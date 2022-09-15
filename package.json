@@ -4,7 +4,8 @@
   "description": "The decentralised governance system from Golem Foundation",
   "main": "index.js",
   "scripts": {
-    "test": "npx hardhat test"
+    "test": "npx hardhat test",
+    "format": "npx prettier --write 'contracts/**/*.sol'"
   },
   "repository": {
     "type": "git",
@@ -36,7 +37,11 @@
     "chai": "^4.2.0",
     "ethers": "^5.4.7",
     "hardhat": "^2.11.1",
+    "hardhat-deploy": "^0.11.15",
+    "hardhat-deploy-ethers": "^0.3.0-beta.13",
     "hardhat-gas-reporter": "^1.0.8",
+    "prettier": "^2.7.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.24",
     "solidity-coverage": "^0.7.21",
     "ts-node": ">=8.0.0",
     "typechain": "^8.1.0",
