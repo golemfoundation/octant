@@ -1,6 +1,6 @@
 {
-  "name": "Proposal 9" ,
-  "description":  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris viverra purus ut dui vulputate, ac lacinia elit tincidunt. Sed in gravida nulla. Nunc augue arcu, rutrum non purus eget, faucibus maximus felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+  "name": "Proposal 9",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris viverra purus ut dui vulputate, ac lacinia elit tincidunt. Sed in gravida nulla. Nunc augue arcu, rutrum non purus eget, faucibus maximus felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
   "website": "http://proposal9.io",
-  "sociallinks": ["http://link1.io", "http://link2.io"]
+  "socialLinks": ["http://link1.io", "http://link2.io"]
 }
