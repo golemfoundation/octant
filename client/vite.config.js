@@ -35,29 +35,4 @@ export default defineConfig({
       views: path.resolve(__dirname, 'src/views'),
     },
   },
-  server: {
-    proxy: {
-      // Proxying websockets or socket.io
-      '/apiws': {
-        target: 'ws://127.0.0.1:5001',
-        ws: true,
-      },
-
-      '/players': {
-        target: 'http://127.0.0.1:5001',
-      },
-
-      '/register': {
-        target: 'http://127.0.0.1:5001',
-      },
-
-      '/timestamp': {
-        target: 'http://127.0.0.1:5001',
-      },
-
-      '/withdraw': {
-        target: 'http://127.0.0.1:5001',
-      },
-    },
-  },
 });
