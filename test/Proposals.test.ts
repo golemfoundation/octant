@@ -9,7 +9,6 @@ makeTestsEnv(PROPOSALS, (testEnv) => {
     it('Should return list of 10 proposals', async () => {
       // given
       const { proposals, signers: { user } } = testEnv;
-
       // when
       const allProposals = await proposals.connect(user).getProposals();
 

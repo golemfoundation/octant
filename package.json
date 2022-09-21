@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat test",
+    "compile": "npx hardhat compile",
     "format": "npx prettier --write 'contracts/**/*.sol'",
     "lint": "npx solhint 'contracts/**/*.sol'"
   },
