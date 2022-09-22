@@ -1,5 +1,7 @@
 pragma solidity ^0.8.9;
 
+/* SPDX-License-Identifier: UNLICENSED */
+
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 

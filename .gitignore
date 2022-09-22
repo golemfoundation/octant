@@ -3,11 +3,14 @@ node_modules
 .env
 coverage
 coverage.json
+.yarn
+
+# Hardhat files
+cache
+artifacts
 deployments
 typechain
 typechain-types
 
-#Hardhat files
-cache
-artifacts
-
+# Client
+dist
