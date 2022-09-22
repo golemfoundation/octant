@@ -1,6 +1,7 @@
 {
   "name": "wildland-governance-game",
   "author": "Wildland Team",
+  "homepage": ".",
   "private": true,
   "version": "1.0.0",
   "scripts": {

@@ -4,7 +4,7 @@
   "description": "The decentralised governance system from Golem Foundation",
   "main": "index.js",
   "scripts": {
-    "test": "npx hardhat test",
+    "test": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat test",
     "format": "npx prettier --write 'contracts/**/*.sol'"
   },
   "repository": {
@@ -35,7 +35,7 @@
     "dotenv": "^10.0.0",
     "ethers": "^5.4.7",
     "ethereum-waffle": "^3.4.4",
-    "hardhat": "^2.11.1",
+    "hardhat": "^2.11.2",
     "hardhat-deploy": "^0.11.15",
     "hardhat-deploy-ethers": "^0.3.0-beta.13",
     "hardhat-gas-reporter": "^1.0.8",

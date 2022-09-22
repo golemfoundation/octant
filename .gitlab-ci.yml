@@ -1,0 +1,80 @@
+variables:
+  DOCKER_DRIVER: overlay2
+  WORKDIR: hexagon
+  FF_USE_FASTZIP: "true"
+  CACHE_COMPRESSION_LEVEL: "fast"
+
+stages:
+  - build
+  - test
+  - deploy
+
+image: node:16-slim
+
+contracts_build:
+  stage: build
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-yarn.lock
+      paths:
+        - node_modules
+      policy: pull-push
+    - key: $CI_COMMIT_REF_SLUG-contracts
+      paths:
+        - .yarn
+        - artifacts
+        - typechain-types
+      policy: pull-push
+  script:
+    - apt-get update && apt-get install -y --no-install-recommends git --reinstall ca-certificates
+    - yarn install --non-interactive --cache-folder .yarn
+    - TS_NODE_TRANSPILE_ONLY=1 npx hardhat compile
+
+contracts_unit_test:
+  stage: test
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-yarn.lock
+      paths:
+        - node_modules
+      policy: pull
+    - key: $CI_COMMIT_REF_SLUG-contracts
+      paths:
+        - .yarn
+        - artifacts
+        - typechain-types
+      policy: pull
+  script:
+    - npx hardhat test
+
+contracts_deploy:
+  stage: deploy
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'
+      when: manual
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-yarn.lock
+      paths:
+        - node_modules
+      policy: pull
+    - key: $CI_COMMIT_REF_SLUG-contracts
+      paths:
+        - .yarn
+        - artifacts
+        - typechain-types
+      policy: pull
+  script:
+    - npx hardhat --network goerli deploy
+
+pages:
+  stage: deploy
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'
+      when: manual
+  script:
+    - cd client
+    - yarn install --non-interactive
+    - yarn build
+    - cd ..
+    - mv client/dist public
+  artifacts:
+    paths:
+      - public
