@@ -39,6 +39,12 @@ contract Deposits {
 				emit Withdrawed(amount, block.timestamp, msg.sender);
 		}
 
+		function active_stake_at(address staker, uint timestamp) public view returns (uint) {
+				Deposit memory d = deposits[staker];
+				if ((d.since < timestamp) && ((d.until == 0) || (d.until > timestamp))) {return d.amount; }
+				return 0;
+		}
+
 		function stakes_since(address staker) public view returns (uint) {
 				return deposits[staker].since;
 		}
