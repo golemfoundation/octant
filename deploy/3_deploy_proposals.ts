@@ -3,7 +3,7 @@ import { DeployFunction } from 'hardhat-deploy/types';
 import { PROPOSALS_BASE_URI } from '../env';
 import { PROPOSALS } from '../helpers/constants';
 
-const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 

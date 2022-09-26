@@ -14,18 +14,18 @@ chai.use(solidity);
 
 const testEnv: TestEnv = {
   signers: {} as Signers,
-	esigners: [] as Array<Signer>,
+  esigners: [] as Array<Signer>,
   proposals: {} as Proposals,
-	glmd: {} as Deposits,
-	token: {} as Token,
+  glmd: {} as Deposits,
+  token: {} as Token,
 };
 
 async function initializeTestsEnv() {
-		testEnv.signers = await getNamedAccounts();
-		testEnv.esigners = await ethers.getSigners();
-		testEnv.token = await ethers.getContract(TOKEN);
-		testEnv.glmd = await ethers.getContract(DEPOSITS);
-		testEnv.proposals = await ethers.getContract(PROPOSALS);
+  testEnv.signers = await getNamedAccounts();
+  testEnv.esigners = await ethers.getSigners();
+  testEnv.token = await ethers.getContract(TOKEN);
+  testEnv.glmd = await ethers.getContract(DEPOSITS);
+  testEnv.proposals = await ethers.getContract(PROPOSALS);
 }
 
 export function makeTestsEnv(name: string, tests: (testEnv: TestEnv) => void) {
