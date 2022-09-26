@@ -16,7 +16,7 @@ const testEnv: TestEnv = {
   signers: {} as Signers,
   esigners: [] as Array<Signer>,
   proposals: {} as Proposals,
-  glmd: {} as Deposits,
+  glmDeposits: {} as Deposits,
   token: {} as Token,
 };
 
@@ -24,7 +24,7 @@ async function initializeTestsEnv() {
   testEnv.signers = await getNamedAccounts();
   testEnv.esigners = await ethers.getSigners();
   testEnv.token = await ethers.getContract(TOKEN);
-  testEnv.glmd = await ethers.getContract(DEPOSITS);
+  testEnv.glmDeposits = await ethers.getContract(DEPOSITS);
   testEnv.proposals = await ethers.getContract(PROPOSALS);
 }
 

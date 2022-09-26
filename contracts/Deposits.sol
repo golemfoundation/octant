@@ -2,13 +2,12 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "hardhat/console.sol";
 
 contract Deposits {
     ERC20 public glm;
 
     event Deposited(uint256 amount, uint256 when, address depositor);
-    event Withdrawed(uint256 amount, uint256 when, address depositor);
+    event Withdrawn(uint256 amount, uint256 when, address depositor);
 
     struct Deposit {
         uint256 amount;
@@ -18,8 +17,8 @@ contract Deposits {
 
     mapping(address => Deposit) public deposits;
 
-    constructor(address glm_address) {
-        glm = ERC20(glm_address);
+    constructor(address glmAddress) {
+        glm = ERC20(glmAddress);
     }
 
     function deposit(uint256 amount) public {
@@ -28,11 +27,10 @@ contract Deposits {
                 (deposits[msg.sender].until != 0),
             "HN/deposit-already-exists"
         );
-        Deposit memory newd = Deposit(amount, block.timestamp, 0);
-        deposits[msg.sender] = newd;
+        deposits[msg.sender] = Deposit(amount, block.timestamp, 0);
         require(
             glm.transferFrom(msg.sender, address(this), amount),
-            "HN/cannot-tranfer-from-sender"
+            "HN/cannot-transfer-from-sender"
         );
         emit Deposited(amount, block.timestamp, msg.sender);
     }
@@ -43,10 +41,10 @@ contract Deposits {
         deposits[msg.sender].until = block.timestamp;
         uint256 amount = deposits[msg.sender].amount;
         require(glm.transfer(msg.sender, amount));
-        emit Withdrawed(amount, block.timestamp, msg.sender);
+        emit Withdrawn(amount, block.timestamp, msg.sender);
     }
 
-    function active_stake_at(address staker, uint256 timestamp)
+    function activeStakeAt(address staker, uint256 timestamp)
         public
         view
         returns (uint256)
@@ -60,15 +58,15 @@ contract Deposits {
         return 0;
     }
 
-    function stakes_since(address staker) public view returns (uint256) {
+    function stakesSince(address staker) public view returns (uint256) {
         return deposits[staker].since;
     }
 
-    function stakes_until(address staker) public view returns (uint256) {
+    function stakesUntil(address staker) public view returns (uint256) {
         return deposits[staker].until;
     }
 
-    function stakes_amount(address staker) public view returns (uint256) {
+    function stakesAmount(address staker) public view returns (uint256) {
         return deposits[staker].amount;
     }
 }
