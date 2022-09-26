@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat test",
-    "format": "npx prettier --write 'contracts/**/*.sol'"
+    "format": "npx prettier --write 'contracts/**/*.sol'",
+    "lint": "npx solhint 'contracts/**/*.sol'"
   },
   "repository": {
     "type": "git",
@@ -24,17 +25,18 @@
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",
     "@ethersproject/providers": "^5.4.7",
+    "@nomiclabs/hardhat-solhint": "^2.0.1",
+    "@openzeppelin/contracts": "^4.7.3",
     "@typechain/ethers-v5": "^10.1.0",
     "@typechain/hardhat": "^6.1.2",
     "@types/chai": "^4.2.0",
     "@types/mocha": "^9.1.0",
     "@types/node": ">=12.0.0",
-    "@openzeppelin/contracts": "^4.7.3",
     "chai": "^4.2.0",
     "chai-bignumber": "^3.0.0",
     "dotenv": "^10.0.0",
-    "ethers": "^5.4.7",
     "ethereum-waffle": "^3.4.4",
+    "ethers": "^5.4.7",
     "hardhat": "^2.11.2",
     "hardhat-deploy": "^0.11.15",
     "hardhat-deploy-ethers": "^0.3.0-beta.13",

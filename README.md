@@ -8,14 +8,20 @@ ensure that `.env`  file is present. See `.env.template`
 
 
 ## Test
-```
+```bash
 yarn test
+```
+
+## Format and lint
+```bash
+yarn format
+yarn lint
 ```
 
 ## Deployment
 
 ### Goerli testnet
-```
+```bash
 hardhat --network goerli deploy
 hardhat --network goerli etherscan-verify --license UNLICENSED
 ```
