@@ -1,6 +1,8 @@
 import { HardhatUserConfig } from "hardhat/types";
 import "hardhat-deploy";
 import "hardhat-deploy-ethers";
+import '@typechain/hardhat'
+
 import { ETHERSCAN_API_KEY, GOERLI_PRIVATE_KEY, GOERLI_URL } from './env';
 
 const config: HardhatUserConfig = {
