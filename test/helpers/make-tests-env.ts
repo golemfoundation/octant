@@ -25,7 +25,7 @@ async function initializeTestsEnv() {
 export function makeTestsEnv(name: string, tests: (testEnv: TestEnv) => void) {
   describe(name, () => {
     beforeEach(async () => {
-      await deployments.fixture(['main']);
+      await deployments.fixture(['test']);
       await initializeTestsEnv();
     });
     tests(testEnv);

@@ -1,5 +1,5 @@
 {
-  "extends": "solhint:default",
+  "extends": "solhint:recommended",
   "rules": {
     "mark-callable-contracts": "off"
   }

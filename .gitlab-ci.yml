@@ -22,12 +22,13 @@ contracts_build:
       paths:
         - .yarn
         - artifacts
+        - artifacts-zk
         - typechain-types
       policy: pull-push
   script:
     - apt-get update && apt-get install -y --no-install-recommends git --reinstall ca-certificates
     - yarn install --non-interactive --cache-folder .yarn
-    - TS_NODE_TRANSPILE_ONLY=1 npx hardhat compile
+    - yarn build
 
 contracts_unit_test:
   stage: test
@@ -40,10 +41,11 @@ contracts_unit_test:
       paths:
         - .yarn
         - artifacts
+        - artifacts-zk
         - typechain-types
       policy: pull
   script:
-    - npx hardhat test
+    - yarn test
 
 contracts_deploy:
   stage: deploy
@@ -59,10 +61,12 @@ contracts_deploy:
       paths:
         - .yarn
         - artifacts
+        - artifacts-zk
         - typechain-types
       policy: pull
   script:
-    - npx hardhat --network goerli deploy
+    - yarn deploy:goerli
+    - yarn deploy:zksync
 
 pages:
   stage: deploy

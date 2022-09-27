@@ -10,8 +10,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await deploy(PROPOSALS, {
     from: deployer,
     log: true,
-    args: [PROPOSALS_BASE_URI, 10]
+    args: [PROPOSALS_BASE_URI, 10],
+    autoMine: true,
   });
 };
 export default func;
-func.tags = ['main'];
+func.tags = ['proposals', 'local', 'test', 'goerli'];
