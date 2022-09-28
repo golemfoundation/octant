@@ -11,7 +11,7 @@ stages:
 
 image: node:16-slim
 
-contracts_build:
+Build:
   stage: build
   cache:
     - key: $CI_COMMIT_REF_SLUG-yarn.lock
@@ -25,12 +25,23 @@ contracts_build:
         - artifacts-zk
         - typechain-types
       policy: pull-push
+    - key: $CI_COMMIT_REF_SLUG-client-yarn.lock
+      paths:
+        - client/node_modules
+      policy: pull-push
+
+    - key: $CI_COMMIT_REF_SLUG-client
+      paths:
+        - client/.yarn
+      policy: pull-push
   script:
     - apt-get update && apt-get install -y --no-install-recommends git --reinstall ca-certificates
     - yarn install --non-interactive --cache-folder .yarn
     - yarn build
+    - cd client
+    - yarn install --non-interactive --cache-folder .yarn
 
-contracts_unit_test:
+Contracts unit tests:
   stage: test
   cache:
     - key: $CI_COMMIT_REF_SLUG-yarn.lock
@@ -47,7 +58,22 @@ contracts_unit_test:
   script:
     - yarn test
 
-contracts_deploy:
+Client unit tests:
+  stage: test
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-client-yarn.lock
+      paths:
+        - client/node_modules
+      policy: pull
+    - key: $CI_COMMIT_REF_SLUG-client
+      paths:
+        - client/.yarn
+      policy: pull
+  script:
+    - cd client
+    - yarn test
+
+Contracts deploy:
   stage: deploy
   rules:
     - if: '$CI_COMMIT_REF_NAME == "master"'
