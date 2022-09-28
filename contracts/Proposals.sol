@@ -14,7 +14,7 @@ contract Proposals is Ownable {
     string public baseURI;
     uint8 public proposalsCount;
 
-    constructor(string memory _initBaseURI, uint8 _proposalsCount) public {
+    constructor(string memory _initBaseURI, uint8 _proposalsCount) {
         setBaseURI(_initBaseURI);
         setProposalsCount(_proposalsCount);
     }
@@ -30,9 +30,7 @@ contract Proposals is Ownable {
     function getProposals() external view returns (Proposal[] memory) {
         Proposal[] memory proposals = new Proposal[](proposalsCount);
         for (uint8 i = 0; i < proposalsCount; i++) {
-            string memory uri = string(
-                abi.encodePacked(baseURI, Strings.toString(i))
-            );
+            string memory uri = string(abi.encodePacked(baseURI, Strings.toString(i)));
             proposals[i] = Proposal(i, uri);
         }
         return proposals;

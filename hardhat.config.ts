@@ -45,14 +45,8 @@ const config: HardhatUserConfig = {
     }
   },
   zksolc: {
-    version: '1.1.5',
-    compilerSource: 'docker',
-    settings: {
-      experimental: {
-        dockerImage: 'matterlabs/zksolc',
-        tag: 'v1.1.5'
-      },
-    },
+    version: '1.1.6',
+    compilerSource: 'binary'
   },
   zkSyncDeploy: {
     zkSyncNetwork: ZKSYNC_URL,
