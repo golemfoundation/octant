@@ -1,16 +1,15 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-import { PROPOSALS_BASE_URI } from '../env';
-import { PROPOSALS } from '../helpers/constants';
+import { TOKEN } from '../helpers/constants';
 
-const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
-  await deploy(PROPOSALS, {
+  await deploy(TOKEN, {
     from: deployer,
     log: true,
-    args: [PROPOSALS_BASE_URI, 10]
+    args: []
   });
 };
 export default func;
