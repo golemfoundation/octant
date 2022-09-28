@@ -5,6 +5,9 @@ import "@matterlabs/hardhat-zksync-deploy";
 import "@matterlabs/hardhat-zksync-solc";
 
 import { ETHERSCAN_API_KEY, GOERLI_PRIVATE_KEY, GOERLI_URL, ZKSYNC_URL } from './env';
+import '@typechain/hardhat'
+
+import { ETHERSCAN_API_KEY, GOERLI_PRIVATE_KEY, GOERLI_URL } from './env';
 
 const config: HardhatUserConfig = {
   solidity: "0.8.9",
@@ -37,21 +40,7 @@ const config: HardhatUserConfig = {
     etherscan: {
       apiKey: ETHERSCAN_API_KEY
     }
-  },
-  zksolc: {
-    version: "1.1.5",
-    compilerSource: "docker",
-    settings: {
-      experimental: {
-        dockerImage: "matterlabs/zksolc",
-        tag: "v1.1.5"
-      },
-    },
-  },
-  zkSyncDeploy: {
-    zkSyncNetwork: ZKSYNC_URL,
-    ethNetwork: GOERLI_URL
-  },
+  }
 };
 
 export default config;
