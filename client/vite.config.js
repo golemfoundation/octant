@@ -8,6 +8,11 @@ const path = require('path');
 // https://vitejs.dev/config/
 export default defineConfig({
   base: '/hexagon/',
+  build: {
+    commonjsOptions: {
+      include: [/typechain-types/, /node_modules/],
+    },
+  },
   css: {
     preprocessorOptions: {
       scss: {
@@ -18,6 +23,9 @@ export default defineConfig({
         },
       },
     },
+  },
+  optimizeDeps: {
+    link: ['typechain-types'],
   },
   plugins: [react()],
   resolve: {

@@ -1,6 +1,7 @@
 {
   "extends": "solhint:recommended",
   "rules": {
-    "mark-callable-contracts": "off"
+    "mark-callable-contracts": "off",
+    "compiler-version": ["error","^0.8.9"]
   }
 }

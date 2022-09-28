@@ -4,7 +4,7 @@
   "description": "The decentralised governance system from Golem Foundation",
   "main": "index.js",
   "scripts": {
-    "build": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat compile",
+    "compile": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat compile",
     "test": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat test",
     "deploy:local": "npx hardhat deploy --tags local",
     "deploy:goerli": "npx hardhat --network goerli deploy --tags goerli",
@@ -52,7 +52,9 @@
     "prettier-plugin-solidity": "^1.0.0-beta.24",
     "solidity-coverage": "^0.7.21",
     "ts-node": ">=8.0.0",
+    "tslint": "^6.1.3",
+    "typescript-formatter": "^7.2.2",
     "typechain": "^8.1.0",
-    "typescript": ">=4.5.0"
+    "typescript": "^4.8.3"
   }
 }
