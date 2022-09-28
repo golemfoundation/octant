@@ -8,9 +8,9 @@ makeTestsEnv(PROPOSALS, (testEnv) => {
   describe('getProposals', async () => {
     it('Should return list of 10 proposals', async () => {
       // given
-      const { proposals, signers: { user } } = testEnv;
+      const { proposals, signers } = testEnv;
       // when
-      const allProposals = await proposals.connect(user).getProposals();
+      const allProposals = await proposals.connect(signers.user).getProposals();
 
       // then
       expect(allProposals.length).eq(10);
