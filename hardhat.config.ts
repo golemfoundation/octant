@@ -22,6 +22,11 @@ const config: HardhatUserConfig = {
     goerli: {
       url: GOERLI_URL,
       accounts: [GOERLI_PRIVATE_KEY]
+    },
+    zksync: {
+      url: ZKSYNC_URL,
+      accounts: [GOERLI_PRIVATE_KEY],
+      zksync: true
     }
   },
   namedAccounts: {

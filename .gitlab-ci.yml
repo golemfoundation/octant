@@ -37,7 +37,7 @@ Build:
   script:
     - apt-get update && apt-get install -y --no-install-recommends git --reinstall ca-certificates
     - yarn install --non-interactive --cache-folder .yarn
-    - yarn build
+    - yarn compile
     - cd client
     - yarn install --non-interactive --cache-folder .yarn
 
@@ -52,7 +52,6 @@ Contracts unit tests:
       paths:
         - .yarn
         - artifacts
-        - artifacts-zk
         - typechain-types
       policy: pull
   script:

@@ -5,10 +5,14 @@ Golem Foundation's decentralised governance system that will be first rolled out
 ## Configuration
 ensure that `.env`  file is present. See `.env.template`
 
-
-## Build
+## Clean
 ```bash
-yarn build
+yarn clean
+```
+
+## Compile
+```bash
+yarn compile
 ```
 
 ## Test
