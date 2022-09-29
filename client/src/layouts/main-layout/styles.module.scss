@@ -1,0 +1,20 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+}
+
+.header {
+  height: 8rem;
+  border-bottom: 0.1rem solid $color-white;
+  padding: 1rem 2rem;
+}
+
+.body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 2rem;
+}
