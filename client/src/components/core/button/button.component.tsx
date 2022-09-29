@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
 import ButtonProps from './types';
-import styles from './styles.module.scss';
+import styles from './style.module.scss';
 
 const Button: FC<ButtonProps> = ({
   children,

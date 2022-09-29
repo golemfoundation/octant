@@ -1,12 +1,12 @@
-import React, { Fragment, ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 
 import { apiGetProposal } from 'api/proposals';
 import { useProposalsContract } from 'hooks/useContract';
-import Button from 'components/core/button/button.component';
+import ProposalItem from 'components/dedicated/proposal-item/proposal-item.component';
 import env from 'env';
 
 import { ExtendedProposal } from './types';
-import styles from './styles.module.scss';
+import styles from './style.module.scss';
 
 const ProposalsView = (): ReactElement => {
   const [loadedProposals, setLoadedProposals] = useState<ExtendedProposal[]>([]);
@@ -19,10 +19,10 @@ const ProposalsView = (): ReactElement => {
         const proposals = await contract.getProposals();
         await Promise.all(proposals.map(({ uri }) => apiGetProposal(uri).catch(error => error)))
           .then(arrayOfValuesOrErrors => {
-            const parsedProposals = arrayOfValuesOrErrors.map<ExtendedProposal>(proposal => {
-              const isLoadingError = !!proposal.response?.status;
-              return { ...proposal, isLoadingError };
-            });
+            const parsedProposals = arrayOfValuesOrErrors.map<ExtendedProposal>(proposal => ({
+              ...proposal,
+              isLoadingError: !!proposal.response?.status,
+            }));
             setLoadedProposals(parsedProposals);
           })
           .catch(error => {
@@ -41,24 +41,7 @@ const ProposalsView = (): ReactElement => {
           ? 'loading'
           : loadedProposals.map((proposal, index) => (
               // eslint-disable-next-line react/no-array-index-key
-              <div key={index} className={styles.proposal}>
-                {proposal.isLoadingError ? (
-                  'Loading of proposal encountered an error.'
-                ) : (
-                  <Fragment>
-                    <div>{proposal.name}</div>
-                    <div>{proposal.description}</div>
-                    <div>
-                      <Button href={proposal.website} label="Website" target="_blank" />
-                    </div>
-                    <div className={styles.buttons}>
-                      {proposal.socialLinks.map(link => (
-                        <Button href={link} label="Social link" target="_blank" />
-                      ))}
-                    </div>
-                  </Fragment>
-                )}
-              </div>
+              <ProposalItem key={index} {...proposal} />
             ))}
       </div>
     </div>
