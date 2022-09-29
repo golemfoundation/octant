@@ -7,10 +7,10 @@ import styles from './style.module.scss';
 
 const ProposalItem: FC<ProposalItemProps> = ({
   description,
+  isLoadingError,
   name,
   socialLinks,
   website,
-  isLoadingError,
 }) => (
   <div className={styles.root}>
     {isLoadingError ? (

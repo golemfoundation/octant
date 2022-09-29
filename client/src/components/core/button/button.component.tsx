@@ -5,12 +5,12 @@ import styles from './style.module.scss';
 
 const Button: FC<ButtonProps> = ({
   children,
+  href,
   label,
   onClick,
-  type = 'button',
-  href,
   rel,
   target,
+  type = 'button',
 }) => {
   const filteredProps = {};
 
