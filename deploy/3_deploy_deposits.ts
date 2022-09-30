@@ -21,4 +21,4 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
   });
 };
 export default func;
-func.tags = ['proposals', 'local', 'test', 'goerli'];
+func.tags = ['deposits', 'local', 'test', 'goerli'];
