@@ -17,9 +17,12 @@
     "prettier:ts": "yarn prettier:ts:pure './**/*.{ts,tsx}'",
     "prettier:ts:pure": "prettier --config .prettierrc.yml --parser typescript --write",
     "type-check": "tsc --noEmit true",
-    "test": "jest"
+    "test": "jest",
+    "preinstall": "yarn copy-typechain",
+    "copy-typechain": "cp -r ../typechain-types ./src/typechain-types"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "classnames": "^2.3.1",
     "ethers": "^5.7.1",
     "react": "^18.2.0",

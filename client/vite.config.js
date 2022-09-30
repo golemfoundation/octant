@@ -27,6 +27,7 @@ export default defineConfig({
       components: path.resolve(__dirname, 'src/components'),
       constants: path.resolve(__dirname, 'src/constants'),
       context: path.resolve(__dirname, 'src/context'),
+      env: path.resolve(__dirname, 'src/env'),
       hooks: path.resolve(__dirname, 'src/hooks'),
       layouts: path.resolve(__dirname, 'src/layouts'),
       services: path.resolve(__dirname, 'src/services'),

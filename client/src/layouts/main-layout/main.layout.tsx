@@ -5,6 +5,7 @@ import React, { FC } from 'react';
 import Button from 'components/core/button/button.component';
 
 import MainLayoutProps from './types';
+import styles from './style.module.scss';
 
 const MainLayout: FC<MainLayoutProps> = ({ children }) => {
   const {
@@ -19,11 +20,11 @@ const MainLayout: FC<MainLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div>
-      <div>
+    <div className={styles.root}>
+      <div className={styles.header}>
         <Button label="Connect MetaMask" onClick={authUser} />
       </div>
-      {children}
+      <div className={styles.body}>{children}</div>
     </div>
   );
 };
