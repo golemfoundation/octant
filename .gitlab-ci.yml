@@ -66,6 +66,11 @@ contracts_deploy:
 
 pages:
   stage: deploy
+  cache:
+  - key: $CI_COMMIT_REF_SLUG-contracts
+    paths:
+      - typechain-types
+    policy: pull
   rules:
     - if: '$CI_COMMIT_REF_NAME == "master"'
       when: manual
