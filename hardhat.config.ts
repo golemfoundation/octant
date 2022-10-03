@@ -36,7 +36,15 @@ const config: HardhatUserConfig = {
     },
     user: {
       default: 1,
-      localhost: 1
+    },
+    user2: {
+      default: 2,
+    },
+    user3: {
+      default: 3,
+    },
+    hacker: {
+      default: 4,
     },
   },
   verify: {

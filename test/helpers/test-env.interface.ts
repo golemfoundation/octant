@@ -1,12 +1,11 @@
-import { Deposits, Proposals, Token } from '../../typechain-types';
-import { ethers } from 'hardhat';
+import { Allocations, Deposits, Proposals, Token } from '../../typechain-types';
 import { SignerWithAddress } from 'hardhat-deploy-ethers/signers';
 
-export type Role = "deployer" | "user" | "hacker";
-export type Signers = Record<Role, SignerWithAddress>;
+export type Signers = Record<string, SignerWithAddress>;
 
 export interface TestEnv {
   signers: Signers;
+  allocations: Allocations;
   proposals: Proposals;
   glmDeposits: Deposits;
   token: Token;
