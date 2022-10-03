@@ -7,7 +7,7 @@ const path = require('path');
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/hexagon/',
+  base: '/governance/hexagon/',
   css: {
     preprocessorOptions: {
       scss: {
