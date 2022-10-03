@@ -11,7 +11,7 @@ stages:
 
 image: node:16-slim
 
-contracts_build:
+Build:
   stage: build
   cache:
     - key: $CI_COMMIT_REF_SLUG-yarn.lock
@@ -22,14 +22,26 @@ contracts_build:
       paths:
         - .yarn
         - artifacts
+        - artifacts-zk
         - typechain-types
+      policy: pull-push
+    - key: $CI_COMMIT_REF_SLUG-client-yarn.lock
+      paths:
+        - client/node_modules
+      policy: pull-push
+
+    - key: $CI_COMMIT_REF_SLUG-client
+      paths:
+        - client/.yarn
       policy: pull-push
   script:
     - apt-get update && apt-get install -y --no-install-recommends git --reinstall ca-certificates
     - yarn install --non-interactive --cache-folder .yarn
-    - TS_NODE_TRANSPILE_ONLY=1 npx hardhat compile
+    - yarn compile
+    - cd client
+    - yarn install --non-interactive --cache-folder .yarn
 
-contracts_unit_test:
+Contracts unit tests:
   stage: test
   cache:
     - key: $CI_COMMIT_REF_SLUG-yarn.lock
@@ -43,9 +55,24 @@ contracts_unit_test:
         - typechain-types
       policy: pull
   script:
-    - npx hardhat test
+    - yarn test
 
-contracts_deploy:
+Client unit tests:
+  stage: test
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-client-yarn.lock
+      paths:
+        - client/node_modules
+      policy: pull
+    - key: $CI_COMMIT_REF_SLUG-client
+      paths:
+        - client/.yarn
+      policy: pull
+  script:
+    - cd client
+    - yarn test
+
+Contracts deploy:
   stage: deploy
   rules:
     - if: '$CI_COMMIT_REF_NAME == "master"'
@@ -59,10 +86,12 @@ contracts_deploy:
       paths:
         - .yarn
         - artifacts
+        - artifacts-zk
         - typechain-types
       policy: pull
   script:
-    - npx hardhat --network goerli deploy
+    - yarn deploy:goerli
+    - yarn deploy:zksync
 
 pages:
   stage: deploy

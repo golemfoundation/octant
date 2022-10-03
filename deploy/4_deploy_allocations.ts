@@ -1,17 +1,17 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-import { TOKEN } from '../helpers/constants';
+import { ALLOCATIONS } from '../helpers/constants';
 
-const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
+const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
-  await deploy(TOKEN, {
+  await deploy(ALLOCATIONS, {
     from: deployer,
     log: true,
     args: [],
-    autoMine: true
+    autoMine: true,
   });
 };
 export default func;
-func.tags = ['token','local', 'test'];
+func.tags = ['allocations', 'local', 'test'];

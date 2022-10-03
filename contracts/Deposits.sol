@@ -23,8 +23,7 @@ contract Deposits {
 
     function deposit(uint256 amount) public {
         require(
-            (deposits[msg.sender].since == 0) ||
-                (deposits[msg.sender].until != 0),
+            (deposits[msg.sender].since == 0) || (deposits[msg.sender].until != 0),
             "HN/deposit-already-exists"
         );
         deposits[msg.sender] = Deposit(amount, block.timestamp, 0);
@@ -44,15 +43,9 @@ contract Deposits {
         emit Withdrawn(amount, block.timestamp, msg.sender);
     }
 
-    function activeStakeAt(address staker, uint256 timestamp)
-        public
-        view
-        returns (uint256)
-    {
+    function activeStakeAt(address staker, uint256 timestamp) public view returns (uint256) {
         Deposit memory d = deposits[staker];
-        if (
-            (d.since < timestamp) && ((d.until == 0) || (d.until > timestamp))
-        ) {
+        if ((d.since < timestamp) && ((d.until == 0) || (d.until > timestamp))) {
             return d.amount;
         }
         return 0;
