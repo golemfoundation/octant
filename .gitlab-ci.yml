@@ -1,6 +1,5 @@
 variables:
   DOCKER_DRIVER: overlay2
-  WORKDIR: hexagon
   FF_USE_FASTZIP: "true"
   CACHE_COMPRESSION_LEVEL: "fast"
 
@@ -112,3 +111,4 @@ pages:
   artifacts:
     paths:
       - public
+
