@@ -1,0 +1,25 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  border: 0.1rem solid $color-white;
+  padding: 2rem;
+  border-radius: $border-radius-standard;
+
+  &:not(:first-child) {
+    margin-top: 2rem;
+  }
+
+  > div {
+    display: flex;
+    justify-content: center;
+
+    &:not(:first-child) {
+      margin-top: 1rem;
+    }
+  }
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-around;
+}
