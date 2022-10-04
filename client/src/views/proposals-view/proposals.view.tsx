@@ -1,4 +1,5 @@
-import { useMetamask } from 'use-metamask';
+// import { useMetamask } from 'use-metamask';
+import { Web3Provider } from 'zksync-web3';
 import React, { ReactElement, useEffect, useState } from 'react';
 
 import { apiGetProposal } from 'api/proposals';
@@ -11,11 +12,13 @@ import styles from './style.module.scss';
 
 const ProposalsView = (): ReactElement => {
   const [loadedProposals, setLoadedProposals] = useState<ExtendedProposal[]>([]);
-  const {
-    metaState: { web3 },
-  } = useMetamask();
+  // const {
+  //   metaState: { web3 },
+  // } = useMetamask();
   const { proposalsAddress, allocationsAddress } = env;
-  const signer = web3 ? web3.getSigner() : null;
+  // @ts-expect-error TODO ethereum property is not declared.
+  const provider = new Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
   const contractProposals = useProposalsContract(proposalsAddress);
   const contractAllocations = useAllocationsContract(allocationsAddress, signer);
 
