@@ -18,7 +18,8 @@
     "prettier:ts:pure": "prettier --config .prettierrc.yml --parser typescript --write",
     "type-check": "tsc --noEmit true",
     "test": "jest",
-    "preinstall": "yarn copy-typechain",
+    "preinstall": "yarn remove-typechain && yarn copy-typechain",
+    "remove-typechain": "rm -r ./src/typechain-types",
     "copy-typechain": "cp -r ../typechain-types ./src/typechain-types"
   },
   "dependencies": {

@@ -1,10 +1,25 @@
-import { ethers } from 'ethers';
+import { Signer, ethers } from 'ethers';
 import { useMemo } from 'react';
+import type { Provider } from '@ethersproject/providers';
 
-import { Proposals, Proposals__factory } from '../typechain-types';
+import {
+  Allocations,
+  Allocations__factory,
+  Proposals,
+  Proposals__factory,
+} from '../typechain-types';
 
 export function useProposalsContract(tokenAddress: string): Proposals | null {
   return useMemo(() => {
     return Proposals__factory.connect(tokenAddress, ethers.providers.getDefaultProvider('goerli'));
   }, [tokenAddress]);
+}
+
+export function useAllocationsContract(
+  tokenAddress: string,
+  signerOrProvider: Signer | Provider,
+): Allocations | null {
+  return useMemo(() => {
+    return signerOrProvider ? Allocations__factory.connect(tokenAddress, signerOrProvider) : null;
+  }, [tokenAddress, signerOrProvider]);
 }

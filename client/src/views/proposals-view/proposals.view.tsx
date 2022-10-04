@@ -1,7 +1,8 @@
+import { useMetamask } from 'use-metamask';
 import React, { ReactElement, useEffect, useState } from 'react';
 
 import { apiGetProposal } from 'api/proposals';
-import { useProposalsContract } from 'hooks/useContract';
+import { useAllocationsContract, useProposalsContract } from 'hooks/useContract';
 import ProposalItem from 'components/dedicated/proposal-item/proposal-item.component';
 import env from 'env';
 
@@ -10,13 +11,30 @@ import styles from './style.module.scss';
 
 const ProposalsView = (): ReactElement => {
   const [loadedProposals, setLoadedProposals] = useState<ExtendedProposal[]>([]);
-  const { proposalsAddress } = env;
-  const contract = useProposalsContract(proposalsAddress);
+  const {
+    metaState: { web3 },
+  } = useMetamask();
+  const { proposalsAddress, allocationsAddress } = env;
+  const signer = web3 ? web3.getSigner() : null;
+  const contractProposals = useProposalsContract(proposalsAddress);
+  const contractAllocations = useAllocationsContract(allocationsAddress, signer);
 
   useEffect(() => {
-    if (contract) {
+    if (contractAllocations) {
       (async () => {
-        const proposals = await contract.getProposals();
+        // eslint-disable-next-line no-console
+        console.log({ contractAllocations });
+        const votes = await contractAllocations.getVotesCount(1, 1);
+        // eslint-disable-next-line no-console
+        console.log({ votes });
+      })();
+    }
+  }, [contractAllocations]);
+
+  useEffect(() => {
+    if (contractProposals) {
+      (async () => {
+        const proposals = await contractProposals.getProposals();
         await Promise.all(proposals.map(({ uri }) => apiGetProposal(uri).catch(error => error)))
           .then(arrayOfValuesOrErrors => {
             const parsedProposals = arrayOfValuesOrErrors.map<ExtendedProposal>(proposal => ({
@@ -31,7 +49,7 @@ const ProposalsView = (): ReactElement => {
           });
       })();
     }
-  }, [contract]);
+  }, [contractProposals]);
 
   return (
     <div>
