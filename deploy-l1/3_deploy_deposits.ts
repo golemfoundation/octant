@@ -2,7 +2,7 @@ import { ethers } from 'hardhat';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { GOERLI_GLM } from '../env';
-import { DEPOSITS, TOKEN } from '../helpers/constants';
+import { DEPOSITS, TOKEN, EPOCHS } from '../helpers/constants';
 
 const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
@@ -13,10 +13,11 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
     glmAddress = token.address
   }
 
+  const epochs = await ethers.getContract(EPOCHS);
   await deploy(DEPOSITS, {
     from: deployer,
     log: true,
-    args: [glmAddress],
+    args: [epochs.address, glmAddress],
     autoMine: true
   });
 };
