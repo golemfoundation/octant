@@ -3,9 +3,9 @@ import chai from 'chai';
 import bignumberChai from 'chai-bignumber';
 import { solidity } from 'ethereum-waffle';
 
-import { deployments, ethers, getNamedAccounts } from 'hardhat';
-import { PROPOSALS, DEPOSITS, TOKEN, ALLOCATIONS } from '../../helpers/constants';
-import { Proposals, Deposits, Token, Allocations } from '../../typechain-types';
+import { deployments, ethers } from 'hardhat';
+import { PROPOSALS, DEPOSITS, TOKEN, ALLOCATIONS, EPOCHS } from '../../helpers/constants';
+import { Proposals, Deposits, Token, Allocations, Epochs } from '../../typechain-types';
 import { Signers, TestEnv } from './test-env.interface';
 
 chai.use(bignumberChai());
@@ -18,6 +18,7 @@ const testEnv: TestEnv = {
   proposals: {} as Proposals,
   glmDeposits: {} as Deposits,
   token: {} as Token,
+  epochs: {} as Epochs,
 };
 
 async function initializeTestsEnv() {
@@ -26,6 +27,7 @@ async function initializeTestsEnv() {
   testEnv.token = await ethers.getContract(TOKEN);
   testEnv.glmDeposits = await ethers.getContract(DEPOSITS);
   testEnv.proposals = await ethers.getContract(PROPOSALS);
+  testEnv.epochs = await ethers.getContract(EPOCHS);
 }
 
 export function makeTestsEnv(name: string, tests: (testEnv: TestEnv) => void) {
