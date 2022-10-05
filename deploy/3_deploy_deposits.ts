@@ -2,7 +2,7 @@ import { ethers } from 'hardhat';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { GOERLI_GLM } from '../env';
-import { TOKEN, DEPOSITS } from '../helpers/constants';
+import { DEPOSITS, TOKEN } from '../helpers/constants';
 
 const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
