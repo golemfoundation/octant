@@ -2,14 +2,20 @@ import { expect } from 'chai';
 import { ethers } from 'hardhat';
 import { DECISION_WINDOW, EPOCH_DURATION } from '../env';
 import { ALLOCATIONS, EPOCHS, PROPOSALS } from '../helpers/constants';
-import { increaseNextBlockTimestamp } from '../helpers/misc-utils';
+import { getLatestBlockTimestamp, increaseNextBlockTimestamp } from '../helpers/misc-utils';
 import { Allocations, Epochs } from '../typechain-types';
 import { makeTestsEnv } from './helpers/make-tests-env';
 
 makeTestsEnv(ALLOCATIONS, (testEnv) => {
 
-  describe('vote', async () => {
+  async function setupAllocations(start: number, duration: number, decisionWindow: number) {
+    const epochsFactory = await ethers.getContractFactory(EPOCHS);
+    const epochs = await epochsFactory.deploy(start, duration, decisionWindow) as Epochs;
+    const allocationsFactory = await ethers.getContractFactory(ALLOCATIONS);
+    return await allocationsFactory.deploy(epochs.address) as Allocations;
+  }
 
+  describe('vote', async () => {
     it('Cannot vote, when alpha is out of range', async () => {
       const { allocations, signers: { user } } = testEnv;
       expect(allocations.connect(user).vote(1, 101)).revertedWith('HN/alpha-out-of-range');
@@ -55,9 +61,11 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
     });
 
     it('Users vote in second epoch', async () => {
-      const { allocations, signers: { user } } = testEnv;
+      const { signers: { user } } = testEnv;
+      const start = await getLatestBlockTimestamp()
+      const allocations = await setupAllocations(start, 500, 200)
 
-      await increaseNextBlockTimestamp(400_000)
+      await increaseNextBlockTimestamp(600)
       await allocations.connect(user).vote(1, 53);
       const voteInFirstEpoch = await allocations.participantVoteByEpoch(1, user.address)
       const voteInSecondEpoch = await allocations.participantVoteByEpoch(2, user.address)
@@ -69,9 +77,11 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
     });
 
     it('Cannot vote when decision window closed', async () => {
-      const { allocations, signers: { user } } = testEnv;
+      const { signers: { user } } = testEnv;
+      const start = await getLatestBlockTimestamp()
+      const allocations = await setupAllocations(start, 500, 200)
 
-      await increaseNextBlockTimestamp(500_000);
+      await increaseNextBlockTimestamp(400);
 
       expect(allocations.connect(user).vote(1, 53))
         .revertedWith("HN/decision-window-closed");
@@ -79,10 +89,7 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
 
     it('Cannot vote when hexagon has not been started yet', async () => {
       const { signers: { user } } = testEnv;
-      const epochsFactory = await ethers.getContractFactory(EPOCHS);
-      const epochs = await epochsFactory.deploy(2000000000, EPOCH_DURATION, DECISION_WINDOW) as Epochs;
-      const allocationsFactory = await ethers.getContractFactory(ALLOCATIONS);
-      const allocations = await allocationsFactory.deploy(epochs.address) as Allocations;
+      const allocations = await setupAllocations(2000000000, 500, 200)
 
       expect(allocations.connect(user).vote(1, 53))
         .revertedWith("HN/not-started-yet");
