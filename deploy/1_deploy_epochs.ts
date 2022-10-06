@@ -2,8 +2,9 @@ import { Wallet } from "zksync-web3";
 import { Deployer } from '@matterlabs/hardhat-zksync-deploy';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-import { DECISION_WINDOW, EPOCH_DURATION, EPOCHS_START, GOERLI_PRIVATE_KEY } from '../../env';
-import { EPOCHS } from '../../helpers/constants';
+import { DECISION_WINDOW, EPOCH_DURATION, EPOCHS_START, GOERLI_PRIVATE_KEY } from '../env';
+import { EPOCHS } from '../helpers/constants';
+
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const wallet = new Wallet(GOERLI_PRIVATE_KEY);
@@ -15,6 +16,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const contractAddress = epochsContract.address;
   console.log(`${artifact.contractName} was deployed to ${contractAddress}`);
+
+  hre.config.zkSyncContracts.epochsAddress = contractAddress;
 };
 export default func;
 func.tags = ['zksync'];

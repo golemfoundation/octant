@@ -5,6 +5,9 @@ import '@matterlabs/hardhat-zksync-deploy';
 import '@matterlabs/hardhat-zksync-solc';
 import '@typechain/hardhat';
 
+import './tasks/clean';
+import './tasks/deploy-zksync';
+
 import { ETHERSCAN_API_KEY, GOERLI_PRIVATE_KEY, GOERLI_URL, ZKSYNC_URL } from './env';
 
 const config: HardhatUserConfig = {
@@ -13,20 +16,25 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 1337,
       initialBaseFeePerGas: 0,
+      deploy: ['deploy-l1/']
     },
     localhost: {
       url: 'http://127.0.0.1:8545',
       chainId: 1337,
       initialBaseFeePerGas: 0,
+      deploy: ['deploy-l1/']
     },
     goerli: {
       url: GOERLI_URL,
-      accounts: [GOERLI_PRIVATE_KEY]
+      accounts: [GOERLI_PRIVATE_KEY],
+      deploy: ['deploy-l1/']
     },
     zksync: {
       url: ZKSYNC_URL,
       accounts: [GOERLI_PRIVATE_KEY],
-      zksync: true
+      zksync: true,
+      // "deploy" dir is hardcoded in hardhat-zksync-deploy plugin, we cannot change this path. Putting it here to mark it explicitly.
+      deploy: ['deploy/']
     }
   },
   namedAccounts: {
