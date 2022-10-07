@@ -1,10 +1,10 @@
 const env = {
   allocationsAddress:
-    // @ts-ignore
+    // @ts-expect-error TS does not understand the way vite imports envs.
     import.meta.env.VITE_ALLOCATIONS_ADDRESS || '0x855Ff93d6E777054cFC0601625471B3C5F1031fC', // example address
   proposalsAddress:
-    // @ts-ignore
-    import.meta.env.VITE_PROPOSALS_ADDRESS || '0xAbf25FFC8E535d8C0c704dD3c78E8B6b4f461C8d', // example address
+    // @ts-expect-error TS does not understand the way vite imports envs.
+    import.meta.env.VITE_PROPOSALS_ADDRESS || '0x35221f93Ca41894FD421C166D63F0b17f2266743', // example address
 };
 
 export default env;

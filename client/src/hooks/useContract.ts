@@ -17,7 +17,7 @@ export function useProposalsContract(tokenAddress: string): Proposals | null {
 
 export function useAllocationsContract(
   tokenAddress: string,
-  signerOrProvider: Signer | Provider,
+  signerOrProvider?: Signer | Provider,
 ): Allocations | null {
   return useMemo(() => {
     return signerOrProvider ? Allocations__factory.connect(tokenAddress, signerOrProvider) : null;

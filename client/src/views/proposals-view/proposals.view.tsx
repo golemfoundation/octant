@@ -1,5 +1,4 @@
-// import { useMetamask } from 'use-metamask';
-import { Web3Provider } from 'zksync-web3';
+import { useMetamask } from 'use-metamask';
 import React, { ReactElement, useEffect, useState } from 'react';
 
 import { apiGetProposal } from 'api/proposals';
@@ -12,27 +11,13 @@ import styles from './style.module.scss';
 
 const ProposalsView = (): ReactElement => {
   const [loadedProposals, setLoadedProposals] = useState<ExtendedProposal[]>([]);
-  // const {
-  //   metaState: { web3 },
-  // } = useMetamask();
+  const {
+    metaState: { web3 },
+  } = useMetamask();
   const { proposalsAddress, allocationsAddress } = env;
-  // @ts-expect-error TODO ethereum property is not declared.
-  const provider = new Web3Provider(window.ethereum);
-  const signer = provider.getSigner();
+  const signer = web3?.getSigner();
   const contractProposals = useProposalsContract(proposalsAddress);
   const contractAllocations = useAllocationsContract(allocationsAddress, signer);
-
-  useEffect(() => {
-    if (contractAllocations) {
-      (async () => {
-        // eslint-disable-next-line no-console
-        console.log({ contractAllocations });
-        const votes = await contractAllocations.getVotesCount(1, 1);
-        // eslint-disable-next-line no-console
-        console.log({ votes });
-      })();
-    }
-  }, [contractAllocations]);
 
   useEffect(() => {
     if (contractProposals) {
@@ -40,10 +25,13 @@ const ProposalsView = (): ReactElement => {
         const proposals = await contractProposals.getProposals();
         await Promise.all(proposals.map(({ uri }) => apiGetProposal(uri).catch(error => error)))
           .then(arrayOfValuesOrErrors => {
-            const parsedProposals = arrayOfValuesOrErrors.map<ExtendedProposal>(proposal => ({
-              ...proposal,
-              isLoadingError: !!proposal.response?.status,
-            }));
+            const parsedProposals = arrayOfValuesOrErrors.map<ExtendedProposal>(
+              (proposal, index) => ({
+                ...proposal,
+                id: proposals[index].id,
+                isLoadingError: !!proposal.response?.status,
+              }),
+            );
             setLoadedProposals(parsedProposals);
           })
           .catch(error => {
@@ -59,10 +47,14 @@ const ProposalsView = (): ReactElement => {
       Currently used proposals address is: {proposalsAddress}
       <div className={styles.list}>
         {loadedProposals.length === 0
-          ? 'loading'
+          ? 'Loading...'
           : loadedProposals.map((proposal, index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <ProposalItem key={index} {...proposal} />
+              <ProposalItem
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
+                {...proposal}
+                contractAllocations={contractAllocations}
+              />
             ))}
       </div>
     </div>

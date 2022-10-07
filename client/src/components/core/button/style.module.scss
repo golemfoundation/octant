@@ -3,4 +3,8 @@
   padding: 1rem 2rem;
   border-radius: 0.5rem;
   cursor: pointer;
+
+  &.isDisabled {
+    cursor: auto;
+  }
 }

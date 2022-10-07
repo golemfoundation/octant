@@ -18,20 +18,21 @@
     "prettier:ts:pure": "prettier --config .prettierrc.yml --parser typescript --write",
     "type-check": "tsc --noEmit true",
     "test": "jest",
-    "preinstall": "yarn remove-typechain && yarn copy-typechain",
-    "remove-typechain": "rm -r ./src/typechain-types",
-    "copy-typechain": "cp -r ../typechain-types ./src/typechain-types"
+    "preinstall": "yarn remove-typechain && yarn remove-artifacts-zk && yarn copy-typechain && yarn copy-artifacts-zk",
+    "remove-typechain": "rm -rf ./src/typechain-types",
+    "remove-artifacts-zk": "rm -rf ./src/artifacts-zk",
+    "copy-typechain": "cp -r ../typechain-types ./src/typechain-types",
+    "copy-artifacts-zk": "cp -r ../artifacts-zk ./src/artifacts-zk"
   },
   "dependencies": {
     "axios": "^0.27.2",
-    "classnames": "^2.3.1",
+    "classnames": "^2.3.2",
     "ethers": "^5.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.1",
     "regenerator-runtime": "^0.13.9",
-    "use-metamask": "^1.3.2",
-    "zksync-web3": "^0.9.0"
+    "use-metamask": "^1.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.18.13",
