@@ -5,6 +5,7 @@ export type ButtonType = ButtonHTMLAttributes<Element>['type'];
 export default interface ButtonProps {
   children?: ReactNode;
   href?: string;
+  isDisabled?: boolean;
   label?: string;
   onClick?: () => void;
   rel?: string;

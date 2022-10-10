@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import cx from 'classnames';
 
 import ButtonProps from './types';
 import styles from './style.module.scss';
@@ -6,6 +7,7 @@ import styles from './style.module.scss';
 const Button: FC<ButtonProps> = ({
   children,
   href,
+  isDisabled,
   label,
   onClick,
   rel,
@@ -27,7 +29,7 @@ const Button: FC<ButtonProps> = ({
 
   return (
     <Component
-      className={styles.root}
+      className={cx(styles.root, isDisabled && styles.isDisabled)}
       onClick={onClick}
       // eslint-disable-next-line react/button-has-type
       type={type}

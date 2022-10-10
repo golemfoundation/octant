@@ -1,7 +1,8 @@
+import { useMetamask } from 'use-metamask';
 import React, { ReactElement, useEffect, useState } from 'react';
 
 import { apiGetProposal } from 'api/proposals';
-import { useProposalsContract } from 'hooks/useContract';
+import { useAllocationsContract, useProposalsContract } from 'hooks/useContract';
 import ProposalItem from 'components/dedicated/proposal-item/proposal-item.component';
 import env from 'env';
 
@@ -10,19 +11,27 @@ import styles from './style.module.scss';
 
 const ProposalsView = (): ReactElement => {
   const [loadedProposals, setLoadedProposals] = useState<ExtendedProposal[]>([]);
-  const { proposalsAddress } = env;
-  const contract = useProposalsContract(proposalsAddress);
+  const {
+    metaState: { web3 },
+  } = useMetamask();
+  const { proposalsAddress, allocationsAddress } = env;
+  const signer = web3?.getSigner();
+  const contractProposals = useProposalsContract(proposalsAddress);
+  const contractAllocations = useAllocationsContract(allocationsAddress, signer);
 
   useEffect(() => {
-    if (contract) {
+    if (contractProposals) {
       (async () => {
-        const proposals = await contract.getProposals();
+        const proposals = await contractProposals.getProposals();
         await Promise.all(proposals.map(({ uri }) => apiGetProposal(uri).catch(error => error)))
           .then(arrayOfValuesOrErrors => {
-            const parsedProposals = arrayOfValuesOrErrors.map<ExtendedProposal>(proposal => ({
-              ...proposal,
-              isLoadingError: !!proposal.response?.status,
-            }));
+            const parsedProposals = arrayOfValuesOrErrors.map<ExtendedProposal>(
+              (proposal, index) => ({
+                ...proposal,
+                id: proposals[index].id,
+                isLoadingError: !!proposal.response?.status,
+              }),
+            );
             setLoadedProposals(parsedProposals);
           })
           .catch(error => {
@@ -31,17 +40,21 @@ const ProposalsView = (): ReactElement => {
           });
       })();
     }
-  }, [contract]);
+  }, [contractProposals]);
 
   return (
     <div>
       Currently used proposals address is: {proposalsAddress}
       <div className={styles.list}>
         {loadedProposals.length === 0
-          ? 'loading'
+          ? 'Loading...'
           : loadedProposals.map((proposal, index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <ProposalItem key={index} {...proposal} />
+              <ProposalItem
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
+                {...proposal}
+                contractAllocations={contractAllocations}
+              />
             ))}
       </div>
     </div>

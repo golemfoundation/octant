@@ -19,10 +19,21 @@ const MainLayout: FC<MainLayoutProps> = ({ children }) => {
     }
   };
 
+  const buttonProps = isConnected
+    ? {
+        isDisabled: true,
+        label: 'MetMask connected',
+        onClick: () => {},
+      }
+    : {
+        label: 'Connect MetaMask',
+        onClick: authUser,
+      };
+
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <Button label="Connect MetaMask" onClick={authUser} />
+        <Button {...buttonProps} />
       </div>
       <div className={styles.body}>{children}</div>
     </div>
