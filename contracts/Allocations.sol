@@ -13,7 +13,7 @@ contract Allocations {
     mapping(uint32 => mapping(address => Vote)) public participantVoteByEpoch;
     mapping(uint32 => mapping(uint8 => uint8)) public votesCountByEpoch;
 
-    IEpochs epochs;
+    IEpochs immutable epochs;
 
     constructor(address _epochsAddress) {
         epochs = IEpochs(_epochsAddress);

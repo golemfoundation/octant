@@ -1,12 +1,11 @@
 import { expect } from "chai";
-import { off } from "process";
 import { increaseNextBlockTimestamp } from '../helpers/misc-utils';
 import { DEPOSITS } from '../helpers/constants';
 import { makeTestsEnv } from './helpers/make-tests-env';
 
 makeTestsEnv(DEPOSITS, (testEnv) => {
 
-  describe("Effective deposits", () => {
+  describe("Effective deposits, parametrized scenarios", () => {
     const parameters = [
       { id: 1, seq: [1000, ["t", 10], -1000], test: [[2, 1000]] },
       { id: 2, seq: [1000, ["t", 100], -1000], test: [[5, 1000]] },
@@ -24,7 +23,7 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
         await token.transfer(signers.user.address, 10000);
         await token.connect(signers.user).approve(glmDeposits.address, 10000);
 
-        for (var step of param.seq) {
+        for (let step of param.seq) {
           if (Number.isInteger(step)) {
             // positive integer is deposit
             if (step > 0) {
@@ -43,7 +42,7 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
           }
         }
 
-        for (var index in param.test) {
+        for (let index in param.test) {
           // test if at epochNo effective stake has particular value
           var epochNo = param.test[index][0];
           var value = param.test[index][1];

@@ -4,22 +4,30 @@ pragma solidity ^0.8.9;
 import "./interfaces/IEpochs.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
+/*
+ * Contract tracking GLM deposits (staking) for Hexagon project.
+ * Funds can be deposited or withdrawn at any moment.
+ * Time is split into epochs, effective deposit is defined as min value
+ * of GLM staked by an address in the epoch.
+ *
+ * To be more capital effective, do deposits at the end of an epoch,
+ * and withdrawals at the beginning of an epoch.
+ */
 
 contract Deposits {
-    ERC20 public glm;
-    IEpochs public epochs;
-    uint256 constant supply = 10**9;
+    ERC20 public immutable glm;
+    IEpochs public immutable epochs;
 
     event Deposited(uint256 amount, uint256 when, address depositor);
     event Withdrawn(uint256 amount, uint256 when, address depositor);
 
-    struct EffectiveStake {
+    struct EffectiveDeposit {
         bool isSet; // set to true to distinguish between null and zero values of ES
         uint256 amount;
     }
 
     mapping(address => uint256) public deposits;
-    mapping(address => mapping(uint256 => EffectiveStake)) public effectiveDeposits;
+    mapping(address => mapping(uint256 => EffectiveDeposit)) effectiveDeposits;
 
     constructor(address epochsAddress, address glmAddress) {
         epochs = IEpochs(epochsAddress);
@@ -27,7 +35,6 @@ contract Deposits {
     }
 
     function deposit(uint256 amount) public {
-        require(amount < supply, "HN/overflow-guard");
         uint256 current = deposits[msg.sender];
         deposits[msg.sender] = current + amount;
         uint256 epoch = epochs.getCurrentEpoch();
@@ -63,7 +70,7 @@ contract Deposits {
     }
 
     function _updatePrevES(uint256 epoch, uint256 currentStake) private {
-        EffectiveStake memory prevES = effectiveDeposits[msg.sender][epoch - 1];
+        EffectiveDeposit memory prevES = effectiveDeposits[msg.sender][epoch - 1];
         if (!prevES.isSet) {
             prevES.isSet = true;
             prevES.amount = currentStake;
@@ -72,7 +79,7 @@ contract Deposits {
     }
 
     function _updateCurrentES(uint256 epoch, uint256 currentStake) private {
-        EffectiveStake memory currentES = effectiveDeposits[msg.sender][epoch];
+        EffectiveDeposit memory currentES = effectiveDeposits[msg.sender][epoch];
         if (!currentES.isSet) {
             currentES.amount = currentStake;
         }
