@@ -3,6 +3,7 @@ pragma solidity ^0.8.9;
 
 import "./interfaces/IEpochs.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "hardhat/console.sol";
 
 /*
  * Contract tracking GLM deposits (staking) for Hexagon project.
@@ -35,6 +36,7 @@ contract Deposits {
     }
 
     function deposit(uint256 amount) public {
+        console.log("CONTRACT deposit", epochs.getCurrentEpoch(), amount);
         uint256 current = deposits[msg.sender];
         deposits[msg.sender] = current + amount;
         uint256 epoch = epochs.getCurrentEpoch();
@@ -48,6 +50,7 @@ contract Deposits {
     }
 
     function withdraw(uint256 amount) public {
+        console.log("CONTRACT withdraw", epochs.getCurrentEpoch(),  amount);
         uint256 current = deposits[msg.sender];
         require(current >= amount, "HN/deposit-is-smaller");
         deposits[msg.sender] = current - amount;
@@ -58,6 +61,7 @@ contract Deposits {
     }
 
     function stakeAt(address owner, uint256 epochNo) public view returns (uint256) {
+        console.log("CONTRACT stakeAt", epochs.getCurrentEpoch(),  epochNo);
         uint256 currentEpoch = epochs.getCurrentEpoch();
         require(epochNo <= currentEpoch, "HN/future-is-unknown");
         require(epochNo > 0, "HN/epochs-start-from-1");
@@ -82,8 +86,7 @@ contract Deposits {
         EffectiveDeposit memory currentES = effectiveDeposits[msg.sender][epoch];
         if (!currentES.isSet) {
             currentES.amount = currentStake;
-        }
-        else {
+        } else {
             currentES.amount = _min(currentStake, currentES.amount);
         }
         currentES.isSet = true;
