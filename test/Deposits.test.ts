@@ -53,6 +53,16 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
     });
   });
 
+  describe("Effective deposits, stakeAt edge cases", async () => {
+    it("stakeAt can't peek into the future", async () => {
+      const { token, glmDeposits, signers } = testEnv;
+      await token.transfer(signers.user.address, 1005);
+      await token.connect(signers.user).approve(glmDeposits.address, 1000);
+      await glmDeposits.connect(signers.user).deposit(1000);
+      await expect(glmDeposits.stakeAt(signers.user.address, 10)).to.be.revertedWith("HN/future-is-unknown");
+    });
+  });
+
   describe("Deposits", async () => {
     describe("Deployment", function() {
       it("No deposits in freshly deployed contract", async function() {
