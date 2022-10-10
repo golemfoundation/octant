@@ -5,6 +5,8 @@ import type { Provider } from '@ethersproject/providers';
 import {
   Allocations,
   Allocations__factory,
+  Epochs,
+  Epochs__factory,
   Proposals,
   Proposals__factory,
 } from '../typechain-types';
@@ -21,5 +23,14 @@ export function useAllocationsContract(
 ): Allocations | null {
   return useMemo(() => {
     return signerOrProvider ? Allocations__factory.connect(tokenAddress, signerOrProvider) : null;
+  }, [tokenAddress, signerOrProvider]);
+}
+
+export function useEpochsContract(
+  tokenAddress: string,
+  signerOrProvider?: Signer | Provider,
+): Epochs | null {
+  return useMemo(() => {
+    return signerOrProvider ? Epochs__factory.connect(tokenAddress, signerOrProvider) : null;
   }, [tokenAddress, signerOrProvider]);
 }

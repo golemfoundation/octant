@@ -6,28 +6,31 @@ import { ProposalItemProps } from './types';
 import styles from './style.module.scss';
 
 const ProposalItem: FC<ProposalItemProps> = ({
-  id,
+  currentEpoch,
   description,
+  getVotesCount,
+  id,
   isLoadingError,
   name,
-  contractAllocations,
   socialLinks,
+  vote,
   website,
 }) => {
   const [numberOfVotes, setNumberOfVotes] = useState<number | undefined>(undefined);
-  const isContractAllocationsAvailable = contractAllocations !== null;
+  const isVotingEnabled =
+    typeof getVotesCount !== 'undefined' &&
+    typeof vote !== 'undefined' &&
+    typeof currentEpoch !== 'undefined';
 
   useEffect(() => {
-    if (isContractAllocationsAvailable) {
+    if (isVotingEnabled) {
       (async () => {
-        // TODO GE-36: remove contractAllocations from ProposalItem, pass used methods only.
-        // TODO GE-36: add dynamic epoch number.
-        contractAllocations!.getVotesCount(1, id).then(value => {
+        getVotesCount!(currentEpoch!, id).then(value => {
           setNumberOfVotes(value);
         });
       })();
     }
-  }, [isContractAllocationsAvailable, id, contractAllocations]);
+  }, [isVotingEnabled, currentEpoch, getVotesCount, id]);
 
   return (
     <div className={styles.root}>
@@ -38,10 +41,10 @@ const ProposalItem: FC<ProposalItemProps> = ({
         <Fragment>
           <div>{name}</div>
           <div>{description}</div>
-          {contractAllocations && (
+          {vote && (
             <div>
               Number of votes: {numberOfVotes}.
-              <Button label="Vote" onClick={() => contractAllocations.vote(id, 100)} />
+              <Button label="Vote" onClick={() => vote(id, 100)} />
             </div>
           )}
           <div>

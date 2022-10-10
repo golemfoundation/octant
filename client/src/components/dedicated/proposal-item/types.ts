@@ -1,7 +1,7 @@
 import { ExtendedProposal } from 'views/proposals-view/types';
 
-import { Allocations } from '../../../typechain-types';
-
 export interface ProposalItemProps extends ExtendedProposal {
-  contractAllocations: Allocations | null;
+  currentEpoch?: number;
+  getVotesCount?: (currentEpoch: number, id: number) => Promise<number>;
+  vote?: (id: number, alpha: number) => void;
 }
