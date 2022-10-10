@@ -6,5 +6,6 @@ export interface BackendProposal {
 }
 
 export interface ExtendedProposal extends BackendProposal {
+  id: number;
   isLoadingError: boolean;
 }
