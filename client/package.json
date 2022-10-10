@@ -18,11 +18,9 @@
     "prettier:ts:pure": "prettier --config .prettierrc.yml --parser typescript --write",
     "type-check": "tsc --noEmit true",
     "test": "jest",
-    "preinstall": "yarn remove-typechain && yarn remove-artifacts-zk && yarn copy-typechain && yarn copy-artifacts-zk",
+    "preinstall": "yarn remove-typechain && yarn copy-typechain",
     "remove-typechain": "rm -rf ./src/typechain-types",
-    "remove-artifacts-zk": "rm -rf ./src/artifacts-zk",
-    "copy-typechain": "cp -r ../typechain-types ./src/typechain-types",
-    "copy-artifacts-zk": "cp -r ../artifacts-zk ./src/artifacts-zk"
+    "copy-typechain": "cp -r ../typechain-types ./src/typechain-types"
   },
   "dependencies": {
     "axios": "^0.27.2",

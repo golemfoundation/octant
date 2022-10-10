@@ -1,4 +1,5 @@
-import React, { FC, Fragment, useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
+import React, { FC, Fragment } from 'react';
 
 import Button from 'components/core/button/button.component';
 
@@ -16,21 +17,16 @@ const ProposalItem: FC<ProposalItemProps> = ({
   vote,
   website,
 }) => {
-  const [numberOfVotes, setNumberOfVotes] = useState<number | undefined>(undefined);
   const isVotingEnabled =
     typeof getVotesCount !== 'undefined' &&
     typeof vote !== 'undefined' &&
     typeof currentEpoch !== 'undefined';
 
-  useEffect(() => {
-    if (isVotingEnabled) {
-      (async () => {
-        getVotesCount!(currentEpoch!, id).then(value => {
-          setNumberOfVotes(value);
-        });
-      })();
-    }
-  }, [isVotingEnabled, currentEpoch, getVotesCount, id]);
+  const { data: numberOfVotes } = useQuery(
+    ['numberOfVotes'],
+    () => getVotesCount!(currentEpoch!, id),
+    { enabled: isVotingEnabled },
+  );
 
   return (
     <div className={styles.root}>
