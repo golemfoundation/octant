@@ -14,7 +14,8 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
       { id: 4, seq: [], test: [[1, 0]] },
       { id: 5, seq: [["t", 20], 1000], test: [[1, 0]] },
       { id: 6, seq: [1000, ["t", 1], 100, ["t", 3]], test: [[2, 1000], [4, 1100]] },
-      { id: 7, seq: [1000, ["t", 1], 1000], test: [[2, 1000]] },
+      { id: 7, seq: [1000, ["t", 1], 1000], test: [[1, 0], [2, 1000]] },
+      { id: 8, seq: [1000, ["t", 5]], test: [[2, 1000]] },
     ];
     parameters.forEach((param) => {
       it(`Effective deposit testing scenario ${param.id}`, async () => {
