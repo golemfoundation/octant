@@ -17,14 +17,19 @@ const ProposalsView = (): ReactElement => {
   const { proposalsAddress, allocationsAddress, epochsAddress } = env;
   const signer = web3?.getSigner();
   const contractProposals = useProposalsContract(proposalsAddress);
-  const contractEpochs = useEpochsContract(epochsAddress, signer);
+  const contractEpochs = useEpochsContract(epochsAddress);
   const contractAllocations = useAllocationsContract(allocationsAddress, signer);
 
-  const { data: currentEpoch } = useQuery(['currentEpoch'], () =>
-    contractEpochs?.getCurrentEpoch(),
+  const { data: currentEpoch } = useQuery(
+    ['currentEpoch'],
+    () => contractEpochs?.getCurrentEpoch(),
+    { enabled: !!contractEpochs },
   );
-  const { data: proposalsContract } = useQuery(['proposals'], () =>
-    contractProposals?.getProposals(),
+
+  const { data: proposalsContract } = useQuery(
+    ['proposals'],
+    () => contractProposals?.getProposals(),
+    { enabled: !!contractProposals },
   );
   const proposalsIpfsResults = useQueries(
     (proposalsContract || []).map(({ id, uri }) => {

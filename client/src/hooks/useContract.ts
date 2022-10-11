@@ -26,11 +26,8 @@ export function useAllocationsContract(
   }, [tokenAddress, signerOrProvider]);
 }
 
-export function useEpochsContract(
-  tokenAddress: string,
-  signerOrProvider?: Signer | Provider,
-): Epochs | null {
+export function useEpochsContract(tokenAddress: string): Epochs | null {
   return useMemo(() => {
-    return signerOrProvider ? Epochs__factory.connect(tokenAddress, signerOrProvider) : null;
-  }, [tokenAddress, signerOrProvider]);
+    return Epochs__factory.connect(tokenAddress, ethers.providers.getDefaultProvider('goerli'));
+  }, [tokenAddress]);
 }
