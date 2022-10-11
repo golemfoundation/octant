@@ -1,4 +1,5 @@
-import React, { FC, Fragment, useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
+import React, { FC, Fragment } from 'react';
 
 import Button from 'components/core/button/button.component';
 
@@ -6,28 +7,24 @@ import { ProposalItemProps } from './types';
 import styles from './style.module.scss';
 
 const ProposalItem: FC<ProposalItemProps> = ({
-  id,
+  currentEpoch,
   description,
+  getVotesCount,
+  id,
   isLoadingError,
   name,
-  contractAllocations,
   socialLinks,
+  vote,
   website,
 }) => {
-  const [numberOfVotes, setNumberOfVotes] = useState<number | undefined>(undefined);
-  const isContractAllocationsAvailable = contractAllocations !== null;
+  const isVotingEnabled =
+    getVotesCount !== undefined && vote !== undefined && currentEpoch !== undefined;
 
-  useEffect(() => {
-    if (isContractAllocationsAvailable) {
-      (async () => {
-        // TODO GE-36: remove contractAllocations from ProposalItem, pass used methods only.
-        // TODO GE-36: add dynamic epoch number.
-        contractAllocations!.getVotesCount(1, id).then(value => {
-          setNumberOfVotes(value);
-        });
-      })();
-    }
-  }, [isContractAllocationsAvailable, id, contractAllocations]);
+  const { data: numberOfVotes } = useQuery(
+    ['numberOfVotes'],
+    () => getVotesCount!(currentEpoch!, id),
+    { enabled: isVotingEnabled },
+  );
 
   return (
     <div className={styles.root}>
@@ -38,10 +35,10 @@ const ProposalItem: FC<ProposalItemProps> = ({
         <Fragment>
           <div>{name}</div>
           <div>{description}</div>
-          {contractAllocations && (
+          {vote && (
             <div>
               Number of votes: {numberOfVotes}.
-              <Button label="Vote" onClick={() => contractAllocations.vote(id, 100)} />
+              <Button label="Vote" onClick={() => vote(id, 100)} />
             </div>
           )}
           <div>
