@@ -27,7 +27,7 @@ const ProposalsView = (): ReactElement => {
   );
 
   const { data: proposalsContract } = useQuery(
-    ['proposals'],
+    ['proposalsContract'],
     () => contractProposals?.getProposals(),
     { enabled: !!contractProposals },
   );
@@ -35,7 +35,7 @@ const ProposalsView = (): ReactElement => {
     (proposalsContract || []).map(({ id, uri }) => {
       return {
         queryFn: () => apiGetProposal(uri),
-        queryKey: ['test', id],
+        queryKey: ['proposalsIpfsResults', id],
       };
     }),
   );

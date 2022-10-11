@@ -11,9 +11,11 @@ import {
   Proposals__factory,
 } from '../typechain-types';
 
+const providerGoerli = ethers.providers.getDefaultProvider('goerli');
+
 export function useProposalsContract(tokenAddress: string): Proposals | null {
   return useMemo(() => {
-    return Proposals__factory.connect(tokenAddress, ethers.providers.getDefaultProvider('goerli'));
+    return Proposals__factory.connect(tokenAddress, providerGoerli);
   }, [tokenAddress]);
 }
 
@@ -28,6 +30,6 @@ export function useAllocationsContract(
 
 export function useEpochsContract(tokenAddress: string): Epochs | null {
   return useMemo(() => {
-    return Epochs__factory.connect(tokenAddress, ethers.providers.getDefaultProvider('goerli'));
+    return Epochs__factory.connect(tokenAddress, providerGoerli);
   }, [tokenAddress]);
 }

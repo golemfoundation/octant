@@ -18,9 +18,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
   website,
 }) => {
   const isVotingEnabled =
-    typeof getVotesCount !== 'undefined' &&
-    typeof vote !== 'undefined' &&
-    typeof currentEpoch !== 'undefined';
+    getVotesCount !== undefined && vote !== undefined && currentEpoch !== undefined;
 
   const { data: numberOfVotes } = useQuery(
     ['numberOfVotes'],
