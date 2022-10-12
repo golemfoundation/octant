@@ -1,6 +1,6 @@
-import { expect } from "chai";
-import { increaseNextBlockTimestamp } from '../helpers/misc-utils';
+import { expect } from 'chai';
 import { DEPOSITS } from '../helpers/constants';
+import { increaseNextBlockTimestamp } from '../helpers/misc-utils';
 import { makeTestsEnv } from './helpers/make-tests-env';
 
 interface Step {
@@ -21,7 +21,7 @@ interface TestParam {
 makeTestsEnv(DEPOSITS, (testEnv) => {
 
   describe("Effective deposits, parametrized scenarios", () => {
-    const parameters = [
+    const parameters: TestParam[] = [
       { steps: [{stake: 1000, forwardEpochs: 10}, {stake: -1000}], tests: [{epoch: 2, expectedEffectiveStake: 1000}] },
       { steps: [{stake: 1000, forwardEpochs: 100}, {stake: -1000}], tests: [{epoch: 5, expectedEffectiveStake: 1000}] },
       { steps: [{stake: 1000, forwardEpochs: 1}, {stake: -1000, forwardEpochs: 2}], tests: [{epoch: 2, expectedEffectiveStake: 0}] },
@@ -40,28 +40,26 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
         await token.connect(signers.user).approve(glmDeposits.address, 10000);
 
         for (let i = 0; i < param.steps.length; i++) {
-          let stepId = i;
-          let step = param.steps[stepId];
-          if (step.stake > 0) {
-            glmDeposits.connect(signers.user).deposit(step.stake);
+          let step = param.steps[i];
+          if (step.stake! > 0) {
+            await glmDeposits.connect(signers.user).deposit(step.stake!);
           }
-          if (step.stake < 0) {
-            glmDeposits.connect(signers.user).withdraw(-step.stake);
+          if (step.stake! < 0) {
+            await glmDeposits.connect(signers.user).withdraw(-step.stake!);
           }
           if (step.forwardEpochs) {
             // forward time
-            let timeDelta = epochDuration * step.forwardEpochs;
-            console.log(`scenario ${id}:${stepId} timeDelta: ${timeDelta}; before: ${await epochs.getCurrentEpoch()}`);
+            let timeDelta = epochDuration.toNumber() * step.forwardEpochs;
             await increaseNextBlockTimestamp(timeDelta);
           }
-        };
+        }
 
         for (let probeId = 0; probeId < param.tests.length; probeId++) {
           // test if at epochNo effective stake has particular value
           let probe = param.tests[probeId];
           let promise = await glmDeposits.stakeAt(signers.user.address, probe.epoch);
           expect(promise).eq(probe.expectedEffectiveStake);
-        };
+        }
       });
     });
   });
