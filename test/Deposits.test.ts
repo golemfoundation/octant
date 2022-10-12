@@ -22,14 +22,21 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
 
   describe("Effective deposits, parametrized scenarios", () => {
     const parameters: TestParam[] = [
+      // check in a long period between deposit and withdrawal
       { steps: [{stake: 1000, forwardEpochs: 10}, {stake: -1000}], tests: [{epoch: 2, expectedEffectiveStake: 1000}] },
+      // check in a very long period between deposit and withdrawal
       { steps: [{stake: 1000, forwardEpochs: 100}, {stake: -1000}], tests: [{epoch: 5, expectedEffectiveStake: 1000}] },
+      // ES sits at zero after user removed all funds
       { steps: [{stake: 1000, forwardEpochs: 1}, {stake: -1000, forwardEpochs: 2}], tests: [{epoch: 2, expectedEffectiveStake: 0}] },
+      // uninitialized deposit means that ES is at zero
       { steps: [], tests: [{epoch: 1, expectedEffectiveStake: 0}] },
+      // before first deposit ES is at zero
       { steps: [{forwardEpochs: 20}, {stake: 1000}], tests: [{epoch: 1, expectedEffectiveStake: 0}] },
+      // ES is at lowest value during the epoch; in fresh epoch ES is at stake level
       { steps: [{stake: 1000, forwardEpochs: 1}, {stake: 100, forwardEpochs: 3}], tests: [{epoch: 2, expectedEffectiveStake: 1000}, {epoch: 4, expectedEffectiveStake: 1100}] },
-      { steps: [{stake: 1000, forwardEpochs: 1}, {stake: 1000}], tests: [{epoch: 1, expectedEffectiveStake: 0}, {epoch: 2, expectedEffectiveStake: 1000}] },
+      // after a deposit, ES stays at stake level even if no further events occur
       { steps: [{stake: 1000, forwardEpochs: 5}], tests: [{epoch: 2, expectedEffectiveStake: 1000}] },
+      // ES is at lowest value during the epoch
       { steps: [{stake: 1000, forwardEpochs: 1}, {stake: -500}], tests: [{epoch: 2, expectedEffectiveStake: 500}] },
     ];
     parameters.forEach((param, id) => {
