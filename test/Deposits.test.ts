@@ -15,32 +15,43 @@ interface Test {
 
 interface TestParam {
   steps: Step[],
-  tests: Test[]
+  tests: Test[],
+  desc: String
 }
 
 makeTestsEnv(DEPOSITS, (testEnv) => {
 
-  describe("Effective deposits, parametrized scenarios", () => {
+  describe("Effective deposits", () => {
     const parameters: TestParam[] = [
-      // check in a long period between deposit and withdrawal
-      { steps: [{stake: 1000, forwardEpochs: 10}, {stake: -1000}], tests: [{epoch: 2, expectedEffectiveStake: 1000}] },
-      // check in a very long period between deposit and withdrawal
-      { steps: [{stake: 1000, forwardEpochs: 100}, {stake: -1000}], tests: [{epoch: 5, expectedEffectiveStake: 1000}] },
-      // ES sits at zero after user removed all funds
-      { steps: [{stake: 1000, forwardEpochs: 1}, {stake: -1000, forwardEpochs: 2}], tests: [{epoch: 2, expectedEffectiveStake: 0}] },
-      // uninitialized deposit means that ES is at zero
-      { steps: [], tests: [{epoch: 1, expectedEffectiveStake: 0}] },
-      // before first deposit ES is at zero
-      { steps: [{forwardEpochs: 20}, {stake: 1000}], tests: [{epoch: 1, expectedEffectiveStake: 0}] },
-      // ES is at lowest value during the epoch; in fresh epoch ES is at stake level
-      { steps: [{stake: 1000, forwardEpochs: 1}, {stake: 100, forwardEpochs: 3}], tests: [{epoch: 2, expectedEffectiveStake: 1000}, {epoch: 4, expectedEffectiveStake: 1100}] },
-      // after a deposit, ES stays at stake level even if no further events occur
-      { steps: [{stake: 1000, forwardEpochs: 5}], tests: [{epoch: 2, expectedEffectiveStake: 1000}] },
-      // ES is at lowest value during the epoch
-      { steps: [{stake: 1000, forwardEpochs: 1}, {stake: -500}], tests: [{epoch: 2, expectedEffectiveStake: 500}] },
+      { steps: [{stake: 1000, forwardEpochs: 10}, {stake: -1000}],
+        tests: [{epoch: 2, expectedEffectiveStake: 1000}],
+        desc: "check ES in a long period between deposit and withdrawal"
+      },
+      { steps: [{ stake: 1000, forwardEpochs: 100 }, { stake: -1000 }],
+        tests: [{ epoch: 5, expectedEffectiveStake: 1000 }],
+        desc: "Check ES in a very long period between deposit and withdrawal" },
+      { steps: [{stake: 1000, forwardEpochs: 1}, {stake: -1000, forwardEpochs: 2}],
+        tests: [{epoch: 2, expectedEffectiveStake: 0}],
+        desc: "ES sits at zero after user removed all funds"
+      },
+      { steps: [],
+        tests: [{ epoch: 1, expectedEffectiveStake: 0 }],
+        desc: "Uninitialized deposit means that ES is at zero" },
+      { steps: [{ forwardEpochs: 20 }, { stake: 1000 }],
+        tests: [{ epoch: 1, expectedEffectiveStake: 0 }],
+        desc: "Before first deposit ES is at zero" },
+      { steps: [{ stake: 1000, forwardEpochs: 1 }, { stake: 100, forwardEpochs: 3 }],
+        tests: [{ epoch: 2, expectedEffectiveStake: 1000 }, { epoch: 4, expectedEffectiveStake: 1100 }],
+        desc: "ES is at lowest value during the epoch; in fresh epoch ES is at stake level" },
+      { steps: [{ stake: 1000, forwardEpochs: 5 }],
+        tests: [{ epoch: 2, expectedEffectiveStake: 1000 }],
+        desc: "After a deposit, ES stays at stake level even if no further events occur" },
+      { steps: [{ stake: 1000, forwardEpochs: 1 }, { stake: -500 }],
+        tests: [{ epoch: 2, expectedEffectiveStake: 500 }],
+        desc: "ES is at lowest value during the epoch" },
     ];
-    parameters.forEach((param, id) => {
-      it(`Effective deposit testing scenario ${id}`, async () => {
+    parameters.forEach((param) => {
+      it(`${param.desc}`, async () => {
         const { token, glmDeposits, signers, epochs } = testEnv;
         let epochDuration = await epochs.epochDuration();
         await token.transfer(signers.user.address, 10000);
