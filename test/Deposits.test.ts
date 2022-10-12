@@ -1,6 +1,8 @@
 import { expect } from "chai";
+import { BigNumber } from "ethers";
 import { DEPOSITS } from "../helpers/constants";
 import { increaseNextBlockTimestamp } from "../helpers/misc-utils";
+import { parseEther } from "ethers/lib/utils";
 import { makeTestsEnv } from "./helpers/make-tests-env";
 
 interface Step {
@@ -21,6 +23,11 @@ interface TestParam {
 
 makeTestsEnv(DEPOSITS, (testEnv) => {
   describe("Effective deposits", () => {
+
+    let toWei = function(n: number): BigNumber {
+      return parseEther(Math.abs(n).toString());
+    }
+
     const parameters: TestParam[] = [
       {
         steps: [{ deposit: 1000, forwardEpochs: 10 }, { deposit: -1000 }],
@@ -67,25 +74,32 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
         desc: "After a deposit, ED stays at deposit level even if no further events occur",
       },
       {
+        steps: [{ deposit: 50, forwardEpochs: 1 }, { deposit: 100, forwardEpochs: 2 }, {deposit: -99, forwardEpochs: 2}],
+        tests: [{ epoch: 1, expectedEffectiveDeposit: 0 }, { epoch: 3, expectedEffectiveDeposit: 150 }, { epoch: 4, expectedEffectiveDeposit: 0 }],
+        desc: "ED is at lowest value during the epoch, 100 GLM capped",
+      },
+      {
         steps: [{ deposit: 1000, forwardEpochs: 1 }, { deposit: -500 }],
         tests: [{ epoch: 2, expectedEffectiveDeposit: 500 }],
-        desc: "ED is at lowest value during the epoch",
+        desc: "ED is at lowest value during the epoch, no capping",
       },
     ];
     parameters.forEach((param) => {
       it(`${param.desc}`, async () => {
         const { token, glmDeposits, signers, epochs } = testEnv;
         let epochDuration = await epochs.epochDuration();
-        await token.transfer(signers.user.address, 10000);
-        await token.connect(signers.user).approve(glmDeposits.address, 10000);
+        await token.transfer(signers.user.address, parseEther("10000"));
+        await token.connect(signers.user).approve(glmDeposits.address, parseEther("10000"));
 
         for (let i = 0; i < param.steps.length; i++) {
           let step = param.steps[i];
-          if (step.deposit! > 0) {
-            await glmDeposits.connect(signers.user).deposit(step.deposit!);
-          }
-          if (step.deposit! < 0) {
-            await glmDeposits.connect(signers.user).withdraw(-step.deposit!);
+          if (step.deposit !== undefined) {
+            if (step.deposit > 0) {
+              await glmDeposits.connect(signers.user).deposit(toWei(step.deposit));
+            }
+            if (step.deposit < 0) {
+              await glmDeposits.connect(signers.user).withdraw(toWei(step.deposit));
+            }
           }
           if (step.forwardEpochs) {
             // forward time
@@ -98,7 +112,8 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
           // test if at epochNo effective deposit has particular value
           let probe = param.tests[probeId];
           let promise = await glmDeposits.depositAt(signers.user.address, probe.epoch);
-          expect(promise).eq(probe.expectedEffectiveDeposit);
+          let expD = parseEther(probe.expectedEffectiveDeposit.toString());
+          expect(promise).eq(expD);
         }
       });
     });
