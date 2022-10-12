@@ -1,7 +1,7 @@
-import { expect } from 'chai';
-import { DEPOSITS } from '../helpers/constants';
-import { increaseNextBlockTimestamp } from '../helpers/misc-utils';
-import { makeTestsEnv } from './helpers/make-tests-env';
+import { expect } from "chai";
+import { DEPOSITS } from "../helpers/constants";
+import { increaseNextBlockTimestamp } from "../helpers/misc-utils";
+import { makeTestsEnv } from "./helpers/make-tests-env";
 
 interface Step {
   stake?: number;
@@ -14,41 +14,63 @@ interface Test {
 }
 
 interface TestParam {
-  steps: Step[],
-  tests: Test[],
-  desc: String
+  steps: Step[];
+  tests: Test[];
+  desc: String;
 }
 
 makeTestsEnv(DEPOSITS, (testEnv) => {
-
   describe("Effective deposits", () => {
     const parameters: TestParam[] = [
-      { steps: [{stake: 1000, forwardEpochs: 10}, {stake: -1000}],
-        tests: [{epoch: 2, expectedEffectiveStake: 1000}],
-        desc: "check ES in a long period between deposit and withdrawal"
-      },
-      { steps: [{ stake: 1000, forwardEpochs: 100 }, { stake: -1000 }],
-        tests: [{ epoch: 5, expectedEffectiveStake: 1000 }],
-        desc: "Check ES in a very long period between deposit and withdrawal" },
-      { steps: [{stake: 1000, forwardEpochs: 1}, {stake: -1000, forwardEpochs: 2}],
-        tests: [{epoch: 2, expectedEffectiveStake: 0}],
-        desc: "ES sits at zero after user removed all funds"
-      },
-      { steps: [],
-        tests: [{ epoch: 1, expectedEffectiveStake: 0 }],
-        desc: "Uninitialized deposit means that ES is at zero" },
-      { steps: [{ forwardEpochs: 20 }, { stake: 1000 }],
-        tests: [{ epoch: 1, expectedEffectiveStake: 0 }],
-        desc: "Before first deposit ES is at zero" },
-      { steps: [{ stake: 1000, forwardEpochs: 1 }, { stake: 100, forwardEpochs: 3 }],
-        tests: [{ epoch: 2, expectedEffectiveStake: 1000 }, { epoch: 4, expectedEffectiveStake: 1100 }],
-        desc: "ES is at lowest value during the epoch; in fresh epoch ES is at stake level" },
-      { steps: [{ stake: 1000, forwardEpochs: 5 }],
+      {
+        steps: [{ stake: 1000, forwardEpochs: 10 }, { stake: -1000 }],
         tests: [{ epoch: 2, expectedEffectiveStake: 1000 }],
-        desc: "After a deposit, ES stays at stake level even if no further events occur" },
-      { steps: [{ stake: 1000, forwardEpochs: 1 }, { stake: -500 }],
+        desc: "check ES in a long period between deposit and withdrawal",
+      },
+      {
+        steps: [{ stake: 1000, forwardEpochs: 100 }, { stake: -1000 }],
+        tests: [{ epoch: 5, expectedEffectiveStake: 1000 }],
+        desc: "Check ES in a very long period between deposit and withdrawal",
+      },
+      {
+        steps: [
+          { stake: 1000, forwardEpochs: 1 },
+          { stake: -1000, forwardEpochs: 2 },
+        ],
+        tests: [{ epoch: 2, expectedEffectiveStake: 0 }],
+        desc: "ES sits at zero after user removed all funds",
+      },
+      {
+        steps: [],
+        tests: [{ epoch: 1, expectedEffectiveStake: 0 }],
+        desc: "Uninitialized deposit means that ES is at zero",
+      },
+      {
+        steps: [{ forwardEpochs: 20 }, { stake: 1000 }],
+        tests: [{ epoch: 1, expectedEffectiveStake: 0 }],
+        desc: "Before first deposit ES is at zero",
+      },
+      {
+        steps: [
+          { stake: 1000, forwardEpochs: 1 },
+          { stake: 100, forwardEpochs: 3 },
+        ],
+        tests: [
+          { epoch: 2, expectedEffectiveStake: 1000 },
+          { epoch: 4, expectedEffectiveStake: 1100 },
+        ],
+        desc: "ES is at lowest value during the epoch; in fresh epoch ES is at stake level",
+      },
+      {
+        steps: [{ stake: 1000, forwardEpochs: 5 }],
+        tests: [{ epoch: 2, expectedEffectiveStake: 1000 }],
+        desc: "After a deposit, ES stays at stake level even if no further events occur",
+      },
+      {
+        steps: [{ stake: 1000, forwardEpochs: 1 }, { stake: -500 }],
         tests: [{ epoch: 2, expectedEffectiveStake: 500 }],
-        desc: "ES is at lowest value during the epoch" },
+        desc: "ES is at lowest value during the epoch",
+      },
     ];
     parameters.forEach((param) => {
       it(`${param.desc}`, async () => {
@@ -88,7 +110,9 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
       await token.transfer(signers.user.address, 1005);
       await token.connect(signers.user).approve(glmDeposits.address, 1000);
       await glmDeposits.connect(signers.user).deposit(1000);
-      await expect(glmDeposits.stakeAt(signers.user.address, 10)).to.be.revertedWith("HN/future-is-unknown");
+      await expect(glmDeposits.stakeAt(signers.user.address, 10)).to.be.revertedWith(
+        "HN/future-is-unknown"
+      );
     });
   });
 
@@ -108,14 +132,18 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
     });
     it("Can't withdrawn empty", async function () {
       const { token, glmDeposits, signers } = testEnv;
-      await expect(glmDeposits.connect(signers.user).withdraw(1)).to.be.revertedWith("HN/deposit-is-smaller");
+      await expect(glmDeposits.connect(signers.user).withdraw(1)).to.be.revertedWith(
+        "HN/deposit-is-smaller"
+      );
     });
     it("Can't withdrawn not owned", async function () {
       const { token, glmDeposits, signers } = testEnv;
       await token.transfer(signers.user.address, 1000);
       await token.connect(signers.user).approve(glmDeposits.address, 1000);
       await glmDeposits.connect(signers.user).deposit(1000);
-      await expect(glmDeposits.connect(signers.hacker).withdraw(1)).to.be.revertedWith("HN/deposit-is-smaller");
+      await expect(glmDeposits.connect(signers.hacker).withdraw(1)).to.be.revertedWith(
+        "HN/deposit-is-smaller"
+      );
     });
     it("Can't withdrawn twice", async function () {
       const { token, glmDeposits, signers } = testEnv;
@@ -124,7 +152,9 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
       await glmDeposits.connect(signers.hacker).deposit(1000);
       await glmDeposits.connect(signers.hacker).withdraw(1000);
       let balance = await token.balanceOf(signers.hacker.address);
-      await expect(glmDeposits.connect(signers.hacker).withdraw(1000)).to.be.revertedWith("HN/deposit-is-smaller");
+      await expect(glmDeposits.connect(signers.hacker).withdraw(1000)).to.be.revertedWith(
+        "HN/deposit-is-smaller"
+      );
       await expect(await token.balanceOf(signers.hacker.address)).eq(balance);
     });
     it("Can deposit again after withdrawal", async function () {
