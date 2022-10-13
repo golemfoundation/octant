@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
  * Contract tracking GLM deposits (staking) for Hexagon project.
  * Funds can be deposited or withdrawn at any moment.
  * Time is split into epochs, effective deposit is defined as min value
- * of GLM staked by an address in the epoch.
+ * of GLM deposited by an address in the epoch.
  *
  * To be more capital effective, do deposits at the end of an epoch,
  * and withdrawals at the beginning of an epoch.
@@ -22,7 +22,7 @@ contract Deposits {
     event Withdrawn(uint256 amount, uint256 when, address depositor);
 
     struct EffectiveDeposit {
-        bool isSet; // set to true to distinguish between null and zero values of ES
+        bool isSet; // set to true to distinguish between null and zero values of ED
         uint256 amount;
     }
 
@@ -38,8 +38,8 @@ contract Deposits {
         uint256 current = deposits[msg.sender];
         deposits[msg.sender] = current + amount;
         uint256 epoch = epochs.getCurrentEpoch();
-        _updatePrevES(epoch, current);
-        _updateCurrentES(epoch, current);
+        _updatePrevED(epoch, current);
+        _updateCurrentED(epoch, current);
         require(
             glm.transferFrom(msg.sender, address(this), amount),
             "HN/cannot-transfer-from-sender"
@@ -52,12 +52,12 @@ contract Deposits {
         require(current >= amount, "HN/deposit-is-smaller");
         deposits[msg.sender] = current - amount;
         uint256 epoch = epochs.getCurrentEpoch();
-        _updatePrevES(epoch, current);
+        _updatePrevED(epoch, current);
         require(glm.transfer(msg.sender, amount));
         emit Withdrawn(amount, block.timestamp, msg.sender);
     }
 
-    function stakeAt(address owner, uint256 epochNo) public view returns (uint256) {
+    function depositAt(address owner, uint256 epochNo) public view returns (uint256) {
         uint256 currentEpoch = epochs.getCurrentEpoch();
         require(epochNo <= currentEpoch, "HN/future-is-unknown");
         require(epochNo > 0, "HN/epochs-start-from-1");
@@ -69,24 +69,24 @@ contract Deposits {
         return deposits[owner];
     }
 
-    function _updatePrevES(uint256 epoch, uint256 currentStake) private {
-        EffectiveDeposit memory prevES = effectiveDeposits[msg.sender][epoch - 1];
-        if (!prevES.isSet) {
-            prevES.isSet = true;
-            prevES.amount = currentStake;
+    function _updatePrevED(uint256 epoch, uint256 currentDeposit) private {
+        EffectiveDeposit memory prevED = effectiveDeposits[msg.sender][epoch - 1];
+        if (!prevED.isSet) {
+            prevED.isSet = true;
+            prevED.amount = currentDeposit;
         }
-        effectiveDeposits[msg.sender][epoch - 1] = prevES;
+        effectiveDeposits[msg.sender][epoch - 1] = prevED;
     }
 
-    function _updateCurrentES(uint256 epoch, uint256 currentStake) private {
-        EffectiveDeposit memory currentES = effectiveDeposits[msg.sender][epoch];
-        if (!currentES.isSet) {
-            currentES.amount = currentStake;
+    function _updateCurrentED(uint256 epoch, uint256 currentDeposit) private {
+        EffectiveDeposit memory currentED = effectiveDeposits[msg.sender][epoch];
+        if (!currentED.isSet) {
+            currentED.amount = currentDeposit;
         } else {
-            currentES.amount = _min(currentStake, currentES.amount);
+            currentED.amount = _min(currentDeposit, currentED.amount);
         }
-        currentES.isSet = true;
-        effectiveDeposits[msg.sender][epoch] = currentES;
+        currentED.isSet = true;
+        effectiveDeposits[msg.sender][epoch] = currentED;
     }
 
     function _min(uint256 a, uint256 b) private pure returns (uint256) {

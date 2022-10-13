@@ -4,13 +4,13 @@ import { increaseNextBlockTimestamp } from "../helpers/misc-utils";
 import { makeTestsEnv } from "./helpers/make-tests-env";
 
 interface Step {
-  stake?: number;
+  deposit?: number;
   forwardEpochs?: number;
 }
 
 interface Test {
   epoch: number;
-  expectedEffectiveStake: number;
+  expectedEffectiveDeposit: number;
 }
 
 interface TestParam {
@@ -23,53 +23,53 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
   describe("Effective deposits", () => {
     const parameters: TestParam[] = [
       {
-        steps: [{ stake: 1000, forwardEpochs: 10 }, { stake: -1000 }],
-        tests: [{ epoch: 2, expectedEffectiveStake: 1000 }],
-        desc: "check ES in a long period between deposit and withdrawal",
+        steps: [{ deposit: 1000, forwardEpochs: 10 }, { deposit: -1000 }],
+        tests: [{ epoch: 2, expectedEffectiveDeposit: 1000 }],
+        desc: "check ED in a long period between deposit and withdrawal",
       },
       {
-        steps: [{ stake: 1000, forwardEpochs: 100 }, { stake: -1000 }],
-        tests: [{ epoch: 5, expectedEffectiveStake: 1000 }],
-        desc: "Check ES in a very long period between deposit and withdrawal",
+        steps: [{ deposit: 1000, forwardEpochs: 100 }, { deposit: -1000 }],
+        tests: [{ epoch: 5, expectedEffectiveDeposit: 1000 }],
+        desc: "Check ED in a very long period between deposit and withdrawal",
       },
       {
         steps: [
-          { stake: 1000, forwardEpochs: 1 },
-          { stake: -1000, forwardEpochs: 2 },
+          { deposit: 1000, forwardEpochs: 1 },
+          { deposit: -1000, forwardEpochs: 2 },
         ],
-        tests: [{ epoch: 2, expectedEffectiveStake: 0 }],
-        desc: "ES sits at zero after user removed all funds",
+        tests: [{ epoch: 2, expectedEffectiveDeposit: 0 }],
+        desc: "ED sits at zero after user removed all funds",
       },
       {
         steps: [],
-        tests: [{ epoch: 1, expectedEffectiveStake: 0 }],
-        desc: "Uninitialized deposit means that ES is at zero",
+        tests: [{ epoch: 1, expectedEffectiveDeposit: 0 }],
+        desc: "Uninitialized deposit means that ED is at zero",
       },
       {
-        steps: [{ forwardEpochs: 20 }, { stake: 1000 }],
-        tests: [{ epoch: 1, expectedEffectiveStake: 0 }],
-        desc: "Before first deposit ES is at zero",
+        steps: [{ forwardEpochs: 20 }, { deposit: 1000 }],
+        tests: [{ epoch: 1, expectedEffectiveDeposit: 0 }],
+        desc: "Before first deposit ED is at zero",
       },
       {
         steps: [
-          { stake: 1000, forwardEpochs: 1 },
-          { stake: 100, forwardEpochs: 3 },
+          { deposit: 1000, forwardEpochs: 1 },
+          { deposit: 100, forwardEpochs: 3 },
         ],
         tests: [
-          { epoch: 2, expectedEffectiveStake: 1000 },
-          { epoch: 4, expectedEffectiveStake: 1100 },
+          { epoch: 2, expectedEffectiveDeposit: 1000 },
+          { epoch: 4, expectedEffectiveDeposit: 1100 },
         ],
-        desc: "ES is at lowest value during the epoch; in fresh epoch ES is at stake level",
+        desc: "ED is at lowest value during the epoch; in fresh epoch ED is at deposit level",
       },
       {
-        steps: [{ stake: 1000, forwardEpochs: 5 }],
-        tests: [{ epoch: 2, expectedEffectiveStake: 1000 }],
-        desc: "After a deposit, ES stays at stake level even if no further events occur",
+        steps: [{ deposit: 1000, forwardEpochs: 5 }],
+        tests: [{ epoch: 2, expectedEffectiveDeposit: 1000 }],
+        desc: "After a deposit, ED stays at deposit level even if no further events occur",
       },
       {
-        steps: [{ stake: 1000, forwardEpochs: 1 }, { stake: -500 }],
-        tests: [{ epoch: 2, expectedEffectiveStake: 500 }],
-        desc: "ES is at lowest value during the epoch",
+        steps: [{ deposit: 1000, forwardEpochs: 1 }, { deposit: -500 }],
+        tests: [{ epoch: 2, expectedEffectiveDeposit: 500 }],
+        desc: "ED is at lowest value during the epoch",
       },
     ];
     parameters.forEach((param) => {
@@ -81,11 +81,11 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
 
         for (let i = 0; i < param.steps.length; i++) {
           let step = param.steps[i];
-          if (step.stake! > 0) {
-            await glmDeposits.connect(signers.user).deposit(step.stake!);
+          if (step.deposit! > 0) {
+            await glmDeposits.connect(signers.user).deposit(step.deposit!);
           }
-          if (step.stake! < 0) {
-            await glmDeposits.connect(signers.user).withdraw(-step.stake!);
+          if (step.deposit! < 0) {
+            await glmDeposits.connect(signers.user).withdraw(-step.deposit!);
           }
           if (step.forwardEpochs) {
             // forward time
@@ -95,22 +95,22 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
         }
 
         for (let probeId = 0; probeId < param.tests.length; probeId++) {
-          // test if at epochNo effective stake has particular value
+          // test if at epochNo effective deposit has particular value
           let probe = param.tests[probeId];
-          let promise = await glmDeposits.stakeAt(signers.user.address, probe.epoch);
-          expect(promise).eq(probe.expectedEffectiveStake);
+          let promise = await glmDeposits.depositAt(signers.user.address, probe.epoch);
+          expect(promise).eq(probe.expectedEffectiveDeposit);
         }
       });
     });
   });
 
-  describe("Effective deposits, stakeAt edge cases", async () => {
-    it("stakeAt can't peek into the future", async () => {
+  describe("Effective deposits, depositAt edge cases", async () => {
+    it("depositAt can't peek into the future", async () => {
       const { token, glmDeposits, signers } = testEnv;
       await token.transfer(signers.user.address, 1005);
       await token.connect(signers.user).approve(glmDeposits.address, 1000);
       await glmDeposits.connect(signers.user).deposit(1000);
-      await expect(glmDeposits.stakeAt(signers.user.address, 10)).to.be.revertedWith(
+      await expect(glmDeposits.depositAt(signers.user.address, 10)).to.be.revertedWith(
         "HN/future-is-unknown"
       );
     });
