@@ -55,6 +55,7 @@ Contracts unit tests:
       policy: pull
   script:
     - yarn test
+    - yarn docs
 
 Client unit tests:
   stage: test
@@ -111,4 +112,3 @@ pages:
   artifacts:
     paths:
       - public
-

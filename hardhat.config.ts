@@ -5,6 +5,8 @@ import '@matterlabs/hardhat-zksync-deploy';
 import '@matterlabs/hardhat-zksync-solc';
 import '@typechain/hardhat';
 
+import 'hardhat-docgen';
+
 import './tasks/clean';
 import './tasks/deploy-zksync';
 
@@ -54,6 +56,10 @@ const config: HardhatUserConfig = {
     hacker: {
       default: 4,
     },
+  },
+  docgen: {
+    path: '.docs',
+    clear: true,
   },
   verify: {
     etherscan: {
