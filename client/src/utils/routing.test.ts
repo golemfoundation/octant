@@ -1,4 +1,4 @@
-import { getPathObject } from './routing';
+import getPathObject from './routing';
 
 describe('getPathObject', () => {
   it('properly creates base root path object', () => {

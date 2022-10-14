@@ -4,6 +4,11 @@
   border-radius: 0.5rem;
   cursor: pointer;
 
+  &.isActive {
+    color: $color-red;
+    border: 0.1rem solid $color-red;
+  }
+
   &.isDisabled {
     cursor: auto;
   }
