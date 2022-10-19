@@ -1,3 +1,8 @@
+$headerNavigationHeight: 7.2rem;
+$headerMarginVertical: 4.8rem;
+$headerMarginHorizontal: 2.4rem;
+$headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
+
 .root {
   display: flex;
   flex-direction: column;
@@ -6,13 +11,18 @@
 }
 
 .header {
-  border-bottom: 0.1rem solid $color-white;
-  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: $headerNavigationHeight;
+  border-radius: $headerNavigationBorderRadius;
+  background: $color-white;
+  padding: $headerMarginHorizontal;
+  margin: $headerMarginVertical $headerMarginHorizontal;
+  box-shadow: $box-shadow-1;
 
-  .navigation {
-    display: flex;
-    justify-content: center;
-    margin: 1rem 0 0 0;
+  .logo {
+    @include svgSize(3rem, 3rem);
   }
 }
 
@@ -21,5 +31,21 @@
   align-items: center;
   justify-content: center;
   flex: 1;
-  padding: 2rem;
+  padding: 2rem 2rem ($headerNavigationHeight + 2 * $headerMarginHorizontal) 2rem;
+}
+
+
+.navigation {
+  position: fixed;
+  bottom: $headerMarginHorizontal;
+  left: $headerMarginHorizontal;
+  right: $headerMarginHorizontal;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: $headerNavigationHeight;
+  border-radius: $headerNavigationBorderRadius;
+  background: $color-white;
+  padding: $headerMarginHorizontal;
+  box-shadow: $box-shadow-1;
 }

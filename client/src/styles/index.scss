@@ -1,5 +1,7 @@
+@import './fonts.css';
+
 :root {
-  font-family: sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 400;
 }
 
@@ -32,7 +34,7 @@ body {
   min-width: 32rem;
   height: 100%;
   min-height: 100%;
-  background: $color-graphite1;
-  color: $color-white;
+  background: $color-hexagon-grey;
+  color: $color-black;
   font-size: $font-size-16;
 }
