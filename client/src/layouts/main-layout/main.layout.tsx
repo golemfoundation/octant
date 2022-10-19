@@ -18,6 +18,10 @@ const getTabs = () => [
     label: 'Proposals',
     to: ROOT_ROUTES.proposals.absolute,
   },
+  {
+    label: 'Settings',
+    to: ROOT_ROUTES.settings.absolute,
+  },
 ];
 
 const MainLayout: FC<MainLayoutProps> = ({ children }) => {
