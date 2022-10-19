@@ -11,7 +11,9 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 /// and withdrawals at the beginning of an epoch.
 /// @dev Time is split into epochs, effective deposit is defined as min value
 /// of GLM held by this contract on behalf of the depositor in particular epoch.
-/// This contract MUST be as simple as possible.
+/// Please note that complexity of this contract should be kept as low as possible,
+/// even at the cost of increased complexity of other contracts. Lets strive to limit
+/// risk exposure of GLM deposits.
 contract Deposits {
     /// @notice GLM token contract address
     ERC20 public immutable glm;
