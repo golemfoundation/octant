@@ -27,7 +27,7 @@ contract Deposits {
     }
 
     mapping(address => uint256) public deposits;
-    mapping(address => mapping(uint256 => EffectiveDeposit)) effectiveDeposits;
+    mapping(address => mapping(uint256 => EffectiveDeposit)) private effectiveDeposits;
 
     constructor(address epochsAddress, address glmAddress) {
         epochs = IEpochs(epochsAddress);
@@ -63,10 +63,17 @@ contract Deposits {
         require(epochNo > 0, "HN/epochs-start-from-1");
         for (uint256 iEpoch = epochNo; iEpoch <= currentEpoch; iEpoch = iEpoch + 1) {
             if (effectiveDeposits[owner][iEpoch].isSet) {
-                return effectiveDeposits[owner][iEpoch].amount;
+                return _applyDepositCutoff(effectiveDeposits[owner][iEpoch].amount);
             }
         }
-        return deposits[owner];
+        return _applyDepositCutoff(deposits[owner]);
+    }
+
+    function _applyDepositCutoff(uint256 actualAmount) public pure returns (uint256) {
+        if (actualAmount < 100 ether) {
+            return 0;
+        }
+        return actualAmount;
     }
 
     function _updatePrevED(uint256 epoch, uint256 currentDeposit) private {
