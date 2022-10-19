@@ -13,6 +13,7 @@ artifacts-zk
 deployments
 typechain
 typechain-types
+.docs
 
 # Client
 dist
