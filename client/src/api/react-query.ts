@@ -1,6 +1,11 @@
 import { QueryCache, QueryClient } from 'react-query';
 
 const reactQueryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
   queryCache: new QueryCache({
     onError: (error, query) => {
       if (query.state.data !== undefined) {
