@@ -7,11 +7,11 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 /// @title Contract tracking GLM deposits (staking) for Hexagon project.
 /// @author Golem Foundation
 /// @notice GLM can be deposited or withdrawn at any moment by its owner.
-/// @notice To be more capital effective, do deposits at the end of an epoch,
-/// @notice and withdrawals at the beginning of an epoch.
+/// To be more capital effective, do deposits at the end of an epoch,
+/// and withdrawals at the beginning of an epoch.
 /// @dev Time is split into epochs, effective deposit is defined as min value
-/// @dev of GLM held by this contract on behalf of the depositor in particular epoch.
-/// @dev This contract MUST be as simple as possible.
+/// of GLM held by this contract on behalf of the depositor in particular epoch.
+/// This contract MUST be as simple as possible.
 contract Deposits {
     /// @notice GLM token contract address
     ERC20 public immutable glm;
@@ -41,7 +41,7 @@ contract Deposits {
     }
 
     /// @notice Deposit GLM to enable participation in Hexagon experiment.
-    /// @notice This can be done at any time, but it is most capital effective at the end of the epoch.
+    /// This can be done at any time, but it is most capital effective at the end of the epoch.
     /// @param amount Amount of GLM to be deposited.
     function deposit(uint256 amount) public {
         uint256 current = deposits[msg.sender];
@@ -69,8 +69,8 @@ contract Deposits {
     }
 
     /// @notice Check how much is staked at particular epoch. Note that contract tracks only minimal value of the stake.
-    /// @dev Call this to read ED for any user at particular epoch. Please note that worst-case gas cost is O(n) where n is_
-    /// @dev the number of epochs contract has been active for.
+    /// @dev Call this to read ED for any user at particular epoch. Please note that worst-case gas cost is O(n) where n is
+    /// the number of epochs contract has been active for.
     /// @param owner Owner of the deposit for which ED will be checked.
     /// @param epochNo Epoch number, for which ED will be checked.
     /// @return Effective deposit (GLM) in wei for particular epoch, particular owner.
