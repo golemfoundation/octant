@@ -1,12 +1,15 @@
 .root {
-  border: 0.1rem solid $color-white;
+  border: 0.1rem solid $color-hexagon-blue;
   padding: 1rem 2rem;
-  border-radius: 0.5rem;
+  border-radius: 0.8rem;
   cursor: pointer;
+  background: $color-white;
+  color: $color-hexagon-blue;
+  font-weight: $font-weight-bold;
 
   &.isActive {
-    color: $color-red;
-    border: 0.1rem solid $color-red;
+    color: $color-white;
+    background: $color-hexagon-blue;
   }
 
   &.isDisabled {
