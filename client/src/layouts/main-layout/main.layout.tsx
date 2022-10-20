@@ -17,6 +17,10 @@ const getTabs = () => [
     to: ROOT_ROUTES.stats.absolute,
   },
   {
+    label: 'Deposits',
+    to: ROOT_ROUTES.deposits.absolute,
+  },
+  {
     label: 'Proposals',
     to: ROOT_ROUTES.proposals.absolute,
   },
@@ -49,7 +53,7 @@ const MainLayout: FC<MainLayoutProps> = ({ children }) => {
   const buttonProps = isConnected
     ? {
         isDisabled: true,
-        label: 'MetMask connected',
+        label: 'MetaMask connected',
         onClick: () => {},
       }
     : {

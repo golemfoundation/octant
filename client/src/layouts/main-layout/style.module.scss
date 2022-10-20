@@ -30,6 +30,7 @@ $headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   flex: 1;
   padding: 2rem 2rem ($headerNavigationHeight + 2 * $headerMarginHorizontal) 2rem;
 }

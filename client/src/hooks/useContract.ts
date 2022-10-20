@@ -5,6 +5,10 @@ import type { Provider } from '@ethersproject/providers';
 import {
   Allocations,
   Allocations__factory,
+  Deposits,
+  Deposits__factory,
+  ERC20,
+  ERC20__factory,
   Epochs,
   Epochs__factory,
   Proposals,
@@ -12,6 +16,12 @@ import {
 } from '../typechain-types';
 
 const providerGoerli = ethers.providers.getDefaultProvider('goerli');
+
+export function useErc20Contract(tokenAddress: string, signer?: Signer): ERC20 | null {
+  return useMemo(() => {
+    return signer ? ERC20__factory.connect(tokenAddress, signer) : null;
+  }, [tokenAddress, signer]);
+}
 
 export function useProposalsContract(tokenAddress: string): Proposals | null {
   return useMemo(() => {
@@ -25,6 +35,15 @@ export function useAllocationsContract(
 ): Allocations | null {
   return useMemo(() => {
     return signerOrProvider ? Allocations__factory.connect(tokenAddress, signerOrProvider) : null;
+  }, [tokenAddress, signerOrProvider]);
+}
+
+export function useDepositsContract(
+  tokenAddress: string,
+  signerOrProvider?: Signer | Provider,
+): Deposits | null {
+  return useMemo(() => {
+    return signerOrProvider ? Deposits__factory.connect(tokenAddress, signerOrProvider) : null;
   }, [tokenAddress, signerOrProvider]);
 }
 
