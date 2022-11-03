@@ -6,7 +6,7 @@ import { solidity } from 'ethereum-waffle';
 import { deployments, ethers } from 'hardhat';
 import {
   PROPOSALS,
-  DEPOSITS,
+  DEPOSITS, TRACKER,
   TOKEN,
   ALLOCATIONS,
   EPOCHS,
@@ -14,7 +14,7 @@ import {
 } from '../../helpers/constants';
 import {
   Proposals,
-  Deposits,
+  Deposits, Tracker,
   Token,
   Allocations,
   Epochs,
@@ -31,6 +31,7 @@ const testEnv: TestEnv = {
   allocations: {} as Allocations,
   proposals: {} as Proposals,
   glmDeposits: {} as Deposits,
+  tracker: {} as Tracker,
   token: {} as Token,
   epochs: {} as Epochs,
   beaconChainOracle: {} as BeaconChainOracle,
@@ -43,6 +44,7 @@ async function initializeTestsEnv() {
   testEnv.allocations = await ethers.getContract(ALLOCATIONS);
   testEnv.token = await ethers.getContract(TOKEN);
   testEnv.glmDeposits = await ethers.getContract(DEPOSITS);
+  testEnv.tracker = await ethers.getContract(TRACKER);
   testEnv.proposals = await ethers.getContract(PROPOSALS);
   testEnv.epochs = await ethers.getContract(EPOCHS);
   testEnv.beaconChainOracle = await ethers.getContract(BEACON_CHAIN_ORACLE);
