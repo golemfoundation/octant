@@ -23,6 +23,7 @@ contract Deposits is Ownable {
 
     event Deposited(uint256 amount, uint256 when, address depositor);
     event Withdrawn(uint256 amount, uint256 when, address depositor);
+    event TrackerThrows();
 
     /// @dev deposit amounts per depositor
     mapping(address => uint256) public deposits;
@@ -46,8 +47,12 @@ contract Deposits is Ownable {
             glm.transferFrom(msg.sender, address(this), amount),
             "HN/cannot-transfer-from-sender"
         );
-        tracker.processDeposit(msg.sender, oldDeposit, amount);
         emit Deposited(amount, block.timestamp, msg.sender);
+        try tracker.processDeposit(msg.sender, oldDeposit, amount) {
+            return;
+        } catch (bytes memory) {
+            emit TrackerThrows();
+        }
     }
 
     /// @notice Withdrawl GLM. This can be done at any time, but it is most capital effective at the beginning of the epoch.
@@ -57,8 +62,12 @@ contract Deposits is Ownable {
         require(oldDeposit >= amount, "HN/deposit-is-smaller");
         deposits[msg.sender] = oldDeposit - amount;
         require(glm.transfer(msg.sender, amount));
-        tracker.processWithdraw(msg.sender, oldDeposit, amount);
         emit Withdrawn(amount, block.timestamp, msg.sender);
+        try tracker.processWithdraw(msg.sender, oldDeposit, amount) {
+            return;
+        } catch (bytes memory) {
+            emit TrackerThrows();
+        }
     }
 
 }
