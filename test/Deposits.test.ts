@@ -6,13 +6,18 @@ import { parseEther } from "ethers/lib/utils";
 import { makeTestsEnv } from "./helpers/make-tests-env";
 
 interface Step {
-  deposit?: number;
+  Alice?: number;
+  Bob?: number;
+  Charlie?: number;
   forwardEpochs?: number;
 }
 
 interface Test {
   epoch: number;
-  expectedEffectiveDeposit: number;
+  expDAlice?: number;
+  expDBob?: number;
+  expDCharlie?: number;
+  expDTotal?: number;
 }
 
 interface TestParam {
@@ -22,98 +27,177 @@ interface TestParam {
 }
 
 makeTestsEnv(DEPOSITS, (testEnv) => {
-  describe("Effective deposits", () => {
 
-    let toWei = function(n: number): BigNumber {
+  let wait = async (epochs, n) => {
+    let epochDuration = await epochs.epochDuration();
+    let timeDelta = epochDuration.toNumber() * n;
+    await increaseNextBlockTimestamp(timeDelta);
+  };
+
+  function nameToExp(name: string) {
+    return "exp" + name[0].toUpperCase() + name.substring(1);
+  }
+
+  describe("Effective deposits, total", async () => {
+    it("totalDepositAt sums for simple cases", async () => {
+      const { token, glmDeposits, epochs, signers } = testEnv;
+      const participants = [signers.Alice, signers.Bob];
+      for (let i = 0; i < participants.length; i++) {
+        await token.transfer(participants[i].address, parseEther("1000"));
+        await token.connect(participants[i]).approve(glmDeposits.address, parseEther("1000"));
+        await glmDeposits.connect(participants[i]).deposit(parseEther("1000"));
+      }
+      expect(await glmDeposits.totalDeposit()).eq(parseEther("2000"));
+      expect(await glmDeposits.totalDepositAt(1)).eq(parseEther("0"));
+      await wait(epochs, 1);
+      expect(await glmDeposits.totalDepositAt(2)).eq(parseEther("2000"));
+    });
+  });
+
+  describe("Test config sanity check", async () => {
+    it("signers are distinct", async () => {
+      const { signers } = testEnv;
+      let configured = new Set();
+      for (let name of ["Alice", "Bob", "Charlie"]) {
+        configured.add(signers[name].address);
+      }
+      expect(configured.size).eq(3);
+    });
+  });
+
+  describe("Effective deposits", async () => {
+
+    let toWei = function (n: number): BigNumber {
       return parseEther(Math.abs(n).toString());
     }
 
     const parameters: TestParam[] = [
       {
-        steps: [{ deposit: 1000, forwardEpochs: 10 }, { deposit: -1000 }],
-        tests: [{ epoch: 2, expectedEffectiveDeposit: 1000 }],
+        steps: [{ Alice: 1000, forwardEpochs: 10 }, { Alice: -1000 }],
+        tests: [{ epoch: 2, expDAlice: 1000 }],
         desc: "check ED in a long period between deposit and withdrawal",
       },
       {
-        steps: [{ deposit: 1000, forwardEpochs: 100 }, { deposit: -1000 }],
-        tests: [{ epoch: 5, expectedEffectiveDeposit: 1000 }],
+        steps: [{ Alice: 1000, forwardEpochs: 100 }, { Alice: -1000 }],
+        tests: [{ epoch: 5, expDAlice: 1000 }],
         desc: "Check ED in a very long period between deposit and withdrawal",
       },
       {
         steps: [
-          { deposit: 1000, forwardEpochs: 1 },
-          { deposit: -1000, forwardEpochs: 2 },
+          { Alice: 1000, forwardEpochs: 1 },
+          { Alice: -1000, forwardEpochs: 2 },
         ],
-        tests: [{ epoch: 2, expectedEffectiveDeposit: 0 }],
+        tests: [{ epoch: 2, expDAlice: 0 }],
         desc: "ED sits at zero after user removed all funds",
       },
       {
         steps: [],
-        tests: [{ epoch: 1, expectedEffectiveDeposit: 0 }],
+        tests: [{ epoch: 1, expDAlice: 0 }],
         desc: "Uninitialized deposit means that ED is at zero",
       },
       {
-        steps: [{ forwardEpochs: 20 }, { deposit: 1000 }],
-        tests: [{ epoch: 1, expectedEffectiveDeposit: 0 }],
+        steps: [{ forwardEpochs: 20 }, { Alice: 1000 }],
+        tests: [{ epoch: 1, expDAlice: 0 }],
         desc: "Before first deposit ED is at zero",
       },
       {
         steps: [
-          { deposit: 1000, forwardEpochs: 1 },
-          { deposit: 100, forwardEpochs: 3 },
+          { Alice: 1000, forwardEpochs: 1 },
+          { Alice: 100, forwardEpochs: 3 },
         ],
         tests: [
-          { epoch: 2, expectedEffectiveDeposit: 1000 },
-          { epoch: 4, expectedEffectiveDeposit: 1100 },
+          { epoch: 2, expDAlice: 1000 },
+          { epoch: 4, expDAlice: 1100 },
         ],
         desc: "ED is at lowest value during the epoch; in fresh epoch ED is at deposit level",
       },
       {
-        steps: [{ deposit: 1000, forwardEpochs: 5 }],
-        tests: [{ epoch: 2, expectedEffectiveDeposit: 1000 }],
+        steps: [{ Alice: 1000, forwardEpochs: 5 }],
+        tests: [{ epoch: 2, expDAlice: 1000 }],
         desc: "After a deposit, ED stays at deposit level even if no further events occur",
       },
       {
-        steps: [{ deposit: 50, forwardEpochs: 1 }, { deposit: 100, forwardEpochs: 2 }, {deposit: -99, forwardEpochs: 2}],
-        tests: [{ epoch: 1, expectedEffectiveDeposit: 0 }, { epoch: 3, expectedEffectiveDeposit: 150 }, { epoch: 4, expectedEffectiveDeposit: 0 }],
+        steps: [{ Alice: 1000, forwardEpochs: 5 }, { Alice: -100 }, { Alice: -100 }, { Alice: -100 }, { forwardEpochs: 5 }],
+        tests: [{ epoch: 2, expDAlice: 1000 }, { epoch: 5, expDAlice: 1000 }, { epoch: 6, expDAlice: 700 }],
+        desc: "Multiple withdrawals reduce ED",
+      },
+      {
+        steps: [{ Alice: 50, forwardEpochs: 1 }, { Alice: 100, forwardEpochs: 2 }, { Alice: -99, forwardEpochs: 2 }],
+        tests: [{ epoch: 1, expDAlice: 0 }, { epoch: 3, expDAlice: 150 }, { epoch: 4, expDAlice: 0 }],
         desc: "ED is at lowest value during the epoch, 100 GLM capped",
       },
       {
-        steps: [{ deposit: 1000, forwardEpochs: 1 }, { deposit: -500 }],
-        tests: [{ epoch: 2, expectedEffectiveDeposit: 500 }],
+        steps: [{ Alice: 1000, forwardEpochs: 1 }, { Alice: -500 }, { Alice: -300 }],
+        tests: [{ epoch: 2, expDAlice: 200 }],
         desc: "ED is at lowest value during the epoch, no capping",
+      },
+      {
+        steps: [{ Alice: 1000, Bob: 1000, forwardEpochs: 1 }],
+        tests: [{ epoch: 2, expDTotal: 2000 }],
+        desc: "TED takes multiple user EDs into account",
+      },
+      {
+        steps: [{ Alice: 1000, Bob: 1000, Charlie: 50, forwardEpochs: 1 }],
+        tests: [{ epoch: 2, expDTotal: 2000 }],
+        desc: "TED cutoff: multiple sources with cutoff on individual source level",
+      },
+      {
+        steps: [{ Alice: 60, forwardEpochs: 1 }, { Alice: 60, forwardEpochs: 2 }, { Alice: -100, forwardEpochs: 2 }],
+        tests: [{ epoch: 2, expDAlice: 0 }, { epoch: 3, expDAlice: 120 }, { epoch: 5, expDTotal: 0 }],
+        desc: "ED: withdrawal does not affect past epochs",
+      },
+      {
+        steps: [{ Alice: 60, forwardEpochs: 1 }, { Alice: 60, forwardEpochs: 2 }, { Alice: -100, forwardEpochs: 2 }],
+        tests: [{ epoch: 2, expDTotal: 0 }, { epoch: 3, expDTotal: 120 }, { epoch: 5, expDTotal: 0 }],
+        desc: "TED cutoff: cutoff boundary is crossed correctly",
       },
     ];
     parameters.forEach((param) => {
       it(`${param.desc}`, async () => {
         const { token, glmDeposits, signers, epochs } = testEnv;
         let epochDuration = await epochs.epochDuration();
-        await token.transfer(signers.user.address, parseEther("10000"));
-        await token.connect(signers.user).approve(glmDeposits.address, parseEther("10000"));
+        let currentEpoch = await epochs.getCurrentEpoch();
+        expect(currentEpoch, "fresh test always starts from epoch one").eq(1);
+        for (let userName of ["Alice", "Bob", "Charlie"]) {
+          await token.transfer(signers[userName].address, parseEther("10000"));
+          await token.connect(signers[userName]).approve(glmDeposits.address, parseEther("10000"));
+        }
 
         for (let i = 0; i < param.steps.length; i++) {
           let step = param.steps[i];
-          if (step.deposit !== undefined) {
-            if (step.deposit > 0) {
-              await glmDeposits.connect(signers.user).deposit(toWei(step.deposit));
-            }
-            if (step.deposit < 0) {
-              await glmDeposits.connect(signers.user).withdraw(toWei(step.deposit));
+          for (let userName of ["Alice", "Bob", "Charlie"]) {
+            if (step[userName] !== undefined) {
+              if (step[userName] > 0) {
+                await glmDeposits.connect(signers[userName]).deposit(toWei(step[userName]));
+              }
+              if (step[userName] < 0) {
+                await glmDeposits.connect(signers[userName]).withdraw(toWei(step[userName]));
+              }
             }
           }
           if (step.forwardEpochs) {
             // forward time
-            let timeDelta = epochDuration.toNumber() * step.forwardEpochs;
-            await increaseNextBlockTimestamp(timeDelta);
+            await wait(epochs, step.forwardEpochs);
           }
         }
 
         for (let probeId = 0; probeId < param.tests.length; probeId++) {
           // test if at epochNo effective deposit has particular value
           let probe = param.tests[probeId];
-          let promise = await glmDeposits.depositAt(signers.user.address, probe.epoch);
-          let expD = parseEther(probe.expectedEffectiveDeposit.toString());
-          expect(promise).eq(expD);
+          for (let userName of ['Alice', 'Bob', 'Charlie']) {
+            let signer = signers[userName];
+            let exp = nameToExp(userName);
+            if (probe[exp]) {
+              let expD = parseEther(probe[exp].toString());
+              let promise = await glmDeposits.depositAt(signer.address, probe.epoch);
+              expect(promise, `ED ${exp} at epoch ${probe.epoch} should be equal to ${expD}`).eq(expD);
+            }
+          }
+          if (probe.expDTotal) {
+            let expD = parseEther(probe.expDTotal.toString());
+            let promise = await glmDeposits.totalDepositAt(probe.epoch);
+            expect(promise, `TED at epoch ${probe.epoch} should be equal to ${expD}`).eq(expD);
+          }
         }
       });
     });
@@ -122,10 +206,10 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
   describe("Effective deposits, depositAt edge cases", async () => {
     it("depositAt can't peek into the future", async () => {
       const { token, glmDeposits, signers } = testEnv;
-      await token.transfer(signers.user.address, 1005);
-      await token.connect(signers.user).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(signers.user).deposit(1000);
-      await expect(glmDeposits.depositAt(signers.user.address, 10)).to.be.revertedWith(
+      await token.transfer(signers.Alice.address, 1005);
+      await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
+      await glmDeposits.connect(signers.Alice).deposit(1000);
+      expect(glmDeposits.depositAt(signers.Alice.address, 10)).to.be.revertedWith(
         "HN/future-is-unknown"
       );
     });
@@ -134,72 +218,72 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
   describe("Deposits", async () => {
     it("No deposits in freshly deployed contract", async function () {
       const { glmDeposits, signers } = testEnv;
-      expect(await glmDeposits.connect(signers.user).deposits(signers.user.address)).to.equal(0);
+      expect(await glmDeposits.connect(signers.Alice).deposits(signers.Alice.address)).to.equal(0);
     });
     it("Can withdrawn", async function () {
       const { token, glmDeposits, signers } = testEnv;
-      await token.transfer(signers.user.address, 1005);
-      await token.connect(signers.user).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(signers.user).deposit(1000);
-      await expect(await token.balanceOf(signers.user.address)).eq(5);
-      await glmDeposits.connect(signers.user).withdraw(1000);
-      await expect(await token.balanceOf(signers.user.address)).eq(1005);
+      await token.transfer(signers.Alice.address, 1005);
+      await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
+      await glmDeposits.connect(signers.Alice).deposit(1000);
+      expect(await token.balanceOf(signers.Alice.address)).eq(5);
+      await glmDeposits.connect(signers.Alice).withdraw(1000);
+      expect(await token.balanceOf(signers.Alice.address)).eq(1005);
     });
     it("Can't withdrawn empty", async function () {
       const { token, glmDeposits, signers } = testEnv;
-      await expect(glmDeposits.connect(signers.user).withdraw(1)).to.be.revertedWith(
+      expect(glmDeposits.connect(signers.Alice).withdraw(1)).to.be.revertedWith(
         "HN/deposit-is-smaller"
       );
     });
     it("Can't withdrawn not owned", async function () {
       const { token, glmDeposits, signers } = testEnv;
-      await token.transfer(signers.user.address, 1000);
-      await token.connect(signers.user).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(signers.user).deposit(1000);
-      await expect(glmDeposits.connect(signers.hacker).withdraw(1)).to.be.revertedWith(
+      await token.transfer(signers.Alice.address, 1000);
+      await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
+      await glmDeposits.connect(signers.Alice).deposit(1000);
+      expect(glmDeposits.connect(signers.Darth).withdraw(1)).to.be.revertedWith(
         "HN/deposit-is-smaller"
       );
     });
     it("Can't withdrawn twice", async function () {
       const { token, glmDeposits, signers } = testEnv;
-      await token.transfer(signers.hacker.address, 1000);
-      await token.connect(signers.hacker).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(signers.hacker).deposit(1000);
-      await glmDeposits.connect(signers.hacker).withdraw(1000);
-      let balance = await token.balanceOf(signers.hacker.address);
-      await expect(glmDeposits.connect(signers.hacker).withdraw(1000)).to.be.revertedWith(
+      await token.transfer(signers.Darth.address, 1000);
+      await token.connect(signers.Darth).approve(glmDeposits.address, 1000);
+      await glmDeposits.connect(signers.Darth).deposit(1000);
+      await glmDeposits.connect(signers.Darth).withdraw(1000);
+      let balance = await token.balanceOf(signers.Darth.address);
+      expect(glmDeposits.connect(signers.Darth).withdraw(1000)).to.be.revertedWith(
         "HN/deposit-is-smaller"
       );
-      await expect(await token.balanceOf(signers.hacker.address)).eq(balance);
+      expect(await token.balanceOf(signers.Darth.address)).eq(balance);
     });
     it("Can deposit again after withdrawal", async function () {
       const { token, glmDeposits, signers } = testEnv;
-      await token.transfer(signers.hacker.address, 1000);
-      await token.connect(signers.hacker).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(signers.hacker).deposit(1000);
-      await glmDeposits.connect(signers.hacker).withdraw(1000);
-      await token.connect(signers.hacker).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(signers.hacker).deposit(1000);
+      await token.transfer(signers.Darth.address, 1000);
+      await token.connect(signers.Darth).approve(glmDeposits.address, 1000);
+      await glmDeposits.connect(signers.Darth).deposit(1000);
+      await glmDeposits.connect(signers.Darth).withdraw(1000);
+      await token.connect(signers.Darth).approve(glmDeposits.address, 1000);
+      await glmDeposits.connect(signers.Darth).deposit(1000);
     });
     it("Can increase deposit", async function () {
       const { token, glmDeposits, signers } = testEnv;
-      await token.transfer(signers.user.address, 1005);
-      await token.connect(signers.user).approve(glmDeposits.address, 1005);
-      await expect(await token.balanceOf(signers.user.address)).eq(1005);
-      await glmDeposits.connect(signers.user).deposit(1000);
-      await expect(await token.balanceOf(glmDeposits.address)).eq(1000);
-      await expect(await token.balanceOf(signers.user.address)).eq(5);
-      await glmDeposits.connect(signers.user).deposit(5);
-      await expect(await token.balanceOf(glmDeposits.address)).eq(1005);
+      await token.transfer(signers.Alice.address, 1005);
+      await token.connect(signers.Alice).approve(glmDeposits.address, 1005);
+      expect(await token.balanceOf(signers.Alice.address)).eq(1005);
+      await glmDeposits.connect(signers.Alice).deposit(1000);
+      expect(await token.balanceOf(glmDeposits.address)).eq(1000);
+      expect(await token.balanceOf(signers.Alice.address)).eq(5);
+      await glmDeposits.connect(signers.Alice).deposit(5);
+      expect(await token.balanceOf(glmDeposits.address)).eq(1005);
     });
     it("Can withdraw partially", async function () {
       const { token, glmDeposits, signers } = testEnv;
-      await token.transfer(signers.user.address, 1000);
-      await token.connect(signers.user).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(signers.user).deposit(1000);
-      await glmDeposits.connect(signers.user).withdraw(600);
-      await expect(await token.balanceOf(glmDeposits.address)).eq(400);
-      await expect(await token.balanceOf(signers.user.address)).eq(600);
+      await token.transfer(signers.Alice.address, 1000);
+      await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
+      await glmDeposits.connect(signers.Alice).deposit(1000);
+      await glmDeposits.connect(signers.Alice).withdraw(600);
+      expect(await token.balanceOf(glmDeposits.address)).eq(400);
+      expect(await token.balanceOf(signers.Alice.address)).eq(600);
     });
   });
 });
