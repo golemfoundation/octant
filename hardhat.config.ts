@@ -44,16 +44,16 @@ const config: HardhatUserConfig = {
       default: 0,
       localhost: 0
     },
-    user: {
+    Alice: {
       default: 1,
     },
-    user2: {
+    Bob: {
       default: 2,
     },
-    user3: {
+    Charlie: {
       default: 3,
     },
-    hacker: {
+    Darth: {
       default: 4,
     },
   },

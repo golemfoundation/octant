@@ -88,14 +88,14 @@ makeTestsEnv(EPOCHS, (testEnv) => {
   });
 
   it('Cannot change epoch duration if not an owner', async () => {
-    const { epochs, signers: { hacker } } = testEnv;
-    expect(epochs.connect(hacker).setEpochDuration(0))
+    const { epochs, signers: { Darth } } = testEnv;
+    expect(epochs.connect(Darth).setEpochDuration(0))
       .revertedWith('Ownable: caller is not the owner');
   });
 
   it('Cannot change decision window if not an owner', async () => {
-    const { epochs, signers: { hacker } } = testEnv;
-    expect(epochs.connect(hacker).setDecisionWindow(0))
+    const { epochs, signers: { Darth } } = testEnv;
+    expect(epochs.connect(Darth).setDecisionWindow(0))
       .revertedWith('Ownable: caller is not the owner');
   });
 });

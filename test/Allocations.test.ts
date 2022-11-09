@@ -17,33 +17,33 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
 
   describe('vote', async () => {
     it('Cannot vote, when alpha is out of range', async () => {
-      const { allocations, signers: { user } } = testEnv;
-      expect(allocations.connect(user).vote(1, 101)).revertedWith('HN/alpha-out-of-range');
+      const { allocations, signers: { Alice } } = testEnv;
+      expect(allocations.connect(Alice).vote(1, 101)).revertedWith('HN/alpha-out-of-range');
     });
 
     it('Should set alpha when vote', async () => {
-      const { allocations, signers: { user } } = testEnv;
+      const { allocations, signers: { Alice } } = testEnv;
 
-      await allocations.connect(user).vote(1, 53);
+      await allocations.connect(Alice).vote(1, 53);
 
-      expect(await allocations.getAlpha(1, user.address)).eq(53);
+      expect(await allocations.getAlpha(1, Alice.address)).eq(53);
     });
 
     it('Can change alpha with next vote', async () => {
-      const { allocations, signers: { user } } = testEnv;
+      const { allocations, signers: { Alice } } = testEnv;
 
-      await allocations.connect(user).vote(1, 53);
-      await allocations.connect(user).vote(1, 75);
+      await allocations.connect(Alice).vote(1, 53);
+      await allocations.connect(Alice).vote(1, 75);
 
-      expect(await allocations.getAlpha(1, user.address)).eq(75);
+      expect(await allocations.getAlpha(1, Alice.address)).eq(75);
     });
 
     it('Users can vote', async () => {
-      const { allocations, signers: { user, user2, user3 } } = testEnv;
+      const { allocations, signers: { Alice, Bob, Charlie } } = testEnv;
 
-      await allocations.connect(user).vote(1, 53);
-      await allocations.connect(user2).vote(1, 75);
-      await allocations.connect(user3).vote(5, 60);
+      await allocations.connect(Alice).vote(1, 53);
+      await allocations.connect(Bob).vote(1, 75);
+      await allocations.connect(Charlie).vote(5, 60);
 
       expect(await allocations.getVotesCount(1, 0)).eq(0);
       expect(await allocations.getVotesCount(1, 1)).eq(2);
@@ -51,24 +51,24 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
     });
 
     it('Users can change his vote', async () => {
-      const { allocations, signers: { user } } = testEnv;
+      const { allocations, signers: { Alice } } = testEnv;
 
-      await allocations.connect(user).vote(1, 53);
-      await allocations.connect(user).vote(2, 75);
-      const vote = await allocations.participantVoteByEpoch(1, user.address)
+      await allocations.connect(Alice).vote(1, 53);
+      await allocations.connect(Alice).vote(2, 75);
+      const vote = await allocations.participantVoteByEpoch(1, Alice.address)
 
       expect(vote.proposalId).eq(2);
     });
 
     it('Users vote in second epoch', async () => {
-      const { signers: { user } } = testEnv;
+      const { signers: { Alice } } = testEnv;
       const start = await getLatestBlockTimestamp()
       const allocations = await setupAllocations(start, 500, 200)
 
       await increaseNextBlockTimestamp(600)
-      await allocations.connect(user).vote(1, 53);
-      const voteInFirstEpoch = await allocations.participantVoteByEpoch(1, user.address)
-      const voteInSecondEpoch = await allocations.participantVoteByEpoch(2, user.address)
+      await allocations.connect(Alice).vote(1, 53);
+      const voteInFirstEpoch = await allocations.participantVoteByEpoch(1, Alice.address)
+      const voteInSecondEpoch = await allocations.participantVoteByEpoch(2, Alice.address)
 
       expect(voteInFirstEpoch.alpha).eq(0);
       expect(voteInFirstEpoch.proposalId).eq(0);
@@ -77,30 +77,30 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
     });
 
     it('Cannot vote when decision window closed', async () => {
-      const { signers: { user } } = testEnv;
+      const { signers: { Alice } } = testEnv;
       const start = await getLatestBlockTimestamp()
       const allocations = await setupAllocations(start, 500, 200)
 
       await increaseNextBlockTimestamp(400);
 
-      expect(allocations.connect(user).vote(1, 53))
+      expect(allocations.connect(Alice).vote(1, 53))
         .revertedWith("HN/decision-window-closed");
     });
 
     it('Cannot vote when hexagon has not been started yet', async () => {
-      const { signers: { user } } = testEnv;
+      const { signers: { Alice } } = testEnv;
       const allocations = await setupAllocations(2000000000, 500, 200)
 
-      expect(allocations.connect(user).vote(1, 53))
+      expect(allocations.connect(Alice).vote(1, 53))
         .revertedWith("HN/not-started-yet");
     });
 
     it('Vote emits proper event', async () => {
-      const { allocations, signers: { user } } = testEnv;
+      const { allocations, signers: { Alice } } = testEnv;
 
-      await expect(allocations.connect(user).vote(1, 53))
+      await expect(allocations.connect(Alice).vote(1, 53))
         .emit(allocations, 'Voted')
-        .withArgs(1, user.address, 1, 53);
+        .withArgs(1, Alice.address, 1, 53);
     });
   });
 });

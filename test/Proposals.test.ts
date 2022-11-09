@@ -11,7 +11,7 @@ makeTestsEnv(PROPOSALS, (testEnv) => {
       // given
       const { proposals, signers } = testEnv;
       // when
-      const allProposals = await proposals.connect(signers.user).getProposals();
+      const allProposals = await proposals.connect(signers.Alice).getProposals();
 
       // then
       expect(allProposals.length).eq(10);
@@ -22,14 +22,14 @@ makeTestsEnv(PROPOSALS, (testEnv) => {
     });
 
     it('Cannot change baseURI if not an owner', async () => {
-      const { proposals, signers: { hacker } } = testEnv;
-      expect(proposals.connect(hacker).setBaseURI("https://malicious.com"))
+      const { proposals, signers: { Darth } } = testEnv;
+      expect(proposals.connect(Darth).setBaseURI("https://malicious.com"))
         .revertedWith('Ownable: caller is not the owner');
     });
 
     it('Cannot change proposals count if not an owner', async () => {
-      const { proposals, signers: { hacker } } = testEnv;
-      expect(proposals.connect(hacker).setProposalsCount(20))
+      const { proposals, signers: { Darth } } = testEnv;
+      expect(proposals.connect(Darth).setProposalsCount(20))
         .revertedWith('Ownable: caller is not the owner');
     });
 
