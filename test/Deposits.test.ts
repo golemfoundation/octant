@@ -1,9 +1,10 @@
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { DEPOSITS } from "../helpers/constants";
-import { increaseNextBlockTimestamp } from "../helpers/misc-utils";
+import { mineBlocks } from "../helpers/misc-utils";
 import { parseEther } from "ethers/lib/utils";
 import { makeTestsEnv } from "./helpers/make-tests-env";
+import { Epochs } from "../typechain-types";
 
 interface Step {
   Alice?: number;
@@ -28,11 +29,11 @@ interface TestParam {
 
 makeTestsEnv(DEPOSITS, (testEnv) => {
 
-  let wait = async (epochs, n) => {
+  async function forwardEpochs(epochs: Epochs, quantity: number) {
     let epochDuration = await epochs.epochDuration();
-    let timeDelta = epochDuration.toNumber() * n;
-    await increaseNextBlockTimestamp(timeDelta);
-  };
+    let blockQuantity = epochDuration.toNumber() * quantity;
+    await mineBlocks(blockQuantity);
+  }
 
   function nameToExp(name: string) {
     return "exp" + name[0].toUpperCase() + name.substring(1);
@@ -49,7 +50,7 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
       }
       expect(await glmDeposits.totalDeposit()).eq(parseEther("2000"));
       expect(await glmDeposits.totalDepositAt(1)).eq(parseEther("0"));
-      await wait(epochs, 1);
+      await forwardEpochs(epochs, 1);
       expect(await glmDeposits.totalDepositAt(2)).eq(parseEther("2000"));
     });
   });
@@ -176,8 +177,7 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
             }
           }
           if (step.forwardEpochs) {
-            // forward time
-            await wait(epochs, step.forwardEpochs);
+            await forwardEpochs(epochs, step.forwardEpochs);
           }
         }
 
@@ -230,7 +230,7 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
       expect(await token.balanceOf(signers.Alice.address)).eq(1005);
     });
     it("Can't withdrawn empty", async function () {
-      const { token, glmDeposits, signers } = testEnv;
+      const { glmDeposits, signers } = testEnv;
       expect(glmDeposits.connect(signers.Alice).withdraw(1)).to.be.revertedWith(
         "HN/deposit-is-smaller"
       );

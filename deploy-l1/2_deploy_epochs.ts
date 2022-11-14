@@ -2,16 +2,13 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { DECISION_WINDOW, EPOCH_DURATION, EPOCHS_START } from '../env';
 import { EPOCHS } from '../helpers/constants';
-import { getLatestBlockTimestamp } from '../helpers/misc-utils';
+import { getCurrentBlockNumber } from '../helpers/misc-utils';
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
-  let start = EPOCHS_START;
-  if (hre.network.name === 'hardhat') {
-    start = await getLatestBlockTimestamp() + 1;
-  }
+  let start = EPOCHS_START ? Number(EPOCHS_START) : await getCurrentBlockNumber();
 
   await deploy(EPOCHS, {
     from: deployer,
