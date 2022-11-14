@@ -5,9 +5,27 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IEpochs.sol";
 
+/**
+ * @notice Contract which handles Hexagon epochs mechanism.
+ *
+ * Epoch duration and time when decision window is open is calculated by number of blocks to pass.
+ * These values are set when deploying a contract but can later be changed with {setEpochDuration} and
+ * {setDecisionWindow} by contract's owner.
+ */
 contract Epochs is Ownable, IEpochs {
+
+    /// @notice Block height when hexagon starts.
     uint256 public start;
+
+    /// @notice Epoch duration in blocks count.
     uint256 public epochDuration;
+
+    /**
+     * @notice Decision window in blocks count.
+     *
+     * This value represents time, when participant can allocate founds to projects.
+     * It must be smaller then {epochDuration}.
+     */
     uint256 public decisionWindow;
 
     constructor(
@@ -22,17 +40,17 @@ contract Epochs is Ownable, IEpochs {
 
     function getCurrentEpoch() public view returns (uint32) {
         require(isStarted(), "HN/not-started-yet");
-        return uint32(((block.timestamp - start) / epochDuration) + 1);
+        return uint32(((block.number - start) / epochDuration) + 1);
     }
 
     function isDecisionWindowOpen() public view returns (bool) {
         require(isStarted(), "HN/not-started-yet");
-        uint32 moduloEpoch = uint32((block.timestamp - start) % epochDuration);
+        uint32 moduloEpoch = uint32((block.number - start) % epochDuration);
         return moduloEpoch <= decisionWindow;
     }
 
     function isStarted() public view returns (bool) {
-        return block.timestamp > start;
+        return block.number >= start;
     }
 
     function setEpochDuration(uint256 _epochDuration) external onlyOwner {

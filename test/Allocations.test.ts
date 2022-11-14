@@ -1,8 +1,7 @@
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
-import { DECISION_WINDOW, EPOCH_DURATION } from '../env';
-import { ALLOCATIONS, EPOCHS, PROPOSALS } from '../helpers/constants';
-import { getLatestBlockTimestamp, increaseNextBlockTimestamp } from '../helpers/misc-utils';
+import { ALLOCATIONS, EPOCHS } from '../helpers/constants';
+import { getCurrentBlockNumber, mineBlocks } from '../helpers/misc-utils';
 import { Allocations, Epochs } from '../typechain-types';
 import { makeTestsEnv } from './helpers/make-tests-env';
 
@@ -62,10 +61,10 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
 
     it('Users vote in second epoch', async () => {
       const { signers: { Alice } } = testEnv;
-      const start = await getLatestBlockTimestamp()
+      const start = await getCurrentBlockNumber();
       const allocations = await setupAllocations(start, 500, 200)
 
-      await increaseNextBlockTimestamp(600)
+      await mineBlocks(510)
       await allocations.connect(Alice).vote(1, 53);
       const voteInFirstEpoch = await allocations.participantVoteByEpoch(1, Alice.address)
       const voteInSecondEpoch = await allocations.participantVoteByEpoch(2, Alice.address)
@@ -78,10 +77,10 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
 
     it('Cannot vote when decision window closed', async () => {
       const { signers: { Alice } } = testEnv;
-      const start = await getLatestBlockTimestamp()
+      const start = await getCurrentBlockNumber();
       const allocations = await setupAllocations(start, 500, 200)
 
-      await increaseNextBlockTimestamp(400);
+      await mineBlocks(750);
 
       expect(allocations.connect(Alice).vote(1, 53))
         .revertedWith("HN/decision-window-closed");
