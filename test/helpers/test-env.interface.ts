@@ -1,4 +1,11 @@
-import { Allocations, Deposits, Epochs, Proposals, Token } from '../../typechain-types';
+import {
+  Allocations,
+  BeaconChainOracle,
+  Deposits,
+  Epochs, HexagonOracle,
+  Proposals, ExecutionLayerOracle,
+  Token
+} from '../../typechain-types';
 import { SignerWithAddress } from 'hardhat-deploy-ethers/signers';
 
 export type Signers = Record<string, SignerWithAddress>;
@@ -10,4 +17,7 @@ export interface TestEnv {
   glmDeposits: Deposits;
   token: Token;
   epochs: Epochs;
+  beaconChainOracle: BeaconChainOracle;
+  executionLayerOracle: ExecutionLayerOracle;
+  hexagonOracle: HexagonOracle;
 }

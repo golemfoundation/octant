@@ -4,8 +4,22 @@ import bignumberChai from 'chai-bignumber';
 import { solidity } from 'ethereum-waffle';
 
 import { deployments, ethers } from 'hardhat';
-import { PROPOSALS, DEPOSITS, TOKEN, ALLOCATIONS, EPOCHS } from '../../helpers/constants';
-import { Proposals, Deposits, Token, Allocations, Epochs } from '../../typechain-types';
+import {
+  PROPOSALS,
+  DEPOSITS,
+  TOKEN,
+  ALLOCATIONS,
+  EPOCHS,
+  BEACON_CHAIN_ORACLE, EXECUTION_LAYER_ORACLE, HEXAGON_ORACLE
+} from '../../helpers/constants';
+import {
+  Proposals,
+  Deposits,
+  Token,
+  Allocations,
+  Epochs,
+  ExecutionLayerOracle, HexagonOracle, BeaconChainOracle
+} from '../../typechain-types';
 import { Signers, TestEnv } from './test-env.interface';
 
 chai.use(bignumberChai());
@@ -19,6 +33,9 @@ const testEnv: TestEnv = {
   glmDeposits: {} as Deposits,
   token: {} as Token,
   epochs: {} as Epochs,
+  beaconChainOracle: {} as BeaconChainOracle,
+  executionLayerOracle: {} as ExecutionLayerOracle,
+  hexagonOracle: {} as HexagonOracle
 };
 
 async function initializeTestsEnv() {
@@ -28,6 +45,9 @@ async function initializeTestsEnv() {
   testEnv.glmDeposits = await ethers.getContract(DEPOSITS);
   testEnv.proposals = await ethers.getContract(PROPOSALS);
   testEnv.epochs = await ethers.getContract(EPOCHS);
+  testEnv.beaconChainOracle = await ethers.getContract(BEACON_CHAIN_ORACLE);
+  testEnv.executionLayerOracle = await ethers.getContract(EXECUTION_LAYER_ORACLE);
+  testEnv.hexagonOracle = await ethers.getContract(HEXAGON_ORACLE);
 }
 
 export function makeTestsEnv(name: string, tests: (testEnv: TestEnv) => void) {
