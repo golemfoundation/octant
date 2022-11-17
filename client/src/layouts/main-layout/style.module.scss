@@ -47,6 +47,10 @@ $headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
   height: $headerNavigationHeight;
   border-radius: $headerNavigationBorderRadius;
   background: $color-white;
-  padding: $headerMarginHorizontal;
+  padding: 2rem;
   box-shadow: $box-shadow-1;
+
+  .button {
+    padding: 0 1rem;
+  }
 }
