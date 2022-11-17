@@ -1,0 +1,51 @@
+$inputWidth: 3.2rem;
+$checkIndicatorSize: 1.4rem;
+
+.root {
+  position: relative;
+  display: flex;
+  width: $inputWidth;
+  height: 2rem;
+}
+
+.input, .checkIndicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: 0;
+}
+
+.input {
+  opacity: 0;
+  cursor: pointer;
+
+  &:checked + .checkIndicator {
+    background: $color-hexagon-blue;
+
+    &:after {
+      left: calc($inputWidth - $checkIndicatorSize - 0.3rem);
+      right: auto;
+    }
+  }
+}
+
+.checkIndicator {
+  background: $color-hexagon-grey2;
+  border-radius: 1rem;
+  pointer-events: none;
+
+  &:after {
+    position: absolute;
+    content: '';
+    top: 50%;
+    left: 0.3rem;
+    transform: translate(0, -50%);
+    border-radius: 0.7rem;
+    width: $checkIndicatorSize;
+    height: $checkIndicatorSize;
+    background: $color-white;
+    transition: left $transition-time-1 ease;
+  }
+}
