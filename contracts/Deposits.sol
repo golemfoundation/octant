@@ -2,6 +2,7 @@
 pragma solidity ^0.8.9;
 
 import "./interfaces/iTracker.sol";
+import "./interfaces/iDeposits.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -14,7 +15,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 /// even at the cost of increased complexity of other contracts. Lets strive to limit
 /// risk exposure of GLM deposits. This is why effective deposit tracking is outside
 /// in a contract that can fail without affecting withdrawal calls.
-contract Deposits is Ownable {
+contract Deposits is Ownable, iDeposits {
     /// @notice GLM token contract address
     ERC20 public immutable glm;
 
