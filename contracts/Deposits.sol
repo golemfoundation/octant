@@ -24,7 +24,7 @@ contract Deposits is Ownable, IDeposits {
 
     event Deposited(uint256 amount, uint256 when, address depositor);
     event Withdrawn(uint256 amount, uint256 when, address depositor);
-    event TrackerThrows();
+    event TrackerThrows(bytes reason);
 
     /// @dev deposit amounts per depositor
     mapping(address => uint256) public deposits;
@@ -51,8 +51,8 @@ contract Deposits is Ownable, IDeposits {
         emit Deposited(amount, block.timestamp, msg.sender);
         try tracker.processDeposit(msg.sender, oldDeposit, amount) {
             return;
-        } catch (bytes memory) {
-            emit TrackerThrows();
+        } catch (bytes memory reason) {
+            emit TrackerThrows(reason);
         }
     }
 
@@ -66,8 +66,8 @@ contract Deposits is Ownable, IDeposits {
         emit Withdrawn(amount, block.timestamp, msg.sender);
         try tracker.processWithdraw(msg.sender, oldDeposit, amount) {
             return;
-        } catch (bytes memory) {
-            emit TrackerThrows();
+        } catch (bytes memory reason) {
+            emit TrackerThrows(reason);
         }
     }
 }
