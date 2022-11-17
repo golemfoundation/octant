@@ -13,7 +13,6 @@ import "./interfaces/IEpochs.sol";
  * {setDecisionWindow} by contract's owner.
  */
 contract Epochs is Ownable, IEpochs {
-
     /// @notice Block height when hexagon starts.
     uint256 public start;
 
