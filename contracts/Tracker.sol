@@ -5,7 +5,7 @@ import "./interfaces/IEpochs.sol";
 import "./interfaces/iTracker.sol";
 import "./interfaces/iDeposits.sol";
 
-/// @title Contract tracking effective deposits accross epochs (Hexagon).
+/// @title Contract tracking effective deposits across epochs (Hexagon).
 /// @author Golem Foundation
 /// @notice This contract tracks effective deposits for particular epochs.
 /// If deposit is lower than 100 GLM it is not taken into account.
@@ -40,9 +40,10 @@ contract Tracker is iTracker {
         deposits = iDeposits(depositsAddress);
     }
 
-    /// @notice Deposit GLM to enable participation in Hexagon experiment.
-    /// This can be done at any time, but it is most capital effective at the end of the epoch.
-    /// @param amount Amount of GLM to be deposited.
+    /// @dev Handle GLM deposit, compute epoch effective deposit.
+    /// @param owner Owner of GLM
+    /// @param oldDeposit Last value of owner's GLM deposit
+    /// @param amount New funds being deposited.
     function processDeposit(
         address owner,
         uint256 oldDeposit,
@@ -59,8 +60,10 @@ contract Tracker is iTracker {
         _updateCurrentED(owner, epoch, oldDeposit, oldTotal);
     }
 
-    /// @notice Withdrawl GLM. This can be done at any time, but it is most capital effective at the beginning of the epoch.
-    /// @param amount Amount of GLM to be withdrawn.
+    /// @dev Handle GLM withdrawal, compute epoch effective deposit.
+    /// @param owner Owner of GLM
+    /// @param oldDeposit Last value of owner's GLM deposit
+    /// @param amount Amount of funds being withdrawed.
     function processWithdraw(
         address owner,
         uint256 oldDeposit,

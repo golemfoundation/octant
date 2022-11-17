@@ -134,7 +134,7 @@ makeTestsEnv(TRACKER, (testEnv) => {
         desc: "TED takes multiple user EDs into account",
       },
       {
-        steps: [{ Alice: 1000, Bob: 1000, user3: 50, forwardEpochs: 1 }],
+        steps: [{ Alice: 1000, Bob: 1000, Charlie: 50, forwardEpochs: 1 }],
         tests: [{ epoch: 2, expDTotal: 2000 }],
         desc: "TED cutoff: multiple sources with cutoff on individual source level",
       },
@@ -145,14 +145,13 @@ makeTestsEnv(TRACKER, (testEnv) => {
       },
       {
         steps: [{ Alice: 60, forwardEpochs: 1 }, { Alice: 60, forwardEpochs: 2 }, { Alice: -100, forwardEpochs: 2 }],
-        tests: [{ epoch: 2, expDTotal: 0 }, { epoch: 3, expDTotal: 120 }], //, { epoch: 5, expDTotal: 0 }
+        tests: [{ epoch: 2, expDTotal: 0 }, { epoch: 3, expDTotal: 120 }, { epoch: 5, expDTotal: 0 }],
         desc: "TED cutoff: cutoff boundary is crossed correctly",
       },
     ];
     parameters.forEach((param) => {
       it(`${param.desc}`, async () => {
         const { token, glmDeposits, signers, epochs, tracker } = testEnv;
-        let epochDuration = await epochs.epochDuration();
         let currentEpoch = await epochs.getCurrentEpoch();
         expect(currentEpoch, "fresh test always starts from epoch one").eq(1);
          for (let userName of ["Alice", "Bob", "Charlie"]) {

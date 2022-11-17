@@ -55,7 +55,7 @@ contract Deposits is Ownable {
         }
     }
 
-    /// @notice Withdrawl GLM. This can be done at any time, but it is most capital effective at the beginning of the epoch.
+    /// @notice Withdraw GLM. This can be done at any time, but it is most capital effective at the beginning of the epoch.
     /// @param amount Amount of GLM to be withdrawn.
     function withdraw(uint256 amount) public {
         uint256 oldDeposit = deposits[msg.sender];
