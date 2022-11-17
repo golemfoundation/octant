@@ -4,7 +4,7 @@ import { useMetamask } from 'use-metamask';
 import React, { FC } from 'react';
 
 import { ROOT_ROUTES } from 'routes/root-routes/routes';
-import { allocate, earn, metrics, projects, settings } from 'svg/navigation';
+import { allocate, earn, metrics, proposals, settings } from 'svg/navigation';
 import { hexagon } from 'svg/logo';
 import Button from 'components/core/button/button.component';
 import Svg from 'components/core/svg/svg.component';
@@ -14,9 +14,9 @@ import styles from './style.module.scss';
 
 const getTabs = () => [
   {
-    icon: projects,
+    icon: proposals,
     label: 'Projects',
-    to: ROOT_ROUTES.projects.absolute,
+    to: ROOT_ROUTES.proposals.absolute,
   },
   {
     icon: allocate,

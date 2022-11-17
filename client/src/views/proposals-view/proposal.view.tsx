@@ -10,7 +10,7 @@ import env from 'env';
 import { ExtendedProposal } from './types';
 import styles from './style.module.scss';
 
-const ProjectsView = (): ReactElement => {
+const ProposalsView = (): ReactElement => {
   const {
     metaState: { web3 },
   } = useMetamask();
@@ -69,4 +69,4 @@ const ProjectsView = (): ReactElement => {
   );
 };
 
-export default ProjectsView;
+export default ProposalsView;
