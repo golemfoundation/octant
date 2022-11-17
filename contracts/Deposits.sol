@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "./interfaces/iTracker.sol";
-import "./interfaces/iDeposits.sol";
+import "./interfaces/ITracker.sol";
+import "./interfaces/IDeposits.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -15,12 +15,12 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 /// even at the cost of increased complexity of other contracts. Lets strive to limit
 /// risk exposure of GLM deposits. This is why effective deposit tracking is outside
 /// in a contract that can fail without affecting withdrawal calls.
-contract Deposits is Ownable, iDeposits {
+contract Deposits is Ownable, IDeposits {
     /// @notice GLM token contract address
     ERC20 public immutable glm;
 
     /// @notice Effective Deposits tracker contract address
-    iTracker public tracker;
+    ITracker public tracker;
 
     event Deposited(uint256 amount, uint256 when, address depositor);
     event Withdrawn(uint256 amount, uint256 when, address depositor);
@@ -35,7 +35,7 @@ contract Deposits is Ownable, iDeposits {
     }
 
     function setDepositTrackerAddress(address newDT) external onlyOwner {
-        tracker = iTracker(newDT);
+        tracker = ITracker(newDT);
     }
 
     /// @notice Deposit GLM to enable participation in Hexagon experiment.

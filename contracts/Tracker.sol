@@ -2,8 +2,8 @@
 pragma solidity ^0.8.9;
 
 import "./interfaces/IEpochs.sol";
-import "./interfaces/iTracker.sol";
-import "./interfaces/iDeposits.sol";
+import "./interfaces/ITracker.sol";
+import "./interfaces/IDeposits.sol";
 
 /// @title Contract tracking effective deposits across epochs (Hexagon).
 /// @author Golem Foundation
@@ -13,12 +13,12 @@ import "./interfaces/iDeposits.sol";
 /// is considered effective.
 /// @dev Time is split into epochs, effective deposit is defined as min value
 /// of GLM held by this contract on behalf of the depositor in particular epoch.
-contract Tracker is iTracker {
+contract Tracker is ITracker {
     /// @notice Epochs contract address.
     IEpochs public immutable epochs;
 
     /// @notice Deposits contract address
-    iDeposits public immutable deposits;
+    IDeposits public immutable deposits;
 
     struct EffectiveDeposit {
         bool isSet; // set to true to distinguish between null and zero values of ED
@@ -37,7 +37,7 @@ contract Tracker is iTracker {
     /// @param epochsAddress Address of Epochs contract.
     constructor(address epochsAddress, address depositsAddress) {
         epochs = IEpochs(epochsAddress);
-        deposits = iDeposits(depositsAddress);
+        deposits = IDeposits(depositsAddress);
     }
 
     /// @dev Handle GLM deposit, compute epoch effective deposit.

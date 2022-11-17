@@ -2,7 +2,7 @@ pragma solidity ^0.8.9;
 
 /* SPDX-License-Identifier: UNLICENSED */
 
-interface iTracker {
+interface ITracker {
     function processDeposit(
         address,
         uint256,
