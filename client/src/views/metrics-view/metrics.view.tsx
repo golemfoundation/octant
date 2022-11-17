@@ -6,7 +6,7 @@ import TimeCounter from 'components/dedicated/time-counter/time-counter.compoent
 import env from 'env';
 import getDurationBetweenTimestamps from 'utils/getDurationBetweenTimestamps';
 
-const StatsView = (): ReactElement => {
+const MetricsView = (): ReactElement => {
   const { epochsAddress } = env;
   const contractEpochs = useEpochsContract(epochsAddress);
 
@@ -61,4 +61,4 @@ const StatsView = (): ReactElement => {
   );
 };
 
-export default StatsView;
+export default MetricsView;

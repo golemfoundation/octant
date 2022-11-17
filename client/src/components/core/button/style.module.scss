@@ -1,19 +1,50 @@
 .root {
-  border: 0.1rem solid $color-hexagon-blue;
   padding: 1rem 2rem;
   border-radius: 0.8rem;
   cursor: pointer;
-  background: $color-white;
-  color: $color-hexagon-blue;
   font-weight: $font-weight-bold;
+}
 
-  &.isActive {
-    color: $color-white;
+.variant-- {
+  &cta {
+    color: $color-hexagon-blue;
+    border: 0.1rem solid $color-hexagon-blue;
     background: $color-hexagon-blue;
   }
 
-  &.isDisabled {
-    cursor: auto;
-    background: $color-grey;
+  &secondary {
+    color: $color-hexagon-blue;
+    border: 0.1rem solid $color-hexagon-blue;
+    background: $color-white;
+
+    &.isActive {
+      color: $color-white;
+      background: $color-hexagon-blue;
+    }
+
+    &.isDisabled {
+      cursor: auto;
+      background: $color-grey;
+    }
+  }
+
+  &iconVertical {
+    color: $color-hexagon-grey2;
+    display: flex;
+    flex-direction: column;
+    border: none;
+    font-size: $font-size-10;
+
+    svg {
+      stroke: $color-hexagon-grey2;
+    }
+
+    &.isActive {
+      color: $color-hexagon-main-text-color;
+
+      svg {
+        stroke: $color-hexagon-main-text-color;
+      }
+    }
   }
 }

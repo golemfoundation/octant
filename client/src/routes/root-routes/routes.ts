@@ -4,7 +4,8 @@ const ROOT = getPathObject('', '');
 
 export const ROOT_ROUTES = {
   deposits: getPathObject(ROOT, 'deposits'),
-  proposals: getPathObject(ROOT, 'proposals'),
+  earn: getPathObject(ROOT, 'earn'),
+  metrics: getPathObject(ROOT, 'metrics'),
+  projects: getPathObject(ROOT, 'projects'),
   settings: getPathObject(ROOT, 'settings'),
-  stats: getPathObject(ROOT, 'stats'),
 };

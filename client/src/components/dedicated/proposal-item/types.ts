@@ -1,4 +1,4 @@
-import { ExtendedProposal } from 'views/proposals-view/types';
+import { ExtendedProposal } from 'views/projects-view/types';
 
 export interface ProposalItemProps extends ExtendedProposal {
   currentEpoch?: number;

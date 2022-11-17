@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom';
-import React, { FC } from 'react';
+import React, { FC, Fragment } from 'react';
 import cx from 'classnames';
 
 import ButtonProps from './types';
 import styles from './style.module.scss';
 
 const Button: FC<ButtonProps> = ({
+  Icon,
   children,
+  className,
   href,
   isActive,
   isDisabled,
@@ -16,6 +18,7 @@ const Button: FC<ButtonProps> = ({
   target,
   to,
   type = 'button',
+  variant = 'secondary',
 }) => {
   const filteredProps = {};
 
@@ -36,14 +39,23 @@ const Button: FC<ButtonProps> = ({
 
   return (
     <Component
-      className={cx(styles.root, isActive && styles.isActive, isDisabled && styles.isDisabled)}
+      className={cx(
+        styles.root,
+        styles[`variant--${variant}`],
+        isActive && styles.isActive,
+        isDisabled && styles.isDisabled,
+        className,
+      )}
       onClick={onClick}
       // eslint-disable-next-line react/button-has-type
       type={type}
       {...filteredProps}
     >
-      {children}
-      {label}
+      <Fragment>
+        {Icon && <span className={styles.icon}>{Icon}</span>}
+        {children}
+        {label}
+      </Fragment>
     </Component>
   );
 };
