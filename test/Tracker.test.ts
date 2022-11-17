@@ -202,7 +202,7 @@ makeTestsEnv(TRACKER, (testEnv) => {
     });
   });
 
-  describe("Effective deposits, depositAt edge cases", async () => {
+  describe("Effective deposits, edge cases", async () => {
     it("depositAt can't peek into the future", async () => {
       const { token, glmDeposits, signers, tracker } = testEnv;
       await token.transfer(signers.Alice.address, 1005);
@@ -210,6 +210,15 @@ makeTestsEnv(TRACKER, (testEnv) => {
       await glmDeposits.connect(signers.Alice).deposit(1000);
       expect(tracker.depositAt(signers.Alice.address, 10)).to.be.revertedWith(
         "HN/future-is-unknown"
+      );
+    });
+    it("tracker accepts calls only from deposits", async () => {
+      const { signers, tracker } = testEnv;
+      expect(tracker.connect(signers.Darth).processDeposit(signers.Darth.address, 0, parseEther("100000"))).to.be.revertedWith(
+        "HN/invalid-caller"
+      );
+      expect(tracker.connect(signers.Darth).processWithdraw(signers.Darth.address, 0, parseEther("100000"))).to.be.revertedWith(
+        "HN/invalid-caller"
       );
     });
   });
