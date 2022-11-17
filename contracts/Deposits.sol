@@ -41,7 +41,7 @@ contract Deposits is Ownable, iDeposits {
     /// @notice Deposit GLM to enable participation in Hexagon experiment.
     /// This can be done at any time, but it is most capital effective at the end of the epoch.
     /// @param amount Amount of GLM to be deposited.
-    function deposit(uint256 amount) public {
+    function deposit(uint256 amount) external {
         uint256 oldDeposit = deposits[msg.sender];
         deposits[msg.sender] = oldDeposit + amount;
         require(
@@ -58,7 +58,7 @@ contract Deposits is Ownable, iDeposits {
 
     /// @notice Withdraw GLM. This can be done at any time, but it is most capital effective at the beginning of the epoch.
     /// @param amount Amount of GLM to be withdrawn.
-    function withdraw(uint256 amount) public {
+    function withdraw(uint256 amount) external {
         uint256 oldDeposit = deposits[msg.sender];
         require(oldDeposit >= amount, "HN/deposit-is-smaller");
         deposits[msg.sender] = oldDeposit - amount;

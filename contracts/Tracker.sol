@@ -48,7 +48,7 @@ contract Tracker is iTracker {
         address owner,
         uint256 oldDeposit,
         uint256 amount
-    ) public {
+    ) external {
         require(msg.sender == address(deposits));
         uint256 oldTotal = totalDeposit;
         totalDeposit =
@@ -68,7 +68,7 @@ contract Tracker is iTracker {
         address owner,
         uint256 oldDeposit,
         uint256 amount
-    ) public {
+    ) external {
         require(msg.sender == address(deposits));
         uint256 oldTotal = totalDeposit;
         totalDeposit =
@@ -85,7 +85,7 @@ contract Tracker is iTracker {
     /// @param owner Owner of the deposit for which ED will be checked.
     /// @param epochNo Epoch number, for which ED will be checked.
     /// @return Effective deposit (GLM) in wei for particular epoch, particular owner.
-    function depositAt(address owner, uint256 epochNo) public view returns (uint256) {
+    function depositAt(address owner, uint256 epochNo) external view returns (uint256) {
         uint256 currentEpoch = epochs.getCurrentEpoch();
         require(epochNo <= currentEpoch, "HN/future-is-unknown");
         require(epochNo > 0, "HN/epochs-start-from-1");
@@ -97,7 +97,7 @@ contract Tracker is iTracker {
         return _applyDepositCutoff(deposits.deposits(owner));
     }
 
-    function totalDepositAt(uint256 epochNo) public view returns (uint256) {
+    function totalDepositAt(uint256 epochNo) external view returns (uint256) {
         uint256 currentEpoch = epochs.getCurrentEpoch();
         require(epochNo <= currentEpoch, "HN/future-is-unknown");
         require(epochNo > 0, "HN/epochs-start-from-1");
