@@ -69,5 +69,4 @@ contract Deposits is Ownable {
             emit TrackerThrows();
         }
     }
-
 }

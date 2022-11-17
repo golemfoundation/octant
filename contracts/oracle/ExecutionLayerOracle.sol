@@ -12,12 +12,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  * Balance for epoch will be taken from block which corresponds to end of Hexagon epoch (check `Epochs.sol` contract).
  */
 contract ExecutionLayerOracle is Ownable {
-
     /// @notice execution layer account balance in given epoch
     mapping(uint256 => uint256) public balanceByEpoch;
 
-    constructor() {
-    }
+    constructor() {}
 
     function setBalance(uint256 epoch, uint256 balance) external onlyOwner {
         require(balanceByEpoch[epoch] == 0, "HN/balance-for-given-epoch-already-exists");

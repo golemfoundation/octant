@@ -14,7 +14,6 @@ import "./interfaces/iDeposits.sol";
 /// @dev Time is split into epochs, effective deposit is defined as min value
 /// of GLM held by this contract on behalf of the depositor in particular epoch.
 contract Tracker is iTracker {
-
     /// @notice Epochs contract address.
     IEpochs public immutable epochs;
 
@@ -44,7 +43,11 @@ contract Tracker is iTracker {
     /// @notice Deposit GLM to enable participation in Hexagon experiment.
     /// This can be done at any time, but it is most capital effective at the end of the epoch.
     /// @param amount Amount of GLM to be deposited.
-    function processDeposit(address owner, uint256 oldDeposit, uint256 amount) public {
+    function processDeposit(
+        address owner,
+        uint256 oldDeposit,
+        uint256 amount
+    ) public {
         require(msg.sender == address(deposits));
         uint256 oldTotal = totalDeposit;
         totalDeposit =
@@ -58,7 +61,11 @@ contract Tracker is iTracker {
 
     /// @notice Withdrawl GLM. This can be done at any time, but it is most capital effective at the beginning of the epoch.
     /// @param amount Amount of GLM to be withdrawn.
-    function processWithdraw(address owner, uint256 oldDeposit, uint256 amount) public {
+    function processWithdraw(
+        address owner,
+        uint256 oldDeposit,
+        uint256 amount
+    ) public {
         require(msg.sender == address(deposits));
         uint256 oldTotal = totalDeposit;
         totalDeposit =
@@ -99,10 +106,9 @@ contract Tracker is iTracker {
         return totalDeposit;
     }
 
-
     /// @dev Sets ED in a situation when funds are moved after a period of inactivity.
     function _updatePrevED(
-                           address owner,
+        address owner,
         uint256 epoch,
         uint256 oldDeposit,
         uint256 oldTotal
@@ -124,7 +130,7 @@ contract Tracker is iTracker {
 
     /// @dev Tracks ED as min(deposit) for current epoch.
     function _updateCurrentED(
-                              address owner,
+        address owner,
         uint256 epoch,
         uint256 oldDeposit,
         uint256 oldTotal

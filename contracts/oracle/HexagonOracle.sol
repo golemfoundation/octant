@@ -15,7 +15,6 @@ import "./ExecutionLayerOracle.sol";
  * side (tips for block proposer and eventual MEVs).
  */
 contract HexagonOracle is IHexagonOracle {
-
     /**
      * @notice BeaconChainOracle contract.
      * Provides balance of the Golem Foundation validator's account on the ETH 2.0 side.
@@ -50,6 +49,8 @@ contract HexagonOracle is IHexagonOracle {
         uint256 previousExecutionLayerBalance = executionLayerOracle.balanceByEpoch(epoch - 1);
         uint256 previousBeaconChainBalance = beaconChainOracle.balanceByEpoch(epoch - 1);
 
-        return (epochExecutionLayerBalance + epochBeaconChainBalance) - (previousBeaconChainBalance + previousExecutionLayerBalance);
+        return
+            (epochExecutionLayerBalance + epochBeaconChainBalance) -
+            (previousBeaconChainBalance + previousExecutionLayerBalance);
     }
 }
