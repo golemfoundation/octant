@@ -48,8 +48,7 @@ contract Tracker is iTracker {
         address owner,
         uint256 oldDeposit,
         uint256 amount
-    ) external {
-        require(msg.sender == address(deposits), "HN/invalid-caller");
+    ) external onlyDeposits {
         uint256 oldTotal = totalDeposit;
         totalDeposit =
             totalDeposit -
@@ -68,8 +67,7 @@ contract Tracker is iTracker {
         address owner,
         uint256 oldDeposit,
         uint256 amount
-    ) external {
-        require(msg.sender == address(deposits), "HN/invalid-caller");
+    ) external onlyDeposits {
         uint256 oldTotal = totalDeposit;
         totalDeposit =
             totalDeposit -
@@ -171,5 +169,10 @@ contract Tracker is iTracker {
             return 0;
         }
         return actualAmount;
+    }
+
+    modifier onlyDeposits() {
+        require(msg.sender == address(deposits), "HN/invalid-caller");
+        _;
     }
 }
