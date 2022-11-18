@@ -12,7 +12,7 @@ export const metrics: SvgImageConfig = {
   viewBox: '0 0 24 24',
 };
 
-export const projects: SvgImageConfig = {
+export const proposals: SvgImageConfig = {
   markup:
     '<rect width="16" height="4" x="1.5" y="1" stroke-linejoin="round" stroke-width="1.5" rx="2"/><rect width="16" height="4" x="1.5" y="8" stroke-linejoin="round" stroke-width="1.5" rx="2"/><rect width="16" height="4" x="1.5" y="15" stroke-linejoin="round" stroke-width="1.5" rx="2"/><rect width="4" height="4" x="20.5" y="1" stroke-linejoin="round" stroke-width="1.5" rx="2"/><rect width="4" height="4" x="20.5" y="8" stroke-linejoin="round" stroke-width="1.5" rx="2"/><rect width="4" height="4" x="20.5" y="15" stroke-linejoin="round" stroke-width="1.5" rx="2"/>',
   viewBox: '0 0 26 20',

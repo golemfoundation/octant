@@ -1,21 +1,89 @@
+$paddingBody: 2.4rem;
+
 .root {
   display: flex;
   flex-direction: column;
-  border: 0.1rem solid $color-black;
-  padding: 2rem;
-  border-radius: $border-radius-standard;
+  border-radius: $border-radius-16;
+  background: $color-white;
 
-  &:not(:first-child) {
-    margin-top: 2rem;
+  &:not(:last-child) {
+    margin: 0 0 1.6rem 0;
   }
 
-  > div {
+  .header {
+    position: relative;
+  }
+
+  .imageLandscapeWrapper {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 20rem;
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 2 / 1;
+
+    .imageLandscape {
+      display: block;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: inherit;
+      object-fit: cover;
+      border-radius: $border-radius-16 $border-radius-16 0 0;
+    }
+  }
+
+  .imageProfile {
+    position: absolute;
+    top: 100%;
+    left: 1.7rem;
+    border-radius: 50%;
+    border: 0.3rem solid $color-white;
+    transform: translate(0, -50%);
+  }
+
+  .body {
+    margin: 3rem 0 0 0;
+    padding: $paddingBody;
+    text-align: left;
+  }
+
+  .name {
+    font-weight: $font-weight-bold;
+    margin: 0 0 1rem 0;
+  }
+
+  .description {
+    color: $color-hexagon-grey3;
+  }
+
+  .footer {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    padding: 0 $paddingBody $paddingBody;
 
-    &:not(:first-child) {
-      margin-top: 1rem;
+    .numbers {
+      display: flex;
+      font-weight: $font-weight-bold;
+    }
+
+    .percentage {
+      position: relative;
+      color: $color-hexagon-green;
+      margin: 0 0 0 1rem;
+      padding: 0 0 0 1rem;
+
+      &:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0.2rem;
+        height: 100%;
+        background: $color-hexagon-grey4;
+      }
     }
   }
 }
