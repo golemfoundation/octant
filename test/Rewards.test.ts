@@ -64,6 +64,7 @@ makeTestsEnv(REWARDS, (testEnv) => {
       expect(await rewards.stakedRatio(2), 'staked ratio').eq(parseEther('0.001'));
       expect(await rewards.allIndividualRewards(2), 'sum of IRs').eq(parseEther('0.4'));
       expect(await rewards.individualReward(2, signers.Alice.address), 'Alice IR').eq(parseEther('0.4'));
+      expect(await rewards.totalRewards(2), "totalRewards").within(parseEther("12"), parseEther("13"));
     });
 
     it('multiplayer scenario', async function () {
@@ -94,6 +95,7 @@ makeTestsEnv(REWARDS, (testEnv) => {
       expect(await rewards.allIndividualRewards(2), 'sum of IRs').eq(parseEther('0.6'));
       expect(await rewards.individualReward(2, signers.Alice.address), 'Alice IR').eq(parseEther('0.4'));
       expect(await rewards.individualReward(2, signers.Bob.address), 'Bob IR').eq(parseEther('0.2'));
+      expect(await rewards.totalRewards(2), "totalRewards").within(parseEther("15"), parseEther("16"));
     });
   });
 

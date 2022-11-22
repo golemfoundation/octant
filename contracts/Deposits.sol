@@ -22,8 +22,8 @@ contract Deposits is Ownable, IDeposits {
     /// @notice Effective Deposits tracker contract address
     ITracker public tracker;
 
-    event Deposited(uint256 amount, uint256 when, address depositor);
-    event Withdrawn(uint256 amount, uint256 when, address depositor);
+    event Deposited(uint224 amount, uint256 when, address depositor);
+    event Withdrawn(uint224 amount, uint256 when, address depositor);
     event TrackerUpdated();
     event TrackerFailed(bytes reason);
 
@@ -42,8 +42,8 @@ contract Deposits is Ownable, IDeposits {
     /// @notice Deposit GLM to enable participation in Hexagon experiment.
     /// This can be done at any time, but it is most capital effective at the end of the epoch.
     /// @param amount Amount of GLM to be deposited.
-    function deposit(uint256 amount) external {
-        uint256 oldDeposit = deposits[msg.sender];
+    function deposit(uint224 amount) external {
+        uint224 oldDeposit = uint224(deposits[msg.sender]);
         deposits[msg.sender] = oldDeposit + amount;
         require(
             glm.transferFrom(msg.sender, address(this), amount),
@@ -56,8 +56,8 @@ contract Deposits is Ownable, IDeposits {
 
     /// @notice Withdraw GLM. This can be done at any time, but it is most capital effective at the beginning of the epoch.
     /// @param amount Amount of GLM to be withdrawn.
-    function withdraw(uint256 amount) external {
-        uint256 oldDeposit = deposits[msg.sender];
+    function withdraw(uint224 amount) external {
+        uint224 oldDeposit = uint224(deposits[msg.sender]);
         require(oldDeposit >= amount, "HN/deposit-is-smaller");
         deposits[msg.sender] = oldDeposit - amount;
         require(glm.transfer(msg.sender, amount));

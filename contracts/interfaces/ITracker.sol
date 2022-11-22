@@ -5,13 +5,13 @@ pragma solidity ^0.8.9;
 interface ITracker {
     function processDeposit(
         address,
-        uint256,
-        uint256
+        uint224,
+        uint224
     ) external;
 
     function processWithdraw(
         address,
-        uint256,
-        uint256
+        uint224,
+        uint224
     ) external returns (bool, bytes memory);
 }

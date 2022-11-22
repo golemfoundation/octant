@@ -62,20 +62,20 @@ contract TestRewards {
     }
 
     /// @notice Compute funds staked at a particular epoch as ratio to total GLM token supply.
-    function stakedRatio(uint256 epoch) public view returns (uint256) {
-        uint256 tokenSupply = tracker.tokenSupplyAt(epoch);
+    function stakedRatio(uint32 epoch) public view returns (uint256) {
+        uint224 tokenSupply = tracker.tokenSupplyAt(epoch);
         uint256 totalDeposit = 13000000 ether;
         return totalDeposit.div(tokenSupply);
     }
 
     /// @notice Compute total individual rewards for particular epoch.
-    function allIndividualRewards(uint256 epoch) public view returns (uint256) {
+    function allIndividualRewards(uint32 epoch) public view returns (uint256) {
         uint256 proceeds = 400 ether;
         return proceeds.mul(stakedRatio(epoch));
     }
 
     /// @notice Compute user's individual reward for particular epoch.
-    function individualReward(uint256 epoch, address) public view returns (uint256) {
+    function individualReward(uint32 epoch, address) public view returns (uint256) {
         uint256 myDeposit = 1000000 ether;
         uint256 allDeposit = 13000000 ether;
         uint256 allRewards = allIndividualRewards(epoch);
@@ -84,19 +84,19 @@ contract TestRewards {
     }
 
     /// @notice Compute total rewards to be distributed between users and proposals.
-    function totalRewards(uint256 epoch) public view returns (uint256) {
+    function totalRewards(uint32 epoch) public view returns (uint256) {
         uint256 proceeds = 400 ether;
         uint256 ratio = stakedRatio(epoch);
         return proceeds.mul(ratio.sqrt());
     }
 
     /// @notice Compute matched rewards.
-    function matchedRewards(uint256 epoch) public view returns (uint256) {
+    function matchedRewards(uint32 epoch) public view returns (uint256) {
         return totalRewards(epoch) - allIndividualRewards(epoch);
     }
 
     /// @notice Total donated funds by participants.
-    function individualProposalRewards(uint256 epoch)
+    function individualProposalRewards(uint32 epoch)
         public
         view
         returns (uint256, ProposalRewards[] memory)
@@ -125,7 +125,7 @@ contract TestRewards {
     }
 
     /// @notice Compute proposal rewards.
-    function matchedProposalRewards(uint256 epoch)
+    function matchedProposalRewards(uint32 epoch)
         external
         view
         returns (ProposalRewards[] memory)

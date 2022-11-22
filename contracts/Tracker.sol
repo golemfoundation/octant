@@ -37,22 +37,22 @@ contract Tracker is Ownable {
 
     struct EffectiveDeposit {
         bool isSet; // set to true to distinguish between null and zero values of ED
-        uint256 amount;
+        uint224 amount;
     }
 
     /// @dev total effective deposit now
-    uint256 public totalDeposit;
+    uint224 public totalDeposit;
 
     /// @dev helper structure for effective deposit amounts tracking. See `depositAt` function
     /// GLMGE_it
-    mapping(address => mapping(uint256 => EffectiveDeposit)) private effectiveDeposits;
+    mapping(address => mapping(uint32 => EffectiveDeposit)) private effectiveDeposits;
 
     /// @dev Tracking total supply of GLM per epoch.
-    mapping(uint256 => uint256) public tokenSupplyByEpoch;
+    mapping(uint32 => uint224) public tokenSupplyByEpoch;
 
     /// @dev total effective deposit in a particular epoch
     /// (sigma GLMGE_i for particular t)
-    mapping(uint256 => EffectiveDeposit) private totalEffectiveDeposits;
+    mapping(uint32 => EffectiveDeposit) private totalEffectiveDeposits;
 
     /// @param epochsAddress Address of Epochs contract.
     constructor(
@@ -73,15 +73,15 @@ contract Tracker is Ownable {
     /// @param amount New funds being deposited.
     function processDeposit(
         address owner,
-        uint256 oldDeposit,
-        uint256 amount
+        uint224 oldDeposit,
+        uint224 amount
     ) external onlyTrackerWrapper {
-        uint256 oldTotal = totalDeposit;
+        uint224 oldTotal = totalDeposit;
         totalDeposit =
             totalDeposit -
             _applyDepositCutoff(oldDeposit) +
             _applyDepositCutoff(oldDeposit + amount);
-        uint256 epoch = epochs.getCurrentEpoch();
+        uint32 epoch = epochs.getCurrentEpoch();
         _updatePrevED(owner, epoch, oldDeposit, oldTotal);
         _updateCurrentED(owner, epoch, oldDeposit, oldTotal);
     }
@@ -92,15 +92,15 @@ contract Tracker is Ownable {
     /// @param amount Amount of funds being withdrawed.
     function processWithdraw(
         address owner,
-        uint256 oldDeposit,
-        uint256 amount
+        uint224 oldDeposit,
+        uint224 amount
     ) external onlyTrackerWrapper {
-        uint256 oldTotal = totalDeposit;
+        uint224 oldTotal = totalDeposit;
         totalDeposit =
             totalDeposit -
             _applyDepositCutoff(oldDeposit) +
             _applyDepositCutoff(oldDeposit - amount);
-        uint256 epoch = epochs.getCurrentEpoch();
+        uint32 epoch = epochs.getCurrentEpoch();
         _updatePrevED(owner, epoch, oldDeposit, oldTotal);
     }
 
@@ -110,35 +110,35 @@ contract Tracker is Ownable {
     /// @param owner Owner of the deposit for which ED will be checked.
     /// @param epochNo Epoch number, for which ED will be checked.
     /// @return Effective deposit (GLM) in wei for particular epoch, particular owner.
-    function depositAt(address owner, uint256 epochNo) external view returns (uint256) {
-        uint256 currentEpoch = epochs.getCurrentEpoch();
+    function depositAt(address owner, uint32 epochNo) external view returns (uint256) {
+        uint32 currentEpoch = epochs.getCurrentEpoch();
         require(epochNo <= currentEpoch, "HN/future-is-unknown");
         require(epochNo > 0, "HN/epochs-start-from-1");
-        for (uint256 iEpoch = epochNo; iEpoch <= currentEpoch; iEpoch = iEpoch + 1) {
+        for (uint32 iEpoch = epochNo; iEpoch <= currentEpoch; iEpoch = iEpoch + 1) {
             if (effectiveDeposits[owner][iEpoch].isSet) {
-                return _applyDepositCutoff(effectiveDeposits[owner][iEpoch].amount);
+                return uint256(_applyDepositCutoff(effectiveDeposits[owner][iEpoch].amount));
             }
         }
-        return _applyDepositCutoff(deposits.deposits(owner));
+        return uint256(_applyDepositCutoff(uint224(deposits.deposits(owner))));
     }
 
-    function totalDepositAt(uint256 epochNo) external view returns (uint256) {
-        uint256 currentEpoch = epochs.getCurrentEpoch();
+    function totalDepositAt(uint32 epochNo) external view returns (uint256) {
+        uint32 currentEpoch = epochs.getCurrentEpoch();
         require(epochNo <= currentEpoch, "HN/future-is-unknown");
         require(epochNo > 0, "HN/epochs-start-from-1");
-        for (uint256 iEpoch = epochNo; iEpoch <= currentEpoch; iEpoch = iEpoch + 1) {
+        for (uint32 iEpoch = epochNo; iEpoch <= currentEpoch; iEpoch = iEpoch + 1) {
             if (totalEffectiveDeposits[iEpoch].isSet) {
-                return totalEffectiveDeposits[iEpoch].amount;
+                return uint256(totalEffectiveDeposits[iEpoch].amount);
             }
         }
         return totalDeposit;
     }
 
-    function tokenSupplyAt(uint256 epochNo) external view returns (uint256) {
-        uint256 currentEpoch = epochs.getCurrentEpoch();
+    function tokenSupplyAt(uint32 epochNo) external view returns (uint224) {
+        uint32 currentEpoch = epochs.getCurrentEpoch();
         require(epochNo <= currentEpoch, "HN/future-is-unknown");
         require(epochNo > 0, "HN/epochs-start-from-1");
-        for (uint256 iEpoch = epochNo; iEpoch <= currentEpoch; iEpoch = iEpoch + 1) {
+        for (uint32 iEpoch = epochNo; iEpoch <= currentEpoch; iEpoch = iEpoch + 1) {
             if (0 != tokenSupplyByEpoch[iEpoch]) {
                 return tokenSupplyByEpoch[iEpoch];
             }
@@ -147,13 +147,13 @@ contract Tracker is Ownable {
     }
 
     /// @notice Compute total GLM token supply at this particular moment. Burned GLM is not part of the supply.
-    function tokenSupply() public view returns (uint256) {
+    function tokenSupply() public view returns (uint224) {
         address burnAddress = 0x0000000000000000000000000000000000000000;
         return
-            glm.totalSupply() +
-            gnt.totalSupply() -
-            glm.balanceOf(burnAddress) -
-            gnt.balanceOf(burnAddress);
+            uint224(glm.totalSupply()) +
+            uint224(gnt.totalSupply()) -
+            uint224(glm.balanceOf(burnAddress)) -
+            uint224(gnt.balanceOf(burnAddress));
     }
 
     function setProxyAddress(address _proxyAddress) external onlyOwner {
@@ -163,9 +163,9 @@ contract Tracker is Ownable {
     /// @dev Sets ED in a situation when funds are moved after a period of inactivity.
     function _updatePrevED(
         address owner,
-        uint256 epoch,
-        uint256 oldDeposit,
-        uint256 oldTotal
+        uint32 epoch,
+        uint224 oldDeposit,
+        uint224 oldTotal
     ) private {
         EffectiveDeposit memory prevED = effectiveDeposits[owner][epoch - 1];
         if (!prevED.isSet) {
@@ -186,9 +186,9 @@ contract Tracker is Ownable {
     /// @dev Tracks ED as min(deposit) for current epoch.
     function _updateCurrentED(
         address owner,
-        uint256 epoch,
-        uint256 oldDeposit,
-        uint256 oldTotal
+        uint32 epoch,
+        uint224 oldDeposit,
+        uint224 oldTotal
     ) private {
         EffectiveDeposit memory currentED = effectiveDeposits[owner][epoch];
         EffectiveDeposit memory epochED = totalEffectiveDeposits[epoch];
@@ -212,14 +212,14 @@ contract Tracker is Ownable {
     }
 
     /// @dev return smaller of two number values
-    function _min(uint256 a, uint256 b) private pure returns (uint256) {
+    function _min(uint224 a, uint224 b) private pure returns (uint224) {
         return a <= b ? a : b;
     }
 
     /// @dev Implements cutoff of 100 GLM. Amounts lower than that are not eligible for rewards.
     /// @param actualAmount Amount of GLM currently deposited.
     /// @return Amount of GLM adjusted by 100 GLM cutoff.
-    function _applyDepositCutoff(uint256 actualAmount) private pure returns (uint256) {
+    function _applyDepositCutoff(uint224 actualAmount) private pure returns (uint224) {
         if (actualAmount < 100 ether) {
             return 0;
         }

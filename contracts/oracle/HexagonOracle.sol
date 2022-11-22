@@ -37,7 +37,7 @@ contract HexagonOracle is IHexagonOracle {
      * @param epoch - Hexagon Epoch's number.
      * @return Total ETH staking proceeds made by foundation in wei for particular epoch.
      */
-    function getTotalETHStakingProceeds(uint256 epoch) public view returns (uint256) {
+    function getTotalETHStakingProceeds(uint32 epoch) public view returns (uint256) {
         uint256 epochExecutionLayerBalance = executionLayerOracle.balanceByEpoch(epoch);
         uint256 epochBeaconChainBalance = beaconChainOracle.balanceByEpoch(epoch);
 
