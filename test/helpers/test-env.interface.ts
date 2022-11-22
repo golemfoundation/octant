@@ -1,7 +1,7 @@
 import {
   Allocations,
   BeaconChainOracle,
-  Deposits, Tracker,
+  Deposits, Tracker, Rewards,
   Epochs, HexagonOracle,
   Proposals, ExecutionLayerOracle,
   Token
@@ -16,6 +16,7 @@ export interface TestEnv {
   proposals: Proposals;
   glmDeposits: Deposits;
   tracker: Tracker;
+  rewards: Rewards;
   token: Token;
   epochs: Epochs;
   beaconChainOracle: BeaconChainOracle;

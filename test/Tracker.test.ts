@@ -202,6 +202,39 @@ makeTestsEnv(TRACKER, (testEnv) => {
     });
   });
 
+  describe("GLM supply is being tracked", async () => {
+    it("tokenSupplyAt when forwarding", async () => {
+      const { epochs, tracker } = testEnv;
+      await forwardEpochs(epochs, 10);
+      expect(await tracker.tokenSupplyAt(5)).gt(0);
+    });
+    it("tokenSupplyAt works for zero case", async () => {
+      const { tracker } = testEnv;
+      expect(await tracker.tokenSupplyAt(1)).gt(0);
+    });
+    it("tokenSupplyAt can't peek into the future", async () => {
+      const { token, glmDeposits, signers, tracker } = testEnv;
+      await token.transfer(signers.Alice.address, 1005);
+      await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
+      await glmDeposits.connect(signers.Alice).deposit(1000);
+      expect(tracker.tokenSupplyAt(10)).to.be.revertedWith(
+        "HN/future-is-unknown"
+      );
+    });
+    it("Can read value in 'silent' epochs", async () => {
+      const { epochs, token, glmDeposits, signers, tracker } = testEnv;
+      let startAt = await epochs.start();
+      console.log(`first epoch starts at ${startAt}`);
+      await token.transfer(signers.Alice.address, 1005);
+      await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
+      await glmDeposits.connect(signers.Alice).deposit(1000);
+      expect(await epochs.getCurrentEpoch(), "first epoch number").eq(1);
+      await forwardEpochs(epochs, 10);
+      expect(await epochs.getCurrentEpoch(), "eleventh number number").eq(11);
+      await tracker.tokenSupplyAt(4);
+    });
+  });
+
   describe("Effective deposits, edge cases", async () => {
     it("depositAt can't peek into the future", async () => {
       const { token, glmDeposits, signers, tracker } = testEnv;

@@ -64,5 +64,8 @@
   },
   "resolutions": {
     "ethereumjs-abi": "https://registry.npmjs.org/ethereumjs-abi/-/ethereumjs-abi-0.6.8.tgz"
+  },
+  "dependencies": {
+    "@prb/math": "^2.5.0"
   }
 }
