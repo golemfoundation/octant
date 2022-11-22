@@ -5,6 +5,10 @@ import "./interfaces/IEpochs.sol";
 import "./interfaces/ITracker.sol";
 import "./interfaces/IDeposits.sol";
 
+/// external dependencies
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "hardhat/console.sol";
+
 /// @title Contract tracking effective deposits across epochs (Hexagon).
 /// @author Golem Foundation
 /// @notice This contract tracks effective deposits for particular epochs.
@@ -29,15 +33,33 @@ contract Tracker is ITracker {
     uint256 public totalDeposit;
 
     /// @dev helper structure for effective deposit amounts tracking. See `depositAt` function
+    /// GLMGE_it
     mapping(address => mapping(uint256 => EffectiveDeposit)) private effectiveDeposits;
 
+    /// @dev Tracking total supply of GLM per epoch.
+    mapping(uint256 => uint256) public tokenSupplyByEpoch;
+
     /// @dev total effective deposit in a particular epoch
+    /// (sigma GLMGE_i for particular t)
     mapping(uint256 => EffectiveDeposit) private totalEffectiveDeposits;
 
+    /// @notice GLM token (token after migration).
+    ERC20 public immutable glm;
+
+    /// @notice GNT token (original GNT, before migration).
+    ERC20 public immutable gnt;
+
     /// @param epochsAddress Address of Epochs contract.
-    constructor(address epochsAddress, address depositsAddress) {
+    constructor(
+        address epochsAddress,
+        address depositsAddress,
+        address glmAddress,
+        address gntAddress
+    ) {
         epochs = IEpochs(epochsAddress);
         deposits = IDeposits(depositsAddress);
+        glm = ERC20(glmAddress);
+        gnt = ERC20(gntAddress);
     }
 
     /// @dev Handle GLM deposit, compute epoch effective deposit.
@@ -107,6 +129,28 @@ contract Tracker is ITracker {
         return totalDeposit;
     }
 
+    function tokenSupplyAt(uint256 epochNo) external view returns (uint256) {
+        uint256 currentEpoch = epochs.getCurrentEpoch();
+        require(epochNo <= currentEpoch, "HN/future-is-unknown");
+        require(epochNo > 0, "HN/epochs-start-from-1");
+        for (uint256 iEpoch = epochNo; iEpoch <= currentEpoch; iEpoch = iEpoch + 1) {
+            if (0 != tokenSupplyByEpoch[iEpoch]) {
+                return tokenSupplyByEpoch[iEpoch];
+            }
+        }
+        return tokenSupply();
+    }
+
+    /// @notice Compute total GLM token supply at this particular moment. Burned GLM is not part of the supply.
+    function tokenSupply() public view returns (uint256) {
+        address burnAddress = 0x0000000000000000000000000000000000000000;
+        return
+            glm.totalSupply() +
+            gnt.totalSupply() -
+            glm.balanceOf(burnAddress) -
+            gnt.balanceOf(burnAddress);
+    }
+
     /// @dev Sets ED in a situation when funds are moved after a period of inactivity.
     function _updatePrevED(
         address owner,
@@ -126,6 +170,7 @@ contract Tracker is ITracker {
             epochED.isSet = true;
             epochED.amount = oldTotal;
             totalEffectiveDeposits[epoch - 1] = epochED;
+            tokenSupplyByEpoch[epoch] = tokenSupply();
         }
     }
 
@@ -153,6 +198,7 @@ contract Tracker is ITracker {
         } else {
             epochED.amount = _min(oldTotal, epochED.amount);
             totalEffectiveDeposits[epoch] = epochED;
+            tokenSupplyByEpoch[epoch] = tokenSupply();
         }
     }
 

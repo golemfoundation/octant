@@ -15,6 +15,15 @@ makeTestsEnv(EPOCHS, (testEnv) => {
     return await epochsFactory.deploy(start, epochDuration, decisionWindow) as Epochs;
   }
 
+  describe('Epoch numbering', () => {
+    it("Starts from 1", async () => {
+      const start = await getCurrentBlockNumber();
+      const epochs = await setupEpochs(start);
+
+      expect(await epochs.getCurrentEpoch()).eq(1);
+    });
+  });
+
   describe('Epoch duration', () => {
     const parameters = [
       { mineBlocks: 0, result: 1 },

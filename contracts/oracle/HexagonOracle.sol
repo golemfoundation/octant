@@ -1,6 +1,5 @@
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
-
-/* SPDX-License-Identifier: UNLICENSED */
 
 import "../interfaces/IHexagonOracle.sol";
 import "./BeaconChainOracle.sol";
