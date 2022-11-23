@@ -72,6 +72,18 @@ Client unit tests:
     - cd client
     - yarn test
 
+Oracle unit tests:
+  stage: test
+  image: python:3.9.15-slim
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-contracts
+      paths:
+      - artifacts
+  script:
+    - cd oracle
+    - pip install -r requirements.txt
+    - pytest -v --ignore=test_integration.py
+
 Contracts deploy:
   stage: deploy
   rules:

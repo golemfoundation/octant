@@ -1,0 +1,32 @@
+{
+  "status": "OK",
+  "data": [
+    {
+      "blockHash": "0x2726595d93b397e4f72ff6d4aad6f3c54da930f745db7f49882cb8418f228560",
+      "blockNumber": 7951588,
+      "timestamp": 1668425112,
+      "blockReward": 81373360598512432,
+      "blockMevReward": 0,
+      "producerReward": 81373360598512432,
+      "feeRecipient": "0x8dc847af872947ac18d5d63fa646eb65d4d99560",
+      "gasLimit": 30000000,
+      "gasUsed": 29989868,
+      "baseFee": 40706140518,
+      "txCount": 128,
+      "internalTxCount": 23,
+      "uncleCount": 0,
+      "parentHash": "0x008d66d1bf562e5b83ffc8382628c93ae4c0148ba812b25a82efeb6d22dd5546",
+      "uncleHash": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+      "difficulty": 0,
+      "posConsensus": {
+        "executionBlockNumber": 7951588,
+        "proposerIndex": 353971,
+        "slot": 4326426,
+        "epoch": 135200,
+        "finalized": true
+      },
+      "relay": null,
+      "consensusAlgorithm": "pos"
+    }
+  ]
+}

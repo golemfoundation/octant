@@ -1,0 +1,3540 @@
+{
+  "status": "OK",
+  "data": [
+    {
+      "balance": 33815147143,
+      "effectivebalance": 32000000000,
+      "epoch": 135256,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074638939,
+      "effectivebalance": 32000000000,
+      "epoch": 135256,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938806512,
+      "effectivebalance": 32000000000,
+      "epoch": 135256,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971227703,
+      "effectivebalance": 32000000000,
+      "epoch": 135256,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989225704,
+      "effectivebalance": 32000000000,
+      "epoch": 135256,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33815137815,
+      "effectivebalance": 32000000000,
+      "epoch": 135255,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074626917,
+      "effectivebalance": 32000000000,
+      "epoch": 135255,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938794490,
+      "effectivebalance": 32000000000,
+      "epoch": 135255,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971215681,
+      "effectivebalance": 32000000000,
+      "epoch": 135255,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989216376,
+      "effectivebalance": 32000000000,
+      "epoch": 135255,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33815126465,
+      "effectivebalance": 32000000000,
+      "epoch": 135254,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074615567,
+      "effectivebalance": 32000000000,
+      "epoch": 135254,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938792366,
+      "effectivebalance": 32000000000,
+      "epoch": 135254,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971206538,
+      "effectivebalance": 32000000000,
+      "epoch": 135254,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989205026,
+      "effectivebalance": 32000000000,
+      "epoch": 135254,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33815114378,
+      "effectivebalance": 32000000000,
+      "epoch": 135253,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074606111,
+      "effectivebalance": 32000000000,
+      "epoch": 135253,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938780279,
+      "effectivebalance": 32000000000,
+      "epoch": 135253,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971194451,
+      "effectivebalance": 32000000000,
+      "epoch": 135253,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989192939,
+      "effectivebalance": 32000000000,
+      "epoch": 135253,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33815102830,
+      "effectivebalance": 32000000000,
+      "epoch": 135252,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074596804,
+      "effectivebalance": 32000000000,
+      "epoch": 135252,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938770972,
+      "effectivebalance": 32000000000,
+      "epoch": 135252,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971182903,
+      "effectivebalance": 32000000000,
+      "epoch": 135252,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989181391,
+      "effectivebalance": 32000000000,
+      "epoch": 135252,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33815091281,
+      "effectivebalance": 32000000000,
+      "epoch": 135251,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074608264,
+      "effectivebalance": 32000000000,
+      "epoch": 135251,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938782432,
+      "effectivebalance": 32000000000,
+      "epoch": 135251,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971171354,
+      "effectivebalance": 32000000000,
+      "epoch": 135251,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989169842,
+      "effectivebalance": 32000000000,
+      "epoch": 135251,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33815079528,
+      "effectivebalance": 32000000000,
+      "epoch": 135250,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074596511,
+      "effectivebalance": 32000000000,
+      "epoch": 135250,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938770679,
+      "effectivebalance": 32000000000,
+      "epoch": 135250,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971159601,
+      "effectivebalance": 32000000000,
+      "epoch": 135250,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989158089,
+      "effectivebalance": 32000000000,
+      "epoch": 135250,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33815067587,
+      "effectivebalance": 32000000000,
+      "epoch": 135249,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074584570,
+      "effectivebalance": 32000000000,
+      "epoch": 135249,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938758738,
+      "effectivebalance": 32000000000,
+      "epoch": 135249,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971147660,
+      "effectivebalance": 32000000000,
+      "epoch": 135249,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989146148,
+      "effectivebalance": 32000000000,
+      "epoch": 135249,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33815055786,
+      "effectivebalance": 32000000000,
+      "epoch": 135248,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074572769,
+      "effectivebalance": 32000000000,
+      "epoch": 135248,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938770198,
+      "effectivebalance": 32000000000,
+      "epoch": 135248,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971135859,
+      "effectivebalance": 32000000000,
+      "epoch": 135248,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989134347,
+      "effectivebalance": 32000000000,
+      "epoch": 135248,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33815053668,
+      "effectivebalance": 32000000000,
+      "epoch": 135247,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074560747,
+      "effectivebalance": 32000000000,
+      "epoch": 135247,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938758176,
+      "effectivebalance": 32000000000,
+      "epoch": 135247,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971123837,
+      "effectivebalance": 32000000000,
+      "epoch": 135247,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989122325,
+      "effectivebalance": 32000000000,
+      "epoch": 135247,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33815041826,
+      "effectivebalance": 32000000000,
+      "epoch": 135246,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074551438,
+      "effectivebalance": 32000000000,
+      "epoch": 135246,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938746334,
+      "effectivebalance": 32000000000,
+      "epoch": 135246,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971111995,
+      "effectivebalance": 32000000000,
+      "epoch": 135246,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989110483,
+      "effectivebalance": 32000000000,
+      "epoch": 135246,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33815039702,
+      "effectivebalance": 32000000000,
+      "epoch": 135245,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074539959,
+      "effectivebalance": 32000000000,
+      "epoch": 135245,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938734855,
+      "effectivebalance": 32000000000,
+      "epoch": 135245,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971100516,
+      "effectivebalance": 32000000000,
+      "epoch": 135245,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989101362,
+      "effectivebalance": 32000000000,
+      "epoch": 135245,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33815027996,
+      "effectivebalance": 32000000000,
+      "epoch": 135244,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074528253,
+      "effectivebalance": 32000000000,
+      "epoch": 135244,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938723149,
+      "effectivebalance": 32000000000,
+      "epoch": 135244,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971088810,
+      "effectivebalance": 32000000000,
+      "epoch": 135244,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989089656,
+      "effectivebalance": 32000000000,
+      "epoch": 135244,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33815015706,
+      "effectivebalance": 32000000000,
+      "epoch": 135243,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074515963,
+      "effectivebalance": 32000000000,
+      "epoch": 135243,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938710859,
+      "effectivebalance": 32000000000,
+      "epoch": 135243,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971076520,
+      "effectivebalance": 32000000000,
+      "epoch": 135243,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989077366,
+      "effectivebalance": 32000000000,
+      "epoch": 135243,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33815006332,
+      "effectivebalance": 32000000000,
+      "epoch": 135242,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074506589,
+      "effectivebalance": 32000000000,
+      "epoch": 135242,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938698857,
+      "effectivebalance": 32000000000,
+      "epoch": 135242,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971067146,
+      "effectivebalance": 32000000000,
+      "epoch": 135242,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989065364,
+      "effectivebalance": 32000000000,
+      "epoch": 135242,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814994098,
+      "effectivebalance": 32000000000,
+      "epoch": 135241,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074494355,
+      "effectivebalance": 32000000000,
+      "epoch": 135241,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938686623,
+      "effectivebalance": 32000000000,
+      "epoch": 135241,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971054912,
+      "effectivebalance": 32000000000,
+      "epoch": 135241,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989053130,
+      "effectivebalance": 32000000000,
+      "epoch": 135241,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814984645,
+      "effectivebalance": 32000000000,
+      "epoch": 135240,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074481873,
+      "effectivebalance": 32000000000,
+      "epoch": 135240,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938674141,
+      "effectivebalance": 32000000000,
+      "epoch": 135240,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971042430,
+      "effectivebalance": 32000000000,
+      "epoch": 135240,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989043677,
+      "effectivebalance": 32000000000,
+      "epoch": 135240,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814972428,
+      "effectivebalance": 32000000000,
+      "epoch": 135239,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074469656,
+      "effectivebalance": 32000000000,
+      "epoch": 135239,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938661924,
+      "effectivebalance": 32000000000,
+      "epoch": 135239,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971030213,
+      "effectivebalance": 32000000000,
+      "epoch": 135239,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989031460,
+      "effectivebalance": 32000000000,
+      "epoch": 135239,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814960186,
+      "effectivebalance": 32000000000,
+      "epoch": 135238,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074457414,
+      "effectivebalance": 32000000000,
+      "epoch": 135238,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938649682,
+      "effectivebalance": 32000000000,
+      "epoch": 135238,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971017971,
+      "effectivebalance": 32000000000,
+      "epoch": 135238,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989022101,
+      "effectivebalance": 32000000000,
+      "epoch": 135238,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814948300,
+      "effectivebalance": 32000000000,
+      "epoch": 135237,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074445528,
+      "effectivebalance": 32000000000,
+      "epoch": 135237,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938637796,
+      "effectivebalance": 32000000000,
+      "epoch": 135237,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971006085,
+      "effectivebalance": 32000000000,
+      "epoch": 135237,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989010215,
+      "effectivebalance": 32000000000,
+      "epoch": 135237,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814937427,
+      "effectivebalance": 32000000000,
+      "epoch": 135236,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074434655,
+      "effectivebalance": 32000000000,
+      "epoch": 135236,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938626923,
+      "effectivebalance": 32000000000,
+      "epoch": 135236,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33971004052,
+      "effectivebalance": 32000000000,
+      "epoch": 135236,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33989008182,
+      "effectivebalance": 32000000000,
+      "epoch": 135236,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814925501,
+      "effectivebalance": 32000000000,
+      "epoch": 135235,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074425267,
+      "effectivebalance": 32000000000,
+      "epoch": 135235,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938614997,
+      "effectivebalance": 32000000000,
+      "epoch": 135235,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970994664,
+      "effectivebalance": 32000000000,
+      "epoch": 135235,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988996256,
+      "effectivebalance": 32000000000,
+      "epoch": 135235,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814913474,
+      "effectivebalance": 32000000000,
+      "epoch": 135234,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074413240,
+      "effectivebalance": 32000000000,
+      "epoch": 135234,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938602970,
+      "effectivebalance": 32000000000,
+      "epoch": 135234,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970985283,
+      "effectivebalance": 32000000000,
+      "epoch": 135234,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988984229,
+      "effectivebalance": 32000000000,
+      "epoch": 135234,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814901085,
+      "effectivebalance": 32000000000,
+      "epoch": 135233,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074400851,
+      "effectivebalance": 32000000000,
+      "epoch": 135233,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938590581,
+      "effectivebalance": 32000000000,
+      "epoch": 135233,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970996743,
+      "effectivebalance": 32000000000,
+      "epoch": 135233,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988971840,
+      "effectivebalance": 32000000000,
+      "epoch": 135233,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814891692,
+      "effectivebalance": 32000000000,
+      "epoch": 135232,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074389006,
+      "effectivebalance": 32000000000,
+      "epoch": 135232,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938578736,
+      "effectivebalance": 32000000000,
+      "epoch": 135232,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970984898,
+      "effectivebalance": 32000000000,
+      "epoch": 135232,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988962447,
+      "effectivebalance": 32000000000,
+      "epoch": 135232,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814882453,
+      "effectivebalance": 32000000000,
+      "epoch": 135231,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074377314,
+      "effectivebalance": 32000000000,
+      "epoch": 135231,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938569497,
+      "effectivebalance": 32000000000,
+      "epoch": 135231,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970973206,
+      "effectivebalance": 32000000000,
+      "epoch": 135231,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988950755,
+      "effectivebalance": 32000000000,
+      "epoch": 135231,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814870628,
+      "effectivebalance": 32000000000,
+      "epoch": 135230,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074365489,
+      "effectivebalance": 32000000000,
+      "epoch": 135230,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938557672,
+      "effectivebalance": 32000000000,
+      "epoch": 135230,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970963836,
+      "effectivebalance": 32000000000,
+      "epoch": 135230,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988938930,
+      "effectivebalance": 32000000000,
+      "epoch": 135230,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814858389,
+      "effectivebalance": 32000000000,
+      "epoch": 135229,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074356032,
+      "effectivebalance": 32000000000,
+      "epoch": 135229,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938545433,
+      "effectivebalance": 32000000000,
+      "epoch": 135229,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970951597,
+      "effectivebalance": 32000000000,
+      "epoch": 135229,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988926691,
+      "effectivebalance": 32000000000,
+      "epoch": 135229,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814846161,
+      "effectivebalance": 32000000000,
+      "epoch": 135228,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074343804,
+      "effectivebalance": 32000000000,
+      "epoch": 135228,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938533205,
+      "effectivebalance": 32000000000,
+      "epoch": 135228,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970939369,
+      "effectivebalance": 32000000000,
+      "epoch": 135228,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988914463,
+      "effectivebalance": 32000000000,
+      "epoch": 135228,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814836895,
+      "effectivebalance": 32000000000,
+      "epoch": 135227,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074331866,
+      "effectivebalance": 32000000000,
+      "epoch": 135227,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938537355,
+      "effectivebalance": 32000000000,
+      "epoch": 135227,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970927431,
+      "effectivebalance": 32000000000,
+      "epoch": 135227,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988902525,
+      "effectivebalance": 32000000000,
+      "epoch": 135227,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814834769,
+      "effectivebalance": 32000000000,
+      "epoch": 135226,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074320126,
+      "effectivebalance": 32000000000,
+      "epoch": 135226,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938525615,
+      "effectivebalance": 32000000000,
+      "epoch": 135226,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970925305,
+      "effectivebalance": 32000000000,
+      "epoch": 135226,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988890785,
+      "effectivebalance": 32000000000,
+      "epoch": 135226,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814822443,
+      "effectivebalance": 32000000000,
+      "epoch": 135225,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074307800,
+      "effectivebalance": 32000000000,
+      "epoch": 135225,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938513289,
+      "effectivebalance": 32000000000,
+      "epoch": 135225,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970912979,
+      "effectivebalance": 32000000000,
+      "epoch": 135225,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988878459,
+      "effectivebalance": 32000000000,
+      "epoch": 135225,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814810573,
+      "effectivebalance": 32000000000,
+      "epoch": 135224,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074295930,
+      "effectivebalance": 32000000000,
+      "epoch": 135224,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938503843,
+      "effectivebalance": 32000000000,
+      "epoch": 135224,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970901109,
+      "effectivebalance": 32000000000,
+      "epoch": 135224,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988869013,
+      "effectivebalance": 32000000000,
+      "epoch": 135224,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814798136,
+      "effectivebalance": 32000000000,
+      "epoch": 135223,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074283493,
+      "effectivebalance": 32000000000,
+      "epoch": 135223,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938491406,
+      "effectivebalance": 32000000000,
+      "epoch": 135223,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970888672,
+      "effectivebalance": 32000000000,
+      "epoch": 135223,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988856576,
+      "effectivebalance": 32000000000,
+      "epoch": 135223,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814788715,
+      "effectivebalance": 32000000000,
+      "epoch": 135222,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074271146,
+      "effectivebalance": 32000000000,
+      "epoch": 135222,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938479059,
+      "effectivebalance": 32000000000,
+      "epoch": 135222,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970879251,
+      "effectivebalance": 32000000000,
+      "epoch": 135222,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988844229,
+      "effectivebalance": 32000000000,
+      "epoch": 135222,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814776796,
+      "effectivebalance": 32000000000,
+      "epoch": 135221,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074259227,
+      "effectivebalance": 32000000000,
+      "epoch": 135221,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938467140,
+      "effectivebalance": 32000000000,
+      "epoch": 135221,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970867332,
+      "effectivebalance": 32000000000,
+      "epoch": 135221,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988832310,
+      "effectivebalance": 32000000000,
+      "epoch": 135221,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814764452,
+      "effectivebalance": 32000000000,
+      "epoch": 135220,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074249760,
+      "effectivebalance": 32000000000,
+      "epoch": 135220,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938454796,
+      "effectivebalance": 32000000000,
+      "epoch": 135220,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970857865,
+      "effectivebalance": 32000000000,
+      "epoch": 135220,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988819966,
+      "effectivebalance": 32000000000,
+      "epoch": 135220,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814754984,
+      "effectivebalance": 32000000000,
+      "epoch": 135219,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074237336,
+      "effectivebalance": 32000000000,
+      "epoch": 135219,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938442372,
+      "effectivebalance": 32000000000,
+      "epoch": 135219,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970848397,
+      "effectivebalance": 32000000000,
+      "epoch": 135219,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988807542,
+      "effectivebalance": 32000000000,
+      "epoch": 135219,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814742791,
+      "effectivebalance": 32000000000,
+      "epoch": 135218,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074225143,
+      "effectivebalance": 32000000000,
+      "epoch": 135218,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938430179,
+      "effectivebalance": 32000000000,
+      "epoch": 135218,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970836204,
+      "effectivebalance": 32000000000,
+      "epoch": 135218,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988798093,
+      "effectivebalance": 32000000000,
+      "epoch": 135218,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814730484,
+      "effectivebalance": 32000000000,
+      "epoch": 135217,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074212836,
+      "effectivebalance": 32000000000,
+      "epoch": 135217,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938417872,
+      "effectivebalance": 32000000000,
+      "epoch": 135217,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970823897,
+      "effectivebalance": 32000000000,
+      "epoch": 135217,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988785786,
+      "effectivebalance": 32000000000,
+      "epoch": 135217,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814718640,
+      "effectivebalance": 32000000000,
+      "epoch": 135216,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074200992,
+      "effectivebalance": 32000000000,
+      "epoch": 135216,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938408513,
+      "effectivebalance": 32000000000,
+      "epoch": 135216,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970812053,
+      "effectivebalance": 32000000000,
+      "epoch": 135216,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988773942,
+      "effectivebalance": 32000000000,
+      "epoch": 135216,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814706406,
+      "effectivebalance": 32000000000,
+      "epoch": 135215,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074188758,
+      "effectivebalance": 32000000000,
+      "epoch": 135215,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938399049,
+      "effectivebalance": 32000000000,
+      "epoch": 135215,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970799819,
+      "effectivebalance": 32000000000,
+      "epoch": 135215,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988761708,
+      "effectivebalance": 32000000000,
+      "epoch": 135215,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814694905,
+      "effectivebalance": 32000000000,
+      "epoch": 135214,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074177257,
+      "effectivebalance": 32000000000,
+      "epoch": 135214,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938389808,
+      "effectivebalance": 32000000000,
+      "epoch": 135214,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970788318,
+      "effectivebalance": 32000000000,
+      "epoch": 135214,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988750207,
+      "effectivebalance": 32000000000,
+      "epoch": 135214,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814682886,
+      "effectivebalance": 32000000000,
+      "epoch": 135213,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074165238,
+      "effectivebalance": 32000000000,
+      "epoch": 135213,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938377789,
+      "effectivebalance": 32000000000,
+      "epoch": 135213,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970776299,
+      "effectivebalance": 32000000000,
+      "epoch": 135213,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988738188,
+      "effectivebalance": 32000000000,
+      "epoch": 135213,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814670900,
+      "effectivebalance": 32000000000,
+      "epoch": 135212,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074153252,
+      "effectivebalance": 32000000000,
+      "epoch": 135212,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938365803,
+      "effectivebalance": 32000000000,
+      "epoch": 135212,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970764313,
+      "effectivebalance": 32000000000,
+      "epoch": 135212,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988728874,
+      "effectivebalance": 32000000000,
+      "epoch": 135212,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814658950,
+      "effectivebalance": 32000000000,
+      "epoch": 135211,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074141302,
+      "effectivebalance": 32000000000,
+      "epoch": 135211,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938353853,
+      "effectivebalance": 32000000000,
+      "epoch": 135211,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970755069,
+      "effectivebalance": 32000000000,
+      "epoch": 135211,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988716924,
+      "effectivebalance": 32000000000,
+      "epoch": 135211,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814647176,
+      "effectivebalance": 32000000000,
+      "epoch": 135210,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074129528,
+      "effectivebalance": 32000000000,
+      "epoch": 135210,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938342079,
+      "effectivebalance": 32000000000,
+      "epoch": 135210,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970743295,
+      "effectivebalance": 32000000000,
+      "epoch": 135210,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988705150,
+      "effectivebalance": 32000000000,
+      "epoch": 135210,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814635313,
+      "effectivebalance": 32000000000,
+      "epoch": 135209,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074117665,
+      "effectivebalance": 32000000000,
+      "epoch": 135209,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938330216,
+      "effectivebalance": 32000000000,
+      "epoch": 135209,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970731432,
+      "effectivebalance": 32000000000,
+      "epoch": 135209,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988693287,
+      "effectivebalance": 32000000000,
+      "epoch": 135209,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814646773,
+      "effectivebalance": 32000000000,
+      "epoch": 135208,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074105523,
+      "effectivebalance": 32000000000,
+      "epoch": 135208,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938328095,
+      "effectivebalance": 32000000000,
+      "epoch": 135208,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970719290,
+      "effectivebalance": 32000000000,
+      "epoch": 135208,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988681145,
+      "effectivebalance": 32000000000,
+      "epoch": 135208,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814644646,
+      "effectivebalance": 32000000000,
+      "epoch": 135207,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074096279,
+      "effectivebalance": 32000000000,
+      "epoch": 135207,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938316365,
+      "effectivebalance": 32000000000,
+      "epoch": 135207,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970707560,
+      "effectivebalance": 32000000000,
+      "epoch": 135207,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988669415,
+      "effectivebalance": 32000000000,
+      "epoch": 135207,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814632565,
+      "effectivebalance": 32000000000,
+      "epoch": 135206,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074086921,
+      "effectivebalance": 32000000000,
+      "epoch": 135206,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938304284,
+      "effectivebalance": 32000000000,
+      "epoch": 135206,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970695479,
+      "effectivebalance": 32000000000,
+      "epoch": 135206,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988667323,
+      "effectivebalance": 32000000000,
+      "epoch": 135206,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814620400,
+      "effectivebalance": 32000000000,
+      "epoch": 135205,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074074756,
+      "effectivebalance": 32000000000,
+      "epoch": 135205,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938292119,
+      "effectivebalance": 32000000000,
+      "epoch": 135205,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970683314,
+      "effectivebalance": 32000000000,
+      "epoch": 135205,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988655158,
+      "effectivebalance": 32000000000,
+      "epoch": 135205,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814608693,
+      "effectivebalance": 32000000000,
+      "epoch": 135204,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074063049,
+      "effectivebalance": 32000000000,
+      "epoch": 135204,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938282786,
+      "effectivebalance": 32000000000,
+      "epoch": 135204,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970673981,
+      "effectivebalance": 32000000000,
+      "epoch": 135204,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988666618,
+      "effectivebalance": 32000000000,
+      "epoch": 135204,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814599662,
+      "effectivebalance": 32000000000,
+      "epoch": 135203,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074051859,
+      "effectivebalance": 32000000000,
+      "epoch": 135203,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938271596,
+      "effectivebalance": 32000000000,
+      "epoch": 135203,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970662791,
+      "effectivebalance": 32000000000,
+      "epoch": 135203,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988655428,
+      "effectivebalance": 32000000000,
+      "epoch": 135203,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814587728,
+      "effectivebalance": 32000000000,
+      "epoch": 135202,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074042449,
+      "effectivebalance": 32000000000,
+      "epoch": 135202,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938259662,
+      "effectivebalance": 32000000000,
+      "epoch": 135202,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970653381,
+      "effectivebalance": 32000000000,
+      "epoch": 135202,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988643494,
+      "effectivebalance": 32000000000,
+      "epoch": 135202,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814575947,
+      "effectivebalance": 32000000000,
+      "epoch": 135201,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074030668,
+      "effectivebalance": 32000000000,
+      "epoch": 135201,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938247881,
+      "effectivebalance": 32000000000,
+      "epoch": 135201,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970641600,
+      "effectivebalance": 32000000000,
+      "epoch": 135201,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988631713,
+      "effectivebalance": 32000000000,
+      "epoch": 135201,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814566503,
+      "effectivebalance": 32000000000,
+      "epoch": 135200,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074018275,
+      "effectivebalance": 32000000000,
+      "epoch": 135200,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938235488,
+      "effectivebalance": 32000000000,
+      "epoch": 135200,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970629207,
+      "effectivebalance": 32000000000,
+      "epoch": 135200,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988619320,
+      "effectivebalance": 32000000000,
+      "epoch": 135200,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814553895,
+      "effectivebalance": 32000000000,
+      "epoch": 135199,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34074005667,
+      "effectivebalance": 32000000000,
+      "epoch": 135199,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938222880,
+      "effectivebalance": 32000000000,
+      "epoch": 135199,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970616599,
+      "effectivebalance": 32000000000,
+      "epoch": 135199,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988606712,
+      "effectivebalance": 32000000000,
+      "epoch": 135199,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814542036,
+      "effectivebalance": 32000000000,
+      "epoch": 135198,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073993808,
+      "effectivebalance": 32000000000,
+      "epoch": 135198,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938211021,
+      "effectivebalance": 32000000000,
+      "epoch": 135198,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970604740,
+      "effectivebalance": 32000000000,
+      "epoch": 135198,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988594853,
+      "effectivebalance": 32000000000,
+      "epoch": 135198,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814532661,
+      "effectivebalance": 32000000000,
+      "epoch": 135197,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073981770,
+      "effectivebalance": 32000000000,
+      "epoch": 135197,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938201646,
+      "effectivebalance": 32000000000,
+      "epoch": 135197,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970592702,
+      "effectivebalance": 32000000000,
+      "epoch": 135197,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988585478,
+      "effectivebalance": 32000000000,
+      "epoch": 135197,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814521147,
+      "effectivebalance": 32000000000,
+      "epoch": 135196,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073972620,
+      "effectivebalance": 32000000000,
+      "epoch": 135196,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938190132,
+      "effectivebalance": 32000000000,
+      "epoch": 135196,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970581188,
+      "effectivebalance": 32000000000,
+      "epoch": 135196,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988573964,
+      "effectivebalance": 32000000000,
+      "epoch": 135196,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814509093,
+      "effectivebalance": 32000000000,
+      "epoch": 135195,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073960566,
+      "effectivebalance": 32000000000,
+      "epoch": 135195,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938180762,
+      "effectivebalance": 32000000000,
+      "epoch": 135195,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970571818,
+      "effectivebalance": 32000000000,
+      "epoch": 135195,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988564594,
+      "effectivebalance": 32000000000,
+      "epoch": 135195,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814499628,
+      "effectivebalance": 32000000000,
+      "epoch": 135194,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073948652,
+      "effectivebalance": 32000000000,
+      "epoch": 135194,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938168848,
+      "effectivebalance": 32000000000,
+      "epoch": 135194,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970562353,
+      "effectivebalance": 32000000000,
+      "epoch": 135194,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988552680,
+      "effectivebalance": 32000000000,
+      "epoch": 135194,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814486945,
+      "effectivebalance": 32000000000,
+      "epoch": 135193,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073935969,
+      "effectivebalance": 32000000000,
+      "epoch": 135193,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938156165,
+      "effectivebalance": 32000000000,
+      "epoch": 135193,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970549670,
+      "effectivebalance": 32000000000,
+      "epoch": 135193,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988539997,
+      "effectivebalance": 32000000000,
+      "epoch": 135193,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814474872,
+      "effectivebalance": 32000000000,
+      "epoch": 135192,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073923896,
+      "effectivebalance": 32000000000,
+      "epoch": 135192,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938144092,
+      "effectivebalance": 32000000000,
+      "epoch": 135192,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970540413,
+      "effectivebalance": 32000000000,
+      "epoch": 135192,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988527924,
+      "effectivebalance": 32000000000,
+      "epoch": 135192,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814465395,
+      "effectivebalance": 32000000000,
+      "epoch": 135191,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073911733,
+      "effectivebalance": 32000000000,
+      "epoch": 135191,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938134615,
+      "effectivebalance": 32000000000,
+      "epoch": 135191,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970528250,
+      "effectivebalance": 32000000000,
+      "epoch": 135191,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988515761,
+      "effectivebalance": 32000000000,
+      "epoch": 135191,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814453170,
+      "effectivebalance": 32000000000,
+      "epoch": 135190,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073899508,
+      "effectivebalance": 32000000000,
+      "epoch": 135190,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938122390,
+      "effectivebalance": 32000000000,
+      "epoch": 135190,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970516025,
+      "effectivebalance": 32000000000,
+      "epoch": 135190,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988503536,
+      "effectivebalance": 32000000000,
+      "epoch": 135190,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814440919,
+      "effectivebalance": 32000000000,
+      "epoch": 135189,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073890042,
+      "effectivebalance": 32000000000,
+      "epoch": 135189,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938112924,
+      "effectivebalance": 32000000000,
+      "epoch": 135189,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970503774,
+      "effectivebalance": 32000000000,
+      "epoch": 135189,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988491285,
+      "effectivebalance": 32000000000,
+      "epoch": 135189,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814428833,
+      "effectivebalance": 32000000000,
+      "epoch": 135188,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073880599,
+      "effectivebalance": 32000000000,
+      "epoch": 135188,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938100838,
+      "effectivebalance": 32000000000,
+      "epoch": 135188,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970494331,
+      "effectivebalance": 32000000000,
+      "epoch": 135188,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988479199,
+      "effectivebalance": 32000000000,
+      "epoch": 135188,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814416991,
+      "effectivebalance": 32000000000,
+      "epoch": 135187,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073868757,
+      "effectivebalance": 32000000000,
+      "epoch": 135187,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938098700,
+      "effectivebalance": 32000000000,
+      "epoch": 135187,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970492193,
+      "effectivebalance": 32000000000,
+      "epoch": 135187,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988467357,
+      "effectivebalance": 32000000000,
+      "epoch": 135187,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814404666,
+      "effectivebalance": 32000000000,
+      "epoch": 135186,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073856432,
+      "effectivebalance": 32000000000,
+      "epoch": 135186,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938086375,
+      "effectivebalance": 32000000000,
+      "epoch": 135186,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970479868,
+      "effectivebalance": 32000000000,
+      "epoch": 135186,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988455032,
+      "effectivebalance": 32000000000,
+      "epoch": 135186,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814395199,
+      "effectivebalance": 32000000000,
+      "epoch": 135185,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073844103,
+      "effectivebalance": 32000000000,
+      "epoch": 135185,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938074046,
+      "effectivebalance": 32000000000,
+      "epoch": 135185,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970470401,
+      "effectivebalance": 32000000000,
+      "epoch": 135185,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988442703,
+      "effectivebalance": 32000000000,
+      "epoch": 135185,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814382981,
+      "effectivebalance": 32000000000,
+      "epoch": 135184,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073831885,
+      "effectivebalance": 32000000000,
+      "epoch": 135184,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938064755,
+      "effectivebalance": 32000000000,
+      "epoch": 135184,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970458183,
+      "effectivebalance": 32000000000,
+      "epoch": 135184,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988430485,
+      "effectivebalance": 32000000000,
+      "epoch": 135184,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814370942,
+      "effectivebalance": 32000000000,
+      "epoch": 135183,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073819846,
+      "effectivebalance": 32000000000,
+      "epoch": 135183,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938052716,
+      "effectivebalance": 32000000000,
+      "epoch": 135183,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970446144,
+      "effectivebalance": 32000000000,
+      "epoch": 135183,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988418446,
+      "effectivebalance": 32000000000,
+      "epoch": 135183,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814361488,
+      "effectivebalance": 32000000000,
+      "epoch": 135182,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073807657,
+      "effectivebalance": 32000000000,
+      "epoch": 135182,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938040527,
+      "effectivebalance": 32000000000,
+      "epoch": 135182,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970444003,
+      "effectivebalance": 32000000000,
+      "epoch": 135182,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988408992,
+      "effectivebalance": 32000000000,
+      "epoch": 135182,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814349010,
+      "effectivebalance": 32000000000,
+      "epoch": 135181,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073795179,
+      "effectivebalance": 32000000000,
+      "epoch": 135181,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938031040,
+      "effectivebalance": 32000000000,
+      "epoch": 135181,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970431525,
+      "effectivebalance": 32000000000,
+      "epoch": 135181,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988396514,
+      "effectivebalance": 32000000000,
+      "epoch": 135181,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814337231,
+      "effectivebalance": 32000000000,
+      "epoch": 135180,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073785825,
+      "effectivebalance": 32000000000,
+      "epoch": 135180,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938028911,
+      "effectivebalance": 32000000000,
+      "epoch": 135180,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970419746,
+      "effectivebalance": 32000000000,
+      "epoch": 135180,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988387160,
+      "effectivebalance": 32000000000,
+      "epoch": 135180,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814325022,
+      "effectivebalance": 32000000000,
+      "epoch": 135179,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073773616,
+      "effectivebalance": 32000000000,
+      "epoch": 135179,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938016702,
+      "effectivebalance": 32000000000,
+      "epoch": 135179,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970407537,
+      "effectivebalance": 32000000000,
+      "epoch": 135179,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988374951,
+      "effectivebalance": 32000000000,
+      "epoch": 135179,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814312967,
+      "effectivebalance": 32000000000,
+      "epoch": 135178,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073764158,
+      "effectivebalance": 32000000000,
+      "epoch": 135178,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33938004647,
+      "effectivebalance": 32000000000,
+      "epoch": 135178,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970395482,
+      "effectivebalance": 32000000000,
+      "epoch": 135178,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988362896,
+      "effectivebalance": 32000000000,
+      "epoch": 135178,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814303642,
+      "effectivebalance": 32000000000,
+      "epoch": 135177,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073752092,
+      "effectivebalance": 32000000000,
+      "epoch": 135177,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937992581,
+      "effectivebalance": 32000000000,
+      "epoch": 135177,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970383416,
+      "effectivebalance": 32000000000,
+      "epoch": 135177,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988350830,
+      "effectivebalance": 32000000000,
+      "epoch": 135177,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814292187,
+      "effectivebalance": 32000000000,
+      "epoch": 135176,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073740637,
+      "effectivebalance": 32000000000,
+      "epoch": 135176,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937981126,
+      "effectivebalance": 32000000000,
+      "epoch": 135176,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970371961,
+      "effectivebalance": 32000000000,
+      "epoch": 135176,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988341582,
+      "effectivebalance": 32000000000,
+      "epoch": 135176,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814280060,
+      "effectivebalance": 32000000000,
+      "epoch": 135175,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073728510,
+      "effectivebalance": 32000000000,
+      "epoch": 135175,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937968999,
+      "effectivebalance": 32000000000,
+      "epoch": 135175,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970359834,
+      "effectivebalance": 32000000000,
+      "epoch": 135175,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988329455,
+      "effectivebalance": 32000000000,
+      "epoch": 135175,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814267992,
+      "effectivebalance": 32000000000,
+      "epoch": 135174,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073726356,
+      "effectivebalance": 32000000000,
+      "epoch": 135174,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937956931,
+      "effectivebalance": 32000000000,
+      "epoch": 135174,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970347766,
+      "effectivebalance": 32000000000,
+      "epoch": 135174,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988320024,
+      "effectivebalance": 32000000000,
+      "epoch": 135174,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814255880,
+      "effectivebalance": 32000000000,
+      "epoch": 135173,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073714244,
+      "effectivebalance": 32000000000,
+      "epoch": 135173,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937944819,
+      "effectivebalance": 32000000000,
+      "epoch": 135173,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970335654,
+      "effectivebalance": 32000000000,
+      "epoch": 135173,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988307912,
+      "effectivebalance": 32000000000,
+      "epoch": 135173,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814244081,
+      "effectivebalance": 32000000000,
+      "epoch": 135172,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073704899,
+      "effectivebalance": 32000000000,
+      "epoch": 135172,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937933020,
+      "effectivebalance": 32000000000,
+      "epoch": 135172,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970323855,
+      "effectivebalance": 32000000000,
+      "epoch": 135172,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988296113,
+      "effectivebalance": 32000000000,
+      "epoch": 135172,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814232444,
+      "effectivebalance": 32000000000,
+      "epoch": 135171,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073693262,
+      "effectivebalance": 32000000000,
+      "epoch": 135171,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937921383,
+      "effectivebalance": 32000000000,
+      "epoch": 135171,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970312218,
+      "effectivebalance": 32000000000,
+      "epoch": 135171,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988286902,
+      "effectivebalance": 32000000000,
+      "epoch": 135171,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814219988,
+      "effectivebalance": 32000000000,
+      "epoch": 135170,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073680806,
+      "effectivebalance": 32000000000,
+      "epoch": 135170,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937908927,
+      "effectivebalance": 32000000000,
+      "epoch": 135170,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970299762,
+      "effectivebalance": 32000000000,
+      "epoch": 135170,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988274446,
+      "effectivebalance": 32000000000,
+      "epoch": 135170,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814210574,
+      "effectivebalance": 32000000000,
+      "epoch": 135169,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073668797,
+      "effectivebalance": 32000000000,
+      "epoch": 135169,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937896918,
+      "effectivebalance": 32000000000,
+      "epoch": 135169,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970287753,
+      "effectivebalance": 32000000000,
+      "epoch": 135169,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988262437,
+      "effectivebalance": 32000000000,
+      "epoch": 135169,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814198252,
+      "effectivebalance": 32000000000,
+      "epoch": 135168,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073656475,
+      "effectivebalance": 32000000000,
+      "epoch": 135168,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937884596,
+      "effectivebalance": 32000000000,
+      "epoch": 135168,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970278312,
+      "effectivebalance": 32000000000,
+      "epoch": 135168,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988250115,
+      "effectivebalance": 32000000000,
+      "epoch": 135168,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814185915,
+      "effectivebalance": 32000000000,
+      "epoch": 135167,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073644138,
+      "effectivebalance": 32000000000,
+      "epoch": 135167,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937872259,
+      "effectivebalance": 32000000000,
+      "epoch": 135167,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970265975,
+      "effectivebalance": 32000000000,
+      "epoch": 135167,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988237778,
+      "effectivebalance": 32000000000,
+      "epoch": 135167,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814176693,
+      "effectivebalance": 32000000000,
+      "epoch": 135166,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073632483,
+      "effectivebalance": 32000000000,
+      "epoch": 135166,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937876447,
+      "effectivebalance": 32000000000,
+      "epoch": 135166,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970256753,
+      "effectivebalance": 32000000000,
+      "epoch": 135166,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988226123,
+      "effectivebalance": 32000000000,
+      "epoch": 135166,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814164503,
+      "effectivebalance": 32000000000,
+      "epoch": 135165,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073620293,
+      "effectivebalance": 32000000000,
+      "epoch": 135165,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937864257,
+      "effectivebalance": 32000000000,
+      "epoch": 135165,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970244563,
+      "effectivebalance": 32000000000,
+      "epoch": 135165,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988213933,
+      "effectivebalance": 32000000000,
+      "epoch": 135165,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814155089,
+      "effectivebalance": 32000000000,
+      "epoch": 135164,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073608334,
+      "effectivebalance": 32000000000,
+      "epoch": 135164,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937852298,
+      "effectivebalance": 32000000000,
+      "epoch": 135164,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970232604,
+      "effectivebalance": 32000000000,
+      "epoch": 135164,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988211803,
+      "effectivebalance": 32000000000,
+      "epoch": 135164,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814143069,
+      "effectivebalance": 32000000000,
+      "epoch": 135163,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073596314,
+      "effectivebalance": 32000000000,
+      "epoch": 135163,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937840278,
+      "effectivebalance": 32000000000,
+      "epoch": 135163,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970220584,
+      "effectivebalance": 32000000000,
+      "epoch": 135163,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988202441,
+      "effectivebalance": 32000000000,
+      "epoch": 135163,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814131279,
+      "effectivebalance": 32000000000,
+      "epoch": 135162,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073584524,
+      "effectivebalance": 32000000000,
+      "epoch": 135162,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937830964,
+      "effectivebalance": 32000000000,
+      "epoch": 135162,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970211270,
+      "effectivebalance": 32000000000,
+      "epoch": 135162,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988190651,
+      "effectivebalance": 32000000000,
+      "epoch": 135162,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814119301,
+      "effectivebalance": 32000000000,
+      "epoch": 135161,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073575109,
+      "effectivebalance": 32000000000,
+      "epoch": 135161,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937821549,
+      "effectivebalance": 32000000000,
+      "epoch": 135161,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970199292,
+      "effectivebalance": 32000000000,
+      "epoch": 135161,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988178673,
+      "effectivebalance": 32000000000,
+      "epoch": 135161,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814109837,
+      "effectivebalance": 32000000000,
+      "epoch": 135160,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073562970,
+      "effectivebalance": 32000000000,
+      "epoch": 135160,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937809410,
+      "effectivebalance": 32000000000,
+      "epoch": 135160,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970187153,
+      "effectivebalance": 32000000000,
+      "epoch": 135160,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988166534,
+      "effectivebalance": 32000000000,
+      "epoch": 135160,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814100399,
+      "effectivebalance": 32000000000,
+      "epoch": 135159,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073551045,
+      "effectivebalance": 32000000000,
+      "epoch": 135159,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937799972,
+      "effectivebalance": 32000000000,
+      "epoch": 135159,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970175228,
+      "effectivebalance": 32000000000,
+      "epoch": 135159,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988154609,
+      "effectivebalance": 32000000000,
+      "epoch": 135159,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814088025,
+      "effectivebalance": 32000000000,
+      "epoch": 135158,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073538671,
+      "effectivebalance": 32000000000,
+      "epoch": 135158,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937787598,
+      "effectivebalance": 32000000000,
+      "epoch": 135158,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970162854,
+      "effectivebalance": 32000000000,
+      "epoch": 135158,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988142235,
+      "effectivebalance": 32000000000,
+      "epoch": 135158,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814075634,
+      "effectivebalance": 32000000000,
+      "epoch": 135157,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073526280,
+      "effectivebalance": 32000000000,
+      "epoch": 135157,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937775207,
+      "effectivebalance": 32000000000,
+      "epoch": 135157,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970150463,
+      "effectivebalance": 32000000000,
+      "epoch": 135157,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988129844,
+      "effectivebalance": 32000000000,
+      "epoch": 135157,
+      "validatorindex": 5,
+      "week": 85
+    },
+    {
+      "balance": 33814063587,
+      "effectivebalance": 32000000000,
+      "epoch": 135156,
+      "validatorindex": 1,
+      "week": 85
+    },
+    {
+      "balance": 34073516807,
+      "effectivebalance": 32000000000,
+      "epoch": 135156,
+      "validatorindex": 2,
+      "week": 85
+    },
+    {
+      "balance": 33937763160,
+      "effectivebalance": 32000000000,
+      "epoch": 135156,
+      "validatorindex": 3,
+      "week": 85
+    },
+    {
+      "balance": 33970138416,
+      "effectivebalance": 32000000000,
+      "epoch": 135156,
+      "validatorindex": 4,
+      "week": 85
+    },
+    {
+      "balance": 33988117797,
+      "effectivebalance": 32000000000,
+      "epoch": 135156,
+      "validatorindex": 5,
+      "week": 85
+    }
+  ]
+}

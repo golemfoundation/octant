@@ -1,10 +1,9 @@
-import { expect } from "chai";
-import { BigNumber } from "ethers";
-import { TRACKER } from "../helpers/constants";
-import { mineBlocks } from "../helpers/misc-utils";
-import { parseEther } from "ethers/lib/utils";
-import { makeTestsEnv } from "./helpers/make-tests-env";
-import { Epochs } from "../typechain-types";
+import { expect } from 'chai';
+import { BigNumber } from 'ethers';
+import { parseEther } from 'ethers/lib/utils';
+import { TRACKER } from '../helpers/constants';
+import { forwardEpochs } from '../helpers/epochs-utils';
+import { makeTestsEnv } from './helpers/make-tests-env';
 
 interface Step {
   Alice?: number;
@@ -28,12 +27,6 @@ interface TestParam {
 }
 
 makeTestsEnv(TRACKER, (testEnv) => {
-
-  async function forwardEpochs(epochs: Epochs, quantity: number) {
-    let epochDuration = await epochs.epochDuration();
-    let blockQuantity = epochDuration.toNumber() * quantity;
-    await mineBlocks(blockQuantity);
-  }
 
   describe("Effective deposits, total", async () => {
     it("totalDepositAt summs for simple cases", async () => {
