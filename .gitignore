@@ -18,7 +18,13 @@ typechain-types
 # Client
 dist
 
+# Oracle
+.pytest_cache
+__pycache__
+venv
+
 #logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+/oracle/api_mock/*.log

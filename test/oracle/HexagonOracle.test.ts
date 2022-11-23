@@ -1,17 +1,22 @@
 import { expect } from 'chai';
 import { HEXAGON_ORACLE } from '../../helpers/constants';
+import { forwardEpochs } from '../../helpers/epochs-utils';
 import { makeTestsEnv } from '../helpers/make-tests-env';
 
-interface TestParam {
+interface OracleFeed {
+  executionLayer: number;
+  beaconChain: number;
+}
+
+interface Asserts {
   epoch: number;
   value: number;
 }
 
 interface TestParams {
   desc: string;
-  executionLayerOracleFeed: TestParam[];
-  beaconChainOracleFeed: TestParam[];
-  asserts: TestParam[];
+  oracleFeedInEpochs: OracleFeed[];
+  asserts: Asserts[];
 }
 
 makeTestsEnv(HEXAGON_ORACLE, (testEnv) => {
@@ -20,41 +25,41 @@ makeTestsEnv(HEXAGON_ORACLE, (testEnv) => {
     const parameters: TestParams[] = [
       {
         desc: 'Should calculate proceeds in first epoch',
-        executionLayerOracleFeed: [{ epoch: 1, value: 100 }],
-        beaconChainOracleFeed: [{ epoch: 1, value: 300 }],
+        oracleFeedInEpochs: [{ executionLayer: 100, beaconChain: 300 }],
         asserts: [{ epoch: 1, value: 400 }]
       },
       {
         desc: 'Should calculate proceeds in second epoch',
-        executionLayerOracleFeed: [{ epoch: 1, value: 100 }, { epoch: 2, value: 3330 }],
-        beaconChainOracleFeed: [{ epoch: 1, value: 300 }, { epoch: 2, value: 321 }],
+        oracleFeedInEpochs: [{ executionLayer: 100, beaconChain: 300 }, {
+          executionLayer: 3330,
+          beaconChain: 321
+        }],
         asserts: [{ epoch: 2, value: 3251 }]
       },
       {
         desc: 'Should return 0 for epoch from the future',
-        executionLayerOracleFeed: [{ epoch: 1, value: 100 }],
-        beaconChainOracleFeed: [{ epoch: 1, value: 300 }],
+        oracleFeedInEpochs: [{ executionLayer: 100, beaconChain: 300 }],
         asserts: [{ epoch: 3, value: 0 }]
       },
       {
         desc: 'Should be able to get proceeds for former epochs',
-        executionLayerOracleFeed: [{ epoch: 1, value: 100 }, { epoch: 2, value: 220 }, { epoch: 3, value: 320 }],
-        beaconChainOracleFeed: [{ epoch: 1, value: 100 }, { epoch: 2, value: 220 }, { epoch: 3, value: 320 }],
+        oracleFeedInEpochs: [{ executionLayer: 100, beaconChain: 100 },
+          { executionLayer: 220, beaconChain: 220 }, { executionLayer: 320, beaconChain: 320 }],
         asserts: [{ epoch: 2, value: 240 }]
       },
     ];
 
-    parameters.forEach(({ desc, beaconChainOracleFeed, executionLayerOracleFeed, asserts }) => {
+    parameters.forEach(({ desc, oracleFeedInEpochs, asserts }) => {
       it(desc, async () => {
         // given
-        const { beaconChainOracle, executionLayerOracle, hexagonOracle } = testEnv;
+        const { epochs, beaconChainOracle, executionLayerOracle, hexagonOracle } = testEnv;
 
         // when
-        for (const { epoch, value } of executionLayerOracleFeed) {
-          await executionLayerOracle.setBalance(epoch, value);
-        }
-        for (const { epoch, value } of beaconChainOracleFeed) {
-          await beaconChainOracle.setBalance(epoch, value);
+        for (let i = 0; i < oracleFeedInEpochs.length; i++){
+          const { executionLayer, beaconChain } = oracleFeedInEpochs[i];
+          await forwardEpochs(epochs, 1);
+          await executionLayerOracle.setBalance(i + 1, executionLayer);
+          await beaconChainOracle.setBalance(i + 1, beaconChain);
         }
 
         // then

@@ -7,6 +7,7 @@
     "clean": "npx hardhat clean",
     "compile": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat compile && npx hardhat --network zksync compile",
     "test": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat test",
+    "start-node": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat node",
     "docs": "npx hardhat docgen",
     "deploy:local": "npx hardhat deploy --tags local",
     "deploy:goerli": "npx hardhat --network goerli deploy --tags goerli",
