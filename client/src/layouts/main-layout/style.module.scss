@@ -20,10 +20,17 @@ $headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
   padding: $headerMarginHorizontal;
   margin: $headerMarginVertical $headerMarginHorizontal;
   box-shadow: $box-shadow-1;
+}
 
-  .logo {
-    @include svgSize(3rem, 3rem);
-  }
+.walletInfo {
+  display: flex;
+  align-items: center;
+}
+
+.address {
+  font-size: $font-size-14;
+  font-weight: $font-weight-bold;
+  margin: 0 0.8rem 0 0;
 }
 
 .body {

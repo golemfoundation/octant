@@ -1,8 +1,0 @@
-@mixin svgSize($width, $height) {
-  min-width: $width;
-  width: $width;
-  max-width: $width;
-  min-height: $height;
-  height: $height;
-  max-height: $height;
-}
