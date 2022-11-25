@@ -1,0 +1,73 @@
+.InputSelect {
+  &__control {
+    cursor: pointer !important;
+    border: 0 !important;
+    min-height: auto !important;
+    height: 3rem;
+
+    &--is-focused {
+      box-shadow: none !important;
+    }
+
+    &--menu-is-open {
+      .InputSelect__indicators {
+        transform: rotate(180deg);
+      }
+
+      &::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        backdrop-filter: blur(4px);
+        z-index: $z-index-3;
+      }
+    }
+  }
+
+  &__indicators {
+    height: 3rem;
+  }
+
+  &__indicator {
+    color: $color-hexagon-main-text-color !important;
+
+    &-separator {
+      display: none;
+    }
+  }
+
+  &__menu {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 0;
+    left: 0;
+    margin: 0 !important;
+    padding: 3.2rem 2.3rem !important;
+    border-radius: $border-radius-20 $border-radius-20 0 0 !important;
+    z-index: $z-index-3 !important;
+    box-shadow: $box-shadow-1 !important;
+    height: auto;
+    width: 100%;
+    animation: fadeIn 0.25s linear;
+  }
+
+  &__option {
+    &--is-focused, &--is-selected {
+      background: none !important;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    // opacity: 0;
+    bottom: -100%;
+  }
+  100% {
+    // opacity: 1;
+    bottom: 0;
+  }
+}

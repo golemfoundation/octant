@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { LinkProps } from 'react-router-dom';
 
-export const BUTTON_VARIANTS = ['iconVertical', 'secondary', 'cta'];
+export const BUTTON_VARIANTS = ['iconVertical', 'secondary', 'cta', 'iconOnly'];
 
 export type ButtonVariant = typeof BUTTON_VARIANTS[number];
 export type ButtonType = ButtonHTMLAttributes<Element>['type'];

@@ -1,0 +1,21 @@
+.option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: $color-hexagon-main-text-color;
+
+  &:not(:last-child) {
+    margin: 0 0 2rem 0;
+  }
+
+  .iconTick {
+    margin: 0 2rem 0 0;
+  }
+}
+
+.buttonClose {
+  position: absolute;
+  top: 2.4rem;
+  right: 2.4rem;
+  z-index: $z-index-3;
+}

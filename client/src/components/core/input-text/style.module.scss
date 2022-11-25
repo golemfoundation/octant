@@ -1,0 +1,40 @@
+.root {
+  position: relative;
+  height: 6.4rem;
+}
+
+.label {
+  position: absolute;
+  top: 1rem;
+  left: 2.4rem;
+  font-size: $font-size-08;
+  font-weight: $font-weight-bold;
+  color: $color-hexagon-grey3;
+  z-index: $z-index-2;
+}
+
+.input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  border: 0;
+  border-radius: $border-radius-16;
+  height: 100%;
+  padding: 2.4rem;
+  font-size: $font-size-14;
+  font-weight: $font-weight-bold;
+
+  &:focus-visible {
+    outline: 0;
+  }
+}
+
+.suffix {
+  position: absolute;
+  top: 50%;
+  right: 2.4rem;
+  transform: translate(0, -50%);
+  z-index: $z-index-2;
+  font-weight: $font-weight-bold;
+}
