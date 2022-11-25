@@ -4,6 +4,11 @@ import React from 'react';
 export const SVG_DISPLAY_MODE = ['raw', 'wrapperDefault', 'wrapperCustom'] as const;
 export type SvgDisplayMode = typeof SVG_DISPLAY_MODE[number];
 
+export const CSS_UNITS = ['rem', '%'] as const;
+export type CssUnits = typeof CSS_UNITS[number];
+
+export type SvgSize = number | 'auto' | [number | string, number | string];
+
 export interface SvgImageConfig {
   defaultColor?: string;
   markup?: string;
@@ -18,6 +23,17 @@ export interface SvgProps {
   displayMode?: SvgDisplayMode;
   img: SvgImageConfig;
   onClick?: () => void;
+  size?: SvgSize;
+  sizeUnit?: CssUnits;
+}
+
+export interface SvgStyles {
+  height: string;
+  maxHeight: string;
+  maxWidth: string;
+  minHeight: string;
+  minWidth: string;
+  width: string;
 }
 
 export interface SvgAttrs {
@@ -28,5 +44,6 @@ export interface SvgAttrs {
     __html: string;
   };
   onClick?: () => void;
+  style?: SvgStyles;
   viewBox: string;
 }

@@ -3,6 +3,7 @@
   border-radius: $border-radius-16;
   cursor: pointer;
   font-weight: $font-weight-bold;
+  border: 0;
 }
 
 .variant-- {
@@ -32,7 +33,7 @@
     color: $color-hexagon-grey2;
     display: flex;
     flex-direction: column;
-    border: none;
+    border: 0;
     font-size: $font-size-10;
 
     svg {
@@ -46,5 +47,13 @@
         stroke: $color-hexagon-main-text-color;
       }
     }
+  }
+
+  &iconOnly {
+    background: $color-hexagon-grey5;
+    border-radius: $border-radius-10;
+    height: 3.2rem;
+    width: 3.2rem;
+    padding: 0;
   }
 }

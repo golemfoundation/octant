@@ -84,7 +84,7 @@ const MainLayout: FC<MainLayoutProps> = ({ children }) => {
             // eslint-disable-next-line react/no-array-index-key
             key={index}
             className={styles.button}
-            Icon={<Svg img={icon} />}
+            Icon={<Svg img={icon} size={2} />}
             variant="iconVertical"
             {...rest}
           />
