@@ -4,10 +4,11 @@ import { useMetamask } from 'use-metamask';
 import React, { FC } from 'react';
 
 import { ROOT_ROUTES } from 'routes/root-routes/routes';
-import { allocate, earn, metrics, proposals, settings } from 'svg/navigation';
+import { allocate, earn, metrics, proposals, settings, userIcon } from 'svg/navigation';
 import { hexagon } from 'svg/logo';
 import Button from 'components/core/button/button.component';
 import Svg from 'components/core/svg/svg.component';
+import truncateEthAddress from 'utils/truncateEthAddress';
 
 import MainLayoutProps from './types';
 import styles from './style.module.scss';
@@ -43,9 +44,10 @@ const getTabs = () => [
 const MainLayout: FC<MainLayoutProps> = ({ children }) => {
   const {
     connect,
-    metaState: { isConnected },
+    metaState: { isConnected, account },
   } = useMetamask();
   const { pathname } = useLocation();
+  const address = account[0];
 
   const authUser = async () => {
     if (!isConnected) {
@@ -60,22 +62,18 @@ const MainLayout: FC<MainLayoutProps> = ({ children }) => {
     };
   });
 
-  const buttonProps = isConnected
-    ? {
-        isDisabled: true,
-        label: 'MetaMask connected',
-        onClick: () => {},
-      }
-    : {
-        label: 'Connect MetaMask',
-        onClick: authUser,
-      };
-
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <Svg classNameSvg={styles.logo} img={hexagon} />
-        <Button {...buttonProps} />
+        <Svg img={hexagon} size={3} />
+        {isConnected ? (
+          <div className={styles.walletInfo}>
+            <div className={styles.address}>{truncateEthAddress(address)}</div>
+            <Svg img={userIcon} size={3} />
+          </div>
+        ) : (
+          <Button label="Connect wallet" onClick={authUser} variant="cta" />
+        )}
       </div>
       <div className={styles.body}>{children}</div>
       <nav className={styles.navigation}>
@@ -84,7 +82,7 @@ const MainLayout: FC<MainLayoutProps> = ({ children }) => {
             // eslint-disable-next-line react/no-array-index-key
             key={index}
             className={styles.button}
-            Icon={<Svg img={icon} size={2} />}
+            Icon={<Svg img={icon} size={[2.25, 'auto']} />}
             variant="iconVertical"
             {...rest}
           />
