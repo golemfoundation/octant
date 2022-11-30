@@ -1,9 +1,14 @@
 .root {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
   padding: 1rem 2rem;
   border-radius: $border-radius-16;
+  background: transparent;
   cursor: pointer;
   font-weight: $font-weight-bold;
   border: 0;
+  min-height: 4rem;
 }
 
 .variant-- {
@@ -26,6 +31,15 @@
     &.isDisabled {
       cursor: auto;
       background: $color-grey;
+    }
+  }
+
+  &secondaryGrey {
+    color: $color-hexagon-grey3;
+    border: 0.1rem solid $color-hexagon-grey3;
+
+    svg path {
+      stroke: $color-hexagon-grey3;
     }
   }
 
@@ -52,6 +66,13 @@
   &iconOnly {
     background: $color-hexagon-grey5;
     border-radius: $border-radius-10;
+    height: 3.2rem;
+    width: 3.2rem;
+    padding: 0;
+  }
+
+  &iconOnlyTransparent {
+    background: transparent;
     height: 3.2rem;
     width: 3.2rem;
     padding: 0;

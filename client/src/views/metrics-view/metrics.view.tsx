@@ -2,6 +2,7 @@ import { useQuery } from 'react-query';
 import React, { ReactElement } from 'react';
 
 import { useEpochsContract } from 'hooks/useContract';
+import MainLayout from 'layouts/main-layout/main.layout';
 import TimeCounter from 'components/dedicated/time-counter/time-counter.compoent';
 import env from 'env';
 import getDurationBetweenTimestamps from 'utils/getDurationBetweenTimestamps';
@@ -42,7 +43,7 @@ const MetricsView = (): ReactElement => {
     : undefined;
 
   return (
-    <div>
+    <MainLayout>
       <TimeCounter duration={timeSinceStart} label="Time passed since the start of Epoch 1" />
       <br />
       <TimeCounter
@@ -57,7 +58,7 @@ const MetricsView = (): ReactElement => {
       </div>
       <br />
       <div>Epoch number: {currentEpoch || 'Loading...'}</div>
-    </div>
+    </MainLayout>
   );
 };
 

@@ -1,10 +1,11 @@
-import React, { Fragment, ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 
 import BoxRounded from 'components/core/box-rounded/box-rounded.component';
 import Header from 'components/core/header/header.component';
 import InputCheckbox from 'components/core/input-checkbox/input-checkbox.component';
 import InputSelect from 'components/core/input-select/input-select.component';
 import InputText from 'components/core/input-text/input-text.component';
+import MainLayout from 'layouts/main-layout/main.layout';
 
 import styles from './style.module.scss';
 
@@ -19,11 +20,11 @@ const options = [
 
 const SettingsView = (): ReactElement => {
   return (
-    <Fragment>
+    <MainLayout>
       <Header text="Settings" />
       <BoxRounded className={styles.box}>
         Choose a display currency
-        <InputSelect options={options} selectedOption={{ label: 'USD', value: 'USD' }} />
+        <InputSelect options={options} selectedOption={options[0]} />
       </BoxRounded>
       <InputText
         className={styles.box}
@@ -31,6 +32,7 @@ const SettingsView = (): ReactElement => {
         onChange={() => {}}
         suffix="USD"
         value="50.0"
+        variant="boxRounded"
       />
       <BoxRounded className={styles.box}>
         Use ETH as main value display
@@ -44,7 +46,7 @@ const SettingsView = (): ReactElement => {
         Always show Allocate onboarding
         <InputCheckbox />
       </BoxRounded>
-    </Fragment>
+    </MainLayout>
   );
 };
 

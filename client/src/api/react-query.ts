@@ -1,5 +1,7 @@
 import { QueryCache, QueryClient } from 'react-query';
 
+import { triggerToast } from 'utils/triggerToast';
+
 const reactQueryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -9,10 +11,8 @@ const reactQueryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error, query) => {
       if (query.state.data !== undefined) {
-        /* eslint-disable no-console */
-        // @ts-expect-error: type of the error is not known.
-        console.error('React Query Error: ', JSON.stringify(error.message));
-        /* eslint-enable no-console */
+        // @ts-expect-error Error is of type 'unknown', but it is an API error.
+        triggerToast({ message: `Something went wrong: ${error.message}`, type: 'error' });
       }
     },
   }),

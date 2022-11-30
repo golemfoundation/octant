@@ -88,7 +88,6 @@ $paddingBody: 2.4rem;
   }
 }
 
-.buttons {
-  display: flex;
-  justify-content: space-around;
+.button {
+  min-width: 12rem;
 }

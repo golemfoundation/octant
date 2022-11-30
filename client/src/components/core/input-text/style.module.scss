@@ -14,19 +14,38 @@
 }
 
 .input {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
   border: 0;
-  border-radius: $border-radius-16;
-  height: 100%;
-  padding: 2.4rem;
-  font-size: $font-size-14;
-  font-weight: $font-weight-bold;
 
   &:focus-visible {
     outline: 0;
+  }
+
+  &.variant-- {
+    &simple {
+      text-align: center;
+      font-size: $font-size-20;
+      background: transparent;
+
+      &.isDisabled {
+        color: $color-hexagon-grey4;
+
+        &::placeholder {
+          color: $color-hexagon-grey4;
+        }
+      }
+    }
+
+    &boxRounded {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      border-radius: $border-radius-16;
+      height: 100%;
+      padding: 2.4rem;
+      font-size: $font-size-14;
+      font-weight: $font-weight-bold;
+    }
   }
 }
 

@@ -1,0 +1,22 @@
+// Overwrites for react-toastify/dist/ReactToastify.css.
+
+.Toastify__toast-container {
+  width: 34rem;
+}
+
+.Toastify__toast {
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 0 0 1.6rem 0;
+  width: 34rem;
+}
+
+.Toastify__progress-bar {
+  visibility: hidden; /* display: none or hideProgressBar prop for toast doesnt work */
+}
+
+.Toastify__toast-body {
+  padding: 0;
+}
