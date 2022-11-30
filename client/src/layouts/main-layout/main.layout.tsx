@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import { useLocation } from 'react-router-dom';
 import { useMetamask } from 'use-metamask';
 import React, { FC } from 'react';
+import cx from 'classnames';
 
 import { ROOT_ROUTES } from 'routes/root-routes/routes';
 import { allocate, earn, metrics, proposals, settings, userIcon } from 'svg/navigation';
@@ -22,7 +23,7 @@ const getTabs = () => [
   {
     icon: allocate,
     label: 'Allocate',
-    to: ROOT_ROUTES.deposits.absolute,
+    to: ROOT_ROUTES.allocation.absolute,
   },
   {
     icon: metrics,
@@ -41,7 +42,7 @@ const getTabs = () => [
   },
 ];
 
-const MainLayout: FC<MainLayoutProps> = ({ children }) => {
+const MainLayout: FC<MainLayoutProps> = ({ children, navigationBottomSuffix }) => {
   const {
     connect,
     metaState: { isConnected, account },
@@ -76,17 +77,27 @@ const MainLayout: FC<MainLayoutProps> = ({ children }) => {
         )}
       </div>
       <div className={styles.body}>{children}</div>
-      <nav className={styles.navigation}>
-        {tabsWithIsActive.map(({ icon, ...rest }, index) => (
-          <Button
-            // eslint-disable-next-line react/no-array-index-key
-            key={index}
-            className={styles.button}
-            Icon={<Svg img={icon} size={[2.25, 'auto']} />}
-            variant="iconVertical"
-            {...rest}
-          />
-        ))}
+      <nav
+        className={cx(
+          styles.navigation,
+          navigationBottomSuffix && styles.hasNavigationBottomSuffix,
+        )}
+      >
+        {navigationBottomSuffix && (
+          <div className={styles.navigationBottomSuffix}>{navigationBottomSuffix}</div>
+        )}
+        <div className={styles.buttons}>
+          {tabsWithIsActive.map(({ icon, ...rest }, index) => (
+            <Button
+              // eslint-disable-next-line react/no-array-index-key
+              key={index}
+              className={styles.button}
+              Icon={<Svg img={icon} size={[2.25, 'auto']} />}
+              variant="iconVertical"
+              {...rest}
+            />
+          ))}
+        </div>
       </nav>
     </div>
   );

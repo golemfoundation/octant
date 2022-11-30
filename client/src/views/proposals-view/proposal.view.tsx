@@ -1,71 +1,32 @@
-import { useMetamask } from 'use-metamask';
-import { useQueries, useQuery } from 'react-query';
 import React, { ReactElement } from 'react';
 
-import { apiGetProposal } from 'api/proposals';
-import { useAllocationsContract, useEpochsContract, useProposalsContract } from 'hooks/useContract';
+import { useIdsInAllocation } from 'hooks/useIdsInAllocation';
+import { useProposals } from 'hooks/useProposals';
+import MainLayout from 'layouts/main-layout/main.layout';
 import ProposalItem from 'components/dedicated/proposal-item/proposal-item.component';
-import env from 'env';
 
-import { ExtendedProposal } from './types';
 import styles from './style.module.scss';
 
 const ProposalsView = (): ReactElement => {
-  const {
-    metaState: { web3 },
-  } = useMetamask();
-  const { proposalsAddress, allocationsAddress, epochsAddress } = env;
-  const signer = web3?.getSigner();
-  const contractProposals = useProposalsContract(proposalsAddress);
-  const contractEpochs = useEpochsContract(epochsAddress);
-  const contractAllocations = useAllocationsContract(allocationsAddress, signer);
-
-  const { data: currentEpoch } = useQuery(
-    ['currentEpoch'],
-    () => contractEpochs?.getCurrentEpoch(),
-    { enabled: !!contractEpochs },
-  );
-
-  const { data: proposalsContract } = useQuery(
-    ['proposalsContract'],
-    () => contractProposals?.getProposals(),
-    { enabled: !!contractProposals },
-  );
-  const proposalsIpfsResults = useQueries(
-    (proposalsContract || []).map(({ id, uri }) => {
-      return {
-        queryFn: () => apiGetProposal(uri),
-        queryKey: ['proposalsIpfsResults', id],
-      };
-    }),
-  );
-  const isProposalsIpfsResultsLoading = proposalsIpfsResults.some(({ isLoading }) => isLoading);
-  const parsedProposals = isProposalsIpfsResultsLoading
-    ? []
-    : proposalsIpfsResults.map<ExtendedProposal>(({ data: proposal }, index) => ({
-        ...proposal,
-        id: proposalsContract![index].id,
-        isLoadingError: !!proposal.response?.status,
-      }));
+  const [proposals] = useProposals();
+  const [idsInAllocation, onAddRemoveFromAllocate] = useIdsInAllocation(proposals);
 
   return (
-    <div>
-      Currently used proposals address is: {proposalsAddress}
+    <MainLayout>
       <div className={styles.list}>
-        {parsedProposals.length === 0
+        {proposals.length === 0
           ? 'Loading...'
-          : parsedProposals.map((proposal, index) => (
+          : proposals.map((proposal, index) => (
               <ProposalItem
                 // eslint-disable-next-line react/no-array-index-key
                 key={index}
-                currentEpoch={currentEpoch}
-                getVotesCount={contractAllocations?.getVotesCount}
-                vote={contractAllocations?.vote}
+                isAlreadyAdded={idsInAllocation.includes(proposal.id)}
+                onAddRemoveFromAllocate={() => onAddRemoveFromAllocate(proposal.id)}
                 {...proposal}
               />
             ))}
       </div>
-    </div>
+    </MainLayout>
   );
 };
 

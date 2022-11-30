@@ -7,7 +7,6 @@ $headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
   display: flex;
   flex-direction: column;
   height: 100%;
-
 }
 
 .header {
@@ -35,27 +34,39 @@ $headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
 
 .body {
   display: flex;
-  align-items: center;
-  justify-content: center;
   flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   flex: 1;
   padding: 2rem 2rem ($headerNavigationHeight + 2 * $headerMarginHorizontal) 2rem;
 }
 
-
 .navigation {
   position: fixed;
   bottom: $headerMarginHorizontal;
-  left: $headerMarginHorizontal;
-  right: $headerMarginHorizontal;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: $headerNavigationHeight;
+  left: 50%;
+  transform: translate(-50%, 0);;
   border-radius: $headerNavigationBorderRadius;
   background: $color-white;
-  padding: 2rem;
   box-shadow: $box-shadow-1;
+  max-width: 37.8rem;
+
+  &.hasNavigationBottomSuffix {
+    border-radius: 1.6rem 1.6rem $headerNavigationBorderRadius $headerNavigationBorderRadius;
+  }
+
+  .navigationBottomSuffix {
+    padding: 1.6rem;
+    border-bottom: 0.1rem solid $color-hexagon-grey;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: $headerNavigationHeight;
+    padding: 2rem;
+  }
 
   .button {
     padding: 0 1rem;

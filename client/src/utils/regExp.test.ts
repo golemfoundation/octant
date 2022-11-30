@@ -1,4 +1,4 @@
-import { floatNumberWithUpTo18DecimalPlaces } from './regExp';
+import { floatNumberWithUpTo18DecimalPlaces, numbersOnly } from './regExp';
 
 const regExpTestCases = [
   {
@@ -37,6 +37,21 @@ const regExpTestCases = [
       { expectedValue: false, test: '+673829123' },
       { expectedValue: false, test: '/13123123123123' },
       { expectedValue: true, test: '999999999' },
+    ],
+  },
+  {
+    name: 'numbersOnly',
+    regExp: numbersOnly,
+    testCases: [
+      { expectedValue: true, test: '1' },
+      { expectedValue: true, test: '1234567890' },
+      { expectedValue: true, test: '0123456789' },
+      { expectedValue: false, test: '0123456789a' },
+      { expectedValue: false, test: '0123456789.' },
+      { expectedValue: false, test: 'a0123456789' },
+      { expectedValue: false, test: '.0123456789' },
+      { expectedValue: false, test: '01234a56789' },
+      { expectedValue: false, test: '01234.56789' },
     ],
   },
 ];

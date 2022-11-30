@@ -1,32 +1,30 @@
-import { useQuery } from 'react-query';
 import React, { FC, Fragment } from 'react';
 
+import { tick } from 'svg/misc';
 import Button from 'components/core/button/button.component';
 import Img from 'components/core/img/img.component';
+import Svg from 'components/core/svg/svg.component';
 
 import { ProposalItemProps } from './types';
 import styles from './style.module.scss';
 
 const ProposalItem: FC<ProposalItemProps> = ({
-  currentEpoch,
   description,
-  getVotesCount,
-  id,
   isLoadingError,
   name,
-  socialLinks,
-  vote,
-  website,
+  onAddRemoveFromAllocate,
+  isAlreadyAdded,
 }) => {
-  const isVotingEnabled =
-    getVotesCount !== undefined && vote !== undefined && currentEpoch !== undefined;
-
-  const { data: numberOfVotes } = useQuery(
-    ['numberOfVotes'],
-    () => getVotesCount!(currentEpoch!, id),
-    { enabled: isVotingEnabled },
-  );
-
+  const buttonProps = isAlreadyAdded
+    ? {
+        Icon: <Svg img={tick} size={1.5} />,
+        label: 'Added',
+        variant: 'secondaryGrey',
+      }
+    : {
+        label: 'Add to Allocate',
+        variant: 'secondary',
+      };
   return (
     <div className={styles.root}>
       {isLoadingError ? (
@@ -55,24 +53,11 @@ const ProposalItem: FC<ProposalItemProps> = ({
               <div className={styles.percentage}>32%</div>
             </div>
             <div>
-              <Button label="Add to Allocate" />
-            </div>
-          </div>
-          {/* Below section is to be removed completely */}
-          <div className={styles.debug}>
-            Debug section:
-            <div className={styles.buttons}>
-              {vote && (
-                <div>
-                  Number of votes: {numberOfVotes}.
-                  <Button label="Vote" onClick={() => vote(id, 100)} />
-                </div>
-              )}
-              <Button href={website} label="Website" target="_blank" />
-              {socialLinks.map((link, buttonIndex) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <Button key={buttonIndex} href={link} label="Social link" target="_blank" />
-              ))}
+              <Button
+                className={styles.button}
+                onClick={onAddRemoveFromAllocate}
+                {...buttonProps}
+              />
             </div>
           </div>
         </Fragment>

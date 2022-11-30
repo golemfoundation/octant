@@ -3,7 +3,8 @@ import getPathObject from 'utils/routing';
 const ROOT = getPathObject('', '');
 
 export const ROOT_ROUTES = {
-  deposits: getPathObject(ROOT, 'deposits'),
+  allocation: getPathObject(ROOT, 'allocation'),
+  deposit: getPathObject(ROOT, 'deposit'),
   earn: getPathObject(ROOT, 'earn'),
   metrics: getPathObject(ROOT, 'metrics'),
   proposals: getPathObject(ROOT, 'projects'),
