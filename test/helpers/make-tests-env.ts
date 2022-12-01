@@ -10,7 +10,7 @@ import {
   TOKEN,
   ALLOCATIONS,
   EPOCHS,
-  BEACON_CHAIN_ORACLE, EXECUTION_LAYER_ORACLE, HEXAGON_ORACLE
+  BEACON_CHAIN_ORACLE, EXECUTION_LAYER_ORACLE, HEXAGON_ORACLE, ALLOCATIONS_STORAGE
 } from '../../helpers/constants';
 import {
   Proposals,
@@ -18,7 +18,7 @@ import {
   Token,
   Allocations,
   Epochs,
-  ExecutionLayerOracle, HexagonOracle, BeaconChainOracle
+  ExecutionLayerOracle, HexagonOracle, BeaconChainOracle, AllocationsStorage
 } from '../../typechain-types';
 import { Signers, TestEnv } from './test-env.interface';
 
@@ -29,6 +29,7 @@ chai.use(solidity);
 const testEnv: TestEnv = {
   signers: {} as Signers,
   allocations: {} as Allocations,
+  allocationsStorage: {} as AllocationsStorage,
   proposals: {} as Proposals,
   glmDeposits: {} as Deposits,
   tracker: {} as Tracker,
@@ -43,6 +44,7 @@ const testEnv: TestEnv = {
 async function initializeTestsEnv() {
   testEnv.signers = await ethers.getNamedSigners();
   testEnv.allocations = await ethers.getContract(ALLOCATIONS);
+  testEnv.allocationsStorage = await ethers.getContract(ALLOCATIONS_STORAGE);
   testEnv.token = await ethers.getContract(TOKEN);
   testEnv.glmDeposits = await ethers.getContract(DEPOSITS);
   testEnv.tracker = await ethers.getContract(TRACKER);

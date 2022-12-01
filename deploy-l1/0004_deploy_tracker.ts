@@ -19,14 +19,12 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
   const epochs = await ethers.getContract(EPOCHS);
   const deposits = await ethers.getContract(DEPOSITS);
 
-  const tracker = await deploy(TRACKER, {
+  await deploy(TRACKER, {
     from: deployer,
     log: true,
     args: [epochs.address, deposits.address, glmAddress, gntAddress],
     autoMine: true
   });
-
-  await deposits.setDepositTrackerAddress(tracker.address);
 };
 export default func;
 func.tags = ['deposits', 'local', 'test', 'goerli'];
