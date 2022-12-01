@@ -30,7 +30,8 @@ const config: HardhatUserConfig = {
     goerli: {
       url: GOERLI_URL,
       accounts: [GOERLI_PRIVATE_KEY],
-      deploy: ['deploy-l1/']
+      deploy: ['deploy-l1/'],
+      gasPrice: 10_000_000_000
     },
     zksync: {
       url: ZKSYNC_URL,
@@ -56,6 +57,9 @@ const config: HardhatUserConfig = {
     },
     Darth: {
       default: 4,
+    },
+    Eve: {
+      default: 5,
     },
   },
   docgen: {

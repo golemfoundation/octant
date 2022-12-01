@@ -8,6 +8,7 @@ export const TRACKER = "Tracker";
 export const REWARDS = "Rewards";
 export const TOKEN = "Token";
 export const ALLOCATIONS = "Allocations";
+export const ALLOCATIONS_STORAGE = "AllocationsStorage";
 export const EPOCHS = "Epochs";
 export const BEACON_CHAIN_ORACLE = "BeaconChainOracle";
 export const EXECUTION_LAYER_ORACLE = "ExecutionLayerOracle";

@@ -13,7 +13,6 @@ import "../interfaces/IEpochs.sol";
  * Balance for epoch will be taken from block which corresponds to end of Hexagon epoch (check `Epochs.sol` contract).
  */
 contract ExecutionLayerOracle is Ownable {
-
     /// @notice Epochs contract address.
     IEpochs public immutable epochs;
 
@@ -29,7 +28,10 @@ contract ExecutionLayerOracle is Ownable {
     }
 
     function setBalance(uint256 epoch, uint256 balance) external onlyOwner {
-        require(epoch > 0 && epoch == epochs.getCurrentEpoch() - 1, "HN/can-set-balance-for-previous-epoch-only");
+        require(
+            epoch > 0 && epoch == epochs.getCurrentEpoch() - 1,
+            "HN/can-set-balance-for-previous-epoch-only"
+        );
         require(balanceByEpoch[epoch] == 0, "HN/balance-for-given-epoch-already-exists");
         balanceByEpoch[epoch] = balance;
     }

@@ -4,7 +4,7 @@ import {
   Deposits, Tracker, Rewards,
   Epochs, HexagonOracle,
   Proposals, ExecutionLayerOracle,
-  Token
+  Token, AllocationsStorage
 } from '../../typechain-types';
 import { SignerWithAddress } from 'hardhat-deploy-ethers/signers';
 
@@ -13,6 +13,7 @@ export type Signers = Record<string, SignerWithAddress>;
 export interface TestEnv {
   signers: Signers;
   allocations: Allocations;
+  allocationsStorage: AllocationsStorage;
   proposals: Proposals;
   glmDeposits: Deposits;
   tracker: Tracker;

@@ -37,14 +37,14 @@ contract Epochs is Ownable, IEpochs {
         decisionWindow = _decisionWindow;
     }
 
-    function getCurrentEpoch() public view returns (uint32) {
+    function getCurrentEpoch() public view returns (uint256) {
         require(isStarted(), "HN/not-started-yet");
-        return uint32(((block.number - start) / epochDuration) + 1);
+        return uint256(((block.number - start) / epochDuration) + 1);
     }
 
     function isDecisionWindowOpen() public view returns (bool) {
         require(isStarted(), "HN/not-started-yet");
-        uint32 moduloEpoch = uint32((block.number - start) % epochDuration);
+        uint256 moduloEpoch = uint256((block.number - start) % epochDuration);
         return moduloEpoch <= decisionWindow;
     }
 
