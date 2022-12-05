@@ -1,6 +1,10 @@
 {
   "name": "Proposal 7",
   "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris viverra purus ut dui vulputate, ac lacinia elit tincidunt. Sed in gravida nulla. Nunc augue arcu, rutrum non purus eget, faucibus maximus felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
-  "website": "http://proposal7.io",
-  "socialLinks": ["http://link1.io", "http://link2.io"]
+  "profileImageUrl": "https://via.placeholder.com/64x64.jpg/000000/FFFFFF",
+  "landscapeImageUrl": "https://via.placeholder.com/600x300.jpg/0000FF/FFFFFF",
+  "website": {
+    "label": "https://golem.foundation/",
+    "url": "https://golem.foundation/"
+  },
 }

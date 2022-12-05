@@ -12,9 +12,12 @@ const env = {
   glmAddress:
     // @ts-expect-error TS does not understand the way vite imports envs.
     import.meta.env.VITE_GLM_ADDRESS || '0x0393EfF8fD1C5B5CaBac9b2d437798B6792fe013',
+  ipfsGateway:
+    // @ts-expect-error TS does not understand the way vite imports envs.
+    import.meta.env.IPFS_GATEWAY || 'https://hexagon.infura-ipfs.io',
   proposalsAddress:
     // @ts-expect-error TS does not understand the way vite imports envs.
-    import.meta.env.VITE_PROPOSALS_ADDRESS || '0x35221f93Ca41894FD421C166D63F0b17f2266743',
+    import.meta.env.VITE_PROPOSALS_ADDRESS || '0xAb763fDBc103Fc2Fa06548A06Fc690ACdE2F1f4F',
 };
 
 export default env;

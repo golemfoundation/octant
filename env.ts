@@ -1,7 +1,6 @@
 require('dotenv').config();
 
-const IPFS_GATEWAY = process.env.IPFS_GATEWAY || 'https://ipfs.io'
-const PROPOSALS_BASE_URI = process.env.PROPOSALS_BASE_URI || `${IPFS_GATEWAY}/ipfs/QmVFvqs93qrn5xayVuEcNwVg5CukSrVHUGJGra3zQsgMax/`;
+const PROPOSALS_BASE_URI = process.env.PROPOSALS_BASE_URI || '/ipfs/Qmbm97crHWQzNYNn2LPZ5hhGu4qEv1DXRP6qS4TCehruPn/';
 const GOERLI_URL = process.env.GOERLI_URL || '';
 const ZKSYNC_URL = process.env.ZKSYNC_URL || 'https://zksync2-testnet.zksync.dev';
 const GOERLI_PRIVATE_KEY = process.env.GOERLI_PRIVATE_KEY || '0000000000000000000000000000000000000000000000000000000000000000';
