@@ -132,16 +132,25 @@ contract Rewards {
             ProposalRewards[] memory proposalRewards
         ) = individualProposalRewards(epoch);
 
-        // add matched rewards.
         uint256 _matchedRewards = matchedRewards(epoch);
         uint256 proposalDonationThreshold = proposalRewardsSum.div(100).mul(
             PROPOSAL_DONATION_THRESHOLD_PERCENT
         );
+
+        // calculate proposal donation above threshold.
+        uint256 proposalDonationAboveThresholdSum;
+        for (uint256 iReward = 0; iReward < proposalRewards.length; iReward++) {
+            if (proposalRewards[iReward].donated > proposalDonationThreshold) {
+                proposalDonationAboveThresholdSum += proposalRewards[iReward].donated;
+            }
+        }
+
+        // distribute matched rewards.
         for (uint256 iReward = 0; iReward < proposalRewards.length; iReward++) {
             if (proposalRewards[iReward].donated > proposalDonationThreshold) {
                 uint256 proposalRewardsPercent = proposalRewards[iReward]
                     .donated
-                    .div(proposalRewardsSum)
+                    .div(proposalDonationAboveThresholdSum)
                     .mul(100);
                 uint256 matchedProposalReward = _matchedRewards.div(100).mul(
                     proposalRewardsPercent

@@ -142,11 +142,11 @@ makeTestsEnv(REWARDS, (testEnv) => {
       const firstProposal = proposalRewards[0];
       expect(firstProposal.id).eq(1);
       expect(firstProposal.donated).eq(parseEther('0.12'));
-      expect(firstProposal.matched).eq(parseEther('8.226378043629436224'));
+      expect(firstProposal.matched).eq(parseEther('9.140420048477151360'));
       const secondProposal = proposalRewards[1];
       expect(secondProposal.id).eq(2);
       expect(secondProposal.donated).eq(parseEther('0.18'));
-      expect(secondProposal.matched).eq(parseEther("12.339567065444154336"));
+      expect(secondProposal.matched).eq(parseEther("13.710630072715727040"));
       const thirdProposal = proposalRewards[2];
       expect(thirdProposal.id).eq(3);
       expect(thirdProposal.donated).eq(0);
@@ -162,8 +162,7 @@ makeTestsEnv(REWARDS, (testEnv) => {
         expect(reward.matched).eq(0);
       });
 
-      // TODO to fix
-      // expect(matchedRewards).eq(firstProposal.matched.add(secondProposal.matched));
+      expect(matchedRewards).eq(firstProposal.matched.add(secondProposal.matched));
     });
   });
 });

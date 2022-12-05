@@ -16,7 +16,8 @@ export function useProposals(): [ExtendedProposal[]] {
 
   const { data: proposalsContract } = useQuery<Proposals.ProposalStructOutput[] | undefined>(
     ['proposalsContract'],
-    () => contractProposals?.getProposals(),
+    // TODO get current epoch, not hardcoded 1 (HEX-86)
+    () => contractProposals?.getProposals(1),
     { enabled: !!contractProposals },
   );
 
