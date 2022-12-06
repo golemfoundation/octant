@@ -9,6 +9,24 @@
   font-weight: $font-weight-bold;
   border: 0;
   min-height: 4rem;
+
+  &.isDisabled {
+    cursor: default;
+  }
+
+  &.isHigh {
+    min-height: 4.8rem;
+  }
+}
+
+.contentPosition-- {
+  &leftToRight {
+    flex-direction: row;
+  }
+
+  &rightToLeft {
+    flex-direction: row-reverse;
+  }
 }
 
 .variant-- {
@@ -16,6 +34,11 @@
     color: $color-white;
     border: 0.1rem solid $color-hexagon-blue;
     background: $color-hexagon-blue;
+
+    &.isDisabled {
+      background: $color-hexagon-blue2;
+      border-color: $color-hexagon-blue2;
+    }
   }
 
   &secondary {
@@ -76,5 +99,21 @@
     height: 3.2rem;
     width: 3.2rem;
     padding: 0;
+  }
+
+  &link {
+    min-height: initial;
+    color: $color-hexagon-blue;
+  }
+}
+
+.icon {
+  &.position-- {
+    &left {
+
+    }
+    &right {
+
+    }
   }
 }

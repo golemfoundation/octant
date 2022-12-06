@@ -1,0 +1,62 @@
+.root {
+  position: fixed;
+  z-index: $z-index-4;
+  bottom: -100%;
+  left: 0;
+  width: 100%;
+  max-height: 75%;
+  overflow: auto;
+  background: $color-white;
+  padding: 3.2rem;
+  text-align: left;
+  box-shadow: $box-shadow-1;
+  transition: bottom 0.25s linear;
+  border-radius: $border-radius-20 $border-radius-20 0 0;
+
+  &.isOpen {
+    bottom: 0;
+  }
+
+  .header {
+    position: relative;
+    font-size: $font-size-20;
+    font-weight: $font-weight-bold;
+    margin: 0 0 5rem 0;
+  }
+
+  .body {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+.overflow {
+  @include overlay(0, 0);
+
+  &.isOpen {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.buttonClose {
+  position: absolute;
+  top: 2.4rem;
+  right: 2.4rem;
+  z-index: $z-index-3;
+}
+
+
+@media only screen and (min-width: 1200px) {
+  .root {
+    width: 47.2rem;
+    transform: translate(-50%, 50%);
+    left: 50%;
+    border-radius: $border-radius-20;
+
+    &.isOpen {
+      bottom: 50%;
+    }
+  }
+}

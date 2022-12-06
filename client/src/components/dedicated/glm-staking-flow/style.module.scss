@@ -1,0 +1,25 @@
+.element {
+  &:not(:last-child) {
+    margin: 0 0 1.6rem 0;
+  }
+}
+
+.inputs {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.input {
+  @include flexBasisGutter(2, 1.6rem);
+}
+
+.availableFunds {
+  margin: 2rem 0 0;
+}
+
+.button {
+  margin: 1.6rem 0 0 0;
+  width: 100%;
+}

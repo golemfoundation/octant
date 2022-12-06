@@ -34,7 +34,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
     if (newValue < 0) {
       return;
     }
-    onChange(id, newValue);
+    onChange(id.toNumber(), newValue);
   };
 
   const onInputTextChange = event => {
@@ -58,7 +58,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   };
 
   return (
-    <BoxRounded className={className} onClick={() => onSelectItem(id)}>
+    <BoxRounded className={className} onClick={() => onSelectItem(id.toNumber())}>
       <div className={styles.details}>
         <div className={styles.name}>{name}</div>
         <div className={styles.funds}>
@@ -70,7 +70,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
         </div>
       </div>
       <div className={cx(styles.value, isSelected && styles.isSelected)}>
-        <InputText ref={inputRef} value={value.toString()} variant="simple" {...inputProps} />
+        <InputText ref={inputRef} value={value.toString()} variant="borderless" {...inputProps} />
         <div className={styles.currency}>ETH</div>
       </div>
       <div className={cx(styles.buttons, isSelected && styles.isSelected)}>

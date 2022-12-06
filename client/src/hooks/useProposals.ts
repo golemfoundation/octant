@@ -7,14 +7,14 @@ import env from 'env';
 
 import { useProposalsContract } from './useContract';
 
-import { Proposals } from '../../../typechain-types';
+import { IProposals } from '../../../typechain-types/contracts/Proposals';
 
 export function useProposals(): [ExtendedProposal[]] {
   const { proposalsAddress } = env;
   const [proposals, setProposals] = useState<ExtendedProposal[]>([]);
   const contractProposals = useProposalsContract(proposalsAddress);
 
-  const { data: proposalsContract } = useQuery<Proposals.ProposalStructOutput[] | undefined>(
+  const { data: proposalsContract } = useQuery<IProposals.ProposalStructOutput[] | undefined>(
     ['proposalsContract'],
     // TODO get current epoch, not hardcoded 1 (HEX-86)
     () => contractProposals?.getProposals(1),
@@ -25,7 +25,7 @@ export function useProposals(): [ExtendedProposal[]] {
     (proposalsContract || []).map(({ id, uri }) => {
       return {
         queryFn: () => apiGetProposal(uri),
-        queryKey: ['proposalsIpfsResults', id],
+        queryKey: ['proposalsIpfsResults', id.toNumber()],
       };
     }),
   );

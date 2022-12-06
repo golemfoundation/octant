@@ -4,7 +4,7 @@ import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import { ExtendedProposal } from 'types/proposals';
 
 const validateProposalsInLocalStorage = (localStorageAllocationItems, proposals) =>
-  localStorageAllocationItems.filter(item => proposals.find(({ id }) => id === item));
+  localStorageAllocationItems.filter(item => proposals.find(({ id }) => id.toNumber() === item));
 
 export function useIdsInAllocation(
   proposals: ExtendedProposal[],

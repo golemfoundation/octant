@@ -8,6 +8,7 @@ export const BUTTON_VARIANTS = [
   'cta',
   'iconOnly',
   'iconOnlyTransparent',
+  'link',
 ];
 
 export type ButtonVariant = typeof BUTTON_VARIANTS[number];
@@ -17,9 +18,11 @@ export default interface ButtonProps {
   Icon?: ReactNode;
   children?: ReactNode;
   className?: string;
+  contentPosition?: 'leftToRight' | 'rightToLeft';
   href?: string;
   isActive?: boolean;
   isDisabled?: boolean;
+  isHigh?: boolean;
   label?: string;
   onClick?: () => void;
   rel?: string;
