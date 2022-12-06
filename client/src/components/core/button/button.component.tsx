@@ -10,12 +10,14 @@ const Button: FC<ButtonProps> = ({
   children,
   className,
   href,
+  contentPosition = 'leftToRight',
   isActive,
   isDisabled,
+  isHigh,
   label,
   onClick,
   rel,
-  target,
+  target = '_blank',
   to,
   type = 'button',
   variant = 'secondary',
@@ -42,8 +44,10 @@ const Button: FC<ButtonProps> = ({
       className={cx(
         styles.root,
         styles[`variant--${variant}`],
+        styles[`contentPosition--${contentPosition}`],
         isActive && styles.isActive,
         isDisabled && styles.isDisabled,
+        isHigh && styles.isHigh,
         className,
       )}
       onClick={onClick}

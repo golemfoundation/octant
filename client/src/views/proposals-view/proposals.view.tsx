@@ -20,8 +20,8 @@ const ProposalsView = (): ReactElement => {
               <ProposalItem
                 // eslint-disable-next-line react/no-array-index-key
                 key={index}
-                isAlreadyAdded={idsInAllocation.includes(proposal.id)}
-                onAddRemoveFromAllocate={() => onAddRemoveFromAllocate(proposal.id)}
+                isAlreadyAdded={idsInAllocation.includes(proposal.id.toNumber())}
+                onAddRemoveFromAllocate={() => onAddRemoveFromAllocate(proposal.id.toNumber())}
                 {...proposal}
               />
             ))}

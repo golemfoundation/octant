@@ -3,13 +3,87 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 2.2rem 2.4rem;
+  padding: 2.4rem;
   border-radius: $border-radius-16;
   background: $color-white;
   font-size: $font-size-12;
   font-weight: $font-weight-bold;
 
+  &.isGrey {
+    color: $color-hexagon-grey8;
+    background: $color-hexagon-grey;
+  }
+
   &.isClickable {
     cursor: pointer;
   }
+
+  &.hasTabs, &.isVertical {
+    flex-direction: column;
+  }
+
+  &.alignment-- {
+    &left {
+      align-items: flex-start;
+    }
+
+    &center {
+      align-items: center;
+      text-align: center;
+    }
+  }
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  align-self: stretch;
+  height: 5.6rem;
+  border-bottom: 0.1rem solid $color-hexagon-grey;
+  margin: 0 0 2rem 0;
+
+  &.isGrey {
+    border-color: $color-white;
+  }
+}
+
+.tab {
+  position: relative;
+  font-size: $font-size-14;
+  color: $color-hexagon-grey2;
+
+  &.isClickable {
+    cursor: pointer;
+  }
+
+  &.isActive {
+    color: $color-hexagon-grey7;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, 0);
+      height: 0.2rem;
+      width: 2.4rem;
+      background: $color-hexagon-grey7;
+    }
+  }
+
+  &:not(:last-child) {
+    margin: 0 2rem 0 0;
+  }
+}
+
+.title {
+  color: $color-hexagon-grey3;
+  font-size: $font-size-14;
+  font-weight: $font-weight-bold;
+  margin: 0 0 0.5rem 0;
+}
+
+.button {
+  margin: 3rem 0 0 0;
+  width: 100%;
 }

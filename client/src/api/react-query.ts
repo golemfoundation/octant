@@ -5,6 +5,7 @@ import { triggerToast } from 'utils/triggerToast';
 const reactQueryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      refetchOnMount: false,
       refetchOnWindowFocus: false,
     },
   },

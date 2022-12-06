@@ -1,5 +1,11 @@
 import { SvgImageConfig } from 'components/core/svg/types';
 
+export const arrow: SvgImageConfig = {
+  markup:
+    '<path stroke="#141DEF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.434 1.7h6.441v6.528"/><path stroke="#141DEF" stroke-linecap="round" stroke-width="2" d="M1-1h9.118" transform="matrix(-.69444 .71955 -.71011 -.70409 8.596 1)"/>',
+  viewBox: '0 0 10 10',
+};
+
 export const tick: SvgImageConfig = {
   markup:
     '<path stroke="#271558" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1.407 6.664 2.938 3.752 8.485-8.485"/>',

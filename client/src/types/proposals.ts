@@ -1,3 +1,5 @@
+import { BigNumber } from 'ethers';
+
 export interface BackendProposal {
   description: string;
   name: string;
@@ -6,6 +8,6 @@ export interface BackendProposal {
 }
 
 export interface ExtendedProposal extends BackendProposal {
-  id: number;
+  id: BigNumber;
   isLoadingError: boolean;
 }

@@ -1,7 +1,9 @@
+import { BigNumber } from 'ethers';
+
 export default interface AllocationItemProps {
   className?: string;
   eth?: number;
-  id: number;
+  id: BigNumber;
   isSelected: boolean;
   name: string;
   onChange: (id: number, value: number) => void;

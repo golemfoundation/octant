@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, Fragment, useState } from 'react';
 import Select, { SingleValue } from 'react-select';
 
 import { cross, tick } from 'svg/misc';
@@ -16,7 +16,16 @@ const CustomOption = ({ innerRef, innerProps, children, isSelected }) => (
   </div>
 );
 
-const CustomMenu = ({ innerRef, innerProps, setIsMenuOpen, children }) => (
+const CustomMenu = ({ innerRef, innerProps, children, setIsMenuOpen }) => (
+  <Fragment>
+    <div className={styles.overlay} onClick={() => setIsMenuOpen(false)} />
+    <div ref={innerRef} {...innerProps} className={styles.menu}>
+      {children}
+    </div>
+  </Fragment>
+);
+
+const CustomMenuList = ({ innerRef, innerProps, setIsMenuOpen, children }) => (
   <div ref={innerRef} {...innerProps}>
     {children}
     <Button
@@ -48,7 +57,8 @@ const InputSelect: FC<InputSelectProps> = ({ options, onChange, selectedOption }
       <Select
         classNamePrefix="InputSelect"
         components={{
-          MenuList: args => <CustomMenu {...args} setIsMenuOpen={setIsMenuOpen} />,
+          Menu: args => <CustomMenu {...args} setIsMenuOpen={setIsMenuOpen} />,
+          MenuList: args => <CustomMenuList {...args} setIsMenuOpen={setIsMenuOpen} />,
           Option: CustomOption,
         }}
         isSearchable={false}

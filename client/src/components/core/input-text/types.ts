@@ -1,4 +1,4 @@
-export const INPUT_TEXT_VARIANTS = ['simple', 'boxRounded'];
+export const INPUT_TEXT_VARIANTS = ['borderless', 'boxRounded', 'simple'];
 
 export type InputTextVariant = typeof INPUT_TEXT_VARIANTS[number];
 

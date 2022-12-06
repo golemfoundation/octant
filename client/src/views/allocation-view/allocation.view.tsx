@@ -62,9 +62,9 @@ const AllocationView = (): ReactElement => {
       <div className={styles.boxes}>
         {isRenderingReady
           ? idsInAllocation.map((idInAllocation, index) => {
-              const allocationItem = proposals[idInAllocation];
-              const isSelected = selectedItemId === allocationItem.id;
-              const value = allocationValues[allocationItem.id];
+              const allocationItem = proposals.find(({ id }) => id.toNumber() === idInAllocation)!;
+              const isSelected = selectedItemId === allocationItem.id.toNumber();
+              const value = allocationValues[allocationItem.id.toNumber()];
               return (
                 <AllocationItem
                   // eslint-disable-next-line react/no-array-index-key

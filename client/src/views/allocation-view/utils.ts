@@ -6,7 +6,7 @@ export function getAllocationValuesInitialState(elements: ExtendedProposal[]): A
   return elements.reduce(
     (acc, { id }) => ({
       ...acc,
-      [id]: 0,
+      [id.toNumber()]: 0,
     }),
     {},
   );

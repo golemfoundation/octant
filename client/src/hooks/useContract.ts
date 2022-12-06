@@ -1,4 +1,5 @@
-import { Signer, ethers } from 'ethers';
+import { InfuraProvider } from '@ethersproject/providers';
+import { Signer } from 'ethers';
 import { useMemo } from 'react';
 import type { Provider } from '@ethersproject/providers';
 
@@ -15,7 +16,7 @@ import {
   Proposals__factory,
 } from '../typechain-types';
 
-const providerGoerli = ethers.providers.getDefaultProvider('goerli');
+const providerGoerli = new InfuraProvider('goerli');
 
 export function useErc20Contract(tokenAddress: string, signer?: Signer): ERC20 | null {
   return useMemo(() => {
@@ -29,6 +30,7 @@ export function useProposalsContract(tokenAddress: string): Proposals | null {
   }, [tokenAddress]);
 }
 
+// TODO: Use Goerli.
 export function useAllocationsContract(
   tokenAddress: string,
   signerOrProvider?: Signer | Provider,

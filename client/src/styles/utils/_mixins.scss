@@ -1,0 +1,17 @@
+@mixin overlay($width, $height) {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: $height;
+  width: $width;
+  backdrop-filter: blur(4px);
+  z-index: $z-index-3;
+  cursor: pointer;
+}
+
+@mixin flexBasisGutter($elementsCount, $gutterSize) {
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: calc(#{calc(100/$elementsCount)}% - #{calc($gutterSize*($elementsCount - 1)/$elementsCount)});
+}
