@@ -12,19 +12,17 @@ const ProposalsView = (): ReactElement => {
   const [idsInAllocation, onAddRemoveFromAllocate] = useIdsInAllocation(proposals);
 
   return (
-    <MainLayout>
+    <MainLayout isLoading={proposals.length === 0}>
       <div className={styles.list}>
-        {proposals.length === 0
-          ? 'Loading...'
-          : proposals.map((proposal, index) => (
-              <ProposalItem
-                // eslint-disable-next-line react/no-array-index-key
-                key={index}
-                isAlreadyAdded={idsInAllocation.includes(proposal.id.toNumber())}
-                onAddRemoveFromAllocate={() => onAddRemoveFromAllocate(proposal.id.toNumber())}
-                {...proposal}
-              />
-            ))}
+        {proposals.map((proposal, index) => (
+          <ProposalItem
+            // eslint-disable-next-line react/no-array-index-key
+            key={index}
+            isAlreadyAdded={idsInAllocation.includes(proposal.id.toNumber())}
+            onAddRemoveFromAllocate={() => onAddRemoveFromAllocate(proposal.id.toNumber())}
+            {...proposal}
+          />
+        ))}
       </div>
     </MainLayout>
   );

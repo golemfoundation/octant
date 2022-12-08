@@ -4,45 +4,26 @@ import { useMetamask } from 'use-metamask';
 import React, { FC } from 'react';
 import cx from 'classnames';
 
-import { ROOT_ROUTES } from 'routes/root-routes/routes';
-import { allocate, earn, metrics, proposals, settings, userIcon } from 'svg/navigation';
 import { hexagon } from 'svg/logo';
+import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
+import { userIcon } from 'svg/navigation';
 import Button from 'components/core/button/button.component';
+import Loader from 'components/core/loader/loader.component';
 import Svg from 'components/core/svg/svg.component';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
 import MainLayoutProps from './types';
 import styles from './style.module.scss';
 
-const getTabs = () => [
-  {
-    icon: proposals,
-    label: 'Projects',
-    to: ROOT_ROUTES.proposals.absolute,
-  },
-  {
-    icon: allocate,
-    label: 'Allocate',
-    to: ROOT_ROUTES.allocation.absolute,
-  },
-  {
-    icon: metrics,
-    label: 'Metrics',
-    to: ROOT_ROUTES.metrics.absolute,
-  },
-  {
-    icon: earn,
-    label: 'Earn',
-    to: ROOT_ROUTES.earn.absolute,
-  },
-  {
-    icon: settings,
-    label: 'Settings',
-    to: ROOT_ROUTES.settings.absolute,
-  },
-];
-
-const MainLayout: FC<MainLayoutProps> = ({ children, navigationBottomSuffix }) => {
+const MainLayout: FC<MainLayoutProps> = ({
+  children,
+  navigationBottomSuffix,
+  isHeaderVisible = true,
+  isLoading,
+  landscapeImage,
+  classNameBody,
+  navigationTabs = navigationTabsDefault,
+}) => {
   const {
     connect,
     metaState: { isConnected, account },
@@ -56,27 +37,32 @@ const MainLayout: FC<MainLayoutProps> = ({ children, navigationBottomSuffix }) =
     }
   };
 
-  const tabsWithIsActive = getTabs().map(tab => {
+  const tabsWithIsActive = navigationTabs.map(tab => {
     return {
       ...tab,
-      isActive: pathname === tab.to,
+      isActive: tab.isActive || pathname === tab.to,
     };
   });
 
   return (
     <div className={styles.root}>
-      <div className={styles.header}>
-        <Svg img={hexagon} size={3} />
-        {isConnected ? (
-          <div className={styles.walletInfo}>
-            <div className={styles.address}>{truncateEthAddress(address)}</div>
-            <Svg img={userIcon} size={3} />
-          </div>
-        ) : (
-          <Button label="Connect wallet" onClick={authUser} variant="cta" />
-        )}
+      {isHeaderVisible && (
+        <div className={styles.header}>
+          <Svg img={hexagon} size={3} />
+          {isConnected ? (
+            <div className={styles.walletInfo}>
+              <div className={styles.address}>{truncateEthAddress(address)}</div>
+              <Svg img={userIcon} size={3} />
+            </div>
+          ) : (
+            <Button label="Connect wallet" onClick={authUser} variant="cta" />
+          )}
+        </div>
+      )}
+      {landscapeImage}
+      <div className={cx(styles.body, isLoading && styles.isLoading, classNameBody)}>
+        {isLoading ? <Loader className={styles.loader} /> : children}
       </div>
-      <div className={styles.body}>{children}</div>
       <nav
         className={cx(
           styles.navigation,
@@ -92,7 +78,7 @@ const MainLayout: FC<MainLayoutProps> = ({ children, navigationBottomSuffix }) =
               // eslint-disable-next-line react/no-array-index-key
               key={index}
               className={styles.button}
-              Icon={<Svg img={icon} size={[2.25, 'auto']} />}
+              Icon={<Svg img={icon} size={2.25} />}
               variant="iconVertical"
               {...rest}
             />

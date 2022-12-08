@@ -52,6 +52,7 @@ const AllocationView = (): ReactElement => {
 
   return (
     <MainLayout
+      isLoading={!isRenderingReady}
       navigationBottomSuffix={
         <div className={styles.buttons}>
           <Button className={styles.button} label="Reset" onClick={onResetAllocationValues} />
@@ -60,25 +61,23 @@ const AllocationView = (): ReactElement => {
       }
     >
       <div className={styles.boxes}>
-        {isRenderingReady
-          ? idsInAllocation.map((idInAllocation, index) => {
-              const allocationItem = proposals.find(({ id }) => id.toNumber() === idInAllocation)!;
-              const isSelected = selectedItemId === allocationItem.id.toNumber();
-              const value = allocationValues[allocationItem.id.toNumber()];
-              return (
-                <AllocationItem
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={index}
-                  className={cx(styles.box, isSelected && styles.isSelected)}
-                  isSelected={isSelected}
-                  onChange={changeAllocationItemValue}
-                  onSelectItem={setSelectedItemId}
-                  value={value}
-                  {...allocationItem}
-                />
-              );
-            })
-          : 'Loading...'}
+        {idsInAllocation.map((idInAllocation, index) => {
+          const allocationItem = proposals.find(({ id }) => id.toNumber() === idInAllocation)!;
+          const isSelected = selectedItemId === allocationItem.id.toNumber();
+          const value = allocationValues[allocationItem.id.toNumber()];
+          return (
+            <AllocationItem
+              // eslint-disable-next-line react/no-array-index-key
+              key={index}
+              className={cx(styles.box, isSelected && styles.isSelected)}
+              isSelected={isSelected}
+              onChange={changeAllocationItemValue}
+              onSelectItem={setSelectedItemId}
+              value={value}
+              {...allocationItem}
+            />
+          );
+        })}
       </div>
       {selectedItemId !== null && (
         <div className={styles.selectedItemOverlay} onClick={() => setSelectedItemId(null)} />

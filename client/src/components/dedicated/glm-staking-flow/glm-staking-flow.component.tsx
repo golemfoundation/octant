@@ -14,6 +14,7 @@ import BoxRounded from 'components/core/box-rounded/box-rounded.component';
 import BudgetBox from 'components/dedicated/budget-box/budget-box.component';
 import Button from 'components/core/button/button.component';
 import InputText from 'components/core/input-text/input-text.component';
+import Loader from 'components/core/loader/loader.component';
 import Modal from 'components/core/modal/modal.component';
 import ProgressBar from 'components/core/progress-bar/progress-bar.component';
 import env from 'env';
@@ -171,11 +172,12 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
           <InputText className={styles.input} isDisabled suffix="USD" variant="simple" />
         </div>
         <div className={styles.availableFunds}>
-          Available wallet balance {dataAvailableFunds} GLM
+          Available wallet balance {dataAvailableFunds} GLM.
         </div>
       </BoxRounded>
       <Button
         className={cx(styles.element, styles.button)}
+        Icon={isApproveOrDepositInProgress && <Loader />}
         isDisabled={!valueToDeposeOrWithdraw || isApproveOrDepositInProgress}
         isHigh
         label={currentMode === 'deposit' ? 'Stake' : 'Unstake'}

@@ -58,7 +58,11 @@ const AllocationItem: FC<AllocationItemProps> = ({
   };
 
   return (
-    <BoxRounded className={className} onClick={() => onSelectItem(id.toNumber())}>
+    <BoxRounded
+      alignment="center"
+      className={className}
+      onClick={() => onSelectItem(id.toNumber())}
+    >
       <div className={styles.details}>
         <div className={styles.name}>{name}</div>
         <div className={styles.funds}>

@@ -2,11 +2,9 @@ import { formatUnits } from 'ethers/lib/utils';
 import React, { FC } from 'react';
 
 import { GOERLI_ETHERSCAN_PREFIX } from 'constants/transactions';
-import { arrow } from 'svg/misc';
 import BoxRounded from 'components/core/box-rounded/box-rounded.component';
 import Button from 'components/core/button/button.component';
 import DoubleValue from 'components/core/double-value/double-value.component';
-import Svg from 'components/core/svg/svg.component';
 
 import BudgetBoxProps from './types';
 import styles from './styles.module.scss';
@@ -38,14 +36,12 @@ const getChildren = (
   }
   return (
     <div>
-      Your stake will update when the transaction is confirmed.
+      Your operation is confirmed.
       <div className={styles.transactionHash}>
         {transactionHash ? (
           <Button
             className={styles.button}
-            contentPosition="rightToLeft"
             href={`${GOERLI_ETHERSCAN_PREFIX}/${transactionHash}`}
-            Icon={<Svg classNameSvg={styles.icon} img={arrow} size={0.8} />}
             label="View on Etherscan"
             variant="link"
           />

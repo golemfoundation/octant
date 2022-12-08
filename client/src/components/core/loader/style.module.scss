@@ -1,0 +1,13 @@
+.root {
+  border: 0.2rem solid $color-hexagon-blue3;
+  border-top-color: $color-hexagon-blue;
+  border-radius: 50%;
+  width: 2.2rem;
+  height: 2.2rem;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

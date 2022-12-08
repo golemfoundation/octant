@@ -89,5 +89,7 @@ $paddingBody: 2.4rem;
 }
 
 .button {
+  position: relative;
+  z-index: $z-index-2;
   min-width: 12rem;
 }

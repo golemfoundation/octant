@@ -6,9 +6,13 @@ export const mockedExtendedProposal1: ExtendedProposal = {
   description: 'Mocked description',
   id: BigNumber.from(1),
   isLoadingError: false,
+  landscapeImageUrl: 'https://via.placeholder.com/600x300.jpg/0000FF/FFFFFF',
   name: 'Mocked name',
-  socialLinks: ['www.sociallink1.com', 'www.sociallink2.com'],
-  website: 'www.website.com',
+  profileImageUrl: 'https://via.placeholder.com/64x64.jpg/000000/FFFFFF',
+  website: {
+    label: 'Website label',
+    url: 'www.website.com',
+  },
 };
 
 export const mockedExtendedProposal2: ExtendedProposal = {

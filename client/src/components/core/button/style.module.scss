@@ -1,7 +1,7 @@
 .root {
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
   padding: 1rem 2rem;
   border-radius: $border-radius-16;
   background: transparent;
@@ -16,16 +16,6 @@
 
   &.isHigh {
     min-height: 4.8rem;
-  }
-}
-
-.contentPosition-- {
-  &leftToRight {
-    flex-direction: row;
-  }
-
-  &rightToLeft {
-    flex-direction: row-reverse;
   }
 }
 
@@ -73,14 +63,16 @@
     border: 0;
     font-size: $font-size-10;
 
-    svg {
+    svg, svg path {
+      color: $color-hexagon-grey2;
       stroke: $color-hexagon-grey2;
     }
 
     &.isActive {
       color: $color-hexagon-main-text-color;
 
-      svg {
+      svg, svg path {
+        color: $color-hexagon-main-text-color;
         stroke: $color-hexagon-main-text-color;
       }
     }
@@ -102,18 +94,23 @@
   }
 
   &link {
+    border-radius: 0;
     min-height: initial;
     color: $color-hexagon-blue;
   }
 }
 
 .icon {
-  &.position-- {
-    &left {
+  display: flex;
+  align-items: center;
 
+  &:not(.isIconVariant) {
+    &.isOnLeft {
+      margin: 0 1rem 0 0;
     }
-    &right {
 
+    &.isOnRight {
+      margin: 0 0 0 1rem;
     }
   }
 }
