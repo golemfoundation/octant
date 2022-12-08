@@ -1,5 +1,7 @@
+import { Link } from 'react-router-dom';
 import React, { FC, Fragment } from 'react';
 
+import { ROOT_ROUTES } from 'routes/root-routes/routes';
 import { tick } from 'svg/misc';
 import Button from 'components/core/button/button.component';
 import Img from 'components/core/img/img.component';
@@ -14,6 +16,9 @@ const ProposalItem: FC<ProposalItemProps> = ({
   name,
   onAddRemoveFromAllocate,
   isAlreadyAdded,
+  id,
+  landscapeImageUrl,
+  profileImageUrl,
 }) => {
   const buttonProps = isAlreadyAdded
     ? {
@@ -25,23 +30,18 @@ const ProposalItem: FC<ProposalItemProps> = ({
         label: 'Add to Allocate',
         variant: 'secondary',
       };
+
   return (
-    <div className={styles.root}>
+    <Link className={styles.root} to={`${ROOT_ROUTES.proposal.absolute}/${id}`}>
       {isLoadingError ? (
         'Loading of proposal encountered an error.'
       ) : (
         <Fragment>
           <div className={styles.header}>
             <div className={styles.imageLandscapeWrapper}>
-              <Img
-                className={styles.imageLandscape}
-                src="https://via.placeholder.com/600x300.jpg/0000FF/FFFFFF"
-              />
+              <Img className={styles.imageLandscape} src={landscapeImageUrl} />
             </div>
-            <Img
-              className={styles.imageProfile}
-              src="https://via.placeholder.com/64x64.jpg/000000/FFFFFF"
-            />
+            <Img className={styles.imageProfile} src={profileImageUrl} />
           </div>
           <div className={styles.body}>
             <div className={styles.name}>{name}</div>
@@ -55,14 +55,17 @@ const ProposalItem: FC<ProposalItemProps> = ({
             <div>
               <Button
                 className={styles.button}
-                onClick={onAddRemoveFromAllocate}
+                onClick={event => {
+                  event!.preventDefault();
+                  onAddRemoveFromAllocate();
+                }}
                 {...buttonProps}
               />
             </div>
           </div>
         </Fragment>
       )}
-    </div>
+    </Link>
   );
 };
 

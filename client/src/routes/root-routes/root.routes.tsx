@@ -4,6 +4,7 @@ import React, { ReactElement } from 'react';
 import AllocationView from 'views/allocation-view/allocation.view';
 import EarnView from 'views/earn-view/earn.view';
 import MetricsView from 'views/metrics-view/metrics.view';
+import ProposalView from 'views/proposal-view/proposal.view';
 import ProposalsView from 'views/proposals-view/proposals.view';
 import SettingsView from 'views/settings-view/settings.view';
 
@@ -16,6 +17,7 @@ const RootRoutes = (): ReactElement => (
     <Route element={<AllocationView />} path={`${ROOT_ROUTES.allocation.relative}/*`} />
     <Route element={<MetricsView />} path={`${ROOT_ROUTES.metrics.relative}/*`} />
     <Route element={<SettingsView />} path={`${ROOT_ROUTES.settings.relative}/*`} />
+    <Route element={<ProposalView />} path={`${ROOT_ROUTES.proposalWithId.relative}/*`} />
     <Route element={<Navigate to={ROOT_ROUTES.proposals.absolute} />} path="*" />
   </Routes>
 );

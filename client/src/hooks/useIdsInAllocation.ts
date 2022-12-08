@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import { ExtendedProposal } from 'types/proposals';
 
+import { onAddRemoveAllocationElementLocalStorage } from './utils';
+
 const validateProposalsInLocalStorage = (localStorageAllocationItems, proposals) =>
   localStorageAllocationItems.filter(item => proposals.find(({ id }) => id.toNumber() === item));
 
@@ -35,16 +37,7 @@ export function useIdsInAllocation(
   }, [proposals]);
 
   const onAddRemoveFromAllocate = (id: number) => {
-    const isItemAlreadyAdded = idsInAllocation.includes(id);
-    const newIds = [...idsInAllocation];
-
-    if (isItemAlreadyAdded) {
-      newIds.splice(newIds.indexOf(id), 1);
-    } else {
-      newIds.push(id);
-    }
-
-    localStorage.setItem(ALLOCATION_ITEMS_KEY, JSON.stringify(newIds));
+    const newIds = onAddRemoveAllocationElementLocalStorage(idsInAllocation, id);
     setIdsInAllocation(newIds);
   };
 

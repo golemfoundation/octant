@@ -1,54 +1,29 @@
-import { useEffect, useState } from 'react';
-import { useQueries, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
 
-import { BackendProposal, ExtendedProposal } from 'types/proposals';
-import { apiGetProposal } from 'api/proposals';
+import { ExtendedProposal } from 'types/proposals';
 import env from 'env';
 
-import { useProposalsContract } from './useContract';
+import { useEpochsContract, useProposalsContract } from './useContract';
+import { useIpfsProposals } from './useIpfsProposals';
 
-import { IProposals } from '../../../typechain-types/contracts/Proposals';
+import { IProposals } from '../../../typechain-types';
 
 export function useProposals(): [ExtendedProposal[]] {
-  const { proposalsAddress } = env;
-  const [proposals, setProposals] = useState<ExtendedProposal[]>([]);
+  const { proposalsAddress, epochsAddress } = env;
+  const contractEpochs = useEpochsContract(epochsAddress);
   const contractProposals = useProposalsContract(proposalsAddress);
+
+  const { data: currentEpoch } = useQuery(
+    ['currentEpoch'],
+    () => contractEpochs?.getCurrentEpoch(),
+    { enabled: !!contractEpochs },
+  );
 
   const { data: proposalsContract } = useQuery<IProposals.ProposalStructOutput[] | undefined>(
     ['proposalsContract'],
-    // TODO get current epoch, not hardcoded 1 (HEX-86)
-    () => contractProposals?.getProposals(1),
-    { enabled: !!contractProposals },
+    () => contractProposals?.getProposals(currentEpoch!),
+    { enabled: !!contractProposals && !!currentEpoch },
   );
 
-  const proposalsIpfsResults = useQueries<BackendProposal[]>(
-    (proposalsContract || []).map(({ id, uri }) => {
-      return {
-        queryFn: () => apiGetProposal(uri),
-        queryKey: ['proposalsIpfsResults', id.toNumber()],
-      };
-    }),
-  );
-
-  const isProposalsIpfsResultsLoading = proposalsIpfsResults.some(({ isLoading }) => isLoading);
-
-  useEffect(() => {
-    if (isProposalsIpfsResultsLoading) {
-      return;
-    }
-
-    const parsedProposals = isProposalsIpfsResultsLoading
-      ? []
-      : proposalsIpfsResults.map<ExtendedProposal>((proposal, index) => ({
-          ...(proposal.data as BackendProposal),
-          id: proposalsContract![index].id,
-          isLoadingError: proposal.isError,
-        }));
-
-    setProposals(parsedProposals);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isProposalsIpfsResultsLoading]);
-
-  return [proposals];
+  return useIpfsProposals(proposalsContract);
 }
