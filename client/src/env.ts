@@ -3,6 +3,10 @@ const env = {
   allocationsAddress:
     // @ts-expect-error TS does not understand the way vite imports envs.
     import.meta.env.VITE_ALLOCATIONS_ADDRESS || '0x43D5831b9086315Dd646Ae66b93107B9791652a8',
+  allocationsStorageAddress:
+    // @ts-expect-error TS does not understand the way vite imports envs.
+    import.meta.env.VITE_ALLOCATIONS_STORAGE_ADDRESS ||
+    '0x0F6AbB21BCaE5630c7dE16bF36261b2d0884523D',
   depositsAddress:
     // @ts-expect-error TS does not understand the way vite imports envs.
     import.meta.env.VITE_DEPOSITS_ADDRESS || '0x8519aE87F338dd5f4CB1cF809339B6B6e5d40F59',
@@ -18,6 +22,9 @@ const env = {
   proposalsAddress:
     // @ts-expect-error TS does not understand the way vite imports envs.
     import.meta.env.VITE_PROPOSALS_ADDRESS || '0x39F67554bA2284925b80A66fA1f95b6B9EeC8486',
+  rewardsAddress:
+    // @ts-expect-error TS does not understand the way vite imports envs.
+    import.meta.env.VITE_REWARDS_ADDRESS || '0xee7c38d27bD638BaE3c68255331f977303e62ab7',
 };
 
 export default env;

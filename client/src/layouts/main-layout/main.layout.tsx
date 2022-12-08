@@ -11,6 +11,7 @@ import Button from 'components/core/button/button.component';
 import Loader from 'components/core/loader/loader.component';
 import Svg from 'components/core/svg/svg.component';
 import truncateEthAddress from 'utils/truncateEthAddress';
+import useRewardBudget from 'hooks/useRewardBudget';
 
 import MainLayoutProps from './types';
 import styles from './style.module.scss';
@@ -28,6 +29,7 @@ const MainLayout: FC<MainLayoutProps> = ({
     connect,
     metaState: { isConnected, account },
   } = useMetamask();
+  const { data: rewardBudget } = useRewardBudget();
   const { pathname } = useLocation();
   const address = account[0];
 
@@ -50,8 +52,11 @@ const MainLayout: FC<MainLayoutProps> = ({
         <div className={styles.header}>
           <Svg img={hexagon} size={3} />
           {isConnected ? (
-            <div className={styles.walletInfo}>
-              <div className={styles.address}>{truncateEthAddress(address)}</div>
+            <div className={styles.profileInfo}>
+              <div className={styles.walletInfo}>
+                <div className={styles.address}>{truncateEthAddress(address)}</div>
+                <div className={styles.budget}>Budget {rewardBudget} ETH</div>
+              </div>
               <Svg img={userIcon} size={3} />
             </div>
           ) : (
