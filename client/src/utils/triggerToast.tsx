@@ -8,7 +8,7 @@ interface TriggerToast extends ToastProps {
   options?: ToastOptions;
 }
 
-export function triggerToast({ options, ...rest }: TriggerToast): void {
+export default function triggerToast({ options, ...rest }: TriggerToast): void {
   toast(<Toast {...rest} />, {
     autoClose: 5000,
     hideProgressBar: false, // it's hidden in toast.css styles, look for comment there.

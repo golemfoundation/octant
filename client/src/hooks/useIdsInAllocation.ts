@@ -8,7 +8,7 @@ import { onAddRemoveAllocationElementLocalStorage } from './utils';
 const validateProposalsInLocalStorage = (localStorageAllocationItems, proposals) =>
   localStorageAllocationItems.filter(item => proposals.find(({ id }) => id.toNumber() === item));
 
-export function useIdsInAllocation(
+export default function useIdsInAllocation(
   proposals: ExtendedProposal[],
 ): [number[], (id: number) => void] {
   const [idsInAllocation, setIdsInAllocation] = useState<number[]>([]);

@@ -1,6 +1,6 @@
 import debounce from 'lodash/debounce';
 
-import { triggerToast } from 'utils/triggerToast';
+import triggerToast from 'utils/triggerToast';
 
 const debounceTime = 5000;
 

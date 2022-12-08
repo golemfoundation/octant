@@ -3,12 +3,12 @@ import cx from 'classnames';
 import isEmpty from 'lodash/isEmpty';
 
 import { ALLOCATIONS_MAX_NUMBER } from 'constants/allocations';
-import { triggerToast } from 'utils/triggerToast';
-import { useIdsInAllocation } from 'hooks/useIdsInAllocation';
-import { useProposals } from 'hooks/useProposals';
 import AllocationItem from 'components/dedicated/allocation-item/allocation-item.component';
 import Button from 'components/core/button/button.component';
 import MainLayout from 'layouts/main-layout/main.layout';
+import triggerToast from 'utils/triggerToast';
+import useIdsInAllocation from 'hooks/useIdsInAllocation';
+import useProposals from 'hooks/useProposals';
 
 import { AllocationValues } from './types';
 import { getAllocationValuesInitialState, getAllocationsWithValues } from './utils';

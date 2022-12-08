@@ -7,7 +7,7 @@ import { apiGetProposal } from 'api/proposals';
 
 import { IProposals } from '../../../typechain-types';
 
-export function useIpfsProposals(
+export default function useIpfsProposals(
   proposalsContract:
     | IProposals.ProposalStructOutput[]
     | { id: BigNumber; uri: string }[]

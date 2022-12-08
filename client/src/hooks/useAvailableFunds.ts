@@ -4,9 +4,9 @@ import { formatUnits } from 'ethers/lib/utils';
 
 import env from 'env';
 
-import { useErc20Contract } from './useContract';
+import useErc20Contract from './contracts/useErc20Contract';
 
-export function useAvailableFunds(address: string, signer: Signer): UseQueryResult<number> {
+export default function useAvailableFunds(address: string, signer: Signer): UseQueryResult<number> {
   const { glmAddress } = env;
   const erc20Contract = useErc20Contract(glmAddress, signer);
   return useQuery<BigNumberish | undefined, unknown, number>(

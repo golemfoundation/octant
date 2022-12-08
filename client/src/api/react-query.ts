@@ -1,6 +1,6 @@
 import { QueryCache, QueryClient } from 'react-query';
 
-import { triggerToast } from 'utils/triggerToast';
+import triggerToast from 'utils/triggerToast';
 
 const reactQueryClient = new QueryClient({
   defaultOptions: {
