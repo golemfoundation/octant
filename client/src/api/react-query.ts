@@ -10,11 +10,9 @@ const reactQueryClient = new QueryClient({
     },
   },
   queryCache: new QueryCache({
-    onError: (error, query) => {
-      if (query.state.data !== undefined) {
-        // @ts-expect-error Error is of type 'unknown', but it is an API error.
-        triggerToast({ message: `Something went wrong: ${error.message}`, type: 'error' });
-      }
+    onError: error => {
+      // @ts-expect-error Error is of type 'unknown', but it is an API error.
+      triggerToast({ message: `Something went wrong: ${error.message}`, type: 'error' });
     },
   }),
 });

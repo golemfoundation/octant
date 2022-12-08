@@ -1,8 +1,9 @@
 import { BigNumber } from 'ethers';
-import { useParams } from 'react-router-dom';
+import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import React, { ReactElement } from 'react';
 
+import { ROOT_ROUTES } from 'routes/root-routes/routes';
 import { chevronLeft } from 'svg/navigation';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import { tick } from 'svg/misc';
@@ -11,6 +12,7 @@ import Img from 'components/core/img/img.component';
 import MainLayout from 'layouts/main-layout/main.layout';
 import Svg from 'components/core/svg/svg.component';
 import env from 'env';
+import triggerToast from 'utils/triggerToast';
 import useIdInAllocation from 'hooks/useIdInAllocation';
 import useIpfsProposals from 'hooks/useIpfsProposals';
 import useProposalsContract from 'hooks/contracts/useProposalsContract';
@@ -50,6 +52,17 @@ const ProposalView = (): ReactElement => {
         isLoading
         navigationTabs={getCustomNavigationTabs()}
       />
+    );
+  }
+
+  if (proposal.isLoadingError) {
+    triggerToast({
+      title: 'Loading of this proposal encountered a problem.',
+    });
+    return (
+      <Routes>
+        <Route element={<Navigate to={ROOT_ROUTES.proposals.absolute} />} path="*" />
+      </Routes>
     );
   }
 
