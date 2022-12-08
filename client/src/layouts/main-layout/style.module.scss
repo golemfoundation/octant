@@ -21,15 +21,25 @@ $headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
   box-shadow: $box-shadow-1;
 }
 
-.walletInfo {
+.profileInfo {
   display: flex;
   align-items: center;
+  font-size: $font-size-14;
+}
+
+.walletInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin: 0 0.8rem 0 0;
 }
 
 .address {
-  font-size: $font-size-14;
   font-weight: $font-weight-bold;
-  margin: 0 0.8rem 0 0;
+}
+
+.budget {
+  font-size: $font-size-14;
 }
 
 .body {

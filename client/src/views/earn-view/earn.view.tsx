@@ -6,6 +6,7 @@ import DoubleValue from 'components/core/double-value/double-value.component';
 import GlmStakingFlow from 'components/dedicated/glm-staking-flow/glm-staking-flow.component';
 import MainLayout from 'layouts/main-layout/main.layout';
 import useDepositValue from 'hooks/useDepositValue';
+import useRewardBudget from 'hooks/useRewardBudget';
 
 import { getCurrentEpochStateText } from './utils';
 import styles from './style.module.scss';
@@ -16,6 +17,7 @@ const EarnView = (): ReactElement => {
   } = useMetamask();
   const [isGlmStakingModalOpen, setIsGlmStakingModalOpen] = useState<boolean>(false);
   const { data: depositsValue } = useDepositValue();
+  const { data: rewardBudget } = useRewardBudget();
 
   return (
     <MainLayout>
@@ -52,7 +54,7 @@ const EarnView = (): ReactElement => {
         isVertical
         title="Rewards Balance"
       >
-        Withdraw rewards.
+        <DoubleValue mainValue={`${rewardBudget} ETH`} />
       </BoxRounded>
       <GlmStakingFlow
         modalProps={{
