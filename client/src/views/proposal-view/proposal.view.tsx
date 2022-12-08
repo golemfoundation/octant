@@ -42,7 +42,7 @@ const ProposalView = (): ReactElement => {
   );
   const [proposal] = proposals;
 
-  if (true) {
+  if (!proposal) {
     return (
       <MainLayout
         classNameBody={styles.bodyLayout}
