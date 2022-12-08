@@ -1,11 +1,11 @@
 import { useMetamask } from 'use-metamask';
 import React, { ReactElement, useState } from 'react';
 
-import { useDepositValue } from 'hooks/useDepositValue';
 import BoxRounded from 'components/core/box-rounded/box-rounded.component';
 import DoubleValue from 'components/core/double-value/double-value.component';
 import GlmStakingFlow from 'components/dedicated/glm-staking-flow/glm-staking-flow.component';
 import MainLayout from 'layouts/main-layout/main.layout';
+import useDepositValue from 'hooks/useDepositValue';
 
 import { getCurrentEpochStateText } from './utils';
 import styles from './style.module.scss';

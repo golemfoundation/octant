@@ -4,9 +4,9 @@ import { useMetamask } from 'use-metamask';
 
 import env from 'env';
 
-import { useDepositsContract } from './useContract';
+import useDepositsContract from './contracts/useDepositsContract';
 
-export function useDepositValue(): UseQueryResult<BigNumberish> {
+export default function useDepositValue(): UseQueryResult<BigNumberish> {
   const {
     metaState: { web3, account },
   } = useMetamask();

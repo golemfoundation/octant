@@ -6,14 +6,14 @@ import React, { ReactElement } from 'react';
 import { chevronLeft } from 'svg/navigation';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import { tick } from 'svg/misc';
-import { useIdInAllocation } from 'hooks/useIdInAllocation';
-import { useIpfsProposals } from 'hooks/useIpfsProposals';
-import { useProposalsContract } from 'hooks/useContract';
 import Button from 'components/core/button/button.component';
 import Img from 'components/core/img/img.component';
 import MainLayout from 'layouts/main-layout/main.layout';
 import Svg from 'components/core/svg/svg.component';
 import env from 'env';
+import useIdInAllocation from 'hooks/useIdInAllocation';
+import useIpfsProposals from 'hooks/useIpfsProposals';
+import useProposalsContract from 'hooks/contracts/useProposalsContract';
 
 import styles from './style.module.scss';
 

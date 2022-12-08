@@ -5,11 +5,6 @@ import React, { FC, useEffect, useState } from 'react';
 import cx from 'classnames';
 
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
-import { triggerToast } from 'utils/triggerToast';
-import { useAvailableFunds } from 'hooks/useAvailableFunds';
-import { useDepositValue } from 'hooks/useDepositValue';
-import { useDepositsContract } from 'hooks/useContract';
-import { useMaxApproveCallback } from 'hooks/useMaxApproveCallback';
 import BoxRounded from 'components/core/box-rounded/box-rounded.component';
 import BudgetBox from 'components/dedicated/budget-box/budget-box.component';
 import Button from 'components/core/button/button.component';
@@ -18,6 +13,11 @@ import Loader from 'components/core/loader/loader.component';
 import Modal from 'components/core/modal/modal.component';
 import ProgressBar from 'components/core/progress-bar/progress-bar.component';
 import env from 'env';
+import triggerToast from 'utils/triggerToast';
+import useAvailableFunds from 'hooks/useAvailableFunds';
+import useDepositValue from 'hooks/useDepositValue';
+import useDepositsContract from 'hooks/contracts/useDepositsContract';
+import useMaxApproveCallback from 'hooks/useMaxApproveCallback';
 
 import { stakeValueTooBigDebouncedToast, unstakeValueTooBigDebouncedToast } from './utils';
 import GlmStakingFlowProps, { CurrentMode, CurrentStepIndex } from './types';

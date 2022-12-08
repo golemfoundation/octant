@@ -3,12 +3,13 @@ import { useQuery } from 'react-query';
 import { ExtendedProposal } from 'types/proposals';
 import env from 'env';
 
-import { useEpochsContract, useProposalsContract } from './useContract';
-import { useIpfsProposals } from './useIpfsProposals';
+import useEpochsContract from './contracts/useEpochsContract';
+import useIpfsProposals from './useIpfsProposals';
+import useProposalsContract from './contracts/useProposalsContract';
 
 import { IProposals } from '../../../typechain-types';
 
-export function useProposals(): [ExtendedProposal[]] {
+export default function useProposals(): [ExtendedProposal[]] {
   const { proposalsAddress, epochsAddress } = env;
   const contractEpochs = useEpochsContract(epochsAddress);
   const contractProposals = useProposalsContract(proposalsAddress);
