@@ -2,17 +2,17 @@
 const env = {
   allocationsAddress:
     // @ts-expect-error TS does not understand the way vite imports envs.
-    import.meta.env.VITE_ALLOCATIONS_ADDRESS || '0x43D5831b9086315Dd646Ae66b93107B9791652a8',
+    import.meta.env.VITE_ALLOCATIONS_ADDRESS || '0x813B40572654B26B2d779829261D5219e5943723',
   allocationsStorageAddress:
     // @ts-expect-error TS does not understand the way vite imports envs.
     import.meta.env.VITE_ALLOCATIONS_STORAGE_ADDRESS ||
-    '0x0F6AbB21BCaE5630c7dE16bF36261b2d0884523D',
+    '0x05c08404435b5DF86FbbD14B5d3BAAb91cE95588',
   depositsAddress:
     // @ts-expect-error TS does not understand the way vite imports envs.
-    import.meta.env.VITE_DEPOSITS_ADDRESS || '0x8519aE87F338dd5f4CB1cF809339B6B6e5d40F59',
+    import.meta.env.VITE_DEPOSITS_ADDRESS || '0x3c6ab3E060F8c9c07A9dAd0a0c2e02298e4a939f',
   epochsAddress:
     // @ts-expect-error TS does not understand the way vite imports envs.
-    import.meta.env.VITE_EPOCHS_ADDRESS || '0xd26c71Bf3ea8845364d650F8bED921C8130EfE9A',
+    import.meta.env.VITE_EPOCHS_ADDRESS || '0x3318e56BC1cF548420818732ce6C8e3C5BF3E304',
   glmAddress:
     // @ts-expect-error TS does not understand the way vite imports envs.
     import.meta.env.VITE_GLM_ADDRESS || '0x4914bdFfFA96a3936304705eE41C2F5CbcAD7774',
@@ -21,10 +21,10 @@ const env = {
     import.meta.env.IPFS_GATEWAY || 'https://hexagon.infura-ipfs.io',
   proposalsAddress:
     // @ts-expect-error TS does not understand the way vite imports envs.
-    import.meta.env.VITE_PROPOSALS_ADDRESS || '0x39F67554bA2284925b80A66fA1f95b6B9EeC8486',
+    import.meta.env.VITE_PROPOSALS_ADDRESS || '0x52716631EAd76efA264039101Fb022bB063b1411',
   rewardsAddress:
     // @ts-expect-error TS does not understand the way vite imports envs.
-    import.meta.env.VITE_REWARDS_ADDRESS || '0xee7c38d27bD638BaE3c68255331f977303e62ab7',
+    import.meta.env.VITE_REWARDS_ADDRESS || '0xB4756950a43f20F73Cda820eB79607FA0CD701d7',
 };
 
 export default env;

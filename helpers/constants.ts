@@ -6,6 +6,7 @@ export const PROPOSALS = "Proposals";
 export const DEPOSITS = "Deposits";
 export const TRACKER = "Tracker";
 export const REWARDS = "Rewards";
+export const TEST_REWARDS = "TestRewards";
 export const TOKEN = "Token";
 export const ALLOCATIONS = "Allocations";
 export const ALLOCATIONS_STORAGE = "AllocationsStorage";

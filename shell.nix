@@ -12,7 +12,11 @@ let
     importmagic # for emacs
     epc # for emacs
   ]);
-  yarn16 = pkgs.dat.override (oldAttrs: {
+  # yarn16 = pkgs.yarn.override (oldAttrs: {
+  #   buildInputs = [ pkgs.nodejs-16_x ];
+  # });
+  # yarn16 = pkgs.yarn.override { buildInputs = [ pkgs.nodejs-16_x ]; };
+  yarn16 = pkgs.yarn.overrideAttrs (finalAttrs: previousAttrs: {
     buildInputs = [ pkgs.nodejs-16_x ];
   });
 in
