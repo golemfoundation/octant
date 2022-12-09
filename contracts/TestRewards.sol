@@ -70,7 +70,8 @@ contract TestRewards {
 
     /// @notice Compute total individual rewards for particular epoch.
     function allIndividualRewards(uint256 epoch) public view returns (uint256) {
-        return oracle.getTotalETHStakingProceeds(epoch).mul(stakedRatio(epoch));
+        uint256 proceeds = 400 ether;
+        return proceeds.mul(stakedRatio(epoch));
     }
 
     /// @notice Compute user's individual reward for particular epoch.
