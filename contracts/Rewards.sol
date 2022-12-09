@@ -74,10 +74,12 @@ contract Rewards {
 
     /// @notice Compute user's individual reward for particular epoch.
     function individualReward(uint256 epoch, address individual) public view returns (uint256) {
+        uint256 myDeposit = tracker.depositAt(individual, epoch);
+        if (myDeposit == 0) {
+            return 0;
+        }
         uint256 allRewards = allIndividualRewards(epoch);
-        uint256 individualShare = tracker.depositAt(individual, epoch).div(
-            tracker.totalDepositAt(epoch)
-        );
+        uint256 individualShare = myDeposit.div(tracker.totalDepositAt(epoch));
         return allRewards.mul(individualShare);
     }
 
