@@ -12,14 +12,17 @@ let
     importmagic # for emacs
     epc # for emacs
   ]);
+  yarn16 = pkgs.dat.override (oldAttrs: {
+    buildInputs = [ pkgs.nodejs-16_x ];
+  });
 in
 
 pkgs.mkShell {
   buildInputs = [
 	  pkgs.nodejs-16_x
-    pkgs.yarn
 	  pkgs.git
 	  pkgs.ripgrep
     python
+    yarn16
   ];
 }
