@@ -4,7 +4,7 @@ import {
   Deposits, Tracker, Rewards,
   Epochs, HexagonOracle,
   Proposals, ExecutionLayerOracle,
-  Token, AllocationsStorage
+  Token, AllocationsStorage, TestRewards
 } from '../../typechain-types';
 import { SignerWithAddress } from 'hardhat-deploy-ethers/signers';
 
@@ -18,6 +18,7 @@ export interface TestEnv {
   glmDeposits: Deposits;
   tracker: Tracker;
   rewards: Rewards;
+  testRewards: TestRewards;
   token: Token;
   epochs: Epochs;
   beaconChainOracle: BeaconChainOracle;

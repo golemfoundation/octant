@@ -7,10 +7,19 @@ import { makeTestsEnv } from './helpers/make-tests-env';
 makeTestsEnv(REWARDS, (testEnv) => {
 
   describe("individualReward", async () => {
-    it.only("TestRewards", async() => {
-      const { epochs, testRewards, signers } = testEnv;
+    it("TestRewards", async() => {
+      const { testRewards, signers } = testEnv;
       expect(await testRewards.individualReward(1, signers.Alice.address)).eq(parseEther("0.4"));
     });
+
+    it("TestRewards", async() => {
+      const { testRewards, allocations, signers: { Alice } } = testEnv;
+      await allocations.connect(Alice).vote(1, 50);
+      const result = await testRewards.matchedProposalRewards(1);
+      expect(result[0].donated).eq(parseEther("0.2"));
+      expect(result[0].matched).eq(parseEther("40.407017003965518800"));
+    });
+
     it("single player scenario", async function () {
       const { epochs, glmDeposits, rewards, tracker, signers, token, beaconChainOracle, executionLayerOracle } = testEnv;
       await token.transfer(signers.Alice.address, parseEther("1000000"));
