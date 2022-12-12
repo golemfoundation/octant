@@ -78,7 +78,7 @@ Oracle unit tests:
   cache:
     - key: $CI_COMMIT_REF_SLUG-contracts
       paths:
-      - artifacts
+        - artifacts
   script:
     - cd oracle
     - pip install -r requirements.txt
@@ -107,15 +107,13 @@ Contracts deploy:
 
 pages:
   stage: deploy
-  cache:
-    - key: $CI_COMMIT_REF_SLUG-contracts
-      paths:
-        - typechain-types
-      policy: pull
   rules:
     - if: '$CI_COMMIT_REF_NAME == "master"'
       when: manual
   script:
+    - apt-get update && apt-get install -y --no-install-recommends git --reinstall ca-certificates
+    - yarn install --non-interactive --cache-folder .yarn
+    - yarn compile
     - cd client
     - yarn install --non-interactive
     - yarn build
