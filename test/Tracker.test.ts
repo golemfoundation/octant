@@ -217,7 +217,6 @@ makeTestsEnv(TRACKER, (testEnv) => {
     it("Can read value in 'silent' epochs", async () => {
       const { epochs, token, glmDeposits, signers, tracker } = testEnv;
       let startAt = await epochs.start();
-      console.log(`first epoch starts at ${startAt}`);
       await token.transfer(signers.Alice.address, 1005);
       await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
       await glmDeposits.connect(signers.Alice).deposit(1000);

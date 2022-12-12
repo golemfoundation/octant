@@ -105,24 +105,24 @@ makeTestsEnv(REWARDS, (testEnv) => {
       await glmDeposits.connect(Eve).deposit(parseEther('200000'));
 
       // Set ETH proceeds in first epoch
-      await forwardEpochs(epochs, 1);
+      await forwardEpochs(epochs, 1); // epoch #2
       await beaconChainOracle.setBalance(1, parseEther('200'));
       await executionLayerOracle.setBalance(1, parseEther('200'));
 
-      // Users vote
+      // Set ETH proceeds in second epoch
+      await forwardEpochs(epochs, 1); // epoch #3
+      await beaconChainOracle.setBalance(2, parseEther('400'));
+      await executionLayerOracle.setBalance(2, parseEther('400'));
+
+      // Users vote in epoch 3 for proceeds of epoch 2
       await allocations.connect(Alice).vote(1, 30);
       await allocations.connect(Bob).vote(2, 50);
       await allocations.connect(Charlie).vote(2, 10);
       await allocations.connect(Eve).vote(4, 40);
-
-      // Set ETH proceeds in second epoch
-      await forwardEpochs(epochs, 1);
-      await beaconChainOracle.setBalance(2, parseEther('400'));
-      await executionLayerOracle.setBalance(2, parseEther('400'));
     });
 
     it('Compute individual proposal rewards', async () => {
-      const { rewards } = testEnv;
+      const { epochs, rewards } = testEnv;
       const proposalRewards = await rewards.individualProposalRewards(2);
       expect(proposalRewards[0], 'proposal rewards sum').eq(parseEther('0.332'));
       const firstProposal = proposalRewards[1][0];
