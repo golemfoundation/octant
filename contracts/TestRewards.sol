@@ -85,8 +85,9 @@ contract TestRewards {
 
     /// @notice Compute total rewards to be distributed between users and proposals.
     function totalRewards(uint256 epoch) public view returns (uint256) {
+        uint256 proceeds = 400 ether;
         uint256 ratio = stakedRatio(epoch);
-        return oracle.getTotalETHStakingProceeds(epoch).mul(ratio.sqrt());
+        return proceeds.mul(ratio.sqrt());
     }
 
     /// @notice Compute matched rewards.
