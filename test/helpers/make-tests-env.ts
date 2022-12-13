@@ -10,7 +10,7 @@ import {
   TOKEN,
   ALLOCATIONS,
   EPOCHS,
-  BEACON_CHAIN_ORACLE, EXECUTION_LAYER_ORACLE, HEXAGON_ORACLE, ALLOCATIONS_STORAGE
+  BEACON_CHAIN_ORACLE, EXECUTION_LAYER_ORACLE, HEXAGON_ORACLE, ALLOCATIONS_STORAGE, FAUCET
 } from '../../helpers/constants';
 import {
   Proposals,
@@ -46,6 +46,7 @@ async function initializeTestsEnv() {
   testEnv.signers = await ethers.getNamedSigners();
   testEnv.allocations = await ethers.getContract(ALLOCATIONS);
   testEnv.allocationsStorage = await ethers.getContract(ALLOCATIONS_STORAGE);
+  testEnv.faucet = await ethers.getContract(FAUCET);
   testEnv.token = await ethers.getContract(TOKEN);
   testEnv.glmDeposits = await ethers.getContract(DEPOSITS);
   testEnv.tracker = await ethers.getContract(TRACKER);
