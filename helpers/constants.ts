@@ -8,6 +8,7 @@ export const TRACKER = "Tracker";
 export const REWARDS = "Rewards";
 export const TEST_REWARDS = "TestRewards";
 export const TOKEN = "Token";
+export const FAUCET = "TestGLMFaucet";
 export const ALLOCATIONS = "Allocations";
 export const ALLOCATIONS_STORAGE = "AllocationsStorage";
 export const EPOCHS = "Epochs";

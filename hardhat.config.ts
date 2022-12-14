@@ -10,6 +10,7 @@ import 'hardhat-docgen';
 import './tasks/clean';
 import './tasks/deploy-zksync';
 import './tasks/mine';
+import './tasks/send-glm';
 
 import { ETHERSCAN_API_KEY, GOERLI_PRIVATE_KEY, GOERLI_URL, ZKSYNC_URL } from './env';
 

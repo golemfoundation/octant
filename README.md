@@ -38,4 +38,14 @@ yarn verify:goerli
 ```bash
 yarn deploy:zksync
 ```
+## GLM Faucet (Goerli)
+Update `.env` with your private key:
+```bash
+GOERLI_PRIVATE_KEY=<your private key>
+```
+Send Test GLM
+```bash
+npx hardhat --network goerli send-glm --recipient <recipient address>
+```
+
 
