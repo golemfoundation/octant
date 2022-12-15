@@ -9,6 +9,7 @@ export default interface BoxRoundedProps {
   className?: string;
   isGrey?: boolean;
   isVertical?: boolean;
+  justifyContent?: 'center' | 'spaceBetween';
   onClick?: () => void;
   tabs?: {
     isActive?: boolean;

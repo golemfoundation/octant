@@ -3,22 +3,16 @@ import { useQuery } from 'react-query';
 import { ExtendedProposal } from 'types/proposals';
 import env from 'env';
 
-import useEpochsContract from './contracts/useEpochsContract';
+import useCurrentEpoch from './useCurrentEpoch';
 import useIpfsProposals from './useIpfsProposals';
 import useProposalsContract from './contracts/useProposalsContract';
 
 import { IProposals } from '../../../typechain-types';
 
 export default function useProposals(): [ExtendedProposal[]] {
-  const { proposalsAddress, epochsAddress } = env;
-  const contractEpochs = useEpochsContract(epochsAddress);
+  const { proposalsAddress } = env;
   const contractProposals = useProposalsContract(proposalsAddress);
-
-  const { data: currentEpoch } = useQuery(
-    ['currentEpoch'],
-    () => contractEpochs?.getCurrentEpoch(),
-    { enabled: !!contractEpochs },
-  );
+  const { data: currentEpoch } = useCurrentEpoch();
 
   const { data: proposalsContract } = useQuery<IProposals.ProposalStructOutput[] | undefined>(
     ['proposalsContract'],

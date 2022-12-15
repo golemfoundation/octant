@@ -1,3 +1,4 @@
+import { BigNumberish } from 'ethers';
 import { UseQueryResult, useQuery } from 'react-query';
 import { useMetamask } from 'use-metamask';
 
@@ -6,7 +7,7 @@ import env from 'env';
 import useCurrentEpoch from './useCurrentEpoch';
 import useRewardsContract from './contracts/useRewardsContract';
 
-export default function useRewardBudget(): UseQueryResult<number | undefined, unknown> {
+export default function useRewardBudget(): UseQueryResult<BigNumberish | undefined> {
   const { rewardsAddress } = env;
   const contractRewards = useRewardsContract(rewardsAddress);
   const {
@@ -19,9 +20,6 @@ export default function useRewardBudget(): UseQueryResult<number | undefined, un
   return useQuery(
     ['rewardBudget'],
     () => contractRewards?.individualReward(currentEpoch!, address),
-    {
-      enabled: !!currentEpoch && !!address && !!contractRewards,
-      select: data => data!.toNumber(),
-    },
+    { enabled: !!currentEpoch && !!address && !!contractRewards },
   );
 }

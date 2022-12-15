@@ -1,4 +1,5 @@
 import { ethers } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 import { useLocation } from 'react-router-dom';
 import { useMetamask } from 'use-metamask';
 import React, { FC } from 'react';
@@ -55,7 +56,9 @@ const MainLayout: FC<MainLayoutProps> = ({
             <div className={styles.profileInfo}>
               <div className={styles.walletInfo}>
                 <div className={styles.address}>{truncateEthAddress(address)}</div>
-                <div className={styles.budget}>Budget {rewardBudget} ETH</div>
+                <div className={styles.budget}>
+                  Budget {rewardBudget ? formatUnits(rewardBudget) : 'Loading...'} ETH
+                </div>
               </div>
               <Svg img={userIcon} size={3} />
             </div>

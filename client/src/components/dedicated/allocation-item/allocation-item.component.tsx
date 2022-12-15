@@ -1,3 +1,4 @@
+import { useMetamask } from 'use-metamask';
 import React, { FC, useEffect, useRef } from 'react';
 import cx from 'classnames';
 
@@ -22,6 +23,9 @@ const AllocationItem: FC<AllocationItemProps> = ({
   onChange,
   value,
 }) => {
+  const {
+    metaState: { isConnected },
+  } = useMetamask();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -57,11 +61,12 @@ const AllocationItem: FC<AllocationItemProps> = ({
     placeholder: isSelected ? '' : '0',
   };
 
+  const valueToRender = value === undefined ? 0 : value;
   return (
     <BoxRounded
       alignment="center"
-      className={className}
-      onClick={() => onSelectItem(id.toNumber())}
+      className={cx(styles.box, className)}
+      onClick={isConnected ? () => onSelectItem(id.toNumber()) : undefined}
     >
       <div className={styles.details}>
         <div className={styles.name}>{name}</div>
@@ -74,20 +79,25 @@ const AllocationItem: FC<AllocationItemProps> = ({
         </div>
       </div>
       <div className={cx(styles.value, isSelected && styles.isSelected)}>
-        <InputText ref={inputRef} value={value.toString()} variant="borderless" {...inputProps} />
-        <div className={styles.currency}>ETH</div>
+        <InputText
+          ref={inputRef}
+          value={valueToRender.toString()}
+          variant="borderless"
+          {...inputProps}
+        />
+        <div className={styles.currency}>% or reward budget</div>
       </div>
       <div className={cx(styles.buttons, isSelected && styles.isSelected)}>
         <Button
           className={styles.button}
           Icon={<Svg img={plus} size={1.2} />}
-          onClick={() => onChangeNumber(value + 1)}
+          onClick={isConnected ? () => onChangeNumber(valueToRender + 1) : undefined}
           variant="iconOnlyTransparent"
         />
         <Button
           className={styles.button}
           Icon={<Svg img={minus} size={1.2} />}
-          onClick={() => onChangeNumber(value - 1)}
+          onClick={isConnected ? () => onChangeNumber(valueToRender - 1) : undefined}
           variant="iconOnlyTransparent"
         />
       </div>

@@ -1,40 +1,89 @@
+import { useMetamask } from 'use-metamask';
 import React, { ReactElement, useEffect, useState } from 'react';
 import cx from 'classnames';
-import isEmpty from 'lodash/isEmpty';
 
 import { ALLOCATIONS_MAX_NUMBER } from 'constants/allocations';
 import AllocationItem from 'components/dedicated/allocation-item/allocation-item.component';
+import BoxRounded from 'components/core/box-rounded/box-rounded.component';
 import Button from 'components/core/button/button.component';
+import Loader from 'components/core/loader/loader.component';
 import MainLayout from 'layouts/main-layout/main.layout';
 import triggerToast from 'utils/triggerToast';
 import useIdsInAllocation from 'hooks/useIdsInAllocation';
+import useIsDecisionWindowOpen from 'hooks/useIsDecisionWindowOpen';
 import useProposals from 'hooks/useProposals';
+import useUserVote from 'hooks/useUserVote';
+import useVote from 'hooks/useVote';
 
 import { AllocationValues } from './types';
-import { getAllocationValuesInitialState, getAllocationsWithValues } from './utils';
+import {
+  getAllocationValuesInitialState,
+  getAllocationsWithPositiveValues,
+  toastBudgetExceeding,
+  toastDebouncedOnlyOneItemAllowed,
+} from './utils';
 import styles from './style.module.scss';
 
 const AllocationView = (): ReactElement => {
+  const {
+    metaState: { isConnected },
+  } = useMetamask();
   const [proposals] = useProposals();
   const [idsInAllocation] = useIdsInAllocation(proposals);
   const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
   const [allocationValues, setAllocationValues] = useState<AllocationValues>({});
+  const [isRenderingReady, setIsRenderingReady] = useState<boolean>(false);
+  const { data: userVote, isLoading: isLoadingUserVote } = useUserVote();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const voteMutation = useVote({
+    onSuccess: () => {
+      triggerToast({
+        title: 'Allocation successful.',
+      });
+    },
+  });
+
+  const onResetAllocationValues = () => {
+    const allocationValuesInitValue = getAllocationValuesInitialState(idsInAllocation!, userVote);
+    setAllocationValues(allocationValuesInitValue);
+    setIsRenderingReady(true);
+  };
+
+  const onVote = async () => {
+    const allocationsWithPositiveValues = getAllocationsWithPositiveValues(allocationValues!);
+    const allocationsWithPositiveValuesKeys = Object.keys(allocationsWithPositiveValues);
+
+    if (allocationsWithPositiveValuesKeys.length > 1) {
+      voteMutation.mutate({
+        proposalId: allocationsWithPositiveValuesKeys[0],
+        value: allocationsWithPositiveValues[allocationsWithPositiveValuesKeys[0]],
+      });
+      return;
+    }
+
+    voteMutation.mutate({ proposalId: proposals[0].id.toString(), value: '0' });
+  };
 
   useEffect(() => {
-    const allocationValuesInitValue = getAllocationValuesInitialState(proposals);
-    setAllocationValues(allocationValuesInitValue);
-  }, [proposals]);
+    if (idsInAllocation !== undefined) {
+      onResetAllocationValues();
+      setIsRenderingReady(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idsInAllocation, userVote]);
 
   const changeAllocationItemValue = (id: number, value: number) => {
-    const allocationsWithValues = getAllocationsWithValues(allocationValues);
+    const allocationsWithPositiveValues = getAllocationsWithPositiveValues(allocationValues!);
+    const allocationsWithPositiveValuesKeys = Object.keys(allocationsWithPositiveValues);
     if (
-      allocationsWithValues.length >= ALLOCATIONS_MAX_NUMBER &&
-      !allocationsWithValues.includes(id.toString())
+      allocationsWithPositiveValuesKeys.length >= ALLOCATIONS_MAX_NUMBER &&
+      !allocationsWithPositiveValuesKeys.includes(id.toString())
     ) {
-      triggerToast({
-        message: 'Currently you can allocate to one project only.',
-        title: 'Only one item allowed',
-      });
+      toastDebouncedOnlyOneItemAllowed();
+      return;
+    }
+    if (value > 100) {
+      toastBudgetExceeding();
       return;
     }
     setAllocationValues(prevState => ({
@@ -43,41 +92,61 @@ const AllocationView = (): ReactElement => {
     }));
   };
 
-  const onResetAllocationValues = () => {
-    const allocationValuesInitValue = getAllocationValuesInitialState(proposals);
-    setAllocationValues(allocationValuesInitValue);
-  };
-
-  const isRenderingReady = proposals.length > 0 && !isEmpty(allocationValues);
+  const isButtonsDisabled = !isConnected || !isDecisionWindowOpen;
 
   return (
     <MainLayout
-      isLoading={!isRenderingReady}
+      isLoading={!isRenderingReady || isLoadingUserVote}
       navigationBottomSuffix={
         <div className={styles.buttons}>
-          <Button className={styles.button} label="Reset" onClick={onResetAllocationValues} />
-          <Button className={styles.button} label="Allocate" variant="cta" />
+          <Button
+            className={styles.button}
+            isDisabled={isButtonsDisabled}
+            label="Reset"
+            onClick={onResetAllocationValues}
+          />
+          <Button
+            className={styles.button}
+            Icon={voteMutation.isLoading && <Loader />}
+            isDisabled={isButtonsDisabled}
+            isLoading={voteMutation.isLoading}
+            label="Allocate"
+            onClick={onVote}
+            variant="cta"
+          />
         </div>
       }
     >
       <div className={styles.boxes}>
-        {idsInAllocation.map((idInAllocation, index) => {
-          const allocationItem = proposals.find(({ id }) => id.toNumber() === idInAllocation)!;
-          const isSelected = selectedItemId === allocationItem.id.toNumber();
-          const value = allocationValues[allocationItem.id.toNumber()];
-          return (
-            <AllocationItem
-              // eslint-disable-next-line react/no-array-index-key
-              key={index}
-              className={cx(styles.box, isSelected && styles.isSelected)}
-              isSelected={isSelected}
-              onChange={changeAllocationItemValue}
-              onSelectItem={setSelectedItemId}
-              value={value}
-              {...allocationItem}
-            />
-          );
-        })}
+        {!isDecisionWindowOpen && (
+          <BoxRounded alignment="center" className={styles.box}>
+            The decision window is now closed. Allocating funds is not possible.
+          </BoxRounded>
+        )}
+        {!isConnected && (
+          <BoxRounded alignment="center" className={styles.box}>
+            In order to manipulate allocation values and vote, please connect your wallet first.
+          </BoxRounded>
+        )}
+        {allocationValues && idsInAllocation
+          ? idsInAllocation.map((idInAllocation, index) => {
+              const allocationItem = proposals.find(({ id }) => id.toNumber() === idInAllocation)!;
+              const isSelected = selectedItemId === allocationItem.id.toNumber();
+              const value = allocationValues[allocationItem.id.toNumber()];
+              return (
+                <AllocationItem
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={index}
+                  className={cx(styles.box, isSelected && styles.isSelected)}
+                  isSelected={isSelected}
+                  onChange={changeAllocationItemValue}
+                  onSelectItem={setSelectedItemId}
+                  value={value}
+                  {...allocationItem}
+                />
+              );
+            })
+          : null}
       </div>
       {selectedItemId !== null && (
         <div className={styles.selectedItemOverlay} onClick={() => setSelectedItemId(null)} />

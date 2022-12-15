@@ -30,6 +30,7 @@ export default defineConfig({
       env: path.resolve(__dirname, 'src/env'),
       hooks: path.resolve(__dirname, 'src/hooks'),
       layouts: path.resolve(__dirname, 'src/layouts'),
+      mocks: path.resolve(__dirname, 'src/mocks'),
       routes: path.resolve(__dirname, 'src/routes'),
       services: path.resolve(__dirname, 'src/services'),
       styles: path.resolve(__dirname, 'src/styles'),

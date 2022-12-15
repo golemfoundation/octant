@@ -5,7 +5,6 @@
   padding: 1rem 2rem;
   border-radius: $border-radius-16;
   background: transparent;
-  cursor: pointer;
   font-weight: $font-weight-bold;
   border: 0;
   min-height: 4rem;
@@ -16,6 +15,10 @@
 
   &.isHigh {
     min-height: 4.8rem;
+  }
+
+  &.isClickable {
+    cursor: pointer;
   }
 }
 
@@ -43,7 +46,9 @@
 
     &.isDisabled {
       cursor: auto;
-      background: $color-grey;
+      background: $color-white;
+      border-color: $color-hexagon-blue3;
+      color: $color-hexagon-blue3;
     }
   }
 
@@ -75,6 +80,10 @@
         color: $color-hexagon-main-text-color;
         stroke: $color-hexagon-main-text-color;
       }
+    }
+
+    .icon {
+      flex: 1;
     }
   }
 

@@ -1,15 +1,22 @@
 import { BigNumberish } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 
-export function getCurrentEpochStateText(
-  isConnected: boolean,
-  depositsValue?: BigNumberish,
-): string {
+interface GetCurrentEpochStateTextParams {
+  isConnected: boolean;
+  suffix: string;
+  value?: BigNumberish;
+}
+
+export function getCurrentEpochStateText({
+  isConnected,
+  value,
+  suffix,
+}: GetCurrentEpochStateTextParams): string {
   if (!isConnected) {
     return 'Please connect your wallet first.';
   }
-  if (!depositsValue) {
-    return 'Fetching data about deposit value.';
+  if (value === undefined) {
+    return 'Fetching data...';
   }
-  return `${formatUnits(depositsValue)} GLM`;
+  return `${formatUnits(value)} ${suffix}`;
 }

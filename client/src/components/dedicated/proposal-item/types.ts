@@ -1,6 +1,6 @@
 import { ExtendedProposal } from 'types/proposals';
 
 export interface ProposalItemProps extends ExtendedProposal {
-  isAlreadyAdded: boolean;
+  isAlreadyAdded?: boolean;
   onAddRemoveFromAllocate: () => void;
 }

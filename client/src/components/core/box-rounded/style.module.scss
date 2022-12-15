@@ -1,7 +1,7 @@
 .root {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
   padding: 2.4rem;
   border-radius: $border-radius-16;
@@ -20,6 +20,16 @@
 
   &.hasTabs, &.isVertical {
     flex-direction: column;
+  }
+
+  &.justifyContent-- {
+    &center {
+      justify-content: center;
+    }
+
+    &spaceBetween {
+      justify-content: space-between;
+    }
   }
 
   &.alignment-- {
