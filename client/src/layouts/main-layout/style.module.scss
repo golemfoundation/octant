@@ -83,10 +83,11 @@ $headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
     justify-content: space-between;
     align-items: center;
     height: $headerNavigationHeight;
-    padding: 2rem;
+    padding: 1.2rem 2rem 1.5rem;
   }
 
   .button {
+    height: 100%;
     padding: 0 1rem;
   }
 }

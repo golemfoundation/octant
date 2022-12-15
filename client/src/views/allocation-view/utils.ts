@@ -1,17 +1,46 @@
-import { ExtendedProposal } from 'types/proposals';
+import debounce from 'lodash/debounce';
 
-import { AllocationValues } from './types';
+import { TOAST_DEBOUNCE_TIME } from 'constants/toasts';
+import { UserVote } from 'hooks/useUserVote';
+import triggerToast from 'utils/triggerToast';
 
-export function getAllocationValuesInitialState(elements: ExtendedProposal[]): AllocationValues {
-  return elements.reduce(
-    (acc, { id }) => ({
+import { AllocationValues, AllocationValuesDefined } from './types';
+
+export function getAllocationValuesInitialState(
+  elements: number[],
+  userVote?: UserVote,
+): AllocationValues {
+  return elements.reduce((acc, curr) => {
+    const value = userVote?.proposalId === curr ? userVote?.alpha : undefined;
+    return {
       ...acc,
-      [id.toNumber()]: 0,
-    }),
-    {},
-  );
+      [curr]: value,
+    };
+  }, {});
 }
 
-export function getAllocationsWithValues(elements: AllocationValues): string[] {
-  return Object.keys(elements).filter(key => elements[key]);
+export function getAllocationsWithPositiveValues(
+  elements: AllocationValues,
+): AllocationValuesDefined {
+  return Object.fromEntries(Object.entries(elements).filter(([_key, value]) => value > 0));
 }
+
+export const toastDebouncedOnlyOneItemAllowed = debounce(
+  () =>
+    triggerToast({
+      message: 'Currently you can allocate to one project only.',
+      title: 'Only one item allowed',
+    }),
+  TOAST_DEBOUNCE_TIME,
+  { leading: true },
+);
+
+export const toastBudgetExceeding = debounce(
+  () =>
+    triggerToast({
+      message: 'It is not allowed to allocate more than 100% of reward budget.',
+      title: 'Exceeding 100%',
+    }),
+  TOAST_DEBOUNCE_TIME,
+  { leading: true },
+);

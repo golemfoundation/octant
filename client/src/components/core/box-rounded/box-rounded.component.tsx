@@ -8,13 +8,14 @@ import BoxRoundedProps from './types';
 import styles from './style.module.scss';
 
 const BoxRounded: FC<BoxRoundedProps> = ({
-  alignment = 'left',
+  alignment = 'center',
   buttonProps,
   isGrey,
   isVertical,
   className,
   children,
   onClick,
+  justifyContent = 'center',
   tabs,
   title,
 }) => (
@@ -25,6 +26,7 @@ const BoxRounded: FC<BoxRoundedProps> = ({
       tabs && styles.hasTabs,
       isVertical && styles.isVertical,
       isGrey && styles.isGrey,
+      styles[`justifyContent--${justifyContent}`],
       styles[`alignment--${alignment}`],
       className,
     )}

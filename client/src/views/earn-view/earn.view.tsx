@@ -22,6 +22,7 @@ const EarnView = (): ReactElement => {
   return (
     <MainLayout>
       <BoxRounded
+        alignment="left"
         buttonProps={{
           isDisabled: !isConnected,
           isHigh: true,
@@ -41,9 +42,12 @@ const EarnView = (): ReactElement => {
           },
         ]}
       >
-        <DoubleValue mainValue={getCurrentEpochStateText(isConnected, depositsValue)} />
+        <DoubleValue
+          mainValue={getCurrentEpochStateText({ isConnected, suffix: 'GLM', value: depositsValue })}
+        />
       </BoxRounded>
       <BoxRounded
+        alignment="left"
         buttonProps={{
           isDisabled: true,
           isHigh: true,
@@ -54,7 +58,9 @@ const EarnView = (): ReactElement => {
         isVertical
         title="Rewards Balance"
       >
-        <DoubleValue mainValue={`${rewardBudget} ETH`} />
+        <DoubleValue
+          mainValue={getCurrentEpochStateText({ isConnected, suffix: 'ETH', value: rewardBudget })}
+        />
       </BoxRounded>
       <GlmStakingFlow
         modalProps={{

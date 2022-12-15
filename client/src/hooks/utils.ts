@@ -1,11 +1,11 @@
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 
 export function onAddRemoveAllocationElementLocalStorage(
-  idsInAllocation: number[],
+  idsInAllocation: undefined | number[],
   id: number,
 ): number[] {
-  const isItemAlreadyAdded = idsInAllocation.includes(id);
-  const newIds = [...idsInAllocation];
+  const isItemAlreadyAdded = idsInAllocation?.includes(id);
+  const newIds = idsInAllocation ? [...idsInAllocation] : [];
 
   if (isItemAlreadyAdded) {
     newIds.splice(newIds.indexOf(id), 1);

@@ -54,6 +54,7 @@ const Button: FC<ButtonProps> = ({
         isActive && styles.isActive,
         isDisabled && styles.isDisabled,
         isHigh && styles.isHigh,
+        onClick && styles.isClickable,
         className,
       )}
       onClick={isActionDisabled ? () => {} : onClick}

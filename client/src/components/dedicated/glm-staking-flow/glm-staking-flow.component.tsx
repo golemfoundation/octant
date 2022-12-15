@@ -19,7 +19,7 @@ import useDepositValue from 'hooks/useDepositValue';
 import useDepositsContract from 'hooks/contracts/useDepositsContract';
 import useMaxApproveCallback from 'hooks/useMaxApproveCallback';
 
-import { stakeValueTooBigDebouncedToast, unstakeValueTooBigDebouncedToast } from './utils';
+import { toastDebouncedStakeValueTooBig, toastDebouncedUnstakeValueTooBig } from './utils';
 import GlmStakingFlowProps, { CurrentMode, CurrentStepIndex } from './types';
 import styles from './style.module.scss';
 
@@ -75,12 +75,12 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
 
     if (currentMode === 'withdraw' && newValueNumber > depositValueNumber) {
       setValueToDeposeOrWithdraw(depositValueNumber.toString());
-      unstakeValueTooBigDebouncedToast();
+      toastDebouncedUnstakeValueTooBig();
       return;
     }
     if (currentMode === 'deposit' && newValueNumber > dataAvailableFunds!) {
       setValueToDeposeOrWithdraw(dataAvailableFunds!.toString());
-      stakeValueTooBigDebouncedToast();
+      toastDebouncedStakeValueTooBig();
       return;
     }
 

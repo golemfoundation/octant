@@ -1,37 +1,43 @@
-import { getAllocationValuesInitialState, getAllocationsWithValues } from './utils';
-import { mockedExtendedProposal1, mockedExtendedProposal2 } from './mockedData';
+/* eslint-disable @typescript-eslint/naming-convention */
+import { getAllocationValuesInitialState, getAllocationsWithPositiveValues } from './utils';
 
 describe('getAllocationValuesInitialState', () => {
   it('properly creates allocationValuesInitialState object', () => {
-    expect(
-      getAllocationValuesInitialState([mockedExtendedProposal1, mockedExtendedProposal2]),
-    ).toMatchObject({
-      /* eslint-disable @typescript-eslint/naming-convention */
-      1: 0,
-      2: 0,
-      /* eslint-enable @typescript-eslint/naming-convention */
+    expect(getAllocationValuesInitialState([1, 2])).toMatchObject({
+      '1': undefined,
+      '2': undefined,
     });
   });
 });
 
-describe('getAlreadyAddedAllocationId', () => {
+describe('getAllocationsWithPositiveValues', () => {
   it('properly finds allocations with values', () => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    expect(getAllocationsWithValues({ '1': 0, '2': 0, '3': 0 })).toEqual([]);
+    expect(
+      getAllocationsWithPositiveValues({
+        '1': undefined,
+        '2': undefined,
+        '3': undefined,
+      }),
+    ).toEqual({});
   });
 
   it('properly finds allocations with values', () => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    expect(getAllocationsWithValues({ '1': 10, '2': 0, '3': 0 })).toEqual(['1']);
+    expect(getAllocationsWithPositiveValues({ '1': 10, '2': 0, '3': undefined })).toEqual({
+      '1': 10,
+    });
   });
 
   it('properly finds allocations with values', () => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    expect(getAllocationsWithValues({ '1': 10, '2': 5, '3': 0 })).toEqual(['1', '2']);
+    expect(getAllocationsWithPositiveValues({ '1': 10, '2': 5, '3': undefined })).toEqual({
+      '1': 10,
+      '2': 5,
+    });
   });
 
   it('properly finds allocations with values', () => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    expect(getAllocationsWithValues({ '1': 10, '2': 5, '3': 100 })).toEqual(['1', '2', '3']);
+    expect(getAllocationsWithPositiveValues({ '1': 10, '2': 5, '3': 0 })).toEqual({
+      '1': 10,
+      '2': 5,
+    });
   });
 });

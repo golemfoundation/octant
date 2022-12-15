@@ -22,7 +22,7 @@ const SettingsView = (): ReactElement => {
   return (
     <MainLayout>
       <Header text="Settings" />
-      <BoxRounded className={styles.box}>
+      <BoxRounded className={styles.box} justifyContent="spaceBetween">
         Choose a display currency
         <InputSelect options={options} selectedOption={options[0]} />
       </BoxRounded>
@@ -34,15 +34,15 @@ const SettingsView = (): ReactElement => {
         value="50.0"
         variant="boxRounded"
       />
-      <BoxRounded className={styles.box}>
+      <BoxRounded className={styles.box} justifyContent="spaceBetween">
         Use ETH as main value display
         <InputCheckbox />
       </BoxRounded>
-      <BoxRounded className={styles.box}>
+      <BoxRounded className={styles.box} justifyContent="spaceBetween">
         Show Metrics introductions
         <InputCheckbox />
       </BoxRounded>
-      <BoxRounded className={styles.box}>
+      <BoxRounded className={styles.box} justifyContent="spaceBetween">
         Always show Allocate onboarding
         <InputCheckbox />
       </BoxRounded>
