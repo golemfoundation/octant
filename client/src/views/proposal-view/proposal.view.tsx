@@ -11,11 +11,10 @@ import Button from 'components/core/button/button.component';
 import Img from 'components/core/img/img.component';
 import MainLayout from 'layouts/main-layout/main.layout';
 import Svg from 'components/core/svg/svg.component';
-import env from 'env';
 import triggerToast from 'utils/triggerToast';
+import useContractProposals from 'hooks/contracts/useContractProposals';
 import useIdInAllocation from 'hooks/useIdInAllocation';
 import useIpfsProposals from 'hooks/useIpfsProposals';
-import useProposalsContract from 'hooks/contracts/useProposalsContract';
 
 import styles from './style.module.scss';
 
@@ -32,8 +31,7 @@ const getCustomNavigationTabs = () => {
 const ProposalView = (): ReactElement => {
   const { proposalId } = useParams();
   const proposalIdNumber = parseInt(proposalId!, 10);
-  const { proposalsAddress } = env;
-  const contractProposals = useProposalsContract(proposalsAddress);
+  const contractProposals = useContractProposals();
   const [isAddedToAllocate, onAddRemoveFromAllocate] = useIdInAllocation(proposalIdNumber);
 
   const { data: baseUri } = useQuery(['baseUri'], () => contractProposals?.baseURI(), {

@@ -1,12 +1,9 @@
 import { UseQueryResult, useQuery } from 'react-query';
 
-import env from 'env';
-
-import useEpochsContract from './contracts/useEpochsContract';
+import useContractEpochs from './contracts/useContractEpochs';
 
 export default function useIsDecisionWindowOpen(): UseQueryResult<boolean> {
-  const { epochsAddress } = env;
-  const contractEpochs = useEpochsContract(epochsAddress);
+  const contractEpochs = useContractEpochs();
 
   return useQuery(['isDecisionWindowOpen'], () => contractEpochs?.isDecisionWindowOpen(), {
     enabled: !!contractEpochs,

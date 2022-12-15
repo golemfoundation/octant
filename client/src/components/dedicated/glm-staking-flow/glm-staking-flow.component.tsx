@@ -15,8 +15,8 @@ import ProgressBar from 'components/core/progress-bar/progress-bar.component';
 import env from 'env';
 import triggerToast from 'utils/triggerToast';
 import useAvailableFunds from 'hooks/useAvailableFunds';
+import useContractDeposits from 'hooks/contracts/useContractDeposits';
 import useDepositValue from 'hooks/useDepositValue';
-import useDepositsContract from 'hooks/contracts/useDepositsContract';
 import useMaxApproveCallback from 'hooks/useMaxApproveCallback';
 
 import { toastDebouncedStakeValueTooBig, toastDebouncedUnstakeValueTooBig } from './utils';
@@ -26,7 +26,7 @@ import styles from './style.module.scss';
 const currentStepIndexInitialValue = 0;
 
 const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
-  const { depositsAddress, glmAddress } = env;
+  const { depositsAddress } = env;
   const {
     metaState: { account, web3: useMetamaskWeb3 },
   } = useMetamask();
@@ -44,9 +44,8 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
     signer,
   );
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
-  const contractDeposits = useDepositsContract(depositsAddress, signer);
+  const contractDeposits = useContractDeposits({ signerOrProvider: signer });
   const [approvalState, approveCallback] = useMaxApproveCallback(
-    glmAddress,
     BigNumber.from(parseUnits(valueToDeposeOrWithdraw || '1', 18)),
     depositsAddress,
     signer,

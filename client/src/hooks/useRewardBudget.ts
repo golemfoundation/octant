@@ -2,20 +2,16 @@ import { BigNumberish } from 'ethers';
 import { UseQueryResult, useQuery } from 'react-query';
 import { useMetamask } from 'use-metamask';
 
-import env from 'env';
-
+import useContractRewards from './contracts/useContractRewards';
 import useCurrentEpoch from './useCurrentEpoch';
-import useRewardsContract from './contracts/useRewardsContract';
 
 export default function useRewardBudget(): UseQueryResult<BigNumberish | undefined> {
-  const { rewardsAddress } = env;
-  const contractRewards = useRewardsContract(rewardsAddress);
+  const contractRewards = useContractRewards();
   const {
     metaState: { account },
   } = useMetamask();
-  const address = account[0];
-
   const { data: currentEpoch } = useCurrentEpoch();
+  const address = account[0];
 
   return useQuery(
     ['rewardBudget'],

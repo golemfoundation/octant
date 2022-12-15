@@ -3,7 +3,7 @@ import { JsonRpcSigner } from '@ethersproject/providers';
 import { MaxUint256 } from '@ethersproject/constants';
 import { useCallback, useState } from 'react';
 
-import useErc20Contract from './contracts/useErc20Contract';
+import useContractErc20 from './contracts/useContractErc20';
 import useTokenAllowance from './useTokenAllowance';
 
 import { ERC20 } from '../typechain-types';
@@ -34,13 +34,12 @@ function useApprovalState(
 }
 
 export default function useMaxApproveCallback(
-  tokenAddress: string,
   minAmountToBeApproved: BigNumber,
   spender: string,
   signer: JsonRpcSigner | undefined,
   signerAddress?: string,
 ): [ApprovalState, () => Promise<void>] {
-  const contract = useErc20Contract(tokenAddress, signer);
+  const contract = useContractErc20({ signerOrProvider: signer });
 
   const approvalState = useApprovalState(contract, signerAddress, spender, minAmountToBeApproved);
   const approveCallback = useCallback(async (): Promise<void> => {

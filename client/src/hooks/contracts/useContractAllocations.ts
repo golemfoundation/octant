@@ -1,16 +1,17 @@
-import { Provider } from '@ethersproject/providers';
-import { Signer } from 'ethers';
 import { useMemo } from 'react';
 
+import env from 'env';
+
 import { providerGoerli } from './providers';
+import UseContractParams from './types';
 
 import { Allocations, Allocations__factory } from '../../typechain-types';
 
-export default function useAllocationsContract(
-  tokenAddress: string,
-  signerOrProvider?: Signer | Provider,
-): Allocations | null {
+export default function useContractAllocations({
+  tokenAddress = env.allocationsAddress,
+  signerOrProvider,
+}: UseContractParams): Allocations | null {
   return useMemo(() => {
     return Allocations__factory.connect(tokenAddress, signerOrProvider || providerGoerli);
-  }, [tokenAddress, signerOrProvider]);
+  }, [signerOrProvider, tokenAddress]);
 }
