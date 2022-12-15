@@ -2,13 +2,10 @@ import { BigNumberish, Signer } from 'ethers';
 import { UseQueryResult, useQuery } from 'react-query';
 import { formatUnits } from 'ethers/lib/utils';
 
-import env from 'env';
-
-import useErc20Contract from './contracts/useErc20Contract';
+import useContractErc20 from './contracts/useContractErc20';
 
 export default function useAvailableFunds(address: string, signer: Signer): UseQueryResult<number> {
-  const { glmAddress } = env;
-  const erc20Contract = useErc20Contract(glmAddress, signer);
+  const erc20Contract = useContractErc20({ signerOrProvider: signer });
   return useQuery<BigNumberish | undefined, unknown, number>(
     ['currentBalance'],
     () => erc20Contract?.balanceOf(address),

@@ -2,9 +2,7 @@ import { ContractTransaction } from 'ethers';
 import { UseMutationResult, useMutation } from 'react-query';
 import { useMetamask } from 'use-metamask';
 
-import env from 'env';
-
-import useAllocationsContract from './contracts/useAllocationsContract';
+import useContractAllocations from './contracts/useContractAllocations';
 
 type UseVote = {
   onSuccess: () => void;
@@ -17,12 +15,11 @@ export default function useVote({
   unknown,
   { proposalId: string; value: string }
 > {
-  const { allocationsAddress } = env;
   const {
     metaState: { web3 },
   } = useMetamask();
   const signer = web3?.getSigner();
-  const contractAllocations = useAllocationsContract(allocationsAddress, signer);
+  const contractAllocations = useContractAllocations({ signerOrProvider: signer });
 
   return useMutation({
     mutationFn: async ({ proposalId, value }) => {
