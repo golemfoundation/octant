@@ -3,6 +3,8 @@ import chai from 'chai';
 import bignumberChai from 'chai-bignumber';
 import { solidity } from 'ethereum-waffle';
 
+import { smock } from '@defi-wonderland/smock';
+
 import { deployments, ethers } from 'hardhat';
 import {
   PROPOSALS,
@@ -24,6 +26,9 @@ import { Signers, TestEnv } from './test-env.interface';
 
 chai.use(bignumberChai());
 chai.use(solidity);
+
+chai.should();
+chai.use(smock.matchers);
 
 
 const testEnv: TestEnv = {

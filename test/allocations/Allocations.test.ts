@@ -7,12 +7,8 @@ import { getCurrentBlockNumber, mineBlocks } from '../../helpers/misc-utils';
 import { Allocations, AllocationsStorage, Epochs, Tracker } from '../../typechain-types';
 import { makeTestsEnv } from '../helpers/make-tests-env';
 import { forwardEpochs } from '../../helpers/epochs-utils';
-import { ContractTransaction, ContractReceipt } from 'ethers';
 
 makeTestsEnv(ALLOCATIONS, (testEnv) => {
-
-  chai.should();
-  chai.use(smock.matchers);
 
   let sTracker: Tracker;
   let allocationsStorage: AllocationsStorage;
@@ -35,6 +31,15 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
     return [epochs, allocations];
   }
 
+  describe('vote with real deposits', async () => {
+    it("Can't vote if deposit is zero", async () => {
+      const { allocations, epochs, signers: { Alice } } = testEnv;
+      await forwardEpochs(epochs, 1);
+      expect(allocations.connect(Alice).vote(1, 100)).revertedWith('HN/voting-blocked-if-deposit-is-zero');
+    });
+  });
+
+
   describe('vote (deposits faked)', async () => {
 
     let epochs: Epochs;
@@ -42,9 +47,7 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
 
     beforeEach(async() => {
       let start = await getCurrentBlockNumber();
-      let contracts = await setupAllocations(start, 300, 100);
-      epochs = contracts[0];
-      allocations = contracts[1];
+      [epochs, allocations] = await setupAllocations(start, 300, 100);
       await forwardEpochs(epochs, 1);
     });
 
@@ -114,9 +117,7 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
     it('Users vote in second epoch', async () => {
       const { signers: { Alice } } = testEnv;
       const start = await getCurrentBlockNumber();
-      const contracts = await setupAllocations(start, 500, 200)
-      const allocations = contracts[1];
-      const epochs = contracts[0];
+      let [epochs, allocations] = await setupAllocations(start, 500, 200)
 
       expect(await epochs.getCurrentEpoch()).eq(1);
       await mineBlocks(510)
@@ -134,8 +135,7 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
     it('Cannot vote when decision window closed', async () => {
       const { signers: { Alice } } = testEnv;
       const start = await getCurrentBlockNumber();
-      const contracts = await setupAllocations(start, 500, 200)
-      const allocations = contracts[1];
+      let [_, allocations] = await setupAllocations(start, 500, 200)
 
       await mineBlocks(750);
 
@@ -145,8 +145,7 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
 
     it('Cannot vote when hexagon has not been started yet', async () => {
       const { signers: { Alice } } = testEnv;
-      const contracts = await setupAllocations(2000000000, 500, 200)
-      const allocations = contracts[1];
+      let [_, allocations] = await setupAllocations(2000000000, 500, 200)
 
       expect(allocations.connect(Alice).vote(1, 53))
         .revertedWith("HN/not-started-yet");
