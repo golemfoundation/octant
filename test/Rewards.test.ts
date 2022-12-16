@@ -1,19 +1,40 @@
 import { expect } from 'chai';
+import chai from 'chai';
+import { smock } from '@defi-wonderland/smock';
+import { ethers } from 'hardhat';
 import { parseEther } from 'ethers/lib/utils';
-import { REWARDS } from '../helpers/constants';
+import { ALLOCATIONS, ALLOCATIONS_STORAGE, REWARDS, TEST_REWARDS } from '../helpers/constants';
 import { forwardEpochs } from '../helpers/epochs-utils';
 import { makeTestsEnv } from './helpers/make-tests-env';
+import { Allocations, AllocationsStorage, Epochs, Tracker } from '../typechain-types';
+
+let ZeroAddr = '0x0000000000000000000000000000000000000000';
 
 makeTestsEnv(REWARDS, (testEnv) => {
 
   describe("individualReward", async () => {
-    it("TestRewards", async() => {
+    it("TestRewards", async () => {
       const { testRewards, signers } = testEnv;
       expect(await testRewards.individualReward(1, signers.Alice.address)).eq(parseEther("0.4"));
     });
 
-    it("TestRewards", async() => {
-      const { testRewards, allocations, signers: { Alice } } = testEnv;
+    it("TestRewards", async () => {
+      const { epochs, proposals, tracker, signers: { Alice } } = testEnv;
+
+      let sTracker = await smock.fake<Tracker>('Tracker');
+      sTracker.depositAt.returns((_owner, _epochNo) => {
+        return 1;
+      });
+      const allocationsStorageFactory = await ethers.getContractFactory(ALLOCATIONS_STORAGE);
+      const allocationsStorage = await allocationsStorageFactory.deploy() as AllocationsStorage;
+      const allocationsFactory = await ethers.getContractFactory(ALLOCATIONS);
+      const allocations: Allocations = await allocationsFactory.deploy(epochs.address, allocationsStorage.address, sTracker.address) as Allocations;
+      await allocationsStorage.transferOwnership(allocations.address);
+
+      const testRewardsFactory = await ethers.getContractFactory(TEST_REWARDS);
+      const testRewards = await testRewardsFactory.deploy(epochs.address, ZeroAddr, tracker.address, ZeroAddr, proposals.address, allocationsStorage.address);
+
+      await forwardEpochs(epochs, 1);
       await allocations.connect(Alice).vote(1, 50);
       const result = await testRewards.matchedProposalRewards(1);
       expect(result[0].donated).eq(parseEther("0.2"));

@@ -20,7 +20,7 @@ import {
   Token,
   Allocations,
   Epochs,
-  ExecutionLayerOracle, HexagonOracle, BeaconChainOracle, AllocationsStorage
+  ExecutionLayerOracle, HexagonOracle, BeaconChainOracle, AllocationsStorage, TestGLMFaucet
 } from '../../typechain-types';
 import { Signers, TestEnv } from './test-env.interface';
 
@@ -35,6 +35,7 @@ const testEnv: TestEnv = {
   signers: {} as Signers,
   allocations: {} as Allocations,
   allocationsStorage: {} as AllocationsStorage,
+  faucet: {} as TestGLMFaucet,
   proposals: {} as Proposals,
   glmDeposits: {} as Deposits,
   tracker: {} as Tracker,

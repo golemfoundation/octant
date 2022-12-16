@@ -1,7 +1,7 @@
 import {
   Allocations,
   BeaconChainOracle,
-  Deposits, Tracker, Rewards, TestRewards,
+  Deposits, Tracker, Rewards,
   Epochs, HexagonOracle,
   Proposals, ExecutionLayerOracle,
   Token, AllocationsStorage, TestRewards, TestGLMFaucet
