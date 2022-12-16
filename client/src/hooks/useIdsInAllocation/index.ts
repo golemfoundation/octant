@@ -3,9 +3,10 @@ import { useMetamask } from 'use-metamask';
 
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import { ExtendedProposal } from 'types/proposals';
+import { onAddRemoveAllocationElementLocalStorage } from 'hooks/utils';
+import useUserVote from 'hooks/useUserVote';
 
-import { onAddRemoveAllocationElementLocalStorage } from '../utils';
-import useUserVote from '../useUserVote';
+import { toastDebouncedOnlyOneItemAllowed } from './utils';
 
 const validateProposalsInLocalStorage = (localStorageAllocationItems, proposals) =>
   localStorageAllocationItems.filter(item => proposals.find(({ id }) => id.toNumber() === item));
@@ -20,9 +21,33 @@ export default function useIdsInAllocation(
   const { data: userVote } = useUserVote();
 
   const onAddRemoveFromAllocate = (id: number) => {
+    // TODO Remove userVote.alpha > 0 check following https://wildlandio.atlassian.net/browse/HEX-108.
+    if (
+      userVote &&
+      userVote.proposalId === id &&
+      userVote.alpha > 0 &&
+      idsInAllocation!.includes(userVote.proposalId)
+    ) {
+      toastDebouncedOnlyOneItemAllowed();
+      return;
+    }
     const newIds = onAddRemoveAllocationElementLocalStorage(idsInAllocation!, id);
     setIdsInAllocation(newIds);
   };
+
+  useEffect(() => {
+    if (
+      isConnected &&
+      userVote &&
+      userVote.proposalId &&
+      userVote.alpha > 0 &&
+      !!idsInAllocation &&
+      !idsInAllocation.includes(userVote.proposalId)
+    ) {
+      onAddRemoveFromAllocate(userVote.proposalId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected, userVote, idsInAllocation]);
 
   useEffect(() => {
     if (!proposals || proposals.length === 0) {
@@ -37,16 +62,8 @@ export default function useIdsInAllocation(
       localStorage.getItem(ALLOCATION_ITEMS_KEY) || 'null',
     );
 
-    if (
-      isConnected &&
-      userVote &&
-      userVote.proposalId &&
-      !localStorageAllocationItems.includes(userVote.proposalId)
-    ) {
-      onAddRemoveFromAllocate(userVote.proposalId);
-    }
-
     if (!localStorageAllocationItems || localStorageAllocationItems.length === 0) {
+      setIdsInAllocation([]);
       return;
     }
 
