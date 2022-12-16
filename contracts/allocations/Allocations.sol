@@ -3,6 +3,8 @@ pragma solidity ^0.8.9;
 import "../interfaces/IEpochs.sol";
 import "../interfaces/IAllocationsStorage.sol";
 
+import "../Tracker.sol";
+
 /* SPDX-License-Identifier: UNLICENSED */
 
 contract Allocations {
@@ -10,10 +12,16 @@ contract Allocations {
 
     IEpochs public immutable epochs;
     IAllocationsStorage public immutable allocationsStorage;
+    Tracker public immutable tracker;
 
-    constructor(address _epochsAddress, address _allocationsStorageAddress) {
+    constructor(
+        address _epochsAddress,
+        address _allocationsStorageAddress,
+        address _trackerAddress
+    ) {
         epochs = IEpochs(_epochsAddress);
         allocationsStorage = IAllocationsStorage(_allocationsStorageAddress);
+        tracker = Tracker(_trackerAddress);
     }
 
     function vote(uint8 _proposalId, uint8 _alpha) external {
@@ -21,7 +29,8 @@ contract Allocations {
         require(epochs.isStarted(), "HN/not-started-yet");
         require(epochs.isDecisionWindowOpen(), "HN/decision-window-closed");
         require(_alpha >= 0 && _alpha <= 100, "HN/alpha-out-of-range");
-        uint256 epoch = epochs.getCurrentEpoch();
+        uint256 epoch = epochs.getCurrentEpoch() - 1;
+        require(tracker.depositAt(msg.sender, epoch) > 0, "HN/voting-blocked-if-deposit-is-zero");
 
         IAllocationsStorage.Vote memory _vote = allocationsStorage.getUserVote(epoch, msg.sender);
         if (_vote.proposalId != 0) {

@@ -4,8 +4,7 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract TestGLMFaucet {
-
-    uint256 constant public AMOUNT = 1000 ether;
+    uint256 public constant AMOUNT = 1000 ether;
 
     /// @notice GLM token contract address
     ERC20 public immutable glm;

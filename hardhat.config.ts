@@ -15,7 +15,16 @@ import './tasks/send-glm';
 import { ETHERSCAN_API_KEY, GOERLI_PRIVATE_KEY, GOERLI_URL, ZKSYNC_URL } from './env';
 
 const config: HardhatUserConfig = {
-  solidity: '0.8.9',
+  solidity: {
+    version: '0.8.9',
+    settings: {
+      outputSelection: {
+        "*": {
+          "*": ["storageLayout"]
+        }
+      }
+    }
+  },
   networks: {
     hardhat: {
       chainId: 1337,
