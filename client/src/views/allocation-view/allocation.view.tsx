@@ -53,14 +53,14 @@ const AllocationView = (): ReactElement => {
     const allocationsWithPositiveValues = getAllocationsWithPositiveValues(allocationValues!);
     const allocationsWithPositiveValuesKeys = Object.keys(allocationsWithPositiveValues);
 
-    if (allocationsWithPositiveValuesKeys.length > 1) {
+    if (allocationsWithPositiveValuesKeys.length > 0) {
+      const proposalId = allocationsWithPositiveValuesKeys[0];
       voteMutation.mutate({
-        proposalId: allocationsWithPositiveValuesKeys[0],
-        value: allocationsWithPositiveValues[allocationsWithPositiveValuesKeys[0]],
+        proposalId,
+        value: allocationValues[proposalId],
       });
       return;
     }
-
     voteMutation.mutate({ proposalId: proposals[0].id.toString(), value: '0' });
   };
 
@@ -93,10 +93,9 @@ const AllocationView = (): ReactElement => {
   };
 
   const isButtonsDisabled = !isConnected || !isDecisionWindowOpen;
-
   return (
     <MainLayout
-      isLoading={!isRenderingReady || isLoadingUserVote}
+      isLoading={!isRenderingReady || (isConnected && isLoadingUserVote)}
       navigationBottomSuffix={
         <div className={styles.buttons}>
           <Button
