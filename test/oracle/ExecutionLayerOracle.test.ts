@@ -8,14 +8,14 @@ makeTestsEnv(EXECUTION_LAYER_ORACLE, (testEnv) => {
   describe('setBalance', async () => {
     it('Can set balance for previous epoch', async () => {
       const { epochs, executionLayerOracle } = testEnv;
-      await forwardEpochs(epochs, 1);
+      await forwardEpochs(epochs);
       await executionLayerOracle.setBalance(1, 100);
       expect(await executionLayerOracle.balanceByEpoch(1)).eq(100);
     });
 
     it('Cannot set balance for given epoch twice', async () => {
       const { epochs, executionLayerOracle } = testEnv;
-      await forwardEpochs(epochs, 1);
+      await forwardEpochs(epochs);
       await executionLayerOracle.setBalance(1, 100);
       expect(executionLayerOracle.setBalance(1, 200))
         .revertedWith('HN/balance-for-given-epoch-already-exists');

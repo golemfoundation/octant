@@ -39,7 +39,7 @@ makeTestsEnv(TRACKER, (testEnv) => {
       }
       expect(await tracker.totalDeposit()).eq(parseEther("2000"));
       expect(await tracker.totalDepositAt(1)).eq(parseEther("0"));
-      await forwardEpochs(epochs, 1);
+      await forwardEpochs(epochs);
       expect(await tracker.totalDepositAt(2)).eq(parseEther("2000"));
     });
   });

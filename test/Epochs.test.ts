@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 import { EPOCHS } from '../helpers/constants';
-import { mineBlocks, getCurrentBlockNumber } from '../helpers/misc-utils';
+import { getLatestBlockTimestamp, increaseNextBlockTimestamp } from '../helpers/misc-utils';
 import { Epochs } from '../typechain-types';
 import { makeTestsEnv } from './helpers/make-tests-env';
 
@@ -17,7 +17,7 @@ makeTestsEnv(EPOCHS, (testEnv) => {
 
   describe('Epoch numbering', () => {
     it("Starts from 1", async () => {
-      const start = await getCurrentBlockNumber();
+      const start = await getLatestBlockTimestamp();
       const epochs = await setupEpochs(start);
 
       expect(await epochs.getCurrentEpoch()).eq(1);
@@ -26,22 +26,22 @@ makeTestsEnv(EPOCHS, (testEnv) => {
 
   describe('Epoch duration', () => {
     const parameters = [
-      { mineBlocks: 0, result: 1 },
-      { mineBlocks: 100, result: 1 },
-      { mineBlocks: 2000, result: 1 },
-      { mineBlocks: 4990, result: 1 },
-      { mineBlocks: 5010, result: 2 },
-      { mineBlocks: 7010, result: 2 },
-      { mineBlocks: 9990, result: 2 },
-      { mineBlocks: 10020, result: 3 },
+      { increaseNextBlockTsBy: 0, result: 1 },
+      { increaseNextBlockTsBy: 100, result: 1 },
+      { increaseNextBlockTsBy: 2000, result: 1 },
+      { increaseNextBlockTsBy: 4990, result: 1 },
+      { increaseNextBlockTsBy: 5010, result: 2 },
+      { increaseNextBlockTsBy: 7010, result: 2 },
+      { increaseNextBlockTsBy: 9990, result: 2 },
+      { increaseNextBlockTsBy: 10020, result: 3 },
     ];
 
     parameters.forEach((param) => {
-      it(`Epoch num is: ${param.result} when next ${param.mineBlocks} blocks are mined`, async () => {
-        const start = await getCurrentBlockNumber() + 1;
+      it(`Epoch num is: ${param.result} when next block timestamp increased by: ${param.increaseNextBlockTsBy}`, async () => {
+        const start = await getLatestBlockTimestamp();
         const epochs = await setupEpochs(start);
 
-        await mineBlocks(param.mineBlocks);
+        await increaseNextBlockTimestamp(param.increaseNextBlockTsBy);
         const currentEpoch = await epochs.getCurrentEpoch();
 
         expect(currentEpoch).eq(param.result);
@@ -51,23 +51,23 @@ makeTestsEnv(EPOCHS, (testEnv) => {
 
   describe('Decision window', () => {
     const parameters = [
-      { mineBlocks: 0, result: true },
-      { mineBlocks: 100, result: true },
-      { mineBlocks: 1990, result: true },
-      { mineBlocks: 3010, result: false },
-      { mineBlocks: 5010, result: true },
-      { mineBlocks: 7010, result: false },
-      { mineBlocks: 9990, result: false },
-      { mineBlocks: 10020, result: true },
+      { increaseNextBlockTsBy: 0, result: true },
+      { increaseNextBlockTsBy: 100, result: true },
+      { increaseNextBlockTsBy: 1990, result: true },
+      { increaseNextBlockTsBy: 3010, result: false },
+      { increaseNextBlockTsBy: 5010, result: true },
+      { increaseNextBlockTsBy: 7010, result: false },
+      { increaseNextBlockTsBy: 9990, result: false },
+      { increaseNextBlockTsBy: 10020, result: true },
     ];
 
     parameters.forEach((param) => {
 
-      it(`isDecisionWindowOpen: ${param.result} when next ${param.mineBlocks} are mined`, async () => {
-        const start = await getCurrentBlockNumber() + 1;
+      it(`isDecisionWindowOpen: ${param.result} when next block timestamp increased by: ${param.increaseNextBlockTsBy}`, async () => {
+        const start = await getLatestBlockTimestamp();
         const epochs = await setupEpochs(start);
 
-        await mineBlocks(param.mineBlocks);
+        await increaseNextBlockTimestamp(param.increaseNextBlockTsBy);
         const isOpen = await epochs.isDecisionWindowOpen();
 
         expect(isOpen).eq(param.result);
@@ -77,22 +77,22 @@ makeTestsEnv(EPOCHS, (testEnv) => {
 
   describe('Is started', () => {
     it(`should be started`, async () => {
-      const start = await getCurrentBlockNumber();
+      const start = await getLatestBlockTimestamp();
       const epochs = await setupEpochs(start);
 
-      await mineBlocks(10);
-      const isStarted = await epochs.isStarted();
+      await increaseNextBlockTimestamp(10);
+      const isOpen = await epochs.isStarted();
 
-      expect(isStarted).true;
+      expect(isOpen).true;
     });
 
     it(`should not be started`, async () => {
-      const start = await getCurrentBlockNumber() + 10;
+      const start = await getLatestBlockTimestamp() + 10;
       const epochs = await setupEpochs(start);
 
-      const isStarted = await epochs.isStarted();
+      const isOpen = await epochs.isStarted();
 
-      expect(isStarted).false;
+      expect(isOpen).false;
     });
   });
 
