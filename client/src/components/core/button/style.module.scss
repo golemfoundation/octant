@@ -68,17 +68,35 @@
     border: 0;
     font-size: $font-size-10;
 
-    svg, svg path {
+    svg {
       color: $color-hexagon-grey2;
       stroke: $color-hexagon-grey2;
+
+      path, circle {
+        color: $color-hexagon-grey2;
+        stroke: $color-hexagon-grey2;
+      }
+
+      circle {
+        fill: $color-hexagon-grey2;
+      }
     }
 
     &.isActive {
       color: $color-hexagon-main-text-color;
 
-      svg, svg path {
+      svg {
         color: $color-hexagon-main-text-color;
         stroke: $color-hexagon-main-text-color;
+
+        path, circle {
+          color: $color-hexagon-main-text-color;
+          stroke: $color-hexagon-main-text-color;
+        }
+
+        circle {
+          fill: $color-hexagon-main-text-color;
+        }
       }
     }
 
