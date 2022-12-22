@@ -8,7 +8,7 @@ import UseContractParams from './types';
 import { Rewards, Rewards__factory } from '../../typechain-types';
 
 export default function useContractRewards({
-  tokenAddress = env.rewardsAddress,
+  tokenAddress = env.contracts.rewardsAddress,
   signerOrProvider = providerGoerli,
 }: UseContractParams = {}): Rewards | null {
   return useMemo(() => {
