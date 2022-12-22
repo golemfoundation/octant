@@ -8,14 +8,14 @@ makeTestsEnv(BEACON_CHAIN_ORACLE, (testEnv) => {
   describe('setBalance', async () => {
     it('Can set balance for previous epoch', async () => {
       const { epochs, beaconChainOracle } = testEnv;
-      await forwardEpochs(epochs);
+      await forwardEpochs(epochs, 1);
       await beaconChainOracle.setBalance(1, 100);
       expect(await beaconChainOracle.balanceByEpoch(1)).eq(100);
     });
 
     it('Cannot set balance for given epoch twice', async () => {
       const { epochs, beaconChainOracle } = testEnv;
-      await forwardEpochs(epochs);
+      await forwardEpochs(epochs, 1);
       await beaconChainOracle.setBalance(1, 100);
       expect(beaconChainOracle.setBalance(1, 200))
         .revertedWith('HN/balance-for-given-epoch-already-exists');

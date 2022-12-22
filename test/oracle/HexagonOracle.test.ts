@@ -57,7 +57,7 @@ makeTestsEnv(HEXAGON_ORACLE, (testEnv) => {
         // when
         for (let i = 0; i < oracleFeedInEpochs.length; i++){
           const { executionLayer, beaconChain } = oracleFeedInEpochs[i];
-          await forwardEpochs(epochs);
+          await forwardEpochs(epochs, 1);
           await executionLayerOracle.setBalance(i + 1, executionLayer);
           await beaconChainOracle.setBalance(i + 1, beaconChain);
         }

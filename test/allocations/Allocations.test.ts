@@ -33,7 +33,7 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
   describe('vote with real deposits', async () => {
     it('Can\'t vote if deposit is zero', async () => {
       const { allocations, epochs, signers: { Alice } } = testEnv;
-      await forwardEpochs(epochs);
+      await forwardEpochs(epochs, 1);
       expect(allocations.connect(Alice).vote(1, 100)).revertedWith('HN/voting-blocked-if-deposit-is-zero');
     });
   });
@@ -47,7 +47,7 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
     beforeEach(async () => {
       let start = await getLatestBlockTimestamp();
       [epochs, allocations] = await setupAllocations(start, 300, 100);
-      await forwardEpochs(epochs);
+      await forwardEpochs(epochs, 1);
     });
 
     it('Cannot vote, when alpha is out of range', async () => {
@@ -119,7 +119,7 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
       let [epochs, allocations] = await setupAllocations(start, 500, 200);
 
       expect(await epochs.getCurrentEpoch()).eq(1);
-      await forwardEpochs(epochs);
+      await forwardEpochs(epochs, 1);
       expect(await epochs.getCurrentEpoch()).eq(2);
       await allocations.connect(Alice).vote(1, 53);
       const voteInFirstEpoch = await allocations.getUserVote(1, Alice.address);
