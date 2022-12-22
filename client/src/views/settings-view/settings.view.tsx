@@ -24,27 +24,30 @@ const SettingsView = (): ReactElement => {
       <Header text="Settings" />
       <BoxRounded className={styles.box} justifyContent="spaceBetween">
         Choose a display currency
-        <InputSelect options={options} selectedOption={options[0]} />
+        <InputSelect isDisabled options={options} selectedOption={options[0]} />
       </BoxRounded>
-      <InputText
-        className={styles.box}
-        label="Allocate value adjusters default"
-        onChange={() => {}}
-        suffix="USD"
-        value="50.0"
-        variant="boxRounded"
-      />
+      <BoxRounded className={styles.box} justifyContent="spaceBetween">
+        <InputText
+          className={styles.box}
+          isDisabled
+          label="Allocate value adjusters default"
+          onChange={() => {}}
+          suffix="USD"
+          value="50.0"
+          variant="boxRounded"
+        />
+      </BoxRounded>
       <BoxRounded className={styles.box} justifyContent="spaceBetween">
         Use ETH as main value display
-        <InputCheckbox />
+        <InputCheckbox isDisabled />
       </BoxRounded>
       <BoxRounded className={styles.box} justifyContent="spaceBetween">
         Show Metrics introductions
-        <InputCheckbox />
+        <InputCheckbox isDisabled />
       </BoxRounded>
       <BoxRounded className={styles.box} justifyContent="spaceBetween">
         Always show Allocate onboarding
-        <InputCheckbox />
+        <InputCheckbox isDisabled />
       </BoxRounded>
     </MainLayout>
   );

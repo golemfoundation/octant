@@ -8,6 +8,7 @@
   background: $color-white;
   font-size: $font-size-12;
   font-weight: $font-weight-bold;
+  user-select: none;
 
   &.isGrey {
     color: $color-hexagon-grey8;
