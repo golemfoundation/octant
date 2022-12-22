@@ -1,28 +1,27 @@
-import { expect } from 'chai';
-import chai from 'chai';
 import { smock } from '@defi-wonderland/smock';
-import { ethers } from 'hardhat';
+import { expect } from 'chai';
 import { parseEther } from 'ethers/lib/utils';
+import { ethers } from 'hardhat';
 import { ALLOCATIONS, ALLOCATIONS_STORAGE, REWARDS, TEST_REWARDS } from '../helpers/constants';
 import { forwardEpochs } from '../helpers/epochs-utils';
+import { Allocations, AllocationsStorage, Tracker } from '../typechain-types';
 import { makeTestsEnv } from './helpers/make-tests-env';
-import { Allocations, AllocationsStorage, Epochs, Tracker } from '../typechain-types';
 
 let ZeroAddr = '0x0000000000000000000000000000000000000000';
 
 makeTestsEnv(REWARDS, (testEnv) => {
 
-  describe("individualReward", async () => {
-    it("TestRewards", async () => {
+  describe('individualReward', async () => {
+    it('TestRewards', async () => {
       const { testRewards, signers } = testEnv;
-      expect(await testRewards.individualReward(1, signers.Alice.address)).eq(parseEther("0.4"));
+      expect(await testRewards.individualReward(1, signers.Alice.address)).eq(parseEther('0.4'));
     });
 
-    it("TestRewards", async () => {
+    it('TestRewards', async () => {
       const { epochs, proposals, tracker, signers: { Alice } } = testEnv;
 
       let sTracker = await smock.fake<Tracker>('Tracker');
-      sTracker.depositAt.returns((_owner, _epochNo) => {
+      sTracker.depositAt.returns((_owner: string, _epochNo: number) => {
         return 1;
       });
       const allocationsStorageFactory = await ethers.getContractFactory(ALLOCATIONS_STORAGE);
@@ -37,62 +36,88 @@ makeTestsEnv(REWARDS, (testEnv) => {
       await forwardEpochs(epochs, 1);
       await allocations.connect(Alice).vote(1, 50);
       const result = await testRewards.matchedProposalRewards(1);
-      expect(result[0].donated).eq(parseEther("0.2"));
-      expect(result[0].matched).eq(parseEther("40.407017003965518800"));
+      expect(result[0].donated).eq(parseEther('0.2'));
+      expect(result[0].matched).eq(parseEther('40.407017003965518800'));
     });
 
-    it("single player scenario", async function () {
-      const { epochs, glmDeposits, rewards, tracker, signers, token, beaconChainOracle, executionLayerOracle } = testEnv;
-      await token.transfer(signers.Alice.address, parseEther("1000000"));
-      await token.connect(signers.Alice).approve(glmDeposits.address, parseEther("1000000"));
-      await glmDeposits.connect(signers.Alice).deposit(parseEther("1000000"));
+    it('single player scenario', async function () {
+      const {
+        epochs,
+        glmDeposits,
+        rewards,
+        tracker,
+        signers,
+        token,
+        beaconChainOracle,
+        executionLayerOracle
+      } = testEnv;
+      await token.transfer(signers.Alice.address, parseEther('1000000'));
+      await token.connect(signers.Alice).approve(glmDeposits.address, parseEther('1000000'));
+      await glmDeposits.connect(signers.Alice).deposit(parseEther('1000000'));
       await forwardEpochs(epochs, 1);
-      await beaconChainOracle.setBalance(1, parseEther("200"))
-      await executionLayerOracle.setBalance(1, parseEther("200"))
+      await beaconChainOracle.setBalance(1, parseEther('200'));
+      await executionLayerOracle.setBalance(1, parseEther('200'));
       await forwardEpochs(epochs, 1);
-      await beaconChainOracle.setBalance(2, parseEther("400"))
-      await executionLayerOracle.setBalance(2, parseEther("400"))
-      expect(await tracker.totalDepositAt(2), "total deposit").eq(parseEther("1000000"));
-      expect(await rewards.stakedRatio(2), "staked ratio").eq(parseEther("0.001"));
-      expect(await rewards.allIndividualRewards(2), "sum of IRs").eq(parseEther("0.4"));
-      expect(await rewards.individualReward(2, signers.Alice.address), "Alice IR").eq(parseEther("0.4"));
+      await beaconChainOracle.setBalance(2, parseEther('400'));
+      await executionLayerOracle.setBalance(2, parseEther('400'));
+      expect(await tracker.totalDepositAt(2), 'total deposit').eq(parseEther('1000000'));
+      expect(await rewards.stakedRatio(2), 'staked ratio').eq(parseEther('0.001'));
+      expect(await rewards.allIndividualRewards(2), 'sum of IRs').eq(parseEther('0.4'));
+      expect(await rewards.individualReward(2, signers.Alice.address), 'Alice IR').eq(parseEther('0.4'));
     });
 
-    it("multiplayer scenario", async function () {
-      const { epochs, glmDeposits, rewards, tracker, signers, token, beaconChainOracle, executionLayerOracle } = testEnv;
-      await token.transfer(signers.Alice.address, parseEther("1000000"));
-      await token.connect(signers.Alice).approve(glmDeposits.address, parseEther("1000000"));
-      await glmDeposits.connect(signers.Alice).deposit(parseEther("1000000"));
-      await token.transfer(signers.Bob.address, parseEther("500000"));
-      await token.connect(signers.Bob).approve(glmDeposits.address, parseEther("500000"));
-      await glmDeposits.connect(signers.Bob).deposit(parseEther("500000"));
+    it('multiplayer scenario', async function () {
+      const {
+        epochs,
+        glmDeposits,
+        rewards,
+        tracker,
+        signers,
+        token,
+        beaconChainOracle,
+        executionLayerOracle
+      } = testEnv;
+      await token.transfer(signers.Alice.address, parseEther('1000000'));
+      await token.connect(signers.Alice).approve(glmDeposits.address, parseEther('1000000'));
+      await glmDeposits.connect(signers.Alice).deposit(parseEther('1000000'));
+      await token.transfer(signers.Bob.address, parseEther('500000'));
+      await token.connect(signers.Bob).approve(glmDeposits.address, parseEther('500000'));
+      await glmDeposits.connect(signers.Bob).deposit(parseEther('500000'));
       await forwardEpochs(epochs, 1);
-      await beaconChainOracle.setBalance(1, parseEther("200"))
-      await executionLayerOracle.setBalance(1, parseEther("200"))
+      await beaconChainOracle.setBalance(1, parseEther('200'));
+      await executionLayerOracle.setBalance(1, parseEther('200'));
       await forwardEpochs(epochs, 1);
-      await beaconChainOracle.setBalance(2, parseEther("400"))
-      await executionLayerOracle.setBalance(2, parseEther("400"))
-      expect(await tracker.totalDepositAt(2), "total deposit").eq(parseEther("1500000"));
-      expect(await rewards.stakedRatio(2), "staked ratio").eq(parseEther("0.0015"));
-      expect(await rewards.allIndividualRewards(2), "sum of IRs").eq(parseEther("0.6"));
-      expect(await rewards.individualReward(2, signers.Alice.address), "Alice IR").eq(parseEther("0.4"));
-      expect(await rewards.individualReward(2, signers.Bob.address), "Bob IR").eq(parseEther("0.2"));
+      await beaconChainOracle.setBalance(2, parseEther('400'));
+      await executionLayerOracle.setBalance(2, parseEther('400'));
+      expect(await tracker.totalDepositAt(2), 'total deposit').eq(parseEther('1500000'));
+      expect(await rewards.stakedRatio(2), 'staked ratio').eq(parseEther('0.0015'));
+      expect(await rewards.allIndividualRewards(2), 'sum of IRs').eq(parseEther('0.6'));
+      expect(await rewards.individualReward(2, signers.Alice.address), 'Alice IR').eq(parseEther('0.4'));
+      expect(await rewards.individualReward(2, signers.Bob.address), 'Bob IR').eq(parseEther('0.2'));
     });
   });
 
-  describe("totalRewards", async () => {
-    it("Compute total rewards", async function () {
-      const { epochs, glmDeposits, rewards, signers, token, beaconChainOracle, executionLayerOracle } = testEnv;
-      await token.transfer(signers.Alice.address, parseEther("1000000"));
-      await token.connect(signers.Alice).approve(glmDeposits.address, parseEther("1000000"));
-      await glmDeposits.connect(signers.Alice).deposit(parseEther("1000000"));
+  describe('totalRewards', async () => {
+    it('Compute total rewards', async function () {
+      const {
+        epochs,
+        glmDeposits,
+        rewards,
+        signers,
+        token,
+        beaconChainOracle,
+        executionLayerOracle
+      } = testEnv;
+      await token.transfer(signers.Alice.address, parseEther('1000000'));
+      await token.connect(signers.Alice).approve(glmDeposits.address, parseEther('1000000'));
+      await glmDeposits.connect(signers.Alice).deposit(parseEther('1000000'));
       await forwardEpochs(epochs, 1);
-      await beaconChainOracle.setBalance(1, parseEther("200"))
-      await executionLayerOracle.setBalance(1, parseEther("200"))
+      await beaconChainOracle.setBalance(1, parseEther('200'));
+      await executionLayerOracle.setBalance(1, parseEther('200'));
       await forwardEpochs(epochs, 1);
-      await beaconChainOracle.setBalance(2, parseEther("400"))
-      await executionLayerOracle.setBalance(2, parseEther("400"))
-      expect(await rewards.totalRewards(2), "sum of TRs").eq(parseEther("12.6491106406735172"));
+      await beaconChainOracle.setBalance(2, parseEther('400'));
+      await executionLayerOracle.setBalance(2, parseEther('400'));
+      expect(await rewards.totalRewards(2), 'sum of TRs').eq(parseEther('12.6491106406735172'));
     });
   });
 
@@ -171,7 +196,7 @@ makeTestsEnv(REWARDS, (testEnv) => {
     it('Compute matched proposal rewards', async function () {
       const { rewards } = testEnv;
       const matchedRewards = await rewards.matchedRewards(2);
-      expect(matchedRewards).eq(parseEther("22.851050121192878400"));
+      expect(matchedRewards).eq(parseEther('22.851050121192878400'));
       const proposalRewards = await rewards.matchedProposalRewards(2);
       const firstProposal = proposalRewards[0];
       expect(firstProposal.id).eq(1);
@@ -180,7 +205,7 @@ makeTestsEnv(REWARDS, (testEnv) => {
       const secondProposal = proposalRewards[1];
       expect(secondProposal.id).eq(2);
       expect(secondProposal.donated).eq(parseEther('0.18'));
-      expect(secondProposal.matched).eq(parseEther("13.710630072715727040"));
+      expect(secondProposal.matched).eq(parseEther('13.710630072715727040'));
       const thirdProposal = proposalRewards[2];
       expect(thirdProposal.id).eq(3);
       expect(thirdProposal.donated).eq(0);
