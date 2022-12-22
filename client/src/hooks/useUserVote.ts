@@ -17,7 +17,7 @@ export default function useUserVote(): UseQueryResult<UserVote> {
 
   return useQuery(
     ['userVote'],
-    () => contractAllocationsStorage?.getUserVote(currentEpoch!.toNumber() - 1, address),
+    () => contractAllocationsStorage?.getUserVote(currentEpoch! - 1, address),
     {
       enabled: !!currentEpoch && !!address,
       select: response => ({
