@@ -37,7 +37,7 @@ const CustomMenuList = ({ innerRef, innerProps, setIsMenuOpen, children }) => (
   </div>
 );
 
-const InputSelect: FC<InputSelectProps> = ({ options, onChange, selectedOption }) => {
+const InputSelect: FC<InputSelectProps> = ({ options, onChange, selectedOption, isDisabled }) => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [_selectedOption, _setSelectedOption] = useState<SingleValue<Option>>(
     selectedOption || options[0],
@@ -61,6 +61,7 @@ const InputSelect: FC<InputSelectProps> = ({ options, onChange, selectedOption }
           MenuList: args => <CustomMenuList {...args} setIsMenuOpen={setIsMenuOpen} />,
           Option: CustomOption,
         }}
+        isDisabled={isDisabled}
         isSearchable={false}
         menuIsOpen={isMenuOpen}
         onChange={option => onOptionClick(option)}

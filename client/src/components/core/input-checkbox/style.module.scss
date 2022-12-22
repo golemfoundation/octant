@@ -19,7 +19,10 @@ $checkIndicatorSize: 1.4rem;
 
 .input {
   opacity: 0;
-  cursor: pointer;
+
+  &:not(.isDisabled) {
+    cursor: pointer;
+  }
 
   &:checked + .checkIndicator {
     background: $color-hexagon-blue;
