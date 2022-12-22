@@ -1,0 +1,33 @@
+.root {
+  width: 100%;
+  max-width: 34rem;
+}
+
+.counters {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 0 0 1.6rem 0;
+}
+
+.counterSection {
+  display: flex;
+  flex-direction: column;
+  width: 8rem
+}
+
+.value {
+  font-size: $font-size-20;
+  font-weight: $font-weight-semibold;
+  color: $color-hexagon-main-text-color;
+}
+
+.label {
+  font-size: $font-size-10;
+  color: $color-hexagon-grey7;
+}
+
+.divider {
+  color: $color-hexagon-grey2;
+  font-size: $font-size-20;
+}

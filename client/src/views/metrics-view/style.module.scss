@@ -1,0 +1,14 @@
+.element {
+  width: 100%;
+
+  &:not(:last-child) {
+    margin: 0 auto 1.6rem;
+  }
+}
+
+.description {
+  width: 100%;
+  text-align: left;
+  color: $color-hexagon-grey3;
+  margin: 0 0 2rem 0;
+}

@@ -33,7 +33,7 @@ const AllocationView = (): ReactElement => {
   const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
   const [allocationValues, setAllocationValues] = useState<AllocationValues>({});
   const [isRenderingReady, setIsRenderingReady] = useState<boolean>(false);
-  const { data: userVote, isLoading: isLoadingUserVote } = useUserVote();
+  const { data: userVote, isFetching: isFetchingUserVote } = useUserVote();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const voteMutation = useVote({
     onSuccess: () => {
@@ -95,7 +95,7 @@ const AllocationView = (): ReactElement => {
   const isButtonsDisabled = !isConnected || !isDecisionWindowOpen;
   return (
     <MainLayout
-      isLoading={!isRenderingReady || (isConnected && isLoadingUserVote)}
+      isLoading={!isRenderingReady || (isConnected && isFetchingUserVote)}
       navigationBottomSuffix={
         <div className={styles.buttons}>
           <Button

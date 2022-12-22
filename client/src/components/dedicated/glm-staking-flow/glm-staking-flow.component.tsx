@@ -11,7 +11,7 @@ import Button from 'components/core/button/button.component';
 import InputText from 'components/core/input-text/input-text.component';
 import Loader from 'components/core/loader/loader.component';
 import Modal from 'components/core/modal/modal.component';
-import ProgressBar from 'components/core/progress-bar/progress-bar.component';
+import ProgressStepper from 'components/core/progress-stepper/progress-stepper.component';
 import env from 'env';
 import triggerToast from 'utils/triggerToast';
 import useAvailableFunds from 'hooks/useAvailableFunds';
@@ -128,7 +128,7 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
   return (
     <Modal {...modalProps}>
       <BoxRounded className={styles.element} isGrey>
-        <ProgressBar
+        <ProgressStepper
           currentStepIndex={currentStepIndex}
           steps={
             currentMode === 'deposit'

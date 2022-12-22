@@ -1,11 +1,11 @@
 import getDurationBetweenTimestamps from './getDurationBetweenTimestamps';
 
 describe('getDurationBetweenDates', () => {
-  const startTimestamp = 1665069473; // 2022-10-06T15:17:53.000Z
+  const startTimestamp = 1665069473000; // 2022-10-06T15:17:53.000Z in milliseconds.
 
   it('correctly returns duration between startTimestamp and endTimestamp', () => {
     const endDate = new Date(2022, 9, 13, 8, 10, 11);
-    const endTimestamp = endDate.getTime() / 1000;
+    const endTimestamp = endDate.getTime();
 
     expect(getDurationBetweenTimestamps(startTimestamp, endTimestamp)).toMatchObject({
       days: 6,
