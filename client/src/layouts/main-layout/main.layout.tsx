@@ -51,7 +51,12 @@ const MainLayout: FC<MainLayoutProps> = ({
     <div className={styles.root}>
       {isHeaderVisible && (
         <div className={styles.header}>
-          <Svg img={hexagon} size={3} />
+          <div className={styles.logoWrapper}>
+            <Svg img={hexagon} size={4} />
+            <div className={styles.testnetIndicatorWrapper}>
+              <div className={styles.testnetIndicator}>GOERLI</div>
+            </div>
+          </div>
           {isConnected ? (
             <div className={styles.profileInfo}>
               <div className={styles.walletInfo}>
