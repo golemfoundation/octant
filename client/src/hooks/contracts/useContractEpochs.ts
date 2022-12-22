@@ -8,7 +8,7 @@ import UseContractParams from './types';
 import { Epochs, Epochs__factory } from '../../typechain-types';
 
 export default function useContractEpochs({
-  tokenAddress = env.epochsAddress,
+  tokenAddress = env.contracts.epochsAddress,
   signerOrProvider = providerGoerli,
 }: UseContractParams = {}): Epochs | null {
   return useMemo(() => {

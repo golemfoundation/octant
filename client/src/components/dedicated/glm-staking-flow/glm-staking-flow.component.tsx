@@ -26,7 +26,7 @@ import styles from './style.module.scss';
 const currentStepIndexInitialValue = 0;
 
 const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
-  const { depositsAddress } = env;
+  const { depositsAddress } = env.contracts;
   const {
     metaState: { account, web3: useMetamaskWeb3 },
   } = useMetamask();

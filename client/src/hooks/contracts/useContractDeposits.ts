@@ -7,7 +7,7 @@ import UseContractParams from './types';
 import { Deposits, Deposits__factory } from '../../typechain-types';
 
 export default function useContractDeposits({
-  tokenAddress = env.depositsAddress,
+  tokenAddress = env.contracts.depositsAddress,
   signerOrProvider,
 }: UseContractParams): Deposits | null {
   return useMemo(() => {

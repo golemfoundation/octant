@@ -11,6 +11,7 @@ import { userIcon } from 'svg/navigation';
 import Button from 'components/core/button/button.component';
 import Loader from 'components/core/loader/loader.component';
 import Svg from 'components/core/svg/svg.component';
+import env from 'env';
 import truncateEthAddress from 'utils/truncateEthAddress';
 import useRewardBudget from 'hooks/useRewardBudget';
 
@@ -53,9 +54,11 @@ const MainLayout: FC<MainLayoutProps> = ({
         <div className={styles.header}>
           <div className={styles.logoWrapper}>
             <Svg img={hexagon} size={4} />
-            <div className={styles.testnetIndicatorWrapper}>
-              <div className={styles.testnetIndicator}>GOERLI</div>
-            </div>
+            {env.isTestnet === 'true' && (
+              <div className={styles.testnetIndicatorWrapper}>
+                <div className={styles.testnetIndicator}>GOERLI</div>
+              </div>
+            )}
           </div>
           {isConnected ? (
             <div className={styles.profileInfo}>

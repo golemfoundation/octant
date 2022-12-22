@@ -8,7 +8,7 @@ import UseContractParams from './types';
 import { Allocations, Allocations__factory } from '../../typechain-types';
 
 export default function useContractAllocations({
-  tokenAddress = env.allocationsAddress,
+  tokenAddress = env.contracts.allocationsAddress,
   signerOrProvider,
 }: UseContractParams): Allocations | null {
   return useMemo(() => {

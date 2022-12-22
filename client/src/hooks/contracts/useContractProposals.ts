@@ -8,7 +8,7 @@ import UseContractParams from './types';
 import { Proposals, Proposals__factory } from '../../typechain-types';
 
 export default function useContractProposals({
-  tokenAddress = env.proposalsAddress,
+  tokenAddress = env.contracts.proposalsAddress,
   signerOrProvider = providerGoerli,
 }: UseContractParams = {}): Proposals | null {
   return useMemo(() => {
