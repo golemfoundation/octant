@@ -1,8 +1,10 @@
 import { useMetamask } from 'use-metamask';
 import React, { ReactElement, useEffect, useState } from 'react';
 import cx from 'classnames';
+import isEmpty from 'lodash/isEmpty';
 
 import { ALLOCATIONS_MAX_NUMBER } from 'constants/allocations';
+import { DISCORD_INVITE_LINK } from 'constants/social';
 import AllocationItem from 'components/dedicated/allocation-item/allocation-item.component';
 import BoxRounded from 'components/core/box-rounded/box-rounded.component';
 import Button from 'components/core/button/button.component';
@@ -93,60 +95,73 @@ const AllocationView = (): ReactElement => {
   };
 
   const isButtonsDisabled = !isConnected || !isDecisionWindowOpen;
+  const areAllocationsAvailable = !isEmpty(allocationValues) && !isEmpty(idsInAllocation);
   return (
     <MainLayout
       isLoading={!isRenderingReady || (isConnected && isFetchingUserVote)}
       navigationBottomSuffix={
-        <div className={styles.buttons}>
-          <Button
-            className={styles.button}
-            isDisabled={isButtonsDisabled}
-            label="Reset"
-            onClick={onResetAllocationValues}
-          />
-          <Button
-            className={styles.button}
-            Icon={voteMutation.isLoading && <Loader />}
-            isDisabled={isButtonsDisabled}
-            isLoading={voteMutation.isLoading}
-            label="Allocate"
-            onClick={onVote}
-            variant="cta"
-          />
-        </div>
+        areAllocationsAvailable && (
+          <div className={styles.buttons}>
+            <Button
+              className={styles.button}
+              isDisabled={isButtonsDisabled}
+              label="Reset"
+              onClick={onResetAllocationValues}
+            />
+            <Button
+              className={styles.button}
+              Icon={voteMutation.isLoading && <Loader />}
+              isDisabled={isButtonsDisabled}
+              isLoading={voteMutation.isLoading}
+              label="Allocate"
+              onClick={onVote}
+              variant="cta"
+            />
+          </div>
+        )
       }
     >
-      <div className={styles.boxes}>
-        {!isDecisionWindowOpen && (
-          <BoxRounded alignment="center" className={styles.box}>
-            The decision window is now closed. Allocating funds is not possible.
-          </BoxRounded>
-        )}
-        {!isConnected && (
-          <BoxRounded alignment="center" className={styles.box}>
-            In order to manipulate allocation values and vote, please connect your wallet first.
-          </BoxRounded>
-        )}
-        {allocationValues && idsInAllocation
-          ? idsInAllocation.map((idInAllocation, index) => {
-              const allocationItem = proposals.find(({ id }) => id.toNumber() === idInAllocation)!;
-              const isSelected = selectedItemId === allocationItem.id.toNumber();
-              const value = allocationValues[allocationItem.id.toNumber()];
-              return (
-                <AllocationItem
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={index}
-                  className={cx(styles.box, isSelected && styles.isSelected)}
-                  isSelected={isSelected}
-                  onChange={changeAllocationItemValue}
-                  onSelectItem={setSelectedItemId}
-                  value={value}
-                  {...allocationItem}
-                />
-              );
-            })
-          : null}
-      </div>
+      {areAllocationsAvailable ? (
+        <div className={styles.boxes}>
+          {!isDecisionWindowOpen && (
+            <BoxRounded alignment="center" className={styles.box}>
+              The decision window is now closed. Allocating funds is not possible.
+            </BoxRounded>
+          )}
+          {!isConnected && (
+            <BoxRounded alignment="center" className={styles.box}>
+              In order to manipulate allocation values and vote, please connect your wallet first.
+            </BoxRounded>
+          )}
+          {idsInAllocation!.map((idInAllocation, index) => {
+            const allocationItem = proposals.find(({ id }) => id.toNumber() === idInAllocation)!;
+            const isSelected = selectedItemId === allocationItem.id.toNumber();
+            const value = allocationValues[allocationItem.id.toNumber()];
+            return (
+              <AllocationItem
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
+                className={cx(styles.box, isSelected && styles.isSelected)}
+                isSelected={isSelected}
+                onChange={changeAllocationItemValue}
+                onSelectItem={setSelectedItemId}
+                value={value}
+                {...allocationItem}
+              />
+            );
+          })}
+        </div>
+      ) : (
+        <div className={styles.emptyState}>
+          You haven’t made any allocations yet. Need a bit of help getting started?
+          <Button
+            className={styles.buttonDiscord}
+            href={DISCORD_INVITE_LINK}
+            label="Join us on Discord"
+            variant="link"
+          />
+        </div>
+      )}
       {selectedItemId !== null && (
         <div className={styles.selectedItemOverlay} onClick={() => setSelectedItemId(null)} />
       )}

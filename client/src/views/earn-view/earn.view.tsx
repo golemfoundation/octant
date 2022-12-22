@@ -43,7 +43,7 @@ const EarnView = (): ReactElement => {
         ]}
       >
         <DoubleValue
-          mainValue={getCurrentEpochStateText({ isConnected, suffix: 'GLM', value: depositsValue })}
+          mainValue={getCurrentEpochStateText({ suffix: 'GLM', value: depositsValue })}
         />
       </BoxRounded>
       <BoxRounded
@@ -58,9 +58,7 @@ const EarnView = (): ReactElement => {
         isVertical
         title="Rewards Balance"
       >
-        <DoubleValue
-          mainValue={getCurrentEpochStateText({ isConnected, suffix: 'ETH', value: rewardBudget })}
-        />
+        <DoubleValue mainValue={getCurrentEpochStateText({ suffix: 'ETH', value: rewardBudget })} />
       </BoxRounded>
       <GlmStakingFlow
         modalProps={{
