@@ -5,6 +5,7 @@ import BoxRounded from 'components/core/box-rounded/box-rounded.component';
 import DoubleValue from 'components/core/double-value/double-value.component';
 import GlmStakingFlow from 'components/dedicated/glm-staking-flow/glm-staking-flow.component';
 import MainLayout from 'layouts/main-layout/main.layout';
+import useDepositEffectiveAtCurrentEpoch from 'hooks/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/useDepositValue';
 import useRewardBudget from 'hooks/useRewardBudget';
 
@@ -15,9 +16,11 @@ const EarnView = (): ReactElement => {
   const {
     metaState: { isConnected },
   } = useMetamask();
+  const [stakeView, setStakeView] = useState<'currentEpoch' | 'nextEpoch'>('nextEpoch');
   const [isGlmStakingModalOpen, setIsGlmStakingModalOpen] = useState<boolean>(false);
   const { data: depositsValue } = useDepositValue();
   const { data: rewardBudget } = useRewardBudget();
+  const { data: depositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
 
   return (
     <MainLayout>
@@ -33,18 +36,29 @@ const EarnView = (): ReactElement => {
         className={styles.box}
         tabs={[
           {
-            isActive: true,
-            onClick: () => {},
+            isActive: stakeView === 'currentEpoch',
+            onClick: () => setStakeView('currentEpoch'),
             title: 'Current Epoch Stake',
           },
           {
+            isActive: stakeView === 'nextEpoch',
+            onClick: () => setStakeView('nextEpoch'),
             title: 'Next Epoch Stake',
           },
         ]}
       >
-        <DoubleValue
-          mainValue={getCurrentEpochStateText({ suffix: 'GLM', value: depositsValue })}
-        />
+        {stakeView === 'currentEpoch' ? (
+          <DoubleValue
+            mainValue={getCurrentEpochStateText({
+              suffix: 'GLM',
+              value: depositEffectiveAtCurrentEpoch,
+            })}
+          />
+        ) : (
+          <DoubleValue
+            mainValue={getCurrentEpochStateText({ suffix: 'GLM', value: depositsValue })}
+          />
+        )}
       </BoxRounded>
       <BoxRounded
         alignment="left"
