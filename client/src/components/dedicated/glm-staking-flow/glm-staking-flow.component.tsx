@@ -17,6 +17,7 @@ import env from 'env';
 import triggerToast from 'utils/triggerToast';
 import useAvailableFunds from 'hooks/useAvailableFunds';
 import useContractDeposits from 'hooks/contracts/useContractDeposits';
+import useDepositEffectiveAtCurrentEpoch from 'hooks/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/useDepositValue';
 import useMaxApproveCallback from 'hooks/useMaxApproveCallback';
 
@@ -40,6 +41,7 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState<CurrentStepIndex>(
     currentStepIndexInitialValue,
   );
+  const { refetch: refetchDepositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
   const { data: dataAvailableFunds, refetch: refetchAvailableFunds } = useAvailableFunds(
     address,
     signer,
@@ -59,6 +61,12 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
     setCurrentStepIndex(0);
     setTransactionHash('');
     setIsApproveOrDepositInProgress(false);
+  };
+
+  const onRefetch = async () => {
+    await refetchDeposit();
+    await refetchAvailableFunds();
+    await refetchDepositEffectiveAtCurrentEpoch();
   };
 
   useEffect(() => {
@@ -118,8 +126,7 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
     triggerToast({
       title: 'Transaction successful',
     });
-    await refetchDeposit();
-    await refetchAvailableFunds();
+    await onRefetch();
     setValueToDeposeOrWithdraw('');
     setCurrentStepIndex(3);
     setIsApproveOrDepositInProgress(false);

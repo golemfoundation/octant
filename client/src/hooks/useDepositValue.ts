@@ -8,8 +8,8 @@ export default function useDepositValue(): UseQueryResult<BigNumberish> {
   const {
     metaState: { web3, account },
   } = useMetamask();
-  const address = account[0];
   const signer = web3?.getSigner();
+  const address = account[0];
   const contractDeposits = useContractDeposits({ signerOrProvider: signer });
 
   return useQuery(['depositsValue'], () => contractDeposits?.deposits(address), {
