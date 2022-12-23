@@ -8,6 +8,7 @@ import BoxRounded from 'components/core/box-rounded/box-rounded.component';
 import Button from 'components/core/button/button.component';
 import InputText from 'components/core/input-text/input-text.component';
 import Svg from 'components/core/svg/svg.component';
+import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
 
 import AllocationItemProps from './types';
 import styles from './style.module.scss';
@@ -15,13 +16,13 @@ import styles from './style.module.scss';
 const AllocationItem: FC<AllocationItemProps> = ({
   className,
   name,
-  eth,
-  percent,
   id,
   onSelectItem,
   isSelected,
   onChange,
   value,
+  totalValueOfAllocations,
+  percentage,
 }) => {
   const {
     metaState: { isConnected },
@@ -71,10 +72,15 @@ const AllocationItem: FC<AllocationItemProps> = ({
       <div className={styles.details}>
         <div className={styles.name}>{name}</div>
         <div className={styles.funds}>
-          <div>{eth} ETH</div>
+          <div>{totalValueOfAllocations} ETH</div>
           <div className={styles.percent}>
-            {percent}%
-            <div className={styles.indicator} />
+            {percentage}%
+            <div
+              className={cx(
+                styles.indicator,
+                isAboveProposalDonationThresholdPercent(percentage) && styles.isAboveThreshold,
+              )}
+            />
           </div>
         </div>
       </div>

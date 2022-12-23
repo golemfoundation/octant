@@ -13,6 +13,7 @@ import MainLayout from 'layouts/main-layout/main.layout';
 import triggerToast from 'utils/triggerToast';
 import useIdsInAllocation from 'hooks/useIdsInAllocation';
 import useIsDecisionWindowOpen from 'hooks/useIsDecisionWindowOpen';
+import useMatchedProposalRewards from 'hooks/useMatchedProposalRewards';
 import useProposals from 'hooks/useProposals';
 import useUserVote from 'hooks/useUserVote';
 import useVote from 'hooks/useVote';
@@ -35,13 +36,16 @@ const AllocationView = (): ReactElement => {
   const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
   const [allocationValues, setAllocationValues] = useState<AllocationValues>({});
   const [isRenderingReady, setIsRenderingReady] = useState<boolean>(false);
-  const { data: userVote, isFetching: isFetchingUserVote } = useUserVote();
+  const { data: userVote, isFetching: isFetchingUserVote } = useUserVote({ refetchOnMount: true });
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const { data: matchedProposalRewards, refetch: refetchMatchedProposalRewards } =
+    useMatchedProposalRewards();
   const voteMutation = useVote({
     onSuccess: () => {
       triggerToast({
         title: 'Allocation successful.',
       });
+      refetchMatchedProposalRewards();
     },
   });
 
@@ -51,19 +55,21 @@ const AllocationView = (): ReactElement => {
     setIsRenderingReady(true);
   };
 
-  const onVote = async () => {
+  const onVote = () => {
     const allocationsWithPositiveValues = getAllocationsWithPositiveValues(allocationValues!);
     const allocationsWithPositiveValuesKeys = Object.keys(allocationsWithPositiveValues);
 
-    if (allocationsWithPositiveValuesKeys.length > 0) {
-      const proposalId = allocationsWithPositiveValuesKeys[0];
-      voteMutation.mutate({
-        proposalId,
-        value: allocationValues[proposalId],
-      });
-      return;
-    }
-    voteMutation.mutate({ proposalId: proposals[0].id.toString(), value: '0' });
+    const voteMutationArgs =
+      allocationsWithPositiveValuesKeys.length > 0
+        ? {
+            proposalId: allocationsWithPositiveValuesKeys[0],
+            value: allocationValues[allocationsWithPositiveValuesKeys[0]],
+          }
+        : {
+            proposalId: proposals[0].id.toString(),
+            value: '0',
+          };
+    voteMutation.mutate(voteMutationArgs);
   };
 
   useEffect(() => {
@@ -95,7 +101,8 @@ const AllocationView = (): ReactElement => {
   };
 
   const isButtonsDisabled = !isConnected || !isDecisionWindowOpen;
-  const areAllocationsAvailable = !isEmpty(allocationValues) && !isEmpty(idsInAllocation);
+  const areAllocationsAvailable =
+    !isEmpty(allocationValues) && !isEmpty(idsInAllocation) && !isEmpty(matchedProposalRewards);
   return (
     <MainLayout
       isLoading={!isRenderingReady || (isConnected && isFetchingUserVote)}
@@ -135,6 +142,9 @@ const AllocationView = (): ReactElement => {
           )}
           {idsInAllocation!.map((idInAllocation, index) => {
             const allocationItem = proposals.find(({ id }) => id.toNumber() === idInAllocation)!;
+            const proposalMatchedProposalRewards = matchedProposalRewards?.find(
+              ({ id }) => id === allocationItem.id.toNumber(),
+            );
             const isSelected = selectedItemId === allocationItem.id.toNumber();
             const value = allocationValues[allocationItem.id.toNumber()];
             return (
@@ -145,6 +155,8 @@ const AllocationView = (): ReactElement => {
                 isSelected={isSelected}
                 onChange={changeAllocationItemValue}
                 onSelectItem={setSelectedItemId}
+                percentage={proposalMatchedProposalRewards!.percentage}
+                totalValueOfAllocations={proposalMatchedProposalRewards!.sum}
                 value={value}
                 {...allocationItem}
               />

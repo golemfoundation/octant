@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
-import { useQuery } from 'react-query';
 import React, { ReactElement } from 'react';
+import cx from 'classnames';
 
 import { ROOT_ROUTES } from 'routes/root-routes/routes';
 import { chevronLeft } from 'svg/navigation';
@@ -11,12 +11,15 @@ import Button from 'components/core/button/button.component';
 import Img from 'components/core/img/img.component';
 import MainLayout from 'layouts/main-layout/main.layout';
 import Svg from 'components/core/svg/svg.component';
+import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
 import triggerToast from 'utils/triggerToast';
-import useContractProposals from 'hooks/contracts/useContractProposals';
+import useBaseUri from 'hooks/useBaseUri';
 import useIdInAllocation from 'hooks/useIdInAllocation';
 import useIpfsProposals from 'hooks/useIpfsProposals';
 
 import styles from './style.module.scss';
+
+import useMatchedProposalRewards from '../../hooks/useMatchedProposalRewards';
 
 const getCustomNavigationTabs = () => {
   const navigationTabs = [...navigationTabsDefault];
@@ -31,18 +34,19 @@ const getCustomNavigationTabs = () => {
 const ProposalView = (): ReactElement => {
   const { proposalId } = useParams();
   const proposalIdNumber = parseInt(proposalId!, 10);
-  const contractProposals = useContractProposals();
   const [isAddedToAllocate, onAddRemoveFromAllocate] = useIdInAllocation(proposalIdNumber);
+  const { data: baseUri } = useBaseUri();
+  const { data: matchedProposalRewards } = useMatchedProposalRewards();
+  const proposalMatchedProposalRewards = matchedProposalRewards?.find(
+    ({ id }) => id.toString() === proposalId,
+  );
 
-  const { data: baseUri } = useQuery(['baseUri'], () => contractProposals?.baseURI(), {
-    enabled: !!contractProposals,
-  });
   const [proposals] = useIpfsProposals(
     baseUri ? [{ id: BigNumber.from(proposalId!), uri: `${baseUri}${proposalId}` }] : undefined,
   );
   const [proposal] = proposals;
 
-  if (!proposal) {
+  if (!proposal || !proposalMatchedProposalRewards) {
     return (
       <MainLayout
         classNameBody={styles.bodyLayout}
@@ -95,9 +99,18 @@ const ProposalView = (): ReactElement => {
         <div className={styles.nameAndAllocationValues}>
           <span className={styles.name}>{name}</span>
           <div className={styles.allocationValues}>
-            <div>$5300</div>
+            <div>{proposalMatchedProposalRewards.sum} ETH</div>
             <div className={styles.separator} />
-            <div>32%</div>
+            <div
+              className={cx(
+                styles.percentage,
+                isAboveProposalDonationThresholdPercent(
+                  proposalMatchedProposalRewards.percentage,
+                ) && styles.isAboveThreshold,
+              )}
+            >
+              {proposalMatchedProposalRewards.percentage} %
+            </div>
           </div>
         </div>
       </div>

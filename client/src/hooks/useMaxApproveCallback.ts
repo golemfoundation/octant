@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers';
+import {BigNumber, ContractTransaction} from 'ethers';
 import { JsonRpcSigner } from '@ethersproject/providers';
 import { MaxUint256 } from '@ethersproject/constants';
 import { useCallback, useState } from 'react';
@@ -38,18 +38,19 @@ export default function useMaxApproveCallback(
   spender: string,
   signer: JsonRpcSigner | undefined,
   signerAddress?: string,
-): [ApprovalState, () => Promise<void>] {
+): [ApprovalState, () => Promise<ContractTransaction>] {
   const contract = useContractErc20({ signerOrProvider: signer });
 
   const approvalState = useApprovalState(contract, signerAddress, spender, minAmountToBeApproved);
-  const approveCallback = useCallback(async (): Promise<void> => {
-    if (contract) {
-      contract.approve(spender, MaxUint256).catch((error: Error) => {
-        // eslint-disable-next-line no-console
-        console.warn(`Failed to approve max amount for token ${contract.address}`, error);
-        throw error;
-      });
+  const approveCallback = useCallback(async (): Promise<ContractTransaction> => {
+    if (!contract) {
+      return Promise.reject();
     }
+    return contract.approve(spender, MaxUint256).catch((error: Error) => {
+      // eslint-disable-next-line no-console
+      console.warn(`Failed to approve max amount for token ${contract.address}`, error);
+      throw error;
+    });
   }, [contract, spender]);
 
   return [approvalState, approveCallback];

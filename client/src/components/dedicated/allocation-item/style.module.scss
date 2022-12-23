@@ -29,6 +29,10 @@
   border-radius: 50%;
   background: $color-hexagon-red;
   margin: 0 0 0 0.4rem;
+
+  &.isAboveThreshold {
+    background: $color-hexagon-green2;
+  }
 }
 
 .percent {

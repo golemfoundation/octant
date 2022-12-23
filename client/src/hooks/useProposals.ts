@@ -6,16 +6,21 @@ import useContractProposals from './contracts/useContractProposals';
 import useCurrentEpoch from './useCurrentEpoch';
 import useIpfsProposals from './useIpfsProposals';
 
-import { IProposals } from '../../../typechain-types';
-
 export default function useProposals(): [ExtendedProposal[]] {
   const contractProposals = useContractProposals();
   const { data: currentEpoch } = useCurrentEpoch();
 
-  const { data: proposalsContract } = useQuery<IProposals.ProposalStructOutput[] | undefined>(
+  const { data: proposalsContract } = useQuery(
     ['proposalsContract'],
     () => contractProposals?.getProposals(currentEpoch!),
-    { enabled: !!contractProposals && !!currentEpoch },
+    {
+      enabled: !!contractProposals && !!currentEpoch,
+      select: response =>
+        response?.map(([id, uri]) => ({
+          id,
+          uri,
+        })),
+    },
   );
 
   return useIpfsProposals(proposalsContract);

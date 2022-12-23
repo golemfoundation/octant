@@ -1,12 +1,21 @@
-import { UseQueryResult, useQuery } from 'react-query';
+import { UseQueryOptions, UseQueryResult, useQuery } from 'react-query';
 import { useMetamask } from 'use-metamask';
 
 import useContractAllocationsStorage from './contracts/useContractAllocationsStorage';
 import useCurrentEpoch from './useCurrentEpoch';
 
+import { IAllocationsStorage } from '../../../typechain-types';
+
 export type UserVote = { alpha: number; proposalId: number };
 
-export default function useUserVote(): UseQueryResult<UserVote> {
+export default function useUserVote(
+  options?: UseQueryOptions<
+    IAllocationsStorage.VoteStructOutput | undefined,
+    unknown,
+    UserVote,
+    string[]
+  >,
+): UseQueryResult<UserVote> {
   const {
     metaState: { account },
   } = useMetamask();
@@ -21,9 +30,10 @@ export default function useUserVote(): UseQueryResult<UserVote> {
     {
       enabled: !!currentEpoch && !!address,
       select: response => ({
-        alpha: response!.alpha.toNumber(),
-        proposalId: response!.proposalId.toNumber(),
+        alpha: response![0]?.toNumber(),
+        proposalId: response![1]?.toNumber(),
       }),
+      ...options,
     },
   );
 }

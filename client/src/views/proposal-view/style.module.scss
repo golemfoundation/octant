@@ -58,6 +58,14 @@
     background: $color-hexagon-grey9;
     margin: 0 0.5rem;
   }
+
+  .percentage {
+    color: $color-hexagon-red2;
+
+    &.isAboveThreshold {
+      color: $color-hexagon-green;
+    }
+  }
 }
 
 .buttonAllocate {

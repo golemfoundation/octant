@@ -23,6 +23,9 @@ const env = {
     rewardsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
       import.meta.env.VITE_REWARDS_ADDRESS || '0x1eF82338e132f74118402B4BB788B245cE3F053f',
+    testRewardsAddress:
+      // @ts-expect-error TS does not understand the way vite imports envs.
+      import.meta.env.VITE_TEST_REWARDS_ADDRESS || '0x993E6B7A83dBa3a1824F1d5463890A321e95A7A1',
   },
   ipfsGateway:
     // @ts-expect-error TS does not understand the way vite imports envs.
