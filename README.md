@@ -48,4 +48,13 @@ Send Test GLM
 npx hardhat --network goerli send-glm --recipient <recipient address>
 ```
 
-
+## Known technical problems
+### client
+Typechain combines responses from contracts so that array and object are joined together, e.g.:
+```
+export type VoteStructOutput = [BigNumber, BigNumber] & {
+    alpha: BigNumber;
+    proposalId: BigNumber;
+};
+```
+The problem with this approach is that `react-query` package used for fetching and managing data from contracts does drop the latter object part on all but first after rerender requests. Hence, the remapping of array elements to named variables is required during response parsing phase.

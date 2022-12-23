@@ -71,9 +71,13 @@ $paddingBody: 2.4rem;
 
     .percentage {
       position: relative;
-      color: $color-hexagon-green;
+      color: $color-hexagon-red2;
       margin: 0 0 0 1rem;
       padding: 0 0 0 1rem;
+
+      &.isAboveThreshold {
+        color: $color-hexagon-green;
+      }
 
       &:before {
         content: '';
