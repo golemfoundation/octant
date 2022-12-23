@@ -30,9 +30,10 @@ export default function useMatchedProposalRewards(): UseQueryResult<ProposalRewa
         );
         return response?.map(([id, donated, matched]) => {
           const sum = donated.add(matched);
-          const percentage = !totalDonations!.isZero()
-            ? sum.div(totalDonations!).mul(100).toNumber()
-            : 0;
+          const percentage =
+            !totalDonations!.isZero() && !sum.isZero()
+              ? sum.mul(100).div(totalDonations!).toNumber()
+              : 0;
           return {
             donated: formatUnits(donated),
             id: id.toNumber(),
