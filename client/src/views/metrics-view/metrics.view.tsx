@@ -1,12 +1,15 @@
+import { formatUnits } from 'ethers/lib/utils';
 import React, { ReactElement } from 'react';
 
 import BoxRounded from 'components/core/box-rounded/box-rounded.component';
 import Counter from 'components/dedicated/counter/counter.component';
+import DoubleValue from 'components/core/double-value/double-value.component';
 import Header from 'components/core/header/header.component';
 import MainLayout from 'layouts/main-layout/main.layout';
 import useCurrentEpoch from 'hooks/useCurrentEpoch';
 import useDecisionWindow from 'hooks/useDecisionWindow';
 import useEpochDuration from 'hooks/useEpochDuration';
+import useGlmStaked from 'hooks/useGlmStaked';
 import useIsDecisionWindowOpen from 'hooks/useIsDecisionWindowOpen';
 import useStart from 'hooks/useStart';
 
@@ -21,6 +24,7 @@ const MetricsView = (): ReactElement => {
   const { data: epochDuration } = useEpochDuration();
   const { data: startTimestamp } = useStart();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const { data: glmStaked } = useGlmStaked();
 
   const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = getEpochAndAllocationTimestamps({
     currentEpoch,
@@ -66,6 +70,16 @@ const MetricsView = (): ReactElement => {
               timestamp={timeCurrentAllocationEnd}
             />
           )}
+        </BoxRounded>
+      </div>
+      <div className={styles.element}>
+        <Header text="Value Staked" />
+        <div className={styles.description}>
+          The total value staked on Hexagon to date, showing ETH staked by the Golem Foundation and
+          GLM staked by Hexagon users.
+        </div>
+        <BoxRounded alignment="left" isVertical title="GLM Staked">
+          <DoubleValue mainValue={glmStaked ? formatUnits(glmStaked) : '0.0'} />
         </BoxRounded>
       </div>
     </MainLayout>
