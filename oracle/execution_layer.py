@@ -17,14 +17,14 @@ def should_update_oracle(epoch):
 
 
 def update_oracle(epoch, block_number, nonce):
-    balance = _get_balance(block_number)
+    balance = _get_balance(epoch, block_number)
     signed_tx = execution_layer_contract.build_set_balance_tx(epoch, balance, nonce)
     return w3.eth.send_raw_transaction(signed_tx.rawTransaction)
 
 
-def _get_balance(block_number):
+def _get_balance(epoch, block_number):
     if settings.ENVIRONMENT == "DEV":
-        return 200 * 10 ** 18
+        return epoch * 200 * 10 ** 18
     else:
         return _get_validator_balance(block_number)
 

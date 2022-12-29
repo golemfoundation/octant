@@ -18,14 +18,14 @@ contract HexagonOracle is IHexagonOracle {
      * @notice BeaconChainOracle contract.
      * Provides balance of the Golem Foundation validator's account on the ETH 2.0 side.
      */
-    BeaconChainOracle private immutable beaconChainOracle;
+    BeaconChainOracle public immutable beaconChainOracle;
 
     /**
      * @notice ExecutionLayerOracle contract address.
      * Provides balance of the Golem Foundation validator execution layer's account
      * which collects fee.
      */
-    ExecutionLayerOracle private immutable executionLayerOracle;
+    ExecutionLayerOracle public immutable executionLayerOracle;
 
     constructor(address _beaconChainOracleAddress, address _executionLayerOracleAddress) {
         beaconChainOracle = BeaconChainOracle(_beaconChainOracleAddress);
