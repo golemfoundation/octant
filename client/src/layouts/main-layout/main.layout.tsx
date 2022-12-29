@@ -7,7 +7,7 @@ import cx from 'classnames';
 
 import { hexagon } from 'svg/logo';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
-import { userIcon } from 'svg/navigation';
+import { userGenericIcon } from 'svg/navigation';
 import Button from 'components/core/button/button.component';
 import Loader from 'components/core/loader/loader.component';
 import Svg from 'components/core/svg/svg.component';
@@ -65,10 +65,12 @@ const MainLayout: FC<MainLayoutProps> = ({
               <div className={styles.walletInfo}>
                 <div className={styles.address}>{truncateEthAddress(address)}</div>
                 <div className={styles.budget}>
-                  Budget {rewardBudget ? formatUnits(rewardBudget) : 'Loading...'} ETH
+                  {rewardBudget
+                    ? `Budget ${formatUnits(rewardBudget)} ETH`
+                    : 'Loading reward budget...'}
                 </div>
               </div>
-              <Svg img={userIcon} size={3} />
+              <Svg img={userGenericIcon} size={3.2} />
             </div>
           ) : (
             <Button label="Connect wallet" onClick={authUser} variant="cta" />
