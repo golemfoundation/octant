@@ -23,13 +23,14 @@ const MetricsView = (): ReactElement => {
   const { data: currentEpoch, refetch: refetchCurrentEpoch } = useCurrentEpoch({
     refetchOnWindowFocus: true,
   });
+  const { data: isDecisionWindowOpen, refetch: refetchIsDecisionWindowOpen } =
+    useIsDecisionWindowOpen();
+  const { data: glmStaked, refetch: refetchGlmStaked } = useGlmStaked();
+  const { data: stakedRatio, refetch: refetchStakedRatio } = useStakedRatio();
+  const { data: ethStaked, refetch: refetchEthStaked } = useEthStaked();
   const { data: decisionWindowDuration } = useDecisionWindow();
   const { data: epochDuration } = useEpochDuration();
   const { data: startTimestamp } = useStart();
-  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { data: glmStaked } = useGlmStaked();
-  const { data: stakedRatio } = useStakedRatio();
-  const { data: ethStaked } = useEthStaked();
 
   const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = getEpochAndAllocationTimestamps({
     currentEpoch,
@@ -40,6 +41,10 @@ const MetricsView = (): ReactElement => {
 
   const onCountingFinish = () => {
     refetchCurrentEpoch();
+    refetchGlmStaked();
+    refetchEthStaked();
+    refetchStakedRatio();
+    refetchIsDecisionWindowOpen();
   };
 
   return (
