@@ -5,21 +5,22 @@ import cx from 'classnames';
 
 import { ROOT_ROUTES } from 'routes/root-routes/routes';
 import { chevronLeft } from 'svg/navigation';
+import { donorGenericIcon, tick } from 'svg/misc';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
-import { tick } from 'svg/misc';
 import Button from 'components/core/button/button.component';
 import Img from 'components/core/img/img.component';
 import MainLayout from 'layouts/main-layout/main.layout';
 import Svg from 'components/core/svg/svg.component';
 import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
 import triggerToast from 'utils/triggerToast';
+import truncateEthAddress from 'utils/truncateEthAddress';
 import useBaseUri from 'hooks/useBaseUri';
+import useGetUsersAlphas from 'hooks/useGetUsersAlphas';
 import useIdInAllocation from 'hooks/useIdInAllocation';
 import useIpfsProposals from 'hooks/useIpfsProposals';
+import useMatchedProposalRewards from 'hooks/useMatchedProposalRewards';
 
 import styles from './style.module.scss';
-
-import useMatchedProposalRewards from '../../hooks/useMatchedProposalRewards';
 
 const getCustomNavigationTabs = () => {
   const navigationTabs = [...navigationTabsDefault];
@@ -37,6 +38,7 @@ const ProposalView = (): ReactElement => {
   const [isAddedToAllocate, onAddRemoveFromAllocate] = useIdInAllocation(proposalIdNumber);
   const { data: baseUri } = useBaseUri();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
+  const { data: userAlphas } = useGetUsersAlphas(proposalId!);
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ id }) => id.toString() === proposalId,
   );
@@ -94,7 +96,7 @@ const ProposalView = (): ReactElement => {
       }
       navigationTabs={getCustomNavigationTabs()}
     >
-      <div className={styles.header}>
+      <div className={styles.proposalHeader}>
         <Img className={styles.imageProfile} src={profileImageUrl} />
         <div className={styles.nameAndAllocationValues}>
           <span className={styles.name}>{name}</span>
@@ -124,6 +126,19 @@ const ProposalView = (): ReactElement => {
         <Button className={styles.buttonWebsite} href={website.url} variant="link">
           {website.label || website.url}
         </Button>
+      </div>
+      <div className={styles.donors}>
+        <div className={styles.header}>
+          Donors {userAlphas && <div className={styles.count}>{userAlphas[0].length}</div>}
+        </div>
+        {userAlphas &&
+          userAlphas[0].map((userAddress, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <div key={index} className={styles.donor}>
+              <Svg classNameSvg={styles.donorIcon} img={donorGenericIcon} size={2.4} />
+              {truncateEthAddress(userAddress)}
+            </div>
+          ))}
       </div>
     </MainLayout>
   );

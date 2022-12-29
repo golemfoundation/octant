@@ -1,5 +1,6 @@
 .bodyLayout {
   background: $color-white;
+  padding: 3.2rem 0 0 0;
 }
 
 .imageLandscapeWrapper {
@@ -21,11 +22,12 @@
   }
 }
 
-.header, .body {
-  padding: 0 3rem;
+.proposalHeader, .body, .donors {
+  padding-left: $layoutBodyMarginHorizontal;
+  padding-right: $layoutBodyMarginHorizontal;
 }
 
-.header {
+.proposalHeader {
   display: flex;
 
   .imageProfile {
@@ -84,5 +86,47 @@
     border-top: 0.1rem solid $color-hexagon-grey;
     border-bottom: 0.1rem solid $color-hexagon-grey;
     padding: 2rem 0;
+  }
+}
+
+.donors {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: $color-hexagon-grey;
+  margin-top: 4rem;
+  padding-top: 4rem;
+  padding-bottom: $layoutBodyMarginBottom;
+  flex: 1;
+  align-self: stretch;
+
+  .header {
+    display: flex;
+    align-items: center;
+    color: $color-hexagon-main-text-color;
+    font-weight: $font-weight-bold;
+    margin-bottom: 2rem;
+
+    .count {
+      display: flex;
+      align-items: center;
+      height: 2.4rem;
+      font-size: $font-size-12;
+      color: $color-white;
+      background: $color-hexagon-blue;
+      border-radius: $border-radius-10;
+      margin: 0 0 0 1rem;
+      padding: 0 1rem;
+    }
+  }
+
+  .donor {
+    display: flex;
+    align-items: center;
+    font-weight: $font-weight-semibold;
+  }
+
+  .donorIcon {
+    margin-right: 1.5rem;
   }
 }
