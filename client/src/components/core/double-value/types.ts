@@ -1,4 +1,4 @@
 export default interface DoubleValueProps {
   alternativeValue?: string;
-  mainValue: string;
+  mainValue: string | number;
 }
