@@ -10,6 +10,7 @@ import ProgressBar from 'components/core/progress-bar/progress-bar.component';
 import useCurrentEpoch from 'hooks/useCurrentEpoch';
 import useDecisionWindow from 'hooks/useDecisionWindow';
 import useEpochDuration from 'hooks/useEpochDuration';
+import useEthStaked from 'hooks/useEthStaked';
 import useGlmStaked from 'hooks/useGlmStaked';
 import useIsDecisionWindowOpen from 'hooks/useIsDecisionWindowOpen';
 import useStakedRatio from 'hooks/useStakedRatio';
@@ -28,6 +29,7 @@ const MetricsView = (): ReactElement => {
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: glmStaked } = useGlmStaked();
   const { data: stakedRatio } = useStakedRatio();
+  const { data: ethStaked } = useEthStaked();
 
   const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = getEpochAndAllocationTimestamps({
     currentEpoch,
@@ -81,6 +83,9 @@ const MetricsView = (): ReactElement => {
           The total value staked on Hexagon to date, showing ETH staked by the Golem Foundation and
           GLM staked by Hexagon users.
         </div>
+        <BoxRounded alignment="left" className={styles.box} isVertical title="ETH Staked">
+          <DoubleValue mainValue={ethStaked || '0.0'} />
+        </BoxRounded>
         <BoxRounded alignment="left" className={styles.box} isVertical title="GLM Staked">
           <DoubleValue mainValue={glmStaked ? formatUnits(glmStaked) : '0.0'} />
         </BoxRounded>
