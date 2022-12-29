@@ -11,6 +11,7 @@ import Button from 'components/core/button/button.component';
 import Loader from 'components/core/loader/loader.component';
 import MainLayout from 'layouts/main-layout/main.layout';
 import triggerToast from 'utils/triggerToast';
+import useDepositEffectiveAtCurrentEpoch from 'hooks/useDepositEffectiveAtCurrentEpoch';
 import useIdsInAllocation from 'hooks/useIdsInAllocation';
 import useIsDecisionWindowOpen from 'hooks/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/useMatchedProposalRewards';
@@ -38,6 +39,7 @@ const AllocationView = (): ReactElement => {
   const [isRenderingReady, setIsRenderingReady] = useState<boolean>(false);
   const { data: userVote, isFetching: isFetchingUserVote } = useUserVote({ refetchOnMount: true });
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const { data: depositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
   const { data: matchedProposalRewards, refetch: refetchMatchedProposalRewards } =
     useMatchedProposalRewards();
   const voteMutation = useVote({
@@ -100,7 +102,8 @@ const AllocationView = (): ReactElement => {
     }));
   };
 
-  const isButtonsDisabled = !isConnected || !isDecisionWindowOpen;
+  const isButtonsDisabled =
+    !isConnected || !isDecisionWindowOpen || depositEffectiveAtCurrentEpoch?.isZero();
   const areAllocationsAvailable =
     !isEmpty(allocationValues) && !isEmpty(idsInAllocation) && !isEmpty(matchedProposalRewards);
   return (
