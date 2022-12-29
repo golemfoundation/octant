@@ -25,7 +25,7 @@ contract Rewards {
     /// @notice In order to be eligible for receiving donations in the epoch,
     /// a proposal must pass a predefined threshold of individual donation.
     /// This threshold is expressed as a percentage.
-    uint256 private constant PROPOSAL_DONATION_THRESHOLD_PERCENT = 10;
+    uint256 public constant PROPOSAL_DONATION_THRESHOLD_PERCENT = 10;
 
     /// @notice Epochs contract.
     IEpochs public immutable epochs;

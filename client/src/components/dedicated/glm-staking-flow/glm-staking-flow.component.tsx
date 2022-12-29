@@ -4,6 +4,7 @@ import { useMetamask } from 'use-metamask';
 import React, { FC, useEffect, useState } from 'react';
 import cx from 'classnames';
 
+import { DEPOSIT_WITHDRAW_GAS_LIMIT } from 'constants/contracts';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 import BoxRounded from 'components/core/box-rounded/box-rounded.component';
 import BudgetBox from 'components/dedicated/budget-box/budget-box.component';
@@ -87,10 +88,10 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
   };
 
   const onDeposit = async (value: BigNumber): Promise<ContractTransaction | undefined> =>
-    contractDeposits?.deposit(value);
+    contractDeposits?.deposit(value, { gasLimit: DEPOSIT_WITHDRAW_GAS_LIMIT });
 
   const onWithdraw = async (value: BigNumber): Promise<ContractTransaction | undefined> =>
-    contractDeposits?.withdraw(value);
+    contractDeposits?.withdraw(value, { gasLimit: DEPOSIT_WITHDRAW_GAS_LIMIT });
 
   const onApproveOrDeposit = async () => {
     if (!signer || !valueToDeposeOrWithdraw) {

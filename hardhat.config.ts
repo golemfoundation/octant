@@ -1,18 +1,19 @@
-import { HardhatUserConfig } from 'hardhat/types';
-import 'hardhat-deploy';
-import 'hardhat-deploy-ethers';
 import '@matterlabs/hardhat-zksync-deploy';
 import '@matterlabs/hardhat-zksync-solc';
 import '@typechain/hardhat';
+import 'hardhat-deploy';
+import 'hardhat-deploy-ethers';
 
 import 'hardhat-docgen';
+import 'hardhat-gas-reporter';
+import { HardhatUserConfig } from 'hardhat/types';
+
+import { ETHERSCAN_API_KEY, GOERLI_PRIVATE_KEY, GOERLI_URL, REPORT_GAS, ZKSYNC_URL } from './env';
 
 import './tasks/clean';
 import './tasks/deploy-zksync';
 import './tasks/mine';
 import './tasks/send-glm';
-
-import { ETHERSCAN_API_KEY, GOERLI_PRIVATE_KEY, GOERLI_URL, ZKSYNC_URL } from './env';
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -75,6 +76,9 @@ const config: HardhatUserConfig = {
   docgen: {
     path: '.docs',
     clear: true,
+  },
+  gasReporter: {
+    enabled: REPORT_GAS
   },
   verify: {
     etherscan: {

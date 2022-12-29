@@ -1,0 +1,1 @@
+export const DEPOSIT_WITHDRAW_GAS_LIMIT = 500_000;
