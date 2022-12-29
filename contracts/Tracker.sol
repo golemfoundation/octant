@@ -7,7 +7,9 @@ import "./interfaces/IDeposits.sol";
 
 /// external dependencies
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "hardhat/console.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+import "./TrackerWrapper.sol";
 
 /// @title Contract tracking effective deposits across epochs (Hexagon).
 /// @author Golem Foundation
@@ -17,12 +19,21 @@ import "hardhat/console.sol";
 /// is considered effective.
 /// @dev Time is split into epochs, effective deposit is defined as min value
 /// of GLM held by this contract on behalf of the depositor in particular epoch.
-contract Tracker is ITracker {
+contract Tracker is Ownable {
     /// @notice Epochs contract address.
     IEpochs public immutable epochs;
 
     /// @notice Deposits contract address
     IDeposits public immutable deposits;
+
+    /// @notice GLM token (token after migration).
+    ERC20 public immutable glm;
+
+    /// @notice GNT token (original GNT, before migration).
+    ERC20 public immutable gnt;
+
+    /// @notice TrackerWrapper address
+    address public proxyAddress;
 
     struct EffectiveDeposit {
         bool isSet; // set to true to distinguish between null and zero values of ED
@@ -42,12 +53,6 @@ contract Tracker is ITracker {
     /// @dev total effective deposit in a particular epoch
     /// (sigma GLMGE_i for particular t)
     mapping(uint256 => EffectiveDeposit) private totalEffectiveDeposits;
-
-    /// @notice GLM token (token after migration).
-    ERC20 public immutable glm;
-
-    /// @notice GNT token (original GNT, before migration).
-    ERC20 public immutable gnt;
 
     /// @param epochsAddress Address of Epochs contract.
     constructor(
@@ -70,7 +75,7 @@ contract Tracker is ITracker {
         address owner,
         uint256 oldDeposit,
         uint256 amount
-    ) external onlyDeposits {
+    ) external onlyTrackerWrapper {
         uint256 oldTotal = totalDeposit;
         totalDeposit =
             totalDeposit -
@@ -89,7 +94,7 @@ contract Tracker is ITracker {
         address owner,
         uint256 oldDeposit,
         uint256 amount
-    ) external onlyDeposits {
+    ) external onlyTrackerWrapper {
         uint256 oldTotal = totalDeposit;
         totalDeposit =
             totalDeposit -
@@ -149,6 +154,10 @@ contract Tracker is ITracker {
             gnt.totalSupply() -
             glm.balanceOf(burnAddress) -
             gnt.balanceOf(burnAddress);
+    }
+
+    function setProxyAddress(address _proxyAddress) external onlyOwner {
+        proxyAddress = _proxyAddress;
     }
 
     /// @dev Sets ED in a situation when funds are moved after a period of inactivity.
@@ -217,8 +226,8 @@ contract Tracker is ITracker {
         return actualAmount;
     }
 
-    modifier onlyDeposits() {
-        require(msg.sender == address(deposits), "HN/invalid-caller");
+    modifier onlyTrackerWrapper() {
+        require(msg.sender == proxyAddress, "HN/invalid-caller");
         _;
     }
 }

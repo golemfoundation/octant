@@ -13,5 +13,5 @@ interface ITracker {
         address,
         uint256,
         uint256
-    ) external;
+    ) external returns (bool, bytes memory);
 }
