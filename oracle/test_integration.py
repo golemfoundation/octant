@@ -40,7 +40,7 @@ try:
     print("Forwarding an epoch")
     epoch_duration = epochs_contract.epoch_duration()
     subprocess.Popen(
-        ['npx', 'hardhat', 'mine', '--quantity', str(epoch_duration), '--network', 'localhost'],
+        ['npx', 'hardhat', 'increase-time', '--time', str(epoch_duration), '--network', 'localhost'],
         cwd=settings.ROOT_DIR)
 
     print("Waiting for oracle watcher to update oracle balance")

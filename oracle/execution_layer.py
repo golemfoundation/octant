@@ -16,7 +16,20 @@ def should_update_oracle(epoch):
     return epoch > 0 and execution_layer_contract.get_balance(epoch) == 0
 
 
-def get_validator_balance(block_number):
+def update_oracle(epoch, block_number, nonce):
+    balance = _get_balance(epoch, block_number)
+    signed_tx = execution_layer_contract.build_set_balance_tx(epoch, balance, nonce)
+    return w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+
+
+def _get_balance(epoch, block_number):
+    if settings.ENVIRONMENT == "DEV":
+        return epoch * 200 * 10 ** 18
+    else:
+        return _get_validator_balance(block_number)
+
+
+def _get_validator_balance(block_number):
     url = settings.ALCHEMY_API_URL
     validator_address = execution_layer_contract.get_validator_address()
     payload = {
@@ -27,9 +40,3 @@ def get_validator_balance(block_number):
     }
     response = requests.post(url, json=payload, headers=headers).json()
     return int(response["result"], 16)
-
-
-def update_oracle(epoch, block_number, nonce):
-    balance = get_validator_balance(block_number)
-    signed_tx = execution_layer_contract.build_set_balance_tx(epoch, balance, nonce)
-    return w3.eth.send_raw_transaction(signed_tx.rawTransaction)

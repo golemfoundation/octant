@@ -10,3 +10,7 @@ w3.eth.defaultAccount = w3.eth.account.privateKeyToAccount(settings.ORACLE_MAINT
 
 def get_nonce():
     return w3.eth.getTransactionCount(settings.ORACLE_MAINTAINER_ADDRESS)
+
+
+def get_latest_block():
+    return w3.eth.blockNumber

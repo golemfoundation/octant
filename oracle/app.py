@@ -3,8 +3,8 @@ from time import sleep
 
 import beacon_chain
 import execution_layer
-from epochs import get_previous_epoch, get_last_block_in_epoch
-from web3_service import get_nonce
+from epochs import get_previous_epoch
+from web3_service import get_nonce, get_latest_block
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -13,7 +13,7 @@ def run_oracle_watcher():
     while True:
         logging.info('Running oracle watcher')
         previous_epoch = get_previous_epoch()
-        block_number = get_last_block_in_epoch(previous_epoch)
+        block_number = get_latest_block()
         nonce = get_nonce()
 
         try:
