@@ -15,10 +15,10 @@ import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonati
 import triggerToast from 'utils/triggerToast';
 import truncateEthAddress from 'utils/truncateEthAddress';
 import useBaseUri from 'hooks/useBaseUri';
-import useGetUsersAlphas from 'hooks/useGetUsersAlphas';
 import useIdInAllocation from 'hooks/useIdInAllocation';
 import useIpfsProposals from 'hooks/useIpfsProposals';
 import useMatchedProposalRewards from 'hooks/useMatchedProposalRewards';
+import useProjectDonors from 'hooks/useProjectDonors';
 
 import styles from './style.module.scss';
 
@@ -38,7 +38,7 @@ const ProposalView = (): ReactElement => {
   const [isAddedToAllocate, onAddRemoveFromAllocate] = useIdInAllocation(proposalIdNumber);
   const { data: baseUri } = useBaseUri();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
-  const { data: userAlphas } = useGetUsersAlphas(proposalId!);
+  const { data: userAlphas } = useProjectDonors(proposalId!);
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ id }) => id.toString() === proposalId,
   );
@@ -129,14 +129,14 @@ const ProposalView = (): ReactElement => {
       </div>
       <div className={styles.donors}>
         <div className={styles.header}>
-          Donors {userAlphas && <div className={styles.count}>{userAlphas[0].length}</div>}
+          Donors {userAlphas && <div className={styles.count}>{userAlphas.length}</div>}
         </div>
         {userAlphas &&
-          userAlphas[0].map((userAddress, index) => (
+          userAlphas.map(({ address }, index) => (
             // eslint-disable-next-line react/no-array-index-key
             <div key={index} className={styles.donor}>
               <Svg classNameSvg={styles.donorIcon} img={donorGenericIcon} size={2.4} />
-              {truncateEthAddress(userAddress)}
+              {truncateEthAddress(address)}
             </div>
           ))}
       </div>
