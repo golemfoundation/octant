@@ -1,10 +1,10 @@
 {
-  "name": "Proposal 1",
-  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris viverra purus ut dui vulputate, ac lacinia elit tincidunt. Sed in gravida nulla. Nunc augue arcu, rutrum non purus eget, faucibus maximus felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
-  "profileImageUrl": "https://via.placeholder.com/64x64.jpg/000000/FFFFFF",
-  "landscapeImageUrl": "https://via.placeholder.com/600x300.jpg/0000FF/FFFFFF",
+  "name": "Ranger 7",
+  "description": "Ranger 7 launched on July 28, 1964 and was the seventh in a series of early U.S. lunar impact missions. It proved to be the first successful mission after 13 failures in a row. The mission resulted in over 4 thousand images of the Moon, which later helped identify safe Moon landing sites for Apollo astronauts. Sadly, Ranger 7 met its end crashing into the Moon on the northern rim of the Sea of Clouds.",
+  "profileImageCID": "QmUSyN5ePrfbYWvprLEfMVPH52b45egJnWKakgwrg8GFkm",
+  "landscapeImageCID": "QmVXiFmCbdmMFbKAqDvKhAG89jAzktoHc2x3vwDhPnHj9U",
   "website": {
-    "label": "https://golem.foundation/",
-    "url": "https://golem.foundation/"
+    "label": "Link to the official NASA website",
+    "url": "https://solarsystem.nasa.gov/missions/ranger-7/in-depth/"
   }
 }

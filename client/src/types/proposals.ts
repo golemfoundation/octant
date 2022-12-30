@@ -2,9 +2,9 @@ import { BigNumber } from 'ethers';
 
 export interface BackendProposal {
   description: string;
-  landscapeImageUrl: string;
+  landscapeImageCID: string;
   name: string;
-  profileImageUrl: string;
+  profileImageCID: string;
   website: {
     label?: string;
     url: string;

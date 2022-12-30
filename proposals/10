@@ -1,10 +1,10 @@
 {
-  "name": "Proposal 10",
-  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris viverra purus ut dui vulputate, ac lacinia elit tincidunt. Sed in gravida nulla. Nunc augue arcu, rutrum non purus eget, faucibus maximus felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
-  "profileImageUrl": "https://via.placeholder.com/64x64.jpg/000000/FFFFFF",
-  "landscapeImageUrl": "https://via.placeholder.com/600x300.jpg/0000FF/FFFFFF",
+  "name": "LADEE",
+  "description": "Launched in 2011, LADEE (Lunar Atmosphere and Dust Environment Explorer) was a robotic mission that orbited the Moon to gather detailed information about the lunar atmosphere and the lunar dust environment—specifically to collect data on the global density, composition, and time variability of the exosphere.",
+  "profileImageCID": "QmchBRpJZadyWnhZPcv5GM3R9Gur8g7ux5V2w6JwR5MqXp",
+  "landscapeImageCID": "QmW4kovNzHgwdQQ5M9BNF94HPQRgLeqBHHQboK7So3JL96",
   "website": {
-    "label": "https://golem.foundation/",
-    "url": "https://golem.foundation/"
+    "label": "Link to the official NASA website",
+    "url": "https://solarsystem.nasa.gov/missions/ladee/in-depth/"
   }
 }

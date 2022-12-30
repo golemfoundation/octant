@@ -1,10 +1,10 @@
 {
-  "name": "Proposal 4",
-  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris viverra purus ut dui vulputate, ac lacinia elit tincidunt. Sed in gravida nulla. Nunc augue arcu, rutrum non purus eget, faucibus maximus felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
-  "profileImageUrl": "https://via.placeholder.com/64x64.jpg/000000/FFFFFF",
-  "landscapeImageUrl": "https://via.placeholder.com/600x300.jpg/0000FF/FFFFFF",
+  "name": "Apollo 11",
+  "description": "The famous mission that saw the first humans land on the Moon on the 20th July 1069. During the mission the crew deployed instruments, took photographs, and collected samples. The plaque left by the astronauts reads: Here men from the planet Earth first set foot on the Moon July 1969, A.D. We came in peace for all mankind.",
+  "profileImageCID": "QmScMiDSc23dbv2yrPHev9p5bxdgPrXfRhMBo13FmEgB8w",
+  "landscapeImageCID": "QmR8Z134S3ckduriSnvD6xhDQDBRY9y5Jbtgdjt9v8JE3m",
   "website": {
-    "label": "https://golem.foundation/",
-    "url": "https://golem.foundation/"
+    "label": "Link to the official NASA website",
+    "url": "https://solarsystem.nasa.gov/missions/apollo-11/in-depth/"
   }
 }

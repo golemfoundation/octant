@@ -11,6 +11,7 @@ import Button from 'components/core/button/button.component';
 import Img from 'components/core/img/img.component';
 import MainLayout from 'layouts/main-layout/main.layout';
 import Svg from 'components/core/svg/svg.component';
+import env from 'env';
 import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
 import triggerToast from 'utils/triggerToast';
 import truncateEthAddress from 'utils/truncateEthAddress';
@@ -33,6 +34,7 @@ const getCustomNavigationTabs = () => {
 };
 
 const ProposalView = (): ReactElement => {
+  const { ipfsGateway } = env;
   const { proposalId } = useParams();
   const proposalIdNumber = parseInt(proposalId!, 10);
   const [isAddedToAllocate, onAddRemoveFromAllocate] = useIdInAllocation(proposalIdNumber);
@@ -70,7 +72,7 @@ const ProposalView = (): ReactElement => {
     );
   }
 
-  const { description, landscapeImageUrl, name, profileImageUrl, website } = proposal;
+  const { description, landscapeImageCID, name, profileImageCID, website } = proposal;
 
   const buttonProps = isAddedToAllocate
     ? {
@@ -88,16 +90,16 @@ const ProposalView = (): ReactElement => {
       classNameBody={styles.bodyLayout}
       isHeaderVisible={false}
       landscapeImage={
-        landscapeImageUrl && (
+        landscapeImageCID && (
           <div className={styles.imageLandscapeWrapper}>
-            <Img className={styles.imageLandscape} src={landscapeImageUrl} />
+            <Img className={styles.imageLandscape} src={`${ipfsGateway}${landscapeImageCID}`} />
           </div>
         )
       }
       navigationTabs={getCustomNavigationTabs()}
     >
       <div className={styles.proposalHeader}>
-        <Img className={styles.imageProfile} src={profileImageUrl} />
+        <Img className={styles.imageProfile} src={`${ipfsGateway}${profileImageCID}`} />
         <div className={styles.nameAndAllocationValues}>
           <span className={styles.name}>{name}</span>
           <div className={styles.allocationValues}>

@@ -6,9 +6,9 @@ export const mockedProposal1: ExtendedProposal = {
   description: 'description',
   id: BigNumber.from(1),
   isLoadingError: false,
-  landscapeImageUrl: 'http://www.landscapeImageUrl.html',
+  landscapeImageCID: 'QmUSyN5ePrfbYWvprLEfMVPH52b45egJnWKakgwrg8GFkm',
   name: 'name',
-  profileImageUrl: 'http://www.profileImageUrl.html',
+  profileImageCID: 'QmVXiFmCbdmMFbKAqDvKhAG89jAzktoHc2x3vwDhPnHj9U',
   website: {
     label: 'website label',
     url: 'http://www.websiteUrl.html',

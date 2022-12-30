@@ -1,10 +1,10 @@
 {
-  "name": "Proposal 6",
-  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris viverra purus ut dui vulputate, ac lacinia elit tincidunt. Sed in gravida nulla. Nunc augue arcu, rutrum non purus eget, faucibus maximus felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
-  "profileImageUrl": "https://via.placeholder.com/64x64.jpg/000000/FFFFFF",
-  "landscapeImageUrl": "https://via.placeholder.com/600x300.jpg/0000FF/FFFFFF",
+  "name": "Apollo 17",
+  "description": "Apollo 17 was the last human expedition to the Moon to the present day. The crew collected the oldest known unshocked lunar rock, which suggests that the Moon had a dynamo-generated magnetic field in its past.",
+  "profileImageCID": "QmVzugRvykR8c9KpENMRrfaAo4C4H1X7pYAnw3zCuAhDKg",
+  "landscapeImageCID": "QmdKfcjJNTK3NZqcLVMdPByEnUkxNaX4K9CrYaJuC2o77q",
   "website": {
-    "label": "https://golem.foundation/",
-    "url": "https://golem.foundation/"
+    "label": "Link to the official NASA website",
+    "url": "https://solarsystem.nasa.gov/missions/apollo-17/in-depth/"
   }
 }

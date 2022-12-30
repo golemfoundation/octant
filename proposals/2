@@ -1,10 +1,10 @@
 {
-  "name": "Proposal 2",
-  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris viverra purus ut dui vulputate, ac lacinia elit tincidunt. Sed in gravida nulla. Nunc augue arcu, rutrum non purus eget, faucibus maximus felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
-  "profileImageUrl": "https://via.placeholder.com/64x64.jpg/000000/FFFFFF",
-  "landscapeImageUrl": "https://via.placeholder.com/600x300.jpg/0000FF/FFFFFF",
+  "name": "Surveyor 5",
+  "description": "NASA's Surveyor 5 lander was the first spacecraft to do a soil analysis on the Moon and found that the surface of it was likely basaltic, thus making it conductive to human exploration.",
+  "profileImageCID": "QmPdfRnM8EnCq5P7xVpSeBYVxA5WRrFRpaN3RS2RmxX8nU",
+  "landscapeImageCID": "QmUz92dYfjMjY3hrfW1nc2u8Qcpv1grTJ4KKinADa4PxgE",
   "website": {
-    "label": "https://golem.foundation/",
-    "url": "https://golem.foundation/"
+    "label": "Link to the official NASA website",
+    "url": "https://solarsystem.nasa.gov/missions/surveyor-5/in-depth/"
   }
 }

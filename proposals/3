@@ -1,10 +1,10 @@
 {
-  "name": "Proposal 3",
-  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris viverra purus ut dui vulputate, ac lacinia elit tincidunt. Sed in gravida nulla. Nunc augue arcu, rutrum non purus eget, faucibus maximus felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
-  "profileImageUrl": "https://via.placeholder.com/64x64.jpg/000000/FFFFFF",
-  "landscapeImageUrl": "https://via.placeholder.com/600x300.jpg/0000FF/FFFFFF",
+  "name": "Apollo 8",
+  "description": "Apollo 8 successfully sent the first humans to orbit the Moon. It proved that the entire Apollo program team was capable of flying a crewed mission to the Moon, conducting tasks in lunar space and returning safely to Earth. The mission proved to be the first time humans saw their home from the vantage point of deep space.",
+  "profileImageCID": "QmVUwjB91CZbGAsY4oGc1RsivvDgzF8QYzpmyfJ1dBKVPH",
+  "landscapeImageCID": "QmRgFfGE3VEh7CSbEDURd3KyN3cpfyHyKuWPna7HWPhZtv",
   "website": {
-    "label": "https://golem.foundation/",
-    "url": "https://golem.foundation/"
+    "label": "Link to the official NASA website",
+    "url": "https://solarsystem.nasa.gov/missions/apollo-8/in-depth/"
   }
 }

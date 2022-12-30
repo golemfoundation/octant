@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { PROPOSALS_BASE_URI } from '../env';
+import { PROPOSALS_CID } from '../env';
 import { PROPOSALS } from '../helpers/constants';
 import { makeTestsEnv } from './helpers/make-tests-env';
 
@@ -17,7 +17,7 @@ makeTestsEnv(PROPOSALS, (testEnv) => {
       expect(allProposals.length).eq(10);
       for (let i = 0; i < 10; i++) {
         expect(allProposals[i].id).eq(i + 1);
-        expect(allProposals[i].uri).eq(`${PROPOSALS_BASE_URI}${i + 1}`);
+        expect(allProposals[i].uri).eq(`${PROPOSALS_CID}${i + 1}`);
       }
     });
 
@@ -33,7 +33,7 @@ makeTestsEnv(PROPOSALS, (testEnv) => {
       expect(allProposals.length).eq(11);
       for (let i = 0; i < newProposals.length; i++) {
         expect(allProposals[i].id).eq(newProposals[i]);
-        expect(allProposals[i].uri).eq(PROPOSALS_BASE_URI + newProposals[i]);
+        expect(allProposals[i].uri).eq(PROPOSALS_CID + newProposals[i]);
       }
     });
 
@@ -48,7 +48,7 @@ makeTestsEnv(PROPOSALS, (testEnv) => {
       expect(allProposals.length).eq(10);
       for (let i = 0; i < 10; i++) {
         expect(allProposals[i].id).eq(i + 1);
-        expect(allProposals[i].uri).eq(`${PROPOSALS_BASE_URI}${i + 1}`);
+        expect(allProposals[i].uri).eq(`${PROPOSALS_CID}${i + 1}`);
       }
     });
 
