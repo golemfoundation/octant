@@ -7,6 +7,7 @@ import { tick } from 'svg/misc';
 import Button from 'components/core/button/button.component';
 import Img from 'components/core/img/img.component';
 import Svg from 'components/core/svg/svg.component';
+import env from 'env';
 import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
 
 import { ProposalItemProps } from './types';
@@ -19,11 +20,12 @@ const ProposalItem: FC<ProposalItemProps> = ({
   onAddRemoveFromAllocate,
   isAlreadyAdded,
   id,
-  landscapeImageUrl,
-  profileImageUrl,
+  landscapeImageCID,
+  profileImageCID,
   totalValueOfAllocations,
   percentage,
 }) => {
+  const { ipfsGateway } = env;
   const buttonProps = isAlreadyAdded
     ? {
         Icon: <Svg img={tick} size={1.5} />,
@@ -43,9 +45,9 @@ const ProposalItem: FC<ProposalItemProps> = ({
         <Fragment>
           <div className={styles.header}>
             <div className={styles.imageLandscapeWrapper}>
-              <Img className={styles.imageLandscape} src={landscapeImageUrl} />
+              <Img className={styles.imageLandscape} src={`${ipfsGateway}${landscapeImageCID}`} />
             </div>
-            <Img className={styles.imageProfile} src={profileImageUrl} />
+            <Img className={styles.imageProfile} src={`${ipfsGateway}${profileImageCID}`} />
           </div>
           <div className={styles.body}>
             <div className={styles.name}>{name}</div>

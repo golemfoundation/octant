@@ -1,10 +1,10 @@
 {
-  "name": "Proposal 8",
-  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris viverra purus ut dui vulputate, ac lacinia elit tincidunt. Sed in gravida nulla. Nunc augue arcu, rutrum non purus eget, faucibus maximus felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
-  "profileImageUrl": "https://via.placeholder.com/64x64.jpg/000000/FFFFFF",
-  "landscapeImageUrl": "https://via.placeholder.com/600x300.jpg/0000FF/FFFFFF",
+  "name": "Lunar Reconnaissance Orbiter",
+  "description": "The Lunar Reconnaissance Orbiter’s primary goal was to make a 3D map of the Moon’s surface from lunar polar orbit. LRO still continues to orbit the Moon. It carried out the first demonstration of laser communication with a lunar satellite.",
+  "profileImageCID": "QmfWrjg4KyUCEb4jQ4YmthvFJMFhRjixLnYJkChxKj1DXC",
+  "landscapeImageCID": "QmZgj8e2HxRJCtRzAwzu9GcCAc5Gypptw3a4gP18A3YDmy",
   "website": {
-    "label": "https://golem.foundation/",
-    "url": "https://golem.foundation/"
+    "label": "Link to the official NASA website",
+    "url": "https://solarsystem.nasa.gov/missions/lro/in-depth/"
   }
 }
