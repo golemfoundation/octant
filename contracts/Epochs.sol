@@ -37,9 +37,9 @@ contract Epochs is Ownable, IEpochs {
         decisionWindow = _decisionWindow;
     }
 
-    function getCurrentEpoch() public view returns (uint256) {
+    function getCurrentEpoch() public view returns (uint32) {
         require(isStarted(), "HN/not-started-yet");
-        return uint256(((block.timestamp - start) / epochDuration) + 1);
+        return uint32(((block.timestamp - start) / epochDuration) + 1);
     }
 
     function isDecisionWindowOpen() public view returns (bool) {

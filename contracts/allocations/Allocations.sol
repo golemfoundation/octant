@@ -29,7 +29,7 @@ contract Allocations {
         require(epochs.isStarted(), "HN/not-started-yet");
         require(epochs.isDecisionWindowOpen(), "HN/decision-window-closed");
         require(_alpha >= 0 && _alpha <= 100, "HN/alpha-out-of-range");
-        uint256 epoch = epochs.getCurrentEpoch() - 1;
+        uint32 epoch = epochs.getCurrentEpoch() - 1;
         require(tracker.depositAt(msg.sender, epoch) > 0, "HN/voting-blocked-if-deposit-is-zero");
 
         IAllocationsStorage.Vote memory _vote = allocationsStorage.getUserVote(epoch, msg.sender);

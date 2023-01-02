@@ -27,8 +27,8 @@ contract TrackerWrapper is ITracker {
     /// @param amount New funds being deposited.
     function processDeposit(
         address owner,
-        uint256 oldDeposit,
-        uint256 amount
+        uint224 oldDeposit,
+        uint224 amount
     ) external onlyDeposits {
         tracker.processDeposit(owner, oldDeposit, amount);
     }
@@ -40,8 +40,8 @@ contract TrackerWrapper is ITracker {
     /// @return true if computation was successful, false in case of any error
     function processWithdraw(
         address owner,
-        uint256 oldDeposit,
-        uint256 amount
+        uint224 oldDeposit,
+        uint224 amount
     ) external onlyDeposits returns (bool, bytes memory) {
         try tracker.processWithdraw(owner, oldDeposit, amount) {
             return (true, "");
