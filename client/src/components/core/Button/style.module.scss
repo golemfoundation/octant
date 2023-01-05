@@ -25,77 +25,63 @@
 .variant-- {
   &cta {
     color: $color-white;
-    border: 0.1rem solid $color-hexagon-blue;
-    background: $color-hexagon-blue;
+    border: 0.1rem solid $color-hexagon-dark;
+    background: $color-hexagon-dark;
 
     &.isDisabled {
-      background: $color-hexagon-blue2;
-      border-color: $color-hexagon-blue2;
+      background: $color-hexagon-grey1;
+      border-color: $color-hexagon-grey1;
     }
   }
 
   &secondary {
-    color: $color-hexagon-blue;
-    border: 0.1rem solid $color-hexagon-blue;
+    color: $color-hexagon-dark;
+    border: 0.1rem solid $color-hexagon-dark;
     background: $color-white;
-
-    &.isActive {
-      color: $color-white;
-      background: $color-hexagon-blue;
-    }
 
     &.isDisabled {
       cursor: auto;
       background: $color-white;
-      border-color: $color-hexagon-blue3;
-      color: $color-hexagon-blue3;
-    }
-  }
-
-  &secondaryGrey {
-    color: $color-hexagon-grey3;
-    border: 0.1rem solid $color-hexagon-grey3;
-
-    svg path {
-      stroke: $color-hexagon-grey3;
+      border-color: $color-hexagon-grey1;
+      color: $color-hexagon-grey1;
     }
   }
 
   &iconVertical {
-    color: $color-hexagon-grey2;
+    color: $color-hexagon-grey3;
     display: flex;
     flex-direction: column;
     border: 0;
     font-size: $font-size-10;
 
     svg {
-      color: $color-hexagon-grey2;
-      stroke: $color-hexagon-grey2;
+      color: $color-hexagon-grey3;
+      stroke: $color-hexagon-grey3;
 
       path, circle {
-        color: $color-hexagon-grey2;
-        stroke: $color-hexagon-grey2;
+        color: $color-hexagon-grey3;
+        stroke: $color-hexagon-grey3;
       }
 
       circle {
-        fill: $color-hexagon-grey2;
+        fill: $color-hexagon-grey3;
       }
     }
 
     &.isActive {
-      color: $color-hexagon-main-text-color;
+      color: $color-hexagon-green3;
 
       svg {
-        color: $color-hexagon-main-text-color;
-        stroke: $color-hexagon-main-text-color;
+        color: $color-hexagon-green3;
+        stroke: $color-hexagon-green3;
 
         path, circle {
-          color: $color-hexagon-main-text-color;
-          stroke: $color-hexagon-main-text-color;
+          color: $color-hexagon-green3;
+          stroke: $color-hexagon-green3;
         }
 
         circle {
-          fill: $color-hexagon-main-text-color;
+          fill: $color-hexagon-green3;
         }
       }
     }
@@ -106,7 +92,7 @@
   }
 
   &iconOnly {
-    background: $color-hexagon-grey5;
+    background: $color-hexagon-grey7;
     border-radius: $border-radius-10;
     height: 3.2rem;
     width: 3.2rem;
@@ -121,9 +107,10 @@
   }
 
   &link {
+    font-size: $font-size-12;
     border-radius: 0;
     min-height: initial;
-    color: $color-hexagon-blue;
+    color: $color-hexagon-green;
   }
 }
 

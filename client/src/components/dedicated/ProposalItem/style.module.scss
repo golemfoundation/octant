@@ -63,6 +63,7 @@ $paddingBody: 2.4rem;
     .numbers {
       display: flex;
       font-weight: $font-weight-bold;
+      font-size: $font-size-18;
     }
 
     .percentage {
@@ -72,7 +73,7 @@ $paddingBody: 2.4rem;
       padding: 0 0 0 1rem;
 
       &.isAboveThreshold {
-        color: $color-hexagon-green;
+        color: $color-hexagon-green5;
       }
 
       &:before {
@@ -82,7 +83,7 @@ $paddingBody: 2.4rem;
         left: 0;
         width: 0.2rem;
         height: 100%;
-        background: $color-hexagon-grey4;
+        background: $color-hexagon-grey2;
       }
     }
   }

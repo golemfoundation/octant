@@ -39,7 +39,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
   const proposalIdNumber = parseInt(proposalId!, 10);
   const { proposals } = useProposals();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
-  const { data: userAlphas } = useProjectDonors(proposalId!);
+  const { data: userAlphas } = useProjectDonors(proposalId!, { refetchOnMount: true });
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ id }) => id.toString() === proposalId,
   );
@@ -78,11 +78,9 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
     ? {
         Icon: <Svg img={tick} size={1.5} />,
         label: 'Added to Allocate',
-        variant: 'secondaryGrey',
       }
     : {
         label: 'Add to Allocate',
-        variant: 'secondary',
       };
 
   return (
@@ -121,6 +119,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
       <Button
         className={styles.buttonAllocate}
         onClick={() => onAddRemoveFromAllocate(proposalIdNumber)}
+        variant="secondary"
         {...buttonProps}
       />
       <div className={styles.body}>
@@ -131,7 +130,8 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
       </div>
       <div className={styles.donors}>
         <div className={styles.header}>
-          Donors {userAlphas && <div className={styles.count}>{userAlphas.length}</div>}
+          <span>Donors</span>{' '}
+          {userAlphas && <div className={styles.count}>{userAlphas.length}</div>}
         </div>
         {userAlphas &&
           userAlphas.map(({ address }, index) => (

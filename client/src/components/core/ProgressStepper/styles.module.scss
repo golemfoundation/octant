@@ -13,7 +13,7 @@
     transform: translate(0, -50%);
     height: 0.2rem;
     width: 100%;
-    background: $color-hexagon-blue;
+    background: $color-hexagon-green3;
   }
 }
 
@@ -21,10 +21,10 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  color: $color-hexagon-grey7;
+  color: $color-hexagon-grey5;
 
   &.isCurrent {
-    color: $color-hexagon-main-text-color;
+    color: $color-hexagon-dark;
   }
 
   &:first-child {
@@ -45,9 +45,9 @@
   z-index: $z-index-2;
   width: 1.6rem;
   height: 1.6rem;
-  border: 0.2rem solid $color-hexagon-blue;
+  border: 0.2rem solid $color-hexagon-green3;
   border-radius: 50%;
-  background: $color-hexagon-grey;
+  background: $color-hexagon-grey4;
   margin: 0 0 0.5rem 0;
 
   &.isCurrent {
@@ -59,13 +59,13 @@
       transform: translate(-50%, -50%);
       height: 0.8rem;
       width: 0.8rem;
-      background: $color-hexagon-blue;
+      background: $color-hexagon-green3;
       border-radius: 50%;
     }
   }
 
   &.isDone {
-    background: $color-hexagon-blue;
+    background: $color-hexagon-green3;
   }
 }
 

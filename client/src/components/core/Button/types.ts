@@ -3,7 +3,6 @@ import { LinkProps } from 'react-router-dom';
 
 export const BUTTON_VARIANTS = [
   'secondary',
-  'secondaryGrey',
   'cta',
   'iconOnly',
   'iconOnlyTransparent',

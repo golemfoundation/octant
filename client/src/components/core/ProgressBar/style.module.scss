@@ -9,21 +9,20 @@
   margin: 0 0 1.4rem 0;
 
   .label {
-    color: $color-hexagon-grey7;
+    color: $color-hexagon-green2;
     font-size: $font-size-10;
   }
 }
 
-
 .bar {
   width: 100%;
   height: 0.8rem;
-  background-color: $color-hexagon-grey4;
+  background-color: $color-hexagon-grey2;
   border-radius: 0.4rem;
 }
 
 .filled {
   height: 100%;
-  background: $color-hexagon-blue;
+  background: $color-hexagon-green;
   border-radius: inherit;
 }

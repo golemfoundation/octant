@@ -12,7 +12,7 @@ export const allocate: SvgImageConfig = {
 export const allocateWithNumber: SvgImageConfig = {
   className: styles.allocateWithNumber,
   markup:
-    '<path fill="#141DEF" stroke="red" d="M23.997 17.251a6.749 6.749 0 1 0-13.498 0 6.749 6.749 0 0 0 13.498 0Z"/><path stroke="#271558" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.249 15.752h-6a1.5 1.5 0 0 1-1.5-1.5v-12a1.5 1.5 0 0 1 1.5-1.5h18a1.5 1.5 0 0 1 1.5 1.5V9"/><circle cx="5.875" cy="5.405" r="1.875" stroke="#271558" stroke-width="1.5"/><path stroke="#271558" stroke-linecap="round" d="M10.999 3.5h7M10.999 5.5h5M10.999 7.5h3.63"/>',
+    '<path fill="#2D9B87" stroke="red" d="M23.997 17.251a6.749 6.749 0 1 0-13.498 0 6.749 6.749 0 0 0 13.498 0Z"/><path stroke="#271558" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.249 15.752h-6a1.5 1.5 0 0 1-1.5-1.5v-12a1.5 1.5 0 0 1 1.5-1.5h18a1.5 1.5 0 0 1 1.5 1.5V9"/><circle cx="5.875" cy="5.405" r="1.875" stroke="#271558" stroke-width="1.5"/><path stroke="#271558" stroke-linecap="round" d="M10.999 3.5h7M10.999 5.5h5M10.999 7.5h3.63"/>',
   viewBox: '0 0 24 24',
 };
 

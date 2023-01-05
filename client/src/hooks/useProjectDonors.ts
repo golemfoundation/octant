@@ -1,12 +1,15 @@
 import { BigNumber } from 'ethers';
-import { UseQueryResult, useQuery } from 'react-query';
+import { UseQueryOptions, UseQueryResult, useQuery } from 'react-query';
 
 import useContractAllocationsStorage from './contracts/useContractAllocationsStorage';
 import useCurrentEpoch from './useCurrentEpoch';
 
 type Donor = { address: string; alpha: BigNumber };
 
-export default function useProjectDonors(proposalId: string): UseQueryResult<Donor[]> {
+export default function useProjectDonors(
+  proposalId: string,
+  options?: UseQueryOptions<[string[], BigNumber[]] | undefined, unknown, any, string[]>,
+): UseQueryResult<Donor[]> {
   const contractAllocationsStorage = useContractAllocationsStorage();
   const { data: currentEpoch } = useCurrentEpoch();
 
@@ -20,6 +23,7 @@ export default function useProjectDonors(proposalId: string): UseQueryResult<Don
           address,
           alpha: response![1][index],
         })),
+      ...options,
     },
   );
 }

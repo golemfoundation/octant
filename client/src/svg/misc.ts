@@ -2,7 +2,7 @@ import { SvgImageConfig } from 'components/core/Svg/types';
 
 export const arrow: SvgImageConfig = {
   markup:
-    '<path stroke="#141DEF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.434 1.7h6.441v6.528"/><path stroke="#141DEF" stroke-linecap="round" stroke-width="2" d="M1-1h9.118" transform="matrix(-.69444 .71955 -.71011 -.70409 8.596 1)"/>',
+    '<path stroke="#2D9B87" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.434 1.7h6.441v6.528"/><path stroke="#2D9B87" stroke-linecap="round" stroke-width="2" d="M1-1h9.118" transform="matrix(-.69444 .71955 -.71011 -.70409 8.596 1)"/>',
   viewBox: '0 0 10 10',
 };
 
@@ -32,7 +32,7 @@ export const minus: SvgImageConfig = {
 
 export const notificationIcon: SvgImageConfig = {
   markup:
-    '<path fill="#141DEF" d="M11.55.12a.902.902 0 0 1 .9 0l11.1 6.408c.278.161.45.46.45.781v12.816c0 .322-.172.62-.45.78l-11.1 6.408a.902.902 0 0 1-.9 0L.45 20.905a.902.902 0 0 1-.45-.78V7.309c0-.322.172-.62.45-.78L11.55.12Z"/><path fill="#fff" d="M11.05 16.53h2.058l.32-5.27V7.5H10.73v3.76l.319 5.27ZM12.079 21c.87 0 1.596-.71 1.596-1.561 0-.87-.727-1.597-1.596-1.597-.87 0-1.579.728-1.579 1.597 0 .851.71 1.561 1.579 1.561Z"/>',
+    '<path fill="#5B8A81" d="M11.55.12a.902.902 0 0 1 .9 0l11.1 6.408c.278.161.45.46.45.781v12.816c0 .322-.172.62-.45.78l-11.1 6.408a.902.902 0 0 1-.9 0L.45 20.905a.902.902 0 0 1-.45-.78V7.309c0-.322.172-.62.45-.78L11.55.12Z"/><path fill="#fff" d="M11.05 16.53h2.058l.32-5.27V7.5H10.73v3.76l.319 5.27ZM12.079 21c.87 0 1.596-.71 1.596-1.561 0-.87-.727-1.597-1.596-1.597-.87 0-1.579.728-1.579 1.597 0 .851.71 1.561 1.579 1.561Z"/>',
   viewBox: '0 0 24 28',
 };
 
