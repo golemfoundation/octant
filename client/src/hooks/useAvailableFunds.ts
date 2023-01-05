@@ -6,6 +6,7 @@ import useContractErc20 from './contracts/useContractErc20';
 
 export default function useAvailableFunds(address: string, signer: Signer): UseQueryResult<number> {
   const erc20Contract = useContractErc20({ signerOrProvider: signer });
+
   return useQuery<BigNumberish | undefined, unknown, number>(
     ['currentBalance'],
     () => erc20Contract?.balanceOf(address),

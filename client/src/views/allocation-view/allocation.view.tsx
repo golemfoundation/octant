@@ -32,7 +32,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
   const {
     metaState: { isConnected },
   } = useMetamask();
-  const [proposals] = useProposals();
+  const { proposals } = useProposals();
   const [currentView, setCurrentView] = useState<CurrentView>('edit');
   const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
   const [allocationValues, setAllocationValues] = useState<undefined | AllocationValues>(undefined);

@@ -21,7 +21,7 @@ const App: FC<AppProps> = ({ allocations, onAddAllocation, onAddAllocations }) =
   const {
     metaState: { isConnected },
   } = useMetamask();
-  const [proposals] = useProposals();
+  const { proposals } = useProposals();
   const { data: userVote } = useUserVote();
 
   useEffect(() => {

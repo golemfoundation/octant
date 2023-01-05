@@ -37,7 +37,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
   const { ipfsGateway } = env;
   const { proposalId } = useParams();
   const proposalIdNumber = parseInt(proposalId!, 10);
-  const [proposals] = useProposals();
+  const { proposals } = useProposals();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
   const { data: userAlphas } = useProjectDonors(proposalId!);
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(

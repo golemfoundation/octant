@@ -12,7 +12,7 @@ export default function useIpfsProposals(
     | IProposals.ProposalStructOutput[]
     | { id: BigNumber; uri: string }[]
     | undefined,
-): [ExtendedProposal[]] {
+): { proposals: ExtendedProposal[] } {
   const [proposals, setProposals] = useState<ExtendedProposal[]>([]);
   const [isProposalsIpfsResultsLoading, setIsProposalsIpfsResultsLoading] = useState<boolean>(true);
 
@@ -46,5 +46,5 @@ export default function useIpfsProposals(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isProposalsIpfsResultsLoading]);
 
-  return [proposals];
+  return { proposals };
 }
