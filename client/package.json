@@ -6,7 +6,8 @@
   "version": "1.0.0",
   "scripts": {
     "prepare": "cd .. && husky install client/.husky",
-    "dev": "vite",
+    "predev": "cd .. && yarn install && yarn compile && cd client && yarn install",
+    "dev": "yarn predev && vite",
     "build": "vite build",
     "preview": "vite preview",
     "eslint": "eslint './**/*.{js,jsx,ts,tsx}'",

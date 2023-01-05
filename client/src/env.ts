@@ -3,35 +3,35 @@ const env = {
   contracts: {
     allocationsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_ALLOCATIONS_ADDRESS || '0xae4F09dBE15a66F36DCe5a7e7E1879840DBE76c9',
+      import.meta.env.VITE_ALLOCATIONS_ADDRESS || '0xB500E75608f32d9c18d233203938b28adEb48904',
     allocationsStorageAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
       import.meta.env.VITE_ALLOCATIONS_STORAGE_ADDRESS ||
-      '0xF9bab78B33b6d1B681a4691b58B77eFE9b684ec6',
+      '0x5Eed1C0547a173C80b4FAC264e5c65cB714c4966',
     beaconChainOracle:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_BEACON_CHAIN_ORACLE || '0xcF3B62F7DF7cE227a558c1FFFf93033142F33B79',
+      import.meta.env.VITE_BEACON_CHAIN_ORACLE || '0x4BaeAa0ae368dC925Af2378daaA1EbD222b8A6aB',
     depositsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_DEPOSITS_ADDRESS || '0xC666Df63bddF00196D231D7c1c73f1cE36Dd8f31',
+      import.meta.env.VITE_DEPOSITS_ADDRESS || '0x8A6651C7F29DE8060e2ED17dE027Ed8Ad557EabE',
     epochsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_EPOCHS_ADDRESS || '0xDA2aE71B3D5659520772679a5479D3219ae1B1a2',
+      import.meta.env.VITE_EPOCHS_ADDRESS || '0xfde5BA608008Db523aF99009951f471b8F0331F0',
     glmAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
       import.meta.env.VITE_GLM_ADDRESS || '0x4914bdFfFA96a3936304705eE41C2F5CbcAD7774',
     proposalsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_PROPOSALS_ADDRESS || '0x3577750C81a6799A6567E481dCf322e59e7991dC',
+      import.meta.env.VITE_PROPOSALS_ADDRESS || '0xE6927f44aAf7a2f95305c46857c00FF821150d45',
     rewardsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_REWARDS_ADDRESS || '0x1eF82338e132f74118402B4BB788B245cE3F053f',
+      import.meta.env.VITE_REWARDS_ADDRESS || '0xF6D222af4361410269dC72ADd842Db9D3FE9E9F6',
     testRewardsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_TEST_REWARDS_ADDRESS || '0x993E6B7A83dBa3a1824F1d5463890A321e95A7A1',
+      import.meta.env.VITE_TEST_REWARDS_ADDRESS || '0xEC7DA9b49719daE402a27DEc721BC59fE8CEe794',
     trackerAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_TRACKER_ADDRESS || '0xdE2FbFbdBa6620ED02728ed5447fF50aaeb35C57',
+      import.meta.env.VITE_TRACKER_ADDRESS || '0xe308a0cFf641c679EA77831adFF2396e65889922',
   },
   ipfsGateway:
     // @ts-expect-error TS does not understand the way vite imports envs.
