@@ -4,8 +4,8 @@ import React, { FC, useEffect } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
-import Loader from 'components/core/loader/loader.component';
-import RootRoutes from 'routes/root-routes/root.routes';
+import Loader from 'components/core/Loader/Loader';
+import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import useProposals from 'hooks/useProposals';
 import useUserVote from 'hooks/useUserVote';
 

@@ -1,8 +1,8 @@
 import { ToastOptions, toast } from 'react-toastify';
 import React from 'react';
 
-import Toast from 'components/core/toast/toast.component';
-import ToastProps from 'components/core/toast/types';
+import Toast from 'components/core/Toast/Toast';
+import ToastProps from 'components/core/Toast/types';
 
 interface TriggerToast extends ToastProps {
   options?: ToastOptions;

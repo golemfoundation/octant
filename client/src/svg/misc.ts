@@ -1,4 +1,4 @@
-import { SvgImageConfig } from 'components/core/svg/types';
+import { SvgImageConfig } from 'components/core/Svg/types';
 
 export const arrow: SvgImageConfig = {
   markup:

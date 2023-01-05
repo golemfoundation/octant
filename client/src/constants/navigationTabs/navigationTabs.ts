@@ -1,4 +1,4 @@
-import { ROOT_ROUTES } from 'routes/root-routes/routes';
+import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import { allocate, earn, metrics, proposals, settings } from 'svg/navigation';
 
 import { NavigationTab } from './types';

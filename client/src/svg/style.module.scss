@@ -1,4 +1,7 @@
-// These are styles for overwriting any other overwrites that are being done on SVGs.
+/**
+  These are styles for overwriting any other overwrites that are being done on SVGs.
+  Example: SVGs change color when in disabled state, but some of their elements should not.
+ */
 .allocate {
   circle {
     fill: transparent !important;
