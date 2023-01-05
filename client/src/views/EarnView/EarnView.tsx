@@ -21,7 +21,7 @@ const EarnView = (): ReactElement => {
           isDisabled: true,
           isHigh: true,
           label: 'Withdraw ETH Rewards',
-          variant: 'cta',
+          variant: 'secondary',
         }}
         className={styles.box}
         isVertical

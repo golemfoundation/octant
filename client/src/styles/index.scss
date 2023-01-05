@@ -20,7 +20,7 @@
 }
 
 a {
-  color: $color-hexagon-main-text-color;
+  color: $color-hexagon-dark;
   text-decoration: none;
 }
 
@@ -34,7 +34,7 @@ body {
   min-width: 32rem;
   height: 100%;
   min-height: 100%;
-  background: $color-hexagon-grey;
-  color: $color-hexagon-main-text-color;
+  background: $color-hexagon-grey4;
+  color: $color-hexagon-dark;
   font-size: $font-size-16;
 }

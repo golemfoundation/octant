@@ -25,7 +25,7 @@ $checkIndicatorSize: 1.4rem;
   }
 
   &:checked + .checkIndicator {
-    background: $color-hexagon-blue;
+    background: $color-hexagon-green;
 
     &:after {
       left: calc($inputWidth - $checkIndicatorSize - 0.3rem);
@@ -35,7 +35,7 @@ $checkIndicatorSize: 1.4rem;
 }
 
 .checkIndicator {
-  background: $color-hexagon-grey2;
+  background: $color-hexagon-grey3;
   border-radius: 1rem;
   pointer-events: none;
 

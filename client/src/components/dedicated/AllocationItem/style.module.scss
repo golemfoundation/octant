@@ -31,7 +31,7 @@
   margin: 0 0 0 0.4rem;
 
   &.isAboveThreshold {
-    background: $color-hexagon-green2;
+    background: $color-hexagon-green5;
   }
 }
 
@@ -39,34 +39,34 @@
   display: flex;
   align-items: center;
   margin: 0 0 0 1rem;
-  color: $color-hexagon-grey3;
+  color: $color-hexagon-grey6;
   font-weight: $font-weight-semibold;
 }
 
 .value {
-  color: $color-hexagon-grey4;
-  border-left: 0.1rem solid $color-hexagon-grey;
-  border-right: 0.1rem solid $color-hexagon-grey;
+  color: $color-hexagon-grey2;
+  border-left: 0.1rem solid $color-hexagon-grey4;
+  border-right: 0.1rem solid $color-hexagon-grey4;
 
   &.isSelected {
-    color: $color-hexagon-main-text-color;
+    color: $color-hexagon-dark;
   }
 }
 
 .buttons {
   display: flex;
   flex-direction: column;
-  border-left: 0.1rem solid $color-hexagon-grey;
+  border-left: 0.1rem solid $color-hexagon-grey4;
 
   &.isSelected {
     svg path {
-      stroke: $color-hexagon-main-text-color;
+      stroke: $color-hexagon-dark;
     }
   }
 }
 
 .button {
   &:first-child {
-    border-bottom: 0.1rem solid $color-hexagon-grey;
+    border-bottom: 0.1rem solid $color-hexagon-grey4;
   }
 }

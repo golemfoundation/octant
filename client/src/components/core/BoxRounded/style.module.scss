@@ -11,8 +11,8 @@
   user-select: none;
 
   &.isGrey {
-    color: $color-hexagon-grey8;
-    background: $color-hexagon-grey;
+    color: $color-hexagon-grey10;
+    background: $color-hexagon-grey4;
   }
 
   &.isClickable {
@@ -54,7 +54,7 @@
   justify-content: center;
   align-self: stretch;
   height: 3.8rem;
-  border-bottom: 0.1rem solid $color-hexagon-grey;
+  border-bottom: 0.1rem solid $color-hexagon-grey4;
   margin: 0 0 2rem 0;
 
   &.isGrey {
@@ -65,24 +65,24 @@
 .tab {
   position: relative;
   font-size: $font-size-14;
-  color: $color-hexagon-grey2;
+  color: $color-hexagon-grey3;
 
   &.isClickable {
     cursor: pointer;
   }
 
   &.isActive {
-    color: $color-hexagon-grey7;
+    color: $color-hexagon-green2;
 
     &::after {
       content: '';
       position: absolute;
-      bottom: 0;
+      bottom: -0.1rem;
       left: 50%;
       transform: translate(-50%, 0);
       height: 0.2rem;
       width: 2.4rem;
-      background: $color-hexagon-grey7;
+      background: $color-hexagon-green2;
     }
   }
 
@@ -92,7 +92,7 @@
 }
 
 .title {
-  color: $color-hexagon-grey3;
+  color: $color-hexagon-grey6;
   font-size: $font-size-14;
   font-weight: $font-weight-bold;
   margin: 0 0 0.5rem 0;

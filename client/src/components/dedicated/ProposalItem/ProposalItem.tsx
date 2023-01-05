@@ -32,11 +32,9 @@ const ProposalItem: FC<ProposalItemProps> = ({
     ? {
         Icon: <Svg img={tick} size={1.5} />,
         label: 'Added',
-        variant: 'secondaryGrey',
       }
     : {
         label: 'Add to Allocate',
-        variant: 'secondary',
       };
 
   return (
@@ -76,6 +74,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
                   event!.preventDefault();
                   onAddRemoveFromAllocate();
                 }}
+                variant="secondary"
                 {...buttonProps}
               />
             </div>
