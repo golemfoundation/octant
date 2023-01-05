@@ -1,11 +1,10 @@
-/* eslint-disable */
 import { BigNumber } from 'ethers';
 import { UseQueryResult, useQuery } from 'react-query';
 
 import useContractAllocationsStorage from './contracts/useContractAllocationsStorage';
 import useCurrentEpoch from './useCurrentEpoch';
 
-type Donor = { alpha: BigNumber; address: string };
+type Donor = { address: string; alpha: BigNumber };
 
 export default function useProjectDonors(proposalId: string): UseQueryResult<Donor[]> {
   const contractAllocationsStorage = useContractAllocationsStorage();
@@ -15,7 +14,7 @@ export default function useProjectDonors(proposalId: string): UseQueryResult<Don
     ['userAlphas', proposalId],
     () => contractAllocationsStorage?.getUsersAlphas(currentEpoch! - 1, proposalId),
     {
-      enabled: !!contractAllocationsStorage && !!currentEpoch,
+      enabled: !!contractAllocationsStorage && !!currentEpoch && currentEpoch - 1 > 0,
       select: response =>
         response![0].map((address, index) => ({
           address,

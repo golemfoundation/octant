@@ -6,7 +6,7 @@ import useContractProposals from './contracts/useContractProposals';
 import useCurrentEpoch from './useCurrentEpoch';
 import useIpfsProposals from './useIpfsProposals';
 
-export default function useProposals(): [ExtendedProposal[]] {
+export default function useProposals(): { proposals: ExtendedProposal[] } {
   const contractProposals = useContractProposals();
   const { data: currentEpoch } = useCurrentEpoch();
 

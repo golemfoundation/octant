@@ -28,7 +28,7 @@ export default function useUserVote(
     ['userVote'],
     () => contractAllocationsStorage?.getUserVote(currentEpoch! - 1, address),
     {
-      enabled: !!currentEpoch && !!address,
+      enabled: !!currentEpoch && currentEpoch - 1 > 0 && !!address,
       select: response => ({
         alpha: response![0]?.toNumber(),
         proposalId: response![1]?.toNumber(),
