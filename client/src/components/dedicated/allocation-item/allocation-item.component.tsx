@@ -78,7 +78,9 @@ const AllocationItem: FC<AllocationItemProps> = ({
             <div
               className={cx(
                 styles.indicator,
-                isAboveProposalDonationThresholdPercent(percentage) && styles.isAboveThreshold,
+                percentage &&
+                  isAboveProposalDonationThresholdPercent(percentage) &&
+                  styles.isAboveThreshold,
               )}
             />
           </div>

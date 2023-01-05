@@ -6,7 +6,7 @@ interface GetCurrentEpochStateTextParams {
   value?: BigNumberish;
 }
 
-export function getCurrentEpochStateText({
+export default function getCurrentEpochStateText({
   value,
   suffix,
 }: GetCurrentEpochStateTextParams): string {

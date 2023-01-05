@@ -1,11 +1,11 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import React, { ReactElement } from 'react';
 
-import AllocationView from 'views/allocation-view/allocation.view';
+import AllocationView from 'views/allocation-view/allocation.view.container';
 import EarnView from 'views/earn-view/earn.view';
 import MetricsView from 'views/metrics-view/metrics.view';
-import ProposalView from 'views/proposal-view/proposal.view';
-import ProposalsView from 'views/proposals-view/proposals.view';
+import ProposalView from 'views/proposal-view/proposal.view.container';
+import ProposalsView from 'views/proposals-view/proposals.view.container';
 import SettingsView from 'views/settings-view/settings.view';
 
 import { ROOT_ROUTES } from './routes';

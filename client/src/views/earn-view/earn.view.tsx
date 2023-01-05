@@ -2,15 +2,15 @@ import React, { ReactElement } from 'react';
 
 import BoxRounded from 'components/core/box-rounded/box-rounded.component';
 import DoubleValue from 'components/core/double-value/double-value.component';
-import MainLayout from 'layouts/main-layout/main.layout';
+import MainLayout from 'layouts/main-layout/main.layout.container';
 import UserGlmStakeComponent from 'components/dedicated/user-glm-stake/user-glm-stake.component';
-import useRewardBudget from 'hooks/useRewardBudget';
+import getCurrentEpochStateText from 'utils/getCryptoValueWithSuffix';
+import useIndividualReward from 'hooks/useIndividualReward';
 
-import { getCurrentEpochStateText } from './utils';
 import styles from './style.module.scss';
 
 const EarnView = (): ReactElement => {
-  const { data: rewardBudget } = useRewardBudget();
+  const { data: individualReward } = useIndividualReward();
 
   return (
     <MainLayout>
@@ -27,7 +27,9 @@ const EarnView = (): ReactElement => {
         isVertical
         title="Rewards Balance"
       >
-        <DoubleValue mainValue={getCurrentEpochStateText({ suffix: 'ETH', value: rewardBudget })} />
+        <DoubleValue
+          mainValue={getCurrentEpochStateText({ suffix: 'ETH', value: individualReward })}
+        />
       </BoxRounded>
     </MainLayout>
   );

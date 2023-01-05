@@ -1,6 +1,5 @@
-import { BigNumber } from 'ethers';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
-import React, { ReactElement } from 'react';
+import React, { FC } from 'react';
 import cx from 'classnames';
 
 import { ROOT_ROUTES } from 'routes/root-routes/routes';
@@ -8,19 +7,20 @@ import { chevronLeft } from 'svg/navigation';
 import { donorGenericIcon, tick } from 'svg/misc';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import Button from 'components/core/button/button.component';
+import Description from 'components/core/description/description.component';
 import Img from 'components/core/img/img.component';
-import MainLayout from 'layouts/main-layout/main.layout';
+import MainLayout from 'layouts/main-layout/main.layout.container';
 import Svg from 'components/core/svg/svg.component';
 import env from 'env';
 import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
 import triggerToast from 'utils/triggerToast';
 import truncateEthAddress from 'utils/truncateEthAddress';
-import useBaseUri from 'hooks/useBaseUri';
-import useIdInAllocation from 'hooks/useIdInAllocation';
-import useIpfsProposals from 'hooks/useIpfsProposals';
+import useIdsInAllocation from 'hooks/useIdsInAllocation';
 import useMatchedProposalRewards from 'hooks/useMatchedProposalRewards';
 import useProjectDonors from 'hooks/useProjectDonors';
+import useProposals from 'hooks/useProposals';
 
+import ProposalViewProps from './types';
 import styles from './style.module.scss';
 
 const getCustomNavigationTabs = () => {
@@ -33,22 +33,22 @@ const getCustomNavigationTabs = () => {
   return navigationTabs;
 };
 
-const ProposalView = (): ReactElement => {
+const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
   const { ipfsGateway } = env;
   const { proposalId } = useParams();
   const proposalIdNumber = parseInt(proposalId!, 10);
-  const [isAddedToAllocate, onAddRemoveFromAllocate] = useIdInAllocation(proposalIdNumber);
-  const { data: baseUri } = useBaseUri();
+  const [proposals] = useProposals();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
   const { data: userAlphas } = useProjectDonors(proposalId!);
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ id }) => id.toString() === proposalId,
   );
+  const proposal = proposals.find(({ id }) => id.toNumber() === proposalIdNumber);
 
-  const [proposals] = useIpfsProposals(
-    baseUri ? [{ id: BigNumber.from(proposalId!), uri: `${baseUri}${proposalId}` }] : undefined,
-  );
-  const [proposal] = proposals;
+  const { onAddRemoveFromAllocate } = useIdsInAllocation({
+    allocations,
+    proposalName: proposal && proposal.name,
+  });
 
   if (!proposal || !proposalMatchedProposalRewards) {
     return (
@@ -74,7 +74,7 @@ const ProposalView = (): ReactElement => {
 
   const { description, landscapeImageCID, name, profileImageCID, website } = proposal;
 
-  const buttonProps = isAddedToAllocate
+  const buttonProps = allocations.includes(proposalIdNumber)
     ? {
         Icon: <Svg img={tick} size={1.5} />,
         label: 'Added to Allocate',
@@ -124,7 +124,7 @@ const ProposalView = (): ReactElement => {
         {...buttonProps}
       />
       <div className={styles.body}>
-        <div>{description}</div>
+        <Description text={description} />
         <Button className={styles.buttonWebsite} href={website.url} variant="link">
           {website.label || website.url}
         </Button>

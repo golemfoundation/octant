@@ -3,9 +3,10 @@ import React, { ReactElement } from 'react';
 
 import BoxRounded from 'components/core/box-rounded/box-rounded.component';
 import Counter from 'components/dedicated/counter/counter.component';
+import Description from 'components/core/description/description.component';
 import DoubleValue from 'components/core/double-value/double-value.component';
 import Header from 'components/core/header/header.component';
-import MainLayout from 'layouts/main-layout/main.layout';
+import MainLayout from 'layouts/main-layout/main.layout.container';
 import ProgressBar from 'components/core/progress-bar/progress-bar.component';
 import useCurrentEpoch from 'hooks/useCurrentEpoch';
 import useDecisionWindow from 'hooks/useDecisionWindow';
@@ -61,10 +62,10 @@ const MetricsView = (): ReactElement => {
       </div>
       <div className={styles.element}>
         <Header text={`Epoch ${currentEpoch} Allocation`} />
-        <div className={styles.description}>
-          Allocation is the currently active governance period of the epoch when you can allocate
-          funds to projects you want to support.
-        </div>
+        <Description
+          text="Allocation is the currently active governance period of the epoch when you can allocate
+          funds to projects you want to support."
+        />
         <BoxRounded
           isVertical
           title={
@@ -84,10 +85,10 @@ const MetricsView = (): ReactElement => {
       </div>
       <div className={styles.element}>
         <Header text="Value Staked" />
-        <div className={styles.description}>
-          The total value staked on Hexagon to date, showing ETH staked by the Golem Foundation and
-          GLM staked by Hexagon users.
-        </div>
+        <Description
+          text="The total value staked on Hexagon to date, showing ETH staked by the Golem Foundation and
+          GLM staked by Hexagon users."
+        />
         <BoxRounded alignment="left" className={styles.box} isVertical title="ETH Staked">
           <DoubleValue mainValue={ethStaked || '0.0'} />
         </BoxRounded>

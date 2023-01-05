@@ -5,7 +5,7 @@ import { useMetamask } from 'use-metamask';
 import useContractRewards from './contracts/useContractRewards';
 import useCurrentEpoch from './useCurrentEpoch';
 
-export default function useRewardBudget(): UseQueryResult<BigNumberish | undefined> {
+export default function useIndividualReward(): UseQueryResult<BigNumberish | undefined> {
   const contractRewards = useContractRewards();
   const {
     metaState: { account },
@@ -14,7 +14,7 @@ export default function useRewardBudget(): UseQueryResult<BigNumberish | undefin
   const address = account[0];
 
   return useQuery(
-    ['rewardBudget'],
+    ['individualReward'],
     () => contractRewards?.individualReward(currentEpoch! - 1, address),
     { enabled: !!currentEpoch && !!address && !!contractRewards },
   );
