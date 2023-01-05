@@ -24,3 +24,8 @@ export const mockedProposal3: ExtendedProposal = {
   ...mockedProposal1,
   id: BigNumber.from(3),
 };
+
+export const mockedProposal4: ExtendedProposal = {
+  ...mockedProposal1,
+  id: BigNumber.from(4),
+};

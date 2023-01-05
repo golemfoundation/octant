@@ -33,6 +33,7 @@ export default defineConfig({
       mocks: path.resolve(__dirname, 'src/mocks'),
       routes: path.resolve(__dirname, 'src/routes'),
       services: path.resolve(__dirname, 'src/services'),
+      store: path.resolve(__dirname, 'src/store'),
       styles: path.resolve(__dirname, 'src/styles'),
       svg: path.resolve(__dirname, 'src/svg'),
       types: path.resolve(__dirname, 'src/types'),

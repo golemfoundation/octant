@@ -1,0 +1,18 @@
+.box {
+  &:not(:last-child) {
+    margin: 0 auto 1.6rem;
+  }
+}
+
+.breadcrumbs {
+  color: $color-hexagon-grey3;
+  font-size: $font-size-10;
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+  align-self: flex-start;
+  margin: 2rem 0 1rem 0;
+}
+
+.progressBar {
+  margin: 1.6rem 0 0 0;
+}

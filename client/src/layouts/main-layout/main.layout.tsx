@@ -5,18 +5,38 @@ import { useMetamask } from 'use-metamask';
 import React, { FC } from 'react';
 import cx from 'classnames';
 
+import { allocateWithNumber, userGenericIcon } from 'svg/navigation';
 import { hexagon } from 'svg/logo';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
-import { userGenericIcon } from 'svg/navigation';
 import Button from 'components/core/button/button.component';
 import Loader from 'components/core/loader/loader.component';
 import Svg from 'components/core/svg/svg.component';
 import env from 'env';
 import truncateEthAddress from 'utils/truncateEthAddress';
-import useRewardBudget from 'hooks/useRewardBudget';
+import useIndividualReward from 'hooks/useIndividualReward';
 
 import MainLayoutProps from './types';
 import styles from './style.module.scss';
+
+const getNavigationTabsWithAllocations = (
+  idsInAllocation: number[] | undefined,
+  navigationTabs = navigationTabsDefault,
+) => {
+  const newNavigationTabs = [...navigationTabs];
+  newNavigationTabs[1] =
+    idsInAllocation && idsInAllocation.length > 0
+      ? {
+          ...newNavigationTabs[1],
+          iconWrapped: (
+            <div className={styles.iconNumberOfAllocations}>
+              <div className={styles.numberOfAllocations}>{idsInAllocation.length}</div>
+              <Svg img={allocateWithNumber} size={2.25} />
+            </div>
+          ),
+        }
+      : newNavigationTabs[1];
+  return newNavigationTabs;
+};
 
 const MainLayout: FC<MainLayoutProps> = ({
   children,
@@ -25,13 +45,14 @@ const MainLayout: FC<MainLayoutProps> = ({
   isLoading,
   landscapeImage,
   classNameBody,
-  navigationTabs = navigationTabsDefault,
+  navigationTabs,
+  allocations,
 }) => {
   const {
     connect,
     metaState: { isConnected, account },
   } = useMetamask();
-  const { data: rewardBudget } = useRewardBudget();
+  const { data: individualReward } = useIndividualReward();
   const { pathname } = useLocation();
   const address = account[0];
 
@@ -41,12 +62,14 @@ const MainLayout: FC<MainLayoutProps> = ({
     }
   };
 
-  const tabsWithIsActive = navigationTabs.map(tab => {
-    return {
-      ...tab,
-      isActive: tab.isActive || pathname === tab.to,
-    };
-  });
+  const tabsWithIsActive = getNavigationTabsWithAllocations(allocations, navigationTabs).map(
+    tab => {
+      return {
+        ...tab,
+        isActive: tab.isActive || pathname === tab.to,
+      };
+    },
+  );
 
   return (
     <div className={styles.root}>
@@ -65,8 +88,8 @@ const MainLayout: FC<MainLayoutProps> = ({
               <div className={styles.walletInfo}>
                 <div className={styles.address}>{truncateEthAddress(address)}</div>
                 <div className={styles.budget}>
-                  {rewardBudget
-                    ? `Budget ${formatUnits(rewardBudget)} ETH`
+                  {individualReward
+                    ? `Budget ${formatUnits(individualReward)} ETH`
                     : 'Loading reward budget...'}
                 </div>
               </div>
@@ -91,12 +114,12 @@ const MainLayout: FC<MainLayoutProps> = ({
           <div className={styles.navigationBottomSuffix}>{navigationBottomSuffix}</div>
         )}
         <div className={styles.buttons}>
-          {tabsWithIsActive.map(({ icon, ...rest }, index) => (
+          {tabsWithIsActive.map(({ icon, iconWrapped, ...rest }, index) => (
             <Button
               // eslint-disable-next-line react/no-array-index-key
               key={index}
               className={styles.button}
-              Icon={<Svg img={icon} size={2.25} />}
+              Icon={iconWrapped || <Svg img={icon} size={2.25} />}
               variant="iconVertical"
               {...rest}
             />

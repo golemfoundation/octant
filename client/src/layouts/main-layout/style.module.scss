@@ -121,3 +121,22 @@ $headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
     padding: 0 1rem;
   }
 }
+
+.iconNumberOfAllocations {
+  position: relative;
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.numberOfAllocations {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.2rem;
+  width: 1.2rem;
+  position: absolute;
+  bottom: 0;
+  right: 0.05rem;
+  color: $color-white;
+  font-size: $font-size-07;
+}

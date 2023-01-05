@@ -16,24 +16,6 @@
   }
 }
 
-.buttons {
-  display: flex;
-  justify-content: space-between;
-
-  .button {
-    flex: 1;
-    height: 4.8rem;
-
-    &:first-child {
-      margin-right: 0.8rem;
-    }
-
-    &:last-child {
-      margin-left: 0.8rem;
-    }
-  }
-}
-
 .emptyState {
   display: flex;
   flex: 1;

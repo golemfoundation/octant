@@ -5,7 +5,7 @@ import Header from 'components/core/header/header.component';
 import InputCheckbox from 'components/core/input-checkbox/input-checkbox.component';
 import InputSelect from 'components/core/input-select/input-select.component';
 import InputText from 'components/core/input-text/input-text.component';
-import MainLayout from 'layouts/main-layout/main.layout';
+import MainLayout from 'layouts/main-layout/main.layout.container';
 
 import styles from './style.module.scss';
 

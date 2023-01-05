@@ -1,0 +1,17 @@
+// These are styles for overwriting any other overwrites that are being done on SVGs.
+.allocate {
+  circle {
+    fill: transparent !important;
+  }
+}
+
+.allocateWithNumber {
+  path {
+    &:first-child {
+      stroke: transparent !important;
+    }
+  }
+  circle {
+    fill: transparent !important;
+  }
+}

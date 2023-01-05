@@ -4,7 +4,9 @@ import cx from 'classnames';
 
 import { ROOT_ROUTES } from 'routes/root-routes/routes';
 import { tick } from 'svg/misc';
+import BoxRounded from 'components/core/box-rounded/box-rounded.component';
 import Button from 'components/core/button/button.component';
+import Description from 'components/core/description/description.component';
 import Img from 'components/core/img/img.component';
 import Svg from 'components/core/svg/svg.component';
 import env from 'env';
@@ -40,7 +42,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
   return (
     <Link className={styles.root} to={`${ROOT_ROUTES.proposal.absolute}/${id}`}>
       {isLoadingError ? (
-        'Loading of proposal encountered an error.'
+        <BoxRounded>Loading of a proposal encountered an error.</BoxRounded>
       ) : (
         <Fragment>
           <div className={styles.header}>
@@ -51,7 +53,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
           </div>
           <div className={styles.body}>
             <div className={styles.name}>{name}</div>
-            <div className={styles.description}>{description}</div>
+            <Description text={description} />
           </div>
           <div className={styles.footer}>
             <div className={styles.numbers}>

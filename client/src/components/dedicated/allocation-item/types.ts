@@ -7,7 +7,7 @@ export default interface AllocationItemProps {
   name: string;
   onChange: (id: number, value: number) => void;
   onSelectItem: (id: number) => void;
-  percentage: number;
-  totalValueOfAllocations: string;
+  percentage?: number;
+  totalValueOfAllocations?: string;
   value?: number;
 }

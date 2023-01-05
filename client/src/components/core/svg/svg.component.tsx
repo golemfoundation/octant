@@ -32,7 +32,7 @@ const SvgComponent: FC<SvgProps> = ({
   const viewBox = img.viewBox || '0 0 16 16';
 
   const svgAttrs: SvgAttrs = {
-    className: cx(styles.root, classNameSvg),
+    className: cx(styles.root, img.className, classNameSvg),
     onClick,
     style: svgStyles,
     viewBox,

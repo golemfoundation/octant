@@ -10,9 +10,11 @@ export type CssUnits = typeof CSS_UNITS[number];
 export type SvgSize = number | 'auto' | [number | string, number | string];
 
 export interface SvgImageConfig {
+  className?: string;
   defaultColor?: string;
   markup?: string;
   path?: string;
+  styles?: string;
   viewBox?: string;
 }
 

@@ -1,10 +1,10 @@
 import { useMetamask } from 'use-metamask';
 import React, { FC, Fragment, useState } from 'react';
 
-import { getCurrentEpochStateText } from 'views/earn-view/utils';
 import BoxRounded from 'components/core/box-rounded/box-rounded.component';
 import DoubleValue from 'components/core/double-value/double-value.component';
 import GlmStakingFlow from 'components/dedicated/glm-staking-flow/glm-staking-flow.component';
+import getCurrentEpochStateText from 'utils/getCryptoValueWithSuffix';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/useDepositValue';
 
