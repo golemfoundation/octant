@@ -133,7 +133,7 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
   };
 
   return (
-    <Modal {...modalProps}>
+    <Modal header={currentMode === 'deposit' ? 'Stake GLM' : 'Unstake GLM'} {...modalProps}>
       <BoxRounded className={styles.element} isGrey>
         <ProgressStepper
           currentStepIndex={currentStepIndex}
@@ -169,7 +169,7 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
           <InputText
             className={styles.input}
             isDisabled={isApproveOrDepositInProgress}
-            label="Amount to stake"
+            label={currentMode === 'deposit' ? 'Amount to stake' : 'Amount to unstake'}
             onChange={({ target: { value } }) => onChangeValue(value)}
             suffix="GLM"
             value={valueToDeposeOrWithdraw}
