@@ -1,17 +1,19 @@
+import { formatUnits } from 'ethers/lib/utils';
 import debounce from 'lodash/debounce';
 
 import { TOAST_DEBOUNCE_TIME } from 'constants/toasts';
-import { UserVote } from 'hooks/useUserVote';
+import { UserAllocation } from 'hooks/useUserAllocation';
 import triggerToast from 'utils/triggerToast';
 
 import { AllocationValues, AllocationValuesDefined } from './types';
 
 export function getAllocationValuesInitialState(
   elements: number[],
-  userVote?: UserVote,
+  userAllocation?: UserAllocation,
 ): AllocationValues {
   return elements.reduce((acc, curr) => {
-    const value = userVote?.proposalId === curr ? userVote?.alpha : undefined;
+    const value =
+      userAllocation?.proposalId === curr ? formatUnits(userAllocation?.allocation) : undefined;
     return {
       ...acc,
       [curr]: value,
@@ -22,7 +24,12 @@ export function getAllocationValuesInitialState(
 export function getAllocationsWithPositiveValues(
   elements: AllocationValues,
 ): AllocationValuesDefined {
-  return Object.fromEntries(Object.entries(elements).filter(([_key, value]) => value > 0));
+  return Object.fromEntries(
+    Object.entries(elements).filter(([_key, value]) => {
+      const valueNumber = parseFloat(value);
+      return valueNumber > 0;
+    }),
+  );
 }
 
 export const toastDebouncedOnlyOneItemAllowed = debounce(

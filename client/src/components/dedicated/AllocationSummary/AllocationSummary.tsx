@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import React, { FC, Fragment } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -15,16 +16,15 @@ import useMatchedRewards from 'hooks/useMatchedRewards';
 import AllocationSummaryProps from './types';
 import styles from './style.module.scss';
 
-const AllocationSummary: FC<AllocationSummaryProps> = ({ newAllocationPercentage }) => {
+const AllocationSummary: FC<AllocationSummaryProps> = ({ newAllocationValue }) => {
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: individualReward } = useIndividualReward();
   const { data: individualProposalRewards } = useIndividualProposalRewards();
   const { data: matchedRewards } = useMatchedRewards();
 
-  const newTotalDonated = (individualReward! as BigNumber)
-    .mul(newAllocationPercentage)
-    .div(100)
-    .add(individualProposalRewards?.sum || 0);
+  const newAllocationValueBigNumber = parseUnits(newAllocationValue);
+  const newTotalDonated = newAllocationValueBigNumber.add(individualProposalRewards?.sum || 0);
+  const newClaimableAndClaimed = (individualReward as BigNumber).sub(newAllocationValueBigNumber);
 
   return (
     <Fragment>
@@ -37,9 +37,12 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ newAllocationPercentage
         />
         <ProgressBar
           className={styles.progressBar}
-          labelLeft={`Donated ${newAllocationPercentage} %`}
-          labelRight={`Claimable ${100 - newAllocationPercentage} %`}
-          progressPercentage={newAllocationPercentage}
+          labelLeft={`Donated ${formatUnits(newAllocationValueBigNumber)}`}
+          labelRight={`Claimable and claimed ${formatUnits(newClaimableAndClaimed)}`}
+          progressPercentage={newAllocationValueBigNumber
+            .mul(100)
+            .div(newClaimableAndClaimed.add(newAllocationValueBigNumber))
+            .toNumber()}
         />
       </BoxRounded>
       <BoxRounded alignment="left" className={styles.box} isVertical title="Total Donated">

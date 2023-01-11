@@ -9,7 +9,7 @@ import styles from './style.module.scss';
 const AllocationNavigation: FC<AllocationNavigationProps> = ({
   areButtonsDisabled,
   onResetAllocationValues,
-  onVote,
+  onAllocate,
   isLoading,
   setCurrentView,
   currentView,
@@ -33,7 +33,7 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
         }
       : {
           label: 'Confirm',
-          onClick: onVote,
+          onClick: onAllocate,
         };
   return (
     <div className={styles.root}>

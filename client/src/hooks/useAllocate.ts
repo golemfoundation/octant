@@ -1,16 +1,17 @@
 import { ContractTransaction } from 'ethers';
 import { UseMutationResult, useMutation } from 'react-query';
+import { parseUnits } from 'ethers/lib/utils';
 import { useMetamask } from 'use-metamask';
 
 import useContractAllocations from './contracts/useContractAllocations';
 
-type UseVote = {
+type UseAllocate = {
   onSuccess: () => void;
 };
 
-export default function useVote({
+export default function useAllocate({
   onSuccess,
-}: UseVote): UseMutationResult<
+}: UseAllocate): UseMutationResult<
   ContractTransaction,
   unknown,
   { proposalId: string; value: string }
@@ -23,7 +24,10 @@ export default function useVote({
 
   return useMutation({
     mutationFn: async ({ proposalId, value }) => {
-      const transactionResponse = await contractAllocations!.vote(proposalId, value);
+      const transactionResponse = await contractAllocations!.allocate(
+        proposalId,
+        parseUnits(value),
+      );
       await transactionResponse.wait(1);
       return transactionResponse;
     },

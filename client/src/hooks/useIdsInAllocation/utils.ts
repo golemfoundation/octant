@@ -3,7 +3,7 @@ import debounce from 'lodash/debounce';
 import { TOAST_DEBOUNCE_TIME } from 'constants/toasts';
 import triggerToast from 'utils/triggerToast';
 
-export const toastDebouncedCantRemoveVotedProject = debounce(
+export const toastDebouncedCantRemoveAllocatedProject = debounce(
   () =>
     triggerToast({
       message:

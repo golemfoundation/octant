@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { ExtendedProposal } from 'types/proposals';
 import { allocationsAdd } from 'store/models/allocations/actions';
 import { onAddRemoveAllocationElementLocalStorage } from 'hooks/utils';
-import useUserVote from 'hooks/useUserVote';
+import useUserAllocation from 'hooks/useUserAllocation';
 
 export default function useIdsInAllocation({
   allocations,
@@ -14,7 +14,7 @@ export default function useIdsInAllocation({
   proposalName?: string;
   proposals?: ExtendedProposal[];
 }): { onAddRemoveFromAllocate: (id: number) => void } {
-  const { data: userVote } = useUserVote();
+  const { data: userAllocation } = useUserAllocation();
   const dispatch = useDispatch();
 
   const onAddRemoveFromAllocate = (id: number) => {
@@ -23,7 +23,7 @@ export default function useIdsInAllocation({
       id,
       name:
         proposalName || proposals!.find(({ id: proposalId }) => proposalId.toNumber() === id)!.name,
-      userVote,
+      userAllocation,
     });
     if (newIds) {
       dispatch(allocationsAdd(newIds));

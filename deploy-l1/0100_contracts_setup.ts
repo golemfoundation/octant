@@ -36,7 +36,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const beaconChainOracle: BeaconChainOracle = await hre.ethers.getContract(BEACON_CHAIN_ORACLE);
   const executionLayerOracle: ExecutionLayerOracle = await hre.ethers.getContract(EXECUTION_LAYER_ORACLE);
   await beaconChainOracle.setValidatorIndexes(validatorIndexes);
-  await executionLayerOracle.setValidatorAddress(validatorAddress);
+  await executionLayerOracle.setFeeAddress(validatorAddress);
 
   // Setup Deposits
   const deposits: Deposits = await hre.ethers.getContract(DEPOSITS);

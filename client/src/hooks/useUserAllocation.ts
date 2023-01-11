@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers';
 import { UseQueryOptions, UseQueryResult, useQuery } from 'react-query';
 import { useMetamask } from 'use-metamask';
 
@@ -6,16 +7,16 @@ import useCurrentEpoch from './useCurrentEpoch';
 
 import { IAllocationsStorage } from '../../../typechain-types';
 
-export type UserVote = { alpha: number; proposalId: number };
+export type UserAllocation = { allocation: BigNumber; proposalId: number };
 
-export default function useUserVote(
+export default function useUserAllocation(
   options?: UseQueryOptions<
-    IAllocationsStorage.VoteStructOutput | undefined,
+    IAllocationsStorage.AllocationStructOutput | undefined,
     unknown,
-    UserVote,
+    UserAllocation,
     string[]
   >,
-): UseQueryResult<UserVote> {
+): UseQueryResult<UserAllocation> {
   const {
     metaState: { account },
   } = useMetamask();
@@ -25,12 +26,12 @@ export default function useUserVote(
   const address = account[0];
 
   return useQuery(
-    ['userVote'],
-    () => contractAllocationsStorage?.getUserVote(currentEpoch! - 1, address),
+    ['userAllocation'],
+    () => contractAllocationsStorage?.getUserAllocation(currentEpoch! - 1, address),
     {
       enabled: !!currentEpoch && currentEpoch - 1 > 0 && !!address,
       select: response => ({
-        alpha: response![0]?.toNumber(),
+        allocation: response![0],
         proposalId: response![1]?.toNumber(),
       }),
       ...options,

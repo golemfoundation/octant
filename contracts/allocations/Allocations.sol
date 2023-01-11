@@ -2,50 +2,56 @@ pragma solidity ^0.8.9;
 
 import "../interfaces/IEpochs.sol";
 import "../interfaces/IAllocationsStorage.sol";
+import "../interfaces/IRewards.sol";
 
-import "../Tracker.sol";
+import "../deposits/Tracker.sol";
 
-/* SPDX-License-Identifier: UNLICENSED */
+import {AllocationErrors} from "../Errors.sol";
 
 contract Allocations {
-    event Voted(uint256 indexed epoch, address indexed user, uint8 proposalId, uint8 alpha);
-
+    /// @notice Epochs contract.
     IEpochs public immutable epochs;
+
+    /// @notice Tracking user`s allocations.
     IAllocationsStorage public immutable allocationsStorage;
-    Tracker public immutable tracker;
+
+    /// @notice Tracking hexagon rewards.
+    IRewards public immutable rewards;
+
+    /// @notice emitted after user allocated funds.
+    /// @param epoch for which user has allocated (current epoch - 1).
+    /// @param user address of the user who allocated funds.
+    /// @param proposalId id of the proposal the user has allocated funds for.
+    /// @param allocatedFunds funds allocated to the proposal.
+    event Allocated(uint256 indexed epoch, address indexed user, uint256 proposalId, uint256 allocatedFunds);
 
     constructor(
         address _epochsAddress,
         address _allocationsStorageAddress,
-        address _trackerAddress
+        address _rewardsAddress
     ) {
         epochs = IEpochs(_epochsAddress);
         allocationsStorage = IAllocationsStorage(_allocationsStorageAddress);
-        tracker = Tracker(_trackerAddress);
+        rewards = IRewards(_rewardsAddress);
     }
 
-    function vote(uint8 _proposalId, uint8 _alpha) external {
-        require(_proposalId != 0, "HN/proposal-id-cannot-be-0");
-        require(epochs.isStarted(), "HN/not-started-yet");
-        require(epochs.isDecisionWindowOpen(), "HN/decision-window-closed");
-        require(_alpha >= 0 && _alpha <= 100, "HN/alpha-out-of-range");
+    /// @notice Allocate funds from previous epoch on given proposal.
+    function allocate(uint256 _proposalId, uint256 _fundsToAllocate) external {
+        require(_proposalId != 0, AllocationErrors.PROPOSAL_ID_CANNOT_BE_ZERO);
+        require(epochs.isStarted(), AllocationErrors.EPOCHS_HAS_NOT_STARTED_YET);
+        require(epochs.isDecisionWindowOpen(), AllocationErrors.DECISION_WINDOW_IS_CLOSED);
         uint32 epoch = epochs.getCurrentEpoch() - 1;
-        require(tracker.depositAt(msg.sender, epoch) > 0, "HN/voting-blocked-if-deposit-is-zero");
+        require(
+            rewards.individualReward(epoch, msg.sender) >= _fundsToAllocate,
+            AllocationErrors.ALLOCATE_ABOVE_REWARDS_BUDGET
+        );
 
-        IAllocationsStorage.Vote memory _vote = allocationsStorage.getUserVote(epoch, msg.sender);
-        if (_vote.proposalId != 0) {
-            allocationsStorage.removeVote(epoch, _vote.proposalId, msg.sender);
+        IAllocationsStorage.Allocation memory _allocation = allocationsStorage.getUserAllocation(epoch, msg.sender);
+        if (_allocation.proposalId != 0) {
+            allocationsStorage.removeAllocation(epoch, _allocation.proposalId, msg.sender);
         }
-        allocationsStorage.addVote(epoch, _proposalId, msg.sender, _alpha);
+        allocationsStorage.addAllocation(epoch, _proposalId, msg.sender, _fundsToAllocate);
 
-        emit Voted(epoch, msg.sender, _proposalId, _alpha);
-    }
-
-    function getUserVote(uint256 _epoch, address _user)
-        public
-        view
-        returns (IAllocationsStorage.Vote memory)
-    {
-        return allocationsStorage.getUserVote(_epoch, _user);
+        emit Allocated(epoch, msg.sender, _proposalId, _fundsToAllocate);
     }
 }

@@ -1,29 +1,35 @@
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import triggerToast from 'utils/triggerToast';
 
-import { UserVote } from './useUserVote';
-import { toastDebouncedCantRemoveVotedProject } from './useIdsInAllocation/utils';
+import { UserAllocation } from './useUserAllocation';
+import { toastDebouncedCantRemoveAllocatedProject } from './useIdsInAllocation/utils';
 
 type OnAddRemoveAllocationElementLocalStorage = {
   allocations: number[];
   id: number;
   name: string;
-  userVote?: UserVote;
+  userAllocation?: UserAllocation;
 };
 
-export function isProposalAlreadyVotedOn(userVote: undefined | UserVote, id: number): boolean {
-  // TODO Remove userVote.alpha > 0 check following https://wildlandio.atlassian.net/browse/HEX-108.
-  return !!userVote && userVote.proposalId === id && userVote.alpha > 0;
+export function isProposalAlreadyAllocatedOn(
+  userAllocation: undefined | UserAllocation,
+  id: number,
+): boolean {
+  // TODO Remove userAllocation.allocation.gt(0) check following https://wildlandio.atlassian.net/browse/HEX-108.
+  return !!userAllocation && userAllocation.proposalId === id && userAllocation.allocation.gt(0);
 }
 
 export function onAddRemoveAllocationElementLocalStorage({
   allocations,
   id,
-  userVote,
+  userAllocation,
   name,
 }: OnAddRemoveAllocationElementLocalStorage): number[] | undefined {
-  if (isProposalAlreadyVotedOn(userVote, id) && allocations.includes(userVote!.proposalId)) {
-    toastDebouncedCantRemoveVotedProject();
+  if (
+    isProposalAlreadyAllocatedOn(userAllocation, id) &&
+    allocations.includes(userAllocation!.proposalId)
+  ) {
+    toastDebouncedCantRemoveAllocatedProject();
     return;
   }
   const isItemAlreadyAdded = allocations.includes(id);

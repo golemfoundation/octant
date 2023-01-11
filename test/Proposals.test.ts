@@ -55,7 +55,7 @@ makeTestsEnv(PROPOSALS, (testEnv) => {
 
     it('Cannot change baseURI if not an owner', async () => {
       const { proposals, signers: { Darth } } = testEnv;
-      expect(proposals.connect(Darth).setBaseURI('https://malicious.com'))
+      expect(proposals.connect(Darth).setCID('https://malicious.com'))
         .revertedWith('Ownable: caller is not the owner');
     });
 

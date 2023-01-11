@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "./interfaces/IDeposits.sol";
-import "./interfaces/IHexagonOracle.sol";
-import "./interfaces/IEpochs.sol";
-import "./interfaces/IAllocationsStorage.sol";
+import "../interfaces/IDeposits.sol";
+import "../interfaces/IHexagonOracle.sol";
+import "../interfaces/IEpochs.sol";
+import "../interfaces/IAllocationsStorage.sol";
+import "../interfaces/IProposals.sol";
 
 /// tightly coupled contracts
-import "./Tracker.sol";
+import "../deposits/Tracker.sol";
 
 /// external dependencies
 import "@prb/math/contracts/PRBMathUD60x18.sol";
-import "./interfaces/IProposals.sol";
 
 contract TestRewards {
     using PRBMathUD60x18 for uint256;
@@ -96,40 +96,34 @@ contract TestRewards {
     }
 
     /// @notice Total donated funds by participants.
-    function individualProposalRewards(uint32 epoch)
-        public
-        view
-        returns (uint256, ProposalRewards[] memory)
-    {
+    function individualProposalRewards(
+        uint32 epoch
+    ) public view returns (uint256, ProposalRewards[] memory) {
         uint256[] memory proposalIds = proposals.getProposalIds(epoch);
         uint256 proposalRewardsSum;
         ProposalRewards[] memory proposalRewards = new ProposalRewards[](proposalIds.length);
         for (uint256 iProposal = 0; iProposal < proposalIds.length; iProposal++) {
             proposalRewards[iProposal].id = proposalIds[iProposal];
-            (address[] memory users, uint256[] memory alphas) = allocationsStorage.getUsersAlphas(
+            (address[] memory users, uint256[] memory allocations) = allocationsStorage.getUsersWithTheirAllocations(
                 epoch,
                 proposalIds[iProposal]
             );
 
             // count individual rewards for proposals.
             for (uint256 iUser = 0; iUser < users.length; iUser++) {
-                uint256 userReward = individualReward(epoch, users[iUser]);
-                uint256 rewardAfterAlpha = userReward.div(100).mul(alphas[iUser]);
                 proposalRewards[iProposal].donated =
                     proposalRewards[iProposal].donated +
-                    rewardAfterAlpha;
-                proposalRewardsSum = proposalRewardsSum + rewardAfterAlpha;
+                    allocations[iUser];
+                proposalRewardsSum = proposalRewardsSum + allocations[iUser];
             }
         }
         return (proposalRewardsSum, proposalRewards);
     }
 
     /// @notice Compute proposal rewards.
-    function matchedProposalRewards(uint32 epoch)
-        external
-        view
-        returns (ProposalRewards[] memory)
-    {
+    function matchedProposalRewards(
+        uint32 epoch
+    ) external view returns (ProposalRewards[] memory) {
         (
             uint256 proposalRewardsSum,
             ProposalRewards[] memory proposalRewards

@@ -1,3 +1,5 @@
+import { BigNumber } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
 import { useMetamask } from 'use-metamask';
 import React, { FC, Fragment, useEffect, useState } from 'react';
 import cx from 'classnames';
@@ -12,12 +14,13 @@ import AllocationSummary from 'components/dedicated/AllocationSummary/Allocation
 import Button from 'components/core/Button/Button';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 import triggerToast from 'utils/triggerToast';
+import useAllocate from 'hooks/useAllocate';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/useDepositEffectiveAtCurrentEpoch';
+import useIndividualReward from 'hooks/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/useMatchedProposalRewards';
 import useProposals from 'hooks/useProposals';
-import useUserVote from 'hooks/useUserVote';
-import useVote from 'hooks/useVote';
+import useUserAllocation from 'hooks/useUserAllocation';
 
 import {
   getAllocationValuesInitialState,
@@ -37,21 +40,24 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
   const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
   const [allocationValues, setAllocationValues] = useState<undefined | AllocationValues>(undefined);
   const {
-    data: userVote,
-    isFetching: isFetchingUserVote,
-    refetch: refetchUserVote,
-  } = useUserVote({ refetchOnMount: true });
+    data: userAllocation,
+    isFetching: isFetchingUserAllocation,
+    refetch: refetchUserAllocation,
+  } = useUserAllocation({ refetchOnMount: true });
+  const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: depositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
   const { data: matchedProposalRewards, refetch: refetchMatchedProposalRewards } =
     useMatchedProposalRewards();
-  const voteMutation = useVote({
-    onSuccess: () => {
+  const allocateMutation = useAllocate({
+    onSuccess: async () => {
       triggerToast({
         title: 'Allocation successful.',
       });
-      refetchMatchedProposalRewards();
-      refetchUserVote();
+      await refetchMatchedProposalRewards();
+      await refetchUserAllocation();
+      setCurrentView('edit');
+      setSelectedItemId(null);
     },
   });
 
@@ -61,7 +67,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
   const allocationsWithPositiveValuesKeys = Object.keys(allocationsWithPositiveValues);
 
   const onResetAllocationValues = () => {
-    const allocationValuesInitValue = getAllocationValuesInitialState(allocations!, userVote);
+    const allocationValuesInitValue = getAllocationValuesInitialState(allocations!, userAllocation);
     setAllocationValues(allocationValuesInitValue);
   };
 
@@ -70,10 +76,10 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
       onResetAllocationValues();
     }
     // eslint-disable-next-line
-  }, [allocations, proposals, userVote]);
+  }, [allocations, proposals, userAllocation]);
 
-  const onVote = () => {
-    const voteMutationArgs =
+  const onAllocate = () => {
+    const allocateMutationArgs =
       allocationsWithPositiveValuesKeys.length > 0
         ? {
             proposalId: allocationsWithPositiveValuesKeys[0],
@@ -83,11 +89,12 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
             proposalId: proposals[0].id.toString(),
             value: '0',
           };
-    voteMutation.mutate(voteMutationArgs);
+    allocateMutation.mutate(allocateMutationArgs);
   };
 
-  const changeAllocationItemValue = (id: number, value: number) => {
-    if (voteMutation.isLoading) {
+  const onChangeAllocationItemValue = (id: number, newValue: string) => {
+    let newValueBigNumber = parseUnits(newValue || '0');
+    if (allocateMutation.isLoading || !individualReward) {
       return;
     }
     if (
@@ -97,13 +104,16 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
       toastDebouncedOnlyOneItemAllowed();
       return;
     }
-    if (value > 100) {
+    if (newValueBigNumber.lt(0)) {
+      newValueBigNumber = BigNumber.from(0);
+    }
+    if (newValueBigNumber.gt(individualReward)) {
       toastBudgetExceeding();
       return;
     }
     setAllocationValues(prevState => ({
       ...prevState,
-      [id]: value,
+      [id]: newValue,
     }));
   };
 
@@ -112,16 +122,16 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
   const areAllocationsAvailable = allocationValues !== undefined && !isEmpty(allocations);
   return (
     <MainLayoutContainer
-      isLoading={allocationValues === undefined || (isConnected && isFetchingUserVote)}
+      isLoading={allocationValues === undefined || (isConnected && isFetchingUserAllocation)}
       navigationBottomSuffix={
         areAllocationsAvailable && (
           <AllocationNavigation
             areButtonsDisabled={areButtonsDisabled}
             currentView={currentView}
-            isLoading={voteMutation.isLoading}
+            isLoading={allocateMutation.isLoading}
             isSummaryEnabled={allocationsWithPositiveValuesKeys.length > 0}
+            onAllocate={onAllocate}
             onResetAllocationValues={onResetAllocationValues}
-            onVote={onVote}
             setCurrentView={setCurrentView}
           />
         )
@@ -151,7 +161,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
                     key={index}
                     className={cx(styles.box, isSelected && styles.isSelected)}
                     isSelected={isSelected}
-                    onChange={changeAllocationItemValue}
+                    onChange={onChangeAllocationItemValue}
                     onSelectItem={setSelectedItemId}
                     percentage={proposalMatchedProposalRewards?.percentage}
                     totalValueOfAllocations={proposalMatchedProposalRewards?.sum}
@@ -178,7 +188,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
         </Fragment>
       ) : (
         <AllocationSummary
-          newAllocationPercentage={allocationValues![allocationsWithPositiveValuesKeys[0]]}
+          newAllocationValue={allocationValues![allocationsWithPositiveValuesKeys[0]]}
         />
       )}
     </MainLayoutContainer>

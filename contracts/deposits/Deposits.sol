@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "./interfaces/ITracker.sol";
-import "./interfaces/IDeposits.sol";
+import "../interfaces/ITracker.sol";
+import "../interfaces/IDeposits.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+
+import {DepositsErrors} from "../Errors.sol";
 
 /// @title Contract tracking GLM deposits (staking) for Hexagon project.
 /// @author Golem Foundation
@@ -47,7 +49,7 @@ contract Deposits is Ownable, IDeposits {
         deposits[msg.sender] = oldDeposit + amount;
         require(
             glm.transferFrom(msg.sender, address(this), amount),
-            "HN/cannot-transfer-from-sender"
+            DepositsErrors.GLM_TRANSFER_FAILED
         );
         emit Deposited(amount, block.timestamp, msg.sender);
 
@@ -58,7 +60,7 @@ contract Deposits is Ownable, IDeposits {
     /// @param amount Amount of GLM to be withdrawn.
     function withdraw(uint224 amount) external {
         uint224 oldDeposit = uint224(deposits[msg.sender]);
-        require(oldDeposit >= amount, "HN/deposit-is-smaller");
+        require(oldDeposit >= amount, DepositsErrors.DEPOSIT_IS_TO_SMALL);
         deposits[msg.sender] = oldDeposit - amount;
         require(glm.transfer(msg.sender, amount));
         emit Withdrawn(amount, block.timestamp, msg.sender);

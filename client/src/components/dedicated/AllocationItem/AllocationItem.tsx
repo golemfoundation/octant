@@ -1,14 +1,17 @@
+import { BigNumber } from 'ethers';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { useMetamask } from 'use-metamask';
 import React, { FC, useEffect, useRef } from 'react';
 import cx from 'classnames';
 
+import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 import { minus, plus } from 'svg/misc';
-import { numbersOnly } from 'utils/regExp';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
 import InputText from 'components/core/InputText/InputText';
 import Svg from 'components/core/Svg/Svg';
 import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
+import useIndividualReward from 'hooks/useIndividualReward';
 
 import AllocationItemProps from './types';
 import styles from './style.module.scss';
@@ -27,6 +30,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   const {
     metaState: { isConnected },
   } = useMetamask();
+  const { data: individualReward } = useIndividualReward();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -35,10 +39,11 @@ const AllocationItem: FC<AllocationItemProps> = ({
     }
   });
 
-  const onChangeNumber = (newValue: number) => {
-    if (newValue < 0) {
+  const onChangeValue = (newValue: string) => {
+    if (newValue && !floatNumberWithUpTo18DecimalPlaces.test(newValue)) {
       return;
     }
+
     onChange(id.toNumber(), newValue);
   };
 
@@ -47,13 +52,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
       target: { value: newValue },
     } = event;
 
-    if ((!value && !newValue) || !numbersOnly.test(newValue)) {
-      return;
-    }
-
-    const newValueNumber = newValue ? parseInt(newValue, 10) : 0;
-
-    onChangeNumber(newValueNumber);
+    onChangeValue(newValue);
   };
 
   const inputProps = {
@@ -62,7 +61,9 @@ const AllocationItem: FC<AllocationItemProps> = ({
     placeholder: isSelected ? '' : '0',
   };
 
-  const valueToRender = value === undefined ? 0 : value;
+  const isChangeAvailable = isConnected && individualReward;
+  const valueToCalculate = value === undefined ? BigNumber.from('0') : parseUnits(value);
+
   return (
     <BoxRounded
       alignment="center"
@@ -87,25 +88,28 @@ const AllocationItem: FC<AllocationItemProps> = ({
         </div>
       </div>
       <div className={cx(styles.value, isSelected && styles.isSelected)}>
-        <InputText
-          ref={inputRef}
-          value={valueToRender.toString()}
-          variant="borderless"
-          {...inputProps}
-        />
-        <div className={styles.currency}>% or reward budget</div>
+        <InputText ref={inputRef} value={value || '0'} variant="borderless" {...inputProps} />
+        <div className={styles.currency}>ETH</div>
       </div>
       <div className={cx(styles.buttons, isSelected && styles.isSelected)}>
         <Button
           className={styles.button}
           Icon={<Svg img={plus} size={1.2} />}
-          onClick={isConnected ? () => onChangeNumber(valueToRender + 1) : undefined}
+          onClick={
+            isChangeAvailable
+              ? () => onChangeValue(formatUnits(valueToCalculate.add(individualReward.div(10))))
+              : undefined
+          }
           variant="iconOnlyTransparent"
         />
         <Button
           className={styles.button}
           Icon={<Svg img={minus} size={1.2} />}
-          onClick={isConnected ? () => onChangeNumber(valueToRender - 1) : undefined}
+          onClick={
+            isChangeAvailable
+              ? () => onChangeValue(formatUnits(valueToCalculate.sub(individualReward.div(10))))
+              : undefined
+          }
           variant="iconOnlyTransparent"
         />
       </div>

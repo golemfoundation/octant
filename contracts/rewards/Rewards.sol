@@ -1,19 +1,22 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "./interfaces/IDeposits.sol";
-import "./interfaces/IHexagonOracle.sol";
-import "./interfaces/IEpochs.sol";
-import "./interfaces/IAllocationsStorage.sol";
+import "../interfaces/IDeposits.sol";
+import "../interfaces/IHexagonOracle.sol";
+import "../interfaces/IEpochs.sol";
+import "../interfaces/IAllocationsStorage.sol";
+import "../interfaces/IProposals.sol";
+import "../interfaces/IRewards.sol";
 
 /// tightly coupled contracts
-import "./Tracker.sol";
+import "../deposits/Tracker.sol";
 
 /// external dependencies
 import "@prb/math/contracts/PRBMathUD60x18.sol";
-import "./interfaces/IProposals.sol";
 
-contract Rewards {
+/// @notice Contract responsible for calculating rewards from Hexagon GLM Governance Experiment.
+/// Get more insight about calculations here: https://hexagonapp.notion.site/Hexagon-a-GLM-Governance-Experiment-e098d7ff9d55468db28b8b3584b5959c
+contract Rewards is IRewards {
     using PRBMathUD60x18 for uint256;
 
     struct ProposalRewards {
@@ -61,9 +64,11 @@ contract Rewards {
         allocationsStorage = IAllocationsStorage(allocationsStorageAddress);
     }
 
-    /// @notice Compute funds staked at a particular epoch as ratio to total GLM token supply.
+    /// @notice Compute GLM staked by users at a particular epoch as ratio to total GLM token supply.
+    /// @return value in the range of 0 to 1 represented in WEI. Parse it to Ether to get the floated ratio.
+    /// example: 2288000000000 = 0.000002288 of total GLMs are staked
     function stakedRatio(uint32 epoch) public view returns (uint256) {
-        uint224 tokenSupply = tracker.tokenSupplyAt(epoch);
+        uint256 tokenSupply = tracker.tokenSupplyAt(epoch);
         return tracker.totalDepositAt(epoch).div(tokenSupply);
     }
 
@@ -73,8 +78,8 @@ contract Rewards {
     }
 
     /// @notice Compute user's individual reward for particular epoch.
-    function individualReward(uint32 epoch, address individual) public view returns (uint256) {
-        uint256 myDeposit = tracker.depositAt(individual, epoch);
+    function individualReward(uint32 epoch, address user) public view returns (uint256) {
+        uint256 myDeposit = tracker.depositAt(user, epoch);
         if (myDeposit == 0) {
             return 0;
         }
@@ -90,45 +95,45 @@ contract Rewards {
     }
 
     /// @notice Compute matched rewards.
+    /// Rewards to be distributed by Golem Foundation between proposals in particular epoch.
     function matchedRewards(uint32 epoch) public view returns (uint256) {
         return totalRewards(epoch) - allIndividualRewards(epoch);
     }
 
-    /// @notice Total donated funds by participants.
-    function individualProposalRewards(uint32 epoch)
-        public
-        view
-        returns (uint256, ProposalRewards[] memory)
-    {
+    /// @notice Calculates donated funds by participants in given epoch.
+    /// @return 0: proposalRewardsSum - total donated ETH to all proposals in given epoch.
+    /// 1: array of proposals rewards containing id - proposal id, donated - donated by all users for
+    /// this proposal in WEI, matched - 0 (to get matched reward value call matchedProposalRewards() method).
+    function individualProposalRewards(
+        uint32 epoch
+    ) public view returns (uint256, ProposalRewards[] memory) {
         uint256[] memory proposalIds = proposals.getProposalIds(epoch);
         uint256 proposalRewardsSum;
         ProposalRewards[] memory proposalRewards = new ProposalRewards[](proposalIds.length);
         for (uint256 iProposal = 0; iProposal < proposalIds.length; iProposal++) {
             proposalRewards[iProposal].id = proposalIds[iProposal];
-            (address[] memory users, uint256[] memory alphas) = allocationsStorage.getUsersAlphas(
+            (address[] memory users, uint256[] memory allocations) = allocationsStorage.getUsersWithTheirAllocations(
                 epoch,
                 proposalIds[iProposal]
             );
 
             // count individual rewards for proposals.
             for (uint256 iUser = 0; iUser < users.length; iUser++) {
-                uint256 userReward = individualReward(epoch, users[iUser]);
-                uint256 rewardAfterAlpha = userReward.div(100).mul(alphas[iUser]);
                 proposalRewards[iProposal].donated =
-                    proposalRewards[iProposal].donated +
-                    rewardAfterAlpha;
-                proposalRewardsSum = proposalRewardsSum + rewardAfterAlpha;
+                proposalRewards[iProposal].donated +
+                allocations[iUser];
+                proposalRewardsSum = proposalRewardsSum + allocations[iUser];
             }
         }
         return (proposalRewardsSum, proposalRewards);
     }
 
-    /// @notice Compute proposal rewards.
-    function matchedProposalRewards(uint32 epoch)
-        external
-        view
-        returns (ProposalRewards[] memory)
-    {
+    /// @notice Calculates donated and matched funds by participants in given epoch.
+    /// @return array of proposals rewards containing id - proposal id, donated - donated by all users for
+    /// this proposal in WEI, matched - amount donated by Golem Foundation to this proposal in WEI.
+    function matchedProposalRewards(
+        uint32 epoch
+    ) external view returns (ProposalRewards[] memory) {
         (
             uint256 proposalRewardsSum,
             ProposalRewards[] memory proposalRewards
