@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { useMetamask } from 'use-metamask';
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, Fragment, useEffect, useRef } from 'react';
 import cx from 'classnames';
 
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
@@ -73,18 +73,24 @@ const AllocationItem: FC<AllocationItemProps> = ({
       <div className={styles.details}>
         <div className={styles.name}>{name}</div>
         <div className={styles.funds}>
-          <div>{totalValueOfAllocations} ETH</div>
-          <div className={styles.percent}>
-            {percentage}%
-            <div
-              className={cx(
-                styles.indicator,
-                percentage &&
-                  isAboveProposalDonationThresholdPercent(percentage) &&
-                  styles.isAboveThreshold,
-              )}
-            />
-          </div>
+          {totalValueOfAllocations !== undefined && percentage !== undefined ? (
+            <Fragment>
+              <div>{totalValueOfAllocations} ETH</div>
+              <div className={styles.percent}>
+                {percentage}%
+                <div
+                  className={cx(
+                    styles.indicator,
+                    percentage &&
+                      isAboveProposalDonationThresholdPercent(percentage) &&
+                      styles.isAboveThreshold,
+                  )}
+                />
+              </div>
+            </Fragment>
+          ) : (
+            <Fragment>Allocation values are not available</Fragment>
+          )}
         </div>
       </div>
       <div className={cx(styles.value, isSelected && styles.isSelected)}>

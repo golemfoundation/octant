@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
-import React, { FC } from 'react';
+import React, { FC, Fragment } from 'react';
 import cx from 'classnames';
 
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
@@ -15,6 +15,7 @@ import env from 'env';
 import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
 import triggerToast from 'utils/triggerToast';
 import truncateEthAddress from 'utils/truncateEthAddress';
+import useCurrentEpoch from 'hooks/useCurrentEpoch';
 import useIdsInAllocation from 'hooks/useIdsInAllocation';
 import useMatchedProposalRewards from 'hooks/useMatchedProposalRewards';
 import useProposals from 'hooks/useProposals';
@@ -38,6 +39,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
   const { proposalId } = useParams();
   const proposalIdNumber = parseInt(proposalId!, 10);
   const { proposals } = useProposals();
+  const { data: currentEpoch } = useCurrentEpoch();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
   const { data: usersWithTheirAllocations } = useUsersWithTheirAllocations(proposalId!, {
     refetchOnMount: true,
@@ -51,8 +53,10 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
     allocations,
     proposalName: proposal && proposal.name,
   });
+  const shouldMatchedProposalRewardsBeAvailable =
+    !!currentEpoch && ((currentEpoch > 1 && matchedProposalRewards) || currentEpoch === 1);
 
-  if (!proposal || !proposalMatchedProposalRewards) {
+  if (!proposal || !shouldMatchedProposalRewardsBeAvailable) {
     return (
       <MainLayoutContainer
         classNameBody={styles.bodyLayout}
@@ -103,18 +107,24 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
         <div className={styles.nameAndAllocationValues}>
           <span className={styles.name}>{name}</span>
           <div className={styles.allocationValues}>
-            <div>{proposalMatchedProposalRewards.sum} ETH</div>
-            <div className={styles.separator} />
-            <div
-              className={cx(
-                styles.percentage,
-                isAboveProposalDonationThresholdPercent(
-                  proposalMatchedProposalRewards.percentage,
-                ) && styles.isAboveThreshold,
-              )}
-            >
-              {proposalMatchedProposalRewards.percentage} %
-            </div>
+            {proposalMatchedProposalRewards ? (
+              <Fragment>
+                <div>{proposalMatchedProposalRewards?.sum} ETH</div>
+                <div className={styles.separator} />
+                <div
+                  className={cx(
+                    styles.percentage,
+                    isAboveProposalDonationThresholdPercent(
+                      proposalMatchedProposalRewards?.percentage,
+                    ) && styles.isAboveThreshold,
+                  )}
+                >
+                  {proposalMatchedProposalRewards?.percentage} %
+                </div>
+              </Fragment>
+            ) : (
+              <Fragment>Allocation values are not available</Fragment>
+            )}
           </div>
         </div>
       </div>

@@ -21,7 +21,7 @@ export default function useMatchedProposalRewards(): UseQueryResult<ProposalRewa
     ['matchedProposalRewards'],
     () => contractRewards?.matchedProposalRewards(currentEpoch! - 1),
     {
-      enabled: !!currentEpoch && currentEpoch - 1 > 0 && !!contractRewards,
+      enabled: !!currentEpoch && currentEpoch > 1 && !!contractRewards,
       select: response => {
         // Response structure: [id, donated, matched][]
         const totalDonations = response?.reduce(

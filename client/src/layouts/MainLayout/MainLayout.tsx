@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import { useLocation } from 'react-router-dom';
 import { useMetamask } from 'use-metamask';
-import React, { FC } from 'react';
+import React, { FC, Fragment } from 'react';
 import cx from 'classnames';
 
 import { allocateWithNumber, userGenericIcon } from 'svg/navigation';
@@ -13,6 +13,7 @@ import Loader from 'components/core/Loader/Loader';
 import Svg from 'components/core/Svg/Svg';
 import env from 'env';
 import truncateEthAddress from 'utils/truncateEthAddress';
+import useCurrentEpoch from 'hooks/useCurrentEpoch';
 import useIndividualReward from 'hooks/useIndividualReward';
 
 import MainLayoutProps from './types';
@@ -53,6 +54,7 @@ const MainLayout: FC<MainLayoutProps> = ({
     metaState: { isConnected, account },
   } = useMetamask();
   const { data: individualReward } = useIndividualReward();
+  const { data: currentEpoch } = useCurrentEpoch();
   const { pathname } = useLocation();
   const address = account[0];
 
@@ -71,6 +73,9 @@ const MainLayout: FC<MainLayoutProps> = ({
     },
   );
 
+  const getIndividualReward = () =>
+    individualReward ? `Budget ${formatUnits(individualReward)} ETH` : 'Loading reward budget...';
+
   return (
     <div className={styles.root}>
       {isHeaderVisible && (
@@ -88,9 +93,11 @@ const MainLayout: FC<MainLayoutProps> = ({
               <div className={styles.walletInfo}>
                 <div className={styles.address}>{truncateEthAddress(address)}</div>
                 <div className={styles.budget}>
-                  {individualReward
-                    ? `Budget ${formatUnits(individualReward)} ETH`
-                    : 'Loading reward budget...'}
+                  {!!currentEpoch && currentEpoch > 1 ? (
+                    getIndividualReward()
+                  ) : (
+                    <Fragment>Reward budget will be available after epoch 1</Fragment>
+                  )}
                 </div>
               </div>
               <Svg img={userGenericIcon} size={3.2} />

@@ -9,6 +9,6 @@ export default function useMatchedRewards(): UseQueryResult<BigNumber> {
   const { data: currentEpoch } = useCurrentEpoch();
 
   return useQuery(['matchedRewards'], () => contractRewards?.matchedRewards(currentEpoch! - 1), {
-    enabled: !!currentEpoch && currentEpoch - 1 > 0 && !!contractRewards,
+    enabled: !!currentEpoch && currentEpoch > 1 && !!contractRewards,
   });
 }

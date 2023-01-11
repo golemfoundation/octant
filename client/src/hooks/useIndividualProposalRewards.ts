@@ -17,7 +17,7 @@ export default function useIndividualProposalRewards(): UseQueryResult<{
     ['individualProposalRewards'],
     () => contractRewards?.individualProposalRewards(currentEpoch! - 1),
     {
-      enabled: !!contractRewards && !!currentEpoch && currentEpoch - 1 > 0,
+      enabled: !!contractRewards && !!currentEpoch && currentEpoch > 1,
       select: response => {
         return {
           list: response![1],
