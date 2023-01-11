@@ -93,7 +93,9 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
   };
 
   const onChangeAllocationItemValue = (id: number, newValue: string) => {
-    let newValueBigNumber = parseUnits(newValue || '0');
+    // When value === '', we keep it as undefined, for check in AllocationItem.tsx mapping to BigNumber.
+    const newValueProcessed = newValue === '' ? undefined : newValue;
+    let newValueBigNumber = parseUnits(newValueProcessed || '0');
     if (allocateMutation.isLoading || !individualReward) {
       return;
     }
@@ -113,7 +115,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
     }
     setAllocationValues(prevState => ({
       ...prevState,
-      [id]: newValue,
+      [id]: newValueProcessed,
     }));
   };
 
