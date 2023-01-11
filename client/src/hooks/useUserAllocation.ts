@@ -29,7 +29,7 @@ export default function useUserAllocation(
     ['userAllocation'],
     () => contractAllocationsStorage?.getUserAllocation(currentEpoch! - 1, address),
     {
-      enabled: !!currentEpoch && currentEpoch - 1 > 0 && !!address,
+      enabled: !!currentEpoch && currentEpoch > 1 && !!address,
       select: response => ({
         allocation: response![0],
         proposalId: response![1]?.toNumber(),

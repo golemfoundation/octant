@@ -17,7 +17,7 @@ export default function useUsersWithTheirAllocations(
     ['usersWithTheirAllocations', proposalId],
     () => contractAllocationsStorage?.getUsersWithTheirAllocations(currentEpoch! - 1, proposalId),
     {
-      enabled: !!contractAllocationsStorage && !!currentEpoch && currentEpoch - 1 > 0,
+      enabled: !!contractAllocationsStorage && !!currentEpoch && currentEpoch > 1,
       select: response =>
         response![0].map((address, index) => ({
           address,

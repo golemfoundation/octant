@@ -55,17 +55,23 @@ const ProposalItem: FC<ProposalItemProps> = ({
           </div>
           <div className={styles.footer}>
             <div className={styles.numbers}>
-              <div className={styles.sum}>{totalValueOfAllocations} ETH</div>
-              <div
-                className={cx(
-                  styles.percentage,
-                  percentage &&
-                    isAboveProposalDonationThresholdPercent(percentage) &&
-                    styles.isAboveThreshold,
-                )}
-              >
-                {percentage}%
-              </div>
+              {totalValueOfAllocations !== undefined && percentage !== undefined ? (
+                <Fragment>
+                  <div className={styles.sum}>{totalValueOfAllocations} ETH</div>
+                  <div
+                    className={cx(
+                      styles.percentage,
+                      percentage &&
+                        isAboveProposalDonationThresholdPercent(percentage) &&
+                        styles.isAboveThreshold,
+                    )}
+                  >
+                    {percentage}%
+                  </div>
+                </Fragment>
+              ) : (
+                <Fragment>Allocation values are not available</Fragment>
+              )}
             </div>
             <div>
               <Button
