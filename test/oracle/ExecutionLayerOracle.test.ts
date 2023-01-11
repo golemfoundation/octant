@@ -56,13 +56,13 @@ makeTestsEnv(EXECUTION_LAYER_ORACLE, (testEnv) => {
   describe('setValidatorAddress', async () => {
     it('Can set validator address', async () => {
       const { executionLayerOracle, signers: { Alice } } = testEnv;
-      await executionLayerOracle.setValidatorAddress(Alice.address);
-      expect(await executionLayerOracle.validatorAddress()).eq(Alice.address);
+      await executionLayerOracle.setFeeAddress(Alice.address);
+      expect(await executionLayerOracle.feeAddress()).eq(Alice.address);
     });
 
     it('Darth cannot set validator`s indexes', async () => {
       const { executionLayerOracle, signers: { Darth } } = testEnv;
-      expect(executionLayerOracle.connect(Darth).setValidatorAddress(Darth.address))
+      expect(executionLayerOracle.connect(Darth).setFeeAddress(Darth.address))
         .revertedWith('Ownable: caller is not the owner');
     });
   });

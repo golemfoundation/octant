@@ -5,7 +5,7 @@ export default interface AllocationNavigationProps {
   currentView: CurrentView;
   isLoading: boolean;
   isSummaryEnabled: boolean;
+  onAllocate: () => void;
   onResetAllocationValues: () => void;
-  onVote: () => void;
   setCurrentView: (newView: CurrentView) => void;
 }

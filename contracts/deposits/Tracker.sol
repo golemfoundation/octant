@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "./interfaces/IEpochs.sol";
-import "./interfaces/ITracker.sol";
-import "./interfaces/IDeposits.sol";
+import "../interfaces/IEpochs.sol";
+import "../interfaces/ITracker.sol";
+import "../interfaces/IDeposits.sol";
 
 /// external dependencies
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./TrackerWrapper.sol";
+
+import {TrackerErrors} from "../Errors.sol";
 
 /// @title Contract tracking effective deposits across epochs (Hexagon).
 /// @author Golem Foundation
@@ -112,8 +114,8 @@ contract Tracker is Ownable {
     /// @return Effective deposit (GLM) in wei for particular epoch, particular owner.
     function depositAt(address owner, uint32 epochNo) external view returns (uint256) {
         uint32 currentEpoch = epochs.getCurrentEpoch();
-        require(epochNo <= currentEpoch, "HN/future-is-unknown");
-        require(epochNo > 0, "HN/epochs-start-from-1");
+        require(epochNo <= currentEpoch, TrackerErrors.FUTURE_IS_UNKNOWN);
+        require(epochNo > 0, TrackerErrors.EPOCHS_START_FROM_1);
         for (uint32 iEpoch = epochNo; iEpoch <= currentEpoch; iEpoch = iEpoch + 1) {
             if (effectiveDeposits[owner][iEpoch].isSet) {
                 return uint256(_applyDepositCutoff(effectiveDeposits[owner][iEpoch].amount));
@@ -124,8 +126,8 @@ contract Tracker is Ownable {
 
     function totalDepositAt(uint32 epochNo) external view returns (uint256) {
         uint32 currentEpoch = epochs.getCurrentEpoch();
-        require(epochNo <= currentEpoch, "HN/future-is-unknown");
-        require(epochNo > 0, "HN/epochs-start-from-1");
+        require(epochNo <= currentEpoch, TrackerErrors.FUTURE_IS_UNKNOWN);
+        require(epochNo > 0, TrackerErrors.EPOCHS_START_FROM_1);
         for (uint32 iEpoch = epochNo; iEpoch <= currentEpoch; iEpoch = iEpoch + 1) {
             if (totalEffectiveDeposits[iEpoch].isSet) {
                 return uint256(totalEffectiveDeposits[iEpoch].amount);
@@ -136,8 +138,8 @@ contract Tracker is Ownable {
 
     function tokenSupplyAt(uint32 epochNo) external view returns (uint224) {
         uint32 currentEpoch = epochs.getCurrentEpoch();
-        require(epochNo <= currentEpoch, "HN/future-is-unknown");
-        require(epochNo > 0, "HN/epochs-start-from-1");
+        require(epochNo <= currentEpoch, TrackerErrors.FUTURE_IS_UNKNOWN);
+        require(epochNo > 0, TrackerErrors.EPOCHS_START_FROM_1);
         for (uint32 iEpoch = epochNo; iEpoch <= currentEpoch; iEpoch = iEpoch + 1) {
             if (0 != tokenSupplyByEpoch[iEpoch]) {
                 return tokenSupplyByEpoch[iEpoch];
@@ -227,7 +229,7 @@ contract Tracker is Ownable {
     }
 
     modifier onlyTrackerWrapper() {
-        require(msg.sender == proxyAddress, "HN/invalid-caller");
+        require(msg.sender == proxyAddress, TrackerErrors.UNAUTHORIZED_CALLER);
         _;
     }
 }

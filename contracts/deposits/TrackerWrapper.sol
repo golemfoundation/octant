@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "./interfaces/ITracker.sol";
+import "../interfaces/ITracker.sol";
 import "./Tracker.sol";
-import "./interfaces/IDeposits.sol";
 
+import {TrackerErrors} from "../Errors.sol";
 
 /// @title Proxy to contract tracking effective deposits across epochs (Hexagon).
 /// @author Golem Foundation
@@ -59,7 +59,7 @@ contract TrackerWrapper is ITracker {
     }
 
     modifier onlyDeposits() {
-        require(msg.sender == depositsAddress, "HN/invalid-caller");
+        require(msg.sender == depositsAddress, TrackerErrors.UNAUTHORIZED_CALLER);
         _;
     }
 }

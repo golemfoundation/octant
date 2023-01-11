@@ -1,3 +1,3 @@
 export default interface AllocationSummaryProps {
-  newAllocationPercentage: number;
+  newAllocationValue: string;
 }

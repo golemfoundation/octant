@@ -17,8 +17,8 @@ import triggerToast from 'utils/triggerToast';
 import truncateEthAddress from 'utils/truncateEthAddress';
 import useIdsInAllocation from 'hooks/useIdsInAllocation';
 import useMatchedProposalRewards from 'hooks/useMatchedProposalRewards';
-import useProjectDonors from 'hooks/useProjectDonors';
 import useProposals from 'hooks/useProposals';
+import useUsersWithTheirAllocations from 'hooks/useUsersWithTheirAllocations';
 
 import ProposalViewProps from './types';
 import styles from './style.module.scss';
@@ -39,7 +39,9 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
   const proposalIdNumber = parseInt(proposalId!, 10);
   const { proposals } = useProposals();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
-  const { data: userAlphas } = useProjectDonors(proposalId!, { refetchOnMount: true });
+  const { data: usersWithTheirAllocations } = useUsersWithTheirAllocations(proposalId!, {
+    refetchOnMount: true,
+  });
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ id }) => id.toString() === proposalId,
   );
@@ -131,10 +133,12 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
       <div className={styles.donors}>
         <div className={styles.header}>
           <span>Donors</span>{' '}
-          {userAlphas && <div className={styles.count}>{userAlphas.length}</div>}
+          {usersWithTheirAllocations && (
+            <div className={styles.count}>{usersWithTheirAllocations.length}</div>
+          )}
         </div>
-        {userAlphas &&
-          userAlphas.map(({ address }, index) => (
+        {usersWithTheirAllocations &&
+          usersWithTheirAllocations.map(({ address }, index) => (
             // eslint-disable-next-line react/no-array-index-key
             <div key={index} className={styles.donor}>
               <Svg classNameSvg={styles.donorIcon} img={donorGenericIcon} size={2.4} />

@@ -1,34 +1,24 @@
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-/* SPDX-License-Identifier: UNLICENSED */
-
 interface IAllocationsStorage {
-    struct Vote {
-        uint256 alpha;
+    struct Allocation {
+        uint256 allocation;
         uint256 proposalId;
     }
 
-    function getUserVote(uint256 _epoch, address _user) external view returns (Vote memory);
+    function getUserAllocation(uint256 _epoch, address _user) external view returns (Allocation memory);
 
-    function addVote(
+    function addAllocation(uint256 _epoch, uint256 _proposalId, address _user, uint256 _fundsToAllocate) external;
+
+    function removeAllocation(uint256 _epoch, uint256 _proposalId, address _user) external;
+
+    function getUsersWithTheirAllocations(
         uint256 _epoch,
-        uint256 _proposalId,
-        address _user,
-        uint256 _alpha
-    ) external;
+        uint256 _proposalId
+    ) external view returns (address[] memory, uint256[] memory);
 
-    function removeVote(
-        uint256 _epoch,
-        uint256 _proposalId,
-        address _user
-    ) external;
-
-    function getUsersAlphas(uint256 _epoch, uint256 _proposalId)
-        external
-        view
-        returns (address[] memory, uint256[] memory);
-
-    function getVotesCount(uint256 _epoch, uint256 _proposalId) external view returns (uint256);
+    function getAllocationsCount(uint256 _epoch, uint256 _proposalId) external view returns (uint256);
 
     function getUser(
         uint256 _epoch,

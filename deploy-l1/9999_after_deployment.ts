@@ -3,6 +3,7 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import {
   ALLOCATIONS,
   ALLOCATIONS_STORAGE,
+  BEACON_CHAIN_ORACLE,
   DEPOSITS,
   EPOCHS,
   PROPOSALS,
@@ -30,6 +31,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`VITE_REWARDS_ADDRESS=${rewards.address}`);
   const testRewards = await hre.ethers.getContract(TEST_REWARDS);
   console.log(`VITE_TEST_REWARDS_ADDRESS=${testRewards.address}`);
+  const beaconChain = await hre.ethers.getContract(BEACON_CHAIN_ORACLE);
+  console.log(`VITE_BEACON_CHAIN_ORACLE_ADDRESS=${beaconChain.address}`);
 };
 
 export default func;

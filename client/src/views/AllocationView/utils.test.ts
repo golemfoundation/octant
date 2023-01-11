@@ -22,22 +22,22 @@ describe('getAllocationsWithPositiveValues', () => {
   });
 
   it('properly finds allocations with values', () => {
-    expect(getAllocationsWithPositiveValues({ '1': 10, '2': 0, '3': undefined })).toEqual({
-      '1': 10,
+    expect(getAllocationsWithPositiveValues({ '1': '10', '2': '0', '3': undefined })).toEqual({
+      '1': '10',
     });
   });
 
   it('properly finds allocations with values', () => {
-    expect(getAllocationsWithPositiveValues({ '1': 10, '2': 5, '3': undefined })).toEqual({
-      '1': 10,
-      '2': 5,
+    expect(getAllocationsWithPositiveValues({ '1': '10', '2': '5', '3': undefined })).toEqual({
+      '1': '10',
+      '2': '5',
     });
   });
 
   it('properly finds allocations with values', () => {
-    expect(getAllocationsWithPositiveValues({ '1': 10, '2': 5, '3': 0 })).toEqual({
-      '1': 10,
-      '2': 5,
+    expect(getAllocationsWithPositiveValues({ '1': '10', '2': '5', '3': '0' })).toEqual({
+      '1': '10',
+      '2': '5',
     });
   });
 });

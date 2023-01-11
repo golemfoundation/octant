@@ -1,9 +1,10 @@
 import '@matterlabs/hardhat-zksync-deploy';
 import '@matterlabs/hardhat-zksync-solc';
+import '@nomicfoundation/hardhat-chai-matchers';
+import '@nomiclabs/hardhat-ethers';
 import '@typechain/hardhat';
 import 'hardhat-deploy';
 import 'hardhat-deploy-ethers';
-
 import 'hardhat-docgen';
 import 'hardhat-gas-reporter';
 import { HardhatUserConfig } from 'hardhat/types';
@@ -12,8 +13,8 @@ import { ETHERSCAN_API_KEY, GOERLI_PRIVATE_KEY, GOERLI_URL, REPORT_GAS, ZKSYNC_U
 
 import './tasks/clean';
 import './tasks/deploy-zksync';
-import './tasks/mine';
 import './tasks/increase-time';
+import './tasks/mine';
 import './tasks/send-glm';
 
 const config: HardhatUserConfig = {
@@ -21,8 +22,8 @@ const config: HardhatUserConfig = {
     version: '0.8.9',
     settings: {
       outputSelection: {
-        "*": {
-          "*": ["storageLayout"]
+        '*': {
+          '*': ['storageLayout']
         }
       }
     }

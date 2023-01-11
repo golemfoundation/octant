@@ -3,7 +3,7 @@ import { AllocationsStore } from 'store/models/allocations/types';
 export type CurrentView = 'edit' | 'summary';
 
 export interface AllocationValues {
-  [key: number]: undefined | number;
+  [key: number]: undefined | string;
 }
 
 export interface AllocationValuesDefined {

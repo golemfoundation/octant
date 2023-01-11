@@ -1,11 +1,11 @@
-import { BigNumberish } from 'ethers';
+import { BigNumber } from 'ethers';
 import { UseQueryResult, useQuery } from 'react-query';
 import { useMetamask } from 'use-metamask';
 
 import useContractRewards from './contracts/useContractRewards';
 import useCurrentEpoch from './useCurrentEpoch';
 
-export default function useIndividualReward(): UseQueryResult<BigNumberish | undefined> {
+export default function useIndividualReward(): UseQueryResult<BigNumber | undefined> {
   const contractRewards = useContractRewards();
   const {
     metaState: { account },

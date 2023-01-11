@@ -1,35 +1,35 @@
-import chai from 'chai';
-// @ts-ignore
-import bignumberChai from 'chai-bignumber';
-import { solidity } from 'ethereum-waffle';
-
-import { smock } from '@defi-wonderland/smock';
-
 import { deployments, ethers } from 'hardhat';
 import {
-  PROPOSALS,
-  DEPOSITS, TRACKER, REWARDS, TEST_REWARDS,
-  TOKEN,
   ALLOCATIONS,
+  ALLOCATIONS_STORAGE,
+  BEACON_CHAIN_ORACLE,
+  DEPOSITS,
   EPOCHS,
-  BEACON_CHAIN_ORACLE, EXECUTION_LAYER_ORACLE, HEXAGON_ORACLE, ALLOCATIONS_STORAGE, FAUCET
+  EXECUTION_LAYER_ORACLE,
+  FAUCET,
+  HEXAGON_ORACLE,
+  PROPOSALS,
+  REWARDS,
+  TEST_REWARDS,
+  TOKEN,
+  TRACKER
 } from '../../helpers/constants';
 import {
-  Proposals,
-  Deposits, Tracker, Rewards, TestRewards,
-  Token,
   Allocations,
+  AllocationsStorage,
+  BeaconChainOracle,
+  Deposits,
   Epochs,
-  ExecutionLayerOracle, HexagonOracle, BeaconChainOracle, AllocationsStorage, TestGLMFaucet
+  ExecutionLayerOracle,
+  HexagonOracle,
+  Proposals,
+  Rewards,
+  TestGLMFaucet,
+  TestRewards,
+  Token,
+  Tracker
 } from '../../typechain-types';
 import { Signers, TestEnv } from './test-env.interface';
-
-chai.use(bignumberChai());
-chai.use(solidity);
-
-chai.should();
-chai.use(smock.matchers);
-
 
 const testEnv: TestEnv = {
   signers: {} as Signers,
