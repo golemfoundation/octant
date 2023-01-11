@@ -59,7 +59,6 @@ const UserGlmStake: FC<UserGlmStakeProps> = ({ classNameBox }) => {
       </BoxRounded>
       <GlmStakingFlow
         modalProps={{
-          header: 'Stake GLM',
           isOpen: isGlmStakingModalOpen,
           onClosePanel: () => setIsGlmStakingModalOpen(false),
         }}
