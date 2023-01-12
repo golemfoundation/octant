@@ -10,11 +10,11 @@ $transition-time-1: 0.5s;
 
 $z-index-2: 2;
 $z-index-3: 3;
-$z-index-4: 4;
+$z-index-4: 4; // overlays
+$z-index-5: 5; // modals
 
 // distances
 $headerNavigationHeight: 7.2rem;
-$headerMarginHorizontal: 2.4rem;
 $layoutBodyMarginTop: 1.6rem;
-$layoutBodyMarginBottom: $headerNavigationHeight + 2 * $headerMarginHorizontal;
-$layoutBodyMarginHorizontal: 2.4rem;
+$layoutMarginHorizontal: 2.4rem;
+$layoutBodyMarginBottom: $headerNavigationHeight + 2 * $layoutMarginHorizontal;

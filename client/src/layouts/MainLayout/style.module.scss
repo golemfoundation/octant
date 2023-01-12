@@ -3,21 +3,24 @@ $headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
 .root {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  max-width: 70.8rem;
+  min-height: 100%;
+  max-width: 70.8rem + $layoutMarginHorizontal * 2;
   margin: 0 auto;
 }
 
 .header {
+  position: sticky;
+  top: 1.6rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: $headerNavigationHeight;
   border-radius: $headerNavigationBorderRadius;
   background: $color-white;
-  padding: $headerMarginHorizontal;
-  margin: 1.6rem $headerMarginHorizontal 0;
+  padding: $layoutMarginHorizontal;
+  margin: 1.6rem $layoutMarginHorizontal;
   box-shadow: $box-shadow-1;
+  z-index: $z-index-3;
 }
 
 .logoWrapper {
@@ -81,7 +84,7 @@ $headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
   align-items: center;
   justify-content: flex-start;
   flex: 1;
-  padding: $layoutBodyMarginTop $layoutBodyMarginHorizontal $layoutBodyMarginBottom;
+  padding: $layoutBodyMarginTop $layoutMarginHorizontal $layoutBodyMarginBottom;
 
   &.isLoading {
     justify-content: center;
@@ -90,14 +93,14 @@ $headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
 
 .navigation {
   position: fixed;
-  bottom: $headerMarginHorizontal;
+  bottom: $layoutMarginHorizontal;
   left: 50%;
   transform: translate(-50%, 0);;
   border-radius: $headerNavigationBorderRadius;
   background: $color-white;
   box-shadow: $box-shadow-1;
   max-width: 37.8rem;
-  z-index: $z-index-3;
+  z-index: $z-index-4;
 
   &.hasNavigationBottomSuffix {
     border-radius: 1.6rem 1.6rem $headerNavigationBorderRadius $headerNavigationBorderRadius;

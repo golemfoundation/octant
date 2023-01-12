@@ -1,6 +1,6 @@
 .root {
   position: fixed;
-  z-index: $z-index-4;
+  z-index: $z-index-5;
   bottom: -100%;
   left: 0;
   width: 100%;
@@ -44,7 +44,7 @@
   position: absolute;
   top: 2.4rem;
   right: 2.4rem;
-  z-index: $z-index-3;
+  z-index: $z-index-4;
 }
 
 
