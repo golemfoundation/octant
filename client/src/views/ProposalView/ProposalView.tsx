@@ -128,12 +128,14 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
           </div>
         </div>
       </div>
-      <Button
-        className={styles.buttonAllocate}
-        onClick={() => onAddRemoveFromAllocate(proposalIdNumber)}
-        variant="secondary"
-        {...buttonProps}
-      />
+      <div className={styles.buttonAllocateWrapper}>
+        <Button
+          className={styles.buttonAllocate}
+          onClick={() => onAddRemoveFromAllocate(proposalIdNumber)}
+          variant="secondary"
+          {...buttonProps}
+        />
+      </div>
       <div className={styles.body}>
         <Description text={description} />
         <Button className={styles.buttonWebsite} href={website.url} variant="link">
