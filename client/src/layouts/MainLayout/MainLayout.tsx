@@ -73,7 +73,12 @@ const MainLayout: FC<MainLayoutProps> = ({
               <Svg img={userGenericIcon} size={3.2} />
             </div>
           ) : (
-            <Button label="Connect wallet" onClick={authUser} variant="cta" />
+            <Button
+              className={styles.buttonConnectWallet}
+              label="Connect wallet"
+              onClick={authUser}
+              variant="cta"
+            />
           )}
         </div>
       )}
@@ -95,7 +100,7 @@ const MainLayout: FC<MainLayoutProps> = ({
             <Button
               // eslint-disable-next-line react/no-array-index-key
               key={index}
-              className={styles.button}
+              className={styles.buttonNavigation}
               Icon={iconWrapped || <Svg img={icon} size={2.25} />}
               variant="iconVertical"
               {...rest}
