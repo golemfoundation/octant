@@ -22,13 +22,14 @@
   }
 }
 
-.proposalHeader, .body, .donors {
-  padding-left: $layoutMarginHorizontal;
-  padding-right: $layoutMarginHorizontal;
+.proposalHeader, .buttonAllocateWrapper, .body, .donors {
+  padding-left: 5.6rem;
+  padding-right: 5.6rem;
 }
 
 .proposalHeader {
   display: flex;
+  width: 100%;
 
   .imageProfile {
     width: 4rem;
@@ -70,8 +71,13 @@
   }
 }
 
-.buttonAllocate {
+.buttonAllocateWrapper {
   margin: 3rem 0;
+  width: 100%;
+}
+
+.buttonAllocate {
+  width: 100%;
 }
 
 .body {
