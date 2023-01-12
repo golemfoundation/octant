@@ -3,6 +3,18 @@ import debounce from 'lodash/debounce';
 import { TOAST_DEBOUNCE_TIME } from 'constants/toasts';
 import triggerToast from 'utils/triggerToast';
 
+import { CurrentMode, CurrentStepIndex } from './types';
+
+export const getButtonCtaLabel = (
+  currentMode: CurrentMode,
+  currentStepIndex: CurrentStepIndex,
+): string => {
+  if (currentStepIndex === 3) {
+    return 'Done';
+  }
+  return currentMode === 'deposit' ? 'Stake' : 'Unstake';
+};
+
 export const toastDebouncedUnstakeValueTooBig = debounce(
   () =>
     triggerToast({

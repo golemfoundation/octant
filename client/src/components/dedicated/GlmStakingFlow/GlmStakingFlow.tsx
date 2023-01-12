@@ -21,7 +21,11 @@ import useDepositEffectiveAtCurrentEpoch from 'hooks/useDepositEffectiveAtCurren
 import useDepositValue from 'hooks/useDepositValue';
 import useMaxApproveCallback from 'hooks/useMaxApproveCallback';
 
-import { toastDebouncedStakeValueTooBig, toastDebouncedUnstakeValueTooBig } from './utils';
+import {
+  getButtonCtaLabel,
+  toastDebouncedStakeValueTooBig,
+  toastDebouncedUnstakeValueTooBig,
+} from './utils';
 import GlmStakingFlowProps, { CurrentMode, CurrentStepIndex } from './types';
 import styles from './style.module.scss';
 
@@ -186,7 +190,7 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
         Icon={isApproveOrDepositInProgress && <Loader />}
         isDisabled={!valueToDeposeOrWithdraw || isApproveOrDepositInProgress}
         isHigh
-        label={currentMode === 'deposit' ? 'Stake' : 'Unstake'}
+        label={getButtonCtaLabel(currentMode, currentStepIndex)}
         onClick={onApproveOrDeposit}
         variant="cta"
       />

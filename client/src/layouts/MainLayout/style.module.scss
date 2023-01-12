@@ -23,6 +23,10 @@ $headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
   z-index: $z-index-3;
 }
 
+.buttonConnectWallet {
+  font-size: $font-size-12;
+}
+
 .logoWrapper {
   position: relative;
   height: 4rem;
@@ -119,7 +123,7 @@ $headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
     padding: 1.2rem 2rem 1.5rem;
   }
 
-  .button {
+  .buttonNavigation {
     height: 100%;
     padding: 0 1rem;
   }
