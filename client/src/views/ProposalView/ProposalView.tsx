@@ -109,7 +109,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
           <div className={styles.allocationValues}>
             {proposalMatchedProposalRewards ? (
               <Fragment>
-                <div>{proposalMatchedProposalRewards?.sum} ETH</div>
+                <div>{proposalMatchedProposalRewards?.sum}</div>
                 <div className={styles.separator} />
                 <div
                   className={cx(

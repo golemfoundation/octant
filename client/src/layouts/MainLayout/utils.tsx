@@ -1,11 +1,11 @@
 import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
 import React from 'react';
 
 import { NavigationTab } from 'constants/navigationTabs/types';
 import { allocateWithNumber } from 'svg/navigation';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import Svg from 'components/core/Svg/Svg';
+import getFormattedUnits from 'utils/getFormattedUnit';
 
 import styles from './style.module.scss';
 
@@ -25,7 +25,7 @@ export function getIndividualRewardText({
   if (individualReward.isZero()) {
     return 'No reward budget yet';
   }
-  return `Budget ${formatUnits(individualReward)} ETH`;
+  return `Budget ${getFormattedUnits(individualReward)}`;
 }
 
 export function getNavigationTabsWithAllocations(

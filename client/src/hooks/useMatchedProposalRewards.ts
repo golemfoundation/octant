@@ -1,6 +1,7 @@
 import { BigNumber } from 'ethers';
 import { UseQueryResult, useQuery } from 'react-query';
-import { formatUnits } from 'ethers/lib/utils';
+
+import getFormattedUnits from 'utils/getFormattedUnit';
 
 import useContractRewards from './contracts/useContractRewards';
 import useCurrentEpoch from './useCurrentEpoch';
@@ -35,11 +36,11 @@ export default function useMatchedProposalRewards(): UseQueryResult<ProposalRewa
               ? sum.mul(100).div(totalDonations!).toNumber()
               : 0;
           return {
-            donated: formatUnits(donated),
+            donated: getFormattedUnits(donated),
             id: id.toNumber(),
-            matched: formatUnits(matched),
+            matched: getFormattedUnits(matched),
             percentage,
-            sum: formatUnits(sum),
+            sum: getFormattedUnits(sum),
           };
         });
       },

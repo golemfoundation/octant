@@ -75,7 +75,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
         <div className={styles.funds}>
           {totalValueOfAllocations !== undefined && percentage !== undefined ? (
             <Fragment>
-              <div>{totalValueOfAllocations} ETH</div>
+              <div>{totalValueOfAllocations}</div>
               <div className={styles.percent}>
                 {percentage}%
                 <div

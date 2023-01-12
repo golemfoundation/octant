@@ -1,10 +1,10 @@
+import { formatUnits } from 'ethers/lib/utils';
 import { useMetamask } from 'use-metamask';
 import React, { FC, Fragment, useState } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import GlmStakingFlow from 'components/dedicated/GlmStakingFlow/GlmStakingFlow';
-import getCurrentEpochStateText from 'utils/getCryptoValueWithSuffix';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/useDepositValue';
 
@@ -46,15 +46,12 @@ const UserGlmStake: FC<UserGlmStakeProps> = ({ classNameBox }) => {
       >
         {stakeView === 'currentEpoch' ? (
           <DoubleValue
-            mainValue={getCurrentEpochStateText({
-              suffix: 'GLM',
-              value: depositEffectiveAtCurrentEpoch,
-            })}
+            mainValue={`${
+              depositEffectiveAtCurrentEpoch ? formatUnits(depositEffectiveAtCurrentEpoch) : '0.0'
+            } GLM`}
           />
         ) : (
-          <DoubleValue
-            mainValue={getCurrentEpochStateText({ suffix: 'GLM', value: depositsValue })}
-          />
+          <DoubleValue mainValue={`${depositsValue ? formatUnits(depositsValue) : '0.0'} GLM`} />
         )}
       </BoxRounded>
       <GlmStakingFlow
