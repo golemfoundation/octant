@@ -1,6 +1,6 @@
 # Hexagon Oracle Watcher
 
-A testnet oracle with information about staking-generated ETH rewards. To be replaced with a mechanism utilizing EIP-4484 SKIMMING push.
+A testnet oracle with information about staking-generated ETH rewards. To be replaced with a mechanism utilizing EIP-4895 SKIMMING push.
 
 ## Setup
 
