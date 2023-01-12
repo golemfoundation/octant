@@ -86,28 +86,30 @@ const MainLayout: FC<MainLayoutProps> = ({
       <div className={cx(styles.body, isLoading && styles.isLoading, classNameBody)}>
         {isLoading ? <Loader className={styles.loader} /> : children}
       </div>
-      <nav
-        className={cx(
-          styles.navigation,
-          navigationBottomSuffix && styles.hasNavigationBottomSuffix,
-        )}
-      >
-        {navigationBottomSuffix && (
-          <div className={styles.navigationBottomSuffix}>{navigationBottomSuffix}</div>
-        )}
-        <div className={styles.buttons}>
-          {tabsWithIsActive.map(({ icon, iconWrapped, ...rest }, index) => (
-            <Button
-              // eslint-disable-next-line react/no-array-index-key
-              key={index}
-              className={styles.buttonNavigation}
-              Icon={iconWrapped || <Svg img={icon} size={2.25} />}
-              variant="iconVertical"
-              {...rest}
-            />
-          ))}
-        </div>
-      </nav>
+      <div className={styles.navigationWrapper}>
+        <nav
+          className={cx(
+            styles.navigation,
+            navigationBottomSuffix && styles.hasNavigationBottomSuffix,
+          )}
+        >
+          {navigationBottomSuffix && (
+            <div className={styles.navigationBottomSuffix}>{navigationBottomSuffix}</div>
+          )}
+          <div className={styles.buttons}>
+            {tabsWithIsActive.map(({ icon, iconWrapped, ...rest }, index) => (
+              <Button
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
+                className={styles.buttonNavigation}
+                Icon={iconWrapped || <Svg img={icon} size={2.25} />}
+                variant="iconVertical"
+                {...rest}
+              />
+            ))}
+          </div>
+        </nav>
+      </div>
     </div>
   );
 };

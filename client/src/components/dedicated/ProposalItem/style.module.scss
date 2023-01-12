@@ -54,6 +54,13 @@ $paddingBody: 2.4rem;
     margin: 0 0 1rem 0;
   }
 
+  .description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
   .footer {
     display: flex;
     align-items: center;
