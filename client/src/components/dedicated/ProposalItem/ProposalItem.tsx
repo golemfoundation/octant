@@ -57,7 +57,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
             <div className={styles.numbers}>
               {totalValueOfAllocations !== undefined && percentage !== undefined ? (
                 <Fragment>
-                  <div className={styles.sum}>{totalValueOfAllocations} ETH</div>
+                  <div className={styles.sum}>{totalValueOfAllocations}</div>
                   <div
                     className={cx(
                       styles.percentage,

@@ -1,4 +1,4 @@
-import { floatNumberWithUpTo18DecimalPlaces, numbersOnly } from './regExp';
+import { dotAndZeroes, floatNumberWithUpTo18DecimalPlaces, numbersOnly } from './regExp';
 
 const regExpTestCases = [
   {
@@ -52,6 +52,23 @@ const regExpTestCases = [
       { expectedValue: false, test: '.0123456789' },
       { expectedValue: false, test: '01234a56789' },
       { expectedValue: false, test: '01234.56789' },
+    ],
+  },
+  {
+    name: 'dotAndZeroes',
+    regExp: dotAndZeroes,
+    testCases: [
+      { expectedValue: true, test: '0' },
+      { expectedValue: true, test: '0.0' },
+      { expectedValue: true, test: '0.00' },
+      { expectedValue: true, test: '0.000' },
+      { expectedValue: false, test: '0.001' },
+      { expectedValue: false, test: '0.0012' },
+      { expectedValue: true, test: '0.001200' },
+      { expectedValue: false, test: '1.' },
+      { expectedValue: true, test: '1.0' },
+      { expectedValue: true, test: '12.0' },
+      { expectedValue: false, test: '12.01' },
     ],
   },
 ];

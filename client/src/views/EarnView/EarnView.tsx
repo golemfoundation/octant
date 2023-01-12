@@ -4,7 +4,7 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 import UserGlmStakeComponent from 'components/dedicated/UserGlmStake/UserGlmStake';
-import getCurrentEpochStateText from 'utils/getCryptoValueWithSuffix';
+import getFormattedUnit from 'utils/getFormattedUnit';
 import useIndividualReward from 'hooks/useIndividualReward';
 
 import styles from './style.module.scss';
@@ -27,9 +27,7 @@ const EarnView = (): ReactElement => {
         isVertical
         title="Rewards Balance"
       >
-        <DoubleValue
-          mainValue={getCurrentEpochStateText({ suffix: 'ETH', value: individualReward })}
-        />
+        <DoubleValue mainValue={individualReward ? getFormattedUnit(individualReward) : '0.0'} />
       </BoxRounded>
     </MainLayoutContainer>
   );
