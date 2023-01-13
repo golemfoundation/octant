@@ -26,7 +26,10 @@ const UserGlmStake: FC<UserGlmStakeProps> = ({ classNameBox }) => {
         buttonProps={{
           isDisabled: !isConnected,
           isHigh: true,
-          label: 'Edit GLM Stake',
+          label:
+            !depositsValue || (!!depositsValue && depositsValue.isZero())
+              ? 'Stake GLM'
+              : 'Edit GLM Stake',
           onClick: () => setIsGlmStakingModalOpen(true),
           variant: 'cta',
         }}
