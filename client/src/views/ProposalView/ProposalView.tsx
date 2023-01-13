@@ -131,6 +131,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
       <div className={styles.buttonAllocateWrapper}>
         <Button
           className={styles.buttonAllocate}
+          isSmallFont
           onClick={() => onAddRemoveFromAllocate(proposalIdNumber)}
           variant="secondary"
           {...buttonProps}

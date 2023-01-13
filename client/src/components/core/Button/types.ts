@@ -8,6 +8,7 @@ export const BUTTON_VARIANTS = [
   'iconOnlyTransparent',
   'iconVertical',
   'link',
+  'link2',
 ];
 
 export type ButtonVariant = typeof BUTTON_VARIANTS[number];
@@ -22,6 +23,7 @@ export default interface ButtonProps {
   isDisabled?: boolean;
   isHigh?: boolean;
   isLoading?: boolean;
+  isSmallFont?: boolean;
   label?: string;
   onClick?: (event?: Event) => void;
   rel?: string;

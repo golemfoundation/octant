@@ -73,12 +73,7 @@ const MainLayout: FC<MainLayoutProps> = ({
               <Svg img={userGenericIcon} size={3.2} />
             </div>
           ) : (
-            <Button
-              className={styles.buttonConnectWallet}
-              label="Connect wallet"
-              onClick={authUser}
-              variant="cta"
-            />
+            <Button isSmallFont label="Connect wallet" onClick={authUser} variant="cta" />
           )}
         </div>
       )}
