@@ -6,10 +6,6 @@ Developed by the [Golem Foundation](https://golem.foundation/) to test various h
 
 Documentation is available [here](http://docs.hexagonapp.xyz/).
 
-More about Hexagon [here](https://hexagonapp.notion.site/Hexagon-a-GLM-Governance-Experiment-e098d7ff9d55468db28b8b3584b5959c)
-
-Hexagon frontend: https://wildland.gitlab.io/governance/hexagon/
-
 ## Configuration
 
 Ensure that `.env`  file is present. See `.env.template`
