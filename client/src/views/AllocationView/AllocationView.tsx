@@ -6,12 +6,11 @@ import cx from 'classnames';
 import isEmpty from 'lodash/isEmpty';
 
 import { ALLOCATIONS_MAX_NUMBER } from 'constants/allocations';
-import { DISCORD_INVITE_LINK } from 'constants/social';
+import AllocationEmptyState from 'components/dedicated/AllocationEmptyState/AllocationEmptyState';
 import AllocationInfoBoxes from 'components/dedicated/AllocationInfoBoxes/AllocationInfoBoxes';
 import AllocationItem from 'components/dedicated/AllocationItem/AllocationItem';
 import AllocationNavigation from 'components/dedicated/AllocationNavigation/AllocationNavigation';
 import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
-import Button from 'components/core/Button/Button';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 import triggerToast from 'utils/triggerToast';
 import useAllocate from 'hooks/useAllocate';
@@ -161,7 +160,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
                   <AllocationItem
                     // eslint-disable-next-line react/no-array-index-key
                     key={index}
-                    className={cx(styles.box, isSelected && styles.isSelected)}
+                    className={cx(styles.box, styles.isAllocation, isSelected && styles.isSelected)}
                     isSelected={isSelected}
                     onChange={onChangeAllocationItemValue}
                     onSelectItem={setSelectedItemId}
@@ -174,15 +173,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
               })}
             </div>
           ) : (
-            <div className={styles.emptyState}>
-              You haven’t made any allocations yet. Need a bit of help getting started?
-              <Button
-                className={styles.buttonDiscord}
-                href={DISCORD_INVITE_LINK}
-                label="Join us on Discord"
-                variant="link"
-              />
-            </div>
+            <AllocationEmptyState />
           )}
           {selectedItemId !== null && (
             <div className={styles.selectedItemOverlay} onClick={() => setSelectedItemId(null)} />

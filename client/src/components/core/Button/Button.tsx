@@ -15,6 +15,7 @@ const Button: FC<ButtonProps> = ({
   href,
   isActive,
   isLoading,
+  isSmallFont,
   isDisabled,
   isHigh,
   label,
@@ -51,6 +52,7 @@ const Button: FC<ButtonProps> = ({
       className={cx(
         styles.root,
         styles[`variant--${variant}`],
+        isSmallFont && styles.isSmallFont,
         isActive && styles.isActive,
         isDisabled && styles.isDisabled,
         isHigh && styles.isHigh,
@@ -70,7 +72,7 @@ const Button: FC<ButtonProps> = ({
         )}
         {children}
         {label}
-        {variant === 'link' && (
+        {(variant === 'link' || variant === 'link2') && (
           <Svg
             classNameSvg={cx(styles.icon, styles.isOnRight, isIconVariant && styles.isIconVariant)}
             img={arrow}

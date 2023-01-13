@@ -76,6 +76,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
             <div>
               <Button
                 className={styles.button}
+                isSmallFont
                 onClick={event => {
                   event!.preventDefault();
                   onAddRemoveFromAllocate();

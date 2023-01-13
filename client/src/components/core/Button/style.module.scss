@@ -10,6 +10,10 @@
   min-height: 4rem;
   font-size: $font-size-14;
 
+  &.isSmallFont {
+    font-size: $font-size-12;
+  }
+
   &.isDisabled {
     cursor: default;
   }
@@ -112,6 +116,20 @@
     border-radius: 0;
     min-height: initial;
     color: $color-hexagon-green;
+  }
+
+  &link2 {
+    height: 4.8rem;
+    background: $color-white;
+    padding: 0 1.6rem;
+    border-radius: $border-radius-20;
+
+    svg {
+      path {
+        color: $color-black;
+        stroke: $color-black;
+      }
+    }
   }
 }
 

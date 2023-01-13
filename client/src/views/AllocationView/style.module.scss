@@ -4,7 +4,10 @@
 
 .box {
   min-height: 9.6rem;
-  padding: 0;
+
+  &.isAllocation {
+    padding: 0;
+  }
 
   &.isSelected {
     position: relative;
@@ -13,18 +16,6 @@
 
   &:not(:last-child) {
     margin: 0 auto 1.6rem;
-  }
-}
-
-.emptyState {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-
-  .buttonDiscord {
-    padding-left: 0;
   }
 }
 
