@@ -36,7 +36,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ newAllocationValue }) =
         <ProgressBar
           className={styles.progressBar}
           labelLeft={`Donated ${getFormattedUnits(newAllocationValueBigNumber)}`}
-          labelRight={`Claimable and claimed ${getFormattedUnits(newClaimableAndClaimed)}`}
+          labelRight={`Claimed ${getFormattedUnits(newClaimableAndClaimed)}`}
           progressPercentage={newAllocationValueBigNumber
             .mul(100)
             .div(newClaimableAndClaimed.add(newAllocationValueBigNumber))
