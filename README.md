@@ -1,13 +1,18 @@
 # Hexagon
 
-Golem Foundation's decentralised governance system that will be first rolled out to govern the Wildland project.
+Hexagon is a community-driven platform for experiments in decentralized governance.
+
+Developed by the [Golem Foundation](https://golem.foundation/) to test various hypotheses around user control, voter engagement, and community funding, the platform allows for running various governance experiments in a real-life environment and rewards user participation with ETH.
+
+Documentation is available [here](http://docs.hexagonapp.xyz/).
 
 More about Hexagon [here](https://hexagonapp.notion.site/Hexagon-a-GLM-Governance-Experiment-e098d7ff9d55468db28b8b3584b5959c)
 
 Hexagon frontend: https://wildland.gitlab.io/governance/hexagon/
 
 ## Configuration
-ensure that `.env`  file is present. See `.env.template`
+
+Ensure that `.env`  file is present. See `.env.template`
 
 ## Clean
 ```bash
@@ -45,10 +50,6 @@ yarn deploy:goerli
 yarn verify:goerli
 ```
 
-### zkSync testnet
-```bash
-yarn deploy:zksync
-```
 ## GLM Faucet (Goerli)
 Update `.env` with your private key:
 ```bash
