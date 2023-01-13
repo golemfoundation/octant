@@ -1,4 +1,4 @@
-$headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
+$headerNavigationBorderRadius: $border-radius-32;
 
 .root {
   display: flex;
@@ -91,6 +91,10 @@ $headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
   flex: 1;
   padding: $layoutBodyMarginTop $layoutMarginHorizontal $layoutBodyMarginBottom;
 
+  &.isNavigationBottomSuffix {
+    padding-bottom: $layoutBodyMarginBottom * 2;
+  }
+
   &.isLoading {
     justify-content: center;
   }
@@ -129,6 +133,7 @@ $headerNavigationBorderRadius: calc($headerNavigationHeight / 2);
     align-items: center;
     height: $headerNavigationHeight;
     padding: 1.2rem 2rem 1.5rem;
+    margin: 0 -0.9rem;
   }
 
   .buttonNavigation {

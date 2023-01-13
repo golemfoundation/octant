@@ -83,7 +83,14 @@ const MainLayout: FC<MainLayoutProps> = ({
         </div>
       )}
       {landscapeImage}
-      <div className={cx(styles.body, isLoading && styles.isLoading, classNameBody)}>
+      <div
+        className={cx(
+          styles.body,
+          isLoading && styles.isLoading,
+          !!navigationBottomSuffix && styles.isNavigationBottomSuffix,
+          classNameBody,
+        )}
+      >
         {isLoading ? <Loader className={styles.loader} /> : children}
       </div>
       <div className={styles.navigationWrapper}>
