@@ -140,8 +140,6 @@ $headerNavigationBorderRadius: $border-radius-32;
 
 .iconNumberOfAllocations {
   position: relative;
-  width: 2.25rem;
-  height: 2.25rem;
 }
 
 .numberOfAllocations {
@@ -151,8 +149,8 @@ $headerNavigationBorderRadius: $border-radius-32;
   height: 1.2rem;
   width: 1.2rem;
   position: absolute;
-  bottom: 0;
-  right: 0.05rem;
+  bottom: 0.6rem;
+  right: 0.5rem;
   color: $color-white;
   font-size: $font-size-07;
 }
