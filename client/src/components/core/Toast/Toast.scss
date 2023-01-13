@@ -1,16 +1,20 @@
 // Overwrites for react-toastify/dist/ReactToastify.css.
 
 .Toastify__toast-container {
-  width: 34rem;
+  width: 34rem !important;
+  top: 1rem !important;
+  left: 50% !important;
+  margin: auto !important;
+  transform: translate(-50%, 0) !important;
 }
 
 .Toastify__toast {
   background: none;
-  box-shadow: none;
   border-radius: 0;
   padding: 0;
   margin: 0 0 1.6rem 0;
   width: 34rem;
+  box-shadow: $box-shadow-1;
 }
 
 .Toastify__progress-bar {
