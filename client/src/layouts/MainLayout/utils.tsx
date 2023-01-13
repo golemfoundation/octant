@@ -40,7 +40,7 @@ export function getNavigationTabsWithAllocations(
           iconWrapped: (
             <div className={styles.iconNumberOfAllocations}>
               <div className={styles.numberOfAllocations}>{idsInAllocation.length}</div>
-              <Svg img={allocateWithNumber} size={2.25} />
+              <Svg img={allocateWithNumber} size={3.2} />
             </div>
           ),
         }
