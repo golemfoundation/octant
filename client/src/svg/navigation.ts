@@ -18,7 +18,7 @@ export const allocateWithNumber: SvgImageConfig = {
 
 export const metrics: SvgImageConfig = {
   markup:
-    '<path d="M16 27.25c6.213 0 11.25-5.037 11.25-11.25S22.213 4.75 16 4.75 4.75 9.787 4.75 16 9.787 27.25 16 27.25Z"/><path d="M21.25 21.25h-10.5V11.5"/><path d="m10.75 17.5 3-2.187a.377.377 0 0 1 .553.164l2.531 2.545a.375.375 0 0 0 .666.046L19 15.08a.372.372 0 0 1 .231-.171l2.1-.409"/></g><defs><clipPath id="metrics"><path fill="#fff" d="M4 4h24v24H4z"/></clipPath></defs>',
+    '<g stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" clip-path="url(#metrics)"><path d="M16 27.25c6.213 0 11.25-5.037 11.25-11.25S22.213 4.75 16 4.75 4.75 9.787 4.75 16 9.787 27.25 16 27.25Z"/><path d="M21.25 21.25h-10.5V11.5"/><path d="m10.75 17.5 3-2.187a.377.377 0 0 1 .553.164l2.531 2.545a.375.375 0 0 0 .666.046L19 15.08a.372.372 0 0 1 .231-.171l2.1-.409"/></g><defs><clipPath id="metrics"><path fill="#fff" d="M4 4h24v24H4z"/></clipPath></defs>',
   viewBox: '0 0 32 32',
 };
 
