@@ -12,7 +12,7 @@
     "deploy:local": "npx hardhat deploy --tags local",
     "deploy:goerli": "npx hardhat --network goerli deploy --tags goerli",
     "deploy:zksync": "npx hardhat --network zksync deploy-zksync",
-    "verify:goerli": "hardhat --network goerli etherscan-verify --license UNLICENSED",
+    "verify:goerli": "hardhat --network goerli etherscan-verify --license GPL-3.0-only",
     "format": "npx prettier --write 'contracts/**/*.sol'",
     "lint": "npx solhint 'contracts/**/*.sol'"
   },
