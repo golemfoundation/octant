@@ -66,3 +66,7 @@ export type AllocationStructOutput = [BigNumber, BigNumber] & {
 };
 ```
 The problem with this approach is that the `react-query` package used for fetching and managing data from contracts does drop the latter object part on all but first after rerender requests. Hence, the remapping of array elements to named variables is required during response parsing phase.
+
+## Contributor Agreement
+
+In order to be able to contribute to any Wildland repository, you will need to agree to the terms of the [Wildland Contributor Agreement](https://docs.wildland.io/contributor-agreement.html). By contributing to any such repository, you agree that your contributions will be licensed under the [GPLv3 License](https://gitlab.com/wildland/governance/hexagon/-/blob/master/LICENSE).
