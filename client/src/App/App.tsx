@@ -8,7 +8,7 @@ import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import Loader from 'components/core/Loader/Loader';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import useProposals from 'hooks/useProposals';
-import useUserAllocation from 'hooks/useUserAllocation';
+import useUserAllocations from 'hooks/useUserAllocations';
 
 import AppProps from './types';
 import styles from './style.module.scss';
@@ -18,7 +18,7 @@ import 'styles/index.scss';
 const validateProposalsInLocalStorage = (localStorageAllocationItems, proposals) =>
   localStorageAllocationItems.filter(item => proposals.find(({ id }) => id.toNumber() === item));
 
-const App: FC<AppProps> = ({ allocations, onAddAllocation, onAddAllocations }) => {
+const App: FC<AppProps> = ({ allocations, onSetAllocations }) => {
   const {
     metaState: { isConnected, account },
   } = useMetamask();
@@ -26,7 +26,7 @@ const App: FC<AppProps> = ({ allocations, onAddAllocation, onAddAllocations }) =
   const [isAccountChanging, setIsAccountChanging] = useState(false);
   const [currentAddress, setCurrentAddress] = useState<null | string>(null);
   const { proposals } = useProposals();
-  const { data: userAllocation } = useUserAllocation();
+  const { data: userAllocations } = useUserAllocations();
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -53,25 +53,28 @@ const App: FC<AppProps> = ({ allocations, onAddAllocation, onAddAllocations }) =
   }, [isAccountChanging, setIsAccountChanging, queryClient]);
 
   useEffect(() => {
+    if (!userAllocations) {
+      return;
+    }
+    const userAllocationsIds = userAllocations.map(({ proposalId }) => proposalId);
     if (
       isConnected &&
-      userAllocation &&
-      userAllocation.proposalId &&
-      userAllocation.allocation.gt(0) &&
+      userAllocations &&
+      userAllocations.length > 0 &&
       !!allocations &&
-      !allocations.includes(userAllocation.proposalId)
+      !allocations.some(allocation => userAllocationsIds.includes(allocation))
     ) {
-      onAddAllocation(userAllocation.proposalId);
+      onSetAllocations([...allocations, ...userAllocationsIds]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, userAllocation, allocations]);
+  }, [isConnected, userAllocations, allocations]);
 
   useEffect(() => {
     if (!proposals || proposals.length === 0) {
       return;
     }
 
-    if (isConnected && !userAllocation) {
+    if (isConnected && !userAllocations) {
       return;
     }
 
@@ -80,7 +83,7 @@ const App: FC<AppProps> = ({ allocations, onAddAllocation, onAddAllocations }) =
     );
 
     if (!localStorageAllocationItems || localStorageAllocationItems.length === 0) {
-      onAddAllocations([]);
+      onSetAllocations([]);
       return;
     }
 
@@ -90,10 +93,10 @@ const App: FC<AppProps> = ({ allocations, onAddAllocation, onAddAllocations }) =
     );
     if (validatedProposalsInLocalStorage) {
       localStorage.setItem(ALLOCATION_ITEMS_KEY, JSON.stringify(validatedProposalsInLocalStorage));
-      onAddAllocations(validatedProposalsInLocalStorage);
+      onSetAllocations(validatedProposalsInLocalStorage);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, proposals, userAllocation]);
+  }, [isConnected, proposals, userAllocations]);
 
   if (allocations === null || isAccountChanging) {
     return <Loader className={styles.loader} />;

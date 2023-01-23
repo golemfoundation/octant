@@ -23,9 +23,8 @@ contract Allocations {
     /// @notice emitted after user allocated funds.
     /// @param epoch for which user has allocated (current epoch - 1).
     /// @param user address of the user who allocated funds.
-    /// @param proposalId id of the proposal the user has allocated funds for.
-    /// @param allocatedFunds funds allocated to the proposal.
-    event Allocated(uint256 indexed epoch, address indexed user, uint256 proposalId, uint256 allocatedFunds);
+    /// @param userAllocations proposalId and funds allocated for it.
+    event Allocated(uint256 epoch, address user, IAllocationsStorage.Allocation[] userAllocations);
 
     constructor(
         address _epochsAddress,
@@ -37,23 +36,25 @@ contract Allocations {
         rewards = IRewards(_rewardsAddress);
     }
 
-    /// @notice Allocate funds from previous epoch on given proposal.
-    function allocate(uint256 _proposalId, uint256 _fundsToAllocate) external {
-        require(_proposalId != 0, AllocationErrors.PROPOSAL_ID_CANNOT_BE_ZERO);
+    /// @notice Allocate funds from previous epoch on given proposals.
+    function allocate(IAllocationsStorage.Allocation[] memory _allocations) external {
         require(epochs.isStarted(), AllocationErrors.EPOCHS_HAS_NOT_STARTED_YET);
         require(epochs.isDecisionWindowOpen(), AllocationErrors.DECISION_WINDOW_IS_CLOSED);
-        uint32 epoch = epochs.getCurrentEpoch() - 1;
+        uint32 _epoch = epochs.getCurrentEpoch() - 1;
+
+        allocationsStorage.removeUserAllocations(_epoch, msg.sender);
+
+        uint256 _fundsToAllocate;
+        for (uint256 i = 0; i < _allocations.length; i++) {
+            require(_allocations[i].proposalId != 0, AllocationErrors.PROPOSAL_ID_CANNOT_BE_ZERO);
+            allocationsStorage.addAllocation(_epoch, msg.sender, _allocations[i]);
+            _fundsToAllocate += _allocations[i].allocation;
+        }
         require(
-            rewards.individualReward(epoch, msg.sender) >= _fundsToAllocate,
+            rewards.individualReward(_epoch, msg.sender) >= _fundsToAllocate,
             AllocationErrors.ALLOCATE_ABOVE_REWARDS_BUDGET
         );
 
-        IAllocationsStorage.Allocation memory _allocation = allocationsStorage.getUserAllocation(epoch, msg.sender);
-        if (_allocation.proposalId != 0) {
-            allocationsStorage.removeAllocation(epoch, _allocation.proposalId, msg.sender);
-        }
-        allocationsStorage.addAllocation(epoch, _proposalId, msg.sender, _fundsToAllocate);
-
-        emit Allocated(epoch, msg.sender, _proposalId, _fundsToAllocate);
+        emit Allocated(_epoch, msg.sender, _allocations);
     }
 }

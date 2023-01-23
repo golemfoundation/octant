@@ -1,5 +1,4 @@
 import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 import React, { FC, Fragment } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -8,23 +7,39 @@ import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import Header from 'components/core/Header/Header';
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import getFormattedUnits from 'utils/getFormattedUnit';
+import getNewAllocationValuesBigNumber from 'utils/getNewAllocationValuesBigNumber';
 import useCurrentEpoch from 'hooks/useCurrentEpoch';
 import useIndividualProposalRewards from 'hooks/useIndividualProposalRewards';
 import useIndividualReward from 'hooks/useIndividualReward';
 import useMatchedRewards from 'hooks/useMatchedRewards';
+import useUserAllocations from 'hooks/useUserAllocations';
 
 import AllocationSummaryProps from './types';
 import styles from './style.module.scss';
 
-const AllocationSummary: FC<AllocationSummaryProps> = ({ newAllocationValue }) => {
+const AllocationSummary: FC<AllocationSummaryProps> = ({ newAllocationValues }) => {
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: userAllocations } = useUserAllocations();
   const { data: individualReward } = useIndividualReward();
   const { data: individualProposalRewards } = useIndividualProposalRewards();
   const { data: matchedRewards } = useMatchedRewards();
 
-  const newAllocationValueBigNumber = parseUnits(newAllocationValue);
-  const newTotalDonated = newAllocationValueBigNumber.add(individualProposalRewards?.sum || 0);
-  const newClaimableAndClaimed = (individualReward as BigNumber).sub(newAllocationValueBigNumber);
+  const currentUserAllocationsSum = userAllocations?.reduce(
+    (acc, { allocation }) => acc.add(allocation),
+    BigNumber.from(0),
+  );
+  const newAllocationValuesBigNumber = getNewAllocationValuesBigNumber(newAllocationValues);
+
+  const newAllocationValuesSum = newAllocationValuesBigNumber.reduce(
+    (acc, { value }) => acc.add(value),
+    BigNumber.from(0),
+  );
+  const newClaimableAndClaimed = (individualReward as BigNumber).sub(newAllocationValuesSum);
+
+  // newAllocationValuesSum replaces currentUserAllocationsSum.
+  const newTotalDonated = newAllocationValuesSum
+    .add(individualProposalRewards?.sum || 0)
+    .sub(currentUserAllocationsSum || 0);
 
   return (
     <Fragment>
@@ -35,11 +50,11 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ newAllocationValue }) =
         <DoubleValue mainValue={individualReward ? getFormattedUnits(individualReward) : '0.0'} />
         <ProgressBar
           className={styles.progressBar}
-          labelLeft={`Donated ${getFormattedUnits(newAllocationValueBigNumber)}`}
+          labelLeft={`Donated ${getFormattedUnits(newAllocationValuesSum)}`}
           labelRight={`Claimed ${getFormattedUnits(newClaimableAndClaimed)}`}
-          progressPercentage={newAllocationValueBigNumber
+          progressPercentage={newAllocationValuesSum
             .mul(100)
-            .div(newClaimableAndClaimed.add(newAllocationValueBigNumber))
+            .div(newClaimableAndClaimed.add(newAllocationValuesSum))
             .toNumber()}
         />
       </BoxRounded>

@@ -18,26 +18,26 @@ describe('getAllocationsWithPositiveValues', () => {
         '2': undefined,
         '3': undefined,
       }),
-    ).toEqual({});
+    ).toEqual([]);
   });
 
   it('properly finds allocations with values', () => {
-    expect(getAllocationsWithPositiveValues({ '1': '10', '2': '0', '3': undefined })).toEqual({
-      '1': '10',
-    });
+    expect(getAllocationsWithPositiveValues({ '1': '10', '2': '0', '3': undefined })).toEqual([
+      { proposalId: 1, value: '10' },
+    ]);
   });
 
   it('properly finds allocations with values', () => {
-    expect(getAllocationsWithPositiveValues({ '1': '10', '2': '5', '3': undefined })).toEqual({
-      '1': '10',
-      '2': '5',
-    });
+    expect(getAllocationsWithPositiveValues({ '1': '10', '2': '5', '3': undefined })).toEqual([
+      { proposalId: 1, value: '10' },
+      { proposalId: 2, value: '5' },
+    ]);
   });
 
   it('properly finds allocations with values', () => {
-    expect(getAllocationsWithPositiveValues({ '1': '10', '2': '5', '3': '0' })).toEqual({
-      '1': '10',
-      '2': '5',
-    });
+    expect(getAllocationsWithPositiveValues({ '1': '10', '2': '5', '3': '0' })).toEqual([
+      { proposalId: 1, value: '10' },
+      { proposalId: 2, value: '5' },
+    ]);
   });
 });

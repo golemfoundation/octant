@@ -156,12 +156,11 @@ contract Rewards is IRewards {
         // distribute matched rewards.
         for (uint256 iReward = 0; iReward < proposalRewards.length; iReward++) {
             if (proposalRewards[iReward].donated > proposalDonationThreshold) {
-                uint256 proposalRewardsPercent = proposalRewards[iReward]
+                uint256 proposalRewardsShare = proposalRewards[iReward]
                     .donated
-                    .div(proposalDonationAboveThresholdSum)
-                    .mul(100);
-                uint256 matchedProposalReward = _matchedRewards.div(100).mul(
-                    proposalRewardsPercent
+                    .div(proposalDonationAboveThresholdSum);
+                uint256 matchedProposalReward = _matchedRewards.mul(
+                    proposalRewardsShare
                 );
                 proposalRewards[iReward].matched = matchedProposalReward;
             }

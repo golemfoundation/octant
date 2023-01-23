@@ -1,34 +1,35 @@
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import triggerToast from 'utils/triggerToast';
 
-import { UserAllocation } from './useUserAllocation';
+import { UserAllocation } from './useUserAllocations';
 import { toastDebouncedCantRemoveAllocatedProject } from './useIdsInAllocation/utils';
 
 type OnAddRemoveAllocationElementLocalStorage = {
   allocations: number[];
   id: number;
   name: string;
-  userAllocation?: UserAllocation;
+  userAllocations?: UserAllocation[];
 };
 
 export function isProposalAlreadyAllocatedOn(
-  userAllocation: undefined | UserAllocation,
+  userAllocations: undefined | UserAllocation[],
   id: number,
 ): boolean {
-  // TODO Remove userAllocation.allocation.gt(0) check following https://wildlandio.atlassian.net/browse/HEX-108.
-  return !!userAllocation && userAllocation.proposalId === id && userAllocation.allocation.gt(0);
+  // TODO Remove userAllocations.allocation.gt(0) check following https://wildlandio.atlassian.net/browse/HEX-108.
+  if (!userAllocations) {
+    return false;
+  }
+  const allocation = userAllocations.find(({ proposalId }) => proposalId === id);
+  return !!allocation && allocation.allocation.gt(0);
 }
 
 export function onAddRemoveAllocationElementLocalStorage({
   allocations,
   id,
-  userAllocation,
+  userAllocations,
   name,
 }: OnAddRemoveAllocationElementLocalStorage): number[] | undefined {
-  if (
-    isProposalAlreadyAllocatedOn(userAllocation, id) &&
-    allocations.includes(userAllocation!.proposalId)
-  ) {
+  if (isProposalAlreadyAllocatedOn(userAllocations, id)) {
     toastDebouncedCantRemoveAllocatedProject();
     return;
   }

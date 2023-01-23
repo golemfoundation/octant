@@ -4,7 +4,7 @@ import { AllocationAddPayload, AllocationRemovePayload, AllocationsAddPayload } 
 
 const allocationsPrefix = 'ALLOCATIONS';
 
-export const allocationsAdd = actionCreator<AllocationsAddPayload>(allocationsPrefix, 'ADD');
+export const allocationsSet = actionCreator<AllocationsAddPayload>(allocationsPrefix, 'SET');
 export const allocationAdd = actionCreator<AllocationAddPayload>(allocationsPrefix, 'ADD_ONE');
 export const allocationRemove = actionCreator<AllocationRemovePayload>(
   allocationsPrefix,
