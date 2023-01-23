@@ -9,14 +9,14 @@ import { IAllocationsStorage } from '../../../typechain-types';
 
 export type UserAllocation = { allocation: BigNumber; proposalId: number };
 
-export default function useUserAllocation(
+export default function useUserAllocations(
   options?: UseQueryOptions<
-    IAllocationsStorage.AllocationStructOutput | undefined,
+    IAllocationsStorage.AllocationStructOutput[] | undefined,
     unknown,
-    UserAllocation,
+    UserAllocation[] | undefined,
     string[]
   >,
-): UseQueryResult<UserAllocation> {
+): UseQueryResult<UserAllocation[] | undefined> {
   const {
     metaState: { account },
   } = useMetamask();
@@ -26,14 +26,15 @@ export default function useUserAllocation(
   const address = account[0];
 
   return useQuery(
-    ['userAllocation'],
-    () => contractAllocationsStorage?.getUserAllocation(currentEpoch! - 1, address),
+    ['userAllocations'],
+    () => contractAllocationsStorage?.getUserAllocations(currentEpoch! - 1, address),
     {
       enabled: !!currentEpoch && currentEpoch > 1 && !!address,
-      select: response => ({
-        allocation: response![0],
-        proposalId: response![1]?.toNumber(),
-      }),
+      select: response =>
+        response?.map<UserAllocation>(element => ({
+          allocation: element![1],
+          proposalId: element![0]?.toNumber(),
+        })),
       ...options,
     },
   );

@@ -27,7 +27,10 @@ makeTestsEnv(TEST_REWARDS, (testEnv) => {
     await allocationsStorage.transferOwnership(allocations.address);
 
     await forwardEpochs(epochs, 1);
-    await allocations.connect(Alice).allocate(1, parseEther('0.2'));
+    await allocations.connect(Alice).allocate([{
+      proposalId: 1,
+      allocation: parseEther('0.2')
+    }]);
     const result = await testRewards.matchedProposalRewards(1);
     expect(result[0].donated).eq(parseEther('0.2'));
     expect(result[0].matched).eq(parseEther('40.407017003965518800'));

@@ -1,3 +1,5 @@
+import { AllocationWithPositiveValue } from 'views/AllocationView/types';
+
 export default interface AllocationSummaryProps {
-  newAllocationValue: string;
+  newAllocationValues: AllocationWithPositiveValue[];
 }
