@@ -11,9 +11,7 @@ describe('getDurationBetweenDates', () => {
       days: 6,
       hours: 16,
       minutes: 52,
-      months: 0,
       seconds: 18,
-      years: 0,
     });
   });
 
@@ -23,12 +21,10 @@ describe('getDurationBetweenDates', () => {
     jest.setSystemTime(new Date(2030, 2, 3, 4, 5, 6));
 
     expect(getDurationBetweenTimestamps(startTimestamp)).toMatchObject({
-      days: 24,
+      days: 2704,
       hours: 12,
       minutes: 47,
-      months: 4,
       seconds: 13,
-      years: 7,
     });
   });
 

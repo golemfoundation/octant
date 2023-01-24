@@ -1,11 +1,12 @@
-export default interface CounterProps {
+export default interface TimeCounterProps {
+  className?: string;
   duration?: number;
   onCountingFinish: () => void;
   timestamp?: number;
 }
 
 export interface CounterSectionsProps {
-  isNextEmpty?: boolean;
+  isDividerVisible?: boolean;
   label: string;
   value?: number;
 }
