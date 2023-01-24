@@ -1,4 +1,4 @@
-import getEpochAndAllocationTimestamps from './utils';
+import getEpochAndAllocationTimestamps from './getEpochAndAllocationTimestamps';
 
 describe('getEpochAndAllocationTimestamps', () => {
   const startTimestamp = 1665069473000; // 2022-10-06T15:17:53.000Z in milliseconds.
