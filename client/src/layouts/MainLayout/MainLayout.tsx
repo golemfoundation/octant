@@ -5,7 +5,6 @@ import React, { FC } from 'react';
 import cx from 'classnames';
 
 import { hexagon } from 'svg/logo';
-import { userGenericIcon } from 'svg/navigation';
 import Button from 'components/core/Button/Button';
 import Loader from 'components/core/Loader/Loader';
 import Svg from 'components/core/Svg/Svg';
@@ -70,7 +69,6 @@ const MainLayout: FC<MainLayoutProps> = ({
                   {getIndividualRewardText({ currentEpoch, individualReward })}
                 </div>
               </div>
-              <Svg img={userGenericIcon} size={3.2} />
             </div>
           ) : (
             <Button isSmallFont label="Connect wallet" onClick={authUser} variant="cta" />
