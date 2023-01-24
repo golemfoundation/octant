@@ -40,12 +40,6 @@ export const earn: SvgImageConfig = {
   viewBox: '0 0 32 32',
 };
 
-export const userGenericIcon: SvgImageConfig = {
-  markup:
-    '<path fill="#FAFAFA" d="M16 0c11.824 0 16 4.196 16 16 0 11.76-4.245 16-16 16C4.28 32 0 27.705 0 16 0 4.25 4.21 0 16 0Z"/><path fill="#171717" fill-rule="evenodd" d="m16.001 10.054-5.15 2.973v5.946l5.15 2.973 5.15-2.973v-5.946L16 10.054Zm.825-1.833a1.651 1.651 0 0 0-1.65 0l-5.499 3.175c-.51.295-.825.84-.825 1.43v6.348c0 .59.314 1.135.825 1.43l5.498 3.175c.511.295 1.14.295 1.651 0l5.499-3.175c.51-.295.825-.84.825-1.43v-6.348a1.65 1.65 0 0 0-.825-1.43L16.827 8.22Z" clip-rule="evenodd"/>',
-  viewBox: '0 0 32 32',
-};
-
 export const chevronLeft: SvgImageConfig = {
   markup:
     '<path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.515 24.485 10.029 16l8.486-8.485"/>',
