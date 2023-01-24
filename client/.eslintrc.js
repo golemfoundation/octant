@@ -170,6 +170,8 @@ module.exports = {
           { devDependencies: ['**/*.test.ts', '**/*.test.tsx', '**/*stories.tsx'] },
         ],
         'import/prefer-default-export': 'off',
+        'import/no-relative-packages': 'off',
+        'react/function-component-definition': [2, { namedComponents: 'arrow-function' }],
         'react/default-props-match-prop-types': 'off',
         'react/destructuring-assignment': 'off',
         'react/forbid-prop-types': 'off',

@@ -38,7 +38,7 @@ const MainLayout: FC<MainLayoutProps> = ({
   const address = account[0];
 
   const authUser = async () => {
-    if (!isConnected) {
+    if (!isConnected && connect) {
       await connect(ethers.providers.Web3Provider, 'any');
     }
   };

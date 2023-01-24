@@ -31,7 +31,7 @@ export default function useUserAllocations(
     {
       enabled: !!currentEpoch && currentEpoch > 1 && !!address,
       select: response =>
-        response?.map<UserAllocation>(element => ({
+        response?.map(element => ({
           allocation: element![1],
           proposalId: element![0]?.toNumber(),
         })),
