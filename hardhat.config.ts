@@ -1,3 +1,4 @@
+import "@graphprotocol/hardhat-graph"
 import '@matterlabs/hardhat-zksync-deploy';
 import '@matterlabs/hardhat-zksync-solc';
 import '@nomicfoundation/hardhat-chai-matchers';
@@ -16,6 +17,7 @@ import './tasks/deploy-zksync';
 import './tasks/increase-time';
 import './tasks/mine';
 import './tasks/send-glm';
+import './tasks/prepare-local-test-env';
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -43,8 +45,7 @@ const config: HardhatUserConfig = {
     goerli: {
       url: GOERLI_URL,
       accounts: [GOERLI_PRIVATE_KEY],
-      deploy: ['deploy-l1/'],
-      gasPrice: 10_000_000_000
+      deploy: ['deploy-l1/']
     },
     zksync: {
       url: ZKSYNC_URL,

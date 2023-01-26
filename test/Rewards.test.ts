@@ -131,7 +131,7 @@ makeTestsEnv(REWARDS, (testEnv) => {
       });
     });
 
-    it.only('Compute matched proposal rewards', async function () {
+    it('Compute matched proposal rewards', async function () {
       const { rewards } = testEnv;
       const matchedRewards = await rewards.matchedRewards(2);
       expect(matchedRewards).eq(parseEther('22.851050121192878400'));

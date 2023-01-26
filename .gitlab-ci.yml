@@ -8,7 +8,7 @@ stages:
   - test
   - deploy
 
-image: node:16-slim
+image: node:16-bullseye
 
 Build:
   stage: build
@@ -24,20 +24,24 @@ Build:
         - artifacts-zk
         - typechain-types
       policy: pull-push
+
     - key: $CI_COMMIT_REF_SLUG-client-yarn.lock
       paths:
         - client/node_modules
       policy: pull-push
 
-    - key: $CI_COMMIT_REF_SLUG-client
+    - key: $CI_COMMIT_REF_SLUG-subgraph-yarn.lock
       paths:
-        - client/.yarn
+        - subgraph/node_modules
       policy: pull-push
+
   script:
     - apt-get update && apt-get install -y --no-install-recommends git --reinstall ca-certificates
     - yarn install --non-interactive --cache-folder .yarn
     - yarn compile
     - cd client
+    - yarn install --non-interactive --cache-folder .yarn
+    - cd ../subgraph
     - yarn install --non-interactive --cache-folder .yarn
 
 Contracts unit tests:
@@ -57,16 +61,25 @@ Contracts unit tests:
     - yarn test
     - yarn docs
 
+Subgraph unit tests:
+  stage: test
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-subgraph-yarn.lock
+      paths:
+        - subgraph/node_modules
+      policy: pull
+  script:
+    - apt-get update && apt-get install libpq5 -y
+    - cd subgraph
+    - yarn codegen
+    - yarn test
+
 Client unit tests:
   stage: test
   cache:
     - key: $CI_COMMIT_REF_SLUG-client-yarn.lock
       paths:
         - client/node_modules
-      policy: pull
-    - key: $CI_COMMIT_REF_SLUG-client
-      paths:
-        - client/.yarn
       policy: pull
   script:
     - cd client

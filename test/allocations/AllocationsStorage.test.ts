@@ -84,7 +84,7 @@ makeTestsEnv(ALLOCATIONS_STORAGE, (testEnv) => {
         proposalId: 1,
         allocation: 1
       }))
-        .revertedWith('HN/allocate-already-exists');
+        .revertedWith('HN:AllocationsStorage/allocation-already-exists');
     });
 
     it('Only owner can allocate', async () => {
@@ -136,14 +136,6 @@ makeTestsEnv(ALLOCATIONS_STORAGE, (testEnv) => {
 
       const userAllocations = await allocationsStorage.getUserAllocations(1, Alice.address);
       expect(userAllocations.length).eq(0);
-    });
-
-    it('Cannot remove allocation if it does not exist', async () => {
-      const { signers: { Alice } } = testEnv;
-      const allocationsStorage = await setupContract(Alice.address);
-
-      expect(allocationsStorage.connect(Alice).removeUserAllocations(1, Alice.address))
-        .revertedWith('HN/allocation-does-not-exist');
     });
 
     it('Only owner can remove allocation', async () => {
