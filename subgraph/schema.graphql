@@ -1,0 +1,28 @@
+type Allocated @entity(immutable: true) {
+    id: Bytes!
+    epoch: BigInt! # uint256
+    user: Bytes! # address
+    proposalId: BigInt!
+    allocation: BigInt!
+    blockNumber: BigInt!
+    blockTimestamp: BigInt!
+    transactionHash: Bytes!
+}
+
+type Deposited @entity(immutable: true) {
+  id: Bytes!
+  amount: BigInt! # uint224
+  depositor: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Withdrawn @entity(immutable: true) {
+  id: Bytes!
+  amount: BigInt! # uint224
+  depositor: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

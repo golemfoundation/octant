@@ -23,6 +23,12 @@ dist
 __pycache__
 venv
 
+# Subgraph
+/subgraph/generated
+/subgraph/build
+/subgraph/data
+/subgraph/tests/.*
+
 #logs
 npm-debug.log*
 yarn-debug.log*

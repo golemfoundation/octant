@@ -1,0 +1,25 @@
+{
+  "name": "hexagon-subgraph",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/wildland/hexagon.git"
+  },
+  "license": "GPL-3.0-only",
+  "scripts": {
+    "test": "graph test",
+    "codegen": "graph codegen",
+    "clean": "docker-compose down -v && docker-compose rm -v && sudo rm -rf data/ipfs data/postgres",
+    "start": "docker-compose up",
+    "create-subgraph": "graph create --node http://127.0.0.1:8020 hexagon",
+    "build-local": "graph build",
+    "build-goerli": "graph build --network goerli",
+    "deploy-local": "graph deploy --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020 hexagon",
+    "deploy-goerli": "graph deploy --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020 --network goerli hexagon"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.30.1",
+    "@graphprotocol/graph-ts": "^0.27.0",
+    "matchstick-as": "^0.5.0"
+  }
+}

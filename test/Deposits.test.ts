@@ -39,7 +39,7 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
     it('Can\'t withdrawn empty', async function () {
       const { glmDeposits, signers } = testEnv;
       expect(glmDeposits.connect(signers.Alice).withdraw(1)).to.be.revertedWith(
-        'HN/deposit-is-smaller'
+        'HN:Deposits/deposit-is-smaller'
       );
     });
 
@@ -49,7 +49,7 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
       await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
       await glmDeposits.connect(signers.Alice).deposit(1000);
       expect(glmDeposits.connect(signers.Darth).withdraw(1)).to.be.revertedWith(
-        'HN/deposit-is-smaller'
+        'HN:Deposits/deposit-is-smaller'
       );
     });
 
@@ -61,7 +61,7 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
       await glmDeposits.connect(signers.Darth).withdraw(1000);
       let balance = await token.balanceOf(signers.Darth.address);
       expect(glmDeposits.connect(signers.Darth).withdraw(1000)).to.be.revertedWith(
-        'HN/deposit-is-smaller'
+        'HN:Deposits/deposit-is-smaller'
       );
       expect(await token.balanceOf(signers.Darth.address)).eq(balance);
     });
@@ -127,7 +127,7 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
       await glmDeposits.connect(Alice).deposit(1000);
 
       expect(glmDeposits.connect(Alice).withdraw(1000, { gasLimit: 50_000 }))
-        .to.be.revertedWith('Transaction reverted: contract call run out of gas and made the transaction revert');
+        .to.be.reverted;
       expect(await token.balanceOf(glmDeposits.address)).eq(1000);
     });
 

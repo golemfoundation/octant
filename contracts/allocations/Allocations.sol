@@ -23,8 +23,8 @@ contract Allocations {
     /// @notice emitted after user allocated funds.
     /// @param epoch for which user has allocated (current epoch - 1).
     /// @param user address of the user who allocated funds.
-    /// @param userAllocations proposalId and funds allocated for it.
-    event Allocated(uint256 epoch, address user, IAllocationsStorage.Allocation[] userAllocations);
+    /// @param allocation proposalId and funds allocated for it.
+    event Allocated(uint256 epoch, address user, IAllocationsStorage.Allocation allocation);
 
     constructor(
         address _epochsAddress,
@@ -49,12 +49,12 @@ contract Allocations {
             require(_allocations[i].proposalId != 0, AllocationErrors.PROPOSAL_ID_CANNOT_BE_ZERO);
             allocationsStorage.addAllocation(_epoch, msg.sender, _allocations[i]);
             _fundsToAllocate += _allocations[i].allocation;
+
+            emit Allocated(_epoch, msg.sender, _allocations[i]);
         }
         require(
             rewards.individualReward(_epoch, msg.sender) >= _fundsToAllocate,
             AllocationErrors.ALLOCATE_ABOVE_REWARDS_BUDGET
         );
-
-        emit Allocated(_epoch, msg.sender, _allocations);
     }
 }

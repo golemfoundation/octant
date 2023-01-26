@@ -1,0 +1,47 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Allocations
+    network: goerli
+    source:
+      abi: Allocations
+      address: "0x44c8aCFf38e6c0700f6F0906Ed0D2091ddb7Ba6e"
+      startBlock: 8332054
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Allocated
+      abis:
+        - name: Allocations
+          file: ./abis/Allocations.json
+      eventHandlers:
+        - event: Allocated(uint256,address,(uint256,uint256))
+          handler: handleAllocated
+      file: ./src/allocations.ts
+  - kind: ethereum
+    name: Deposits
+    network: goerli
+    source:
+      abi: Deposits
+      address: "0xD9DAd2E6c1cB9e31C7d1B34f4754427C09a2CbFA"
+      startBlock: 8332054
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Deposited
+        - Withdrawn
+      abis:
+        - name: Deposits
+          file: ./abis/Deposits.json
+      eventHandlers:
+        - event: Deposited(uint224,uint256,address)
+          handler: handleDeposited
+        - event: Withdrawn(uint224,uint256,address)
+          handler: handleWithdrawn
+      file: ./src/deposits.ts

@@ -18,32 +18,32 @@ makeTestsEnv(BEACON_CHAIN_ORACLE, (testEnv) => {
       await forwardEpochs(epochs, 1);
       await beaconChainOracle.setBalance(1, 100);
       expect(beaconChainOracle.setBalance(1, 200))
-        .revertedWith('HN/balance-for-given-epoch-already-exists');
+        .revertedWith('HN:Oracle/balance-for-given-epoch-already-exists');
     });
 
     it('Cannot set balance for future epoch', async () => {
       const { beaconChainOracle } = testEnv;
       expect(beaconChainOracle.setBalance(10, 200))
-        .revertedWith('HN/can-set-balance-for-previous-epoch-only');
+        .revertedWith('HN:Oracle/can-set-balance-for-previous-epoch-only');
     });
 
     it('Cannot set balance for current epoch', async () => {
       const { beaconChainOracle } = testEnv;
       expect(beaconChainOracle.setBalance(1, 200))
-        .revertedWith('HN/can-set-balance-for-previous-epoch-only');
+        .revertedWith('HN:Oracle/can-set-balance-for-previous-epoch-only');
     });
 
     it('Cannot set balance for epoch 0', async () => {
       const { beaconChainOracle } = testEnv;
       expect(beaconChainOracle.setBalance(0, 200))
-        .revertedWith('HN/can-set-balance-for-previous-epoch-only');
+        .revertedWith('HN:Oracle/can-set-balance-for-previous-epoch-only');
     });
 
     it('Cannot set balance for epoch before previous epoch', async () => {
       const { epochs, beaconChainOracle } = testEnv;
       await forwardEpochs(epochs, 10);
       expect(beaconChainOracle.setBalance(5, 200))
-        .revertedWith('HN/can-set-balance-for-previous-epoch-only');
+        .revertedWith('HN:Oracle/can-set-balance-for-previous-epoch-only');
     });
 
     it('Darth cannot set balance', async () => {

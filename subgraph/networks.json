@@ -1,0 +1,28 @@
+{
+  "goerli": {
+    "Allocations": {
+      "address": "0x44c8aCFf38e6c0700f6F0906Ed0D2091ddb7Ba6e",
+      "startBlock": 8332054
+    },
+    "Deposits": {
+      "address": "0xD9DAd2E6c1cB9e31C7d1B34f4754427C09a2CbFA",
+      "startBlock": 8332054
+    }
+  },
+  "hardhat": {
+    "Allocations": {
+      "address": "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82"
+    },
+    "Deposits": {
+      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
+    }
+  },
+  "localhost": {
+    "Allocations": {
+      "address": "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82"
+    },
+    "Deposits": {
+      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
+    }
+  }
+}
