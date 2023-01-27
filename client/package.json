@@ -81,5 +81,15 @@
   },
   "engines": {
     "node": ">= 16.13.0 <17.0.0"
+  },
+  "lint-staged": {
+    "./**/*.js": [
+      "yarn prettier:js:pure",
+      "eslint --fix"
+    ],
+    "./**/*.{ts,tsx}": [
+      "yarn prettier:ts:pure",
+      "eslint --fix"
+    ]
   }
 }
