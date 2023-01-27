@@ -1,13 +1,13 @@
 import { formatUnits } from 'ethers/lib/utils';
 import React, { FC } from 'react';
 
-import { GOERLI_ETHERSCAN_PREFIX } from 'constants/transactions';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
+import { GOERLI_ETHERSCAN_PREFIX } from 'constants/transactions';
 
-import BudgetBoxProps from './types';
 import styles from './styles.module.scss';
+import BudgetBoxProps from './types';
 
 const getProps = (currentStepIndex: BudgetBoxProps['currentStepIndex']): object | undefined => {
   if (currentStepIndex === 0) {

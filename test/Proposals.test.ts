@@ -1,12 +1,12 @@
 import { expect } from 'chai';
-import { PROPOSALS_CID } from '../env';
-import { PROPOSALS } from '../helpers/constants';
+
 import { makeTestsEnv } from './helpers/make-tests-env';
 
-makeTestsEnv(PROPOSALS, (testEnv) => {
+import { PROPOSALS_CID } from '../env';
+import { PROPOSALS } from '../helpers/constants';
 
+makeTestsEnv(PROPOSALS, testEnv => {
   describe('getProposals', async () => {
-
     it('Should return list of default proposals', async () => {
       // given
       const { proposals, signers } = testEnv;
@@ -52,18 +52,24 @@ makeTestsEnv(PROPOSALS, (testEnv) => {
       }
     });
 
-
     it('Cannot change baseURI if not an owner', async () => {
-      const { proposals, signers: { Darth } } = testEnv;
-      expect(proposals.connect(Darth).setCID('https://malicious.com'))
-        .revertedWith('Ownable: caller is not the owner');
+      const {
+        proposals,
+        signers: { Darth },
+      } = testEnv;
+      expect(proposals.connect(Darth).setCID('https://malicious.com')).revertedWith(
+        'Ownable: caller is not the owner',
+      );
     });
 
     it('Cannot change proposals count if not an owner', async () => {
-      const { proposals, signers: { Darth } } = testEnv;
-      expect(proposals.connect(Darth).setProposalIds(1, [1, 2, 3, 4]))
-        .revertedWith('Ownable: caller is not the owner');
+      const {
+        proposals,
+        signers: { Darth },
+      } = testEnv;
+      expect(proposals.connect(Darth).setProposalIds(1, [1, 2, 3, 4])).revertedWith(
+        'Ownable: caller is not the owner',
+      );
     });
-
   });
 });

@@ -1,18 +1,15 @@
+import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
-import { useMetamask } from 'use-metamask';
-import React, { FC, Fragment, useEffect, useState } from 'react';
-import cx from 'classnames';
 import isEmpty from 'lodash/isEmpty';
+import React, { FC, Fragment, useEffect, useState } from 'react';
+import { useMetamask } from 'use-metamask';
 
 import AllocationEmptyState from 'components/dedicated/AllocationEmptyState/AllocationEmptyState';
 import AllocationInfoBoxes from 'components/dedicated/AllocationInfoBoxes/AllocationInfoBoxes';
 import AllocationItem from 'components/dedicated/AllocationItem/AllocationItem';
 import AllocationNavigation from 'components/dedicated/AllocationNavigation/AllocationNavigation';
 import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
-import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
-import getNewAllocationValuesBigNumber from 'utils/getNewAllocationValuesBigNumber';
-import triggerToast from 'utils/triggerToast';
 import useAllocate from 'hooks/useAllocate';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/useDepositEffectiveAtCurrentEpoch';
 import useIndividualReward from 'hooks/useIndividualReward';
@@ -20,14 +17,17 @@ import useIsDecisionWindowOpen from 'hooks/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/useMatchedProposalRewards';
 import useProposals from 'hooks/useProposals';
 import useUserAllocations from 'hooks/useUserAllocations';
+import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
+import getNewAllocationValuesBigNumber from 'utils/getNewAllocationValuesBigNumber';
+import triggerToast from 'utils/triggerToast';
 
+import styles from './style.module.scss';
+import AllocationViewProps, { AllocationValues, CurrentView } from './types';
 import {
   getAllocationValuesInitialState,
   getAllocationsWithPositiveValues,
   toastBudgetExceeding,
 } from './utils';
-import AllocationViewProps, { AllocationValues, CurrentView } from './types';
-import styles from './style.module.scss';
 
 const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
   const {

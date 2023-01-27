@@ -1,27 +1,29 @@
 {
-  "name": "wildland-governance-game",
-  "author": "Wildland Team",
-  "homepage": ".",
-  "private": true,
+  "name": "hexagon-client",
   "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/wildland/hexagon.git"
+  },
+  "license": "GPL-3.0-only",
   "scripts": {
-    "prepare": "cd .. && husky install client/.husky",
-    "predev": "cd .. && yarn install && yarn compile && cd client && yarn install",
-    "dev": "yarn predev && vite",
     "build": "vite build",
-    "preview": "vite preview",
+    "copy-typechain": "cp -r ../typechain-types ./src/typechain-types",
+    "dev": "yarn predev && vite",
     "eslint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "eslint:fix": "yarn prettier && yarn eslint --fix",
+    "install-root-packages": "cd .. && yarn install && yarn compile && cd client",
+    "predev": "yarn install-root-packages && yarn install",
+    "preinstall": "yarn install-root-packages && yarn remove-typechain && yarn copy-typechain",
     "prettier": "yarn prettier:js --loglevel silent && yarn prettier:ts --loglevel silent",
     "prettier:js": "yarn prettier:js:pure './**/*.{js,jsx}'",
-    "prettier:js:pure": "prettier --config .prettierrc.yml --write",
+    "prettier:js:pure": "prettier --write",
     "prettier:ts": "yarn prettier:ts:pure './**/*.{ts,tsx}'",
-    "prettier:ts:pure": "prettier --config .prettierrc.yml --parser typescript --write",
-    "type-check": "tsc --noEmit true",
-    "test": "TZ=UTC jest",
-    "preinstall": "yarn remove-typechain && yarn copy-typechain",
+    "prettier:ts:pure": "prettier --parser typescript --write",
+    "preview": "vite preview",
     "remove-typechain": "rm -rf ./src/typechain-types",
-    "copy-typechain": "cp -r ../typechain-types ./src/typechain-types"
+    "test": "TZ=UTC jest",
+    "type-check": "tsc --noEmit true"
   },
   "dependencies": {
     "@ethersproject/constants": "^5.7.0",
@@ -59,20 +61,17 @@
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-chai-friendly": "^0.7.2",
-    "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jest": "^27.2.1",
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-no-only-tests": "^3.1.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.32.1",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-sort-imports-es6-autofix": "^0.6.0",
     "eslint-plugin-sort-keys-fix": "^1.1.2",
     "eslint-plugin-typescript-sort-keys": "^2.1.0",
-    "husky": "^8.0.3",
     "jest": "^29.3.1",
     "jest-environment-jsdom": "^29.3.1",
-    "lint-staged": "^13.1.0",
     "prettier": "^2.8.3",
     "regenerator-runtime": "^0.13.11",
     "sass": "^1.57.1",
@@ -82,15 +81,5 @@
   },
   "engines": {
     "node": ">= 16.13.0 <17.0.0"
-  },
-  "lint-staged": {
-    "./**/*.js": [
-      "yarn prettier:js:pure",
-      "eslint --fix"
-    ],
-    "./**/*.{ts,tsx}": [
-      "yarn prettier:ts:pure",
-      "eslint --fix"
-    ]
   }
 }

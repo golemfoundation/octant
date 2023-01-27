@@ -2,10 +2,10 @@ import React, { ReactElement } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
-import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 import UserGlmStakeComponent from 'components/dedicated/UserGlmStake/UserGlmStake';
-import getFormattedUnit from 'utils/getFormattedUnit';
 import useIndividualReward from 'hooks/useIndividualReward';
+import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
+import getFormattedUnit from 'utils/getFormattedUnit';
 
 import styles from './style.module.scss';
 

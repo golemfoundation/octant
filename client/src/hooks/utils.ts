@@ -1,8 +1,8 @@
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import triggerToast from 'utils/triggerToast';
 
-import { UserAllocation } from './useUserAllocations';
 import { toastDebouncedCantRemoveAllocatedProject } from './useIdsInAllocation/utils';
+import { UserAllocation } from './useUserAllocations';
 
 type OnAddRemoveAllocationElementLocalStorage = {
   allocations: number[];

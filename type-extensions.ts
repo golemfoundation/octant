@@ -1,12 +1,14 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import 'hardhat/types/config';
+
 import { ZkSyncContractsConfig } from './types';
 
 declare module 'hardhat/types/config' {
-    interface HardhatUserConfig {
-        zkSyncContracts?: Partial<ZkSyncContractsConfig>;
-    }
+  interface HardhatUserConfig {
+    zkSyncContracts?: Partial<ZkSyncContractsConfig>;
+  }
 
-    interface HardhatConfig {
-      zkSyncContracts: ZkSyncContractsConfig;
-    }
+  interface HardhatConfig {
+    zkSyncContracts: ZkSyncContractsConfig;
+  }
 }

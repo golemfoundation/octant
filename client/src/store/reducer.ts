@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
-import { RootStore } from './types';
 import modelsReducer from './models/reducer';
+import { RootStore } from './types';
 
 const rootReducer = combineReducers<RootStore>({
   models: modelsReducer,

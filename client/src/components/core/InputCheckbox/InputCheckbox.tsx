@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
 import cx from 'classnames';
+import React, { FC } from 'react';
 
-import InputCheckboxProps from './types';
 import styles from './style.module.scss';
+import InputCheckboxProps from './types';
 
 const InputCheckbox: FC<InputCheckboxProps> = ({ isChecked, isDisabled }) => (
   <label className={cx(styles.root, isDisabled && styles.isDisabled)}>

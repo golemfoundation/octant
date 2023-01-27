@@ -1,22 +1,23 @@
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
+
+import { makeTestsEnv } from './helpers/make-tests-env';
+
 import { EPOCHS } from '../helpers/constants';
 import { getLatestBlockTimestamp, increaseNextBlockTimestamp } from '../helpers/misc-utils';
 import { Epochs } from '../typechain-types';
-import { makeTestsEnv } from './helpers/make-tests-env';
 
-makeTestsEnv(EPOCHS, (testEnv) => {
-
+makeTestsEnv(EPOCHS, testEnv => {
   const epochDuration = 5000;
   const decisionWindow = 2000;
 
   async function setupEpochs(start: number) {
     const epochsFactory = await ethers.getContractFactory(EPOCHS);
-    return await epochsFactory.deploy(start, epochDuration, decisionWindow) as Epochs;
+    return (await epochsFactory.deploy(start, epochDuration, decisionWindow)) as Epochs;
   }
 
   describe('Epoch numbering', () => {
-    it("Starts from 1", async () => {
+    it('Starts from 1', async () => {
       const start = await getLatestBlockTimestamp();
       const epochs = await setupEpochs(start);
 
@@ -36,7 +37,7 @@ makeTestsEnv(EPOCHS, (testEnv) => {
       { increaseNextBlockTsBy: 10020, result: 3 },
     ];
 
-    parameters.forEach((param) => {
+    parameters.forEach(param => {
       it(`Epoch num is: ${param.result} when next block timestamp increased by: ${param.increaseNextBlockTsBy}`, async () => {
         const start = await getLatestBlockTimestamp();
         const epochs = await setupEpochs(start);
@@ -61,8 +62,7 @@ makeTestsEnv(EPOCHS, (testEnv) => {
       { increaseNextBlockTsBy: 10020, result: true },
     ];
 
-    parameters.forEach((param) => {
-
+    parameters.forEach(param => {
       it(`isDecisionWindowOpen: ${param.result} when next block timestamp increased by: ${param.increaseNextBlockTsBy}`, async () => {
         const start = await getLatestBlockTimestamp();
         const epochs = await setupEpochs(start);
@@ -87,7 +87,7 @@ makeTestsEnv(EPOCHS, (testEnv) => {
     });
 
     it(`should not be started`, async () => {
-      const start = await getLatestBlockTimestamp() + 10;
+      const start = (await getLatestBlockTimestamp()) + 10;
       const epochs = await setupEpochs(start);
 
       const isOpen = await epochs.isStarted();
@@ -97,8 +97,12 @@ makeTestsEnv(EPOCHS, (testEnv) => {
   });
 
   it('Cannot change decision window if not an owner', async () => {
-    const { epochs, signers: { Darth } } = testEnv;
-    expect(epochs.connect(Darth).setDecisionWindow(0))
-      .revertedWith('Ownable: caller is not the owner');
+    const {
+      epochs,
+      signers: { Darth },
+    } = testEnv;
+    expect(epochs.connect(Darth).setDecisionWindow(0)).revertedWith(
+      'Ownable: caller is not the owner',
+    );
   });
 });

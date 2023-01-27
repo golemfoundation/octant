@@ -2,19 +2,23 @@ import { smock } from '@defi-wonderland/smock';
 import { expect } from 'chai';
 import { parseEther } from 'ethers/lib/utils';
 import { ethers } from 'hardhat';
+
 import { ALLOCATIONS, ALLOCATIONS_STORAGE, EPOCHS } from '../../helpers/constants';
 import { forwardEpochs } from '../../helpers/epochs-utils';
 import { getLatestBlockTimestamp, increaseNextBlockTimestamp } from '../../helpers/misc-utils';
 import { Allocations, AllocationsStorage, Epochs, Rewards } from '../../typechain-types';
 import { makeTestsEnv } from '../helpers/make-tests-env';
 
-makeTestsEnv(ALLOCATIONS, (testEnv) => {
-
-  async function setupAllocations(start: number, duration: number, decisionWindow: number): Promise<[Epochs, Allocations, AllocationsStorage]> {
+makeTestsEnv(ALLOCATIONS, testEnv => {
+  async function setupAllocations(
+    start: number,
+    duration: number,
+    decisionWindow: number,
+  ): Promise<[Epochs, Allocations, AllocationsStorage]> {
     const epochsFactory = await ethers.getContractFactory(EPOCHS);
-    const epochs: Epochs = await epochsFactory.deploy(start, duration, decisionWindow) as Epochs;
+    const epochs: Epochs = (await epochsFactory.deploy(start, duration, decisionWindow)) as Epochs;
     const allocationsStorageFactory = await ethers.getContractFactory(ALLOCATIONS_STORAGE);
-    const allocationsStorage = await allocationsStorageFactory.deploy() as AllocationsStorage;
+    const allocationsStorage = (await allocationsStorageFactory.deploy()) as AllocationsStorage;
     const allocationsFactory = await ethers.getContractFactory(ALLOCATIONS);
 
     const sRewards = await smock.fake<Rewards>('Rewards');
@@ -22,26 +26,33 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
       return parseEther('0.4');
     });
 
-    const allocations: Allocations = await allocationsFactory.deploy(epochs.address, allocationsStorage.address, sRewards.address) as Allocations;
+    const allocations: Allocations = (await allocationsFactory.deploy(
+      epochs.address,
+      allocationsStorage.address,
+      sRewards.address,
+    )) as Allocations;
     await allocationsStorage.transferOwnership(allocations.address);
 
     return [epochs, allocations, allocationsStorage];
   }
 
   describe('Allocate with real deposits', async () => {
-
     describe('No rewards', async () => {
       it('Cannot allocate if deposit is zero', async () => {
-        const { allocations, epochs, signers: { Alice } } = testEnv;
+        const {
+          allocations,
+          epochs,
+          signers: { Alice },
+        } = testEnv;
         await forwardEpochs(epochs, 1);
-        const userAllocations = [{ proposalId: 1, allocation: 100 }];
-        await expect(allocations.connect(Alice).allocate(userAllocations))
-          .revertedWith('HN:Allocations/allocate-above-rewards-budget');
+        const userAllocations = [{ allocation: 100, proposalId: 1 }];
+        await expect(allocations.connect(Alice).allocate(userAllocations)).revertedWith(
+          'HN:Allocations/allocate-above-rewards-budget',
+        );
       });
     });
 
     describe('With rewards', async () => {
-
       beforeEach(async () => {
         const {
           token,
@@ -49,7 +60,7 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
           beaconChainOracle,
           executionLayerOracle,
           epochs,
-          signers: { Alice }
+          signers: { Alice },
         } = testEnv;
         await token.transfer(Alice.address, parseEther('1000000'));
         await token.connect(Alice).approve(glmDeposits.address, parseEther('1000000'));
@@ -64,66 +75,98 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
       });
 
       it('Cannot allocate if individual reward is lower than funds to allocate', async () => {
-        const { allocations, signers: { Alice } } = testEnv;
-        const userAllocations = [{ proposalId: 1, allocation: parseEther('0.5') }];
-        await expect(allocations.connect(Alice).allocate(userAllocations))
-          .revertedWith('HN:Allocations/allocate-above-rewards-budget');
+        const {
+          allocations,
+          signers: { Alice },
+        } = testEnv;
+        const userAllocations = [{ allocation: parseEther('0.5'), proposalId: 1 }];
+        await expect(allocations.connect(Alice).allocate(userAllocations)).revertedWith(
+          'HN:Allocations/allocate-above-rewards-budget',
+        );
       });
 
       it('Cannot allocate if individual reward is lower than funds to allocate in two proposals', async () => {
-        const { allocations, signers: { Alice } } = testEnv;
-        const userAllocations = [{ proposalId: 1, allocation: parseEther('0.2') }, {
-          proposalId: 2,
-          allocation: parseEther('0.3')
-        }];
-        await expect(allocations.connect(Alice).allocate(userAllocations))
-          .revertedWith('HN:Allocations/allocate-above-rewards-budget');
+        const {
+          allocations,
+          signers: { Alice },
+        } = testEnv;
+        const userAllocations = [
+          { allocation: parseEther('0.2'), proposalId: 1 },
+          {
+            allocation: parseEther('0.3'),
+            proposalId: 2,
+          },
+        ];
+        await expect(allocations.connect(Alice).allocate(userAllocations)).revertedWith(
+          'HN:Allocations/allocate-above-rewards-budget',
+        );
       });
 
       it('Can allocate if individual reward is equals to funds to allocate', async () => {
-        const { allocations, allocationsStorage, epochs, signers: { Alice } } = testEnv;
-        const userAllocations = [{ proposalId: 1, allocation: parseEther('0.4') }];
+        const {
+          allocations,
+          allocationsStorage,
+          epochs,
+          signers: { Alice },
+        } = testEnv;
+        const userAllocations = [{ allocation: parseEther('0.4'), proposalId: 1 }];
         await allocations.connect(Alice).allocate(userAllocations);
         const currentEpoch = await epochs.getCurrentEpoch();
-        const userAllocation = await allocationsStorage.getUserAllocations(currentEpoch - 1, Alice.address);
+        const userAllocation = await allocationsStorage.getUserAllocations(
+          currentEpoch - 1,
+          Alice.address,
+        );
         expect(userAllocation[0].allocation).eq(parseEther('0.4'));
       });
 
       it('Can allocate if individual reward is higher than funds to allocate', async () => {
-        const { allocations, allocationsStorage, epochs, signers: { Alice } } = testEnv;
-        const userAllocations = [{ proposalId: 1, allocation: parseEther('0.3') }];
+        const {
+          allocations,
+          allocationsStorage,
+          epochs,
+          signers: { Alice },
+        } = testEnv;
+        const userAllocations = [{ allocation: parseEther('0.3'), proposalId: 1 }];
         await allocations.connect(Alice).allocate(userAllocations);
         const currentEpoch = await epochs.getCurrentEpoch();
-        const userAllocation = await allocationsStorage.getUserAllocations(currentEpoch - 1, Alice.address);
+        const userAllocation = await allocationsStorage.getUserAllocations(
+          currentEpoch - 1,
+          Alice.address,
+        );
         expect(userAllocation[0].allocation).eq(parseEther('0.3'));
       });
     });
   });
 
-
   describe('Allocate (deposits faked)', async () => {
-
     let epochs: Epochs;
     let allocations: Allocations;
     let allocationsStorage: AllocationsStorage;
 
     beforeEach(async () => {
-      let start = await getLatestBlockTimestamp();
+      const start = await getLatestBlockTimestamp();
       [epochs, allocations, allocationsStorage] = await setupAllocations(start, 300, 100);
       await forwardEpochs(epochs, 1);
     });
 
     it('Cannot allocate for proposal with id 0', async () => {
-      const { allocations, epochs, signers: { Alice } } = testEnv;
-      await forwardEpochs(epochs, 1);
-      const userAllocations = [{ proposalId: 0, allocation: parseEther('0.4') }];
-      await expect(allocations.connect(Alice).allocate(userAllocations))
-        .revertedWith('HN:Allocations/proposal-id-equals-0');
+      const {
+        allocations: currentTestAllocations,
+        epochs: currentTestEpochs,
+        signers: { Alice },
+      } = testEnv;
+      await forwardEpochs(currentTestEpochs, 1);
+      const userAllocations = [{ allocation: parseEther('0.4'), proposalId: 0 }];
+      await expect(currentTestAllocations.connect(Alice).allocate(userAllocations)).revertedWith(
+        'HN:Allocations/proposal-id-equals-0',
+      );
     });
 
     it('Can allocate to one proposal', async () => {
-      const { signers: { Alice } } = testEnv;
-      const userAllocations = [{ proposalId: 1, allocation: parseEther('0.4') }];
+      const {
+        signers: { Alice },
+      } = testEnv;
+      const userAllocations = [{ allocation: parseEther('0.4'), proposalId: 1 }];
 
       await allocations.connect(Alice).allocate(userAllocations);
 
@@ -133,13 +176,15 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
     });
 
     it('Can allocate to multiple proposals', async () => {
-      const { signers: { Alice } } = testEnv;
+      const {
+        signers: { Alice },
+      } = testEnv;
       const userAllocations = [
-        { proposalId: 1, allocation: parseEther('0.001') },
-        { proposalId: 2, allocation: parseEther('0.04') },
-        { proposalId: 4, allocation: parseEther('0.2') },
-        { proposalId: 3, allocation: parseEther('0.000000009') },
-        { proposalId: 7, allocation: parseEther('0.1') },
+        { allocation: parseEther('0.001'), proposalId: 1 },
+        { allocation: parseEther('0.04'), proposalId: 2 },
+        { allocation: parseEther('0.2'), proposalId: 4 },
+        { allocation: parseEther('0.000000009'), proposalId: 3 },
+        { allocation: parseEther('0.1'), proposalId: 7 },
       ];
 
       await allocations.connect(Alice).allocate(userAllocations);
@@ -158,18 +203,24 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
     });
 
     it('Can change one allocation', async () => {
-      const { signers: { Alice } } = testEnv;
+      const {
+        signers: { Alice },
+      } = testEnv;
 
       expect(await epochs.isDecisionWindowOpen()).eq(true);
 
-      await allocations.connect(Alice).allocate([{
-        proposalId: 1,
-        allocation: parseEther('0.4')
-      }]);
-      await allocations.connect(Alice).allocate([{
-        proposalId: 1,
-        allocation: parseEther('0.2')
-      }]);
+      await allocations.connect(Alice).allocate([
+        {
+          allocation: parseEther('0.4'),
+          proposalId: 1,
+        },
+      ]);
+      await allocations.connect(Alice).allocate([
+        {
+          allocation: parseEther('0.2'),
+          proposalId: 1,
+        },
+      ]);
 
       const allocation = await allocationsStorage.getUserAllocations(1, Alice.address);
       expect(allocation[0].allocation).eq(parseEther('0.2'));
@@ -177,18 +228,20 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
     });
 
     it('Can change to more allocations', async () => {
-      const { signers: { Alice } } = testEnv;
+      const {
+        signers: { Alice },
+      } = testEnv;
 
       expect(await epochs.isDecisionWindowOpen()).eq(true);
 
       await allocations.connect(Alice).allocate([
-        { proposalId: 1, allocation: parseEther('0.1') },
-        { proposalId: 2, allocation: parseEther('0.01') },
+        { allocation: parseEther('0.1'), proposalId: 1 },
+        { allocation: parseEther('0.01'), proposalId: 2 },
       ]);
       await allocations.connect(Alice).allocate([
-        { proposalId: 4, allocation: parseEther('0.009') },
-        { proposalId: 5, allocation: parseEther('0.00001') },
-        { proposalId: 1, allocation: parseEther('0.2') },
+        { allocation: parseEther('0.009'), proposalId: 4 },
+        { allocation: parseEther('0.00001'), proposalId: 5 },
+        { allocation: parseEther('0.2'), proposalId: 1 },
       ]);
 
       const result = await allocationsStorage.getUserAllocations(1, Alice.address);
@@ -202,19 +255,21 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
     });
 
     it('Can change to less allocations', async () => {
-      const { signers: { Alice } } = testEnv;
+      const {
+        signers: { Alice },
+      } = testEnv;
 
       expect(await epochs.isDecisionWindowOpen()).eq(true);
 
       await allocations.connect(Alice).allocate([
-        { proposalId: 4, allocation: parseEther('0.009') },
-        { proposalId: 5, allocation: parseEther('0.00001') },
-        { proposalId: 1, allocation: parseEther('0.2') },
+        { allocation: parseEther('0.009'), proposalId: 4 },
+        { allocation: parseEther('0.00001'), proposalId: 5 },
+        { allocation: parseEther('0.2'), proposalId: 1 },
       ]);
 
       await allocations.connect(Alice).allocate([
-        { proposalId: 1, allocation: parseEther('0.1') },
-        { proposalId: 2, allocation: parseEther('0.01') },
+        { allocation: parseEther('0.1'), proposalId: 1 },
+        { allocation: parseEther('0.01'), proposalId: 2 },
       ]);
 
       const result = await allocationsStorage.getUserAllocations(1, Alice.address);
@@ -226,23 +281,29 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
     });
 
     it('Multiple users can allocate', async () => {
-      const { signers: { Alice, Bob, Charlie } } = testEnv;
+      const {
+        signers: { Alice, Bob, Charlie },
+      } = testEnv;
 
       expect(await epochs.getCurrentEpoch()).eq(2);
       expect(await epochs.isDecisionWindowOpen()).eq(true);
 
-      await allocations.connect(Alice).allocate([{
-        proposalId: 1,
-        allocation: parseEther('0.4')
-      }]);
-      await allocations.connect(Bob).allocate([
-        { proposalId: 1, allocation: parseEther('0.13') },
-        { proposalId: 5, allocation: parseEther('0.0002') }
+      await allocations.connect(Alice).allocate([
+        {
+          allocation: parseEther('0.4'),
+          proposalId: 1,
+        },
       ]);
-      await allocations.connect(Charlie).allocate([{
-        proposalId: 5,
-        allocation: parseEther('0.23')
-      }]);
+      await allocations.connect(Bob).allocate([
+        { allocation: parseEther('0.13'), proposalId: 1 },
+        { allocation: parseEther('0.0002'), proposalId: 5 },
+      ]);
+      await allocations.connect(Charlie).allocate([
+        {
+          allocation: parseEther('0.23'),
+          proposalId: 5,
+        },
+      ]);
       const proposal1allocations = await allocationsStorage.getUsersWithTheirAllocations(1, 1);
       expect(proposal1allocations[0].length).eq(2);
       expect(proposal1allocations[1].length).eq(2);
@@ -255,44 +316,60 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
     });
 
     it('User can change his a proposal to allocate', async () => {
-      const { signers: { Alice } } = testEnv;
+      const {
+        signers: { Alice },
+      } = testEnv;
 
-      await allocations.connect(Alice).allocate([{
-        proposalId: 1,
-        allocation: parseEther('0.4')
-      }]);
-      await allocations.connect(Alice).allocate([{
-        proposalId: 2,
-        allocation: parseEther('0.234')
-      }]);
+      await allocations.connect(Alice).allocate([
+        {
+          allocation: parseEther('0.4'),
+          proposalId: 1,
+        },
+      ]);
+      await allocations.connect(Alice).allocate([
+        {
+          allocation: parseEther('0.234'),
+          proposalId: 2,
+        },
+      ]);
       const allocation = await allocationsStorage.getUserAllocations(1, Alice.address);
 
       expect(allocation[0].proposalId).eq(2);
     });
 
     it('Allocate emits proper event', async () => {
-      const { signers: { Alice } } = testEnv;
+      const {
+        signers: { Alice },
+      } = testEnv;
 
-      await expect(allocations.connect(Alice).allocate([{
-        proposalId: 1,
-        allocation: parseEther('0.4')
-      }])).emit(allocations, 'Allocated');
+      await expect(
+        allocations.connect(Alice).allocate([
+          {
+            allocation: parseEther('0.4'),
+            proposalId: 1,
+          },
+        ]),
+      ).emit(allocations, 'Allocated');
     });
   });
 
   describe('Tests with controlled epochs setup (deposits faked)', async () => {
     it('Users allocate in second epoch', async () => {
-      const { signers: { Alice } } = testEnv;
+      const {
+        signers: { Alice },
+      } = testEnv;
       const start = await getLatestBlockTimestamp();
-      let [epochs, allocations, allocationsStorage] = await setupAllocations(start, 500, 200);
+      const [epochs, allocations, allocationsStorage] = await setupAllocations(start, 500, 200);
 
       expect(await epochs.getCurrentEpoch()).eq(1);
       await forwardEpochs(epochs, 1);
       expect(await epochs.getCurrentEpoch()).eq(2);
-      await allocations.connect(Alice).allocate([{
-        proposalId: 1,
-        allocation: parseEther('0.4')
-      }]);
+      await allocations.connect(Alice).allocate([
+        {
+          allocation: parseEther('0.4'),
+          proposalId: 1,
+        },
+      ]);
       const allocationInFirstEpoch = await allocationsStorage.getUserAllocations(1, Alice.address);
       const allocationInSecondEpoch = await allocationsStorage.getUserAllocations(2, Alice.address);
 
@@ -302,28 +379,38 @@ makeTestsEnv(ALLOCATIONS, (testEnv) => {
     });
 
     it('Cannot allocate when decision window closed', async () => {
-      const { signers: { Alice } } = testEnv;
+      const {
+        signers: { Alice },
+      } = testEnv;
       const start = await getLatestBlockTimestamp();
-      let [_, allocations] = await setupAllocations(start, 500, 200);
+      const [_, allocations] = await setupAllocations(start, 500, 200);
 
       await increaseNextBlockTimestamp(750);
 
-      await expect(allocations.connect(Alice).allocate([{
-        proposalId: 1,
-        allocation: parseEther('0.4')
-      }]))
-        .revertedWith('HN:Allocations/decision-window-closed');
+      await expect(
+        allocations.connect(Alice).allocate([
+          {
+            allocation: parseEther('0.4'),
+            proposalId: 1,
+          },
+        ]),
+      ).revertedWith('HN:Allocations/decision-window-closed');
     });
 
     it('Cannot allocate when hexagon has not been started yet', async () => {
-      const { signers: { Alice } } = testEnv;
-      let [_, allocations] = await setupAllocations(2000000000, 500, 200);
+      const {
+        signers: { Alice },
+      } = testEnv;
+      const [_, allocations] = await setupAllocations(2000000000, 500, 200);
 
-      await expect(allocations.connect(Alice).allocate([{
-        proposalId: 1,
-        allocation: parseEther('0.4')
-      }]))
-        .revertedWith('HN:Allocations/first-epoch-not-started-yet');
+      await expect(
+        allocations.connect(Alice).allocate([
+          {
+            allocation: parseEther('0.4'),
+            proposalId: 1,
+          },
+        ]),
+      ).revertedWith('HN:Allocations/first-epoch-not-started-yet');
     });
   });
 });

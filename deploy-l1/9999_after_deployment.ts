@@ -1,5 +1,6 @@
-import { DeployFunction } from 'hardhat-deploy/types';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { DeployFunction } from 'hardhat-deploy/types';
+
 import {
   ALLOCATIONS,
   ALLOCATIONS_STORAGE,
@@ -9,12 +10,14 @@ import {
   PROPOSALS,
   REWARDS,
   TEST_REWARDS,
-  TRACKER
+  TRACKER,
 } from '../helpers/constants';
 
+// This function needs to be declared this way, otherwise it's not understood by test runner.
+// eslint-disable-next-line func-names
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-
   // Prepare .env for client
+  /* eslint-disable no-console */
   const allocations = await hre.ethers.getContract(ALLOCATIONS);
   console.log(`VITE_ALLOCATIONS_ADDRESS=${allocations.address}`);
   const allocationsStorage = await hre.ethers.getContract(ALLOCATIONS_STORAGE);
@@ -33,6 +36,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`VITE_TEST_REWARDS_ADDRESS=${testRewards.address}`);
   const beaconChain = await hre.ethers.getContract(BEACON_CHAIN_ORACLE);
   console.log(`VITE_BEACON_CHAIN_ORACLE_ADDRESS=${beaconChain.address}`);
+  /* eslint-enable no-console */
 };
 
 export default func;

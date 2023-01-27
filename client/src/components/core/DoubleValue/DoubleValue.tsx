@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
-import DoubleValueProps from './types';
 import styles from './style.module.scss';
+import DoubleValueProps from './types';
 
 const DoubleValue: FC<DoubleValueProps> = ({ mainValue, alternativeValue }) => (
   <div className={styles.root}>

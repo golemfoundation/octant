@@ -1,4 +1,7 @@
 import { deployments, ethers } from 'hardhat';
+
+import { Signers, TestEnv } from './test-env.interface';
+
 import {
   ALLOCATIONS,
   ALLOCATIONS_STORAGE,
@@ -12,7 +15,7 @@ import {
   REWARDS,
   TEST_REWARDS,
   TOKEN,
-  TRACKER
+  TRACKER,
 } from '../../helpers/constants';
 import {
   Allocations,
@@ -27,25 +30,24 @@ import {
   TestGLMFaucet,
   TestRewards,
   Token,
-  Tracker
+  Tracker,
 } from '../../typechain-types';
-import { Signers, TestEnv } from './test-env.interface';
 
 const testEnv: TestEnv = {
-  signers: {} as Signers,
   allocations: {} as Allocations,
   allocationsStorage: {} as AllocationsStorage,
+  beaconChainOracle: {} as BeaconChainOracle,
+  epochs: {} as Epochs,
+  executionLayerOracle: {} as ExecutionLayerOracle,
   faucet: {} as TestGLMFaucet,
-  proposals: {} as Proposals,
   glmDeposits: {} as Deposits,
-  tracker: {} as Tracker,
+  hexagonOracle: {} as HexagonOracle,
+  proposals: {} as Proposals,
   rewards: {} as Rewards,
+  signers: {} as Signers,
   testRewards: {} as TestRewards,
   token: {} as Token,
-  epochs: {} as Epochs,
-  beaconChainOracle: {} as BeaconChainOracle,
-  executionLayerOracle: {} as ExecutionLayerOracle,
-  hexagonOracle: {} as HexagonOracle,
+  tracker: {} as Tracker,
 };
 
 async function initializeTestsEnv() {
@@ -65,7 +67,7 @@ async function initializeTestsEnv() {
   testEnv.hexagonOracle = await ethers.getContract(HEXAGON_ORACLE);
 }
 
-export function makeTestsEnv(name: string, tests: (testEnv: TestEnv) => void) {
+export function makeTestsEnv(name: string, tests: (testEnvToMake: TestEnv) => void): void {
   describe(name, () => {
     beforeEach(async () => {
       await deployments.fixture(['test']);

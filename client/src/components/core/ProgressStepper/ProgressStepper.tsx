@@ -1,11 +1,11 @@
-import React, { FC } from 'react';
 import cx from 'classnames';
+import React, { FC } from 'react';
 
-import { tick } from 'svg/misc';
 import Svg from 'components/core/Svg/Svg';
+import { tick } from 'svg/misc';
 
-import ProgressStepperProps from './types';
 import styles from './styles.module.scss';
+import ProgressStepperProps from './types';
 
 const ProgressStepper: FC<ProgressStepperProps> = ({ currentStepIndex, steps }) => (
   <div className={styles.root}>

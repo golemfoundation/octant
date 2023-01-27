@@ -1,10 +1,12 @@
 import { expect } from 'chai';
 import { parseEther } from 'ethers/lib/utils';
-import { REWARDS } from '../helpers/constants';
-import { forwardEpochs } from '../helpers/epochs-utils';
+
 import { makeTestsEnv } from './helpers/make-tests-env';
 
-makeTestsEnv(REWARDS, (testEnv) => {
+import { REWARDS } from '../helpers/constants';
+import { forwardEpochs } from '../helpers/epochs-utils';
+
+makeTestsEnv(REWARDS, testEnv => {
   async function updateOracle() {
     const { epochs, beaconChainOracle, executionLayerOracle } = testEnv;
     await forwardEpochs(epochs, 1);
@@ -16,7 +18,7 @@ makeTestsEnv(REWARDS, (testEnv) => {
   }
 
   describe('individual rewards', async () => {
-    it('single player scenario', async function () {
+    it('single player scenario', async () => {
       const { glmDeposits, rewards, tracker, signers, token } = testEnv;
       await token.transfer(signers.Alice.address, parseEther('1000000'));
       await token.connect(signers.Alice).approve(glmDeposits.address, parseEther('1000000'));
@@ -25,11 +27,16 @@ makeTestsEnv(REWARDS, (testEnv) => {
       expect(await tracker.totalDepositAt(2), 'total deposit').eq(parseEther('1000000'));
       expect(await rewards.stakedRatio(2), 'staked ratio').eq(parseEther('0.001'));
       expect(await rewards.allIndividualRewards(2), 'sum of IRs').eq(parseEther('0.4'));
-      expect(await rewards.individualReward(2, signers.Alice.address), 'Alice IR').eq(parseEther('0.4'));
-      expect(await rewards.totalRewards(2), 'totalRewards').within(parseEther('12'), parseEther('13'));
+      expect(await rewards.individualReward(2, signers.Alice.address), 'Alice IR').eq(
+        parseEther('0.4'),
+      );
+      expect(await rewards.totalRewards(2), 'totalRewards').within(
+        parseEther('12'),
+        parseEther('13'),
+      );
     });
 
-    it('multiplayer scenario', async function () {
+    it('multiplayer scenario', async () => {
       const { glmDeposits, rewards, tracker, signers, token } = testEnv;
       await token.transfer(signers.Alice.address, parseEther('1000000'));
       await token.connect(signers.Alice).approve(glmDeposits.address, parseEther('1000000'));
@@ -41,13 +48,20 @@ makeTestsEnv(REWARDS, (testEnv) => {
       expect(await tracker.totalDepositAt(2), 'total deposit').eq(parseEther('1500000'));
       expect(await rewards.stakedRatio(2), 'staked ratio').eq(parseEther('0.0015'));
       expect(await rewards.allIndividualRewards(2), 'sum of IRs').eq(parseEther('0.6'));
-      expect(await rewards.individualReward(2, signers.Alice.address), 'Alice IR').eq(parseEther('0.4'));
-      expect(await rewards.individualReward(2, signers.Bob.address), 'Bob IR').eq(parseEther('0.2'));
-      expect(await rewards.totalRewards(2), 'totalRewards').within(parseEther('15'), parseEther('16'));
+      expect(await rewards.individualReward(2, signers.Alice.address), 'Alice IR').eq(
+        parseEther('0.4'),
+      );
+      expect(await rewards.individualReward(2, signers.Bob.address), 'Bob IR').eq(
+        parseEther('0.2'),
+      );
+      expect(await rewards.totalRewards(2), 'totalRewards').within(
+        parseEther('15'),
+        parseEther('16'),
+      );
     });
   });
 
-  it('Compute total rewards', async function () {
+  it('Compute total rewards', async () => {
     const { glmDeposits, rewards, signers, token } = testEnv;
     await token.transfer(signers.Alice.address, parseEther('1000000'));
     await token.connect(signers.Alice).approve(glmDeposits.address, parseEther('1000000'));
@@ -58,7 +72,12 @@ makeTestsEnv(REWARDS, (testEnv) => {
 
   describe('Proposal rewards', async () => {
     beforeEach(async () => {
-      const { token, glmDeposits, allocations, signers: { Alice, Bob, Charlie, Eve } } = testEnv;
+      const {
+        token,
+        glmDeposits,
+        allocations,
+        signers: { Alice, Bob, Charlie, Eve },
+      } = testEnv;
 
       // Users deposit
       await token.transfer(Alice.address, parseEther('1000000'));
@@ -80,23 +99,26 @@ makeTestsEnv(REWARDS, (testEnv) => {
       await updateOracle();
 
       // Users allocate in epoch 3 for proceeds of epoch 2
-      await allocations.connect(Alice).allocate([{
-        proposalId: 1,
-        allocation: parseEther('0.12')
-      }]);
-      await allocations.connect(Bob).allocate([{
-        proposalId: 2,
-        allocation: parseEther('0.1')
-      }]);
+      await allocations.connect(Alice).allocate([
+        {
+          allocation: parseEther('0.12'),
+          proposalId: 1,
+        },
+      ]);
+      await allocations.connect(Bob).allocate([
+        {
+          allocation: parseEther('0.1'),
+          proposalId: 2,
+        },
+      ]);
       await allocations.connect(Charlie).allocate([
-        { proposalId: 2, allocation: parseEther('0.08') },
-        { proposalId: 5, allocation: parseEther('0.00001') },
-        { proposalId: 4, allocation: parseEther('0.000000000009') },
-
+        { allocation: parseEther('0.08'), proposalId: 2 },
+        { allocation: parseEther('0.00001'), proposalId: 5 },
+        { allocation: parseEther('0.000000000009'), proposalId: 4 },
       ]);
       await allocations.connect(Eve).allocate([
-        { proposalId: 4, allocation: parseEther('0.032') },
-        { proposalId: 1, allocation: parseEther('0.0000000989') }
+        { allocation: parseEther('0.032'), proposalId: 4 },
+        { allocation: parseEther('0.0000000989'), proposalId: 1 },
       ]);
     });
 
@@ -131,7 +153,7 @@ makeTestsEnv(REWARDS, (testEnv) => {
       });
     });
 
-    it('Compute matched proposal rewards', async function () {
+    it('Compute matched proposal rewards', async () => {
       const { rewards } = testEnv;
       const matchedRewards = await rewards.matchedRewards(2);
       expect(matchedRewards).eq(parseEther('22.851050121192878400'));

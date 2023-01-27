@@ -6,16 +6,16 @@ import Description from 'components/core/Description/Description';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import Header from 'components/core/Header/Header';
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
-import getFormattedUnits from 'utils/getFormattedUnit';
-import getNewAllocationValuesBigNumber from 'utils/getNewAllocationValuesBigNumber';
 import useCurrentEpoch from 'hooks/useCurrentEpoch';
 import useIndividualProposalRewards from 'hooks/useIndividualProposalRewards';
 import useIndividualReward from 'hooks/useIndividualReward';
 import useMatchedRewards from 'hooks/useMatchedRewards';
 import useUserAllocations from 'hooks/useUserAllocations';
+import getFormattedUnits from 'utils/getFormattedUnit';
+import getNewAllocationValuesBigNumber from 'utils/getNewAllocationValuesBigNumber';
 
-import AllocationSummaryProps from './types';
 import styles from './style.module.scss';
+import AllocationSummaryProps from './types';
 
 const AllocationSummary: FC<AllocationSummaryProps> = ({ newAllocationValues }) => {
   const { data: currentEpoch } = useCurrentEpoch();

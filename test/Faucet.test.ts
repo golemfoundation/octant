@@ -1,14 +1,18 @@
 import { expect } from 'chai';
 import { parseEther } from 'ethers/lib/utils';
-import { DEPOSITS } from '../helpers/constants';
+
 import { makeTestsEnv } from './helpers/make-tests-env';
 
-makeTestsEnv(DEPOSITS, (testEnv) => {
+import { DEPOSITS } from '../helpers/constants';
 
+makeTestsEnv(DEPOSITS, testEnv => {
   describe('Faucet', async () => {
-
     it('Can withdraw GLM', async () => {
-      const { token, faucet, signers: { Alice } } = testEnv;
+      const {
+        token,
+        faucet,
+        signers: { Alice },
+      } = testEnv;
       await token.transfer(faucet.address, parseEther('10000'));
 
       await faucet.connect(Alice).sendMeGLM();
@@ -17,7 +21,11 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
     });
 
     it('Can withdraw twice', async () => {
-      const { token, faucet, signers: { Alice } } = testEnv;
+      const {
+        token,
+        faucet,
+        signers: { Alice },
+      } = testEnv;
       await token.transfer(faucet.address, parseEther('10000'));
 
       await faucet.connect(Alice).sendMeGLM();
@@ -27,7 +35,11 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
     });
 
     it('Can send GLM to recipient', async () => {
-      const { token, faucet, signers: { Alice, Bob } } = testEnv;
+      const {
+        token,
+        faucet,
+        signers: { Alice, Bob },
+      } = testEnv;
       await token.transfer(faucet.address, parseEther('10000'));
 
       await faucet.connect(Alice).sendGLM(Bob.address);
@@ -37,7 +49,11 @@ makeTestsEnv(DEPOSITS, (testEnv) => {
     });
 
     it('Can send to recipient twice', async () => {
-      const { token, faucet, signers: { Alice, Bob } } = testEnv;
+      const {
+        token,
+        faucet,
+        signers: { Alice, Bob },
+      } = testEnv;
       await token.transfer(faucet.address, parseEther('10000'));
 
       await faucet.connect(Alice).sendGLM(Bob.address);

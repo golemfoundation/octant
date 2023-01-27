@@ -1,12 +1,12 @@
-import { Link } from 'react-router-dom';
-import React, { FC, Fragment } from 'react';
 import cx from 'classnames';
+import React, { FC, Fragment } from 'react';
+import { Link } from 'react-router-dom';
 
-import { arrow } from 'svg/misc';
 import Svg from 'components/core/Svg/Svg';
+import { arrow } from 'svg/misc';
 
-import ButtonProps from './types';
 import styles from './style.module.scss';
+import ButtonProps from './types';
 
 const Button: FC<ButtonProps> = ({
   Icon,

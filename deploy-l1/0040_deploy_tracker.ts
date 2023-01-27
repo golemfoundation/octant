@@ -1,10 +1,13 @@
 import { ethers } from 'hardhat';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-import { GOERLI_GLM, GOERLI_GNT } from '../env';
-import { DEPOSITS, TRACKER, EPOCHS, TOKEN } from '../helpers/constants';
 
-const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
+import { GOERLI_GLM, GOERLI_GNT } from '../env';
+import { DEPOSITS, EPOCHS, TOKEN, TRACKER } from '../helpers/constants';
+
+// This function needs to be declared this way, otherwise it's not understood by test runner.
+// eslint-disable-next-line func-names
+const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
@@ -20,10 +23,10 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
   const deposits = await ethers.getContract(DEPOSITS);
 
   await deploy(TRACKER, {
+    args: [epochs.address, deposits.address, glmAddress, gntAddress],
+    autoMine: true,
     from: deployer,
     log: true,
-    args: [epochs.address, deposits.address, glmAddress, gntAddress],
-    autoMine: true
   });
 };
 export default func;

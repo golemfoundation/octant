@@ -1,11 +1,11 @@
-import React, { FC } from 'react';
 import cx from 'classnames';
 import isEmpty from 'lodash/isEmpty';
+import React, { FC } from 'react';
 
 import Button from 'components/core/Button/Button';
 
-import BoxRoundedProps from './types';
 import styles from './style.module.scss';
+import BoxRoundedProps from './types';
 
 const BoxRounded: FC<BoxRoundedProps> = ({
   alignment = 'center',

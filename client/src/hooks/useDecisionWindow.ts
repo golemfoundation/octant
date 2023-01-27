@@ -7,6 +7,6 @@ export default function useDecisionWindow(): UseQueryResult<number | undefined> 
 
   return useQuery(['decisionWindow'], () => contractEpochs?.decisionWindow(), {
     enabled: !!contractEpochs,
-    select: response => (response ? response?.toNumber() * 1000 : undefined),
+    select: response => (response ? response.toNumber() * 1000 : undefined),
   });
 }
