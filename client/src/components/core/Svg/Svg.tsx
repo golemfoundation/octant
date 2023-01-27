@@ -1,9 +1,9 @@
-import React, { FC } from 'react';
 import cx from 'classnames';
 import isArray from 'lodash/isArray';
+import React, { FC } from 'react';
 
-import { SvgAttrs, SvgProps, SvgStyles } from './types';
 import styles from './style.module.scss';
+import { SvgAttrs, SvgProps, SvgStyles } from './types';
 
 const Svg: FC<SvgProps> = ({
   img,

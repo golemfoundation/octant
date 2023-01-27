@@ -57,6 +57,10 @@ npx hardhat --network goerli send-glm --recipient <recipient address>
 ```
 
 ## Known technical problems
+### root
+
+Root `package.json` `yarn postinstall` command replaces `@nomiclabs/hardhat-ethers` with `hardhat-deploy-ethers`. This is due to the fact that the first package, although essential declares different methods for `ethers` than the latter package, causing unexpected type collision.
+
 ### client
 Typechain combines responses from contracts so that an array and object are joined together, e.g.:
 ```

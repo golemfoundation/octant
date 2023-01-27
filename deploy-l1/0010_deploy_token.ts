@@ -1,17 +1,20 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
+
 import { TOKEN } from '../helpers/constants';
 
-const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
+// This function needs to be declared this way, otherwise it's not understood by test runner.
+// eslint-disable-next-line func-names
+const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
   await deploy(TOKEN, {
+    args: [],
+    autoMine: true,
     from: deployer,
     log: true,
-    args: [],
-    autoMine: true
   });
 };
 export default func;
-func.tags = ['token','local', 'test'];
+func.tags = ['token', 'local', 'test'];

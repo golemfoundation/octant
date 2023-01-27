@@ -1,7 +1,7 @@
 import { createActions } from 'store/utils/createActions';
 
-import { AllocationsStore } from './types';
 import { allocationAdd, allocationRemove, allocationsSet } from './actions';
+import { AllocationsStore } from './types';
 
 export const initialState: AllocationsStore = null;
 

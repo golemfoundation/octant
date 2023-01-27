@@ -1,6 +1,6 @@
 import { formatUnits } from 'ethers/lib/utils';
-import { useMetamask } from 'use-metamask';
 import React, { FC, Fragment, useState } from 'react';
+import { useMetamask } from 'use-metamask';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';

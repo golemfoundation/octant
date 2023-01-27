@@ -2,8 +2,8 @@ import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useQueries } from 'react-query';
 
-import { BackendProposal, ExtendedProposal } from 'types/proposals';
 import { apiGetProposal } from 'api/proposals';
+import { BackendProposal, ExtendedProposal } from 'types/proposals';
 
 import { IProposals } from '../../../typechain-types';
 

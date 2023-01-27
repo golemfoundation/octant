@@ -5,14 +5,14 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Description from 'components/core/Description/Description';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import Header from 'components/core/Header/Header';
-import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
-import MetricsTimeSection from 'components/dedicated/MetricsTimeSection/MetricsTimeSection';
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
+import MetricsTimeSection from 'components/dedicated/MetricsTimeSection/MetricsTimeSection';
 import useCurrentEpoch from 'hooks/useCurrentEpoch';
 import useEthStaked from 'hooks/useEthStaked';
 import useGlmStaked from 'hooks/useGlmStaked';
 import useIsDecisionWindowOpen from 'hooks/useIsDecisionWindowOpen';
 import useStakedRatio from 'hooks/useStakedRatio';
+import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 
 import styles from './style.module.scss';
 

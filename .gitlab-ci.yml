@@ -5,6 +5,7 @@ variables:
 
 stages:
   - build
+  - lint_and_typecheck
   - test
   - deploy
 
@@ -43,6 +44,39 @@ Build:
     - yarn install --non-interactive --cache-folder .yarn
     - cd ../subgraph
     - yarn install --non-interactive --cache-folder .yarn
+
+Lint and typecheck:
+  stage: lint_and_typecheck
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-yarn.lock
+      paths:
+        - node_modules
+      policy: pull
+    - key: $CI_COMMIT_REF_SLUG-contracts
+      paths:
+        - .yarn
+        - artifacts
+        - artifacts-zk
+        - typechain-types
+      policy: pull
+    - key: $CI_COMMIT_REF_SLUG-client-yarn.lock
+      paths:
+        - client/node_modules
+      policy: pull
+    - key: $CI_COMMIT_REF_SLUG-subgraph-yarn.lock
+      paths:
+        - subgraph/node_modules
+      policy: pull
+  script:
+    - yarn eslint
+    - yarn type-check
+    - cd client
+    - yarn install
+    - yarn eslint
+    - yarn type-check
+    - cd ../subgraph
+    - yarn codegen
+    - yarn eslint
 
 Contracts unit tests:
   stage: test

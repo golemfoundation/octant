@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
-import { ModelsStore } from './types';
 import allocationsReducer, { initialState as allocationsInitialState } from './allocations/reducer';
+import { ModelsStore } from './types';
 
 export const initialState = {
   allocations: allocationsInitialState,

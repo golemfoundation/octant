@@ -1,14 +1,17 @@
-import { DeployFunction } from 'hardhat-deploy/types';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { DECISION_WINDOW, EPOCH_DURATION, EPOCHS_START } from '../env';
+import { DeployFunction } from 'hardhat-deploy/types';
+
+import { DECISION_WINDOW, EPOCHS_START, EPOCH_DURATION } from '../env';
 import { EPOCHS } from '../helpers/constants';
 import { getLatestBlockTimestamp } from '../helpers/misc-utils';
 
+// This function needs to be declared this way, otherwise it's not understood by test runner.
+// eslint-disable-next-line func-names
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
-  let start = EPOCHS_START ? Number(EPOCHS_START) : await getLatestBlockTimestamp();
+  const start = EPOCHS_START ? Number(EPOCHS_START) : await getLatestBlockTimestamp();
   let decisionWindow = DECISION_WINDOW;
   let epochDuration = EPOCH_DURATION;
   if (hre.network.name === 'hardhat') {
@@ -17,10 +20,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   }
 
   await deploy(EPOCHS, {
-    from: deployer,
-    log: true,
     args: [start, epochDuration, decisionWindow],
     autoMine: true,
+    from: deployer,
+    log: true,
   });
 };
 export default func;

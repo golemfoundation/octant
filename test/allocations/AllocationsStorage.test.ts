@@ -1,31 +1,33 @@
 import { expect } from 'chai';
 import { parseEther } from 'ethers/lib/utils';
 import { ethers } from 'hardhat';
+
 import { ALLOCATIONS_STORAGE } from '../../helpers/constants';
 import { AllocationsStorage } from '../../typechain-types';
 import { makeTestsEnv } from '../helpers/make-tests-env';
 
-makeTestsEnv(ALLOCATIONS_STORAGE, (testEnv) => {
-
+makeTestsEnv(ALLOCATIONS_STORAGE, testEnv => {
   async function setupContract(newOwner: string) {
     const allocationsStorageFactory = await ethers.getContractFactory(ALLOCATIONS_STORAGE);
-    const allocationsStorage = await allocationsStorageFactory.deploy() as AllocationsStorage;
+    const allocationsStorage = (await allocationsStorageFactory.deploy()) as AllocationsStorage;
     await allocationsStorage.transferOwnership(newOwner);
     return allocationsStorage;
   }
 
   describe('Allocate', async () => {
     it('Users can allocate', async () => {
-      const { signers: { Alice, Bob } } = testEnv;
+      const {
+        signers: { Alice, Bob },
+      } = testEnv;
       const allocationsStorage = await setupContract(Alice.address);
 
       await allocationsStorage.connect(Alice).addAllocation(1, Alice.address, {
+        allocation: parseEther('0.5'),
         proposalId: 1,
-        allocation: parseEther("0.5")
       });
       await allocationsStorage.connect(Alice).addAllocation(2, Bob.address, {
+        allocation: parseEther('0.6'),
         proposalId: 2,
-        allocation: parseEther("0.6")
       });
 
       const aliceAllocations = await allocationsStorage.getUserAllocations(1, Alice.address);
@@ -36,12 +38,15 @@ makeTestsEnv(ALLOCATIONS_STORAGE, (testEnv) => {
       expect(bobAllocations.length).eq(1);
       expect(bobAllocations[0].allocation).eq(parseEther('0.6'));
       expect(bobAllocations[0].proposalId).eq(2);
-      const [undefinedAliceAllocation] = await allocationsStorage.getUserAllocations(3, Alice.address);
+      const [undefinedAliceAllocation] = await allocationsStorage.getUserAllocations(
+        3,
+        Alice.address,
+      );
       expect(undefinedAliceAllocation).eq(undefined);
 
       await allocationsStorage.connect(Alice).addAllocation(2, Bob.address, {
+        allocation: parseEther('0.7'),
         proposalId: 3,
-        allocation: parseEther("0.7")
       });
       const bobAllocationsAfterUpdate = await allocationsStorage.getUserAllocations(2, Bob.address);
       expect(bobAllocationsAfterUpdate.length).eq(2);
@@ -54,16 +59,18 @@ makeTestsEnv(ALLOCATIONS_STORAGE, (testEnv) => {
 
   describe('addAllocation', async () => {
     it('Can get all users', async () => {
-      const { signers: { Alice, Bob } } = testEnv;
+      const {
+        signers: { Alice, Bob },
+      } = testEnv;
       const allocationsStorage = await setupContract(Alice.address);
 
       await allocationsStorage.connect(Alice).addAllocation(1, Alice.address, {
+        allocation: 1,
         proposalId: 1,
-        allocation: 1
       });
       await allocationsStorage.connect(Alice).addAllocation(1, Bob.address, {
+        allocation: 1,
         proposalId: 1,
-        allocation: 1
       });
 
       const [users, _] = await allocationsStorage.getUsersWithTheirAllocations(1, 1);
@@ -73,64 +80,75 @@ makeTestsEnv(ALLOCATIONS_STORAGE, (testEnv) => {
     });
 
     it('Cannot allocate twice', async () => {
-      const { signers: { Alice } } = testEnv;
+      const {
+        signers: { Alice },
+      } = testEnv;
       const allocationsStorage = await setupContract(Alice.address);
 
       await allocationsStorage.connect(Alice).addAllocation(1, Alice.address, {
+        allocation: 1,
         proposalId: 1,
-        allocation: 1
       });
-      expect(allocationsStorage.connect(Alice).addAllocation(1, Alice.address, {
-        proposalId: 1,
-        allocation: 1
-      }))
-        .revertedWith('HN:AllocationsStorage/allocation-already-exists');
+      expect(
+        allocationsStorage.connect(Alice).addAllocation(1, Alice.address, {
+          allocation: 1,
+          proposalId: 1,
+        }),
+      ).revertedWith('HN:AllocationsStorage/allocation-already-exists');
     });
 
     it('Only owner can allocate', async () => {
-      const { signers: { Alice, Bob } } = testEnv;
+      const {
+        signers: { Alice, Bob },
+      } = testEnv;
       const allocationsStorage = await setupContract(Alice.address);
 
-      expect(allocationsStorage.connect(Bob).addAllocation(1, Alice.address, {
-        proposalId: 1,
-        allocation: 1
-      })).revertedWith('Ownable: caller is not the owner');
+      expect(
+        allocationsStorage.connect(Bob).addAllocation(1, Alice.address, {
+          allocation: 1,
+          proposalId: 1,
+        }),
+      ).revertedWith('Ownable: caller is not the owner');
     });
   });
 
   describe('removeAllocation', async () => {
     it('Can add allocation after removal', async () => {
-      const { signers: { Alice } } = testEnv;
+      const {
+        signers: { Alice },
+      } = testEnv;
       const allocationsStorage = await setupContract(Alice.address);
 
       await allocationsStorage.connect(Alice).addAllocation(1, Alice.address, {
+        allocation: 1,
         proposalId: 1,
-        allocation: 1
       });
       await allocationsStorage.connect(Alice).removeUserAllocations(1, Alice.address);
       await allocationsStorage.connect(Alice).addAllocation(1, Alice.address, {
+        allocation: 1,
         proposalId: 2,
-        allocation: 1
       });
 
-      const [usersProposal1, _] = await allocationsStorage.getUsersWithTheirAllocations(1, 1);
+      const [usersProposal1] = await allocationsStorage.getUsersWithTheirAllocations(1, 1);
       expect(usersProposal1.length).eq(0);
-      const [usersProposal2, __] = await allocationsStorage.getUsersWithTheirAllocations(1, 2);
+      const [usersProposal2] = await allocationsStorage.getUsersWithTheirAllocations(1, 2);
       expect(usersProposal2.length).eq(1);
       expect(usersProposal2[0]).eq(Alice.address);
     });
 
     it('Allocations count after removal is 0', async () => {
-      const { signers: { Alice } } = testEnv;
+      const {
+        signers: { Alice },
+      } = testEnv;
       const allocationsStorage = await setupContract(Alice.address);
 
       await allocationsStorage.connect(Alice).addAllocation(1, Alice.address, {
+        allocation: 1,
         proposalId: 1,
-        allocation: 1
       });
       await allocationsStorage.connect(Alice).addAllocation(1, Alice.address, {
+        allocation: 2,
         proposalId: 2,
-        allocation: 2
       });
       await allocationsStorage.connect(Alice).removeUserAllocations(1, Alice.address);
 
@@ -139,11 +157,14 @@ makeTestsEnv(ALLOCATIONS_STORAGE, (testEnv) => {
     });
 
     it('Only owner can remove allocation', async () => {
-      const { signers: { Alice, Bob } } = testEnv;
+      const {
+        signers: { Alice, Bob },
+      } = testEnv;
       const allocationsStorage = await setupContract(Alice.address);
 
-      expect(allocationsStorage.connect(Bob).removeUserAllocations(1, Alice.address))
-        .revertedWith('Ownable: caller is not the owner');
+      expect(allocationsStorage.connect(Bob).removeUserAllocations(1, Alice.address)).revertedWith(
+        'Ownable: caller is not the owner',
+      );
     });
   });
 });

@@ -1,5 +1,5 @@
-import apiService from 'services/apiService';
 import env from 'env';
+import apiService from 'services/apiService';
 
 export function apiGetProposal(baseUri: string): Promise<any> {
   const { ipfsGateway } = env;

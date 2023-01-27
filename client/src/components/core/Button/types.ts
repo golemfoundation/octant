@@ -11,7 +11,7 @@ export const BUTTON_VARIANTS = [
   'link2',
 ];
 
-export type ButtonVariant = typeof BUTTON_VARIANTS[number];
+export type ButtonVariant = (typeof BUTTON_VARIANTS)[number];
 export type ButtonType = ButtonHTMLAttributes<Element>['type'];
 
 export default interface ButtonProps {

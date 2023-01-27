@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
-import { AllocationsStore } from 'store/models/allocations/types';
 import { NavigationTab } from 'constants/navigationTabs/types';
+import { AllocationsStore } from 'store/models/allocations/types';
 
 export interface OwnProps {
   children?: ReactNode;

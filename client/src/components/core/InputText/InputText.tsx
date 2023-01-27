@@ -1,8 +1,8 @@
-import React, { forwardRef } from 'react';
 import cx from 'classnames';
+import React, { forwardRef } from 'react';
 
-import InputTextProps from './types';
 import styles from './style.module.scss';
+import InputTextProps from './types';
 
 const InputText = forwardRef<HTMLInputElement, InputTextProps>(
   ({ className, isDisabled, label, suffix, variant = 'simple', ...rest }, ref) => {

@@ -1,28 +1,36 @@
+import { SignerWithAddress } from 'hardhat-deploy-ethers/signers';
+
 import {
   Allocations,
+  AllocationsStorage,
   BeaconChainOracle,
-  Deposits, Tracker, Rewards,
-  Epochs, HexagonOracle,
-  Proposals, ExecutionLayerOracle,
-  Token, AllocationsStorage, TestRewards, TestGLMFaucet
+  Deposits,
+  Epochs,
+  ExecutionLayerOracle,
+  HexagonOracle,
+  Proposals,
+  Rewards,
+  TestGLMFaucet,
+  TestRewards,
+  Token,
+  Tracker,
 } from '../../typechain-types';
-import { SignerWithAddress } from 'hardhat-deploy-ethers/signers';
 
 export type Signers = Record<string, SignerWithAddress>;
 
 export interface TestEnv {
-  signers: Signers;
   allocations: Allocations;
   allocationsStorage: AllocationsStorage;
+  beaconChainOracle: BeaconChainOracle;
+  epochs: Epochs;
+  executionLayerOracle: ExecutionLayerOracle;
   faucet: TestGLMFaucet;
-  proposals: Proposals;
   glmDeposits: Deposits;
-  tracker: Tracker;
+  hexagonOracle: HexagonOracle;
+  proposals: Proposals;
   rewards: Rewards;
+  signers: Signers;
   testRewards: TestRewards;
   token: Token;
-  epochs: Epochs;
-  beaconChainOracle: BeaconChainOracle;
-  executionLayerOracle: ExecutionLayerOracle;
-  hexagonOracle: HexagonOracle;
+  tracker: Tracker;
 }

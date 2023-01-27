@@ -1,5 +1,5 @@
-import { UseQueryResult, useQuery } from 'react-query';
 import { formatUnits } from 'ethers/lib/utils';
+import { UseQueryResult, useQuery } from 'react-query';
 
 import useContractRewards from './contracts/useContractRewards';
 import useCurrentEpoch from './useCurrentEpoch';

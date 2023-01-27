@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
-import { Path } from 'utils/routing';
 import { SvgImageConfig } from 'components/core/Svg/types';
+import { Path } from 'utils/routing';
 
 export interface NavigationTab {
   icon: SvgImageConfig;

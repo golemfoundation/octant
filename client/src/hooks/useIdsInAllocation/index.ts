@@ -1,9 +1,9 @@
 import { useDispatch } from 'react-redux';
 
-import { ExtendedProposal } from 'types/proposals';
-import { allocationsSet } from 'store/models/allocations/actions';
-import { onAddRemoveAllocationElementLocalStorage } from 'hooks/utils';
 import useUserAllocations from 'hooks/useUserAllocations';
+import { onAddRemoveAllocationElementLocalStorage } from 'hooks/utils';
+import { allocationsSet } from 'store/models/allocations/actions';
+import { ExtendedProposal } from 'types/proposals';
 
 export default function useIdsInAllocation({
   allocations,

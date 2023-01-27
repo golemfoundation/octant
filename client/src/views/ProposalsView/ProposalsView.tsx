@@ -1,14 +1,14 @@
 import React, { FC } from 'react';
 
-import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 import ProposalItem from 'components/dedicated/ProposalItem/ProposalItem';
 import useCurrentEpoch from 'hooks/useCurrentEpoch';
 import useIdsInAllocation from 'hooks/useIdsInAllocation';
 import useMatchedProposalRewards from 'hooks/useMatchedProposalRewards';
 import useProposals from 'hooks/useProposals';
+import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 
-import ProposalsViewProps from './types';
 import styles from './style.module.scss';
+import ProposalsViewProps from './types';
 
 const ProposalsView: FC<ProposalsViewProps> = ({ allocations }) => {
   const { proposals } = useProposals();

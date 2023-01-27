@@ -1,6 +1,6 @@
 export const INPUT_TEXT_VARIANTS = ['borderless', 'boxRounded', 'simple'];
 
-export type InputTextVariant = typeof INPUT_TEXT_VARIANTS[number];
+export type InputTextVariant = (typeof INPUT_TEXT_VARIANTS)[number];
 
 export default interface InputTextProps {
   className?: string;

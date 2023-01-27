@@ -4,13 +4,13 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Description from 'components/core/Description/Description';
 import Header from 'components/core/Header/Header';
 import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
-import getEpochAndAllocationTimestamps from 'utils/getEpochAndAllocationTimestamps';
 import useDecisionWindow from 'hooks/useDecisionWindow';
 import useEpochDuration from 'hooks/useEpochDuration';
 import useStart from 'hooks/useStart';
+import getEpochAndAllocationTimestamps from 'utils/getEpochAndAllocationTimestamps';
 
-import MetricsTimeSectionProps from './types';
 import styles from './style.module.scss';
+import MetricsTimeSectionProps from './types';
 
 const MetricsTimeSection: FC<MetricsTimeSectionProps> = ({
   className,

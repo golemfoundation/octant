@@ -1,19 +1,19 @@
-import { Link } from 'react-router-dom';
-import React, { FC, Fragment } from 'react';
 import cx from 'classnames';
+import React, { FC, Fragment } from 'react';
+import { Link } from 'react-router-dom';
 
-import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
-import { tick } from 'svg/misc';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
 import Description from 'components/core/Description/Description';
 import Img from 'components/core/Img/Img';
 import Svg from 'components/core/Svg/Svg';
 import env from 'env';
+import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
+import { tick } from 'svg/misc';
 import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
 
-import { ProposalItemProps } from './types';
 import styles from './style.module.scss';
+import { ProposalItemProps } from './types';
 
 const ProposalItem: FC<ProposalItemProps> = ({
   description,

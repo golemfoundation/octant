@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
 import cx from 'classnames';
+import React, { FC } from 'react';
 
-import LoaderProps from './types';
 import styles from './style.module.scss';
+import LoaderProps from './types';
 
 const Loader: FC<LoaderProps> = ({ className }) => <div className={cx(styles.root, className)} />;
 

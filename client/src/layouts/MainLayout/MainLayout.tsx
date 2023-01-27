@@ -1,21 +1,21 @@
+import cx from 'classnames';
 import { ethers } from 'ethers';
+import React, { FC } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useMetamask } from 'use-metamask';
-import React, { FC } from 'react';
-import cx from 'classnames';
 
-import { hexagon } from 'svg/logo';
 import Button from 'components/core/Button/Button';
 import Loader from 'components/core/Loader/Loader';
 import Svg from 'components/core/Svg/Svg';
 import env from 'env';
-import truncateEthAddress from 'utils/truncateEthAddress';
 import useCurrentEpoch from 'hooks/useCurrentEpoch';
 import useIndividualReward from 'hooks/useIndividualReward';
+import { hexagon } from 'svg/logo';
+import truncateEthAddress from 'utils/truncateEthAddress';
 
-import { getIndividualRewardText, getNavigationTabsWithAllocations } from './utils';
-import MainLayoutProps from './types';
 import styles from './style.module.scss';
+import MainLayoutProps from './types';
+import { getIndividualRewardText, getNavigationTabsWithAllocations } from './utils';
 
 const MainLayout: FC<MainLayoutProps> = ({
   children,

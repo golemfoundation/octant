@@ -1,10 +1,10 @@
 import { BigNumber } from 'ethers';
 import React from 'react';
 
+import Svg from 'components/core/Svg/Svg';
+import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import { NavigationTab } from 'constants/navigationTabs/types';
 import { allocateWithNumber } from 'svg/navigation';
-import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
-import Svg from 'components/core/Svg/Svg';
 import getFormattedUnits from 'utils/getFormattedUnit';
 
 import styles from './style.module.scss';

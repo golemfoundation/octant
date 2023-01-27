@@ -1,33 +1,33 @@
+import cx from 'classnames';
 import { BigNumber, ContractTransaction } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
-import { useMetamask } from 'use-metamask';
 import React, { FC, useEffect, useState } from 'react';
-import cx from 'classnames';
+import { useMetamask } from 'use-metamask';
 
-import { DEPOSIT_WITHDRAW_GAS_LIMIT } from 'constants/contracts';
-import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import BudgetBox from 'components/dedicated/BudgetBox/BudgetBox';
 import Button from 'components/core/Button/Button';
 import InputText from 'components/core/InputText/InputText';
 import Loader from 'components/core/Loader/Loader';
 import Modal from 'components/core/Modal/Modal';
 import ProgressStepper from 'components/core/ProgressStepper/ProgressStepper';
+import BudgetBox from 'components/dedicated/BudgetBox/BudgetBox';
+import { DEPOSIT_WITHDRAW_GAS_LIMIT } from 'constants/contracts';
 import env from 'env';
-import triggerToast from 'utils/triggerToast';
-import useAvailableFunds from 'hooks/useAvailableFunds';
 import useContractDeposits from 'hooks/contracts/useContractDeposits';
+import useAvailableFunds from 'hooks/useAvailableFunds';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/useDepositValue';
 import useMaxApproveCallback from 'hooks/useMaxApproveCallback';
+import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
+import triggerToast from 'utils/triggerToast';
 
+import styles from './style.module.scss';
+import GlmStakingFlowProps, { CurrentMode, CurrentStepIndex } from './types';
 import {
   getButtonCtaLabel,
   toastDebouncedStakeValueTooBig,
   toastDebouncedUnstakeValueTooBig,
 } from './utils';
-import GlmStakingFlowProps, { CurrentMode, CurrentStepIndex } from './types';
-import styles from './style.module.scss';
 
 const currentStepIndexInitialValue = 0;
 

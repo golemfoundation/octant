@@ -1,6 +1,6 @@
 import { BigNumberish, Signer } from 'ethers';
-import { UseQueryResult, useQuery } from 'react-query';
 import { formatUnits } from 'ethers/lib/utils';
+import { UseQueryResult, useQuery } from 'react-query';
 
 import useContractErc20 from './contracts/useContractErc20';
 

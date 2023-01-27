@@ -1,28 +1,28 @@
-import { Navigate, Route, Routes, useParams } from 'react-router-dom';
-import React, { FC, Fragment } from 'react';
 import cx from 'classnames';
+import React, { FC, Fragment } from 'react';
+import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 
-import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
-import { chevronLeft } from 'svg/navigation';
-import { donorGenericIcon, tick } from 'svg/misc';
-import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import Button from 'components/core/Button/Button';
 import Description from 'components/core/Description/Description';
 import Img from 'components/core/Img/Img';
-import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 import Svg from 'components/core/Svg/Svg';
+import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import env from 'env';
-import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
-import triggerToast from 'utils/triggerToast';
-import truncateEthAddress from 'utils/truncateEthAddress';
 import useCurrentEpoch from 'hooks/useCurrentEpoch';
 import useIdsInAllocation from 'hooks/useIdsInAllocation';
 import useMatchedProposalRewards from 'hooks/useMatchedProposalRewards';
 import useProposals from 'hooks/useProposals';
 import useUsersWithTheirAllocations from 'hooks/useUsersWithTheirAllocations';
+import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
+import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
+import { donorGenericIcon, tick } from 'svg/misc';
+import { chevronLeft } from 'svg/navigation';
+import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
+import triggerToast from 'utils/triggerToast';
+import truncateEthAddress from 'utils/truncateEthAddress';
 
-import ProposalViewProps from './types';
 import styles from './style.module.scss';
+import ProposalViewProps from './types';
 
 const getCustomNavigationTabs = () => {
   const navigationTabs = [...navigationTabsDefault];

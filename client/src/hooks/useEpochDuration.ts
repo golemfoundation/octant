@@ -7,6 +7,6 @@ export default function useEpochDuration(): UseQueryResult<number | undefined> {
 
   return useQuery(['epochDuration'], () => contractEpochs?.epochDuration(), {
     enabled: !!contractEpochs,
-    select: response => (response ? response?.toNumber() * 1000 : undefined),
+    select: response => (response ? response.toNumber() * 1000 : undefined),
   });
 }

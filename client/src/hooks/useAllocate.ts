@@ -1,6 +1,6 @@
 import { BigNumber, ContractTransaction } from 'ethers';
-import { UseMutationResult, useMutation } from 'react-query';
 import { parseUnits } from 'ethers/lib/utils';
+import { UseMutationResult, useMutation } from 'react-query';
 import { useMetamask } from 'use-metamask';
 
 import useContractAllocations from './contracts/useContractAllocations';

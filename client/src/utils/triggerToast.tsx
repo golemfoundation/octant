@@ -1,5 +1,5 @@
-import { ToastOptions, toast } from 'react-toastify';
 import React from 'react';
+import { ToastOptions, toast } from 'react-toastify';
 
 import Toast from 'components/core/Toast/Toast';
 import ToastProps from 'components/core/Toast/types';

@@ -1,12 +1,12 @@
-import React, { FC, Fragment } from 'react';
 import cx from 'classnames';
+import React, { FC, Fragment } from 'react';
 
-import { cross } from 'svg/misc';
 import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
+import { cross } from 'svg/misc';
 
-import ModalProps from './types';
 import styles from './style.module.scss';
+import ModalProps from './types';
 
 const Modal: FC<ModalProps> = ({ className, children, header, isOpen, onClosePanel }) => (
   <Fragment>

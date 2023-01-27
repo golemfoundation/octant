@@ -1,17 +1,17 @@
-import { useMetamask } from 'use-metamask';
-import { useQueryClient } from 'react-query';
 import React, { FC, useEffect, useState } from 'react';
+import { useQueryClient } from 'react-query';
+import { useMetamask } from 'use-metamask';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import Loader from 'components/core/Loader/Loader';
-import RootRoutes from 'routes/RootRoutes/RootRoutes';
+import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import useProposals from 'hooks/useProposals';
 import useUserAllocations from 'hooks/useUserAllocations';
+import RootRoutes from 'routes/RootRoutes/RootRoutes';
 
-import AppProps from './types';
 import styles from './style.module.scss';
+import AppProps from './types';
 
 import 'styles/index.scss';
 

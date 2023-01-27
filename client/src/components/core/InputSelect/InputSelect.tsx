@@ -1,13 +1,13 @@
 import React, { FC, Fragment, useState } from 'react';
 import Select, { SingleValue } from 'react-select';
 
-import { cross, tick } from 'svg/misc';
 import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
+import { cross, tick } from 'svg/misc';
 
 import './InputSelect.scss';
-import InputSelectProps, { Option } from './types';
 import styles from './style.module.scss';
+import InputSelectProps, { Option } from './types';
 
 const CustomOption = ({ innerRef, innerProps, children, isSelected }) => (
   <div ref={innerRef} className={styles.option} {...innerProps}>
@@ -57,8 +57,10 @@ const InputSelect: FC<InputSelectProps> = ({ options, onChange, selectedOption, 
       <Select
         classNamePrefix="InputSelect"
         components={{
+          /* eslint-disable react/no-unstable-nested-components */
           Menu: args => <CustomMenu {...args} setIsMenuOpen={setIsMenuOpen} />,
           MenuList: args => <CustomMenuList {...args} setIsMenuOpen={setIsMenuOpen} />,
+          /* eslint-enable react/no-unstable-nested-components */
           Option: CustomOption,
         }}
         isDisabled={isDisabled}

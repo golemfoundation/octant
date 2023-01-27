@@ -3,8 +3,8 @@ import React, { FC } from 'react';
 import Button from 'components/core/Button/Button';
 import Loader from 'components/core/Loader/Loader';
 
-import AllocationNavigationProps from './types';
 import styles from './style.module.scss';
+import AllocationNavigationProps from './types';
 
 const AllocationNavigation: FC<AllocationNavigationProps> = ({
   areButtonsDisabled,

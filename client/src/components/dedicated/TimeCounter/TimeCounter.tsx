@@ -1,13 +1,13 @@
+import cx from 'classnames';
 import { Duration } from 'date-fns';
 import React, { FC, Fragment, useEffect, useState } from 'react';
-import cx from 'classnames';
 
 import Loader from 'components/core/Loader/Loader';
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import getDurationBetweenTimestamps from 'utils/getDurationBetweenTimestamps';
 
-import TimeCounterProps, { CounterSectionsProps } from './types';
 import styles from './style.module.scss';
+import TimeCounterProps, { CounterSectionsProps } from './types';
 
 const CounterSection: FC<CounterSectionsProps> = ({
   value = 0,
