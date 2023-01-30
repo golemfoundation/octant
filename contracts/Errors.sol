@@ -67,8 +67,18 @@ library TrackerErrors {
     /// @notice Thrown when trying to get info about effective deposits in epoch 0.
     /// @return HN:Tracker/epochs-start-from-1
     string public constant EPOCHS_START_FROM_1 = "HN:Tracker/epochs-start-from-1";
-
-    /// @notice Thrown when trying updat effective deposits as an unauthorized account.
-    /// @return HN:Tracker/invalid-caller
-    string public constant UNAUTHORIZED_CALLER = "HN:Tracker/unauthorized-caller";
 }
+
+library PayoutsErrors {
+    /// @notice Thrown when trying to register more funds than possess.
+    /// @return HN:Payouts/registering-withdrawal-of-unearned-funds
+    string public constant REGISTERING_UNEARNED_FUNDS = "HN:Payouts/registering-withdrawal-of-unearned-funds";
+}
+
+library CommonErrors {
+    /// @notice Thrown when trying to call as an unauthorized account.
+    /// @return HN:Common/unauthorized-caller
+    string public constant UNAUTHORIZED_CALLER = "HN:Common/unauthorized-caller";
+}
+
+

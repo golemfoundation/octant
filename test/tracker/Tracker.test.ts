@@ -151,12 +151,12 @@ makeTestsEnv(TRACKER, testEnv => {
         tracker
           .connect(signers.Darth)
           .processDeposit(signers.Darth.address, 0, parseEther('100000')),
-      ).to.be.revertedWith('HN:Tracker/unauthorized-caller');
+      ).to.be.revertedWith('HN:Common/unauthorized-caller');
       expect(
         tracker
           .connect(signers.Darth)
           .processWithdraw(signers.Darth.address, 0, parseEther('100000')),
-      ).to.be.revertedWith('HN:Tracker/unauthorized-caller');
+      ).to.be.revertedWith('HN:Common/unauthorized-caller');
     });
   });
 });

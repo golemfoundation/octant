@@ -5,7 +5,7 @@ pragma solidity ^0.8.9;
 import "../interfaces/ITracker.sol";
 import "./Tracker.sol";
 
-import {TrackerErrors} from "../Errors.sol";
+import {TrackerErrors, CommonErrors} from "../Errors.sol";
 
 /// @title Proxy to contract tracking effective deposits across epochs (Hexagon).
 /// @author Golem Foundation
@@ -60,7 +60,7 @@ contract TrackerWrapper is ITracker {
     }
 
     modifier onlyDeposits() {
-        require(msg.sender == depositsAddress, TrackerErrors.UNAUTHORIZED_CALLER);
+        require(msg.sender == depositsAddress, CommonErrors.UNAUTHORIZED_CALLER);
         _;
     }
 }

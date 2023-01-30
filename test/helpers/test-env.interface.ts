@@ -8,6 +8,7 @@ import {
   Epochs,
   ExecutionLayerOracle,
   HexagonOracle,
+  Payouts,
   Proposals,
   Rewards,
   TestGLMFaucet,
@@ -27,6 +28,7 @@ export interface TestEnv {
   faucet: TestGLMFaucet;
   glmDeposits: Deposits;
   hexagonOracle: HexagonOracle;
+  payouts: Payouts;
   proposals: Proposals;
   rewards: Rewards;
   signers: Signers;

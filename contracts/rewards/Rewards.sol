@@ -89,6 +89,17 @@ contract Rewards is IRewards {
         return allRewards.mul(individualShare);
     }
 
+    /// @notice Compute user's claimable reward for particular epoch.
+    function claimableReward(uint32 epoch, address user) public view returns (uint256) {
+        uint256 ir = individualReward(epoch, user);
+        uint256 allocationsSum;
+        IAllocationsStorage.Allocation[] memory allocations = allocationsStorage.getUserAllocations(epoch, user);
+        for (uint256 i = 0; i < allocations.length; i++) {
+            allocationsSum += allocations[i].allocation;
+        }
+        return ir - allocationsSum;
+    }
+
     /// @notice Compute total rewards to be distributed between users and proposals.
     function totalRewards(uint32 epoch) public view returns (uint256) {
         uint256 ratio = stakedRatio(epoch);

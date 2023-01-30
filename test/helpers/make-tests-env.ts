@@ -1,3 +1,5 @@
+import { smock } from '@defi-wonderland/smock';
+import chai from 'chai';
 import { deployments, ethers } from 'hardhat';
 
 import { Signers, TestEnv } from './test-env.interface';
@@ -11,6 +13,7 @@ import {
   EXECUTION_LAYER_ORACLE,
   FAUCET,
   HEXAGON_ORACLE,
+  PAYOUTS,
   PROPOSALS,
   REWARDS,
   TEST_REWARDS,
@@ -25,6 +28,7 @@ import {
   Epochs,
   ExecutionLayerOracle,
   HexagonOracle,
+  Payouts,
   Proposals,
   Rewards,
   TestGLMFaucet,
@@ -32,6 +36,8 @@ import {
   Token,
   Tracker,
 } from '../../typechain-types';
+
+chai.use(smock.matchers);
 
 const testEnv: TestEnv = {
   allocations: {} as Allocations,
@@ -42,6 +48,7 @@ const testEnv: TestEnv = {
   faucet: {} as TestGLMFaucet,
   glmDeposits: {} as Deposits,
   hexagonOracle: {} as HexagonOracle,
+  payouts: {} as Payouts,
   proposals: {} as Proposals,
   rewards: {} as Rewards,
   signers: {} as Signers,
@@ -60,6 +67,7 @@ async function initializeTestsEnv() {
   testEnv.tracker = await ethers.getContract(TRACKER);
   testEnv.rewards = await ethers.getContract(REWARDS);
   testEnv.testRewards = await ethers.getContract(TEST_REWARDS);
+  testEnv.payouts = await ethers.getContract(PAYOUTS);
   testEnv.proposals = await ethers.getContract(PROPOSALS);
   testEnv.epochs = await ethers.getContract(EPOCHS);
   testEnv.beaconChainOracle = await ethers.getContract(BEACON_CHAIN_ORACLE);
