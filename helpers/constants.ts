@@ -15,3 +15,4 @@ export const EPOCHS = 'Epochs';
 export const BEACON_CHAIN_ORACLE = 'BeaconChainOracle';
 export const EXECUTION_LAYER_ORACLE = 'ExecutionLayerOracle';
 export const HEXAGON_ORACLE = 'HexagonOracle';
+export const PAYOUTS = 'Payouts';

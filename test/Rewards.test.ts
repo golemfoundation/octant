@@ -70,7 +70,7 @@ makeTestsEnv(REWARDS, testEnv => {
     expect(await rewards.totalRewards(2), 'sum of TRs').eq(parseEther('12.6491106406735172'));
   });
 
-  describe('Proposal rewards', async () => {
+  describe('Tests dependent on allocations', async () => {
     beforeEach(async () => {
       const {
         token,
@@ -120,6 +120,38 @@ makeTestsEnv(REWARDS, testEnv => {
         { allocation: parseEther('0.032'), proposalId: 4 },
         { allocation: parseEther('0.0000000989'), proposalId: 1 },
       ]);
+    });
+
+    it('Claimable rewards are equals 0 in first epoch', async () => {
+      const {
+        rewards,
+        signers: { Alice, Bob, Charlie, Eve },
+      } = testEnv;
+      const aliceClaimableRewards = await rewards.claimableReward(1, Alice.address);
+      const bobClaimableRewards = await rewards.claimableReward(1, Bob.address);
+      const charlieClaimableRewards = await rewards.claimableReward(1, Charlie.address);
+      const eveClaimableRewards = await rewards.claimableReward(1, Eve.address);
+
+      expect(aliceClaimableRewards).eq(0);
+      expect(bobClaimableRewards).eq(0);
+      expect(charlieClaimableRewards).eq(0);
+      expect(eveClaimableRewards).eq(0);
+    });
+
+    it('Compute claimable rewards', async () => {
+      const {
+        rewards,
+        signers: { Alice, Bob, Charlie, Eve },
+      } = testEnv;
+      const aliceClaimableRewards = await rewards.claimableReward(2, Alice.address);
+      const bobClaimableRewards = await rewards.claimableReward(2, Bob.address);
+      const charlieClaimableRewards = await rewards.claimableReward(2, Charlie.address);
+      const eveClaimableRewards = await rewards.claimableReward(2, Eve.address);
+
+      expect(aliceClaimableRewards).eq(parseEther('0.28'));
+      expect(bobClaimableRewards).eq(parseEther('0.1'));
+      expect(charlieClaimableRewards).eq(parseEther('0.719989999990999999'));
+      expect(eveClaimableRewards).eq(parseEther('0.0479999011'));
     });
 
     it('Compute individual proposal rewards', async () => {

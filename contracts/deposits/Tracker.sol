@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./TrackerWrapper.sol";
 
-import {TrackerErrors} from "../Errors.sol";
+import {TrackerErrors, CommonErrors} from "../Errors.sol";
 
 /// @title Contract tracking effective deposits across epochs (Hexagon).
 /// @author Golem Foundation
@@ -230,7 +230,7 @@ contract Tracker is Ownable {
     }
 
     modifier onlyTrackerWrapper() {
-        require(msg.sender == proxyAddress, TrackerErrors.UNAUTHORIZED_CALLER);
+        require(msg.sender == proxyAddress, CommonErrors.UNAUTHORIZED_CALLER);
         _;
     }
 }
