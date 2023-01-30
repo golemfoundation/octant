@@ -9,12 +9,17 @@
 }
 
 .Toastify__toast {
-  background: none;
-  border-radius: 0;
-  padding: 0;
+  background: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
   margin: 0 0 1.6rem 0;
   width: 34rem;
-  box-shadow: $box-shadow-1;
+  box-shadow: none !important;
+}
+
+.Toastify__toast-body {
+  box-shadow: $box-shadow-1 !important;
+  padding: 0 !important;
 }
 
 .Toastify__progress-bar {
