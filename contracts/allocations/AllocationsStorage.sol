@@ -14,7 +14,10 @@ contract AllocationsStorage is Ownable, IAllocationsStorage {
     mapping(bytes32 => uint256) private userByProposalIndex;
 
     // @notice Get user's allocations in given epoch.
-    function getUserAllocations(uint256 _epoch, address _user) external view returns (Allocation[] memory) {
+    function getUserAllocations(
+        uint256 _epoch,
+        address _user
+    ) external view returns (Allocation[] memory) {
         return _getAllocationsByUser(_epoch, _user);
     }
 
@@ -28,16 +31,30 @@ contract AllocationsStorage is Ownable, IAllocationsStorage {
             _getUserByProposalIndex(_epoch, _allocation.proposalId, _user) == 0,
             AllocationStorageErrors.ALLOCATION_ALREADY_EXISTS
         );
-        uint256 count = _getUsersByProposalCount(_epoch, _allocation.proposalId);
+        uint256 count = _getUsersByProposalCount(
+            _epoch,
+            _allocation.proposalId
+        );
         _setUserByProposal(_epoch, _allocation.proposalId, count + 1, _user);
-        _setUserByProposalIndex(_epoch, _allocation.proposalId, _user, count + 1);
+        _setUserByProposalIndex(
+            _epoch,
+            _allocation.proposalId,
+            _user,
+            count + 1
+        );
         _setUsersByProposalCount(_epoch, _allocation.proposalId, count + 1);
-        Allocation[] storage _userAllocations = _getAllocationsByUser(_epoch, _user);
+        Allocation[] storage _userAllocations = _getAllocationsByUser(
+            _epoch,
+            _user
+        );
         _userAllocations.push(_allocation);
     }
 
     /// @notice Remove user's allocations in given epoch. If allocations for the epoch already existed, they will be replaced.
-    function removeUserAllocations(uint256 _epoch, address _user) external onlyOwner {
+    function removeUserAllocations(
+        uint256 _epoch,
+        address _user
+    ) external onlyOwner {
         Allocation[] memory _allocations = _getAllocationsByUser(_epoch, _user);
         for (uint256 i = 0; i < _allocations.length; i++) {
             _removeUserByProposal(_epoch, _allocations[i].proposalId, _user);
@@ -61,7 +78,10 @@ contract AllocationsStorage is Ownable, IAllocationsStorage {
             address user = _getUserByProposal(_epoch, _proposalId, i);
             users[i - 1] = user;
 
-            Allocation[] memory _userAllocations = _getAllocationsByUser(_epoch, user);
+            Allocation[] memory _userAllocations = _getAllocationsByUser(
+                _epoch,
+                user
+            );
             for (uint256 j = 0; j < _userAllocations.length; j++) {
                 if (_userAllocations[j].proposalId == _proposalId) {
                     allocations[i - 1] = _userAllocations[j].allocation;
@@ -72,7 +92,10 @@ contract AllocationsStorage is Ownable, IAllocationsStorage {
     }
 
     // @notice Get allocations by user.
-    function _getAllocationsByUser(uint256 _epoch, address _user) private view returns (Allocation[] storage) {
+    function _getAllocationsByUser(
+        uint256 _epoch,
+        address _user
+    ) private view returns (Allocation[] storage) {
         bytes32 key = keccak256(abi.encodePacked(_epoch, ".user", _user));
         return allocationsByUser[key];
     }
@@ -85,12 +108,20 @@ contract AllocationsStorage is Ownable, IAllocationsStorage {
 
     // @dev Remove a user who allocated for proposal. Swaps the item with the last item in the set and truncates it; computationally cheap.
     // Requires that the allocation exists.
-    function _removeUserByProposal(uint256 _epoch, uint256 _proposalId, address _user) private {
+    function _removeUserByProposal(
+        uint256 _epoch,
+        uint256 _proposalId,
+        address _user
+    ) private {
         uint256 index = _getUserByProposalIndex(_epoch, _proposalId, _user);
         require(index > 0, AllocationStorageErrors.ALLOCATION_DOES_NOT_EXIST);
         uint256 count = _getUsersByProposalCount(_epoch, _proposalId);
         if (index < count) {
-            address lastAllocation = _getUserByProposal(_epoch, _proposalId, count);
+            address lastAllocation = _getUserByProposal(
+                _epoch,
+                _proposalId,
+                count
+            );
             _setUserByProposal(_epoch, _proposalId, index, lastAllocation);
             _setUserByProposalIndex(_epoch, _proposalId, lastAllocation, index);
         }
@@ -104,7 +135,13 @@ contract AllocationsStorage is Ownable, IAllocationsStorage {
         uint256 _index
     ) private view returns (address) {
         bytes32 key = keccak256(
-            abi.encodePacked(_epoch, ".proposalId", _proposalId, ".index", _index)
+            abi.encodePacked(
+                _epoch,
+                ".proposalId",
+                _proposalId,
+                ".index",
+                _index
+            )
         );
         return usersByProposal[key];
     }
@@ -116,18 +153,35 @@ contract AllocationsStorage is Ownable, IAllocationsStorage {
         address _user
     ) private {
         bytes32 key = keccak256(
-            abi.encodePacked(_epoch, ".proposalId", _proposalId, ".index", _index)
+            abi.encodePacked(
+                _epoch,
+                ".proposalId",
+                _proposalId,
+                ".index",
+                _index
+            )
         );
         usersByProposal[key] = _user;
     }
 
-    function _getUsersByProposalCount(uint256 _epoch, uint256 _proposalId) private view returns (uint256) {
-        bytes32 key = keccak256(abi.encodePacked(_epoch, ".proposalId", _proposalId));
+    function _getUsersByProposalCount(
+        uint256 _epoch,
+        uint256 _proposalId
+    ) private view returns (uint256) {
+        bytes32 key = keccak256(
+            abi.encodePacked(_epoch, ".proposalId", _proposalId)
+        );
         return usersByProposalCount[key];
     }
 
-    function _setUsersByProposalCount(uint256 _epoch, uint256 _proposalId, uint256 _count) private {
-        bytes32 key = keccak256(abi.encodePacked(_epoch, ".proposalId", _proposalId));
+    function _setUsersByProposalCount(
+        uint256 _epoch,
+        uint256 _proposalId,
+        uint256 _count
+    ) private {
+        bytes32 key = keccak256(
+            abi.encodePacked(_epoch, ".proposalId", _proposalId)
+        );
         usersByProposalCount[key] = _count;
     }
 

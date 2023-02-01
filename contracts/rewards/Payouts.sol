@@ -29,28 +29,43 @@ contract Payouts {
         uint144 total; // 128+16
     }
 
-    /// @dev tracks ETH payouts to both GLM stakers and proposals
-    mapping(address => Payout) public payouts;
+    /// @dev tracks ETH payouts to GLM stakers
+    mapping(address => Payout) public userPayouts;
 
-    constructor(address rewardsAddress, address epochsAddress, address withdrawalsAddress) {
+    /// @dev tracks ETH payouts to proposals
+    mapping(uint256 => Payout) public proposalPayouts;
+
+    constructor(
+        address rewardsAddress,
+        address epochsAddress,
+        address withdrawalsAddress
+    ) {
         rewards = IRewards(rewardsAddress);
         epochs = IEpochs(epochsAddress);
         withdrawals = Withdrawals(withdrawalsAddress);
     }
 
-    /// @param payee GLM staker or proposal
+    /// @param user GLM staker
     /// @param amount Payout amount
-    function registerPayout(address payee, uint144 amount) public onlyWithdrawals {
+    function registerUserPayout(
+        address user,
+        uint144 amount
+    ) public onlyWithdrawals {
         uint32 finalizedEpoch = epochs.getCurrentEpoch() - 1;
-        Payout memory p = payouts[payee];
+        Payout memory p = userPayouts[user];
         uint144 remaining = amount;
         bool stop = false;
         while (!stop) {
-            uint144 stepFunds = uint144(rewards.claimableReward(p.checkpointEpoch + 1, payee));
+            uint144 stepFunds = uint144(
+                rewards.claimableReward(p.checkpointEpoch + 1, user)
+            );
             if (p.extra + remaining > stepFunds) {
                 remaining = remaining - (stepFunds - p.extra);
                 p.checkpointEpoch = p.checkpointEpoch + 1;
-                require(p.checkpointEpoch <= finalizedEpoch, PayoutsErrors.REGISTERING_UNEARNED_FUNDS);
+                require(
+                    p.checkpointEpoch <= finalizedEpoch,
+                    PayoutsErrors.REGISTERING_UNEARNED_FUNDS
+                );
                 p.checkpointSum = p.checkpointSum + stepFunds;
                 p.extra = 0;
             } else {
@@ -60,15 +75,59 @@ contract Payouts {
                 assert(p.total == p.checkpointSum + p.extra);
             }
         }
-        payouts[payee] = p;
+        userPayouts[user] = p;
     }
 
-    function payoutStatus(address payee) external view returns (Payout memory) {
-        return payouts[payee];
+    /// @param proposalId proposal id
+    /// @param amount Payout amount
+    function registerProposalPayout(
+        uint256 proposalId,
+        uint144 amount
+    ) public onlyWithdrawals {
+        uint32 finalizedEpoch = epochs.getCurrentEpoch() - 1;
+        Payout memory p = proposalPayouts[proposalId];
+        uint144 remaining = amount;
+        bool stop = false;
+        while (!stop) {
+            uint144 stepFunds = uint144(
+                rewards.proposalReward(p.checkpointEpoch + 1, proposalId)
+            );
+            if (p.extra + remaining > stepFunds) {
+                remaining = remaining - (stepFunds - p.extra);
+                p.checkpointEpoch = p.checkpointEpoch + 1;
+                require(
+                    p.checkpointEpoch <= finalizedEpoch,
+                    PayoutsErrors.REGISTERING_UNEARNED_FUNDS
+                );
+                p.checkpointSum = p.checkpointSum + stepFunds;
+                p.extra = 0;
+            } else {
+                stop = true;
+                p.extra = p.extra + remaining;
+                p.total = p.total + amount;
+                assert(p.total == p.checkpointSum + p.extra);
+            }
+        }
+        proposalPayouts[proposalId] = p;
+    }
+
+    function userPayoutStatus(
+        address user
+    ) external view returns (Payout memory) {
+        return userPayouts[user];
+    }
+
+    function proposalPayoutStatus(
+        uint256 proposalId
+    ) external view returns (Payout memory) {
+        return proposalPayouts[proposalId];
     }
 
     modifier onlyWithdrawals() {
-        require(msg.sender == address(withdrawals), CommonErrors.UNAUTHORIZED_CALLER);
+        require(
+            msg.sender == address(withdrawals),
+            CommonErrors.UNAUTHORIZED_CALLER
+        );
         _;
     }
 }

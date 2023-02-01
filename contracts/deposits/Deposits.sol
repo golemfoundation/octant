@@ -66,7 +66,11 @@ contract Deposits is Ownable, IDeposits {
         require(glm.transfer(msg.sender, amount));
         emit Withdrawn(amount, block.timestamp, msg.sender);
 
-        (bool result, bytes memory error) = tracker.processWithdraw(msg.sender, oldDeposit, amount);
+        (bool result, bytes memory error) = tracker.processWithdraw(
+            msg.sender,
+            oldDeposit,
+            amount
+        );
         if (result) {
             emit TrackerUpdated();
         } else {

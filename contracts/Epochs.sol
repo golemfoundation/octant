@@ -23,7 +23,11 @@ contract Epochs is Ownable, IEpochs {
     /// It must be smaller or equal then {epochDuration}.
     uint256 public decisionWindow;
 
-    constructor(uint256 _start, uint256 _epochDuration, uint256 _decisionWindow) {
+    constructor(
+        uint256 _start,
+        uint256 _epochDuration,
+        uint256 _decisionWindow
+    ) {
         start = _start;
         epochDuration = _epochDuration;
         decisionWindow = _decisionWindow;
@@ -38,7 +42,9 @@ contract Epochs is Ownable, IEpochs {
 
     function isDecisionWindowOpen() public view returns (bool) {
         require(isStarted(), EpochsErrors.NOT_STARTED);
-        uint256 moduloEpoch = uint256((block.timestamp - start) % epochDuration);
+        uint256 moduloEpoch = uint256(
+            (block.timestamp - start) % epochDuration
+        );
         return moduloEpoch <= decisionWindow;
     }
 

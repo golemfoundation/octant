@@ -48,7 +48,8 @@ contract Tracker is Ownable {
 
     /// @dev helper structure for effective deposit amounts tracking. See `depositAt` function
     /// GLMGE_it
-    mapping(address => mapping(uint32 => EffectiveDeposit)) private effectiveDeposits;
+    mapping(address => mapping(uint32 => EffectiveDeposit))
+        private effectiveDeposits;
 
     /// @dev Tracking total supply of GLM per epoch.
     mapping(uint32 => uint224) public tokenSupplyByEpoch;
@@ -113,13 +114,25 @@ contract Tracker is Ownable {
     /// @param owner Owner of the deposit for which ED will be checked.
     /// @param epochNo Epoch number, for which ED will be checked.
     /// @return Effective deposit (GLM) in wei for particular epoch, particular owner.
-    function depositAt(address owner, uint32 epochNo) external view returns (uint256) {
+    function depositAt(
+        address owner,
+        uint32 epochNo
+    ) external view returns (uint256) {
         uint32 currentEpoch = epochs.getCurrentEpoch();
         require(epochNo <= currentEpoch, TrackerErrors.FUTURE_IS_UNKNOWN);
         require(epochNo > 0, TrackerErrors.EPOCHS_START_FROM_1);
-        for (uint32 iEpoch = epochNo; iEpoch <= currentEpoch; iEpoch = iEpoch + 1) {
+        for (
+            uint32 iEpoch = epochNo;
+            iEpoch <= currentEpoch;
+            iEpoch = iEpoch + 1
+        ) {
             if (effectiveDeposits[owner][iEpoch].isSet) {
-                return uint256(_applyDepositCutoff(effectiveDeposits[owner][iEpoch].amount));
+                return
+                    uint256(
+                        _applyDepositCutoff(
+                            effectiveDeposits[owner][iEpoch].amount
+                        )
+                    );
             }
         }
         return uint256(_applyDepositCutoff(uint224(deposits.deposits(owner))));
@@ -129,7 +142,11 @@ contract Tracker is Ownable {
         uint32 currentEpoch = epochs.getCurrentEpoch();
         require(epochNo <= currentEpoch, TrackerErrors.FUTURE_IS_UNKNOWN);
         require(epochNo > 0, TrackerErrors.EPOCHS_START_FROM_1);
-        for (uint32 iEpoch = epochNo; iEpoch <= currentEpoch; iEpoch = iEpoch + 1) {
+        for (
+            uint32 iEpoch = epochNo;
+            iEpoch <= currentEpoch;
+            iEpoch = iEpoch + 1
+        ) {
             if (totalEffectiveDeposits[iEpoch].isSet) {
                 return uint256(totalEffectiveDeposits[iEpoch].amount);
             }
@@ -141,7 +158,11 @@ contract Tracker is Ownable {
         uint32 currentEpoch = epochs.getCurrentEpoch();
         require(epochNo <= currentEpoch, TrackerErrors.FUTURE_IS_UNKNOWN);
         require(epochNo > 0, TrackerErrors.EPOCHS_START_FROM_1);
-        for (uint32 iEpoch = epochNo; iEpoch <= currentEpoch; iEpoch = iEpoch + 1) {
+        for (
+            uint32 iEpoch = epochNo;
+            iEpoch <= currentEpoch;
+            iEpoch = iEpoch + 1
+        ) {
             if (0 != tokenSupplyByEpoch[iEpoch]) {
                 return tokenSupplyByEpoch[iEpoch];
             }
@@ -222,7 +243,9 @@ contract Tracker is Ownable {
     /// @dev Implements cutoff of 100 GLM. Amounts lower than that are not eligible for rewards.
     /// @param actualAmount Amount of GLM currently deposited.
     /// @return Amount of GLM adjusted by 100 GLM cutoff.
-    function _applyDepositCutoff(uint224 actualAmount) private pure returns (uint224) {
+    function _applyDepositCutoff(
+        uint224 actualAmount
+    ) private pure returns (uint224) {
         if (actualAmount < 100 ether) {
             return 0;
         }

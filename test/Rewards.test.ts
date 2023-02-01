@@ -122,7 +122,7 @@ makeTestsEnv(REWARDS, testEnv => {
       ]);
     });
 
-    it('Claimable rewards are equals 0 in first epoch', async () => {
+    it('Claimable rewards are equal to 0 in the first epoch', async () => {
       const {
         rewards,
         signers: { Alice, Bob, Charlie, Eve },
@@ -152,6 +152,30 @@ makeTestsEnv(REWARDS, testEnv => {
       expect(bobClaimableRewards).eq(parseEther('0.1'));
       expect(charlieClaimableRewards).eq(parseEther('0.719989999990999999'));
       expect(eveClaimableRewards).eq(parseEther('0.0479999011'));
+    });
+
+    it('Proposal reward is equal to 0 in the first epoch', async () => {
+      const { rewards } = testEnv;
+
+      for (let i = 0; i < 10; i++) {
+        /* eslint-disable no-await-in-loop */
+        const proposalReward = await rewards.proposalReward(1, i);
+        expect(proposalReward).eq(0);
+      }
+    });
+
+    it('Compute proposal reward', async () => {
+      const { rewards } = testEnv;
+      const firstProposalReward = await rewards.proposalReward(2, 1);
+      expect(firstProposalReward).eq(parseEther('9.260424667313375238'));
+      const secondProposalReward = await rewards.proposalReward(2, 2);
+      expect(secondProposalReward).eq(parseEther('13.890625552779503139'));
+
+      for (let i = 3; i < 10; i++) {
+        /* eslint-disable no-await-in-loop */
+        const proposalReward = await rewards.proposalReward(1, i);
+        expect(proposalReward).eq(0);
+      }
     });
 
     it('Compute individual proposal rewards', async () => {
