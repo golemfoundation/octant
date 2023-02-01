@@ -11,7 +11,11 @@ interface IProposals {
         string uri;
     }
 
-    function getProposalIds(uint256 _epoch) external view returns (uint256[] memory);
+    function getProposalIds(
+        uint256 _epoch
+    ) external view returns (uint256[] memory);
 
-    function getProposals(uint256 _epoch) external view returns (Proposal[] memory);
+    function getProposals(
+        uint256 _epoch
+    ) external view returns (Proposal[] memory);
 }

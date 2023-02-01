@@ -79,7 +79,10 @@ contract Rewards is IRewards {
     }
 
     /// @notice Compute user's individual reward for particular epoch.
-    function individualReward(uint32 epoch, address user) public view returns (uint256) {
+    function individualReward(
+        uint32 epoch,
+        address user
+    ) public view returns (uint256) {
         uint256 myDeposit = tracker.depositAt(user, epoch);
         if (myDeposit == 0) {
             return 0;
@@ -90,10 +93,14 @@ contract Rewards is IRewards {
     }
 
     /// @notice Compute user's claimable reward for particular epoch.
-    function claimableReward(uint32 epoch, address user) public view returns (uint256) {
+    function claimableReward(
+        uint32 epoch,
+        address user
+    ) public view returns (uint256) {
         uint256 ir = individualReward(epoch, user);
         uint256 allocationsSum;
-        IAllocationsStorage.Allocation[] memory allocations = allocationsStorage.getUserAllocations(epoch, user);
+        IAllocationsStorage.Allocation[] memory allocations = allocationsStorage
+            .getUserAllocations(epoch, user);
         for (uint256 i = 0; i < allocations.length; i++) {
             allocationsSum += allocations[i].allocation;
         }
@@ -121,19 +128,28 @@ contract Rewards is IRewards {
     ) public view returns (uint256, ProposalRewards[] memory) {
         uint256[] memory proposalIds = proposals.getProposalIds(epoch);
         uint256 proposalRewardsSum;
-        ProposalRewards[] memory proposalRewards = new ProposalRewards[](proposalIds.length);
-        for (uint256 iProposal = 0; iProposal < proposalIds.length; iProposal++) {
+        ProposalRewards[] memory proposalRewards = new ProposalRewards[](
+            proposalIds.length
+        );
+        for (
+            uint256 iProposal = 0;
+            iProposal < proposalIds.length;
+            iProposal++
+        ) {
             proposalRewards[iProposal].id = proposalIds[iProposal];
-            (address[] memory users, uint256[] memory allocations) = allocationsStorage.getUsersWithTheirAllocations(
-                epoch,
-                proposalIds[iProposal]
-            );
+            (
+                address[] memory users,
+                uint256[] memory allocations
+            ) = allocationsStorage.getUsersWithTheirAllocations(
+                    epoch,
+                    proposalIds[iProposal]
+                );
 
             // count individual rewards for proposals.
             for (uint256 iUser = 0; iUser < users.length; iUser++) {
                 proposalRewards[iProposal].donated =
-                proposalRewards[iProposal].donated +
-                allocations[iUser];
+                    proposalRewards[iProposal].donated +
+                    allocations[iUser];
                 proposalRewardsSum = proposalRewardsSum + allocations[iUser];
             }
         }
@@ -151,19 +167,15 @@ contract Rewards is IRewards {
             ProposalRewards[] memory proposalRewards
         ) = individualProposalRewards(epoch);
 
+        (
+            uint256 proposalDonationThreshold,
+            uint256 proposalDonationAboveThresholdSum
+        ) = _calculateProposalRewardsThreshold(
+                proposalRewardsSum,
+                proposalRewards
+            );
+
         uint256 _matchedRewards = matchedRewards(epoch);
-        uint256 proposalDonationThreshold = proposalRewardsSum.div(100).mul(
-            PROPOSAL_DONATION_THRESHOLD_PERCENT
-        );
-
-        // calculate proposal donation above threshold.
-        uint256 proposalDonationAboveThresholdSum;
-        for (uint256 iReward = 0; iReward < proposalRewards.length; iReward++) {
-            if (proposalRewards[iReward].donated > proposalDonationThreshold) {
-                proposalDonationAboveThresholdSum += proposalRewards[iReward].donated;
-            }
-        }
-
         // distribute matched rewards.
         for (uint256 iReward = 0; iReward < proposalRewards.length; iReward++) {
             if (proposalRewards[iReward].donated > proposalDonationThreshold) {
@@ -177,5 +189,62 @@ contract Rewards is IRewards {
             }
         }
         return proposalRewards;
+    }
+
+    /// @notice Calculates total proposal rewards (donated and matched) in particular epoch.
+    /// @return Rewards amount assigned to this proposal in WEI.
+    function proposalReward(
+        uint32 epoch,
+        uint256 proposalId
+    ) external view returns (uint256) {
+        (
+            uint256 proposalRewardsSum,
+            ProposalRewards[] memory proposalRewards
+        ) = individualProposalRewards(epoch);
+
+        (
+            uint256 proposalDonationThreshold,
+            uint256 proposalDonationAboveThresholdSum
+        ) = _calculateProposalRewardsThreshold(
+                proposalRewardsSum,
+                proposalRewards
+            );
+
+        uint256 _matchedRewards = matchedRewards(epoch);
+        // calculate total proposal rewards (donated + matched).
+        for (uint256 iReward = 0; iReward < proposalRewards.length; iReward++) {
+            if (
+                proposalRewards[iReward].donated > proposalDonationThreshold &&
+                proposalRewards[iReward].id == proposalId
+            ) {
+                uint256 proposalRewardsShare = proposalRewards[iReward]
+                    .donated
+                    .div(proposalDonationAboveThresholdSum);
+                uint256 matchedProposalReward = _matchedRewards.mul(
+                    proposalRewardsShare
+                );
+                return proposalRewards[iReward].donated + matchedProposalReward;
+            }
+        }
+        return 0;
+    }
+
+    function _calculateProposalRewardsThreshold(
+        uint256 proposalRewardsSum,
+        ProposalRewards[] memory proposalRewards
+    ) private view returns (uint256, uint256) {
+        uint256 proposalDonationThreshold = proposalRewardsSum.div(100).mul(
+            PROPOSAL_DONATION_THRESHOLD_PERCENT
+        );
+
+        // calculate proposal donation above threshold.
+        uint256 proposalDonationAboveThresholdSum;
+        for (uint256 iReward = 0; iReward < proposalRewards.length; iReward++) {
+            if (proposalRewards[iReward].donated > proposalDonationThreshold) {
+                proposalDonationAboveThresholdSum += proposalRewards[iReward]
+                    .donated;
+            }
+        }
+        return (proposalDonationThreshold, proposalDonationAboveThresholdSum);
     }
 }

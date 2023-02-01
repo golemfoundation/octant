@@ -2,5 +2,4 @@
 
 pragma solidity ^0.8.9;
 
-contract Withdrawals {
-}
+contract Withdrawals {}

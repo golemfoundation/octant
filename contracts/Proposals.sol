@@ -29,12 +29,17 @@ contract Proposals is Ownable, IProposals {
     /// @notice sets proposal Ids that will be active in the particular epoch.
     /// Ids should be provided as an array and will represent JSON file names stored under CID provided
     /// to this contract.
-    function setProposalIds(uint256 _epoch, uint256[] calldata _proposalIds) public onlyOwner {
+    function setProposalIds(
+        uint256 _epoch,
+        uint256[] calldata _proposalIds
+    ) public onlyOwner {
         proposalIdsByEpoch[_epoch] = _proposalIds;
     }
 
     /// @return list of proposal Ids active in given epoch.
-    function getProposalIds(uint256 _epoch) public view returns (uint256[] memory) {
+    function getProposalIds(
+        uint256 _epoch
+    ) public view returns (uint256[] memory) {
         for (uint256 iEpoch = _epoch; iEpoch > 0; iEpoch = iEpoch - 1) {
             if (proposalIdsByEpoch[iEpoch].length > 0) {
                 return proposalIdsByEpoch[iEpoch];
@@ -47,12 +52,16 @@ contract Proposals is Ownable, IProposals {
     /// https://<IPFS Gateway of your choice>/ipfs/<CID>/<Proposal ID>
     // example: https://ipfs.io/ipfs/Qmbm97crHWQzNYNn2LPZ5hhGu4qEv1DXRP6qS4TCehruPn/1
     /// @return list of proposal active in given epoch as a struct containing CID and proposal id.
-    function getProposals(uint256 _epoch) external view returns (Proposal[] memory) {
+    function getProposals(
+        uint256 _epoch
+    ) external view returns (Proposal[] memory) {
         uint256[] memory proposalIds = getProposalIds(_epoch);
         Proposal[] memory proposals = new Proposal[](proposalIds.length);
         for (uint256 i = 0; i < proposalIds.length; i++) {
             uint256 id = proposalIds[i];
-            string memory uri = string(abi.encodePacked(CID, Strings.toString(id)));
+            string memory uri = string(
+                abi.encodePacked(CID, Strings.toString(id))
+            );
             proposals[i] = Proposal(id, uri);
         }
         return proposals;

@@ -8,9 +8,16 @@ interface IAllocationsStorage {
         uint256 allocation;
     }
 
-    function getUserAllocations(uint256 _epoch, address _user) external view returns (Allocation[] memory);
+    function getUserAllocations(
+        uint256 _epoch,
+        address _user
+    ) external view returns (Allocation[] memory);
 
-    function addAllocation(uint256 _epoch, address _user, Allocation memory _allocation) external;
+    function addAllocation(
+        uint256 _epoch,
+        address _user,
+        Allocation memory _allocation
+    ) external;
 
     function removeUserAllocations(uint256 _epoch, address _user) external;
 

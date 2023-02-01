@@ -38,7 +38,9 @@ contract BeaconChainOracle is Ownable {
 
     /// @notice set beaconchain validator indexes as string split by comma.
     /// example: 1,2,5,6,10,123,2347
-    function setValidatorIndexes(string memory _validatorIndexes) external onlyOwner {
+    function setValidatorIndexes(
+        string memory _validatorIndexes
+    ) external onlyOwner {
         validatorIndexes = _validatorIndexes;
     }
 }

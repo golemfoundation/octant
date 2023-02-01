@@ -60,7 +60,10 @@ contract TrackerWrapper is ITracker {
     }
 
     modifier onlyDeposits() {
-        require(msg.sender == depositsAddress, CommonErrors.UNAUTHORIZED_CALLER);
+        require(
+            msg.sender == depositsAddress,
+            CommonErrors.UNAUTHORIZED_CALLER
+        );
         _;
     }
 }
