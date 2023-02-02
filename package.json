@@ -24,7 +24,7 @@
     "start-node": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat node",
     "test": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat test",
     "type-check": "tsc --noEmit true",
-    "verify:goerli": "hardhat --network goerli etherscan-verify --license GPL-3.0-only"
+    "verify:goerli": "hardhat --network goerli etherscan-verify --license GPL-3.0"
   },
   "repository": {
     "type": "git",
@@ -35,7 +35,7 @@
     "staking"
   ],
   "author": "Golem Foundation Contributors <contact@golem.foundation>",
-  "license": "GPL-3.0-only",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://gitlab.com/wildland/hexagon/issues"
   },

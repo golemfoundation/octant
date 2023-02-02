@@ -12,7 +12,7 @@ type Allocated @entity(immutable: true) {
 type Deposited @entity(immutable: true) {
   id: Bytes!
   amount: BigInt! # uint224
-  depositor: Bytes! # address
+  user: Bytes! # address
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -21,7 +21,7 @@ type Deposited @entity(immutable: true) {
 type Withdrawn @entity(immutable: true) {
   id: Bytes!
   amount: BigInt! # uint224
-  depositor: Bytes! # address
+  user: Bytes! # address
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!

@@ -34,7 +34,7 @@ describe('Describe entity assertions', () => {
     assert.fieldEquals(
       DEPOSIT_ENTITY_TYPE,
       '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
-      'depositor',
+      'user',
       '0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199'.toLowerCase(),
     );
     assert.fieldEquals(
@@ -68,7 +68,7 @@ describe('Describe entity assertions', () => {
     assert.fieldEquals(
       WITHDRAWAL_ENTITY_TYPE,
       '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
-      'depositor',
+      'user',
       '0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199'.toLowerCase(),
     );
     assert.fieldEquals(
