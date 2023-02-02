@@ -2,7 +2,7 @@ import { QueryCache, QueryClient } from 'react-query';
 
 import triggerToast from 'utils/triggerToast';
 
-const reactQueryClient = new QueryClient({
+const clientReactQuery = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnMount: false,
@@ -17,4 +17,4 @@ const reactQueryClient = new QueryClient({
   }),
 });
 
-export default reactQueryClient;
+export default clientReactQuery;

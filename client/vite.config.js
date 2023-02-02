@@ -41,4 +41,12 @@ export default defineConfig({
       views: path.resolve(__dirname, 'src/views'),
     },
   },
+  // server: {
+  //   proxy: {
+  //     '/subgraphs/name/hexagon': {
+  //       changeOrigin: true,
+  //       target: 'http://localhost:8000/subgraphs/name/hexagon',
+  //     },
+  //   },
+  // },
 });

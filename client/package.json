@@ -26,6 +26,7 @@
     "type-check": "tsc --noEmit true"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.4",
     "@ethersproject/constants": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
     "@reduxjs/toolkit": "^1.9.1",

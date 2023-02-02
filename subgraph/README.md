@@ -1,5 +1,7 @@
 # Hexagon subgraph (The Graph)
 
+In order for subgraph to index contracts used by the client ensure that addresses in `subgraph/networks.json` are the same as used in `client/env.ts`.
+
 ## Install
 ```bash
 yarn

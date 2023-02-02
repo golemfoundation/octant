@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
+import History from 'components/dedicated/History/History';
 import UserGlmStakeComponent from 'components/dedicated/UserGlmStake/UserGlmStake';
 import useIndividualReward from 'hooks/useIndividualReward';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
@@ -29,6 +30,7 @@ const EarnView = (): ReactElement => {
       >
         <DoubleValue mainValue={individualReward ? getFormattedUnit(individualReward) : '0.0'} />
       </BoxRounded>
+      <History />
     </MainLayoutContainer>
   );
 };
