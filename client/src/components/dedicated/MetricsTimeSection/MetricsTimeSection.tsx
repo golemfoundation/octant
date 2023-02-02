@@ -5,9 +5,8 @@ import Description from 'components/core/Description/Description';
 import Header from 'components/core/Header/Header';
 import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
 import useDecisionWindow from 'hooks/useDecisionWindow';
+import useEpochAndAllocationTimestamps from 'hooks/useEpochAndAllocationTimestamps';
 import useEpochDuration from 'hooks/useEpochDuration';
-import useStart from 'hooks/useStart';
-import getEpochAndAllocationTimestamps from 'utils/getEpochAndAllocationTimestamps';
 
 import styles from './style.module.scss';
 import MetricsTimeSectionProps from './types';
@@ -20,14 +19,7 @@ const MetricsTimeSection: FC<MetricsTimeSectionProps> = ({
 }) => {
   const { data: decisionWindowDuration } = useDecisionWindow();
   const { data: epochDuration } = useEpochDuration();
-  const { data: startTimestamp } = useStart();
-
-  const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = getEpochAndAllocationTimestamps({
-    currentEpoch,
-    decisionWindowDuration,
-    epochDuration,
-    startTimestamp,
-  });
+  const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
 
   const counterProps = isDecisionWindowOpen
     ? {
