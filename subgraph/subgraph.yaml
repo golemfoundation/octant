@@ -7,8 +7,8 @@ dataSources:
     network: goerli
     source:
       abi: Allocations
-      address: "0x44c8aCFf38e6c0700f6F0906Ed0D2091ddb7Ba6e"
-      startBlock: 8332054
+      address: "0x17e1cC72420909944B65266D724eB4836A5fd987"
+      startBlock: 8415400
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -27,8 +27,8 @@ dataSources:
     network: goerli
     source:
       abi: Deposits
-      address: "0xD9DAd2E6c1cB9e31C7d1B34f4754427C09a2CbFA"
-      startBlock: 8332054
+      address: "0x9b89577bE6dB818897d65Ff2988dacF8026206E7"
+      startBlock: 8415400
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

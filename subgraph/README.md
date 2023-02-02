@@ -15,13 +15,13 @@ yarn test
 
 ### Local
 ```bash
-yarn build-local
+yarn build:local
 ```
 Be sure to change network in `subgraph.yaml` from `hardhat` to `localhost`
 
 ### Goerli
 ```bash
-yarn build-goerli
+yarn build:goerli
 ```
 
 ## Run
@@ -35,13 +35,13 @@ yarn start
 ### Local
 ```bash
 yarn create-subgraph
-yarn deploy-local
+yarn deploy:local
 ```
 
 ### Goerli
 ```bash
 yarn create-subgraph
-yarn deploy-goerli
+yarn deploy:goerli
 ```
 
 ## Query

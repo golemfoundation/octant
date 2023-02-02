@@ -5,7 +5,7 @@
     "type": "git",
     "url": "git+https://gitlab.com/wildland/hexagon.git"
   },
-  "license": "GPL-3.0-only",
+  "license": "GPL-3.0",
   "scripts": {
     "build": "vite build",
     "copy-typechain": "cp -r ../typechain-types ./src/typechain-types",
