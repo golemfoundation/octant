@@ -61,21 +61,25 @@ const TimeCounter: FC<TimeCounterProps> = ({
     return () => clearTimeout(timer);
   }, [shouldDoRefetch, timestamp, time, onCountingFinish]);
 
-  if (!timestamp || !duration || !time || shouldDoRefetch) {
-    return <Loader />;
-  }
-
-  const progressPercentage = ((timestamp - Date.now()) / duration) * 100;
+  const shouldShowLoader = !timestamp || !duration || !time || shouldDoRefetch;
+  const progressPercentage =
+    timestamp && duration ? ((timestamp - Date.now()) / duration) * 100 : 0;
 
   return (
     <div className={cx(styles.root, className)}>
-      <div className={styles.counters}>
-        <CounterSection label="Days" value={time.days} />
-        <CounterSection label="Hours" value={time.hours} />
-        <CounterSection label="Minutes" value={time.minutes} />
-        <CounterSection isDividerVisible={false} label="Seconds" value={time.seconds} />
-      </div>
-      <ProgressBar progressPercentage={progressPercentage} />
+      {shouldShowLoader ? (
+        <Loader />
+      ) : (
+        <Fragment>
+          <div className={styles.counters}>
+            <CounterSection label="Days" value={time.days} />
+            <CounterSection label="Hours" value={time.hours} />
+            <CounterSection label="Minutes" value={time.minutes} />
+            <CounterSection isDividerVisible={false} label="Seconds" value={time.seconds} />
+          </div>
+          <ProgressBar progressPercentage={progressPercentage} />
+        </Fragment>
+      )}
     </div>
   );
 };
