@@ -10,6 +10,7 @@ import AllocationInfoBoxes from 'components/dedicated/AllocationInfoBoxes/Alloca
 import AllocationItem from 'components/dedicated/AllocationItem/AllocationItem';
 import AllocationNavigation from 'components/dedicated/AllocationNavigation/AllocationNavigation';
 import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
+import useAllocations from 'hooks/subgraph/useAllocations';
 import useAllocate from 'hooks/useAllocate';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/useDepositEffectiveAtCurrentEpoch';
 import useIndividualReward from 'hooks/useIndividualReward';
@@ -45,6 +46,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: depositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
+  const { refetch: refetchAllocations } = useAllocations();
   const { data: matchedProposalRewards, refetch: refetchMatchedProposalRewards } =
     useMatchedProposalRewards();
   const allocateMutation = useAllocate({
@@ -54,6 +56,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
       });
       await refetchMatchedProposalRewards();
       await refetchUserAllocation();
+      await refetchAllocations();
       setCurrentView('edit');
       setSelectedItemId(null);
     },

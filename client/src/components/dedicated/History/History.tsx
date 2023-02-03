@@ -8,7 +8,7 @@ import Loader from 'components/core/Loader/Loader';
 import Svg from 'components/core/Svg/Svg';
 import useAllocations from 'hooks/subgraph/useAllocations';
 import useDeposits from 'hooks/subgraph/useDeposits';
-import useUndeposits from 'hooks/subgraph/useUndeposits';
+import useWithdrawns from 'hooks/subgraph/useWithdrawns';
 import useEpochAndAllocationTimestamps from 'hooks/useEpochAndAllocationTimestamps';
 import { allocate, donation } from 'svg/history';
 import getFormattedUnits from 'utils/getFormattedUnit';
@@ -18,17 +18,16 @@ import { sortAllocationsAndDeposits } from './utils';
 
 const History = (): ReactElement => {
   const {
-    metaState: { account, isConnected },
+    metaState: { isConnected },
   } = useMetamask();
-  const address = account[0];
-  const { data: dataDeposits } = useDeposits(address);
-  const { data: dataAllocations } = useAllocations(address);
-  const { data: dataUndeposits } = useUndeposits(address);
+  const { data: dataDeposits } = useDeposits();
+  const { data: dataAllocations } = useAllocations();
+  const { data: dataWithdrawns } = useWithdrawns();
   const { timeCurrentEpochStart } = useEpochAndAllocationTimestamps();
 
   let allocationsAndDeposits =
-    dataDeposits !== undefined && dataAllocations !== undefined && dataUndeposits !== undefined
-      ? [...dataDeposits, ...dataAllocations, ...dataUndeposits]
+    dataDeposits !== undefined && dataAllocations !== undefined && dataWithdrawns !== undefined
+      ? [...dataDeposits, ...dataAllocations, ...dataWithdrawns]
       : undefined;
   allocationsAndDeposits = allocationsAndDeposits
     ? sortAllocationsAndDeposits(allocationsAndDeposits)

@@ -14,6 +14,8 @@ import BudgetBox from 'components/dedicated/BudgetBox/BudgetBox';
 import { DEPOSIT_WITHDRAW_GAS_LIMIT } from 'constants/contracts';
 import env from 'env';
 import useContractDeposits from 'hooks/contracts/useContractDeposits';
+import useDeposits from 'hooks/subgraph/useDeposits';
+import useWithdrawns from 'hooks/subgraph/useWithdrawns';
 import useAvailableFunds from 'hooks/useAvailableFunds';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/useDepositValue';
@@ -51,6 +53,9 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
     signer,
   );
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
+  const { refetch: refetchDeposits } = useDeposits();
+  const { refetch: refetchWithdrawns } = useWithdrawns();
+
   const contractDeposits = useContractDeposits({ signerOrProvider: signer });
   const [approvalState, approveCallback] = useMaxApproveCallback(
     BigNumber.from(parseUnits(valueToDeposeOrWithdraw || '1', 18)),
@@ -71,6 +76,8 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
     await refetchDeposit();
     await refetchAvailableFunds();
     await refetchDepositEffectiveAtCurrentEpoch();
+    await refetchDeposits();
+    await refetchWithdrawns();
   };
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 import { gql, useQuery, QueryResult } from '@apollo/client';
 import { BigNumber } from 'ethers';
+import { useMetamask } from 'use-metamask';
 
 type Allocation = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -30,9 +31,12 @@ const GET_ALLOCATIONS = gql`
   }
 `;
 
-export default function useAllocations(
-  userAddress: string,
-): QueryResult<AllocationSquashed[], Variables> {
+export default function useAllocations(): QueryResult<AllocationSquashed[], Variables> {
+  const {
+    metaState: { account },
+  } = useMetamask();
+  const userAddress = account[0];
+
   const { data, ...rest } = useQuery(GET_ALLOCATIONS, {
     variables: {
       userAddress,
