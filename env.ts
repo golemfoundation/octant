@@ -4,7 +4,6 @@ require('dotenv').config();
 const PROPOSALS_CID =
   process.env.PROPOSALS_CID || 'QmNzpzeU4zktuzWq37Ke1bWgfn8h7FzBw9V3xoTASfk33o/';
 const GOERLI_URL = process.env.GOERLI_URL || '';
-const ZKSYNC_URL = process.env.ZKSYNC_URL || 'https://zksync2-testnet.zksync.dev';
 const GOERLI_PRIVATE_KEY =
   process.env.GOERLI_PRIVATE_KEY ||
   '0000000000000000000000000000000000000000000000000000000000000000';
@@ -24,7 +23,6 @@ const EXECUTION_LAYER_VALIDATOR_ADDRESS = '0xe7cf7C3BA875Dd3884Ed6a9082d342cb4FB
 export {
   PROPOSALS_CID,
   GOERLI_URL,
-  ZKSYNC_URL,
   GOERLI_PRIVATE_KEY,
   GOERLI_GNT,
   GOERLI_GLM,

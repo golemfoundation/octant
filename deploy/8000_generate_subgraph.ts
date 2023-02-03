@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
@@ -6,6 +7,11 @@ import { ALLOCATIONS, DEPOSITS } from '../helpers/constants';
 // This function needs to be declared this way, otherwise it's not understood by test runner.
 // eslint-disable-next-line func-names
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+  const networkFile = 'subgraph/networks.json';
+  if (!fs.existsSync(networkFile)) {
+    fs.writeFileSync(networkFile, JSON.stringify({}, null, 4));
+  }
+
   const allocations = await hre.ethers.getContract(ALLOCATIONS);
   // eslint-disable-next-line no-console
   console.log('Generating subgraph for Allocations contract...');

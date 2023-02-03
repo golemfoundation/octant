@@ -9,7 +9,6 @@ import {
   EPOCHS,
   PROPOSALS,
   REWARDS,
-  TEST_REWARDS,
   TRACKER,
 } from '../helpers/constants';
 
@@ -32,8 +31,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`VITE_PROPOSALS_ADDRESS=${proposals.address}`);
   const rewards = await hre.ethers.getContract(REWARDS);
   console.log(`VITE_REWARDS_ADDRESS=${rewards.address}`);
-  const testRewards = await hre.ethers.getContract(TEST_REWARDS);
-  console.log(`VITE_TEST_REWARDS_ADDRESS=${testRewards.address}`);
   const beaconChain = await hre.ethers.getContract(BEACON_CHAIN_ORACLE);
   console.log(`VITE_BEACON_CHAIN_ORACLE_ADDRESS=${beaconChain.address}`);
   /* eslint-enable no-console */

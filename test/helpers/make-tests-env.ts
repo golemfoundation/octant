@@ -16,7 +16,6 @@ import {
   PAYOUTS,
   PROPOSALS,
   REWARDS,
-  TEST_REWARDS,
   TOKEN,
   TRACKER,
 } from '../../helpers/constants';
@@ -32,7 +31,6 @@ import {
   Proposals,
   Rewards,
   TestGLMFaucet,
-  TestRewards,
   Token,
   Tracker,
 } from '../../typechain-types';
@@ -52,7 +50,6 @@ const testEnv: TestEnv = {
   proposals: {} as Proposals,
   rewards: {} as Rewards,
   signers: {} as Signers,
-  testRewards: {} as TestRewards,
   token: {} as Token,
   tracker: {} as Tracker,
 };
@@ -66,7 +63,6 @@ async function initializeTestsEnv() {
   testEnv.glmDeposits = await ethers.getContract(DEPOSITS);
   testEnv.tracker = await ethers.getContract(TRACKER);
   testEnv.rewards = await ethers.getContract(REWARDS);
-  testEnv.testRewards = await ethers.getContract(TEST_REWARDS);
   testEnv.payouts = await ethers.getContract(PAYOUTS);
   testEnv.proposals = await ethers.getContract(PROPOSALS);
   testEnv.epochs = await ethers.getContract(EPOCHS);
