@@ -42,7 +42,8 @@ const env = {
     import.meta.env.VITE_IS_TESTNET || 'true',
   subgraphAddress:
     // @ts-expect-error TS does not understand the way vite imports envs.
-    import.meta.env.VITE_SUBGRAPH_ADDRESS || 'http://34.173.64.64:8000/subgraphs/name/hexagon',
+    import.meta.env.VITE_SUBGRAPH_ADDRESS ||
+    'https://hexagon-subgraph.online/subgraphs/name/hexagon',
 };
 
 export default env;
