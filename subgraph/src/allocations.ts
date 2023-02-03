@@ -7,13 +7,13 @@ export function handleAllocated(event: AllocatedEvent): void {
     entity = new Allocated(event.transaction.hash.concatI32(event.logIndex.toI32()));
   }
 
-  entity.epoch = event.params.epoch;
+  entity.epoch = event.params.epoch.toI32();
   entity.user = event.params.user;
-  entity.proposalId = event.params.allocation.proposalId;
+  entity.proposalId = event.params.allocation.proposalId.toI32();
   entity.allocation = event.params.allocation.allocation;
 
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
+  entity.blockNumber = event.block.number.toI32();
+  entity.blockTimestamp = event.block.timestamp.toI32();
   entity.transactionHash = event.transaction.hash;
 
   entity.save();

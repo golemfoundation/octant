@@ -9,8 +9,8 @@ export function handleDeposited(event: DepositedEvent): void {
   entity.amount = event.params.amount;
   entity.user = event.params.depositor;
 
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
+  entity.blockNumber = event.block.number.toI32();
+  entity.blockTimestamp = event.block.timestamp.toI32();
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
@@ -21,8 +21,8 @@ export function handleWithdrawn(event: WithdrawnEvent): void {
   entity.amount = event.params.amount;
   entity.user = event.params.depositor;
 
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
+  entity.blockNumber = event.block.number.toI32();
+  entity.blockTimestamp = event.block.timestamp.toI32();
   entity.transactionHash = event.transaction.hash;
 
   entity.save();

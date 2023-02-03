@@ -40,6 +40,11 @@ Go to `.docs` and open the `index.html` file in your browser.
 
 ## Deployment
 
+### Local
+```bash
+yarn start-node
+```
+
 ### Goerli testnet
 ```bash
 yarn deploy:goerli

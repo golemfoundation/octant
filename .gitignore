@@ -7,9 +7,7 @@ coverage.json
 
 # Hardhat files
 cache
-cache-zk
 artifacts
-artifacts-zk
 deployments
 typechain
 typechain-types
@@ -27,6 +25,7 @@ venv
 /subgraph/generated
 /subgraph/build
 /subgraph/data
+/subgraph/networks.json
 /subgraph/tests/.*
 
 #logs

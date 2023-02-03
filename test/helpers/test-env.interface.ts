@@ -12,7 +12,6 @@ import {
   Proposals,
   Rewards,
   TestGLMFaucet,
-  TestRewards,
   Token,
   Tracker,
 } from '../../typechain-types';
@@ -32,7 +31,6 @@ export interface TestEnv {
   proposals: Proposals;
   rewards: Rewards;
   signers: Signers;
-  testRewards: TestRewards;
   token: Token;
   tracker: Tracker;
 }

@@ -5,10 +5,9 @@
   "main": "index.js",
   "scripts": {
     "clean": "npx hardhat clean",
-    "compile": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat compile && npx hardhat --network zksync compile",
+    "compile": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat compile",
     "deploy:goerli": "npx hardhat --network goerli deploy --tags goerli",
     "deploy:local": "npx hardhat deploy --tags local",
-    "deploy:zksync": "npx hardhat --network zksync deploy-zksync",
     "docs": "npx hardhat docgen",
     "eslint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "eslint:fix": "yarn prettier && yarn eslint --fix",
@@ -16,6 +15,7 @@
     "lint": "npx solhint 'contracts/**/*.sol'",
     "postinstall": "rm -r node_modules/@nomiclabs/hardhat-ethers && cp -R node_modules/hardhat-deploy-ethers node_modules/@nomiclabs/hardhat-ethers",
     "prepare": "husky install",
+    "prepare-local-test-env": "npx hardhat prepare-local-test-env --network localhost",
     "prettier": "yarn prettier:js --loglevel silent && yarn prettier:ts --loglevel silent",
     "prettier:js": "yarn prettier:js:pure './**/*.{js,jsx}'",
     "prettier:js:pure": "prettier --write",
@@ -47,8 +47,6 @@
     "@graphprotocol/graph-cli": "^0.30.0",
     "@graphprotocol/graph-ts": "^0.27.0",
     "@graphprotocol/hardhat-graph": "^0.1.0-alpha.2",
-    "@matterlabs/hardhat-zksync-deploy": "^0.4.0",
-    "@matterlabs/hardhat-zksync-solc": "^0.3.9",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.5",
     "@nomiclabs/hardhat-ethers": "2.2.2",
     "@nomiclabs/hardhat-solhint": "^2.0.1",
@@ -91,8 +89,7 @@
     "ts-node": ">=8.0.0",
     "typechain": "^8.1.0",
     "typescript": "^4.8.3",
-    "typescript-formatter": "^7.2.2",
-    "zksync-web3": "^0.12.5"
+    "typescript-formatter": "^7.2.2"
   },
   "resolutions": {
     "ethereumjs-abi": "https://registry.npmjs.org/ethereumjs-abi/-/ethereumjs-abi-0.6.8.tgz"

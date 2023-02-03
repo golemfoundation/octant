@@ -232,7 +232,7 @@ contract Rewards is IRewards {
     function _calculateProposalRewardsThreshold(
         uint256 proposalRewardsSum,
         ProposalRewards[] memory proposalRewards
-    ) private view returns (uint256, uint256) {
+    ) private pure returns (uint256, uint256) {
         uint256 proposalDonationThreshold = proposalRewardsSum.div(100).mul(
             PROPOSAL_DONATION_THRESHOLD_PERCENT
         );
