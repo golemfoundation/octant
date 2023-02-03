@@ -1,10 +1,10 @@
 import { AllocationSquashed } from 'hooks/subgraph/useAllocations';
 import { Deposit } from 'hooks/subgraph/useDeposits';
-import { Undeposit } from 'hooks/subgraph/useUndeposits';
+import { Withdrawn } from 'hooks/subgraph/useWithdrawns';
 
 export function sortAllocationsAndDeposits(
-  elements: (AllocationSquashed | Deposit | Undeposit)[],
-): (AllocationSquashed | Deposit | Undeposit)[] {
+  elements: (AllocationSquashed | Deposit | Withdrawn)[],
+): (AllocationSquashed | Deposit | Withdrawn)[] {
   return elements.sort(
     ({ blockTimestamp: blockTimestampA }, { blockTimestamp: blockTimestampB }) => {
       if (blockTimestampA < blockTimestampB) {
