@@ -8,6 +8,8 @@ import { arrow } from 'svg/misc';
 import styles from './style.module.scss';
 import ButtonProps from './types';
 
+import Loader from '../Loader/Loader';
+
 const Button: FC<ButtonProps> = ({
   Icon,
   children,
@@ -46,6 +48,7 @@ const Button: FC<ButtonProps> = ({
 
   const isIconVariant =
     variant === 'iconOnly' || variant === 'iconOnlyTransparent' || variant === 'iconVertical';
+  const IconToRender = isLoading ? <Loader className={styles.loader} /> : Icon;
 
   return (
     <Component
@@ -54,7 +57,8 @@ const Button: FC<ButtonProps> = ({
         styles[`variant--${variant}`],
         isSmallFont && styles.isSmallFont,
         isActive && styles.isActive,
-        isDisabled && styles.isDisabled,
+        isActionDisabled && styles.isDisabled,
+        isLoading && styles.isLoading,
         isHigh && styles.isHigh,
         onClick && styles.isClickable,
         className,
@@ -65,9 +69,9 @@ const Button: FC<ButtonProps> = ({
       {...filteredProps}
     >
       <Fragment>
-        {Icon && (
+        {IconToRender && (
           <span className={cx(styles.icon, styles.isOnLeft, isIconVariant && styles.isIconVariant)}>
-            {Icon}
+            {IconToRender}
           </span>
         )}
         {children}
