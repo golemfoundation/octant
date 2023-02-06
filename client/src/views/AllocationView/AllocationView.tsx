@@ -1,6 +1,5 @@
 import cx from 'classnames';
 import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 import isEmpty from 'lodash/isEmpty';
 import React, { FC, Fragment, useEffect, useState } from 'react';
 import { useMetamask } from 'use-metamask';
@@ -101,11 +100,28 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
 
     // When value === '', we keep it as undefined, for check in AllocationItem.tsx mapping to BigNumber.
     const newValueProcessed = newValue === '' ? undefined : newValue;
+
+    const newAllocationsWithPositiveValues = allocationsWithPositiveValues.map(element => {
+      return element.proposalId === id
+        ? {
+            ...element,
+            value: newValue,
+          }
+        : element;
+    });
+    if (!newAllocationsWithPositiveValues.find(({ proposalId }) => proposalId === id) && newValue) {
+      newAllocationsWithPositiveValues.push({
+        proposalId: id,
+        value: newValue,
+      });
+    }
+
     const newAllocationValuesBigNumber = getNewAllocationValuesBigNumber(
-      allocationsWithPositiveValues,
+      newAllocationsWithPositiveValues,
     );
+
     const newAllocationValuesSum = newAllocationValuesBigNumber.reduce(
-      (acc, { proposalId, value }) => acc.add(proposalId === id ? parseUnits(newValue) : value),
+      (acc, { value }) => acc.add(value),
       BigNumber.from(0),
     );
 
@@ -113,6 +129,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
       toastBudgetExceeding();
       return;
     }
+
     setAllocationValues(prevState => ({
       ...prevState,
       [id]: newValueProcessed,
