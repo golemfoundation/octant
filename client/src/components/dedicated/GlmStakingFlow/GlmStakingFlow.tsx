@@ -7,7 +7,6 @@ import { useMetamask } from 'use-metamask';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
 import InputText from 'components/core/InputText/InputText';
-import Loader from 'components/core/Loader/Loader';
 import Modal from 'components/core/Modal/Modal';
 import ProgressStepper from 'components/core/ProgressStepper/ProgressStepper';
 import BudgetBox from 'components/dedicated/BudgetBox/BudgetBox';
@@ -194,10 +193,10 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
       </BoxRounded>
       <Button
         className={cx(styles.element, styles.button)}
-        Icon={isApproveOrDepositInProgress && <Loader />}
-        isDisabled={!valueToDeposeOrWithdraw || isApproveOrDepositInProgress}
+        isDisabled={!valueToDeposeOrWithdraw}
         isHigh
-        label={getButtonCtaLabel(currentMode, currentStepIndex)}
+        isLoading={isApproveOrDepositInProgress}
+        label={getButtonCtaLabel(currentMode, currentStepIndex, isApproveOrDepositInProgress)}
         onClick={onApproveOrDeposit}
         variant="cta"
       />

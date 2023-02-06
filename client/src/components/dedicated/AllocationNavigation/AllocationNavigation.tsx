@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 
 import Button from 'components/core/Button/Button';
-import Loader from 'components/core/Loader/Loader';
 
 import styles from './style.module.scss';
 import AllocationNavigationProps from './types';
@@ -40,7 +39,6 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
       <Button className={styles.button} isDisabled={areButtonsDisabled} {...buttonPreviousProps} />
       <Button
         className={styles.button}
-        Icon={isLoading && <Loader />}
         isDisabled={areButtonsDisabled || !isSummaryEnabled}
         isLoading={isLoading}
         variant="cta"

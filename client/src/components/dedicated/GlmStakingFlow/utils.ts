@@ -8,9 +8,13 @@ import { CurrentMode, CurrentStepIndex } from './types';
 export const getButtonCtaLabel = (
   currentMode: CurrentMode,
   currentStepIndex: CurrentStepIndex,
+  isLoading: boolean,
 ): string => {
   if (currentStepIndex === 3) {
     return 'Done';
+  }
+  if (isLoading) {
+    return 'Waiting for approval...';
   }
   return currentMode === 'deposit' ? 'Stake' : 'Unstake';
 };

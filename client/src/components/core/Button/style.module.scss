@@ -14,16 +14,16 @@
     font-size: $font-size-12;
   }
 
-  &.isDisabled {
-    cursor: default;
-  }
-
   &.isHigh {
     min-height: 4.8rem;
   }
 
   &.isClickable {
     cursor: pointer;
+  }
+
+  &.isDisabled {
+    cursor: default;
   }
 }
 
@@ -34,6 +34,7 @@
     background: $color-hexagon-dark;
 
     &.isDisabled {
+      color: $color-hexagon-grey2;
       background: $color-hexagon-grey1;
       border-color: $color-hexagon-grey1;
     }
@@ -139,11 +140,18 @@
 
   &:not(.isIconVariant) {
     &.isOnLeft {
-      margin: 0 1rem 0 0;
+      margin: 0 1.2rem 0 0;
     }
 
     &.isOnRight {
-      margin: 0 0 0 1rem;
+      margin: 0 0 0 1.2rem;
     }
   }
+}
+
+.loader {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-color: $color-white;
+  border-top-color: $color-hexagon-grey-14;
 }
