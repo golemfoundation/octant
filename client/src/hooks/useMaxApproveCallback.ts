@@ -4,7 +4,7 @@ import { BigNumber, ContractTransaction } from 'ethers';
 import { useCallback, useState } from 'react';
 
 import useContractErc20 from './contracts/useContractErc20';
-import useTokenAllowance from './useTokenAllowance';
+import useTokenAllowance from './queries/useTokenAllowance';
 
 import { ERC20 } from '../typechain-types';
 

@@ -2,10 +2,11 @@ import { BigNumber } from 'ethers';
 import { UseQueryOptions, UseQueryResult, useQuery } from 'react-query';
 import { useMetamask } from 'use-metamask';
 
-import useContractAllocationsStorage from './contracts/useContractAllocationsStorage';
+import useContractAllocationsStorage from 'hooks/contracts/useContractAllocationsStorage';
+
 import useCurrentEpoch from './useCurrentEpoch';
 
-import { IAllocationsStorage } from '../../../typechain-types';
+import { IAllocationsStorage } from '../../../../typechain-types';
 
 export type UserAllocation = { allocation: BigNumber; proposalId: number };
 

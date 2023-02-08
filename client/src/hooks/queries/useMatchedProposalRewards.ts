@@ -1,9 +1,9 @@
 import { BigNumber } from 'ethers';
 import { UseQueryResult, useQuery } from 'react-query';
 
+import useContractRewards from 'hooks/contracts/useContractRewards';
 import getFormattedUnits from 'utils/getFormattedUnit';
 
-import useContractRewards from './contracts/useContractRewards';
 import useCurrentEpoch from './useCurrentEpoch';
 
 type ProposalRewards = {

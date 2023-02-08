@@ -5,7 +5,7 @@ import { useQueries } from 'react-query';
 import { apiGetProposal } from 'api/proposals';
 import { BackendProposal, ExtendedProposal } from 'types/proposals';
 
-import { IProposals } from '../../../typechain-types';
+import { IProposals } from '../../../../typechain-types';
 
 export default function useIpfsProposals(
   proposalsContract:

@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
 
-import { ERC20 } from '../typechain-types';
+import { ERC20 } from '../../typechain-types';
 
 export default function useTokenAllowance(
   contract: ERC20,

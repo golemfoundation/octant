@@ -8,8 +8,8 @@ import Button from 'components/core/Button/Button';
 import Loader from 'components/core/Loader/Loader';
 import Svg from 'components/core/Svg/Svg';
 import env from 'env';
-import useCurrentEpoch from 'hooks/useCurrentEpoch';
-import useIndividualReward from 'hooks/useIndividualReward';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIndividualReward from 'hooks/queries/useIndividualReward';
 import { hexagon } from 'svg/logo';
 import truncateEthAddress from 'utils/truncateEthAddress';
 

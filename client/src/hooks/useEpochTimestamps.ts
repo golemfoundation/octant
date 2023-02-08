@@ -1,8 +1,8 @@
 import getEpochTimestamps, { Response } from 'utils/getEpochTimestamps';
 
-import useDecisionWindow from './useDecisionWindow';
-import useEpochDuration from './useEpochDuration';
-import useStart from './useStart';
+import useDecisionWindow from './queries/useDecisionWindow';
+import useEpochDuration from './queries/useEpochDuration';
+import useStart from './queries/useStart';
 
 export default function useEpochTimestamps(epoch?: number): Response {
   const { data: decisionWindowDuration } = useDecisionWindow();

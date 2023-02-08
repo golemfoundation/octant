@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 import { UseQueryResult, useQuery } from 'react-query';
 import { useMetamask } from 'use-metamask';
 
-import useContractDeposits from './contracts/useContractDeposits';
+import useContractDeposits from 'hooks/contracts/useContractDeposits';
 
 export default function useDepositValue(): UseQueryResult<BigNumber> {
   const {

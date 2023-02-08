@@ -1,15 +1,23 @@
+import debounce from 'lodash/debounce';
+
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
+import { TOAST_DEBOUNCE_TIME } from 'constants/toasts';
+import { UserAllocation } from 'hooks/queries/useUserAllocations';
 import triggerToast from 'utils/triggerToast';
 
-import { toastDebouncedCantRemoveAllocatedProject } from './useIdsInAllocation/utils';
-import { UserAllocation } from './useUserAllocations';
+import { OnAddRemoveAllocationElementLocalStorage } from './types';
 
-type OnAddRemoveAllocationElementLocalStorage = {
-  allocations: number[];
-  id: number;
-  name: string;
-  userAllocations?: UserAllocation[];
-};
+export const toastDebouncedCantRemoveAllocatedProject = debounce(
+  () =>
+    triggerToast({
+      message:
+        'If you want to remove a project from the Allocate view, you need to unallocate funds from it first.',
+      title: 'You allocated to this project',
+      type: 'warning',
+    }),
+  TOAST_DEBOUNCE_TIME,
+  { leading: true },
+);
 
 export function isProposalAlreadyAllocatedOn(
   userAllocations: undefined | UserAllocation[],

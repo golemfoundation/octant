@@ -1,8 +1,8 @@
 import { useQuery } from 'react-query';
 
+import useContractProposals from 'hooks/contracts/useContractProposals';
 import { ExtendedProposal } from 'types/proposals';
 
-import useContractProposals from './contracts/useContractProposals';
 import useCurrentEpoch from './useCurrentEpoch';
 import useIpfsProposals from './useIpfsProposals';
 

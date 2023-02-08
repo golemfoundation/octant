@@ -1,8 +1,7 @@
 import { BigNumberish, Signer } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
 import { UseQueryResult, useQuery } from 'react-query';
 
-import useContractErc20 from './contracts/useContractErc20';
+import useContractErc20 from 'hooks/contracts/useContractErc20';
 
 export default function useAvailableFunds(address: string, signer: Signer): UseQueryResult<number> {
   const erc20Contract = useContractErc20({ signerOrProvider: signer });
@@ -12,7 +11,6 @@ export default function useAvailableFunds(address: string, signer: Signer): UseQ
     () => erc20Contract?.balanceOf(address),
     {
       enabled: !!erc20Contract && !!address,
-      select: response => parseInt(formatUnits(response!), 10),
     },
   );
 }

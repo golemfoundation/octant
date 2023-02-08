@@ -1,10 +1,11 @@
 import { BigNumber } from 'ethers';
 import { UseQueryResult, useQuery } from 'react-query';
 
-import useContractRewards from './contracts/useContractRewards';
+import useContractRewards from 'hooks/contracts/useContractRewards';
+
 import useCurrentEpoch from './useCurrentEpoch';
 
-import { Rewards } from '../../../typechain-types';
+import { Rewards } from '../../../../typechain-types';
 
 export default function useIndividualProposalRewards(): UseQueryResult<{
   list: Rewards.ProposalRewardsStructOutput[];

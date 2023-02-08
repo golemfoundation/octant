@@ -2,7 +2,8 @@ import { BigNumber } from 'ethers';
 import { UseQueryResult, useQuery } from 'react-query';
 import { useMetamask } from 'use-metamask';
 
-import useContractRewards from './contracts/useContractRewards';
+import useContractRewards from 'hooks/contracts/useContractRewards';
+
 import useCurrentEpoch from './useCurrentEpoch';
 
 export default function useIndividualReward(): UseQueryResult<BigNumber | undefined> {
