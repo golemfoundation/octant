@@ -1,8 +1,7 @@
 import { UseQueryResult, useQuery } from 'react-query';
 
 import { NUMBER_OF_ETHERS_PER_VALIDATOR } from 'constants/eth';
-
-import useContractBeaconChainOracle from './contracts/useContractBeaconChainOracle';
+import useContractBeaconChainOracle from 'hooks/contracts/useContractBeaconChainOracle';
 
 export default function useEthStaked(): UseQueryResult<string | undefined> {
   const contractBeaconChainOracle = useContractBeaconChainOracle();

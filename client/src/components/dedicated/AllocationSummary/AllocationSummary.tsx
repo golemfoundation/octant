@@ -6,11 +6,11 @@ import Description from 'components/core/Description/Description';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import Header from 'components/core/Header/Header';
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
-import useCurrentEpoch from 'hooks/useCurrentEpoch';
-import useIndividualProposalRewards from 'hooks/useIndividualProposalRewards';
-import useIndividualReward from 'hooks/useIndividualReward';
-import useMatchedRewards from 'hooks/useMatchedRewards';
-import useUserAllocations from 'hooks/useUserAllocations';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIndividualProposalRewards from 'hooks/queries/useIndividualProposalRewards';
+import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useMatchedRewards from 'hooks/queries/useMatchedRewards';
+import useUserAllocations from 'hooks/queries/useUserAllocations';
 import getFormattedUnits from 'utils/getFormattedUnit';
 import getNewAllocationValuesBigNumber from 'utils/getNewAllocationValuesBigNumber';
 

@@ -1,6 +1,6 @@
-import { QueryCache, QueryClient } from 'react-query';
+import { MutationCache, QueryCache, QueryClient } from 'react-query';
 
-import triggerToast from 'utils/triggerToast';
+import { handleError } from './errorMessages';
 
 const clientReactQuery = new QueryClient({
   defaultOptions: {
@@ -9,10 +9,16 @@ const clientReactQuery = new QueryClient({
       refetchOnWindowFocus: false,
     },
   },
+  mutationCache: new MutationCache({
+    onError: error => {
+      // @ts-expect-error Error is of type 'unknown', but it is an API error.
+      handleError(error.reason);
+    },
+  }),
   queryCache: new QueryCache({
     onError: error => {
       // @ts-expect-error Error is of type 'unknown', but it is an API error.
-      triggerToast({ message: `Something went wrong: ${error.message}`, type: 'error' });
+      handleError(error.reason);
     },
   }),
 });

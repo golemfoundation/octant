@@ -10,14 +10,14 @@ import InputText from 'components/core/InputText/InputText';
 import Modal from 'components/core/Modal/Modal';
 import ProgressStepper from 'components/core/ProgressStepper/ProgressStepper';
 import BudgetBox from 'components/dedicated/BudgetBox/BudgetBox';
-import { DEPOSIT_WITHDRAW_GAS_LIMIT } from 'constants/contracts';
 import env from 'env';
-import useContractDeposits from 'hooks/contracts/useContractDeposits';
+import useDeposit from 'hooks/mutations/useDeposit';
+import useWithdraw from 'hooks/mutations/useWithdraw';
+import useAvailableFunds from 'hooks/queries/useAvailableFunds';
+import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
+import useDepositValue from 'hooks/queries/useDepositValue';
 import useDeposits from 'hooks/subgraph/useDeposits';
 import useWithdrawns from 'hooks/subgraph/useWithdrawns';
-import useAvailableFunds from 'hooks/useAvailableFunds';
-import useDepositEffectiveAtCurrentEpoch from 'hooks/useDepositEffectiveAtCurrentEpoch';
-import useDepositValue from 'hooks/useDepositValue';
 import useMaxApproveCallback from 'hooks/useMaxApproveCallback';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 import triggerToast from 'utils/triggerToast';
@@ -39,7 +39,6 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
   } = useMetamask();
   const address = account[0];
   const signer = useMetamaskWeb3?.getSigner();
-  const [isApproveOrDepositInProgress, setIsApproveOrDepositInProgress] = useState<boolean>(false);
   const [currentMode, setCurrentMode] = useState<CurrentMode>('deposit');
   const [transactionHash, setTransactionHash] = useState<string>('');
   const [valueToDeposeOrWithdraw, setValueToDeposeOrWithdraw] = useState<string>('');
@@ -54,8 +53,6 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
   const { refetch: refetchDeposits } = useDeposits();
   const { refetch: refetchWithdrawns } = useWithdrawns();
-
-  const contractDeposits = useContractDeposits({ signerOrProvider: signer });
   const [approvalState, approveCallback] = useMaxApproveCallback(
     BigNumber.from(parseUnits(valueToDeposeOrWithdraw || '1', 18)),
     depositsAddress,
@@ -63,15 +60,14 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
     address,
   );
 
-  const onReset = (newMode: CurrentMode = 'deposit') => {
+  const onReset = (newMode: CurrentMode = 'deposit'): void => {
     setCurrentMode(newMode);
     setValueToDeposeOrWithdraw('');
     setCurrentStepIndex(0);
     setTransactionHash('');
-    setIsApproveOrDepositInProgress(false);
   };
 
-  const onRefetch = async () => {
+  const onRefetch = async (): Promise<void> => {
     await refetchDeposit();
     await refetchAvailableFunds();
     await refetchDepositEffectiveAtCurrentEpoch();
@@ -83,55 +79,19 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
     onReset();
   }, [modalProps.isOpen]);
 
-  const onChangeValue = (newValue: string): void => {
-    if (newValue && !floatNumberWithUpTo18DecimalPlaces.test(newValue)) {
-      return;
-    }
-
-    const depositValueNumber = parseInt(formatUnits(depositsValue!), 10);
-    const newValueNumber = parseInt(newValue, 10);
-
-    if (currentMode === 'withdraw' && newValueNumber > depositValueNumber) {
-      setValueToDeposeOrWithdraw(depositValueNumber.toString());
-      toastDebouncedUnstakeValueTooBig();
-      return;
-    }
-    if (currentMode === 'deposit' && newValueNumber > dataAvailableFunds!) {
-      setValueToDeposeOrWithdraw(dataAvailableFunds!.toString());
-      toastDebouncedStakeValueTooBig();
-      return;
-    }
-
-    setValueToDeposeOrWithdraw(newValue);
-  };
-
-  const onDeposit = async (value: BigNumber): Promise<ContractTransaction | undefined> =>
-    contractDeposits?.deposit(value, { gasLimit: DEPOSIT_WITHDRAW_GAS_LIMIT });
-
-  const onWithdraw = async (value: BigNumber): Promise<ContractTransaction | undefined> =>
-    contractDeposits?.withdraw(value, { gasLimit: DEPOSIT_WITHDRAW_GAS_LIMIT });
-
-  const onApproveOrDeposit = async () => {
+  const onMutate = async (): Promise<void> => {
     if (!signer || !valueToDeposeOrWithdraw) {
       return;
     }
 
-    setIsApproveOrDepositInProgress(true);
     if (currentMode === 'deposit' && approvalState === 'NOT_APPROVED') {
       await approveCallback();
     }
 
     setCurrentStepIndex(1);
+  };
 
-    const valueToDeposeOrWithdrawBigNumber = parseUnits(valueToDeposeOrWithdraw.toString(), 18);
-
-    let transactionResponse;
-    if (currentMode === 'deposit') {
-      transactionResponse = await onDeposit(valueToDeposeOrWithdrawBigNumber);
-    } else {
-      transactionResponse = await onWithdraw(valueToDeposeOrWithdrawBigNumber);
-    }
-    await transactionResponse.wait(1);
+  const onSuccess = async (transactionResponse: ContractTransaction): Promise<void> => {
     setTransactionHash(transactionResponse!.hash);
     triggerToast({
       title: 'Transaction successful',
@@ -139,8 +99,40 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
     await onRefetch();
     setValueToDeposeOrWithdraw('');
     setCurrentStepIndex(3);
-    setIsApproveOrDepositInProgress(false);
   };
+
+  const depositMutation = useDeposit({ onMutate, onSuccess });
+  const withdrawMutation = useWithdraw({ onMutate, onSuccess });
+
+  const onApproveOrDeposit = async (): Promise<void> => {
+    const valueToDeposeOrWithdrawBigNumber = parseUnits(valueToDeposeOrWithdraw.toString(), 18);
+    if (currentMode === 'deposit') {
+      await depositMutation.mutateAsync(valueToDeposeOrWithdrawBigNumber);
+    } else {
+      await withdrawMutation.mutateAsync(valueToDeposeOrWithdrawBigNumber);
+    }
+  };
+
+  const onChangeValue = (newValue: string): void => {
+    if (newValue && !floatNumberWithUpTo18DecimalPlaces.test(newValue)) {
+      return;
+    }
+
+    const newValueBigNumber = parseUnits(newValue);
+    let valueToSet = newValue;
+    if (currentMode === 'withdraw' && newValueBigNumber.gt(depositsValue!)) {
+      valueToSet = formatUnits(depositsValue!);
+      toastDebouncedUnstakeValueTooBig();
+    }
+    if (currentMode === 'deposit' && newValueBigNumber.gt(dataAvailableFunds!)) {
+      valueToSet = formatUnits(dataAvailableFunds!);
+      toastDebouncedStakeValueTooBig();
+    }
+
+    setValueToDeposeOrWithdraw(valueToSet);
+  };
+
+  const isApproveOrDepositInProgress = depositMutation.isLoading || withdrawMutation.isLoading;
 
   return (
     <Modal header={currentMode === 'deposit' ? 'Stake GLM' : 'Unstake GLM'} {...modalProps}>
@@ -188,7 +180,8 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
           <InputText className={styles.input} isDisabled suffix="USD" variant="simple" />
         </div>
         <div className={styles.availableFunds}>
-          Available wallet balance {dataAvailableFunds} GLM.
+          Available wallet balance {dataAvailableFunds ? formatUnits(dataAvailableFunds) : '0.0'}{' '}
+          GLM.
         </div>
       </BoxRounded>
       <Button

@@ -1,7 +1,8 @@
 import { BigNumber } from 'ethers';
 import { UseQueryOptions, UseQueryResult, useQuery } from 'react-query';
 
-import useContractAllocationsStorage from './contracts/useContractAllocationsStorage';
+import useContractAllocationsStorage from 'hooks/contracts/useContractAllocationsStorage';
+
 import useCurrentEpoch from './useCurrentEpoch';
 
 type Donor = { address: string; allocation: BigNumber };

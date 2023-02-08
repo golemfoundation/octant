@@ -6,8 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import Loader from 'components/core/Loader/Loader';
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
-import useProposals from 'hooks/useProposals';
-import useUserAllocations from 'hooks/useUserAllocations';
+import useProposals from 'hooks/queries/useProposals';
+import useUserAllocations from 'hooks/queries/useUserAllocations';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 
 import styles from './style.module.scss';

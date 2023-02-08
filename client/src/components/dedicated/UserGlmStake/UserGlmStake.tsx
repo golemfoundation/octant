@@ -5,8 +5,8 @@ import { useMetamask } from 'use-metamask';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import GlmStakingFlow from 'components/dedicated/GlmStakingFlow/GlmStakingFlow';
-import useDepositEffectiveAtCurrentEpoch from 'hooks/useDepositEffectiveAtCurrentEpoch';
-import useDepositValue from 'hooks/useDepositValue';
+import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
+import useDepositValue from 'hooks/queries/useDepositValue';
 
 import UserGlmStakeProps from './types';
 

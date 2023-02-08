@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 
 import ProposalItem from 'components/dedicated/ProposalItem/ProposalItem';
-import useCurrentEpoch from 'hooks/useCurrentEpoch';
-import useIdsInAllocation from 'hooks/useIdsInAllocation';
-import useMatchedProposalRewards from 'hooks/useMatchedProposalRewards';
-import useProposals from 'hooks/useProposals';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIdsInAllocation from 'hooks/queries/useIdsInAllocation';
+import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
+import useProposals from 'hooks/queries/useProposals';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 
 import styles from './style.module.scss';

@@ -3,7 +3,7 @@ import { parseUnits } from 'ethers/lib/utils';
 import { UseMutationResult, useMutation } from 'react-query';
 import { useMetamask } from 'use-metamask';
 
-import useContractAllocations from './contracts/useContractAllocations';
+import useContractAllocations from 'hooks/contracts/useContractAllocations';
 
 type UseAllocate = {
   onSuccess: () => void;

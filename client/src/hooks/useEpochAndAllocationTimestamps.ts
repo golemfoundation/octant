@@ -1,9 +1,9 @@
 import getEpochAndAllocationTimestamps, { Response } from 'utils/getEpochAndAllocationTimestamps';
 
-import useCurrentEpoch from './useCurrentEpoch';
-import useDecisionWindow from './useDecisionWindow';
-import useEpochDuration from './useEpochDuration';
-import useStart from './useStart';
+import useCurrentEpoch from './queries/useCurrentEpoch';
+import useDecisionWindow from './queries/useDecisionWindow';
+import useEpochDuration from './queries/useEpochDuration';
+import useStart from './queries/useStart';
 
 export default function useEpochAndAllocationTimestamps(): Response {
   const { data: currentEpoch } = useCurrentEpoch();

@@ -8,7 +8,7 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
 import InputText from 'components/core/InputText/InputText';
 import Svg from 'components/core/Svg/Svg';
-import useIndividualReward from 'hooks/useIndividualReward';
+import useIndividualReward from 'hooks/queries/useIndividualReward';
 import { minus, plus } from 'svg/misc';
 import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';

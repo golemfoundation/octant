@@ -2,7 +2,7 @@ import { formatUnits } from 'ethers/lib/utils';
 import debounce from 'lodash/debounce';
 
 import { TOAST_DEBOUNCE_TIME } from 'constants/toasts';
-import { UserAllocation } from 'hooks/useUserAllocations';
+import { UserAllocation } from 'hooks/queries/useUserAllocations';
 import triggerToast from 'utils/triggerToast';
 
 import { AllocationValues, AllocationWithPositiveValue } from './types';

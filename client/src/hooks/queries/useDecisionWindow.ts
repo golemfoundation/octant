@@ -1,6 +1,6 @@
 import { UseQueryResult, useQuery } from 'react-query';
 
-import useContractEpochs from './contracts/useContractEpochs';
+import useContractEpochs from 'hooks/contracts/useContractEpochs';
 
 export default function useDecisionWindow(): UseQueryResult<number | undefined> {
   const contractEpochs = useContractEpochs();
