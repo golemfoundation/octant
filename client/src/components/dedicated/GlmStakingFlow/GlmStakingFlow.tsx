@@ -118,7 +118,7 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
       return;
     }
 
-    const newValueBigNumber = parseUnits(newValue);
+    const newValueBigNumber = parseUnits(newValue || '0');
     let valueToSet = newValue;
     if (currentMode === 'withdraw' && newValueBigNumber.gt(depositsValue!)) {
       valueToSet = formatUnits(depositsValue!);
