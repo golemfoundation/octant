@@ -1,0 +1,26 @@
+$height: 0.4rem;
+
+.root {
+  display: flex;
+  height: $height;
+  width: 100%;
+}
+
+.step {
+  border-radius: calc($height / 2);
+  margin: 0 0.8rem;
+  background: $color-white;
+  height: 100%;
+  width: 100%;
+
+  &:first-child {
+    margin-left: 0;
+  }
+  &:last-child {
+    margin-right: 0;
+  }
+
+  &.isCurrent {
+    background-color: $color-hexagon-green;
+  }
+}

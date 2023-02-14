@@ -8,7 +8,8 @@ import Loader from 'components/core/Loader/Loader';
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import useProposals from 'hooks/queries/useProposals';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
-import RootRoutes from 'routes/RootRoutes/RootRoutes';
+import RootRoutesContainer from 'routes/RootRoutes/RootRoutesContainer';
+import localStorageService from 'services/localStorageService';
 
 import styles from './style.module.scss';
 import AppProps from './types';
@@ -18,7 +19,14 @@ import 'styles/index.scss';
 const validateProposalsInLocalStorage = (localStorageAllocationItems, proposals) =>
   localStorageAllocationItems.filter(item => proposals.find(({ id }) => id.toNumber() === item));
 
-const App: FC<AppProps> = ({ allocations, onSetAllocations }) => {
+const App: FC<AppProps> = ({
+  allocations,
+  onSetAllocations,
+  onDefaultValuesFromLocalStorageSetOnboarding,
+  onDefaultValuesFromLocalStorageSetSettings,
+  onboarding,
+  settings,
+}) => {
   const {
     metaState: { isConnected, account },
   } = useMetamask();
@@ -28,6 +36,13 @@ const App: FC<AppProps> = ({ allocations, onSetAllocations }) => {
   const { proposals } = useProposals();
   const { data: userAllocations } = useUserAllocations();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    localStorageService.init();
+    onDefaultValuesFromLocalStorageSetOnboarding();
+    onDefaultValuesFromLocalStorageSetSettings();
+    // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     if (address && address !== currentAddress) {
@@ -92,17 +107,22 @@ const App: FC<AppProps> = ({ allocations, onSetAllocations }) => {
       proposals,
     );
     if (validatedProposalsInLocalStorage) {
-      localStorage.setItem(ALLOCATION_ITEMS_KEY, JSON.stringify(validatedProposalsInLocalStorage));
       onSetAllocations(validatedProposalsInLocalStorage);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, proposals, userAllocations]);
 
-  if (allocations === null || isAccountChanging) {
+  const areOnboardingValuesSet = Object.values(onboarding).some(value => value !== undefined);
+  const areSettingValuesSet = Object.values(settings).some(value => value !== undefined);
+
+  const isLoading =
+    allocations === null || !areOnboardingValuesSet || !areSettingValuesSet || isAccountChanging;
+
+  if (isLoading) {
     return <Loader className={styles.loader} />;
   }
 
-  return <RootRoutes />;
+  return <RootRoutesContainer />;
 };
 
 export default App;

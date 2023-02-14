@@ -132,6 +132,16 @@
       }
     }
   }
+
+  &link3 {
+    position: relative;
+    height: auto;
+    display: inline;
+    color: $color-hexagon-green;
+    padding: 0;
+    font-size: 1.6rem;
+    text-decoration: underline;
+  }
 }
 
 .icon {

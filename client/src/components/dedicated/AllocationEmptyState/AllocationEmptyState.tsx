@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 
 import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
-import { DISCORD_INVITE_LINK } from 'constants/social';
+import { DISCORD_INVITE_LINK } from 'constants/urls';
 import { hexagonEmpty } from 'svg/logo';
 
 import styles from './style.module.scss';

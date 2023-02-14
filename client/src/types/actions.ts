@@ -1,9 +1,5 @@
-/* eslint-disable import/no-unresolved */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { ActionType } from '@redux-saga/types';
+import { Action } from 'redux';
 
-export interface AnyAction {
-  [key: string]: any;
-  type: ActionType;
+export interface ActionWithPayload<PayloadType> extends Action {
+  payload: PayloadType;
 }

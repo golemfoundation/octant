@@ -5,5 +5,7 @@ export default interface ModalProps {
   className?: string;
   header?: string;
   isOpen: boolean;
+  isOverflowEnabled?: boolean;
+  onClick?: () => void;
   onClosePanel: () => void;
 }

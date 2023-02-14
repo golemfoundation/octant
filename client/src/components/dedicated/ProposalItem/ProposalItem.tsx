@@ -77,8 +77,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
               <Button
                 className={styles.button}
                 isSmallFont
-                onClick={event => {
-                  event!.preventDefault();
+                onClick={() => {
                   onAddRemoveFromAllocate();
                 }}
                 variant="secondary"

@@ -1,6 +1,5 @@
 import debounce from 'lodash/debounce';
 
-import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import { TOAST_DEBOUNCE_TIME } from 'constants/toasts';
 import { UserAllocation } from 'hooks/queries/useUserAllocations';
 import triggerToast from 'utils/triggerToast';
@@ -55,8 +54,6 @@ export function onAddRemoveAllocationElementLocalStorage({
       title: `Added ${name} to Allocate`,
     });
   }
-
-  localStorage.setItem(ALLOCATION_ITEMS_KEY, JSON.stringify(newIds));
 
   return newIds;
 }

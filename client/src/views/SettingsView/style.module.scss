@@ -2,4 +2,8 @@
   &:not(:last-child) {
     margin: 0 auto 1.6rem;
   }
+
+  &.isDisabled {
+    opacity: 0.5;
+  }
 }
