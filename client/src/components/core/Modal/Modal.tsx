@@ -8,10 +8,23 @@ import { cross } from 'svg/misc';
 import styles from './style.module.scss';
 import ModalProps from './types';
 
-const Modal: FC<ModalProps> = ({ className, children, header, isOpen, onClosePanel }) => (
+const Modal: FC<ModalProps> = ({
+  className,
+  children,
+  header,
+  isOpen,
+  isOverflowEnabled = true,
+  onClosePanel,
+  onClick,
+}) => (
   <Fragment>
-    <div className={cx(styles.overflow, isOpen && styles.isOpen)} onClick={onClosePanel} />
-    <div className={cx(styles.root, isOpen && styles.isOpen, className)}>
+    {isOverflowEnabled && (
+      <div className={cx(styles.overflow, isOpen && styles.isOpen)} onClick={onClosePanel} />
+    )}
+    <div
+      className={cx(styles.root, isOpen && styles.isOpen, onClick && styles.isClickable, className)}
+      onClick={onClick}
+    >
       {header && <div className={styles.header}>{header}</div>}
       <div className={styles.body}>{children}</div>
       <Button

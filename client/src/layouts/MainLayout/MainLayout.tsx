@@ -22,6 +22,7 @@ const MainLayout: FC<MainLayoutProps> = ({
   navigationBottomSuffix,
   isHeaderVisible = true,
   isLoading,
+  isNavigationVisible = true,
   landscapeImage,
   classNameBody,
   navigationTabs,
@@ -86,30 +87,32 @@ const MainLayout: FC<MainLayoutProps> = ({
       >
         {isLoading ? <Loader className={styles.loader} /> : children}
       </div>
-      <div className={styles.navigationWrapper}>
-        <nav
-          className={cx(
-            styles.navigation,
-            navigationBottomSuffix && styles.hasNavigationBottomSuffix,
-          )}
-        >
-          {navigationBottomSuffix && (
-            <div className={styles.navigationBottomSuffix}>{navigationBottomSuffix}</div>
-          )}
-          <div className={styles.buttons}>
-            {tabsWithIsActive.map(({ icon, iconWrapped, ...rest }, index) => (
-              <Button
-                // eslint-disable-next-line react/no-array-index-key
-                key={index}
-                className={styles.buttonNavigation}
-                Icon={iconWrapped || <Svg img={icon} size={3.2} />}
-                variant="iconVertical"
-                {...rest}
-              />
-            ))}
-          </div>
-        </nav>
-      </div>
+      {isNavigationVisible && (
+        <div className={styles.navigationWrapper}>
+          <nav
+            className={cx(
+              styles.navigation,
+              navigationBottomSuffix && styles.hasNavigationBottomSuffix,
+            )}
+          >
+            {navigationBottomSuffix && (
+              <div className={styles.navigationBottomSuffix}>{navigationBottomSuffix}</div>
+            )}
+            <div className={styles.buttons}>
+              {tabsWithIsActive.map(({ icon, iconWrapped, ...rest }, index) => (
+                <Button
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={index}
+                  className={styles.buttonNavigation}
+                  Icon={iconWrapped || <Svg img={icon} size={3.2} />}
+                  variant="iconVertical"
+                  {...rest}
+                />
+              ))}
+            </div>
+          </nav>
+        </div>
+      )}
     </div>
   );
 };

@@ -8,6 +8,7 @@ export interface OwnProps {
   classNameBody?: string;
   isHeaderVisible?: boolean;
   isLoading?: boolean;
+  isNavigationVisible?: boolean;
   landscapeImage?: ReactNode;
   navigationBottomSuffix?: ReactNode;
   navigationTabs?: NavigationTab[];

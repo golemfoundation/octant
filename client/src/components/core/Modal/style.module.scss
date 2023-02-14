@@ -7,7 +7,7 @@
   max-height: 75%;
   overflow: auto;
   background: $color-white;
-  padding: 3.2rem;
+  padding: $modalPadding;
   text-align: left;
   box-shadow: $box-shadow-1;
   transition: bottom 0.25s linear;
@@ -15,6 +15,10 @@
 
   &.isOpen {
     bottom: 0;
+  }
+
+  &.isClickable {
+    cursor: pointer;
   }
 
   .header {
