@@ -14,7 +14,7 @@ import useUserAllocations from 'hooks/queries/useUserAllocations';
 import getFormattedUnits from 'utils/getFormattedUnit';
 import getNewAllocationValuesBigNumber from 'utils/getNewAllocationValuesBigNumber';
 
-import styles from './style.module.scss';
+import styles from './AllocationSummary.module.scss';
 import AllocationSummaryProps from './types';
 
 const AllocationSummary: FC<AllocationSummaryProps> = ({ newAllocationValues }) => {

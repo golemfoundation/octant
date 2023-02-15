@@ -13,7 +13,7 @@ import useEpochAndAllocationTimestamps from 'hooks/useEpochAndAllocationTimestam
 import { allocate, donation } from 'svg/history';
 import getFormattedUnits from 'utils/getFormattedUnit';
 
-import styles from './style.module.scss';
+import styles from './History.module.scss';
 import { sortAllocationsAndDeposits } from './utils';
 
 const History = (): ReactElement => {

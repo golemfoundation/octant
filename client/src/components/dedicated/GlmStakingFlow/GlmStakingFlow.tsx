@@ -22,7 +22,7 @@ import useMaxApproveCallback from 'hooks/useMaxApproveCallback';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 import triggerToast from 'utils/triggerToast';
 
-import styles from './style.module.scss';
+import styles from './GlmStakingFlow.module.scss';
 import GlmStakingFlowProps, { CurrentMode, CurrentStepIndex } from './types';
 import {
   getButtonCtaLabel,

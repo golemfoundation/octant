@@ -7,7 +7,7 @@ import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposals from 'hooks/queries/useProposals';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 
-import styles from './style.module.scss';
+import styles from './ProposalsView.module.scss';
 import ProposalsViewProps from './types';
 
 const ProposalsView: FC<ProposalsViewProps> = ({ allocations }) => {

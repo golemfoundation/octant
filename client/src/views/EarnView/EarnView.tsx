@@ -8,7 +8,7 @@ import useIndividualReward from 'hooks/queries/useIndividualReward';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 import getFormattedUnit from 'utils/getFormattedUnit';
 
-import styles from './style.module.scss';
+import styles from './EarnView.module.scss';
 
 const EarnView = (): ReactElement => {
   const { data: individualReward } = useIndividualReward();

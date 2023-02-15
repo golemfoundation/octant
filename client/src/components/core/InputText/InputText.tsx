@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import React, { forwardRef } from 'react';
 
-import styles from './style.module.scss';
+import styles from './InputText.module.scss';
 import InputTextProps from './types';
 
 const InputText = forwardRef<HTMLInputElement, InputTextProps>(

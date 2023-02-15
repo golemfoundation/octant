@@ -8,7 +8,7 @@ import InputSelect from 'components/core/InputSelect/InputSelect';
 import InputText from 'components/core/InputText/InputText';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 
-import styles from './style.module.scss';
+import styles from './SettingsView.module.scss';
 import SettingsViewProps from './types';
 
 const options = [

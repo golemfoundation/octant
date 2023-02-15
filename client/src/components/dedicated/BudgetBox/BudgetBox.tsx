@@ -6,7 +6,7 @@ import Button from 'components/core/Button/Button';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import { GOERLI_ETHERSCAN_PREFIX } from 'constants/transactions';
 
-import styles from './styles.module.scss';
+import styles from './BudgetBox.module.scss';
 import BudgetBoxProps from './types';
 
 const getProps = (currentStepIndex: BudgetBoxProps['currentStepIndex']): object | undefined => {

@@ -5,7 +5,7 @@ import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
 import { cross } from 'svg/misc';
 
-import styles from './style.module.scss';
+import styles from './Modal.module.scss';
 import ModalProps from './types';
 
 const Modal: FC<ModalProps> = ({

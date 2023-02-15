@@ -7,7 +7,7 @@ import stepFourImage from 'assets/images/onboarding/4.png';
 import Button from 'components/core/Button/Button';
 import { DISCORD_INVITE_LINK, HEXAGON_DOCS, BLOG_POST } from 'constants/urls';
 
-import styles from './style.module.scss';
+import styles from './OnboardingView.module.scss';
 import { Step } from './types';
 
 const steps: Step[] = [

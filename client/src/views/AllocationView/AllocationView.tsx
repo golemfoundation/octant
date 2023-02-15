@@ -21,7 +21,7 @@ import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 import getNewAllocationValuesBigNumber from 'utils/getNewAllocationValuesBigNumber';
 import triggerToast from 'utils/triggerToast';
 
-import styles from './style.module.scss';
+import styles from './AllocationView.module.scss';
 import AllocationViewProps, { AllocationValues, CurrentView } from './types';
 import {
   getAllocationValuesInitialState,

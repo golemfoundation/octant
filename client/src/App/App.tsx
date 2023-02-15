@@ -11,7 +11,7 @@ import useUserAllocations from 'hooks/queries/useUserAllocations';
 import RootRoutesContainer from 'routes/RootRoutes/RootRoutesContainer';
 import localStorageService from 'services/localStorageService';
 
-import styles from './style.module.scss';
+import styles from './App.module.scss';
 import AppProps from './types';
 
 import 'styles/index.scss';

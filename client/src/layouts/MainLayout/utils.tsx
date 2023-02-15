@@ -7,7 +7,7 @@ import { NavigationTab } from 'constants/navigationTabs/types';
 import { allocateWithNumber } from 'svg/navigation';
 import getFormattedUnits from 'utils/getFormattedUnit';
 
-import styles from './style.module.scss';
+import styles from './MainLayout.module.scss';
 
 export function getIndividualRewardText({
   individualReward,

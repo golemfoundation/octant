@@ -5,8 +5,8 @@ import Modal from 'components/core/Modal/Modal';
 import ProgressStepperSlim from 'components/core/ProgressStepperSlim/ProgressStepperSlim';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 
+import styles from './OnboardingView.module.scss';
 import steps from './steps';
-import styles from './style.module.scss';
 import { OnboardingViewProps } from './types';
 
 const OnboardingView: FC<OnboardingViewProps> = ({ setIsOnboardingDone }) => {

@@ -14,7 +14,7 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useStakedRatio from 'hooks/queries/useStakedRatio';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 
-import styles from './style.module.scss';
+import styles from './MetricsView.module.scss';
 
 const MetricsView = (): ReactElement => {
   const { data: currentEpoch, refetch: refetchCurrentEpoch } = useCurrentEpoch({
