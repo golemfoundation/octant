@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import Svg from 'components/core/Svg/Svg';
 import { arrow } from 'svg/misc';
 
-import styles from './style.module.scss';
+import styles from './Button.module.scss';
 import ButtonProps from './types';
 
 import Loader from '../Loader/Loader';

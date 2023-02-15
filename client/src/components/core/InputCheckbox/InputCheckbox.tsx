@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import React, { FC } from 'react';
 
-import styles from './style.module.scss';
+import styles from './InputCheckbox.module.scss';
 import InputCheckboxProps from './types';
 
 const InputCheckbox: FC<InputCheckboxProps> = ({ isChecked, isDisabled, onChange }) => (

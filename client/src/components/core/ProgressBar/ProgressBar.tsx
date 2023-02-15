@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import React, { FC } from 'react';
 
-import styles from './style.module.scss';
+import styles from './ProgressBar.module.scss';
 import ProgressBarProps from './types';
 
 const ProgressBar: FC<ProgressBarProps> = ({

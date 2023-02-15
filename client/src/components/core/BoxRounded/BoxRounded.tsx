@@ -4,7 +4,7 @@ import React, { FC } from 'react';
 
 import Button from 'components/core/Button/Button';
 
-import styles from './style.module.scss';
+import styles from './BoxRounded.module.scss';
 import BoxRoundedProps from './types';
 
 const BoxRounded: FC<BoxRoundedProps> = ({

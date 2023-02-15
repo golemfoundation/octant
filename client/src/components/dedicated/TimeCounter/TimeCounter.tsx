@@ -6,7 +6,7 @@ import Loader from 'components/core/Loader/Loader';
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import getDurationBetweenTimestamps from 'utils/getDurationBetweenTimestamps';
 
-import styles from './style.module.scss';
+import styles from './TimeCounter.module.scss';
 import TimeCounterProps, { CounterSectionsProps } from './types';
 
 const CounterSection: FC<CounterSectionsProps> = ({

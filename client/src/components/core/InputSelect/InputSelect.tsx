@@ -6,7 +6,7 @@ import Svg from 'components/core/Svg/Svg';
 import { cross, tick } from 'svg/misc';
 
 import './InputSelect.scss';
-import styles from './style.module.scss';
+import styles from './InputSelect.module.scss';
 import InputSelectProps, { Option } from './types';
 
 const CustomOption = ({ innerRef, innerProps, children, isSelected }) => (

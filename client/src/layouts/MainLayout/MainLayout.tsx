@@ -13,7 +13,7 @@ import useIndividualReward from 'hooks/queries/useIndividualReward';
 import { hexagon } from 'svg/logo';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
-import styles from './style.module.scss';
+import styles from './MainLayout.module.scss';
 import MainLayoutProps from './types';
 import { getIndividualRewardText, getNavigationTabsWithAllocations } from './utils';
 

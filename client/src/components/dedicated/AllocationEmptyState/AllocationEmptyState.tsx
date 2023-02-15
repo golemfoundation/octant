@@ -5,7 +5,7 @@ import Svg from 'components/core/Svg/Svg';
 import { DISCORD_INVITE_LINK } from 'constants/urls';
 import { hexagonEmpty } from 'svg/logo';
 
-import styles from './style.module.scss';
+import styles from './AllocationEmptyState.module.scss';
 
 const AllocationEmptyState = (): ReactElement => (
   <div className={styles.root}>

@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import React, { FC } from 'react';
 
-import styles from './style.module.scss';
+import styles from './ProgressStepperSlim.module.scss';
 import ProgressStepperSlimProps from './types';
 
 const ProgressStepperSlim: FC<ProgressStepperSlimProps> = ({

@@ -8,7 +8,7 @@ import useDecisionWindow from 'hooks/queries/useDecisionWindow';
 import useEpochDuration from 'hooks/queries/useEpochDuration';
 import useEpochAndAllocationTimestamps from 'hooks/useEpochAndAllocationTimestamps';
 
-import styles from './style.module.scss';
+import styles from './MetricsTimeSection.module.scss';
 import MetricsTimeSectionProps from './types';
 
 const MetricsTimeSection: FC<MetricsTimeSectionProps> = ({

@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 
 import Button from 'components/core/Button/Button';
 
-import styles from './style.module.scss';
+import styles from './AllocationNavigation.module.scss';
 import AllocationNavigationProps from './types';
 
 const AllocationNavigation: FC<AllocationNavigationProps> = ({

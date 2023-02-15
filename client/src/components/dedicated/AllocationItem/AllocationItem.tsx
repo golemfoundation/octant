@@ -13,7 +13,7 @@ import { minus, plus } from 'svg/misc';
 import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 
-import styles from './style.module.scss';
+import styles from './AllocationItem.module.scss';
 import AllocationItemProps from './types';
 
 const AllocationItem: FC<AllocationItemProps> = ({

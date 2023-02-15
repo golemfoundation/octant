@@ -21,7 +21,7 @@ import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonati
 import triggerToast from 'utils/triggerToast';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
-import styles from './style.module.scss';
+import styles from './ProposalView.module.scss';
 import ProposalViewProps from './types';
 
 const getCustomNavigationTabs = () => {

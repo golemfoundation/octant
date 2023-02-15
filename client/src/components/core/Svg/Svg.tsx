@@ -2,7 +2,7 @@ import cx from 'classnames';
 import isArray from 'lodash/isArray';
 import React, { FC } from 'react';
 
-import styles from './style.module.scss';
+import styles from './Svg.module.scss';
 import { SvgAttrs, SvgProps, SvgStyles } from './types';
 
 const Svg: FC<SvgProps> = ({

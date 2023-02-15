@@ -12,7 +12,7 @@ import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import { tick } from 'svg/misc';
 import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
 
-import styles from './style.module.scss';
+import styles from './ProposalItem.module.scss';
 import { ProposalItemProps } from './types';
 
 const ProposalItem: FC<ProposalItemProps> = ({
