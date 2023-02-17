@@ -15,3 +15,5 @@ export const BEACON_CHAIN_ORACLE = 'BeaconChainOracle';
 export const EXECUTION_LAYER_ORACLE = 'ExecutionLayerOracle';
 export const HEXAGON_ORACLE = 'HexagonOracle';
 export const PAYOUTS = 'Payouts';
+export const PAYOUTS_MANAGER = 'PayoutsManager';
+export const WITHDRAWALS_TARGET = 'WithdrawalsTarget';
