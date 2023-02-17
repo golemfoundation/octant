@@ -14,8 +14,10 @@ import {
   FAUCET,
   HEXAGON_ORACLE,
   PAYOUTS,
+  PAYOUTS_MANAGER,
   PROPOSALS,
   REWARDS,
+  WITHDRAWALS_TARGET,
   TOKEN,
   TRACKER,
 } from '../../helpers/constants';
@@ -28,11 +30,13 @@ import {
   ExecutionLayerOracle,
   HexagonOracle,
   Payouts,
+  PayoutsManager,
   Proposals,
   Rewards,
   TestGLMFaucet,
   Token,
   Tracker,
+  WithdrawalsTarget,
 } from '../../typechain-types';
 
 chai.use(smock.matchers);
@@ -47,9 +51,11 @@ const testEnv: TestEnv = {
   glmDeposits: {} as Deposits,
   hexagonOracle: {} as HexagonOracle,
   payouts: {} as Payouts,
+  payoutsManager: {} as PayoutsManager,
   proposals: {} as Proposals,
   rewards: {} as Rewards,
   signers: {} as Signers,
+  target: {} as WithdrawalsTarget,
   token: {} as Token,
   tracker: {} as Tracker,
 };
@@ -63,7 +69,9 @@ async function initializeTestsEnv() {
   testEnv.glmDeposits = await ethers.getContract(DEPOSITS);
   testEnv.tracker = await ethers.getContract(TRACKER);
   testEnv.rewards = await ethers.getContract(REWARDS);
+  testEnv.target = await ethers.getContract(WITHDRAWALS_TARGET);
   testEnv.payouts = await ethers.getContract(PAYOUTS);
+  testEnv.payoutsManager = await ethers.getContract(PAYOUTS_MANAGER);
   testEnv.proposals = await ethers.getContract(PROPOSALS);
   testEnv.epochs = await ethers.getContract(EPOCHS);
   testEnv.beaconChainOracle = await ethers.getContract(BEACON_CHAIN_ORACLE);

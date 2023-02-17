@@ -9,11 +9,13 @@ import {
   ExecutionLayerOracle,
   HexagonOracle,
   Payouts,
+  PayoutsManager,
   Proposals,
   Rewards,
   TestGLMFaucet,
   Token,
   Tracker,
+  WithdrawalsTarget,
 } from '../../typechain-types';
 
 export type Signers = Record<string, SignerWithAddress>;
@@ -28,9 +30,11 @@ export interface TestEnv {
   glmDeposits: Deposits;
   hexagonOracle: HexagonOracle;
   payouts: Payouts;
+  payoutsManager: PayoutsManager;
   proposals: Proposals;
   rewards: Rewards;
   signers: Signers;
+  target: WithdrawalsTarget;
   token: Token;
   tracker: Tracker;
 }

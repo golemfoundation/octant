@@ -5,7 +5,6 @@ pragma solidity ^0.8.9;
 import "../interfaces/IEpochs.sol";
 import "../interfaces/IRewards.sol";
 
-import "./Withdrawals.sol";
 import {PayoutsErrors, CommonErrors} from "../Errors.sol";
 
 /// @title Contract tracking ETH payouts for Hexagon project.
@@ -13,8 +12,7 @@ import {PayoutsErrors, CommonErrors} from "../Errors.sol";
 contract Payouts {
     IRewards public immutable rewards;
     IEpochs public immutable epochs;
-    // TODO change to Withdrawals contract when implemented
-    Withdrawals public immutable withdrawals;
+    address public immutable withdrawals;
 
     struct Payout {
         // packed into two 32 byte slots
@@ -42,7 +40,7 @@ contract Payouts {
     ) {
         rewards = IRewards(rewardsAddress);
         epochs = IEpochs(epochsAddress);
-        withdrawals = Withdrawals(withdrawalsAddress);
+        withdrawals = withdrawalsAddress;
     }
 
     /// @param user GLM staker
@@ -125,7 +123,7 @@ contract Payouts {
 
     modifier onlyWithdrawals() {
         require(
-            msg.sender == address(withdrawals),
+            msg.sender == withdrawals,
             CommonErrors.UNAUTHORIZED_CALLER
         );
         _;
