@@ -18,7 +18,10 @@ const ProgressBar: FC<ProgressBarProps> = ({
       </div>
     )}
     <div className={styles.bar}>
-      <div className={styles.filled} style={{ width: `${progressPercentage}%` }} />
+      <div
+        className={cx(styles.filled, progressPercentage > 0 && styles.isBorderVisible)}
+        style={{ width: `${progressPercentage}%` }}
+      />
     </div>
   </div>
 );

@@ -46,8 +46,12 @@ const Button: FC<ButtonProps> = ({
     });
   }
 
-  const isIconVariant =
-    variant === 'iconOnly' || variant === 'iconOnlyTransparent' || variant === 'iconVertical';
+  const isIconVariant = [
+    'iconOnly',
+    'iconOnlyTransparent',
+    'iconOnlyTransparent2',
+    'iconVertical',
+  ].includes(variant);
   const IconToRender = isLoading ? <Loader className={styles.loader} /> : Icon;
 
   return (

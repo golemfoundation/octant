@@ -4,13 +4,34 @@
   }
 }
 
-.breadcrumbs {
+.totalDonation {
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  .label {
+    text-align: left;
+    flex: 1;
+    color: $color-hexagon-grey6;
+  }
+}
+
+.values {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.separator {
+  font-size: 2rem;
+}
+
+.header {
+  text-align: left;
+  font-size: $font-size-14;
   color: $color-hexagon-grey6;
-  font-size: $font-size-10;
-  font-weight: $font-weight-bold;
-  text-transform: uppercase;
-  align-self: flex-start;
-  margin: 2rem 0 1rem 0;
+  height: 1.7rem;
+  margin: 0 0 1rem 0;
 }
 
 .progressBar {

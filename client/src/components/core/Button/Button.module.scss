@@ -109,7 +109,14 @@
     background: transparent;
     height: 3.2rem;
     width: 3.2rem;
+    min-height: initial;
     padding: 0;
+  }
+
+  &iconOnlyTransparent2 {
+    background: transparent;
+    padding: 0;
+    min-height: initial;
   }
 
   &link {
@@ -163,5 +170,5 @@
   width: 1.6rem;
   height: 1.6rem;
   border-color: $color-white;
-  border-top-color: $color-hexagon-grey-14;
+  border-top-color: $color-hexagon-grey14;
 }

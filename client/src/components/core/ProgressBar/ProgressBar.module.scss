@@ -19,10 +19,18 @@
   height: 0.8rem;
   background-color: $color-hexagon-grey2;
   border-radius: 0.4rem;
+  overflow: hidden;
 }
 
 .filled {
   height: 100%;
   background: $color-hexagon-green;
+  // shorthand doesn't work here.
   border-radius: inherit;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+
+  &.isBorderVisible {
+    border-right: 0.2rem solid $color-white;
+  }
 }
