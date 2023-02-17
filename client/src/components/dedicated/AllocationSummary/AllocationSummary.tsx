@@ -1,72 +1,84 @@
 import { BigNumber } from 'ethers';
-import React, { FC, Fragment } from 'react';
+import { parseUnits } from 'ethers/lib/utils';
+import React, { FC, Fragment, useState } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import Description from 'components/core/Description/Description';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import Header from 'components/core/Header/Header';
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useIndividualProposalRewards from 'hooks/queries/useIndividualProposalRewards';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useMatchedRewards from 'hooks/queries/useMatchedRewards';
-import useUserAllocations from 'hooks/queries/useUserAllocations';
 import getFormattedUnits from 'utils/getFormattedUnit';
-import getNewAllocationValuesBigNumber from 'utils/getNewAllocationValuesBigNumber';
 
 import styles from './AllocationSummary.module.scss';
+import ExpandableList from './ExpandableList/ExpandableList';
 import AllocationSummaryProps from './types';
 
-const AllocationSummary: FC<AllocationSummaryProps> = ({ newAllocationValues }) => {
+const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocationValues = {} }) => {
+  const [isProjectsTileExpanded, setIsProjectsTileExpanded] = useState<boolean>(false);
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: userAllocations } = useUserAllocations();
   const { data: individualReward } = useIndividualReward();
-  const { data: individualProposalRewards } = useIndividualProposalRewards();
   const { data: matchedRewards } = useMatchedRewards();
-
-  const currentUserAllocationsSum = userAllocations?.reduce(
-    (acc, { allocation }) => acc.add(allocation),
-    BigNumber.from(0),
-  );
-  const newAllocationValuesBigNumber = getNewAllocationValuesBigNumber(newAllocationValues);
-
-  const newAllocationValuesSum = newAllocationValuesBigNumber.reduce(
-    (acc, { value }) => acc.add(value),
+  const newAllocationValuesSum = Object.values(allocationValues).reduce(
+    (acc, value) => acc.add(parseUnits(value || '0')),
     BigNumber.from(0),
   );
   const newClaimableAndClaimed = (individualReward as BigNumber).sub(newAllocationValuesSum);
 
-  // newAllocationValuesSum replaces currentUserAllocationsSum.
-  const newTotalDonated = newAllocationValuesSum
-    .add(individualProposalRewards?.sum || 0)
-    .sub(currentUserAllocationsSum || 0);
-
   return (
     <Fragment>
-      <div className={styles.breadcrumbs}>Allocate -&gt; Decisions</div>
-      <Header text={`Epoch ${currentEpoch} Decisions`} />
-      <Description text="These are your decisions about how to use your staking rewards this epoch. Tap Confirm to finalise them in your wallet or Edit to change." />
-      <BoxRounded alignment="left" className={styles.box} isVertical title="Reward Budget">
-        <DoubleValue mainValue={individualReward ? getFormattedUnits(individualReward) : '0.0'} />
+      <Header text={`Confirm Epoch ${currentEpoch} Allocation`} />
+      <BoxRounded
+        alignment="left"
+        className={styles.box}
+        expandableChildren={
+          <ExpandableList allocations={allocations} allocationValues={allocationValues} />
+        }
+        isExpanded={isProjectsTileExpanded}
+        isVertical
+        onToggle={isExpanded => setIsProjectsTileExpanded(isExpanded)}
+        suffix={`Estimated Match Funding ${
+          matchedRewards ? getFormattedUnits(matchedRewards) : '0'
+        }`}
+        title={`Send funds to ${allocations.length} projects`}
+      >
+        <div className={styles.totalDonation}>
+          {isProjectsTileExpanded && <div className={styles.label}>Total donation</div>}
+          <DoubleValue mainValue={getFormattedUnits(newAllocationValuesSum)} />
+        </div>
+      </BoxRounded>
+      <BoxRounded isVertical>
+        <div className={styles.values}>
+          <div>
+            <div className={styles.header}>Current Budget</div>
+            <DoubleValue
+              mainValue={individualReward ? getFormattedUnits(individualReward) : '0.0'}
+            />
+          </div>
+          <div className={styles.separator}>
+            <div className={styles.header} />
+            -&gt;
+          </div>
+          <div>
+            <div className={styles.header}>After Allocation</div>
+            <DoubleValue
+              mainValue={
+                individualReward
+                  ? getFormattedUnits(individualReward.sub(newAllocationValuesSum))
+                  : '0.0'
+              }
+            />
+          </div>
+        </div>
         <ProgressBar
           className={styles.progressBar}
-          labelLeft={`Donated ${getFormattedUnits(newAllocationValuesSum)}`}
+          labelLeft={`Allocations ${getFormattedUnits(newAllocationValuesSum)}`}
           labelRight={`Claimed ${getFormattedUnits(newClaimableAndClaimed)}`}
           progressPercentage={newAllocationValuesSum
             .mul(100)
             .div(newClaimableAndClaimed.add(newAllocationValuesSum))
             .toNumber()}
-        />
-      </BoxRounded>
-      <BoxRounded alignment="left" className={styles.box} isVertical title="Total Donated">
-        <DoubleValue mainValue={getFormattedUnits(newTotalDonated)} />
-        <ProgressBar
-          className={styles.progressBar}
-          labelLeft={`Donated ${getFormattedUnits(newTotalDonated)}`}
-          labelRight={`Matched ${matchedRewards ? getFormattedUnits(matchedRewards) : '0.0'}`}
-          progressPercentage={
-            matchedRewards ? newTotalDonated.add(matchedRewards).div(matchedRewards).toNumber() : 0
-          }
         />
       </BoxRounded>
     </Fragment>

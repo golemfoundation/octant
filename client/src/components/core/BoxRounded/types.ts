@@ -7,10 +7,14 @@ export default interface BoxRoundedProps {
   buttonProps?: ButtonProps;
   children: ReactNode;
   className?: string;
+  expandableChildren?: ReactNode;
+  isExpanded?: boolean;
   isGrey?: boolean;
   isVertical?: boolean;
   justifyContent?: 'center' | 'spaceBetween';
   onClick?: () => void;
+  onToggle?: (isExpanded: boolean) => void;
+  suffix?: string;
   tabs?: {
     isActive?: boolean;
     onClick?: () => void;

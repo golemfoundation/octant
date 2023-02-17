@@ -1,0 +1,30 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.projectRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .name {
+    display: flex;
+    align-items: center;
+  }
+
+  &:not(:last-child) {
+    margin: 0 0 1.2rem 0;
+  }
+
+  .sum {
+    color: $color-hexagon-grey6;
+  }
+}
+
+.imageProfile {
+  width: 2rem;
+  height: 2rem;
+  margin: 0 1.2rem 0 0;
+}

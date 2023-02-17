@@ -50,14 +50,14 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
     useMatchedProposalRewards();
   const allocateMutation = useAllocate({
     onSuccess: async () => {
+      setCurrentView('edit');
+      setSelectedItemId(null);
       triggerToast({
         title: 'Allocation successful.',
       });
       await refetchMatchedProposalRewards();
       await refetchUserAllocation();
       await refetchAllocations();
-      setCurrentView('edit');
-      setSelectedItemId(null);
     },
   });
 
@@ -198,7 +198,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
           )}
         </Fragment>
       ) : (
-        <AllocationSummary newAllocationValues={allocationsWithPositiveValues} />
+        <AllocationSummary allocations={allocations} allocationValues={allocationValues!} />
       )}
     </MainLayoutContainer>
   );

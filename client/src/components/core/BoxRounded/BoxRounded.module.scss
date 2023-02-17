@@ -1,3 +1,5 @@
+$padding: 2.4rem;
+
 .root {
   display: flex;
   align-items: center;
@@ -19,33 +21,13 @@
     cursor: pointer;
   }
 
-  &.hasTabs, &.isVertical {
-    flex-direction: column;
-  }
-
   &.hasTabs {
     padding-top: 1.8rem;
   }
 
-  &.justifyContent-- {
-    &center {
-      justify-content: center;
-    }
-
-    &spaceBetween {
-      justify-content: space-between;
-    }
-  }
-
-  &.alignment-- {
-    &left {
-      align-items: flex-start;
-    }
-
-    &center {
-      align-items: center;
-      text-align: center;
-    }
+  &.isPaddingMovedToElements {
+    padding-top: 0;
+    padding-bottom: 0;
   }
 }
 
@@ -96,9 +78,83 @@
   font-size: $font-size-14;
   font-weight: $font-weight-bold;
   margin: 0 0 0.5rem 0;
+
+  &.isExpandable {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 0.1rem solid $color-hexagon-grey4;
+    height: 4.8rem;
+    align-self: stretch;
+  }
+
+  .chevron {
+    transform: rotate(270deg);
+
+    &.isExpandableChildrenVisible {
+      transform: rotate(90deg);
+    }
+
+    path {
+      stroke: $color-hexagon-grey6;
+    }
+  }
+}
+
+.expandableChildren {
+  width: 100%;
+  padding: 1.5rem 0;
+  border-bottom: 0.1rem solid $color-hexagon-grey4;
+}
+
+.children {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  width: 100%;
+
+  &.isPaddingMovedToElements {
+    padding: 1.5rem 0;
+  }
+}
+
+.suffix {
+  display: flex;
+  align-items: center;
+  color: $color-hexagon-green2;
+  font-size: $font-size-12;
+  border-top: 0.1rem solid $color-hexagon-grey4;
+  align-self: stretch;
+  height: 4rem;
 }
 
 .button {
   margin: 3rem 0 0 0;
   width: 100%;
+}
+
+.isVertical {
+  flex-direction: column;
+}
+
+.justifyContent-- {
+  &center {
+    justify-content: center;
+  }
+
+  &spaceBetween {
+    justify-content: space-between;
+  }
+}
+
+.alignment-- {
+  &left {
+    align-items: flex-start;
+  }
+
+  &center {
+    align-items: center;
+    text-align: center;
+  }
 }
