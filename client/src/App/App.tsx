@@ -33,7 +33,7 @@ const App: FC<AppProps> = ({
   const address = account[0];
   const [isAccountChanging, setIsAccountChanging] = useState(false);
   const [currentAddress, setCurrentAddress] = useState<null | string>(null);
-  const { proposals } = useProposals();
+  const proposals = useProposals();
   const { data: userAllocations } = useUserAllocations();
   const queryClient = useQueryClient();
 
@@ -85,7 +85,7 @@ const App: FC<AppProps> = ({
   }, [isConnected, userAllocations, allocations]);
 
   useEffect(() => {
-    if (!proposals || proposals.length === 0) {
+    if (!proposals || proposals.length === 0 || allocations !== null) {
       return;
     }
 
@@ -110,7 +110,7 @@ const App: FC<AppProps> = ({
       onSetAllocations(validatedProposalsInLocalStorage);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, proposals, userAllocations]);
+  }, [allocations, isConnected, proposals, userAllocations]);
 
   const areOnboardingValuesSet = Object.values(onboarding).some(value => value !== undefined);
   const areSettingValuesSet = Object.values(settings).some(value => value !== undefined);

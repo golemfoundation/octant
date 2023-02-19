@@ -11,7 +11,7 @@ export interface BackendProposal {
   };
 }
 
-export interface ExtendedProposal extends BackendProposal {
+export interface ExtendedProposal extends Partial<BackendProposal> {
   id: BigNumber;
   isLoadingError: boolean;
 }

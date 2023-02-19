@@ -11,7 +11,7 @@ import styles from './ProposalsView.module.scss';
 import ProposalsViewProps from './types';
 
 const ProposalsView: FC<ProposalsViewProps> = ({ allocations }) => {
-  const { proposals } = useProposals();
+  const proposals = useProposals();
   const { data: currentEpoch } = useCurrentEpoch();
   const { onAddRemoveFromAllocate } = useIdsInAllocation({ allocations, proposals });
   const { data: matchedProposalRewards } = useMatchedProposalRewards();

@@ -21,6 +21,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   name,
   id,
   onSelectItem,
+  isLoadingError,
   isSelected,
   onChange,
   value,
@@ -70,55 +71,61 @@ const AllocationItem: FC<AllocationItemProps> = ({
       className={cx(styles.box, className)}
       onClick={isConnected ? () => onSelectItem(id.toNumber()) : undefined}
     >
-      <div className={styles.details}>
-        <div className={styles.name}>{name}</div>
-        <div className={styles.funds}>
-          {totalValueOfAllocations !== undefined && percentage !== undefined ? (
-            <Fragment>
-              <div>{totalValueOfAllocations}</div>
-              <div className={styles.percent}>
-                {percentage}%
-                <div
-                  className={cx(
-                    styles.indicator,
-                    percentage &&
-                      isAboveProposalDonationThresholdPercent(percentage) &&
-                      styles.isAboveThreshold,
-                  )}
-                />
-              </div>
-            </Fragment>
-          ) : (
-            <Fragment>Allocation values are not available</Fragment>
-          )}
-        </div>
-      </div>
-      <div className={cx(styles.value, isSelected && styles.isSelected)}>
-        <InputText ref={inputRef} value={value || '0'} variant="borderless" {...inputProps} />
-        <div className={styles.currency}>ETH</div>
-      </div>
-      <div className={cx(styles.buttons, isSelected && styles.isSelected)}>
-        <Button
-          className={styles.button}
-          Icon={<Svg img={plus} size={1.2} />}
-          onClick={
-            isChangeAvailable
-              ? () => onChangeValue(formatUnits(valueToCalculate.add(individualReward.div(10))))
-              : undefined
-          }
-          variant="iconOnlyTransparent"
-        />
-        <Button
-          className={styles.button}
-          Icon={<Svg img={minus} size={1.2} />}
-          onClick={
-            isChangeAvailable
-              ? () => onChangeValue(formatUnits(valueToCalculate.sub(individualReward.div(10))))
-              : undefined
-          }
-          variant="iconOnlyTransparent"
-        />
-      </div>
+      {isLoadingError ? (
+        'Loading of a proposal encountered an error.'
+      ) : (
+        <Fragment>
+          <div className={styles.details}>
+            <div className={styles.name}>{name}</div>
+            <div className={styles.funds}>
+              {totalValueOfAllocations !== undefined && percentage !== undefined ? (
+                <Fragment>
+                  <div>{totalValueOfAllocations}</div>
+                  <div className={styles.percent}>
+                    {percentage}%
+                    <div
+                      className={cx(
+                        styles.indicator,
+                        percentage &&
+                          isAboveProposalDonationThresholdPercent(percentage) &&
+                          styles.isAboveThreshold,
+                      )}
+                    />
+                  </div>
+                </Fragment>
+              ) : (
+                <Fragment>Allocation values are not available</Fragment>
+              )}
+            </div>
+          </div>
+          <div className={cx(styles.value, isSelected && styles.isSelected)}>
+            <InputText ref={inputRef} value={value || '0'} variant="borderless" {...inputProps} />
+            <div className={styles.currency}>ETH</div>
+          </div>
+          <div className={cx(styles.buttons, isSelected && styles.isSelected)}>
+            <Button
+              className={styles.button}
+              Icon={<Svg img={plus} size={1.2} />}
+              onClick={
+                isChangeAvailable
+                  ? () => onChangeValue(formatUnits(valueToCalculate.add(individualReward.div(10))))
+                  : undefined
+              }
+              variant="iconOnlyTransparent"
+            />
+            <Button
+              className={styles.button}
+              Icon={<Svg img={minus} size={1.2} />}
+              onClick={
+                isChangeAvailable
+                  ? () => onChangeValue(formatUnits(valueToCalculate.sub(individualReward.div(10))))
+                  : undefined
+              }
+              variant="iconOnlyTransparent"
+            />
+          </div>
+        </Fragment>
+      )}
     </BoxRounded>
   );
 };
