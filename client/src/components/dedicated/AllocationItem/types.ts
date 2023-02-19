@@ -1,10 +1,8 @@
-import { BigNumber } from 'ethers';
+import { ExtendedProposal } from 'types/proposals';
 
-export default interface AllocationItemProps {
+export default interface AllocationItemProps extends ExtendedProposal {
   className?: string;
-  id: BigNumber;
   isSelected: boolean;
-  name: string;
   onChange: (id: number, value: string) => void;
   onSelectItem: (id: number) => void;
   percentage?: number;

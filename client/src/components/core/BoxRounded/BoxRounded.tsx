@@ -74,7 +74,9 @@ const BoxRounded: FC<BoxRoundedProps> = ({
         </div>
       )}
       {title && (
-        <div className={cx(styles.title, isExpandable && styles.isExpandable)}>
+        <div
+          className={cx(styles.title, isPaddingMovedToElements && styles.isPaddingMovedToElements)}
+        >
           {title}
           {isExpandable && (
             <Button

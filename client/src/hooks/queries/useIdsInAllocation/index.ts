@@ -23,7 +23,8 @@ export default function useIdsInAllocation({
       allocations,
       id,
       name:
-        proposalName || proposals!.find(({ id: proposalId }) => proposalId.toNumber() === id)!.name,
+        proposalName ||
+        proposals!.find(({ id: proposalId }) => proposalId.toNumber() === id)!.name!,
       userAllocations,
     });
     if (newIds) {

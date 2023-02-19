@@ -9,15 +9,26 @@ import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useMatchedRewards from 'hooks/queries/useMatchedRewards';
+import useProposals from 'hooks/queries/useProposals';
 import getFormattedUnits from 'utils/getFormattedUnit';
 
 import styles from './AllocationSummary.module.scss';
 import ExpandableList from './ExpandableList/ExpandableList';
 import AllocationSummaryProps from './types';
 
+const getHeader = (proposals, allocations) => {
+  if (allocations.length > 1) {
+    return `Send funds to ${allocations.length} projects`;
+  }
+  const proposal = proposals.find(({ id }) => allocations[0] === id.toNumber()).name;
+
+  return `Send funds to ${proposal}`;
+};
+
 const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocationValues = {} }) => {
   const [isProjectsTileExpanded, setIsProjectsTileExpanded] = useState<boolean>(false);
   const { data: currentEpoch } = useCurrentEpoch();
+  const proposals = useProposals();
   const { data: individualReward } = useIndividualReward();
   const { data: matchedRewards } = useMatchedRewards();
   const newAllocationValuesSum = Object.values(allocationValues).reduce(
@@ -26,6 +37,8 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocation
   );
   const newClaimableAndClaimed = (individualReward as BigNumber).sub(newAllocationValuesSum);
 
+  const isExpandableListAvailable = allocations.length > 1;
+
   return (
     <Fragment>
       <Header text={`Confirm Epoch ${currentEpoch} Allocation`} />
@@ -33,7 +46,9 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocation
         alignment="left"
         className={styles.box}
         expandableChildren={
-          <ExpandableList allocations={allocations} allocationValues={allocationValues} />
+          isExpandableListAvailable ? (
+            <ExpandableList allocations={allocations} allocationValues={allocationValues} />
+          ) : null
         }
         isExpanded={isProjectsTileExpanded}
         isVertical
@@ -41,7 +56,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocation
         suffix={`Estimated Match Funding ${
           matchedRewards ? getFormattedUnits(matchedRewards) : '0'
         }`}
-        title={`Send funds to ${allocations.length} projects`}
+        title={getHeader(proposals, allocations)}
       >
         <div className={styles.totalDonation}>
           {isProjectsTileExpanded && <div className={styles.label}>Total donation</div>}

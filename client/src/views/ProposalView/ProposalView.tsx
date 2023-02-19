@@ -38,7 +38,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
   const { ipfsGateway } = env;
   const { proposalId } = useParams();
   const proposalIdNumber = parseInt(proposalId!, 10);
-  const { proposals } = useProposals();
+  const proposals = useProposals();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
   const { data: usersWithTheirAllocations } = useUsersWithTheirAllocations(proposalId!, {
@@ -138,9 +138,9 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
         />
       </div>
       <div className={styles.body}>
-        <Description text={description} />
-        <Button className={styles.buttonWebsite} href={website.url} variant="link">
-          {website.label || website.url}
+        <Description text={description!} />
+        <Button className={styles.buttonWebsite} href={website!.url} variant="link">
+          {website!.label || website!.url}
         </Button>
       </div>
       <div className={styles.donors}>

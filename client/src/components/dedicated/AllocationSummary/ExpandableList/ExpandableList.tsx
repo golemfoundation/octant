@@ -12,7 +12,7 @@ import ExpandableListProps from './types';
 
 const ExpandableList: FC<ExpandableListProps> = ({ allocations, allocationValues }) => {
   const { ipfsGateway } = env;
-  const { proposals } = useProposals();
+  const proposals = useProposals();
 
   if (proposals.length === 0) {
     return <Loader />;

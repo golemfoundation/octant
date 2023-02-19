@@ -51,7 +51,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
           </div>
           <div className={styles.body}>
             <div className={styles.name}>{name}</div>
-            <Description className={styles.description} text={description} />
+            <Description className={styles.description} text={description!} />
           </div>
           <div className={styles.footer}>
             <div className={styles.numbers}>

@@ -33,7 +33,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
   const {
     metaState: { isConnected },
   } = useMetamask();
-  const { proposals } = useProposals();
+  const proposals = useProposals();
   const [currentView, setCurrentView] = useState<CurrentView>('edit');
   const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
   const [allocationValues, setAllocationValues] = useState<undefined | AllocationValues>(undefined);
@@ -74,11 +74,9 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
   };
 
   useEffect(() => {
-    if (proposals.length > 0 && allocations) {
-      onResetAllocationValues();
-    }
-    // eslint-disable-next-line
-  }, [allocations, proposals, userAllocations]);
+    onResetAllocationValues();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userAllocations]);
 
   const onAllocate = () => {
     const allocateMutationArgs =
