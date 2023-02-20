@@ -13,7 +13,7 @@ const getProps = (currentStepIndex: BudgetBoxProps['currentStepIndex']): object 
   if (currentStepIndex === 0) {
     return {
       alignment: 'left',
-      title: 'Current Stake',
+      title: 'Current Lock',
     };
   }
   return {
@@ -32,7 +32,7 @@ const getChildren = (
     );
   }
   if (currentStepIndex === 1) {
-    return 'Please approve 2 transactions in your wallet. The first (required only once and for staking) allows ERC-20 tokens, and the second stakes / unstakes GLM.';
+    return 'Please approve 2 transactions in your wallet. The first (required only once and for staking) allows ERC-20 tokens, and the second locks / unlocks GLM.';
   }
   return (
     <div>

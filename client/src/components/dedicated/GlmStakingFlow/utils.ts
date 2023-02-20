@@ -16,13 +16,13 @@ export const getButtonCtaLabel = (
   if (isLoading) {
     return 'Waiting for approval...';
   }
-  return currentMode === 'deposit' ? 'Stake' : 'Unstake';
+  return currentMode === 'lock' ? 'Lock' : 'Unlock';
 };
 
-export const toastDebouncedUnstakeValueTooBig = debounce(
+export const toastDebouncedUnlockValueTooBig = debounce(
   () =>
     triggerToast({
-      message: "You can't unstake more than is staked.",
+      message: "You can't unlock more than is locked.",
       title: 'Too big value',
       type: 'warning',
     }),
@@ -30,10 +30,10 @@ export const toastDebouncedUnstakeValueTooBig = debounce(
   { leading: true },
 );
 
-export const toastDebouncedStakeValueTooBig = debounce(
+export const toastDebouncedLockValueTooBig = debounce(
   () =>
     triggerToast({
-      message: "You can't stake more than is available in the wallet.",
+      message: "You can't lock more than is available in the wallet.",
       title: 'Too big value',
       type: 'warning',
     }),

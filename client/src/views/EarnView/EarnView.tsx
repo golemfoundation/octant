@@ -3,7 +3,7 @@ import React, { ReactElement } from 'react';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import History from 'components/dedicated/History/History';
-import UserGlmStakeComponent from 'components/dedicated/UserGlmStake/UserGlmStake';
+import UserGlmLock from 'components/dedicated/UserGlmLock/UserGlmLock';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 import getFormattedUnit from 'utils/getFormattedUnit';
@@ -15,7 +15,7 @@ const EarnView = (): ReactElement => {
 
   return (
     <MainLayoutContainer>
-      <UserGlmStakeComponent classNameBox={styles.box} />
+      <UserGlmLock classNameBox={styles.box} />
       <BoxRounded
         alignment="left"
         buttonProps={{

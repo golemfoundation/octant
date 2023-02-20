@@ -72,7 +72,7 @@ const History = (): ReactElement => {
                     <Svg img={donation} size={4} />
                     <div className={styles.titleAndSubtitle}>
                       <div className={styles.title}>
-                        {element.type === 'Withdrawn' ? `Unstaked GLM` : `Staked GLM`}
+                        {element.type === 'Withdrawn' ? `Unlocked GLM` : `Locked GLM`}
                       </div>
                     </div>
                   </div>

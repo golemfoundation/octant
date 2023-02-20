@@ -20,8 +20,8 @@ const steps: Step[] = [
         for the public good.
         <br />
         <br />
-        To get started, connect your wallet and stake some GLM in the Earn tab. If you don’t have
-        any GLM or you want to know more about staking, this{' '}
+        To get started, connect your wallet and lock some GLM in the Earn tab. If you don’t have any
+        GLM or you want to know more about locking, this{' '}
         <Button href={BLOG_POST} variant="link3">
           blog post
         </Button>{' '}
@@ -34,8 +34,8 @@ const steps: Step[] = [
     image: stepTwoImage,
     text: (
       <div>
-        If you stake more than 100 GLM, you will earn rewards in ETH for every epoch you have tokens
-        staked. Tokens can be unstaked at any time.
+        If you lock more than 100 GLM, you will earn rewards in ETH for every epoch you have tokens
+        locked. Tokens can be unlocked at any time.
         <br />
         <br />
         You can choose to withdraw your earnings or allocate them to public good projects, which you
