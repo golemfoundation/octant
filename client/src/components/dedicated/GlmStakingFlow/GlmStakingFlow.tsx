@@ -26,8 +26,8 @@ import styles from './GlmStakingFlow.module.scss';
 import GlmStakingFlowProps, { CurrentMode, CurrentStepIndex } from './types';
 import {
   getButtonCtaLabel,
-  toastDebouncedStakeValueTooBig,
-  toastDebouncedUnstakeValueTooBig,
+  toastDebouncedLockValueTooBig,
+  toastDebouncedUnlockValueTooBig,
 } from './utils';
 
 const currentStepIndexInitialValue = 0;
@@ -39,7 +39,7 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
   } = useMetamask();
   const address = account[0];
   const signer = useMetamaskWeb3?.getSigner();
-  const [currentMode, setCurrentMode] = useState<CurrentMode>('deposit');
+  const [currentMode, setCurrentMode] = useState<CurrentMode>('lock');
   const [transactionHash, setTransactionHash] = useState<string>('');
   const [valueToDeposeOrWithdraw, setValueToDeposeOrWithdraw] = useState<string>('');
   const [currentStepIndex, setCurrentStepIndex] = useState<CurrentStepIndex>(
@@ -60,7 +60,7 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
     address,
   );
 
-  const onReset = (newMode: CurrentMode = 'deposit'): void => {
+  const onReset = (newMode: CurrentMode = 'lock'): void => {
     setCurrentMode(newMode);
     setValueToDeposeOrWithdraw('');
     setCurrentStepIndex(0);
@@ -84,7 +84,7 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
       return;
     }
 
-    if (currentMode === 'deposit' && approvalState === 'NOT_APPROVED') {
+    if (currentMode === 'lock' && approvalState === 'NOT_APPROVED') {
       await approveCallback();
     }
 
@@ -106,7 +106,7 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
 
   const onApproveOrDeposit = async (): Promise<void> => {
     const valueToDeposeOrWithdrawBigNumber = parseUnits(valueToDeposeOrWithdraw.toString(), 18);
-    if (currentMode === 'deposit') {
+    if (currentMode === 'lock') {
       await depositMutation.mutateAsync(valueToDeposeOrWithdrawBigNumber);
     } else {
       await withdrawMutation.mutateAsync(valueToDeposeOrWithdrawBigNumber);
@@ -120,13 +120,13 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
 
     const newValueBigNumber = parseUnits(newValue || '0');
     let valueToSet = newValue;
-    if (currentMode === 'withdraw' && newValueBigNumber.gt(depositsValue!)) {
+    if (currentMode === 'unlock' && newValueBigNumber.gt(depositsValue!)) {
       valueToSet = formatUnits(depositsValue!);
-      toastDebouncedUnstakeValueTooBig();
+      toastDebouncedUnlockValueTooBig();
     }
-    if (currentMode === 'deposit' && newValueBigNumber.gt(dataAvailableFunds!)) {
+    if (currentMode === 'lock' && newValueBigNumber.gt(dataAvailableFunds!)) {
       valueToSet = formatUnits(dataAvailableFunds!);
-      toastDebouncedStakeValueTooBig();
+      toastDebouncedLockValueTooBig();
     }
 
     setValueToDeposeOrWithdraw(valueToSet);
@@ -135,13 +135,13 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
   const isApproveOrDepositInProgress = depositMutation.isLoading || withdrawMutation.isLoading;
 
   return (
-    <Modal header={currentMode === 'deposit' ? 'Stake GLM' : 'Unstake GLM'} {...modalProps}>
+    <Modal header={currentMode === 'lock' ? 'Lock GLM' : 'Unlock GLM'} {...modalProps}>
       <BoxRounded className={styles.element} isGrey>
         <ProgressStepper
           currentStepIndex={currentStepIndex}
           steps={
-            currentMode === 'deposit'
-              ? ['Submit', 'Approve & Stake', 'Done']
+            currentMode === 'lock'
+              ? ['Submit', 'Approve & Lock', 'Done']
               : ['Submit', 'Withdraw', 'Done']
           }
         />
@@ -156,14 +156,14 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
         isGrey
         tabs={[
           {
-            isActive: currentMode === 'deposit',
-            onClick: () => onReset('deposit'),
-            title: 'Stake',
+            isActive: currentMode === 'lock',
+            onClick: () => onReset('lock'),
+            title: 'Lock',
           },
           {
-            isActive: currentMode === 'withdraw',
-            onClick: () => onReset('withdraw'),
-            title: 'Unstake',
+            isActive: currentMode === 'unlock',
+            onClick: () => onReset('unlock'),
+            title: 'Unlock',
           },
         ]}
       >
@@ -171,7 +171,7 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
           <InputText
             className={styles.input}
             isDisabled={isApproveOrDepositInProgress}
-            label={currentMode === 'deposit' ? 'Amount to stake' : 'Amount to unstake'}
+            label={currentMode === 'lock' ? 'Amount to lock' : 'Amount to unlock'}
             onChange={({ target: { value } }) => onChangeValue(value)}
             suffix="GLM"
             value={valueToDeposeOrWithdraw}

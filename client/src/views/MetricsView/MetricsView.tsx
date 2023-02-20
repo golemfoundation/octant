@@ -9,9 +9,9 @@ import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import MetricsTimeSection from 'components/dedicated/MetricsTimeSection/MetricsTimeSection';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useEthStaked from 'hooks/queries/useEthStaked';
-import useGlmStaked from 'hooks/queries/useGlmStaked';
+import useGlmLocked from 'hooks/queries/useGlmLocked';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useStakedRatio from 'hooks/queries/useStakedRatio';
+import useLockedRatio from 'hooks/queries/useLockedRatio';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 
 import styles from './MetricsView.module.scss';
@@ -22,15 +22,15 @@ const MetricsView = (): ReactElement => {
   });
   const { data: isDecisionWindowOpen, refetch: refetchIsDecisionWindowOpen } =
     useIsDecisionWindowOpen();
-  const { data: glmStaked, refetch: refetchGlmStaked } = useGlmStaked();
-  const { data: stakedRatio, refetch: refetchStakedRatio } = useStakedRatio();
+  const { data: glmLocked, refetch: refetchGlmLocked } = useGlmLocked();
+  const { data: lockedRatio, refetch: refetchLockedRatio } = useLockedRatio();
   const { data: ethStaked, refetch: refetchEthStaked } = useEthStaked();
 
   const onCountingFinish = () => {
     refetchCurrentEpoch();
-    refetchGlmStaked();
+    refetchGlmLocked();
     refetchEthStaked();
-    refetchStakedRatio();
+    refetchLockedRatio();
     refetchIsDecisionWindowOpen();
   };
 
@@ -43,27 +43,27 @@ const MetricsView = (): ReactElement => {
         onCountingFinish={onCountingFinish}
       />
       <div className={styles.element}>
-        <Header text="Value Staked" />
+        <Header text="Value Locked" />
         <Description
           text="The total value staked on Hexagon to date, showing ETH staked by the Golem Foundation and
-          GLM staked by Hexagon users."
+          GLM locked by Hexagon users."
         />
         <BoxRounded alignment="left" className={styles.box} isVertical title="ETH Staked">
           <DoubleValue mainValue={ethStaked || '0.0'} />
         </BoxRounded>
-        <BoxRounded alignment="left" className={styles.box} isVertical title="GLM Staked">
-          <DoubleValue mainValue={glmStaked ? formatUnits(glmStaked) : '0.0'} />
+        <BoxRounded alignment="left" className={styles.box} isVertical title="GLM Locked">
+          <DoubleValue mainValue={glmLocked ? formatUnits(glmLocked) : '0.0'} />
         </BoxRounded>
         <BoxRounded
           alignment="left"
           className={styles.box}
           isVertical
-          title="GLM Staked as % of Total Supply"
+          title="GLM Locked as % of Total Supply"
         >
-          <DoubleValue mainValue={`${stakedRatio || '0.0'}%`} />
+          <DoubleValue mainValue={`${lockedRatio || '0.0'}%`} />
           <ProgressBar
-            className={styles.stakedRatioProgressBar}
-            progressPercentage={stakedRatio ? parseFloat(stakedRatio) : 0}
+            className={styles.lockedRatioProgressBar}
+            progressPercentage={lockedRatio ? parseFloat(lockedRatio) : 0}
           />
         </BoxRounded>
       </div>

@@ -8,13 +8,13 @@ import GlmStakingFlow from 'components/dedicated/GlmStakingFlow/GlmStakingFlow';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 
-import UserGlmStakeProps from './types';
+import UserGlmLockProps from './types';
 
-const UserGlmStake: FC<UserGlmStakeProps> = ({ classNameBox }) => {
+const UserGlmLock: FC<UserGlmLockProps> = ({ classNameBox }) => {
   const {
     metaState: { isConnected },
   } = useMetamask();
-  const [stakeView, setStakeView] = useState<'currentEpoch' | 'nextEpoch'>('nextEpoch');
+  const [lockType, setLockType] = useState<'currentEpoch' | 'nextEpoch'>('nextEpoch');
   const [isGlmStakingModalOpen, setIsGlmStakingModalOpen] = useState<boolean>(false);
   const { data: depositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
   const { data: depositsValue } = useDepositValue();
@@ -28,26 +28,26 @@ const UserGlmStake: FC<UserGlmStakeProps> = ({ classNameBox }) => {
           isHigh: true,
           label:
             !depositsValue || (!!depositsValue && depositsValue.isZero())
-              ? 'Stake GLM'
-              : 'Edit GLM Stake',
+              ? 'Lock GLM'
+              : 'Edit GLM Lock',
           onClick: () => setIsGlmStakingModalOpen(true),
           variant: 'cta',
         }}
         className={classNameBox}
         tabs={[
           {
-            isActive: stakeView === 'currentEpoch',
-            onClick: () => setStakeView('currentEpoch'),
-            title: 'Current Epoch Stake',
+            isActive: lockType === 'currentEpoch',
+            onClick: () => setLockType('currentEpoch'),
+            title: 'Current Epoch Lock',
           },
           {
-            isActive: stakeView === 'nextEpoch',
-            onClick: () => setStakeView('nextEpoch'),
-            title: 'Next Epoch Stake',
+            isActive: lockType === 'nextEpoch',
+            onClick: () => setLockType('nextEpoch'),
+            title: 'Next Epoch Lock',
           },
         ]}
       >
-        {stakeView === 'currentEpoch' ? (
+        {lockType === 'currentEpoch' ? (
           <DoubleValue
             mainValue={`${
               depositEffectiveAtCurrentEpoch ? formatUnits(depositEffectiveAtCurrentEpoch) : '0.0'
@@ -67,4 +67,4 @@ const UserGlmStake: FC<UserGlmStakeProps> = ({ classNameBox }) => {
   );
 };
 
-export default UserGlmStake;
+export default UserGlmLock;
