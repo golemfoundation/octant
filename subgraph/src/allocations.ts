@@ -9,7 +9,7 @@ export function handleAllocated(event: AllocatedEvent): void {
 
   entity.epoch = event.params.epoch.toI32();
   entity.user = event.params.user;
-  entity.proposalId = event.params.allocation.proposalId.toI32();
+  entity.proposal = event.params.allocation.proposal;
   entity.allocation = event.params.allocation.allocation;
 
   entity.blockNumber = event.block.number.toI32();

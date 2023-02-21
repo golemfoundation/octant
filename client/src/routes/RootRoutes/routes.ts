@@ -9,7 +9,7 @@ export const ROOT_ROUTES = {
   metrics: getPathObject(ROOT, 'metrics'),
   onboarding: getPathObject(ROOT, 'onboarding'),
   proposal: getPathObject(ROOT, PROPOSAL_PREFIX),
-  proposalWithId: getPathObject(ROOT, `${PROPOSAL_PREFIX}/:proposalId`),
+  proposalWithAddress: getPathObject(ROOT, `${PROPOSAL_PREFIX}/:proposalAddress`),
   proposals: getPathObject(ROOT, 'projects'),
   settings: getPathObject(ROOT, 'settings'),
 };

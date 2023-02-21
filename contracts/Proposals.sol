@@ -8,62 +8,46 @@ import "./interfaces/IProposals.sol";
 
 /// @notice Contract tracking active Hexagon proposals in particular epoch.
 /// Proposals are stored in IPFS in JSON format and are maintained entirely by Golem Foundation.
+/// In order to get proposal details from IPFS call use returned values as this:
+/// https://<IPFS Gateway of your choice>/ipfs/<CID>/<Proposal address>
+// example: https://ipfs.io/ipfs/Qmbm97crHWQzNYNn2LPZ5hhGu4qEv1DXRP6qS4TCehruPn/1
 contract Proposals is Ownable, IProposals {
     /// @notice IPFS CID (Content identifier).
     /// Under this CID will be placed a directory with all the proposals,
     /// currently active and inactive.
-    string public CID;
+    string public cid;
 
-    mapping(uint256 => uint256[]) private proposalIdsByEpoch;
+    mapping(uint256 => address[]) private proposalAddressesByEpoch;
 
-    constructor(string memory _initCID) {
+    constructor(string memory _initCID, address[] memory proposals) {
         setCID(_initCID);
-        proposalIdsByEpoch[0] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        proposalAddressesByEpoch[0] = proposals;
     }
 
     /// @notice sets a new IPFS CID, where proposals are stored.
     function setCID(string memory _newCID) public onlyOwner {
-        CID = _newCID;
+        cid = _newCID;
     }
 
     /// @notice sets proposal Ids that will be active in the particular epoch.
     /// Ids should be provided as an array and will represent JSON file names stored under CID provided
     /// to this contract.
-    function setProposalIds(
+    function setProposalAddresses(
         uint256 _epoch,
-        uint256[] calldata _proposalIds
+        address[] calldata _proposalAddresses
     ) public onlyOwner {
-        proposalIdsByEpoch[_epoch] = _proposalIds;
+        proposalAddressesByEpoch[_epoch] = _proposalAddresses;
     }
 
-    /// @return list of proposal Ids active in given epoch.
-    function getProposalIds(
+    /// @return list of active proposal addresses in given epoch.
+    function getProposalAddresses(
         uint256 _epoch
-    ) public view returns (uint256[] memory) {
+    ) public view returns (address[] memory) {
         for (uint256 iEpoch = _epoch; iEpoch > 0; iEpoch = iEpoch - 1) {
-            if (proposalIdsByEpoch[iEpoch].length > 0) {
-                return proposalIdsByEpoch[iEpoch];
+            if (proposalAddressesByEpoch[iEpoch].length > 0) {
+                return proposalAddressesByEpoch[iEpoch];
             }
         }
-        return proposalIdsByEpoch[0];
-    }
-
-    /// @notice In order to get proposal details from IPFS call use returned values as this:
-    /// https://<IPFS Gateway of your choice>/ipfs/<CID>/<Proposal ID>
-    // example: https://ipfs.io/ipfs/Qmbm97crHWQzNYNn2LPZ5hhGu4qEv1DXRP6qS4TCehruPn/1
-    /// @return list of proposal active in given epoch as a struct containing CID and proposal id.
-    function getProposals(
-        uint256 _epoch
-    ) external view returns (Proposal[] memory) {
-        uint256[] memory proposalIds = getProposalIds(_epoch);
-        Proposal[] memory proposals = new Proposal[](proposalIds.length);
-        for (uint256 i = 0; i < proposalIds.length; i++) {
-            uint256 id = proposalIds[i];
-            string memory uri = string(
-                abi.encodePacked(CID, Strings.toString(id))
-            );
-            proposals[i] = Proposal(id, uri);
-        }
-        return proposals;
+        return proposalAddressesByEpoch[0];
     }
 }

@@ -8,11 +8,11 @@ import triggerToast from 'utils/triggerToast';
 import { AllocationValues, AllocationWithPositiveValue } from './types';
 
 export function getAllocationValuesInitialState(
-  elements: number[],
+  elements: string[],
   userAllocations?: UserAllocation[],
 ): AllocationValues {
   return elements.reduce((acc, curr) => {
-    const allocation = userAllocations?.find(({ proposalId }) => proposalId === curr);
+    const allocation = userAllocations?.find(({ proposalAddress }) => proposalAddress === curr);
     const value = allocation ? formatUnits(allocation.allocation) : undefined;
     return {
       ...acc,
@@ -26,10 +26,10 @@ export function getAllocationsWithPositiveValues(
 ): AllocationWithPositiveValue[] {
   return Object.keys(elements).reduce<AllocationWithPositiveValue[]>((acc, key) => {
     const value = elements[key];
-    const valueNumber = parseFloat(value);
+    const valueNumber = value ? parseFloat(value) : 0;
     const newElement: AllocationWithPositiveValue = {
-      proposalId: parseInt(key, 10),
-      value,
+      proposalAddress: key,
+      value: value || '',
     };
     return valueNumber > 0 ? [...acc, newElement] : acc;
   }, []);

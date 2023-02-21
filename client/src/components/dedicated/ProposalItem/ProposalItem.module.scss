@@ -3,6 +3,8 @@ $paddingBody: 2.4rem;
 .root {
   display: flex;
   flex-direction: column;
+  align-items: stretch;
+  cursor: pointer;
   border-radius: $border-radius-16;
   background: $color-white;
 

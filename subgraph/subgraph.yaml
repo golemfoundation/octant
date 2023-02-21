@@ -19,7 +19,7 @@ dataSources:
         - name: Allocations
           file: ./abis/Allocations.json
       eventHandlers:
-        - event: Allocated(uint256,address,(uint256,uint256))
+        - event: Allocated(uint256,address,(address,uint256))
           handler: handleAllocated
       file: ./src/allocations.ts
   - kind: ethereum

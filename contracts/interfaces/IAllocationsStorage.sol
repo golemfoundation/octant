@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 
 interface IAllocationsStorage {
     struct Allocation {
-        uint256 proposalId;
+        address proposal;
         uint256 allocation;
     }
 
@@ -19,10 +19,25 @@ interface IAllocationsStorage {
         Allocation memory _allocation
     ) external;
 
+    function putClaimableReward(
+        uint256 _epoch,
+        address _user,
+        uint256 _amount
+    ) external;
+
+    function getTotalClaimableRewards(
+        uint256 _epoch
+    ) external view returns (uint256);
+
     function removeUserAllocations(uint256 _epoch, address _user) external;
 
     function getUsersWithTheirAllocations(
         uint256 _epoch,
-        uint256 _proposalId
+        address _proposal
     ) external view returns (address[] memory, uint256[] memory);
+
+    function getUserClaimableRewards(
+        uint256 _epoch,
+        address _user
+    ) external view returns (uint256);
 }

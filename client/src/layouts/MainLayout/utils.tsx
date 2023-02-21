@@ -29,7 +29,7 @@ export function getIndividualRewardText({
 }
 
 export function getNavigationTabsWithAllocations(
-  idsInAllocation: number[] | undefined,
+  idsInAllocation: string[] | undefined,
   navigationTabs = navigationTabsDefault,
 ): NavigationTab[] {
   const newNavigationTabs = [...navigationTabs];

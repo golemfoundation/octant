@@ -20,11 +20,11 @@ const ExpandableList: FC<ExpandableListProps> = ({ allocations, allocationValues
 
   return (
     <div className={styles.projects}>
-      {allocations!.map((idInAllocation, index) => {
+      {allocations!.map((addressInAllocation, index) => {
         const { name, profileImageCID } = proposals.find(
-          ({ id }) => id.toNumber() === idInAllocation,
+          ({ address }) => address === addressInAllocation,
         )!;
-        const value = allocationValues[idInAllocation];
+        const value = allocationValues[addressInAllocation];
         return (
           // eslint-disable-next-line react/no-array-index-key
           <div key={index} className={styles.projectRow}>

@@ -5,16 +5,16 @@ import { AllocationsStore } from 'store/models/allocations/types';
 export type CurrentView = 'edit' | 'summary';
 
 export interface AllocationValues {
-  [key: number]: undefined | string;
+  [key: string]: undefined | string;
 }
 
 export type AllocationWithPositiveValue = {
-  proposalId: number;
+  proposalAddress: string;
   value: string;
 };
 
 export type AllocationWithPositiveValueBigNumber = {
-  proposalId: number;
+  proposalAddress: string;
   value: BigNumber;
 };
 

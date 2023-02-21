@@ -33,7 +33,7 @@ const RootRoutes: FC<RootRoutesProps> = ({ isOnboardingDone }) => {
       <Route element={<ProposalsViewContainer />} path={`${ROOT_ROUTES.proposals.relative}/*`} />
       <Route
         element={<ProposalViewContainer />}
-        path={`${ROOT_ROUTES.proposalWithId.relative}/*`}
+        path={`${ROOT_ROUTES.proposalWithAddress.relative}/*`}
       />
       <Route element={<SettingsViewContainer />} path={`${ROOT_ROUTES.settings.relative}/*`} />
       <Route element={<Navigate to={ROOT_ROUTES.proposals.absolute} />} path="*" />

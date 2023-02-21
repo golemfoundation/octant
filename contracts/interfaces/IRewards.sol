@@ -15,6 +15,10 @@ interface IRewards {
 
     function proposalReward(
         uint32 epoch,
-        uint256 proposalId
+        address proposal
+    ) external view returns (uint256);
+
+    function golemFoundationReward(
+        uint32 epoch
     ) external view returns (uint256);
 }

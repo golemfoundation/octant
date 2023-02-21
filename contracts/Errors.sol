@@ -3,11 +3,6 @@
 pragma solidity ^0.8.9;
 
 library AllocationErrors {
-    /// @notice Thrown when the user trying to allocate for proposal with id equals 0
-    /// @return HN:Allocations/proposal-id-equals-0
-    string public constant PROPOSAL_ID_CANNOT_BE_ZERO =
-        "HN:Allocations/proposal-id-equals-0";
-
     /// @notice Thrown when the user trying to allocate before first epoch has started
     /// @return HN:Allocations/not-started-yet
     string public constant EPOCHS_HAS_NOT_STARTED_YET =

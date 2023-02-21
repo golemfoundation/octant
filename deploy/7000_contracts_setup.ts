@@ -1,15 +1,22 @@
+import { ethers } from 'hardhat';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
-import { BEACONCHAIN_VALIDATOR_INDEXES, EXECUTION_LAYER_VALIDATOR_ADDRESS } from '../env';
+import {
+  BEACONCHAIN_VALIDATOR_INDEXES,
+  EXECUTION_LAYER_VALIDATOR_ADDRESS,
+  GOERLI_WITHDRAWALS_TARGET,
+} from '../env';
 import {
   ALLOCATIONS,
   ALLOCATIONS_STORAGE,
   BEACON_CHAIN_ORACLE,
   DEPOSITS,
   EXECUTION_LAYER_ORACLE,
+  PAYOUTS_MANAGER,
   TRACKER,
   TRACKER_WRAPPER,
+  WITHDRAWALS_TARGET,
 } from '../helpers/constants';
 import {
   Allocations,
@@ -18,6 +25,8 @@ import {
   Deposits,
   ExecutionLayerOracle,
   Tracker,
+  PayoutsManager,
+  WithdrawalsTarget,
 } from '../typechain-types';
 
 // This function needs to be declared this way, otherwise it's not understood by test runner.
@@ -48,6 +57,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const trackerWrapper = await hre.ethers.getContract(TRACKER_WRAPPER);
   await deposits.setDepositTrackerAddress(trackerWrapper.address);
   await tracker.setProxyAddress(trackerWrapper.address);
+
+  // Setup Payouts
+  let targetAddress = GOERLI_WITHDRAWALS_TARGET;
+  if (hre.network.name === 'hardhat') {
+    const target = await ethers.getContract(WITHDRAWALS_TARGET);
+    targetAddress = target.address;
+  }
+  const manager: PayoutsManager = await ethers.getContract(PAYOUTS_MANAGER);
+  await manager.setTarget(targetAddress);
+
+  const target: WithdrawalsTarget = await ethers.getContractAt(WITHDRAWALS_TARGET, targetAddress);
+  await target.setHexagon(manager.address);
 };
+
 export default func;
 func.tags = ['setup', 'local', 'test', 'goerli'];

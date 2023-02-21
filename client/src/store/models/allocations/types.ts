@@ -1,7 +1,7 @@
-export type AllocationsStore = null | number[];
+export type AllocationsStore = null | string[];
 
 export type AllocationsAddPayload = AllocationsStore;
 
-export type AllocationAddPayload = number;
+export type AllocationAddPayload = string;
 
-export type AllocationRemovePayload = number;
+export type AllocationRemovePayload = string;

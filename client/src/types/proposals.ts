@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 export interface BackendProposal {
   description: string;
   landscapeImageCID: string;
@@ -12,6 +10,6 @@ export interface BackendProposal {
 }
 
 export interface ExtendedProposal extends Partial<BackendProposal> {
-  id: BigNumber;
+  address: string;
   isLoadingError: boolean;
 }

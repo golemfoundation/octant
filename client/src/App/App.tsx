@@ -17,7 +17,7 @@ import AppProps from './types';
 import 'styles/index.scss';
 
 const validateProposalsInLocalStorage = (localStorageAllocationItems, proposals) =>
-  localStorageAllocationItems.filter(item => proposals.find(({ id }) => id.toNumber() === item));
+  localStorageAllocationItems.filter(item => proposals.find(({ address }) => address === item));
 
 const App: FC<AppProps> = ({
   allocations,
@@ -71,15 +71,15 @@ const App: FC<AppProps> = ({
     if (!userAllocations) {
       return;
     }
-    const userAllocationsIds = userAllocations.map(({ proposalId }) => proposalId);
+    const userAllocationsAddresses = userAllocations.map(({ proposalAddress }) => proposalAddress);
     if (
       isConnected &&
       userAllocations &&
       userAllocations.length > 0 &&
       !!allocations &&
-      !allocations.some(allocation => userAllocationsIds.includes(allocation))
+      !allocations.some(allocation => userAllocationsAddresses.includes(allocation))
     ) {
-      onSetAllocations([...allocations, ...userAllocationsIds]);
+      onSetAllocations([...allocations, ...userAllocationsAddresses]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, userAllocations, allocations]);

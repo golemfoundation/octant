@@ -8,7 +8,7 @@ import useCurrentEpoch from './useCurrentEpoch';
 
 import { IAllocationsStorage } from '../../../../typechain-types';
 
-export type UserAllocation = { allocation: BigNumber; proposalId: number };
+export type UserAllocation = { allocation: BigNumber; proposalAddress: string };
 
 export default function useUserAllocations(
   options?: UseQueryOptions<
@@ -33,8 +33,8 @@ export default function useUserAllocations(
       enabled: !!currentEpoch && currentEpoch > 1 && !!address,
       select: response =>
         response?.map(element => ({
-          allocation: element![1],
-          proposalId: element![0]?.toNumber(),
+          allocation: element[1],
+          proposalAddress: element[0],
         })),
       ...options,
     },

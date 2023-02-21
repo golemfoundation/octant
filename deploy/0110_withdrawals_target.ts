@@ -2,7 +2,7 @@ import { network } from 'hardhat';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
-import { GFMS } from '../env';
+import { GOLEM_FOUNDATION_MULTISIG } from '../env';
 import { WITHDRAWALS_TARGET } from '../helpers/constants';
 
 // This function needs to be declared this way, otherwise it's not understood by test runner.
@@ -27,7 +27,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       ? false
       : {
           // owner set to GFMS means that upgrade can only be performed by multisig
-          owner: network.live ? GFMS : deployer,
+          owner: network.live ? GOLEM_FOUNDATION_MULTISIG : deployer,
           proxyContract: 'EIP173Proxy',
         },
   });

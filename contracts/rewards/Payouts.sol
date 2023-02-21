@@ -31,7 +31,7 @@ contract Payouts {
     mapping(address => Payout) public userPayouts;
 
     /// @dev tracks ETH payouts to proposals
-    mapping(uint256 => Payout) public proposalPayouts;
+    mapping(address => Payout) public proposalPayouts;
 
     constructor(
         address rewardsAddress,
@@ -76,19 +76,19 @@ contract Payouts {
         userPayouts[user] = p;
     }
 
-    /// @param proposalId proposal id
+    /// @param proposal proposal address
     /// @param amount Payout amount
     function registerProposalPayout(
-        uint256 proposalId,
+        address proposal,
         uint144 amount
     ) public onlyWithdrawals {
         uint32 finalizedEpoch = epochs.getCurrentEpoch() - 1;
-        Payout memory p = proposalPayouts[proposalId];
+        Payout memory p = proposalPayouts[proposal];
         uint144 remaining = amount;
         bool stop = false;
         while (!stop) {
             uint144 stepFunds = uint144(
-                rewards.proposalReward(p.checkpointEpoch + 1, proposalId)
+                rewards.proposalReward(p.checkpointEpoch + 1, proposal)
             );
             if (p.extra + remaining > stepFunds) {
                 remaining = remaining - (stepFunds - p.extra);
@@ -106,7 +106,7 @@ contract Payouts {
                 assert(p.total == p.checkpointSum + p.extra);
             }
         }
-        proposalPayouts[proposalId] = p;
+        proposalPayouts[proposal] = p;
     }
 
     function userPayoutStatus(
@@ -116,9 +116,9 @@ contract Payouts {
     }
 
     function proposalPayoutStatus(
-        uint256 proposalId
+        address proposal
     ) external view returns (Payout memory) {
-        return proposalPayouts[proposalId];
+        return proposalPayouts[proposal];
     }
 
     modifier onlyWithdrawals() {

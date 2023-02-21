@@ -20,14 +20,24 @@ contract Allocations {
     /// @notice Tracking hexagon rewards.
     IRewards public immutable rewards;
 
-    /// @notice emitted after user allocated funds.
+    /// @notice emitted after user allocated funds. This event contains funds allocated to proposals.
     /// @param epoch for which user has allocated (current epoch - 1).
     /// @param user address of the user who allocated funds.
-    /// @param allocation proposalId and funds allocated for it.
+    /// @param allocation proposal address and funds allocated for it.
     event Allocated(
         uint256 epoch,
         address user,
         IAllocationsStorage.Allocation allocation
+    );
+
+    /// @notice emitted after user allocated funds. This event contains funds claimed by user to withdraw.
+    /// @param epoch for which user has allocated (current epoch - 1).
+    /// @param user address of the user who allocated funds.
+    /// @param amount amount claimed by the user.
+    event Claimed(
+        uint256 epoch,
+        address user,
+        uint256 amount
     );
 
     constructor(
@@ -53,15 +63,15 @@ contract Allocations {
             AllocationErrors.DECISION_WINDOW_IS_CLOSED
         );
         uint32 _epoch = epochs.getCurrentEpoch() - 1;
+        uint256 _fundsToAllocate = _putAllocationsToStorage(_epoch, _allocations);
+        _putClaimableRewardsToStorage(_epoch, _fundsToAllocate);
+    }
 
+    function _putAllocationsToStorage(uint32 _epoch, IAllocationsStorage.Allocation[] memory _allocations) private returns (uint256) {
         allocationsStorage.removeUserAllocations(_epoch, msg.sender);
 
         uint256 _fundsToAllocate;
         for (uint256 i = 0; i < _allocations.length; i++) {
-            require(
-                _allocations[i].proposalId != 0,
-                AllocationErrors.PROPOSAL_ID_CANNOT_BE_ZERO
-            );
             allocationsStorage.addAllocation(
                 _epoch,
                 msg.sender,
@@ -71,9 +81,22 @@ contract Allocations {
 
             emit Allocated(_epoch, msg.sender, _allocations[i]);
         }
+        return _fundsToAllocate;
+    }
+
+    function _putClaimableRewardsToStorage(uint32 _epoch,uint256 _fundsToAllocate) private {
+        uint256 _individualReward = rewards.individualReward(_epoch, msg.sender);
         require(
-            rewards.individualReward(_epoch, msg.sender) >= _fundsToAllocate,
+            _individualReward >= _fundsToAllocate,
             AllocationErrors.ALLOCATE_ABOVE_REWARDS_BUDGET
         );
+
+        uint256 _claimableReward = _individualReward - _fundsToAllocate;
+        allocationsStorage.putClaimableReward(
+            _epoch,
+            msg.sender,
+            _claimableReward
+        );
+        emit Claimed(_epoch, msg.sender, _claimableReward);
     }
 }

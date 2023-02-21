@@ -28,14 +28,14 @@ const ProposalsView: FC<ProposalsViewProps> = ({ allocations }) => {
           shouldMatchedProposalRewardsBeAvailable &&
           proposals.map((proposal, index) => {
             const proposalMatchedProposalRewards = matchedProposalRewards?.find(
-              ({ id }) => id === proposal.id.toNumber(),
+              ({ address }) => address === proposal.address,
             );
             return (
               <ProposalItem
                 // eslint-disable-next-line react/no-array-index-key
                 key={index}
-                isAlreadyAdded={allocations.includes(proposal.id.toNumber())}
-                onAddRemoveFromAllocate={() => onAddRemoveFromAllocate(proposal.id.toNumber())}
+                isAlreadyAdded={allocations.includes(proposal.address)}
+                onAddRemoveFromAllocate={() => onAddRemoveFromAllocate(proposal.address)}
                 percentage={proposalMatchedProposalRewards?.percentage}
                 totalValueOfAllocations={proposalMatchedProposalRewards?.sum}
                 {...proposal}

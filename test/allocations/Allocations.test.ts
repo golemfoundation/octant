@@ -43,9 +43,10 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
           allocations,
           epochs,
           signers: { Alice },
+          proposalAddresses,
         } = testEnv;
         await forwardEpochs(epochs, 1);
-        const userAllocations = [{ allocation: 100, proposalId: 1 }];
+        const userAllocations = [{ allocation: 100, proposal: proposalAddresses[0].address }];
         await expect(allocations.connect(Alice).allocate(userAllocations)).revertedWith(
           'HN:Allocations/allocate-above-rewards-budget',
         );
@@ -78,8 +79,11 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
         const {
           allocations,
           signers: { Alice },
+          proposalAddresses,
         } = testEnv;
-        const userAllocations = [{ allocation: parseEther('0.5'), proposalId: 1 }];
+        const userAllocations = [
+          { allocation: parseEther('0.5'), proposal: proposalAddresses[0].address },
+        ];
         await expect(allocations.connect(Alice).allocate(userAllocations)).revertedWith(
           'HN:Allocations/allocate-above-rewards-budget',
         );
@@ -89,12 +93,13 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
         const {
           allocations,
           signers: { Alice },
+          proposalAddresses,
         } = testEnv;
         const userAllocations = [
-          { allocation: parseEther('0.2'), proposalId: 1 },
+          { allocation: parseEther('0.2'), proposal: proposalAddresses[0].address },
           {
             allocation: parseEther('0.3'),
-            proposalId: 2,
+            proposal: proposalAddresses[1].address,
           },
         ];
         await expect(allocations.connect(Alice).allocate(userAllocations)).revertedWith(
@@ -108,8 +113,11 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
           allocationsStorage,
           epochs,
           signers: { Alice },
+          proposalAddresses,
         } = testEnv;
-        const userAllocations = [{ allocation: parseEther('0.4'), proposalId: 1 }];
+        const userAllocations = [
+          { allocation: parseEther('0.4'), proposal: proposalAddresses[0].address },
+        ];
         await allocations.connect(Alice).allocate(userAllocations);
         const currentEpoch = await epochs.getCurrentEpoch();
         const userAllocation = await allocationsStorage.getUserAllocations(
@@ -125,8 +133,11 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
           allocationsStorage,
           epochs,
           signers: { Alice },
+          proposalAddresses,
         } = testEnv;
-        const userAllocations = [{ allocation: parseEther('0.3'), proposalId: 1 }];
+        const userAllocations = [
+          { allocation: parseEther('0.3'), proposal: proposalAddresses[0].address },
+        ];
         await allocations.connect(Alice).allocate(userAllocations);
         const currentEpoch = await epochs.getCurrentEpoch();
         const userAllocation = await allocationsStorage.getUserAllocations(
@@ -149,14 +160,18 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
       await forwardEpochs(epochs, 1);
     });
 
-    it('Cannot allocate for proposal with id 0', async () => {
+    // TODO unskip after HEX-262
+    /* eslint-disable jest/no-disabled-tests */
+    it.skip('Cannot allocate for proposal with invalid address', async () => {
       const {
         allocations: currentTestAllocations,
         epochs: currentTestEpochs,
         signers: { Alice },
       } = testEnv;
       await forwardEpochs(currentTestEpochs, 1);
-      const userAllocations = [{ allocation: parseEther('0.4'), proposalId: 0 }];
+      const userAllocations = [
+        { allocation: parseEther('0.4'), proposal: '0x0000000000000000000000000000000000000000' },
+      ];
       await expect(currentTestAllocations.connect(Alice).allocate(userAllocations)).revertedWith(
         'HN:Allocations/proposal-id-equals-0',
       );
@@ -165,46 +180,55 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
     it('Can allocate to one proposal', async () => {
       const {
         signers: { Alice },
+        proposalAddresses,
       } = testEnv;
-      const userAllocations = [{ allocation: parseEther('0.4'), proposalId: 1 }];
+      const userAllocations = [
+        { allocation: parseEther('0.4'), proposal: proposalAddresses[0].address },
+      ];
 
       await allocations.connect(Alice).allocate(userAllocations);
 
       const allocation = await allocationsStorage.getUserAllocations(1, Alice.address);
+      const claimableRewards = await allocationsStorage.getUserClaimableRewards(1, Alice.address);
       expect(allocation[0].allocation).eq(parseEther('0.4'));
-      expect(allocation[0].proposalId).eq(1);
+      expect(allocation[0].proposal).eq(proposalAddresses[0].address);
+      expect(claimableRewards).eq(0);
     });
 
     it('Can allocate to multiple proposals', async () => {
       const {
         signers: { Alice },
+        proposalAddresses,
       } = testEnv;
       const userAllocations = [
-        { allocation: parseEther('0.001'), proposalId: 1 },
-        { allocation: parseEther('0.04'), proposalId: 2 },
-        { allocation: parseEther('0.2'), proposalId: 4 },
-        { allocation: parseEther('0.000000009'), proposalId: 3 },
-        { allocation: parseEther('0.1'), proposalId: 7 },
+        { allocation: parseEther('0.001'), proposal: proposalAddresses[0].address },
+        { allocation: parseEther('0.04'), proposal: proposalAddresses[1].address },
+        { allocation: parseEther('0.2'), proposal: proposalAddresses[3].address },
+        { allocation: parseEther('0.000000009'), proposal: proposalAddresses[2].address },
+        { allocation: parseEther('0.1'), proposal: proposalAddresses[6].address },
       ];
 
       await allocations.connect(Alice).allocate(userAllocations);
+      const claimableRewards = await allocationsStorage.getUserClaimableRewards(1, Alice.address);
 
       const result = await allocationsStorage.getUserAllocations(1, Alice.address);
       expect(result[0].allocation).eq(parseEther('0.001'));
-      expect(result[0].proposalId).eq(1);
+      expect(result[0].proposal).eq(proposalAddresses[0].address);
       expect(result[1].allocation).eq(parseEther('0.04'));
-      expect(result[1].proposalId).eq(2);
+      expect(result[1].proposal).eq(proposalAddresses[1].address);
       expect(result[2].allocation).eq(parseEther('0.2'));
-      expect(result[2].proposalId).eq(4);
+      expect(result[2].proposal).eq(proposalAddresses[3].address);
       expect(result[3].allocation).eq(parseEther('0.000000009'));
-      expect(result[3].proposalId).eq(3);
+      expect(result[3].proposal).eq(proposalAddresses[2].address);
       expect(result[4].allocation).eq(parseEther('0.1'));
-      expect(result[4].proposalId).eq(7);
+      expect(result[4].proposal).eq(proposalAddresses[6].address);
+      expect(claimableRewards).eq(parseEther('0.058999991'));
     });
 
     it('Can change one allocation', async () => {
       const {
         signers: { Alice },
+        proposalAddresses,
       } = testEnv;
 
       expect(await epochs.isDecisionWindowOpen()).eq(true);
@@ -212,77 +236,86 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
       await allocations.connect(Alice).allocate([
         {
           allocation: parseEther('0.4'),
-          proposalId: 1,
+          proposal: proposalAddresses[0].address,
         },
       ]);
       await allocations.connect(Alice).allocate([
         {
           allocation: parseEther('0.2'),
-          proposalId: 1,
+          proposal: proposalAddresses[0].address,
         },
       ]);
 
       const allocation = await allocationsStorage.getUserAllocations(1, Alice.address);
+      const claimableRewards = await allocationsStorage.getUserClaimableRewards(1, Alice.address);
       expect(allocation[0].allocation).eq(parseEther('0.2'));
-      expect(allocation[0].proposalId).eq(1);
+      expect(allocation[0].proposal).eq(proposalAddresses[0].address);
+      expect(claimableRewards).eq(parseEther('0.2'));
     });
 
     it('Can change to more allocations', async () => {
       const {
         signers: { Alice },
+        proposalAddresses,
       } = testEnv;
 
       expect(await epochs.isDecisionWindowOpen()).eq(true);
 
       await allocations.connect(Alice).allocate([
-        { allocation: parseEther('0.1'), proposalId: 1 },
-        { allocation: parseEther('0.01'), proposalId: 2 },
+        { allocation: parseEther('0.1'), proposal: proposalAddresses[0].address },
+        { allocation: parseEther('0.01'), proposal: proposalAddresses[1].address },
       ]);
       await allocations.connect(Alice).allocate([
-        { allocation: parseEther('0.009'), proposalId: 4 },
-        { allocation: parseEther('0.00001'), proposalId: 5 },
-        { allocation: parseEther('0.2'), proposalId: 1 },
+        { allocation: parseEther('0.009'), proposal: proposalAddresses[3].address },
+        { allocation: parseEther('0.00001'), proposal: proposalAddresses[4].address },
+        { allocation: parseEther('0.2'), proposal: proposalAddresses[0].address },
       ]);
 
-      const result = await allocationsStorage.getUserAllocations(1, Alice.address);
-      expect(result).length(3);
-      expect(result[0].allocation).eq(parseEther('0.009'));
-      expect(result[0].proposalId).eq(4);
-      expect(result[1].allocation).eq(parseEther('0.00001'));
-      expect(result[1].proposalId).eq(5);
-      expect(result[2].allocation).eq(parseEther('0.2'));
-      expect(result[2].proposalId).eq(1);
+      const allocation = await allocationsStorage.getUserAllocations(1, Alice.address);
+      const claimableRewards = await allocationsStorage.getUserClaimableRewards(1, Alice.address);
+      expect(allocation).length(3);
+      expect(allocation[0].allocation).eq(parseEther('0.009'));
+      expect(allocation[0].proposal).eq(proposalAddresses[3].address);
+      expect(allocation[1].allocation).eq(parseEther('0.00001'));
+      expect(allocation[1].proposal).eq(proposalAddresses[4].address);
+      expect(allocation[2].allocation).eq(parseEther('0.2'));
+      expect(allocation[2].proposal).eq(proposalAddresses[0].address);
+      expect(claimableRewards).eq(parseEther('0.19099'));
     });
 
     it('Can change to less allocations', async () => {
       const {
         signers: { Alice },
+        proposalAddresses,
       } = testEnv;
 
       expect(await epochs.isDecisionWindowOpen()).eq(true);
 
       await allocations.connect(Alice).allocate([
-        { allocation: parseEther('0.009'), proposalId: 4 },
-        { allocation: parseEther('0.00001'), proposalId: 5 },
-        { allocation: parseEther('0.2'), proposalId: 1 },
+        { allocation: parseEther('0.009'), proposal: proposalAddresses[3].address },
+        { allocation: parseEther('0.00001'), proposal: proposalAddresses[4].address },
+        { allocation: parseEther('0.2'), proposal: proposalAddresses[0].address },
       ]);
 
       await allocations.connect(Alice).allocate([
-        { allocation: parseEther('0.1'), proposalId: 1 },
-        { allocation: parseEther('0.01'), proposalId: 2 },
+        { allocation: parseEther('0.1'), proposal: proposalAddresses[0].address },
+        { allocation: parseEther('0.01'), proposal: proposalAddresses[1].address },
       ]);
 
-      const result = await allocationsStorage.getUserAllocations(1, Alice.address);
-      expect(result).length(2);
-      expect(result[0].allocation).eq(parseEther('0.1'));
-      expect(result[0].proposalId).eq(1);
-      expect(result[1].allocation).eq(parseEther('0.01'));
-      expect(result[1].proposalId).eq(2);
+      const allocation = await allocationsStorage.getUserAllocations(1, Alice.address);
+      const claimableRewards = await allocationsStorage.getUserClaimableRewards(1, Alice.address);
+      expect(allocation).length(2);
+      expect(allocation[0].allocation).eq(parseEther('0.1'));
+      expect(allocation[0].proposal).eq(proposalAddresses[0].address);
+      expect(allocation[1].allocation).eq(parseEther('0.01'));
+      expect(allocation[1].proposal).eq(proposalAddresses[1].address);
+      expect(claimableRewards).eq(parseEther('0.29'));
     });
 
     it('Multiple users can allocate', async () => {
       const {
         signers: { Alice, Bob, Charlie },
+        proposalAddresses,
       } = testEnv;
 
       expect(await epochs.getCurrentEpoch()).eq(2);
@@ -291,65 +324,92 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
       await allocations.connect(Alice).allocate([
         {
           allocation: parseEther('0.4'),
-          proposalId: 1,
+          proposal: proposalAddresses[0].address,
         },
       ]);
       await allocations.connect(Bob).allocate([
-        { allocation: parseEther('0.13'), proposalId: 1 },
-        { allocation: parseEther('0.0002'), proposalId: 5 },
+        { allocation: parseEther('0.13'), proposal: proposalAddresses[0].address },
+        { allocation: parseEther('0.0002'), proposal: proposalAddresses[4].address },
       ]);
       await allocations.connect(Charlie).allocate([
         {
           allocation: parseEther('0.23'),
-          proposalId: 5,
+          proposal: proposalAddresses[4].address,
         },
       ]);
-      const proposal1allocations = await allocationsStorage.getUsersWithTheirAllocations(1, 1);
+      const proposal1allocations = await allocationsStorage.getUsersWithTheirAllocations(
+        1,
+        proposalAddresses[0].address,
+      );
       expect(proposal1allocations[0].length).eq(2);
       expect(proposal1allocations[1].length).eq(2);
-      const proposal3allocations = await allocationsStorage.getUsersWithTheirAllocations(1, 3);
+      const proposal3allocations = await allocationsStorage.getUsersWithTheirAllocations(
+        1,
+        proposalAddresses[2].address,
+      );
       expect(proposal3allocations[0].length).eq(0);
       expect(proposal3allocations[1].length).eq(0);
-      const proposal5allocations = await allocationsStorage.getUsersWithTheirAllocations(1, 5);
+      const proposal5allocations = await allocationsStorage.getUsersWithTheirAllocations(
+        1,
+        proposalAddresses[4].address,
+      );
       expect(proposal5allocations[0].length).eq(2);
       expect(proposal5allocations[1].length).eq(2);
     });
 
-    it('User can change his a proposal to allocate', async () => {
+    it('User can change his proposal to allocate', async () => {
       const {
         signers: { Alice },
+        proposalAddresses,
       } = testEnv;
 
       await allocations.connect(Alice).allocate([
         {
           allocation: parseEther('0.4'),
-          proposalId: 1,
+          proposal: proposalAddresses[0].address,
         },
       ]);
       await allocations.connect(Alice).allocate([
         {
           allocation: parseEther('0.234'),
-          proposalId: 2,
+          proposal: proposalAddresses[1].address,
         },
       ]);
       const allocation = await allocationsStorage.getUserAllocations(1, Alice.address);
 
-      expect(allocation[0].proposalId).eq(2);
+      expect(allocation[0].proposal).eq(proposalAddresses[1].address);
     });
 
-    it('Allocate emits proper event', async () => {
+    it('Allocate emits Allocated event', async () => {
       const {
         signers: { Alice },
+        proposalAddresses,
       } = testEnv;
 
       await expect(
         allocations.connect(Alice).allocate([
           {
             allocation: parseEther('0.4'),
-            proposalId: 1,
+            proposal: proposalAddresses[0].address,
           },
         ]),
       ).emit(allocations, 'Allocated');
+    });
+
+    it('Allocate emits Claimed event', async () => {
+      const {
+        signers: { Alice },
+        proposalAddresses,
+      } = testEnv;
+
+      await expect(
+        allocations.connect(Alice).allocate([
+          {
+            allocation: parseEther('0.4'),
+            proposal: proposalAddresses[0].address,
+          },
+        ]),
+      ).emit(allocations, 'Claimed');
     });
   });
 
@@ -357,6 +417,7 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
     it('Users allocate in second epoch', async () => {
       const {
         signers: { Alice },
+        proposalAddresses,
       } = testEnv;
       const start = await getLatestBlockTimestamp();
       const [epochs, allocations, allocationsStorage] = await setupAllocations(start, 500, 200);
@@ -367,20 +428,21 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
       await allocations.connect(Alice).allocate([
         {
           allocation: parseEther('0.4'),
-          proposalId: 1,
+          proposal: proposalAddresses[0].address,
         },
       ]);
       const allocationInFirstEpoch = await allocationsStorage.getUserAllocations(1, Alice.address);
       const allocationInSecondEpoch = await allocationsStorage.getUserAllocations(2, Alice.address);
 
       expect(allocationInFirstEpoch[0].allocation).eq(parseEther('0.4'));
-      expect(allocationInFirstEpoch[0].proposalId).eq(1);
+      expect(allocationInFirstEpoch[0].proposal).eq(proposalAddresses[0].address);
       expect(allocationInSecondEpoch.length).eq(0);
     });
 
     it('Cannot allocate when decision window closed', async () => {
       const {
         signers: { Alice },
+        proposalAddresses,
       } = testEnv;
       const start = await getLatestBlockTimestamp();
       const [_, allocations] = await setupAllocations(start, 500, 200);
@@ -391,7 +453,7 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
         allocations.connect(Alice).allocate([
           {
             allocation: parseEther('0.4'),
-            proposalId: 1,
+            proposal: proposalAddresses[0].address,
           },
         ]),
       ).revertedWith('HN:Allocations/decision-window-closed');
@@ -400,6 +462,7 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
     it('Cannot allocate when hexagon has not been started yet', async () => {
       const {
         signers: { Alice },
+        proposalAddresses,
       } = testEnv;
       const [_, allocations] = await setupAllocations(2000000000, 500, 200);
 
@@ -407,7 +470,7 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
         allocations.connect(Alice).allocate([
           {
             allocation: parseEther('0.4'),
-            proposalId: 1,
+            proposal: proposalAddresses[0].address,
           },
         ]),
       ).revertedWith('HN:Allocations/first-epoch-not-started-yet');

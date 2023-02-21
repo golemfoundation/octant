@@ -36,18 +36,17 @@ const getCustomNavigationTabs = () => {
 
 const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
   const { ipfsGateway } = env;
-  const { proposalId } = useParams();
-  const proposalIdNumber = parseInt(proposalId!, 10);
+  const { proposalAddress } = useParams();
   const proposals = useProposals();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
-  const { data: usersWithTheirAllocations } = useUsersWithTheirAllocations(proposalId!, {
+  const { data: usersWithTheirAllocations } = useUsersWithTheirAllocations(proposalAddress!, {
     refetchOnMount: true,
   });
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
-    ({ id }) => id.toString() === proposalId,
+    ({ address }) => address === proposalAddress,
   );
-  const proposal = proposals.find(({ id }) => id.toNumber() === proposalIdNumber);
+  const proposal = proposals.find(({ address }) => address === proposalAddress);
 
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
     allocations,
@@ -56,7 +55,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
   const shouldMatchedProposalRewardsBeAvailable =
     !!currentEpoch && ((currentEpoch > 1 && matchedProposalRewards) || currentEpoch === 1);
 
-  if (!proposal || !shouldMatchedProposalRewardsBeAvailable) {
+  if (!proposals || !shouldMatchedProposalRewardsBeAvailable) {
     return (
       <MainLayoutContainer
         classNameBody={styles.bodyLayout}
@@ -67,7 +66,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
     );
   }
 
-  if (proposal.isLoadingError) {
+  if (!proposal || (proposal && proposal.isLoadingError)) {
     triggerToast({
       title: 'Loading of this proposal encountered a problem.',
     });
@@ -80,7 +79,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
 
   const { description, landscapeImageCID, name, profileImageCID, website } = proposal;
 
-  const buttonProps = allocations.includes(proposalIdNumber)
+  const buttonProps = allocations.includes(proposalAddress!)
     ? {
         Icon: <Svg img={tick} size={1.5} />,
         label: 'Added to Allocate',
@@ -132,7 +131,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
         <Button
           className={styles.buttonAllocate}
           isSmallFont
-          onClick={() => onAddRemoveFromAllocate(proposalIdNumber)}
+          onClick={() => onAddRemoveFromAllocate(proposalAddress!)}
           variant="secondary"
           {...buttonProps}
         />
