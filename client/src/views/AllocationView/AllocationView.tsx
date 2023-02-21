@@ -35,7 +35,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
   } = useMetamask();
   const proposals = useProposals();
   const [currentView, setCurrentView] = useState<CurrentView>('edit');
-  const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
+  const [selectedItemAddress, setSelectedItemAddress] = useState<null | string>(null);
   const [allocationValues, setAllocationValues] = useState<undefined | AllocationValues>(undefined);
   const {
     data: userAllocations,
@@ -51,7 +51,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
   const allocateMutation = useAllocate({
     onSuccess: async () => {
       setCurrentView('edit');
-      setSelectedItemId(null);
+      setSelectedItemAddress(null);
       triggerToast({
         title: 'Allocation successful.',
       });
@@ -84,14 +84,14 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
         ? allocationsWithPositiveValues
         : [
             {
-              proposalId: proposals[0].id.toNumber(),
+              proposalAddress: proposals[0].address,
               value: '0',
             },
           ];
     allocateMutation.mutate(allocateMutationArgs);
   };
 
-  const onChangeAllocationItemValue = (id: number, newValue: string) => {
+  const onChangeAllocationItemValue = (proposalAddressToModify: string, newValue: string) => {
     if (allocateMutation.isLoading || !individualReward) {
       return;
     }
@@ -99,17 +99,22 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
     // When value === '', we keep it as undefined, for check in AllocationItem.tsx mapping to BigNumber.
     const newValueProcessed = newValue === '' ? undefined : newValue;
 
-    const newAllocationsWithPositiveValues = allocationsWithPositiveValues.map(element => {
-      return element.proposalId === id
+    const newAllocationsWithPositiveValues = allocationsWithPositiveValues.map(element =>
+      element.proposalAddress === proposalAddressToModify
         ? {
             ...element,
             value: newValue,
           }
-        : element;
-    });
-    if (!newAllocationsWithPositiveValues.find(({ proposalId }) => proposalId === id) && newValue) {
+        : element,
+    );
+    if (
+      !newAllocationsWithPositiveValues.find(
+        ({ proposalAddress }) => proposalAddress === proposalAddressToModify,
+      ) &&
+      newValue
+    ) {
       newAllocationsWithPositiveValues.push({
-        proposalId: id,
+        proposalAddress: proposalAddressToModify,
         value: newValue,
       });
     }
@@ -130,7 +135,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
 
     setAllocationValues(prevState => ({
       ...prevState,
-      [id]: newValueProcessed,
+      [proposalAddressToModify]: newValueProcessed,
     }));
   };
 
@@ -163,15 +168,15 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
                 isConnected={isConnected}
                 isDecisionWindowOpen={!!isDecisionWindowOpen}
               />
-              {allocations!.map((idInAllocation, index) => {
+              {allocations!.map((addressInAllocation, index) => {
                 const allocationItem = proposals.find(
-                  ({ id }) => id.toNumber() === idInAllocation,
+                  ({ address }) => address === addressInAllocation,
                 )!;
                 const proposalMatchedProposalRewards = matchedProposalRewards?.find(
-                  ({ id }) => id === allocationItem.id.toNumber(),
+                  ({ address }) => address === addressInAllocation,
                 );
-                const isSelected = selectedItemId === allocationItem.id.toNumber();
-                const value = allocationValues[allocationItem.id.toNumber()];
+                const isSelected = selectedItemAddress === allocationItem.address;
+                const value = allocationValues[allocationItem.address];
                 return (
                   <AllocationItem
                     // eslint-disable-next-line react/no-array-index-key
@@ -179,7 +184,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
                     className={cx(styles.box, styles.isAllocation, isSelected && styles.isSelected)}
                     isSelected={isSelected}
                     onChange={onChangeAllocationItemValue}
-                    onSelectItem={setSelectedItemId}
+                    onSelectItem={setSelectedItemAddress}
                     percentage={proposalMatchedProposalRewards?.percentage}
                     totalValueOfAllocations={proposalMatchedProposalRewards?.sum}
                     value={value}
@@ -191,8 +196,11 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
           ) : (
             <AllocationEmptyState />
           )}
-          {selectedItemId !== null && (
-            <div className={styles.selectedItemOverlay} onClick={() => setSelectedItemId(null)} />
+          {selectedItemAddress !== null && (
+            <div
+              className={styles.selectedItemOverlay}
+              onClick={() => setSelectedItemAddress(null)}
+            />
           )}
         </Fragment>
       ) : (

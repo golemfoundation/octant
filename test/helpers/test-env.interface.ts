@@ -31,6 +31,7 @@ export interface TestEnv {
   hexagonOracle: HexagonOracle;
   payouts: Payouts;
   payoutsManager: PayoutsManager;
+  proposalAddresses: SignerWithAddress[];
   proposals: Proposals;
   rewards: Rewards;
   signers: Signers;

@@ -1,8 +1,9 @@
 import { UserAllocation } from 'hooks/queries/useUserAllocations';
+import { AllocationsStore } from 'store/models/allocations/types';
 
 export type OnAddRemoveAllocationElementLocalStorage = {
-  allocations: number[];
-  id: number;
+  address: string;
+  allocations: NonNullable<AllocationsStore>;
   name: string;
   userAllocations?: UserAllocation[];
 };

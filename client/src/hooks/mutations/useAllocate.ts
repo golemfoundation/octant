@@ -1,4 +1,4 @@
-import { BigNumber, ContractTransaction } from 'ethers';
+import { ContractTransaction } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { UseMutationResult, useMutation } from 'react-query';
 import { useMetamask } from 'use-metamask';
@@ -14,7 +14,7 @@ export default function useAllocate({
 }: UseAllocate): UseMutationResult<
   ContractTransaction,
   unknown,
-  { proposalId: number; value: string }[]
+  { proposalAddress: string; value: string }[]
 > {
   const {
     metaState: { web3 },
@@ -25,9 +25,9 @@ export default function useAllocate({
   return useMutation({
     mutationFn: async allocations => {
       const transactionResponse = await contractAllocations!.allocate(
-        allocations.map(({ proposalId, value }) => ({
+        allocations.map(({ proposalAddress, value }) => ({
           allocation: parseUnits(value),
-          proposalId: BigNumber.from(proposalId),
+          proposal: proposalAddress,
         })),
       );
       await transactionResponse.wait(1);

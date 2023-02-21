@@ -8,8 +8,8 @@ import {
 export default function getNewAllocationValuesBigNumber(
   elements: AllocationWithPositiveValue[],
 ): AllocationWithPositiveValueBigNumber[] {
-  return elements.map(({ proposalId, value }) => ({
-    proposalId,
+  return elements.map(({ proposalAddress, value }) => ({
+    proposalAddress,
     value: parseUnits(value),
   }));
 }

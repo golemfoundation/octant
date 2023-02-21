@@ -20,36 +20,36 @@ export const toastDebouncedCantRemoveAllocatedProject = debounce(
 
 export function isProposalAlreadyAllocatedOn(
   userAllocations: undefined | UserAllocation[],
-  id: number,
+  address: string,
 ): boolean {
   // TODO Remove userAllocations.allocation.gt(0) check following https://wildlandio.atlassian.net/browse/HEX-108.
   if (!userAllocations) {
     return false;
   }
-  const allocation = userAllocations.find(({ proposalId }) => proposalId === id);
+  const allocation = userAllocations.find(({ proposalAddress }) => proposalAddress === address);
   return !!allocation && allocation.allocation.gt(0);
 }
 
 export function onAddRemoveAllocationElementLocalStorage({
   allocations,
-  id,
+  address,
   userAllocations,
   name,
-}: OnAddRemoveAllocationElementLocalStorage): number[] | undefined {
-  if (isProposalAlreadyAllocatedOn(userAllocations, id)) {
+}: OnAddRemoveAllocationElementLocalStorage): string[] | undefined {
+  if (isProposalAlreadyAllocatedOn(userAllocations, address)) {
     toastDebouncedCantRemoveAllocatedProject();
     return;
   }
-  const isItemAlreadyAdded = allocations.includes(id);
+  const isItemAlreadyAdded = allocations.includes(address);
   const newIds = allocations ? [...allocations] : [];
 
   if (isItemAlreadyAdded) {
-    newIds.splice(newIds.indexOf(id), 1);
+    newIds.splice(newIds.indexOf(address), 1);
     triggerToast({
       title: 'Removed from Allocate',
     });
   } else {
-    newIds.push(id);
+    newIds.push(address);
     triggerToast({
       title: `Added ${name} to Allocate`,
     });

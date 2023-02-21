@@ -38,9 +38,9 @@
       {
         "components": [
           {
-            "internalType": "uint256",
-            "name": "proposalId",
-            "type": "uint256"
+            "internalType": "address",
+            "name": "proposal",
+            "type": "address"
           },
           {
             "internalType": "uint256",
@@ -58,13 +58,38 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "epoch",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Claimed",
+    "type": "event"
+  },
+  {
     "inputs": [
       {
         "components": [
           {
-            "internalType": "uint256",
-            "name": "proposalId",
-            "type": "uint256"
+            "internalType": "address",
+            "name": "proposal",
+            "type": "address"
           },
           {
             "internalType": "uint256",

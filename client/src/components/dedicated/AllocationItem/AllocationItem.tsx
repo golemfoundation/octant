@@ -17,16 +17,16 @@ import styles from './AllocationItem.module.scss';
 import AllocationItemProps from './types';
 
 const AllocationItem: FC<AllocationItemProps> = ({
+  address,
   className,
-  name,
-  id,
-  onSelectItem,
   isLoadingError,
   isSelected,
+  name,
   onChange,
-  value,
-  totalValueOfAllocations,
+  onSelectItem,
   percentage,
+  totalValueOfAllocations,
+  value,
 }) => {
   const {
     metaState: { isConnected },
@@ -45,7 +45,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
       return;
     }
 
-    onChange(id.toNumber(), newValue);
+    onChange(address, newValue);
   };
 
   const onInputTextChange = event => {
@@ -69,7 +69,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
     <BoxRounded
       alignment="center"
       className={cx(styles.box, className)}
-      onClick={isConnected ? () => onSelectItem(id.toNumber()) : undefined}
+      onClick={isConnected ? () => onSelectItem(address) : undefined}
     >
       {isLoadingError ? (
         'Loading of a proposal encountered an error.'

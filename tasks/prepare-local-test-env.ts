@@ -21,6 +21,7 @@ import {
 task('prepare-local-test-env', 'Prepare local test environment').setAction(
   async (_, { ethers, network }) => {
     const { Alice } = await ethers.getNamedSigners();
+    const proposalAddresses = await ethers.getUnnamedSigners();
     const allocations: Allocations = await ethers.getContract(ALLOCATIONS);
     const token: ERC20 = await ethers.getContract(TOKEN);
     const glmDeposits: Deposits = await ethers.getContract(DEPOSITS);
@@ -49,7 +50,9 @@ task('prepare-local-test-env', 'Prepare local test environment').setAction(
     await executionLayerOracle.setBalance(2, parseEther('400'));
     // eslint-disable-next-line no-console
     console.log('Alice is allocating to first proposal.');
-    const userAllocations = [{ allocation: parseEther('0.4'), proposalId: 1 }];
+    const userAllocations = [
+      { allocation: parseEther('0.4'), proposal: proposalAddresses[0].address },
+    ];
     await allocations.connect(Alice).allocate(userAllocations);
     // eslint-disable-next-line no-console
     console.log('Test environment prepared.');

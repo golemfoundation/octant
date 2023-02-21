@@ -7,37 +7,37 @@ describe('getNewAllocationValuesBigNumber', () => {
     expect(
       getNewAllocationValuesBigNumber([
         {
-          proposalId: 1,
+          proposalAddress: '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91d',
           value: '1',
         },
         {
-          proposalId: 2,
+          proposalAddress: '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91e',
           value: '2',
         },
         {
-          proposalId: 3,
+          proposalAddress: '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91f',
           value: '3',
         },
         {
-          proposalId: 4,
+          proposalAddress: '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91g',
           value: '1809273910283',
         },
       ]),
     ).toEqual([
       {
-        proposalId: 1,
+        proposalAddress: '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91d',
         value: parseUnits('1'),
       },
       {
-        proposalId: 2,
+        proposalAddress: '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91e',
         value: parseUnits('2'),
       },
       {
-        proposalId: 3,
+        proposalAddress: '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91f',
         value: parseUnits('3'),
       },
       {
-        proposalId: 4,
+        proposalAddress: '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91g',
         value: parseUnits('1809273910283'),
       },
     ]);

@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import React, { FC, Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
@@ -16,18 +16,19 @@ import styles from './ProposalItem.module.scss';
 import { ProposalItemProps } from './types';
 
 const ProposalItem: FC<ProposalItemProps> = ({
+  address,
   description,
+  isAlreadyAdded,
   isLoadingError,
+  landscapeImageCID,
   name,
   onAddRemoveFromAllocate,
-  isAlreadyAdded,
-  id,
-  landscapeImageCID,
+  percentage,
   profileImageCID,
   totalValueOfAllocations,
-  percentage,
 }) => {
   const { ipfsGateway } = env;
+  const navigate = useNavigate();
   const buttonProps = isAlreadyAdded
     ? {
         Icon: <Svg img={tick} size={1.5} />,
@@ -38,7 +39,10 @@ const ProposalItem: FC<ProposalItemProps> = ({
       };
 
   return (
-    <Link className={styles.root} to={`${ROOT_ROUTES.proposal.absolute}/${id}`}>
+    <div
+      className={styles.root}
+      onClick={() => navigate(`${ROOT_ROUTES.proposal.absolute}/${address}`)}
+    >
       {isLoadingError ? (
         <BoxRounded>Loading of a proposal encountered an error.</BoxRounded>
       ) : (
@@ -77,9 +81,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
               <Button
                 className={styles.button}
                 isSmallFont
-                onClick={() => {
-                  onAddRemoveFromAllocate();
-                }}
+                onClick={onAddRemoveFromAllocate}
                 variant="secondary"
                 {...buttonProps}
               />
@@ -87,7 +89,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
           </div>
         </Fragment>
       )}
-    </Link>
+    </div>
   );
 };
 

@@ -1,6 +1,7 @@
 import { smock } from '@defi-wonderland/smock';
 import chai from 'chai';
 import { deployments, ethers } from 'hardhat';
+import { SignerWithAddress } from 'hardhat-deploy-ethers/signers';
 
 import { Signers, TestEnv } from './test-env.interface';
 
@@ -52,6 +53,7 @@ const testEnv: TestEnv = {
   hexagonOracle: {} as HexagonOracle,
   payouts: {} as Payouts,
   payoutsManager: {} as PayoutsManager,
+  proposalAddresses: {} as SignerWithAddress[],
   proposals: {} as Proposals,
   rewards: {} as Rewards,
   signers: {} as Signers,
@@ -62,6 +64,9 @@ const testEnv: TestEnv = {
 
 async function initializeTestsEnv() {
   testEnv.signers = await ethers.getNamedSigners();
+  testEnv.proposalAddresses = await ethers
+    .getUnnamedSigners()
+    .then(proposals => proposals.slice(0, 10));
   testEnv.allocations = await ethers.getContract(ALLOCATIONS);
   testEnv.allocationsStorage = await ethers.getContract(ALLOCATIONS_STORAGE);
   testEnv.faucet = await ethers.getContract(FAUCET);

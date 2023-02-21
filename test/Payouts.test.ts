@@ -111,49 +111,68 @@ makeTestsEnv(PAYOUTS, testEnv => {
 
   describe('Proposal payouts', async () => {
     it('check if rewards contract is called once', async () => {
-      await payouts.connect(withdrawals.wallet).registerProposalPayout(1, parseEther('0.3'));
+      const { proposalAddresses } = testEnv;
+      await payouts
+        .connect(withdrawals.wallet)
+        .registerProposalPayout(proposalAddresses[0].address, parseEther('0.3'));
       expect(rewards.proposalReward).calledOnce;
       rewards.proposalReward.atCall(0).calledWith(1, 1);
     });
 
     it('check if rewards contract is called twice', async () => {
-      await payouts.connect(withdrawals.wallet).registerProposalPayout(1, parseEther('2.0'));
+      const { proposalAddresses } = testEnv;
+      await payouts
+        .connect(withdrawals.wallet)
+        .registerProposalPayout(proposalAddresses[0].address, parseEther('2.0'));
       expect(rewards.proposalReward).calledTwice;
       rewards.proposalReward.atCall(0).calledWith(1, 1);
       rewards.proposalReward.atCall(1).calledWith(2, 1);
     });
 
     it("can't register more than earned", async () => {
+      const { proposalAddresses } = testEnv;
       // proposal gets 1 ETH claimable rewards, it's third epoch so max possible payout is 3 ETH
       expect(
-        payouts.connect(withdrawals.wallet).registerProposalPayout(1, parseEther('3.1')),
+        payouts
+          .connect(withdrawals.wallet)
+          .registerProposalPayout(proposalAddresses[0].address, parseEther('3.1')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
     });
 
     it('payout stay permanent if registration is reverted', async () => {
-      await payouts.connect(withdrawals.wallet).registerProposalPayout(1, parseEther('0.3'));
-      let proposalPayout = await payouts.proposalPayouts(1);
+      const { proposalAddresses } = testEnv;
+      await payouts
+        .connect(withdrawals.wallet)
+        .registerProposalPayout(proposalAddresses[0].address, parseEther('0.3'));
+      let proposalPayout = await payouts.proposalPayouts(proposalAddresses[0].address);
       expect(proposalPayout.total).eq(parseEther('0.3'));
       expect(proposalPayout.checkpointEpoch).eq(0);
 
       // proposal gets 1 ETH claimable rewards, it's third epoch so max possible payout is 3 ETH
       expect(
-        payouts.connect(withdrawals.wallet).registerProposalPayout(1, parseEther('2.8')),
+        payouts
+          .connect(withdrawals.wallet)
+          .registerProposalPayout(proposalAddresses[0].address, parseEther('2.8')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
 
-      proposalPayout = await payouts.proposalPayouts(1);
+      proposalPayout = await payouts.proposalPayouts(proposalAddresses[0].address);
       expect(proposalPayout.total).eq(parseEther('0.3'));
       expect(proposalPayout.extra).eq(parseEther('0.3'));
     });
 
     it('multiple registrations add up; checkpoint grows; extra is taken into account', async () => {
-      await payouts.connect(withdrawals.wallet).registerProposalPayout(1, parseEther('0.3'));
-      let proposalPayout = await payouts.proposalPayouts(1);
+      const { proposalAddresses } = testEnv;
+      await payouts
+        .connect(withdrawals.wallet)
+        .registerProposalPayout(proposalAddresses[0].address, parseEther('0.3'));
+      let proposalPayout = await payouts.proposalPayouts(proposalAddresses[0].address);
       expect(proposalPayout.total).eq(parseEther('0.3'));
       expect(proposalPayout.extra).eq(parseEther('0.3'));
 
-      await payouts.connect(withdrawals.wallet).registerProposalPayout(1, parseEther('0.8'));
-      proposalPayout = await payouts.proposalPayouts(1);
+      await payouts
+        .connect(withdrawals.wallet)
+        .registerProposalPayout(proposalAddresses[0].address, parseEther('0.8'));
+      proposalPayout = await payouts.proposalPayouts(proposalAddresses[0].address);
       expect(proposalPayout.total).eq(parseEther('1.1'));
       expect(proposalPayout.extra).eq(parseEther('0.1'));
       expect(proposalPayout.checkpointEpoch).eq(1);

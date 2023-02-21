@@ -5,29 +5,26 @@ import useContractProposals from 'hooks/contracts/useContractProposals';
 import { BackendProposal, ExtendedProposal } from 'types/proposals';
 
 import useCurrentEpoch from './useCurrentEpoch';
+import useProposalsCid from './useProposalsCid';
 
 export default function useProposals(): ExtendedProposal[] {
   const contractProposals = useContractProposals();
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: proposalsCid } = useProposalsCid();
 
   const proposalsContract = useQuery(
     ['proposalsContract'],
-    () => contractProposals?.getProposals(currentEpoch!),
+    () => contractProposals?.getProposalAddresses(currentEpoch!),
     {
       enabled: !!contractProposals && !!currentEpoch,
-      select: response =>
-        response?.map(([id, uri]) => ({
-          id,
-          uri,
-        })),
     },
   );
 
   const proposalsIpfsResults = useQueries<BackendProposal[]>(
-    (proposalsContract!.data || []).map(({ id, uri }) => ({
+    (proposalsContract!.data || []).map(address => ({
       enabled: !!proposalsContract && !!proposalsContract.data,
-      queryFn: () => apiGetProposal(uri),
-      queryKey: ['proposalsIpfsResults', id.toNumber()],
+      queryFn: () => apiGetProposal(`${proposalsCid}/${address}`),
+      queryKey: ['proposalsIpfsResults', address],
     })),
   );
 
@@ -39,7 +36,7 @@ export default function useProposals(): ExtendedProposal[] {
   }
 
   return proposalsIpfsResults.map<ExtendedProposal>((proposal, index) => ({
-    id: proposalsContract!.data![index].id,
+    address: proposalsContract!.data![index],
     isLoadingError: proposal.isError,
     ...(proposal.data || {}),
   }));

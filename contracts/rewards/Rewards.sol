@@ -21,7 +21,7 @@ contract Rewards is IRewards {
     using PRBMathUD60x18 for uint256;
 
     struct ProposalRewards {
-        uint256 id;
+        address proposalAddress;
         uint256 donated;
         uint256 matched;
     }
@@ -97,14 +97,7 @@ contract Rewards is IRewards {
         uint32 epoch,
         address user
     ) public view returns (uint256) {
-        uint256 ir = individualReward(epoch, user);
-        uint256 allocationsSum;
-        IAllocationsStorage.Allocation[] memory allocations = allocationsStorage
-            .getUserAllocations(epoch, user);
-        for (uint256 i = 0; i < allocations.length; i++) {
-            allocationsSum += allocations[i].allocation;
-        }
-        return ir - allocationsSum;
+        return allocationsStorage.getUserClaimableRewards(epoch, user);
     }
 
     /// @notice Compute total rewards to be distributed between users and proposals.
@@ -121,28 +114,28 @@ contract Rewards is IRewards {
 
     /// @notice Calculates donated funds by participants in given epoch.
     /// @return 0: proposalRewardsSum - total donated ETH to all proposals in given epoch.
-    /// 1: array of proposals rewards containing id - proposal id, donated - donated by all users for
+    /// 1: array of proposals rewards containing proposalAddress - proposal address, donated - donated by all users for
     /// this proposal in WEI, matched - 0 (to get matched reward value call matchedProposalRewards() method).
     function individualProposalRewards(
         uint32 epoch
     ) public view returns (uint256, ProposalRewards[] memory) {
-        uint256[] memory proposalIds = proposals.getProposalIds(epoch);
+        address[] memory proposalAddresses = proposals.getProposalAddresses(epoch);
         uint256 proposalRewardsSum;
         ProposalRewards[] memory proposalRewards = new ProposalRewards[](
-            proposalIds.length
+            proposalAddresses.length
         );
         for (
             uint256 iProposal = 0;
-            iProposal < proposalIds.length;
+            iProposal < proposalAddresses.length;
             iProposal++
         ) {
-            proposalRewards[iProposal].id = proposalIds[iProposal];
+            proposalRewards[iProposal].proposalAddress = proposalAddresses[iProposal];
             (
                 address[] memory users,
                 uint256[] memory allocations
             ) = allocationsStorage.getUsersWithTheirAllocations(
                     epoch,
-                    proposalIds[iProposal]
+                        proposalAddresses[iProposal]
                 );
 
             // count individual rewards for proposals.
@@ -157,7 +150,7 @@ contract Rewards is IRewards {
     }
 
     /// @notice Calculates donated and matched funds by participants in given epoch.
-    /// @return array of proposals rewards containing id - proposal id, donated - donated by all users for
+    /// @return array of proposals rewards containing proposalAddress - proposal address, donated - donated by all users for
     /// this proposal in WEI, matched - amount donated by Golem Foundation to this proposal in WEI.
     function matchedProposalRewards(
         uint32 epoch
@@ -195,7 +188,7 @@ contract Rewards is IRewards {
     /// @return Rewards amount assigned to this proposal in WEI.
     function proposalReward(
         uint32 epoch,
-        uint256 proposalId
+        address proposal
     ) external view returns (uint256) {
         (
             uint256 proposalRewardsSum,
@@ -215,7 +208,7 @@ contract Rewards is IRewards {
         for (uint256 iReward = 0; iReward < proposalRewards.length; iReward++) {
             if (
                 proposalRewards[iReward].donated > proposalDonationThreshold &&
-                proposalRewards[iReward].id == proposalId
+                proposalRewards[iReward].proposalAddress == proposal
             ) {
                 uint256 proposalRewardsShare = proposalRewards[iReward]
                     .donated
@@ -227,6 +220,24 @@ contract Rewards is IRewards {
             }
         }
         return 0;
+    }
+
+    /// @notice Calculates Golem Foundation rewards (donations that didn't pass the threshold and
+    /// individual rewards from users who didn't vote in particular epoch.
+    /// @return amount in WEI.
+    function golemFoundationReward(uint32 epoch) external view returns (uint256) {
+        (
+        uint256 proposalRewardsSum,
+        ProposalRewards[] memory proposalRewards
+        ) = individualProposalRewards(epoch);
+
+        (,uint256 proposalDonationAboveThresholdSum) = _calculateProposalRewardsThreshold(
+            proposalRewardsSum,
+            proposalRewards
+        );
+        uint256 claimableRewardsSum = allocationsStorage.getTotalClaimableRewards(epoch);
+
+        return allIndividualRewards(epoch) - proposalDonationAboveThresholdSum - claimableRewardsSum;
     }
 
     function _calculateProposalRewardsThreshold(

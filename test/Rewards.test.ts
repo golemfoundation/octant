@@ -76,7 +76,8 @@ makeTestsEnv(REWARDS, testEnv => {
         token,
         glmDeposits,
         allocations,
-        signers: { Alice, Bob, Charlie, Eve },
+        signers: { Alice, Bob, Charlie, Eve, Darth },
+        proposalAddresses,
       } = testEnv;
 
       // Users deposit
@@ -92,6 +93,11 @@ makeTestsEnv(REWARDS, testEnv => {
       await token.connect(Charlie).approve(glmDeposits.address, parseEther('2000000'));
       await glmDeposits.connect(Charlie).deposit(parseEther('2000000'));
 
+      // Darth does not vote, his rewards go back to Golem Foundation
+      await token.transfer(Darth.address, parseEther('1500'));
+      await token.connect(Darth).approve(glmDeposits.address, parseEther('1500'));
+      await glmDeposits.connect(Darth).deposit(parseEther('1500'));
+
       await token.transfer(Eve.address, parseEther('200000'));
       await token.connect(Eve).approve(glmDeposits.address, parseEther('200000'));
       await glmDeposits.connect(Eve).deposit(parseEther('200000'));
@@ -102,23 +108,23 @@ makeTestsEnv(REWARDS, testEnv => {
       await allocations.connect(Alice).allocate([
         {
           allocation: parseEther('0.12'),
-          proposalId: 1,
+          proposal: proposalAddresses[0].address,
         },
       ]);
       await allocations.connect(Bob).allocate([
         {
           allocation: parseEther('0.1'),
-          proposalId: 2,
+          proposal: proposalAddresses[1].address,
         },
       ]);
       await allocations.connect(Charlie).allocate([
-        { allocation: parseEther('0.08'), proposalId: 2 },
-        { allocation: parseEther('0.00001'), proposalId: 5 },
-        { allocation: parseEther('0.000000000009'), proposalId: 4 },
+        { allocation: parseEther('0.08'), proposal: proposalAddresses[1].address },
+        { allocation: parseEther('0.00001'), proposal: proposalAddresses[4].address },
+        { allocation: parseEther('0.000000000009'), proposal: proposalAddresses[3].address },
       ]);
       await allocations.connect(Eve).allocate([
-        { allocation: parseEther('0.032'), proposalId: 4 },
-        { allocation: parseEther('0.0000000989'), proposalId: 1 },
+        { allocation: parseEther('0.032'), proposal: proposalAddresses[3].address },
+        { allocation: parseEther('0.0000000989'), proposal: proposalAddresses[0].address },
       ]);
     });
 
@@ -148,59 +154,59 @@ makeTestsEnv(REWARDS, testEnv => {
       const charlieClaimableRewards = await rewards.claimableReward(2, Charlie.address);
       const eveClaimableRewards = await rewards.claimableReward(2, Eve.address);
 
-      expect(aliceClaimableRewards).eq(parseEther('0.28'));
+      expect(aliceClaimableRewards).eq(parseEther('0.279999999999999999'));
       expect(bobClaimableRewards).eq(parseEther('0.1'));
       expect(charlieClaimableRewards).eq(parseEther('0.719989999990999999'));
       expect(eveClaimableRewards).eq(parseEther('0.0479999011'));
     });
 
     it('Proposal reward is equal to 0 in the first epoch', async () => {
-      const { rewards } = testEnv;
+      const { rewards, proposalAddresses } = testEnv;
 
       for (let i = 0; i < 10; i++) {
         /* eslint-disable no-await-in-loop */
-        const proposalReward = await rewards.proposalReward(1, i);
+        const proposalReward = await rewards.proposalReward(1, proposalAddresses[i].address);
         expect(proposalReward).eq(0);
       }
     });
 
     it('Compute proposal reward', async () => {
-      const { rewards } = testEnv;
-      const firstProposalReward = await rewards.proposalReward(2, 1);
-      expect(firstProposalReward).eq(parseEther('9.260424667313375238'));
-      const secondProposalReward = await rewards.proposalReward(2, 2);
-      expect(secondProposalReward).eq(parseEther('13.890625552779503139'));
+      const { rewards, proposalAddresses } = testEnv;
+      const firstProposalReward = await rewards.proposalReward(2, proposalAddresses[0].address);
+      expect(firstProposalReward).eq(parseEther('9.262157256113608813'));
+      const secondProposalReward = await rewards.proposalReward(2, proposalAddresses[1].address);
+      expect(secondProposalReward).eq(parseEther('13.893224433837942364'));
 
       for (let i = 3; i < 10; i++) {
         /* eslint-disable no-await-in-loop */
-        const proposalReward = await rewards.proposalReward(1, i);
+        const proposalReward = await rewards.proposalReward(1, proposalAddresses[i].address);
         expect(proposalReward).eq(0);
       }
     });
 
     it('Compute individual proposal rewards', async () => {
-      const { rewards } = testEnv;
+      const { rewards, proposalAddresses } = testEnv;
 
       const proposalRewards = await rewards.individualProposalRewards(2);
       expect(proposalRewards[0], 'proposal rewards sum').eq(parseEther('0.332010098909'));
       const firstProposal = proposalRewards[1][0];
-      expect(firstProposal.id).eq(1);
+      expect(firstProposal.proposalAddress).eq(proposalAddresses[0].address);
       expect(firstProposal.donated).eq(parseEther('0.1200000989'));
       expect(firstProposal.matched).eq(0);
       const secondProposal = proposalRewards[1][1];
-      expect(secondProposal.id).eq(2);
+      expect(secondProposal.proposalAddress).eq(proposalAddresses[1].address);
       expect(secondProposal.donated).eq(parseEther('0.18'));
       expect(secondProposal.matched).eq(0);
       const thirdProposal = proposalRewards[1][2];
-      expect(thirdProposal.id).eq(3);
+      expect(thirdProposal.proposalAddress).eq(proposalAddresses[2].address);
       expect(thirdProposal.donated).eq(0);
       expect(thirdProposal.matched).eq(0);
       const fourthProposal = proposalRewards[1][3];
-      expect(fourthProposal.id).eq(4);
+      expect(fourthProposal.proposalAddress).eq(proposalAddresses[3].address);
       expect(fourthProposal.donated).eq(parseEther('0.032000000009'));
       expect(fourthProposal.matched).eq(0);
       const fifthProposal = proposalRewards[1][4];
-      expect(fifthProposal.id).eq(5);
+      expect(fifthProposal.proposalAddress).eq(proposalAddresses[4].address);
       expect(fifthProposal.donated).eq(parseEther('0.00001'));
       expect(fifthProposal.matched).eq(0);
       proposalRewards[1].slice(5).forEach(reward => {
@@ -210,29 +216,33 @@ makeTestsEnv(REWARDS, testEnv => {
     });
 
     it('Compute matched proposal rewards', async () => {
-      const { rewards } = testEnv;
+      const {
+        rewards,
+        signers: { Darth },
+        proposalAddresses,
+      } = testEnv;
       const matchedRewards = await rewards.matchedRewards(2);
-      expect(matchedRewards).eq(parseEther('22.851050121192878400'));
+      expect(matchedRewards).eq(parseEther('22.855381591051551200'));
       const proposalRewards = await rewards.matchedProposalRewards(2);
       const firstProposal = proposalRewards[0];
-      expect(firstProposal.id).eq(1);
+      expect(firstProposal.proposalAddress).eq(proposalAddresses[0].address);
       expect(firstProposal.donated).eq(parseEther('0.1200000989'));
-      expect(firstProposal.matched).eq(parseEther('9.140424568413375238'));
+      expect(firstProposal.matched).eq(parseEther('9.142157157213608813'));
       const secondProposal = proposalRewards[1];
-      expect(secondProposal.id).eq(2);
+      expect(secondProposal.proposalAddress).eq(proposalAddresses[1].address);
       expect(secondProposal.donated).eq(parseEther('0.18'));
-      expect(secondProposal.matched).eq(parseEther('13.710625552779503139'));
+      expect(secondProposal.matched).eq(parseEther('13.713224433837942364'));
       const thirdProposal = proposalRewards[2];
-      expect(thirdProposal.id).eq(3);
+      expect(thirdProposal.proposalAddress).eq(proposalAddresses[2].address);
       expect(thirdProposal.donated).eq(0);
       expect(thirdProposal.matched).eq(0);
       const fourthProposal = proposalRewards[3];
       // fourth and fifth proposal didn't pass the threshold -> matched = 0
-      expect(fourthProposal.id).eq(4);
+      expect(fourthProposal.proposalAddress).eq(proposalAddresses[3].address);
       expect(fourthProposal.donated).eq(parseEther('0.032000000009'));
       expect(fourthProposal.matched).eq(0);
       const fifthProposal = proposalRewards[4];
-      expect(fifthProposal.id).eq(5);
+      expect(fifthProposal.proposalAddress).eq(proposalAddresses[4].address);
       expect(fifthProposal.donated).eq(parseEther('0.00001'));
       expect(fifthProposal.matched).eq(0);
 
@@ -240,7 +250,17 @@ makeTestsEnv(REWARDS, testEnv => {
         expect(reward.donated).eq(0);
         expect(reward.matched).eq(0);
       });
+      // matched rewards
       expect(matchedRewards).approximately(firstProposal.matched.add(secondProposal.matched), 30);
+
+      // Golem foundation rewards
+      const gfRewards = await rewards.golemFoundationReward(2);
+      // Darth didn't allocate, his rewards go back to GF
+      const darthIndividualReward = await rewards.individualReward(2, Darth.address);
+      expect(gfRewards).approximately(
+        fourthProposal.donated.add(fifthProposal.donated).add(darthIndividualReward),
+        3,
+      );
     });
   });
 });

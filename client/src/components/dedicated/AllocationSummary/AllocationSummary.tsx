@@ -10,17 +10,21 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useMatchedRewards from 'hooks/queries/useMatchedRewards';
 import useProposals from 'hooks/queries/useProposals';
+import { ExtendedProposal } from 'types/proposals';
 import getFormattedUnits from 'utils/getFormattedUnit';
 
 import styles from './AllocationSummary.module.scss';
 import ExpandableList from './ExpandableList/ExpandableList';
 import AllocationSummaryProps from './types';
 
-const getHeader = (proposals, allocations) => {
+const getHeader = (
+  proposals: ExtendedProposal[],
+  allocations: AllocationSummaryProps['allocations'],
+) => {
   if (allocations.length > 1) {
     return `Send funds to ${allocations.length} projects`;
   }
-  const proposal = proposals.find(({ id }) => allocations[0] === id.toNumber()).name;
+  const proposal = proposals.find(({ address }) => allocations[0] === address)!.name;
 
   return `Send funds to ${proposal}`;
 };
