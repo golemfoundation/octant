@@ -26,7 +26,7 @@ const GET_ALLOCATIONS = gql`
     allocateds(orderBy: blockTimestamp, where: { user: $userAddress }) {
       allocation
       blockTimestamp
-      proposalId
+      proposal
     }
   }
 `;
