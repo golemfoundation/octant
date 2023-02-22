@@ -1,4 +1,4 @@
-# Hexagon subgraph (The Graph)
+# Octant subgraph (The Graph)
 
 ## Setup
 
@@ -66,4 +66,4 @@ yarn deploy:goerli
 ```
 
 ## Query
-Open the following url in your browser `http://127.0.0.1:8000/subgraphs/name/hexagon/graphql`
+Open the following url in your browser `http://127.0.0.1:8000/subgraphs/name/octant/graphql`
