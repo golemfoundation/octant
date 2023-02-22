@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 
 import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
-import { DISCORD_INVITE_LINK } from 'constants/urls';
+import { DISCORD_LINK } from 'constants/urls';
 import { octantEmpty } from 'svg/logo';
 
 import styles from './AllocationEmptyState.module.scss';
@@ -17,7 +17,7 @@ const AllocationEmptyState = (): ReactElement => (
     </div>
     <Button
       className={styles.buttonDiscord}
-      href={DISCORD_INVITE_LINK}
+      href={DISCORD_LINK}
       label="Join us on Discord"
       variant="link2"
     />
