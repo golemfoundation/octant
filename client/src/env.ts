@@ -33,7 +33,7 @@ const env = {
   },
   ipfsGateway:
     // @ts-expect-error TS does not understand the way vite imports envs.
-    import.meta.env.IPFS_GATEWAY || 'https://hexagon.infura-ipfs.io/ipfs/',
+    import.meta.env.IPFS_GATEWAY || 'https://octant.infura-ipfs.io/ipfs/',
   isTestnet:
     // @ts-expect-error TS does not understand the way vite imports envs.
     import.meta.env.VITE_IS_TESTNET || 'true',
