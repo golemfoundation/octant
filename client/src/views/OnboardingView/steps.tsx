@@ -5,7 +5,7 @@ import stepTwoImage from 'assets/images/onboarding/2.png';
 import stepThreeImage from 'assets/images/onboarding/3.png';
 import stepFourImage from 'assets/images/onboarding/4.png';
 import Button from 'components/core/Button/Button';
-import { DISCORD_INVITE_LINK, OCTANT_DOCS, BLOG_POST } from 'constants/urls';
+import { DISCORD_LINK, OCTANT_DOCS, BLOG_POST } from 'constants/urls';
 
 import styles from './OnboardingView.module.scss';
 import { Step } from './types';
@@ -75,7 +75,7 @@ const steps: Step[] = [
           Docs
         </Button>{' '}
         or join us on{' '}
-        <Button href={DISCORD_INVITE_LINK} variant="link3">
+        <Button href={DISCORD_LINK} variant="link3">
           Discord
         </Button>
         .
