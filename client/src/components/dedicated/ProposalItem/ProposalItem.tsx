@@ -40,8 +40,10 @@ const ProposalItem: FC<ProposalItemProps> = ({
 
   return (
     <div
-      className={styles.root}
-      onClick={() => navigate(`${ROOT_ROUTES.proposal.absolute}/${address}`)}
+      className={cx(styles.root, !isLoadingError && styles.isClickable)}
+      onClick={
+        isLoadingError ? () => {} : () => navigate(`${ROOT_ROUTES.proposal.absolute}/${address}`)
+      }
     >
       {isLoadingError ? (
         <BoxRounded>Loading of a proposal encountered an error.</BoxRounded>
