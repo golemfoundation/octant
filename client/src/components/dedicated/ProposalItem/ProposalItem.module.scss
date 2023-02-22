@@ -4,9 +4,12 @@ $paddingBody: 2.4rem;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  cursor: pointer;
   border-radius: $border-radius-16;
   background: $color-white;
+
+  &.isClickabe {
+    cursor: pointer;
+  }
 
   &:not(:last-child) {
     margin: 0 auto 1.6rem;
