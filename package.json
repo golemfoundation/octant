@@ -1,5 +1,5 @@
 {
-  "name": "hexagon",
+  "name": "octant",
   "version": "1.0.0",
   "description": "The decentralised governance system from Golem Foundation",
   "main": "index.js",
@@ -28,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/wildland/hexagon.git"
+    "url": "git+https://gitlab.com/wildland/octant.git"
   },
   "keywords": [
     "governance",
@@ -37,7 +37,7 @@
   "author": "Golem Foundation Contributors <contact@golem.foundation>",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://gitlab.com/wildland/hexagon/issues"
+    "url": "https://gitlab.com/wildland/octant/issues"
   },
   "homepage": "https://wildland.io/",
   "devDependencies": {

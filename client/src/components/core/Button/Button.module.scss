@@ -30,64 +30,64 @@
 .variant-- {
   &cta {
     color: $color-white;
-    border: 0.1rem solid $color-hexagon-dark;
-    background: $color-hexagon-dark;
+    border: 0.1rem solid $color-octant-dark;
+    background: $color-octant-dark;
 
     &.isDisabled {
-      color: $color-hexagon-grey2;
-      background: $color-hexagon-grey1;
-      border-color: $color-hexagon-grey1;
+      color: $color-octant-grey2;
+      background: $color-octant-grey1;
+      border-color: $color-octant-grey1;
     }
   }
 
   &secondary {
-    color: $color-hexagon-dark;
-    border: 0.1rem solid $color-hexagon-dark;
+    color: $color-octant-dark;
+    border: 0.1rem solid $color-octant-dark;
     background: $color-white;
 
     &.isDisabled {
       cursor: auto;
       background: $color-white;
-      border-color: $color-hexagon-grey1;
-      color: $color-hexagon-grey1;
+      border-color: $color-octant-grey1;
+      color: $color-octant-grey1;
     }
   }
 
   &iconVertical {
-    color: $color-hexagon-grey3;
+    color: $color-octant-grey3;
     display: flex;
     flex-direction: column;
     border: 0;
     font-size: $font-size-10;
 
     svg {
-      color: $color-hexagon-grey3;
-      stroke: $color-hexagon-grey3;
+      color: $color-octant-grey3;
+      stroke: $color-octant-grey3;
 
       path, circle, rect {
-        color: $color-hexagon-grey3;
-        stroke: $color-hexagon-grey3;
+        color: $color-octant-grey3;
+        stroke: $color-octant-grey3;
       }
 
       circle {
-        fill: $color-hexagon-grey3;
+        fill: $color-octant-grey3;
       }
     }
 
     &.isActive {
-      color: $color-hexagon-green3;
+      color: $color-octant-green3;
 
       svg {
-        color: $color-hexagon-green3;
-        stroke: $color-hexagon-green3;
+        color: $color-octant-green3;
+        stroke: $color-octant-green3;
 
         path, circle, rect {
-          color: $color-hexagon-green3;
-          stroke: $color-hexagon-green3;
+          color: $color-octant-green3;
+          stroke: $color-octant-green3;
         }
 
         circle {
-          fill: $color-hexagon-green3;
+          fill: $color-octant-green3;
         }
       }
     }
@@ -98,7 +98,7 @@
   }
 
   &iconOnly {
-    background: $color-hexagon-grey7;
+    background: $color-octant-grey7;
     border-radius: $border-radius-10;
     height: 3.2rem;
     width: 3.2rem;
@@ -123,7 +123,7 @@
     font-size: $font-size-12;
     border-radius: 0;
     min-height: initial;
-    color: $color-hexagon-green;
+    color: $color-octant-green;
   }
 
   &link2 {
@@ -144,7 +144,7 @@
     position: relative;
     height: auto;
     display: inline;
-    color: $color-hexagon-green;
+    color: $color-octant-green;
     padding: 0;
     font-size: 1.6rem;
     text-decoration: underline;
@@ -170,5 +170,5 @@
   width: 1.6rem;
   height: 1.6rem;
   border-color: $color-white;
-  border-top-color: $color-hexagon-grey14;
+  border-top-color: $color-octant-grey14;
 }

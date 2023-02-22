@@ -5,19 +5,19 @@ import stepTwoImage from 'assets/images/onboarding/2.png';
 import stepThreeImage from 'assets/images/onboarding/3.png';
 import stepFourImage from 'assets/images/onboarding/4.png';
 import Button from 'components/core/Button/Button';
-import { DISCORD_INVITE_LINK, HEXAGON_DOCS, BLOG_POST } from 'constants/urls';
+import { DISCORD_INVITE_LINK, OCTANT_DOCS, BLOG_POST } from 'constants/urls';
 
 import styles from './OnboardingView.module.scss';
 import { Step } from './types';
 
 const steps: Step[] = [
   {
-    header: 'Welcome to Hexagon',
+    header: 'Welcome to Octant',
     image: stepOneImage,
     text: (
       <div>
-        Hexagon is a Golem Foundation experiment in decentralised governance and funding projects
-        for the public good.
+        Octant is a Golem Foundation experiment in decentralised governance and funding projects for
+        the public good.
         <br />
         <br />
         To get started, connect your wallet and lock some GLM in the Earn tab. If you don’t have any
@@ -65,13 +65,13 @@ const steps: Step[] = [
       <div>
         The <span className={styles.bold}>Metrics</span> tab shows a range of stats about the
         current and previous epochs to help inform your allocation decisions and generally provide
-        an overview of Hexagon.
+        an overview of Octant.
         <br />
         <br />
         Still have questions or want to reach out?
         <br />
         Read the{' '}
-        <Button href={HEXAGON_DOCS} variant="link3">
+        <Button href={OCTANT_DOCS} variant="link3">
           Docs
         </Button>{' '}
         or join us on{' '}

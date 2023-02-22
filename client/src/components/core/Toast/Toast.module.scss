@@ -21,22 +21,22 @@
 }
 
 .title {
-  color: $color-hexagon-dark;
+  color: $color-octant-dark;
   font-weight: $font-weight-bold;
   margin: 0 0 0.5rem 0;
 }
 
 .message {
   text-align: left;
-  color: $color-hexagon-grey6;
+  color: $color-octant-grey6;
 }
 
 .type-- {
   &error {
-    border: 0.2rem solid $color-hexagon-red;
+    border: 0.2rem solid $color-octant-red;
   }
 
   &success {
-    border: 0.2rem solid $color-hexagon-green;
+    border: 0.2rem solid $color-octant-green;
   }
 }

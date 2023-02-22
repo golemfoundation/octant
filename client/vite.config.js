@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    base: '/governance/hexagon/',
+    base: '/governance/octant/',
     css: {
       modules: {
         generateScopedName: localIdentName,
@@ -59,13 +59,5 @@ export default defineConfig(({ mode }) => {
         views: path.resolve(__dirname, 'src/views'),
       },
     },
-    // server: {
-    //   proxy: {
-    //     '/subgraphs/name/hexagon': {
-    //       changeOrigin: true,
-    //       target: 'http://localhost:8000/subgraphs/name/hexagon',
-    //     },
-    //   },
-    // },
   };
 });

@@ -51,7 +51,7 @@ $headerNavigationBorderRadius: $border-radius-32;
   font-weight: $font-weight-bold;
   color: $color-white;
   letter-spacing: 0.1rem;
-  background: $color-hexagon-orange;
+  background: $color-octant-orange;
   border-radius: 0.8rem;
   height: 1.6rem;
   padding: 0 0.8rem;
@@ -122,7 +122,7 @@ $headerNavigationBorderRadius: $border-radius-32;
 
   .navigationBottomSuffix {
     padding: 1.6rem;
-    border-bottom: 0.1rem solid $color-hexagon-grey4;
+    border-bottom: 0.1rem solid $color-octant-grey4;
   }
 
   .buttons {

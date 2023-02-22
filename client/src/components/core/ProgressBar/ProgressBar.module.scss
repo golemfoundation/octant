@@ -9,7 +9,7 @@
   margin: 0 0 1.4rem 0;
 
   .label {
-    color: $color-hexagon-green2;
+    color: $color-octant-green2;
     font-size: $font-size-10;
   }
 }
@@ -17,14 +17,14 @@
 .bar {
   width: 100%;
   height: 0.8rem;
-  background-color: $color-hexagon-grey2;
+  background-color: $color-octant-grey2;
   border-radius: 0.4rem;
   overflow: hidden;
 }
 
 .filled {
   height: 100%;
-  background: $color-hexagon-green;
+  background: $color-octant-green;
   // shorthand doesn't work here.
   border-radius: inherit;
   border-top-right-radius: 0;

@@ -29,11 +29,11 @@
   width: 0.8rem;
   height: 0.8rem;
   border-radius: 50%;
-  background: $color-hexagon-red;
+  background: $color-octant-red;
   margin: 0 0 0 0.4rem;
 
   &.isAboveThreshold {
-    background: $color-hexagon-green5;
+    background: $color-octant-green5;
   }
 }
 
@@ -41,17 +41,17 @@
   display: flex;
   align-items: center;
   margin: 0 0 0 1rem;
-  color: $color-hexagon-grey6;
+  color: $color-octant-grey6;
   font-weight: $font-weight-semibold;
 }
 
 .value {
-  color: $color-hexagon-grey2;
-  border-left: 0.1rem solid $color-hexagon-grey4;
-  border-right: 0.1rem solid $color-hexagon-grey4;
+  color: $color-octant-grey2;
+  border-left: 0.1rem solid $color-octant-grey4;
+  border-right: 0.1rem solid $color-octant-grey4;
 
   &.isSelected {
-    color: $color-hexagon-dark;
+    color: $color-octant-dark;
   }
 }
 
@@ -62,7 +62,7 @@
 
   &.isSelected {
     svg path {
-      stroke: $color-hexagon-dark;
+      stroke: $color-octant-dark;
     }
   }
 }
@@ -71,6 +71,6 @@
   width: 100%;
 
   &:first-child {
-    border-bottom: 0.1rem solid $color-hexagon-grey4;
+    border-bottom: 0.1rem solid $color-octant-grey4;
   }
 }
