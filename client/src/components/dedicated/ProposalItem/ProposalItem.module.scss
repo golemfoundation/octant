@@ -77,12 +77,12 @@ $paddingBody: 2.4rem;
 
     .percentage {
       position: relative;
-      color: $color-hexagon-red2;
+      color: $color-octant-red2;
       margin: 0 0 0 1rem;
       padding: 0 0 0 1rem;
 
       &.isAboveThreshold {
-        color: $color-hexagon-green5;
+        color: $color-octant-green5;
       }
 
       &:before {
@@ -92,7 +92,7 @@ $paddingBody: 2.4rem;
         left: 0;
         width: 0.2rem;
         height: 100%;
-        background: $color-hexagon-grey2;
+        background: $color-octant-grey2;
       }
     }
   }

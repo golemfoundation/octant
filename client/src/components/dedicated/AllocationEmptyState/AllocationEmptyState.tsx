@@ -3,13 +3,13 @@ import React, { ReactElement } from 'react';
 import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
 import { DISCORD_INVITE_LINK } from 'constants/urls';
-import { hexagonEmpty } from 'svg/logo';
+import { octantEmpty } from 'svg/logo';
 
 import styles from './AllocationEmptyState.module.scss';
 
 const AllocationEmptyState = (): ReactElement => (
   <div className={styles.root}>
-    <Svg classNameSvg={styles.icon} img={hexagonEmpty} size={16.8} />
+    <Svg classNameSvg={styles.icon} img={octantEmpty} size={16.8} />
     <div className={styles.text}>
       You haven’t made any allocations yet.
       <br />

@@ -10,7 +10,7 @@ import Svg from 'components/core/Svg/Svg';
 import env from 'env';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
-import { hexagon } from 'svg/logo';
+import { octant } from 'svg/logo';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
 import styles from './MainLayout.module.scss';
@@ -55,7 +55,7 @@ const MainLayout: FC<MainLayoutProps> = ({
       {isHeaderVisible && (
         <div className={styles.header}>
           <div className={styles.logoWrapper}>
-            <Svg img={hexagon} size={4} />
+            <Svg img={octant} size={4} />
             {env.isTestnet === 'true' && (
               <div className={styles.testnetIndicatorWrapper}>
                 <div className={styles.testnetIndicator}>GOERLI</div>

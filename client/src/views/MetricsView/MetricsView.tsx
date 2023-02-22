@@ -45,8 +45,8 @@ const MetricsView = (): ReactElement => {
       <div className={styles.element}>
         <Header text="Value Locked" />
         <Description
-          text="The total value staked on Hexagon to date, showing ETH staked by the Golem Foundation and
-          GLM locked by Hexagon users."
+          text="The total value staked on Octant to date, showing ETH staked by the Golem Foundation and
+          GLM locked by Octant users."
         />
         <BoxRounded alignment="left" className={styles.box} isVertical title="ETH Staked">
           <DoubleValue mainValue={ethStaked || '0.0'} />
