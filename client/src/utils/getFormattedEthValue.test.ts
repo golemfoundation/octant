@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 
-import getFormattedUnits from './getFormattedUnit';
+import getFormattedEthValue from './getFormattedEthValue';
 
 const testCases = [
   { argument: BigNumber.from(0), expectedValue: '0 ETH' },
@@ -52,10 +52,10 @@ const testCases = [
   { argument: BigNumber.from(10).pow(22), expectedValue: '10000 ETH' },
 ];
 
-describe('getFormattedUnits', () => {
+describe('getFormattedEthValue', () => {
   for (const { argument, expectedValue } of testCases) {
     it(`returns ${expectedValue} for an argument ${formatUnits(argument)}`, () => {
-      expect(getFormattedUnits(argument)).toBe(expectedValue);
+      expect(getFormattedEthValue(argument).fullString).toBe(expectedValue);
     });
   }
 });

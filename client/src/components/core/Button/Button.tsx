@@ -3,7 +3,7 @@ import React, { FC, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
 import Svg from 'components/core/Svg/Svg';
-import { arrow } from 'svg/misc';
+import { arrowTopRight } from 'svg/misc';
 
 import styles from './Button.module.scss';
 import ButtonProps from './types';
@@ -67,16 +67,7 @@ const Button: FC<ButtonProps> = ({
         onClick && styles.isClickable,
         className,
       )}
-      onClick={
-        isActionDisabled
-          ? () => {}
-          : event => {
-              event.stopPropagation();
-              if (onClick) {
-                onClick();
-              }
-            }
-      }
+      onClick={isActionDisabled ? () => {} : onClick}
       // eslint-disable-next-line react/button-has-type
       type={type}
       {...filteredProps}
@@ -92,7 +83,7 @@ const Button: FC<ButtonProps> = ({
         {(variant === 'link' || variant === 'link2') && (
           <Svg
             classNameSvg={cx(styles.icon, styles.isOnRight, isIconVariant && styles.isIconVariant)}
-            img={arrow}
+            img={arrowTopRight}
             size={0.8}
           />
         )}

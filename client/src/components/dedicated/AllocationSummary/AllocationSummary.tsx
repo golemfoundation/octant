@@ -6,12 +6,14 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import Header from 'components/core/Header/Header';
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
+import Svg from 'components/core/Svg/Svg';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useMatchedRewards from 'hooks/queries/useMatchedRewards';
 import useProposals from 'hooks/queries/useProposals';
+import { arrowRight } from 'svg/misc';
 import { ExtendedProposal } from 'types/proposals';
-import getFormattedUnits from 'utils/getFormattedUnit';
+import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './AllocationSummary.module.scss';
 import ExpandableList from './ExpandableList/ExpandableList';
@@ -43,6 +45,11 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocation
 
   const isExpandableListAvailable = allocations.length > 1;
 
+  const budgetBefore = individualReward ? getFormattedEthValue(individualReward) : undefined;
+  const budgetAfter = individualReward
+    ? getFormattedEthValue(individualReward.sub(newAllocationValuesSum))
+    : undefined;
+
   return (
     <Fragment>
       <Header text={`Confirm Epoch ${currentEpoch} Allocation`} />
@@ -58,42 +65,42 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocation
         isVertical
         onToggle={isExpanded => setIsProjectsTileExpanded(isExpanded)}
         suffix={`Estimated Match Funding ${
-          matchedRewards ? getFormattedUnits(matchedRewards) : '0'
+          matchedRewards ? getFormattedEthValue(matchedRewards).fullString : '0'
         }`}
         title={getHeader(proposals, allocations)}
       >
         <div className={styles.totalDonation}>
           {isProjectsTileExpanded && <div className={styles.label}>Total donation</div>}
-          <DoubleValue mainValue={getFormattedUnits(newAllocationValuesSum)} />
+          <DoubleValue mainValue={getFormattedEthValue(newAllocationValuesSum).fullString} />
         </div>
       </BoxRounded>
       <BoxRounded isVertical>
         <div className={styles.values}>
           <div>
-            <div className={styles.header}>Current Budget</div>
+            <div className={styles.header}>Budget {budgetBefore && `(${budgetBefore.suffix})`}</div>
             <DoubleValue
-              mainValue={individualReward ? getFormattedUnits(individualReward) : '0.0'}
+              className={styles.budgetValue}
+              mainValue={budgetBefore ? budgetBefore.value : '0.0'}
             />
           </div>
           <div className={styles.separator}>
             <div className={styles.header} />
-            -&gt;
+            <Svg img={arrowRight} size={[1.5, 1.4]} />
           </div>
           <div>
-            <div className={styles.header}>After Allocation</div>
+            <div className={styles.header}>
+              After Allocation {budgetAfter && `(${budgetAfter.suffix})`}
+            </div>
             <DoubleValue
-              mainValue={
-                individualReward
-                  ? getFormattedUnits(individualReward.sub(newAllocationValuesSum))
-                  : '0.0'
-              }
+              className={styles.budgetValue}
+              mainValue={budgetAfter ? budgetAfter.value : '0.0'}
             />
           </div>
         </div>
         <ProgressBar
           className={styles.progressBar}
-          labelLeft={`Allocations ${getFormattedUnits(newAllocationValuesSum)}`}
-          labelRight={`Claimed ${getFormattedUnits(newClaimableAndClaimed)}`}
+          labelLeft={`Allocations ${getFormattedEthValue(newAllocationValuesSum).fullString}`}
+          labelRight={`Claimed ${getFormattedEthValue(newClaimableAndClaimed).fullString}`}
           progressPercentage={newAllocationValuesSum
             .mul(100)
             .div(newClaimableAndClaimed.add(newAllocationValuesSum))

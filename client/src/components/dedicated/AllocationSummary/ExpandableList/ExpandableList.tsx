@@ -5,7 +5,7 @@ import Img from 'components/core/Img/Img';
 import Loader from 'components/core/Loader/Loader';
 import env from 'env';
 import useProposals from 'hooks/queries/useProposals';
-import getFormattedUnits from 'utils/getFormattedUnit';
+import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './ExpandableList.module.scss';
 import ExpandableListProps from './types';
@@ -33,7 +33,7 @@ const ExpandableList: FC<ExpandableListProps> = ({ allocations, allocationValues
               {name}
             </div>
             <div className={styles.sum}>
-              {getFormattedUnits(parseUnits((value as string) || '0'))}
+              {getFormattedEthValue(parseUnits((value as string) || '0')).fullString}
             </div>
           </div>
         );
