@@ -13,7 +13,7 @@
     "dev": "yarn predev && vite",
     "eslint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "eslint:fix": "yarn prettier && yarn eslint --fix",
-    "install-root-packages": "cd .. && yarn install && yarn compile && cd client",
+    "install-root-packages": "cd .. && yarn clean && yarn install && yarn compile && cd client",
     "predev": "yarn install",
     "preinstall": "yarn install-root-packages && yarn remove-typechain && yarn copy-typechain",
     "prettier": "yarn prettier:js --loglevel silent && yarn prettier:ts --loglevel silent",

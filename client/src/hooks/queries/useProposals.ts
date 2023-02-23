@@ -22,7 +22,7 @@ export default function useProposals(): ExtendedProposal[] {
 
   const proposalsIpfsResults = useQueries<BackendProposal[]>(
     (proposalsContract!.data || []).map(address => ({
-      enabled: !!proposalsContract && !!proposalsContract.data,
+      enabled: !!proposalsContract && !!proposalsContract.data && !!proposalsCid,
       queryFn: () => apiGetProposal(`${proposalsCid}/${address}`),
       queryKey: ['proposalsIpfsResults', address],
     })),
