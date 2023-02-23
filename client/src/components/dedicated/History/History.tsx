@@ -11,7 +11,7 @@ import useDeposits from 'hooks/subgraph/useDeposits';
 import useWithdrawns from 'hooks/subgraph/useWithdrawns';
 import useEpochAndAllocationTimestamps from 'hooks/useEpochAndAllocationTimestamps';
 import { allocate, donation } from 'svg/history';
-import getFormattedUnits from 'utils/getFormattedUnit';
+import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './History.module.scss';
 import { sortAllocationsAndDeposits } from './utils';
@@ -61,7 +61,7 @@ const History = (): ReactElement => {
                         <div className={styles.subtitle}>{element.array.length} Projects</div>
                       </div>
                     </div>
-                    <div>{getFormattedUnits(element.amount)}</div>
+                    <div>{getFormattedEthValue(element.amount).fullString}</div>
                   </Fragment>
                 );
               }

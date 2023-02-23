@@ -5,7 +5,7 @@ import Svg from 'components/core/Svg/Svg';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import { NavigationTab } from 'constants/navigationTabs/types';
 import { allocateWithNumber } from 'svg/navigation';
-import getFormattedUnits from 'utils/getFormattedUnit';
+import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './MainLayout.module.scss';
 
@@ -25,7 +25,7 @@ export function getIndividualRewardText({
   if (individualReward.isZero()) {
     return 'No reward budget yet';
   }
-  return `Budget ${getFormattedUnits(individualReward)}`;
+  return `Budget ${getFormattedEthValue(individualReward).fullString}`;
 }
 
 export function getNavigationTabsWithAllocations(

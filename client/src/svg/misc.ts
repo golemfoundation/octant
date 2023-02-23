@@ -1,9 +1,15 @@
 import { SvgImageConfig } from 'components/core/Svg/types';
 
-export const arrow: SvgImageConfig = {
+export const arrowTopRight: SvgImageConfig = {
   markup:
     '<path stroke="#2D9B87" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.434 1.7h6.441v6.528"/><path stroke="#2D9B87" stroke-linecap="round" stroke-width="2" d="M1-1h9.118" transform="matrix(-.69444 .71955 -.71011 -.70409 8.596 1)"/>',
   viewBox: '0 0 10 10',
+};
+
+export const arrowRight = {
+  markup:
+    '<path fill="#171717" d="m7.99 13.253-1.278-1.264 4.439-4.44H0V5.704h11.15L6.713 1.271 7.99 0l6.627 6.627-6.627 6.626Z"/>',
+  viewBox: '0 0 15 14',
 };
 
 export const tick: SvgImageConfig = {

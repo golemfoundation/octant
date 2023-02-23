@@ -85,7 +85,7 @@ $headerNavigationBorderRadius: $border-radius-32;
   align-items: center;
   justify-content: flex-start;
   flex: 1;
-  padding: $layoutBodyMarginTop $layoutMarginHorizontal $layoutBodyMarginBottom;
+  padding: 2.8rem $layoutMarginHorizontal $layoutBodyMarginBottom;
 
   &.isNavigationBottomSuffix {
     padding-bottom: $layoutBodyMarginBottom * 2;
