@@ -26,7 +26,7 @@ task('prepare-local-test-env', 'Prepare local test environment').setAction(
     const token: ERC20 = await ethers.getContract(TOKEN);
     const glmDeposits: Deposits = await ethers.getContract(DEPOSITS);
     const epochs: Epochs = await ethers.getContract(EPOCHS);
-    const epochDuration = await epochs.epochDuration();
+    const epochDuration = await epochs.getEpochDuration();
     // eslint-disable-next-line no-console
     console.log(`Epoch duraiton: ${epochDuration}.`);
     const beaconChainOracle: BeaconChainOracle = await ethers.getContract(BEACON_CHAIN_ORACLE);

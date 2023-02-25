@@ -61,6 +61,10 @@ library EpochsErrors {
     /// @notice Thrown when calling the contract before the first epoch started.
     /// @return HN:Epochs/not-started-yet
     string public constant NOT_STARTED = "HN:Epochs/not-started-yet";
+
+    /// @notice Thrown when updating epoch props to invalid values (decision window bigger than epoch duration.
+    /// @return HN:Epochs/decision-window-bigger-than-duration
+    string public constant DECISION_WINDOW_TOO_BIG = "HN:Epochs/decision-window-bigger-than-duration";
 }
 
 library TrackerErrors {
