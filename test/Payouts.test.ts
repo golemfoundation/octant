@@ -10,7 +10,6 @@ import { PAYOUTS, PAYOUTS_MANAGER } from '../helpers/constants';
 import { forwardEpochs } from '../helpers/epochs-utils';
 import { Payouts, PayoutsManager, Rewards } from '../typechain-types';
 
-
 makeTestsEnv(PAYOUTS, testEnv => {
   let rewards: FakeContract<Rewards>;
   let payouts: Payouts;
@@ -56,7 +55,12 @@ makeTestsEnv(PAYOUTS, testEnv => {
       const {
         signers: { Alice },
       } = testEnv;
+      const before = await ethers.provider.getBalance(Alice.address);
       await payoutsManager.connect(Alice).withdrawUser(parseEther('0.3'));
+      expect(await ethers.provider.getBalance(Alice.address)).approximately(
+        before.add(parseEther('0.3')),
+        parseEther('0.001'),
+      );
       expect(rewards.claimableReward).calledOnce;
       rewards.claimableReward.atCall(0).calledWith(1, Alice.address);
     });
@@ -65,7 +69,12 @@ makeTestsEnv(PAYOUTS, testEnv => {
       const {
         signers: { Alice },
       } = testEnv;
+      const before = await ethers.provider.getBalance(Alice.address);
       await payoutsManager.connect(Alice).withdrawUser(parseEther('2.0'));
+      expect(await ethers.provider.getBalance(Alice.address)).approximately(
+        before.add(parseEther('2.0')),
+        parseEther('0.001'),
+      );
       expect(rewards.claimableReward).calledTwice;
       rewards.claimableReward.atCall(0).calledWith(1, Alice.address);
       rewards.claimableReward.atCall(1).calledWith(2, Alice.address);
@@ -104,6 +113,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
       const {
         signers: { Alice },
       } = testEnv;
+      const before = await ethers.provider.getBalance(Alice.address);
       await payoutsManager.connect(Alice).withdrawUser(parseEther('0.3'));
       let alicePayout = await payouts.payoutStatus(Alice.address);
       expect(alicePayout.total).eq(parseEther('0.3'));
@@ -114,6 +124,10 @@ makeTestsEnv(PAYOUTS, testEnv => {
       expect(alicePayout.total).eq(parseEther('1.1'));
       expect(alicePayout.extra).eq(parseEther('0.1'));
       expect(alicePayout.checkpointEpoch).eq(1);
+      expect(await ethers.provider.getBalance(Alice.address)).approximately(
+        before.add(parseEther('1.1')),
+        parseEther('0.001'),
+      );
     });
   });
 
@@ -131,14 +145,19 @@ makeTestsEnv(PAYOUTS, testEnv => {
       });
     });
 
-    it('check if rewards contract is called once', async () => {
+    it('check if funds can be withdrawed', async () => {
       const {
         proposalAddresses,
         signers: { Alice },
       } = testEnv;
+      const before = await ethers.provider.getBalance(proposalAddresses[0].address);
       await payoutsManager
         .connect(Alice)
         .withdrawProposal(proposalAddresses[0].address, parseEther('0.3'));
+      expect(await ethers.provider.getBalance(proposalAddresses[0].address)).approximately(
+        before.add(parseEther('0.3')),
+        parseEther('0.001'),
+      );
       expect(rewards.proposalReward).calledOnce;
       rewards.proposalReward.atCall(0).calledWith(1, 1);
     });
@@ -148,9 +167,14 @@ makeTestsEnv(PAYOUTS, testEnv => {
         proposalAddresses,
         signers: { Alice },
       } = testEnv;
+      const before = await ethers.provider.getBalance(proposalAddresses[0].address);
       await payoutsManager
         .connect(Alice)
         .withdrawProposal(proposalAddresses[0].address, parseEther('2.0'));
+      expect(await ethers.provider.getBalance(proposalAddresses[0].address)).approximately(
+        before.add(parseEther('2.0')),
+        parseEther('0.001'),
+      );
       expect(rewards.proposalReward).calledTwice;
       rewards.proposalReward.atCall(0).calledWith(1, 1);
       rewards.proposalReward.atCall(1).calledWith(2, 1);
@@ -242,10 +266,15 @@ makeTestsEnv(PAYOUTS, testEnv => {
       const {
         signers: { Alice },
       } = testEnv;
+      const before = await ethers.provider.getBalance(GOLEM_FOUNDATION_MULTISIG);
       await payoutsManager.connect(Alice).withdrawGolemFoundation(parseEther('2.0'));
       expect(rewards.golemFoundationReward).calledTwice;
       rewards.golemFoundationReward.atCall(0).calledWith(1, 1);
       rewards.golemFoundationReward.atCall(1).calledWith(2, 1);
+      expect(await ethers.provider.getBalance(GOLEM_FOUNDATION_MULTISIG)).approximately(
+        before.add(parseEther('2.0')),
+        parseEther('0.001'),
+      );
     });
 
     it("can't register more than earned", async () => {
