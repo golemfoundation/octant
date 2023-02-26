@@ -5,6 +5,7 @@ pragma solidity ^0.8.9;
 import "../interfaces/IEpochs.sol";
 import "../interfaces/IAllocationsStorage.sol";
 import "../interfaces/IRewards.sol";
+import "../interfaces/IProposals.sol";
 
 import "../deposits/Tracker.sol";
 
@@ -19,6 +20,9 @@ contract Allocations {
 
     /// @notice Tracking octant rewards.
     IRewards public immutable rewards;
+
+    /// @notice Proposals list
+    IProposals public immutable proposals;
 
     /// @notice emitted after user allocated funds. This event contains funds allocated to proposals.
     /// @param epoch for which user has allocated (current epoch - 1).
@@ -43,11 +47,13 @@ contract Allocations {
     constructor(
         address _epochsAddress,
         address _allocationsStorageAddress,
-        address _rewardsAddress
+        address _rewardsAddress,
+        address _proposalsAddress
     ) {
         epochs = IEpochs(_epochsAddress);
         allocationsStorage = IAllocationsStorage(_allocationsStorageAddress);
         rewards = IRewards(_rewardsAddress);
+        proposals = IProposals(_proposalsAddress);
     }
 
     /// @notice Allocate funds from previous epoch on given proposals.
@@ -63,8 +69,21 @@ contract Allocations {
             AllocationErrors.DECISION_WINDOW_IS_CLOSED
         );
         uint32 _epoch = epochs.getCurrentEpoch() - 1;
+        require(_proposalsAreActive(_epoch, _allocations), AllocationErrors.ALLOCATE_TO_NON_EXISTING_PROPOSAL);
         uint256 _fundsToAllocate = _putAllocationsToStorage(_epoch, _allocations);
         _putClaimableRewardsToStorage(_epoch, _fundsToAllocate);
+    }
+
+    function _proposalsAreActive(uint32 _epoch, IAllocationsStorage.Allocation[] memory _allocations) public view returns (bool) {
+        address[] memory active = proposals.getProposalAddresses(_epoch);
+        for (uint8 i = 0; i < _allocations.length; i = i + 1) {
+            bool found = false;
+            for (uint8 j = 0; j < active.length; j = j + 1) {
+                if (_allocations[i].proposal == active[j]) found = true;
+            }
+            if (!found) return false;
+        }
+        return true;
     }
 
     function _putAllocationsToStorage(uint32 _epoch, IAllocationsStorage.Allocation[] memory _allocations) private returns (uint256) {

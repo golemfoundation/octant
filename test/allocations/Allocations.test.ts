@@ -3,13 +3,15 @@ import { expect } from 'chai';
 import { parseEther } from 'ethers/lib/utils';
 import { ethers, deployments } from 'hardhat';
 
-import { ALLOCATIONS, ALLOCATIONS_STORAGE, EPOCHS } from '../../helpers/constants';
+import { PROPOSALS_CID } from '../../env';
+import { ALLOCATIONS, ALLOCATIONS_STORAGE, EPOCHS, PROPOSALS } from '../../helpers/constants';
 import { forwardEpochs } from '../../helpers/epochs-utils';
 import { getLatestBlockTimestamp, increaseNextBlockTimestamp } from '../../helpers/misc-utils';
 import {
   Allocations,
   AllocationsStorage,
   Epochs,
+  Proposals,
   Rewards,
   WithdrawalsTargetV3,
 } from '../../typechain-types';
@@ -20,12 +22,24 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
     start: number,
     duration: number,
     decisionWindow: number,
-  ): Promise<[Epochs, Allocations, AllocationsStorage]> {
+  ): Promise<[Epochs, Allocations, AllocationsStorage, Proposals]> {
     const epochsFactory = await ethers.getContractFactory(EPOCHS);
     const epochs: Epochs = (await epochsFactory.deploy(start, duration, decisionWindow)) as Epochs;
     const allocationsStorageFactory = await ethers.getContractFactory(ALLOCATIONS_STORAGE);
     const allocationsStorage = (await allocationsStorageFactory.deploy()) as AllocationsStorage;
     const allocationsFactory = await ethers.getContractFactory(ALLOCATIONS);
+
+    const proposalsFactory = await ethers.getContractFactory(PROPOSALS);
+    // eslint-disable-next-line no-undef
+
+    const proposalAddresses = await ethers
+      .getUnnamedSigners()
+      .then(proposals => proposals.slice(0, 10))
+      .then(proposals => proposals.map(el => el.address));
+    const proposals = (await proposalsFactory.deploy(
+      PROPOSALS_CID,
+      proposalAddresses,
+    )) as Proposals;
 
     const sRewards = await smock.fake<Rewards>('Rewards');
     sRewards.individualReward.returns((_owner: string, _epochNo: number) => {
@@ -36,10 +50,11 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
       epochs.address,
       allocationsStorage.address,
       sRewards.address,
+      proposals.address,
     )) as Allocations;
     await allocationsStorage.transferOwnership(allocations.address);
 
-    return [epochs, allocations, allocationsStorage];
+    return [epochs, allocations, allocationsStorage, proposals];
   }
 
   describe('Allocate with real deposits', async () => {
@@ -178,20 +193,20 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
       await forwardEpochs(epochs, 1);
     });
 
-    // TODO unskip after HEX-262
-    /* eslint-disable jest/no-disabled-tests */
-    it.skip('Cannot allocate for proposal with invalid address', async () => {
+    it('Cannot allocate for proposal with invalid address', async () => {
       const {
         allocations: currentTestAllocations,
         epochs: currentTestEpochs,
+        proposalAddresses,
         signers: { Alice },
       } = testEnv;
       await forwardEpochs(currentTestEpochs, 1);
       const userAllocations = [
-        { allocation: parseEther('0.4'), proposal: '0x0000000000000000000000000000000000000000' },
+        { allocation: parseEther('0.4'), proposal: proposalAddresses[0].address },
+        { allocation: parseEther('0.4'), proposal: '0x1234560000000000000000000000000000000000' },
       ];
       await expect(currentTestAllocations.connect(Alice).allocate(userAllocations)).revertedWith(
-        'HN:Allocations/proposal-id-equals-0',
+        'HN:Allocations/no-such-proposal',
       );
     });
 
