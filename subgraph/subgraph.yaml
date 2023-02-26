@@ -34,14 +34,14 @@ dataSources:
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
-        - Deposited
-        - Withdrawn
+        - Locked
+        - Unlocked
       abis:
         - name: Deposits
           file: ./abis/Deposits.json
       eventHandlers:
-        - event: Deposited(uint224,uint256,address)
-          handler: handleDeposited
-        - event: Withdrawn(uint224,uint256,address)
-          handler: handleWithdrawn
+        - event: Locked(uint224,uint256,address)
+          handler: handleLocked
+        - event: Unlocked(uint224,uint256,address)
+          handler: handleUnlocked
       file: ./src/deposits.ts

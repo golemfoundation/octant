@@ -9,15 +9,15 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import {DepositsErrors} from "../Errors.sol";
 
-/// @title Contract tracking GLM deposits (staking) for Hexagon project.
+/// @title Contract tracking GLM deposits for Octant project.
 /// @author Golem Foundation
-/// @notice GLM can be deposited or withdrawn at any moment by its owner.
-/// To be more capital effective, do deposits at the end of an epoch,
-/// and withdrawals at the beginning of an epoch.
+/// @notice GLM can be locked or unlocked at any moment by its owner.
+/// To be more capital effective, do lock at the end of an epoch,
+/// and unlock at the beginning of an epoch.
 /// @dev Please note that complexity of this contract should be kept as low as possible,
 /// even at the cost of increased complexity of other contracts. Lets strive to limit
 /// risk exposure of GLM deposits. This is why effective deposit tracking is outside
-/// in a contract that can fail without affecting withdrawal calls.
+/// in a contract that can fail without affecting unlock calls.
 contract Deposits is Ownable, IDeposits {
     /// @notice GLM token contract address
     ERC20 public immutable glm;
@@ -25,12 +25,12 @@ contract Deposits is Ownable, IDeposits {
     /// @notice Effective Deposits tracker contract address
     ITracker public tracker;
 
-    event Deposited(uint224 amount, uint256 when, address depositor);
-    event Withdrawn(uint224 amount, uint256 when, address depositor);
+    event Locked(uint224 amount, uint256 when, address user);
+    event Unlocked(uint224 amount, uint256 when, address user);
     event TrackerUpdated();
     event TrackerFailed(bytes reason);
 
-    /// @dev deposit amounts per depositor
+    /// @dev deposit amounts per user
     mapping(address => uint256) public deposits;
 
     /// @param glmAddress Address of Golem Network Token contract (updated, GLM).
@@ -38,35 +38,31 @@ contract Deposits is Ownable, IDeposits {
         glm = ERC20(glmAddress);
     }
 
-    function setDepositTrackerAddress(address newDT) external onlyOwner {
-        tracker = ITracker(newDT);
-    }
-
-    /// @notice Deposit GLM to enable participation in Hexagon experiment.
+    /// @notice Lock GLM to enable participation in Octant experiment.
     /// This can be done at any time, but it is most capital effective at the end of the epoch.
-    /// @param amount Amount of GLM to be deposited.
-    function deposit(uint224 amount) external {
+    /// @param amount Amount of GLM to be locked.
+    function lock(uint224 amount) external {
         uint224 oldDeposit = uint224(deposits[msg.sender]);
         deposits[msg.sender] = oldDeposit + amount;
         require(
             glm.transferFrom(msg.sender, address(this), amount),
             DepositsErrors.GLM_TRANSFER_FAILED
         );
-        emit Deposited(amount, block.timestamp, msg.sender);
+        emit Locked(amount, block.timestamp, msg.sender);
 
-        tracker.processDeposit(msg.sender, oldDeposit, amount);
+        tracker.processLock(msg.sender, oldDeposit, amount);
     }
 
-    /// @notice Withdraw GLM. This can be done at any time, but it is most capital effective at the beginning of the epoch.
-    /// @param amount Amount of GLM to be withdrawn.
-    function withdraw(uint224 amount) external {
+    /// @notice Unlock GLM. This can be done at any time, but it is most capital effective at the beginning of the epoch.
+    /// @param amount Amount of GLM to be unlocked.
+    function unlock(uint224 amount) external {
         uint224 oldDeposit = uint224(deposits[msg.sender]);
         require(oldDeposit >= amount, DepositsErrors.DEPOSIT_IS_TO_SMALL);
         deposits[msg.sender] = oldDeposit - amount;
         require(glm.transfer(msg.sender, amount));
-        emit Withdrawn(amount, block.timestamp, msg.sender);
+        emit Unlocked(amount, block.timestamp, msg.sender);
 
-        (bool result, bytes memory error) = tracker.processWithdraw(
+        (bool result, bytes memory error) = tracker.processUnlock(
             msg.sender,
             oldDeposit,
             amount
@@ -76,5 +72,9 @@ contract Deposits is Ownable, IDeposits {
         } else {
             emit TrackerFailed(error);
         }
+    }
+
+    function setTrackerAddress(address newTracker) external onlyOwner {
+        tracker = ITracker(newTracker);
     }
 }

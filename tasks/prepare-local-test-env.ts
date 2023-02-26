@@ -37,7 +37,7 @@ task('prepare-local-test-env', 'Prepare local test environment').setAction(
     console.log('Making deposit.');
     await token.transfer(Alice.address, parseEther('1000000'));
     await token.connect(Alice).approve(glmDeposits.address, parseEther('1000000'));
-    await glmDeposits.connect(Alice).deposit(parseEther('1000000'));
+    await glmDeposits.connect(Alice).lock(parseEther('1000000'));
     // eslint-disable-next-line no-console
     console.log('Setting up Oracle balances.');
     await target.sendETH({ value: 400 });

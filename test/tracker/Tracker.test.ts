@@ -18,7 +18,7 @@ makeTestsEnv(TRACKER, testEnv => {
         /* eslint-disable no-await-in-loop */
         await token.transfer(participants[i].address, parseEther('1000'));
         await token.connect(participants[i]).approve(glmDeposits.address, parseEther('1000'));
-        await glmDeposits.connect(participants[i]).deposit(parseEther('1000'));
+        await glmDeposits.connect(participants[i]).lock(parseEther('1000'));
         /* eslint-enable no-await-in-loop */
       }
       expect(await tracker.totalDeposit()).eq(parseEther('2000'));
@@ -63,8 +63,8 @@ makeTestsEnv(TRACKER, testEnv => {
             /* eslint-disable no-await-in-loop */
             // eslint-disable-next-line chai-friendly/no-unused-expressions
             value > 0
-              ? await glmDeposits.connect(signers[name]).deposit(allocationValueInWei)
-              : await glmDeposits.connect(signers[name]).withdraw(allocationValueInWei);
+              ? await glmDeposits.connect(signers[name]).lock(allocationValueInWei)
+              : await glmDeposits.connect(signers[name]).unlock(allocationValueInWei);
             /* eslint-enable no-await-in-loop */
           }
           if (step.forwardEpochs) {
@@ -119,7 +119,7 @@ makeTestsEnv(TRACKER, testEnv => {
       const { token, glmDeposits, signers, tracker } = testEnv;
       await token.transfer(signers.Alice.address, 1005);
       await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(signers.Alice).deposit(1000);
+      await glmDeposits.connect(signers.Alice).lock(1000);
       expect(tracker.tokenSupplyAt(10)).to.be.revertedWith('HN:Tracker/future-is-unknown');
     });
 
@@ -127,7 +127,7 @@ makeTestsEnv(TRACKER, testEnv => {
       const { epochs, token, glmDeposits, signers, tracker } = testEnv;
       await token.transfer(signers.Alice.address, 1005);
       await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(signers.Alice).deposit(1000);
+      await glmDeposits.connect(signers.Alice).lock(1000);
       expect(await epochs.getCurrentEpoch(), 'first epoch number').eq(1);
       await forwardEpochs(epochs, 10);
       expect(await epochs.getCurrentEpoch(), 'eleventh number number').eq(11);
@@ -140,7 +140,7 @@ makeTestsEnv(TRACKER, testEnv => {
       const { token, glmDeposits, signers, tracker } = testEnv;
       await token.transfer(signers.Alice.address, 1005);
       await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(signers.Alice).deposit(1000);
+      await glmDeposits.connect(signers.Alice).lock(1000);
       expect(tracker.depositAt(signers.Alice.address, 10)).to.be.revertedWith(
         'HN:Tracker/future-is-unknown',
       );
@@ -148,14 +148,12 @@ makeTestsEnv(TRACKER, testEnv => {
     it('tracker accepts calls only from deposits', async () => {
       const { signers, tracker } = testEnv;
       expect(
-        tracker
-          .connect(signers.Darth)
-          .processDeposit(signers.Darth.address, 0, parseEther('100000')),
+        tracker.connect(signers.Darth).processLock(signers.Darth.address, 0, parseEther('100000')),
       ).to.be.revertedWith('HN:Common/unauthorized-caller');
       expect(
         tracker
           .connect(signers.Darth)
-          .processWithdraw(signers.Darth.address, 0, parseEther('100000')),
+          .processUnlock(signers.Darth.address, 0, parseEther('100000')),
       ).to.be.revertedWith('HN:Common/unauthorized-caller');
     });
   });

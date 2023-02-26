@@ -16,7 +16,7 @@ export default function useWithdraw(
 
   return useMutation({
     mutationFn: async value => {
-      const transactionResponse = await contractDeposits!.withdraw(value, {
+      const transactionResponse = await contractDeposits!.unlock(value, {
         gasLimit: DEPOSIT_WITHDRAW_GAS_LIMIT,
       });
       await transactionResponse.wait(1);

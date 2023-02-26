@@ -34,7 +34,7 @@ makeTestsEnv(REWARDS, testEnv => {
       const { glmDeposits, rewards, tracker, signers, token } = testEnv;
       await token.transfer(signers.Alice.address, parseEther('1000000'));
       await token.connect(signers.Alice).approve(glmDeposits.address, parseEther('1000000'));
-      await glmDeposits.connect(signers.Alice).deposit(parseEther('1000000'));
+      await glmDeposits.connect(signers.Alice).lock(parseEther('1000000'));
       await updateOracle();
       expect(await tracker.totalDepositAt(2), 'total deposit').eq(parseEther('1000000'));
       expect(await rewards.stakedRatio(2), 'staked ratio').eq(parseEther('0.001'));
@@ -52,10 +52,10 @@ makeTestsEnv(REWARDS, testEnv => {
       const { glmDeposits, rewards, tracker, signers, token } = testEnv;
       await token.transfer(signers.Alice.address, parseEther('1000000'));
       await token.connect(signers.Alice).approve(glmDeposits.address, parseEther('1000000'));
-      await glmDeposits.connect(signers.Alice).deposit(parseEther('1000000'));
+      await glmDeposits.connect(signers.Alice).lock(parseEther('1000000'));
       await token.transfer(signers.Bob.address, parseEther('500000'));
       await token.connect(signers.Bob).approve(glmDeposits.address, parseEther('500000'));
-      await glmDeposits.connect(signers.Bob).deposit(parseEther('500000'));
+      await glmDeposits.connect(signers.Bob).lock(parseEther('500000'));
       await updateOracle();
       expect(await tracker.totalDepositAt(2), 'total deposit').eq(parseEther('1500000'));
       expect(await rewards.stakedRatio(2), 'staked ratio').eq(parseEther('0.0015'));
@@ -77,7 +77,7 @@ makeTestsEnv(REWARDS, testEnv => {
     const { glmDeposits, rewards, signers, token } = testEnv;
     await token.transfer(signers.Alice.address, parseEther('1000000'));
     await token.connect(signers.Alice).approve(glmDeposits.address, parseEther('1000000'));
-    await glmDeposits.connect(signers.Alice).deposit(parseEther('1000000'));
+    await glmDeposits.connect(signers.Alice).lock(parseEther('1000000'));
     await updateOracle();
     expect(await rewards.totalRewards(2), 'sum of TRs').eq(parseEther('12.6491106406735172'));
   });
@@ -95,24 +95,24 @@ makeTestsEnv(REWARDS, testEnv => {
       // Users deposit
       await token.transfer(Alice.address, parseEther('1000000'));
       await token.connect(Alice).approve(glmDeposits.address, parseEther('1000000'));
-      await glmDeposits.connect(Alice).deposit(parseEther('1000000'));
+      await glmDeposits.connect(Alice).lock(parseEther('1000000'));
 
       await token.transfer(Bob.address, parseEther('500000'));
       await token.connect(Bob).approve(glmDeposits.address, parseEther('500000'));
-      await glmDeposits.connect(Bob).deposit(parseEther('500000'));
+      await glmDeposits.connect(Bob).lock(parseEther('500000'));
 
       await token.transfer(Charlie.address, parseEther('2000000'));
       await token.connect(Charlie).approve(glmDeposits.address, parseEther('2000000'));
-      await glmDeposits.connect(Charlie).deposit(parseEther('2000000'));
+      await glmDeposits.connect(Charlie).lock(parseEther('2000000'));
 
       // Darth does not vote, his rewards go back to Golem Foundation
       await token.transfer(Darth.address, parseEther('1500'));
       await token.connect(Darth).approve(glmDeposits.address, parseEther('1500'));
-      await glmDeposits.connect(Darth).deposit(parseEther('1500'));
+      await glmDeposits.connect(Darth).lock(parseEther('1500'));
 
       await token.transfer(Eve.address, parseEther('200000'));
       await token.connect(Eve).approve(glmDeposits.address, parseEther('200000'));
-      await glmDeposits.connect(Eve).deposit(parseEther('200000'));
+      await glmDeposits.connect(Eve).lock(parseEther('200000'));
 
       await updateOracle();
 

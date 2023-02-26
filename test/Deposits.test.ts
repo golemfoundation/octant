@@ -22,7 +22,7 @@ makeTestsEnv(DEPOSITS, testEnv => {
       sTracker.address,
       glmDeposits.address,
     )) as TrackerWrapper;
-    await glmDeposits.setDepositTrackerAddress(trackerWrapper.address);
+    await glmDeposits.setTrackerAddress(trackerWrapper.address);
 
     return { glmDeposits, sTracker };
   }
@@ -37,15 +37,15 @@ makeTestsEnv(DEPOSITS, testEnv => {
       const { token, glmDeposits, signers } = testEnv;
       await token.transfer(signers.Alice.address, 1005);
       await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(signers.Alice).deposit(1000);
+      await glmDeposits.connect(signers.Alice).lock(1000);
       expect(await token.balanceOf(signers.Alice.address)).eq(5);
-      await glmDeposits.connect(signers.Alice).withdraw(1000);
+      await glmDeposits.connect(signers.Alice).unlock(1000);
       expect(await token.balanceOf(signers.Alice.address)).eq(1005);
     });
 
     it("Can't withdrawn empty", async () => {
       const { glmDeposits, signers } = testEnv;
-      expect(glmDeposits.connect(signers.Alice).withdraw(1)).to.be.revertedWith(
+      expect(glmDeposits.connect(signers.Alice).unlock(1)).to.be.revertedWith(
         'HN:Deposits/deposit-is-smaller',
       );
     });
@@ -54,8 +54,8 @@ makeTestsEnv(DEPOSITS, testEnv => {
       const { token, glmDeposits, signers } = testEnv;
       await token.transfer(signers.Alice.address, 1000);
       await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(signers.Alice).deposit(1000);
-      expect(glmDeposits.connect(signers.Darth).withdraw(1)).to.be.revertedWith(
+      await glmDeposits.connect(signers.Alice).lock(1000);
+      expect(glmDeposits.connect(signers.Darth).unlock(1)).to.be.revertedWith(
         'HN:Deposits/deposit-is-smaller',
       );
     });
@@ -64,10 +64,10 @@ makeTestsEnv(DEPOSITS, testEnv => {
       const { token, glmDeposits, signers } = testEnv;
       await token.transfer(signers.Darth.address, 1000);
       await token.connect(signers.Darth).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(signers.Darth).deposit(1000);
-      await glmDeposits.connect(signers.Darth).withdraw(1000);
+      await glmDeposits.connect(signers.Darth).lock(1000);
+      await glmDeposits.connect(signers.Darth).unlock(1000);
       const balance = await token.balanceOf(signers.Darth.address);
-      expect(glmDeposits.connect(signers.Darth).withdraw(1000)).to.be.revertedWith(
+      expect(glmDeposits.connect(signers.Darth).unlock(1000)).to.be.revertedWith(
         'HN:Deposits/deposit-is-smaller',
       );
       expect(await token.balanceOf(signers.Darth.address)).eq(balance);
@@ -77,10 +77,10 @@ makeTestsEnv(DEPOSITS, testEnv => {
       const { token, glmDeposits, signers } = testEnv;
       await token.transfer(signers.Darth.address, 1000);
       await token.connect(signers.Darth).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(signers.Darth).deposit(1000);
-      await glmDeposits.connect(signers.Darth).withdraw(1000);
+      await glmDeposits.connect(signers.Darth).lock(1000);
+      await glmDeposits.connect(signers.Darth).unlock(1000);
       await token.connect(signers.Darth).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(signers.Darth).deposit(1000);
+      await glmDeposits.connect(signers.Darth).lock(1000);
     });
 
     it('Can increase deposit', async () => {
@@ -88,10 +88,10 @@ makeTestsEnv(DEPOSITS, testEnv => {
       await token.transfer(signers.Alice.address, 1005);
       await token.connect(signers.Alice).approve(glmDeposits.address, 1005);
       expect(await token.balanceOf(signers.Alice.address)).eq(1005);
-      await glmDeposits.connect(signers.Alice).deposit(1000);
+      await glmDeposits.connect(signers.Alice).lock(1000);
       expect(await token.balanceOf(glmDeposits.address)).eq(1000);
       expect(await token.balanceOf(signers.Alice.address)).eq(5);
-      await glmDeposits.connect(signers.Alice).deposit(5);
+      await glmDeposits.connect(signers.Alice).lock(5);
       expect(await token.balanceOf(glmDeposits.address)).eq(1005);
     });
 
@@ -99,8 +99,8 @@ makeTestsEnv(DEPOSITS, testEnv => {
       const { token, glmDeposits, signers } = testEnv;
       await token.transfer(signers.Alice.address, 1000);
       await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(signers.Alice).deposit(1000);
-      await glmDeposits.connect(signers.Alice).withdraw(600);
+      await glmDeposits.connect(signers.Alice).lock(1000);
+      await glmDeposits.connect(signers.Alice).unlock(600);
       expect(await token.balanceOf(glmDeposits.address)).eq(400);
       expect(await token.balanceOf(signers.Alice.address)).eq(600);
     });
@@ -114,7 +114,7 @@ makeTestsEnv(DEPOSITS, testEnv => {
       await token.transfer(Alice.address, 1000);
       await token.connect(Alice).approve(glmDeposits.address, 1000);
 
-      expect(glmDeposits.connect(Alice).deposit(1000, { gasLimit: 100_000 })).to.be.reverted;
+      expect(glmDeposits.connect(Alice).lock(1000, { gasLimit: 100_000 })).to.be.reverted;
       expect(await token.balanceOf(glmDeposits.address)).eq(0);
     });
 
@@ -124,11 +124,11 @@ makeTestsEnv(DEPOSITS, testEnv => {
         signers: { Alice },
       } = testEnv;
       const { sTracker, glmDeposits } = await setupDeposits();
-      sTracker.processDeposit.reverts();
+      sTracker.processLock.reverts();
 
       await token.transfer(Alice.address, 1000);
       await token.connect(Alice).approve(glmDeposits.address, 1000);
-      expect(glmDeposits.connect(Alice).deposit(1000)).to.be.reverted;
+      expect(glmDeposits.connect(Alice).lock(1000)).to.be.reverted;
       expect(await token.balanceOf(glmDeposits.address)).eq(0);
     });
 
@@ -140,9 +140,9 @@ makeTestsEnv(DEPOSITS, testEnv => {
       } = testEnv;
       await token.transfer(Alice.address, 1000);
       await token.connect(Alice).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(Alice).deposit(1000);
+      await glmDeposits.connect(Alice).lock(1000);
 
-      expect(glmDeposits.connect(Alice).withdraw(1000, { gasLimit: 50_000 })).to.be.reverted;
+      expect(glmDeposits.connect(Alice).unlock(1000, { gasLimit: 50_000 })).to.be.reverted;
       expect(await token.balanceOf(glmDeposits.address)).eq(1000);
     });
 
@@ -152,13 +152,13 @@ makeTestsEnv(DEPOSITS, testEnv => {
         signers: { Alice },
       } = testEnv;
       const { sTracker, glmDeposits } = await setupDeposits();
-      sTracker.processWithdraw.reverts();
+      sTracker.processUnlock.reverts();
 
       await token.transfer(Alice.address, 1000);
       await token.connect(Alice).approve(glmDeposits.address, 1000);
-      await glmDeposits.connect(Alice).deposit(1000);
+      await glmDeposits.connect(Alice).lock(1000);
 
-      await expect(glmDeposits.connect(Alice).withdraw(1000)).emit(glmDeposits, 'TrackerFailed');
+      await expect(glmDeposits.connect(Alice).unlock(1000)).emit(glmDeposits, 'TrackerFailed');
       expect(await token.balanceOf(glmDeposits.address)).eq(0);
     });
   });

@@ -14,7 +14,7 @@ import "./TrackerWrapper.sol";
 
 import {TrackerErrors, CommonErrors} from "../Errors.sol";
 
-/// @title Contract tracking effective deposits across epochs (Hexagon).
+/// @title Contract tracking effective deposits across epochs (Octant).
 /// @author Golem Foundation
 /// @notice This contract tracks effective deposits for particular epochs.
 /// If deposit is lower than 100 GLM it is not taken into account.
@@ -36,7 +36,7 @@ contract Tracker is Ownable {
     ERC20 public immutable gnt;
 
     /// @notice TrackerWrapper address
-    address public proxyAddress;
+    address public wrapperAddress;
 
     struct EffectiveDeposit {
         bool isSet; // set to true to distinguish between null and zero values of ED
@@ -71,11 +71,11 @@ contract Tracker is Ownable {
         gnt = ERC20(gntAddress);
     }
 
-    /// @dev Handle GLM deposit, compute epoch effective deposit.
+    /// @dev Handle GLM locking, compute epoch effective deposit.
     /// @param owner Owner of GLM
     /// @param oldDeposit Last value of owner's GLM deposit
-    /// @param amount New funds being deposited.
-    function processDeposit(
+    /// @param amount New funds being locked.
+    function processLock(
         address owner,
         uint224 oldDeposit,
         uint224 amount
@@ -90,11 +90,11 @@ contract Tracker is Ownable {
         _updateCurrentED(owner, epoch, oldDeposit, oldTotal);
     }
 
-    /// @dev Handle GLM withdrawal, compute epoch effective deposit.
+    /// @dev Handle GLM unlocking, compute epoch effective deposit.
     /// @param owner Owner of GLM
     /// @param oldDeposit Last value of owner's GLM deposit
-    /// @param amount Amount of funds being withdrawed.
-    function processWithdraw(
+    /// @param amount Amount of funds being unlocked.
+    function processUnlock(
         address owner,
         uint224 oldDeposit,
         uint224 amount
@@ -108,7 +108,7 @@ contract Tracker is Ownable {
         _updatePrevED(owner, epoch, oldDeposit, oldTotal);
     }
 
-    /// @notice Check how much is staked at particular epoch. Note that contract tracks only minimal value of the stake particular depositor had at the epoch.
+    /// @notice Check how much is locked at particular epoch. Note that contract tracks only minimal value of locked GLM particular depositor had at the epoch.
     /// @dev Call this to read ED for any user at particular epoch. Please note that worst-case gas cost is O(n) where n is
     /// the number of epochs contract has been active for.
     /// @param owner Owner of the deposit for which ED will be checked.
@@ -138,6 +138,10 @@ contract Tracker is Ownable {
         return uint256(_applyDepositCutoff(uint224(deposits.deposits(owner))));
     }
 
+    /// @dev Returns the total deposit amount for the given epoch.
+    /// @param epochNo The epoch to retrieve the total deposit for.
+    /// @return The total deposit amount for the epoch.
+    /// @notice If the epochNo is in the future or less than 1, this function will revert.
     function totalDepositAt(uint32 epochNo) external view returns (uint256) {
         uint32 currentEpoch = epochs.getCurrentEpoch();
         require(epochNo <= currentEpoch, TrackerErrors.FUTURE_IS_UNKNOWN);
@@ -154,6 +158,10 @@ contract Tracker is Ownable {
         return totalDeposit;
     }
 
+    /// @dev Returns the GLM supply for the given epoch.
+    /// @param epochNo The epoch to retrieve the GLM supply for.
+    /// @return The GLM supply for the epoch.
+    /// @notice If the epochNo is in the future or less than 1, this function will revert.
     function tokenSupplyAt(uint32 epochNo) external view returns (uint224) {
         uint32 currentEpoch = epochs.getCurrentEpoch();
         require(epochNo <= currentEpoch, TrackerErrors.FUTURE_IS_UNKNOWN);
@@ -180,8 +188,8 @@ contract Tracker is Ownable {
             uint224(gnt.balanceOf(burnAddress));
     }
 
-    function setProxyAddress(address _proxyAddress) external onlyOwner {
-        proxyAddress = _proxyAddress;
+    function setWrapperAddress(address _wrapperAddress) external onlyOwner {
+        wrapperAddress = _wrapperAddress;
     }
 
     /// @dev Sets ED in a situation when funds are moved after a period of inactivity.
@@ -253,7 +261,7 @@ contract Tracker is Ownable {
     }
 
     modifier onlyTrackerWrapper() {
-        require(msg.sender == proxyAddress, CommonErrors.UNAUTHORIZED_CALLER);
+        require(msg.sender == wrapperAddress, CommonErrors.UNAUTHORIZED_CALLER);
         _;
     }
 }
