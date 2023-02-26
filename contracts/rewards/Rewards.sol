@@ -3,7 +3,7 @@
 pragma solidity ^0.8.9;
 
 import "../interfaces/IDeposits.sol";
-import "../interfaces/IHexagonOracle.sol";
+import "../interfaces/IOctantOracle.sol";
 import "../interfaces/IEpochs.sol";
 import "../interfaces/IAllocationsStorage.sol";
 import "../interfaces/IProposals.sol";
@@ -41,7 +41,7 @@ contract Rewards is IRewards {
     Tracker public immutable tracker;
 
     /// @notice ETH staking proceeds oracle.
-    IHexagonOracle public immutable oracle;
+    IOctantOracle public immutable oracle;
 
     /// @notice Actual proposals store.
     IProposals public immutable proposals;
@@ -60,7 +60,7 @@ contract Rewards is IRewards {
         epochs = IEpochs(epochsAddress);
         deposits = IDeposits(depositsAddress);
         tracker = Tracker(trackerAddress);
-        oracle = IHexagonOracle(oracleAddress);
+        oracle = IOctantOracle(oracleAddress);
         proposals = IProposals(proposalsAddress);
         allocationsStorage = IAllocationsStorage(allocationsStorageAddress);
     }

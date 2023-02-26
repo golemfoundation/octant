@@ -39,10 +39,26 @@ library OracleErrors {
     string public constant CANNOT_SET_BALANCE_FOR_PAST_EPOCHS =
         "HN:Oracle/can-set-balance-for-previous-epoch-only";
 
+    /// @notice Thrown when trying to set the balance in oracle when balance can't yet be determined.
+    /// @return HN:Oracle/can-set-balance-at-earliest-in-second-epoch
+    string public constant BALANCE_CANT_BE_KNOWN =
+        "HN:Oracle/can-set-balance-at-earliest-in-second-epoch";
+
     /// @notice Thrown when trying to set the oracle balance multiple times.
     /// @return HN:Oracle/balance-for-given-epoch-already-exists
     string public constant BALANCE_ALREADY_SET =
         "HN:Oracle/balance-for-given-epoch-already-exists";
+
+    /// @notice Thrown if contract is misconfigured
+    /// @return HN:Oracle/WithdrawalsTarget-not-set
+    string public constant NO_TARGET =
+        "HN:Oracle/WithdrawalsTarget-not-set";
+
+    /// @notice Thrown if contract is misconfigured
+    /// @return HN:Oracle/PayoutsManager-not-set
+    string public constant NO_PAYOUTS_MANAGER =
+        "HN:Oracle/PayoutsManager-not-set";
+
 }
 
 library DepositsErrors {

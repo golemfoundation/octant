@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.9;
 
-interface IHexagonOracle {
+interface IOctantOracle {
     function getTotalETHStakingProceeds(
         uint32 epoch
     ) external view returns (uint256);
