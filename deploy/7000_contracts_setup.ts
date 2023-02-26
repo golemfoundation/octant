@@ -2,17 +2,13 @@ import { ethers } from 'hardhat';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
-import {
-  BEACONCHAIN_VALIDATOR_INDEXES,
-  EXECUTION_LAYER_VALIDATOR_ADDRESS,
-  GOERLI_WITHDRAWALS_TARGET,
-} from '../env';
+import { GOERLI_WITHDRAWALS_TARGET } from '../env';
 import {
   ALLOCATIONS,
   ALLOCATIONS_STORAGE,
-  BEACON_CHAIN_ORACLE,
   DEPOSITS,
-  EXECUTION_LAYER_ORACLE,
+  OCTANT_ORACLE,
+  PAYOUTS,
   PAYOUTS_MANAGER,
   TRACKER,
   TRACKER_WRAPPER,
@@ -21,11 +17,11 @@ import {
 import {
   Allocations,
   AllocationsStorage,
-  BeaconChainOracle,
   Deposits,
-  ExecutionLayerOracle,
-  Tracker,
+  OctantOracle,
+  Payouts,
   PayoutsManager,
+  Tracker,
   WithdrawalsTarget,
 } from '../typechain-types';
 
@@ -38,18 +34,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await allocationsStorage.transferOwnership(allocations.address);
 
   // Setup Oracle
-  const validatorIndexes = BEACONCHAIN_VALIDATOR_INDEXES;
-  let validatorAddress = EXECUTION_LAYER_VALIDATOR_ADDRESS;
-  if (hre.network.name === 'hardhat') {
-    const { Alice } = await hre.ethers.getNamedSigners();
-    validatorAddress = Alice.address;
-  }
-  const beaconChainOracle: BeaconChainOracle = await hre.ethers.getContract(BEACON_CHAIN_ORACLE);
-  const executionLayerOracle: ExecutionLayerOracle = await hre.ethers.getContract(
-    EXECUTION_LAYER_ORACLE,
-  );
-  await beaconChainOracle.setValidatorIndexes(validatorIndexes);
-  await executionLayerOracle.setFeeAddress(validatorAddress);
+  const withdrawalsTarget: WithdrawalsTarget = await hre.ethers.getContract(WITHDRAWALS_TARGET);
+  const payoutsManager: PayoutsManager = await hre.ethers.getContract(PAYOUTS_MANAGER);
+  const octantOracle: OctantOracle = await hre.ethers.getContract(OCTANT_ORACLE);
+  await octantOracle.setTarget(withdrawalsTarget.address);
+  await octantOracle.setPayoutsManager(payoutsManager.address);
 
   // Setup Deposits
   const deposits: Deposits = await hre.ethers.getContract(DEPOSITS);
@@ -64,11 +53,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const target = await ethers.getContract(WITHDRAWALS_TARGET);
     targetAddress = target.address;
   }
-  const manager: PayoutsManager = await ethers.getContract(PAYOUTS_MANAGER);
-  await manager.setTarget(targetAddress);
-
+  const payouts: Payouts = await hre.ethers.getContract(PAYOUTS);
+  await payouts.setPayoutsManager(payoutsManager.address);
+  const oracle = await ethers.getContract(OCTANT_ORACLE);
   const target: WithdrawalsTarget = await ethers.getContractAt(WITHDRAWALS_TARGET, targetAddress);
-  await target.setHexagon(manager.address);
+  await target.setHexagon(oracle.address);
 };
 
 export default func;

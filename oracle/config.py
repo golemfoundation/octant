@@ -15,10 +15,6 @@ defaults = {
     "ORACLE_MAINTAINER_PRIVATE_KEY": "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
     "EPOCHS_CONTRACT_DEF": path.join(PROJECT_DIR, "artifacts/contracts/Epochs.sol/Epochs.json"),
     "EPOCHS_CONTRACT_ADDRESS": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-    "BEACONCHAIN_ORACLE_CONTRACT_DEF": path.join(PROJECT_DIR, "artifacts/contracts/oracle/BeaconChainOracle.sol/BeaconChainOracle.json"),
-    "BEACONCHAIN_ORACLE_CONTRACT_ADDRESS": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-    "EXECUTION_LAYER_ORACLE_CONTRACT_DEF": path.join(PROJECT_DIR, "artifacts/contracts/oracle/ExecutionLayerOracle.sol/ExecutionLayerOracle.json"),
-    "EXECUTION_LAYER_ORACLE_CONTRACT_ADDRESS": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788"
 }
 
 

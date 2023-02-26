@@ -6,7 +6,7 @@ import {
   ALLOCATIONS_STORAGE,
   DEPOSITS,
   EPOCHS,
-  HEXAGON_ORACLE,
+  OCTANT_ORACLE,
   PROPOSALS,
   REWARDS,
   TRACKER,
@@ -21,7 +21,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const epochs = await ethers.getContract(EPOCHS);
   const deposits = await ethers.getContract(DEPOSITS);
   const tracker = await ethers.getContract(TRACKER);
-  const oracle = await ethers.getContract(HEXAGON_ORACLE);
+  const oracle = await ethers.getContract(OCTANT_ORACLE);
   const proposals = await ethers.getContract(PROPOSALS);
   const allocationsStorage = await ethers.getContract(ALLOCATIONS_STORAGE);
 

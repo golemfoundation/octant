@@ -4,15 +4,18 @@ pragma solidity ^0.8.9;
 
 import "../interfaces/IEpochs.sol";
 import "../interfaces/IRewards.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 import {PayoutsErrors, CommonErrors} from "../Errors.sol";
 
 /// @title Contract tracking ETH payouts for Hexagon project.
 /// @author Golem Foundation
-contract Payouts {
+contract Payouts is Ownable {
     IRewards public immutable rewards;
     IEpochs public immutable epochs;
-    address public immutable withdrawals;
+    address public payoutsManager;
+
+    enum Payee { User, Proposal, GolemFoundation }
 
     struct Payout {
         // packed into two 32 byte slots
@@ -27,35 +30,31 @@ contract Payouts {
         uint144 total; // 128+16
     }
 
-    /// @dev tracks ETH payouts to GLM stakers
-    mapping(address => Payout) public userPayouts;
-
-    /// @dev tracks ETH payouts to proposals
-    mapping(address => Payout) public proposalPayouts;
+    /// @dev tracks ETH payouts to GLM stakers, proposals and Golem Foundation
+    mapping(address => Payout) public payouts;
 
     constructor(
         address rewardsAddress,
-        address epochsAddress,
-        address withdrawalsAddress
+        address epochsAddress
     ) {
         rewards = IRewards(rewardsAddress);
         epochs = IEpochs(epochsAddress);
-        withdrawals = withdrawalsAddress;
     }
 
-    /// @param user GLM staker
+    /// @param payeeAddress address of a payee (user, proposal, of Golem Foundation)
     /// @param amount Payout amount
-    function registerUserPayout(
-        address user,
+    function registerPayout(
+        Payee payee,
+        address payeeAddress,
         uint144 amount
-    ) public onlyWithdrawals {
-        uint32 finalizedEpoch = epochs.getCurrentEpoch() - 1;
-        Payout memory p = userPayouts[user];
+    ) public onlyPayoutsManager {
+        uint32 finalizedEpoch = getFinalizedEpoch();
+        Payout memory p = payouts[payeeAddress];
         uint144 remaining = amount;
         bool stop = false;
         while (!stop) {
             uint144 stepFunds = uint144(
-                rewards.claimableReward(p.checkpointEpoch + 1, user)
+                _getRewards(payee, p.checkpointEpoch + 1, payeeAddress)
             );
             if (p.extra + remaining > stepFunds) {
                 remaining = remaining - (stepFunds - p.extra);
@@ -73,57 +72,46 @@ contract Payouts {
                 assert(p.total == p.checkpointSum + p.extra);
             }
         }
-        userPayouts[user] = p;
+        payouts[payeeAddress] = p;
     }
 
-    /// @param proposal proposal address
-    /// @param amount Payout amount
-    function registerProposalPayout(
-        address proposal,
-        uint144 amount
-    ) public onlyWithdrawals {
-        uint32 finalizedEpoch = epochs.getCurrentEpoch() - 1;
-        Payout memory p = proposalPayouts[proposal];
-        uint144 remaining = amount;
-        bool stop = false;
-        while (!stop) {
-            uint144 stepFunds = uint144(
-                rewards.proposalReward(p.checkpointEpoch + 1, proposal)
-            );
-            if (p.extra + remaining > stepFunds) {
-                remaining = remaining - (stepFunds - p.extra);
-                p.checkpointEpoch = p.checkpointEpoch + 1;
-                require(
-                    p.checkpointEpoch <= finalizedEpoch,
-                    PayoutsErrors.REGISTERING_UNEARNED_FUNDS
-                );
-                p.checkpointSum = p.checkpointSum + stepFunds;
-                p.extra = 0;
-            } else {
-                stop = true;
-                p.extra = p.extra + remaining;
-                p.total = p.total + amount;
-                assert(p.total == p.checkpointSum + p.extra);
-            }
-        }
-        proposalPayouts[proposal] = p;
-    }
-
-    function userPayoutStatus(
+    function payoutStatus(
         address user
     ) external view returns (Payout memory) {
-        return userPayouts[user];
+        return payouts[user];
     }
 
-    function proposalPayoutStatus(
-        address proposal
-    ) external view returns (Payout memory) {
-        return proposalPayouts[proposal];
+
+    function setPayoutsManager(address _payoutsManager) public onlyOwner {
+        require(payoutsManager == address(0x0), "HN/Payouts:already-initialized");
+        payoutsManager = _payoutsManager;
     }
 
-    modifier onlyWithdrawals() {
+    /// @dev returns most recent epoch from which funds can be spent
+    function getFinalizedEpoch() public view returns (uint32) {
+        if (epochs.isDecisionWindowOpen()) {
+            return epochs.getCurrentEpoch() - 1;
+        }
+        else {
+            return epochs.getCurrentEpoch() - 2;
+        }
+    }
+
+    function _getRewards(Payee payee, uint32 epoch, address payeeAddress) private view returns (uint256) {
+        if (payee == Payee.User) {
+            return rewards.claimableReward(epoch, payeeAddress);
+        } else if (payee == Payee.Proposal) {
+            return rewards.proposalReward(epoch, payeeAddress);
+        } else if (payee == Payee.GolemFoundation) {
+            return rewards.golemFoundationReward(epoch);
+        } else {
+            revert();
+        }
+    }
+
+    modifier onlyPayoutsManager() {
         require(
-            msg.sender == withdrawals,
+            msg.sender == payoutsManager,
             CommonErrors.UNAUTHORIZED_CALLER
         );
         _;

@@ -8,12 +8,10 @@ import { Signers, TestEnv } from './test-env.interface';
 import {
   ALLOCATIONS,
   ALLOCATIONS_STORAGE,
-  BEACON_CHAIN_ORACLE,
   DEPOSITS,
   EPOCHS,
-  EXECUTION_LAYER_ORACLE,
   FAUCET,
-  HEXAGON_ORACLE,
+  OCTANT_ORACLE,
   PAYOUTS,
   PAYOUTS_MANAGER,
   PROPOSALS,
@@ -25,11 +23,9 @@ import {
 import {
   Allocations,
   AllocationsStorage,
-  BeaconChainOracle,
   Deposits,
   Epochs,
-  ExecutionLayerOracle,
-  HexagonOracle,
+  OctantOracle,
   Payouts,
   PayoutsManager,
   Proposals,
@@ -45,12 +41,10 @@ chai.use(smock.matchers);
 const testEnv: TestEnv = {
   allocations: {} as Allocations,
   allocationsStorage: {} as AllocationsStorage,
-  beaconChainOracle: {} as BeaconChainOracle,
   epochs: {} as Epochs,
-  executionLayerOracle: {} as ExecutionLayerOracle,
   faucet: {} as TestGLMFaucet,
   glmDeposits: {} as Deposits,
-  hexagonOracle: {} as HexagonOracle,
+  octantOracle: {} as OctantOracle,
   payouts: {} as Payouts,
   payoutsManager: {} as PayoutsManager,
   proposalAddresses: {} as SignerWithAddress[],
@@ -79,9 +73,7 @@ async function initializeTestsEnv() {
   testEnv.payoutsManager = await ethers.getContract(PAYOUTS_MANAGER);
   testEnv.proposals = await ethers.getContract(PROPOSALS);
   testEnv.epochs = await ethers.getContract(EPOCHS);
-  testEnv.beaconChainOracle = await ethers.getContract(BEACON_CHAIN_ORACLE);
-  testEnv.executionLayerOracle = await ethers.getContract(EXECUTION_LAYER_ORACLE);
-  testEnv.hexagonOracle = await ethers.getContract(HEXAGON_ORACLE);
+  testEnv.octantOracle = await ethers.getContract(OCTANT_ORACLE);
 }
 
 export function makeTestsEnv(name: string, tests: (testEnvToMake: TestEnv) => void): void {

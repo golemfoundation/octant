@@ -1,20 +1,32 @@
 import { expect } from 'chai';
 import { parseEther } from 'ethers/lib/utils';
+import { ethers, deployments } from 'hardhat';
 
 import { makeTestsEnv } from './helpers/make-tests-env';
 
 import { REWARDS } from '../helpers/constants';
 import { forwardEpochs } from '../helpers/epochs-utils';
+import { WithdrawalsTargetV3 } from '../typechain-types';
 
 makeTestsEnv(REWARDS, testEnv => {
   async function updateOracle() {
-    const { epochs, beaconChainOracle, executionLayerOracle } = testEnv;
+    const { epochs, octantOracle, signers } = testEnv;
+    const { deploy } = deployments;
+    const t = await deploy('WithdrawalsTarget', {
+      contract: 'WithdrawalsTargetV3',
+      from: signers.deployer.address,
+      proxy: true,
+    });
+    const target: WithdrawalsTargetV3 = await ethers.getContractAt(
+      'WithdrawalsTargetV3',
+      t.address,
+    );
+    expect(await target.version()).eq(3);
     await forwardEpochs(epochs, 1);
-    await beaconChainOracle.setBalance(1, parseEther('200'));
-    await executionLayerOracle.setBalance(1, parseEther('200'));
+    await target.sendETH({ value: ethers.utils.parseEther('400.0') });
     await forwardEpochs(epochs, 1);
-    await beaconChainOracle.setBalance(2, parseEther('400'));
-    await executionLayerOracle.setBalance(2, parseEther('400'));
+    await octantOracle.writeBalance();
+    await target.sendETH({ value: ethers.utils.parseEther('400.0') });
   }
 
   describe('individual rewards', async () => {

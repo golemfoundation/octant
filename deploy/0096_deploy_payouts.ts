@@ -12,11 +12,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const epochs = await ethers.getContract(EPOCHS);
   const rewards = await ethers.getContract(REWARDS);
-  // TODO change to Withdrawals contract when implemented
-  const withdrawals = deployer;
 
   await deploy(PAYOUTS, {
-    args: [rewards.address, epochs.address, withdrawals],
+    args: [rewards.address, epochs.address],
     autoMine: true,
     from: deployer,
     log: true,

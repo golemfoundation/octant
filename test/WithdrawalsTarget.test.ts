@@ -1,9 +1,11 @@
 import { expect } from 'chai';
-import { deployments } from 'hardhat';
+import { ethers, deployments } from 'hardhat';
 
 import { makeTestsEnv } from './helpers/make-tests-env';
 
 import { WITHDRAWALS_TARGET } from '../helpers/constants';
+import { forwardEpochs } from '../helpers/epochs-utils';
+import { WithdrawalsTargetV3 } from '../typechain-types';
 
 /* eslint no-console: 0 */
 
@@ -58,6 +60,32 @@ makeTestsEnv(WITHDRAWALS_TARGET, testEnv => {
           throw e;
         }
       }
+    });
+  });
+
+  describe('ETH withdrawals', () => {
+    it('Smoke test', async () => {
+      const { octantOracle, payoutsManager, epochs, signers } = testEnv;
+      const { deploy } = deployments;
+
+      const t = await deploy('WithdrawalsTarget', {
+        contract: 'WithdrawalsTargetV3',
+        from: signers.deployer.address,
+        proxy: true,
+      });
+      const target: WithdrawalsTargetV3 = await ethers.getContractAt(
+        'WithdrawalsTargetV3',
+        t.address,
+      );
+      expect(await target.version()).eq(3);
+      await target.setOctant(octantOracle.address);
+      await target.sendETH({ value: ethers.utils.parseEther('1.0') });
+      await forwardEpochs(epochs, 1);
+      await octantOracle.writeBalance();
+      expect(await ethers.provider.getBalance(target.address)).eq(0);
+      expect(await ethers.provider.getBalance(payoutsManager.address)).eq(
+        ethers.utils.parseEther('1.0'),
+      );
     });
   });
 });
