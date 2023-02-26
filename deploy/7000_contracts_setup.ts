@@ -44,8 +44,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const deposits: Deposits = await hre.ethers.getContract(DEPOSITS);
   const tracker: Tracker = await hre.ethers.getContract(TRACKER);
   const trackerWrapper = await hre.ethers.getContract(TRACKER_WRAPPER);
-  await deposits.setDepositTrackerAddress(trackerWrapper.address);
-  await tracker.setProxyAddress(trackerWrapper.address);
+  await deposits.setTrackerAddress(trackerWrapper.address);
+  await tracker.setWrapperAddress(trackerWrapper.address);
 
   // Setup Payouts
   let targetAddress = GOERLI_WITHDRAWALS_TARGET;
@@ -57,7 +57,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await payouts.setPayoutsManager(payoutsManager.address);
   const oracle = await ethers.getContract(OCTANT_ORACLE);
   const target: WithdrawalsTarget = await ethers.getContractAt(WITHDRAWALS_TARGET, targetAddress);
-  await target.setHexagon(oracle.address);
+  await target.setOctant(oracle.address);
 };
 
 export default func;

@@ -28,11 +28,11 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "depositor",
+        "name": "user",
         "type": "address"
       }
     ],
-    "name": "Deposited",
+    "name": "Locked",
     "type": "event"
   },
   {
@@ -91,25 +91,12 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "depositor",
+        "name": "user",
         "type": "address"
       }
     ],
-    "name": "Withdrawn",
+    "name": "Unlocked",
     "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint224",
-        "name": "amount",
-        "type": "uint224"
-      }
-    ],
-    "name": "deposit",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
   },
   {
     "inputs": [
@@ -144,6 +131,19 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint224",
+        "name": "amount",
+        "type": "uint224"
+      }
+    ],
+    "name": "lock",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "owner",
     "outputs": [
@@ -167,11 +167,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "newDT",
+        "name": "newTracker",
         "type": "address"
       }
     ],
-    "name": "setDepositTrackerAddress",
+    "name": "setTrackerAddress",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -210,7 +210,7 @@
         "type": "uint224"
       }
     ],
-    "name": "withdraw",
+    "name": "unlock",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

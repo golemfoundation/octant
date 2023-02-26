@@ -80,7 +80,7 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
         );
         await token.transfer(Alice.address, parseEther('1000000'));
         await token.connect(Alice).approve(glmDeposits.address, parseEther('1000000'));
-        await glmDeposits.connect(Alice).deposit(parseEther('1000000'));
+        await glmDeposits.connect(Alice).lock(parseEther('1000000'));
         expect(await epochs.getCurrentEpoch()).eq(1);
         await target.sendETH({ value: ethers.utils.parseEther('400.0') });
         await forwardEpochs(epochs, 1);

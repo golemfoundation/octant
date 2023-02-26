@@ -15,10 +15,10 @@ contract WithdrawalsTargetV2 is Proxied {
     //   https://docs.openzeppelin.com/upgrades-plugins/1.x/writing-upgradeable
     // Note that this contract uses hardhat's upgradeable, not OpenZeppelin's!
 
-    /// @notice Hexagon address - expected to withdraw rewards ETH
-    address public hexagon;
+    /// @notice Octant address - expected to withdraw rewards ETH
+    address public octant;
 
-    event HexagonSet(address oldValue, address newValue);
+    event OctantSet(address oldValue, address newValue);
     event OwnerSet(address oldValue, address newValue);
 
     constructor () {}
@@ -29,8 +29,8 @@ contract WithdrawalsTargetV2 is Proxied {
         return 2;
     }
 
-    function setHexagon(address newHexagon) public {
-        emit HexagonSet(hexagon, newHexagon);
-        hexagon = newHexagon;
+    function setOctant(address newOctant) public {
+        emit OctantSet(octant, newOctant);
+        octant = newOctant;
     }
 }

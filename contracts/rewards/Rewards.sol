@@ -15,8 +15,8 @@ import "../deposits/Tracker.sol";
 /// external dependencies
 import "@prb/math/contracts/PRBMathUD60x18.sol";
 
-/// @notice Contract responsible for calculating rewards from Hexagon GLM Governance Experiment.
-/// Get more insight about calculations here: https://hexagonapp.notion.site/Hexagon-a-GLM-Governance-Experiment-e098d7ff9d55468db28b8b3584b5959c
+/// @notice Contract responsible for calculating rewards from Octant GLM Governance Experiment.
+/// Get more insight about calculations here: https://octantapp.notion.site/Octant-a-GLM-Governance-Experiment-e098d7ff9d55468db28b8b3584b5959c
 contract Rewards is IRewards {
     using PRBMathUD60x18 for uint256;
 
@@ -31,12 +31,6 @@ contract Rewards is IRewards {
     /// This threshold is expressed as a percentage.
     uint256 public constant PROPOSAL_DONATION_THRESHOLD_PERCENT = 10;
 
-    /// @notice Epochs contract.
-    IEpochs public immutable epochs;
-
-    /// @notice GLM deposits contract.
-    IDeposits public immutable deposits;
-
     /// @notice Effective deposit tracking.
     Tracker public immutable tracker;
 
@@ -50,15 +44,11 @@ contract Rewards is IRewards {
     IAllocationsStorage public immutable allocationsStorage;
 
     constructor(
-        address epochsAddress,
-        address depositsAddress,
         address trackerAddress,
         address oracleAddress,
         address proposalsAddress,
         address allocationsStorageAddress
     ) {
-        epochs = IEpochs(epochsAddress);
-        deposits = IDeposits(depositsAddress);
         tracker = Tracker(trackerAddress);
         oracle = IOctantOracle(oracleAddress);
         proposals = IProposals(proposalsAddress);

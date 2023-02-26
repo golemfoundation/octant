@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IProposals.sol";
 
-/// @notice Contract tracking active Hexagon proposals in particular epoch.
+/// @notice Contract tracking active Octant proposals in particular epoch.
 /// Proposals are stored in IPFS in JSON format and are maintained entirely by Golem Foundation.
 /// In order to get proposal details from IPFS call use returned values as this:
 /// https://<IPFS Gateway of your choice>/ipfs/<CID>/<Proposal address>

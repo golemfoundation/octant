@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import {PayoutsErrors, CommonErrors} from "../Errors.sol";
 
-/// @title Contract tracking ETH payouts for Hexagon project.
+/// @title Contract tracking ETH payouts for Octant project.
 /// @author Golem Foundation
 contract Payouts is Ownable {
     IRewards public immutable rewards;

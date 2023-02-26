@@ -17,7 +17,7 @@ contract Allocations {
     /// @notice Tracking user`s allocations.
     IAllocationsStorage public immutable allocationsStorage;
 
-    /// @notice Tracking hexagon rewards.
+    /// @notice Tracking octant rewards.
     IRewards public immutable rewards;
 
     /// @notice emitted after user allocated funds. This event contains funds allocated to proposals.

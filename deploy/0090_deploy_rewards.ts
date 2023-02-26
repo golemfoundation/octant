@@ -4,8 +4,6 @@ import { DeployFunction } from 'hardhat-deploy/types';
 
 import {
   ALLOCATIONS_STORAGE,
-  DEPOSITS,
-  EPOCHS,
   OCTANT_ORACLE,
   PROPOSALS,
   REWARDS,
@@ -18,22 +16,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
-  const epochs = await ethers.getContract(EPOCHS);
-  const deposits = await ethers.getContract(DEPOSITS);
   const tracker = await ethers.getContract(TRACKER);
   const oracle = await ethers.getContract(OCTANT_ORACLE);
   const proposals = await ethers.getContract(PROPOSALS);
   const allocationsStorage = await ethers.getContract(ALLOCATIONS_STORAGE);
 
   await deploy(REWARDS, {
-    args: [
-      epochs.address,
-      deposits.address,
-      tracker.address,
-      oracle.address,
-      proposals.address,
-      allocationsStorage.address,
-    ],
+    args: [tracker.address, oracle.address, proposals.address, allocationsStorage.address],
     autoMine: true,
     from: deployer,
     log: true,

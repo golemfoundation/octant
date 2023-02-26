@@ -16,7 +16,7 @@ export default function useDeposit(
 
   return useMutation({
     mutationFn: async value => {
-      const transactionResponse = await contractDeposits!.deposit(value, {
+      const transactionResponse = await contractDeposits!.lock(value, {
         gasLimit: DEPOSIT_WITHDRAW_GAS_LIMIT,
       });
       await transactionResponse.wait(1);

@@ -9,7 +9,7 @@ type Allocated @entity(immutable: true) {
     transactionHash: Bytes!
 }
 
-type Deposited @entity(immutable: true) {
+type Locked @entity(immutable: true) {
   id: Bytes!
   amount: BigInt! # uint224
   user: Bytes! # address
@@ -18,7 +18,7 @@ type Deposited @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type Withdrawn @entity(immutable: true) {
+type Unlocked @entity(immutable: true) {
   id: Bytes!
   amount: BigInt! # uint224
   user: Bytes! # address
