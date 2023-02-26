@@ -15,6 +15,11 @@
         "internalType": "address",
         "name": "_rewardsAddress",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_proposalsAddress",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -85,6 +90,42 @@
   {
     "inputs": [
       {
+        "internalType": "uint32",
+        "name": "_epoch",
+        "type": "uint32"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "proposal",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "allocation",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IAllocationsStorage.Allocation[]",
+        "name": "_allocations",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "_proposalsAreActive",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "components": [
           {
             "internalType": "address",
@@ -126,6 +167,19 @@
     "outputs": [
       {
         "internalType": "contract IEpochs",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "proposals",
+    "outputs": [
+      {
+        "internalType": "contract IProposals",
         "name": "",
         "type": "address"
       }

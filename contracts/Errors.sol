@@ -17,6 +17,11 @@ library AllocationErrors {
     /// @return HN:Allocations/allocate-above-rewards-budget
     string public constant ALLOCATE_ABOVE_REWARDS_BUDGET =
         "HN:Allocations/allocate-above-rewards-budget";
+
+    /// @notice Thrown when user trying to allocate to a proposal that does not exist.
+    /// @return HN:Allocations/no-such-proposal
+    string public constant ALLOCATE_TO_NON_EXISTING_PROPOSAL =
+        "HN:Allocations/no-such-proposal";
 }
 
 library AllocationStorageErrors {
