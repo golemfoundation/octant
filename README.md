@@ -4,7 +4,7 @@ Octant is a community-driven platform for experiments in decentralized governanc
 
 Developed by the [Golem Foundation](https://golem.foundation/) to test various hypotheses around user control, voter engagement, and community funding, the platform allows for running various governance experiments in a real-life environment and rewards user participation with ETH.
 
-Documentation is available [here](http://docs.hexagonapp.xyz/).
+Documentation is available [here](https://docs.octant.app/).
 
 ## Configuration
 
