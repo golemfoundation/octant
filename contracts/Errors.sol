@@ -106,6 +106,13 @@ library PayoutsErrors {
         "HN:Payouts/registering-withdrawal-of-unearned-funds";
 }
 
+library ProposalsErrors {
+    /// @notice Thrown when trying to change proposals that could already have been voted upon.
+    /// @return HN:Proposals/only-future-proposals-changing-is-allowed
+    string public constant CHANGING_PROPOSALS_IN_THE_PAST =
+        "HN:Proposals/only-future-proposals-changing-is-allowed";
+}
+
 library CommonErrors {
     /// @notice Thrown when trying to call as an unauthorized account.
     /// @return HN:Common/unauthorized-caller

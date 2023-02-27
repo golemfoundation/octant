@@ -37,6 +37,7 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
       .then(proposals => proposals.slice(0, 10))
       .then(proposals => proposals.map(el => el.address));
     const proposals = (await proposalsFactory.deploy(
+      epochs.address,
       PROPOSALS_CID,
       proposalAddresses,
     )) as Proposals;
