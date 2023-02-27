@@ -4,7 +4,11 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+
 import "./interfaces/IProposals.sol";
+import "./interfaces/IEpochs.sol";
+
+import {ProposalsErrors} from "./Errors.sol";
 
 /// @notice Contract tracking active Octant proposals in particular epoch.
 /// Proposals are stored in IPFS in JSON format and are maintained entirely by Golem Foundation.
@@ -17,9 +21,12 @@ contract Proposals is Ownable, IProposals {
     /// currently active and inactive.
     string public cid;
 
+    IEpochs public epochs;
+
     mapping(uint256 => address[]) private proposalAddressesByEpoch;
 
-    constructor(string memory _initCID, address[] memory proposals) {
+    constructor(address _epochs, string memory _initCID, address[] memory proposals) {
+        epochs = IEpochs(_epochs);
         setCID(_initCID);
         proposalAddressesByEpoch[0] = proposals;
     }
@@ -36,6 +43,7 @@ contract Proposals is Ownable, IProposals {
         uint256 _epoch,
         address[] calldata _proposalAddresses
     ) public onlyOwner {
+        require(epochs.getCurrentEpoch() < _epoch, ProposalsErrors.CHANGING_PROPOSALS_IN_THE_PAST);
         proposalAddressesByEpoch[_epoch] = _proposalAddresses;
     }
 

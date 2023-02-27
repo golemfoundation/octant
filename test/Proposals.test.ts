@@ -2,8 +2,10 @@ import { expect } from 'chai';
 
 import { makeTestsEnv } from './helpers/make-tests-env';
 
+
 import { PROPOSALS_CID } from '../env';
 import { PROPOSALS } from '../helpers/constants';
+import { forwardEpochs } from '../helpers/epochs-utils';
 
 makeTestsEnv(PROPOSALS, testEnv => {
   const newProposals = [
@@ -73,6 +75,17 @@ makeTestsEnv(PROPOSALS, testEnv => {
           `${PROPOSALS_CID}${proposalAddresses[i].address.toLowerCase()}`,
         );
       }
+    });
+
+    it('Cannot change historical proposals', async () => {
+      const { epochs, proposals } = testEnv;
+      // when
+      await forwardEpochs(epochs, 3);
+
+      // then
+      expect(proposals.setProposalAddresses(1, newProposals)).revertedWith(
+        'HN:Proposals/only-future-proposals-changing-is-allowed',
+      );
     });
 
     it('Cannot change baseURI if not an owner', async () => {
