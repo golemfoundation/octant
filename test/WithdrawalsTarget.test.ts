@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { parseEther } from 'ethers/lib/utils';
 import { ethers, deployments } from 'hardhat';
 
 import { makeTestsEnv } from './helpers/make-tests-env';
@@ -19,7 +20,7 @@ class NoExpectedError extends Error {
 
 makeTestsEnv(WITHDRAWALS_TARGET, testEnv => {
   describe('Basic deployment', () => {
-    it('Owner is initialized', async () => {
+    it('Version is set to 1', async () => {
       const { target } = testEnv;
       expect(await target.version()).eq(1);
     });
@@ -33,16 +34,38 @@ makeTestsEnv(WITHDRAWALS_TARGET, testEnv => {
       expect(await target.version()).eq(1);
 
       const { deploy } = deployments;
-      const upgradedTarget = await deploy('WithdrawalsTarget', {
-        contract: 'WithdrawalsTargetV2',
+      const deployRes = await deploy('WithdrawalsTarget', {
+        contract: 'WithdrawalsTargetV3',
         from: signers.deployer.address,
         proxy: true,
       });
-
+      const targetV3 = await ethers.getContractAt('WithdrawalsTargetV3', deployRes.address);
       // sanity check: storage addr must be the same
-      expect(upgradedTarget.address).eq(oldAddr);
+      expect(deployRes.address).eq(oldAddr);
       // sanity check: version number has changed
-      expect(await target.version()).eq(2);
+      expect(await targetV3.version()).eq(3);
+    });
+
+    it('multisig can withdraw', async () => {
+      const { signers } = testEnv;
+      const { deploy } = deployments;
+      const deployRes = await deploy('WithdrawalsTarget', {
+        contract: 'WithdrawalsTargetV3',
+        from: signers.deployer.address,
+        proxy: true,
+      });
+      const targetV3 = await ethers.getContractAt('WithdrawalsTargetV3', deployRes.address);
+
+      // target has some funds
+      await targetV3.sendETH({ value: parseEther('1.0') });
+
+      // Alice can't withdraw
+      expect(targetV3.connect(signers.Alice).withdrawUnstaked(parseEther('0'))).to.be.revertedWith(
+        'HN:WithdrawalsTarget/unauthorized-caller',
+      );
+
+      // Deployer can withdraw
+      await targetV3.withdrawUnstaked(parseEther('1'));
     });
 
     it('only original deployer can upgrade', async () => {

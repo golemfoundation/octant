@@ -22,21 +22,32 @@ contract WithdrawalsTargetV3 is Proxied {
     event OwnerSet(address oldValue, address newValue);
     event GotEth(uint amount, address sender);
 
-    constructor () {}
+    constructor () {
+    }
 
-    function init() public proxied {}
+    function init() public proxied {
+    }
+
+    // replace with Ownable for mainnet
+    function multisig() view public returns (address) {
+        return _proxyAdmin();
+    }
 
     function version() public pure returns (uint) {
         return 3;
     }
 
-    function setOctant(address newOctant) public {
+    function setOctant(address newOctant) public onlyMultisig {
         emit OctantSet(octant, newOctant);
         octant = newOctant;
     }
 
     function withdrawRewards(address payable rewardsVault) public onlyOctant {
         rewardsVault.transfer(address(this).balance);
+    }
+
+    function withdrawUnstaked(uint256 amount) public onlyMultisig {
+        payable(multisig()).transfer(amount);
     }
 
     /// @dev This will be removed before mainnet launch.
@@ -47,6 +58,11 @@ contract WithdrawalsTargetV3 is Proxied {
 
     modifier onlyOctant() {
         require(msg.sender == octant, "HN:WithdrawalsTarget/unauthorized-caller");
+        _;
+    }
+
+    modifier onlyMultisig() {
+        require(msg.sender == multisig(), "HN:WithdrawalsTarget/unauthorized-caller");
         _;
     }
 }
