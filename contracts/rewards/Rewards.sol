@@ -15,6 +15,7 @@ import "../deposits/Tracker.sol";
 /// external dependencies
 import "@prb/math/contracts/PRBMathUD60x18.sol";
 
+
 /// @notice Contract responsible for calculating rewards from Octant GLM Governance Experiment.
 /// Get more insight about calculations here: https://octantapp.notion.site/Octant-a-GLM-Governance-Experiment-e098d7ff9d55468db28b8b3584b5959c
 contract Rewards is IRewards {
@@ -224,6 +225,17 @@ contract Rewards is IRewards {
         uint256 claimableRewardsSum = allocationsStorage.getTotalClaimableRewards(epoch);
 
         return allIndividualRewards(epoch) - proposalDonationAboveThresholdSum - claimableRewardsSum;
+    }
+
+    /// @notice In order to be eligible for receiving donations in the epoch,
+    /// a proposal must pass a predefined threshold of individual donation.
+    /// This threshold is calculated as 1/proposal length * 2.
+    /// @return value in the range of 0 to 1 represented in WEI. Parse it to Ether to get the floated ratio.
+    /// example: 250000000000000000 = 0.25 fraction
+    function proposalRewardsThresholdFraction(uint32 epoch) external view returns (uint256) {
+        address[] memory proposalAddresses = proposals.getProposalAddresses(epoch);
+        uint256 denominator = proposalAddresses.length * 2 * 10 ** 18;
+        return denominator.inv();
     }
 
     /// @notice In order to be eligible for receiving donations in the epoch,
