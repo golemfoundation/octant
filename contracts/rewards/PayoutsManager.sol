@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./../interfaces/IWithdrawalsTarget.sol";
 
 import "./Payouts.sol";
+import "../Proposals.sol";
 
 import {PayoutsErrors, CommonErrors} from "../Errors.sol";
 
@@ -14,12 +15,14 @@ import {PayoutsErrors, CommonErrors} from "../Errors.sol";
 contract PayoutsManager is Ownable {
     Payouts public immutable payouts;
     address public golemFoundationWithdrawalAddress;
+    Proposals public proposals;
 
     event ETHWithdrawal(Payouts.Payee payee, address owner, uint224 amount);
 
-    constructor(address payoutsAddress, address _golemFoundationWithdrawalAddress) {
-        payouts = Payouts(payoutsAddress);
+    constructor(address _payoutsAddress, address _golemFoundationWithdrawalAddress, address _proposalsAddress) {
+        payouts = Payouts(_payoutsAddress);
         golemFoundationWithdrawalAddress = _golemFoundationWithdrawalAddress;
+        proposals = Proposals(_proposalsAddress);
     }
 
     function withdrawUser(uint144 amount) public {
@@ -28,11 +31,13 @@ contract PayoutsManager is Ownable {
     }
 
     function withdrawProposal(address proposalAddress, uint144 amount) public {
+        require(proposals.isAuthorized(msg.sender, proposalAddress), CommonErrors.UNAUTHORIZED_CALLER);
         emit ETHWithdrawal(Payouts.Payee.Proposal, proposalAddress, amount);
         _withdraw(Payouts.Payee.Proposal, payable(proposalAddress), amount);
     }
 
     function withdrawGolemFoundation(uint144 amount) public {
+        require(msg.sender == golemFoundationWithdrawalAddress, CommonErrors.UNAUTHORIZED_CALLER);
         emit ETHWithdrawal(Payouts.Payee.GolemFoundation, golemFoundationWithdrawalAddress, amount);
         _withdraw(Payouts.Payee.GolemFoundation, payable(golemFoundationWithdrawalAddress), amount);
     }

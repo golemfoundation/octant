@@ -42,6 +42,9 @@ const config: HardhatUserConfig = {
     Eve: {
       default: 5,
     },
+    TestFoundation: {
+      default: 6,
+    },
     deployer: {
       default: 0,
       localhost: 0,

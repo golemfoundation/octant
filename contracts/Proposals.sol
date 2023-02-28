@@ -47,6 +47,10 @@ contract Proposals is Ownable, IProposals {
         proposalAddressesByEpoch[_epoch] = _proposalAddresses;
     }
 
+    function isAuthorized(address caller, address proposal) public pure returns (bool){
+        return (caller == proposal);
+    }
+
     /// @return list of active proposal addresses in given epoch.
     function getProposalAddresses(
         uint256 _epoch
