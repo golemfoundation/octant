@@ -1,6 +1,6 @@
 import { FakeContract, smock } from '@defi-wonderland/smock';
 import { expect } from 'chai';
-import { parseEther } from 'ethers/lib/utils';
+import { formatEther, parseEther } from 'ethers/lib/utils';
 import { ethers, deployments } from 'hardhat';
 
 import { makeTestsEnv } from './helpers/make-tests-env';
@@ -67,15 +67,15 @@ makeTestsEnv(REWARDS, testEnv => {
 
     const parameters = [
       // threshold 25% (0.0125), donations [0.01, 0.04]
-      { proposalsNotPassingThresholdNum: 1, proposalsNumber: 2 },
-      // threshold 16% (0.0224), donations [0.01, 0.04, 0.09]
-      { proposalsNotPassingThresholdNum: 1, proposalsNumber: 3 },
+      { fraction: '0.25', proposalsNotPassingThresholdNum: 1, proposalsNumber: 2 },
+      // threshold 16.6666% (0.0224), donations [0.01, 0.04, 0.09]
+      { fraction: '0.166666666666666666', proposalsNotPassingThresholdNum: 1, proposalsNumber: 3 },
       // threshold 10% (0.055), donations [0.01, 0.04, 0.09, 0.16, 0.25]
-      { proposalsNotPassingThresholdNum: 2, proposalsNumber: 5 },
+      { fraction: '0.1', proposalsNotPassingThresholdNum: 2, proposalsNumber: 5 },
       // threshold 5% (0.1925), donations [0.01, 0.04, 0.09, 0.16, 0.25, 0.36, 0.49, 0.64, 0.81, 1]
-      { proposalsNotPassingThresholdNum: 4, proposalsNumber: 10 },
-      // threshold 3,125%, (0,203125), donations [0.01, 0.04, 0.09, 0.16, 0.25, 0.36, 0.49, 0.64, 0.81, 1, 1,21, 1,44]
-      { proposalsNotPassingThresholdNum: 4, proposalsNumber: 12 },
+      { fraction: '0.05', proposalsNotPassingThresholdNum: 4, proposalsNumber: 10 },
+      // threshold 4.16666%, (0,27083333329), donations [0.01, 0.04, 0.09, 0.16, 0.25, 0.36, 0.49, 0.64, 0.81, 1, 1,21, 1,44]
+      { fraction: '0.041666666666666666', proposalsNotPassingThresholdNum: 5, proposalsNumber: 12 },
     ];
 
     parameters.forEach(param => {
@@ -108,6 +108,18 @@ makeTestsEnv(REWARDS, testEnv => {
         for (let i = param.proposalsNotPassingThresholdNum; i < proposalRewards.length; i++) {
           expect(proposalRewards[i].matched).gt(0);
         }
+      });
+
+      it(`Fraction is ${param.fraction} when there are ${param.proposalsNumber} proposals`, async () => {
+        const { proposalAddresses } = testEnv;
+        const testProposalAddresses = proposalAddresses
+          .slice(0, param.proposalsNumber)
+          .map(proposal => proposal.address);
+
+        proposals.getProposalAddresses.returns((_epoch: number) => testProposalAddresses);
+
+        const proposalRewardsThresholdFraction = await rewards.proposalRewardsThresholdFraction(2);
+        expect(formatEther(proposalRewardsThresholdFraction)).eq(param.fraction);
       });
     });
   });

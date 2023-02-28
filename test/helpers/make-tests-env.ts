@@ -60,7 +60,7 @@ async function initializeTestsEnv() {
   testEnv.signers = await ethers.getNamedSigners();
   testEnv.proposalAddresses = await ethers
     .getUnnamedSigners()
-    .then(proposals => proposals.slice(0, 10));
+    .then(proposals => proposals.slice(0, 12));
   testEnv.allocations = await ethers.getContract(ALLOCATIONS);
   testEnv.allocationsStorage = await ethers.getContract(ALLOCATIONS_STORAGE);
   testEnv.faucet = await ethers.getContract(FAUCET);
