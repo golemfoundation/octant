@@ -28,7 +28,10 @@ makeTestsEnv(WITHDRAWALS_TARGET, testEnv => {
 
   describe('upgrade', () => {
     it('basic upgrade', async () => {
-      const { target, signers } = testEnv;
+      const {
+        target,
+        signers: { deployer },
+      } = testEnv;
 
       const oldAddr = target.address;
       expect(await target.version()).eq(1);
@@ -36,7 +39,7 @@ makeTestsEnv(WITHDRAWALS_TARGET, testEnv => {
       const { deploy } = deployments;
       const deployRes = await deploy('WithdrawalsTarget', {
         contract: 'WithdrawalsTargetV3',
-        from: signers.deployer.address,
+        from: deployer.address,
         proxy: true,
       });
       const targetV3 = await ethers.getContractAt('WithdrawalsTargetV3', deployRes.address);
@@ -47,25 +50,28 @@ makeTestsEnv(WITHDRAWALS_TARGET, testEnv => {
     });
 
     it('multisig can withdraw', async () => {
-      const { signers } = testEnv;
+      const {
+        signers: { deployer, Darth, TestFoundation },
+      } = testEnv;
       const { deploy } = deployments;
       const deployRes = await deploy('WithdrawalsTarget', {
         contract: 'WithdrawalsTargetV3',
-        from: signers.deployer.address,
+        from: deployer.address,
         proxy: true,
       });
       const targetV3 = await ethers.getContractAt('WithdrawalsTargetV3', deployRes.address);
+      await targetV3.setMultisig(TestFoundation.address);
 
       // target has some funds
       await targetV3.sendETH({ value: parseEther('1.0') });
 
       // Alice can't withdraw
-      expect(targetV3.connect(signers.Alice).withdrawUnstaked(parseEther('0'))).to.be.revertedWith(
+      expect(targetV3.connect(Darth).withdrawUnstaked(parseEther('0'))).to.be.revertedWith(
         'HN:WithdrawalsTarget/unauthorized-caller',
       );
 
       // Deployer can withdraw
-      await targetV3.withdrawUnstaked(parseEther('1'));
+      await targetV3.connect(TestFoundation).withdrawUnstaked(parseEther('1'));
     });
 
     it('only original deployer can upgrade', async () => {
@@ -88,12 +94,17 @@ makeTestsEnv(WITHDRAWALS_TARGET, testEnv => {
 
   describe('ETH withdrawals', () => {
     it('Smoke test', async () => {
-      const { octantOracle, payoutsManager, epochs, signers } = testEnv;
+      const {
+        octantOracle,
+        payoutsManager,
+        epochs,
+        signers: { deployer, TestFoundation },
+      } = testEnv;
       const { deploy } = deployments;
 
       const t = await deploy('WithdrawalsTarget', {
         contract: 'WithdrawalsTargetV3',
-        from: signers.deployer.address,
+        from: deployer.address,
         proxy: true,
       });
       const target: WithdrawalsTargetV3 = await ethers.getContractAt(
@@ -101,7 +112,8 @@ makeTestsEnv(WITHDRAWALS_TARGET, testEnv => {
         t.address,
       );
       expect(await target.version()).eq(3);
-      await target.setOctant(octantOracle.address);
+      await target.setMultisig(TestFoundation.address);
+      await target.connect(TestFoundation).setOctant(octantOracle.address);
       await target.sendETH({ value: ethers.utils.parseEther('1.0') });
       await forwardEpochs(epochs, 1);
       await octantOracle.writeBalance();

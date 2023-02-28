@@ -18,19 +18,17 @@ contract WithdrawalsTargetV3 is Proxied {
     /// @notice Octant address will receive rewards ETH
     address public octant;
 
+    /// @notice Golem Foundation multisig address
+    address public multisig;
+
     event OctantSet(address oldValue, address newValue);
-    event OwnerSet(address oldValue, address newValue);
+    event MultisigSet(address oldValue, address newValue);
     event GotEth(uint amount, address sender);
 
     constructor () {
     }
 
     function init() public proxied {
-    }
-
-    // replace with Ownable for mainnet
-    function multisig() view public returns (address) {
-        return _proxyAdmin();
     }
 
     function version() public pure returns (uint) {
@@ -42,12 +40,19 @@ contract WithdrawalsTargetV3 is Proxied {
         octant = newOctant;
     }
 
+    function setMultisig(address newMultisig) public {
+        require((multisig == address(0x0)) || (msg.sender == multisig),
+                "HN:WithdrawalsTarget/unauthorized-caller");
+        emit MultisigSet(multisig, newMultisig);
+        multisig = newMultisig;
+    }
+
     function withdrawRewards(address payable rewardsVault) public onlyOctant {
         rewardsVault.transfer(address(this).balance);
     }
 
     function withdrawUnstaked(uint256 amount) public onlyMultisig {
-        payable(multisig()).transfer(amount);
+        payable(multisig).transfer(amount);
     }
 
     /// @dev This will be removed before mainnet launch.
@@ -62,7 +67,7 @@ contract WithdrawalsTargetV3 is Proxied {
     }
 
     modifier onlyMultisig() {
-        require(msg.sender == multisig(), "HN:WithdrawalsTarget/unauthorized-caller");
+        require(msg.sender == multisig, "HN:WithdrawalsTarget/unauthorized-caller");
         _;
     }
 }
