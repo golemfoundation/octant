@@ -37,6 +37,10 @@ contract PayoutsManager is Ownable {
         _withdraw(Payouts.Payee.GolemFoundation, payable(golemFoundationWithdrawalAddress), amount);
     }
 
+    function emergencyWithdraw(uint144 amount) external onlyOwner {
+        payable(golemFoundationWithdrawalAddress).transfer(amount);
+    }
+
     function setGolemFoundationMultisigAddress(address newAddress) external onlyOwner {
         golemFoundationWithdrawalAddress = newAddress;
     }

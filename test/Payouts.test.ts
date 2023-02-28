@@ -337,4 +337,22 @@ makeTestsEnv(PAYOUTS, testEnv => {
     } = testEnv;
     expect(payoutsManager.connect(Alice).withdrawGolemFoundation(parseEther('2.8'))).to.be.reverted;
   });
+
+  it('Golem Foundation can make emergency withdraw', async () => {
+    const before = await ethers.provider.getBalance(GOLEM_FOUNDATION_MULTISIG);
+
+    await payoutsManager.emergencyWithdraw(parseEther('2.8'));
+
+    expect(await ethers.provider.getBalance(GOLEM_FOUNDATION_MULTISIG)).approximately(
+      before.add(parseEther('2.8')),
+      parseEther('0.001'),
+    );
+  });
+
+  it('Emergency withdraw by unauthorized user is reverted', async () => {
+    const {
+      signers: { Darth },
+    } = testEnv;
+    expect(payoutsManager.connect(Darth).emergencyWithdraw(parseEther('2.8'))).to.be.reverted;
+  });
 });
