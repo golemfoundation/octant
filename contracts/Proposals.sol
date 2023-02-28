@@ -25,6 +25,10 @@ contract Proposals is Ownable, IProposals {
 
     mapping(uint256 => address[]) private proposalAddressesByEpoch;
 
+    /// @notice mapping that stores account authorized to withdraw funds on behalf of the proposal.
+    /// This is additional account, main proposal account is also eligible to withdraw.
+    mapping(address => address) private authorizedAccountByProposal;
+
     constructor(address _epochs, string memory _initCID, address[] memory proposals) {
         epochs = IEpochs(_epochs);
         setCID(_initCID);
@@ -36,8 +40,8 @@ contract Proposals is Ownable, IProposals {
         cid = _newCID;
     }
 
-    /// @notice sets proposal Ids that will be active in the particular epoch.
-    /// Ids should be provided as an array and will represent JSON file names stored under CID provided
+    /// @notice sets proposal addresses that will be active in the particular epoch.
+    /// Addresses should be provided as an array and will represent JSON file names stored under CID provided
     /// to this contract.
     function setProposalAddresses(
         uint256 _epoch,
@@ -61,5 +65,21 @@ contract Proposals is Ownable, IProposals {
             }
         }
         return proposalAddressesByEpoch[0];
+    }
+
+    /// @dev Returns whether the account is authorized for the given proposal.
+    /// @param proposal The proposal to check authorization for.
+    /// @param account The account to check authorization for.
+    /// @return True if the account is authorized for the proposal, false otherwise.
+    function isAuthorized(address proposal, address account) public view returns (bool) {
+        return proposal == account || authorizedAccountByProposal[proposal] == account;
+    }
+
+    /// @dev Sets the authorized account for the given proposal.
+    /// @param proposal The proposal to set the authorized account for.
+    /// @param account The account to authorize for the proposal.
+    /// @notice Only the owner of the contract can call this function.
+    function setAuthorizedAccount(address proposal, address account) external onlyOwner {
+        authorizedAccountByProposal[proposal] = account;
     }
 }

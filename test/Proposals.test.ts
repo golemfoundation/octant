@@ -2,7 +2,6 @@ import { expect } from 'chai';
 
 import { makeTestsEnv } from './helpers/make-tests-env';
 
-
 import { PROPOSALS_CID } from '../env';
 import { PROPOSALS } from '../helpers/constants';
 import { forwardEpochs } from '../helpers/epochs-utils';
@@ -106,6 +105,89 @@ makeTestsEnv(PROPOSALS, testEnv => {
       expect(proposals.connect(Darth).setProposalAddresses(1, newProposals)).revertedWith(
         'Ownable: caller is not the owner',
       );
+    });
+  });
+
+  describe('Authorized account', async () => {
+    it('Proposal account is authorized', async () => {
+      const { proposals, proposalAddresses } = testEnv;
+
+      const isAuthorized = await proposals.isAuthorized(
+        proposalAddresses[0].address,
+        proposalAddresses[0].address,
+      );
+
+      expect(isAuthorized).true;
+    });
+
+    it('Authorized account is not set by default', async () => {
+      const {
+        proposals,
+        proposalAddresses,
+        signers: { Alice },
+      } = testEnv;
+
+      const isAuthorized = await proposals.isAuthorized(
+        proposalAddresses[0].address,
+        Alice.address,
+      );
+
+      expect(isAuthorized).false;
+    });
+
+    it('Authorized account can be set by owner', async () => {
+      const {
+        proposals,
+        proposalAddresses,
+        signers: { Alice },
+      } = testEnv;
+
+      await proposals.setAuthorizedAccount(proposalAddresses[0].address, Alice.address);
+      const isAuthorized = await proposals.isAuthorized(
+        proposalAddresses[0].address,
+        Alice.address,
+      );
+
+      expect(isAuthorized).true;
+    });
+
+    it('Authorizing account doesnt authorize other users', async () => {
+      const {
+        proposals,
+        proposalAddresses,
+        signers: { Alice, Bob },
+      } = testEnv;
+
+      await proposals.setAuthorizedAccount(proposalAddresses[0].address, Alice.address);
+      const isAuthorized = await proposals.isAuthorized(proposalAddresses[0].address, Bob.address);
+
+      expect(isAuthorized).false;
+    });
+
+    it('Authorized account can be changed by owner', async () => {
+      const {
+        proposals,
+        proposalAddresses,
+        signers: { Alice, Bob },
+      } = testEnv;
+
+      await proposals.setAuthorizedAccount(proposalAddresses[0].address, Alice.address);
+      await proposals.setAuthorizedAccount(proposalAddresses[0].address, Bob.address);
+      const isAuthorized = await proposals.isAuthorized(proposalAddresses[0].address, Bob.address);
+
+      expect(isAuthorized).true;
+    });
+
+    it('Authorized account cannot be set by other account', async () => {
+      const {
+        proposals,
+        proposalAddresses,
+        signers: { Darth },
+      } = testEnv;
+
+      expect(
+        proposals.connect(Darth).setAuthorizedAccount(proposalAddresses[0].address, Darth.address),
+      ).revertedWith('Ownable: caller is not the owner');
     });
   });
 });
