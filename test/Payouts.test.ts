@@ -329,11 +329,14 @@ makeTestsEnv(PAYOUTS, testEnv => {
   });
 
   it('Golem Foundation can make emergency withdraw', async () => {
-    const before = await ethers.provider.getBalance(GOLEM_FOUNDATION_MULTISIG);
+    const {
+      signers: { TestFoundation },
+    } = testEnv;
+    const before = await ethers.provider.getBalance(TestFoundation.address);
 
     await payoutsManager.emergencyWithdraw(parseEther('2.8'));
 
-    expect(await ethers.provider.getBalance(GOLEM_FOUNDATION_MULTISIG)).approximately(
+    expect(await ethers.provider.getBalance(TestFoundation.address)).approximately(
       before.add(parseEther('2.8')),
       parseEther('0.001'),
     );
