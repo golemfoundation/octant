@@ -5,7 +5,6 @@ import { ethers } from 'hardhat';
 
 import { makeTestsEnv } from './helpers/make-tests-env';
 
-import { GOLEM_FOUNDATION_MULTISIG } from '../env';
 import { PAYOUTS, PAYOUTS_MANAGER } from '../helpers/constants';
 import { forwardEpochs } from '../helpers/epochs-utils';
 import { Payouts, PayoutsManager, Rewards } from '../typechain-types';
@@ -18,7 +17,8 @@ makeTestsEnv(PAYOUTS, testEnv => {
   beforeEach(async () => {
     const {
       epochs,
-      signers: { Alice },
+      proposals,
+      signers: { Alice, TestFoundation },
     } = testEnv;
 
     // configure rewards in a simpler way
@@ -28,7 +28,8 @@ makeTestsEnv(PAYOUTS, testEnv => {
     const payoutsManagerFactory = await ethers.getContractFactory(PAYOUTS_MANAGER);
     payoutsManager = (await payoutsManagerFactory.deploy(
       payouts.address,
-      GOLEM_FOUNDATION_MULTISIG,
+      TestFoundation.address,
+      proposals.address,
     )) as PayoutsManager;
     await payouts.setPayoutsManager(payoutsManager.address);
 
@@ -146,13 +147,10 @@ makeTestsEnv(PAYOUTS, testEnv => {
     });
 
     it('check if funds can be withdrawed', async () => {
-      const {
-        proposalAddresses,
-        signers: { Alice },
-      } = testEnv;
+      const { proposalAddresses } = testEnv;
       const before = await ethers.provider.getBalance(proposalAddresses[0].address);
       await payoutsManager
-        .connect(Alice)
+        .connect(proposalAddresses[0])
         .withdrawProposal(proposalAddresses[0].address, parseEther('0.3'));
       expect(await ethers.provider.getBalance(proposalAddresses[0].address)).approximately(
         before.add(parseEther('0.3')),
@@ -163,13 +161,10 @@ makeTestsEnv(PAYOUTS, testEnv => {
     });
 
     it('check if rewards contract is called twice', async () => {
-      const {
-        proposalAddresses,
-        signers: { Alice },
-      } = testEnv;
+      const { proposalAddresses } = testEnv;
       const before = await ethers.provider.getBalance(proposalAddresses[0].address);
       await payoutsManager
-        .connect(Alice)
+        .connect(proposalAddresses[0])
         .withdrawProposal(proposalAddresses[0].address, parseEther('2.0'));
       expect(await ethers.provider.getBalance(proposalAddresses[0].address)).approximately(
         before.add(parseEther('2.0')),
@@ -181,25 +176,19 @@ makeTestsEnv(PAYOUTS, testEnv => {
     });
 
     it("can't register more than earned", async () => {
-      const {
-        proposalAddresses,
-        signers: { Alice },
-      } = testEnv;
+      const { proposalAddresses } = testEnv;
       // proposal gets 1 ETH claimable rewards, it's third epoch so max possible payout is 3 ETH
       expect(
         payoutsManager
-          .connect(Alice)
+          .connect(proposalAddresses[0])
           .withdrawProposal(proposalAddresses[0].address, parseEther('3.1')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
     });
 
     it('payout stay permanent if registration is reverted', async () => {
-      const {
-        proposalAddresses,
-        signers: { Alice },
-      } = testEnv;
+      const { proposalAddresses } = testEnv;
       await payoutsManager
-        .connect(Alice)
+        .connect(proposalAddresses[0])
         .withdrawProposal(proposalAddresses[0].address, parseEther('0.3'));
       let proposalPayout = await payouts.payoutStatus(proposalAddresses[0].address);
       expect(proposalPayout.total).eq(parseEther('0.3'));
@@ -208,7 +197,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
       // proposal gets 1 ETH claimable rewards, it's third epoch so max possible payout is 3 ETH
       expect(
         payoutsManager
-          .connect(Alice)
+          .connect(proposalAddresses[0])
           .withdrawProposal(proposalAddresses[0].address, parseEther('2.8')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
 
@@ -218,19 +207,16 @@ makeTestsEnv(PAYOUTS, testEnv => {
     });
 
     it('multiple registrations add up; checkpoint grows; extra is taken into account', async () => {
-      const {
-        proposalAddresses,
-        signers: { Alice },
-      } = testEnv;
+      const { proposalAddresses } = testEnv;
       await payoutsManager
-        .connect(Alice)
+        .connect(proposalAddresses[0])
         .withdrawProposal(proposalAddresses[0].address, parseEther('0.3'));
       let proposalPayout = await payouts.payoutStatus(proposalAddresses[0].address);
       expect(proposalPayout.total).eq(parseEther('0.3'));
       expect(proposalPayout.extra).eq(parseEther('0.3'));
 
       await payoutsManager
-        .connect(Alice)
+        .connect(proposalAddresses[0])
         .withdrawProposal(proposalAddresses[0].address, parseEther('0.8'));
       proposalPayout = await payouts.payoutStatus(proposalAddresses[0].address);
       expect(proposalPayout.total).eq(parseEther('1.1'));
@@ -255,23 +241,23 @@ makeTestsEnv(PAYOUTS, testEnv => {
 
     it('check if rewards contract is called once', async () => {
       const {
-        signers: { Alice },
+        signers: { TestFoundation },
       } = testEnv;
-      await payoutsManager.connect(Alice).withdrawGolemFoundation(parseEther('0.3'));
+      await payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('0.3'));
       expect(rewards.golemFoundationReward).calledOnce;
       rewards.golemFoundationReward.atCall(0).calledWith(1, 1);
     });
 
     it('check if rewards contract is called twice', async () => {
       const {
-        signers: { Alice },
+        signers: { TestFoundation },
       } = testEnv;
-      const before = await ethers.provider.getBalance(GOLEM_FOUNDATION_MULTISIG);
-      await payoutsManager.connect(Alice).withdrawGolemFoundation(parseEther('2.0'));
+      const before = await ethers.provider.getBalance(TestFoundation.address);
+      await payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('2.0'));
       expect(rewards.golemFoundationReward).calledTwice;
       rewards.golemFoundationReward.atCall(0).calledWith(1, 1);
       rewards.golemFoundationReward.atCall(1).calledWith(2, 1);
-      expect(await ethers.provider.getBalance(GOLEM_FOUNDATION_MULTISIG)).approximately(
+      expect(await ethers.provider.getBalance(TestFoundation.address)).approximately(
         before.add(parseEther('2.0')),
         parseEther('0.001'),
       );
@@ -279,19 +265,19 @@ makeTestsEnv(PAYOUTS, testEnv => {
 
     it("can't register more than earned", async () => {
       const {
-        signers: { Alice },
+        signers: { TestFoundation },
       } = testEnv;
       // proposal gets 1 ETH claimable rewards, it's third epoch so max possible payout is 3 ETH
       expect(
-        payoutsManager.connect(Alice).withdrawGolemFoundation(parseEther('3.1')),
+        payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('3.1')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
     });
 
     it('payout stay permanent if registration is reverted', async () => {
       const {
-        signers: { Alice },
+        signers: { TestFoundation },
       } = testEnv;
-      await payoutsManager.connect(Alice).withdrawGolemFoundation(parseEther('0.3'));
+      await payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('0.3'));
       let proposalPayout = await payouts.payoutStatus(
         payoutsManager.golemFoundationWithdrawalAddress(),
       );
@@ -300,7 +286,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
 
       // proposal gets 1 ETH claimable rewards, it's third epoch so max possible payout is 3 ETH
       expect(
-        payoutsManager.connect(Alice).withdrawGolemFoundation(parseEther('2.8')),
+        payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('2.8')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
 
       proposalPayout = await payouts.payoutStatus(
@@ -312,16 +298,20 @@ makeTestsEnv(PAYOUTS, testEnv => {
 
     it('multiple registrations add up; checkpoint grows; extra is taken into account', async () => {
       const {
-        signers: { Alice },
+        signers: { Alice, TestFoundation },
       } = testEnv;
-      await payoutsManager.connect(Alice).withdrawGolemFoundation(parseEther('0.3'));
+
+      expect(
+        payoutsManager.connect(Alice).withdrawGolemFoundation(parseEther('0.3')),
+      ).to.be.revertedWith('HN:Common/unauthorized-caller');
+      await payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('0.3'));
       let proposalPayout = await payouts.payoutStatus(
         payoutsManager.golemFoundationWithdrawalAddress(),
       );
       expect(proposalPayout.total).eq(parseEther('0.3'));
       expect(proposalPayout.extra).eq(parseEther('0.3'));
 
-      await payoutsManager.connect(Alice).withdrawGolemFoundation(parseEther('0.8'));
+      await payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('0.8'));
       proposalPayout = await payouts.payoutStatus(
         payoutsManager.golemFoundationWithdrawalAddress(),
       );
@@ -333,9 +323,9 @@ makeTestsEnv(PAYOUTS, testEnv => {
 
   it('Tx for unknown payee type is reverted', async () => {
     const {
-      signers: { Alice },
+      signers: { Darth },
     } = testEnv;
-    expect(payoutsManager.connect(Alice).withdrawGolemFoundation(parseEther('2.8'))).to.be.reverted;
+    expect(payoutsManager.connect(Darth).withdrawGolemFoundation(parseEther('0.1'))).to.be.reverted;
   });
 
   it('Golem Foundation can make emergency withdraw', async () => {
