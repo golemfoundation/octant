@@ -15,8 +15,8 @@ import {EpochsErrors} from "./Errors.sol";
 contract Epochs is Ownable, IEpochs {
 
     /// @dev Struct to store the properties of an epoch.
-    /// @param from The epoch number when this epoch starts.
-    /// @param to The epoch number when this epoch ends.
+    /// @param from The epoch number from which properties are valid (inclusive).
+    /// @param to The epoch number to which properties are valid (exclusive).
     /// @param duration Epoch duration in seconds.
     /// @param decisionWindow Decision window in seconds.
     /// This value represents time, when participant can allocate funds to projects.
