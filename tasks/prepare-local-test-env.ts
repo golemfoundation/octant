@@ -40,11 +40,11 @@ task('prepare-local-test-env', 'Prepare local test environment').setAction(
     await glmDeposits.connect(Alice).lock(parseEther('1000000'));
     // eslint-disable-next-line no-console
     console.log('Setting up Oracle balances.');
-    await target.sendETH({ value: 400 });
+    await target.sendETH({ value: parseEther('400') });
     await network.provider.send('evm_increaseTime', [epochDuration.toNumber()]);
     await network.provider.send('evm_mine');
     await octantOracle.writeBalance();
-    await target.sendETH({ value: 400 });
+    await target.sendETH({ value: parseEther('400') });
     await network.provider.send('evm_increaseTime', [epochDuration.toNumber()]);
     await network.provider.send('evm_mine');
     await octantOracle.writeBalance();

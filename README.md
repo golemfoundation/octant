@@ -41,8 +41,13 @@ Go to `.docs` and open the `index.html` file in your browser.
 ## Deployment
 
 ### Local
+In one terminal:
 ```bash
 yarn start-node
+```
+In second terminal:
+```bash
+yarn prepare-local-test-env
 ```
 
 ### Goerli testnet
