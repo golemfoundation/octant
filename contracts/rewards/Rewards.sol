@@ -26,11 +26,6 @@ contract Rewards is IRewards {
         uint256 matched;
     }
 
-    /// @notice In order to be eligible for receiving donations in the epoch,
-    /// a proposal must pass a predefined threshold of individual donation.
-    /// This threshold is expressed as a percentage.
-    uint256 public constant PROPOSAL_DONATION_THRESHOLD_PERCENT = 10;
-
     /// @notice Effective deposit tracking.
     Tracker public immutable tracker;
 
@@ -159,6 +154,7 @@ contract Rewards is IRewards {
             );
 
         uint256 _matchedRewards = matchedRewards(epoch);
+
         // distribute matched rewards.
         for (uint256 iReward = 0; iReward < proposalRewards.length; iReward++) {
             if (proposalRewards[iReward].donated > proposalDonationThreshold) {
@@ -230,18 +226,21 @@ contract Rewards is IRewards {
         return allIndividualRewards(epoch) - proposalDonationAboveThresholdSum - claimableRewardsSum;
     }
 
+    /// @notice In order to be eligible for receiving donations in the epoch,
+    /// a proposal must pass a predefined threshold of individual donation.
+    /// This threshold is calculated as 1/proposal length * 2.
     function _calculateProposalRewardsThreshold(
         uint256 proposalRewardsSum,
         ProposalRewards[] memory proposalRewards
     ) private pure returns (uint256, uint256) {
-        uint256 proposalDonationThreshold = proposalRewardsSum.div(100).mul(
-            PROPOSAL_DONATION_THRESHOLD_PERCENT
-        );
+        /// proposalRewards array contains all proposals in given epoch, hence to get a threshold value
+        /// we can just divide proposalRewardsSum by proposalRewards * 2
+        uint256 proposalDonationThreshold = proposalRewardsSum / (proposalRewards.length * 2);
 
         // calculate proposal donation above threshold.
         uint256 proposalDonationAboveThresholdSum;
         for (uint256 iReward = 0; iReward < proposalRewards.length; iReward++) {
-            if (proposalRewards[iReward].donated > proposalDonationThreshold) {
+        if (proposalRewards[iReward].donated > proposalDonationThreshold) {
                 proposalDonationAboveThresholdSum += proposalRewards[iReward]
                     .donated;
             }
