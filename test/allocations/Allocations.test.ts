@@ -493,7 +493,7 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
       ).revertedWith('HN:Allocations/decision-window-closed');
     });
 
-    it('Cannot allocate when hexagon has not been started yet', async () => {
+    it('Cannot allocate when octant has not been started yet', async () => {
       const {
         signers: { Alice },
         proposalAddresses,
