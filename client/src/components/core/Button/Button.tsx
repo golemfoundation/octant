@@ -67,7 +67,16 @@ const Button: FC<ButtonProps> = ({
         onClick && styles.isClickable,
         className,
       )}
-      onClick={isActionDisabled ? () => {} : onClick}
+      onClick={
+        isActionDisabled
+          ? () => {}
+          : event => {
+              event.stopPropagation();
+              if (onClick) {
+                onClick();
+              }
+            }
+      }
       // eslint-disable-next-line react/button-has-type
       type={type}
       {...filteredProps}
