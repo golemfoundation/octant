@@ -5,9 +5,13 @@
   left: 0;
   height: $height;
   width: $width;
-  backdrop-filter: blur(4px);
   z-index: $z-index-4;
   cursor: pointer;
+
+  // This class needs to be aligned with whatever triggers the overflow to open, e.g. Modal.tsx.
+  &.isOpen {
+    backdrop-filter: blur(4px);
+  }
 }
 
 @mixin flexBasisGutter($elementsCount, $gutterSize) {

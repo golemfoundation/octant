@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import React, { FC, Fragment, useState } from 'react';
 import Select, { SingleValue } from 'react-select';
 
@@ -18,7 +19,8 @@ const CustomOption = ({ innerRef, innerProps, children, isSelected }) => (
 
 const CustomMenu = ({ innerRef, innerProps, children, setIsMenuOpen }) => (
   <Fragment>
-    <div className={styles.overlay} onClick={() => setIsMenuOpen(false)} />
+    {/* isOpen class is added in overlay mixin. */}
+    <div className={cx(styles.overlay, styles.isOpen)} onClick={() => setIsMenuOpen(false)} />
     <div ref={innerRef} {...innerProps} className={styles.menu}>
       {children}
     </div>

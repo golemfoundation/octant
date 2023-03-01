@@ -101,7 +101,11 @@
     background: $color-octant-grey7;
     border-radius: $border-radius-10;
     height: 3.2rem;
+    max-height: 3.2rem;
+    min-height: 3.2rem;
     width: 3.2rem;
+    max-width: 3.2rem;
+    min-width: 3.2rem;
     padding: 0;
   }
 

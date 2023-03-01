@@ -7,7 +7,7 @@
   max-height: 75%;
   overflow: auto;
   background: $color-white;
-  padding: 3.2rem;
+  padding: 2.4rem 2.4rem 4rem;
   text-align: left;
   box-shadow: $box-shadow-1;
   transition: bottom 0.25s linear;
@@ -25,7 +25,7 @@
     position: relative;
     font-size: $font-size-20;
     font-weight: $font-weight-bold;
-    margin: 0 0 5rem 0;
+    margin: 0 0 4rem 0;
   }
 
   .body {
@@ -46,9 +46,10 @@
 
 .buttonClose {
   position: absolute;
-  top: 2.4rem;
-  right: 2.4rem;
+  top: 1.6rem;
+  right: 1.6rem;
   z-index: $z-index-4;
+
 }
 
 
