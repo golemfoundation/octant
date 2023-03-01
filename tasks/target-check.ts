@@ -16,5 +16,5 @@ task('target-check', 'Check version of target at particular addres')
       deployer,
     );
     console.log('version: ', (await target.version()).toNumber());
-    console.log('hexagon: ', await target.octant());
+    console.log('octant: ', await target.octant());
   });
