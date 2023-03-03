@@ -7,30 +7,30 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Loader from 'components/core/Loader/Loader';
 import Svg from 'components/core/Svg/Svg';
 import useAllocations from 'hooks/subgraph/useAllocations';
-import useDeposits from 'hooks/subgraph/useDeposits';
-import useWithdrawns from 'hooks/subgraph/useWithdrawns';
+import useLocks from 'hooks/subgraph/useLocks';
+import useUnlocks from 'hooks/subgraph/useUnlocks';
 import useEpochAndAllocationTimestamps from 'hooks/useEpochAndAllocationTimestamps';
 import { allocate, donation } from 'svg/history';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './History.module.scss';
-import { sortAllocationsAndDeposits } from './utils';
+import { sortAllocationsAndLocks } from './utils';
 
 const History = (): ReactElement => {
   const {
     metaState: { isConnected },
   } = useMetamask();
-  const { data: dataDeposits } = useDeposits();
   const { data: dataAllocations } = useAllocations();
-  const { data: dataWithdrawns } = useWithdrawns();
+  const { data: dataLocks } = useLocks();
+  const { data: dataUnlocks } = useUnlocks();
   const { timeCurrentEpochStart } = useEpochAndAllocationTimestamps();
 
   let allocationsAndDeposits =
-    dataDeposits !== undefined && dataAllocations !== undefined && dataWithdrawns !== undefined
-      ? [...dataDeposits, ...dataAllocations, ...dataWithdrawns]
+    dataLocks !== undefined && dataAllocations !== undefined && dataUnlocks !== undefined
+      ? [...dataLocks, ...dataAllocations, ...dataUnlocks]
       : undefined;
   allocationsAndDeposits = allocationsAndDeposits
-    ? sortAllocationsAndDeposits(allocationsAndDeposits)
+    ? sortAllocationsAndLocks(allocationsAndDeposits)
     : undefined;
 
   const isListAvailable = (isConnected && allocationsAndDeposits !== undefined) || !isConnected;

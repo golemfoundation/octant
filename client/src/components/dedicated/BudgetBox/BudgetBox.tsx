@@ -13,7 +13,7 @@ const getProps = (currentStepIndex: BudgetBoxProps['currentStepIndex']): object 
   if (currentStepIndex === 0) {
     return {
       alignment: 'left',
-      title: 'Current Lock',
+      title: 'Currently Locked',
     };
   }
   return {

@@ -1,8 +1,8 @@
 import { AllocationSquashed } from 'hooks/subgraph/useAllocations';
-import { Deposit } from 'hooks/subgraph/useDeposits';
-import { Withdrawn } from 'hooks/subgraph/useWithdrawns';
+import { Deposit } from 'hooks/subgraph/useLocks';
+import { Withdrawn } from 'hooks/subgraph/useUnlocks';
 
-export function sortAllocationsAndDeposits(
+export function sortAllocationsAndLocks(
   elements: (AllocationSquashed | Deposit | Withdrawn)[],
 ): (AllocationSquashed | Deposit | Withdrawn)[] {
   return elements.sort(

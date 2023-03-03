@@ -5,7 +5,7 @@ import { useMetamask } from 'use-metamask';
 import { DEPOSIT_WITHDRAW_GAS_LIMIT } from 'constants/contracts';
 import useContractDeposits from 'hooks/contracts/useContractDeposits';
 
-export default function useDeposit(
+export default function useUnlock(
   options?: UseMutationOptions<ContractTransaction, unknown, BigNumber>,
 ): UseMutationResult<ContractTransaction, unknown, BigNumber> {
   const {
@@ -16,7 +16,7 @@ export default function useDeposit(
 
   return useMutation({
     mutationFn: async value => {
-      const transactionResponse = await contractDeposits!.lock(value, {
+      const transactionResponse = await contractDeposits!.unlock(value, {
         gasLimit: DEPOSIT_WITHDRAW_GAS_LIMIT,
       });
       await transactionResponse.wait(1);

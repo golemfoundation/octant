@@ -1,12 +1,12 @@
 import { mockedAllocationSquashed1, mockedAllocationSquashed2 } from 'mocks/subgraph/allocations';
 import { mockedDeposit1, mockedDeposit2 } from 'mocks/subgraph/deposits';
 
-import { sortAllocationsAndDeposits } from './utils';
+import { sortAllocationsAndLocks } from './utils';
 
-describe('sortAllocationsAndDeposits', () => {
+describe('sortAllocationsAndLocks', () => {
   it('properly sorts allocations and deposits based on their blockTimestamp field', () => {
     expect(
-      sortAllocationsAndDeposits([
+      sortAllocationsAndLocks([
         mockedDeposit1,
         mockedDeposit2,
         mockedAllocationSquashed1,
