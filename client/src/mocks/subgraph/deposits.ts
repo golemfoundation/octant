@@ -1,4 +1,4 @@
-import { Deposit } from 'hooks/subgraph/useDeposits';
+import { Deposit } from 'hooks/subgraph/useLocks';
 
 export const mockedDeposit1: Deposit = {
   amount: '100000000000000000000',

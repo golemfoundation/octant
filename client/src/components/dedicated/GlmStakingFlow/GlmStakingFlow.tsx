@@ -11,13 +11,13 @@ import Modal from 'components/core/Modal/Modal';
 import ProgressStepper from 'components/core/ProgressStepper/ProgressStepper';
 import BudgetBox from 'components/dedicated/BudgetBox/BudgetBox';
 import env from 'env';
-import useDeposit from 'hooks/mutations/useDeposit';
-import useWithdraw from 'hooks/mutations/useWithdraw';
+import useLock from 'hooks/mutations/useLock';
+import useUnlock from 'hooks/mutations/useUnlock';
 import useAvailableFunds from 'hooks/queries/useAvailableFunds';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
-import useDeposits from 'hooks/subgraph/useDeposits';
-import useWithdrawns from 'hooks/subgraph/useWithdrawns';
+import useLocks from 'hooks/subgraph/useLocks';
+import useUnlocks from 'hooks/subgraph/useUnlocks';
 import useMaxApproveCallback from 'hooks/useMaxApproveCallback';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 import triggerToast from 'utils/triggerToast';
@@ -51,8 +51,8 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
     signer,
   );
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
-  const { refetch: refetchDeposits } = useDeposits();
-  const { refetch: refetchWithdrawns } = useWithdrawns();
+  const { refetch: refetchDeposits } = useLocks();
+  const { refetch: refetchWithdrawns } = useUnlocks();
   const [approvalState, approveCallback] = useMaxApproveCallback(
     BigNumber.from(parseUnits(valueToDeposeOrWithdraw || '1', 18)),
     depositsAddress,
@@ -101,15 +101,15 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
     setCurrentStepIndex(3);
   };
 
-  const depositMutation = useDeposit({ onMutate, onSuccess });
-  const withdrawMutation = useWithdraw({ onMutate, onSuccess });
+  const lockMutation = useLock({ onMutate, onSuccess });
+  const unlockMutation = useUnlock({ onMutate, onSuccess });
 
   const onApproveOrDeposit = async (): Promise<void> => {
     const valueToDeposeOrWithdrawBigNumber = parseUnits(valueToDeposeOrWithdraw.toString(), 18);
     if (currentMode === 'lock') {
-      await depositMutation.mutateAsync(valueToDeposeOrWithdrawBigNumber);
+      await lockMutation.mutateAsync(valueToDeposeOrWithdrawBigNumber);
     } else {
-      await withdrawMutation.mutateAsync(valueToDeposeOrWithdrawBigNumber);
+      await unlockMutation.mutateAsync(valueToDeposeOrWithdrawBigNumber);
     }
   };
 
@@ -132,7 +132,7 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
     setValueToDeposeOrWithdraw(valueToSet);
   };
 
-  const isApproveOrDepositInProgress = depositMutation.isLoading || withdrawMutation.isLoading;
+  const isApproveOrDepositInProgress = lockMutation.isLoading || unlockMutation.isLoading;
 
   return (
     <Modal header={currentMode === 'lock' ? 'Lock GLM' : 'Unlock GLM'} {...modalProps}>

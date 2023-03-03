@@ -1,9 +1,12 @@
+import { EpochProps } from 'hooks/queries/useEpochProps';
+
 import getEpochTimestamps from './getEpochTimestamps';
 
 type Parameters = {
   currentEpoch?: number;
   decisionWindowDuration?: number;
   epochDuration?: number;
+  epochProps: EpochProps[];
   startTimestamp?: number;
 };
 
@@ -18,9 +21,16 @@ export default function getEpochAndAllocationTimestamps({
   currentEpoch,
   startTimestamp,
   epochDuration,
+  epochProps,
   decisionWindowDuration,
 }: Parameters): Response {
-  if (!currentEpoch || !startTimestamp || !epochDuration || !decisionWindowDuration) {
+  if (
+    !currentEpoch ||
+    !startTimestamp ||
+    !epochDuration ||
+    !decisionWindowDuration ||
+    !epochProps
+  ) {
     return {};
   }
 
@@ -29,6 +39,7 @@ export default function getEpochAndAllocationTimestamps({
       decisionWindowDuration,
       epoch: currentEpoch,
       epochDuration,
+      epochProps,
       startTimestamp,
     });
 
