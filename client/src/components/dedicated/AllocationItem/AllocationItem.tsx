@@ -9,8 +9,8 @@ import Button from 'components/core/Button/Button';
 import InputText from 'components/core/InputText/InputText';
 import Svg from 'components/core/Svg/Svg';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useIsDonationAboveThreshold from 'hooks/queries/useIsDonationAboveThreshold';
 import { minus, plus } from 'svg/misc';
-import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 
 import styles from './AllocationItem.module.scss';
@@ -31,6 +31,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   const {
     metaState: { isConnected },
   } = useMetamask();
+  const isDonationAboveThreshold = useIsDonationAboveThreshold(address);
   const { data: individualReward } = useIndividualReward();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -86,9 +87,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
                     <div
                       className={cx(
                         styles.indicator,
-                        percentage &&
-                          isAboveProposalDonationThresholdPercent(percentage) &&
-                          styles.isAboveThreshold,
+                        isDonationAboveThreshold && styles.isAboveThreshold,
                       )}
                     />
                   </div>
