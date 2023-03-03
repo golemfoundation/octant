@@ -12,6 +12,7 @@ import useEthStaked from 'hooks/queries/useEthStaked';
 import useGlmLocked from 'hooks/queries/useGlmLocked';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useLockedRatio from 'hooks/queries/useLockedRatio';
+import useProposals from 'hooks/queries/useProposals';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 
 import styles from './MetricsView.module.scss';
@@ -20,6 +21,7 @@ const MetricsView = (): ReactElement => {
   const { data: currentEpoch, refetch: refetchCurrentEpoch } = useCurrentEpoch({
     refetchOnWindowFocus: true,
   });
+  const { refetch: refetchProposals } = useProposals();
   const { data: isDecisionWindowOpen, refetch: refetchIsDecisionWindowOpen } =
     useIsDecisionWindowOpen();
   const { data: glmLocked, refetch: refetchGlmLocked } = useGlmLocked();
@@ -32,6 +34,7 @@ const MetricsView = (): ReactElement => {
     refetchEthStaked();
     refetchLockedRatio();
     refetchIsDecisionWindowOpen();
+    refetchProposals();
   };
 
   return (

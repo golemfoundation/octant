@@ -15,6 +15,8 @@ import styles from './App.module.scss';
 import AppProps from './types';
 
 import 'styles/index.scss';
+import useCurrentEpoch from '../hooks/queries/useCurrentEpoch';
+import useIsDecisionWindowOpen from '../hooks/queries/useIsDecisionWindowOpen';
 
 const validateProposalsInLocalStorage = (localStorageAllocationItems, proposals) =>
   localStorageAllocationItems.filter(item => proposals.find(({ address }) => address === item));
@@ -27,15 +29,25 @@ const App: FC<AppProps> = ({
   onboarding,
   settings,
 }) => {
+  const queryClient = useQueryClient();
   const {
     metaState: { isConnected, account },
   } = useMetamask();
   const address = account[0];
-  const [isAccountChanging, setIsAccountChanging] = useState(false);
-  const [currentAddress, setCurrentAddress] = useState<null | string>(null);
-  const proposals = useProposals();
+  const { data: currentEpoch } = useCurrentEpoch({
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+  });
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen({
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+  });
+  const { data: proposals } = useProposals();
   const { data: userAllocations } = useUserAllocations();
-  const queryClient = useQueryClient();
+  const [isAccountChanging, setIsAccountChanging] = useState(false);
+  const [currentAddressLocal, setCurrentAddressLocal] = useState<null | string>(null);
+  const [currentEpochLocal, setCurrentEpochLocal] = useState<number | null>(null);
+  const [isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal] = useState<boolean | null>(null);
 
   useEffect(() => {
     localStorageService.init();
@@ -45,16 +57,48 @@ const App: FC<AppProps> = ({
   }, []);
 
   useEffect(() => {
-    if (address && address !== currentAddress) {
-      setCurrentAddress(address);
+    if (address && address !== currentAddressLocal) {
+      setCurrentAddressLocal(address);
     }
-  }, [address, currentAddress, setCurrentAddress]);
+  }, [address, currentAddressLocal, setCurrentAddressLocal]);
 
   useEffect(() => {
-    if (address && currentAddress && address !== currentAddress) {
+    if (currentEpoch && currentEpoch !== currentEpochLocal) {
+      setCurrentEpochLocal(currentEpoch);
+    }
+  }, [currentEpoch, currentEpochLocal, setCurrentEpochLocal]);
+
+  useEffect(() => {
+    if (isDecisionWindowOpen && isDecisionWindowOpen !== isDecisionWindowOpenLocal) {
+      setIsDecisionWindowOpenLocal(isDecisionWindowOpen);
+    }
+  }, [isDecisionWindowOpen, isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal]);
+
+  useEffect(() => {
+    const doesAddressRequireFlush =
+      !!address && !!currentAddressLocal && address !== currentAddressLocal;
+    const doesCurrentEpochRequireFlush =
+      !!currentEpoch && !!currentEpochLocal && currentEpoch !== currentEpochLocal;
+    const doesIsDecisionWindowOpenRequireFlush =
+      !!isDecisionWindowOpen &&
+      !!isDecisionWindowOpenLocal &&
+      isDecisionWindowOpen !== isDecisionWindowOpenLocal;
+    if (
+      doesAddressRequireFlush ||
+      doesCurrentEpochRequireFlush ||
+      doesIsDecisionWindowOpenRequireFlush
+    ) {
       setIsAccountChanging(true);
     }
-  }, [address, currentAddress, queryClient]);
+  }, [
+    address,
+    currentAddressLocal,
+    currentEpoch,
+    currentEpochLocal,
+    isDecisionWindowOpen,
+    isDecisionWindowOpenLocal,
+    queryClient,
+  ]);
 
   useEffect(() => {
     (() => {
@@ -81,8 +125,7 @@ const App: FC<AppProps> = ({
     ) {
       onSetAllocations([...allocations, ...userAllocationsAddresses]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, userAllocations, allocations]);
+  }, [isConnected, userAllocations, allocations, onSetAllocations]);
 
   useEffect(() => {
     if (!proposals || proposals.length === 0 || allocations !== null) {
@@ -109,8 +152,7 @@ const App: FC<AppProps> = ({
     if (validatedProposalsInLocalStorage) {
       onSetAllocations(validatedProposalsInLocalStorage);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allocations, isConnected, proposals, userAllocations]);
+  }, [allocations, isConnected, proposals, userAllocations, onSetAllocations]);
 
   const areOnboardingValuesSet = Object.values(onboarding).some(value => value !== undefined);
   const areSettingValuesSet = Object.values(settings).some(value => value !== undefined);
