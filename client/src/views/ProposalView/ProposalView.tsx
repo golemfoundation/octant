@@ -10,6 +10,7 @@ import { navigationTabs as navigationTabsDefault } from 'constants/navigationTab
 import env from 'env';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIdsInAllocation from 'hooks/queries/useIdsInAllocation';
+import useIsDonationAboveThreshold from 'hooks/queries/useIsDonationAboveThreshold';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposals from 'hooks/queries/useProposals';
 import useUsersWithTheirAllocations from 'hooks/queries/useUsersWithTheirAllocations';
@@ -17,7 +18,6 @@ import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import { donorGenericIcon, tick } from 'svg/misc';
 import { chevronLeft } from 'svg/navigation';
-import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
 import triggerToast from 'utils/triggerToast';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
@@ -37,6 +37,7 @@ const getCustomNavigationTabs = () => {
 const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
   const { ipfsGateway } = env;
   const { proposalAddress } = useParams();
+  const isDonationAboveThreshold = useIsDonationAboveThreshold(proposalAddress!);
   const proposals = useProposals();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
@@ -113,9 +114,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
                 <div
                   className={cx(
                     styles.percentage,
-                    isAboveProposalDonationThresholdPercent(
-                      proposalMatchedProposalRewards?.percentage,
-                    ) && styles.isAboveThreshold,
+                    isDonationAboveThreshold && styles.isAboveThreshold,
                   )}
                 >
                   {proposalMatchedProposalRewards?.percentage} %

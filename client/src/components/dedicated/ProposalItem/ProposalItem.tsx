@@ -8,9 +8,9 @@ import Description from 'components/core/Description/Description';
 import Img from 'components/core/Img/Img';
 import Svg from 'components/core/Svg/Svg';
 import env from 'env';
+import useIsDonationAboveThreshold from 'hooks/queries/useIsDonationAboveThreshold';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import { tick } from 'svg/misc';
-import isAboveProposalDonationThresholdPercent from 'utils/isAboveProposalDonationThresholdPercent';
 
 import styles from './ProposalItem.module.scss';
 import { ProposalItemProps } from './types';
@@ -27,6 +27,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
   profileImageCID,
   totalValueOfAllocations,
 }) => {
+  const isDonationAboveThreshold = useIsDonationAboveThreshold(address);
   const { ipfsGateway } = env;
   const navigate = useNavigate();
   const buttonProps = isAlreadyAdded
@@ -67,9 +68,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
                   <div
                     className={cx(
                       styles.percentage,
-                      percentage &&
-                        isAboveProposalDonationThresholdPercent(percentage) &&
-                        styles.isAboveThreshold,
+                      isDonationAboveThreshold && styles.isAboveThreshold,
                     )}
                   >
                     {percentage}%
