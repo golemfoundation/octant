@@ -34,7 +34,7 @@ const getHeader = (
 const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocationValues = {} }) => {
   const [isProjectsTileExpanded, setIsProjectsTileExpanded] = useState<boolean>(false);
   const { data: currentEpoch } = useCurrentEpoch();
-  const proposals = useProposals();
+  const { data: proposals } = useProposals();
   const { data: individualReward } = useIndividualReward();
   const { data: matchedRewards } = useMatchedRewards();
   const newAllocationValuesSum = Object.values(allocationValues).reduce(

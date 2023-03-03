@@ -37,8 +37,8 @@ const getCustomNavigationTabs = () => {
 const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
   const { ipfsGateway } = env;
   const { proposalAddress } = useParams();
+  const { data: proposals } = useProposals();
   const isDonationAboveThreshold = useIsDonationAboveThreshold(proposalAddress!);
-  const proposals = useProposals();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
   const { data: usersWithTheirAllocations } = useUsersWithTheirAllocations(proposalAddress!, {

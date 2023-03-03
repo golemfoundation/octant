@@ -21,6 +21,9 @@ const env = {
     glmAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
       import.meta.env.VITE_GLM_ADDRESS || '0x4914bdFfFA96a3936304705eE41C2F5CbcAD7774',
+    payoutsManager:
+      // @ts-expect-error TS does not understand the way vite imports envs.
+      import.meta.env.VITE_PAYOUTS_MANAGER_ADDRESS || '0x72655E55177551B7F21B2e300FcE65a45De2907d',
     proposalsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
       import.meta.env.VITE_PROPOSALS_ADDRESS || '0x140C3b862D4343BB3352bc6841b39b1CFEecfc22',
