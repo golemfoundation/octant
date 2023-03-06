@@ -30,13 +30,3 @@
   text-align: left;
   color: $color-octant-grey6;
 }
-
-.type-- {
-  &error {
-    border: 0.2rem solid $color-octant-red;
-  }
-
-  &success {
-    border: 0.2rem solid $color-octant-green;
-  }
-}
