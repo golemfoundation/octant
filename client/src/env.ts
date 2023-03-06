@@ -8,10 +8,6 @@ const env = {
       // @ts-expect-error TS does not understand the way vite imports envs.
       import.meta.env.VITE_ALLOCATIONS_STORAGE_ADDRESS ||
       '0x523cb5bfa4E203ed39Bc77387Ae276B08C3A6B55',
-    beaconChainOracle:
-      // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_BEACON_CHAIN_ORACLE_ADDRESS ||
-      '0x05f185a47013090f30049f0009b76be2ABe995a6',
     depositsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
       import.meta.env.VITE_DEPOSITS_ADDRESS || '0x7BE31CD84E5F27Ee26b5452a98A2f0350bf41ff2',

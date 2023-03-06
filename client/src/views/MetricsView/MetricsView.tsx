@@ -7,8 +7,8 @@ import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import Header from 'components/core/Header/Header';
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import MetricsTimeSection from 'components/dedicated/MetricsTimeSection/MetricsTimeSection';
+import { ETH_STAKED } from 'constants/stake';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useEthStaked from 'hooks/queries/useEthStaked';
 import useGlmLocked from 'hooks/queries/useGlmLocked';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useLockedRatio from 'hooks/queries/useLockedRatio';
@@ -26,12 +26,10 @@ const MetricsView = (): ReactElement => {
     useIsDecisionWindowOpen();
   const { data: glmLocked, refetch: refetchGlmLocked } = useGlmLocked();
   const { data: lockedRatio, refetch: refetchLockedRatio } = useLockedRatio();
-  const { data: ethStaked, refetch: refetchEthStaked } = useEthStaked();
 
   const onCountingFinish = () => {
     refetchCurrentEpoch();
     refetchGlmLocked();
-    refetchEthStaked();
     refetchLockedRatio();
     refetchIsDecisionWindowOpen();
     refetchProposals();
@@ -52,7 +50,7 @@ const MetricsView = (): ReactElement => {
           GLM locked by Octant users."
         />
         <BoxRounded alignment="left" className={styles.box} isVertical title="ETH Staked">
-          <DoubleValue mainValue={ethStaked || '0.0'} />
+          <DoubleValue mainValue={ETH_STAKED || '0.0'} />
         </BoxRounded>
         <BoxRounded alignment="left" className={styles.box} isVertical title="GLM Locked">
           <DoubleValue mainValue={glmLocked ? formatUnits(glmLocked) : '0.0'} />
