@@ -1,8 +1,8 @@
 import { EpochProps } from 'hooks/queries/useEpochProps';
 
 type GetDurations = {
+  currentEpoch?: number;
   decisionWindowDuration?: number;
-  epoch?: number;
   epochDuration?: number;
   epochProps: EpochProps[];
   startTimestamp?: number;
@@ -13,14 +13,14 @@ export type Response = {
   timeEpochStart?: number;
 };
 
-export default function getEpochTimestamps({
+export default function getCurrentEpochTimestamps({
   epochProps,
-  epoch,
+  currentEpoch,
   startTimestamp,
   epochDuration,
   decisionWindowDuration,
 }: GetDurations): Response {
-  if (!epoch || !startTimestamp || !epochDuration || !decisionWindowDuration || !epochProps) {
+  if (!currentEpoch || !startTimestamp || !epochDuration || !decisionWindowDuration) {
     return {};
   }
 
@@ -38,7 +38,7 @@ export default function getEpochTimestamps({
 
   const timeEpochStart =
     timeEndOfLastEpochBeforeCurrentDuration +
-    (epoch - 1 - numberOfLastEpochBeforeCurrentDuration) * epochDuration;
+    (currentEpoch - numberOfLastEpochBeforeCurrentDuration) * epochDuration;
   const timeEpochEnd = timeEpochStart + epochDuration;
 
   return {
