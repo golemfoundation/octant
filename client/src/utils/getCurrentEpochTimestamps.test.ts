@@ -1,19 +1,23 @@
-import getEpochTimestamps from './getEpochTimestamps';
+import getCurrentEpochTimestamps from './getCurrentEpochTimestamps';
 
-describe('getEpochTimestamps', () => {
+describe('getCurrentEpochTimestamps', () => {
   const startTimestamp = 1665069473000; // 2022-10-06T15:17:53.000Z in milliseconds.
   const defaultArgs = {
+    currentEpoch: 1,
     decisionWindowDuration: 600,
-    epoch: 1,
     epochDuration: 600,
+    epochProps: [],
+    startTimestamp,
+  };
+  const defaultArgsWithEpochProps = {
+    ...defaultArgs,
     epochProps: [
       { decisionWindow: 3600000, duration: 3600000, from: 1, to: 3 },
       { decisionWindow: 3600000, duration: 5800000, from: 3, to: 33 },
     ],
-    startTimestamp,
   };
-  const defaultArgsDifferentProps = {
-    ...defaultArgs,
+  const defaultArgsWithEpochProps2 = {
+    ...defaultArgsWithEpochProps,
     epochProps: [
       { decisionWindow: 3600000, duration: 3600000, from: 1, to: 3 },
       { decisionWindow: 3600000, duration: 5800000, from: 3, to: 33 },
@@ -22,31 +26,38 @@ describe('getEpochTimestamps', () => {
   };
 
   it('correctly returns timestamps of the beginning and end of epoch', () => {
-    expect(getEpochTimestamps(defaultArgs)).toMatchObject({
-      timeEpochEnd: 1665250654400,
-      timeEpochStart: 1665250653800,
+    expect(getCurrentEpochTimestamps(defaultArgs)).toMatchObject({
+      timeEpochEnd: 1665069473600,
+      timeEpochStart: 1665069473000,
     });
   });
 
   it('correctly returns timestamps of the beginning and end of epoch', () => {
-    expect(getEpochTimestamps(defaultArgsDifferentProps)).toMatchObject({
-      timeEpochEnd: 1665250579040,
-      timeEpochStart: 1665250578440,
+    expect(getCurrentEpochTimestamps(defaultArgsWithEpochProps)).toMatchObject({
+      timeEpochEnd: 1665250655000,
+      timeEpochStart: 1665250654400,
+    });
+  });
+
+  it('correctly returns timestamps of the beginning and end of epoch', () => {
+    expect(getCurrentEpochTimestamps(defaultArgsWithEpochProps2)).toMatchObject({
+      timeEpochEnd: 1665250579640,
+      timeEpochStart: 1665250579040,
     });
   });
 
   it('correctly returns all undefined when currentEpoch is not defined', () => {
     expect(
-      getEpochTimestamps({
+      getCurrentEpochTimestamps({
         ...defaultArgs,
-        epoch: undefined,
+        currentEpoch: undefined,
       }),
     ).toMatchObject({});
   });
 
   it('correctly returns all undefined when startTimestamp is not defined', () => {
     expect(
-      getEpochTimestamps({
+      getCurrentEpochTimestamps({
         ...defaultArgs,
         startTimestamp: undefined,
       }),
@@ -55,7 +66,7 @@ describe('getEpochTimestamps', () => {
 
   it('correctly returns all undefined when epochDuration is not defined', () => {
     expect(
-      getEpochTimestamps({
+      getCurrentEpochTimestamps({
         ...defaultArgs,
         epochDuration: undefined,
       }),
@@ -64,7 +75,7 @@ describe('getEpochTimestamps', () => {
 
   it('correctly returns all undefined when decisionWindowDuration is not defined', () => {
     expect(
-      getEpochTimestamps({
+      getCurrentEpochTimestamps({
         ...defaultArgs,
         decisionWindowDuration: undefined,
       }),

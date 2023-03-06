@@ -1,19 +1,23 @@
-import getEpochAndAllocationTimestamps from './getEpochAndAllocationTimestamps';
+import getCurrentEpochAndAllocationTimestamps from './getCurrentEpochAndAllocationTimestamps';
 
-describe('getEpochAndAllocationTimestamps', () => {
+describe('getCurrentEpochAndAllocationTimestamps', () => {
   const startTimestamp = 1665069473000; // 2022-10-06T15:17:53.000Z in milliseconds.
   const defaultArgs = {
     currentEpoch: 1,
     decisionWindowDuration: 600,
     epochDuration: 600,
+    epochProps: [],
+    startTimestamp,
+  };
+  const defaultArgsWithEpochProps = {
+    ...defaultArgs,
     epochProps: [
       { decisionWindow: 3600000, duration: 3600000, from: 1, to: 3 },
       { decisionWindow: 3600000, duration: 5800000, from: 3, to: 33 },
     ],
-    startTimestamp,
   };
-  const defaultArgsDifferentProps = {
-    ...defaultArgs,
+  const defaultArgsWithEpochProps2 = {
+    ...defaultArgsWithEpochProps,
     epochProps: [
       { decisionWindow: 3600000, duration: 3600000, from: 1, to: 3 },
       { decisionWindow: 3600000, duration: 5800000, from: 3, to: 33 },
@@ -22,26 +26,35 @@ describe('getEpochAndAllocationTimestamps', () => {
   };
 
   it('correctly returns timestamps of the beginning and end of epoch and allocation', () => {
-    expect(getEpochAndAllocationTimestamps(defaultArgs)).toMatchObject({
-      timeCurrentAllocationEnd: 1665250654400,
-      timeCurrentAllocationStart: 1665250653800,
-      timeCurrentEpochEnd: 1665250654400,
-      timeCurrentEpochStart: 1665250653800,
+    expect(getCurrentEpochAndAllocationTimestamps(defaultArgs)).toMatchObject({
+      timeCurrentAllocationEnd: 1665069473600,
+      timeCurrentAllocationStart: 1665069473000,
+      timeCurrentEpochEnd: 1665069473600,
+      timeCurrentEpochStart: 1665069473000,
     });
   });
 
   it('correctly returns timestamps of the beginning and end of epoch and allocation', () => {
-    expect(getEpochAndAllocationTimestamps(defaultArgsDifferentProps)).toMatchObject({
-      timeCurrentAllocationEnd: 1665250579040,
-      timeCurrentAllocationStart: 1665250578440,
-      timeCurrentEpochEnd: 1665250579040,
-      timeCurrentEpochStart: 1665250578440,
+    expect(getCurrentEpochAndAllocationTimestamps(defaultArgsWithEpochProps)).toMatchObject({
+      timeCurrentAllocationEnd: 1665250655000,
+      timeCurrentAllocationStart: 1665250654400,
+      timeCurrentEpochEnd: 1665250655000,
+      timeCurrentEpochStart: 1665250654400,
+    });
+  });
+
+  it('correctly returns timestamps of the beginning and end of epoch and allocation', () => {
+    expect(getCurrentEpochAndAllocationTimestamps(defaultArgsWithEpochProps2)).toMatchObject({
+      timeCurrentAllocationEnd: 1665250579640,
+      timeCurrentAllocationStart: 1665250579040,
+      timeCurrentEpochEnd: 1665250579640,
+      timeCurrentEpochStart: 1665250579040,
     });
   });
 
   it('correctly returns all undefined when currentEpoch is not defined', () => {
     expect(
-      getEpochAndAllocationTimestamps({
+      getCurrentEpochAndAllocationTimestamps({
         ...defaultArgs,
         currentEpoch: undefined,
       }),
@@ -50,7 +63,7 @@ describe('getEpochAndAllocationTimestamps', () => {
 
   it('correctly returns all undefined when startTimestamp is not defined', () => {
     expect(
-      getEpochAndAllocationTimestamps({
+      getCurrentEpochAndAllocationTimestamps({
         ...defaultArgs,
         startTimestamp: undefined,
       }),
@@ -59,7 +72,7 @@ describe('getEpochAndAllocationTimestamps', () => {
 
   it('correctly returns all undefined when epochDuration is not defined', () => {
     expect(
-      getEpochAndAllocationTimestamps({
+      getCurrentEpochAndAllocationTimestamps({
         ...defaultArgs,
         epochDuration: undefined,
       }),
@@ -68,7 +81,7 @@ describe('getEpochAndAllocationTimestamps', () => {
 
   it('correctly returns all undefined when decisionWindowDuration is not defined', () => {
     expect(
-      getEpochAndAllocationTimestamps({
+      getCurrentEpochAndAllocationTimestamps({
         ...defaultArgs,
         decisionWindowDuration: undefined,
       }),
