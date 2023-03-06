@@ -34,7 +34,14 @@ const errors: ErrorsConfig = {
 };
 
 function getError(reason: string): Error {
-  return errors[reason] || 'Oops, something went wrong there. Please reload the app and try again.';
+  const error = errors[reason];
+  if (error) {
+    return error;
+  }
+  return {
+    message: 'Oops, something went wrong there. Please reload the app and try again.',
+    type: 'toast',
+  };
 }
 
 export function handleError(reason: string): string | undefined {

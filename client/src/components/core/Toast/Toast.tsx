@@ -1,4 +1,3 @@
-import cx from 'classnames';
 import React, { FC } from 'react';
 
 import Svg from 'components/core/Svg/Svg';
@@ -21,7 +20,7 @@ const getIcon = (type: ToastProps['type']): SvgImageConfig => {
 };
 
 const Toast: FC<ToastProps> = ({ title, message, type = 'info' }) => (
-  <div className={cx(styles.root, styles[`type--${type}`])}>
+  <div className={styles.root}>
     <Svg classNameSvg={styles.icon} img={getIcon(type)} size={3.2} />
     <div className={styles.body}>
       {title && <div className={styles.title}>{title}</div>}
