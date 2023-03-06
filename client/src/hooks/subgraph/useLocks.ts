@@ -1,42 +1,42 @@
 import { gql, useQuery, QueryResult } from '@apollo/client';
 import { useMetamask } from 'use-metamask';
 
-export type Deposit = {
+export type Lock = {
   amount: string;
   blockTimestamp: number;
-  type: 'Deposited';
+  type: 'Lock';
 };
 
 type Variables = {
   userAddress: string;
 };
 
-const GET_DEPOSITS = gql`
-  query GetDeposits($userAddress: String!) {
-    depositeds(orderBy: blockTimestamp, where: { user: $userAddress }) {
+const GET_LOCKS = gql`
+  query GetLocks($userAddress: String!) {
+    lockeds(orderBy: blockTimestamp, where: { user: $userAddress }) {
       amount
       blockTimestamp
     }
   }
 `;
 
-export default function useLocks(): QueryResult<Deposit[], Variables> {
+export default function useLocks(): QueryResult<Lock[], Variables> {
   const {
     metaState: { account },
   } = useMetamask();
   const userAddress = account[0];
 
-  const { data, ...rest } = useQuery(GET_DEPOSITS, {
+  const { data, ...rest } = useQuery(GET_LOCKS, {
     variables: {
       userAddress,
     },
   });
 
   return {
-    data: data?.depositeds.map(({ blockTimestamp, ...elementRest }) => ({
+    data: data?.lockeds.map(({ blockTimestamp, ...elementRest }) => ({
       ...elementRest,
       blockTimestamp: parseInt(blockTimestamp, 10) * 1000,
-      type: 'Deposited',
+      type: 'Lock',
     })),
     ...rest,
   };
