@@ -24,9 +24,7 @@ export type AllocationSquashed = {
 const GET_ALLOCATIONS = gql`
   query GetAllocations($userAddress: String!) {
     allocateds(orderBy: blockTimestamp, where: { user: $userAddress }) {
-      allocation
       blockTimestamp
-      proposal
     }
   }
 `;
@@ -38,6 +36,7 @@ export default function useAllocations(): QueryResult<AllocationSquashed[], Vari
   const userAddress = account[0];
 
   const { data, ...rest } = useQuery(GET_ALLOCATIONS, {
+    skip: !userAddress,
     variables: {
       userAddress,
     },
