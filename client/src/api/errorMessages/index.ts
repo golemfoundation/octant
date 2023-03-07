@@ -7,15 +7,15 @@ import { ErrorsConfig, Error } from './types';
 const errors: ErrorsConfig = {
   'HN:Allocations/allocate-above-rewards-budget': {
     message:
-      "You don't have that much in your rewards budget. Please try again when you have earned some more rewards",
+      "You don't have that much in your rewards budget. Please try again when you have earned some more rewards.",
     type: 'toast',
   },
   'HN:Allocations/decision-window-closed': {
-    message: 'The allocation period is not open at the moment. Please try again later',
+    message: 'The allocation period is not open at the moment. Please try again later.',
     type: 'toast',
   },
   'HN:Allocations/not-started-yet': {
-    message: "The epoch hasn't started yet. Please try again later",
+    message: "The epoch hasn't started yet. Please try again later.",
     type: 'toast',
   },
   'HN:Deposits/cannot-transfer-from-sender': {
@@ -26,6 +26,10 @@ const errors: ErrorsConfig = {
   'HN:Deposits/deposit-is-smaller': {
     message: 'Not enough funds.',
     type: 'inline',
+  },
+  'History/loading-encountered-an-error': {
+    message: 'Loading of history of operations encountered a problem. Please try again.',
+    type: 'toast',
   },
   'user rejected transaction': {
     message: 'User rejected transaction.',

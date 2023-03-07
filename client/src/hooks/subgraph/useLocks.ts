@@ -27,6 +27,7 @@ export default function useLocks(): QueryResult<Lock[], Variables> {
   const userAddress = account[0];
 
   const { data, ...rest } = useQuery(GET_LOCKS, {
+    skip: !userAddress,
     variables: {
       userAddress,
     },

@@ -27,6 +27,7 @@ export default function useUnlocks(): QueryResult<Unlock[], Variables> {
   const userAddress = account[0];
 
   const { data, ...rest } = useQuery(GET_UNLCOKS, {
+    skip: !userAddress,
     variables: {
       userAddress,
     },
