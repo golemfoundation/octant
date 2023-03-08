@@ -178,7 +178,8 @@ makeTestsEnv(EPOCHS, testEnv => {
     });
 
     it(`should not be started`, async () => {
-      const start = (await getLatestBlockTimestamp()) + 10;
+      const latestBlockTimestamp = await getLatestBlockTimestamp();
+      const start = latestBlockTimestamp + 100;
       const epochs = await setupEpochs(start);
 
       const isOpen = await epochs.isStarted();
