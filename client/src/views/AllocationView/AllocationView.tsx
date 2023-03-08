@@ -10,7 +10,6 @@ import AllocationItem from 'components/dedicated/AllocationItem/AllocationItem';
 import AllocationNavigation from 'components/dedicated/AllocationNavigation/AllocationNavigation';
 import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
 import useAllocate from 'hooks/mutations/useAllocate';
-import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
@@ -44,7 +43,6 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
   } = useUserAllocations({ refetchOnMount: true });
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { data: depositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
   const { refetch: refetchAllocations } = useAllocations();
   const { data: matchedProposalRewards, refetch: refetchMatchedProposalRewards } =
     useMatchedProposalRewards();
@@ -139,8 +137,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
     }));
   };
 
-  const areButtonsDisabled =
-    !isConnected || !isDecisionWindowOpen || !!depositEffectiveAtCurrentEpoch?.isZero();
+  const areButtonsDisabled = !isConnected || !isDecisionWindowOpen;
   const areAllocationsAvailable = allocationValues !== undefined && !isEmpty(allocations);
   return (
     <MainLayoutContainer
