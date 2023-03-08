@@ -10,6 +10,8 @@ import AllocationItem from 'components/dedicated/AllocationItem/AllocationItem';
 import AllocationNavigation from 'components/dedicated/AllocationNavigation/AllocationNavigation';
 import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
 import useAllocate from 'hooks/mutations/useAllocate';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useDepositEffectiveAtGivenEpoch from 'hooks/queries/useDepositEffectiveAtGivenEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
@@ -41,6 +43,10 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
     isFetching: isFetchingUserAllocation,
     refetch: refetchUserAllocation,
   } = useUserAllocations({ refetchOnMount: true });
+  const { data: currentEpoch } = useCurrentEpoch();
+  const { data: depositAtPreviousEpoch } = useDepositEffectiveAtGivenEpoch(
+    currentEpoch ? currentEpoch - 1 : undefined,
+  );
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { refetch: refetchAllocations } = useAllocations();
@@ -137,7 +143,8 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
     }));
   };
 
-  const areButtonsDisabled = !isConnected || !isDecisionWindowOpen;
+  const areButtonsDisabled =
+    !isConnected || !isDecisionWindowOpen || !!depositAtPreviousEpoch?.isZero();
   const areAllocationsAvailable = allocationValues !== undefined && !isEmpty(allocations);
   return (
     <MainLayoutContainer
