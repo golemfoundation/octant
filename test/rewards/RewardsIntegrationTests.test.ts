@@ -1,26 +1,11 @@
-import { FakeContract, smock } from '@defi-wonderland/smock';
 import { expect } from 'chai';
-import { formatEther, parseEther } from 'ethers/lib/utils';
-import { ethers, deployments } from 'hardhat';
+import { parseEther } from 'ethers/lib/utils';
+import { deployments, ethers } from 'hardhat';
 
-import { makeTestsEnv } from './helpers/make-tests-env';
-
-import {
-  ALLOCATIONS_STORAGE,
-  OCTANT_ORACLE,
-  PROPOSALS,
-  REWARDS,
-  TRACKER,
-} from '../helpers/constants';
-import { forwardEpochs } from '../helpers/epochs-utils';
-import {
-  WithdrawalsTargetV3,
-  Proposals,
-  Rewards,
-  Tracker,
-  OctantOracle,
-  AllocationsStorage,
-} from '../typechain-types';
+import { REWARDS } from '../../helpers/constants';
+import { forwardEpochs } from '../../helpers/epochs-utils';
+import { WithdrawalsTargetV3 } from '../../typechain-types';
+import { makeTestsEnv } from '../helpers/make-tests-env';
 
 makeTestsEnv(REWARDS, testEnv => {
   async function updateOracle() {
@@ -42,87 +27,6 @@ makeTestsEnv(REWARDS, testEnv => {
     await octantOracle.writeBalance();
     await target.sendETH({ value: ethers.utils.parseEther('400.0') });
   }
-
-  describe('Proposal donation threshold', async () => {
-    let proposals: FakeContract<Proposals>;
-    let allocationsStorage: FakeContract<AllocationsStorage>;
-    let rewards: Rewards;
-
-    beforeEach(async () => {
-      proposals = await smock.fake<Proposals>(PROPOSALS);
-      const oracle = await smock.fake<OctantOracle>(OCTANT_ORACLE);
-      oracle.getTotalETHStakingProceeds.returns((_epoch: number) => parseEther('400'));
-      const tracker = await smock.fake<Tracker>(TRACKER);
-      tracker.tokenSupplyAt.returns((_epoch: number) => parseEther('1000000000'));
-      tracker.totalDepositAt.returns((_epoch: number) => parseEther('10000'));
-      allocationsStorage = await smock.fake<AllocationsStorage>(ALLOCATIONS_STORAGE);
-      const rewardsFactory = await ethers.getContractFactory(REWARDS);
-      rewards = (await rewardsFactory.deploy(
-        tracker.address,
-        oracle.address,
-        proposals.address,
-        allocationsStorage.address,
-      )) as Rewards;
-    });
-
-    const parameters = [
-      // threshold 25% (0.0125), donations [0.01, 0.04]
-      { fraction: '0.25', proposalsNotPassingThresholdNum: 1, proposalsNumber: 2 },
-      // threshold 16.6666% (0.0224), donations [0.01, 0.04, 0.09]
-      { fraction: '0.166666666666666666', proposalsNotPassingThresholdNum: 1, proposalsNumber: 3 },
-      // threshold 10% (0.055), donations [0.01, 0.04, 0.09, 0.16, 0.25]
-      { fraction: '0.1', proposalsNotPassingThresholdNum: 2, proposalsNumber: 5 },
-      // threshold 5% (0.1925), donations [0.01, 0.04, 0.09, 0.16, 0.25, 0.36, 0.49, 0.64, 0.81, 1]
-      { fraction: '0.05', proposalsNotPassingThresholdNum: 4, proposalsNumber: 10 },
-      // threshold 4.16666%, (0,27083333329), donations [0.01, 0.04, 0.09, 0.16, 0.25, 0.36, 0.49, 0.64, 0.81, 1, 1,21, 1,44]
-      { fraction: '0.041666666666666666', proposalsNotPassingThresholdNum: 5, proposalsNumber: 12 },
-    ];
-
-    parameters.forEach(param => {
-      it(`${param.proposalsNotPassingThresholdNum} proposals eligible for matched funds when there are ${param.proposalsNumber} proposals`, async () => {
-        const {
-          proposalAddresses,
-          signers: { Alice },
-        } = testEnv;
-        const testProposalAddresses = proposalAddresses
-          .slice(0, param.proposalsNumber)
-          .map(proposal => proposal.address);
-
-        proposals.getProposalAddresses.returns((_epoch: number) => testProposalAddresses);
-
-        await allocationsStorage.getUsersWithTheirAllocations.returns((_args: string[]) => {
-          for (let i = 0; i < testProposalAddresses.length; i++) {
-            // args[1] is proposalAddress
-            if (_args[1] === testProposalAddresses[i]) {
-              const allocation = ((i + 1) * i) / 100;
-              return [[Alice.address], [parseEther(allocation.toString())]];
-            }
-          }
-        });
-
-        const proposalRewards = await rewards.matchedProposalRewards(2);
-        for (let i = 0; i < param.proposalsNotPassingThresholdNum; i++) {
-          expect(proposalRewards[i].matched).eq(0);
-        }
-
-        for (let i = param.proposalsNotPassingThresholdNum; i < proposalRewards.length; i++) {
-          expect(proposalRewards[i].matched).gt(0);
-        }
-      });
-
-      it(`Fraction is ${param.fraction} when there are ${param.proposalsNumber} proposals`, async () => {
-        const { proposalAddresses } = testEnv;
-        const testProposalAddresses = proposalAddresses
-          .slice(0, param.proposalsNumber)
-          .map(proposal => proposal.address);
-
-        proposals.getProposalAddresses.returns((_epoch: number) => testProposalAddresses);
-
-        const proposalRewardsThresholdFraction = await rewards.proposalRewardsThresholdFraction(2);
-        expect(formatEther(proposalRewardsThresholdFraction)).eq(param.fraction);
-      });
-    });
-  });
 
   describe('individual rewards', async () => {
     it('single player scenario', async () => {
@@ -166,15 +70,6 @@ makeTestsEnv(REWARDS, testEnv => {
         parseEther('16'),
       );
     });
-  });
-
-  it('Compute total rewards', async () => {
-    const { glmDeposits, rewards, signers, token } = testEnv;
-    await token.transfer(signers.Alice.address, parseEther('1000000'));
-    await token.connect(signers.Alice).approve(glmDeposits.address, parseEther('1000000'));
-    await glmDeposits.connect(signers.Alice).lock(parseEther('1000000'));
-    await updateOracle();
-    expect(await rewards.totalRewards(2), 'sum of TRs').eq(parseEther('12.6491106406735172'));
   });
 
   describe('Tests dependent on allocations', async () => {
