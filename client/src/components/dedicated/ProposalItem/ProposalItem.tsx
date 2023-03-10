@@ -11,9 +11,10 @@ import env from 'env';
 import useIsDonationAboveThreshold from 'hooks/queries/useIsDonationAboveThreshold';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import { tick } from 'svg/misc';
+import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './ProposalItem.module.scss';
-import { ProposalItemProps } from './types';
+import ProposalItemProps from './types';
 
 const ProposalItem: FC<ProposalItemProps> = ({
   address,
@@ -64,7 +65,9 @@ const ProposalItem: FC<ProposalItemProps> = ({
             <div className={styles.numbers}>
               {totalValueOfAllocations !== undefined && percentage !== undefined ? (
                 <Fragment>
-                  <div className={styles.sum}>{totalValueOfAllocations}</div>
+                  <div className={styles.sum}>
+                    {getFormattedEthValue(totalValueOfAllocations).fullString}
+                  </div>
                   <div
                     className={cx(
                       styles.percentage,

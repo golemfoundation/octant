@@ -1,8 +1,13 @@
+import { BigNumber } from 'ethers';
+
 import { ExtendedProposal } from 'types/proposals';
 
-export interface ProposalItemProps extends ExtendedProposal {
+export interface ProposalWithAllocations extends ExtendedProposal {
+  percentage: number | undefined;
+  totalValueOfAllocations: BigNumber | undefined;
+}
+
+export default interface ProposalItemProps extends ProposalWithAllocations {
   isAlreadyAdded?: boolean;
   onAddRemoveFromAllocate: () => void;
-  percentage?: number;
-  totalValueOfAllocations?: string;
 }

@@ -2,16 +2,15 @@ import { BigNumber } from 'ethers';
 import { UseQueryResult, useQuery } from 'react-query';
 
 import useContractRewards from 'hooks/contracts/useContractRewards';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import useCurrentEpoch from './useCurrentEpoch';
 
 type ProposalRewards = {
   address: string;
-  donated: string;
-  matched: string;
+  donated: BigNumber;
+  matched: BigNumber;
   percentage: number;
-  sum: string;
+  sum: BigNumber;
 };
 
 export default function useMatchedProposalRewards(): UseQueryResult<ProposalRewards[] | undefined> {
@@ -37,10 +36,10 @@ export default function useMatchedProposalRewards(): UseQueryResult<ProposalRewa
               : 0;
           return {
             address,
-            donated: getFormattedEthValue(donated).fullString,
-            matched: getFormattedEthValue(matched).fullString,
+            donated,
+            matched,
             percentage,
-            sum: getFormattedEthValue(sum).fullString,
+            sum,
           };
         });
       },
