@@ -1,11 +1,25 @@
 import { BigNumber } from 'ethers';
-import { UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from 'react-query';
+import { useMetamask } from 'use-metamask';
+
+import useContractTracker from 'hooks/contracts/useContractTracker';
 
 import useCurrentEpoch from './useCurrentEpoch';
-import useDepositEffectiveAtGivenEpoch from './useDepositEffectiveAtGivenEpoch';
 
 export default function useDepositEffectiveAtCurrentEpoch(): UseQueryResult<BigNumber | undefined> {
+  const {
+    metaState: { web3, account },
+  } = useMetamask();
+  const signer = web3?.getSigner();
+  const address = account[0];
+  const contractTracker = useContractTracker({ signerOrProvider: signer });
   const { data: currentEpoch } = useCurrentEpoch();
 
-  return useDepositEffectiveAtGivenEpoch(currentEpoch);
+  return useQuery(
+    ['depositAt', currentEpoch],
+    () => contractTracker?.depositAt(address, currentEpoch!),
+    {
+      enabled: !!contractTracker && !!currentEpoch && !!address,
+    },
+  );
 }
