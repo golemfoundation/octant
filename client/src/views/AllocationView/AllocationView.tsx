@@ -10,6 +10,7 @@ import AllocationItem from 'components/dedicated/AllocationItem/AllocationItem';
 import AllocationNavigation from 'components/dedicated/AllocationNavigation/AllocationNavigation';
 import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
 import useAllocate from 'hooks/mutations/useAllocate';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
@@ -18,6 +19,7 @@ import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useAllocations from 'hooks/subgraph/useAllocations';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 import getNewAllocationValuesBigNumber from 'utils/getNewAllocationValuesBigNumber';
+import getSortedElementsByTotalValueOfAllocations from 'utils/getSortedElementsByTotalValueOfAllocations';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './AllocationView.module.scss';
@@ -27,6 +29,8 @@ import {
   getAllocationsWithPositiveValues,
   toastBudgetExceeding,
 } from './utils';
+
+import { AllocationItemWithAllocations } from '../../components/dedicated/AllocationItem/types';
 
 const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
   const {
@@ -41,6 +45,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
     isFetching: isFetchingUserAllocation,
     refetch: refetchUserAllocation,
   } = useUserAllocations({ refetchOnMount: true });
+  const { data: currentEpoch } = useCurrentEpoch();
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { refetch: refetchAllocations } = useAllocations();
@@ -139,6 +144,33 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
 
   const areButtonsDisabled = !isConnected || !isDecisionWindowOpen || !!individualReward?.isZero();
   const areAllocationsAvailable = allocationValues !== undefined && !isEmpty(allocations);
+
+  let allocationsWithRewards = areAllocationsAvailable
+    ? allocations.map(addressInAllocation => {
+        const allocationItem = proposals.find(({ address }) => address === addressInAllocation)!;
+        const proposalMatchedProposalRewards = matchedProposalRewards?.find(
+          ({ address }) => address === addressInAllocation,
+        );
+        const isSelected = selectedItemAddress === allocationItem.address;
+        const value = allocationValues[allocationItem.address];
+
+        return {
+          isSelected,
+          percentage: proposalMatchedProposalRewards?.percentage,
+          totalValueOfAllocations: proposalMatchedProposalRewards?.sum,
+          value,
+          ...allocationItem,
+        };
+      })
+    : [];
+
+  allocationsWithRewards =
+    !!currentEpoch && currentEpoch > 1 && matchedProposalRewards
+      ? (getSortedElementsByTotalValueOfAllocations(
+          allocationsWithRewards,
+        ) as AllocationItemWithAllocations[])
+      : allocationsWithRewards;
+
   return (
     <MainLayoutContainer
       isLoading={allocationValues === undefined || (isConnected && isFetchingUserAllocation)}
@@ -165,30 +197,20 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
                 isConnected={isConnected}
                 isDecisionWindowOpen={!!isDecisionWindowOpen}
               />
-              {allocations!.map((addressInAllocation, index) => {
-                const allocationItem = proposals.find(
-                  ({ address }) => address === addressInAllocation,
-                )!;
-                const proposalMatchedProposalRewards = matchedProposalRewards?.find(
-                  ({ address }) => address === addressInAllocation,
-                );
-                const isSelected = selectedItemAddress === allocationItem.address;
-                const value = allocationValues[allocationItem.address];
-                return (
-                  <AllocationItem
-                    // eslint-disable-next-line react/no-array-index-key
-                    key={index}
-                    className={cx(styles.box, styles.isAllocation, isSelected && styles.isSelected)}
-                    isSelected={isSelected}
-                    onChange={onChangeAllocationItemValue}
-                    onSelectItem={setSelectedItemAddress}
-                    percentage={proposalMatchedProposalRewards?.percentage}
-                    totalValueOfAllocations={proposalMatchedProposalRewards?.sum}
-                    value={value}
-                    {...allocationItem}
-                  />
-                );
-              })}
+              {allocationsWithRewards!.map((allocation, index) => (
+                <AllocationItem
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={index}
+                  className={cx(
+                    styles.box,
+                    styles.isAllocation,
+                    allocation.isSelected && styles.isSelected,
+                  )}
+                  onChange={onChangeAllocationItemValue}
+                  onSelectItem={setSelectedItemAddress}
+                  {...allocation}
+                />
+              ))}
             </div>
           ) : (
             <AllocationEmptyState />

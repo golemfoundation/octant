@@ -24,6 +24,8 @@ import truncateEthAddress from 'utils/truncateEthAddress';
 import styles from './ProposalView.module.scss';
 import ProposalViewProps from './types';
 
+import getFormattedEthValue from '../../utils/getFormattedEthValue';
+
 const getCustomNavigationTabs = () => {
   const navigationTabs = [...navigationTabsDefault];
   navigationTabs[0] = {
@@ -109,7 +111,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
           <div className={styles.allocationValues}>
             {proposalMatchedProposalRewards ? (
               <Fragment>
-                <div>{proposalMatchedProposalRewards?.sum}</div>
+                <div>{getFormattedEthValue(proposalMatchedProposalRewards?.sum).fullString}</div>
                 <div className={styles.separator} />
                 <div
                   className={cx(

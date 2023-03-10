@@ -129,6 +129,10 @@
     display: flex;
     align-items: center;
     font-weight: $font-weight-semibold;
+
+    &:not(:last-child) {
+      margin-bottom: 1.6rem;
+    }
   }
 
   .donorIcon {

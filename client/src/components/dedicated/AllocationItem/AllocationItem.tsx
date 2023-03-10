@@ -16,6 +16,8 @@ import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 import styles from './AllocationItem.module.scss';
 import AllocationItemProps from './types';
 
+import getFormattedEthValue from '../../../utils/getFormattedEthValue';
+
 const AllocationItem: FC<AllocationItemProps> = ({
   address,
   className,
@@ -81,7 +83,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
             <div className={styles.funds}>
               {totalValueOfAllocations !== undefined && percentage !== undefined ? (
                 <Fragment>
-                  <div>{totalValueOfAllocations}</div>
+                  <div>{getFormattedEthValue(totalValueOfAllocations).fullString}</div>
                   <div className={styles.percent}>
                     {percentage}%
                     <div
