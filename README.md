@@ -49,6 +49,11 @@ In second terminal:
 ```bash
 yarn prepare-local-test-env
 ```
+In order to generate reward budget:
+```bash
+yarn generate-reward
+```
+Please note that this needs to be run in each epoch you want to have reward budget.
 
 ### Goerli testnet
 ```bash

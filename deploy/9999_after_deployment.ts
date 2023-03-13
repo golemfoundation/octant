@@ -10,6 +10,7 @@ import {
   PROPOSALS,
   REWARDS,
   TRACKER,
+  PAYOUTS_MANAGER,
 } from '../helpers/constants';
 
 // This function needs to be declared this way, otherwise it's not understood by test runner.
@@ -33,6 +34,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`VITE_REWARDS_ADDRESS=${rewards.address}`);
   const octantOracle = await hre.ethers.getContract(OCTANT_ORACLE);
   console.log(`VITE_OCTANT_ORACLE_ADDRESS=${octantOracle.address}`);
+  const payoutsManager = await hre.ethers.getContract(PAYOUTS_MANAGER);
+  console.log(`VITE_OCTANT_PAYOUTS_MANAGER_ADDRESS=${payoutsManager.address}`);
   /* eslint-enable no-console */
 };
 
