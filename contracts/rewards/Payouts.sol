@@ -97,6 +97,29 @@ contract Payouts is Ownable {
         }
     }
 
+    function withdrawableUserETH(address payeeAddress) external view returns (uint144) {
+        return withdrawableETH(Payee.User, payeeAddress);
+    }
+
+    function withdrawableProposalETH(address payeeAddress) public view returns (uint144) {
+        return withdrawableETH(Payee.Proposal, payeeAddress);
+    }
+
+    function withdrawableGolemFoundationETH(address payeeAddress) public view returns (uint144) {
+        return withdrawableETH(Payee.GolemFoundation, payeeAddress);
+    }
+
+    function withdrawableETH(Payee payee, address payeeAddress) private view returns (uint144) {
+        uint144 available;
+        Payout memory p = payouts[payeeAddress];
+        uint32 finalizedEpoch = getFinalizedEpoch();
+        for (uint32 i = p.checkpointEpoch; i <= finalizedEpoch; i++) {
+            uint144 stepFunds = uint144(_getRewards(payee, i, payeeAddress));
+            available = available + stepFunds;
+        }
+        return available - p.extra;
+    }
+
     function _getRewards(Payee payee, uint32 epoch, address payeeAddress) private view returns (uint256) {
         if (payee == Payee.User) {
             return rewards.claimableReward(epoch, payeeAddress);
