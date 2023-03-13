@@ -4,9 +4,9 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Description from 'components/core/Description/Description';
 import Header from 'components/core/Header/Header';
 import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
+import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useDecisionWindow from 'hooks/queries/useDecisionWindow';
 import useEpochDuration from 'hooks/queries/useEpochDuration';
-import useEpochAndAllocationTimestamps from 'hooks/useEpochAndAllocationTimestamps';
 
 import styles from './MetricsTimeSection.module.scss';
 import MetricsTimeSectionProps from './types';

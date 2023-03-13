@@ -1,5 +1,6 @@
 import { useQuery, useQueries } from 'react-query';
 
+import { QUERY_KEYS } from 'api/queryKeys';
 import useContractEpochs from 'hooks/contracts/useContractEpochs';
 
 export interface EpochProps {
@@ -12,16 +13,20 @@ export interface EpochProps {
 export default function useEpochProps(): EpochProps[] {
   const contractEpochs = useContractEpochs();
 
-  const epochPropsIndex = useQuery(['epochPropsIndex'], () => contractEpochs?.epochPropsIndex(), {
-    enabled: !!contractEpochs,
-    select: response => response?.toNumber(),
-  });
+  const epochPropsIndex = useQuery(
+    QUERY_KEYS.epochPropsIndex,
+    () => contractEpochs?.epochPropsIndex(),
+    {
+      enabled: !!contractEpochs,
+      select: response => response?.toNumber(),
+    },
+  );
 
   const epochProps = useQueries(
     [...Array(epochPropsIndex.data).keys()].map(index => ({
       enabled: !!epochPropsIndex && !!epochPropsIndex.data,
       queryFn: () => contractEpochs?.epochProps(index),
-      queryKey: ['epochProps', index],
+      queryKey: QUERY_KEYS.epochProps(index),
       select: response => {
         const [from, to, duration, decisionWindow] = response;
         return {

@@ -6,10 +6,10 @@ import { useMetamask } from 'use-metamask';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Loader from 'components/core/Loader/Loader';
 import Svg from 'components/core/Svg/Svg';
+import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useAllocations from 'hooks/subgraph/useAllocations';
 import useLocks from 'hooks/subgraph/useLocks';
 import useUnlocks from 'hooks/subgraph/useUnlocks';
-import useEpochAndAllocationTimestamps from 'hooks/useEpochAndAllocationTimestamps';
 import { allocate, donation } from 'svg/history';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 

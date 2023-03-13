@@ -8,7 +8,7 @@ import Description from 'components/core/Description/Description';
 import Img from 'components/core/Img/Img';
 import Svg from 'components/core/Svg/Svg';
 import env from 'env';
-import useIsDonationAboveThreshold from 'hooks/queries/useIsDonationAboveThreshold';
+import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import { tick } from 'svg/misc';
 import getFormattedEthValue from 'utils/getFormattedEthValue';

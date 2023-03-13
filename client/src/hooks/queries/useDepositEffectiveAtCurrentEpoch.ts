@@ -2,6 +2,7 @@ import { BigNumber } from 'ethers';
 import { useQuery, UseQueryResult } from 'react-query';
 import { useMetamask } from 'use-metamask';
 
+import { QUERY_KEYS } from 'api/queryKeys';
 import useContractTracker from 'hooks/contracts/useContractTracker';
 
 import useCurrentEpoch from './useCurrentEpoch';
@@ -16,7 +17,7 @@ export default function useDepositEffectiveAtCurrentEpoch(): UseQueryResult<BigN
   const { data: currentEpoch } = useCurrentEpoch();
 
   return useQuery(
-    ['depositAt', currentEpoch],
+    QUERY_KEYS.depositAtGivenEpoch(currentEpoch!),
     () => contractTracker?.depositAt(address, currentEpoch!),
     {
       enabled: !!contractTracker && !!currentEpoch && !!address,

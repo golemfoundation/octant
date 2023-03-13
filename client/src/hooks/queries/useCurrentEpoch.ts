@@ -1,5 +1,6 @@
 import { UseQueryOptions, UseQueryResult, useQuery } from 'react-query';
 
+import { QUERY_KEYS } from 'api/queryKeys';
 import useContractEpochs from 'hooks/contracts/useContractEpochs';
 
 export default function useCurrentEpoch(
@@ -7,7 +8,7 @@ export default function useCurrentEpoch(
 ): UseQueryResult<number | undefined> {
   const contractEpochs = useContractEpochs();
 
-  return useQuery(['currentEpoch'], () => contractEpochs?.getCurrentEpoch(), {
+  return useQuery(QUERY_KEYS.currentEpoch, () => contractEpochs?.getCurrentEpoch(), {
     enabled: !!contractEpochs,
     ...options,
   });

@@ -1,6 +1,7 @@
 import { useQueries, useQuery } from 'react-query';
 
 import { apiGetProposal } from 'api/proposals';
+import { QUERY_KEYS } from 'api/queryKeys';
 import useContractProposals from 'hooks/contracts/useContractProposals';
 import { BackendProposal, ExtendedProposal } from 'types/proposals';
 
@@ -26,7 +27,7 @@ export default function useProposals(): {
   const { data: proposalsCid } = useProposalsCid();
 
   const proposalsContract = useQuery(
-    ['proposalsContract'],
+    QUERY_KEYS.proposalsContract,
     // When decision window is open, fetch proposals from the previous epoch, because that's what users should be allocating to.
     () =>
       contractProposals?.getProposalAddresses(
@@ -45,7 +46,7 @@ export default function useProposals(): {
     (proposalsContract!.data || []).map(address => ({
       enabled: !!proposalsContract && !!proposalsContract.data && !!proposalsCid,
       queryFn: () => apiGetProposal(`${proposalsCid}/${address}`),
-      queryKey: ['proposalsIpfsResults', address],
+      queryKey: QUERY_KEYS.proposalsIpfsResults(address),
     })),
   );
 
