@@ -6,7 +6,7 @@ import { ethers } from 'hardhat';
 import { makeTestsEnv } from './helpers/make-tests-env';
 
 import { PAYOUTS, PAYOUTS_MANAGER } from '../helpers/constants';
-import { forwardEpochs } from '../helpers/epochs-utils';
+import { forwardEpochs, forwardAfterDecisionWindow } from '../helpers/epochs-utils';
 import { Payouts, PayoutsManager, Rewards } from '../typechain-types';
 
 makeTestsEnv(PAYOUTS, testEnv => {
@@ -50,6 +50,43 @@ makeTestsEnv(PAYOUTS, testEnv => {
             return parseEther('1.0');
         }
       });
+    });
+
+    it('max withdrawal during decision window', async () => {
+      const {
+        epochs,
+        signers: { Alice },
+      } = testEnv;
+      expect(await epochs.getCurrentEpoch()).eq(3);
+      expect(await epochs.isDecisionWindowOpen()).eq(true);
+      const before = await ethers.provider.getBalance(Alice.address);
+      await payoutsManager.connect(Alice).withdrawUser(parseEther('2'));
+      expect(await ethers.provider.getBalance(Alice.address)).approximately(
+        before.add(parseEther('2')),
+        parseEther('0.001'),
+      );
+      expect(
+        payoutsManager.connect(Alice).withdrawUser(parseEther('0.0000001')),
+      ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
+    });
+
+    it('max withdrawal after decision window', async () => {
+      const {
+        epochs,
+        signers: { Alice },
+      } = testEnv;
+      expect(await epochs.getCurrentEpoch()).eq(3);
+      await forwardAfterDecisionWindow(epochs);
+      expect(await epochs.isDecisionWindowOpen()).eq(false);
+      const before = await ethers.provider.getBalance(Alice.address);
+      await payoutsManager.connect(Alice).withdrawUser(parseEther('3'));
+      expect(await ethers.provider.getBalance(Alice.address)).approximately(
+        before.add(parseEther('3')),
+        parseEther('0.001'),
+      );
+      expect(
+        payoutsManager.connect(Alice).withdrawUser(parseEther('0.0000001')),
+      ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
     });
 
     it('check if rewards contract is called once', async () => {

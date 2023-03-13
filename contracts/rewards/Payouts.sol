@@ -90,10 +90,10 @@ contract Payouts is Ownable {
     /// @dev returns most recent epoch from which funds can be spent
     function getFinalizedEpoch() public view returns (uint32) {
         if (epochs.isDecisionWindowOpen()) {
-            return epochs.getCurrentEpoch() - 1;
+            return epochs.getCurrentEpoch() - 2;
         }
         else {
-            return epochs.getCurrentEpoch() - 2;
+            return epochs.getCurrentEpoch() - 1;
         }
     }
 
