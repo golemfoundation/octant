@@ -1,6 +1,7 @@
 import { BigNumber } from 'ethers';
 import { UseQueryResult, useQuery } from 'react-query';
 
+import { QUERY_KEYS } from 'api/queryKeys';
 import useContractRewards from 'hooks/contracts/useContractRewards';
 
 import useCurrentEpoch from './useCurrentEpoch';
@@ -18,7 +19,7 @@ export default function useMatchedProposalRewards(): UseQueryResult<ProposalRewa
   const { data: currentEpoch } = useCurrentEpoch();
 
   return useQuery(
-    ['matchedProposalRewards'],
+    QUERY_KEYS.matchedProposalRewards,
     () => contractRewards?.matchedProposalRewards(currentEpoch! - 1),
     {
       enabled: !!currentEpoch && currentEpoch > 1 && !!contractRewards,

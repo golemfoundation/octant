@@ -2,6 +2,7 @@ import { BigNumber } from 'ethers';
 import { UseQueryOptions, UseQueryResult, useQuery } from 'react-query';
 import { useMetamask } from 'use-metamask';
 
+import { QUERY_KEYS } from 'api/queryKeys';
 import useContractAllocationsStorage from 'hooks/contracts/useContractAllocationsStorage';
 
 import useCurrentEpoch from './useCurrentEpoch';
@@ -27,7 +28,7 @@ export default function useUserAllocations(
   const address = account[0];
 
   return useQuery(
-    ['userAllocations'],
+    QUERY_KEYS.userAllocations,
     () => contractAllocationsStorage?.getUserAllocations(currentEpoch! - 1, address),
     {
       enabled: !!currentEpoch && currentEpoch > 1 && !!address,

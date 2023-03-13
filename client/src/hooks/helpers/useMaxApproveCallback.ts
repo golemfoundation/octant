@@ -3,10 +3,11 @@ import { JsonRpcSigner } from '@ethersproject/providers';
 import { BigNumber, ContractTransaction } from 'ethers';
 import { useCallback, useState } from 'react';
 
-import useContractErc20 from './contracts/useContractErc20';
-import useTokenAllowance from './queries/useTokenAllowance';
+import useContractErc20 from 'hooks/contracts/useContractErc20';
 
-import { ERC20 } from '../typechain-types';
+import useTokenAllowance from './useTokenAllowance';
+
+import { ERC20 } from '../../typechain-types';
 
 // eslint-disable-next-line no-shadow
 export enum ApprovalState {

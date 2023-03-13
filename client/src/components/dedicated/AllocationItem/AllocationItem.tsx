@@ -8,8 +8,8 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
 import InputText from 'components/core/InputText/InputText';
 import Svg from 'components/core/Svg/Svg';
+import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
-import useIsDonationAboveThreshold from 'hooks/queries/useIsDonationAboveThreshold';
 import { minus, plus } from 'svg/misc';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 

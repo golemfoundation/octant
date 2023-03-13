@@ -11,6 +11,7 @@ import Modal from 'components/core/Modal/Modal';
 import ProgressStepper from 'components/core/ProgressStepper/ProgressStepper';
 import BudgetBox from 'components/dedicated/BudgetBox/BudgetBox';
 import env from 'env';
+import useMaxApproveCallback from 'hooks/helpers/useMaxApproveCallback';
 import useLock from 'hooks/mutations/useLock';
 import useUnlock from 'hooks/mutations/useUnlock';
 import useAvailableFunds from 'hooks/queries/useAvailableFunds';
@@ -18,7 +19,6 @@ import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffective
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useLocks from 'hooks/subgraph/useLocks';
 import useUnlocks from 'hooks/subgraph/useUnlocks';
-import useMaxApproveCallback from 'hooks/useMaxApproveCallback';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 import triggerToast from 'utils/triggerToast';
 
