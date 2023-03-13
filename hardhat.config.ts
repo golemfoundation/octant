@@ -17,6 +17,7 @@ import './tasks/send-glm';
 import './tasks/target-upgrade';
 import './tasks/target-deploy';
 import './tasks/target-check';
+import './tasks/target-fund';
 
 const config: HardhatUserConfig = {
   docgen: {

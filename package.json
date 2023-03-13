@@ -12,6 +12,7 @@
     "eslint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "eslint:fix": "yarn prettier && yarn eslint --fix",
     "format": "npx prettier --write 'contracts/**/*.sol'",
+    "generate-reward": "npx hardhat --network localhost target-fund",
     "lint": "npx solhint 'contracts/**/*.sol'",
     "postinstall": "rm -r node_modules/@nomiclabs/hardhat-ethers && cp -R node_modules/hardhat-deploy-ethers node_modules/@nomiclabs/hardhat-ethers",
     "prepare": "husky install",

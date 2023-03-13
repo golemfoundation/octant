@@ -11,8 +11,19 @@ import {
   WithdrawalsTargetV3,
 } from '../typechain-types';
 
-task('prepare-local-test-env', 'Prepare local test environment').setAction(
-  async (_, { ethers, network, deployments }) => {
+task('prepare-local-test-env', 'Prepare local test environment')
+  .setDescription(
+    `
+
+   Use this to run a local environment.
+    Console steps look like this:
+     1. hh node --no-deploy
+     2. hh --localhost deploy
+     3. hh --localhost prepare-local-test-env
+
+    Please note that deploying contracts in hh deploy step will populate proposals with test values.`,
+  )
+  .setAction(async (_, { ethers, network, deployments }) => {
     const { deploy } = deployments;
     const { deployer, Alice } = await ethers.getNamedSigners();
     const proposalAddresses = await ethers.getUnnamedSigners();
@@ -56,5 +67,4 @@ task('prepare-local-test-env', 'Prepare local test environment').setAction(
     await allocations.connect(Alice).allocate(userAllocations);
     // eslint-disable-next-line no-console
     console.log('Test environment prepared.');
-  },
-);
+  });
