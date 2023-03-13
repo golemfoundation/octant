@@ -52,6 +52,68 @@ makeTestsEnv(PAYOUTS, testEnv => {
       });
     });
 
+    it('withdrawable estimator if some funds has already been withdrawn in an epoch', async () => {
+      const {
+        epochs,
+        signers: { Alice },
+      } = testEnv;
+      await payoutsManager.connect(Alice).withdrawUser(parseEther('0.3'));
+      expect(await epochs.getCurrentEpoch()).eq(3);
+      expect(await epochs.isDecisionWindowOpen()).eq(true);
+      expect(await payouts.withdrawableUserETH(Alice.address)).eq(parseEther('1.7'));
+      const before = await ethers.provider.getBalance(Alice.address);
+      await payoutsManager.connect(Alice).withdrawUser(parseEther('1.7'));
+      expect(await ethers.provider.getBalance(Alice.address)).approximately(
+        before.add(parseEther('1.7')),
+        parseEther('0.001'),
+      );
+      expect(await payouts.withdrawableUserETH(Alice.address)).eq(parseEther('0'));
+      expect(
+        payoutsManager.connect(Alice).withdrawUser(parseEther('0.0000001')),
+      ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
+    });
+
+    it('withdrawable estimator during decision window', async () => {
+      const {
+        epochs,
+        signers: { Alice },
+      } = testEnv;
+      expect(await epochs.getCurrentEpoch()).eq(3);
+      expect(await epochs.isDecisionWindowOpen()).eq(true);
+      expect(await payouts.withdrawableUserETH(Alice.address)).eq(parseEther('2'));
+      const before = await ethers.provider.getBalance(Alice.address);
+      await payoutsManager.connect(Alice).withdrawUser(parseEther('2'));
+      expect(await ethers.provider.getBalance(Alice.address)).approximately(
+        before.add(parseEther('2')),
+        parseEther('0.001'),
+      );
+      expect(await payouts.withdrawableUserETH(Alice.address)).eq(parseEther('0'));
+      expect(
+        payoutsManager.connect(Alice).withdrawUser(parseEther('0.0000001')),
+      ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
+    });
+
+    it('withdrawable estimator after decision window', async () => {
+      const {
+        epochs,
+        signers: { Alice },
+      } = testEnv;
+      expect(await epochs.getCurrentEpoch()).eq(3);
+      await forwardAfterDecisionWindow(epochs);
+      expect(await epochs.isDecisionWindowOpen()).eq(false);
+      expect(await payouts.withdrawableUserETH(Alice.address)).eq(parseEther('3'));
+      const before = await ethers.provider.getBalance(Alice.address);
+      await payoutsManager.connect(Alice).withdrawUser(parseEther('3'));
+      expect(await ethers.provider.getBalance(Alice.address)).approximately(
+        before.add(parseEther('3')),
+        parseEther('0.001'),
+      );
+      expect(await payouts.withdrawableUserETH(Alice.address)).eq(parseEther('0'));
+      expect(
+        payoutsManager.connect(Alice).withdrawUser(parseEther('0.0000001')),
+      ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
+    });
+
     it('max withdrawal during decision window', async () => {
       const {
         epochs,
@@ -78,12 +140,14 @@ makeTestsEnv(PAYOUTS, testEnv => {
       expect(await epochs.getCurrentEpoch()).eq(3);
       await forwardAfterDecisionWindow(epochs);
       expect(await epochs.isDecisionWindowOpen()).eq(false);
+      expect(await payouts.withdrawableUserETH(Alice.address)).eq(parseEther('3'));
       const before = await ethers.provider.getBalance(Alice.address);
       await payoutsManager.connect(Alice).withdrawUser(parseEther('3'));
       expect(await ethers.provider.getBalance(Alice.address)).approximately(
         before.add(parseEther('3')),
         parseEther('0.001'),
       );
+      expect(await payouts.withdrawableUserETH(Alice.address)).eq(parseEther('0'));
       expect(
         payoutsManager.connect(Alice).withdrawUser(parseEther('0.0000001')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
@@ -212,6 +276,40 @@ makeTestsEnv(PAYOUTS, testEnv => {
       rewards.proposalReward.atCall(1).calledWith(2, 1);
     });
 
+    it('withdrawableProposalETH estimation is accurate during decision window', async () => {
+      const { epochs, proposalAddresses } = testEnv;
+      expect(await epochs.isDecisionWindowOpen()).eq(true);
+      expect(await payouts.withdrawableProposalETH(proposalAddresses[0].address)).eq(
+        parseEther('2.0'),
+      );
+      await payoutsManager
+        .connect(proposalAddresses[0])
+        .withdrawProposal(proposalAddresses[0].address, parseEther('2.0'));
+      expect(await payouts.withdrawableProposalETH(proposalAddresses[0].address)).eq(
+        parseEther('0'),
+      );
+      expect(
+        payoutsManager
+          .connect(proposalAddresses[0])
+          .withdrawProposal(proposalAddresses[0].address, parseEther('0.000000000001')),
+      ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
+    });
+
+    it('withdrawableProposalETH estimation is accurate after decision window', async () => {
+      const { epochs, proposalAddresses } = testEnv;
+      await forwardAfterDecisionWindow(epochs);
+      expect(await epochs.isDecisionWindowOpen()).eq(false);
+      expect(await payouts.withdrawableProposalETH(proposalAddresses[0].address)).eq(
+        parseEther('3.0'),
+      );
+      await payoutsManager
+        .connect(proposalAddresses[0])
+        .withdrawProposal(proposalAddresses[0].address, parseEther('1.0'));
+      expect(await payouts.withdrawableProposalETH(proposalAddresses[0].address)).eq(
+        parseEther('2.0'),
+      );
+    });
+
     it("can't register more than earned", async () => {
       const { proposalAddresses } = testEnv;
       // proposal gets 1 ETH claimable rewards, it's third epoch so max possible payout is 3 ETH
@@ -298,6 +396,43 @@ makeTestsEnv(PAYOUTS, testEnv => {
         before.add(parseEther('2.0')),
         parseEther('0.001'),
       );
+    });
+
+    it('withdrawable estimator for Foundation funds during decision window', async () => {
+      const {
+        epochs,
+        signers: { TestFoundation },
+      } = testEnv;
+      expect(await epochs.isDecisionWindowOpen()).eq(true);
+      expect(await payouts.withdrawableGolemFoundationETH(TestFoundation.address)).eq(
+        parseEther('2.0'),
+      );
+      await payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('2.0'));
+      expect(await payouts.withdrawableGolemFoundationETH(TestFoundation.address)).eq(
+        parseEther('0.0'),
+      );
+      expect(
+        payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('0.0000001')),
+      ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
+    });
+
+    it('withdrawable estimator for Foundation funds after decision window', async () => {
+      const {
+        epochs,
+        signers: { TestFoundation },
+      } = testEnv;
+      await forwardAfterDecisionWindow(epochs);
+      expect(await epochs.isDecisionWindowOpen()).eq(false);
+      expect(await payouts.withdrawableGolemFoundationETH(TestFoundation.address)).eq(
+        parseEther('3.0'),
+      );
+      await payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('3.0'));
+      expect(await payouts.withdrawableGolemFoundationETH(TestFoundation.address)).eq(
+        parseEther('0.0'),
+      );
+      expect(
+        payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('0.0000001')),
+      ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
     });
 
     it("can't register more than earned", async () => {
