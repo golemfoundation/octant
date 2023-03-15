@@ -6,6 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import Loader from 'components/core/Loader/Loader';
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposals from 'hooks/queries/useProposals';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import RootRoutesContainer from 'routes/RootRoutes/RootRoutesContainer';
@@ -15,8 +17,6 @@ import styles from './App.module.scss';
 import AppProps from './types';
 
 import 'styles/index.scss';
-import useCurrentEpoch from '../hooks/queries/useCurrentEpoch';
-import useIsDecisionWindowOpen from '../hooks/queries/useIsDecisionWindowOpen';
 
 const validateProposalsInLocalStorage = (localStorageAllocationItems, proposals) =>
   localStorageAllocationItems.filter(item => proposals.find(({ address }) => address === item));

@@ -7,6 +7,7 @@ import { useMetamask } from 'use-metamask';
 import AllocationEmptyState from 'components/dedicated/AllocationEmptyState/AllocationEmptyState';
 import AllocationInfoBoxes from 'components/dedicated/AllocationInfoBoxes/AllocationInfoBoxes';
 import AllocationItem from 'components/dedicated/AllocationItem/AllocationItem';
+import { AllocationItemWithAllocations } from 'components/dedicated/AllocationItem/types';
 import AllocationNavigation from 'components/dedicated/AllocationNavigation/AllocationNavigation';
 import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
 import useAllocate from 'hooks/mutations/useAllocate';
@@ -29,8 +30,6 @@ import {
   getAllocationsWithPositiveValues,
   toastBudgetExceeding,
 } from './utils';
-
-import { AllocationItemWithAllocations } from '../../components/dedicated/AllocationItem/types';
 
 const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
   const {
