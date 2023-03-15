@@ -1,5 +1,5 @@
-import useMatchedProposalRewards from '../queries/useMatchedProposalRewards';
-import useProposalRewardsThresholdFraction from '../queries/useProposalRewardsThresholdFraction';
+import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
+import useProposalRewardsThresholdFraction from 'hooks/queries/useProposalRewardsThresholdFraction';
 
 export default function useIsDonationAboveThreshold(proposalAddress: string): boolean {
   const { data: matchedProposalRewards } = useMatchedProposalRewards();

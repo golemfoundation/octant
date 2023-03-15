@@ -2,13 +2,12 @@ import cx from 'classnames';
 import React, { FC, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
+import Loader from 'components/core/Loader/Loader';
 import Svg from 'components/core/Svg/Svg';
 import { arrowTopRight } from 'svg/misc';
 
 import styles from './Button.module.scss';
 import ButtonProps from './types';
-
-import Loader from '../Loader/Loader';
 
 const Button: FC<ButtonProps> = ({
   Icon,

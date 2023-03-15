@@ -18,13 +18,12 @@ import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import { donorGenericIcon, tick } from 'svg/misc';
 import { chevronLeft } from 'svg/navigation';
+import getFormattedEthValue from 'utils/getFormattedEthValue';
 import triggerToast from 'utils/triggerToast';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
 import styles from './ProposalView.module.scss';
 import ProposalViewProps from './types';
-
-import getFormattedEthValue from '../../utils/getFormattedEthValue';
 
 const getCustomNavigationTabs = () => {
   const navigationTabs = [...navigationTabsDefault];

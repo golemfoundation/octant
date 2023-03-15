@@ -11,12 +11,11 @@ import Svg from 'components/core/Svg/Svg';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import { minus, plus } from 'svg/misc';
+import getFormattedEthValue from 'utils/getFormattedEthValue';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 
 import styles from './AllocationItem.module.scss';
 import AllocationItemProps from './types';
-
-import getFormattedEthValue from '../../../utils/getFormattedEthValue';
 
 const AllocationItem: FC<AllocationItemProps> = ({
   address,
