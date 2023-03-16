@@ -75,22 +75,19 @@ makeTestsEnv(REWARDS, testEnv => {
 
     parameters.forEach(param => {
       it(`${param.proposalsNotPassingThresholdNum} proposals eligible for matched funds when there are ${param.proposalsNumber} proposals`, async () => {
-        const {
-          proposalAddresses,
-          signers: { Alice },
-        } = testEnv;
+        const { proposalAddresses } = testEnv;
         const testProposalAddresses = proposalAddresses
           .slice(0, param.proposalsNumber)
           .map(proposal => proposal.address);
 
         proposals.getProposalAddresses.returns((_epoch: number) => testProposalAddresses);
 
-        await allocationsStorage.getUsersWithTheirAllocations.returns((_args: string[]) => {
+        await allocationsStorage.getProposalAllocation.returns((_args: string[]) => {
           for (let i = 0; i < testProposalAddresses.length; i++) {
             // args[1] is proposalAddress
             if (_args[1] === testProposalAddresses[i]) {
               const allocation = ((i + 1) * i) / 100;
-              return [[Alice.address], [parseEther(allocation.toString())]];
+              return parseEther(allocation.toString());
             }
           }
         });
@@ -143,22 +140,19 @@ makeTestsEnv(REWARDS, testEnv => {
 
     testScenarios.forEach(params => {
       it(`Proposal rewards :${JSON.stringify(params)}`, async () => {
-        const {
-          signers: { Alice, Bob, Charlie },
-          proposalAddresses,
-        } = testEnv;
+        const { proposalAddresses } = testEnv;
         tracker.totalDepositAt.returns((_epoch: number) => parseEther(params.totalDeposit));
-        await allocationsStorage.getUsersWithTheirAllocations.returns((_args: string[]) => {
+        await allocationsStorage.getProposalAllocation.returns((_args: string[]) => {
           if (_args[1] === proposalAddresses[0].address) {
-            return [[Alice.address], [parseEther(params.aliceAllocation)]];
+            return parseEther(params.aliceAllocation);
           }
           if (_args[1] === proposalAddresses[1].address) {
-            return [[Bob.address], [parseEther(params.bobAllocation)]];
+            return parseEther(params.bobAllocation);
           }
           if (_args[1] === proposalAddresses[2].address) {
-            return [[Charlie.address], [parseEther(params.charlieAllocation)]];
+            return parseEther(params.charlieAllocation);
           }
-          return [[], []];
+          return 0;
         });
         const proposal1Rewards = await rewards.proposalReward(2, proposalAddresses[0].address);
         const proposal2Rewards = await rewards.proposalReward(2, proposalAddresses[1].address);

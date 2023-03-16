@@ -31,7 +31,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // Setup Allocations
   const allocations: Allocations = await hre.ethers.getContract(ALLOCATIONS);
   const allocationsStorage: AllocationsStorage = await hre.ethers.getContract(ALLOCATIONS_STORAGE);
-  await allocationsStorage.transferOwnership(allocations.address);
+  await allocationsStorage.setAllocations(allocations.address);
+  await allocationsStorage.renounceOwnership();
 
   // Setup Oracle
   const withdrawalsTarget: WithdrawalsTarget = await hre.ethers.getContract(WITHDRAWALS_TARGET);

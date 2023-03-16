@@ -5,16 +5,16 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../interfaces/IAllocationsStorage.sol";
 
-import {AllocationStorageErrors} from "../Errors.sol";
-
+import {CommonErrors} from "../Errors.sol";
 
 contract AllocationsStorage is Ownable, IAllocationsStorage {
     mapping(bytes32 => Allocation[]) private allocationsByUser;
-    mapping(bytes32 => address) private usersByProposal;
-    mapping(bytes32 => uint256) private usersByProposalCount;
-    mapping(bytes32 => uint256) private userByProposalIndex;
+    mapping(bytes32 => uint256) private allocationByProposal;
     mapping(bytes32 => uint256) private claimableRewardsByUser;
     mapping(uint256 => uint256) private claimableRewardsTotal;
+
+    /// @notice Allocations contract address.
+    address public allocationsAddress;
 
     // @notice Get user's allocations in given epoch.
     function getUserAllocations(
@@ -24,33 +24,23 @@ contract AllocationsStorage is Ownable, IAllocationsStorage {
         return _getAllocationsByUser(_epoch, _user);
     }
 
+    // @notice Get proposal's total allocation in given epoch.
+    function getProposalAllocation(
+        uint256 _epoch,
+        address _proposal
+    ) external view returns (uint256) {
+        return _getAllocationByProposal(_epoch, _proposal);
+    }
+
     // @notice Add an allocation. Requires that the allocation does not exist.
     function addAllocation(
         uint256 _epoch,
         address _user,
         Allocation memory _allocation
-    ) external onlyOwner {
-        require(
-            _getUserByProposalIndex(_epoch, _allocation.proposal, _user) == 0,
-            AllocationStorageErrors.ALLOCATION_ALREADY_EXISTS
-        );
-        uint256 count = _getUsersByProposalCount(
-            _epoch,
-            _allocation.proposal
-        );
-        _setUserByProposal(_epoch, _allocation.proposal, count + 1, _user);
-        _setUserByProposalIndex(
-            _epoch,
-            _allocation.proposal,
-            _user,
-            count + 1
-        );
-        _setUsersByProposalCount(_epoch, _allocation.proposal, count + 1);
-        Allocation[] storage _userAllocations = _getAllocationsByUser(
-            _epoch,
-            _user
-        );
-        _userAllocations.push(_allocation);
+    ) external onlyAllocations {
+        uint256 _oldProposalAllocation = _getAllocationByProposal(_epoch, _allocation.proposal);
+        _setAllocationByProposal(_epoch, _allocation.proposal, _oldProposalAllocation + _allocation.allocation);
+        _addAllocationByUser(_epoch, _user, _allocation);
     }
 
     // @notice Put user's claimable rewards. If it's already existed, the amount is replaced.
@@ -58,7 +48,7 @@ contract AllocationsStorage is Ownable, IAllocationsStorage {
         uint256 _epoch,
         address _user,
         uint256 _amount
-    ) external onlyOwner {
+    ) external onlyAllocations {
         uint256 _oldAmount = _getClaimableRewardsByUser(_epoch, _user);
         _setClaimableRewardsByUser(_epoch, _user, _amount);
         _setClaimableRewardsTotal(_epoch, _oldAmount, _amount);
@@ -76,48 +66,24 @@ contract AllocationsStorage is Ownable, IAllocationsStorage {
     function getTotalClaimableRewards(
         uint256 _epoch
     ) external view returns (uint256) {
-        return _getClaimableRewardsTotal(_epoch);
+        return claimableRewardsTotal[_epoch];
     }
 
     /// @notice Remove user's allocations in given epoch. If allocations for the epoch already existed, they will be replaced.
     function removeUserAllocations(
         uint256 _epoch,
         address _user
-    ) external onlyOwner {
+    ) external onlyAllocations {
         Allocation[] memory _allocations = _getAllocationsByUser(_epoch, _user);
         for (uint256 i = 0; i < _allocations.length; i++) {
-            _removeUserByProposal(_epoch, _allocations[i].proposal, _user);
+            uint256 _oldProposalAllocation = _getAllocationByProposal(_epoch, _allocations[i].proposal);
+            _setAllocationByProposal(_epoch, _allocations[i].proposal, _oldProposalAllocation - _allocations[i].allocation);
         }
         _deleteAllocationsByUser(_epoch, _user);
     }
 
-    /// @notice Users with their allocations in WEI. Returns two arrays where every element corresponds
-    /// to the same element from second array.
-    /// example: array1[0] is the address which allocated array2[0] funds to some proposal.
-    /// @return 0: array of user addresses
-    /// 1: array of user allocation in WEI
-    function getUsersWithTheirAllocations(
-        uint256 _epoch,
-        address _proposal
-    ) external view returns (address[] memory, uint256[] memory) {
-        uint256 count = _getUsersByProposalCount(_epoch, _proposal);
-        address[] memory users = new address[](count);
-        uint256[] memory allocations = new uint256[](count);
-        for (uint256 i = 1; i <= count; i++) {
-            address user = _getUserByProposal(_epoch, _proposal, i);
-            users[i - 1] = user;
-
-            Allocation[] memory _userAllocations = _getAllocationsByUser(
-                _epoch,
-                user
-            );
-            for (uint256 j = 0; j < _userAllocations.length; j++) {
-                if (_userAllocations[j].proposal == _proposal) {
-                    allocations[i - 1] = _userAllocations[j].allocation;
-                }
-            }
-        }
-        return (users, allocations);
+    function setAllocations(address _allocationsAddress) external onlyOwner {
+        allocationsAddress = _allocationsAddress;
     }
 
     // @notice Get allocations by user.
@@ -129,112 +95,42 @@ contract AllocationsStorage is Ownable, IAllocationsStorage {
         return allocationsByUser[key];
     }
 
+    // @notice Add allocation by user.
+    function _addAllocationByUser(
+        uint256 _epoch,
+        address _user,
+        Allocation memory _allocation
+    ) private {
+        Allocation[] storage _userAllocations = _getAllocationsByUser(
+            _epoch,
+            _user
+        );
+        _userAllocations.push(_allocation);
+    }
+
     // @notice Delete allocations by user.
     function _deleteAllocationsByUser(uint256 _epoch, address _user) private {
         bytes32 key = keccak256(abi.encodePacked(_epoch, ".user", _user));
         delete allocationsByUser[key];
     }
 
-    // @dev Remove a user who allocated for proposal. Swaps the item with the last item in the set and truncates it; computationally cheap.
-    // Requires that the allocation exists.
-    function _removeUserByProposal(
-        uint256 _epoch,
-        address _proposal,
-        address _user
-    ) private {
-        uint256 index = _getUserByProposalIndex(_epoch, _proposal, _user);
-        require(index > 0, AllocationStorageErrors.ALLOCATION_DOES_NOT_EXIST);
-        uint256 count = _getUsersByProposalCount(_epoch, _proposal);
-        if (index < count) {
-            address lastAllocation = _getUserByProposal(
-                _epoch,
-                _proposal,
-                count
-            );
-            _setUserByProposal(_epoch, _proposal, index, lastAllocation);
-            _setUserByProposalIndex(_epoch, _proposal, lastAllocation, index);
-        }
-        _setUserByProposalIndex(_epoch, _proposal, _user, 0);
-        _setUsersByProposalCount(_epoch, _proposal, count - 1);
-    }
-
-    function _getUserByProposal(
-        uint256 _epoch,
-        address _proposal,
-        uint256 _index
-    ) private view returns (address) {
-        bytes32 key = keccak256(
-            abi.encodePacked(
-                _epoch,
-                ".proposal",
-                _proposal,
-                ".index",
-                _index
-            )
-        );
-        return usersByProposal[key];
-    }
-
-    function _setUserByProposal(
-        uint256 _epoch,
-        address _proposal,
-        uint256 _index,
-        address _user
-    ) private {
-        bytes32 key = keccak256(
-            abi.encodePacked(
-                _epoch,
-                ".proposal",
-                _proposal,
-                ".index",
-                _index
-            )
-        );
-        usersByProposal[key] = _user;
-    }
-
-    function _getUsersByProposalCount(
+    // @notice Get allocation by proposal.
+    function _getAllocationByProposal(
         uint256 _epoch,
         address _proposal
     ) private view returns (uint256) {
-        bytes32 key = keccak256(
-            abi.encodePacked(_epoch, ".proposal", _proposal)
-        );
-        return usersByProposalCount[key];
+        bytes32 key = keccak256(abi.encodePacked(_epoch, ".proposal", _proposal));
+        return allocationByProposal[key];
     }
 
-    function _setUsersByProposalCount(
+    // @notice Set allocation by proposal.
+    function _setAllocationByProposal(
         uint256 _epoch,
         address _proposal,
-        uint256 _count
+        uint256 _allocation
     ) private {
-        bytes32 key = keccak256(
-            abi.encodePacked(_epoch, ".proposal", _proposal)
-        );
-        usersByProposalCount[key] = _count;
-    }
-
-    function _getUserByProposalIndex(
-        uint256 _epoch,
-        address _proposal,
-        address _user
-    ) private view returns (uint256) {
-        bytes32 key = keccak256(
-            abi.encodePacked(_epoch, ".proposal", _proposal, ".user", _user)
-        );
-        return userByProposalIndex[key];
-    }
-
-    function _setUserByProposalIndex(
-        uint256 _epoch,
-        address _proposal,
-        address _user,
-        uint256 _index
-    ) private {
-        bytes32 key = keccak256(
-            abi.encodePacked(_epoch, ".proposal", _proposal, ".user", _user)
-        );
-        userByProposalIndex[key] = _index;
+        bytes32 key = keccak256(abi.encodePacked(_epoch, ".proposal", _proposal));
+        allocationByProposal[key] = _allocation;
     }
 
     function _setClaimableRewardsByUser(
@@ -267,10 +163,11 @@ contract AllocationsStorage is Ownable, IAllocationsStorage {
         claimableRewardsTotal[_epoch] = newTotal;
     }
 
-    function _getClaimableRewardsTotal(
-        uint256 _epoch
-    ) private view returns (uint256) {
-        return claimableRewardsTotal[_epoch];
+    modifier onlyAllocations() {
+        require(
+            msg.sender == allocationsAddress,
+            CommonErrors.UNAUTHORIZED_CALLER
+        );
+        _;
     }
-
 }

@@ -24,20 +24,6 @@ library AllocationErrors {
         "HN:Allocations/no-such-proposal";
 }
 
-library AllocationStorageErrors {
-    /// @notice Thrown when trying to allocate without removing it first. Should never occur as this
-    /// is called from Allocations contract
-    /// @return HN:AllocationsStorage/allocation-already-exists
-    string public constant ALLOCATION_ALREADY_EXISTS =
-        "HN:AllocationsStorage/allocation-already-exists";
-
-    /// @notice Thrown when trying to allocate which does not exist. Should never occur as this
-    /// is called from Allocations contract.
-    /// @return HN:AllocationsStorage/allocation-does-not-exist
-    string public constant ALLOCATION_DOES_NOT_EXIST =
-        "HN:AllocationsStorage/allocation-does-not-exist";
-}
-
 library OracleErrors {
     /// @notice Thrown when trying to set the balance in oracle for epochs other then previous.
     /// @return HN:Oracle/can-set-balance-for-previous-epoch-only

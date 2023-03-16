@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, useEffect } from 'react';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 
 import Button from 'components/core/Button/Button';
@@ -13,7 +13,7 @@ import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThresho
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposals from 'hooks/queries/useProposals';
-import useUsersWithTheirAllocations from 'hooks/queries/useUsersWithTheirAllocations';
+import useProposalAllocations from 'hooks/subgraph/allocations/useProposalAllocations';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import { donorGenericIcon, tick } from 'svg/misc';
@@ -39,12 +39,12 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
   const { ipfsGateway } = env;
   const { proposalAddress } = useParams();
   const { data: proposals } = useProposals();
+  const { data: proposalAllocations, refetch: refetchProposalAllocations } = useProposalAllocations(
+    { proposalAddress },
+  );
   const isDonationAboveThreshold = useIsDonationAboveThreshold(proposalAddress!);
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
-  const { data: usersWithTheirAllocations } = useUsersWithTheirAllocations(proposalAddress!, {
-    refetchOnMount: true,
-  });
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ address }) => address === proposalAddress,
   );
@@ -56,6 +56,10 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
   });
   const shouldMatchedProposalRewardsBeAvailable =
     !!currentEpoch && ((currentEpoch > 1 && matchedProposalRewards) || currentEpoch === 1);
+
+  useEffect(() => {
+    refetchProposalAllocations();
+  }, [refetchProposalAllocations]);
 
   if (!proposals || !shouldMatchedProposalRewardsBeAvailable) {
     return (
@@ -145,18 +149,15 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
       <div className={styles.donors}>
         <div className={styles.header}>
           <span>Donors</span>{' '}
-          {usersWithTheirAllocations && (
-            <div className={styles.count}>{usersWithTheirAllocations.length}</div>
-          )}
+          {proposalAllocations && <div className={styles.count}>{proposalAllocations.length}</div>}
         </div>
-        {usersWithTheirAllocations &&
-          usersWithTheirAllocations.map(({ address }, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <div key={index} className={styles.donor}>
-              <Svg classNameSvg={styles.donorIcon} img={donorGenericIcon} size={2.4} />
-              {truncateEthAddress(address)}
-            </div>
-          ))}
+        {proposalAllocations?.map(({ user }, index) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <div key={index} className={styles.donor}>
+            <Svg classNameSvg={styles.donorIcon} img={donorGenericIcon} size={2.4} />
+            {truncateEthAddress(user)}
+          </div>
+        ))}
       </div>
     </MainLayoutContainer>
   );
