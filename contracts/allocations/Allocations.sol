@@ -74,7 +74,7 @@ contract Allocations {
         _putClaimableRewardsToStorage(_epoch, _fundsToAllocate);
     }
 
-    function _proposalsAreActive(uint32 _epoch, IAllocationsStorage.Allocation[] memory _allocations) public view returns (bool) {
+    function _proposalsAreActive(uint32 _epoch, IAllocationsStorage.Allocation[] memory _allocations) private view returns (bool) {
         address[] memory active = proposals.getProposalAddresses(_epoch);
         for (uint8 i = 0; i < _allocations.length; i = i + 1) {
             bool found = false;

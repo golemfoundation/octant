@@ -17,7 +17,6 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposals from 'hooks/queries/useProposals';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
-import useAllocations from 'hooks/subgraph/useAllocations';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 import getNewAllocationValuesBigNumber from 'utils/getNewAllocationValuesBigNumber';
 import getSortedElementsByTotalValueOfAllocations from 'utils/getSortedElementsByTotalValueOfAllocations';
@@ -47,7 +46,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { refetch: refetchAllocations } = useAllocations();
+  const { refetch: refetchAllocations } = useUserAllocations();
   const { data: matchedProposalRewards, refetch: refetchMatchedProposalRewards } =
     useMatchedProposalRewards();
   const allocateMutation = useAllocate({

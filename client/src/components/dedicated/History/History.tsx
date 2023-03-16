@@ -7,7 +7,7 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Loader from 'components/core/Loader/Loader';
 import Svg from 'components/core/Svg/Svg';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
-import useAllocations from 'hooks/subgraph/useAllocations';
+import useUserAllocations from 'hooks/subgraph/allocations/useUserAllocations';
 import useLocks from 'hooks/subgraph/useLocks';
 import useUnlocks from 'hooks/subgraph/useUnlocks';
 import { allocate, donation } from 'svg/history';
@@ -20,7 +20,7 @@ const History = (): ReactElement => {
   const {
     metaState: { isConnected },
   } = useMetamask();
-  const { data: dataAllocations } = useAllocations();
+  const { data: dataAllocations } = useUserAllocations();
   const { data: dataLocks } = useLocks();
   const { data: dataUnlocks } = useUnlocks();
   const { timeCurrentEpochStart } = useEpochAndAllocationTimestamps();

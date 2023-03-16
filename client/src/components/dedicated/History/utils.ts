@@ -1,4 +1,4 @@
-import { AllocationSquashed } from 'hooks/subgraph/useAllocations';
+import { AllocationSquashed } from 'hooks/subgraph/allocations/types';
 import { Lock } from 'hooks/subgraph/useLocks';
 import { Unlock } from 'hooks/subgraph/useUnlocks';
 

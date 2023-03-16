@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
 
-import { AllocationSquashed } from 'hooks/subgraph/useAllocations';
+import { AllocationSquashed } from 'hooks/subgraph/allocations/types';
 
 export const mockedAllocationSquashed1: AllocationSquashed = {
   amount: BigNumber.from('12000000000000'),
@@ -8,20 +8,23 @@ export const mockedAllocationSquashed1: AllocationSquashed = {
     {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       __typename: 'Allocated',
+      address: '1',
       allocation: '8000000000000',
       blockTimestamp: '3',
-      proposalId: '1',
+      user: 'user',
     },
     {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       __typename: 'Allocated',
+      address: '2',
       allocation: '4000000000000',
       blockTimestamp: '3',
-      proposalId: '2',
+      user: 'user',
     },
   ],
   blockTimestamp: 3,
   type: 'Allocated',
+  user: 'user',
 };
 
 export const mockedAllocationSquashed2: AllocationSquashed = {
@@ -30,18 +33,21 @@ export const mockedAllocationSquashed2: AllocationSquashed = {
     {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       __typename: 'Allocated',
+      address: '1',
       allocation: '24000000000000',
       blockTimestamp: '4',
-      proposalId: '1',
+      user: 'user',
     },
     {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       __typename: 'Allocated',
+      address: '2',
       allocation: '12000000000000',
       blockTimestamp: '4',
-      proposalId: '2',
+      user: 'user',
     },
   ],
   blockTimestamp: 4,
   type: 'Allocated',
+  user: 'user',
 };
