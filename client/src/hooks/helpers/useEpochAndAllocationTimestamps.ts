@@ -1,24 +1,15 @@
-import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useDecisionWindow from 'hooks/queries/useDecisionWindow';
-import useEpochDuration from 'hooks/queries/useEpochDuration';
-import useEpochProps from 'hooks/queries/useEpochProps';
-import useStart from 'hooks/queries/useStart';
+import useCurrentEpochEnd from 'hooks/queries/useCurrentEpochEnd';
+import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
 import getCurrentEpochAndAllocationTimestamps, {
   Response,
 } from 'utils/getCurrentEpochAndAllocationTimestamps';
 
 export default function useEpochAndAllocationTimestamps(): Response {
-  const epochProps = useEpochProps();
-  const { data: currentEpoch } = useCurrentEpoch();
-  const { data: decisionWindowDuration } = useDecisionWindow();
-  const { data: epochDuration } = useEpochDuration();
-  const { data: startTimestamp } = useStart();
+  const { data: currentEpochProps } = useCurrentEpochProps();
+  const { data: currentEpochEnd } = useCurrentEpochEnd();
 
   return getCurrentEpochAndAllocationTimestamps({
-    currentEpoch,
-    decisionWindowDuration,
-    epochDuration,
-    epochProps,
-    startTimestamp,
+    currentEpochEnd,
+    currentEpochProps,
   });
 }

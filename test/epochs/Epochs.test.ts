@@ -1,11 +1,16 @@
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
-import { makeTestsEnv } from './helpers/make-tests-env';
+import { isChangePropsStep, testScenarios } from './epochsTestParameters';
 
-import { EPOCHS } from '../helpers/constants';
-import { getLatestBlockTimestamp, increaseNextBlockTimestamp } from '../helpers/misc-utils';
-import { Epochs } from '../typechain-types';
+import { EPOCHS } from '../../helpers/constants';
+import {
+  getLatestBlockTimestamp,
+  increaseNextBlockTimestamp,
+  setNextBlockTimestamp,
+} from '../../helpers/misc-utils';
+import { Epochs } from '../../typechain-types';
+import { makeTestsEnv } from '../helpers/make-tests-env';
 
 makeTestsEnv(EPOCHS, testEnv => {
   const epochDuration = 5000;
@@ -51,106 +56,49 @@ makeTestsEnv(EPOCHS, testEnv => {
   });
 
   describe('Epoch duration, with changes in epoch properties', () => {
-    const parameters = [
-      {
-        firstDurationChange: 5000,
-        firstIncreaseNextBlockTsBy: 0,
-        firstResult: 1,
-        secondDurationChange: 5000,
-        secondIncreaseNextBlockTsBy: 0,
-        secondResult: 1,
-      },
-      {
-        firstDurationChange: 3000,
-        firstIncreaseNextBlockTsBy: 1500,
-        firstResult: 1,
-        secondDurationChange: 3000,
-        secondIncreaseNextBlockTsBy: 1000,
-        secondResult: 1,
-      },
-      {
-        firstDurationChange: 3000,
-        firstIncreaseNextBlockTsBy: 2000,
-        firstResult: 1,
-        secondDurationChange: 3000,
-        secondIncreaseNextBlockTsBy: 3010,
-        secondResult: 2,
-      },
-      {
-        firstDurationChange: 2000,
-        firstIncreaseNextBlockTsBy: 5500,
-        firstResult: 2,
-        secondDurationChange: 1000,
-        secondIncreaseNextBlockTsBy: 2000,
-        secondResult: 3,
-      },
-      {
-        firstDurationChange: 2000,
-        firstIncreaseNextBlockTsBy: 5500,
-        firstResult: 2,
-        secondDurationChange: 1000,
-        secondIncreaseNextBlockTsBy: 3490,
-        secondResult: 4,
-      },
-      {
-        firstDurationChange: 7000,
-        firstIncreaseNextBlockTsBy: 11000,
-        firstResult: 2,
-        secondDurationChange: 5000,
-        secondIncreaseNextBlockTsBy: 2000,
-        secondResult: 3,
-      },
-      {
-        firstDurationChange: 7000,
-        firstIncreaseNextBlockTsBy: 11000,
-        firstResult: 2,
-        secondDurationChange: 5000,
-        secondIncreaseNextBlockTsBy: 7000,
-        secondResult: 4,
-      },
-      {
-        firstDurationChange: 7000,
-        firstIncreaseNextBlockTsBy: 13000,
-        firstResult: 3,
-        secondDurationChange: 5000,
-        secondIncreaseNextBlockTsBy: 11010,
-        secondResult: 5,
-      },
-    ];
-
-    parameters.forEach(param => {
-      it(`Epoch num is: ${param.firstResult} when next block timestamp increased by: ${param.firstIncreaseNextBlockTsBy}
-       and epoch duration is changed by: ${param.firstDurationChange};
-       Epoch num is: ${param.secondResult} when next block timestamp increased by: ${param.secondIncreaseNextBlockTsBy}
-       and epoch duration is changed by: ${param.secondDurationChange} `, async () => {
+    testScenarios.forEach(scenario => {
+      it(`${scenario.desc}`, async () => {
         const start = await getLatestBlockTimestamp();
         const epochs = await setupEpochs(start);
 
-        await epochs.setEpochProps(param.firstDurationChange, 1000);
-
-        await increaseNextBlockTimestamp(param.firstIncreaseNextBlockTsBy);
-        const currentEpochAfterFirstChange = await epochs.getCurrentEpoch();
-        expect(currentEpochAfterFirstChange).eq(param.firstResult);
-
-        await epochs.setEpochProps(param.secondDurationChange, 1000);
-
-        await increaseNextBlockTimestamp(param.secondIncreaseNextBlockTsBy);
-        const currentEpochAfterSecondChange = await epochs.getCurrentEpoch();
-        expect(currentEpochAfterSecondChange).eq(param.secondResult);
+        for (const step of scenario.steps) {
+          if (isChangePropsStep(step)) {
+            /* eslint-disable no-await-in-loop */
+            await epochs.setEpochProps(
+              step.changeNextEpochProps.epochDuration,
+              step.changeNextEpochProps.decisionWindow,
+            );
+          } else {
+            /* eslint-disable no-await-in-loop */
+            await setNextBlockTimestamp(start + step.timestamp);
+            /* eslint-disable no-await-in-loop */
+            const epoch = await epochs.getCurrentEpoch();
+            expect(epoch).eq(step.expectedEpoch);
+            /* eslint-disable no-await-in-loop */
+            const isDecisionWindowOpen = await epochs.isDecisionWindowOpen();
+            expect(isDecisionWindowOpen).eq(step.expectedDecisionWindowOpen);
+            /* eslint-disable no-await-in-loop */
+            const epochEnd = await epochs.getCurrentEpochEnd();
+            expect(epochEnd).approximately(start + step.expectedCurrentEpochEnd, 100);
+          }
+        }
       });
     });
   });
 
-  describe('Decision window', () => {
+  describe('Decision window, without changes in epoch properties', () => {
     const parameters = [
-      { increaseNextBlockTsBy: 0, result: true },
-      { increaseNextBlockTsBy: 100, result: true },
-      { increaseNextBlockTsBy: 1990, result: true },
+      { increaseNextBlockTsBy: 0, result: false },
+      { increaseNextBlockTsBy: 100, result: false },
+      { increaseNextBlockTsBy: 1990, result: false },
       { increaseNextBlockTsBy: 3010, result: false },
       { increaseNextBlockTsBy: 5010, result: true },
+      { increaseNextBlockTsBy: 5190, result: true },
       { increaseNextBlockTsBy: 7010, result: false },
       { increaseNextBlockTsBy: 9990, result: false },
       { increaseNextBlockTsBy: 10020, result: true },
+      { increaseNextBlockTsBy: 11900, result: true },
+      { increaseNextBlockTsBy: 12100, result: false },
     ];
 
     parameters.forEach(param => {

@@ -1,16 +1,14 @@
 export const QUERY_KEYS = {
   currentBalance: ['currentBalance'],
   currentEpoch: ['currentEpoch'],
-  decisionWindow: ['decisionWindow'],
+  currentEpochEnd: ['currentEpochEnd'],
+  currentEpochProps: ['currentEpochProps'],
   depositAt: ['depositAt'],
   depositAtGivenEpoch: (epochNumber: number): string[] => [
     ...QUERY_KEYS.depositAt,
     epochNumber.toString(),
   ],
   depositsValue: ['depositsValue'],
-  epochDuration: ['epochDuration'],
-  epochProps: (index: number): string[] => ['epochProps', index.toString()],
-  epochPropsIndex: ['epochPropsIndex'],
   glmLocked: ['glmLocked'],
   individualReward: ['individualReward'],
   isDecisionWindowOpen: ['isDecisionWindowOpen'],
@@ -21,7 +19,6 @@ export const QUERY_KEYS = {
   proposalsCid: ['proposalsCid'],
   proposalsContract: ['proposalsContract'],
   proposalsIpfsResults: (address: string): string[] => ['proposalsIpfsResults', address],
-  start: ['start'],
   userAllocations: ['userAllocations'],
   usersWithTheirAllocations: (proposalAddress: string): string[] => [
     'usersWithTheirAllocations',
