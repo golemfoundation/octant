@@ -9,6 +9,7 @@ import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import MetricsTimeSection from 'components/dedicated/MetricsTimeSection/MetricsTimeSection';
 import { ETH_STAKED } from 'constants/stake';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
 import useGlmLocked from 'hooks/queries/useGlmLocked';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useLockedRatio from 'hooks/queries/useLockedRatio';
@@ -18,6 +19,7 @@ import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 import styles from './MetricsView.module.scss';
 
 const MetricsView = (): ReactElement => {
+  const { refetch: refetchCurrentEpochProps } = useCurrentEpochProps();
   const { data: currentEpoch, refetch: refetchCurrentEpoch } = useCurrentEpoch({
     refetchOnWindowFocus: true,
   });
@@ -33,6 +35,7 @@ const MetricsView = (): ReactElement => {
     refetchLockedRatio();
     refetchIsDecisionWindowOpen();
     refetchProposals();
+    refetchCurrentEpochProps();
   };
 
   return (

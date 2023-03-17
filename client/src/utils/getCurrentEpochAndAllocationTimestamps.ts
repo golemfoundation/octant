@@ -1,13 +1,8 @@
-import { EpochProps } from 'hooks/queries/useEpochProps';
-
-import getCurrentEpochTimestamps from './getCurrentEpochTimestamps';
+import { EpochProps } from 'hooks/queries/useCurrentEpochProps';
 
 type Parameters = {
-  currentEpoch?: number;
-  decisionWindowDuration?: number;
-  epochDuration?: number;
-  epochProps: EpochProps[];
-  startTimestamp?: number;
+  currentEpochEnd?: number;
+  currentEpochProps?: EpochProps;
 };
 
 export type Response = {
@@ -18,27 +13,18 @@ export type Response = {
 };
 
 export default function getCurrentEpochAndAllocationTimestamps({
-  currentEpoch,
-  startTimestamp,
-  epochDuration,
-  epochProps,
-  decisionWindowDuration,
+  currentEpochProps,
+  currentEpochEnd,
 }: Parameters): Response {
-  if (!currentEpoch || !startTimestamp || !epochDuration || !decisionWindowDuration) {
+  if (!currentEpochProps || !currentEpochEnd) {
     return {};
   }
 
-  const { timeEpochStart: timeCurrentEpochStart, timeEpochEnd: timeCurrentEpochEnd } =
-    getCurrentEpochTimestamps({
-      currentEpoch,
-      decisionWindowDuration,
-      epochDuration,
-      epochProps,
-      startTimestamp,
-    });
+  const timeCurrentEpochEnd = currentEpochEnd;
+  const timeCurrentEpochStart = currentEpochEnd - currentEpochProps.duration;
 
-  const timeCurrentAllocationStart = timeCurrentEpochStart!;
-  const timeCurrentAllocationEnd = timeCurrentEpochStart! + decisionWindowDuration;
+  const timeCurrentAllocationStart = timeCurrentEpochStart;
+  const timeCurrentAllocationEnd = timeCurrentEpochStart + currentEpochProps.decisionWindow;
 
   return {
     timeCurrentAllocationEnd,
