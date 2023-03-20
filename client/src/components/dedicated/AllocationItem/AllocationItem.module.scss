@@ -1,5 +1,9 @@
 .box {
   user-select: none;
+
+  &.isAllocatedTo {
+    border: 0.1rem solid $color-octant-green;
+  }
 }
 
 .details, .value, .button {

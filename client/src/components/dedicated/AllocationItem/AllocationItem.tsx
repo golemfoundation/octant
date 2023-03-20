@@ -22,6 +22,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   className,
   isLoadingError,
   isSelected,
+  isAllocatedTo,
   name,
   onChange,
   onSelectItem,
@@ -70,7 +71,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   return (
     <BoxRounded
       alignment="center"
-      className={cx(styles.box, className)}
+      className={cx(styles.box, isAllocatedTo && styles.isAllocatedTo, className)}
       onClick={isConnected ? () => onSelectItem(address) : undefined}
     >
       {isLoadingError ? (
