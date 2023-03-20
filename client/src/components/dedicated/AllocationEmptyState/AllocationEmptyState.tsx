@@ -1,15 +1,15 @@
 import React, { ReactElement } from 'react';
 
+import allocationEmpty from 'assets/images/allocation/empty.png';
 import Button from 'components/core/Button/Button';
-import Svg from 'components/core/Svg/Svg';
+import Img from 'components/core/Img/Img';
 import { DISCORD_LINK } from 'constants/urls';
-import { octantEmpty } from 'svg/logo';
 
 import styles from './AllocationEmptyState.module.scss';
 
 const AllocationEmptyState = (): ReactElement => (
   <div className={styles.root}>
-    <Svg classNameSvg={styles.icon} img={octantEmpty} size={16.8} />
+    <Img alt="Octant logo blurred" src={allocationEmpty} />
     <div className={styles.text}>
       You haven’t made any allocations yet.
       <br />
