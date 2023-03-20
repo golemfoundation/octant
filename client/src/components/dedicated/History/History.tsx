@@ -1,7 +1,6 @@
 import cx from 'classnames';
 import { formatUnits } from 'ethers/lib/utils';
 import React, { Fragment, ReactElement } from 'react';
-import { useMetamask } from 'use-metamask';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Loader from 'components/core/Loader/Loader';
@@ -10,6 +9,7 @@ import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocation
 import useUserAllocations from 'hooks/subgraph/allocations/useUserAllocations';
 import useLocks from 'hooks/subgraph/useLocks';
 import useUnlocks from 'hooks/subgraph/useUnlocks';
+import useWallet from 'store/models/wallet/store';
 import { allocate, donation } from 'svg/history';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
@@ -18,8 +18,8 @@ import { sortAllocationsAndLocks } from './utils';
 
 const History = (): ReactElement => {
   const {
-    metaState: { isConnected },
-  } = useMetamask();
+    wallet: { isConnected },
+  } = useWallet();
   const { data: dataAllocations } = useUserAllocations();
   const { data: dataLocks } = useLocks();
   const { data: dataUnlocks } = useUnlocks();

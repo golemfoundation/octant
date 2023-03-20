@@ -58,17 +58,30 @@ $headerNavigationBorderRadius: $border-radius-32;
   user-select: none;
 }
 
+.buttons {
+  display: flex;
+  align-items: center;
+}
+
+.walletButton {
+  margin-left: 1.6rem;
+
+  &.isWalletModalOpen {
+    transform: rotate(180deg);
+  }
+}
+
 .profileInfo {
   display: flex;
   align-items: center;
   font-size: $font-size-14;
+  cursor: pointer;
 }
 
 .walletInfo {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  margin: 0 0.8rem 0 0;
 }
 
 .address {

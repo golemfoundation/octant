@@ -13,9 +13,10 @@ const BoxRounded: FC<BoxRoundedProps> = ({
   alignment = 'center',
   buttonProps,
   expandableChildren,
+  hasSections = false,
   isExpanded = false,
-  isGrey,
-  isVertical,
+  isGrey = false,
+  isVertical = false,
   className,
   children,
   onClick,
@@ -24,6 +25,7 @@ const BoxRounded: FC<BoxRoundedProps> = ({
   suffix,
   tabs,
   title,
+  titleSuffix,
 }) => {
   const [isExpandableChildrenVisible, setIsExpandableChildrenVisible] =
     useState<boolean>(isExpanded);
@@ -51,6 +53,7 @@ const BoxRounded: FC<BoxRoundedProps> = ({
         styles[`justifyContent--${justifyContent}`],
         styles[`alignment--${alignment}`],
         isPaddingMovedToElements && styles.isPaddingMovedToElements,
+        hasSections && styles.hasSections,
         className,
       )}
       onClick={onClick}
@@ -75,9 +78,14 @@ const BoxRounded: FC<BoxRoundedProps> = ({
       )}
       {title && (
         <div
-          className={cx(styles.title, isPaddingMovedToElements && styles.isPaddingMovedToElements)}
+          className={cx(
+            styles.title,
+            hasSections && styles.hasSections,
+            isPaddingMovedToElements && styles.isPaddingMovedToElements,
+          )}
         >
           {title}
+          {titleSuffix && <div className={styles.titleSuffix}>{titleSuffix}</div>}
           {isExpandable && (
             <Button
               Icon={

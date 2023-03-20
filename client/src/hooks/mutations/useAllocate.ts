@@ -1,9 +1,9 @@
 import { ContractTransaction } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { UseMutationResult, useMutation } from 'react-query';
-import { useMetamask } from 'use-metamask';
 
 import useContractAllocations from 'hooks/contracts/useContractAllocations';
+import useWallet from 'store/models/wallet/store';
 
 type UseAllocate = {
   onSuccess: () => void;
@@ -17,8 +17,8 @@ export default function useAllocate({
   { proposalAddress: string; value: string }[]
 > {
   const {
-    metaState: { web3 },
-  } = useMetamask();
+    wallet: { web3 },
+  } = useWallet();
   const signer = web3?.getSigner();
   const contractAllocations = useContractAllocations({ signerOrProvider: signer });
 

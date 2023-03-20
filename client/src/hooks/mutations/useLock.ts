@@ -1,16 +1,16 @@
 import { BigNumber, ContractTransaction } from 'ethers';
 import { UseMutationResult, useMutation, UseMutationOptions } from 'react-query';
-import { useMetamask } from 'use-metamask';
 
 import { DEPOSIT_WITHDRAW_GAS_LIMIT } from 'constants/contracts';
 import useContractDeposits from 'hooks/contracts/useContractDeposits';
+import useWallet from 'store/models/wallet/store';
 
 export default function useLock(
   options?: UseMutationOptions<ContractTransaction, unknown, BigNumber>,
 ): UseMutationResult<ContractTransaction, unknown, BigNumber> {
   const {
-    metaState: { web3 },
-  } = useMetamask();
+    wallet: { web3 },
+  } = useWallet();
   const signer = web3?.getSigner();
   const contractDeposits = useContractDeposits({ signerOrProvider: signer });
 

@@ -6,10 +6,16 @@ export const arrowTopRight: SvgImageConfig = {
   viewBox: '0 0 10 10',
 };
 
-export const arrowRight = {
+export const arrowRight: SvgImageConfig = {
   markup:
     '<path fill="#171717" d="m7.99 13.253-1.278-1.264 4.439-4.44H0V5.704h11.15L6.713 1.271 7.99 0l6.627 6.627-6.627 6.626Z"/>',
   viewBox: '0 0 15 14',
+};
+
+export const chevronBottom: SvgImageConfig = {
+  markup:
+    '<path d="M7.18198 1.68198L3.99823 4.86573L0.816245 1.68375" stroke="#171717" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
+  viewBox: '0 0 8 6',
 };
 
 export const tick: SvgImageConfig = {

@@ -1,5 +1,6 @@
 import { gql, useQuery, QueryResult } from '@apollo/client';
-import { useMetamask } from 'use-metamask';
+
+import useWallet from 'store/models/wallet/store';
 
 import { ALLOCATED_FIELDS } from './fragments';
 import { AllocationSquashed } from './types';
@@ -20,14 +21,13 @@ const GET_USER_ALLOCATIONS = gql`
 
 export default function useUserAllocations(): QueryResult<AllocationSquashed[], Variables> {
   const {
-    metaState: { account },
-  } = useMetamask();
-  const userAddress = account[0];
+    wallet: { address },
+  } = useWallet();
 
   const { data, ...rest } = useQuery(GET_USER_ALLOCATIONS, {
-    skip: !userAddress,
+    skip: !address,
     variables: {
-      userAddress,
+      userAddress: address!,
     },
   });
 

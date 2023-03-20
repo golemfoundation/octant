@@ -4,7 +4,15 @@
 }
 
 .mainValue {
-  font-size: $font-size-24;
+
+  &.variant-- {
+    &standard {
+      font-size: $font-size-24;
+    }
+    &small {
+      font-size: $font-size-18;
+    }
+  }
 }
 
 .alternativeValue {

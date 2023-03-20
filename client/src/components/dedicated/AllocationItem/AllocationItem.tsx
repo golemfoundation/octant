@@ -2,7 +2,6 @@ import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import React, { FC, Fragment, useEffect, useRef } from 'react';
-import { useMetamask } from 'use-metamask';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
@@ -10,6 +9,7 @@ import InputText from 'components/core/InputText/InputText';
 import Svg from 'components/core/Svg/Svg';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useWallet from 'store/models/wallet/store';
 import { minus, plus } from 'svg/misc';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
@@ -31,8 +31,8 @@ const AllocationItem: FC<AllocationItemProps> = ({
   value,
 }) => {
   const {
-    metaState: { isConnected },
-  } = useMetamask();
+    wallet: { isConnected },
+  } = useWallet();
   const isDonationAboveThreshold = useIsDonationAboveThreshold(address);
   const { data: individualReward } = useIndividualReward();
   const inputRef = useRef<HTMLInputElement>(null);
