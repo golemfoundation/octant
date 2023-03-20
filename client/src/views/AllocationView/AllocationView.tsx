@@ -140,7 +140,9 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
     }));
   };
 
-  const areButtonsDisabled = !isConnected || !isDecisionWindowOpen || !!individualReward?.isZero();
+  const isLoading = allocationValues === undefined || (isConnected && isFetchingUserAllocation);
+  const areButtonsDisabled =
+    isLoading || !isConnected || !isDecisionWindowOpen || !!individualReward?.isZero();
   const areAllocationsAvailable = allocationValues !== undefined && !isEmpty(allocations);
 
   let allocationsWithRewards = areAllocationsAvailable
@@ -151,8 +153,12 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
         );
         const isSelected = selectedItemAddress === allocationItem.address;
         const value = allocationValues[allocationItem.address];
+        const isAllocatedTo = !!userAllocations?.find(
+          ({ proposalAddress }) => proposalAddress === addressInAllocation,
+        );
 
         return {
+          isAllocatedTo,
           isSelected,
           percentage: proposalMatchedProposalRewards?.percentage,
           totalValueOfAllocations: proposalMatchedProposalRewards?.sum,
@@ -171,7 +177,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
 
   return (
     <MainLayoutContainer
-      isLoading={allocationValues === undefined || (isConnected && isFetchingUserAllocation)}
+      isLoading={isLoading}
       navigationBottomSuffix={
         areAllocationsAvailable && (
           <AllocationNavigation

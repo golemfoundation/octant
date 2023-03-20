@@ -1,6 +1,7 @@
 import { ProposalWithAllocations } from 'components/dedicated//ProposalItem/types';
 
 export interface AllocationItemWithAllocations extends ProposalWithAllocations {
+  isAllocatedTo: boolean;
   isSelected: boolean;
   value: string | undefined;
 }
