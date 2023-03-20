@@ -2,7 +2,6 @@ import cx from 'classnames';
 import { BigNumber, ContractTransaction } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import React, { FC, useEffect, useState } from 'react';
-import { useMetamask } from 'use-metamask';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
@@ -14,11 +13,12 @@ import env from 'env';
 import useMaxApproveCallback from 'hooks/helpers/useMaxApproveCallback';
 import useLock from 'hooks/mutations/useLock';
 import useUnlock from 'hooks/mutations/useUnlock';
-import useAvailableFunds from 'hooks/queries/useAvailableFunds';
+import useAvailableFundsGlm from 'hooks/queries/useAvailableFundsGlm';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useLocks from 'hooks/subgraph/useLocks';
 import useUnlocks from 'hooks/subgraph/useUnlocks';
+import useWallet from 'store/models/wallet/store';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 import triggerToast from 'utils/triggerToast';
 
@@ -35,10 +35,9 @@ const currentStepIndexInitialValue = 0;
 const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
   const { depositsAddress } = env.contracts;
   const {
-    metaState: { account, web3: useMetamaskWeb3 },
-  } = useMetamask();
-  const address = account[0];
-  const signer = useMetamaskWeb3?.getSigner();
+    wallet: { address, web3 },
+  } = useWallet();
+  const signer = web3?.getSigner();
   const [currentMode, setCurrentMode] = useState<CurrentMode>('lock');
   const [transactionHash, setTransactionHash] = useState<string>('');
   const [valueToDeposeOrWithdraw, setValueToDeposeOrWithdraw] = useState<string>('');
@@ -46,10 +45,7 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
     currentStepIndexInitialValue,
   );
   const { refetch: refetchDepositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
-  const { data: dataAvailableFunds, refetch: refetchAvailableFunds } = useAvailableFunds(
-    address,
-    signer,
-  );
+  const { data: dataAvailableFunds, refetch: refetchAvailableFunds } = useAvailableFundsGlm();
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
   const { refetch: refetchDeposits } = useLocks();
   const { refetch: refetchWithdrawns } = useUnlocks();

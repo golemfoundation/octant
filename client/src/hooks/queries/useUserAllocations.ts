@@ -1,9 +1,9 @@
 import { BigNumber } from 'ethers';
 import { UseQueryOptions, UseQueryResult, useQuery } from 'react-query';
-import { useMetamask } from 'use-metamask';
 
 import { QUERY_KEYS } from 'api/queryKeys';
 import useContractAllocationsStorage from 'hooks/contracts/useContractAllocationsStorage';
+import useWallet from 'store/models/wallet/store';
 
 import useCurrentEpoch from './useCurrentEpoch';
 
@@ -20,16 +20,14 @@ export default function useUserAllocations(
   >,
 ): UseQueryResult<UserAllocation[] | undefined> {
   const {
-    metaState: { account },
-  } = useMetamask();
+    wallet: { address },
+  } = useWallet();
   const contractAllocationsStorage = useContractAllocationsStorage();
   const { data: currentEpoch } = useCurrentEpoch();
 
-  const address = account[0];
-
   return useQuery(
     QUERY_KEYS.userAllocations,
-    () => contractAllocationsStorage?.getUserAllocations(currentEpoch! - 1, address),
+    () => contractAllocationsStorage?.getUserAllocations(currentEpoch! - 1, address!),
     {
       enabled: !!currentEpoch && currentEpoch > 1 && !!address,
       select: response =>

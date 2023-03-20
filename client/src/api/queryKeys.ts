@@ -1,5 +1,6 @@
 export const QUERY_KEYS = {
-  currentBalance: ['currentBalance'],
+  availableFundsEth: ['availableFundsEth'],
+  availableFundsGlm: ['availableFundsGlm'],
   currentEpoch: ['currentEpoch'],
   currentEpochEnd: ['currentEpochEnd'],
   currentEpochProps: ['currentEpochProps'],

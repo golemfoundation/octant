@@ -1,5 +1,6 @@
 import { gql, useQuery, QueryResult } from '@apollo/client';
-import { useMetamask } from 'use-metamask';
+
+import useWallet from 'store/models/wallet/store';
 
 export type Unlock = {
   amount: string;
@@ -22,14 +23,13 @@ const GET_UNLCOKS = gql`
 
 export default function useUnlocks(): QueryResult<Unlock[], Variables> {
   const {
-    metaState: { account },
-  } = useMetamask();
-  const userAddress = account[0];
+    wallet: { address },
+  } = useWallet();
 
   const { data, ...rest } = useQuery(GET_UNLCOKS, {
-    skip: !userAddress,
+    skip: !address,
     variables: {
-      userAddress,
+      userAddress: address!,
     },
   });
 

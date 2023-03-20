@@ -1,6 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
-import { useMetamask } from 'use-metamask';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -12,6 +11,7 @@ import useProposals from 'hooks/queries/useProposals';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import RootRoutesContainer from 'routes/RootRoutes/RootRoutesContainer';
 import localStorageService from 'services/localStorageService';
+import useWallet from 'store/models/wallet/store';
 
 import styles from './App.module.scss';
 import AppProps from './types';
@@ -31,9 +31,8 @@ const App: FC<AppProps> = ({
 }) => {
   const queryClient = useQueryClient();
   const {
-    metaState: { isConnected, account },
-  } = useMetamask();
-  const address = account[0];
+    wallet: { isConnected, address },
+  } = useWallet();
   const { data: currentEpoch } = useCurrentEpoch({
     refetchOnMount: true,
     refetchOnWindowFocus: true,

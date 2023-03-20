@@ -1,19 +1,19 @@
 import { formatUnits } from 'ethers/lib/utils';
 import React, { FC, Fragment, useState } from 'react';
-import { useMetamask } from 'use-metamask';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import GlmStakingFlow from 'components/dedicated/GlmStakingFlow/GlmStakingFlow';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
+import useWallet from 'store/models/wallet/store';
 
 import UserGlmLockProps from './types';
 
 const UserGlmLock: FC<UserGlmLockProps> = ({ classNameBox }) => {
   const {
-    metaState: { isConnected },
-  } = useMetamask();
+    wallet: { isConnected },
+  } = useWallet();
   const [lockType, setLockType] = useState<'currentEpoch' | 'nextEpoch'>('nextEpoch');
   const [isGlmStakingModalOpen, setIsGlmStakingModalOpen] = useState<boolean>(false);
   const { data: depositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();

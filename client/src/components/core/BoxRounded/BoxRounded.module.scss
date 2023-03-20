@@ -27,6 +27,11 @@
     padding-top: 0;
     padding-bottom: 0;
   }
+
+  &.hasSections {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
 }
 
 .tabs {
@@ -72,10 +77,23 @@
 }
 
 .title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
   color: $color-octant-grey6;
   font-size: $font-size-14;
   font-weight: $font-weight-bold;
   margin: 0 0 0.5rem 0;
+
+  &.hasSections {
+    color: $color-octant-dark;
+    font-size: $font-size-16;
+    padding-top: 1.8rem;
+    padding-bottom: 1.8rem;
+    margin: 0;
+    border-bottom: 0.1rem solid $color-white;
+  }
 
   &.isPaddingMovedToElements {
     display: flex;
@@ -97,6 +115,11 @@
       stroke: $color-octant-grey6;
     }
   }
+}
+
+.titleSuffix {
+  font-size: $font-size-12;
+  color: $color-octant-green2;
 }
 
 .expandableChildren {
