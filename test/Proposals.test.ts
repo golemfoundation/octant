@@ -41,7 +41,7 @@ makeTestsEnv(PROPOSALS, testEnv => {
       }
     });
 
-    it('Should return list of updated proposals', async () => {
+    it('Should return list of updated proposals in future epoch', async () => {
       // given
       const { proposals } = testEnv;
 
@@ -49,6 +49,24 @@ makeTestsEnv(PROPOSALS, testEnv => {
       await proposals.setProposalAddresses(5, newProposals);
       const cid = await proposals.cid();
       const proposalAddressesFromContract = await proposals.getProposalAddresses(7);
+
+      // then
+      expect(proposalAddressesFromContract.length).eq(11);
+      for (let i = 0; i < newProposals.length; i++) {
+        expect(`${cid}${proposalAddressesFromContract[i].toLowerCase()}`).eq(
+          `${PROPOSALS_CID}${newProposals[i]}`,
+        );
+      }
+    });
+
+    it('Should return list of updated proposals in current epoch', async () => {
+      // given
+      const { proposals } = testEnv;
+
+      // when
+      await proposals.setProposalAddresses(1, newProposals);
+      const cid = await proposals.cid();
+      const proposalAddressesFromContract = await proposals.getProposalAddresses(1);
 
       // then
       expect(proposalAddressesFromContract.length).eq(11);

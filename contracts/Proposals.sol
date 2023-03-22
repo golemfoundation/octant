@@ -47,7 +47,7 @@ contract Proposals is Ownable, IProposals {
         uint256 _epoch,
         address[] calldata _proposalAddresses
     ) public onlyOwner {
-        require(epochs.getCurrentEpoch() < _epoch, ProposalsErrors.CHANGING_PROPOSALS_IN_THE_PAST);
+        require(_epoch >= epochs.getCurrentEpoch(), ProposalsErrors.CHANGING_PROPOSALS_IN_THE_PAST);
         proposalAddressesByEpoch[_epoch] = _proposalAddresses;
     }
 
