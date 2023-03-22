@@ -77,6 +77,11 @@
 
     &simple {
       padding: 1.6rem 0 1.6rem 1.6rem;
+
+      &::placeholder {
+        color: $color-octant-grey15;
+        font-weight: $font-weight-semibold;
+      }
     }
   }
 }

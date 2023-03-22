@@ -1,0 +1,10 @@
+.root {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.input {
+  @include flexBasisGutter(2, 1.6rem);
+}

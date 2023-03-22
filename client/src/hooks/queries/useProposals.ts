@@ -46,7 +46,7 @@ export default function useProposals(): {
     (proposalsContract!.data || []).map(address => ({
       enabled: !!proposalsContract && !!proposalsContract.data && !!proposalsCid,
       queryFn: () => apiGetProposal(`${proposalsCid}/${address}`),
-      queryKey: QUERY_KEYS.proposalsIpfsResults(address),
+      queryKey: address ? QUERY_KEYS.proposalsIpfsResults(address) : '',
     })),
   );
 

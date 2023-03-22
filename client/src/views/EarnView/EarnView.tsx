@@ -1,37 +1,17 @@
 import React, { ReactElement } from 'react';
 
-import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import History from 'components/dedicated/History/History';
+import UserEthWithdraw from 'components/dedicated/UserEthWithdraw/UserEthWithdraw';
 import UserGlmLock from 'components/dedicated/UserGlmLock/UserGlmLock';
-import useIndividualReward from 'hooks/queries/useIndividualReward';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './EarnView.module.scss';
 
 const EarnView = (): ReactElement => {
-  const { data: individualReward } = useIndividualReward();
-
   return (
     <MainLayoutContainer>
       <UserGlmLock classNameBox={styles.box} />
-      <BoxRounded
-        alignment="left"
-        buttonProps={{
-          isDisabled: true,
-          isHigh: true,
-          label: 'Withdraw ETH Rewards',
-          variant: 'secondary',
-        }}
-        className={styles.box}
-        isVertical
-        title="Rewards Balance"
-      >
-        <DoubleValue
-          mainValue={individualReward ? getFormattedEthValue(individualReward).fullString : '0.0'}
-        />
-      </BoxRounded>
+      <UserEthWithdraw classNameBox={styles.box} />
       <History />
     </MainLayoutContainer>
   );

@@ -12,6 +12,14 @@
   display: flex;
   justify-content: center;
   margin: 0 0 1.6rem 0;
+
+  &.variant-- {
+    &small {
+      border: 0.1rem solid $color-octant-grey2;
+      border-radius: $border-radius-04;
+      padding: 1.6rem;
+    }
+  }
 }
 
 .counterSection {
@@ -21,14 +29,32 @@
 }
 
 .value {
-  font-size: $font-size-20;
   font-weight: $font-weight-semibold;
   color: $color-octant-dark;
+
+  &.variant-- {
+    &standard {
+      font-size: $font-size-20;
+    }
+    &small {
+      font-size: $font-size-14;
+    }
+  }
 }
 
 .label {
-  font-size: $font-size-10;
   color: $color-octant-green2;
+
+  &.variant-- {
+    &standard {
+      font-size: $font-size-10;
+    }
+    &small {
+      font-size: $font-size-08;
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+    }
+  }
 }
 
 .divider {

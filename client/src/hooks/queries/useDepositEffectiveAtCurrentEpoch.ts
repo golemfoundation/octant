@@ -16,7 +16,7 @@ export default function useDepositEffectiveAtCurrentEpoch(): UseQueryResult<BigN
   const { data: currentEpoch } = useCurrentEpoch();
 
   return useQuery(
-    QUERY_KEYS.depositAtGivenEpoch(currentEpoch!),
+    currentEpoch ? QUERY_KEYS.depositAtGivenEpoch(currentEpoch) : '',
     () => contractTracker?.depositAt(address!, currentEpoch!),
     {
       enabled: !!contractTracker && !!currentEpoch && !!address,
