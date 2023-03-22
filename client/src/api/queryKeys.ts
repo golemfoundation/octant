@@ -21,8 +21,5 @@ export const QUERY_KEYS = {
   proposalsContract: ['proposalsContract'],
   proposalsIpfsResults: (address: string): string[] => ['proposalsIpfsResults', address],
   userAllocations: ['userAllocations'],
-  usersWithTheirAllocations: (proposalAddress: string): string[] => [
-    'usersWithTheirAllocations',
-    proposalAddress,
-  ],
+  withdrawableUserEth: ['withdrawableUserEth'],
 };

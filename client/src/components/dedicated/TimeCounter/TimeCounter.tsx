@@ -12,13 +12,16 @@ import TimeCounterProps, { CounterSectionsProps } from './types';
 const CounterSection: FC<CounterSectionsProps> = ({
   value = 0,
   label,
+  labelSmall,
   isDividerVisible = true,
+  variant,
 }) => {
+  const labelFinal = variant === 'small' && labelSmall ? labelSmall : label;
   return (
     <Fragment>
       <div className={styles.counterSection}>
-        <div className={styles.value}>{value}</div>
-        <div className={styles.label}>{label}</div>
+        <div className={cx(styles.value, styles[`variant--${variant}`])}>{value}</div>
+        <div className={cx(styles.label, styles[`variant--${variant}`])}>{labelFinal}</div>
       </div>
       {isDividerVisible && <div className={styles.divider}>:</div>}
     </Fragment>
@@ -30,6 +33,7 @@ const TimeCounter: FC<TimeCounterProps> = ({
   timestamp,
   duration,
   onCountingFinish,
+  variant = 'standard',
 }) => {
   const [time, setTime] = useState<Duration | undefined>(undefined);
   const shouldDoRefetch = timestamp ? timestamp < Date.now() : false;
@@ -49,7 +53,7 @@ const TimeCounter: FC<TimeCounterProps> = ({
     }
 
     const countdown = () => {
-      if (shouldDoRefetch) {
+      if (shouldDoRefetch && onCountingFinish) {
         onCountingFinish();
       }
 
@@ -71,13 +75,24 @@ const TimeCounter: FC<TimeCounterProps> = ({
         <Loader />
       ) : (
         <Fragment>
-          <div className={styles.counters}>
-            <CounterSection label="Days" value={time.days} />
-            <CounterSection label="Hours" value={time.hours} />
-            <CounterSection label="Minutes" value={time.minutes} />
-            <CounterSection isDividerVisible={false} label="Seconds" value={time.seconds} />
+          <div className={cx(styles.counters, styles[`variant--${variant}`])}>
+            <CounterSection label="Days" value={time.days} variant={variant} />
+            <CounterSection label="Hours" labelSmall="Hrs" value={time.hours} variant={variant} />
+            <CounterSection
+              label="Minutes"
+              labelSmall="Min"
+              value={time.minutes}
+              variant={variant}
+            />
+            <CounterSection
+              isDividerVisible={false}
+              label="Seconds"
+              labelSmall="Sec"
+              value={time.seconds}
+              variant={variant}
+            />
           </div>
-          <ProgressBar progressPercentage={progressPercentage} />
+          {variant === 'standard' && <ProgressBar progressPercentage={progressPercentage} />}
         </Fragment>
       )}
     </div>

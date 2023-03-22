@@ -15,8 +15,15 @@
   @include flexBasisGutter(2, 1.6rem);
 }
 
-.availableFunds {
-  margin: 2rem 0 0;
+.timeCounterWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1.6rem;
+}
+
+.timeCounter {
+  margin-top: 1.6rem;
 }
 
 .button {

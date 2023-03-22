@@ -1,14 +1,14 @@
 import cx from 'classnames';
 import { BigNumber, ContractTransaction } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
-import React, { FC, useEffect, useState } from 'react';
+import React, { ChangeEvent, FC, useEffect, useState } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
-import InputText from 'components/core/InputText/InputText';
 import Modal from 'components/core/Modal/Modal';
 import ProgressStepper from 'components/core/ProgressStepper/ProgressStepper';
 import BudgetBox from 'components/dedicated/BudgetBox/BudgetBox';
+import InputsCryptoFiat from 'components/dedicated/InputsCryptoFiat/InputsCryptoFiat';
 import env from 'env';
 import useMaxApproveCallback from 'hooks/helpers/useMaxApproveCallback';
 import useLock from 'hooks/mutations/useLock';
@@ -109,13 +109,16 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
     }
   };
 
-  const onChangeValue = (newValue: string): void => {
-    if (newValue && !floatNumberWithUpTo18DecimalPlaces.test(newValue)) {
+  const onChangeValue = (event: ChangeEvent<HTMLInputElement>): void => {
+    const {
+      target: { value },
+    } = event;
+    if (value && !floatNumberWithUpTo18DecimalPlaces.test(value)) {
       return;
     }
 
-    const newValueBigNumber = parseUnits(newValue || '0');
-    let valueToSet = newValue;
+    const newValueBigNumber = parseUnits(value || '0');
+    let valueToSet = value;
     if (currentMode === 'unlock' && newValueBigNumber.gt(depositsValue!)) {
       valueToSet = formatUnits(depositsValue!);
       toastDebouncedUnlockValueTooBig();
@@ -149,6 +152,7 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
         transactionHash={transactionHash}
       />
       <BoxRounded
+        className={styles.element}
         isGrey
         tabs={[
           {
@@ -163,18 +167,15 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
           },
         ]}
       >
-        <div className={styles.inputs}>
-          <InputText
-            className={styles.input}
-            isDisabled={isApproveOrDepositInProgress}
-            label={currentMode === 'lock' ? 'Amount to lock' : 'Amount to unlock'}
-            onChange={({ target: { value } }) => onChangeValue(value)}
-            suffix="GLM"
-            value={valueToDeposeOrWithdraw}
-            variant="simple"
-          />
-          <InputText className={styles.input} isDisabled suffix="USD" variant="simple" />
-        </div>
+        <InputsCryptoFiat
+          inputCryptoProps={{
+            isDisabled: isApproveOrDepositInProgress,
+            label: currentMode === 'lock' ? 'Amount to lock' : 'Amount to unlock',
+            onChange: onChangeValue,
+            suffix: 'GLM',
+            value: valueToDeposeOrWithdraw,
+          }}
+        />
         <div className={styles.availableFunds}>
           Available wallet balance {dataAvailableFunds ? formatUnits(dataAvailableFunds) : '0.0'}{' '}
           GLM.

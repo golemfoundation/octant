@@ -15,7 +15,7 @@ const UserGlmLock: FC<UserGlmLockProps> = ({ classNameBox }) => {
     wallet: { isConnected },
   } = useWallet();
   const [lockType, setLockType] = useState<'currentEpoch' | 'nextEpoch'>('nextEpoch');
-  const [isGlmStakingModalOpen, setIsGlmStakingModalOpen] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { data: depositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
   const { data: depositsValue } = useDepositValue();
 
@@ -30,7 +30,7 @@ const UserGlmLock: FC<UserGlmLockProps> = ({ classNameBox }) => {
             !depositsValue || (!!depositsValue && depositsValue.isZero())
               ? 'Lock GLM'
               : 'Edit GLM Lock',
-          onClick: () => setIsGlmStakingModalOpen(true),
+          onClick: () => setIsModalOpen(true),
           variant: 'cta',
         }}
         className={classNameBox}
@@ -59,8 +59,8 @@ const UserGlmLock: FC<UserGlmLockProps> = ({ classNameBox }) => {
       </BoxRounded>
       <GlmStakingFlow
         modalProps={{
-          isOpen: isGlmStakingModalOpen,
-          onClosePanel: () => setIsGlmStakingModalOpen(false),
+          isOpen: isModalOpen,
+          onClosePanel: () => setIsModalOpen(false),
         }}
       />
     </Fragment>
