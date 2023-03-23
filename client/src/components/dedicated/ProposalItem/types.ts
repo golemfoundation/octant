@@ -8,6 +8,7 @@ export interface ProposalWithAllocations extends ExtendedProposal {
 }
 
 export default interface ProposalItemProps extends ProposalWithAllocations {
+  className?: string;
   isAlreadyAdded?: boolean;
   onAddRemoveFromAllocate: () => void;
 }

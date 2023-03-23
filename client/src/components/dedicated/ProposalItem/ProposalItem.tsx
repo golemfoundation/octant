@@ -18,6 +18,7 @@ import ProposalItemProps from './types';
 
 const ProposalItem: FC<ProposalItemProps> = ({
   address,
+  className,
   description,
   isAlreadyAdded,
   isLoadingError,
@@ -42,7 +43,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
 
   return (
     <div
-      className={cx(styles.root, !isLoadingError && styles.isClickable)}
+      className={cx(styles.root, className, !isLoadingError && styles.isClickable)}
       onClick={
         isLoadingError ? () => {} : () => navigate(`${ROOT_ROUTES.proposal.absolute}/${address}`)
       }

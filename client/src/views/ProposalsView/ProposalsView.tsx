@@ -43,6 +43,7 @@ const ProposalsView: FC<ProposalsViewProps> = ({ allocations }) => {
           <ProposalItem
             // eslint-disable-next-line react/no-array-index-key
             key={index}
+            className={styles.element}
             isAlreadyAdded={allocations.includes(proposal.address)}
             onAddRemoveFromAllocate={() => onAddRemoveFromAllocate(proposal.address)}
             {...proposal}
