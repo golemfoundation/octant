@@ -58,7 +58,7 @@ describe('LocalStorageService', () => {
     it('should validate displayCurrency', () => {
       localStorage.setItem(DISPLAY_CURRENCY, 'invalid-currency');
       localStorageService.init();
-      expect(localStorage.getItem(DISPLAY_CURRENCY)).toBe('usd');
+      expect(localStorage.getItem(DISPLAY_CURRENCY)).toBe('"usd"');
     });
 
     it('should validate isCryptoMainValueDisplay', () => {
