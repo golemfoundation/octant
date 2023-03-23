@@ -1,11 +1,13 @@
 import cx from 'classnames';
-import { formatUnits } from 'ethers/lib/utils';
-import React, { Fragment, ReactElement } from 'react';
+import { parseUnits } from 'ethers/lib/utils';
+import React, { Fragment, FC } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
+import { getValuesToDisplay } from 'components/core/DoubleValue/utils';
 import Loader from 'components/core/Loader/Loader';
 import Svg from 'components/core/Svg/Svg';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
+import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useUserAllocations from 'hooks/subgraph/allocations/useUserAllocations';
 import useLocks from 'hooks/subgraph/useLocks';
 import useUnlocks from 'hooks/subgraph/useUnlocks';
@@ -14,15 +16,17 @@ import { allocate, donation } from 'svg/history';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './History.module.scss';
+import HistoryProps from './types';
 import { sortAllocationsAndLocks } from './utils';
 
-const History = (): ReactElement => {
+const History: FC<HistoryProps> = ({ displayCurrency, isCryptoMainValueDisplay }) => {
   const {
     wallet: { isConnected },
   } = useWallet();
   const { data: dataAllocations } = useUserAllocations();
   const { data: dataLocks } = useLocks();
   const { data: dataUnlocks } = useUnlocks();
+  const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
   const { timeCurrentEpochStart } = useEpochAndAllocationTimestamps();
 
   let allocationsAndDeposits =
@@ -66,6 +70,15 @@ const History = (): ReactElement => {
                 );
               }
 
+              const values = getValuesToDisplay({
+                cryptoCurrency: 'golem',
+                cryptoValues,
+                displayCurrency,
+                error,
+                isCryptoMainValueDisplay,
+                valueCrypto: parseUnits(element.amount, 'wei'),
+              });
+
               return (
                 <Fragment>
                   <div className={styles.iconAndTitle}>
@@ -76,7 +89,10 @@ const History = (): ReactElement => {
                       </div>
                     </div>
                   </div>
-                  <div>{formatUnits(element.amount)} GLM</div>
+                  <div className={styles.values}>
+                    <div className={styles.primary}>{values.primary}</div>
+                    <div className={styles.secondary}>{values.secondary}</div>
+                  </div>
                 </Fragment>
               );
             })()}

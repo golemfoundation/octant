@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import Loader from 'components/core/Loader/Loader';
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
+import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposals from 'hooks/queries/useProposals';
@@ -28,11 +29,17 @@ const App: FC<AppProps> = ({
   onDefaultValuesFromLocalStorageSetSettings,
   onboarding,
   settings,
+  setIsCryptoMainValueDisplay,
 }) => {
   const queryClient = useQueryClient();
   const {
     wallet: { isConnected, address },
   } = useWallet();
+  useCryptoValues(settings.displayCurrency, {
+    onError: () => {
+      setIsCryptoMainValueDisplay(true);
+    },
+  });
   const { data: currentEpoch } = useCurrentEpoch({
     refetchOnMount: true,
     refetchOnWindowFocus: true,
@@ -44,6 +51,7 @@ const App: FC<AppProps> = ({
   const { data: proposals } = useProposals();
   const { data: userAllocations } = useUserAllocations();
   const [isAccountChanging, setIsAccountChanging] = useState(false);
+  const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
   const [currentAddressLocal, setCurrentAddressLocal] = useState<null | string>(null);
   const [currentEpochLocal, setCurrentEpochLocal] = useState<number | null>(null);
   const [isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal] = useState<boolean | null>(null);
@@ -54,6 +62,12 @@ const App: FC<AppProps> = ({
     onDefaultValuesFromLocalStorageSetSettings();
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (isConnected !== isConnectedLocal) {
+      setIsConnectedLocal(isConnected);
+    }
+  }, [isConnected, isConnectedLocal, setIsConnectedLocal]);
 
   useEffect(() => {
     if (address && address !== currentAddressLocal) {
@@ -74,6 +88,7 @@ const App: FC<AppProps> = ({
   }, [isDecisionWindowOpen, isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal]);
 
   useEffect(() => {
+    const doesIsConnectedRequireFlush = !isConnected && isConnectedLocal;
     const doesAddressRequireFlush =
       !!address && !!currentAddressLocal && address !== currentAddressLocal;
     const doesCurrentEpochRequireFlush =
@@ -83,6 +98,7 @@ const App: FC<AppProps> = ({
       !!isDecisionWindowOpenLocal &&
       isDecisionWindowOpen !== isDecisionWindowOpenLocal;
     if (
+      doesIsConnectedRequireFlush ||
       doesAddressRequireFlush ||
       doesCurrentEpochRequireFlush ||
       doesIsDecisionWindowOpenRequireFlush
@@ -90,6 +106,8 @@ const App: FC<AppProps> = ({
       setIsAccountChanging(true);
     }
   }, [
+    isConnected,
+    isConnectedLocal,
     address,
     currentAddressLocal,
     currentEpoch,

@@ -8,3 +8,13 @@ export const isAllocateOnboardingAlwaysVisibleSelector = createSelector(
   settingsSelector,
   ({ isAllocateOnboardingAlwaysVisible }) => isAllocateOnboardingAlwaysVisible,
 );
+
+export const isCryptoMainValueDisplaySelector = createSelector(
+  settingsSelector,
+  ({ isCryptoMainValueDisplay }) => isCryptoMainValueDisplay,
+);
+
+export const displayCurrencySelector = createSelector(
+  settingsSelector,
+  ({ displayCurrency }) => displayCurrency,
+);

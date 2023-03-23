@@ -1,4 +1,4 @@
-export default function isValidJson(value: string | null): boolean {
+export default function isStringValidJson(value: string | null): boolean {
   if (typeof value !== 'string') {
     return false;
   }

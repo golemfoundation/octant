@@ -13,3 +13,9 @@ export const IS_ONBOARDING_ALWAYS_VISIBLE = getLocalStorageKey(
   settingsPrefix,
   'isOnboardingAlwaysVisible',
 );
+export const DISPLAY_CURRENCY = getLocalStorageKey(settingsPrefix, 'displayCurrency');
+
+export const IS_CRYPTO_MAIN_VALUE_DISPLAY = getLocalStorageKey(
+  settingsPrefix,
+  'isCryptoMainValueDisplay',
+);

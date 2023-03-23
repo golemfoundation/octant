@@ -3,19 +3,23 @@
   font-weight: $font-weight-semibold;
 }
 
-.mainValue {
+.primary {
+  font-size: $font-size-24;
+  text-align: left;
 
   &.variant-- {
     &standard {
       font-size: $font-size-24;
     }
+
     &small {
       font-size: $font-size-18;
     }
   }
 }
 
-.alternativeValue {
+.secondary {
+  text-align: left;
   font-size: $font-size-12;
   color: $color-octant-green2;
 }

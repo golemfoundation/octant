@@ -1,20 +1,18 @@
 import React, { ReactElement } from 'react';
 
-import History from 'components/dedicated/History/History';
-import UserEthWithdraw from 'components/dedicated/UserEthWithdraw/UserEthWithdraw';
-import UserGlmLock from 'components/dedicated/UserGlmLock/UserGlmLock';
+import BoxGlmLock from 'components/dedicated/BoxGlmLock/BoxGlmLock';
+import BoxWithdrawEth from 'components/dedicated/BoxWithdrawEth/BoxWithdrawEth';
+import HistoryContainer from 'components/dedicated/History/HistoryContainer';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
 
 import styles from './EarnView.module.scss';
 
-const EarnView = (): ReactElement => {
-  return (
-    <MainLayoutContainer>
-      <UserGlmLock classNameBox={styles.box} />
-      <UserEthWithdraw classNameBox={styles.box} />
-      <History />
-    </MainLayoutContainer>
-  );
-};
+const EarnView = (): ReactElement => (
+  <MainLayoutContainer>
+    <BoxGlmLock classNameBox={styles.box} />
+    <BoxWithdrawEth classNameBox={styles.box} />
+    <HistoryContainer />
+  </MainLayoutContainer>
+);
 
 export default EarnView;

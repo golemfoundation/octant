@@ -1,6 +1,14 @@
+import { SettingsStore } from '../store/models/settings/types';
+
 export const QUERY_KEYS = {
   availableFundsEth: ['availableFundsEth'],
   availableFundsGlm: ['availableFundsGlm'],
+  cryptoValues: (fiatCurrency: NonNullable<SettingsStore['displayCurrency']>): string[] => [
+    ...QUERY_KEYS.cryptoValuesRoot,
+    fiatCurrency,
+  ],
+  cryptoValuesRoot: ['cryptoValues'],
+  currentBalance: ['currentBalance'],
   currentEpoch: ['currentEpoch'],
   currentEpochEnd: ['currentEpochEnd'],
   currentEpochProps: ['currentEpochProps'],

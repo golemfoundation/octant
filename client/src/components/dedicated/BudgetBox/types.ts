@@ -1,10 +1,10 @@
-import { BigNumberish } from 'ethers';
+import { BigNumber } from 'ethers';
 
-import { CurrentStepIndex } from 'components/dedicated/GlmStakingFlow/types';
+import { CurrentStepIndex } from 'components/dedicated/ModalGlmLock/types';
 
 export default interface BudgetBoxProps {
   className: string;
   currentStepIndex: CurrentStepIndex;
-  depositsValue?: BigNumberish;
+  depositsValue?: BigNumber;
   transactionHash: string;
 }

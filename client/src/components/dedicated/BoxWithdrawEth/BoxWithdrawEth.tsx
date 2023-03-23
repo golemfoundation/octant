@@ -2,14 +2,13 @@ import React, { FC, useState, Fragment } from 'react';
 import { useMetamask } from 'use-metamask';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import DoubleValue from 'components/core/DoubleValue/DoubleValue';
-import EthWithdrawingFlow from 'components/dedicated/EthWithdrawingFlow/EthWithdrawingFlow';
+import DoubleValueContainer from 'components/core/DoubleValue/DoubleValueContainer';
+import ModalWithdrawEth from 'components/dedicated/ModalWithdrawEth/ModalWithdrawEth';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import UserEthWithdrawProps from './types';
 
-const UserEthWithdraw: FC<UserEthWithdrawProps> = ({ classNameBox }) => {
+const BoxWithdrawEth: FC<UserEthWithdrawProps> = ({ classNameBox }) => {
   const {
     metaState: { isConnected },
   } = useMetamask();
@@ -31,13 +30,9 @@ const UserEthWithdraw: FC<UserEthWithdrawProps> = ({ classNameBox }) => {
         isVertical
         title="Available to withdraw"
       >
-        <DoubleValue
-          mainValue={
-            withdrawableUserEth ? getFormattedEthValue(withdrawableUserEth).fullString : '0.0'
-          }
-        />
+        <DoubleValueContainer cryptoCurrency="ethereum" valueCrypto={withdrawableUserEth} />
       </BoxRounded>
-      <EthWithdrawingFlow
+      <ModalWithdrawEth
         modalProps={{
           isOpen: isModalOpen,
           onClosePanel: () => setIsModalOpen(false),
@@ -47,4 +42,4 @@ const UserEthWithdraw: FC<UserEthWithdrawProps> = ({ classNameBox }) => {
   );
 };
 
-export default UserEthWithdraw;
+export default BoxWithdrawEth;

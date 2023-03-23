@@ -33,6 +33,9 @@ const env = {
       // @ts-expect-error TS does not understand the way vite imports envs.
       import.meta.env.VITE_TRACKER_ADDRESS || '0x29D23DE66F737bF5e9a7c0D5cBE283e409c857d1',
   },
+  cryptoValuesEndpoint:
+    // @ts-expect-error TS does not understand the way vite imports envs.
+    import.meta.VITE_CRYPTO_VALUES_ENDPOINT || 'https://crypto-server.octant.world/',
   ipfsGateway:
     // @ts-expect-error TS does not understand the way vite imports envs.
     import.meta.env.IPFS_GATEWAY || 'https://octant.infura-ipfs.io/ipfs/',

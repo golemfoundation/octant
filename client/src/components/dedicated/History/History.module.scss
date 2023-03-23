@@ -47,3 +47,18 @@
   color: $color-octant-grey13;
   margin-top: 0.3rem;
 }
+
+.values {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  .primary {
+    font-weight: $font-weight-bold;
+  }
+
+  .secondary {
+    color: $color-octant-grey6;
+    font-weight: $font-weight-semibold;
+  }
+}

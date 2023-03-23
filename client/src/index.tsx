@@ -9,8 +9,8 @@ import { HashRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { MetamaskStateProvider } from 'use-metamask';
 
-import clientApollo from './api/client-apollo';
-import clientReactQuery from './api/client-react-query';
+import clientApollo from './api/clients/client-apollo';
+import clientReactQuery from './api/clients/client-react-query';
 import AppContainer from './App/AppContainer';
 import store from './store';
 

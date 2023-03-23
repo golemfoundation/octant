@@ -132,6 +132,7 @@ const MainLayout: FC<MainLayoutProps> = ({
                 ))}
               </div>
             </nav>
+            <div className={styles.coinGecko}>Powered by CoinGecko API</div>
           </div>
         )}
       </div>

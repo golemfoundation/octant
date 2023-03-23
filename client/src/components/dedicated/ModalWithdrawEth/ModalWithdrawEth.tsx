@@ -4,7 +4,7 @@ import React, { ChangeEvent, FC, useState } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
-import DoubleValue from 'components/core/DoubleValue/DoubleValue';
+import DoubleValueContainer from 'components/core/DoubleValue/DoubleValueContainer';
 import Modal from 'components/core/Modal/Modal';
 import InputsCryptoFiat from 'components/dedicated/InputsCryptoFiat/InputsCryptoFiat';
 import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
@@ -13,19 +13,18 @@ import useWithdrawEth from 'hooks/mutations/useWithdrawEth';
 import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 
-import styles from './EthWithdrawingFlow.module.scss';
-import EthWithdrawingFlowProps from './types';
+import styles from './ModalWithdrawEth.module.scss';
+import ModalEthWithdrawingProps from './types';
 import { toastDebouncedWithdrawValueTooBig } from './utils';
 
-const EthWithdrawingFlow: FC<EthWithdrawingFlowProps> = ({ modalProps }) => {
+const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
   const [valueToWithdraw, setValueToWithdraw] = useState<string>('');
   const { data: withdrawableUserEth } = useWithdrawableUserEth();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpochProps } = useCurrentEpochProps();
-  const { timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
+  const { timeCurrentAllocationEnd } = useEpochAndAllocationTimestamps();
   const withdrawEthMutation = useWithdrawEth();
 
   const onChangeValue = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -54,11 +53,7 @@ const EthWithdrawingFlow: FC<EthWithdrawingFlowProps> = ({ modalProps }) => {
         isVertical
         title="Available to withdraw"
       >
-        <DoubleValue
-          mainValue={
-            withdrawableUserEth ? getFormattedEthValue(withdrawableUserEth).fullString : '0.0'
-          }
-        />
+        <DoubleValueContainer cryptoCurrency="ethereum" valueCrypto={withdrawableUserEth} />
       </BoxRounded>
       <BoxRounded className={styles.element} isGrey isVertical>
         <InputsCryptoFiat
@@ -76,7 +71,7 @@ const EthWithdrawingFlow: FC<EthWithdrawingFlowProps> = ({ modalProps }) => {
             <TimeCounter
               className={styles.timeCounter}
               duration={currentEpochProps?.decisionWindow}
-              timestamp={timeCurrentEpochEnd}
+              timestamp={timeCurrentAllocationEnd}
               variant="small"
             />
           </div>
@@ -95,4 +90,4 @@ const EthWithdrawingFlow: FC<EthWithdrawingFlowProps> = ({ modalProps }) => {
   );
 };
 
-export default EthWithdrawingFlow;
+export default ModalWithdrawEth;

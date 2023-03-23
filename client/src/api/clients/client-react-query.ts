@@ -1,6 +1,6 @@
 import { MutationCache, QueryCache, QueryClient } from 'react-query';
 
-import { handleError } from './errorMessages';
+import { handleError } from 'api/errorMessages';
 
 const clientReactQuery = new QueryClient({
   defaultOptions: {
@@ -10,15 +10,15 @@ const clientReactQuery = new QueryClient({
     },
   },
   mutationCache: new MutationCache({
-    onError: error => {
+    onError: (error, query) => {
       // @ts-expect-error Error is of type 'unknown', but it is an API error.
-      handleError(error.reason);
+      return handleError(error.reason, query);
     },
   }),
   queryCache: new QueryCache({
-    onError: error => {
+    onError: (error, query) => {
       // @ts-expect-error Error is of type 'unknown', but it is an API error.
-      handleError(error.reason);
+      return handleError(error.reason, query);
     },
   }),
 });
