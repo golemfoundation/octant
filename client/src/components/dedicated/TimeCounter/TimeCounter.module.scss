@@ -10,7 +10,7 @@
 .counters {
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   margin: 0 0 1.6rem 0;
 
   &.variant-- {
@@ -25,7 +25,6 @@
 .counterSection {
   display: flex;
   flex-direction: column;
-  width: 8rem
 }
 
 .value {

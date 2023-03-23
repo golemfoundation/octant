@@ -169,3 +169,12 @@ $headerNavigationBorderRadius: $border-radius-32;
   color: $color-white;
   font-size: $font-size-07;
 }
+
+.coinGecko {
+  position: fixed;
+  bottom: 0.7rem;
+  color: $color-octant-dark;
+  left: 50%;
+  transform: translate(-50%, 0);
+  font-size: $font-size-08;
+}

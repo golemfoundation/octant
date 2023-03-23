@@ -25,13 +25,10 @@ Build:
         - typechain-types
       policy: pull-push
 
-    - key: $CI_COMMIT_REF_SLUG-client-yarn.lock
+    - key: $CI_COMMIT_REF_SLUG-client-subgraph-fiatserver-yarn.lock
       paths:
         - client/node_modules
-      policy: pull-push
-
-    - key: $CI_COMMIT_REF_SLUG-subgraph-yarn.lock
-      paths:
+        - crypto-server/node_modules
         - subgraph/node_modules
       policy: pull-push
 
@@ -42,6 +39,8 @@ Build:
     - cd client
     - yarn install --non-interactive --cache-folder .yarn
     - cd ../subgraph
+    - yarn install --non-interactive --cache-folder .yarn
+    - cd ../crypto-server
     - yarn install --non-interactive --cache-folder .yarn
 
 Lint and typecheck:
@@ -57,18 +56,18 @@ Lint and typecheck:
         - artifacts
         - typechain-types
       policy: pull
-    - key: $CI_COMMIT_REF_SLUG-client-yarn.lock
+    - key: $CI_COMMIT_REF_SLUG-client-subgraph-fiatserver-yarn.lock
       paths:
         - client/node_modules
-      policy: pull
-    - key: $CI_COMMIT_REF_SLUG-subgraph-yarn.lock
-      paths:
-        - subgraph/node_modules
       policy: pull
   script:
     - yarn eslint
     - yarn type-check
     - cd client
+    - yarn install
+    - yarn eslint
+    - yarn type-check
+    - cd ../crypto-server
     - yarn install
     - yarn eslint
     - yarn type-check
@@ -96,7 +95,7 @@ Contracts unit tests:
 Subgraph unit tests:
   stage: test
   cache:
-    - key: $CI_COMMIT_REF_SLUG-subgraph-yarn.lock
+    - key: $CI_COMMIT_REF_SLUG-client-subgraph-fiatserver-yarn.lock
       paths:
         - subgraph/node_modules
       policy: pull
@@ -109,7 +108,7 @@ Subgraph unit tests:
 Client unit tests:
   stage: test
   cache:
-    - key: $CI_COMMIT_REF_SLUG-client-yarn.lock
+    - key: $CI_COMMIT_REF_SLUG-client-subgraph-fiatserver-yarn.lock
       paths:
         - client/node_modules
       policy: pull

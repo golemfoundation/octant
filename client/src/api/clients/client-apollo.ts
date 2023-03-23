@@ -1,9 +1,8 @@
 import { ApolloClient, InMemoryCache, HttpLink, from } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 
+import { handleError } from 'api/errorMessages';
 import env from 'env';
-
-import { handleError } from './errorMessages';
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors || networkError) {

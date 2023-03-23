@@ -3,7 +3,7 @@ import { parseUnits } from 'ethers/lib/utils';
 import React, { FC, Fragment, useState } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import DoubleValue from 'components/core/DoubleValue/DoubleValue';
+import DoubleValueContainer from 'components/core/DoubleValue/DoubleValueContainer';
 import Header from 'components/core/Header/Header';
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import Svg from 'components/core/Svg/Svg';
@@ -71,16 +71,16 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocation
       >
         <div className={styles.totalDonation}>
           {isProjectsTileExpanded && <div className={styles.label}>Total donation</div>}
-          <DoubleValue mainValue={getFormattedEthValue(newAllocationValuesSum).fullString} />
+          <DoubleValueContainer valueCrypto={newAllocationValuesSum} />
         </div>
       </BoxRounded>
       <BoxRounded isVertical>
         <div className={styles.values}>
           <div>
             <div className={styles.header}>Budget {budgetBefore && `(${budgetBefore.suffix})`}</div>
-            <DoubleValue
+            <DoubleValueContainer
               className={styles.budgetValue}
-              mainValue={budgetBefore ? budgetBefore.value : '0.0'}
+              valueString={budgetBefore ? budgetBefore.value : '0.0'}
             />
           </div>
           <div className={styles.separator}>
@@ -91,9 +91,9 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocation
             <div className={styles.header}>
               After Allocation {budgetAfter && `(${budgetAfter.suffix})`}
             </div>
-            <DoubleValue
+            <DoubleValueContainer
               className={styles.budgetValue}
-              mainValue={budgetAfter ? budgetAfter.value : '0.0'}
+              valueString={budgetAfter ? budgetAfter.value : '0.0'}
             />
           </div>
         </div>

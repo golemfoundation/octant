@@ -1,19 +1,39 @@
 import cx from 'classnames';
 import React, { FC } from 'react';
 
+import useCryptoValues from 'hooks/queries/useCryptoValues';
+
 import styles from './DoubleValue.module.scss';
 import DoubleValueProps from './types';
+import { getValuesToDisplay } from './utils';
 
 const DoubleValue: FC<DoubleValueProps> = ({
   className,
-  mainValue,
-  alternativeValue,
+  cryptoCurrency,
+  isCryptoMainValueDisplay,
+  displayCurrency,
+  valueCrypto,
+  valueString,
   variant = 'standard',
-}) => (
-  <div className={cx(styles.root, className)}>
-    <div className={cx(styles.mainValue, styles[`variant--${variant}`])}>{mainValue}</div>
-    {alternativeValue && <div className={styles.alternativeValue}>{alternativeValue}</div>}
-  </div>
-);
+}) => {
+  const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
+
+  const values = getValuesToDisplay({
+    cryptoCurrency,
+    cryptoValues,
+    displayCurrency,
+    error,
+    isCryptoMainValueDisplay,
+    valueCrypto,
+    valueString,
+  });
+
+  return (
+    <div className={cx(styles.root, className)}>
+      <div className={cx(styles.primary, styles[`variant--${variant}`])}>{values.primary}</div>
+      {values.secondary && <div className={styles.secondary}>{values.secondary}</div>}
+    </div>
+  );
+};
 
 export default DoubleValue;

@@ -22,8 +22,8 @@ import useWallet from 'store/models/wallet/store';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 import triggerToast from 'utils/triggerToast';
 
-import styles from './GlmStakingFlow.module.scss';
-import GlmStakingFlowProps, { CurrentMode, CurrentStepIndex } from './types';
+import styles from './ModalGlmLock.module.scss';
+import ModalGlmLockProps, { CurrentMode, CurrentStepIndex } from './types';
 import {
   getButtonCtaLabel,
   toastDebouncedLockValueTooBig,
@@ -32,7 +32,7 @@ import {
 
 const currentStepIndexInitialValue = 0;
 
-const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
+const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
   const { depositsAddress } = env.contracts;
   const {
     wallet: { address, web3 },
@@ -194,4 +194,4 @@ const GlmStakingFlow: FC<GlmStakingFlowProps> = ({ modalProps }) => {
   );
 };
 
-export default GlmStakingFlow;
+export default ModalGlmLock;

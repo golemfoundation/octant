@@ -1,1 +1,0 @@
-export const NUMBER_OF_ETHERS_PER_VALIDATOR = 32;

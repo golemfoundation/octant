@@ -1,16 +1,15 @@
-import { formatUnits } from 'ethers/lib/utils';
 import React, { FC, Fragment, useState } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import DoubleValue from 'components/core/DoubleValue/DoubleValue';
-import GlmStakingFlow from 'components/dedicated/GlmStakingFlow/GlmStakingFlow';
+import DoubleValueContainer from 'components/core/DoubleValue/DoubleValueContainer';
+import ModalGlmLock from 'components/dedicated/ModalGlmLock/ModalGlmLock';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useWallet from 'store/models/wallet/store';
 
-import UserGlmLockProps from './types';
+import BoxGlmLockProps from './types';
 
-const UserGlmLock: FC<UserGlmLockProps> = ({ classNameBox }) => {
+const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
   const {
     wallet: { isConnected },
   } = useWallet();
@@ -48,16 +47,15 @@ const UserGlmLock: FC<UserGlmLockProps> = ({ classNameBox }) => {
         ]}
       >
         {lockType === 'currentEpoch' ? (
-          <DoubleValue
-            mainValue={`${
-              depositEffectiveAtCurrentEpoch ? formatUnits(depositEffectiveAtCurrentEpoch) : '0.0'
-            } GLM`}
+          <DoubleValueContainer
+            cryptoCurrency="golem"
+            valueCrypto={depositEffectiveAtCurrentEpoch}
           />
         ) : (
-          <DoubleValue mainValue={`${depositsValue ? formatUnits(depositsValue) : '0.0'} GLM`} />
+          <DoubleValueContainer cryptoCurrency="golem" valueCrypto={depositsValue} />
         )}
       </BoxRounded>
-      <GlmStakingFlow
+      <ModalGlmLock
         modalProps={{
           isOpen: isModalOpen,
           onClosePanel: () => setIsModalOpen(false),
@@ -67,4 +65,4 @@ const UserGlmLock: FC<UserGlmLockProps> = ({ classNameBox }) => {
   );
 };
 
-export default UserGlmLock;
+export default BoxGlmLock;

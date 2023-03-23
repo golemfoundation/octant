@@ -16,7 +16,7 @@
     "deploy:local": "graph deploy --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020 octant",
     "eslint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "eslint:fix": "yarn prettier && yarn eslint --fix",
-    "install-root-packages": "cd .. && yarn install && yarn compile && cd subgraph",
+    "install-root-packages": "cd .. && yarn clean && yarn install && yarn compile && cd subgraph",
     "preinstall": "yarn install-root-packages",
     "prettier": "yarn prettier:js --loglevel silent && yarn prettier:ts --loglevel silent",
     "prettier:js": "yarn prettier:js:pure './**/*.{js,jsx}'",

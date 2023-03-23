@@ -1,9 +1,8 @@
-import { formatUnits } from 'ethers/lib/utils';
 import React, { ReactElement } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Description from 'components/core/Description/Description';
-import DoubleValue from 'components/core/DoubleValue/DoubleValue';
+import DoubleValueContainer from 'components/core/DoubleValue/DoubleValueContainer';
 import Header from 'components/core/Header/Header';
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import MetricsTimeSection from 'components/dedicated/MetricsTimeSection/MetricsTimeSection';
@@ -53,10 +52,10 @@ const MetricsView = (): ReactElement => {
           GLM locked by Octant users."
         />
         <BoxRounded alignment="left" className={styles.box} isVertical title="ETH Staked">
-          <DoubleValue mainValue={ETH_STAKED || '0.0'} />
+          <DoubleValueContainer cryptoCurrency="ethereum" valueCrypto={ETH_STAKED} />
         </BoxRounded>
         <BoxRounded alignment="left" className={styles.box} isVertical title="GLM Locked">
-          <DoubleValue mainValue={glmLocked ? formatUnits(glmLocked) : '0.0'} />
+          <DoubleValueContainer cryptoCurrency="golem" valueCrypto={glmLocked} />
         </BoxRounded>
         <BoxRounded
           alignment="left"
@@ -64,7 +63,7 @@ const MetricsView = (): ReactElement => {
           isVertical
           title="GLM Locked as % of Total Supply"
         >
-          <DoubleValue mainValue={`${lockedRatio || '0.0'}%`} />
+          <DoubleValueContainer valueString={lockedRatio} />
           <ProgressBar
             className={styles.lockedRatioProgressBar}
             progressPercentage={lockedRatio ? parseFloat(lockedRatio) : 0}

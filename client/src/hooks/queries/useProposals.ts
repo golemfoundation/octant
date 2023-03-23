@@ -1,6 +1,6 @@
 import { useQueries, useQuery } from 'react-query';
 
-import { apiGetProposal } from 'api/proposals';
+import { apiGetProposal } from 'api/calls/proposals';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useContractProposals from 'hooks/contracts/useContractProposals';
 import { BackendProposal, ExtendedProposal } from 'types/proposals';
