@@ -9,11 +9,12 @@ import {
 import isStringValidJson from 'utils/isStringValidJson';
 
 const LocalStorageService = () => {
-  const validateBoolean = (localStorageKey: string, defaultValue = 'false'): void => {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const validateBoolean = (localStorageKey: string, defaultValue = false): void => {
     const value = JSON.parse(localStorage.getItem(localStorageKey) || 'null');
 
     if (value !== true && value !== false) {
-      localStorage.setItem(localStorageKey, defaultValue);
+      localStorage.setItem(localStorageKey, JSON.stringify(defaultValue));
     }
   };
 
@@ -51,7 +52,7 @@ const LocalStorageService = () => {
     const isOnboardingAlwaysVisible = localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE);
 
     if (isOnboardingAlwaysVisible === 'true') {
-      localStorage.setItem(IS_ONBOARDING_DONE, 'false');
+      localStorage.setItem(IS_ONBOARDING_DONE, JSON.stringify(false));
     }
 
     validateBoolean(IS_ONBOARDING_DONE);
@@ -61,12 +62,12 @@ const LocalStorageService = () => {
     const displayCurrency = JSON.parse(localStorage.getItem(DISPLAY_CURRENCY) || 'null');
 
     if (!displayCurrency || !DISPLAY_CURRENCIES.includes(displayCurrency)) {
-      localStorage.setItem(DISPLAY_CURRENCY, 'usd');
+      localStorage.setItem(DISPLAY_CURRENCY, JSON.stringify('usd'));
     }
   };
 
   const validateIsCryptoMainValueDisplay = (): void => {
-    validateBoolean(IS_CRYPTO_MAIN_VALUE_DISPLAY, 'true');
+    validateBoolean(IS_CRYPTO_MAIN_VALUE_DISPLAY, true);
   };
 
   const init = (): void => {
