@@ -1,3 +1,18 @@
+$verticalDistanceBetweenElements: $layoutMarginHorizontal;
+
 .list {
-  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+
+  @media #{$desktop-up} {
+    margin: 0 (-(calc($verticalDistanceBetweenElements / 2)));
+  }
+}
+
+.element {
+  margin: 0 auto 2.4rem;
+
+  @media #{$desktop-up} {
+    @include flexBasisGutter(2, calc($verticalDistanceBetweenElements * 2));
+  }
 }

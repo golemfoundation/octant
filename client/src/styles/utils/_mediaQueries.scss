@@ -1,8 +1,9 @@
 // Media Query Ranges
 // **********************
 
-$phone-range:   (   0px,  471px );
-$desktop-range: ( 472px );
+$phone-range:   (   0px, 471px );
+$tablet-range:  ( 472px, 755px );
+$desktop-range: ( 756px );
 
 // Range functions
 // We use these functions to define ranges for various things, like media queries.
@@ -35,23 +36,10 @@ $phone-portrait-up: $screen;
 $phone-range-only: "#{$screen} and (max-width: #{upper-bound($phone-range)})";
 $phone-down: "#{$screen} and (max-width:#{upper-bound($phone-range)})";
 
+$table-up: "#{$screen} and (min-width:#{lower-bound($tablet-range)})";
+$table-only: "#{$screen} and (min-width:#{lower-bound($tablet-range)}) and (max-width:#{upper-bound($tablet-range)})";
+$table-down: "#{$screen} and (max-width:#{upper-bound($tablet-range)})";
+
 $desktop-up: "#{$screen} and (min-width:#{lower-bound($desktop-range)})";
 $desktop-only: "#{$screen} and (min-width:#{lower-bound($desktop-range)}) and (max-width:#{upper-bound($desktop-range)})";
 $desktop-down: "#{$screen} and (max-width:#{upper-bound($desktop-range)})";
-
-
-// Global classes
-.phoneOnly,
-.tabletOnly,
-.mobileOnly,
-.desktopOnly {
-  display: none;
-}
-
-.tabletOnly {
-  @media #{$desktop-only} { display: inherit; }
-}
-
-.mobileOnly {
-  @media #{$desktop-down} { display: inherit; }
-}
