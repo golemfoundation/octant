@@ -53,7 +53,7 @@
 }
 
 
-@media only screen and (min-width: 1200px) {
+@media #{$desktop-up} {
   .root {
     width: 47.2rem;
     transform: translate(-50%, 50%);
