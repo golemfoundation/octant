@@ -8,6 +8,7 @@ export type DoubleValueVariant = (typeof DOUBLE_VALUE_VARIANTS)[number];
 export interface OwnProps {
   className?: string;
   cryptoCurrency?: 'golem' | 'ethereum';
+  textAlignment?: 'left' | 'right';
   valueCrypto?: BigNumber;
   valueString?: string;
   variant?: DoubleValueVariant;

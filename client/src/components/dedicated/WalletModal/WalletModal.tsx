@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import React, { FC } from 'react';
+import { useAccount, useDisconnect } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
@@ -9,7 +10,6 @@ import Svg from 'components/core/Svg/Svg';
 import RewardsBox from 'components/dedicated/RewardsBox/RewardsBox';
 import useAvailableFundsEth from 'hooks/queries/useAvailableFundsEth';
 import useAvailableFundsGlm from 'hooks/queries/useAvailableFundsGlm';
-import useWallet from 'store/models/wallet/store';
 import { golem, ethereum } from 'svg/logo';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
@@ -17,12 +17,10 @@ import WalletModalProps from './types';
 import styles from './WalletModal.module.scss';
 
 const WalletModal: FC<WalletModalProps> = ({ modalProps }) => {
-  const {
-    disconnect,
-    wallet: { address },
-  } = useWallet();
+  const { address } = useAccount();
   const { data: availableFundsGlm } = useAvailableFundsGlm();
   const { data: availableFundsEth } = useAvailableFundsEth();
+  const { disconnect } = useDisconnect();
 
   const _disconnect = () => {
     modalProps.onClosePanel();
@@ -59,6 +57,7 @@ const WalletModal: FC<WalletModalProps> = ({ modalProps }) => {
             <Svg classNameSvg={styles.icon} img={icon} size={4} />
             <DoubleValueContainer
               cryptoCurrency={cryptoCurrency as 'golem' | 'ethereum'}
+              textAlignment="right"
               valueCrypto={valueCrypto}
               variant="small"
             />

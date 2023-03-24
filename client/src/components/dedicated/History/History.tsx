@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import { parseUnits } from 'ethers/lib/utils';
 import React, { Fragment, FC } from 'react';
+import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import { getValuesToDisplay } from 'components/core/DoubleValue/utils';
@@ -11,7 +12,6 @@ import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useUserAllocations from 'hooks/subgraph/allocations/useUserAllocations';
 import useLocks from 'hooks/subgraph/useLocks';
 import useUnlocks from 'hooks/subgraph/useUnlocks';
-import useWallet from 'store/models/wallet/store';
 import { allocate, donation } from 'svg/history';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
@@ -20,9 +20,7 @@ import HistoryProps from './types';
 import { sortAllocationsAndLocks } from './utils';
 
 const History: FC<HistoryProps> = ({ displayCurrency, isCryptoMainValueDisplay }) => {
-  const {
-    wallet: { isConnected },
-  } = useWallet();
+  const { isConnected } = useAccount();
   const { data: dataAllocations } = useUserAllocations();
   const { data: dataLocks } = useLocks();
   const { data: dataUnlocks } = useUnlocks();

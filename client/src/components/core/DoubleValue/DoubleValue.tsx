@@ -12,6 +12,7 @@ const DoubleValue: FC<DoubleValueProps> = ({
   cryptoCurrency,
   isCryptoMainValueDisplay,
   displayCurrency,
+  textAlignment = 'left',
   valueCrypto,
   valueString,
   variant = 'standard',
@@ -29,7 +30,7 @@ const DoubleValue: FC<DoubleValueProps> = ({
   });
 
   return (
-    <div className={cx(styles.root, className)}>
+    <div className={cx(styles.root, styles[`textAlignment--${textAlignment}`], className)}>
       <div className={cx(styles.primary, styles[`variant--${variant}`])}>{values.primary}</div>
       {values.secondary && <div className={styles.secondary}>{values.secondary}</div>}
     </div>

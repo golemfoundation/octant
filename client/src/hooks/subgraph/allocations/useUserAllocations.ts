@@ -1,13 +1,12 @@
 import { gql, useQuery, QueryResult } from '@apollo/client';
-
-import useWallet from 'store/models/wallet/store';
+import { useAccount } from 'wagmi';
 
 import { ALLOCATED_FIELDS } from './fragments';
 import { AllocationSquashed } from './types';
 import { parseAllocations } from './utils';
 
 type Variables = {
-  userAddress: string;
+  userAddress: `0x${string}`;
 };
 
 const GET_USER_ALLOCATIONS = gql`
@@ -20,9 +19,7 @@ const GET_USER_ALLOCATIONS = gql`
 `;
 
 export default function useUserAllocations(): QueryResult<AllocationSquashed[], Variables> {
-  const {
-    wallet: { address },
-  } = useWallet();
+  const { address } = useAccount();
 
   const { data, ...rest } = useQuery(GET_USER_ALLOCATIONS, {
     skip: !address,

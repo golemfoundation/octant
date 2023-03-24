@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
+import { useAccount } from 'wagmi';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -12,7 +13,6 @@ import useProposals from 'hooks/queries/useProposals';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import RootRoutesContainer from 'routes/RootRoutes/RootRoutesContainer';
 import localStorageService from 'services/localStorageService';
-import useWallet from 'store/models/wallet/store';
 
 import styles from './App.module.scss';
 import AppProps from './types';
@@ -32,9 +32,7 @@ const App: FC<AppProps> = ({
   setIsCryptoMainValueDisplay,
 }) => {
   const queryClient = useQueryClient();
-  const {
-    wallet: { isConnected, address },
-  } = useWallet();
+  const { address, isConnected } = useAccount();
   useCryptoValues(settings.displayCurrency, {
     onError: () => {
       setIsCryptoMainValueDisplay(true);

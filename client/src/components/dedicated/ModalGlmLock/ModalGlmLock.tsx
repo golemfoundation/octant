@@ -2,6 +2,7 @@ import cx from 'classnames';
 import { BigNumber, ContractTransaction } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import React, { ChangeEvent, FC, useEffect, useState } from 'react';
+import { useAccount, useSigner } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
@@ -18,7 +19,6 @@ import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffective
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useLocks from 'hooks/subgraph/useLocks';
 import useUnlocks from 'hooks/subgraph/useUnlocks';
-import useWallet from 'store/models/wallet/store';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 import triggerToast from 'utils/triggerToast';
 
@@ -34,10 +34,8 @@ const currentStepIndexInitialValue = 0;
 
 const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
   const { depositsAddress } = env.contracts;
-  const {
-    wallet: { address, web3 },
-  } = useWallet();
-  const signer = web3?.getSigner();
+  const { address } = useAccount();
+  const { data: signer } = useSigner();
   const [currentMode, setCurrentMode] = useState<CurrentMode>('lock');
   const [transactionHash, setTransactionHash] = useState<string>('');
   const [valueToDeposeOrWithdraw, setValueToDeposeOrWithdraw] = useState<string>('');

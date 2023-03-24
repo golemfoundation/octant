@@ -12,6 +12,6 @@ export default function useContractProposals({
   signerOrProvider = providerGoerli,
 }: UseContractParams = {}): Proposals | null {
   return useMemo(() => {
-    return Proposals__factory.connect(tokenAddress, signerOrProvider);
+    return signerOrProvider ? Proposals__factory.connect(tokenAddress, signerOrProvider) : null;
   }, [signerOrProvider, tokenAddress]);
 }

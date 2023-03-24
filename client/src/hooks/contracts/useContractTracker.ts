@@ -12,6 +12,6 @@ export default function useContractTracker({
   signerOrProvider = providerGoerli,
 }: UseContractParams = {}): Tracker | null {
   return useMemo(() => {
-    return Tracker__factory.connect(tokenAddress, signerOrProvider);
+    return signerOrProvider ? Tracker__factory.connect(tokenAddress, signerOrProvider) : null;
   }, [signerOrProvider, tokenAddress]);
 }

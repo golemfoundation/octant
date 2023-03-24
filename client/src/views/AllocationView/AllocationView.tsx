@@ -2,6 +2,7 @@ import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import isEmpty from 'lodash/isEmpty';
 import React, { FC, Fragment, useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
 
 import AllocationEmptyState from 'components/dedicated/AllocationEmptyState/AllocationEmptyState';
 import AllocationInfoBoxes from 'components/dedicated/AllocationInfoBoxes/AllocationInfoBoxes';
@@ -17,7 +18,6 @@ import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposals from 'hooks/queries/useProposals';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
-import useWallet from 'store/models/wallet/store';
 import getNewAllocationValuesBigNumber from 'utils/getNewAllocationValuesBigNumber';
 import getSortedElementsByTotalValueOfAllocations from 'utils/getSortedElementsByTotalValueOfAllocations';
 import triggerToast from 'utils/triggerToast';
@@ -31,9 +31,7 @@ import {
 } from './utils';
 
 const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
-  const {
-    wallet: { isConnected },
-  } = useWallet();
+  const { isConnected } = useAccount();
   const { data: proposals } = useProposals();
   const [currentView, setCurrentView] = useState<CurrentView>('edit');
   const [selectedItemAddress, setSelectedItemAddress] = useState<null | string>(null);

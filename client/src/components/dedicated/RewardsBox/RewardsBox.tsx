@@ -34,6 +34,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({ className }) => {
           <div className={styles.label}>{label}</div>
           <DoubleValueContainer
             cryptoCurrency={cryptoCurrency as 'golem' | 'ethereum'}
+            textAlignment="right"
             valueCrypto={valueCrypto}
             variant="small"
           />

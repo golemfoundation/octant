@@ -1,9 +1,9 @@
 import { ContractTransaction } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { UseMutationResult, useMutation } from 'react-query';
+import { useSigner } from 'wagmi';
 
 import useContractAllocations from 'hooks/contracts/useContractAllocations';
-import useWallet from 'store/models/wallet/store';
 
 type UseAllocate = {
   onSuccess: () => void;
@@ -16,10 +16,7 @@ export default function useAllocate({
   unknown,
   { proposalAddress: string; value: string }[]
 > {
-  const {
-    wallet: { web3 },
-  } = useWallet();
-  const signer = web3?.getSigner();
+  const { data: signer } = useSigner();
   const contractAllocations = useContractAllocations({ signerOrProvider: signer });
 
   return useMutation({

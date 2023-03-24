@@ -12,6 +12,6 @@ export default function useContractEpochs({
   signerOrProvider = providerGoerli,
 }: UseContractParams = {}): Epochs | null {
   return useMemo(() => {
-    return Epochs__factory.connect(tokenAddress, signerOrProvider);
+    return signerOrProvider ? Epochs__factory.connect(tokenAddress, signerOrProvider) : null;
   }, [signerOrProvider, tokenAddress]);
 }
