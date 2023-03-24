@@ -1,18 +1,16 @@
 import React, { FC, Fragment, useState } from 'react';
+import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import DoubleValueContainer from 'components/core/DoubleValue/DoubleValueContainer';
 import ModalGlmLock from 'components/dedicated/ModalGlmLock/ModalGlmLock';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
-import useWallet from 'store/models/wallet/store';
 
 import BoxGlmLockProps from './types';
 
 const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
-  const {
-    wallet: { isConnected },
-  } = useWallet();
+  const { isConnected } = useAccount();
   const [lockType, setLockType] = useState<'currentEpoch' | 'nextEpoch'>('nextEpoch');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { data: depositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();

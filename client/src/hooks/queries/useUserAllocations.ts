@@ -1,9 +1,9 @@
 import { BigNumber } from 'ethers';
 import { UseQueryOptions, UseQueryResult, useQuery } from 'react-query';
+import { useAccount } from 'wagmi';
 
 import { QUERY_KEYS } from 'api/queryKeys';
 import useContractAllocationsStorage from 'hooks/contracts/useContractAllocationsStorage';
-import useWallet from 'store/models/wallet/store';
 
 import useCurrentEpoch from './useCurrentEpoch';
 
@@ -19,11 +19,9 @@ export default function useUserAllocations(
     string[]
   >,
 ): UseQueryResult<UserAllocation[] | undefined> {
-  const {
-    wallet: { address },
-  } = useWallet();
-  const contractAllocationsStorage = useContractAllocationsStorage();
+  const { address } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
+  const contractAllocationsStorage = useContractAllocationsStorage();
 
   return useQuery(
     QUERY_KEYS.userAllocations,

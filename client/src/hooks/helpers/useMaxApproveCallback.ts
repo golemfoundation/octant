@@ -1,6 +1,5 @@
 import { MaxUint256 } from '@ethersproject/constants';
-import { JsonRpcSigner } from '@ethersproject/providers';
-import { BigNumber, ContractTransaction } from 'ethers';
+import { BigNumber, ContractTransaction, Signer } from 'ethers';
 import { useCallback, useState } from 'react';
 
 import useContractErc20 from 'hooks/contracts/useContractErc20';
@@ -37,7 +36,7 @@ function useApprovalState(
 export default function useMaxApproveCallback(
   minAmountToBeApproved: BigNumber,
   spender: string,
-  signer: JsonRpcSigner | undefined,
+  signer: Signer | undefined | null,
   signerAddress?: string,
 ): [ApprovalState, () => Promise<ContractTransaction>] {
   const contract = useContractErc20({ signerOrProvider: signer });

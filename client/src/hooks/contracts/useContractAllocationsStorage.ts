@@ -12,6 +12,8 @@ export default function useContractAllocationsStorage({
   signerOrProvider = providerGoerli,
 }: UseContractParams = {}): AllocationsStorage | null {
   return useMemo(() => {
-    return AllocationsStorage__factory.connect(tokenAddress, signerOrProvider);
+    return signerOrProvider
+      ? AllocationsStorage__factory.connect(tokenAddress, signerOrProvider)
+      : null;
   }, [signerOrProvider, tokenAddress]);
 }

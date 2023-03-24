@@ -12,6 +12,6 @@ export default function useContractRewards({
   signerOrProvider = providerGoerli,
 }: UseContractParams = {}): Rewards | null {
   return useMemo(() => {
-    return Rewards__factory.connect(tokenAddress, signerOrProvider);
+    return signerOrProvider ? Rewards__factory.connect(tokenAddress, signerOrProvider) : null;
   }, [signerOrProvider, tokenAddress]);
 }

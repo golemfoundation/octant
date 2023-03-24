@@ -1,6 +1,5 @@
 import { gql, useQuery, QueryResult } from '@apollo/client';
-
-import useWallet from 'store/models/wallet/store';
+import { useAccount } from 'wagmi';
 
 export type Unlock = {
   amount: string;
@@ -9,7 +8,7 @@ export type Unlock = {
 };
 
 type Variables = {
-  userAddress: string;
+  userAddress: `0x${string}`;
 };
 
 const GET_UNLCOKS = gql`
@@ -22,9 +21,7 @@ const GET_UNLCOKS = gql`
 `;
 
 export default function useUnlocks(): QueryResult<Unlock[], Variables> {
-  const {
-    wallet: { address },
-  } = useWallet();
+  const { address } = useAccount();
 
   const { data, ...rest } = useQuery(GET_UNLCOKS, {
     skip: !address,

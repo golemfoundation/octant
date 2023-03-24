@@ -1,7 +1,7 @@
 import { ContractTransaction } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { UseMutationResult, useMutation, UseMutationOptions } from 'react-query';
-import { useMetamask } from 'use-metamask';
+import { useSigner } from 'wagmi';
 
 import { DEPOSIT_WITHDRAW_GAS_LIMIT } from 'constants/contracts';
 import useContractPayoutsManager from 'hooks/contracts/useContractPayoutsManager';
@@ -9,10 +9,7 @@ import useContractPayoutsManager from 'hooks/contracts/useContractPayoutsManager
 export default function useWithdrawEth(
   options?: UseMutationOptions<ContractTransaction, unknown, string>,
 ): UseMutationResult<ContractTransaction, unknown, string> {
-  const {
-    metaState: { web3 },
-  } = useMetamask();
-  const signer = web3?.getSigner();
+  const { data: signer } = useSigner();
   const contractPayoutsManager = useContractPayoutsManager({ signerOrProvider: signer });
 
   return useMutation({

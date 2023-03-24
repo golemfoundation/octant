@@ -1,6 +1,5 @@
 import { gql, useQuery, QueryResult } from '@apollo/client';
-
-import useWallet from 'store/models/wallet/store';
+import { useAccount } from 'wagmi';
 
 export type Lock = {
   amount: string;
@@ -9,7 +8,7 @@ export type Lock = {
 };
 
 type Variables = {
-  userAddress: string;
+  userAddress: `0x${string}`;
 };
 
 const GET_LOCKS = gql`
@@ -22,9 +21,7 @@ const GET_LOCKS = gql`
 `;
 
 export default function useLocks(): QueryResult<Lock[], Variables> {
-  const {
-    wallet: { address },
-  } = useWallet();
+  const { address } = useAccount();
 
   const { data, ...rest } = useQuery(GET_LOCKS, {
     skip: !address,

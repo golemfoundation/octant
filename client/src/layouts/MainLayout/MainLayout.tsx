@@ -1,7 +1,8 @@
+import { useWeb3Modal } from '@web3modal/react';
 import cx from 'classnames';
 import React, { FC, useState, Fragment } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useMetamask } from 'use-metamask';
+import { useAccount } from 'wagmi';
 
 import Button from 'components/core/Button/Button';
 import Loader from 'components/core/Loader/Loader';
@@ -10,7 +11,6 @@ import WalletModal from 'components/dedicated/WalletModal/WalletModal';
 import env from 'env';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
-import useWallet from 'store/models/wallet/store';
 import { octant } from 'svg/logo';
 import { chevronBottom } from 'svg/misc';
 import truncateEthAddress from 'utils/truncateEthAddress';
@@ -31,18 +31,15 @@ const MainLayout: FC<MainLayoutProps> = ({
   allocations,
 }) => {
   const [isWalletModalOpen, setIsWalletModalOpen] = useState<boolean>(false);
-  const { connect: connectHook, getAccounts } = useMetamask();
-  const {
-    connect,
-    wallet: { isConnected, address },
-  } = useWallet();
+  const { open } = useWeb3Modal();
+  const { address, isConnected } = useAccount();
   const { data: individualReward } = useIndividualReward();
   const { data: currentEpoch } = useCurrentEpoch();
   const { pathname } = useLocation();
 
   const authUser = async () => {
-    if (connectHook && !isConnected) {
-      await connect(connectHook, getAccounts);
+    if (!isConnected) {
+      await open();
     }
   };
 

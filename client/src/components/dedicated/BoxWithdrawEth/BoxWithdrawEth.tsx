@@ -1,5 +1,5 @@
 import React, { FC, useState, Fragment } from 'react';
-import { useMetamask } from 'use-metamask';
+import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import DoubleValueContainer from 'components/core/DoubleValue/DoubleValueContainer';
@@ -9,9 +9,7 @@ import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
 import UserEthWithdrawProps from './types';
 
 const BoxWithdrawEth: FC<UserEthWithdrawProps> = ({ classNameBox }) => {
-  const {
-    metaState: { isConnected },
-  } = useMetamask();
+  const { isConnected } = useAccount();
   const { data: withdrawableUserEth } = useWithdrawableUserEth();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
