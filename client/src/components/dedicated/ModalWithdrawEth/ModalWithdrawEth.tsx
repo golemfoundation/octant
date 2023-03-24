@@ -14,6 +14,7 @@ import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
+import triggerToast from 'utils/triggerToast';
 
 import styles from './ModalWithdrawEth.module.scss';
 import ModalEthWithdrawingProps from './types';
@@ -25,7 +26,13 @@ const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpochProps } = useCurrentEpochProps();
   const { timeCurrentAllocationEnd } = useEpochAndAllocationTimestamps();
-  const withdrawEthMutation = useWithdrawEth();
+  const withdrawEthMutation = useWithdrawEth({
+    onSuccess: () => {
+      triggerToast({
+        title: 'Transaction successful',
+      });
+    },
+  });
 
   const onChangeValue = (event: ChangeEvent<HTMLInputElement>): void => {
     const {
