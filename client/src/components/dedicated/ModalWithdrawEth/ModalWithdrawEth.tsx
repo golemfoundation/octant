@@ -23,7 +23,8 @@ import { toastDebouncedWithdrawValueTooBig } from './utils';
 const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
   const [valueToWithdraw, setValueToWithdraw] = useState<string>('');
   const { data: withdrawableUserEth } = useWithdrawableUserEth();
-  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const { data: isDecisionWindowOpen, refetch: refetchIsDecisionWindowOpen } =
+    useIsDecisionWindowOpen();
   const { data: currentEpochProps } = useCurrentEpochProps();
   const { timeCurrentAllocationEnd } = useEpochAndAllocationTimestamps();
   const withdrawEthMutation = useWithdrawEth({
@@ -78,6 +79,7 @@ const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
             <TimeCounter
               className={styles.timeCounter}
               duration={currentEpochProps?.decisionWindow}
+              onCountingFinish={refetchIsDecisionWindowOpen}
               timestamp={timeCurrentAllocationEnd}
               variant="small"
             />
