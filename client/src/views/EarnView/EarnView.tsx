@@ -2,17 +2,17 @@ import React, { ReactElement } from 'react';
 
 import BoxGlmLock from 'components/dedicated/BoxGlmLock/BoxGlmLock';
 import BoxWithdrawEth from 'components/dedicated/BoxWithdrawEth/BoxWithdrawEth';
-import HistoryContainer from 'components/dedicated/History/HistoryContainer';
-import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
+import History from 'components/dedicated/History/History';
+import MainLayout from 'layouts/MainLayout/MainLayout';
 
 import styles from './EarnView.module.scss';
 
 const EarnView = (): ReactElement => (
-  <MainLayoutContainer>
+  <MainLayout>
     <BoxGlmLock classNameBox={styles.box} />
     <BoxWithdrawEth classNameBox={styles.box} />
-    <HistoryContainer />
-  </MainLayoutContainer>
+    <History />
+  </MainLayout>
 );
 
 export default EarnView;

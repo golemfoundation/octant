@@ -4,7 +4,7 @@ import React, { ChangeEvent, FC, useState } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
-import DoubleValueContainer from 'components/core/DoubleValue/DoubleValueContainer';
+import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import Modal from 'components/core/Modal/Modal';
 import InputsCryptoFiat from 'components/dedicated/InputsCryptoFiat/InputsCryptoFiat';
 import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
@@ -61,7 +61,7 @@ const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
         isVertical
         title="Available to withdraw"
       >
-        <DoubleValueContainer cryptoCurrency="ethereum" valueCrypto={withdrawableUserEth} />
+        <DoubleValue cryptoCurrency="ethereum" valueCrypto={withdrawableUserEth} />
       </BoxRounded>
       <BoxRounded className={styles.element} isGrey isVertical>
         <InputsCryptoFiat

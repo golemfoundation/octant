@@ -4,7 +4,7 @@ import { useAccount, useDisconnect } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
-import DoubleValueContainer from 'components/core/DoubleValue/DoubleValueContainer';
+import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import Modal from 'components/core/Modal/Modal';
 import Svg from 'components/core/Svg/Svg';
 import RewardsBox from 'components/dedicated/RewardsBox/RewardsBox';
@@ -55,7 +55,7 @@ const WalletModal: FC<WalletModalProps> = ({ modalProps }) => {
           // eslint-disable-next-line react/no-array-index-key
           <div key={index} className={styles.walletCurrency}>
             <Svg classNameSvg={styles.icon} img={icon} size={4} />
-            <DoubleValueContainer
+            <DoubleValue
               cryptoCurrency={cryptoCurrency as 'golem' | 'ethereum'}
               textAlignment="right"
               valueCrypto={valueCrypto}

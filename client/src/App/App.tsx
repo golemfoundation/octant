@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useAccount } from 'wagmi';
 
@@ -11,26 +11,28 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposals from 'hooks/queries/useProposals';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
-import RootRoutesContainer from 'routes/RootRoutes/RootRoutesContainer';
+import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import localStorageService from 'services/localStorageService';
+import useAllocationsStore from 'store/allocations/store';
+import useOnboardingStore from 'store/onboarding/store';
+import useSettingsStore from 'store/settings/store';
 
 import styles from './App.module.scss';
-import AppProps from './types';
 
 import 'styles/index.scss';
 
 const validateProposalsInLocalStorage = (localStorageAllocationItems, proposals) =>
   localStorageAllocationItems.filter(item => proposals.find(({ address }) => address === item));
 
-const App: FC<AppProps> = ({
-  allocations,
-  onSetAllocations,
-  onDefaultValuesFromLocalStorageSetOnboarding,
-  onDefaultValuesFromLocalStorageSetSettings,
-  onboarding,
-  settings,
-  setIsCryptoMainValueDisplay,
-}) => {
+const App = (): ReactElement => {
+  const { data: allocations, setAllocations } = useAllocationsStore();
+  const {
+    data: settings,
+    setValuesFromLocalStorage: setValuesFromLocalStorageSettings,
+    setIsCryptoMainValueDisplay,
+  } = useSettingsStore();
+  const { data: onboarding, setValuesFromLocalStorage: setValuesFromLocalStorageOnboarding } =
+    useOnboardingStore();
   const queryClient = useQueryClient();
   const { address, isConnected } = useAccount();
   useCryptoValues(settings.displayCurrency, {
@@ -56,8 +58,8 @@ const App: FC<AppProps> = ({
 
   useEffect(() => {
     localStorageService.init();
-    onDefaultValuesFromLocalStorageSetOnboarding();
-    onDefaultValuesFromLocalStorageSetSettings();
+    setValuesFromLocalStorageSettings();
+    setValuesFromLocalStorageOnboarding();
     // eslint-disable-next-line
   }, []);
 
@@ -138,9 +140,9 @@ const App: FC<AppProps> = ({
       !!allocations &&
       !allocations.some(allocation => userAllocationsAddresses.includes(allocation))
     ) {
-      onSetAllocations([...allocations, ...userAllocationsAddresses]);
+      setAllocations([...allocations, ...userAllocationsAddresses]);
     }
-  }, [isConnected, userAllocations, allocations, onSetAllocations]);
+  }, [isConnected, userAllocations, allocations, setAllocations]);
 
   useEffect(() => {
     if (!proposals || proposals.length === 0 || allocations !== null) {
@@ -156,7 +158,7 @@ const App: FC<AppProps> = ({
     );
 
     if (!localStorageAllocationItems || localStorageAllocationItems.length === 0) {
-      onSetAllocations([]);
+      setAllocations([]);
       return;
     }
 
@@ -165,9 +167,9 @@ const App: FC<AppProps> = ({
       proposals,
     );
     if (validatedProposalsInLocalStorage) {
-      onSetAllocations(validatedProposalsInLocalStorage);
+      setAllocations(validatedProposalsInLocalStorage);
     }
-  }, [allocations, isConnected, proposals, userAllocations, onSetAllocations]);
+  }, [allocations, isConnected, proposals, userAllocations, setAllocations]);
 
   const areOnboardingValuesSet = Object.values(onboarding).some(value => value !== undefined);
   const areSettingValuesSet = Object.values(settings).some(value => value !== undefined);
@@ -179,7 +181,7 @@ const App: FC<AppProps> = ({
     return <Loader className={styles.loader} />;
   }
 
-  return <RootRoutesContainer />;
+  return <RootRoutes />;
 };
 
 export default App;

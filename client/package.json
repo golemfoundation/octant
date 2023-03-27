@@ -30,7 +30,6 @@
     "@apollo/client": "^3.7.4",
     "@ethersproject/constants": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
-    "@reduxjs/toolkit": "^1.9.1",
     "@web3modal/ethereum": "^2.2.2",
     "@web3modal/react": "^2.2.2",
     "axios": "^0.27.2",
@@ -41,14 +40,12 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-query": "^3.39.2",
-    "react-redux": "^8.0.5",
     "react-router-dom": "^6.7.0",
     "react-select": "^5.7.0",
     "react-toastify": "^9.1.1",
-    "redux": "^4.2.0",
-    "redux-actions": "^2.6.5",
     "reselect": "^4.1.7",
-    "wagmi": "^0.12.6"
+    "wagmi": "^0.12.6",
+    "zustand": "^4.3.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",

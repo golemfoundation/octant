@@ -11,6 +11,7 @@ import WalletModal from 'components/dedicated/WalletModal/WalletModal';
 import env from 'env';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useAllocationsStore from 'store/allocations/store';
 import { octant } from 'svg/logo';
 import { chevronBottom } from 'svg/misc';
 import truncateEthAddress from 'utils/truncateEthAddress';
@@ -28,9 +29,9 @@ const MainLayout: FC<MainLayoutProps> = ({
   landscapeImage,
   classNameBody,
   navigationTabs,
-  allocations,
 }) => {
   const [isWalletModalOpen, setIsWalletModalOpen] = useState<boolean>(false);
+  const { data: allocations } = useAllocationsStore();
   const { open } = useWeb3Modal();
   const { address, isConnected } = useAccount();
   const { data: individualReward } = useIndividualReward();
@@ -43,7 +44,7 @@ const MainLayout: FC<MainLayoutProps> = ({
     }
   };
 
-  const tabsWithIsActive = getNavigationTabsWithAllocations(allocations, navigationTabs).map(
+  const tabsWithIsActive = getNavigationTabsWithAllocations(allocations!, navigationTabs).map(
     tab => ({
       ...tab,
       isActive: tab.isActive || pathname === tab.to,

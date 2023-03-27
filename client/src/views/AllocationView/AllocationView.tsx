@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import isEmpty from 'lodash/isEmpty';
-import React, { FC, Fragment, useEffect, useState } from 'react';
+import React, { Fragment, ReactElement, useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 
 import AllocationEmptyState from 'components/dedicated/AllocationEmptyState/AllocationEmptyState';
@@ -17,21 +17,23 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposals from 'hooks/queries/useProposals';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
-import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
+import MainLayout from 'layouts/MainLayout/MainLayout';
+import useAllocationsStore from 'store/allocations/store';
 import getNewAllocationValuesBigNumber from 'utils/getNewAllocationValuesBigNumber';
 import getSortedElementsByTotalValueOfAllocations from 'utils/getSortedElementsByTotalValueOfAllocations';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './AllocationView.module.scss';
-import AllocationViewProps, { AllocationValues, CurrentView } from './types';
+import { AllocationValues, CurrentView } from './types';
 import {
   getAllocationValuesInitialState,
   getAllocationsWithPositiveValues,
   toastBudgetExceeding,
 } from './utils';
 
-const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
+const AllocationView = (): ReactElement => {
   const { isConnected } = useAccount();
+  const { data: allocations } = useAllocationsStore();
   const { data: proposals } = useProposals();
   const [currentView, setCurrentView] = useState<CurrentView>('edit');
   const [selectedItemAddress, setSelectedItemAddress] = useState<null | string>(null);
@@ -144,7 +146,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
   const areAllocationsAvailable = allocationValues !== undefined && !isEmpty(allocations);
 
   let allocationsWithRewards = areAllocationsAvailable
-    ? allocations.map(addressInAllocation => {
+    ? allocations!.map(addressInAllocation => {
         const allocationItem = proposals.find(({ address }) => address === addressInAllocation)!;
         const proposalMatchedProposalRewards = matchedProposalRewards?.find(
           ({ address }) => address === addressInAllocation,
@@ -174,7 +176,7 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
       : allocationsWithRewards;
 
   return (
-    <MainLayoutContainer
+    <MainLayout
       isLoading={isLoading}
       navigationBottomSuffix={
         areAllocationsAvailable && (
@@ -225,9 +227,9 @@ const AllocationView: FC<AllocationViewProps> = ({ allocations }) => {
           )}
         </Fragment>
       ) : (
-        <AllocationSummary allocations={allocations} allocationValues={allocationValues!} />
+        <AllocationSummary allocations={allocations!} allocationValues={allocationValues!} />
       )}
-    </MainLayoutContainer>
+    </MainLayout>
   );
 };
 

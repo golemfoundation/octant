@@ -2,7 +2,7 @@ import cx from 'classnames';
 import React, { FC } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import DoubleValueContainer from 'components/core/DoubleValue/DoubleValueContainer';
+import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 
 import styles from './RewardsBox.module.scss';
@@ -32,7 +32,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({ className }) => {
         // eslint-disable-next-line react/no-array-index-key
         <div key={index} className={styles.reward}>
           <div className={styles.label}>{label}</div>
-          <DoubleValueContainer
+          <DoubleValue
             cryptoCurrency={cryptoCurrency as 'golem' | 'ethereum'}
             textAlignment="right"
             valueCrypto={valueCrypto}

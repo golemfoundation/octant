@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useCallback, FC } from 'react';
+import React, { useState, useEffect, useCallback, ReactElement } from 'react';
 
 import Img from 'components/core/Img/Img';
 import Modal from 'components/core/Modal/Modal';
 import ProgressStepperSlim from 'components/core/ProgressStepperSlim/ProgressStepperSlim';
-import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
+import MainLayout from 'layouts/MainLayout/MainLayout';
+import useOnboardingStore from 'store/onboarding/store';
 
 import styles from './OnboardingView.module.scss';
 import steps from './steps';
-import { OnboardingViewProps } from './types';
 
-const OnboardingView: FC<OnboardingViewProps> = ({ setIsOnboardingDone }) => {
+const OnboardingView = (): ReactElement => {
+  const { setIsOnboardingDone } = useOnboardingStore();
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const currentStep = steps[currentStepIndex];
 
@@ -28,7 +29,7 @@ const OnboardingView: FC<OnboardingViewProps> = ({ setIsOnboardingDone }) => {
   }
 
   return (
-    <MainLayoutContainer isNavigationVisible={false}>
+    <MainLayout isNavigationVisible={false}>
       <Modal
         header={currentStep.header}
         isOpen
@@ -48,7 +49,7 @@ const OnboardingView: FC<OnboardingViewProps> = ({ setIsOnboardingDone }) => {
           />
         </div>
       </Modal>
-    </MainLayoutContainer>
+    </MainLayout>
   );
 };
 

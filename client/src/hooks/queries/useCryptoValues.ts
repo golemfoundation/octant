@@ -1,21 +1,11 @@
 import { UseQueryResult, useQuery, UseQueryOptions } from 'react-query';
 
-import { apiGetCryptoValues } from 'api/calls/cryptoValues';
+import { Response, apiGetCryptoValues } from 'api/calls/cryptoValues';
 import { QUERY_KEYS } from 'api/queryKeys';
-import { DisplayCurrencies } from 'constants/currencies';
-import { SettingsStore } from 'store/models/settings/types';
-
-type Currencies = {
-  [key in DisplayCurrencies]: number;
-};
-
-export type Response = {
-  ethereum: Currencies;
-  golem: Currencies;
-};
+import { SettingsData } from 'store/settings/types';
 
 export default function useCryptoValues(
-  fiatCurrency: SettingsStore['displayCurrency'],
+  fiatCurrency: SettingsData['displayCurrency'],
   options?: UseQueryOptions<Response, unknown, Response, string[]>,
 ): UseQueryResult<Response | undefined> {
   return useQuery(QUERY_KEYS.cryptoValues(fiatCurrency!), () => apiGetCryptoValues(fiatCurrency!), {

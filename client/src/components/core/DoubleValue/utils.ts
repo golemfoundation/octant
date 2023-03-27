@@ -1,7 +1,8 @@
 import { formatUnits } from 'ethers/lib/utils';
 
+import { Response } from 'api/calls/cryptoValues';
 import { CRYPTO_CURRENCIES_TICKERS, FIAT_CURRENCIES_SYMBOLS } from 'constants/currencies';
-import { Response } from 'hooks/queries/useCryptoValues';
+import { SettingsData } from 'store/settings/types';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import DoubleValueProps from './types';
@@ -15,7 +16,7 @@ export function getValueFiatToDisplay({
 }: {
   cryptoCurrency: DoubleValueProps['cryptoCurrency'];
   cryptoValues?: Response;
-  displayCurrency: DoubleValueProps['displayCurrency'];
+  displayCurrency: NonNullable<SettingsData['displayCurrency']>;
   error: any;
   valueCrypto: DoubleValueProps['valueCrypto'];
 }): undefined | string {
@@ -63,9 +64,9 @@ export function getValuesToDisplay({
 }: {
   cryptoCurrency: DoubleValueProps['cryptoCurrency'];
   cryptoValues?: Response;
-  displayCurrency: DoubleValueProps['displayCurrency'];
+  displayCurrency: NonNullable<SettingsData['displayCurrency']>;
   error: any;
-  isCryptoMainValueDisplay: DoubleValueProps['isCryptoMainValueDisplay'];
+  isCryptoMainValueDisplay: SettingsData['isCryptoMainValueDisplay'];
   valueCrypto: DoubleValueProps['valueCrypto'];
   valueString?: DoubleValueProps['valueString'];
 }): {

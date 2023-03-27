@@ -1,17 +1,16 @@
 import cx from 'classnames';
-import React, { FC } from 'react';
+import React, { ReactElement } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Header from 'components/core/Header/Header';
 import InputCheckbox from 'components/core/InputCheckbox/InputCheckbox';
 import InputSelect from 'components/core/InputSelect/InputSelect';
 import InputText from 'components/core/InputText/InputText';
-import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
+import MainLayout from 'layouts/MainLayout/MainLayout';
+import useSettingsStore from 'store/settings/store';
+import { SettingsData } from 'store/settings/types';
 
 import styles from './SettingsView.module.scss';
-import SettingsViewProps from './types';
-
-import { DisplayCurrencySetPayload } from '../../store/models/settings/types';
 
 const options = [
   { label: 'USD', value: 'usd' },
@@ -22,21 +21,20 @@ const options = [
   { label: 'GBP', value: 'gbp' },
 ];
 
-const SettingsView: FC<SettingsViewProps> = ({
-  isAllocateOnboardingAlwaysVisible,
-  setIsAllocateOnboardingAlwaysVisible,
-  setDisplayCurrency,
-  displayCurrency,
-  setIsCryptoMainValueDisplay,
-  isCryptoMainValueDisplay,
-}) => {
+const SettingsView = (): ReactElement => {
+  const {
+    setDisplayCurrency,
+    setIsAllocateOnboardingAlwaysVisible,
+    setIsCryptoMainValueDisplay,
+    data: { displayCurrency, isAllocateOnboardingAlwaysVisible, isCryptoMainValueDisplay },
+  } = useSettingsStore();
   return (
-    <MainLayoutContainer>
+    <MainLayout>
       <Header text="Settings" />
       <BoxRounded className={styles.box} justifyContent="spaceBetween">
         Choose a display currency
         <InputSelect
-          onChange={option => setDisplayCurrency(option!.value as DisplayCurrencySetPayload)}
+          onChange={option => setDisplayCurrency(option!.value as SettingsData['displayCurrency'])}
           options={options}
           selectedOption={options.find(({ value }) => value === displayCurrency)}
         />
@@ -70,7 +68,7 @@ const SettingsView: FC<SettingsViewProps> = ({
           onChange={event => setIsAllocateOnboardingAlwaysVisible(event.target.checked)}
         />
       </BoxRounded>
-    </MainLayoutContainer>
+    </MainLayout>
   );
 };
 

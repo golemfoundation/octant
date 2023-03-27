@@ -1,9 +1,9 @@
-import { SettingsStore } from '../store/models/settings/types';
+import { SettingsData } from 'store/settings/types';
 
 export const QUERY_KEYS = {
   availableFundsEth: ['availableFundsEth'],
   availableFundsGlm: ['availableFundsGlm'],
-  cryptoValues: (fiatCurrency: NonNullable<SettingsStore['displayCurrency']>): string[] => [
+  cryptoValues: (fiatCurrency: NonNullable<SettingsData['displayCurrency']>): string[] => [
     ...QUERY_KEYS.cryptoValuesRoot,
     fiatCurrency,
   ],
