@@ -2,6 +2,7 @@ import cx from 'classnames';
 import React, { FC } from 'react';
 
 import useCryptoValues from 'hooks/queries/useCryptoValues';
+import useSettingsStore from 'store/settings/store';
 
 import styles from './DoubleValue.module.scss';
 import DoubleValueProps from './types';
@@ -10,19 +11,25 @@ import { getValuesToDisplay } from './utils';
 const DoubleValue: FC<DoubleValueProps> = ({
   className,
   cryptoCurrency,
-  isCryptoMainValueDisplay,
-  displayCurrency,
   textAlignment = 'left',
   valueCrypto,
   valueString,
   variant = 'standard',
 }) => {
+  const {
+    data: { displayCurrency, isCryptoMainValueDisplay },
+  } = useSettingsStore(({ data }) => ({
+    data: {
+      displayCurrency: data.displayCurrency,
+      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
+    },
+  }));
   const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
 
   const values = getValuesToDisplay({
     cryptoCurrency,
     cryptoValues,
-    displayCurrency,
+    displayCurrency: displayCurrency!,
     error,
     isCryptoMainValueDisplay,
     valueCrypto,

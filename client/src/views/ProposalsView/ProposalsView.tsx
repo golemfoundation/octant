@@ -1,20 +1,21 @@
-import React, { FC } from 'react';
+import React, { ReactElement } from 'react';
 
 import ProposalItem from 'components/dedicated/ProposalItem/ProposalItem';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposals from 'hooks/queries/useProposals';
-import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
+import MainLayout from 'layouts/MainLayout/MainLayout';
+import useAllocationsStore from 'store/allocations/store';
 import getSortedElementsByTotalValueOfAllocations from 'utils/getSortedElementsByTotalValueOfAllocations';
 
 import styles from './ProposalsView.module.scss';
-import ProposalsViewProps from './types';
 
-const ProposalsView: FC<ProposalsViewProps> = ({ allocations }) => {
+const ProposalsView = (): ReactElement => {
+  const { data: allocations } = useAllocationsStore();
   const { data: proposals } = useProposals();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { onAddRemoveFromAllocate } = useIdsInAllocation({ allocations, proposals });
+  const { onAddRemoveFromAllocate } = useIdsInAllocation({ allocations: allocations!, proposals });
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
 
   const areMatchedProposalsReady =
@@ -37,20 +38,20 @@ const ProposalsView: FC<ProposalsViewProps> = ({ allocations }) => {
       : proposalsWithRewards;
 
   return (
-    <MainLayoutContainer isLoading={proposals.length === 0 || !areMatchedProposalsReady}>
+    <MainLayout isLoading={proposals.length === 0 || !areMatchedProposalsReady}>
       <div className={styles.list}>
         {proposalsWithRewards.map((proposal, index) => (
           <ProposalItem
             // eslint-disable-next-line react/no-array-index-key
             key={index}
             className={styles.element}
-            isAlreadyAdded={allocations.includes(proposal.address)}
+            isAlreadyAdded={allocations!.includes(proposal.address)}
             onAddRemoveFromAllocate={() => onAddRemoveFromAllocate(proposal.address)}
             {...proposal}
           />
         ))}
       </div>
-    </MainLayoutContainer>
+    </MainLayout>
   );
 };
 

@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { parseUnits } from 'ethers/lib/utils';
-import React, { Fragment, FC } from 'react';
+import React, { Fragment, ReactElement } from 'react';
 import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -12,14 +12,21 @@ import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useUserAllocations from 'hooks/subgraph/allocations/useUserAllocations';
 import useLocks from 'hooks/subgraph/useLocks';
 import useUnlocks from 'hooks/subgraph/useUnlocks';
+import useSettingsStore from 'store/settings/store';
 import { allocate, donation } from 'svg/history';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './History.module.scss';
-import HistoryProps from './types';
 import { sortAllocationsAndLocks } from './utils';
 
-const History: FC<HistoryProps> = ({ displayCurrency, isCryptoMainValueDisplay }) => {
+const History = (): ReactElement => {
+  const {
+    data: { displayCurrency, isCryptoMainValueDisplay },
+  } = useSettingsStore(({ data }) => ({
+    data: {
+      displayCurrency: data.displayCurrency,
+      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
+    },
+  }));
   const { isConnected } = useAccount();
   const { data: dataAllocations } = useUserAllocations();
   const { data: dataLocks } = useLocks();
@@ -54,6 +61,15 @@ const History: FC<HistoryProps> = ({ displayCurrency, isCryptoMainValueDisplay }
           >
             {(() => {
               if (element.type === 'Allocated') {
+                const values = getValuesToDisplay({
+                  cryptoCurrency: 'ethereum',
+                  cryptoValues,
+                  displayCurrency: displayCurrency!,
+                  error,
+                  isCryptoMainValueDisplay,
+                  valueCrypto: element.amount,
+                });
+
                 return (
                   <Fragment>
                     <div className={styles.iconAndTitle}>
@@ -63,7 +79,10 @@ const History: FC<HistoryProps> = ({ displayCurrency, isCryptoMainValueDisplay }
                         <div className={styles.subtitle}>{element.array.length} Projects</div>
                       </div>
                     </div>
-                    <div>{getFormattedEthValue(element.amount).fullString}</div>
+                    <div className={styles.values}>
+                      <div className={styles.primary}>{values.primary}</div>
+                      <div className={styles.secondary}>{values.secondary}</div>
+                    </div>
                   </Fragment>
                 );
               }
@@ -71,7 +90,7 @@ const History: FC<HistoryProps> = ({ displayCurrency, isCryptoMainValueDisplay }
               const values = getValuesToDisplay({
                 cryptoCurrency: 'golem',
                 cryptoValues,
-                displayCurrency,
+                displayCurrency: displayCurrency!,
                 error,
                 isCryptoMainValueDisplay,
                 valueCrypto: parseUnits(element.amount, 'wei'),

@@ -2,7 +2,7 @@ import React, { FC, Fragment, useState } from 'react';
 import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import DoubleValueContainer from 'components/core/DoubleValue/DoubleValueContainer';
+import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import ModalGlmLock from 'components/dedicated/ModalGlmLock/ModalGlmLock';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
@@ -45,12 +45,9 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
         ]}
       >
         {lockType === 'currentEpoch' ? (
-          <DoubleValueContainer
-            cryptoCurrency="golem"
-            valueCrypto={depositEffectiveAtCurrentEpoch}
-          />
+          <DoubleValue cryptoCurrency="golem" valueCrypto={depositEffectiveAtCurrentEpoch} />
         ) : (
-          <DoubleValueContainer cryptoCurrency="golem" valueCrypto={depositsValue} />
+          <DoubleValue cryptoCurrency="golem" valueCrypto={depositsValue} />
         )}
       </BoxRounded>
       <ModalGlmLock

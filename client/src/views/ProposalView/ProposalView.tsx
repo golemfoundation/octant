@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC, Fragment, useEffect } from 'react';
+import React, { ReactElement, Fragment, useEffect } from 'react';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 
 import Button from 'components/core/Button/Button';
@@ -14,8 +14,9 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposals from 'hooks/queries/useProposals';
 import useProposalAllocations from 'hooks/subgraph/allocations/useProposalAllocations';
-import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
+import MainLayout from 'layouts/MainLayout/MainLayout';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
+import useAllocationsStore from 'store/allocations/store';
 import { donorGenericIcon, tick } from 'svg/misc';
 import { chevronLeft } from 'svg/navigation';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
@@ -23,7 +24,6 @@ import triggerToast from 'utils/triggerToast';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
 import styles from './ProposalView.module.scss';
-import ProposalViewProps from './types';
 
 const getCustomNavigationTabs = () => {
   const navigationTabs = [...navigationTabsDefault];
@@ -35,8 +35,9 @@ const getCustomNavigationTabs = () => {
   return navigationTabs;
 };
 
-const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
+const ProposalView = (): ReactElement => {
   const { ipfsGateway } = env;
+  const { data: allocations } = useAllocationsStore();
   const { proposalAddress } = useParams();
   const { data: proposals } = useProposals();
   const { data: proposalAllocations, refetch: refetchProposalAllocations } = useProposalAllocations(
@@ -51,7 +52,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
   const proposal = proposals.find(({ address }) => address === proposalAddress);
 
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
-    allocations,
+    allocations: allocations!,
     proposalName: proposal && proposal.name,
   });
   const shouldMatchedProposalRewardsBeAvailable =
@@ -63,7 +64,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
 
   if (!proposals || !shouldMatchedProposalRewardsBeAvailable) {
     return (
-      <MainLayoutContainer
+      <MainLayout
         classNameBody={styles.bodyLayout}
         isHeaderVisible={false}
         isLoading
@@ -85,7 +86,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
 
   const { description, landscapeImageCID, name, profileImageCID, website } = proposal;
 
-  const buttonProps = allocations.includes(proposalAddress!)
+  const buttonProps = allocations!.includes(proposalAddress!)
     ? {
         Icon: <Svg img={tick} size={1.5} />,
         label: 'Added to Allocate',
@@ -95,7 +96,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
       };
 
   return (
-    <MainLayoutContainer
+    <MainLayout
       classNameBody={styles.bodyLayout}
       isHeaderVisible={false}
       landscapeImage={
@@ -159,7 +160,7 @@ const ProposalView: FC<ProposalViewProps> = ({ allocations }) => {
           </div>
         ))}
       </div>
-    </MainLayoutContainer>
+    </MainLayout>
   );
 };
 

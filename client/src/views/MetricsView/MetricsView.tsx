@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Description from 'components/core/Description/Description';
-import DoubleValueContainer from 'components/core/DoubleValue/DoubleValueContainer';
+import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import Header from 'components/core/Header/Header';
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import MetricsTimeSection from 'components/dedicated/MetricsTimeSection/MetricsTimeSection';
@@ -13,7 +13,7 @@ import useGlmLocked from 'hooks/queries/useGlmLocked';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useLockedRatio from 'hooks/queries/useLockedRatio';
 import useProposals from 'hooks/queries/useProposals';
-import MainLayoutContainer from 'layouts/MainLayout/MainLayoutContainer';
+import MainLayout from 'layouts/MainLayout/MainLayout';
 
 import styles from './MetricsView.module.scss';
 
@@ -38,7 +38,7 @@ const MetricsView = (): ReactElement => {
   };
 
   return (
-    <MainLayoutContainer>
+    <MainLayout>
       <MetricsTimeSection
         className={styles.element}
         currentEpoch={currentEpoch}
@@ -52,10 +52,10 @@ const MetricsView = (): ReactElement => {
           GLM locked by Octant users."
         />
         <BoxRounded alignment="left" className={styles.box} isVertical title="ETH Staked">
-          <DoubleValueContainer cryptoCurrency="ethereum" valueCrypto={ETH_STAKED} />
+          <DoubleValue cryptoCurrency="ethereum" valueCrypto={ETH_STAKED} />
         </BoxRounded>
         <BoxRounded alignment="left" className={styles.box} isVertical title="GLM Locked">
-          <DoubleValueContainer cryptoCurrency="golem" valueCrypto={glmLocked} />
+          <DoubleValue cryptoCurrency="golem" valueCrypto={glmLocked} />
         </BoxRounded>
         <BoxRounded
           alignment="left"
@@ -63,14 +63,14 @@ const MetricsView = (): ReactElement => {
           isVertical
           title="GLM Locked as % of Total Supply"
         >
-          <DoubleValueContainer valueString={lockedRatio} />
+          <DoubleValue valueString={lockedRatio} />
           <ProgressBar
             className={styles.lockedRatioProgressBar}
             progressPercentage={lockedRatio ? parseFloat(lockedRatio) : 0}
           />
         </BoxRounded>
       </div>
-    </MainLayoutContainer>
+    </MainLayout>
   );
 };
 

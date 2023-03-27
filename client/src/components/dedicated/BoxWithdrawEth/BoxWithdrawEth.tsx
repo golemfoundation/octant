@@ -2,7 +2,7 @@ import React, { FC, useState, Fragment } from 'react';
 import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import DoubleValueContainer from 'components/core/DoubleValue/DoubleValueContainer';
+import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import ModalWithdrawEth from 'components/dedicated/ModalWithdrawEth/ModalWithdrawEth';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
 
@@ -28,7 +28,7 @@ const BoxWithdrawEth: FC<UserEthWithdrawProps> = ({ classNameBox }) => {
         isVertical
         title="Available to withdraw"
       >
-        <DoubleValueContainer cryptoCurrency="ethereum" valueCrypto={withdrawableUserEth} />
+        <DoubleValue cryptoCurrency="ethereum" valueCrypto={withdrawableUserEth} />
       </BoxRounded>
       <ModalWithdrawEth
         modalProps={{
