@@ -28,13 +28,15 @@ const middleware = async (req: Request, res: Response) => {
     return res.send(appCache.get(cacheKey));
   }
 
-  const data = await fetch(`${coingecoUrl}${req.originalUrl}`, fetchOptions).then(response =>
-    response.json(),
-  );
-
-  appCache.set(cacheKey, data);
-
-  return res.send(data);
+  try {
+    const data = await fetch(`${coingecoUrl}${req.originalUrl}`, fetchOptions).then(response =>
+      response.json(),
+    );
+    appCache.set(cacheKey, data);
+    return res.send(data);
+  } catch (e) {
+    return res.status(400).end();
+  }
 };
 
 const app = express();
