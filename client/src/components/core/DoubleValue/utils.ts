@@ -1,57 +1,9 @@
-import { formatUnits } from 'ethers/lib/utils';
-
 import { Response } from 'api/calls/cryptoValues';
-import { CRYPTO_CURRENCIES_TICKERS, FIAT_CURRENCIES_SYMBOLS } from 'constants/currencies';
 import { SettingsData } from 'store/settings/types';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
+import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
+import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 
 import DoubleValueProps from './types';
-
-export function getValueFiatToDisplay({
-  cryptoValues,
-  cryptoCurrency,
-  displayCurrency,
-  valueCrypto,
-  error,
-}: {
-  cryptoCurrency: DoubleValueProps['cryptoCurrency'];
-  cryptoValues?: Response;
-  displayCurrency: NonNullable<SettingsData['displayCurrency']>;
-  error: any;
-  valueCrypto: DoubleValueProps['valueCrypto'];
-}): undefined | string {
-  if (error) {
-    return 'Conversion offline';
-  }
-
-  const prefix = FIAT_CURRENCIES_SYMBOLS[displayCurrency] || displayCurrency.toUpperCase();
-
-  if (!cryptoCurrency || !cryptoValues || !displayCurrency || !valueCrypto) {
-    return `${prefix} 0.0`;
-  }
-
-  const exchangeRate = cryptoValues[cryptoCurrency][displayCurrency];
-
-  return `${prefix} ${(parseFloat(formatUnits(valueCrypto)) * exchangeRate).toFixed(2)}`;
-}
-
-export function getValueCryptoToDisplay({
-  valueString,
-  valueCrypto,
-  cryptoCurrency,
-}: {
-  cryptoCurrency: DoubleValueProps['cryptoCurrency'];
-  valueCrypto: DoubleValueProps['valueCrypto'];
-  valueString: DoubleValueProps['valueString'];
-}): string {
-  if (valueString || !cryptoCurrency || !valueCrypto) {
-    return valueString || '0.0';
-  }
-
-  return cryptoCurrency === 'ethereum'
-    ? getFormattedEthValue(valueCrypto).fullString
-    : `${formatUnits(valueCrypto)} ${CRYPTO_CURRENCIES_TICKERS[cryptoCurrency]}`;
-}
 
 export function getValuesToDisplay({
   cryptoCurrency,

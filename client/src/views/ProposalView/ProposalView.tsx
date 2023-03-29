@@ -1,11 +1,12 @@
 import cx from 'classnames';
-import React, { ReactElement, Fragment, useEffect } from 'react';
+import React, { ReactElement, Fragment } from 'react';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 
 import Button from 'components/core/Button/Button';
 import Description from 'components/core/Description/Description';
 import Img from 'components/core/Img/Img';
 import Svg from 'components/core/Svg/Svg';
+import DonorsList from 'components/dedicated/DonorsList/DonorsList';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
@@ -13,15 +14,13 @@ import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThresho
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposals from 'hooks/queries/useProposals';
-import useProposalAllocations from 'hooks/subgraph/allocations/useProposalAllocations';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
-import { donorGenericIcon, tick } from 'svg/misc';
+import { tick } from 'svg/misc';
 import { chevronLeft } from 'svg/navigation';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 import triggerToast from 'utils/triggerToast';
-import truncateEthAddress from 'utils/truncateEthAddress';
 
 import styles from './ProposalView.module.scss';
 
@@ -40,9 +39,6 @@ const ProposalView = (): ReactElement => {
   const { data: allocations } = useAllocationsStore();
   const { proposalAddress } = useParams();
   const { data: proposals } = useProposals();
-  const { data: proposalAllocations, refetch: refetchProposalAllocations } = useProposalAllocations(
-    { proposalAddress },
-  );
   const isDonationAboveThreshold = useIsDonationAboveThreshold(proposalAddress!);
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
@@ -57,10 +53,6 @@ const ProposalView = (): ReactElement => {
   });
   const shouldMatchedProposalRewardsBeAvailable =
     !!currentEpoch && ((currentEpoch > 1 && matchedProposalRewards) || currentEpoch === 1);
-
-  useEffect(() => {
-    refetchProposalAllocations();
-  }, [refetchProposalAllocations]);
 
   if (!proposals || !shouldMatchedProposalRewardsBeAvailable) {
     return (
@@ -147,19 +139,7 @@ const ProposalView = (): ReactElement => {
           {website!.label || website!.url}
         </Button>
       </div>
-      <div className={styles.donors}>
-        <div className={styles.header}>
-          <span>Donors</span>{' '}
-          {proposalAllocations && <div className={styles.count}>{proposalAllocations.length}</div>}
-        </div>
-        {proposalAllocations?.map(({ user }, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <div key={index} className={styles.donor}>
-            <Svg classNameSvg={styles.donorIcon} img={donorGenericIcon} size={2.4} />
-            {truncateEthAddress(user)}
-          </div>
-        ))}
-      </div>
+      <DonorsList proposalAddress={proposalAddress} />
     </MainLayout>
   );
 };
