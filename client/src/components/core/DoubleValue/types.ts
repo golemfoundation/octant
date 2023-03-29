@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
 
-export const DOUBLE_VALUE_VARIANTS = ['standard', 'small'];
+export const DOUBLE_VALUE_VARIANTS = ['standard', 'small'] as const;
 export type DoubleValueVariant = (typeof DOUBLE_VALUE_VARIANTS)[number];
 
 export default interface DoubleValueProps {

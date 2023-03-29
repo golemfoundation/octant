@@ -10,7 +10,9 @@ export const BUTTON_VARIANTS = [
   'iconVertical',
   'link',
   'link2',
-];
+  'link3',
+  'link4',
+] as const;
 
 export type ButtonVariant = (typeof BUTTON_VARIANTS)[number];
 export type ButtonType = ButtonHTMLAttributes<Element>['type'];

@@ -1,0 +1,64 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  background: $color-octant-grey4;
+  margin-top: 4rem;
+  padding-top: 4rem;
+  padding-bottom: $layoutBodyMarginBottom;
+  flex: 1;
+  align-self: stretch;
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: $color-octant-dark;
+    font-size: $font-size-16;
+    font-weight: $font-weight-bold;
+    margin-bottom: 2.4rem;
+
+    .count {
+      display: flex;
+      align-items: center;
+      height: 2.4rem;
+      font-size: $font-size-12;
+      color: $color-white;
+      background: $color-octant-dark;
+      border-radius: $border-radius-10;
+      margin: 0 0 0 1rem;
+      padding: 0 1rem;
+    }
+  }
+
+  .donor {
+    display: flex;
+    align-items: center;
+    font-size: $font-size-14;
+    font-weight: $font-weight-semibold;
+    color: $color-octant-grey6;
+
+    &:not(:last-child) {
+      margin-bottom: 0.8rem;
+    }
+
+    .address {
+      flex: 1;
+      text-align: left;
+    }
+  }
+
+  .identicon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: $border-radius-10;
+    background: $color-white;
+    margin-right: 1.5rem;
+  }
+}
+
+.buttonDonors {
+  text-align: left;
+}
