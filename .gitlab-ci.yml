@@ -22,7 +22,7 @@ Build:
       paths:
         - contracts/.yarn
         - contracts/artifacts
-        - contracts/typechain-types
+        - contracts/typechain
         - contracts/node_modules
       policy: pull-push
 
@@ -57,7 +57,7 @@ Lint and typecheck:
       paths:
         - contracts/.yarn
         - contracts/artifacts
-        - contracts/typechain-types
+        - contracts/typechain
       policy: pull
     - key: $CI_COMMIT_REF_SLUG-client-subgraph-fiatserver-yarn.lock
       paths:
@@ -89,7 +89,7 @@ Contracts unit tests:
         - contracts/node_modules
         - contracts/.yarn
         - contracts/artifacts
-        - contracts/typechain-types
+        - contracts/typechain
       policy: pull
   script:
     - cd contracts
@@ -146,7 +146,7 @@ Contracts deploy:
       paths:
         - contracts/.yarn
         - contracts/artifacts
-        - contracts/typechain-types
+        - contracts/typechain
       policy: pull
   script:
     - cd contracts

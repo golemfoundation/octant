@@ -1,11 +1,10 @@
+import { Proposals, Proposals__factory } from 'octant-typechain-types';
 import { useMemo } from 'react';
 
 import env from 'env';
 
 import { providerGoerli } from './providers';
 import UseContractParams from './types';
-
-import { Proposals, Proposals__factory } from '../../typechain-types';
 
 export default function useContractProposals({
   tokenAddress = env.contracts.proposalsAddress,

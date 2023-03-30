@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+import { IAllocationsStorage } from 'octant-typechain-types';
 import { UseQueryOptions, UseQueryResult, useQuery } from 'react-query';
 import { useAccount } from 'wagmi';
 
@@ -6,8 +7,6 @@ import { QUERY_KEYS } from 'api/queryKeys';
 import useContractAllocationsStorage from 'hooks/contracts/useContractAllocationsStorage';
 
 import useCurrentEpoch from './useCurrentEpoch';
-
-import { IAllocationsStorage } from '../../typechain-types';
 
 export type UserAllocation = { allocation: BigNumber; proposalAddress: string };
 

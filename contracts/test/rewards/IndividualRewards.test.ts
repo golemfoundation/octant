@@ -6,7 +6,7 @@ import { ethers } from 'hardhat';
 import { testScenarios } from './rewardsTestParameters';
 
 import { OCTANT_ORACLE, REWARDS, TRACKER } from '../../helpers/constants';
-import { OctantOracle, Rewards, Tracker } from '../../typechain-types';
+import { OctantOracle, Rewards, Tracker } from '../../typechain';
 import { makeTestsEnv } from '../helpers/make-tests-env';
 
 makeTestsEnv(REWARDS, testEnv => {

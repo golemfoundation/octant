@@ -3,7 +3,7 @@ import { parseEther } from 'ethers/lib/utils';
 import { ethers } from 'hardhat';
 
 import { ALLOCATIONS_STORAGE } from '../../helpers/constants';
-import { AllocationsStorage } from '../../typechain-types';
+import { AllocationsStorage } from '../../typechain';
 import { makeTestsEnv } from '../helpers/make-tests-env';
 
 makeTestsEnv(ALLOCATIONS_STORAGE, testEnv => {

@@ -23,7 +23,7 @@ import {
   PayoutsManager,
   Tracker,
   WithdrawalsTarget,
-} from '../typechain-types';
+} from '../typechain';
 
 // This function needs to be declared this way, otherwise it's not understood by test runner.
 // eslint-disable-next-line func-names

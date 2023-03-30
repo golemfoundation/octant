@@ -9,7 +9,7 @@ import {
   increaseNextBlockTimestamp,
   setNextBlockTimestamp,
 } from '../../helpers/misc-utils';
-import { Epochs } from '../../typechain-types';
+import { Epochs } from '../../typechain';
 import { makeTestsEnv } from '../helpers/make-tests-env';
 
 makeTestsEnv(EPOCHS, testEnv => {

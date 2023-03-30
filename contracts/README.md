@@ -63,6 +63,14 @@ Send Test GLM.
 npx hardhat --network goerli send-glm --recipient <recipient address>
 ```
 
+## Publish typechain types
+Login to Octant npm account, update a version in `typechain/package.json` and run following commands:
+```bash
+yarn compile
+cd typechain
+npm publish
+```
+
 ## Known technical problems
 
 Root `package.json` `yarn postinstall` command replaces `@nomiclabs/hardhat-ethers` with `hardhat-deploy-ethers`. This is due to the fact that the first package, although essential declares different methods for `ethers` than the latter package, causing unexpected type collision.

@@ -14,7 +14,7 @@
     "eslint:fix": "yarn prettier && yarn eslint --fix",
     "install:rootpackages": "cd .. && yarn install && cd client",
     "predev": "yarn install:rootpackages && yarn install",
-    "preinstall": "yarn install:rootpackages && yarn typechain:synchronize",
+    "preinstall": "yarn install:rootpackages",
     "prettier": "yarn prettier:js --loglevel silent && yarn prettier:ts --loglevel silent",
     "prettier:js": "yarn prettier:js:pure './**/*.{js,jsx}'",
     "prettier:js:pure": "prettier --write",
@@ -22,11 +22,7 @@
     "prettier:ts:pure": "prettier --parser typescript --write",
     "preview": "vite preview",
     "test": "TZ=UTC jest",
-    "type-check": "tsc --noEmit true",
-    "typechain:copy": "cp -r ../contracts/typechain-types ./src/typechain-types",
-    "typechain:install": "cd ../contracts && yarn clean && yarn compile && cd ../client",
-    "typechain:remove": "rm -rf ./src/typechain-types",
-    "typechain:synchronize": "yarn typechain:remove && yarn typechain:copy"
+    "type-check": "tsc --noEmit true"
   },
   "dependencies": {
     "@apollo/client": "^3.7.4",
@@ -37,7 +33,7 @@
     "axios": "^0.27.2",
     "classnames": "^2.3.2",
     "date-fns": "^2.29.3",
-    "ethers": "^5",
+    "ethers": "^5.7.2",
     "graphql": "^16.6.0",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
@@ -48,6 +44,7 @@
     "react-select": "^5.7.0",
     "react-toastify": "^9.1.1",
     "reselect": "^4.1.7",
+    "octant-typechain-types": "^0.0.1",
     "wagmi": "^0.12.6",
     "zustand": "^4.3.6"
   },

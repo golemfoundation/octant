@@ -1,11 +1,10 @@
+import { Allocations, Allocations__factory } from 'octant-typechain-types';
 import { useMemo } from 'react';
 
 import env from 'env';
 
 import { providerGoerli } from './providers';
 import UseContractParams from './types';
-
-import { Allocations, Allocations__factory } from '../../typechain-types';
 
 export default function useContractAllocations({
   tokenAddress = env.contracts.allocationsAddress,

@@ -2,7 +2,7 @@ import { parseEther } from 'ethers/lib/utils';
 import { task } from 'hardhat/config';
 
 import { OCTANT_ORACLE } from '../helpers/constants';
-import { Epochs, OctantOracle, WithdrawalsTargetV3 } from '../typechain-types';
+import { Epochs, OctantOracle, WithdrawalsTargetV3 } from '../typechain';
 
 /* eslint no-console: 0 */
 

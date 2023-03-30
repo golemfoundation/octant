@@ -1,10 +1,9 @@
+import { Deposits, Deposits__factory } from 'octant-typechain-types';
 import { useMemo } from 'react';
 
 import env from 'env';
 
 import UseContractParams from './types';
-
-import { Deposits, Deposits__factory } from '../../typechain-types';
 
 export default function useContractDeposits({
   tokenAddress = env.contracts.depositsAddress,

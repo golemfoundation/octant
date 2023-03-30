@@ -34,7 +34,7 @@ import {
   Token,
   Tracker,
   WithdrawalsTarget,
-} from '../../typechain-types';
+} from '../../typechain';
 
 chai.use(smock.matchers);
 

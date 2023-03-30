@@ -2,7 +2,7 @@ import { task } from 'hardhat/config';
 
 import { GOERLI_GLM_FAUCET } from '../env';
 import { FAUCET } from '../helpers/constants';
-import { TestGLMFaucet } from '../typechain-types';
+import { TestGLMFaucet } from '../typechain';
 
 task('send-glm', 'Send Test GLM to given address')
   .addParam('recipient', 'Recipient of GLMs')

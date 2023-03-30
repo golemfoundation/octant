@@ -14,7 +14,7 @@ import {
   Proposals,
   Rewards,
   WithdrawalsTargetV3,
-} from '../../typechain-types';
+} from '../../typechain';
 import { makeTestsEnv } from '../helpers/make-tests-env';
 
 makeTestsEnv(ALLOCATIONS, testEnv => {

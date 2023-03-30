@@ -3,7 +3,7 @@ import { task } from 'hardhat/config';
 /* eslint no-console: 0 */
 
 import { WITHDRAWALS_TARGET } from '../helpers/constants';
-import { WithdrawalsTarget } from '../typechain-types';
+import { WithdrawalsTarget } from '../typechain';
 
 task('target-check', 'Check version of target at particular addres')
   .addParam('address', 'Address of the proxy', '0x6D699Cb950cc1e33D25C179F67DF6a688EaCd0a3')

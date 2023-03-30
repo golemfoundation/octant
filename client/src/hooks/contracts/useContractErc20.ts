@@ -1,10 +1,9 @@
+import { ERC20, ERC20__factory } from 'octant-typechain-types';
 import { useMemo } from 'react';
 
 import env from 'env';
 
 import UseContractParams from './types';
-
-import { ERC20, ERC20__factory } from '../../typechain-types';
 
 export default function useContractErc20({
   signerOrProvider,
