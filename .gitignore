@@ -1,7 +1,7 @@
 .env
-**/.idea
-.yarn
-node_modules
+.idea/
+.yarn/
+node_modules/
 
 #logs
 npm-debug.log*

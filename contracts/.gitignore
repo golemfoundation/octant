@@ -1,9 +1,5 @@
-.env
-.idea
-.yarn
 coverage
 coverage.json
-node_modules
 
 # Hardhat files
 .docs
@@ -13,8 +9,3 @@ cache
 cache-zk
 deployments
 typechain-types
-
-#logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
