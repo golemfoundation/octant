@@ -1,0 +1,22 @@
+node_modules/
+.env
+.yarn/
+
+.dockerignore
+.gitignore
+.eslintrc.js
+README.md
+dist/
+jest.config.js
+nix/
+setupTests.js
+shell.nix
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*

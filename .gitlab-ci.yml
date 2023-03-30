@@ -227,6 +227,7 @@ Build container:
     matrix:
       - SERVICE:
           - coin-prices-server
+          - client
   image:
     name: gcr.io/kaniko-project/executor:$KANIKO_VERSION-debug
     entrypoint: [""]

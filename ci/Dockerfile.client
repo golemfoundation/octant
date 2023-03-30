@@ -1,0 +1,7 @@
+FROM node:16-alpine
+WORKDIR /app
+COPY ./ ./
+RUN yarn install --ignore-scripts --frozen-lockfile && yarn cache clean
+
+EXPOSE 4173
+ENTRYPOINT [ "yarn", "start" ]
