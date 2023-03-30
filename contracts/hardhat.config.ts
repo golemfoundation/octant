@@ -1,5 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import '@graphprotocol/hardhat-graph';
 import '@nomicfoundation/hardhat-chai-matchers';
 import '@typechain/hardhat';
 import 'hardhat-deploy';

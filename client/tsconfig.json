@@ -28,6 +28,9 @@
     "strict": true,
     "target": "es2022"
   },
+  "exclude": [
+    "src/typechain-types/**/*",
+  ],
   "include": [
     "src/**/*"
   ]

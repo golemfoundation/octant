@@ -1,4 +1,13 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+cd client
+yarn install
+yarn type-check
+cd ../contracts
+yarn install
+yarn type-check
+cd ../coin-prices-server
+yarn install
+
 yarn type-check

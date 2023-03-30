@@ -5,7 +5,10 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "moduleResolution": "Node",
+    "moduleResolution": "node",
     "skipLibCheck": true
-  }
+  },
+  "exclude": [
+    "dist/**/*"
+  ]
 }

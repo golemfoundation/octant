@@ -3,8 +3,8 @@ import { ethers, deployments } from 'hardhat';
 
 import { OCTANT_ORACLE } from '../../helpers/constants';
 import { forwardEpochs } from '../../helpers/epochs-utils';
-import { makeTestsEnv } from '../helpers/make-tests-env';
 import { WithdrawalsTargetV3 } from '../../typechain-types';
+import { makeTestsEnv } from '../helpers/make-tests-env';
 
 interface OracleFeed {
   beaconChain: number;

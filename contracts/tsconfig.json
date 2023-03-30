@@ -7,5 +7,4 @@
     "strict": true,
     "skipLibCheck": true,
   },
-  "exclude": ["client", "contracts", "coin-prices-server", "subgraph"],
 }

@@ -20,27 +20,30 @@ Build:
       policy: pull-push
     - key: $CI_COMMIT_REF_SLUG-contracts
       paths:
-        - .yarn
-        - artifacts
-        - typechain-types
+        - contracts/.yarn
+        - contracts/artifacts
+        - contracts/typechain-types
+        - contracts/node_modules
       policy: pull-push
 
     - key: $CI_COMMIT_REF_SLUG-client-subgraph-fiatserver-yarn.lock
       paths:
         - client/node_modules
-        - crypto-server/node_modules
+        - coin-prices-server/node_modules
         - subgraph/node_modules
       policy: pull-push
 
   script:
     - apt-get update && apt-get install -y --no-install-recommends git --reinstall ca-certificates
+    - yarn install
+    - cd contracts
     - yarn install --non-interactive --cache-folder .yarn
     - yarn compile
-    - cd client
+    - cd ../client
     - yarn install --non-interactive --cache-folder .yarn
     - cd ../subgraph
     - yarn install --non-interactive --cache-folder .yarn
-    - cd ../crypto-server
+    - cd ../coin-prices-server
     - yarn install --non-interactive --cache-folder .yarn
 
 Lint and typecheck:
@@ -52,22 +55,25 @@ Lint and typecheck:
       policy: pull
     - key: $CI_COMMIT_REF_SLUG-contracts
       paths:
-        - .yarn
-        - artifacts
-        - typechain-types
+        - contracts/.yarn
+        - contracts/artifacts
+        - contracts/typechain-types
       policy: pull
     - key: $CI_COMMIT_REF_SLUG-client-subgraph-fiatserver-yarn.lock
       paths:
         - client/node_modules
       policy: pull
   script:
-    - yarn eslint
-    - yarn type-check
-    - cd client
+    - yarn install
+    - cd contracts
     - yarn install
     - yarn eslint
     - yarn type-check
-    - cd ../crypto-server
+    - cd ../client
+    - yarn install
+    - yarn eslint
+    - yarn type-check
+    - cd ../coin-prices-server
     - yarn install
     - yarn eslint
     - yarn type-check
@@ -78,17 +84,15 @@ Lint and typecheck:
 Contracts unit tests:
   stage: test
   cache:
-    - key: $CI_COMMIT_REF_SLUG-yarn.lock
-      paths:
-        - node_modules
-      policy: pull
     - key: $CI_COMMIT_REF_SLUG-contracts
       paths:
-        - .yarn
-        - artifacts
-        - typechain-types
+        - contracts/node_modules
+        - contracts/.yarn
+        - contracts/artifacts
+        - contracts/typechain-types
       policy: pull
   script:
+    - cd contracts
     - yarn test
     - yarn docs
 
@@ -122,7 +126,7 @@ Client unit tests:
 #   cache:
 #     - key: $CI_COMMIT_REF_SLUG-contracts
 #       paths:
-#         - artifacts
+#         - contracts/artifacts
 #   script:
 #     - cd oracle
 #     - pip install -r requirements.txt
@@ -140,11 +144,12 @@ Contracts deploy:
       policy: pull
     - key: $CI_COMMIT_REF_SLUG-contracts
       paths:
-        - .yarn
-        - artifacts
-        - typechain-types
+        - contracts/.yarn
+        - contracts/artifacts
+        - contracts/typechain-types
       policy: pull
   script:
+    - cd contracts
     - yarn deploy:goerli
 
 pages:
@@ -154,6 +159,7 @@ pages:
       when: manual
   script:
     - apt-get update && apt-get install -y --no-install-recommends git --reinstall ca-certificates
+    - cd contracts
     - yarn install --non-interactive --cache-folder .yarn
     - yarn compile
     - cd client

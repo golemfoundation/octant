@@ -9,22 +9,24 @@
   "scripts": {
     "build": "vite build",
     "build:staging": "vite build --mode staging",
-    "copy-typechain": "cp -r ../typechain-types ./src/typechain-types",
-    "dev": "yarn predev && vite",
+    "dev": "yarn install && vite",
     "eslint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "eslint:fix": "yarn prettier && yarn eslint --fix",
-    "install-root-packages": "cd .. && yarn clean && yarn install && yarn compile && cd client",
-    "predev": "yarn install",
-    "preinstall": "yarn install-root-packages && yarn remove-typechain && yarn copy-typechain",
+    "install:rootpackages": "cd .. && yarn install && cd client",
+    "predev": "yarn install:rootpackages && yarn install",
+    "preinstall": "yarn install:rootpackages && yarn typechain:synchronize",
     "prettier": "yarn prettier:js --loglevel silent && yarn prettier:ts --loglevel silent",
     "prettier:js": "yarn prettier:js:pure './**/*.{js,jsx}'",
     "prettier:js:pure": "prettier --write",
     "prettier:ts": "yarn prettier:ts:pure './**/*.{ts,tsx}'",
     "prettier:ts:pure": "prettier --parser typescript --write",
     "preview": "vite preview",
-    "remove-typechain": "rm -rf ./src/typechain-types",
     "test": "TZ=UTC jest",
-    "type-check": "tsc --noEmit true"
+    "type-check": "tsc --noEmit true",
+    "typechain:copy": "cp -r ../contracts/typechain-types ./src/typechain-types",
+    "typechain:install": "cd ../contracts && yarn clean && yarn compile && cd ../client",
+    "typechain:remove": "rm -rf ./src/typechain-types",
+    "typechain:synchronize": "yarn typechain:remove && yarn typechain:copy"
   },
   "dependencies": {
     "@apollo/client": "^3.7.4",
@@ -79,7 +81,7 @@
     "rollup-plugin-visualizer": "^5.9.0",
     "sass": "^1.57.1",
     "ts-jest": "^29.0.5",
-    "typescript": "^4.9.4",
+    "typescript": "^5.0.2",
     "vite": "^4.0.4"
   },
   "engines": {

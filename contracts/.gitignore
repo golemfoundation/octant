@@ -1,0 +1,21 @@
+.env
+.idea
+.yarn
+coverage
+coverage.json
+node_modules
+
+# Hardhat files
+.docs
+artifacts
+artifacts-zk
+cache
+cache-zk
+deployments
+typechain
+typechain-types
+
+#logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
