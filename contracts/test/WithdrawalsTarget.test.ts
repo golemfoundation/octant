@@ -6,7 +6,7 @@ import { makeTestsEnv } from './helpers/make-tests-env';
 
 import { WITHDRAWALS_TARGET } from '../helpers/constants';
 import { forwardEpochs } from '../helpers/epochs-utils';
-import { WithdrawalsTargetV3 } from '../typechain-types';
+import { WithdrawalsTargetV3 } from '../typechain';
 
 /* eslint no-console: 0 */
 

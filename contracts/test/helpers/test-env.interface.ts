@@ -14,7 +14,7 @@ import {
   Token,
   Tracker,
   WithdrawalsTarget,
-} from '../../typechain-types';
+} from '../../typechain';
 
 export type Signers = Record<string, SignerWithAddress>;
 

@@ -13,13 +13,7 @@ import {
   REWARDS,
   TRACKER,
 } from '../../helpers/constants';
-import {
-  AllocationsStorage,
-  OctantOracle,
-  Proposals,
-  Rewards,
-  Tracker,
-} from '../../typechain-types';
+import { AllocationsStorage, OctantOracle, Proposals, Rewards, Tracker } from '../../typechain';
 import { makeTestsEnv } from '../helpers/make-tests-env';
 
 makeTestsEnv(REWARDS, testEnv => {

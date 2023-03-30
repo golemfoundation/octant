@@ -7,7 +7,7 @@ import { makeTestsEnv } from './helpers/make-tests-env';
 
 import { PAYOUTS, PAYOUTS_MANAGER } from '../helpers/constants';
 import { forwardEpochs, forwardAfterDecisionWindow } from '../helpers/epochs-utils';
-import { Payouts, PayoutsManager, Rewards } from '../typechain-types';
+import { Payouts, PayoutsManager, Rewards } from '../typechain';
 
 makeTestsEnv(PAYOUTS, testEnv => {
   let rewards: FakeContract<Rewards>;

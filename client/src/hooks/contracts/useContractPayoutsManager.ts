@@ -1,11 +1,10 @@
+import { PayoutsManager__factory, PayoutsManager } from 'octant-typechain-types';
 import { useMemo } from 'react';
 
 import env from 'env';
 
 import { providerGoerli } from './providers';
 import UseContractParams from './types';
-
-import { PayoutsManager__factory, PayoutsManager } from '../../typechain-types';
 
 export default function useContractPayoutsManager({
   tokenAddress = env.contracts.payoutsManagerAddress,

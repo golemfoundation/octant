@@ -1,12 +1,11 @@
 import { MaxUint256 } from '@ethersproject/constants';
 import { BigNumber, ContractTransaction, Signer } from 'ethers';
+import { ERC20 } from 'octant-typechain-types';
 import { useCallback, useState } from 'react';
 
 import useContractErc20 from 'hooks/contracts/useContractErc20';
 
 import useTokenAllowance from './useTokenAllowance';
-
-import { ERC20 } from '../../typechain-types';
 
 // eslint-disable-next-line no-shadow
 export enum ApprovalState {

@@ -3,7 +3,7 @@ import { ethers, deployments } from 'hardhat';
 
 import { OCTANT_ORACLE } from '../../helpers/constants';
 import { forwardEpochs } from '../../helpers/epochs-utils';
-import { WithdrawalsTargetV3 } from '../../typechain-types';
+import { WithdrawalsTargetV3 } from '../../typechain';
 import { makeTestsEnv } from '../helpers/make-tests-env';
 
 interface OracleFeed {

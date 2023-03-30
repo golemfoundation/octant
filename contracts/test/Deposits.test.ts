@@ -5,7 +5,7 @@ import { ethers } from 'hardhat';
 import { makeTestsEnv } from './helpers/make-tests-env';
 
 import { DEPOSITS, TOKEN, TRACKER_WRAPPER } from '../helpers/constants';
-import { Deposits, Tracker, TrackerWrapper } from '../typechain-types';
+import { Deposits, Tracker, TrackerWrapper } from '../typechain';
 
 makeTestsEnv(DEPOSITS, testEnv => {
   async function setupDeposits(): Promise<{

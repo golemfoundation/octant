@@ -77,6 +77,10 @@ const config: HardhatUserConfig = {
     },
     version: '0.8.9',
   },
+  typechain: {
+    outDir: 'typechain/typechain-types',
+    target: 'ethers-v5',
+  },
   verify: {
     etherscan: {
       apiKey: ETHERSCAN_API_KEY,

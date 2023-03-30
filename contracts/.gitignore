@@ -12,7 +12,6 @@ artifacts-zk
 cache
 cache-zk
 deployments
-typechain
 typechain-types
 
 #logs

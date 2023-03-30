@@ -4,7 +4,7 @@ import { deployments, ethers } from 'hardhat';
 
 import { REWARDS } from '../../helpers/constants';
 import { forwardEpochs } from '../../helpers/epochs-utils';
-import { WithdrawalsTargetV3 } from '../../typechain-types';
+import { WithdrawalsTargetV3 } from '../../typechain';
 import { makeTestsEnv } from '../helpers/make-tests-env';
 
 makeTestsEnv(REWARDS, testEnv => {

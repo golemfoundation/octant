@@ -9,7 +9,7 @@ import {
   Epochs,
   OctantOracle,
   WithdrawalsTargetV3,
-} from '../typechain-types';
+} from '../typechain';
 
 task('prepare-local-test-env', 'Prepare local test environment')
   .setDescription(
