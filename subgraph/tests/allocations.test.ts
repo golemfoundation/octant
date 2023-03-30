@@ -35,7 +35,6 @@ export function createAllocatedEvent(
   allocatedEvent.parameters.push(userParam);
   allocatedEvent.parameters.push(allocationStructParam);
   allocatedEvent.logIndex = BigInt.fromI32(logIndex);
-
   return allocatedEvent;
 }
 

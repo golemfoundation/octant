@@ -7,7 +7,7 @@ import useContractAllocationsStorage from 'hooks/contracts/useContractAllocation
 
 import useCurrentEpoch from './useCurrentEpoch';
 
-import { IAllocationsStorage } from '../../../../typechain-types';
+import { IAllocationsStorage } from '../../typechain-types';
 
 export type UserAllocation = { allocation: BigNumber; proposalAddress: string };
 

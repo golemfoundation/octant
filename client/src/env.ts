@@ -35,7 +35,7 @@ const env = {
   },
   cryptoValuesEndpoint:
     // @ts-expect-error TS does not understand the way vite imports envs.
-    import.meta.VITE_CRYPTO_VALUES_ENDPOINT || 'https://crypto-server.octant.world/',
+    import.meta.env.VITE_CRYPTO_VALUES_ENDPOINT || 'https://crypto-server.octant.world/',
   ipfsGateway:
     // @ts-expect-error TS does not understand the way vite imports envs.
     import.meta.env.IPFS_GATEWAY || 'https://octant.infura-ipfs.io/ipfs/',

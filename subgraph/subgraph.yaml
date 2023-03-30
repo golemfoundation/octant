@@ -8,7 +8,7 @@ dataSources:
     source:
       abi: Allocations
       address: "0x17e1cC72420909944B65266D724eB4836A5fd987"
-      startBlock: 8414200
+      startBlock: 8415400
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -28,7 +28,7 @@ dataSources:
     source:
       abi: Deposits
       address: "0x9b89577bE6dB818897d65Ff2988dacF8026206E7"
-      startBlock: 8414200
+      startBlock: 8415400
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

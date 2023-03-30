@@ -1,7 +1,10 @@
-.env
-**/.idea
-.yarn
 node_modules
+
+build
+data
+generated
+networks.json
+tests/.*
 
 #logs
 npm-debug.log*
