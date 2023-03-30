@@ -28,13 +28,22 @@ const middleware = async (req: Request, res: Response) => {
     return res.send(appCache.get(cacheKey));
   }
 
+  let data;
   try {
-    const data = await fetch(`${coingecoUrl}${req.originalUrl}`, fetchOptions).then(response =>
-      response.json(),
-    );
+    data = await fetch(`${coingecoUrl}${req.originalUrl}`, fetchOptions);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.log(1, { originalUrl: req.originalUrl, url: req.url }, { e });
+    return res.status(400).end();
+  }
+
+  try {
+    data = await data.json();
     appCache.set(cacheKey, data);
     return res.send(data);
   } catch (e) {
+    // eslint-disable-next-line no-console
+    console.log(2, { data }, { originalUrl: req.originalUrl, url: req.url }, { e });
     return res.status(400).end();
   }
 };
