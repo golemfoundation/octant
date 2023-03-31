@@ -9,128 +9,169 @@ stages:
   - test
   - deploy
 
-image: node:16-bullseye
+image: node:16-bullseye-slim
 
-Build:
+.rules:
+  on_mr:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  on_push_to_default_branch:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+.scripts:
+  install_packages:
+    - apt update && apt install -y --no-install-recommends git ca-certificates
+  install_libpq5:
+    - apt update && apt install -y --no-install-recommends libpq5
+  yarn_install:
+    - yarn install --cache-folder .yarn --non-interactive --frozen-lockfile
+
+Build contracts:
   stage: build
+  rules:
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+  script:
+    - !reference [.scripts, install_packages]
+    - ci/build_root.sh
+    - ci/build_contracts.sh
   cache:
-    - key: $CI_COMMIT_REF_SLUG-yarn.lock
+    - key: $CI_COMMIT_REF_SLUG-yarn-root
       paths:
         - node_modules
-      policy: pull-push
-    - key: $CI_COMMIT_REF_SLUG-contracts
+        - .yarn
+    - key: $CI_COMMIT_REF_SLUG-yarn-contracts
       paths:
         - contracts/.yarn
-        - contracts/artifacts
-        - contracts/typechain
         - contracts/node_modules
-      policy: pull-push
+  artifacts:
+    name: contracts
+    paths:
+      - contracts/artifacts
+      - contracts/typechain
+    expire_in: 30 days
 
-    - key: $CI_COMMIT_REF_SLUG-client-subgraph-fiatserver-yarn.lock
-      paths:
-        - client/node_modules
-        - coin-prices-server/node_modules
-        - subgraph/node_modules
-      policy: pull-push
-
+Build services:
+  stage: build
+  parallel:
+    matrix:
+      - SERVICE:
+          - client
+          - coin-prices-server
+          - subgraph
+  rules:
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+  dependencies:
+    - Build contracts
+  needs:
+    - Build contracts
   script:
-    - apt-get update && apt-get install -y --no-install-recommends git --reinstall ca-certificates
-    - yarn install
-    - cd contracts
-    - yarn install --non-interactive --cache-folder .yarn
-    - yarn compile
-    - cd ../client
-    - yarn install --non-interactive --cache-folder .yarn
-    - cd ../subgraph
-    - yarn install --non-interactive --cache-folder .yarn
-    - cd ../coin-prices-server
-    - yarn install --non-interactive --cache-folder .yarn
+    - !reference [.scripts, install_packages]
+    - ci/build_$SERVICE.sh
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-yarn-root
+      paths:
+        - node_modules
+        - .yarn
+      policy: pull
+    - key: $CI_COMMIT_REF_SLUG-yarn-$SERVICE
+      paths:
+        - $SERVICE/.yarn
+        - $SERVICE/node-modules
 
 Lint and typecheck:
   stage: lint_and_typecheck
+  parallel:
+    matrix:
+      - SERVICE:
+          - contracts
+          - client
+          - coin-prices-server
+          - subgraph
+  rules:
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+  script:
+    - cd $SERVICE
+    - !reference [ .scripts, yarn_install ]
+    - yarn eslint
+    - yarn type-check
   cache:
-    - key: $CI_COMMIT_REF_SLUG-yarn.lock
+    - key: $CI_COMMIT_REF_SLUG-yarn-root
       paths:
         - node_modules
+        - .yarn
       policy: pull
-    - key: $CI_COMMIT_REF_SLUG-contracts
+    - key: $CI_COMMIT_REF_SLUG-yarn-$SERVICE
       paths:
-        - contracts/.yarn
-        - contracts/artifacts
-        - contracts/typechain
+        - $SERVICE/.yarn
+        - $SERVICE/node-modules
       policy: pull
-    - key: $CI_COMMIT_REF_SLUG-client-subgraph-fiatserver-yarn.lock
-      paths:
-        - client/node_modules
-      policy: pull
-  script:
-    - yarn install
-    - cd contracts
-    - yarn install
-    - yarn eslint
-    - yarn type-check
-    - cd ../client
-    - yarn install
-    - yarn eslint
-    - yarn type-check
-    - cd ../coin-prices-server
-    - yarn install
-    - yarn eslint
-    - yarn type-check
-    - cd ../subgraph
-    - yarn codegen
-    - yarn eslint
 
-Contracts unit tests:
+Unit tests:
   stage: test
-  cache:
-    - key: $CI_COMMIT_REF_SLUG-contracts
-      paths:
-        - contracts/node_modules
-        - contracts/.yarn
-        - contracts/artifacts
-        - contracts/typechain
-      policy: pull
+  parallel:
+    matrix:
+      - SERVICE:
+          - contracts
+          - client
+          - coin-prices-server
+          - subgraph
+  rules:
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+  dependencies:
+    - Build contracts
   script:
-    - cd contracts
+    - cd $SERVICE
+    - !reference [ .scripts, install_libpq5 ]
+    - !reference [ .scripts, yarn_install ]
     - yarn test
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-yarn-root
+      paths:
+        - node_modules
+        - .yarn
+      policy: pull
+    - key: $CI_COMMIT_REF_SLUG-yarn-$SERVICE
+      paths:
+        - $SERVICE/.yarn
+        - $SERVICE/node-modules
+      policy: pull
+
+Documentation:
+  stage: test
+  parallel:
+    matrix:
+      - SERVICE:
+          - contracts
+  rules:
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+  dependencies:
+    - Build contracts
+  script:
+    - cd $SERVICE
+    - !reference [ .scripts, yarn_install ]
     - yarn docs
-
-Subgraph unit tests:
-  stage: test
   cache:
-    - key: $CI_COMMIT_REF_SLUG-client-subgraph-fiatserver-yarn.lock
+    - key: $CI_COMMIT_REF_SLUG-yarn-root
       paths:
-        - subgraph/node_modules
+        - node_modules
+        - .yarn
       policy: pull
-  script:
-    - apt-get update && apt-get install libpq5 -y
-    - cd subgraph
-    - yarn codegen
-    - yarn test
-
-Client unit tests:
-  stage: test
-  cache:
-    - key: $CI_COMMIT_REF_SLUG-client-subgraph-fiatserver-yarn.lock
+    - key: $CI_COMMIT_REF_SLUG-yarn-$SERVICE
       paths:
-        - client/node_modules
+        - $SERVICE/.yarn
+        - $SERVICE/node-modules
       policy: pull
-  script:
-    - cd client
-    - yarn test
+  artifacts:
+    name: $SERVICE_docs
+    paths:
+      - $SERVICE/.docs/
+    expire_in: 30 days
 
-# Oracle unit tests:
-#   stage: test
-#   image: python:3.9.15-slim
-#   cache:
-#     - key: $CI_COMMIT_REF_SLUG-contracts
-#       paths:
-#         - contracts/artifacts
-#   script:
-#     - cd oracle
-#     - pip install -r requirements.txt
-#     - pytest -v --ignore=test_integration.py
+# TODO To be removed (mslomnicki)
 
 Contracts deploy:
   stage: deploy
@@ -138,15 +179,15 @@ Contracts deploy:
     - if: '$CI_COMMIT_REF_NAME == "master"'
       when: manual
   cache:
-    - key: $CI_COMMIT_REF_SLUG-yarn.lock
+    - key: $CI_COMMIT_REF_SLUG-yarn-root
       paths:
         - node_modules
+        - .yarn
       policy: pull
-    - key: $CI_COMMIT_REF_SLUG-contracts
+    - key: $CI_COMMIT_REF_SLUG-yarn-$SERVICE
       paths:
-        - contracts/.yarn
-        - contracts/artifacts
-        - contracts/typechain
+        - $SERVICE/.yarn
+        - $SERVICE/node-modules
       policy: pull
   script:
     - cd contracts

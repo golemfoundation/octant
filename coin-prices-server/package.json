@@ -20,6 +20,7 @@
     "prettier:js:pure": "prettier --write",
     "prettier:ts": "yarn prettier:ts:pure './**/*.{ts,tsx}'",
     "prettier:ts:pure": "prettier --parser typescript --write",
+    "test": "echo 'Not implemented'",
     "type-check": "tsc --noEmit true"
   },
   "dependencies": {

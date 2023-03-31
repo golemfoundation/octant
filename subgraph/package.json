@@ -17,14 +17,17 @@
     "eslint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "eslint:fix": "yarn prettier && yarn eslint --fix",
     "install-root-packages": "cd .. && yarn install && cd subgraph",
+    "preeslint": "yarn codegen",
     "preinstall": "yarn install-root-packages",
+    "pretest": "yarn codegen",
     "prettier": "yarn prettier:js --loglevel silent && yarn prettier:ts --loglevel silent",
     "prettier:js": "yarn prettier:js:pure './**/*.{js,jsx}'",
     "prettier:js:pure": "prettier --write",
     "prettier:ts": "yarn prettier:ts:pure './**/*.{ts,tsx}'",
     "prettier:ts:pure": "prettier --parser typescript --write",
     "start": "docker-compose up",
-    "test": "graph test"
+    "test": "graph test",
+    "type-check": "echo 'Not used'"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.49.0",
