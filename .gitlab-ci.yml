@@ -228,6 +228,7 @@ Build container:
       - SERVICE:
           - coin-prices-server
           - client
+          - subgraph
   image:
     name: gcr.io/kaniko-project/executor:$KANIKO_VERSION-debug
     entrypoint: [""]
@@ -239,5 +240,6 @@ Build container:
       --context "$CI_PROJECT_DIR/$SERVICE"
       --dockerfile "$CI_PROJECT_DIR/ci/Dockerfile.$SERVICE"
       --destination "${CI_REGISTRY_IMAGE}/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
+      --build-arg CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA
       --cache=true
       --cache-repo=$KANIKO_CACHE_REPO

@@ -1,0 +1,13 @@
+FROM node:16-alpine AS root
+WORKDIR /app
+
+FROM root AS build
+RUN apk add git
+COPY ./ ./
+RUN yarn install --ignore-scripts --frozen-lockfile
+
+FROM root AS deploy
+ARG CI_COMMIT_SHORT_SHA
+ENV CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA
+COPY --from=build /app/ /app/
+ENTRYPOINT [ "/app/entrypoint.sh" ]
