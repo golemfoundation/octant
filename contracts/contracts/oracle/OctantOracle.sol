@@ -3,9 +3,9 @@
 pragma solidity ^0.8.9;
 
 import "../interfaces/IOctantOracle.sol";
-import "../withdrawals/WithdrawalsTargetV3.sol";
 import "../Epochs.sol";
 import {OracleErrors} from "../Errors.sol";
+import "../interfaces/IWithdrawalsTarget.sol";
 
 /// @title Protocol ETH income sampler
 ///
@@ -14,10 +14,10 @@ import {OracleErrors} from "../Errors.sol";
 /// SKIMMED from validator balances on beacon chain (attestations etc)
 /// and tx inclusion fees on execution layer (tips for block proposer and eventual MEVs).
 contract OctantOracle is IOctantOracle {
-    WithdrawalsTargetV3 public target;
-    address public payoutsManager;
+    IWithdrawalsTarget public target;
     IEpochs public immutable epochs;
     mapping(uint256 => uint256) public balanceByEpoch;
+
     constructor(
         address _epochsAddress
     ) {
@@ -35,21 +35,15 @@ contract OctantOracle is IOctantOracle {
 
     function setTarget(address _target) public {
         require(address(target) == address(0x0));
-        target = WithdrawalsTargetV3(_target);
-    }
-
-    function setPayoutsManager(address _manager) public {
-        require(address(payoutsManager) == address(0x0));
-        payoutsManager = _manager;
+        target = IWithdrawalsTarget(_target);
     }
 
     function writeBalance() external {
         uint32 epoch = epochs.getCurrentEpoch();
         require(epoch > 1, OracleErrors.BALANCE_CANT_BE_KNOWN);
-        require(balanceByEpoch[epoch-1] == 0, OracleErrors.BALANCE_ALREADY_SET);
+        require(balanceByEpoch[epoch - 1] == 0, OracleErrors.BALANCE_ALREADY_SET);
         require(address(target) != address(0x0), OracleErrors.NO_TARGET);
-        require(address(payoutsManager) != address(0x0), OracleErrors.NO_PAYOUTS_MANAGER);
-        balanceByEpoch[epoch-1] = address(target).balance;
-        target.withdrawRewards(payable(payoutsManager));
+        balanceByEpoch[epoch - 1] = address(target).balance;
+        target.withdrawToVault(address(target).balance);
     }
 }

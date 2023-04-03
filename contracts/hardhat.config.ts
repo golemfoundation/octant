@@ -13,9 +13,6 @@ import './tasks/increase-time';
 import './tasks/mine';
 import './tasks/prepare-local-test-env';
 import './tasks/send-glm';
-import './tasks/target-upgrade';
-import './tasks/target-deploy';
-import './tasks/target-check';
 import './tasks/target-fund';
 
 const config: HardhatUserConfig = {

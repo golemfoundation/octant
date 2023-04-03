@@ -1,14 +1,21 @@
 import { parseEther } from 'ethers/lib/utils';
 import { task } from 'hardhat/config';
 
-import { ALLOCATIONS, DEPOSITS, EPOCHS, OCTANT_ORACLE, TOKEN } from '../helpers/constants';
+import {
+  ALLOCATIONS,
+  DEPOSITS,
+  EPOCHS,
+  OCTANT_ORACLE,
+  TOKEN,
+  WITHDRAWALS_TARGET,
+} from '../helpers/constants';
 import {
   Allocations,
   Deposits,
   ERC20,
   Epochs,
   OctantOracle,
-  WithdrawalsTargetV3,
+  WithdrawalsTarget,
 } from '../typechain';
 
 task('prepare-local-test-env', 'Prepare local test environment')
@@ -24,7 +31,6 @@ task('prepare-local-test-env', 'Prepare local test environment')
     Please note that deploying contracts in hh deploy step will populate proposals with test values.`,
   )
   .setAction(async (_, { ethers, network, deployments }) => {
-    const { deploy } = deployments;
     const { deployer, Alice } = await ethers.getNamedSigners();
     const proposalAddresses = await ethers.getUnnamedSigners();
     const allocations: Allocations = await ethers.getContract(ALLOCATIONS);
@@ -35,15 +41,7 @@ task('prepare-local-test-env', 'Prepare local test environment')
     // eslint-disable-next-line no-console
     console.log(`Epoch duraiton: ${epochDuration}.`);
     const octantOracle: OctantOracle = await ethers.getContract(OCTANT_ORACLE);
-    const t = await deploy('WithdrawalsTarget', {
-      contract: 'WithdrawalsTargetV3',
-      from: deployer.address,
-      proxy: true,
-    });
-    const target: WithdrawalsTargetV3 = await ethers.getContractAt(
-      'WithdrawalsTargetV3',
-      t.address,
-    );
+    const target: WithdrawalsTarget = await ethers.getContract(WITHDRAWALS_TARGET);
     // eslint-disable-next-line no-console
     console.log('Making deposit.');
     await token.transfer(Alice.address, parseEther('1000000'));
@@ -51,11 +49,17 @@ task('prepare-local-test-env', 'Prepare local test environment')
     await glmDeposits.connect(Alice).lock(parseEther('1000000'));
     // eslint-disable-next-line no-console
     console.log('Setting up Oracle balances.');
-    await target.sendETH({ value: parseEther('400') });
+    await deployer.sendTransaction({
+      to: target.address,
+      value: ethers.utils.parseEther('400'),
+    });
     await network.provider.send('evm_increaseTime', [epochDuration.toNumber()]);
     await network.provider.send('evm_mine');
     await octantOracle.writeBalance();
-    await target.sendETH({ value: parseEther('400') });
+    await deployer.sendTransaction({
+      to: target.address,
+      value: ethers.utils.parseEther('400'),
+    });
     await network.provider.send('evm_increaseTime', [epochDuration.toNumber()]);
     await network.provider.send('evm_mine');
     await octantOracle.writeBalance();

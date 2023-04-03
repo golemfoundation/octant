@@ -1,8 +1,6 @@
-import { ethers } from 'hardhat';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
-import { GOERLI_WITHDRAWALS_TARGET } from '../env';
 import {
   ALLOCATIONS,
   ALLOCATIONS_STORAGE,
@@ -28,18 +26,13 @@ import {
 // This function needs to be declared this way, otherwise it's not understood by test runner.
 // eslint-disable-next-line func-names
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+  const { TestFoundation } = await hre.ethers.getNamedSigners();
+
   // Setup Allocations
   const allocations: Allocations = await hre.ethers.getContract(ALLOCATIONS);
   const allocationsStorage: AllocationsStorage = await hre.ethers.getContract(ALLOCATIONS_STORAGE);
   await allocationsStorage.setAllocations(allocations.address);
   await allocationsStorage.renounceOwnership();
-
-  // Setup Oracle
-  const withdrawalsTarget: WithdrawalsTarget = await hre.ethers.getContract(WITHDRAWALS_TARGET);
-  const payoutsManager: PayoutsManager = await hre.ethers.getContract(PAYOUTS_MANAGER);
-  const octantOracle: OctantOracle = await hre.ethers.getContract(OCTANT_ORACLE);
-  await octantOracle.setTarget(withdrawalsTarget.address);
-  await octantOracle.setPayoutsManager(payoutsManager.address);
 
   // Setup Deposits
   const deposits: Deposits = await hre.ethers.getContract(DEPOSITS);
@@ -49,16 +42,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await tracker.setWrapperAddress(trackerWrapper.address);
 
   // Setup Payouts
-  let targetAddress = GOERLI_WITHDRAWALS_TARGET;
-  if (hre.network.name === 'hardhat') {
-    const target = await ethers.getContract(WITHDRAWALS_TARGET);
-    targetAddress = target.address;
-  }
+  const withdrawalsTarget: WithdrawalsTarget = await hre.ethers.getContract(WITHDRAWALS_TARGET);
+  const payoutsManager: PayoutsManager = await hre.ethers.getContract(PAYOUTS_MANAGER);
+  const octantOracle: OctantOracle = await hre.ethers.getContract(OCTANT_ORACLE);
   const payouts: Payouts = await hre.ethers.getContract(PAYOUTS);
+
+  await octantOracle.setTarget(withdrawalsTarget.address);
   await payouts.setPayoutsManager(payoutsManager.address);
-  const oracle = await ethers.getContract(OCTANT_ORACLE);
-  const target: WithdrawalsTarget = await ethers.getContractAt(WITHDRAWALS_TARGET, targetAddress);
-  await target.setOctant(oracle.address);
+  await withdrawalsTarget.setWithdrawer(octantOracle.address);
+
+  if (['hardhat', 'localhost'].includes(hre.network.name)) {
+    // TODO automate the flow for testnet deployment - OCT-364
+    await withdrawalsTarget.connect(TestFoundation).setVault(payoutsManager.address);
+  }
 };
 
 export default func;
