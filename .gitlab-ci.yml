@@ -1,13 +1,15 @@
 variables:
-  DOCKER_DRIVER: overlay2
+  KANIKO_VERSION: v1.9.2
   FF_USE_FASTZIP: "true"
   CACHE_COMPRESSION_LEVEL: "fast"
+  TRANSFER_METER_FREQUENCY: "2s"
 
 stages:
   - build
   - lint_and_typecheck
   - test
   - deploy
+  - publish
 
 image: node:16-bullseye-slim
 
@@ -211,3 +213,33 @@ pages:
   artifacts:
     paths:
       - public
+
+Build container:
+  stage: publish
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: true
+      variables:
+        IMAGE_NAME: dev/$SERVICE
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  parallel:
+    matrix:
+      - SERVICE:
+          - coin-prices-server
+          - client
+          - subgraph
+  image:
+    name: gcr.io/kaniko-project/executor:$KANIKO_VERSION-debug
+    entrypoint: [""]
+  variables:
+    IMAGE_NAME: $SERVICE
+  script:
+    - echo $KANIKO_CACHE_CONFIG > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --context "$CI_PROJECT_DIR/$SERVICE"
+      --dockerfile "$CI_PROJECT_DIR/ci/Dockerfile.$SERVICE"
+      --destination "${CI_REGISTRY_IMAGE}/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
+      --build-arg CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA
+      --cache=true
+      --cache-repo=$KANIKO_CACHE_REPO

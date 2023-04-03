@@ -1,0 +1,24 @@
+.dockerignore
+.env
+.env.template
+.envrc
+.eslintignore
+.eslintrc.js
+.gitignore
+.yarn/
+docker-compose.yml
+networks.json
+networks.template.json
+nix/
+node_modules/
+README.md
+shell.nix
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*

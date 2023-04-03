@@ -21,6 +21,7 @@
     "prettier:ts": "yarn prettier:ts:pure './**/*.{ts,tsx}'",
     "prettier:ts:pure": "prettier --parser typescript --write",
     "preview": "vite preview",
+    "start": "yarn build --base=/ && yarn preview --base=/ --host=0.0.0.0",
     "test": "TZ=UTC jest",
     "type-check": "tsc --noEmit true"
   },
