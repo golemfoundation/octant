@@ -9,14 +9,6 @@ import useCurrentEpoch from './useCurrentEpoch';
 import useIsDecisionWindowOpen from './useIsDecisionWindowOpen';
 import useProposalsCid from './useProposalsCid';
 
-// TODO: Remove this util in OCT-295.
-const getEpochToFetchProposals = (isDecisionWindowOpen, currentEpoch) => {
-  if (isDecisionWindowOpen) {
-    return currentEpoch > 1 ? currentEpoch - 1 : currentEpoch;
-  }
-  return currentEpoch;
-};
-
 export default function useProposals(): {
   data: ExtendedProposal[];
   refetch: () => Promise<unknown>;
@@ -31,14 +23,13 @@ export default function useProposals(): {
     // When decision window is open, fetch proposals from the previous epoch, because that's what users should be allocating to.
     () =>
       contractProposals?.getProposalAddresses(
-        // TODO: Replace this value in OCT-295.
-        // isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
-        getEpochToFetchProposals(isDecisionWindowOpen, currentEpoch),
+        isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
       ),
     {
-      enabled: !!contractProposals && !!currentEpoch,
-      // TODO: Add this check in OCT-295.
-      // && ((isDecisionWindowOpen && currentEpoch > 1) || !isDecisionWindowOpen),
+      enabled:
+        !!contractProposals &&
+        !!currentEpoch &&
+        ((isDecisionWindowOpen && currentEpoch > 1) || !isDecisionWindowOpen),
     },
   );
 
