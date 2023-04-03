@@ -4,5 +4,6 @@
 pragma solidity ^0.8.9;
 
 interface IWithdrawalsTarget {
-    function withdrawRewards(address, uint256) external;
+    function withdrawToVault(uint256) external;
+    function withdrawToMultisig(uint256) external;
 }

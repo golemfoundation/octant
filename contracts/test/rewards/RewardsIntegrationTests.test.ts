@@ -1,31 +1,19 @@
 import { expect } from 'chai';
 import { parseEther } from 'ethers/lib/utils';
-import { deployments, ethers } from 'hardhat';
 
 import { REWARDS } from '../../helpers/constants';
 import { forwardEpochs } from '../../helpers/epochs-utils';
-import { WithdrawalsTargetV3 } from '../../typechain';
+import { sendETH } from '../../helpers/target-utils';
 import { makeTestsEnv } from '../helpers/make-tests-env';
 
 makeTestsEnv(REWARDS, testEnv => {
   async function updateOracle() {
-    const { epochs, octantOracle, signers } = testEnv;
-    const { deploy } = deployments;
-    const t = await deploy('WithdrawalsTarget', {
-      contract: 'WithdrawalsTargetV3',
-      from: signers.deployer.address,
-      proxy: true,
-    });
-    const target: WithdrawalsTargetV3 = await ethers.getContractAt(
-      'WithdrawalsTargetV3',
-      t.address,
-    );
-    expect(await target.version()).eq(3);
+    const { epochs, octantOracle, target } = testEnv;
     await forwardEpochs(epochs, 1);
-    await target.sendETH({ value: ethers.utils.parseEther('400.0') });
+    await sendETH(target, 400);
     await forwardEpochs(epochs, 1);
     await octantOracle.writeBalance();
-    await target.sendETH({ value: ethers.utils.parseEther('400.0') });
+    await sendETH(target, 400);
   }
 
   describe('individual rewards', async () => {

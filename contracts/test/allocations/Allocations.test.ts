@@ -1,20 +1,14 @@
 import { smock } from '@defi-wonderland/smock';
 import { expect } from 'chai';
 import { parseEther } from 'ethers/lib/utils';
-import { ethers, deployments } from 'hardhat';
+import { ethers } from 'hardhat';
 
 import { PROPOSALS_CID } from '../../env';
 import { ALLOCATIONS, ALLOCATIONS_STORAGE, EPOCHS, PROPOSALS } from '../../helpers/constants';
 import { forwardEpochs } from '../../helpers/epochs-utils';
 import { getLatestBlockTimestamp, increaseNextBlockTimestamp } from '../../helpers/misc-utils';
-import {
-  Allocations,
-  AllocationsStorage,
-  Epochs,
-  Proposals,
-  Rewards,
-  WithdrawalsTargetV3,
-} from '../../typechain';
+import { sendETH } from '../../helpers/target-utils';
+import { Allocations, AllocationsStorage, Epochs, Proposals, Rewards } from '../../typechain';
 import { makeTestsEnv } from '../helpers/make-tests-env';
 
 makeTestsEnv(ALLOCATIONS, testEnv => {
@@ -82,27 +76,19 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
           glmDeposits,
           octantOracle,
           epochs,
-          signers: { deployer, Alice },
+          target,
+          signers: { Alice },
         } = testEnv;
-        const { deploy } = deployments;
-        const t = await deploy('WithdrawalsTarget', {
-          contract: 'WithdrawalsTargetV3',
-          from: deployer.address,
-          proxy: true,
-        });
-        const target: WithdrawalsTargetV3 = await ethers.getContractAt(
-          'WithdrawalsTargetV3',
-          t.address,
-        );
+
         await token.transfer(Alice.address, parseEther('1000000'));
         await token.connect(Alice).approve(glmDeposits.address, parseEther('1000000'));
         await glmDeposits.connect(Alice).lock(parseEther('1000000'));
         expect(await epochs.getCurrentEpoch()).eq(1);
-        await target.sendETH({ value: ethers.utils.parseEther('400.0') });
+        await sendETH(target, 400);
         await forwardEpochs(epochs, 1);
         expect(await epochs.getCurrentEpoch()).eq(2);
         await octantOracle.writeBalance();
-        await target.sendETH({ value: ethers.utils.parseEther('400.0') });
+        await sendETH(target, 400);
         await forwardEpochs(epochs, 1);
         expect(await epochs.getCurrentEpoch()).eq(3);
         await octantOracle.writeBalance();

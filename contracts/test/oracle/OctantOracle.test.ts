@@ -1,9 +1,9 @@
 import { expect } from 'chai';
-import { ethers, deployments } from 'hardhat';
+import { parseEther } from 'ethers/lib/utils';
 
 import { OCTANT_ORACLE } from '../../helpers/constants';
 import { forwardEpochs } from '../../helpers/epochs-utils';
-import { WithdrawalsTargetV3 } from '../../typechain';
+import { sendETH } from '../../helpers/target-utils';
 import { makeTestsEnv } from '../helpers/make-tests-env';
 
 interface OracleFeed {
@@ -60,25 +60,14 @@ makeTestsEnv(OCTANT_ORACLE, testEnv => {
     parameters.forEach(({ desc, oracleFeedInEpochs, asserts }) => {
       it(desc, async () => {
         // given
-        const { epochs, octantOracle, signers } = testEnv;
-        const { deploy } = deployments;
-
-        const t = await deploy('WithdrawalsTarget', {
-          contract: 'WithdrawalsTargetV3',
-          from: signers.deployer.address,
-          proxy: true,
-        });
-        const target: WithdrawalsTargetV3 = await ethers.getContractAt(
-          'WithdrawalsTargetV3',
-          t.address,
-        );
+        const { epochs, octantOracle, target } = testEnv;
 
         // when
         for (let i = 0; i < oracleFeedInEpochs.length; i++) {
           const { executionLayer, beaconChain } = oracleFeedInEpochs[i];
           // Following actions need to be done in sequence, hence await in for instead of Promise.all.
           /* eslint-disable no-await-in-loop */
-          await target.sendETH({ value: executionLayer + beaconChain });
+          await sendETH(target, executionLayer + beaconChain);
           await forwardEpochs(epochs, 1);
           await octantOracle.writeBalance();
           /* eslint-enable no-await-in-loop */
@@ -89,7 +78,7 @@ makeTestsEnv(OCTANT_ORACLE, testEnv => {
           // Following actions need to be done in sequence, hence await in for instead of Promise.all.
           // eslint-disable-next-line no-await-in-loop
           const proceeds = await octantOracle.getTotalETHStakingProceeds(epoch);
-          expect(proceeds).eq(value);
+          expect(proceeds).eq(parseEther(value.toString()));
         }
       });
     });

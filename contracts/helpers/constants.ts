@@ -1,6 +1,7 @@
 // ----------------
 // CONTRACT NAMES
 // ----------------
+export const AUTH = 'Auth';
 export const PROPOSALS = 'Proposals';
 export const DEPOSITS = 'Deposits';
 export const TRACKER = 'Tracker';
@@ -11,8 +12,6 @@ export const FAUCET = 'TestGLMFaucet';
 export const ALLOCATIONS = 'Allocations';
 export const ALLOCATIONS_STORAGE = 'AllocationsStorage';
 export const EPOCHS = 'Epochs';
-export const BEACON_CHAIN_ORACLE = 'BeaconChainOracle';
-export const EXECUTION_LAYER_ORACLE = 'ExecutionLayerOracle';
 export const OCTANT_ORACLE = 'OctantOracle';
 export const PAYOUTS = 'Payouts';
 export const PAYOUTS_MANAGER = 'PayoutsManager';
