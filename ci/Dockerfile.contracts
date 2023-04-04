@@ -2,7 +2,6 @@ FROM node:16-alpine AS root
 WORKDIR /app
 
 FROM root AS build
-#RUN apk add git
 COPY package.json yarn.lock ./
 RUN yarn install --ignore-scripts --frozen-lockfile
 COPY ./ ./

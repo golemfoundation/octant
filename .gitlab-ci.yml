@@ -226,6 +226,7 @@ Build container:
   parallel:
     matrix:
       - SERVICE:
+          - contracts
           - coin-prices-server
           - client
           - subgraph
