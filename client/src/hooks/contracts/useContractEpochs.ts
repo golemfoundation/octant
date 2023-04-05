@@ -3,12 +3,12 @@ import { useMemo } from 'react';
 
 import env from 'env';
 
-import { providerGoerli } from './providers';
+import { provider } from './providers';
 import UseContractParams from './types';
 
 export default function useContractEpochs({
   tokenAddress = env.contracts.epochsAddress,
-  signerOrProvider = providerGoerli,
+  signerOrProvider = provider,
 }: UseContractParams = {}): Epochs | null {
   return useMemo(() => {
     return signerOrProvider ? Epochs__factory.connect(tokenAddress, signerOrProvider) : null;

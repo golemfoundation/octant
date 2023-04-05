@@ -40,4 +40,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 };
 
 export default func;
-func.tags = ['after-deployment', 'goerli'];
+func.tags = ['after-deployment', 'goerli', 'local'];

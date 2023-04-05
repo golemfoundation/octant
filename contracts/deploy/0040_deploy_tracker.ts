@@ -13,7 +13,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   let glmAddress = GOERLI_GLM;
   let gntAddress = GOERLI_GNT;
-  if (hre.network.name === 'hardhat') {
+  if (['hardhat', 'localhost'].includes(hre.network.name)) {
     const token = await ethers.getContract(TOKEN);
     glmAddress = token.address;
     gntAddress = token.address;

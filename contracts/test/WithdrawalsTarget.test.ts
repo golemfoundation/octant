@@ -2,7 +2,6 @@ import { expect } from 'chai';
 import { parseEther } from 'ethers/lib/utils';
 import { ethers } from 'hardhat';
 
-
 import { makeTestsEnv } from './helpers/make-tests-env';
 
 import { WITHDRAWALS_TARGET } from '../helpers/constants';

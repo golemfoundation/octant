@@ -3,12 +3,12 @@ import { useMemo } from 'react';
 
 import env from 'env';
 
-import { providerGoerli } from './providers';
+import { provider } from './providers';
 import UseContractParams from './types';
 
 export default function useContractRewards({
   tokenAddress = env.contracts.rewardsAddress,
-  signerOrProvider = providerGoerli,
+  signerOrProvider = provider,
 }: UseContractParams = {}): Rewards | null {
   return useMemo(() => {
     return signerOrProvider ? Rewards__factory.connect(tokenAddress, signerOrProvider) : null;

@@ -14,7 +14,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const start = await getLatestBlockTimestamp();
   let decisionWindow = DECISION_WINDOW;
   let epochDuration = EPOCH_DURATION;
-  if (hre.network.name === 'hardhat') {
+  if (['hardhat', 'localhost'].includes(hre.network.name)) {
     decisionWindow = 120;
     epochDuration = 300;
   }

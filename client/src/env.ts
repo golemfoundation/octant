@@ -42,6 +42,9 @@ const env = {
   isTestnet:
     // @ts-expect-error TS does not understand the way vite imports envs.
     import.meta.env.VITE_IS_TESTNET || 'true',
+  isUsingLocalContracts:
+    // @ts-expect-error TS does not understand the way vite imports envs.
+    import.meta.env.VITE_IS_USING_LOCAL_CONTRACTS || 'false',
   subgraphAddress:
     // @ts-expect-error TS does not understand the way vite imports envs.
     import.meta.env.VITE_SUBGRAPH_ADDRESS || 'https://octant.world/subgraphs/name/octant',

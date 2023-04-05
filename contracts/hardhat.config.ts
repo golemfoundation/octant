@@ -9,6 +9,7 @@ import { HardhatUserConfig } from 'hardhat/types';
 import { ETHERSCAN_API_KEY, GOERLI_PRIVATE_KEY, GOERLI_URL, IS_GAS_REPORTING_ENABLED } from './env';
 
 import './tasks/clean';
+import './tasks/allocate';
 import './tasks/increase-time';
 import './tasks/mine';
 import './tasks/prepare-local-test-env';

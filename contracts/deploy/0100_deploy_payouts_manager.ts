@@ -16,7 +16,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   let golemFoundationWithdrawalAddress = MULTISIG_ADDRESS;
 
-  if (hre.network.name === 'hardhat') {
+  if (['hardhat', 'localhost'].includes(hre.network.name)) {
     golemFoundationWithdrawalAddress = TestFoundation;
   }
 
