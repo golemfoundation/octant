@@ -12,6 +12,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployer } = await hre.getNamedAccounts();
   let proposalAddresses = PROPOSAL_ADDRESSES;
 
+  /// for localhost and goerli same set of proposals is used
+  /// for hardhat - test propsals are used
   if (hre.network.name === 'hardhat') {
     const unnamedAddresses = await hre.getUnnamedAccounts();
     proposalAddresses = unnamedAddresses.slice(0, 10);

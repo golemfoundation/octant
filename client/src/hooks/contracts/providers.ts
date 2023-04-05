@@ -1,7 +1,8 @@
-import { InfuraProvider } from '@ethersproject/providers';
+import { JsonRpcProvider, InfuraProvider } from '@ethersproject/providers';
 
-export const providerGoerli = new InfuraProvider('goerli');
+import env from 'env';
 
-// import { JsonRpcProvider } from '@ethersproject/providers';
-//
-// export const providerGoerli = new JsonRpcProvider('http://127.0.0.1:8545/');
+export const provider =
+  env.isUsingLocalContracts === 'true'
+    ? new JsonRpcProvider('http://127.0.0.1:8545/')
+    : new InfuraProvider('goerli');

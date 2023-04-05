@@ -3,12 +3,12 @@ import { useMemo } from 'react';
 
 import env from 'env';
 
-import { providerGoerli } from './providers';
+import { provider } from './providers';
 import UseContractParams from './types';
 
 export default function useContractAllocationsStorage({
   tokenAddress = env.contracts.allocationsStorageAddress,
-  signerOrProvider = providerGoerli,
+  signerOrProvider = provider,
 }: UseContractParams = {}): AllocationsStorage | null {
   return useMemo(() => {
     return signerOrProvider

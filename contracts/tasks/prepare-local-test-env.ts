@@ -1,4 +1,4 @@
-import { parseEther } from 'ethers/lib/utils';
+import { formatEther, parseEther } from 'ethers/lib/utils';
 import { task } from 'hardhat/config';
 
 import {
@@ -18,19 +18,19 @@ import {
   WithdrawalsTarget,
 } from '../typechain';
 
+/* eslint no-console: 0 */
+
 task('prepare-local-test-env', 'Prepare local test environment')
   .setDescription(
     `
-
-   Use this to run a local environment.
-    Console steps look like this:
-     1. hh node --no-deploy
-     2. hh --localhost deploy
-     3. hh --localhost prepare-local-test-env
-
-    Please note that deploying contracts in hh deploy step will populate proposals with test values.`,
+      Use this to run a local environment.
+      Console steps look like this:
+        |    1. yarn start-node # this does not deploy contracts
+        |    2. yarn deploy:localhost # will deploy to localhost network
+        |    3. yarn prepare-local-test-env # will perform basic setup of localhost network
+        |  Please note that step will populate proposals with test values.`,
   )
-  .setAction(async (_, { ethers, network, deployments }) => {
+  .setAction(async (_, { ethers, network }) => {
     const { deployer, Alice } = await ethers.getNamedSigners();
     const proposalAddresses = await ethers.getUnnamedSigners();
     const allocations: Allocations = await ethers.getContract(ALLOCATIONS);
@@ -39,35 +39,44 @@ task('prepare-local-test-env', 'Prepare local test environment')
     const epochs: Epochs = await ethers.getContract(EPOCHS);
     const epochDuration = await epochs.getEpochDuration();
     // eslint-disable-next-line no-console
-    console.log(`Epoch duraiton: ${epochDuration}.`);
+    console.log(`Epoch duration: ${epochDuration}.`);
     const octantOracle: OctantOracle = await ethers.getContract(OCTANT_ORACLE);
     const target: WithdrawalsTarget = await ethers.getContract(WITHDRAWALS_TARGET);
     // eslint-disable-next-line no-console
-    console.log('Making deposit.');
-    await token.transfer(Alice.address, parseEther('1000000'));
-    await token.connect(Alice).approve(glmDeposits.address, parseEther('1000000'));
-    await glmDeposits.connect(Alice).lock(parseEther('1000000'));
+    console.log('Alice is making GLM deposit.');
+    const glmLock = parseEther('1000000');
+    await token.transfer(Alice.address, glmLock);
+    await token.connect(Alice).approve(glmDeposits.address, glmLock);
+    await glmDeposits.connect(Alice).lock(glmLock);
     // eslint-disable-next-line no-console
     console.log('Setting up Oracle balances.');
-    await deployer.sendTransaction({
-      to: target.address,
-      value: ethers.utils.parseEther('400'),
-    });
-    await network.provider.send('evm_increaseTime', [epochDuration.toNumber()]);
-    await network.provider.send('evm_mine');
-    await octantOracle.writeBalance();
-    await deployer.sendTransaction({
-      to: target.address,
-      value: ethers.utils.parseEther('400'),
-    });
-    await network.provider.send('evm_increaseTime', [epochDuration.toNumber()]);
-    await network.provider.send('evm_mine');
-    await octantOracle.writeBalance();
     // eslint-disable-next-line no-console
-    console.log('Alice is allocating to first proposal.');
-    const userAllocations = [
-      { allocation: parseEther('0.4'), proposal: proposalAddresses[0].address },
-    ];
+    console.log("Alice's address is ", Alice.address);
+    // eslint-disable-next-line no-console
+    console.log(
+      "To retrieve Alice's private key and to add her to Metamask, please check `yarn start-node` output for her private key or use default mnemonic mentioned in the README.",
+    );
+    await deployer.sendTransaction({
+      to: target.address,
+      value: ethers.utils.parseEther('400'),
+    });
+    await network.provider.send('evm_increaseTime', [epochDuration.toNumber()]);
+    await network.provider.send('evm_mine');
+    await octantOracle.writeBalance();
+    await deployer.sendTransaction({
+      to: target.address,
+      value: ethers.utils.parseEther('400'),
+    });
+    await network.provider.send('evm_increaseTime', [epochDuration.toNumber()]);
+    await network.provider.send('evm_mine');
+    await octantOracle.writeBalance();
+    const ethAmount = parseEther('0.4');
+    // eslint-disable-next-line no-console
+    console.log(
+      `Alice is allocating ${formatEther(ethAmount)} ETH to first proposal:`,
+      proposalAddresses[0],
+    );
+    const userAllocations = [{ allocation: ethAmount, proposal: proposalAddresses[0].address }];
     await allocations.connect(Alice).allocate(userAllocations);
     // eslint-disable-next-line no-console
     console.log('Test environment prepared.');

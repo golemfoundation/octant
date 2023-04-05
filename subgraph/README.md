@@ -37,7 +37,7 @@ yarn test
 
 ### Local
 ```bash
-yarn build:local
+yarn build:localhost
 ```
 
 ### Goerli
@@ -56,7 +56,7 @@ yarn start
 ### Local
 ```bash
 yarn create-subgraph
-yarn deploy:local
+yarn deploy:localhost
 ```
 
 ### Goerli

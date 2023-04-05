@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import env from 'env';
 
-import { providerGoerli } from './providers';
+import { provider } from './providers';
 import UseContractParams from './types';
 
 export default function useContractAllocations({
@@ -11,6 +11,6 @@ export default function useContractAllocations({
   signerOrProvider,
 }: UseContractParams): Allocations | null {
   return useMemo(() => {
-    return Allocations__factory.connect(tokenAddress, signerOrProvider || providerGoerli);
+    return Allocations__factory.connect(tokenAddress, signerOrProvider || provider);
   }, [signerOrProvider, tokenAddress]);
 }

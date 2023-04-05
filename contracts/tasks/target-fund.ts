@@ -6,7 +6,7 @@ import { Epochs, OctantOracle, WithdrawalsTarget } from '../typechain';
 /* eslint no-console: 0 */
 
 task('target-fund', 'Send some funds to WithdrawalsTarget, simulating ETH staking rewards')
-  .addParam('address', 'Address of the proxy', '0x4ed7c70f96b99c776995fb64377f0d4ab3b0e1c1')
+  .addParam('address', 'Address of the proxy')
   .addParam('amount', 'Amount in ethers', '1.0')
   .setAction(async (taskArgs, { ethers, network }) => {
     const { deployer } = await ethers.getNamedSigners();

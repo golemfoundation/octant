@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import env from 'env';
 
-import { providerGoerli } from './providers';
+import { provider } from './providers';
 import UseContractParams from './types';
 
 export default function useContractPayoutsManager({
@@ -11,6 +11,6 @@ export default function useContractPayoutsManager({
   signerOrProvider,
 }: UseContractParams): PayoutsManager | null {
   return useMemo(() => {
-    return PayoutsManager__factory.connect(tokenAddress, signerOrProvider || providerGoerli);
+    return PayoutsManager__factory.connect(tokenAddress, signerOrProvider || provider);
   }, [signerOrProvider, tokenAddress]);
 }
