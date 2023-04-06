@@ -26,7 +26,6 @@ const MainLayout: FC<MainLayoutProps> = ({
   isHeaderVisible = true,
   isLoading,
   isNavigationVisible = true,
-  landscapeImage,
   classNameBody,
   navigationTabs,
 }) => {
@@ -95,7 +94,6 @@ const MainLayout: FC<MainLayoutProps> = ({
             </div>
           </div>
         )}
-        {landscapeImage}
         <div
           className={cx(
             styles.body,

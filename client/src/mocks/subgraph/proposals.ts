@@ -1,28 +1,19 @@
 import { BigNumber } from 'ethers';
 
-import { ProposalWithAllocations } from 'components/dedicated/ProposalItem/types';
+import { ProposalWithRewards } from 'hooks/queries/useProposalsWithRewards';
 
-export const mockedProposal1: ProposalWithAllocations = {
+export const mockedProposal1: ProposalWithRewards = {
   address: 'address',
-  description: 'description',
-  isLoadingError: false,
-  landscapeImageCID: 'landscapeImageCID',
-  name: 'name',
   percentage: 1,
-  profileImageCID: 'profileImageCID',
   totalValueOfAllocations: BigNumber.from(1),
-  website: {
-    label: 'label',
-    url: 'url',
-  },
 };
 
-export const mockedProposal2: ProposalWithAllocations = {
+export const mockedProposal2: ProposalWithRewards = {
   ...mockedProposal1,
   totalValueOfAllocations: BigNumber.from(2),
 };
 
-export const mockedProposal3: ProposalWithAllocations = {
+export const mockedProposal3: ProposalWithRewards = {
   ...mockedProposal1,
   totalValueOfAllocations: BigNumber.from(3),
 };

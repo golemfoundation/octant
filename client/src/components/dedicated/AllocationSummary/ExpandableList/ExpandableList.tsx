@@ -4,7 +4,8 @@ import React, { FC } from 'react';
 import Img from 'components/core/Img/Img';
 import Loader from 'components/core/Loader/Loader';
 import env from 'env';
-import useProposals from 'hooks/queries/useProposals';
+import useProposalsContract from 'hooks/queries/useProposalsContract';
+import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './ExpandableList.module.scss';
@@ -12,7 +13,8 @@ import ExpandableListProps from './types';
 
 const ExpandableList: FC<ExpandableListProps> = ({ allocations, allocationValues }) => {
   const { ipfsGateway } = env;
-  const { data: proposals } = useProposals();
+  const { data: proposalsContracts } = useProposalsContract();
+  const { data: proposals } = useProposalsIpfs(proposalsContracts);
 
   if (proposals.length === 0) {
     return <Loader />;

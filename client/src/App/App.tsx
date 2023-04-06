@@ -9,7 +9,7 @@ import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useProposals from 'hooks/queries/useProposals';
+import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import localStorageService from 'services/localStorageService';
@@ -21,8 +21,11 @@ import styles from './App.module.scss';
 
 import 'styles/index.scss';
 
-const validateProposalsInLocalStorage = (localStorageAllocationItems, proposals) =>
-  localStorageAllocationItems.filter(item => proposals.find(({ address }) => address === item));
+const validateProposalsInLocalStorage = (
+  localStorageAllocationItems: string[],
+  proposals: string[],
+): string[] =>
+  localStorageAllocationItems.filter(item => proposals.find(address => address === item));
 
 const App = (): ReactElement => {
   const { data: allocations, setAllocations } = useAllocationsStore();
@@ -48,7 +51,7 @@ const App = (): ReactElement => {
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
-  const { data: proposals } = useProposals();
+  const { data: proposals } = useProposalsContract();
   const { data: userAllocations } = useUserAllocations();
   const [isAccountChanging, setIsAccountChanging] = useState(false);
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);

@@ -6,9 +6,16 @@ $paddingBody: 2.4rem;
   align-items: stretch;
   border-radius: $border-radius-16;
   background: $color-white;
+  height: 42.9rem;
 
   &.isClickable {
     cursor: pointer;
+  }
+
+  &.isLoadingStates {
+    align-items: center;
+    justify-content: center;
+    padding: $paddingBody;
   }
 
   .header {

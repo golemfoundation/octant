@@ -10,7 +10,8 @@ import Svg from 'components/core/Svg/Svg';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useMatchedRewards from 'hooks/queries/useMatchedRewards';
-import useProposals from 'hooks/queries/useProposals';
+import useProposalsContract from 'hooks/queries/useProposalsContract';
+import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import { arrowRight } from 'svg/misc';
 import { ExtendedProposal } from 'types/proposals';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
@@ -34,7 +35,8 @@ const getHeader = (
 const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocationValues = {} }) => {
   const [isProjectsTileExpanded, setIsProjectsTileExpanded] = useState<boolean>(false);
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: proposals } = useProposals();
+  const { data: proposalsContracts } = useProposalsContract();
+  const { data: proposals } = useProposalsIpfs(proposalsContracts);
   const { data: individualReward } = useIndividualReward();
   const { data: matchedRewards } = useMatchedRewards();
   const newAllocationValuesSum = Object.values(allocationValues).reduce(

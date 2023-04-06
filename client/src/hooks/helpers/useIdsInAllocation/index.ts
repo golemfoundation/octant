@@ -1,29 +1,24 @@
-import useUserAllocations from 'hooks/queries/useUserAllocations';
-import useAllocationsStore from 'store/allocations/store';
-import { AllocationsData } from 'store/allocations/types';
-import { ExtendedProposal } from 'types/proposals';
+import { UserAllocation } from 'hooks/queries/useUserAllocations';
+import { AllocationsData, AllocationsStore } from 'store/allocations/types';
 
 import { onAddRemoveAllocationElementLocalStorage } from './utils';
 
 export default function useIdsInAllocation({
   allocations,
-  proposals,
   proposalName,
+  userAllocations,
+  setAllocations,
 }: {
   allocations: NonNullable<AllocationsData>;
   proposalName?: string;
-  proposals?: ExtendedProposal[];
+  setAllocations: AllocationsStore['setAllocations'];
+  userAllocations?: UserAllocation[];
 }): { onAddRemoveFromAllocate: (address: string) => void } {
-  const { data: userAllocations } = useUserAllocations();
-  const { setAllocations } = useAllocationsStore();
-
   const onAddRemoveFromAllocate = (address: string) => {
     const newIds = onAddRemoveAllocationElementLocalStorage({
       address,
       allocations,
-      name:
-        proposalName ||
-        proposals!.find(({ address: proposalAddress }) => proposalAddress === address)!.name!,
+      name: proposalName,
       userAllocations,
     });
     if (newIds) {
