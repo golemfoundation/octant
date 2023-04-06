@@ -13,7 +13,7 @@
     "eslint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "eslint:fix": "yarn prettier && yarn eslint --fix",
     "predev": "yarn install",
-    "install:rootpackages": "cd .. && yarn install && cd client",
+    "install:rootpackages": "cd .. && yarn install && cd coin-prices-server",
     "preinstall": "yarn install:rootpackages",
     "prettier": "yarn prettier:js --loglevel silent && yarn prettier:ts --loglevel silent",
     "prettier:js": "yarn prettier:js:pure './**/*.{js,jsx}'",
