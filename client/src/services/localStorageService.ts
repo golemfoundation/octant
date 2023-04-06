@@ -33,7 +33,6 @@ const LocalStorageService = () => {
 
   const validateAllocationItems = (): void => {
     const allocationItems = JSON.parse(localStorage.getItem(ALLOCATION_ITEMS_KEY) || 'null');
-
     if (!Array.isArray(allocationItems)) {
       localStorage.removeItem(ALLOCATION_ITEMS_KEY);
       return;

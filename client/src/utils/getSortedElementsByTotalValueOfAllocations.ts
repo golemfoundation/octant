@@ -1,9 +1,9 @@
 import { AllocationItemWithAllocations } from 'components/dedicated/AllocationItem/types';
-import { ProposalWithAllocations } from 'components/dedicated/ProposalItem/types';
+import { ProposalWithRewards } from 'hooks/queries/useProposalsWithRewards';
 
 export default function getSortedElementsByTotalValueOfAllocations(
-  elements: (ProposalWithAllocations | AllocationItemWithAllocations)[],
-): (ProposalWithAllocations | AllocationItemWithAllocations)[] {
+  elements: (ProposalWithRewards | AllocationItemWithAllocations)[],
+): (ProposalWithRewards | AllocationItemWithAllocations)[] {
   return elements.sort(
     (
       { totalValueOfAllocations: totalValueOfAllocationsA },

@@ -8,7 +8,6 @@ export default interface MainLayoutProps {
   isHeaderVisible?: boolean;
   isLoading?: boolean;
   isNavigationVisible?: boolean;
-  landscapeImage?: ReactNode;
   navigationBottomSuffix?: ReactNode;
   navigationTabs?: NavigationTab[];
 }

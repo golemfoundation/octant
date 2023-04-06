@@ -1,6 +1,14 @@
+.loaderWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 3rem;
+  padding-bottom: $layoutBodyMarginBottom;
+}
+
 .bodyLayout {
   background: $color-white;
-  padding: 3.2rem 0 0 0;
+  padding: 0;
 }
 
 .imageLandscapeWrapper {
@@ -30,6 +38,7 @@
 .proposalHeader {
   display: flex;
   width: 100%;
+  padding-top: 3.2rem;
 
   .imageProfile {
     width: 4rem;
@@ -46,28 +55,6 @@
 
   .name {
     font-weight: $font-weight-bold;
-  }
-
-  .allocationValues {
-    display: flex;
-    align-items: center;
-    font-size: $font-size-14;
-    font-weight: $font-weight-semibold;
-  }
-
-  .separator {
-    width: 0.1rem;
-    height: 1.5rem;
-    background: $color-octant-grey11;
-    margin: 0 0.5rem;
-  }
-
-  .percentage {
-    color: $color-octant-red2;
-
-    &.isAboveThreshold {
-      color: $color-octant-green5;
-    }
   }
 }
 
@@ -86,6 +73,8 @@
   align-items: center;
 
   .buttonWebsite {
+    align-self: stretch;
+    justify-content: flex-start;
     border-top: 0.1rem solid $color-octant-grey4;
     border-bottom: 0.1rem solid $color-octant-grey4;
     padding: 2rem 0;

@@ -1,0 +1,21 @@
+.root {
+  display: flex;
+  align-items: center;
+  font-size: $font-size-14;
+  font-weight: $font-weight-semibold;
+}
+
+.separator {
+  width: 0.1rem;
+  height: 1.5rem;
+  background: $color-octant-grey11;
+  margin: 0 0.5rem;
+}
+
+.percentage {
+  color: $color-octant-red2;
+
+  &.isAboveThreshold {
+    color: $color-octant-green5;
+  }
+}

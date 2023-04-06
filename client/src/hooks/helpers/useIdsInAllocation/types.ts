@@ -4,6 +4,6 @@ import { AllocationsData } from 'store/allocations/types';
 export type OnAddRemoveAllocationElementLocalStorage = {
   address: string;
   allocations: NonNullable<AllocationsData>;
-  name: string;
+  name?: string;
   userAllocations?: UserAllocation[];
 };

@@ -1,6 +1,6 @@
-import { ProposalWithAllocations } from 'components/dedicated//ProposalItem/types';
+import { ProposalWithRewards } from 'hooks/queries/useProposalsWithRewards';
 
-export interface AllocationItemWithAllocations extends ProposalWithAllocations {
+export interface AllocationItemWithAllocations extends ProposalWithRewards {
   isAllocatedTo: boolean;
   isSelected: boolean;
   value: string | undefined;

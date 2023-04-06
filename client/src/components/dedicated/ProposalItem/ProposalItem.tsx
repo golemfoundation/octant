@@ -2,14 +2,18 @@ import cx from 'classnames';
 import React, { FC, Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
 import Description from 'components/core/Description/Description';
 import Img from 'components/core/Img/Img';
 import Svg from 'components/core/Svg/Svg';
+import ProposalLoadingStates from 'components/dedicated/ProposalLoadingStates/ProposalLoadingStates';
 import env from 'env';
+import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
+import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
+import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
+import useAllocationsStore from 'store/allocations/store';
 import { tick } from 'svg/misc';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
@@ -19,19 +23,16 @@ import ProposalItemProps from './types';
 const ProposalItem: FC<ProposalItemProps> = ({
   address,
   className,
-  description,
-  isAlreadyAdded,
-  isLoadingError,
-  landscapeImageCID,
-  name,
-  onAddRemoveFromAllocate,
   percentage,
-  profileImageCID,
   totalValueOfAllocations,
 }) => {
-  const isDonationAboveThreshold = useIsDonationAboveThreshold(address);
   const { ipfsGateway } = env;
   const navigate = useNavigate();
+  const { data: userAllocations } = useUserAllocations();
+  const { data: allocations, setAllocations } = useAllocationsStore();
+  const { data: proposalsIpfs } = useProposalsIpfs([address]);
+  const isDonationAboveThreshold = useIsDonationAboveThreshold(address);
+  const isAlreadyAdded = allocations!.includes(address);
   const buttonProps = isAlreadyAdded
     ? {
         Icon: <Svg img={tick} size={1.5} />,
@@ -41,15 +42,33 @@ const ProposalItem: FC<ProposalItemProps> = ({
         label: 'Add to Allocate',
       };
 
+  const isLoading = !proposalsIpfs || proposalsIpfs.length === 0;
+  const proposal = proposalsIpfs[0] || {};
+  const { isLoadingError, landscapeImageCID, profileImageCID, name, description } = proposal;
+
+  const { onAddRemoveFromAllocate } = useIdsInAllocation({
+    allocations: allocations!,
+    proposalName: name,
+    setAllocations,
+    userAllocations,
+  });
+
+  const isLoadingStates = isLoadingError || isLoading;
+
   return (
     <div
-      className={cx(styles.root, className, !isLoadingError && styles.isClickable)}
+      className={cx(
+        styles.root,
+        className,
+        !isLoadingStates && styles.isClickable,
+        isLoadingStates && styles.isLoadingStates,
+      )}
       onClick={
-        isLoadingError ? () => {} : () => navigate(`${ROOT_ROUTES.proposal.absolute}/${address}`)
+        isLoadingStates ? () => {} : () => navigate(`${ROOT_ROUTES.proposal.absolute}/${address}`)
       }
     >
-      {isLoadingError ? (
-        <BoxRounded>Loading of a proposal encountered an error.</BoxRounded>
+      {isLoadingStates ? (
+        <ProposalLoadingStates isLoading={isLoading} isLoadingError={isLoadingError} />
       ) : (
         <Fragment>
           <div className={styles.header}>
@@ -86,7 +105,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
               <Button
                 className={styles.button}
                 isSmallFont
-                onClick={onAddRemoveFromAllocate}
+                onClick={() => onAddRemoveFromAllocate(address)}
                 variant="secondary"
                 {...buttonProps}
               />

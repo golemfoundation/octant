@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import React, { FC, useEffect, useState } from 'react';
 import Identicon from 'react-identicons';
 
@@ -14,7 +15,7 @@ import DonorsListProps from './types';
 
 const SHORT_LIST_LENGTH = 4;
 
-const DonorsList: FC<DonorsListProps> = ({ proposalAddress }) => {
+const DonorsList: FC<DonorsListProps> = ({ className, proposalAddress }) => {
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
   } = useSettingsStore(({ data }) => ({
@@ -35,7 +36,7 @@ const DonorsList: FC<DonorsListProps> = ({ proposalAddress }) => {
   }, []);
 
   return (
-    <div className={styles.root}>
+    <div className={cx(styles.root, className)}>
       <div className={styles.header}>
         <span>Donors</span>{' '}
         {proposalAllocations && <div className={styles.count}>{proposalAllocations.length}</div>}

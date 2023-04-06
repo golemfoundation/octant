@@ -15,7 +15,7 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
-import useProposals from 'hooks/queries/useProposals';
+import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useAllocationsStore from 'store/allocations/store';
@@ -34,7 +34,7 @@ import {
 const AllocationView = (): ReactElement => {
   const { isConnected } = useAccount();
   const { data: allocations } = useAllocationsStore();
-  const { data: proposals } = useProposals();
+  const { data: proposals } = useProposalsContract();
   const [currentView, setCurrentView] = useState<CurrentView>('edit');
   const [selectedItemAddress, setSelectedItemAddress] = useState<null | string>(null);
   const [allocationValues, setAllocationValues] = useState<undefined | AllocationValues>(undefined);
@@ -85,7 +85,7 @@ const AllocationView = (): ReactElement => {
         ? allocationsWithPositiveValues
         : [
             {
-              proposalAddress: proposals[0].address,
+              proposalAddress: proposals![0],
               value: '0',
             },
           ];
@@ -145,28 +145,29 @@ const AllocationView = (): ReactElement => {
     isLoading || !isConnected || !isDecisionWindowOpen || !!individualReward?.isZero();
   const areAllocationsAvailable = allocationValues !== undefined && !isEmpty(allocations);
 
-  let allocationsWithRewards = areAllocationsAvailable
-    ? allocations!.map(addressInAllocation => {
-        const allocationItem = proposals.find(({ address }) => address === addressInAllocation)!;
-        const proposalMatchedProposalRewards = matchedProposalRewards?.find(
-          ({ address }) => address === addressInAllocation,
-        );
-        const isSelected = selectedItemAddress === allocationItem.address;
-        const value = allocationValues[allocationItem.address];
-        const isAllocatedTo = !!userAllocations?.find(
-          ({ proposalAddress }) => proposalAddress === addressInAllocation,
-        );
+  let allocationsWithRewards =
+    proposals && proposals.length > 0 && areAllocationsAvailable
+      ? allocations!.map(addressInAllocation => {
+          const allocationItemAddress = proposals.find(address => address === addressInAllocation)!;
+          const proposalMatchedProposalRewards = matchedProposalRewards?.find(
+            ({ address }) => address === addressInAllocation,
+          );
+          const isSelected = selectedItemAddress === allocationItemAddress;
+          const value = allocationValues[allocationItemAddress];
+          const isAllocatedTo = !!userAllocations?.find(
+            ({ proposalAddress }) => proposalAddress === addressInAllocation,
+          );
 
-        return {
-          isAllocatedTo,
-          isSelected,
-          percentage: proposalMatchedProposalRewards?.percentage,
-          totalValueOfAllocations: proposalMatchedProposalRewards?.sum,
-          value,
-          ...allocationItem,
-        };
-      })
-    : [];
+          return {
+            address: allocationItemAddress,
+            isAllocatedTo,
+            isSelected,
+            percentage: proposalMatchedProposalRewards?.percentage,
+            totalValueOfAllocations: proposalMatchedProposalRewards?.sum,
+            value,
+          };
+        })
+      : [];
 
   allocationsWithRewards =
     !!currentEpoch && currentEpoch > 1 && matchedProposalRewards

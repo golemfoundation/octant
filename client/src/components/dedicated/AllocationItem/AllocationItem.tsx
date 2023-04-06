@@ -8,8 +8,10 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
 import InputText from 'components/core/InputText/InputText';
 import Svg from 'components/core/Svg/Svg';
+import ProposalLoadingStates from 'components/dedicated/ProposalLoadingStates/ProposalLoadingStates';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import { minus, plus } from 'svg/misc';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
@@ -20,10 +22,8 @@ import AllocationItemProps from './types';
 const AllocationItem: FC<AllocationItemProps> = ({
   address,
   className,
-  isLoadingError,
   isSelected,
   isAllocatedTo,
-  name,
   onChange,
   onSelectItem,
   percentage,
@@ -31,9 +31,11 @@ const AllocationItem: FC<AllocationItemProps> = ({
   value,
 }) => {
   const { isConnected } = useAccount();
+  const { data: proposalsIpfs, isLoading } = useProposalsIpfs([address]);
   const isDonationAboveThreshold = useIsDonationAboveThreshold(address);
   const { data: individualReward } = useIndividualReward();
   const inputRef = useRef<HTMLInputElement>(null);
+  const { name, isLoadingError } = proposalsIpfs[0] || {};
 
   useEffect(() => {
     if (isSelected && inputRef.current) {
@@ -63,6 +65,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
     placeholder: isSelected ? '' : '0',
   };
 
+  const isLoadingStates = isLoadingError || isLoading;
   const isChangeAvailable = isConnected && individualReward;
   const valueToCalculate = value === undefined ? BigNumber.from('0') : parseUnits(value);
 
@@ -72,8 +75,8 @@ const AllocationItem: FC<AllocationItemProps> = ({
       className={cx(styles.box, isAllocatedTo && styles.isAllocatedTo, className)}
       onClick={isConnected ? () => onSelectItem(address) : undefined}
     >
-      {isLoadingError ? (
-        'Loading of a proposal encountered an error.'
+      {isLoadingStates ? (
+        <ProposalLoadingStates isLoading={isLoading} isLoadingError={isLoadingError} />
       ) : (
         <Fragment>
           <div className={styles.details}>
