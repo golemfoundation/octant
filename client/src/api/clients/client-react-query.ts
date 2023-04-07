@@ -1,4 +1,4 @@
-import { MutationCache, QueryCache, QueryClient } from 'react-query';
+import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
 
 import { handleError } from 'api/errorMessages';
 

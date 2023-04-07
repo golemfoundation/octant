@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Query } from 'react-query';
+import { Query } from '@tanstack/react-query';
 
 import { QUERY_KEYS } from 'api/queryKeys';
 import triggerToast from 'utils/triggerToast';
@@ -51,7 +51,6 @@ function getError(reason: string): Error {
 }
 
 export function handleError(reason: string, query?: Query): string | undefined {
-  // @ts-expect-error TS wrongly assumes queryKey is a string.
   if (query && query.queryKey.find(element => element === QUERY_KEYS.cryptoValuesRoot[0])) {
     // Graceful failure, no notification, no error. Inline info shown in places for values.
     return;

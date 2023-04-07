@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 import { QUERY_KEYS } from 'api/queryKeys';
 import useContractEpochs from 'hooks/contracts/useContractEpochs';

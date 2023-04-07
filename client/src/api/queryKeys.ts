@@ -22,12 +22,25 @@ export const QUERY_KEYS = {
   individualReward: ['individualReward'],
   isDecisionWindowOpen: ['isDecisionWindowOpen'],
   lockedRatio: ['lockedRatio'],
+  locks: ['locks'],
   matchedProposalRewards: ['matchedProposalRewards'],
   matchedRewards: ['matchedRewards'],
+  proposalAllocations: (proposalAddress: string): string[] => [
+    'proposalAllocations',
+    proposalAddress,
+  ],
   proposalRewardsThresholdFraction: ['proposalRewardsThresholdFraction'],
   proposalsCid: ['proposalsCid'],
   proposalsContract: ['proposalsContract'],
-  proposalsIpfsResults: (address: string): string[] => ['proposalsIpfsResults', address],
+  proposalsIpfsResults: (proposalAddress: string): string[] => [
+    'proposalsIpfsResults',
+    proposalAddress,
+  ],
+  unlocks: ['unlocks'],
   userAllocations: ['userAllocations'],
+  userHistoricAllocations: (userAddress: string): string[] => [
+    'userHistoricAllocations',
+    userAddress,
+  ],
   withdrawableUserEth: ['withdrawableUserEth'],
 };

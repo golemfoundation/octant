@@ -1,5 +1,5 @@
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
-import { UseQueryResult, useQuery } from 'react-query';
 
 import { QUERY_KEYS } from 'api/queryKeys';
 import useContractRewards from 'hooks/contracts/useContractRewards';

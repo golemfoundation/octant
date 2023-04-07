@@ -1,4 +1,4 @@
-import { useQueries, UseQueryResult } from 'react-query';
+import { useQueries, UseQueryResult } from '@tanstack/react-query';
 
 import { apiGetProposal } from 'api/calls/proposals';
 import { QUERY_KEYS } from 'api/queryKeys';
@@ -15,13 +15,13 @@ export default function useProposalsIpfs(proposalsAddresses?: string[]): {
   const { data: proposalsCid, isLoading: isLoadingProposalsCid } = useProposalsCid();
   const { refetch } = useProposalsContract();
 
-  const proposalsIpfsResults: UseQueryResult<BackendProposal>[] = useQueries(
-    (proposalsAddresses || []).map(address => ({
+  const proposalsIpfsResults: UseQueryResult<BackendProposal>[] = useQueries({
+    queries: (proposalsAddresses || []).map(address => ({
       enabled: !!address && !!proposalsCid,
       queryFn: () => apiGetProposal(`${proposalsCid}${address}`),
       queryKey: QUERY_KEYS.proposalsIpfsResults(address),
     })),
-  );
+  });
 
   const isProposalsIpfsResultsLoading =
     isLoadingProposalsCid ||

@@ -1,5 +1,5 @@
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
-import { useQuery, UseQueryResult } from 'react-query';
 import { useSigner, useAccount } from 'wagmi';
 
 import { QUERY_KEYS } from 'api/queryKeys';
@@ -15,7 +15,7 @@ export default function useDepositEffectiveAtCurrentEpoch(): UseQueryResult<BigN
   const { data: currentEpoch } = useCurrentEpoch();
 
   return useQuery(
-    currentEpoch ? QUERY_KEYS.depositAtGivenEpoch(currentEpoch) : '',
+    currentEpoch ? QUERY_KEYS.depositAtGivenEpoch(currentEpoch) : [''],
     () => contractTracker?.depositAt(address!, currentEpoch!),
     {
       enabled: !!contractTracker && !!currentEpoch && !!address,

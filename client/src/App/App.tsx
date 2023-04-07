@@ -1,5 +1,5 @@
+import { useQueryClient } from '@tanstack/react-query';
 import React, { ReactElement, useEffect, useState } from 'react';
-import { useQueryClient } from 'react-query';
 import { useAccount } from 'wagmi';
 
 import 'react-toastify/dist/ReactToastify.css';

@@ -1,3 +1,7 @@
+## Configuration
+
+Ensure that the `.env`  file is present. See `.env.template`.
+
 ## Known technical problems
 
 Typechain combines responses from contracts so that an array and object are joined together, e.g.:

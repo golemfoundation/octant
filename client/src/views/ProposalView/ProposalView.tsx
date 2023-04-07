@@ -68,7 +68,12 @@ const ProposalView = (): ReactElement => {
 
   const onLoadNextProposal = () => {
     // isLoading prevents onLoadNextProposal from being called infinitely.
-    if (isLoading || loadedAddresses.length === 0 || loadedProposals.length === 0) {
+    if (
+      isLoading ||
+      loadedAddresses.length === 0 ||
+      loadedProposals.length === 0 ||
+      proposalsWithRewards.length === 0
+    ) {
       return;
     }
 
