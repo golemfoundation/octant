@@ -32,11 +32,16 @@ export default function useProposalAllocations({
 }): UseQueryResult<AllocationSquashed[]> {
   const { subgraphAddress } = env;
   const { timeCurrentEpochStart } = useEpochAndAllocationTimestamps();
-  const { data, ...rest } = useQuery(QUERY_KEYS.proposalAllocations(proposalAddress!), async () =>
-    request(subgraphAddress, GET_PROPOSAL_ALLOCATIONS, {
-      blockTimestamp: timeCurrentEpochStart ? timeCurrentEpochStart / 1000 : undefined,
-      proposalAddress,
-    }),
+  const { data, ...rest } = useQuery(
+    QUERY_KEYS.proposalAllocations(proposalAddress!),
+    async () =>
+      request(subgraphAddress, GET_PROPOSAL_ALLOCATIONS, {
+        blockTimestamp: timeCurrentEpochStart ? timeCurrentEpochStart / 1000 : undefined,
+        proposalAddress,
+      }),
+    {
+      enabled: !!timeCurrentEpochStart && !!proposalAddress,
+    },
   );
 
   const parsedAllocations = parseAllocations(data?.allocateds as Allocation[]);
