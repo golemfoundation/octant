@@ -1,8 +1,9 @@
 import cx from 'classnames';
-import React, { FC, useEffect, useState } from 'react';
-import Identicon from 'react-identicons';
+import React, { FC, useEffect, useState, Fragment } from 'react';
 
 import Button from 'components/core/Button/Button';
+import Identicon from 'components/core/Identicon/Identicon';
+import Loader from 'components/core/Loader/Loader';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useProposalAllocations from 'hooks/subgraph/allocations/useProposalAllocations';
 import useSettingsStore from 'store/settings/store';
@@ -26,9 +27,11 @@ const DonorsList: FC<DonorsListProps> = ({ className, proposalAddress }) => {
   }));
   const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
   const [isDonorsListExpanded, setIsDonorsListExpanded] = useState<boolean>(false);
-  const { data: proposalAllocations, refetch: refetchProposalAllocations } = useProposalAllocations(
-    { proposalAddress },
-  );
+  const {
+    data: proposalAllocations,
+    refetch: refetchProposalAllocations,
+    isLoading,
+  } = useProposalAllocations({ proposalAddress });
 
   useEffect(() => {
     refetchProposalAllocations();
@@ -37,42 +40,47 @@ const DonorsList: FC<DonorsListProps> = ({ className, proposalAddress }) => {
 
   return (
     <div className={cx(styles.root, className)}>
-      <div className={styles.header}>
-        <span>Donors</span>{' '}
-        {proposalAllocations && <div className={styles.count}>{proposalAllocations.length}</div>}
-      </div>
-      {proposalAllocations
-        ?.slice(0, isDonorsListExpanded ? proposalAllocations.length : SHORT_LIST_LENGTH)
-        ?.map(({ amount, user }, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <div key={index} className={styles.donor}>
-            <div className={styles.identicon}>
-              <Identicon size={14} string={user} />
-            </div>
-            <div className={styles.address}>{truncateEthAddress(user)}</div>
-            <div>
-              {isCryptoMainValueDisplay
-                ? getValueCryptoToDisplay({
-                    cryptoCurrency: 'ethereum',
-                    valueCrypto: amount,
-                  })
-                : getValueFiatToDisplay({
-                    cryptoCurrency: 'ethereum',
-                    cryptoValues,
-                    displayCurrency: displayCurrency!,
-                    error,
-                    valueCrypto: amount,
-                  })}
-            </div>
+      {isLoading ? (
+        <Loader className={styles.loader} />
+      ) : (
+        <Fragment>
+          <div className={styles.header}>
+            <span>Donors</span>{' '}
+            {proposalAllocations && (
+              <div className={styles.count}>{proposalAllocations.length}</div>
+            )}
           </div>
-        ))}
-      {proposalAllocations && proposalAllocations.length > SHORT_LIST_LENGTH && (
-        <Button
-          className={styles.buttonDonors}
-          label={isDonorsListExpanded ? 'See less' : 'See all'}
-          onClick={() => setIsDonorsListExpanded(!isDonorsListExpanded)}
-          variant="link4"
-        />
+          {proposalAllocations
+            ?.slice(0, isDonorsListExpanded ? proposalAllocations.length : SHORT_LIST_LENGTH)
+            ?.map(({ amount, user }) => (
+              <div key={`${proposalAddress}-${user}`} className={styles.donor}>
+                <Identicon className={styles.identicon} username={user} />
+                <div className={styles.address}>{truncateEthAddress(user)}</div>
+                <div>
+                  {isCryptoMainValueDisplay
+                    ? getValueCryptoToDisplay({
+                        cryptoCurrency: 'ethereum',
+                        valueCrypto: amount,
+                      })
+                    : getValueFiatToDisplay({
+                        cryptoCurrency: 'ethereum',
+                        cryptoValues,
+                        displayCurrency: displayCurrency!,
+                        error,
+                        valueCrypto: amount,
+                      })}
+                </div>
+              </div>
+            ))}
+          {proposalAllocations && proposalAllocations.length > SHORT_LIST_LENGTH && (
+            <Button
+              className={styles.buttonDonors}
+              label={isDonorsListExpanded ? 'See less' : 'See all'}
+              onClick={() => setIsDonorsListExpanded(!isDonorsListExpanded)}
+              variant="link4"
+            />
+          )}
+        </Fragment>
       )}
     </div>
   );

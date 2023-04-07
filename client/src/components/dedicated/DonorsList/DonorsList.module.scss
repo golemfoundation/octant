@@ -7,6 +7,10 @@
   flex: 1;
   align-self: stretch;
 
+  .loader {
+    align-self: center;
+  }
+
   .header {
     display: flex;
     align-items: center;
