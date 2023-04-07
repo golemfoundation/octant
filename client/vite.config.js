@@ -46,6 +46,7 @@ export default defineConfig(({ mode }) => {
         constants: path.resolve(__dirname, 'src/constants'),
         context: path.resolve(__dirname, 'src/context'),
         env: path.resolve(__dirname, 'src/env'),
+        gql: path.resolve(__dirname, 'src/gql'),
         hooks: path.resolve(__dirname, 'src/hooks'),
         layouts: path.resolve(__dirname, 'src/layouts'),
         mocks: path.resolve(__dirname, 'src/mocks'),

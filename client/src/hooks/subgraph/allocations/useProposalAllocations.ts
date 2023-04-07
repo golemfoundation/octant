@@ -1,23 +1,21 @@
-import { gql, useQuery, QueryResult } from '@apollo/client';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
+// eslint-disable-next-line import/no-unresolved
+import request from 'graphql-request';
 
+import { QUERY_KEYS } from 'api/queryKeys';
+import env from 'env';
+import { graphql } from 'gql/gql';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 
-import { ALLOCATED_FIELDS } from './fragments';
-import { AllocationSquashed } from './types';
+import { Allocation, AllocationSquashed } from './types';
 import { parseAllocations } from './utils';
-
-type Variables = {
-  blockTimestamp: number | undefined;
-  proposalAddress: string | undefined;
-};
 
 /**
  * $blockTimestamp is set as optional because skip option is not respected,
  * causing query to be sent without it, resulting in an error.
  */
-const GET_PROPOSAL_ALLOCATIONS = gql`
-  ${ALLOCATED_FIELDS}
-  query GetProposalAllocations($blockTimestamp: Int = 0, $proposalAddress: String!) {
+const GET_PROPOSAL_ALLOCATIONS = graphql(`
+  query GetProposalAllocations($blockTimestamp: Int = 0, $proposalAddress: Bytes!) {
     allocateds(
       orderBy: blockTimestamp
       where: { proposal: $proposalAddress, blockTimestamp_gte: $blockTimestamp }
@@ -25,24 +23,23 @@ const GET_PROPOSAL_ALLOCATIONS = gql`
       ...AllocatedFields
     }
   }
-`;
+`);
 
 export default function useProposalAllocations({
   proposalAddress,
 }: {
   proposalAddress?: string;
-}): QueryResult<AllocationSquashed[], Variables> {
+}): UseQueryResult<AllocationSquashed[]> {
+  const { subgraphAddress } = env;
   const { timeCurrentEpochStart } = useEpochAndAllocationTimestamps();
-
-  const { data, ...rest } = useQuery(GET_PROPOSAL_ALLOCATIONS, {
-    skip: timeCurrentEpochStart === undefined || !proposalAddress,
-    variables: {
+  const { data, ...rest } = useQuery(QUERY_KEYS.proposalAllocations(proposalAddress!), async () =>
+    request(subgraphAddress, GET_PROPOSAL_ALLOCATIONS, {
       blockTimestamp: timeCurrentEpochStart ? timeCurrentEpochStart / 1000 : undefined,
       proposalAddress,
-    },
-  });
+    }),
+  );
 
-  const parsedAllocations = parseAllocations(data?.allocateds);
+  const parsedAllocations = parseAllocations(data?.allocateds as Allocation[]);
 
   // TODO OCT-312: potentially remove this util, otherwise extract & test.
   // From each user getting allocation with the highest timestsamp (newest).
@@ -58,6 +55,7 @@ export default function useProposalAllocations({
       }, [])
     : [];
 
+  // @ts-expect-error resolve typing issue.
   return {
     data: filteredAllocation,
     ...rest,

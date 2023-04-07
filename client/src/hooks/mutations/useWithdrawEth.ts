@@ -1,6 +1,6 @@
+import { UseMutationResult, useMutation, UseMutationOptions } from '@tanstack/react-query';
 import { ContractTransaction } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
-import { UseMutationResult, useMutation, UseMutationOptions } from 'react-query';
 import { useSigner } from 'wagmi';
 
 import { DEPOSIT_WITHDRAW_GAS_LIMIT } from 'constants/contracts';

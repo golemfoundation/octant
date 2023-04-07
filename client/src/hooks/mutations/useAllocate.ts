@@ -1,6 +1,6 @@
+import { UseMutationResult, useMutation } from '@tanstack/react-query';
 import { ContractTransaction } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
-import { UseMutationResult, useMutation } from 'react-query';
 import { useSigner } from 'wagmi';
 
 import useContractAllocations from 'hooks/contracts/useContractAllocations';
