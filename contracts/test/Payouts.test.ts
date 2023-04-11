@@ -16,20 +16,25 @@ makeTestsEnv(PAYOUTS, testEnv => {
 
   beforeEach(async () => {
     const {
+      auth,
       epochs,
       proposals,
-      signers: { Alice, TestFoundation },
+      signers: { Alice },
     } = testEnv;
 
     // configure rewards in a simpler way
     rewards = await smock.fake<Rewards>('Rewards');
     const payoutsFactory = await ethers.getContractFactory(PAYOUTS);
-    payouts = (await payoutsFactory.deploy(rewards.address, epochs.address)) as Payouts;
+    payouts = (await payoutsFactory.deploy(
+      rewards.address,
+      epochs.address,
+      auth.address,
+    )) as Payouts;
     const payoutsManagerFactory = await ethers.getContractFactory(PAYOUTS_MANAGER);
     payoutsManager = (await payoutsManagerFactory.deploy(
       payouts.address,
-      TestFoundation.address,
       proposals.address,
+      auth.address,
     )) as PayoutsManager;
     await payouts.setPayoutsManager(payoutsManager.address);
 
@@ -450,9 +455,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
         signers: { TestFoundation },
       } = testEnv;
       await payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('0.3'));
-      let proposalPayout = await payouts.payoutStatus(
-        payoutsManager.golemFoundationWithdrawalAddress(),
-      );
+      let proposalPayout = await payouts.payoutStatus(TestFoundation.address);
       expect(proposalPayout.total).eq(parseEther('0.3'));
       expect(proposalPayout.checkpointEpoch).eq(0);
 
@@ -461,9 +464,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
         payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('2.8')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
 
-      proposalPayout = await payouts.payoutStatus(
-        payoutsManager.golemFoundationWithdrawalAddress(),
-      );
+      proposalPayout = await payouts.payoutStatus(TestFoundation.address);
       expect(proposalPayout.total).eq(parseEther('0.3'));
       expect(proposalPayout.extra).eq(parseEther('0.3'));
     });
@@ -477,16 +478,12 @@ makeTestsEnv(PAYOUTS, testEnv => {
         payoutsManager.connect(Alice).withdrawGolemFoundation(parseEther('0.3')),
       ).to.be.revertedWith('HN:Common/unauthorized-caller');
       await payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('0.3'));
-      let proposalPayout = await payouts.payoutStatus(
-        payoutsManager.golemFoundationWithdrawalAddress(),
-      );
+      let proposalPayout = await payouts.payoutStatus(TestFoundation.address);
       expect(proposalPayout.total).eq(parseEther('0.3'));
       expect(proposalPayout.extra).eq(parseEther('0.3'));
 
       await payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('0.8'));
-      proposalPayout = await payouts.payoutStatus(
-        payoutsManager.golemFoundationWithdrawalAddress(),
-      );
+      proposalPayout = await payouts.payoutStatus(TestFoundation.address);
       expect(proposalPayout.total).eq(parseEther('1.1'));
       expect(proposalPayout.extra).eq(parseEther('0.1'));
       expect(proposalPayout.checkpointEpoch).eq(1);
@@ -506,7 +503,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
     } = testEnv;
     const before = await ethers.provider.getBalance(TestFoundation.address);
 
-    await payoutsManager.emergencyWithdraw(parseEther('2.8'));
+    await payoutsManager.connect(TestFoundation).emergencyWithdraw(parseEther('2.8'));
 
     expect(await ethers.provider.getBalance(TestFoundation.address)).approximately(
       before.add(parseEther('2.8')),

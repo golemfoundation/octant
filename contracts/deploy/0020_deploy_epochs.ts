@@ -1,8 +1,9 @@
+import { ethers } from 'hardhat';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
 import { DECISION_WINDOW, EPOCH_DURATION } from '../env';
-import { EPOCHS } from '../helpers/constants';
+import { AUTH, EPOCHS } from '../helpers/constants';
 import { getLatestBlockTimestamp } from '../helpers/misc-utils';
 
 // This function needs to be declared this way, otherwise it's not understood by test runner.
@@ -19,8 +20,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     epochDuration = 300;
   }
 
+  const auth = await ethers.getContract(AUTH);
+
   await deploy(EPOCHS, {
-    args: [start, epochDuration, decisionWindow],
+    args: [start, epochDuration, decisionWindow, auth.address],
     autoMine: true,
     from: deployer,
     log: true,

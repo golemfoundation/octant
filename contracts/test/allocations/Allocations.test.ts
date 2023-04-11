@@ -4,7 +4,7 @@ import { parseEther } from 'ethers/lib/utils';
 import { ethers } from 'hardhat';
 
 import { PROPOSALS_CID } from '../../env';
-import { ALLOCATIONS, ALLOCATIONS_STORAGE, EPOCHS, PROPOSALS } from '../../helpers/constants';
+import { ALLOCATIONS, ALLOCATIONS_STORAGE, AUTH, EPOCHS, PROPOSALS } from '../../helpers/constants';
 import { forwardEpochs } from '../../helpers/epochs-utils';
 import { getLatestBlockTimestamp, increaseNextBlockTimestamp } from '../../helpers/misc-utils';
 import { sendETH } from '../../helpers/target-utils';
@@ -17,10 +17,18 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
     duration: number,
     decisionWindow: number,
   ): Promise<[Epochs, Allocations, AllocationsStorage, Proposals]> {
+    const auth = await ethers.getContract(AUTH);
     const epochsFactory = await ethers.getContractFactory(EPOCHS);
-    const epochs: Epochs = (await epochsFactory.deploy(start, duration, decisionWindow)) as Epochs;
+    const epochs = (await epochsFactory.deploy(
+      start,
+      duration,
+      decisionWindow,
+      auth.address,
+    )) as Epochs;
     const allocationsStorageFactory = await ethers.getContractFactory(ALLOCATIONS_STORAGE);
-    const allocationsStorage = (await allocationsStorageFactory.deploy()) as AllocationsStorage;
+    const allocationsStorage = (await allocationsStorageFactory.deploy(
+      auth.address,
+    )) as AllocationsStorage;
     const allocationsFactory = await ethers.getContractFactory(ALLOCATIONS);
 
     const proposalsFactory = await ethers.getContractFactory(PROPOSALS);
@@ -34,6 +42,7 @@ makeTestsEnv(ALLOCATIONS, testEnv => {
       epochs.address,
       PROPOSALS_CID,
       proposalAddresses,
+      auth.address,
     )) as Proposals;
 
     const sRewards = await smock.fake<Rewards>('Rewards');

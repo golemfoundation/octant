@@ -2,14 +2,17 @@ import { expect } from 'chai';
 import { parseEther } from 'ethers/lib/utils';
 import { ethers } from 'hardhat';
 
-import { ALLOCATIONS_STORAGE } from '../../helpers/constants';
+import { ALLOCATIONS_STORAGE, AUTH } from '../../helpers/constants';
 import { AllocationsStorage } from '../../typechain';
 import { makeTestsEnv } from '../helpers/make-tests-env';
 
 makeTestsEnv(ALLOCATIONS_STORAGE, testEnv => {
   async function setupContract(newOwner: string) {
+    const auth = await ethers.getContract(AUTH);
     const allocationsStorageFactory = await ethers.getContractFactory(ALLOCATIONS_STORAGE);
-    const allocationsStorage = (await allocationsStorageFactory.deploy()) as AllocationsStorage;
+    const allocationsStorage = (await allocationsStorageFactory.deploy(
+      auth.address,
+    )) as AllocationsStorage;
     await allocationsStorage.setAllocations(newOwner);
     return allocationsStorage;
   }

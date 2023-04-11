@@ -4,7 +4,7 @@ import { ethers } from 'hardhat';
 
 import { makeTestsEnv } from './helpers/make-tests-env';
 
-import { DEPOSITS, TOKEN, TRACKER_WRAPPER } from '../helpers/constants';
+import { AUTH, DEPOSITS, TOKEN, TRACKER_WRAPPER } from '../helpers/constants';
 import { Deposits, Tracker, TrackerWrapper } from '../typechain';
 
 makeTestsEnv(DEPOSITS, testEnv => {
@@ -15,9 +15,13 @@ makeTestsEnv(DEPOSITS, testEnv => {
     const trackerWrapperFactory = await ethers.getContractFactory(TRACKER_WRAPPER);
     const depositsFactory = await ethers.getContractFactory(DEPOSITS);
     const token = await ethers.getContract(TOKEN);
+    const auth = await ethers.getContract(AUTH);
 
     const sTracker = await smock.fake<Tracker>('Tracker');
-    const glmDeposits: Deposits = (await depositsFactory.deploy(token.address)) as Deposits;
+    const glmDeposits: Deposits = (await depositsFactory.deploy(
+      token.address,
+      auth.address,
+    )) as Deposits;
     const trackerWrapper: TrackerWrapper = (await trackerWrapperFactory.deploy(
       sTracker.address,
       glmDeposits.address,

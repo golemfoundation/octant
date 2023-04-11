@@ -6,13 +6,14 @@ import "../interfaces/IEpochs.sol";
 import "../interfaces/ITracker.sol";
 import "../interfaces/IDeposits.sol";
 
-/// external dependencies
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-
 import "./TrackerWrapper.sol";
+import "../OctantBase.sol";
 
 import {TrackerErrors, CommonErrors} from "../Errors.sol";
+
+/// external dependencies
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
 
 /// @title Contract tracking effective deposits across epochs (Octant).
 /// @author Golem Foundation
@@ -22,7 +23,7 @@ import {TrackerErrors, CommonErrors} from "../Errors.sol";
 /// is considered effective.
 /// @dev Time is split into epochs, effective deposit is defined as min value
 /// of GLM held by this contract on behalf of the depositor in particular epoch.
-contract Tracker is Ownable {
+contract Tracker is OctantBase {
     /// @notice Epochs contract address.
     IEpochs public immutable epochs;
 
@@ -48,8 +49,7 @@ contract Tracker is Ownable {
 
     /// @dev helper structure for effective deposit amounts tracking. See `depositAt` function
     /// GLMGE_it
-    mapping(address => mapping(uint32 => EffectiveDeposit))
-        private effectiveDeposits;
+    mapping(address => mapping(uint32 => EffectiveDeposit)) private effectiveDeposits;
 
     /// @dev Tracking total supply of GLM per epoch.
     mapping(uint32 => uint224) public tokenSupplyByEpoch;
@@ -63,8 +63,9 @@ contract Tracker is Ownable {
         address epochsAddress,
         address depositsAddress,
         address glmAddress,
-        address gntAddress
-    ) {
+        address gntAddress,
+        address _auth
+    ) OctantBase(_auth) {
         epochs = IEpochs(epochsAddress);
         deposits = IDeposits(depositsAddress);
         glm = ERC20(glmAddress);
@@ -188,7 +189,8 @@ contract Tracker is Ownable {
             uint224(gnt.balanceOf(burnAddress));
     }
 
-    function setWrapperAddress(address _wrapperAddress) external onlyOwner {
+    function setWrapperAddress(address _wrapperAddress) external onlyDeployer {
+        require(address(wrapperAddress) == address(0x0));
         wrapperAddress = _wrapperAddress;
     }
 

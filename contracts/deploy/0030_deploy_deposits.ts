@@ -3,7 +3,7 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
 import { GOERLI_GLM } from '../env';
-import { DEPOSITS, TOKEN } from '../helpers/constants';
+import { AUTH, DEPOSITS, TOKEN } from '../helpers/constants';
 
 // This function needs to be declared this way, otherwise it's not understood by test runner.
 // eslint-disable-next-line func-names
@@ -16,8 +16,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     glmAddress = token.address;
   }
 
+  const auth = await ethers.getContract(AUTH);
+
   await deploy(DEPOSITS, {
-    args: [glmAddress],
+    args: [glmAddress, auth.address],
     autoMine: true,
     from: deployer,
     log: true,

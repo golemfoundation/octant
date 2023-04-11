@@ -4,13 +4,13 @@ pragma solidity ^0.8.9;
 
 import "../interfaces/IEpochs.sol";
 import "../interfaces/IRewards.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
 import {PayoutsErrors, CommonErrors} from "../Errors.sol";
+import "../OctantBase.sol";
 
 /// @title Contract tracking ETH payouts for Octant project.
 /// @author Golem Foundation
-contract Payouts is Ownable {
+contract Payouts is OctantBase {
     IRewards public immutable rewards;
     IEpochs public immutable epochs;
     address public payoutsManager;
@@ -35,8 +35,9 @@ contract Payouts is Ownable {
 
     constructor(
         address rewardsAddress,
-        address epochsAddress
-    ) {
+        address epochsAddress,
+        address _auth)
+    OctantBase(_auth) {
         rewards = IRewards(rewardsAddress);
         epochs = IEpochs(epochsAddress);
     }
@@ -82,7 +83,7 @@ contract Payouts is Ownable {
     }
 
 
-    function setPayoutsManager(address _payoutsManager) public onlyOwner {
+    function setPayoutsManager(address _payoutsManager) public onlyDeployer {
         require(payoutsManager == address(0x0), "HN/Payouts:already-initialized");
         payoutsManager = _payoutsManager;
     }

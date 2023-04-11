@@ -12,8 +12,12 @@ contract Auth {
     /// @param newValue The new Golem Foundation multisig address.
     event MultisigSet(address oldValue, address newValue);
 
+    /// @dev Emitted when the deployer address is set.
+    /// @param oldValue The old deployer address.
+    event DeployerRenounced(address oldValue);
+
     /// @dev The deployer address.
-    address public immutable deployer;
+    address public deployer;
 
     /// @dev The multisig address.
     address public multisig;
@@ -30,5 +34,13 @@ contract Auth {
         require(msg.sender == multisig, CommonErrors.UNAUTHORIZED_CALLER);
         emit MultisigSet(multisig, _multisig);
         multisig = _multisig;
+    }
+
+    /// @dev Leaves the contract without a deployer. It will not be possible to call
+    /// `onlyDeployer` functions. Can only be called by the current deployer.
+    function renounceDeployer() external {
+        require(msg.sender == deployer, CommonErrors.UNAUTHORIZED_CALLER);
+        emit DeployerRenounced(deployer);
+        deployer = address(0);
     }
 }

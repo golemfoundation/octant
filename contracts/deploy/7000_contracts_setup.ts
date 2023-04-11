@@ -4,6 +4,7 @@ import { DeployFunction } from 'hardhat-deploy/types';
 import {
   ALLOCATIONS,
   ALLOCATIONS_STORAGE,
+  AUTH,
   DEPOSITS,
   OCTANT_ORACLE,
   PAYOUTS,
@@ -15,6 +16,7 @@ import {
 import {
   Allocations,
   AllocationsStorage,
+  Auth,
   Deposits,
   OctantOracle,
   Payouts,
@@ -32,7 +34,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const allocations: Allocations = await hre.ethers.getContract(ALLOCATIONS);
   const allocationsStorage: AllocationsStorage = await hre.ethers.getContract(ALLOCATIONS_STORAGE);
   await allocationsStorage.setAllocations(allocations.address);
-  await allocationsStorage.renounceOwnership();
 
   // Setup Deposits
   const deposits: Deposits = await hre.ethers.getContract(DEPOSITS);
@@ -52,8 +53,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await withdrawalsTarget.setWithdrawer(octantOracle.address);
 
   if (['hardhat', 'localhost'].includes(hre.network.name)) {
+    // Test networks setup
     // TODO automate the flow for testnet deployment - OCT-364
     await withdrawalsTarget.connect(TestFoundation).setVault(payoutsManager.address);
+  } else {
+    // Live networks setup
+    // Renounce deployer role
+    const auth: Auth = await hre.ethers.getContract(AUTH);
+    await auth.renounceDeployer();
   }
 };
 
