@@ -3,6 +3,7 @@ $verticalDistanceBetweenElements: $layoutMarginHorizontal;
 .list {
   display: flex;
   flex-wrap: wrap;
+  width: 100%;
 
   @media #{$desktop-up} {
     margin: 0 (-(calc($verticalDistanceBetweenElements / 2)));

@@ -57,10 +57,6 @@ const SettingsView = (): ReactElement => {
           onChange={({ target: { checked: isChecked } }) => setIsCryptoMainValueDisplay(isChecked)}
         />
       </BoxRounded>
-      <BoxRounded className={cx(styles.box, styles.isDisabled)} justifyContent="spaceBetween">
-        Show Metrics introductions
-        <InputCheckbox isDisabled />
-      </BoxRounded>
       <BoxRounded className={styles.box} justifyContent="spaceBetween">
         Always show Allocate onboarding
         <InputCheckbox
