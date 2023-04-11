@@ -1,0 +1,175 @@
+#cloud-config
+
+users:
+  - name: cloudservice
+    uid: 2000
+
+write_files:
+  - path: /home/cloudservice/contracts.txt
+    permissions: 0644
+    owner: root
+    encoding: base64
+    content: "${contracts_b64}"
+  - path: /etc/traefik/traefik.yml
+    permissions: 0644
+    owner: root
+    content: |
+      global:
+        checkNewVersion: false
+        sendAnonymousUsage: false
+      entryPoints:
+        web:
+          address: :80
+      api:
+        insecure: true
+        dashboard: true
+      #accessLog: {}
+      providers:
+        docker:
+          exposedByDefault: false
+
+  - path: /etc/systemd/system/gitlab-login.service
+    permissions: 0644
+    owner: root
+    content: |
+      [Unit]
+      Description=Docker gitlab login
+      Requires=network-online.target
+      After=network.target network-online.target
+
+      [Service]
+      Type=oneshot
+      Environment="HOME=/home/cloudservice"
+      ExecStart=/usr/bin/docker login -u ${docker_username} -p ${docker_password} registry.gitlab.com
+
+  - path: /etc/systemd/system/traefik.service
+    permissions: 0644
+    owner: root
+    content: |
+      [Unit]
+      Description=Start a simple docker container
+      Requires=docker.service
+      After=docker.service
+
+      [Service]
+      ExecStartPre=-/usr/bin/docker network create main
+      ExecStart=/usr/bin/docker run --rm --name traefik --network main -p 80:80 -p 8080:8080 -v /etc/traefik/:/etc/traefik/ -v /var/run/docker.sock:/var/run/docker.sock traefik:${image_versions.traefik}
+      ExecStop=/usr/bin/docker stop traefik
+      ExecStopPost=-/usr/bin/docker rm traefik
+      Restart=always
+      RestartSec=1s
+
+%{ for name, service in docker_services ~}
+  - path: /etc/systemd/system/${name}.service
+    permissions: 0644
+    owner: root
+    content: |
+      [Unit]
+      Description=Docker service ${name}
+      Requires=traefik.service
+      After=traefik.service gitlab-login.service
+
+      [Service]
+      Environment="HOME=/home/cloudservice"
+      EnvironmentFile="/home/cloudservice/env.${name}"
+      ExecStart=/usr/bin/docker run --rm --name ${name} --network main %{ if can(service.params) }${service.params} %{ endif }%{ for env in lookup(service, "envs", []) ~}-e "${env}" %{ endfor ~}${service.image}
+      ExecStop=/usr/bin/docker stop ${name}
+      ExecStopPost=-/usr/bin/docker rm ${name}
+      TimeoutStartSec=10min
+
+%{ endfor ~}
+%{ for name, service in traefik_services ~}
+  - path: /etc/systemd/system/${name}.service
+    permissions: 0644
+    owner: root
+    content: |
+      [Unit]
+      Description=Docker service ${name}
+      Requires=traefik.service
+      After=traefik.service gitlab-login.service
+
+      [Service]
+      Environment="HOME=/home/cloudservice"
+%{ if try(service.envFileEnable, false) ~}
+      EnvironmentFile=/home/cloudservice/envfile.${name}
+%{ endif ~}
+      ExecStartPre=/usr/bin/docker pull ${service.image}
+      ExecStartPre=/bin/sh -c 'echo "FROM ${service.image}" | /usr/bin/docker build -t ${name}:local - %{ for label in service.labels }--label "${label}" %{ endfor }'
+%{ if try(service.envFileEnable, false) ~}
+      ExecStart=/usr/bin/docker run --rm --name ${name} --network main %{ if can(service.params) }${service.params} %{ endif }%{ for env in lookup(service, "envs", []) ~}-e "${env}" %{ endfor ~}--env-file /home/cloudservice/envfile.${name} ${name}:local
+%{ else ~}
+      ExecStart=/usr/bin/docker run --rm --name ${name} --network main %{ if can(service.params) }${service.params} %{ endif }%{ for env in lookup(service, "envs", []) ~}-e "${env}" %{ endfor ~}${name}:local
+%{ endif ~}
+      ExecStop=/usr/bin/docker stop ${name}
+      ExecStopPost=-/usr/bin/docker rm ${name}
+      TimeoutStartSec=10min
+
+%{ endfor ~}
+  - path: /home/cloudservice/entrypoint.sh
+    permissions: 0777
+    owner: cloudservice
+    content: |
+      #!/usr/bin/env bash
+      set -ex
+
+      on_failure() {
+        exit 1
+      }
+      trap on_failure ERR
+
+      NETWORK=$${NETWORK:-"goerli"}
+      TAG=$${CI_COMMIT_SHORT_SHA:-"latest"}
+      CONTRACTS=$HOME/contracts.txt
+%{ if generate_contracts ~}
+
+      // TBD
+
+%{ endif ~}
+      # Generating env variable files
+      grep '^VITE_' "$CONTRACTS" > $HOME/envfile.client
+      echo "VITE_CRYPTO_VALUES_ENDPOINT=http://cps.${dns_domain}/" >> $HOME/envfile.client
+      echo "VITE_SUBGRAPH_ADDRESS=http://subgraph.${dns_domain}/subgraphs/name/octant" >> $HOME/envfile.client
+      BLOCK_NUMBER=$(grep '^BLOCK_NUMBER=' "$CONTRACTS" | cut -d= -f2)
+      ALLOCATIONS_ADDRESS=$(grep '^VITE_ALLOCATIONS_ADDRESS' "$CONTRACTS" | cut -d= -f2)
+      DEPOSITS_ADDRESS=$(grep '^VITE_DEPOSITS_ADDRESS' "$CONTRACTS" | cut -d= -f2)
+      # Generate networks.json file
+      echo "{ \
+        \"goerli\": { \
+          \"Allocations\": { \
+            \"address\": \"$ALLOCATIONS_ADDRESS\", \
+            \"startBlock\": $BLOCK_NUMBER \
+          },
+          \"Deposits\": { \
+            \"address\": \"$DEPOSITS_ADDRESS\", \
+            \"startBlock\": $BLOCK_NUMBER \
+          }
+        }\
+      }" | jq '.' > $HOME/networks.json
+
+      echo "Wait graph-node to start..."
+      while ! docker logs graph-node 2>&1 | grep -q 'Started all assigned subgraphs'; do
+        sleep 1
+      done
+      echo "Graph-node started"
+
+      HOME=$HOME docker run \
+        --name subgraph \
+        --network main \
+        -v $HOME/networks.json:/app/networks.json \
+        -e "NETWORK=${network}" \
+        -e "SUBGRAPH_URL=http://graph-node:8020" \
+        -e "IPFS_URL=http://ipfs:5001" \
+        -e "CI_COMMIT_SHORT_SHA=$TAG" \
+        -e "NODE_NAME=octant" \
+        ${images_prefix}/subgraph:${tag}
+
+      echo "Run Coin Prices Server"
+      systemctl start coin_prices_server.service
+      echo "Run Client Service"
+      systemctl start client.service
+
+runcmd:
+  - systemctl daemon-reload
+  - systemctl start traefik.service gitlab-login.service
+  - systemctl start ipfs.service postgres.service graph-node.service
+  - HOME=/home/cloudservice /bin/sh /home/cloudservice/entrypoint.sh

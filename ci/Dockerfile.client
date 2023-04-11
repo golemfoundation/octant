@@ -1,7 +1,8 @@
 FROM node:16-alpine
 WORKDIR /app
-COPY ./ ./
+COPY package.json yarn.lock ./
 RUN yarn install --ignore-scripts --frozen-lockfile && yarn cache clean
+COPY ./ ./
 
 EXPOSE 4173
 ENTRYPOINT [ "yarn", "start" ]

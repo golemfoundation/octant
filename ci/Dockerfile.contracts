@@ -3,7 +3,7 @@ WORKDIR /app
 
 FROM root AS build
 COPY package.json yarn.lock ./
-RUN yarn install --ignore-scripts --frozen-lockfile
+RUN yarn install --ignore-scripts --frozen-lockfile && yarn postinstall
 COPY ./ ./
 RUN yarn compile
 RUN rm -Rf cache/

@@ -8,8 +8,11 @@ stages:
   - build
   - lint_and_typecheck
   - test
-  - deploy
   - publish
+  - deploy
+  - ci-validate
+  - ci-plan
+  - environments
 
 image: node:16-bullseye-slim
 
@@ -173,47 +176,6 @@ Documentation:
       - $SERVICE/.docs/
     expire_in: 30 days
 
-# TODO To be removed (mslomnicki)
-
-Contracts deploy:
-  stage: deploy
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "master"'
-      when: manual
-  cache:
-    - key: $CI_COMMIT_REF_SLUG-yarn-root
-      paths:
-        - node_modules
-        - .yarn
-      policy: pull
-    - key: $CI_COMMIT_REF_SLUG-yarn-$SERVICE
-      paths:
-        - $SERVICE/.yarn
-        - $SERVICE/node-modules
-      policy: pull
-  script:
-    - cd contracts
-    - yarn deploy:goerli
-
-pages:
-  stage: deploy
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "master"'
-      when: manual
-  script:
-    - apt-get update && apt-get install -y --no-install-recommends git --reinstall ca-certificates
-    - cd contracts
-    - yarn install --non-interactive --cache-folder .yarn
-    - yarn compile
-    - cd ../client
-    - yarn install --non-interactive
-    - yarn build
-    - cd ..
-    - mv client/dist public
-  artifacts:
-    paths:
-      - public
-
 Build container:
   stage: publish
   rules:
@@ -244,3 +206,185 @@ Build container:
       --build-arg CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA
       --cache=true
       --cache-repo=$KANIKO_CACHE_REPO
+
+# TODO left until migration to from gitlab pages will be finished
+pages:
+  stage: environments
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'
+      when: manual
+  script:
+    - apt-get update && apt-get install -y --no-install-recommends git --reinstall ca-certificates
+    - cd contracts
+    - yarn install --non-interactive --cache-folder .yarn
+    - yarn compile
+    - cd client
+    - yarn install --non-interactive
+    - yarn build
+    - cd ..
+    - mv client/dist public
+  artifacts:
+    paths:
+      - public
+
+include:
+  - template: Terraform/Base.latest.gitlab-ci.yml  # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Terraform/Base.latest.gitlab-ci.yml
+
+.terraform:config:
+  image:
+    name: "$CI_TEMPLATE_REGISTRY_HOST/gitlab-org/terraform-images/stable:latest"
+  before_script:
+    - echo "$GCP_TERRAFORM_ACCT" | base64 -d > "$CI_PROJECT_DIR/.gcloud_credentials.json"
+    - chmod 400 "$CI_PROJECT_DIR/.gcloud_credentials.json"
+  after_script:
+    - rm "$CI_PROJECT_DIR/.gcloud_credentials.json"
+  variables:
+    TF_ROOT: ${CI_PROJECT_DIR}/ci/terraform
+    TF_STATE_NAME: $CI_ENVIRONMENT_SLUG
+    TF_INIT_FLAGS: -lockfile=readonly
+    GOOGLE_APPLICATION_CREDENTIALS: $CI_PROJECT_DIR/.gcloud_credentials.json
+    DNS_DOMAIN: gle.octant.world
+    TF_VAR_CI_COMMIT_REF_NAME: $CI_COMMIT_REF_NAME
+    TF_VAR_CI_ENVIRONMENT_NAME: $CI_ENVIRONMENT_NAME
+    TF_VAR_dns_endpoint: $CI_ENVIRONMENT_SLUG
+    TF_VAR_generate_contracts: "false"
+    TF_VAR_octant_tag: $CI_COMMIT_SHORT_SHA
+
+fmt:
+  stage: ci-validate
+  extends:
+    - .terraform:fmt
+    - .terraform:config
+  needs: [ ]
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+validate:
+  stage: ci-validate
+  extends:
+    - .terraform:validate
+    - .terraform:config
+  needs: [ ]
+  variables:
+    TF_STATE_NAME: validate
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# Manually join 2 stages from gitlab template
+.deploy:
+  stage: environments
+  extends:
+    - .terraform:config
+  needs:
+    - fmt
+    - validate
+    - Build container
+  script:
+    - cd "${TF_ROOT}"
+    - gitlab-terraform plan -replace="google_compute_instance.vm"
+    - gitlab-terraform plan-json -replace="google_compute_instance.vm"
+    - gitlab-terraform apply
+  resource_group: ${TF_STATE_NAME}
+  artifacts:
+    public: false
+    reports:
+      terraform: ${TF_ROOT}/plan.json
+  environment:
+    url: http://$CI_ENVIRONMENT_SLUG.$DNS_DOMAIN
+    action: start
+
+.destroy:
+  stage: environments
+  extends:
+    - .terraform:destroy
+    - .terraform:config
+  needs:
+    - fmt
+    - validate
+  after_script:
+    - !reference [ .terraform:config, after_script ]
+    - "curl -H \"Private-Token: ${TF_VAR_gitlab_token}\" -X DELETE \"${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${TF_STATE_NAME}\""
+  environment:
+    action: stop
+
+Deploy to MR environment:
+  extends:
+    - .deploy
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: true
+      variables:
+        TF_VAR_octant_branch: dev
+  environment:
+    name: mr/$CI_MERGE_REQUEST_IID
+    deployment_tier: development
+    on_stop: Stop MR environment
+
+Stop MR environment:
+  extends:
+    - .destroy
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: true
+      variables:
+        TF_VAR_octant_branch: dev
+  environment:
+    name: mr/$CI_MERGE_REQUEST_IID
+    deployment_tier: development
+
+Deploy to TEST environment:
+  extends:
+    - .deploy
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: true
+      variables:
+        TF_VAR_octant_branch: dev
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+  environment:
+    name: test
+    deployment_tier: testing
+
+Stop TEST environment:
+  extends:
+    - .destroy
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: true
+      variables:
+        TF_VAR_octant_branch: dev
+    - if: $CI_COMMIT_BRANCH
+      when: manual
+      allow_failure: true
+  environment:
+    name: test
+    deployment_tier: testing
+
+Deploy to UAT environment:
+  extends:
+    - .deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+      allow_failure: true
+  environment:
+    name: uat
+    deployment_tier: staging
+
+Stop UAT environment:
+  extends:
+    - .destroy
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+      allow_failure: true
+  environment:
+    name: uat
+    deployment_tier: staging
