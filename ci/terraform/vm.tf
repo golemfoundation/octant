@@ -42,19 +42,23 @@ resource "google_compute_instance" "vm" {
 
   metadata = {
     user-data : templatefile("${path.module}/templates/cloud-init.yaml", {
-      dns_domain         = "${var.dns_endpoint}.${local.dns_root_domain}"
-      docker_username    = var.gitlab_username,
-      docker_password    = var.gitlab_token
-      docker_services    = local.docker_services
-      etherscan_api_key  = var.etherscan_api_key
-      generate_contracts = var.generate_contracts
-      image_versions     = local.image_versions
-      images_prefix      = local.images_prefix
-      network            = var.network
-      tag                = var.octant_tag
-      traefik_services   = local.traefik_services
-      wallet_private_key = var.wallet_private_key
-      contracts_b64      = filebase64("${path.module}/templates/contracts.txt")
+      CI_COMMIT_REF_NAME  = var.CI_COMMIT_REF_NAME
+      CI_COMMIT_SHA       = var.CI_COMMIT_SHA
+      CI_ENVIRONMENT_NAME = var.CI_ENVIRONMENT_NAME
+      CI_PROJECT_ID       = var.CI_PROJECT_ID
+      dns_domain          = "${var.dns_endpoint}.${local.dns_root_domain}"
+      gitlab_username     = var.gitlab_username
+      gitlab_token        = var.gitlab_token
+      docker_services     = local.docker_services
+      etherscan_api_key   = var.etherscan_api_key
+      generate_contracts  = var.generate_contracts
+      image_versions      = local.image_versions
+      images_prefix       = local.images_prefix
+      network             = var.network
+      tag                 = var.octant_tag
+      traefik_services    = local.traefik_services
+      wallet_private_key  = var.wallet_private_key
+      contracts_b64       = filebase64("${path.module}/templates/contracts.txt")
     })
   }
 }
