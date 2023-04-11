@@ -3,19 +3,19 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./interfaces/IProposals.sol";
 import "./interfaces/IEpochs.sol";
 
 import {ProposalsErrors} from "./Errors.sol";
+import "./OctantBase.sol";
 
 /// @notice Contract tracking active Octant proposals in particular epoch.
 /// Proposals are stored in IPFS in JSON format and are maintained entirely by Golem Foundation.
 /// In order to get proposal details from IPFS call use returned values as this:
 /// https://<IPFS Gateway of your choice>/ipfs/<CID>/<Proposal address>
 // example: https://ipfs.io/ipfs/Qmbm97crHWQzNYNn2LPZ5hhGu4qEv1DXRP6qS4TCehruPn/1
-contract Proposals is Ownable, IProposals {
+contract Proposals is OctantBase, IProposals {
     /// @notice IPFS CID (Content identifier).
     /// Under this CID will be placed a directory with all the proposals,
     /// currently active and inactive.
@@ -29,14 +29,19 @@ contract Proposals is Ownable, IProposals {
     /// This is additional account, main proposal account is also eligible to withdraw.
     mapping(address => address) private authorizedAccountByProposal;
 
-    constructor(address _epochs, string memory _initCID, address[] memory proposals) {
+    constructor(
+        address _epochs,
+        string memory _initCID,
+        address[] memory proposals,
+        address _auth
+    ) OctantBase(_auth) {
         epochs = IEpochs(_epochs);
-        setCID(_initCID);
+        cid = _initCID;
         proposalAddressesByEpoch[0] = proposals;
     }
 
     /// @notice sets a new IPFS CID, where proposals are stored.
-    function setCID(string memory _newCID) public onlyOwner {
+    function setCID(string memory _newCID) public onlyMultisig {
         cid = _newCID;
     }
 
@@ -46,7 +51,7 @@ contract Proposals is Ownable, IProposals {
     function setProposalAddresses(
         uint256 _epoch,
         address[] calldata _proposalAddresses
-    ) public onlyOwner {
+    ) public onlyMultisig {
         require(_epoch >= epochs.getCurrentEpoch(), ProposalsErrors.CHANGING_PROPOSALS_IN_THE_PAST);
         proposalAddressesByEpoch[_epoch] = _proposalAddresses;
     }
@@ -75,7 +80,7 @@ contract Proposals is Ownable, IProposals {
     /// @param proposal The proposal to set the authorized account for.
     /// @param account The account to authorize for the proposal.
     /// @notice Only the owner of the contract can call this function.
-    function setAuthorizedAccount(address proposal, address account) external onlyOwner {
+    function setAuthorizedAccount(address proposal, address account) external onlyMultisig {
         authorizedAccountByProposal[proposal] = account;
     }
 }

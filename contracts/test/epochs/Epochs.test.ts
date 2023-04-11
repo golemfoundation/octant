@@ -3,7 +3,7 @@ import { ethers } from 'hardhat';
 
 import { isChangePropsStep, testScenarios } from './epochsTestParameters';
 
-import { EPOCHS } from '../../helpers/constants';
+import { AUTH, EPOCHS } from '../../helpers/constants';
 import {
   getLatestBlockTimestamp,
   increaseNextBlockTimestamp,
@@ -17,8 +17,14 @@ makeTestsEnv(EPOCHS, testEnv => {
   const decisionWindow = 2000;
 
   async function setupEpochs(start: number) {
+    const auth = await ethers.getContract(AUTH);
     const epochsFactory = await ethers.getContractFactory(EPOCHS);
-    return (await epochsFactory.deploy(start, epochDuration, decisionWindow)) as Epochs;
+    return (await epochsFactory.deploy(
+      start,
+      epochDuration,
+      decisionWindow,
+      auth.address,
+    )) as Epochs;
   }
 
   describe('Epoch numbering', () => {
@@ -58,16 +64,21 @@ makeTestsEnv(EPOCHS, testEnv => {
   describe('Epoch duration, with changes in epoch properties', () => {
     testScenarios.forEach(scenario => {
       it(`${scenario.desc}`, async () => {
+        const {
+          signers: { TestFoundation },
+        } = testEnv;
         const start = await getLatestBlockTimestamp();
         const epochs = await setupEpochs(start);
 
         for (const step of scenario.steps) {
           if (isChangePropsStep(step)) {
             /* eslint-disable no-await-in-loop */
-            await epochs.setEpochProps(
-              step.changeNextEpochProps.epochDuration,
-              step.changeNextEpochProps.decisionWindow,
-            );
+            await epochs
+              .connect(TestFoundation)
+              .setEpochProps(
+                step.changeNextEpochProps.epochDuration,
+                step.changeNextEpochProps.decisionWindow,
+              );
           } else {
             /* eslint-disable no-await-in-loop */
             await setNextBlockTimestamp(start + step.timestamp);
@@ -147,9 +158,12 @@ makeTestsEnv(EPOCHS, testEnv => {
     });
 
     it(`Returns correct value for changed props`, async () => {
+      const {
+        signers: { TestFoundation },
+      } = testEnv;
       const start = await getLatestBlockTimestamp();
       const epochs = await setupEpochs(start);
-      await epochs.setEpochProps(1000, 1000);
+      await epochs.connect(TestFoundation).setEpochProps(1000, 1000);
 
       await increaseNextBlockTimestamp(5010);
 
@@ -159,12 +173,15 @@ makeTestsEnv(EPOCHS, testEnv => {
     });
 
     it(`Changing props does not change duration of old epochs`, async () => {
+      const {
+        signers: { TestFoundation },
+      } = testEnv;
       const start = await getLatestBlockTimestamp();
       const epochs = await setupEpochs(start);
       await increaseNextBlockTimestamp(10);
       expect(await epochs.getCurrentEpoch()).eq(1);
       const currentEpochDuration = await epochs.getEpochDuration();
-      await epochs.setEpochProps(1000, 1000);
+      await epochs.connect(TestFoundation).setEpochProps(1000, 1000);
       expect(await epochs.getEpochDuration()).eq(currentEpochDuration);
     });
   });
@@ -180,9 +197,12 @@ makeTestsEnv(EPOCHS, testEnv => {
     });
 
     it(`Returns correct value for changed props`, async () => {
+      const {
+        signers: { TestFoundation },
+      } = testEnv;
       const start = await getLatestBlockTimestamp();
       const epochs = await setupEpochs(start);
-      await epochs.setEpochProps(7000, 3000);
+      await epochs.connect(TestFoundation).setEpochProps(7000, 3000);
 
       await increaseNextBlockTimestamp(5010);
 
@@ -197,14 +217,15 @@ makeTestsEnv(EPOCHS, testEnv => {
       epochs,
       signers: { Darth },
     } = testEnv;
-    expect(epochs.connect(Darth).setEpochProps(0, 0)).revertedWith(
-      'Ownable: caller is not the owner',
-    );
+    expect(epochs.connect(Darth).setEpochProps(0, 0)).revertedWith('HN:Common/unauthorized-caller');
   });
 
   it('Cannot change props when decision window is bigger than epoch duration', async () => {
-    const { epochs } = testEnv;
-    expect(epochs.setEpochProps(1000, 2000)).revertedWith(
+    const {
+      epochs,
+      signers: { TestFoundation },
+    } = testEnv;
+    expect(epochs.connect(TestFoundation).setEpochProps(1000, 2000)).revertedWith(
       'HN:Epochs/decision-window-bigger-than-duration',
     );
   });

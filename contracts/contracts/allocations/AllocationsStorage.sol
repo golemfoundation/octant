@@ -2,12 +2,12 @@
 
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "../interfaces/IAllocationsStorage.sol";
 
 import {CommonErrors} from "../Errors.sol";
+import "../OctantBase.sol";
 
-contract AllocationsStorage is Ownable, IAllocationsStorage {
+contract AllocationsStorage is OctantBase, IAllocationsStorage {
     mapping(bytes32 => Allocation[]) private allocationsByUser;
     mapping(bytes32 => uint256) private allocationByProposal;
     mapping(bytes32 => uint256) private claimableRewardsByUser;
@@ -15,6 +15,9 @@ contract AllocationsStorage is Ownable, IAllocationsStorage {
 
     /// @notice Allocations contract address.
     address public allocationsAddress;
+
+    constructor(address _auth) OctantBase(_auth) {
+    }
 
     // @notice Get user's allocations in given epoch.
     function getUserAllocations(
@@ -82,7 +85,8 @@ contract AllocationsStorage is Ownable, IAllocationsStorage {
         _deleteAllocationsByUser(_epoch, _user);
     }
 
-    function setAllocations(address _allocationsAddress) external onlyOwner {
+    function setAllocations(address _allocationsAddress) external onlyDeployer {
+        require(address(allocationsAddress) == address(0x0), "Allocations address already set");
         allocationsAddress = _allocationsAddress;
     }
 

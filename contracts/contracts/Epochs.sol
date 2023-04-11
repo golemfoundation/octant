@@ -2,17 +2,17 @@
 
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IEpochs.sol";
 
 import {EpochsErrors} from "./Errors.sol";
+import "./OctantBase.sol";
 
 /// @title Epochs
 /// @notice Contract which handles Octant epochs mechanism.
 /// Epoch duration and time when decision window is open is calculated in seconds.
 /// These values are set when deploying a contract but can later be changed by calling
 /// {setEpochProps} function.
-contract Epochs is Ownable, IEpochs {
+contract Epochs is OctantBase, IEpochs {
 
     /// @dev Struct to store the properties of an epoch.
     /// @param from The epoch number from which properties are valid (inclusive).
@@ -46,8 +46,9 @@ contract Epochs is Ownable, IEpochs {
     constructor(
         uint256 _start,
         uint256 _epochDuration,
-        uint256 _decisionWindow
-    ) {
+        uint256 _decisionWindow,
+        address _auth)
+    OctantBase(_auth) {
         start = _start;
         epochProps[0] = EpochProps({from : 1, fromTs: block.timestamp, to : 0, duration : _epochDuration, decisionWindow : _decisionWindow});
     }
@@ -101,7 +102,7 @@ contract Epochs is Ownable, IEpochs {
     /// @dev Sets the epoch properties of the next epoch.
     /// @param _epochDuration Epoch duration in seconds.
     /// @param _decisionWindow Decision window in seconds.
-    function setEpochProps(uint256 _epochDuration, uint256 _decisionWindow) external onlyOwner {
+    function setEpochProps(uint256 _epochDuration, uint256 _decisionWindow) external onlyMultisig {
         require(_epochDuration >= _decisionWindow, EpochsErrors.DECISION_WINDOW_TOO_BIG);
         EpochProps memory _props = getCurrentEpochProps();
 

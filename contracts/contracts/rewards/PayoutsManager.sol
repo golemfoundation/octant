@@ -2,57 +2,55 @@
 
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "./../interfaces/IWithdrawalsTarget.sol";
 
 import "./Payouts.sol";
 import "../Proposals.sol";
+import "../OctantBase.sol";
 
 import {PayoutsErrors, CommonErrors} from "../Errors.sol";
 
 /// @title Contract triggering ETH payouts for Octant project.
 /// @author Golem Foundation
-contract PayoutsManager is Ownable {
+contract PayoutsManager is OctantBase {
     Payouts public immutable payouts;
-    address public golemFoundationWithdrawalAddress;
     Proposals public proposals;
 
     event ETHWithdrawal(Payouts.Payee payee, address owner, uint224 amount);
 
-    constructor(address _payoutsAddress, address _golemFoundationWithdrawalAddress, address _proposalsAddress) {
+    constructor(
+        address _payoutsAddress,
+        address _proposalsAddress,
+        address _auth)
+    OctantBase(_auth) {
         payouts = Payouts(_payoutsAddress);
-        golemFoundationWithdrawalAddress = _golemFoundationWithdrawalAddress;
         proposals = Proposals(_proposalsAddress);
     }
 
-    function withdrawUser(uint144 amount) public {
-        emit ETHWithdrawal(Payouts.Payee.User, msg.sender, amount);
+    function withdrawUser(uint144 amount) external {
         _withdraw(Payouts.Payee.User, payable(msg.sender), amount);
     }
 
-    function withdrawProposal(address proposalAddress, uint144 amount) public {
+    function withdrawProposal(address proposalAddress, uint144 amount) external {
         require(proposals.isAuthorized(msg.sender, proposalAddress), CommonErrors.UNAUTHORIZED_CALLER);
-        emit ETHWithdrawal(Payouts.Payee.Proposal, proposalAddress, amount);
         _withdraw(Payouts.Payee.Proposal, payable(proposalAddress), amount);
     }
 
-    function withdrawGolemFoundation(uint144 amount) public {
-        require(msg.sender == golemFoundationWithdrawalAddress, CommonErrors.UNAUTHORIZED_CALLER);
-        emit ETHWithdrawal(Payouts.Payee.GolemFoundation, golemFoundationWithdrawalAddress, amount);
-        _withdraw(Payouts.Payee.GolemFoundation, payable(golemFoundationWithdrawalAddress), amount);
+    function withdrawGolemFoundation(uint144 amount) external onlyMultisig {
+        address multisig = super.getMultisig();
+        _withdraw(Payouts.Payee.GolemFoundation, payable(multisig), amount);
     }
 
-    function emergencyWithdraw(uint144 amount) external onlyOwner {
-        payable(golemFoundationWithdrawalAddress).transfer(amount);
-    }
-
-    function setGolemFoundationMultisigAddress(address newAddress) external onlyOwner {
-        golemFoundationWithdrawalAddress = newAddress;
+    function emergencyWithdraw(uint144 amount) external onlyMultisig {
+        address multisig = super.getMultisig();
+        payable(multisig).transfer(amount);
     }
 
     function _withdraw(Payouts.Payee payee, address payable payeeAddress, uint144 amount) private {
         payouts.registerPayout(payee, payeeAddress, amount);
         payeeAddress.transfer(amount);
+
+        emit ETHWithdrawal(payee, payeeAddress, amount);
     }
 
     receive() external payable {

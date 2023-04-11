@@ -43,10 +43,13 @@ makeTestsEnv(PROPOSALS, testEnv => {
 
     it('Should return list of updated proposals in future epoch', async () => {
       // given
-      const { proposals } = testEnv;
+      const {
+        proposals,
+        signers: { TestFoundation },
+      } = testEnv;
 
       // when
-      await proposals.setProposalAddresses(5, newProposals);
+      await proposals.connect(TestFoundation).setProposalAddresses(5, newProposals);
       const cid = await proposals.cid();
       const proposalAddressesFromContract = await proposals.getProposalAddresses(7);
 
@@ -61,10 +64,13 @@ makeTestsEnv(PROPOSALS, testEnv => {
 
     it('Should return list of updated proposals in current epoch', async () => {
       // given
-      const { proposals } = testEnv;
+      const {
+        proposals,
+        signers: { TestFoundation },
+      } = testEnv;
 
       // when
-      await proposals.setProposalAddresses(1, newProposals);
+      await proposals.connect(TestFoundation).setProposalAddresses(1, newProposals);
       const cid = await proposals.cid();
       const proposalAddressesFromContract = await proposals.getProposalAddresses(1);
 
@@ -79,9 +85,13 @@ makeTestsEnv(PROPOSALS, testEnv => {
 
     it('Should return list of default proposals when call for epoch before update', async () => {
       // given
-      const { proposals, proposalAddresses } = testEnv;
+      const {
+        proposals,
+        proposalAddresses,
+        signers: { TestFoundation },
+      } = testEnv;
       // when
-      await proposals.setProposalAddresses(5, newProposals);
+      await proposals.connect(TestFoundation).setProposalAddresses(5, newProposals);
       const cid = await proposals.cid();
       const proposalAddressesFromContract = await proposals.getProposalAddresses(4);
 
@@ -95,45 +105,52 @@ makeTestsEnv(PROPOSALS, testEnv => {
     });
 
     it('Cannot change historical proposals', async () => {
-      const { epochs, proposals } = testEnv;
+      const {
+        epochs,
+        proposals,
+        signers: { TestFoundation },
+      } = testEnv;
       // when
       await forwardEpochs(epochs, 3);
 
       // then
-      expect(proposals.setProposalAddresses(1, newProposals)).revertedWith(
+      expect(proposals.connect(TestFoundation).setProposalAddresses(1, newProposals)).revertedWith(
         'HN:Proposals/only-future-proposals-changing-is-allowed',
       );
     });
 
-    it('Cannot change baseURI if not an owner', async () => {
+    it('Cannot change baseURI if not a deployer', async () => {
       const {
         proposals,
         signers: { Darth },
       } = testEnv;
       expect(proposals.connect(Darth).setCID('https://malicious.com')).revertedWith(
-        'Ownable: caller is not the owner',
+        'HN:Common/unauthorized-caller',
       );
     });
 
-    it('Cannot change proposals count if not an owner', async () => {
+    it('Cannot change proposals addresses if not a deployer', async () => {
       const {
         proposals,
         signers: { Darth },
       } = testEnv;
       expect(proposals.connect(Darth).setProposalAddresses(1, newProposals)).revertedWith(
-        'Ownable: caller is not the owner',
+        'HN:Common/unauthorized-caller',
       );
     });
   });
 
   describe('Authorized account', async () => {
     it('Proposal account is authorized', async () => {
-      const { proposals, proposalAddresses } = testEnv;
+      const {
+        proposals,
+        proposalAddresses,
+        signers: { TestFoundation },
+      } = testEnv;
 
-      const isAuthorized = await proposals.isAuthorized(
-        proposalAddresses[0].address,
-        proposalAddresses[0].address,
-      );
+      const isAuthorized = await proposals
+        .connect(TestFoundation)
+        .isAuthorized(proposalAddresses[0].address, proposalAddresses[0].address);
 
       expect(isAuthorized).true;
     });
@@ -142,13 +159,12 @@ makeTestsEnv(PROPOSALS, testEnv => {
       const {
         proposals,
         proposalAddresses,
-        signers: { Alice },
+        signers: { Alice, TestFoundation },
       } = testEnv;
 
-      const isAuthorized = await proposals.isAuthorized(
-        proposalAddresses[0].address,
-        Alice.address,
-      );
+      const isAuthorized = await proposals
+        .connect(TestFoundation)
+        .isAuthorized(proposalAddresses[0].address, Alice.address);
 
       expect(isAuthorized).false;
     });
@@ -157,10 +173,12 @@ makeTestsEnv(PROPOSALS, testEnv => {
       const {
         proposals,
         proposalAddresses,
-        signers: { Alice },
+        signers: { Alice, TestFoundation },
       } = testEnv;
 
-      await proposals.setAuthorizedAccount(proposalAddresses[0].address, Alice.address);
+      await proposals
+        .connect(TestFoundation)
+        .setAuthorizedAccount(proposalAddresses[0].address, Alice.address);
       const isAuthorized = await proposals.isAuthorized(
         proposalAddresses[0].address,
         Alice.address,
@@ -173,10 +191,12 @@ makeTestsEnv(PROPOSALS, testEnv => {
       const {
         proposals,
         proposalAddresses,
-        signers: { Alice, Bob },
+        signers: { Alice, Bob, TestFoundation },
       } = testEnv;
 
-      await proposals.setAuthorizedAccount(proposalAddresses[0].address, Alice.address);
+      await proposals
+        .connect(TestFoundation)
+        .setAuthorizedAccount(proposalAddresses[0].address, Alice.address);
       const isAuthorized = await proposals.isAuthorized(proposalAddresses[0].address, Bob.address);
 
       expect(isAuthorized).false;
@@ -186,11 +206,15 @@ makeTestsEnv(PROPOSALS, testEnv => {
       const {
         proposals,
         proposalAddresses,
-        signers: { Alice, Bob },
+        signers: { Alice, Bob, TestFoundation },
       } = testEnv;
 
-      await proposals.setAuthorizedAccount(proposalAddresses[0].address, Alice.address);
-      await proposals.setAuthorizedAccount(proposalAddresses[0].address, Bob.address);
+      await proposals
+        .connect(TestFoundation)
+        .setAuthorizedAccount(proposalAddresses[0].address, Alice.address);
+      await proposals
+        .connect(TestFoundation)
+        .setAuthorizedAccount(proposalAddresses[0].address, Bob.address);
       const isAuthorized = await proposals.isAuthorized(proposalAddresses[0].address, Bob.address);
 
       expect(isAuthorized).true;
@@ -205,7 +229,7 @@ makeTestsEnv(PROPOSALS, testEnv => {
 
       expect(
         proposals.connect(Darth).setAuthorizedAccount(proposalAddresses[0].address, Darth.address),
-      ).revertedWith('Ownable: caller is not the owner');
+      ).revertedWith('HN:Common/unauthorized-caller');
     });
   });
 });

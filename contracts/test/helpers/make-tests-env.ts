@@ -6,6 +6,7 @@ import { SignerWithAddress } from 'hardhat-deploy-ethers/signers';
 import { Signers, TestEnv } from './test-env.interface';
 
 import {
+  AUTH,
   ALLOCATIONS,
   ALLOCATIONS_STORAGE,
   DEPOSITS,
@@ -21,6 +22,7 @@ import {
   TRACKER,
 } from '../../helpers/constants';
 import {
+  Auth,
   Allocations,
   AllocationsStorage,
   Deposits,
@@ -41,6 +43,7 @@ chai.use(smock.matchers);
 const testEnv: TestEnv = {
   allocations: {} as Allocations,
   allocationsStorage: {} as AllocationsStorage,
+  auth: {} as Auth,
   epochs: {} as Epochs,
   faucet: {} as TestGLMFaucet,
   glmDeposits: {} as Deposits,
@@ -61,6 +64,7 @@ async function initializeTestsEnv() {
   testEnv.proposalAddresses = await ethers
     .getUnnamedSigners()
     .then(proposals => proposals.slice(0, 12));
+  testEnv.auth = await ethers.getContract(AUTH);
   testEnv.allocations = await ethers.getContract(ALLOCATIONS);
   testEnv.allocationsStorage = await ethers.getContract(ALLOCATIONS_STORAGE);
   testEnv.faucet = await ethers.getContract(FAUCET);

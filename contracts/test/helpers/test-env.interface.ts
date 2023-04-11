@@ -1,6 +1,7 @@
 import { SignerWithAddress } from 'hardhat-deploy-ethers/signers';
 
 import {
+  Auth,
   Allocations,
   AllocationsStorage,
   Deposits,
@@ -21,6 +22,7 @@ export type Signers = Record<string, SignerWithAddress>;
 export interface TestEnv {
   allocations: Allocations;
   allocationsStorage: AllocationsStorage;
+  auth: Auth;
   epochs: Epochs;
   faucet: TestGLMFaucet;
   glmDeposits: Deposits;

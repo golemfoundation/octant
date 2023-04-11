@@ -5,9 +5,9 @@ pragma solidity ^0.8.9;
 import "../interfaces/ITracker.sol";
 import "../interfaces/IDeposits.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
 import {DepositsErrors} from "../Errors.sol";
+import "../OctantBase.sol";
 
 /// @title Contract tracking GLM deposits for Octant project.
 /// @author Golem Foundation
@@ -18,7 +18,7 @@ import {DepositsErrors} from "../Errors.sol";
 /// even at the cost of increased complexity of other contracts. Lets strive to limit
 /// risk exposure of GLM deposits. This is why effective deposit tracking is outside
 /// in a contract that can fail without affecting unlock calls.
-contract Deposits is Ownable, IDeposits {
+contract Deposits is OctantBase, IDeposits {
     /// @notice GLM token contract address
     ERC20 public immutable glm;
 
@@ -34,7 +34,7 @@ contract Deposits is Ownable, IDeposits {
     mapping(address => uint256) public deposits;
 
     /// @param glmAddress Address of Golem Network Token contract (updated, GLM).
-    constructor(address glmAddress) {
+    constructor(address glmAddress, address _auth) OctantBase(_auth) {
         glm = ERC20(glmAddress);
     }
 
@@ -74,7 +74,8 @@ contract Deposits is Ownable, IDeposits {
         }
     }
 
-    function setTrackerAddress(address newTracker) external onlyOwner {
+    function setTrackerAddress(address newTracker) external onlyDeployer {
+        require(address(tracker) == address(0x0));
         tracker = ITracker(newTracker);
     }
 }
