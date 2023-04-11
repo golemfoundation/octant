@@ -43,8 +43,8 @@ resource "google_compute_instance" "vm" {
   metadata = {
     user-data : templatefile("${path.module}/templates/cloud-init.yaml", {
       dns_domain         = "${var.dns_endpoint}.${local.dns_root_domain}"
-      docker_username    = var.gitlab_docker_username,
-      docker_password    = var.gitlab_docker_token
+      docker_username    = var.gitlab_username,
+      docker_password    = var.gitlab_token
       docker_services    = local.docker_services
       etherscan_api_key  = var.etherscan_api_key
       generate_contracts = var.generate_contracts

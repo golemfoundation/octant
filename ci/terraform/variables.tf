@@ -20,14 +20,14 @@ variable "CI_PROJECT_ID" {
   description = "GitLab variable CI_PROJECT_ID"
 }
 
-variable "gitlab_docker_username" {
+variable "gitlab_username" {
   type        = string
-  description = "User to authenticate to GitLab registry"
+  description = "User to authenticate to GitLab"
 }
 
-variable "gitlab_docker_token" {
+variable "gitlab_token" {
   type        = string
-  description = "Token to authenticate to GitLab registry"
+  description = "Token to authenticate to GitLab"
 }
 
 # GCP variables
