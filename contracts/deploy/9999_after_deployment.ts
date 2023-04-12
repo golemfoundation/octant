@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
@@ -36,7 +37,21 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`VITE_OCTANT_ORACLE_ADDRESS=${octantOracle.address}`);
   const payoutsManager = await hre.ethers.getContract(PAYOUTS_MANAGER);
   console.log(`VITE_OCTANT_PAYOUTS_MANAGER_ADDRESS=${payoutsManager.address}`);
-  /* eslint-enable no-console */
+  console.log(`Deployment finished at block number: ${await hre.ethers.provider.getBlockNumber()}`);
+  /* eslint-disable no-console */
+
+  const contractAddresses = `
+VITE_ALLOCATIONS_ADDRESS=${allocations.address}
+VITE_ALLOCATIONS_STORAGE_ADDRESS=${allocationsStorage.address}
+VITE_DEPOSITS_ADDRESS=${deposits.address}
+VITE_TRACKER_ADDRESS=${tracker.address}
+VITE_EPOCHS_ADDRESS=${epochs.address}
+VITE_PROPOSALS_ADDRESS=${proposals.address}
+VITE_REWARDS_ADDRESS=${rewards.address}
+VITE_OCTANT_ORACLE_ADDRESS=${octantOracle.address}
+VITE_OCTANT_PAYOUTS_MANAGER_ADDRESS=${payoutsManager.address}`;
+
+  fs.appendFileSync('deployments/clientEnv', contractAddresses);
 };
 
 export default func;
