@@ -40,7 +40,7 @@ write_files:
       [Service]
       Type=oneshot
       Environment="HOME=/home/cloudservice"
-      ExecStart=/usr/bin/docker login -u ${docker_username} -p ${docker_password} registry.gitlab.com
+      ExecStart=/usr/bin/docker login -u ${gitlab_username} -p ${gitlab_token} registry.gitlab.com
 
   - path: /etc/systemd/system/traefik.service
     permissions: 0644
@@ -113,9 +113,11 @@ write_files:
       set -ex
 
       on_failure() {
+        curl -H "PRIVATE-TOKEN: ${gitlab_token}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/deployments/$DEPLOYMENT_ID" -X PUT --data 'status=failed'
         exit 1
       }
       trap on_failure ERR
+      DEPLOYMENT_ID=$(curl -H "PRIVATE-TOKEN: ${gitlab_token}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/deployments/" -X POST --data 'environment=${CI_ENVIRONMENT_NAME}&status=running&sha=${CI_COMMIT_SHA}&ref=${CI_COMMIT_REF_NAME}&tag=false' | jq '.id')
 
       NETWORK=$${NETWORK:-"goerli"}
       TAG=$${CI_COMMIT_SHORT_SHA:-"latest"}
@@ -167,6 +169,7 @@ write_files:
       systemctl start coin_prices_server.service
       echo "Run Client Service"
       systemctl start client.service
+      curl -H "PRIVATE-TOKEN: ${gitlab_token}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/deployments/$DEPLOYMENT_ID" -X PUT --data 'status=success'
 
 runcmd:
   - systemctl daemon-reload
