@@ -1,15 +1,34 @@
-$height: 0.4rem;
+$stepHeight: 0.8rem;
+$stepPadding: 2.4rem;
 
 .root {
   display: flex;
-  height: $height;
   width: 100%;
 }
 
-.step {
-  border-radius: calc($height / 2);
+.stepWrapper {
+  width: 100%;
   margin: 0 0.8rem;
-  background: $color-white;
+  padding: $stepPadding 0;
+  height: $stepHeight;
+  box-sizing: content-box;
+
+  &.isClickable {
+    cursor: pointer;
+  }
+
+  &:hover {
+    .step {
+      &:not(.isCurrent) {
+        background: $color-octant-grey2;
+      }
+    }
+  }
+}
+
+.step {
+  border-radius: calc($stepHeight / 2);
+  background: $color-octant-grey4;
   height: 100%;
   width: 100%;
 
