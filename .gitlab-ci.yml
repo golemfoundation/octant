@@ -360,7 +360,7 @@ Stop TEST environment:
       allow_failure: true
       variables:
         TF_VAR_octant_branch: dev
-    - if: $CI_COMMIT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
       allow_failure: true
   environment:
