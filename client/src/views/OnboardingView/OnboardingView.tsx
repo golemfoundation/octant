@@ -29,25 +29,27 @@ const OnboardingView = (): ReactElement => {
   }
 
   return (
-    <MainLayout isNavigationVisible={false}>
+    <MainLayout isHeaderVisible={false} isNavigationVisible={false}>
       <Modal
         header={currentStep.header}
+        Image={<Img className={styles.image} src={currentStep.image} />}
+        isFullScreen
         isOpen
-        isOverflowEnabled={false}
-        onClick={() =>
-          currentStepIndex < steps.length ? setCurrentStepIndex(currentStepIndex + 1) : () => {}
-        }
         onClosePanel={onOnboardingExit}
       >
         <div className={styles.text}>{currentStep.text}</div>
-        <div className={styles.imageWrapper}>
-          <Img className={styles.image} src={currentStep.image} />
-          <ProgressStepperSlim
-            className={styles.progressBar}
-            currentStepIndex={currentStepIndex}
-            numberOfSteps={steps.length}
-          />
-        </div>
+        <ProgressStepperSlim
+          className={styles.progressBar}
+          currentStepIndex={currentStepIndex}
+          numberOfSteps={steps.length}
+          onStepClick={stepIndex => {
+            if (stepIndex === currentStepIndex) {
+              setCurrentStepIndex(stepIndex + 1);
+              return;
+            }
+            setCurrentStepIndex(stepIndex);
+          }}
+        />
       </Modal>
     </MainLayout>
   );
