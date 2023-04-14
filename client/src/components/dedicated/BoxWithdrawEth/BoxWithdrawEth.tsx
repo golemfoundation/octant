@@ -1,35 +1,27 @@
 import React, { FC, useState, Fragment } from 'react';
 import { useAccount } from 'wagmi';
 
-import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import ModalWithdrawEth from 'components/dedicated/ModalWithdrawEth/ModalWithdrawEth';
-import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
+import RewardsBox from 'components/dedicated/RewardsBox/RewardsBox';
 
-import UserEthWithdrawProps from './types';
+import BoxWithdrawEthProps from './types';
 
-const BoxWithdrawEth: FC<UserEthWithdrawProps> = ({ classNameBox }) => {
+const BoxWithdrawEth: FC<BoxWithdrawEthProps> = ({ classNameBox }) => {
   const { isConnected } = useAccount();
-  const { data: withdrawableUserEth } = useWithdrawableUserEth();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   return (
     <Fragment>
-      <BoxRounded
-        alignment="left"
+      <RewardsBox
         buttonProps={{
           isDisabled: !isConnected,
           isHigh: true,
-          label: 'Withdraw ETH Rewards',
+          label: 'Withdraw Rewards',
           onClick: () => setIsModalOpen(true),
           variant: 'secondary',
         }}
         className={classNameBox}
-        isVertical
-        title="Available to withdraw"
-      >
-        <DoubleValue cryptoCurrency="ethereum" valueCrypto={withdrawableUserEth} />
-      </BoxRounded>
+      />
       <ModalWithdrawEth
         modalProps={{
           isOpen: isModalOpen,

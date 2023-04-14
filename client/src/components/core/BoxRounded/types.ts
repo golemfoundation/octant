@@ -8,6 +8,7 @@ export default interface BoxRoundedProps {
   children: ReactNode;
   className?: string;
   expandableChildren?: ReactNode;
+  hasPadding?: boolean;
   hasSections?: boolean;
   isExpanded?: boolean;
   isGrey?: boolean;

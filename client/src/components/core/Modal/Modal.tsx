@@ -6,7 +6,9 @@ import Svg from 'components/core/Svg/Svg';
 import { cross } from 'svg/misc';
 
 import styles from './Modal.module.scss';
-import ModalProps from './types';
+import ModalProps, { TextProps } from './types';
+
+export const Text: FC<TextProps> = ({ children }) => <div className={styles.text}>{children}</div>;
 
 const Modal: FC<ModalProps> = ({
   className,

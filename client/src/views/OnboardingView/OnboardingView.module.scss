@@ -1,16 +1,10 @@
 @import "src/components/core/ProgressStepperSlim/ProgressStepperSlim.module";
 
-.text {
-  color: $color-octant-grey6;
-  font-weight: $font-weight-semibold;
-  line-height: 2.4rem;
-}
-
 .progressBar {
   align-self: stretch;
   margin: 4.8rem 5.2rem (-$stepPadding);
 }
 
 .bold {
-  font-weight: $font-weight-superbold;
+  @include boldText();
 }

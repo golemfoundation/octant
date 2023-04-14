@@ -1,14 +1,20 @@
+$padding: 2.4rem;
+
 .root {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 2.4rem;
+  padding: 0 $padding;
   border-radius: $border-radius-16;
   background: $color-white;
   font-size: $font-size-12;
   font-weight: $font-weight-bold;
   user-select: none;
+
+  &.hasPadding {
+    padding: $padding;
+  }
 
   &.isGrey {
     color: $color-octant-grey10;
@@ -92,7 +98,11 @@
     padding-top: 1.8rem;
     padding-bottom: 1.8rem;
     margin: 0;
-    border-bottom: 0.1rem solid $color-white;
+    border-bottom: 0.1rem solid $color-octant-grey4;
+
+    &.isGrey {
+      border-bottom: 0.1rem solid $color-white;
+    }
   }
 
   &.isPaddingMovedToElements {
@@ -151,7 +161,7 @@
 }
 
 .button {
-  margin: 3rem 0 0 0;
+  margin: 2.4rem 0;
   width: 100%;
 }
 

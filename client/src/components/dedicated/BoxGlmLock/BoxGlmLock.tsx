@@ -2,7 +2,9 @@ import React, { FC, Fragment, useState } from 'react';
 import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import DoubleValue from 'components/core/DoubleValue/DoubleValue';
+import Sections from 'components/core/BoxRounded/Sections/Sections';
+import { SectionProps } from 'components/core/BoxRounded/Sections/types';
+import ModalEffectiveLockedBalance from 'components/dedicated/ModalEffectiveLockedBalance/ModalEffectiveLockedBalance';
 import ModalGlmLock from 'components/dedicated/ModalGlmLock/ModalGlmLock';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
@@ -11,10 +13,25 @@ import BoxGlmLockProps from './types';
 
 const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
   const { isConnected } = useAccount();
-  const [lockType, setLockType] = useState<'currentEpoch' | 'nextEpoch'>('nextEpoch');
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isModalGlmLockOpen, setIsModalGlmLockOpen] = useState<boolean>(false);
+  const [isModalEffectiveLockedBalanceOpen, setIsModalEffectiveLockedBalanceOpen] =
+    useState<boolean>(false);
   const { data: depositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
   const { data: depositsValue } = useDepositValue();
+
+  const sections: SectionProps[] = [
+    {
+      cryptoCurrency: 'golem',
+      label: 'Current',
+      valueCrypto: depositsValue,
+    },
+    {
+      cryptoCurrency: 'golem',
+      label: 'Effective',
+      onTooltipClick: () => setIsModalEffectiveLockedBalanceOpen(true),
+      valueCrypto: depositEffectiveAtCurrentEpoch,
+    },
+  ];
 
   return (
     <Fragment>
@@ -26,34 +43,27 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
           label:
             !depositsValue || (!!depositsValue && depositsValue.isZero())
               ? 'Lock GLM'
-              : 'Edit GLM Lock',
-          onClick: () => setIsModalOpen(true),
+              : 'Edit Locked GLM',
+          onClick: () => setIsModalGlmLockOpen(true),
           variant: 'cta',
         }}
         className={classNameBox}
-        tabs={[
-          {
-            isActive: lockType === 'currentEpoch',
-            onClick: () => setLockType('currentEpoch'),
-            title: 'Current Epoch Lock',
-          },
-          {
-            isActive: lockType === 'nextEpoch',
-            onClick: () => setLockType('nextEpoch'),
-            title: 'Next Epoch Lock',
-          },
-        ]}
+        hasSections
+        isVertical
+        title="Locked balance"
       >
-        {lockType === 'currentEpoch' ? (
-          <DoubleValue cryptoCurrency="golem" valueCrypto={depositEffectiveAtCurrentEpoch} />
-        ) : (
-          <DoubleValue cryptoCurrency="golem" valueCrypto={depositsValue} />
-        )}
+        <Sections sections={sections} />
       </BoxRounded>
+      <ModalEffectiveLockedBalance
+        modalProps={{
+          isOpen: isModalEffectiveLockedBalanceOpen,
+          onClosePanel: () => setIsModalEffectiveLockedBalanceOpen(false),
+        }}
+      />
       <ModalGlmLock
         modalProps={{
-          isOpen: isModalOpen,
-          onClosePanel: () => setIsModalOpen(false),
+          isOpen: isModalGlmLockOpen,
+          onClosePanel: () => setIsModalGlmLockOpen(false),
         }}
       />
     </Fragment>

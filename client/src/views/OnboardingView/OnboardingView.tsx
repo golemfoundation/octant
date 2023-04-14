@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, ReactElement } from 'react';
 
 import Img from 'components/core/Img/Img';
-import Modal from 'components/core/Modal/Modal';
+import Modal, { Text } from 'components/core/Modal/Modal';
 import ProgressStepperSlim from 'components/core/ProgressStepperSlim/ProgressStepperSlim';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useOnboardingStore from 'store/onboarding/store';
@@ -37,7 +37,7 @@ const OnboardingView = (): ReactElement => {
         isOpen
         onClosePanel={onOnboardingExit}
       >
-        <div className={styles.text}>{currentStep.text}</div>
+        <Text>{currentStep.text}</Text>
         <ProgressStepperSlim
           className={styles.progressBar}
           currentStepIndex={currentStepIndex}

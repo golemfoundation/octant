@@ -3,6 +3,13 @@
   justify-content: space-between;
   align-items: flex-end;
   width: 100%;
+
+  &.isCryptoMainValueDisplay {
+    flex-direction: row;
+  }
+  &:not(.isCryptoMainValueDisplay) {
+    flex-direction: row-reverse;
+  }
 }
 
 .input {
