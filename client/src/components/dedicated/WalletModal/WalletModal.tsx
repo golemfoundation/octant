@@ -29,14 +29,19 @@ const WalletModal: FC<WalletModalProps> = ({ modalProps }) => {
 
   const sections: SectionProps[] = [
     {
-      cryptoCurrency: 'ethereum',
+      doubleValueProps: {
+        cryptoCurrency: 'ethereum',
+        valueCrypto: availableFundsEth,
+      },
       icon: ethereum,
-      valueCrypto: availableFundsEth,
     },
     {
-      cryptoCurrency: 'golem',
+      doubleValueProps: {
+        coinPricesServerDowntimeText: '...',
+        cryptoCurrency: 'golem',
+        valueCrypto: availableFundsGlm,
+      },
       icon: golem,
-      valueCrypto: availableFundsGlm,
     },
   ];
 
