@@ -14,9 +14,11 @@ const RewardsBox: FC<RewardsBoxProps> = ({ buttonProps, className, isGrey }) => 
 
   const sections: SectionProps[] = [
     {
-      cryptoCurrency: 'ethereum',
+      doubleValueProps: {
+        cryptoCurrency: 'ethereum',
+        valueCrypto: withdrawableUserEth,
+      },
       label: 'Available now',
-      valueCrypto: withdrawableUserEth,
     },
   ];
 

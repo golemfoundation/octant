@@ -7,13 +7,7 @@ import { questionMark } from 'svg/misc';
 import styles from './Sections.module.scss';
 import SectionsProps, { SectionProps } from './types';
 
-const Section: FC<SectionProps> = ({
-  cryptoCurrency,
-  label,
-  icon,
-  valueCrypto,
-  onTooltipClick,
-}) => (
+const Section: FC<SectionProps> = ({ label, icon, onTooltipClick, doubleValueProps }) => (
   <div className={styles.root}>
     <div className={styles.label}>
       {icon ? <Svg img={icon} size={4} /> : label}
@@ -21,12 +15,7 @@ const Section: FC<SectionProps> = ({
         <Svg classNameSvg={styles.tooltip} img={questionMark} onClick={onTooltipClick} size={1.6} />
       )}
     </div>
-    <DoubleValue
-      cryptoCurrency={cryptoCurrency as 'golem' | 'ethereum'}
-      textAlignment="right"
-      valueCrypto={valueCrypto}
-      variant="small"
-    />
+    <DoubleValue textAlignment="right" variant="small" {...doubleValueProps} />
   </div>
 );
 

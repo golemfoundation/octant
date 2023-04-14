@@ -21,15 +21,20 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
 
   const sections: SectionProps[] = [
     {
-      cryptoCurrency: 'golem',
+      doubleValueProps: {
+        cryptoCurrency: 'golem',
+        valueCrypto: depositsValue,
+      },
       label: 'Current',
-      valueCrypto: depositsValue,
     },
     {
-      cryptoCurrency: 'golem',
+      doubleValueProps: {
+        coinPricesServerDowntimeText: '...',
+        cryptoCurrency: 'golem',
+        valueCrypto: depositEffectiveAtCurrentEpoch,
+      },
       label: 'Effective',
       onTooltipClick: () => setIsModalEffectiveLockedBalanceOpen(true),
-      valueCrypto: depositEffectiveAtCurrentEpoch,
     },
   ];
 

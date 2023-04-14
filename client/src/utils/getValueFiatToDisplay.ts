@@ -6,12 +6,14 @@ import { FIAT_CURRENCIES_SYMBOLS } from 'constants/currencies';
 import { SettingsData } from 'store/settings/types';
 
 export default function getValueFiatToDisplay({
+  coinPricesServerDowntimeText = 'Conversion offline',
   cryptoValues,
   cryptoCurrency,
   displayCurrency,
   valueCrypto,
   error,
 }: {
+  coinPricesServerDowntimeText?: DoubleValueProps['coinPricesServerDowntimeText'];
   cryptoCurrency: DoubleValueProps['cryptoCurrency'];
   cryptoValues?: Response;
   displayCurrency: NonNullable<SettingsData['displayCurrency']>;
@@ -19,7 +21,7 @@ export default function getValueFiatToDisplay({
   valueCrypto: DoubleValueProps['valueCrypto'];
 }): undefined | string {
   if (error) {
-    return 'Conversion offline';
+    return coinPricesServerDowntimeText;
   }
 
   const prefix = FIAT_CURRENCIES_SYMBOLS[displayCurrency] || displayCurrency.toUpperCase();

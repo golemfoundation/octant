@@ -58,9 +58,11 @@ const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
         <Sections
           sections={[
             {
-              cryptoCurrency: 'ethereum',
+              doubleValueProps: {
+                cryptoCurrency: 'ethereum',
+                valueCrypto: withdrawableUserEth,
+              },
               label: 'Available rewards',
-              valueCrypto: withdrawableUserEth,
             },
           ]}
         />

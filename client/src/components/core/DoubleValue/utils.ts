@@ -8,12 +8,14 @@ import DoubleValueProps from './types';
 export function getValuesToDisplay({
   cryptoCurrency,
   cryptoValues,
+  coinPricesServerDowntimeText = 'Conversion offline',
   displayCurrency,
   valueCrypto,
   valueString,
   isCryptoMainValueDisplay,
   error,
 }: {
+  coinPricesServerDowntimeText?: DoubleValueProps['coinPricesServerDowntimeText'];
   cryptoCurrency: DoubleValueProps['cryptoCurrency'];
   cryptoValues?: Response;
   displayCurrency: NonNullable<SettingsData['displayCurrency']>;
@@ -37,6 +39,7 @@ export function getValuesToDisplay({
     valueString,
   });
   const valueFiatToDisplay = getValueFiatToDisplay({
+    coinPricesServerDowntimeText,
     cryptoCurrency,
     cryptoValues,
     displayCurrency,

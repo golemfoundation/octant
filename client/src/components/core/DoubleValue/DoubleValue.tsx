@@ -11,6 +11,7 @@ import { getValuesToDisplay } from './utils';
 const DoubleValue: FC<DoubleValueProps> = ({
   className,
   cryptoCurrency,
+  coinPricesServerDowntimeText = 'Conversion offline',
   textAlignment = 'left',
   valueCrypto,
   valueString,
@@ -27,6 +28,7 @@ const DoubleValue: FC<DoubleValueProps> = ({
   const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
 
   const values = getValuesToDisplay({
+    coinPricesServerDowntimeText,
     cryptoCurrency,
     cryptoValues,
     displayCurrency: displayCurrency!,
