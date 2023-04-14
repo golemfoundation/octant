@@ -53,3 +53,9 @@ export const notificationIconSuccess: SvgImageConfig = {
     '<path fill="#5B8A81" d="M15.55 2.12a.902.902 0 0 1 .9 0l11.1 6.408c.278.161.45.46.45.781v12.816c0 .322-.172.62-.45.78l-11.1 6.408a.902.902 0 0 1-.9 0l-11.1-6.408a.902.902 0 0 1-.45-.78V9.309c0-.322.172-.62.45-.78l11.1-6.408Z"/><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m11.34 15.732 2.447 3.127 7.072-7.072"/>',
   viewBox: '0 0 33 32',
 };
+
+export const questionMark: SvgImageConfig = {
+  markup:
+    '<path stroke="#9EA39E" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7a2 2 0 1 1 2.667 1.886A1 1 0 0 0 9 9.83v.671"/><circle cx="9" cy="12.75" r="1" fill="#9EA39E"/><path stroke="#9EA39E" stroke-miterlimit="10" stroke-width="1.5" d="M9 16.5a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15Z"/>',
+  viewBox: '0 0 18 18',
+};

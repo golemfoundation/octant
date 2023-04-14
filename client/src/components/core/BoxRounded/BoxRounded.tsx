@@ -17,6 +17,7 @@ const BoxRounded: FC<BoxRoundedProps> = ({
   isExpanded = false,
   isGrey = false,
   isVertical = false,
+  hasPadding = true,
   className,
   children,
   onClick,
@@ -54,6 +55,7 @@ const BoxRounded: FC<BoxRoundedProps> = ({
         styles[`alignment--${alignment}`],
         isPaddingMovedToElements && styles.isPaddingMovedToElements,
         hasSections && styles.hasSections,
+        hasPadding && styles.hasPadding,
         className,
       )}
       onClick={onClick}
@@ -81,6 +83,7 @@ const BoxRounded: FC<BoxRoundedProps> = ({
           className={cx(
             styles.title,
             hasSections && styles.hasSections,
+            isGrey && styles.isGrey,
             isPaddingMovedToElements && styles.isPaddingMovedToElements,
           )}
         >

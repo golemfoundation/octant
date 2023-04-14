@@ -1,0 +1,7 @@
+.image {
+  margin-bottom: 4rem;
+}
+
+.bold {
+  @include boldText();
+}

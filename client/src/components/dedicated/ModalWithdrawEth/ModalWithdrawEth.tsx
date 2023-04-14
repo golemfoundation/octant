@@ -3,8 +3,8 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import React, { ChangeEvent, FC, useState } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
+import Sections from 'components/core/BoxRounded/Sections/Sections';
 import Button from 'components/core/Button/Button';
-import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import Modal from 'components/core/Modal/Modal';
 import InputsCryptoFiat from 'components/dedicated/InputsCryptoFiat/InputsCryptoFiat';
 import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
@@ -54,24 +54,26 @@ const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
 
   return (
     <Modal header="Withdraw ETH" {...modalProps}>
-      <BoxRounded
-        alignment="left"
-        className={styles.element}
-        isGrey
-        isVertical
-        title="Available to withdraw"
-      >
-        <DoubleValue cryptoCurrency="ethereum" valueCrypto={withdrawableUserEth} />
+      <BoxRounded alignment="left" className={styles.element} hasPadding={false} isGrey isVertical>
+        <Sections
+          sections={[
+            {
+              cryptoCurrency: 'ethereum',
+              label: 'Available rewards',
+              valueCrypto: withdrawableUserEth,
+            },
+          ]}
+        />
       </BoxRounded>
       <BoxRounded className={styles.element} isGrey isVertical>
         <InputsCryptoFiat
           inputCryptoProps={{
             isDisabled: withdrawEthMutation.isLoading,
-            label: 'Amount to withdraw',
             onChange: onChangeValue,
             suffix: 'ETH',
             value: valueToWithdraw,
           }}
+          label="Amount to withdraw"
         />
         {isDecisionWindowOpen && (
           <div className={styles.timeCounterWrapper}>

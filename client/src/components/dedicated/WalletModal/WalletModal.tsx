@@ -3,10 +3,10 @@ import React, { FC } from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
+import Sections from 'components/core/BoxRounded/Sections/Sections';
+import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import Button from 'components/core/Button/Button';
-import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import Modal from 'components/core/Modal/Modal';
-import Svg from 'components/core/Svg/Svg';
 import RewardsBox from 'components/dedicated/RewardsBox/RewardsBox';
 import useAvailableFundsEth from 'hooks/queries/useAvailableFundsEth';
 import useAvailableFundsGlm from 'hooks/queries/useAvailableFundsGlm';
@@ -27,7 +27,7 @@ const WalletModal: FC<WalletModalProps> = ({ modalProps }) => {
     disconnect();
   };
 
-  const funds = [
+  const sections: SectionProps[] = [
     {
       cryptoCurrency: 'ethereum',
       icon: ethereum,
@@ -51,20 +51,9 @@ const WalletModal: FC<WalletModalProps> = ({ modalProps }) => {
         title="Connected Wallet Balances"
         titleSuffix={address ? truncateEthAddress(address) : undefined}
       >
-        {funds.map(({ icon, valueCrypto, cryptoCurrency }, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <div key={index} className={styles.walletCurrency}>
-            <Svg classNameSvg={styles.icon} img={icon} size={4} />
-            <DoubleValue
-              cryptoCurrency={cryptoCurrency as 'golem' | 'ethereum'}
-              textAlignment="right"
-              valueCrypto={valueCrypto}
-              variant="small"
-            />
-          </div>
-        ))}
+        <Sections sections={sections} />
       </BoxRounded>
-      <RewardsBox className={cx(styles.element, styles.box)} />
+      <RewardsBox className={cx(styles.element, styles.box)} isGrey />
       <Button className={styles.button} label="Disconnect Wallet" onClick={_disconnect} />
     </Modal>
   );

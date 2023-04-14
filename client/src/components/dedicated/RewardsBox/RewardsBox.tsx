@@ -2,44 +2,35 @@ import cx from 'classnames';
 import React, { FC } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import DoubleValue from 'components/core/DoubleValue/DoubleValue';
-import useIndividualReward from 'hooks/queries/useIndividualReward';
+import Sections from 'components/core/BoxRounded/Sections/Sections';
+import { SectionProps } from 'components/core/BoxRounded/Sections/types';
+import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
 
 import styles from './RewardsBox.module.scss';
 import RewardsBoxProps from './types';
 
-const RewardsBox: FC<RewardsBoxProps> = ({ className }) => {
-  const { data: individualReward } = useIndividualReward();
+const RewardsBox: FC<RewardsBoxProps> = ({ buttonProps, className, isGrey }) => {
+  const { data: withdrawableUserEth } = useWithdrawableUserEth();
 
-  const rewards = [
+  const sections: SectionProps[] = [
     {
       cryptoCurrency: 'ethereum',
       label: 'Available now',
-      valueCrypto: individualReward,
+      valueCrypto: withdrawableUserEth,
     },
   ];
 
   return (
     <BoxRounded
       alignment="left"
+      buttonProps={buttonProps}
       className={cx(styles.root, className)}
       hasSections
-      isGrey
+      isGrey={isGrey}
       isVertical
-      title="Rewards Budget"
+      title="Rewards"
     >
-      {rewards.map(({ label, valueCrypto, cryptoCurrency }, index) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <div key={index} className={styles.reward}>
-          <div className={styles.label}>{label}</div>
-          <DoubleValue
-            cryptoCurrency={cryptoCurrency as 'golem' | 'ethereum'}
-            textAlignment="right"
-            valueCrypto={valueCrypto}
-            variant="small"
-          />
-        </div>
-      ))}
+      <Sections sections={sections} />
     </BoxRounded>
   );
 };

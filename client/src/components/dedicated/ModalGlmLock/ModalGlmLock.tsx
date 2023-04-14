@@ -168,11 +168,11 @@ const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
         <InputsCryptoFiat
           inputCryptoProps={{
             isDisabled: isApproveOrDepositInProgress,
-            label: currentMode === 'lock' ? 'Amount to lock' : 'Amount to unlock',
             onChange: onChangeValue,
             suffix: 'GLM',
             value: valueToDeposeOrWithdraw,
           }}
+          label={currentMode === 'lock' ? 'Amount to lock' : 'Amount to unlock'}
         />
         <div className={styles.availableFunds}>
           Available wallet balance {dataAvailableFunds ? formatUnits(dataAvailableFunds) : '0.0'}{' '}

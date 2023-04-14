@@ -8,7 +8,6 @@
   left: 0;
   width: 100%;
   height: max-content;
-  max-height: 90%;
   text-align: left;
   transition: bottom 0.25s linear;
   background: $color-octant-grey4;
@@ -35,8 +34,9 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    width: 100%;
     background: $color-white;
-    padding: 5.6rem 2.4rem 5.6rem;
+    padding: 4rem 2.4rem;
   }
 }
 
@@ -84,6 +84,8 @@
   }
 
   .body {
+    padding: 5.6rem 2.4rem;
+
     &.hasImage {
       border-radius: 0 0 $border-radius-20 $border-radius-20;
     }
@@ -91,4 +93,10 @@
       border-radius: $border-radius-20;
     }
   }
+}
+
+.text {
+  color: $color-octant-grey6;
+  font-weight: $font-weight-semibold;
+  line-height: 2.4rem;
 }

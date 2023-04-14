@@ -1,3 +1,3 @@
-export default interface UserEthWithdrawProps {
+export default interface BoxWithdrawEthProps {
   classNameBox: string;
 }
