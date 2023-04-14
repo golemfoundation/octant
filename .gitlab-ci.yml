@@ -218,7 +218,7 @@ pages:
     - cd contracts
     - yarn install --non-interactive --cache-folder .yarn
     - yarn compile
-    - cd client
+    - cd ../client
     - yarn install --non-interactive
     - yarn build
     - cd ..
