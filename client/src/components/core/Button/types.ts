@@ -24,6 +24,7 @@ export default interface ButtonProps {
   href?: string;
   isActive?: boolean;
   isDisabled?: boolean;
+  isEventStopPropagation?: boolean;
   isHigh?: boolean;
   isLoading?: boolean;
   isSmallFont?: boolean;

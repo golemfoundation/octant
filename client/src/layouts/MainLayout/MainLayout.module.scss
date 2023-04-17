@@ -65,6 +65,7 @@ $headerNavigationBorderRadius: $border-radius-32;
 
 .walletButton {
   margin-left: 1.6rem;
+  cursor: pointer;
 
   &.isWalletModalOpen {
     transform: rotate(180deg);
@@ -76,6 +77,8 @@ $headerNavigationBorderRadius: $border-radius-32;
   align-items: center;
   font-size: $font-size-14;
   cursor: pointer;
+  padding: $layoutMarginHorizontal;
+  margin: (-$layoutMarginHorizontal);
 }
 
 .walletInfo {

@@ -84,7 +84,7 @@ const MainLayout: FC<MainLayoutProps> = ({
                       isWalletModalOpen && styles.isWalletModalOpen,
                     )}
                     Icon={<Svg img={chevronBottom} size={0.8} />}
-                    onClick={() => {}}
+                    isEventStopPropagation={false}
                     variant="iconOnlyTransparent2"
                   />
                 </div>
