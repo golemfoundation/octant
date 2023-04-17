@@ -15,10 +15,11 @@ const Button: FC<ButtonProps> = ({
   className,
   href,
   isActive,
+  isDisabled,
+  isEventStopPropagation = true,
+  isHigh,
   isLoading,
   isSmallFont,
-  isDisabled,
-  isHigh,
   label,
   onClick,
   rel,
@@ -70,7 +71,9 @@ const Button: FC<ButtonProps> = ({
         isActionDisabled
           ? () => {}
           : event => {
-              event.stopPropagation();
+              if (isEventStopPropagation) {
+                event.stopPropagation();
+              }
               if (onClick) {
                 onClick();
               }
