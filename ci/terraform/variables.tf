@@ -28,6 +28,7 @@ variable "gitlab_username" {
 variable "gitlab_token" {
   type        = string
   description = "Token to authenticate to GitLab"
+  sensitive   = true
 }
 
 # GCP variables
@@ -40,6 +41,7 @@ variable "coingecko_api_key" {
   type        = string
   description = "CoinGecko API key"
   default     = ""
+  sensitive   = true
 }
 
 variable "gcp_domain_zone_name" {
@@ -48,19 +50,47 @@ variable "gcp_domain_zone_name" {
 }
 
 # API keys / private keys
-variable "alchemy_api_url" {
+variable "contracts_alchemy_api_url" {
   type        = string
-  description = "Alchemy API URL for Subgraph use"
+  description = "Alchemy API URL for Contracts use"
+  sensitive   = true
 }
 
 variable "etherscan_api_key" {
   type        = string
   description = "Etherscan.io API key"
+  sensitive   = true
+}
+
+
+variable "subgraph_alchemy_api_url" {
+  type        = string
+  description = "Alchemy API URL for Subgraph use"
+  sensitive   = true
 }
 
 variable "wallet_private_key" {
   type        = string
   description = "Cryptocurrency wallet private key"
+  sensitive   = true
+}
+
+# HackMD
+variable "hackmd_note_header" {
+  type        = string
+  description = "Header after which new contract addresses should be inserted"
+  default     = "Deployed contracts addresses"
+}
+
+variable "hackmd_noteid" {
+  type        = string
+  description = "hackmd.io note id"
+}
+
+variable "hackmd_token" {
+  type        = string
+  description = "hackmd.io access token"
+  sensitive   = true
 }
 
 # Deployment variables

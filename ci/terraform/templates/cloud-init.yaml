@@ -71,7 +71,6 @@ write_files:
 
       [Service]
       Environment="HOME=/home/cloudservice"
-      EnvironmentFile="/home/cloudservice/env.${name}"
       ExecStart=/usr/bin/docker run --rm --name ${name} --network main %{ if can(service.params) }${service.params} %{ endif }%{ for env in lookup(service, "envs", []) ~}-e "${env}" %{ endfor ~}${service.image}
       ExecStop=/usr/bin/docker stop ${name}
       ExecStopPost=-/usr/bin/docker rm ${name}
@@ -117,16 +116,50 @@ write_files:
         exit 1
       }
       trap on_failure ERR
-      DEPLOYMENT_ID=$(curl -H "PRIVATE-TOKEN: ${gitlab_token}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/deployments/" -X POST --data 'environment=${CI_ENVIRONMENT_NAME}&status=running&sha=${CI_COMMIT_SHA}&ref=${CI_COMMIT_REF_NAME}&tag=false' | jq '.id')
 
+      systemctl daemon-reload
+      systemctl start traefik.service gitlab-login.service
+
+      DEPLOYMENT_ID=$(curl -H "PRIVATE-TOKEN: ${gitlab_token}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/deployments/" -X POST --data 'environment=${CI_ENVIRONMENT_NAME}&status=running&sha=${CI_COMMIT_SHA}&ref=${CI_COMMIT_REF_NAME}&tag=false' | jq '.id')
       NETWORK=$${NETWORK:-"goerli"}
       TAG=$${CI_COMMIT_SHORT_SHA:-"latest"}
       CONTRACTS=$HOME/contracts.txt
 %{ if generate_contracts ~}
 
-      // TBD
+      echo "Deploying smart contracts"
+      mkdir $HOME/deployments
+      HOME=$HOME docker run \
+        --name contracts \
+        --network main \
+        -e "GOERLI_URL=${contracts_alchemy_api_url}" \
+        -e "GOERLI_PRIVATE_KEY=${wallet_private_key}" \
+        -e "ETHERSCAN_API_KEY=${etherscan_api_key}" \
+        -v $HOME/deployments:/app/deployments \
+        ${images_prefix}/contracts:${tag} ${network}
+      echo "Smart contracts deployed"
+      cp $HOME/deployments/clientEnv $CONTRACTS
+
+      echo "Updating HackMD note"
+      HACKMD_TO_INSERT=$(cat <<EOF
+
+
+      ## $(date +'%Y-%m-%d %H:%M:%S')
+      ### Environment: [${CI_ENVIRONMENT_NAME}](http://${dns_domain})
+      ### Contracts config file
+      \`\`\`
+      $(cat $CONTRACTS)
+      \`\`\`
+
+      EOF
+      )
+
+      HACKMD_BODY=$(curl -qH "Authorization: Bearer ${hackmd_token}" -H "Content-Type: application/json" "https://api.hackmd.io/v1/notes/${hackmd_noteid}" | jq -r '.content')
+      HACKMD_NEWBODY=$(jq -R --null-input --arg content "$${HACKMD_BODY//# ${hackmd_note_header}/# ${hackmd_note_header}$HACKMD_TO_INSERT}" '{"content": $content}')
+      curl -H "Authorization: Bearer ${hackmd_token}" -H "Content-Type: application/json" "https://api.hackmd.io/v1/notes/${hackmd_noteid}" -X PATCH -d "$HACKMD_NEWBODY"
 
 %{ endif ~}
+      echo "Smart contracts config"
+      cat $CONTRACTS
       # Generating env variable files
       grep '^VITE_' "$CONTRACTS" > $HOME/envfile.client
       echo "VITE_CRYPTO_VALUES_ENDPOINT=http://cps.${dns_domain}/" >> $HOME/envfile.client
@@ -148,6 +181,7 @@ write_files:
         }\
       }" | jq '.' > $HOME/networks.json
 
+      systemctl start ipfs.service postgres.service graph-node.service
       echo "Wait graph-node to start..."
       while ! docker logs graph-node 2>&1 | grep -q 'Started all assigned subgraphs'; do
         sleep 1
@@ -172,7 +206,4 @@ write_files:
       curl -H "PRIVATE-TOKEN: ${gitlab_token}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/deployments/$DEPLOYMENT_ID" -X PUT --data 'status=success'
 
 runcmd:
-  - systemctl daemon-reload
-  - systemctl start traefik.service gitlab-login.service
-  - systemctl start ipfs.service postgres.service graph-node.service
   - HOME=/home/cloudservice /bin/sh /home/cloudservice/entrypoint.sh
