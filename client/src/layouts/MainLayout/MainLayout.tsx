@@ -1,6 +1,6 @@
 import { useWeb3Modal } from '@web3modal/react';
 import cx from 'classnames';
-import React, { FC, useState, Fragment } from 'react';
+import React, { FC, useState, Fragment, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
@@ -8,6 +8,7 @@ import Button from 'components/core/Button/Button';
 import Loader from 'components/core/Loader/Loader';
 import Svg from 'components/core/Svg/Svg';
 import WalletModal from 'components/dedicated/WalletModal/WalletModal';
+import { IS_INITIAL_LOAD_DONE } from 'constants/dataAttributes';
 import env from 'env';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
@@ -29,7 +30,10 @@ const MainLayout: FC<MainLayoutProps> = ({
   classNameBody,
   navigationTabs,
 }) => {
+  const numberOfAllocationsRef = useRef<HTMLDivElement>(null);
+  const [localAllocationsLenght, setLocalAllocationsLenght] = useState<number>();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState<boolean>(false);
+  const [isAllocationValueChanging, setIsAllocationValueChanging] = useState<boolean>(false);
   const { data: allocations } = useAllocationsStore();
   const { open } = useWeb3Modal();
   const { address, isConnected } = useAccount();
@@ -37,18 +41,43 @@ const MainLayout: FC<MainLayoutProps> = ({
   const { data: currentEpoch } = useCurrentEpoch();
   const { pathname } = useLocation();
 
+  useEffect(() => {
+    numberOfAllocationsRef?.current?.setAttribute(IS_INITIAL_LOAD_DONE, 'true');
+  }, []);
+
+  useEffect(() => {
+    setLocalAllocationsLenght(allocations?.length);
+    setIsAllocationValueChanging(false);
+  }, [allocations?.length]);
+
+  useEffect(() => {
+    if (localAllocationsLenght && localAllocationsLenght === allocations?.length) {
+      setIsAllocationValueChanging(true);
+    }
+  }, [localAllocationsLenght, allocations?.length]);
+
+  useEffect(() => {
+    if (isAllocationValueChanging) {
+      setTimeout(() => {
+        setIsAllocationValueChanging(false);
+      }, 1000);
+    }
+  }, [isAllocationValueChanging]);
+
   const authUser = async () => {
     if (!isConnected) {
       await open();
     }
   };
 
-  const tabsWithIsActive = getNavigationTabsWithAllocations(allocations!, navigationTabs).map(
-    tab => ({
-      ...tab,
-      isActive: tab.isActive || pathname === tab.to,
-    }),
-  );
+  const tabsWithIsActive = getNavigationTabsWithAllocations(
+    allocations!,
+    isAllocationValueChanging,
+    navigationTabs,
+  ).map(tab => ({
+    ...tab,
+    isActive: tab.isActive || pathname === tab.to,
+  }));
 
   return (
     <Fragment>

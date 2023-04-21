@@ -2,4 +2,3 @@ dist
 typechain-types
 # rollup-plugin-visualizer result file
 /client/bundleAnalysis.html
-src/gql

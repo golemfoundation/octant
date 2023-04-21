@@ -19,6 +19,7 @@ export const QUERY_KEYS = {
   ],
   depositsValue: ['depositsValue'],
   glmLocked: ['glmLocked'],
+  individualProposalRewards: ['individualProposalRewards'],
   individualReward: ['individualReward'],
   isDecisionWindowOpen: ['isDecisionWindowOpen'],
   lockedRatio: ['lockedRatio'],

@@ -1,8 +1,6 @@
-@import "src/components/core/ProgressStepperSlim/ProgressStepperSlim.module";
-
 .progressBar {
   align-self: stretch;
-  margin: 4.8rem 5.2rem (-$stepPadding);
+  margin: 4.8rem 5.2rem (-$progressStepperSlimStepPadding);
 }
 
 .bold {

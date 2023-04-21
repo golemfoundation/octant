@@ -53,6 +53,16 @@
     }
   }
 
+  &secondary2 {
+    color: $color-octant-grey6;
+    height: 3.2rem;
+    border-radius: 1.6rem;
+    background: $color-white;
+    box-shadow: $box-shadow-1;
+    min-height: 0;
+    width: auto;
+  }
+
   &iconVertical {
     color: $color-octant-grey3;
     display: flex;
@@ -106,6 +116,10 @@
     max-width: 3.2rem;
     min-width: 3.2rem;
     padding: 0;
+
+    &:hover {
+      background: $color-octant-grey4;
+    }
   }
 
   &iconOnlyTransparent {
@@ -161,6 +175,24 @@
     padding: 0;
     font-size: 1.2rem;
     text-decoration: underline;
+  }
+
+  &link5 {
+    position: relative;
+    height: auto;
+    display: inline-flex;
+    color: $color-octant-grey6;
+    padding: 0;
+    font-size: 1.2rem;
+    min-height: 2.4rem;
+
+    .icon {
+      margin-left: 0.4rem !important;
+    }
+
+    svg path {
+      stroke: $color-octant-grey6;
+    }
   }
 }
 

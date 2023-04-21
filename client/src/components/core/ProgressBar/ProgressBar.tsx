@@ -9,6 +9,7 @@ const ProgressBar: FC<ProgressBarProps> = ({
   progressPercentage,
   labelLeft,
   labelRight,
+  variant = 'green',
 }) => (
   <div className={cx(styles.root, className)}>
     {(labelLeft || labelRight) && (
@@ -19,7 +20,11 @@ const ProgressBar: FC<ProgressBarProps> = ({
     )}
     <div className={styles.bar}>
       <div
-        className={cx(styles.filled, progressPercentage > 0 && styles.isBorderVisible)}
+        className={cx(
+          styles.filled,
+          styles[`variant--${variant}`],
+          progressPercentage > 0 && styles.isBorderVisible,
+        )}
         style={{ width: `${progressPercentage}%` }}
       />
     </div>

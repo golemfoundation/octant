@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC, Fragment } from 'react';
+import React, { Fragment, forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 
 import Loader from 'components/core/Loader/Loader';
@@ -9,25 +9,29 @@ import { arrowTopRight } from 'svg/misc';
 import styles from './Button.module.scss';
 import ButtonProps from './types';
 
-const Button: FC<ButtonProps> = ({
-  Icon,
-  children,
-  className,
-  href,
-  isActive,
-  isDisabled,
-  isEventStopPropagation = true,
-  isHigh,
-  isLoading,
-  isSmallFont,
-  label,
-  onClick,
-  rel,
-  target = '_blank',
-  to,
-  type = 'button',
-  variant = 'secondary',
-}) => {
+const Button = <T extends ButtonProps>(
+  {
+    Icon,
+    children,
+    className,
+    dataParameters,
+    href,
+    isActive,
+    isDisabled,
+    isEventStopPropagation = true,
+    isHigh,
+    isLoading,
+    isSmallFont,
+    label,
+    onClick,
+    rel,
+    target = '_blank',
+    to,
+    type = 'button',
+    variant = 'secondary',
+  }: T,
+  ref,
+) => {
   const filteredProps = {};
   const isActionDisabled = isDisabled || isLoading;
 
@@ -56,6 +60,7 @@ const Button: FC<ButtonProps> = ({
 
   return (
     <Component
+      ref={ref}
       className={cx(
         styles.root,
         styles[`variant--${variant}`],
@@ -67,6 +72,7 @@ const Button: FC<ButtonProps> = ({
         onClick && styles.isClickable,
         className,
       )}
+      {...dataParameters}
       onClick={
         isActionDisabled
           ? () => {}
@@ -91,7 +97,7 @@ const Button: FC<ButtonProps> = ({
         )}
         {children}
         {label}
-        {(variant === 'link' || variant === 'link2') && (
+        {['link', 'link2', 'link5'].includes(variant) && (
           <Svg
             classNameSvg={cx(styles.icon, styles.isOnRight, isIconVariant && styles.isIconVariant)}
             img={arrowTopRight}
@@ -103,4 +109,4 @@ const Button: FC<ButtonProps> = ({
   );
 };
 
-export default Button;
+export default forwardRef(Button);

@@ -31,6 +31,8 @@ import {
   toastBudgetExceeding,
 } from './utils';
 
+import useIndividualProposalRewards from '../../hooks/queries/useIndividualProposalRewards';
+
 const AllocationView = (): ReactElement => {
   const { isConnected } = useAccount();
   const { data: allocations } = useAllocationsStore();
@@ -46,6 +48,7 @@ const AllocationView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const { refetch: refetchIndividualProposalRewards } = useIndividualProposalRewards();
   const { refetch: refetchAllocations } = useUserAllocations();
   const { data: matchedProposalRewards, refetch: refetchMatchedProposalRewards } =
     useMatchedProposalRewards();
@@ -59,6 +62,7 @@ const AllocationView = (): ReactElement => {
       await refetchMatchedProposalRewards();
       await refetchUserAllocation();
       await refetchAllocations();
+      await refetchIndividualProposalRewards();
     },
   });
 

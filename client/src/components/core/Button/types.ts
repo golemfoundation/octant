@@ -3,6 +3,7 @@ import { LinkProps } from 'react-router-dom';
 
 export const BUTTON_VARIANTS = [
   'secondary',
+  'secondary2',
   'cta',
   'iconOnly',
   'iconOnlyTransparent',
@@ -12,6 +13,7 @@ export const BUTTON_VARIANTS = [
   'link2',
   'link3',
   'link4',
+  'link5',
 ] as const;
 
 export type ButtonVariant = (typeof BUTTON_VARIANTS)[number];
@@ -21,6 +23,9 @@ export default interface ButtonProps {
   Icon?: ReactNode;
   children?: ReactNode;
   className?: string;
+  dataParameters?: {
+    [key: string]: string;
+  };
   href?: string;
   isActive?: boolean;
   isDisabled?: boolean;

@@ -1,8 +1,23 @@
 .root {
   text-align: left;
-  font-size: $font-size-14;
-  font-weight: $font-weight-semibold;
   color: $color-octant-grey6;
   margin: 0 0 2rem 0;
-  line-height: 2.2rem;
+}
+
+.variant-- {
+  &medium {
+    font-size: $font-size-14;
+    font-weight: $font-weight-semibold;
+    line-height: 2.2rem;
+  }
+
+  &big {
+    font-size: $font-size-18;
+    line-height: 3rem;
+
+    @media #{$table-down} {
+      font-size: $font-size-14;
+      line-height: 2.2rem;
+    }
+  }
 }

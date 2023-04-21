@@ -30,6 +30,12 @@ export const cross: SvgImageConfig = {
   viewBox: '0 0 11 11',
 };
 
+export const heart: SvgImageConfig = {
+  markup:
+    '<path stroke="#9EA39E" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 11.5 1.886 6.164a3.027 3.027 0 0 1 3.07-5.019c.455.148.87.401 1.21.74L7 2.721l.835-.835a3.026 3.026 0 0 1 4.28 4.28L7 11.498Z"/>',
+  viewBox: '0 0 14 13',
+};
+
 export const plus: SvgImageConfig = {
   markup:
     '<path stroke="#EBEBEB" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1.344 7.657h12M7.344 13.657v-12"/>',

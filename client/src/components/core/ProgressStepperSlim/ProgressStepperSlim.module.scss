@@ -1,5 +1,4 @@
 $stepHeight: 0.8rem;
-$stepPadding: 2.4rem;
 
 .root {
   display: flex;
@@ -9,7 +8,7 @@ $stepPadding: 2.4rem;
 .stepWrapper {
   width: 100%;
   margin: 0 0.8rem;
-  padding: $stepPadding 0;
+  padding: $progressStepperSlimStepPadding 0;
   height: $stepHeight;
   box-sizing: content-box;
 

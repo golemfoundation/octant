@@ -1,7 +1,9 @@
+import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import React from 'react';
 
 import Svg from 'components/core/Svg/Svg';
+import { IS_INITIAL_LOAD_DONE } from 'constants/dataAttributes';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import { NavigationTab } from 'constants/navigationTabs/types';
 import { allocateWithNumber } from 'svg/navigation';
@@ -30,8 +32,12 @@ export function getIndividualRewardText({
 
 export function getNavigationTabsWithAllocations(
   idsInAllocation: string[] | undefined,
+  isAllocationValueChanging: boolean,
   navigationTabs = navigationTabsDefault,
 ): NavigationTab[] {
+  const dataAttributes = {
+    [IS_INITIAL_LOAD_DONE]: 'false',
+  };
   const newNavigationTabs = [...navigationTabs];
   newNavigationTabs[1] =
     idsInAllocation && idsInAllocation.length > 0
@@ -39,7 +45,15 @@ export function getNavigationTabsWithAllocations(
           ...newNavigationTabs[1],
           iconWrapped: (
             <div className={styles.iconNumberOfAllocations}>
-              <div className={styles.numberOfAllocations}>{idsInAllocation.length}</div>
+              <div
+                className={cx(
+                  styles.numberOfAllocations,
+                  isAllocationValueChanging && styles.isAllocationValueChanging,
+                )}
+                {...dataAttributes}
+              >
+                {idsInAllocation.length}
+              </div>
               <Svg img={allocateWithNumber} size={3.2} />
             </div>
           ),

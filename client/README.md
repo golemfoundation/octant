@@ -2,6 +2,11 @@
 
 Ensure that the `.env`  file is present. See `.env.template`.
 
+## Codegen
+
+[Codegen](https://the-guild.dev/graphql/codegen) is used to generate GQL typed queries, mutations & subscriptions. Types are fetched from the server on `yarn codegen` command and put in `src/gql` directory, which is commited. It's done so that whenever server is not available starting frontend application is not blocked. When the server becomes more stable or local environment is available, we will not commit `src/gql` directory.
+
+
 ## Known technical problems
 
 Typechain combines responses from contracts so that an array and object are joined together, e.g.:

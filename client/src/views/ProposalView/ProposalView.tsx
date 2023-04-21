@@ -6,7 +6,7 @@ import Button from 'components/core/Button/Button';
 import Description from 'components/core/Description/Description';
 import Img from 'components/core/Img/Img';
 import Loader from 'components/core/Loader/Loader';
-import Svg from 'components/core/Svg/Svg';
+import ButtonAddToAllocate from 'components/dedicated/ButtonAddToAllocate/ButtonAddToAllocate';
 import DonorsList from 'components/dedicated/DonorsList/DonorsList';
 import ProposalRewards from 'components/dedicated/ProposalRewards/ProposalRewards';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
@@ -19,7 +19,6 @@ import useProposalsWithRewards from 'hooks/queries/useProposalsWithRewards';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
-import { tick } from 'svg/misc';
 import { chevronLeft } from 'svg/navigation';
 import { ExtendedProposal } from 'types/proposals';
 import triggerToast from 'utils/triggerToast';
@@ -127,14 +126,7 @@ const ProposalView = (): ReactElement => {
   const initialElement = loadedProposals[0] || {};
 
   if (!initialElement || !shouldMatchedProposalRewardsBeAvailable) {
-    return (
-      <MainLayout
-        classNameBody={styles.bodyLayout}
-        isHeaderVisible={false}
-        isLoading
-        navigationTabs={getCustomNavigationTabs()}
-      />
-    );
+    return <MainLayout isLoading navigationTabs={getCustomNavigationTabs()} />;
   }
 
   if (!initialElement || (initialElement && initialElement.isLoadingError)) {
@@ -150,11 +142,7 @@ const ProposalView = (): ReactElement => {
   }
 
   return (
-    <MainLayout
-      classNameBody={styles.bodyLayout}
-      isHeaderVisible={false}
-      navigationTabs={getCustomNavigationTabs()}
-    >
+    <MainLayout navigationTabs={getCustomNavigationTabs()}>
       <InfiniteScroll
         hasMore
         initialLoad
@@ -167,62 +155,57 @@ const ProposalView = (): ReactElement => {
         pageStart={0}
         useWindow
       >
-        {loadedProposals.map(
-          ({ address, description, name, profileImageCID, landscapeImageCID, website }, index) => {
-            const buttonProps = allocations!.includes(address)
-              ? {
-                  Icon: <Svg img={tick} size={1.5} />,
-                  label: 'Added to Allocate',
-                }
-              : {
-                  label: 'Add to Allocate',
-                };
-            const proposalMatchedProposalRewards = proposalsWithRewards?.find(
-              ({ address: matchedAddress }) => matchedAddress === address,
-            );
-            const { onAddRemoveFromAllocate } = useIdsInAllocation({
-              allocations: allocations!,
-              proposalName: name,
-              setAllocations,
-            });
-            return (
-              // eslint-disable-next-line react/no-array-index-key
-              <Fragment key={`${address}-${index}`}>
-                <div className={styles.imageLandscapeWrapper}>
-                  <Img
-                    className={styles.imageLandscape}
-                    src={`${ipfsGateway}${landscapeImageCID}`}
-                  />
-                </div>
+        {loadedProposals.map(({ address, description, name, profileImageCID, website }, index) => {
+          const isAlreadyAdded = allocations!.includes(address);
+          const proposalMatchedProposalRewards = proposalsWithRewards?.find(
+            ({ address: matchedAddress }) => matchedAddress === address,
+          );
+          const { onAddRemoveFromAllocate } = useIdsInAllocation({
+            allocations: allocations!,
+            proposalName: name,
+            setAllocations,
+          });
+          return (
+            // eslint-disable-next-line react/no-array-index-key
+            <Fragment key={`${address}-${index}`}>
+              <div className={styles.proposal}>
                 <div className={styles.proposalHeader}>
-                  <Img className={styles.imageProfile} src={`${ipfsGateway}${profileImageCID}`} />
-                  <div className={styles.nameAndAllocationValues}>
-                    <span className={styles.name}>{name}</span>
-                    <ProposalRewards
-                      proposalMatchedProposalRewards={proposalMatchedProposalRewards}
+                  <div className={styles.imageProfileWrapper}>
+                    <Img className={styles.imageProfile} src={`${ipfsGateway}${profileImageCID}`} />
+                    <ButtonAddToAllocate
+                      className={styles.buttonAddToAllocateMobile}
+                      isAlreadyAdded={isAlreadyAdded}
+                      onClick={() => onAddRemoveFromAllocate(address)}
                     />
                   </div>
-                </div>
-                <div className={styles.buttonAllocateWrapper}>
-                  <Button
-                    className={styles.buttonAllocate}
-                    isSmallFont
-                    onClick={() => onAddRemoveFromAllocate(address)}
-                    variant="secondary"
-                    {...buttonProps}
+                  <span className={styles.name}>{name}</span>
+
+                  <Button className={styles.buttonWebsite} href={website!.url} variant="link5">
+                    {website!.label || website!.url}
+                  </Button>
+                  <ProposalRewards
+                    canFoundedAtHide={false}
+                    className={styles.proposalRewards}
+                    MiddleElement={
+                      <ButtonAddToAllocate
+                        className={styles.buttonAddToAllocateDesktop}
+                        isAlreadyAdded={isAlreadyAdded}
+                        onClick={() => onAddRemoveFromAllocate(address)}
+                      />
+                    }
+                    totalValueOfAllocations={
+                      proposalMatchedProposalRewards?.totalValueOfAllocations
+                    }
                   />
                 </div>
                 <div className={styles.body}>
-                  <Description text={description!} />
-                  <Button className={styles.buttonWebsite} href={website!.url} variant="link">
-                    {website!.label || website!.url}
-                  </Button>
+                  <Description text={description!} variant="big" />
                 </div>
-                <DonorsList className={styles.donors} proposalAddress={address} />
-              </Fragment>
-            );
-          },
-        )}
+              </div>
+              <DonorsList className={styles.donors} proposalAddress={address} />
+            </Fragment>
+          );
+        })}
       </InfiniteScroll>
     </MainLayout>
   );

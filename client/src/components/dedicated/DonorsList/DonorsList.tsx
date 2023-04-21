@@ -34,9 +34,10 @@ const DonorsList: FC<DonorsListProps> = ({ className, proposalAddress }) => {
   } = useProposalAllocations({ proposalAddress });
 
   useEffect(() => {
-    refetchProposalAllocations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (proposalAllocations && proposalAllocations?.length > 0) {
+      refetchProposalAllocations();
+    }
+  }, [proposalAllocations, refetchProposalAllocations]);
 
   return (
     <div className={cx(styles.root, className)}>
@@ -75,9 +76,9 @@ const DonorsList: FC<DonorsListProps> = ({ className, proposalAddress }) => {
           {proposalAllocations && proposalAllocations.length > SHORT_LIST_LENGTH && (
             <Button
               className={styles.buttonDonors}
-              label={isDonorsListExpanded ? 'See less' : 'See all'}
+              label={isDonorsListExpanded ? '- See less' : '+ See all'}
               onClick={() => setIsDonorsListExpanded(!isDonorsListExpanded)}
-              variant="link4"
+              variant="secondary2"
             />
           )}
         </Fragment>
