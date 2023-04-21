@@ -1,43 +1,77 @@
 import cx from 'classnames';
+import { BigNumber } from 'ethers';
 import React, { FC, Fragment } from 'react';
 
+import ProgressBar from 'components/core/ProgressBar/ProgressBar';
+import useIndividualProposalRewards from 'hooks/queries/useIndividualProposalRewards';
 import useProposalRewardsThresholdFraction from 'hooks/queries/useProposalRewardsThresholdFraction';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './ProposalRewards.module.scss';
 import ProposalRewardsProps from './types';
 
-const ProposalRewards: FC<ProposalRewardsProps> = ({ proposalMatchedProposalRewards }) => {
+const ProposalRewards: FC<ProposalRewardsProps> = ({
+  canFoundedAtHide = true,
+  className,
+  MiddleElement,
+  totalValueOfAllocations,
+}) => {
+  const { data: individualProposalRewards } = useIndividualProposalRewards();
   const { data: proposalRewardsThresholdFraction } = useProposalRewardsThresholdFraction();
 
+  const cutOffValue =
+    individualProposalRewards &&
+    proposalRewardsThresholdFraction &&
+    !individualProposalRewards.sum.isZero()
+      ? BigNumber.from(individualProposalRewards.sum.toNumber() * proposalRewardsThresholdFraction)
+      : BigNumber.from(0);
+
+  const isProjectFounded = totalValueOfAllocations
+    ? totalValueOfAllocations.gte(cutOffValue)
+    : false;
+
+  const isFundedAtHidden =
+    cutOffValue.isZero() ||
+    (canFoundedAtHide && !cutOffValue.isZero() && totalValueOfAllocations && isProjectFounded);
+
   return (
-    <div className={styles.root}>
-      {proposalMatchedProposalRewards ? (
-        <Fragment>
-          <div>
-            {
-              getFormattedEthValue(proposalMatchedProposalRewards.totalValueOfAllocations!)
-                .fullString
+    <div className={cx(styles.root, className)}>
+      <div className={styles.separator}>
+        {isProjectFounded ? (
+          <div className={styles.line} />
+        ) : (
+          <ProgressBar
+            progressPercentage={
+              totalValueOfAllocations &&
+              cutOffValue &&
+              totalValueOfAllocations.gt(0) &&
+              cutOffValue.gt(0)
+                ? totalValueOfAllocations.mul(100).div(cutOffValue).toNumber()
+                : 0
             }
-          </div>
-          {proposalRewardsThresholdFraction && (
-            <Fragment>
-              <div className={styles.separator} />
-              <div
-                className={cx(
-                  styles.percentage,
-                  proposalMatchedProposalRewards.percentage! > proposalRewardsThresholdFraction &&
-                    styles.isAboveThreshold,
-                )}
-              >
-                {proposalMatchedProposalRewards.percentage!} %
-              </div>
-            </Fragment>
-          )}
-        </Fragment>
-      ) : (
-        <Fragment>Allocation values are not available</Fragment>
-      )}
+            variant="orange"
+          />
+        )}
+      </div>
+      <div className={styles.values}>
+        {totalValueOfAllocations !== undefined ? (
+          <Fragment>
+            <div className={styles.value}>
+              <span className={styles.label}>Total donated</span>
+              <span className={cx(styles.number, !isProjectFounded && styles.isBelowCutOff)}>
+                {getFormattedEthValue(totalValueOfAllocations).fullString}
+              </span>
+            </div>
+            {MiddleElement}
+            <div className={cx(styles.value, isFundedAtHidden && styles.isHidden)}>
+              <span className={styles.label}>Funded at</span>
+              <span className={styles.number}>{getFormattedEthValue(cutOffValue).fullString}</span>
+            </div>
+          </Fragment>
+        ) : (
+          <Fragment>Allocation values are not available</Fragment>
+        )}
+      </div>
     </div>
   );
 };

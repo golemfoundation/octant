@@ -1,21 +1,83 @@
 .root {
   display: flex;
-  align-items: center;
-  font-size: $font-size-14;
-  font-weight: $font-weight-semibold;
-}
+  flex-direction: column;
+  align-items: stretch;
+  align-self: stretch;
+  justify-content: space-between;
 
-.separator {
-  width: 0.1rem;
-  height: 1.5rem;
-  background: $color-octant-grey11;
-  margin: 0 0.5rem;
-}
+  .separator {
+    margin: 0 0 2.4rem 0;
+  }
 
-.percentage {
-  color: $color-octant-red2;
+  .line {
+    height: 0.2rem;
+    width: 100%;
+    content: '';
+    background: $color-octant-grey4;
+  }
 
-  &.isAboveThreshold {
-    color: $color-octant-green5;
+  .values {
+    display: flex;
+    justify-content: space-between;
+    color: $color-octant-grey6;
+
+    .value {
+      display: flex;
+      flex-direction: column;
+      font-weight: $font-weight-bold;
+
+      &:first-child {
+        align-items: flex-start;
+
+        .number {
+          color: $color-black;
+        }
+      }
+
+      &:last-child {
+        align-items: flex-end;
+      }
+
+      &.isHidden {
+        visibility: hidden;
+      }
+
+      .label {
+        font-size: $font-size-12;
+      }
+
+      .number {
+        font-size: $font-size-18;
+
+        @media #{$table-down} {
+          font-size: $font-size-16;
+        }
+
+        &.isBelowCutOff {
+          color: $color-octant-orange;
+        }
+      }
+    }
+  }
+
+  .percentage {
+    position: relative;
+    color: $color-octant-red2;
+    margin: 0 0 0 1rem;
+    padding: 0 0 0 1rem;
+
+    &.isAboveThreshold {
+      color: $color-octant-green5;
+    }
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0.2rem;
+      height: 100%;
+      background: $color-octant-grey2;
+    }
   }
 }

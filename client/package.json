@@ -15,7 +15,6 @@
     "eslint:fix": "yarn prettier && yarn eslint --fix",
     "install:rootpackages": "cd .. && yarn install && cd client",
     "predev": "yarn install:rootpackages && yarn install",
-    "postinstall": "yarn codegen",
     "preinstall": "yarn install:rootpackages",
     "prettier": "yarn prettier:js --loglevel silent && yarn prettier:ts --loglevel silent",
     "prettier:js": "yarn prettier:js:pure './**/*.{js,jsx}'",

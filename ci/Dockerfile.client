@@ -3,7 +3,6 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --ignore-scripts --frozen-lockfile && yarn cache clean
 COPY ./ ./
-RUN yarn postinstall
 
 EXPOSE 4173
 ENTRYPOINT [ "yarn", "start" ]
