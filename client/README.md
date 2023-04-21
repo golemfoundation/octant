@@ -2,10 +2,25 @@
 
 Ensure that the `.env`  file is present. See `.env.template`.
 
+## Proposals
+
+The app fetches proposals addresses from the contract and their data (name, description, etc.) from IPFS. Current expected schema of proposal coming from IPFS is as follows:
+
+```ts
+export interface BackendProposal {
+  description: string;
+  name: string;
+  profileImageCID: string;
+  website: {
+    label?: string;
+    url: string;
+  };
+}
+```
+
 ## Codegen
 
 [Codegen](https://the-guild.dev/graphql/codegen) is used to generate GQL typed queries, mutations & subscriptions. Types are fetched from the server on `yarn codegen` command and put in `src/gql` directory, which is commited. It's done so that whenever server is not available starting frontend application is not blocked. When the server becomes more stable or local environment is available, we will not commit `src/gql` directory.
-
 
 ## Known technical problems
 

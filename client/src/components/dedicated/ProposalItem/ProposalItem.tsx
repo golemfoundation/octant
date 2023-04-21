@@ -17,9 +17,6 @@ import useAllocationsStore from 'store/allocations/store';
 import styles from './ProposalItem.module.scss';
 import ProposalItemProps from './types';
 
-// TODO To README add format of propsals that need to be in IPFS.
-// TODO Animation in the bottom navbar when the number changes.
-
 const ProposalItem: FC<ProposalItemProps> = ({ address, className, totalValueOfAllocations }) => {
   const { ipfsGateway } = env;
   const navigate = useNavigate();
