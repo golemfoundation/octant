@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { BigNumber } from 'ethers';
-import React from 'react';
+import React, { LegacyRef } from 'react';
 
 import Svg from 'components/core/Svg/Svg';
 import { IS_INITIAL_LOAD_DONE } from 'constants/dataAttributes';
@@ -33,6 +33,7 @@ export function getIndividualRewardText({
 export function getNavigationTabsWithAllocations(
   idsInAllocation: string[] | undefined,
   isAllocationValueChanging: boolean,
+  numberOfAllocationsRef?: LegacyRef<HTMLDivElement> | undefined,
   navigationTabs = navigationTabsDefault,
 ): NavigationTab[] {
   const dataAttributes = {
@@ -46,6 +47,7 @@ export function getNavigationTabsWithAllocations(
           iconWrapped: (
             <div className={styles.iconNumberOfAllocations}>
               <div
+                ref={numberOfAllocationsRef}
                 className={cx(
                   styles.numberOfAllocations,
                   isAllocationValueChanging && styles.isAllocationValueChanging,
