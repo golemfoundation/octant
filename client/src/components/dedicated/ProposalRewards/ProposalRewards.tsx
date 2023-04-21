@@ -71,7 +71,9 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
             </div>
           </Fragment>
         ) : (
-          <Fragment>Allocation values are not available</Fragment>
+          <div className={styles.allocationValuesNotAvailable}>
+            Allocation values are not available
+          </div>
         )}
       </div>
     </div>

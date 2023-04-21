@@ -42,8 +42,10 @@ const MainLayout: FC<MainLayoutProps> = ({
   const { pathname } = useLocation();
 
   useEffect(() => {
-    numberOfAllocationsRef?.current?.setAttribute(IS_INITIAL_LOAD_DONE, 'true');
-  }, []);
+    if (localAllocationsLenght && localAllocationsLenght === allocations?.length) {
+      numberOfAllocationsRef?.current?.setAttribute(IS_INITIAL_LOAD_DONE, 'true');
+    }
+  }, [localAllocationsLenght, allocations?.length]);
 
   useEffect(() => {
     setLocalAllocationsLenght(allocations?.length);
@@ -51,7 +53,7 @@ const MainLayout: FC<MainLayoutProps> = ({
   }, [allocations?.length]);
 
   useEffect(() => {
-    if (localAllocationsLenght && localAllocationsLenght === allocations?.length) {
+    if (localAllocationsLenght && localAllocationsLenght !== allocations?.length) {
       setIsAllocationValueChanging(true);
     }
   }, [localAllocationsLenght, allocations?.length]);
@@ -73,6 +75,7 @@ const MainLayout: FC<MainLayoutProps> = ({
   const tabsWithIsActive = getNavigationTabsWithAllocations(
     allocations!,
     isAllocationValueChanging,
+    numberOfAllocationsRef,
     navigationTabs,
   ).map(tab => ({
     ...tab,
