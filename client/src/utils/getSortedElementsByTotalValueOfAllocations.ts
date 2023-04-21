@@ -9,6 +9,13 @@ export default function getSortedElementsByTotalValueOfAllocations(
       { totalValueOfAllocations: totalValueOfAllocationsA },
       { totalValueOfAllocations: totalValueOfAllocationsB },
     ) => {
+      /**
+       * When added during current epoch proposals do not have totalValueOfAllocations defined.
+       * In such case, do not sort them, leaving them at the end of the list.
+       */
+      if (!totalValueOfAllocationsA || !totalValueOfAllocationsB) {
+        return 0;
+      }
       if (totalValueOfAllocationsA!.lt(totalValueOfAllocationsB!)) {
         return 1;
       }

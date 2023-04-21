@@ -34,10 +34,12 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
     cutOffValue.isZero() ||
     (canFoundedAtHide && !cutOffValue.isZero() && totalValueOfAllocations && isProjectFounded);
 
+  const isTotalValueOfAllocationsDefined = totalValueOfAllocations !== undefined;
+
   return (
     <div className={cx(styles.root, className)}>
       <div className={styles.separator}>
-        {isProjectFounded ? (
+        {isProjectFounded || !isTotalValueOfAllocationsDefined ? (
           <div className={styles.line} />
         ) : (
           <ProgressBar
@@ -54,7 +56,7 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
         )}
       </div>
       <div className={styles.values}>
-        {totalValueOfAllocations !== undefined ? (
+        {isTotalValueOfAllocationsDefined ? (
           <Fragment>
             <div className={styles.value}>
               <span className={styles.label}>Total donated</span>
