@@ -1,6 +1,5 @@
 export interface BackendProposal {
   description: string;
-  landscapeImageCID: string;
   name: string;
   profileImageCID: string;
   website: {
