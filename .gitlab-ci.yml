@@ -249,6 +249,7 @@ include:
     TF_VAR_dns_endpoint: $CI_ENVIRONMENT_SLUG
     TF_VAR_generate_contracts: "false"
     TF_VAR_octant_tag: $CI_COMMIT_SHORT_SHA
+    TF_VAR_hackmd_token: $HACKMD_TOKEN
 
 fmt:
   stage: ci-validate
@@ -309,7 +310,7 @@ validate:
   environment:
     action: stop
 
-Deploy to MR environment:
+Deploy to MR environment without contracts:
   extends:
     - .deploy
   rules:
@@ -322,6 +323,12 @@ Deploy to MR environment:
     name: mr/$CI_MERGE_REQUEST_IID
     deployment_tier: development
     on_stop: Stop MR environment
+
+Deploy to MR environment with contracts:
+  extends:
+    - Deploy to MR environment without contracts
+  variables:
+    TF_VAR_generate_contracts: "true"
 
 Stop MR environment:
   extends:
@@ -336,7 +343,7 @@ Stop MR environment:
     name: mr/$CI_MERGE_REQUEST_IID
     deployment_tier: development
 
-Deploy to TEST environment:
+Deploy to TEST environment without contracts:
   extends:
     - .deploy
   rules:
@@ -350,6 +357,12 @@ Deploy to TEST environment:
   environment:
     name: test
     deployment_tier: testing
+
+Deploy to TEST environment with contracts:
+  extends:
+    - Deploy to TEST environment without contracts
+  variables:
+    TF_VAR_generate_contracts: "true"
 
 Stop TEST environment:
   extends:
@@ -367,7 +380,7 @@ Stop TEST environment:
     name: test
     deployment_tier: testing
 
-Deploy to UAT environment:
+Deploy to UAT environment without contracts:
   extends:
     - .deploy
   rules:
@@ -377,6 +390,12 @@ Deploy to UAT environment:
   environment:
     name: uat
     deployment_tier: staging
+
+Deploy to UAT environment with contracts:
+  extends:
+    - Deploy to UAT environment without contracts
+  variables:
+    TF_VAR_generate_contracts: "true"
 
 Stop UAT environment:
   extends:

@@ -59,7 +59,7 @@ locals {
         "postgres_db=graph-node",
         "ipfs=ipfs:5001",
         "GRAPH_LOG=info",
-        "ethereum=${var.network}:${var.alchemy_api_url}",
+        "ethereum=${var.network}:${var.subgraph_alchemy_api_url}",
       ]
       labels = [
         "traefik.enable=true",
