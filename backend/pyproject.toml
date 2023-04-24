@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "octant-backend"
+version = "0.1.0"
+description = ""
+authors = ["Golem Foundation Contributors <contact@golem.foundation>"]
+license = "GPL-3.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+flask = "^2.2.3"
+python-dotenv = "^1.0.0"
+flask-cors = "^3.0.10"
+flask-migrate = "^4.0.4"
+flask-socketio = "^5.3.3"
+gql = {extras = ["aiohttp"], version = "^3.4.0"}
+requests = "^2.28.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.1"
+pytest-mock = "^3.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
