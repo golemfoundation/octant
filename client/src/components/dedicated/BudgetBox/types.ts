@@ -6,5 +6,6 @@ export default interface BudgetBoxProps {
   className: string;
   currentStepIndex: CurrentStepIndex;
   depositsValue?: BigNumber;
+  isError: boolean;
   transactionHash: string;
 }

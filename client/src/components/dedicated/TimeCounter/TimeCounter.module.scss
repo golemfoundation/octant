@@ -11,13 +11,15 @@
   width: 100%;
   display: flex;
   justify-content: space-around;
-  margin: 0 0 1.6rem 0;
 
   &.variant-- {
     &small {
       border: 0.1rem solid $color-octant-grey2;
       border-radius: $border-radius-04;
       padding: 1.6rem;
+    }
+    &standard {
+      margin: 0 0 1.6rem 0;
     }
   }
 }

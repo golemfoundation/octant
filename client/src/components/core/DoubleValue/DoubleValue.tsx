@@ -13,6 +13,7 @@ const DoubleValue: FC<DoubleValueProps> = ({
   cryptoCurrency,
   coinPricesServerDowntimeText = 'Conversion offline',
   textAlignment = 'left',
+  isError,
   valueCrypto,
   valueString,
   variant = 'standard',
@@ -39,9 +40,18 @@ const DoubleValue: FC<DoubleValueProps> = ({
   });
 
   return (
-    <div className={cx(styles.root, styles[`textAlignment--${textAlignment}`], className)}>
+    <div
+      className={cx(
+        styles.root,
+        isError && styles.isError,
+        styles[`textAlignment--${textAlignment}`],
+        className,
+      )}
+    >
       <div className={cx(styles.primary, styles[`variant--${variant}`])}>{values.primary}</div>
-      {values.secondary && <div className={styles.secondary}>{values.secondary}</div>}
+      {values.secondary && (
+        <div className={cx(styles.secondary, isError && styles.isError)}>{values.secondary}</div>
+      )}
     </div>
   );
 };

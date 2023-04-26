@@ -1,15 +1,16 @@
 import cx from 'classnames';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
-import React, { ChangeEvent, FC, useState } from 'react';
+import { useFormik } from 'formik';
+import React, { FC, useEffect } from 'react';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import Sections from 'components/core/BoxRounded/Sections/Sections';
 import Button from 'components/core/Button/Button';
+import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import Modal from 'components/core/Modal/Modal';
 import InputsCryptoFiat from 'components/dedicated/InputsCryptoFiat/InputsCryptoFiat';
 import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useWithdrawEth from 'hooks/mutations/useWithdrawEth';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
@@ -17,11 +18,11 @@ import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './ModalWithdrawEth.module.scss';
-import ModalEthWithdrawingProps from './types';
-import { toastDebouncedWithdrawValueTooBig } from './utils';
+import ModalEthWithdrawingProps, { FormValues } from './types';
+import { validationSchema, formInitialValues } from './utils';
 
 const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
-  const [valueToWithdraw, setValueToWithdraw] = useState<string>('');
+  const { data: currentEpoch } = useCurrentEpoch();
   const { data: withdrawableUserEth } = useWithdrawableUserEth();
   const { data: isDecisionWindowOpen, refetch: refetchIsDecisionWindowOpen } =
     useIsDecisionWindowOpen();
@@ -35,51 +36,24 @@ const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
     },
   });
 
-  const onChangeValue = (event: ChangeEvent<HTMLInputElement>): void => {
-    const {
-      target: { value },
-    } = event;
-    if (value && !floatNumberWithUpTo18DecimalPlaces.test(value)) {
-      return;
-    }
-    const valueBigNumber = parseUnits(value || '0');
-    let valueToSet = value;
-    if (valueBigNumber.gt(withdrawableUserEth!)) {
-      valueToSet = formatUnits(value);
-      toastDebouncedWithdrawValueTooBig();
-    }
+  const formik = useFormik<FormValues>({
+    initialValues: formInitialValues,
+    onSubmit: ({ valueToWithdraw }) => withdrawEthMutation.mutateAsync(valueToWithdraw),
+    validateOnChange: true,
+    validationSchema: validationSchema(withdrawableUserEth),
+  });
 
-    setValueToWithdraw(valueToSet);
-  };
+  useEffect(() => {
+    formik.resetForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modalProps.isOpen]);
 
   return (
     <Modal header="Withdraw ETH" {...modalProps}>
-      <BoxRounded alignment="left" className={styles.element} hasPadding={false} isGrey isVertical>
-        <Sections
-          sections={[
-            {
-              doubleValueProps: {
-                cryptoCurrency: 'ethereum',
-                valueCrypto: withdrawableUserEth,
-              },
-              label: 'Available rewards',
-            },
-          ]}
-        />
-      </BoxRounded>
-      <BoxRounded className={styles.element} isGrey isVertical>
-        <InputsCryptoFiat
-          inputCryptoProps={{
-            isDisabled: withdrawEthMutation.isLoading,
-            onChange: onChangeValue,
-            suffix: 'ETH',
-            value: valueToWithdraw,
-          }}
-          label="Amount to withdraw"
-        />
+      <form className={styles.form} onSubmit={formik.handleSubmit}>
         {isDecisionWindowOpen && (
-          <div className={styles.timeCounterWrapper}>
-            Epoch (n-1) rewards available when allocation period closes
+          <BoxRounded className={styles.element} isGrey isVertical>
+            Withdrawals are distributed when Epoch {currentEpoch} ends
             <TimeCounter
               className={styles.timeCounter}
               duration={currentEpochProps?.decisionWindow}
@@ -87,18 +61,54 @@ const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
               timestamp={timeCurrentAllocationEnd}
               variant="small"
             />
-          </div>
+          </BoxRounded>
         )}
-      </BoxRounded>
-      <Button
-        className={cx(styles.element, styles.button)}
-        isDisabled={!valueToWithdraw}
-        isHigh
-        isLoading={withdrawEthMutation.isLoading}
-        label="Request withdrawal"
-        onClick={() => withdrawEthMutation.mutateAsync(valueToWithdraw)}
-        variant="cta"
-      />
+        <BoxRounded
+          alignment="left"
+          className={styles.element}
+          isGrey
+          isVertical
+          title="Rewards Budget"
+        >
+          <DoubleValue
+            cryptoCurrency="ethereum"
+            isError={!formik.isValid}
+            valueCrypto={withdrawableUserEth}
+          />
+        </BoxRounded>
+        <BoxRounded className={styles.element} isGrey isVertical>
+          <InputsCryptoFiat
+            error={formik.errors.valueToWithdraw}
+            inputCryptoProps={{
+              isDisabled: withdrawEthMutation.isLoading,
+              name: 'valueToWithdraw',
+              onChange: event => {
+                const {
+                  target: { value },
+                } = event;
+                if (value && !floatNumberWithUpTo18DecimalPlaces.test(value)) {
+                  return;
+                }
+
+                formik.handleChange(event);
+              },
+              onClear: formik.resetForm,
+              suffix: 'ETH',
+              value: formik.values.valueToWithdraw,
+            }}
+            label="Amount to withdraw"
+          />
+        </BoxRounded>
+        <Button
+          className={cx(styles.element, styles.button)}
+          isDisabled={!formik.isValid}
+          isHigh
+          isLoading={formik.isSubmitting}
+          label="Request withdrawal"
+          type="submit"
+          variant="cta"
+        />
+      </form>
     </Modal>
   );
 };

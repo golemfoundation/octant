@@ -1,9 +1,12 @@
-import debounce from 'lodash/debounce';
+import { BigNumber } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
+import { string, object, ObjectSchema } from 'yup';
 
-import { TOAST_DEBOUNCE_TIME } from 'constants/toasts';
-import triggerToast from 'utils/triggerToast';
+import { CurrentMode, CurrentStepIndex, FormValues } from './types';
 
-import { CurrentMode, CurrentStepIndex } from './types';
+export const formInitialValues: FormValues = {
+  valueToDeposeOrWithdraw: '',
+};
 
 export const getButtonCtaLabel = (
   currentMode: CurrentMode,
@@ -19,24 +22,27 @@ export const getButtonCtaLabel = (
   return currentMode === 'lock' ? 'Lock' : 'Unlock';
 };
 
-export const toastDebouncedUnlockValueTooBig = debounce(
-  () =>
-    triggerToast({
-      message: "You can't unlock more than is locked.",
-      title: 'Too big value',
-      type: 'warning',
-    }),
-  TOAST_DEBOUNCE_TIME,
-  { leading: true },
-);
+export const validationSchema = (
+  currentMode: CurrentMode,
+  dataAvailableFunds: BigNumber | undefined,
+  depositsValue: BigNumber | undefined,
+): ObjectSchema<FormValues> =>
+  object().shape({
+    valueToDeposeOrWithdraw: string()
+      .required("Value can't be empty")
+      .test({
+        name: 'value-in-range',
+        skipAbsent: true,
+        test(value, ctx) {
+          const newValueBigNumber = parseUnits(value || '0');
+          if (currentMode === 'unlock' && newValueBigNumber.gt(depositsValue!)) {
+            return ctx.createError({ message: "You can't unlock more than you have locked" });
+          }
+          if (currentMode === 'lock' && newValueBigNumber.gt(dataAvailableFunds!)) {
+            return ctx.createError({ message: "You don't have enough to lock that amount" });
+          }
 
-export const toastDebouncedLockValueTooBig = debounce(
-  () =>
-    triggerToast({
-      message: "You can't lock more than is available in the wallet.",
-      title: 'Too big value',
-      type: 'warning',
-    }),
-  TOAST_DEBOUNCE_TIME,
-  { leading: true },
-);
+          return true;
+        },
+      }),
+  });

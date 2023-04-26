@@ -1,7 +1,8 @@
 import cx from 'classnames';
 import { BigNumber, ContractTransaction } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
-import React, { ChangeEvent, FC, useEffect, useState } from 'react';
+import { parseUnits } from 'ethers/lib/utils';
+import { useFormik } from 'formik';
+import React, { FC, useEffect, useState } from 'react';
 import { useAccount, useSigner } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -23,12 +24,8 @@ import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './ModalGlmLock.module.scss';
-import ModalGlmLockProps, { CurrentMode, CurrentStepIndex } from './types';
-import {
-  getButtonCtaLabel,
-  toastDebouncedLockValueTooBig,
-  toastDebouncedUnlockValueTooBig,
-} from './utils';
+import ModalGlmLockProps, { CurrentMode, CurrentStepIndex, FormValues } from './types';
+import { formInitialValues, getButtonCtaLabel, validationSchema } from './utils';
 
 const currentStepIndexInitialValue = 0;
 
@@ -38,7 +35,6 @@ const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
   const { data: signer } = useSigner();
   const [currentMode, setCurrentMode] = useState<CurrentMode>('lock');
   const [transactionHash, setTransactionHash] = useState<string>('');
-  const [valueToDeposeOrWithdraw, setValueToDeposeOrWithdraw] = useState<string>('');
   const [currentStepIndex, setCurrentStepIndex] = useState<CurrentStepIndex>(
     currentStepIndexInitialValue,
   );
@@ -48,18 +44,11 @@ const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
   const { refetch: refetchDeposits } = useLocks();
   const { refetch: refetchWithdrawns } = useUnlocks();
   const [approvalState, approveCallback] = useMaxApproveCallback(
-    BigNumber.from(parseUnits(valueToDeposeOrWithdraw || '1', 18)),
+    BigNumber.from(dataAvailableFunds || BigNumber.from(1)),
     depositsAddress,
     signer,
     address,
   );
-
-  const onReset = (newMode: CurrentMode = 'lock'): void => {
-    setCurrentMode(newMode);
-    setValueToDeposeOrWithdraw('');
-    setCurrentStepIndex(0);
-    setTransactionHash('');
-  };
 
   const onRefetch = async (): Promise<void> => {
     await refetchDeposit();
@@ -69,12 +58,8 @@ const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
     await refetchWithdrawns();
   };
 
-  useEffect(() => {
-    onReset();
-  }, [modalProps.isOpen]);
-
   const onMutate = async (): Promise<void> => {
-    if (!signer || !valueToDeposeOrWithdraw) {
+    if (!signer) {
       return;
     }
 
@@ -91,15 +76,14 @@ const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
       title: 'Transaction successful',
     });
     await onRefetch();
-    setValueToDeposeOrWithdraw('');
     setCurrentStepIndex(3);
   };
 
   const lockMutation = useLock({ onMutate, onSuccess });
   const unlockMutation = useUnlock({ onMutate, onSuccess });
 
-  const onApproveOrDeposit = async (): Promise<void> => {
-    const valueToDeposeOrWithdrawBigNumber = parseUnits(valueToDeposeOrWithdraw.toString(), 18);
+  const onApproveOrDeposit = async ({ valueToDeposeOrWithdraw }): Promise<void> => {
+    const valueToDeposeOrWithdrawBigNumber = parseUnits(valueToDeposeOrWithdraw, 18);
     if (currentMode === 'lock') {
       await lockMutation.mutateAsync(valueToDeposeOrWithdrawBigNumber);
     } else {
@@ -107,87 +91,93 @@ const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
     }
   };
 
-  const onChangeValue = (event: ChangeEvent<HTMLInputElement>): void => {
-    const {
-      target: { value },
-    } = event;
-    if (value && !floatNumberWithUpTo18DecimalPlaces.test(value)) {
-      return;
-    }
+  const formik = useFormik<FormValues>({
+    initialValues: formInitialValues,
+    onSubmit: onApproveOrDeposit,
+    validateOnChange: true,
+    validationSchema: validationSchema(currentMode, dataAvailableFunds, depositsValue),
+  });
 
-    const newValueBigNumber = parseUnits(value || '0');
-    let valueToSet = value;
-    if (currentMode === 'unlock' && newValueBigNumber.gt(depositsValue!)) {
-      valueToSet = formatUnits(depositsValue!);
-      toastDebouncedUnlockValueTooBig();
-    }
-    if (currentMode === 'lock' && newValueBigNumber.gt(dataAvailableFunds!)) {
-      valueToSet = formatUnits(dataAvailableFunds!);
-      toastDebouncedLockValueTooBig();
-    }
-
-    setValueToDeposeOrWithdraw(valueToSet);
+  const onReset = (newMode: CurrentMode = 'lock'): void => {
+    setCurrentMode(newMode);
+    setCurrentStepIndex(0);
+    setTransactionHash('');
+    formik.resetForm();
   };
 
-  const isApproveOrDepositInProgress = lockMutation.isLoading || unlockMutation.isLoading;
+  useEffect(() => {
+    onReset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modalProps.isOpen]);
 
   return (
     <Modal header={currentMode === 'lock' ? 'Lock GLM' : 'Unlock GLM'} {...modalProps}>
-      <BoxRounded className={styles.element} isGrey>
-        <ProgressStepper
+      <form className={styles.form} onSubmit={formik.handleSubmit}>
+        <BoxRounded className={styles.element} isGrey>
+          <ProgressStepper
+            currentStepIndex={currentStepIndex}
+            steps={
+              currentMode === 'lock'
+                ? ['Submit', 'Approve & Lock', 'Done']
+                : ['Submit', 'Withdraw', 'Done']
+            }
+          />
+        </BoxRounded>
+        <BudgetBox
+          className={styles.element}
           currentStepIndex={currentStepIndex}
-          steps={
-            currentMode === 'lock'
-              ? ['Submit', 'Approve & Lock', 'Done']
-              : ['Submit', 'Withdraw', 'Done']
-          }
+          depositsValue={depositsValue}
+          isError={!formik.isValid}
+          transactionHash={transactionHash}
         />
-      </BoxRounded>
-      <BudgetBox
-        className={styles.element}
-        currentStepIndex={currentStepIndex}
-        depositsValue={depositsValue}
-        transactionHash={transactionHash}
-      />
-      <BoxRounded
-        className={styles.element}
-        isGrey
-        tabs={[
-          {
-            isActive: currentMode === 'lock',
-            onClick: () => onReset('lock'),
-            title: 'Lock',
-          },
-          {
-            isActive: currentMode === 'unlock',
-            onClick: () => onReset('unlock'),
-            title: 'Unlock',
-          },
-        ]}
-      >
-        <InputsCryptoFiat
-          inputCryptoProps={{
-            isDisabled: isApproveOrDepositInProgress,
-            onChange: onChangeValue,
-            suffix: 'GLM',
-            value: valueToDeposeOrWithdraw,
-          }}
-          label={currentMode === 'lock' ? 'Amount to lock' : 'Amount to unlock'}
+        <BoxRounded
+          className={styles.element}
+          isGrey
+          tabs={[
+            {
+              isActive: currentMode === 'lock',
+              onClick: () => onReset('lock'),
+              title: 'Lock',
+            },
+            {
+              isActive: currentMode === 'unlock',
+              onClick: () => onReset('unlock'),
+              title: 'Unlock',
+            },
+          ]}
+        >
+          <InputsCryptoFiat
+            error={formik.errors.valueToDeposeOrWithdraw}
+            inputCryptoProps={{
+              isDisabled: formik.isSubmitting,
+              name: 'valueToDeposeOrWithdraw',
+              onChange: event => {
+                const {
+                  target: { value },
+                } = event;
+                if (value && !floatNumberWithUpTo18DecimalPlaces.test(value)) {
+                  return;
+                }
+
+                formik.handleChange(event);
+              },
+              onClear: formik.resetForm,
+              suffix: 'GLM',
+              value: formik.values.valueToDeposeOrWithdraw,
+            }}
+            label={currentMode === 'lock' ? 'Amount to lock' : 'Amount to unlock'}
+          />
+        </BoxRounded>
+        <Button
+          className={cx(styles.element, styles.button)}
+          isDisabled={!formik.isValid}
+          isHigh
+          isLoading={formik.isSubmitting}
+          label={getButtonCtaLabel(currentMode, currentStepIndex, formik.isSubmitting)}
+          type="submit"
+          variant="cta"
         />
-        <div className={styles.availableFunds}>
-          Available wallet balance {dataAvailableFunds ? formatUnits(dataAvailableFunds) : '0.0'}{' '}
-          GLM.
-        </div>
-      </BoxRounded>
-      <Button
-        className={cx(styles.element, styles.button)}
-        isDisabled={!valueToDeposeOrWithdraw}
-        isHigh
-        isLoading={isApproveOrDepositInProgress}
-        label={getButtonCtaLabel(currentMode, currentStepIndex, isApproveOrDepositInProgress)}
-        onClick={onApproveOrDeposit}
-        variant="cta"
-      />
+      </form>
     </Modal>
   );
 };
