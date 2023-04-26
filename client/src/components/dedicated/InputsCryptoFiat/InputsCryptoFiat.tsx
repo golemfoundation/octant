@@ -7,7 +7,7 @@ import useSettingsStore from 'store/settings/store';
 import styles from './InputsCryptoFiat.module.scss';
 import InputsCryptoFiatProps from './types';
 
-const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({ label, inputCryptoProps }) => {
+const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({ error, label, inputCryptoProps }) => {
   const {
     data: { isCryptoMainValueDisplay },
   } = useSettingsStore(({ data }) => ({
@@ -17,20 +17,22 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({ label, inputCryptoProps }
   }));
 
   const inputCryptoPropsLabel = isCryptoMainValueDisplay
-    ? { ...inputCryptoProps, label }
-    : inputCryptoProps;
-  const inputFiatPropsLabel = isCryptoMainValueDisplay ? undefined : { label };
+    ? { ...inputCryptoProps, error, isErrorInlineVisible: false, label }
+    : { ...inputCryptoProps, error };
+  const inputFiatPropsLabel = isCryptoMainValueDisplay
+    ? { error }
+    : { error, isErrorInlineVisible: false, label };
 
   return (
     <div className={cx(styles.root, isCryptoMainValueDisplay && styles.isCryptoMainValueDisplay)}>
       <InputText
-        className={styles.input}
+        className={cx(styles.input, isCryptoMainValueDisplay && styles.isCryptoMainValueDisplay)}
         placeholder="0.00"
         variant="simple"
         {...inputCryptoPropsLabel}
       />
       <InputText
-        className={styles.input}
+        className={cx(styles.input, !isCryptoMainValueDisplay && styles.isFiatMainValueDisplay)}
         isDisabled
         placeholder="0.00"
         suffix="USD"

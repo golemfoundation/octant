@@ -17,7 +17,7 @@
 
     &simple {
       text-align: left;
-      font-size: $font-size-12;
+      font-size: $font-size-10;
       font-weight: $font-weight-bold;
       color: $color-octant-grey6;
       margin: 0 0 0.5rem 0;
@@ -26,23 +26,10 @@
 }
 
 .inputWrapper {
+  position: relative;
   display: flex;
   align-items: center;
-  position: relative;
   width: 100%;
-
-  &.variant-- {
-    &simple {
-      border: 0.1rem solid $color-octant-grey2;
-      border-radius: $border-radius-04;
-      background: $color-white;
-      height: 4.8rem;
-
-      &.isDisabled {
-        background: $color-octant-grey2;
-      }
-    }
-  }
 }
 
 .input {
@@ -76,22 +63,47 @@
     }
 
     &simple {
+      height: 4.8rem;
       padding: 1.6rem 0 1.6rem 1.6rem;
+      border: 0.1rem solid $color-octant-grey2;
+      border-radius: $border-radius-04;
+      background: $color-white;
+
+      &.isDisabled {
+        background: $color-octant-grey2;
+      }
 
       &::placeholder {
         color: $color-octant-grey15;
         font-weight: $font-weight-semibold;
       }
+
+      &:focus-visible {
+        border-color: $color-octant-green;
+      }
+
+      &.isError {
+        border-color: $color-octant-orange;
+      }
     }
   }
 }
 
+.buttonClear {
+  position: absolute;
+  right: 1.6rem;
+
+  &.isSuffix {
+    right: 6.4rem;
+  }
+}
+
 .suffix {
+  position: absolute;
   background: transparent;
 
   &.variant-- {
     &boxRounded {
-      position: absolute;
       top: 50%;
       z-index: $z-index-2;
       right: 2.4rem;
@@ -100,11 +112,22 @@
     }
 
     &simple {
-      position: relative;
+      right: 1.6rem;
       z-index: $z-index-2;
       font-weight: $font-weight-bold;
       padding: 1rem;
       color: $color-octant-dark;
     }
   }
+}
+
+.error {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  text-align: left;
+  font-size: $font-size-10;
+  color: $color-octant-orange;
+  font-weight: $font-weight-bold;
+  margin-top: 0.5rem;
 }

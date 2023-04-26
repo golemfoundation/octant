@@ -1,15 +1,29 @@
-import debounce from 'lodash/debounce';
+import { BigNumber } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
+import { object, string, ObjectSchema } from 'yup';
 
-import { TOAST_DEBOUNCE_TIME } from 'constants/toasts';
-import triggerToast from 'utils/triggerToast';
+import { FormValues } from './types';
 
-export const toastDebouncedWithdrawValueTooBig = debounce(
-  () =>
-    triggerToast({
-      message: "You can't withdraw more than is available to withdraw.",
-      title: 'Too big value',
-      type: 'warning',
-    }),
-  TOAST_DEBOUNCE_TIME,
-  { leading: true },
-);
+export const formInitialValues: FormValues = {
+  valueToWithdraw: '',
+};
+
+export const validationSchema = (
+  withdrawableUserEth: BigNumber | undefined,
+): ObjectSchema<FormValues> =>
+  object().shape({
+    valueToWithdraw: string()
+      .required("Value can't be empty")
+      .test({
+        name: 'value-in-range',
+        skipAbsent: true,
+        test(value, ctx) {
+          const newValueBigNumber = parseUnits(value || '0');
+          if (newValueBigNumber.gt(withdrawableUserEth!)) {
+            return ctx.createError({ message: "You don't have that much to withdraw" });
+          }
+
+          return true;
+        },
+      }),
+  });

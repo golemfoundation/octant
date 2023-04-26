@@ -1,17 +1,19 @@
 .root {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  flex-direction: column;
   width: 100%;
+  padding: 0 0 1.4rem;
 
-  &.isCryptoMainValueDisplay {
-    flex-direction: row;
-  }
   &:not(.isCryptoMainValueDisplay) {
-    flex-direction: row-reverse;
+    flex-direction: column-reverse;
   }
 }
 
 .input {
-  @include flexBasisGutter(2, 1.6rem);
+  &.isCryptoMainValueDisplay {
+    margin-bottom: 1.6rem;
+  }
+  &.isFiatMainValueDisplay {
+    margin-bottom: 1.6rem;
+  }
 }

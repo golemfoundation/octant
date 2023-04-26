@@ -52,6 +52,7 @@ const Button = <T extends ButtonProps>(
 
   const isIconVariant = [
     'iconOnly',
+    'iconOnly2',
     'iconOnlyTransparent',
     'iconOnlyTransparent2',
     'iconVertical',
@@ -69,7 +70,7 @@ const Button = <T extends ButtonProps>(
         isActionDisabled && styles.isDisabled,
         isLoading && styles.isLoading,
         isHigh && styles.isHigh,
-        onClick && styles.isClickable,
+        (onClick || type === 'submit') && styles.isClickable,
         className,
       )}
       {...dataParameters}

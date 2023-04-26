@@ -7,6 +7,7 @@ export default interface DoubleValueProps {
   className?: string;
   coinPricesServerDowntimeText?: 'Conversion offline' | '...';
   cryptoCurrency?: 'golem' | 'ethereum';
+  isError?: boolean;
   textAlignment?: 'left' | 'right';
   valueCrypto?: BigNumber;
   valueString?: string;
