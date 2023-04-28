@@ -8,7 +8,9 @@ import { cross } from 'svg/misc';
 import styles from './Modal.module.scss';
 import ModalProps, { TextProps } from './types';
 
-export const Text: FC<TextProps> = ({ children }) => <div className={styles.text}>{children}</div>;
+export const Text: FC<TextProps> = ({ children, className = '' }) => (
+  <div className={cx(styles.text, className)}>{children}</div>
+);
 
 const Modal: FC<ModalProps> = ({
   className,

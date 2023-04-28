@@ -32,12 +32,12 @@ const OnboardingView = (): ReactElement => {
     <MainLayout isHeaderVisible={false} isNavigationVisible={false}>
       <Modal
         header={currentStep.header}
-        Image={<Img className={styles.image} src={currentStep.image} />}
+        Image={<Img className={styles.onboardingModalImage} src={currentStep.image} />}
         isFullScreen
         isOpen
         onClosePanel={onOnboardingExit}
       >
-        <Text>{currentStep.text}</Text>
+        <Text className={styles.onboardingModalText}>{currentStep.text}</Text>
         <ProgressStepperSlim
           className={styles.progressBar}
           currentStepIndex={currentStepIndex}
