@@ -6,3 +6,11 @@
 .bold {
   @include boldText();
 }
+
+.onboardingModalText {
+  height: 21.6rem;
+}
+
+.onboardingModalImage {
+  height: 24.8rem;
+}
