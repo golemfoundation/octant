@@ -3,3 +3,18 @@
     margin: 0 auto 1.6rem;
   }
 }
+
+.boxesWrapper {
+  width: 100%;
+
+  @media #{$desktop-up} {
+    padding-right: 3.2rem;
+  }
+}
+
+.layoutBody {
+  @media #{$desktop-up} {
+    flex-direction: row;
+    align-items: start;
+  }
+}
