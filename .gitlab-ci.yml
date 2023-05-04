@@ -3,6 +3,7 @@ variables:
   FF_USE_FASTZIP: "true"
   CACHE_COMPRESSION_LEVEL: "fast"
   TRANSFER_METER_FREQUENCY: "2s"
+  PYTHON_IMAGE: "acidrain/python-poetry:3.10-slim-1.4.0"
 
 stages:
   - build
@@ -29,6 +30,21 @@ image: node:16-bullseye-slim
     - apt update && apt install -y --no-install-recommends libpq5
   yarn_install:
     - yarn install --cache-folder .yarn --non-interactive --frozen-lockfile
+
+Build backend:
+  stage: build
+  image: $PYTHON_IMAGE
+  rules:
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+  script:
+    - !reference [.scripts, install_packages]
+    - ci/build_backend.sh
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-poetry-backend
+      policy: push
+      paths:
+        - backend/.venv
 
 Build contracts:
   stage: build
@@ -113,6 +129,24 @@ Lint and typecheck:
         - $SERVICE/node-modules
       policy: pull
 
+Backend tests:
+  stage: test
+  image: $PYTHON_IMAGE
+  rules:
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+  dependencies:
+    - Build backend
+  script:
+    - cd backend
+    - poetry config virtualenvs.in-project true
+    - poetry run pytest
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-poetry-backend
+      policy: pull
+      paths:
+        - backend/.venv
+
 Unit tests:
   stage: test
   parallel:
@@ -192,6 +226,7 @@ Build container:
           - coin-prices-server
           - client
           - subgraph
+          - backend
   image:
     name: gcr.io/kaniko-project/executor:$KANIKO_VERSION-debug
     entrypoint: [""]

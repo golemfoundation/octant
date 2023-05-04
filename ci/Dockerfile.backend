@@ -1,0 +1,13 @@
+FROM acidrain/python-poetry:3.10-slim-1.4.0
+
+WORKDIR /app
+
+# Make use of Docker layer for poetry deps
+COPY pyproject.toml poetry.lock ./
+RUN poetry config virtualenvs.create false
+RUN poetry install --no-interaction --no-ansi -v --with prod --without dev
+
+COPY ./ ./
+
+EXPOSE 5000
+ENTRYPOINT [ "/app/entrypoint.sh" ]

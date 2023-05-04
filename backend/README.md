@@ -27,8 +27,6 @@ Run the following commands to create your app's
 database tables and perform the initial migration
 
 ```bash
-flask db init
-flask db migrate
 flask db upgrade
 ```
 

@@ -160,13 +160,19 @@ write_files:
 %{ endif ~}
       echo "Smart contracts config"
       cat $CONTRACTS
-      # Generating env variable files
-      grep '^VITE_' "$CONTRACTS" > $HOME/envfile.client
-      echo "VITE_CRYPTO_VALUES_ENDPOINT=http://cps.${dns_domain}/" >> $HOME/envfile.client
-      echo "VITE_SUBGRAPH_ADDRESS=http://subgraph.${dns_domain}/subgraphs/name/octant" >> $HOME/envfile.client
       BLOCK_NUMBER=$(grep '^BLOCK_NUMBER=' "$CONTRACTS" | cut -d= -f2)
       ALLOCATIONS_ADDRESS=$(grep '^VITE_ALLOCATIONS_ADDRESS' "$CONTRACTS" | cut -d= -f2)
       DEPOSITS_ADDRESS=$(grep '^VITE_DEPOSITS_ADDRESS' "$CONTRACTS" | cut -d= -f2)
+      EPOCHS_CONTRACT_ADDRESS=$(grep '^VITE_EPOCHS_ADDRESS' "$CONTRACTS" | cut -d= -f2)
+      PROPOSALS_CONTRACT_ADDRESS=$(grep '^VITE_PROPOSALS_ADDRESS' "$CONTRACTS" | cut -d= -f2)
+      # Generating client env variable file
+      grep '^VITE_' "$CONTRACTS" > $HOME/envfile.client
+      echo "VITE_CRYPTO_VALUES_ENDPOINT=http://cps.${dns_domain}/" >> $HOME/envfile.client
+      echo "VITE_SUBGRAPH_ADDRESS=http://subgraph.${dns_domain}/subgraphs/name/octant" >> $HOME/envfile.client
+      # Generating python backend server env variable file
+      echo "EPOCHS_CONTRACT_ADDRESS=$EPOCHS_CONTRACT_ADDRESS" >> $HOME/envfile.backend
+      echo "PROPOSALS_CONTRACT_ADDRESS=$PROPOSALS_CONTRACT_ADDRESS" >> $HOME/envfile.backend
+      echo "SUBGRAPH_ENDPOINT=http://graph-node:8000/subgraphs/name/octant" >> $HOME/envfile.backend
       # Generate networks.json file
       echo "{ \
         \"goerli\": { \
@@ -181,7 +187,7 @@ write_files:
         }\
       }" | jq '.' > $HOME/networks.json
 
-      systemctl start ipfs.service postgres.service graph-node.service
+      systemctl start ipfs.service postgres.service postgres-backend.service graph-node.service
       echo "Wait graph-node to start..."
       while ! docker logs graph-node 2>&1 | grep -q 'Started all assigned subgraphs'; do
         sleep 1
@@ -201,6 +207,8 @@ write_files:
 
       echo "Run Coin Prices Server"
       systemctl start coin_prices_server.service
+      echo "Run Python Backend Server"
+      systemctl start backend.service
       echo "Run Client Service"
       systemctl start client.service
       curl -H "PRIVATE-TOKEN: ${gitlab_token}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/deployments/$DEPLOYMENT_ID" -X PUT --data 'status=success'
