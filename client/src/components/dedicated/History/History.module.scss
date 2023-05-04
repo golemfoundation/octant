@@ -7,10 +7,14 @@
 }
 
 .header {
-  font-size: 1.6rem;
+  font-size: $font-size-16;
   font-weight: $font-weight-bold;
   margin: 2rem 0;
   text-align: left;
+
+  @media #{$desktop-up} {
+    display: none;
+  }
 }
 
 .box {
