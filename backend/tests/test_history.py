@@ -1,8 +1,8 @@
 import pytest
 
-from app.history.service import get_history
+from app.core.history import get_history
 
-from app.graphql import graphql_client
+from app.infrastructure.graphql_client import graphql_client
 
 
 @pytest.mark.parametrize(
@@ -61,7 +61,7 @@ from app.graphql import graphql_client
         "Case 3: more unlock values than lock values",
         "Case 4: empty lists",
     ])
-def test_get_history(mocker, locks, unlocks, expected_history):
+def test_get_history(mocker, locks, unlocks, expected_history, app):
     # Mock the execute method of the GraphQL client
     mocker.patch.object(graphql_client, "execute")
 

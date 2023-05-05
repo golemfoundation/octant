@@ -1,4 +1,4 @@
-from app.graphql import get_locks, get_unlocks
+from app.infrastructure.graphql_client import get_locks, get_unlocks
 
 
 def get_history(user_address):

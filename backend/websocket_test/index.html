@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocker Octant Client</title>
+</head>
+
+<body>
+<h2>Status: <span id="status">Disconnected</span></h2>
+<form>
+  <label for="privateKey">Private Key:</label><br>
+  <input type="text" id="privateKey" name="privateKey" size="200"><br>
+
+  <div id="input-group-container"></div>
+
+  <button type="button" id="add-input-group">Add Proposal and Amount</button>
+  <br>
+</form>
+
+<button id="vote">Vote</button>
+
+<h2>Errors:</h2>
+<ul id="errors"></ul>
+<script type="module">
+  import {io} from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
+
+  import * as ethers from 'https://cdn.jsdelivr.net/npm/ethers@5.7.2/+esm'
+
+  async function signEIP712(signer, data) {
+    return await signer._signTypedData(data.domain, data.types, data.message);
+  }
+
+  const status = document.getElementById("status");
+  const errors = document.getElementById("errors");
+
+  const container = document.getElementById('input-group-container');
+  const addButton = document.getElementById('add-input-group');
+  let inputGroupCount = 0;
+
+  addButton.addEventListener('click', () => {
+    inputGroupCount++;
+
+    const inputGroup = document.createElement('div');
+    inputGroup.className = 'input-group';
+
+    const proposalLabel = document.createElement('label');
+    proposalLabel.setAttribute('for', `proposal${inputGroupCount}`);
+    proposalLabel.textContent = `Proposal address ${inputGroupCount}:`;
+
+    const proposalInput = document.createElement('input');
+    proposalInput.type = 'text';
+    proposalInput.id = `proposal${inputGroupCount}`;
+    proposalInput.name = 'proposalAddress[]';
+
+    const amountLabel = document.createElement('label');
+    amountLabel.setAttribute('for', `amount${inputGroupCount}`);
+    amountLabel.textContent = `Amount ${inputGroupCount}:`;
+
+    const amountInput = document.createElement('input');
+    amountInput.type = 'number';
+    amountInput.id = `amount${inputGroupCount}`;
+    amountInput.name = 'amount[]';
+
+    inputGroup.appendChild(proposalLabel);
+    inputGroup.appendChild(document.createElement('br'));
+    inputGroup.appendChild(proposalInput);
+    inputGroup.appendChild(document.createElement('br'));
+    inputGroup.appendChild(amountLabel);
+    inputGroup.appendChild(document.createElement('br'));
+    inputGroup.appendChild(amountInput);
+    inputGroup.appendChild(document.createElement('br'));
+
+    container.appendChild(inputGroup);
+  });
+
+  const privateKeyInput = document.getElementById('privateKey');
+
+  const voteButton = document.getElementById('vote');
+  voteButton.addEventListener('click', async () => {
+    const proposalInputs = document.getElementsByName('proposalAddress[]');
+    const amountInputs = document.getElementsByName('amount[]');
+
+    const allocations = [];
+
+    for (let i = 0; i < proposalInputs.length; i++) {
+      if(proposalInputs[i].value && amountInputs[i].value) {
+        allocations.push({
+          proposalAddress: proposalInputs[i].value,
+          amount: parseInt(amountInputs[i].value)
+        });
+      }
+    }
+
+    const domain = {
+      name: "Octant",
+      version: "1.0.0",
+      chainId: 5,
+    };
+
+    const types = {
+      Allocation: [
+        { name: "proposalAddress", type: "string" },
+        { name: "amount", type: "uint256" },
+      ],
+      AllocationPayload: [
+        { name: "allocations", type: "Allocation[]" },
+      ],
+    };
+
+    const message = {
+      allocations: allocations
+    };
+
+    const data = {
+      types,
+      domain,
+      primaryType: "AllocationPayload",
+      message,
+    };
+    console.log(data);
+
+    // Get the private key from the input
+    const privateKey = privateKeyInput.value;
+    if(!privateKey) {
+      console.error('Private key is required to sign the message');
+      return;
+    }
+
+    // Sign the hash
+    const wallet = new ethers.Wallet(`0x${privateKey}`);
+    const signature = await signEIP712(wallet, data);
+
+    console.log(signature);
+
+    socket.emit("allocate", JSON.stringify({
+      "payload": data.message,
+      "signature": signature.substring(2)
+    }));
+  });
+
+  const socket = io.connect("http://127.0.0.1:5000");
+
+  socket.on("connect", () => {
+    status.innerText = "Connected";
+  });
+
+  socket.on("connect_error", (err) => {
+    status.innerText = "Error";
+    console.error(err)
+  });
+
+  socket.on("disconnect", () => {
+    status.innerText = "Disconnected";
+  });
+
+  socket.on("exception", (exceptionResponse) => {
+    const item = document.createElement("li");
+    item.textContent = exceptionResponse;
+    errors.appendChild(item)
+  });
+
+</script>
+</body>
+</html>

@@ -3,6 +3,8 @@ import traceback
 
 from flask import jsonify
 
+UNEXPECTED_EXCEPTION = "An unexpected error has occurred"
+
 
 class OctantException(Exception):
     status_code = 500
@@ -18,19 +20,19 @@ class OctantException(Exception):
 
 
 def handle_octant_exception(e: OctantException):
-    __print_stacktrace()
+    print_stacktrace()
     response = e.to_json()
     response.status_code = e.status_code
     return response
 
 
 def handle_unexpected_exception(_):
-    __print_stacktrace()
-    response = jsonify({'message': 'An unexpected error has occurred'})
+    print_stacktrace()
+    response = jsonify({'message': UNEXPECTED_EXCEPTION})
     response.status_code = 500
     return response
 
 
-def __print_stacktrace():
+def print_stacktrace():
     etype, value, tb = sys.exc_info()
     traceback.print_exception(etype, value, tb)
