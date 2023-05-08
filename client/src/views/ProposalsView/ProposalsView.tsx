@@ -24,7 +24,7 @@ const ProposalsView = (): ReactElement => {
         !proposalsAddresses || proposalsAddresses.length === 0 || !areMatchedProposalsReady
       }
     >
-      <div className={styles.list}>
+      <div className={styles.list} data-test="ProposalsView__List">
         {proposalsWithRewards.map(proposal => (
           <ProposalItem key={proposal.address} className={styles.element} {...proposal} />
         ))}

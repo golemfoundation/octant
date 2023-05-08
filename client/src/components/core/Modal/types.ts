@@ -10,6 +10,7 @@ export default interface ModalProps {
   bodyClassName?: string;
   children: ReactNode;
   className?: string;
+  dataTest?: string;
   header?: string;
   isFullScreen?: boolean;
   isOpen: boolean;

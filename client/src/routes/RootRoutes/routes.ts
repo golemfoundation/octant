@@ -1,6 +1,6 @@
 import getPathObject from 'utils/routing';
 
-const ROOT = getPathObject('', '');
+export const ROOT = getPathObject('', '');
 const PROPOSAL_PREFIX = 'project';
 
 export const ROOT_ROUTES = {

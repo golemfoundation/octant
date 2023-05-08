@@ -16,6 +16,7 @@ const Modal: FC<ModalProps> = ({
   bodyClassName,
   className,
   children,
+  dataTest = 'Modal',
   header,
   Image,
   isOpen,
@@ -35,6 +36,7 @@ const Modal: FC<ModalProps> = ({
       </div>
       <Button
         className={cx(styles.buttonClose, isFullScreen && styles.isFullScreen)}
+        dataTest={`${dataTest}__Button`}
         Icon={<Svg img={cross} size={1} />}
         onClick={onClosePanel}
         variant="iconOnly"

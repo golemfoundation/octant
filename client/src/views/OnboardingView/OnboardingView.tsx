@@ -31,6 +31,7 @@ const OnboardingView = (): ReactElement => {
   return (
     <MainLayout isHeaderVisible={false} isNavigationVisible={false}>
       <Modal
+        dataTest="OnboardingView__Modal"
         header={currentStep.header}
         Image={<Img className={styles.onboardingModalImage} src={currentStep.image} />}
         isFullScreen
@@ -41,6 +42,7 @@ const OnboardingView = (): ReactElement => {
         <ProgressStepperSlim
           className={styles.progressBar}
           currentStepIndex={currentStepIndex}
+          dataTest="OnboardingView__ProgressStepperSlim"
           numberOfSteps={steps.length}
           onStepClick={stepIndex => {
             if (stepIndex === currentStepIndex) {

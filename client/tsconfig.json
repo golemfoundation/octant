@@ -30,6 +30,14 @@
   },
   "include": [
     "codegen.ts",
-    "src/**/*"
+    "src/**/*",
+  ],
+  "exclude": [
+    "/client/cypress",
+    /**
+      synpress.config.ts needs to be excluded:
+      https://stackoverflow.com/questions/58999086/cypress-causing-type-errors-in-jest-assertions/72663546#7266354
+    */
+    "/client/synpress.config.ts",
   ]
 }

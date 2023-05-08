@@ -15,6 +15,7 @@ const Button = <T extends ButtonProps>(
     children,
     className,
     dataParameters,
+    dataTest = 'Button',
     href,
     isActive,
     isDisabled,
@@ -74,6 +75,7 @@ const Button = <T extends ButtonProps>(
         className,
       )}
       {...dataParameters}
+      data-test={dataTest}
       onClick={
         isActionDisabled
           ? () => {}
