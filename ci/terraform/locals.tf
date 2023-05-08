@@ -14,6 +14,7 @@ locals {
   dns_subdomains = [
     "subgraph",
     "cps",
+    "backend",
   ]
 
   images_prefix = var.octant_branch == null ? "registry.gitlab.com/wildland/governance/octant" : "registry.gitlab.com/wildland/governance/octant/${var.octant_branch}"
@@ -36,11 +37,36 @@ locals {
       ]
       params = "-e POSTGRES_INITDB_ARGS='--encoding=UTF-8 --lc-collate=C --lc-ctype=C'",
     },
+    postgres-backend = {
+      image = "postgres:${local.image_versions.postgres}"
+      envs = [
+        "POSTGRES_USER=backend-server",
+        "POSTGRES_PASSWORD=let_me_in",
+        "POSTGRES_DB=backend-server",
+        "PGDATA=/data/postgres",
+      ]
+      params = "-e POSTGRES_INITDB_ARGS='--encoding=UTF-8 --lc-collate=C --lc-ctype=C'",
+    },
     ipfs = {
       image = "ipfs/kubo:${local.image_versions.ipfs}"
     },
   }
   traefik_services = {
+    backend = {
+      image = "${local.images_prefix}/backend:${var.octant_tag}"
+      labels = [
+        "traefik.enable=true",
+        "traefik.http.routers.backend.entrypoints=web",
+        "traefik.http.routers.backend.rule=Host(\\`backend.${var.dns_endpoint}.${local.dns_root_domain}\\`)",
+      ]
+      envs = [
+        "OCTANT_ENV=production",
+        "ETH_RPC_PROVIDER_URL=${var.subgraph_alchemy_api_url}",
+        "DB_URI=postgresql://backend-server:let_me_in@postgres-backend:5432/backend-server",
+        "OCTANT_BACKEND_SECRET_KEY=${uuid()}"
+      ]
+      envFileEnable = true
+    },
     client = {
       image = "${local.images_prefix}/client:${var.octant_tag}"
       labels = [

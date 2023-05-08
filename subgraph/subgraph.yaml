@@ -7,8 +7,8 @@ dataSources:
     network: goerli
     source:
       abi: Allocations
-      address: "0x17e1cC72420909944B65266D724eB4836A5fd987"
-      startBlock: 8415400
+      address: "0x39B50A32a38CB843Cc70B3342cB4E8b2C33be727"
+      startBlock: 8772670
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

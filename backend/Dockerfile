@@ -1,3 +1,7 @@
+# Image used with local docker-compose for development purposes only
+#
+# Maintainer:
+#   Łukasz Kujawski
 FROM acidrain/python-poetry:3.10-slim-1.4.0
 
 WORKDIR /app
