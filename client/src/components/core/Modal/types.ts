@@ -9,6 +9,7 @@ export default interface ModalProps {
   Image?: ReactNode;
   children: ReactNode;
   className?: string;
+  dataTest?: string;
   header?: string;
   isFullScreen?: boolean;
   isOpen: boolean;

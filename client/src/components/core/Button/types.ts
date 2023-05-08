@@ -27,6 +27,7 @@ export default interface ButtonProps {
   dataParameters?: {
     [key: string]: string;
   };
+  dataTest?: string;
   href?: string;
   isActive?: boolean;
   isDisabled?: boolean;

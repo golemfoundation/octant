@@ -9,7 +9,10 @@ module.exports = {
   root: true,
   parser: '@babel/eslint-parser',
   extends: ['airbnb', '../.eslintrc.js'],
-  plugins: ['react', 'react-hooks'],
+  plugins: ['react', 'react-hooks', 'cypress'],
+  env: {
+    'cypress/globals': true,
+  },
   rules: {
     'jsx-a11y/click-events-have-key-events': 'off',
     'jsx-a11y/label-has-associated-control': [
@@ -37,7 +40,7 @@ module.exports = {
       files: ['*.{ts,tsx}'],
       parser: '@typescript-eslint/parser',
       parserOptions: {
-        project: ['./tsconfig.json'],
+        project: ['./tsconfig.json', './cypress/tsconfig.json'],
       },
       rules: Object.assign(rootEslintConfig.rules, {
         'react/function-component-definition': [2, { namedComponents: 'arrow-function' }],

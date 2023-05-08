@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "baseUrl": "../",
+    "types": [
+      "cypress",
+      "@synthetixio/synpress/support",
+      "cypress-wait-until",
+      "@testing-library/cypress",
+      "../src/global"
+    ],
+    "outDir": "./output"
+  },
+  "include": ["**/*.*", "../synpress.config.ts"]
+}
