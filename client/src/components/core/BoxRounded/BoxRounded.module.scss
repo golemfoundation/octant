@@ -177,6 +177,10 @@ $padding: 2.4rem;
   &spaceBetween {
     justify-content: space-between;
   }
+
+  &start {
+    justify-content: start;
+  }
 }
 
 .alignment-- {

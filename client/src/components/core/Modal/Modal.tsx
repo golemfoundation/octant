@@ -8,11 +8,12 @@ import { cross } from 'svg/misc';
 import styles from './Modal.module.scss';
 import ModalProps, { TextProps } from './types';
 
-export const Text: FC<TextProps> = ({ children, className = '' }) => (
+export const Text: FC<TextProps> = ({ children, className }) => (
   <div className={cx(styles.text, className)}>{children}</div>
 );
 
 const Modal: FC<ModalProps> = ({
+  bodyClassName,
   className,
   children,
   header,
@@ -28,7 +29,7 @@ const Modal: FC<ModalProps> = ({
     )}
     <div className={cx(styles.root, isOpen && styles.isOpen, className)}>
       {Image && <div className={styles.image}>{Image}</div>}
-      <div className={cx(styles.body, Image && styles.hasImage)}>
+      <div className={cx(styles.body, Image && styles.hasImage, bodyClassName)}>
         {header && <div className={styles.header}>{header}</div>}
         {children}
       </div>
