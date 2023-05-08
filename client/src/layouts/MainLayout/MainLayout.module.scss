@@ -3,6 +3,7 @@ $headerNavigationBorderRadius: $border-radius-32;
 .root {
   display: flex;
   flex-direction: column;
+  height: 100%;
   min-height: 100%;
   min-width: 39rem;
   max-width: 70.8rem + $layoutMarginHorizontal * 2;
@@ -176,12 +177,11 @@ $headerNavigationBorderRadius: $border-radius-32;
   transform: translateZ(0); // On webkit solves the flickering of text during the scale.
 
   &.isAllocationValueChanging {
-    &[data-is-initial-load-done="true"] {
+    &[data-is-initial-load-done='true'] {
       animation-name: scale1;
       animation-duration: $transition-time-1;
     }
   }
-
 }
 
 .coinGecko {
