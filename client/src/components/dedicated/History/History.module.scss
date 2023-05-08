@@ -1,5 +1,10 @@
 .root {
   width: 100%;
+
+  @media #{$desktop-up} {
+    max-height: 100%;
+    overflow: auto;
+  }
 }
 
 .loader {

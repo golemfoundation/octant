@@ -16,5 +16,6 @@
   @media #{$desktop-up} {
     flex-direction: row;
     align-items: start;
+    min-height: 0;
   }
 }
