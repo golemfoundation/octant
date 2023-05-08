@@ -1,0 +1,11 @@
+coverage
+coverage.json
+
+# Hardhat files
+.docs
+artifacts
+artifacts-zk
+cache
+cache-zk
+deployments
+typechain-types

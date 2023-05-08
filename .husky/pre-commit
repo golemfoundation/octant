@@ -5,6 +5,10 @@ cd client
 yarn install
 cd ../contracts
 yarn install
+yarn compile
+cd ../contracts-v1
+yarn install
+yarn compile
 cd ../coin-prices-server
 yarn install
 cd ../subgraph
