@@ -7,6 +7,7 @@ export interface TextProps {
 
 export default interface ModalProps {
   Image?: ReactNode;
+  bodyClassName?: string;
   children: ReactNode;
   className?: string;
   header?: string;

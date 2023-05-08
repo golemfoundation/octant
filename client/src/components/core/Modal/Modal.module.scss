@@ -30,16 +30,16 @@
     margin: 0 0 4rem 0;
     width: 100%;
   }
+}
 
-  .body {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
-    background: $color-white;
-    padding: 3.2rem 5.6rem;
-    overflow: auto;
-  }
+.body {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  background: $color-white;
+  padding: 3.2rem 5.6rem;
+  overflow: auto;
 }
 
 .overflow {

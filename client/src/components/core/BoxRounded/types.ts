@@ -13,7 +13,7 @@ export default interface BoxRoundedProps {
   isExpanded?: boolean;
   isGrey?: boolean;
   isVertical?: boolean;
-  justifyContent?: 'center' | 'spaceBetween';
+  justifyContent?: 'center' | 'spaceBetween' | 'start';
   onClick?: () => void;
   onToggle?: (isExpanded: boolean) => void;
   suffix?: string;

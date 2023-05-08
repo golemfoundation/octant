@@ -1,4 +1,3 @@
-import { useWeb3Modal } from '@web3modal/react';
 import cx from 'classnames';
 import React, { FC, useState, Fragment, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -7,6 +6,7 @@ import { useAccount } from 'wagmi';
 import Button from 'components/core/Button/Button';
 import Loader from 'components/core/Loader/Loader';
 import Svg from 'components/core/Svg/Svg';
+import ModalConnectWallet from 'components/dedicated/ModalConnectWallet/ModalConnectWallet';
 import WalletModal from 'components/dedicated/WalletModal/WalletModal';
 import { IS_INITIAL_LOAD_DONE } from 'constants/dataAttributes';
 import env from 'env';
@@ -31,11 +31,11 @@ const MainLayout: FC<MainLayoutProps> = ({
   navigationTabs,
 }) => {
   const numberOfAllocationsRef = useRef<HTMLDivElement>(null);
+  const [isModalConnectWalletOpen, setIsModalConnectWalletOpen] = useState(false);
   const [localAllocationsLenght, setLocalAllocationsLenght] = useState<number>();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState<boolean>(false);
   const [isAllocationValueChanging, setIsAllocationValueChanging] = useState<boolean>(false);
   const { data: allocations } = useAllocationsStore();
-  const { open } = useWeb3Modal();
   const { address, isConnected } = useAccount();
   const { data: individualReward } = useIndividualReward();
   const { data: currentEpoch } = useCurrentEpoch();
@@ -66,12 +66,6 @@ const MainLayout: FC<MainLayoutProps> = ({
     }
   }, [isAllocationValueChanging]);
 
-  const authUser = async () => {
-    if (!isConnected) {
-      await open();
-    }
-  };
-
   const tabsWithIsActive = getNavigationTabsWithAllocations(
     allocations!,
     isAllocationValueChanging,
@@ -88,6 +82,12 @@ const MainLayout: FC<MainLayoutProps> = ({
         modalProps={{
           isOpen: isWalletModalOpen,
           onClosePanel: () => setIsWalletModalOpen(false),
+        }}
+      />
+      <ModalConnectWallet
+        modalProps={{
+          isOpen: isModalConnectWalletOpen,
+          onClosePanel: () => setIsModalConnectWalletOpen(false),
         }}
       />
       <div className={styles.root}>
@@ -121,7 +121,12 @@ const MainLayout: FC<MainLayoutProps> = ({
                   />
                 </div>
               ) : (
-                <Button isSmallFont label="Connect wallet" onClick={authUser} variant="cta" />
+                <Button
+                  isSmallFont
+                  label="Connect wallet"
+                  onClick={() => setIsModalConnectWalletOpen(true)}
+                  variant="cta"
+                />
               )}
             </div>
           </div>
