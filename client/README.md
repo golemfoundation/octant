@@ -32,3 +32,13 @@ export type AllocationStructOutput = [BigNumber, BigNumber] & {
 };
 ```
 The problem with this approach is that the `react-query` package used for fetching and managing data from contracts does drop the latter object part on all but first after rerender requests. Hence, the remapping of array elements to named variables is required during response parsing phase.
+
+## Packages
+
+`@synthetixio/synpress` requests `eth-sig-util@^1.4.2`, which requests `ethereum-abi` as a dependency directly from git, breaking container builds. To solve it we could either alter our node image to include git, or add following resolution, which we did:
+```bash
+"resolutions": {
+  "@synthetixio/synpress/**/eth-sig-util": "2.5.3"
+}
+```
+`eth-sig-util@2.5.3` does require `ethereum-abi@0.6.5` from yarn registry instead of git.
