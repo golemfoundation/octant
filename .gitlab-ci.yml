@@ -39,6 +39,7 @@ Build contracts:
     - !reference [.scripts, install_packages]
     - ci/build_root.sh
     - ci/build_contracts.sh
+    - ci/build_contracts_v1.sh
   cache:
     - key: $CI_COMMIT_REF_SLUG-yarn-root
       paths:
@@ -48,11 +49,15 @@ Build contracts:
       paths:
         - contracts/.yarn
         - contracts/node_modules
+        - contracts-v1/.yarn
+        - contracts-v1/node_modules
   artifacts:
     name: contracts
     paths:
       - contracts/artifacts
       - contracts/typechain
+      - contracts-v1/artifacts
+      - contracts-v1/typechain
     expire_in: 30 days
 
 Build services:
@@ -90,6 +95,7 @@ Lint and typecheck:
     matrix:
       - SERVICE:
           - contracts
+          - contracts-v1
           - client
           - coin-prices-server
           - subgraph
@@ -119,6 +125,7 @@ Unit tests:
     matrix:
       - SERVICE:
           - contracts
+          - contracts-v1
           - client
           - coin-prices-server
           - subgraph
@@ -150,6 +157,7 @@ Documentation:
     matrix:
       - SERVICE:
           - contracts
+          - contracts-v1
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
@@ -189,6 +197,7 @@ Build container:
     matrix:
       - SERVICE:
           - contracts
+          - contracts-v1
           - coin-prices-server
           - client
           - subgraph

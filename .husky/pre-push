@@ -6,6 +6,13 @@ yarn install
 yarn type-check
 cd ../contracts
 yarn install
+yarn clean
+yarn compile
+yarn type-check
+cd ../contracts-v1
+yarn install
+yarn clean
+yarn compile
 yarn type-check
 cd ../coin-prices-server
 yarn install
