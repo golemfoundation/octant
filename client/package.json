@@ -95,6 +95,9 @@
     "typescript": "^5.0.2",
     "vite": "^4.0.4"
   },
+  "resolutions": {
+    "@synthetixio/synpress/**/eth-sig-util": "2.5.3"
+  },
   "engines": {
     "node": ">= 16.13.0 <17.0.0"
   },
