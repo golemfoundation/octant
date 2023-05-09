@@ -3,7 +3,7 @@ from flask_restx import Resource
 
 from app import settings
 from app.extensions import api
-from . import docs, history
+from . import docs, history, epochs
 
 
 @api.route("/favicon.ico")

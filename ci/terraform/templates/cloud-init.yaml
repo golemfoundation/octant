@@ -28,6 +28,36 @@ write_files:
         docker:
           exposedByDefault: false
 
+  - path: /etc/systemd/system/backend-epoch-nudger.timer
+    permissions: 0644
+    owner: root
+    content: |
+      [Unit]
+      Description=Run backend epoch curl every minute
+      Requires=backend-epoch-nudger.service
+
+      [Timer]
+      Unit=backend-epoch-nudger.service
+      OnBootSec=1m
+      OnUnitActiveSec=1m
+
+  - path: /etc/systemd/system/backend-epoch-nudger.service
+    permissions: 0644
+    owner: root
+    content: |
+      [Unit]
+      Description=Backend epoch snapshotting
+      Requires=network-online.target
+      After=network.target network-online.target
+      Wants=backend-epoch-nudger.timer
+
+      [Service]
+      Type=oneshot
+      ExecStart=curl -X POST 172.18.0.1:5000/epochs/snapshot
+
+      [Install]
+      WantedBy=multi-user.target
+
   - path: /etc/systemd/system/gitlab-login.service
     permissions: 0644
     owner: root
@@ -211,6 +241,14 @@ write_files:
       systemctl start backend.service
       echo "Run Client Service"
       systemctl start client.service
+
+      echo "Setting up docker-network port forwarding on an existing container"
+      export BACKEND_DOCKER_IP=$(docker inspect backend | jq -r .[].NetworkSettings.Networks.main.IPAddress)
+      iptables -t nat -A DOCKER -p tcp --dport 5000 -j DNAT --to-destination $BACKEND_DOCKER_IP:5000
+
+      echo "Run Backend epoch nudger"
+      systemctl start backend-epoch-nudger.service
+
       curl -H "PRIVATE-TOKEN: ${gitlab_token}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/deployments/$DEPLOYMENT_ID" -X PUT --data 'status=success'
 
 runcmd:
