@@ -96,7 +96,7 @@
     "vite": "^4.0.4"
   },
   "resolutions": {
-    "@synthetixio/synpress/**/eth-sig-util": "2.5.3"
+    "@synthetixio/synpress/**/eth-sig-util": "yarn:@metamask/eth-sig-util@^5.1.0"
   },
   "engines": {
     "node": ">= 16.13.0 <17.0.0"
