@@ -12,6 +12,8 @@ import {
   REWARDS,
   TRACKER,
   PAYOUTS_MANAGER,
+  PAYOUTS,
+  WITHDRAWALS_TARGET,
 } from '../helpers/constants';
 
 // This function needs to be declared this way, otherwise it's not understood by test runner.
@@ -37,6 +39,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`VITE_OCTANT_ORACLE_ADDRESS=${octantOracle.address}`);
   const payoutsManager = await hre.ethers.getContract(PAYOUTS_MANAGER);
   console.log(`VITE_OCTANT_PAYOUTS_MANAGER_ADDRESS=${payoutsManager.address}`);
+  const payouts = await hre.ethers.getContract(PAYOUTS);
+  console.log(`VITE_OCTANT_PAYOUTS_ADDRESS=${payouts.address}`);
+  const withdrawalsTarget = await hre.ethers.getContract(WITHDRAWALS_TARGET);
+  console.log(`VITE_WITHDRAWALS_TARGET_ADDRESS=${withdrawalsTarget.address}`);
   console.log(`Deployment finished at block number: ${await hre.ethers.provider.getBlockNumber()}`);
   /* eslint-disable no-console */
 
