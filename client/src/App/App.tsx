@@ -1,10 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query';
 import React, { ReactElement, useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 
 import 'react-toastify/dist/ReactToastify.css';
 
 import Loader from 'components/core/Loader/Loader';
+import { GOERLI_CHAIN_ID } from 'constants/chains';
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -16,6 +17,7 @@ import localStorageService from 'services/localStorageService';
 import useAllocationsStore from 'store/allocations/store';
 import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
+import triggerToast from 'utils/triggerToast';
 
 import styles from './App.module.scss';
 
@@ -28,6 +30,7 @@ const validateProposalsInLocalStorage = (
   localStorageAllocationItems.filter(item => proposals.find(address => address === item));
 
 const App = (): ReactElement => {
+  const { chain } = useNetwork();
   const { data: allocations, setAllocations } = useAllocationsStore();
   const {
     data: settings,
@@ -58,6 +61,23 @@ const App = (): ReactElement => {
   const [currentAddressLocal, setCurrentAddressLocal] = useState<null | string>(null);
   const [currentEpochLocal, setCurrentEpochLocal] = useState<number | null>(null);
   const [isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal] = useState<boolean | null>(null);
+  const [chainIdLocal, setChainIdLocal] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (chain && chain.id !== GOERLI_CHAIN_ID) {
+      triggerToast({
+        message: 'Please change network to Goerli testnet',
+        title: 'Wrong network',
+        type: 'error',
+      });
+    }
+  }, [chain]);
+
+  useEffect(() => {
+    if (chain && chain.id && chain.id !== chainIdLocal) {
+      setChainIdLocal(chain.id);
+    }
+  }, [chain, chainIdLocal, setChainIdLocal]);
 
   useEffect(() => {
     localStorageService.init();
@@ -91,6 +111,7 @@ const App = (): ReactElement => {
   }, [isDecisionWindowOpen, isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal]);
 
   useEffect(() => {
+    const doesChainIdRequireFlush = chain && chain.id && chain.id !== chainIdLocal;
     const doesIsConnectedRequireFlush = !isConnected && isConnectedLocal;
     const doesAddressRequireFlush =
       !!address && !!currentAddressLocal && address !== currentAddressLocal;
@@ -101,6 +122,7 @@ const App = (): ReactElement => {
       !!isDecisionWindowOpenLocal &&
       isDecisionWindowOpen !== isDecisionWindowOpenLocal;
     if (
+      doesChainIdRequireFlush ||
       doesIsConnectedRequireFlush ||
       doesAddressRequireFlush ||
       doesCurrentEpochRequireFlush ||
@@ -112,6 +134,8 @@ const App = (): ReactElement => {
     isConnected,
     isConnectedLocal,
     address,
+    chain,
+    chainIdLocal,
     currentAddressLocal,
     currentEpoch,
     currentEpochLocal,
