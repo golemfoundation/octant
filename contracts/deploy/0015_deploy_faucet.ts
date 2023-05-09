@@ -2,7 +2,7 @@ import { ethers } from 'hardhat';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
-import { GOERLI_GLM } from '../env';
+import { GLM_ADDRESS } from '../env';
 import { FAUCET, TOKEN } from '../helpers/constants';
 
 // This function needs to be declared this way, otherwise it's not understood by test runner.
@@ -11,7 +11,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
-  let glmAddress = GOERLI_GLM;
+  let glmAddress = GLM_ADDRESS;
   if (['hardhat', 'localhost'].includes(hre.network.name)) {
     const token = await ethers.getContract(TOKEN);
     glmAddress = token.address;

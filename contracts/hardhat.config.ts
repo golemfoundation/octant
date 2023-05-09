@@ -6,7 +6,12 @@ import 'hardhat-docgen';
 import 'hardhat-gas-reporter';
 import { HardhatUserConfig } from 'hardhat/types';
 
-import { ETHERSCAN_API_KEY, GOERLI_PRIVATE_KEY, GOERLI_URL, IS_GAS_REPORTING_ENABLED } from './env';
+import {
+  ETHERSCAN_API_KEY,
+  TESTNET_PRIVATE_KEY,
+  TESTNET_RPC_URL,
+  IS_GAS_REPORTING_ENABLED,
+} from './env';
 
 import './tasks/clean';
 import './tasks/allocate';
@@ -50,8 +55,8 @@ const config: HardhatUserConfig = {
   },
   networks: {
     goerli: {
-      accounts: [GOERLI_PRIVATE_KEY],
-      url: GOERLI_URL,
+      accounts: [TESTNET_PRIVATE_KEY],
+      url: TESTNET_RPC_URL,
     },
     hardhat: {
       chainId: 1337,
@@ -61,6 +66,10 @@ const config: HardhatUserConfig = {
       chainId: 1337,
       initialBaseFeePerGas: 0,
       url: 'http://127.0.0.1:8545',
+    },
+    sepolia: {
+      accounts: [TESTNET_PRIVATE_KEY],
+      url: TESTNET_RPC_URL,
     },
   },
   solidity: {

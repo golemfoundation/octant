@@ -2,7 +2,7 @@ import { ethers } from 'hardhat';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
-import { GOERLI_GLM } from '../env';
+import { GLM_ADDRESS } from '../env';
 import { AUTH, DEPOSITS, TOKEN } from '../helpers/constants';
 
 // This function needs to be declared this way, otherwise it's not understood by test runner.
@@ -10,7 +10,7 @@ import { AUTH, DEPOSITS, TOKEN } from '../helpers/constants';
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
-  let glmAddress = GOERLI_GLM;
+  let glmAddress = GLM_ADDRESS;
   if (['hardhat', 'localhost'].includes(hre.network.name)) {
     const token = await ethers.getContract(TOKEN);
     glmAddress = token.address;
@@ -26,4 +26,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
 };
 export default func;
-func.tags = ['deposits', 'local', 'test', 'goerli'];
+func.tags = ['deposits', 'local', 'test', 'testnet'];

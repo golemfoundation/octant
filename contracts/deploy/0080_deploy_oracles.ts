@@ -20,4 +20,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
 };
 export default func;
-func.tags = ['oracle', 'local', 'test', 'goerli'];
+func.tags = ['oracle', 'local', 'test', 'testnet'];

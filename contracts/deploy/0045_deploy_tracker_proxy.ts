@@ -21,4 +21,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
 };
 export default func;
-func.tags = ['tracker-proxy', 'local', 'test', 'goerli'];
+func.tags = ['tracker-proxy', 'local', 'test', 'testnet'];

@@ -20,4 +20,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
 };
 export default func;
-func.tags = ['withdrawals-target', 'local', 'test', 'goerli'];
+func.tags = ['withdrawals-target', 'local', 'test', 'testnet'];

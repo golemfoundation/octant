@@ -55,4 +55,4 @@ VITE_OCTANT_PAYOUTS_MANAGER_ADDRESS=${payoutsManager.address}`;
 };
 
 export default func;
-func.tags = ['after-deployment', 'goerli', 'local'];
+func.tags = ['after-deployment', 'testnet', 'local'];
