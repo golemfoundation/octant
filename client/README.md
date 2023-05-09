@@ -35,10 +35,10 @@ The problem with this approach is that the `react-query` package used for fetchi
 
 ## Packages
 
-`@synthetixio/synpress` requests `eth-sig-util@^1.4.2`, which requests `ethereum-abi` as a dependency directly from git, breaking container builds. To solve it we could either alter our node image to include git, or add following resolution, which we did:
+`@synthetixio/synpress` requests `eth-sig-util@^1.4.2`, which requests `ethereumjs-abi` as a dependency directly from git, breaking container builds. To solve it we could either alter our node image to include git, or add following resolution, which we did:
 ```bash
 "resolutions": {
-  "@synthetixio/synpress/**/eth-sig-util": "2.5.3"
+  "@synthetixio/synpress/**/eth-sig-util": "yarn:@metamask/eth-sig-util@^5.1.0"
 }
 ```
-`eth-sig-util@2.5.3` does require `ethereum-abi@0.6.5` from yarn registry instead of git.
+`eth-sig-util` is deprecated in favor of `@metamask/eth-sig-util`. The latter does not require `ethereumjs-abi` at all.
