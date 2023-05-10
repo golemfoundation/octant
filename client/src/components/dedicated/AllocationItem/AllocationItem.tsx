@@ -14,7 +14,7 @@ import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import { minus, plus } from 'svg/misc';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
-import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
+import { comma, floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 
 import styles from './AllocationItem.module.scss';
 import AllocationItemProps from './types';
@@ -52,9 +52,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   };
 
   const onInputTextChange = event => {
-    const {
-      target: { value: newValue },
-    } = event;
+    const newValue = event.target.value.replace(comma, '.');
 
     onChangeValue(newValue);
   };
@@ -101,7 +99,13 @@ const AllocationItem: FC<AllocationItemProps> = ({
             </div>
           </div>
           <div className={cx(styles.value, isSelected && styles.isSelected)}>
-            <InputText ref={inputRef} value={value || '0'} variant="borderless" {...inputProps} />
+            <InputText
+              ref={inputRef}
+              inputMode="decimal"
+              value={value || '0'}
+              variant="borderless"
+              {...inputProps}
+            />
             <div className={styles.currency}>ETH</div>
           </div>
           <div className={cx(styles.buttons, isSelected && styles.isSelected)}>

@@ -14,7 +14,7 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
-import { floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
+import { comma, floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './ModalWithdrawEth.module.scss';
@@ -83,9 +83,13 @@ const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
               isDisabled: withdrawEthMutation.isLoading,
               name: 'valueToWithdraw',
               onChange: event => {
+                /* eslint-disable no-param-reassign */
+                event.target.value = event.target.value.replace(comma, '.');
+
                 const {
                   target: { value },
                 } = event;
+
                 if (value && !floatNumberWithUpTo18DecimalPlaces.test(value)) {
                   return;
                 }
