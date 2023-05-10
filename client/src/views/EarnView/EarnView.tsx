@@ -8,7 +8,7 @@ import MainLayout from 'layouts/MainLayout/MainLayout';
 import styles from './EarnView.module.scss';
 
 const EarnView = (): ReactElement => (
-  <MainLayout classNameBody={styles.layoutBody}>
+  <MainLayout classNameBody={styles.layoutBody} dataTest="EarnView">
     <div className={styles.boxesWrapper}>
       <BoxGlmLock classNameBox={styles.box} />
       <BoxWithdrawEth classNameBox={styles.box} />

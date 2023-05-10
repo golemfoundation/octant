@@ -20,6 +20,7 @@ const ProposalsView = (): ReactElement => {
 
   return (
     <MainLayout
+      dataTest="ProposalsView"
       isLoading={
         !proposalsAddresses || proposalsAddresses.length === 0 || !areMatchedProposalsReady
       }

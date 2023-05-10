@@ -29,7 +29,7 @@ const SettingsView = (): ReactElement => {
     data: { displayCurrency, isAllocateOnboardingAlwaysVisible, isCryptoMainValueDisplay },
   } = useSettingsStore();
   return (
-    <MainLayout>
+    <MainLayout dataTest="SettingsView">
       <Header text="Settings" />
       <BoxRounded className={styles.box} justifyContent="spaceBetween">
         Choose a display currency
