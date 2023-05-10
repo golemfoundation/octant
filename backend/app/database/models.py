@@ -27,3 +27,10 @@ class Allocation(Model):
     user = relationship("User", backref=db.backref("allocations", lazy=True))
     proposal_address = Column(db.String(42), nullable=False)
     amount = Column(db.String, nullable=False)
+
+
+class OnchainSnapshot(Model):
+    __tablename__ = "onchain_snapshot"
+    id = Column(db.Integer, primary_key=True)
+    epoch_no = Column(db.Integer, nullable=False, unique=True)
+    glm_supply = Column(db.String, nullable=False)
