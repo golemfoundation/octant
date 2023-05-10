@@ -1,4 +1,4 @@
-import { dotAndZeroes, floatNumberWithUpTo18DecimalPlaces, numbersOnly } from './regExp';
+import { comma, dotAndZeroes, floatNumberWithUpTo18DecimalPlaces, numbersOnly } from './regExp';
 
 const regExpTestCases = [
   {
@@ -68,6 +68,23 @@ const regExpTestCases = [
       { expectedValue: false, test: '1.' },
       { expectedValue: true, test: '1.0' },
       { expectedValue: true, test: '12.0' },
+      { expectedValue: false, test: '12.01' },
+    ],
+  },
+  {
+    name: 'comma',
+    regExp: comma,
+    testCases: [
+      { expectedValue: false, test: '0' },
+      { expectedValue: true, test: '0,0' },
+      { expectedValue: true, test: '0,00' },
+      { expectedValue: true, test: '0,000' },
+      { expectedValue: false, test: '0.000' },
+      { expectedValue: false, test: '0.001' },
+      { expectedValue: true, test: '0,001200' },
+      { expectedValue: false, test: '1.' },
+      { expectedValue: true, test: '1,0' },
+      { expectedValue: true, test: '12,0' },
       { expectedValue: false, test: '12.01' },
     ],
   },

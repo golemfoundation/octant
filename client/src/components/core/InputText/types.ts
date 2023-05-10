@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, HTMLAttributes } from 'react';
 
 export const INPUT_TEXT_VARIANTS = ['borderless', 'boxRounded', 'simple'] as const;
 export type InputTextVariant = (typeof INPUT_TEXT_VARIANTS)[number];
@@ -6,6 +6,7 @@ export type InputTextVariant = (typeof INPUT_TEXT_VARIANTS)[number];
 export default interface InputTextProps {
   className?: string;
   error?: string;
+  inputMode?: HTMLAttributes<HTMLInputElement>['inputMode'];
   isDisabled?: boolean;
   isErrorInlineVisible?: boolean;
   label?: string;

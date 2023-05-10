@@ -27,12 +27,14 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({ error, label, inputCrypto
     <div className={cx(styles.root, isCryptoMainValueDisplay && styles.isCryptoMainValueDisplay)}>
       <InputText
         className={cx(styles.input, isCryptoMainValueDisplay && styles.isCryptoMainValueDisplay)}
+        inputMode="decimal"
         placeholder="0.00"
         variant="simple"
         {...inputCryptoPropsLabel}
       />
       <InputText
         className={cx(styles.input, !isCryptoMainValueDisplay && styles.isFiatMainValueDisplay)}
+        inputMode="decimal"
         isDisabled
         placeholder="0.00"
         suffix="USD"
