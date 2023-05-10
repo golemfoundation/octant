@@ -23,6 +23,7 @@ import { getIndividualRewardText, getNavigationTabsWithAllocations } from './uti
 
 const MainLayout: FC<MainLayoutProps> = ({
   children,
+  dataTest,
   navigationBottomSuffix,
   isHeaderVisible = true,
   isLoading,
@@ -90,9 +91,9 @@ const MainLayout: FC<MainLayoutProps> = ({
           onClosePanel: () => setIsModalConnectWalletOpen(false),
         }}
       />
-      <div className={styles.root}>
+      <div className={styles.root} data-test={dataTest}>
         {isHeaderVisible && (
-          <div className={styles.header}>
+          <div className={styles.header} data-test="Header__element">
             <div className={styles.logoWrapper}>
               <Svg img={octant} size={4} />
               {env.isTestnet === 'true' && (
@@ -142,7 +143,7 @@ const MainLayout: FC<MainLayoutProps> = ({
           {isLoading ? <Loader className={styles.loader} /> : children}
         </div>
         {isNavigationVisible && (
-          <div className={styles.navigationWrapper}>
+          <div className={styles.navigationWrapper} data-test="Navigation__element">
             <nav
               className={cx(
                 styles.navigation,

@@ -29,7 +29,7 @@ const OnboardingView = (): ReactElement => {
   }
 
   return (
-    <MainLayout isHeaderVisible={false} isNavigationVisible={false}>
+    <MainLayout dataTest="OnboardingView" isHeaderVisible={false} isNavigationVisible={false}>
       <Modal
         dataTest="OnboardingView__Modal"
         header={currentStep.header}

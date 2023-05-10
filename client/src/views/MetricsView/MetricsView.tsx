@@ -38,7 +38,7 @@ const MetricsView = (): ReactElement => {
   };
 
   return (
-    <MainLayout>
+    <MainLayout dataTest="MetricsView">
       <MetricsTimeSection
         className={styles.element}
         currentEpoch={currentEpoch}

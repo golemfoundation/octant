@@ -182,6 +182,7 @@ const AllocationView = (): ReactElement => {
 
   return (
     <MainLayout
+      dataTest="AllocationView"
       isLoading={isLoading}
       navigationBottomSuffix={
         areAllocationsAvailable && (
