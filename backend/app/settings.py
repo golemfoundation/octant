@@ -26,6 +26,13 @@ class Config(object):
     PROPOSALS_CONTRACT_ADDRESS = os.getenv(
         "PROPOSALS_CONTRACT_ADDRESS", "0x17c09dA7c6Ba1Dd24AdbEB514CF8f07c9aEfd655"
     )
+    GNT_CONTRACT_ADDRESS = os.getenv(
+        "GNT_CONTRACT_ADDRESS", "0x9d90f1Df10b797DB0D6368eCBFd8961798be5558"
+    )
+    GLM_CONTRACT_ADDRESS = os.getenv(
+        "GLM_CONTRACT_ADDRESS", "0x4914bdFfFA96a3936304705eE41C2F5CbcAD7774"
+    )
+
     CHAIN_ID = os.getenv("CHAIN_ID", 5)  # 5 corresponds to Goerli network
 
 

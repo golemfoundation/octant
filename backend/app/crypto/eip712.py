@@ -13,8 +13,10 @@ domain = {
 
 def build_allocations_eip712_data(message: dict) -> dict:
     # Convert amount value to int
-    message['allocations'] = [{**allocation, 'amount': int(allocation['amount'])} for allocation in
-                              message['allocations']]
+    message["allocations"] = [
+        {**allocation, "amount": int(allocation["amount"])}
+        for allocation in message["allocations"]
+    ]
 
     allocation_types = {
         "EIP712Domain": [
