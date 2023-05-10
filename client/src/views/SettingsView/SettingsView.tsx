@@ -60,6 +60,7 @@ const SettingsView = (): ReactElement => {
       <BoxRounded className={styles.box} justifyContent="spaceBetween">
         Always show Allocate onboarding
         <InputCheckbox
+          dataTest="AlwaysShowOnboarding__InputCheckbox"
           isChecked={isAllocateOnboardingAlwaysVisible}
           onChange={event => setIsAllocateOnboardingAlwaysVisible(event.target.checked)}
         />

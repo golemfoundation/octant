@@ -1,4 +1,4 @@
-import { visitWithLoader } from 'cypress/utils/e2e';
+import { checkLocationWithLoader, visitWithLoader } from 'cypress/utils/e2e';
 import { ROOT, ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import steps from 'src/views/OnboardingView/steps';
 
@@ -35,5 +35,21 @@ describe('onboarding', () => {
   it('user is able to close the modal by clicking button in the top-right', () => {
     cy.get('[data-test=OnboardingView__Modal__Button]').click();
     cy.get('[data-test=ProposalsView__List]').should('be.visible');
+  });
+
+  it('renders every time page is refreshed when "Always show Allocate onboarding" option is checked', () => {
+    cy.get('[data-test=OnboardingView__Modal__Button]').click();
+    cy.get('[data-test=Settings__Button]').click();
+    cy.get('[data-test=AlwaysShowOnboarding__InputCheckbox]').check().should('be.checked');
+    cy.reload();
+    checkLocationWithLoader(ROOT_ROUTES.onboarding.absolute);
+  });
+
+  it('renders only once when "Always show Allocate onboarding" option is not checked', () => {
+    cy.get('[data-test=OnboardingView__Modal__Button]').click();
+    cy.get('[data-test=Settings__Button]').click();
+    cy.get('[data-test=AlwaysShowOnboarding__InputCheckbox]').should('not.be.checked');
+    cy.reload();
+    checkLocationWithLoader(ROOT_ROUTES.settings.absolute);
   });
 });
