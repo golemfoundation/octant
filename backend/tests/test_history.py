@@ -17,9 +17,21 @@ from app.infrastructure.graphql_client import graphql_client
                 {"amount": "400000000000000000000", "blockTimestamp": 1679645800},
             ],
             [
-                {"type": "lock", "amount": "300000000000000000000", "blockTimestamp": 1679645700},
-                {"type": "unlock", "amount": "400000000000000000000", "blockTimestamp": 1679645800},
-                {"type": "lock", "amount": "500000000000000000000", "blockTimestamp": 1679645896},
+                {
+                    "type": "lock",
+                    "amount": "300000000000000000000",
+                    "timestamp": 1679645700,
+                },
+                {
+                    "type": "unlock",
+                    "amount": "400000000000000000000",
+                    "timestamp": 1679645800,
+                },
+                {
+                    "type": "lock",
+                    "amount": "500000000000000000000",
+                    "timestamp": 1679645896,
+                },
             ],
         ),
         (  # Case 2: unlock value first
@@ -31,9 +43,21 @@ from app.infrastructure.graphql_client import graphql_client
                 {"amount": "400000000000000000000", "blockTimestamp": 1679645950},
             ],
             [
-                {"type": "lock", "amount": "500000000000000000000", "blockTimestamp": 1679645900},
-                {"type": "lock", "amount": "300000000000000000000", "blockTimestamp": 1679645910},
-                {"type": "unlock", "amount": "400000000000000000000", "blockTimestamp": 1679645950},
+                {
+                    "type": "lock",
+                    "amount": "500000000000000000000",
+                    "timestamp": 1679645900,
+                },
+                {
+                    "type": "lock",
+                    "amount": "300000000000000000000",
+                    "timestamp": 1679645910,
+                },
+                {
+                    "type": "unlock",
+                    "amount": "400000000000000000000",
+                    "timestamp": 1679645950,
+                },
             ],
         ),
         (  # Case 3: more unlock values than lock values
@@ -45,22 +69,36 @@ from app.infrastructure.graphql_client import graphql_client
                 {"amount": "600000000000000000000", "blockTimestamp": 1679646000},
             ],
             [
-                {"type": "unlock", "amount": "400000000000000000000", "blockTimestamp": 1679645800},
-                {"type": "lock", "amount": "500000000000000000000", "blockTimestamp": 1679645900},
-                {"type": "unlock", "amount": "600000000000000000000", "blockTimestamp": 1679646000},
+                {
+                    "type": "unlock",
+                    "amount": "400000000000000000000",
+                    "timestamp": 1679645800,
+                },
+                {
+                    "type": "lock",
+                    "amount": "500000000000000000000",
+                    "timestamp": 1679645900,
+                },
+                {
+                    "type": "unlock",
+                    "amount": "600000000000000000000",
+                    "timestamp": 1679646000,
+                },
             ],
         ),
         (  # Case 4: empty lists
             [],
             [],
             [],
-        )],
+        ),
+    ],
     ids=[
         "Case 1: unlock value in the middle",
         "Case 2: unlock value first",
         "Case 3: more unlock values than lock values",
         "Case 4: empty lists",
-    ])
+    ],
+)
 def test_get_history(mocker, locks, unlocks, expected_history, app):
     # Mock the execute method of the GraphQL client
     mocker.patch.object(graphql_client, "execute")

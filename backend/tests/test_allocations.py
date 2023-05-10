@@ -1,8 +1,8 @@
 from random import randint
 
+from app import database
 from app.core.allocations import allocate, deserialize_payload
 from app.crypto.eip712 import sign, build_allocations_eip712_data
-from app.database import User, Allocation
 
 
 def test_user_allocates_for_the_first_time(app, user_accounts, proposal_accounts):
@@ -17,7 +17,9 @@ def test_user_allocates_for_the_first_time(app, user_accounts, proposal_accounts
     check_allocations(user_accounts[0].address, payload, 2)
 
 
-def test_multiple_users_allocate_for_the_first_time(app, user_accounts, proposal_accounts):
+def test_multiple_users_allocate_for_the_first_time(
+    app, user_accounts, proposal_accounts
+):
     # Test data
     payload1 = create_payload(proposal_accounts[0:2])
     signature1 = sign(user_accounts[0], build_allocations_eip712_data(payload1))
@@ -37,14 +39,18 @@ def test_multiple_users_allocate_for_the_first_time(app, user_accounts, proposal
 def test_allocate_updates_with_more_proposals(app, user_accounts, proposal_accounts):
     # Test data
     initial_payload = create_payload(proposal_accounts[0:2])
-    initial_signature = sign(user_accounts[0], build_allocations_eip712_data(initial_payload))
+    initial_signature = sign(
+        user_accounts[0], build_allocations_eip712_data(initial_payload)
+    )
 
     # Call allocate method
     allocate(initial_payload, initial_signature)
 
     # Create a new payload with more proposals
     updated_payload = create_payload(proposal_accounts[0:3])
-    updated_signature = sign(user_accounts[0], build_allocations_eip712_data(updated_payload))
+    updated_signature = sign(
+        user_accounts[0], build_allocations_eip712_data(updated_payload)
+    )
 
     # Call allocate method with updated_payload
     allocate(updated_payload, updated_signature)
@@ -56,14 +62,18 @@ def test_allocate_updates_with_more_proposals(app, user_accounts, proposal_accou
 def test_allocate_updates_with_less_proposals(app, user_accounts, proposal_accounts):
     # Test data
     initial_payload = create_payload(proposal_accounts[0:3])
-    initial_signature = sign(user_accounts[0], build_allocations_eip712_data(initial_payload))
+    initial_signature = sign(
+        user_accounts[0], build_allocations_eip712_data(initial_payload)
+    )
 
     # Call allocate method
     allocate(initial_payload, initial_signature)
 
     # Create a new payload with fewer proposals
     updated_payload = create_payload(proposal_accounts[0:2])
-    updated_signature = sign(user_accounts[0], build_allocations_eip712_data(updated_payload))
+    updated_signature = sign(
+        user_accounts[0], build_allocations_eip712_data(updated_payload)
+    )
 
     # Call allocate method with updated_payload
     allocate(updated_payload, updated_signature)
@@ -75,9 +85,13 @@ def test_allocate_updates_with_less_proposals(app, user_accounts, proposal_accou
 def test_multiple_users_change_their_allocations(app, user_accounts, proposal_accounts):
     # Create initial payloads and signatures for both users
     initial_payload1 = create_payload(proposal_accounts[0:2])
-    initial_signature1 = sign(user_accounts[0], build_allocations_eip712_data(initial_payload1))
+    initial_signature1 = sign(
+        user_accounts[0], build_allocations_eip712_data(initial_payload1)
+    )
     initial_payload2 = create_payload(proposal_accounts[0:3])
-    initial_signature2 = sign(user_accounts[1], build_allocations_eip712_data(initial_payload2))
+    initial_signature2 = sign(
+        user_accounts[1], build_allocations_eip712_data(initial_payload2)
+    )
 
     # Call allocate method with initial payloads for both users
     allocate(initial_payload1, initial_signature1)
@@ -85,9 +99,13 @@ def test_multiple_users_change_their_allocations(app, user_accounts, proposal_ac
 
     # Create updated payloads for both users
     updated_payload1 = create_payload(proposal_accounts[0:4])
-    updated_signature1 = sign(user_accounts[0], build_allocations_eip712_data(updated_payload1))
+    updated_signature1 = sign(
+        user_accounts[0], build_allocations_eip712_data(updated_payload1)
+    )
     updated_payload2 = create_payload(proposal_accounts[2:7])
-    updated_signature2 = sign(user_accounts[1], build_allocations_eip712_data(updated_payload2))
+    updated_signature2 = sign(
+        user_accounts[1], build_allocations_eip712_data(updated_payload2)
+    )
 
     # Call allocate method with updated payloads for both users
     allocate(updated_payload1, updated_signature1)
@@ -99,23 +117,29 @@ def test_multiple_users_change_their_allocations(app, user_accounts, proposal_ac
 
 
 def check_allocations(user_address, expected_payload, expected_count):
+    epoch = 1
     expected_allocations = deserialize_payload(expected_payload)
-    user = User.query.filter_by(address=user_address).first()
+    user = database.user.get_by_address(user_address)
     assert user is not None
 
-    db_allocations = Allocation.query.filter_by(user_id=user.id).all()
+    db_allocations = database.allocations.get_all_by_epoch_and_user_id(epoch, user.id)
     assert len(db_allocations) == expected_count
 
     for db_allocation, expected_allocation in zip(db_allocations, expected_allocations):
-        assert db_allocation.epoch == 1
+        assert db_allocation.epoch == epoch
         assert db_allocation.user_id == user.id
         assert db_allocation.user is not None
         assert db_allocation.proposal_address == expected_allocation.proposalAddress
-        assert db_allocation.amount == expected_allocation.amount
+        assert int(db_allocation.amount) == expected_allocation.amount
 
 
 def create_payload(proposals):
-    allocations = [{'proposalAddress': proposal.address, 'amount': randint(1, 1000)}
-                   for proposal in proposals]
+    allocations = [
+        {
+            "proposalAddress": proposal.address,
+            "amount": str(randint(1 * 10**18, 100_000_000 * 10**18)),
+        }
+        for proposal in proposals
+    ]
 
     return {"allocations": allocations}

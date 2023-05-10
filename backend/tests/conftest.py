@@ -7,7 +7,7 @@ from app.settings import TestConfig
 MNEMONIC = "test test test test test test test test test test test junk"
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def app():
     """An application for the tests."""
     _app = create_app(TestConfig)
@@ -28,12 +28,16 @@ def app():
 @pytest.fixture(scope="function")
 def user_accounts():
     w3.eth.account.enable_unaudited_hdwallet_features()
-    return [w3.eth.account.from_mnemonic(MNEMONIC, account_path=f"m/44'/60'/0'/0/{i}") for i in
-            range(10)]
+    return [
+        w3.eth.account.from_mnemonic(MNEMONIC, account_path=f"m/44'/60'/0'/0/{i}")
+        for i in range(10)
+    ]
 
 
 @pytest.fixture(scope="module")
 def proposal_accounts():
     w3.eth.account.enable_unaudited_hdwallet_features()
-    return [w3.eth.account.from_mnemonic(MNEMONIC, account_path=f"m/44'/60'/0'/0/{i}") for i in
-            range(10, 20)]
+    return [
+        w3.eth.account.from_mnemonic(MNEMONIC, account_path=f"m/44'/60'/0'/0/{i}")
+        for i in range(10, 20)
+    ]

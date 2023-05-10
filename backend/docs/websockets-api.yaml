@@ -1,0 +1,78 @@
+asyncapi: 2.0.0
+info:
+  title: Octant websockets API
+  version: '1.0.0'
+  description: |
+    The Octant API that allows you to allocate rewards from previous epoch when decision window is open
+    and check projects rewards in real tim.
+
+    ### Features:
+
+    * Allocate your rewards budget to projects of your choice 💵
+    * Receive real-time information about projects rewards with matching funding 📈
+  license:
+    name: GPL-3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.html
+
+defaultContentType: application/json
+
+channels:
+  connect:
+    publish:
+      summary: Client connected event
+      operationId: handle_connect
+  disconnect:
+    publish:
+      summary: Client disconnected event
+      operationId: handle_disconnect
+  allocate:
+    publish:
+      summary: User allocation event
+      operationId: handle_allocate
+      message:
+        name: UserAllocation
+        contentType: application/json
+        description: Payload containing a list of allocations and nonce.
+        payload:
+          type: object
+          properties:
+            payload:
+              type: object
+              properties:
+                allocations:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      proposalAddress:
+                        description: Proposal ethereum address in hexadecimal format
+                        type: string
+                      amount:
+                        description: Amount of rewards donated for given proposal, BigNumber (WEI)
+                        type: string
+            signature:
+              type: string
+        examples:
+          - payload:
+              payload:
+                allocations:
+                  - proposalAddress: "0x90F79bf6EB2c4f870365E785982E1f101E93b906"
+                    amount: 100
+                  - proposalAddress: "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
+                    amount: 5000
+              signature: 8d704f19cde0f1f9d310e57621229b919a8e17187be332c4bd08bf797d0fb50232b4aa30639b741723e647667d87da1af38fd4601600f4d4e2c6f724abea03d61b
+
+  exception:
+    subscribe:
+      summary: Exception event
+      operationId: handle_exception
+      message:
+        name: Exception
+        payload:
+          type: object
+          properties:
+            message:
+              type: string
+        examples:
+          - payload:
+              message: An unexpected error has occurred
