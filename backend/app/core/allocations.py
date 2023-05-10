@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import List
 
+from app import database
 from app.crypto.eip712 import recover_address, build_allocations_eip712_data
-from app.database import User, Allocation
 from app.extensions import db
 
 
@@ -20,24 +20,18 @@ def allocate(payload: dict, signature: str):
     # TODO connect Epochs contract
     epoch = 1
 
-    user = User.query.filter_by(address=user_address).first()
+    user = database.user.get_by_address(user_address)
     if not user:
-        user = User(address=user_address)
-        db.session.add(user)
+        user = database.user.add_user(user_address)
 
-    # Delete any existing allocations for the current epoch and user
-    existing_allocations = Allocation.query.filter_by(epoch=epoch, user_id=user.id).all()
-    for allocation in existing_allocations:
-        db.session.delete(allocation)
+    database.allocations.delete_all_by_epoch_and_user_id(epoch, user.id)
+    database.allocations.add_all(epoch, user.id, user_allocations)
 
-    # Create new Allocation instances for the provided allocations
-    new_allocations = [Allocation(epoch=epoch, user_id=user.id, proposal_address=a.proposalAddress,
-                                  amount=a.amount) for a in user_allocations]
-
-    db.session.add_all(new_allocations)
     db.session.commit()
 
 
 def deserialize_payload(payload) -> List[AllocationPayload]:
-    return [AllocationPayload(**allocation_data) for allocation_data in
-            payload['allocations']]
+    return [
+        AllocationPayload(**allocation_data)
+        for allocation_data in payload["allocations"]
+    ]

@@ -12,6 +12,10 @@ domain = {
 
 
 def build_allocations_eip712_data(message: dict) -> dict:
+    # Convert amount value to int
+    message['allocations'] = [{**allocation, 'amount': int(allocation['amount'])} for allocation in
+                              message['allocations']]
+
     allocation_types = {
         "EIP712Domain": [
             {"name": "name", "type": "string"},
@@ -24,14 +28,14 @@ def build_allocations_eip712_data(message: dict) -> dict:
         ],
         "AllocationPayload": [
             {"name": "allocations", "type": "Allocation[]"},
-        ]
+        ],
     }
 
     return {
         "types": allocation_types,
         "domain": domain,
         "primaryType": "AllocationPayload",
-        "message": message
+        "message": message,
     }
 
 
@@ -48,4 +52,6 @@ def recover_address(data: dict, signature: str) -> str:
     Recovers the address from EIP-712 structured data
     :returns address as a hexadecimal string.
     """
-    return w3.eth.account.recover_message(encode_structured_data(data), signature=signature)
+    return w3.eth.account.recover_message(
+        encode_structured_data(data), signature=signature
+    )

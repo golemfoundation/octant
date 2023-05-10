@@ -28,7 +28,7 @@ def handle_octant_exception(e: OctantException):
 
 def handle_unexpected_exception(_):
     print_stacktrace()
-    response = jsonify({'message': UNEXPECTED_EXCEPTION})
+    response = jsonify({"message": UNEXPECTED_EXCEPTION})
     response.status_code = 500
     return response
 

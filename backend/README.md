@@ -39,3 +39,16 @@ flask --app startup run
 ```bash
 pytest
 ```
+
+## Lint
+```bash
+black .
+```
+
+## Docs
+First, Run the server as described above. Then, open a web browser and navigate to the following URL to view documentation:
+
+### HTTP endpoints
+http://localhost:5000/
+### Websockets
+http://localhost:5000/docs/websockets-api
