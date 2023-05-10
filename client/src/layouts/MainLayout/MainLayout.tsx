@@ -153,11 +153,12 @@ const MainLayout: FC<MainLayoutProps> = ({
                 <div className={styles.navigationBottomSuffix}>{navigationBottomSuffix}</div>
               )}
               <div className={styles.buttons}>
-                {tabsWithIsActive.map(({ icon, iconWrapped, ...rest }, index) => (
+                {tabsWithIsActive.map(({ icon, iconWrapped, label, ...rest }, index) => (
                   <Button
                     // eslint-disable-next-line react/no-array-index-key
                     key={index}
                     className={styles.buttonNavigation}
+                    dataTest={`${label}__Button`}
                     Icon={iconWrapped || <Svg img={icon} size={3.2} />}
                     variant="iconVertical"
                     {...rest}
