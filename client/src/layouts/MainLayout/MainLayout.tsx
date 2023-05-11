@@ -161,6 +161,7 @@ const MainLayout: FC<MainLayoutProps> = ({
                     className={styles.buttonNavigation}
                     dataTest={`${label}__Button`}
                     Icon={iconWrapped || <Svg img={icon} size={3.2} />}
+                    label={label}
                     variant="iconVertical"
                     {...rest}
                   />
