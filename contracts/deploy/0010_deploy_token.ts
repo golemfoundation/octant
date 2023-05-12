@@ -1,3 +1,4 @@
+import { parseEther } from 'ethers/lib/utils';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
@@ -9,8 +10,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
+  const name = 'Token';
+  const symbol = 'TKN';
+  const amount = parseEther('500000000');
+
   await deploy(TOKEN, {
-    args: [],
+    args: [name, symbol, amount],
     autoMine: true,
     from: deployer,
     log: true,
