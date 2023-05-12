@@ -8,11 +8,13 @@
   "license": "GPL-3.0",
   "scripts": {
     "build:goerli": "graph build --network goerli",
+    "build:sepolia": "graph build --network sepolia",
     "build:localhost": "graph build --network localhost",
     "clean": "docker-compose down -v && docker-compose rm -v && sudo rm -rf data/ipfs data/postgres",
     "codegen": "graph codegen",
     "create-subgraph": "graph create --node http://127.0.0.1:8020 octant",
     "deploy:goerli": "graph deploy --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020 --network goerli octant",
+    "deploy:sepolia": "graph deploy --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020 --network sepolia octant",
     "deploy:localhost": "graph deploy --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020 octant",
     "eslint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "eslint:fix": "yarn prettier && yarn eslint --fix",
