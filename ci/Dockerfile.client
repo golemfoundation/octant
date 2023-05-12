@@ -4,5 +4,5 @@ COPY package.json yarn.lock ./
 RUN yarn install --ignore-scripts --frozen-lockfile && yarn cache clean
 COPY ./ ./
 
-EXPOSE 5173
+EXPOSE 4173
 ENTRYPOINT [ "yarn", "start" ]
