@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccount, useDisconnect } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -17,6 +18,9 @@ import WalletModalProps from './types';
 import styles from './WalletModal.module.scss';
 
 const WalletModal: FC<WalletModalProps> = ({ modalProps }) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'components.dedicated.walletModal',
+  });
   const { address } = useAccount();
   const { data: availableFundsGlm } = useAvailableFundsGlm();
   const { data: availableFundsEth } = useAvailableFundsEth();
@@ -46,20 +50,20 @@ const WalletModal: FC<WalletModalProps> = ({ modalProps }) => {
   ];
 
   return (
-    <Modal header="Balances" {...modalProps}>
+    <Modal header={t('balances')} {...modalProps}>
       <BoxRounded
         alignment="left"
         className={cx(styles.element, styles.box)}
         hasSections
         isGrey
         isVertical
-        title="Connected Wallet Balances"
+        title={t('connectedWalletBalances')}
         titleSuffix={address ? truncateEthAddress(address) : undefined}
       >
         <Sections sections={sections} />
       </BoxRounded>
       <RewardsBox className={cx(styles.element, styles.box)} isGrey />
-      <Button className={styles.button} label="Disconnect Wallet" onClick={_disconnect} />
+      <Button className={styles.button} label={t('disconnectWallet')} onClick={_disconnect} />
     </Modal>
   );
 };

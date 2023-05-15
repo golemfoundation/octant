@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import React, { FC, Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import useIndividualProposalRewards from 'hooks/queries/useIndividualProposalRewards';
@@ -16,6 +17,10 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
   MiddleElement,
   totalValueOfAllocations,
 }) => {
+  const { t, i18n } = useTranslation('translation', {
+    keyPrefix: 'components.dedicated.proposalRewards',
+  });
+
   const { data: individualProposalRewards } = useIndividualProposalRewards();
   const { data: proposalRewardsThresholdFraction } = useProposalRewardsThresholdFraction();
 
@@ -59,20 +64,20 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
         {isTotalValueOfAllocationsDefined ? (
           <Fragment>
             <div className={styles.value}>
-              <span className={styles.label}>Total donated</span>
+              <span className={styles.label}>{t('totalDonated')}</span>
               <span className={cx(styles.number, !isProjectFounded && styles.isBelowCutOff)}>
                 {getFormattedEthValue(totalValueOfAllocations).fullString}
               </span>
             </div>
             {MiddleElement}
             <div className={cx(styles.value, isFundedAtHidden && styles.isHidden)}>
-              <span className={styles.label}>Funded at</span>
+              <span className={styles.label}>{t('fundedAt')}</span>
               <span className={styles.number}>{getFormattedEthValue(cutOffValue).fullString}</span>
             </div>
           </Fragment>
         ) : (
           <div className={styles.allocationValuesNotAvailable}>
-            Allocation values are not available
+            {i18n.t('common.allocationValuesNotAvailable')}
           </div>
         )}
       </div>

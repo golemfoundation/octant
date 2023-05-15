@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import { Duration } from 'date-fns';
 import React, { FC, Fragment, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Loader from 'components/core/Loader/Loader';
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
@@ -35,6 +36,9 @@ const TimeCounter: FC<TimeCounterProps> = ({
   onCountingFinish,
   variant = 'standard',
 }) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'components.dedicated.timeCounter',
+  });
   const [time, setTime] = useState<Duration | undefined>(undefined);
   const shouldDoRefetch = timestamp ? timestamp < Date.now() : false;
 
@@ -76,18 +80,23 @@ const TimeCounter: FC<TimeCounterProps> = ({
       ) : (
         <Fragment>
           <div className={cx(styles.counters, styles[`variant--${variant}`])}>
-            <CounterSection label="Days" value={time.days} variant={variant} />
-            <CounterSection label="Hours" labelSmall="Hrs" value={time.hours} variant={variant} />
+            <CounterSection label={t('days')} value={time.days} variant={variant} />
             <CounterSection
-              label="Minutes"
-              labelSmall="Min"
+              label={t('hours')}
+              labelSmall={t('hrs')}
+              value={time.hours}
+              variant={variant}
+            />
+            <CounterSection
+              label={t('minutes')}
+              labelSmall={t('min')}
               value={time.minutes}
               variant={variant}
             />
             <CounterSection
               isDividerVisible={false}
-              label="Seconds"
-              labelSmall="Sec"
+              label={t('seconds')}
+              labelSmall={t('sec')}
               value={time.seconds}
               variant={variant}
             />

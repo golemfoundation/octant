@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import React, { FC, useEffect, useState, Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Button from 'components/core/Button/Button';
 import Identicon from 'components/core/Identicon/Identicon';
@@ -17,6 +18,7 @@ import DonorsListProps from './types';
 const SHORT_LIST_LENGTH = 4;
 
 const DonorsList: FC<DonorsListProps> = ({ className, proposalAddress }) => {
+  const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.donorsList' });
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
   } = useSettingsStore(({ data }) => ({
@@ -46,7 +48,7 @@ const DonorsList: FC<DonorsListProps> = ({ className, proposalAddress }) => {
       ) : (
         <Fragment>
           <div className={styles.header}>
-            <span>Donors</span>{' '}
+            <span>{t('donors')}</span>{' '}
             {proposalAllocations && (
               <div className={styles.count}>{proposalAllocations.length}</div>
             )}
@@ -76,7 +78,7 @@ const DonorsList: FC<DonorsListProps> = ({ className, proposalAddress }) => {
           {proposalAllocations && proposalAllocations.length > SHORT_LIST_LENGTH && (
             <Button
               className={styles.buttonDonors}
-              label={isDonorsListExpanded ? '- See less' : '+ See all'}
+              label={isDonorsListExpanded ? `- ${t('seeLess')}` : `+ ${t('seeAll')}`}
               onClick={() => setIsDonorsListExpanded(!isDonorsListExpanded)}
               variant="secondary2"
             />

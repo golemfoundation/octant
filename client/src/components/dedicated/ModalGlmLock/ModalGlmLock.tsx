@@ -3,6 +3,7 @@ import { BigNumber, ContractTransaction } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { useFormik } from 'formik';
 import React, { FC, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccount, useSigner } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -30,6 +31,9 @@ import { formInitialValues, getButtonCtaLabel, validationSchema } from './utils'
 const currentStepIndexInitialValue = 0;
 
 const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
+  const { t, i18n } = useTranslation('translation', {
+    keyPrefix: 'components.dedicated.modalGlmLock',
+  });
   const { depositsAddress } = env.contracts;
   const { address } = useAccount();
   const { data: signer } = useSigner();
@@ -73,7 +77,7 @@ const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
   const onSuccess = async (transactionResponse: ContractTransaction): Promise<void> => {
     setTransactionHash(transactionResponse!.hash);
     triggerToast({
-      title: 'Transaction successful',
+      title: i18n.t('common.transactionSuccessful'),
     });
     await onRefetch();
     setCurrentStepIndex(3);
@@ -111,15 +115,18 @@ const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
   }, [modalProps.isOpen]);
 
   return (
-    <Modal header={currentMode === 'lock' ? 'Lock GLM' : 'Unlock GLM'} {...modalProps}>
+    <Modal
+      header={currentMode === 'lock' ? i18n.t('common.lockGlm') : t('unlockGLM')}
+      {...modalProps}
+    >
       <form className={styles.form} onSubmit={formik.handleSubmit}>
         <BoxRounded className={styles.element} isGrey>
           <ProgressStepper
             currentStepIndex={currentStepIndex}
             steps={
               currentMode === 'lock'
-                ? ['Submit', 'Approve & Lock', 'Done']
-                : ['Submit', 'Withdraw', 'Done']
+                ? [t('submit'), t('approveAndLock'), t('done')]
+                : [t('submit'), t('withdraw'), t('done')]
             }
           />
         </BoxRounded>
@@ -137,12 +144,12 @@ const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
             {
               isActive: currentMode === 'lock',
               onClick: () => onReset('lock'),
-              title: 'Lock',
+              title: t('lock'),
             },
             {
               isActive: currentMode === 'unlock',
               onClick: () => onReset('unlock'),
-              title: 'Unlock',
+              title: t('unlock'),
             },
           ]}
         >
@@ -169,7 +176,7 @@ const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
               suffix: 'GLM',
               value: formik.values.valueToDeposeOrWithdraw,
             }}
-            label={currentMode === 'lock' ? 'Amount to lock' : 'Amount to unlock'}
+            label={currentMode === 'lock' ? t('amountToLock') : t('amountToUnlock')}
           />
         </BoxRounded>
         <Button

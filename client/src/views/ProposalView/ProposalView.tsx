@@ -1,4 +1,5 @@
 import React, { ReactElement, Fragment, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 
@@ -36,6 +37,7 @@ const getCustomNavigationTabs = () => {
 };
 
 const ProposalView = (): ReactElement => {
+  const { t } = useTranslation('translation', { keyPrefix: 'views.proposal' });
   const { ipfsGateway } = env;
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadedAddresses, setLoadedAddresses] = useState<string[]>([]);
@@ -131,7 +133,7 @@ const ProposalView = (): ReactElement => {
 
   if (!initialElement || (initialElement && initialElement.isLoadingError)) {
     triggerToast({
-      title: 'Loading of this proposal encountered a problem.',
+      title: t('loadingProblem'),
       type: 'warning',
     });
     return (

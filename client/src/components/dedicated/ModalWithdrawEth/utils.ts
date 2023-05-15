@@ -2,6 +2,8 @@ import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { object, string, ObjectSchema } from 'yup';
 
+import i18n from 'i18n';
+
 import { FormValues } from './types';
 
 export const formInitialValues: FormValues = {
@@ -20,7 +22,9 @@ export const validationSchema = (
         test(value, ctx) {
           const newValueBigNumber = parseUnits(value || '0');
           if (newValueBigNumber.gt(withdrawableUserEth!)) {
-            return ctx.createError({ message: "You don't have that much to withdraw" });
+            return ctx.createError({
+              message: i18n.t('components.dedicated.modalWithdrawEth.dontHaveThatMuchToWithdraw'),
+            });
           }
 
           return true;

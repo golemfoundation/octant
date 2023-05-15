@@ -2,6 +2,7 @@ import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import React, { FC, Fragment, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -30,6 +31,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   totalValueOfAllocations,
   value,
 }) => {
+  const { t } = useTranslation();
   const { isConnected } = useAccount();
   const { data: proposalsIpfs, isLoading } = useProposalsIpfs([address]);
   const isDonationAboveThreshold = useIsDonationAboveThreshold(address);
@@ -94,7 +96,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
                   </div>
                 </Fragment>
               ) : (
-                <Fragment>Allocation values are not available</Fragment>
+                <Fragment>{t('common.allocationValuesNotAvailable')}</Fragment>
               )}
             </div>
           </div>

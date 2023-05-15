@@ -1,6 +1,7 @@
 import { useWeb3Modal } from '@web3modal/react';
 import cx from 'classnames';
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccount, useConnect } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 
@@ -14,6 +15,9 @@ import styles from './ModalConnectWallet.module.scss';
 import ModalConnectWalletProps from './types';
 
 const ModalConnectWallet: FC<ModalConnectWalletProps> = ({ modalProps }) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'components.dedicated.modalConnectWallet',
+  });
   const { isConnected, connector } = useAccount();
   const { connectors, connect, pendingConnector, isLoading } = useConnect();
   const { open, isOpen } = useWeb3Modal();
@@ -37,7 +41,7 @@ const ModalConnectWallet: FC<ModalConnectWalletProps> = ({ modalProps }) => {
   return (
     <Modal
       bodyClassName={styles.modal}
-      header="Connect via"
+      header={t('connectVia')}
       isOpen={modalProps.isOpen && !isConnected}
       onClosePanel={modalProps.onClosePanel}
     >
@@ -52,7 +56,7 @@ const ModalConnectWallet: FC<ModalConnectWalletProps> = ({ modalProps }) => {
             <div className={styles.icon}>
               <Loader />
             </div>
-            <div className={styles.label}>Connecting ...</div>
+            <div className={styles.label}>{t('connecting')}</div>
           </>
         ) : (
           <>
@@ -62,7 +66,7 @@ const ModalConnectWallet: FC<ModalConnectWalletProps> = ({ modalProps }) => {
               img={browserWallet}
               size={3.2}
             />
-            <div className={styles.label}>Browser wallet</div>
+            <div className={styles.label}>{t('browserWallet')}</div>
           </>
         )}
       </BoxRounded>
@@ -79,7 +83,7 @@ const ModalConnectWallet: FC<ModalConnectWalletProps> = ({ modalProps }) => {
           size={2.4}
         />
         <div className={cx(styles.label, !isOpen && isBrowserWalletConnecting && styles.labelGrey)}>
-          Wallet connect
+          {t('walletConnect')}
         </div>
       </BoxRounded>
     </Modal>

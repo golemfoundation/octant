@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { Trans } from 'react-i18next';
 
 import modalEffectiveLockedBalance from 'assets/images/modalEffectiveLockedBalance.png';
 import Img from 'components/core/Img/Img';
@@ -14,18 +15,10 @@ const ModalEffectiveLockedBalance: FC<ModalEffectiveLockedBalanceProps> = ({ mod
     Image={<Img className={styles.image} src={modalEffectiveLockedBalance} />}
   >
     <Text>
-      Effective Balance refers to Locked GLM that has been locked for a full epoch and is generating
-      rewards. Rewards for GLM locked during Epoch <span className={styles.bold}>T</span> will be
-      available in Epoch <span className={styles.bold}>T+2</span>.
-      <br />
-      <br />
-      Consider locking 100 GLM in Epoch 1 and 1000 GLM in Epoch 2. During Epoch 2 Locked Balance
-      will be 1100 GLM, but Effective Balance will be 100 GLM, because the 1000 GLM has not been
-      locked for a full epoch yet.
-      <br />
-      <br />
-      During Epoch 3, rewards will be generated on the entire balance, so Effective Balance will
-      become 1100 GLM.
+      <Trans
+        components={[<span className={styles.bold} />, <span className={styles.bold} />]}
+        i18nKey="components.dedicated.modalEffectiveLockedBalance.text"
+      />
     </Text>
   </Modal>
 );

@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import { useFormik } from 'formik';
 import React, { FC, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
@@ -22,6 +23,9 @@ import ModalEthWithdrawingProps, { FormValues } from './types';
 import { validationSchema, formInitialValues } from './utils';
 
 const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
+  const { t, i18n } = useTranslation('translation', {
+    keyPrefix: 'components.dedicated.modalWithdrawEth',
+  });
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: withdrawableUserEth } = useWithdrawableUserEth();
   const { data: isDecisionWindowOpen, refetch: refetchIsDecisionWindowOpen } =
@@ -31,7 +35,7 @@ const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
   const withdrawEthMutation = useWithdrawEth({
     onSuccess: () => {
       triggerToast({
-        title: 'Transaction successful',
+        title: i18n.t('common.transactionSuccessful'),
       });
     },
   });
@@ -49,11 +53,13 @@ const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
   }, [modalProps.isOpen]);
 
   return (
-    <Modal header="Withdraw ETH" {...modalProps}>
+    <Modal header={t('withdrawETH')} {...modalProps}>
       <form className={styles.form} onSubmit={formik.handleSubmit}>
         {isDecisionWindowOpen && (
           <BoxRounded className={styles.element} isGrey isVertical>
-            Withdrawals are distributed when Epoch {currentEpoch} ends
+            {t('withdrawalsDistributedEpoch', {
+              currentEpoch,
+            })}
             <TimeCounter
               className={styles.timeCounter}
               duration={currentEpochProps?.decisionWindow}
@@ -68,7 +74,7 @@ const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
           className={styles.element}
           isGrey
           isVertical
-          title="Rewards Budget"
+          title={t('rewardsBudget')}
         >
           <DoubleValue
             cryptoCurrency="ethereum"
@@ -100,7 +106,7 @@ const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
               suffix: 'ETH',
               value: formik.values.valueToWithdraw,
             }}
-            label="Amount to withdraw"
+            label={t('amountToWithdraw')}
           />
         </BoxRounded>
         <Button
@@ -108,7 +114,7 @@ const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
           isDisabled={!formik.isValid}
           isHigh
           isLoading={formik.isSubmitting}
-          label="Request withdrawal"
+          label={t('requestWithdrawal')}
           type="submit"
           variant="cta"
         />

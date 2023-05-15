@@ -2,6 +2,8 @@ import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { string, object, ObjectSchema } from 'yup';
 
+import i18n from 'i18n';
+
 import { CurrentMode, CurrentStepIndex, FormValues } from './types';
 
 export const formInitialValues: FormValues = {
@@ -14,12 +16,14 @@ export const getButtonCtaLabel = (
   isLoading: boolean,
 ): string => {
   if (currentStepIndex === 3) {
-    return 'Done';
+    return i18n.t('components.dedicated.modalGlmLock.done');
   }
   if (isLoading) {
-    return 'Waiting for approval...';
+    return i18n.t('components.dedicated.modalGlmLock.waitingForApproval'); // 'Waiting for approval...';
   }
-  return currentMode === 'lock' ? 'Lock' : 'Unlock';
+  return currentMode === 'lock'
+    ? i18n.t('components.dedicated.modalGlmLock.lock')
+    : i18n.t('components.dedicated.modalGlmLock.unlock');
 };
 
 export const validationSchema = (
@@ -36,10 +40,14 @@ export const validationSchema = (
         test(value, ctx) {
           const newValueBigNumber = parseUnits(value || '0');
           if (currentMode === 'unlock' && newValueBigNumber.gt(depositsValue!)) {
-            return ctx.createError({ message: "You can't unlock more than you have locked" });
+            return ctx.createError({
+              message: i18n.t('components.dedicated.modalGlmLock.cantUnlock'),
+            });
           }
           if (currentMode === 'lock' && newValueBigNumber.gt(dataAvailableFunds!)) {
-            return ctx.createError({ message: "You don't have enough to lock that amount" });
+            return ctx.createError({
+              message: i18n.t('components.dedicated.modalGlmLock.dontHaveEnough'),
+            });
           }
 
           return true;

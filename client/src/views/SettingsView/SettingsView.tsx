@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import React, { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Header from 'components/core/Header/Header';
@@ -22,6 +23,7 @@ const options = [
 ];
 
 const SettingsView = (): ReactElement => {
+  const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
   const {
     setDisplayCurrency,
     setIsAllocateOnboardingAlwaysVisible,
@@ -30,9 +32,9 @@ const SettingsView = (): ReactElement => {
   } = useSettingsStore();
   return (
     <MainLayout dataTest="SettingsView">
-      <Header text="Settings" />
+      <Header text={t('settings')} />
       <BoxRounded className={styles.box} justifyContent="spaceBetween">
-        Choose a display currency
+        {t('chooseDisplayCurrency')}
         <InputSelect
           onChange={option => setDisplayCurrency(option!.value as SettingsData['displayCurrency'])}
           options={options}
@@ -43,7 +45,7 @@ const SettingsView = (): ReactElement => {
         <InputText
           className={styles.box}
           isDisabled
-          label="Allocate value adjusters default"
+          label={t('allocateValueAdjustersDefault')}
           onChange={() => {}}
           suffix="USD"
           value="50.0"
@@ -51,14 +53,14 @@ const SettingsView = (): ReactElement => {
         />
       </BoxRounded>
       <BoxRounded className={styles.box} justifyContent="spaceBetween">
-        Use crypto as main value display
+        {t('cryptoMainValueDisplay')}
         <InputCheckbox
           isChecked={isCryptoMainValueDisplay}
           onChange={({ target: { checked: isChecked } }) => setIsCryptoMainValueDisplay(isChecked)}
         />
       </BoxRounded>
       <BoxRounded className={styles.box} justifyContent="spaceBetween">
-        Always show Allocate onboarding
+        {t('alwaysShowOnboarding')}
         <InputCheckbox
           dataTest="AlwaysShowOnboarding__InputCheckbox"
           isChecked={isAllocateOnboardingAlwaysVisible}
