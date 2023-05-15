@@ -2,6 +2,12 @@
 
 Ensure that the `.env`  file is present. See `.env.template`.
 
+`VITE_IS_USING_LOCAL_CONTRACTS` sets network used by the application to local environment. Please note that this option does not work currently, so unexpected behavior might occur. Local environment with contracts, server, is not currently operational as per `contracts/README.md`.
+
+`VITE_NETWORK` sets network used by the application. Supported values are 'Goerli' and 'Sepolia' with the latter being default. Whenever different value is set, app sets 'Sepolia' anyway.
+
+`VITE_IS_USING_LOCAL_CONTRACTS` set to `true` overrides `VITE_NETWORK`.
+
 ## Proposals
 
 The app fetches proposals addresses from the contract and their data (name, description, etc.) from IPFS. Current expected schema of proposal coming from IPFS is as follows:

@@ -1,37 +1,39 @@
+import { Env } from 'types/env';
+
 // All default values here are example addresses used during development.
-const env = {
+const env: Env = {
   contracts: {
     allocationsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_ALLOCATIONS_ADDRESS || '0x9a1e5fecED685995cC51A6D13Bda19A184079B99',
+      import.meta.env.VITE_ALLOCATIONS_ADDRESS || '0xB4b3a771196a68BfaC5C629EF76Aa7B11a2376Cc',
     allocationsStorageAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
       import.meta.env.VITE_ALLOCATIONS_STORAGE_ADDRESS ||
-      '0x97623a89DC2d3268D9221c73e03b8b0808E80CC1',
+      '0xc7fc74942E4C319627429E6f17a3d285a6c85edA',
     depositsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_DEPOSITS_ADDRESS || '0xFFf04168c4DD28eCb076224bbba621Af4347E767',
+      import.meta.env.VITE_DEPOSITS_ADDRESS || '0xa571e25cE27A0513219c975E6fd2B1095c1B6583',
     epochsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_EPOCHS_ADDRESS || '0xFf2cc5C9fD16dBFef0020b13CDDB59BA4D89BBBC',
+      import.meta.env.VITE_EPOCHS_ADDRESS || '0xdD10d42E75467B96bA1d16Da53E0Fa8B23E51856',
     glmAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_GLM_ADDRESS || '0x4914bdFfFA96a3936304705eE41C2F5CbcAD7774',
+      import.meta.env.VITE_GLM_ADDRESS || '0x71432DD1ae7DB41706ee6a22148446087BdD0906',
     payoutsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_PAYOUTS_ADDRESS || '0xF068e8D19846D2db7b7A2bDFE04F9A332766cAd4',
+      import.meta.env.VITE_PAYOUTS_ADDRESS || '0x5E41644C119CD10FB72E55184A0984d92a136311',
     payoutsManagerAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_PAYOUTS_MANAGER_ADDRESS || '0xE574B8188DD1b3c4d2f33d5193f4D0fc39591c2b',
+      import.meta.env.VITE_PAYOUTS_MANAGER_ADDRESS || '0x501A87Ea3B1648430670d8824E18368b5cB2b844',
     proposalsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_PROPOSALS_ADDRESS || '0x17c09dA7c6Ba1Dd24AdbEB514CF8f07c9aEfd655',
+      import.meta.env.VITE_PROPOSALS_ADDRESS || '0x17Cf4f99d3E967391f9DaDA7dbD69F9A41900B86',
     rewardsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_REWARDS_ADDRESS || '0x93f61768890D5D6D99b44a01bE0d73Dd900725Fc',
+      import.meta.env.VITE_REWARDS_ADDRESS || '0x6ac463a7ecE1C4b6F487a93B6DA4bC9c6eA93e5B',
     trackerAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_TRACKER_ADDRESS || '0x29D23DE66F737bF5e9a7c0D5cBE283e409c857d1',
+      import.meta.env.VITE_TRACKER_ADDRESS || '0x6Bb39cC44F949338261770e9d95eB50C8aeEcC49',
   },
   cryptoValuesEndpoint:
     // @ts-expect-error TS does not understand the way vite imports envs.
@@ -45,9 +47,14 @@ const env = {
   isUsingLocalContracts:
     // @ts-expect-error TS does not understand the way vite imports envs.
     import.meta.env.VITE_IS_USING_LOCAL_CONTRACTS || 'false',
+  // @ts-expect-error TS does not understand the way vite imports envs.
+  network: import.meta.env.VITE_NETWORK || 'Sepolia',
   subgraphAddress:
     // @ts-expect-error TS does not understand the way vite imports envs.
     import.meta.env.VITE_SUBGRAPH_ADDRESS || 'https://octant.world/subgraphs/name/octant',
+  walletConnectProjectId:
+    // @ts-expect-error TS does not understand the way vite imports envs.
+    import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID || '588213fd06714cc7e36ecbc5f2fdfd21',
 };
 
 export default env;
