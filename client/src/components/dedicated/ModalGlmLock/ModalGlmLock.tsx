@@ -20,7 +20,6 @@ import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffective
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useLocks from 'hooks/subgraph/useLocks';
 import useUnlocks from 'hooks/subgraph/useUnlocks';
-import { comma, floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './ModalGlmLock.module.scss';
@@ -147,23 +146,13 @@ const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
           ]}
         >
           <InputsCryptoFiat
+            cryptoCurrency="golem"
             error={formik.errors.valueToDeposeOrWithdraw}
             inputCryptoProps={{
               isDisabled: formik.isSubmitting,
               name: 'valueToDeposeOrWithdraw',
-              onChange: event => {
-                /* eslint-disable no-param-reassign */
-                event.target.value = event.target.value.replace(comma, '.');
-
-                const {
-                  target: { value },
-                } = event;
-
-                if (value && !floatNumberWithUpTo18DecimalPlaces.test(value)) {
-                  return;
-                }
-
-                formik.handleChange(event);
+              onChange: value => {
+                formik.setFieldValue('valueToDeposeOrWithdraw', value);
               },
               onClear: formik.resetForm,
               suffix: 'GLM',

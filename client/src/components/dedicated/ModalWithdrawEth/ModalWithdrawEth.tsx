@@ -14,7 +14,6 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
-import { comma, floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './ModalWithdrawEth.module.scss';
@@ -78,23 +77,13 @@ const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
         </BoxRounded>
         <BoxRounded className={styles.element} isGrey isVertical>
           <InputsCryptoFiat
+            cryptoCurrency="ethereum"
             error={formik.errors.valueToWithdraw}
             inputCryptoProps={{
               isDisabled: withdrawEthMutation.isLoading,
               name: 'valueToWithdraw',
-              onChange: event => {
-                /* eslint-disable no-param-reassign */
-                event.target.value = event.target.value.replace(comma, '.');
-
-                const {
-                  target: { value },
-                } = event;
-
-                if (value && !floatNumberWithUpTo18DecimalPlaces.test(value)) {
-                  return;
-                }
-
-                formik.handleChange(event);
+              onChange: value => {
+                formik.setFieldValue('valueToWithdraw', value);
               },
               onClear: formik.resetForm,
               suffix: 'ETH',
