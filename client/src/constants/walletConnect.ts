@@ -1,4 +1,6 @@
-import { goerli } from 'wagmi/chains';
+import env from 'env';
 
-export const CHAINS = [goerli];
-export const PROJECT_ID = '588213fd06714cc7e36ecbc5f2fdfd21';
+import networkConfig from './networkConfig';
+
+export const CHAINS = networkConfig.chains;
+export const PROJECT_ID = env.walletConnectProjectId;

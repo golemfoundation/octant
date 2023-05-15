@@ -10,6 +10,7 @@ import Svg from 'components/core/Svg/Svg';
 import ModalConnectWallet from 'components/dedicated/ModalConnectWallet/ModalConnectWallet';
 import WalletModal from 'components/dedicated/WalletModal/WalletModal';
 import { IS_INITIAL_LOAD_DONE } from 'constants/dataAttributes';
+import networkConfig from 'constants/networkConfig';
 import env from 'env';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
@@ -100,7 +101,7 @@ const MainLayout: FC<MainLayoutProps> = ({
               <Svg img={octant} size={4} />
               {env.isTestnet === 'true' && (
                 <div className={styles.testnetIndicatorWrapper}>
-                  <div className={styles.testnetIndicator}>GOERLI</div>
+                  <div className={styles.testnetIndicator}>{networkConfig.name}</div>
                 </div>
               )}
             </div>

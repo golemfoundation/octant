@@ -6,7 +6,7 @@ import useContractRewards from 'hooks/contracts/useContractRewards';
 
 import useCurrentEpoch from './useCurrentEpoch';
 
-interface IndividualProposalRewards {
+export interface IndividualProposalRewards {
   projects: {
     address: string;
     donated: BigNumber;

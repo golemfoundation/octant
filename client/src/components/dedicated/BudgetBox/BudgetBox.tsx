@@ -7,7 +7,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
-import { GOERLI_ETHERSCAN_PREFIX } from 'constants/transactions';
+import networkConfig from 'constants/networkConfig';
 import useAvailableFundsGlm from 'hooks/queries/useAvailableFundsGlm';
 
 import styles from './BudgetBox.module.scss';
@@ -66,7 +66,7 @@ const getChildren = (
         {transactionHash ? (
           <Button
             className={styles.button}
-            href={`${GOERLI_ETHERSCAN_PREFIX}/${transactionHash}`}
+            href={`${networkConfig.etherscanAddress}/tx/${transactionHash}`}
             label={t('viewOnEtherscan')}
             variant="link"
           />

@@ -5,8 +5,8 @@ import { useAccount, useNetwork } from 'wagmi';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Loader from 'components/core/Loader/Loader';
-import { GOERLI_CHAIN_ID } from 'constants/chains';
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
+import networkConfig from 'constants/networkConfig';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -14,7 +14,7 @@ import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import localStorageService from 'services/localStorageService';
-import useAllocationsStore from 'store/allocations/store';
+import useAllocationsStore, { initialState } from 'store/allocations/store';
 import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
 import triggerToast from 'utils/triggerToast';
@@ -32,7 +32,7 @@ const validateProposalsInLocalStorage = (
 
 const App = (): ReactElement => {
   const { chain } = useNetwork();
-  const { data: allocations, setAllocations } = useAllocationsStore();
+  const { data: allocations, addAllocations, setAllocations } = useAllocationsStore();
   const {
     data: settings,
     setValuesFromLocalStorage: setValuesFromLocalStorageSettings,
@@ -65,14 +65,14 @@ const App = (): ReactElement => {
   const [chainIdLocal, setChainIdLocal] = useState<number | null>(null);
 
   useEffect(() => {
-    if (chain && chain.id !== GOERLI_CHAIN_ID) {
+    if (chainIdLocal && chainIdLocal !== networkConfig.id) {
       triggerToast({
-        message: 'Please change network to Goerli testnet',
+        message: `Please change network to ${networkConfig.name} testnet`,
         title: 'Wrong network',
         type: 'error',
       });
     }
-  }, [chain]);
+  }, [chainIdLocal]);
 
   useEffect(() => {
     if (chain && chain.id && chain.id !== chainIdLocal) {
@@ -157,27 +157,11 @@ const App = (): ReactElement => {
   }, [isAccountChanging, setIsAccountChanging, queryClient]);
 
   useEffect(() => {
-    if (!userAllocations) {
-      return;
-    }
-    const userAllocationsAddresses = userAllocations.map(({ proposalAddress }) => proposalAddress);
-    if (
-      isConnected &&
-      userAllocations &&
-      userAllocations.length > 0 &&
-      !!allocations &&
-      !allocations.some(allocation => userAllocationsAddresses.includes(allocation))
-    ) {
-      setAllocations([...allocations, ...userAllocationsAddresses]);
-    }
-  }, [isConnected, userAllocations, allocations, setAllocations]);
-
-  useEffect(() => {
+    /**
+     * This hook validates allocations in localStorage
+     * and populates store with them or sets empty array.
+     */
     if (!proposals || proposals.length === 0 || allocations !== null) {
-      return;
-    }
-
-    if (isConnected && !userAllocations) {
       return;
     }
 
@@ -197,7 +181,27 @@ const App = (): ReactElement => {
     if (validatedProposalsInLocalStorage) {
       setAllocations(validatedProposalsInLocalStorage);
     }
-  }, [allocations, isConnected, proposals, userAllocations, setAllocations]);
+  }, [allocations, isConnected, proposals, setAllocations]);
+
+  useEffect(() => {
+    /**
+     * This hook adds userAllocations to the store.
+     * This needs to be done after store is populated with values from localStorage.
+     */
+    if (!userAllocations || allocations === initialState) {
+      return;
+    }
+    const userAllocationsAddresses = userAllocations.map(({ proposalAddress }) => proposalAddress);
+    if (
+      isConnected &&
+      userAllocations &&
+      userAllocations.length > 0 &&
+      !!allocations &&
+      !allocations.some(allocation => userAllocationsAddresses.includes(allocation))
+    ) {
+      addAllocations(userAllocationsAddresses);
+    }
+  }, [isConnected, userAllocations, allocations, addAllocations]);
 
   const areOnboardingValuesSet = Object.values(onboarding).some(value => value !== undefined);
   const areSettingValuesSet = Object.values(settings).some(value => value !== undefined);

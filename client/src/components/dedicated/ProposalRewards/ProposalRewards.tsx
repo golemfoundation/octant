@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import { BigNumber } from 'ethers';
 import React, { FC, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -10,6 +9,7 @@ import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './ProposalRewards.module.scss';
 import ProposalRewardsProps from './types';
+import { getCutOffValueBigNumber, getProgressPercentage } from './utils';
 
 const ProposalRewards: FC<ProposalRewardsProps> = ({
   canFoundedAtHide = true,
@@ -24,13 +24,10 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
   const { data: individualProposalRewards } = useIndividualProposalRewards();
   const { data: proposalRewardsThresholdFraction } = useProposalRewardsThresholdFraction();
 
-  const cutOffValue =
-    individualProposalRewards &&
-    proposalRewardsThresholdFraction &&
-    !individualProposalRewards.sum.isZero()
-      ? BigNumber.from(individualProposalRewards.sum.toNumber() * proposalRewardsThresholdFraction)
-      : BigNumber.from(0);
-
+  const cutOffValue = getCutOffValueBigNumber(
+    individualProposalRewards?.sum,
+    proposalRewardsThresholdFraction,
+  );
   const isProjectFounded = totalValueOfAllocations
     ? totalValueOfAllocations.gte(cutOffValue)
     : false;
@@ -48,14 +45,7 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
           <div className={styles.line} />
         ) : (
           <ProgressBar
-            progressPercentage={
-              totalValueOfAllocations &&
-              cutOffValue &&
-              totalValueOfAllocations.gt(0) &&
-              cutOffValue.gt(0)
-                ? totalValueOfAllocations.mul(100).div(cutOffValue).toNumber()
-                : 0
-            }
+            progressPercentage={getProgressPercentage(totalValueOfAllocations, cutOffValue)}
             variant="orange"
           />
         )}
