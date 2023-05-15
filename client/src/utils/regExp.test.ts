@@ -1,6 +1,38 @@
-import { comma, dotAndZeroes, floatNumberWithUpTo18DecimalPlaces, numbersOnly } from './regExp';
+import {
+  comma,
+  dotAndZeroes,
+  floatNumberWithUpTo18DecimalPlaces,
+  floatNumberWithUpTo2DecimalPlaces,
+  numbersOnly,
+} from './regExp';
 
 const regExpTestCases = [
+  {
+    name: 'floatNumberWithUpTo2DecimalPlaces',
+    regExp: floatNumberWithUpTo2DecimalPlaces,
+    testCases: [
+      { expectedValue: true, test: '1' },
+      { expectedValue: true, test: '1.0' },
+      { expectedValue: true, test: '1.00' },
+      { expectedValue: false, test: '1.000' },
+      { expectedValue: false, test: '1.0000' },
+      { expectedValue: false, test: '1.00000' },
+      { expectedValue: false, test: '1.000000' },
+      { expectedValue: true, test: '1.' },
+      { expectedValue: false, test: '.000000000000000000' },
+      { expectedValue: false, test: '1.a' },
+      { expectedValue: false, test: '1.-' },
+      { expectedValue: false, test: 'abc' },
+      { expectedValue: false, test: '+123123123' },
+      { expectedValue: false, test: '+12312awdawda' },
+      { expectedValue: false, test: '+adawdawd' },
+      { expectedValue: false, test: 'adawdawd' },
+      { expectedValue: false, test: 'test' },
+      { expectedValue: false, test: '+673829123' },
+      { expectedValue: false, test: '/13123123123123' },
+      { expectedValue: true, test: '999999999' },
+    ],
+  },
   {
     name: 'floatNumberWithUpTo18DecimalPlaces',
     regExp: floatNumberWithUpTo18DecimalPlaces,
