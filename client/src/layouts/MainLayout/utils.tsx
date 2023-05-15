@@ -6,6 +6,7 @@ import Svg from 'components/core/Svg/Svg';
 import { IS_INITIAL_LOAD_DONE } from 'constants/dataAttributes';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import { NavigationTab } from 'constants/navigationTabs/types';
+import i18n from 'i18n';
 import { allocateWithNumber } from 'svg/navigation';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
@@ -19,15 +20,17 @@ export function getIndividualRewardText({
   individualReward?: BigNumber;
 }): string {
   if (currentEpoch !== undefined && currentEpoch === 1) {
-    return 'No reward budget yet';
+    return i18n.t('layouts.main.noRewardBudgetYet');
   }
   if (currentEpoch === undefined || individualReward === undefined) {
-    return 'Loading reward budget...';
+    return i18n.t('layouts.main.loadingRewardBudget');
   }
   if (individualReward.isZero()) {
-    return 'No reward budget yet';
+    return i18n.t('layouts.main.noRewardBudgetYet');
   }
-  return `Budget ${getFormattedEthValue(individualReward).fullString}`;
+  return i18n.t('common.budget', {
+    budget: getFormattedEthValue(individualReward).fullString,
+  });
 }
 
 export function getNavigationTabsWithAllocations(

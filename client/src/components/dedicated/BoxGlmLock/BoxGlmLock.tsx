@@ -1,4 +1,5 @@
 import React, { FC, Fragment, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -12,6 +13,9 @@ import useDepositValue from 'hooks/queries/useDepositValue';
 import BoxGlmLockProps from './types';
 
 const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
+  const { t, i18n } = useTranslation('translation', {
+    keyPrefix: 'components.dedicated.boxGlmLock',
+  });
   const { isConnected } = useAccount();
   const [isModalGlmLockOpen, setIsModalGlmLockOpen] = useState<boolean>(false);
   const [isModalEffectiveLockedBalanceOpen, setIsModalEffectiveLockedBalanceOpen] =
@@ -25,7 +29,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
         cryptoCurrency: 'golem',
         valueCrypto: depositsValue,
       },
-      label: 'Current',
+      label: t('current'),
     },
     {
       doubleValueProps: {
@@ -33,7 +37,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
         cryptoCurrency: 'golem',
         valueCrypto: depositEffectiveAtCurrentEpoch,
       },
-      label: 'Effective',
+      label: t('effective'),
       onTooltipClick: () => setIsModalEffectiveLockedBalanceOpen(true),
     },
   ];
@@ -47,15 +51,15 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
           isHigh: true,
           label:
             !depositsValue || (!!depositsValue && depositsValue.isZero())
-              ? 'Lock GLM'
-              : 'Edit Locked GLM',
+              ? i18n.t('common.lockGlm')
+              : t('editLockedGLM'),
           onClick: () => setIsModalGlmLockOpen(true),
           variant: 'cta',
         }}
         className={classNameBox}
         hasSections
         isVertical
-        title="Locked balance"
+        title={t('lockedBalance')}
       >
         <Sections sections={sections} />
       </BoxRounded>

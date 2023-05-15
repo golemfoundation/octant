@@ -1,4 +1,5 @@
 import React, { FC, useState, Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import ModalWithdrawEth from 'components/dedicated/ModalWithdrawEth/ModalWithdrawEth';
@@ -7,6 +8,9 @@ import RewardsBox from 'components/dedicated/RewardsBox/RewardsBox';
 import BoxWithdrawEthProps from './types';
 
 const BoxWithdrawEth: FC<BoxWithdrawEthProps> = ({ classNameBox }) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'components.dedicated.boxWithdrawEth',
+  });
   const { isConnected } = useAccount();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -16,7 +20,7 @@ const BoxWithdrawEth: FC<BoxWithdrawEthProps> = ({ classNameBox }) => {
         buttonProps={{
           isDisabled: !isConnected,
           isHigh: true,
-          label: 'Withdraw Rewards',
+          label: t('withdrawRewards'),
           onClick: () => setIsModalOpen(true),
           variant: 'secondary',
         }}

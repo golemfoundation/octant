@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Description from 'components/core/Description/Description';
@@ -16,6 +17,9 @@ const MetricsTimeSection: FC<MetricsTimeSectionProps> = ({
   currentEpoch,
   onCountingFinish,
 }) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'components.dedicated.metricsTimeSection',
+  });
   const { data: currentEpochProps } = useCurrentEpochProps();
   const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
 
@@ -32,21 +36,24 @@ const MetricsTimeSection: FC<MetricsTimeSectionProps> = ({
   return (
     <div className={className}>
       <Header
-        text={isDecisionWindowOpen ? `Epoch ${currentEpoch} Allocation` : `Epoch ${currentEpoch}`}
+        text={
+          isDecisionWindowOpen
+            ? t('epochAllocation', { currentEpoch })
+            : t('epoch', {
+                currentEpoch,
+              })
+        }
       />
-      {isDecisionWindowOpen && (
-        <Description
-          text="Allocation is the currently active governance period of the epoch when you can allocate
-          funds to projects you want to support."
-        />
-      )}
+      {isDecisionWindowOpen && <Description text={t('descriptionText')} />}
       <BoxRounded
         alignment="left"
         isVertical
         title={
           isDecisionWindowOpen
-            ? `Epoch ${currentEpoch} Allocation ends in`
-            : `Epoch ${currentEpoch} ends in`
+            ? t('epochAllocationEndsIn', { currentEpoch })
+            : t('epochEndsIn', {
+                currentEpoch,
+              })
         }
       >
         <TimeCounter

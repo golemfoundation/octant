@@ -22,6 +22,7 @@ import triggerToast from 'utils/triggerToast';
 import styles from './App.module.scss';
 
 import 'styles/index.scss';
+import 'i18n';
 
 const validateProposalsInLocalStorage = (
   localStorageAllocationItems: string[],

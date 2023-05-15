@@ -1,4 +1,5 @@
 import React from 'react';
+import { Trans } from 'react-i18next';
 
 import stepOneImage from 'assets/images/onboarding/1.png';
 import stepTwoImage from 'assets/images/onboarding/2.png';
@@ -6,80 +7,54 @@ import stepThreeImage from 'assets/images/onboarding/3.png';
 import stepFourImage from 'assets/images/onboarding/4.png';
 import Button from 'components/core/Button/Button';
 import { DISCORD_LINK, OCTANT_DOCS, BLOG_POST } from 'constants/urls';
+import i18n from 'i18n';
 
 import styles from './OnboardingView.module.scss';
 import { Step } from './types';
 
 const steps: Step[] = [
   {
-    header: 'Welcome to Octant',
+    header: i18n.t('views.onboarding.steps.welcomeToOctant.header'),
     image: stepOneImage,
     text: (
-      <div>
-        Octant is a Golem Foundation experiment in decentralised governance and funding projects for
-        the public good.
-        <br />
-        <br />
-        To get started, connect your wallet and lock some GLM in the Earn tab. If you don’t have any
-        GLM or you want to know more about locking, this{' '}
-        <Button href={BLOG_POST} variant="link3">
-          blog post
-        </Button>{' '}
-        has all you need to know to get started.
-      </div>
+      <Trans
+        components={[<Button href={BLOG_POST} variant="link3" />]}
+        i18nKey="views.onboarding.steps.welcomeToOctant.text"
+      />
     ),
   },
   {
-    header: 'Staking rewards',
+    header: i18n.t('views.onboarding.steps.stakingRewards.header'),
     image: stepTwoImage,
     text: (
-      <div>
-        If you lock more than 100 GLM, you will earn rewards in ETH for every epoch you have tokens
-        locked. Tokens can be unlocked at any time.
-        <br />
-        <br />
-        You can choose to withdraw your earnings or allocate them to public good projects, which you
-        can browse in the <span className={styles.bold}>Projects</span> tab.
-      </div>
+      <Trans
+        components={[<span className={styles.bold} />]}
+        i18nKey="views.onboarding.steps.stakingRewards.text"
+      />
     ),
   },
   {
-    header: 'Allocate or Withdraw',
+    header: i18n.t('views.onboarding.steps.allocateOrWithdraw.header'),
     image: stepThreeImage,
     text: (
-      <div>
-        Projects you shortlist for allocation will appear here in the{' '}
-        <span className={styles.bold}>Allocate</span> tab. You can allocate some, or all of your ETH
-        rewards.
-        <br />
-        <br />
-        Rewards allocated will have Golem Foundation match funding applied, so donating will
-        multiply the impact of your earnings compared to withdrawing it.
-      </div>
+      <Trans
+        components={[<span className={styles.bold} />]}
+        i18nKey="views.onboarding.steps.allocateOrWithdraw.text"
+      />
     ),
   },
   {
-    header: 'More information',
+    header: i18n.t('views.onboarding.steps.moreInformation.header'),
     image: stepFourImage,
     text: (
-      <div>
-        The <span className={styles.bold}>Metrics</span> tab shows a range of stats about the
-        current and previous epochs to help inform your allocation decisions and generally provide
-        an overview of Octant.
-        <br />
-        <br />
-        Still have questions or want to reach out?
-        <br />
-        Read the{' '}
-        <Button href={OCTANT_DOCS} variant="link3">
-          Docs
-        </Button>{' '}
-        or join us on{' '}
-        <Button href={DISCORD_LINK} variant="link3">
-          Discord
-        </Button>
-        .
-      </div>
+      <Trans
+        components={[
+          <span className={styles.bold} />,
+          <Button href={OCTANT_DOCS} variant="link3" />,
+          <Button href={DISCORD_LINK} variant="link3" />,
+        ]}
+        i18nKey="views.onboarding.steps.moreInformation.text"
+      />
     ),
   },
 ];

@@ -2,6 +2,7 @@ import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import isEmpty from 'lodash/isEmpty';
 import React, { Fragment, ReactElement, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import AllocationEmptyState from 'components/dedicated/AllocationEmptyState/AllocationEmptyState';
@@ -35,6 +36,7 @@ import useIndividualProposalRewards from '../../hooks/queries/useIndividualPropo
 
 const AllocationView = (): ReactElement => {
   const { isConnected } = useAccount();
+  const { t } = useTranslation('translation', { keyPrefix: 'views.allocation' });
   const { data: allocations } = useAllocationsStore();
   const { data: proposals } = useProposalsContract();
   const [currentView, setCurrentView] = useState<CurrentView>('edit');
@@ -57,7 +59,7 @@ const AllocationView = (): ReactElement => {
       setCurrentView('edit');
       setSelectedItemAddress(null);
       triggerToast({
-        title: 'Allocation successful.',
+        title: t('allocationSuccessful'),
       });
       await refetchMatchedProposalRewards();
       await refetchUserAllocation();

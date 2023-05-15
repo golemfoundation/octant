@@ -1,0 +1,197 @@
+{
+  "api": {
+    "errorMessage": {
+      "allocations": {
+        "allocateAboveRewardsBudget": "You don't have that much in your rewards budget. Please try again when you have earned some more rewards.",
+        "decisionWindowClosed": "The allocation period is not open at the moment. Please try again later.",
+        "notStartedYet": "The epoch hasn't started yet. Please try again later."
+      },
+      "deposits": {
+        "cannotTransferFromSender": "Something went wrong with the GLM transfer, but your funds are safe. Please try again.",
+        "depositIsSmaller": "Not enough funds."
+      },
+      "history": {
+        "loadingEncounteredAnError": "Loading of history of operations encountered a problem. Please try again."
+      },
+      "userRejectedTransaction": "User rejected transaction",
+      "default": "Oops, something went wrong there. Please reload the app and try again."
+    }
+  },
+  "common": {
+    "allocationValuesNotAvailable": "Allocation values are not available",
+    "budget": "Budget {{budget}}",
+    "lockGlm": "Lock GLM",
+    "transactionSuccessful": "Transaction successful"
+  },
+  "components": {
+    "dedicated": {
+      "allocationEmptyState": {
+        "text": "<0>You haven’t made any allocations yet. <br/> Need a bit of help getting started?</0>",
+        "joinUsOnDiscord": "Join us on Discord"
+      },
+      "allocationInfoBoxes": {
+        "decisionWindowClosed": "The decision window is now closed. Allocating funds is not possible.",
+        "connectWallet": "In order to manipulate allocation values and vote, please connect your wallet first."
+      },
+      "allocationNavigation": {
+        "allocate": "Allocate",
+        "confirm": "Confirm",
+        "edit": "Edit",
+        "reset": "Reset"
+      },
+      "allocationSummary": {
+        "afterAllocation": "After Allocation {{budget}}",
+        "allocations": "Allocations {{allocations}}",
+        "claimed": "Claimed {{claimed}}",
+        "confirmEpochAllocation": "Confirm Epoch {{currentEpoch}} Allocation",
+        "estimatedMatchFunding": "Estimated Match Funding {{matchedRewards}}",
+        "header": {
+          "allocations": "Send funds to {{allocationsLength}} projects",
+          "proposal": "Send funds to {{proposal}}"
+        },
+        "totalDonation": "Total donation"
+      },
+      "boxGlmLock": {
+        "current": "Current",
+        "editLockedGLM": "Edit Locked GLM",
+        "effective": "Effective",
+        "lockedBalance": "Locked balance"
+      },
+      "boxWithdrawEth": {
+        "withdrawRewards": "Withdraw Rewards"
+      },
+      "budgetBox": {
+        "approve2Transactions": "Please approve 2 transactions in your wallet. The first (required only once and for locking) allows ERC-20 tokens, and the second locks / unlocks GLM.",
+        "currentlyLocked": "Currently Locked",
+        "stakeWillUpdate": "Your stake will update when the transaction is confirmed",
+        "waitingForTransactionHash": "Waiting for transaction hash from Etherscan...",
+        "walletBalanceAvailable": "<0>{{availableFunds}} GLM</0> \u00a0 wallet balance available",
+        "viewOnEtherscan": "View on Etherscan"
+      },
+      "donorsList": {
+        "donors": "Donors",
+        "seeAll": "See all",
+        "seeLess": "See less"
+      },
+      "history": {
+        "allocatedFunds": "Allocated funds",
+        "history": "History",
+        "lockedGLM": "Locked GLM",
+        "projects": "Projects",
+        "unlockedGLM": "Unlocked GLM"
+      },
+      "metricsTimeSection": {
+        "descriptionText": "Allocation is the currently active governance period of the epoch when you can allocate funds to projects you want to support.",
+        "epoch": "Epoch {{currentEpoch}}",
+        "epochEndsIn": "Epoch {{currentEpoch}} ends in",
+        "epochAllocation": "Epoch {{currentEpoch}} Allocation",
+        "epochAllocationEndsIn": "Epoch {{currentEpoch}} Allocation ends in"
+      },
+      "modalConnectWallet": {
+        "browserWallet": "Browser wallet",
+        "connecting": "Connecting ...",
+        "connectVia": "Connect via",
+        "walletConnect": "Wallet connect"
+      },
+      "modalEffectiveLockedBalance": {
+        "text": "Effective Balance refers to Locked GLM that has been locked for a full epoch and is generating rewards. Rewards for GLM locked during Epoch <0>T</0> will be available in Epoch <1>T+2</1>. <br/> <br/> Consider locking 100 GLM in Epoch 1 and 1000 GLM in Epoch 2. During Epoch 2 Locked Balance will be 1100 GLM, but Effective Balance will be 100 GLM, because the 1000 GLM has not been locked for a full epoch yet. <br/> <br/> During Epoch 3, rewards will be generated on the entire balance, so Effective Balance will become 1100 GLM."
+      },
+      "modalGlmLock": {
+        "unlockGLM": "Unlock GLM",
+        "lock": "Lock",
+        "unlock": "Unlock",
+        "submit": "Submit",
+        "approveAndLock": "Approve & Lock",
+        "done": "Done",
+        "withdraw": "Withdraw",
+        "amountToLock": "Amount to lock",
+        "amountToUnlock": "Amount to unlock",
+        "waitingForApproval": "Waiting for approval...",
+        "cantUnlock": "You can't unlock more than you have locked",
+        "dontHaveEnough": "You don't have enough to lock that amount"
+      },
+      "modalWithdrawEth": {
+        "withdrawETH": "Withdraw ETH",
+        "withdrawalsDistributedEpoch": "Withdrawals are distributed when Epoch {{currentEpoch}} ends",
+        "rewardsBudget": "Rewards Budget",
+        "amountToWithdraw": "Amount to withdraw",
+        "requestWithdrawal": "Request withdrawal",
+        "dontHaveThatMuchToWithdraw": "You don't have that much to withdraw"
+      },
+      "proposalLoadingStates": {
+        "text": "Loading of a proposal <br/> encountered an error."
+      },
+      "proposalRewards": {
+        "totalDonated": "Total donated",
+        "fundedAt": "Funded at"
+      },
+      "rewardsBox": {
+        "availableNow": "Available now",
+        "rewards": "Rewards"
+      },
+      "timeCounter": {
+        "days": "Days",
+        "hours": "Hours",
+        "hrs": "Hrs",
+        "min": "Min",
+        "minutes": "Minutes",
+        "sec": "Sec",
+        "seconds": "Seconds"
+      },
+      "walletModal": {
+        "balances": "Balances",
+        "connectedWalletBalances": "Connected Wallet Balances",
+        "disconnectWallet": "Disconnect Wallet"
+      }
+    }
+  },
+  "layouts": {
+    "main": {
+      "connectWallet": "Connect wallet",
+      "noRewardBudgetYet": "No reward budget yet",
+      "loadingRewardBudget": "Loading reward budget..."
+    }
+  },
+  "views": {
+    "allocation": {
+      "allocationSuccessful": "Allocation successful"
+    },
+    "metrics": {
+      "ethStaked": "ETH Staked",
+      "glmLockedTotalSupplyPercentage": "GLM Locked as % of Total Supply",
+      "glmStaked": "GLM Staked",
+      "totalValueStakedDescription": "The total value staked on Octant to date, showing ETH staked by the Golem Foundation and GLM locked by Octant users.",
+      "valueLocked": "Value Locked"
+    },
+    "onboarding": {
+      "steps": {
+        "welcomeToOctant": {
+          "header": "Welcome to Octant",
+          "text": "Octant is a Golem Foundation experiment in decentralised governance and funding projects for the public good. <br/> <br/> To get started, connect your wallet and lock some GLM in the Earn tab. If you don’t have any GLM or you want to know more about locking, this <0> blog post </0> has all you need to know to get started."
+        },
+        "stakingRewards": {
+          "header": "Staking rewards",
+          "text": "If you lock more than 100 GLM, you will earn rewards in ETH for every epoch you have tokens locked. Tokens can be unlocked at any time. <br/> <br/> You can choose to withdraw your earnings or allocate them to public good projects, which you can browse in the <0>Projects</0> tab."
+        },
+        "allocateOrWithdraw": {
+          "header": "Allocate or Withdraw",
+          "text": "Projects you shortlist for allocation will appear here in the <0>Allocate</0> tab. You can allocate some, or all of your ETH rewards. <br/> <br/> Rewards allocated will have Golem Foundation match funding applied, so donating will multiply the impact of your earnings compared to withdrawing it."
+        },
+        "moreInformation": {
+          "header": "More information",
+          "text": "The <0>Metrics</0> tab shows a range of stats about the current and previous epochs to help inform your allocation decisions and generally provide an overview of Octant. <br/> <br/> Still have questions or want to reach out? <br /> Read the <1>Docs</1> or join us on <2>Discord</2>."
+        }
+      }
+    },
+    "proposal": {
+      "loadingProblem": "Loading of this proposal encountered a problem."
+    },
+    "settings": {
+      "settings": "Settings",
+      "chooseDisplayCurrency": "Choose a display currency",
+      "allocateValueAdjustersDefault": "Allocate value adjusters default",
+      "cryptoMainValueDisplay": "Use crypto as main value display",
+      "alwaysShowOnboarding": "Always show Allocate onboarding"
+    }
+  }
+}

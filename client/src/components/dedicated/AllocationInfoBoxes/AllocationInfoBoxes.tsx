@@ -1,4 +1,5 @@
 import React, { FC, Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 
@@ -8,19 +9,25 @@ const AllocationInfoBoxes: FC<AllocationInfoBoxesProps> = ({
   classNameBox,
   isDecisionWindowOpen,
   isConnected,
-}) => (
-  <Fragment>
-    {!isDecisionWindowOpen && (
-      <BoxRounded alignment="center" className={classNameBox}>
-        The decision window is now closed. Allocating funds is not possible.
-      </BoxRounded>
-    )}
-    {!isConnected && (
-      <BoxRounded alignment="center" className={classNameBox}>
-        In order to manipulate allocation values and vote, please connect your wallet first.
-      </BoxRounded>
-    )}
-  </Fragment>
-);
+}) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'components.dedicated.allocationInfoBoxes',
+  });
+
+  return (
+    <Fragment>
+      {!isDecisionWindowOpen && (
+        <BoxRounded alignment="center" className={classNameBox}>
+          {t('decisionWindowClosed')}
+        </BoxRounded>
+      )}
+      {!isConnected && (
+        <BoxRounded alignment="center" className={classNameBox}>
+          {t('connectWallet')}
+        </BoxRounded>
+      )}
+    </Fragment>
+  );
+};
 
 export default AllocationInfoBoxes;

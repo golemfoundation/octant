@@ -1,6 +1,7 @@
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import React, { FC, Fragment, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
@@ -24,15 +25,26 @@ const getHeader = (
   proposals: ExtendedProposal[],
   allocations: AllocationSummaryProps['allocations'],
 ) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'components.dedicated.allocationSummary',
+  });
+
   if (allocations.length > 1) {
-    return `Send funds to ${allocations.length} projects`;
+    return t('header.allocations', {
+      allocationsLength: allocations.length,
+    });
   }
   const proposal = proposals.find(({ address }) => allocations[0] === address)!.name;
 
-  return `Send funds to ${proposal}`;
+  return t('header.proposal', {
+    proposal,
+  });
 };
 
 const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocationValues = {} }) => {
+  const { t, i18n } = useTranslation('translation', {
+    keyPrefix: 'components.dedicated.allocationSummary',
+  });
   const [isProjectsTileExpanded, setIsProjectsTileExpanded] = useState<boolean>(false);
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: proposalsContracts } = useProposalsContract();
@@ -54,7 +66,11 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocation
 
   return (
     <Fragment>
-      <Header text={`Confirm Epoch ${currentEpoch} Allocation`} />
+      <Header
+        text={t('confirmEpochAllocation', {
+          currentEpoch,
+        })}
+      />
       <BoxRounded
         alignment="left"
         className={styles.box}
@@ -66,20 +82,24 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocation
         isExpanded={isProjectsTileExpanded}
         isVertical
         onToggle={isExpanded => setIsProjectsTileExpanded(isExpanded)}
-        suffix={`Estimated Match Funding ${
-          matchedRewards ? getFormattedEthValue(matchedRewards).fullString : '0'
-        }`}
+        suffix={t('estimatedMatchFunding', {
+          matchedRewards: matchedRewards ? getFormattedEthValue(matchedRewards).fullString : '0',
+        })}
         title={getHeader(proposals, allocations)}
       >
         <div className={styles.totalDonation}>
-          {isProjectsTileExpanded && <div className={styles.label}>Total donation</div>}
+          {isProjectsTileExpanded && <div className={styles.label}>{t('totalDonation')}</div>}
           <DoubleValue valueCrypto={newAllocationValuesSum} />
         </div>
       </BoxRounded>
       <BoxRounded isVertical>
         <div className={styles.values}>
           <div>
-            <div className={styles.header}>Budget {budgetBefore && `(${budgetBefore.suffix})`}</div>
+            <div className={styles.header}>
+              {i18n.t('common.budget', {
+                budget: budgetBefore && `(${budgetBefore.suffix})`,
+              })}
+            </div>
             <DoubleValue
               className={styles.budgetValue}
               valueString={budgetBefore ? budgetBefore.value : '0.0'}
@@ -91,7 +111,9 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocation
           </div>
           <div>
             <div className={styles.header}>
-              After Allocation {budgetAfter && `(${budgetAfter.suffix})`}
+              {t('afterAllocation', {
+                budget: budgetAfter && `(${budgetAfter.suffix})`,
+              })}
             </div>
             <DoubleValue
               className={styles.budgetValue}
@@ -101,8 +123,12 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocation
         </div>
         <ProgressBar
           className={styles.progressBar}
-          labelLeft={`Allocations ${getFormattedEthValue(newAllocationValuesSum).fullString}`}
-          labelRight={`Claimed ${getFormattedEthValue(newClaimableAndClaimed).fullString}`}
+          labelLeft={t('allocations', {
+            allocations: getFormattedEthValue(newAllocationValuesSum).fullString,
+          })}
+          labelRight={t('claimed', {
+            claimed: getFormattedEthValue(newClaimableAndClaimed).fullString,
+          })}
           progressPercentage={newAllocationValuesSum
             .mul(100)
             .div(newClaimableAndClaimed.add(newAllocationValuesSum))

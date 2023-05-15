@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import React, { FC, useState, Fragment, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
@@ -31,6 +32,7 @@ const MainLayout: FC<MainLayoutProps> = ({
   classNameBody,
   navigationTabs,
 }) => {
+  const { t } = useTranslation('translation', { keyPrefix: 'layouts.main' });
   const numberOfAllocationsRef = useRef<HTMLDivElement>(null);
   const [isModalConnectWalletOpen, setIsModalConnectWalletOpen] = useState(false);
   const [localAllocationsLenght, setLocalAllocationsLenght] = useState<number>();
@@ -124,7 +126,7 @@ const MainLayout: FC<MainLayoutProps> = ({
               ) : (
                 <Button
                   isSmallFont
-                  label="Connect wallet"
+                  label={t('connectWallet')}
                   onClick={() => setIsModalConnectWalletOpen(true)}
                   variant="cta"
                 />

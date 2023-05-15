@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Description from 'components/core/Description/Description';
@@ -18,6 +19,7 @@ import MainLayout from 'layouts/MainLayout/MainLayout';
 import styles from './MetricsView.module.scss';
 
 const MetricsView = (): ReactElement => {
+  const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { refetch: refetchCurrentEpochProps } = useCurrentEpochProps();
   const { data: currentEpoch, refetch: refetchCurrentEpoch } = useCurrentEpoch({
     refetchOnWindowFocus: true,
@@ -46,22 +48,19 @@ const MetricsView = (): ReactElement => {
         onCountingFinish={onCountingFinish}
       />
       <div className={styles.element}>
-        <Header text="Value Locked" />
-        <Description
-          text="The total value staked on Octant to date, showing ETH staked by the Golem Foundation and
-          GLM locked by Octant users."
-        />
-        <BoxRounded alignment="left" className={styles.box} isVertical title="ETH Staked">
+        <Header text={t('valueLocked')} />
+        <Description text={t('totalValueStakedDescription')} />
+        <BoxRounded alignment="left" className={styles.box} isVertical title={t('ethStaked')}>
           <DoubleValue cryptoCurrency="ethereum" valueCrypto={ETH_STAKED} />
         </BoxRounded>
-        <BoxRounded alignment="left" className={styles.box} isVertical title="GLM Locked">
+        <BoxRounded alignment="left" className={styles.box} isVertical title={t('glmStaked')}>
           <DoubleValue cryptoCurrency="golem" valueCrypto={glmLocked} />
         </BoxRounded>
         <BoxRounded
           alignment="left"
           className={styles.box}
           isVertical
-          title="GLM Locked as % of Total Supply"
+          title={t('glmLockedTotalSupplyPercentage')}
         >
           <DoubleValue valueString={lockedRatio} />
           <ProgressBar

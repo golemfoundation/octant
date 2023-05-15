@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import { parseUnits } from 'ethers/lib/utils';
 import React, { Fragment, ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -19,6 +20,7 @@ import styles from './History.module.scss';
 import { sortAllocationsAndLocks } from './utils';
 
 const History = (): ReactElement => {
+  const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.history' });
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
   } = useSettingsStore(({ data }) => ({
@@ -46,7 +48,7 @@ const History = (): ReactElement => {
 
   return (
     <div className={styles.root}>
-      <div className={styles.header}>History</div>
+      <div className={styles.header}>{t('history')}</div>
       {!isListAvailable || timeCurrentEpochStart === undefined ? (
         <Loader className={styles.loader} />
       ) : (
@@ -75,8 +77,11 @@ const History = (): ReactElement => {
                     <div className={styles.iconAndTitle}>
                       <Svg img={allocate} size={4} />
                       <div className={styles.titleAndSubtitle}>
-                        <div className={styles.title}>Allocated funds</div>
-                        <div className={styles.subtitle}>{element.array.length} Projects</div>
+                        <div className={styles.title}>{t('allocatedFunds')}</div>
+                        <div className={styles.subtitle}>
+                          {element.array.length}
+                          {t('projects')}
+                        </div>
                       </div>
                     </div>
                     <div className={styles.values}>
@@ -102,7 +107,7 @@ const History = (): ReactElement => {
                     <Svg img={donation} size={4} />
                     <div className={styles.titleAndSubtitle}>
                       <div className={styles.title}>
-                        {element.type === 'Unlock' ? `Unlocked GLM` : `Locked GLM`}
+                        {element.type === 'Unlock' ? t('unlockedGLM') : t('lockedGLM')}
                       </div>
                     </div>
                   </div>

@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Button from 'components/core/Button/Button';
 
@@ -14,24 +15,28 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
   currentView,
   isSummaryEnabled,
 }) => {
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'components.dedicated.allocationNavigation',
+  });
+
   const buttonPreviousProps =
     currentView === 'edit'
       ? {
-          label: 'Reset',
+          label: t('reset'),
           onClick: onResetAllocationValues,
         }
       : {
-          label: 'Edit',
+          label: t('edit'),
           onClick: () => setCurrentView('edit'),
         };
   const buttonNextProps =
     currentView === 'edit'
       ? {
-          label: 'Allocate',
+          label: t('allocate'),
           onClick: () => setCurrentView('summary'),
         }
       : {
-          label: 'Confirm',
+          label: t('confirm'),
           onClick: onAllocate,
         };
   return (
