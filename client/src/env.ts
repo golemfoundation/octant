@@ -21,10 +21,11 @@ const env: Env = {
       import.meta.env.VITE_GLM_ADDRESS || '0x71432DD1ae7DB41706ee6a22148446087BdD0906',
     payoutsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_PAYOUTS_ADDRESS || '0x5E41644C119CD10FB72E55184A0984d92a136311',
+      import.meta.env.VITE_OCTANT_PAYOUTS_ADDRESS || '0x5E41644C119CD10FB72E55184A0984d92a136311',
     payoutsManagerAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
-      import.meta.env.VITE_PAYOUTS_MANAGER_ADDRESS || '0x501A87Ea3B1648430670d8824E18368b5cB2b844',
+      import.meta.env.VITE_OCTANT_PAYOUTS_MANAGER_ADDRESS ||
+      '0x501A87Ea3B1648430670d8824E18368b5cB2b844',
     proposalsAddress:
       // @ts-expect-error TS does not understand the way vite imports envs.
       import.meta.env.VITE_PROPOSALS_ADDRESS || '0x17Cf4f99d3E967391f9DaDA7dbD69F9A41900B86',
