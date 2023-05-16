@@ -50,6 +50,7 @@ export default defineConfig(({ mode }) => {
         hooks: path.resolve(__dirname, 'src/hooks'),
         i18n: path.resolve(__dirname, 'src/i18n'),
         layouts: path.resolve(__dirname, 'src/layouts'),
+        locales: path.resolve(__dirname, 'src/locales'),
         mocks: path.resolve(__dirname, 'src/mocks'),
         routes: path.resolve(__dirname, 'src/routes'),
         services: path.resolve(__dirname, 'src/services'),
