@@ -22,12 +22,14 @@ const ModalConnectWallet: FC<ModalConnectWalletProps> = ({ modalProps }) => {
   const { connectors, connect, pendingConnector, isLoading } = useConnect();
   const { open, isOpen } = useWeb3Modal();
 
-  const connectBrowserWallet = (): void => {
-    const browserWalletConnector = connectors.find(
-      ({ id }) => id === 'injected',
-    ) as InjectedConnector;
-    connect({ connector: browserWalletConnector });
-  };
+  const browserWalletConnector = connectors.find(
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    ({ id, ready }) => id === 'injected' && ready,
+  ) as InjectedConnector;
+
+  const isBrowserWalletConnecting = isLoading && pendingConnector?.id === connector?.id;
+
+  const connectBrowserWallet = (): void => connect({ connector: browserWalletConnector });
 
   const openWalletConnectModal = async (): Promise<void> => {
     if (isConnected) {
@@ -36,8 +38,6 @@ const ModalConnectWallet: FC<ModalConnectWalletProps> = ({ modalProps }) => {
     await open();
   };
 
-  const isBrowserWalletConnecting = isLoading && pendingConnector?.id === connector?.id;
-
   return (
     <Modal
       bodyClassName={styles.modal}
@@ -45,31 +45,33 @@ const ModalConnectWallet: FC<ModalConnectWalletProps> = ({ modalProps }) => {
       isOpen={modalProps.isOpen && !isConnected}
       onClosePanel={modalProps.onClosePanel}
     >
-      <BoxRounded
-        className={styles.browserWalletTile}
-        isGrey
-        justifyContent="start"
-        onClick={isBrowserWalletConnecting ? undefined : connectBrowserWallet}
-      >
-        {isBrowserWalletConnecting ? (
-          <>
-            <div className={styles.icon}>
-              <Loader />
-            </div>
-            <div className={styles.label}>{t('connecting')}</div>
-          </>
-        ) : (
-          <>
-            <Svg
-              classNameWrapper={styles.icon}
-              displayMode="wrapperCustom"
-              img={browserWallet}
-              size={3.2}
-            />
-            <div className={styles.label}>{t('browserWallet')}</div>
-          </>
-        )}
-      </BoxRounded>
+      {browserWalletConnector && (
+        <BoxRounded
+          className={styles.browserWalletTile}
+          isGrey
+          justifyContent="start"
+          onClick={isBrowserWalletConnecting ? undefined : connectBrowserWallet}
+        >
+          {isBrowserWalletConnecting ? (
+            <>
+              <div className={styles.icon}>
+                <Loader />
+              </div>
+              <div className={styles.label}>{t('connecting')}</div>
+            </>
+          ) : (
+            <>
+              <Svg
+                classNameWrapper={styles.icon}
+                displayMode="wrapperCustom"
+                img={browserWallet}
+                size={3.2}
+              />
+              <div className={styles.label}>{t('browserWallet')}</div>
+            </>
+          )}
+        </BoxRounded>
+      )}
       <BoxRounded
         isGrey
         justifyContent="start"
