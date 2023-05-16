@@ -1,12 +1,12 @@
 {
-  "goerli": {
+  "sepolia": {
     "Allocations": {
-      "address": "0x17e1cC72420909944B65266D724eB4836A5fd987",
-      "startBlock": 8415400
+      "address": "0xB4b3a771196a68BfaC5C629EF76Aa7B11a2376Cc",
+      "startBlock": 3443486
     },
     "Deposits": {
-      "address": "0x9b89577bE6dB818897d65Ff2988dacF8026206E7",
-      "startBlock": 8415400
+      "address": "0xa571e25cE27A0513219c975E6fd2B1095c1B6583",
+      "startBlock": 3443486
     }
   },
   "localhost": {

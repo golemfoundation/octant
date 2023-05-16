@@ -15,4 +15,4 @@ FROM root AS deploy
 COPY --from=build /root/.cache/hardhat-nodejs/ /root/.cache/hardhat-nodejs/
 COPY --from=build /app/ /app/
 ENTRYPOINT [ "/app/entrypoint.sh" ]
-CMD [ "goerli" ]
+CMD [ "sepolia" ]

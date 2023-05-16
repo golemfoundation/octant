@@ -12,10 +12,10 @@ If you're doing a local deployment, please be sure to change `hardhat` to `local
 `networks.json` (hardhat-deploy plugin bug - cannot set "localhost" as a default network).
 You can run `yarn prepare-local-test-env` from project directory to generate some events subgraph will index.
 
-### Goerli
+### Sepolia
 
 Also, generated file doesn't contain `startBlock` fields indicating the height on which the graph should
-start indexing. it's good to add it if you do `goerli` deployment to make indexing faster. You can set
+start indexing. it's good to add it if you do `sepolia` deployment to make indexing faster. You can set
 it to the block before the one where you deployed your contract.
 
 ### Client
@@ -40,9 +40,9 @@ yarn test
 yarn build:localhost
 ```
 
-### Goerli
+### Sepolia
 ```bash
-yarn build:goerli
+yarn build:sepolia
 ```
 
 ## Run
@@ -59,10 +59,10 @@ yarn create-subgraph
 yarn deploy:localhost
 ```
 
-### Goerli
+### Sepolia
 ```bash
 yarn create-subgraph
-yarn deploy:goerli
+yarn deploy:sepolia
 ```
 
 ## Query

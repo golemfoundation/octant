@@ -121,7 +121,7 @@ write_files:
       systemctl start traefik.service gitlab-login.service
 
       DEPLOYMENT_ID=$(curl -H "PRIVATE-TOKEN: ${gitlab_token}" "https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/deployments/" -X POST --data 'environment=${CI_ENVIRONMENT_NAME}&status=running&sha=${CI_COMMIT_SHA}&ref=${CI_COMMIT_REF_NAME}&tag=false' | jq '.id')
-      NETWORK=$${NETWORK:-"goerli"}
+      NETWORK=$${NETWORK:-"sepolia"}
       TAG=$${CI_COMMIT_SHORT_SHA:-"latest"}
       CONTRACTS=$HOME/contracts.txt
 %{ if generate_contracts ~}
@@ -131,8 +131,8 @@ write_files:
       HOME=$HOME docker run \
         --name contracts \
         --network main \
-        -e "GOERLI_URL=${contracts_alchemy_api_url}" \
-        -e "GOERLI_PRIVATE_KEY=${wallet_private_key}" \
+        -e "TESTNET_RPC_URL=${contracts_alchemy_api_url}" \
+        -e "TESTNET_PRIVATE_KEY=${wallet_private_key}" \
         -e "ETHERSCAN_API_KEY=${etherscan_api_key}" \
         -v $HOME/deployments:/app/deployments \
         ${images_prefix}/contracts:${tag} ${network}
@@ -175,7 +175,7 @@ write_files:
       echo "SUBGRAPH_ENDPOINT=http://graph-node:8000/subgraphs/name/octant" >> $HOME/envfile.backend
       # Generate networks.json file
       echo "{ \
-        \"goerli\": { \
+        \"sepolia\": { \
           \"Allocations\": { \
             \"address\": \"$ALLOCATIONS_ADDRESS\", \
             \"startBlock\": $BLOCK_NUMBER \
