@@ -2,7 +2,7 @@
 # Docker entrypoint
 set -e
 
-NETWORK=${1:-"goerli"}
+NETWORK=${1:-"sepolia"}
 
 echo "Network:      $NETWORK"
 echo

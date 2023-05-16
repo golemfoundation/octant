@@ -4,7 +4,7 @@ schema:
 dataSources:
   - kind: ethereum
     name: Allocations
-    network: goerli
+    network: sepolia
     source:
       abi: Allocations
       address: "0x39B50A32a38CB843Cc70B3342cB4E8b2C33be727"
@@ -24,7 +24,7 @@ dataSources:
       file: ./src/allocations.ts
   - kind: ethereum
     name: Deposits
-    network: goerli
+    network: sepolia
     source:
       abi: Deposits
       address: "0x9b89577bE6dB818897d65Ff2988dacF8026206E7"

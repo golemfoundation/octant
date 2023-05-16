@@ -2,7 +2,7 @@
 # Docker entrypoint
 set -e
 
-NETWORK=${NETWORK:-"goerli"}
+NETWORK=${NETWORK:-"sepolia"}
 SUBGRAPH_URL=${SUBGRAPH_URL:-"http://127.0.0.1:8020"}
 IPFS_URL=${IPFS_URL:-"http://127.0.0.1:5001"}
 LABEL=${CI_COMMIT_SHORT_SHA:-"VM_$HOSTNAME"}

@@ -108,7 +108,7 @@ variable "generate_contracts" {
 variable "network" {
   type        = string
   description = "Target network"
-  default     = "goerli"
+  default     = "sepolia"
 }
 
 variable "octant_branch" {
