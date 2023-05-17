@@ -79,8 +79,7 @@ const History = (): ReactElement => {
                       <div className={styles.titleAndSubtitle}>
                         <div className={styles.title}>{t('allocatedFunds')}</div>
                         <div className={styles.subtitle}>
-                          {element.array.length}
-                          {t('projects')}
+                          {element.array.length} {t('projects')}
                         </div>
                       </div>
                     </div>
