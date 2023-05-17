@@ -1,9 +1,8 @@
-from flask import render_template, make_response, send_from_directory, Response
+from flask import Response
 from flask_restx import Resource, Namespace
 
-from app import settings
-from app.extensions import api
 from app.controllers import epochs
+from app.extensions import api
 
 ns = Namespace("epochs", description="Octant epochs")
 api.add_namespace(ns)
@@ -15,9 +14,11 @@ api.add_namespace(ns)
     This endpoint should be executed at the beginning of an epoch to activate \
     a decision window."
 )
+@ns.response(
+    200, "Snapshot could not be created due to an existing snapshot for previous epoch"
+)
+@ns.response(201, "Snapshot created successfully")
 class EpochsSnapshot(Resource):
     def post(self):
         epoch = epochs.snapshot_previous_epoch()
-        status = 201 if epoch > 0 else 409
-
-        return Response(status=status)
+        return ({"epoch": epoch}, 201) if epoch is not None else Response()

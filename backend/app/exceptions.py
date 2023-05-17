@@ -16,7 +16,7 @@ class OctantException(Exception):
             self.status_code = status_code
 
     def to_json(self):
-        return jsonify(self.message)
+        return jsonify({"message": self.message})
 
 
 def handle_octant_exception(e: OctantException):
