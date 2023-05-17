@@ -29,8 +29,11 @@ class Allocation(Model):
     amount = Column(db.String, nullable=False)
 
 
-class OnchainSnapshot(Model):
-    __tablename__ = "onchain_snapshot"
+class EpochSnapshot(Model):
+    __tablename__ = "epoch_snapshots"
+
     id = Column(db.Integer, primary_key=True)
-    epoch_no = Column(db.Integer, nullable=False, unique=True)
+    epoch = Column(db.Integer, nullable=False, unique=True)
     glm_supply = Column(db.String, nullable=False)
+    eth_proceeds = Column(db.String, nullable=False)
+    total_effective_deposit = Column(db.String, nullable=False)

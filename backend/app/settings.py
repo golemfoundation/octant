@@ -14,26 +14,21 @@ class Config(object):
     APP_DIR = os.path.abspath(os.path.dirname(__file__))  # This directory
     PROJECT_ROOT = os.path.abspath(os.path.join(APP_DIR, os.pardir))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SUBGRAPH_ENDPOINT = os.getenv(
-        "SUBGRAPH_ENDPOINT", "https://octant.world/subgraphs/name/octant"
-    )
+    SUBGRAPH_ENDPOINT = os.getenv("SUBGRAPH_ENDPOINT")
     WEB3_PROVIDER = Web3.HTTPProvider(os.getenv("ETH_RPC_PROVIDER_URL"))
 
     # Smart contract addresses
-    EPOCHS_CONTRACT_ADDRESS = os.getenv(
-        "EPOCHS_CONTRACT_ADDRESS", "0xFf2cc5C9fD16dBFef0020b13CDDB59BA4D89BBBC"
-    )
-    PROPOSALS_CONTRACT_ADDRESS = os.getenv(
-        "PROPOSALS_CONTRACT_ADDRESS", "0x17c09dA7c6Ba1Dd24AdbEB514CF8f07c9aEfd655"
-    )
-    GNT_CONTRACT_ADDRESS = os.getenv(
-        "GNT_CONTRACT_ADDRESS", "0x9d90f1Df10b797DB0D6368eCBFd8961798be5558"
-    )
-    GLM_CONTRACT_ADDRESS = os.getenv(
-        "GLM_CONTRACT_ADDRESS", "0x4914bdFfFA96a3936304705eE41C2F5CbcAD7774"
+    GNT_CONTRACT_ADDRESS = os.getenv("GNT_CONTRACT_ADDRESS")
+    GLM_CONTRACT_ADDRESS = os.getenv("GLM_CONTRACT_ADDRESS")
+    EPOCHS_CONTRACT_ADDRESS = os.getenv("EPOCHS_CONTRACT_ADDRESS")
+    PROPOSALS_CONTRACT_ADDRESS = os.getenv("PROPOSALS_CONTRACT_ADDRESS")
+    WITHDRAWALS_TARGET_CONTRACT_ADDRESS = os.getenv(
+        "WITHDRAWALS_TARGET_CONTRACT_ADDRESS"
     )
 
-    CHAIN_ID = os.getenv("CHAIN_ID", 5)  # 5 corresponds to Goerli network
+    CHAIN_ID = os.getenv(
+        "CHAIN_ID", 11155111
+    )  # 11155111 corresponds to Sepolia network
 
 
 class ProdConfig(Config):

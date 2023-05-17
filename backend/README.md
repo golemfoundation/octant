@@ -32,7 +32,7 @@ flask db upgrade
 
 Start the server
 ```bash
-flask --app startup run
+python3 startup.py
 ```
 
 ## Test
