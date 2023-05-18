@@ -3,6 +3,7 @@ export type DescriptionVariant = (typeof DESCRIPTION_VARIANTS)[number];
 
 export default interface DescriptionProps {
   className?: string;
+  dataTest?: string;
   text: string;
   variant?: DescriptionVariant;
 }

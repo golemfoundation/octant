@@ -11,5 +11,6 @@ export const checkLocationWithLoader = (url: string): Chainable<any> => {
 
 export const visitWithLoader = (urlEnter: string, urlEnd?: string): Chainable<any> => {
   cy.visit(`#${urlEnter}`);
+  cy.get('[data-test*=Loader]').should('be.visible'); // wait for any loader to show up.
   return checkLocationWithLoader(urlEnd || urlEnter);
 };

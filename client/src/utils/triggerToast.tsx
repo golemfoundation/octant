@@ -8,9 +8,11 @@ interface TriggerToast extends ToastProps {
   options?: ToastOptions;
 }
 
+export const autoClose = 5000;
+
 export default function triggerToast({ options, ...rest }: TriggerToast): void {
   toast(<Toast {...rest} />, {
-    autoClose: 5000,
+    autoClose,
     hideProgressBar: false, // it's hidden in toast.css styles, look for comment there.
     ...options,
   });

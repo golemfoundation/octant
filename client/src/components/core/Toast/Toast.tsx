@@ -19,11 +19,15 @@ const getIcon = (type: ToastProps['type']): SvgImageConfig => {
   }
 };
 
-const Toast: FC<ToastProps> = ({ title, message, type = 'info' }) => (
-  <div className={styles.root}>
+const Toast: FC<ToastProps> = ({ dataTest, title, message, type = 'info' }) => (
+  <div className={styles.root} data-test={dataTest}>
     <Svg classNameSvg={styles.icon} img={getIcon(type)} size={3.2} />
     <div className={styles.body}>
-      {title && <div className={styles.title}>{title}</div>}
+      {title && (
+        <div className={styles.title} data-test={`${dataTest}__title`}>
+          {title}
+        </div>
+      )}
       {message && <div className={styles.message}>{message}</div>}
     </div>
   </div>

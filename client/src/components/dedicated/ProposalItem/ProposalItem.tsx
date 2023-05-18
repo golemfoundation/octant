@@ -17,7 +17,12 @@ import useAllocationsStore from 'store/allocations/store';
 import styles from './ProposalItem.module.scss';
 import ProposalItemProps from './types';
 
-const ProposalItem: FC<ProposalItemProps> = ({ address, className, totalValueOfAllocations }) => {
+const ProposalItem: FC<ProposalItemProps> = ({
+  address,
+  className,
+  dataTest,
+  totalValueOfAllocations,
+}) => {
   const { ipfsGateway } = env;
   const navigate = useNavigate();
   const { data: userAllocations } = useUserAllocations();
@@ -46,6 +51,7 @@ const ProposalItem: FC<ProposalItemProps> = ({ address, className, totalValueOfA
         !isLoadingStates && styles.isClickable,
         isLoadingStates && styles.isLoadingStates,
       )}
+      data-test={dataTest}
       onClick={
         isLoadingStates ? () => {} : () => navigate(`${ROOT_ROUTES.proposal.absolute}/${address}`)
       }
@@ -55,16 +61,27 @@ const ProposalItem: FC<ProposalItemProps> = ({ address, className, totalValueOfA
       ) : (
         <Fragment>
           <div className={styles.header}>
-            <Img className={styles.imageProfile} src={`${ipfsGateway}${profileImageCID}`} />
+            <Img
+              className={styles.imageProfile}
+              dataTest="ProposalItem__imageProfile"
+              src={`${ipfsGateway}${profileImageCID}`}
+            />
             <ButtonAddToAllocate
               className={styles.button}
+              dataTest="ProposalItem__ButtonAddToAllocate"
               isAlreadyAdded={isAlreadyAdded}
               onClick={() => onAddRemoveFromAllocate(address)}
             />
           </div>
           <div className={styles.body}>
-            <div className={styles.name}>{name}</div>
-            <Description className={styles.description} text={description!} />
+            <div className={styles.name} data-test="ProposalItem__name">
+              {name}
+            </div>
+            <Description
+              className={styles.description}
+              dataTest="ProposalItem__Description"
+              text={description!}
+            />
           </div>
           <ProposalRewards
             className={styles.proposalRewards}
