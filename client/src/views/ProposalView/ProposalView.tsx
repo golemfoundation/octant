@@ -67,10 +67,9 @@ const ProposalView = (): ReactElement => {
     }
   }, [loadedProposals, proposalsIpfs, setLoadedProposals]);
 
-  const onLoadNextProposal = () => {
-    // isLoading prevents onLoadNextProposal from being called infinitely.
+  useEffect(() => {
     if (
-      isLoading ||
+      !isLoading ||
       loadedAddresses.length === 0 ||
       loadedProposals.length === 0 ||
       proposalsWithRewards.length === 0
@@ -78,7 +77,6 @@ const ProposalView = (): ReactElement => {
       return;
     }
 
-    setIsLoading(true);
     const initialElement = loadedProposals[0];
     const currentElement = proposalsWithRewards!.find(
       ({ address }) => address === loadedAddresses[loadedAddresses.length - 1],
@@ -108,6 +106,7 @@ const ProposalView = (): ReactElement => {
     /**
      * During first iteration we want to skip initialElement.
      * When user enters project index number 2, next ones are 0, 1, 3, ..., n - 1, n, 0, 1, 2, ...
+     * Triggers when initialElement is not the first one.
      */
 
     if (
@@ -121,6 +120,21 @@ const ProposalView = (): ReactElement => {
     nextIndex += 1;
     nextAddress = proposalsWithRewards[nextIndex].address;
     setLoadedAddresses(prevLoadedAddresses => [...prevLoadedAddresses, nextAddress]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]);
+
+  const onLoadNextProposal = () => {
+    // isLoading prevents onLoadNextProposal from being called infinitely.
+    if (
+      isLoading ||
+      loadedAddresses.length === 0 ||
+      loadedProposals.length === 0 ||
+      proposalsWithRewards.length === 0
+    ) {
+      return;
+    }
+
+    setIsLoading(true);
   };
 
   const shouldMatchedProposalRewardsBeAvailable =
@@ -170,19 +184,29 @@ const ProposalView = (): ReactElement => {
           return (
             // eslint-disable-next-line react/no-array-index-key
             <Fragment key={`${address}-${index}`}>
-              <div className={styles.proposal}>
+              <div className={styles.proposal} data-test="ProposalView__proposal">
                 <div className={styles.proposalHeader}>
                   <div className={styles.imageProfileWrapper}>
-                    <Img className={styles.imageProfile} src={`${ipfsGateway}${profileImageCID}`} />
+                    <Img
+                      className={styles.imageProfile}
+                      dataTest="ProposalView__proposal__Img"
+                      src={`${ipfsGateway}${profileImageCID}`}
+                    />
                     <ButtonAddToAllocate
                       className={styles.buttonAddToAllocateMobile}
                       isAlreadyAdded={isAlreadyAdded}
                       onClick={() => onAddRemoveFromAllocate(address)}
                     />
                   </div>
-                  <span className={styles.name}>{name}</span>
-
-                  <Button className={styles.buttonWebsite} href={website!.url} variant="link5">
+                  <span className={styles.name} data-test="ProposalView__proposal__name">
+                    {name}
+                  </span>
+                  <Button
+                    className={styles.buttonWebsite}
+                    dataTest="ProposalView__proposal__Button"
+                    href={website!.url}
+                    variant="link5"
+                  >
                     {website!.label || website!.url}
                   </Button>
                   <ProposalRewards
@@ -191,6 +215,7 @@ const ProposalView = (): ReactElement => {
                     MiddleElement={
                       <ButtonAddToAllocate
                         className={styles.buttonAddToAllocateDesktop}
+                        dataTest="ProposalView__proposal__ButtonAddToAllocate"
                         isAlreadyAdded={isAlreadyAdded}
                         onClick={() => onAddRemoveFromAllocate(address)}
                       />
@@ -201,10 +226,18 @@ const ProposalView = (): ReactElement => {
                   />
                 </div>
                 <div className={styles.body}>
-                  <Description text={description!} variant="big" />
+                  <Description
+                    dataTest="ProposalView__proposal__Description"
+                    text={description!}
+                    variant="big"
+                  />
                 </div>
               </div>
-              <DonorsList className={styles.donors} proposalAddress={address} />
+              <DonorsList
+                className={styles.donors}
+                dataTest="ProposalView__proposal__DonorsList"
+                proposalAddress={address}
+              />
             </Fragment>
           );
         })}

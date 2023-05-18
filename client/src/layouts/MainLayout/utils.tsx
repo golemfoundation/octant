@@ -55,6 +55,7 @@ export function getNavigationTabsWithAllocations(
                   styles.numberOfAllocations,
                   isAllocationValueChanging && styles.isAllocationValueChanging,
                 )}
+                data-test="MainLayout__navigation__numberOfAllocations"
                 {...dataAttributes}
               >
                 {idsInAllocation.length}

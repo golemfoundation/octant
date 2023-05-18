@@ -46,11 +46,13 @@ export function onAddRemoveAllocationElementLocalStorage({
   if (isItemAlreadyAdded) {
     newIds.splice(newIds.indexOf(address), 1);
     triggerToast({
-      title: 'Removed from Allocate',
+      dataTest: 'Toast--removeFromAllocate',
+      title: `Removed ${name} from Allocate`,
     });
   } else {
     newIds.push(address);
     triggerToast({
+      dataTest: 'Toast--addToAllocate',
       title: `Added ${name} to Allocate`,
     });
   }

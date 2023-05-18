@@ -39,7 +39,7 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
   const isTotalValueOfAllocationsDefined = totalValueOfAllocations !== undefined;
 
   return (
-    <div className={cx(styles.root, className)}>
+    <div className={cx(styles.root, className)} data-test="ProposalRewards">
       <div className={styles.separator}>
         {isProjectFounded || !isTotalValueOfAllocationsDefined ? (
           <div className={styles.line} />
@@ -54,8 +54,13 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
         {isTotalValueOfAllocationsDefined ? (
           <Fragment>
             <div className={styles.value}>
-              <span className={styles.label}>{t('totalDonated')}</span>
-              <span className={cx(styles.number, !isProjectFounded && styles.isBelowCutOff)}>
+              <span className={styles.label} data-test="ProposalRewards__totalDonated__label">
+                {t('totalDonated')}
+              </span>
+              <span
+                className={cx(styles.number, !isProjectFounded && styles.isBelowCutOff)}
+                data-test="ProposalRewards__totalDonated__number"
+              >
                 {getFormattedEthValue(totalValueOfAllocations).fullString}
               </span>
             </div>

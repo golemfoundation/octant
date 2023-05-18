@@ -17,7 +17,7 @@ import DonorsListProps from './types';
 
 const SHORT_LIST_LENGTH = 4;
 
-const DonorsList: FC<DonorsListProps> = ({ className, proposalAddress }) => {
+const DonorsList: FC<DonorsListProps> = ({ className, dataTest, proposalAddress }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.donorsList' });
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
@@ -42,7 +42,7 @@ const DonorsList: FC<DonorsListProps> = ({ className, proposalAddress }) => {
   }, [proposalAllocations, refetchProposalAllocations]);
 
   return (
-    <div className={cx(styles.root, className)}>
+    <div className={cx(styles.root, className)} data-test={dataTest}>
       {isLoading ? (
         <Loader className={styles.loader} />
       ) : (
@@ -50,7 +50,9 @@ const DonorsList: FC<DonorsListProps> = ({ className, proposalAddress }) => {
           <div className={styles.header}>
             <span>{t('donors')}</span>{' '}
             {proposalAllocations && (
-              <div className={styles.count}>{proposalAllocations.length}</div>
+              <div className={styles.count} data-test={`${dataTest}__count`}>
+                {proposalAllocations.length}
+              </div>
             )}
           </div>
           {proposalAllocations

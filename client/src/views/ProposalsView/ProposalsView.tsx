@@ -26,8 +26,13 @@ const ProposalsView = (): ReactElement => {
       }
     >
       <div className={styles.list} data-test="ProposalsView__List">
-        {proposalsWithRewards.map(proposal => (
-          <ProposalItem key={proposal.address} className={styles.element} {...proposal} />
+        {proposalsWithRewards.map((proposal, index) => (
+          <ProposalItem
+            key={proposal.address}
+            className={styles.element}
+            dataTest={`ProposalsView__ProposalItem--${index}`}
+            {...proposal}
+          />
         ))}
       </div>
     </MainLayout>

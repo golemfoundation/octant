@@ -11,6 +11,7 @@ import ButtonAddToAllocateProps from './types';
 
 const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
   className,
+  dataTest,
   onClick,
   isAlreadyAdded,
 }) => {
@@ -27,6 +28,7 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
       dataParameters={{
         [IS_INITIAL_LOAD_DONE]: 'false',
       }}
+      dataTest={dataTest}
       Icon={<Svg img={heart} size={1.2} />}
       onClick={onClick}
       variant="iconOnly"
