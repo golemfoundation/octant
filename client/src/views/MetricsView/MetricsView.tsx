@@ -78,7 +78,7 @@ const MetricsView = (): ReactElement => {
         <BoxRounded alignment="left" className={styles.box} isVertical title={t('ethStaked')}>
           <DoubleValue cryptoCurrency="ethereum" valueCrypto={ETH_STAKED} />
         </BoxRounded>
-        <BoxRounded alignment="left" className={styles.box} isVertical title={t('glmStaked')}>
+        <BoxRounded alignment="left" className={styles.box} isVertical title={t('glmLocked')}>
           <DoubleValue cryptoCurrency="golem" valueCrypto={glmLocked} />
         </BoxRounded>
         <BoxRounded
