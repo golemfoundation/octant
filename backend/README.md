@@ -21,6 +21,7 @@ Then run the following commands to bootstrap your environment
 
 ```bash
 poetry install
+poetry shell
 ```
 
 Run the following commands to create your app's
