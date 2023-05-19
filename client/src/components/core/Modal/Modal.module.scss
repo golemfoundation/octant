@@ -70,7 +70,12 @@
     left: 50%;
     box-shadow: $box-shadow-1;
     border-radius: $border-radius-20;
-    animation: hideModal $transition-time-2;
+    animation-name: hideModal;
+    animation-duration: 0s;
+
+    &[data-is-initial-load-done='true'] {
+      animation-duration: $transition-time-2;
+    }
 
     &.isOpen {
       bottom: 50%;
