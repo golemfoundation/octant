@@ -5,6 +5,7 @@
   justify-content: center;
   width: 100%;
   max-width: 34rem;
+  height: 6rem; // solves flickering problem when Loader disappears and content (higher) loads.
 }
 
 .counters {
