@@ -17,6 +17,7 @@ import localStorageService from 'services/localStorageService';
 import useAllocationsStore, { initialState } from 'store/allocations/store';
 import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
+import useTipsStore from 'store/tips/store';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './App.module.scss';
@@ -33,6 +34,10 @@ const validateProposalsInLocalStorage = (
 const App = (): ReactElement => {
   const { chain } = useNetwork();
   const { data: allocations, addAllocations, setAllocations } = useAllocationsStore();
+  const {
+    setValuesFromLocalStorage: setValuesFromLocalStorageTips,
+    isInitialized: isTipsStoreInitialized,
+  } = useTipsStore();
   const {
     data: settings,
     setValuesFromLocalStorage: setValuesFromLocalStorageSettings,
@@ -84,6 +89,7 @@ const App = (): ReactElement => {
     localStorageService.init();
     setValuesFromLocalStorageSettings();
     setValuesFromLocalStorageOnboarding();
+    setValuesFromLocalStorageTips();
     // eslint-disable-next-line
   }, []);
 
@@ -207,7 +213,11 @@ const App = (): ReactElement => {
   const areSettingValuesSet = Object.values(settings).some(value => value !== undefined);
 
   const isLoading =
-    allocations === null || !areOnboardingValuesSet || !areSettingValuesSet || isAccountChanging;
+    allocations === null ||
+    !areOnboardingValuesSet ||
+    !areSettingValuesSet ||
+    isAccountChanging ||
+    !isTipsStoreInitialized;
 
   if (isLoading) {
     return <Loader className={styles.loader} />;

@@ -5,7 +5,14 @@ import {
   IS_CRYPTO_MAIN_VALUE_DISPLAY,
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
+  WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP,
+  WAS_CHECK_STATUS_ALREADY_CLOSED_TIP,
+  WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP,
+  WAS_LOCK_GLM_ALREADY_CLOSED_TIP,
+  WAS_REWARDS_ALREADY_CLOSED_TIP,
+  WAS_WITHDRAW_ALREADY_CLOSED_TIP,
 } from 'constants/localStorageKeys';
+import { initialState as tipsStoreInitialState } from 'store/tips/store';
 import isStringValidJson from 'utils/isStringValidJson';
 
 const LocalStorageService = () => {
@@ -69,6 +76,36 @@ const LocalStorageService = () => {
     validateBoolean(IS_CRYPTO_MAIN_VALUE_DISPLAY, true);
   };
 
+  const validateWasAddFavouritesAlreadyClosed = (): void =>
+    validateBoolean(
+      WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP,
+      tipsStoreInitialState.wasAddFavouritesAlreadyClosed,
+    );
+
+  const validateWasCheckStatusAlreadyClosed = (): void =>
+    validateBoolean(
+      WAS_CHECK_STATUS_ALREADY_CLOSED_TIP,
+      tipsStoreInitialState.wasCheckStatusAlreadyClosed,
+    );
+
+  const validateWasConnectWalletAlreadyClosed = (): void =>
+    validateBoolean(
+      WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP,
+      tipsStoreInitialState.wasConnectWalletAlreadyClosed,
+    );
+
+  const validateWasLockGLMAlreadyClosed = (): void =>
+    validateBoolean(WAS_LOCK_GLM_ALREADY_CLOSED_TIP, tipsStoreInitialState.wasLockGLMAlreadyClosed);
+
+  const validateWasRewardsAlreadyClosed = (): void =>
+    validateBoolean(WAS_REWARDS_ALREADY_CLOSED_TIP, tipsStoreInitialState.wasRewardsAlreadyClosed);
+
+  const validateWasWithdrawAlreadyClosed = (): void =>
+    validateBoolean(
+      WAS_WITHDRAW_ALREADY_CLOSED_TIP,
+      tipsStoreInitialState.wasWithdrawAlreadyClosed,
+    );
+
   const init = (): void => {
     validateLocalStorageJsons();
     validateAllocationItems();
@@ -76,6 +113,12 @@ const LocalStorageService = () => {
     validateIsOnboardingDone();
     validateDisplayCurrency();
     validateIsCryptoMainValueDisplay();
+    validateWasAddFavouritesAlreadyClosed();
+    validateWasCheckStatusAlreadyClosed();
+    validateWasConnectWalletAlreadyClosed();
+    validateWasLockGLMAlreadyClosed();
+    validateWasRewardsAlreadyClosed();
+    validateWasWithdrawAlreadyClosed();
   };
 
   return {

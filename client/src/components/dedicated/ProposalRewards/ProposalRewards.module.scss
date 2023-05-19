@@ -49,7 +49,7 @@
       .number {
         font-size: $font-size-18;
 
-        @media #{$table-down} {
+        @media #{$tablet-down} {
           font-size: $font-size-16;
         }
 

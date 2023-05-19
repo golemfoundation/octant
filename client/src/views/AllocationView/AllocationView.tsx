@@ -11,8 +11,10 @@ import AllocationItem from 'components/dedicated/AllocationItem/AllocationItem';
 import { AllocationItemWithAllocations } from 'components/dedicated/AllocationItem/types';
 import AllocationNavigation from 'components/dedicated/AllocationNavigation/AllocationNavigation';
 import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
+import TipTile from 'components/dedicated/TipTile/TipTile';
 import useAllocate from 'hooks/mutations/useAllocate';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useDepositValue from 'hooks/queries/useDepositValue';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
@@ -20,6 +22,7 @@ import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useAllocationsStore from 'store/allocations/store';
+import useTipsStore from 'store/tips/store';
 import getNewAllocationValuesBigNumber from 'utils/getNewAllocationValuesBigNumber';
 import getSortedElementsByTotalValueOfAllocations from 'utils/getSortedElementsByTotalValueOfAllocations';
 import triggerToast from 'utils/triggerToast';
@@ -36,8 +39,14 @@ import useIndividualProposalRewards from '../../hooks/queries/useIndividualPropo
 
 const AllocationView = (): ReactElement => {
   const { isConnected } = useAccount();
-  const { t } = useTranslation('translation', { keyPrefix: 'views.allocation' });
+  const { t, i18n } = useTranslation('translation', { keyPrefix: 'views.allocation' });
   const { data: allocations } = useAllocationsStore();
+  const {
+    data: { wasConnectWalletAlreadyClosed, wasLockGLMAlreadyClosed, wasRewardsAlreadyClosed },
+    setWasConnectWalletAlreadyClosed,
+    setWasLockGLMAlreadyClosed,
+    setWasRewardsAlreadyClosed,
+  } = useTipsStore();
   const { data: proposals } = useProposalsContract();
   const [currentView, setCurrentView] = useState<CurrentView>('edit');
   const [selectedItemAddress, setSelectedItemAddress] = useState<null | string>(null);
@@ -48,6 +57,7 @@ const AllocationView = (): ReactElement => {
     refetch: refetchUserAllocation,
   } = useUserAllocations({ refetchOnMount: true });
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: depositsValue } = useDepositValue();
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { refetch: refetchIndividualProposalRewards } = useIndividualProposalRewards();
@@ -182,6 +192,16 @@ const AllocationView = (): ReactElement => {
         ) as AllocationItemWithAllocations[])
       : allocationsWithRewards;
 
+  const isConnectWalletTipVisible = !isConnected && !wasConnectWalletAlreadyClosed;
+
+  const isLockGlmTipVisible =
+    (!depositsValue || (!!depositsValue && depositsValue.isZero())) &&
+    isConnected &&
+    !wasLockGLMAlreadyClosed;
+
+  const isRewardsTipVisible =
+    isConnected && individualReward && !individualReward.isZero && !wasRewardsAlreadyClosed;
+
   return (
     <MainLayout
       dataTest="AllocationView"
@@ -202,6 +222,36 @@ const AllocationView = (): ReactElement => {
     >
       {currentView === 'edit' ? (
         <Fragment>
+          {isConnectWalletTipVisible && (
+            <TipTile
+              className={styles.tip}
+              image="images/tip-connect-wallet.png"
+              infoLabel={i18n.t('common.gettingStarted')}
+              onClose={() => setWasConnectWalletAlreadyClosed(true)}
+              text={t('tip.connectWallet.text')}
+              title={t('tip.connectWallet.title')}
+            />
+          )}
+          {isLockGlmTipVisible && (
+            <TipTile
+              className={styles.tip}
+              image="images/tip-lock-glm.png"
+              infoLabel={i18n.t('common.gettingStarted')}
+              onClose={() => setWasLockGLMAlreadyClosed(true)}
+              text={t('tip.lockGlm.text')}
+              title={t('tip.lockGlm.title')}
+            />
+          )}
+          {isRewardsTipVisible && (
+            <TipTile
+              className={styles.tip}
+              image="images/tip-rewards.png"
+              infoLabel={i18n.t('common.octantTips')}
+              onClose={() => setWasRewardsAlreadyClosed(true)}
+              text={t('tip.rewards.text')}
+              title={t('tip.rewards.title')}
+            />
+          )}
           {areAllocationsAvailable ? (
             <div className={styles.boxes}>
               <AllocationInfoBoxes

@@ -13,12 +13,15 @@
   border-radius: $border-radius-16;
   background: $color-white;
 
-  @media #{$table-down} {
+  @media #{$tablet-down} {
     border-radius: 0;
   }
 }
 
-.proposalHeader, .buttonAllocateWrapper, .body, .donors {
+.proposalHeader,
+.buttonAllocateWrapper,
+.body,
+.donors {
   padding-left: 5.6rem;
   padding-right: 5.6rem;
 }
@@ -43,7 +46,7 @@
     border-radius: 50%;
     margin-bottom: 1.6rem;
 
-    @media #{$table-down} {
+    @media #{$tablet-down} {
       width: 4.8rem;
       height: 4.8rem;
     }
@@ -73,7 +76,7 @@
     font-size: $font-size-24;
     font-weight: $font-weight-bold;
 
-    @media #{$table-down} {
+    @media #{$tablet-down} {
       font-size: $font-size-16;
     }
   }

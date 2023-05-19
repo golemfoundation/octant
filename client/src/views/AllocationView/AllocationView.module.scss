@@ -30,3 +30,11 @@
   opacity: 0.5;
   cursor: pointer;
 }
+
+.tip {
+  margin-bottom: 1.6rem;
+
+  @media #{$desktop-up} {
+    margin-bottom: 2.8rem;
+  }
+}

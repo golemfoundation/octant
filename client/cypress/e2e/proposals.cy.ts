@@ -34,7 +34,8 @@ function checkProposalItemElements(index, name): Chainable<any> {
     .eq(index)
     .find('[data-test=ProposalRewards__totalDonated__label]')
     .should('be.visible');
-  return cy.get('[data-test^=ProposalsView__ProposalItem')
+  return cy
+    .get('[data-test^=ProposalsView__ProposalItem')
     .eq(index)
     .find('[data-test=ProposalRewards__totalDonated__number]')
     .should('be.visible');
@@ -87,7 +88,11 @@ function addProposalToAllocate(index, numberOfAddedProposals): Chainable<any> {
     });
 }
 
-function removeProposalFromAllocate(numberOfProposals, numberOfAddedProposals, index): Chainable<any> {
+function removeProposalFromAllocate(
+  numberOfProposals,
+  numberOfAddedProposals,
+  index,
+): Chainable<any> {
   cy.get('[data-test^=ProposalsView__ProposalItem')
     .eq(index)
     .find('[data-test=ProposalItem__ButtonAddToAllocate]')
