@@ -181,7 +181,7 @@
     "metrics": {
       "ethStaked": "ETH Staked",
       "glmLockedTotalSupplyPercentage": "GLM Locked as % of Total Supply",
-      "glmStaked": "GLM Staked",
+      "glmLocked": "GLM Locked",
       "tip": {
         "title": "Check the stats",
         "text": "View the data about all the decisions taken in the previous epoch here in <0>Metrics</0>"
