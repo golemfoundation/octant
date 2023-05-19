@@ -15,7 +15,7 @@
     font-size: $font-size-18;
     line-height: 3rem;
 
-    @media #{$table-down} {
+    @media #{$tablet-down} {
       font-size: $font-size-14;
       line-height: 2.2rem;
     }

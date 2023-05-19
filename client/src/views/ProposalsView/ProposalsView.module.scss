@@ -4,6 +4,7 @@ $verticalDistanceBetweenElements: $layoutMarginHorizontal;
   display: flex;
   flex-wrap: wrap;
   width: 100%;
+  justify-content: space-between;
 
   @media #{$desktop-up} {
     margin: 0 (-(calc($verticalDistanceBetweenElements / 2)));
@@ -11,9 +12,17 @@ $verticalDistanceBetweenElements: $layoutMarginHorizontal;
 }
 
 .element {
-  margin: 0 auto 2.4rem;
+  margin-bottom: 2.4rem;
 
   @media #{$desktop-up} {
     @include flexBasisGutter(2, calc($verticalDistanceBetweenElements * 2));
+  }
+}
+
+.tip {
+  margin-bottom: 1.6rem;
+
+  @media #{$desktop-up} {
+    margin-bottom: 2.8rem;
   }
 }

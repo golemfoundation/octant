@@ -1,45 +1,44 @@
 // Media Query Ranges
 // **********************
 
-$phone-range:   (   0px, 471px );
-$tablet-range:  ( 472px, 755px );
-$desktop-range: ( 756px );
+$phone-range: (0px, 471px);
+$tablet-range: (472px, 755px);
+$desktop-range: (756px);
 
 // Range functions
 // We use these functions to define ranges for various things, like media queries.
 // **********************
 
-@function lower-bound($range){
+@function lower-bound($range) {
   @if length($range) <= 0 {
-    @return 0;
+    @return 0px;
   }
-  @return nth($range,1);
+  @return nth($range, 1);
 }
 
 @function upper-bound($range) {
   @if length($range) < 2 {
-    @return 999999999999;
+    @return 999999999999px;
   }
   @return nth($range, 2);
 }
 
-
 // Media queries setup
 // **********************
 
-$screen: "only screen";
+$screen: 'only screen';
 
-$landscape: "#{$screen} and (orientation: landscape)";
-$portrait: "#{$screen} and (orientation: portrait)";
+$landscape: '#{$screen} and (orientation: landscape)';
+$portrait: '#{$screen} and (orientation: portrait)';
 
 $phone-portrait-up: $screen;
-$phone-range-only: "#{$screen} and (max-width: #{upper-bound($phone-range)})";
-$phone-down: "#{$screen} and (max-width:#{upper-bound($phone-range)})";
+$phone-only: '#{$screen} and (max-width: #{upper-bound($phone-range)})';
+$phone-down: '#{$screen} and (max-width: #{upper-bound($phone-range)})';
 
-$table-up: "#{$screen} and (min-width:#{lower-bound($tablet-range)})";
-$table-only: "#{$screen} and (min-width:#{lower-bound($tablet-range)}) and (max-width:#{upper-bound($tablet-range)})";
-$table-down: "#{$screen} and (max-width:#{upper-bound($tablet-range)})";
+$tablet-up: '#{$screen} and (min-width:#{lower-bound($tablet-range)})';
+$tablet-only: '#{$screen} and (min-width:#{lower-bound($tablet-range)}) and (max-width:#{upper-bound($tablet-range)})';
+$tablet-down: '#{$screen} and (max-width:#{upper-bound($tablet-range)})';
 
-$desktop-up: "#{$screen} and (min-width:#{lower-bound($desktop-range)})";
-$desktop-only: "#{$screen} and (min-width:#{lower-bound($desktop-range)}) and (max-width:#{upper-bound($desktop-range)})";
-$desktop-down: "#{$screen} and (max-width:#{upper-bound($desktop-range)})";
+$desktop-up: '#{$screen} and (min-width:#{lower-bound($desktop-range)})';
+$desktop-only: '#{$screen} and (min-width:#{lower-bound($desktop-range)}) and (max-width:#{upper-bound($desktop-range)})';
+$desktop-down: '#{$screen} and (max-width:#{upper-bound($desktop-range)})';

@@ -21,7 +21,9 @@
     "allocationValuesNotAvailable": "Allocation values are not available",
     "budget": "Budget {{budget}}",
     "lockGlm": "Lock GLM",
-    "transactionSuccessful": "Transaction successful"
+    "transactionSuccessful": "Transaction successful",
+    "gettingStarted": "Getting started",
+    "octantTips": "Octant tips"
   },
   "components": {
     "dedicated": {
@@ -154,12 +156,36 @@
   },
   "views": {
     "allocation": {
-      "allocationSuccessful": "Allocation successful"
+      "allocationSuccessful": "Allocation successful",
+      "tip": {
+        "connectWallet": {
+          "title": "Connect wallet",
+          "text": "Please connect your wallet to Octant in order to participate in this and future epochs"
+        },
+        "lockGlm": {
+          "title": "Lock GLM to earn",
+          "text": "Lock GLM tokens for at least one full epoch to earn ETH rewards you can donate or withdraw"
+        },
+        "rewards": {
+          "title": "You have rewards!",
+          "text": "During allocation period you can donate rewards to projects and allocate them to yourself"
+        }
+      }
+    },
+    "earn": {
+      "tip": {
+        "title": "Withdraw ETH",
+        "text": "Rewards you allocate to yourself can be withdrawn to your wallet here in the Earn view"
+      }
     },
     "metrics": {
       "ethStaked": "ETH Staked",
       "glmLockedTotalSupplyPercentage": "GLM Locked as % of Total Supply",
       "glmStaked": "GLM Staked",
+      "tip": {
+        "title": "Check the stats",
+        "text": "View the data about all the decisions taken in the previous epoch here in <0>Metrics</0>"
+      },
       "totalValueStakedDescription": "The total value staked on Octant to date, showing ETH staked by the Golem Foundation and GLM locked by Octant users.",
       "valueLocked": "Value Locked"
     },
@@ -185,6 +211,12 @@
     },
     "proposal": {
       "loadingProblem": "Loading of this proposal encountered a problem."
+    },
+    "proposals": {
+      "tip": {
+        "title": "Add your favourites",
+        "text": "Save projects to the Allocate view with the heart icon so you can donate rewards to them"
+      }
     },
     "settings": {
       "settings": "Settings",

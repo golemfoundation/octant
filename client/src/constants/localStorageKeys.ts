@@ -19,3 +19,34 @@ export const IS_CRYPTO_MAIN_VALUE_DISPLAY = getLocalStorageKey(
   settingsPrefix,
   'isCryptoMainValueDisplay',
 );
+
+const tipTilesPrefix = 'tipTiles';
+export const WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP = getLocalStorageKey(
+  tipTilesPrefix,
+  'wasAddFavouritesAlreadyClosed',
+);
+
+export const WAS_CHECK_STATUS_ALREADY_CLOSED_TIP = getLocalStorageKey(
+  tipTilesPrefix,
+  'wasCheckStatusAlreadyClosed',
+);
+
+export const WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP = getLocalStorageKey(
+  tipTilesPrefix,
+  'wasConnectWalletAlreadyClosed',
+);
+
+export const WAS_LOCK_GLM_ALREADY_CLOSED_TIP = getLocalStorageKey(
+  tipTilesPrefix,
+  'wasLockGLMAlreadyClosed',
+);
+
+export const WAS_REWARDS_ALREADY_CLOSED_TIP = getLocalStorageKey(
+  tipTilesPrefix,
+  'wasRewardsAlreadyClosed',
+);
+
+export const WAS_WITHDRAW_ALREADY_CLOSED_TIP = getLocalStorageKey(
+  tipTilesPrefix,
+  'wasWithdrawAlreadyClosed',
+);
