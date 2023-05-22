@@ -55,7 +55,10 @@ VITE_EPOCHS_ADDRESS=${epochs.address}
 VITE_PROPOSALS_ADDRESS=${proposals.address}
 VITE_REWARDS_ADDRESS=${rewards.address}
 VITE_OCTANT_ORACLE_ADDRESS=${octantOracle.address}
-VITE_OCTANT_PAYOUTS_MANAGER_ADDRESS=${payoutsManager.address}`;
+VITE_OCTANT_PAYOUTS_MANAGER_ADDRESS=${payoutsManager.address}
+VITE_OCTANT_PAYOUTS_ADDRESS=${payouts.address}
+VITE_WITHDRAWALS_TARGET_ADDRESS=${withdrawalsTarget.address}
+`; // Newline is intentional
 
   fs.appendFileSync('deployments/clientEnv', contractAddresses);
 };
