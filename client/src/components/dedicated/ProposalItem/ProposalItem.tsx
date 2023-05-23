@@ -26,7 +26,10 @@ const ProposalItem: FC<ProposalItemProps> = ({
   const { ipfsGateway } = env;
   const navigate = useNavigate();
   const { data: userAllocations } = useUserAllocations();
-  const { data: allocations, setAllocations } = useAllocationsStore();
+  const { allocations, setAllocations } = useAllocationsStore(state => ({
+    allocations: state.data.allocations,
+    setAllocations: state.setAllocations,
+  }));
   const { data: proposalsIpfs } = useProposalsIpfs([address]);
   const isAlreadyAdded = allocations!.includes(address);
 
@@ -35,7 +38,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
   const { isLoadingError, profileImageCID, name, description } = proposal;
 
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
-    allocations: allocations!,
+    allocations,
     proposalName: name,
     setAllocations,
     userAllocations,

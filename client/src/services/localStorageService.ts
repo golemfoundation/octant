@@ -12,6 +12,7 @@ import {
   WAS_REWARDS_ALREADY_CLOSED_TIP,
   WAS_WITHDRAW_ALREADY_CLOSED_TIP,
 } from 'constants/localStorageKeys';
+import { initialState as settingsStoreInitialState } from 'store/settings/store';
 import { initialState as tipsStoreInitialState } from 'store/tips/store';
 import isStringValidJson from 'utils/isStringValidJson';
 
@@ -58,7 +59,10 @@ const LocalStorageService = () => {
     const isOnboardingAlwaysVisible = localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE);
 
     if (isOnboardingAlwaysVisible === 'true') {
-      localStorage.setItem(IS_ONBOARDING_DONE, JSON.stringify(false));
+      localStorage.setItem(
+        IS_ONBOARDING_DONE,
+        JSON.stringify(settingsStoreInitialState.isAllocateOnboardingAlwaysVisible),
+      );
     }
 
     validateBoolean(IS_ONBOARDING_DONE);
@@ -68,12 +72,18 @@ const LocalStorageService = () => {
     const displayCurrency = JSON.parse(localStorage.getItem(DISPLAY_CURRENCY) || 'null');
 
     if (!displayCurrency || !DISPLAY_CURRENCIES.includes(displayCurrency)) {
-      localStorage.setItem(DISPLAY_CURRENCY, JSON.stringify('usd'));
+      localStorage.setItem(
+        DISPLAY_CURRENCY,
+        JSON.stringify(settingsStoreInitialState.displayCurrency),
+      );
     }
   };
 
   const validateIsCryptoMainValueDisplay = (): void => {
-    validateBoolean(IS_CRYPTO_MAIN_VALUE_DISPLAY, true);
+    validateBoolean(
+      IS_CRYPTO_MAIN_VALUE_DISPLAY,
+      settingsStoreInitialState.isCryptoMainValueDisplay,
+    );
   };
 
   const validateWasAddFavouritesAlreadyClosed = (): void =>

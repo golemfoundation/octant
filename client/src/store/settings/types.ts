@@ -1,13 +1,11 @@
 export interface SettingsData {
-  allocateValueAdjusterUnit?: string;
-  areMetricsIntroductionsVisible?: boolean;
-  displayCurrency?: 'usd' | 'aud' | 'eur' | 'jpy' | 'cny' | 'gbp';
-  isAllocateOnboardingAlwaysVisible?: boolean;
-  isCryptoMainValueDisplay?: boolean;
+  allocateValueAdjusterUnit: string;
+  displayCurrency: 'usd' | 'aud' | 'eur' | 'jpy' | 'cny' | 'gbp';
+  isAllocateOnboardingAlwaysVisible: boolean;
+  isCryptoMainValueDisplay: boolean;
 }
 
-export interface SettingsStore {
-  data: SettingsData;
+export interface SettingsMethods {
   reset: () => void;
   setDisplayCurrency: (payload: SettingsData['displayCurrency']) => void;
   setIsAllocateOnboardingAlwaysVisible: (

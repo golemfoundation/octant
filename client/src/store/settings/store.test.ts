@@ -21,16 +21,16 @@ describe('useSettingsStore', () => {
       reset,
     } = useSettingsStore.getState();
 
-    setIsCryptoMainValueDisplay(true);
-    setDisplayCurrency('usd');
+    setIsCryptoMainValueDisplay(false);
+    setDisplayCurrency('jpy');
     setIsAllocateOnboardingAlwaysVisible(true);
-    expect(useSettingsStore.getState().data.isCryptoMainValueDisplay).toEqual(true);
-    expect(useSettingsStore.getState().data.displayCurrency).toEqual('usd');
+    expect(useSettingsStore.getState().data.isCryptoMainValueDisplay).toEqual(false);
+    expect(useSettingsStore.getState().data.displayCurrency).toEqual('jpy');
     expect(useSettingsStore.getState().data.isAllocateOnboardingAlwaysVisible).toEqual(true);
     reset();
-    expect(useSettingsStore.getState().data.isCryptoMainValueDisplay).toEqual(undefined);
-    expect(useSettingsStore.getState().data.displayCurrency).toEqual(undefined);
-    expect(useSettingsStore.getState().data.isAllocateOnboardingAlwaysVisible).toEqual(undefined);
+    expect(useSettingsStore.getState().data.isCryptoMainValueDisplay).toEqual(true);
+    expect(useSettingsStore.getState().data.displayCurrency).toEqual('usd');
+    expect(useSettingsStore.getState().data.isAllocateOnboardingAlwaysVisible).toEqual(false);
   });
 
   it('should set display currency in localStorage and state', () => {
@@ -80,7 +80,9 @@ describe('useSettingsStore', () => {
       JSON.stringify(isAllocateOnboardingAlwaysVisible),
     );
     localStorage.setItem(IS_CRYPTO_MAIN_VALUE_DISPLAY, JSON.stringify(isCryptoMainValueDisplay));
+    expect(useSettingsStore.getState().meta.isInitialized).toEqual(false);
     setValuesFromLocalStorage();
+    expect(useSettingsStore.getState().meta.isInitialized).toEqual(true);
     expect(useSettingsStore.getState().data.displayCurrency).toEqual(displayCurrency);
     expect(useSettingsStore.getState().data.isAllocateOnboardingAlwaysVisible).toEqual(
       isAllocateOnboardingAlwaysVisible,

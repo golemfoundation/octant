@@ -19,10 +19,12 @@ const ProposalsView = (): ReactElement => {
   const { data: proposalsAddresses } = useProposalsContract();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
-  const {
-    data: { wasAddFavouritesAlreadyClosed },
-    setWasAddFavouritesAlreadyClosed,
-  } = useTipsStore();
+  const { wasAddFavouritesAlreadyClosed, setWasAddFavouritesAlreadyClosed } = useTipsStore(
+    state => ({
+      setWasAddFavouritesAlreadyClosed: state.setWasAddFavouritesAlreadyClosed,
+      wasAddFavouritesAlreadyClosed: state.data.wasAddFavouritesAlreadyClosed,
+    }),
+  );
   const proposalsWithRewards = useProposalsWithRewards();
 
   const areMatchedProposalsReady =

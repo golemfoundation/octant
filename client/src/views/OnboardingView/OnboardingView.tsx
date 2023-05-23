@@ -11,7 +11,9 @@ import styles from './OnboardingView.module.scss';
 import steps from './steps';
 
 const OnboardingView = (): ReactElement => {
-  const { setIsOnboardingDone } = useOnboardingStore();
+  const { setIsOnboardingDone } = useOnboardingStore(state => ({
+    setIsOnboardingDone: state.setIsOnboardingDone,
+  }));
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const currentStep = steps[currentStepIndex];
 

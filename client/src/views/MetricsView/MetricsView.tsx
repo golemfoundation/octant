@@ -23,10 +23,10 @@ import styles from './MetricsView.module.scss';
 
 const MetricsView = (): ReactElement => {
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'views.metrics' });
-  const {
-    data: { wasCheckStatusAlreadyClosed },
-    setWasCheckStatusAlreadyClosed,
-  } = useTipsStore();
+  const { wasCheckStatusAlreadyClosed, setWasCheckStatusAlreadyClosed } = useTipsStore(state => ({
+    setWasCheckStatusAlreadyClosed: state.setWasCheckStatusAlreadyClosed,
+    wasCheckStatusAlreadyClosed: state.data.wasCheckStatusAlreadyClosed,
+  }));
   const { refetch: refetchCurrentEpochProps } = useCurrentEpochProps();
   const { data: currentEpoch, refetch: refetchCurrentEpoch } = useCurrentEpoch({
     refetchOnWindowFocus: true,

@@ -1,9 +1,8 @@
 export interface OnboardingData {
-  isOnboardingDone?: boolean;
+  isOnboardingDone: boolean;
 }
 
-export interface OnboardingStore {
-  data: OnboardingData;
+export interface OnboardingMethods {
   reset: () => void;
   setIsOnboardingDone: (payload: OnboardingData['isOnboardingDone']) => void;
   setValuesFromLocalStorage: () => void;
