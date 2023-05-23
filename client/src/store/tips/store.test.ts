@@ -198,7 +198,9 @@ describe('useTipsStore', () => {
   it('should set values from localStorage in state', () => {
     const { setValuesFromLocalStorage } = useTipsStore.getState();
 
+    expect(useTipsStore.getState().meta.isInitialized).toEqual(false);
     setValuesFromLocalStorage();
+    expect(useTipsStore.getState().meta.isInitialized).toEqual(true);
 
     expect(useTipsStore.getState().data.wasAddFavouritesAlreadyClosed).toEqual(false);
     expect(useTipsStore.getState().data.wasCheckStatusAlreadyClosed).toEqual(false);

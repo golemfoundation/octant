@@ -43,7 +43,10 @@ const ProposalView = (): ReactElement => {
   const [loadedAddresses, setLoadedAddresses] = useState<string[]>([]);
   const [loadedProposals, setLoadedProposals] = useState<ExtendedProposal[]>([]);
   const { proposalAddress: proposalAddressUrl } = useParams();
-  const { data: allocations, setAllocations } = useAllocationsStore();
+  const { allocations, setAllocations } = useAllocationsStore(state => ({
+    allocations: state.data.allocations,
+    setAllocations: state.setAllocations,
+  }));
   const { data: proposalsIpfs } = useProposalsIpfs(loadedAddresses!);
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
@@ -172,7 +175,7 @@ const ProposalView = (): ReactElement => {
         useWindow
       >
         {loadedProposals.map(({ address, description, name, profileImageCID, website }, index) => {
-          const isAlreadyAdded = allocations!.includes(address);
+          const isAlreadyAdded = allocations.includes(address);
           const proposalMatchedProposalRewards = proposalsWithRewards?.find(
             ({ address: matchedAddress }) => matchedAddress === address,
           );

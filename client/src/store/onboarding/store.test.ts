@@ -15,7 +15,7 @@ describe('useOnboardingStore', () => {
     setIsOnboardingDone(true);
     expect(useOnboardingStore.getState().data.isOnboardingDone).toEqual(true);
     reset();
-    expect(useOnboardingStore.getState().data.isOnboardingDone).toEqual(undefined);
+    expect(useOnboardingStore.getState().data.isOnboardingDone).toEqual(false);
   });
 
   it('should set isOnboardingDone to true in localStorage and state', () => {
@@ -38,7 +38,9 @@ describe('useOnboardingStore', () => {
     const { setValuesFromLocalStorage } = useOnboardingStore.getState();
 
     localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+    expect(useOnboardingStore.getState().meta.isInitialized).toEqual(false);
     setValuesFromLocalStorage();
+    expect(useOnboardingStore.getState().meta.isInitialized).toEqual(true);
     expect(useOnboardingStore.getState().data.isOnboardingDone).toEqual(true);
   });
 

@@ -13,9 +13,9 @@ import SettingsView from 'views/SettingsView/SettingsView';
 import { ROOT_ROUTES } from './routes';
 
 const RootRoutes = (): ReactElement => {
-  const {
-    data: { isOnboardingDone },
-  } = useOnboardingStore();
+  const { isOnboardingDone } = useOnboardingStore(state => ({
+    isOnboardingDone: state.data.isOnboardingDone,
+  }));
 
   if (!isOnboardingDone) {
     return (

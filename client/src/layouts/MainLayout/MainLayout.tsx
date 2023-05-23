@@ -39,7 +39,9 @@ const MainLayout: FC<MainLayoutProps> = ({
   const [localAllocationsLenght, setLocalAllocationsLenght] = useState<number>();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState<boolean>(false);
   const [isAllocationValueChanging, setIsAllocationValueChanging] = useState<boolean>(false);
-  const { data: allocations } = useAllocationsStore();
+  const { allocations } = useAllocationsStore(state => ({
+    allocations: state.data.allocations,
+  }));
   const { address, isConnected } = useAccount();
   const { data: individualReward } = useIndividualReward();
   const { data: currentEpoch } = useCurrentEpoch();

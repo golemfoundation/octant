@@ -14,7 +14,7 @@ import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import localStorageService from 'services/localStorageService';
-import useAllocationsStore, { initialState } from 'store/allocations/store';
+import useAllocationsStore from 'store/allocations/store';
 import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
 import useTipsStore from 'store/tips/store';
@@ -31,18 +31,38 @@ const validateProposalsInLocalStorage = (
 
 const App = (): ReactElement => {
   const { chain } = useNetwork();
-  const { data: allocations, addAllocations, setAllocations } = useAllocationsStore();
+  const { allocations, setAllocations, addAllocations, isAllocationsInitialized } =
+    useAllocationsStore(state => ({
+      addAllocations: state.addAllocations,
+      allocations: state.data.allocations,
+      isAllocationsInitialized: state.meta.isInitialized,
+      setAllocations: state.setAllocations,
+    }));
   const {
     setValuesFromLocalStorage: setValuesFromLocalStorageTips,
     isInitialized: isTipsStoreInitialized,
-  } = useTipsStore();
+  } = useTipsStore(({ meta, setValuesFromLocalStorage }) => ({
+    isInitialized: meta.isInitialized,
+    setValuesFromLocalStorage,
+  }));
   const {
-    data: settings,
-    setValuesFromLocalStorage: setValuesFromLocalStorageSettings,
+    settings,
+    isSettingsInitialized,
+    setValuesFromLocalStorageSettings,
     setIsCryptoMainValueDisplay,
-  } = useSettingsStore();
-  const { data: onboarding, setValuesFromLocalStorage: setValuesFromLocalStorageOnboarding } =
-    useOnboardingStore();
+  } = useSettingsStore(state => ({
+    isSettingsInitialized: state.meta.isInitialized,
+    setIsCryptoMainValueDisplay: state.setIsCryptoMainValueDisplay,
+    setValuesFromLocalStorageSettings: state.setValuesFromLocalStorage,
+    settings: state.data,
+  }));
+  const {
+    isInitialized: isOnboardingInitialized,
+    setValuesFromLocalStorage: setValuesFromLocalStorageOnboarding,
+  } = useOnboardingStore(({ meta, setValuesFromLocalStorage }) => ({
+    isInitialized: meta.isInitialized,
+    setValuesFromLocalStorage,
+  }));
   const queryClient = useQueryClient();
   const { address, isConnected } = useAccount();
   useCryptoValues(settings.displayCurrency, {
@@ -165,7 +185,7 @@ const App = (): ReactElement => {
      * This hook validates allocations in localStorage
      * and populates store with them or sets empty array.
      */
-    if (!proposals || proposals.length === 0 || allocations !== null) {
+    if (!proposals || proposals.length === 0 || isAllocationsInitialized) {
       return;
     }
 
@@ -185,14 +205,14 @@ const App = (): ReactElement => {
     if (validatedProposalsInLocalStorage) {
       setAllocations(validatedProposalsInLocalStorage);
     }
-  }, [allocations, isConnected, proposals, setAllocations]);
+  }, [isAllocationsInitialized, allocations, isConnected, proposals, setAllocations]);
 
   useEffect(() => {
     /**
      * This hook adds userAllocations to the store.
      * This needs to be done after store is populated with values from localStorage.
      */
-    if (!userAllocations || allocations === initialState) {
+    if (!userAllocations || isAllocationsInitialized) {
       return;
     }
     const userAllocationsAddresses = userAllocations.map(({ proposalAddress }) => proposalAddress);
@@ -205,15 +225,12 @@ const App = (): ReactElement => {
     ) {
       addAllocations(userAllocationsAddresses);
     }
-  }, [isConnected, userAllocations, allocations, addAllocations]);
-
-  const areOnboardingValuesSet = Object.values(onboarding).some(value => value !== undefined);
-  const areSettingValuesSet = Object.values(settings).some(value => value !== undefined);
+  }, [isAllocationsInitialized, isConnected, userAllocations, allocations, addAllocations]);
 
   const isLoading =
-    allocations === null ||
-    !areOnboardingValuesSet ||
-    !areSettingValuesSet ||
+    !isAllocationsInitialized ||
+    !isOnboardingInitialized ||
+    !isSettingsInitialized ||
     isAccountChanging ||
     !isTipsStoreInitialized;
 

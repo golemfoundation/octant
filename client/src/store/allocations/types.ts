@@ -1,8 +1,9 @@
-export type AllocationsData = null | string[];
+export interface AllocationsData {
+  allocations: string[];
+}
 
-export interface AllocationsStore {
+export interface AllocationsMethods {
   addAllocations: (proposalAddresses: string[]) => void;
-  data: AllocationsData;
   reset: () => void;
   setAllocations: (proposalAddresses: string[]) => void;
 }

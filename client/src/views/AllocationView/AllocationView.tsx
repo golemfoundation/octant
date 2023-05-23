@@ -15,6 +15,7 @@ import TipTile from 'components/dedicated/TipTile/TipTile';
 import useAllocate from 'hooks/mutations/useAllocate';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
+import useIndividualProposalRewards from 'hooks/queries/useIndividualProposalRewards';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
@@ -35,18 +36,27 @@ import {
   toastBudgetExceeding,
 } from './utils';
 
-import useIndividualProposalRewards from '../../hooks/queries/useIndividualProposalRewards';
-
 const AllocationView = (): ReactElement => {
   const { isConnected } = useAccount();
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'views.allocation' });
-  const { data: allocations } = useAllocationsStore();
+  const { allocations } = useAllocationsStore(state => ({
+    allocations: state.data.allocations,
+  }));
   const {
-    data: { wasConnectWalletAlreadyClosed, wasLockGLMAlreadyClosed, wasRewardsAlreadyClosed },
+    wasConnectWalletAlreadyClosed,
+    wasLockGLMAlreadyClosed,
+    wasRewardsAlreadyClosed,
     setWasConnectWalletAlreadyClosed,
     setWasLockGLMAlreadyClosed,
     setWasRewardsAlreadyClosed,
-  } = useTipsStore();
+  } = useTipsStore(state => ({
+    setWasConnectWalletAlreadyClosed: state.setWasConnectWalletAlreadyClosed,
+    setWasLockGLMAlreadyClosed: state.setWasLockGLMAlreadyClosed,
+    setWasRewardsAlreadyClosed: state.setWasRewardsAlreadyClosed,
+    wasConnectWalletAlreadyClosed: state.data.wasConnectWalletAlreadyClosed,
+    wasLockGLMAlreadyClosed: state.data.wasLockGLMAlreadyClosed,
+    wasRewardsAlreadyClosed: state.data.wasRewardsAlreadyClosed,
+  }));
   const { data: proposals } = useProposalsContract();
   const [currentView, setCurrentView] = useState<CurrentView>('edit');
   const [selectedItemAddress, setSelectedItemAddress] = useState<null | string>(null);
@@ -83,10 +93,7 @@ const AllocationView = (): ReactElement => {
     : [];
 
   const onResetAllocationValues = () => {
-    const allocationValuesInitValue = getAllocationValuesInitialState(
-      allocations!,
-      userAllocations,
-    );
+    const allocationValuesInitValue = getAllocationValuesInitialState(allocations, userAllocations);
     setAllocationValues(allocationValuesInitValue);
   };
 
@@ -285,7 +292,7 @@ const AllocationView = (): ReactElement => {
           )}
         </Fragment>
       ) : (
-        <AllocationSummary allocations={allocations!} allocationValues={allocationValues!} />
+        <AllocationSummary allocations={allocations} allocationValues={allocationValues!} />
       )}
     </MainLayout>
   );

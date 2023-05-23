@@ -1,23 +1,29 @@
-import { create } from 'zustand';
-
 import { IS_ONBOARDING_DONE } from 'constants/localStorageKeys';
+import { getStoreWithMeta } from 'store/utils/getStoreWithMeta';
 
-import { OnboardingStore, OnboardingData } from './types';
+import { OnboardingMethods, OnboardingData } from './types';
 
-const initialState: OnboardingData = {
-  isOnboardingDone: undefined,
+export const initialState: OnboardingData = {
+  isOnboardingDone: false,
 };
 
-const useOnboardingStore = create<OnboardingStore>(set => ({
-  data: initialState,
-  reset: () => set({ data: initialState }),
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  setIsOnboardingDone: payload => {
-    localStorage.setItem(IS_ONBOARDING_DONE, JSON.stringify(payload));
-    set({ data: { isOnboardingDone: payload } });
-  },
-  setValuesFromLocalStorage: () =>
-    set({ data: { isOnboardingDone: localStorage.getItem(IS_ONBOARDING_DONE) === 'true' } }),
-}));
-
-export default useOnboardingStore;
+export default getStoreWithMeta<OnboardingData, OnboardingMethods>({
+  getStoreMethods: set => ({
+    reset: () => set({ data: initialState }),
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    setIsOnboardingDone: payload => {
+      localStorage.setItem(IS_ONBOARDING_DONE, JSON.stringify(payload));
+      set({ data: { isOnboardingDone: payload } });
+    },
+    setValuesFromLocalStorage: () =>
+      set({
+        data: {
+          isOnboardingDone: localStorage.getItem(IS_ONBOARDING_DONE) === 'true',
+        },
+        meta: {
+          isInitialized: true,
+        },
+      }),
+  }),
+  initialState,
+});

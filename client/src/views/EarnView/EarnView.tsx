@@ -16,10 +16,10 @@ const EarnView = (): ReactElement => {
     keyPrefix: 'views.earn',
   });
   const { data: withdrawableUserEth } = useWithdrawableUserEth();
-  const {
-    data: { wasWithdrawAlreadyClosed },
-    setWasWithdrawAlreadyClosed,
-  } = useTipsStore();
+  const { wasWithdrawAlreadyClosed, setWasWithdrawAlreadyClosed } = useTipsStore(state => ({
+    setWasWithdrawAlreadyClosed: state.setWasWithdrawAlreadyClosed,
+    wasWithdrawAlreadyClosed: state.data.wasWithdrawAlreadyClosed,
+  }));
 
   const isWithdrawTipVisible =
     withdrawableUserEth && !withdrawableUserEth.isZero() && !wasWithdrawAlreadyClosed;

@@ -7,9 +7,7 @@ export interface TipsData {
   wasWithdrawAlreadyClosed: boolean;
 }
 
-export interface TipsStore {
-  data: TipsData;
-  isInitialized: boolean;
+export interface TipsMethods {
   reset: () => void;
   setValuesFromLocalStorage: () => void;
   setWasAddFavouritesAlreadyClosed: (payload: TipsData['wasAddFavouritesAlreadyClosed']) => void;

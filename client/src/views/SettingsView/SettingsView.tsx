@@ -28,8 +28,19 @@ const SettingsView = (): ReactElement => {
     setDisplayCurrency,
     setIsAllocateOnboardingAlwaysVisible,
     setIsCryptoMainValueDisplay,
-    data: { displayCurrency, isAllocateOnboardingAlwaysVisible, isCryptoMainValueDisplay },
-  } = useSettingsStore();
+    allocateValueAdjusterUnit,
+    displayCurrency,
+    isAllocateOnboardingAlwaysVisible,
+    isCryptoMainValueDisplay,
+  } = useSettingsStore(state => ({
+    allocateValueAdjusterUnit: state.data.allocateValueAdjusterUnit,
+    displayCurrency: state.data.displayCurrency,
+    isAllocateOnboardingAlwaysVisible: state.data.isAllocateOnboardingAlwaysVisible,
+    isCryptoMainValueDisplay: state.data.isCryptoMainValueDisplay,
+    setDisplayCurrency: state.setDisplayCurrency,
+    setIsAllocateOnboardingAlwaysVisible: state.setIsAllocateOnboardingAlwaysVisible,
+    setIsCryptoMainValueDisplay: state.setIsCryptoMainValueDisplay,
+  }));
   return (
     <MainLayout dataTest="SettingsView">
       <Header text={t('settings')} />
@@ -47,8 +58,8 @@ const SettingsView = (): ReactElement => {
           isDisabled
           label={t('allocateValueAdjustersDefault')}
           onChange={() => {}}
-          suffix="USD"
-          value="50.0"
+          suffix={displayCurrency.toUpperCase()}
+          value={allocateValueAdjusterUnit}
           variant="boxRounded"
         />
       </BoxRounded>
