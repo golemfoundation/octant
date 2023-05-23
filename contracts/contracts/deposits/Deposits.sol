@@ -25,8 +25,8 @@ contract Deposits is OctantBase, IDeposits {
     /// @notice Effective Deposits tracker contract address
     ITracker public tracker;
 
-    event Locked(uint224 amount, uint256 when, address user);
-    event Unlocked(uint224 amount, uint256 when, address user);
+    event Locked(uint224 depositBefore, uint224 amount, uint256 when, address user);
+    event Unlocked(uint224 depositBefore, uint224 amount, uint256 when, address user);
     event TrackerUpdated();
     event TrackerFailed(bytes reason);
 
@@ -48,7 +48,7 @@ contract Deposits is OctantBase, IDeposits {
             glm.transferFrom(msg.sender, address(this), amount),
             DepositsErrors.GLM_TRANSFER_FAILED
         );
-        emit Locked(amount, block.timestamp, msg.sender);
+        emit Locked(oldDeposit, amount, block.timestamp, msg.sender);
 
         tracker.processLock(msg.sender, oldDeposit, amount);
     }
@@ -60,7 +60,7 @@ contract Deposits is OctantBase, IDeposits {
         require(oldDeposit >= amount, DepositsErrors.DEPOSIT_IS_TO_SMALL);
         deposits[msg.sender] = oldDeposit - amount;
         require(glm.transfer(msg.sender, amount));
-        emit Unlocked(amount, block.timestamp, msg.sender);
+        emit Unlocked(oldDeposit, amount, block.timestamp, msg.sender);
 
         (bool result, bytes memory error) = tracker.processUnlock(
             msg.sender,

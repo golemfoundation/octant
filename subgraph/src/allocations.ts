@@ -13,7 +13,7 @@ export function handleAllocated(event: AllocatedEvent): void {
   entity.allocation = event.params.allocation.allocation;
 
   entity.blockNumber = event.block.number.toI32();
-  entity.blockTimestamp = event.block.timestamp.toI32();
+  entity.timestamp = event.block.timestamp.toI32();
   entity.transactionHash = event.transaction.hash;
 
   entity.save();

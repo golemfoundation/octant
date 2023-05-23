@@ -1,18 +1,9 @@
-from app.infrastructure.graphql_client import get_locks, get_unlocks
+from app.infrastructure.qraphql.locks import get_locks_by_address
+from app.infrastructure.qraphql.unlocks import get_unlocks_by_address
 
 
 def get_history(user_address):
-    locks = [
-        {"type": "lock", "timestamp": lock["blockTimestamp"], "amount": lock["amount"]}
-        for lock in get_locks(user_address)
-    ]
-    unlocks = [
-        {
-            "type": "unlock",
-            "timestamp": unlock["blockTimestamp"],
-            "amount": unlock["amount"],
-        }
-        for unlock in get_unlocks(user_address)
-    ]
-
-    return sorted(locks + unlocks, key=lambda x: x["timestamp"])
+    return sorted(
+        get_locks_by_address(user_address) + get_unlocks_by_address(user_address),
+        key=lambda x: x["timestamp"],
+    )

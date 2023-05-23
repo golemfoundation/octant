@@ -213,6 +213,10 @@ write_files:
           \"Deposits\": { \
             \"address\": \"$DEPOSITS_ADDRESS\", \
             \"startBlock\": $BLOCK_NUMBER \
+          },
+          \"Epochs\": { \
+            \"address\": \"$EPOCHS_CONTRACT_ADDRESS\", \
+            \"startBlock\": $BLOCK_NUMBER \
           }
         }\
       }" | jq '.' > $HOME/networks.json
