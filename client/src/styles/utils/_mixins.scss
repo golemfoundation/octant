@@ -17,7 +17,9 @@
 @mixin flexBasisGutter($elementsCount, $gutterSize) {
   flex-grow: 0;
   flex-shrink: 0;
-  flex-basis: calc(#{calc(100/$elementsCount)}% - #{calc($gutterSize*($elementsCount - 1)/$elementsCount)});
+  flex-basis: calc(
+    #{calc(100 / $elementsCount)}% - #{calc($gutterSize * ($elementsCount - 1) / $elementsCount)}
+  );
 }
 
 @mixin boldText() {

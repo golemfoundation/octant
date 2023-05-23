@@ -3,7 +3,8 @@ import { Trans } from 'react-i18next';
 
 import modalEffectiveLockedBalance from 'assets/images/modalEffectiveLockedBalance.png';
 import Img from 'components/core/Img/Img';
-import Modal, { Text } from 'components/core/Modal/Modal';
+import Modal from 'components/core/Modal/Modal';
+import Text from 'components/core/Text/Text';
 
 import styles from './ModalEffectiveLockedBalance.module.scss';
 import ModalEffectiveLockedBalanceProps from './types';

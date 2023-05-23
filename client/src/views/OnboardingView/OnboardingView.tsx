@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback, ReactElement } from 'react';
 
 import Img from 'components/core/Img/Img';
-import Modal, { Text } from 'components/core/Modal/Modal';
+import Modal from 'components/core/Modal/Modal';
 import ProgressStepperSlim from 'components/core/ProgressStepperSlim/ProgressStepperSlim';
+import Text from 'components/core/Text/Text';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useOnboardingStore from 'store/onboarding/store';
 
