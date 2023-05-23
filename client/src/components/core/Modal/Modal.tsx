@@ -1,17 +1,39 @@
 import cx from 'classnames';
-import React, { FC, Fragment, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import React, { FC } from 'react';
 
 import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
-import { IS_INITIAL_LOAD_DONE } from 'constants/dataAttributes';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import { cross } from 'svg/misc';
 
 import styles from './Modal.module.scss';
-import ModalProps, { TextProps } from './types';
+import ModalProps from './types';
 
-export const Text: FC<TextProps> = ({ children, className }) => (
-  <div className={cx(styles.text, className)}>{children}</div>
-);
+const desktopVariants = {
+  showHide: {
+    bottom: 'calc(50% + 20px)',
+    opacity: 0,
+    x: '-50%',
+    y: `50%`,
+  },
+  visible: {
+    bottom: '50%',
+    opacity: 1,
+    x: '-50%',
+    y: '50%',
+  },
+};
+
+const variants = {
+  showHide: {
+    bottom: '-100%',
+  },
+  visible: {
+    bottom: 0,
+    opacity: 1,
+  },
+};
 
 const Modal: FC<ModalProps> = ({
   bodyClassName,
@@ -25,35 +47,47 @@ const Modal: FC<ModalProps> = ({
   isFullScreen,
   onClosePanel,
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
-
-  // TODO: Temporary fix until task https://linear.app/golemfoundation/issue/OCT-470/render-modal-component-only-if-it-should-be-visible is done.
-  useEffect(() => {
-    setTimeout(() => {
-      ref?.current?.setAttribute(IS_INITIAL_LOAD_DONE, 'true');
-    }, 100);
-  }, []);
+  const { isDesktop } = useMediaQuery();
 
   return (
-    <Fragment>
-      {isOverflowEnabled && (
-        <div className={cx(styles.overflow, isOpen && styles.isOpen)} onClick={onClosePanel} />
-      )}
-      <div ref={ref} className={cx(styles.root, isOpen && styles.isOpen, className)}>
-        {Image && <div className={styles.image}>{Image}</div>}
-        <div className={cx(styles.body, Image && styles.hasImage, bodyClassName)}>
-          {header && <div className={styles.header}>{header}</div>}
-          {children}
-        </div>
-        <Button
-          className={cx(styles.buttonClose, isFullScreen && styles.isFullScreen)}
-          dataTest={`${dataTest}__Button`}
-          Icon={<Svg img={cross} size={1} />}
+    <AnimatePresence initial={false}>
+      {isOverflowEnabled && isOpen && (
+        <motion.div
+          key="modal-overflow"
+          animate={{
+            opacity: 1,
+          }}
+          className={cx(styles.overflow, isOpen && styles.isOpen)}
+          exit={{ opacity: 0 }}
+          initial={{ opacity: 0 }}
           onClick={onClosePanel}
-          variant="iconOnly"
         />
-      </div>
-    </Fragment>
+      )}
+      {isOpen && (
+        <motion.div
+          key="modal-root"
+          animate="visible"
+          className={cx(styles.root, className)}
+          exit="showHide"
+          initial="showHide"
+          transition={{ damping: 0.5 }}
+          variants={isDesktop ? desktopVariants : variants}
+        >
+          {Image && <div className={styles.image}>{Image}</div>}
+          <div className={cx(styles.body, Image && styles.hasImage, bodyClassName)}>
+            {header && <div className={styles.header}>{header}</div>}
+            {children}
+          </div>
+          <Button
+            className={cx(styles.buttonClose, isFullScreen && styles.isFullScreen)}
+            dataTest={`${dataTest}__Button`}
+            Icon={<Svg img={cross} size={1} />}
+            onClick={onClosePanel}
+            variant="iconOnly"
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 

@@ -23,7 +23,7 @@ export const validationSchema = (
           const newValueBigNumber = parseUnits(value || '0');
           if (newValueBigNumber.gt(withdrawableUserEth!)) {
             return ctx.createError({
-              message: i18n.t('components.dedicated.modalWithdrawEth.dontHaveThatMuchToWithdraw'),
+              message: i18n.t('components.dedicated.withdrawEth.dontHaveThatMuchToWithdraw'),
             });
           }
 

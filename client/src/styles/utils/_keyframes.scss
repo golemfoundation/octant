@@ -27,33 +27,3 @@
     transform: rotate(360deg);
   }
 }
-
-@keyframes showModal {
-  0% {
-    bottom: -100%;
-    opacity: 0;
-  }
-  75% {
-    bottom: 49%;
-    opacity: 0;
-  }
-  100% {
-    bottom: 50%;
-    opacity: 1;
-  }
-}
-
-@keyframes hideModal {
-  0% {
-    bottom: 50%;
-    opacity: 1;
-  }
-  25% {
-    bottom: 49%;
-    opacity: 0;
-  }
-  100% {
-    bottom: -100%;
-    opacity: 0;
-  }
-}

@@ -16,14 +16,14 @@ export const getButtonCtaLabel = (
   isLoading: boolean,
 ): string => {
   if (currentStepIndex === 3) {
-    return i18n.t('components.dedicated.modalGlmLock.done');
+    return i18n.t('components.dedicated.glmLock.done');
   }
   if (isLoading) {
-    return i18n.t('components.dedicated.modalGlmLock.waitingForApproval'); // 'Waiting for approval...';
+    return i18n.t('components.dedicated.glmLock.waitingForApproval'); // 'Waiting for approval...';
   }
   return currentMode === 'lock'
-    ? i18n.t('components.dedicated.modalGlmLock.lock')
-    : i18n.t('components.dedicated.modalGlmLock.unlock');
+    ? i18n.t('components.dedicated.glmLock.lock')
+    : i18n.t('components.dedicated.glmLock.unlock');
 };
 
 export const validationSchema = (
@@ -41,12 +41,12 @@ export const validationSchema = (
           const newValueBigNumber = parseUnits(value || '0');
           if (currentMode === 'unlock' && newValueBigNumber.gt(depositsValue!)) {
             return ctx.createError({
-              message: i18n.t('components.dedicated.modalGlmLock.cantUnlock'),
+              message: i18n.t('components.dedicated.glmLock.cantUnlock'),
             });
           }
           if (currentMode === 'lock' && newValueBigNumber.gt(dataAvailableFunds!)) {
             return ctx.createError({
-              message: i18n.t('components.dedicated.modalGlmLock.dontHaveEnough'),
+              message: i18n.t('components.dedicated.glmLock.dontHaveEnough'),
             });
           }
 

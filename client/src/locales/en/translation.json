@@ -70,10 +70,28 @@
         "walletBalanceAvailable": "<0>{{availableFunds}} GLM</0> \u00a0 wallet balance available",
         "viewOnEtherscan": "View on Etherscan"
       },
+      "connectWallet": {
+        "browserWallet": "Browser wallet",
+        "connecting": "Connecting ...",
+        "walletConnect": "Wallet connect"
+      },
       "donorsList": {
         "donors": "Donors",
         "seeAll": "See all",
         "seeLess": "See less"
+      },
+      "glmLock": {
+        "lock": "Lock",
+        "unlock": "Unlock",
+        "submit": "Submit",
+        "approveAndLock": "Approve & Lock",
+        "done": "Done",
+        "withdraw": "Withdraw",
+        "amountToLock": "Amount to lock",
+        "amountToUnlock": "Amount to unlock",
+        "waitingForApproval": "Waiting for approval...",
+        "cantUnlock": "You can't unlock more than you have locked",
+        "dontHaveEnough": "You don't have enough to lock that amount"
       },
       "history": {
         "allocatedFunds": "Allocated funds",
@@ -90,35 +108,16 @@
         "epochAllocationEndsIn": "Epoch {{currentEpoch}} Allocation ends in"
       },
       "modalConnectWallet": {
-        "browserWallet": "Browser wallet",
-        "connecting": "Connecting ...",
-        "connectVia": "Connect via",
-        "walletConnect": "Wallet connect"
+        "connectVia": "Connect via"
       },
       "modalEffectiveLockedBalance": {
         "text": "Effective Balance refers to Locked GLM that has been locked for a full epoch and is generating rewards. Rewards for GLM locked during Epoch <0>T</0> will be available in Epoch <1>T+2</1>. <br/> <br/> Consider locking 100 GLM in Epoch 1 and 1000 GLM in Epoch 2. During Epoch 2 Locked Balance will be 1100 GLM, but Effective Balance will be 100 GLM, because the 1000 GLM has not been locked for a full epoch yet. <br/> <br/> During Epoch 3, rewards will be generated on the entire balance, so Effective Balance will become 1100 GLM."
       },
       "modalGlmLock": {
-        "unlockGLM": "Unlock GLM",
-        "lock": "Lock",
-        "unlock": "Unlock",
-        "submit": "Submit",
-        "approveAndLock": "Approve & Lock",
-        "done": "Done",
-        "withdraw": "Withdraw",
-        "amountToLock": "Amount to lock",
-        "amountToUnlock": "Amount to unlock",
-        "waitingForApproval": "Waiting for approval...",
-        "cantUnlock": "You can't unlock more than you have locked",
-        "dontHaveEnough": "You don't have enough to lock that amount"
+        "unlockGLM": "Unlock GLM"
       },
       "modalWithdrawEth": {
-        "withdrawETH": "Withdraw ETH",
-        "withdrawalsDistributedEpoch": "Withdrawals are distributed when Epoch {{currentEpoch}} ends",
-        "rewardsBudget": "Rewards Budget",
-        "amountToWithdraw": "Amount to withdraw",
-        "requestWithdrawal": "Request withdrawal",
-        "dontHaveThatMuchToWithdraw": "You don't have that much to withdraw"
+        "withdrawETH": "Withdraw ETH"
       },
       "proposalLoadingStates": {
         "text": "Loading of a proposal <br/> encountered an error."
@@ -144,6 +143,13 @@
         "balances": "Balances",
         "connectedWalletBalances": "Connected Wallet Balances",
         "disconnectWallet": "Disconnect Wallet"
+      },
+      "withdrawEth": {
+        "withdrawalsDistributedEpoch": "Withdrawals are distributed when Epoch {{currentEpoch}} ends",
+        "rewardsBudget": "Rewards Budget",
+        "amountToWithdraw": "Amount to withdraw",
+        "requestWithdrawal": "Request withdrawal",
+        "dontHaveThatMuchToWithdraw": "You don't have that much to withdraw"
       }
     }
   },
