@@ -5,16 +5,18 @@ import { createLockedEvent, createUnlockedEvent } from './utils';
 
 import { handleLocked, handleUnlocked } from '../src/deposits';
 
+
 const LOCK_ENTITY_TYPE = 'Locked';
 const UNLOCK_ENTITY_TYPE = 'Unlocked';
 
 describe('Describe entity assertions', () => {
   beforeAll(() => {
+    const depositBefore = BigInt.fromI32(100);
     const amount = BigInt.fromI32(234);
     const when = BigInt.fromI32(234);
     const user = Address.fromString('0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199');
-    const lockedEvent = createLockedEvent(amount, when, user);
-    const unlockedEvent = createUnlockedEvent(amount, when, user);
+    const lockedEvent = createLockedEvent(depositBefore, amount, when, user);
+    const unlockedEvent = createUnlockedEvent(depositBefore, amount, when, user);
     handleLocked(lockedEvent);
     handleUnlocked(unlockedEvent);
   });
@@ -25,6 +27,12 @@ describe('Describe entity assertions', () => {
 
   test('Locked created and stored', () => {
     assert.entityCount(LOCK_ENTITY_TYPE, 1);
+    assert.fieldEquals(
+      LOCK_ENTITY_TYPE,
+      '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
+      'depositBefore',
+      '100',
+    );
     assert.fieldEquals(
       LOCK_ENTITY_TYPE,
       '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
@@ -40,7 +48,7 @@ describe('Describe entity assertions', () => {
     assert.fieldEquals(
       LOCK_ENTITY_TYPE,
       '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
-      'blockTimestamp',
+      'timestamp',
       '1',
     );
     assert.fieldEquals(
@@ -60,6 +68,12 @@ describe('Describe entity assertions', () => {
   test('Unlocked created and stored', () => {
     assert.entityCount(UNLOCK_ENTITY_TYPE, 1);
     assert.fieldEquals(
+      LOCK_ENTITY_TYPE,
+      '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
+      'depositBefore',
+      '100',
+    );
+    assert.fieldEquals(
       UNLOCK_ENTITY_TYPE,
       '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
       'amount',
@@ -74,7 +88,7 @@ describe('Describe entity assertions', () => {
     assert.fieldEquals(
       UNLOCK_ENTITY_TYPE,
       '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
-      'blockTimestamp',
+      'timestamp',
       '1',
     );
     assert.fieldEquals(

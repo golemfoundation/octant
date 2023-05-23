@@ -4,6 +4,7 @@ from flask import current_app as app
 
 from app.contracts import epochs
 from app.core import glm
+from app.core.deposits import update_deposits
 from app.database import epoch_snapshot
 from app.extensions import db, w3
 from app.settings import config
@@ -23,8 +24,7 @@ def snapshot_previous_epoch() -> Optional[int]:
 
     glm_supply = glm.get_current_glm_supply()
     eth_proceeds = w3.eth.get_balance(config.WITHDRAWALS_TARGET_CONTRACT_ADDRESS)
-    # TODO add total_ed
-    total_effective_deposit = 0
+    total_effective_deposit = update_deposits(previous_epoch)
 
     epoch_snapshot.add_snapshot(
         previous_epoch, glm_supply, eth_proceeds, total_effective_deposit

@@ -3,12 +3,31 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
+    name: Epochs
+    network: sepolia
+    source:
+      abi: Epochs
+      address: "0x456F0802243A14C3b5F55B943A57acf64Ac82531"
+      startBlock: 3509172
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Epoch
+      abis:
+        - name: Epochs
+          file: ./abis/Epochs.json
+      file: ./src/epochs.ts
+      blockHandlers:
+        - handler: handleBlock
+  - kind: ethereum
     name: Allocations
     network: sepolia
     source:
       abi: Allocations
-      address: "0x39B50A32a38CB843Cc70B3342cB4E8b2C33be727"
-      startBlock: 8772670
+      address: "0x5725206751BFc976da6E3038e050f97AD7797E7A"
+      startBlock: 3509172
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -27,8 +46,8 @@ dataSources:
     network: sepolia
     source:
       abi: Deposits
-      address: "0x9b89577bE6dB818897d65Ff2988dacF8026206E7"
-      startBlock: 8415400
+      address: "0xd085521c65331E7f3905b412D3452bcF9D9888aD"
+      startBlock: 3509172
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -40,8 +59,8 @@ dataSources:
         - name: Deposits
           file: ./abis/Deposits.json
       eventHandlers:
-        - event: Locked(uint224,uint256,address)
+        - event: Locked(uint224,uint224,uint256,address)
           handler: handleLocked
-        - event: Unlocked(uint224,uint256,address)
+        - event: Unlocked(uint224,uint224,uint256,address)
           handler: handleUnlocked
       file: ./src/deposits.ts

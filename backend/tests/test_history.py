@@ -1,8 +1,7 @@
 import pytest
 
 from app.core.history import get_history
-
-from app.infrastructure.graphql_client import graphql_client
+from app.extensions import graphql_client
 
 
 @pytest.mark.parametrize(
@@ -10,25 +9,37 @@ from app.infrastructure.graphql_client import graphql_client
     [
         (  # Case 1: unlock value in the middle
             [
-                {"amount": "500000000000000000000", "blockTimestamp": 1679645896},
-                {"amount": "300000000000000000000", "blockTimestamp": 1679645700},
-            ],
-            [
-                {"amount": "400000000000000000000", "blockTimestamp": 1679645800},
+                {
+                    "__typename": "Locked",
+                    "amount": "500000000000000000000",
+                    "timestamp": 1679645896,
+                },
+                {
+                    "__typename": "Locked",
+                    "amount": "300000000000000000000",
+                    "timestamp": 1679645700,
+                },
             ],
             [
                 {
-                    "type": "lock",
+                    "__typename": "Unlocked",
+                    "amount": "400000000000000000000",
+                    "timestamp": 1679645800,
+                },
+            ],
+            [
+                {
+                    "__typename": "Locked",
                     "amount": "300000000000000000000",
                     "timestamp": 1679645700,
                 },
                 {
-                    "type": "unlock",
+                    "__typename": "Unlocked",
                     "amount": "400000000000000000000",
                     "timestamp": 1679645800,
                 },
                 {
-                    "type": "lock",
+                    "__typename": "Locked",
                     "amount": "500000000000000000000",
                     "timestamp": 1679645896,
                 },
@@ -36,25 +47,37 @@ from app.infrastructure.graphql_client import graphql_client
         ),
         (  # Case 2: unlock value first
             [
-                {"amount": "500000000000000000000", "blockTimestamp": 1679645900},
-                {"amount": "300000000000000000000", "blockTimestamp": 1679645910},
-            ],
-            [
-                {"amount": "400000000000000000000", "blockTimestamp": 1679645950},
-            ],
-            [
                 {
-                    "type": "lock",
+                    "__typename": "Locked",
                     "amount": "500000000000000000000",
                     "timestamp": 1679645900,
                 },
                 {
-                    "type": "lock",
+                    "__typename": "Locked",
+                    "amount": "300000000000000000000",
+                    "timestamp": 1679645910,
+                },
+            ],
+            [
+                {
+                    "__typename": "Unlocked",
+                    "amount": "400000000000000000000",
+                    "timestamp": 1679645950,
+                },
+            ],
+            [
+                {
+                    "__typename": "Locked",
+                    "amount": "500000000000000000000",
+                    "timestamp": 1679645900,
+                },
+                {
+                    "__typename": "Locked",
                     "amount": "300000000000000000000",
                     "timestamp": 1679645910,
                 },
                 {
-                    "type": "unlock",
+                    "__typename": "Unlocked",
                     "amount": "400000000000000000000",
                     "timestamp": 1679645950,
                 },
@@ -62,25 +85,37 @@ from app.infrastructure.graphql_client import graphql_client
         ),
         (  # Case 3: more unlock values than lock values
             [
-                {"amount": "500000000000000000000", "blockTimestamp": 1679645900},
-            ],
-            [
-                {"amount": "400000000000000000000", "blockTimestamp": 1679645800},
-                {"amount": "600000000000000000000", "blockTimestamp": 1679646000},
+                {
+                    "__typename": "Locked",
+                    "amount": "500000000000000000000",
+                    "timestamp": 1679645900,
+                },
             ],
             [
                 {
-                    "type": "unlock",
+                    "__typename": "Unlocked",
                     "amount": "400000000000000000000",
                     "timestamp": 1679645800,
                 },
                 {
-                    "type": "lock",
+                    "__typename": "Unlocked",
+                    "amount": "600000000000000000000",
+                    "timestamp": 1679646000,
+                },
+            ],
+            [
+                {
+                    "__typename": "Unlocked",
+                    "amount": "400000000000000000000",
+                    "timestamp": 1679645800,
+                },
+                {
+                    "__typename": "Locked",
                     "amount": "500000000000000000000",
                     "timestamp": 1679645900,
                 },
                 {
-                    "type": "unlock",
+                    "__typename": "Unlocked",
                     "amount": "600000000000000000000",
                     "timestamp": 1679646000,
                 },

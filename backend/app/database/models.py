@@ -37,3 +37,14 @@ class EpochSnapshot(Model):
     glm_supply = Column(db.String, nullable=False)
     eth_proceeds = Column(db.String, nullable=False)
     total_effective_deposit = Column(db.String, nullable=False)
+
+
+class Deposit(Model):
+    __tablename__ = "deposits"
+
+    id = Column(db.Integer, primary_key=True)
+    epoch = Column(db.Integer, nullable=False)
+    user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    user = relationship("User", backref=db.backref("deposits", lazy=True))
+    effective_deposit = Column(db.String, nullable=False)
+    epoch_end_deposit = Column(db.String, nullable=False)

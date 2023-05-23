@@ -2,11 +2,15 @@
   "sepolia": {
     "Allocations": {
       "address": "0xB4b3a771196a68BfaC5C629EF76Aa7B11a2376Cc",
-      "startBlock": 3443486
+      "startBlock": 8415400
     },
     "Deposits": {
       "address": "0xa571e25cE27A0513219c975E6fd2B1095c1B6583",
-      "startBlock": 3443486
+      "startBlock": 8415400
+    },
+    "Epochs": {
+      "address": "0xdD10d42E75467B96bA1d16Da53E0Fa8B23E51856",
+      "startBlock": 8415400
     }
   },
   "localhost": {
@@ -15,6 +19,9 @@
     },
     "Deposits": {
       "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
+    },
+    "Epochs": {
+      "address": "0xdD10d42E75467B96bA1d16Da53E0Fa8B23E51856"
     }
   }
 }

@@ -20,8 +20,8 @@ contract Deposits is OctantBase, IDeposits {
     /// @notice GLM token contract address
     ERC20 public immutable glm;
 
-    event Locked(uint224 amount, uint256 when, address user);
-    event Unlocked(uint224 amount, uint256 when, address user);
+    event Locked(uint224 depositBefore, uint224 amount, uint256 when, address user);
+    event Unlocked(uint224 depositBefore, uint224 amount, uint256 when, address user);
 
     /// @dev deposit amounts per user
     mapping(address => uint256) public deposits;
@@ -41,7 +41,7 @@ contract Deposits is OctantBase, IDeposits {
             glm.transferFrom(msg.sender, address(this), amount),
             DepositsErrors.GLM_TRANSFER_FAILED
         );
-        emit Locked(amount, block.timestamp, msg.sender);
+        emit Locked(oldDeposit, amount, block.timestamp, msg.sender);
     }
 
     /// @notice Unlock GLM. This can be done at any time, but it is most capital effective at the beginning of the epoch.
@@ -51,6 +51,6 @@ contract Deposits is OctantBase, IDeposits {
         require(oldDeposit >= amount, DepositsErrors.DEPOSIT_IS_TO_SMALL);
         deposits[msg.sender] = oldDeposit - amount;
         require(glm.transfer(msg.sender, amount));
-        emit Unlocked(amount, block.timestamp, msg.sender);
+        emit Unlocked(oldDeposit, amount, block.timestamp, msg.sender);
     }
 }

@@ -5,24 +5,34 @@ type Allocated @entity(immutable: true) {
     proposal: Bytes! # address
     allocation: BigInt!
     blockNumber: Int!
-    blockTimestamp: Int!
+    timestamp: Int!
     transactionHash: Bytes!
 }
 
 type Locked @entity(immutable: true) {
-  id: Bytes!
-  amount: BigInt! # uint224
-  user: Bytes! # address
-  blockNumber: Int!
-  blockTimestamp: Int!
-  transactionHash: Bytes!
+    id: Bytes!
+    depositBefore: BigInt!
+    amount: BigInt! # uint224
+    user: Bytes! # address
+    blockNumber: Int!
+    timestamp: Int!
+    transactionHash: Bytes!
 }
 
 type Unlocked @entity(immutable: true) {
-  id: Bytes!
-  amount: BigInt! # uint224
-  user: Bytes! # address
-  blockNumber: Int!
-  blockTimestamp: Int!
-  transactionHash: Bytes!
+    id: Bytes!
+    depositBefore: BigInt!
+    amount: BigInt! # uint224
+    user: Bytes! # address
+    blockNumber: Int!
+    timestamp: Int!
+    transactionHash: Bytes!
+}
+
+type Epoch @entity(immutable: true) {
+    id: String!
+    duration: Int!
+    decisionWindow: Int!
+    fromTs: Int!
+    toTs: Int!
 }

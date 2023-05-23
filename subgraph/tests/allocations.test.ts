@@ -91,7 +91,7 @@ describe('Mocked Events', () => {
     assert.fieldEquals(
       ALLOCATION_ENTITY_TYPE,
       '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
-      'blockTimestamp',
+      'timestamp',
       '1',
     );
     assert.fieldEquals(
@@ -134,7 +134,7 @@ describe('Mocked Events', () => {
     assert.fieldEquals(
       ALLOCATION_ENTITY_TYPE,
       '0xa16081f360e3847006db660bae1c6d1b2e17ec2a02000000',
-      'blockTimestamp',
+      'timestamp',
       '1',
     );
     assert.fieldEquals(
