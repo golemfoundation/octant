@@ -4,7 +4,7 @@ import { useAccount, useNetwork } from 'wagmi';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-import Loader from 'components/core/Loader/Loader';
+import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
@@ -19,8 +19,6 @@ import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
 import useTipsStore from 'store/tips/store';
 import triggerToast from 'utils/triggerToast';
-
-import styles from './App.module.scss';
 
 import 'styles/index.scss';
 import 'i18n';
@@ -220,7 +218,7 @@ const App = (): ReactElement => {
     !isTipsStoreInitialized;
 
   if (isLoading) {
-    return <Loader className={styles.loader} />;
+    return <AppLoader />;
   }
 
   return <RootRoutes />;
