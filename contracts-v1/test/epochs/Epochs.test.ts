@@ -217,7 +217,9 @@ makeTestsEnv(EPOCHS, testEnv => {
       epochs,
       signers: { Darth },
     } = testEnv;
-    expect(epochs.connect(Darth).setEpochProps(0, 0)).revertedWith('HN:Common/unauthorized-caller');
+    await expect(epochs.connect(Darth).setEpochProps(0, 0)).revertedWith(
+      'HN:Common/unauthorized-caller',
+    );
   });
 
   it('Cannot change props when decision window is bigger than epoch duration', async () => {
@@ -225,7 +227,7 @@ makeTestsEnv(EPOCHS, testEnv => {
       epochs,
       signers: { TestFoundation },
     } = testEnv;
-    expect(epochs.connect(TestFoundation).setEpochProps(1000, 2000)).revertedWith(
+    await expect(epochs.connect(TestFoundation).setEpochProps(1000, 2000)).revertedWith(
       'HN:Epochs/decision-window-bigger-than-duration',
     );
   });

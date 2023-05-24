@@ -23,7 +23,7 @@ makeTestsEnv(DEPOSITS, testEnv => {
 
     it("Can't withdrawn empty", async () => {
       const { glmDeposits, signers } = testEnv;
-      expect(glmDeposits.connect(signers.Alice).unlock(1)).to.be.revertedWith(
+      await expect(glmDeposits.connect(signers.Alice).unlock(1)).to.be.revertedWith(
         'HN:Deposits/deposit-is-smaller',
       );
     });
@@ -33,7 +33,7 @@ makeTestsEnv(DEPOSITS, testEnv => {
       await token.transfer(signers.Alice.address, 1000);
       await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
       await glmDeposits.connect(signers.Alice).lock(1000);
-      expect(glmDeposits.connect(signers.Darth).unlock(1)).to.be.revertedWith(
+      await expect(glmDeposits.connect(signers.Darth).unlock(1)).to.be.revertedWith(
         'HN:Deposits/deposit-is-smaller',
       );
     });
@@ -45,7 +45,7 @@ makeTestsEnv(DEPOSITS, testEnv => {
       await glmDeposits.connect(signers.Darth).lock(1000);
       await glmDeposits.connect(signers.Darth).unlock(1000);
       const balance = await token.balanceOf(signers.Darth.address);
-      expect(glmDeposits.connect(signers.Darth).unlock(1000)).to.be.revertedWith(
+      await expect(glmDeposits.connect(signers.Darth).unlock(1000)).to.be.revertedWith(
         'HN:Deposits/deposit-is-smaller',
       );
       expect(await token.balanceOf(signers.Darth.address)).eq(balance);
