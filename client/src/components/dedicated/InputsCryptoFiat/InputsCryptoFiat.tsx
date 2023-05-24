@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useDeferredValue, useEffect, useState } from 'react';
 
 import InputText from 'components/core/InputText/InputText';
 import InputTextProps from 'components/core/InputText/types';
@@ -19,6 +19,7 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({
   label,
   inputCryptoProps,
   cryptoCurrency,
+  onInputsFocusChange = () => {},
 }) => {
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
@@ -30,6 +31,9 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({
   }));
   const { data: cryptoValues } = useCryptoValues(displayCurrency);
   const [fiat, setFiat] = useState('');
+  const [isCryptoInputFocused, setIsCryptoInputFocused] = useState(false);
+  const [isFiatInputFocused, setIsFiatInputFocused] = useState(false);
+  const isAnyInputFocused = useDeferredValue(isCryptoInputFocused || isFiatInputFocused);
 
   const inputCryptoPropsLabel = isCryptoMainValueDisplay
     ? { ...inputCryptoProps, error, isErrorInlineVisible: false, label }
@@ -78,6 +82,10 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({
     }
   }, [inputCryptoProps.value, fiat]);
 
+  useEffect(() => {
+    onInputsFocusChange(isAnyInputFocused);
+  }, [onInputsFocusChange, isAnyInputFocused]);
+
   return (
     <div className={cx(styles.root, isCryptoMainValueDisplay && styles.isCryptoMainValueDisplay)}>
       <InputText
@@ -86,14 +94,18 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({
         placeholder="0.00"
         variant="simple"
         {...inputCryptoPropsLabel}
+        onBlur={() => setIsCryptoInputFocused(false)}
         onChange={handleCryptoChange}
         onClear={handleClear}
+        onFocus={() => setIsCryptoInputFocused(true)}
       />
       <InputText
         className={cx(styles.input, !isCryptoMainValueDisplay && styles.isFiatMainValueDisplay)}
         inputMode="decimal"
+        onBlur={() => setIsFiatInputFocused(false)}
         onChange={handleFiatChange}
         onClear={handleClear}
+        onFocus={() => setIsFiatInputFocused(true)}
         placeholder="0.00"
         suffix={displayCurrency?.toUpperCase() || 'USD'}
         value={fiat}

@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
-import React, { FC, Fragment } from 'react';
+import React, { Fragment, forwardRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -78,25 +78,22 @@ const getChildren = (
   );
 };
 
-const BudgetBox: FC<BudgetBoxProps> = ({
-  className,
-  currentStepIndex,
-  depositsValue,
-  transactionHash,
-  isError,
-}) => {
-  const { data: dataAvailableFunds } = useAvailableFundsGlm();
-  return (
-    <BoxRounded
-      alignment="center"
-      className={className}
-      isGrey
-      isVertical
-      {...getProps(currentStepIndex)}
-    >
-      {getChildren(currentStepIndex, depositsValue, transactionHash, isError, dataAvailableFunds)}
-    </BoxRounded>
-  );
-};
+const BudgetBox = forwardRef<HTMLDivElement, BudgetBoxProps>(
+  ({ className, currentStepIndex, depositsValue, transactionHash, isError }, ref) => {
+    const { data: dataAvailableFunds } = useAvailableFundsGlm();
+    return (
+      <BoxRounded
+        alignment="center"
+        className={className}
+        isGrey
+        isVertical
+        {...getProps(currentStepIndex)}
+        ref={ref}
+      >
+        {getChildren(currentStepIndex, depositsValue, transactionHash, isError, dataAvailableFunds)}
+      </BoxRounded>
+    );
+  },
+);
 
 export default BudgetBox;

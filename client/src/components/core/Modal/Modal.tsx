@@ -50,7 +50,7 @@ const Modal: FC<ModalProps> = ({
   const { isDesktop } = useMediaQuery();
 
   return (
-    <AnimatePresence initial={false}>
+    <AnimatePresence>
       {isOverflowEnabled && isOpen && (
         <motion.div
           key="modal-overflow"
@@ -75,7 +75,19 @@ const Modal: FC<ModalProps> = ({
         >
           {Image && <div className={styles.image}>{Image}</div>}
           <div className={cx(styles.body, Image && styles.hasImage, bodyClassName)}>
-            {header && <div className={styles.header}>{header}</div>}
+            <AnimatePresence initial={false}>
+              {header && (
+                <motion.div
+                  animate={{ height: 'auto', marginBottom: '4rem', opacity: 1 }}
+                  className={styles.header}
+                  exit={{ height: 0, marginBottom: 0, opacity: 0 }}
+                  initial={{ height: 0, marginBottom: 0, opacity: 0 }}
+                  transition={{ ease: 'linear' }}
+                >
+                  {header}
+                </motion.div>
+              )}
+            </AnimatePresence>
             {children}
           </div>
           <Button
