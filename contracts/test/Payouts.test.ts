@@ -73,7 +73,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
         parseEther('0.001'),
       );
       expect(await payouts.withdrawableUserETH(Alice.address)).eq(parseEther('0'));
-      expect(
+      await expect(
         payoutsManager.connect(Alice).withdrawUser(parseEther('0.0000001')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
     });
@@ -93,7 +93,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
         parseEther('0.001'),
       );
       expect(await payouts.withdrawableUserETH(Alice.address)).eq(parseEther('0'));
-      expect(
+      await expect(
         payoutsManager.connect(Alice).withdrawUser(parseEther('0.0000001')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
     });
@@ -114,7 +114,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
         parseEther('0.001'),
       );
       expect(await payouts.withdrawableUserETH(Alice.address)).eq(parseEther('0'));
-      expect(
+      await expect(
         payoutsManager.connect(Alice).withdrawUser(parseEther('0.0000001')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
     });
@@ -132,7 +132,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
         before.add(parseEther('2')),
         parseEther('0.001'),
       );
-      expect(
+      await expect(
         payoutsManager.connect(Alice).withdrawUser(parseEther('0.0000001')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
     });
@@ -153,7 +153,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
         parseEther('0.001'),
       );
       expect(await payouts.withdrawableUserETH(Alice.address)).eq(parseEther('0'));
-      expect(
+      await expect(
         payoutsManager.connect(Alice).withdrawUser(parseEther('0.0000001')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
     });
@@ -192,9 +192,9 @@ makeTestsEnv(PAYOUTS, testEnv => {
         signers: { Alice },
       } = testEnv;
       // user gets 1 ETH claimable rewards, it's third epoch so max possible payout is 3 ETH
-      expect(payoutsManager.connect(Alice).withdrawUser(parseEther('3.1'))).to.be.revertedWith(
-        'HN:Payouts/registering-withdrawal-of-unearned-funds',
-      );
+      await expect(
+        payoutsManager.connect(Alice).withdrawUser(parseEther('3.1')),
+      ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
     });
 
     it('payout stay permanent if registration is reverted', async () => {
@@ -207,9 +207,9 @@ makeTestsEnv(PAYOUTS, testEnv => {
       expect(alicePayout.checkpointEpoch).eq(0);
 
       // user gets 1 ETH claimable rewards, it's third epoch so max possible payout is 3 ETH
-      expect(payoutsManager.connect(Alice).withdrawUser(parseEther('2.8'))).to.be.revertedWith(
-        'HN:Payouts/registering-withdrawal-of-unearned-funds',
-      );
+      await expect(
+        payoutsManager.connect(Alice).withdrawUser(parseEther('2.8')),
+      ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
 
       alicePayout = await payouts.payoutStatus(Alice.address);
       expect(alicePayout.total).eq(parseEther('0.3'));
@@ -293,7 +293,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
       expect(await payouts.withdrawableProposalETH(proposalAddresses[0].address)).eq(
         parseEther('0'),
       );
-      expect(
+      await expect(
         payoutsManager
           .connect(proposalAddresses[0])
           .withdrawProposal(proposalAddresses[0].address, parseEther('0.000000000001')),
@@ -318,7 +318,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
     it("can't register more than earned", async () => {
       const { proposalAddresses } = testEnv;
       // proposal gets 1 ETH claimable rewards, it's third epoch so max possible payout is 3 ETH
-      expect(
+      await expect(
         payoutsManager
           .connect(proposalAddresses[0])
           .withdrawProposal(proposalAddresses[0].address, parseEther('3.1')),
@@ -335,7 +335,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
       expect(proposalPayout.checkpointEpoch).eq(0);
 
       // proposal gets 1 ETH claimable rewards, it's third epoch so max possible payout is 3 ETH
-      expect(
+      await expect(
         payoutsManager
           .connect(proposalAddresses[0])
           .withdrawProposal(proposalAddresses[0].address, parseEther('2.8')),
@@ -416,7 +416,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
       expect(await payouts.withdrawableGolemFoundationETH(TestFoundation.address)).eq(
         parseEther('0.0'),
       );
-      expect(
+      await expect(
         payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('0.0000001')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
     });
@@ -435,7 +435,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
       expect(await payouts.withdrawableGolemFoundationETH(TestFoundation.address)).eq(
         parseEther('0.0'),
       );
-      expect(
+      await expect(
         payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('0.0000001')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
     });
@@ -445,7 +445,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
         signers: { TestFoundation },
       } = testEnv;
       // proposal gets 1 ETH claimable rewards, it's third epoch so max possible payout is 3 ETH
-      expect(
+      await expect(
         payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('3.1')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
     });
@@ -460,7 +460,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
       expect(proposalPayout.checkpointEpoch).eq(0);
 
       // proposal gets 1 ETH claimable rewards, it's third epoch so max possible payout is 3 ETH
-      expect(
+      await expect(
         payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('2.8')),
       ).to.be.revertedWith('HN:Payouts/registering-withdrawal-of-unearned-funds');
 
@@ -474,7 +474,7 @@ makeTestsEnv(PAYOUTS, testEnv => {
         signers: { Alice, TestFoundation },
       } = testEnv;
 
-      expect(
+      await expect(
         payoutsManager.connect(Alice).withdrawGolemFoundation(parseEther('0.3')),
       ).to.be.revertedWith('HN:Common/unauthorized-caller');
       await payoutsManager.connect(TestFoundation).withdrawGolemFoundation(parseEther('0.3'));

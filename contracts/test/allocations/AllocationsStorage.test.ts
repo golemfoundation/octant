@@ -208,7 +208,7 @@ makeTestsEnv(ALLOCATIONS_STORAGE, testEnv => {
       } = testEnv;
       const allocationsStorage = await setupContract(Alice.address);
 
-      expect(
+      await expect(
         allocationsStorage.connect(Bob).addAllocation(1, Alice.address, {
           allocation: 1,
           proposal: proposalAddresses[0].address,
@@ -274,9 +274,9 @@ makeTestsEnv(ALLOCATIONS_STORAGE, testEnv => {
       } = testEnv;
       const allocationsStorage = await setupContract(Alice.address);
 
-      expect(allocationsStorage.connect(Bob).removeUserAllocations(1, Alice.address)).revertedWith(
-        'HN:Common/unauthorized-caller',
-      );
+      await expect(
+        allocationsStorage.connect(Bob).removeUserAllocations(1, Alice.address),
+      ).revertedWith('HN:Common/unauthorized-caller');
     });
   });
 });

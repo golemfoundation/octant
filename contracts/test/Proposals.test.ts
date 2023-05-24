@@ -114,9 +114,9 @@ makeTestsEnv(PROPOSALS, testEnv => {
       await forwardEpochs(epochs, 3);
 
       // then
-      expect(proposals.connect(TestFoundation).setProposalAddresses(1, newProposals)).revertedWith(
-        'HN:Proposals/only-future-proposals-changing-is-allowed',
-      );
+      await expect(
+        proposals.connect(TestFoundation).setProposalAddresses(1, newProposals),
+      ).revertedWith('HN:Proposals/only-future-proposals-changing-is-allowed');
     });
 
     it('Cannot change baseURI if not a deployer', async () => {
@@ -124,7 +124,7 @@ makeTestsEnv(PROPOSALS, testEnv => {
         proposals,
         signers: { Darth },
       } = testEnv;
-      expect(proposals.connect(Darth).setCID('https://malicious.com')).revertedWith(
+      await expect(proposals.connect(Darth).setCID('https://malicious.com')).revertedWith(
         'HN:Common/unauthorized-caller',
       );
     });
@@ -134,7 +134,7 @@ makeTestsEnv(PROPOSALS, testEnv => {
         proposals,
         signers: { Darth },
       } = testEnv;
-      expect(proposals.connect(Darth).setProposalAddresses(1, newProposals)).revertedWith(
+      await expect(proposals.connect(Darth).setProposalAddresses(1, newProposals)).revertedWith(
         'HN:Common/unauthorized-caller',
       );
     });
@@ -227,7 +227,7 @@ makeTestsEnv(PROPOSALS, testEnv => {
         signers: { Darth },
       } = testEnv;
 
-      expect(
+      await expect(
         proposals.connect(Darth).setAuthorizedAccount(proposalAddresses[0].address, Darth.address),
       ).revertedWith('HN:Common/unauthorized-caller');
     });

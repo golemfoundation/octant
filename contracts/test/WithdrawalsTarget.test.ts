@@ -20,8 +20,8 @@ makeTestsEnv(WITHDRAWALS_TARGET, testEnv => {
       await sendETH(target, 1);
 
       // Darth can't withdraw
-      expect(target.connect(Darth).withdrawUnstaked(parseEther('0'))).to.be.revertedWith(
-        'HN:WithdrawalsTarget/unauthorized-caller',
+      await expect(target.connect(Darth).withdrawUnstaked(parseEther('0'))).to.be.revertedWith(
+        'HN:Common/unauthorized-caller',
       );
 
       // Deployer can withdraw

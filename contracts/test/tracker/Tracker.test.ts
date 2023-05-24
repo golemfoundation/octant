@@ -120,7 +120,7 @@ makeTestsEnv(TRACKER, testEnv => {
       await token.transfer(signers.Alice.address, 1005);
       await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
       await glmDeposits.connect(signers.Alice).lock(1000);
-      expect(tracker.tokenSupplyAt(10)).to.be.revertedWith('HN:Tracker/future-is-unknown');
+      await expect(tracker.tokenSupplyAt(10)).to.be.revertedWith('HN:Tracker/future-is-unknown');
     });
 
     it("Can read value in 'silent' epochs", async () => {
@@ -141,16 +141,16 @@ makeTestsEnv(TRACKER, testEnv => {
       await token.transfer(signers.Alice.address, 1005);
       await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
       await glmDeposits.connect(signers.Alice).lock(1000);
-      expect(tracker.depositAt(signers.Alice.address, 10)).to.be.revertedWith(
+      await expect(tracker.depositAt(signers.Alice.address, 10)).to.be.revertedWith(
         'HN:Tracker/future-is-unknown',
       );
     });
     it('tracker accepts calls only from deposits', async () => {
       const { signers, tracker } = testEnv;
-      expect(
+      await expect(
         tracker.connect(signers.Darth).processLock(signers.Darth.address, 0, parseEther('100000')),
       ).to.be.revertedWith('HN:Common/unauthorized-caller');
-      expect(
+      await expect(
         tracker
           .connect(signers.Darth)
           .processUnlock(signers.Darth.address, 0, parseEther('100000')),
