@@ -8,5 +8,7 @@ export type FormValues = {
 
 export default interface GlmLockProps {
   currentMode: CurrentMode;
+  onChangeCryptoOrFiatInputFocus: (isCryptoOrFiatInputFocused: boolean) => void;
   onCurrentModeChange: (currentMode: CurrentMode) => void;
+  showBudgetBox: boolean;
 }

@@ -1,4 +1,4 @@
-import { ChangeEvent, HTMLAttributes } from 'react';
+import { ChangeEvent, FocusEventHandler, HTMLAttributes } from 'react';
 
 export const INPUT_TEXT_VARIANTS = ['borderless', 'boxRounded', 'simple'] as const;
 export type InputTextVariant = (typeof INPUT_TEXT_VARIANTS)[number];
@@ -11,8 +11,10 @@ export default interface InputTextProps {
   isErrorInlineVisible?: boolean;
   label?: string;
   name?: string;
+  onBlur?: FocusEventHandler<HTMLInputElement>;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   onClear?: () => void;
+  onFocus?: FocusEventHandler<HTMLInputElement>;
   placeholder?: string;
   suffix?: string;
   value?: string;

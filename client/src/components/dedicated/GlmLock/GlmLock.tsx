@@ -2,6 +2,7 @@ import cx from 'classnames';
 import { BigNumber, ContractTransaction } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { useFormik } from 'formik';
+import { AnimatePresence, motion } from 'framer-motion';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount, useSigner } from 'wagmi';
@@ -28,7 +29,33 @@ import { formInitialValues, getButtonCtaLabel, validationSchema } from './utils'
 
 const currentStepIndexInitialValue = 0;
 
-const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange }) => {
+const budgetBoxVariants = {
+  hide: {
+    height: '0',
+    margin: '0',
+    opacity: '0',
+    zIndex: '-1',
+  },
+  show: {
+    height: '0',
+    margin: '0',
+    opacity: '0',
+    zIndex: '-1',
+  },
+  visible: {
+    height: 'auto',
+    margin: '0 auto 1.6rem',
+    opacity: 1,
+    zIndex: '1',
+  },
+};
+
+const GlmLock: FC<GlmLockProps> = ({
+  showBudgetBox,
+  currentMode,
+  onCurrentModeChange,
+  onChangeCryptoOrFiatInputFocus,
+}) => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.glmLock',
   });
@@ -118,13 +145,25 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange }) => {
           }
         />
       </BoxRounded>
-      <BudgetBox
-        className={styles.element}
-        currentStepIndex={currentStepIndex}
-        depositsValue={depositsValue}
-        isError={!formik.isValid}
-        transactionHash={transactionHash}
-      />
+      <AnimatePresence initial={false}>
+        {showBudgetBox && (
+          <motion.div
+            animate="visible"
+            className={styles.budgetBoxContainer}
+            exit="hide"
+            initial="show"
+            transition={{ ease: 'linear' }}
+            variants={budgetBoxVariants}
+          >
+            <BudgetBox
+              currentStepIndex={currentStepIndex}
+              depositsValue={depositsValue}
+              isError={!formik.isValid}
+              transactionHash={transactionHash}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
       <BoxRounded
         className={styles.element}
         isGrey
@@ -155,6 +194,7 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange }) => {
             value: formik.values.valueToDeposeOrWithdraw,
           }}
           label={currentMode === 'lock' ? t('amountToLock') : t('amountToUnlock')}
+          onInputsFocusChange={onChangeCryptoOrFiatInputFocus}
         />
       </BoxRounded>
       <Button

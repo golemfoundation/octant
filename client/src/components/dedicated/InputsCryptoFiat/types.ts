@@ -13,4 +13,6 @@ export default interface InputsCryptoFiatProps {
     value: InputTextProps['value'];
   };
   label: string;
+
+  onInputsFocusChange?: (isAnyInputFocused: boolean) => void;
 }
