@@ -71,14 +71,20 @@ yarn deploy:goerli
 yarn verify:goerli
 ```
 
-## GLM Faucet (Goerli)
+### Sepolia testnet
+```bash
+yarn deploy:sepolia
+yarn verify:sepolia
+```
+
+## GLM Faucet
 Update `.env` with your private key:
 ```bash
-GOERLI_PRIVATE_KEY=<your private key>
+TESTNET_PRIVATE_KEY=<your private key>
 ```
 Send Test GLM.
 ```bash
-npx hardhat --network goerli send-glm --recipient <recipient address>
+npx hardhat --network <network> send-glm --recipient <recipient address>
 ```
 
 ## Publish typechain types

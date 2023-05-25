@@ -21,4 +21,4 @@ VITE_DEPOSITS_ADDRESS=${deposits.address}`;
 };
 
 export default func;
-func.tags = ['after-deployment', 'goerli', 'local'];
+func.tags = ['after-deployment', 'testnet', 'local'];

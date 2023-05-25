@@ -5,7 +5,8 @@
   "scripts": {
     "clean": "npx hardhat clean",
     "compile": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat compile",
-    "deploy:goerli": "npx hardhat --network goerli deploy --tags goerli",
+    "deploy:goerli": "npx hardhat --network goerli deploy --tags testnet",
+    "deploy:sepolia": "npx hardhat --network sepolia deploy --tags testnet",
     "deploy:localhost": "npx hardhat --network localhost deploy --tags local",
     "docs": "npx hardhat docgen",
     "eslint": "eslint './**/*.{js,jsx,ts,tsx}'",
@@ -25,7 +26,9 @@
     "start-node": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat node --no-deploy",
     "test": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat test",
     "type-check": "tsc --noEmit true",
-    "verify:goerli": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat --network goerli etherscan-verify --license GPL-3.0"
+    "verify:goerli": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat --network goerli etherscan-verify --license GPL-3.0",
+    "verify:sepolia": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat --network sepolia etherscan-verify --license GPL-3.0",
+    "verify:sepolia-proxy": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat --network sepolia etherscan-verify --license MIT"
   },
   "repository": {
     "type": "git",
