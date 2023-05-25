@@ -10,12 +10,25 @@ import './InputSelect.scss';
 import styles from './InputSelect.module.scss';
 import InputSelectProps, { Option } from './types';
 
-const CustomOption = ({ innerRef, innerProps, children, isSelected }) => (
-  <div ref={innerRef} className={styles.option} {...innerProps}>
-    {isSelected && <Svg classNameSvg={styles.iconTick} img={tick} size={1} />}
+const CustomSingleValue = ({ dataTest, innerProps, children }) => (
+  <div {...innerProps} className={styles.singleValue} data-test={`${dataTest}__CustomSingleValue`}>
     {children}
   </div>
 );
+
+const CustomOption = ({ dataTest, innerRef, innerProps, children, isSelected }) => {
+  return (
+    <div
+      ref={innerRef}
+      className={styles.option}
+      data-test={`${dataTest}__CustomOption--${children}`}
+      {...innerProps}
+    >
+      {isSelected && <Svg classNameSvg={styles.iconTick} img={tick} size={1} />}
+      {children}
+    </div>
+  );
+};
 
 const CustomMenu = ({ innerRef, innerProps, children, setIsMenuOpen }) => (
   <Fragment>
@@ -39,7 +52,13 @@ const CustomMenuList = ({ innerRef, innerProps, setIsMenuOpen, children }) => (
   </div>
 );
 
-const InputSelect: FC<InputSelectProps> = ({ options, onChange, selectedOption, isDisabled }) => {
+const InputSelect: FC<InputSelectProps> = ({
+  dataTest = 'InputSelect',
+  options,
+  onChange,
+  selectedOption,
+  isDisabled,
+}) => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [_selectedOption, _setSelectedOption] = useState<SingleValue<Option>>(
     selectedOption || options[0],
@@ -55,15 +74,16 @@ const InputSelect: FC<InputSelectProps> = ({ options, onChange, selectedOption, 
   };
 
   return (
-    <div>
+    <div data-test={dataTest}>
       <Select
         classNamePrefix="InputSelect"
         components={{
           /* eslint-disable react/no-unstable-nested-components */
           Menu: args => <CustomMenu {...args} setIsMenuOpen={setIsMenuOpen} />,
           MenuList: args => <CustomMenuList {...args} setIsMenuOpen={setIsMenuOpen} />,
+          Option: args => <CustomOption dataTest={dataTest} {...args} />,
+          SingleValue: args => <CustomSingleValue {...args} dataTest={dataTest} />,
           /* eslint-enable react/no-unstable-nested-components */
-          Option: CustomOption,
         }}
         isDisabled={isDisabled}
         isSearchable={false}

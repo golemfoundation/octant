@@ -8,5 +8,5 @@ export const CRYPTO_CURRENCIES_TICKERS = {
   golem: 'GLM',
 };
 
-export const DISPLAY_CURRENCIES = ['usd', 'aud', 'eur', 'jpy', 'cny', 'gbp'];
+export const DISPLAY_CURRENCIES = ['usd', 'aud', 'eur', 'jpy', 'cny', 'gbp'] as const;
 export type DisplayCurrencies = (typeof DISPLAY_CURRENCIES)[number];

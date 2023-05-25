@@ -76,7 +76,11 @@ const MetricsView = (): ReactElement => {
         <Header text={t('valueLocked')} />
         <Description text={t('totalValueStakedDescription')} />
         <BoxRounded alignment="left" className={styles.box} isVertical title={t('ethStaked')}>
-          <DoubleValue cryptoCurrency="ethereum" valueCrypto={ETH_STAKED} />
+          <DoubleValue
+            cryptoCurrency="ethereum"
+            dataTest="MetricsView__DoubleValue--ethStaked"
+            valueCrypto={ETH_STAKED}
+          />
         </BoxRounded>
         <BoxRounded alignment="left" className={styles.box} isVertical title={t('glmLocked')}>
           <DoubleValue cryptoCurrency="golem" valueCrypto={glmLocked} />
