@@ -6,6 +6,7 @@ export interface Option {
 }
 
 export default interface InputSelectProps {
+  dataTest?: string;
   isDisabled?: boolean;
   onChange?: (option: SingleValue<Option>) => void;
   options: Options<Option>;

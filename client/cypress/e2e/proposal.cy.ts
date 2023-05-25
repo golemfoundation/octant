@@ -18,6 +18,9 @@ describe('proposal', () => {
     if (proposalNames.length === 0) {
       proposalNames = getNamesOfProposals();
     }
+
+    // Wait for all loaders (in ProposalItem) to disappear.
+    cy.get('[data-test*=Loader]').should('not.exist');
   });
 
   it('entering proposal view renders all its elements', () => {

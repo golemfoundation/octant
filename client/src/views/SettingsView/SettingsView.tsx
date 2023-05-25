@@ -12,8 +12,9 @@ import useSettingsStore from 'store/settings/store';
 import { SettingsData } from 'store/settings/types';
 
 import styles from './SettingsView.module.scss';
+import { Options } from './types';
 
-const options = [
+const options: Options = [
   { label: 'USD', value: 'usd' },
   { label: 'AUD', value: 'aud' },
   { label: 'EUR', value: 'eur' },
