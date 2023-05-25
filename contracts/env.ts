@@ -27,8 +27,7 @@ const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || '';
 const EPOCH_DURATION = Number(process.env.EPOCH_DURATION) || 600;
 const DECISION_WINDOW = Number(process.env.DECISION_WINDOW) || 600;
 const IS_GAS_REPORTING_ENABLED = Boolean(process.env.IS_GAS_REPORTING_ENABLED) || true;
-const MULTISIG_ADDRESS =
-  process.env.MULTISIG_ADDRESS || '0x2cF28ec7f4B6CbF8CC052f56D9901a8a4AdFfd6c';
+const MULTISIG_ADDRESS = process.env.MULTISIG_ADDRESS || '';
 
 export {
   PROPOSALS_CID,

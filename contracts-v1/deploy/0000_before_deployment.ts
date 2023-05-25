@@ -19,4 +19,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 };
 
 export default func;
-func.tags = ['before-deployment', 'local', 'goerli'];
+func.tags = ['before-deployment', 'local', 'testnet'];
