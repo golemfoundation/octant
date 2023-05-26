@@ -67,6 +67,7 @@ const SettingsView = (): ReactElement => {
       <BoxRounded className={styles.box} justifyContent="spaceBetween">
         {t('cryptoMainValueDisplay')}
         <InputCheckbox
+          dataTest="UseCryptoAsMainValueDisplay__InputCheckbox"
           isChecked={isCryptoMainValueDisplay}
           onChange={({ target: { checked: isChecked } }) => setIsCryptoMainValueDisplay(isChecked)}
         />

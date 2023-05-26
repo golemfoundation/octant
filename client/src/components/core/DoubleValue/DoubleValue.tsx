@@ -48,6 +48,7 @@ const DoubleValue: FC<DoubleValueProps> = ({
         styles[`textAlignment--${textAlignment}`],
         className,
       )}
+      data-test={dataTest}
     >
       <div
         className={cx(styles.primary, styles[`variant--${variant}`])}
