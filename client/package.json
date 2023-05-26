@@ -99,7 +99,8 @@
     "sass": "^1.61.0",
     "ts-jest": "^29.0.5",
     "typescript": "^5.0.2",
-    "vite": "^4.3.8"
+    "vite": "^4.3.8",
+    "vite-plugin-compression": "^0.5.1"
   },
   "resolutions": {
     "@synthetixio/synpress/**/eth-sig-util": "yarn:@metamask/eth-sig-util@^5.1.0"
