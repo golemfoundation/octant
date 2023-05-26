@@ -1,10 +1,6 @@
 import React from 'react';
 import { Trans } from 'react-i18next';
 
-import stepOneImage from 'assets/images/onboarding/1.png';
-import stepTwoImage from 'assets/images/onboarding/2.png';
-import stepThreeImage from 'assets/images/onboarding/3.png';
-import stepFourImage from 'assets/images/onboarding/4.png';
 import Button from 'components/core/Button/Button';
 import { DISCORD_LINK, OCTANT_DOCS, BLOG_POST } from 'constants/urls';
 import i18n from 'i18n';
@@ -15,7 +11,7 @@ import { Step } from './types';
 const steps: Step[] = [
   {
     header: i18n.t('views.onboarding.steps.welcomeToOctant.header'),
-    image: stepOneImage,
+    image: 'images/onboarding/1.webp',
     text: (
       <Trans
         components={[<Button href={BLOG_POST} variant="link3" />]}
@@ -25,7 +21,7 @@ const steps: Step[] = [
   },
   {
     header: i18n.t('views.onboarding.steps.stakingRewards.header'),
-    image: stepTwoImage,
+    image: 'images/onboarding/2.webp',
     text: (
       <Trans
         components={[<span className={styles.bold} />]}
@@ -35,7 +31,7 @@ const steps: Step[] = [
   },
   {
     header: i18n.t('views.onboarding.steps.allocateOrWithdraw.header'),
-    image: stepThreeImage,
+    image: 'images/onboarding/3.webp',
     text: (
       <Trans
         components={[<span className={styles.bold} />]}
@@ -45,7 +41,7 @@ const steps: Step[] = [
   },
   {
     header: i18n.t('views.onboarding.steps.moreInformation.header'),
-    image: stepFourImage,
+    image: 'images/onboarding/4.webp',
     text: (
       <Trans
         components={[

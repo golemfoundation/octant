@@ -40,7 +40,7 @@ const ProposalsView = (): ReactElement => {
       {!wasAddFavouritesAlreadyClosed && (
         <TipTile
           className={styles.tip}
-          image="images/tip-favourites.png"
+          image="images/tip-favourites.webp"
           infoLabel={i18n.t('common.gettingStarted')}
           onClose={() => setWasAddFavouritesAlreadyClosed(true)}
           text={t('tip.text')}

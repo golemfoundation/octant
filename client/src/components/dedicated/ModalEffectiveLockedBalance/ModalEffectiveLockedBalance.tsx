@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { Trans } from 'react-i18next';
 
-import modalEffectiveLockedBalance from 'assets/images/modalEffectiveLockedBalance.png';
 import Img from 'components/core/Img/Img';
 import Modal from 'components/core/Modal/Modal';
 import Text from 'components/core/Text/Text';
@@ -13,7 +12,7 @@ const ModalEffectiveLockedBalance: FC<ModalEffectiveLockedBalanceProps> = ({ mod
   <Modal
     {...modalProps}
     header="Effective Locked Balance"
-    Image={<Img className={styles.image} src={modalEffectiveLockedBalance} />}
+    Image={<Img className={styles.image} src="images/modalEffectiveLockedBalance.webp" />}
   >
     <Text>
       <Trans

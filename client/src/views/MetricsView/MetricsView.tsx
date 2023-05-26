@@ -54,7 +54,7 @@ const MetricsView = (): ReactElement => {
       {isCheckStatsTipVisible && (
         <TipTile
           className={styles.tip}
-          image={isDesktop ? 'images/tip-stats-hor.png' : 'images/tip-stats-vert.png'}
+          image={isDesktop ? 'images/tip-stats-hor.webp' : 'images/tip-stats-vert.webp'}
           infoLabel={i18n.t('common.octantTips')}
           onClose={() => setWasCheckStatusAlreadyClosed(true)}
           text={
