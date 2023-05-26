@@ -1,7 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig } from 'vite';
+import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import viteCompression from 'vite-plugin-compression';
 
 const path = require('path');
 /* eslint-enable import/no-extraneous-dependencies */
@@ -12,7 +13,7 @@ export default defineConfig(({ mode }) => {
   const isStaging = mode === 'staging';
   const localIdentName = isProduction ? '[hash:base64:5]' : '[name]__[local]--[hash:base64:5]';
 
-  const plugins = [react()];
+  const plugins = [react(), splitVendorChunkPlugin(), viteCompression()];
   if (isStaging) {
     plugins.push(
       visualizer({
