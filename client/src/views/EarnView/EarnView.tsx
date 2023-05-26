@@ -29,7 +29,7 @@ const EarnView = (): ReactElement => {
       {isWithdrawTipVisible && (
         <TipTile
           className={styles.tip}
-          image="images/tip-withdraw.png"
+          image="images/tip-withdraw.webp"
           infoLabel={i18n.t('common.gettingStarted')}
           onClose={() => setWasWithdrawAlreadyClosed(true)}
           text={t('tip.text')}

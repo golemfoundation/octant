@@ -232,7 +232,7 @@ const AllocationView = (): ReactElement => {
           {isConnectWalletTipVisible && (
             <TipTile
               className={styles.tip}
-              image="images/tip-connect-wallet.png"
+              image="images/tip-connect-wallet.webp"
               infoLabel={i18n.t('common.gettingStarted')}
               onClose={() => setWasConnectWalletAlreadyClosed(true)}
               text={t('tip.connectWallet.text')}
@@ -242,7 +242,7 @@ const AllocationView = (): ReactElement => {
           {isLockGlmTipVisible && (
             <TipTile
               className={styles.tip}
-              image="images/tip-lock-glm.png"
+              image="images/tip-lock-glm.webp"
               infoLabel={i18n.t('common.gettingStarted')}
               onClose={() => setWasLockGLMAlreadyClosed(true)}
               text={t('tip.lockGlm.text')}
@@ -252,7 +252,7 @@ const AllocationView = (): ReactElement => {
           {isRewardsTipVisible && (
             <TipTile
               className={styles.tip}
-              image="images/tip-rewards.png"
+              image="images/tip-rewards.webp"
               infoLabel={i18n.t('common.octantTips')}
               onClose={() => setWasRewardsAlreadyClosed(true)}
               text={t('tip.rewards.text')}
