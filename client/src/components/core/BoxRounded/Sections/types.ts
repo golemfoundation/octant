@@ -2,6 +2,7 @@ import DoubleValueProps from 'components/core/DoubleValue/types';
 import { SvgImageConfig } from 'components/core/Svg/types';
 
 export interface SectionProps {
+  dataTest?: string;
   doubleValueProps: {
     coinPricesServerDowntimeText?: DoubleValueProps['coinPricesServerDowntimeText'];
     cryptoCurrency: DoubleValueProps['cryptoCurrency'];

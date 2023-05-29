@@ -14,6 +14,7 @@ const Svg: FC<SvgProps> = ({
   displayMode = 'raw',
   size = 'auto',
   sizeUnit = 'rem',
+  dataTest = 'Svg',
 }) => {
   const parsedSize = isArray(size) ? size : [size, size];
   const width = parsedSize[0] === 'auto' ? parsedSize[0] : `${parsedSize[0]}${sizeUnit}`;
@@ -33,6 +34,8 @@ const Svg: FC<SvgProps> = ({
 
   const svgAttrs: SvgAttrs = {
     className: cx(styles.root, img.className, classNameSvg),
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    'data-test': dataTest,
     onClick,
     style: svgStyles,
     viewBox,

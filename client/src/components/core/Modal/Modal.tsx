@@ -58,6 +58,7 @@ const Modal: FC<ModalProps> = ({
             opacity: 1,
           }}
           className={cx(styles.overflow, isOpen && styles.isOpen)}
+          data-test={`${dataTest}__overflow`}
           exit={{ opacity: 0 }}
           initial={{ opacity: 0 }}
           onClick={onClosePanel}
@@ -68,6 +69,7 @@ const Modal: FC<ModalProps> = ({
           key="modal-root"
           animate="visible"
           className={cx(styles.root, className)}
+          data-test={dataTest}
           exit="showHide"
           initial="showHide"
           transition={{ damping: 0.5 }}

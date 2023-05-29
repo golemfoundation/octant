@@ -7,12 +7,24 @@ import { questionMark } from 'svg/misc';
 import styles from './Sections.module.scss';
 import SectionsProps, { SectionProps } from './types';
 
-const Section: FC<SectionProps> = ({ label, icon, onTooltipClick, doubleValueProps }) => (
-  <div className={styles.root}>
+const Section: FC<SectionProps> = ({
+  label,
+  icon,
+  onTooltipClick,
+  doubleValueProps,
+  dataTest = 'Section',
+}) => (
+  <div className={styles.root} data-test={dataTest}>
     <div className={styles.label}>
       {icon ? <Svg img={icon} size={4} /> : label}
       {onTooltipClick && (
-        <Svg classNameSvg={styles.tooltip} img={questionMark} onClick={onTooltipClick} size={1.6} />
+        <Svg
+          classNameSvg={styles.tooltip}
+          dataTest={`${dataTest}__Svg`}
+          img={questionMark}
+          onClick={onTooltipClick}
+          size={1.6}
+        />
       )}
     </div>
     <DoubleValue textAlignment="right" variant="small" {...doubleValueProps} />

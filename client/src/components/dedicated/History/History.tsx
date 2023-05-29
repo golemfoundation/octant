@@ -47,7 +47,7 @@ const History = (): ReactElement => {
   const isListAvailable = (isConnected && allocationsAndDeposits !== undefined) || !isConnected;
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test="History">
       <div className={styles.header}>{t('history')}</div>
       {!isListAvailable || timeCurrentEpochStart === undefined ? (
         <Loader className={styles.loader} />

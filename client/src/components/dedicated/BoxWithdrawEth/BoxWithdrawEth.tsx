@@ -18,6 +18,7 @@ const BoxWithdrawEth: FC<BoxWithdrawEthProps> = ({ classNameBox }) => {
     <Fragment>
       <RewardsBox
         buttonProps={{
+          dataTest: 'BoxWithdrawEth__RewardsBox__Button',
           isDisabled: !isConnected,
           isHigh: true,
           label: t('withdrawRewards'),

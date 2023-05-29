@@ -31,6 +31,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({ buttonProps, className, isGrey }) => 
       alignment="left"
       buttonProps={buttonProps}
       className={cx(styles.root, className)}
+      dataTest="RewardsBox__BoxRounded"
       hasSections
       isGrey={isGrey}
       isVertical
