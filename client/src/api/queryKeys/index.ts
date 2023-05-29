@@ -1,22 +1,24 @@
-import { SettingsData } from 'store/settings/types';
+import { Root, QueryKeys } from './types';
 
-export const QUERY_KEYS = {
+export const ROOTS: Root = {
+  cryptoValues: 'cryptoValues',
+  depositAt: 'depositAt',
+  proposalAllocations: 'proposalAllocations',
+  proposalsIpfsResults: 'proposalsIpfsResults',
+  userHistoricAllocations: 'userHistoricAllocations',
+};
+
+export const QUERY_KEYS: QueryKeys = {
   availableFundsEth: ['availableFundsEth'],
   availableFundsGlm: ['availableFundsGlm'],
-  cryptoValues: (fiatCurrency: NonNullable<SettingsData['displayCurrency']>): string[] => [
-    ...QUERY_KEYS.cryptoValuesRoot,
-    fiatCurrency,
-  ],
+  cryptoValues: fiatCurrency => [ROOTS.cryptoValues, fiatCurrency],
   cryptoValuesRoot: ['cryptoValues'],
   currentBalance: ['currentBalance'],
   currentEpoch: ['currentEpoch'],
   currentEpochEnd: ['currentEpochEnd'],
   currentEpochProps: ['currentEpochProps'],
   depositAt: ['depositAt'],
-  depositAtGivenEpoch: (epochNumber: number): string[] => [
-    ...QUERY_KEYS.depositAt,
-    epochNumber.toString(),
-  ],
+  depositAtGivenEpoch: epochNumber => [ROOTS.depositAt, epochNumber.toString()],
   depositsValue: ['depositsValue'],
   glmLocked: ['glmLocked'],
   individualProposalRewards: ['individualProposalRewards'],
@@ -26,22 +28,13 @@ export const QUERY_KEYS = {
   locks: ['locks'],
   matchedProposalRewards: ['matchedProposalRewards'],
   matchedRewards: ['matchedRewards'],
-  proposalAllocations: (proposalAddress: string): string[] => [
-    'proposalAllocations',
-    proposalAddress,
-  ],
+  proposalAllocations: proposalAddress => [ROOTS.proposalAllocations, proposalAddress],
   proposalRewardsThresholdFraction: ['proposalRewardsThresholdFraction'],
   proposalsCid: ['proposalsCid'],
   proposalsContract: ['proposalsContract'],
-  proposalsIpfsResults: (proposalAddress: string): string[] => [
-    'proposalsIpfsResults',
-    proposalAddress,
-  ],
+  proposalsIpfsResults: proposalAddress => [ROOTS.proposalsIpfsResults, proposalAddress],
   unlocks: ['unlocks'],
   userAllocations: ['userAllocations'],
-  userHistoricAllocations: (userAddress: string): string[] => [
-    'userHistoricAllocations',
-    userAddress,
-  ],
+  userHistoricAllocations: userAddress => [ROOTS.userHistoricAllocations, userAddress],
   withdrawableUserEth: ['withdrawableUserEth'],
 };

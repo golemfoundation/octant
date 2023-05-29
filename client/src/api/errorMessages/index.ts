@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Query } from '@tanstack/react-query';
 
-import { QUERY_KEYS } from 'api/queryKeys';
+import { ROOTS } from 'api/queryKeys';
 import i18n from 'i18n';
 import triggerToast from 'utils/triggerToast';
 
@@ -51,7 +51,7 @@ function getError(reason: string): Error {
 
 export function handleError(reason: string, query?: Query | unknown): string | undefined {
   // @ts-expect-error mutations do not have queryKey field, they are pure value and are unknown.
-  if (query && query.queryKey?.find(element => element === QUERY_KEYS.cryptoValuesRoot[0])) {
+  if (query && query.queryKey?.find(element => element === ROOTS.cryptoValues)) {
     // Graceful failure, no notification, no error. Inline info shown in places for values.
     return;
   }
