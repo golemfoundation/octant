@@ -17,7 +17,11 @@ import DonorsListProps from './types';
 
 const SHORT_LIST_LENGTH = 4;
 
-const DonorsList: FC<DonorsListProps> = ({ className, dataTest, proposalAddress }) => {
+const DonorsList: FC<DonorsListProps> = ({
+  className,
+  dataTest = 'DonorsList',
+  proposalAddress,
+}) => {
   const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.donorsList' });
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
@@ -44,7 +48,7 @@ const DonorsList: FC<DonorsListProps> = ({ className, dataTest, proposalAddress 
   return (
     <div className={cx(styles.root, className)} data-test={dataTest}>
       {isLoading ? (
-        <Loader className={styles.loader} />
+        <Loader className={styles.loader} dataTest={`${dataTest}__Loader`} />
       ) : (
         <Fragment>
           <div className={styles.header}>

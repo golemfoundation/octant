@@ -34,11 +34,16 @@ describe('proposal', () => {
       .should('be.visible');
     proposalView.get('[data-test=ProposalView__proposal__Button]').should('be.visible');
     proposalView.get('[data-test=ProposalView__proposal__Description]').should('be.visible');
+
     cy.get('[data-test=ProposalView__proposal__DonorsList]').first().should('be.visible');
-    cy.get('[data-test=ProposalView__proposal__DonorsList__count]')
-      .first()
-      .should('be.visible')
-      .should('have.text', '0');
+
+    // Requests to subgraph are disabled in Cypress before transition to the server is done.
+    // cy.get('[data-test=ProposalView__proposal__DonorsList__count]')
+    //   .first()
+    //   .should('be.visible')
+    //   .should('have.text', '0');
+
+    cy.get('[data-test=ProposalView__proposal__DonorsList__Loader]').should('be.visible');
   });
 
   it('entering proposal view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar & toast', () => {
