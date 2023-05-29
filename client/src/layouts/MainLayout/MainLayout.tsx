@@ -128,6 +128,7 @@ const MainLayout: FC<MainLayoutProps> = ({
                 </div>
               ) : (
                 <Button
+                  dataTest="ConnectWalletButton"
                   isSmallFont
                   label={t('connectWallet')}
                   onClick={() => setIsModalConnectWalletOpen(true)}

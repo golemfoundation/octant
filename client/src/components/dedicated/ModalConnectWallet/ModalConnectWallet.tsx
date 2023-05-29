@@ -19,6 +19,7 @@ const ModalConnectWallet: FC<ModalConnectWalletProps> = ({ modalProps }) => {
   return (
     <Modal
       bodyClassName={styles.modal}
+      dataTest="ModalConnectWallet"
       header={t('connectVia')}
       isOpen={modalProps.isOpen && !isConnected}
       onClosePanel={modalProps.onClosePanel}
