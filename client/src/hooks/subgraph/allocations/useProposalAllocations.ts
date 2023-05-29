@@ -40,7 +40,8 @@ export default function useProposalAllocations({
         proposalAddress,
       }),
     {
-      enabled: !!timeCurrentEpochStart && !!proposalAddress,
+      // @ts-expect-error Requests to subgraph are disabled in Cypress before transition to the server is done.
+      enabled: !!timeCurrentEpochStart && !!proposalAddress && window.Cypress === undefined,
     },
   );
 

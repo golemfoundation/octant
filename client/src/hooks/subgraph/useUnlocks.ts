@@ -29,7 +29,11 @@ export default function useUnlocks(): UseQueryResult<Unlock[]> {
   const { data, ...rest } = useQuery(
     QUERY_KEYS.unlocks,
     async () => request(subgraphAddress, GET_UNLCOKS, { userAddress: address! }),
-    { enabled: !!address, refetchOnMount: false },
+    {
+      // @ts-expect-error Requests to subgraph are disabled in Cypress before transition to the server is done.
+      enabled: !!address && window.Cypress === undefined,
+      refetchOnMount: false,
+    },
   );
 
   // @ts-expect-error resolve typing issue.
