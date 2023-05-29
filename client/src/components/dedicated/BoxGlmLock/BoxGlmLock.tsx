@@ -32,6 +32,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
       label: t('current'),
     },
     {
+      dataTest: 'BoxGlmLock__Section--effective',
       doubleValueProps: {
         coinPricesServerDowntimeText: '...',
         cryptoCurrency: 'golem',
@@ -47,6 +48,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
       <BoxRounded
         alignment="left"
         buttonProps={{
+          dataTest: 'BoxGlmLock__Button',
           isDisabled: !isConnected,
           isHigh: true,
           label:
@@ -57,6 +59,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
           variant: 'cta',
         }}
         className={classNameBox}
+        dataTest="BoxGlmLock__BoxRounded"
         hasSections
         isVertical
         title={t('lockedBalance')}
@@ -65,6 +68,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
       </BoxRounded>
       <ModalEffectiveLockedBalance
         modalProps={{
+          dataTest: 'ModalEffectiveLockedBalance',
           isOpen: isModalEffectiveLockedBalanceOpen,
           onClosePanel: () => setIsModalEffectiveLockedBalanceOpen(false),
         }}

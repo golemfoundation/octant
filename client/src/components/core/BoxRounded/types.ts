@@ -7,6 +7,7 @@ export default interface BoxRoundedProps {
   buttonProps?: ButtonProps;
   children: ReactNode;
   className?: string;
+  dataTest?: string;
   expandableChildren?: ReactNode;
   hasPadding?: boolean;
   hasSections?: boolean;

@@ -22,6 +22,7 @@ export interface SvgProps {
   classNameSvg?: string;
   classNameWrapper?: string;
   color?: string;
+  dataTest?: string;
   displayMode?: SvgDisplayMode;
   img: SvgImageConfig;
   onClick?: () => void;
@@ -45,6 +46,8 @@ export interface SvgAttrs {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     __html: string;
   };
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  'data-test': string;
   onClick?: () => void;
   style?: SvgStyles;
   viewBox: string;
