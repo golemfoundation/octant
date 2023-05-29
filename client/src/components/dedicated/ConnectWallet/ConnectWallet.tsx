@@ -41,6 +41,7 @@ const ConnectWallet: FC = () => {
       {browserWalletConnector && (
         <BoxRounded
           className={styles.browserWalletTile}
+          dataTest="ConnectWallet__BoxRounded--browserWallet"
           isGrey
           justifyContent="start"
           onClick={isBrowserWalletConnecting ? undefined : connectBrowserWallet}
@@ -66,6 +67,7 @@ const ConnectWallet: FC = () => {
         </BoxRounded>
       )}
       <BoxRounded
+        dataTest="ConnectWallet__BoxRounded--walletConnect"
         isGrey
         justifyContent="start"
         onClick={!isOpen && isBrowserWalletConnecting ? undefined : openWalletConnectModal}

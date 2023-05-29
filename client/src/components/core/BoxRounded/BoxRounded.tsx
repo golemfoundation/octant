@@ -29,6 +29,7 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
       tabs,
       title,
       titleSuffix,
+      dataTest = 'BoxRounded',
     },
     ref,
   ) => {
@@ -63,6 +64,7 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
           hasPadding && styles.hasPadding,
           className,
         )}
+        data-test={dataTest}
         onClick={onClick}
       >
         {tabs && (
