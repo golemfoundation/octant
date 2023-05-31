@@ -21,6 +21,7 @@ import './tasks/send-glm';
 import './tasks/target-check';
 import './tasks/target-deploy';
 import './tasks/target-upgrade';
+import './tasks/target-withdraw';
 
 const config: HardhatUserConfig = {
   docgen: {
