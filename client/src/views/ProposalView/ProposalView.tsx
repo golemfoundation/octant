@@ -197,6 +197,7 @@ const ProposalView = (): ReactElement => {
                     />
                     <ButtonAddToAllocate
                       className={styles.buttonAddToAllocateMobile}
+                      dataTest="ProposalView__proposal__ButtonAddToAllocate--mobile"
                       isAlreadyAdded={isAlreadyAdded}
                       onClick={() => onAddRemoveFromAllocate(address)}
                     />
