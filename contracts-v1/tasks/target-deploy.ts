@@ -24,4 +24,5 @@ task('target-deploy', 'Deploy Withdrawals Target contract to new address')
       },
     });
     console.log('Withdrawals target deployed at ', target.address);
+    console.log('Withdrawals implementation     ', target.implementation);
   });
