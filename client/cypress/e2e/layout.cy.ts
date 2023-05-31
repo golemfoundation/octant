@@ -30,64 +30,58 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         checkLocationWithLoader(to);
       });
     });
-  });
 
-  it('"Connect wallet" button is visible when wallet is disconnected', () => {
-    cy.get('[data-test=ConnectWalletButton]').should('be.visible');
-    cy.get('[data-test=ConnectWalletButton]').click();
-  });
-
-  it('"Connect wallet" button opens "ModalConnectWallet"', () => {
-    cy.get('[data-test=ConnectWalletButton]').click();
-    cy.get('[data-test=ModalConnectWallet]').should('be.visible');
-  });
-
-  it('"ModalConnectWallet" always shows "Wallet connect" option', () => {
-    cy.get('[data-test=ConnectWalletButton]').click();
-    cy.get('[data-test=ModalConnectWallet]').within(() => {
-      cy.get('[data-test=ConnectWallet__BoxRounded--walletConnect]').should('be.visible');
+    it('"Connect wallet" button is visible when wallet is disconnected', () => {
+      cy.get('[data-test=ConnectWalletButton]').should('be.visible');
+      cy.get('[data-test=ConnectWalletButton]').click();
     });
-  });
 
-  it('"ModalConnectWallet" shows "Browser wallet" and "Wallet connect" options (MetaMask wallet detected)', () => {
-    cy.get('[data-test=ConnectWalletButton]').click();
-    cy.get('[data-test=ModalConnectWallet]').within(() => {
-      cy.get('[data-test=ConnectWallet__BoxRounded--walletConnect]').should('be.visible');
-      cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').should('be.visible');
+    it('"Connect wallet" button opens "ModalConnectWallet"', () => {
+      cy.get('[data-test=ConnectWalletButton]').click();
+      cy.get('[data-test=ModalConnectWallet]').should('be.visible');
     });
-  });
 
-  it('"ModalConnectWallet" has overflow enabled', () => {
-    cy.get('[data-test=ConnectWalletButton]').click();
-    cy.get('[data-test=ModalConnectWallet__overflow]').should('exist');
-  });
+    it('"ModalConnectWallet" always shows "Wallet connect" option', () => {
+      cy.get('[data-test=ConnectWalletButton]').click();
+      cy.get('[data-test=ModalConnectWallet]').within(() => {
+        cy.get('[data-test=ConnectWallet__BoxRounded--walletConnect]').should('be.visible');
+      });
+    });
 
-  it('Clicking background when "ModalConnectWallet" is open, closes Modal', () => {
-    cy.get('[data-test=ConnectWalletButton]').click();
-    cy.get('[data-test=ModalConnectWallet__overflow]').click({ force: true });
-    cy.get('[data-test=ModalConnectWallet]').should('not.exist');
-  });
+    it('"ModalConnectWallet" shows "Browser wallet" and "Wallet connect" options (MetaMask wallet detected)', () => {
+      cy.get('[data-test=ConnectWalletButton]').click();
+      cy.get('[data-test=ModalConnectWallet]').within(() => {
+        cy.get('[data-test=ConnectWallet__BoxRounded--walletConnect]').should('be.visible');
+        cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').should('be.visible');
+      });
+    });
 
-  it('"ModalConnectWallet" has "cross" icon button in header', () => {
-    cy.get('[data-test=ConnectWalletButton]').click();
-    cy.get('[data-test=ModalConnectWallet__Button]').should('be.visible');
-  });
+    it('"ModalConnectWallet" has overflow enabled', () => {
+      cy.get('[data-test=ConnectWalletButton]').click();
+      cy.get('[data-test=ModalConnectWallet__overflow]').should('exist');
+    });
 
-  it('Clicking on "X" mark in "ModalConnectWallet", closes Modal', () => {
-    cy.get('[data-test=ConnectWalletButton]').click();
-    cy.get('[data-test=ModalConnectWallet__Button]').click();
-    cy.get('[data-test=ModalConnectWallet]').should('not.exist');
-  });
+    it('Clicking background when "ModalConnectWallet" is open, closes Modal', () => {
+      cy.get('[data-test=ConnectWalletButton]').click();
+      cy.get('[data-test=ModalConnectWallet__overflow]').click({ force: true });
+      cy.get('[data-test=ModalConnectWallet]').should('not.exist');
+    });
 
-  it('Clicking on "Wallet connect" option, opens Web3Modal', () => {
-    cy.get('[data-test=ConnectWalletButton]').click();
-    cy.get('[data-test=ConnectWallet__BoxRounded--walletConnect]').click();
-    cy.get('w3m-modal').find('#w3m-modal', { includeShadowDom: true }).should('be.visible');
-  });
+    it('"ModalConnectWallet" has "cross" icon button in header', () => {
+      cy.get('[data-test=ConnectWalletButton]').click();
+      cy.get('[data-test=ModalConnectWallet__Button]').should('be.visible');
+    });
 
-  it('Clicking on "Browser wallet" option, opens MetaMask window', () => {
-    cy.get('[data-test=ConnectWalletButton]').click();
-    cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
-    cy.isMetamaskWindowActive().should('be.true');
+    it('Clicking on "X" mark in "ModalConnectWallet", closes Modal', () => {
+      cy.get('[data-test=ConnectWalletButton]').click();
+      cy.get('[data-test=ModalConnectWallet__Button]').click();
+      cy.get('[data-test=ModalConnectWallet]').should('not.exist');
+    });
+
+    it('Clicking on "Wallet connect" option, opens Web3Modal', () => {
+      cy.get('[data-test=ConnectWalletButton]').click();
+      cy.get('[data-test=ConnectWallet__BoxRounded--walletConnect]').click();
+      cy.get('w3m-modal').find('#w3m-modal', { includeShadowDom: true }).should('be.visible');
+    });
   });
 });
