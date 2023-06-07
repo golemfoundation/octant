@@ -37,6 +37,9 @@ class EpochSnapshot(Model):
     glm_supply = Column(db.String, nullable=False)
     eth_proceeds = Column(db.String, nullable=False)
     total_effective_deposit = Column(db.String, nullable=False)
+    staked_ratio = Column(db.String, nullable=False)
+    total_rewards = Column(db.String, nullable=False)
+    all_individual_rewards = Column(db.String, nullable=False)
 
 
 class Deposit(Model):
