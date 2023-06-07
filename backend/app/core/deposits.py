@@ -6,34 +6,18 @@ from app.infrastructure import qraphql
 from app.infrastructure.qraphql.locks import get_locks_by_timestamp_range
 from app.infrastructure.qraphql.unlocks import get_unlocks_by_timestamp_range
 
+from decimal import Decimal
+
+
 CUT_OFF = 100 * 10**18
 
 
-def get_deposits_events(epoch_num: int) -> dict:
-    epoch = qraphql.epochs.get_epoch_by_number(epoch_num)
-    start, end = epoch["fromTs"], epoch["toTs"]
-    events = get_locks_by_timestamp_range(start, end) + get_unlocks_by_timestamp_range(
-        start, end
-    )
-
-    events_by_user_addr = {}
-
-    for event in events:
-        event["depositBefore"] = int(event["depositBefore"])
-        event["amount"] = int(event["amount"])
-        user_address = to_checksum_address(event["user"])
-        if user_address not in events_by_user_addr:
-            events_by_user_addr[user_address] = []
-        events_by_user_addr[user_address].append(event)
-
-    for user_address, events in events_by_user_addr.items():
-        events_by_user_addr[user_address] = sorted(events, key=lambda x: x["timestamp"])
-
-    return events_by_user_addr
+def calculate_staked_ratio(total_effective_deposit: int, glm_supply: int) -> Decimal:
+    return Decimal(total_effective_deposit) / Decimal(glm_supply)
 
 
-def update_deposits(epoch: int) -> int:
-    events = get_deposits_events(epoch)
+def update_db_deposits(epoch: int) -> int:
+    events = _get_deposits_events(epoch)
     total_ed = 0
     previous_deposits = database.deposits.get_all_by_epoch(epoch - 1)
 
@@ -60,6 +44,29 @@ def update_deposits(epoch: int) -> int:
         _save_user_deposit(epoch, user, 0, epoch_end_deposit)
 
     return total_ed
+
+
+def _get_deposits_events(epoch_num: int) -> dict:
+    epoch = qraphql.epochs.get_epoch_by_number(epoch_num)
+    start, end = epoch["fromTs"], epoch["toTs"]
+    events = get_locks_by_timestamp_range(start, end) + get_unlocks_by_timestamp_range(
+        start, end
+    )
+
+    events_by_user_addr = {}
+
+    for event in events:
+        event["depositBefore"] = int(event["depositBefore"])
+        event["amount"] = int(event["amount"])
+        user_address = to_checksum_address(event["user"])
+        if user_address not in events_by_user_addr:
+            events_by_user_addr[user_address] = []
+        events_by_user_addr[user_address].append(event)
+
+    for user_address, events in events_by_user_addr.items():
+        events_by_user_addr[user_address] = sorted(events, key=lambda x: x["timestamp"])
+
+    return events_by_user_addr
 
 
 def _calculate_deposits(events: [dict]) -> (int, int):

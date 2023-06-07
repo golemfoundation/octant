@@ -2,11 +2,44 @@ import pytest
 from eth_utils import to_checksum_address
 
 from app import database
-from app.core.deposits import update_deposits
+from app.core.deposits import update_db_deposits, calculate_staked_ratio
 from app.extensions import graphql_client
 
 USER1_ADDRESS = "0xabcdef7890123456789012345678901234567893"
 USER2_ADDRESS = "0x2345678901234567890123456789012345678904"
+
+
+@pytest.mark.parametrize(
+    "glm_supply, total_ed, expected",
+    [
+        (1000000000000000000000000000, 400_000000000_000000000, "0.0000004"),
+        (
+            985000000000048271659382201,
+            9999_999999999_999999999,
+            "0.00001015228426395889333237670954",
+        ),
+        (
+            1_000000000_000000000_000000000,
+            22700_000000000_099999994,
+            "0.000022700000000000099999994",
+        ),
+        (
+            1000000000000000000000000000,
+            77659900_000050080_003040099,
+            "0.077659900000050080003040099",
+        ),
+        (
+            1000000000000000000000000000,
+            111388800_044440000_000000000,
+            "0.11138880004444",
+        ),
+        (1000000000000000000000000000, 422361100_000000000_000000000, "0.4223611"),
+        (1000000000000000000000000000, 1000000000_000000000_000000000, "1"),
+    ],
+)
+def test_staked_ratio_positive(glm_supply, total_ed, expected, app):
+    result = calculate_staked_ratio(total_ed, glm_supply)
+    assert "{:f}".format(result) == expected
 
 
 @pytest.mark.parametrize(
@@ -145,7 +178,7 @@ def test_update_user_deposits(mocker, state_before, events, expected, app):
 
     _mock_graphql(mocker, events, deposit_before)
 
-    total_ed = update_deposits(epoch)
+    total_ed = update_db_deposits(epoch)
 
     db_deposit = database.deposits.get_all_by_epoch(epoch)
 
@@ -179,7 +212,7 @@ def test_add_multiple_user_deposits(mocker, app):
     ]
     _mock_graphql(mocker, events)
 
-    total_ed = update_deposits(epoch)
+    total_ed = update_db_deposits(epoch)
 
     db_deposits = database.deposits.get_all_by_epoch(epoch)
 
@@ -230,7 +263,7 @@ def test_update_multiple_user_deposits(mocker, app):
     )
     _mock_graphql(mocker, events)
 
-    total_ed = update_deposits(epoch)
+    total_ed = update_db_deposits(epoch)
 
     db_deposits = database.deposits.get_all_by_epoch(epoch)
 
@@ -283,7 +316,7 @@ def test_add_and_update_deposits(mocker, app):
     )
     _mock_graphql(mocker, events)
 
-    total_ed = update_deposits(epoch)
+    total_ed = update_db_deposits(epoch)
 
     db_deposits = database.deposits.get_all_by_epoch(epoch)
 
