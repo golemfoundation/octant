@@ -160,6 +160,9 @@
       "loadingRewardBudget": "Loading reward budget..."
     }
   },
+  "meta": {
+    "description": "Octant is a platform for experiments in decentralized governance that reward participation"
+  },
   "views": {
     "allocation": {
       "allocationSuccessful": "Allocation successful",

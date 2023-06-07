@@ -1,11 +1,30 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import react from '@vitejs/plugin-react';
+import i18n from 'i18next';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import viteCompression from 'vite-plugin-compression';
+import htmlPlugin from 'vite-plugin-html-config';
+
+import translationEN from './src/locales/en/translation.json';
 
 const path = require('path');
+
 /* eslint-enable import/no-extraneous-dependencies */
+
+i18n.init({
+  fallbackLng: 'en',
+  interpolation: {
+    escapeValue: false,
+  },
+  lng: 'en',
+  resources: {
+    en: {
+      translation: translationEN,
+    },
+  },
+  returnNull: false,
+});
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -13,7 +32,17 @@ export default defineConfig(({ mode }) => {
   const isStaging = mode === 'staging';
   const localIdentName = isProduction ? '[hash:base64:5]' : '[name]__[local]--[hash:base64:5]';
 
-  const plugins = [react(), splitVendorChunkPlugin(), viteCompression()];
+  const plugins = [
+    react(),
+    splitVendorChunkPlugin(),
+    viteCompression(),
+    htmlPlugin({
+      metas: [
+        { content: i18n.t('meta.description'), name: 'og:description' },
+        { content: i18n.t('meta.description'), name: 'description' },
+      ],
+    }),
+  ];
   if (isStaging) {
     plugins.push(
       visualizer({
