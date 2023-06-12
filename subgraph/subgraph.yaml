@@ -22,26 +22,6 @@ dataSources:
       blockHandlers:
         - handler: handleBlock
   - kind: ethereum
-    name: Allocations
-    network: sepolia
-    source:
-      abi: Allocations
-      address: "0x5725206751BFc976da6E3038e050f97AD7797E7A"
-      startBlock: 3509172
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      entities:
-        - Allocated
-      abis:
-        - name: Allocations
-          file: ./abis/Allocations.json
-      eventHandlers:
-        - event: Allocated(uint256,address,(address,uint256))
-          handler: handleAllocated
-      file: ./src/allocations.ts
-  - kind: ethereum
     name: Deposits
     network: sepolia
     source:
