@@ -15,7 +15,7 @@ $verticalDistanceBetweenElements: $layoutMarginHorizontal;
   margin-bottom: 2.4rem;
 
   @media #{$desktop-up} {
-    @include flexBasisGutter(2, calc($verticalDistanceBetweenElements * 2));
+    @include flexBasisGutter(2, 1.6rem);
   }
 }
 

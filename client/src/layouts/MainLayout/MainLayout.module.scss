@@ -6,13 +6,11 @@ $headerNavigationBorderRadius: $border-radius-32;
   height: 100%;
   min-height: 100%;
   min-width: 39rem;
-  max-width: 70.8rem + $layoutMarginHorizontal * 2;
+  max-width: 70rem + $layoutMarginHorizontal * 2;
   margin: 0 auto;
 }
 
 .header {
-  position: sticky;
-  top: 1.6rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -20,9 +18,13 @@ $headerNavigationBorderRadius: $border-radius-32;
   border-radius: $headerNavigationBorderRadius;
   background: $color-white;
   padding: $layoutMarginHorizontal;
-  margin: 1.6rem $layoutMarginHorizontal;
+  margin: 1.6rem $layoutMarginHorizontal 0;
   box-shadow: $box-shadow-1;
   z-index: $z-index-3;
+
+  @media #{$desktop-up} {
+    margin: 1.6rem $layoutMarginHorizontal 0;
+  }
 }
 
 .logoWrapper {
@@ -103,7 +105,11 @@ $headerNavigationBorderRadius: $border-radius-32;
   align-items: center;
   justify-content: flex-start;
   flex: 1;
-  padding: 2.8rem $layoutMarginHorizontal $layoutBodyMarginBottom;
+  padding: 1.6rem $layoutMarginHorizontal $layoutBodyMarginBottom;
+
+  @media #{$desktop-up} {
+    padding-top: 2.4rem;
+  }
 
   &.isNavigationBottomSuffix {
     padding-bottom: $layoutBodyMarginBottom * 2;

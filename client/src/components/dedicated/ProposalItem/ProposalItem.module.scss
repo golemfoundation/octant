@@ -7,7 +7,7 @@ $proposalItemPadding: 2.4rem;
   align-items: stretch;
   border-radius: $border-radius-16;
   background: $color-white;
-  height: 31.4rem;
+  height: 28rem;
   width: 100%;
   bottom: 0;
   transition: bottom $transition-time-4 linear;
@@ -29,7 +29,7 @@ $proposalItemPadding: 2.4rem;
   .header {
     display: flex;
     justify-content: space-between;
-    padding: $proposalItemPadding;
+    padding: $proposalItemPadding $proposalItemPadding 1rem;
   }
 
   .button {
@@ -40,6 +40,8 @@ $proposalItemPadding: 2.4rem;
 
   .imageProfile {
     border-radius: 50%;
+    width: 4rem;
+    height: 4rem;
   }
 
   .body {
@@ -49,7 +51,10 @@ $proposalItemPadding: 2.4rem;
 
   .name {
     font-weight: $font-weight-bold;
-    margin: 0 0 1rem 0;
+    margin: 0 0 0.6rem 0;
+    height: 3.2rem;
+    display: flex;
+    align-items: center;
   }
 
   .description {
