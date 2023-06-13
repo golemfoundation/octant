@@ -232,7 +232,8 @@
       "chooseDisplayCurrency": "Choose a display currency",
       "allocateValueAdjustersDefault": "Allocate value adjusters default",
       "cryptoMainValueDisplay": "Use crypto as main value display",
-      "alwaysShowOnboarding": "Always show Allocate onboarding"
+      "alwaysShowOnboarding": "Always show Allocate onboarding",
+      "alwaysShowOctantTips": "Always show Octant tips"
     }
   }
 }

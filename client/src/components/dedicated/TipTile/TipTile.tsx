@@ -9,8 +9,16 @@ import { cross, info } from 'svg/misc';
 import styles from './TipTile.module.scss';
 import { TipTileProps } from './types';
 
-const TipTile: React.FC<TipTileProps> = ({ onClose, infoLabel, title, text, image, className }) => (
-  <div className={cx(styles.root, className)}>
+const TipTile: React.FC<TipTileProps> = ({
+  onClose,
+  infoLabel,
+  title,
+  text,
+  image,
+  className,
+  dataTest = 'TipTile',
+}) => (
+  <div className={cx(styles.root, className)} data-test={dataTest}>
     <div>
       <div className={styles.info}>
         <Svg img={info} size={3.2} />
@@ -26,6 +34,7 @@ const TipTile: React.FC<TipTileProps> = ({ onClose, infoLabel, title, text, imag
     </div>
     <Button
       className={styles.buttonClose}
+      dataTest={`${dataTest}__Button`}
       Icon={<Svg img={cross} size={1} />}
       onClick={onClose}
       variant="iconOnly"

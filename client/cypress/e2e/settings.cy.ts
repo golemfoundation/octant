@@ -2,6 +2,7 @@ import { visitWithLoader } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { FIAT_CURRENCIES_SYMBOLS, DISPLAY_CURRENCIES } from 'src/constants/currencies';
 import {
+  ARE_OCTANT_TIPS_ALWAYS_VISIBLE,
   DISPLAY_CURRENCY,
   IS_CRYPTO_MAIN_VALUE_DISPLAY,
   IS_ONBOARDING_ALWAYS_VISIBLE,
@@ -131,6 +132,57 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         cy.get('[data-test=InputSelect]').click();
         cy.get(`[data-test=InputSelect__CustomOption--${nextDisplayCurrencyToUppercase}]`).click();
       }
+    });
+
+    it('"Always show Octant tips" option toggle works', () => {
+      cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').check();
+      cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').should('be.checked');
+      cy.getAllLocalStorage().then(() => {
+        expect(localStorage.getItem(ARE_OCTANT_TIPS_ALWAYS_VISIBLE)).eq('true');
+      });
+
+      cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').click();
+      cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').should('not.be.checked');
+      cy.getAllLocalStorage().then(() => {
+        expect(localStorage.getItem(ARE_OCTANT_TIPS_ALWAYS_VISIBLE)).eq('false');
+      });
+
+      cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').click();
+      cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').should('be.checked');
+      cy.getAllLocalStorage().then(() => {
+        expect(localStorage.getItem(ARE_OCTANT_TIPS_ALWAYS_VISIBLE)).eq('true');
+      });
+    });
+
+    it('"Always show Octant tips" works (checked)', () => {
+      cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').check();
+
+      cy.get('[data-test=Projects__Button]').click();
+      cy.get('[data-test=ProposalsView__TipTile]').should('exist');
+      cy.get('[data-test=ProposalsView__TipTile]').should('be.visible');
+
+      cy.get('[data-test=ProposalsView__TipTile__Button]').click();
+      cy.get('[data-test=ProposalsView__TipTile]').should('not.exist');
+
+      cy.reload();
+
+      cy.get('[data-test=ProposalsView__TipTile]').should('exist');
+      cy.get('[data-test=ProposalsView__TipTile]').should('be.visible');
+    });
+
+    it('"Always show Octant tips" works (unchecked)', () => {
+      cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').uncheck();
+
+      cy.get('[data-test=Projects__Button]').click();
+      cy.get('[data-test=ProposalsView__TipTile]').should('exist');
+      cy.get('[data-test=ProposalsView__TipTile]').should('be.visible');
+
+      cy.get('[data-test=ProposalsView__TipTile__Button]').click();
+      cy.get('[data-test=ProposalsView__TipTile]').should('not.exist');
+
+      cy.reload();
+
+      cy.get('[data-test=ProposalsView__TipTile]').should('not.exist');
     });
   });
 });

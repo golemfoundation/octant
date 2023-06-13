@@ -29,15 +29,19 @@ const SettingsView = (): ReactElement => {
     setDisplayCurrency,
     setIsAllocateOnboardingAlwaysVisible,
     setIsCryptoMainValueDisplay,
+    setAreOctantTipsAlwaysVisible,
     allocateValueAdjusterUnit,
     displayCurrency,
     isAllocateOnboardingAlwaysVisible,
     isCryptoMainValueDisplay,
+    areOctantTipsAlwaysVisible,
   } = useSettingsStore(state => ({
     allocateValueAdjusterUnit: state.data.allocateValueAdjusterUnit,
+    areOctantTipsAlwaysVisible: state.data.areOctantTipsAlwaysVisible,
     displayCurrency: state.data.displayCurrency,
     isAllocateOnboardingAlwaysVisible: state.data.isAllocateOnboardingAlwaysVisible,
     isCryptoMainValueDisplay: state.data.isCryptoMainValueDisplay,
+    setAreOctantTipsAlwaysVisible: state.setAreOctantTipsAlwaysVisible,
     setDisplayCurrency: state.setDisplayCurrency,
     setIsAllocateOnboardingAlwaysVisible: state.setIsAllocateOnboardingAlwaysVisible,
     setIsCryptoMainValueDisplay: state.setIsCryptoMainValueDisplay,
@@ -78,6 +82,14 @@ const SettingsView = (): ReactElement => {
           dataTest="AlwaysShowOnboarding__InputCheckbox"
           isChecked={isAllocateOnboardingAlwaysVisible}
           onChange={event => setIsAllocateOnboardingAlwaysVisible(event.target.checked)}
+        />
+      </BoxRounded>
+      <BoxRounded className={styles.box} justifyContent="spaceBetween">
+        {t('alwaysShowOctantTips')}
+        <InputCheckbox
+          dataTest="AlwaysShowOctantTips__InputCheckbox"
+          isChecked={areOctantTipsAlwaysVisible}
+          onChange={event => setAreOctantTipsAlwaysVisible(event.target.checked)}
         />
       </BoxRounded>
     </MainLayout>
