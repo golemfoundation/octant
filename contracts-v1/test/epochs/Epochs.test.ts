@@ -34,6 +34,122 @@ makeTestsEnv(EPOCHS, testEnv => {
 
       expect(await epochs.getCurrentEpoch()).eq(1);
     });
+
+    it('Starts from 2', async () => {
+      const {
+        signers: { TestFoundation },
+      } = testEnv;
+
+      const latestBlockTs = await getLatestBlockTimestamp();
+      const start = latestBlockTs - epochDuration;
+      const epochs = await setupEpochs(start);
+
+      expect(await epochs.getCurrentEpoch()).eq(2);
+      expect(await epochs.isDecisionWindowOpen()).true;
+      await epochs.connect(TestFoundation).setEpochProps(10000, 3000);
+
+      await setNextBlockTimestamp(latestBlockTs + 2100);
+      expect(await epochs.isDecisionWindowOpen()).false;
+
+      await setNextBlockTimestamp(latestBlockTs + 5100);
+      expect(await epochs.getCurrentEpoch()).eq(3);
+
+      await setNextBlockTimestamp(latestBlockTs + 7900);
+      expect(await epochs.isDecisionWindowOpen()).true;
+
+      await setNextBlockTimestamp(latestBlockTs + 8100);
+      expect(await epochs.isDecisionWindowOpen()).false;
+
+      await setNextBlockTimestamp(latestBlockTs + 14900);
+      expect(await epochs.getCurrentEpoch()).eq(3);
+
+      await setNextBlockTimestamp(latestBlockTs + 15100);
+      expect(await epochs.getCurrentEpoch()).eq(4);
+    });
+  });
+
+  describe('getFinalizedEpoch', () => {
+    it('Reverts when there are no finalized epochs yet', async () => {
+      const start = await getLatestBlockTimestamp();
+      const epochs = await setupEpochs(start);
+
+      await expect(epochs.getFinalizedEpoch()).revertedWith('HN:Epochs/not-finalized');
+
+      await setNextBlockTimestamp(start + 4900);
+      await expect(epochs.getFinalizedEpoch()).revertedWith('HN:Epochs/not-finalized');
+
+      await setNextBlockTimestamp(start + 6900);
+      await expect(epochs.getFinalizedEpoch()).revertedWith('HN:Epochs/not-finalized');
+    });
+
+    it('Returns proper finalized epoch num when decision window is closed', async () => {
+      const start = await getLatestBlockTimestamp();
+      const epochs = await setupEpochs(start);
+
+      await setNextBlockTimestamp(start + 7100);
+      expect(await epochs.getCurrentEpoch()).eq(2);
+      expect(await epochs.getFinalizedEpoch()).eq(1);
+
+      await setNextBlockTimestamp(start + 12100);
+      expect(await epochs.getCurrentEpoch()).eq(3);
+      expect(await epochs.getFinalizedEpoch()).eq(2);
+
+      await setNextBlockTimestamp(start + 17100);
+      expect(await epochs.getCurrentEpoch()).eq(4);
+      expect(await epochs.getFinalizedEpoch()).eq(3);
+    });
+
+    it('Returns proper finalized epoch num when decision window is open', async () => {
+      const start = await getLatestBlockTimestamp();
+      const epochs = await setupEpochs(start);
+
+      await setNextBlockTimestamp(start + 11900);
+      expect(await epochs.getCurrentEpoch()).eq(3);
+      expect(await epochs.getFinalizedEpoch()).eq(1);
+
+      await setNextBlockTimestamp(start + 16900);
+      expect(await epochs.getCurrentEpoch()).eq(4);
+      expect(await epochs.getFinalizedEpoch()).eq(2);
+
+      await setNextBlockTimestamp(start + 21900);
+      expect(await epochs.getCurrentEpoch()).eq(5);
+      expect(await epochs.getFinalizedEpoch()).eq(3);
+    });
+  });
+
+  describe('getPendingEpoch', () => {
+    it('Reverts when decision window is closed', async () => {
+      const start = await getLatestBlockTimestamp();
+      const epochs = await setupEpochs(start);
+
+      await expect(epochs.getPendingEpoch()).revertedWith('HN:Epochs/not-pending');
+
+      await setNextBlockTimestamp(start + 4900);
+      await expect(epochs.getPendingEpoch()).revertedWith('HN:Epochs/not-pending');
+
+      await setNextBlockTimestamp(start + 7100);
+      await expect(epochs.getPendingEpoch()).revertedWith('HN:Epochs/not-pending');
+
+      await setNextBlockTimestamp(start + 12100);
+      await expect(epochs.getPendingEpoch()).revertedWith('HN:Epochs/not-pending');
+    });
+
+    it('Returns proper pending epoch num when decision window is open', async () => {
+      const start = await getLatestBlockTimestamp();
+      const epochs = await setupEpochs(start);
+
+      await setNextBlockTimestamp(start + 6900);
+      expect(await epochs.getCurrentEpoch()).eq(2);
+      expect(await epochs.getPendingEpoch()).eq(1);
+
+      await setNextBlockTimestamp(start + 11900);
+      expect(await epochs.getCurrentEpoch()).eq(3);
+      expect(await epochs.getPendingEpoch()).eq(2);
+
+      await setNextBlockTimestamp(start + 16900);
+      expect(await epochs.getCurrentEpoch()).eq(4);
+      expect(await epochs.getPendingEpoch()).eq(3);
+    });
   });
 
   describe('Epoch duration, without changes in epoch properties', () => {
