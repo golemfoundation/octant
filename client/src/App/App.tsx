@@ -41,20 +41,24 @@ const App = (): ReactElement => {
   const {
     setValuesFromLocalStorage: setValuesFromLocalStorageTips,
     isInitialized: isTipsStoreInitialized,
-  } = useTipsStore(({ meta, setValuesFromLocalStorage }) => ({
+    reset: resetTipsStore,
+  } = useTipsStore(({ meta, setValuesFromLocalStorage, reset }) => ({
     isInitialized: meta.isInitialized,
+    reset,
     setValuesFromLocalStorage,
   }));
   const {
-    settings,
+    areOctantTipsAlwaysVisible,
+    displayCurrency,
     isSettingsInitialized,
     setValuesFromLocalStorageSettings,
     setIsCryptoMainValueDisplay,
   } = useSettingsStore(state => ({
+    areOctantTipsAlwaysVisible: state.data.areOctantTipsAlwaysVisible,
+    displayCurrency: state.data.displayCurrency,
     isSettingsInitialized: state.meta.isInitialized,
     setIsCryptoMainValueDisplay: state.setIsCryptoMainValueDisplay,
     setValuesFromLocalStorageSettings: state.setValuesFromLocalStorage,
-    settings: state.data,
   }));
   const {
     isInitialized: isOnboardingInitialized,
@@ -65,7 +69,7 @@ const App = (): ReactElement => {
   }));
   const queryClient = useQueryClient();
   const { address, isConnected } = useAccount();
-  useCryptoValues(settings.displayCurrency, {
+  useCryptoValues(displayCurrency, {
     onError: () => {
       setIsCryptoMainValueDisplay(true);
     },
@@ -226,6 +230,13 @@ const App = (): ReactElement => {
       addAllocations(userAllocationsAddresses);
     }
   }, [isAllocationsInitialized, isConnected, userAllocations, allocations, addAllocations]);
+
+  useEffect(() => {
+    if (!areOctantTipsAlwaysVisible) {
+      return;
+    }
+    resetTipsStore();
+  }, [areOctantTipsAlwaysVisible, resetTipsStore]);
 
   const isLoading =
     !isAllocationsInitialized ||

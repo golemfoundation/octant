@@ -15,6 +15,11 @@ export const IS_ONBOARDING_ALWAYS_VISIBLE = getLocalStorageKey(
 );
 export const DISPLAY_CURRENCY = getLocalStorageKey(settingsPrefix, 'displayCurrency');
 
+export const ARE_OCTANT_TIPS_ALWAYS_VISIBLE = getLocalStorageKey(
+  settingsPrefix,
+  'areOctantTipsAlwaysVisible',
+);
+
 export const IS_CRYPTO_MAIN_VALUE_DISPLAY = getLocalStorageKey(
   settingsPrefix,
   'isCryptoMainValueDisplay',
