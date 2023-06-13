@@ -19,6 +19,7 @@ import useUnlock from 'hooks/mutations/useUnlock';
 import useAvailableFundsGlm from 'hooks/queries/useAvailableFundsGlm';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
+import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useLocks from 'hooks/subgraph/useLocks';
 import useUnlocks from 'hooks/subgraph/useUnlocks';
 import triggerToast from 'utils/triggerToast';
@@ -69,6 +70,7 @@ const GlmLock: FC<GlmLockProps> = ({
   const { refetch: refetchDepositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
   const { data: dataAvailableFunds, refetch: refetchAvailableFunds } = useAvailableFundsGlm();
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
+  const { data: proposalsAddresses } = useProposalsContract();
   const { refetch: refetchDeposits } = useLocks();
   const { refetch: refetchWithdrawns } = useUnlocks();
   const [approvalState, approveCallback] = useMaxApproveCallback(
@@ -111,6 +113,15 @@ const GlmLock: FC<GlmLockProps> = ({
   const unlockMutation = useUnlock({ onMutate, onSuccess });
 
   const onApproveOrDeposit = async ({ valueToDeposeOrWithdraw }): Promise<void> => {
+    const isSignedInAsAProposal = proposalsAddresses!.includes(address!);
+
+    if (isSignedInAsAProposal) {
+      return triggerToast({
+        title: i18n.t('common.proposalForbiddenOperation'),
+        type: 'error',
+      });
+    }
+
     const valueToDeposeOrWithdrawBigNumber = parseUnits(valueToDeposeOrWithdraw, 18);
     if (currentMode === 'lock') {
       await lockMutation.mutateAsync(valueToDeposeOrWithdrawBigNumber);
