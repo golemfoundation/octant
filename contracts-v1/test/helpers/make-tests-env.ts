@@ -4,8 +4,24 @@ import { deployments, ethers } from 'hardhat';
 
 import { Signers, TestEnv } from './test-env.interface';
 
-import { AUTH, DEPOSITS, EPOCHS, FAUCET, TOKEN, WITHDRAWALS_TARGET } from '../../helpers/constants';
-import { Auth, Deposits, Epochs, TestGLMFaucet, Token, WithdrawalsTarget } from '../../typechain';
+import {
+  AUTH,
+  DEPOSITS,
+  EPOCHS,
+  FAUCET,
+  TOKEN,
+  VAULT,
+  WITHDRAWALS_TARGET,
+} from '../../helpers/constants';
+import {
+  Auth,
+  Deposits,
+  Epochs,
+  TestGLMFaucet,
+  Token,
+  WithdrawalsTarget,
+  Vault,
+} from '../../typechain';
 
 chai.use(smock.matchers);
 
@@ -17,6 +33,7 @@ const testEnv: TestEnv = {
   signers: {} as Signers,
   target: {} as WithdrawalsTarget,
   token: {} as Token,
+  vault: {} as Vault,
 };
 
 async function initializeTestsEnv() {
@@ -27,6 +44,7 @@ async function initializeTestsEnv() {
   testEnv.token = await ethers.getContract(TOKEN);
   testEnv.target = await ethers.getContract(WITHDRAWALS_TARGET);
   testEnv.glmDeposits = await ethers.getContract(DEPOSITS);
+  testEnv.vault = await ethers.getContract(VAULT);
 }
 
 export function makeTestsEnv(name: string, tests: (testEnvToMake: TestEnv) => void): void {
