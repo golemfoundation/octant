@@ -2,11 +2,11 @@
 
 pragma solidity ^0.8.9;
 
-import "../interfaces/IDeposits.sol";
+import "./interfaces/IDeposits.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import {DepositsErrors} from "../Errors.sol";
-import "../OctantBase.sol";
+import {DepositsErrors} from "./Errors.sol";
+import "./OctantBase.sol";
 
 /// @title Contract tracking GLM deposits for Octant project.
 /// @author Golem Foundation

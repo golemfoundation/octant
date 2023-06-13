@@ -4,6 +4,7 @@ import '@typechain/hardhat';
 import 'hardhat-deploy';
 import 'hardhat-docgen';
 import 'hardhat-gas-reporter';
+import 'solidity-coverage';
 import { HardhatUserConfig } from 'hardhat/types';
 
 import {

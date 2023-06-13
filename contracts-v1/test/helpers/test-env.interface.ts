@@ -1,6 +1,14 @@
 import { SignerWithAddress } from 'hardhat-deploy-ethers/signers';
 
-import { Auth, Deposits, Epochs, TestGLMFaucet, Token, WithdrawalsTarget } from '../../typechain';
+import {
+  Auth,
+  Deposits,
+  Epochs,
+  TestGLMFaucet,
+  Token,
+  WithdrawalsTarget,
+  Vault,
+} from '../../typechain';
 
 export type Signers = Record<string, SignerWithAddress>;
 
@@ -12,4 +20,5 @@ export interface TestEnv {
   signers: Signers;
   target: WithdrawalsTarget;
   token: Token;
+  vault: Vault;
 }
