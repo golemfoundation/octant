@@ -23,7 +23,8 @@
     "lockGlm": "Lock GLM",
     "transactionSuccessful": "Transaction successful",
     "gettingStarted": "Getting started",
-    "octantTips": "Octant tips"
+    "octantTips": "Octant tips",
+    "proposalForbiddenOperation": "As a proposal you are not able to proceed with this operation"
   },
   "components": {
     "dedicated": {
