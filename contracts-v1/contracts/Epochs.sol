@@ -50,7 +50,7 @@ contract Epochs is OctantBase, IEpochs {
         address _auth)
     OctantBase(_auth) {
         start = _start;
-        epochProps[0] = EpochProps({from : 1, fromTs: block.timestamp, to : 0, duration : _epochDuration, decisionWindow : _decisionWindow});
+        epochProps[0] = EpochProps({from: 1, fromTs: start, to: 0, duration: _epochDuration, decisionWindow: _decisionWindow});
     }
 
     /// @notice Get the current epoch number.
@@ -63,6 +63,32 @@ contract Epochs is OctantBase, IEpochs {
             return uint32(_currentEpochProps.to);
         }
         return uint32(((block.timestamp - _currentEpochProps.fromTs) / _currentEpochProps.duration) + _currentEpochProps.from);
+    }
+
+    /// @notice Gets the number of the last epoch for which the decision window has already ended.
+    /// @dev Will revert when calling before the first epoch is finalized.
+    /// @return The finalized epoch number, number in range [1, inf)
+    function getFinalizedEpoch() external view returns (uint32) {
+        uint32 currentEpoch = getCurrentEpoch();
+        bool isWindowOpen = isDecisionWindowOpen();
+
+        // Ensure we are not in the first epoch and not in the second one with the decision window still open
+        require(currentEpoch > 1 && !(currentEpoch == 2 && isWindowOpen), EpochsErrors.NOT_FINALIZED);
+
+        // If the decision window is still open, we return the previous to last epoch as the last finalized one.
+        // If the decision window is closed, we return the last epoch as the last finalized one.
+        if (isWindowOpen) {
+            return currentEpoch - 2;
+        }
+        return currentEpoch - 1;
+    }
+
+    /// @notice Gets the number of the epoch for which the decision window is currently open.
+    /// @dev Will revert when calling during closed decision window.
+    /// @return The pending epoch number, number in range [1, inf)
+    function getPendingEpoch() external view returns (uint32) {
+        require(isDecisionWindowOpen(), EpochsErrors.NOT_PENDING);
+        return getCurrentEpoch() - 1;
     }
 
     /// @dev Returns the duration of current epoch.
@@ -81,7 +107,6 @@ contract Epochs is OctantBase, IEpochs {
 
     /// @return bool Whether the decision window is currently open or not.
     function isDecisionWindowOpen() public view returns (bool) {
-        require(isStarted(), EpochsErrors.NOT_STARTED);
         uint32 _currentEpoch = getCurrentEpoch();
         if (_currentEpoch == 1) {
             return false;
@@ -112,11 +137,11 @@ contract Epochs is OctantBase, IEpochs {
             uint32 _currentEpoch = getCurrentEpoch();
             uint256 _currentEpochEnd = _calculateCurrentEpochEnd(_currentEpoch, _props);
             epochProps[epochPropsIndex].to = _currentEpoch;
-            epochProps[epochPropsIndex + 1] = EpochProps({from : _currentEpoch + 1, fromTs: _currentEpochEnd,
-            to : 0, duration : _epochDuration, decisionWindow : _decisionWindow});
+            epochProps[epochPropsIndex + 1] = EpochProps({from: _currentEpoch + 1, fromTs: _currentEpochEnd,
+                to: 0, duration: _epochDuration, decisionWindow: _decisionWindow});
             epochPropsIndex = epochPropsIndex + 1;
-        // Next epoch props were set up before, props are being updated. EpochPropsIndex has been
-        // updated already, changing props in the latest epochPropsIndex
+            // Next epoch props were set up before, props are being updated. EpochPropsIndex has been
+            // updated already, changing props in the latest epochPropsIndex
         } else {
             epochProps[epochPropsIndex].duration = _epochDuration;
             epochProps[epochPropsIndex].decisionWindow = _decisionWindow;
@@ -125,7 +150,7 @@ contract Epochs is OctantBase, IEpochs {
 
     /// @dev Gets the epoch properties of current epoch.
     function getCurrentEpochProps() public view returns (EpochProps memory) {
-        if(epochProps[epochPropsIndex].fromTs > block.timestamp) {
+        if (epochProps[epochPropsIndex].fromTs > block.timestamp) {
             return epochProps[epochPropsIndex - 1];
         }
         return epochProps[epochPropsIndex];

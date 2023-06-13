@@ -19,6 +19,14 @@ library EpochsErrors {
     /// @return HN:Epochs/not-started-yet
     string public constant NOT_STARTED = "HN:Epochs/not-started-yet";
 
+    /// @notice Thrown when getFinalizedEpoch function is called before any epoch has been finalized.
+    /// @return HN:Epochs/not-finalized
+    string public constant NOT_FINALIZED = "HN:Epochs/not-finalized";
+
+    /// @notice Thrown when getPendingEpoch function is called during closed decision window.
+    /// @return HN:Epochs/not-pending
+    string public constant NOT_PENDING = "HN:Epochs/not-pending";
+
     /// @notice Thrown when updating epoch props to invalid values (decision window bigger than epoch duration.
     /// @return HN:Epochs/decision-window-bigger-than-duration
     string public constant DECISION_WINDOW_TOO_BIG = "HN:Epochs/decision-window-bigger-than-duration";
