@@ -11,6 +11,8 @@ import {
   ETHERSCAN_API_KEY,
   TESTNET_PRIVATE_KEY,
   TESTNET_RPC_URL,
+  MAINNET_PRIVATE_KEY,
+  MAINNET_RPC_URL,
   IS_GAS_REPORTING_ENABLED,
 } from './env';
 
@@ -70,6 +72,11 @@ const config: HardhatUserConfig = {
       chainId: 1337,
       initialBaseFeePerGas: 0,
       url: 'http://127.0.0.1:8545',
+    },
+    mainnet: {
+      accounts: [MAINNET_PRIVATE_KEY],
+      chainId: 1,
+      url: MAINNET_RPC_URL,
     },
     sepolia: {
       accounts: [TESTNET_PRIVATE_KEY],

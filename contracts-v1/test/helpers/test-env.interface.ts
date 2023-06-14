@@ -6,8 +6,9 @@ import {
   Epochs,
   TestGLMFaucet,
   Token,
-  WithdrawalsTarget,
+  Proposals,
   Vault,
+  WithdrawalsTarget,
 } from '../../typechain';
 
 export type Signers = Record<string, SignerWithAddress>;
@@ -17,6 +18,8 @@ export interface TestEnv {
   epochs: Epochs;
   faucet: TestGLMFaucet;
   glmDeposits: Deposits;
+  proposalAddresses: SignerWithAddress[];
+  proposals: Proposals;
   signers: Signers;
   target: WithdrawalsTarget;
   token: Token;

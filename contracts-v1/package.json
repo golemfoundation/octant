@@ -8,6 +8,8 @@
     "deploy:goerli": "npx hardhat --network goerli deploy --tags testnet",
     "deploy:sepolia": "npx hardhat --network sepolia deploy --tags testnet",
     "deploy:localhost": "npx hardhat --network localhost deploy --tags local",
+    "deploy:epoch1": "npx hardhat --network mainnet deploy --tags epoch1",
+    "deploy:epoch2": "npx hardhat --network mainnet deploy --tags epoch2",
     "docs": "npx hardhat docgen",
     "eslint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "eslint:fix": "yarn prettier && yarn eslint --fix",

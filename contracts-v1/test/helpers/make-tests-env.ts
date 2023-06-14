@@ -1,6 +1,7 @@
 import { smock } from '@defi-wonderland/smock';
 import chai from 'chai';
 import { deployments, ethers } from 'hardhat';
+import { SignerWithAddress } from 'hardhat-deploy-ethers/signers';
 
 import { Signers, TestEnv } from './test-env.interface';
 
@@ -10,6 +11,7 @@ import {
   EPOCHS,
   FAUCET,
   TOKEN,
+  PROPOSALS,
   VAULT,
   WITHDRAWALS_TARGET,
 } from '../../helpers/constants';
@@ -19,8 +21,9 @@ import {
   Epochs,
   TestGLMFaucet,
   Token,
-  WithdrawalsTarget,
+  Proposals,
   Vault,
+  WithdrawalsTarget,
 } from '../../typechain';
 
 chai.use(smock.matchers);
@@ -30,6 +33,8 @@ const testEnv: TestEnv = {
   epochs: {} as Epochs,
   faucet: {} as TestGLMFaucet,
   glmDeposits: {} as Deposits,
+  proposalAddresses: {} as SignerWithAddress[],
+  proposals: {} as Proposals,
   signers: {} as Signers,
   target: {} as WithdrawalsTarget,
   token: {} as Token,
@@ -37,13 +42,17 @@ const testEnv: TestEnv = {
 };
 
 async function initializeTestsEnv() {
-  testEnv.signers = await ethers.getNamedSigners();
+  testEnv.proposalAddresses = await ethers
+    .getUnnamedSigners()
+    .then(proposals => proposals.slice(0, 12));
   testEnv.auth = await ethers.getContract(AUTH);
   testEnv.epochs = await ethers.getContract(EPOCHS);
   testEnv.faucet = await ethers.getContract(FAUCET);
-  testEnv.token = await ethers.getContract(TOKEN);
-  testEnv.target = await ethers.getContract(WITHDRAWALS_TARGET);
   testEnv.glmDeposits = await ethers.getContract(DEPOSITS);
+  testEnv.proposals = await ethers.getContract(PROPOSALS);
+  testEnv.signers = await ethers.getNamedSigners();
+  testEnv.target = await ethers.getContract(WITHDRAWALS_TARGET);
+  testEnv.token = await ethers.getContract(TOKEN);
   testEnv.vault = await ethers.getContract(VAULT);
 }
 
