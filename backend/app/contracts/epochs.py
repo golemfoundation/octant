@@ -29,5 +29,9 @@ class Epochs:
     def get_current_epoch(self):
         return self.contract.functions.getCurrentEpoch().call()
 
+    def get_pending_epoch(self):
+        # TODO pending epoch must consider allocation window time. current implementation does not!
+        return int(self.contract.functions.getCurrentEpoch().call()) - 1
+
 
 epochs = Epochs()

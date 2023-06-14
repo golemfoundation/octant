@@ -49,5 +49,5 @@ def register_extensions(app):
 
 
 def register_errorhandlers(app):
-    app.errorhandler(OctantException)(handle_octant_exception)
-    app.errorhandler(Exception)(handle_unexpected_exception)
+    app.register_error_handler(OctantException, handle_octant_exception)
+    app.register_error_handler(Exception, handle_unexpected_exception)
