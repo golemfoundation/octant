@@ -5,7 +5,7 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "./OctantBase.sol";
 
-import {VaultErrors} from "./Errors.sol";
+import {CommonErrors, VaultErrors} from "./Errors.sol";
 
 /**
  * @title Vault
@@ -65,7 +65,8 @@ contract Vault is OctantBase {
             amount += payloads[i].amount;
         }
         lastClaimedEpoch[msg.sender] = claimedEpoch;
-        payable(msg.sender).transfer(amount);
+        (bool success,) = payable(msg.sender).call{value: amount}("");
+        require(success, CommonErrors.FAILED_TO_SEND);
 
         emit Withdrawn(msg.sender, amount);
     }
