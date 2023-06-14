@@ -10,13 +10,29 @@ class OctantException(Exception):
     status_code = 500
 
     def __init__(self, message, status_code=None):
-        Exception.__init__(self)
+        super().__init__()
         self.message = message
         if status_code is not None:
             self.status_code = status_code
 
     def to_json(self):
         return jsonify({"message": self.message})
+
+
+class InvalidEpoch(OctantException):
+    code = 400
+    description = "Given epoch is not valid."
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
+class MissingSnapshot(OctantException):
+    code = 500
+    description = "No snapshot has been taken. Try calling /epochs/snapshot endpoint"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
 
 
 def handle_octant_exception(e: OctantException):

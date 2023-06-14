@@ -4,6 +4,10 @@ from app.database.models import Allocation
 from app.extensions import db
 
 
+def get_all_by_epoch(epoch):
+    return Allocation.query.filter_by(epoch=epoch).all()
+
+
 def get_all_by_epoch_and_user_id(epoch, user_id):
     return Allocation.query.filter_by(epoch=epoch, user_id=user_id).all()
 

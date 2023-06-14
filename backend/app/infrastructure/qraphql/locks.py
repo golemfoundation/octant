@@ -7,7 +7,7 @@ def get_locks_by_address(user_address):
     query = gql(
         """
         query GetLocks($userAddress: Bytes!) {
-            lockeds(orderBy: blockTimestamp, where: { user: $userAddress }) {
+            lockeds(orderBy: timestamp, where: { user: $userAddress }) {
                 __typename
                 amount
                 timestamp

@@ -7,6 +7,7 @@ from app.core import glm
 from app.core.deposits import update_db_deposits, calculate_staked_ratio
 from app.core.rewards import calculate_total_rewards, calculate_all_individual_rewards
 from app.database import epoch_snapshot
+from app import exceptions
 from app.extensions import db, w3
 from app.settings import config
 
@@ -14,18 +15,23 @@ from app.settings import config
 def snapshot_previous_epoch() -> Optional[int]:
     current_epoch = epochs.get_current_epoch()
     app.logger.info(f"[+] Current epoch: {current_epoch}")
-    previous_epoch = current_epoch - 1
+    pending_epoch = epochs.get_pending_epoch()
+    app.logger.info(f"[+] Pending epoch: {pending_epoch}")
 
-    last_snapshot = epoch_snapshot.get_last_snapshot()
-    last_snapshot_epoch = last_snapshot.epoch if last_snapshot is not None else 0
+    try:
+        last_snapshot = epoch_snapshot.get_last_snapshot()
+        last_snapshot_epoch = last_snapshot.epoch
+    except exceptions.MissingSnapshot:
+        last_snapshot_epoch = 0
+
     app.logger.info(f"[+] Last db epoch: {last_snapshot_epoch}")
 
-    if previous_epoch <= last_snapshot_epoch:
+    if pending_epoch <= last_snapshot_epoch:
         return None
 
     glm_supply = glm.get_current_glm_supply()
     eth_proceeds = w3.eth.get_balance(config.WITHDRAWALS_TARGET_CONTRACT_ADDRESS)
-    total_effective_deposit = update_db_deposits(previous_epoch)
+    total_effective_deposit = update_db_deposits(pending_epoch)
     staked_ratio = calculate_staked_ratio(total_effective_deposit, glm_supply)
     total_rewards = calculate_total_rewards(eth_proceeds, staked_ratio)
     all_individual_rewards = calculate_all_individual_rewards(
@@ -33,7 +39,7 @@ def snapshot_previous_epoch() -> Optional[int]:
     )
 
     epoch_snapshot.add_snapshot(
-        previous_epoch,
+        pending_epoch,
         glm_supply,
         eth_proceeds,
         total_effective_deposit,
@@ -42,6 +48,6 @@ def snapshot_previous_epoch() -> Optional[int]:
         all_individual_rewards,
     )
     db.session.commit()
-    app.logger.info(f"[+] Saved {previous_epoch} epoch snapshot to the DB")
+    app.logger.info(f"[+] Saved {pending_epoch} epoch snapshot to the DB")
 
-    return previous_epoch
+    return pending_epoch

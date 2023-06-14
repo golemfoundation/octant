@@ -36,6 +36,7 @@ class ProdConfig(Config):
     """Production configuration."""
 
     ENV = "prod"
+    PROPAGATE_EXCEPTIONS = True
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DB_URI", "postgresql://user:password@localhost/octant"
