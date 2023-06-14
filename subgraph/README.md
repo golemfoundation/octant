@@ -6,6 +6,8 @@ Provide `networks.json` file. You can do it manually, check `networks.template.j
 deploy new contracts (check [Deployment section in project root's Readme.md file](../README.md#deployment)).
 This will generate the file for you.
 
+Additionally you have to replace epochs contract address in the `src/epochs.ts` file.
+
 ### Local
 
 If you're doing a local deployment, please be sure to change `hardhat` to `localhost` in the generated

@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: $DEPLOYMENT_ID
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: $DEPLOYMENT_ID
+  namespace: argocd
+spec:
+  project: octant
+  destination:
+    name: in-cluster
+    namespace: $DEPLOYMENT_ID
+  sources:
+  # https://linear.app/golemfoundation/issue/CAQD-142/move-helm-git-repository-to-devops-space
+  - repoURL: 'https://git.ring0.cc/mike/helm/raw/branch/master'
+    targetRevision: 0.1.54
+    chart: octant
+    helm:
+      parameters:
+        - name: "image.tag"
+          value: "$IMAGE_TAG"
+        - name: "contracts.deploy"
+          value: "$DEPLOY_CONTRACTS"
+        - name: "contracts.epochDuration"
+          value: "$EPOCH_DURATION"
+        - name: "contracts.decisionWindow"
+          value: "$DECISION_WINDOW"
+        # New (v1) addresses used in Backend and Subgraph
+        - name: "contracts.addresses.startBlock"
+          value: "$BLOCK_NUMBER"
+        - name: "contracts.addresses.multisigAddress"
+          value: "0xfC9527820A76b515a2c66C22e0575501DEDD8281"
+        - name: "contracts.addresses.allocations"
+          value: "0x0000000000000000000000000000000000000000"
+        - name: "contracts.addresses.deposits"
+          value: "$DEPOSITS_CONTRACT_ADDRESS"
+        - name: "contracts.addresses.epochs"
+          value: "$EPOCHS_CONTRACT_ADDRESS"
+        - name: "contracts.addresses.proposals"
+          value: "$PROPOSALS_CONTRACT_ADDRESS"
+        - name: "contracts.addresses.withdrawals_target"
+          value: "$WITHDRAWALS_TARGET_CONTRACT_ADDRESS"
+        # Old (v0) addresses still in use by Web Client
+        - name: "contracts.old_addresses.startBlock"
+          value: "$OLD_BLOCK_NUMBER"
+        - name: "contracts.old_addresses.allocations"
+          value: "$VITE_ALLOCATIONS_ADDRESS"
+        - name: "contracts.old_addresses.allocations_storage"
+          value: "$VITE_ALLOCATIONS_STORAGE_ADDRESS"
+        - name: "contracts.old_addresses.deposits"
+          value: "$VITE_DEPOSITS_ADDRESS"
+        - name: "contracts.old_addresses.tracker"
+          value: "$VITE_TRACKER_ADDRESS"
+        - name: "contracts.old_addresses.epochs"
+          value: "$VITE_EPOCHS_ADDRESS"
+        - name: "contracts.old_addresses.proposals"
+          value: "$VITE_PROPOSALS_ADDRESS"
+        - name: "contracts.old_addresses.rewards"
+          value: "$VITE_REWARDS_ADDRESS"
+        - name: "contracts.old_addresses.octant_oracle"
+          value: "$VITE_OCTANT_ORACLE_ADDRESS"
+        - name: "contracts.old_addresses.octant_payouts_manager"
+          value: "$VITE_OCTANT_PAYOUTS_MANAGER_ADDRESS"
+        - name: "contracts.old_addresses.octant_payouts"
+          value: "$VITE_OCTANT_PAYOUTS_ADDRESS"
+        - name: "contracts.old_addresses.withdrawals_target"
+          value: "$VITE_WITHDRAWALS_TARGET_ADDRESS"
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - RespectIgnoreDifferences=true
+  ignoreDifferences:
+  - group: "batch"
+    kind: "Job"
+    jsonPointers:
+    - /metadata/annotations
+    - /spec/template/metadata
+    - /spec/template/labels

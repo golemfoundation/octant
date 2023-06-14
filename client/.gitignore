@@ -3,3 +3,4 @@ typechain-types
 # rollup-plugin-visualizer result file
 /client/bundleAnalysis.html
 /cypress/videos/**
+/cypress/screenshots/**
