@@ -16,11 +16,19 @@ contract Auth {
     /// @param oldValue The old deployer address.
     event DeployerRenounced(address oldValue);
 
+    /// @dev Emitted when ownership transfer is initiated.
+    /// @param previousOwner Old multisig, one that initiated the process.
+    /// @param newOwner New multisig, one that should finalize the process.
+    event OwnershipTransferStarted(address indexed previousOwner, address indexed newOwner);
+
     /// @dev The deployer address.
     address public deployer;
 
     /// @dev The multisig address.
     address public multisig;
+
+    /// @dev Pending multisig address.
+    address public pendingOwner;
 
     /// @param _multisig The initial Golem Foundation multisig address.
     constructor(address _multisig) {
@@ -28,12 +36,24 @@ contract Auth {
         deployer = msg.sender;
     }
 
-    /// @dev Sets the multisig address.
-    /// @param _multisig The new multisig address.
-    function setMultisig(address _multisig) external {
+    /**
+     * @dev Starts the ownership transfer of the contract to a new account. Replaces the pending transfer if there is one.
+     * Can only be called by the current owner.
+     */
+    function transferOwnership(address newOwner) external {
         require(msg.sender == multisig, CommonErrors.UNAUTHORIZED_CALLER);
-        emit MultisigSet(multisig, _multisig);
-        multisig = _multisig;
+        pendingOwner = newOwner;
+        emit OwnershipTransferStarted(multisig, newOwner);
+    }
+
+    /**
+     * @dev The new owner accepts the ownership transfer.
+     */
+    function acceptOwnership() external {
+        require(msg.sender == pendingOwner, CommonErrors.UNAUTHORIZED_CALLER);
+        emit MultisigSet(multisig, pendingOwner);
+        multisig = pendingOwner;
+        pendingOwner = address(0);
     }
 
     /// @dev Leaves the contract without a deployer. It will not be possible to call

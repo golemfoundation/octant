@@ -12,3 +12,8 @@ export const WITHDRAWALS_TARGET_TEST_V2 = 'WithdrawalsTargetTestV2';
 export const VAULT = 'Vault';
 
 export const PROXY_WITH_RECEIVE = 'EIP173ProxyWithReceive';
+
+// ----------------
+// ADDRESSES
+// ----------------
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
