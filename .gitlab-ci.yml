@@ -4,16 +4,21 @@ variables:
   CACHE_COMPRESSION_LEVEL: "fast"
   TRANSFER_METER_FREQUENCY: "2s"
   PYTHON_IMAGE: "acidrain/python-poetry:3.10-slim-1.4.0"
+  IMAGE_TAG: $CI_COMMIT_SHA
 
 stages:
   - build
   - lint_and_typecheck
   - test
   - publish
+  - e2e
   - deploy
-  - ci-validate
-  - ci-plan
-  - environments
+  - cleanup
+
+default:
+  tags:
+    - metal
+  interruptible: true
 
 image: node:16-bullseye-slim
 
@@ -22,6 +27,15 @@ image: node:16-bullseye-slim
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   on_push_to_default_branch:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  on_push_to_default_branch_manual:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+      allow_failure: true
+  on_mr_manual:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: true
+
 
 .scripts:
   install_packages:
@@ -218,15 +232,11 @@ Documentation:
       - $SERVICE/.docs/
     expire_in: 30 days
 
-Build container:
+Build images:
   stage: publish
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: manual
-      allow_failure: true
-      variables:
-        IMAGE_NAME: dev/$SERVICE
-    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
   parallel:
     matrix:
       - SERVICE:
@@ -241,214 +251,147 @@ Build container:
     entrypoint: [""]
   variables:
     IMAGE_NAME: $SERVICE
+    GOOGLE_APPLICATION_CREDENTIALS: /kaniko/config.json
   script:
     - echo $KANIKO_CACHE_CONFIG > /kaniko/.docker/config.json
+    - echo "$GCP_REGISTRY_PUSHER_SERVICE_ACCOUNT" | base64 -d > /kaniko/config.json
+    - chmod 400 /kaniko/config.json
     - /kaniko/executor
       --context "$CI_PROJECT_DIR/$SERVICE"
       --dockerfile "$CI_PROJECT_DIR/ci/Dockerfile.$SERVICE"
-      --destination "${CI_REGISTRY_IMAGE}/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
-      --build-arg CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA
+      --destination "${GCP_DOCKER_IMAGE_REGISTRY}/$IMAGE_NAME:$IMAGE_TAG"
+      --build-arg VERSION_TAG=$CI_COMMIT_SHORT_SHA
       --cache=true
       --cache-repo=$KANIKO_CACHE_REPO
 
-# TODO left until migration to from gitlab pages will be finished
-pages:
-  stage: environments
+Cypress E2E Tests:
+  stage: e2e
+  image: synthetixio/docker-e2e:16.20-ubuntu
   rules:
-    - if: '$CI_COMMIT_REF_NAME == "master"'
-      when: manual
-  script:
-    - apt-get update && apt-get install -y --no-install-recommends git --reinstall ca-certificates
-    - cd contracts
-    - yarn install --non-interactive --cache-folder .yarn
-    - yarn compile
-    - cd ../client
-    - yarn install --non-interactive
-    - yarn build
-    - cd ..
-    - mv client/dist public
-    - echo '/governance/octant/* /:splat 200' > public/_redirects
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+  variables:
+    NETWORK_NAME: sepolia
+    PRIVATE_KEY: $GOERLI_PRIVATE_KEY
+    CYPRESS_DOCKER_RUN: "true"
+    CI: "true"
+    METAMASK_VERSION: "latest"
   artifacts:
+    when: on_failure
+    name: cypress
     paths:
-      - public
-
-include:
-  - template: Terraform/Base.latest.gitlab-ci.yml  # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Terraform/Base.latest.gitlab-ci.yml
-
-.terraform:config:
-  image:
-    name: "$CI_TEMPLATE_REGISTRY_HOST/gitlab-org/terraform-images/stable:latest"
-  before_script:
-    - echo "$GCP_TERRAFORM_ACCT" | base64 -d > "$CI_PROJECT_DIR/.gcloud_credentials.json"
-    - chmod 400 "$CI_PROJECT_DIR/.gcloud_credentials.json"
-  after_script:
-    - rm "$CI_PROJECT_DIR/.gcloud_credentials.json"
-  variables:
-    TF_ROOT: ${CI_PROJECT_DIR}/ci/terraform
-    TF_STATE_NAME: $CI_ENVIRONMENT_SLUG
-    TF_INIT_FLAGS: -lockfile=readonly
-    GOOGLE_APPLICATION_CREDENTIALS: $CI_PROJECT_DIR/.gcloud_credentials.json
-    DNS_DOMAIN: gle.octant.world
-    TF_VAR_CI_COMMIT_REF_NAME: $CI_COMMIT_REF_NAME
-    TF_VAR_CI_ENVIRONMENT_NAME: $CI_ENVIRONMENT_NAME
-    TF_VAR_dns_endpoint: $CI_ENVIRONMENT_SLUG
-    TF_VAR_generate_contracts: "false"
-    TF_VAR_octant_tag: $CI_COMMIT_SHORT_SHA
-    TF_VAR_hackmd_token: $HACKMD_TOKEN
-
-fmt:
-  stage: ci-validate
-  extends:
-    - .terraform:fmt
-    - .terraform:config
-  needs: [ ]
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
-validate:
-  stage: ci-validate
-  extends:
-    - .terraform:validate
-    - .terraform:config
-  needs: [ ]
-  variables:
-    TF_STATE_NAME: validate
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
-# Manually join 2 stages from gitlab template
-.deploy:
-  stage: environments
-  extends:
-    - .terraform:config
-  needs:
-    - fmt
-    - validate
-    - Build container
+      - client/cypress/videos
+      - client/cypress/screenshots
+    expire_in: 3 days
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-yarn-client
+      policy: pull
+      paths:
+        - client/.yarn
+        - client/node-modules
+    - key: $CI_COMMIT_REF_SLUG-yarn-root
+      policy: pull
+      paths:
+        - node_modules
+        - .yarn
   script:
-    - cd "${TF_ROOT}"
-    - gitlab-terraform plan -replace="google_compute_instance.vm"
-    - gitlab-terraform plan-json -replace="google_compute_instance.vm"
-    - gitlab-terraform apply
-  resource_group: ${TF_STATE_NAME}
-  artifacts:
-    public: false
-    reports:
-      terraform: ${TF_ROOT}/plan.json
+    - set -e
+    - apt update && apt install -y git gettext
+    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh e2e
+    - bash $CI_PROJECT_DIR/ci/argocd/application.sh create
+    - cd client
+    - yarn install --cache-folder .yarn --frozen-lockfile --prefer-offline --no-audit
+    - export OCTANT_BASE_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_web_client_url.sh)
+    - set +e
+    - yarn run synpress run --configFile synpress.config.ts --browser chrome || CY_EXIT_CODE=$?
+    - if [[ "$CY_EXIT_CODE" == "0" ]]; then rm -r $CI_PROJECT_DIR/client/cypress/videos $CI_PROJECT_DIR/client/cypress/screenshots; fi
+    - set -e
+    - bash $CI_PROJECT_DIR/ci/argocd/application.sh delete
+    - exit $CY_EXIT_CODE
+
+Force destroy E2E env:
+  stage: e2e
+  image: mikecode/git-gettext:ubuntu
+  rules:
+    - !reference [.rules, on_mr_manual]
+  allow_failure: true
+  script:
+    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh e2e
+    - bash $CI_PROJECT_DIR/ci/argocd/application.sh destroy
+
+.deploy:
+  stage: deploy
+  image: mikecode/git-gettext:ubuntu
+  script:
+    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh $ENV_TYPE
+    - bash $CI_PROJECT_DIR/ci/argocd/application.sh create
   environment:
-    url: http://$CI_ENVIRONMENT_SLUG.$DNS_DOMAIN
     action: start
 
 .destroy:
-  stage: environments
-  extends:
-    - .terraform:destroy
-    - .terraform:config
-  needs:
-    - fmt
-    - validate
-  after_script:
-    - !reference [ .terraform:config, after_script ]
-    - "curl -H \"Private-Token: ${TF_VAR_gitlab_token}\" -X DELETE \"${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${TF_STATE_NAME}\""
+  stage: cleanup
+  image: mikecode/git-gettext:ubuntu
+  script:
+    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh $ENV_TYPE
+    - bash $CI_PROJECT_DIR/ci/argocd/application.sh destroy
   environment:
     action: stop
 
-Deploy to MR environment without contracts:
+Deploy MR App:
   extends:
     - .deploy
+  variables:
+    ENV_TYPE: "mr"
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: manual
-      allow_failure: true
-      variables:
-        TF_VAR_octant_branch: dev
+    - !reference [.rules, on_mr_manual]
+  environment:
+    name: mr/$CI_MERGE_REQUEST_IID
+    url: https://mr-$CI_MERGE_REQUEST_IID-client.octant.wildland.dev
+    deployment_tier: development
+    on_stop: Destroy MR App
+
+
+Deploy UAT App:
+  extends:
+    - .deploy
+  variables:
+    ENV_TYPE: "uat"
+  rules:
+    - !reference [.rules, on_mr_manual]
+  environment:
+    name: persistent/uat
+    url: https://uat-client.octant.wildland.dev
+    deployment_tier: testing
+    on_stop: Destroy UAT App
+
+Deploy PROD App:
+  extends:
+    - .deploy
+  variables:
+    ENV_TYPE: "prod"
+  rules:
+    - !reference [.rules, on_push_to_default_branch_manual]
+  environment:
+    name: persistent/prod
+    url: https://prod-client.octant.wildland.dev
+    deployment_tier: production
+
+Destroy MR App:
+  extends:
+    - .destroy
+  rules:
+    - !reference [.rules, on_mr_manual]
+  needs: []
   environment:
     name: mr/$CI_MERGE_REQUEST_IID
     deployment_tier: development
-    on_stop: Stop MR environment
 
-Deploy to MR environment with contracts:
-  extends:
-    - Deploy to MR environment without contracts
-  variables:
-    TF_VAR_generate_contracts: "true"
-
-Stop MR environment:
+Destroy UAT App:
   extends:
     - .destroy
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: manual
-      allow_failure: true
-      variables:
-        TF_VAR_octant_branch: dev
+    - !reference [.rules, on_mr_manual]
+  needs: []
   environment:
-    name: mr/$CI_MERGE_REQUEST_IID
-    deployment_tier: development
-
-Deploy to TEST environment without contracts:
-  extends:
-    - .deploy
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: manual
-      allow_failure: true
-      variables:
-        TF_VAR_octant_branch: dev
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
-  environment:
-    name: test
+    name: persistent/uat
     deployment_tier: testing
-
-Deploy to TEST environment with contracts:
-  extends:
-    - Deploy to TEST environment without contracts
-  variables:
-    TF_VAR_generate_contracts: "true"
-
-Stop TEST environment:
-  extends:
-    - .destroy
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: manual
-      allow_failure: true
-      variables:
-        TF_VAR_octant_branch: dev
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
-      allow_failure: true
-  environment:
-    name: test
-    deployment_tier: testing
-
-Deploy to UAT environment without contracts:
-  extends:
-    - .deploy
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
-      allow_failure: true
-  environment:
-    name: uat
-    deployment_tier: staging
-
-Deploy to UAT environment with contracts:
-  extends:
-    - Deploy to UAT environment without contracts
-  variables:
-    TF_VAR_generate_contracts: "true"
-
-Stop UAT environment:
-  extends:
-    - .destroy
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
-      allow_failure: true
-  environment:
-    name: uat
-    deployment_tier: staging

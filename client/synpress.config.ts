@@ -7,7 +7,7 @@ import path from 'path';
 
 export default defineConfig({
   e2e: {
-    baseUrl: 'http://localhost:5173',
+    baseUrl: process.env.OCTANT_BASE_URL || 'http://localhost:5173',
     setupNodeEvents(on, config) {
       on(
         'file:preprocessor',

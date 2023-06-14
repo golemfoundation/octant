@@ -7,7 +7,8 @@ COPY ./ ./
 RUN yarn install --ignore-scripts --frozen-lockfile
 
 FROM root AS deploy
-ARG CI_COMMIT_SHORT_SHA
-ENV CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA
+RUN apk add jq
+ARG VERSION_TAG
+ENV VERSION_TAG=$VERSION_TAG
 COPY --from=build /app/ /app/
 ENTRYPOINT [ "/app/entrypoint.sh" ]
