@@ -37,8 +37,10 @@ contract WithdrawalsTarget is Initializable, IWithdrawalsTarget {
     }
 
     function withdraw(uint256 amount) external onlyMultisig {
+        (bool success,) = payable(multisig).call{value: amount}("");
+        require(success, CommonErrors.FAILED_TO_SEND);
+
         emit Withdrawn(multisig, amount);
-        payable(multisig).transfer(amount);
     }
 
     /// @dev Modifier that allows only multisig address to call a function.

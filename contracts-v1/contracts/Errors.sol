@@ -58,4 +58,8 @@ library CommonErrors {
     /// @return HN:Common/unauthorized-caller
     string public constant UNAUTHORIZED_CALLER =
     "HN:Common/unauthorized-caller";
+
+    /// @notice Thrown when failed to send eth.
+    /// @return HN:Vault/failed-to-send
+    string public constant FAILED_TO_SEND = "HN:Vault/failed-to-send";
 }
