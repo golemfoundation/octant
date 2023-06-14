@@ -40,6 +40,13 @@ Go to `.docs` and open the `index.html` file in your browser.
 
 **WARNING:** As of 2023-03-04 local environment runs into multiple issues when requesting data from contracts, making allocations or withdrawing funds. Please consider it as not stable.
 
+Tags description:
+* `testnet`: uses testnet specific GLM and faucet
+* `test`: used in local tests, deploys its own GLM and faucet
+* `local`: used for local environment, deploy's its own GLM and faucet
+* `epoch1`: Epoch.sol is not deployed, contracts that use Epoch handle this as a special case
+* `epoch2`: Epoch.sol is deployed
+
 ---
 ### Local
 

@@ -20,4 +20,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
 };
 export default func;
-func.tags = ['local', 'test', 'testnet', 'vault'];
+func.tags = ['epoch2', 'local', 'test', 'testnet', 'vault'];

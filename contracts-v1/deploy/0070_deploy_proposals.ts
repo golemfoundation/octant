@@ -2,32 +2,31 @@ import { ethers } from 'hardhat';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
-import { DECISION_WINDOW, EPOCH_DURATION } from '../env';
-import { AUTH, EPOCHS } from '../helpers/constants';
-import { getLatestBlockTimestamp } from '../helpers/misc-utils';
+import { PROPOSAL_ADDRESSES, PROPOSALS_CID } from '../env';
+import { AUTH, PROPOSALS } from '../helpers/constants';
 
 // This function needs to be declared this way, otherwise it's not understood by test runner.
 // eslint-disable-next-line func-names
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
+  let proposalAddresses = PROPOSAL_ADDRESSES;
 
-  const start = await getLatestBlockTimestamp();
-  let decisionWindow = DECISION_WINDOW;
-  let epochDuration = EPOCH_DURATION;
-  if (['hardhat', 'localhost'].includes(hre.network.name)) {
-    decisionWindow = 120;
-    epochDuration = 300;
+  /// for localhost and testnet same set of proposals is used
+  /// for hardhat - test propsals are used
+  if (hre.network.name === 'hardhat') {
+    const unnamedAddresses = await hre.getUnnamedAccounts();
+    proposalAddresses = unnamedAddresses.slice(0, 10);
   }
 
   const auth = await ethers.getContract(AUTH);
 
-  await deploy(EPOCHS, {
-    args: [start, epochDuration, decisionWindow, auth.address],
+  await deploy(PROPOSALS, {
+    args: [PROPOSALS_CID, proposalAddresses, auth.address],
     autoMine: true,
     from: deployer,
     log: true,
   });
 };
 export default func;
-func.tags = ['epoch2', 'epochs', 'local', 'test', 'testnet'];
+func.tags = ['epoch1', 'proposals', 'local', 'test', 'testnet'];
