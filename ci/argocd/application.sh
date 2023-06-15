@@ -45,11 +45,11 @@ if [[ "$ACTION" == "create" ]]; then
 	# https://github.com/argoproj/argo-cd/issues/5882
 	#
 	sleep 10
-	curl --fail -s -X DELETE \
+	curl -s -X DELETE \
 		-H "Authorization: Bearer ${ARGOCD_ACCESS_TOKEN}" \
 		-H "Content-type: application/json" \
 		"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/resource?name=deploy-contracts&appNamespace=argocd&namespace=${DEPLOYMENT_ID}&resourceName=deploy-contracts&version=v1&kind=Job&group=batch&force=true&orphan=false"
-	curl --fail -s -X DELETE \
+	curl -s -X DELETE \
 		-H "Authorization: Bearer ${ARGOCD_ACCESS_TOKEN}" \
 		-H "Content-type: application/json" \
 		"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/resource?name=graph-deploy&appNamespace=argocd&namespace=${DEPLOYMENT_ID}&resourceName=graph-deploy&version=v1&kind=Job&group=batch&force=true&orphan=false"
@@ -57,6 +57,11 @@ if [[ "$ACTION" == "create" ]]; then
 		-H "Authorization: Bearer ${ARGOCD_ACCESS_TOKEN}" \
 		-H "Content-type: application/json" \
 		"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/sync"
+	sleep 10
+	curl -s -X DELETE \
+		-H "Authorization: Bearer ${ARGOCD_ACCESS_TOKEN}" \
+		-H "Content-type: application/json" \
+		"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/resource?name=octant&appNamespace=argocd&namespace=${DEPLOYMENT_ID}&resourceName=octant&version=v1&kind=Secret&group=&force=true&orphan=false"
 
 	# I'm leaving the previous hack for the time being in case it has to be used again
 	#
