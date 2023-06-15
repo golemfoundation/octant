@@ -3,7 +3,7 @@
 pragma solidity ^0.8.9;
 
 interface IEpochs {
-    function getCurrentEpoch() external view returns (uint32);
+    function getCurrentEpoch() external view returns (uint256);
 
     function getEpochDuration() external view returns (uint256);
 

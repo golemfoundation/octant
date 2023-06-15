@@ -20,8 +20,8 @@ contract Deposits is OctantBase, IDeposits {
     /// @notice GLM token contract address
     ERC20 public immutable glm;
 
-    event Locked(uint224 depositBefore, uint224 amount, uint256 when, address user);
-    event Unlocked(uint224 depositBefore, uint224 amount, uint256 when, address user);
+    event Locked(uint256 depositBefore, uint256 amount, uint256 when, address user);
+    event Unlocked(uint256 depositBefore, uint256 amount, uint256 when, address user);
 
     /// @dev deposit amounts per user
     mapping(address => uint256) public deposits;
@@ -34,8 +34,8 @@ contract Deposits is OctantBase, IDeposits {
     /// @notice Lock GLM to enable participation in Octant experiment.
     /// This can be done at any time, but it is most capital effective at the end of the epoch.
     /// @param amount Amount of GLM to be locked.
-    function lock(uint224 amount) external {
-        uint224 oldDeposit = uint224(deposits[msg.sender]);
+    function lock(uint256 amount) external {
+        uint256 oldDeposit = deposits[msg.sender];
         deposits[msg.sender] = oldDeposit + amount;
         require(
             glm.transferFrom(msg.sender, address(this), amount),
@@ -46,8 +46,8 @@ contract Deposits is OctantBase, IDeposits {
 
     /// @notice Unlock GLM. This can be done at any time, but it is most capital effective at the beginning of the epoch.
     /// @param amount Amount of GLM to be unlocked.
-    function unlock(uint224 amount) external {
-        uint224 oldDeposit = uint224(deposits[msg.sender]);
+    function unlock(uint256 amount) external {
+        uint256 oldDeposit = deposits[msg.sender];
         require(oldDeposit >= amount, DepositsErrors.DEPOSIT_IS_TO_SMALL);
         deposits[msg.sender] = oldDeposit - amount;
         require(glm.transfer(msg.sender, amount));

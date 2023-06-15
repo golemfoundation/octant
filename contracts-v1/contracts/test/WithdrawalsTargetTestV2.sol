@@ -14,7 +14,7 @@ contract WithdrawalsTargetTestV2 is Initializable, IWithdrawalsTarget {
     address public multisig;
     string public greeting;
 
-    function version() external pure returns (uint) {
+    function version() external pure returns (uint256) {
         return 2;
     }
 

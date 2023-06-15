@@ -2,8 +2,6 @@
 
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/utils/Strings.sol";
-
 import "./interfaces/IProposals.sol";
 import "./interfaces/IEpochs.sol";
 
@@ -26,10 +24,6 @@ contract Proposals is OctantBase, IProposals {
     IEpochs public epochs;
 
     mapping(uint256 => address[]) private proposalAddressesByEpoch;
-
-    /// @notice mapping that stores account authorized to withdraw funds on behalf of the proposal.
-    /// This is additional account, main proposal account is also eligible to withdraw.
-    mapping(address => address) private authorizedAccountByProposal;
 
     /// @notice This event is emitted when Epochs contract is deployed and Proposals is notified about it.
     event EpochsSet(address epochs);
@@ -78,21 +72,5 @@ contract Proposals is OctantBase, IProposals {
             }
         }
         return proposalAddressesByEpoch[0];
-    }
-
-    /// @dev Returns whether the account is authorized for the given proposal.
-    /// @param proposal The proposal to check authorization for.
-    /// @param account The account to check authorization for.
-    /// @return True if the account is authorized for the proposal, false otherwise.
-    function isAuthorized(address proposal, address account) public view returns (bool) {
-        return proposal == account || authorizedAccountByProposal[proposal] == account;
-    }
-
-    /// @dev Sets the authorized account for the given proposal.
-    /// @param proposal The proposal to set the authorized account for.
-    /// @param account The account to authorize for the proposal.
-    /// @notice Only the owner of the contract can call this function.
-    function setAuthorizedAccount(address proposal, address account) external onlyMultisig {
-        authorizedAccountByProposal[proposal] = account;
     }
 }

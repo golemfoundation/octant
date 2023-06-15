@@ -32,7 +32,7 @@ contract WithdrawalsTarget is Initializable, IWithdrawalsTarget {
         multisig = _multisig;
     }
 
-    function version() public pure returns (uint) {
+    function version() public pure returns (uint256) {
         return 1;
     }
 
