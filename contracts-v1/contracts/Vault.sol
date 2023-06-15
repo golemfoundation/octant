@@ -38,7 +38,7 @@ contract Vault is OctantBase {
      * @param epoch The epoch number.
      * @param root The Merkle root.
      */
-    function setMerkleRoot(uint epoch, bytes32 root) external onlyMultisig {
+    function setMerkleRoot(uint256 epoch, bytes32 root) external onlyMultisig {
         require(merkleRoots[epoch] == bytes32(0), VaultErrors.MERKLE_ROOT_ALREADY_SET);
         merkleRoots[epoch] = root;
 
@@ -52,10 +52,12 @@ contract Vault is OctantBase {
      * @param payloads An array of WithdrawPayload structs.
      */
     function batchWithdraw(WithdrawPayload[] calldata payloads) external {
+        require(payloads.length > 0, VaultErrors.EMPTY_PAYLOADS);
+
         uint256 amount = 0;
         uint256 claimedEpoch = lastClaimedEpoch[msg.sender];
 
-        for (uint i = 0; i < payloads.length; i++) {
+        for (uint256 i = 0; i < payloads.length; i++) {
             require(payloads[i].epoch > claimedEpoch, VaultErrors.ALREADY_CLAIMED);
             bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(msg.sender, payloads[i].amount))));
             bytes32 root = merkleRoots[payloads[i].epoch];

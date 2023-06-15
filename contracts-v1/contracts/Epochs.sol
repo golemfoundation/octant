@@ -16,18 +16,18 @@ contract Epochs is OctantBase, IEpochs {
 
     /// @dev Struct to store the properties of an epoch.
     /// @param from The epoch number from which properties are valid (inclusive).
-    /// @param fromTs Timestamp from which properties are valid.
     /// @param to The epoch number to which properties are valid (inclusive).
+    /// @param fromTs Timestamp from which properties are valid.
     /// @param duration Epoch duration in seconds.
     /// @param decisionWindow Decision window in seconds.
     /// This value represents time, when participant can allocate funds to projects.
     /// It must be smaller or equal to {epochDuration}.
     struct EpochProps {
-        uint256 from;
-        uint256 fromTs;
-        uint256 to;
-        uint256 duration;
-        uint256 decisionWindow;
+        uint32 from;
+        uint32 to;
+        uint64 fromTs;
+        uint64 duration;
+        uint64 decisionWindow;
     }
 
     /// @notice Timestamp when octant starts.
@@ -50,26 +50,26 @@ contract Epochs is OctantBase, IEpochs {
         address _auth)
     OctantBase(_auth) {
         start = _start;
-        epochProps[0] = EpochProps({from: 1, fromTs: start, to: 0, duration: _epochDuration, decisionWindow: _decisionWindow});
+        epochProps[0] = EpochProps({from: 1, fromTs: uint64(start), to: 0, duration: uint64(_epochDuration), decisionWindow: uint64(_decisionWindow)});
     }
 
     /// @notice Get the current epoch number.
     /// @dev Will revert when calling before the first epoch started.
     /// @return The current epoch number, number in range [1, inf)
-    function getCurrentEpoch() public view returns (uint32) {
+    function getCurrentEpoch() public view returns (uint256) {
         require(isStarted(), EpochsErrors.NOT_STARTED);
         EpochProps memory _currentEpochProps = getCurrentEpochProps();
         if (_currentEpochProps.to != 0) {
-            return uint32(_currentEpochProps.to);
+            return _currentEpochProps.to;
         }
-        return uint32(((block.timestamp - _currentEpochProps.fromTs) / _currentEpochProps.duration) + _currentEpochProps.from);
+        return ((block.timestamp - _currentEpochProps.fromTs) / _currentEpochProps.duration) + _currentEpochProps.from;
     }
 
     /// @notice Gets the number of the last epoch for which the decision window has already ended.
     /// @dev Will revert when calling before the first epoch is finalized.
     /// @return The finalized epoch number, number in range [1, inf)
-    function getFinalizedEpoch() external view returns (uint32) {
-        uint32 currentEpoch = getCurrentEpoch();
+    function getFinalizedEpoch() external view returns (uint256) {
+        uint256 currentEpoch = getCurrentEpoch();
         bool isWindowOpen = isDecisionWindowOpen();
 
         // Ensure we are not in the first epoch and not in the second one with the decision window still open
@@ -86,7 +86,7 @@ contract Epochs is OctantBase, IEpochs {
     /// @notice Gets the number of the epoch for which the decision window is currently open.
     /// @dev Will revert when calling during closed decision window.
     /// @return The pending epoch number, number in range [1, inf)
-    function getPendingEpoch() external view returns (uint32) {
+    function getPendingEpoch() external view returns (uint256) {
         require(isDecisionWindowOpen(), EpochsErrors.NOT_PENDING);
         return getCurrentEpoch() - 1;
     }
@@ -107,15 +107,13 @@ contract Epochs is OctantBase, IEpochs {
 
     /// @return bool Whether the decision window is currently open or not.
     function isDecisionWindowOpen() public view returns (bool) {
-        uint32 _currentEpoch = getCurrentEpoch();
+        uint256 _currentEpoch = getCurrentEpoch();
         if (_currentEpoch == 1) {
             return false;
         }
 
         EpochProps memory _currentEpochProps = getCurrentEpochProps();
-        uint256 moduloEpoch = uint256(
-            (block.timestamp - _currentEpochProps.fromTs) % _currentEpochProps.duration
-        );
+        uint256 moduloEpoch = (block.timestamp - _currentEpochProps.fromTs) % _currentEpochProps.duration;
         return moduloEpoch <= _currentEpochProps.decisionWindow;
     }
 
@@ -134,17 +132,17 @@ contract Epochs is OctantBase, IEpochs {
         // Next epoch props set up for the first time in this epoch. Storing the new props under
         // incremented epochPropsIndex.
         if (_props.to == 0) {
-            uint32 _currentEpoch = getCurrentEpoch();
+            uint256 _currentEpoch = getCurrentEpoch();
             uint256 _currentEpochEnd = _calculateCurrentEpochEnd(_currentEpoch, _props);
-            epochProps[epochPropsIndex].to = _currentEpoch;
-            epochProps[epochPropsIndex + 1] = EpochProps({from: _currentEpoch + 1, fromTs: _currentEpochEnd,
-                to: 0, duration: _epochDuration, decisionWindow: _decisionWindow});
+            epochProps[epochPropsIndex].to = uint32(_currentEpoch);
+            epochProps[epochPropsIndex + 1] = EpochProps({from: uint32(_currentEpoch + 1), fromTs: uint64(_currentEpochEnd),
+                to: 0, duration: uint64(_epochDuration), decisionWindow: uint64(_decisionWindow)});
             epochPropsIndex = epochPropsIndex + 1;
             // Next epoch props were set up before, props are being updated. EpochPropsIndex has been
             // updated already, changing props in the latest epochPropsIndex
         } else {
-            epochProps[epochPropsIndex].duration = _epochDuration;
-            epochProps[epochPropsIndex].decisionWindow = _decisionWindow;
+            epochProps[epochPropsIndex].duration = uint64(_epochDuration);
+            epochProps[epochPropsIndex].decisionWindow = uint64(_decisionWindow);
         }
     }
 
@@ -158,13 +156,13 @@ contract Epochs is OctantBase, IEpochs {
 
     /// @dev Gets current epoch end timestamp.
     function getCurrentEpochEnd() external view returns (uint256) {
-        uint32 _currentEpoch = getCurrentEpoch();
+        uint256 _currentEpoch = getCurrentEpoch();
         EpochProps memory _props = getCurrentEpochProps();
         return _calculateCurrentEpochEnd(_currentEpoch, _props);
     }
 
     /// @dev Calculates current epoch end timestamp.
-    function _calculateCurrentEpochEnd(uint32 _currentEpoch, EpochProps memory _props) private pure returns (uint256) {
+    function _calculateCurrentEpochEnd(uint256 _currentEpoch, EpochProps memory _props) private pure returns (uint256) {
         return _props.fromTs + _props.duration * (1 + _currentEpoch - _props.from);
     }
 }

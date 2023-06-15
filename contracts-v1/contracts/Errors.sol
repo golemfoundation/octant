@@ -51,6 +51,10 @@ library VaultErrors {
     /// @notice Thrown when trying to withdraw multiple times.
     /// @return HN:Vault/already-claimed
     string public constant ALREADY_CLAIMED = "HN:Vault/already-claimed";
+
+    /// @notice Thrown when trying to send empty payload list.
+    /// @return HN:Vault/empty-payloads
+    string public constant EMPTY_PAYLOADS = "HN:Vault/empty-payloads";
 }
 
 library CommonErrors {

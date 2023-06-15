@@ -3,7 +3,6 @@ import { expect } from 'chai';
 import { parseEther } from 'ethers/lib/utils';
 import { ethers } from 'hardhat';
 
-
 import { VAULT } from '../../helpers/constants';
 import Leaf, { buildMerkleTree, getProof } from '../../helpers/merkle-tree';
 import { makeTestsEnv } from '../helpers/make-tests-env';
@@ -262,6 +261,26 @@ makeTestsEnv(VAULT, testEnv => {
 
       await expect(vault.connect(Alice).batchWithdraw([payload])).to.be.revertedWith(
         'HN:Vault/invalid-merkle-proof',
+      );
+
+      expect(await ethers.provider.getBalance(Alice.address)).approximately(
+        before,
+        parseEther('0.001'),
+      );
+    });
+
+    it('Cannot send empty payloads', async () => {
+      const {
+        vault,
+        signers: { Alice, TestFoundation },
+      } = testEnv;
+      const before = await ethers.provider.getBalance(Alice.address);
+      // vault has some funds
+      await TestFoundation.sendTransaction({ to: vault.address, value: parseEther('20') });
+      await vault.connect(TestFoundation).setMerkleRoot(1, merkleTree1.root);
+
+      await expect(vault.connect(Alice).batchWithdraw([])).to.be.revertedWith(
+        'HN:Vault/empty-payloads',
       );
 
       expect(await ethers.provider.getBalance(Alice.address)).approximately(
