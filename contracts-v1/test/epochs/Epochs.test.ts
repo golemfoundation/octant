@@ -157,11 +157,11 @@ makeTestsEnv(EPOCHS, testEnv => {
       { increaseNextBlockTsBy: 0, result: 1 },
       { increaseNextBlockTsBy: 100, result: 1 },
       { increaseNextBlockTsBy: 2000, result: 1 },
-      { increaseNextBlockTsBy: 4990, result: 1 },
-      { increaseNextBlockTsBy: 5010, result: 2 },
-      { increaseNextBlockTsBy: 7010, result: 2 },
-      { increaseNextBlockTsBy: 9990, result: 2 },
-      { increaseNextBlockTsBy: 10020, result: 3 },
+      { increaseNextBlockTsBy: 4900, result: 1 },
+      { increaseNextBlockTsBy: 5100, result: 2 },
+      { increaseNextBlockTsBy: 7100, result: 2 },
+      { increaseNextBlockTsBy: 9900, result: 2 },
+      { increaseNextBlockTsBy: 10100, result: 3 },
     ];
 
     parameters.forEach(param => {
@@ -217,13 +217,12 @@ makeTestsEnv(EPOCHS, testEnv => {
     const parameters = [
       { increaseNextBlockTsBy: 0, result: false },
       { increaseNextBlockTsBy: 100, result: false },
-      { increaseNextBlockTsBy: 1990, result: false },
-      { increaseNextBlockTsBy: 3010, result: false },
-      { increaseNextBlockTsBy: 5010, result: true },
-      { increaseNextBlockTsBy: 5190, result: true },
-      { increaseNextBlockTsBy: 7010, result: false },
-      { increaseNextBlockTsBy: 9990, result: false },
-      { increaseNextBlockTsBy: 10020, result: true },
+      { increaseNextBlockTsBy: 1900, result: false },
+      { increaseNextBlockTsBy: 3100, result: false },
+      { increaseNextBlockTsBy: 5100, result: true },
+      { increaseNextBlockTsBy: 7100, result: false },
+      { increaseNextBlockTsBy: 9900, result: false },
+      { increaseNextBlockTsBy: 10100, result: true },
       { increaseNextBlockTsBy: 11900, result: true },
       { increaseNextBlockTsBy: 12100, result: false },
     ];
