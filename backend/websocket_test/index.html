@@ -22,6 +22,10 @@
 
 <button id="vote">Vote</button>
 
+<h2>Threshold: <span id="threshold"></span></h2>
+<h2>Proposal rewards:</h2>
+<ul id="proposal-rewards"></ul>
+
 <h2>Errors:</h2>
 <ul id="errors"></ul>
 <script type="module">
@@ -34,6 +38,8 @@
   }
 
   const status = document.getElementById("status");
+  const threshold = document.getElementById("threshold");
+  const proposalRewards = document.getElementById("proposal-rewards");
   const errors = document.getElementById("errors");
 
   const container = document.getElementById('input-group-container');
@@ -150,6 +156,16 @@
   socket.on("connect_error", (err) => {
     status.innerText = "Error";
     console.error(err)
+  });
+
+  socket.on("threshold", (thresholdResponse) => {
+    threshold.innerText = thresholdResponse;
+  });
+
+  socket.on("proposal_rewards", (proposalRewardsResponse) => {
+    const item = document.createElement("li");
+    item.textContent = proposalRewardsResponse;
+    proposalRewards.appendChild(item)
   });
 
   socket.on("disconnect", () => {

@@ -76,3 +76,43 @@ channels:
         examples:
           - payload:
               message: An unexpected error has occurred
+
+  threshold:
+    subscribe:
+      summary: Threshold event
+      operationId: handle_threshold
+      message:
+        name: Threshold
+        payload:
+          type: object
+          properties:
+            threshold:
+              type: string
+        examples:
+          - payload:
+              threshold: "0.001"
+  proposal_rewards:
+    subscribe:
+      summary: Proposal rewards event
+      operationId: handle_proposal_rewards
+      message:
+        name: ProposalRewards
+        payload:
+          type: array
+          items:
+            type: object
+            properties:
+              address:
+                type: string
+              allocated:
+                type: string
+              matched:
+                type: string
+        examples:
+          - payload:
+              - address: "0xD7D115F998A7D8Df6c7960dF192e4D8311AD7046"
+                allocated: "100000000000"
+                matched: "50000000000000"
+              - address: "0x1234567890123456789012345678901234567893"
+                allocated: "200000000"
+                matched: "10000000000"

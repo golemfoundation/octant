@@ -1,18 +1,19 @@
 from dataclasses import dataclass
-from itertools import groupby
-from app import database
-from app.database import allocations as allocation_db
-from app.core import allocations as allocations_core, proposals
-from typing import Optional
-from app.contracts.epochs import epochs
-from typing import List
-from app.core.rewards import calculate_matched_rewards, get_matched_rewards_from_epoch
-from app import exceptions
 from decimal import Decimal
+from itertools import groupby
+from typing import List
+from typing import Optional
+
+from app import database
+from app import exceptions
+from app.contracts.epochs import epochs
+from app.core import allocations as allocations_core, proposals
+from app.core.rewards import calculate_matched_rewards, get_matched_rewards_from_epoch
+from app.database import allocations as allocation_db
 
 
 @dataclass(frozen=True)
-class Proposal:
+class ProposalReward:
     address: str
     allocated: int
     matched: int
@@ -39,7 +40,7 @@ def get_user_budget(user_address: str, epoch: int) -> int:
     return int(Decimal(snapshot.all_individual_rewards) * individual_share)
 
 
-def get_rewards_budget(epoch: Optional[int]) -> Rewards:
+def get_rewards_budget(epoch: int = None) -> Rewards:
     epoch = epochs.get_pending_epoch() if epoch is None else epoch
     matched = None
 
@@ -54,10 +55,10 @@ def get_rewards_budget(epoch: Optional[int]) -> Rewards:
     allocations = database.allocations.get_all_by_epoch(epoch)
     allocated = sum([int(allocation.amount) for allocation in allocations])
 
-    return Rewards(epoch, allocated, Decimal(matched))
+    return Rewards(epoch, allocated, matched)
 
 
-def get_allocation_threshold(epoch: Optional[int]) -> int:
+def get_allocation_threshold(epoch: int = None) -> int:
     epoch = epochs.get_pending_epoch() if epoch is None else epoch
 
     proposals_no = proposals.get_number_of_proposals(epoch)
@@ -68,7 +69,7 @@ def get_allocation_threshold(epoch: Optional[int]) -> int:
     return allocations_core.calculate_threshold(total_allocated, proposals_no)
 
 
-def get_proposals_rewards(epoch: Optional[int]) -> List[Proposal]:
+def get_proposals_rewards(epoch: int = None) -> List[ProposalReward]:
     epoch = epochs.get_pending_epoch() if epoch is None else epoch
     matched_rewards = get_matched_rewards_from_epoch(epoch)
 
@@ -91,7 +92,7 @@ def get_proposals_rewards(epoch: Optional[int]) -> List[Proposal]:
         else:
             matched = 0
 
-        rewards.append(Proposal(address, allocated, matched))
+        rewards.append(ProposalReward(address, allocated, matched))
 
     return rewards
 

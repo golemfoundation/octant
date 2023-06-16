@@ -1,4 +1,5 @@
 import dataclasses
+
 from flask import current_app
 from flask_restx import Resource, Namespace, fields
 
@@ -13,6 +14,16 @@ user_budget_model = api.model(
     {
         "budget": fields.String(
             required=True, description="User budget for given epoch, BigNumber (wei)"
+        ),
+    },
+)
+
+threshold_model = api.model(
+    "Threshold",
+    {
+        "threshold": fields.String(
+            required=True,
+            description="Threshold, that projects have to pass to be eligible for receiving rewards"
         ),
     },
 )
@@ -48,7 +59,7 @@ budget_model = api.model(
         ),
         "matched": fields.String(
             description="Total matched rewards for the proposals. Returns null if "
-            "epoch is not in the allocation window",
+                        "epoch is not in the allocation window",
         ),
     },
 )
@@ -59,7 +70,7 @@ budget_model = api.model(
     description="Returns user's rewards budget available to allocate for given epoch",
     params={
         "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed "
-        "with 0x)",
+                        "with 0x)",
         "epoch": "Epoch number",
     },
 )
@@ -83,9 +94,10 @@ class UserBudget(Resource):
 )
 @ns.response(200, "Returns allocation threshold value as uint256")
 class Threshold(Resource):
+    @ns.marshal_with(threshold_model)
     @ns.response(200, "Threshold successfully retrieved")
     def get(self, epoch):
-        current_app.logger.debug(f"Requested threshold for epoch: {epoch}")
+        current_app.logger.info(f"Requested threshold for epoch: {epoch}")
         threshold = rewards.get_allocation_threshold(epoch)
         return {"threshold": threshold}
 
@@ -109,6 +121,7 @@ class Threshold(Resource):
 class Proposals(Resource):
     @ns.marshal_with(proposal_model)
     def get(self, epoch):
+        current_app.logger.info(f"Requested proposal rewards for: {epoch}")
         return [
             dataclasses.asdict(proposal)
             for proposal in rewards.get_proposals_rewards(epoch)
