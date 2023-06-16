@@ -16,7 +16,7 @@ spec:
   sources:
   # https://linear.app/golemfoundation/issue/CAQD-142/move-helm-git-repository-to-devops-space
   - repoURL: 'https://git.ring0.cc/mike/helm/raw/branch/master'
-    targetRevision: 0.1.54
+    targetRevision: 0.1.57
     chart: octant
     helm:
       parameters:
@@ -81,3 +81,8 @@ spec:
     - /metadata/annotations
     - /spec/template/metadata
     - /spec/template/labels
+  - group: ""
+    kind: "Secret"
+    jsonPointers:
+    - /data
+

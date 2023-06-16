@@ -268,7 +268,7 @@ Cypress E2E Tests:
   stage: e2e
   image: synthetixio/docker-e2e:16.20-ubuntu
   rules:
-    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_mr_manual]
     - !reference [.rules, on_push_to_default_branch ]
   variables:
     NETWORK_NAME: sepolia
