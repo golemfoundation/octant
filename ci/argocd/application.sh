@@ -57,11 +57,11 @@ if [[ "$ACTION" == "create" ]]; then
 		-H "Authorization: Bearer ${ARGOCD_ACCESS_TOKEN}" \
 		-H "Content-type: application/json" \
 		"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/sync"
-	sleep 10
-	curl -s -X DELETE \
-		-H "Authorization: Bearer ${ARGOCD_ACCESS_TOKEN}" \
-		-H "Content-type: application/json" \
-		"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/resource?name=octant&appNamespace=argocd&namespace=${DEPLOYMENT_ID}&resourceName=octant&version=v1&kind=Secret&group=&force=true&orphan=false"
+	sleep 30
+	# curl -s -X DELETE \
+	# 	-H "Authorization: Bearer ${ARGOCD_ACCESS_TOKEN}" \
+	# 	-H "Content-type: application/json" \
+	# 	"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/resource?name=octant&appNamespace=argocd&namespace=${DEPLOYMENT_ID}&resourceName=octant&version=v1&kind=Secret&group=&force=true&orphan=false"
 
 	# I'm leaving the previous hack for the time being in case it has to be used again
 	#
