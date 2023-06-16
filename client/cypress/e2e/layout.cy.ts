@@ -8,6 +8,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
   describe(`layout: ${device}`, { viewportHeight, viewportWidth }, () => {
     before(() => {
       cy.clearLocalStorage();
+      cy.setupMetamask();
+      cy.activateShowTestnetNetworksInMetamask();
+      cy.changeMetamaskNetwork('sepolia');
+      cy.disconnectMetamaskWalletFromAllDapps();
     });
 
     beforeEach(() => {
@@ -82,6 +86,15 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=ConnectWalletButton]').click();
       cy.get('[data-test=ConnectWallet__BoxRounded--walletConnect]').click();
       cy.get('w3m-modal').find('#w3m-modal', { includeShadowDom: true }).should('be.visible');
+    });
+
+    it('Clicking on "Browser wallet" option connects with MetaMask wallet', () => {
+      cy.get('[data-test=ConnectWalletButton]').click();
+      cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
+      cy.switchToMetamaskNotification();
+      cy.acceptMetamaskAccess();
+      cy.get('[data-test=ConnectWalletButton]').should('not.exist');
+      cy.get('[data-test=ProfileInfo]').should('be.visible');
     });
   });
 });

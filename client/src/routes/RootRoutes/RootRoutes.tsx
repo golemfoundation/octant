@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { useAccount } from 'wagmi';
 
 import useOnboardingStore from 'store/onboarding/store';
 import AllocationView from 'views/AllocationView/AllocationView';
@@ -13,11 +14,13 @@ import SettingsView from 'views/SettingsView/SettingsView';
 import { ROOT_ROUTES } from './routes';
 
 const RootRoutes = (): ReactElement => {
+  const { isConnected } = useAccount();
+
   const { isOnboardingDone } = useOnboardingStore(state => ({
     isOnboardingDone: state.data.isOnboardingDone,
   }));
 
-  if (!isOnboardingDone) {
+  if (isConnected && !isOnboardingDone) {
     return (
       <Routes>
         <Route element={<OnboardingView />} path={`${ROOT_ROUTES.onboarding.relative}/*`} />

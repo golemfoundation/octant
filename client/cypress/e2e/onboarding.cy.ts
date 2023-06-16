@@ -5,6 +5,15 @@ import steps from 'src/views/OnboardingView/steps';
 
 import Chainable = Cypress.Chainable;
 
+const connectWallet = (): Chainable<any> => {
+  cy.disconnectMetamaskWalletFromAllDapps();
+  visitWithLoader(ROOT.absolute);
+  cy.get('[data-test=ConnectWalletButton]').click();
+  cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
+  cy.switchToMetamaskNotification();
+  cy.acceptMetamaskAccess();
+};
+
 const checkProgressStepperSlimIsCurrentAndClickNext = (index): Chainable<any> => {
   cy.get('[data-test=OnboardingView__ProgressStepperSlim__element]')
     .eq(index)
@@ -18,9 +27,20 @@ const checkProgressStepperSlimIsCurrentAndClickNext = (index): Chainable<any> =>
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
   describe(`onboarding: ${device}`, { viewportHeight, viewportWidth }, () => {
+    before(() => {
+      cy.setupMetamask();
+      cy.activateShowTestnetNetworksInMetamask();
+      cy.changeMetamaskNetwork('sepolia');
+    });
+
     beforeEach(() => {
       cy.clearLocalStorage();
-      visitWithLoader(ROOT.absolute, ROOT_ROUTES.onboarding.absolute);
+      connectWallet();
+      checkLocationWithLoader(ROOT_ROUTES.onboarding.absolute);
+    });
+
+    after(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
     });
 
     it('user is able to click through entire onboarding flow', () => {

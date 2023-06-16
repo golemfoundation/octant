@@ -109,7 +109,11 @@ const MainLayout: FC<MainLayoutProps> = ({
             </div>
             <div className={styles.buttons}>
               {isConnected && address ? (
-                <div className={styles.profileInfo} onClick={() => setIsWalletModalOpen(true)}>
+                <div
+                  className={styles.profileInfo}
+                  data-test="ProfileInfo"
+                  onClick={() => setIsWalletModalOpen(true)}
+                >
                   <div className={styles.walletInfo}>
                     <div className={styles.address}>{truncateEthAddress(address)}</div>
                     <div className={styles.budget}>
