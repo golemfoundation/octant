@@ -27,6 +27,14 @@ class InvalidEpoch(OctantException):
         super().__init__(self.description, self.code)
 
 
+class EpochNotStartedYet(OctantException):
+    code = 400
+    description = "Given epoch has not yet started."
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
 class MissingSnapshot(OctantException):
     code = 500
     description = "No snapshot has been taken. Try calling /epochs/snapshot endpoint"

@@ -1,11 +1,26 @@
 from app.extensions import w3
 from app.settings import config
+from web3 import exceptions
 
 abi = [
     {
         "inputs": [],
         "name": "getCurrentEpoch",
-        "outputs": [{"internalType": "uint32", "name": "", "type": "uint32"}],
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "view",
+        "type": "function",
+    },
+    {
+        "inputs": [],
+        "name": "getPendingEpoch",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "view",
+        "type": "function",
+    },
+    {
+        "inputs": [],
+        "name": "getFinalizedEpoch",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
         "stateMutability": "view",
         "type": "function",
     },
@@ -27,11 +42,25 @@ class Epochs:
         return self.contract.functions.isDecisionWindowOpen().call()
 
     def get_current_epoch(self):
-        return self.contract.functions.getCurrentEpoch().call()
+        try:
+            return self.contract.functions.getCurrentEpoch().call()
+        except exceptions.ContractLogicError:
+            # HN:Epochs/not-started-yet
+            return 0
 
     def get_pending_epoch(self):
-        # TODO pending epoch must consider allocation window time. current implementation does not!
-        return int(self.contract.functions.getCurrentEpoch().call()) - 1
+        try:
+            return self.contract.functions.getPendingEpoch().call()
+        except exceptions.ContractLogicError:
+            # HN:Epochs/not-pending
+            return 0
+
+    def get_finalized_epoch(self):
+        try:
+            return self.contract.functions.getFinalizedEpoch().call()
+        except exceptions.ContractLogicError:
+            # HN:Epochs/not-finalized
+            return 0
 
 
 epochs = Epochs()
