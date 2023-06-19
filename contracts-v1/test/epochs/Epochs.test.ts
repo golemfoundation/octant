@@ -260,6 +260,13 @@ makeTestsEnv(EPOCHS, testEnv => {
 
       expect(isOpen).false;
     });
+
+    it('getCurrentEpoch reverts if not started', async () => {
+      const start = (await getLatestBlockTimestamp()) + 100;
+      const epochs = await setupEpochs(start);
+
+      await expect(epochs.getCurrentEpoch()).revertedWith('HN:Epochs/not-started-yet');
+    });
   });
 
   describe('Current epoch duration', () => {

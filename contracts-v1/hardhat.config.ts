@@ -94,7 +94,7 @@ const config: HardhatUserConfig = {
         },
       },
     },
-    version: '0.8.9',
+    version: '0.8.18',
   },
   typechain: {
     outDir: 'typechain/typechain-types',

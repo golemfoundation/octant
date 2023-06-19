@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.16;
 
 import "./interfaces/IDeposits.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -20,8 +20,18 @@ contract Deposits is OctantBase, IDeposits {
     /// @notice GLM token contract address
     ERC20 public immutable glm;
 
-    event Locked(uint256 depositBefore, uint256 amount, uint256 when, address user);
-    event Unlocked(uint256 depositBefore, uint256 amount, uint256 when, address user);
+    event Locked(
+        uint256 depositBefore,
+        uint256 amount,
+        uint256 when,
+        address user
+    );
+    event Unlocked(
+        uint256 depositBefore,
+        uint256 amount,
+        uint256 when,
+        address user
+    );
 
     /// @dev deposit amounts per user
     mapping(address => uint256) public deposits;
