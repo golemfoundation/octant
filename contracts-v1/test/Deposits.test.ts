@@ -11,7 +11,7 @@ makeTestsEnv(DEPOSITS, testEnv => {
       expect(await glmDeposits.connect(signers.Alice).deposits(signers.Alice.address)).to.equal(0);
     });
 
-    it('Can withdrawn', async () => {
+    it('Can withdraw', async () => {
       const { token, glmDeposits, signers } = testEnv;
       await token.transfer(signers.Alice.address, 1005);
       await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
@@ -19,6 +19,15 @@ makeTestsEnv(DEPOSITS, testEnv => {
       expect(await token.balanceOf(signers.Alice.address)).eq(5);
       await glmDeposits.connect(signers.Alice).unlock(1000);
       expect(await token.balanceOf(signers.Alice.address)).eq(1005);
+    });
+
+    it('Cannot deposit without approve', async () => {
+      const { token, glmDeposits, signers } = testEnv;
+      await token.transfer(signers.Alice.address, 1000);
+      await expect(glmDeposits.connect(signers.Alice).lock(1000)).to.be.revertedWith(
+        'ERC20: insufficient allowance',
+      );
+      expect(await glmDeposits.deposits(signers.Alice.address)).eq(0);
     });
 
     it("Can't withdrawn empty", async () => {

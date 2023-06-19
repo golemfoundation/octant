@@ -7,6 +7,18 @@ import { makeTestsEnv } from './helpers/make-tests-env';
 import { WITHDRAWALS_TARGET, WITHDRAWALS_TARGET_TEST_V2 } from '../helpers/constants';
 
 makeTestsEnv(WITHDRAWALS_TARGET, testEnv => {
+  describe('Initialization', () => {
+    it('Cannot call initialize method', async () => {
+      const {
+        target,
+        signers: { Darth },
+      } = testEnv;
+      await expect(target.initialize(Darth.address)).revertedWith(
+        'Initializable: contract is already initialized',
+      );
+    });
+  });
+
   describe('Upgrades', () => {
     it('Version is set to 1', async () => {
       const { target } = testEnv;
@@ -84,6 +96,18 @@ makeTestsEnv(WITHDRAWALS_TARGET, testEnv => {
   });
 
   describe('Withdrawals', () => {
+    it('Should revert with failed-to-send message if contract does not have enough ETH', async () => {
+      const {
+        target,
+        signers: { TestFoundation },
+      } = testEnv;
+
+      // This should fail because contract has 0 ETH
+      await expect(target.connect(TestFoundation).withdraw(1)).revertedWith(
+        'HN:Common/failed-to-send',
+      );
+    });
+
     it('Only multisig can withdraw', async () => {
       const {
         target,

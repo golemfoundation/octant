@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.16;
 
 import {CommonErrors} from "./Errors.sol";
 import "./Auth.sol";
@@ -10,9 +10,8 @@ import "./Auth.sol";
 /// to deployer or the Golem Foundation multisig.
 /// It provides functionality for setting and accessing the Golem Foundation multisig address.
 abstract contract OctantBase {
-
     /// @dev The Auth contract instance
-    Auth auth;
+    Auth public immutable auth;
 
     /// @param _auth the contract containing Octant authorities.
     constructor(address _auth) {
@@ -26,13 +25,10 @@ abstract contract OctantBase {
 
     /// @dev Modifier that allows only the Golem Foundation multisig address to call a function.
     modifier onlyMultisig() {
-        require(msg.sender == auth.multisig(), CommonErrors.UNAUTHORIZED_CALLER);
-        _;
-    }
-
-    /// @dev Modifier that allows only deployer address to call a function.
-    modifier onlyDeployer() {
-        require(msg.sender == auth.deployer(), CommonErrors.UNAUTHORIZED_CALLER);
+        require(
+            msg.sender == auth.multisig(),
+            CommonErrors.UNAUTHORIZED_CALLER
+        );
         _;
     }
 }

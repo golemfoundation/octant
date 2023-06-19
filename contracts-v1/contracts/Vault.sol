@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.16;
 
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "./OctantBase.sol";
@@ -12,7 +12,6 @@ import {CommonErrors, VaultErrors} from "./Errors.sol";
  * @dev This contract allows for claiming the rewards from Octant.
  */
 contract Vault is OctantBase {
-
     event Withdrawn(address user, uint256 amount);
     event MerkleRootSet(uint256 epoch, bytes32 root);
 
@@ -39,7 +38,10 @@ contract Vault is OctantBase {
      * @param root The Merkle root.
      */
     function setMerkleRoot(uint256 epoch, bytes32 root) external onlyMultisig {
-        require(merkleRoots[epoch] == bytes32(0), VaultErrors.MERKLE_ROOT_ALREADY_SET);
+        require(
+            merkleRoots[epoch] == bytes32(0),
+            VaultErrors.MERKLE_ROOT_ALREADY_SET
+        );
         merkleRoots[epoch] = root;
 
         emit MerkleRootSet(epoch, root);
@@ -58,16 +60,26 @@ contract Vault is OctantBase {
         uint256 claimedEpoch = lastClaimedEpoch[msg.sender];
 
         for (uint256 i = 0; i < payloads.length; i++) {
-            require(payloads[i].epoch > claimedEpoch, VaultErrors.ALREADY_CLAIMED);
-            bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(msg.sender, payloads[i].amount))));
+            require(
+                payloads[i].epoch > claimedEpoch,
+                VaultErrors.ALREADY_CLAIMED
+            );
+            bytes32 leaf = keccak256(
+                bytes.concat(
+                    keccak256(abi.encode(msg.sender, payloads[i].amount))
+                )
+            );
             bytes32 root = merkleRoots[payloads[i].epoch];
-            require(verify(payloads[i].proof, root, leaf), VaultErrors.INVALID_MERKLE_PROOF);
+            require(
+                verify(payloads[i].proof, root, leaf),
+                VaultErrors.INVALID_MERKLE_PROOF
+            );
 
             claimedEpoch = payloads[i].epoch;
             amount += payloads[i].amount;
         }
         lastClaimedEpoch[msg.sender] = claimedEpoch;
-        (bool success,) = payable(msg.sender).call{value: amount}("");
+        (bool success, ) = payable(msg.sender).call{value: amount}("");
         require(success, CommonErrors.FAILED_TO_SEND);
 
         emit Withdrawn(msg.sender, amount);
@@ -79,7 +91,8 @@ contract Vault is OctantBase {
      */
     function emergencyWithdraw(uint256 amount) external onlyMultisig {
         address multisig = super.getMultisig();
-        payable(multisig).transfer(amount);
+        (bool success, ) = payable(msg.sender).call{value: amount}("");
+        require(success, CommonErrors.FAILED_TO_SEND);
 
         emit Withdrawn(multisig, amount);
     }
@@ -91,7 +104,11 @@ contract Vault is OctantBase {
      * @param leaf The leaf node.
      * @return A boolean value indicating whether the proof is valid.
      */
-    function verify(bytes32[] memory proof, bytes32 root, bytes32 leaf) public pure returns (bool) {
+    function verify(
+        bytes32[] memory proof,
+        bytes32 root,
+        bytes32 leaf
+    ) public pure returns (bool) {
         return MerkleProof.verify(proof, root, leaf);
     }
 

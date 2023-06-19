@@ -1,28 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.16;
 
 import {CommonErrors} from "./Errors.sol";
 
 /// @title Auth
 contract Auth {
-
     /// @dev Emitted when the Golem Foundation multisig address is set.
     /// @param oldValue The old Golem Foundation multisig address.
     /// @param newValue The new Golem Foundation multisig address.
     event MultisigSet(address oldValue, address newValue);
 
-    /// @dev Emitted when the deployer address is set.
-    /// @param oldValue The old deployer address.
-    event DeployerRenounced(address oldValue);
-
     /// @dev Emitted when ownership transfer is initiated.
     /// @param previousOwner Old multisig, one that initiated the process.
     /// @param newOwner New multisig, one that should finalize the process.
-    event OwnershipTransferStarted(address indexed previousOwner, address indexed newOwner);
-
-    /// @dev The deployer address.
-    address public deployer;
+    event OwnershipTransferStarted(
+        address indexed previousOwner,
+        address indexed newOwner
+    );
 
     /// @dev The multisig address.
     address public multisig;
@@ -32,8 +27,8 @@ contract Auth {
 
     /// @param _multisig The initial Golem Foundation multisig address.
     constructor(address _multisig) {
+        require(_multisig != address(0));
         multisig = _multisig;
-        deployer = msg.sender;
     }
 
     /**
@@ -41,6 +36,7 @@ contract Auth {
      * Can only be called by the current owner.
      */
     function transferOwnership(address newOwner) external {
+        require(newOwner != address(0));
         require(msg.sender == multisig, CommonErrors.UNAUTHORIZED_CALLER);
         pendingOwner = newOwner;
         emit OwnershipTransferStarted(multisig, newOwner);
@@ -54,13 +50,5 @@ contract Auth {
         emit MultisigSet(multisig, pendingOwner);
         multisig = pendingOwner;
         pendingOwner = address(0);
-    }
-
-    /// @dev Leaves the contract without a deployer. It will not be possible to call
-    /// `onlyDeployer` functions. Can only be called by the current deployer.
-    function renounceDeployer() external {
-        require(msg.sender == deployer, CommonErrors.UNAUTHORIZED_CALLER);
-        emit DeployerRenounced(deployer);
-        deployer = address(0);
     }
 }

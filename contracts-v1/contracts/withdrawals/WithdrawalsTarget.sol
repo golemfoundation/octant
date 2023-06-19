@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.16;
 
 import "../interfaces/IWithdrawalsTarget.sol";
 
 import "hardhat-deploy/solc_0.8/openzeppelin/proxy/utils/Initializable.sol";
 import {CommonErrors} from "../Errors.sol";
-
-
 
 /// @title Contract that receives both ETH staking rewards and unstaked ETH
 /// @author Golem Foundation
@@ -29,6 +27,7 @@ contract WithdrawalsTarget is Initializable, IWithdrawalsTarget {
     address public multisig;
 
     function initialize(address _multisig) public initializer {
+        require(_multisig != address(0));
         multisig = _multisig;
     }
 
@@ -37,7 +36,7 @@ contract WithdrawalsTarget is Initializable, IWithdrawalsTarget {
     }
 
     function withdraw(uint256 amount) external onlyMultisig {
-        (bool success,) = payable(multisig).call{value: amount}("");
+        (bool success, ) = payable(multisig).call{value: amount}("");
         require(success, CommonErrors.FAILED_TO_SEND);
 
         emit Withdrawn(multisig, amount);

@@ -24,23 +24,29 @@ makeTestsEnv(PROPOSALS, testEnv => {
   ];
 
   describe('Epochs', async () => {
-    it('not being set, should not prevent getProposals from functioning', async () => {
-      // given
-      const { auth, signers } = testEnv;
+    let proposalsContract: Proposals;
+
+    beforeEach(async () => {
+      const { auth } = testEnv;
       const proposalsFactory = await ethers.getContractFactory(PROPOSALS);
       const proposalAddresses = await ethers
         .getUnnamedSigners()
         .then(proposals => proposals.slice(0, 10))
         .then(proposals => proposals.map(el => el.address));
-      const proposals = (await proposalsFactory.deploy(
+      proposalsContract = (await proposalsFactory.deploy(
         PROPOSALS_CID,
         proposalAddresses,
         auth.address,
       )) as Proposals;
+    });
+
+    it('not being set, should not prevent getProposals from functioning', async () => {
+      // given
+      const { signers } = testEnv;
 
       // when
-      expect(await proposals.epochs()).to.eq('0x0000000000000000000000000000000000000000');
-      const proposalAddressesFromContract = await proposals
+      expect(await proposalsContract.epochs()).to.eq('0x0000000000000000000000000000000000000000');
+      const proposalAddressesFromContract = await proposalsContract
         .connect(signers.Alice)
         .getProposalAddresses(0);
 
@@ -48,25 +54,43 @@ makeTestsEnv(PROPOSALS, testEnv => {
       expect(proposalAddressesFromContract.length).eq(10);
     });
 
-    it("not being set, don't prevent setProposalAddresses from working", async () => {
+    it('Cannot set epochs if not multisig', async () => {
       // given
-      const { auth, signers } = testEnv;
-      const proposalsFactory = await ethers.getContractFactory(PROPOSALS);
-      const proposalAddresses = await ethers
-        .getUnnamedSigners()
-        .then(proposals => proposals.slice(0, 10))
-        .then(proposals => proposals.map(el => el.address));
-      const proposals = (await proposalsFactory.deploy(
-        PROPOSALS_CID,
-        proposalAddresses,
-        auth.address,
-      )) as Proposals;
+      const {
+        signers: { Darth },
+      } = testEnv;
 
       // when
-      expect(await proposals.epochs()).to.eq('0x0000000000000000000000000000000000000000');
-      await proposals.connect(signers.TestFoundation).setProposalAddresses(0, newProposals);
-      const cid = await proposals.cid();
-      const proposalAddressesFromContract = await proposals.getProposalAddresses(1);
+      await expect(proposalsContract.connect(Darth).setEpochs(Darth.address)).revertedWith(
+        'HN:Common/unauthorized-caller',
+      );
+      expect(await proposalsContract.epochs()).to.eq('0x0000000000000000000000000000000000000000');
+    });
+
+    it('Cannot set epochs twice', async () => {
+      // given
+      const {
+        epochs,
+        signers: { TestFoundation },
+      } = testEnv;
+
+      // when
+      await proposalsContract.connect(TestFoundation).setEpochs(epochs.address);
+      await expect(
+        proposalsContract.connect(TestFoundation).setEpochs(epochs.address),
+      ).revertedWith('HN:Proposals/cannot-set-epochs-twice');
+      expect(await proposalsContract.epochs()).to.eq(epochs.address);
+    });
+
+    it("not being set, don't prevent setProposalAddresses from working", async () => {
+      // given
+      const { signers } = testEnv;
+
+      // when
+      expect(await proposalsContract.epochs()).to.eq('0x0000000000000000000000000000000000000000');
+      await proposalsContract.connect(signers.TestFoundation).setProposalAddresses(0, newProposals);
+      const cid = await proposalsContract.cid();
+      const proposalAddressesFromContract = await proposalsContract.getProposalAddresses(1);
 
       // then
       expect(proposalAddressesFromContract.length).eq(11);
@@ -178,7 +202,18 @@ makeTestsEnv(PROPOSALS, testEnv => {
       ).revertedWith('HN:Proposals/only-future-proposals-changing-is-allowed');
     });
 
-    it('Cannot change baseURI if not a deployer', async () => {
+    it('Multisig can change baseURI', async () => {
+      const {
+        proposals,
+        signers: { TestFoundation },
+      } = testEnv;
+      await proposals
+        .connect(TestFoundation)
+        .setCID('Qme1qBgaJDuDTEE72AsL5M7zb2vaqFUwA6C9xJbXBXfkWn/');
+      expect(await proposals.cid()).eq('Qme1qBgaJDuDTEE72AsL5M7zb2vaqFUwA6C9xJbXBXfkWn/');
+    });
+
+    it('Cannot change baseURI if not a multisig', async () => {
       const {
         proposals,
         signers: { Darth },

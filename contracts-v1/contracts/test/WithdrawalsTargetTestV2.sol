@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.16;
 
 import "../interfaces/IWithdrawalsTarget.sol";
 
 import "hardhat-deploy/solc_0.8/openzeppelin/proxy/utils/Initializable.sol";
 import {CommonErrors} from "../Errors.sol";
 
-
 contract WithdrawalsTargetTestV2 is Initializable, IWithdrawalsTarget {
-
     /// @notice Multisig address
     address public multisig;
     string public greeting;

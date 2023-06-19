@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.16;
 
 import "./interfaces/IEpochs.sol";
 
@@ -13,7 +13,6 @@ import "./OctantBase.sol";
 /// These values are set when deploying a contract but can later be changed by calling
 /// {setEpochProps} function.
 contract Epochs is OctantBase, IEpochs {
-
     /// @dev Struct to store the properties of an epoch.
     /// @param from The epoch number from which properties are valid (inclusive).
     /// @param to The epoch number to which properties are valid (inclusive).
@@ -31,7 +30,7 @@ contract Epochs is OctantBase, IEpochs {
     }
 
     /// @notice Timestamp when octant starts.
-    uint256 public start;
+    uint256 public immutable start;
 
     /// @dev Index of current or next epoch properties in epochProps mapping.
     uint256 public epochPropsIndex;
@@ -47,10 +46,16 @@ contract Epochs is OctantBase, IEpochs {
         uint256 _start,
         uint256 _epochDuration,
         uint256 _decisionWindow,
-        address _auth)
-    OctantBase(_auth) {
+        address _auth
+    ) OctantBase(_auth) {
         start = _start;
-        epochProps[0] = EpochProps({from: 1, fromTs: uint64(start), to: 0, duration: uint64(_epochDuration), decisionWindow: uint64(_decisionWindow)});
+        epochProps[0] = EpochProps({
+            from: 1,
+            fromTs: uint64(start),
+            to: 0,
+            duration: uint64(_epochDuration),
+            decisionWindow: uint64(_decisionWindow)
+        });
     }
 
     /// @notice Get the current epoch number.
@@ -62,7 +67,9 @@ contract Epochs is OctantBase, IEpochs {
         if (_currentEpochProps.to != 0) {
             return _currentEpochProps.to;
         }
-        return ((block.timestamp - _currentEpochProps.fromTs) / _currentEpochProps.duration) + _currentEpochProps.from;
+        return
+            ((block.timestamp - _currentEpochProps.fromTs) /
+                _currentEpochProps.duration) + _currentEpochProps.from;
     }
 
     /// @notice Gets the number of the last epoch for which the decision window has already ended.
@@ -73,7 +80,10 @@ contract Epochs is OctantBase, IEpochs {
         bool isWindowOpen = isDecisionWindowOpen();
 
         // Ensure we are not in the first epoch and not in the second one with the decision window still open
-        require(currentEpoch > 1 && !(currentEpoch == 2 && isWindowOpen), EpochsErrors.NOT_FINALIZED);
+        require(
+            currentEpoch > 1 && !(currentEpoch == 2 && isWindowOpen),
+            EpochsErrors.NOT_FINALIZED
+        );
 
         // If the decision window is still open, we return the previous to last epoch as the last finalized one.
         // If the decision window is closed, we return the last epoch as the last finalized one.
@@ -113,7 +123,8 @@ contract Epochs is OctantBase, IEpochs {
         }
 
         EpochProps memory _currentEpochProps = getCurrentEpochProps();
-        uint256 moduloEpoch = (block.timestamp - _currentEpochProps.fromTs) % _currentEpochProps.duration;
+        uint256 moduloEpoch = (block.timestamp - _currentEpochProps.fromTs) %
+            _currentEpochProps.duration;
         return moduloEpoch <= _currentEpochProps.decisionWindow;
     }
 
@@ -125,24 +136,40 @@ contract Epochs is OctantBase, IEpochs {
     /// @dev Sets the epoch properties of the next epoch.
     /// @param _epochDuration Epoch duration in seconds.
     /// @param _decisionWindow Decision window in seconds.
-    function setEpochProps(uint256 _epochDuration, uint256 _decisionWindow) external onlyMultisig {
-        require(_epochDuration >= _decisionWindow, EpochsErrors.DECISION_WINDOW_TOO_BIG);
+    function setEpochProps(
+        uint256 _epochDuration,
+        uint256 _decisionWindow
+    ) external onlyMultisig {
+        require(
+            _epochDuration >= _decisionWindow,
+            EpochsErrors.DECISION_WINDOW_TOO_BIG
+        );
         EpochProps memory _props = getCurrentEpochProps();
 
         // Next epoch props set up for the first time in this epoch. Storing the new props under
         // incremented epochPropsIndex.
         if (_props.to == 0) {
             uint256 _currentEpoch = getCurrentEpoch();
-            uint256 _currentEpochEnd = _calculateCurrentEpochEnd(_currentEpoch, _props);
+            uint256 _currentEpochEnd = _calculateCurrentEpochEnd(
+                _currentEpoch,
+                _props
+            );
             epochProps[epochPropsIndex].to = uint32(_currentEpoch);
-            epochProps[epochPropsIndex + 1] = EpochProps({from: uint32(_currentEpoch + 1), fromTs: uint64(_currentEpochEnd),
-                to: 0, duration: uint64(_epochDuration), decisionWindow: uint64(_decisionWindow)});
+            epochProps[epochPropsIndex + 1] = EpochProps({
+                from: uint32(_currentEpoch + 1),
+                fromTs: uint64(_currentEpochEnd),
+                to: 0,
+                duration: uint64(_epochDuration),
+                decisionWindow: uint64(_decisionWindow)
+            });
             epochPropsIndex = epochPropsIndex + 1;
             // Next epoch props were set up before, props are being updated. EpochPropsIndex has been
             // updated already, changing props in the latest epochPropsIndex
         } else {
             epochProps[epochPropsIndex].duration = uint64(_epochDuration);
-            epochProps[epochPropsIndex].decisionWindow = uint64(_decisionWindow);
+            epochProps[epochPropsIndex].decisionWindow = uint64(
+                _decisionWindow
+            );
         }
     }
 
@@ -162,7 +189,11 @@ contract Epochs is OctantBase, IEpochs {
     }
 
     /// @dev Calculates current epoch end timestamp.
-    function _calculateCurrentEpochEnd(uint256 _currentEpoch, EpochProps memory _props) private pure returns (uint256) {
-        return _props.fromTs + _props.duration * (1 + _currentEpoch - _props.from);
+    function _calculateCurrentEpochEnd(
+        uint256 _currentEpoch,
+        EpochProps memory _props
+    ) private pure returns (uint256) {
+        return
+            _props.fromTs + _props.duration * (1 + _currentEpoch - _props.from);
     }
 }

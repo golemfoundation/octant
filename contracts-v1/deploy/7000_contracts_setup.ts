@@ -1,8 +1,8 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
-import { AUTH, EPOCHS, PROPOSALS } from '../helpers/constants';
-import { Auth, Epochs, Proposals } from '../typechain';
+import { EPOCHS, PROPOSALS } from '../helpers/constants';
+import { Epochs, Proposals } from '../typechain';
 
 // This function needs to be declared this way, otherwise it's not understood by test runner.
 // eslint-disable-next-line func-names
@@ -16,11 +16,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     await proposals.connect(TestFoundation).setEpochs(epochs.address);
   } else {
     // Live networks setup
-    // Renounce deployer role
-    const auth: Auth = await hre.ethers.getContract(AUTH);
-    await auth.renounceDeployer();
   }
 };
 
 export default func;
-func.tags = ['epoch1', 'setup', 'local', 'test', 'testnet'];
+func.tags = ['setup', 'local', 'test', 'testnet'];

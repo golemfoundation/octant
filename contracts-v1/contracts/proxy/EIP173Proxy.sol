@@ -41,7 +41,9 @@ contract EIP173Proxy is Proxy {
         ERC165 implementation;
         // solhint-disable-next-line security/no-inline-assembly
         assembly {
-            implementation := sload(0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc)
+            implementation := sload(
+                0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc
+            )
         }
 
         // Technically this is not standard compliant as ERC-165 require 30,000 gas which that call cannot ensure

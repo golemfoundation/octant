@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { ethers } from 'hardhat';
 
 import { makeTestsEnv } from './helpers/make-tests-env';
 
@@ -10,9 +9,8 @@ makeTestsEnv(AUTH, testEnv => {
     it('should set the deployer and multisig addresses', async () => {
       const {
         auth,
-        signers: { deployer, TestFoundation },
+        signers: { TestFoundation },
       } = testEnv;
-      expect(await auth.deployer()).to.eq(deployer.address);
       expect(await auth.multisig()).to.eq(TestFoundation.address);
     });
   });
@@ -101,37 +99,6 @@ makeTestsEnv(AUTH, testEnv => {
       await auth.connect(TestFoundation).transferOwnership(Alice.address);
       await auth.connect(Alice).acceptOwnership();
       await expect(auth.connect(Alice).acceptOwnership()).to.be.revertedWith(
-        'HN:Common/unauthorized-caller',
-      );
-    });
-  });
-
-  describe('renounceDeployer', () => {
-    it('should set the deployer address to zero', async () => {
-      const {
-        auth,
-        signers: { deployer },
-      } = testEnv;
-      await auth.connect(deployer).renounceDeployer();
-      expect(await auth.deployer()).to.eq(ethers.constants.AddressZero);
-    });
-
-    it('should emit DeployerRenounced event', async () => {
-      const {
-        auth,
-        signers: { deployer },
-      } = testEnv;
-      await expect(auth.connect(deployer).renounceDeployer())
-        .to.emit(auth, 'DeployerRenounced')
-        .withArgs(deployer.address);
-    });
-
-    it('should revert if called by a non-deployer', async () => {
-      const {
-        auth,
-        signers: { Darth },
-      } = testEnv;
-      await expect(auth.connect(Darth).renounceDeployer()).to.be.revertedWith(
         'HN:Common/unauthorized-caller',
       );
     });

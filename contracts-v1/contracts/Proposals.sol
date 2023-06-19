@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.16;
 
 import "./interfaces/IProposals.sol";
 import "./interfaces/IEpochs.sol";
@@ -44,7 +44,10 @@ contract Proposals is OctantBase, IProposals {
 
     /// @notice Sets epochs contract, can be done only once.
     function setEpochs(address _epochs) external onlyMultisig {
-        require(address(epochs) == address(0x0));
+        require(
+            address(epochs) == address(0x0),
+            ProposalsErrors.CANNOT_SET_EPOCHS_TWICE
+        );
         epochs = IEpochs(_epochs);
         emit EpochsSet(_epochs);
     }
@@ -57,7 +60,10 @@ contract Proposals is OctantBase, IProposals {
         address[] calldata _proposalAddresses
     ) public onlyMultisig {
         if (address(epochs) != address(0x0)) {
-            require(_epoch >= epochs.getCurrentEpoch(), ProposalsErrors.CHANGING_PROPOSALS_IN_THE_PAST);
+            require(
+                _epoch >= epochs.getCurrentEpoch(),
+                ProposalsErrors.CHANGING_PROPOSALS_IN_THE_PAST
+            );
         }
         proposalAddressesByEpoch[_epoch] = _proposalAddresses;
     }

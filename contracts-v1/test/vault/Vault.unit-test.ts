@@ -82,6 +82,18 @@ makeTestsEnv(VAULT, testEnv => {
         'HN:Common/unauthorized-caller',
       );
     });
+
+    it('Should revert with failed-to-send message if contract does not have enough ETH', async () => {
+      const {
+        vault,
+        signers: { TestFoundation },
+      } = testEnv;
+
+      // This should fail because contract has 0 ETH
+      await expect(vault.connect(TestFoundation).emergencyWithdraw(1)).to.be.revertedWith(
+        'HN:Common/failed-to-send',
+      );
+    });
   });
 
   describe('withdraw (single and batch)', async () => {
@@ -207,6 +219,31 @@ makeTestsEnv(VAULT, testEnv => {
 
       expect(await ethers.provider.getBalance(Alice.address)).approximately(
         before.add(parseEther('10')),
+        parseEther('0.001'),
+      );
+    });
+
+    it('Should revert with failed-to-send message if contract does not have enough ETH', async () => {
+      const {
+        vault,
+        signers: { Alice, TestFoundation },
+      } = testEnv;
+      const before = await ethers.provider.getBalance(Alice.address);
+      // vault has some funds
+      await TestFoundation.sendTransaction({ to: vault.address, value: parseEther('1') });
+      await vault.connect(TestFoundation).setMerkleRoot(1, merkleTree1.root);
+      const aliceProof = getProof(merkleTree1, Alice.address);
+      const payload = {
+        amount: parseEther('10'),
+        epoch: 1,
+        proof: aliceProof,
+      };
+
+      await expect(vault.connect(Alice).batchWithdraw([payload])).revertedWith(
+        'HN:Common/failed-to-send',
+      );
+      expect(await ethers.provider.getBalance(Alice.address)).approximately(
+        before,
         parseEther('0.001'),
       );
     });
