@@ -12,7 +12,7 @@ from decimal import Decimal
 CUT_OFF = 100 * 10**18
 
 
-def calculate_staked_ratio(total_effective_deposit: int, glm_supply: int) -> Decimal:
+def calculate_locked_ratio(total_effective_deposit: int, glm_supply: int) -> Decimal:
     return Decimal(total_effective_deposit) / Decimal(glm_supply)
 
 

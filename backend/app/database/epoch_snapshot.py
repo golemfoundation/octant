@@ -32,7 +32,7 @@ def add_snapshot(
     glm_supply: int,
     eth_proceeds: int,
     total_ed: int,
-    staked_ratio: Decimal,
+    locked_ratio: Decimal,
     total_rewards: int,
     all_individual_rewards: int,
 ):
@@ -41,7 +41,7 @@ def add_snapshot(
         glm_supply=str(glm_supply),
         eth_proceeds=str(eth_proceeds),
         total_effective_deposit=str(total_ed),
-        staked_ratio="{:f}".format(staked_ratio),
+        locked_ratio="{:f}".format(locked_ratio),
         total_rewards=str(total_rewards),
         all_individual_rewards=str(all_individual_rewards),
     )

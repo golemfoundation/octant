@@ -2,7 +2,7 @@ import pytest
 from eth_utils import to_checksum_address
 
 from app import database
-from app.core.deposits import update_db_deposits, calculate_staked_ratio
+from app.core.deposits import update_db_deposits, calculate_locked_ratio
 from app.extensions import graphql_client
 
 USER1_ADDRESS = "0xabcdef7890123456789012345678901234567893"
@@ -37,8 +37,8 @@ USER2_ADDRESS = "0x2345678901234567890123456789012345678904"
         (1000000000000000000000000000, 1000000000_000000000_000000000, "1"),
     ],
 )
-def test_staked_ratio_positive(glm_supply, total_ed, expected, app):
-    result = calculate_staked_ratio(total_ed, glm_supply)
+def test_locked_ratio_positive(glm_supply, total_ed, expected, app):
+    result = calculate_locked_ratio(total_ed, glm_supply)
     assert "{:f}".format(result) == expected
 
 

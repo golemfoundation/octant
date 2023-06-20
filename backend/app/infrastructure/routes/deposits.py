@@ -10,18 +10,16 @@ total_effective_model = api.model(
     "TotalEffective",
     {
         "totalEffective": fields.String(
-            required=True,
-            description="total effective deposit in given epoch"
+            required=True, description="total effective deposit in given epoch"
         ),
     },
 )
 
-staked_ratio_model = api.model(
-    "StakedRatio",
+locked_ratio_model = api.model(
+    "LockedRatio",
     {
-        "stakedRatio": fields.String(
-            required=True,
-            description="GLM staked ratio in given epoch"
+        "lockedRatio": fields.String(
+            required=True, description="GLM locked ratio in given epoch"
         ),
     },
 )
@@ -39,11 +37,11 @@ class TotalEffectiveDeposit(Resource):
         return {"totalEffective": total_effective_deposit}
 
 
-@ns.route("/<string:epoch>/staked_ratio")
+@ns.route("/<string:epoch>/locked_ratio")
 @ns.doc(params={"epoch": "Epoch number"})
-class StakedRatio(Resource):
-    @ns.marshal_with(staked_ratio_model)
-    @ns.response(200, "Epoch staked ratio successfully retrieved")
+class LockedRatio(Resource):
+    @ns.marshal_with(locked_ratio_model)
+    @ns.response(200, "Epoch locked ratio successfully retrieved")
     def get(self, epoch):
-        staked_ratio = epoch_snapshot.get_by_epoch_num(epoch).staked_ratio
-        return {"stakedRatio": staked_ratio}
+        locked_ratio = epoch_snapshot.get_by_epoch_num(epoch).locked_ratio
+        return {"lockedRatio": locked_ratio}
