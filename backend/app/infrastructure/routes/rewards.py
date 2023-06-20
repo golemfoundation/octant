@@ -23,7 +23,7 @@ threshold_model = api.model(
     {
         "threshold": fields.String(
             required=True,
-            description="Threshold, that projects have to pass to be eligible for receiving rewards"
+            description="Threshold, that projects have to pass to be eligible for receiving rewards",
         ),
     },
 )
@@ -59,7 +59,7 @@ budget_model = api.model(
         ),
         "matched": fields.String(
             description="Total matched rewards for the proposals. Returns null if "
-                        "epoch is not in the allocation window",
+            "epoch is not in the allocation window",
         ),
     },
 )
@@ -70,7 +70,7 @@ budget_model = api.model(
     description="Returns user's rewards budget available to allocate for given epoch",
     params={
         "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed "
-                        "with 0x)",
+        "with 0x)",
         "epoch": "Epoch number",
     },
 )

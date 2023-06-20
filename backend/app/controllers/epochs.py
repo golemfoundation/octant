@@ -4,7 +4,7 @@ from flask import current_app as app
 
 from app.contracts import epochs
 from app.core import glm
-from app.core.deposits import update_db_deposits, calculate_staked_ratio
+from app.core.deposits import update_db_deposits, calculate_locked_ratio
 from app.core.rewards import calculate_total_rewards, calculate_all_individual_rewards
 from app.database import epoch_snapshot
 from app import exceptions
@@ -32,10 +32,10 @@ def snapshot_previous_epoch() -> Optional[int]:
     glm_supply = glm.get_current_glm_supply()
     eth_proceeds = w3.eth.get_balance(config.WITHDRAWALS_TARGET_CONTRACT_ADDRESS)
     total_effective_deposit = update_db_deposits(pending_epoch)
-    staked_ratio = calculate_staked_ratio(total_effective_deposit, glm_supply)
-    total_rewards = calculate_total_rewards(eth_proceeds, staked_ratio)
+    locked_ratio = calculate_locked_ratio(total_effective_deposit, glm_supply)
+    total_rewards = calculate_total_rewards(eth_proceeds, locked_ratio)
     all_individual_rewards = calculate_all_individual_rewards(
-        eth_proceeds, staked_ratio
+        eth_proceeds, locked_ratio
     )
 
     epoch_snapshot.add_snapshot(
@@ -43,7 +43,7 @@ def snapshot_previous_epoch() -> Optional[int]:
         glm_supply,
         eth_proceeds,
         total_effective_deposit,
-        staked_ratio,
+        locked_ratio,
         total_rewards,
         all_individual_rewards,
     )
