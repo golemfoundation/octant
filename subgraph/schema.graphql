@@ -19,9 +19,10 @@ type Unlocked @entity(immutable: true) {
 }
 
 type Epoch @entity(immutable: true) {
-    id: String!
-    duration: Int!
-    decisionWindow: Int!
-    fromTs: Int!
-    toTs: Int!
+    id: Bytes!
+    epoch: Int!
+    duration: BigInt!
+    decisionWindow: BigInt!
+    fromTs: BigInt!
+    toTs: BigInt!
 }

@@ -7,8 +7,8 @@ dataSources:
     network: sepolia
     source:
       abi: Epochs
-      address: "0x456F0802243A14C3b5F55B943A57acf64Ac82531"
-      startBlock: 3509172
+      address: "0x93f098E71ea4CbbbA137A03C4CDa0517DfA112D8"
+      startBlock: 3727338
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -26,8 +26,8 @@ dataSources:
     network: sepolia
     source:
       abi: Deposits
-      address: "0xd085521c65331E7f3905b412D3452bcF9D9888aD"
-      startBlock: 3509172
+      address: "0x63dDB6249E2119Af4BD6858E0Ef3E22CBe4E4777"
+      startBlock: 3727338
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
