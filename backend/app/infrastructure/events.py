@@ -9,7 +9,7 @@ from app.controllers.rewards import (
     get_proposals_rewards,
     ProposalReward,
 )
-from app.core.allocations import allocate
+from app.core.allocations import allocate, AllocationRequest
 from app.exceptions import print_stacktrace, UNEXPECTED_EXCEPTION, OctantException
 from app.extensions import socketio
 
@@ -35,7 +35,7 @@ def handle_allocate(msg):
     current_app.logger.info(
         f"User allocation: payload: {payload}, signature: {signature}"
     )
-    allocate(payload, signature)
+    allocate(AllocationRequest(payload, signature, override_existing_allocations=True))
 
     threshold = get_allocation_threshold()
     emit("threshold", json.dumps({"threshold": str(threshold)}), broadcast=True)
