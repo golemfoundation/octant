@@ -366,7 +366,7 @@ def _mock_graphql(mocker, events, deposit_before=0):
 
     # Define the mock responses for the execute method
     graphql_client.execute.side_effect = [
-        {"epoch": {"fromTs": 1, "toTs": 1000}},
+        {"epoches": [{"fromTs": 1, "toTs": 1000}]},
         {"lockeds": locks},
         {"unlockeds": unlocks},
     ]

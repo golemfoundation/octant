@@ -14,7 +14,7 @@ import { createBlockEvent } from './utils';
 import { handleBlock } from '../src/epochs';
 
 const EPOCH_ENTITY_TYPE = 'Epoch';
-const EPOCHS_ADDRESS = '0x456F0802243A14C3b5F55B943A57acf64Ac82531';
+const EPOCHS_ADDRESS = '0x93f098E71ea4CbbbA137A03C4CDa0517DfA112D8';
 
 describe('Describe entity assertions', () => {
   afterAll(() => {
@@ -47,9 +47,9 @@ describe('Describe entity assertions', () => {
     handleBlock(blockEvent);
 
     assert.entityCount(EPOCH_ENTITY_TYPE, 1);
-    assert.fieldEquals(EPOCH_ENTITY_TYPE, '1', 'duration', '5000');
-    assert.fieldEquals(EPOCH_ENTITY_TYPE, '1', 'decisionWindow', '2000');
-    assert.fieldEquals(EPOCH_ENTITY_TYPE, '1', 'fromTs', '1000');
-    assert.fieldEquals(EPOCH_ENTITY_TYPE, '1', 'toTs', '6000');
+    assert.fieldEquals(EPOCH_ENTITY_TYPE, '0x01000000', 'duration', '5000');
+    assert.fieldEquals(EPOCH_ENTITY_TYPE, '0x01000000', 'decisionWindow', '2000');
+    assert.fieldEquals(EPOCH_ENTITY_TYPE, '0x01000000', 'fromTs', '1000');
+    assert.fieldEquals(EPOCH_ENTITY_TYPE, '0x01000000', 'toTs', '6000');
   });
 });

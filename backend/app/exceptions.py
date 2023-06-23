@@ -35,6 +35,14 @@ class EpochNotStartedYet(OctantException):
         super().__init__(self.description, self.code)
 
 
+class EpochNotIndexed(OctantException):
+    code = 400
+    description = "Epoch {} has not yet been indexed in the Graph."
+
+    def __init__(self, epoch_no):
+        super().__init__(self.description.format(epoch_no), self.code)
+
+
 class MissingSnapshot(OctantException):
     code = 500
     description = "No snapshot has been taken. Try calling /epochs/snapshot endpoint"

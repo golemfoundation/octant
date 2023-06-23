@@ -1,13 +1,14 @@
 from gql import gql
 
 from app.extensions import graphql_client
+from app import exceptions
 
 
 def get_epoch_by_number(epoch_number):
     query = gql(
         """
-        query GetEpoch($id: ID!) {
-  epoch(id: $id) {
+        query GetEpoch($epochNo: Int!) {
+  epoches(where: {epoch: $epochNo}) {
     fromTs
     toTs
   }
@@ -15,6 +16,11 @@ def get_epoch_by_number(epoch_number):
     """
     )
 
-    variables = {"id": epoch_number}
+    variables = {"epochNo": epoch_number}
 
-    return graphql_client.execute(query, variable_values=variables)["epoch"]
+    data = graphql_client.execute(query, variable_values=variables)["epoches"]
+
+    if data:
+        return data[0]
+    else:
+        raise exceptions.EpochNotIndexed(epoch_number)
