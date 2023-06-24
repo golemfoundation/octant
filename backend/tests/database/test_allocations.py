@@ -27,7 +27,7 @@ def test_get_all_by_epoch_group_by_user_address(app, user_accounts, proposal_acc
 
     result = database.allocations.get_alloc_sum_by_epoch_and_user_address(epoch)
 
-    assert result == [
-        AddressAndAmount(user2.address, 1550 * 10**18),
-        AddressAndAmount(user1.address, 315 * 10**18),
-    ]
+    assert result[0].proposal_address == user2.address
+    assert result[0].amount == 1550 * 10**18
+    assert result[1].proposal_address == user1.address
+    assert result[1].amount == 315 * 10**18

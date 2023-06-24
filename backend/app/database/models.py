@@ -35,6 +35,8 @@ class Allocation(BaseModel):
     user = relationship("User", backref=db.backref("allocations", lazy=True))
     proposal_address = Column(db.String(42), nullable=False)
     amount = Column(db.String, nullable=False)
+    created_at = Column(db.TIMESTAMP, nullable=False)
+    deleted_at = Column(db.TIMESTAMP, nullable=True)
 
 
 class PendingEpochSnapshot(BaseModel):

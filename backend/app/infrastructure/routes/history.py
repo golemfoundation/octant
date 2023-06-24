@@ -1,7 +1,7 @@
 from flask import current_app
 from flask_restx import Resource, Namespace, fields
 
-from app.core import history
+from app.controllers import history
 from app.extensions import api
 
 ns = Namespace("history", description="User operations overview")
@@ -11,14 +11,14 @@ history_item = api.model(
     "HistoryItem",
     {
         "type": fields.String(
-            required=True, description="Type of action (lock, unlock)"
+            required=True, description="Type of action (lock, unlock, allocation)"
         ),
         "amount": fields.String(
             required=True, description="Amount involved in the action, BigNumber (wei)"
         ),
-        "timestamp": fields.Integer(
+        "timestamp": fields.String(
             required=True,
-            description="Timestamp when action occurred (seconds since Unix epoch)",
+            description="Timestamp in microseconds when the action occurred (since Unix epoch)",
         ),
     },
 )
@@ -44,5 +44,5 @@ class History(Resource):
     @ns.response(200, "User history successfully retrieved")
     def get(self, user_address):
         current_app.logger.info(f"Getting history for user: {user_address}")
-        user_history = history.get_history(user_address)
+        user_history = history.user_history(user_address)
         return {"history": user_history}

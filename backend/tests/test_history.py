@@ -1,6 +1,8 @@
+import dataclasses
+
 import pytest
 
-from app.core.history import get_history
+from app.core.history import get_locks, get_unlocks
 from app.extensions import graphql_client
 
 
@@ -12,36 +14,36 @@ from app.extensions import graphql_client
                 {
                     "__typename": "Locked",
                     "amount": "500000000000000000000",
-                    "timestamp": 1679645896,
+                    "timestamp": 1679645896 * 10**6,
                 },
                 {
                     "__typename": "Locked",
                     "amount": "300000000000000000000",
-                    "timestamp": 1679645700,
+                    "timestamp": 1679645700 * 10**6,
                 },
             ],
             [
                 {
                     "__typename": "Unlocked",
                     "amount": "400000000000000000000",
-                    "timestamp": 1679645800,
+                    "timestamp": 1679645800 * 10**6,
                 },
             ],
             [
                 {
-                    "__typename": "Locked",
-                    "amount": "300000000000000000000",
-                    "timestamp": 1679645700,
+                    "type": "lock",
+                    "amount": 300000000000000000000,
+                    "timestamp": 1679645700 * 10**6,
                 },
                 {
-                    "__typename": "Unlocked",
-                    "amount": "400000000000000000000",
-                    "timestamp": 1679645800,
+                    "type": "unlock",
+                    "amount": 400000000000000000000,
+                    "timestamp": 1679645800 * 10**6,
                 },
                 {
-                    "__typename": "Locked",
-                    "amount": "500000000000000000000",
-                    "timestamp": 1679645896,
+                    "type": "lock",
+                    "amount": 500000000000000000000,
+                    "timestamp": 1679645896 * 10**6,
                 },
             ],
         ),
@@ -50,36 +52,36 @@ from app.extensions import graphql_client
                 {
                     "__typename": "Locked",
                     "amount": "500000000000000000000",
-                    "timestamp": 1679645900,
+                    "timestamp": 1679645900 * 10**6,
                 },
                 {
                     "__typename": "Locked",
                     "amount": "300000000000000000000",
-                    "timestamp": 1679645910,
+                    "timestamp": 1679645910 * 10**6,
                 },
             ],
             [
                 {
                     "__typename": "Unlocked",
                     "amount": "400000000000000000000",
-                    "timestamp": 1679645950,
+                    "timestamp": 1679645950 * 10**6,
                 },
             ],
             [
                 {
-                    "__typename": "Locked",
-                    "amount": "500000000000000000000",
-                    "timestamp": 1679645900,
+                    "type": "lock",
+                    "amount": 500000000000000000000,
+                    "timestamp": 1679645900 * 10**6,
                 },
                 {
-                    "__typename": "Locked",
-                    "amount": "300000000000000000000",
-                    "timestamp": 1679645910,
+                    "type": "lock",
+                    "amount": 300000000000000000000,
+                    "timestamp": 1679645910 * 10**6,
                 },
                 {
-                    "__typename": "Unlocked",
-                    "amount": "400000000000000000000",
-                    "timestamp": 1679645950,
+                    "type": "unlock",
+                    "amount": 400000000000000000000,
+                    "timestamp": 1679645950 * 10**6,
                 },
             ],
         ),
@@ -88,36 +90,36 @@ from app.extensions import graphql_client
                 {
                     "__typename": "Locked",
                     "amount": "500000000000000000000",
-                    "timestamp": 1679645900,
+                    "timestamp": 1679645900 * 10**6,
                 },
             ],
             [
                 {
                     "__typename": "Unlocked",
                     "amount": "400000000000000000000",
-                    "timestamp": 1679645800,
+                    "timestamp": 1679645800 * 10**6,
                 },
                 {
                     "__typename": "Unlocked",
                     "amount": "600000000000000000000",
-                    "timestamp": 1679646000,
+                    "timestamp": 1679646000 * 10**6,
                 },
             ],
             [
                 {
-                    "__typename": "Unlocked",
-                    "amount": "400000000000000000000",
-                    "timestamp": 1679645800,
+                    "type": "unlock",
+                    "amount": 400000000000000000000,
+                    "timestamp": 1679645800 * 10**6,
                 },
                 {
-                    "__typename": "Locked",
-                    "amount": "500000000000000000000",
-                    "timestamp": 1679645900,
+                    "type": "lock",
+                    "amount": 500000000000000000000,
+                    "timestamp": 1679645900 * 10**6,
                 },
                 {
-                    "__typename": "Unlocked",
-                    "amount": "600000000000000000000",
-                    "timestamp": 1679646000,
+                    "type": "unlock",
+                    "amount": 600000000000000000000,
+                    "timestamp": 1679646000 * 10**6,
                 },
             ],
         ),
@@ -134,7 +136,7 @@ from app.extensions import graphql_client
         "Case 4: empty lists",
     ],
 )
-def test_get_history(mocker, locks, unlocks, expected_history, app):
+def test_history_locks(mocker, locks, unlocks, expected_history, app):
     # Mock the execute method of the GraphQL client
     mocker.patch.object(graphql_client, "execute")
 
@@ -146,8 +148,10 @@ def test_get_history(mocker, locks, unlocks, expected_history, app):
 
     user_address = "0xca50c6c165d19ab38cc7935ff84f214a483a5494"
 
-    # Call the get_history function
-    history = get_history(user_address)
+    # Test various functions from core/history
+    history = get_locks(user_address, 0) + get_unlocks(user_address, 0)
+    history = [
+        dataclasses.asdict(item) for item in sorted(history, key=lambda x: x.timestamp)
+    ]
 
-    # Verify the result
     assert history == expected_history

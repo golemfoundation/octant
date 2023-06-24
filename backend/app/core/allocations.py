@@ -24,7 +24,51 @@ class AllocationRequest:
     override_existing_allocations: bool
 
 
-def verify_allocations(epoch: int, allocations: List[Allocation]):
+def store_allocations_in_db(
+    epoch: int,
+    user_address: str,
+    allocations: List[Allocation],
+    delete_existing_user_epoch_allocations: bool,
+):
+    user = database.user.get_by_address(user_address)
+    if not user:
+        user = database.user.add_user(user_address)
+
+    if delete_existing_user_epoch_allocations:
+        database.allocations.soft_delete_all_by_epoch_and_user_id(epoch, user.id)
+
+    database.allocations.add_all(epoch, user.id, allocations)
+    db.session.commit()
+
+
+def allocate(request: AllocationRequest):
+    user_address = get_user_address(request)
+    user_allocations = deserialize_payload(request.payload)
+    epoch = epochs.get_pending_epoch()
+
+    _verify_allocations(epoch, user_address, user_allocations)
+    store_allocations_in_db(
+        epoch, user_address, user_allocations, request.override_existing_allocations
+    )
+
+
+def get_user_address(request: AllocationRequest) -> str:
+    eip712_data = build_allocations_eip712_data(request.payload)
+    return recover_address(eip712_data, request.signature)
+
+
+def deserialize_payload(payload) -> List[Allocation]:
+    return [
+        Allocation.from_dict(allocation_data)
+        for allocation_data in payload["allocations"]
+    ]
+
+
+def calculate_threshold(total_allocated: int, proposals_no: int) -> int:
+    return int(total_allocated / (proposals_no * 2))
+
+
+def _verify_allocations(epoch: int, user_address: str, allocations: List[Allocation]):
     if epoch == 0:
         raise exceptions.NotInDecisionWindow
 
@@ -40,50 +84,13 @@ def verify_allocations(epoch: int, allocations: List[Allocation]):
     if invalid_proposals:
         raise exceptions.InvalidProposals(invalid_proposals)
 
+    # Check if any allocation address has been duplicated in the payload
+    [proposal_addresses.remove(p) for p in set(proposal_addresses)]
 
-def store_allocations_in_db(
-    epoch: int,
-    user_address: str,
-    allocations: List[Allocation],
-    prune_existing_user_epoch_allocations: bool,
-):
-    user = database.user.get_by_address(user_address)
-    if not user:
-        user = database.user.add_user(user_address)
+    if proposal_addresses:
+        raise exceptions.DuplicatedProposals(proposal_addresses)
 
-    if prune_existing_user_epoch_allocations:
-        database.allocations.delete_all_by_epoch_and_user_id(epoch, user.id)
-
-    database.allocations.add_all(epoch, user.id, allocations)
-    db.session.commit()
-
-
-def allocate(request: AllocationRequest):
-    user_address = get_user_address(request)
-    user_allocations = get_allocations(request)
-    epoch = epochs.get_pending_epoch()
-
-    verify_allocations(epoch, user_allocations)
-    store_allocations_in_db(
-        epoch, user_address, user_allocations, request.override_existing_allocations
-    )
-
-
-def get_user_address(request: AllocationRequest) -> str:
-    eip712_data = build_allocations_eip712_data(request.payload)
-    return recover_address(eip712_data, request.signature)
-
-
-def get_allocations(request: AllocationRequest) -> List[Allocation]:
-    return deserialize_payload(request.payload)
-
-
-def deserialize_payload(payload) -> List[Allocation]:
-    return [
-        Allocation.from_dict(allocation_data)
-        for allocation_data in payload["allocations"]
-    ]
-
-
-def calculate_threshold(total_allocated: int, proposals_no: int) -> int:
-    return int(total_allocated / (proposals_no * 2))
+    # Check if user address is not in one of the allocations
+    for allocation in allocations:
+        if allocation.proposal_address == user_address:
+            raise exceptions.ProposalAllocateToItself

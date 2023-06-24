@@ -59,6 +59,14 @@ class InvalidProposals(OctantException):
         super().__init__(self.description.format(proposals), self.code)
 
 
+class DuplicatedProposals(OctantException):
+    code = 400
+    description = "The following proposals are duplicated in the payload: {}"
+
+    def __init__(self, proposals):
+        super().__init__(self.description.format(proposals), self.code)
+
+
 class MissingSnapshot(OctantException):
     code = 500
     description = "No snapshot has been taken. Try calling /snapshot/pending or /snapshot/finalized endpoint"
