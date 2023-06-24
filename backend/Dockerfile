@@ -2,7 +2,7 @@
 #
 # Maintainer:
 #   Łukasz Kujawski
-FROM --platform=linux/amd64 acidrain/python-poetry:3.10-slim-1.4.0
+FROM --platform=linux/amd64 acidrain/python-poetry:3.11-slim-1.5.1
 
 WORKDIR /app
 
