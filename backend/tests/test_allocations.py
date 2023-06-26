@@ -248,6 +248,19 @@ def test_allocation_validation_errors(
     allocate(AllocationRequest(payload, signature, override_existing_allocations=True))
 
 
+def test_project_allocates_funds_to_itself(
+    app, monkeypatch, proposal_accounts, user_accounts
+):
+    # Test data
+    payload = create_payload(proposal_accounts[0:3], None)
+    signature = sign(proposal_accounts[0], build_allocations_eip712_data(payload))
+
+    with pytest.raises(exceptions.ProposalAllocateToItself):
+        allocate(
+            AllocationRequest(payload, signature, override_existing_allocations=True)
+        )
+
+
 def check_allocations(user_address, expected_payload, expected_count):
     epoch = MOCKED_PENDING_EPOCH_NO
     expected_allocations = deserialize_payload(expected_payload)
