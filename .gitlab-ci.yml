@@ -396,3 +396,20 @@ Destroy UAT App:
   environment:
     name: persistent/uat
     deployment_tier: testing
+
+pages:
+  stage: deploy
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'
+      when: manual
+  script:
+    - apt-get update && apt-get install -y --no-install-recommends git --reinstall ca-certificates
+    - cd contracts
+    - yarn install --non-interactive --cache-folder .yarn
+    - yarn compile
+    - cd ../client
+    - yarn install --non-interactive
+    - yarn build
+    - cd ..
+    - mv client/dist public
+    - echo '/governance/octant/* /:splat 200' > public/_redirects
