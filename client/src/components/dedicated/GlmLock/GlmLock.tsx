@@ -9,6 +9,7 @@ import { useAccount, useSigner } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
+import ButtonProps from 'components/core/Button/types';
 import ProgressStepper from 'components/core/ProgressStepper/ProgressStepper';
 import BudgetBox from 'components/dedicated/BudgetBox/BudgetBox';
 import InputsCryptoFiat from 'components/dedicated/InputsCryptoFiat/InputsCryptoFiat';
@@ -56,6 +57,7 @@ const GlmLock: FC<GlmLockProps> = ({
   currentMode,
   onCurrentModeChange,
   onChangeCryptoOrFiatInputFocus,
+  onCloseModal,
 }) => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.glmLock',
@@ -144,6 +146,16 @@ const GlmLock: FC<GlmLockProps> = ({
     formik.resetForm();
   };
 
+  const buttonCtaProps: ButtonProps =
+    currentStepIndex === 3
+      ? {
+          onClick: onCloseModal,
+          type: 'button',
+        }
+      : {
+          type: 'submit',
+        };
+
   return (
     <form className={styles.form} onSubmit={formik.handleSubmit}>
       <BoxRounded className={styles.element} isGrey>
@@ -214,8 +226,8 @@ const GlmLock: FC<GlmLockProps> = ({
         isHigh
         isLoading={formik.isSubmitting}
         label={getButtonCtaLabel(currentMode, currentStepIndex, formik.isSubmitting)}
-        type="submit"
         variant="cta"
+        {...buttonCtaProps}
       />
     </form>
   );
