@@ -29,7 +29,7 @@ def get_unlocks_by_timestamp_range(from_ts, to_ts):
     orderBy: timestamp,
     where: {
       timestamp_gte: $fromTimestamp,
-      timestamp_lte: $toTimestamp
+      timestamp_lt: $toTimestamp
     }
   ) {
     __typename

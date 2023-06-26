@@ -29,7 +29,7 @@ def get_locks_by_timestamp_range(from_ts: int, to_ts: int):
     orderBy: timestamp,
     where: {
       timestamp_gte: $fromTimestamp,
-      timestamp_lte: $toTimestamp
+      timestamp_lt: $toTimestamp
     }
   ) {
     __typename
