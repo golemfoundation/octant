@@ -269,7 +269,8 @@ Cypress E2E Tests:
   image: synthetixio/docker-e2e:16.20-ubuntu
   rules:
     - !reference [.rules, on_mr_manual]
-    - !reference [.rules, on_push_to_default_branch ]
+# TODO OCT-556 Enable CY for master
+#    - !reference [.rules, on_push_to_default_branch ]
   variables:
     NETWORK_NAME: sepolia
     PRIVATE_KEY: $GOERLI_PRIVATE_KEY
