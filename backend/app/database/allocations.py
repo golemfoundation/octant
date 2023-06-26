@@ -17,7 +17,7 @@ def add_all(epoch, user_id, allocations):
         Allocation(
             epoch=epoch,
             user_id=user_id,
-            proposal_address=to_checksum_address(a.proposalAddress),
+            proposal_address=to_checksum_address(a.proposal_address),
             amount=str(a.amount),
         )
         for a in allocations

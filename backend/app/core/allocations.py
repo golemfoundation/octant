@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import List
 
+from dataclass_wizard import JSONWizard
+
 from app import database, exceptions
 from app.core.epochs import is_epoch_snapshotted
 from app.crypto.eip712 import recover_address, build_allocations_eip712_data
@@ -10,8 +12,8 @@ from app.contracts.proposals import proposals
 
 
 @dataclass(frozen=True)
-class Allocation:
-    proposalAddress: str
+class Allocation(JSONWizard):
+    proposal_address: str
     amount: int
 
 
@@ -29,7 +31,9 @@ def verify_allocations(epoch: int, allocations: List[Allocation]):
     if not is_epoch_snapshotted(epoch):
         raise exceptions.MissingSnapshot
 
-    proposal_addresses = [a.proposalAddress for a in allocations]
+    # Check if the list of proposal addresses is a subset of
+    # proposal addresses in the Proposals contract
+    proposal_addresses = [a.proposal_address for a in allocations]
     valid_proposals = proposals.get_proposal_addresses(epoch)
     invalid_proposals = list(set(proposal_addresses) - set(valid_proposals))
 
@@ -75,7 +79,10 @@ def get_allocations(request: AllocationRequest) -> List[Allocation]:
 
 
 def deserialize_payload(payload) -> List[Allocation]:
-    return [Allocation(**allocation_data) for allocation_data in payload["allocations"]]
+    return [
+        Allocation.from_dict(allocation_data)
+        for allocation_data in payload["allocations"]
+    ]
 
 
 def calculate_threshold(total_allocated: int, proposals_no: int) -> int:

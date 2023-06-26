@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, Mock
 
 import pytest
 
-from app import database
+from app import database, exceptions
 from app.contracts.epochs import Epochs
 from app.contracts.proposals import Proposals
 from app.core.allocations import (
@@ -201,6 +201,54 @@ def test_multiple_users_change_their_allocations(app, user_accounts, proposal_ac
     check_allocation_threshold(updated_payload1, updated_payload2)
 
 
+def test_allocation_validation_errors(
+    app, monkeypatch, proposal_accounts, user_accounts
+):
+    # Test data
+    payload = create_payload(proposal_accounts[0:3], None)
+    signature = sign(user_accounts[0], build_allocations_eip712_data(payload))
+
+    mock_snapshotted = Mock()
+    mock_snapshotted.return_value = True
+    monkeypatch.setattr("app.core.allocations.is_epoch_snapshotted", mock_snapshotted)
+
+    # Set invalid number of proposals on purpose (two proposals while three are needed)
+    mock_proposals = MagicMock(spec=Proposals)
+    mock_proposals.get_proposal_addresses.return_value = [
+        p.address for p in proposal_accounts[0:2]
+    ]
+    monkeypatch.setattr("app.core.allocations.proposals", mock_proposals)
+
+    mock_epochs = MagicMock(spec=Epochs)
+
+    # Set invalid epoch on purpose (mimicking no pending epoch)
+    mock_epochs.get_pending_epoch.return_value = 0
+    monkeypatch.setattr("app.core.allocations.epochs", mock_epochs)
+
+    # Call allocate method, expect exception
+    with pytest.raises(exceptions.NotInDecisionWindow):
+        allocate(
+            AllocationRequest(payload, signature, override_existing_allocations=True)
+        )
+
+    # Fix pending epoch
+    mock_epochs.get_pending_epoch.return_value = MOCKED_EPOCH_NO
+
+    # Call allocate method, expect invalid proposals
+    with pytest.raises(exceptions.InvalidProposals):
+        allocate(
+            AllocationRequest(payload, signature, override_existing_allocations=True)
+        )
+
+    # Fix missing proposals
+    mock_proposals.get_proposal_addresses.return_value = [
+        p.address for p in proposal_accounts[0:3]
+    ]
+
+    # Expect no validation errors at this point
+    allocate(AllocationRequest(payload, signature, override_existing_allocations=True))
+
+
 def check_allocations(user_address, expected_payload, expected_count):
     epoch = MOCKED_EPOCH_NO
     expected_allocations = deserialize_payload(expected_payload)
@@ -214,7 +262,7 @@ def check_allocations(user_address, expected_payload, expected_count):
         assert db_allocation.epoch == epoch
         assert db_allocation.user_id == user.id
         assert db_allocation.user is not None
-        assert db_allocation.proposal_address == expected_allocation.proposalAddress
+        assert db_allocation.proposal_address == expected_allocation.proposal_address
         assert int(db_allocation.amount) == expected_allocation.amount
 
 
