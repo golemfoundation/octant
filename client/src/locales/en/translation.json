@@ -19,18 +19,21 @@
   },
   "common": {
     "allocationValuesNotAvailable": "Allocation values are not available",
+    "close": "Close",
     "budget": "Budget {{budget}}",
     "lockGlm": "Lock GLM",
     "transactionSuccessful": "Transaction successful",
     "gettingStarted": "Getting started",
     "octantTips": "Octant tips",
+    "done": "Done",
+    "valueCantBeEmpty": "Value can't be empty",
+    "personal": "Personal",
     "proposalForbiddenOperation": "As a proposal you are not able to proceed with this operation"
   },
   "components": {
     "dedicated": {
       "allocationEmptyState": {
-        "text": "<0>You haven’t made any allocations yet. <br/> Need a bit of help getting started?</0>",
-        "joinUsOnDiscord": "Join us on Discord"
+        "text": "Add some projects or lock GLM tokens to prepare for the next allocation period"
       },
       "allocationInfoBoxes": {
         "decisionWindowClosed": "The decision window is now closed. Allocating funds is not possible.",
@@ -40,19 +43,24 @@
         "allocate": "Allocate",
         "confirm": "Confirm",
         "edit": "Edit",
-        "reset": "Reset"
+        "reset": "Reset values"
+      },
+      "allocationRewardsBox": {
+        "title": "Allocate rewards",
+        "subtitle": "{{individualReward}} available",
+        "donate": "Donate {{percentRewardsForProposals}}%",
+        "withdraw": "Withdraw {{percentWithdraw}}%"
       },
       "allocationSummary": {
-        "afterAllocation": "After Allocation {{budget}}",
-        "allocations": "Allocations {{allocations}}",
-        "claimed": "Claimed {{claimed}}",
-        "confirmEpochAllocation": "Confirm Epoch {{currentEpoch}} Allocation",
-        "estimatedMatchFunding": "Estimated Match Funding {{matchedRewards}}",
-        "header": {
-          "allocations": "Send funds to {{allocationsLength}} projects",
-          "proposal": "Send funds to {{proposal}}"
-        },
-        "totalDonation": "Total donation"
+        "matchFundingEstimate": "Match funding (estimate)",
+        "donations": "Donations",
+        "confirmYourAllocations": "Confirm your allocations",
+        "confirmAllocations": "Confirm allocations"
+      },
+      "allocationInputsRewardsAvailable": {
+        "resetAllocations": "Reset allocations to manually edit this project",
+        "valueExceeded": "You can't allocate more than",
+        "rewardsAvailable": "Rewards available"
       },
       "boxGlmLock": {
         "current": "Current",
@@ -75,6 +83,14 @@
         "browserWallet": "Browser wallet",
         "connecting": "Connecting ...",
         "walletConnect": "Wallet connect"
+      },
+      "donationEstimateBox": {
+        "donationEstimate": "Donation estimate",
+        "showDetails": "Show details",
+        "hideDetails": "Hide details",
+        "totalDonationEstimate": "Total donation estimate",
+        "yourTotal": "Your total",
+        "matchFundingEstimate": "Match Funding estimate"
       },
       "donorsList": {
         "donors": "Donors",
@@ -107,6 +123,9 @@
         "epochEndsIn": "Epoch {{currentEpoch}} ends in",
         "epochAllocation": "Epoch {{currentEpoch}} Allocation",
         "epochAllocationEndsIn": "Epoch {{currentEpoch}} Allocation ends in"
+      },
+      "modalAllocationEditSelection": {
+        "uncheckToRemove": "Uncheck to remove"
       },
       "modalConnectWallet": {
         "connectVia": "Connect via"
@@ -158,7 +177,9 @@
     "main": {
       "connectWallet": "Connect wallet",
       "noRewardBudgetYet": "No reward budget yet",
-      "loadingRewardBudget": "Loading reward budget..."
+      "loadingRewardBudget": "Loading reward budget...",
+      "allocationStartsIn": "Allocation starts in <0>{{allocationPeriod}}</0>",
+      "allocationEndsIn": "Allocation ends in <0>{{allocationPeriod}}</0>"
     }
   },
   "meta": {
@@ -179,7 +200,14 @@
         "rewards": {
           "title": "You have rewards!",
           "text": "During allocation period you can donate rewards to projects and allocate them to yourself"
+        },
+        "changedYourMind": {
+          "title": "Changed your mind?",
+          "text": "To change your allocations, click the slider handle to unlock and make your changes"
         }
+      },
+      "modalAllocationValuesEdit": {
+        "header": "Edit {{allocation}}"
       }
     },
     "earn": {
@@ -231,7 +259,6 @@
     "settings": {
       "settings": "Settings",
       "chooseDisplayCurrency": "Choose a display currency",
-      "allocateValueAdjustersDefault": "Allocate value adjusters default",
       "cryptoMainValueDisplay": "Use crypto as main value display",
       "alwaysShowOnboarding": "Always show Allocate onboarding",
       "alwaysShowOctantTips": "Always show Octant tips"

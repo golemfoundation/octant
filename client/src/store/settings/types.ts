@@ -1,5 +1,4 @@
 export interface SettingsData {
-  allocateValueAdjusterUnit: string;
   areOctantTipsAlwaysVisible: boolean;
   displayCurrency: 'usd' | 'aud' | 'eur' | 'jpy' | 'cny' | 'gbp';
   isAllocateOnboardingAlwaysVisible: boolean;

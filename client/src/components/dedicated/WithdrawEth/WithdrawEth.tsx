@@ -16,7 +16,7 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
 import triggerToast from 'utils/triggerToast';
 
-import { FormValues } from './types';
+import { FormFields } from './types';
 import { validationSchema, formInitialValues } from './utils';
 import styles from './WithdrawEth.module.scss';
 
@@ -38,7 +38,7 @@ const WithdrawEth: FC = () => {
     },
   });
 
-  const formik = useFormik<FormValues>({
+  const formik = useFormik<FormFields>({
     initialValues: formInitialValues,
     onSubmit: ({ valueToWithdraw }) => withdrawEthMutation.mutateAsync(valueToWithdraw),
     validateOnChange: true,

@@ -5,11 +5,12 @@ import { useTranslation } from 'react-i18next';
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import useIndividualProposalRewards from 'hooks/queries/useIndividualProposalRewards';
 import useProposalRewardsThresholdFraction from 'hooks/queries/useProposalRewardsThresholdFraction';
+import getCutOffValueBigNumber from 'utils/getCutOffValueBigNumber';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './ProposalRewards.module.scss';
 import ProposalRewardsProps from './types';
-import { getCutOffValueBigNumber, getProgressPercentage } from './utils';
+import { getProgressPercentage } from './utils';
 
 const ProposalRewards: FC<ProposalRewardsProps> = ({
   canFoundedAtHide = true,

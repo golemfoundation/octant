@@ -9,7 +9,6 @@ import { getStoreWithMeta } from 'store/utils/getStoreWithMeta';
 import { SettingsData, SettingsMethods } from './types';
 
 export const initialState: SettingsData = {
-  allocateValueAdjusterUnit: '50',
   areOctantTipsAlwaysVisible: false,
   displayCurrency: 'usd',
   isAllocateOnboardingAlwaysVisible: false,
@@ -44,7 +43,6 @@ export default getStoreWithMeta<SettingsData, SettingsMethods>({
     setValuesFromLocalStorage: () =>
       set({
         data: {
-          allocateValueAdjusterUnit: '50.0',
           areOctantTipsAlwaysVisible: JSON.parse(
             localStorage.getItem(ARE_OCTANT_TIPS_ALWAYS_VISIBLE) || 'null',
           ),

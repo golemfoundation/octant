@@ -11,7 +11,6 @@ export const BUTTON_VARIANTS = [
   'iconOnlyTransparent2',
   'iconVertical',
   'link',
-  'link2',
   'link3',
   'link4',
   'link5',

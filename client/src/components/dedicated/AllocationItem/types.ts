@@ -1,13 +1,16 @@
+import { BigNumber } from 'ethers';
+
 import { ProposalWithRewards } from 'hooks/queries/useProposalsWithRewards';
 
 export interface AllocationItemWithAllocations extends ProposalWithRewards {
   isAllocatedTo: boolean;
-  isSelected: boolean;
-  value: string | undefined;
+  value: BigNumber;
 }
 
 export default interface AllocationItemProps extends AllocationItemWithAllocations {
   className?: string;
-  onChange: (proposalAddress: string, value: string) => void;
+  isDisabled: boolean;
+  isLocked: boolean;
+  isManuallyEdited?: boolean;
   onSelectItem: (proposalAddress: string) => void;
 }

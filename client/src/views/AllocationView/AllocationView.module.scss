@@ -3,19 +3,21 @@
 }
 
 .box {
-  min-height: 9.6rem;
-
   &.isAllocation {
     padding: 0;
   }
 
-  &.isSelected {
-    position: relative;
-    z-index: $z-index-4;
-  }
-
   &:not(:last-child) {
     margin: 0 auto 1.6rem;
+  }
+
+  &.isTipTiles {
+    width: 100%;
+    margin: 0 0 1.6rem;
+
+    @media #{$desktop-up} {
+      margin-bottom: 2.8rem;
+    }
   }
 }
 
@@ -29,12 +31,4 @@
   background-color: $color-octant-grey8;
   opacity: 0.5;
   cursor: pointer;
-}
-
-.tip {
-  margin-bottom: 1.6rem;
-
-  @media #{$desktop-up} {
-    margin-bottom: 2.8rem;
-  }
 }

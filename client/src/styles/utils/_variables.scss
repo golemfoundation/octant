@@ -7,6 +7,7 @@ $border-radius-20: 2rem;
 $border-radius-32: 3.2rem;
 
 $box-shadow-1: 0px 0px 25px rgba(0, 0, 0, 0.05);
+$box-shadow-2: 0px 4px 25px rgba(0, 0, 0, 0.15);
 
 $transition-time-1: 0.5s;
 $transition-time-2: 0.25s;
@@ -23,3 +24,5 @@ $headerNavigationHeight: 7.2rem;
 $layoutMarginHorizontal: 2.4rem;
 $layoutBodyMarginBottom: $headerNavigationHeight + 2 * $layoutMarginHorizontal;
 $progressStepperSlimStepPadding: 2.4rem;
+$modalVariantSmallPaddingMobile: 2.4rem;
+$modalVariantSmallPaddingDesktop: 5.6rem;

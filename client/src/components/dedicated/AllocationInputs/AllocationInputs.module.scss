@@ -1,0 +1,20 @@
+.element {
+  &:not(:last-child) {
+    margin: 0 0 1.6rem;
+  }
+  &:last-child {
+    margin: 0 0 2.4rem;
+  }
+}
+
+.root {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.inputs {
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 2.4rem;
+}

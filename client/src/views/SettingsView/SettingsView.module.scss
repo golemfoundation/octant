@@ -7,3 +7,8 @@
     opacity: 0.5;
   }
 }
+
+.inputToggle {
+  // Prevents inputs from shrinking when label text is long.
+  flex-shrink: 0;
+}

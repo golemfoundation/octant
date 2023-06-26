@@ -2,7 +2,7 @@ export type CurrentMode = 'lock' | 'unlock';
 
 export type CurrentStepIndex = 0 | 1 | 2 | 3;
 
-export type FormValues = {
+export type FormFields = {
   valueToDeposeOrWithdraw: string;
 };
 

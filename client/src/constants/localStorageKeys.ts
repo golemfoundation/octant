@@ -4,6 +4,10 @@ const getLocalStorageKey = (prefix: string, suffix: string): string =>
 
 const allocationPrefix = 'allocation';
 export const ALLOCATION_ITEMS_KEY = getLocalStorageKey(allocationPrefix, 'items');
+export const ALLOCATION_REWARDS_FOR_PROPOSALS = getLocalStorageKey(
+  allocationPrefix,
+  'rewardsForProposals',
+);
 
 const onboardingPrefix = 'onboarding';
 export const IS_ONBOARDING_DONE = getLocalStorageKey(onboardingPrefix, 'isOnboardingDone');
@@ -54,4 +58,9 @@ export const WAS_REWARDS_ALREADY_CLOSED_TIP = getLocalStorageKey(
 export const WAS_WITHDRAW_ALREADY_CLOSED_TIP = getLocalStorageKey(
   tipTilesPrefix,
   'wasWithdrawAlreadyClosed',
+);
+
+export const WAS_CHANGED_YOUR_MIND_ALREADY_CLOSED_TIP = getLocalStorageKey(
+  tipTilesPrefix,
+  'wasChangedYourMindAlreadyClosed',
 );

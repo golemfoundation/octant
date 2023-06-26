@@ -6,7 +6,7 @@ import useContractRewards from 'hooks/contracts/useContractRewards';
 
 import useCurrentEpoch from './useCurrentEpoch';
 
-type ProposalRewards = {
+export type ProposalRewards = {
   address: string;
   donated: BigNumber;
   matched: BigNumber;

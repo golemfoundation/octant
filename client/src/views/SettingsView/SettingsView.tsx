@@ -1,12 +1,10 @@
-import cx from 'classnames';
 import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Header from 'components/core/Header/Header';
-import InputCheckbox from 'components/core/InputCheckbox/InputCheckbox';
 import InputSelect from 'components/core/InputSelect/InputSelect';
-import InputText from 'components/core/InputText/InputText';
+import InputToggle from 'components/core/InputToggle/InputToggle';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useSettingsStore from 'store/settings/store';
 import { SettingsData } from 'store/settings/types';
@@ -30,13 +28,11 @@ const SettingsView = (): ReactElement => {
     setIsAllocateOnboardingAlwaysVisible,
     setIsCryptoMainValueDisplay,
     setAreOctantTipsAlwaysVisible,
-    allocateValueAdjusterUnit,
     displayCurrency,
     isAllocateOnboardingAlwaysVisible,
     isCryptoMainValueDisplay,
     areOctantTipsAlwaysVisible,
   } = useSettingsStore(state => ({
-    allocateValueAdjusterUnit: state.data.allocateValueAdjusterUnit,
     areOctantTipsAlwaysVisible: state.data.areOctantTipsAlwaysVisible,
     displayCurrency: state.data.displayCurrency,
     isAllocateOnboardingAlwaysVisible: state.data.isAllocateOnboardingAlwaysVisible,
@@ -49,7 +45,7 @@ const SettingsView = (): ReactElement => {
   return (
     <MainLayout dataTest="SettingsView">
       <Header text={t('settings')} />
-      <BoxRounded className={styles.box} justifyContent="spaceBetween">
+      <BoxRounded className={styles.box} justifyContent="spaceBetween" textAlign="left">
         {t('chooseDisplayCurrency')}
         <InputSelect
           onChange={option => setDisplayCurrency(option!.value as SettingsData['displayCurrency'])}
@@ -57,36 +53,27 @@ const SettingsView = (): ReactElement => {
           selectedOption={options.find(({ value }) => value === displayCurrency)}
         />
       </BoxRounded>
-      <BoxRounded className={cx(styles.box, styles.isDisabled)} justifyContent="spaceBetween">
-        <InputText
-          className={styles.box}
-          isDisabled
-          label={t('allocateValueAdjustersDefault')}
-          onChange={() => {}}
-          suffix={displayCurrency.toUpperCase()}
-          value={allocateValueAdjusterUnit}
-          variant="boxRounded"
-        />
-      </BoxRounded>
-      <BoxRounded className={styles.box} justifyContent="spaceBetween">
+      <BoxRounded className={styles.box} justifyContent="spaceBetween" textAlign="left">
         {t('cryptoMainValueDisplay')}
-        <InputCheckbox
-          dataTest="UseCryptoAsMainValueDisplay__InputCheckbox"
+        <InputToggle
+          className={styles.inputToggle}
+          dataTest="InputToggle__UseCryptoAsMainValueDisplay"
           isChecked={isCryptoMainValueDisplay}
           onChange={({ target: { checked: isChecked } }) => setIsCryptoMainValueDisplay(isChecked)}
         />
       </BoxRounded>
-      <BoxRounded className={styles.box} justifyContent="spaceBetween">
+      <BoxRounded className={styles.box} justifyContent="spaceBetween" textAlign="left">
         {t('alwaysShowOnboarding')}
-        <InputCheckbox
-          dataTest="AlwaysShowOnboarding__InputCheckbox"
+        <InputToggle
+          className={styles.inputToggle}
+          dataTest="InputToggle__AlwaysShowOnboarding"
           isChecked={isAllocateOnboardingAlwaysVisible}
           onChange={event => setIsAllocateOnboardingAlwaysVisible(event.target.checked)}
         />
       </BoxRounded>
       <BoxRounded className={styles.box} justifyContent="spaceBetween">
         {t('alwaysShowOctantTips')}
-        <InputCheckbox
+        <InputToggle
           dataTest="AlwaysShowOctantTips__InputCheckbox"
           isChecked={areOctantTipsAlwaysVisible}
           onChange={event => setAreOctantTipsAlwaysVisible(event.target.checked)}

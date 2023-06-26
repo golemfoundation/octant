@@ -95,8 +95,14 @@ $headerNavigationBorderRadius: $border-radius-32;
   font-weight: $font-weight-bold;
 }
 
-.budget {
+.budget,
+.allocationPeriod {
   font-size: $font-size-14;
+}
+
+.highlighted {
+  color: $color-octant-orange;
+  font-weight: $font-weight-bold;
 }
 
 .body {

@@ -10,22 +10,24 @@ import { cross } from 'svg/misc';
 import styles from './Modal.module.scss';
 import ModalProps from './types';
 
-const desktopVariants = {
-  showHide: {
+const variantsCenter = {
+  showHide: isDesktop => ({
     bottom: 'calc(50% + 20px)',
+    margin: isDesktop ? '0' : '0 2.4rem',
     opacity: 0,
-    x: '-50%',
+    x: isDesktop ? '-50%' : '0',
     y: `50%`,
-  },
-  visible: {
+  }),
+  visible: isDesktop => ({
     bottom: '50%',
+    margin: isDesktop ? '0' : '0 2.4rem',
     opacity: 1,
-    x: '-50%',
+    x: isDesktop ? '-50%' : '0',
     y: '50%',
-  },
+  }),
 };
 
-const variants = {
+const variantsBottom = {
   showHide: {
     bottom: '-100%',
   },
@@ -39,6 +41,7 @@ const variants = {
 
 const Modal: FC<ModalProps> = ({
   bodyClassName,
+  variant = 'standard',
   className,
   children,
   dataTest = 'Modal',
@@ -48,6 +51,7 @@ const Modal: FC<ModalProps> = ({
   isOverflowEnabled = true,
   isFullScreen,
   onClosePanel,
+  onModalClosed,
 }) => {
   const { isDesktop } = useMediaQuery();
 
@@ -70,12 +74,19 @@ const Modal: FC<ModalProps> = ({
         <motion.div
           key="modal-root"
           animate="visible"
-          className={cx(styles.root, className)}
+          className={cx(styles.root, className, styles[`variant--${variant}`])}
+          custom={isDesktop}
           data-test={dataTest}
           exit="showHide"
           initial="showHide"
+          onAnimationComplete={definition => {
+            if (definition !== 'showHide' || !onModalClosed) {
+              return;
+            }
+            onModalClosed();
+          }}
           transition={{ damping: 0.5 }}
-          variants={isDesktop ? desktopVariants : variants}
+          variants={isDesktop || variant === 'small' ? variantsCenter : variantsBottom}
         >
           {Image && <div className={styles.image}>{Image}</div>}
           <div className={cx(styles.body, Image && styles.hasImage, bodyClassName)}>

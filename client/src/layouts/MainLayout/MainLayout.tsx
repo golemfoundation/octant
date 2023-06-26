@@ -1,7 +1,7 @@
 import cx from 'classnames';
-import React, { FC, useState, Fragment, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
+import React, { FC, useState, Fragment, useEffect, useRef, useMemo } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { useLocation, useMatch } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
 import Button from 'components/core/Button/Button';
@@ -12,11 +12,16 @@ import WalletModal from 'components/dedicated/WalletModal/WalletModal';
 import { IS_INITIAL_LOAD_DONE } from 'constants/dataAttributes';
 import networkConfig from 'constants/networkConfig';
 import env from 'env';
+import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
 import { octant } from 'svg/logo';
 import { chevronBottom } from 'svg/misc';
+import getDifferenceInWeeks from 'utils/getDifferenceInWeeks';
+import getTimeDistance from 'utils/getTimeDistance';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
 import styles from './MainLayout.module.scss';
@@ -45,6 +50,8 @@ const MainLayout: FC<MainLayoutProps> = ({
   const { address, isConnected } = useAccount();
   const { data: individualReward } = useIndividualReward();
   const { data: currentEpoch } = useCurrentEpoch();
+  const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -82,6 +89,35 @@ const MainLayout: FC<MainLayoutProps> = ({
     isActive: tab.isActive || pathname === tab.to,
   }));
 
+  const isAllocationRoot = !!useMatch(ROOT_ROUTES.allocation.absolute);
+  const isProposalRoot =
+    !!useMatch(ROOT_ROUTES.proposal.absolute) ||
+    !!useMatch(ROOT_ROUTES.proposalWithAddress.absolute);
+  const isProposalsRoot = !!useMatch(ROOT_ROUTES.proposals.absolute);
+
+  const showAllocationPeriod = isAllocationRoot || isProposalRoot || isProposalsRoot;
+
+  const allocationPeriod = useMemo(() => {
+    if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
+      return getTimeDistance(Date.now(), new Date(timeCurrentAllocationEnd).getTime());
+    }
+    if (!isDecisionWindowOpen && timeCurrentEpochEnd) {
+      return getTimeDistance(Date.now(), new Date(timeCurrentEpochEnd).getTime());
+    }
+
+    return '';
+  }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
+
+  const isAllocationPeriodIsHighlighted = useMemo(() => {
+    if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
+      return getDifferenceInWeeks(Date.now(), new Date(timeCurrentAllocationEnd).getTime()) < 1;
+    }
+    if (!isDecisionWindowOpen && timeCurrentEpochEnd) {
+      return getDifferenceInWeeks(Date.now(), new Date(timeCurrentEpochEnd).getTime()) < 1;
+    }
+    return false;
+  }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
+
   return (
     <Fragment>
       <WalletModal
@@ -116,9 +152,27 @@ const MainLayout: FC<MainLayoutProps> = ({
                 >
                   <div className={styles.walletInfo}>
                     <div className={styles.address}>{truncateEthAddress(address)}</div>
-                    <div className={styles.budget}>
-                      {getIndividualRewardText({ currentEpoch, individualReward })}
-                    </div>
+                    {showAllocationPeriod ? (
+                      <div className={styles.allocationPeriod}>
+                        <Trans
+                          components={[
+                            <span
+                              className={cx(isAllocationPeriodIsHighlighted && styles.highlighted)}
+                            />,
+                          ]}
+                          i18nKey={
+                            isDecisionWindowOpen
+                              ? 'layouts.main.allocationEndsIn'
+                              : 'layouts.main.allocationStartsIn'
+                          }
+                          values={{ allocationPeriod }}
+                        />
+                      </div>
+                    ) : (
+                      <div className={styles.budget}>
+                        {getIndividualRewardText({ currentEpoch, individualReward })}
+                      </div>
+                    )}
                   </div>
                   <Button
                     className={cx(

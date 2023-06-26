@@ -1,4 +1,4 @@
-import { UserAllocation } from 'hooks/queries/useUserAllocations';
+import { UserAllocationElement } from 'hooks/queries/useUserAllocations';
 import { AllocationsData, AllocationsMethods } from 'store/allocations/types';
 
 import { onAddRemoveAllocationElementLocalStorage } from './utils';
@@ -6,20 +6,20 @@ import { onAddRemoveAllocationElementLocalStorage } from './utils';
 export default function useIdsInAllocation({
   allocations,
   proposalName,
-  userAllocations,
+  userAllocationsElements,
   setAllocations,
 }: {
   allocations: AllocationsData['allocations'];
   proposalName?: string;
   setAllocations: AllocationsMethods['setAllocations'];
-  userAllocations?: UserAllocation[];
+  userAllocationsElements?: UserAllocationElement[];
 }): { onAddRemoveFromAllocate: (address: string) => void } {
   const onAddRemoveFromAllocate = (address: string) => {
     const newIds = onAddRemoveAllocationElementLocalStorage({
       address,
       allocations,
       name: proposalName,
-      userAllocations,
+      userAllocationsElements,
     });
     if (newIds) {
       setAllocations(newIds);

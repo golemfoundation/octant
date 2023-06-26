@@ -1,3 +1,5 @@
+import { BigNumber } from 'ethers';
+
 import { DISPLAY_CURRENCIES } from 'constants/currencies';
 import {
   ALLOCATION_ITEMS_KEY,
@@ -11,21 +13,13 @@ import {
   WAS_LOCK_GLM_ALREADY_CLOSED_TIP,
   WAS_REWARDS_ALREADY_CLOSED_TIP,
   WAS_WITHDRAW_ALREADY_CLOSED_TIP,
+  ALLOCATION_REWARDS_FOR_PROPOSALS,
 } from 'constants/localStorageKeys';
 import { initialState as settingsStoreInitialState } from 'store/settings/store';
 import { initialState as tipsStoreInitialState } from 'store/tips/store';
 import isStringValidJson from 'utils/isStringValidJson';
 
 const LocalStorageService = () => {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  const validateBoolean = (localStorageKey: string, defaultValue = false): void => {
-    const value = JSON.parse(localStorage.getItem(localStorageKey) || 'null');
-
-    if (value !== true && value !== false) {
-      localStorage.setItem(localStorageKey, JSON.stringify(defaultValue));
-    }
-  };
-
   const validateLocalStorageJsons = (): void => {
     const localStorageElements = { ...localStorage };
     const localStorageKeys = Object.keys(localStorageElements);
@@ -36,6 +30,28 @@ const LocalStorageService = () => {
       if (!isStringValidJson(localStorageElement)) {
         localStorage.removeItem(localStorageKey);
       }
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const validateBoolean = (localStorageKey: string, defaultValue = false): void => {
+    const value = JSON.parse(localStorage.getItem(localStorageKey) || 'null');
+
+    if (value !== true && value !== false) {
+      localStorage.setItem(localStorageKey, JSON.stringify(defaultValue));
+    }
+  };
+
+  const validateBigNumber = (localStorageKey: string): void => {
+    let value;
+    try {
+      value = BigNumber.from(JSON.parse(localStorage.getItem(localStorageKey) || 'null'));
+    } catch (e) {
+      value = '';
+    }
+
+    if (!BigNumber.isBigNumber(value)) {
+      localStorage.setItem(localStorageKey, JSON.stringify(BigNumber.from(0)));
     }
   };
 
@@ -116,6 +132,9 @@ const LocalStorageService = () => {
       tipsStoreInitialState.wasWithdrawAlreadyClosed,
     );
 
+  const validateRewardsForProposals = (): void =>
+    validateBigNumber(ALLOCATION_REWARDS_FOR_PROPOSALS);
+
   const init = (): void => {
     validateLocalStorageJsons();
     validateAllocationItems();
@@ -129,6 +148,7 @@ const LocalStorageService = () => {
     validateWasLockGLMAlreadyClosed();
     validateWasRewardsAlreadyClosed();
     validateWasWithdrawAlreadyClosed();
+    validateRewardsForProposals();
   };
 
   return {
