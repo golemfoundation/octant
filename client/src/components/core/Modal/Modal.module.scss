@@ -1,3 +1,5 @@
+$paddingVertical: 3.2rem;
+
 .root {
   display: flex;
   flex-direction: column;
@@ -32,7 +34,7 @@
   justify-content: center;
   width: 100%;
   background: $color-white;
-  padding: 3.2rem 5.6rem;
+  padding: $paddingVertical 2.4rem;
   overflow: auto;
 }
 
@@ -68,7 +70,7 @@
   }
 
   .body {
-    padding: 5.6rem 2.4rem;
+    padding: $paddingVertical 5.6rem;
 
     &.hasImage {
       border-radius: 0 0 $border-radius-20 $border-radius-20;
