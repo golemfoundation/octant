@@ -21,7 +21,7 @@ def get_locks_by_address(user_address):
     return graphql_client.execute(query, variable_values=variables)["lockeds"]
 
 
-def get_locks_by_timestamp_range(from_ts, to_ts):
+def get_locks_by_timestamp_range(from_ts: int, to_ts: int):
     query = gql(
         """
         query GetLocks($fromTimestamp: Int!, $toTimestamp: Int!) {
