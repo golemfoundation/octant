@@ -35,6 +35,7 @@ const Button = <T extends ButtonProps>(
 ) => {
   const filteredProps = {};
   const isActionDisabled = isDisabled || isLoading;
+  const hasHoverState = !to && !href;
 
   let Component;
   if (to) {
@@ -71,6 +72,7 @@ const Button = <T extends ButtonProps>(
         isActionDisabled && styles.isDisabled,
         isLoading && styles.isLoading,
         isHigh && styles.isHigh,
+        hasHoverState && styles.hasHoverState,
         (onClick || type === 'submit') && styles.isClickable,
         className,
       )}
