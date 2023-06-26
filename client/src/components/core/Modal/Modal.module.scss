@@ -1,3 +1,4 @@
+$desktop-width: 47.2rem;
 $paddingVertical: 3.2rem;
 
 .root {
@@ -13,6 +14,28 @@ $paddingVertical: 3.2rem;
   text-align: left;
   background: $color-octant-grey4;
 
+  &.variant {
+    &--small {
+      width: calc(100% - 4.8rem);
+      border-radius: $border-radius-16;
+      box-shadow: $box-shadow-2;
+
+      .header {
+        font-size: $font-size-14;
+        margin: $modalVariantSmallPaddingMobile !important;
+      }
+
+      @media #{$desktop-up} {
+        width: $desktop-width;
+
+        .header {
+          font-size: $font-size-20;
+          margin: 2.4rem $modalVariantSmallPaddingDesktop !important;
+        }
+      }
+    }
+  }
+
   .image {
     display: flex;
     align-items: flex-end;
@@ -21,8 +44,9 @@ $paddingVertical: 3.2rem;
 
   .header {
     position: relative;
-    font-size: $font-size-20;
     font-weight: $font-weight-bold;
+    font-size: $font-size-20;
+    color: $color-octant-dark;
     width: 100%;
     overflow: hidden;
   }
@@ -57,7 +81,7 @@ $paddingVertical: 3.2rem;
 
 @media #{$desktop-up} {
   .root {
-    width: 47.2rem;
+    width: $desktop-width;
     left: 50%;
     box-shadow: $box-shadow-1;
     border-radius: $border-radius-20;

@@ -1,39 +1,5 @@
-import {
-  getCutOffValueBigNumberTestCases,
-  getProgressPercentageTestCases,
-  getCutOffValueNumberTestCases,
-} from './testCases';
-import { getCutOffValueNumber, getCutOffValueBigNumber, getProgressPercentage } from './utils';
-
-describe('getCutOffValueNumber', () => {
-  for (const {
-    name,
-    individualProposalRewardsSum,
-    proposalRewardsThresholdFraction,
-    expectedValue,
-  } of getCutOffValueNumberTestCases) {
-    it(name, () => {
-      expect(
-        getCutOffValueNumber(individualProposalRewardsSum, proposalRewardsThresholdFraction),
-      ).toEqual(expectedValue);
-    });
-  }
-});
-
-describe('getCutOffValueBigNumberTestCases', () => {
-  for (const {
-    name,
-    individualProposalRewardsSum,
-    proposalRewardsThresholdFraction,
-    expectedValue,
-  } of getCutOffValueBigNumberTestCases) {
-    it(name, () => {
-      expect(
-        getCutOffValueBigNumber(individualProposalRewardsSum, proposalRewardsThresholdFraction),
-      ).toEqual(expectedValue);
-    });
-  }
-});
+import { getProgressPercentageTestCases } from './testCases';
+import { getProgressPercentage } from './utils';
 
 describe('getProgressPercentage', () => {
   for (const {

@@ -7,6 +7,7 @@ export default interface InputTextProps {
   className?: string;
   error?: string;
   inputMode?: HTMLAttributes<HTMLInputElement>['inputMode'];
+  isButtonClearVisible?: boolean;
   isDisabled?: boolean;
   isErrorInlineVisible?: boolean;
   label?: string;
@@ -17,6 +18,7 @@ export default interface InputTextProps {
   onFocus?: FocusEventHandler<HTMLInputElement>;
   placeholder?: string;
   suffix?: string;
+  textAlign?: 'left' | 'center';
   value?: string;
   variant?: InputTextVariant;
 }

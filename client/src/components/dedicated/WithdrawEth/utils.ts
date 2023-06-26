@@ -4,18 +4,18 @@ import { object, string, ObjectSchema } from 'yup';
 
 import i18n from 'i18n';
 
-import { FormValues } from './types';
+import { FormFields } from './types';
 
-export const formInitialValues: FormValues = {
+export const formInitialValues: FormFields = {
   valueToWithdraw: '',
 };
 
 export const validationSchema = (
   withdrawableUserEth: BigNumber | undefined,
-): ObjectSchema<FormValues> =>
+): ObjectSchema<FormFields> =>
   object().shape({
     valueToWithdraw: string()
-      .required("Value can't be empty")
+      .required(i18n.t('common.valueCantBeEmpty'))
       .test({
         name: 'value-in-range',
         skipAbsent: true,

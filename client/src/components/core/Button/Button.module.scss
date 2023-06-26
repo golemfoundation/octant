@@ -171,20 +171,6 @@
     color: $color-octant-green;
   }
 
-  &link2 {
-    height: 4.8rem;
-    background: $color-white;
-    padding: 0 1.6rem;
-    border-radius: $border-radius-20;
-
-    svg {
-      path {
-        color: $color-black;
-        stroke: $color-black;
-      }
-    }
-  }
-
   &link3 {
     position: relative;
     height: auto;

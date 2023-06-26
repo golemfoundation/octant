@@ -1,14 +1,16 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { BigNumber } from 'ethers';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { useAccount, useNetwork } from 'wagmi';
 
 import 'react-toastify/dist/ReactToastify.css';
 
 import AppLoader from 'components/dedicated/AppLoader/AppLoader';
-import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
+import { ALLOCATION_ITEMS_KEY, ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -20,24 +22,25 @@ import useSettingsStore from 'store/settings/store';
 import useTipsStore from 'store/tips/store';
 import triggerToast from 'utils/triggerToast';
 
+import { getValidatedProposalsFromLocalStorage } from './utils';
 import 'styles/index.scss';
 import 'i18n';
 
-const validateProposalsInLocalStorage = (
-  localStorageAllocationItems: string[],
-  proposals: string[],
-): string[] =>
-  localStorageAllocationItems.filter(item => proposals.find(address => address === item));
-
 const App = (): ReactElement => {
   const { chain } = useNetwork();
-  const { allocations, setAllocations, addAllocations, isAllocationsInitialized } =
-    useAllocationsStore(state => ({
-      addAllocations: state.addAllocations,
-      allocations: state.data.allocations,
-      isAllocationsInitialized: state.meta.isInitialized,
-      setAllocations: state.setAllocations,
-    }));
+  const {
+    allocations,
+    setAllocations,
+    addAllocations,
+    isAllocationsInitialized,
+    setRewardsForProposals,
+  } = useAllocationsStore(state => ({
+    addAllocations: state.addAllocations,
+    allocations: state.data.allocations,
+    isAllocationsInitialized: state.meta.isInitialized,
+    setAllocations: state.setAllocations,
+    setRewardsForProposals: state.setRewardsForProposals,
+  }));
   const {
     setValuesFromLocalStorage: setValuesFromLocalStorageTips,
     isInitialized: isTipsStoreInitialized,
@@ -84,6 +87,7 @@ const App = (): ReactElement => {
   });
   const { data: proposals } = useProposalsContract();
   const { data: userAllocations } = useUserAllocations();
+  const { data: individualReward } = useIndividualReward();
   const [isAccountChanging, setIsAccountChanging] = useState(false);
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
   const [currentAddressLocal, setCurrentAddressLocal] = useState<null | string>(null);
@@ -202,7 +206,7 @@ const App = (): ReactElement => {
       return;
     }
 
-    const validatedProposalsInLocalStorage = validateProposalsInLocalStorage(
+    const validatedProposalsInLocalStorage = getValidatedProposalsFromLocalStorage(
       localStorageAllocationItems,
       proposals,
     );
@@ -219,17 +223,47 @@ const App = (): ReactElement => {
     if (!userAllocations || isAllocationsInitialized) {
       return;
     }
-    const userAllocationsAddresses = userAllocations.map(({ proposalAddress }) => proposalAddress);
+    const userAllocationsAddresses = userAllocations.elements.map(
+      ({ address: userAllocationAddress }) => userAllocationAddress,
+    );
     if (
       isConnected &&
       userAllocations &&
-      userAllocations.length > 0 &&
+      userAllocations.elements.length > 0 &&
       !!allocations &&
       !allocations.some(allocation => userAllocationsAddresses.includes(allocation))
     ) {
       addAllocations(userAllocationsAddresses);
     }
   }, [isAllocationsInitialized, isConnected, userAllocations, allocations, addAllocations]);
+
+  useEffect(() => {
+    /**
+     * This hook adds rewardsForProposals to the store.
+     */
+    if (!individualReward || !userAllocations) {
+      return;
+    }
+
+    const localStorageRewardsForProposals = BigNumber.from(
+      JSON.parse(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROPOSALS) || 'null'),
+    );
+    if (userAllocations.elements.length > 0) {
+      const userAllocationsSum = userAllocations.elements.reduce(
+        (acc, curr) => acc.add(curr.value),
+        BigNumber.from(0),
+      );
+      setRewardsForProposals(userAllocationsSum);
+      return;
+    }
+    setRewardsForProposals(
+      localStorageRewardsForProposals.gt(individualReward)
+        ? BigNumber.from(0)
+        : localStorageRewardsForProposals,
+    );
+    // .toHexString(), because React can't compare objects as deps in hooks, causing infinite loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [individualReward?.toHexString(), userAllocations]);
 
   useEffect(() => {
     if (!areOctantTipsAlwaysVisible) {

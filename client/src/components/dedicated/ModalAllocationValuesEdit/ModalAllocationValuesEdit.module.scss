@@ -1,0 +1,19 @@
+.root {
+  padding: 0;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 1.6rem $modalVariantSmallPaddingMobile $modalVariantSmallPaddingMobile;
+  border-top: 0.1rem solid $color-octant-grey4;
+
+  @media #{$desktop-up} {
+    padding: 1.6rem $modalVariantSmallPaddingDesktop $modalVariantSmallPaddingDesktop;
+  }
+}
+
+.inputs {
+  width: 100%;
+}

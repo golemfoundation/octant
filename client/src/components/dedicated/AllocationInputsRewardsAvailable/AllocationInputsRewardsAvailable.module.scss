@@ -1,0 +1,28 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.6rem;
+  height: 4rem;
+  background: $color-octant-grey4;
+  margin-bottom: 1.6rem;
+  border-radius: $border-radius-04;
+  font-size: $font-size-12;
+  font-weight: $font-weight-semibold;
+  color: $color-octant-grey6;
+
+  &:not(.isThereSomethingToDistribute) {
+    justify-content: center;
+  }
+
+  .value {
+    font-weight: $font-weight-bold;
+
+    &:not(.isValueExceeded) {
+      color: $color-octant-green
+    }
+    &.isValueExceeded {
+      color: $color-octant-orange;
+    }
+  }
+}

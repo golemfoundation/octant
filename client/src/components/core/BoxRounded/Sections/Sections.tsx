@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import React, { FC, Fragment } from 'react';
 
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
@@ -9,26 +10,35 @@ import SectionsProps, { SectionProps } from './types';
 
 const Section: FC<SectionProps> = ({
   label,
+  labelClassName,
   icon,
   onTooltipClick,
   doubleValueProps,
   dataTest = 'Section',
+  className,
+  additionalContent,
+  onClick,
+  labelSuffix,
 }) => (
-  <div className={styles.root} data-test={dataTest}>
-    <div className={styles.label}>
-      {icon ? <Svg img={icon} size={4} /> : label}
-      {onTooltipClick && (
-        <Svg
-          classNameSvg={styles.tooltip}
-          dataTest={`${dataTest}__Svg`}
-          img={questionMark}
-          onClick={onTooltipClick}
-          size={1.6}
-        />
-      )}
+  <>
+    <div className={cx(styles.root, className)} data-test={dataTest} onClick={onClick}>
+      <div className={cx(styles.label, labelClassName)}>
+        {icon ? <Svg img={icon} size={4} /> : label}
+        {labelSuffix && labelSuffix}
+        {onTooltipClick && (
+          <Svg
+            classNameSvg={styles.tooltip}
+            dataTest={`${dataTest}__Svg`}
+            img={questionMark}
+            onClick={onTooltipClick}
+            size={1.6}
+          />
+        )}
+      </div>
+      <DoubleValue textAlignment="right" variant="small" {...doubleValueProps} />
     </div>
-    <DoubleValue textAlignment="right" variant="small" {...doubleValueProps} />
-  </div>
+    {!!additionalContent && additionalContent}
+  </>
 );
 
 const Sections: FC<SectionsProps> = ({ sections }) => (

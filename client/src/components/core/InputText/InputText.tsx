@@ -21,6 +21,8 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
       variant = 'simple',
       onChange,
       onClear,
+      isButtonClearVisible = true,
+      textAlign = 'left',
       value,
       ...rest
     },
@@ -38,6 +40,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
       className: cx(
         styles.input,
         styles[`variant--${variant}`],
+        styles[`textAlign--${textAlign}`],
         isDisabled && styles.isDisabled,
         !!error && styles.isError,
         styles.className,
@@ -55,7 +58,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
     };
 
     const suffixProps = {
-      className: cx(styles.suffix, styles[`variant--${variant}`]),
+      className: cx(styles.suffix, styles[`variant--${variant}`], isDisabled && styles.isDisabled),
     };
 
     if (variant === 'borderless') {
@@ -68,7 +71,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
           {label && <div {...labelProps}>{label}</div>}
           <div {...inputWrapperProps}>
             <input {...inputProps} />
-            {variant === 'simple' && value && (
+            {variant === 'simple' && value && isButtonClearVisible && (
               <Button
                 className={cx(styles.buttonClear, !!suffix && styles.isSuffix)}
                 Icon={<Svg img={cross} size={0.8} />}

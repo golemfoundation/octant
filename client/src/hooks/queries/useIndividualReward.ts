@@ -15,6 +15,8 @@ export default function useIndividualReward(): UseQueryResult<BigNumber | undefi
   return useQuery(
     QUERY_KEYS.individualReward,
     () => contractRewards?.individualReward(currentEpoch! - 1, address!),
-    { enabled: !!currentEpoch && currentEpoch > 1 && !!address && !!contractRewards },
+    {
+      enabled: !!currentEpoch && currentEpoch > 1 && !!address && !!contractRewards,
+    },
   );
 }

@@ -3,18 +3,21 @@
   flex: 1;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   color: $color-octant-grey6;
   line-height: 2.4rem;
-
-  .icon {
-    filter: blur(0.75rem);
-  }
+  padding-top: 13.2rem;
 
   .text {
-    border-top: 0.1rem solid $color-octant-grey12;
-    border-bottom: 0.1rem solid $color-octant-grey12;
-    padding: 1.9rem 0;
-    margin: 8rem 0 5.6rem;
+    font-size: $font-size-14;
+    font-weight: $font-weight-semibold;
+    color: $color-octant-grey6;
+    text-align: center;
+    margin-top: 4rem;
+    padding: 0 2rem;
+  }
+
+  .image {
+    filter: grayscale(1);
+    opacity: 0.25;
   }
 }

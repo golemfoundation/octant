@@ -4,9 +4,9 @@ import { string, object, ObjectSchema } from 'yup';
 
 import i18n from 'i18n';
 
-import { CurrentMode, CurrentStepIndex, FormValues } from './types';
+import { CurrentMode, CurrentStepIndex, FormFields } from './types';
 
-export const formInitialValues: FormValues = {
+export const formInitialValues: FormFields = {
   valueToDeposeOrWithdraw: '',
 };
 
@@ -30,10 +30,10 @@ export const validationSchema = (
   currentMode: CurrentMode,
   dataAvailableFunds: BigNumber | undefined,
   depositsValue: BigNumber | undefined,
-): ObjectSchema<FormValues> =>
+): ObjectSchema<FormFields> =>
   object().shape({
     valueToDeposeOrWithdraw: string()
-      .required("Value can't be empty")
+      .required(i18n.t('common.valueCantBeEmpty'))
       .test({
         name: 'value-in-range',
         skipAbsent: true,

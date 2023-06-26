@@ -4,6 +4,7 @@ import {
   floatNumberWithUpTo18DecimalPlaces,
   floatNumberWithUpTo2DecimalPlaces,
   numbersOnly,
+  percentageOnly,
 } from './regExp';
 
 const regExpTestCases = [
@@ -118,6 +119,32 @@ const regExpTestCases = [
       { expectedValue: true, test: '1,0' },
       { expectedValue: true, test: '12,0' },
       { expectedValue: false, test: '12.01' },
+    ],
+  },
+  {
+    name: 'percentageOnly',
+    regExp: percentageOnly,
+    testCases: [
+      { expectedValue: false, test: '0,0' },
+      { expectedValue: false, test: '0,00' },
+      { expectedValue: false, test: '0.0' },
+      { expectedValue: false, test: '0.00' },
+      { expectedValue: false, test: '0.001' },
+      { expectedValue: false, test: '101' },
+      { expectedValue: false, test: '100.0' },
+      { expectedValue: false, test: '100.00' },
+      { expectedValue: false, test: '100,0' },
+      { expectedValue: false, test: '100,00' },
+      { expectedValue: false, test: '100.01' },
+      { expectedValue: false, test: '100,01' },
+      { expectedValue: true, test: '0' },
+      { expectedValue: true, test: '100' },
+      { expectedValue: true, test: '1' },
+      { expectedValue: true, test: '99' },
+      { expectedValue: true, test: '19' },
+      { expectedValue: true, test: '35' },
+      { expectedValue: true, test: '9' },
+      { expectedValue: true, test: '68' },
     ],
   },
 ];

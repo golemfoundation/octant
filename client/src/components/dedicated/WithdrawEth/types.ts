@@ -1,3 +1,3 @@
-export type FormValues = {
+export type FormFields = {
   valueToWithdraw: string;
 };

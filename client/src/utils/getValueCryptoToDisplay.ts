@@ -1,19 +1,22 @@
+import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 
-import DoubleValueProps from 'components/core/DoubleValue/types';
 import { CRYPTO_CURRENCIES_TICKERS } from 'constants/currencies';
+import { CryptoCurrency } from 'types/cryptoCurrency';
 
 import getFormattedEthValue from './getFormattedEthValue';
+
+export type ValueCryptoToDisplay = {
+  cryptoCurrency?: CryptoCurrency;
+  valueCrypto?: BigNumber;
+  valueString?: string;
+};
 
 export default function getValueCryptoToDisplay({
   valueString,
   valueCrypto,
   cryptoCurrency,
-}: {
-  cryptoCurrency: DoubleValueProps['cryptoCurrency'];
-  valueCrypto: DoubleValueProps['valueCrypto'];
-  valueString?: DoubleValueProps['valueString'];
-}): string {
+}: ValueCryptoToDisplay): string {
   if (valueString || !cryptoCurrency || !valueCrypto) {
     return valueString || '0.0';
   }

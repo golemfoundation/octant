@@ -1,21 +1,17 @@
 import cx from 'classnames';
-import { BigNumber } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
-import React, { FC, Fragment, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { FC, Fragment } from 'react';
 import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import Button from 'components/core/Button/Button';
-import InputText from 'components/core/InputText/InputText';
 import Svg from 'components/core/Svg/Svg';
 import ProposalLoadingStates from 'components/dedicated/ProposalLoadingStates/ProposalLoadingStates';
-import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
-import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useIndividualProposalRewards from 'hooks/queries/useIndividualProposalRewards';
+import useProposalRewardsThresholdFraction from 'hooks/queries/useProposalRewardsThresholdFraction';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
-import { minus, plus } from 'svg/misc';
+import useAllocationsStore from 'store/allocations/store';
+import { checkMark, pencil } from 'svg/misc';
+import getCutOffValueBigNumber from 'utils/getCutOffValueBigNumber';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
-import { comma, floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 
 import styles from './AllocationItem.module.scss';
 import AllocationItemProps from './types';
@@ -23,114 +19,78 @@ import AllocationItemProps from './types';
 const AllocationItem: FC<AllocationItemProps> = ({
   address,
   className,
-  isSelected,
   isAllocatedTo,
-  onChange,
+  isDisabled,
+  isLocked,
+  isManuallyEdited,
   onSelectItem,
-  percentage,
   totalValueOfAllocations,
   value,
 }) => {
-  const { t } = useTranslation();
   const { isConnected } = useAccount();
+  const { data: proposalRewardsThresholdFraction } = useProposalRewardsThresholdFraction();
+  const { data: individualProposalRewards } = useIndividualProposalRewards();
   const { data: proposalsIpfs, isLoading } = useProposalsIpfs([address]);
-  const isDonationAboveThreshold = useIsDonationAboveThreshold(address);
-  const { data: individualReward } = useIndividualReward();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const { rewardsForProposals } = useAllocationsStore(state => ({
+    rewardsForProposals: state.data.rewardsForProposals,
+  }));
   const { name, isLoadingError } = proposalsIpfs[0] || {};
 
-  useEffect(() => {
-    if (isSelected && inputRef.current) {
-      inputRef.current.focus();
-    }
-  });
-
-  const onChangeValue = (newValue: string) => {
-    if (newValue && !floatNumberWithUpTo18DecimalPlaces.test(newValue)) {
-      return;
-    }
-
-    onChange(address, newValue);
-  };
-
-  const onInputTextChange = event => {
-    const newValue = event.target.value.replace(comma, '.');
-
-    onChangeValue(newValue);
-  };
-
-  const inputProps = {
-    isDisabled: !isSelected,
-    onChange: onInputTextChange,
-    placeholder: isSelected ? '' : '0',
-  };
-
   const isLoadingStates = isLoadingError || isLoading;
-  const isChangeAvailable = isConnected && individualReward;
-  const valueToCalculate = value === undefined ? BigNumber.from('0') : parseUnits(value);
+
+  const percentToRender = rewardsForProposals.isZero()
+    ? 0
+    : value.mul(100).div(rewardsForProposals).toNumber();
+  const valueToRender = getFormattedEthValue(value).fullString;
+
+  const cutOffValue = getCutOffValueBigNumber(
+    individualProposalRewards?.sum,
+    proposalRewardsThresholdFraction,
+  );
+
+  const isProjectFounded = totalValueOfAllocations
+    ? totalValueOfAllocations.gte(cutOffValue)
+    : false;
+
+  const individualProposalReward = individualProposalRewards?.projects.find(
+    ({ address: individualProposalRewardAddress }) => individualProposalRewardAddress === address,
+  );
 
   return (
     <BoxRounded
       alignment="center"
-      className={cx(styles.box, isAllocatedTo && styles.isAllocatedTo, className)}
-      onClick={isConnected ? () => onSelectItem(address) : undefined}
+      className={cx(styles.root, className)}
+      isVertical
+      justifyContent="center"
+      onClick={isConnected && !isDisabled ? () => onSelectItem(address) : undefined}
     >
       {isLoadingStates ? (
         <ProposalLoadingStates isLoading={isLoading} isLoadingError={isLoadingError} />
       ) : (
         <Fragment>
-          <div className={styles.details}>
-            <div className={styles.name}>{name}</div>
-            <div className={styles.funds}>
-              {totalValueOfAllocations !== undefined && percentage !== undefined ? (
-                <Fragment>
-                  <div>{getFormattedEthValue(totalValueOfAllocations).fullString}</div>
-                  <div className={styles.percent}>
-                    {percentage}%
-                    <div
-                      className={cx(
-                        styles.indicator,
-                        isDonationAboveThreshold && styles.isAboveThreshold,
-                      )}
-                    />
-                  </div>
-                </Fragment>
-              ) : (
-                <Fragment>{t('common.allocationValuesNotAvailable')}</Fragment>
+          <div className={styles.name}>{name}</div>
+          {(isAllocatedTo || isManuallyEdited) && (
+            <div className={styles.icons}>
+              {isAllocatedTo && isLocked && (
+                <Svg classNameSvg={styles.icon} img={checkMark} size={2.4} />
+              )}
+              {isManuallyEdited && !isLocked && (
+                <Svg classNameSvg={styles.icon} img={pencil} size={2.4} />
               )}
             </div>
-          </div>
-          <div className={cx(styles.value, isSelected && styles.isSelected)}>
-            <InputText
-              ref={inputRef}
-              inputMode="decimal"
-              value={value || '0'}
-              variant="borderless"
-              {...inputProps}
-            />
-            <div className={styles.currency}>ETH</div>
-          </div>
-          <div className={cx(styles.buttons, isSelected && styles.isSelected)}>
-            <Button
-              className={styles.button}
-              Icon={<Svg img={plus} size={1.2} />}
-              onClick={
-                isChangeAvailable
-                  ? () => onChangeValue(formatUnits(valueToCalculate.add(individualReward.div(10))))
-                  : undefined
-              }
-              variant="iconOnlyTransparent"
-            />
-            <Button
-              className={styles.button}
-              Icon={<Svg img={minus} size={1.2} />}
-              onClick={
-                isChangeAvailable
-                  ? () => onChangeValue(formatUnits(valueToCalculate.sub(individualReward.div(10))))
-                  : undefined
-              }
-              variant="iconOnlyTransparent"
-            />
+          )}
+          <div className={styles.valuesBox}>
+            <div className={styles.ethNeeded}>
+              <div className={cx(styles.dot, isProjectFounded && styles.isProjectFounded)} />
+              {individualProposalReward &&
+                `${getFormattedEthValue(individualProposalReward.donated).fullString} of ${
+                  getFormattedEthValue(cutOffValue).fullString
+                } needed`}
+            </div>
+            <div className={styles.allocated}>
+              <div className={styles.allocatedPercentage}>{percentToRender}%</div>
+              <div className={styles.allocatedAmount}>{valueToRender}</div>
+            </div>
           </div>
         </Fragment>
       )}

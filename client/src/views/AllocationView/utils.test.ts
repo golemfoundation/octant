@@ -1,64 +1,117 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { getAllocationValuesInitialState, getAllocationsWithPositiveValues } from './utils';
+import { BigNumber } from 'ethers';
 
-describe('getAllocationValuesInitialState', () => {
-  it('properly creates allocationValuesInitialState object', () => {
+import { AllocationValues } from './types';
+import {
+  getRestToDistribute,
+  getNewAllocationValues,
+  getAllocationValuesWithRewardsSplitted,
+} from './utils';
+
+describe('getAllocationValuesWithRewardsSplitted', () => {
+  it('properly distributes the difference between restToDistribute and sum of values among projects ', () => {
     expect(
-      getAllocationValuesInitialState([
-        '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91d',
-        '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91e',
-      ]),
-    ).toMatchObject({
-      '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91d': undefined,
-      '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91e': undefined,
-    });
+      getAllocationValuesWithRewardsSplitted({
+        allocationValues: [
+          { address: '0xabc', value: BigNumber.from(100) },
+          { address: '0xdef', value: BigNumber.from(200) },
+          { address: '0x123', value: BigNumber.from(150) },
+        ],
+        restToDistribute: BigNumber.from(500),
+      }),
+    ).toEqual([
+      { address: '0xabc', value: BigNumber.from(100) },
+      { address: '0xdef', value: BigNumber.from(200) },
+      { address: '0x123', value: BigNumber.from(200) },
+    ]);
+
+    expect(
+      getAllocationValuesWithRewardsSplitted({
+        allocationValues: [
+          { address: '0xabc', value: BigNumber.from(100) },
+          { address: '0xdef', value: BigNumber.from(200) },
+          { address: '0x123', value: BigNumber.from(150) },
+        ],
+        restToDistribute: BigNumber.from(700),
+      }),
+    ).toEqual([
+      { address: '0xabc', value: BigNumber.from(100) },
+      { address: '0xdef', value: BigNumber.from(200) },
+      { address: '0x123', value: BigNumber.from(400) },
+    ]);
   });
-});
 
-describe('getAllocationsWithPositiveValues', () => {
-  it('properly finds allocations with values', () => {
+  it('returns empty array when given empty array', () => {
     expect(
-      getAllocationsWithPositiveValues({
-        '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91d': undefined,
-        '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91e': undefined,
-        '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91f': undefined,
+      getAllocationValuesWithRewardsSplitted({
+        allocationValues: [],
+        restToDistribute: BigNumber.from(500),
       }),
     ).toEqual([]);
   });
+});
 
-  it('properly finds allocations with values', () => {
-    expect(
-      getAllocationsWithPositiveValues({
-        '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91d': '10',
-        '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91e': '0',
-        '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91f': undefined,
-      }),
-    ).toEqual([{ proposalAddress: '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91d', value: '10' }]);
+describe('getRestToDistribute', () => {
+  const propsCommon = {
+    allocationValues: [
+      { address: '0xabc', value: BigNumber.from(100) },
+      { address: '0xdef', value: BigNumber.from(200) },
+      { address: '0x123', value: BigNumber.from(250) },
+    ],
+    allocationsEdited: ['0xabc', '0xdef'],
+    individualReward: BigNumber.from(500),
+    rewardsForProposals: BigNumber.from(1000),
+  };
+  it('should return the correct rest to distribute when allocation values and individual reward are provided', () => {
+    const restToDistribute = getRestToDistribute(propsCommon);
+
+    const expectedRestToDistribute = BigNumber.from(700); // 1000 - (100 + 200)
+
+    expect(restToDistribute).toEqual(expectedRestToDistribute);
   });
 
-  it('properly finds allocations with values', () => {
-    expect(
-      getAllocationsWithPositiveValues({
-        '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91d': '10',
-        '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91e': '5',
-        '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91f': undefined,
-      }),
-    ).toEqual([
-      { proposalAddress: '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91d', value: '10' },
-      { proposalAddress: '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91e', value: '5' },
-    ]);
+  it('should return zero when individualReward', () => {
+    const restToDistribute = getRestToDistribute({
+      ...propsCommon,
+      individualReward: undefined,
+    });
+
+    expect(restToDistribute).toEqual(BigNumber.from(0));
+  });
+});
+
+describe('getNewAllocationValues', () => {
+  const propsCommon = {
+    allocationValues: [
+      { address: '0x123', value: BigNumber.from(150) },
+      { address: '0xabc', value: BigNumber.from(100) },
+      { address: '0xdef', value: BigNumber.from(200) },
+    ],
+    allocationsEdited: ['0xdef', '0xabc'],
+    individualReward: BigNumber.from(5000),
+    newValue: BigNumber.from(500),
+    proposalAddressToModify: '0xabc',
+    rewardsForProposals: BigNumber.from(1000),
+  };
+
+  it('should return the correct updated allocation values', () => {
+    const newAllocationValues = getNewAllocationValues(propsCommon);
+
+    const expectedAllocationValues: AllocationValues = [
+      { address: '0x123', value: BigNumber.from(300) },
+      { address: '0xabc', value: BigNumber.from(500) },
+      { address: '0xdef', value: BigNumber.from(200) },
+    ];
+
+    expect(newAllocationValues).toEqual(expectedAllocationValues);
   });
 
-  it('properly finds allocations with values', () => {
-    expect(
-      getAllocationsWithPositiveValues({
-        '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91d': '10',
-        '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91e': '5',
-        '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91f': '0',
-      }),
-    ).toEqual([
-      { proposalAddress: '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91d', value: '10' },
-      { proposalAddress: '0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91e', value: '5' },
-    ]);
+  it('should return the original allocation values when individual reward is not provided', () => {
+    const newAllocationValues = getNewAllocationValues({
+      ...propsCommon,
+      individualReward: undefined,
+    });
+
+    expect(newAllocationValues).toEqual(propsCommon.allocationValues);
   });
 });

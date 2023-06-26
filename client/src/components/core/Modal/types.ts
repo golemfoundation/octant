@@ -11,4 +11,6 @@ export default interface ModalProps {
   isOpen: boolean;
   isOverflowEnabled?: boolean;
   onClosePanel: () => void;
+  onModalClosed?: () => void;
+  variant?: 'standard' | 'small';
 }

@@ -21,47 +21,47 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('"Always show Allocate onboarding" option toggle works', () => {
-      cy.get('[data-test=AlwaysShowOnboarding__InputCheckbox]').check();
-      cy.get('[data-test=AlwaysShowOnboarding__InputCheckbox]').should('be.checked');
+      cy.get('[data-test=InputToggle__AlwaysShowOnboarding]').check();
+      cy.get('[data-test=InputToggle__AlwaysShowOnboarding]').should('be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('true');
       });
 
-      cy.get('[data-test=AlwaysShowOnboarding__InputCheckbox]').click();
-      cy.get('[data-test=AlwaysShowOnboarding__InputCheckbox]').should('not.be.checked');
+      cy.get('[data-test=InputToggle__AlwaysShowOnboarding]').click();
+      cy.get('[data-test=InputToggle__AlwaysShowOnboarding]').should('not.be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('false');
       });
 
-      cy.get('[data-test=AlwaysShowOnboarding__InputCheckbox]').click();
-      cy.get('[data-test=AlwaysShowOnboarding__InputCheckbox]').should('be.checked');
+      cy.get('[data-test=InputToggle__AlwaysShowOnboarding]').click();
+      cy.get('[data-test=InputToggle__AlwaysShowOnboarding]').should('be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('true');
       });
     });
 
     it('"Use crypto as main value display" option is checked by default', () => {
-      cy.get('[data-test=UseCryptoAsMainValueDisplay__InputCheckbox]').should('be.checked');
+      cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').should('be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).eq('true');
       });
     });
 
     it('"Use crypto as main value display" option toggle works', () => {
-      cy.get('[data-test=UseCryptoAsMainValueDisplay__InputCheckbox]').check();
-      cy.get('[data-test=UseCryptoAsMainValueDisplay__InputCheckbox]').should('be.checked');
+      cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').check();
+      cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').should('be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).eq('true');
       });
 
-      cy.get('[data-test=UseCryptoAsMainValueDisplay__InputCheckbox]').click();
-      cy.get('[data-test=UseCryptoAsMainValueDisplay__InputCheckbox]').should('not.be.checked');
+      cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').click();
+      cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').should('not.be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).eq('false');
       });
 
-      cy.get('[data-test=UseCryptoAsMainValueDisplay__InputCheckbox]').click();
-      cy.get('[data-test=UseCryptoAsMainValueDisplay__InputCheckbox]').should('be.checked');
+      cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').click();
+      cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').should('be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).eq('true');
       });
@@ -86,7 +86,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('"Use crypto as main value display" option changes DoubleValue sections order', () => {
-      cy.get('[data-test=UseCryptoAsMainValueDisplay__InputCheckbox]').uncheck();
+      cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').uncheck();
       cy.get('[data-test=Metrics__Button]').click();
 
       const cryptoValue = getValueCryptoToDisplay({

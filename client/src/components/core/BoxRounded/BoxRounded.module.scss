@@ -82,7 +82,7 @@ $padding: 2.4rem;
   }
 }
 
-.title {
+.titleWrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -91,6 +91,10 @@ $padding: 2.4rem;
   font-size: $font-size-14;
   font-weight: $font-weight-bold;
   margin: 0 0 0.5rem 0;
+
+  .title {
+    text-align: left;
+  }
 
   &.hasSections {
     color: $color-octant-dark;
@@ -103,6 +107,11 @@ $padding: 2.4rem;
     &.isGrey {
       border-bottom: 0.1rem solid $color-white;
     }
+  }
+
+  &.hasSubtitle {
+    font-size: $font-size-16;
+    color: $color-black;
   }
 
   &.isPaddingMovedToElements {
@@ -124,6 +133,11 @@ $padding: 2.4rem;
     path {
       stroke: $color-octant-grey6;
     }
+  }
+
+  .subtitle {
+    font-size: $font-size-12;
+    color: $color-octant-grey6;
   }
 }
 
@@ -191,5 +205,19 @@ $padding: 2.4rem;
   &center {
     align-items: center;
     text-align: center;
+  }
+}
+
+.textAlign--{
+  &center {
+    text-align: center;
+  }
+
+  &left {
+    text-align: left;
+  }
+
+  &right {
+    text-align: right;
   }
 }

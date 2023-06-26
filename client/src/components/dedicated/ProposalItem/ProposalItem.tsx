@@ -41,7 +41,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
     allocations,
     proposalName: name,
     setAllocations,
-    userAllocations,
+    userAllocationsElements: userAllocations?.elements,
   });
 
   const isLoadingStates = isLoadingError || isLoading;

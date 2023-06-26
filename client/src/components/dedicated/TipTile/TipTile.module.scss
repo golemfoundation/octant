@@ -4,6 +4,7 @@
   background: $color-white;
   border-radius: $border-radius-16;
   width: 100%;
+  align-items: center;
 }
 
 .infoLabel {
@@ -43,7 +44,7 @@
   flex: 1;
   align-items: center;
   justify-content: center;
-  padding: 1.6rem 2rem 1.6rem 0;
+  padding: 1.6rem 2rem;
   height: 100%;
 
   @media #{$desktop-up} {

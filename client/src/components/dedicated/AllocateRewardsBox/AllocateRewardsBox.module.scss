@@ -1,0 +1,45 @@
+.root {
+  color: $color-octant-grey6;
+}
+
+.slider {
+  margin: 1.2rem 0 0.8rem;
+}
+
+.sections {
+  display: flex;
+  justify-content: space-between;
+  align-self: stretch;
+}
+
+.section {
+  &:not(.isDisabled) {
+    cursor: pointer;
+  }
+
+  .header {
+    font-size: $font-size-12;
+  }
+
+  .value {
+    font-size: $font-size-16;
+  }
+
+  &:first-child {
+    text-align: left;
+  }
+
+  &:last-child {
+    text-align: right;
+  }
+
+  &:not(.isDisabled) {
+    &:first-child .value {
+      color: $color-octant-green;
+    }
+
+    &:last-child .value {
+      color: $color-octant-orange3;
+    }
+  }
+}

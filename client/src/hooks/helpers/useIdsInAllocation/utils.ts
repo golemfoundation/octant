@@ -1,7 +1,7 @@
 import debounce from 'lodash/debounce';
 
 import { TOAST_DEBOUNCE_TIME } from 'constants/toasts';
-import { UserAllocation } from 'hooks/queries/useUserAllocations';
+import { UserAllocationElement } from 'hooks/queries/useUserAllocations';
 import triggerToast from 'utils/triggerToast';
 
 import { OnAddRemoveAllocationElementLocalStorage } from './types';
@@ -19,24 +19,26 @@ export const toastDebouncedCantRemoveAllocatedProject = debounce(
 );
 
 export function isProposalAlreadyAllocatedOn(
-  userAllocations: undefined | UserAllocation[],
+  userAllocationsElements: undefined | UserAllocationElement[],
   address: string,
 ): boolean {
   // TODO Remove userAllocations.allocation.gt(0) check following https://wildlandio.atlassian.net/browse/HEX-108.
-  if (!userAllocations) {
+  if (!userAllocationsElements) {
     return false;
   }
-  const allocation = userAllocations.find(({ proposalAddress }) => proposalAddress === address);
-  return !!allocation && allocation.allocation.gt(0);
+  const allocation = userAllocationsElements.find(
+    ({ address: userAllocationAddress }) => userAllocationAddress === address,
+  );
+  return !!allocation && allocation.value.gt(0);
 }
 
 export function onAddRemoveAllocationElementLocalStorage({
   allocations,
   address,
-  userAllocations,
+  userAllocationsElements,
   name,
 }: OnAddRemoveAllocationElementLocalStorage): string[] | undefined {
-  if (isProposalAlreadyAllocatedOn(userAllocations, address)) {
+  if (isProposalAlreadyAllocatedOn(userAllocationsElements, address)) {
     toastDebouncedCantRemoveAllocatedProject();
     return;
   }

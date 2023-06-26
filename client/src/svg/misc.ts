@@ -71,3 +71,27 @@ export const info: SvgImageConfig = {
     '<circle cx="16" cy="16" r="11.5" stroke="#EBEBEB"/><path fill="#171717" d="M16 8.5a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15Z"/><path fill="#fff" d="M17.5 19H17a1 1 0 0 1-1-1v-2.5a.5.5 0 0 0-.5-.5H15"/><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.5 19H17a1 1 0 0 1-1-1v-2.5a.5.5 0 0 0-.5-.5H15"/><circle cx="1" cy="1" r="1" fill="#fff" transform="matrix(1 0 0 -1 14.5 13.25)"/>',
   viewBox: '0 0 32 32',
 };
+
+export const lock: SvgImageConfig = {
+  markup:
+    '<path stroke="#9EA39E" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.017 4.32H1.983c-.445 0-.806.422-.806.942v2.823c0 .52.36.941.806.941h4.034c.446 0 .807-.421.807-.94V5.261c0-.52-.361-.942-.807-.942Z"/><path stroke="#9EA39E" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.327 4.32V3.065c0-.946 0-2.091 1.673-2.091 1.674 0 1.674 1.145 1.674 2.091V4.32"/>',
+  viewBox: '0 0 8 10',
+};
+
+export const unlock: SvgImageConfig = {
+  markup:
+    '<path stroke="#2D9B87" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10.571 10.509h-7.14c-.79 0-1.43.746-1.43 1.666v4.999c.001.92.64 1.666 1.43 1.666h7.14c.789 0 1.428-.746 1.428-1.666v-4.999c0-.92-.64-1.666-1.428-1.666ZM4.037 9.35V5.925c0-1.676 0-3.702 2.962-3.702s2.962 2.026 2.962 3.702V5.81"/>',
+  viewBox: '0 0 14 21',
+};
+
+export const checkMark: SvgImageConfig = {
+  markup:
+    '<circle cx="11.982" cy="12" r="8" fill="#2D9B87"/><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9.07 12.171 1.65 1.792 4.243-4.243"/>',
+  viewBox: '0 0 24 24',
+};
+
+export const pencil: SvgImageConfig = {
+  markup:
+    '<path fill="#CDD1CD" d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/><path fill="#fff" fill-rule="evenodd" d="m8.022 15.977 2.475-.354 3.063-3.063-2.121-2.121-3.063 3.063-.354 2.475ZM12.5 9.378l2.122 2.122.917-.917a1.5 1.5 0 1 0-2.122-2.122l-.917.917Z" clip-rule="evenodd"/>',
+  viewBox: '0 0 24 24',
+};

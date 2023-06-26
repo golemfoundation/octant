@@ -102,7 +102,7 @@ const Button = <T extends ButtonProps>(
         )}
         {children}
         {label}
-        {['link', 'link2', 'link5'].includes(variant) && (
+        {['link', 'link5'].includes(variant) && (
           <Svg
             classNameSvg={cx(styles.icon, styles.isOnRight, isIconVariant && styles.isIconVariant)}
             img={arrowTopRight}

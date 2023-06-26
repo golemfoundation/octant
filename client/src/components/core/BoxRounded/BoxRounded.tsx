@@ -25,11 +25,13 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
       onClick,
       onToggle,
       justifyContent = 'center',
+      subtitle,
       suffix,
       tabs,
       title,
       titleSuffix,
       dataTest = 'BoxRounded',
+      textAlign = 'center',
     },
     ref,
   ) => {
@@ -88,13 +90,17 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
         {title && (
           <div
             className={cx(
-              styles.title,
+              styles.titleWrapper,
               hasSections && styles.hasSections,
+              subtitle && styles.hasSubtitle,
               isGrey && styles.isGrey,
               isPaddingMovedToElements && styles.isPaddingMovedToElements,
             )}
           >
-            {title}
+            <div className={styles.title}>
+              {title}
+              <div className={styles.subtitle}>{subtitle}</div>
+            </div>
             {titleSuffix && <div className={styles.titleSuffix}>{titleSuffix}</div>}
             {isExpandable && (
               <Button
@@ -124,6 +130,7 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
             isVerticalCombined && styles.isVertical,
             styles[`justifyContent--${justifyContent}`],
             styles[`alignment--${alignment}`],
+            styles[`textAlign--${textAlign}`],
           )}
         >
           {children}

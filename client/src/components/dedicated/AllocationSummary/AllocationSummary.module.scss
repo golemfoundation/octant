@@ -1,43 +1,54 @@
-.box {
-  &:not(:last-child) {
-    margin: 0 auto 1.6rem;
-  }
-}
-
-.totalDonation {
-  display: flex;
-  align-items: center;
-  width: 100%;
-
-  .label {
-    text-align: left;
-    flex: 1;
-    color: $color-octant-grey6;
-  }
-}
-
-.values {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-
-  .budgetValue {
-    text-align: left;
-  }
-}
-
-.separator {
-  font-size: 2rem;
-}
-
 .header {
-  text-align: left;
-  font-size: $font-size-14;
-  color: $color-octant-grey6;
-  height: 1.7rem;
-  margin: 0 0 1rem 0;
+  padding: 2.9rem 0;
+  margin: 0;
+  border-bottom: 0.1rem solid $color-octant-grey4;
+  font-size: $font-size-18;
+
+  @media #{$desktop-up} {
+    font-size: $font-size-20;
+    padding: 3.2rem 0;
+  }
 }
 
-.progressBar {
-  margin: 1.6rem 0 0 0;
+.sectionLabel {
+  color: $color-octant-dark;
+
+  @media #{$desktop-up} {
+    font-size: $font-size-16;
+  }
+}
+
+.matchFundingLabel {
+  font-size: $font-size-12;
+
+  @media #{$desktop-up} {
+    font-size: $font-size-16;
+  }
+}
+
+.icon {
+  transition: $transition-time-2 all;
+  margin-left: 1rem;
+
+  &.areDonationsVisible {
+    transform: rotate(-180deg);
+  }
+}
+
+.detailsWrapper {
+  overflow: hidden;
+  width: 100%;
+
+  .details {
+    padding: 1.8rem 0 2.6rem;
+    border-bottom: 0.1rem solid $color-octant-grey4;
+
+    @media #{$desktop-up} {
+      padding: 1.6rem 0;
+    }
+  }
+}
+
+.donations {
+  cursor: pointer;
 }

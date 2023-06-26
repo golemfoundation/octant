@@ -26,7 +26,7 @@ import useUnlocks from 'hooks/subgraph/useUnlocks';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './GlmLock.module.scss';
-import GlmLockProps, { CurrentMode, CurrentStepIndex, FormValues } from './types';
+import GlmLockProps, { CurrentMode, CurrentStepIndex, FormFields } from './types';
 import { formInitialValues, getButtonCtaLabel, validationSchema } from './utils';
 
 const currentStepIndexInitialValue = 0;
@@ -131,7 +131,7 @@ const GlmLock: FC<GlmLockProps> = ({
     }
   };
 
-  const formik = useFormik<FormValues>({
+  const formik = useFormik<FormFields>({
     initialValues: formInitialValues,
     onSubmit: onApproveOrDeposit,
     validateOnChange: true,
@@ -162,8 +162,8 @@ const GlmLock: FC<GlmLockProps> = ({
           currentStepIndex={currentStepIndex}
           steps={
             currentMode === 'lock'
-              ? [t('submit'), t('approveAndLock'), t('done')]
-              : [t('submit'), t('withdraw'), t('done')]
+              ? [t('submit'), t('approveAndLock'), i18n.t('common.done')]
+              : [t('submit'), t('withdraw'), i18n.t('common.done')]
           }
         />
       </BoxRounded>

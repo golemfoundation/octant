@@ -1,141 +1,110 @@
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
-import React, { FC, Fragment, useState } from 'react';
+import cx from 'classnames';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import DoubleValue from 'components/core/DoubleValue/DoubleValue';
+import Sections from 'components/core/BoxRounded/Sections/Sections';
+import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import Header from 'components/core/Header/Header';
-import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import Svg from 'components/core/Svg/Svg';
-import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import AllocationSummaryProject from 'components/dedicated/AllocationSummaryProject/AllocationSummaryProject';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
-import useMatchedRewards from 'hooks/queries/useMatchedRewards';
-import useProposalsContract from 'hooks/queries/useProposalsContract';
-import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
-import { arrowRight } from 'svg/misc';
-import { ExtendedProposal } from 'types/proposals';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
+import useAllocationsStore from 'store/allocations/store';
+import { chevronBottom } from 'svg/misc';
 
 import styles from './AllocationSummary.module.scss';
-import ExpandableList from './ExpandableList/ExpandableList';
 import AllocationSummaryProps from './types';
 
-const getHeader = (
-  proposals: ExtendedProposal[],
-  allocations: AllocationSummaryProps['allocations'],
-) => {
-  const { t } = useTranslation('translation', {
-    keyPrefix: 'components.dedicated.allocationSummary',
-  });
-
-  if (allocations.length > 1) {
-    return t('header.allocations', {
-      allocationsLength: allocations.length,
-    });
-  }
-  const proposal = proposals.find(({ address }) => allocations[0] === address)!.name;
-
-  return t('header.proposal', {
-    proposal,
-  });
+const variants = {
+  showHide: { height: 0, opacity: 0 },
+  visible: { height: 'auto', opacity: 1 },
 };
 
-const AllocationSummary: FC<AllocationSummaryProps> = ({ allocations, allocationValues = {} }) => {
+const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationSummary',
   });
-  const [isProjectsTileExpanded, setIsProjectsTileExpanded] = useState<boolean>(false);
-  const { data: currentEpoch } = useCurrentEpoch();
-  const { data: proposalsContracts } = useProposalsContract();
-  const { data: proposals } = useProposalsIpfs(proposalsContracts);
+  const { isDesktop } = useMediaQuery();
   const { data: individualReward } = useIndividualReward();
-  const { data: matchedRewards } = useMatchedRewards();
-  const newAllocationValuesSum = Object.values(allocationValues).reduce(
-    (acc, value) => acc.add(parseUnits(value || '0')),
-    BigNumber.from(0),
-  );
-  const newClaimableAndClaimed = (individualReward as BigNumber).sub(newAllocationValuesSum);
+  const [areDonationsVisible, setAreDonationsVisible] = useState(isDesktop);
+  const { rewardsForProposals } = useAllocationsStore(state => ({
+    rewardsForProposals: state.data.rewardsForProposals,
+  }));
 
-  const isExpandableListAvailable = allocations.length > 1;
+  const allocationValuesPositive = allocationValues.filter(({ value }) => !value.isZero());
 
-  const budgetBefore = individualReward ? getFormattedEthValue(individualReward) : undefined;
-  const budgetAfter = individualReward
-    ? getFormattedEthValue(individualReward.sub(newAllocationValuesSum))
-    : undefined;
+  const sections: SectionProps[] = [];
+  const personalAllocation = individualReward?.sub(rewardsForProposals);
+
+  if (!personalAllocation?.isZero()) {
+    sections.push({
+      doubleValueProps: {
+        cryptoCurrency: 'ethereum',
+        valueCrypto: individualReward?.sub(rewardsForProposals),
+      },
+      label: i18n.t('common.personal'),
+      labelClassName: styles.sectionLabel,
+    });
+  }
+
+  if (allocationValuesPositive.length > 0) {
+    sections.push(
+      {
+        additionalContent: (
+          <AnimatePresence initial={false}>
+            {areDonationsVisible && (
+              <motion.div
+                animate="visible"
+                className={styles.detailsWrapper}
+                exit="showHide"
+                initial="showHide"
+                variants={variants}
+              >
+                <div className={styles.details}>
+                  {allocationValuesPositive.map(({ address, ...rest }) => (
+                    <AllocationSummaryProject key={address} address={address} {...rest} />
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        ),
+        className: styles.donations,
+        doubleValueProps: {
+          cryptoCurrency: 'ethereum',
+          valueCrypto: rewardsForProposals,
+        },
+        label: t('donations'),
+        labelClassName: styles.sectionLabel,
+        labelSuffix: (
+          <Svg
+            classNameSvg={cx(styles.icon, areDonationsVisible && styles.areDonationsVisible)}
+            img={chevronBottom}
+            size={0.8}
+          />
+        ),
+        /* eslint-disable-next-line @typescript-eslint/naming-convention */
+        onClick: () => setAreDonationsVisible(prev => !prev),
+      },
+      // TODO OCT-573: fetch the data and render it.
+      // {
+      //   doubleValueProps: {
+      //     cryptoCurrency: 'ethereum',
+      //     valueCrypto: parseUnits('0.250'),
+      //   },
+      //   label: t('matchFundingEstimate'),
+      //   labelClassName: cx(styles.sectionLabel, styles.matchFundingLabel),
+      // },
+    );
+  }
 
   return (
-    <Fragment>
-      <Header
-        text={t('confirmEpochAllocation', {
-          currentEpoch,
-        })}
-      />
-      <BoxRounded
-        alignment="left"
-        className={styles.box}
-        expandableChildren={
-          isExpandableListAvailable ? (
-            <ExpandableList allocations={allocations} allocationValues={allocationValues} />
-          ) : null
-        }
-        isExpanded={isProjectsTileExpanded}
-        isVertical
-        onToggle={isExpanded => setIsProjectsTileExpanded(isExpanded)}
-        suffix={t('estimatedMatchFunding', {
-          matchedRewards: matchedRewards ? getFormattedEthValue(matchedRewards).fullString : '0',
-        })}
-        title={getHeader(proposals, allocations)}
-      >
-        <div className={styles.totalDonation}>
-          {isProjectsTileExpanded && <div className={styles.label}>{t('totalDonation')}</div>}
-          <DoubleValue valueCrypto={newAllocationValuesSum} />
-        </div>
-      </BoxRounded>
-      <BoxRounded isVertical>
-        <div className={styles.values}>
-          <div>
-            <div className={styles.header}>
-              {i18n.t('common.budget', {
-                budget: budgetBefore && `(${budgetBefore.suffix})`,
-              })}
-            </div>
-            <DoubleValue
-              className={styles.budgetValue}
-              valueString={budgetBefore ? budgetBefore.value : '0.0'}
-            />
-          </div>
-          <div className={styles.separator}>
-            <div className={styles.header} />
-            <Svg img={arrowRight} size={[1.5, 1.4]} />
-          </div>
-          <div>
-            <div className={styles.header}>
-              {t('afterAllocation', {
-                budget: budgetAfter && `(${budgetAfter.suffix})`,
-              })}
-            </div>
-            <DoubleValue
-              className={styles.budgetValue}
-              valueString={budgetAfter ? budgetAfter.value : '0.0'}
-            />
-          </div>
-        </div>
-        <ProgressBar
-          className={styles.progressBar}
-          labelLeft={t('allocations', {
-            allocations: getFormattedEthValue(newAllocationValuesSum).fullString,
-          })}
-          labelRight={t('claimed', {
-            claimed: getFormattedEthValue(newClaimableAndClaimed).fullString,
-          })}
-          progressPercentage={newAllocationValuesSum
-            .mul(100)
-            .div(newClaimableAndClaimed.add(newAllocationValuesSum))
-            .toNumber()}
-        />
-      </BoxRounded>
-    </Fragment>
+    <BoxRounded hasPadding={false} isVertical>
+      <Header className={styles.header} text={t('confirmYourAllocations')} />
+      <Sections sections={sections} />
+    </BoxRounded>
   );
 };
 

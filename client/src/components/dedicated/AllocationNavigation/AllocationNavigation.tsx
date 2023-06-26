@@ -8,12 +8,11 @@ import AllocationNavigationProps from './types';
 
 const AllocationNavigation: FC<AllocationNavigationProps> = ({
   areButtonsDisabled,
-  onResetAllocationValues,
-  onAllocate,
-  isLoading,
-  setCurrentView,
   currentView,
-  isSummaryEnabled,
+  isLoading,
+  onAllocate,
+  onResetValues,
+  setCurrentView,
 }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationNavigation',
@@ -23,7 +22,7 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
     currentView === 'edit'
       ? {
           label: t('reset'),
-          onClick: onResetAllocationValues,
+          onClick: onResetValues,
         }
       : {
           label: t('edit'),
@@ -41,10 +40,14 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
         };
   return (
     <div className={styles.root}>
-      <Button className={styles.button} isDisabled={areButtonsDisabled} {...buttonPreviousProps} />
       <Button
         className={styles.button}
-        isDisabled={areButtonsDisabled || !isSummaryEnabled}
+        isDisabled={areButtonsDisabled || isLoading}
+        {...buttonPreviousProps}
+      />
+      <Button
+        className={styles.button}
+        isDisabled={areButtonsDisabled}
         isLoading={isLoading}
         variant="cta"
         {...buttonNextProps}

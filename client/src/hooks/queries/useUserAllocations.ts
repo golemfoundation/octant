@@ -8,16 +8,21 @@ import useContractAllocationsStorage from 'hooks/contracts/useContractAllocation
 
 import useCurrentEpoch from './useCurrentEpoch';
 
-export type UserAllocation = { allocation: BigNumber; proposalAddress: string };
+export type UserAllocationElement = { address: string; value: BigNumber };
+
+type Response = {
+  elements: UserAllocationElement[];
+  hasUserAlreadyDoneAllocation: boolean;
+};
 
 export default function useUserAllocations(
   options?: UseQueryOptions<
     IAllocationsStorage.AllocationStructOutput[] | undefined,
     unknown,
-    UserAllocation[] | undefined,
+    Response,
     string[]
   >,
-): UseQueryResult<UserAllocation[] | undefined> {
+): UseQueryResult<Response> {
   const { address } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
   const contractAllocationsStorage = useContractAllocationsStorage();
@@ -27,11 +32,22 @@ export default function useUserAllocations(
     () => contractAllocationsStorage?.getUserAllocations(currentEpoch! - 1, address!),
     {
       enabled: !!currentEpoch && currentEpoch > 1 && !!address,
-      select: response =>
-        response?.map(element => ({
-          allocation: element[1],
-          proposalAddress: element[0],
-        })),
+      select: response => {
+        const userAllocationsFromBackend = response!.map(element => ({
+          address: element[0],
+          value: element[1],
+        }));
+
+        return {
+          /**
+           * Allocations with value 0 are filtered out.
+           * They are not shown anywhere in the UI and should be treated as not done at all.
+           */
+elements: userAllocationsFromBackend.filter(({ value }) => !value.isZero()),
+          
+          hasUserAlreadyDoneAllocation: !!userAllocationsFromBackend?.length,
+        };
+      },
       ...options,
     },
   );
