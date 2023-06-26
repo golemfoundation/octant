@@ -7,8 +7,8 @@ dataSources:
     network: sepolia
     source:
       abi: Epochs
-      address: "0x93f098E71ea4CbbbA137A03C4CDa0517DfA112D8"
-      startBlock: 3727338
+      address: "0x86A032e5e5bEaaEB8eb0F625bEB5426D8B526719"
+      startBlock: 3771656
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -26,8 +26,8 @@ dataSources:
     network: sepolia
     source:
       abi: Deposits
-      address: "0x63dDB6249E2119Af4BD6858E0Ef3E22CBe4E4777"
-      startBlock: 3727338
+      address: "0x044465B505aeE0B790b180750E263e3F83a682e8"
+      startBlock: 3771656
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -39,8 +39,8 @@ dataSources:
         - name: Deposits
           file: ./abis/Deposits.json
       eventHandlers:
-        - event: Locked(uint224,uint224,uint256,address)
+        - event: Locked(uint256,uint256,uint256,address)
           handler: handleLocked
-        - event: Unlocked(uint224,uint224,uint256,address)
+        - event: Unlocked(uint256,uint256,uint256,address)
           handler: handleUnlocked
       file: ./src/deposits.ts
