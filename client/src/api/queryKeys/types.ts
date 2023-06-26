@@ -5,8 +5,6 @@ export type Root = {
 };
 
 export type QueryKeys = {
-  availableFundsEth: string[];
-  availableFundsGlm: string[];
   cryptoValues: (fiatCurrency: NonNullable<SettingsData['displayCurrency']>) => string[];
   cryptoValuesRoot: string[];
   currentBalance: string[];
