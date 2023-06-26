@@ -43,6 +43,22 @@ class EpochNotIndexed(OctantException):
         super().__init__(self.description.format(epoch_no), self.code)
 
 
+class NotInDecisionWindow(OctantException):
+    code = 400
+    description = "The decision window is not opened."
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
+class InvalidProposals(OctantException):
+    code = 400
+    description = "The following proposals are not valid: {}"
+
+    def __init__(self, proposals):
+        super().__init__(self.description.format(proposals), self.code)
+
+
 class MissingSnapshot(OctantException):
     code = 500
     description = "No snapshot has been taken. Try calling /epochs/snapshot endpoint"

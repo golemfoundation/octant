@@ -6,7 +6,7 @@ import { Epoch } from '../generated/schema';
 export function handleBlock(block: ethereum.Block): void {
   // TODO pass the address from config OCT-467
   const epochsContract = Epochs.bind(
-    Address.fromString('0x93f098E71ea4CbbbA137A03C4CDa0517DfA112D8'),
+    Address.fromString('0x86A032e5e5bEaaEB8eb0F625bEB5426D8B526719'),
   );
   const currentEpoch = epochsContract.try_getCurrentEpoch();
   if (currentEpoch.reverted) {

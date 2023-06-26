@@ -20,15 +20,15 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "uint224",
+        "internalType": "uint256",
         "name": "depositBefore",
-        "type": "uint224"
+        "type": "uint256"
       },
       {
         "indexed": false,
-        "internalType": "uint224",
+        "internalType": "uint256",
         "name": "amount",
-        "type": "uint224"
+        "type": "uint256"
       },
       {
         "indexed": false,
@@ -70,15 +70,15 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "uint224",
+        "internalType": "uint256",
         "name": "depositBefore",
-        "type": "uint224"
+        "type": "uint256"
       },
       {
         "indexed": false,
-        "internalType": "uint224",
+        "internalType": "uint256",
         "name": "amount",
-        "type": "uint224"
+        "type": "uint256"
       },
       {
         "indexed": false,
@@ -131,9 +131,9 @@
   {
     "inputs": [
       {
-        "internalType": "uint224",
+        "internalType": "uint256",
         "name": "amount",
-        "type": "uint224"
+        "type": "uint256"
       }
     ],
     "name": "lock",
@@ -170,9 +170,9 @@
   {
     "inputs": [
       {
-        "internalType": "uint224",
+        "internalType": "uint256",
         "name": "amount",
-        "type": "uint224"
+        "type": "uint256"
       }
     ],
     "name": "unlock",

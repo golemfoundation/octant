@@ -48,7 +48,7 @@ def update_db_deposits(epoch: int) -> int:
 
 def _get_deposits_events(epoch_num: int) -> dict:
     epoch = qraphql.epochs.get_epoch_by_number(epoch_num)
-    start, end = epoch["fromTs"], epoch["toTs"]
+    start, end = int(epoch["fromTs"]), int(epoch["toTs"])
     events = get_locks_by_timestamp_range(start, end) + get_unlocks_by_timestamp_range(
         start, end
     )
