@@ -26,6 +26,7 @@ const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
       <GlmLock
         currentMode={currentMode}
         onChangeCryptoOrFiatInputFocus={setIsCryptoOrFiatInputFocused}
+        onCloseModal={modalProps.onClosePanel}
         onCurrentModeChange={setCurrentMode}
         showBudgetBox={showBudgetBox}
       />
