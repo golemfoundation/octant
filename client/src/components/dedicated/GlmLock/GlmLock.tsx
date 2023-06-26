@@ -13,10 +13,10 @@ import ProgressStepper from 'components/core/ProgressStepper/ProgressStepper';
 import BudgetBox from 'components/dedicated/BudgetBox/BudgetBox';
 import InputsCryptoFiat from 'components/dedicated/InputsCryptoFiat/InputsCryptoFiat';
 import env from 'env';
+import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
 import useMaxApproveCallback from 'hooks/helpers/useMaxApproveCallback';
 import useLock from 'hooks/mutations/useLock';
 import useUnlock from 'hooks/mutations/useUnlock';
-import useAvailableFundsGlm from 'hooks/queries/useAvailableFundsGlm';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
@@ -68,13 +68,13 @@ const GlmLock: FC<GlmLockProps> = ({
     currentStepIndexInitialValue,
   );
   const { refetch: refetchDepositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
-  const { data: dataAvailableFunds, refetch: refetchAvailableFunds } = useAvailableFundsGlm();
+  const { data: dataAvailableFunds } = useAvailableFundsGlm();
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
   const { data: proposalsAddresses } = useProposalsContract();
   const { refetch: refetchDeposits } = useLocks();
   const { refetch: refetchWithdrawns } = useUnlocks();
   const [approvalState, approveCallback] = useMaxApproveCallback(
-    BigNumber.from(dataAvailableFunds || BigNumber.from(1)),
+    BigNumber.from(dataAvailableFunds?.value || BigNumber.from(1)),
     depositsAddress,
     signer,
     address,
@@ -82,7 +82,6 @@ const GlmLock: FC<GlmLockProps> = ({
 
   const onRefetch = async (): Promise<void> => {
     await refetchDeposit();
-    await refetchAvailableFunds();
     await refetchDepositEffectiveAtCurrentEpoch();
     await refetchDeposits();
     await refetchWithdrawns();
@@ -134,7 +133,7 @@ const GlmLock: FC<GlmLockProps> = ({
     initialValues: formInitialValues,
     onSubmit: onApproveOrDeposit,
     validateOnChange: true,
-    validationSchema: validationSchema(currentMode, dataAvailableFunds, depositsValue),
+    validationSchema: validationSchema(currentMode, dataAvailableFunds?.value, depositsValue),
   });
 
   const onReset = (newMode: CurrentMode = 'lock'): void => {

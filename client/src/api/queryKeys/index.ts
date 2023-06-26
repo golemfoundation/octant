@@ -9,8 +9,6 @@ export const ROOTS: Root = {
 };
 
 export const QUERY_KEYS: QueryKeys = {
-  availableFundsEth: ['availableFundsEth'],
-  availableFundsGlm: ['availableFundsGlm'],
   cryptoValues: fiatCurrency => [ROOTS.cryptoValues, fiatCurrency],
   cryptoValuesRoot: ['cryptoValues'],
   currentBalance: ['currentBalance'],
