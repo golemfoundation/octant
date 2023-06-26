@@ -25,6 +25,11 @@
   &.isDisabled {
     cursor: default;
   }
+
+  &.hasHoverState:hover {
+    transform: scale(1.03);
+    transition: all $transition-time-4 ease-out;
+  }
 }
 
 .variant-- {
@@ -74,7 +79,9 @@
       color: $color-octant-grey3;
       stroke: $color-octant-grey3;
 
-      path, circle, rect {
+      path,
+      circle,
+      rect {
         color: $color-octant-grey3;
         stroke: $color-octant-grey3;
       }
@@ -91,7 +98,9 @@
         color: $color-octant-green3;
         stroke: $color-octant-green3;
 
-        path, circle, rect {
+        path,
+        circle,
+        rect {
           color: $color-octant-green3;
           stroke: $color-octant-green3;
         }
