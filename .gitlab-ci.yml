@@ -414,3 +414,6 @@ pages:
     - cd ..
     - mv client/dist public
     - echo '/governance/octant/* /:splat 200' > public/_redirects
+  artifacts:
+    paths:
+      - public
