@@ -40,10 +40,10 @@
         "connectWallet": "In order to manipulate allocation values and vote, please connect your wallet first."
       },
       "allocationNavigation": {
-        "allocate": "Allocate",
+        "next": "Next",
         "confirm": "Confirm",
         "edit": "Edit",
-        "reset": "Reset values"
+        "reset": "Reset allocations"
       },
       "allocationRewardsBox": {
         "title": "Allocate rewards",

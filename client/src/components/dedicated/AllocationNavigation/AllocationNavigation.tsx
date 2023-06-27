@@ -31,7 +31,7 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
   const buttonNextProps =
     currentView === 'edit'
       ? {
-          label: t('allocate'),
+          label: t('next'),
           onClick: () => setCurrentView('summary'),
         }
       : {
