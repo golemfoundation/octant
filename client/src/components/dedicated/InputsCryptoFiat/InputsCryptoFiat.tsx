@@ -109,7 +109,6 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({
         placeholder="0.00"
         suffix={displayCurrency?.toUpperCase() || 'USD'}
         value={fiat}
-        variant="simple"
         {...inputFiatPropsLabel}
       />
     </div>
