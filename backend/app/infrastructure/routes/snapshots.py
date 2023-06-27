@@ -3,10 +3,10 @@ import dataclasses
 from flask import Response
 from flask_restx import Resource, Namespace, fields
 
-from app.controllers import epochs
+from app.controllers import snapshots
 from app.extensions import api
 
-ns = Namespace("epochs", description="Octant epochs")
+ns = Namespace("snapshots", description="Database snapshots")
 api.add_namespace(ns)
 
 epoch_status_model = api.model(
@@ -28,7 +28,7 @@ epoch_status_model = api.model(
 )
 
 
-@ns.route("/snapshot")
+@ns.route("/pending")
 @ns.doc(
     description="Take a database snapshot of the recently completed epoch. \
     This endpoint should be executed at the beginning of an epoch to activate \
@@ -38,9 +38,24 @@ epoch_status_model = api.model(
     200, "Snapshot could not be created due to an existing snapshot for previous epoch"
 )
 @ns.response(201, "Snapshot created successfully")
-class EpochsSnapshot(Resource):
+class PendingEpochSnapshot(Resource):
     def post(self):
-        epoch = epochs.snapshot_previous_epoch()
+        epoch = snapshots.snapshot_pending_epoch()
+        return ({"epoch": epoch}, 201) if epoch is not None else Response()
+
+
+@ns.route("/finalized")
+@ns.doc(
+    description="Take a database snapshot of the recently completed allocations. \
+    This endpoint should be executed at the end of the decision window"
+)
+@ns.response(
+    200, "Snapshot could not be created due to an existing snapshot for previous epoch"
+)
+@ns.response(201, "Snapshot created successfully")
+class FinalizedEpochSnapshot(Resource):
+    def post(self):
+        epoch = snapshots.snapshot_finalized_epoch()
         return ({"epoch": epoch}, 201) if epoch is not None else Response()
 
 
@@ -59,5 +74,5 @@ class EpochsSnapshot(Resource):
 class EpochStatus(Resource):
     @ns.marshal_with(epoch_status_model)
     def get(self, epoch: int):
-        status = epochs.get_epoch_status(epoch)
+        status = snapshots.get_epoch_status(epoch)
         return status.to_dict()
