@@ -67,6 +67,14 @@ class ProposalAllocateToItself(OctantException):
         super().__init__(self.description, self.code)
 
 
+class RewardsBudgetExceeded(OctantException):
+    code = 400
+    description = "You cannot allocate more funds than your rewards budget."
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
 class DuplicatedProposals(OctantException):
     code = 400
     description = "The following proposals are duplicated in the payload: {}"

@@ -5,6 +5,7 @@ from dataclass_wizard import JSONWizard
 
 from app import database, exceptions
 from app.core.epochs import has_pending_epoch_snapshot
+from app.core.user import get_budget
 from app.crypto.eip712 import recover_address, build_allocations_eip712_data
 from app.extensions import db
 from app.contracts.epochs import epochs
@@ -94,3 +95,12 @@ def _verify_allocations(epoch: int, user_address: str, allocations: List[Allocat
     for allocation in allocations:
         if allocation.proposal_address == user_address:
             raise exceptions.ProposalAllocateToItself
+
+    # Check if user didn't exceed his budget
+    user_budget = get_budget(user_address, epoch)
+    proposals_sum = sum([a.amount for a in allocations])
+
+    print("SUM {}", proposals_sum)
+
+    if proposals_sum > user_budget:
+        raise exceptions.RewardsBudgetExceeded

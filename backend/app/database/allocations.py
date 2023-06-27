@@ -67,7 +67,7 @@ def get_alloc_sum_by_epoch_and_user_address(
             CoreAllocation(proposal_address=i[0], amount=i[1])
             for i in allocations_by_user.items()
         ],
-        key=lambda item: item.proposal_address
+        key=lambda item: item.proposal_address,
     )
 
     return sorted_allocations
