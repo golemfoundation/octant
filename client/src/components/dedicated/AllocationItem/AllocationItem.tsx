@@ -83,7 +83,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
             <div className={styles.ethNeeded}>
               <div className={cx(styles.dot, isProjectFounded && styles.isProjectFounded)} />
               {individualProposalReward &&
-                `${getFormattedEthValue(individualProposalReward.donated).fullString} of ${
+                `${getFormattedEthValue(individualProposalReward.donated).value} of ${
                   getFormattedEthValue(cutOffValue).fullString
                 } needed`}
             </div>
