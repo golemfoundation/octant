@@ -1,12 +1,13 @@
+from dataclasses import dataclass
 from typing import List
 
 from multiproof import StandardMerkleTree
 
 
+@dataclass(frozen=True)
 class Leaf:
-    def __init__(self, address: str, amount: int):
-        self.address = address
-        self.amount = amount
+    address: str
+    amount: int
 
 
 def build_merkle_tree(leaves: List[Leaf]) -> StandardMerkleTree:

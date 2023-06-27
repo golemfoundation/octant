@@ -1,5 +1,4 @@
-from random import randint
-from typing import Optional, List
+from tests.conftest import create_payload, MOCKED_PENDING_EPOCH_NO
 from unittest.mock import MagicMock, Mock
 
 import pytest
@@ -13,30 +12,28 @@ from app.core.allocations import (
     calculate_threshold,
     AllocationRequest,
 )
-from app.core.epochs import is_epoch_snapshotted
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 
 
-MOCKED_EPOCH_NO = 42
-
-
 @pytest.fixture(autouse=True)
-def patch_epochs_and_proposals(monkeypatch, proposal_accounts):
-    mock_proposals = MagicMock(spec=Proposals)
+def before(monkeypatch, proposal_accounts):
     mock_epochs = MagicMock(spec=Epochs)
+    mock_proposals = MagicMock(spec=Proposals)
     mock_snapshotted = Mock()
 
-    mock_epochs.get_pending_epoch.return_value = MOCKED_EPOCH_NO
+    mock_epochs.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
     mock_snapshotted.return_value = True
 
-    monkeypatch.setattr("app.core.allocations.epochs", mock_epochs)
-    monkeypatch.setattr("app.core.allocations.is_epoch_snapshotted", mock_snapshotted)
+    monkeypatch.setattr(
+        "app.core.allocations.has_pending_epoch_snapshot", mock_snapshotted
+    )
 
     mock_proposals.get_proposal_addresses.return_value = [
-        p.address for p in proposal_accounts[0:10]
+        p.address for p in proposal_accounts[0:5]
     ]
 
     monkeypatch.setattr("app.core.allocations.proposals", mock_proposals)
+    monkeypatch.setattr("app.core.allocations.epochs", mock_epochs)
 
 
 def test_user_allocates_for_the_first_time(app, user_accounts, proposal_accounts):
@@ -176,7 +173,7 @@ def test_multiple_users_change_their_allocations(app, user_accounts, proposal_ac
     updated_signature1 = sign(
         user_accounts[0], build_allocations_eip712_data(updated_payload1)
     )
-    updated_payload2 = create_payload(proposal_accounts[2:7], None)
+    updated_payload2 = create_payload(proposal_accounts[2:5], None)
     updated_signature2 = sign(
         user_accounts[1], build_allocations_eip712_data(updated_payload2)
     )
@@ -195,7 +192,7 @@ def test_multiple_users_change_their_allocations(app, user_accounts, proposal_ac
 
     # Check if allocations were updated for both users
     check_allocations(user_accounts[0].address, updated_payload1, 4)
-    check_allocations(user_accounts[1].address, updated_payload2, 5)
+    check_allocations(user_accounts[1].address, updated_payload2, 3)
 
     # Check if threshold is properly calculated
     check_allocation_threshold(updated_payload1, updated_payload2)
@@ -210,7 +207,9 @@ def test_allocation_validation_errors(
 
     mock_snapshotted = Mock()
     mock_snapshotted.return_value = True
-    monkeypatch.setattr("app.core.allocations.is_epoch_snapshotted", mock_snapshotted)
+    monkeypatch.setattr(
+        "app.core.allocations.has_pending_epoch_snapshot", mock_snapshotted
+    )
 
     # Set invalid number of proposals on purpose (two proposals while three are needed)
     mock_proposals = MagicMock(spec=Proposals)
@@ -232,7 +231,7 @@ def test_allocation_validation_errors(
         )
 
     # Fix pending epoch
-    mock_epochs.get_pending_epoch.return_value = MOCKED_EPOCH_NO
+    mock_epochs.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
 
     # Call allocate method, expect invalid proposals
     with pytest.raises(exceptions.InvalidProposals):
@@ -250,7 +249,7 @@ def test_allocation_validation_errors(
 
 
 def check_allocations(user_address, expected_payload, expected_count):
-    epoch = MOCKED_EPOCH_NO
+    epoch = MOCKED_PENDING_EPOCH_NO
     expected_allocations = deserialize_payload(expected_payload)
     user = database.user.get_by_address(user_address)
     assert user is not None
@@ -267,7 +266,7 @@ def check_allocations(user_address, expected_payload, expected_count):
 
 
 def check_allocation_threshold(*payloads):
-    epoch = MOCKED_EPOCH_NO
+    epoch = MOCKED_PENDING_EPOCH_NO
     projects_no = 5
     expected = [deserialize_payload(payload) for payload in payloads]
 
@@ -283,18 +282,3 @@ def check_allocation_threshold(*payloads):
     expected_threshold = int(total_allocations / (projects_no * 2))
 
     assert expected_threshold == calculate_threshold(total_allocations, projects_no)
-
-
-def create_payload(proposals, amounts: Optional[List[int]]):
-    if amounts is None:
-        amounts = [randint(1 * 10**18, 100_000_000 * 10**18) for p in proposals]
-
-    allocations = [
-        {
-            "proposalAddress": proposal.address,
-            "amount": str(amount),
-        }
-        for proposal, amount in zip(proposals, amounts)
-    ]
-
-    return {"allocations": allocations}

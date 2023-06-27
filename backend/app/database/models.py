@@ -1,3 +1,6 @@
+from datetime import datetime as dt
+
+from sqlalchemy import DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
 from app.extensions import db
@@ -10,7 +13,12 @@ relationship = db.relationship
 Base = declarative_base()
 
 
-class User(Model):
+class BaseModel(Model):
+    __abstract__ = True
+    created_at = Column(db.TIMESTAMP, default=dt.utcnow)
+
+
+class User(BaseModel):
     __tablename__ = "users"
 
     id = Column(db.Integer, primary_key=True)
@@ -18,7 +26,7 @@ class User(Model):
     nonce = Column(db.Integer, nullable=False, default=0)
 
 
-class Allocation(Model):
+class Allocation(BaseModel):
     __tablename__ = "allocations"
 
     id = Column(db.Integer, primary_key=True)
@@ -29,8 +37,8 @@ class Allocation(Model):
     amount = Column(db.String, nullable=False)
 
 
-class EpochSnapshot(Model):
-    __tablename__ = "epoch_snapshots"
+class PendingEpochSnapshot(BaseModel):
+    __tablename__ = "pending_epoch_snapshots"
 
     id = Column(db.Integer, primary_key=True)
     epoch = Column(db.Integer, nullable=False, unique=True)
@@ -42,7 +50,16 @@ class EpochSnapshot(Model):
     all_individual_rewards = Column(db.String, nullable=False)
 
 
-class Deposit(Model):
+class FinalizedEpochSnapshot(BaseModel):
+    __tablename__ = "finalized_epoch_snapshots"
+
+    id = Column(db.Integer, primary_key=True)
+    epoch = Column(db.Integer, nullable=False, unique=True)
+    withdrawals_merkle_root = Column(db.String)
+    total_withdrawals = Column(db.String)
+
+
+class Deposit(BaseModel):
     __tablename__ = "deposits"
 
     id = Column(db.Integer, primary_key=True)
@@ -51,3 +68,12 @@ class Deposit(Model):
     user = relationship("User", backref=db.backref("deposits", lazy=True))
     effective_deposit = Column(db.String, nullable=False)
     epoch_end_deposit = Column(db.String, nullable=False)
+
+
+class Reward(BaseModel):
+    __tablename__ = "rewards"
+
+    id = Column(db.Integer, primary_key=True)
+    epoch = Column(db.Integer, nullable=False)
+    address = Column(db.String(42), nullable=False)
+    amount = Column(db.String, nullable=False)

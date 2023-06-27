@@ -4,7 +4,7 @@ from typing import List
 from dataclass_wizard import JSONWizard
 
 from app import database, exceptions
-from app.core.epochs import is_epoch_snapshotted
+from app.core.epochs import has_pending_epoch_snapshot
 from app.crypto.eip712 import recover_address, build_allocations_eip712_data
 from app.extensions import db
 from app.contracts.epochs import epochs
@@ -28,7 +28,7 @@ def verify_allocations(epoch: int, allocations: List[Allocation]):
     if epoch == 0:
         raise exceptions.NotInDecisionWindow
 
-    if not is_epoch_snapshotted(epoch):
+    if not has_pending_epoch_snapshot(epoch):
         raise exceptions.MissingSnapshot
 
     # Check if the list of proposal addresses is a subset of

@@ -1,14 +1,14 @@
 from sqlalchemy import desc
 
-from app.database.models import EpochSnapshot
+from app.database.models import PendingEpochSnapshot
 from app.extensions import db
 from app import exceptions
 
 from decimal import Decimal
 
 
-def get_by_epoch_num(epoch) -> EpochSnapshot:
-    snapshot = EpochSnapshot.query.filter_by(epoch=epoch).first()
+def get_by_epoch_num(epoch) -> PendingEpochSnapshot:
+    snapshot = PendingEpochSnapshot.query.filter_by(epoch=epoch).first()
 
     if snapshot is None:
         raise exceptions.InvalidEpoch()
@@ -16,9 +16,11 @@ def get_by_epoch_num(epoch) -> EpochSnapshot:
     return snapshot
 
 
-def get_last_snapshot() -> EpochSnapshot:
+def get_last_snapshot() -> PendingEpochSnapshot:
     snapshot = (
-        db.session.query(EpochSnapshot).order_by(desc(EpochSnapshot.epoch)).first()
+        db.session.query(PendingEpochSnapshot)
+        .order_by(desc(PendingEpochSnapshot.epoch))
+        .first()
     )
 
     if snapshot is None:
@@ -36,7 +38,7 @@ def add_snapshot(
     total_rewards: int,
     all_individual_rewards: int,
 ):
-    snapshot = EpochSnapshot(
+    snapshot = PendingEpochSnapshot(
         epoch=epoch,
         glm_supply=str(glm_supply),
         eth_proceeds=str(eth_proceeds),

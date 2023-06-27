@@ -1,1 +1,8 @@
-from . import user, allocations, epoch_snapshot, deposits
+from . import (
+    user,
+    allocations,
+    pending_epoch_snapshot,
+    finalized_epoch_snapshot,
+    deposits,
+    rewards,
+)

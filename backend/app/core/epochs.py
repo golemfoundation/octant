@@ -1,10 +1,18 @@
-from app.database import epoch_snapshot
+from app.database import pending_epoch_snapshot, finalized_epoch_snapshot
 from app import exceptions
 
 
-def is_epoch_snapshotted(epoch: int) -> bool:
+def has_pending_epoch_snapshot(epoch: int) -> bool:
     try:
-        epoch_snapshot.get_by_epoch_num(epoch)
+        pending_epoch_snapshot.get_by_epoch_num(epoch)
+        return True
+    except exceptions.InvalidEpoch:
+        return False
+
+
+def has_finalized_epoch_snapshot(epoch: int) -> bool:
+    try:
+        finalized_epoch_snapshot.get_by_epoch_num(epoch)
         return True
     except exceptions.InvalidEpoch:
         return False

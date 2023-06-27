@@ -4,6 +4,7 @@ from flask import current_app
 from flask_restx import Resource, Namespace, fields
 
 from app.controllers import rewards
+from app.core import user
 from app.extensions import api
 
 ns = Namespace("rewards", description="Octant rewards")
@@ -81,7 +82,7 @@ class UserBudget(Resource):
         current_app.logger.info(
             f"Getting budget for user: {user_address} in epoch {epoch}"
         )
-        budget = rewards.get_user_budget(user_address, epoch)
+        budget = user.get_budget(user_address, epoch)
         return {"budget": budget}
 
 

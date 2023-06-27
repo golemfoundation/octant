@@ -1,6 +1,7 @@
 from decimal import Decimal
+
 from app import database
-from app.database.models import EpochSnapshot
+from app.database.models import PendingEpochSnapshot
 
 
 def calculate_total_rewards(eth_proceeds: int, locked_ratio: Decimal) -> int:
@@ -11,11 +12,11 @@ def calculate_all_individual_rewards(eth_proceeds: int, locked_ratio: Decimal) -
     return int(eth_proceeds * locked_ratio)
 
 
-def calculate_matched_rewards(snapshot: EpochSnapshot) -> int:
+def calculate_matched_rewards(snapshot: PendingEpochSnapshot) -> int:
     return int(snapshot.total_rewards) - int(snapshot.all_individual_rewards)
 
 
 def get_matched_rewards_from_epoch(epoch: int) -> int:
-    snapshot = database.epoch_snapshot.get_by_epoch_num(epoch)
+    snapshot = database.pending_epoch_snapshot.get_by_epoch_num(epoch)
 
     return calculate_matched_rewards(snapshot)

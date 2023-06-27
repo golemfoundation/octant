@@ -1,24 +1,25 @@
+from decimal import Decimal
 from unittest.mock import MagicMock, Mock
 
 import pytest
 from eth_account import Account
 
 from app import database
-from app.contracts.proposals import Proposals
 from app.contracts.epochs import Epochs
+from app.contracts.proposals import Proposals
 from app.controllers.rewards import (
-    get_user_budget,
     get_allocation_threshold,
     get_rewards_budget,
     get_proposals_rewards,
 )
+from app.core.allocations import allocate, calculate_threshold, AllocationRequest
 from app.core.rewards import (
     calculate_total_rewards,
     calculate_all_individual_rewards,
     calculate_matched_rewards,
     get_matched_rewards_from_epoch,
 )
-from app.core.allocations import allocate, calculate_threshold, AllocationRequest
+from .conftest import allocate_user_rewards, MOCKED_PENDING_EPOCH_NO
 from .test_allocations import (
     sign,
     create_payload,
@@ -26,10 +27,27 @@ from .test_allocations import (
     deserialize_payload,
 )
 
-from decimal import Decimal
 
+@pytest.fixture(autouse=True)
+def before(monkeypatch, proposal_accounts):
+    mock_epochs = MagicMock(spec=Epochs)
+    mock_proposals = MagicMock(spec=Proposals)
+    mock_snapshotted = Mock()
 
-MOCKED_EPOCH_NO = 42
+    mock_epochs.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
+    mock_snapshotted.return_value = True
+    mock_proposals.get_proposal_addresses.return_value = [
+        p.address for p in proposal_accounts[0:5]
+    ]
+
+    monkeypatch.setattr(
+        "app.core.allocations.has_pending_epoch_snapshot", mock_snapshotted
+    )
+    monkeypatch.setattr("app.core.allocations.proposals", mock_proposals)
+    monkeypatch.setattr("app.core.allocations.epochs", mock_epochs)
+    monkeypatch.setattr("app.core.proposals.proposals", mock_proposals)
+    monkeypatch.setattr("app.core.proposals.epochs", mock_epochs)
+    monkeypatch.setattr("app.controllers.rewards.epochs", mock_epochs)
 
 
 @pytest.mark.parametrize(
@@ -60,55 +78,6 @@ def test_calculate_all_individual_rewards(eth_proceeds, locked_ratio, expected):
     assert result == expected
 
 
-def test_get_user_budget(app):
-    user_address = "0xabcdef7890123456789012345678901234567893"
-    glm_supply = 1000000000_000000000_000000000
-    eth_proceeds = 402_410958904_110000000
-    total_ed = 22700_000000000_099999994
-    user_ed = 1500_000055377_000000000
-    locked_ratio = Decimal("0.000022700000000000099999994")
-    total_rewards = 1_917267577_180363384
-    all_individual_rewards = 9134728_767123337
-    expected_result = 603616_460640476
-
-    database.epoch_snapshot.add_snapshot(
-        1,
-        glm_supply,
-        eth_proceeds,
-        total_ed,
-        locked_ratio,
-        total_rewards,
-        all_individual_rewards,
-    )
-    user = database.user.add_user(user_address)
-    database.deposits.add_deposit(1, user, user_ed, user_ed)
-
-    result = get_user_budget(user_address, 1)
-
-    assert result == expected_result
-
-
-@pytest.fixture(autouse=True)
-def patch_epochs_and_proposals(monkeypatch, proposal_accounts):
-    mock_epochs = MagicMock(spec=Epochs)
-    mock_proposals = MagicMock(spec=Proposals)
-    mock_snapshotted = Mock()
-
-    mock_epochs.get_pending_epoch.return_value = MOCKED_EPOCH_NO
-    mock_snapshotted.return_value = True
-
-    mock_proposals.get_proposal_addresses.return_value = [
-        p.address for p in proposal_accounts[0:5]
-    ]
-
-    monkeypatch.setattr("app.core.proposals.proposals", mock_proposals)
-    monkeypatch.setattr("app.core.allocations.proposals", mock_proposals)
-    monkeypatch.setattr("app.core.proposals.epochs", mock_epochs)
-    monkeypatch.setattr("app.controllers.rewards.epochs", mock_epochs)
-    monkeypatch.setattr("app.core.allocations.epochs", mock_epochs)
-    monkeypatch.setattr("app.core.allocations.is_epoch_snapshotted", mock_snapshotted)
-
-
 def test_get_allocation_threshold(app, user_accounts, proposal_accounts):
     total_allocated = _allocate_random_individual_rewards(
         user_accounts, proposal_accounts
@@ -125,8 +94,8 @@ def test_get_rewards_budget(app, user_accounts, proposal_accounts):
     total_rewards = 1_917267577_180363384
     all_individual_rewards = 9134728_767123337
 
-    database.epoch_snapshot.add_snapshot(
-        MOCKED_EPOCH_NO,
+    database.pending_epoch_snapshot.add_snapshot(
+        MOCKED_PENDING_EPOCH_NO,
         glm_supply,
         eth_proceeds,
         total_ed,
@@ -135,14 +104,14 @@ def test_get_rewards_budget(app, user_accounts, proposal_accounts):
         all_individual_rewards,
     )
 
-    expected_matched = get_matched_rewards_from_epoch(MOCKED_EPOCH_NO)
+    expected_matched = get_matched_rewards_from_epoch(MOCKED_PENDING_EPOCH_NO)
     total_allocated = _allocate_random_individual_rewards(
         user_accounts, proposal_accounts
     )
 
     rewards = get_rewards_budget(None)
 
-    assert rewards.epoch == MOCKED_EPOCH_NO
+    assert rewards.epoch == MOCKED_PENDING_EPOCH_NO
     assert rewards.allocated == total_allocated
     assert rewards.matched == expected_matched
 
@@ -196,7 +165,7 @@ def test_get_rewards_budget(app, user_accounts, proposal_accounts):
         ),
     ],
 )
-def test_proposals_matched_rewards(
+def test_proposals_rewards(
     app,
     monkeypatch,
     user_accounts,
@@ -218,7 +187,7 @@ def test_proposals_matched_rewards(
             proposal_account: Account = proposal_accounts[allocation[0]]
             allocation_amount = allocation[1]
 
-            _allocate_user_rewards(user_account, proposal_account, allocation_amount)
+            allocate_user_rewards(user_account, proposal_account, allocation_amount)
 
     expected_rewards = {}
 
@@ -226,16 +195,8 @@ def test_proposals_matched_rewards(
         proposal_address = proposal_accounts[proposal_index].address
         expected_rewards[proposal_address] = expected_reward
 
-    for proposal in get_proposals_rewards(MOCKED_EPOCH_NO):
+    for proposal in get_proposals_rewards(MOCKED_PENDING_EPOCH_NO):
         assert expected_rewards.get(proposal.address) == proposal.matched
-
-
-def _allocate_user_rewards(user_account: Account, proposal_account, allocation_amount):
-    payload = create_payload([proposal_account], [allocation_amount])
-    signature = sign(user_account, build_allocations_eip712_data(payload))
-    request = AllocationRequest(payload, signature, override_existing_allocations=False)
-
-    allocate(request)
 
 
 def _allocate_random_individual_rewards(user_accounts, proposal_accounts) -> int:
