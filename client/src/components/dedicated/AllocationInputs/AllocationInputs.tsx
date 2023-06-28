@@ -105,8 +105,8 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
         />
       )}
       <InputText
-        inputMode="decimal"
         className={styles.element}
+        inputMode="decimal"
         isButtonClearVisible={false}
         isDisabled={!isThereSomethingToDistribute}
         onBlur={() => setInputFocused(null)}
@@ -119,9 +119,9 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
         value={percentage}
       />
       <InputText
-        inputMode="decimal"
         className={styles.element}
         error={formik.errors.valueCryptoSelected}
+        inputMode="decimal"
         isButtonClearVisible={false}
         isDisabled={!isThereSomethingToDistribute}
         isErrorInlineVisible={false}
