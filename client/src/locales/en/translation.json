@@ -33,7 +33,9 @@
   "components": {
     "dedicated": {
       "allocationEmptyState": {
-        "text": "Add some projects or lock GLM tokens to prepare for the next allocation period"
+        "text": "Add some projects or lock GLM tokens to prepare for the next allocation period",
+        "epoch1textMobile": "Allocations start in Epoch 2, <br/> please check back in then",
+        "epoch1textDesktop": "Check out some projects or lock some GLM <br/> to prepare for the next allocation period"
       },
       "allocationInfoBoxes": {
         "decisionWindowClosed": "The decision window is now closed. Allocating funds is not possible.",
@@ -95,7 +97,8 @@
       "donorsList": {
         "donors": "Donors",
         "seeAll": "See all",
-        "seeLess": "See less"
+        "seeLess": "See less",
+        "donationsNotEnabled": "Donations are not enabled in this epoch"
       },
       "glmLock": {
         "lock": "Lock",

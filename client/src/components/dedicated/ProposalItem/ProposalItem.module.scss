@@ -12,6 +12,10 @@ $proposalItemPadding: 2.4rem;
   bottom: 0;
   transition: bottom $transition-time-4 linear;
 
+  &.isEpoch1 {
+    height: 20.8rem;
+  }
+
   &:hover {
     bottom: 0.5rem;
   }

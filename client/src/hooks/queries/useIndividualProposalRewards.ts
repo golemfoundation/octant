@@ -23,7 +23,7 @@ export default function useIndividualProposalRewards(): UseQueryResult<Individua
     QUERY_KEYS.individualProposalRewards,
     () => contractRewards?.individualProposalRewards(currentEpoch! - 1),
     {
-      enabled: !!currentEpoch && currentEpoch > 1 && !!contractRewards,
+      enabled: !!currentEpoch && currentEpoch > 0 && !!contractRewards,
       select: response => ({
         projects: response![1].map(([address, donated, matched]) => ({
           address,

@@ -9,6 +9,7 @@ import ProposalLoadingStates from 'components/dedicated/ProposalLoadingStates/Pr
 import ProposalRewards from 'components/dedicated/ProposalRewards/ProposalRewards';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
@@ -31,6 +32,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
     setAllocations: state.setAllocations,
   }));
   const { data: proposalsIpfs } = useProposalsIpfs([address]);
+  const { data: currentEpoch } = useCurrentEpoch();
   const isAlreadyAdded = allocations!.includes(address);
 
   const isLoading = !proposalsIpfs || proposalsIpfs.length === 0;
@@ -46,6 +48,8 @@ const ProposalItem: FC<ProposalItemProps> = ({
 
   const isLoadingStates = isLoadingError || isLoading;
 
+  const isEpoch1 = currentEpoch === 1;
+
   return (
     <div
       className={cx(
@@ -53,6 +57,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
         className,
         !isLoadingStates && styles.isClickable,
         isLoadingStates && styles.isLoadingStates,
+        isEpoch1 && styles.isEpoch1,
       )}
       data-test={dataTest}
       onClick={
@@ -86,10 +91,12 @@ const ProposalItem: FC<ProposalItemProps> = ({
               text={description!}
             />
           </div>
-          <ProposalRewards
-            className={styles.proposalRewards}
-            totalValueOfAllocations={totalValueOfAllocations}
-          />
+          {!isEpoch1 && (
+            <ProposalRewards
+              className={styles.proposalRewards}
+              totalValueOfAllocations={totalValueOfAllocations}
+            />
+          )}
         </Fragment>
       )}
     </div>

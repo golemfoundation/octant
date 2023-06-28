@@ -35,7 +35,7 @@ const Button = <T extends ButtonProps>(
 ) => {
   const filteredProps = {};
   const isActionDisabled = isDisabled || isLoading;
-  const hasHoverState = !to && !href;
+  const hasHoverState = !to && !href && !isDisabled;
 
   let Component;
   if (to) {

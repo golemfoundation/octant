@@ -10,7 +10,7 @@ import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
 import styles from './RewardsBox.module.scss';
 import RewardsBoxProps from './types';
 
-const RewardsBox: FC<RewardsBoxProps> = ({ buttonProps, className, isGrey }) => {
+const RewardsBox: FC<RewardsBoxProps> = ({ buttonProps, className, isGrey, isDisabled }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.rewardsBox',
   });
@@ -30,7 +30,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({ buttonProps, className, isGrey }) => 
     <BoxRounded
       alignment="left"
       buttonProps={buttonProps}
-      className={cx(styles.root, className)}
+      className={cx(styles.root, className, isDisabled && styles.isDisabled)}
       dataTest="RewardsBox__BoxRounded"
       hasSections
       isGrey={isGrey}

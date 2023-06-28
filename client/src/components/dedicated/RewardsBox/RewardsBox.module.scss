@@ -21,3 +21,8 @@
     font-size: $font-size-14;
   }
 }
+
+.isDisabled * {
+  color: $color-octant-grey3;
+  pointer-events: none;
+}

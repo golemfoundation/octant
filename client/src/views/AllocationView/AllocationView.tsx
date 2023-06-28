@@ -100,7 +100,7 @@ const AllocationView = (): ReactElement => {
     }
     onResetAllocationValues();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLocked])
+  }, [isLocked]);
 
   useEffect(() => {
     onResetAllocationValues();
@@ -169,11 +169,14 @@ const AllocationView = (): ReactElement => {
     rewardsForProposals,
   });
 
+  const isEpoch1 = currentEpoch === 1;
+
   return (
     <MainLayout
       dataTest="AllocationView"
       isLoading={isLoading}
       navigationBottomSuffix={
+        !isEpoch1 &&
         areAllocationsAvailableOrAlreadyDone &&
         !isLocked && (
           <AllocationNavigation
@@ -190,7 +193,7 @@ const AllocationView = (): ReactElement => {
       {currentView === 'edit' ? (
         <Fragment>
           <AllocationTipTiles className={cx(styles.box, styles.isTipTiles)} />
-          {individualReward && !individualReward.isZero() && (
+          {!isEpoch1 && individualReward && !individualReward.isZero() && (
             <AllocateRewardsBox
               className={styles.box}
               isDisabled={isLocked}

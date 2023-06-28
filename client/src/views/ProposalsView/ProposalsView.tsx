@@ -27,8 +27,10 @@ const ProposalsView = (): ReactElement => {
   );
   const proposalsWithRewards = useProposalsWithRewards();
 
+  const isEpoch1 = currentEpoch === 1;
+
   const areMatchedProposalsReady =
-    !!currentEpoch && ((currentEpoch > 1 && matchedProposalRewards) || currentEpoch === 1);
+    !!currentEpoch && ((currentEpoch > 1 && matchedProposalRewards) || isEpoch1);
 
   return (
     <MainLayout
@@ -37,7 +39,7 @@ const ProposalsView = (): ReactElement => {
         !proposalsAddresses || proposalsAddresses.length === 0 || !areMatchedProposalsReady
       }
     >
-      {!wasAddFavouritesAlreadyClosed && (
+      {!wasAddFavouritesAlreadyClosed && !isEpoch1 && (
         <TipTile
           className={styles.tip}
           dataTest="ProposalsView__TipTile"

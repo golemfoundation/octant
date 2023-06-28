@@ -32,13 +32,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       proposalView.get('[data-test=ProposalView__proposal__Img]').should('be.visible');
       proposalView.get('[data-test=ProposalView__proposal__name]').should('be.visible');
       proposalView
-        .get(
-          `[data-test=${
-            isDesktop
-              ? 'ProposalView__proposal__ButtonAddToAllocate'
-              : 'ProposalView__proposal__ButtonAddToAllocate--mobile'
-          }]`,
-        )
+        .get(`[data-test=ProposalView__proposal__ButtonAddToAllocate]`)
         .should('be.visible');
       proposalView.get('[data-test=ProposalView__proposal__Button]').should('be.visible');
       proposalView.get('[data-test=ProposalView__proposal__Description]').should('be.visible');
@@ -57,13 +51,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
 
       cy.get('[data-test=ProposalView__proposal]')
         .first()
-        .find(
-          `[data-test=${
-            isDesktop
-              ? 'ProposalView__proposal__ButtonAddToAllocate'
-              : 'ProposalView__proposal__ButtonAddToAllocate--mobile'
-          }]`,
-        )
+        .find(`[data-test=ProposalView__proposal__ButtonAddToAllocate]`)
         .click();
       cy.get('[data-test=Toast--addToAllocate]')
         .last()
@@ -81,13 +69,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         });
       cy.get('[data-test=ProposalView__proposal]')
         .first()
-        .find(
-          `[data-test=${
-            isDesktop
-              ? 'ProposalView__proposal__ButtonAddToAllocate'
-              : 'ProposalView__proposal__ButtonAddToAllocate--mobile'
-          }]`,
-        )
+        .find(`[data-test=ProposalView__proposal__ButtonAddToAllocate]`)
         .click();
       cy.get('[data-test=Toast--removeFromAllocate]')
         .last()

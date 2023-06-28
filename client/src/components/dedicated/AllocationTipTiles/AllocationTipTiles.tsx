@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import TipTile from 'components/dedicated/TipTile/TipTile';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -13,7 +14,8 @@ import AllocationTipTilesProps from './types';
 const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'views.allocation.tip' });
   const { isConnected } = useAccount();
-  const { data: depositsValue, isLoading: isLoadingDepositsValue } = useDepositValue();
+  const { data: currentEpoch } = useCurrentEpoch();
+  const { data: depositsValue } = useDepositValue();
   const { data: individualReward, isLoading: isLoadingIndividualReward } = useIndividualReward();
   const { data: userAllocations, isFetching: isFetchingUserAllocation } = useUserAllocations();
   const {
@@ -35,6 +37,9 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
     wasLockGLMAlreadyClosed: state.data.wasLockGLMAlreadyClosed,
     wasRewardsAlreadyClosed: state.data.wasRewardsAlreadyClosed,
   }));
+
+  const isEpoch1 = currentEpoch === 1;
+
   const isConnectWalletTipVisible = !isConnected && !wasConnectWalletAlreadyClosed;
 
   const isLockGlmTipVisible =
@@ -43,10 +48,16 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
     !wasLockGLMAlreadyClosed;
 
   const isRewardsTipVisible =
-    isConnected && !!individualReward && !individualReward.isZero && !wasRewardsAlreadyClosed;
+    !isEpoch1 &&
+    isConnected &&
+    !!individualReward &&
+    !individualReward.isZero &&
+    !wasRewardsAlreadyClosed;
 
   const isChangedYourMindTipVisible =
-    !!userAllocations?.hasUserAlreadyDoneAllocation && !wasChangedYourMindAlreadyClosed;
+    !isEpoch1 &&
+    !!userAllocations?.hasUserAlreadyDoneAllocation &&
+    !wasChangedYourMindAlreadyClosed;
 
   const isAnyTipTileVisible =
     isConnectWalletTipVisible ||
@@ -55,9 +66,8 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
     isChangedYourMindTipVisible;
 
   if (
+    (!isEpoch1 && isLoadingIndividualReward) ||
     !isAnyTipTileVisible ||
-    isLoadingDepositsValue ||
-    isLoadingIndividualReward ||
     isFetchingUserAllocation
   ) {
     return null;

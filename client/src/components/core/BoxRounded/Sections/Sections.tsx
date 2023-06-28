@@ -19,9 +19,14 @@ const Section: FC<SectionProps> = ({
   additionalContent,
   onClick,
   labelSuffix,
+  isDisabled,
 }) => (
   <>
-    <div className={cx(styles.root, className)} data-test={dataTest} onClick={onClick}>
+    <div
+      className={cx(styles.root, className, isDisabled && styles.isDisabled)}
+      data-test={dataTest}
+      onClick={onClick}
+    >
       <div className={cx(styles.label, labelClassName)}>
         {icon ? <Svg img={icon} size={4} /> : label}
         {labelSuffix && labelSuffix}
@@ -35,7 +40,12 @@ const Section: FC<SectionProps> = ({
           />
         )}
       </div>
-      <DoubleValue textAlignment="right" variant="small" {...doubleValueProps} />
+      <DoubleValue
+        textAlignment="right"
+        variant="small"
+        {...doubleValueProps}
+        isDisabled={isDisabled}
+      />
     </div>
     {!!additionalContent && additionalContent}
   </>
