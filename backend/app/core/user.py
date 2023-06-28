@@ -2,7 +2,7 @@ from decimal import Decimal
 from typing import List
 
 from app import database
-from app.core.common import AddressAndAmount
+from app.core.common import AccountFunds
 
 
 def get_budget(user_address: str, epoch: int) -> int:
@@ -19,7 +19,7 @@ def get_budget(user_address: str, epoch: int) -> int:
     return int(Decimal(snapshot.all_individual_rewards) * individual_share)
 
 
-def get_claimed_rewards(epoch: int) -> (List[AddressAndAmount], int):
+def get_claimed_rewards(epoch: int) -> (List[AccountFunds], int):
     rewards_sum = 0
     rewards = []
 
@@ -30,7 +30,7 @@ def get_claimed_rewards(epoch: int) -> (List[AddressAndAmount], int):
         claimed_rewards = user_budget - allocation.amount
         if claimed_rewards > 0:
             rewards.append(
-                AddressAndAmount(allocation.proposal_address, claimed_rewards)
+                AccountFunds(allocation.proposal_address, claimed_rewards)
             )
             rewards_sum += claimed_rewards
 

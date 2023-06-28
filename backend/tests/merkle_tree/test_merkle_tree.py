@@ -4,7 +4,7 @@ from hexbytes import HexBytes
 from multiproof import StandardMerkleTree
 from multiproof.standart import LeafValue
 
-from app.core.common import AddressAndAmount
+from app.core.common import AccountFunds
 from app.settings import config
 
 from app.core.merkle_tree import build_merkle_tree, get_proof
@@ -14,7 +14,7 @@ def test_merkle_tree():
     with open(f"{config.TEST_DIR}/merkle_tree/testInputs.json", "r") as f:
         test_inputs = json.load(f)
 
-    leaves = [AddressAndAmount(addr, amount) for addr, amount in test_inputs]
+    leaves = [AccountFunds(addr, amount) for addr, amount in test_inputs]
     merkle_tree = build_merkle_tree(leaves)
 
     # validate whole dumped tree

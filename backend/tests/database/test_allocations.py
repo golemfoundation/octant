@@ -1,5 +1,5 @@
 from app import database
-from app.core.common import AddressAndAmount
+from app.core.common import AccountFunds
 from app.extensions import db
 from app.core.allocations import Allocation
 
