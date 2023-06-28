@@ -67,6 +67,16 @@ class MissingSnapshot(OctantException):
         super().__init__(self.description, self.code)
 
 
+class MissingAddress(OctantException):
+    code = 400
+    description = (
+        "The following address: {} was not found in merkle tree from given epoch"
+    )
+
+    def __init__(self, address: str):
+        super().__init__(self.description.format(address), self.code)
+
+
 def handle_octant_exception(e: OctantException):
     print_stacktrace()
     response = e.to_json()
