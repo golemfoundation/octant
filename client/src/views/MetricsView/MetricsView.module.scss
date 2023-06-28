@@ -10,6 +10,10 @@
   &:not(:last-child) {
     margin: 0 auto 1.6rem;
   }
+
+  @media #{$desktop-up} {
+    @include flexBasisGutter(2, 1.6rem);
+  }
 }
 
 .lockedRatioProgressBar {
@@ -22,4 +26,15 @@
 
 .blackText {
   color: $color-octant-dark;
+}
+
+.boxesGroup {
+  @media #{$desktop-up} {
+    display: flex;
+    align-items: start;
+  }
+
+  .box {
+    margin: 0 auto 1.6rem;
+  }
 }

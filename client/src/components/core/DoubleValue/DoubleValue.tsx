@@ -18,6 +18,7 @@ const DoubleValue: FC<DoubleValueProps> = ({
   valueCrypto,
   valueString,
   variant = 'standard',
+  isDisabled,
 }) => {
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
@@ -46,6 +47,7 @@ const DoubleValue: FC<DoubleValueProps> = ({
         styles.root,
         isError && styles.isError,
         styles[`textAlignment--${textAlignment}`],
+        isDisabled && styles.isDisabled,
         className,
       )}
       data-test={dataTest}

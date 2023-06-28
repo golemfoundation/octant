@@ -1,4 +1,4 @@
-import React, { ReactElement, Fragment, useState, useEffect } from 'react';
+import React, { ReactElement, Fragment, useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
@@ -25,16 +25,6 @@ import { ExtendedProposal } from 'types/proposals';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './ProposalView.module.scss';
-
-const getCustomNavigationTabs = () => {
-  const navigationTabs = [...navigationTabsDefault];
-  navigationTabs[0] = {
-    ...navigationTabs[0],
-    icon: chevronLeft,
-    isActive: true,
-  };
-  return navigationTabs;
-};
 
 const ProposalView = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.proposal' });
@@ -140,12 +130,24 @@ const ProposalView = (): ReactElement => {
     setIsLoading(true);
   };
 
-  const shouldMatchedProposalRewardsBeAvailable =
-    !!currentEpoch && ((currentEpoch > 1 && matchedProposalRewards) || currentEpoch === 1);
+  const navigationTabs = useMemo(() => {
+    const navTabs = [...navigationTabsDefault];
+    navTabs[0] = {
+      ...navTabs[0],
+      icon: chevronLeft,
+      isActive: true,
+    };
+    return navTabs;
+  }, []);
+
+  const isEpoch1 = currentEpoch === 1;
+
+  const areMatchedProposalsReady =
+    !!currentEpoch && ((currentEpoch > 1 && matchedProposalRewards) || isEpoch1);
   const initialElement = loadedProposals[0] || {};
 
-  if (!initialElement || !shouldMatchedProposalRewardsBeAvailable) {
-    return <MainLayout isLoading navigationTabs={getCustomNavigationTabs()} />;
+  if (!initialElement || !areMatchedProposalsReady) {
+    return <MainLayout isLoading navigationTabs={navigationTabs} />;
   }
 
   if (!initialElement || (initialElement && initialElement.isLoadingError)) {
@@ -161,7 +163,11 @@ const ProposalView = (): ReactElement => {
   }
 
   return (
-    <MainLayout dataTest="ProposalView" navigationTabs={getCustomNavigationTabs()}>
+    <MainLayout
+      classNameBody={styles.layout}
+      dataTest="ProposalView"
+      navigationTabs={navigationTabs}
+    >
       <InfiniteScroll
         hasMore
         initialLoad
@@ -196,8 +202,7 @@ const ProposalView = (): ReactElement => {
                       src={`${ipfsGateway}${profileImageCID}`}
                     />
                     <ButtonAddToAllocate
-                      className={styles.buttonAddToAllocateMobile}
-                      dataTest="ProposalView__proposal__ButtonAddToAllocate--mobile"
+                      dataTest="ProposalView__proposal__ButtonAddToAllocate"
                       isAlreadyAdded={isAlreadyAdded}
                       onClick={() => onAddRemoveFromAllocate(address)}
                     />
@@ -213,21 +218,17 @@ const ProposalView = (): ReactElement => {
                   >
                     {website!.label || website!.url}
                   </Button>
-                  <ProposalRewards
-                    canFoundedAtHide={false}
-                    className={styles.proposalRewards}
-                    MiddleElement={
-                      <ButtonAddToAllocate
-                        className={styles.buttonAddToAllocateDesktop}
-                        dataTest="ProposalView__proposal__ButtonAddToAllocate"
-                        isAlreadyAdded={isAlreadyAdded}
-                        onClick={() => onAddRemoveFromAllocate(address)}
-                      />
-                    }
-                    totalValueOfAllocations={
-                      proposalMatchedProposalRewards?.totalValueOfAllocations
-                    }
-                  />
+                  {!isEpoch1 ? (
+                    <ProposalRewards
+                      canFoundedAtHide={false}
+                      className={styles.proposalRewards}
+                      totalValueOfAllocations={
+                        proposalMatchedProposalRewards?.totalValueOfAllocations
+                      }
+                    />
+                  ) : (
+                    <div className={styles.divider} />
+                  )}
                 </div>
                 <div className={styles.body}>
                   <Description

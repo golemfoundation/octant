@@ -7,6 +7,7 @@ import Sections from 'components/core/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import ModalEffectiveLockedBalance from 'components/dedicated/ModalEffectiveLockedBalance/ModalEffectiveLockedBalance';
 import ModalGlmLock from 'components/dedicated/ModalGlmLock/ModalGlmLock';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 
@@ -22,6 +23,9 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
     useState<boolean>(false);
   const { data: depositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
   const { data: depositsValue } = useDepositValue();
+  const { data: currentEpoch } = useCurrentEpoch();
+
+  const isEpoch1 = currentEpoch === 1;
 
   const sections: SectionProps[] = [
     {
@@ -29,6 +33,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
         cryptoCurrency: 'golem',
         valueCrypto: depositsValue,
       },
+      isDisabled: isEpoch1 && !isConnected,
       label: t('current'),
     },
     {
@@ -38,6 +43,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
         cryptoCurrency: 'golem',
         valueCrypto: depositEffectiveAtCurrentEpoch,
       },
+      isDisabled: isEpoch1 && !isConnected,
       label: t('effective'),
       onTooltipClick: () => setIsModalEffectiveLockedBalanceOpen(true),
     },

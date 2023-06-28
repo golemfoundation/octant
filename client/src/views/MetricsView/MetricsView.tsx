@@ -47,7 +47,8 @@ const MetricsView = (): ReactElement => {
   };
 
   const { isDesktop } = useMediaQuery();
-  const isCheckStatsTipVisible = currentEpoch && currentEpoch > 1 && !wasCheckStatusAlreadyClosed;
+  const isCheckStatsTipVisible = currentEpoch && currentEpoch > 0 && !wasCheckStatusAlreadyClosed;
+  const isEpoch1 = currentEpoch === 1;
 
   return (
     <MainLayout dataTest="MetricsView">
@@ -66,25 +67,29 @@ const MetricsView = (): ReactElement => {
           title={t('tip.title')}
         />
       )}
-      <MetricsTimeSection
-        className={styles.element}
-        currentEpoch={currentEpoch}
-        isDecisionWindowOpen={isDecisionWindowOpen}
-        onCountingFinish={onCountingFinish}
-      />
+      {!isEpoch1 && (
+        <MetricsTimeSection
+          className={styles.element}
+          currentEpoch={currentEpoch}
+          isDecisionWindowOpen={isDecisionWindowOpen}
+          onCountingFinish={onCountingFinish}
+        />
+      )}
       <div className={styles.element}>
         <Header text={t('valueLocked')} />
         <Description text={t('totalValueStakedDescription')} />
-        <BoxRounded alignment="left" className={styles.box} isVertical title={t('ethStaked')}>
-          <DoubleValue
-            cryptoCurrency="ethereum"
-            dataTest="MetricsView__DoubleValue--ethStaked"
-            valueCrypto={ETH_STAKED}
-          />
-        </BoxRounded>
-        <BoxRounded alignment="left" className={styles.box} isVertical title={t('glmLocked')}>
-          <DoubleValue cryptoCurrency="golem" valueCrypto={glmLocked} />
-        </BoxRounded>
+        <div className={styles.boxesGroup}>
+          <BoxRounded alignment="left" className={styles.box} isVertical title={t('ethStaked')}>
+            <DoubleValue
+              cryptoCurrency="ethereum"
+              dataTest="MetricsView__DoubleValue--ethStaked"
+              valueCrypto={ETH_STAKED}
+            />
+          </BoxRounded>
+          <BoxRounded alignment="left" className={styles.box} isVertical title={t('glmLocked')}>
+            <DoubleValue cryptoCurrency="golem" valueCrypto={glmLocked} />
+          </BoxRounded>
+        </div>
         <BoxRounded
           alignment="left"
           className={styles.box}

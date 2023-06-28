@@ -10,6 +10,7 @@ export default interface DoubleValueProps {
   coinPricesServerDowntimeText?: 'Conversion offline' | '...';
   cryptoCurrency?: CryptoCurrency;
   dataTest?: string;
+  isDisabled?: boolean;
   isError?: boolean;
   textAlignment?: 'left' | 'right';
   valueCrypto?: BigNumber;

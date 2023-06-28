@@ -178,7 +178,10 @@
     color: $color-octant-green;
     padding: 0;
     font-size: 1.6rem;
-    text-decoration: underline;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   &link4 {

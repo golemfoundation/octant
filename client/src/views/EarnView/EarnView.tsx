@@ -5,6 +5,7 @@ import BoxGlmLock from 'components/dedicated/BoxGlmLock/BoxGlmLock';
 import BoxWithdrawEth from 'components/dedicated/BoxWithdrawEth/BoxWithdrawEth';
 import History from 'components/dedicated/History/History';
 import TipTile from 'components/dedicated/TipTile/TipTile';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useTipsStore from 'store/tips/store';
@@ -20,9 +21,14 @@ const EarnView = (): ReactElement => {
     setWasWithdrawAlreadyClosed: state.setWasWithdrawAlreadyClosed,
     wasWithdrawAlreadyClosed: state.data.wasWithdrawAlreadyClosed,
   }));
+  const { data: currentEpoch } = useCurrentEpoch();
 
   const isWithdrawTipVisible =
-    withdrawableUserEth && !withdrawableUserEth.isZero() && !wasWithdrawAlreadyClosed;
+    currentEpoch &&
+    currentEpoch > 1 &&
+    withdrawableUserEth &&
+    !withdrawableUserEth.isZero() &&
+    !wasWithdrawAlreadyClosed;
 
   return (
     <MainLayout classNameBody={styles.layoutBody} dataTest="EarnView">

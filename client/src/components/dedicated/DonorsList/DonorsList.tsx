@@ -6,6 +6,7 @@ import Button from 'components/core/Button/Button';
 import Identicon from 'components/core/Identicon/Identicon';
 import Loader from 'components/core/Loader/Loader';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useProposalAllocations from 'hooks/subgraph/allocations/useProposalAllocations';
 import useSettingsStore from 'store/settings/store';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
@@ -38,12 +39,15 @@ const DonorsList: FC<DonorsListProps> = ({
     refetch: refetchProposalAllocations,
     isLoading,
   } = useProposalAllocations({ proposalAddress });
+  const { data: currentEpoch } = useCurrentEpoch();
 
   useEffect(() => {
     if (proposalAllocations && proposalAllocations?.length > 0) {
       refetchProposalAllocations();
     }
   }, [proposalAllocations, refetchProposalAllocations]);
+
+  const isEpoch1 = currentEpoch === 1;
 
   return (
     <div className={cx(styles.root, className)} data-test={dataTest}>
@@ -55,33 +59,34 @@ const DonorsList: FC<DonorsListProps> = ({
             <span>{t('donors')}</span>{' '}
             {proposalAllocations && (
               <div className={styles.count} data-test={`${dataTest}__count`}>
-                {proposalAllocations.length}
+                {isEpoch1 ? '--' : proposalAllocations.length}
               </div>
             )}
           </div>
-          {proposalAllocations
-            ?.slice(0, isDonorsListExpanded ? proposalAllocations.length : SHORT_LIST_LENGTH)
-            ?.map(({ amount, user }) => (
-              <div key={`${proposalAddress}-${user}`} className={styles.donor}>
-                <Identicon className={styles.identicon} username={user} />
-                <div className={styles.address}>{truncateEthAddress(user)}</div>
-                <div>
-                  {isCryptoMainValueDisplay
-                    ? getValueCryptoToDisplay({
-                        cryptoCurrency: 'ethereum',
-                        valueCrypto: amount,
-                      })
-                    : getValueFiatToDisplay({
-                        cryptoCurrency: 'ethereum',
-                        cryptoValues,
-                        displayCurrency: displayCurrency!,
-                        error,
-                        valueCrypto: amount,
-                      })}
+          {!isEpoch1 &&
+            proposalAllocations
+              ?.slice(0, isDonorsListExpanded ? proposalAllocations.length : SHORT_LIST_LENGTH)
+              ?.map(({ amount, user }) => (
+                <div key={`${proposalAddress}-${user}`} className={styles.donor}>
+                  <Identicon className={styles.identicon} username={user} />
+                  <div className={styles.address}>{truncateEthAddress(user)}</div>
+                  <div>
+                    {isCryptoMainValueDisplay
+                      ? getValueCryptoToDisplay({
+                          cryptoCurrency: 'ethereum',
+                          valueCrypto: amount,
+                        })
+                      : getValueFiatToDisplay({
+                          cryptoCurrency: 'ethereum',
+                          cryptoValues,
+                          displayCurrency: displayCurrency!,
+                          error,
+                          valueCrypto: amount,
+                        })}
+                  </div>
                 </div>
-              </div>
-            ))}
-          {proposalAllocations && proposalAllocations.length > SHORT_LIST_LENGTH && (
+              ))}
+          {!isEpoch1 && proposalAllocations && proposalAllocations.length > SHORT_LIST_LENGTH && (
             <Button
               className={styles.buttonDonors}
               label={isDonorsListExpanded ? `- ${t('seeLess')}` : `+ ${t('seeAll')}`}
@@ -89,6 +94,7 @@ const DonorsList: FC<DonorsListProps> = ({
               variant="secondary2"
             />
           )}
+          {isEpoch1 && <div className={styles.donationsNotEnabled}>{t('donationsNotEnabled')}</div>}
         </Fragment>
       )}
     </div>

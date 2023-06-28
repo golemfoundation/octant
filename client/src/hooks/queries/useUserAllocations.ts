@@ -31,7 +31,7 @@ export default function useUserAllocations(
     QUERY_KEYS.userAllocations,
     () => contractAllocationsStorage?.getUserAllocations(currentEpoch! - 1, address!),
     {
-      enabled: !!currentEpoch && currentEpoch > 1 && !!address,
+      enabled: !!currentEpoch && currentEpoch > 0 && !!address,
       select: response => {
         const userAllocationsFromBackend = response!.map(element => ({
           address: element[0],

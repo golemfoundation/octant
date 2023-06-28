@@ -6,7 +6,15 @@
     color: $color-octant-orange;
   }
 
-  &.textAlignment--{
+  &.isDisabled {
+    color: $color-octant-grey3;
+
+    .secondary {
+      color: $color-octant-grey3;
+    }
+  }
+
+  &.textAlignment-- {
     &left {
       text-align: left;
     }

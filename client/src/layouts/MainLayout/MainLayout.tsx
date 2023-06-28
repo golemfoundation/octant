@@ -89,6 +89,7 @@ const MainLayout: FC<MainLayoutProps> = ({
     isActive: tab.isActive || pathname === tab.to,
   }));
 
+  const isEpoch1 = currentEpoch === 1;
   const isAllocationRoot = !!useMatch(ROOT_ROUTES.allocation.absolute);
   const isProposalRoot =
     !!useMatch(ROOT_ROUTES.proposal.absolute) ||
@@ -152,27 +153,30 @@ const MainLayout: FC<MainLayoutProps> = ({
                 >
                   <div className={styles.walletInfo}>
                     <div className={styles.address}>{truncateEthAddress(address)}</div>
-                    {showAllocationPeriod ? (
-                      <div className={styles.allocationPeriod}>
-                        <Trans
-                          components={[
-                            <span
-                              className={cx(isAllocationPeriodIsHighlighted && styles.highlighted)}
-                            />,
-                          ]}
-                          i18nKey={
-                            isDecisionWindowOpen
-                              ? 'layouts.main.allocationEndsIn'
-                              : 'layouts.main.allocationStartsIn'
-                          }
-                          values={{ allocationPeriod }}
-                        />
-                      </div>
-                    ) : (
-                      <div className={styles.budget}>
-                        {getIndividualRewardText({ currentEpoch, individualReward })}
-                      </div>
-                    )}
+                    {!isEpoch1 &&
+                      (showAllocationPeriod ? (
+                        <div className={styles.allocationPeriod}>
+                          <Trans
+                            components={[
+                              <span
+                                className={cx(
+                                  isAllocationPeriodIsHighlighted && styles.highlighted,
+                                )}
+                              />,
+                            ]}
+                            i18nKey={
+                              isDecisionWindowOpen
+                                ? 'layouts.main.allocationEndsIn'
+                                : 'layouts.main.allocationStartsIn'
+                            }
+                            values={{ allocationPeriod }}
+                          />
+                        </div>
+                      ) : (
+                        <div className={styles.budget}>
+                          {getIndividualRewardText({ currentEpoch, individualReward })}
+                        </div>
+                      ))}
                   </div>
                   <Button
                     className={cx(

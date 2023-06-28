@@ -22,7 +22,7 @@ export default function useProposalsContract(): UseQueryResult<string[]> {
       enabled:
         !!contractProposals &&
         !!currentEpoch &&
-        ((isDecisionWindowOpen && currentEpoch > 1) || !isDecisionWindowOpen),
+        ((isDecisionWindowOpen && currentEpoch > 0) || !isDecisionWindowOpen),
     },
   );
 }
