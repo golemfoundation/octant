@@ -1,10 +1,10 @@
-import { identicon } from 'minidenticons';
+import { minidenticon } from 'minidenticons';
 import React, { FC } from 'react';
 
 import IdenticonProps from './types';
 
 const Identicon: FC<IdenticonProps> = ({ className, username }) => {
-  const identiconSvg = identicon(username);
+  const identiconSvg = minidenticon(username);
   return (
     <div
       className={className}

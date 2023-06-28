@@ -10,6 +10,6 @@ const { provider } = configureChains<typeof goerli | typeof sepolia>(CHAINS, [
 
 export const wagmiClient = createClient({
   autoConnect: true,
-  connectors: w3mConnectors({ chains: CHAINS, projectId: PROJECT_ID, version: 1 }),
+  connectors: w3mConnectors({ chains: CHAINS, projectId: PROJECT_ID }),
   provider,
 });
