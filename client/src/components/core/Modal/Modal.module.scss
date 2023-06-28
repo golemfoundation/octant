@@ -13,6 +13,7 @@ $paddingVertical: 3.2rem;
   overflow: auto;
   text-align: left;
   background: $color-octant-grey4;
+  border-radius: $border-radius-20 $border-radius-20 0 0;
 
   &.variant {
     &--small {
@@ -34,12 +35,6 @@ $paddingVertical: 3.2rem;
         }
       }
     }
-  }
-
-  .image {
-    display: flex;
-    align-items: flex-end;
-    margin-top: 5.6rem;
   }
 
   .header {

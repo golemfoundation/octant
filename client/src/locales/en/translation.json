@@ -245,6 +245,24 @@
           "header": "More information",
           "text": "The <0>Metrics</0> tab shows a range of stats about the current and previous epochs to help inform your allocation decisions and generally provide an overview of Octant. <br/> <br/> Still have questions or want to reach out? <br /> Read the <1>Docs</1> or join us on <2>Discord</2>."
         }
+      },
+      "stepsEpoch1": {
+        "welcomeToOctant": {
+          "header": "Welcome to Octant Epoch 1",
+          "text": "Octant is a Golem Foundation experiment in decentralised governance and funding public good projects.<br/><br/>To get started, connect your wallet and lock some GLM in the Earn view. Take a look at the <0>FAQ</0> if you want to learn more."
+        },
+        "earnRewards": {
+          "header": "Earn ETH rewards",
+          "text": "If you lock more than 100 GLM, you will earn ETH in Epoch 2. The longer you lock, the more rewards you earn.<br/><br/>Tokens can be unlocked anytime but if you want to maximise rewards, keep them locked for as long as you can."
+        },
+        "previewProjects": {
+          "header": "Preview projects",
+          "text": "Epoch 1 is a preview, so you can't donate to projects yet, but you can read about and add them to the Allocate view ready for Epoch 2.<br/><br/>Just tap the heart icon on the project tile or in the detail page.The badge on the bottom navbar will count the projects you added."
+        },
+        "getReady": {
+          "header": "Get ready for Epoch 2",
+          "text": "Octant begins properly in Epoch 2. There is no set date for it yet, so if you want to be involved, keep an eye out for updates.<br/><br/>Visit <0>Octant.build</0>, join the <1>Discord</1> or get project updates on <2>Twitter</2>."
+        }
       }
     },
     "proposal": {

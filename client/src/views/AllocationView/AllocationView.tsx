@@ -100,7 +100,7 @@ const AllocationView = (): ReactElement => {
     }
     onResetAllocationValues();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLocked])
+  }, [isLocked]);
 
   useEffect(() => {
     onResetAllocationValues();
