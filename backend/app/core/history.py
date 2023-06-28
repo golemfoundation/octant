@@ -31,9 +31,7 @@ class AllocationItem:
 
 def get_locks(user_address: str, from_timestamp_us: int) -> List[LockItem]:
     return [
-        LockItem(
-            type=OpType.LOCK, amount=int(r["amount"]), timestamp=int(r["timestamp"])
-        )
+        LockItem(type=OpType.LOCK, amount=int(r["amount"]), timestamp=r["timestamp"])
         for r in get_locks_by_address(user_address)
         if int(r["timestamp"]) >= from_timestamp_us
     ]
@@ -41,23 +39,21 @@ def get_locks(user_address: str, from_timestamp_us: int) -> List[LockItem]:
 
 def get_unlocks(user_address: str, from_timestamp_us: int) -> List[LockItem]:
     return [
-        LockItem(
-            type=OpType.UNLOCK, amount=int(r["amount"]), timestamp=int(r["timestamp"])
-        )
+        LockItem(type=OpType.UNLOCK, amount=int(r["amount"]), timestamp=r["timestamp"])
         for r in get_unlocks_by_address(user_address)
         if int(r["timestamp"]) >= from_timestamp_us
     ]
 
 
-def get_allocations(user_address: str, from_timestamp_us: int):
+def get_allocations(user_address: str, from_timestamp_us: int) -> List[AllocationItem]:
     return [
         AllocationItem(
             address=r.proposal_address,
             epoch=r.epoch,
-            amount=r.amount,
+            amount=int(r.amount),
             timestamp=_datetime_to_microseconds(r.created_at),
         )
-        for r in allocations.get_all_by_user(user_address)
+        for r in allocations.get_all_by_user(user_address, with_deleted=True)
         if _datetime_to_microseconds(r.created_at) >= from_timestamp_us
     ]
 

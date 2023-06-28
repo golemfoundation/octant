@@ -29,7 +29,9 @@ def get_claimed_rewards(epoch: int) -> (List[AddressAndAmount], int):
         user_budget = get_budget(allocation.proposal_address, epoch)
         claimed_rewards = user_budget - allocation.amount
         if claimed_rewards > 0:
-            rewards.append(AddressAndAmount(allocation.proposal_address, claimed_rewards))
+            rewards.append(
+                AddressAndAmount(allocation.proposal_address, claimed_rewards)
+            )
             rewards_sum += claimed_rewards
 
     return rewards, rewards_sum

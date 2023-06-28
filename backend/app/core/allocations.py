@@ -25,6 +25,17 @@ class AllocationRequest:
     override_existing_allocations: bool
 
 
+def allocate(request: AllocationRequest):
+    user_address = get_user_address(request)
+    user_allocations = deserialize_payload(request.payload)
+    epoch = epochs.get_pending_epoch()
+
+    _verify_allocations(epoch, user_address, user_allocations)
+    store_allocations_in_db(
+        epoch, user_address, user_allocations, request.override_existing_allocations
+    )
+
+
 def store_allocations_in_db(
     epoch: int,
     user_address: str,
@@ -40,17 +51,6 @@ def store_allocations_in_db(
 
     database.allocations.add_all(epoch, user.id, allocations)
     db.session.commit()
-
-
-def allocate(request: AllocationRequest):
-    user_address = get_user_address(request)
-    user_allocations = deserialize_payload(request.payload)
-    epoch = epochs.get_pending_epoch()
-
-    _verify_allocations(epoch, user_address, user_allocations)
-    store_allocations_in_db(
-        epoch, user_address, user_allocations, request.override_existing_allocations
-    )
 
 
 def get_user_address(request: AllocationRequest) -> str:
@@ -99,8 +99,6 @@ def _verify_allocations(epoch: int, user_address: str, allocations: List[Allocat
     # Check if user didn't exceed his budget
     user_budget = get_budget(user_address, epoch)
     proposals_sum = sum([a.amount for a in allocations])
-
-    print("SUM {}", proposals_sum)
 
     if proposals_sum > user_budget:
         raise exceptions.RewardsBudgetExceeded

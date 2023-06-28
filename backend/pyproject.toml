@@ -7,16 +7,16 @@ license = "GPL-3.0"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 python-dotenv = "^1.0.0"
 flask = "^2.2.3"
-flask-cors = "^3.0.10"
+flask-cors = "^4.0.0"
 flask-migrate = "^4.0.4"
 flask-socketio = "^5.3.3"
 flask-restx = "^1.1.0"
 gql = { extras = ["aiohttp"], version = "^3.4.0" }
 requests = "^2.28.2"
-web3 = "^6.2.0"
+web3 = "^6.5.0"
 multiproof = {git = "https://github.com/stakewise/multiproof.git", rev = "v0.1.2"}
 dataclass-wizard = "^0.22.2"
 
