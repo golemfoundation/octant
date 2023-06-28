@@ -26,6 +26,7 @@ class Config(object):
     WITHDRAWALS_TARGET_CONTRACT_ADDRESS = os.getenv(
         "WITHDRAWALS_TARGET_CONTRACT_ADDRESS"
     )
+    VAULT_CONTRACT_ADDRESS = os.getenv("VAULT_CONTRACT_ADDRESS")
 
     CHAIN_ID = os.getenv(
         "CHAIN_ID", 11155111

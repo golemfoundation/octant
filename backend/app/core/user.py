@@ -1,14 +1,8 @@
-from dataclasses import dataclass
 from decimal import Decimal
 from typing import List
 
 from app import database
-
-
-@dataclass(frozen=True)
-class ClaimedRewards:
-    address: str
-    amount: int
+from app.core.common import AddressAndAmount
 
 
 def get_budget(user_address: str, epoch: int) -> int:
@@ -25,7 +19,7 @@ def get_budget(user_address: str, epoch: int) -> int:
     return int(Decimal(snapshot.all_individual_rewards) * individual_share)
 
 
-def get_claimed_rewards(epoch: int) -> (List[ClaimedRewards], int):
+def get_claimed_rewards(epoch: int) -> (List[AddressAndAmount], int):
     rewards_sum = 0
     rewards = []
 
@@ -36,7 +30,7 @@ def get_claimed_rewards(epoch: int) -> (List[ClaimedRewards], int):
         user_budget = get_budget(user_addr, epoch)
         claimed_rewards = user_budget - allocated
         if claimed_rewards > 0:
-            rewards.append(ClaimedRewards(user_addr, claimed_rewards))
+            rewards.append(AddressAndAmount(user_addr, claimed_rewards))
             rewards_sum += claimed_rewards
 
     return rewards, rewards_sum

@@ -17,12 +17,6 @@ from app.settings import config
 
 
 @dataclass(frozen=True)
-class ProposalReward:
-    address: str
-    amount: int
-
-
-@dataclass(frozen=True)
 class EpochStatus(JSONWizard):
     is_current: bool
     is_pending: bool

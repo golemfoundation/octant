@@ -2,8 +2,8 @@ from collections import defaultdict
 from typing import List
 
 from eth_utils import to_checksum_address
-from sqlalchemy import Integer, cast
 
+from app.core.common import AddressAndAmount
 from app.database.models import Allocation, User
 from app.extensions import db
 
@@ -16,7 +16,7 @@ def get_all_by_epoch_and_user_id(epoch: int, user_id: int) -> List[Allocation]:
     return Allocation.query.filter_by(epoch=epoch, user_id=user_id).all()
 
 
-def get_alloc_sum_by_epoch_and_user_address(epoch: int) -> List[tuple]:
+def get_alloc_sum_by_epoch_and_user_address(epoch: int) -> List[AddressAndAmount]:
     allocations = (
         db.session.query(User, Allocation)
         .join(User, User.id == Allocation.user_id)
@@ -32,7 +32,7 @@ def get_alloc_sum_by_epoch_and_user_address(epoch: int) -> List[tuple]:
 
     sorted_allocations = sorted(allocations_by_user.items(), key=lambda item: item[0])
 
-    return sorted_allocations
+    return [AddressAndAmount(address=a, amount=b) for a, b in sorted_allocations]
 
 
 def add_all(epoch: int, user_id: int, allocations):
