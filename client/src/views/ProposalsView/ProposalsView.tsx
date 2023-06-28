@@ -41,7 +41,7 @@ const ProposalsView = (): ReactElement => {
         <TipTile
           className={styles.tip}
           dataTest="ProposalsView__TipTile"
-          image="images/tip-favourites.webp"
+          image="images/favourites.webp"
           infoLabel={i18n.t('common.gettingStarted')}
           onClose={() => setWasAddFavouritesAlreadyClosed(true)}
           text={t('tip.text')}

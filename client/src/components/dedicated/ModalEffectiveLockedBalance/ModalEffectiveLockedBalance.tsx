@@ -12,7 +12,11 @@ const ModalEffectiveLockedBalance: FC<ModalEffectiveLockedBalanceProps> = ({ mod
   <Modal
     {...modalProps}
     header="Effective Locked Balance"
-    Image={<Img className={styles.image} src="images/modalEffectiveLockedBalance.webp" />}
+    Image={
+      <div className={styles.imageWrapper}>
+        <Img className={styles.image} src="images/modalEffectiveLockedBalance.webp" />
+      </div>
+    }
   >
     <Text>
       <Trans

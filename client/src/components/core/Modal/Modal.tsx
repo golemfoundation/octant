@@ -88,7 +88,7 @@ const Modal: FC<ModalProps> = ({
           transition={{ damping: 0.5 }}
           variants={isDesktop || variant === 'small' ? variantsCenter : variantsBottom}
         >
-          {Image && <div className={styles.image}>{Image}</div>}
+          {Image && Image}
           <div className={cx(styles.body, Image && styles.hasImage, bodyClassName)}>
             <AnimatePresence initial={false}>
               {header && (
