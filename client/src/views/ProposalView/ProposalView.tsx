@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import React, { ReactElement, Fragment, useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
@@ -202,7 +203,8 @@ const ProposalView = (): ReactElement => {
                       src={`${ipfsGateway}${profileImageCID}`}
                     />
                     <ButtonAddToAllocate
-                      dataTest="ProposalView__proposal__ButtonAddToAllocate"
+                      className={cx(styles.buttonAddToAllocatePrimary, isEpoch1 && styles.isEpoch1)}
+                      dataTest="ProposalView__proposal__ButtonAddToAllocate--primary"
                       isAlreadyAdded={isAlreadyAdded}
                       onClick={() => onAddRemoveFromAllocate(address)}
                     />
@@ -222,6 +224,16 @@ const ProposalView = (): ReactElement => {
                     <ProposalRewards
                       canFoundedAtHide={false}
                       className={styles.proposalRewards}
+                      MiddleElement={
+                        isEpoch1 ? null : (
+                          <ButtonAddToAllocate
+                            className={styles.buttonAddToAllocateSecondary}
+                            dataTest="ProposalView__proposal__ButtonAddToAllocate--secondary"
+                            isAlreadyAdded={isAlreadyAdded}
+                            onClick={() => onAddRemoveFromAllocate(address)}
+                          />
+                        )
+                      }
                       totalValueOfAllocations={
                         proposalMatchedProposalRewards?.totalValueOfAllocations
                       }
