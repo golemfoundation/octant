@@ -60,6 +60,24 @@
     align-self: stretch;
   }
 
+  .buttonAddToAllocate {
+    &Primary {
+      @media #{$desktop-up} {
+        visibility: hidden;
+
+        &.isEpoch1 {
+          visibility: initial;
+        }
+      }
+    }
+    &Secondary {
+      visibility: hidden;
+      @media #{$desktop-up} {
+        visibility: initial;
+      }
+    }
+  }
+
   .imageProfile {
     width: 6.4rem;
     height: 6.4rem;
