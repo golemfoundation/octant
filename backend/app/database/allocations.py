@@ -6,6 +6,7 @@ from typing import List
 from eth_utils import to_checksum_address
 
 from app.core.allocations import Allocation as CoreAllocation
+from app.core.common import AccountFunds
 from app.database.models import Allocation, User
 from app.extensions import db
 from app.database.user import get_by_address
@@ -22,6 +23,9 @@ def get_all_by_epoch(epoch: int, with_deleted=False) -> List[Allocation]:
 
 def get_all_by_user(user_address: str, with_deleted=False) -> List[Allocation]:
     user: User = get_by_address(user_address)
+
+    if user is None:
+        return []
 
     query: Query = Allocation.query.filter_by(user_id=user.id)
 
@@ -44,7 +48,7 @@ def get_all_by_epoch_and_user_id(
 
 def get_alloc_sum_by_epoch_and_user_address(
     epoch: int, with_deleted=False
-) -> List[CoreAllocation]:
+) -> List[AccountFunds]:
     query: Query = (
         db.session.query(User, Allocation)
         .join(User, User.id == Allocation.user_id)
@@ -63,11 +67,8 @@ def get_alloc_sum_by_epoch_and_user_address(
         allocations_by_user[user.address] += int(allocation.amount)
 
     sorted_allocations = sorted(
-        [
-            CoreAllocation(proposal_address=i[0], amount=i[1])
-            for i in allocations_by_user.items()
-        ],
-        key=lambda item: item.proposal_address,
+        [AccountFunds(address=i[0], amount=i[1]) for i in allocations_by_user.items()],
+        key=lambda item: item.address,
     )
 
     return sorted_allocations

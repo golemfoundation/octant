@@ -26,12 +26,10 @@ def get_claimed_rewards(epoch: int) -> (List[AccountFunds], int):
     for allocation in database.allocations.get_alloc_sum_by_epoch_and_user_address(
         epoch
     ):
-        user_budget = get_budget(allocation.proposal_address, epoch)
+        user_budget = get_budget(allocation.address, epoch)
         claimed_rewards = user_budget - allocation.amount
         if claimed_rewards > 0:
-            rewards.append(
-                AccountFunds(allocation.proposal_address, claimed_rewards)
-            )
+            rewards.append(AccountFunds(allocation.address, claimed_rewards))
             rewards_sum += claimed_rewards
 
     return rewards, rewards_sum

@@ -49,19 +49,19 @@ def before(monkeypatch, proposal_accounts):
                 {
                     "__typename": "Locked",
                     "amount": "500000000000000000000",
-                    "timestamp": 1679645896 * 10**6,
+                    "timestamp": 1679645896,
                 },
                 {
                     "__typename": "Locked",
                     "amount": "300000000000000000000",
-                    "timestamp": 1679645700 * 10**6,
+                    "timestamp": 1679645700,
                 },
             ],
             [
                 {
                     "__typename": "Unlocked",
                     "amount": "400000000000000000000",
-                    "timestamp": 1679645800 * 10**6,
+                    "timestamp": 1679645800,
                 },
             ],
             [
@@ -87,19 +87,19 @@ def before(monkeypatch, proposal_accounts):
                 {
                     "__typename": "Locked",
                     "amount": "500000000000000000000",
-                    "timestamp": 1679645900 * 10**6,
+                    "timestamp": 1679645900,
                 },
                 {
                     "__typename": "Locked",
                     "amount": "300000000000000000000",
-                    "timestamp": 1679645910 * 10**6,
+                    "timestamp": 1679645910,
                 },
             ],
             [
                 {
                     "__typename": "Unlocked",
                     "amount": "400000000000000000000",
-                    "timestamp": 1679645950 * 10**6,
+                    "timestamp": 1679645950,
                 },
             ],
             [
@@ -125,19 +125,19 @@ def before(monkeypatch, proposal_accounts):
                 {
                     "__typename": "Locked",
                     "amount": "500000000000000000000",
-                    "timestamp": 1679645900 * 10**6,
+                    "timestamp": 1679645900,
                 },
             ],
             [
                 {
                     "__typename": "Unlocked",
                     "amount": "400000000000000000000",
-                    "timestamp": 1679645800 * 10**6,
+                    "timestamp": 1679645800,
                 },
                 {
                     "__typename": "Unlocked",
                     "amount": "600000000000000000000",
-                    "timestamp": 1679646000 * 10**6,
+                    "timestamp": 1679646000,
                 },
             ],
             [
