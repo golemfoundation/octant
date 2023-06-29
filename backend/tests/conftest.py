@@ -90,7 +90,7 @@ def allocate_user_rewards(user_account: Account, proposal_account, allocation_am
 
 def create_payload(proposals, amounts: Optional[List[int]]):
     if amounts is None:
-        amounts = [randint(1 * 10**18, 100_000_000 * 10**18) for p in proposals]
+        amounts = [randint(1 * 10**18, 100_000_000 * 10**18) for _ in proposals]
 
     allocations = [
         {

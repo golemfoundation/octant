@@ -35,6 +35,11 @@ def before(monkeypatch, proposal_accounts):
     monkeypatch.setattr("app.core.allocations.proposals", mock_proposals)
     monkeypatch.setattr("app.core.allocations.epochs", mock_epochs)
 
+    # Set some insanely high user rewards budget
+    mock_get_user_budget = Mock()
+    mock_get_user_budget.return_value = 10 * 10**18 * 10**18
+    monkeypatch.setattr("app.core.allocations.get_budget", mock_get_user_budget)
+
 
 def test_user_allocates_for_the_first_time(app, user_accounts, proposal_accounts):
     # Test data
@@ -245,6 +250,46 @@ def test_allocation_validation_errors(
     ]
 
     # Expect no validation errors at this point
+    allocate(AllocationRequest(payload, signature, override_existing_allocations=True))
+
+
+def test_project_allocates_funds_to_itself(
+    app, monkeypatch, proposal_accounts, user_accounts
+):
+    # Test data
+    payload = create_payload(proposal_accounts[0:3], None)
+    signature = sign(proposal_accounts[0], build_allocations_eip712_data(payload))
+
+    with pytest.raises(exceptions.ProposalAllocateToItself):
+        allocate(
+            AllocationRequest(payload, signature, override_existing_allocations=True)
+        )
+
+
+def test_user_exceeded_rewards_budget_in_allocations(
+    app, monkeypatch, proposal_accounts, user_accounts
+):
+    # Set some reasonable user rewards budget
+    mock_get_user_budget = Mock()
+    mock_get_user_budget.return_value = 100 * 10**18
+    monkeypatch.setattr("app.core.allocations.get_budget", mock_get_user_budget)
+
+    # First payload sums up to 110 eth (budget is set to 100)
+    payload = create_payload(
+        proposal_accounts[0:3], [10 * 10**18, 50 * 10**18, 50 * 10**18]
+    )
+    signature = sign(user_accounts[0], build_allocations_eip712_data(payload))
+
+    with pytest.raises(exceptions.RewardsBudgetExceeded):
+        allocate(
+            AllocationRequest(payload, signature, override_existing_allocations=True)
+        )
+
+    # Lower it to 100 total (should pass)
+    payload = create_payload(
+        proposal_accounts[0:3], [10 * 10**18, 40 * 10**18, 50 * 10**18]
+    )
+    signature = sign(user_accounts[0], build_allocations_eip712_data(payload))
     allocate(AllocationRequest(payload, signature, override_existing_allocations=True))
 
 

@@ -59,6 +59,30 @@ class InvalidProposals(OctantException):
         super().__init__(self.description.format(proposals), self.code)
 
 
+class ProposalAllocateToItself(OctantException):
+    code = 400
+    description = "You cannot allocate funds to your own project."
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
+class RewardsBudgetExceeded(OctantException):
+    code = 400
+    description = "You cannot allocate more funds than your rewards budget."
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
+class DuplicatedProposals(OctantException):
+    code = 400
+    description = "The following proposals are duplicated in the payload: {}"
+
+    def __init__(self, proposals):
+        super().__init__(self.description.format(proposals), self.code)
+
+
 class MissingSnapshot(OctantException):
     code = 500
     description = "No snapshot has been taken. Try calling /snapshot/pending or /snapshot/finalized endpoint"

@@ -1,5 +1,8 @@
+from typing import Union
+
 from eth_account import Account
 from eth_account.messages import encode_structured_data
+from eth_account.signers.local import LocalAccount
 
 from app.extensions import w3
 from app.settings import config
@@ -41,7 +44,7 @@ def build_allocations_eip712_data(message: dict) -> dict:
     }
 
 
-def sign(account: Account, data: dict) -> str:
+def sign(account: Union[Account, LocalAccount], data: dict) -> str:
     """
     Signs the provided message with w3.eth.account following EIP-712 structure
     :returns signature as a hexadecimal string.

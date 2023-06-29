@@ -6,7 +6,7 @@ from app import database
 from app.contracts.epochs import epochs
 from app.contracts.proposals import proposals
 from app.core import allocations as allocations_core
-from app.core.common import AddressAndAmount
+from app.core.common import AccountFunds
 from app.core.rewards import get_matched_rewards_from_epoch
 from app.database import allocations as allocation_db
 
@@ -27,7 +27,7 @@ def get_proposal_allocation_threshold(epoch: int) -> int:
 
 def get_proposal_rewards_above_threshold(
     epoch: int,
-) -> (List[AddressAndAmount], int):
+) -> (List[AccountFunds], int):
     matched_rewards = get_matched_rewards_from_epoch(epoch)
     projects = get_proposals_with_allocations(epoch)
     threshold = get_proposal_allocation_threshold(epoch)
@@ -47,7 +47,7 @@ def get_proposal_rewards_above_threshold(
                 * matched_rewards
             )
             rewards_sum += allocated + matched
-            rewards.append(AddressAndAmount(address, allocated + matched))
+            rewards.append(AccountFunds(address, allocated + matched))
 
     return rewards, rewards_sum
 

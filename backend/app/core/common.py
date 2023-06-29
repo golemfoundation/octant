@@ -4,7 +4,7 @@ from dataclass_wizard import JSONWizard
 
 
 @dataclass(frozen=True)
-class AddressAndAmount(JSONWizard):
+class AccountFunds(JSONWizard):
     address: str
     amount: int
 

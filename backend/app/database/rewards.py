@@ -3,7 +3,7 @@ from typing import List
 from eth_utils import to_checksum_address
 
 from app import db
-from app.core.common import AddressAndAmount
+from app.core.common import AccountFunds
 from app.database.models import Reward as RewardDB
 
 
@@ -31,7 +31,7 @@ def add(epoch: int, address: str, amount: int):
     )
 
 
-def add_all(epoch: int, rewards: List[AddressAndAmount]):
+def add_all(epoch: int, rewards: List[AccountFunds]):
     new_rewards = [
         RewardDB(
             epoch=epoch,

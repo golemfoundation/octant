@@ -30,6 +30,11 @@ def before(monkeypatch, proposal_accounts):
     monkeypatch.setattr("app.core.allocations.epochs", mock_epochs)
     monkeypatch.setattr("app.core.proposals.proposals", mock_proposals)
 
+    # Set some insanely high user rewards budget
+    mock_get_user_budget = Mock()
+    mock_get_user_budget.return_value = 10 * 10**18 * 10**18
+    monkeypatch.setattr("app.core.allocations.get_budget", mock_get_user_budget)
+
 
 @pytest.mark.parametrize(
     #     The structure of these parameters is as follows

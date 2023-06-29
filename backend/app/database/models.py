@@ -1,7 +1,6 @@
 from datetime import datetime as dt
 
-from sqlalchemy import DateTime
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 
 from app.extensions import db
 
@@ -35,6 +34,7 @@ class Allocation(BaseModel):
     user = relationship("User", backref=db.backref("allocations", lazy=True))
     proposal_address = Column(db.String(42), nullable=False)
     amount = Column(db.String, nullable=False)
+    deleted_at = Column(db.TIMESTAMP, nullable=True)
 
 
 class PendingEpochSnapshot(BaseModel):
