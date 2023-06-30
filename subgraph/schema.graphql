@@ -1,7 +1,7 @@
 type Locked @entity(immutable: true) {
     id: Bytes!
     depositBefore: BigInt!
-    amount: BigInt! # uint224
+    amount: BigInt! # uint256
     user: Bytes! # address
     blockNumber: Int!
     timestamp: Int!
@@ -11,7 +11,16 @@ type Locked @entity(immutable: true) {
 type Unlocked @entity(immutable: true) {
     id: Bytes!
     depositBefore: BigInt!
-    amount: BigInt! # uint224
+    amount: BigInt! # uint256
+    user: Bytes! # address
+    blockNumber: Int!
+    timestamp: Int!
+    transactionHash: Bytes!
+}
+
+type Withdrawal @entity(immutable: true) {
+    id: Bytes!
+    amount: BigInt! # uint256
     user: Bytes! # address
     blockNumber: Int!
     timestamp: Int!

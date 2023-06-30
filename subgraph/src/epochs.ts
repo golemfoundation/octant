@@ -14,7 +14,7 @@ export function handleBlock(block: ethereum.Block): void {
     return;
   }
 
-  const epochNo = currentEpoch.value.toI32()
+  const epochNo = currentEpoch.value.toI32();
   let epoch = Epoch.load(Bytes.fromI32(epochNo));
   if (epoch == null) {
     epoch = new Epoch(Bytes.fromI32(epochNo));

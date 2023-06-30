@@ -10,6 +10,7 @@ class OpType(StrEnum):
     LOCK = "lock"
     UNLOCK = "unlock"
     ALLOCATION = "allocation"
+    WITHDRAWAL = "withdrawal"
 
 
 @dataclass(frozen=True)
@@ -47,6 +48,15 @@ def user_history(user_address: str) -> List[HistoryEntry]:
         for r in history.get_unlocks(user_address, 0)
     ]
 
-    combined = allocations + locks + unlocks
+    withdrawals = [
+        HistoryEntry(
+            type=OpType.WITHDRAWAL,
+            amount=r.amount,
+            timestamp=r.timestamp,
+        )
+        for r in history.get_withdrawals(user_address, 0)
+    ]
+
+    combined = allocations + locks + unlocks + withdrawals
 
     return sorted(combined, key=lambda x: x.timestamp)

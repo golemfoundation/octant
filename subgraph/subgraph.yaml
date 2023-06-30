@@ -44,3 +44,23 @@ dataSources:
         - event: Unlocked(uint256,uint256,uint256,address)
           handler: handleUnlocked
       file: ./src/deposits.ts
+  - kind: ethereum
+    name: Vault
+    network: sepolia
+    source:
+      abi: Vault
+      address: "0xd3C9777a8cafE46583B5425C10196503c4428ddC"
+      startBlock: 3771656
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Withdrawal
+      abis:
+        - name: Vault
+          file: ./abis/Vault.json
+      eventHandlers:
+        - event: Withdrawn(address,uint256)
+          handler: handleWithdrawn
+      file: ./src/vault.ts

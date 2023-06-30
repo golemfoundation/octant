@@ -1,20 +1,30 @@
 {
   "sepolia": {
     "Deposits": {
-      "address": "0xa571e25cE27A0513219c975E6fd2B1095c1B6583",
-      "startBlock": 8415400
+      "address": "0x044465B505aeE0B790b180750E263e3F83a682e8",
+      "startBlock": 3771656
     },
     "Epochs": {
-      "address": "0xdD10d42E75467B96bA1d16Da53E0Fa8B23E51856",
-      "startBlock": 8415400
+      "address": "0x86A032e5e5bEaaEB8eb0F625bEB5426D8B526719",
+      "startBlock": 3771656
+    },
+    "Vault": {
+      "address": "0xd3C9777a8cafE46583B5425C10196503c4428ddC",
+      "startBlock": 3771656
     }
   },
   "localhost": {
-    "Deposits": {
-      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
+   "Deposits": {
+      "address": "0x044465B505aeE0B790b180750E263e3F83a682e8",
+      "startBlock": 3771656
     },
     "Epochs": {
-      "address": "0xdD10d42E75467B96bA1d16Da53E0Fa8B23E51856"
+      "address": "0x86A032e5e5bEaaEB8eb0F625bEB5426D8B526719",
+      "startBlock": 3771656
+    },
+    "Vault": {
+      "address": "0xd3C9777a8cafE46583B5425C10196503c4428ddC",
+      "startBlock": 3771656
     }
   }
 }
