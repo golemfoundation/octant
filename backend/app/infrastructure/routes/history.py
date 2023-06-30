@@ -11,7 +11,8 @@ history_item = api.model(
     "HistoryItem",
     {
         "type": fields.String(
-            required=True, description="Type of action (lock, unlock, allocation)"
+            required=True,
+            description="Type of action (lock, unlock, allocation, withdrawal)",
         ),
         "amount": fields.String(
             required=True, description="Amount involved in the action, BigNumber (wei)"

@@ -9,7 +9,13 @@ from eth_account.signers.local import LocalAccount
 from app.contracts.epochs import Epochs
 from app.contracts.proposals import Proposals
 from app.core.allocations import allocate, AllocationRequest
-from app.core.history import get_locks, get_unlocks, get_allocations, AllocationItem
+from app.core.history import (
+    get_locks,
+    get_unlocks,
+    get_allocations,
+    AllocationItem,
+    get_withdrawals,
+)
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.extensions import graphql_client
 from tests.conftest import create_payload, MOCKED_PENDING_EPOCH_NO
@@ -192,9 +198,73 @@ def test_history_locks(mocker, locks, unlocks, expected_history, app):
     assert history == expected_history
 
 
-def test_history_allocations_same_epoch(
-    app, monkeypatch, proposal_accounts, user_accounts
-):
+@pytest.mark.parametrize(
+    "withdrawals, expected_history_sorted_by_ts",
+    [
+        (
+            [
+                {
+                    "user": "0x1000000000000000000000000000000000000000",
+                    "amount": 100000000000000000000,
+                    "timestamp": 200,
+                },
+                {
+                    "user": "0x1000000000000000000000000000000000000000",
+                    "amount": 200000000000000000000,
+                    "timestamp": 100,
+                },
+            ],
+            [
+                {
+                    "address": "0x1000000000000000000000000000000000000000",
+                    "amount": 200000000000000000000,
+                    "timestamp": 100 * 10**6,
+                },
+                {
+                    "address": "0x1000000000000000000000000000000000000000",
+                    "amount": 100000000000000000000,
+                    "timestamp": 200 * 10**6,
+                },
+            ],
+        ),
+        (
+            [
+                {
+                    "user": "0x1000000000000000000000000000000000000000",
+                    "amount": 300000000000000000000,
+                    "timestamp": 100,
+                },
+            ],
+            [
+                {
+                    "address": "0x1000000000000000000000000000000000000000",
+                    "amount": 300000000000000000000,
+                    "timestamp": 100 * 10**6,
+                },
+            ],
+        ),
+        (
+            [],
+            [],
+        ),
+    ],
+)
+def test_history_withdrawals(mocker, withdrawals, expected_history_sorted_by_ts, app):
+    # Mock the execute method of the GraphQL client
+    mocker.patch.object(graphql_client, "execute")
+
+    # Define the mock responses for the execute method
+    graphql_client.execute.side_effect = [{"withdrawals": withdrawals}]
+
+    history = get_withdrawals("0x1000000000000000000000000000000000000000", 0)
+    history = [
+        dataclasses.asdict(item) for item in sorted(history, key=lambda x: x.timestamp)
+    ]
+
+    assert history == expected_history_sorted_by_ts
+
+
+def test_history_allocations(app, monkeypatch, proposal_accounts, user_accounts):
     # Setup constant data
     mock_epochs = MagicMock(spec=Epochs)
     monkeypatch.setattr("app.core.allocations.epochs", mock_epochs)

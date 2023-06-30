@@ -5,7 +5,6 @@ import { createLockedEvent, createUnlockedEvent } from './utils';
 
 import { handleLocked, handleUnlocked } from '../src/deposits';
 
-
 const LOCK_ENTITY_TYPE = 'Locked';
 const UNLOCK_ENTITY_TYPE = 'Unlocked';
 

@@ -2,6 +2,7 @@ import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { newMockEvent } from 'matchstick-as';
 
 import { Locked as LockedEvent, Unlocked as UnlockedEvent } from '../generated/Deposits/Deposits';
+import { Withdrawn } from '../generated/Vault/Vault';
 
 export function createLockedEvent(
   depositBefore: BigInt,
@@ -52,6 +53,21 @@ export function createUnlockedEvent(
   unlockedEvent.parameters.push(new ethereum.EventParam('user', ethereum.Value.fromAddress(user)));
 
   return unlockedEvent;
+}
+
+export function createWithdrawnEvent(amount: BigInt, user: Address): Withdrawn {
+  // eslint-disable-next-line no-undef
+  const withdrawnEvent = changetype<Withdrawn>(newMockEvent());
+
+  withdrawnEvent.parameters = [];
+
+  withdrawnEvent.parameters.push(new ethereum.EventParam('user', ethereum.Value.fromAddress(user)));
+
+  withdrawnEvent.parameters.push(
+    new ethereum.EventParam('amount', ethereum.Value.fromUnsignedBigInt(amount)),
+  );
+
+  return withdrawnEvent;
 }
 
 export function createBlockEvent(): ethereum.Block {

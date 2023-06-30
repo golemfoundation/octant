@@ -7,6 +7,7 @@ from app.database import allocations
 
 from app.infrastructure.qraphql.locks import get_locks_by_address
 from app.infrastructure.qraphql.unlocks import get_unlocks_by_address
+from app.infrastructure.qraphql.withdrawals import get_withdrawals_by_address_and_ts
 
 
 class OpType(StrEnum):
@@ -26,6 +27,13 @@ class AllocationItem:
     address: str
     epoch: int
     amount: int
+    timestamp: int  # Should be in microseconds
+
+
+@dataclass(frozen=True)
+class WithdrawalItem:
+    amount: int
+    address: str
     timestamp: int  # Should be in microseconds
 
 
@@ -63,6 +71,17 @@ def get_allocations(user_address: str, from_timestamp_us: int) -> List[Allocatio
         )
         for r in allocations.get_all_by_user(user_address, with_deleted=True)
         if _datetime_to_microseconds(r.created_at) >= from_timestamp_us
+    ]
+
+
+def get_withdrawals(user_address: str, from_timestamp_s: int) -> List[WithdrawalItem]:
+    return [
+        WithdrawalItem(
+            address=r["user"],
+            amount=int(r["amount"]),
+            timestamp=_seconds_to_microseconds(r["timestamp"]),
+        )
+        for r in get_withdrawals_by_address_and_ts(user_address, from_timestamp_s)
     ]
 
 
