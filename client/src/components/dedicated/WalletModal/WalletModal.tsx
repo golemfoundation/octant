@@ -5,6 +5,7 @@ import Modal from 'components/core/Modal/Modal';
 import Wallet from 'components/dedicated/Wallet/Wallet';
 
 import WalletModalProps from './types';
+import styles from './WalletModal.module.scss';
 
 const WalletModal: FC<WalletModalProps> = ({ modalProps }) => {
   const { t } = useTranslation('translation', {
@@ -12,7 +13,7 @@ const WalletModal: FC<WalletModalProps> = ({ modalProps }) => {
   });
 
   return (
-    <Modal header={t('balances')} {...modalProps}>
+    <Modal header={t('balances')} {...modalProps} bodyClassName={styles.modalBody}>
       <Wallet onDisconnect={() => modalProps.onClosePanel()} />
     </Modal>
   );
