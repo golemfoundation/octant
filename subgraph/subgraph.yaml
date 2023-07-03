@@ -36,6 +36,8 @@ dataSources:
         - Locked
         - Unlocked
       abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
         - name: Deposits
           file: ./abis/Deposits.json
       eventHandlers:
