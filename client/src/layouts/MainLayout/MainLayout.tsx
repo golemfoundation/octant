@@ -135,70 +135,75 @@ const MainLayout: FC<MainLayoutProps> = ({
       />
       <div className={styles.root} data-test={dataTest}>
         {isHeaderVisible && (
-          <div className={styles.header} data-test="Header__element">
-            <div className={styles.logoWrapper}>
-              <Svg img={octant} size={4} />
-              {env.isTestnet === 'true' && (
-                <div className={styles.testnetIndicatorWrapper}>
-                  <div className={styles.testnetIndicator}>{networkConfig.name}</div>
+          <Fragment>
+            <div className={styles.headerBlur} />
+            <div className={styles.headerWrapper}>
+              <div className={styles.header} data-test="Header__element">
+                <div className={styles.logoWrapper}>
+                  <Svg img={octant} size={4} />
+                  {env.isTestnet === 'true' && (
+                    <div className={styles.testnetIndicatorWrapper}>
+                      <div className={styles.testnetIndicator}>{networkConfig.name}</div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            <div className={styles.buttons}>
-              {isConnected && address ? (
-                <div
-                  className={styles.profileInfo}
-                  data-test="ProfileInfo"
-                  onClick={() => setIsWalletModalOpen(true)}
-                >
-                  <div className={styles.walletInfo}>
-                    <div className={styles.address}>{truncateEthAddress(address)}</div>
-                    {!isEpoch1 &&
-                      (showAllocationPeriod ? (
-                        <div className={styles.allocationPeriod}>
-                          <Trans
-                            components={[
-                              <span
-                                className={cx(
-                                  isAllocationPeriodIsHighlighted && styles.highlighted,
-                                )}
-                              />,
-                            ]}
-                            i18nKey={
-                              isDecisionWindowOpen
-                                ? 'layouts.main.allocationEndsIn'
-                                : 'layouts.main.allocationStartsIn'
-                            }
-                            values={{ allocationPeriod }}
-                          />
-                        </div>
-                      ) : (
-                        <div className={styles.budget}>
-                          {getIndividualRewardText({ currentEpoch, individualReward })}
-                        </div>
-                      ))}
-                  </div>
-                  <Button
-                    className={cx(
-                      styles.walletButton,
-                      isWalletModalOpen && styles.isWalletModalOpen,
-                    )}
-                    Icon={<Svg img={chevronBottom} size={0.8} />}
-                    isEventStopPropagation={false}
-                    variant="iconOnlyTransparent2"
-                  />
+                <div className={styles.buttons}>
+                  {isConnected && address ? (
+                    <div
+                      className={styles.profileInfo}
+                      data-test="ProfileInfo"
+                      onClick={() => setIsWalletModalOpen(true)}
+                    >
+                      <div className={styles.walletInfo}>
+                        <div className={styles.address}>{truncateEthAddress(address)}</div>
+                        {!isEpoch1 &&
+                          (showAllocationPeriod ? (
+                            <div className={styles.allocationPeriod}>
+                              <Trans
+                                components={[
+                                  <span
+                                    className={cx(
+                                      isAllocationPeriodIsHighlighted && styles.highlighted,
+                                    )}
+                                  />,
+                                ]}
+                                i18nKey={
+                                  isDecisionWindowOpen
+                                    ? 'layouts.main.allocationEndsIn'
+                                    : 'layouts.main.allocationStartsIn'
+                                }
+                                values={{ allocationPeriod }}
+                              />
+                            </div>
+                          ) : (
+                            <div className={styles.budget}>
+                              {getIndividualRewardText({ currentEpoch, individualReward })}
+                            </div>
+                          ))}
+                      </div>
+                      <Button
+                        className={cx(
+                          styles.walletButton,
+                          isWalletModalOpen && styles.isWalletModalOpen,
+                        )}
+                        Icon={<Svg img={chevronBottom} size={0.8} />}
+                        isEventStopPropagation={false}
+                        variant="iconOnlyTransparent2"
+                      />
+                    </div>
+                  ) : (
+                    <Button
+                      dataTest="ConnectWalletButton"
+                      isSmallFont
+                      label={t('connectWallet')}
+                      onClick={() => setIsModalConnectWalletOpen(true)}
+                      variant="cta"
+                    />
+                  )}
                 </div>
-              ) : (
-                <Button
-                  dataTest="ConnectWalletButton"
-                  isSmallFont
-                  label={t('connectWallet')}
-                  onClick={() => setIsModalConnectWalletOpen(true)}
-                  variant="cta"
-                />
-              )}
+              </div>
             </div>
-          </div>
+          </Fragment>
         )}
         <div
           className={cx(
@@ -211,33 +216,36 @@ const MainLayout: FC<MainLayoutProps> = ({
           {isLoading ? <Loader className={styles.loader} /> : children}
         </div>
         {isNavigationVisible && (
-          <div className={styles.navigationWrapper} data-test="Navigation__element">
-            <nav
-              className={cx(
-                styles.navigation,
-                navigationBottomSuffix && styles.hasNavigationBottomSuffix,
-              )}
-            >
-              {navigationBottomSuffix && (
-                <div className={styles.navigationBottomSuffix}>{navigationBottomSuffix}</div>
-              )}
-              <div className={styles.buttons}>
-                {tabsWithIsActive.map(({ icon, iconWrapped, label, ...rest }, index) => (
-                  <Button
-                    // eslint-disable-next-line react/no-array-index-key
-                    key={index}
-                    className={styles.buttonNavigation}
-                    dataTest={`${label}__Button`}
-                    Icon={iconWrapped || <Svg img={icon} size={3.2} />}
-                    label={label}
-                    variant="iconVertical"
-                    {...rest}
-                  />
-                ))}
-              </div>
-            </nav>
-            <div className={styles.coinGecko}>Powered by CoinGecko API</div>
-          </div>
+          <Fragment>
+            <div className={styles.navigationWrapper} data-test="Navigation__element">
+              <nav
+                className={cx(
+                  styles.navigation,
+                  navigationBottomSuffix && styles.hasNavigationBottomSuffix,
+                )}
+              >
+                {navigationBottomSuffix && (
+                  <div className={styles.navigationBottomSuffix}>{navigationBottomSuffix}</div>
+                )}
+                <div className={styles.buttons}>
+                  {tabsWithIsActive.map(({ icon, iconWrapped, label, ...rest }, index) => (
+                    <Button
+                      // eslint-disable-next-line react/no-array-index-key
+                      key={index}
+                      className={styles.buttonNavigation}
+                      dataTest={`${label}__Button`}
+                      Icon={iconWrapped || <Svg img={icon} size={3.2} />}
+                      label={label}
+                      variant="iconVertical"
+                      {...rest}
+                    />
+                  ))}
+                </div>
+              </nav>
+              <div className={styles.coinGecko}>Powered by CoinGecko API</div>
+            </div>
+            <div className={styles.navigationBlur} />
+          </Fragment>
         )}
       </div>
     </Fragment>
