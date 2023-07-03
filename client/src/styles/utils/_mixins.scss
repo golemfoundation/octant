@@ -25,3 +25,16 @@
 @mixin boldText() {
   font-weight: $font-weight-superbold;
 }
+
+@mixin layoutOverflowBlurCommonProperties() {
+  backdrop-filter: blur(2rem);
+  -webkit-backdrop-filter: blur(2rem);
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  left: 0;
+  width: 100%;
+  padding: 0 $layoutMarginHorizontal;
+  z-index: $z-index-3;
+  pointer-events: none;
+}

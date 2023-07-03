@@ -1,13 +1,26 @@
 $headerNavigationBorderRadius: $border-radius-32;
+$headerMarginTop: 1.6rem;
+$bodyPaddingTopMobile: calc(1.6rem + $headerMarginTop + $headerNavigationHeight);
+$bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerNavigationHeight);
 
 .root {
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 100%;
+}
+
+.root,
+.headerWrapper {
   min-width: 39rem;
   max-width: 70rem + $layoutMarginHorizontal * 2;
   margin: 0 auto;
+}
+
+.headerWrapper {
+  position: fixed;
+  width: 100%;
+  z-index: $z-index-3;
 }
 
 .header {
@@ -18,12 +31,32 @@ $headerNavigationBorderRadius: $border-radius-32;
   border-radius: $headerNavigationBorderRadius;
   background: $color-white;
   padding: $layoutMarginHorizontal;
-  margin: 1.6rem $layoutMarginHorizontal 0;
+  margin: $headerMarginTop $layoutMarginHorizontal 0;
   box-shadow: $box-shadow-1;
   z-index: $z-index-3;
+}
+
+.headerBlur {
+  @include layoutOverflowBlurCommonProperties();
+  height: $bodyPaddingTopMobile;
+  top: 0;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1),
+    rgba(0, 0, 0, 0.9),
+    rgba(0, 0, 0, 0.8),
+    rgba(0, 0, 0, 0.05)
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1),
+    rgba(0, 0, 0, 0.9),
+    rgba(0, 0, 0, 0.8),
+    rgba(0, 0, 0, 0.05)
+  );
 
   @media #{$desktop-up} {
-    margin: 1.6rem $layoutMarginHorizontal 0;
+    height: $bodyPaddingTopDesktop;
   }
 }
 
@@ -111,10 +144,10 @@ $headerNavigationBorderRadius: $border-radius-32;
   align-items: center;
   justify-content: flex-start;
   flex: 1;
-  padding: 1.6rem $layoutMarginHorizontal $layoutBodyMarginBottom;
+  padding: $bodyPaddingTopMobile $layoutMarginHorizontal $layoutBodyMarginBottom;
 
   @media #{$desktop-up} {
-    padding-top: 2.4rem;
+    padding-top: $bodyPaddingTopDesktop;
   }
 
   &.isNavigationBottomSuffix {
@@ -204,4 +237,26 @@ $headerNavigationBorderRadius: $border-radius-32;
   left: 50%;
   transform: translate(-50%, 0);
   font-size: $font-size-08;
+}
+
+.navigationBlur {
+  @include layoutOverflowBlurCommonProperties();
+  height: 12.4rem;
+  bottom: 0;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.05),
+    rgba(0, 0, 0, 0.25),
+    rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0.75),
+    rgba(0, 0, 0, 1)
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.05),
+    rgba(0, 0, 0, 0.25),
+    rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0.75),
+    rgba(0, 0, 0, 1)
+  );
 }
