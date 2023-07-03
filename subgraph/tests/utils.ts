@@ -1,8 +1,11 @@
 import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
-import { newMockEvent } from 'matchstick-as';
+import { newMockEvent, createMockedFunction } from 'matchstick-as';
 
 import { Locked as LockedEvent, Unlocked as UnlockedEvent } from '../generated/Deposits/Deposits';
 import { Withdrawn } from '../generated/Vault/Vault';
+
+export const GLM_ADDRESS = Address.fromString('0x71432DD1ae7DB41706ee6a22148446087BdD0906');
+export const GNT_ADDRESS = Address.fromString('0xE6de13D64F6036E4E3f5fC84B5EB620C5C7c1050');
 
 export function createLockedEvent(
   depositBefore: BigInt,
@@ -12,6 +15,8 @@ export function createLockedEvent(
 ): LockedEvent {
   // eslint-disable-next-line no-undef
   const lockedEvent = changetype<LockedEvent>(newMockEvent());
+
+  lockedEvent.logIndex = BigInt.fromI32(1);
 
   lockedEvent.parameters = [];
 
@@ -37,6 +42,8 @@ export function createUnlockedEvent(
 ): UnlockedEvent {
   // eslint-disable-next-line no-undef
   const unlockedEvent = changetype<UnlockedEvent>(newMockEvent());
+
+  unlockedEvent.logIndex = BigInt.fromI32(2);
 
   unlockedEvent.parameters = [];
 
@@ -88,4 +95,26 @@ export function createBlockEvent(): ethereum.Block {
     BigInt.fromI32(1),
     BigInt.fromI32(1),
   );
+}
+
+export function mockGLMAndGNT(): void {
+  // Mock GLM
+  createMockedFunction(GLM_ADDRESS, 'totalSupply', 'totalSupply():(uint256)').returns([
+    ethereum.Value.fromSignedBigInt(BigInt.fromString('627708950807659352199701196')),
+  ]);
+  createMockedFunction(GLM_ADDRESS, 'balanceOf', 'balanceOf(address):(uint256)')
+    .withArgs([
+      ethereum.Value.fromAddress(Address.fromString('0x0000000000000000000000000000000000000000')),
+    ])
+    .returns([ethereum.Value.fromI32(1000)]);
+
+  // Mock GNT
+  createMockedFunction(GNT_ADDRESS, 'totalSupply', 'totalSupply():(uint256)').returns([
+    ethereum.Value.fromSignedBigInt(BigInt.fromString('372291049192340647800298804')),
+  ]);
+  createMockedFunction(GNT_ADDRESS, 'balanceOf', 'balanceOf(address):(uint256)')
+    .withArgs([
+      ethereum.Value.fromAddress(Address.fromString('0x0000000000000000000000000000000000000000')),
+    ])
+    .returns([ethereum.Value.fromI32(2000)]);
 }

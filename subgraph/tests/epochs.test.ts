@@ -24,9 +24,11 @@ describe('Describe entity assertions', () => {
 
   test('Epoch created and stored', () => {
     const contractAddress = Address.fromString(EPOCHS_ADDRESS);
-    createMockedFunction(contractAddress, 'getCurrentEpoch', 'getCurrentEpoch():(uint32)').returns([
-      ethereum.Value.fromI32(1),
-    ]);
+    createMockedFunction(
+      contractAddress,
+      'getCurrentEpoch',
+      'getCurrentEpoch():(uint256)',
+    ).returns([ethereum.Value.fromI32(1)]);
     createMockedFunction(
       contractAddress,
       'getDecisionWindow',

@@ -1,7 +1,7 @@
 type Locked @entity(immutable: true) {
     id: Bytes!
     depositBefore: BigInt!
-    amount: BigInt! # uint256
+    amount: BigInt!
     user: Bytes! # address
     blockNumber: Int!
     timestamp: Int!
@@ -11,7 +11,7 @@ type Locked @entity(immutable: true) {
 type Unlocked @entity(immutable: true) {
     id: Bytes!
     depositBefore: BigInt!
-    amount: BigInt! # uint256
+    amount: BigInt!
     user: Bytes! # address
     blockNumber: Int!
     timestamp: Int!
@@ -20,8 +20,28 @@ type Unlocked @entity(immutable: true) {
 
 type Withdrawal @entity(immutable: true) {
     id: Bytes!
-    amount: BigInt! # uint256
+    amount: BigInt!
     user: Bytes! # address
+    blockNumber: Int!
+    timestamp: Int!
+    transactionHash: Bytes!
+}
+
+type LockedSummaryLatest @entity {
+    id: String!
+    glmSupply: BigInt!
+    lockedTotal: BigInt!
+    lockedRatio: BigDecimal!
+    blockNumber: Int!
+    timestamp: Int!
+    transactionHash: Bytes!
+}
+
+type LockedSummarySnapshot @entity(immutable: true) {
+    id: Bytes!
+    glmSupply: BigInt!
+    lockedTotal: BigInt!
+    lockedRatio: BigDecimal!
     blockNumber: Int!
     timestamp: Int!
     transactionHash: Bytes!
