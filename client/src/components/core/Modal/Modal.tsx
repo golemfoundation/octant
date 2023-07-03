@@ -93,7 +93,7 @@ const Modal: FC<ModalProps> = ({
             <AnimatePresence initial={false}>
               {header && (
                 <motion.div
-                  animate={{ height: 'auto', marginBottom: '4rem', opacity: 1 }}
+                  animate={{ height: 'auto', marginBottom: '3.2rem', opacity: 1 }}
                   className={styles.header}
                   exit={{ height: 0, marginBottom: 0, opacity: 0 }}
                   initial={{ height: 0, marginBottom: 0, opacity: 0 }}

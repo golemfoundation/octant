@@ -52,18 +52,18 @@ const Wallet: FC<WalletProps> = ({ onDisconnect }) => {
 
   return (
     <Fragment>
+      <RewardsBox className={cx(styles.element, styles.box)} isGrey />
       <BoxRounded
         alignment="left"
         className={cx(styles.element, styles.box)}
         hasSections
         isGrey
         isVertical
-        title={t('connectedWalletBalances')}
+        title={t('wallet')}
         titleSuffix={address ? truncateEthAddress(address) : undefined}
       >
         <Sections sections={sections} />
       </BoxRounded>
-      <RewardsBox className={cx(styles.element, styles.box)} isGrey />
       <Button className={styles.button} label={t('disconnectWallet')} onClick={_disconnect} />
     </Fragment>
   );

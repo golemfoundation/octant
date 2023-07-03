@@ -164,7 +164,7 @@
       },
       "walletModal": {
         "balances": "Balances",
-        "connectedWalletBalances": "Connected Wallet Balances",
+        "wallet": "Wallet",
         "disconnectWallet": "Disconnect Wallet"
       },
       "withdrawEth": {
