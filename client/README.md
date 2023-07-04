@@ -41,10 +41,17 @@ The problem with this approach is that the `react-query` package used for fetchi
 
 ## Packages
 
-`@synthetixio/synpress` requests `eth-sig-util@^1.4.2`, which requests `ethereumjs-abi` as a dependency directly from git, breaking container builds. To solve it we could either alter our node image to include git, or add following resolution, which we did:
+1. `@synthetixio/synpress` requests `eth-sig-util@^1.4.2`, which requests `ethereumjs-abi` as a dependency directly from git, breaking container builds. To solve it we could either alter our node image to include git, or add following resolution, which we did:
 ```bash
 "resolutions": {
   "@synthetixio/synpress/**/eth-sig-util": "yarn:@metamask/eth-sig-util@^5.1.0"
 }
 ```
 `eth-sig-util` is deprecated in favor of `@metamask/eth-sig-util`. The latter does not require `ethereumjs-abi` at all.
+2. `cypress` is resolved to `12.14.0` because of [this issue](https://github.com/cypress-io/code-coverage/issues/667). Issue is resolved, but Cypress Team is on track of some edge cases, as explained [here](https://github.com/cypress-io/code-coverage/issues/667#issuecomment-1609563639). Issue causes our Synpress runs to fail when executing actions in MetaMask.
+3.
+```json
+    "@web3modal/ethereum": "^2.2.2",
+    "@web3modal/react": "^2.2.2",
+```
+Because of [this](https://github.com/cypress-io/cypress/discussions/26853).

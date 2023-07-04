@@ -2,5 +2,6 @@ dist
 typechain-types
 # rollup-plugin-visualizer result file
 /client/bundleAnalysis.html
+/cypress/downloads/**
 /cypress/videos/**
 /cypress/screenshots/**
