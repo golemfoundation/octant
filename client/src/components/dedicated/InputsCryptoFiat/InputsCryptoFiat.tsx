@@ -94,12 +94,14 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({
         placeholder="0.00"
         variant="simple"
         {...inputCryptoPropsLabel}
+        autocomplete="off"
         onBlur={() => setIsCryptoInputFocused(false)}
         onChange={handleCryptoChange}
         onClear={handleClear}
         onFocus={() => setIsCryptoInputFocused(true)}
       />
       <InputText
+        autocomplete="off"
         className={cx(styles.input, !isCryptoMainValueDisplay && styles.isFiatMainValueDisplay)}
         inputMode="decimal"
         onBlur={() => setIsFiatInputFocused(false)}
