@@ -3,7 +3,6 @@ import chaiColors from 'chai-colors';
 
 import { visitWithLoader } from 'cypress/utils/e2e';
 import { getNamesOfProposals } from 'cypress/utils/proposals';
-import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import { autoClose } from 'src/utils/triggerToast';
@@ -123,38 +122,36 @@ function removeProposalFromAllocate(
     });
 }
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
-  describe(`proposals: ${device}`, { viewportHeight, viewportWidth }, () => {
-    let proposalNames: string[] = [];
+describe('proposals', () => {
+  let proposalNames: string[] = [];
 
-    beforeEach(() => {
-      localStorage.setItem(IS_ONBOARDING_DONE, 'true');
-      visitWithLoader(ROOT_ROUTES.proposals.absolute);
+  beforeEach(() => {
+    localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+    visitWithLoader(ROOT_ROUTES.proposals.absolute);
 
-      /**
-       * This could be done in before hook, but CY wipes the state after each test
-       * (could be disabled, but creates other problems)
-       */
-      if (proposalNames.length === 0) {
-        proposalNames = getNamesOfProposals();
-      }
-    });
+    /**
+     * This could be done in before hook, but CY wipes the state after each test
+     * (could be disabled, but creates other problems)
+     */
+    if (proposalNames.length === 0) {
+      proposalNames = getNamesOfProposals();
+    }
+  });
 
-    it('user is able to see all the projects in the view', () => {
-      for (let i = 0; i < proposalNames.length; i++) {
-        cy.get('[data-test^=ProposalsView__ProposalItem]').eq(i).scrollIntoView();
-        checkProposalItemElements(i, proposalNames[i]);
-      }
-    });
+  it('user is able to see all the projects in the view', () => {
+    for (let i = 0; i < proposalNames.length; i++) {
+      cy.get('[data-test^=ProposalsView__ProposalItem]').eq(i).scrollIntoView();
+      checkProposalItemElements(i, proposalNames[i]);
+    }
+  });
 
-    it('user is able to add & remove the first and the last project to/from allocation, triggering change of the icon, change of the number in navbar & toast', () => {
-      // This test checks the first and the last elements only to save time.
-      cy.get('[data-test=MainLayout__navigation__numberOfAllocations]').should('not.exist');
+  it('user is able to add & remove the first and the last project to/from allocation, triggering change of the icon, change of the number in navbar & toast', () => {
+    // This test checks the first and the last elements only to save time.
+    cy.get('[data-test=MainLayout__navigation__numberOfAllocations]').should('not.exist');
 
-      addProposalToAllocate(0, 0);
-      addProposalToAllocate(proposalNames.length - 1, 1);
-      removeProposalFromAllocate(proposalNames.length, 2, 0);
-      removeProposalFromAllocate(proposalNames.length, 1, proposalNames.length - 1);
-    });
+    addProposalToAllocate(0, 0);
+    addProposalToAllocate(proposalNames.length - 1, 1);
+    removeProposalFromAllocate(proposalNames.length, 2, 0);
+    removeProposalFromAllocate(proposalNames.length, 1, proposalNames.length - 1);
   });
 });

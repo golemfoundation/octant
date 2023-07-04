@@ -269,7 +269,7 @@ Cypress E2E Tests:
   image: synthetixio/docker-e2e:16.20-ubuntu
   rules:
     - !reference [.rules, on_mr_manual]
-# TODO OCT-556 Enable CY for master
+#    TODO OCT-556 Enable CY for master
 #    - !reference [.rules, on_push_to_default_branch ]
   variables:
     NETWORK_NAME: sepolia
@@ -304,7 +304,7 @@ Cypress E2E Tests:
     - yarn install --cache-folder .yarn --frozen-lockfile --prefer-offline --no-audit
     - export OCTANT_BASE_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_web_client_url.sh)
     - set +e
-    - yarn run synpress run --configFile synpress.config.ts --browser chrome || CY_EXIT_CODE=$?
+    - yarn synpress:run || CY_EXIT_CODE=$?
     - if [[ "$CY_EXIT_CODE" == "0" ]]; then rm -r $CI_PROJECT_DIR/client/cypress/videos $CI_PROJECT_DIR/client/cypress/screenshots; fi
     - set -e
     - bash $CI_PROJECT_DIR/ci/argocd/application.sh delete
