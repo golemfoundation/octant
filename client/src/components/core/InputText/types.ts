@@ -4,6 +4,7 @@ export const INPUT_TEXT_VARIANTS = ['borderless', 'boxRounded', 'simple'] as con
 export type InputTextVariant = (typeof INPUT_TEXT_VARIANTS)[number];
 
 export default interface InputTextProps {
+  autocomplete?: string;
   className?: string;
   error?: string;
   inputMode?: HTMLAttributes<HTMLInputElement>['inputMode'];
