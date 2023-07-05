@@ -20,6 +20,7 @@ $paddingVertical: 3.2rem;
       width: calc(100% - 4.8rem);
       border-radius: $border-radius-16;
       box-shadow: $box-shadow-2;
+      margin: 0 2.4rem;
 
       .header {
         font-size: $font-size-14;
@@ -28,6 +29,7 @@ $paddingVertical: 3.2rem;
 
       @media #{$desktop-up} {
         width: $desktop-width;
+        margin: 0 0 0 calc($desktop-width / -2);
 
         .header {
           font-size: $font-size-20;
@@ -80,6 +82,7 @@ $paddingVertical: 3.2rem;
     left: 50%;
     box-shadow: $box-shadow-1;
     border-radius: $border-radius-20;
+    margin-left: calc($desktop-width / -2);
   }
 
   .buttonClose {

@@ -64,17 +64,6 @@ $padding: 2.4rem;
 
   &.isActive {
     color: $color-octant-green2;
-
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -0.1rem;
-      left: 50%;
-      transform: translate(-50%, 0);
-      height: 0.2rem;
-      width: 2.4rem;
-      background: $color-octant-green2;
-    }
   }
 
   &:not(:last-child) {
@@ -220,4 +209,18 @@ $padding: 2.4rem;
   &right {
     text-align: right;
   }
+}
+
+.underlineWrapper {
+  position: absolute;
+  bottom: -0.1rem;
+  width: 100%;
+  display: flex;
+}
+
+.underline {
+  height: 0.2rem;
+  width: 2.4rem;
+  background: $color-octant-green2;
+  margin: auto;
 }
