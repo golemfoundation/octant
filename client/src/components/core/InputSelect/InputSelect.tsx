@@ -1,5 +1,6 @@
 import cx from 'classnames';
-import React, { FC, Fragment, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { FC, useState } from 'react';
 import Select, { SingleValue } from 'react-select';
 
 import Button from 'components/core/Button/Button';
@@ -30,14 +31,10 @@ const CustomOption = ({ dataTest, innerRef, innerProps, children, isSelected }) 
   );
 };
 
-const CustomMenu = ({ innerRef, innerProps, children, setIsMenuOpen }) => (
-  <Fragment>
-    {/* isOpen class is added in overlay mixin. */}
-    <div className={cx(styles.overlay, styles.isOpen)} onClick={() => setIsMenuOpen(false)} />
-    <div ref={innerRef} {...innerProps} className={styles.menu}>
-      {children}
-    </div>
-  </Fragment>
+const CustomMenu = ({ innerRef, innerProps, children }) => (
+  <div ref={innerRef} {...innerProps} className={styles.menu}>
+    {children}
+  </div>
 );
 
 const CustomMenuList = ({ innerRef, innerProps, setIsMenuOpen, children }) => (
@@ -79,7 +76,7 @@ const InputSelect: FC<InputSelectProps> = ({
         classNamePrefix="InputSelect"
         components={{
           /* eslint-disable react/no-unstable-nested-components */
-          Menu: args => <CustomMenu {...args} setIsMenuOpen={setIsMenuOpen} />,
+          Menu: args => <CustomMenu {...args} />,
           MenuList: args => <CustomMenuList {...args} setIsMenuOpen={setIsMenuOpen} />,
           Option: args => <CustomOption dataTest={dataTest} {...args} />,
           SingleValue: args => <CustomSingleValue {...args} dataTest={dataTest} />,
@@ -88,11 +85,24 @@ const InputSelect: FC<InputSelectProps> = ({
         isDisabled={isDisabled}
         isSearchable={false}
         menuIsOpen={isMenuOpen}
+        onBlur={() => setIsMenuOpen(false)}
         onChange={option => onOptionClick(option)}
         onMenuOpen={() => setIsMenuOpen(true)}
         options={options}
         value={_selectedOption}
       />
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            key="menu-overlay"
+            animate={{ opacity: 1 }}
+            className={cx(styles.overlay, styles.isOpen)}
+            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            onClick={() => setIsMenuOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
