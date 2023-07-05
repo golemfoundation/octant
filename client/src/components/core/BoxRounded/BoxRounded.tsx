@@ -1,4 +1,5 @@
 import cx from 'classnames';
+import { motion } from 'framer-motion';
 import isEmpty from 'lodash/isEmpty';
 import React, { forwardRef, useState } from 'react';
 
@@ -83,6 +84,11 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
                 onClick={tabOnClick}
               >
                 {tabTitle}
+                {isActive ? (
+                  <div className={styles.underlineWrapper}>
+                    <motion.div className={styles.underline} layoutId="underline" />
+                  </div>
+                ) : null}
               </div>
             ))}
           </div>

@@ -11,20 +11,16 @@ import styles from './Modal.module.scss';
 import ModalProps from './types';
 
 const variantsCenter = {
-  showHide: isDesktop => ({
+  showHide: {
     bottom: 'calc(50% + 20px)',
-    margin: isDesktop ? '0' : '0 2.4rem',
     opacity: 0,
-    x: isDesktop ? '-50%' : '0',
     y: `50%`,
-  }),
-  visible: isDesktop => ({
+  },
+  visible: {
     bottom: '50%',
-    margin: isDesktop ? '0' : '0 2.4rem',
     opacity: 1,
-    x: isDesktop ? '-50%' : '0',
     y: '50%',
-  }),
+  },
 };
 
 const variantsBottom = {
@@ -75,7 +71,6 @@ const Modal: FC<ModalProps> = ({
           key="modal-root"
           animate="visible"
           className={cx(styles.root, className, styles[`variant--${variant}`])}
-          custom={isDesktop}
           data-test={dataTest}
           exit="showHide"
           initial="showHide"
