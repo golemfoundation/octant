@@ -54,6 +54,7 @@
     "@nomiclabs/hardhat-ethers": "2.2.2",
     "@nomiclabs/hardhat-solhint": "^2.0.1",
     "@openzeppelin/contracts": "^4.7.3",
+    "@openzeppelin/contracts-upgradeable": "^4.9.2",
     "@openzeppelin/merkle-tree": "^1.0.4",
     "@prb/math": "^2.5.0",
     "@typechain/ethers-v5": "^10.1.0",

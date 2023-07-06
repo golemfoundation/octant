@@ -4,7 +4,8 @@ pragma solidity ^0.8.16;
 
 import "../interfaces/IWithdrawalsTarget.sol";
 
-import "hardhat-deploy/solc_0.8/openzeppelin/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
 import {CommonErrors} from "../Errors.sol";
 
 /// @title Contract that receives both ETH staking rewards and unstaked ETH
@@ -25,6 +26,11 @@ contract WithdrawalsTarget is Initializable, IWithdrawalsTarget {
 
     /// @notice Multisig address
     address public multisig;
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
 
     function initialize(address _multisig) public initializer {
         require(_multisig != address(0));
