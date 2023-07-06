@@ -1,18 +1,15 @@
+from decimal import Decimal
 from random import randint
 from typing import Optional, List
-from unittest.mock import MagicMock, Mock
 
 import pytest
 from eth_account import Account
 
 from app import create_app, database
-from app.contracts.epochs import Epochs
-from app.contracts.proposals import Proposals
 from app.core.allocations import AllocationRequest, allocate
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.extensions import db as _db, w3
 from app.settings import TestConfig
-from decimal import Decimal
 
 MNEMONIC = "test test test test test test test test test test test junk"
 MOCKED_PENDING_EPOCH_NO = 42
@@ -76,8 +73,8 @@ def pending_epoch_snapshot(app, user_accounts):
     )
     user1 = database.user.add_user(user_accounts[0].address)
     user2 = database.user.add_user(user_accounts[1].address)
-    database.deposits.add_deposit(MOCKED_PENDING_EPOCH_NO, user1, USER1_ED, USER1_ED)
-    database.deposits.add_deposit(MOCKED_PENDING_EPOCH_NO, user2, USER2_ED, USER2_ED)
+    database.deposits.add(MOCKED_PENDING_EPOCH_NO, user1, USER1_ED, USER1_ED)
+    database.deposits.add(MOCKED_PENDING_EPOCH_NO, user2, USER2_ED, USER2_ED)
 
 
 def allocate_user_rewards(user_account: Account, proposal_account, allocation_amount):
