@@ -63,6 +63,6 @@ dataSources:
         - name: Vault
           file: ./abis/Vault.json
       eventHandlers:
-        - event: Withdrawn(address,uint256)
+        - event: Withdrawn(address,uint256,uint256)
           handler: handleWithdrawn
       file: ./src/vault.ts

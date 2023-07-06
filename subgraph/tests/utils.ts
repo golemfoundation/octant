@@ -62,7 +62,8 @@ export function createUnlockedEvent(
   return unlockedEvent;
 }
 
-export function createWithdrawnEvent(amount: BigInt, user: Address): Withdrawn {
+// eslint-disable-next-line no-undef
+export function createWithdrawnEvent(amount: BigInt, user: Address, epoch: i32): Withdrawn {
   // eslint-disable-next-line no-undef
   const withdrawnEvent = changetype<Withdrawn>(newMockEvent());
 
@@ -73,6 +74,7 @@ export function createWithdrawnEvent(amount: BigInt, user: Address): Withdrawn {
   withdrawnEvent.parameters.push(
     new ethereum.EventParam('amount', ethereum.Value.fromUnsignedBigInt(amount)),
   );
+  withdrawnEvent.parameters.push(new ethereum.EventParam('epoch', ethereum.Value.fromI32(epoch)));
 
   return withdrawnEvent;
 }
