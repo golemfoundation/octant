@@ -2,7 +2,7 @@ import pytest
 from eth_utils import to_checksum_address
 
 from app import database
-from app.core.deposits import update_db_deposits, calculate_locked_ratio
+from app.core.deposits.deposits import get_user_deposits, calculate_locked_ratio
 from app.extensions import graphql_client
 
 USER1_ADDRESS = "0xabcdef7890123456789012345678901234567893"
@@ -169,28 +169,25 @@ def test_update_user_deposits(mocker, state_before, events, expected, app):
     if state_before is not None:
         deposit_before = int(state_before["epoch_end_deposit"])
         user = database.user.add_user(USER1_ADDRESS)
-        database.deposits.add_deposit(
+        database.deposits.add(
             epoch - 1,
             user,
-            state_before["effective_deposit"],
-            state_before["epoch_end_deposit"],
+            int(state_before["effective_deposit"]),
+            int(state_before["epoch_end_deposit"]),
         )
 
     _mock_graphql(mocker, events, deposit_before)
 
-    total_ed = update_db_deposits(epoch)
-
-    db_deposit = database.deposits.get_all_by_epoch(epoch)
+    user_deposits, total_ed = get_user_deposits(epoch)
 
     if expected is not None:
-        assert db_deposit[0].user.address == to_checksum_address(USER1_ADDRESS)
-        assert db_deposit[0].epoch == epoch
-        assert db_deposit[0].effective_deposit == expected["effective_deposit"]
-        assert db_deposit[0].epoch_end_deposit == expected["epoch_end_deposit"]
+        assert user_deposits[0].user_address == to_checksum_address(USER1_ADDRESS)
+        assert str(user_deposits[0].effective_deposit) == expected["effective_deposit"]
+        assert str(user_deposits[0].deposit) == expected["epoch_end_deposit"]
 
         assert total_ed == int(expected["effective_deposit"])
     else:
-        assert db_deposit == []
+        assert user_deposits == []
 
 
 def test_add_multiple_user_deposits(mocker, app):
@@ -212,21 +209,20 @@ def test_add_multiple_user_deposits(mocker, app):
     ]
     _mock_graphql(mocker, events)
 
-    total_ed = update_db_deposits(epoch)
+    user_deposits, total_ed = get_user_deposits(epoch)
 
-    db_deposits = database.deposits.get_all_by_epoch(epoch)
+    assert len(user_deposits) == 2
+    user_deposits = sorted(user_deposits, key=lambda u: u.user_address)
 
-    assert len(db_deposits) == 2
     assert total_ed == 0
-    assert db_deposits[0].user.address == to_checksum_address(USER1_ADDRESS)
-    assert db_deposits[0].epoch == epoch
-    assert db_deposits[0].effective_deposit == "0"
-    assert db_deposits[0].epoch_end_deposit == "200000000000000000000"
 
-    assert db_deposits[1].user.address == USER2_ADDRESS
-    assert db_deposits[1].epoch == epoch
-    assert db_deposits[1].effective_deposit == "0"
-    assert db_deposits[1].epoch_end_deposit == "400000000000000000000"
+    assert user_deposits[0].user_address == USER2_ADDRESS
+    assert str(user_deposits[0].effective_deposit) == "0"
+    assert str(user_deposits[0].deposit) == "400000000000000000000"
+
+    assert user_deposits[1].user_address == to_checksum_address(USER1_ADDRESS)
+    assert str(user_deposits[1].effective_deposit) == "0"
+    assert str(user_deposits[1].deposit) == "200000000000000000000"
 
 
 def test_update_multiple_user_deposits(mocker, app):
@@ -249,36 +245,35 @@ def test_update_multiple_user_deposits(mocker, app):
 
     user1 = database.user.add_user(USER1_ADDRESS)
     user2 = database.user.add_user(USER2_ADDRESS)
-    database.deposits.add_deposit(
+    database.deposits.add(
         epoch - 1,
         user1,
-        "200000000000000000000",
-        "200000000000000000000",
+        200000000000000000000,
+        200000000000000000000,
     )
-    database.deposits.add_deposit(
+    database.deposits.add(
         epoch - 1,
         user2,
-        "300000000000000000000",
-        "300000000000000000000",
+        300000000000000000000,
+        300000000000000000000,
     )
+
     _mock_graphql(mocker, events)
 
-    total_ed = update_db_deposits(epoch)
+    user_deposits, total_ed = get_user_deposits(epoch)
 
-    db_deposits = database.deposits.get_all_by_epoch(epoch)
+    assert len(user_deposits) == 2
+    user_deposits = sorted(user_deposits, key=lambda u: u.user_address)
 
-    assert len(db_deposits) == 2
     assert total_ed == 500000000000000000000
 
-    assert db_deposits[0].user.address == to_checksum_address(USER1_ADDRESS)
-    assert db_deposits[0].epoch == epoch
-    assert db_deposits[0].effective_deposit == "200000000000000000000"
-    assert db_deposits[0].epoch_end_deposit == "400000000000000000000"
+    assert user_deposits[0].user_address == USER2_ADDRESS
+    assert str(user_deposits[0].effective_deposit) == "300000000000000000000"
+    assert str(user_deposits[0].deposit) == "700000000000000000000"
 
-    assert db_deposits[1].user.address == USER2_ADDRESS
-    assert db_deposits[1].epoch == epoch
-    assert db_deposits[1].effective_deposit == "300000000000000000000"
-    assert db_deposits[1].epoch_end_deposit == "700000000000000000000"
+    assert user_deposits[1].user_address == to_checksum_address(USER1_ADDRESS)
+    assert str(user_deposits[1].effective_deposit) == "200000000000000000000"
+    assert str(user_deposits[1].deposit) == "400000000000000000000"
 
 
 def test_add_and_update_deposits(mocker, app):
@@ -308,30 +303,28 @@ def test_add_and_update_deposits(mocker, app):
     database.user.add_user(USER1_ADDRESS)
     user2 = database.user.add_user(USER2_ADDRESS)
 
-    database.deposits.add_deposit(
+    database.deposits.add(
         epoch - 1,
         user2,
-        "0",
-        events[1]["depositBefore"],
+        0,
+        int(events[1]["depositBefore"]),
     )
     _mock_graphql(mocker, events)
 
-    total_ed = update_db_deposits(epoch)
+    user_deposits, total_ed = get_user_deposits(epoch)
 
-    db_deposits = database.deposits.get_all_by_epoch(epoch)
+    assert len(user_deposits) == 2
+    user_deposits = sorted(user_deposits, key=lambda u: u.user_address)
 
-    assert len(db_deposits) == 2
     assert total_ed == 200000000000000000000
 
-    assert db_deposits[0].user.address == USER2_ADDRESS
-    assert db_deposits[0].epoch == epoch
-    assert db_deposits[0].effective_deposit == "200000000000000000000"
-    assert db_deposits[0].epoch_end_deposit == "200000000000000000000"
+    assert user_deposits[0].user_address == USER2_ADDRESS
+    assert str(user_deposits[0].effective_deposit) == "200000000000000000000"
+    assert str(user_deposits[0].deposit) == "200000000000000000000"
 
-    assert db_deposits[1].user.address == to_checksum_address(USER1_ADDRESS)
-    assert db_deposits[1].epoch == epoch
-    assert db_deposits[1].effective_deposit == "0"
-    assert db_deposits[1].epoch_end_deposit == "200000000000000000000"
+    assert user_deposits[1].user_address == to_checksum_address(USER1_ADDRESS)
+    assert str(user_deposits[1].effective_deposit) == "0"
+    assert str(user_deposits[1].deposit) == "200000000000000000000"
 
 
 def _mock_graphql(mocker, events, deposit_before=0):
