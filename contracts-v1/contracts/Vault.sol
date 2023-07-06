@@ -12,7 +12,8 @@ import {CommonErrors, VaultErrors} from "./Errors.sol";
  * @dev This contract allows for claiming the rewards from Octant.
  */
 contract Vault is OctantBase {
-    event Withdrawn(address user, uint256 amount);
+    event EmergencyWithdrawn(address user, uint256 amount);
+    event Withdrawn(address user, uint256 amount, uint256 epoch);
     event MerkleRootSet(uint256 epoch, bytes32 root);
 
     struct WithdrawPayload {
@@ -82,7 +83,7 @@ contract Vault is OctantBase {
         (bool success, ) = payable(msg.sender).call{value: amount}("");
         require(success, CommonErrors.FAILED_TO_SEND);
 
-        emit Withdrawn(msg.sender, amount);
+        emit Withdrawn(msg.sender, amount, claimedEpoch);
     }
 
     /**
@@ -94,7 +95,7 @@ contract Vault is OctantBase {
         (bool success, ) = payable(msg.sender).call{value: amount}("");
         require(success, CommonErrors.FAILED_TO_SEND);
 
-        emit Withdrawn(multisig, amount);
+        emit EmergencyWithdrawn(multisig, amount);
     }
 
     /**

@@ -21,6 +21,7 @@ type Unlocked @entity(immutable: true) {
 type Withdrawal @entity(immutable: true) {
     id: Bytes!
     amount: BigInt!
+    epoch: Int!
     user: Bytes! # address
     blockNumber: Int!
     timestamp: Int!
