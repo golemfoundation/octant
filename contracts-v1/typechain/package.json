@@ -1,6 +1,6 @@
 {
   "name": "octant-typechain-types",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "TypeScript bindings for octant smart contracts",
   "main": "typechain-types/index.ts",
   "files": [

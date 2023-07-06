@@ -17,6 +17,17 @@ makeTestsEnv(WITHDRAWALS_TARGET, testEnv => {
         'Initializable: contract is already initialized',
       );
     });
+
+    it('Cannot initialize implementation directly', async () => {
+      const {
+        signers: { Darth },
+      } = testEnv;
+      const targetImpl = await ethers.getContract('WithdrawalsTarget_Implementation');
+      expect(await targetImpl.multisig()).eq('0x0000000000000000000000000000000000000000');
+      await expect(targetImpl.initialize(Darth.address)).revertedWith(
+        'Initializable: contract is already initialized',
+      );
+    });
   });
 
   describe('Upgrades', () => {
