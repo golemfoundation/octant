@@ -1,10 +1,9 @@
 import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
 
-import { CRYPTO_CURRENCIES_TICKERS } from 'constants/currencies';
 import { CryptoCurrency } from 'types/cryptoCurrency';
 
 import getFormattedEthValue from './getFormattedEthValue';
+import getFormattedGlmValue from './getFormattedGlmValue';
 
 export type ValueCryptoToDisplay = {
   cryptoCurrency?: CryptoCurrency;
@@ -23,5 +22,5 @@ export default function getValueCryptoToDisplay({
 
   return cryptoCurrency === 'ethereum'
     ? getFormattedEthValue(valueCrypto).fullString
-    : `${formatUnits(valueCrypto)} ${CRYPTO_CURRENCIES_TICKERS[cryptoCurrency]}`;
+    : getFormattedGlmValue(valueCrypto).fullString;
 }

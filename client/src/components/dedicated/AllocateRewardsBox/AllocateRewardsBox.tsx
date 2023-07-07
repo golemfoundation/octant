@@ -8,7 +8,7 @@ import Slider from 'components/core/Slider/Slider';
 import ModalAllocationValuesEdit from 'components/dedicated/ModalAllocationValuesEdit/ModalAllocationValuesEdit';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useAllocationsStore from 'store/allocations/store';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
+import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
 import styles from './AllocateRewardsBox.module.scss';
 import AllocateRewardsBoxProps from './types';
@@ -30,7 +30,10 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
         className={cx(styles.root, className)}
         isVertical
         subtitle={t('subtitle', {
-          individualReward: getFormattedEthValue(individualReward!).fullString,
+          individualReward: getValueCryptoToDisplay({
+            cryptoCurrency: 'ethereum',
+            valueCrypto: individualReward,
+          }),
         })}
         title={t('title')}
       >
@@ -45,11 +48,17 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
   const sections = [
     {
       header: t('donate', { percentRewardsForProposals }),
-      value: getFormattedEthValue(rewardsForProposals),
+      value: getValueCryptoToDisplay({
+        cryptoCurrency: 'ethereum',
+        valueCrypto: rewardsForProposals,
+      }),
     },
     {
       header: t('withdraw', { percentWithdraw }),
-      value: getFormattedEthValue(rewardsForWithdraw),
+      value: getValueCryptoToDisplay({
+        cryptoCurrency: 'ethereum',
+        valueCrypto: rewardsForWithdraw,
+      }),
     },
   ];
 
@@ -65,7 +74,10 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
       className={cx(styles.root, className)}
       isVertical
       subtitle={t('subtitle', {
-        individualReward: getFormattedEthValue(individualReward!).fullString,
+        individualReward: getValueCryptoToDisplay({
+          cryptoCurrency: 'ethereum',
+          valueCrypto: individualReward,
+        }),
       })}
       title={t('title')}
     >
@@ -87,7 +99,7 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
             onClick={() => (isDisabled ? {} : setModalMode(index === 0 ? 'donate' : 'withdraw'))}
           >
             <div>{header}</div>
-            <div className={styles.value}>{value.fullString}</div>
+            <div className={styles.value}>{value}</div>
           </div>
         ))}
       </div>
