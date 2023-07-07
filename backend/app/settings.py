@@ -22,6 +22,8 @@ class Config(object):
     GNT_CONTRACT_ADDRESS = os.getenv("GNT_CONTRACT_ADDRESS")
     GLM_CONTRACT_ADDRESS = os.getenv("GLM_CONTRACT_ADDRESS")
     EPOCHS_CONTRACT_ADDRESS = os.getenv("EPOCHS_CONTRACT_ADDRESS")
+    AUTH_CONTRACT_ADDRESS = os.getenv("AUTH_CONTRACT_ADDRESS")
+    DEPOSITS_CONTRACT_ADDRESS = os.getenv("DEPOSITS_CONTRACT_ADDRESS")
     PROPOSALS_CONTRACT_ADDRESS = os.getenv("PROPOSALS_CONTRACT_ADDRESS")
     WITHDRAWALS_TARGET_CONTRACT_ADDRESS = os.getenv(
         "WITHDRAWALS_TARGET_CONTRACT_ADDRESS"
@@ -31,6 +33,7 @@ class Config(object):
     CHAIN_ID = os.getenv(
         "CHAIN_ID", 11155111
     )  # 11155111 corresponds to Sepolia network
+    CHAIN_NAME = os.getenv("CHAIN_NAME", "Sepolia")
 
 
 class ProdConfig(Config):

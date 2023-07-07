@@ -3,13 +3,14 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
 import { GLM_ADDRESS, GNT_ADDRESS } from '../env';
-import { WITHDRAWALS_TARGET, EPOCHS, DEPOSITS, PROPOSALS, VAULT } from '../helpers/constants';
+import { WITHDRAWALS_TARGET, EPOCHS, DEPOSITS, PROPOSALS, VAULT, AUTH } from '../helpers/constants';
 
 // This function needs to be declared this way, otherwise it's not understood by test runner.
 // eslint-disable-next-line func-names
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // Prepare .env for client
   /* eslint-disable no-console */
+  const auth = await hre.ethers.getContract(AUTH);
   const withdrawals = await hre.ethers.getContract(WITHDRAWALS_TARGET);
   const epochs = await hre.ethers.getContract(EPOCHS);
   const deposits = await hre.ethers.getContract(DEPOSITS);
@@ -31,6 +32,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const contractAddresses = `
 GNT_CONTRACT_ADDRESS=${GNT_ADDRESS}
 GLM_CONTRACT_ADDRESS=${GLM_ADDRESS}
+AUTH_CONTRACT_ADDRESS=${auth.address}
 DEPOSITS_CONTRACT_ADDRESS=${deposits.address}
 EPOCHS_CONTRACT_ADDRESS=${epochs.address}
 PROPOSALS_CONTRACT_ADDRESS=${proposals.address}
