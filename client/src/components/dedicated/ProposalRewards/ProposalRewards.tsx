@@ -6,7 +6,7 @@ import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import useIndividualProposalRewards from 'hooks/queries/useIndividualProposalRewards';
 import useProposalRewardsThresholdFraction from 'hooks/queries/useProposalRewardsThresholdFraction';
 import getCutOffValueBigNumber from 'utils/getCutOffValueBigNumber';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
+import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
 import styles from './ProposalRewards.module.scss';
 import ProposalRewardsProps from './types';
@@ -39,6 +39,16 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
 
   const isTotalValueOfAllocationsDefined = totalValueOfAllocations !== undefined;
 
+  const totalValueOfAllocationsToDisplay = getValueCryptoToDisplay({
+    cryptoCurrency: 'ethereum',
+    valueCrypto: totalValueOfAllocations,
+  });
+
+  const cutOffValueToDisplay = getValueCryptoToDisplay({
+    cryptoCurrency: 'ethereum',
+    valueCrypto: cutOffValue,
+  });
+
   return (
     <div className={cx(styles.root, className)} data-test="ProposalRewards">
       <div className={styles.separator}>
@@ -62,13 +72,13 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
                 className={cx(styles.number, !isProjectFounded && styles.isBelowCutOff)}
                 data-test="ProposalRewards__totalDonated__number"
               >
-                {getFormattedEthValue(totalValueOfAllocations).fullString}
+                {totalValueOfAllocationsToDisplay}
               </span>
             </div>
             {MiddleElement}
             <div className={cx(styles.value, isFundedAtHidden && styles.isHidden)}>
               <span className={styles.label}>{t('fundedAt')}</span>
-              <span className={styles.number}>{getFormattedEthValue(cutOffValue).fullString}</span>
+              <span className={styles.number}>{cutOffValueToDisplay}</span>
             </div>
           </Fragment>
         ) : (

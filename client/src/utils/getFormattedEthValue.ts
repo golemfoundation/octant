@@ -1,16 +1,14 @@
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 
+import { FormattedCryptoValue } from 'types/formattedCryptoValue';
+
 import { dotAndZeroes } from './regExp';
 
 const GWEI_5 = BigNumber.from(10).pow(14);
 const WEI_5 = BigNumber.from(10).pow(5);
 
-export default function getFormattedEthValue(value: BigNumber): {
-  fullString: string;
-  suffix: string;
-  value: string;
-} {
+export default function getFormattedEthValue(value: BigNumber): FormattedCryptoValue {
   let returnObject: { suffix: string; value: string };
   if (value.isZero()) {
     returnObject = { suffix: 'ETH', value: formatUnits(value) };
@@ -22,12 +20,12 @@ export default function getFormattedEthValue(value: BigNumber): {
     returnObject = { suffix: 'ETH', value: formatUnits(value) };
   }
 
-  returnObject.value = parseFloat(returnObject.value).toFixed(4).replace(dotAndZeroes, '');
+  const formattedValue = parseFloat(returnObject.value).toFixed(4).replace(dotAndZeroes, '');
+
+  returnObject.value = formattedValue;
 
   return {
-    fullString: `${parseFloat(returnObject.value).toFixed(4).replace(dotAndZeroes, '')} ${
-      returnObject.suffix
-    }`,
+    fullString: `${formattedValue} ${returnObject.suffix}`,
     ...returnObject,
   };
 }

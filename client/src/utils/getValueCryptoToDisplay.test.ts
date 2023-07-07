@@ -1,6 +1,7 @@
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
+import { parseUnits } from 'ethers/lib/utils';
 
 import getFormattedEthValue from './getFormattedEthValue';
+import getFormattedGlmValue from './getFormattedGlmValue';
 import getValueCryptoToDisplay from './getValueCryptoToDisplay';
 
 describe('getValueCryptoToDisplay', () => {
@@ -32,8 +33,7 @@ describe('getValueCryptoToDisplay', () => {
     const valueString = '';
     const valueCrypto = parseUnits('1');
     const cryptoCurrency = 'golem';
-    const cryptoTicker = 'GLM';
-    const formattedCryptoValue = `${formatUnits(valueCrypto)} ${cryptoTicker}`;
+    const formattedCryptoValue = getFormattedGlmValue(valueCrypto).fullString;
     expect(getValueCryptoToDisplay({ cryptoCurrency, valueCrypto, valueString })).toBe(
       formattedCryptoValue,
     );

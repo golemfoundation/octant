@@ -2,7 +2,7 @@ import cx from 'classnames';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import getFormattedEthValue from 'utils/getFormattedEthValue';
+import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
 import styles from './AllocationInputsRewardsAvailable.module.scss';
 import AllocationInputsRewardsAvailableProps from './types';
@@ -35,7 +35,10 @@ const AllocationInputsRewardsAvailable: FC<AllocationInputsRewardsAvailableProps
         return `${restToDistribute.mul(100).div(valueCryptoTotal).toString()} %`;
       case 'crypto':
       default:
-        return getFormattedEthValue(restToDistribute).fullString;
+        return getValueCryptoToDisplay({
+          cryptoCurrency: 'ethereum',
+          valueCrypto: restToDistribute,
+        });
     }
   }, [inputFocused, restToDistribute, valueCryptoTotal]);
 
