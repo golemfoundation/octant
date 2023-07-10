@@ -3,4 +3,4 @@
 set -ex
 
 poetry run flask db upgrade
-poetry run python3 startup.py
+poetry run gunicorn -c gunicorn_config.py startup:app

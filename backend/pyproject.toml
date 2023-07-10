@@ -31,6 +31,8 @@ optional = true
 
 [tool.poetry.group.prod.dependencies]
 psycopg2-binary = "^2.9.6"
+gunicorn = "^20.1.0"
+gevent-websocket = "^0.10.1"
 
 [build-system]
 requires = ["poetry-core"]

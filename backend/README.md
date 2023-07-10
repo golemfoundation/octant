@@ -19,8 +19,15 @@ Before running shell commands, copy `.env.template` as `.env` and adjust variabl
 
 Then run the following commands to bootstrap your environment
 
+#### Development
 ```bash
 poetry install
+poetry shell
+```
+
+#### Production
+```bash
+poetry install --no-interaction --no-ansi -v --with prod --without dev
 poetry shell
 ```
 
@@ -32,8 +39,15 @@ flask db upgrade
 ```
 
 Start the server
+
+#### Development
 ```bash
 python3 startup.py
+```
+
+#### Production
+```bash
+gunicorn -c gunicorn_config.py startup:app
 ```
 
 ## Test
@@ -51,5 +65,9 @@ First, Run the server as described above. Then, open a web browser and navigate 
 
 ### HTTP endpoints
 http://localhost:5000/
+
 ### Websockets
 http://localhost:5000/docs/websockets-api
+
+### Blockchain info
+http://localhost:5000/docs/chain-info
