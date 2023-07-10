@@ -41,7 +41,6 @@ const ProposalItem: FC<ProposalItemProps> = ({
 
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
     allocations,
-    proposalName: name,
     setAllocations,
     userAllocationsElements: userAllocations!.elements,
   });

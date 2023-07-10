@@ -5,7 +5,6 @@ import { visitWithLoader } from 'cypress/utils/e2e';
 import { getNamesOfProposals } from 'cypress/utils/proposals';
 import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
-import { autoClose } from 'src/utils/triggerToast';
 
 import Chainable = Cypress.Chainable;
 
@@ -69,23 +68,9 @@ function addProposalToAllocate(index, numberOfAddedProposals): Chainable<any> {
     .find('path')
     .then($el => $el.css('stroke'))
     .should('be.colored', '#FF6157');
-  cy.get('[data-test=Toast--addToAllocate]')
-    .last()
-    .find('[data-test=Toast--addToAllocate__title]')
-    .as('toast');
   return cy
-    .get('[data-test^=ProposalsView__ProposalItem')
-    .eq(index)
-    .find('[data-test=ProposalItem__name]')
-    .then($name => {
-      cy.get('@toast').then($toastName => {
-        expect($toastName.text()).to.eq(`Added ${$name.text()} to Allocate`);
-        cy.get('[data-test=MainLayout__navigation__numberOfAllocations]').contains(
-          numberOfAddedProposals + 1,
-        );
-        cy.wait(autoClose);
-      });
-    });
+    .get('[data-test=MainLayout__navigation__numberOfAllocations]')
+    .contains(numberOfAddedProposals + 1);
 }
 
 function removeProposalFromAllocate(
@@ -98,28 +83,12 @@ function removeProposalFromAllocate(
     .find('[data-test=ProposalItem__ButtonAddToAllocate]')
     .scrollIntoView()
     .click();
-  cy.get('[data-test=Toast--removeFromAllocate]')
-    .last()
-    .find('[data-test=Toast--removeFromAllocate__title]')
-    .as('toast');
-  return cy
-    .get('[data-test^=ProposalsView__ProposalItem')
-    .eq(index)
-    .find('[data-test=ProposalItem__name]')
-    .then($name => {
-      cy.get('@toast').then($toastName => {
-        expect($toastName.text()).to.eq(`Removed ${$name.text()} from Allocate`);
-        if (index < numberOfProposals - 1) {
-          cy.get('[data-test=MainLayout__navigation__numberOfAllocations]').contains(
-            numberOfAddedProposals - 1,
-          );
-        } else {
-          cy.get('[data-test=MainLayout__navigation__numberOfAllocations]').should('not.exist');
-        }
-
-        cy.wait(autoClose);
-      });
-    });
+  if (index < numberOfProposals - 1) {
+    return cy
+      .get('[data-test=MainLayout__navigation__numberOfAllocations]')
+      .contains(numberOfAddedProposals - 1);
+  }
+  return cy.get('[data-test=MainLayout__navigation__numberOfAllocations]').should('not.exist');
 }
 
 describe('proposals', () => {
@@ -145,7 +114,7 @@ describe('proposals', () => {
     }
   });
 
-  it('user is able to add & remove the first and the last project to/from allocation, triggering change of the icon, change of the number in navbar & toast', () => {
+  it('user is able to add & remove the first and the last project to/from allocation, triggering change of the icon, change of the number in navbar', () => {
     // This test checks the first and the last elements only to save time.
     cy.get('[data-test=MainLayout__navigation__numberOfAllocations]').should('not.exist');
 

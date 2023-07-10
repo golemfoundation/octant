@@ -3,7 +3,6 @@ import { getNamesOfProposals } from 'cypress/utils/proposals';
 import { isDesktop } from 'cypress/utils/viewports';
 import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
-import { autoClose } from 'src/utils/triggerToast';
 
 describe('proposal', () => {
   let proposalNames: string[] = [];
@@ -50,7 +49,7 @@ describe('proposal', () => {
     cy.get('[data-test=ProposalView__proposal__DonorsList__Loader]').should('be.visible');
   });
 
-  it('entering proposal view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar & toast', () => {
+  it('entering proposal view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar', () => {
     cy.get('[data-test^=ProposalsView__ProposalItem').first().click();
 
     cy.get('[data-test=ProposalView__proposal]')
@@ -63,20 +62,7 @@ describe('proposal', () => {
         }]`,
       )
       .click();
-    cy.get('[data-test=Toast--addToAllocate]')
-      .last()
-      .find('[data-test=Toast--addToAllocate__title]')
-      .as('toast');
-    cy.get('[data-test=ProposalView__proposal]')
-      .first()
-      .find('[data-test=ProposalView__proposal__name]')
-      .then($name => {
-        cy.get('@toast').then($toastName => {
-          expect($toastName.text()).to.eq(`Added ${$name.text()} to Allocate`);
-          cy.get('[data-test=MainLayout__navigation__numberOfAllocations]').contains(1);
-          cy.wait(autoClose);
-        });
-      });
+    cy.get('[data-test=MainLayout__navigation__numberOfAllocations]').contains(1);
     cy.get('[data-test=ProposalView__proposal]')
       .first()
       .find(
@@ -87,19 +73,7 @@ describe('proposal', () => {
         }]`,
       )
       .click();
-    cy.get('[data-test=Toast--removeFromAllocate]')
-      .last()
-      .find('[data-test=Toast--removeFromAllocate__title]')
-      .as('toast');
-    cy.get('[data-test=ProposalView__proposal]')
-      .first()
-      .find('[data-test=ProposalView__proposal__name]')
-      .then($name => {
-        cy.get('@toast').then($toastName => {
-          expect($toastName.text()).to.eq(`Removed ${$name.text()} from Allocate`);
-          cy.get('[data-test=MainLayout__navigation__numberOfAllocations]').should('not.exist');
-        });
-      });
+    cy.get('[data-test=MainLayout__navigation__numberOfAllocations]').should('not.exist');
   });
 
   it('entering proposal 1 view allows infinite scroll down in 1, 2, 3, ... , n - 1 , n, 0, 1, 2, ... order', () => {
