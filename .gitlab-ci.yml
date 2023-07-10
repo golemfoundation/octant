@@ -431,7 +431,7 @@ pages:
     - yarn compile
     - cd ../client
     - yarn install --non-interactive
-    - yarn build
+    - yarn build:staging
     - cd ..
     - mv client/dist public
     - echo '/governance/octant/* /:splat 200' > public/_redirects

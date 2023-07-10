@@ -52,7 +52,7 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    base: '/governance/octant/',
+    base: (isProduction ? '/' : '/governance/octant/'),
     css: {
       modules: {
         generateScopedName: localIdentName,
