@@ -263,7 +263,7 @@ const App = (): ReactElement => {
     );
     // .toHexString(), because React can't compare objects as deps in hooks, causing infinite loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [individualReward?.toHexString(), userAllocations]);
+  }, [individualReward?.toHexString(), userAllocations?.elements.length]);
 
   useEffect(() => {
     if (!areOctantTipsAlwaysVisible) {

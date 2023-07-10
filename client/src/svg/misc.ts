@@ -32,8 +32,8 @@ export const cross: SvgImageConfig = {
 
 export const heart: SvgImageConfig = {
   markup:
-    '<path stroke="#9EA39E" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 11.5 1.886 6.164a3.027 3.027 0 0 1 3.07-5.019c.455.148.87.401 1.21.74L7 2.721l.835-.835a3.026 3.026 0 0 1 4.28 4.28L7 11.498Z"/>',
-  viewBox: '0 0 14 13',
+    '<path stroke="#9EA39E" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m16 21.5-5.114-5.335a3.028 3.028 0 0 1 1.655-5.126 3.027 3.027 0 0 1 2.624.847l.835.835.835-.835a3.026 3.026 0 1 1 4.28 4.28L16 21.498Z"/>',
+  viewBox: '0 0 32 32',
 };
 
 export const plus: SvgImageConfig = {
@@ -50,13 +50,13 @@ export const minus: SvgImageConfig = {
 
 export const notificationIconWarning: SvgImageConfig = {
   markup:
-    '<path fill="#5B8A81" d="M16.05 2.12a.902.902 0 0 1 .9 0l11.1 6.408c.278.161.45.46.45.781v12.816c0 .322-.172.62-.45.78l-11.1 6.408a.902.902 0 0 1-.9 0l-11.1-6.408a.902.902 0 0 1-.45-.78V9.309c0-.322.172-.62.45-.78l11.1-6.408Z"/><path fill="#fff" d="M15.55 18.53h2.058l.32-5.27V9.5H15.23v3.76l.319 5.27ZM16.579 23c.87 0 1.596-.71 1.596-1.561 0-.87-.727-1.597-1.596-1.597-.87 0-1.579.728-1.579 1.597 0 .851.71 1.561 1.579 1.561Z"/>',
+    '<path fill="#1D4558" d="M16.5 4c8.868 0 12 3.147 12 12 0 8.82-3.184 12-12 12-8.79 0-12-3.22-12-12 0-8.813 3.158-12 12-12Z"/><path fill="#fff" d="M15.05 18.53h2.058l.32-5.27V9.5H14.73v3.76l.319 5.27ZM16.079 23c.87 0 1.596-.71 1.596-1.561 0-.87-.727-1.597-1.596-1.597-.87 0-1.579.728-1.579 1.597 0 .851.71 1.561 1.579 1.561Z"/>',
   viewBox: '0 0 33 32',
 };
 
 export const notificationIconSuccess: SvgImageConfig = {
   markup:
-    '<path fill="#5B8A81" d="M15.55 2.12a.902.902 0 0 1 .9 0l11.1 6.408c.278.161.45.46.45.781v12.816c0 .322-.172.62-.45.78l-11.1 6.408a.902.902 0 0 1-.9 0l-11.1-6.408a.902.902 0 0 1-.45-.78V9.309c0-.322.172-.62.45-.78l11.1-6.408Z"/><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m11.34 15.732 2.447 3.127 7.072-7.072"/>',
+    '<path fill="#2D9B87" d="M16 4c8.868 0 12 3.147 12 12 0 8.82-3.184 12-12 12-8.79 0-12-3.22-12-12C4 7.187 7.158 4 16 4Z"/><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m11.34 15.732 2.447 3.127 7.072-7.072"/>',
   viewBox: '0 0 33 32',
 };
 
@@ -86,8 +86,8 @@ export const unlock: SvgImageConfig = {
 
 export const checkMark: SvgImageConfig = {
   markup:
-    '<circle cx="11.982" cy="12" r="8" fill="#2D9B87"/><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9.07 12.171 1.65 1.792 4.243-4.243"/>',
-  viewBox: '0 0 24 24',
+    '<circle cx="16" cy="16" r="8" fill="#2D9B87"/><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m13.089 16.171 1.65 1.792 4.243-4.243"/>',
+  viewBox: '0 0 32 32',
 };
 
 export const pencil: SvgImageConfig = {

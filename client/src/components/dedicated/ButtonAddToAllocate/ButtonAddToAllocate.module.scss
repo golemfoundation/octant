@@ -1,13 +1,15 @@
 .root {
-  &.isAlreadyAdded {
-    svg path {
-      stroke: $color-octant-orange;
-      fill: $color-octant-orange;
-    }
+  &:not(.isAllocatedTo) {
+    &:not(.isAddedToAllocate) {
+      svg path {
+        stroke: $color-octant-orange;
+        fill: $color-octant-orange;
+      }
 
-    &[data-is-initial-load-done="true"] {
-      animation-name: scale1;
-      animation-duration: $transition-time-1;
+      &[data-is-initial-load-done="true"] {
+        animation-name: scale1;
+        animation-duration: $transition-time-1;
+      }
     }
   }
 }

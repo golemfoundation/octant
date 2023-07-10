@@ -18,6 +18,7 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import useProposalsWithRewards from 'hooks/queries/useProposalsWithRewards';
+import useUserAllocations from 'hooks/queries/useUserAllocations';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
@@ -40,6 +41,7 @@ const ProposalView = (): ReactElement => {
   }));
   const { data: proposalsIpfs } = useProposalsIpfs(loadedAddresses!);
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: userAllocations } = useUserAllocations();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
   const proposalsWithRewards = useProposalsWithRewards();
 
@@ -182,7 +184,6 @@ const ProposalView = (): ReactElement => {
         useWindow
       >
         {loadedProposals.map(({ address, description, name, profileImageCID, website }, index) => {
-          const isAlreadyAdded = allocations.includes(address);
           const proposalMatchedProposalRewards = proposalsWithRewards?.find(
             ({ address: matchedAddress }) => matchedAddress === address,
           );
@@ -190,7 +191,15 @@ const ProposalView = (): ReactElement => {
             allocations: allocations!,
             proposalName: name,
             setAllocations,
+            userAllocationsElements: userAllocations!.elements,
           });
+          const buttonAddToAllocateProps = {
+            isAddedToAllocate: allocations.includes(address),
+            isAllocatedTo: !!userAllocations!.elements.find(
+              ({ address: userAllocationAddress }) => userAllocationAddress === address,
+            ),
+            onClick: () => onAddRemoveFromAllocate(address),
+          };
           return (
             // eslint-disable-next-line react/no-array-index-key
             <Fragment key={`${address}-${index}`}>
@@ -205,8 +214,7 @@ const ProposalView = (): ReactElement => {
                     <ButtonAddToAllocate
                       className={cx(styles.buttonAddToAllocatePrimary, isEpoch1 && styles.isEpoch1)}
                       dataTest="ProposalView__proposal__ButtonAddToAllocate--primary"
-                      isAlreadyAdded={isAlreadyAdded}
-                      onClick={() => onAddRemoveFromAllocate(address)}
+                      {...buttonAddToAllocateProps}
                     />
                   </div>
                   <span className={styles.name} data-test="ProposalView__proposal__name">
@@ -229,8 +237,7 @@ const ProposalView = (): ReactElement => {
                           <ButtonAddToAllocate
                             className={styles.buttonAddToAllocateSecondary}
                             dataTest="ProposalView__proposal__ButtonAddToAllocate--secondary"
-                            isAlreadyAdded={isAlreadyAdded}
-                            onClick={() => onAddRemoveFromAllocate(address)}
+                            {...buttonAddToAllocateProps}
                           />
                         )
                       }

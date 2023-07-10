@@ -33,7 +33,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
   }));
   const { data: proposalsIpfs } = useProposalsIpfs([address]);
   const { data: currentEpoch } = useCurrentEpoch();
-  const isAlreadyAdded = allocations!.includes(address);
+  const isAddedToAllocate = allocations!.includes(address);
 
   const isLoading = !proposalsIpfs || proposalsIpfs.length === 0;
   const proposal = proposalsIpfs[0] || {};
@@ -43,11 +43,13 @@ const ProposalItem: FC<ProposalItemProps> = ({
     allocations,
     proposalName: name,
     setAllocations,
-    userAllocationsElements: userAllocations?.elements,
+    userAllocationsElements: userAllocations!.elements,
   });
 
+  const isAllocatedTo = !!userAllocations!.elements.find(
+    ({ address: userAllocationAddress }) => userAllocationAddress === address,
+  );
   const isLoadingStates = isLoadingError || isLoading;
-
   const isEpoch1 = currentEpoch === 1;
 
   return (
@@ -77,7 +79,8 @@ const ProposalItem: FC<ProposalItemProps> = ({
             <ButtonAddToAllocate
               className={styles.button}
               dataTest="ProposalItem__ButtonAddToAllocate"
-              isAlreadyAdded={isAlreadyAdded}
+              isAddedToAllocate={isAddedToAllocate}
+              isAllocatedTo={isAllocatedTo}
               onClick={() => onAddRemoveFromAllocate(address)}
             />
           </div>

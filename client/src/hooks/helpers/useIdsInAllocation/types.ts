@@ -5,5 +5,5 @@ export type OnAddRemoveAllocationElementLocalStorage = {
   address: string;
   allocations: AllocationsData['allocations'];
   name?: string;
-  userAllocationsElements?: UserAllocationElement[];
+  userAllocationsElements: UserAllocationElement[];
 };

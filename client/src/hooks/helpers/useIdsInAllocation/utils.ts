@@ -2,6 +2,7 @@ import debounce from 'lodash/debounce';
 
 import { TOAST_DEBOUNCE_TIME } from 'constants/toasts';
 import { UserAllocationElement } from 'hooks/queries/useUserAllocations';
+import i18n from 'i18n';
 import triggerToast from 'utils/triggerToast';
 
 import { OnAddRemoveAllocationElementLocalStorage } from './types';
@@ -9,9 +10,8 @@ import { OnAddRemoveAllocationElementLocalStorage } from './types';
 export const toastDebouncedCantRemoveAllocatedProject = debounce(
   () =>
     triggerToast({
-      message:
-        'If you want to remove a project from the Allocate view, you need to unallocate funds from it first.',
-      title: 'You allocated to this project',
+      message: i18n.t('toasts.cantRemoveProjectWithDonations.message'),
+      title: i18n.t('toasts.cantRemoveProjectWithDonations.title'),
       type: 'warning',
     }),
   TOAST_DEBOUNCE_TIME,

@@ -44,7 +44,6 @@ export default function useUserAllocations(
            * They are not shown anywhere in the UI and should be treated as not done at all.
            */
           elements: userAllocationsFromBackend.filter(({ value }) => !value.isZero()),
-
           hasUserAlreadyDoneAllocation: !!userAllocationsFromBackend?.length,
         };
       },
