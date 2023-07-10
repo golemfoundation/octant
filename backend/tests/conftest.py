@@ -6,9 +6,9 @@ import pytest
 from eth_account import Account
 
 from app import create_app, database
-from app.core.allocations import AllocationRequest, allocate
+from app.core.allocations import AllocationRequest, allocate, Allocation
 from app.crypto.eip712 import sign, build_allocations_eip712_data
-from app.extensions import db as _db, w3
+from app.extensions import db, w3
 from app.settings import TestConfig
 
 MNEMONIC = "test test test test test test test test test test test junk"
@@ -30,15 +30,15 @@ def app():
     _app = create_app(TestConfig)
 
     with _app.app_context():
-        _db.create_all()
+        db.create_all()
 
     ctx = _app.test_request_context()
     ctx.push()
 
-    yield _app, _db
+    yield _app, db
 
-    _db.session.close()
-    _db.drop_all()
+    db.session.close()
+    db.drop_all()
     ctx.pop()
 
 
@@ -71,10 +71,31 @@ def pending_epoch_snapshot(app, user_accounts):
         TOTAL_REWARDS,
         ALL_INDIVIDUAL_REWARDS,
     )
-    user1 = database.user.add_user(user_accounts[0].address)
-    user2 = database.user.add_user(user_accounts[1].address)
+    user1 = database.user.get_or_add_user(user_accounts[0].address)
+    user2 = database.user.get_or_add_user(user_accounts[1].address)
     database.deposits.add(MOCKED_PENDING_EPOCH_NO, user1, USER1_ED, USER1_ED)
     database.deposits.add(MOCKED_PENDING_EPOCH_NO, user2, USER2_ED, USER2_ED)
+    db.session.commit()
+
+
+@pytest.fixture(scope="function")
+def allocations(app, user_accounts, proposal_accounts):
+    user1 = database.user.get_or_add_user(user_accounts[0].address)
+    user2 = database.user.get_or_add_user(user_accounts[1].address)
+    db.session.commit()
+    user1_allocations = [
+        Allocation(proposal_accounts[0].address, 10 * 10**18),
+        Allocation(proposal_accounts[1].address, 5 * 10**18),
+        Allocation(proposal_accounts[2].address, 300 * 10**18),
+    ]
+
+    user2_allocations = [
+        Allocation(proposal_accounts[1].address, 1050 * 10**18),
+        Allocation(proposal_accounts[3].address, 500 * 10**18),
+    ]
+    database.allocations.add_all(MOCKED_PENDING_EPOCH_NO, user1.id, user1_allocations)
+    database.allocations.add_all(MOCKED_PENDING_EPOCH_NO, user2.id, user2_allocations)
+    db.session.commit()
 
 
 def allocate_user_rewards(user_account: Account, proposal_account, allocation_amount):

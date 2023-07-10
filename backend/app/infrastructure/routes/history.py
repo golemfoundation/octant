@@ -37,7 +37,7 @@ user_history_model = api.model(
 @ns.route("/<string:user_address>")
 @ns.doc(
     params={
-        "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed with 0x"
+        "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)"
     }
 )
 class History(Resource):

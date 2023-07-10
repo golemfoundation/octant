@@ -5,20 +5,28 @@ from app import settings
 from app.controllers import docs
 from app.extensions import api
 
-ns = Namespace("docs", description="Octant websockets documentation")
+ns = Namespace("docs", description="Octant documentation")
 api.add_namespace(ns)
 
-smart_contract_model = api.model('SmartContract', {
-    'name': fields.String(description='The smart contract name.'),
-    'address': fields.String(description='The smart contract address.'),
-})
+smart_contract_model = api.model(
+    "SmartContract",
+    {
+        "name": fields.String(description="The smart contract name."),
+        "address": fields.String(description="The smart contract address."),
+    },
+)
 
-chain_info_model = api.model('ChainInfo', {
-    'chainName': fields.String(description='The chain name.'),
-    'chainId': fields.String(description='The chain id.'),
-    'smartContracts': fields.List(fields.Nested(smart_contract_model),
-                                  description='The smart contracts used by Octant in given network.')
-})
+chain_info_model = api.model(
+    "ChainInfo",
+    {
+        "chainName": fields.String(description="The chain name."),
+        "chainId": fields.String(description="The chain id."),
+        "smartContracts": fields.List(
+            fields.Nested(smart_contract_model),
+            description="The smart contracts used by Octant in given network.",
+        ),
+    },
+)
 
 
 @ns.route("/websockets-api")

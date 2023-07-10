@@ -28,11 +28,11 @@ def get_blockchain_info() -> ChainInfo:
         SmartContract("Deposits", config.DEPOSITS_CONTRACT_ADDRESS),
         SmartContract("Proposals", config.PROPOSALS_CONTRACT_ADDRESS),
         SmartContract("WithdrawalsTarget", config.WITHDRAWALS_TARGET_CONTRACT_ADDRESS),
-        SmartContract("Vault", config.VAULT_CONTRACT_ADDRESS)
+        SmartContract("Vault", config.VAULT_CONTRACT_ADDRESS),
     ]
 
     return ChainInfo(
         chain_name=config.CHAIN_NAME,
         chain_id=config.CHAIN_ID,
-        smart_contracts=smart_contracts
+        smart_contracts=smart_contracts,
     )
