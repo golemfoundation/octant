@@ -66,6 +66,39 @@ budget_model = api.model(
 )
 
 
+epoch_rewards_merkle_tree_leaf_model = api.model(
+    "EpochRewardsMerkleTreeLeaf",
+    {
+        "address": fields.String(
+            required=True, description="User account or proposal address"
+        ),
+        "amount": fields.String(required=True, description="Assigned reward"),
+    },
+)
+
+epoch_rewards_merkle_tree_model = api.model(
+    "EpochRewardsMerkleTree",
+    {
+        "epoch": fields.Integer(
+            required=True,
+            description="Epoch number",
+        ),
+        "rewardsSum": fields.String(
+            required=True, description="Sum of assigned rewards for epoch"
+        ),
+        "root": fields.String(required=True, description="Merkle Tree root for epoch"),
+        "leaves": fields.List(
+            fields.Nested(epoch_rewards_merkle_tree_leaf_model),
+            required=True,
+            description="List of Merkle Tree leaves",
+        ),
+        "leafEncoding": fields.List(
+            fields.String, required=True, description="Merkle tree leaf encoding"
+        ),
+    },
+)
+
+
 @ns.route("/budget/<string:user_address>/epoch/<int:epoch>")
 @ns.doc(
     description="Returns user's rewards budget available to allocate for given epoch",
@@ -142,3 +175,23 @@ class Budget(Resource):
     def get(self, epoch):
         budget = rewards.get_rewards_budget(epoch)
         return dataclasses.asdict(budget)
+
+
+@ns.doc(
+    description="Returns merkle tree leaves with rewards for a given epoch",
+    params={
+        "epoch": "Epoch number",
+    },
+)
+@ns.response(
+    200,
+    "",
+)
+@ns.response(400, "Invalid epoch number given")
+@ns.route("/merkle_tree/<int:epoch>")
+class RewardsMerkleTree(Resource):
+    @ns.marshal_with(epoch_rewards_merkle_tree_model)
+    def get(self, epoch: int):
+        current_app.logger.info(f"Requested merkle tree leaves for: {epoch}")
+        merkle_tree_leaves = rewards.get_rewards_merkle_tree(epoch)
+        return merkle_tree_leaves.to_dict()
