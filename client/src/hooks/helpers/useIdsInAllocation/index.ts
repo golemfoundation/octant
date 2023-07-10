@@ -5,12 +5,10 @@ import { onAddRemoveAllocationElementLocalStorage } from './utils';
 
 export default function useIdsInAllocation({
   allocations,
-  proposalName,
   userAllocationsElements,
   setAllocations,
 }: {
   allocations: AllocationsData['allocations'];
-  proposalName?: string;
   setAllocations: AllocationsMethods['setAllocations'];
   userAllocationsElements: UserAllocationElement[];
 }): { onAddRemoveFromAllocate: (address: string) => void } {
@@ -18,7 +16,6 @@ export default function useIdsInAllocation({
     const newIds = onAddRemoveAllocationElementLocalStorage({
       address,
       allocations,
-      name: proposalName,
       userAllocationsElements,
     });
     if (newIds) {

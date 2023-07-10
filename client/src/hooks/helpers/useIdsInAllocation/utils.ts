@@ -36,7 +36,6 @@ export function onAddRemoveAllocationElementLocalStorage({
   allocations,
   address,
   userAllocationsElements,
-  name,
 }: OnAddRemoveAllocationElementLocalStorage): string[] | undefined {
   if (isProposalAlreadyAllocatedOn(userAllocationsElements, address)) {
     toastDebouncedCantRemoveAllocatedProject();
@@ -47,16 +46,8 @@ export function onAddRemoveAllocationElementLocalStorage({
 
   if (isItemAlreadyAdded) {
     newIds.splice(newIds.indexOf(address), 1);
-    triggerToast({
-      dataTest: 'Toast--removeFromAllocate',
-      title: `Removed ${name} from Allocate`,
-    });
   } else {
     newIds.push(address);
-    triggerToast({
-      dataTest: 'Toast--addToAllocate',
-      title: `Added ${name} to Allocate`,
-    });
   }
 
   return newIds;

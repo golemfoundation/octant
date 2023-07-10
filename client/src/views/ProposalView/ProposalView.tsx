@@ -189,7 +189,6 @@ const ProposalView = (): ReactElement => {
           );
           const { onAddRemoveFromAllocate } = useIdsInAllocation({
             allocations: allocations!,
-            proposalName: name,
             setAllocations,
             userAllocationsElements: userAllocations!.elements,
           });
