@@ -4,7 +4,7 @@ import React, { FC, useRef, useEffect } from 'react';
 import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
 import { IS_INITIAL_LOAD_DONE } from 'constants/dataAttributes';
-import { heart } from 'svg/misc';
+import { checkMark, heart } from 'svg/misc';
 
 import styles from './ButtonAddToAllocate.module.scss';
 import ButtonAddToAllocateProps from './types';
@@ -13,7 +13,8 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
   className,
   dataTest,
   onClick,
-  isAlreadyAdded,
+  isAddedToAllocate,
+  isAllocatedTo,
 }) => {
   const ref = useRef<HTMLButtonElement>(null);
 
@@ -24,12 +25,17 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
   return (
     <Button
       ref={ref}
-      className={cx(styles.root, isAlreadyAdded && styles.isAlreadyAdded, className)}
+      className={cx(
+        styles.root,
+        isAddedToAllocate && styles.isAddedToAllocate,
+        isAllocatedTo && styles.isAllocatedTo,
+        className,
+      )}
       dataParameters={{
         [IS_INITIAL_LOAD_DONE]: 'false',
       }}
       dataTest={dataTest}
-      Icon={<Svg img={heart} size={1.2} />}
+      Icon={<Svg img={isAllocatedTo ? checkMark : heart} size={3.2} />}
       onClick={onClick}
       variant="iconOnly"
     />

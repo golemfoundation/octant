@@ -12,7 +12,7 @@ export default function useIdsInAllocation({
   allocations: AllocationsData['allocations'];
   proposalName?: string;
   setAllocations: AllocationsMethods['setAllocations'];
-  userAllocationsElements?: UserAllocationElement[];
+  userAllocationsElements: UserAllocationElement[];
 }): { onAddRemoveFromAllocate: (address: string) => void } {
   const onAddRemoveFromAllocate = (address: string) => {
     const newIds = onAddRemoveAllocationElementLocalStorage({
