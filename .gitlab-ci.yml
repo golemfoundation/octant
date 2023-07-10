@@ -3,7 +3,6 @@ variables:
   FF_USE_FASTZIP: "true"
   CACHE_COMPRESSION_LEVEL: "fast"
   TRANSFER_METER_FREQUENCY: "2s"
-  PYTHON_IMAGE: "acidrain/python-poetry:3.11-slim-1.5.1"
   IMAGE_TAG: $CI_COMMIT_SHA
 
 stages:
@@ -22,7 +21,23 @@ default:
     - metal
   interruptible: true
 
-image: node:16-bullseye-slim
+.images:
+  python:
+    name: acidrain/python-poetry:3.11-slim-1.5.1
+    pull_policy: if-not-present
+  node:
+    name: registry.gitlab.com/wildland/devops/container-builder/octant/node-extended:latest
+    pull_policy: if-not-present
+  kaniko:
+    name: gcr.io/kaniko-project/executor:$KANIKO_VERSION-debug
+    pull_policy: if-not-present
+    entrypoint: [""]
+  git_improved:
+    name: mikecode/git-gettext:ubuntu
+    pull_policy: if-not-present
+  synpress:
+    name: synthetixio/docker-e2e:16.20-ubuntu
+    pull_policy: if-not-present
 
 .rules:
   on_mr:
@@ -49,7 +64,7 @@ image: node:16-bullseye-slim
 
 Build backend:
   stage: build
-  image: $PYTHON_IMAGE
+  image: !reference [.images, python ]
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
@@ -64,6 +79,7 @@ Build backend:
 
 Build contracts:
   stage: build
+  image: !reference [.images, node ]
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
@@ -94,6 +110,7 @@ Build contracts:
 
 Build services:
   stage: build
+  image: !reference [.images, node ]
   parallel:
     matrix:
       - SERVICE:
@@ -123,6 +140,7 @@ Build services:
 
 Lint and typecheck:
   stage: lint_and_typecheck
+  image: !reference [.images, node ]
   parallel:
     matrix:
       - SERVICE:
@@ -153,7 +171,7 @@ Lint and typecheck:
 
 Backend tests:
   stage: test
-  image: $PYTHON_IMAGE
+  image: !reference [.images, python ]
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
@@ -171,6 +189,7 @@ Backend tests:
 
 Unit tests:
   stage: test
+  image: !reference [.images, node ]
   parallel:
     matrix:
       - SERVICE:
@@ -203,6 +222,7 @@ Unit tests:
 
 Documentation:
   stage: test
+  image: !reference [.images, node ]
   parallel:
     matrix:
       - SERVICE:
@@ -236,6 +256,7 @@ Documentation:
 
 Build images:
   stage: publish
+  image: !reference [.images, kaniko ]
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
@@ -248,9 +269,6 @@ Build images:
           - client
           - subgraph
           - backend
-  image:
-    name: gcr.io/kaniko-project/executor:$KANIKO_VERSION-debug
-    entrypoint: [""]
   variables:
     IMAGE_NAME: $SERVICE
     GOOGLE_APPLICATION_CREDENTIALS: /kaniko/config.json
@@ -265,12 +283,13 @@ Build images:
       --build-arg VERSION_TAG=$CI_COMMIT_SHORT_SHA
       --cache=true
       --cache-repo=$KANIKO_CACHE_REPO
+      --insecure-pull
 
 #    TODO OCT-631 Fix Cypress in CI.
 #    Cypress does not work in CI due to problem in operating MetaMask in Chrome in Synpress in Docker.
 #Cypress E2E Tests:
 #  stage: e2e
-#  image: synthetixio/docker-e2e:16.20-ubuntu
+#  image: !reference [.images, synpress ]
 #  rules:
 #    - !reference [.rules, on_mr_manual]
 #    - !reference [.rules, on_push_to_default_branch ]
@@ -315,7 +334,7 @@ Build images:
 #
 #Force destroy E2E env:
 #  stage: e2e
-#  image: mikecode/git-gettext:ubuntu
+#  image: !reference [.images, git_improved ]
 #  rules:
 #    - !reference [.rules, on_mr_manual]
 #    - !reference [.rules, on_push_to_default_branch_manual]
@@ -326,7 +345,7 @@ Build images:
 
 .deploy:
   stage: deploy
-  image: mikecode/git-gettext:ubuntu
+  image: !reference [.images, git_improved ]
   script:
     - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh $ENV_TYPE
     - bash $CI_PROJECT_DIR/ci/argocd/application.sh create
@@ -335,7 +354,7 @@ Build images:
 
 .destroy:
   stage: cleanup
-  image: mikecode/git-gettext:ubuntu
+  image: !reference [.images, git_improved ]
   script:
     - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh $ENV_TYPE
     - bash $CI_PROJECT_DIR/ci/argocd/application.sh destroy
@@ -403,11 +422,11 @@ Destroy UAT App:
 
 pages:
   stage: deploy
+  image: !reference [.images, node ]
   rules:
     - if: '$CI_COMMIT_REF_NAME == "master"'
       when: manual
   script:
-    - apt-get update && apt-get install -y --no-install-recommends git --reinstall ca-certificates
     - cd contracts
     - yarn install --non-interactive --cache-folder .yarn
     - yarn compile
