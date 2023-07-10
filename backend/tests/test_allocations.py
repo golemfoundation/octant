@@ -1,4 +1,3 @@
-from tests.conftest import create_payload, MOCKED_PENDING_EPOCH_NO
 from unittest.mock import MagicMock, Mock
 
 import pytest
@@ -6,6 +5,7 @@ import pytest
 from app import database, exceptions
 from app.contracts.epochs import Epochs
 from app.contracts.proposals import Proposals
+from app.controllers.allocations import get_by_user_and_epoch, get_by_proposal_and_epoch
 from app.core.allocations import (
     allocate,
     deserialize_payload,
@@ -13,6 +13,7 @@ from app.core.allocations import (
     AllocationRequest,
 )
 from app.crypto.eip712 import sign, build_allocations_eip712_data
+from tests.conftest import create_payload, MOCKED_PENDING_EPOCH_NO
 
 
 @pytest.fixture(autouse=True)
@@ -253,9 +254,7 @@ def test_allocation_validation_errors(
     allocate(AllocationRequest(payload, signature, override_existing_allocations=True))
 
 
-def test_project_allocates_funds_to_itself(
-    app, monkeypatch, proposal_accounts, user_accounts
-):
+def test_project_allocates_funds_to_itself(app, proposal_accounts, user_accounts):
     # Test data
     payload = create_payload(proposal_accounts[0:3], None)
     signature = sign(proposal_accounts[0], build_allocations_eip712_data(payload))
@@ -264,6 +263,30 @@ def test_project_allocates_funds_to_itself(
         allocate(
             AllocationRequest(payload, signature, override_existing_allocations=True)
         )
+
+
+def test_get_by_user_and_epoch(allocations, user_accounts, proposal_accounts):
+    result = get_by_user_and_epoch(user_accounts[0].address, MOCKED_PENDING_EPOCH_NO)
+
+    assert len(result) == 3
+    assert result[0].address == proposal_accounts[0].address
+    assert result[0].amount == str(10 * 10**18)
+    assert result[1].address == proposal_accounts[1].address
+    assert result[1].amount == str(5 * 10**18)
+    assert result[2].address == proposal_accounts[2].address
+    assert result[2].amount == str(300 * 10**18)
+
+
+def test_get_by_proposal_and_epoch(allocations, user_accounts, proposal_accounts):
+    result = get_by_proposal_and_epoch(
+        proposal_accounts[1].address, MOCKED_PENDING_EPOCH_NO
+    )
+
+    assert len(result) == 2
+    assert result[0].address == user_accounts[0].address
+    assert result[0].amount == str(5 * 10**18)
+    assert result[1].address == user_accounts[1].address
+    assert result[1].amount == str(1050 * 10**18)
 
 
 def test_user_exceeded_rewards_budget_in_allocations(

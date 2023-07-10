@@ -22,9 +22,17 @@
 
 <button id="vote">Vote</button>
 
+<label for="proposalAddress">Proposal Address:</label><br>
+<input type="text" id="proposalAddress" name="proposalAddress" size="200"><br>
+<button type="button" id="getDonors">Get Donors</button>
+
 <h2>Threshold: <span id="threshold"></span></h2>
 <h2>Proposal rewards:</h2>
 <ul id="proposal-rewards"></ul>
+
+<h2>Donors:</h2>
+<ul id="donors"></ul>
+
 
 <h2>Errors:</h2>
 <ul id="errors"></ul>
@@ -147,6 +155,14 @@
     }));
   });
 
+  const getDonorsButton = document.getElementById('getDonors');
+  const proposalAddressInput = document.getElementById('proposalAddress');
+
+  getDonorsButton.addEventListener('click', () => {
+    const proposalAddress = proposalAddressInput.value;
+    socket.emit("proposal_donors", proposalAddress);
+  });
+
   const socket = io.connect("http://127.0.0.1:5000");
 
   socket.on("connect", () => {
@@ -167,6 +183,23 @@
     item.textContent = proposalRewardsResponse;
     proposalRewards.appendChild(item)
   });
+
+  socket.on("proposal_donors", (donorsResponse) => {
+    const donorsElement = document.getElementById("donors");
+    // Clear previous donors list
+    donorsElement.innerHTML = "";
+
+    // Parse donorsResponse to JSON
+    const donors = JSON.parse(donorsResponse);
+
+    // Iterate over donors and append to the donors element
+    donors.forEach(donor => {
+        const item = document.createElement("li");
+        item.textContent = `Address: ${donor.address}, Amount: ${donor.amount}`;
+        donorsElement.appendChild(item);
+    });
+  });
+
 
   socket.on("disconnect", () => {
     status.innerText = "Disconnected";

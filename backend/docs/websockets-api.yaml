@@ -116,3 +116,40 @@ channels:
               - address: "0x1234567890123456789012345678901234567893"
                 allocated: "200000000"
                 matched: "10000000000"
+
+  proposal_donors:
+    subscribe:
+      summary: Proposal donors event
+      operationId: handle_proposal_donors
+      message:
+        name: ProposalDonors
+        payload:
+          type: array
+          items:
+            type: object
+            properties:
+              address:
+                type: string
+              amount:
+                type: string
+        examples:
+          - payload:
+              - address: "0x9eB7B2006DC686Ae7330234d9913B8F7283659D1"
+                amount: "100000000000"
+              - address: "0x17F6AD8Ef982297579C203069C1DbfFE4348c372"
+                amount: "200000000"
+    publish:
+      summary: Proposal donors event
+      operationId: handle_proposal_donors
+      message:
+        name: ProposalDonors
+        contentType: application/json
+        payload:
+          type: object
+          properties:
+            proposalAddress:
+              description: Proposal ethereum address in hexadecimal format, case-insensitive
+              type: string
+        examples:
+          - payload:
+              proposalAddress: "0x90F79bf6EB2c4f870365E785982E1f101E93b906"

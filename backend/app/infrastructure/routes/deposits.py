@@ -25,7 +25,7 @@ locked_ratio_model = api.model(
 )
 
 
-@ns.route("/<string:epoch>/total_effective")
+@ns.route("/<int:epoch>/total_effective")
 @ns.doc(params={"epoch": "Epoch number"})
 class TotalEffectiveDeposit(Resource):
     @ns.marshal_with(total_effective_model)
@@ -37,7 +37,7 @@ class TotalEffectiveDeposit(Resource):
         return {"totalEffective": total_effective_deposit}
 
 
-@ns.route("/<string:epoch>/locked_ratio")
+@ns.route("/<int:epoch>/locked_ratio")
 @ns.doc(params={"epoch": "Epoch number"})
 class LockedRatio(Resource):
     @ns.marshal_with(locked_ratio_model)

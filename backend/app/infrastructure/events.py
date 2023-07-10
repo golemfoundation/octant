@@ -4,12 +4,14 @@ from typing import List
 from flask import current_app
 from flask_socketio import emit
 
+from app.controllers import allocations
 from app.controllers.rewards import (
     get_allocation_threshold,
     get_proposals_rewards,
     ProposalReward,
 )
 from app.core.allocations import allocate, AllocationRequest
+from app.core.common import AccountFunds
 from app.exceptions import print_stacktrace, UNEXPECTED_EXCEPTION, OctantException
 from app.extensions import socketio
 
@@ -45,6 +47,15 @@ def handle_allocate(msg):
         json.dumps(_serialize_proposal_rewards(proposal_rewards)),
         broadcast=True,
     )
+    for proposal in proposal_rewards:
+        donors = allocations.get_by_proposal_and_epoch(proposal.address)
+        emit("proposal_donors", json.dumps(_serialize_donors(donors)), broadcast=True)
+
+
+@socketio.on("proposal_donors")
+def handle_proposal_donors(proposal_address: str):
+    donors = allocations.get_by_proposal_and_epoch(proposal_address)
+    emit("proposal_donors", json.dumps(_serialize_donors(donors)))
 
 
 @socketio.on_error_default
@@ -64,4 +75,14 @@ def _serialize_proposal_rewards(proposal_rewards: List[ProposalReward]) -> List[
             "matched": str(proposal.matched),
         }
         for proposal in proposal_rewards
+    ]
+
+
+def _serialize_donors(donors: List[AccountFunds]) -> List[dict]:
+    return [
+        {
+            "address": donor.address,
+            "amount": str(donor.amount),
+        }
+        for donor in donors
     ]
