@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.16;
+pragma solidity 0.8.18;
 
 import {CommonErrors} from "./Errors.sol";
 
@@ -27,8 +27,9 @@ contract Auth {
 
     /// @param _multisig The initial Golem Foundation multisig address.
     constructor(address _multisig) {
-        require(_multisig != address(0));
+        require(_multisig != address(0), CommonErrors.INVALID_ARGUMENT);
         multisig = _multisig;
+        emit MultisigSet(address(0), multisig);
     }
 
     /**

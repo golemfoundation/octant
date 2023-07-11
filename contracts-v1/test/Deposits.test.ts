@@ -30,6 +30,15 @@ makeTestsEnv(DEPOSITS, testEnv => {
       expect(await glmDeposits.deposits(signers.Alice.address)).eq(0);
     });
 
+    it('Cannot deposit zero GLMs', async () => {
+      const { token, glmDeposits, signers } = testEnv;
+      await token.transfer(signers.Alice.address, 1000);
+      await token.connect(signers.Alice).approve(glmDeposits.address, 1000);
+      await expect(glmDeposits.connect(signers.Alice).lock(0)).to.be.revertedWith(
+        'HN:Common/invalid-argument',
+      );
+    });
+
     it("Can't withdrawn empty", async () => {
       const { glmDeposits, signers } = testEnv;
       await expect(glmDeposits.connect(signers.Alice).unlock(1)).to.be.revertedWith(

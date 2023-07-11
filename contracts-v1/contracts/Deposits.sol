@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.16;
+pragma solidity 0.8.18;
 
 import "./interfaces/IDeposits.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import {DepositsErrors} from "./Errors.sol";
+import {DepositsErrors, CommonErrors} from "./Errors.sol";
 import "./OctantBase.sol";
 
 /// @title Contract tracking GLM deposits for Octant project.
@@ -38,6 +38,7 @@ contract Deposits is OctantBase, IDeposits {
 
     /// @param glmAddress Address of Golem Network Token contract (updated, GLM).
     constructor(address glmAddress, address _auth) OctantBase(_auth) {
+        require(glmAddress != address(0), CommonErrors.INVALID_ARGUMENT);
         glm = ERC20(glmAddress);
     }
 
@@ -45,6 +46,8 @@ contract Deposits is OctantBase, IDeposits {
     /// This can be done at any time, but it is most capital effective at the end of the epoch.
     /// @param amount Amount of GLM to be locked.
     function lock(uint256 amount) external {
+        require(amount != 0, CommonErrors.INVALID_ARGUMENT);
+
         uint256 oldDeposit = deposits[msg.sender];
         deposits[msg.sender] = oldDeposit + amount;
         require(

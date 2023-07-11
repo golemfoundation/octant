@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { ethers } from 'hardhat';
 
 import { makeTestsEnv } from './helpers/make-tests-env';
 
@@ -12,6 +13,14 @@ makeTestsEnv(AUTH, testEnv => {
         signers: { TestFoundation },
       } = testEnv;
       expect(await auth.multisig()).to.eq(TestFoundation.address);
+    });
+
+    it('should revert when multisig is set to zero-address', async () => {
+      const authFactory = await ethers.getContractFactory(AUTH);
+
+      await expect(authFactory.deploy(ZERO_ADDRESS)).to.be.revertedWith(
+        'HN:Common/invalid-argument',
+      );
     });
   });
 

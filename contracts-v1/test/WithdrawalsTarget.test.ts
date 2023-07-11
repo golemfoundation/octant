@@ -1,5 +1,5 @@
 import { assert, expect } from 'chai';
-import { parseEther } from 'ethers/lib/utils';
+import { parseEther, parseUnits } from 'ethers/lib/utils';
 import { deployments, ethers } from 'hardhat';
 
 import { makeTestsEnv } from './helpers/make-tests-env';
@@ -116,6 +116,30 @@ makeTestsEnv(WITHDRAWALS_TARGET, testEnv => {
       // This should fail because contract has 0 ETH
       await expect(target.connect(TestFoundation).withdraw(1)).revertedWith(
         'HN:Common/failed-to-send',
+      );
+    });
+
+    it('Should withdraw funds when contract has exactly as much ETH as required', async () => {
+      const {
+        target,
+        signers: { Alice, TestFoundation },
+      } = testEnv;
+
+      const ethProceeds = parseEther('1');
+      const wei = parseUnits('1', 'wei');
+
+      // target has some funds
+      await Alice.sendTransaction({ to: target.address, value: ethProceeds });
+
+      // fails when slightly above the limit
+      await expect(
+        target.connect(TestFoundation).withdraw(ethProceeds.add(wei)),
+      ).to.be.revertedWith('HN:Common/failed-to-send');
+
+      // succeeds when at limit
+      await expect(target.connect(TestFoundation).withdraw(ethProceeds)).to.changeEtherBalances(
+        [target.address, TestFoundation.address],
+        [ethProceeds.mul(-1), ethProceeds],
       );
     });
 
