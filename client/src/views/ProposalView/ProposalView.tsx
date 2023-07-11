@@ -190,11 +190,11 @@ const ProposalView = (): ReactElement => {
           const { onAddRemoveFromAllocate } = useIdsInAllocation({
             allocations: allocations!,
             setAllocations,
-            userAllocationsElements: userAllocations!.elements,
+            userAllocationsElements: userAllocations?.elements,
           });
           const buttonAddToAllocateProps = {
             isAddedToAllocate: allocations.includes(address),
-            isAllocatedTo: !!userAllocations!.elements.find(
+            isAllocatedTo: !!userAllocations?.elements.find(
               ({ address: userAllocationAddress }) => userAllocationAddress === address,
             ),
             onClick: () => onAddRemoveFromAllocate(address),
