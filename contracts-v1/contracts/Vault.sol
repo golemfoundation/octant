@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.16;
+pragma solidity 0.8.18;
 
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "./OctantBase.sol";
@@ -39,6 +39,8 @@ contract Vault is OctantBase {
      * @param root The Merkle root.
      */
     function setMerkleRoot(uint256 epoch, bytes32 root) external onlyMultisig {
+        require(root != bytes32(0), VaultErrors.INVALID_MERKLE_ROOT);
+
         require(
             merkleRoots[epoch] == bytes32(0),
             VaultErrors.MERKLE_ROOT_ALREADY_SET

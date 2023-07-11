@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.16;
+pragma solidity 0.8.18;
 
 import "./interfaces/IProposals.sol";
 import "./interfaces/IEpochs.sol";
@@ -34,11 +34,16 @@ contract Proposals is OctantBase, IProposals {
         address _auth
     ) OctantBase(_auth) {
         cid = _initCID;
+
+        require(
+            _areEpochProposalsValid(proposals),
+            ProposalsErrors.INVALID_PROPOSAL
+        );
         proposalAddressesByEpoch[0] = proposals;
     }
 
     /// @notice sets a new IPFS CID, where proposals are stored.
-    function setCID(string memory _newCID) public onlyMultisig {
+    function setCID(string memory _newCID) external onlyMultisig {
         cid = _newCID;
     }
 
@@ -58,25 +63,39 @@ contract Proposals is OctantBase, IProposals {
     function setProposalAddresses(
         uint256 _epoch,
         address[] calldata _proposalAddresses
-    ) public onlyMultisig {
+    ) external onlyMultisig {
         if (address(epochs) != address(0x0)) {
             require(
                 _epoch >= epochs.getCurrentEpoch(),
                 ProposalsErrors.CHANGING_PROPOSALS_IN_THE_PAST
             );
         }
+        require(
+            _areEpochProposalsValid(_proposalAddresses),
+            ProposalsErrors.INVALID_PROPOSAL
+        );
         proposalAddressesByEpoch[_epoch] = _proposalAddresses;
     }
 
     /// @return list of active proposal addresses in given epoch.
     function getProposalAddresses(
         uint256 _epoch
-    ) public view returns (address[] memory) {
+    ) external view returns (address[] memory) {
         for (uint256 iEpoch = _epoch; iEpoch > 0; iEpoch = iEpoch - 1) {
             if (proposalAddressesByEpoch[iEpoch].length > 0) {
                 return proposalAddressesByEpoch[iEpoch];
             }
         }
         return proposalAddressesByEpoch[0];
+    }
+
+    function _areEpochProposalsValid(
+        address[] memory _proposals
+    ) private pure returns (bool) {
+        for (uint256 i = 0; i < _proposals.length; i++) {
+            if (_proposals[i] == address(0)) return false;
+        }
+
+        return true;
     }
 }

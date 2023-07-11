@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.16;
+pragma solidity 0.8.18;
 
 import {CommonErrors} from "./Errors.sol";
 import "./Auth.sol";
@@ -15,6 +15,7 @@ abstract contract OctantBase {
 
     /// @param _auth the contract containing Octant authorities.
     constructor(address _auth) {
+        require(_auth != address(0), CommonErrors.INVALID_ARGUMENT);
         auth = Auth(_auth);
     }
 

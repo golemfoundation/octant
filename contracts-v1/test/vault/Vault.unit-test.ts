@@ -39,6 +39,19 @@ makeTestsEnv(VAULT, testEnv => {
       ).to.be.revertedWith('HN:Vault/merkle-root-already-set');
     });
 
+    it('Cannot set invalid merkle root', async () => {
+      const {
+        vault,
+        signers: { TestFoundation },
+      } = testEnv;
+      const invalidMerkleRoot =
+        '0x0000000000000000000000000000000000000000000000000000000000000000';
+
+      await expect(
+        vault.connect(TestFoundation).setMerkleRoot(1, invalidMerkleRoot),
+      ).to.revertedWith('HN:Vault/invalid-merkle-root');
+    });
+
     it('Can set merkle roots', async () => {
       const {
         vault,

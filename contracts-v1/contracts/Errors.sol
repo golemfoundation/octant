@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.16;
+pragma solidity 0.8.18;
 
 library DepositsErrors {
     /// @notice Thrown when transfer operation fails in GLM smart contract.
@@ -43,6 +43,10 @@ library ProposalsErrors {
     /// @return HN:Proposals/cannot-set-epochs-twice
     string public constant CANNOT_SET_EPOCHS_TWICE =
         "HN:Proposals/cannot-set-epochs-twice";
+
+    /// @notice Thrown when setting proposal with zero address.
+    /// @return HN:Proposals/invalid-proposal
+    string public constant INVALID_PROPOSAL = "HN:Proposals/invalid-proposal";
 }
 
 library VaultErrors {
@@ -50,6 +54,10 @@ library VaultErrors {
     /// @return HN:Vault/merkle-root-already-set
     string public constant MERKLE_ROOT_ALREADY_SET =
         "HN:Vault/merkle-root-already-set";
+
+    /// @notice Thrown when trying to set invalid merkle root.
+    /// @return HN:Vault/invalid-merkle-root
+    string public constant INVALID_MERKLE_ROOT = "HN:Vault/invalid-merkle-root";
 
     /// @notice Thrown when trying to withdraw without providing valid merkle proof.
     /// @return HN:Vault/invalid-merkle-proof
@@ -74,4 +82,8 @@ library CommonErrors {
     /// @notice Thrown when failed to send eth.
     /// @return HN:Common/failed-to-send
     string public constant FAILED_TO_SEND = "HN:Common/failed-to-send";
+
+    /// @notice Thrown when invalid argument provided.
+    /// @return HN:Common/invalid-argument
+    string public constant INVALID_ARGUMENT = "HN:Common/invalid-argument";
 }

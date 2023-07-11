@@ -4,7 +4,7 @@ import { ethers } from 'hardhat';
 import { makeTestsEnv } from './helpers/make-tests-env';
 
 import { PROPOSALS_CID } from '../env';
-import { PROPOSALS } from '../helpers/constants';
+import { PROPOSALS, ZERO_ADDRESS } from '../helpers/constants';
 import { forwardEpochs } from '../helpers/epochs-utils';
 import { Proposals } from '../typechain';
 
@@ -22,6 +22,21 @@ makeTestsEnv(PROPOSALS, testEnv => {
     '0xb2cc5b5a5b5aa5f7d5d13113b57a36aa7070c123',
     '0x3c1b8802b304f3b8e3e3d1c60d2f9e45d10c77da',
   ];
+
+  describe('Constructor', async () => {
+    it('should revert when given invalid proposals', async () => {
+      // given
+      const { auth } = testEnv;
+      const proposalsFactory = await ethers.getContractFactory(PROPOSALS);
+      const invalidProposals = newProposals.concat([ZERO_ADDRESS]);
+
+      // then
+      await expect(
+        proposalsFactory.deploy(PROPOSALS_CID,invalidProposals,auth.address)
+      ).to.be.revertedWith("HN:Proposals/invalid-proposal");
+
+    });
+  });
 
   describe('Epochs', async () => {
     let proposalsContract: Proposals;
@@ -102,6 +117,19 @@ makeTestsEnv(PROPOSALS, testEnv => {
     });
   });
 
+  describe('setProposalAddresses', async () => {
+    it('should fail when given proposal with zero address', async () => {
+      // given
+      const { proposals, signers} = testEnv;
+      const invalidProposals = newProposals.concat([ZERO_ADDRESS]);
+
+      // then
+      await expect(
+        proposals.connect(signers.TestFoundation).setProposalAddresses(1, invalidProposals)
+      ).to.be.revertedWith("HN:Proposals/invalid-proposal");
+
+    });
+  });
   describe('getProposals', async () => {
     it('Should return list of default proposals', async () => {
       // given

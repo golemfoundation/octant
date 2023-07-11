@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.16;
+pragma solidity 0.8.18;
 
 import "../interfaces/IWithdrawalsTarget.sol";
 
@@ -32,16 +32,17 @@ contract WithdrawalsTarget is Initializable, IWithdrawalsTarget {
         _disableInitializers();
     }
 
-    function initialize(address _multisig) public initializer {
+    function initialize(address _multisig) external initializer {
         require(_multisig != address(0));
         multisig = _multisig;
     }
 
-    function version() public pure returns (uint256) {
+    function version() external pure returns (uint256) {
         return 1;
     }
 
     function withdraw(uint256 amount) external onlyMultisig {
+        require(address(this).balance >= amount, CommonErrors.FAILED_TO_SEND);
         (bool success, ) = payable(multisig).call{value: amount}("");
         require(success, CommonErrors.FAILED_TO_SEND);
 
