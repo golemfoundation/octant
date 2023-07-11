@@ -42,10 +42,10 @@ const ProposalItem: FC<ProposalItemProps> = ({
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
     allocations,
     setAllocations,
-    userAllocationsElements: userAllocations!.elements,
+    userAllocationsElements: userAllocations?.elements,
   });
 
-  const isAllocatedTo = !!userAllocations!.elements.find(
+  const isAllocatedTo = !!userAllocations?.elements.find(
     ({ address: userAllocationAddress }) => userAllocationAddress === address,
   );
   const isLoadingStates = isLoadingError || isLoading;
