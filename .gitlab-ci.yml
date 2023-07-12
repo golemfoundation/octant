@@ -10,9 +10,7 @@ stages:
   - lint_and_typecheck
   - test
   - publish
-#    TODO OCT-631 Fix Cypress in CI.
-#    Cypress does not work in CI due to problem in operating MetaMask in Chrome in Synpress in Docker.
-#  - e2e
+  - e2e
   - deploy
   - cleanup
 
@@ -36,7 +34,7 @@ default:
     name: mikecode/git-gettext:ubuntu
     pull_policy: if-not-present
   synpress:
-    name: synthetixio/docker-e2e:16.20-ubuntu
+    name: registry.gitlab.com/wildland/devops/container-builder/octant/synpress-arch:179ba913
     pull_policy: if-not-present
 
 .rules:
@@ -285,63 +283,64 @@ Build images:
       --cache-repo=$KANIKO_CACHE_REPO
       --insecure-pull
 
-#    TODO OCT-631 Fix Cypress in CI.
-#    Cypress does not work in CI due to problem in operating MetaMask in Chrome in Synpress in Docker.
-#Cypress E2E Tests:
-#  stage: e2e
-#  image: !reference [.images, synpress ]
-#  rules:
-#    - !reference [.rules, on_mr_manual]
-#    - !reference [.rules, on_push_to_default_branch ]
-#  variables:
-#    NETWORK_NAME: sepolia
-#    PRIVATE_KEY: $GOERLI_PRIVATE_KEY
-#    CYPRESS_DOCKER_RUN: "true"
-#    CI: "true"
-#    METAMASK_VERSION: "latest"
-#  artifacts:
-#    when: on_failure
-#    name: cypress
-#    paths:
-#      - client/cypress/videos
-#      - client/cypress/screenshots
-#    expire_in: 3 days
-#  cache:
-#    - key: $CI_COMMIT_REF_SLUG-yarn-client
-#      policy: pull
-#      paths:
-#        - client/.yarn
-#        - client/node-modules
-#    - key: $CI_COMMIT_REF_SLUG-yarn-root
-#      policy: pull
-#      paths:
-#        - node_modules
-#        - .yarn
-#  script:
-#    - set -e
-#    - apt update && apt install -y git gettext
-#    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh e2e
-#    - bash $CI_PROJECT_DIR/ci/argocd/application.sh create
-#    - cd client
-#    - yarn install --cache-folder .yarn --frozen-lockfile --prefer-offline --no-audit
-#    - export OCTANT_BASE_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_web_client_url.sh)
-#    - set +e
-#    - yarn synpress:run || CY_EXIT_CODE=$?
-#    - if [[ "$CY_EXIT_CODE" == "0" ]]; then rm -r $CI_PROJECT_DIR/client/cypress/videos $CI_PROJECT_DIR/client/cypress/screenshots; fi
-#    - set -e
-#    - bash $CI_PROJECT_DIR/ci/argocd/application.sh delete
-#    - exit $CY_EXIT_CODE
-#
-#Force destroy E2E env:
-#  stage: e2e
-#  image: !reference [.images, git_improved ]
-#  rules:
-#    - !reference [.rules, on_mr_manual]
-#    - !reference [.rules, on_push_to_default_branch_manual]
-#  allow_failure: true
-#  script:
-#    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh e2e
-#    - bash $CI_PROJECT_DIR/ci/argocd/application.sh destroy
+Cypress E2E Tests:
+  stage: e2e
+  image: !reference [.images, synpress ]
+  rules:
+    - !reference [ .rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+  variables:
+    NETWORK_NAME: sepolia
+    PRIVATE_KEY: $GOERLI_PRIVATE_KEY
+    CYPRESS_DOCKER_RUN: "true"
+    CI: "true"
+    METAMASK_VERSION: "10.25.0"
+  artifacts:
+    when: on_failure
+    name: cypress
+    paths:
+      - client/cypress/videos
+      - client/cypress/screenshots
+    expire_in: 3 days
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-yarn-client
+      policy: pull
+      paths:
+        - client/.yarn
+        - client/node-modules
+    - key: $CI_COMMIT_REF_SLUG-yarn-root
+      policy: pull
+      paths:
+        - node_modules
+        - .yarn
+  script:
+    - set -e
+    # Setup NVM to use Node version 16
+    - source /usr/share/nvm/init-nvm.sh
+    - nvm install 16
+    - npm i -g yarn
+    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh e2e
+    - bash $CI_PROJECT_DIR/ci/argocd/application.sh create
+    - cd client
+    - yarn install --cache-folder .yarn --frozen-lockfile --prefer-offline --no-audit
+    - export OCTANT_BASE_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_web_client_url.sh)
+    - set +e
+    - yarn synpress:run || CY_EXIT_CODE=$?
+    - if [[ "$CY_EXIT_CODE" == "0" ]]; then rm -r $CI_PROJECT_DIR/client/cypress/videos $CI_PROJECT_DIR/client/cypress/screenshots; fi
+    - set -e
+    - bash $CI_PROJECT_DIR/ci/argocd/application.sh delete
+    - exit $CY_EXIT_CODE
+
+Force destroy E2E env:
+  stage: e2e
+  image: !reference [.images, git_improved ]
+  rules:
+    - !reference [.rules, on_mr_manual]
+    - !reference [.rules, on_push_to_default_branch_manual]
+  allow_failure: true
+  script:
+    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh e2e
+    - bash $CI_PROJECT_DIR/ci/argocd/application.sh destroy
 
 .deploy:
   stage: deploy

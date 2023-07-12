@@ -26,10 +26,6 @@ export default defineConfig({
     },
     supportFile: 'cypress/support/index.ts',
   },
-  env: {
-    viewportWidthBreakpointTablet: 755,
-    viewportWidthBreakpointsMobile: 471,
-  },
-  responseTimeout: 600000,
-  taskTimeout: 600000,
+  viewportHeight: 1080,
+  viewportWidth: 1920,
 });

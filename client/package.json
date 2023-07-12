@@ -26,10 +26,7 @@
     "test": "TZ=UTC jest",
     "type-check": "tsc --noEmit true",
     "synpress:open": "synpress open --configFile synpress.config.ts",
-    "synpress:run:desktop": "synpress run --configFile synpress.config.ts --config viewportWidth=1920,viewportHeight=1080",
-    "synpress:run:mobile": "synpress run --configFile synpress.config.ts --config viewportWidth=471,viewportHeight=667",
-    "synpress:run:tablet": "synpress run --configFile synpress.config.ts --config viewportWidth=755,viewportHeight=667",
-    "synpress:run": "yarn synpress:run:mobile && yarn synpress:run:tablet && yarn synpress:run:desktop"
+    "synpress:run": "synpress run --configFile synpress.config.ts"
   },
   "dependencies": {
     "@ethersproject/constants": "^5.7.0",
