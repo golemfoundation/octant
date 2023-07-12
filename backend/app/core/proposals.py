@@ -18,9 +18,7 @@ def get_number_of_proposals(epoch: Optional[int]) -> int:
 
 def get_proposal_allocation_threshold(epoch: int) -> int:
     proposals_no = get_number_of_proposals(epoch)
-    total_allocated = sum(
-        [int(a.amount) for a in allocation_db.get_all_by_epoch(epoch)]
-    )
+    total_allocated = allocation_db.get_alloc_sum_by_epoch(epoch)
 
     return allocations_core.calculate_threshold(total_allocated, proposals_no)
 

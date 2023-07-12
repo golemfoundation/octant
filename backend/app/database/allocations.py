@@ -74,20 +74,14 @@ def get_all_by_epoch_and_user_id(
     return query.all()
 
 
-def get_alloc_sum_by_epoch_and_user_address(
-    epoch: int, with_deleted=False
-) -> List[AccountFunds]:
-    query: Query = (
+def get_alloc_sum_by_epoch_and_user_address(epoch: int) -> List[AccountFunds]:
+    allocations = (
         db.session.query(User, Allocation)
         .join(User, User.id == Allocation.user_id)
         .filter(Allocation.epoch == epoch)
+        .filter(Allocation.deleted_at.is_(None))
         .order_by(User.address)
-    )
-
-    if not with_deleted:
-        query = query.filter(Allocation.deleted_at.is_(None))
-
-    allocations = query.all()
+    ).all()
 
     allocations_by_user = defaultdict(int)
 
@@ -100,6 +94,15 @@ def get_alloc_sum_by_epoch_and_user_address(
     )
 
     return sorted_allocations
+
+
+def get_alloc_sum_by_epoch(epoch: int) -> int:
+    allocations = (
+        Allocation.query.filter(Allocation.epoch == epoch)
+        .filter(Allocation.deleted_at.is_(None))
+        .all()
+    )
+    return sum([int(a.amount) for a in allocations])
 
 
 def add_all(epoch: int, user_id: int, allocations):

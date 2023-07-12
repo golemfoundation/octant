@@ -41,6 +41,11 @@ def handle_allocate(msg):
 
     threshold = get_allocation_threshold()
     emit("threshold", json.dumps({"threshold": str(threshold)}), broadcast=True)
+    allocations_sum = allocations.get_sum_by_epoch()
+    emit(
+        "allocations_sum", json.dumps({"amount": str(allocations_sum)}), broadcast=True
+    )
+
     proposal_rewards = get_proposals_rewards()
     emit(
         "proposal_rewards",
@@ -48,14 +53,20 @@ def handle_allocate(msg):
         broadcast=True,
     )
     for proposal in proposal_rewards:
-        donors = allocations.get_by_proposal_and_epoch(proposal.address)
+        donors = allocations.get_all_by_proposal_and_epoch(proposal.address)
         emit("proposal_donors", json.dumps(_serialize_donors(donors)), broadcast=True)
 
 
 @socketio.on("proposal_donors")
 def handle_proposal_donors(proposal_address: str):
-    donors = allocations.get_by_proposal_and_epoch(proposal_address)
+    donors = allocations.get_all_by_proposal_and_epoch(proposal_address)
     emit("proposal_donors", json.dumps(_serialize_donors(donors)))
+
+
+@socketio.on("allocations_sum")
+def handle_allocations_sum():
+    allocations_sum = allocations.get_sum_by_epoch()
+    emit("allocations_sum", json.dumps({"amount": str(allocations_sum)}))
 
 
 @socketio.on_error_default

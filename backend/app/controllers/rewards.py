@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 from decimal import Decimal
+from functools import reduce
 from typing import List
 from typing import Optional
-from functools import reduce
+
 from dataclass_wizard import JSONWizard
 
 from app import database
@@ -54,9 +55,7 @@ def get_rewards_budget(epoch: int = None) -> Rewards:
         # thus the matched rewards value is not yet known.
         pass
 
-    allocations = database.allocations.get_all_by_epoch(epoch)
-    allocated = sum([int(allocation.amount) for allocation in allocations])
-
+    allocated = database.allocations.get_alloc_sum_by_epoch(epoch)
     return Rewards(epoch, allocated, matched)
 
 
