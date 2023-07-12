@@ -1,6 +1,6 @@
 .root {
   &:not(.isAllocatedTo) {
-    &:not(.isAddedToAllocate) {
+    &.isAddedToAllocate {
       svg path {
         stroke: $color-octant-orange;
         fill: $color-octant-orange;
