@@ -90,7 +90,21 @@ channels:
               type: string
         examples:
           - payload:
-              threshold: "0.001"
+              threshold: "100000000000000000"
+  allocations_sum:
+    subscribe:
+      summary: Allocations sum event
+      operationId: handle_allocations_sum
+      message:
+        name: AllocationsSum
+        payload:
+          type: object
+          properties:
+            amount:
+              type: string
+        examples:
+          - payload:
+              amount: "100000000000000000"
   proposal_rewards:
     subscribe:
       summary: Proposal rewards event

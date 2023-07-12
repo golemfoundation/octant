@@ -27,6 +27,7 @@
 <button type="button" id="getDonors">Get Donors</button>
 
 <h2>Threshold: <span id="threshold"></span></h2>
+<h2>Allocations sum: <span id="allocSum"></span></h2>
 <h2>Proposal rewards:</h2>
 <ul id="proposal-rewards"></ul>
 
@@ -47,6 +48,7 @@
 
   const status = document.getElementById("status");
   const threshold = document.getElementById("threshold");
+  const allocSum = document.getElementById("allocSum");
   const proposalRewards = document.getElementById("proposal-rewards");
   const errors = document.getElementById("errors");
 
@@ -176,6 +178,9 @@
 
   socket.on("threshold", (thresholdResponse) => {
     threshold.innerText = thresholdResponse;
+  });
+  socket.on("allocations_sum", (allocSumResponse) => {
+    allocSum.innerText = allocSumResponse;
   });
 
   socket.on("proposal_rewards", (proposalRewardsResponse) => {

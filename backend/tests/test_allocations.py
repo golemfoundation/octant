@@ -5,7 +5,11 @@ import pytest
 from app import database, exceptions
 from app.contracts.epochs import Epochs
 from app.contracts.proposals import Proposals
-from app.controllers.allocations import get_by_user_and_epoch, get_by_proposal_and_epoch
+from app.controllers.allocations import (
+    get_all_by_user_and_epoch,
+    get_all_by_proposal_and_epoch,
+    get_sum_by_epoch,
+)
 from app.core.allocations import (
     allocate,
     deserialize_payload,
@@ -266,7 +270,9 @@ def test_project_allocates_funds_to_itself(app, proposal_accounts, user_accounts
 
 
 def test_get_by_user_and_epoch(allocations, user_accounts, proposal_accounts):
-    result = get_by_user_and_epoch(user_accounts[0].address, MOCKED_PENDING_EPOCH_NO)
+    result = get_all_by_user_and_epoch(
+        user_accounts[0].address, MOCKED_PENDING_EPOCH_NO
+    )
 
     assert len(result) == 3
     assert result[0].address == proposal_accounts[0].address
@@ -278,7 +284,7 @@ def test_get_by_user_and_epoch(allocations, user_accounts, proposal_accounts):
 
 
 def test_get_by_proposal_and_epoch(allocations, user_accounts, proposal_accounts):
-    result = get_by_proposal_and_epoch(
+    result = get_all_by_proposal_and_epoch(
         proposal_accounts[1].address, MOCKED_PENDING_EPOCH_NO
     )
 
@@ -287,6 +293,11 @@ def test_get_by_proposal_and_epoch(allocations, user_accounts, proposal_accounts
     assert result[0].amount == str(5 * 10**18)
     assert result[1].address == user_accounts[1].address
     assert result[1].amount == str(1050 * 10**18)
+
+
+def test_get_sum_by_epoch(allocations, user_accounts, proposal_accounts):
+    result = get_sum_by_epoch(MOCKED_PENDING_EPOCH_NO)
+    assert result == 1865 * 10**18
 
 
 def test_user_exceeded_rewards_budget_in_allocations(

@@ -38,5 +38,5 @@ class UserAllocations(Resource):
     def get(self, user_address: str, epoch: int):
         return [
             dataclasses.asdict(w)
-            for w in allocations.get_by_user_and_epoch(user_address, epoch)
+            for w in allocations.get_all_by_user_and_epoch(user_address, epoch)
         ]
