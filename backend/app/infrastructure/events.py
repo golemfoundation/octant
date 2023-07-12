@@ -63,10 +63,6 @@ def handle_proposal_donors(proposal_address: str):
     emit("proposal_donors", json.dumps(_serialize_donors(donors)))
 
 
-@socketio.on("allocations_sum")
-def handle_allocations_sum():
-    allocations_sum = allocations.get_sum_by_epoch()
-    emit("allocations_sum", json.dumps({"amount": str(allocations_sum)}))
 
 
 @socketio.on_error_default

@@ -23,6 +23,18 @@ user_allocations_model = api.model(
     },
 )
 
+user_allocations_sum_model = api.model(
+    "UserAllocationsSum",
+    {
+        "amount": fields.String(
+            required=True,
+            description="User allocations sum in WEI"
+        ),
+    },
+)
+
+
+
 
 @ns.route("/user/<string:user_address>/epoch/<int:epoch>")
 @ns.doc(
@@ -40,3 +52,15 @@ class UserAllocations(Resource):
             dataclasses.asdict(w)
             for w in allocations.get_all_by_user_and_epoch(user_address, epoch)
         ]
+
+
+@ns.route("/users/sum")
+@ns.doc(
+    description="Returns user's allocations sum",
+)
+class UserAllocationsSum(Resource):
+    @ns.marshal_with(user_allocations_sum_model)
+    @ns.response(200, "User allocations sum successfully retrieved")
+    def get(self):
+        allocations_sum = allocations.get_sum_by_epoch()
+        return {"amount": str(allocations_sum)}
