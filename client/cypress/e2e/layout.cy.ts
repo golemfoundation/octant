@@ -25,12 +25,12 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('renders bottom navbar', () => {
-      cy.get('[data-test=Navigation__element]').should('be.visible');
+      cy.get('[data-test=Navbar]').should('be.visible');
     });
 
     it('bottom navbar allows to change views', () => {
       navigationTabs.forEach(({ label, to }) => {
-        cy.get(`[data-test=${label}__Button]`).click();
+        cy.get(`[data-test=Navbar__Button--${label}]`).click();
         checkLocationWithLoader(to);
       });
     });

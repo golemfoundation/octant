@@ -69,9 +69,7 @@ function addProposalToAllocate(index, numberOfAddedProposals): Chainable<any> {
     .find('path')
     .then($el => $el.css('stroke'))
     .should('be.colored', '#FF6157');
-  return cy
-    .get('[data-test=MainLayout__navigation__numberOfAllocations]')
-    .contains(numberOfAddedProposals + 1);
+  return cy.get('[data-test=Navbar__numberOfAllocations]').contains(numberOfAddedProposals + 1);
 }
 
 function removeProposalFromAllocate(
@@ -85,11 +83,9 @@ function removeProposalFromAllocate(
     .scrollIntoView()
     .click();
   if (index < numberOfProposals - 1) {
-    return cy
-      .get('[data-test=MainLayout__navigation__numberOfAllocations]')
-      .contains(numberOfAddedProposals - 1);
+    return cy.get('[data-test=Navbar__numberOfAllocations]').contains(numberOfAddedProposals - 1);
   }
-  return cy.get('[data-test=MainLayout__navigation__numberOfAllocations]').should('not.exist');
+  return cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
 }
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
@@ -118,7 +114,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
 
     it('user is able to add & remove the first and the last project to/from allocation, triggering change of the icon, change of the number in navbar', () => {
       // This test checks the first and the last elements only to save time.
-      cy.get('[data-test=MainLayout__navigation__numberOfAllocations]').should('not.exist');
+      cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
 
       addProposalToAllocate(0, 0);
       addProposalToAllocate(proposalNames.length - 1, 1);

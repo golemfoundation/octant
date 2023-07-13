@@ -1,0 +1,133 @@
+.buttons {
+  display: flex;
+  align-items: center;
+}
+
+.navigationWrapper {
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  bottom: $layoutMarginHorizontal;
+  left: 0;
+  width: 100%;
+  padding: 0 $layoutMarginHorizontal;
+  z-index: $z-index-4;
+  pointer-events: none;
+}
+
+.navigation {
+  border-radius: $border-radius-32;
+  background: $color-white;
+  box-shadow: $box-shadow-1;
+  pointer-events: initial;
+
+  @media #{$desktop-up} {
+    border-radius: $border-radius-40;
+  }
+
+  .navigationBottomSuffix {
+    padding: 1.6rem;
+    border-bottom: 0.1rem solid $color-octant-grey4;
+
+    @media #{$desktop-up} {
+      padding: 2.4rem;
+    }
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 7.2rem;
+    margin: 0 1.1rem 0 1.1rem;
+
+    @media #{$desktop-up} {
+      margin: 1.2rem 2.4rem 2rem 2.4rem;
+    }
+  }
+
+  .buttonNavigation {
+    position: relative;
+    height: 100%;
+    padding: 0;
+    width: 6.4rem;
+    min-width: 6.4rem;
+    flex: 0;
+    font-size: $font-size-10;
+
+    @media #{$desktop-up} {
+      font-size: $font-size-12;
+
+      &:not(:last-child) {
+        margin-right: 1.6rem;
+      }
+    }
+  }
+}
+
+.numberOfAllocations {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.6rem;
+  width: 1.6rem;
+  position: absolute;
+  top: 0.8rem;
+  right: 1.4rem;
+  color: $color-white;
+  font-size: $font-size-08;
+  background: $color-octant-dark;
+  border-radius: 50%;
+  transform: translateZ(0); // On webkit solves the flickering of text during the scale.
+
+  @media #{$desktop-up} {
+    height: 2rem;
+    width: 2rem;
+    font-size: $font-size-10;
+    top: 0.4rem;
+    right: 1rem;
+  }
+}
+
+.coinGecko {
+  position: fixed;
+  bottom: 0.7rem;
+  color: $color-octant-grey3;
+  left: 50%;
+  transform: translate(-50%, 0);
+  font-size: $font-size-08;
+}
+
+.navigationBlur {
+  @include layoutOverflowBlurCommonProperties();
+  height: 12rem;
+  bottom: 0;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.05),
+    rgba(0, 0, 0, 0.25),
+    rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0.75),
+    rgba(0, 0, 0, 1)
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.05),
+    rgba(0, 0, 0, 0.25),
+    rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0.75),
+    rgba(0, 0, 0, 1)
+  );
+
+  @media #{$desktop-up} {
+    height: 15.2rem;
+  }
+
+  &.hasNavigationBottomSuffix {
+    height: 20rem;
+
+    @media #{$desktop-up} {
+      height: 24.8rem;
+    }
+  }
+}

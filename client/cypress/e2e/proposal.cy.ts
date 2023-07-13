@@ -63,7 +63,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           }]`,
         )
         .click();
-      cy.get('[data-test=MainLayout__navigation__numberOfAllocations]').contains(1);
+      cy.get('[data-test=Navbar__numberOfAllocations]').contains(1);
       cy.get('[data-test=ProposalView__proposal]')
         .first()
         .find(
@@ -74,7 +74,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           }]`,
         )
         .click();
-      cy.get('[data-test=MainLayout__navigation__numberOfAllocations]').should('not.exist');
+      cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
     });
 
     it('entering proposal 1 view allows infinite scroll down in 1, 2, 3, ... , n - 1 , n, 0, 1, 2, ... order', () => {

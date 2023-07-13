@@ -5,6 +5,7 @@ $border-radius-10: 1rem;
 $border-radius-16: 1.6rem;
 $border-radius-20: 2rem;
 $border-radius-32: 3.2rem;
+$border-radius-40: 4rem;
 
 $box-shadow-1: 0px 0px 25px rgba(0, 0, 0, 0.05);
 $box-shadow-2: 0px 4px 25px rgba(0, 0, 0, 0.15);
@@ -20,9 +21,8 @@ $z-index-4: 4; // overlays
 $z-index-5: 5; // modals
 
 // distances
-$headerNavigationHeight: 7.2rem;
+$headerHeight: 7.2rem;
 $layoutMarginHorizontal: 2.4rem;
-$layoutBodyMarginBottom: $headerNavigationHeight + 2 * $layoutMarginHorizontal;
 $progressStepperSlimStepPadding: 2.4rem;
 $modalVariantSmallPaddingMobile: 2.4rem;
 $modalVariantSmallPaddingDesktop: 5.6rem;
