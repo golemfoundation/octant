@@ -20,7 +20,7 @@ export default function useUserAllocations(
     IAllocationsStorage.AllocationStructOutput[] | undefined,
     unknown,
     Response,
-    string[]
+    ['userAllocations']
   >,
 ): UseQueryResult<Response> {
   const { address } = useAccount();

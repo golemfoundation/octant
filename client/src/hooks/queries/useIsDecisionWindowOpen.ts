@@ -4,7 +4,7 @@ import { QUERY_KEYS } from 'api/queryKeys';
 import useContractEpochs from 'hooks/contracts/useContractEpochs';
 
 export default function useIsDecisionWindowOpen(
-  options?: UseQueryOptions<boolean | undefined, unknown, boolean, string[]>,
+  options?: UseQueryOptions<boolean | undefined, unknown, boolean, ['isDecisionWindowOpen']>,
 ): UseQueryResult<boolean> {
   const contractEpochs = useContractEpochs();
 

@@ -4,7 +4,7 @@ import { QUERY_KEYS } from 'api/queryKeys';
 import useContractEpochs from 'hooks/contracts/useContractEpochs';
 
 export default function useCurrentEpoch(
-  options?: UseQueryOptions<number | undefined, unknown, number | undefined, string[]>,
+  options?: UseQueryOptions<number | undefined, unknown, number | undefined, ['currentEpoch']>,
 ): UseQueryResult<number | undefined> {
   const contractEpochs = useContractEpochs();
 
