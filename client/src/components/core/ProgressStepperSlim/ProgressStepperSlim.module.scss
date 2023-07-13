@@ -3,14 +3,22 @@ $stepHeight: 0.8rem;
 .root {
   display: flex;
   width: 100%;
+  justify-content: center;
 }
 
 .stepWrapper {
-  width: 100%;
-  margin: 0 0.8rem;
+  width: 1.8rem;
+  margin: 0.8rem 0rem 2rem;
   padding: $progressStepperSlimStepPadding 0;
   height: $stepHeight;
   box-sizing: content-box;
+  justify-content: center;
+  display: flex;
+
+  @media #{$desktop-up} {
+    width: 6.4rem;
+    margin: 1.6rem 0.8rem 4.8rem;
+  }
 
   &.isClickable {
     cursor: pointer;
@@ -29,7 +37,7 @@ $stepHeight: 0.8rem;
   border-radius: calc($stepHeight / 2);
   background: $color-octant-grey4;
   height: 100%;
-  width: 100%;
+  width: 0.8rem;
 
   &:first-child {
     margin-left: 0;
@@ -40,5 +48,9 @@ $stepHeight: 0.8rem;
 
   &.isCurrent {
     background-color: $color-octant-green;
+  }
+
+  @media #{$desktop-up} {
+    width: 100%;
   }
 }

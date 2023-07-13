@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, TouchEvent } from 'react';
 
 export default interface ModalProps {
   Image?: ReactNode;
@@ -6,11 +6,14 @@ export default interface ModalProps {
   children: ReactNode;
   className?: string;
   dataTest?: string;
-  header?: string;
+  header?: string | ReactNode;
+  headerClassName?: string;
   isFullScreen?: boolean;
   isOpen: boolean;
   isOverflowEnabled?: boolean;
   onClosePanel: () => void;
   onModalClosed?: () => void;
+  onTouchMove?: (e: TouchEvent<HTMLDivElement>) => void;
+  onTouchStart?: (e: TouchEvent<HTMLDivElement>) => void;
   variant?: 'standard' | 'small';
 }

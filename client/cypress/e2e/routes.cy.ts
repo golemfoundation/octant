@@ -28,11 +28,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=MetricsView]').should('be.visible');
     });
 
-    it('onboarding route redirects to proposals view', () => {
-      visitWithLoader(ROOT_ROUTES.proposals.absolute);
-      cy.get('[data-test=ProposalsView]').should('be.visible');
-    });
-
     it('proposals route redirects to proposals view', () => {
       visitWithLoader(ROOT_ROUTES.proposals.absolute);
       cy.get('[data-test=ProposalsView]').should('be.visible');

@@ -37,6 +37,7 @@ const variantsBottom = {
 
 const Modal: FC<ModalProps> = ({
   bodyClassName,
+  headerClassName,
   variant = 'standard',
   className,
   children,
@@ -48,6 +49,8 @@ const Modal: FC<ModalProps> = ({
   isFullScreen,
   onClosePanel,
   onModalClosed,
+  onTouchMove,
+  onTouchStart,
 }) => {
   const { isDesktop } = useMediaQuery();
 
@@ -80,6 +83,8 @@ const Modal: FC<ModalProps> = ({
             }
             onModalClosed();
           }}
+          onTouchMove={onTouchMove}
+          onTouchStart={onTouchStart}
           transition={{ damping: 0.5 }}
           variants={isDesktop || variant === 'small' ? variantsCenter : variantsBottom}
         >
@@ -89,7 +94,7 @@ const Modal: FC<ModalProps> = ({
               {header && (
                 <motion.div
                   animate={{ height: 'auto', marginBottom: '3.2rem', opacity: 1 }}
-                  className={styles.header}
+                  className={cx(styles.header, headerClassName)}
                   exit={{ height: 0, marginBottom: 0, opacity: 0 }}
                   initial={{ height: 0, marginBottom: 0, opacity: 0 }}
                   transition={{ ease: 'linear' }}

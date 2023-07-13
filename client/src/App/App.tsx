@@ -6,6 +6,7 @@ import { useAccount, useNetwork } from 'wagmi';
 import 'react-toastify/dist/ReactToastify.css';
 
 import AppLoader from 'components/dedicated/AppLoader/AppLoader';
+import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
 import { ALLOCATION_ITEMS_KEY, ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
@@ -283,7 +284,12 @@ const App = (): ReactElement => {
     return <AppLoader />;
   }
 
-  return <RootRoutes />;
+  return (
+    <>
+      <RootRoutes />
+      <ModalOnboarding />
+    </>
+  );
 };
 
 export default App;

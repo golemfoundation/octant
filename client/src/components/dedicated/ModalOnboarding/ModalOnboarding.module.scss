@@ -1,0 +1,65 @@
+.progressBar {
+  align-self: stretch;
+}
+
+.bold {
+  @include boldText();
+}
+
+.onboardingModalBody {
+  flex-wrap: nowrap;
+  flex-direction: column;
+  padding: 0 2.4rem;
+  overflow: hidden;
+
+  .onboardingModalHeader {
+    display: flex;
+    align-items: center;
+    height: 8rem !important;
+    font-size: $font-size-18;
+    margin-bottom: 0 !important;
+
+    @media #{$desktop-up} {
+      font-size: $font-size-20;
+    }
+  }
+}
+
+.onboardingModalText {
+  height: 17.2rem;
+  line-height: 2.2rem;
+
+  &,
+  * {
+    font-size: $font-size-14;
+  }
+
+  @media #{$desktop-up} {
+    height: 19.2rem;
+    line-height: 2.4rem;
+
+    &,
+    * {
+      font-size: $font-size-16;
+    }
+  }
+}
+
+.onboardingModalImageWrapper {
+  height: 24rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 3.2rem 2.4rem 1.2rem;
+  background: $color-octant-grey12;
+
+  @media #{$desktop-up} {
+    height: 31.2rem;
+  }
+
+  .onboardingModalImage {
+    max-width: 100%;
+    max-height: 100%;
+  }
+}

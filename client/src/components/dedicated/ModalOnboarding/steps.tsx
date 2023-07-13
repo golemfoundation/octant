@@ -5,7 +5,7 @@ import Button from 'components/core/Button/Button';
 import { DISCORD_LINK, OCTANT_DOCS, BLOG_POST } from 'constants/urls';
 import i18n from 'i18n';
 
-import styles from './OnboardingView.module.scss';
+import styles from './ModalOnboarding.module.scss';
 import { Step } from './types';
 
 const steps: Step[] = [
