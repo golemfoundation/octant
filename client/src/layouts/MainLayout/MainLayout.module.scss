@@ -1,7 +1,7 @@
 $headerNavigationBorderRadius: $border-radius-32;
 $headerMarginTop: 1.6rem;
-$bodyPaddingTopMobile: calc(1.6rem + $headerMarginTop + $headerNavigationHeight);
-$bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerNavigationHeight);
+$bodyPaddingTopMobile: calc(1.6rem + $headerMarginTop + $headerHeight);
+$bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerHeight);
 
 .root {
   display: flex;
@@ -27,7 +27,7 @@ $bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerNavigationHeight
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: $headerNavigationHeight;
+  height: $headerHeight;
   border-radius: $headerNavigationBorderRadius;
   background: $color-white;
   padding: $layoutMarginHorizontal;
@@ -144,119 +144,22 @@ $bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerNavigationHeight
   align-items: center;
   justify-content: flex-start;
   flex: 1;
-  padding: $bodyPaddingTopMobile $layoutMarginHorizontal $layoutBodyMarginBottom;
+  padding: $bodyPaddingTopMobile $layoutMarginHorizontal 12rem;
 
   @media #{$desktop-up} {
     padding-top: $bodyPaddingTopDesktop;
+    padding-bottom: 15.2rem;
   }
 
   &.isNavigationBottomSuffix {
-    padding-bottom: $layoutBodyMarginBottom * 2;
+    padding-bottom: 20rem;
+
+    @media #{$desktop-up} {
+      padding-bottom: 24.8rem;
+    }
   }
 
   &.isLoading {
     justify-content: center;
   }
-}
-
-.navigationWrapper {
-  display: flex;
-  justify-content: center;
-  position: fixed;
-  bottom: $layoutMarginHorizontal;
-  left: 0;
-  width: 100%;
-  padding: 0 $layoutMarginHorizontal;
-  z-index: $z-index-4;
-  pointer-events: none;
-}
-
-.navigation {
-  border-radius: $headerNavigationBorderRadius;
-  background: $color-white;
-  box-shadow: $box-shadow-1;
-  width: 100%;
-  max-width: 37.8rem;
-  pointer-events: initial;
-
-  &.hasNavigationBottomSuffix {
-    border-radius: 1.6rem 1.6rem $headerNavigationBorderRadius $headerNavigationBorderRadius;
-  }
-
-  .navigationBottomSuffix {
-    padding: 1.6rem;
-    border-bottom: 0.1rem solid $color-octant-grey4;
-  }
-
-  .buttons {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: $headerNavigationHeight;
-    padding: 1.2rem 2rem 1.5rem;
-    margin: 0 -0.9rem;
-  }
-
-  .buttonNavigation {
-    height: 100%;
-    padding: 0 1rem;
-  }
-}
-
-.iconNumberOfAllocations {
-  position: relative;
-}
-
-.numberOfAllocations {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 1.2rem;
-  width: 1.2rem;
-  position: absolute;
-  bottom: 0.7rem;
-  right: 0.5rem;
-  color: $color-white;
-  font-size: $font-size-07;
-  background: $color-octant-orange;
-  border-radius: 50%;
-  transform: translateZ(0); // On webkit solves the flickering of text during the scale.
-
-  &.isAllocationValueChanging {
-    &[data-is-initial-load-done='true'] {
-      animation-name: scale1;
-      animation-duration: $transition-time-1;
-    }
-  }
-}
-
-.coinGecko {
-  position: fixed;
-  bottom: 0.7rem;
-  color: $color-octant-grey3;
-  left: 50%;
-  transform: translate(-50%, 0);
-  font-size: $font-size-08;
-}
-
-.navigationBlur {
-  @include layoutOverflowBlurCommonProperties();
-  height: 12.4rem;
-  bottom: 0;
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.05),
-    rgba(0, 0, 0, 0.25),
-    rgba(0, 0, 0, 0.5),
-    rgba(0, 0, 0, 0.75),
-    rgba(0, 0, 0, 1)
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.05),
-    rgba(0, 0, 0, 0.25),
-    rgba(0, 0, 0, 0.5),
-    rgba(0, 0, 0, 0.75),
-    rgba(0, 0, 0, 1)
-  );
 }

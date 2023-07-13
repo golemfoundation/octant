@@ -92,27 +92,23 @@
     }
 
     &.isActive {
-      color: $color-octant-green3;
+      color: $color-octant-dark;
 
       svg {
-        color: $color-octant-green3;
-        stroke: $color-octant-green3;
+        color: $color-octant-dark;
+        stroke: $color-octant-dark;
 
         path,
         circle,
         rect {
-          color: $color-octant-green3;
-          stroke: $color-octant-green3;
+          color: $color-octant-dark;
+          stroke: $color-octant-dark;
         }
 
         circle {
-          fill: $color-octant-green3;
+          fill: $color-octant-dark;
         }
       }
-    }
-
-    .icon {
-      flex: 1;
     }
   }
 

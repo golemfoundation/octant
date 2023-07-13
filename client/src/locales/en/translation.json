@@ -188,7 +188,7 @@
   "meta": {
     "description": "Octant is a platform for experiments in decentralized governance that reward participation"
   },
-  "toasts":  {
+  "toasts": {
     "cantRemoveProjectWithDonations": {
       "title": "You can't remove projects with donations",
       "message": "Set your donation to zero in Allocate view to enable project removal"

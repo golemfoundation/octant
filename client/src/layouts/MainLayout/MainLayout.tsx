@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC, useState, Fragment, useEffect, useRef, useMemo } from 'react';
+import React, { FC, useState, Fragment, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocation, useMatch } from 'react-router-dom';
 import { useAccount } from 'wagmi';
@@ -8,8 +8,9 @@ import Button from 'components/core/Button/Button';
 import Loader from 'components/core/Loader/Loader';
 import Svg from 'components/core/Svg/Svg';
 import ModalConnectWallet from 'components/dedicated/ModalConnectWallet/ModalConnectWallet';
+import Navbar from 'components/dedicated/Navbar/Navbar';
 import WalletModal from 'components/dedicated/WalletModal/WalletModal';
-import { IS_INITIAL_LOAD_DONE } from 'constants/dataAttributes';
+import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import networkConfig from 'constants/networkConfig';
 import env from 'env';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
@@ -17,7 +18,6 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
-import useAllocationsStore from 'store/allocations/store';
 import { octant } from 'svg/logo';
 import { chevronBottom } from 'svg/misc';
 import getDifferenceInWeeks from 'utils/getDifferenceInWeeks';
@@ -26,7 +26,7 @@ import truncateEthAddress from 'utils/truncateEthAddress';
 
 import styles from './MainLayout.module.scss';
 import MainLayoutProps from './types';
-import { getIndividualRewardText, getNavigationTabsWithAllocations } from './utils';
+import { getIndividualRewardText } from './utils';
 
 const MainLayout: FC<MainLayoutProps> = ({
   children,
@@ -36,17 +36,11 @@ const MainLayout: FC<MainLayoutProps> = ({
   isLoading,
   isNavigationVisible = true,
   classNameBody,
-  navigationTabs,
+  navigationTabs = navigationTabsDefault,
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'layouts.main' });
-  const numberOfAllocationsRef = useRef<HTMLDivElement>(null);
   const [isModalConnectWalletOpen, setIsModalConnectWalletOpen] = useState(false);
-  const [localAllocationsLenght, setLocalAllocationsLenght] = useState<number>();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState<boolean>(false);
-  const [isAllocationValueChanging, setIsAllocationValueChanging] = useState<boolean>(false);
-  const { allocations } = useAllocationsStore(state => ({
-    allocations: state.data.allocations,
-  }));
   const { address, isConnected } = useAccount();
   const { data: individualReward } = useIndividualReward();
   const { data: currentEpoch } = useCurrentEpoch();
@@ -54,37 +48,7 @@ const MainLayout: FC<MainLayoutProps> = ({
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { pathname } = useLocation();
 
-  useEffect(() => {
-    if (localAllocationsLenght && localAllocationsLenght === allocations?.length) {
-      numberOfAllocationsRef?.current?.setAttribute(IS_INITIAL_LOAD_DONE, 'true');
-    }
-  }, [localAllocationsLenght, allocations?.length]);
-
-  useEffect(() => {
-    setLocalAllocationsLenght(allocations?.length);
-    setIsAllocationValueChanging(false);
-  }, [allocations?.length]);
-
-  useEffect(() => {
-    if (localAllocationsLenght && localAllocationsLenght !== allocations?.length) {
-      setIsAllocationValueChanging(true);
-    }
-  }, [localAllocationsLenght, allocations?.length]);
-
-  useEffect(() => {
-    if (isAllocationValueChanging) {
-      setTimeout(() => {
-        setIsAllocationValueChanging(false);
-      }, 1000);
-    }
-  }, [isAllocationValueChanging]);
-
-  const tabsWithIsActive = getNavigationTabsWithAllocations(
-    allocations!,
-    isAllocationValueChanging,
-    numberOfAllocationsRef,
-    navigationTabs,
-  ).map(tab => ({
+  const tabsWithIsActive = navigationTabs.map(tab => ({
     ...tab,
     isActive: tab.isActive || pathname === tab.to,
   }));
@@ -216,36 +180,7 @@ const MainLayout: FC<MainLayoutProps> = ({
           {isLoading ? <Loader className={styles.loader} /> : children}
         </div>
         {isNavigationVisible && (
-          <Fragment>
-            <div className={styles.navigationWrapper} data-test="Navigation__element">
-              <nav
-                className={cx(
-                  styles.navigation,
-                  navigationBottomSuffix && styles.hasNavigationBottomSuffix,
-                )}
-              >
-                {navigationBottomSuffix && (
-                  <div className={styles.navigationBottomSuffix}>{navigationBottomSuffix}</div>
-                )}
-                <div className={styles.buttons}>
-                  {tabsWithIsActive.map(({ icon, iconWrapped, label, ...rest }, index) => (
-                    <Button
-                      // eslint-disable-next-line react/no-array-index-key
-                      key={index}
-                      className={styles.buttonNavigation}
-                      dataTest={`${label}__Button`}
-                      Icon={iconWrapped || <Svg img={icon} size={3.2} />}
-                      label={label}
-                      variant="iconVertical"
-                      {...rest}
-                    />
-                  ))}
-                </div>
-              </nav>
-              <div className={styles.coinGecko}>Powered by CoinGecko API</div>
-            </div>
-            <div className={styles.navigationBlur} />
-          </Fragment>
+          <Navbar navigationBottomSuffix={navigationBottomSuffix} tabs={tabsWithIsActive} />
         )}
       </div>
     </Fragment>

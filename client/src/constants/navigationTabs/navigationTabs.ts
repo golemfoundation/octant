@@ -15,14 +15,14 @@ export const navigationTabs: NavigationTab[] = [
     to: ROOT_ROUTES.allocation.absolute,
   },
   {
-    icon: metrics,
-    label: 'Metrics',
-    to: ROOT_ROUTES.metrics.absolute,
-  },
-  {
     icon: earn,
     label: 'Earn',
     to: ROOT_ROUTES.earn.absolute,
+  },
+  {
+    icon: metrics,
+    label: 'Metrics',
+    to: ROOT_ROUTES.metrics.absolute,
   },
   {
     icon: settings,

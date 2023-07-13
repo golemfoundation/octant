@@ -68,7 +68,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('"Use crypto as main value display" option by default displays crypto value as primary in DoubleValue component', () => {
-      cy.get('[data-test=Metrics__Button]').click();
+      cy.get('[data-test=Navbar__Button--Metrics]').click();
 
       const cryptoValue = getValueCryptoToDisplay({
         cryptoCurrency: 'ethereum',
@@ -87,7 +87,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
 
     it('"Use crypto as main value display" option changes DoubleValue sections order', () => {
       cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').uncheck();
-      cy.get('[data-test=Metrics__Button]').click();
+      cy.get('[data-test=Navbar__Button--Metrics]').click();
 
       const cryptoValue = getValueCryptoToDisplay({
         cryptoCurrency: 'ethereum',
@@ -116,7 +116,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           i < DISPLAY_CURRENCIES.length - 1 ? DISPLAY_CURRENCIES[i + 1].toUpperCase() : undefined;
 
         cy.get('[data-test=InputSelect__CustomSingleValue]').contains(displayCurrencyToUppercase);
-        cy.get('[data-test=Metrics__Button]').click();
+        cy.get('[data-test=Navbar__Button--Metrics]').click();
 
         if (FIAT_CURRENCIES_SYMBOLS[displayCurrency]) {
           cy.get('[data-test=MetricsView__DoubleValue--ethStaked__secondary]').contains(
@@ -128,7 +128,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           );
         }
 
-        cy.get('[data-test=Settings__Button]').click();
+        cy.get('[data-test=Navbar__Button--Settings]').click();
         cy.get('[data-test=InputSelect]').click();
         cy.get(`[data-test=InputSelect__CustomOption--${nextDisplayCurrencyToUppercase}]`).click();
       }
@@ -157,7 +157,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     it('"Always show Octant tips" works (checked)', () => {
       cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').check();
 
-      cy.get('[data-test=Projects__Button]').click();
+      cy.get('[data-test=Navbar__Button--Projects]').click();
       cy.get('[data-test=ProposalsView__TipTile]').should('exist');
       cy.get('[data-test=ProposalsView__TipTile]').should('be.visible');
 
@@ -173,7 +173,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     it('"Always show Octant tips" works (unchecked)', () => {
       cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').uncheck();
 
-      cy.get('[data-test=Projects__Button]').click();
+      cy.get('[data-test=Navbar__Button--Projects]').click();
       cy.get('[data-test=ProposalsView__TipTile]').should('exist');
       cy.get('[data-test=ProposalsView__TipTile]').should('be.visible');
 
