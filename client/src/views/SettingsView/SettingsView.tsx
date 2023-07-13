@@ -2,7 +2,6 @@ import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import Header from 'components/core/Header/Header';
 import InputSelect from 'components/core/InputSelect/InputSelect';
 import InputToggle from 'components/core/InputToggle/InputToggle';
 import MainLayout from 'layouts/MainLayout/MainLayout';
@@ -44,15 +43,6 @@ const SettingsView = (): ReactElement => {
   }));
   return (
     <MainLayout dataTest="SettingsView">
-      <Header text={t('settings')} />
-      <BoxRounded className={styles.box} justifyContent="spaceBetween" textAlign="left">
-        {t('chooseDisplayCurrency')}
-        <InputSelect
-          onChange={option => setDisplayCurrency(option!.value as SettingsData['displayCurrency'])}
-          options={options}
-          selectedOption={options.find(({ value }) => value === displayCurrency)}
-        />
-      </BoxRounded>
       <BoxRounded className={styles.box} justifyContent="spaceBetween" textAlign="left">
         {t('cryptoMainValueDisplay')}
         <InputToggle
@@ -60,6 +50,15 @@ const SettingsView = (): ReactElement => {
           dataTest="InputToggle__UseCryptoAsMainValueDisplay"
           isChecked={isCryptoMainValueDisplay}
           onChange={({ target: { checked: isChecked } }) => setIsCryptoMainValueDisplay(isChecked)}
+        />
+      </BoxRounded>
+      <BoxRounded className={styles.box} justifyContent="spaceBetween" textAlign="left">
+        {t('chooseDisplayCurrency')}
+        <div className={styles.spacer} />
+        <InputSelect
+          onChange={option => setDisplayCurrency(option!.value as SettingsData['displayCurrency'])}
+          options={options}
+          selectedOption={options.find(({ value }) => value === displayCurrency)}
         />
       </BoxRounded>
       <BoxRounded className={styles.box} justifyContent="spaceBetween" textAlign="left">
