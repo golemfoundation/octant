@@ -284,11 +284,10 @@
       }
     },
     "settings": {
-      "settings": "Settings",
       "chooseDisplayCurrency": "Choose a display currency",
       "cryptoMainValueDisplay": "Use crypto as main value display",
-      "alwaysShowOnboarding": "Always show Allocate onboarding",
-      "alwaysShowOctantTips": "Always show Octant tips"
+      "alwaysShowOnboarding": "Always show onboarding",
+      "alwaysShowOctantTips": "Always show tips"
     }
   }
 }

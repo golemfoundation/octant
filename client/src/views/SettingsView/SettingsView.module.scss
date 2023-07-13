@@ -12,3 +12,9 @@
   // Prevents inputs from shrinking when label text is long.
   flex-shrink: 0;
 }
+
+.spacer {
+  height: 2.4rem;
+  width: 0.1rem;
+  background: $color-octant-grey2;
+}

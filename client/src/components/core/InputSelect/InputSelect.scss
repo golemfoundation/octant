@@ -1,3 +1,5 @@
+$controlHeight: 2rem;
+
 .InputSelect {
   &__value-container {
     display: flex !important;
@@ -9,7 +11,7 @@
     cursor: pointer !important;
     border: 0 !important;
     min-height: auto !important;
-    height: 3rem;
+    height: $controlHeight;
 
     &--is-focused {
       box-shadow: none !important;
@@ -23,7 +25,7 @@
   }
 
   &__indicators {
-    height: 3rem;
+    height: $controlHeight;
   }
 
   &__indicator {
