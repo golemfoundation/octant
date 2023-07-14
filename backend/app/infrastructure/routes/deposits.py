@@ -1,6 +1,7 @@
 from flask_restx import Resource, Namespace, fields
 
 from app.database import pending_epoch_snapshot
+import app.controllers.deposits as deposits_controller
 from app.extensions import api
 
 ns = Namespace("deposits", description="Octant deposits")
@@ -20,6 +21,15 @@ locked_ratio_model = api.model(
     {
         "lockedRatio": fields.String(
             required=True, description="GLM locked ratio in given epoch"
+        ),
+    },
+)
+
+user_effective_deposit_model = api.model(
+    "EffectiveDeposit",
+    {
+        "effectiveDeposit": fields.String(
+            required=True, description="Effective GLM deposit, in wei"
         ),
     },
 )
@@ -52,3 +62,18 @@ class LockedRatio(Resource):
     def get(self, epoch):
         locked_ratio = pending_epoch_snapshot.get_by_epoch_num(epoch).locked_ratio
         return {"lockedRatio": locked_ratio}
+
+
+@ns.route("/users/<string:address>/<int:epoch>")
+@ns.doc(
+    description="Returns user's effective deposit for particular epoch.",
+    params={"epoch": "Epoch number or keyword 'current'", "address": "User ethereum address in hexadecimal form (case-insensitive, prefixed with 0x)"}
+)
+class UserEffectiveDeposit(Resource):
+    @ns.marshal_with(user_effective_deposit_model)
+    @ns.response(200, "User effective deposit successfully retrieved")
+    def get(self, address: str, epoch: int):
+        result = deposits_controller.get_by_user_and_epoch(address, epoch)
+        return {
+            "effectiveDeposit": result.effective_deposit,
+        }
