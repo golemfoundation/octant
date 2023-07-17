@@ -30,7 +30,7 @@ def _set_merkle_root(epoch: int, merkle_root: str):
         app.logger.error(f"Cannot set merkle root: {e}")
 
 
-def _fund_vault(value: int):
+def _fund_vault(value: str):
     try:
         multisig = Account.from_key(config.TESTNET_MULTISIG_PRIVATE_KEY)
         tx_hash = multisig.send_eth(

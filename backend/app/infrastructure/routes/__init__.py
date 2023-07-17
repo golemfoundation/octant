@@ -3,7 +3,16 @@ from flask_restx import Resource
 
 from app import settings
 from app.extensions import api
-from . import docs, history, snapshots, rewards, deposits, withdrawals, allocations
+from . import (
+    docs,
+    history,
+    snapshots,
+    rewards,
+    deposits,
+    withdrawals,
+    allocations,
+    epochs,
+)
 
 
 @api.route("/favicon.ico")
