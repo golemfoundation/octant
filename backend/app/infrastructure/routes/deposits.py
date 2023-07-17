@@ -34,12 +34,12 @@ user_effective_deposit_model = api.model(
     },
 )
 
+
 @ns.route("/<int:epoch>/total_effective")
 @ns.doc(
     description="Returns value of total effective deposits made by the end of an epoch. Latest data and data for any given point in time from the past is available in the Subgraph.",
-    params={"epoch": "Epoch number"}
+    params={"epoch": "Epoch number"},
 )
-
 class TotalEffectiveDeposit(Resource):
     @ns.marshal_with(total_effective_model)
     @ns.response(200, "Epoch total effective deposit successfully retrieved")
@@ -53,9 +53,8 @@ class TotalEffectiveDeposit(Resource):
 @ns.route("/<int:epoch>/locked_ratio")
 @ns.doc(
     description="Returns locked ratio of total effective deposits made by the end of an epoch. Latest data and data for any given point in time from the past is available in the Subgraph.",
-    params={"epoch": "Epoch number"}
+    params={"epoch": "Epoch number"},
 )
-
 class LockedRatio(Resource):
     @ns.marshal_with(locked_ratio_model)
     @ns.response(200, "Epoch locked ratio successfully retrieved")
@@ -67,7 +66,10 @@ class LockedRatio(Resource):
 @ns.route("/users/<string:address>/<int:epoch>")
 @ns.doc(
     description="Returns user's effective deposit for particular epoch.",
-    params={"epoch": "Epoch number or keyword 'current'", "address": "User ethereum address in hexadecimal form (case-insensitive, prefixed with 0x)"}
+    params={
+        "epoch": "Epoch number or keyword 'current'",
+        "address": "User ethereum address in hexadecimal form (case-insensitive, prefixed with 0x)",
+    },
 )
 class UserEffectiveDeposit(Resource):
     @ns.marshal_with(user_effective_deposit_model)

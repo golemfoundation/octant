@@ -1,5 +1,6 @@
 import logging
 
+from flask_apscheduler import APScheduler
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_restx import Api
@@ -18,6 +19,8 @@ socketio = SocketIO(cors_allowed_origins="*")
 db = SQLAlchemy()
 migrate = Migrate()
 cors = CORS()
+scheduler = APScheduler()
+
 
 # Other extensions
 graphql_client = Client()
@@ -44,3 +47,9 @@ def init_web3(app):
     w3.provider = app.config["WEB3_PROVIDER"]
     if geth_poa_middleware not in w3.middleware_onion:
         w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+
+
+def init_scheduler(app):
+    if app.config["SCHEDULER_ENABLED"]:
+        scheduler.init_app(app)
+        scheduler.start()

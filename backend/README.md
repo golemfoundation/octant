@@ -71,3 +71,19 @@ http://localhost:5000/docs/websockets-api
 
 ### Blockchain info
 http://localhost:5000/docs/chain-info
+
+
+## Scheduler tasks
+The app can run background tasks which are handled by [Flask-APScheduler](https://github.com/viniciuschiele/flask-apscheduler).
+
+The scheduler is disabled by default, you can enable it in `.env`:
+```
+SCHEDULER_ENABLED=True
+```
+
+Flask-APScheduler comes with a [build-in API](https://viniciuschiele.github.io/flask-apscheduler/rst/api.html). Enable it by setting:
+
+```
+SCHEDULER_API_ENABLED=True
+```
+

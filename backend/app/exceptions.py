@@ -103,9 +103,8 @@ class MissingAddress(OctantException):
 
 class EffectiveDepositNotFound(OctantException):
     code = 404
-    description = (
-        "Effective deposit for user {} for epoch {} not found"
-    )
+    description = "Effective deposit for user {} for epoch {} not found"
+
     def __init__(self, address: str, epoch: int):
         super().__init__(self.description.format(address, epoch), self.code)
 

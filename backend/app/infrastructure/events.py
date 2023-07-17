@@ -63,8 +63,6 @@ def handle_proposal_donors(proposal_address: str):
     emit("proposal_donors", json.dumps(_serialize_donors(donors)))
 
 
-
-
 @socketio.on_error_default
 def default_error_handler(e):
     print_stacktrace()
