@@ -27,13 +27,10 @@ user_allocations_sum_model = api.model(
     "UserAllocationsSum",
     {
         "amount": fields.String(
-            required=True,
-            description="User allocations sum in WEI"
+            required=True, description="User allocations sum in WEI"
         ),
     },
 )
-
-
 
 
 @ns.route("/user/<string:user_address>/epoch/<int:epoch>")

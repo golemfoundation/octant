@@ -17,6 +17,7 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SUBGRAPH_ENDPOINT = os.getenv("SUBGRAPH_ENDPOINT")
     WEB3_PROVIDER = Web3.HTTPProvider(os.getenv("ETH_RPC_PROVIDER_URL"))
+    SCHEDULER_ENABLED = os.getenv("SCHEDULER_ENABLED", "False") == "True"
 
     # Smart contract addresses
     GNT_CONTRACT_ADDRESS = os.getenv("GNT_CONTRACT_ADDRESS")
@@ -34,6 +35,12 @@ class Config(object):
         "CHAIN_ID", 11155111
     )  # 11155111 corresponds to Sepolia network
     CHAIN_NAME = os.getenv("CHAIN_NAME", "Sepolia")
+    TESTNET_MULTISIG_PRIVATE_KEY = os.getenv("TESTNET_MULTISIG_PRIVATE_KEY")
+
+    # Confirming withdrawals in Vault
+    VAULT_CONFIRM_WITHDRAWALS_ENABLED = (
+        os.getenv("VAULT_CONFIRM_WITHDRAWALS_ENABLED", "False") == "True"
+    )
 
 
 class ProdConfig(Config):

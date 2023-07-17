@@ -15,8 +15,9 @@ from app.extensions import (
     init_logger,
     init_web3,
     api,
+    init_scheduler,
 )
-from app.infrastructure import events, routes
+from app.infrastructure import events, routes, apscheduler
 
 
 def create_app(config_object=None):
@@ -43,6 +44,7 @@ def register_extensions(app):
     db.init_app(app)
     migrate.init_app(app, db)
     socketio.init_app(app)
+    init_scheduler(app)
     init_graphql_client(app)
     init_logger(app)
     init_web3(app)
