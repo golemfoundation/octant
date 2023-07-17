@@ -50,6 +50,6 @@ def init_web3(app):
 
 
 def init_scheduler(app):
-    if app.config["SCHEDULER_ENABLED"]:
+    if app.config["SCHEDULER_ENABLED"] and app.config["ENV"] != "test":
         scheduler.init_app(app)
         scheduler.start()
