@@ -10,8 +10,21 @@
 
   // This class needs to be aligned with whatever triggers the overflow to open, e.g. Modal.tsx.
   &.isOpen {
-    backdrop-filter: blur(0.4rem);
-    -webkit-backdrop-filter: blur(0.4rem);
+    backdrop-filter: blur(0.5rem);
+    -webkit-backdrop-filter: blur(0.5rem);
+
+    &::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      z-index: $z-index-4;
+      cursor: pointer;
+      background-color: $color-octant-grey4;
+      opacity: 0.8;
+    }
   }
 }
 
