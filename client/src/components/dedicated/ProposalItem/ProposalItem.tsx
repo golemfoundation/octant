@@ -57,7 +57,6 @@ const ProposalItem: FC<ProposalItemProps> = ({
         styles.root,
         className,
         !isLoadingStates && styles.isClickable,
-        isLoadingStates && styles.isLoadingStates,
         isEpoch1 && styles.isEpoch1,
       )}
       data-test={dataTest}

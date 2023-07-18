@@ -27,3 +27,12 @@
     transform: rotate(360deg);
   }
 }
+
+@keyframes wave {
+  0% {
+    background-position: -46.8rem 0;
+  }
+  100% {
+    background-position: 46.8rem 0;
+  }
+}
