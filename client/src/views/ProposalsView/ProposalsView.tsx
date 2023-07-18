@@ -39,17 +39,16 @@ const ProposalsView = (): ReactElement => {
         !proposalsAddresses || proposalsAddresses.length === 0 || !areMatchedProposalsReady
       }
     >
-      {!wasAddFavouritesAlreadyClosed && !isEpoch1 && (
-        <TipTile
-          className={styles.tip}
-          dataTest="ProposalsView__TipTile"
-          image="images/favourites.webp"
-          infoLabel={i18n.t('common.gettingStarted')}
-          onClose={() => setWasAddFavouritesAlreadyClosed(true)}
-          text={t('tip.text')}
-          title={t('tip.title')}
-        />
-      )}
+      <TipTile
+        className={styles.tip}
+        dataTest="ProposalsView__TipTile"
+        image="images/favourites.webp"
+        infoLabel={i18n.t('common.gettingStarted')}
+        isOpen={!wasAddFavouritesAlreadyClosed && !isEpoch1}
+        onClose={() => setWasAddFavouritesAlreadyClosed(true)}
+        text={t('tip.text')}
+        title={t('tip.title')}
+      />
       <div className={styles.list} data-test="ProposalsView__List">
         {proposalsWithRewards.map((proposal, index) => (
           <ProposalItem

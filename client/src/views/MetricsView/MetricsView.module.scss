@@ -21,7 +21,11 @@
 }
 
 .tip {
-  margin-bottom: 3.2rem;
+  margin-bottom: 1.6rem;
+
+  @media #{$desktop-up} {
+    margin-bottom: 2.8rem;
+  }
 }
 
 .blackText {
