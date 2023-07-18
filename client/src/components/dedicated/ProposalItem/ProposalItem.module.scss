@@ -24,12 +24,6 @@ $proposalItemPadding: 2.4rem;
     cursor: pointer;
   }
 
-  &.isLoadingStates {
-    align-items: center;
-    justify-content: center;
-    padding: $proposalItemPadding;
-  }
-
   .header {
     display: flex;
     justify-content: space-between;
