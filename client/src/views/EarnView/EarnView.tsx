@@ -24,24 +24,23 @@ const EarnView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
 
   const isWithdrawTipVisible =
-    currentEpoch &&
+    !!currentEpoch &&
     currentEpoch > 1 &&
-    withdrawableUserEth &&
+    !!withdrawableUserEth &&
     !withdrawableUserEth.isZero() &&
     !wasWithdrawAlreadyClosed;
 
   return (
     <MainLayout classNameBody={styles.layoutBody} dataTest="EarnView">
-      {isWithdrawTipVisible && (
-        <TipTile
-          className={styles.tip}
-          image="images/tip-withdraw.webp"
-          infoLabel={i18n.t('common.gettingStarted')}
-          onClose={() => setWasWithdrawAlreadyClosed(true)}
-          text={t('tip.text')}
-          title={t('tip.title')}
-        />
-      )}
+      <TipTile
+        className={styles.tip}
+        image="images/tip-withdraw.webp"
+        infoLabel={i18n.t('common.gettingStarted')}
+        isOpen={isWithdrawTipVisible}
+        onClose={() => setWasWithdrawAlreadyClosed(true)}
+        text={t('tip.text')}
+        title={t('tip.title')}
+      />
       <div className={styles.wrapper}>
         <div className={styles.boxesWrapper}>
           <BoxGlmLock classNameBox={styles.box} />

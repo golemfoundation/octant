@@ -47,26 +47,25 @@ const MetricsView = (): ReactElement => {
   };
 
   const { isDesktop } = useMediaQuery();
-  const isCheckStatsTipVisible = currentEpoch && currentEpoch > 0 && !wasCheckStatusAlreadyClosed;
+  const isCheckStatsTipVisible = !!currentEpoch && currentEpoch > 0 && !wasCheckStatusAlreadyClosed;
   const isEpoch1 = currentEpoch === 1;
 
   return (
     <MainLayout dataTest="MetricsView">
-      {isCheckStatsTipVisible && (
-        <TipTile
-          className={styles.tip}
-          image={isDesktop ? 'images/tip-stats-hor.webp' : 'images/tip-stats-vert.webp'}
-          infoLabel={i18n.t('common.octantTips')}
-          onClose={() => setWasCheckStatusAlreadyClosed(true)}
-          text={
-            <Trans
-              components={[<span className={styles.blackText} />]}
-              i18nKey="views.metrics.tip.text"
-            />
-          }
-          title={t('tip.title')}
-        />
-      )}
+      <TipTile
+        className={styles.tip}
+        image={isDesktop ? 'images/tip-stats-hor.webp' : 'images/tip-stats-vert.webp'}
+        infoLabel={i18n.t('common.octantTips')}
+        isOpen={isCheckStatsTipVisible}
+        onClose={() => setWasCheckStatusAlreadyClosed(true)}
+        text={
+          <Trans
+            components={[<span className={styles.blackText} />]}
+            i18nKey="views.metrics.tip.text"
+          />
+        }
+        title={t('tip.title')}
+      />
       {!isEpoch1 && (
         <MetricsTimeSection
           className={styles.element}
