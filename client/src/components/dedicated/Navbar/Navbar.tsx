@@ -41,7 +41,7 @@ const Navbar: FC<NavbarProps> = ({ navigationBottomSuffix, tabs }) => {
               <Button
                 // eslint-disable-next-line react/no-array-index-key
                 key={index}
-                className={styles.buttonNavigation}
+                className={cx(styles.buttonNavigation, isActive && styles.isActive)}
                 dataTest={`Navbar__Button--${label}`}
                 Icon={<Svg img={icon} size={isDesktop ? 4 : 3.2} />}
                 isActive={isActive}
