@@ -43,7 +43,12 @@ const SettingsView = (): ReactElement => {
   }));
   return (
     <MainLayout dataTest="SettingsView">
-      <BoxRounded className={styles.box} justifyContent="spaceBetween" textAlign="left">
+      <BoxRounded
+        className={styles.box}
+        hasPadding={false}
+        justifyContent="spaceBetween"
+        textAlign="left"
+      >
         {t('cryptoMainValueDisplay')}
         <InputToggle
           className={styles.inputToggle}
@@ -52,16 +57,30 @@ const SettingsView = (): ReactElement => {
           onChange={({ target: { checked: isChecked } }) => setIsCryptoMainValueDisplay(isChecked)}
         />
       </BoxRounded>
-      <BoxRounded className={styles.box} justifyContent="spaceBetween" textAlign="left">
+      <BoxRounded
+        className={styles.box}
+        hasPadding={false}
+        justifyContent="spaceBetween"
+        textAlign="left"
+      >
         {t('chooseDisplayCurrency')}
-        <div className={styles.spacer} />
-        <InputSelect
-          onChange={option => setDisplayCurrency(option!.value as SettingsData['displayCurrency'])}
-          options={options}
-          selectedOption={options.find(({ value }) => value === displayCurrency)}
-        />
+        <div className={styles.currencySelectorWrapper}>
+          <div className={styles.spacer} />
+          <InputSelect
+            onChange={option =>
+              setDisplayCurrency(option!.value as SettingsData['displayCurrency'])
+            }
+            options={options}
+            selectedOption={options.find(({ value }) => value === displayCurrency)}
+          />
+        </div>
       </BoxRounded>
-      <BoxRounded className={styles.box} justifyContent="spaceBetween" textAlign="left">
+      <BoxRounded
+        className={styles.box}
+        hasPadding={false}
+        justifyContent="spaceBetween"
+        textAlign="left"
+      >
         {t('alwaysShowOnboarding')}
         <InputToggle
           className={styles.inputToggle}
@@ -70,7 +89,7 @@ const SettingsView = (): ReactElement => {
           onChange={event => setIsAllocateOnboardingAlwaysVisible(event.target.checked)}
         />
       </BoxRounded>
-      <BoxRounded className={styles.box} justifyContent="spaceBetween">
+      <BoxRounded className={styles.box} hasPadding={false} justifyContent="spaceBetween">
         {t('alwaysShowOctantTips')}
         <InputToggle
           dataTest="AlwaysShowOctantTips__InputCheckbox"
