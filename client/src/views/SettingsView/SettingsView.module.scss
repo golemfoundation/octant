@@ -1,10 +1,17 @@
 .box {
+  height: 6.4rem;
+  font-size: $font-size-12;
+
   &:not(:last-child) {
     margin: 0 auto 1.6rem;
   }
 
   &.isDisabled {
     opacity: 0.5;
+  }
+
+  @media #{$desktop-up} {
+    font-size: $font-size-14;
   }
 }
 
@@ -17,4 +24,10 @@
   height: 2.4rem;
   width: 0.1rem;
   background: $color-octant-grey2;
+  margin-right: 4rem;
+}
+
+.currencySelectorWrapper {
+  display: flex;
+  font-size: $font-size-12;
 }
