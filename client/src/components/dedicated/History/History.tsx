@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import Loader from 'components/core/Loader/Loader';
-import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useHistory from 'hooks/queries/useHistory';
 
 import styles from './History.module.scss';
@@ -13,11 +12,10 @@ const History = (): ReactElement => {
   const { i18n } = useTranslation('translation');
   const { isConnected } = useAccount();
   const { data: history, isFetching: isFetchingHistory } = useHistory();
-  const { timeCurrentEpochStart } = useEpochAndAllocationTimestamps();
 
   const shouldHistoryBeVisible = isConnected;
   const isListAvailable = shouldHistoryBeVisible && history !== undefined;
-  const showLoader = !isListAvailable || isFetchingHistory || timeCurrentEpochStart === undefined;
+  const showLoader = !isListAvailable || isFetchingHistory;
 
   return (
     <div className={styles.root} data-test="History">
@@ -28,7 +26,7 @@ const History = (): ReactElement => {
         ) : (
           history?.map((element, index) => (
             // eslint-disable-next-line react/no-array-index-key
-            <HistoryItem key={index} {...element} timeCurrentEpochStart={timeCurrentEpochStart} />
+            <HistoryItem key={index} {...element} />
           ))
         ))}
     </div>

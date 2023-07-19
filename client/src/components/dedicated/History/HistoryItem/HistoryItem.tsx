@@ -1,4 +1,3 @@
-import cx from 'classnames';
 import { parseUnits } from 'ethers/lib/utils';
 import React, { FC, memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,13 +12,7 @@ import { allocate, donation } from 'svg/history';
 import styles from './HistoryItem.module.scss';
 import HistoryItemProps from './types';
 
-const HistoryItem: FC<HistoryItemProps> = ({
-  type,
-  amount,
-  timestamp,
-  timeCurrentEpochStart,
-  projectsNumber,
-}) => {
+const HistoryItem: FC<HistoryItemProps> = ({ type, amount, projectsNumber }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.historyItem' });
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
@@ -56,9 +49,7 @@ const HistoryItem: FC<HistoryItemProps> = ({
   const img = type === 'allocation' || type === 'withdrawal' ? allocate : donation;
 
   return (
-    <BoxRounded
-      className={cx(styles.box, parseInt(timestamp, 10) < timeCurrentEpochStart && styles.isPast)}
-    >
+    <BoxRounded className={styles.box}>
       <div className={styles.iconAndTitle}>
         <Svg img={img} size={4} />
         <div className={styles.titleAndSubtitle}>

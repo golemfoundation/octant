@@ -1,5 +1,3 @@
 import { HistoryItem } from 'hooks/queries/useHistory';
 
-export default interface HistoryItemProps extends HistoryItem {
-  timeCurrentEpochStart: number;
-}
+export default interface HistoryItemProps extends HistoryItem {}
