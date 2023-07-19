@@ -30,14 +30,21 @@ function checkProposalItemElements(index, name): Chainable<any> {
     .eq(index)
     .find('[data-test=ProposalItem__ButtonAddToAllocate]')
     .should('be.visible');
-  cy.get('[data-test^=ProposalsView__ProposalItem')
-    .eq(index)
-    .find('[data-test=ProposalRewards__totalDonated__label]')
-    .should('be.visible');
+
+  // TODO OCT-663 Make CY check which epoch is currently and base tests on that.
+  const isFirstEpoch = true;
+  if (isFirstEpoch) {
+    return cy
+      .get('[data-test^=ProposalsView__ProposalItem')
+      .eq(index)
+      .find('[data-test=ProposalRewards__notAvailable]')
+      .should('be.visible');
+  }
+
   return cy
     .get('[data-test^=ProposalsView__ProposalItem')
     .eq(index)
-    .find('[data-test=ProposalRewards__totalDonated__number]')
+    .find('[data-test=ProposalRewards__totalDonated__label]')
     .should('be.visible');
 }
 

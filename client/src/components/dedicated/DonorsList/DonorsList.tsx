@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC, useEffect, useState, Fragment } from 'react';
+import React, { FC, useState, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Button from 'components/core/Button/Button';
@@ -7,7 +7,7 @@ import Identicon from 'components/core/Identicon/Identicon';
 import Loader from 'components/core/Loader/Loader';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useProposalAllocations from 'hooks/subgraph/allocations/useProposalAllocations';
+import useProposalDonors from 'hooks/queries/useProposalDonors';
 import useSettingsStore from 'store/settings/store';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
@@ -34,18 +34,8 @@ const DonorsList: FC<DonorsListProps> = ({
   }));
   const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
   const [isDonorsListExpanded, setIsDonorsListExpanded] = useState<boolean>(false);
-  const {
-    data: proposalAllocations,
-    refetch: refetchProposalAllocations,
-    isLoading,
-  } = useProposalAllocations({ proposalAddress });
+  const { data: proposalDonors, isLoading } = useProposalDonors(proposalAddress);
   const { data: currentEpoch } = useCurrentEpoch();
-
-  useEffect(() => {
-    if (proposalAllocations && proposalAllocations?.length > 0) {
-      refetchProposalAllocations();
-    }
-  }, [proposalAllocations, refetchProposalAllocations]);
 
   const isEpoch1 = currentEpoch === 1;
 
@@ -57,19 +47,19 @@ const DonorsList: FC<DonorsListProps> = ({
         <Fragment>
           <div className={styles.header}>
             <span>{t('donors')}</span>{' '}
-            {proposalAllocations && (
+            {proposalDonors && (
               <div className={styles.count} data-test={`${dataTest}__count`}>
-                {isEpoch1 ? '--' : proposalAllocations.length}
+                {isEpoch1 ? '--' : proposalDonors.length}
               </div>
             )}
           </div>
           {!isEpoch1 &&
-            proposalAllocations
-              ?.slice(0, isDonorsListExpanded ? proposalAllocations.length : SHORT_LIST_LENGTH)
-              ?.map(({ amount, user }) => (
-                <div key={`${proposalAddress}-${user}`} className={styles.donor}>
-                  <Identicon className={styles.identicon} username={user} />
-                  <div className={styles.address}>{truncateEthAddress(user)}</div>
+            proposalDonors
+              ?.slice(0, isDonorsListExpanded ? proposalDonors.length : SHORT_LIST_LENGTH)
+              ?.map(({ amount, address }) => (
+                <div key={`${proposalAddress}-${address}`} className={styles.donor}>
+                  <Identicon className={styles.identicon} username={address} />
+                  <div className={styles.address}>{truncateEthAddress(address)}</div>
                   <div>
                     {isCryptoMainValueDisplay
                       ? getValueCryptoToDisplay({
@@ -86,7 +76,7 @@ const DonorsList: FC<DonorsListProps> = ({
                   </div>
                 </div>
               ))}
-          {!isEpoch1 && proposalAllocations && proposalAllocations.length > SHORT_LIST_LENGTH && (
+          {!isEpoch1 && proposalDonors && proposalDonors.length > SHORT_LIST_LENGTH && (
             <Button
               className={styles.buttonDonors}
               label={isDonorsListExpanded ? `- ${t('seeLess')}` : `+ ${t('seeAll')}`}

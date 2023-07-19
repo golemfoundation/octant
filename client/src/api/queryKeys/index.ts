@@ -3,7 +3,7 @@ import { Root, QueryKeys } from './types';
 export const ROOTS: Root = {
   cryptoValues: 'cryptoValues',
   depositAt: 'depositAt',
-  proposalAllocations: 'proposalAllocations',
+  proposalDonors: 'proposalDonors',
   proposalsIpfsResults: 'proposalsIpfsResults',
   userHistoricAllocations: 'userHistoricAllocations',
 };
@@ -17,15 +17,13 @@ export const QUERY_KEYS: QueryKeys = {
   depositAt: ['depositAt'],
   depositAtGivenEpoch: epochNumber => [ROOTS.depositAt, epochNumber.toString()],
   depositsValue: ['depositsValue'],
-  glmLocked: ['glmLocked'],
-  individualProposalRewards: ['individualProposalRewards'],
+  history: ['history'],
   individualReward: ['individualReward'],
   isDecisionWindowOpen: ['isDecisionWindowOpen'],
   lockedRatio: ['lockedRatio'],
   locks: ['locks'],
   matchedProposalRewards: ['matchedProposalRewards'],
-  matchedRewards: ['matchedRewards'],
-  proposalAllocations: proposalAddress => [ROOTS.proposalAllocations, proposalAddress],
+  proposalDonors: proposalAddress => [ROOTS.proposalDonors, proposalAddress],
   proposalRewardsThresholdFraction: ['proposalRewardsThresholdFraction'],
   proposalsCid: ['proposalsCid'],
   proposalsContract: ['proposalsContract'],
@@ -33,5 +31,6 @@ export const QUERY_KEYS: QueryKeys = {
   unlocks: ['unlocks'],
   userAllocations: ['userAllocations'],
   userHistoricAllocations: userAddress => [ROOTS.userHistoricAllocations, userAddress],
+  usersAllocationsSum: ['usersAllocationsSum'],
   withdrawableUserEth: ['withdrawableUserEth'],
 };

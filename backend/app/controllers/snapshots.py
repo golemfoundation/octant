@@ -24,10 +24,10 @@ class EpochStatus(JSONWizard):
 
 
 def snapshot_pending_epoch() -> Optional[int]:
+    app.logger.info(f"--- Initiating pending epoch snapshot ---")
     current_epoch = epochs.get_current_epoch()
-    app.logger.info(f"[+] Current epoch: {current_epoch}")
     pending_epoch = epochs.get_pending_epoch()
-    app.logger.info(f"[+] Pending epoch: {pending_epoch}")
+    app.logger.info(f"[*] Blockchain [current epoch: {current_epoch}] [pending epoch: {pending_epoch}] ")
 
     try:
         last_snapshot = pending_epoch_snapshot.get_last_snapshot()
@@ -35,9 +35,10 @@ def snapshot_pending_epoch() -> Optional[int]:
     except exceptions.MissingSnapshot:
         last_snapshot_epoch = 0
 
-    app.logger.info(f"[+] Last db epoch: {last_snapshot_epoch}")
+    app.logger.info(f"[*] Most recent pending snapshot: {last_snapshot_epoch}")
 
     if pending_epoch <= last_snapshot_epoch:
+        app.logger.info(f"[+] Pending snapshots are up to date")
         return None
 
     glm_supply = glm.get_current_glm_supply()
@@ -60,16 +61,16 @@ def snapshot_pending_epoch() -> Optional[int]:
         all_individual_rewards,
     )
     db.session.commit()
-    app.logger.info(f"[+] Saved {pending_epoch} epoch snapshot to the DB")
+    app.logger.info(f"[+] Saved {pending_epoch} pending epoch snapshot")
 
     return pending_epoch
 
 
 def snapshot_finalized_epoch() -> Optional[int]:
+    app.logger.info(f"--- Initiating finalized epoch snapshot ---")
     current_epoch = epochs.get_current_epoch()
-    app.logger.info(f"[+] Current epoch: {current_epoch}")
     finalized_epoch = epochs.get_finalized_epoch()
-    app.logger.info(f"[+] Finalized epoch: {finalized_epoch}")
+    app.logger.info(f"[*] Blockchain [current epoch: {current_epoch}] [finalized epoch: {finalized_epoch}] ")
 
     try:
         last_snapshot = finalized_epoch_snapshot.get_last_snapshot()
@@ -77,9 +78,10 @@ def snapshot_finalized_epoch() -> Optional[int]:
     except exceptions.MissingSnapshot:
         last_snapshot_epoch = 0
 
-    app.logger.info(f"[+] Last db epoch: {last_snapshot_epoch}")
+    app.logger.info(f"[*] Most recent finalized snapshot: {last_snapshot_epoch}")
 
     if finalized_epoch <= last_snapshot_epoch:
+        app.logger.info(f"[+] Finalized snapshots are up to date")
         return None
 
     proposal_rewards, proposal_rewards_sum = get_proposal_rewards_above_threshold(
@@ -99,15 +101,12 @@ def snapshot_finalized_epoch() -> Optional[int]:
             merkle_root,
             proposal_rewards_sum + user_rewards_sum,
         )
-        db.session.commit()
-        app.logger.info(f"[+] Saved {finalized_epoch} epoch snapshot to the DB")
-
-        return finalized_epoch
     else:
         finalized_epoch_snapshot.add_snapshot(finalized_epoch)
-        db.session.commit()
-        app.logger.info(f"[+] Saved {finalized_epoch} epoch snapshot to the DB")
-        return finalized_epoch
+
+    db.session.commit()
+    app.logger.info(f"[+] Saved {finalized_epoch} finalized epoch snapshot")
+    return finalized_epoch
 
 
 def get_epoch_status(epoch: int) -> EpochStatus:

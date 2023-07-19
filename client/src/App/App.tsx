@@ -21,6 +21,7 @@ import useAllocationsStore from 'store/allocations/store';
 import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
 import useTipsStore from 'store/tips/store';
+import getIsPreLaunch from 'utils/getIsPreLaunch';
 import triggerToast from 'utils/triggerToast';
 
 import { getValidatedProposalsFromLocalStorage } from './utils';
@@ -78,7 +79,7 @@ const App = (): ReactElement => {
       setIsCryptoMainValueDisplay(true);
     },
   });
-  const { data: currentEpoch } = useCurrentEpoch({
+  const { data: currentEpoch, isLoading: isLoadingCurrentEpoch } = useCurrentEpoch({
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
@@ -95,6 +96,7 @@ const App = (): ReactElement => {
   const [currentEpochLocal, setCurrentEpochLocal] = useState<number | null>(null);
   const [isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal] = useState<boolean | null>(null);
   const [chainIdLocal, setChainIdLocal] = useState<number | null>(null);
+  const isPreLaunch = getIsPreLaunch(currentEpoch);
 
   useEffect(() => {
     if (chainIdLocal && chainIdLocal !== networkConfig.id) {
@@ -274,7 +276,8 @@ const App = (): ReactElement => {
   }, [areOctantTipsAlwaysVisible, resetTipsStore]);
 
   const isLoading =
-    !isAllocationsInitialized ||
+    isLoadingCurrentEpoch ||
+    (!isPreLaunch && !isAllocationsInitialized) ||
     !isOnboardingInitialized ||
     !isSettingsInitialized ||
     isAccountChanging ||

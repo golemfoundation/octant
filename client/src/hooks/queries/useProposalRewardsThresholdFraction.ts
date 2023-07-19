@@ -1,21 +1,33 @@
-import { UseQueryResult, useQuery } from '@tanstack/react-query';
-import { formatUnits } from 'ethers/lib/utils';
+import { UseQueryOptions, UseQueryResult, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { apiGetProjectThreshold, Response } from 'api/calls/projectThreshold';
 import { QUERY_KEYS } from 'api/queryKeys';
-import useContractRewards from 'hooks/contracts/useContractRewards';
+import useSubscription from 'hooks/helpers/useSubscription';
+import { WebsocketListenEvent } from 'types/websocketEvents';
 
 import useCurrentEpoch from './useCurrentEpoch';
 
-export default function useProposalRewardsThresholdFraction(): UseQueryResult<number | undefined> {
-  const contractRewards = useContractRewards();
+export default function useProposalRewardsThresholdFraction(
+  options?: UseQueryOptions<Response, unknown, number, any>,
+): UseQueryResult<number> {
+  const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();
+
+  useSubscription<{ threshold: string }>(WebsocketListenEvent.threshold, data => {
+    queryClient.setQueryData(
+      QUERY_KEYS.proposalRewardsThresholdFraction,
+      parseFloat(data.threshold),
+    );
+  });
 
   return useQuery(
     QUERY_KEYS.proposalRewardsThresholdFraction,
-    () => contractRewards?.proposalRewardsThresholdFraction(currentEpoch!),
+    () => apiGetProjectThreshold(currentEpoch!),
     {
-      enabled: !!contractRewards && !!currentEpoch,
-      select: response => parseFloat(formatUnits(response!)),
+      enabled: !!currentEpoch,
+      select: response => parseFloat(response.threshold),
+      staleTime: Infinity,
+      ...options,
     },
   );
 }

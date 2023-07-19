@@ -8,9 +8,6 @@ else
 	PREFIX="app-${CI_PIPELINE_ID}"
 fi
 
-export EPOCH_DURATION=300
-export DECISION_WINDOW=120
-
 if [[ "$TYPE" == "e2e" ]]; then
 	## E2E tests deployment
 	## 	contracts are always deployed

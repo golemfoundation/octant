@@ -1,19 +1,29 @@
-import { UseQueryResult, useQuery } from '@tanstack/react-query';
+import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
 import { useAccount } from 'wagmi';
 
+import { apiGetWithdrawableRewards, Response } from 'api/calls/withdrawableRewards';
 import { QUERY_KEYS } from 'api/queryKeys';
-import useContractPayouts from 'hooks/contracts/useContractPayouts';
 
-export default function useWithdrawableUserEth(): UseQueryResult<BigNumber> {
+import useCurrentEpoch from './useCurrentEpoch';
+
+export default function useWithdrawableUserEth(
+  options?: UseQueryOptions<Response, unknown, BigNumber, any>,
+): UseQueryResult<BigNumber> {
   const { address } = useAccount();
-  const contractPayouts = useContractPayouts();
+  const { data: currentEpoch } = useCurrentEpoch();
 
   return useQuery(
     QUERY_KEYS.withdrawableUserEth,
-    () => contractPayouts?.withdrawableUserETH(address!),
+    () => apiGetWithdrawableRewards(address as string),
     {
-      enabled: !!contractPayouts && !!address,
+      enabled: !!address && !!currentEpoch,
+      select: data => {
+        const sum = data.reduce((prev, { amount }) => prev + parseFloat(amount), 0);
+        return parseUnits(sum.toString());
+      },
+      ...options,
     },
   );
 }

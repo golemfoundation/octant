@@ -40,7 +40,9 @@ const Button = <T extends ButtonProps>(
   let Component;
   if (to) {
     Component = Link;
-    Object.assign(filteredProps, { to });
+    Object.assign(filteredProps, {
+      to: isActionDisabled ? undefined : to,
+    });
   } else if (href) {
     Component = 'a';
     Object.assign(filteredProps, { href, rel, target });

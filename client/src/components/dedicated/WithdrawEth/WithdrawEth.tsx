@@ -1,23 +1,22 @@
 import cx from 'classnames';
-import { useFormik } from 'formik';
+import { parseUnits } from 'ethers/lib/utils';
+import { Vault } from 'octant-typechain-types';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
-import InputsCryptoFiat from 'components/dedicated/InputsCryptoFiat/InputsCryptoFiat';
 import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useWithdrawEth from 'hooks/mutations/useWithdrawEth';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
 import triggerToast from 'utils/triggerToast';
 
-import { FormFields } from './types';
-import { validationSchema, formInitialValues } from './utils';
 import styles from './WithdrawEth.module.scss';
 
 const WithdrawEth: FC = () => {
@@ -26,6 +25,8 @@ const WithdrawEth: FC = () => {
   });
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: withdrawableUserEth } = useWithdrawableUserEth();
+  const { data: withdrawableRewards, isFetched: isWithdrawableRewardsFetched } =
+    useWithdrawableRewards();
   const { data: isDecisionWindowOpen, refetch: refetchIsDecisionWindowOpen } =
     useIsDecisionWindowOpen();
   const { data: currentEpochProps } = useCurrentEpochProps();
@@ -38,15 +39,22 @@ const WithdrawEth: FC = () => {
     },
   });
 
-  const formik = useFormik<FormFields>({
-    initialValues: formInitialValues,
-    onSubmit: ({ valueToWithdraw }) => withdrawEthMutation.mutateAsync(valueToWithdraw),
-    validateOnChange: true,
-    validationSchema: validationSchema(withdrawableUserEth),
-  });
+  const withdrawEth = () => {
+    if (!withdrawableRewards?.length) {
+      return;
+    }
+    const value: Vault.WithdrawPayloadStruct[] = withdrawableRewards.map(
+      ({ amount, epoch, proof }) => ({
+        amount: parseUnits(amount),
+        epoch: parseUnits(epoch.toString()),
+        proof,
+      }),
+    );
+    withdrawEthMutation.mutateAsync(value);
+  };
 
   return (
-    <form className={styles.form} onSubmit={formik.handleSubmit}>
+    <div className={styles.root}>
       {isDecisionWindowOpen && (
         <BoxRounded className={styles.element} isGrey isVertical>
           {t('withdrawalsDistributedEpoch', {
@@ -68,39 +76,18 @@ const WithdrawEth: FC = () => {
         isVertical
         title={t('rewardsBudget')}
       >
-        <DoubleValue
-          cryptoCurrency="ethereum"
-          isError={!formik.isValid}
-          valueCrypto={withdrawableUserEth}
-        />
-      </BoxRounded>
-      <BoxRounded className={styles.element} isGrey isVertical>
-        <InputsCryptoFiat
-          cryptoCurrency="ethereum"
-          error={formik.errors.valueToWithdraw}
-          inputCryptoProps={{
-            isDisabled: withdrawEthMutation.isLoading,
-            name: 'valueToWithdraw',
-            onChange: value => {
-              formik.setFieldValue('valueToWithdraw', value);
-            },
-            onClear: formik.resetForm,
-            suffix: 'ETH',
-            value: formik.values.valueToWithdraw,
-          }}
-          label={t('amountToWithdraw')}
-        />
+        <DoubleValue cryptoCurrency="ethereum" valueCrypto={withdrawableUserEth} />
       </BoxRounded>
       <Button
         className={cx(styles.element, styles.button)}
-        isDisabled={!formik.isValid}
+        isDisabled={!isWithdrawableRewardsFetched}
         isHigh
-        isLoading={formik.isSubmitting}
+        isLoading={withdrawEthMutation.isLoading}
         label={t('requestWithdrawal')}
-        type="submit"
+        onClick={withdrawEth}
         variant="cta"
       />
-    </form>
+    </div>
   );
 };
 

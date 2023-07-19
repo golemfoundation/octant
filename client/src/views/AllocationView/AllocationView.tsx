@@ -12,9 +12,8 @@ import AllocationNavigation from 'components/dedicated/AllocationNavigation/Allo
 import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
 import AllocationTipTiles from 'components/dedicated/AllocationTipTiles/AllocationTipTiles';
 import ModalAllocationValuesEdit from 'components/dedicated/ModalAllocationValuesEdit/ModalAllocationValuesEdit';
-import useAllocate from 'hooks/mutations/useAllocate';
+import useAllocate from 'hooks/events/useAllocate';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useIndividualProposalRewards from 'hooks/queries/useIndividualProposalRewards';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
@@ -52,7 +51,6 @@ const AllocationView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { refetch: refetchIndividualProposalRewards } = useIndividualProposalRewards();
   const { data: matchedProposalRewards, refetch: refetchMatchedProposalRewards } =
     useMatchedProposalRewards();
   const { allocations, rewardsForProposals, setAllocations } = useAllocationsStore(state => ({
@@ -61,7 +59,7 @@ const AllocationView = (): ReactElement => {
     setAllocations: state.setAllocations,
   }));
 
-  const allocateMutation = useAllocate({
+  const allocateEvent = useAllocate({
     onSuccess: async () => {
       setCurrentView('edit');
       setSelectedItemAddress(null);
@@ -70,7 +68,6 @@ const AllocationView = (): ReactElement => {
       });
       await refetchMatchedProposalRewards();
       await refetchUserAllocations();
-      await refetchIndividualProposalRewards();
       setAllocations([
         ...allocations.filter(allocation => {
           const allocationValue = allocationValues.find(({ address }) => address === allocation);
@@ -112,7 +109,7 @@ const AllocationView = (): ReactElement => {
   }, [allocations, userAllocations, rewardsForProposals]);
 
   const onAllocate = () => {
-    allocateMutation.mutate(allocationValues);
+    allocateEvent.emit(allocationValues);
   };
 
   useEffect(() => {
@@ -182,7 +179,7 @@ const AllocationView = (): ReactElement => {
           <AllocationNavigation
             areButtonsDisabled={areButtonsDisabled}
             currentView={currentView}
-            isLoading={allocateMutation.isLoading}
+            isLoading={allocateEvent.isLoading}
             onAllocate={onAllocate}
             onResetValues={onResetAllocationValues}
             setCurrentView={setCurrentView}

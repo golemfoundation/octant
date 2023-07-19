@@ -7,7 +7,7 @@ import UseContractParams from './types';
 
 export default function useContractErc20({
   signerOrProvider,
-  tokenAddress = env.contracts.glmAddress,
+  tokenAddress = env.contractGlmAddress,
 }: UseContractParams): ERC20 | null {
   return useMemo(() => {
     return signerOrProvider ? ERC20__factory.connect(tokenAddress, signerOrProvider) : null;

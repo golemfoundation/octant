@@ -16,60 +16,35 @@ spec:
   sources:
   # https://linear.app/golemfoundation/issue/CAQD-142/move-helm-git-repository-to-devops-space
   - repoURL: 'https://git.ring0.cc/mike/helm/raw/branch/master'
-    targetRevision: 0.1.74
+    targetRevision: 0.1.90
     chart: octant
     helm:
       parameters:
-        - name: "secureIngress"
-          value: "$SECURE_INGRESS"
+        # From gitlab-ci.yml
         - name: "image.tag"
           value: "$IMAGE_TAG"
+        # From CI/CD vars
+        - name: "secureIngress"
+          value: "$SECURE_INGRESS"
         - name: "contracts.deploy"
           value: "$DEPLOY_CONTRACTS"
         - name: "contracts.epochDuration"
           value: "$EPOCH_DURATION"
         - name: "contracts.decisionWindow"
           value: "$DECISION_WINDOW"
-        # New (v1) addresses used in Backend and Subgraph
-        - name: "contracts.addresses.startBlock"
-          value: "$BLOCK_NUMBER"
+        # Hardcoded in this file
         - name: "contracts.addresses.multisigAddress"
           value: "0xfC9527820A76b515a2c66C22e0575501DEDD8281"
         - name: "contracts.addresses.allocations"
           value: "0x0000000000000000000000000000000000000000"
-        - name: "contracts.addresses.deposits"
-          value: "$DEPOSITS_CONTRACT_ADDRESS"
-        - name: "contracts.addresses.epochs"
-          value: "$EPOCHS_CONTRACT_ADDRESS"
-        - name: "contracts.addresses.proposals"
-          value: "$PROPOSALS_CONTRACT_ADDRESS"
-        - name: "contracts.addresses.withdrawals_target"
-          value: "$WITHDRAWALS_TARGET_CONTRACT_ADDRESS"
-        # Old (v0) addresses still in use by Web Client
-        - name: "contracts.old_addresses.startBlock"
-          value: "$OLD_BLOCK_NUMBER"
-        - name: "contracts.old_addresses.allocations"
-          value: "$VITE_ALLOCATIONS_ADDRESS"
-        - name: "contracts.old_addresses.allocations_storage"
-          value: "$VITE_ALLOCATIONS_STORAGE_ADDRESS"
-        - name: "contracts.old_addresses.deposits"
-          value: "$VITE_DEPOSITS_ADDRESS"
-        - name: "contracts.old_addresses.tracker"
-          value: "$VITE_TRACKER_ADDRESS"
-        - name: "contracts.old_addresses.epochs"
-          value: "$VITE_EPOCHS_ADDRESS"
-        - name: "contracts.old_addresses.proposals"
-          value: "$VITE_PROPOSALS_ADDRESS"
-        - name: "contracts.old_addresses.rewards"
-          value: "$VITE_REWARDS_ADDRESS"
-        - name: "contracts.old_addresses.octant_oracle"
-          value: "$VITE_OCTANT_ORACLE_ADDRESS"
-        - name: "contracts.old_addresses.octant_payouts_manager"
-          value: "$VITE_OCTANT_PAYOUTS_MANAGER_ADDRESS"
-        - name: "contracts.old_addresses.octant_payouts"
-          value: "$VITE_OCTANT_PAYOUTS_ADDRESS"
-        - name: "contracts.old_addresses.withdrawals_target"
-          value: "$VITE_WITHDRAWALS_TARGET_ADDRESS"
+        - name: "backendServer.schedulerEnabled"
+          value: "True"
+        - name: "backendServer.vaultConfirmWithdrawals"
+          value: "True"
+        - name: "backendServer.epoch0End"
+          value: "$EPOCH_0_END"
+        - name: "backendServer.epoch1End"
+          value: "$EPOCH_1_END"
   syncPolicy:
     automated:
       prune: true

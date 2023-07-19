@@ -1,6 +1,11 @@
-import { goerli, sepolia } from 'wagmi/chains';
+import { getNetworkConfig } from './index';
 
-import { getNetworkConfig, NetworkConfig } from './index';
+import {
+  localNetworkConfig,
+  goerliNetworkConfig,
+  sepoliaNetworkConfig,
+  mainnetNetworkConfig,
+} from './configs';
 
 jest.mock('wagmi/chains', () => ({
   goerli: 'goerli-chain-mock',
@@ -8,67 +13,33 @@ jest.mock('wagmi/chains', () => ({
 }));
 jest.mock('env', () => ({}));
 
-const localNetworkConfig: NetworkConfig = {
-  chains: [],
-  etherscanAddress: '',
-  id: -1,
-  name: 'Local',
-};
-
-const goerliNetworkConfig: NetworkConfig = {
-  chains: [goerli],
-  etherscanAddress: 'https://goerli.etherscan.io',
-  id: 5,
-  name: 'Goerli',
-};
-
-const sepoliaNetworkConfig: NetworkConfig = {
-  chains: [sepolia],
-  etherscanAddress: 'https://sepolia.etherscan.io',
-  id: 11155111,
-  name: 'Sepolia',
-};
-
 describe('networkConfig', () => {
-  it("should return Goerli networkConfig when env.network is Goerli & env.isUsingLocalContracts is 'false'", () => {
+  it('should return Mainnet networkConfig when env.network is Mainnet', () => {
     // @ts-expect-error Only part of env file is passed here.
-    expect(getNetworkConfig({ isUsingLocalContracts: 'false', network: 'Goerli' })).toEqual(
-      goerliNetworkConfig,
-    );
+    expect(getNetworkConfig({ network: 'Mainnet' })).toEqual(mainnetNetworkConfig);
   });
 
-  it("should return Sepolia networkConfig when env.network is Sepolia & env.isUsingLocalContracts is 'false'", () => {
+  it('should return Goerli networkConfig when env.network is Goerli', () => {
     // @ts-expect-error Only part of env file is passed here.
-    expect(getNetworkConfig({ isUsingLocalContracts: 'false', network: 'Sepolia' })).toEqual(
-      sepoliaNetworkConfig,
-    );
+    expect(getNetworkConfig({ network: 'Goerli' })).toEqual(goerliNetworkConfig);
   });
 
-  it("should return Sepolia networkConfig when env.network is not Goerli and not Sepolia & env.isUsingLocalContracts is 'false'", () => {
+  it('should return Sepolia networkConfig when env.network is Sepolia', () => {
+    // @ts-expect-error Only part of env file is passed here.
+    expect(getNetworkConfig({ network: 'Sepolia' })).toEqual(sepoliaNetworkConfig);
+  });
+
+  it('should return Local networkConfig when env.network is Local', () => {
     expect(
       // @ts-expect-error Only part of env file is passed here.
-      getNetworkConfig({ isUsingLocalContracts: 'false', network: 'SomeOtherNetwork' }),
+      getNetworkConfig({ network: 'Local' }),
+    ).toEqual(localNetworkConfig);
+  });
+
+  it('should return Sepolia networkConfig when env.network is not Goerli and not Sepolia', () => {
+    expect(
+      // @ts-expect-error Only part of env file is passed here.
+      getNetworkConfig({ network: 'SomeOtherNetwork' }),
     ).toEqual(sepoliaNetworkConfig);
-  });
-
-  it("should return local networkConfig when env.network is Goerli & env.isUsingLocalContracts is 'true'", () => {
-    expect(
-      // @ts-expect-error Only part of env file is passed here.
-      getNetworkConfig({ isUsingLocalContracts: 'true', network: 'SomeOtherNetwork' }),
-    ).toEqual(localNetworkConfig);
-  });
-
-  it("should return local networkConfig when env.network is Sepolia & env.isUsingLocalContracts is 'true'", () => {
-    expect(
-      // @ts-expect-error Only part of env file is passed here.
-      getNetworkConfig({ isUsingLocalContracts: 'true', network: 'SomeOtherNetwork' }),
-    ).toEqual(localNetworkConfig);
-  });
-
-  it("should return local networkConfig when env.network is not Goerli and not Sepolia & env.isUsingLocalContracts is 'true'", () => {
-    expect(
-      // @ts-expect-error Only part of env file is passed here.
-      getNetworkConfig({ isUsingLocalContracts: 'true', network: 'SomeOtherNetwork' }),
-    ).toEqual(localNetworkConfig);
   });
 });

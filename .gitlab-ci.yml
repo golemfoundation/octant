@@ -294,6 +294,7 @@ Cypress E2E Tests:
     CYPRESS_DOCKER_RUN: "true"
     CI: "true"
     METAMASK_VERSION: "10.25.0"
+    SECRET_WORDS: test test test test test test test test test test test junk
   artifacts:
     when: on_failure
     name: cypress
@@ -400,6 +401,8 @@ Deploy PROD App:
 Destroy MR App:
   extends:
     - .destroy
+  variables:
+    ENV_TYPE: "mr"
   rules:
     - !reference [.rules, on_mr_manual]
   needs: []
@@ -410,6 +413,8 @@ Destroy MR App:
 Destroy UAT App:
   extends:
     - .destroy
+  variables:
+    ENV_TYPE: "uat"
   rules:
     - !reference [.rules, on_mr_manual]
   needs: []

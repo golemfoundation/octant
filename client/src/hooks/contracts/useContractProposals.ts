@@ -7,7 +7,7 @@ import { provider } from './providers';
 import UseContractParams from './types';
 
 export default function useContractProposals({
-  tokenAddress = env.contracts.proposalsAddress,
+  tokenAddress = env.contractProposalsAddress,
   signerOrProvider = provider,
 }: UseContractParams = {}): Proposals | null {
   return useMemo(() => {

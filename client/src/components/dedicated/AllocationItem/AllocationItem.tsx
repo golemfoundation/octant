@@ -5,9 +5,10 @@ import { useAccount } from 'wagmi';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Svg from 'components/core/Svg/Svg';
 import ProposalLoadingStates from 'components/dedicated/ProposalLoadingStates/ProposalLoadingStates';
-import useIndividualProposalRewards from 'hooks/queries/useIndividualProposalRewards';
+import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalRewardsThresholdFraction from 'hooks/queries/useProposalRewardsThresholdFraction';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
+import useUsersAllocationsSum from 'hooks/queries/useUsersAllocationsSum';
 import useAllocationsStore from 'store/allocations/store';
 import { checkMark, pencil } from 'svg/misc';
 import getCutOffValueBigNumber from 'utils/getCutOffValueBigNumber';
@@ -29,7 +30,8 @@ const AllocationItem: FC<AllocationItemProps> = ({
 }) => {
   const { isConnected } = useAccount();
   const { data: proposalRewardsThresholdFraction } = useProposalRewardsThresholdFraction();
-  const { data: individualProposalRewards } = useIndividualProposalRewards();
+  const { data: matchedProposalRewards } = useMatchedProposalRewards();
+  const { data: usersAllocationsSum } = useUsersAllocationsSum();
   const { data: proposalsIpfs, isLoading } = useProposalsIpfs([address]);
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
@@ -44,7 +46,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   const valueToRender = getFormattedEthValue(value).fullString;
 
   const cutOffValue = getCutOffValueBigNumber(
-    individualProposalRewards?.sum,
+    usersAllocationsSum,
     proposalRewardsThresholdFraction,
   );
 
@@ -52,8 +54,8 @@ const AllocationItem: FC<AllocationItemProps> = ({
     ? totalValueOfAllocations.gte(cutOffValue)
     : false;
 
-  const individualProposalReward = individualProposalRewards?.projects.find(
-    ({ address: individualProposalRewardAddress }) => individualProposalRewardAddress === address,
+  const proposalMatchedProposalRewards = matchedProposalRewards?.find(
+    ({ address: matchedProposalRewardsAddress }) => address === matchedProposalRewardsAddress,
   );
 
   return (
@@ -82,8 +84,8 @@ const AllocationItem: FC<AllocationItemProps> = ({
           <div className={styles.valuesBox}>
             <div className={styles.ethNeeded}>
               <div className={cx(styles.dot, isProjectFounded && styles.isProjectFounded)} />
-              {individualProposalReward &&
-                `${getFormattedEthValue(individualProposalReward.donated).value} of ${
+              {proposalMatchedProposalRewards &&
+                `${getFormattedEthValue(proposalMatchedProposalRewards?.sum).value} of ${
                   getFormattedEthValue(cutOffValue).fullString
                 } needed`}
             </div>

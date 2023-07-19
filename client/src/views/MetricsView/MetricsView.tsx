@@ -1,3 +1,4 @@
+import { parseUnits } from 'ethers/lib/utils';
 import React, { ReactElement } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 
@@ -12,10 +13,9 @@ import { ETH_STAKED } from 'constants/stake';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
-import useGlmLocked from 'hooks/queries/useGlmLocked';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useLockedRatio from 'hooks/queries/useLockedRatio';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
+import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useTipsStore from 'store/tips/store';
 
@@ -28,19 +28,18 @@ const MetricsView = (): ReactElement => {
     wasCheckStatusAlreadyClosed: state.data.wasCheckStatusAlreadyClosed,
   }));
   const { refetch: refetchCurrentEpochProps } = useCurrentEpochProps();
+  const { data: lockedSummaryLatest, refetch: refetchLockedSummaryLatest } =
+    useLockedSummaryLatest();
   const { data: currentEpoch, refetch: refetchCurrentEpoch } = useCurrentEpoch({
     refetchOnWindowFocus: true,
   });
   const { refetch: refetchProposals } = useProposalsContract();
   const { data: isDecisionWindowOpen, refetch: refetchIsDecisionWindowOpen } =
     useIsDecisionWindowOpen();
-  const { data: glmLocked, refetch: refetchGlmLocked } = useGlmLocked();
-  const { data: lockedRatio, refetch: refetchLockedRatio } = useLockedRatio();
 
   const onCountingFinish = () => {
     refetchCurrentEpoch();
-    refetchGlmLocked();
-    refetchLockedRatio();
+    refetchLockedSummaryLatest();
     refetchIsDecisionWindowOpen();
     refetchProposals();
     refetchCurrentEpochProps();
@@ -86,7 +85,14 @@ const MetricsView = (): ReactElement => {
             />
           </BoxRounded>
           <BoxRounded alignment="left" className={styles.box} isVertical title={t('glmLocked')}>
-            <DoubleValue cryptoCurrency="golem" valueCrypto={glmLocked} />
+            <DoubleValue
+              cryptoCurrency="golem"
+              valueCrypto={
+                lockedSummaryLatest?.lockedTotal
+                  ? parseUnits(lockedSummaryLatest?.lockedTotal)
+                  : undefined
+              }
+            />
           </BoxRounded>
         </div>
         <BoxRounded
@@ -95,10 +101,12 @@ const MetricsView = (): ReactElement => {
           isVertical
           title={t('glmLockedTotalSupplyPercentage')}
         >
-          <DoubleValue valueString={lockedRatio} />
+          <DoubleValue valueString={lockedSummaryLatest?.lockedRatio} />
           <ProgressBar
             className={styles.lockedRatioProgressBar}
-            progressPercentage={lockedRatio ? parseFloat(lockedRatio) : 0}
+            progressPercentage={
+              lockedSummaryLatest ? parseInt(lockedSummaryLatest?.lockedRatio, 10) : 0
+            }
           />
         </BoxRounded>
       </div>

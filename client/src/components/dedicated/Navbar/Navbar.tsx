@@ -37,7 +37,7 @@ const Navbar: FC<NavbarProps> = ({ navigationBottomSuffix, tabs }) => {
             <div className={styles.navigationBottomSuffix}>{navigationBottomSuffix}</div>
           )}
           <div className={styles.buttons}>
-            {tabs.map(({ icon, label, to, isActive }, index) => (
+            {tabs.map(({ icon, label, to, isActive, isDisabled = false }, index) => (
               <Button
                 // eslint-disable-next-line react/no-array-index-key
                 key={index}
@@ -45,6 +45,7 @@ const Navbar: FC<NavbarProps> = ({ navigationBottomSuffix, tabs }) => {
                 dataTest={`Navbar__Button--${label}`}
                 Icon={<Svg img={icon} size={isDesktop ? 4 : 3.2} />}
                 isActive={isActive}
+                isDisabled={isDisabled}
                 label={label}
                 to={to}
                 variant="iconVertical"

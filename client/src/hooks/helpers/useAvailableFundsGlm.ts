@@ -8,7 +8,7 @@ export default function useAvailableFundsGlm() {
 
   return useBalance({
     address,
-    token: env.contracts.glmAddress as `0x{${string}}`,
+    token: env.contractGlmAddress as `0x{${string}}`,
     watch: true,
   });
 }
