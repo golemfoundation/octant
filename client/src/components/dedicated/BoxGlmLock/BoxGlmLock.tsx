@@ -10,6 +10,7 @@ import ModalGlmLock from 'components/dedicated/ModalGlmLock/ModalGlmLock';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
+import getIsPreLaunch from 'utils/getIsPreLaunch';
 
 import BoxGlmLockProps from './types';
 
@@ -25,7 +26,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
   const { data: depositsValue } = useDepositValue();
   const { data: currentEpoch } = useCurrentEpoch();
 
-  const isEpoch1 = currentEpoch === 1;
+  const isPreLaunch = getIsPreLaunch(currentEpoch);
 
   const sections: SectionProps[] = [
     {
@@ -33,7 +34,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
         cryptoCurrency: 'golem',
         valueCrypto: depositsValue,
       },
-      isDisabled: isEpoch1 && !isConnected,
+      isDisabled: isPreLaunch && !isConnected,
       label: t('current'),
     },
     {
@@ -43,7 +44,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
         cryptoCurrency: 'golem',
         valueCrypto: depositEffectiveAtCurrentEpoch,
       },
-      isDisabled: isEpoch1 && !isConnected,
+      isDisabled: isPreLaunch && !isConnected,
       label: t('effective'),
       onTooltipClick: () => setIsModalEffectiveLockedBalanceOpen(true),
     },
@@ -55,7 +56,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
         alignment="left"
         buttonProps={{
           dataTest: 'BoxGlmLock__Button',
-          isDisabled: !isConnected,
+          isDisabled: !isConnected || isPreLaunch,
           isHigh: true,
           label:
             !depositsValue || (!!depositsValue && depositsValue.isZero())

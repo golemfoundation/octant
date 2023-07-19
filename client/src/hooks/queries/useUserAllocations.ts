@@ -1,10 +1,10 @@
 import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
-import { IAllocationsStorage } from 'octant-typechain-types';
+import { parseUnits } from 'ethers/lib/utils';
 import { useAccount } from 'wagmi';
 
+import { apiGetUserAllocations, Response as ApiResponse } from 'api/calls/userAllocations';
 import { QUERY_KEYS } from 'api/queryKeys';
-import useContractAllocationsStorage from 'hooks/contracts/useContractAllocationsStorage';
 
 import useCurrentEpoch from './useCurrentEpoch';
 
@@ -16,26 +16,20 @@ type Response = {
 };
 
 export default function useUserAllocations(
-  options?: UseQueryOptions<
-    IAllocationsStorage.AllocationStructOutput[] | undefined,
-    unknown,
-    Response,
-    ['userAllocations']
-  >,
-): UseQueryResult<Response> {
+  options?: UseQueryOptions<ApiResponse, unknown, Response | undefined, ['userAllocations']>,
+): UseQueryResult<Response | undefined> {
   const { address } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
-  const contractAllocationsStorage = useContractAllocationsStorage();
 
   return useQuery(
     QUERY_KEYS.userAllocations,
-    () => contractAllocationsStorage?.getUserAllocations(currentEpoch! - 1, address!),
+    () => apiGetUserAllocations(address as string, (currentEpoch! - 1) as number),
     {
       enabled: !!currentEpoch && currentEpoch > 0 && !!address,
       select: response => {
         const userAllocationsFromBackend = response!.map(element => ({
-          address: element[0],
-          value: element[1],
+          address: element.address,
+          value: parseUnits(element.amount, 'wei'),
         }));
 
         return {

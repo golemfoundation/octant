@@ -1,22 +1,19 @@
 import { UseMutationResult, useMutation, UseMutationOptions } from '@tanstack/react-query';
 import { ContractTransaction } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
+import { Vault } from 'octant-typechain-types';
 import { useSigner } from 'wagmi';
 
-import { DEPOSIT_WITHDRAW_GAS_LIMIT } from 'constants/contracts';
-import useContractPayoutsManager from 'hooks/contracts/useContractPayoutsManager';
+import useContractVault from 'hooks/contracts/useContractVault';
 
 export default function useWithdrawEth(
-  options?: UseMutationOptions<ContractTransaction, unknown, string>,
-): UseMutationResult<ContractTransaction, unknown, string> {
+  options?: UseMutationOptions<ContractTransaction, unknown, Vault.WithdrawPayloadStruct[]>,
+): UseMutationResult<ContractTransaction, unknown, Vault.WithdrawPayloadStruct[]> {
   const { data: signer } = useSigner();
-  const contractPayoutsManager = useContractPayoutsManager({ signerOrProvider: signer });
+  const contractVault = useContractVault({ signerOrProvider: signer });
 
   return useMutation({
     mutationFn: async value => {
-      const transactionResponse = await contractPayoutsManager!.withdrawUser(parseUnits(value), {
-        gasLimit: DEPOSIT_WITHDRAW_GAS_LIMIT,
-      });
+      const transactionResponse = await contractVault!.batchWithdraw(value);
       await transactionResponse.wait(1);
       return transactionResponse;
     },

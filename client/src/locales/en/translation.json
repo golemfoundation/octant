@@ -28,7 +28,8 @@
     "done": "Done",
     "valueCantBeEmpty": "Value can't be empty",
     "personal": "Personal",
-    "proposalForbiddenOperation": "As a proposal you are not able to proceed with this operation"
+    "proposalForbiddenOperation": "As a proposal you are not able to proceed with this operation",
+    "history": "History"
   },
   "components": {
     "dedicated": {
@@ -113,12 +114,12 @@
         "cantUnlock": "You can't unlock more than you have locked",
         "dontHaveEnough": "You don't have enough to lock that amount"
       },
-      "history": {
+      "historyItem": {
         "allocatedFunds": "Allocated funds",
-        "history": "History",
         "lockedGLM": "Locked GLM",
+        "unlockedGLM": "Unlocked GLM",
         "projects": "Projects",
-        "unlockedGLM": "Unlocked GLM"
+        "withdrawnFunds": "Withdrawn funds"
       },
       "metricsTimeSection": {
         "descriptionText": "Allocation is the currently active governance period of the epoch when you can allocate funds to projects you want to support.",
@@ -171,8 +172,7 @@
         "withdrawalsDistributedEpoch": "Withdrawals are distributed when Epoch {{currentEpoch}} ends",
         "rewardsBudget": "Rewards Budget",
         "amountToWithdraw": "Amount to withdraw",
-        "requestWithdrawal": "Request withdrawal",
-        "dontHaveThatMuchToWithdraw": "You don't have that much to withdraw"
+        "requestWithdrawal": "Request withdrawal"
       }
     }
   },
@@ -223,6 +223,10 @@
       "tip": {
         "title": "Withdraw ETH",
         "text": "Rewards you allocate to yourself can be withdrawn to your wallet here in the Earn view"
+      },
+      "preLaunch": {
+        "timerTitle": "Octant launches in",
+        "emptyHistory": "You haven’t made any transactions yet"
       }
     },
     "metrics": {

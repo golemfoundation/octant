@@ -6,7 +6,7 @@ import env from 'env';
 import UseContractParams from './types';
 
 export default function useContractDeposits({
-  tokenAddress = env.contracts.depositsAddress,
+  tokenAddress = env.contractDepositsAddress,
   signerOrProvider,
 }: UseContractParams): Deposits | null {
   return useMemo(() => {

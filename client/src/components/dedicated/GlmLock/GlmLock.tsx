@@ -21,8 +21,6 @@ import useUnlock from 'hooks/mutations/useUnlock';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
-import useLocks from 'hooks/subgraph/useLocks';
-import useUnlocks from 'hooks/subgraph/useUnlocks';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './GlmLock.module.scss';
@@ -62,7 +60,6 @@ const GlmLock: FC<GlmLockProps> = ({
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.glmLock',
   });
-  const { depositsAddress } = env.contracts;
   const { address } = useAccount();
   const { data: signer } = useSigner();
   const [transactionHash, setTransactionHash] = useState<string>('');
@@ -73,11 +70,9 @@ const GlmLock: FC<GlmLockProps> = ({
   const { data: dataAvailableFunds } = useAvailableFundsGlm();
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
   const { data: proposalsAddresses } = useProposalsContract();
-  const { refetch: refetchDeposits } = useLocks();
-  const { refetch: refetchWithdrawns } = useUnlocks();
   const [approvalState, approveCallback] = useMaxApproveCallback(
     BigNumber.from(dataAvailableFunds?.value || BigNumber.from(1)),
-    depositsAddress,
+    env.contractDepositsAddress,
     signer,
     address,
   );
@@ -85,8 +80,6 @@ const GlmLock: FC<GlmLockProps> = ({
   const onRefetch = async (): Promise<void> => {
     await refetchDeposit();
     await refetchDepositEffectiveAtCurrentEpoch();
-    await refetchDeposits();
-    await refetchWithdrawns();
   };
 
   const onMutate = async (): Promise<void> => {

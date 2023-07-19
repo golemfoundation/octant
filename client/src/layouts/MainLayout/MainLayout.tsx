@@ -12,7 +12,6 @@ import Navbar from 'components/dedicated/Navbar/Navbar';
 import WalletModal from 'components/dedicated/WalletModal/WalletModal';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import networkConfig from 'constants/networkConfig';
-import env from 'env';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
@@ -21,6 +20,7 @@ import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import { octant } from 'svg/logo';
 import { chevronBottom } from 'svg/misc';
 import getDifferenceInWeeks from 'utils/getDifferenceInWeeks';
+import getIsPreLaunch from 'utils/getIsPreLaunch';
 import getTimeDistance from 'utils/getTimeDistance';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
@@ -48,12 +48,8 @@ const MainLayout: FC<MainLayoutProps> = ({
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { pathname } = useLocation();
 
-  const tabsWithIsActive = navigationTabs.map(tab => ({
-    ...tab,
-    isActive: tab.isActive || pathname === tab.to,
-  }));
-
   const isEpoch1 = currentEpoch === 1;
+  const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isAllocationRoot = !!useMatch(ROOT_ROUTES.allocation.absolute);
   const isProposalRoot =
     !!useMatch(ROOT_ROUTES.proposal.absolute) ||
@@ -61,6 +57,12 @@ const MainLayout: FC<MainLayoutProps> = ({
   const isProposalsRoot = !!useMatch(ROOT_ROUTES.proposals.absolute);
 
   const showAllocationPeriod = isAllocationRoot || isProposalRoot || isProposalsRoot;
+
+  const tabsWithIsActive = navigationTabs.map(tab => ({
+    ...tab,
+    isActive: tab.isActive || pathname === tab.to,
+    isDisabled: isPreLaunch && tab.to !== ROOT_ROUTES.earn.absolute,
+  }));
 
   const allocationPeriod = useMemo(() => {
     if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
@@ -105,7 +107,7 @@ const MainLayout: FC<MainLayoutProps> = ({
               <div className={styles.header} data-test="Header__element">
                 <div className={styles.logoWrapper}>
                   <Svg img={octant} size={4} />
-                  {env.isTestnet === 'true' && (
+                  {networkConfig.isTestnet && (
                     <div className={styles.testnetIndicatorWrapper}>
                       <div className={styles.testnetIndicator}>{networkConfig.name}</div>
                     </div>
@@ -158,6 +160,7 @@ const MainLayout: FC<MainLayoutProps> = ({
                   ) : (
                     <Button
                       dataTest="ConnectWalletButton"
+                      isDisabled={isPreLaunch}
                       isSmallFont
                       label={t('connectWallet')}
                       onClick={() => setIsModalConnectWalletOpen(true)}

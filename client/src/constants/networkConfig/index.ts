@@ -1,38 +1,26 @@
-import { goerli, sepolia } from 'wagmi/chains';
-
 import env from 'env';
 import { Env } from 'types/env';
 
-export type NetworkConfig = {
-  chains: [typeof goerli] | [typeof sepolia] | [];
-  etherscanAddress: string;
-  id: number;
-  name: 'Goerli' | 'Local' | 'Sepolia';
-};
+import {
+  goerliNetworkConfig,
+  localNetworkConfig,
+  sepoliaNetworkConfig,
+  mainnetNetworkConfig,
+} from './configs';
+import { NetworkConfig } from './types';
 
 export const getNetworkConfig = (envConfig: Env): NetworkConfig => {
-  // TODO Following OCT-316 proper local config needs to be defined.
-  if (envConfig.isUsingLocalContracts === 'true') {
-    return {
-      chains: [],
-      etherscanAddress: '',
-      id: -1,
-      name: 'Local',
-    };
+  switch (envConfig.network) {
+    case 'Goerli':
+      return goerliNetworkConfig;
+    case 'Local':
+      return localNetworkConfig;
+    case 'Mainnet':
+      return mainnetNetworkConfig;
+    case 'Sepolia':
+    default:
+      return sepoliaNetworkConfig;
   }
-  return envConfig.network === 'Goerli'
-    ? {
-        chains: [goerli],
-        etherscanAddress: 'https://goerli.etherscan.io',
-        id: 5,
-        name: 'Goerli',
-      }
-    : {
-        chains: [sepolia],
-        etherscanAddress: 'https://sepolia.etherscan.io',
-        id: 11155111,
-        name: 'Sepolia',
-      };
 };
 
 const networkConfig = getNetworkConfig(env);

@@ -12,7 +12,7 @@ export default function getDurationBetweenTimestamps(
   startTimestamp: number,
   endTimestamp = Date.now(),
 ): DurationWithoutMonthsAndYears {
-  const differenceInDaysValue = differenceInDays(endTimestamp, startTimestamp);
+  const differenceInDaysValue = Math.abs(differenceInDays(endTimestamp, startTimestamp));
   // Which date is 'start', which is 'end' -- doesn't matter.
   const interval = intervalToDuration({
     end: new Date(endTimestamp),

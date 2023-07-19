@@ -15,7 +15,9 @@ const config: CodegenConfig = {
   },
   ignoreNoDocuments: true, // for better experience with the watcher
   overwrite: true,
-  schema: process.env.VITE_SUBGRAPH_ADDRESS || 'https://octant.world/subgraphs/name/octant',
+  schema:
+    process.env.VITE_SUBGRAPH_ADDRESS ||
+    'https://uat-graph.octant.wildland.dev/subgraphs/name/octant',
 };
 
 export default config;

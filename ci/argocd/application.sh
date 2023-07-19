@@ -72,7 +72,7 @@ if [[ "$ACTION" == "create" ]]; then
 	# 	"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/sync"
 
 else # assuming $ACTION =~ (delete|destroy)
-	git rm $OCTANT_APP_DIR/$DEPLOYMENT_ID-app.yaml
+	git rm -f $OCTANT_APP_DIR/$DEPLOYMENT_ID-app.yaml
 	git commit -S -m "Removed Octant deployment file for $DEPLOYMENT_ID branch at $(date +%Y-%m-%d)"
 	git push
 fi

@@ -13,6 +13,7 @@ cd ../coin-prices-server
 yarn install
 cd ../subgraph
 yarn install
+yarn codegen
 cd ..
 
 yarn lint-staged

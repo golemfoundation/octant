@@ -1,44 +1,15 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-// eslint-disable-next-line import/no-unresolved
-import request from 'graphql-request';
 import { useAccount } from 'wagmi';
 
 import { QUERY_KEYS } from 'api/queryKeys';
-import env from 'env';
-import { graphql } from 'gql/gql';
 
-import { AllocationSquashed } from './types';
-import { parseAllocations } from './utils';
-
-const GET_USER_ALLOCATIONS = graphql(`
-  query GetUserAllocations($userAddress: Bytes!) {
-    allocateds(orderBy: blockTimestamp, where: { user: $userAddress }) {
-      ...AllocatedFields
-    }
-  }
-`);
-
-export default function useUserAllocations(): UseQueryResult<AllocationSquashed[]> {
-  const { subgraphAddress } = env;
+// TODO OCT-624 Remove this hook. Empty hook left for UI so it doesn't break.
+export default function useUserAllocations(): UseQueryResult<any[]> {
   const { address } = useAccount();
 
-  const { data, ...rest } = useQuery(
-    QUERY_KEYS.userHistoricAllocations(address!),
-    async () =>
-      request(subgraphAddress, GET_USER_ALLOCATIONS, {
-        userAddress: address!,
-      }),
-    {
-      // @ts-expect-error Requests to subgraph are disabled in Cypress before transition to the server is done.
-      enabled: !!address && window.Cypress === undefined,
-      refetchOnMount: false,
-    },
-  );
-
-  // @ts-expect-error resolve typing issue.
-  return {
-    // @ts-expect-error resolve typing issue.
-    data: parseAllocations(data?.allocateds),
-    ...rest,
-  };
+  return useQuery(QUERY_KEYS.userHistoricAllocations(address!), async () => {}, {
+    // @ts-expect-error Requests to subgraph are disabled in Cypress before transition to the server is done.
+    enabled: !!address && window.Cypress === undefined,
+    refetchOnMount: false,
+  });
 }

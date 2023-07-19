@@ -1,10 +1,10 @@
 import cx from 'classnames';
-import React, { FC, Fragment } from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
-import useIndividualProposalRewards from 'hooks/queries/useIndividualProposalRewards';
 import useProposalRewardsThresholdFraction from 'hooks/queries/useProposalRewardsThresholdFraction';
+import useUsersAllocationsSum from 'hooks/queries/useUsersAllocationsSum';
 import getCutOffValueBigNumber from 'utils/getCutOffValueBigNumber';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
@@ -22,11 +22,11 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
     keyPrefix: 'components.dedicated.proposalRewards',
   });
 
-  const { data: individualProposalRewards } = useIndividualProposalRewards();
   const { data: proposalRewardsThresholdFraction } = useProposalRewardsThresholdFraction();
+  const { data: usersAllocationsSum } = useUsersAllocationsSum();
 
   const cutOffValue = getCutOffValueBigNumber(
-    individualProposalRewards?.sum,
+    usersAllocationsSum,
     proposalRewardsThresholdFraction,
   );
   const isProjectFounded = totalValueOfAllocations
@@ -63,27 +63,27 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
       </div>
       <div className={styles.values}>
         {isTotalValueOfAllocationsDefined ? (
-          <Fragment>
-            <div className={styles.value}>
-              <span className={styles.label} data-test="ProposalRewards__totalDonated__label">
-                {t('totalDonated')}
-              </span>
-              <span
-                className={cx(styles.number, !isProjectFounded && styles.isBelowCutOff)}
-                data-test="ProposalRewards__totalDonated__number"
-              >
-                {totalValueOfAllocationsToDisplay}
-              </span>
-            </div>
-            {MiddleElement}
-            <div className={cx(styles.value, isFundedAtHidden && styles.isHidden)}>
-              <span className={styles.label}>{t('fundedAt')}</span>
-              <span className={styles.number}>{cutOffValueToDisplay}</span>
-            </div>
-          </Fragment>
+          <div className={styles.value}>
+            <span className={styles.label} data-test="ProposalRewards__totalDonated__label">
+              {t('totalDonated')}
+            </span>
+            <span
+              className={cx(styles.number, !isProjectFounded && styles.isBelowCutOff)}
+              data-test="ProposalRewards__totalDonated__number"
+            >
+              {totalValueOfAllocationsToDisplay}
+            </span>
+          </div>
         ) : (
           <div className={styles.allocationValuesNotAvailable}>
             {i18n.t('common.allocationValuesNotAvailable')}
+          </div>
+        )}
+        {MiddleElement}
+        {isTotalValueOfAllocationsDefined && (
+          <div className={cx(styles.value, isFundedAtHidden && styles.isHidden)}>
+            <span className={styles.label}>{t('fundedAt')}</span>
+            <span className={styles.number}>{cutOffValueToDisplay}</span>
           </div>
         )}
       </div>

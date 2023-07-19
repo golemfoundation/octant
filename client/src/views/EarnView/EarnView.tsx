@@ -1,14 +1,17 @@
 import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import BoxGlmLock from 'components/dedicated/BoxGlmLock/BoxGlmLock';
 import BoxWithdrawEth from 'components/dedicated/BoxWithdrawEth/BoxWithdrawEth';
 import History from 'components/dedicated/History/History';
+import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
 import TipTile from 'components/dedicated/TipTile/TipTile';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useTipsStore from 'store/tips/store';
+import getIsPreLaunch from 'utils/getIsPreLaunch';
 
 import styles from './EarnView.module.scss';
 
@@ -23,12 +26,18 @@ const EarnView = (): ReactElement => {
   }));
   const { data: currentEpoch } = useCurrentEpoch();
 
+  const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isWithdrawTipVisible =
     !!currentEpoch &&
     currentEpoch > 1 &&
     !!withdrawableUserEth &&
     !withdrawableUserEth.isZero() &&
     !wasWithdrawAlreadyClosed;
+
+  const preLaunchEndTimestamp = Date.UTC(2023, 7, 1, 0, 0, 0);
+  // TODO OCT-668: set preLaunchStartTimestamp -> https://linear.app/golemfoundation/issue/OCT-668/set-prelaunchstarttimestamp-before-deploy-on-production
+  const preLaunchStartTimestamp = Date.UTC(2023, 6, 1, 0, 0, 0);
+  const duration = preLaunchEndTimestamp - preLaunchStartTimestamp;
 
   return (
     <MainLayout classNameBody={styles.layoutBody} dataTest="EarnView">
@@ -43,10 +52,30 @@ const EarnView = (): ReactElement => {
       />
       <div className={styles.wrapper}>
         <div className={styles.boxesWrapper}>
+          {isPreLaunch && (
+            <BoxRounded className={styles.box} isVertical title={t('preLaunch.timerTitle')}>
+              <TimeCounter
+                className={styles.preLaunchTimer}
+                duration={duration}
+                timestamp={preLaunchEndTimestamp}
+              />
+            </BoxRounded>
+          )}
           <BoxGlmLock classNameBox={styles.box} />
           <BoxWithdrawEth classNameBox={styles.box} />
         </div>
-        <History />
+        {isPreLaunch ? (
+          <BoxRounded
+            className={styles.box}
+            hasSections
+            isVertical
+            title={i18n.t('common.history')}
+          >
+            <div className={styles.emptyHistoryInfo}>{t('preLaunch.emptyHistory')}</div>
+          </BoxRounded>
+        ) : (
+          <History />
+        )}
       </div>
     </MainLayout>
   );
