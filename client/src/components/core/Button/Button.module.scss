@@ -1,3 +1,5 @@
+$paddingVertical: 1rem;
+
 .root {
   display: flex;
   align-items: center;
@@ -12,6 +14,11 @@
 
   &.isSmallFont {
     font-size: $font-size-12;
+
+    @media #{$desktop-up} {
+      width: 9.4rem;
+      font-size: $font-size-14;
+    }
   }
 
   &.isHigh {

@@ -30,7 +30,7 @@ $bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerHeight);
   height: $headerHeight;
   border-radius: $headerNavigationBorderRadius;
   background: $color-white;
-  padding: $layoutMarginHorizontal;
+  padding: 1.6rem;
   margin: $headerMarginTop $layoutMarginHorizontal 0;
   box-shadow: $box-shadow-1;
   z-index: $z-index-3;
@@ -100,7 +100,7 @@ $bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerHeight);
   align-items: center;
 }
 
-.walletButton {
+.buttonWallet {
   margin-left: 1.6rem;
   cursor: pointer;
 

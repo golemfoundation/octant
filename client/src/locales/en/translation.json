@@ -178,8 +178,8 @@
   },
   "layouts": {
     "main": {
-      "connectWallet": "Connect wallet",
-      "noRewardBudgetYet": "No reward budget yet",
+      "buttonConnect": "Connect",
+      "noRewardsYet": "No rewards yet",
       "loadingRewardBudget": "Loading reward budget...",
       "allocationStartsIn": "Allocation starts in <0>{{allocationPeriod}}</0>",
       "allocationEndsIn": "Allocation ends in <0>{{allocationPeriod}}</0>"
