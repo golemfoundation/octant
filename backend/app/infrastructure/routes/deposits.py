@@ -77,5 +77,5 @@ class UserEffectiveDeposit(Resource):
     def get(self, address: str, epoch: int):
         result = deposits_controller.get_by_user_and_epoch(address, epoch)
         return {
-            "effectiveDeposit": result.effective_deposit,
+            "effectiveDeposit": result,
         }
