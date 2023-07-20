@@ -101,14 +101,6 @@ class MissingAddress(OctantException):
         super().__init__(self.description.format(address), self.code)
 
 
-class EffectiveDepositNotFound(OctantException):
-    code = 404
-    description = "Effective deposit for user {} for epoch {} not found"
-
-    def __init__(self, address: str, epoch: int):
-        super().__init__(self.description.format(address, epoch), self.code)
-
-
 def handle_octant_exception(e: OctantException):
     print_stacktrace()
     response = e.to_json()
