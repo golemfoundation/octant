@@ -166,11 +166,7 @@ const ProposalView = (): ReactElement => {
   }
 
   return (
-    <MainLayout
-      classNameBody={styles.layout}
-      dataTest="ProposalView"
-      navigationTabs={navigationTabs}
-    >
+    <MainLayout dataTest="ProposalView" navigationTabs={navigationTabs}>
       <InfiniteScroll
         hasMore
         initialLoad
