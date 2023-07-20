@@ -22,7 +22,6 @@ export function isProposalAlreadyAllocatedOn(
   userAllocationsElements: undefined | UserAllocationElement[],
   address: string,
 ): boolean {
-  // TODO Remove userAllocations.allocation.gt(0) check following https://wildlandio.atlassian.net/browse/HEX-108.
   if (!userAllocationsElements) {
     return false;
   }
