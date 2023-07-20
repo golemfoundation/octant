@@ -85,7 +85,7 @@ const Modal: FC<ModalProps> = ({
           }}
           onTouchMove={onTouchMove}
           onTouchStart={onTouchStart}
-          transition={{ damping: 0.5 }}
+          transition={{ duration: 0.1, ease: 'easeOut' }}
           variants={isDesktop || variant === 'small' ? variantsCenter : variantsBottom}
         >
           {Image && Image}
