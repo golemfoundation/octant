@@ -11,13 +11,13 @@ export function getIndividualRewardText({
   individualReward?: BigNumber;
 }): string {
   if (currentEpoch !== undefined && currentEpoch === 1) {
-    return i18n.t('layouts.main.noRewardBudgetYet');
+    return i18n.t('layouts.main.noRewardsYet');
   }
   if (currentEpoch === undefined || individualReward === undefined) {
     return i18n.t('layouts.main.loadingRewardBudget');
   }
   if (individualReward.isZero()) {
-    return i18n.t('layouts.main.noRewardBudgetYet');
+    return i18n.t('layouts.main.noRewardsYet');
   }
   return i18n.t('common.budget', {
     budget: getFormattedEthValue(individualReward).fullString,

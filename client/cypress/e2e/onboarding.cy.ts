@@ -8,7 +8,7 @@ import Chainable = Cypress.Chainable;
 const connectWallet = (): Chainable<any> => {
   cy.disconnectMetamaskWalletFromAllDapps();
   visitWithLoader(ROOT.absolute);
-  cy.get('[data-test=ConnectWalletButton]').click();
+  cy.get('[data-test=MainLayout__Button--connect]').click();
   cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
   cy.switchToMetamaskNotification();
   return cy.acceptMetamaskAccess();

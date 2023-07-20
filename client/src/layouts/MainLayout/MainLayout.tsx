@@ -104,7 +104,7 @@ const MainLayout: FC<MainLayoutProps> = ({
           <Fragment>
             <div className={styles.headerBlur} />
             <div className={styles.headerWrapper}>
-              <div className={styles.header} data-test="Header__element">
+              <div className={styles.header} data-test="MainLayout__Header">
                 <div className={styles.logoWrapper}>
                   <Svg img={octant} size={4} />
                   {networkConfig.isTestnet && (
@@ -149,7 +149,7 @@ const MainLayout: FC<MainLayoutProps> = ({
                       </div>
                       <Button
                         className={cx(
-                          styles.walletButton,
+                          styles.buttonWallet,
                           isWalletModalOpen && styles.isWalletModalOpen,
                         )}
                         Icon={<Svg img={chevronBottom} size={0.8} />}
@@ -159,10 +159,11 @@ const MainLayout: FC<MainLayoutProps> = ({
                     </div>
                   ) : (
                     <Button
-                      dataTest="ConnectWalletButton"
+                      className={styles.buttonConnect}
+                      dataTest="MainLayout__Button--connect"
                       isDisabled={isPreLaunch}
                       isSmallFont
-                      label={t('connectWallet')}
+                      label={t('buttonConnect')}
                       onClick={() => setIsModalConnectWalletOpen(true)}
                       variant="cta"
                     />
