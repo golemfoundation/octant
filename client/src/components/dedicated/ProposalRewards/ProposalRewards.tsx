@@ -75,7 +75,10 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
             </span>
           </div>
         ) : (
-          <div className={styles.allocationValuesNotAvailable}>
+          <div
+            className={styles.allocationValuesNotAvailable}
+            data-test="ProposalRewards__notAvailable"
+          >
             {i18n.t('common.allocationValuesNotAvailable')}
           </div>
         )}

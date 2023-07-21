@@ -27,9 +27,25 @@ user_allocations_sum_model = api.model(
     "UserAllocationsSum",
     {
         "amount": fields.String(
-            required=True, description="User allocations sum in WEI"
+            required=True,
+            description="User allocations sum in WEI"
         ),
     },
+)
+
+
+proposal_donors_model = api.model(
+    "ProposalDonors",
+    {
+        "address": fields.String(
+            required=True,
+            description="Donor address",
+        ),
+        "amount": fields.String(
+            required=True,
+            description="Funds allocated by donor for the proposal in WEI",
+        ),
+    }
 )
 
 
@@ -61,3 +77,21 @@ class UserAllocationsSum(Resource):
     def get(self):
         allocations_sum = allocations.get_sum_by_epoch()
         return {"amount": str(allocations_sum)}
+
+
+@ns.route("/proposal/<string:proposal_address>/epoch/<int:epoch>")
+@ns.doc(
+    description="Returns list of donors for given proposal in particular epoch",
+    params={
+        "proposal_address": "Proposal ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)",
+        "epoch": "Epoch number",
+    },
+)
+class ProposalDonors(Resource):
+    @ns.marshal_with(proposal_donors_model)
+    @ns.response(200, "Returns list of proposal donors")
+    def get(self, proposal_address: str, epoch: int):
+        return [
+            dataclasses.asdict(w)
+            for w in allocations.get_all_by_proposal_and_epoch(proposal_address, epoch)
+        ]

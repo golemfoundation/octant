@@ -34,16 +34,22 @@ const DonorsList: FC<DonorsListProps> = ({
   }));
   const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
   const [isDonorsListExpanded, setIsDonorsListExpanded] = useState<boolean>(false);
-  const { data: proposalDonors, isLoading } = useProposalDonors(proposalAddress);
+  const { data: proposalDonors, isFetching } = useProposalDonors(proposalAddress);
   const { data: currentEpoch } = useCurrentEpoch();
 
   const isEpoch1 = currentEpoch === 1;
 
   return (
     <div className={cx(styles.root, className)} data-test={dataTest}>
-      {isLoading ? (
+      {isEpoch1 && (
+        <div className={styles.donationsNotEnabled} data-test={`${dataTest}__donationsNotEnabled`}>
+          {t('donationsNotEnabled')}
+        </div>
+      )}
+      {!isEpoch1 && isFetching && (
         <Loader className={styles.loader} dataTest={`${dataTest}__Loader`} />
-      ) : (
+      )}
+      {!isEpoch1 && !isFetching && (
         <Fragment>
           <div className={styles.header}>
             <span>{t('donors')}</span>{' '}
@@ -53,30 +59,29 @@ const DonorsList: FC<DonorsListProps> = ({
               </div>
             )}
           </div>
-          {!isEpoch1 &&
-            proposalDonors
-              ?.slice(0, isDonorsListExpanded ? proposalDonors.length : SHORT_LIST_LENGTH)
-              ?.map(({ amount, address }) => (
-                <div key={`${proposalAddress}-${address}`} className={styles.donor}>
-                  <Identicon className={styles.identicon} username={address} />
-                  <div className={styles.address}>{truncateEthAddress(address)}</div>
-                  <div>
-                    {isCryptoMainValueDisplay
-                      ? getValueCryptoToDisplay({
-                          cryptoCurrency: 'ethereum',
-                          valueCrypto: amount,
-                        })
-                      : getValueFiatToDisplay({
-                          cryptoCurrency: 'ethereum',
-                          cryptoValues,
-                          displayCurrency: displayCurrency!,
-                          error,
-                          valueCrypto: amount,
-                        })}
-                  </div>
+          {proposalDonors
+            ?.slice(0, isDonorsListExpanded ? proposalDonors.length : SHORT_LIST_LENGTH)
+            ?.map(({ amount, address }) => (
+              <div key={`${proposalAddress}-${address}`} className={styles.donor}>
+                <Identicon className={styles.identicon} username={address} />
+                <div className={styles.address}>{truncateEthAddress(address)}</div>
+                <div>
+                  {isCryptoMainValueDisplay
+                    ? getValueCryptoToDisplay({
+                        cryptoCurrency: 'ethereum',
+                        valueCrypto: amount,
+                      })
+                    : getValueFiatToDisplay({
+                        cryptoCurrency: 'ethereum',
+                        cryptoValues,
+                        displayCurrency: displayCurrency!,
+                        error,
+                        valueCrypto: amount,
+                      })}
                 </div>
-              ))}
-          {!isEpoch1 && proposalDonors && proposalDonors.length > SHORT_LIST_LENGTH && (
+              </div>
+            ))}
+          {proposalDonors && proposalDonors.length > SHORT_LIST_LENGTH && (
             <Button
               className={styles.buttonDonors}
               label={isDonorsListExpanded ? `- ${t('seeLess')}` : `+ ${t('seeAll')}`}
@@ -84,7 +89,6 @@ const DonorsList: FC<DonorsListProps> = ({
               variant="secondary2"
             />
           )}
-          {isEpoch1 && <div className={styles.donationsNotEnabled}>{t('donationsNotEnabled')}</div>}
         </Fragment>
       )}
     </div>

@@ -72,6 +72,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   return (
     <div className={cx(styles.root, isAnyTipTileVisible && styles.isAnyTipTileVisible, className)}>
       <TipTile
+        dataTest="AllocationTipTiles--connectWallet"
         image="images/tip-connect-wallet.webp"
         infoLabel={i18n.t('common.gettingStarted')}
         isOpen={isConnectWalletTipVisible}

@@ -11,5 +11,5 @@ type HistoryItem = {
 export type Response = { history: HistoryItem[] };
 
 export function apiGetHistory(address: string): Promise<Response> {
-  return apiService.get(`${env.serverEndpoint}history${address}`).then(({ data }) => data);
+  return apiService.get(`${env.serverEndpoint}history/${address}`).then(({ data }) => data);
 }

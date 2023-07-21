@@ -4,6 +4,8 @@ variables:
   CACHE_COMPRESSION_LEVEL: "fast"
   TRANSFER_METER_FREQUENCY: "2s"
   IMAGE_TAG: $CI_COMMIT_SHA
+  EPOCH_0_END: 1690848000
+  EPOCH_1_END: 1698796800
 
 stages:
   - build
@@ -283,11 +285,11 @@ Build images:
       --cache-repo=$KANIKO_CACHE_REPO
       --insecure-pull
 
-Cypress E2E Tests:
+Cypress E2E Tests Epoch 1:
   stage: e2e
   image: !reference [.images, synpress ]
   rules:
-    - !reference [.rules, on_mr_manual]
+    - !reference [.rules, on_mr]
   variables:
     NETWORK_NAME: sepolia
     PRIVATE_KEY: $GOERLI_PRIVATE_KEY
@@ -295,6 +297,8 @@ Cypress E2E Tests:
     CI: "true"
     METAMASK_VERSION: "10.25.0"
     SECRET_WORDS: test test test test test test test test test test test junk
+    EPOCH_0_END: 0
+    EPOCH_1_END: 1698796800
   artifacts:
     when: on_failure
     name: cypress
@@ -364,6 +368,8 @@ Deploy MR App:
     - .deploy
   variables:
     ENV_TYPE: "mr"
+    EPOCH_0_END: 0
+    EPOCH_1_END: 1698796800
   rules:
     - !reference [.rules, on_mr_manual]
   environment:

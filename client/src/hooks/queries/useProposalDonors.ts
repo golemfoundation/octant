@@ -39,7 +39,7 @@ export default function useProposalDonors(
     QUERY_KEYS.proposalDonors(proposalAddress),
     () => apiGetProposalDonors(proposalAddress, currentEpoch!),
     {
-      enabled: !!currentEpoch && !!address && !!proposalAddress,
+      enabled: !!currentEpoch && !!address && !!proposalAddress && currentEpoch > 1,
       select: response => mapDataToProposalDonors(response),
       staleTime: Infinity,
       ...options,
