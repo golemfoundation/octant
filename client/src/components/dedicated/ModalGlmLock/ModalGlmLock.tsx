@@ -22,7 +22,11 @@ const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
   const modalHeader = currentMode === 'lock' ? i18n.t('common.lockGlm') : t('unlockGLM');
 
   return (
-    <Modal header={showBudgetBox ? modalHeader : undefined} {...modalProps}>
+    <Modal
+      header={showBudgetBox ? modalHeader : undefined}
+      showCloseButton={showBudgetBox}
+      {...modalProps}
+    >
       <GlmLock
         currentMode={currentMode}
         onChangeCryptoOrFiatInputFocus={setIsCryptoOrFiatInputFocused}

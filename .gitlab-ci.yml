@@ -290,6 +290,7 @@ Cypress E2E Tests Epoch 1:
   image: !reference [.images, synpress ]
   rules:
     - !reference [.rules, on_mr]
+    - !reference [.rules, on_push_to_default_branch ]
   variables:
     NETWORK_NAME: sepolia
     PRIVATE_KEY: $GOERLI_PRIVATE_KEY

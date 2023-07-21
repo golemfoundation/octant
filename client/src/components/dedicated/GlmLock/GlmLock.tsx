@@ -2,8 +2,8 @@ import cx from 'classnames';
 import { BigNumber, ContractTransaction } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { useFormik } from 'formik';
-import { AnimatePresence, motion } from 'framer-motion';
-import React, { FC, useState } from 'react';
+import { AnimatePresence, motion, useAnimate } from 'framer-motion';
+import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount, useSigner } from 'wagmi';
 
@@ -76,6 +76,7 @@ const GlmLock: FC<GlmLockProps> = ({
     signer,
     address,
   );
+  const [scope, animate] = useAnimate();
 
   const onRefetch = async (): Promise<void> => {
     await refetchDeposit();
@@ -148,9 +149,13 @@ const GlmLock: FC<GlmLockProps> = ({
           type: 'submit',
         };
 
+  useEffect(() => {
+    animate(scope?.current, { marginTop: showBudgetBox ? '0' : '2.4rem' });
+  }, [showBudgetBox, scope, animate]);
+
   return (
     <form className={styles.form} onSubmit={formik.handleSubmit}>
-      <BoxRounded className={styles.element} isGrey>
+      <BoxRounded ref={scope} className={styles.element} isGrey>
         <ProgressStepper
           currentStepIndex={currentStepIndex}
           steps={
