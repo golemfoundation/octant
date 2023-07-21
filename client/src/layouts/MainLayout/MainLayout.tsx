@@ -181,7 +181,11 @@ const MainLayout: FC<MainLayoutProps> = ({
             classNameBody,
           )}
         >
-          {isLoading ? <Loader className={styles.loader} /> : children}
+          {isLoading ? (
+            <Loader className={styles.loader} dataTest="MainLayout__Loader" />
+          ) : (
+            children
+          )}
         </div>
         {isNavigationVisible && (
           <Navbar navigationBottomSuffix={navigationBottomSuffix} tabs={tabsWithIsActive} />

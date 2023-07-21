@@ -31,21 +31,30 @@ function checkProposalItemElements(index, name): Chainable<any> {
     .find('[data-test=ProposalItem__ButtonAddToAllocate]')
     .should('be.visible');
 
-  // TODO OCT-663 Make CY check which epoch is currently and base tests on that.
-  const isFirstEpoch = true;
-  if (isFirstEpoch) {
-    return cy
-      .get('[data-test^=ProposalsView__ProposalItem')
-      .eq(index)
-      .find('[data-test=ProposalRewards__notAvailable]')
-      .should('be.visible');
-  }
-
-  return cy
-    .get('[data-test^=ProposalsView__ProposalItem')
-    .eq(index)
-    .find('[data-test=ProposalRewards__totalDonated__label]')
-    .should('be.visible');
+  return cy.get('@currentEpoch').then(currentEpoch => {
+    switch (currentEpoch) {
+      // @ts-expect-error currentEpoch is a number
+      case 0:
+        // In Epoch 0 rewards are not shown.
+        return cy;
+      // @ts-expect-error currentEpoch is a number
+      case 1:
+        // In Epoch 1 rewards are not shown.
+        return cy;
+      default:
+        return cy
+          .get('[data-test^=ProposalsView__ProposalItem')
+          .eq(index)
+          .find('[data-test=ProposalRewards__notAvailable]')
+          .should('be.visible');
+      // TODO OCT-663 Make CY check if rewards are available (Epoch 2, decision window open).
+      // return cy
+      //   .get('[data-test^=ProposalsView__ProposalItem')
+      //   .eq(index)
+      //   .find('[data-test=ProposalRewards__totalDonated__label]')
+      //   .should('be.visible');
+    }
+  });
 }
 
 function addProposalToAllocate(index, numberOfAddedProposals): Chainable<any> {
@@ -100,8 +109,13 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     let proposalNames: string[] = [];
 
     beforeEach(() => {
+      cy.intercept('GET', '/epochs/current').as('requestGetCurrentEpoch');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+
       visitWithLoader(ROOT_ROUTES.proposals.absolute);
+      cy.get('[data-test^=ProposalItemSkeleton').should('not.exist');
+
+      cy.wait('@requestGetCurrentEpoch').its('response.body.currentEpoch').as('currentEpoch');
 
       /**
        * This could be done in before hook, but CY wipes the state after each test
