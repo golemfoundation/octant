@@ -25,7 +25,7 @@ const variantsCenter = {
 
 const variantsBottom = {
   showHide: {
-    bottom: '-100%',
+    y: '100%',
   },
   visible: {
     bottom: 0,
@@ -51,6 +51,7 @@ const Modal: FC<ModalProps> = ({
   onModalClosed,
   onTouchMove,
   onTouchStart,
+  showCloseButton = true,
 }) => {
   const { isDesktop } = useMediaQuery();
 
@@ -93,10 +94,10 @@ const Modal: FC<ModalProps> = ({
             <AnimatePresence initial={false}>
               {header && (
                 <motion.div
-                  animate={{ height: 'auto', marginBottom: '3.2rem', opacity: 1 }}
+                  animate={{ height: 'auto', opacity: 1 }}
                   className={cx(styles.header, headerClassName)}
-                  exit={{ height: 0, marginBottom: 0, opacity: 0 }}
-                  initial={{ height: 0, marginBottom: 0, opacity: 0 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  initial={{ height: 0, opacity: 0 }}
                   transition={{ ease: 'linear' }}
                 >
                   {header}
@@ -105,13 +106,15 @@ const Modal: FC<ModalProps> = ({
             </AnimatePresence>
             {children}
           </div>
-          <Button
-            className={cx(styles.buttonClose, isFullScreen && styles.isFullScreen)}
-            dataTest={`${dataTest}__Button`}
-            Icon={<Svg img={cross} size={1} />}
-            onClick={onClosePanel}
-            variant="iconOnly"
-          />
+          {showCloseButton && (
+            <Button
+              className={cx(styles.buttonClose, isFullScreen && styles.isFullScreen)}
+              dataTest={`${dataTest}__Button`}
+              Icon={<Svg img={cross} size={1} />}
+              onClick={onClosePanel}
+              variant="iconOnly"
+            />
+          )}
         </motion.div>
       )}
     </AnimatePresence>
