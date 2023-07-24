@@ -28,14 +28,14 @@ const TipTile: React.FC<TipTileProps> = ({
       {isOpen && (
         <motion.div
           animate={{
-            height: isDesktop ? ['0', '19.2rem', '19.2rem'] : ['0', '20rem', '20rem'],
+            height: isDesktop ? ['0', '22.4rem', '22.4rem'] : ['0', '20rem', '20rem'],
             marginBottom: isDesktop ? ['0', '2.8rem', '2.8rem'] : ['0', '1.6rem', '1.6rem'],
             opacity: [0, 0, 1],
           }}
           className={cx(styles.root, className)}
           data-test={dataTest}
           exit={{
-            height: isDesktop ? ['19.2rem', '19.2rem', '0'] : ['20rem', '20rem', '0'],
+            height: isDesktop ? ['22.4rem', '22.4rem', '0'] : ['20rem', '20rem', '0'],
             marginBottom: isDesktop ? ['2.8rem', '2.8rem', '0'] : ['1.6rem', '1.6rem', '0'],
             opacity: [1, 0.1, 0],
           }}
