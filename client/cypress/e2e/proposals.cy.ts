@@ -24,7 +24,7 @@ function checkProposalItemElements(index, name): Chainable<any> {
     .contains(name);
   cy.get('[data-test^=ProposalsView__ProposalItem')
     .eq(index)
-    .find('[data-test=ProposalItem__Description]')
+    .find('[data-test=ProposalItem__IntroDescription]')
     .should('be.visible');
   cy.get('[data-test^=ProposalsView__ProposalItem')
     .eq(index)
@@ -64,7 +64,7 @@ function addProposalToAllocate(index, numberOfAddedProposals): Chainable<any> {
     .should('be.visible');
   cy.get('[data-test^=ProposalsView__ProposalItem')
     .eq(index)
-    .find('[data-test=ProposalItem__Description]')
+    .find('[data-test=ProposalItem__IntroDescription]')
     .should('be.visible');
   cy.get('[data-test^=ProposalsView__ProposalItem')
     .eq(index)
