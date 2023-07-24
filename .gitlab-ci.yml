@@ -12,6 +12,7 @@ stages:
   - lint_and_typecheck
   - test
   - publish
+  - contracts
   - e2e
   - deploy
   - cleanup
@@ -85,8 +86,6 @@ Build contracts:
     - !reference [.rules, on_push_to_default_branch ]
   script:
     - !reference [.scripts, install_packages]
-    - ci/build_root.sh
-    - ci/build_contracts.sh
     - ci/build_contracts_v1.sh
   cache:
     - key: $CI_COMMIT_REF_SLUG-yarn-root
@@ -95,18 +94,14 @@ Build contracts:
         - .yarn
     - key: $CI_COMMIT_REF_SLUG-yarn-contracts
       paths:
-        - contracts/.yarn
-        - contracts/node_modules
         - contracts-v1/.yarn
         - contracts-v1/node_modules
   artifacts:
     name: contracts
     paths:
-      - contracts/artifacts
-      - contracts/typechain
       - contracts-v1/artifacts
       - contracts-v1/typechain
-    expire_in: 30 days
+    expire_in: 3 days
 
 Build services:
   stage: build
@@ -144,7 +139,6 @@ Lint and typecheck:
   parallel:
     matrix:
       - SERVICE:
-          - contracts
           - contracts-v1
           - client
           - coin-prices-server
@@ -193,7 +187,6 @@ Unit tests:
   parallel:
     matrix:
       - SERVICE:
-          - contracts
           - contracts-v1
           - client
           - coin-prices-server
@@ -202,7 +195,6 @@ Unit tests:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
   dependencies:
-    - Build contracts
   script:
     - cd $SERVICE
     - !reference [ .scripts, install_libpq5 ]
@@ -226,13 +218,11 @@ Documentation:
   parallel:
     matrix:
       - SERVICE:
-          - contracts
-          - contracts-v1
+         - contracts-v1
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
   dependencies:
-    - Build contracts
   script:
     - cd $SERVICE
     - !reference [ .scripts, yarn_install ]
@@ -252,7 +242,7 @@ Documentation:
     name: $SERVICE_docs
     paths:
       - $SERVICE/.docs/
-    expire_in: 30 days
+    expire_in: 3 days
 
 Build images:
   stage: publish
@@ -263,7 +253,6 @@ Build images:
   parallel:
     matrix:
       - SERVICE:
-          - contracts
           - contracts-v1
           - coin-prices-server
           - client
@@ -285,9 +274,30 @@ Build images:
       --cache-repo=$KANIKO_CACHE_REPO
       --insecure-pull
 
+Deploy contracts:
+  stage: contracts
+  image:
+    name: ${GCP_DOCKER_IMAGE_REGISTRY}/contracts-v1:${IMAGE_TAG}
+    entrypoint: [""]
+  rules:
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+  variables:
+    NETWORK: sepolia
+  artifacts:
+    reports:
+      dotenv: build.env
+  tags:
+    - contracts
+    - octant
+  script:
+    - /app/entrypoint.sh $NETWORK $CI_PROJECT_DIR/build.env
+
 Cypress E2E Tests Epoch 1:
   stage: e2e
   image: !reference [.images, synpress ]
+  dependencies:
+    - Deploy contracts
   rules:
     - !reference [.rules, on_mr]
     - !reference [.rules, on_push_to_default_branch ]
@@ -349,6 +359,8 @@ Force destroy E2E env:
 .deploy:
   stage: deploy
   image: !reference [.images, git_improved ]
+  dependencies:
+    - Deploy contracts
   script:
     - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh $ENV_TYPE
     - bash $CI_PROJECT_DIR/ci/argocd/application.sh create
@@ -436,7 +448,7 @@ pages:
     - if: '$CI_COMMIT_REF_NAME == "master"'
       when: manual
   script:
-    - cd contracts
+    - cd contracts-v1
     - yarn install --non-interactive --cache-folder .yarn
     - yarn compile
     - cd ../client

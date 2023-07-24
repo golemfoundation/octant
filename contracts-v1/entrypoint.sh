@@ -1,8 +1,10 @@
 #!/usr/bin/env sh
 # Docker entrypoint
-set -e
+set -ex
 
 NETWORK=${1:-"sepolia"}
+
+cd /app
 
 echo "Network:      $NETWORK"
 echo
