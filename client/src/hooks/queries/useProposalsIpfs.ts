@@ -18,7 +18,7 @@ export default function useProposalsIpfs(proposalsAddresses?: string[]): {
   const proposalsIpfsResults: UseQueryResult<BackendProposal>[] = useQueries({
     queries: (proposalsAddresses || []).map(address => ({
       enabled: !!address && !!proposalsCid,
-      queryFn: () => apiGetProposal(`${proposalsCid}${address}`),
+      queryFn: () => apiGetProposal(`${proposalsCid}/${address}`),
       queryKey: QUERY_KEYS.proposalsIpfsResults(address),
     })),
   });
