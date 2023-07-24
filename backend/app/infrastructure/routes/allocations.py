@@ -51,7 +51,7 @@ proposal_donors_model = api.model(
 
 @ns.route("/user/<string:user_address>/epoch/<int:epoch>")
 @ns.doc(
-    description="Returns user's final allocation in a particular epoch",
+    description="Returns user's latest allocation in a particular epoch",
     params={
         "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)",
         "epoch": "Epoch number",
