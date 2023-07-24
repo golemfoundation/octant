@@ -32,9 +32,8 @@ makeTestsEnv(PROPOSALS, testEnv => {
 
       // then
       await expect(
-        proposalsFactory.deploy(PROPOSALS_CID,invalidProposals,auth.address)
-      ).to.be.revertedWith("HN:Proposals/invalid-proposal");
-
+        proposalsFactory.deploy(PROPOSALS_CID, invalidProposals, auth.address),
+      ).to.be.revertedWith('HN:Proposals/invalid-proposal');
     });
   });
 
@@ -120,14 +119,13 @@ makeTestsEnv(PROPOSALS, testEnv => {
   describe('setProposalAddresses', async () => {
     it('should fail when given proposal with zero address', async () => {
       // given
-      const { proposals, signers} = testEnv;
+      const { proposals, signers } = testEnv;
       const invalidProposals = newProposals.concat([ZERO_ADDRESS]);
 
       // then
       await expect(
-        proposals.connect(signers.TestFoundation).setProposalAddresses(1, invalidProposals)
-      ).to.be.revertedWith("HN:Proposals/invalid-proposal");
-
+        proposals.connect(signers.TestFoundation).setProposalAddresses(5, invalidProposals),
+      ).to.be.revertedWith('HN:Proposals/invalid-proposal');
     });
   });
   describe('getProposals', async () => {
@@ -179,9 +177,9 @@ makeTestsEnv(PROPOSALS, testEnv => {
       } = testEnv;
 
       // when
-      await proposals.connect(TestFoundation).setProposalAddresses(1, newProposals);
+      await proposals.connect(TestFoundation).setProposalAddresses(2, newProposals);
       const cid = await proposals.cid();
-      const proposalAddressesFromContract = await proposals.getProposalAddresses(1);
+      const proposalAddressesFromContract = await proposals.getProposalAddresses(2);
 
       // then
       expect(proposalAddressesFromContract.length).eq(11);
