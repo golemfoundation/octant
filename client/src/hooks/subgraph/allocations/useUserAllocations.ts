@@ -8,8 +8,7 @@ export default function useUserAllocations(): UseQueryResult<any[]> {
   const { address } = useAccount();
 
   return useQuery(QUERY_KEYS.userHistoricAllocations(address!), async () => {}, {
-    // @ts-expect-error Requests to subgraph are disabled in Cypress before transition to the server is done.
-    enabled: !!address && window.Cypress === undefined,
+    enabled: !!address,
     refetchOnMount: false,
   });
 }

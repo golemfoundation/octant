@@ -1,4 +1,3 @@
-import { parseUnits } from 'ethers/lib/utils';
 import React, { ReactElement } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 
@@ -85,14 +84,7 @@ const MetricsView = (): ReactElement => {
             />
           </BoxRounded>
           <BoxRounded alignment="left" className={styles.box} isVertical title={t('glmLocked')}>
-            <DoubleValue
-              cryptoCurrency="golem"
-              valueCrypto={
-                lockedSummaryLatest?.lockedTotal
-                  ? parseUnits(lockedSummaryLatest?.lockedTotal)
-                  : undefined
-              }
-            />
+            <DoubleValue cryptoCurrency="golem" valueCrypto={lockedSummaryLatest?.lockedTotal} />
           </BoxRounded>
         </div>
         <BoxRounded

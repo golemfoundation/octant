@@ -12,18 +12,15 @@ export type QueryKeys = {
   cryptoValues: (
     fiatCurrency: NonNullable<SettingsData['displayCurrency']>,
   ) => [Root['cryptoValues'], NonNullable<SettingsData['displayCurrency']>];
-  currentBalance: ['currentBalance'];
   currentEpoch: ['currentEpoch'];
   currentEpochEnd: ['currentEpochEnd'];
   currentEpochProps: ['currentEpochProps'];
-  depositAt: ['depositAt'];
   depositAtGivenEpoch: (epochNumber: number) => [Root['depositAt'], string];
   depositsValue: ['depositsValue'];
   history: ['history'];
   individualReward: ['individualReward'];
   isDecisionWindowOpen: ['isDecisionWindowOpen'];
-  lockedRatio: ['lockedRatio'];
-  locks: ['locks'];
+  lockedSummaryLatest: ['lockedSummaryLatest'];
   matchedProposalRewards: ['matchedProposalRewards'];
   proposalDonors: (proposalAddress: string) => [Root['proposalDonors'], string];
   proposalRewardsThresholdFraction: ['proposalRewardsThresholdFraction'];
