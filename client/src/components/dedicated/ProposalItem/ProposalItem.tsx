@@ -37,7 +37,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
 
   const isLoading = !proposalsIpfs || proposalsIpfs.length === 0;
   const proposal = proposalsIpfs[0] || {};
-  const { isLoadingError, profileImageCID, name, description } = proposal;
+  const { isLoadingError, profileImageCID, name, introDescription } = proposal;
 
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
     allocations,
@@ -87,9 +87,9 @@ const ProposalItem: FC<ProposalItemProps> = ({
               {name}
             </div>
             <Description
-              className={styles.description}
-              dataTest="ProposalItem__Description"
-              text={description!}
+              className={styles.introDescription}
+              dataTest="ProposalItem__IntroDescription"
+              text={introDescription!}
             />
           </div>
           {!isEpoch1 && (
