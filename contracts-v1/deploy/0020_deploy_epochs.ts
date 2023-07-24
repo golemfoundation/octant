@@ -2,7 +2,7 @@ import { ethers } from 'hardhat';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
-import { DECISION_WINDOW, EPOCH_DURATION } from '../env';
+import { DECISION_WINDOW, EPOCH_DURATION, EPOCHS_START } from '../env';
 import { AUTH, EPOCHS } from '../helpers/constants';
 import { getLatestBlockTimestamp } from '../helpers/misc-utils';
 
@@ -12,13 +12,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
-  const start = await getLatestBlockTimestamp();
+  const now = await getLatestBlockTimestamp();
   let decisionWindow = DECISION_WINDOW;
   let epochDuration = EPOCH_DURATION;
   if (['hardhat', 'localhost'].includes(hre.network.name)) {
     decisionWindow = 120;
     epochDuration = 300;
   }
+  const start = EPOCHS_START || now - epochDuration;
 
   const auth = await ethers.getContract(AUTH);
 
