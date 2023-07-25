@@ -1,0 +1,30 @@
+.root {
+  padding: 1.8rem 0;
+  width: 100%;
+  display: flex;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: end;
+}
+
+.box {
+  @include skeleton();
+  width: 8.8rem;
+  height: 1.6rem;
+
+  &:not(:last-child) {
+    margin-bottom: 0.4rem;
+  }
+
+  &.long {
+    width: 16rem;
+  }
+
+  &.short {
+    width: 7.2rem;
+  }
+}
