@@ -19,7 +19,7 @@ export default function useDepositEffectiveAtCurrentEpoch(
     currentEpoch ? QUERY_KEYS.depositAtGivenEpoch(currentEpoch) : [''],
     () => apiGetEffectiveDeposit(address!, currentEpoch!),
     {
-      enabled: !!currentEpoch && !!address && currentEpoch > 1,
+      enabled: !!currentEpoch && !!address && currentEpoch > 0,
       select: response => parseUnits(response.effectiveDeposit, 'wei'),
       ...options,
     },

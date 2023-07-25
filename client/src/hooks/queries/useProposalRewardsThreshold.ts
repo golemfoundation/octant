@@ -16,14 +16,17 @@ export default function useProposalRewardsThreshold(
   const { data: currentEpoch } = useCurrentEpoch();
 
   useSubscription<{ threshold: string }>(WebsocketListenEvent.threshold, data => {
-    queryClient.setQueryData(QUERY_KEYS.proposalRewardsThreshold, parseUnits(data.threshold, 'wei'));
+    queryClient.setQueryData(
+      QUERY_KEYS.proposalRewardsThreshold,
+      parseUnits(data.threshold, 'wei'),
+    );
   });
 
   return useQuery(
     QUERY_KEYS.proposalRewardsThreshold,
     () => apiGetProjectThreshold(currentEpoch!),
     {
-      enabled: !!currentEpoch,
+      enabled: !!currentEpoch && currentEpoch > 1,
       select: response => parseUnits(response.threshold, 'wei'),
       staleTime: Infinity,
       ...options,
