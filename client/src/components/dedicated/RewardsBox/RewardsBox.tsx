@@ -11,7 +11,7 @@ import styles from './RewardsBox.module.scss';
 import RewardsBoxProps from './types';
 
 const RewardsBox: FC<RewardsBoxProps> = ({ buttonProps, className, isGrey, isDisabled }) => {
-  const { t } = useTranslation('translation', {
+  const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.rewardsBox',
   });
   const { data: withdrawableUserEth } = useWithdrawableUserEth();
@@ -22,7 +22,7 @@ const RewardsBox: FC<RewardsBoxProps> = ({ buttonProps, className, isGrey, isDis
         cryptoCurrency: 'ethereum',
         valueCrypto: withdrawableUserEth,
       },
-      label: t('availableNow'),
+      label: i18n.t('common.availableNow'),
     },
   ];
 

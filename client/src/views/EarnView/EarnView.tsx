@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import BoxGlmLock from 'components/dedicated/BoxGlmLock/BoxGlmLock';
-import BoxWithdrawEth from 'components/dedicated/BoxWithdrawEth/BoxWithdrawEth';
+import BoxPersonalAllocation from 'components/dedicated/BoxPersonalAllocation/BoxPersonalAllocation';
 import History from 'components/dedicated/History/History';
 import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
 import TipTile from 'components/dedicated/TipTile/TipTile';
@@ -63,7 +63,7 @@ const EarnView = (): ReactElement => {
             </BoxRounded>
           )}
           <BoxGlmLock classNameBox={styles.box} />
-          <BoxWithdrawEth classNameBox={styles.box} />
+          <BoxPersonalAllocation className={styles.box} />
         </div>
         <History className={styles.column} />
       </div>
