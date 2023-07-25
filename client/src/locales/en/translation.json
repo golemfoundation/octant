@@ -114,6 +114,9 @@
         "cantUnlock": "You can't unlock more than you have locked",
         "dontHaveEnough": "You don't have enough to lock that amount"
       },
+      "historyList": {
+        "emptyHistory": "You haven’t made any transactions yet"
+      },
       "historyItem": {
         "allocatedFunds": "Allocated funds",
         "lockedGLM": "Locked GLM",
@@ -225,8 +228,7 @@
         "text": "Rewards you allocate to yourself can be withdrawn to your wallet here in the Earn view"
       },
       "preLaunch": {
-        "timerTitle": "Octant launches in",
-        "emptyHistory": "You haven’t made any transactions yet"
+        "timerTitle": "Octant launches in"
       }
     },
     "metrics": {

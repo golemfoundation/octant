@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -51,7 +52,7 @@ const EarnView = (): ReactElement => {
         title={t('tip.title')}
       />
       <div className={styles.wrapper}>
-        <div className={styles.boxesWrapper}>
+        <div className={cx(styles.boxesWrapper, styles.column)}>
           {isPreLaunch && (
             <BoxRounded className={styles.box} isVertical title={t('preLaunch.timerTitle')}>
               <TimeCounter
@@ -64,18 +65,7 @@ const EarnView = (): ReactElement => {
           <BoxGlmLock classNameBox={styles.box} />
           <BoxWithdrawEth classNameBox={styles.box} />
         </div>
-        {isPreLaunch ? (
-          <BoxRounded
-            className={styles.box}
-            hasSections
-            isVertical
-            title={i18n.t('common.history')}
-          >
-            <div className={styles.emptyHistoryInfo}>{t('preLaunch.emptyHistory')}</div>
-          </BoxRounded>
-        ) : (
-          <History />
-        )}
+        <History className={styles.column} />
       </div>
     </MainLayout>
   );

@@ -4,11 +4,22 @@
   }
 }
 
+.column {
+  &:not(:last-child) {
+    margin-bottom: 1.6rem;
+  }
+
+  @media #{$desktop-up} {
+    @include flexBasisGutter(2, 1.6rem);
+    margin-bottom: 0;
+  }
+}
+
 .boxesWrapper {
   width: 100%;
 
   @media #{$desktop-up} {
-    padding-right: 3.2rem;
+    padding-right: 1.6rem;
   }
 }
 
@@ -29,6 +40,7 @@
 
   @media #{$desktop-up} {
     flex-direction: row;
+    justify-content: space-between;
   }
 }
 
@@ -38,15 +50,6 @@
   @media #{$desktop-up} {
     margin-bottom: 2.8rem;
   }
-}
-
-.emptyHistoryInfo {
-  height: 7.2rem;
-  display: flex;
-  align-items: center;
-  color: $color-octant-grey6;
-  font-size: $font-size-14;
-  font-weight: $font-weight-semibold;
 }
 
 .preLaunchTimer {

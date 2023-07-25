@@ -1,35 +1,37 @@
-import React, { ReactElement } from 'react';
+import cx from 'classnames';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
 
-import Loader from 'components/core/Loader/Loader';
+import BoxRounded from 'components/core/BoxRounded/BoxRounded';
+import HistoryItemSkeleton from 'components/dedicated/History//HistoryItemSkeleton/HistoryItemSkeleton';
+import HistoryList from 'components/dedicated/History/HistoryList/HistoryList';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useHistory from 'hooks/queries/useHistory';
+import getIsPreLaunch from 'utils/getIsPreLaunch';
 
 import styles from './History.module.scss';
-import HistoryItem from './HistoryItem/HistoryItem';
+import HistoryProps from './types';
 
-const History = (): ReactElement => {
+const History: FC<HistoryProps> = ({ className }) => {
   const { i18n } = useTranslation('translation');
-  const { isConnected } = useAccount();
+  const { data: currentEpoch } = useCurrentEpoch();
   const { data: history, isFetching: isFetchingHistory } = useHistory();
 
-  const shouldHistoryBeVisible = isConnected;
-  const isListAvailable = shouldHistoryBeVisible && history !== undefined;
-  const showLoader = !isListAvailable || isFetchingHistory;
+  const isListAvailable = history !== undefined;
+  const isPreLaunch = getIsPreLaunch(currentEpoch);
+  const showLoader = (!isListAvailable || isFetchingHistory) && !isPreLaunch;
 
   return (
-    <div className={styles.root} data-test="History">
-      <div className={styles.header}>{i18n.t('common.history')}</div>
-      {shouldHistoryBeVisible &&
-        (showLoader ? (
-          <Loader className={styles.loader} />
-        ) : (
-          history?.map((element, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <HistoryItem key={index} {...element} />
-          ))
-        ))}
-    </div>
+    <BoxRounded
+      className={cx(styles.root, className)}
+      dataTest="History"
+      hasPadding={false}
+      hasSections
+      isVertical
+      title={i18n.t('common.history')}
+    >
+      {showLoader ? <HistoryItemSkeleton /> : <HistoryList history={history} />}
+    </BoxRounded>
   );
 };
 

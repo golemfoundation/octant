@@ -13,7 +13,7 @@ export type HistoryItem = {
   type: 'lock' | 'unlock' | 'allocation' | 'withdrawal';
 };
 
-type HistoryItems = HistoryItem[];
+export type HistoryItems = HistoryItem[];
 
 export default function useHistory(
   options?: UseQueryOptions<Response, unknown, Response['history'], any>,

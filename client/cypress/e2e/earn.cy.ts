@@ -3,14 +3,12 @@ import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
+Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
   describe(`earn: ${device}`, { viewportHeight, viewportWidth }, () => {
     beforeEach(() => {
-      cy.intercept('GET', '/epochs/current').as('requestGetCurrentEpoch');
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       visitWithLoader(ROOT_ROUTES.earn.absolute);
-      cy.wait('@requestGetCurrentEpoch').its('response.body.currentEpoch').as('currentEpoch');
     });
 
     it('renders "Locked balance" box', () => {
@@ -22,15 +20,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('renders "History"', () => {
-      cy.get('@currentEpoch').then(currentEpoch => {
-        switch(currentEpoch) {
-          // @ts-expect-error currentEpoch is a number
-          case 1:
-            return cy.get('[data-test=History]').should(isDesktop ? 'not.be.visible' : 'be.visible');
-          default:
-            return cy.get('[data-test=History]').should('be.visible');
-        }
-      });
+      cy.get('[data-test=History]').should('be.visible');
     });
 
     it('"Lock GLM" button is visible', () => {
