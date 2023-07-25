@@ -7,6 +7,10 @@ from web3 import Web3
 load_dotenv()
 
 
+def _parse_bool(value: str) -> bool:
+    return value.lower() in ["true", "1"] if value is not None else False
+
+
 class Config(object):
     """Base configuration."""
 
@@ -17,7 +21,7 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SUBGRAPH_ENDPOINT = os.getenv("SUBGRAPH_ENDPOINT")
     WEB3_PROVIDER = Web3.HTTPProvider(os.getenv("ETH_RPC_PROVIDER_URL"))
-    SCHEDULER_ENABLED = os.getenv("SCHEDULER_ENABLED", "False") == "True"
+    SCHEDULER_ENABLED = _parse_bool(os.getenv("SCHEDULER_ENABLED"))
 
     # Epoch ending dates
     EPOCH_0_END = int(os.getenv("EPOCH_0_END", 1690848000))
@@ -42,9 +46,7 @@ class Config(object):
     TESTNET_MULTISIG_PRIVATE_KEY = os.getenv("TESTNET_MULTISIG_PRIVATE_KEY")
 
     # Confirming withdrawals in Vault
-    VAULT_CONFIRM_WITHDRAWALS_ENABLED = (
-        os.getenv("VAULT_CONFIRM_WITHDRAWALS_ENABLED", "False") == "True"
-    )
+    VAULT_CONFIRM_WITHDRAWALS_ENABLED = _parse_bool(os.getenv("VAULT_CONFIRM_WITHDRAWALS_ENABLED"))
 
 
 class ProdConfig(Config):
