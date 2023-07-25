@@ -18,7 +18,7 @@ export default function useWithdrawableUserEth(
     QUERY_KEYS.withdrawableUserEth,
     () => apiGetWithdrawableRewards(address as string),
     {
-      enabled: !!address && !!currentEpoch,
+      enabled: !!address && !!currentEpoch && currentEpoch > 1,
       select: data => {
         const sum = data.reduce((prev, { amount }) => prev + parseFloat(amount), 0);
         return parseUnits(sum.toString());

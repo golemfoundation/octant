@@ -16,7 +16,7 @@ export default function useWithdrawableRewards(
     QUERY_KEYS.withdrawableUserEth,
     () => apiGetWithdrawableRewards(address as string),
     {
-      enabled: !!address && !!currentEpoch,
+      enabled: !!address && !!currentEpoch && currentEpoch > 1,
       ...options,
     },
   );
