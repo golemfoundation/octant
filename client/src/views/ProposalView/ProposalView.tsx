@@ -180,9 +180,6 @@ const ProposalView = (): ReactElement => {
         useWindow
       >
         {loadedProposals.map(({ address, description, name, profileImageCID, website }, index) => {
-          const proposalMatchedProposalRewards = proposalsWithRewards?.find(
-            ({ address: matchedAddress }) => matchedAddress === address,
-          );
           const { onAddRemoveFromAllocate } = useIdsInAllocation({
             allocations: allocations!,
             setAllocations,
@@ -225,6 +222,7 @@ const ProposalView = (): ReactElement => {
                   </Button>
                   {!isEpoch1 ? (
                     <ProposalRewards
+                      address={address}
                       canFoundedAtHide={false}
                       className={styles.proposalRewards}
                       MiddleElement={
@@ -235,9 +233,6 @@ const ProposalView = (): ReactElement => {
                             {...buttonAddToAllocateProps}
                           />
                         )
-                      }
-                      totalValueOfAllocations={
-                        proposalMatchedProposalRewards?.totalValueOfAllocations
                       }
                     />
                   ) : (

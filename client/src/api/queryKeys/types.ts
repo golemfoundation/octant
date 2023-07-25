@@ -23,13 +23,12 @@ export type QueryKeys = {
   lockedSummaryLatest: ['lockedSummaryLatest'];
   matchedProposalRewards: ['matchedProposalRewards'];
   proposalDonors: (proposalAddress: string) => [Root['proposalDonors'], string];
-  proposalRewardsThresholdFraction: ['proposalRewardsThresholdFraction'];
+  proposalRewardsThreshold: ['proposalRewardsThreshold'];
   proposalsCid: ['proposalsCid'];
   proposalsContract: ['proposalsContract'];
   proposalsIpfsResults: (proposalAddress: string) => [Root['proposalsIpfsResults'], string];
   unlocks: ['unlocks'];
   userAllocations: ['userAllocations'];
   userHistoricAllocations: (userAddress: string) => [Root['userHistoricAllocations'], string];
-  usersAllocationsSum: ['usersAllocationsSum'];
   withdrawableUserEth: ['withdrawableUserEth'];
 };

@@ -5,13 +5,12 @@ import { useAccount } from 'wagmi';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Svg from 'components/core/Svg/Svg';
 import ProposalLoadingStates from 'components/dedicated/ProposalLoadingStates/ProposalLoadingStates';
+import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
-import useProposalRewardsThresholdFraction from 'hooks/queries/useProposalRewardsThresholdFraction';
+import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
-import useUsersAllocationsSum from 'hooks/queries/useUsersAllocationsSum';
 import useAllocationsStore from 'store/allocations/store';
 import { checkMark, pencil } from 'svg/misc';
-import getCutOffValueBigNumber from 'utils/getCutOffValueBigNumber';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './AllocationItem.module.scss';
@@ -25,19 +24,19 @@ const AllocationItem: FC<AllocationItemProps> = ({
   isLocked,
   isManuallyEdited,
   onSelectItem,
-  totalValueOfAllocations,
   value,
 }) => {
   const { isConnected } = useAccount();
-  const { data: proposalRewardsThresholdFraction } = useProposalRewardsThresholdFraction();
+  const { data: proposalRewardsThreshold, isLoading: isLoadingRewardsThreshold } =
+    useProposalRewardsThreshold();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
-  const { data: usersAllocationsSum } = useUsersAllocationsSum();
-  const { data: proposalsIpfs, isLoading } = useProposalsIpfs([address]);
+  const { data: proposalsIpfs, isLoading: isLoadingProposalsIpfs } = useProposalsIpfs([address]);
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
   }));
   const { name, isLoadingError } = proposalsIpfs[0] || {};
 
+  const isLoading = isLoadingRewardsThreshold || isLoadingProposalsIpfs;
   const isLoadingStates = isLoadingError || isLoading;
 
   const percentToRender = rewardsForProposals.isZero()
@@ -45,14 +44,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
     : value.mul(100).div(rewardsForProposals).toNumber();
   const valueToRender = getFormattedEthValue(value).fullString;
 
-  const cutOffValue = getCutOffValueBigNumber(
-    usersAllocationsSum,
-    proposalRewardsThresholdFraction,
-  );
-
-  const isProjectFounded = totalValueOfAllocations
-    ? totalValueOfAllocations.gte(cutOffValue)
-    : false;
+  const isDonationAboveThreshold = useIsDonationAboveThreshold(address);
 
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ address: matchedProposalRewardsAddress }) => address === matchedProposalRewardsAddress,
@@ -83,10 +75,16 @@ const AllocationItem: FC<AllocationItemProps> = ({
           )}
           <div className={styles.valuesBox}>
             <div className={styles.ethNeeded}>
-              <div className={cx(styles.dot, isProjectFounded && styles.isProjectFounded)} />
+              <div
+                className={cx(
+                  styles.dot,
+                  isDonationAboveThreshold && styles.isDonationAboveThreshold,
+                )}
+              />
               {proposalMatchedProposalRewards &&
+                proposalRewardsThreshold &&
                 `${getFormattedEthValue(proposalMatchedProposalRewards?.sum).value} of ${
-                  getFormattedEthValue(cutOffValue).fullString
+                  getFormattedEthValue(proposalRewardsThreshold).fullString
                 } needed`}
             </div>
             <div className={styles.allocated}>

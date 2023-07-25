@@ -1,10 +1,8 @@
 import { ReactNode } from 'react';
 
-import ProposalItemProps from 'components/dedicated/ProposalItem/types';
-
 export default interface ProposalRewardsProps {
   MiddleElement?: ReactNode;
+  address: string;
   canFoundedAtHide?: boolean;
   className?: string;
-  totalValueOfAllocations: ProposalItemProps['totalValueOfAllocations'];
 }
