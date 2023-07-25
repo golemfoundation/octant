@@ -15,8 +15,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=BoxGlmLock__BoxRounded]').should('be.visible');
     });
 
-    it('renders "Rewards" box', () => {
-      cy.get('[data-test=RewardsBox__BoxRounded]').should('be.visible');
+    it('renders "Personal allocation" box', () => {
+      cy.get('[data-test=BoxPersonalAllocation]').should('be.visible');
     });
 
     it('renders "History"', () => {
@@ -32,11 +32,11 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('"Withdraw rewards" button is visible', () => {
-      cy.get('[data-test=BoxWithdrawEth__RewardsBox__Button]').should('be.visible');
+      cy.get('[data-test=BoxPersonalAllocation__Button]').should('be.visible');
     });
 
     it('"Withdraw rewards" button is disabled', () => {
-      cy.get('[data-test=BoxWithdrawEth__RewardsBox__Button]').should('be.disabled');
+      cy.get('[data-test=BoxPersonalAllocation__Button]').should('be.disabled');
     });
 
     it('"Effective" section has tooltip', () => {

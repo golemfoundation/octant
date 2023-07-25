@@ -29,7 +29,8 @@
     "valueCantBeEmpty": "Value can't be empty",
     "personal": "Personal",
     "proposalForbiddenOperation": "As a proposal you are not able to proceed with this operation",
-    "history": "History"
+    "history": "History",
+    "availableNow": "Available now"
   },
   "components": {
     "dedicated": {
@@ -71,7 +72,9 @@
         "effective": "Effective",
         "lockedBalance": "Locked balance"
       },
-      "boxWithdrawEth": {
+      "boxPersonalAllocation": {
+        "personalAllocation": "Personal allocation",
+        "pending": "Pending",
         "withdrawRewards": "Withdraw Rewards"
       },
       "budgetBox": {
@@ -154,7 +157,6 @@
         "fundedAt": "Funded at"
       },
       "rewardsBox": {
-        "availableNow": "Available now",
         "rewards": "Rewards"
       },
       "timeCounter": {
