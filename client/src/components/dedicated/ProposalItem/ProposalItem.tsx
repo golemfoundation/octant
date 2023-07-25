@@ -18,12 +18,7 @@ import useAllocationsStore from 'store/allocations/store';
 import styles from './ProposalItem.module.scss';
 import ProposalItemProps from './types';
 
-const ProposalItem: FC<ProposalItemProps> = ({
-  address,
-  className,
-  dataTest,
-  totalValueOfAllocations,
-}) => {
+const ProposalItem: FC<ProposalItemProps> = ({ address, className, dataTest }) => {
   const { ipfsGateway } = env;
   const navigate = useNavigate();
   const { data: userAllocations } = useUserAllocations();
@@ -92,12 +87,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
               text={introDescription!}
             />
           </div>
-          {!isEpoch1 && (
-            <ProposalRewards
-              className={styles.proposalRewards}
-              totalValueOfAllocations={totalValueOfAllocations}
-            />
-          )}
+          {!isEpoch1 && <ProposalRewards address={address} className={styles.proposalRewards} />}
         </Fragment>
       )}
     </div>

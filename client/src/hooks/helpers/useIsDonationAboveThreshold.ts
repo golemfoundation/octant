@@ -1,20 +1,17 @@
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
-import useProposalRewardsThresholdFraction from 'hooks/queries/useProposalRewardsThresholdFraction';
+import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
 
 export default function useIsDonationAboveThreshold(proposalAddress: string): boolean {
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
-  const { data: proposalRewardsThresholdFraction } = useProposalRewardsThresholdFraction();
+  const { data: proposalRewardsThreshold } = useProposalRewardsThreshold();
 
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ address }) => address === proposalAddress,
   );
 
-  if (
-    proposalRewardsThresholdFraction === undefined ||
-    proposalMatchedProposalRewards === undefined
-  ) {
+  if (proposalRewardsThreshold === undefined || proposalMatchedProposalRewards === undefined) {
     return false;
   }
 
-  return proposalMatchedProposalRewards.percentage >= proposalRewardsThresholdFraction;
+  return proposalMatchedProposalRewards.sum >= proposalRewardsThreshold;
 }

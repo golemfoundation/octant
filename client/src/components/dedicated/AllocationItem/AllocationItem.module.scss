@@ -46,7 +46,7 @@
       background: $color-octant-orange;
       margin-right: 1.4rem;
 
-      &.isProjectFounded {
+      &.isDonationAboveThreshold {
         background: $color-octant-green;
       }
     }

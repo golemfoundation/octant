@@ -3,9 +3,9 @@ import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
-import useProposalRewardsThresholdFraction from 'hooks/queries/useProposalRewardsThresholdFraction';
-import useUsersAllocationsSum from 'hooks/queries/useUsersAllocationsSum';
-import getCutOffValueBigNumber from 'utils/getCutOffValueBigNumber';
+import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
+import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
+import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
 import styles from './ProposalRewards.module.scss';
@@ -13,62 +13,63 @@ import ProposalRewardsProps from './types';
 import { getProgressPercentage } from './utils';
 
 const ProposalRewards: FC<ProposalRewardsProps> = ({
+  address,
   canFoundedAtHide = true,
   className,
   MiddleElement,
-  totalValueOfAllocations,
 }) => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.proposalRewards',
   });
 
-  const { data: proposalRewardsThresholdFraction } = useProposalRewardsThresholdFraction();
-  const { data: usersAllocationsSum } = useUsersAllocationsSum();
-
-  const cutOffValue = getCutOffValueBigNumber(
-    usersAllocationsSum,
-    proposalRewardsThresholdFraction,
+  const { data: proposalRewardsThreshold } = useProposalRewardsThreshold();
+  const { data: matchedProposalRewards } = useMatchedProposalRewards();
+  const proposalMatchedProposalRewards = matchedProposalRewards?.find(
+    ({ address: proposalAddress }) => address === proposalAddress,
   );
-  const isProjectFounded = totalValueOfAllocations
-    ? totalValueOfAllocations.gte(cutOffValue)
-    : false;
+
+  const isDonationAboveThreshold = useIsDonationAboveThreshold(address);
 
   const isFundedAtHidden =
-    cutOffValue.isZero() ||
-    (canFoundedAtHide && !cutOffValue.isZero() && totalValueOfAllocations && isProjectFounded);
+    (proposalRewardsThreshold && proposalRewardsThreshold.isZero()) ||
+    (canFoundedAtHide && isDonationAboveThreshold);
 
-  const isTotalValueOfAllocationsDefined = totalValueOfAllocations !== undefined;
+  const isDataDefined =
+    proposalMatchedProposalRewards !== undefined && proposalRewardsThreshold !== undefined;
 
   const totalValueOfAllocationsToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
-    valueCrypto: totalValueOfAllocations,
+    valueCrypto: proposalMatchedProposalRewards?.sum,
   });
 
   const cutOffValueToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
-    valueCrypto: cutOffValue,
+    valueCrypto: proposalRewardsThreshold,
   });
 
   return (
     <div className={cx(styles.root, className)} data-test="ProposalRewards">
       <div className={styles.separator}>
-        {isProjectFounded || !isTotalValueOfAllocationsDefined ? (
+        {isDonationAboveThreshold || !isDataDefined ? (
           <div className={styles.line} />
         ) : (
           <ProgressBar
-            progressPercentage={getProgressPercentage(totalValueOfAllocations, cutOffValue)}
+            progressPercentage={getProgressPercentage(
+              proposalMatchedProposalRewards?.sum,
+              proposalRewardsThreshold,
+            )}
             variant="orange"
           />
         )}
       </div>
       <div className={styles.values}>
-        {isTotalValueOfAllocationsDefined ? (
+        {isDataDefined ? (
           <div className={styles.value}>
             <span className={styles.label} data-test="ProposalRewards__totalDonated__label">
               {t('totalDonated')}
             </span>
             <span
-              className={cx(styles.number, !isProjectFounded && styles.isBelowCutOff)}
+              className={cx(styles.number, !isDonationAboveThreshold && styles.isBelowCutOff)}
               data-test="ProposalRewards__totalDonated__number"
             >
               {totalValueOfAllocationsToDisplay}
@@ -83,7 +84,7 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
           </div>
         )}
         {MiddleElement}
-        {isTotalValueOfAllocationsDefined && (
+        {isDataDefined && (
           <div className={cx(styles.value, isFundedAtHidden && styles.isHidden)}>
             <span className={styles.label}>{t('fundedAt')}</span>
             <span className={styles.number}>{cutOffValueToDisplay}</span>
