@@ -53,6 +53,10 @@ if [[ "$ACTION" == "create" ]]; then
 		-H "Authorization: Bearer ${ARGOCD_ACCESS_TOKEN}" \
 		-H "Content-type: application/json" \
 		"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/resource?name=graph-deploy&appNamespace=argocd&namespace=${DEPLOYMENT_ID}&resourceName=graph-deploy&version=v1&kind=Job&group=batch&force=true&orphan=false"
+	curl -s -X DELETE \
+		-H "Authorization: Bearer ${ARGOCD_ACCESS_TOKEN}" \
+		-H "Content-type: application/json" \
+		"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/resource?name=web-client&appNamespace=argocd&namespace=${DEPLOYMENT_ID}&resourceName=web-client&version=v1&kind=Deployment&group=apps&force=true&orphan=false"
 	curl -s -X POST \
 		-H "Authorization: Bearer ${ARGOCD_ACCESS_TOKEN}" \
 		-H "Content-type: application/json" \

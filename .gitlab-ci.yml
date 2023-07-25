@@ -351,6 +351,7 @@ Force destroy E2E env:
   image: !reference [.images, git_improved ]
   rules:
     - !reference [.rules, on_mr_manual]
+    - !reference [.rules, on_push_to_default_branch_manual ]
   allow_failure: true
   script:
     - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh e2e
