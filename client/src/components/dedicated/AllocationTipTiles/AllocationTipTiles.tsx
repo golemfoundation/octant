@@ -81,7 +81,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
         title={t('connectWallet.title')}
       />
       <TipTile
-        image="images/tip-lock-glm.webp"
+        image="images/lock-glm.webp"
         infoLabel={i18n.t('common.gettingStarted')}
         isOpen={isLockGlmTipVisible}
         onClose={() => setWasLockGLMAlreadyClosed(true)}
