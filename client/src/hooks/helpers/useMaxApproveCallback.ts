@@ -23,7 +23,7 @@ function useApprovalState(
   const [approvalState, setApprovalState] = useState(ApprovalState.UNKNOWN);
   if (contract && signerAddress) {
     useTokenAllowance(contract, signerAddress, spender).then(allowance => {
-      const state = allowance.gt(minAmountToBeApproved)
+      const state = allowance.gte(minAmountToBeApproved)
         ? ApprovalState.APPROVED
         : ApprovalState.NOT_APPROVED;
       setApprovalState(state);

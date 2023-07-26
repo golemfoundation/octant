@@ -66,12 +66,14 @@ const GlmLock: FC<GlmLockProps> = ({
   const [currentStepIndex, setCurrentStepIndex] = useState<CurrentStepIndex>(
     currentStepIndexInitialValue,
   );
+  const [valueToDepose, setValueToDepose] = useState<BigNumber>(BigNumber.from(0));
+
   const { refetch: refetchDepositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
   const { data: dataAvailableFunds } = useAvailableFundsGlm();
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
   const { data: proposalsAddresses } = useProposalsContract();
   const [approvalState, approveCallback] = useMaxApproveCallback(
-    BigNumber.from(dataAvailableFunds?.value || BigNumber.from(1)),
+    valueToDepose,
     env.contractDepositsAddress,
     signer,
     address,
@@ -207,6 +209,9 @@ const GlmLock: FC<GlmLockProps> = ({
             isDisabled: formik.isSubmitting,
             name: 'valueToDeposeOrWithdraw',
             onChange: value => {
+              if (currentMode === 'lock') {
+                setValueToDepose(parseUnits(value, 18));
+              }
               formik.setFieldValue('valueToDeposeOrWithdraw', value);
             },
             onClear: formik.resetForm,
