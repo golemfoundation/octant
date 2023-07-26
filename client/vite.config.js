@@ -31,6 +31,7 @@ export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production';
   const isStaging = mode === 'staging';
   const localIdentName = isProduction ? '[hash:base64:5]' : '[name]__[local]--[hash:base64:5]';
+  const base = isProduction ? '/' : '/governance/octant/';
 
   const plugins = [
     react(),
@@ -40,6 +41,7 @@ export default defineConfig(({ mode }) => {
       metas: [
         { content: i18n.t('meta.description'), name: 'og:description' },
         { content: i18n.t('meta.description'), name: 'description' },
+        { content: `${base}images/og-image.png`, name: 'og:image' },
       ],
     }),
   ];
@@ -52,7 +54,7 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    base: isProduction ? '/' : '/governance/octant/',
+    base,
     css: {
       modules: {
         generateScopedName: localIdentName,
