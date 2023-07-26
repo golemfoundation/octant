@@ -2,7 +2,11 @@ from typing import List, Tuple
 
 from app.core.common import UserDeposit
 from app.core.deposits.cut_off import apply_cutoff
-from app.core.deposits.events import get_weighted_deposits, WeightedDeposit
+from app.core.deposits.events import (
+    get_all_users_weighted_deposits,
+    WeightedDeposit,
+    get_user_weighted_deposits,
+)
 
 
 def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
@@ -36,7 +40,7 @@ def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
             - A list of UserDeposit instances.
             - The total effective deposit.
     """
-    deposits = get_weighted_deposits(epoch_no)
+    deposits = get_all_users_weighted_deposits(epoch_no)
     total_ed = 0
     user_deposits = []
 
@@ -50,11 +54,19 @@ def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
     return user_deposits, total_ed
 
 
+def get_estimated_effective_deposit(start: int, end: int, user_address: str) -> int:
+    user_deposit_events = get_user_weighted_deposits(start, end, user_address)
+    return _calculate_effective_deposit(user_deposit_events)
+
+
 def _calculate_effective_deposit(deposits: List[WeightedDeposit]) -> int:
     numerator = 0
     denominator = 0
     for amount, weight in deposits:
         numerator += amount * weight
         denominator += weight
+
+    if denominator == 0:
+        return 0
 
     return apply_cutoff(int(numerator / denominator))

@@ -48,3 +48,36 @@ def get_unlocks_by_timestamp_range(from_ts, to_ts):
     }
 
     return graphql_client.execute(query, variable_values=variables)["unlockeds"]
+
+
+def get_unlocks_by_address_and_timestamp_range(
+    user_address: str, from_ts: int, to_ts: int
+):
+    query = gql(
+        """
+        query GetUnlocks($userAddress: Bytes!, $fromTimestamp: Int!, $toTimestamp: Int!) {
+         unlockeds(
+    orderBy: timestamp,
+    where: {
+      timestamp_gte: $fromTimestamp,
+      timestamp_lt: $toTimestamp,
+      user: $userAddress
+    }
+  ) {
+    __typename
+    depositBefore
+    amount
+    timestamp
+    user
+  }
+}
+    """
+    )
+
+    variables = {
+        "userAddress": user_address,
+        "fromTimestamp": from_ts,
+        "toTimestamp": to_ts,
+    }
+
+    return graphql_client.execute(query, variable_values=variables)["unlockeds"]
