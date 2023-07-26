@@ -63,7 +63,6 @@ const Navbar: FC<NavbarProps> = ({ navigationBottomSuffix, tabs }) => {
             ))}
           </div>
         </nav>
-        <div className={styles.coinGecko}>Powered by CoinGecko API</div>
       </div>
       <div
         className={cx(

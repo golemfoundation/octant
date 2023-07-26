@@ -2,8 +2,11 @@ import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
+import Button from 'components/core/Button/Button';
 import InputSelect from 'components/core/InputSelect/InputSelect';
 import InputToggle from 'components/core/InputToggle/InputToggle';
+import { TERMS_OF_USE } from 'constants/urls';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useSettingsStore from 'store/settings/store';
 import { SettingsData } from 'store/settings/types';
@@ -22,6 +25,7 @@ const options: Options = [
 
 const SettingsView = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
+  const { data: currentEpoch } = useCurrentEpoch();
   const {
     setDisplayCurrency,
     setIsAllocateOnboardingAlwaysVisible,
@@ -41,8 +45,26 @@ const SettingsView = (): ReactElement => {
     setIsAllocateOnboardingAlwaysVisible: state.setIsAllocateOnboardingAlwaysVisible,
     setIsCryptoMainValueDisplay: state.setIsCryptoMainValueDisplay,
   }));
+
   return (
     <MainLayout dataTest="SettingsView">
+      <BoxRounded
+        alignment="left"
+        className={styles.infoBox}
+        hasPadding={false}
+        isVertical
+        textAlign="left"
+      >
+        <div className={styles.infoTitle}>{t('octant')}</div>
+        <div className={styles.infoEpoch}>{t('epoch', { epoch: currentEpoch })}</div>
+        <div className={styles.infoContainer}>
+          <div className={styles.info}>{t('golemFoundationProject')}</div>
+          <div className={styles.info}>{t('poweredByCoinGeckoApi')}</div>
+          <Button className={styles.link} href={TERMS_OF_USE} variant="link3">
+            {t('termsAndConditions')}
+          </Button>
+        </div>
+      </BoxRounded>
       <BoxRounded
         className={styles.box}
         hasPadding={false}
