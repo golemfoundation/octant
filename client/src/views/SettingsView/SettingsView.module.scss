@@ -31,3 +31,67 @@
   display: flex;
   font-size: $font-size-12;
 }
+
+.infoTitle {
+  font-size: $font-size-20;
+  line-height: 2rem;
+  margin-bottom: 0.8rem;
+
+  @media #{$desktop-up} {
+    font-size: 2.7rem;
+    line-height: 2.7rem;
+  }
+}
+
+.infoEpoch {
+  padding: 0.4rem 0.8rem;
+  background: $color-octant-grey2;
+  border-radius: $border-radius-04;
+  font-size: $font-size-12;
+  font-weight: $font-weight-bold;
+  line-height: 1.6rem;
+
+  @media #{$desktop-up} {
+    font-size: $font-size-14;
+  }
+}
+
+.infoBox {
+  padding: 4.4rem 2.2rem 0.5rem;
+  margin-bottom: 1.6rem;
+
+  @media #{$desktop-up} {
+    padding: 4.5rem 2.2rem 2.5rem;
+  }
+}
+
+.infoContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 9.9rem;
+
+  @media #{$desktop-up} {
+    min-height: 8rem;
+    margin-top: 1.6rem;
+  }
+
+  .info,
+  .link {
+    font-size: $font-size-12;
+    line-height: 2rem;
+    font-weight: $font-weight-semibold;
+
+    @media #{$desktop-up} {
+      font-size: $font-size-14;
+    }
+  }
+
+  .link {
+    min-height: 2rem;
+  }
+
+  .info {
+    color: $color-octant-grey6;
+  }
+}

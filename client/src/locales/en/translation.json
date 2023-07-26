@@ -292,6 +292,11 @@
       }
     },
     "settings": {
+      "octant": "Octant",
+      "epoch": "Epoch {{epoch}}",
+      "golemFoundationProject": "A Golem Foundation Project",
+      "poweredByCoinGeckoApi": "Powered by CoinGecko API",
+      "termsAndConditions": "Terms & Conditions",
       "chooseDisplayCurrency": "Choose a display currency",
       "cryptoMainValueDisplay": "Use crypto as main value display",
       "alwaysShowOnboarding": "Always show onboarding",
