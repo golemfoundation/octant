@@ -1,10 +1,9 @@
+import cx from 'classnames';
 import React, { ReactElement } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import Description from 'components/core/Description/Description';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
-import Header from 'components/core/Header/Header';
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import MetricsTimeSection from 'components/dedicated/MetricsTimeSection/MetricsTimeSection';
 import TipTile from 'components/dedicated/TipTile/TipTile';
@@ -64,32 +63,18 @@ const MetricsView = (): ReactElement => {
         }
         title={t('tip.title')}
       />
-      {!isEpoch1 && (
-        <MetricsTimeSection
-          className={styles.element}
-          currentEpoch={currentEpoch}
-          isDecisionWindowOpen={isDecisionWindowOpen}
-          onCountingFinish={onCountingFinish}
-        />
-      )}
-      <div className={styles.element}>
-        <Header text={t('valueLocked')} />
-        <Description text={t('totalValueStakedDescription')} />
-        <div className={styles.boxesGroup}>
-          <BoxRounded alignment="left" className={styles.box} isVertical title={t('ethStaked')}>
-            <DoubleValue
-              cryptoCurrency="ethereum"
-              dataTest="MetricsView__DoubleValue--ethStaked"
-              valueCrypto={ETH_STAKED}
-            />
-          </BoxRounded>
-          <BoxRounded alignment="left" className={styles.box} isVertical title={t('glmLocked')}>
-            <DoubleValue cryptoCurrency="golem" valueCrypto={lockedSummaryLatest?.lockedTotal} />
-          </BoxRounded>
-        </div>
+      <div className={styles.boxesGroup}>
+        {!isEpoch1 && (
+          <MetricsTimeSection
+            className={styles.box}
+            currentEpoch={currentEpoch}
+            isDecisionWindowOpen={isDecisionWindowOpen}
+            onCountingFinish={onCountingFinish}
+          />
+        )}
         <BoxRounded
           alignment="left"
-          className={styles.box}
+          className={cx(styles.box, styles.totalSupply, isEpoch1 && styles.isEpoch1)}
           isVertical
           title={t('glmLockedTotalSupplyPercentage')}
         >
@@ -100,6 +85,26 @@ const MetricsView = (): ReactElement => {
               lockedSummaryLatest ? parseInt(lockedSummaryLatest?.lockedRatio, 10) : 0
             }
           />
+        </BoxRounded>
+        <BoxRounded
+          alignment="left"
+          className={cx(styles.box, styles.ethStaked, isEpoch1 && styles.order1)}
+          isVertical
+          title={t('ethStaked')}
+        >
+          <DoubleValue
+            cryptoCurrency="ethereum"
+            dataTest="MetricsView__DoubleValue--ethStaked"
+            valueCrypto={ETH_STAKED}
+          />
+        </BoxRounded>
+        <BoxRounded
+          alignment="left"
+          className={cx(styles.box, styles.glmLocked, isEpoch1 && styles.order2)}
+          isVertical
+          title={t('glmLocked')}
+        >
+          <DoubleValue cryptoCurrency="golem" valueCrypto={lockedSummaryLatest?.lockedTotal} />
         </BoxRounded>
       </div>
     </MainLayout>

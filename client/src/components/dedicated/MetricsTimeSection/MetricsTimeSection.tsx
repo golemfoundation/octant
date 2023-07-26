@@ -2,8 +2,6 @@ import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import Description from 'components/core/Description/Description';
-import Header from 'components/core/Header/Header';
 import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
@@ -34,35 +32,24 @@ const MetricsTimeSection: FC<MetricsTimeSectionProps> = ({
       };
 
   return (
-    <div className={className}>
-      <Header
-        text={
-          isDecisionWindowOpen
-            ? t('epochAllocation', { currentEpoch })
-            : t('epoch', {
-                currentEpoch,
-              })
-        }
+    <BoxRounded
+      alignment="left"
+      className={className}
+      isVertical
+      title={
+        isDecisionWindowOpen
+          ? t('epochAllocationEndsIn', { currentEpoch })
+          : t('epochEndsIn', {
+              currentEpoch,
+            })
+      }
+    >
+      <TimeCounter
+        className={styles.timeCounter}
+        onCountingFinish={onCountingFinish}
+        {...counterProps}
       />
-      {isDecisionWindowOpen && <Description text={t('descriptionText')} />}
-      <BoxRounded
-        alignment="left"
-        isVertical
-        title={
-          isDecisionWindowOpen
-            ? t('epochAllocationEndsIn', { currentEpoch })
-            : t('epochEndsIn', {
-                currentEpoch,
-              })
-        }
-      >
-        <TimeCounter
-          className={styles.timeCounter}
-          onCountingFinish={onCountingFinish}
-          {...counterProps}
-        />
-      </BoxRounded>
-    </div>
+    </BoxRounded>
   );
 };
 
