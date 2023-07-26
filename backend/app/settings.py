@@ -10,7 +10,7 @@ load_dotenv()
 class Config(object):
     """Base configuration."""
 
-    SECRET_KEY = os.getenv("OCTANT_BACKEND_SECRET_KEY", "secret-key")
+    SECRET_KEY = os.getenv("OCTANT_BACKEND_SECRET_KEY")
     APP_DIR = os.path.abspath(os.path.dirname(__file__))  # This directory
     PROJECT_ROOT = os.path.abspath(os.path.join(APP_DIR, os.pardir))
     TEST_DIR = os.path.abspath(os.path.join(PROJECT_ROOT, "tests"))
@@ -35,10 +35,10 @@ class Config(object):
     )
     VAULT_CONTRACT_ADDRESS = os.getenv("VAULT_CONTRACT_ADDRESS")
 
-    CHAIN_ID = os.getenv(
+    CHAIN_ID = int(os.getenv(
         "CHAIN_ID", 11155111
-    )  # 11155111 corresponds to Sepolia network
-    CHAIN_NAME = os.getenv("CHAIN_NAME", "Sepolia")
+    ))  # 11155111 corresponds to Sepolia network
+    CHAIN_NAME = os.getenv("CHAIN_NAME")
     TESTNET_MULTISIG_PRIVATE_KEY = os.getenv("TESTNET_MULTISIG_PRIVATE_KEY")
 
     # Confirming withdrawals in Vault
@@ -53,9 +53,7 @@ class ProdConfig(Config):
     ENV = "prod"
     PROPAGATE_EXCEPTIONS = True
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DB_URI", "postgresql://user:password@localhost/octant"
-    )
+    SQLALCHEMY_DATABASE_URI = os.getenv("DB_URI")
 
 
 class DevConfig(Config):
