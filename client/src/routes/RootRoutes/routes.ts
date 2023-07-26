@@ -8,7 +8,7 @@ export const ROOT_ROUTES = {
   earn: getPathObject(ROOT, 'earn'),
   metrics: getPathObject(ROOT, 'metrics'),
   proposal: getPathObject(ROOT, PROPOSAL_PREFIX),
-  proposalWithAddress: getPathObject(ROOT, `${PROPOSAL_PREFIX}/:proposalAddress`),
+  proposalWithAddress: getPathObject(ROOT, `${PROPOSAL_PREFIX}/:epoch/:proposalAddress`),
   proposals: getPathObject(ROOT, 'projects'),
   settings: getPathObject(ROOT, 'settings'),
 };
