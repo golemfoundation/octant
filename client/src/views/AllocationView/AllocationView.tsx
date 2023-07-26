@@ -78,14 +78,19 @@ const AllocationView = (): ReactElement => {
   });
 
   const onResetAllocationValues = () => {
-    if (isLocked === undefined || !userAllocations || !rewardsForProposals) {
+    if (
+      currentEpoch === undefined ||
+      isLocked === undefined ||
+      (!userAllocations && currentEpoch > 1) ||
+      !rewardsForProposals
+    ) {
       return;
     }
     const allocationValuesNew = getAllocationValuesInitialState({
       allocations,
       isLocked,
       rewardsForProposals,
-      userAllocationsElements: userAllocations.elements,
+      userAllocationsElements: userAllocations?.elements,
     });
     setAllocationsEdited([]);
     setAllocationValues(allocationValuesNew);
@@ -106,17 +111,24 @@ const AllocationView = (): ReactElement => {
      * Only when userAllocations are fetched OR after rewardsForProposals value changes.
      */
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allocations, userAllocations, rewardsForProposals]);
+  }, [currentEpoch, allocations, userAllocations, rewardsForProposals]);
 
   const onAllocate = () => {
     allocateEvent.emit(allocationValues);
   };
 
   useEffect(() => {
-    if (userAllocations) {
-      setIsLocked(userAllocations.hasUserAlreadyDoneAllocation);
+    if (!currentEpoch) {
+      return;
     }
-  }, [userAllocations]);
+    if (userAllocations && currentEpoch > 1) {
+      setIsLocked(userAllocations.hasUserAlreadyDoneAllocation);
+      return;
+    }
+    if (currentEpoch <= 1) {
+      setIsLocked(false);
+    }
+  }, [currentEpoch, userAllocations]);
 
   const onChangeAllocationItemValue = (proposalAddressToModify: string, newValue: BigNumber) => {
     const isProposalAddressToModifyEdited = allocationsEdited.includes(proposalAddressToModify);

@@ -6,6 +6,7 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Svg from 'components/core/Svg/Svg';
 import ProposalLoadingStates from 'components/dedicated/ProposalLoadingStates/ProposalLoadingStates';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
@@ -27,6 +28,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   value,
 }) => {
   const { isConnected } = useAccount();
+  const { data: currentEpoch } = useCurrentEpoch();
   const { data: proposalRewardsThreshold, isLoading: isLoadingRewardsThreshold } =
     useProposalRewardsThreshold();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
@@ -36,7 +38,10 @@ const AllocationItem: FC<AllocationItemProps> = ({
   }));
   const { name, isLoadingError } = proposalsIpfs[0] || {};
 
-  const isLoading = isLoadingRewardsThreshold || isLoadingProposalsIpfs;
+  const isLoading =
+    currentEpoch === undefined ||
+    (isLoadingRewardsThreshold && currentEpoch > 1) ||
+    isLoadingProposalsIpfs;
   const isLoadingStates = isLoadingError || isLoading;
 
   const percentToRender = rewardsForProposals.isZero()
@@ -75,12 +80,14 @@ const AllocationItem: FC<AllocationItemProps> = ({
           )}
           <div className={styles.valuesBox}>
             <div className={styles.ethNeeded}>
-              <div
-                className={cx(
-                  styles.dot,
-                  isDonationAboveThreshold && styles.isDonationAboveThreshold,
-                )}
-              />
+              {currentEpoch > 1 && (
+                <div
+                  className={cx(
+                    styles.dot,
+                    isDonationAboveThreshold && styles.isDonationAboveThreshold,
+                  )}
+                />
+              )}
               {proposalMatchedProposalRewards &&
                 proposalRewardsThreshold &&
                 `${getFormattedEthValue(proposalMatchedProposalRewards?.sum).value} of ${
