@@ -1,3 +1,4 @@
+from eth_utils import to_checksum_address
 from flask_restx import Resource, Namespace, fields
 
 from app.database import pending_epoch_snapshot
@@ -75,7 +76,9 @@ class UserEffectiveDeposit(Resource):
     @ns.marshal_with(user_effective_deposit_model)
     @ns.response(200, "User effective deposit successfully retrieved")
     def get(self, address: str, epoch: int):
-        result = deposits_controller.get_by_user_and_epoch(address, epoch)
+        result = deposits_controller.get_by_user_and_epoch(
+            to_checksum_address(address), epoch
+        )
         return {
             "effectiveDeposit": result,
         }

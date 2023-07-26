@@ -27,8 +27,7 @@ user_allocations_sum_model = api.model(
     "UserAllocationsSum",
     {
         "amount": fields.String(
-            required=True,
-            description="User allocations sum in WEI"
+            required=True, description="User allocations sum in WEI"
         ),
     },
 )
@@ -45,7 +44,7 @@ proposal_donors_model = api.model(
             required=True,
             description="Funds allocated by donor for the proposal in WEI",
         ),
-    }
+    },
 )
 
 

@@ -2,7 +2,7 @@ import pytest
 from eth_utils import to_checksum_address
 
 from app import database
-from app.core.deposits.deposits import get_user_deposits, calculate_locked_ratio
+from app.core.deposits.deposits import get_users_deposits, calculate_locked_ratio
 from app.extensions import graphql_client
 
 USER1_ADDRESS = "0xabcdef7890123456789012345678901234567893"
@@ -178,7 +178,7 @@ def test_update_user_deposits(mocker, state_before, events, expected, app):
 
     _mock_graphql(mocker, events, deposit_before)
 
-    user_deposits, total_ed = get_user_deposits(epoch)
+    user_deposits, total_ed = get_users_deposits(epoch)
 
     if expected is not None:
         assert user_deposits[0].user_address == to_checksum_address(USER1_ADDRESS)
@@ -209,7 +209,7 @@ def test_add_multiple_user_deposits(mocker, app):
     ]
     _mock_graphql(mocker, events)
 
-    user_deposits, total_ed = get_user_deposits(epoch)
+    user_deposits, total_ed = get_users_deposits(epoch)
 
     assert len(user_deposits) == 2
     user_deposits = sorted(user_deposits, key=lambda u: u.user_address)
@@ -260,7 +260,7 @@ def test_update_multiple_user_deposits(mocker, app):
 
     _mock_graphql(mocker, events)
 
-    user_deposits, total_ed = get_user_deposits(epoch)
+    user_deposits, total_ed = get_users_deposits(epoch)
 
     assert len(user_deposits) == 2
     user_deposits = sorted(user_deposits, key=lambda u: u.user_address)
@@ -311,7 +311,7 @@ def test_add_and_update_deposits(mocker, app):
     )
     _mock_graphql(mocker, events)
 
-    user_deposits, total_ed = get_user_deposits(epoch)
+    user_deposits, total_ed = get_users_deposits(epoch)
 
     assert len(user_deposits) == 2
     user_deposits = sorted(user_deposits, key=lambda u: u.user_address)

@@ -3,7 +3,7 @@ from typing import List, Tuple, Dict
 from app import database
 from app.core.common import UserDeposit
 from app.core.deposits.cut_off import apply_cutoff
-from app.core.deposits.events import get_weighted_deposits, WeightedDeposit
+from app.core.deposits.events import get_all_users_weighted_deposits, WeightedDeposit
 from app.database.models import Deposit
 
 MINIMUM_DEPOSIT = 0
@@ -31,7 +31,7 @@ def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
             - The total effective deposit.
     """
     previous_db_deposits = database.deposits.get_all_by_epoch(epoch_no - 1)
-    epoch_deposits = get_weighted_deposits(epoch_no)
+    epoch_deposits = get_all_users_weighted_deposits(epoch_no)
     total_effective_deposit = 0
     user_deposits = []
 

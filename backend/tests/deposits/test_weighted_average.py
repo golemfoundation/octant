@@ -1,17 +1,19 @@
 import pytest
 from eth_utils import to_checksum_address
 
-from app.core.deposits.deposits import get_user_deposits
+from app.core.deposits.deposits import (
+    get_users_deposits,
+    get_estimated_effective_deposit,
+)
 from app.extensions import graphql_client
 
 USER1_ADDRESS = "0xabcdef7890123456789012345678901234567893"
 
 
 @pytest.mark.parametrize(
-    "timing, events, expected",
+    "events, expected",
     [
         (
-            (1000, 2000),
             [
                 {
                     "__typename": "Locked",
@@ -30,7 +32,6 @@ USER1_ADDRESS = "0xabcdef7890123456789012345678901234567893"
             },
         ),
         (
-            (1000, 2000),
             [
                 {
                     "__typename": "Locked",
@@ -44,7 +45,6 @@ USER1_ADDRESS = "0xabcdef7890123456789012345678901234567893"
             },
         ),
         (
-            (1000, 2000),
             [
                 {
                     "__typename": "Locked",
@@ -55,7 +55,6 @@ USER1_ADDRESS = "0xabcdef7890123456789012345678901234567893"
             {"effective_deposit": "0", "epoch_end_deposit": "100_000000000_000000000"},
         ),
         (
-            (1000, 2000),
             [
                 {
                     "__typename": "Locked",
@@ -74,7 +73,6 @@ USER1_ADDRESS = "0xabcdef7890123456789012345678901234567893"
             },
         ),
         (
-            (1000, 2000),
             [
                 {
                     "__typename": "Locked",
@@ -93,7 +91,6 @@ USER1_ADDRESS = "0xabcdef7890123456789012345678901234567893"
             },
         ),
         (
-            (1000, 2000),
             [
                 {
                     "__typename": "Locked",
@@ -122,7 +119,6 @@ USER1_ADDRESS = "0xabcdef7890123456789012345678901234567893"
             },
         ),
         (
-            (1000, 2000),
             [
                 {
                     "__typename": "Locked",
@@ -152,13 +148,15 @@ USER1_ADDRESS = "0xabcdef7890123456789012345678901234567893"
         ),
     ],
 )
-def test_update_user_deposits(mocker, timing, events, expected, app):
+def test_update_user_deposits(app, mocker, events, expected):
+    """Epochs start == 1000, epoch end == 2000"""
+
     epoch = 1
     deposit_before = 0
 
-    _mock_graphql(mocker, timing, events, deposit_before)
+    _mock_graphql(mocker, events, deposit_before)
 
-    user_deposits, total_ed = get_user_deposits(epoch)
+    user_deposits, total_ed = get_users_deposits(epoch)
 
     if expected is not None:
         assert user_deposits[0].user_address == to_checksum_address(USER1_ADDRESS)
@@ -170,7 +168,38 @@ def test_update_user_deposits(mocker, timing, events, expected, app):
         assert user_deposits == []
 
 
-def _mock_graphql(mocker, timing, events, deposit_before=0):
+def test_estimated_effective_deposit_when_user_has_events(mocker, app):
+    """Epochs start == 1000, epoch end == 2000"""
+    events = [
+        {
+            "__typename": "Locked",
+            "timestamp": 1500,
+            "amount": "1000_000000000_000000000",
+        },
+        {
+            "__typename": "Unlocked",
+            "timestamp": 1750,
+            "amount": "500_000000000_000000000",
+        },
+    ]
+
+    _mock_graphql(mocker, events, with_epochs=False)
+
+    result = get_estimated_effective_deposit(1000, 2000, USER1_ADDRESS)
+
+    assert result == 375_000000000_000000000
+
+
+def test_estimated_effective_deposit_when_user_does_not_have_events(mocker, app):
+    """Epochs start == 1000, epoch end == 2000"""
+    _mock_graphql(mocker, [], with_epochs=False)
+
+    result = get_estimated_effective_deposit(1000, 2000, USER1_ADDRESS)
+
+    assert result == 0
+
+
+def _mock_graphql(mocker, events, deposit_before=0, with_epochs=True):
     locks = []
     unlocks = []
     for event in events:
@@ -197,9 +226,13 @@ def _mock_graphql(mocker, timing, events, deposit_before=0):
     mocker.patch.object(graphql_client, "execute")
 
     # Define the mock responses for the execute method
-    fromTs, toTs = timing
-    graphql_client.execute.side_effect = [
-        {"epoches": [{"fromTs": fromTs, "toTs": toTs}]},
+    gql_execution = []
+    if with_epochs:
+        gql_execution.append({"epoches": [{"fromTs": 1000, "toTs": 2000}]})
+
+    gql_execution += [
         {"lockeds": locks},
         {"unlockeds": unlocks},
     ]
+
+    graphql_client.execute.side_effect = gql_execution
