@@ -56,7 +56,9 @@ const ProposalItem: FC<ProposalItemProps> = ({ address, className, dataTest }) =
       )}
       data-test={dataTest}
       onClick={
-        isLoadingStates ? () => {} : () => navigate(`${ROOT_ROUTES.proposal.absolute}/${address}`)
+        isLoadingStates
+          ? () => {}
+          : () => navigate(`${ROOT_ROUTES.proposal.absolute}/${currentEpoch}/${address}`)
       }
     >
       {isLoadingStates ? (
