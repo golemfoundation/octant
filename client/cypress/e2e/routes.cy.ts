@@ -9,7 +9,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('empty route redirects to proposals view', () => {
-      visitWithLoader(ROOT.absolute);
+      visitWithLoader(ROOT.absolute, ROOT_ROUTES.proposals.absolute);
       cy.get('[data-test=ProposalsView]').should('be.visible');
     });
 
