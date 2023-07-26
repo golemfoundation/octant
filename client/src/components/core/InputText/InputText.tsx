@@ -12,18 +12,19 @@ import Button from '../Button/Button';
 const InputText = forwardRef<HTMLInputElement, InputTextProps>(
   (
     {
+      autocomplete,
       className,
-      isDisabled,
       error,
-      label,
-      suffix,
+      isButtonClearVisible = true,
+      isDisabled,
       isErrorInlineVisible = true,
-      variant = 'simple',
+      label,
       onChange,
       onClear,
-      isButtonClearVisible = true,
+      suffix,
       textAlign = 'left',
       value,
+      variant = 'simple',
       ...rest
     },
     ref,
@@ -37,6 +38,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
     };
 
     const inputProps = {
+      autoComplete: autocomplete,
       className: cx(
         styles.input,
         styles[`variant--${variant}`],
