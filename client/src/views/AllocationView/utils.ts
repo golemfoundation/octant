@@ -41,7 +41,7 @@ export function getAllocationValuesInitialState({
   allocations: string[];
   isLocked: boolean;
   rewardsForProposals: BigNumber;
-  userAllocationsElements: UserAllocationElement[];
+  userAllocationsElements: UserAllocationElement[] | undefined;
 }): AllocationValues {
   const allocationValues = !isLocked
     ? allocations.map(allocation => ({
@@ -49,7 +49,7 @@ export function getAllocationValuesInitialState({
         value: rewardsForProposals.div(allocations.length),
       }))
     : allocations.map(allocation => {
-        const userAllocationsElement = userAllocationsElements.find(
+        const userAllocationsElement = userAllocationsElements?.find(
           ({ address }) => address === allocation,
         );
         return {
