@@ -128,10 +128,7 @@
         "withdrawnFunds": "Withdrawn funds"
       },
       "metricsTimeSection": {
-        "descriptionText": "Allocation is the currently active governance period of the epoch when you can allocate funds to projects you want to support.",
-        "epoch": "Epoch {{currentEpoch}}",
         "epochEndsIn": "Epoch {{currentEpoch}} ends in",
-        "epochAllocation": "Epoch {{currentEpoch}} Allocation",
         "epochAllocationEndsIn": "Epoch {{currentEpoch}} Allocation ends in"
       },
       "modalAllocationEditSelection": {
