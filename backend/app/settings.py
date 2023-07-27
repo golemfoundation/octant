@@ -15,6 +15,7 @@ class Config(object):
     """Base configuration."""
 
     SECRET_KEY = os.getenv("OCTANT_BACKEND_SECRET_KEY")
+    DEPLOYMENT_ID = os.getenv("DEPLOYMENT_ID", "unknown")
     APP_DIR = os.path.abspath(os.path.dirname(__file__))  # This directory
     PROJECT_ROOT = os.path.abspath(os.path.join(APP_DIR, os.pardir))
     TEST_DIR = os.path.abspath(os.path.join(PROJECT_ROOT, "tests"))
@@ -39,14 +40,16 @@ class Config(object):
     )
     VAULT_CONTRACT_ADDRESS = os.getenv("VAULT_CONTRACT_ADDRESS")
 
-    CHAIN_ID = int(os.getenv(
-        "CHAIN_ID", 11155111
-    ))  # 11155111 corresponds to Sepolia network
+    CHAIN_ID = int(
+        os.getenv("CHAIN_ID", 11155111)
+    )  # 11155111 corresponds to Sepolia network
     CHAIN_NAME = os.getenv("CHAIN_NAME")
     TESTNET_MULTISIG_PRIVATE_KEY = os.getenv("TESTNET_MULTISIG_PRIVATE_KEY")
 
     # Confirming withdrawals in Vault
-    VAULT_CONFIRM_WITHDRAWALS_ENABLED = _parse_bool(os.getenv("VAULT_CONFIRM_WITHDRAWALS_ENABLED"))
+    VAULT_CONFIRM_WITHDRAWALS_ENABLED = _parse_bool(
+        os.getenv("VAULT_CONFIRM_WITHDRAWALS_ENABLED")
+    )
 
 
 class ProdConfig(Config):

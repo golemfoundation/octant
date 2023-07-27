@@ -4,6 +4,7 @@ from flask_restx import Resource, Namespace, fields
 from app import settings
 from app.controllers import docs
 from app.extensions import api
+from app.settings import config
 
 ns = Namespace("docs", description="Octant documentation")
 api.add_namespace(ns)
@@ -25,6 +26,15 @@ chain_info_model = api.model(
             fields.Nested(smart_contract_model),
             description="The smart contracts used by Octant in given network.",
         ),
+    },
+)
+
+app_version_model = api.model(
+    "AppVersion",
+    {
+        "id": fields.String(description="deployment identifier"),
+        "env": fields.String(description="deployment environment"),
+        "chain": fields.String(description="blockchain name"),
     },
 )
 
@@ -53,3 +63,15 @@ class ChainInfo(Resource):
     def get(self):
         chain_info = docs.get_blockchain_info()
         return chain_info.to_dict()
+
+
+@ns.route("/version")
+class ChainInfo(Resource):
+    @ns.doc(description="Application deployment information")
+    @api.marshal_with(app_version_model)
+    def get(self):
+        return {
+            "id": config.DEPLOYMENT_ID,
+            "env": config.ENV,
+            "chain": config.CHAIN_NAME,
+        }
