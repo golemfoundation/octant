@@ -16,7 +16,7 @@ spec:
   sources:
   # https://linear.app/golemfoundation/issue/CAQD-142/move-helm-git-repository-to-devops-space
   - repoURL: 'https://git.ring0.cc/mike/helm/raw/branch/master'
-    targetRevision: 0.2.6
+    targetRevision: 0.2.7
     chart: octant
     helm:
       parameters:
@@ -26,21 +26,21 @@ spec:
         # From CI/CD vars
         - name: "secureIngress"
           value: "$SECURE_INGRESS"
-        - name: "contracts.deploy"
-          value: "false"
         - name: "contracts.epochDuration"
           value: "$EPOCH_DURATION"
         - name: "contracts.decisionWindow"
           value: "$DECISION_WINDOW"
         - name: "backendServer.epoch0End"
           value: "$EPOCH_0_END"
-        - name: "backendServer.epoch1End"
-          value: "$EPOCH_1_END"
+        - name: "webClient.alchemyId"
+          value: "$VITE_ALCHEMY_ID"
         # Hardcoded in this file
         - name: "contracts.addresses.multisigAddress"
           value: "$MULTISIG_ADDRESS"
         - name: "backendServer.schedulerEnabled"
           value: "True"
+        - name: "contracts.deploy"
+          value: "false"
         # From Deploy contracts job
         - name: contracts.addresses.startBlock
           value: "$BLOCK_NUMBER"
