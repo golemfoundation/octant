@@ -1,15 +1,11 @@
 from datetime import datetime as dt
 
-from sqlalchemy.orm import declarative_base
-
 from app.extensions import db
 
 # Alias common SQLAlchemy names
 Column = db.Column
 Model = db.Model
 relationship = db.relationship
-
-Base = declarative_base()
 
 
 class BaseModel(Model):
@@ -23,6 +19,15 @@ class User(BaseModel):
     id = Column(db.Integer, primary_key=True)
     address = Column(db.String(42), unique=True, nullable=False)
     nonce = Column(db.Integer, nullable=False, default=0)
+
+
+class UserConsents(BaseModel):
+    __tablename__ = "user_consents"  # terms of serivce consents
+
+    id = Column(db.Integer, primary_key=True)
+    user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user = relationship("User", backref=db.backref("consents", lazy=True))
+    ip = Column(db.String, nullable=False)
 
 
 class Allocation(BaseModel):

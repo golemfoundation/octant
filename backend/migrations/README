@@ -1,1 +1,11 @@
 Single-database configuration for Flask.
+
+#### Development
+
+In order to create a new migration run the following:
+
+```
+flask db upgrade # optional if you do not yet have local db files
+flask db migrate
+flask db upgrade 
+```

@@ -12,6 +12,7 @@ from . import (
     withdrawals,
     allocations,
     epochs,
+    user,
 )
 
 
