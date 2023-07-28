@@ -39,6 +39,7 @@ contract Epochs is OctantBase, IEpochs {
     mapping(uint256 => EpochProps) public epochProps;
 
     /// @dev Constructor to initialize start and the first epoch properties.
+    /// @dev Create the first epoch properties entry. Set the 'from' value to the 1st epoch and 'to' as undefined (0 is a stub)
     /// @param _start Timestamp when octant starts.
     /// @param _epochDuration Duration of an epoch in seconds.
     /// @param _decisionWindow Decision window in seconds for the first epoch.
@@ -74,6 +75,7 @@ contract Epochs is OctantBase, IEpochs {
 
     /// @notice Gets the number of the last epoch for which the decision window has already ended.
     /// @dev Will revert when calling before the first epoch is finalized.
+    /// @dev Finalized epoch is the one that has been completed and the decision window is closed
     /// @return The finalized epoch number, number in range [1, inf)
     function getFinalizedEpoch() external view returns (uint256) {
         uint256 currentEpoch = getCurrentEpoch();
@@ -95,6 +97,7 @@ contract Epochs is OctantBase, IEpochs {
 
     /// @notice Gets the number of the epoch for which the decision window is currently open.
     /// @dev Will revert when calling during closed decision window.
+    /// @dev Pending epoch is the one that has a decision window opened
     /// @return The pending epoch number, number in range [1, inf)
     function getPendingEpoch() external view returns (uint256) {
         require(isDecisionWindowOpen(), EpochsErrors.NOT_PENDING);

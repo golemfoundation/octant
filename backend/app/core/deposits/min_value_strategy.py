@@ -16,7 +16,7 @@ def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
     Effective Deposit refers to Locked GLM that has been locked for a full epoch
     and is generating rewards.
     Consider locking 100 GLM in Epoch 2 and 1000 GLM in Epoch 3.
-    During Epoch 2 Locked Balance will be 1100 GLM, but Effective Deposit will be 100 GLM,
+    During Epoch 3 Locked Balance will be 1100 GLM, but Effective Deposit will be 100 GLM,
     because the 1000 GLM has not been locked for a full epoch yet.
 
     During Epoch 3, rewards will be generated on the entire balance,
