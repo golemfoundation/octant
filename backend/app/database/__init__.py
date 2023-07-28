@@ -5,4 +5,5 @@ from . import (
     finalized_epoch_snapshot,
     deposits,
     rewards,
+    user_consents,
 )
