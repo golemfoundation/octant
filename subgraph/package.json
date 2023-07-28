@@ -27,7 +27,8 @@
     "prettier:js:pure": "prettier --write",
     "prettier:ts": "yarn prettier:ts:pure './**/*.{ts,tsx}'",
     "prettier:ts:pure": "prettier --parser typescript --write",
-    "start": "docker-compose up",
+    "start": "docker-compose -f docker-compose.yml up",
+    "start:linux": "docker-compose -f docker-compose-linux.yml up",
     "test": "graph test",
     "type-check": "echo 'Not used'"
   },
