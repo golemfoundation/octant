@@ -51,11 +51,6 @@ function getError(reason: string): QueryMutationError {
 
 export function handleError(reason: string, query?: Query | unknown): string | undefined {
   // @ts-expect-error mutations do not have queryKey field, they are pure value and are unknown.
-  if (query && query.queryKey) {
-    // @ts-expect-error mutations do not have queryKey field, they are pure value and are unknown.
-    throw new Error(query?.queryKey);
-  }
-  // @ts-expect-error mutations do not have queryKey field, they are pure value and are unknown.
   if (query && query.queryKey?.find(element => element === ROOTS.cryptoValues)) {
     // Graceful failure, no notification, no error. Inline info shown in places for values.
     return;
