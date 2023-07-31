@@ -58,7 +58,7 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
           dataTest: 'BoxPersonalAllocation__Button',
           isDisabled: isPreLaunch || !isConnected,
           isHigh: true,
-          label: t('withdrawRewards'),
+          label: t('withdrawToWallet'),
           onClick: () => setIsModalOpen(true),
           variant: 'secondary',
         }}

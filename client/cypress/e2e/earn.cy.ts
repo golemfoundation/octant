@@ -42,11 +42,11 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=BoxGlmLock__Button]').should('be.disabled');
     });
 
-    it('"Withdraw rewards" button is visible', () => {
+    it('"Withdraw to wallet" button is visible', () => {
       cy.get('[data-test=BoxPersonalAllocation__Button]').should('be.visible');
     });
 
-    it('"Withdraw rewards" button is disabled', () => {
+    it('"Withdraw to wallet" button is disabled', () => {
       cy.get('[data-test=BoxPersonalAllocation__Button]').should('be.disabled');
     });
 
