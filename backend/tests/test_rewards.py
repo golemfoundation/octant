@@ -1,12 +1,9 @@
 from decimal import Decimal
-from unittest.mock import MagicMock, Mock
 
 import pytest
 from eth_account import Account
 
 from app import database
-from app.contracts.epochs import Epochs
-from app.contracts.proposals import Proposals
 from app.controllers.rewards import (
     get_allocation_threshold,
     get_rewards_budget,
@@ -16,10 +13,9 @@ from app.core.allocations import allocate, calculate_threshold, AllocationReques
 from app.core.rewards import (
     calculate_total_rewards,
     calculate_all_individual_rewards,
-    calculate_matched_rewards,
     get_matched_rewards_from_epoch,
 )
-from .conftest import allocate_user_rewards, MOCKED_PENDING_EPOCH_NO
+from .conftest import allocate_user_rewards, MOCKED_PENDING_EPOCH_NO, MOCK_PROPOSALS
 from .test_allocations import (
     sign,
     create_payload,
@@ -29,30 +25,17 @@ from .test_allocations import (
 
 
 @pytest.fixture(autouse=True)
-def before(monkeypatch, proposal_accounts):
-    mock_epochs = MagicMock(spec=Epochs)
-    mock_proposals = MagicMock(spec=Proposals)
-    mock_snapshotted = Mock()
-
-    mock_epochs.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
-    mock_snapshotted.return_value = True
-    mock_proposals.get_proposal_addresses.return_value = [
+def before(
+    proposal_accounts,
+    patch_epochs,
+    patch_proposals,
+    patch_has_pending_epoch_snapshot,
+    patch_user_budget,
+    patch_matched_rewards,
+):
+    MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts[0:5]
     ]
-
-    monkeypatch.setattr(
-        "app.core.allocations.has_pending_epoch_snapshot", mock_snapshotted
-    )
-    monkeypatch.setattr("app.core.allocations.proposals", mock_proposals)
-    monkeypatch.setattr("app.core.allocations.epochs", mock_epochs)
-    monkeypatch.setattr("app.core.proposals.proposals", mock_proposals)
-    monkeypatch.setattr("app.core.proposals.epochs", mock_epochs)
-    monkeypatch.setattr("app.controllers.rewards.epochs", mock_epochs)
-
-    # Set some insanely high user rewards budget
-    mock_get_user_budget = Mock()
-    mock_get_user_budget.return_value = 10 * 10**18 * 10**18
-    monkeypatch.setattr("app.core.allocations.get_budget", mock_get_user_budget)
 
 
 @pytest.mark.parametrize(
@@ -172,19 +155,11 @@ def test_get_rewards_budget(app, user_accounts, proposal_accounts):
 )
 def test_proposals_rewards(
     app,
-    monkeypatch,
     user_accounts,
     proposal_accounts,
     user_allocations: dict,
     expected_matches: dict,
 ):
-    mock_matched_rewards = MagicMock(spec=calculate_matched_rewards)
-    mock_matched_rewards.return_value = 10_000000000_000000000
-
-    monkeypatch.setattr(
-        "app.controllers.rewards.get_matched_rewards_from_epoch", mock_matched_rewards
-    )
-
     for user_index, allocations in user_allocations.items():
         user_account = user_accounts[user_index]
 

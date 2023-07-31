@@ -1,39 +1,26 @@
-from unittest.mock import MagicMock, Mock
-
 import pytest
 from eth_account import Account
 
-from app.contracts.epochs import Epochs
-from app.contracts.proposals import Proposals
 from app.core.proposals import get_proposal_rewards_above_threshold
-from app.core.rewards import calculate_matched_rewards
-from tests.conftest import allocate_user_rewards, MOCKED_PENDING_EPOCH_NO
+from tests.conftest import (
+    allocate_user_rewards,
+    MOCKED_PENDING_EPOCH_NO,
+    MOCK_PROPOSALS,
+)
 
 
 @pytest.fixture(autouse=True)
-def before(monkeypatch, proposal_accounts):
-    mock_epochs = MagicMock(spec=Epochs)
-    mock_proposals = MagicMock(spec=Proposals)
-    mock_snapshotted = Mock()
-
-    mock_epochs.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
-    mock_snapshotted.return_value = True
-
-    mock_proposals.get_proposal_addresses.return_value = [
+def before(
+    proposal_accounts,
+    patch_epochs,
+    patch_proposals,
+    patch_has_pending_epoch_snapshot,
+    patch_user_budget,
+    patch_matched_rewards,
+):
+    MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts[0:5]
     ]
-
-    monkeypatch.setattr(
-        "app.core.allocations.has_pending_epoch_snapshot", mock_snapshotted
-    )
-    monkeypatch.setattr("app.core.allocations.proposals", mock_proposals)
-    monkeypatch.setattr("app.core.allocations.epochs", mock_epochs)
-    monkeypatch.setattr("app.core.proposals.proposals", mock_proposals)
-
-    # Set some insanely high user rewards budget
-    mock_get_user_budget = Mock()
-    mock_get_user_budget.return_value = 10 * 10**18 * 10**18
-    monkeypatch.setattr("app.core.allocations.get_budget", mock_get_user_budget)
 
 
 @pytest.mark.parametrize(
@@ -86,19 +73,11 @@ def before(monkeypatch, proposal_accounts):
 )
 def test_proposals_rewards_above_threshold(
     app,
-    monkeypatch,
     user_accounts,
     proposal_accounts,
     user_allocations: dict,
     expected_rewards: dict,
 ):
-    mock_matched_rewards = MagicMock(spec=calculate_matched_rewards)
-    mock_matched_rewards.return_value = 10_000000000_000000000
-
-    monkeypatch.setattr(
-        "app.core.proposals.get_matched_rewards_from_epoch", mock_matched_rewards
-    )
-
     for user_index, allocations in user_allocations.items():
         user_account = user_accounts[user_index]
 

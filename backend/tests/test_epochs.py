@@ -1,17 +1,13 @@
-from unittest.mock import MagicMock
-
 import pytest
 from freezegun import freeze_time
 
-from app.contracts.epochs import Epochs
 from app.controllers.epochs import get_current_epoch
+from tests.conftest import MOCK_EPOCHS
 
 
 @pytest.fixture(autouse=True)
-def before(monkeypatch, proposal_accounts):
-    mock_epochs = MagicMock(spec=Epochs)
-    mock_epochs.get_current_epoch.return_value = 2
-    monkeypatch.setattr("app.controllers.epochs.epochs", mock_epochs)
+def before(patch_epochs):
+    MOCK_EPOCHS.get_current_epoch.return_value = 2
 
 
 @freeze_time("2023-07-31 23:59:59")

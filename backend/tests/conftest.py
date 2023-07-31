@@ -1,20 +1,30 @@
 from decimal import Decimal
 from random import randint
-from typing import Optional, List
+from typing import Optional, List, Dict
+from unittest.mock import MagicMock, Mock
 
 import pytest
 from eth_account import Account
+from web3 import Web3
 
 from app import create_app, database
+from app.contracts.epochs import Epochs
+from app.contracts.erc20 import ERC20
+from app.contracts.proposals import Proposals
+from app.contracts.vault import Vault
 from app.core.allocations import AllocationRequest, allocate, Allocation
+from app.core.rewards import calculate_matched_rewards
 from app.crypto.eip712 import sign, build_allocations_eip712_data
-from app.extensions import db, w3
+from app.extensions import db, w3, graphql_client
 from app.settings import TestConfig
 
+# Consts
 MNEMONIC = "test test test test test test test test test test test junk"
 MOCKED_PENDING_EPOCH_NO = 42
 MOCKED_CURRENT_EPOCH_NO = 43
-GLM_SUPPLY = 1000000000_000000000_000000000
+GLM_CONTRACT_SUPPLY = 700000000_000000000_000000000
+GNT_CONTRACT_SUPPLY = 300000000_000000000_000000000
+GLM_SUPPLY = GLM_CONTRACT_SUPPLY + GNT_CONTRACT_SUPPLY
 ETH_PROCEEDS = 402_410958904_110000000
 TOTAL_ED = 22700_000000000_099999994
 USER1_ED = 1500_000055377_000000000
@@ -22,6 +32,21 @@ USER2_ED = 7500_000000000_000000000
 LOCKED_RATIO = Decimal("0.000022700000000000099999994")
 TOTAL_REWARDS = 1_917267577_180363384
 ALL_INDIVIDUAL_REWARDS = 9134728_767123337
+USER1_ADDRESS = "0xabcdef7890123456789012345678901234567893"
+USER2_ADDRESS = "0x2345678901234567890123456789012345678904"
+
+# Contracts mocks
+MOCK_GLM = MagicMock(spec=ERC20)
+MOCK_GNT = MagicMock(spec=ERC20)
+MOCK_EPOCHS = MagicMock(spec=Epochs)
+MOCK_PROPOSALS = MagicMock(spec=Proposals)
+MOCK_VAULT = MagicMock(spec=Vault)
+
+# Other mocks
+MOCK_GET_ETH_BALANCE = MagicMock()
+MOCK_GET_USER_BUDGET = Mock()
+MOCK_HAS_PENDING_SNAPSHOT = Mock()
+MOCK_MATCHED_REWARDS = MagicMock(spec=calculate_matched_rewards)
 
 
 @pytest.fixture(scope="function")
@@ -61,7 +86,80 @@ def proposal_accounts():
 
 
 @pytest.fixture(scope="function")
-def pending_epoch_snapshot(app, user_accounts):
+def patch_glm_and_gnt(monkeypatch):
+    monkeypatch.setattr("app.core.glm.glm", MOCK_GLM)
+    monkeypatch.setattr("app.core.glm.gnt", MOCK_GNT)
+
+    MOCK_GLM.total_supply.return_value = GLM_CONTRACT_SUPPLY
+    MOCK_GNT.total_supply.return_value = GNT_CONTRACT_SUPPLY
+    MOCK_GLM.balance_of.return_value = 0
+    MOCK_GNT.balance_of.return_value = 0
+
+
+@pytest.fixture(scope="function")
+def patch_epochs(monkeypatch):
+    monkeypatch.setattr("app.core.allocations.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.controllers.snapshots.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.core.proposals.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.controllers.rewards.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.controllers.epochs.epochs", MOCK_EPOCHS)
+
+    MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
+    MOCK_EPOCHS.get_current_epoch.return_value = MOCKED_CURRENT_EPOCH_NO
+
+
+@pytest.fixture(scope="function")
+def patch_proposals(monkeypatch, proposal_accounts):
+    monkeypatch.setattr("app.core.allocations.proposals", MOCK_PROPOSALS)
+    monkeypatch.setattr("app.core.proposals.proposals", MOCK_PROPOSALS)
+
+    MOCK_PROPOSALS.get_proposal_addresses.return_value = [
+        p.address for p in proposal_accounts
+    ]
+
+
+@pytest.fixture(scope="function")
+def patch_vault(monkeypatch):
+    monkeypatch.setattr("app.controllers.withdrawals.vault", MOCK_VAULT)
+    MOCK_VAULT.get_last_claimed_epoch.return_value = 0
+
+
+@pytest.fixture(scope="function")
+def patch_eth_get_balance(monkeypatch):
+    mock_eth = MagicMock(get_balance=MOCK_GET_ETH_BALANCE)
+    mock_web3 = MagicMock(spec=Web3, eth=mock_eth)
+
+    monkeypatch.setattr("app.controllers.snapshots.w3", mock_web3)
+    MOCK_GET_ETH_BALANCE.return_value = ETH_PROCEEDS
+
+
+@pytest.fixture(scope="function")
+def patch_has_pending_epoch_snapshot(monkeypatch):
+    monkeypatch.setattr(
+        "app.core.allocations.has_pending_epoch_snapshot", MOCK_HAS_PENDING_SNAPSHOT
+    )
+    MOCK_HAS_PENDING_SNAPSHOT.return_value = True
+
+
+@pytest.fixture(scope="function")
+def patch_user_budget(monkeypatch):
+    monkeypatch.setattr("app.core.allocations.get_budget", MOCK_GET_USER_BUDGET)
+    MOCK_GET_USER_BUDGET.return_value = 10 * 10**18 * 10**18
+
+
+@pytest.fixture(scope="function")
+def patch_matched_rewards(monkeypatch):
+    monkeypatch.setattr(
+        "app.controllers.rewards.get_matched_rewards_from_epoch", MOCK_MATCHED_REWARDS
+    )
+    monkeypatch.setattr(
+        "app.core.proposals.get_matched_rewards_from_epoch", MOCK_MATCHED_REWARDS
+    )
+    MOCK_MATCHED_REWARDS.return_value = 10_000000000_000000000
+
+
+@pytest.fixture(scope="function")
+def mock_pending_epoch_snapshot_db(app, user_accounts):
     database.pending_epoch_snapshot.add_snapshot(
         MOCKED_PENDING_EPOCH_NO,
         GLM_SUPPLY,
@@ -79,7 +177,7 @@ def pending_epoch_snapshot(app, user_accounts):
 
 
 @pytest.fixture(scope="function")
-def allocations(app, user_accounts, proposal_accounts):
+def mock_allocations_db(app, user_accounts, proposal_accounts):
     user1 = database.user.get_or_add_user(user_accounts[0].address)
     user2 = database.user.get_or_add_user(user_accounts[1].address)
     db.session.commit()
@@ -119,3 +217,66 @@ def create_payload(proposals, amounts: Optional[List[int]]):
     ]
 
     return {"allocations": allocations}
+
+
+def create_deposit_event(
+    typename="Locked",
+    deposit_before="0",
+    amount="100000000000000000000",
+    user=USER1_ADDRESS,
+    **kwargs,
+):
+    return {
+        "__typename": typename,
+        "depositBefore": deposit_before,
+        "amount": amount,
+        "user": user,
+        **kwargs,
+    }
+
+
+def mock_graphql(
+    mocker,
+    events: List[Dict],
+    with_epochs=True,
+    epoch_start=1000,
+    epoch_end=2000,
+):
+    timestamp = 1
+    locks = []
+    unlocks = []
+    for event in events:
+        if event["__typename"] == "Locked":
+            locks.append(
+                {
+                    "depositBefore": "0",
+                    "timestamp": timestamp,
+                    "user": USER1_ADDRESS,
+                    **event,
+                }
+            )
+        else:
+            unlocks.append(
+                {
+                    "depositBefore": "0",
+                    "timestamp": timestamp,
+                    "user": USER1_ADDRESS,
+                    **event,
+                }
+            )
+        timestamp += 1
+
+    # Mock the execute method of the GraphQL client
+    mocker.patch.object(graphql_client, "execute")
+
+    # Define the mock responses for the execute method
+    gql_execution = []
+    if with_epochs:
+        gql_execution.append({"epoches": [{"fromTs": epoch_start, "toTs": epoch_end}]})
+
+    gql_execution += [
+        {"lockeds": locks},
+        {"unlockeds": unlocks},
+    ]
+
+    graphql_client.execute.side_effect = gql_execution

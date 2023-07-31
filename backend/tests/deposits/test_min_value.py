@@ -3,10 +3,14 @@ from eth_utils import to_checksum_address
 
 from app import database
 from app.core.deposits.deposits import get_users_deposits, calculate_locked_ratio
-from app.extensions import graphql_client
+from tests.conftest import (
+    USER1_ADDRESS,
+    USER2_ADDRESS,
+    mock_graphql,
+    create_deposit_event,
+)
 
-USER1_ADDRESS = "0xabcdef7890123456789012345678901234567893"
-USER2_ADDRESS = "0x2345678901234567890123456789012345678904"
+EPOCH = 42
 
 
 @pytest.mark.parametrize(
@@ -49,7 +53,11 @@ def test_locked_ratio_positive(glm_supply, total_ed, expected, app):
             None,
             [
                 {"__typename": "Locked", "amount": "400000000000000000000"},
-                {"__typename": "Locked", "amount": "300000000000000000000"},
+                {
+                    "__typename": "Locked",
+                    "depositBefore": "400000000000000000000",
+                    "amount": "300000000000000000000",
+                },
             ],
             {"effective_deposit": "0", "epoch_end_deposit": "700000000000000000000"},
         ),
@@ -57,9 +65,21 @@ def test_locked_ratio_positive(glm_supply, total_ed, expected, app):
             None,
             [
                 {"__typename": "Locked", "amount": "400000000000000000000"},
-                {"__typename": "Unlocked", "amount": "200000000000000000000"},
-                {"__typename": "Locked", "amount": "300000000000000000000"},
-                {"__typename": "Unlocked", "amount": "400000000000000000000"},
+                {
+                    "__typename": "Unlocked",
+                    "depositBefore": "400000000000000000000",
+                    "amount": "200000000000000000000",
+                },
+                {
+                    "__typename": "Locked",
+                    "depositBefore": "200000000000000000000",
+                    "amount": "300000000000000000000",
+                },
+                {
+                    "__typename": "Unlocked",
+                    "depositBefore": "500000000000000000000",
+                    "amount": "400000000000000000000",
+                },
             ],
             {"effective_deposit": "0", "epoch_end_deposit": "100000000000000000000"},
         ),
@@ -74,8 +94,16 @@ def test_locked_ratio_positive(glm_supply, total_ed, expected, app):
         (
             {"effective_deposit": "0", "epoch_end_deposit": "200000000000000000000"},
             [
-                {"__typename": "Locked", "amount": "400000000000000000000"},
-                {"__typename": "Locked", "amount": "500000000000000000000"},
+                {
+                    "__typename": "Locked",
+                    "depositBefore": "200000000000000000000",
+                    "amount": "400000000000000000000",
+                },
+                {
+                    "__typename": "Locked",
+                    "depositBefore": "600000000000000000000",
+                    "amount": "500000000000000000000",
+                },
             ],
             {
                 "effective_deposit": "200000000000000000000",
@@ -85,9 +113,21 @@ def test_locked_ratio_positive(glm_supply, total_ed, expected, app):
         (
             {"effective_deposit": "0", "epoch_end_deposit": "200000000000000000000"},
             [
-                {"__typename": "Locked", "amount": "400000000000000000000"},
-                {"__typename": "Unlocked", "amount": "500000000000000000000"},
-                {"__typename": "Locked", "amount": "700000000000000000000"},
+                {
+                    "__typename": "Locked",
+                    "depositBefore": "200000000000000000000",
+                    "amount": "400000000000000000000",
+                },
+                {
+                    "__typename": "Unlocked",
+                    "depositBefore": "600000000000000000000",
+                    "amount": "500000000000000000000",
+                },
+                {
+                    "__typename": "Locked",
+                    "depositBefore": "100000000000000000000",
+                    "amount": "700000000000000000000",
+                },
             ],
             {
                 "effective_deposit": "100000000000000000000",
@@ -97,16 +137,32 @@ def test_locked_ratio_positive(glm_supply, total_ed, expected, app):
         (
             {"effective_deposit": "0", "epoch_end_deposit": "400000000000000000000"},
             [
-                {"__typename": "Unlocked", "amount": "350000000000000000000"},
-                {"__typename": "Locked", "amount": "700000000000000000000"},
+                {
+                    "__typename": "Unlocked",
+                    "depositBefore": "400000000000000000000",
+                    "amount": "350000000000000000000",
+                },
+                {
+                    "__typename": "Locked",
+                    "depositBefore": "50000000000000000000",
+                    "amount": "700000000000000000000",
+                },
             ],
             {"effective_deposit": "0", "epoch_end_deposit": "750000000000000000000"},
         ),
         (
             {"effective_deposit": "0", "epoch_end_deposit": "400000000000000000000"},
             [
-                {"__typename": "Unlocked", "amount": "200000000000000000000"},
-                {"__typename": "Unlocked", "amount": "200000000000000000000"},
+                {
+                    "__typename": "Unlocked",
+                    "depositBefore": "400000000000000000000",
+                    "amount": "200000000000000000000",
+                },
+                {
+                    "__typename": "Unlocked",
+                    "depositBefore": "200000000000000000000",
+                    "amount": "200000000000000000000",
+                },
             ],
             None,
         ),
@@ -116,8 +172,16 @@ def test_locked_ratio_positive(glm_supply, total_ed, expected, app):
                 "epoch_end_deposit": "400000000000000000000",
             },
             [
-                {"__typename": "Unlocked", "amount": "200000000000000000000"},
-                {"__typename": "Unlocked", "amount": "200000000000000000000"},
+                {
+                    "__typename": "Unlocked",
+                    "depositBefore": "400000000000000000000",
+                    "amount": "200000000000000000000",
+                },
+                {
+                    "__typename": "Unlocked",
+                    "depositBefore": "200000000000000000000",
+                    "amount": "200000000000000000000",
+                },
             ],
             None,
         ),
@@ -127,9 +191,21 @@ def test_locked_ratio_positive(glm_supply, total_ed, expected, app):
                 "epoch_end_deposit": "200000000000000000000",
             },
             [
-                {"__typename": "Locked", "amount": "400000000000000000000"},
-                {"__typename": "Unlocked", "amount": "500000000000000000000"},
-                {"__typename": "Locked", "amount": "700000000000000000000"},
+                {
+                    "__typename": "Locked",
+                    "depositBefore": "200000000000000000000",
+                    "amount": "400000000000000000000",
+                },
+                {
+                    "__typename": "Unlocked",
+                    "depositBefore": "600000000000000000000",
+                    "amount": "500000000000000000000",
+                },
+                {
+                    "__typename": "Locked",
+                    "depositBefore": "100000000000000000000",
+                    "amount": "700000000000000000000",
+                },
             ],
             {
                 "effective_deposit": "100000000000000000000",
@@ -162,23 +238,18 @@ def test_locked_ratio_positive(glm_supply, total_ed, expected, app):
         ),
     ],
 )
-def test_update_user_deposits(mocker, state_before, events, expected, app):
-    epoch = 2
-    deposit_before = 0
-
+def test_get_user_deposits(mocker, state_before, events, expected, app):
     if state_before is not None:
-        deposit_before = int(state_before["epoch_end_deposit"])
         user = database.user.add_user(USER1_ADDRESS)
         database.deposits.add(
-            epoch - 1,
+            EPOCH - 1,
             user,
             int(state_before["effective_deposit"]),
             int(state_before["epoch_end_deposit"]),
         )
+    mock_graphql(mocker, events)
 
-    _mock_graphql(mocker, events, deposit_before)
-
-    user_deposits, total_ed = get_users_deposits(epoch)
+    user_deposits, total_ed = get_users_deposits(EPOCH)
 
     if expected is not None:
         assert user_deposits[0].user_address == to_checksum_address(USER1_ADDRESS)
@@ -191,25 +262,13 @@ def test_update_user_deposits(mocker, state_before, events, expected, app):
 
 
 def test_add_multiple_user_deposits(mocker, app):
-    epoch = 2
-
     events = [
-        {
-            "__typename": "Locked",
-            "depositBefore": 0,
-            "amount": "200000000000000000000",
-            "user": USER1_ADDRESS,
-        },
-        {
-            "__typename": "Locked",
-            "depositBefore": 0,
-            "amount": "400000000000000000000",
-            "user": USER2_ADDRESS,
-        },
+        create_deposit_event(amount="200000000000000000000"),
+        create_deposit_event(amount="400000000000000000000", user=USER2_ADDRESS),
     ]
-    _mock_graphql(mocker, events)
+    mock_graphql(mocker, events)
 
-    user_deposits, total_ed = get_users_deposits(epoch)
+    user_deposits, total_ed = get_users_deposits(EPOCH)
 
     assert len(user_deposits) == 2
     user_deposits = sorted(user_deposits, key=lambda u: u.user_address)
@@ -226,41 +285,35 @@ def test_add_multiple_user_deposits(mocker, app):
 
 
 def test_update_multiple_user_deposits(mocker, app):
-    epoch = 2
-
     events = [
-        {
-            "__typename": "Locked",
-            "depositBefore": "200000000000000000000",
-            "amount": "200000000000000000000",
-            "user": USER1_ADDRESS,
-        },
-        {
-            "__typename": "Locked",
-            "depositBefore": "300000000000000000000",
-            "amount": "400000000000000000000",
-            "user": USER2_ADDRESS,
-        },
+        create_deposit_event(
+            deposit_before="200000000000000000000", amount="200000000000000000000"
+        ),
+        create_deposit_event(
+            deposit_before="300000000000000000000",
+            amount="400000000000000000000",
+            user=USER2_ADDRESS,
+        ),
     ]
 
     user1 = database.user.add_user(USER1_ADDRESS)
     user2 = database.user.add_user(USER2_ADDRESS)
     database.deposits.add(
-        epoch - 1,
+        EPOCH - 1,
         user1,
         200000000000000000000,
         200000000000000000000,
     )
     database.deposits.add(
-        epoch - 1,
+        EPOCH - 1,
         user2,
         300000000000000000000,
         300000000000000000000,
     )
 
-    _mock_graphql(mocker, events)
+    mock_graphql(mocker, events)
 
-    user_deposits, total_ed = get_users_deposits(epoch)
+    user_deposits, total_ed = get_users_deposits(EPOCH)
 
     assert len(user_deposits) == 2
     user_deposits = sorted(user_deposits, key=lambda u: u.user_address)
@@ -277,41 +330,33 @@ def test_update_multiple_user_deposits(mocker, app):
 
 
 def test_add_and_update_deposits(mocker, app):
-    epoch = 2
-
     events = [
-        {
-            "__typename": "Locked",
-            "depositBefore": "0",
-            "amount": "200000000000000000000",
-            "user": USER1_ADDRESS,
-        },
-        {
-            "__typename": "Locked",
-            "depositBefore": "300000000000000000000",
-            "amount": "400000000000000000000",
-            "user": USER2_ADDRESS,
-        },
-        {
-            "__typename": "Unlocked",
-            "depositBefore": "700000000000000000000",
-            "amount": "500000000000000000000",
-            "user": USER2_ADDRESS,
-        },
+        create_deposit_event(amount="200000000000000000000"),
+        create_deposit_event(
+            deposit_before="300000000000000000000",
+            amount="400000000000000000000",
+            user=USER2_ADDRESS,
+        ),
+        create_deposit_event(
+            typename="Unlocked",
+            deposit_before="700000000000000000000",
+            amount="500000000000000000000",
+            user=USER2_ADDRESS,
+        ),
     ]
 
     database.user.add_user(USER1_ADDRESS)
     user2 = database.user.add_user(USER2_ADDRESS)
 
     database.deposits.add(
-        epoch - 1,
+        EPOCH - 1,
         user2,
         0,
         int(events[1]["depositBefore"]),
     )
-    _mock_graphql(mocker, events)
+    mock_graphql(mocker, events)
 
-    user_deposits, total_ed = get_users_deposits(epoch)
+    user_deposits, total_ed = get_users_deposits(EPOCH)
 
     assert len(user_deposits) == 2
     user_deposits = sorted(user_deposits, key=lambda u: u.user_address)
@@ -325,41 +370,3 @@ def test_add_and_update_deposits(mocker, app):
     assert user_deposits[1].user_address == to_checksum_address(USER1_ADDRESS)
     assert str(user_deposits[1].effective_deposit) == "0"
     assert str(user_deposits[1].deposit) == "200000000000000000000"
-
-
-def _mock_graphql(mocker, events, deposit_before=0):
-    timestamp = 1
-    locks = []
-    unlocks = []
-    for event in events:
-        if event["__typename"] == "Locked":
-            locks.append(
-                {
-                    "depositBefore": str(deposit_before),
-                    "timestamp": timestamp,
-                    "user": USER1_ADDRESS,
-                    **event,
-                }
-            )
-            deposit_before += int(event["amount"])
-        else:
-            unlocks.append(
-                {
-                    "depositBefore": str(deposit_before),
-                    "timestamp": timestamp,
-                    "user": USER1_ADDRESS,
-                    **event,
-                }
-            )
-            deposit_before -= int(event["amount"])
-        timestamp += 1
-
-    # Mock the execute method of the GraphQL client
-    mocker.patch.object(graphql_client, "execute")
-
-    # Define the mock responses for the execute method
-    graphql_client.execute.side_effect = [
-        {"epoches": [{"fromTs": 1, "toTs": 1000}]},
-        {"lockeds": locks},
-        {"unlockeds": unlocks},
-    ]

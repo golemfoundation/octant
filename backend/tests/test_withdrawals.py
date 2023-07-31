@@ -1,10 +1,13 @@
-from unittest.mock import MagicMock
-
 import pytest
 
 from app import database, db
-from app.contracts.vault import Vault
 from app.controllers.withdrawals import get_withdrawable_eth
+from tests.conftest import MOCK_VAULT
+
+
+@pytest.fixture(autouse=True)
+def before(patch_vault):
+    pass
 
 
 @pytest.mark.parametrize(
@@ -163,11 +166,7 @@ from app.controllers.withdrawals import get_withdrawable_eth
         ),
     ],
 )
-def test_get_withdrawable_eth(app, monkeypatch, user_accounts, expected_rewards):
-    mock_vault = MagicMock(spec=Vault)
-    monkeypatch.setattr("app.controllers.withdrawals.vault", mock_vault)
-    mock_vault.get_last_claimed_epoch.return_value = 0
-
+def test_get_withdrawable_eth(app, user_accounts, expected_rewards):
     # Populate db
     for user_index, rewards in expected_rewards.items():
         user_account = user_accounts[user_index].address
@@ -188,12 +187,8 @@ def test_get_withdrawable_eth(app, monkeypatch, user_accounts, expected_rewards)
             assert act.proof == exp[2]
 
 
-def test_get_withdrawable_eth_returns_only_not_claimed_rewards(
-    app, monkeypatch, user_accounts
-):
-    mock_vault = MagicMock(spec=Vault)
-    monkeypatch.setattr("app.controllers.withdrawals.vault", mock_vault)
-    mock_vault.get_last_claimed_epoch.return_value = 2
+def test_get_withdrawable_eth_returns_only_not_claimed_rewards(app, user_accounts):
+    MOCK_VAULT.get_last_claimed_epoch.return_value = 2
 
     database.rewards.add(1, user_accounts[0].address, 100_000000000)
     database.rewards.add(2, user_accounts[0].address, 200_000000000)
@@ -210,11 +205,7 @@ def test_get_withdrawable_eth_returns_only_not_claimed_rewards(
     assert result[1].amount == str(400_000000000)
 
 
-def test_get_withdrawable_eth_result_sorted_by_epochs(app, monkeypatch, user_accounts):
-    mock_vault = MagicMock(spec=Vault)
-    monkeypatch.setattr("app.controllers.withdrawals.vault", mock_vault)
-    mock_vault.get_last_claimed_epoch.return_value = 0
-
+def test_get_withdrawable_eth_result_sorted_by_epochs(app, user_accounts):
     database.rewards.add(2, user_accounts[0].address, 200_000000000)
     database.rewards.add(4, user_accounts[0].address, 400_000000000)
     database.rewards.add(1, user_accounts[0].address, 100_000000000)
