@@ -75,7 +75,7 @@
       "boxPersonalAllocation": {
         "personalAllocation": "Personal allocation",
         "pending": "Pending",
-        "withdrawRewards": "Withdraw Rewards"
+        "withdrawToWallet": "Withdraw to wallet"
       },
       "budgetBox": {
         "approve2Transactions": "Please approve 2 transactions in your wallet. The first (required only once and for locking) allows ERC-20 tokens, and the second locks / unlocks GLM.",
