@@ -289,7 +289,6 @@
       }
     },
     "settings": {
-      "octant": "Octant",
       "epoch": "Epoch {{epoch}}",
       "golemFoundationProject": "A Golem Foundation Project",
       "poweredByCoinGeckoApi": "Powered by CoinGecko API",
