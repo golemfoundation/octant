@@ -25,7 +25,7 @@
     "prettier:js:pure": "prettier --write",
     "prettier:ts": "yarn prettier:ts:pure './**/*.{ts,tsx}'",
     "prettier:ts:pure": "prettier --parser typescript --write",
-    "start-node": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat node --no-deploy",
+    "start-node": "anvil --chain-id 1337 --mnemonic 'test test test test test test test test test test test junk'",
     "test": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat test",
     "type-check": "tsc --noEmit true",
     "verify:goerli": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat --network goerli etherscan-verify --license GPL-3.0",

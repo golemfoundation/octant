@@ -1,8 +1,14 @@
 # Octant subgraph (The Graph)
 
+Graph indexes events sourced from Ethereum. Ethereum clients (and RPCs) do not provide
+indexing capabilities. Graph allows to create easily queriable indexes, speeding up dApps.
+
+In current setup data about events follows this path: Ethereum -> Graph -> Backend -> Client.
+
 ## Setup
 
-Provide `networks.json` file. You can do it manually, check `networks.template.json` for reference or
+Provide `networks.json` file. Values in this file override default values in subgraph.yaml (which
+can't be removed, unfortunately). You can do it manually, check `networks.template.json` for reference or
 deploy new contracts (check [Deployment section in project root's Readme.md file](../README.md#deployment)).
 This will generate the file for you.
 
@@ -22,7 +28,8 @@ it to the block before the one where you deployed your contract.
 
 ### Client
 
-In order for subgraph to index contracts used by the client ensure that addresses in `subgraph/networks.json` are the same as used in `client/env.ts`.
+In order for subgraph to index contracts used by the client ensure that addresses in `subgraph/networks.json`
+are the same as used in `client/env.ts`.
 
 ## Install
 ```bash
