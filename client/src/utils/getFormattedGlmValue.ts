@@ -3,10 +3,11 @@ import { formatUnits } from 'ethers/lib/utils';
 
 import { FormattedCryptoValue } from 'types/formattedCryptoValue';
 
-import { dotAndZeroes } from './regExp';
+import getNumberWithSpaces from './getNumberWithSpaces';
 
 export default function getFormattedGlmValue(value: BigNumber): FormattedCryptoValue {
-  const formattedValue = parseFloat(formatUnits(value)).toFixed(4).replace(dotAndZeroes, '');
+  const valueString = parseFloat(formatUnits(value)).toFixed(0);
+  const formattedValue = getNumberWithSpaces(valueString);
   const suffix = 'GLM';
 
   return {
