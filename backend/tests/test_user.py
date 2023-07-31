@@ -1,29 +1,16 @@
-from unittest.mock import MagicMock
-
 import pytest
 from eth_account import Account
 
-from app.contracts.epochs import Epochs
-from app.contracts.proposals import Proposals
 from app.core.user import get_budget, get_claimed_rewards
 from tests.conftest import allocate_user_rewards, MOCKED_PENDING_EPOCH_NO
 
 
 @pytest.fixture(autouse=True)
-def before(monkeypatch, proposal_accounts):
-    mock_epochs = MagicMock(spec=Epochs)
-    mock_proposals = MagicMock(spec=Proposals)
-
-    mock_epochs.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
-    mock_proposals.get_proposal_addresses.return_value = [
-        p.address for p in proposal_accounts
-    ]
-
-    monkeypatch.setattr("app.core.allocations.proposals", mock_proposals)
-    monkeypatch.setattr("app.core.allocations.epochs", mock_epochs)
+def before(patch_epochs, patch_proposals):
+    pass
 
 
-def test_get_user_budget(user_accounts, pending_epoch_snapshot):
+def test_get_user_budget(user_accounts, mock_pending_epoch_snapshot_db):
     expected_result = 603616_460640476
 
     result = get_budget(user_accounts[0].address, MOCKED_PENDING_EPOCH_NO)
@@ -76,7 +63,7 @@ def test_get_user_budget(user_accounts, pending_epoch_snapshot):
 def test_get_claimed_rewards(
     user_accounts,
     proposal_accounts,
-    pending_epoch_snapshot,
+    mock_pending_epoch_snapshot_db,
     user_allocations: dict,
     expected_rewards: dict,
 ):

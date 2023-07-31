@@ -1,13 +1,9 @@
 import dataclasses
-from collections import Counter
 from typing import List
-from unittest.mock import MagicMock, Mock
 
 import pytest
 from eth_account.signers.local import LocalAccount
 
-from app.contracts.epochs import Epochs
-from app.contracts.proposals import Proposals
 from app.core.allocations import allocate, AllocationRequest
 from app.core.history import (
     get_locks,
@@ -18,33 +14,20 @@ from app.core.history import (
 )
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.extensions import graphql_client
-from tests.conftest import create_payload, MOCKED_PENDING_EPOCH_NO
+from tests.conftest import create_payload, MOCK_PROPOSALS, MOCK_EPOCHS
 
 
 @pytest.fixture(autouse=True)
-def before(monkeypatch, proposal_accounts):
-    mock_epochs = MagicMock(spec=Epochs)
-    mock_proposals = MagicMock(spec=Proposals)
-    mock_snapshotted = Mock()
-
-    mock_epochs.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
-    mock_snapshotted.return_value = True
-
-    monkeypatch.setattr(
-        "app.core.allocations.has_pending_epoch_snapshot", mock_snapshotted
-    )
-
-    mock_proposals.get_proposal_addresses.return_value = [
+def before(
+    proposal_accounts,
+    patch_epochs,
+    patch_proposals,
+    patch_has_pending_epoch_snapshot,
+    patch_user_budget,
+):
+    MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts[0:5]
     ]
-
-    monkeypatch.setattr("app.core.allocations.proposals", mock_proposals)
-    monkeypatch.setattr("app.core.allocations.epochs", mock_epochs)
-
-    # Set some insanely high user rewards budget
-    mock_get_user_budget = Mock()
-    mock_get_user_budget.return_value = 10 * 10**18 * 10**18
-    monkeypatch.setattr("app.core.allocations.get_budget", mock_get_user_budget)
 
 
 @pytest.mark.parametrize(
@@ -264,18 +247,15 @@ def test_history_withdrawals(mocker, withdrawals, expected_history_sorted_by_ts,
     assert history == expected_history_sorted_by_ts
 
 
-def test_history_allocations(app, monkeypatch, proposal_accounts, user_accounts):
+def test_history_allocations(app, proposal_accounts, user_accounts):
     # Setup constant data
-    mock_epochs = MagicMock(spec=Epochs)
-    monkeypatch.setattr("app.core.allocations.epochs", mock_epochs)
     proposals = proposal_accounts[0:3]
     user1: LocalAccount = user_accounts[0]
-    user2: LocalAccount = user_accounts[1]
 
     # Test data for epoch no 3
     payload = create_payload(proposals, [100, 200, 300])
     signature = sign(user1, build_allocations_eip712_data(payload))
-    mock_epochs.get_pending_epoch.return_value = 3
+    MOCK_EPOCHS.get_pending_epoch.return_value = 3
 
     allocate(
         AllocationRequest(
@@ -299,7 +279,6 @@ def test_history_allocations(app, monkeypatch, proposal_accounts, user_accounts)
     # Allocate different data, but for the same epoch no 3
     payload = create_payload(proposals, [200, 200, 400])
     signature = sign(user1, build_allocations_eip712_data(payload))
-    mock_epochs.get_pending_epoch.return_value = 3
 
     allocate(
         AllocationRequest(
@@ -326,7 +305,7 @@ def test_history_allocations(app, monkeypatch, proposal_accounts, user_accounts)
     # Allocate data, for different epoch (no 4)
     payload = create_payload(proposals, [10, 20, 30])
     signature = sign(user1, build_allocations_eip712_data(payload))
-    mock_epochs.get_pending_epoch.return_value = 4
+    MOCK_EPOCHS.get_pending_epoch.return_value = 4
 
     allocate(
         AllocationRequest(

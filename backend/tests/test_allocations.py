@@ -1,10 +1,6 @@
-from unittest.mock import MagicMock, Mock
-
 import pytest
 
 from app import database, exceptions
-from app.contracts.epochs import Epochs
-from app.contracts.proposals import Proposals
 from app.controllers.allocations import (
     get_all_by_user_and_epoch,
     get_all_by_proposal_and_epoch,
@@ -17,33 +13,26 @@ from app.core.allocations import (
     AllocationRequest,
 )
 from app.crypto.eip712 import sign, build_allocations_eip712_data
-from tests.conftest import create_payload, MOCKED_PENDING_EPOCH_NO
+from tests.conftest import (
+    create_payload,
+    MOCKED_PENDING_EPOCH_NO,
+    MOCK_PROPOSALS,
+    MOCK_EPOCHS,
+    MOCK_GET_USER_BUDGET,
+)
 
 
 @pytest.fixture(autouse=True)
-def before(monkeypatch, proposal_accounts):
-    mock_epochs = MagicMock(spec=Epochs)
-    mock_proposals = MagicMock(spec=Proposals)
-    mock_snapshotted = Mock()
-
-    mock_epochs.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
-    mock_snapshotted.return_value = True
-
-    monkeypatch.setattr(
-        "app.core.allocations.has_pending_epoch_snapshot", mock_snapshotted
-    )
-
-    mock_proposals.get_proposal_addresses.return_value = [
+def before(
+    proposal_accounts,
+    patch_epochs,
+    patch_proposals,
+    patch_has_pending_epoch_snapshot,
+    patch_user_budget,
+):
+    MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts[0:5]
     ]
-
-    monkeypatch.setattr("app.core.allocations.proposals", mock_proposals)
-    monkeypatch.setattr("app.core.allocations.epochs", mock_epochs)
-
-    # Set some insanely high user rewards budget
-    mock_get_user_budget = Mock()
-    mock_get_user_budget.return_value = 10 * 10**18 * 10**18
-    monkeypatch.setattr("app.core.allocations.get_budget", mock_get_user_budget)
 
 
 def test_user_allocates_for_the_first_time(app, user_accounts, proposal_accounts):
@@ -208,31 +197,18 @@ def test_multiple_users_change_their_allocations(app, user_accounts, proposal_ac
     check_allocation_threshold(updated_payload1, updated_payload2)
 
 
-def test_allocation_validation_errors(
-    app, monkeypatch, proposal_accounts, user_accounts
-):
+def test_allocation_validation_errors(app, proposal_accounts, user_accounts):
     # Test data
     payload = create_payload(proposal_accounts[0:3], None)
     signature = sign(user_accounts[0], build_allocations_eip712_data(payload))
 
-    mock_snapshotted = Mock()
-    mock_snapshotted.return_value = True
-    monkeypatch.setattr(
-        "app.core.allocations.has_pending_epoch_snapshot", mock_snapshotted
-    )
-
     # Set invalid number of proposals on purpose (two proposals while three are needed)
-    mock_proposals = MagicMock(spec=Proposals)
-    mock_proposals.get_proposal_addresses.return_value = [
+    MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts[0:2]
     ]
-    monkeypatch.setattr("app.core.allocations.proposals", mock_proposals)
-
-    mock_epochs = MagicMock(spec=Epochs)
 
     # Set invalid epoch on purpose (mimicking no pending epoch)
-    mock_epochs.get_pending_epoch.return_value = 0
-    monkeypatch.setattr("app.core.allocations.epochs", mock_epochs)
+    MOCK_EPOCHS.get_pending_epoch.return_value = 0
 
     # Call allocate method, expect exception
     with pytest.raises(exceptions.NotInDecisionWindow):
@@ -241,7 +217,7 @@ def test_allocation_validation_errors(
         )
 
     # Fix pending epoch
-    mock_epochs.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
+    MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
 
     # Call allocate method, expect invalid proposals
     with pytest.raises(exceptions.InvalidProposals):
@@ -250,7 +226,7 @@ def test_allocation_validation_errors(
         )
 
     # Fix missing proposals
-    mock_proposals.get_proposal_addresses.return_value = [
+    MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts[0:3]
     ]
 
@@ -269,7 +245,7 @@ def test_project_allocates_funds_to_itself(app, proposal_accounts, user_accounts
         )
 
 
-def test_get_by_user_and_epoch(allocations, user_accounts, proposal_accounts):
+def test_get_by_user_and_epoch(mock_allocations_db, user_accounts, proposal_accounts):
     result = get_all_by_user_and_epoch(
         user_accounts[0].address, MOCKED_PENDING_EPOCH_NO
     )
@@ -283,7 +259,9 @@ def test_get_by_user_and_epoch(allocations, user_accounts, proposal_accounts):
     assert result[2].amount == str(300 * 10**18)
 
 
-def test_get_by_proposal_and_epoch(allocations, user_accounts, proposal_accounts):
+def test_get_by_proposal_and_epoch(
+    mock_allocations_db, user_accounts, proposal_accounts
+):
     result = get_all_by_proposal_and_epoch(
         proposal_accounts[1].address, MOCKED_PENDING_EPOCH_NO
     )
@@ -295,18 +273,16 @@ def test_get_by_proposal_and_epoch(allocations, user_accounts, proposal_accounts
     assert result[1].amount == str(1050 * 10**18)
 
 
-def test_get_sum_by_epoch(allocations, user_accounts, proposal_accounts):
+def test_get_sum_by_epoch(mock_allocations_db, user_accounts, proposal_accounts):
     result = get_sum_by_epoch(MOCKED_PENDING_EPOCH_NO)
     assert result == 1865 * 10**18
 
 
 def test_user_exceeded_rewards_budget_in_allocations(
-    app, monkeypatch, proposal_accounts, user_accounts
+    app, proposal_accounts, user_accounts
 ):
     # Set some reasonable user rewards budget
-    mock_get_user_budget = Mock()
-    mock_get_user_budget.return_value = 100 * 10**18
-    monkeypatch.setattr("app.core.allocations.get_budget", mock_get_user_budget)
+    MOCK_GET_USER_BUDGET.return_value = 100 * 10**18
 
     # First payload sums up to 110 eth (budget is set to 100)
     payload = create_payload(
