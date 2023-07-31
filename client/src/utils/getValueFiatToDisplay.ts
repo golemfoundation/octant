@@ -5,6 +5,8 @@ import DoubleValueProps from 'components/core/DoubleValue/types';
 import { FIAT_CURRENCIES_SYMBOLS } from 'constants/currencies';
 import { SettingsData } from 'store/settings/types';
 
+import getNumberWithSpaces from './getNumberWithSpaces';
+
 export default function getValueFiatToDisplay({
   coinPricesServerDowntimeText = 'Conversion offline',
   cryptoValues,
@@ -32,5 +34,9 @@ export default function getValueFiatToDisplay({
 
   const exchangeRate = cryptoValues[cryptoCurrency][displayCurrency];
 
-  return `${prefix} ${(parseFloat(formatUnits(valueCrypto)) * exchangeRate).toFixed(2)}`;
+  const valueFiat = (parseFloat(formatUnits(valueCrypto)) * exchangeRate).toFixed(
+    displayCurrency === 'jpy' ? 0 : 2,
+  );
+
+  return `${prefix} ${getNumberWithSpaces(valueFiat)}`;
 }

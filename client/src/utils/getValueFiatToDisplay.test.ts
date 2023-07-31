@@ -14,6 +14,17 @@ describe('getValueFiatToDisplay', () => {
     valueCrypto: parseUnits('1'),
   };
 
+  const propsJPY = {
+    cryptoCurrency: 'ethereum',
+    cryptoValues: {
+      ethereum: { jpy: 58242.84 },
+      golem: { jpy: 1900.23 },
+    },
+    displayCurrency: 'jpy',
+    error: null,
+    valueCrypto: parseUnits('1'),
+  };
+
   it('should return "Conversion offline" if error is truthy', () => {
     expect(
       // @ts-expect-error error here is caused by lack of typing for defaultProps.
@@ -38,6 +49,15 @@ describe('getValueFiatToDisplay', () => {
       getValueFiatToDisplay({
         ...defaultProps,
       }),
-    ).toEqual('$ 58242.34');
+    ).toEqual('$ 58\u200a242.34');
+  });
+
+  it('should return fiat value in JPY as an integer', () => {
+    expect(
+      // @ts-expect-error error here is caused by lack of typing for defaultProps.
+      getValueFiatToDisplay({
+        ...propsJPY,
+      }),
+    ).toEqual('JPY 58\u200a243');
   });
 });

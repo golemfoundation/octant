@@ -9,3 +9,5 @@ export const percentageOnly = /(^100$)|(^([1-9]([0-9])?|0)$)/;
 export const dotAndZeroes = /\.?0+$/;
 
 export const comma = /,/;
+
+export const groupingNumbersUpTo3 = /\B(?=(\d{3})+(?!\d))/g;

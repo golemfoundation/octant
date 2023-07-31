@@ -22,7 +22,7 @@ describe('getValuesToDisplay', () => {
 
   it('should return primary value if valueString is provided', () => {
     // @ts-expect-error error here is caused by lack of typing for defaultProps.
-    expect(getValuesToDisplay({ ...defaultProps })).toEqual({ primary: defaultProps.valueString });
+    expect(getValuesToDisplay({ ...defaultProps })).toEqual({ primary: '1.00' });
   });
 
   it('should return primary and secondary values for isCryptoMainValueDisplay = true', () => {

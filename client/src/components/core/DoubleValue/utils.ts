@@ -1,5 +1,6 @@
 import { Response } from 'api/calls/cryptoValues';
 import { SettingsData } from 'store/settings/types';
+import getNumberWithSpaces from 'utils/getNumberWithSpaces';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 
@@ -29,7 +30,7 @@ export function getValuesToDisplay({
 } {
   if (valueString) {
     return {
-      primary: valueString,
+      primary: getNumberWithSpaces(parseFloat(valueString).toFixed(2)),
     };
   }
 
