@@ -5,7 +5,7 @@ import { ROOTS } from 'api/queryKeys';
 import i18n from 'i18n';
 import triggerToast from 'utils/triggerToast';
 
-import { QueryMutationError, QueryMutationErrorConfig} from './types';
+import { QueryMutationError, QueryMutationErrorConfig } from './types';
 
 const errors: QueryMutationErrorConfig = {
   'HN:Allocations/allocate-above-rewards-budget': {

@@ -1,0 +1,53 @@
+{
+  "$id": "schema/backendproposal.json",
+  "title": "Backend Proposal",
+  "description": "Metadata describing a project proposal for Octant",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the project proposed for Octant funding"
+    },
+    "introDescription": {
+      "type": "string",
+      "description": "Short description of the project"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the project"
+    },
+    "profileImageSmall": {
+      "type": "string",
+      "description": "Profile image of the project (small) 64px"
+    },
+    "profileImageMedium": {
+      "type": "string",
+      "description": "Profile image of the project (medium) 128px"
+    },
+    "profileImageLarge": {
+      "type": "string",
+      "description": "Profile image of the project (large) 192px"
+    },
+    "version": {
+      "type": "string",
+      "description": "The version of Backend Proposal schema used to describe this proposal"
+    },
+    "website": {
+      "type": "object",
+      "description": "Website information",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Optional label describing website"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL to the website"
+        }
+      },
+      "required": ["url"]
+    }
+  },
+  "additionalProperties": false,
+  "required": ["name", "introDescription", "description", "profileImageSmall", "website"]
+}

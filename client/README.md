@@ -11,12 +11,49 @@ Ensure that the `.env`  file is present. See `.env.template`.
 The app fetches proposals addresses from the contract and their data (name, description, etc.) from IPFS. Current expected schema of proposal coming from IPFS is as follows:
 
 ```ts
+/**
+ * Metadata describing a project proposal for Octant
+ */
 export interface BackendProposal {
-  description: string;
+  /**
+   * Name of the project proposed for Octant funding
+   */
   name: string;
-  profileImageCID: string;
+  /**
+   * Short description of the project
+   */
+  introDescription: string;
+  /**
+   * Detailed description of the project
+   */
+  description: string;
+  /**
+   * Profile image of the project (small) 64px
+   */
+  profileImageSmall: string;
+  /**
+   * Profile image of the project (medium) 128px
+   */
+  profileImageMedium?: string;
+  /**
+   * Profile image of the project (large) 192px
+   */
+  profileImageLarge?: string;
+  /**
+   * The version of Backend Proposal schema used to describe this proposal
+   */
+  version?: string;
+  /**
+   * Website information
+   */
   website: {
+    /**
+     * Optional label describing website
+     */
     label?: string;
+    /**
+     * URL to the website
+     */
     url: string;
   };
 }

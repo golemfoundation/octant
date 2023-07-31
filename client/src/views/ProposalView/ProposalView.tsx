@@ -23,7 +23,7 @@ import MainLayout from 'layouts/MainLayout/MainLayout';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
 import { chevronLeft } from 'svg/navigation';
-import { ExtendedProposal } from 'types/proposals';
+import { ExtendedProposal } from 'types/extended-proposal';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './ProposalView.module.scss';
@@ -172,89 +172,94 @@ const ProposalView = (): ReactElement => {
         initialLoad
         loader={
           <div key={-1} className={styles.loaderWrapper}>
-            <Loader />
+            <Loader dataTest="ProposalView__Loader" />
           </div>
         }
         loadMore={onLoadNextProposal}
         pageStart={0}
         useWindow
       >
-        {loadedProposals.map(({ address, description, name, profileImageCID, website }, index) => {
-          const { onAddRemoveFromAllocate } = useIdsInAllocation({
-            allocations: allocations!,
-            setAllocations,
-            userAllocationsElements: userAllocations?.elements,
-          });
-          const buttonAddToAllocateProps = {
-            isAddedToAllocate: allocations.includes(address),
-            isAllocatedTo: !!userAllocations?.elements.find(
-              ({ address: userAllocationAddress }) => userAllocationAddress === address,
-            ),
-            onClick: () => onAddRemoveFromAllocate(address),
-          };
-          return (
-            // eslint-disable-next-line react/no-array-index-key
-            <Fragment key={`${address}-${index}`}>
-              <div className={styles.proposal} data-test="ProposalView__proposal">
-                <div className={styles.proposalHeader}>
-                  <div className={styles.imageProfileWrapper}>
-                    <Img
-                      className={styles.imageProfile}
-                      dataTest="ProposalView__proposal__Img"
-                      src={`${ipfsGateway}${profileImageCID}`}
-                    />
-                    <ButtonAddToAllocate
-                      className={cx(styles.buttonAddToAllocatePrimary, isEpoch1 && styles.isEpoch1)}
-                      dataTest="ProposalView__proposal__ButtonAddToAllocate--primary"
-                      {...buttonAddToAllocateProps}
+        {loadedProposals.map(
+          ({ address, description, name, profileImageSmall, website }, index) => {
+            const { onAddRemoveFromAllocate } = useIdsInAllocation({
+              allocations: allocations!,
+              setAllocations,
+              userAllocationsElements: userAllocations?.elements,
+            });
+            const buttonAddToAllocateProps = {
+              isAddedToAllocate: allocations.includes(address),
+              isAllocatedTo: !!userAllocations?.elements.find(
+                ({ address: userAllocationAddress }) => userAllocationAddress === address,
+              ),
+              onClick: () => onAddRemoveFromAllocate(address),
+            };
+            return (
+              // eslint-disable-next-line react/no-array-index-key
+              <Fragment key={`${address}-${index}`}>
+                <div className={styles.proposal} data-test="ProposalView__proposal">
+                  <div className={styles.proposalHeader}>
+                    <div className={styles.imageProfileWrapper}>
+                      <Img
+                        className={styles.imageProfile}
+                        dataTest="ProposalView__proposal__Img"
+                        src={`${ipfsGateway}${profileImageSmall}`}
+                      />
+                      <ButtonAddToAllocate
+                        className={cx(
+                          styles.buttonAddToAllocatePrimary,
+                          isEpoch1 && styles.isEpoch1,
+                        )}
+                        dataTest="ProposalView__proposal__ButtonAddToAllocate--primary"
+                        {...buttonAddToAllocateProps}
+                      />
+                    </div>
+                    <span className={styles.name} data-test="ProposalView__proposal__name">
+                      {name}
+                    </span>
+                    <Button
+                      className={styles.buttonWebsite}
+                      dataTest="ProposalView__proposal__Button"
+                      href={website!.url}
+                      variant="link5"
+                    >
+                      {website!.label || website!.url}
+                    </Button>
+                    {!isEpoch1 ? (
+                      <ProposalRewards
+                        address={address}
+                        canFoundedAtHide={false}
+                        className={styles.proposalRewards}
+                        MiddleElement={
+                          isEpoch1 ? null : (
+                            <ButtonAddToAllocate
+                              className={styles.buttonAddToAllocateSecondary}
+                              dataTest="ProposalView__proposal__ButtonAddToAllocate--secondary"
+                              {...buttonAddToAllocateProps}
+                            />
+                          )
+                        }
+                      />
+                    ) : (
+                      <div className={styles.divider} />
+                    )}
+                  </div>
+                  <div className={styles.body}>
+                    <Description
+                      dataTest="ProposalView__proposal__Description"
+                      text={description!}
+                      variant="big"
                     />
                   </div>
-                  <span className={styles.name} data-test="ProposalView__proposal__name">
-                    {name}
-                  </span>
-                  <Button
-                    className={styles.buttonWebsite}
-                    dataTest="ProposalView__proposal__Button"
-                    href={website!.url}
-                    variant="link5"
-                  >
-                    {website!.label || website!.url}
-                  </Button>
-                  {!isEpoch1 ? (
-                    <ProposalRewards
-                      address={address}
-                      canFoundedAtHide={false}
-                      className={styles.proposalRewards}
-                      MiddleElement={
-                        isEpoch1 ? null : (
-                          <ButtonAddToAllocate
-                            className={styles.buttonAddToAllocateSecondary}
-                            dataTest="ProposalView__proposal__ButtonAddToAllocate--secondary"
-                            {...buttonAddToAllocateProps}
-                          />
-                        )
-                      }
-                    />
-                  ) : (
-                    <div className={styles.divider} />
-                  )}
                 </div>
-                <div className={styles.body}>
-                  <Description
-                    dataTest="ProposalView__proposal__Description"
-                    text={description!}
-                    variant="big"
-                  />
-                </div>
-              </div>
-              <DonorsList
-                className={styles.donors}
-                dataTest="ProposalView__proposal__DonorsList"
-                proposalAddress={address}
-              />
-            </Fragment>
-          );
-        })}
+                <DonorsList
+                  className={styles.donors}
+                  dataTest="ProposalView__proposal__DonorsList"
+                  proposalAddress={address}
+                />
+              </Fragment>
+            );
+          },
+        )}
       </InfiniteScroll>
     </MainLayout>
   );

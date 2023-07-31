@@ -13,14 +13,14 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({ address, 
 
   const { data: proposalsIpfs } = useProposalsIpfs([address]);
   const proposal = proposalsIpfs[0] || {};
-  const { profileImageCID, name } = proposal;
+  const { profileImageSmall, name } = proposal;
 
   const ethValue = getValueCryptoToDisplay({ cryptoCurrency: 'ethereum', valueCrypto: value });
 
   return (
     <div className={styles.root}>
       <div className={styles.info}>
-        <Img className={styles.logo} src={`${ipfsGateway}${profileImageCID}`} />
+        <Img className={styles.logo} src={`${ipfsGateway}${profileImageSmall}`} />
         {name}
       </div>
       <div className={styles.allocation}>{ethValue}</div>
