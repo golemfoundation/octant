@@ -29,7 +29,7 @@ const TipTile: React.FC<TipTileProps> = ({
         <motion.div
           animate={{
             height: isDesktop ? ['0', '22.4rem', '22.4rem'] : ['0', '20rem', '20rem'],
-            marginBottom: isDesktop ? ['0', '2.8rem', '2.8rem'] : ['0', '1.6rem', '1.6rem'],
+            marginBottom: ['0', '2.4rem', '2.4rem'],
             opacity: [0, 0, 1],
           }}
           className={cx(styles.root, className)}

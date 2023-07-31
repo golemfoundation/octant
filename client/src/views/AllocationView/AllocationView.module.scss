@@ -13,11 +13,7 @@
 
   &.isTipTiles {
     width: 100%;
-    margin: 0 0 1.6rem;
-
-    @media #{$desktop-up} {
-      margin-bottom: 2.8rem;
-    }
+    margin: 0;
   }
 }
 
