@@ -1,16 +1,16 @@
-import { Epochs, Epochs__factory } from 'octant-typechain-types';
 import { useMemo } from 'react';
 
 import env from 'env';
 
-import { provider } from './providers';
-import UseContractParams from './types';
+import Epochs from './abi/Epochs.json';
+import { ContractContext as EpochsContract } from './typings/Epochs';
+import { web3 } from './web3';
 
-export default function useContractEpochs({
-  tokenAddress = env.contractEpochsAddress,
-  signerOrProvider = provider,
-}: UseContractParams = {}): Epochs | null {
+export default function useContractEpochs(): EpochsContract {
   return useMemo(() => {
-    return signerOrProvider ? Epochs__factory.connect(tokenAddress, signerOrProvider) : null;
-  }, [signerOrProvider, tokenAddress]);
+    return new web3.eth.Contract<typeof Epochs.abi>(
+      Epochs.abi,
+      env.contractEpochsAddress,
+    ) as unknown as EpochsContract;
+  }, []);
 }

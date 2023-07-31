@@ -1,16 +1,16 @@
-import { Proposals, Proposals__factory } from 'octant-typechain-types';
 import { useMemo } from 'react';
 
 import env from 'env';
 
-import { provider } from './providers';
-import UseContractParams from './types';
+import Proposals from './abi/Proposals.json';
+import { ContractContext as ProposalsContract } from './typings/Proposals';
+import { web3 } from './web3';
 
-export default function useContractProposals({
-  tokenAddress = env.contractProposalsAddress,
-  signerOrProvider = provider,
-}: UseContractParams = {}): Proposals | null {
+export default function useContractDeposits(): ProposalsContract {
   return useMemo(() => {
-    return signerOrProvider ? Proposals__factory.connect(tokenAddress, signerOrProvider) : null;
-  }, [signerOrProvider, tokenAddress]);
+    return new web3.eth.Contract<typeof Proposals.abi>(
+      Proposals.abi,
+      env.contractProposalsAddress,
+    ) as unknown as ProposalsContract;
+  }, []);
 }

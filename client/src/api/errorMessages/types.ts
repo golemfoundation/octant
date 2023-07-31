@@ -1,8 +1,8 @@
-export type Error = {
+export type QueryMutationError = {
   message: string;
   type: 'inline' | 'toast';
 };
 
-export type ErrorsConfig = {
-  [key: string]: Error;
+export type QueryMutationErrorConfig = {
+  [key: string]: QueryMutationError;
 };

@@ -1,5 +1,6 @@
 import cx from 'classnames';
-import React, { FC, Fragment } from 'react';
+import { BigNumber } from 'ethers';
+import React, { FC, Fragment, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount, useDisconnect } from 'wagmi';
 
@@ -22,10 +23,22 @@ const Wallet: FC<WalletProps> = ({ onDisconnect }) => {
   });
   const { address } = useAccount();
 
-  const { data: availableFundsGlm } = useAvailableFundsGlm();
   const { data: availableFundsEth } = useAvailableFundsEth();
+  const { data: availableFundsGlm } = useAvailableFundsGlm();
 
   const { disconnect } = useDisconnect();
+
+  /**
+   * Setting values in local state prevents flickering
+   * when account is disconnected and balances returned are undefined.
+   */
+  const availableFundsEthLocal = useMemo(() => {
+    return !availableFundsEth?.value ? BigNumber.from(0) : BigNumber.from(availableFundsEth?.value);
+  }, [availableFundsEth]);
+
+  const availableFundsGlmLocal = useMemo(() => {
+    return !availableFundsGlm?.value ? BigNumber.from(0) : BigNumber.from(availableFundsGlm?.value);
+  }, [availableFundsGlm]);
 
   const _disconnect = () => {
     onDisconnect();
@@ -36,7 +49,7 @@ const Wallet: FC<WalletProps> = ({ onDisconnect }) => {
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
-        valueCrypto: availableFundsEth?.value,
+        valueCrypto: availableFundsEthLocal,
       },
       icon: ethereum,
     },
@@ -44,7 +57,7 @@ const Wallet: FC<WalletProps> = ({ onDisconnect }) => {
       doubleValueProps: {
         coinPricesServerDowntimeText: '...',
         cryptoCurrency: 'golem',
-        valueCrypto: availableFundsGlm?.value,
+        valueCrypto: availableFundsGlmLocal,
       },
       icon: golem,
     },

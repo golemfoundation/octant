@@ -1,7 +1,8 @@
 import { MaxUint256 } from '@ethersproject/constants';
-import { BigNumber, ContractTransaction, Signer } from 'ethers';
-import { ERC20 } from 'octant-typechain-types';
-import { useCallback, useState } from 'react';
+import { TransactionReceipt } from 'ethereum-abi-types-generator';
+import { BigNumber } from 'ethers';
+import { useCallback, useState, useEffect } from 'react';
+import { useAccount } from 'wagmi';
 
 import useContractErc20 from 'hooks/contracts/useContractErc20';
 
@@ -15,42 +16,50 @@ export enum ApprovalState {
 }
 
 function useApprovalState(
-  contract: ERC20 | null,
+  contract: any | null,
   signerAddress: string | undefined,
   spender: string,
   minAmountToBeApproved: BigNumber,
 ): ApprovalState {
   const [approvalState, setApprovalState] = useState(ApprovalState.UNKNOWN);
-  if (contract && signerAddress) {
-    useTokenAllowance(contract, signerAddress, spender).then(allowance => {
-      const state = allowance.gte(minAmountToBeApproved)
-        ? ApprovalState.APPROVED
-        : ApprovalState.NOT_APPROVED;
-      setApprovalState(state);
-    });
-  }
+
+  useEffect(() => {
+    if (contract && signerAddress) {
+      useTokenAllowance(contract, signerAddress, spender).then(allowance => {
+        const allowanceBigNumber = BigNumber.from(allowance);
+        const state = allowanceBigNumber.gte(minAmountToBeApproved)
+          ? ApprovalState.APPROVED
+          : ApprovalState.NOT_APPROVED;
+        setApprovalState(state);
+      });
+    }
+  }, [contract, signerAddress, spender, minAmountToBeApproved]);
   return approvalState;
 }
 
 export default function useMaxApproveCallback(
   minAmountToBeApproved: BigNumber,
   spender: string,
-  signer: Signer | undefined | null,
   signerAddress?: string,
-): [ApprovalState, () => Promise<ContractTransaction>] {
-  const contract = useContractErc20({ signerOrProvider: signer });
+): [ApprovalState, () => Promise<TransactionReceipt>] {
+  const contract = useContractErc20();
+  const { address } = useAccount();
 
   const approvalState = useApprovalState(contract, signerAddress, spender, minAmountToBeApproved);
-  const approveCallback = useCallback(async (): Promise<ContractTransaction> => {
+  const approveCallback = useCallback(async (): Promise<TransactionReceipt> => {
     if (!contract) {
       return Promise.reject();
     }
-    return contract.approve(spender, MaxUint256).catch((error: Error) => {
-      // eslint-disable-next-line no-console
-      console.warn(`Failed to approve max amount for token ${contract.address}`, error);
-      throw error;
-    });
-  }, [contract, spender]);
+
+    return contract.methods
+      .approve(spender, MaxUint256.toString())
+      .send({ from: address as `0x${string}` })
+      .catch((error: Error) => {
+        // eslint-disable-next-line no-console
+        console.warn(`Failed to approve max amount for token ${contract.address}`, error);
+        throw error;
+      });
+  }, [address, contract, spender]);
 
   return [approvalState, approveCallback];
 }

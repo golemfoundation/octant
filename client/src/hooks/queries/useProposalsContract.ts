@@ -15,14 +15,17 @@ export default function useProposalsContract(): UseQueryResult<string[]> {
     QUERY_KEYS.proposalsContract,
     // When decision window is open, fetch proposals from the previous epoch, because that's what users should be allocating to.
     () =>
-      contractProposals?.getProposalAddresses(
-        isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
-      ),
+      contractProposals?.methods
+        .getProposalAddresses((isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!).toString())
+        .call(),
     {
       enabled:
         !!contractProposals &&
         !!currentEpoch &&
         ((isDecisionWindowOpen && currentEpoch > 0) || !isDecisionWindowOpen),
+      onError: error => {
+        throw new Error(JSON.stringify(error));
+      },
     },
   );
 }

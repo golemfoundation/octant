@@ -1,15 +1,16 @@
-import { ERC20, ERC20__factory } from 'octant-typechain-types';
 import { useMemo } from 'react';
 
 import env from 'env';
 
-import UseContractParams from './types';
+import ERC20 from './abi/ERC20.json';
+import { ContractContext as ERC20Contract } from './typings/ERC20';
+import { web3 } from './web3';
 
-export default function useContractErc20({
-  signerOrProvider,
-  tokenAddress = env.contractGlmAddress,
-}: UseContractParams): ERC20 | null {
+export default function useContractEpochs(): ERC20Contract {
   return useMemo(() => {
-    return signerOrProvider ? ERC20__factory.connect(tokenAddress, signerOrProvider) : null;
-  }, [signerOrProvider, tokenAddress]);
+    return new web3.eth.Contract<typeof ERC20.abi>(
+      ERC20.abi,
+      env.contractGlmAddress,
+    ) as unknown as ERC20Contract;
+  }, []);
 }

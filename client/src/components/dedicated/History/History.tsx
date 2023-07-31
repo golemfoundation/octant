@@ -19,7 +19,7 @@ const History: FC<HistoryProps> = ({ className }) => {
 
   const isListAvailable = history !== undefined;
   const isPreLaunch = getIsPreLaunch(currentEpoch);
-  const showLoader = (!isListAvailable || isFetchingHistory) && !isPreLaunch;
+  const showLoader = (!isListAvailable && isFetchingHistory) && !isPreLaunch;
 
   return (
     <BoxRounded

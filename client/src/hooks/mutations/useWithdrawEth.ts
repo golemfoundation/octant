@@ -1,21 +1,21 @@
 import { UseMutationResult, useMutation, UseMutationOptions } from '@tanstack/react-query';
-import { ContractTransaction } from 'ethers';
-import { Vault } from 'octant-typechain-types';
-import { useSigner } from 'wagmi';
+import { TransactionReceipt } from 'ethereum-abi-types-generator';
+import { useAccount } from 'wagmi';
 
+import { BatchWithdrawRequest } from 'hooks/contracts/typings/Vault';
 import useContractVault from 'hooks/contracts/useContractVault';
 
 export default function useWithdrawEth(
-  options?: UseMutationOptions<ContractTransaction, unknown, Vault.WithdrawPayloadStruct[]>,
-): UseMutationResult<ContractTransaction, unknown, Vault.WithdrawPayloadStruct[]> {
-  const { data: signer } = useSigner();
-  const contractVault = useContractVault({ signerOrProvider: signer });
+  options?: UseMutationOptions<TransactionReceipt, unknown, BatchWithdrawRequest[]>,
+): UseMutationResult<TransactionReceipt, unknown, BatchWithdrawRequest[]> {
+  const contractVault = useContractVault();
+  const { address } = useAccount();
 
   return useMutation({
     mutationFn: async value => {
-      const transactionResponse = await contractVault!.batchWithdraw(value);
-      await transactionResponse.wait(1);
-      return transactionResponse;
+      return contractVault!.methods.batchWithdraw(value).send({
+        from: address as `0x${string}`,
+      });
     },
     ...options,
   });

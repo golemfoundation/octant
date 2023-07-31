@@ -28,11 +28,15 @@ const types = {
 export default function useAllocate({ onSuccess }: UseAllocateProps): UseAllocate {
   const { signTypedData, isLoading } = useSignTypedData({
     domain,
+    message: {
+      value: 'Octant Allocation',
+    },
     onSuccess: async (data, variables) => {
       websocketService().then(socket => {
         socket.default.emit(
           WebsocketEmitEvent.allocate,
           JSON.stringify({
+            // @ts-expect-error TODO solve types issue.
             payload: variables.value,
             signature: data.substring(2),
           }),
@@ -43,12 +47,13 @@ export default function useAllocate({ onSuccess }: UseAllocateProps): UseAllocat
         onSuccess();
       }
     },
+    primaryType: 'AllocationPayload',
     types,
   });
 
   const allocate = (allocations: AllocationValues) => {
     const allocationsMapped = allocations.map(({ address, value }) => ({
-      amount: value,
+      amount: BigInt(value.toHexString()),
       proposalAddress: address,
     }));
 
@@ -57,7 +62,9 @@ export default function useAllocate({ onSuccess }: UseAllocateProps): UseAllocat
     };
 
     signTypedData({
-      value: message,
+      message,
+      primaryType: 'Allocation',
+      types,
     });
   };
 
