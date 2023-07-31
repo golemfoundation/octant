@@ -106,15 +106,21 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           .eq(i)
           .get('[data-test=ProposalView__proposal__name]')
           .contains(proposalNames[i]);
+        cy.get('[data-test=ProposalView__proposal__DonorsList]')
+          .eq(i)
+          .scrollIntoView({ offset: { left: 0, top: 100 } });
       }
 
       // Second iteration, from the start.
       for (let i = proposalNames.length; i < proposalNames.length * 2; i++) {
-        cy.get('[data-test=ProposalView__proposal').eq(i).scrollIntoView();
-        cy.get('[data-test=ProposalView__proposal')
+        cy.get('[data-test=ProposalView__proposal]').eq(i).scrollIntoView();
+        cy.get('[data-test=ProposalView__proposal]')
           .eq(i)
           .get('[data-test=ProposalView__proposal__name]')
           .contains(proposalNames[i - proposalNames.length]);
+        cy.get('[data-test=ProposalView__proposal__DonorsList]')
+          .eq(i)
+          .scrollIntoView({ offset: { left: 0, top: 100 } });
       }
     });
 
@@ -134,6 +140,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           .eq(i)
           .get('[data-test=ProposalView__proposal__name]')
           .contains(proposalNamesWithoutSecondElement[i]);
+        cy.get('[data-test=ProposalView__proposal__DonorsList]')
+          .eq(i)
+          .scrollIntoView({ offset: { left: 0, top: 100 } });
       }
 
       // Second iteration, from the start.
@@ -149,6 +158,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           .contains(
             proposalNamesWithoutSecondElement[i - proposalNamesWithoutSecondElement.length],
           );
+        cy.get('[data-test=ProposalView__proposal__DonorsList]')
+          .eq(i)
+          .scrollIntoView({ offset: { left: 0, top: 100 } });
       }
     });
   });

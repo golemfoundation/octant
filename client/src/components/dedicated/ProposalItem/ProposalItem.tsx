@@ -32,7 +32,7 @@ const ProposalItem: FC<ProposalItemProps> = ({ address, className, dataTest }) =
 
   const isLoading = !proposalsIpfs || proposalsIpfs.length === 0;
   const proposal = proposalsIpfs[0] || {};
-  const { isLoadingError, profileImageCID, name, introDescription } = proposal;
+  const { isLoadingError, profileImageSmall, name, introDescription } = proposal;
 
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
     allocations,
@@ -69,7 +69,7 @@ const ProposalItem: FC<ProposalItemProps> = ({ address, className, dataTest }) =
             <Img
               className={styles.imageProfile}
               dataTest="ProposalItem__imageProfile"
-              src={`${ipfsGateway}${profileImageCID}`}
+              src={`${ipfsGateway}${profileImageSmall}`}
             />
             <ButtonAddToAllocate
               className={styles.button}

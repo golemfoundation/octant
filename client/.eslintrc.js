@@ -35,6 +35,13 @@ module.exports = {
     'react/static-property-placement': 'off',
     'react-hooks/exhaustive-deps': 'error',
   },
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.d.ts', '.tsx'],
+      },
+    },
+  },
   overrides: [
     {
       files: ['*.{ts,tsx}'],

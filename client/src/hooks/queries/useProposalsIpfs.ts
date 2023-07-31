@@ -2,7 +2,8 @@ import { useQueries, UseQueryResult } from '@tanstack/react-query';
 
 import { apiGetProposal } from 'api/calls/proposals';
 import { QUERY_KEYS } from 'api/queryKeys';
-import { BackendProposal, ExtendedProposal } from 'types/proposals';
+import { ExtendedProposal } from 'types/extended-proposal';
+import { BackendProposal } from 'types/gen/backendproposal';
 
 import useProposalsCid from './useProposalsCid';
 import useProposalsContract from './useProposalsContract';
