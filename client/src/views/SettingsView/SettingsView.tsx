@@ -5,11 +5,13 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
 import InputSelect from 'components/core/InputSelect/InputSelect';
 import InputToggle from 'components/core/InputToggle/InputToggle';
+import Svg from 'components/core/Svg/Svg';
 import { TERMS_OF_USE } from 'constants/urls';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useSettingsStore from 'store/settings/store';
 import { SettingsData } from 'store/settings/types';
+import { octantWordmark } from 'svg/logo';
 
 import styles from './SettingsView.module.scss';
 import { Options } from './types';
@@ -55,7 +57,7 @@ const SettingsView = (): ReactElement => {
         isVertical
         textAlign="left"
       >
-        <div className={styles.infoTitle}>{t('octant')}</div>
+        <Svg classNameSvg={styles.infoTitle} img={octantWordmark} size={[11.2, 2.7]} />
         <div className={styles.infoEpoch}>{t('epoch', { epoch: currentEpoch })}</div>
         <div className={styles.infoContainer}>
           <div className={styles.info}>{t('golemFoundationProject')}</div>
