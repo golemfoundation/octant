@@ -1,11 +1,12 @@
 import cx from 'classnames';
-import { BigNumber, ContractTransaction } from 'ethers';
+import { TransactionReceipt } from 'ethereum-abi-types-generator';
+import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { useFormik } from 'formik';
 import { AnimatePresence, motion, useAnimate } from 'framer-motion';
 import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount, useSigner } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
@@ -61,7 +62,6 @@ const GlmLock: FC<GlmLockProps> = ({
     keyPrefix: 'components.dedicated.glmLock',
   });
   const { address } = useAccount();
-  const { data: signer } = useSigner();
   const [transactionHash, setTransactionHash] = useState<string>('');
   const [currentStepIndex, setCurrentStepIndex] = useState<CurrentStepIndex>(
     currentStepIndexInitialValue,
@@ -69,13 +69,12 @@ const GlmLock: FC<GlmLockProps> = ({
   const [valueToDepose, setValueToDepose] = useState<BigNumber>(BigNumber.from(0));
 
   const { refetch: refetchDepositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
-  const { data: dataAvailableFunds } = useAvailableFundsGlm();
+  const { data: availableFundsGlm } = useAvailableFundsGlm();
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
   const { data: proposalsAddresses } = useProposalsContract();
   const [approvalState, approveCallback] = useMaxApproveCallback(
     valueToDepose,
     env.contractDepositsAddress,
-    signer,
     address,
   );
   const [scope, animate] = useAnimate();
@@ -86,10 +85,6 @@ const GlmLock: FC<GlmLockProps> = ({
   };
 
   const onMutate = async (): Promise<void> => {
-    if (!signer) {
-      return;
-    }
-
     if (currentMode === 'lock' && approvalState === 'NOT_APPROVED') {
       await approveCallback();
     }
@@ -97,8 +92,8 @@ const GlmLock: FC<GlmLockProps> = ({
     setCurrentStepIndex(1);
   };
 
-  const onSuccess = async (transactionResponse: ContractTransaction): Promise<void> => {
-    setTransactionHash(transactionResponse!.hash);
+  const onSuccess = async (transactionResponse: TransactionReceipt): Promise<void> => {
+    setTransactionHash(transactionResponse!.transactionHash);
     triggerToast({
       title: i18n.t('common.transactionSuccessful'),
     });
@@ -131,7 +126,11 @@ const GlmLock: FC<GlmLockProps> = ({
     initialValues: formInitialValues,
     onSubmit: onApproveOrDeposit,
     validateOnChange: true,
-    validationSchema: validationSchema(currentMode, dataAvailableFunds?.value, depositsValue),
+    validationSchema: validationSchema(
+      currentMode,
+      BigNumber.from(availableFundsGlm?.value),
+      depositsValue,
+    ),
   });
 
   const onReset = (newMode: CurrentMode = 'lock'): void => {

@@ -1,16 +1,16 @@
-import { Vault, Vault__factory } from 'octant-typechain-types';
 import { useMemo } from 'react';
 
 import env from 'env';
 
-import { provider } from './providers';
-import UseContractParams from './types';
+import Vault from './abi/Vault.json';
+import { ContractContext as VaultContract } from './typings/Vault';
+import { web3 } from './web3';
 
-export default function useContractVault({
-  tokenAddress = env.contractVaultAddress,
-  signerOrProvider = provider,
-}: UseContractParams = {}): Vault | null {
+export default function useContractEpochs(): VaultContract {
   return useMemo(() => {
-    return signerOrProvider ? Vault__factory.connect(tokenAddress, signerOrProvider) : null;
-  }, [signerOrProvider, tokenAddress]);
+    return new web3.eth.Contract<typeof Vault.abi>(
+      Vault.abi,
+      env.contractGlmAddress,
+    ) as unknown as VaultContract;
+  }, []);
 }

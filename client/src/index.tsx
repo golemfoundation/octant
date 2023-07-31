@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'regenerator-runtime/runtime';
+import './wallect-connect-polyfill';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Web3Modal } from '@web3modal/react';
 import React, { Fragment } from 'react';
@@ -12,7 +13,7 @@ import env, { envViteKeys } from 'env';
 
 import { ethereumClient } from './api/clients/client-ethereum';
 import clientReactQuery from './api/clients/client-react-query';
-import { wagmiClient } from './api/clients/client-wagmi';
+import { wagmiConfig } from './api/clients/client-wagmi';
 import App from './App/App';
 import { PROJECT_ID } from './constants/walletConnect';
 
@@ -32,8 +33,8 @@ const root = document.getElementById('root')!;
     const emptyEnvKeysWithLinebreaksUI = emptyEnvKeys.map(element => `<br />-- ${element}`);
 
     ReactDOM.createRoot(root).render(
-      // eslint-disable-next-line react/no-danger
       <div
+        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{
           // eslint-disable-next-line @typescript-eslint/naming-convention
           __html: `${errorMessage}: ${emptyEnvKeysWithLinebreaksUI}`,
@@ -45,7 +46,7 @@ const root = document.getElementById('root')!;
 
   ReactDOM.createRoot(root).render(
     <Fragment>
-      <WagmiConfig client={wagmiClient}>
+      <WagmiConfig config={wagmiConfig}>
         <QueryClientProvider client={clientReactQuery}>
           <HashRouter>
             <App />

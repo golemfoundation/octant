@@ -31,5 +31,8 @@
       https://stackoverflow.com/questions/58999086/cypress-causing-type-errors-in-jest-assertions/72663546#7266354
     */
     "/client/synpress.config.ts"
+  ],
+  "files": [
+    "src/global.d.ts"
   ]
 }

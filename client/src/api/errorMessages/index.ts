@@ -5,9 +5,9 @@ import { ROOTS } from 'api/queryKeys';
 import i18n from 'i18n';
 import triggerToast from 'utils/triggerToast';
 
-import { ErrorsConfig, Error } from './types';
+import { QueryMutationError, QueryMutationErrorConfig} from './types';
 
-const errors: ErrorsConfig = {
+const errors: QueryMutationErrorConfig = {
   'HN:Allocations/allocate-above-rewards-budget': {
     message: i18n.t('api.errorMessage.allocations.allocateAboveRewardsBudget'),
     type: 'toast',
@@ -38,7 +38,7 @@ const errors: ErrorsConfig = {
   },
 };
 
-function getError(reason: string): Error {
+function getError(reason: string): QueryMutationError {
   const error = errors[reason];
   if (error) {
     return error;
@@ -50,6 +50,11 @@ function getError(reason: string): Error {
 }
 
 export function handleError(reason: string, query?: Query | unknown): string | undefined {
+  // @ts-expect-error mutations do not have queryKey field, they are pure value and are unknown.
+  if (query && query.queryKey) {
+    // @ts-expect-error mutations do not have queryKey field, they are pure value and are unknown.
+    throw new Error(query?.queryKey);
+  }
   // @ts-expect-error mutations do not have queryKey field, they are pure value and are unknown.
   if (query && query.queryKey?.find(element => element === ROOTS.cryptoValues)) {
     // Graceful failure, no notification, no error. Inline info shown in places for values.

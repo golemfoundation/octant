@@ -1,6 +1,4 @@
 import cx from 'classnames';
-import { parseUnits } from 'ethers/lib/utils';
-import { Vault } from 'octant-typechain-types';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -8,6 +6,7 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
+import { BatchWithdrawRequest } from 'hooks/contracts/typings/Vault';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useWithdrawEth from 'hooks/mutations/useWithdrawEth';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -43,13 +42,11 @@ const WithdrawEth: FC = () => {
     if (!withdrawableRewards?.length) {
       return;
     }
-    const value: Vault.WithdrawPayloadStruct[] = withdrawableRewards.map(
-      ({ amount, epoch, proof }) => ({
-        amount: parseUnits(amount),
-        epoch: parseUnits(epoch.toString()),
-        proof,
-      }),
-    );
+    const value: BatchWithdrawRequest[] = withdrawableRewards.map(({ amount, epoch, proof }) => ({
+      amount: BigInt(amount),
+      epoch: BigInt(epoch.toString()),
+      proof,
+    }));
     withdrawEthMutation.mutateAsync(value);
   };
 

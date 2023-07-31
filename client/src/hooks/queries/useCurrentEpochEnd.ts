@@ -9,8 +9,12 @@ export default function useCurrentEpochEnd(): UseQueryResult<number | undefined>
   const contractEpochs = useContractEpochs();
   const { data: currentEpoch } = useCurrentEpoch();
 
-  return useQuery(QUERY_KEYS.currentEpochEnd, () => contractEpochs?.getCurrentEpochEnd(), {
-    enabled: !!contractEpochs && !!currentEpoch && currentEpoch > 1,
-    select: response => response!.toNumber() * 1000,
-  });
+  return useQuery(
+    QUERY_KEYS.currentEpochEnd,
+    () => contractEpochs?.methods.getCurrentEpochEnd().call(),
+    {
+      enabled: !!contractEpochs && !!currentEpoch && currentEpoch > 1,
+      select: response => Number(response) * 1000,
+    },
+  );
 }

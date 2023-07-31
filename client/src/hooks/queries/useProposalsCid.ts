@@ -6,7 +6,7 @@ import useContractProposals from 'hooks/contracts/useContractProposals';
 export default function useProposalsCid(): UseQueryResult<string> {
   const contractProposals = useContractProposals();
 
-  return useQuery(QUERY_KEYS.proposalsCid, () => contractProposals?.cid(), {
+  return useQuery(QUERY_KEYS.proposalsCid, () => contractProposals?.methods.cid().call(), {
     enabled: !!contractProposals,
   });
 }

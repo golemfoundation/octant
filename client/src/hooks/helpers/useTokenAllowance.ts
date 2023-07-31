@@ -1,10 +1,10 @@
-import { BigNumber } from 'ethers';
-import { ERC20 } from 'octant-typechain-types';
+import { ContractContext as ERC20Contract } from 'hooks/contracts/typings/ERC20';
 
 export default function useTokenAllowance(
-  contract: ERC20,
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  contract: ERC20Contract,
   signerAddress: string,
   spender: string,
-): Promise<BigNumber> {
-  return contract.allowance(signerAddress, spender);
+): Promise<BigInt> {
+  return contract.methods.allowance(signerAddress, spender).call();
 }
