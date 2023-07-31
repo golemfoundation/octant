@@ -206,7 +206,10 @@
         },
         "lockGlm": {
           "title": "Lock GLM to earn",
-          "text": "Lock GLM tokens for at least one full epoch to earn ETH rewards you can donate or withdraw"
+          "text": {
+            "standard": "Lock GLM tokens for at least one full epoch to earn ETH rewards you can donate or withdraw",
+            "epoch1": "Lock GLM tokens for as long as\u00a0you can to earn ETH rewards you can donate or withdraw"
+          }
         },
         "rewards": {
           "title": "You have rewards!",
