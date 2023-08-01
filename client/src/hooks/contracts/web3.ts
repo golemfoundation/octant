@@ -1,35 +1,15 @@
-import Web3, { HttpProvider, SupportedProviders, EthExecutionAPI } from 'web3';
+import Web3, { HttpProvider } from 'web3';
 
 import { ALCHEMY_API_URL } from 'constants/urls';
 import env from 'env';
 
-const getProvider = (): SupportedProviders<EthExecutionAPI> => {
-  /**
-   * "Web3.providers.givenProvider" should be set if in an Ethereum supported browser.
-   * It's not true on all browsers. E.g. Metamask prevents it from being set.
-   */
-  if (Web3.givenProvider) {
-    return Web3.givenProvider;
-  }
-  /**
-   * window.ethereum is the newest standard of setting provider by a wallet (EIP-11993).
-   * https://eips.ethereum.org/EIPS/eip-1193
-   * Most wallets use it.
-   */
-  if (window.ethereum) {
-    return window.ethereum;
-  }
-  /**
-   * Current provider is a predecessor of window.ethereum,
-   * possibly still used by some old wallets.
-   */
-  if (window.web3?.currentProvider) {
-    return window.web3.currentProvider;
-  }
-  /**
-   * When user doesn't have any provider, we provide Alchemy provider.
-   */
-  return new HttpProvider(`${ALCHEMY_API_URL}/${env.alchemyId}`);
-};
+export const alchemyProvider = new HttpProvider(`${ALCHEMY_API_URL}/${env.alchemyId}`);
 
-export const web3 = new Web3(getProvider());
+/**
+ * By default we use alchemy provider.
+ * Once user connects to the app and has correct chain set up,
+ * we use their provider. Set up in App.tsx.
+ */
+const web3 = new Web3(alchemyProvider);
+
+export default web3;

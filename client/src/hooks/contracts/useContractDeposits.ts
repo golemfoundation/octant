@@ -4,7 +4,7 @@ import env from 'env';
 
 import Deposits from './abi/Deposits.json';
 import { ContractContext as DepositsContract } from './typings/Deposits';
-import { web3 } from './web3';
+import web3 from './web3';
 
 export default function useContractDeposits(): DepositsContract {
   return useMemo(() => {

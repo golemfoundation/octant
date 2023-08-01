@@ -5,7 +5,7 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 
 import Epochs from './abi/Epochs.json';
 import { ContractContext as EpochsContract } from './typings/Epochs';
-import { web3 } from './web3';
+import web3 from './web3';
 
 export default function useContractEpochs(): EpochsContract | null {
   const { data: currentEpoch } = useCurrentEpoch();

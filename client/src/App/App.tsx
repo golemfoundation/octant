@@ -9,6 +9,7 @@ import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
 import { ALLOCATION_ITEMS_KEY, ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
+import web3, { alchemyProvider } from 'hooks/contracts/web3';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
@@ -113,6 +114,32 @@ const App = (): ReactElement => {
       setChainIdLocal(chain.id);
     }
   }, [chain, chainIdLocal, setChainIdLocal]);
+
+  useEffect(() => {
+    if (!chain || !chain.id || chain.id !== networkConfig.id) {
+      /**
+       * When user doesn't have any provider, we provide Alchemy provider.
+       */
+      web3.setProvider(alchemyProvider);
+      return;
+    }
+    if (window.ethereum) {
+      web3.setProvider(window.ethereum);
+      return;
+    }
+    /**
+     * Current provider is a predecessor of window.ethereum,
+     * possibly still used by some old browsers.
+     */
+    if (window.web3?.currentProvider) {
+      web3.setProvider(window.web3.currentProvider);
+      return;
+    }
+    /**
+     * When user doesn't have any provider, we provide Alchemy provider.
+     */
+    web3.setProvider(alchemyProvider);
+  }, [chain]);
 
   useEffect(() => {
     localStorageService.init();
