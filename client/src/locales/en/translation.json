@@ -200,10 +200,6 @@
     "allocation": {
       "allocationSuccessful": "Allocation successful",
       "tip": {
-        "connectWallet": {
-          "title": "Connect wallet",
-          "text": "Please connect your wallet to Octant in order to participate in this and future epochs"
-        },
         "lockGlm": {
           "title": "Lock GLM to earn",
           "text": {
@@ -225,9 +221,15 @@
       }
     },
     "earn": {
-      "tip": {
-        "title": "Withdraw ETH",
-        "text": "Rewards you allocate to yourself can be withdrawn to your wallet here in the Earn view"
+      "tips": {
+        "withdrawEth": {
+          "title": "Withdraw ETH",
+          "text": "Rewards you allocate to yourself can be withdrawn to your wallet here in the Earn view"
+        },
+        "connectWallet": {
+          "title": "Connect wallet",
+          "text": "Please connect your wallet to Octant in order to participate in this and future epochs"
+        }
       },
       "preLaunch": {
         "timerTitle": "Octant launches in"

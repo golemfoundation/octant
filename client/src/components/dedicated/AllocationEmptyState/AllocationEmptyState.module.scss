@@ -3,9 +3,9 @@
   flex: 1;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   color: $color-octant-grey6;
   line-height: 2.4rem;
-  padding-top: 13.2rem;
 
   .text {
     font-size: $font-size-14;
@@ -19,5 +19,6 @@
   .image {
     filter: grayscale(1);
     opacity: 0.25;
+    width: 22rem;
   }
 }
