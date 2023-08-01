@@ -13,7 +13,8 @@ from web3.middleware import geth_poa_middleware
 
 # Flask extensions
 api = Api(
-    version="1.0.0", title="Octant API", description="Octant REST API documentation"
+    version="1.0.0", title="Octant API", description="Octant REST API documentation",
+    catch_all_404s=True
 )
 socketio = SocketIO(cors_allowed_origins="*")
 db = SQLAlchemy()
