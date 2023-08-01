@@ -1,4 +1,5 @@
 export default interface ProgressStepperProps {
-  currentStepIndex: number;
+  currentStep: 1 | 2 | 3;
+  isNextStepIsAvailable: boolean;
   steps: string[];
 }

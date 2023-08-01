@@ -82,7 +82,7 @@
         "currentlyLocked": "Currently Locked",
         "stakeWillUpdate": "Your stake will update when the transaction is confirmed",
         "waitingForTransactionHash": "Waiting for transaction hash from Etherscan...",
-        "walletBalanceAvailable": "<0>{{availableFunds}} GLM</0> \u00a0 wallet balance available",
+        "walletBalance": "Wallet balance",
         "viewOnEtherscan": "View on Etherscan"
       },
       "connectWallet": {
@@ -107,15 +107,28 @@
       "glmLock": {
         "lock": "Lock",
         "unlock": "Unlock",
-        "submit": "Submit",
-        "approveAndLock": "Approve & Lock",
-        "done": "Done",
-        "withdraw": "Withdraw",
-        "amountToLock": "Amount to lock",
-        "amountToUnlock": "Amount to unlock",
-        "waitingForApproval": "Waiting for approval...",
-        "cantUnlock": "You can't unlock more than you have locked",
-        "dontHaveEnough": "You don't have enough to lock that amount"
+        "glmLockStepper": {
+          "approve": "Approve"
+        },
+        "glmLockTabs": {
+          "waitingForWallet": "Waiting for wallet",
+          "useMax": "Use max",
+          "amountToLock": "Amount to lock",
+          "amountToUnlock": "Amount to unlock",
+          "locked": "Locked",
+          "available": "Available"
+        },
+        "glmLockNotification": {
+          "success": {
+            "labelLocked": "GLM locked successfully",
+            "labelUnlocked": "GLM unlocked successfully",
+            "text": "Your locked balance will update after tx confirmation. <0>View on Etherscan</0>"
+          },
+          "info": {
+            "label": "Please approve two wallet transactions",
+            "text": "One to allow ERC-20 tokens, the other to deposit GLM."
+          }
+        }
       },
       "historyList": {
         "emptyHistory": "You haven’t made any transactions yet"

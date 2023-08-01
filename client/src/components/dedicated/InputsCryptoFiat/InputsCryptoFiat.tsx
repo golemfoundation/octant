@@ -2,7 +2,6 @@ import cx from 'classnames';
 import React, { FC, useDeferredValue, useEffect, useState } from 'react';
 
 import InputText from 'components/core/InputText/InputText';
-import InputTextProps from 'components/core/InputText/types';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useSettingsStore from 'store/settings/store';
 import {
@@ -19,6 +18,7 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({
   label,
   inputCryptoProps,
   cryptoCurrency,
+  areInputsDisabled,
   onInputsFocusChange = () => {},
 }) => {
   const {
@@ -36,28 +36,14 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({
   const isAnyInputFocused = useDeferredValue(isCryptoInputFocused || isFiatInputFocused);
 
   const inputCryptoPropsLabel = isCryptoMainValueDisplay
-    ? { ...inputCryptoProps, error, isErrorInlineVisible: false, label }
+    ? { ...inputCryptoProps, error, label }
     : { ...inputCryptoProps, error };
-  const inputFiatPropsLabel = isCryptoMainValueDisplay
-    ? { error }
-    : { error, isErrorInlineVisible: false, label };
+  const inputFiatPropsLabel = isCryptoMainValueDisplay ? { error } : { error, label };
 
   const cryptoFiatRatio = cryptoValues?.[cryptoCurrency][displayCurrency || 'usd'] || 1;
 
-  const handleFiatChange: InputTextProps['onChange'] = event => {
-    const valueComma = event.target.value.replace(comma, '.');
-
-    if (valueComma && !floatNumberWithUpTo2DecimalPlaces.test(valueComma)) {
-      return;
-    }
-
-    const fiatToCrypto = valueComma ? (parseFloat(valueComma) / cryptoFiatRatio).toFixed(18) : '';
-    setFiat(valueComma);
-    inputCryptoProps.onChange(fiatToCrypto);
-  };
-
-  const handleCryptoChange: InputTextProps['onChange'] = event => {
-    const valueComma = event.target.value.replace(comma, '.');
+  const onCryptoValueChange = (value: string) => {
+    const valueComma = value.replace(comma, '.');
 
     if (valueComma && !floatNumberWithUpTo18DecimalPlaces.test(valueComma)) {
       return;
@@ -67,6 +53,18 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({
 
     setFiat(cryptoToFiat);
     inputCryptoProps.onChange(valueComma);
+  };
+
+  const onFiatValueChange = (value: string) => {
+    const valueComma = value.replace(comma, '.');
+
+    if (valueComma && !floatNumberWithUpTo2DecimalPlaces.test(valueComma)) {
+      return;
+    }
+
+    const fiatToCrypto = valueComma ? (parseFloat(valueComma) / cryptoFiatRatio).toFixed(18) : '';
+    setFiat(valueComma);
+    inputCryptoProps.onChange(fiatToCrypto);
   };
 
   const handleClear = () => {
@@ -86,6 +84,15 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({
     onInputsFocusChange(isAnyInputFocused);
   }, [onInputsFocusChange, isAnyInputFocused]);
 
+  useEffect(() => {
+    if ((inputCryptoProps.value && fiat) || (!inputCryptoProps.value && !fiat)) {
+      return;
+    }
+
+    onCryptoValueChange(inputCryptoProps.value!);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputCryptoProps.value, fiat]);
+
   return (
     <div className={cx(styles.root, isCryptoMainValueDisplay && styles.isCryptoMainValueDisplay)}>
       <InputText
@@ -95,8 +102,10 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({
         variant="simple"
         {...inputCryptoPropsLabel}
         autocomplete="off"
+        isDisabled={areInputsDisabled}
+        isErrorInlineVisible={false}
         onBlur={() => setIsCryptoInputFocused(false)}
-        onChange={handleCryptoChange}
+        onChange={e => onCryptoValueChange(e.target.value)}
         onClear={handleClear}
         onFocus={() => setIsCryptoInputFocused(true)}
       />
@@ -104,8 +113,10 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({
         autocomplete="off"
         className={cx(styles.input, !isCryptoMainValueDisplay && styles.isFiatMainValueDisplay)}
         inputMode="decimal"
+        isDisabled={areInputsDisabled}
+        isErrorInlineVisible={false}
         onBlur={() => setIsFiatInputFocused(false)}
-        onChange={handleFiatChange}
+        onChange={e => onFiatValueChange(e.target.value)}
         onClear={handleClear}
         onFocus={() => setIsFiatInputFocused(true)}
         placeholder="0.00"

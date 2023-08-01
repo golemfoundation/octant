@@ -23,3 +23,36 @@
 .button {
   padding: 0;
 }
+
+.budgetRow {
+  position: relative;
+  height: 5.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: $font-size-14;
+  font-weight: $font-weight-bold;
+
+  &:not(:last-child)::after {
+    content: '';
+    width: 100%;
+    position: absolute;
+    height: 0.1rem;
+    background-color: $color-octant-grey2;
+    bottom: 0;
+    left: 0;
+  }
+
+  .budgetLabel {
+    color: $color-octant-grey6;
+  }
+
+  .budgetValue {
+    color: $color-octant-dark;
+
+    &.isError {
+      color: $color-octant-orange;
+    }
+  }
+}

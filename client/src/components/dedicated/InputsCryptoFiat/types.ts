@@ -2,17 +2,16 @@ import InputTextProps from 'components/core/InputText/types';
 import { CryptoCurrency } from 'types/cryptoCurrency';
 
 export default interface InputsCryptoFiatProps {
+  areInputsDisabled?: boolean;
   cryptoCurrency: CryptoCurrency;
   error: string | undefined;
   inputCryptoProps: {
-    isDisabled: InputTextProps['isDisabled'];
     name: InputTextProps['name'];
     onChange: (value: string) => void;
     onClear?: InputTextProps['onClear'];
     suffix: InputTextProps['suffix'];
     value: InputTextProps['value'];
   };
-  label: string;
-
+  label: InputTextProps['label'];
   onInputsFocusChange?: (isAnyInputFocused: boolean) => void;
 }
