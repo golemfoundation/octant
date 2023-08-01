@@ -21,7 +21,7 @@ const getProvider = (): SupportedProviders<EthExecutionAPI> => {
   }
   /**
    * Current provider is a predecessor of window.ethereum,
-   * possibly still used by some old browsers.
+   * possibly still used by some old wallets.
    */
   if (window.web3?.currentProvider) {
     return window.web3.currentProvider;
@@ -32,5 +32,4 @@ const getProvider = (): SupportedProviders<EthExecutionAPI> => {
   return new HttpProvider(`${ALCHEMY_API_URL}/${env.alchemyId}`);
 };
 
-// "Web3.providers.givenProvider" will be set if in an Ethereum supported browser.
 export const web3 = new Web3(getProvider());

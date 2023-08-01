@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import BoxGlmLock from 'components/dedicated/BoxGlmLock/BoxGlmLock';
@@ -20,14 +21,22 @@ const EarnView = (): ReactElement => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'views.earn',
   });
+  const { isConnected } = useAccount();
   const { data: withdrawableUserEth } = useWithdrawableUserEth();
   const { wasWithdrawAlreadyClosed, setWasWithdrawAlreadyClosed } = useTipsStore(state => ({
     setWasWithdrawAlreadyClosed: state.setWasWithdrawAlreadyClosed,
     wasWithdrawAlreadyClosed: state.data.wasWithdrawAlreadyClosed,
   }));
   const { data: currentEpoch } = useCurrentEpoch();
+  const { wasConnectWalletAlreadyClosed, setWasConnectWalletAlreadyClosed } = useTipsStore(
+    state => ({
+      setWasConnectWalletAlreadyClosed: state.setWasConnectWalletAlreadyClosed,
+      wasConnectWalletAlreadyClosed: state.data.wasConnectWalletAlreadyClosed,
+    }),
+  );
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
+  const isConnectWalletTipVisible = !isConnected && !wasConnectWalletAlreadyClosed;
   const isWithdrawTipVisible =
     !!currentEpoch &&
     currentEpoch > 1 &&
@@ -43,13 +52,22 @@ const EarnView = (): ReactElement => {
   return (
     <MainLayout classNameBody={styles.layoutBody} dataTest="EarnView">
       <TipTile
+        dataTest="EarnView__TipTile--connectWallet"
+        image="images/tip-connect-wallet.webp"
+        infoLabel={i18n.t('common.gettingStarted')}
+        isOpen={isConnectWalletTipVisible}
+        onClose={() => setWasConnectWalletAlreadyClosed(true)}
+        text={t('tips.connectWallet.text')}
+        title={t('tips.connectWallet.title')}
+      />
+      <TipTile
         className={styles.tip}
         image="images/tip-withdraw.webp"
         infoLabel={i18n.t('common.gettingStarted')}
         isOpen={isWithdrawTipVisible}
         onClose={() => setWasWithdrawAlreadyClosed(true)}
-        text={t('tip.text')}
-        title={t('tip.title')}
+        text={t('tips.withdrawEth.text')}
+        title={t('tips.withdrawEth.title')}
       />
       <div className={styles.wrapper}>
         <div className={cx(styles.boxesWrapper, styles.column)}>

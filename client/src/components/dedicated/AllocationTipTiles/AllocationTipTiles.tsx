@@ -21,11 +21,9 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   const { data: individualReward, isLoading: isLoadingIndividualReward } = useIndividualReward();
   const { data: userAllocations, isFetching: isFetchingUserAllocation } = useUserAllocations();
   const {
-    wasConnectWalletAlreadyClosed,
     wasLockGLMAlreadyClosed,
     wasRewardsAlreadyClosed,
     wasChangedYourMindAlreadyClosed,
-    setWasConnectWalletAlreadyClosed,
     setWasLockGLMAlreadyClosed,
     setWasRewardsAlreadyClosed,
     setWasChangedYourMindAlreadyClosed,
@@ -41,8 +39,6 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   }));
 
   const isEpoch1 = currentEpoch === 1;
-
-  const isConnectWalletTipVisible = !isConnected && !wasConnectWalletAlreadyClosed;
 
   const isLockGlmTipVisible =
     (!depositsValue || (!!depositsValue && depositsValue.isZero())) &&
@@ -64,22 +60,10 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
     !wasChangedYourMindAlreadyClosed;
 
   const isAnyTipTileVisible =
-    isConnectWalletTipVisible ||
-    isLockGlmTipVisible ||
-    isRewardsTipVisible ||
-    isChangedYourMindTipVisible;
+    isLockGlmTipVisible || isRewardsTipVisible || isChangedYourMindTipVisible;
 
   return (
     <div className={cx(styles.root, isAnyTipTileVisible && styles.isAnyTipTileVisible, className)}>
-      <TipTile
-        dataTest="AllocationTipTiles--connectWallet"
-        image="images/tip-connect-wallet.webp"
-        infoLabel={i18n.t('common.gettingStarted')}
-        isOpen={isConnectWalletTipVisible}
-        onClose={() => setWasConnectWalletAlreadyClosed(true)}
-        text={t('connectWallet.text')}
-        title={t('connectWallet.title')}
-      />
       <TipTile
         image="images/lock-glm.webp"
         infoLabel={i18n.t('common.gettingStarted')}

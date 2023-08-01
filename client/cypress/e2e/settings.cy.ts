@@ -157,32 +157,32 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     it('"Always show Octant tips" works (checked)', () => {
       cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').check();
 
-      cy.get('[data-test=Navbar__Button--Allocate]').click();
-      cy.get('[data-test=AllocationTipTiles--connectWallet]').should('exist');
-      cy.get('[data-test=AllocationTipTiles--connectWallet]').should('be.visible');
+      cy.get('[data-test=Navbar__Button--Earn]').click();
+      cy.get('[data-test=EarnView__TipTile--connectWallet]').should('exist');
+      cy.get('[data-test=EarnView__TipTile--connectWallet]').should('be.visible');
 
-      cy.get('[data-test=AllocationTipTiles--connectWallet__Button]').click();
-      cy.get('[data-test=AllocationTipTiles--connectWallet]').should('not.exist');
+      cy.get('[data-test=EarnView__TipTile--connectWallet__Button]').click();
+      cy.get('[data-test=EarnView__TipTile--connectWallet]').should('not.exist');
 
       cy.reload();
 
-      cy.get('[data-test=AllocationTipTiles--connectWallet]').should('exist');
-      cy.get('[data-test=AllocationTipTiles--connectWallet]').should('be.visible');
+      cy.get('[data-test=EarnView__TipTile--connectWallet]').should('exist');
+      cy.get('[data-test=EarnView__TipTile--connectWallet]').should('be.visible');
     });
 
     it('"Always show Octant tips" works (unchecked)', () => {
       cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').uncheck();
 
-      cy.get('[data-test=Navbar__Button--Allocate]').click();
-      cy.get('[data-test=AllocationTipTiles--connectWallet]').should('exist');
-      cy.get('[data-test=AllocationTipTiles--connectWallet]').should('be.visible');
+      cy.get('[data-test=Navbar__Button--Earn]').click();
+      cy.get('[data-test=EarnView__TipTile--connectWallet]').should('exist');
+      cy.get('[data-test=EarnView__TipTile--connectWallet]').should('be.visible');
 
-      cy.get('[data-test=AllocationTipTiles--connectWallet__Button]').click();
-      cy.get('[data-test=AllocationTipTiles--connectWallet]').should('not.exist');
+      cy.get('[data-test=EarnView__TipTile--connectWallet__Button]').click();
+      cy.get('[data-test=EarnView__TipTile--connectWallet]').should('not.exist');
 
       cy.reload();
 
-      cy.get('[data-test=AllocationTipTiles--connectWallet]').should('not.exist');
+      cy.get('[data-test=EarnView__TipTile--connectWallet]').should('not.exist');
     });
   });
 });
