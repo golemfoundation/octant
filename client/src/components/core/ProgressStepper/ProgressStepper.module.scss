@@ -12,7 +12,7 @@
     left: 0;
     transform: translate(0, -50%);
     height: 0.2rem;
-    width: 100%;
+    width: calc(100% - 0.1rem);
     background: $color-octant-green3;
   }
 }
@@ -22,6 +22,7 @@
   display: flex;
   flex-direction: column;
   color: $color-octant-grey5;
+  flex: 1;
 
   &.isCurrent {
     color: $color-octant-dark;
@@ -50,7 +51,8 @@
   background: $color-octant-grey4;
   margin: 0 0 0.5rem 0;
 
-  &.isCurrent {
+  &.isCurrent,
+  &.isAvailable {
     &::after {
       content: '';
       position: absolute;
@@ -64,8 +66,20 @@
     }
   }
 
+  &.isCurrent::after {
+    background: $color-octant-green3;
+  }
+
+  &.isAvailable::after {
+    background: $color-octant-grey6;
+  }
+
   &.isDone {
     background: $color-octant-green3;
+
+    &::after {
+      background: none;
+    }
   }
 }
 

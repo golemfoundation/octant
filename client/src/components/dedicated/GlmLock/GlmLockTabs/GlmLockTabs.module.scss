@@ -1,0 +1,52 @@
+.box {
+  position: relative;
+  padding: 1.8rem 2.4rem 2.4rem;
+
+  .max {
+    position: absolute;
+    font-size: $font-size-14;
+    line-height: 2rem;
+    top: 1.8rem;
+    right: 2.4rem;
+    color: $color-octant-green;
+    cursor: pointer;
+
+    &.isDisabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    &:not(.isDisabled):hover {
+      color: $color-octant-green2;
+    }
+  }
+}
+
+.inputsLabel {
+  display: flex;
+  justify-content: space-between;
+
+  .inputsLabelBalance {
+    display: flex;
+
+    .availableValue {
+      margin: 0 0.2rem;
+
+      &.dontHaveEnough {
+        color: $color-octant-orange;
+      }
+    }
+
+    .lockedValue {
+      margin-right: 0.2rem;
+
+      &.cantUnlock {
+        color: $color-octant-orange;
+      }
+    }
+  }
+}
+
+.button {
+  width: 100%;
+}

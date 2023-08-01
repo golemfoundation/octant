@@ -1,6 +1,6 @@
 export type CurrentMode = 'lock' | 'unlock';
 
-export type CurrentStepIndex = 0 | 1 | 2 | 3;
+export type Step = 1 | 2 | 3;
 
 export type FormFields = {
   valueToDeposeOrWithdraw: string;
@@ -8,8 +8,6 @@ export type FormFields = {
 
 export default interface GlmLockProps {
   currentMode: CurrentMode;
-  onChangeCryptoOrFiatInputFocus: (isCryptoOrFiatInputFocused: boolean) => void;
   onCloseModal: () => void;
   onCurrentModeChange: (currentMode: CurrentMode) => void;
-  showBudgetBox: boolean;
 }

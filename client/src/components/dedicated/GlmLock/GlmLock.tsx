@@ -1,22 +1,20 @@
-import cx from 'classnames';
+import { MaxUint256 } from '@ethersproject/constants';
 import { TransactionReceipt } from 'ethereum-abi-types-generator';
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
-import { useFormik } from 'formik';
-import { AnimatePresence, motion, useAnimate } from 'framer-motion';
-import React, { FC, useEffect, useState } from 'react';
+import { Formik } from 'formik';
+import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
-import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import Button from 'components/core/Button/Button';
-import ButtonProps from 'components/core/Button/types';
-import ProgressStepper from 'components/core/ProgressStepper/ProgressStepper';
-import BudgetBox from 'components/dedicated/BudgetBox/BudgetBox';
-import InputsCryptoFiat from 'components/dedicated/InputsCryptoFiat/InputsCryptoFiat';
+import GlmLockBudget from 'components/dedicated/GlmLock/GlmLockBudget/GlmLockBudget';
+import GlmLockNotification from 'components/dedicated/GlmLock/GlmLockNotification/GlmLockNotification';
+import GlmLockStepper from 'components/dedicated/GlmLock/GlmLockStepper/GlmLockStepper';
+import GlmLockTabs from 'components/dedicated/GlmLock/GlmLockTabs/GlmLockTabs';
 import env from 'env';
+import useContractErc20 from 'hooks/contracts/useContractErc20';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
-import useMaxApproveCallback from 'hooks/helpers/useMaxApproveCallback';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useLock from 'hooks/mutations/useLock';
 import useUnlock from 'hooks/mutations/useUnlock';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
@@ -25,59 +23,24 @@ import useProposalsContract from 'hooks/queries/useProposalsContract';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './GlmLock.module.scss';
-import GlmLockProps, { CurrentMode, CurrentStepIndex, FormFields } from './types';
-import { formInitialValues, getButtonCtaLabel, validationSchema } from './utils';
+import GlmLockProps, { CurrentMode, Step } from './types';
+import { formInitialValues, validationSchema } from './utils';
 
-const currentStepIndexInitialValue = 0;
-
-const budgetBoxVariants = {
-  hide: {
-    height: '0',
-    margin: '0',
-    opacity: '0',
-    zIndex: '-1',
-  },
-  show: {
-    height: '0',
-    margin: '0',
-    opacity: '0',
-    zIndex: '-1',
-  },
-  visible: {
-    height: 'auto',
-    margin: '0 auto 1.6rem',
-    opacity: 1,
-    zIndex: '1',
-  },
-};
-
-const GlmLock: FC<GlmLockProps> = ({
-  showBudgetBox,
-  currentMode,
-  onCurrentModeChange,
-  onChangeCryptoOrFiatInputFocus,
-  onCloseModal,
-}) => {
-  const { t, i18n } = useTranslation('translation', {
-    keyPrefix: 'components.dedicated.glmLock',
-  });
+const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseModal }) => {
+  const { i18n } = useTranslation();
   const { address } = useAccount();
-  const [transactionHash, setTransactionHash] = useState<string>('');
-  const [currentStepIndex, setCurrentStepIndex] = useState<CurrentStepIndex>(
-    currentStepIndexInitialValue,
-  );
-  const [valueToDepose, setValueToDepose] = useState<BigNumber>(BigNumber.from(0));
 
   const { refetch: refetchDepositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
   const { data: availableFundsGlm } = useAvailableFundsGlm();
   const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
   const { data: proposalsAddresses } = useProposalsContract();
-  const [approvalState, approveCallback] = useMaxApproveCallback(
-    valueToDepose,
-    env.contractDepositsAddress,
-    address,
-  );
-  const [scope, animate] = useAnimate();
+  const contract = useContractErc20();
+  const { isDesktop } = useMediaQuery();
+
+  const [step, setStep] = useState<Step>(1);
+  const [transactionHash, setTransactionHash] = useState<string>('');
+  const [isCryptoOrFiatInputFocused, setIsCryptoOrFiatInputFocused] = useState(false);
+  const showBudgetBox = isDesktop || (!isDesktop && !isCryptoOrFiatInputFocused);
 
   const onRefetch = async (): Promise<void> => {
     await refetchDeposit();
@@ -85,24 +48,47 @@ const GlmLock: FC<GlmLockProps> = ({
   };
 
   const onMutate = async (): Promise<void> => {
-    if (currentMode === 'lock' && approvalState === 'NOT_APPROVED') {
-      await approveCallback();
+    if (!contract || !address || !availableFundsGlm) {
+      return;
     }
 
-    setCurrentStepIndex(1);
+    const allowance = await contract.methods.allowance(address, env.contractDepositsAddress).call();
+    const allowanceBigNumber = BigNumber.from(allowance);
+
+    const isApproved = allowanceBigNumber.gte(availableFundsGlm?.value);
+
+    if (currentMode === 'lock' && !isApproved) {
+      await contract.methods
+        .approve(env.contractDepositsAddress, MaxUint256.toString())
+        .send({ from: address })
+        .catch((error: Error) => {
+          // eslint-disable-next-line no-console
+          console.warn(`Failed to approve max amount for token ${contract.address}`, error);
+          throw error;
+        });
+    }
+
+    setStep(2);
   };
 
   const onSuccess = async (transactionResponse: TransactionReceipt): Promise<void> => {
-    setTransactionHash(transactionResponse!.transactionHash);
-    triggerToast({
-      title: i18n.t('common.transactionSuccessful'),
-    });
     await onRefetch();
-    setCurrentStepIndex(3);
+    setTransactionHash(transactionResponse!.transactionHash);
+    setStep(3);
   };
 
-  const lockMutation = useLock({ onMutate, onSuccess });
-  const unlockMutation = useUnlock({ onMutate, onSuccess });
+  const onReset = (newMode: CurrentMode = 'lock'): void => {
+    onCurrentModeChange(newMode);
+    setTransactionHash('');
+    setStep(1);
+  };
+
+  const onError = () => {
+    onReset(currentMode);
+  };
+
+  const lockMutation = useLock({ onError, onMutate, onSuccess });
+  const unlockMutation = useUnlock({ onError, onMutate, onSuccess });
 
   const onApproveOrDeposit = async ({ valueToDeposeOrWithdraw }): Promise<void> => {
     const isSignedInAsAProposal = proposalsAddresses!.includes(address!);
@@ -122,115 +108,46 @@ const GlmLock: FC<GlmLockProps> = ({
     }
   };
 
-  const formik = useFormik<FormFields>({
-    initialValues: formInitialValues,
-    onSubmit: onApproveOrDeposit,
-    validateOnChange: true,
-    validationSchema: validationSchema(
-      currentMode,
-      BigNumber.from(availableFundsGlm?.value),
-      depositsValue,
-    ),
-  });
-
-  const onReset = (newMode: CurrentMode = 'lock'): void => {
-    onCurrentModeChange(newMode);
-    setCurrentStepIndex(0);
-    setTransactionHash('');
-    formik.resetForm();
-  };
-
-  const buttonCtaProps: ButtonProps =
-    currentStepIndex === 3
-      ? {
-          onClick: onCloseModal,
-          type: 'button',
-        }
-      : {
-          type: 'submit',
-        };
-
-  useEffect(() => {
-    animate(scope?.current, { marginTop: showBudgetBox ? '0' : '2.4rem' });
-  }, [showBudgetBox, scope, animate]);
-
   return (
-    <form className={styles.form} onSubmit={formik.handleSubmit}>
-      <BoxRounded ref={scope} className={styles.element} isGrey>
-        <ProgressStepper
-          currentStepIndex={currentStepIndex}
-          steps={
-            currentMode === 'lock'
-              ? [t('submit'), t('approveAndLock'), i18n.t('common.done')]
-              : [t('submit'), t('withdraw'), i18n.t('common.done')]
-          }
-        />
-      </BoxRounded>
-      <AnimatePresence initial={false}>
-        {showBudgetBox && (
-          <motion.div
-            animate="visible"
-            className={styles.budgetBoxContainer}
-            exit="hide"
-            initial="show"
-            transition={{ ease: 'linear' }}
-            variants={budgetBoxVariants}
-          >
-            <BudgetBox
-              currentStepIndex={currentStepIndex}
-              depositsValue={depositsValue}
-              isError={!formik.isValid}
+    <Formik
+      initialValues={formInitialValues}
+      isInitialValid={false}
+      onSubmit={onApproveOrDeposit}
+      validateOnChange
+      validationSchema={validationSchema(
+        currentMode,
+        BigNumber.from(availableFundsGlm ? availableFundsGlm?.value : 0),
+        depositsValue,
+      )}
+    >
+      {props => (
+        <form className={styles.form} onSubmit={props.handleSubmit}>
+          {isDesktop && (
+            <GlmLockStepper className={styles.element} currentMode={currentMode} step={step} />
+          )}
+          {/* TODO: OCT-737 https://linear.app/golemfoundation/issue/OCT-737/unlocking-glm-info-notification  */}
+          {(step === 2 && currentMode !== 'unlock') || step === 3 ? (
+            <GlmLockNotification
+              className={styles.element}
+              currentMode={currentMode}
               transactionHash={transactionHash}
+              type={step === 2 ? 'info' : 'success'}
             />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <BoxRounded
-        className={styles.element}
-        isGrey
-        tabs={[
-          {
-            isActive: currentMode === 'lock',
-            onClick: () => onReset('lock'),
-            title: t('lock'),
-          },
-          {
-            isActive: currentMode === 'unlock',
-            onClick: () => onReset('unlock'),
-            title: t('unlock'),
-          },
-        ]}
-      >
-        <InputsCryptoFiat
-          cryptoCurrency="golem"
-          error={formik.errors.valueToDeposeOrWithdraw}
-          inputCryptoProps={{
-            isDisabled: formik.isSubmitting,
-            name: 'valueToDeposeOrWithdraw',
-            onChange: value => {
-              if (currentMode === 'lock') {
-                setValueToDepose(parseUnits(value, 18));
-              }
-              formik.setFieldValue('valueToDeposeOrWithdraw', value);
-            },
-            onClear: formik.resetForm,
-            suffix: 'GLM',
-            value: formik.values.valueToDeposeOrWithdraw,
-          }}
-          label={currentMode === 'lock' ? t('amountToLock') : t('amountToUnlock')}
-          onInputsFocusChange={onChangeCryptoOrFiatInputFocus}
-        />
-      </BoxRounded>
-      <Button
-        className={cx(styles.element, styles.button)}
-        isDisabled={!formik.isValid}
-        isHigh
-        isLoading={formik.isSubmitting}
-        label={getButtonCtaLabel(currentMode, currentStepIndex, formik.isSubmitting)}
-        variant="cta"
-        {...buttonCtaProps}
-      />
-    </form>
+          ) : (
+            <GlmLockBudget isVisible={showBudgetBox} />
+          )}
+          <GlmLockTabs
+            className={styles.element}
+            currentMode={currentMode}
+            onClose={onCloseModal}
+            onInputsFocusChange={setIsCryptoOrFiatInputFocused}
+            onReset={onReset}
+            showBalances={!showBudgetBox}
+            step={step}
+          />
+        </form>
+      )}
+    </Formik>
   );
 };
 

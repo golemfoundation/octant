@@ -4,26 +4,10 @@ import { string, object, ObjectSchema } from 'yup';
 
 import i18n from 'i18n';
 
-import { CurrentMode, CurrentStepIndex, FormFields } from './types';
+import { CurrentMode, FormFields } from './types';
 
 export const formInitialValues: FormFields = {
   valueToDeposeOrWithdraw: '',
-};
-
-export const getButtonCtaLabel = (
-  currentMode: CurrentMode,
-  currentStepIndex: CurrentStepIndex,
-  isLoading: boolean,
-): string => {
-  if (currentStepIndex === 3) {
-    return i18n.t('components.dedicated.glmLock.done');
-  }
-  if (isLoading) {
-    return i18n.t('components.dedicated.glmLock.waitingForApproval'); // 'Waiting for approval...';
-  }
-  return currentMode === 'lock'
-    ? i18n.t('components.dedicated.glmLock.lock')
-    : i18n.t('components.dedicated.glmLock.unlock');
 };
 
 export const validationSchema = (
@@ -41,12 +25,12 @@ export const validationSchema = (
           const newValueBigNumber = parseUnits(value || '0');
           if (currentMode === 'unlock' && newValueBigNumber.gt(depositsValue!)) {
             return ctx.createError({
-              message: i18n.t('components.dedicated.glmLock.cantUnlock'),
+              message: 'cantUnlock',
             });
           }
           if (currentMode === 'lock' && newValueBigNumber.gt(dataAvailableFunds!)) {
             return ctx.createError({
-              message: i18n.t('components.dedicated.glmLock.dontHaveEnough'),
+              message: 'dontHaveEnough',
             });
           }
 
