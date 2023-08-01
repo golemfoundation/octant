@@ -6,7 +6,7 @@ import useContractEpochs from 'hooks/contracts/useContractEpochs';
 import useCurrentEpoch from './useCurrentEpoch';
 
 export default function useIsDecisionWindowOpen(
-  options?: UseQueryOptions<boolean, unknown, boolean, ['isDecisionWindowOpen']>,
+  options?: UseQueryOptions<boolean | undefined, unknown, boolean, ['isDecisionWindowOpen']>,
 ): UseQueryResult<boolean> {
   const contractEpochs = useContractEpochs();
   const { data: currentEpoch } = useCurrentEpoch();

@@ -6,6 +6,19 @@ Ensure that the `.env`  file is present. See `.env.template`.
 
 `yanr generate-abi-typings` is used to generate typings for proposals ABIs that we have in codebase. In these typings custom adjustments are added, e.g. in some places `string` is wrongly instead of `BigInt`. Linter is also disabled there. Since ABIs do not change, this command doesn't need to rerun.
 
+### Contracts
+
+Client uses 5 contracts. Following are their names and envs which should have their addresses:
+1. Deposits (`VITE_DEPOSITS_ADDRESS`).
+2. Epochs (`VITE_EPOCHS_ADDRESS`).
+3. ERC20 (`VITE_GLM_ADDRESS`).
+4. Proposals (`VITE_PROPOSALS_ADDRESS)`.
+5. Vault (`VITE_VAULT_ADDRESS`).
+
+Epochs & Vault are not available during Epoch 1. They will be deployed and the client will be redeployed with their addresses before the start of Epoch 2.
+
+Values for all envs are required. In order to deploy client without Epochs & Vault contracts please use any placeholder value for their envs (e.g. `placeholder`), i.e. `VITE_EPOCHS_ADDRESS=placeholder`.
+
 ## Proposals
 
 The app fetches proposals addresses from the contract and their data (name, description, etc.) from IPFS. Current expected schema of proposal coming from IPFS is as follows:
