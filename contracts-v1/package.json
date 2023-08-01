@@ -8,8 +8,10 @@
     "deploy:goerli": "npx hardhat --network goerli deploy --tags testnet",
     "deploy:sepolia": "npx hardhat --network sepolia deploy --tags testnet",
     "deploy:localhost": "npx hardhat --network localhost deploy --tags local",
-    "deploy:epoch1": "npx hardhat --network mainnet deploy --tags epoch1",
-    "deploy:epoch2": "npx hardhat --network mainnet deploy --tags epoch2",
+    "deploy:sepolia:epoch1": "npx hardhat --network sepolia deploy --tags epoch1",
+    "deploy:mainnet:epoch1": "npx hardhat --network mainnet deploy --tags epoch1",
+    "deploy:sepolia:epoch2": "npx hardhat --network sepolia deploy --tags epoch2",
+    "deploy:mainnet:epoch2": "npx hardhat --network mainnet deploy --tags epoch2",
     "docs": "npx hardhat docgen",
     "eslint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "eslint:fix": "yarn prettier && yarn eslint --fix",
@@ -30,7 +32,9 @@
     "type-check": "tsc --noEmit true",
     "verify:goerli": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat --network goerli etherscan-verify --license GPL-3.0",
     "verify:sepolia": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat --network sepolia etherscan-verify --license GPL-3.0",
-    "verify:sepolia-proxy": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat --network sepolia etherscan-verify --license MIT"
+    "verify:mainnet": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat --network mainnet etherscan-verify --license GPL-3.0",
+    "verify:sepolia:proxy": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat --network sepolia etherscan-verify --license MIT",
+    "verify:mainnet:proxy": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat --network mainnet etherscan-verify --license MIT"
   },
   "repository": {
     "type": "git",

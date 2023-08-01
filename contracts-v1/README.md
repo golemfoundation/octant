@@ -2,6 +2,16 @@
 
 Contracts-v1 is a part of gradual rollout of Octant. It contains a minimal set of contracts needed to make Octant work. Rest of functionality is currently implemented on the server (see $ROOT/backend).
 
+## Deployments
+
+### Mainnet
+
+Auth: [0x287493F76b8A1833E9E0BF2dE0D972Fb16C6C8ae](https://etherscan.io/address/0x287493f76b8a1833e9e0bf2de0d972fb16c6c8ae)
+
+Deposits: [0x879133Fd79b7F48CE1c368b0fCA9ea168eaF117c](https://etherscan.io/address/0x879133fd79b7f48ce1c368b0fca9ea168eaf117c#code)
+
+Proposals: [0x91B904e8B0F9133D0766059065C2A1F6c6CAfA27](https://etherscan.io/address/0x91b904e8b0f9133d0766059065c2a1f6c6cafa27)
+
 ## Configuration
 
 Ensure that the `.env`  file is present. See `.env.template`.
