@@ -5,7 +5,7 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 
 import Vault from './abi/Vault.json';
 import { ContractContext as VaultContract } from './typings/Vault';
-import { web3 } from './web3';
+import web3 from './web3';
 
 export default function useContractVault(): VaultContract | null {
   const { data: currentEpoch } = useCurrentEpoch();

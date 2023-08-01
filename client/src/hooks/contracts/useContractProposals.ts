@@ -4,7 +4,7 @@ import env from 'env';
 
 import Proposals from './abi/Proposals.json';
 import { ContractContext as ProposalsContract } from './typings/Proposals';
-import { web3 } from './web3';
+import web3 from './web3';
 
 export default function useContractDeposits(): ProposalsContract {
   return useMemo(() => {

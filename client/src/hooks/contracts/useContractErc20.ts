@@ -4,7 +4,7 @@ import env from 'env';
 
 import ERC20 from './abi/ERC20.json';
 import { ContractContext as ERC20Contract } from './typings/ERC20';
-import { web3 } from './web3';
+import web3 from './web3';
 
 export default function useContractEpochs(): ERC20Contract {
   return useMemo(() => {
