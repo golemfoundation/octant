@@ -17,7 +17,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'views.allocation.tip' });
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: depositsValue } = useDepositValue();
+  const { data: depositsValue, isFetching: isFetchingDepositsValue } = useDepositValue();
   const { data: individualReward, isLoading: isLoadingIndividualReward } = useIndividualReward();
   const { data: userAllocations, isFetching: isFetchingUserAllocation } = useUserAllocations();
   const {
@@ -41,6 +41,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   const isEpoch1 = currentEpoch === 1;
 
   const isLockGlmTipVisible =
+    !isFetchingDepositsValue &&
     (!depositsValue || (!!depositsValue && depositsValue.isZero())) &&
     isConnected &&
     !wasLockGLMAlreadyClosed;

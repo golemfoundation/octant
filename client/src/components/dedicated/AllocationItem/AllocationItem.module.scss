@@ -1,7 +1,10 @@
+$rowHeightDesktop: 6.4rem;
+$rowHeightMobile: 5.6rem;
+
 .root {
+  display: flex;
   position: relative;
   user-select: none;
-  min-height: 11.2rem;
 
   .icons {
     position: absolute;
@@ -10,66 +13,102 @@
   }
 }
 
+.nameAndEthNeeded {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-right: 0.1rem solid $color-octant-grey12;
+}
+
+.name, .ethNeeded {
+  height: $rowHeightMobile;
+
+  @media #{$desktop-up} {
+    height: $rowHeightDesktop;
+  }
+}
+
 .name {
+  display: flex;
+  align-items: center;
   color: $color-octant-dark;
   font-size: $font-size-14;
   font-weight: $font-weight-bold;
-  padding: 1.9rem 2.4rem;
+  padding: 0 1.6rem;
   white-space: nowrap;
   border-bottom: 0.1rem solid $color-octant-grey12;
   width: 100%;
   text-align: left;
-}
 
-.valuesBox {
-  display: flex;
-  width: 100%;
-  height: 5.6rem;
-  align-items: center;
+  .image {
+    display: none;
+    width: 3.2rem;
+    height: 3.2rem;
+    margin: 0 1.6rem 0 0;
 
-  .ethNeeded {
-    text-align: left;
-    padding: 0 2.4rem;
-    flex-basis: 65%;
-    border-right: 0.1rem solid $color-octant-grey12;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    color: $color-octant-dark;
-    font-size: $font-size-12;
-    font-weight: $font-weight-semibold;
-
-    .dot {
-      width: 1rem;
-      height: 1rem;
-      border-radius: 50%;
-      background: $color-octant-orange;
-      margin-right: 1.4rem;
-
-      &.isDonationAboveThreshold {
-        background: $color-octant-green;
-      }
+    @media #{$desktop-up} {
+      display: initial;
     }
   }
 
-  .allocated {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    height: 100%;
 
-    .allocatedPercentage {
-      color: $color-octant-green;
+  @media #{$desktop-up} {
+    font-size: $font-size-16;
+  }
+}
+
+.ethNeeded {
+  width: 100%;
+  text-align: left;
+  padding: 0 2.7rem;
+  display: flex;
+  align-items: center;
+  color: $color-octant-dark;
+  font-size: $font-size-12;
+  font-weight: $font-weight-semibold;
+
+  .dot {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: $color-octant-orange;
+    margin-right: 1.4rem;
+
+    &.isDonationAboveThreshold {
+      background: $color-octant-green;
+    }
+  }
+}
+
+.allocated {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 12rem;
+
+  .allocatedPercentage {
+    color: $color-octant-green;
+    font-size: $font-size-14;
+    font-weight: $font-weight-bold;
+
+    @media #{$desktop-up} {
+      font-size: $font-size-20;
+    }
+  }
+
+  .allocatedAmount {
+    color: $color-octant-grey6;
+    font-size: $font-size-10;
+    font-weight: $font-weight-bold;
+
+    @media #{$desktop-up} {
       font-size: $font-size-14;
-      font-weight: $font-weight-bold;
     }
+  }
 
-    .allocatedAmount {
-      color: $color-octant-grey6;
-      font-size: $font-size-12;
-      font-weight: $font-weight-bold;
-    }
+  @media #{$desktop-up} {
+    width: 16.4rem;
   }
 }
