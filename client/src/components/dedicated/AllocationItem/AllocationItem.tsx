@@ -3,8 +3,10 @@ import React, { FC, Fragment } from 'react';
 import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
+import Img from 'components/core/Img/Img';
 import Svg from 'components/core/Svg/Svg';
 import ProposalLoadingStates from 'components/dedicated/ProposalLoadingStates/ProposalLoadingStates';
+import env from 'env';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
@@ -27,6 +29,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   onSelectItem,
   value,
 }) => {
+  const { ipfsGateway } = env;
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: proposalRewardsThreshold, isLoading: isLoadingRewardsThreshold } =
@@ -36,7 +39,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
   }));
-  const { name, isLoadingError } = proposalsIpfs[0] || {};
+  const { name, isLoadingError, profileImageSmall } = proposalsIpfs[0] || {};
 
   const isLoading =
     currentEpoch === undefined ||
@@ -57,17 +60,13 @@ const AllocationItem: FC<AllocationItemProps> = ({
 
   return (
     <BoxRounded
-      alignment="center"
       className={cx(styles.root, className)}
-      isVertical
-      justifyContent="center"
       onClick={isConnected && !isDisabled ? () => onSelectItem(address) : undefined}
     >
       {isLoadingStates ? (
         <ProposalLoadingStates isLoading={isLoading} isLoadingError={isLoadingError} />
       ) : (
         <Fragment>
-          <div className={styles.name}>{name}</div>
           {(isAllocatedTo || isManuallyEdited) && (
             <div className={styles.icons}>
               {isAllocatedTo && isLocked && (
@@ -78,7 +77,15 @@ const AllocationItem: FC<AllocationItemProps> = ({
               )}
             </div>
           )}
-          <div className={styles.valuesBox}>
+          <div className={styles.nameAndEthNeeded}>
+            <div className={styles.name}>
+              <Img
+                className={styles.image}
+                dataTest="ProposalItem__imageProfile"
+                src={`${ipfsGateway}${profileImageSmall}`}
+              />
+              {name}
+            </div>
             <div className={styles.ethNeeded}>
               {currentEpoch > 1 && (
                 <div
@@ -94,10 +101,10 @@ const AllocationItem: FC<AllocationItemProps> = ({
                   getFormattedEthValue(proposalRewardsThreshold).fullString
                 } needed`}
             </div>
-            <div className={styles.allocated}>
-              <div className={styles.allocatedPercentage}>{percentToRender}%</div>
-              <div className={styles.allocatedAmount}>{valueToRender}</div>
-            </div>
+          </div>
+          <div className={styles.allocated}>
+            <div className={styles.allocatedPercentage}>{percentToRender}%</div>
+            <div className={styles.allocatedAmount}>{valueToRender}</div>
           </div>
         </Fragment>
       )}
