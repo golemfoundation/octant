@@ -24,7 +24,7 @@ const BudgetBox: FC<BudgetBoxProps> = ({
   });
 
   const currentlyLocked = useMemo(
-    () => getFormattedGlmValue(depositsValue!).fullString,
+    () => getFormattedGlmValue(depositsValue || BigNumber.from(0)).fullString,
     [depositsValue],
   );
 

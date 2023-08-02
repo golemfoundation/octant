@@ -37,13 +37,13 @@ const GlmLockTabs: FC<GlmLockTabsProps> = ({
   const isMaxDisabled = formik.isSubmitting || step > 1;
 
   const onMax = () => {
-    if (isMaxDisabled) {
+    if (isMaxDisabled || !depositsValue || !availableFundsGlm) {
       return;
     }
     const value =
       currentMode === 'lock'
-        ? formatUnits(BigNumber.from(availableFundsGlm?.value))
-        : formatUnits(depositsValue!);
+        ? formatUnits(BigNumber.from(availableFundsGlm.value))
+        : formatUnits(depositsValue);
 
     formik.setFieldValue('valueToDeposeOrWithdraw', value);
   };
@@ -118,7 +118,7 @@ const GlmLockTabs: FC<GlmLockTabsProps> = ({
                     formik.errors.valueToDeposeOrWithdraw === 'cantUnlock' && styles.cantUnlock,
                   )}
                 >
-                  {getFormattedGlmValue(depositsValue!).value}
+                  {getFormattedGlmValue(depositsValue || BigNumber.from(0)).value}
                 </div>
                 {t('glmLockTabs.locked')}
                 <div
