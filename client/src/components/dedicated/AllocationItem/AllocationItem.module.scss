@@ -44,6 +44,7 @@ $rowHeightMobile: 5.6rem;
     display: none;
     width: 3.2rem;
     height: 3.2rem;
+    border-radius: 50%;
     margin: 0 1.6rem 0 0;
 
     @media #{$desktop-up} {
