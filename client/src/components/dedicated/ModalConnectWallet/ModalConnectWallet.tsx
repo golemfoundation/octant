@@ -5,7 +5,6 @@ import { useAccount } from 'wagmi';
 
 import Modal from 'components/core/Modal/Modal';
 
-import styles from './ModalConnectWallet.module.scss';
 import ModalConnectWalletProps from './types';
 
 const ConnectWallet = loadable(() => import('components/dedicated/ConnectWallet/ConnectWallet'));
@@ -18,7 +17,6 @@ const ModalConnectWallet: FC<ModalConnectWalletProps> = ({ modalProps }) => {
 
   return (
     <Modal
-      bodyClassName={styles.modal}
       dataTest="ModalConnectWallet"
       header={t('connectVia')}
       isOpen={modalProps.isOpen && !isConnected}
