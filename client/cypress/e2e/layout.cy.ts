@@ -45,14 +45,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=ModalConnectWallet]').should('be.visible');
     });
 
-    it('"ModalConnectWallet" always shows "Wallet connect" option', () => {
+    it('"ModalConnectWallet" always shows "WalletConnect" option', () => {
       cy.get('[data-test=MainLayout__Button--connect]').click();
       cy.get('[data-test=ModalConnectWallet]').within(() => {
         cy.get('[data-test=ConnectWallet__BoxRounded--walletConnect]').should('be.visible');
       });
     });
 
-    it('"ModalConnectWallet" shows "Browser wallet" and "Wallet connect" options (MetaMask wallet detected)', () => {
+    it('"ModalConnectWallet" shows "Browser wallet" and "WalletConnect" options (MetaMask wallet detected)', () => {
       cy.get('[data-test=MainLayout__Button--connect]').click();
       cy.get('[data-test=ModalConnectWallet]').within(() => {
         cy.get('[data-test=ConnectWallet__BoxRounded--walletConnect]').should('be.visible');
@@ -82,7 +82,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=ModalConnectWallet]').should('not.exist');
     });
 
-    it('Clicking on "Wallet connect" option, opens Web3Modal', () => {
+    it('Clicking on "WalletConnect" option, opens Web3Modal', () => {
       cy.get('[data-test=MainLayout__Button--connect]').click();
       cy.get('[data-test=ConnectWallet__BoxRounded--walletConnect]').click();
       cy.get('w3m-modal').find('#w3m-modal', { includeShadowDom: true }).should('be.visible');
