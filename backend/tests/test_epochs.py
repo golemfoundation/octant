@@ -6,7 +6,7 @@ from tests.conftest import MOCK_EPOCHS
 
 
 @pytest.fixture(autouse=True)
-def before(patch_epochs):
+def before(app, patch_epochs):
     MOCK_EPOCHS.get_current_epoch.return_value = 2
 
 

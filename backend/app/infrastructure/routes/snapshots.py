@@ -1,4 +1,5 @@
 from flask import Response
+from flask import current_app as app
 from flask_restx import Resource, Namespace, fields
 
 from app.controllers import snapshots
@@ -41,7 +42,10 @@ if config.EPOCH_2_FEATURES_ENABLED:
     @ns.response(201, "Snapshot created successfully")
     class PendingEpochSnapshot(Resource):
         def post(self):
+            app.logger.info("Initiating pending epoch snapshot")
             epoch = snapshots.snapshot_pending_epoch()
+            app.logger.info(f"Saved pending epoch snapshot for epoch: {epoch}")
+
             return ({"epoch": epoch}, 201) if epoch is not None else Response()
 
     @ns.route("/finalized")
@@ -56,7 +60,10 @@ if config.EPOCH_2_FEATURES_ENABLED:
     @ns.response(201, "Snapshot created successfully")
     class FinalizedEpochSnapshot(Resource):
         def post(self):
+            app.logger.info("Initiating finalized epoch snapshot")
             epoch = snapshots.snapshot_finalized_epoch()
+            app.logger.info(f"Saved finalized epoch snapshot for epoch: {epoch}")
+
             return ({"epoch": epoch}, 201) if epoch is not None else Response()
 
 
@@ -75,5 +82,8 @@ if config.EPOCH_2_FEATURES_ENABLED:
 class EpochStatus(Resource):
     @ns.marshal_with(epoch_status_model)
     def get(self, epoch: int):
+        app.logger.debug(f"Getting epoch {epoch} status")
         status = snapshots.get_epoch_status(epoch)
+        app.logger.debug(f"Epoch {epoch} status: {status}")
+
         return status.to_dict()

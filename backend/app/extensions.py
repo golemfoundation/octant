@@ -7,7 +7,7 @@ from flask_restx import Api
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from gql import Client
-from gql.transport.aiohttp import AIOHTTPTransport
+from gql.transport.aiohttp import AIOHTTPTransport, log as gql_logger
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
@@ -38,6 +38,7 @@ def init_graphql_client(app):
 
 
 def init_logger(app):
+    gql_logger.setLevel(logging.WARNING)
     if app.config["ENV"] == "prod":
         app.logger.setLevel(logging.INFO)
     else:

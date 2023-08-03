@@ -1,5 +1,4 @@
-import sys
-import traceback
+import logging
 
 from flask import jsonify
 
@@ -134,19 +133,16 @@ class DuplicateConsent(OctantException):
 
 
 def handle_octant_exception(e: OctantException):
-    print_stacktrace()
+    logger = logging.getLogger("gunicorn.error")
+    logger.error("Octant exception occurred:", exc_info=True)
     response = e.to_json()
     response.status_code = e.status_code
     return response
 
 
 def handle_unexpected_exception(_):
-    print_stacktrace()
+    logger = logging.getLogger("gunicorn.error")
+    logger.error("Unexpected exception occurred:", exc_info=True)
     response = jsonify({"message": UNEXPECTED_EXCEPTION})
     response.status_code = 500
     return response
-
-
-def print_stacktrace():
-    etype, value, tb = sys.exc_info()
-    traceback.print_exception(etype, value, tb)

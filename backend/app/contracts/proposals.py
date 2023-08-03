@@ -1,3 +1,5 @@
+from flask import current_app as app
+
 from app.extensions import w3
 from app.settings import config
 
@@ -19,6 +21,9 @@ class Proposals:
         )
 
     def get_proposal_addresses(self, epoch):
+        app.logger.debug(
+            f"[Proposals contract] Getting proposal addresses for epoch: {epoch}"
+        )
         return self.contract.functions.getProposalAddresses(epoch).call()
 
 

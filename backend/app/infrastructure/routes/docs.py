@@ -1,3 +1,4 @@
+from flask import current_app as app
 from flask import render_template, make_response, send_from_directory
 from flask_restx import Resource, Namespace, fields
 
@@ -64,6 +65,7 @@ class ChainInfo(Resource):
     @ns.doc(description="Info about the blockchain network and smart contracts")
     @api.marshal_with(chain_info_model)
     def get(self):
+        app.logger.debug("Getting chain info")
         chain_info = docs.get_blockchain_info()
         return chain_info.to_dict()
 

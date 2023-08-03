@@ -21,7 +21,7 @@ def confirm_withdrawals():
 def _set_merkle_root(epoch: int, merkle_root: str):
     try:
         tx_hash = vault.set_merkle_root(epoch, merkle_root)
-        app.logger.info(
+        app.logger.debug(
             f"Merkle root: {merkle_root} set for epoch: {epoch}, tx: {tx_hash.hex()}"
         )
     except Exception as e:
@@ -36,7 +36,7 @@ def _fund_vault(value: str):
         tx_hash = multisig.send_eth(
             config.VAULT_CONTRACT_ADDRESS, int(value), nonce=multisig.nonce + 1
         )
-        app.logger.info(
+        app.logger.debug(
             f"{value} WEI sent to: {config.VAULT_CONTRACT_ADDRESS}, tx: {tx_hash.hex()}"
         )
     except Exception as e:

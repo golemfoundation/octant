@@ -1,7 +1,8 @@
+from flask import current_app as app
 from gql import gql
 
-from app.extensions import graphql_client
 from app import exceptions
+from app.extensions import graphql_client
 
 
 def get_epoch_by_number(epoch_number):
@@ -17,10 +18,16 @@ def get_epoch_by_number(epoch_number):
     )
 
     variables = {"epochNo": epoch_number}
-
+    app.logger.debug(
+        f"[Subgraph] Getting epoch properties for epoch number: {epoch_number}"
+    )
     data = graphql_client.execute(query, variable_values=variables)["epoches"]
 
     if data:
+        app.logger.debug(f"[Subgraph] Received epoch properties: {data[0]}")
         return data[0]
     else:
+        app.logger.warning(
+            f"[Subgraph] No epoch properties received for epoch number: {epoch_number}"
+        )
         raise exceptions.EpochNotIndexed(epoch_number)
