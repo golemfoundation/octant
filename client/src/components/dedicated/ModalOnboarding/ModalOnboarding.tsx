@@ -22,7 +22,7 @@ const ModalOnboarding = (): ReactElement => {
   }));
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: glmClaimCheck, isError, isFetched } = useGlmClaimCheck();
+  const { data: glmClaimCheck, isError, isFetched } = useGlmClaimCheck(isOnboardingDone);
   /**
    * glmClaimMutation sits here to have persistent status ('success' / 'idle') of it
    * required to show disabled button when status === 'success'.
