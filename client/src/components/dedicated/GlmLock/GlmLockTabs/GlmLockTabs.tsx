@@ -60,7 +60,7 @@ const GlmLockTabs: FC<GlmLockTabsProps> = ({
 
   const buttonLabel = useMemo(() => {
     if (formik.isSubmitting) {
-      return t('glmLockTabs.waitingForWallet');
+      return t('glmLockTabs.waitingForConformation');
     }
     if (step === 3) {
       return i18n.t('common.close');

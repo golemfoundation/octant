@@ -111,7 +111,7 @@
           "approve": "Approve"
         },
         "glmLockTabs": {
-          "waitingForWallet": "Waiting for wallet",
+          "waitingForConformation": "Waiting for confirmation",
           "useMax": "Use max",
           "amountToLock": "Amount to lock",
           "amountToUnlock": "Amount to unlock",
