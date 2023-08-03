@@ -175,7 +175,7 @@ Lint and typecheck poetry:
   script:
     - cd backend
     - !reference [ .scripts, poetry_install ]
-    - poetry run black --check .
+    - poetry run black --check --extend-exclude .venv .
     - poetry run flake8 
   cache:
     - key: $CI_COMMIT_REF_SLUG-poetry-backend-lint
