@@ -3,6 +3,7 @@ from typing import List
 
 from app import database
 from app.core.common import AccountFunds
+from app.settings import config
 from app.crypto.terms_and_conditions_consent import verify_signed_message
 
 from app.exceptions import DuplicateConsent, InvalidSignature

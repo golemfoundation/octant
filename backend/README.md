@@ -31,7 +31,8 @@ poetry install --no-interaction --no-ansi -v --with prod --without dev
 poetry shell
 ```
 
-Run the following commands to create your app's
+Run the following commands to create your a
+pp's
 database tables and perform the initial migration
 
 ```bash
@@ -96,3 +97,8 @@ http://localhost:5000/docs/chain-info
 - `TESTNET_MULTISIG_PRIVATE_KEY` - Multisig private key, which is allowed to send transactions to `Vault.sol`. Needed for automatic withdrawals confirmations for test purposes.
 - `VAULT_CONFIRM_WITHDRAWALS_ENABLED` - Confirming withdrawals requires sending a merkle root to `Vault.sol`. For test purposes you can enable sending this value automatically by setting this var to `True`. In order for it to work scheduler must be enabled as well
 
+
+- `GLM_CLAIM_ENABLED` - Set it to `True` if you want to enable GLM claiming feature. It requires also to enable scheduler.
+- `GLM_SENDER_ADDRESS` - Address, from which GLMs will be sent.
+- `GLM_SENDER_PRIVATE_KEY` - Private key corresponding to `GLM_SENDER_ADDRESS`
+- `GLM_SENDER_NONCE` - Current nonce of the `GLM_SENDER_ADDRESS`

@@ -1,5 +1,6 @@
 import { useSignTypedData } from 'wagmi';
 
+import networkConfig from 'constants/networkConfig';
 import { WebsocketEmitEvent } from 'types/websocketEvents';
 import { AllocationValues } from 'views/AllocationView/types';
 
@@ -12,7 +13,7 @@ type UseAllocateProps = {
 type UseAllocate = { emit: (allocations: AllocationValues) => void; isLoading: boolean };
 
 const domain = {
-  chainId: 11155111,
+  chainId: networkConfig.id,
   name: 'Octant',
   version: '1.0.0',
 };

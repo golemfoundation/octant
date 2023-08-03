@@ -5,6 +5,7 @@ from flask_restx import Resource, Namespace, fields
 
 from app.controllers import snapshots
 from app.extensions import api
+from app.settings import config
 
 ns = Namespace("snapshots", description="Database snapshots")
 api.add_namespace(ns)
@@ -27,36 +28,38 @@ epoch_status_model = api.model(
     },
 )
 
+if config.EPOCH_2_FEATURES_ENABLED:
 
-@ns.route("/pending")
-@ns.doc(
-    description="Take a database snapshot of the recently completed epoch. \
-    This endpoint should be executed at the beginning of an epoch to activate \
-    a decision window."
-)
-@ns.response(
-    200, "Snapshot could not be created due to an existing snapshot for previous epoch"
-)
-@ns.response(201, "Snapshot created successfully")
-class PendingEpochSnapshot(Resource):
-    def post(self):
-        epoch = snapshots.snapshot_pending_epoch()
-        return ({"epoch": epoch}, 201) if epoch is not None else Response()
+    @ns.route("/pending")
+    @ns.doc(
+        description="Take a database snapshot of the recently completed epoch. \
+        This endpoint should be executed at the beginning of an epoch to activate \
+        a decision window."
+    )
+    @ns.response(
+        200,
+        "Snapshot could not be created due to an existing snapshot for previous epoch",
+    )
+    @ns.response(201, "Snapshot created successfully")
+    class PendingEpochSnapshot(Resource):
+        def post(self):
+            epoch = snapshots.snapshot_pending_epoch()
+            return ({"epoch": epoch}, 201) if epoch is not None else Response()
 
-
-@ns.route("/finalized")
-@ns.doc(
-    description="Take a database snapshot of the recently completed allocations. \
-    This endpoint should be executed at the end of the decision window"
-)
-@ns.response(
-    200, "Snapshot could not be created due to an existing snapshot for previous epoch"
-)
-@ns.response(201, "Snapshot created successfully")
-class FinalizedEpochSnapshot(Resource):
-    def post(self):
-        epoch = snapshots.snapshot_finalized_epoch()
-        return ({"epoch": epoch}, 201) if epoch is not None else Response()
+    @ns.route("/finalized")
+    @ns.doc(
+        description="Take a database snapshot of the recently completed allocations. \
+        This endpoint should be executed at the end of the decision window"
+    )
+    @ns.response(
+        200,
+        "Snapshot could not be created due to an existing snapshot for previous epoch",
+    )
+    @ns.response(201, "Snapshot created successfully")
+    class FinalizedEpochSnapshot(Resource):
+        def post(self):
+            epoch = snapshots.snapshot_finalized_epoch()
+            return ({"epoch": epoch}, 201) if epoch is not None else Response()
 
 
 @ns.route("/status/<int:epoch>")

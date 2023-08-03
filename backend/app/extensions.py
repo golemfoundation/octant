@@ -22,7 +22,6 @@ migrate = Migrate()
 cors = CORS()
 scheduler = APScheduler()
 
-
 # Other extensions
 graphql_client = Client()
 w3 = Web3()

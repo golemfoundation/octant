@@ -18,7 +18,9 @@ export type QueryKeys = {
   currentEpochProps: ['currentEpochProps'];
   depositAtGivenEpoch: (epochNumber: number) => [Root['depositAt'], string];
   depositsValue: ['depositsValue'];
+  glmClaimCheck: ['glmClaimCheck'];
   history: ['history'];
+  individualProposalRewards: ['individualProposalRewards'];
   individualReward: ['individualReward'];
   isDecisionWindowOpen: ['isDecisionWindowOpen'];
   lockedSummaryLatest: ['lockedSummaryLatest'];

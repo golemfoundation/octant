@@ -34,11 +34,17 @@ spec:
           value: "$EPOCH_0_END"
         - name: "webClient.alchemyId"
           value: "$VITE_ALCHEMY_ID"
+        - name: "backendServer.glmClaim.senderNonce"
+          value: "$GLM_SENDER_NONCE"
         # Hardcoded in this file
         - name: "contracts.addresses.multisigAddress"
           value: "$MULTISIG_ADDRESS"
         - name: "backendServer.schedulerEnabled"
           value: "True"
+        - name: "backendServer.glmClaim.enabled"
+          value: "True"
+        - name: "backendServer.snapshotter.enabled"
+          value: "False"
         - name: "contracts.deploy"
           value: "false"
         # From Deploy contracts job

@@ -4,6 +4,7 @@ from flask_restx import Resource, Namespace, fields
 from app.database import pending_epoch_snapshot
 import app.controllers.deposits as deposits_controller
 from app.extensions import api
+from app.settings import config
 
 ns = Namespace("deposits", description="Octant deposits")
 api.add_namespace(ns)
@@ -35,33 +36,33 @@ user_effective_deposit_model = api.model(
     },
 )
 
+if config.EPOCH_2_FEATURES_ENABLED:
 
-@ns.route("/<int:epoch>/total_effective")
-@ns.doc(
-    description="Returns value of total effective deposits made by the end of an epoch. Latest data and data for any given point in time from the past is available in the Subgraph.",
-    params={"epoch": "Epoch number"},
-)
-class TotalEffectiveDeposit(Resource):
-    @ns.marshal_with(total_effective_model)
-    @ns.response(200, "Epoch total effective deposit successfully retrieved")
-    def get(self, epoch):
-        total_effective_deposit = pending_epoch_snapshot.get_by_epoch_num(
-            epoch
-        ).total_effective_deposit
-        return {"totalEffective": total_effective_deposit}
+    @ns.route("/<int:epoch>/total_effective")
+    @ns.doc(
+        description="Returns value of total effective deposits made by the end of an epoch. Latest data and data for any given point in time from the past is available in the Subgraph.",
+        params={"epoch": "Epoch number"},
+    )
+    class TotalEffectiveDeposit(Resource):
+        @ns.marshal_with(total_effective_model)
+        @ns.response(200, "Epoch total effective deposit successfully retrieved")
+        def get(self, epoch):
+            total_effective_deposit = pending_epoch_snapshot.get_by_epoch_num(
+                epoch
+            ).total_effective_deposit
+            return {"totalEffective": total_effective_deposit}
 
-
-@ns.route("/<int:epoch>/locked_ratio")
-@ns.doc(
-    description="Returns locked ratio of total effective deposits made by the end of an epoch. Latest data and data for any given point in time from the past is available in the Subgraph.",
-    params={"epoch": "Epoch number"},
-)
-class LockedRatio(Resource):
-    @ns.marshal_with(locked_ratio_model)
-    @ns.response(200, "Epoch locked ratio successfully retrieved")
-    def get(self, epoch):
-        locked_ratio = pending_epoch_snapshot.get_by_epoch_num(epoch).locked_ratio
-        return {"lockedRatio": locked_ratio}
+    @ns.route("/<int:epoch>/locked_ratio")
+    @ns.doc(
+        description="Returns locked ratio of total effective deposits made by the end of an epoch. Latest data and data for any given point in time from the past is available in the Subgraph.",
+        params={"epoch": "Epoch number"},
+    )
+    class LockedRatio(Resource):
+        @ns.marshal_with(locked_ratio_model)
+        @ns.response(200, "Epoch locked ratio successfully retrieved")
+        def get(self, epoch):
+            locked_ratio = pending_epoch_snapshot.get_by_epoch_num(epoch).locked_ratio
+            return {"lockedRatio": locked_ratio}
 
 
 @ns.route("/users/<string:address>/<int:epoch>")

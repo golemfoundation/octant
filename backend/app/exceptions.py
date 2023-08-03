@@ -101,6 +101,22 @@ class MissingAddress(OctantException):
         super().__init__(self.description.format(address), self.code)
 
 
+class NotEligibleToClaimGLM(OctantException):
+    code = 403
+    description = "User with address: {} is not eligible to claim GLMs."
+
+    def __init__(self, user_address: str):
+        super().__init__(self.description.format(user_address), self.code)
+
+
+class GlmClaimed(OctantException):
+    code = 400
+    description = "User with address: {} has already claimed GLMs."
+
+    def __init__(self, user_address: str):
+        super().__init__(self.description.format(user_address), self.code)
+
+
 class InvalidSignature(OctantException):
     code = 400
     description = "Given signature {} is invalid or does not belong to {}"

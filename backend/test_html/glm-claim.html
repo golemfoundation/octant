@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GLM Claim Octant Client</title>
+</head>
+
+<body>
+<form>
+  <label for="privateKey">Private Key:</label><br>
+  <input type="text" id="privateKey" name="privateKey" size="200"><br>
+</form>
+
+<button id="claim">Claim GLM</button>
+
+<script type="module">
+  import * as ethers from 'https://cdn.jsdelivr.net/npm/ethers@5.7.2/+esm'
+
+  async function signEIP712(signer, data) {
+    return await signer._signTypedData(data.domain, data.types, data.message);
+  }
+
+  const privateKeyInput = document.getElementById('privateKey');
+
+  const claimButton = document.getElementById('claim');
+  claimButton.addEventListener('click', async () => {
+    const domain = {
+      name: "Octant",
+      version: "1.0.0",
+      chainId: 11155111,
+    };
+
+    const types = {
+      ClaimGLMPayload: [
+        { name: "msg", type: "string" },
+      ],
+    };
+
+    const message = {
+      msg: "Claim 1000 GLMs"
+    };
+
+    const data = {
+      types,
+      domain,
+      primaryType: "ClaimGLMPayload",
+      message,
+    };
+    console.log(data);
+
+    // Get the private key from the input
+    const privateKey = privateKeyInput.value;
+    if(!privateKey) {
+      console.error('Private key is required to sign the message');
+      return;
+    }
+
+    // Sign the hash
+    const wallet = new ethers.Wallet(`0x${privateKey}`);
+    const signature = await signEIP712(wallet, data);
+
+    console.log(signature);
+
+    // Send the signed message to the server
+    fetch('http://127.0.0.1:5000/glm/claim', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "signature": signature.substring(2)
+      }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  });
+</script>
+</body>
+</html>
