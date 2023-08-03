@@ -3,7 +3,16 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
 import { GLM_ADDRESS, GNT_ADDRESS } from '../env';
-import { WITHDRAWALS_TARGET, EPOCHS, DEPOSITS, PROPOSALS, VAULT, AUTH } from '../helpers/constants';
+import {
+  AUTH,
+  EPOCHS,
+  DEPOSITS,
+  GNT,
+  PROPOSALS,
+  TOKEN,
+  VAULT,
+  WITHDRAWALS_TARGET,
+} from '../helpers/constants';
 
 // This function needs to be declared this way, otherwise it's not understood by test runner.
 // eslint-disable-next-line func-names
@@ -16,10 +25,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const deposits = await hre.ethers.getContract(DEPOSITS);
   const proposals = await hre.ethers.getContract(PROPOSALS);
   const vault = await hre.ethers.getContract(VAULT);
+  let gntAddress = GNT_ADDRESS;
+  let glmAddress = GLM_ADDRESS;
 
-  console.log(`GNT_CONTRACT_ADDRESS=${GNT_ADDRESS}`);
-  console.log(`GLM_CONTRACT_ADDRESS=${GLM_ADDRESS}`);
-
+  if (['hardhat', 'localhost'].includes(hre.network.name)) {
+    gntAddress = (await hre.ethers.getContract(GNT)).address;
+    glmAddress = (await hre.ethers.getContract(TOKEN)).address;
+  }
+  console.log(`GNT_CONTRACT_ADDRESS=${gntAddress}`);
+  console.log(`GLM_CONTRACT_ADDRESS=${glmAddress}`);
   console.log(`DEPOSITS_CONTRACT_ADDRESS=${deposits.address}`);
   console.log(`EPOCHS_CONTRACT_ADDRESS=${epochs.address}`);
   console.log(`PROPOSALS_CONTRACT_ADDRESS=${proposals.address}`);
@@ -30,8 +44,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   /* eslint-disable no-console */
 
   const contractAddresses = `
-GNT_CONTRACT_ADDRESS=${GNT_ADDRESS}
-GLM_CONTRACT_ADDRESS=${GLM_ADDRESS}
+GNT_CONTRACT_ADDRESS=${gntAddress}
+GLM_CONTRACT_ADDRESS=${glmAddress}
 AUTH_CONTRACT_ADDRESS=${auth.address}
 DEPOSITS_CONTRACT_ADDRESS=${deposits.address}
 EPOCHS_CONTRACT_ADDRESS=${epochs.address}
@@ -41,6 +55,26 @@ VAULT_CONTRACT_ADDRESS=${vault.address}
 `; // Newline is intentional
 
   fs.appendFileSync('deployments/clientEnv', contractAddresses);
+
+  if (['localhost'].includes(hre.network.name)) {
+    // Update networks.json for local (developer's) subgraph instance.
+    // It's used by both graph-node and entrypoint.sh
+    const networksFn = '../subgraph/networks.json';
+    const templateFn = '../subgraph/networks.template.json';
+    try {
+      fs.accessSync(networksFn, fs.constants.W_OK);
+    } catch (_err) {
+      fs.copyFileSync(templateFn, networksFn);
+    }
+
+    const json = JSON.parse(fs.readFileSync(networksFn).toString());
+    json.localhost.GNT.address = gntAddress;
+    json.localhost.GLM.address = glmAddress;
+    json.localhost.Epochs.address = epochs.address;
+    json.localhost.Deposits.address = deposits.address;
+    json.localhost.Vault.address = vault.address;
+    fs.writeFileSync(networksFn, JSON.stringify(json, null, 2));
+  }
 };
 
 export default func;

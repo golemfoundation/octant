@@ -8,7 +8,9 @@ IPFS_URL=${IPFS_URL:-"http://127.0.0.1:5001"}
 LABEL=${VERSION_TAG:-"VM_$HOSTNAME"}
 NODE_NAME=${NODE_NAME:-"octant"}
 NETWORK_FILE=${NETWORK_FILE:-"./networks.json"}
-EPOCHS_ADDRESS=$(cat $NETWORK_FILE | jq -r ".${NETWORK}.Epochs.address")
+export GNT_CONTRACT_ADDRESS=$(cat $NETWORK_FILE | jq -r ".${NETWORK}.GNT.address")
+export GLM_CONTRACT_ADDRESS=$(cat $NETWORK_FILE | jq -r ".${NETWORK}.GLM.address")
+export EPOCHS_CONTRACT_ADDRESS=$(cat $NETWORK_FILE | jq -r ".${NETWORK}.Epochs.address")
 
 echo "Node name:    $NODE_NAME"
 echo "Network:      $NETWORK"
@@ -17,8 +19,12 @@ echo "Subgraph URL: $SUBGRAPH_URL"
 echo "IPFS URL:     $IPFS_URL"
 echo "EPOCHS addr:  $EPOCHS_ADDRESS"
 echo
-echo "Replace hardcoded contract address"
-sed -i'' -E "s/Address.fromString\(.+\)/Address.fromString\('$EPOCHS_ADDRESS')/g" src/epochs.ts
+echo "Replace hardcoded contract addresses"
+for i in src/*template*; do
+    echo "Replacing in $i"
+    F=$(echo $i | sed 's/template\.//')
+    envsubst < $i > $F
+done
 echo "Code generation"
 npx graph codegen
 echo "Build graph"
