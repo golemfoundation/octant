@@ -9,6 +9,7 @@ import {
 
 jest.mock('wagmi/chains', () => ({
   goerli: 'goerli-chain-mock',
+  mainnet: 'mainnet-chain-mock',
   sepolia: 'sepolia-chain-mock',
 }));
 jest.mock('env', () => ({}));

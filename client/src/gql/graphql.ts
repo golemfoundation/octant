@@ -841,6 +841,13 @@ export enum _SubgraphErrorPolicy_ {
   Deny = 'deny',
 }
 
+export type GetBlockNumberQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetBlockNumberQuery = {
+  __typename?: 'Query';
+  _meta?: { __typename?: '_Meta_'; block: { __typename?: '_Block_'; number: number } } | null;
+};
+
 export type GetLockedSummaryLatestQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetLockedSummaryLatestQuery = {
@@ -853,6 +860,38 @@ export type GetLockedSummaryLatestQuery = {
   } | null;
 };
 
+export const GetBlockNumberDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetBlockNumber' },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: '_meta' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'block' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [{ kind: 'Field', name: { kind: 'Name', value: 'number' } }],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetBlockNumberQuery, GetBlockNumberQueryVariables>;
 export const GetLockedSummaryLatestDocument = {
   kind: 'Document',
   definitions: [

@@ -12,13 +12,17 @@ import networkConfig from 'constants/networkConfig';
 import web3, { alchemyProvider } from 'hooks/contracts/web3';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
+import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
+import useBlockNumber from 'hooks/subgraph/useBlockNumber';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import localStorageService from 'services/localStorageService';
 import useAllocationsStore from 'store/allocations/store';
+import useMetaStore, { initialState as metaInitialState } from 'store/meta/store';
 import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
 import useTipsStore from 'store/tips/store';
@@ -73,6 +77,10 @@ const App = (): ReactElement => {
     isInitialized: meta.isInitialized,
     setValuesFromLocalStorage,
   }));
+  const { blockNumberWithLatestTx, setBlockNumberWithLatestTx } = useMetaStore(state => ({
+    blockNumberWithLatestTx: state.data.blockNumberWithLatestTx,
+    setBlockNumberWithLatestTx: state.setBlockNumberWithLatestTx,
+  }));
   const queryClient = useQueryClient();
   const { address, isConnected } = useAccount();
   useCryptoValues(displayCurrency, {
@@ -91,6 +99,12 @@ const App = (): ReactElement => {
   const { data: proposals } = useProposalsContract();
   const { data: userAllocations } = useUserAllocations();
   const { data: individualReward } = useIndividualReward();
+  const { data: blockNumber } = useBlockNumber(
+    blockNumberWithLatestTx !== metaInitialState.blockNumberWithLatestTx,
+  );
+  const { refetch: refetchDepositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
+  const { refetch: refetchHistory } = useHistory();
+
   const [isAccountChanging, setIsAccountChanging] = useState(false);
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
   const [currentAddressLocal, setCurrentAddressLocal] = useState<null | string>(null);
@@ -108,12 +122,6 @@ const App = (): ReactElement => {
       });
     }
   }, [chainIdLocal]);
-
-  useEffect(() => {
-    if (chain && chain.id && chain.id !== chainIdLocal) {
-      setChainIdLocal(chain.id);
-    }
-  }, [chain, chainIdLocal, setChainIdLocal]);
 
   useEffect(() => {
     if (!chain || !chain.id || chain.id !== networkConfig.id) {
@@ -150,6 +158,12 @@ const App = (): ReactElement => {
   }, []);
 
   useEffect(() => {
+    if (chain && chain.id && chain.id !== chainIdLocal) {
+      setChainIdLocal(chain.id);
+    }
+  }, [chain, chainIdLocal, setChainIdLocal]);
+
+  useEffect(() => {
     if (isConnected !== isConnectedLocal) {
       setIsConnectedLocal(isConnected);
     }
@@ -172,6 +186,37 @@ const App = (): ReactElement => {
       setIsDecisionWindowOpenLocal(isDecisionWindowOpen);
     }
   }, [isDecisionWindowOpen, isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal]);
+
+  useEffect(() => {
+    /**
+     * Locking and unlocking GLMs require updating history and effective deposit.
+     * Both these values are coming from backend, which takes them from subgraph (history - always, effective deposit only during epoch 1).
+     *
+     * The problem is that value in subgraph (and consequently in the backend)
+     * is updated only after block is indexed in the subgraph.
+     *
+     * So, after lock / unlock is done, blockNumberWithLatestTx is set to the value from transaction,
+     * polling starts in useBlockNumber hook and after the number
+     * of block changes, refetchHistory and refetchDepositEffectiveAtCurrentEpoch
+     * is triggered and blockNumberWithLatestTx to null.
+     */
+    if (blockNumber && blockNumberWithLatestTx && blockNumber > blockNumberWithLatestTx) {
+      refetchHistory();
+
+      if (currentEpoch === 1) {
+        refetchDepositEffectiveAtCurrentEpoch();
+      }
+
+      setBlockNumberWithLatestTx(metaInitialState.blockNumberWithLatestTx);
+    }
+  }, [
+    currentEpoch,
+    blockNumber,
+    setBlockNumberWithLatestTx,
+    blockNumberWithLatestTx,
+    refetchHistory,
+    refetchDepositEffectiveAtCurrentEpoch,
+  ]);
 
   useEffect(() => {
     const doesChainIdRequireFlush = chain && chain.id && chain.id !== chainIdLocal;
