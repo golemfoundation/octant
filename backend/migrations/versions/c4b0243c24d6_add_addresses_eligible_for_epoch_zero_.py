@@ -8,17 +8,18 @@ Create Date: 2023-08-02 17:55:40.476945
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = 'c4b0243c24d6'
-down_revision = '16ed3f1d5233'
+revision = "c4b0243c24d6"
+down_revision = "16ed3f1d5233"
 branch_labels = None
 depends_on = None
+
 
 def upgrade():
     op.execute(sqltext())
 
 
 def downgrade():
-    op.execute('DELETE FROM epoch_zero_claims')
+    op.execute("DELETE FROM epoch_zero_claims")
 
 
 def sqltext():

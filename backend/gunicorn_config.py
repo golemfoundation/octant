@@ -3,8 +3,7 @@ bind = "0.0.0.0:5000"
 # possible to use more than one worker process when using this web server.
 # Thanks, gunicorn
 workers = 1
-accesslog = None
-errorlog = "-"  # stderr
+logconfig = "log_config.conf"
 capture_output = True
 loglevel = "info"
 timeout = 0

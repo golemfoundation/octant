@@ -1,8 +1,9 @@
 from eth_utils import to_checksum_address
+from flask import current_app as app
 from flask_restx import Resource, Namespace, fields
 
-from app.database import pending_epoch_snapshot
 import app.controllers.deposits as deposits_controller
+from app.database import pending_epoch_snapshot
 from app.extensions import api
 from app.settings import config
 
@@ -47,9 +48,14 @@ if config.EPOCH_2_FEATURES_ENABLED:
         @ns.marshal_with(total_effective_model)
         @ns.response(200, "Epoch total effective deposit successfully retrieved")
         def get(self, epoch):
+            app.logger.debug(f"Getting total effective deposit in epoch {epoch}")
             total_effective_deposit = pending_epoch_snapshot.get_by_epoch_num(
                 epoch
             ).total_effective_deposit
+            app.logger.debug(
+                f"Total effective deposit in epoch {epoch}: {total_effective_deposit}"
+            )
+
             return {"totalEffective": total_effective_deposit}
 
     @ns.route("/<int:epoch>/locked_ratio")
@@ -61,7 +67,10 @@ if config.EPOCH_2_FEATURES_ENABLED:
         @ns.marshal_with(locked_ratio_model)
         @ns.response(200, "Epoch locked ratio successfully retrieved")
         def get(self, epoch):
+            app.logger.debug(f"Getting locked ratio in epoch {epoch}")
             locked_ratio = pending_epoch_snapshot.get_by_epoch_num(epoch).locked_ratio
+            app.logger.debug(f"Locked ratio in epoch {epoch}: {locked_ratio}")
+
             return {"lockedRatio": locked_ratio}
 
 
@@ -77,9 +86,12 @@ class UserEffectiveDeposit(Resource):
     @ns.marshal_with(user_effective_deposit_model)
     @ns.response(200, "User effective deposit successfully retrieved")
     def get(self, address: str, epoch: int):
+        app.logger.debug(f"Getting user {address} effective deposit in epoch {epoch}")
         result = deposits_controller.get_by_user_and_epoch(
             to_checksum_address(address), epoch
         )
+        app.logger.debug(f"User {address} effective deposit in epoch {epoch}: {result}")
+
         return {
             "effectiveDeposit": result,
         }

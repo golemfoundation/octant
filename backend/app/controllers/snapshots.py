@@ -24,7 +24,6 @@ class EpochStatus(JSONWizard):
 
 
 def snapshot_pending_epoch() -> Optional[int]:
-    app.logger.info("--- Initiating pending epoch snapshot ---")
     current_epoch = epochs.get_current_epoch()
     pending_epoch = epochs.get_pending_epoch()
     app.logger.info(
@@ -63,13 +62,11 @@ def snapshot_pending_epoch() -> Optional[int]:
         all_individual_rewards,
     )
     db.session.commit()
-    app.logger.info(f"[+] Saved {pending_epoch} pending epoch snapshot")
 
     return pending_epoch
 
 
 def snapshot_finalized_epoch() -> Optional[int]:
-    app.logger.info("--- Initiating finalized epoch snapshot ---")
     current_epoch = epochs.get_current_epoch()
     finalized_epoch = epochs.get_finalized_epoch()
     app.logger.info(
@@ -107,9 +104,8 @@ def snapshot_finalized_epoch() -> Optional[int]:
         )
     else:
         finalized_epoch_snapshot.add_snapshot(finalized_epoch)
-
     db.session.commit()
-    app.logger.info(f"[+] Saved {finalized_epoch} finalized epoch snapshot")
+
     return finalized_epoch
 
 

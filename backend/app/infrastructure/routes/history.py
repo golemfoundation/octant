@@ -1,4 +1,4 @@
-from flask import current_app
+from flask import current_app as app
 from flask_restx import Resource, Namespace, fields
 
 from app.controllers import history
@@ -44,6 +44,8 @@ class History(Resource):
     @ns.marshal_with(user_history_model)
     @ns.response(200, "User history successfully retrieved")
     def get(self, user_address):
-        current_app.logger.info(f"Getting history for user: {user_address}")
+        app.logger.debug(f"Getting user: {user_address} history")
         user_history = history.user_history(user_address)
+        app.logger.debug(f"User: {user_address} history: {user_history}")
+
         return {"history": user_history}

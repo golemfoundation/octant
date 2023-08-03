@@ -1,6 +1,6 @@
 import dataclasses
 
-from flask import current_app
+from flask import current_app as app
 from flask_restx import Resource, Namespace, fields
 
 from app.controllers import rewards
@@ -114,10 +114,10 @@ if config.EPOCH_2_FEATURES_ENABLED:
         @ns.marshal_with(user_budget_model)
         @ns.response(200, "Budget successfully retrieved")
         def get(self, user_address, epoch):
-            current_app.logger.info(
-                f"Getting budget for user: {user_address} in epoch {epoch}"
-            )
+            app.logger.debug(f"Getting user {user_address} budget in epoch {epoch}")
             budget = user.get_budget(user_address, epoch)
+            app.logger.debug(f"User {user_address} budget in epoch {epoch}: {budget}")
+
             return {"budget": budget}
 
     @ns.route("/threshold/<int:epoch>")
@@ -132,8 +132,10 @@ if config.EPOCH_2_FEATURES_ENABLED:
         @ns.marshal_with(threshold_model)
         @ns.response(200, "Threshold successfully retrieved")
         def get(self, epoch):
-            current_app.logger.info(f"Requested threshold for epoch: {epoch}")
+            app.logger.debug(f"Getting threshold for epoch {epoch}")
             threshold = rewards.get_allocation_threshold(epoch)
+            app.logger.debug(f"Threshold in epoch: {epoch}: {threshold}")
+
             return {"threshold": threshold}
 
     @ns.doc(
@@ -155,11 +157,14 @@ if config.EPOCH_2_FEATURES_ENABLED:
     class Proposals(Resource):
         @ns.marshal_with(proposal_model)
         def get(self, epoch):
-            current_app.logger.info(f"Requested proposal rewards for: {epoch}")
-            return [
+            app.logger.debug(f"Getting proposal rewards for epoch {epoch}")
+            proposal_rewards = [
                 dataclasses.asdict(proposal)
                 for proposal in rewards.get_proposals_rewards(epoch)
             ]
+            app.logger.debug(f"Proposal rewards in epoch: {epoch}: {proposal_rewards}")
+
+            return proposal_rewards
 
     @ns.doc(
         description="Returns total of allocated and budget for matched rewards for a given epoch",
@@ -172,7 +177,14 @@ if config.EPOCH_2_FEATURES_ENABLED:
     class Budget(Resource):
         @ns.marshal_with(budget_model)
         def get(self, epoch):
+            app.logger.debug(
+                f"Getting total of allocated and matched budget for epoch {epoch}"
+            )
             budget = rewards.get_rewards_budget(epoch)
+            app.logger.debug(
+                f"Total of allocated and matched budget for epoch {epoch}: {budget}"
+            )
+
             return dataclasses.asdict(budget)
 
     @ns.doc(
@@ -190,6 +202,10 @@ if config.EPOCH_2_FEATURES_ENABLED:
     class RewardsMerkleTree(Resource):
         @ns.marshal_with(epoch_rewards_merkle_tree_model)
         def get(self, epoch: int):
-            current_app.logger.info(f"Requested merkle tree leaves for: {epoch}")
+            app.logger.debug(f"Getting merkle tree leaves for epoch {epoch}")
             merkle_tree_leaves = rewards.get_rewards_merkle_tree(epoch)
+            app.logger.debug(
+                f"Merkle tree leaves for epoch {epoch}: {merkle_tree_leaves}"
+            )
+
             return merkle_tree_leaves.to_dict()

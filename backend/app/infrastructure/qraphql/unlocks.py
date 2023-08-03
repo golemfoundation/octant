@@ -1,3 +1,4 @@
+from flask import current_app as app
 from gql import gql
 
 from app.extensions import graphql_client
@@ -18,7 +19,11 @@ def get_unlocks_by_address(user_address):
 
     variables = {"userAddress": user_address}
 
-    return graphql_client.execute(query, variable_values=variables)["unlockeds"]
+    app.logger.debug(f"[Subgraph] Getting user {user_address} unlocks")
+    result = graphql_client.execute(query, variable_values=variables)["unlockeds"]
+    app.logger.debug(f"[Subgraph] Received unlocks: {result}")
+
+    return result
 
 
 def get_unlocks_by_timestamp_range(from_ts, to_ts):
@@ -47,7 +52,13 @@ def get_unlocks_by_timestamp_range(from_ts, to_ts):
         "toTimestamp": to_ts,
     }
 
-    return graphql_client.execute(query, variable_values=variables)["unlockeds"]
+    app.logger.debug(
+        f"[Subgraph] Getting unlocks in timestamp range {from_ts} - {to_ts}"
+    )
+    result = graphql_client.execute(query, variable_values=variables)["unlockeds"]
+    app.logger.debug(f"[Subgraph] Received unlocks: {result}")
+
+    return result
 
 
 def get_unlocks_by_address_and_timestamp_range(
@@ -80,4 +91,10 @@ def get_unlocks_by_address_and_timestamp_range(
         "toTimestamp": to_ts,
     }
 
-    return graphql_client.execute(query, variable_values=variables)["unlockeds"]
+    app.logger.debug(
+        f"[Subgraph] Getting user {user_address} unlocks in timestamp range {from_ts} - {to_ts}"
+    )
+    result = graphql_client.execute(query, variable_values=variables)["unlockeds"]
+    app.logger.debug(f"[Subgraph] Received unlocks: {result}")
+
+    return result

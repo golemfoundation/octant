@@ -1,3 +1,4 @@
+from flask import current_app as app
 from flask_restx import fields, Namespace, Resource
 
 from app.controllers import epochs
@@ -22,5 +23,8 @@ class CurrentEpoch(Resource):
     @ns.marshal_with(current_epoch_model)
     @ns.response(200, "Current epoch successfully retrieved")
     def get(self):
+        app.logger.debug("Getting current epoch number")
         current_epoch = epochs.get_current_epoch()
+        app.logger.debug(f"Current epoch number: {current_epoch}")
+
         return {"currentEpoch": current_epoch}

@@ -1,5 +1,6 @@
 import dataclasses
 
+from flask import current_app as app
 from flask_restx import Resource, Namespace, fields
 
 from app.controllers import allocations
@@ -60,10 +61,14 @@ if config.EPOCH_2_FEATURES_ENABLED:
         @ns.marshal_with(user_allocations_model)
         @ns.response(200, "User allocations successfully retrieved")
         def get(self, user_address: str, epoch: int):
-            return [
+            app.logger.debug(f"Getting user {user_address} allocation in epoch {epoch}")
+            user_allocation = [
                 dataclasses.asdict(w)
                 for w in allocations.get_all_by_user_and_epoch(user_address, epoch)
             ]
+            app.logger.debug(f"User {user_address} allocation: {user_allocation}")
+
+            return user_allocation
 
     @ns.route("/users/sum")
     @ns.doc(
@@ -73,7 +78,10 @@ if config.EPOCH_2_FEATURES_ENABLED:
         @ns.marshal_with(user_allocations_sum_model)
         @ns.response(200, "User allocations sum successfully retrieved")
         def get(self):
+            app.logger.debug("Getting users allocations sum")
             allocations_sum = allocations.get_sum_by_epoch()
+            app.logger.debug(f"Users allocations sum: {allocations_sum}")
+
             return {"amount": str(allocations_sum)}
 
     @ns.route("/proposal/<string:proposal_address>/epoch/<int:epoch>")
@@ -88,9 +96,15 @@ if config.EPOCH_2_FEATURES_ENABLED:
         @ns.marshal_with(proposal_donors_model)
         @ns.response(200, "Returns list of proposal donors")
         def get(self, proposal_address: str, epoch: int):
-            return [
+            app.logger.debug(
+                f"Getting donors for proposal {proposal_address} in epoch {epoch}"
+            )
+            donors = [
                 dataclasses.asdict(w)
                 for w in allocations.get_all_by_proposal_and_epoch(
                     proposal_address, epoch
                 )
             ]
+            app.logger.debug(f"Proposal donors {donors}")
+
+            return donors

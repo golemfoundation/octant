@@ -1,6 +1,6 @@
 import dataclasses
 
-from flask import current_app
+from flask import current_app as app
 from flask_restx import Resource, Namespace, fields
 
 from app.controllers import withdrawals
@@ -45,9 +45,10 @@ if config.EPOCH_2_FEATURES_ENABLED:
     class Withdrawals(Resource):
         @ns.marshal_with(withdrawable_rewards_model)
         def get(self, address):
-            current_app.logger.info(
-                f"Requested withdrawable eth for address: {address}"
-            )
-            return [
+            app.logger.debug(f"Getting withdrawable eth for address: {address}")
+            result = [
                 dataclasses.asdict(w) for w in withdrawals.get_withdrawable_eth(address)
             ]
+            app.logger.debug(f"Withdrawable eth for address: {address}: {result}")
+
+            return result

@@ -1,9 +1,9 @@
+from flask import current_app as app
 from flask_restx import Resource, Namespace, fields
 from flask_restx import reqparse
 
 import app.controllers.user as user_controller
 from app.extensions import api
-
 
 ns = Namespace("user", description="Octant user settings")
 api.add_namespace(ns)
@@ -41,9 +41,12 @@ class TermsOfService(Resource):
     @ns.marshal_with(user_tos_consent_status_model)
     @ns.response(200, "User's consent to Terms of Service status retrieved")
     def get(self, user_address):
+        app.logger.debug(f"Getting user {user_address} ToS consent status")
         consent_status = user_controller.get_user_terms_of_service_consent_status(
             user_address
         )
+        app.logger.debug(f"User {user_address} ToS consent status: {consent_status}")
+
         return {"accepted": consent_status}
 
     @ns.doc(
@@ -51,9 +54,11 @@ class TermsOfService(Resource):
     )
     @ns.expect(tos_consent_post_parser)
     @ns.marshal_with(user_tos_consent_status_model)
-    @ns.response(200, "User's consent to Terms of Service status updated.")
+    @ns.response(201, "User's consent to Terms of Service status updated.")
     @ns.response(400, "Could not update user consent status.")
     def post(self, user_address):
+        app.logger.info(f"Updating user {user_address} ToS consent status")
+
         args = tos_consent_post_parser.parse_args()
 
         signature = ns.payload.get("signature")
@@ -62,5 +67,6 @@ class TermsOfService(Resource):
         user_controller.post_user_terms_of_service_consent(
             user_address, signature, user_ip
         )
+        app.logger.info(f"User {user_address} ToS consent status updated")
 
-        return {"accepted": True}
+        return {"accepted": True}, 201

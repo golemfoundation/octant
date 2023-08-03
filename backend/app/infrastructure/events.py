@@ -1,7 +1,8 @@
 import json
+import logging
 from typing import List
 
-from flask import current_app
+from flask import current_app as app
 from flask_socketio import emit
 
 from app.controllers import allocations
@@ -12,13 +13,13 @@ from app.controllers.rewards import (
 )
 from app.core.allocations import allocate, AllocationRequest
 from app.core.common import AccountFunds
-from app.exceptions import print_stacktrace, UNEXPECTED_EXCEPTION, OctantException
+from app.exceptions import UNEXPECTED_EXCEPTION, OctantException
 from app.extensions import socketio
 
 
 @socketio.on("connect")
 def handle_connect():
-    current_app.logger.info("Client connected")
+    app.logger.debug("Client connected")
     threshold = get_allocation_threshold()
     emit("threshold", json.dumps({"threshold": str(threshold)}))
     proposal_rewards = get_proposals_rewards()
@@ -27,16 +28,14 @@ def handle_connect():
 
 @socketio.on("disconnect")
 def handle_disconnect():
-    current_app.logger.info("Client disconnected")
+    app.logger.debug("Client disconnected")
 
 
 @socketio.on("allocate")
 def handle_allocate(msg):
     msg = json.loads(msg)
     payload, signature = msg["payload"], msg["signature"]
-    current_app.logger.info(
-        f"User allocation: payload: {payload}, signature: {signature}"
-    )
+    app.logger.info(f"User allocation: payload: {payload}, signature: {signature}")
     allocate(AllocationRequest(payload, signature, override_existing_allocations=True))
 
     threshold = get_allocation_threshold()
@@ -65,10 +64,13 @@ def handle_proposal_donors(proposal_address: str):
 
 @socketio.on_error_default
 def default_error_handler(e):
-    print_stacktrace()
     if isinstance(e, OctantException):
+        logger = logging.getLogger("gunicorn.error")
+        logger.error("Octant exception occurred", exc_info=True)
         emit("exception", json.dumps({"message": str(e.message)}))
     else:
+        logger = logging.getLogger("gunicorn.error")
+        logger.error("Unexpected exception occurred", exc_info=True)
         emit("exception", json.dumps({"message": UNEXPECTED_EXCEPTION}))
 
 
