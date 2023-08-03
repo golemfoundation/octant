@@ -4,7 +4,7 @@ from flask_restx import Resource
 from app import settings
 from app.extensions import api
 from . import (
-    docs,
+    info,
     history,
     snapshots,
     rewards,

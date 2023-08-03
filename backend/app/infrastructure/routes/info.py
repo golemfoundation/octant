@@ -3,11 +3,11 @@ from flask import render_template, make_response, send_from_directory
 from flask_restx import Resource, Namespace, fields
 
 from app import settings
-from app.controllers import docs
+from app.controllers import info
 from app.extensions import api
 from app.settings import config
 
-ns = Namespace("docs", description="Octant documentation")
+ns = Namespace("info", description="Information about Octant's backend API")
 api.add_namespace(ns)
 
 smart_contract_model = api.model(
@@ -39,6 +39,19 @@ app_version_model = api.model(
     },
 )
 
+healthcheck_model = api.model(
+    "Healthcheck",
+    {
+        "blockchain": fields.String(
+            description="UP if blockchain RPC is responsive, DOWN otherwise"
+        ),
+        "db": fields.String(description="UP if db is responsive, DOWN otherwise"),
+        "subgraph": fields.String(
+            description="UP if subgraph is responsive, DOWN otherwise"
+        ),
+    },
+)
+
 
 if config.EPOCH_2_FEATURES_ENABLED:
 
@@ -66,7 +79,7 @@ class ChainInfo(Resource):
     @api.marshal_with(chain_info_model)
     def get(self):
         app.logger.debug("Getting chain info")
-        chain_info = docs.get_blockchain_info()
+        chain_info = info.get_blockchain_info()
         return chain_info.to_dict()
 
 
@@ -80,3 +93,13 @@ class Version(Resource):
             "env": config.ENV,
             "chain": config.CHAIN_NAME,
         }
+
+
+@ns.response(200, "All services are healthy")
+@ns.response(500, "At least one service is down")
+@ns.route("/healthcheck")
+class Healthcheck(Resource):
+    @ns.doc(description="Application healthcheck endpoint")
+    @api.marshal_with(healthcheck_model)
+    def get(self):
+        return info.healthcheck()

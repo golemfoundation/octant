@@ -3,6 +3,7 @@ from . import (
     allocations,
     pending_epoch_snapshot,
     finalized_epoch_snapshot,
+    info,
     deposits,
     rewards,
     claims,
