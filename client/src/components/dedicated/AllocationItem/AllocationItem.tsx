@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import React, { FC, Fragment } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -29,6 +30,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   onSelectItem,
   value,
 }) => {
+  const { t } = useTranslation('translation', { keyPrefix: 'views.allocation.allocationItem' });
   const { ipfsGateway } = env;
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
@@ -58,6 +60,8 @@ const AllocationItem: FC<AllocationItemProps> = ({
     ({ address: matchedProposalRewardsAddress }) => address === matchedProposalRewardsAddress,
   );
 
+  const isEpoch1 = currentEpoch === 1;
+
   return (
     <BoxRounded
       className={cx(styles.root, className)}
@@ -86,23 +90,29 @@ const AllocationItem: FC<AllocationItemProps> = ({
               />
               {name}
             </div>
-            <div className={styles.ethNeeded}>
-              {currentEpoch > 1 && (
-                <div
-                  className={cx(
-                    styles.dot,
-                    isDonationAboveThreshold && styles.isDonationAboveThreshold,
+            <div className={cx(styles.ethNeeded, isEpoch1 && styles.isEpoch1)}>
+              <div
+                className={cx(
+                  styles.dot,
+                  isDonationAboveThreshold && styles.isDonationAboveThreshold,
+                  isEpoch1 && styles.isEpoch1,
+                )}
+              />
+              {isEpoch1
+                ? t('epoch1')
+                : proposalMatchedProposalRewards &&
+                  proposalRewardsThreshold && (
+                    <Trans
+                      i18nKey="views.allocation.allocationItem"
+                      values={{
+                        sum: getFormattedEthValue(proposalMatchedProposalRewards?.sum).value,
+                        threshold: getFormattedEthValue(proposalRewardsThreshold).fullString,
+                      }}
+                    />
                   )}
-                />
-              )}
-              {proposalMatchedProposalRewards &&
-                proposalRewardsThreshold &&
-                `${getFormattedEthValue(proposalMatchedProposalRewards?.sum).value} of ${
-                  getFormattedEthValue(proposalRewardsThreshold).fullString
-                } needed`}
             </div>
           </div>
-          <div className={styles.allocated}>
+          <div className={cx(styles.allocated, isEpoch1 && styles.isEpoch1)}>
             <div className={styles.allocatedPercentage}>{percentToRender}%</div>
             <div className={styles.allocatedAmount}>{valueToRender}</div>
           </div>
