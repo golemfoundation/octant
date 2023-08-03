@@ -18,13 +18,14 @@ import styles from './GlmLockTabs.module.scss';
 import GlmLockTabsProps from './types';
 
 const GlmLockTabs: FC<GlmLockTabsProps> = ({
+  className,
   currentMode,
   step,
+  onClose,
+  onInputsFocusChange,
+  setValueToDepose,
   onReset,
   showBalances,
-  onInputsFocusChange,
-  onClose,
-  className,
 }) => {
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.glmLock',
@@ -36,6 +37,11 @@ const GlmLockTabs: FC<GlmLockTabsProps> = ({
 
   const isMaxDisabled = formik.isSubmitting || step > 1;
 
+  const onSetValue = (value: string): void => {
+    formik.setFieldValue('valueToDeposeOrWithdraw', value);
+    setValueToDepose(value ? parseUnits(value) : BigNumber.from(0));
+  };
+
   const onMax = () => {
     if (isMaxDisabled || !depositsValue || !availableFundsGlm) {
       return;
@@ -45,7 +51,7 @@ const GlmLockTabs: FC<GlmLockTabsProps> = ({
         ? formatUnits(BigNumber.from(availableFundsGlm.value))
         : formatUnits(depositsValue);
 
-    formik.setFieldValue('valueToDeposeOrWithdraw', value);
+    onSetValue(value);
   };
 
   const buttonCtaProps: ButtonProps =
@@ -100,9 +106,7 @@ const GlmLockTabs: FC<GlmLockTabsProps> = ({
         error={formik.values.valueToDeposeOrWithdraw && formik.errors.valueToDeposeOrWithdraw}
         inputCryptoProps={{
           name: 'valueToDeposeOrWithdraw',
-          onChange: value => {
-            formik.setFieldValue('valueToDeposeOrWithdraw', value);
-          },
+          onChange: onSetValue,
           onClear: formik.resetForm,
           suffix: 'GLM',
           value: formik.values.valueToDeposeOrWithdraw,

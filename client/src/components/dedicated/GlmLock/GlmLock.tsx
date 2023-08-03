@@ -14,6 +14,7 @@ import GlmLockTabs from 'components/dedicated/GlmLock/GlmLockTabs/GlmLockTabs';
 import env from 'env';
 import useContractErc20 from 'hooks/contracts/useContractErc20';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
+import useApprovalState, { ApprovalState } from 'hooks/helpers/useMaxApproveCallback';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useLock from 'hooks/mutations/useLock';
 import useUnlock from 'hooks/mutations/useUnlock';
@@ -37,9 +38,15 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
   const contract = useContractErc20();
   const { isDesktop } = useMediaQuery();
 
+  /**
+   * Value to depose so that we don't ask for allowance when user
+   * requests less than already approved.
+   */
+  const [valueToDepose, setValueToDepose] = useState<BigNumber>(BigNumber.from(0));
   const [step, setStep] = useState<Step>(1);
   const [transactionHash, setTransactionHash] = useState<string>('');
   const [isCryptoOrFiatInputFocused, setIsCryptoOrFiatInputFocused] = useState(false);
+  const approvalState = useApprovalState(address, env.contractDepositsAddress, valueToDepose);
   const showBudgetBox = isDesktop || (!isDesktop && !isCryptoOrFiatInputFocused);
 
   const onRefetch = async (): Promise<void> => {
@@ -52,12 +59,9 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
       return;
     }
 
-    const allowance = await contract.methods.allowance(address, env.contractDepositsAddress).call();
-    const allowanceBigNumber = BigNumber.from(allowance);
+    setStep(2);
 
-    const isApproved = allowanceBigNumber.gte(availableFundsGlm?.value);
-
-    if (currentMode === 'lock' && !isApproved) {
+    if (currentMode === 'lock' && approvalState !== ApprovalState.APPROVED) {
       await contract.methods
         .approve(env.contractDepositsAddress, MaxUint256.toString())
         .send({ from: address })
@@ -67,8 +71,6 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
           throw error;
         });
     }
-
-    setStep(2);
   };
 
   const onSuccess = async (transactionResponse: TransactionReceipt): Promise<void> => {
@@ -108,6 +110,7 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
     }
   };
 
+  const isLockingApproved = approvalState === ApprovalState.APPROVED;
   return (
     <Formik
       initialValues={formInitialValues}
@@ -125,13 +128,13 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
           {isDesktop && (
             <GlmLockStepper className={styles.element} currentMode={currentMode} step={step} />
           )}
-          {/* TODO: OCT-737 https://linear.app/golemfoundation/issue/OCT-737/unlocking-glm-info-notification  */}
-          {(step === 2 && currentMode !== 'unlock') || step === 3 ? (
+          {(step === 2 && currentMode === 'lock' && !isLockingApproved) || step === 3 ? (
             <GlmLockNotification
               className={styles.element}
               currentMode={currentMode}
+              isLockingApproved={isLockingApproved}
               transactionHash={transactionHash}
-              type={step === 2 ? 'info' : 'success'}
+              type={step === 3 ? 'success' : 'info'}
             />
           ) : (
             <GlmLockBudget isVisible={showBudgetBox} />
@@ -142,6 +145,7 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
             onClose={onCloseModal}
             onInputsFocusChange={setIsCryptoOrFiatInputFocused}
             onReset={onReset}
+            setValueToDepose={setValueToDepose}
             showBalances={!showBudgetBox}
             step={step}
           />
