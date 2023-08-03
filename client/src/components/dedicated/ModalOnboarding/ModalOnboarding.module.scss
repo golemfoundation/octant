@@ -9,7 +9,6 @@
 .onboardingModalBody {
   flex-wrap: nowrap;
   flex-direction: column;
-  padding: 0 2.4rem;
   overflow: hidden;
 
   @media #{$desktop-up} {
@@ -55,16 +54,35 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 3.2rem 2.4rem 1.2rem;
   background: $color-octant-grey12;
 
-  @media #{$desktop-up} {
-    height: 31.2rem;
+  &.claimGlm {
+    padding: 7.2rem 0 6.4rem;
+  }
+
+  &.welcomeToOctant {
+    padding: 4rem 0 3.2rem;
+  }
+
+  &.earnRewards {
+    padding: 5.5rem 0 2.8rem;
+  }
+
+  &.previewProjects {
+    padding: 4.8rem 0 4rem;
+  }
+
+  &.getReady {
+    padding: 6.2rem 0 4.4rem;
   }
 
   .onboardingModalImage {
     max-width: 100%;
     max-height: 100%;
+  }
+
+  @media #{$desktop-up} {
+    height: 31.2rem;
   }
 }
 

@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import React, { useState, useEffect, useCallback, ReactElement } from 'react';
 import { useAccount } from 'wagmi';
 
@@ -124,7 +125,7 @@ const ModalOnboarding = (): ReactElement => {
       headerClassName={styles.onboardingModalHeader}
       Image={
         currentStep && (
-          <div className={styles.onboardingModalImageWrapper}>
+          <div className={cx(styles.onboardingModalImageWrapper, currentStep.imageClassName)}>
             <Img className={styles.onboardingModalImage} src={currentStep.image} />
           </div>
         )
