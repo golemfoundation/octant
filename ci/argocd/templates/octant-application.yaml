@@ -14,9 +14,8 @@ spec:
     name: in-cluster
     namespace: $DEPLOYMENT_ID
   sources:
-  # https://linear.app/golemfoundation/issue/CAQD-142/move-helm-git-repository-to-devops-space
-  - repoURL: 'https://git.ring0.cc/mike/helm/raw/branch/master'
-    targetRevision: 0.3.8
+  - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
+    targetRevision: 0.1.1
     chart: octant
     helm:
       parameters:
@@ -40,12 +39,10 @@ spec:
         - name: "contracts.addresses.multisigAddress"
           value: "$MULTISIG_ADDRESS"
         - name: "backendServer.schedulerEnabled"
-          value: "True"
+          value: "true"
         - name: "backendServer.glmClaim.enabled"
-          value: "True"
+          value: "true"
         - name: "backendServer.snapshotter.enabled"
-          value: "False"
-        - name: "contracts.deploy"
           value: "false"
         # From Deploy contracts job
         - name: contracts.addresses.startBlock

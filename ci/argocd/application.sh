@@ -7,14 +7,6 @@ ACTION=$1
 ARGO_REPOSITORY="https://wildland-bot:${HOUSEKEEPER_CI_TOKEN}@gitlab.com/wildland/devops/iac/k8s/wildland-k8s-devops.git"
 ARGO_REPOSITORY_BRANCH="octant"
 
-# sourcing Old contracts
-source $CI_PROJECT_DIR/ci/argocd/templates/old-contracts/all.env
-
-# sourcing New contracts (prod, uat, etc) -- this functionality is tba, for now its not used
-if [[ "$ENV_FILE" ]]; then
-	source $CI_PROJECT_DIR/ci/argocd/templates/new-contracts/$ENV_FILE
-fi
-
 set +a
 
 ## ArgoCD repository commit
