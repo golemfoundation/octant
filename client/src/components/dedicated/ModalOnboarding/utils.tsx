@@ -37,6 +37,7 @@ export const getStepsToUse = ({
     {
       header: i18n.t('views.onboarding.steps.claimGlm.header'),
       image: 'images/tip-withdraw.webp',
+      imageClassName: styles.claimGlm,
       text: (
         <Fragment>
           <Trans

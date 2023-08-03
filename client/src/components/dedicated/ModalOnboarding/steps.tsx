@@ -12,6 +12,7 @@ const steps: Step[] = [
   {
     header: i18n.t('views.onboarding.steps.welcomeToOctant.header'),
     image: 'images/onboarding/1.webp',
+    imageClassName: styles.welcomeToOctant,
     text: (
       <Trans
         components={[<Button href={BLOG_POST} variant="link3" />]}
@@ -22,6 +23,7 @@ const steps: Step[] = [
   {
     header: i18n.t('views.onboarding.steps.stakingRewards.header'),
     image: 'images/onboarding/2.webp',
+    imageClassName: styles.stakingRewrads,
     text: (
       <Trans
         components={[<span className={styles.bold} />]}
@@ -32,6 +34,7 @@ const steps: Step[] = [
   {
     header: i18n.t('views.onboarding.steps.allocateOrWithdraw.header'),
     image: 'images/onboarding/3.webp',
+    imageClassName: styles.allocateOrWithdraw,
     text: (
       <Trans
         components={[<span className={styles.bold} />]}
@@ -42,6 +45,7 @@ const steps: Step[] = [
   {
     header: i18n.t('views.onboarding.steps.moreInformation.header'),
     image: 'images/onboarding/4.webp',
+    imageClassName: styles.moreInformation,
     text: (
       <Trans
         components={[
