@@ -5,6 +5,7 @@ from flask_restx import Resource, Namespace, fields
 
 from app.controllers import withdrawals
 from app.extensions import api
+from app.settings import config
 
 ns = Namespace("withdrawals", description="Octant withdrawals")
 api.add_namespace(ns)
@@ -28,22 +29,25 @@ withdrawable_rewards_model = api.model(
     },
 )
 
+if config.EPOCH_2_FEATURES_ENABLED:
 
-@ns.doc(
-    description="Returns a list containing amount and merkle proofs for all not claimed epochs",
-    params={
-        "address": "User or proposal address",
-    },
-)
-@ns.response(
-    200,
-    "",
-)
-@ns.route("/<string:address>")
-class Withdrawals(Resource):
-    @ns.marshal_with(withdrawable_rewards_model)
-    def get(self, address):
-        current_app.logger.info(f"Requested withdrawable eth for address: {address}")
-        return [
-            dataclasses.asdict(w) for w in withdrawals.get_withdrawable_eth(address)
-        ]
+    @ns.doc(
+        description="Returns a list containing amount and merkle proofs for all not claimed epochs",
+        params={
+            "address": "User or proposal address",
+        },
+    )
+    @ns.response(
+        200,
+        "",
+    )
+    @ns.route("/<string:address>")
+    class Withdrawals(Resource):
+        @ns.marshal_with(withdrawable_rewards_model)
+        def get(self, address):
+            current_app.logger.info(
+                f"Requested withdrawable eth for address: {address}"
+            )
+            return [
+                dataclasses.asdict(w) for w in withdrawals.get_withdrawable_eth(address)
+            ]

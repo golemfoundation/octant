@@ -11,6 +11,7 @@ from . import (
     deposits,
     withdrawals,
     allocations,
+    glm_claim,
     epochs,
     user,
 )

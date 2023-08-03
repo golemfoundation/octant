@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Query } from '@tanstack/react-query';
 
-import { ROOTS } from 'api/queryKeys';
+import { ROOTS, QUERY_KEYS } from 'api/queryKeys';
 import i18n from 'i18n';
 import triggerToast from 'utils/triggerToast';
 
-import { QueryMutationError, QueryMutationErrorConfig } from './types';
+import { QueryMutationError, QueryMutationErrorConfig, IgnoredQueries} from './types';
+
+const IGNORED_QUERIES: IgnoredQueries = [ROOTS.cryptoValues, QUERY_KEYS.glmClaimCheck[0]];
 
 const errors: QueryMutationErrorConfig = {
   'HN:Allocations/allocate-above-rewards-budget': {
@@ -51,8 +53,8 @@ function getError(reason: string): QueryMutationError {
 
 export function handleError(reason: string, query?: Query | unknown): string | undefined {
   // @ts-expect-error mutations do not have queryKey field, they are pure value and are unknown.
-  if (query && query.queryKey?.find(element => element === ROOTS.cryptoValues)) {
-    // Graceful failure, no notification, no error. Inline info shown in places for values.
+  if (query && query.queryKey?.find(element => IGNORED_QUERIES.includes(element))) {
+    // No notification. Either graceful failure, or local handling.
     return;
   }
 

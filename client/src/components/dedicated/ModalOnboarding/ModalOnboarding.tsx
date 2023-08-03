@@ -2,28 +2,45 @@ import React, { useState, useEffect, useCallback, ReactElement } from 'react';
 import { useAccount } from 'wagmi';
 
 import Img from 'components/core/Img/Img';
+import Loader from 'components/core/Loader/Loader';
 import Modal from 'components/core/Modal/Modal';
 import ProgressStepperSlim from 'components/core/ProgressStepperSlim/ProgressStepperSlim';
 import Text from 'components/core/Text/Text';
+import useGlmClaim from 'hooks/mutations/useGlmClaim';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useGlmClaimCheck from 'hooks/queries/useGlmClaimCheck';
 import useOnboardingStore from 'store/onboarding/store';
 
 import styles from './ModalOnboarding.module.scss';
-import steps from './steps';
-import stepsEpoch1 from './stepsEpoch1';
+import { getStepsToUse } from './utils';
 
 const ModalOnboarding = (): ReactElement => {
   const { setIsOnboardingDone, isOnboardingDone } = useOnboardingStore(state => ({
     isOnboardingDone: state.data.isOnboardingDone,
     setIsOnboardingDone: state.setIsOnboardingDone,
   }));
-
   const { isConnected } = useAccount();
-
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: glmClaimCheck, isError, isFetched } = useGlmClaimCheck();
+  /**
+   * glmClaimMutation sits here to have persistent status ('success' / 'idle') of it
+   * required to show disabled button when status === 'success'.
+   */
+  const glmClaimMutation = useGlmClaim(glmClaimCheck?.value);
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
-  const stepsToUse = currentEpoch === 1 ? stepsEpoch1 : steps;
-  const currentStep = stepsToUse[currentStepIndex];
+  const isUserToClaimAvailable = isFetched && !isError && !!glmClaimCheck;
+  const isUserEligibleToClaimFetched = isUserToClaimAvailable || (isFetched && isError);
+  // Status code 200 & value 0 is an indication that user already claimed.
+  const isUserEligibleToClaimGlm = isUserToClaimAvailable && !glmClaimCheck.value.isZero();
+
+  const stepsToUse = getStepsToUse({
+    currentEpoch,
+    glmClaimCheckValue: glmClaimCheck?.value,
+    glmClaimMutation,
+    isUserEligibleToClaimFetched,
+    isUserEligibleToClaimGlm,
+  });
+  const currentStep = stepsToUse.length > 0 ? stepsToUse[currentStepIndex] : null;
 
   const onOnboardingExit = useCallback(() => {
     setIsOnboardingDone(true);
@@ -103,32 +120,44 @@ const ModalOnboarding = (): ReactElement => {
     <Modal
       bodyClassName={styles.onboardingModalBody}
       dataTest="ModalOnboarding"
-      header={currentStep.header}
+      header={currentStep?.header}
       headerClassName={styles.onboardingModalHeader}
       Image={
-        <div className={styles.onboardingModalImageWrapper}>
-          <Img className={styles.onboardingModalImage} src={currentStep.image} />
-        </div>
+        currentStep && (
+          <div className={styles.onboardingModalImageWrapper}>
+            <Img className={styles.onboardingModalImage} src={currentStep.image} />
+          </div>
+        )
       }
       isOpen={isConnected && !isOnboardingDone}
       onClosePanel={onOnboardingExit}
       onTouchMove={handleTouchMove}
       onTouchStart={handleTouchStart}
     >
-      <Text className={styles.onboardingModalText}>{currentStep.text}</Text>
-      <ProgressStepperSlim
-        className={styles.progressBar}
-        currentStepIndex={currentStepIndex}
-        dataTest="ModalOnboarding__ProgressStepperSlim"
-        numberOfSteps={stepsToUse.length}
-        onStepClick={stepIndex => {
-          if (stepIndex === currentStepIndex) {
-            setCurrentStepIndex(stepIndex + 1);
-            return;
-          }
-          setCurrentStepIndex(stepIndex);
-        }}
-      />
+      <Text className={styles.onboardingModalText}>
+        {currentStep ? (
+          currentStep.text
+        ) : (
+          <div className={styles.loaderWrapper}>
+            <Loader className={styles.loader} />
+          </div>
+        )}
+      </Text>
+      {currentStep && (
+        <ProgressStepperSlim
+          className={styles.progressBar}
+          currentStepIndex={currentStepIndex}
+          dataTest="ModalOnboarding__ProgressStepperSlim"
+          numberOfSteps={stepsToUse.length}
+          onStepClick={stepIndex => {
+            if (stepIndex === currentStepIndex) {
+              setCurrentStepIndex(stepIndex + 1);
+              return;
+            }
+            setCurrentStepIndex(stepIndex);
+          }}
+        />
+      )}
     </Modal>
   );
 };

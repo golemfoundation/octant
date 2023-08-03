@@ -18,7 +18,7 @@ class User(BaseModel):
 
     id = Column(db.Integer, primary_key=True)
     address = Column(db.String(42), unique=True, nullable=False)
-    nonce = Column(db.Integer, nullable=False, default=0)
+    allocation_nonce = Column(db.Integer, nullable=False, default=0)
 
 
 class UserConsents(BaseModel):
@@ -82,3 +82,11 @@ class Reward(BaseModel):
     epoch = Column(db.Integer, nullable=False)
     address = Column(db.String(42), nullable=False)
     amount = Column(db.String, nullable=False)
+
+
+class EpochZeroClaim(BaseModel):
+    __tablename__ = "epoch_zero_claims"
+
+    address = Column(db.String(42), primary_key=True, nullable=False)
+    claimed = Column(db.Boolean, default=False)
+    claim_nonce = db.Column(db.Integer(), unique=True, nullable=True)

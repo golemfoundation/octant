@@ -23,6 +23,7 @@ class Config(object):
     SUBGRAPH_ENDPOINT = os.getenv("SUBGRAPH_ENDPOINT")
     WEB3_PROVIDER = Web3.HTTPProvider(os.getenv("ETH_RPC_PROVIDER_URL"))
     SCHEDULER_ENABLED = _parse_bool(os.getenv("SCHEDULER_ENABLED"))
+    EPOCH_2_FEATURES_ENABLED = _parse_bool(os.getenv("EPOCH_2_FEATURES_ENABLED"))
 
     # Epoch ending dates
     EPOCH_0_END = int(os.getenv("EPOCH_0_END", 1690848000))
@@ -50,6 +51,15 @@ class Config(object):
     VAULT_CONFIRM_WITHDRAWALS_ENABLED = _parse_bool(
         os.getenv("VAULT_CONFIRM_WITHDRAWALS_ENABLED")
     )
+
+    # GLM claiming
+    GLM_CLAIM_ENABLED = _parse_bool(os.getenv("GLM_CLAIM_ENABLED"))
+    GLM_WITHDRAWAL_AMOUNT = int(
+        os.getenv("GLM_WITHDRAWAL_AMOUNT", 1000_000000000_000000000)
+    )
+    GLM_SENDER_ADDRESS = os.getenv("GLM_SENDER_ADDRESS")
+    GLM_SENDER_PRIVATE_KEY = os.getenv("GLM_SENDER_PRIVATE_KEY")
+    GLM_SENDER_NONCE = int(os.getenv("GLM_SENDER_NONCE", 0))
 
 
 class ProdConfig(Config):

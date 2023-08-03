@@ -265,6 +265,15 @@
     },
     "onboarding": {
       "steps": {
+        "claimGlm": {
+          "header": "Claim your GLM",
+          "text": "As you hold an Epoch Zero Token and you participated in the Snapshot vote, you are eligible to claim {{value}} GLM. Click the button below to withdraw to your wallet.",
+          "buttonLabel":  {
+            "withdraw": "Withdraw GLM",
+            "withdrawn": "GLM claimed"
+          },
+          "signMessage":  "Claim {{value}} GLMs"
+        },
         "welcomeToOctant": {
           "header": "Welcome to Octant",
           "text": "Octant is a Golem Foundation experiment in decentralised governance and funding projects for the public good. <br/> <br/> To get started, connect your wallet and lock some GLM in the Earn tab. If you don’t have any GLM or you want to know more about locking, this <0> blog post </0> has all you need to know to get started."

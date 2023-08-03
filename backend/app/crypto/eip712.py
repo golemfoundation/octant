@@ -44,6 +44,26 @@ def build_allocations_eip712_data(message: dict) -> dict:
     }
 
 
+def build_claim_glm_eip712_data() -> dict:
+    claim_glm_types = {
+        "EIP712Domain": [
+            {"name": "name", "type": "string"},
+            {"name": "version", "type": "string"},
+            {"name": "chainId", "type": "uint256"},
+        ],
+        "ClaimGLMPayload": [
+            {"name": "msg", "type": "string"},
+        ],
+    }
+
+    return {
+        "types": claim_glm_types,
+        "domain": domain,
+        "primaryType": "ClaimGLMPayload",
+        "message": {"msg": f"Claim {int(config.GLM_WITHDRAWAL_AMOUNT / 1e18)} GLMs"},
+    }
+
+
 def sign(account: Union[Account, LocalAccount], data: dict) -> str:
     """
     Signs the provided message with w3.eth.account following EIP-712 structure

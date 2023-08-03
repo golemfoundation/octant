@@ -39,21 +39,24 @@ app_version_model = api.model(
 )
 
 
-@ns.route("/websockets-api")
-@ns.doc(description="The documentation for websockets can be found under this path")
-class WebsocketsDocs(Resource):
-    def get(self):
-        headers = {"Content-Type": "text/html"}
-        return make_response(render_template("websockets-api-docs.html"), 200, headers)
+if config.EPOCH_2_FEATURES_ENABLED:
 
+    @ns.route("/websockets-api")
+    @ns.doc(description="The documentation for websockets can be found under this path")
+    class WebsocketsDocs(Resource):
+        def get(self):
+            headers = {"Content-Type": "text/html"}
+            return make_response(
+                render_template("websockets-api-docs.html"), 200, headers
+            )
 
-@ns.route("/websockets-api.yaml")
-class WebsocketsDocsYaml(Resource):
-    def get(self):
-        docs_folder = f"{settings.config.PROJECT_ROOT}/docs"
-        return send_from_directory(
-            docs_folder, "websockets-api.yaml", mimetype="text/plain"
-        )
+    @ns.route("/websockets-api.yaml")
+    class WebsocketsDocsYaml(Resource):
+        def get(self):
+            docs_folder = f"{settings.config.PROJECT_ROOT}/docs"
+            return send_from_directory(
+                docs_folder, "websockets-api.yaml", mimetype="text/plain"
+            )
 
 
 @ns.route("/chain-info")
