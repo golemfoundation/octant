@@ -27,6 +27,10 @@ pytest-mock = "^3.10.0"
 black = "^23.3.0"
 pytest-cov = "^4.0.0"
 freezegun = "^1.2.2"
+flake8 = "^6.0.0" 
+flake8-bugbear = "^23.7.10"
+flake8-pyproject = "^1.2.3"
+# flake8-sqlalchemy = "^0.1.0"
 
 [tool.poetry.group.prod]
 optional = true
@@ -34,6 +38,15 @@ optional = true
 [tool.poetry.group.prod.dependencies]
 psycopg2-binary = "^2.9.6"
 gunicorn = "^20.1.0"
+
+[tool.black]
+line-length = 88
+
+[tool.flake8]
+max-line-length = 88
+select = ["C","E","F","W","B"]
+extend-ignore = ["E203", "E501", "W503", "F401"]
+exclude = [ "./migrations", "./.venv"]
 
 [build-system]
 requires = ["poetry-core"]
