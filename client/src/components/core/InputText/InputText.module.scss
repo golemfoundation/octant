@@ -130,6 +130,10 @@
       color: $color-octant-dark;
       background: $color-octant-grey2;
       border-radius: $border-radius-04;
+
+      &.isDisabled {
+        color: $color-octant-grey6;
+      }
     }
   }
 }
