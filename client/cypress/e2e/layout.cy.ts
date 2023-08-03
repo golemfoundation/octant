@@ -24,6 +24,11 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=MainLayout__Header]').should('be.visible');
     });
 
+    it('Octant logo redirects to projects view', () => {
+      cy.get('[data-test=MainLayout__Logo]').click();
+      cy.get('[data-test=ProposalsView]').should('be.visible');
+    });
+
     it('renders bottom navbar', () => {
       cy.get('[data-test=Navbar]').should('be.visible');
     });
