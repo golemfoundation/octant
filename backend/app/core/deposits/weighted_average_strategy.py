@@ -40,11 +40,11 @@ def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
             - A list of UserDeposit instances.
             - The total effective deposit.
     """
-    deposits = get_all_users_weighted_deposits(epoch_no)
+    weighted_deposits = get_all_users_weighted_deposits(epoch_no)
     total_ed = 0
     user_deposits = []
 
-    for address, deposits in deposits.items():
+    for address, deposits in weighted_deposits.items():
         effective_deposit = _calculate_effective_deposit(deposits)
         total_ed = total_ed + effective_deposit
         user_deposits.append(

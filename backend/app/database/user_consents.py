@@ -1,7 +1,7 @@
 from eth_utils import to_checksum_address
 
 from app.database.models import User, UserConsents
-from app.database.user import get_by_address, get_or_add_user
+from app.database.user import get_or_add_user
 from app.extensions import db
 
 

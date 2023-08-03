@@ -66,7 +66,7 @@ class ChainInfo(Resource):
 
 
 @ns.route("/version")
-class ChainInfo(Resource):
+class Version(Resource):
     @ns.doc(description="Application deployment information")
     @api.marshal_with(app_version_model)
     def get(self):

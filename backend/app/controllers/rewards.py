@@ -101,7 +101,7 @@ def get_rewards_merkle_tree(epoch: int) -> RewardsMerkleTree:
         for leaf in mt.values
     ]
 
-    rewards_sum = reduce(lambda acc, l: acc + l.amount, leaves, 0)
+    rewards_sum = reduce(lambda acc, leaf: acc + leaf.amount, leaves, 0)
 
     return RewardsMerkleTree(
         epoch=epoch,

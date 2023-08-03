@@ -39,7 +39,7 @@ def test_take_snapshot_without_effective_deposits(mocker, app, user_accounts):
 
     result = snapshot_pending_epoch()
 
-    assert result is 42
+    assert result == 42
     snapshot = database.pending_epoch_snapshot.get_last_snapshot()
     assert snapshot.epoch == 42
     assert snapshot.created_at is not None
@@ -85,7 +85,7 @@ def test_take_snapshot_with_effective_deposits(
 
     result = snapshot_pending_epoch()
 
-    assert result is 43
+    assert result == 43
     snapshot = database.pending_epoch_snapshot.get_last_snapshot()
     assert snapshot.epoch == 43
     assert snapshot.created_at is not None

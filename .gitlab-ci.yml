@@ -62,6 +62,9 @@ default:
     - apt update && apt install -y --no-install-recommends libpq5
   yarn_install:
     - yarn install --cache-folder .yarn --non-interactive --frozen-lockfile
+  poetry_install:
+    - poetry config virtualenvs.in-project true
+    - poetry install
 
 Build backend:
   stage: build
@@ -133,7 +136,7 @@ Build services:
         - $SERVICE/.yarn
         - $SERVICE/node-modules
 
-Lint and typecheck:
+Lint and typecheck yarn:
   stage: lint_and_typecheck
   image: !reference [.images, node ]
   parallel:
@@ -163,6 +166,23 @@ Lint and typecheck:
         - $SERVICE/node-modules
       policy: pull
 
+Lint and typecheck poetry:
+  stage: lint_and_typecheck
+  image: !reference [.images, python ]
+  rules:
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+  script:
+    - cd backend
+    - !reference [ .scripts, poetry_install ]
+    - poetry run black --check .
+    - poetry run flake8 
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-poetry-backend-lint
+      paths:
+        - backend/.venv
+      policy: pull
+
 Backend tests:
   stage: test
   image: !reference [.images, python ]
@@ -173,7 +193,7 @@ Backend tests:
     - Build backend
   script:
     - cd backend
-    - poetry config virtualenvs.in-project true
+    - !reference [ .scripts, poetry_install ]
     - poetry run pytest
   cache:
     - key: $CI_COMMIT_REF_SLUG-poetry-backend

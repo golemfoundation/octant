@@ -1,5 +1,3 @@
-import dataclasses
-
 from flask import Response
 from flask_restx import Resource, Namespace, fields
 

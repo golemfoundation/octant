@@ -24,7 +24,7 @@ class EpochStatus(JSONWizard):
 
 
 def snapshot_pending_epoch() -> Optional[int]:
-    app.logger.info(f"--- Initiating pending epoch snapshot ---")
+    app.logger.info("--- Initiating pending epoch snapshot ---")
     current_epoch = epochs.get_current_epoch()
     pending_epoch = epochs.get_pending_epoch()
     app.logger.info(
@@ -40,7 +40,7 @@ def snapshot_pending_epoch() -> Optional[int]:
     app.logger.info(f"[*] Most recent pending snapshot: {last_snapshot_epoch}")
 
     if pending_epoch <= last_snapshot_epoch:
-        app.logger.info(f"[+] Pending snapshots are up to date")
+        app.logger.info("[+] Pending snapshots are up to date")
         return None
 
     glm_supply = glm.get_current_glm_supply()
@@ -69,7 +69,7 @@ def snapshot_pending_epoch() -> Optional[int]:
 
 
 def snapshot_finalized_epoch() -> Optional[int]:
-    app.logger.info(f"--- Initiating finalized epoch snapshot ---")
+    app.logger.info("--- Initiating finalized epoch snapshot ---")
     current_epoch = epochs.get_current_epoch()
     finalized_epoch = epochs.get_finalized_epoch()
     app.logger.info(
@@ -85,7 +85,7 @@ def snapshot_finalized_epoch() -> Optional[int]:
     app.logger.info(f"[*] Most recent finalized snapshot: {last_snapshot_epoch}")
 
     if finalized_epoch <= last_snapshot_epoch:
-        app.logger.info(f"[+] Finalized snapshots are up to date")
+        app.logger.info("[+] Finalized snapshots are up to date")
         return None
 
     proposal_rewards, proposal_rewards_sum = get_proposal_rewards_above_threshold(
