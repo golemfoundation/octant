@@ -88,7 +88,7 @@
       "connectWallet": {
         "browserWallet": "Browser wallet",
         "connecting": "Connecting ...",
-        "walletConnect": "Wallet connect"
+        "walletConnect": "WalletConnect"
       },
       "donationEstimateBox": {
         "donationEstimate": "Donation estimate",
