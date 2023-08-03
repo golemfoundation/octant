@@ -9,6 +9,7 @@ export const ROOTS: Root = {
 };
 
 export const QUERY_KEYS: QueryKeys = {
+  blockNumber: ['blockNumber'],
   cryptoValues: fiatCurrency => [ROOTS.cryptoValues, fiatCurrency],
   currentEpoch: ['currentEpoch'],
   currentEpochEnd: ['currentEpochEnd'],

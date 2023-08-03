@@ -17,9 +17,9 @@ import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useLock from 'hooks/mutations/useLock';
 import useUnlock from 'hooks/mutations/useUnlock';
-import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
+import useMetaStore from 'store/meta/store';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './GlmLock.module.scss';
@@ -29,22 +29,25 @@ import { formInitialValues, validationSchema } from './utils';
 const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseModal }) => {
   const { i18n } = useTranslation();
   const { address } = useAccount();
-
-  const { refetch: refetchDepositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
-  const { data: availableFundsGlm } = useAvailableFundsGlm();
-  const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
-  const { data: proposalsAddresses } = useProposalsContract();
-  const contract = useContractErc20();
   const { isDesktop } = useMediaQuery();
+  const { setBlockNumberWithLatestTx } = useMetaStore(state => ({
+    setBlockNumberWithLatestTx: state.setBlockNumberWithLatestTx,
+  }));
+
+  const { data: availableFundsGlm } = useAvailableFundsGlm();
+  const { data: proposalsAddresses } = useProposalsContract();
+  const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
+  const contract = useContractErc20();
 
   const [step, setStep] = useState<Step>(1);
   const [transactionHash, setTransactionHash] = useState<string>('');
   const [isCryptoOrFiatInputFocused, setIsCryptoOrFiatInputFocused] = useState(false);
   const showBudgetBox = isDesktop || (!isDesktop && !isCryptoOrFiatInputFocused);
 
-  const onRefetch = async (): Promise<void> => {
+  const onRefetch = async (blockNumber: number): Promise<void> => {
+    // History and effective deposits are refetched in App.tsx. Look for a comment there.
+    setBlockNumberWithLatestTx(blockNumber);
     await refetchDeposit();
-    await refetchDepositEffectiveAtCurrentEpoch();
   };
 
   const onMutate = async (): Promise<void> => {
@@ -72,7 +75,7 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
   };
 
   const onSuccess = async (transactionResponse: TransactionReceipt): Promise<void> => {
-    await onRefetch();
+    await onRefetch(transactionResponse.blockNumber);
     setTransactionHash(transactionResponse!.transactionHash);
     setStep(3);
   };

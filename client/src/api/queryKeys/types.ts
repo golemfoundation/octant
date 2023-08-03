@@ -9,6 +9,7 @@ export type Root = {
 };
 
 export type QueryKeys = {
+  blockNumber: ['blockNumber'];
   cryptoValues: (
     fiatCurrency: NonNullable<SettingsData['displayCurrency']>,
   ) => [Root['cryptoValues'], NonNullable<SettingsData['displayCurrency']>];
