@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import React, { FC, useState, Fragment, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useLocation, useMatch } from 'react-router-dom';
+import { Link, useLocation, useMatch } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
 import Button from 'components/core/Button/Button';
@@ -106,7 +106,9 @@ const MainLayout: FC<MainLayoutProps> = ({
             <div className={styles.headerWrapper}>
               <div className={styles.header} data-test="MainLayout__Header">
                 <div className={styles.logoWrapper}>
-                  <Svg img={octant} size={4} />
+                  <Link data-test="MainLayout__Logo" to={ROOT_ROUTES.proposals.absolute}>
+                    <Svg img={octant} size={4} />
+                  </Link>
                   {networkConfig.isTestnet && (
                     <div className={styles.testnetIndicatorWrapper}>
                       <div className={styles.testnetIndicator}>{networkConfig.name}</div>
