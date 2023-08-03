@@ -10,7 +10,7 @@ import { arrowTopRight, checkMark, notificationIconWarning } from 'svg/misc';
 import styles from './GlmLockNotification.module.scss';
 import GlmLockNotificationProps from './types';
 
-const ButtonLinkWithIcon: FC<{ children?: React.ReactNode, transactionHash: string; }> = ({
+const ButtonLinkWithIcon: FC<{ children?: React.ReactNode; transactionHash: string }> = ({
   children,
   transactionHash,
 }) => {
@@ -27,6 +27,7 @@ const ButtonLinkWithIcon: FC<{ children?: React.ReactNode, transactionHash: stri
 
 const GlmLockNotification: FC<GlmLockNotificationProps> = ({
   className,
+  isLockingApproved,
   type,
   transactionHash,
   currentMode,
@@ -38,14 +39,25 @@ const GlmLockNotification: FC<GlmLockNotificationProps> = ({
   });
 
   const label = useMemo(() => {
-    if (type === 'info') {
-      return t('info.label');
+    if (type === 'info' && currentMode === 'lock' && !isLockingApproved) {
+      return t('info.lock.notApproved.label');
     }
-    if (currentMode === 'lock') {
+    if (type === 'success' && currentMode === 'lock') {
       return t('success.labelLocked');
     }
-    return t('success.labelUnlocked');
-  }, [t, currentMode, type]);
+    if (type === 'success' && currentMode === 'unlock') {
+      return t('success.labelUnlocked');
+    }
+  }, [t, currentMode, type, isLockingApproved]);
+
+  const text = useMemo(() => {
+    if (type === 'success') {
+      return `${keyPrefix}.success.text`;
+    }
+    if (type === 'info' && currentMode === 'lock' && !isLockingApproved) {
+      return `${keyPrefix}.info.lock.notApproved.text`;
+    }
+  }, [type, currentMode, isLockingApproved]);
 
   return (
     <BoxRounded className={className} hasPadding={false} isGrey isVertical>
@@ -56,17 +68,19 @@ const GlmLockNotification: FC<GlmLockNotificationProps> = ({
           size={3.2}
         />
         <div className={styles.info}>
-          <div className={styles.label}>{label}</div>
-          <div className={styles.text}>
-            <Trans
-              components={
-                type === 'success'
-                  ? [<ButtonLinkWithIcon transactionHash={transactionHash!} />]
-                  : undefined
-              }
-              i18nKey={type === 'success' ? `${keyPrefix}.success.text` : `${keyPrefix}.info.text`}
-            />
-          </div>
+          {label && <div className={styles.label}>{label}</div>}
+          {text && (
+            <div className={styles.text}>
+              <Trans
+                components={
+                  type === 'success'
+                    ? [<ButtonLinkWithIcon transactionHash={transactionHash!} />]
+                    : undefined
+                }
+                i18nKey={text}
+              />
+            </div>
+          )}
         </div>
       </div>
     </BoxRounded>

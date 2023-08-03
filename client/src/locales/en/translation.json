@@ -125,8 +125,12 @@
             "text": "Your locked balance will update after tx confirmation. <0>View on Etherscan</0>"
           },
           "info": {
-            "label": "Please approve two wallet transactions",
-            "text": "One to allow ERC-20 tokens, the other to deposit GLM."
+            "lock": {
+              "notApproved": {
+                "label": "Please approve two wallet transactions",
+                "text": "One to allow ERC-20 tokens, the other to deposit GLM."
+              }
+            }
           }
         }
       },
