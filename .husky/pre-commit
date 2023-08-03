@@ -20,6 +20,7 @@ yarn install
 yarn codegen
 
 cd ../backend
+poetry install
 poetry run flake8
 poetry run black --check .
 

@@ -27,7 +27,7 @@ def add_claim(user_address: str) -> EpochZeroClaim:
 def get_by_claimed_true_and_nonce_gte(nonce: int = 0) -> List[EpochZeroClaim]:
     return (
         EpochZeroClaim.query.filter(
-            EpochZeroClaim.claimed == True,
+            EpochZeroClaim.claimed == True,  # noqa: E712
             EpochZeroClaim.claim_nonce >= nonce,
         )
         .order_by(EpochZeroClaim.claim_nonce.asc())

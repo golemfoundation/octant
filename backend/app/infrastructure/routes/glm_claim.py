@@ -13,7 +13,7 @@ claim_glm_request = ns.model(
     {
         "signature": fields.String(
             required=True,
-            description='EIP-712 signature of a payload with the following message: {"msg": "Claim \<AMOUNT-TO-CLAIM-IN-ETHER\> GLMs"} as a hexadecimal string',
+            description='EIP-712 signature of a payload with the following message: {"msg": "Claim <AMOUNT-TO-CLAIM-IN-ETHER> GLMs"} as a hexadecimal string',
         )
     },
 )

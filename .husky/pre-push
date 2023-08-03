@@ -22,5 +22,6 @@ yarn install
 yarn type-check
 
 cd ../backend
+poetry install
 poetry run flake8
 poetry run black --check .
