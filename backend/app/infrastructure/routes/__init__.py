@@ -2,6 +2,7 @@ from flask import send_from_directory
 from flask_restx import Resource
 
 from app import settings
+from app.infrastructure import OctantResource
 from app.extensions import api
 from . import (
     info,
@@ -18,7 +19,7 @@ from . import (
 
 
 @api.route("/favicon.ico")
-class Favicon(Resource):
+class Favicon(OctantResource):
     def get(self):
         static_folder = f"{settings.config.PROJECT_ROOT}/static"
         return send_from_directory(

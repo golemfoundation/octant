@@ -13,7 +13,8 @@ from app.controllers.rewards import (
 )
 from app.core.allocations import allocate, AllocationRequest
 from app.core.common import AccountFunds
-from app.exceptions import UNEXPECTED_EXCEPTION, OctantException
+from app.exceptions import OctantException
+from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler
 from app.extensions import socketio
 
 
@@ -64,13 +65,10 @@ def handle_proposal_donors(proposal_address: str):
 
 @socketio.on_error_default
 def default_error_handler(e):
+    ExceptionHandler.print_stacktrace(e)
     if isinstance(e, OctantException):
-        logger = logging.getLogger("gunicorn.error")
-        logger.error("Octant exception occurred", exc_info=True)
         emit("exception", json.dumps({"message": str(e.message)}))
     else:
-        logger = logging.getLogger("gunicorn.error")
-        logger.error("Unexpected exception occurred", exc_info=True)
         emit("exception", json.dumps({"message": UNEXPECTED_EXCEPTION}))
 
 

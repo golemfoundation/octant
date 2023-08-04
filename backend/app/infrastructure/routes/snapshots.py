@@ -2,6 +2,7 @@ from flask import Response
 from flask import current_app as app
 from flask_restx import Resource, Namespace, fields
 
+from app.infrastructure import OctantResource
 from app.controllers import snapshots
 from app.extensions import api
 from app.settings import config
@@ -40,7 +41,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
         "Snapshot could not be created due to an existing snapshot for previous epoch",
     )
     @ns.response(201, "Snapshot created successfully")
-    class PendingEpochSnapshot(Resource):
+    class PendingEpochSnapshot(OctantResource):
         def post(self):
             app.logger.info("Initiating pending epoch snapshot")
             epoch = snapshots.snapshot_pending_epoch()
@@ -58,7 +59,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
         "Snapshot could not be created due to an existing snapshot for previous epoch",
     )
     @ns.response(201, "Snapshot created successfully")
-    class FinalizedEpochSnapshot(Resource):
+    class FinalizedEpochSnapshot(OctantResource):
         def post(self):
             app.logger.info("Initiating finalized epoch snapshot")
             epoch = snapshots.snapshot_finalized_epoch()
@@ -79,7 +80,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
     "Invalid epoch number given. Most likely the epoch has not started yet. "
     "Consult the error message.",
 )
-class EpochStatus(Resource):
+class EpochStatus(OctantResource):
     @ns.marshal_with(epoch_status_model)
     def get(self, epoch: int):
         app.logger.debug(f"Getting epoch {epoch} status")

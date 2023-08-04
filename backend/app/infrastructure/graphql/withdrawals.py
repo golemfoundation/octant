@@ -1,7 +1,7 @@
 from flask import current_app as app
 from gql import gql
 
-from app.infrastructure.qraphql.client import get_graphql_client
+from app.infrastructure.graphql.client import get_graphql_client
 
 
 def get_withdrawals_by_address_and_ts(user_address: str, gt_timestamp: int):

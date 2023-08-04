@@ -6,12 +6,12 @@ from typing import Dict, List
 
 from eth_utils import to_checksum_address
 
-from app.infrastructure import qraphql
-from app.infrastructure.qraphql.locks import (
+from app.infrastructure import graphql
+from app.infrastructure.graphql.locks import (
     get_locks_by_timestamp_range,
     get_locks_by_address_and_timestamp_range,
 )
-from app.infrastructure.qraphql.unlocks import (
+from app.infrastructure.graphql.unlocks import (
     get_unlocks_by_timestamp_range,
     get_unlocks_by_address_and_timestamp_range,
 )
@@ -40,7 +40,7 @@ def get_all_users_weighted_deposits(epoch_no: int) -> Dict[str, List[WeightedDep
     Get a list of weighted deposits per user for a given epoch number. The weight of the deposit
     is calculated based on the time duration it remained locked in a given epoch.
     """
-    epoch = qraphql.epochs.get_epoch_by_number(epoch_no)
+    epoch = graphql.epochs.get_epoch_by_number(epoch_no)
     start, end = int(epoch["fromTs"]), int(epoch["toTs"])
     events = _get_all_users_events_from_subgraph(start, end)
 

@@ -5,9 +5,9 @@ from typing import List
 
 from app.database import allocations
 
-from app.infrastructure.qraphql.locks import get_locks_by_address
-from app.infrastructure.qraphql.unlocks import get_unlocks_by_address
-from app.infrastructure.qraphql.withdrawals import get_withdrawals_by_address_and_ts
+from app.infrastructure.graphql.locks import get_locks_by_address
+from app.infrastructure.graphql.unlocks import get_unlocks_by_address
+from app.infrastructure.graphql.withdrawals import get_withdrawals_by_address_and_ts
 
 
 class OpType(StrEnum):

@@ -1,11 +1,7 @@
 from flask import Flask
 
 from app import settings
-from app.exceptions import (
-    OctantException,
-    handle_octant_exception,
-    handle_unexpected_exception,
-)
+from app.infrastructure.exception_handler import ExceptionHandler
 from app.extensions import (
     db,
     migrate,
@@ -51,5 +47,5 @@ def register_extensions(app):
 
 
 def register_errorhandlers(app):
-    app.register_error_handler(OctantException, handle_octant_exception)
-    app.register_error_handler(Exception, handle_unexpected_exception)
+    handler = ExceptionHandler()
+    app.register_error_handler(Exception, handler)

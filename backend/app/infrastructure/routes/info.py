@@ -4,6 +4,7 @@ from flask_restx import Resource, Namespace, fields
 
 from app import settings
 from app.controllers import info
+from app.infrastructure import OctantResource
 from app.extensions import api
 from app.settings import config
 
@@ -57,7 +58,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
 
     @ns.route("/websockets-api")
     @ns.doc(description="The documentation for websockets can be found under this path")
-    class WebsocketsDocs(Resource):
+    class WebsocketsDocs(OctantResource):
         def get(self):
             headers = {"Content-Type": "text/html"}
             return make_response(
@@ -65,7 +66,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
             )
 
     @ns.route("/websockets-api.yaml")
-    class WebsocketsDocsYaml(Resource):
+    class WebsocketsDocsYaml(OctantResource):
         def get(self):
             docs_folder = f"{settings.config.PROJECT_ROOT}/docs"
             return send_from_directory(
@@ -74,7 +75,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
 
 
 @ns.route("/chain-info")
-class ChainInfo(Resource):
+class ChainInfo(OctantResource):
     @ns.doc(description="Info about the blockchain network and smart contracts")
     @api.marshal_with(chain_info_model)
     def get(self):
@@ -84,7 +85,7 @@ class ChainInfo(Resource):
 
 
 @ns.route("/version")
-class Version(Resource):
+class Version(OctantResource):
     @ns.doc(description="Application deployment information")
     @api.marshal_with(app_version_model)
     def get(self):
