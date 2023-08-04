@@ -82,7 +82,7 @@ const MetricsView = (): ReactElement => {
           <ProgressBar
             className={styles.lockedRatioProgressBar}
             progressPercentage={
-              lockedSummaryLatest ? parseInt(lockedSummaryLatest?.lockedRatio, 10) : 0
+              lockedSummaryLatest ? parseInt(lockedSummaryLatest?.lockedRatio, 10) * 100 : 0
             }
           />
         </BoxRounded>
