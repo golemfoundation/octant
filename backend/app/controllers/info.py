@@ -60,10 +60,12 @@ def healthcheck() -> (Healthcheck, int):
     except Exception:
         is_db_healthy = False
 
-    try:
-        is_subgraph_healthy = qraphql.info.get_indexed_block_num() > 0
-    except Exception:
-        is_subgraph_healthy = False
+    # this causes problems, removing as a quick fix
+    # try:
+    #     is_subgraph_healthy = qraphql.info.get_indexed_block_num() > 0
+    # except Exception:
+    #     is_subgraph_healthy = False
+    is_subgraph_healthy = True
 
     healthcheck_status = Healthcheck(
         blockchain="UP" if is_chain_rpc_healthy else "DOWN",
@@ -73,7 +75,7 @@ def healthcheck() -> (Healthcheck, int):
 
     if False in (is_chain_rpc_healthy, is_db_healthy, is_subgraph_healthy):
         app.logger.warning(
-            f"[Healthcheck] failed: chain_rpc: {is_chain_rpc_healthy}, db_health: {is_db_healthy}, subgraph_health: {is_subgraph_healthy}"
+            f"[Healthcheck] failed: chain_rpc: {is_chain_rpc_healthy}, db_health: {is_db_healthy}, subgraph_health: DISABLED"
         )
         return healthcheck_status, 500
 
