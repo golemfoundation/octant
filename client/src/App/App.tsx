@@ -20,6 +20,7 @@ import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import useBlockNumber from 'hooks/subgraph/useBlockNumber';
+import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import localStorageService from 'services/localStorageService';
 import useAllocationsStore from 'store/allocations/store';
@@ -105,6 +106,7 @@ const App = (): ReactElement => {
   );
   const { refetch: refetchDepositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
   const { refetch: refetchHistory } = useHistory();
+  const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
 
   const [isAccountChanging, setIsAccountChanging] = useState(false);
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
@@ -204,6 +206,7 @@ const App = (): ReactElement => {
      */
     if (blockNumber && blockNumberWithLatestTx && blockNumber > blockNumberWithLatestTx) {
       refetchHistory();
+      refetchLockedSummaryLatest();
 
       if (currentEpoch === 1) {
         refetchDepositEffectiveAtCurrentEpoch();
@@ -218,6 +221,7 @@ const App = (): ReactElement => {
     blockNumberWithLatestTx,
     refetchHistory,
     refetchDepositEffectiveAtCurrentEpoch,
+    refetchLockedSummaryLatest,
   ]);
 
   useEffect(() => {
