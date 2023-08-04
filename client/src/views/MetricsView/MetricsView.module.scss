@@ -1,8 +1,8 @@
 .box {
   height: 14.4rem;
 
-  &:not(:last-child) {
-    margin: 0 auto 1.6rem;
+  &:not(:first-child) {
+    margin: 1.6rem auto 0;
   }
 
   @media #{$desktop-up} {
