@@ -9,6 +9,7 @@ import BoxPersonalAllocation from 'components/dedicated/BoxPersonalAllocation/Bo
 import History from 'components/dedicated/History/History';
 import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
 import TipTile from 'components/dedicated/TipTile/TipTile';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
 import MainLayout from 'layouts/MainLayout/MainLayout';
@@ -21,6 +22,7 @@ const EarnView = (): ReactElement => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'views.earn',
   });
+  const { isDesktop } = useMediaQuery();
   const { isConnected } = useAccount();
   const { data: withdrawableUserEth } = useWithdrawableUserEth();
   const { wasWithdrawAlreadyClosed, setWasWithdrawAlreadyClosed } = useTipsStore(state => ({
@@ -58,7 +60,9 @@ const EarnView = (): ReactElement => {
         isOpen={isConnectWalletTipVisible}
         onClose={() => setWasConnectWalletAlreadyClosed(true)}
         text={t('tips.connectWallet.text')}
-        title={t('tips.connectWallet.title')}
+        title={t(
+          isDesktop ? 'tips.connectWallet.title.desktop' : 'tips.connectWallet.title.mobile',
+        )}
       />
       <TipTile
         className={styles.tip}

@@ -23,7 +23,7 @@
     "budget": "Budget {{budget}}",
     "lockGlm": "Lock GLM",
     "transactionSuccessful": "Transaction successful",
-    "gettingStarted": "Getting started",
+    "gettingStarted": "Getting Started",
     "octantTips": "Octant tips",
     "done": "Done",
     "valueCantBeEmpty": "Value can't be empty",
@@ -251,7 +251,10 @@
           "text": "Rewards you allocate to yourself can be withdrawn to your wallet here in the Earn view"
         },
         "connectWallet": {
-          "title": "Connect wallet",
+          "title": {
+            "desktop": "Connect your wallet",
+            "mobile": "Connect wallet"
+          },
           "text": "Please connect your wallet to Octant in order to participate in this and future epochs"
         }
       },
