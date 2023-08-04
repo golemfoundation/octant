@@ -182,6 +182,9 @@
         "sec": "Sec",
         "seconds": "Seconds"
       },
+      "tos": {
+        "text": "I agree to the <0> Terms of Service </0>"
+      },
       "walletModal": {
         "balances": "Balances",
         "wallet": "Wallet",
@@ -269,14 +272,18 @@
     },
     "onboarding": {
       "steps": {
+        "usingTheApp": {
+          "header": "Using the app",
+          "text": "Before we can go any further, please read the terms of service and click the checkbox below to agree with them."
+        },
         "claimGlm": {
           "header": "Claim your GLM",
           "text": "As you hold an Epoch Zero Token and you participated in the Snapshot vote, you are eligible to claim {{value}} GLM. Click the button below to withdraw to your wallet.",
-          "buttonLabel":  {
+          "buttonLabel": {
             "withdraw": "Withdraw GLM",
             "withdrawn": "GLM claimed"
           },
-          "signMessage":  "Claim {{value}} GLMs"
+          "signMessage": "Claim {{value}} GLMs"
         },
         "welcomeToOctant": {
           "header": "Welcome to Octant",

@@ -1,10 +1,12 @@
 import cx from 'classnames';
 import { useAnimate } from 'framer-motion';
 import React, { FC, Fragment, useEffect, useRef } from 'react';
+import { useAccount } from 'wagmi';
 
 import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
+import useUserTOS from 'hooks/queries/useUserTOS';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
 
@@ -12,6 +14,8 @@ import styles from './Navbar.module.scss';
 import NavbarProps from './types';
 
 const Navbar: FC<NavbarProps> = ({ navigationBottomSuffix, tabs }) => {
+  const { isConnected } = useAccount();
+  const { data: isUserTOSAccepted } = useUserTOS();
   const { allocations } = useAllocationsStore(state => ({
     allocations: state.data.allocations,
   }));
@@ -19,6 +23,8 @@ const Navbar: FC<NavbarProps> = ({ navigationBottomSuffix, tabs }) => {
 
   const { isDesktop } = useMediaQuery();
   const [scope, animate] = useAnimate();
+
+  const areTabsDisabled = isConnected && !isUserTOSAccepted;
 
   useEffect(() => {
     if (!scope?.current || allocations.length === allocationsPrevRef.current.length) {
@@ -45,7 +51,7 @@ const Navbar: FC<NavbarProps> = ({ navigationBottomSuffix, tabs }) => {
                 dataTest={`Navbar__Button--${label}`}
                 Icon={<Svg img={icon} size={isDesktop ? 4 : 3.2} />}
                 isActive={isActive}
-                isDisabled={isDisabled}
+                isDisabled={isDisabled || areTabsDisabled}
                 label={label}
                 to={to}
                 variant="iconVertical"

@@ -1,0 +1,21 @@
+.box {
+  height: 8rem;
+  margin-top: 1.6rem;
+
+  .text {
+    margin-left: 1.8rem;
+    font-size: $font-size-16;
+    font-weight: $font-weight-semibold;
+    line-height: 2.4rem;
+    color: $color-octant-grey6;
+    cursor: pointer;
+  }
+
+  .link {
+    font-weight: $font-weight-semibold;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}

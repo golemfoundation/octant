@@ -6,6 +6,7 @@ export type Root = {
   proposalDonors: 'proposalDonors';
   proposalsIpfsResults: 'proposalsIpfsResults';
   userHistoricAllocations: 'userHistoricAllocations';
+  userTOS: 'userTOS';
 };
 
 export type QueryKeys = {
@@ -33,5 +34,6 @@ export type QueryKeys = {
   unlocks: ['unlocks'];
   userAllocations: ['userAllocations'];
   userHistoricAllocations: (userAddress: string) => [Root['userHistoricAllocations'], string];
+  userTOS: (userAddress: string) => [Root['userTOS'], string];
   withdrawableUserEth: ['withdrawableUserEth'];
 };

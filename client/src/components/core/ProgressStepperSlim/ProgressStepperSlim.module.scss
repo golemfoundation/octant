@@ -4,6 +4,14 @@ $stepHeight: 0.8rem;
   display: flex;
   width: 100%;
   justify-content: center;
+
+  &.isDisabled {
+    pointer-events: none;
+
+    .step {
+      opacity: 0.5;
+    }
+  }
 }
 
 .stepWrapper {

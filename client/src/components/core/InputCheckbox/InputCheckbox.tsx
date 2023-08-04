@@ -12,6 +12,7 @@ const InputCheckbox: FC<InputCheckboxProps> = ({
   isDisabled,
   dataTest = 'InputCheckbox',
   onChange,
+  inputId,
 }) => {
   return (
     <div className={cx(styles.root, isDisabled && styles.disabled)}>
@@ -20,6 +21,7 @@ const InputCheckbox: FC<InputCheckboxProps> = ({
         className={styles.input}
         data-test={dataTest}
         disabled={isDisabled}
+        id={inputId}
         onChange={onChange}
         type="checkbox"
       />

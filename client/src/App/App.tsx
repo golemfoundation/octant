@@ -18,6 +18,7 @@ import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
+import useUserTOS from 'hooks/queries/useUserTOS';
 import useBlockNumber from 'hooks/subgraph/useBlockNumber';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import localStorageService from 'services/localStorageService';
@@ -112,6 +113,7 @@ const App = (): ReactElement => {
   const [isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal] = useState<boolean | null>(null);
   const [chainIdLocal, setChainIdLocal] = useState<number | null>(null);
   const isPreLaunch = getIsPreLaunch(currentEpoch);
+  const { isFetching: isFetchingUserTOS } = useUserTOS();
 
   useEffect(() => {
     if (chainIdLocal && chainIdLocal !== networkConfig.id) {
@@ -346,14 +348,14 @@ const App = (): ReactElement => {
     }
     resetTipsStore();
   }, [areOctantTipsAlwaysVisible, resetTipsStore]);
-
   const isLoading =
     isLoadingCurrentEpoch ||
     (!isPreLaunch && !isAllocationsInitialized) ||
     !isOnboardingInitialized ||
     !isSettingsInitialized ||
     isAccountChanging ||
-    !isTipsStoreInitialized;
+    !isTipsStoreInitialized ||
+    isFetchingUserTOS;
 
   if (isLoading) {
     return <AppLoader />;

@@ -16,6 +16,7 @@ import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocation
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useUserTOS from 'hooks/queries/useUserTOS';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import { octant } from 'svg/logo';
 import { chevronBottom } from 'svg/misc';
@@ -47,6 +48,7 @@ const MainLayout: FC<MainLayoutProps> = ({
   const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { pathname } = useLocation();
+  const { data: isUserTOSAccepted } = useUserTOS();
 
   const isEpoch1 = currentEpoch === 1;
   const isPreLaunch = getIsPreLaunch(currentEpoch);
@@ -120,7 +122,7 @@ const MainLayout: FC<MainLayoutProps> = ({
                     <div
                       className={styles.profileInfo}
                       data-test="ProfileInfo"
-                      onClick={() => setIsWalletModalOpen(true)}
+                      onClick={() => isUserTOSAccepted && setIsWalletModalOpen(true)}
                     >
                       <div className={styles.walletInfo}>
                         <div className={styles.address}>{truncateEthAddress(address)}</div>

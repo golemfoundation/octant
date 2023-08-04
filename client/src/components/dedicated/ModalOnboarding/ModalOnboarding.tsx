@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { useState, useEffect, useCallback, ReactElement } from 'react';
+import React, { useState, useEffect, useCallback, FC } from 'react';
 import { useAccount } from 'wagmi';
 
 import Img from 'components/core/Img/Img';
@@ -7,49 +7,37 @@ import Loader from 'components/core/Loader/Loader';
 import Modal from 'components/core/Modal/Modal';
 import ProgressStepperSlim from 'components/core/ProgressStepperSlim/ProgressStepperSlim';
 import Text from 'components/core/Text/Text';
-import useGlmClaim from 'hooks/mutations/useGlmClaim';
-import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useGlmClaimCheck from 'hooks/queries/useGlmClaimCheck';
+import useOnboardingSteps from 'hooks/helpers/useOnboardingSteps';
+import useUserTOS from 'hooks/queries/useUserTOS';
 import useOnboardingStore from 'store/onboarding/store';
 
 import styles from './ModalOnboarding.module.scss';
-import { getStepsToUse } from './utils';
 
-const ModalOnboarding = (): ReactElement => {
+const ModalOnboarding: FC = () => {
+  const { data: isUserTOSAccepted } = useUserTOS();
   const { setIsOnboardingDone, isOnboardingDone } = useOnboardingStore(state => ({
     isOnboardingDone: state.data.isOnboardingDone,
     setIsOnboardingDone: state.setIsOnboardingDone,
   }));
   const { isConnected } = useAccount();
-  const { data: currentEpoch } = useCurrentEpoch();
-  const { data: glmClaimCheck, isError, isFetched } = useGlmClaimCheck(isOnboardingDone);
-  /**
-   * glmClaimMutation sits here to have persistent status ('success' / 'idle') of it
-   * required to show disabled button when status === 'success'.
-   */
-  const glmClaimMutation = useGlmClaim(glmClaimCheck?.value);
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
-  const isUserToClaimAvailable = isFetched && !isError && !!glmClaimCheck;
-  const isUserEligibleToClaimFetched = isUserToClaimAvailable || (isFetched && isError);
-  // Status code 200 & value 0 is an indication that user already claimed.
-  const isUserEligibleToClaimGlm = isUserToClaimAvailable && !glmClaimCheck.value.isZero();
 
-  const stepsToUse = getStepsToUse({
-    currentEpoch,
-    glmClaimCheckValue: glmClaimCheck?.value,
-    glmClaimMutation,
-    isUserEligibleToClaimFetched,
-    isUserEligibleToClaimGlm,
-  });
+  const stepsToUse = useOnboardingSteps(isOnboardingDone);
+
   const currentStep = stepsToUse.length > 0 ? stepsToUse[currentStepIndex] : null;
-
   const onOnboardingExit = useCallback(() => {
+    if (!isUserTOSAccepted) {
+      return;
+    }
     setIsOnboardingDone(true);
-  }, [setIsOnboardingDone]);
+  }, [setIsOnboardingDone, isUserTOSAccepted]);
 
   const [touchStart, setTouchStart] = useState<number | null>(null);
 
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!isUserTOSAccepted) {
+      return;
+    }
     const touchDown = e.touches[0].clientX;
     const touchStartXDiff = 15;
 
@@ -72,7 +60,7 @@ const ModalOnboarding = (): ReactElement => {
   };
 
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (!touchStart) {
+    if (!touchStart || !isUserTOSAccepted) {
       return;
     }
 
@@ -110,12 +98,18 @@ const ModalOnboarding = (): ReactElement => {
       }
     };
 
-    window.addEventListener('keydown', listener);
+    if (isUserTOSAccepted) {
+      window.addEventListener('keydown', listener);
+    }
 
     return () => {
       window.removeEventListener('keydown', listener);
     };
-  }, [currentStepIndex, stepsToUse, isOnboardingDone]);
+  }, [currentStepIndex, stepsToUse, isOnboardingDone, isUserTOSAccepted]);
+
+  const isModalOpen =
+    (isConnected && !isUserTOSAccepted) ||
+    (isConnected && !!isUserTOSAccepted && !isOnboardingDone);
 
   return (
     <Modal
@@ -130,7 +124,9 @@ const ModalOnboarding = (): ReactElement => {
           </div>
         )
       }
-      isOpen={isConnected && !isOnboardingDone}
+      isCloseButtonDisabled={!isUserTOSAccepted}
+      isOpen={isModalOpen}
+      isOverflowOnClickDisabled={!isUserTOSAccepted}
       onClosePanel={onOnboardingExit}
       onTouchMove={handleTouchMove}
       onTouchStart={handleTouchStart}
@@ -144,21 +140,20 @@ const ModalOnboarding = (): ReactElement => {
           </div>
         )}
       </Text>
-      {currentStep && (
-        <ProgressStepperSlim
-          className={styles.progressBar}
-          currentStepIndex={currentStepIndex}
-          dataTest="ModalOnboarding__ProgressStepperSlim"
-          numberOfSteps={stepsToUse.length}
-          onStepClick={stepIndex => {
-            if (stepIndex === currentStepIndex) {
-              setCurrentStepIndex(stepIndex + 1);
-              return;
-            }
-            setCurrentStepIndex(stepIndex);
-          }}
-        />
-      )}
+      <ProgressStepperSlim
+        className={styles.progressBar}
+        currentStepIndex={currentStepIndex}
+        dataTest="ModalOnboarding__ProgressStepperSlim"
+        isDisabled={!isUserTOSAccepted}
+        numberOfSteps={stepsToUse.length}
+        onStepClick={stepIndex => {
+          if (stepIndex === currentStepIndex && stepIndex !== stepsToUse.length - 1) {
+            setCurrentStepIndex(stepIndex + 1);
+            return;
+          }
+          setCurrentStepIndex(stepIndex);
+        }}
+      />
     </Modal>
   );
 };

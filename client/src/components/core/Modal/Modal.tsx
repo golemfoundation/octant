@@ -52,8 +52,15 @@ const Modal: FC<ModalProps> = ({
   onTouchMove,
   onTouchStart,
   showCloseButton = true,
+  isCloseButtonDisabled = false,
+  isOverflowOnClickDisabled = false,
 }) => {
   const { isDesktop } = useMediaQuery();
+
+  const onOverflowClick = () => {
+    if (isOverflowOnClickDisabled) {return;}
+    onClosePanel();
+  };
 
   return (
     <AnimatePresence>
@@ -63,11 +70,15 @@ const Modal: FC<ModalProps> = ({
           animate={{
             opacity: 1,
           }}
-          className={cx(styles.overflow, isOpen && styles.isOpen)}
+          className={cx(
+            styles.overflow,
+            isOpen && styles.isOpen,
+            isOverflowOnClickDisabled && styles.isOverflowOnClickDisabled,
+          )}
           data-test={`${dataTest}__overflow`}
           exit={{ opacity: 0 }}
           initial={{ opacity: 0 }}
-          onClick={onClosePanel}
+          onClick={onOverflowClick}
         />
       )}
       {isOpen && (
@@ -108,7 +119,11 @@ const Modal: FC<ModalProps> = ({
           </div>
           {showCloseButton && (
             <Button
-              className={cx(styles.buttonClose, isFullScreen && styles.isFullScreen)}
+              className={cx(
+                styles.buttonClose,
+                isFullScreen && styles.isFullScreen,
+                isCloseButtonDisabled && styles.isCloseButtonDisabled,
+              )}
               dataTest={`${dataTest}__Button`}
               Icon={<Svg img={cross} size={1} />}
               onClick={onClosePanel}
