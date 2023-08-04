@@ -63,6 +63,10 @@ $desktop-width: 47.2rem;
   @include overlay(0, 0);
   width: 100%;
   height: 100%;
+
+  &.isOverflowOnClickDisabled:after {
+    cursor: default;
+  }
 }
 
 .buttonClose {
@@ -73,6 +77,15 @@ $desktop-width: 47.2rem;
 
   &.isFullScreen {
     position: fixed;
+  }
+
+  &.isCloseButtonDisabled {
+    pointer-events: none;
+    opacity: 0.5;
+
+    svg path {
+      stroke: $color-octant-grey2;
+    }
   }
 }
 

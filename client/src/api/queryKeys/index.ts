@@ -6,6 +6,7 @@ export const ROOTS: Root = {
   proposalDonors: 'proposalDonors',
   proposalsIpfsResults: 'proposalsIpfsResults',
   userHistoricAllocations: 'userHistoricAllocations',
+  userTOS: 'userTOS',
 };
 
 export const QUERY_KEYS: QueryKeys = {
@@ -31,5 +32,6 @@ export const QUERY_KEYS: QueryKeys = {
   unlocks: ['unlocks'],
   userAllocations: ['userAllocations'],
   userHistoricAllocations: userAddress => [ROOTS.userHistoricAllocations, userAddress],
+  userTOS: userAddress => [ROOTS.userTOS, userAddress],
   withdrawableUserEth: ['withdrawableUserEth'],
 };

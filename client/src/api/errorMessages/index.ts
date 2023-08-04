@@ -5,7 +5,7 @@ import { ROOTS, QUERY_KEYS } from 'api/queryKeys';
 import i18n from 'i18n';
 import triggerToast from 'utils/triggerToast';
 
-import { QueryMutationError, QueryMutationErrorConfig, IgnoredQueries} from './types';
+import { QueryMutationError, QueryMutationErrorConfig, IgnoredQueries } from './types';
 
 const IGNORED_QUERIES: IgnoredQueries = [ROOTS.cryptoValues, QUERY_KEYS.glmClaimCheck[0]];
 

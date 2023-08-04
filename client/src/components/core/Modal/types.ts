@@ -8,9 +8,11 @@ export default interface ModalProps {
   dataTest?: string;
   header?: string | ReactNode;
   headerClassName?: string;
+  isCloseButtonDisabled?: boolean;
   isFullScreen?: boolean;
   isOpen: boolean;
   isOverflowEnabled?: boolean;
+  isOverflowOnClickDisabled?: boolean;
   onClosePanel: () => void;
   onModalClosed?: () => void;
   onTouchMove?: (e: TouchEvent<HTMLDivElement>) => void;

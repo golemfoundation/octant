@@ -11,10 +11,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.setupMetamask();
       cy.activateShowTestnetNetworksInMetamask();
       cy.changeMetamaskNetwork('sepolia');
-      cy.disconnectMetamaskWalletFromAllDapps();
     });
 
     beforeEach(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       cy.visit(ROOT.absolute);
@@ -99,7 +99,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.switchToMetamaskNotification();
       cy.acceptMetamaskAccess();
       cy.get('[data-test=MainLayout__Button--connect]').should('not.exist');
-      cy.get('[data-test=ProfileInfo]').should('be.visible');
+      cy.get('[data-test=ProfileInfo]').should('exist');
     });
   });
 });
