@@ -24,6 +24,7 @@ import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
 import { chevronLeft } from 'svg/navigation';
 import { ExtendedProposal } from 'types/extended-proposal';
+import decodeBase64ToUtf8 from 'utils/decodeBase64ToUtf8';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './ProposalView.module.scss';
@@ -246,7 +247,7 @@ const ProposalView = (): ReactElement => {
                   <div className={styles.body}>
                     <Description
                       dataTest="ProposalView__proposal__Description"
-                      text={description!}
+                      innerHtml={decodeBase64ToUtf8(description!)}
                       variant="big"
                     />
                   </div>
