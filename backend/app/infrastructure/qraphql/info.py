@@ -1,9 +1,10 @@
 from gql import gql
 
-from app.extensions import graphql_client
+from app.infrastructure.qraphql.client import get_graphql_client
 
 
 def get_indexed_block_num() -> int:
+    graphql_client = get_graphql_client()
     query = gql(
         """
         query {

@@ -69,6 +69,7 @@ class ProdConfig(Config):
     PROPAGATE_EXCEPTIONS = True
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.getenv("DB_URI")
+    SQLALCHEMY_ENGINE_OPTIONS = {"pool_size": 3, "max_overflow": 5}
 
 
 class DevConfig(Config):
