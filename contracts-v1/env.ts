@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires, import/no-extraneous-dependencies
 require('dotenv').config();
 
-const PROPOSALS_CID = process.env.PROPOSALS_CID || 'QmasaDBKPrMTTqmJYC4TUuer7mZzJ1ZCnzCw6Mxfv36z8n';
+const PROPOSALS_CID = process.env.PROPOSALS_CID || 'QmPmjjRPLjYEVWjSL7Er7hXdQA8efExRyEAS22w9o73ZfZ';
 const PROPOSAL_ADDRESSES = process.env.PROPOSAL_ADDRESSES || [
   '0x00De4B13153673BCAE2616b67bf822500d325Fc3',
   '0x1c01595f9534E33d411035AE99a4317faeC4f6Fe',
