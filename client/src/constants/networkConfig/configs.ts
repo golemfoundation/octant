@@ -17,7 +17,7 @@ export const sepoliaNetworkConfig: NetworkConfig = {
   chains: [sepolia],
   etherscanAddress: 'https://sepolia.etherscan.io',
   id: 11155111,
-  isTestnet: false,
+  isTestnet: true,
   name: 'Sepolia',
 };
 
