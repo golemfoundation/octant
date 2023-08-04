@@ -29,7 +29,7 @@ const EarnView = (): ReactElement => {
     setWasWithdrawAlreadyClosed: state.setWasWithdrawAlreadyClosed,
     wasWithdrawAlreadyClosed: state.data.wasWithdrawAlreadyClosed,
   }));
-  const { data: currentEpoch } = useCurrentEpoch();
+  const { data: currentEpoch, refetch: refetchCurrentEpoch } = useCurrentEpoch();
   const { wasConnectWalletAlreadyClosed, setWasConnectWalletAlreadyClosed } = useTipsStore(
     state => ({
       setWasConnectWalletAlreadyClosed: state.setWasConnectWalletAlreadyClosed,
@@ -46,9 +46,8 @@ const EarnView = (): ReactElement => {
     !withdrawableUserEth.isZero() &&
     !wasWithdrawAlreadyClosed;
 
-  const preLaunchEndTimestamp = Date.UTC(2023, 7, 1, 0, 0, 0);
-  // TODO OCT-668: set preLaunchStartTimestamp -> https://linear.app/golemfoundation/issue/OCT-668/set-prelaunchstarttimestamp-before-deploy-on-production
-  const preLaunchStartTimestamp = Date.UTC(2023, 6, 1, 0, 0, 0);
+  const preLaunchEndTimestamp = Date.UTC(2023, 7, 8, 16, 0, 0, 0); // 08.08.2023 18:00 CEST
+  const preLaunchStartTimestamp = Date.UTC(2023, 7, 4, 10, 0, 0, 0); // 04.08.2023 12:00 CEST
   const duration = preLaunchEndTimestamp - preLaunchStartTimestamp;
 
   return (
@@ -81,6 +80,7 @@ const EarnView = (): ReactElement => {
                 className={styles.preLaunchTimer}
                 duration={duration}
                 timestamp={preLaunchEndTimestamp}
+                onCountingFinish={refetchCurrentEpoch}
               />
             </BoxRounded>
           )}
