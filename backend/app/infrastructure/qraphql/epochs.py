@@ -2,10 +2,11 @@ from flask import current_app as app
 from gql import gql
 
 from app import exceptions
-from app.extensions import graphql_client
+from app.infrastructure.qraphql.client import get_graphql_client
 
 
 def get_epoch_by_number(epoch_number):
+    graphql_client = get_graphql_client()
     query = gql(
         """
         query GetEpoch($epochNo: Int!) {

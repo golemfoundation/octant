@@ -1,10 +1,11 @@
 from flask import current_app as app
 from gql import gql
 
-from app.extensions import graphql_client
+from app.infrastructure.qraphql.client import get_graphql_client
 
 
 def get_locks_by_address(user_address: str):
+    graphql_client = get_graphql_client()
     query = gql(
         """
         query GetLocks($userAddress: Bytes!) {
@@ -26,6 +27,7 @@ def get_locks_by_address(user_address: str):
 
 
 def get_locks_by_timestamp_range(from_ts: int, to_ts: int):
+    graphql_client = get_graphql_client()
     query = gql(
         """
         query GetLocks($fromTimestamp: Int!, $toTimestamp: Int!) {
@@ -60,6 +62,7 @@ def get_locks_by_timestamp_range(from_ts: int, to_ts: int):
 def get_locks_by_address_and_timestamp_range(
     user_address: str, from_ts: int, to_ts: int
 ):
+    graphql_client = get_graphql_client()
     query = gql(
         """
         query GetLocks($userAddress: Bytes!, $fromTimestamp: Int!, $toTimestamp: Int!) {
