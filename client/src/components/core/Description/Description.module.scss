@@ -2,6 +2,20 @@
   text-align: left;
   color: $color-octant-grey6;
   margin: 0 0 2rem 0;
+
+  > * {
+    &:not(:last-child) {
+      margin: 0 0 3.2rem 0;
+    }
+  }
+
+  ul {
+    padding: 0 0 0 3.2rem;
+  }
+
+  a {
+    color: $color-octant-green;
+  }
 }
 
 .variant-- {
@@ -12,6 +26,7 @@
   }
 
   &big {
+    color: $color-octant-dark;
     font-size: $font-size-18;
     line-height: 3rem;
 
