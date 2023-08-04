@@ -49,7 +49,7 @@ describe('getValueFiatToDisplay', () => {
       getValueFiatToDisplay({
         ...defaultProps,
       }),
-    ).toEqual('$ 58\u200a242.34');
+    ).toEqual('$58\u200a242.34');
   });
 
   it('should return fiat value in JPY as an integer', () => {

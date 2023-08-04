@@ -26,10 +26,10 @@ export default function getValueFiatToDisplay({
     return coinPricesServerDowntimeText;
   }
 
-  const prefix = FIAT_CURRENCIES_SYMBOLS[displayCurrency] || displayCurrency.toUpperCase();
+  const prefix = FIAT_CURRENCIES_SYMBOLS[displayCurrency] || `${displayCurrency.toUpperCase()} `;
 
   if (!cryptoCurrency || !cryptoValues || !displayCurrency || !valueCrypto) {
-    return `${prefix} 0.0`;
+    return `${prefix}0.0`;
   }
 
   const exchangeRate = cryptoValues[cryptoCurrency][displayCurrency];
@@ -38,5 +38,5 @@ export default function getValueFiatToDisplay({
     displayCurrency === 'jpy' ? 0 : 2,
   );
 
-  return `${prefix} ${getNumberWithSpaces(valueFiat)}`;
+  return `${prefix}${getNumberWithSpaces(valueFiat)}`;
 }
