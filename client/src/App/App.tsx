@@ -120,7 +120,7 @@ const App = (): ReactElement => {
   useEffect(() => {
     if (chainIdLocal && chainIdLocal !== networkConfig.id) {
       triggerToast({
-        message: `Please change network to ${networkConfig.name} testnet`,
+        message: `Please change network to ${networkConfig.name}${networkConfig.isTestnet ? ' testnet' : ''}`,
         title: 'Wrong network',
         type: 'error',
       });
