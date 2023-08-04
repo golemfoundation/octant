@@ -59,4 +59,4 @@ def user_history(user_address: str) -> List[HistoryEntry]:
 
     combined = allocations + locks + unlocks + withdrawals
 
-    return sorted(combined, key=lambda x: x.timestamp)
+    return sorted(combined, key=lambda x: x.timestamp, reverse=True)
