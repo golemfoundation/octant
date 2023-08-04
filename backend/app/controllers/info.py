@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List
+from flask import current_app as app
 
 from dataclass_wizard import JSONWizard
 
@@ -71,6 +72,9 @@ def healthcheck() -> (Healthcheck, int):
     )
 
     if False in (is_chain_rpc_healthy, is_db_healthy, is_subgraph_healthy):
+        app.logger.warning(
+            f"[Healthcheck] failed: chain_rpc: {is_chain_rpc_healthy}, db_health: {is_db_healthy}, subgraph_health: {is_subgraph_healthy}"
+        )
         return healthcheck_status, 500
 
     return healthcheck_status, 200
