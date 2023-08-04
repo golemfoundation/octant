@@ -39,6 +39,10 @@ default:
   synpress:
     name: registry.gitlab.com/wildland/devops/container-builder/octant/synpress-arch:179ba913
     pull_policy: if-not-present
+  alpine_git:
+    name: alpine/git
+    pull_policy: if-not-present
+    entrypoint: [""]
 
 .rules:
   on_mr:
@@ -176,7 +180,7 @@ Lint and typecheck poetry:
     - cd backend
     - !reference [ .scripts, poetry_install ]
     - poetry run black --check --extend-exclude .venv .
-    - poetry run flake8 
+    - poetry run flake8
   cache:
     - key: $CI_COMMIT_REF_SLUG-poetry-backend-lint
       paths:
@@ -371,7 +375,7 @@ Force destroy E2E env:
   image: !reference [.images, git_improved ]
   rules:
     - !reference [.rules, on_mr_manual]
-    - !reference [.rules, on_push_to_default_branch_manual ]
+    - !reference [.rules, on_push_to_default_branch_manual]
   allow_failure: true
   script:
     - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh e2e
@@ -408,10 +412,8 @@ Deploy MR App:
     - !reference [.rules, on_mr_manual]
   environment:
     name: mr/$CI_MERGE_REQUEST_IID
-    url: https://mr-$CI_MERGE_REQUEST_IID-client.octant.wildland.dev
     deployment_tier: development
     on_stop: Destroy MR App
-
 
 Deploy UAT App:
   extends:
@@ -425,18 +427,6 @@ Deploy UAT App:
     url: https://uat-client.octant.wildland.dev
     deployment_tier: testing
     on_stop: Destroy UAT App
-
-Deploy PROD App:
-  extends:
-    - .deploy
-  variables:
-    ENV_TYPE: "prod"
-  rules:
-    - !reference [.rules, on_push_to_default_branch_manual]
-  environment:
-    name: persistent/prod
-    url: https://prod-client.octant.wildland.dev
-    deployment_tier: production
 
 Destroy MR App:
   extends:
@@ -461,6 +451,40 @@ Destroy UAT App:
   environment:
     name: persistent/uat
     deployment_tier: testing
+
+Deploy PROD App:
+  stage: deploy
+  image: !reference [.images, alpine_git]
+  rules:
+    - !reference [.rules, on_push_to_default_branch_manual]
+  resource_group: production
+  variables:
+    ARGO_REPOSITORY: "https://wildland-bot:${HOUSEKEEPER_CI_TOKEN}@gitlab.com/wildland/devops/iac/k8s/wildland-k8s-devops.git"
+    ARGO_REPOSITORY_BRANCH: "gitlab/octant-testing"
+  script: |
+    set -ex
+    apk add gpg-agent yq
+    gpg --import <(echo $HOUSEKEEPER_GPG_KEY | base64 -d)
+    git config --global user.name "Wildland Housekeeper"
+    git config --global user.email "$HOUSEKEEPER_EMAIL"
+    git config --global user.signingkey $HOUSEKEEPER_GPG_KEY_ID
+
+    GIT_DIR=`mktemp -d`
+    git clone -b $ARGO_REPOSITORY_BRANCH $ARGO_REPOSITORY $GIT_DIR
+
+    cd $GIT_DIR
+
+    cat mainnet/octant-image.values.yaml | yq -r ".[0].value.value = \"$IMAGE_TAG\"" | tee mainnet/octant-image.values.yaml
+    cat testnet/octant-image.values.yaml | yq -r ".[0].value.value = \"$IMAGE_TAG\"" | tee testnet/octant-image.values.yaml
+
+    git add mainnet/octant-image.values.yaml
+    git add testnet/octant-image.values.yaml
+    git commit -S -m "Changed octant image tag to $IMAGE_TAG at $(date +%Y-%m-%d)" || true
+
+    git push
+  environment:
+    name: persistent/prod
+    url: https://client.testnet.octant.wildland.dev
 
 pages:
   stage: deploy
