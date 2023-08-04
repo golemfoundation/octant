@@ -34,7 +34,7 @@ describe('getValuesToDisplay', () => {
       }),
     ).toEqual({
       primary: '0.5 ETH',
-      secondary: '$ 2000.00',
+      secondary: '$2000.00',
     });
   });
 
@@ -47,7 +47,7 @@ describe('getValuesToDisplay', () => {
         valueString: undefined,
       }),
     ).toEqual({
-      primary: '$ 2000.00',
+      primary: '$2000.00',
       secondary: '0.5 ETH',
     });
   });
