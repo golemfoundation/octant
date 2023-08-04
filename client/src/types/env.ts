@@ -23,7 +23,7 @@ export type Env = {
   contractVaultAddress: string;
   cryptoValuesEndpoint: string;
   ipfsGateway: string;
-  network: 'Goerli' | 'Local' | 'Mainnet' | 'Sepolia';
+  network: 'Local' | 'Mainnet' | 'Sepolia';
   serverEndpoint: string;
   subgraphAddress: string;
   walletConnectProjectId: string;

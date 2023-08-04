@@ -2,7 +2,7 @@
 
 Ensure that the `.env`  file is present. See `.env.template`.
 
-`VITE_NETWORK` sets network used by the application. Supported values are 'Goerli', 'Local', 'Mainnet', 'Sepolia'. Whenever different value is set, app uses 'Sepolia' network config.
+`VITE_NETWORK` sets network used by the application. Supported values are 'Local', 'Mainnet', 'Sepolia'. Whenever different value is set, app uses 'Sepolia' network config.
 
 `yanr generate-abi-typings` is used to generate typings for proposals ABIs that we have in codebase. In these typings custom adjustments are added, e.g. in some places `string` is wrongly instead of `BigInt`. Linter is also disabled there. Since ABIs do not change, this command doesn't need to rerun.
 

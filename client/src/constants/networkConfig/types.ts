@@ -1,9 +1,10 @@
-import { goerli, sepolia, mainnet } from 'wagmi/chains';
+import { sepolia, mainnet } from 'wagmi/chains';
 
 import { Env } from 'types/env';
 
 export type NetworkConfig = {
-  chains: [typeof goerli] | [typeof sepolia] | [typeof mainnet] | [];
+  alchemyUrl: string;
+  chains: [typeof sepolia] | [typeof mainnet] | [];
   etherscanAddress: string;
   id: number;
   isTestnet: boolean;
