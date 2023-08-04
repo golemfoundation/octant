@@ -1,5 +1,6 @@
 from flask_restx import Resource, Namespace, fields
 
+from app.infrastructure import OctantResource
 from app.controllers import glm_claim
 from app.exceptions import GlmClaimed
 from app.extensions import api
@@ -50,7 +51,7 @@ check_claim_model = api.model(
     400,
     "GLMs have been already claimed",
 )
-class Claim(Resource):
+class Claim(OctantResource):
     @ns.expect(claim_glm_request)
     def post(self):
         if not config.GLM_CLAIM_ENABLED:
@@ -76,7 +77,7 @@ class Claim(Resource):
     400,
     "GLMs have been already claimed",
 )
-class CheckClaim(Resource):
+class CheckClaim(OctantResource):
     @ns.marshal_with(check_claim_model)
     def get(self, user_address: str):
         if not config.GLM_CLAIM_ENABLED:

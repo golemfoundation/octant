@@ -1,15 +1,15 @@
 from flask import current_app as app
 from gql import gql
 
-from app.infrastructure.qraphql.client import get_graphql_client
+from app.infrastructure.graphql.client import get_graphql_client
 
 
-def get_locks_by_address(user_address: str):
+def get_unlocks_by_address(user_address):
     graphql_client = get_graphql_client()
     query = gql(
         """
         query GetLocks($userAddress: Bytes!) {
-            lockeds(orderBy: timestamp, where: { user: $userAddress }) {
+            unlockeds(orderBy: timestamp, where: { user: $userAddress }) {
                 __typename
                 amount
                 timestamp
@@ -19,19 +19,20 @@ def get_locks_by_address(user_address: str):
     )
 
     variables = {"userAddress": user_address}
-    app.logger.debug(f"[Subgraph] Getting user {user_address} locks")
-    result = graphql_client.execute(query, variable_values=variables)["lockeds"]
-    app.logger.debug(f"[Subgraph] Received locks: {result}")
+
+    app.logger.debug(f"[Subgraph] Getting user {user_address} unlocks")
+    result = graphql_client.execute(query, variable_values=variables)["unlockeds"]
+    app.logger.debug(f"[Subgraph] Received unlocks: {result}")
 
     return result
 
 
-def get_locks_by_timestamp_range(from_ts: int, to_ts: int):
+def get_unlocks_by_timestamp_range(from_ts, to_ts):
     graphql_client = get_graphql_client()
     query = gql(
         """
-        query GetLocks($fromTimestamp: Int!, $toTimestamp: Int!) {
-         lockeds(
+        query GetUnlocks($fromTimestamp: Int!, $toTimestamp: Int!) {
+         unlockeds(
     orderBy: timestamp,
     where: {
       timestamp_gte: $fromTimestamp,
@@ -52,21 +53,24 @@ def get_locks_by_timestamp_range(from_ts: int, to_ts: int):
         "fromTimestamp": from_ts,
         "toTimestamp": to_ts,
     }
-    app.logger.debug(f"[Subgraph] Getting locks in timestamp range {from_ts} - {to_ts}")
-    result = graphql_client.execute(query, variable_values=variables)["lockeds"]
-    app.logger.debug(f"[Subgraph] Received locks: {result}")
+
+    app.logger.debug(
+        f"[Subgraph] Getting unlocks in timestamp range {from_ts} - {to_ts}"
+    )
+    result = graphql_client.execute(query, variable_values=variables)["unlockeds"]
+    app.logger.debug(f"[Subgraph] Received unlocks: {result}")
 
     return result
 
 
-def get_locks_by_address_and_timestamp_range(
+def get_unlocks_by_address_and_timestamp_range(
     user_address: str, from_ts: int, to_ts: int
 ):
     graphql_client = get_graphql_client()
     query = gql(
         """
-        query GetLocks($userAddress: Bytes!, $fromTimestamp: Int!, $toTimestamp: Int!) {
-         lockeds(
+        query GetUnlocks($userAddress: Bytes!, $fromTimestamp: Int!, $toTimestamp: Int!) {
+         unlockeds(
     orderBy: timestamp,
     where: {
       timestamp_gte: $fromTimestamp,
@@ -91,9 +95,9 @@ def get_locks_by_address_and_timestamp_range(
     }
 
     app.logger.debug(
-        f"[Subgraph] Getting user {user_address} locks in timestamp range {from_ts} - {to_ts}"
+        f"[Subgraph] Getting user {user_address} unlocks in timestamp range {from_ts} - {to_ts}"
     )
-    result = graphql_client.execute(query, variable_values=variables)["lockeds"]
-    app.logger.debug(f"[Subgraph] Received locks: {result}")
+    result = graphql_client.execute(query, variable_values=variables)["unlockeds"]
+    app.logger.debug(f"[Subgraph] Received unlocks: {result}")
 
     return result

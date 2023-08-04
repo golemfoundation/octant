@@ -1,6 +1,7 @@
 from flask import current_app as app
 from flask_restx import Resource, Namespace, fields
 
+from app.infrastructure import OctantResource
 from app.controllers import history
 from app.extensions import api
 
@@ -40,7 +41,7 @@ user_history_model = api.model(
         "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)"
     }
 )
-class History(Resource):
+class History(OctantResource):
     @ns.marshal_with(user_history_model)
     @ns.response(200, "User history successfully retrieved")
     def get(self, user_address):

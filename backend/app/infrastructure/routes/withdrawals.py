@@ -3,6 +3,7 @@ import dataclasses
 from flask import current_app as app
 from flask_restx import Resource, Namespace, fields
 
+from app.infrastructure import OctantResource
 from app.controllers import withdrawals
 from app.extensions import api
 from app.settings import config
@@ -42,7 +43,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
         "",
     )
     @ns.route("/<string:address>")
-    class Withdrawals(Resource):
+    class Withdrawals(OctantResource):
         @ns.marshal_with(withdrawable_rewards_model)
         def get(self, address):
             app.logger.debug(f"Getting withdrawable eth for address: {address}")

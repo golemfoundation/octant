@@ -3,6 +3,7 @@ import dataclasses
 from flask import current_app as app
 from flask_restx import Resource, Namespace, fields
 
+from app.infrastructure import OctantResource
 from app.controllers import rewards
 from app.core import user
 from app.extensions import api
@@ -110,7 +111,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
             "epoch": "Epoch number",
         },
     )
-    class UserBudget(Resource):
+    class UserBudget(OctantResource):
         @ns.marshal_with(user_budget_model)
         @ns.response(200, "Budget successfully retrieved")
         def get(self, user_address, epoch):
@@ -128,7 +129,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
         },
     )
     @ns.response(200, "Returns allocation threshold value as uint256")
-    class Threshold(Resource):
+    class Threshold(OctantResource):
         @ns.marshal_with(threshold_model)
         @ns.response(200, "Threshold successfully retrieved")
         def get(self, epoch):
@@ -154,7 +155,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
         "for the given epoch started already?",
     )
     @ns.route("/proposals/epoch/<int:epoch>")
-    class Proposals(Resource):
+    class Proposals(OctantResource):
         @ns.marshal_with(proposal_model)
         def get(self, epoch):
             app.logger.debug(f"Getting proposal rewards for epoch {epoch}")
@@ -174,7 +175,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
     )
     @ns.response(200, "")
     @ns.route("/budget/epoch/<int:epoch>")
-    class Budget(Resource):
+    class Budget(OctantResource):
         @ns.marshal_with(budget_model)
         def get(self, epoch):
             app.logger.debug(
@@ -199,7 +200,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
     )
     @ns.response(400, "Invalid epoch number given")
     @ns.route("/merkle_tree/<int:epoch>")
-    class RewardsMerkleTree(Resource):
+    class RewardsMerkleTree(OctantResource):
         @ns.marshal_with(epoch_rewards_merkle_tree_model)
         def get(self, epoch: int):
             app.logger.debug(f"Getting merkle tree leaves for epoch {epoch}")

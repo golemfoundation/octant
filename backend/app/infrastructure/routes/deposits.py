@@ -5,6 +5,7 @@ from flask_restx import Resource, Namespace, fields
 import app.controllers.deposits as deposits_controller
 from app.database import pending_epoch_snapshot
 from app.extensions import api
+from app.infrastructure import OctantResource
 from app.settings import config
 
 ns = Namespace("deposits", description="Octant deposits")
@@ -44,7 +45,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
         description="Returns value of total effective deposits made by the end of an epoch. Latest data and data for any given point in time from the past is available in the Subgraph.",
         params={"epoch": "Epoch number"},
     )
-    class TotalEffectiveDeposit(Resource):
+    class TotalEffectiveDeposit(OctantResource):
         @ns.marshal_with(total_effective_model)
         @ns.response(200, "Epoch total effective deposit successfully retrieved")
         def get(self, epoch):
@@ -63,7 +64,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
         description="Returns locked ratio of total effective deposits made by the end of an epoch. Latest data and data for any given point in time from the past is available in the Subgraph.",
         params={"epoch": "Epoch number"},
     )
-    class LockedRatio(Resource):
+    class LockedRatio(OctantResource):
         @ns.marshal_with(locked_ratio_model)
         @ns.response(200, "Epoch locked ratio successfully retrieved")
         def get(self, epoch):
@@ -82,7 +83,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
         "address": "User ethereum address in hexadecimal form (case-insensitive, prefixed with 0x)",
     },
 )
-class UserEffectiveDeposit(Resource):
+class UserEffectiveDeposit(OctantResource):
     @ns.marshal_with(user_effective_deposit_model)
     @ns.response(200, "User effective deposit successfully retrieved")
     def get(self, address: str, epoch: int):

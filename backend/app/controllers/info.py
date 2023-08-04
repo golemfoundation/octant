@@ -6,7 +6,6 @@ from dataclass_wizard import JSONWizard
 
 from app import database
 from app.extensions import w3
-from app.infrastructure import qraphql
 from app.settings import config
 
 
@@ -62,7 +61,7 @@ def healthcheck() -> (Healthcheck, int):
 
     # this causes problems, removing as a quick fix
     # try:
-    #     is_subgraph_healthy = qraphql.info.get_indexed_block_num() > 0
+    #     is_subgraph_healthy = graphql.info.get_indexed_block_num() > 0
     # except Exception:
     #     is_subgraph_healthy = False
     is_subgraph_healthy = True

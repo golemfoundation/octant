@@ -1,6 +1,7 @@
 from flask import current_app as app
 from flask_restx import fields, Namespace, Resource
 
+from app.infrastructure import OctantResource
 from app.controllers import epochs
 from app.extensions import api
 
@@ -19,7 +20,7 @@ current_epoch_model = api.model(
 
 @ns.route("/current")
 @ns.doc(description="Returns current epoch number")
-class CurrentEpoch(Resource):
+class CurrentEpoch(OctantResource):
     @ns.marshal_with(current_epoch_model)
     @ns.response(200, "Current epoch successfully retrieved")
     def get(self):

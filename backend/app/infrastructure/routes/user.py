@@ -4,6 +4,7 @@ from flask_restx import reqparse
 
 import app.controllers.user as user_controller
 from app.extensions import api
+from app.infrastructure import OctantResource
 
 ns = Namespace("user", description="Octant user settings")
 api.add_namespace(ns)
@@ -34,7 +35,7 @@ tos_consent_post_parser.add_argument(
         "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)"
     }
 )
-class TermsOfService(Resource):
+class TermsOfService(OctantResource):
     @ns.doc(
         description="Returns true if given user has already accepted Terms of Service, false in the other case.",
     )

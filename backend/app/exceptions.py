@@ -1,8 +1,4 @@
-import logging
-
 from flask import jsonify
-
-UNEXPECTED_EXCEPTION = "An unexpected error has occurred"
 
 
 class OctantException(Exception):
@@ -130,19 +126,3 @@ class DuplicateConsent(OctantException):
 
     def __init__(self, address: str):
         super().__init__(self.description.format(address), self.code)
-
-
-def handle_octant_exception(e: OctantException):
-    logger = logging.getLogger("gunicorn.error")
-    logger.error("Octant exception occurred:", exc_info=True)
-    response = e.to_json()
-    response.status_code = e.status_code
-    return response
-
-
-def handle_unexpected_exception(_):
-    logger = logging.getLogger("gunicorn.error")
-    logger.error("Unexpected exception occurred:", exc_info=True)
-    response = jsonify({"message": UNEXPECTED_EXCEPTION})
-    response.status_code = 500
-    return response

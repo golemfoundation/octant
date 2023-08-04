@@ -1,6 +1,6 @@
 from gql import gql
 
-from app.infrastructure.qraphql.client import get_graphql_client
+from app.infrastructure.graphql.client import get_graphql_client
 
 
 def get_indexed_block_num() -> int:

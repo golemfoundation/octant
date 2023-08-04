@@ -3,6 +3,7 @@ import dataclasses
 from flask import current_app as app
 from flask_restx import Resource, Namespace, fields
 
+from app.infrastructure import OctantResource
 from app.controllers import allocations
 from app.extensions import api
 from app.settings import config
@@ -57,7 +58,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
             "epoch": "Epoch number",
         },
     )
-    class UserAllocations(Resource):
+    class UserAllocations(OctantResource):
         @ns.marshal_with(user_allocations_model)
         @ns.response(200, "User allocations successfully retrieved")
         def get(self, user_address: str, epoch: int):
@@ -74,7 +75,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
     @ns.doc(
         description="Returns user's allocations sum",
     )
-    class UserAllocationsSum(Resource):
+    class UserAllocationsSum(OctantResource):
         @ns.marshal_with(user_allocations_sum_model)
         @ns.response(200, "User allocations sum successfully retrieved")
         def get(self):
@@ -92,7 +93,7 @@ if config.EPOCH_2_FEATURES_ENABLED:
             "epoch": "Epoch number",
         },
     )
-    class ProposalDonors(Resource):
+    class ProposalDonors(OctantResource):
         @ns.marshal_with(proposal_donors_model)
         @ns.response(200, "Returns list of proposal donors")
         def get(self, proposal_address: str, epoch: int):
