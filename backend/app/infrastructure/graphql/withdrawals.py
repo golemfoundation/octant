@@ -1,11 +1,8 @@
-from flask import current_app as app
+from flask import current_app as app, g as request_context
 from gql import gql
-
-from app.infrastructure.graphql.client import get_graphql_client
 
 
 def get_withdrawals_by_address_and_ts(user_address: str, gt_timestamp: int):
-    graphql_client = get_graphql_client()
     query = gql(
         """
         query GetWithdrawals($user_address: Bytes!, $timestamp_gt: Int!) {
@@ -27,7 +24,9 @@ def get_withdrawals_by_address_and_ts(user_address: str, gt_timestamp: int):
     app.logger.info(
         f"[Subgraph] Getting user {user_address} withdrawals after ts {gt_timestamp}"
     )
-    result = graphql_client.execute(query, variable_values=variables)["withdrawals"]
+    result = request_context.graphql_client.execute(query, variable_values=variables)[
+        "withdrawals"
+    ]
     app.logger.info(f"[Subgraph] Received withdrawals: {result}")
 
     return result

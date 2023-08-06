@@ -1,14 +1,13 @@
-import sys
-import traceback
 import logging
-from flask import jsonify
+
 from flask import g as request_context
+from flask import jsonify
 
 from app.exceptions import OctantException
 
 UNEXPECTED_EXCEPTION = "An unexpected error has occurred"
 
-logger = logging.getLogger("gunicorn.error")
+LOGGER = logging.getLogger("gunicorn.error")
 
 
 class ExceptionHandler:
@@ -53,7 +52,7 @@ class ExceptionHandler:
     def print_stacktrace(cls, exception, opts=None):
         opts = ExceptionHandlerOpts() if opts is None else opts
         if opts.should_print_stacktrace(exception):
-            logger.error("An exception occurred:", exc_info=True)
+            LOGGER.error("An exception occurred:", exc_info=True)
 
 
 class ExceptionHandlerOpts:

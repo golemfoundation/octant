@@ -1,11 +1,8 @@
-from flask import current_app as app
+from flask import current_app as app, g as request_context
 from gql import gql
-
-from app.infrastructure.graphql.client import get_graphql_client
 
 
 def get_unlocks_by_address(user_address):
-    graphql_client = get_graphql_client()
     query = gql(
         """
         query GetLocks($userAddress: Bytes!) {
@@ -21,14 +18,15 @@ def get_unlocks_by_address(user_address):
     variables = {"userAddress": user_address}
 
     app.logger.debug(f"[Subgraph] Getting user {user_address} unlocks")
-    result = graphql_client.execute(query, variable_values=variables)["unlockeds"]
+    result = request_context.graphql_client.execute(query, variable_values=variables)[
+        "unlockeds"
+    ]
     app.logger.debug(f"[Subgraph] Received unlocks: {result}")
 
     return result
 
 
 def get_unlocks_by_timestamp_range(from_ts, to_ts):
-    graphql_client = get_graphql_client()
     query = gql(
         """
         query GetUnlocks($fromTimestamp: Int!, $toTimestamp: Int!) {
@@ -57,7 +55,9 @@ def get_unlocks_by_timestamp_range(from_ts, to_ts):
     app.logger.debug(
         f"[Subgraph] Getting unlocks in timestamp range {from_ts} - {to_ts}"
     )
-    result = graphql_client.execute(query, variable_values=variables)["unlockeds"]
+    result = request_context.graphql_client.execute(query, variable_values=variables)[
+        "unlockeds"
+    ]
     app.logger.debug(f"[Subgraph] Received unlocks: {result}")
 
     return result
@@ -66,7 +66,6 @@ def get_unlocks_by_timestamp_range(from_ts, to_ts):
 def get_unlocks_by_address_and_timestamp_range(
     user_address: str, from_ts: int, to_ts: int
 ):
-    graphql_client = get_graphql_client()
     query = gql(
         """
         query GetUnlocks($userAddress: Bytes!, $fromTimestamp: Int!, $toTimestamp: Int!) {
@@ -97,7 +96,9 @@ def get_unlocks_by_address_and_timestamp_range(
     app.logger.debug(
         f"[Subgraph] Getting user {user_address} unlocks in timestamp range {from_ts} - {to_ts}"
     )
-    result = graphql_client.execute(query, variable_values=variables)["unlockeds"]
+    result = request_context.graphql_client.execute(query, variable_values=variables)[
+        "unlockeds"
+    ]
     app.logger.debug(f"[Subgraph] Received unlocks: {result}")
 
     return result

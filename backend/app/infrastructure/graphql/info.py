@@ -1,10 +1,8 @@
+from flask import g as request_context
 from gql import gql
-
-from app.infrastructure.graphql.client import get_graphql_client
 
 
 def get_indexed_block_num() -> int:
-    graphql_client = get_graphql_client()
     query = gql(
         """
         query {
@@ -16,7 +14,7 @@ def get_indexed_block_num() -> int:
         }
     """
     )
-    data = graphql_client.execute(query)
+    data = request_context.graphql_client.execute(query)
     if data:
         return data["_meta"]["block"]["number"]
     else:

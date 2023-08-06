@@ -1,10 +1,12 @@
 from decimal import Decimal
 from random import randint
-from typing import Optional, List, Dict
+from typing import Optional, List
 from unittest.mock import MagicMock, Mock
 
 import pytest
 from eth_account import Account
+from flask import g as request_context
+from gql import Client
 from web3 import Web3
 
 from app import create_app, database
@@ -15,7 +17,7 @@ from app.contracts.vault import Vault
 from app.core.allocations import AllocationRequest, allocate, Allocation
 from app.core.rewards import calculate_matched_rewards
 from app.crypto.eip712 import sign, build_allocations_eip712_data
-from app.extensions import db, w3, graphql_client
+from app.extensions import db, w3
 from app.settings import TestConfig
 
 # Consts
@@ -65,6 +67,11 @@ def app():
     db.session.close()
     db.drop_all()
     ctx.pop()
+
+
+@pytest.fixture(scope="function")
+def graphql_client(app):
+    request_context.graphql_client = Client()
 
 
 @pytest.fixture(scope="function")
@@ -235,48 +242,54 @@ def create_deposit_event(
     }
 
 
+def create_epoch_event(start=1000, end=2000, **kwargs):
+    return {
+        "fromTs": start,
+        "toTs": end,
+        **kwargs,
+    }
+
+
 def mock_graphql(
     mocker,
-    events: List[Dict],
-    with_epochs=True,
-    epoch_start=1000,
-    epoch_end=2000,
+    deposit_events=None,
+    epochs_events=None,
+    withdrawals_events=None,
 ):
-    timestamp = 1
-    locks = []
-    unlocks = []
-    for event in events:
-        if event["__typename"] == "Locked":
-            locks.append(
-                {
-                    "depositBefore": "0",
-                    "timestamp": timestamp,
-                    "user": USER1_ADDRESS,
-                    **event,
-                }
-            )
-        else:
-            unlocks.append(
-                {
-                    "depositBefore": "0",
-                    "timestamp": timestamp,
-                    "user": USER1_ADDRESS,
-                    **event,
-                }
-            )
-        timestamp += 1
-
     # Mock the execute method of the GraphQL client
-    mocker.patch.object(graphql_client, "execute")
+    mocker.patch.object(request_context.graphql_client, "execute")
 
     # Define the mock responses for the execute method
     gql_execution = []
-    if with_epochs:
-        gql_execution.append({"epoches": [{"fromTs": epoch_start, "toTs": epoch_end}]})
+    if epochs_events is not None:
+        gql_execution.append({"epoches": epochs_events})
+    if deposit_events is not None:
+        timestamp = 1001
+        locks_events = []
+        unlocks_events = []
+        for event in deposit_events:
+            if event["__typename"] == "Locked":
+                locks_events.append(
+                    {
+                        "depositBefore": "0",
+                        "timestamp": timestamp,
+                        "user": USER1_ADDRESS,
+                        **event,
+                    }
+                )
+            else:
+                unlocks_events.append(
+                    {
+                        "depositBefore": "0",
+                        "timestamp": timestamp,
+                        "user": USER1_ADDRESS,
+                        **event,
+                    }
+                )
+            timestamp += 1
+        gql_execution.append({"lockeds": locks_events})
+        gql_execution.append({"unlockeds": unlocks_events})
+    if withdrawals_events is not None:
+        gql_execution.append({"withdrawals": withdrawals_events})
 
-    gql_execution += [
-        {"lockeds": locks},
-        {"unlockeds": unlocks},
-    ]
-
-    graphql_client.execute.side_effect = gql_execution
+    request_context.graphql_client.execute.side_effect = gql_execution
