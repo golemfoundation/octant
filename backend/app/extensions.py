@@ -6,8 +6,7 @@ from flask_migrate import Migrate
 from flask_restx import Api
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
-from gql import Client
-from gql.transport.aiohttp import AIOHTTPTransport, log as gql_logger
+from gql.transport.aiohttp import log as gql_logger
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
@@ -25,16 +24,7 @@ cors = CORS()
 scheduler = APScheduler()
 
 # Other extensions
-graphql_client = Client()
 w3 = Web3()
-
-
-def init_graphql_client(app):
-    transport = AIOHTTPTransport(
-        url=app.config["SUBGRAPH_ENDPOINT"],
-    )
-    graphql_client.transport = transport
-    graphql_client.fetch_schema_from_transport = True
 
 
 def init_logger(app):

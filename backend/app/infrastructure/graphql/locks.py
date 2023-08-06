@@ -1,11 +1,8 @@
-from flask import current_app as app
+from flask import current_app as app, g as request_context
 from gql import gql
-
-from app.infrastructure.graphql.client import get_graphql_client
 
 
 def get_locks_by_address(user_address: str):
-    graphql_client = get_graphql_client()
     query = gql(
         """
         query GetLocks($userAddress: Bytes!) {
@@ -17,17 +14,17 @@ def get_locks_by_address(user_address: str):
         }
     """
     )
-
     variables = {"userAddress": user_address}
     app.logger.debug(f"[Subgraph] Getting user {user_address} locks")
-    result = graphql_client.execute(query, variable_values=variables)["lockeds"]
+    result = request_context.graphql_client.execute(query, variable_values=variables)[
+        "lockeds"
+    ]
     app.logger.debug(f"[Subgraph] Received locks: {result}")
 
     return result
 
 
 def get_locks_by_timestamp_range(from_ts: int, to_ts: int):
-    graphql_client = get_graphql_client()
     query = gql(
         """
         query GetLocks($fromTimestamp: Int!, $toTimestamp: Int!) {
@@ -53,7 +50,9 @@ def get_locks_by_timestamp_range(from_ts: int, to_ts: int):
         "toTimestamp": to_ts,
     }
     app.logger.debug(f"[Subgraph] Getting locks in timestamp range {from_ts} - {to_ts}")
-    result = graphql_client.execute(query, variable_values=variables)["lockeds"]
+    result = request_context.graphql_client.execute(query, variable_values=variables)[
+        "lockeds"
+    ]
     app.logger.debug(f"[Subgraph] Received locks: {result}")
 
     return result
@@ -62,7 +61,6 @@ def get_locks_by_timestamp_range(from_ts: int, to_ts: int):
 def get_locks_by_address_and_timestamp_range(
     user_address: str, from_ts: int, to_ts: int
 ):
-    graphql_client = get_graphql_client()
     query = gql(
         """
         query GetLocks($userAddress: Bytes!, $fromTimestamp: Int!, $toTimestamp: Int!) {
@@ -93,7 +91,9 @@ def get_locks_by_address_and_timestamp_range(
     app.logger.debug(
         f"[Subgraph] Getting user {user_address} locks in timestamp range {from_ts} - {to_ts}"
     )
-    result = graphql_client.execute(query, variable_values=variables)["lockeds"]
+    result = request_context.graphql_client.execute(query, variable_values=variables)[
+        "lockeds"
+    ]
     app.logger.debug(f"[Subgraph] Received locks: {result}")
 
     return result
