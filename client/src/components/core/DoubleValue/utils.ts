@@ -25,7 +25,7 @@ export function getValuesToDisplay({
   valueCrypto: DoubleValueProps['valueCrypto'];
   valueString?: DoubleValueProps['valueString'];
 }): {
-  primary?: string;
+  primary: string;
   secondary?: string;
 } {
   if (valueString) {
@@ -34,11 +34,12 @@ export function getValuesToDisplay({
     };
   }
 
-  const valueCryptoToDisplay = getValueCryptoToDisplay({
-    cryptoCurrency,
-    valueCrypto,
-    valueString,
-  });
+  const valueCryptoToDisplay =
+    valueString ||
+    getValueCryptoToDisplay({
+      cryptoCurrency,
+      valueCrypto,
+    });
   const valueFiatToDisplay = getValueFiatToDisplay({
     coinPricesServerDowntimeText,
     cryptoCurrency,

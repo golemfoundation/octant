@@ -14,12 +14,14 @@ const RewardsBox: FC<RewardsBoxProps> = ({ buttonProps, className, isGrey, isDis
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.rewardsBox',
   });
-  const { data: withdrawableUserEth } = useWithdrawableUserEth();
+  const { data: withdrawableUserEth, isFetching: isFetchingWithdrawableUserEth } =
+    useWithdrawableUserEth();
 
   const sections: SectionProps[] = [
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
+        isFetching: isFetchingWithdrawableUserEth,
         valueCrypto: withdrawableUserEth,
       },
       label: i18n.t('common.availableNow'),

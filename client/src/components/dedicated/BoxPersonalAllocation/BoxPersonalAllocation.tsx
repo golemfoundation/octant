@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers';
 import React, { FC, Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
@@ -20,8 +21,9 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
   });
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: withdrawableUserEth } = useWithdrawableUserEth();
-  const { data: individualReward } = useIndividualReward();
+  const { data: withdrawableUserEth, isFetching: isFetchingWithdrawableUserEth } =
+    useWithdrawableUserEth();
+  const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
     setRewardsForProposals: state.setRewardsForProposals,
@@ -37,14 +39,16 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
-        valueCrypto: withdrawableUserEth,
+        isFetching: isFetchingWithdrawableUserEth,
+        valueCrypto: currentEpoch === 1 ? BigNumber.from(0) : withdrawableUserEth,
       },
       label: i18n.t('common.availableNow'),
     },
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
-        valueCrypto: pendingCrypto,
+        isFetching: isFetchingIndividualReward,
+        valueCrypto: currentEpoch === 1 ? BigNumber.from(0) : pendingCrypto,
       },
       label: t('pending'),
     },

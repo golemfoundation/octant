@@ -21,7 +21,7 @@ export default function getValueFiatToDisplay({
   displayCurrency: NonNullable<SettingsData['displayCurrency']>;
   error?: any;
   valueCrypto: DoubleValueProps['valueCrypto'];
-}): undefined | string {
+}): string {
   if (error) {
     return coinPricesServerDowntimeText;
   }

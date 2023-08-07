@@ -27,7 +27,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
     keyPrefix: 'components.dedicated.allocationSummary',
   });
   const { isDesktop } = useMediaQuery();
-  const { data: individualReward } = useIndividualReward();
+  const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const [areDonationsVisible, setAreDonationsVisible] = useState(isDesktop);
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
@@ -42,6 +42,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
     sections.push({
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
+        isFetching: isFetchingIndividualReward,
         valueCrypto: individualReward?.sub(rewardsForProposals),
       },
       label: i18n.t('common.personal'),

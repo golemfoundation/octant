@@ -1,6 +1,7 @@
 import cx from 'classnames';
-import React, { FC } from 'react';
+import React, { FC, Fragment } from 'react';
 
+import DoubleValueSkeleton from 'components/core/DoubleValueSkeleton/DoubleValueSkeleton';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useSettingsStore from 'store/settings/store';
 
@@ -10,15 +11,16 @@ import { getValuesToDisplay } from './utils';
 
 const DoubleValue: FC<DoubleValueProps> = ({
   className,
-  cryptoCurrency,
   coinPricesServerDowntimeText = 'Conversion offline',
+  cryptoCurrency,
   dataTest = 'DoubleValue',
-  textAlignment = 'left',
+  isDisabled,
   isError,
+  textAlignment = 'left',
   valueCrypto,
   valueString,
   variant = 'standard',
-  isDisabled,
+  isFetching = false,
 }) => {
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
@@ -52,19 +54,25 @@ const DoubleValue: FC<DoubleValueProps> = ({
       )}
       data-test={dataTest}
     >
-      <div
-        className={cx(styles.primary, styles[`variant--${variant}`])}
-        data-test={`${dataTest}__primary`}
-      >
-        {values.primary}
-      </div>
-      {values.secondary && (
-        <div
-          className={cx(styles.secondary, isError && styles.isError)}
-          data-test={`${dataTest}__secondary`}
-        >
-          {values.secondary}
-        </div>
+      {isFetching ? (
+        <DoubleValueSkeleton />
+      ) : (
+        <Fragment>
+          <div
+            className={cx(styles.primary, styles[`variant--${variant}`])}
+            data-test={`${dataTest}__primary`}
+          >
+            {values.primary}
+          </div>
+          {values.secondary && (
+            <div
+              className={cx(styles.secondary, isError && styles.isError)}
+              data-test={`${dataTest}__secondary`}
+            >
+              {values.secondary}
+            </div>
+          )}
+        </Fragment>
       )}
     </div>
   );
