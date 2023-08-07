@@ -33,6 +33,7 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
       titleSuffix,
       dataTest = 'BoxRounded',
       textAlign = 'center',
+      childrenWrapperClassName,
     },
     ref,
   ) => {
@@ -137,6 +138,7 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
             styles[`justifyContent--${justifyContent}`],
             styles[`alignment--${alignment}`],
             styles[`textAlign--${textAlign}`],
+            childrenWrapperClassName,
           )}
         >
           {children}

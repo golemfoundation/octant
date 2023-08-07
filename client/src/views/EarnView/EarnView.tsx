@@ -79,8 +79,8 @@ const EarnView = (): ReactElement => {
               <TimeCounter
                 className={styles.preLaunchTimer}
                 duration={duration}
-                timestamp={preLaunchEndTimestamp}
                 onCountingFinish={refetchCurrentEpoch}
+                timestamp={preLaunchEndTimestamp}
               />
             </BoxRounded>
           )}

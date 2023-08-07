@@ -30,6 +30,7 @@ const History: FC<HistoryProps> = ({ className }) => {
 
   return (
     <BoxRounded
+      childrenWrapperClassName={styles.childrenWrapper}
       className={cx(styles.root, className)}
       dataTest="History"
       hasPadding={false}
