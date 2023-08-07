@@ -95,3 +95,9 @@ export const pencil: SvgImageConfig = {
     '<path fill="#CDD1CD" d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/><path fill="#fff" fill-rule="evenodd" d="m8.022 15.977 2.475-.354 3.063-3.063-2.121-2.121-3.063 3.063-.354 2.475ZM12.5 9.378l2.122 2.122.917-.917a1.5 1.5 0 1 0-2.122-2.122l-.917.917Z" clip-rule="evenodd"/>',
   viewBox: '0 0 24 24',
 };
+
+export const share: SvgImageConfig = {
+  markup:
+    '<path stroke="#9EA39E" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 13.5h1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1h1M16 9v10M13.5 11 16 8.5l2.5 2.5"/>',
+  viewBox: '0 0 32 32',
+};

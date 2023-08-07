@@ -8,6 +8,8 @@ import Button from 'components/core/Button/Button';
 import Description from 'components/core/Description/Description';
 import Img from 'components/core/Img/Img';
 import Loader from 'components/core/Loader/Loader';
+import Svg from 'components/core/Svg/Svg';
+import Tooltip from 'components/core/Tooltip/Tooltip';
 import ButtonAddToAllocate from 'components/dedicated/ButtonAddToAllocate/ButtonAddToAllocate';
 import DonorsList from 'components/dedicated/DonorsList/DonorsList';
 import ProposalRewards from 'components/dedicated/ProposalRewards/ProposalRewards';
@@ -19,9 +21,11 @@ import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import useProposalsWithRewards from 'hooks/queries/useProposalsWithRewards';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
+import i18n from 'i18n';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
+import { share } from 'svg/misc';
 import { chevronLeft } from 'svg/navigation';
 import { ExtendedProposal } from 'types/extended-proposal';
 import decodeBase64ToUtf8 from 'utils/decodeBase64ToUtf8';
@@ -35,6 +39,7 @@ const ProposalView = (): ReactElement => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadedAddresses, setLoadedAddresses] = useState<string[]>([]);
   const [loadedProposals, setLoadedProposals] = useState<ExtendedProposal[]>([]);
+  const [isLinkCopied, setIsLinkCopied] = useState(false);
   const { proposalAddress: proposalAddressUrl } = useParams();
   const { allocations, setAllocations } = useAllocationsStore(state => ({
     allocations: state.data.allocations,
@@ -166,6 +171,30 @@ const ProposalView = (): ReactElement => {
     );
   }
 
+  const onShareClick = ({ name, address }) => {
+    const { origin, pathname } = window.location;
+    const url = `${origin}${pathname}#${ROOT_ROUTES.proposal.absolute}/${currentEpoch}/${address}`;
+
+    if (window.navigator.share as any) {
+      window.navigator.share({
+        title: i18n.t('meta.fundrasingOnOctant', {
+          projectName: name,
+        }),
+        url,
+      });
+
+      return;
+    }
+
+    window.navigator.clipboard.writeText(url).then(() => {
+      setIsLinkCopied(true);
+
+      setTimeout(() => {
+        setIsLinkCopied(false);
+      }, 1000);
+    });
+  };
+
   return (
     <MainLayout dataTest="ProposalView" navigationTabs={navigationTabs}>
       <InfiniteScroll
@@ -205,14 +234,33 @@ const ProposalView = (): ReactElement => {
                         dataTest="ProposalView__proposal__Img"
                         src={`${ipfsGateway}${profileImageSmall}`}
                       />
-                      <ButtonAddToAllocate
-                        className={cx(
-                          styles.buttonAddToAllocatePrimary,
-                          isEpoch1 && styles.isEpoch1,
-                        )}
-                        dataTest="ProposalView__proposal__ButtonAddToAllocate--primary"
-                        {...buttonAddToAllocateProps}
-                      />
+                      <div className={styles.actionsWrapper}>
+                        <Tooltip
+                          showForce={isLinkCopied}
+                          text={isLinkCopied ? i18n.t('common.copied') : i18n.t('common.copy')}
+                          wrapperClassname={styles.shareWrapper}
+                        >
+                          <Svg
+                            classNameSvg={cx(styles.shareIcon, isLinkCopied && styles.isCopied)}
+                            img={share}
+                            onClick={() =>
+                              onShareClick({
+                                address,
+                                name,
+                              })
+                            }
+                            size={3.2}
+                          />
+                        </Tooltip>
+                        <ButtonAddToAllocate
+                          className={cx(
+                            styles.buttonAddToAllocatePrimary,
+                            isEpoch1 && styles.isEpoch1,
+                          )}
+                          dataTest="ProposalView__proposal__ButtonAddToAllocate--primary"
+                          {...buttonAddToAllocateProps}
+                        />
+                      </div>
                     </div>
                     <span className={styles.name} data-test="ProposalView__proposal__name">
                       {name}

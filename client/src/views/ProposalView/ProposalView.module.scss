@@ -109,3 +109,39 @@
     padding: 2rem 0;
   }
 }
+
+.actionsWrapper {
+  display: flex;
+
+  .shareWrapper {
+    position: relative;
+    margin-right: 3.2rem;
+
+    @media #{$desktop-up} {
+      margin-right: 2.6rem;
+    }
+  }
+
+  .shareIcon {
+    border-radius: $border-radius-10;
+
+    @media #{$desktop-up} {
+      &:hover {
+        cursor: pointer;
+        background: $color-octant-grey12;
+
+        path {
+          stroke: $color-octant-dark;
+        }
+      }
+
+      &.isCopied {
+        background: $color-octant-grey2;
+
+        path {
+          stroke: $color-octant-dark;
+        }
+      }
+    }
+  }
+}

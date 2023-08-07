@@ -30,7 +30,9 @@
     "personal": "Personal",
     "proposalForbiddenOperation": "As a proposal you are not able to proceed with this operation",
     "history": "History",
-    "availableNow": "Available now"
+    "availableNow": "Available now",
+    "copy": "Copy",
+    "copied": "Copied"
   },
   "components": {
     "dedicated": {
@@ -208,7 +210,8 @@
     }
   },
   "meta": {
-    "description": "Octant is a platform for experiments in decentralized governance that reward participation"
+    "description": "Octant is a platform for experiments in decentralized governance that reward participation.",
+    "fundrasingOnOctant": "{{projectName}} is fundrasing on Octant"
   },
   "toasts": {
     "cantRemoveProjectWithDonations": {
