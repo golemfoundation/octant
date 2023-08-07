@@ -13,7 +13,7 @@ stages:
   - test
   - publish
   - contracts
-#  - e2e
+  - e2e
   - deploy
   - cleanup
 
@@ -317,69 +317,69 @@ Deploy contracts:
   script:
     - /app/entrypoint.sh $NETWORK $CI_PROJECT_DIR/build.env
 
-#Cypress E2E Tests Epoch 1:
-#  stage: e2e
-#  image: !reference [.images, synpress ]
-#  dependencies:
-#    - Deploy contracts
-#  rules:
-#    - !reference [.rules, on_mr]
-#    - !reference [.rules, on_push_to_default_branch ]
-#  variables:
-#    NETWORK_NAME: sepolia
-#    PRIVATE_KEY: $GOERLI_PRIVATE_KEY
-#    CYPRESS_DOCKER_RUN: "true"
-#    CI: "true"
-#    METAMASK_VERSION: "10.25.0"
-#    SECRET_WORDS: test test test test test test test test test test test junk
-#    EPOCH_0_END: 0
-#    EPOCH_1_END: 1698796800
-#  artifacts:
-#    when: on_failure
-#    name: cypress
-#    paths:
-#      - client/cypress/videos
-#      - client/cypress/screenshots
-#    expire_in: 3 days
-#  cache:
-#    - key: $CI_COMMIT_REF_SLUG-yarn-client
-#      policy: pull
-#      paths:
-#        - client/.yarn
-#        - client/node-modules
-#    - key: $CI_COMMIT_REF_SLUG-yarn-root
-#      policy: pull
-#      paths:
-#        - node_modules
-#        - .yarn
-#  script:
-#    - set -e
-#    # Setup NVM to use Node version 16
-#    - source /usr/share/nvm/init-nvm.sh
-#    - nvm install 16
-#    - npm i -g yarn
-#    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh e2e
-#    - bash $CI_PROJECT_DIR/ci/argocd/application.sh create
-#    - cd client
-#    - yarn install --cache-folder .yarn --frozen-lockfile --prefer-offline --no-audit
-#    - export OCTANT_BASE_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_web_client_url.sh)
-#    - set +e
-#    - yarn synpress:run || CY_EXIT_CODE=$?
-#    - if [[ "$CY_EXIT_CODE" == "0" ]]; then rm -r $CI_PROJECT_DIR/client/cypress/videos $CI_PROJECT_DIR/client/cypress/screenshots; fi
-#    - set -e
-#    - bash $CI_PROJECT_DIR/ci/argocd/application.sh delete
-#    - exit $CY_EXIT_CODE
-#
-#Force destroy E2E env:
-#  stage: e2e
-#  image: !reference [.images, git_improved ]
-#  rules:
-#    - !reference [.rules, on_mr_manual]
-#    - !reference [.rules, on_push_to_default_branch_manual]
-#  allow_failure: true
-#  script:
-#    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh e2e
-#    - bash $CI_PROJECT_DIR/ci/argocd/application.sh destroy
+Cypress E2E Tests Epoch 1:
+  stage: e2e
+  image: !reference [.images, synpress ]
+  dependencies:
+    - Deploy contracts
+  rules:
+    - !reference [.rules, on_mr]
+    - !reference [.rules, on_push_to_default_branch ]
+  variables:
+    NETWORK_NAME: sepolia
+    PRIVATE_KEY: $GOERLI_PRIVATE_KEY
+    CYPRESS_DOCKER_RUN: "true"
+    CI: "true"
+    METAMASK_VERSION: "10.25.0"
+    SECRET_WORDS: test test test test test test test test test test test junk
+    EPOCH_0_END: 0
+    EPOCH_1_END: 1698796800
+  artifacts:
+    when: on_failure
+    name: cypress
+    paths:
+      - client/cypress/videos
+      - client/cypress/screenshots
+    expire_in: 3 days
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-yarn-client
+      policy: pull
+      paths:
+        - client/.yarn
+        - client/node-modules
+    - key: $CI_COMMIT_REF_SLUG-yarn-root
+      policy: pull
+      paths:
+        - node_modules
+        - .yarn
+  script:
+    - set -e
+    # Setup NVM to use Node version 16
+    - source /usr/share/nvm/init-nvm.sh
+    - nvm install 16
+    - npm i -g yarn
+    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh e2e
+    - bash $CI_PROJECT_DIR/ci/argocd/application.sh create
+    - cd client
+    - yarn install --cache-folder .yarn --frozen-lockfile --prefer-offline --no-audit
+    - export OCTANT_BASE_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_web_client_url.sh)
+    - set +e
+    - yarn synpress:run || CY_EXIT_CODE=$?
+    - if [[ "$CY_EXIT_CODE" == "0" ]]; then rm -r $CI_PROJECT_DIR/client/cypress/videos $CI_PROJECT_DIR/client/cypress/screenshots; fi
+    - set -e
+    - bash $CI_PROJECT_DIR/ci/argocd/application.sh delete
+    - exit $CY_EXIT_CODE
+
+Force destroy E2E env:
+  stage: e2e
+  image: !reference [.images, git_improved ]
+  rules:
+    - !reference [.rules, on_mr_manual]
+    - !reference [.rules, on_push_to_default_branch_manual]
+  allow_failure: true
+  script:
+    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh e2e
+    - bash $CI_PROJECT_DIR/ci/argocd/application.sh destroy
 
 .deploy:
   stage: deploy
@@ -409,7 +409,7 @@ Deploy MR App:
     EPOCH_0_END: 0
     EPOCH_1_END: 1698796800
   rules:
-    - !reference [.rules, on_mr]
+    - !reference [.rules, on_mr_manual]
   environment:
     name: mr/$CI_MERGE_REQUEST_IID
     deployment_tier: development
