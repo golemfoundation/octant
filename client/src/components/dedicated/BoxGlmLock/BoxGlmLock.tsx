@@ -22,8 +22,11 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
   const [isModalGlmLockOpen, setIsModalGlmLockOpen] = useState<boolean>(false);
   const [isModalEffectiveLockedBalanceOpen, setIsModalEffectiveLockedBalanceOpen] =
     useState<boolean>(false);
-  const { data: depositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
-  const { data: depositsValue } = useDepositValue();
+  const {
+    data: depositEffectiveAtCurrentEpoch,
+    isFetching: isFetchingDepositEffectiveAtCurrentEpoch,
+  } = useDepositEffectiveAtCurrentEpoch();
+  const { data: depositsValue, isFetching: isFetchingDepositValue } = useDepositValue();
   const { data: currentEpoch } = useCurrentEpoch();
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
@@ -32,6 +35,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
     {
       doubleValueProps: {
         cryptoCurrency: 'golem',
+        isFetching: isFetchingDepositValue,
         valueCrypto: depositsValue,
       },
       isDisabled: isPreLaunch && !isConnected,
@@ -42,6 +46,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
       doubleValueProps: {
         coinPricesServerDowntimeText: '...',
         cryptoCurrency: 'golem',
+        isFetching: isFetchingDepositEffectiveAtCurrentEpoch,
         valueCrypto: depositEffectiveAtCurrentEpoch,
       },
       isDisabled: isPreLaunch && !isConnected,

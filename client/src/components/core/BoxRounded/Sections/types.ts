@@ -11,6 +11,7 @@ export interface SectionProps {
     coinPricesServerDowntimeText?: DoubleValueProps['coinPricesServerDowntimeText'];
     cryptoCurrency: DoubleValueProps['cryptoCurrency'];
     isDisabled?: DoubleValueProps['isDisabled'];
+    isFetching?: DoubleValueProps['isFetching'];
     valueCrypto: DoubleValueProps['valueCrypto'];
   };
   icon?: SvgImageConfig;

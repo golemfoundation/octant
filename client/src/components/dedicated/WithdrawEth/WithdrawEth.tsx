@@ -23,7 +23,8 @@ const WithdrawEth: FC = () => {
     keyPrefix: 'components.dedicated.withdrawEth',
   });
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: withdrawableUserEth } = useWithdrawableUserEth();
+  const { data: withdrawableUserEth, isFetching: isFetchingWithdrawableUserEth } =
+    useWithdrawableUserEth();
   const { data: withdrawableRewards, isFetched: isWithdrawableRewardsFetched } =
     useWithdrawableRewards();
   const { data: isDecisionWindowOpen, refetch: refetchIsDecisionWindowOpen } =
@@ -73,7 +74,11 @@ const WithdrawEth: FC = () => {
         isVertical
         title={t('rewardsBudget')}
       >
-        <DoubleValue cryptoCurrency="ethereum" valueCrypto={withdrawableUserEth} />
+        <DoubleValue
+          cryptoCurrency="ethereum"
+          isFetching={isFetchingWithdrawableUserEth}
+          valueCrypto={withdrawableUserEth}
+        />
       </BoxRounded>
       <Button
         className={cx(styles.element, styles.button)}

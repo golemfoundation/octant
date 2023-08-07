@@ -26,8 +26,11 @@ const MetricsView = (): ReactElement => {
     wasCheckStatusAlreadyClosed: state.data.wasCheckStatusAlreadyClosed,
   }));
   const { refetch: refetchCurrentEpochProps } = useCurrentEpochProps();
-  const { data: lockedSummaryLatest, refetch: refetchLockedSummaryLatest } =
-    useLockedSummaryLatest();
+  const {
+    data: lockedSummaryLatest,
+    refetch: refetchLockedSummaryLatest,
+    isFetching: isFetchingLockedSummaryLatest,
+  } = useLockedSummaryLatest();
   const { data: currentEpoch, refetch: refetchCurrentEpoch } = useCurrentEpoch({
     refetchOnWindowFocus: true,
   });
@@ -78,7 +81,10 @@ const MetricsView = (): ReactElement => {
           isVertical
           title={t('glmLockedTotalSupplyPercentage')}
         >
-          <DoubleValue valueString={lockedSummaryLatest?.lockedRatio} />
+          <DoubleValue
+            isFetching={isFetchingLockedSummaryLatest}
+            valueString={lockedSummaryLatest?.lockedRatio}
+          />
           <ProgressBar
             className={styles.lockedRatioProgressBar}
             progressPercentage={
@@ -104,7 +110,11 @@ const MetricsView = (): ReactElement => {
           isVertical
           title={t('glmLocked')}
         >
-          <DoubleValue cryptoCurrency="golem" valueCrypto={lockedSummaryLatest?.lockedTotal} />
+          <DoubleValue
+            cryptoCurrency="golem"
+            isFetching={isFetchingLockedSummaryLatest}
+            valueCrypto={lockedSummaryLatest?.lockedTotal}
+          />
         </BoxRounded>
       </div>
     </MainLayout>

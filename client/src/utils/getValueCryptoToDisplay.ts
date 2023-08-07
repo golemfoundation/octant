@@ -8,16 +8,14 @@ import getFormattedGlmValue from './getFormattedGlmValue';
 export type ValueCryptoToDisplay = {
   cryptoCurrency?: CryptoCurrency;
   valueCrypto?: BigNumber;
-  valueString?: string;
 };
 
 export default function getValueCryptoToDisplay({
-  valueString,
   valueCrypto,
   cryptoCurrency,
 }: ValueCryptoToDisplay): string {
-  if (valueString || !cryptoCurrency || !valueCrypto) {
-    return valueString || '0.0';
+  if (!cryptoCurrency || !valueCrypto) {
+    return '0.0';
   }
 
   return cryptoCurrency === 'ethereum'

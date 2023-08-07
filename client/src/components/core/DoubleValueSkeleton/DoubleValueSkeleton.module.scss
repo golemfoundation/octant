@@ -1,0 +1,16 @@
+.root {
+  width: 12.8rem;
+}
+
+.row {
+  @include skeleton();
+  width: 100%;
+
+  &:first-child {
+    height: 2.4rem;
+    margin: 0 0 0.4rem 0;
+  }
+  &:last-child {
+    height: 1.6rem;
+  }
+}

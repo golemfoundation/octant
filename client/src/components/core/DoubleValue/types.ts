@@ -12,6 +12,7 @@ export default interface DoubleValueProps {
   dataTest?: string;
   isDisabled?: boolean;
   isError?: boolean;
+  isFetching?: boolean;
   textAlignment?: 'left' | 'right';
   valueCrypto?: BigNumber;
   valueString?: string;
