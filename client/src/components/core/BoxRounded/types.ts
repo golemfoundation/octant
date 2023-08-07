@@ -6,6 +6,7 @@ export default interface BoxRoundedProps {
   alignment?: 'left' | 'center' | 'right';
   buttonProps?: ButtonProps;
   children: ReactNode;
+  childrenWrapperClassName?: string;
   className?: string;
   dataTest?: string;
   expandableChildren?: ReactNode;

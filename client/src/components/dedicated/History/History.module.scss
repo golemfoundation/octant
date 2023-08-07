@@ -4,6 +4,13 @@
 
   @media #{$desktop-up} {
     max-height: 100%;
+  }
+}
+
+.childrenWrapper {
+  display: block;
+
+  @media #{$desktop-up} {
     overflow: auto;
   }
 }
