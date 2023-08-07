@@ -29,6 +29,8 @@ w3 = Web3()
 
 def init_logger(app):
     gql_logger.setLevel(logging.WARNING)
+    logging.getLogger("apscheduler.executors.default").setLevel(logging.WARNING)
+
     if app.config["ENV"] == "prod":
         app.logger.setLevel(logging.INFO)
     else:

@@ -1,8 +1,8 @@
 from flask import current_app as app
 
+from app.core import glm
 from app.core import vault
 from app.extensions import scheduler
-from app.core import glm
 
 
 @scheduler.task(

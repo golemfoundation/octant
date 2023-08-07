@@ -1,8 +1,8 @@
+from flask import current_app as app
+
 from app import database
 from app.constants import BURN_ADDRESS
 from app.contracts.erc20 import glm, gnt
-from flask import current_app as app
-
 from app.crypto.account import Account
 from app.settings import config
 
