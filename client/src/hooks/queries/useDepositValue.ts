@@ -1,19 +1,24 @@
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
-import { useAccount } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
 
 import { QUERY_KEYS } from 'api/queryKeys';
-import useContractDeposits from 'hooks/contracts/useContractDeposits';
+import { readContractDeposits } from 'hooks/contracts/readContracts';
 
 export default function useDepositValue(): UseQueryResult<BigNumber> {
   const { address } = useAccount();
-  const contractDeposits = useContractDeposits();
+  const publicClient = usePublicClient();
 
   return useQuery(
     QUERY_KEYS.depositsValue,
-    () => contractDeposits?.methods.deposits(address!).call(),
+    () =>
+      readContractDeposits({
+        args: [address],
+        functionName: 'deposits',
+        publicClient,
+      }),
     {
-      enabled: !!contractDeposits && !!address,
+      enabled: !!address,
       select: response => BigNumber.from(response),
     },
   );

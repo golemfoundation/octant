@@ -1,7 +1,8 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { usePublicClient } from 'wagmi';
 
 import { QUERY_KEYS } from 'api/queryKeys';
-import useContractEpochs from 'hooks/contracts/useContractEpochs';
+import { readContractEpochs } from 'hooks/contracts/readContracts';
 
 import useCurrentEpoch from './useCurrentEpoch';
 
@@ -11,14 +12,18 @@ export interface EpochProps {
 }
 
 export default function useCurrentEpochProps(): UseQueryResult<EpochProps> {
-  const contractEpochs = useContractEpochs();
   const { data: currentEpoch } = useCurrentEpoch();
+  const publicClient = usePublicClient();
 
-  return useQuery(
+  return useQuery<{ decisionWindow: BigInt; duration: BigInt }, any, EpochProps>(
     QUERY_KEYS.currentEpochProps,
-    () => contractEpochs?.methods.getCurrentEpochProps().call(),
+    () =>
+      readContractEpochs({
+        functionName: 'getCurrentEpochProps',
+        publicClient,
+      }),
     {
-      enabled: !!contractEpochs && !!currentEpoch && currentEpoch > 1,
+      enabled: !!currentEpoch && currentEpoch > 1,
       select: response => {
         const { duration, decisionWindow } = response!;
         return {

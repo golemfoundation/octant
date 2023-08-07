@@ -7,7 +7,7 @@ import HistoryItemSkeleton from 'components/dedicated/History//HistoryItemSkelet
 import HistoryList from 'components/dedicated/History/HistoryList/HistoryList';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useHistory from 'hooks/queries/useHistory';
-import useMetaStore, { initialState as metaInitialState } from 'store/meta/store';
+import useMetaStore from 'store/meta/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
 import styles from './History.module.scss';
@@ -15,8 +15,8 @@ import HistoryProps from './types';
 
 const History: FC<HistoryProps> = ({ className }) => {
   const { i18n } = useTranslation('translation');
-  const { blockNumberWithLatestTx } = useMetaStore(state => ({
-    blockNumberWithLatestTx: state.data.blockNumberWithLatestTx,
+  const { isAppWaitingForTransactionToBeIndexed } = useMetaStore(state => ({
+    isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
   }));
 
   const { data: currentEpoch } = useCurrentEpoch();
@@ -25,7 +25,7 @@ const History: FC<HistoryProps> = ({ className }) => {
   const isListAvailable = history !== undefined;
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const showLoader =
-    blockNumberWithLatestTx !== metaInitialState.blockNumberWithLatestTx ||
+    isAppWaitingForTransactionToBeIndexed ||
     (!isListAvailable && isFetchingHistory && !isPreLaunch);
 
   return (

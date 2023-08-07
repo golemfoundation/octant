@@ -1,28 +1,21 @@
 import { UseMutationResult, useMutation, UseMutationOptions } from '@tanstack/react-query';
-import { TransactionReceipt } from 'ethereum-abi-types-generator';
 import { BigNumber } from 'ethers';
-import { useAccount } from 'wagmi';
+import { useWalletClient } from 'wagmi';
 
-import { DEPOSIT_WITHDRAW_GAS_LIMIT } from 'constants/contracts';
-import useContractDeposits from 'hooks/contracts/useContractDeposits';
+import { writeContractDeposits } from '../contracts/writeContracts';
 
 export default function useUnlock(
-  options?: UseMutationOptions<TransactionReceipt, unknown, BigNumber>,
-): UseMutationResult<TransactionReceipt, unknown, BigNumber> {
-  const contractDeposits = useContractDeposits();
-  const { address } = useAccount();
+  options?: UseMutationOptions<string, unknown, BigNumber>,
+): UseMutationResult<string, unknown, BigNumber> {
+  const { data: walletClient } = useWalletClient();
+
   return useMutation({
     mutationFn: async value => {
-      return (
-        contractDeposits!.methods
-          // @ts-expect-error generated typing does not understand options.
-          .unlock(BigInt(value.toHexString()), {
-            gas: DEPOSIT_WITHDRAW_GAS_LIMIT,
-          })
-          .send({
-            from: address as `0x${string}`,
-          })
-      );
+      return writeContractDeposits({
+        args: [BigInt(value.toHexString())],
+        functionName: 'unlock',
+        walletClient: walletClient!,
+      });
     },
     ...options,
   });

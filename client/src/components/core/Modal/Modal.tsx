@@ -58,7 +58,9 @@ const Modal: FC<ModalProps> = ({
   const { isDesktop } = useMediaQuery();
 
   const onOverflowClick = () => {
-    if (isOverflowOnClickDisabled) {return;}
+    if (isOverflowOnClickDisabled) {
+      return;
+    }
     onClosePanel();
   };
 

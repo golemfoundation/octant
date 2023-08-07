@@ -5,7 +5,7 @@ import { QUERY_KEYS } from 'api/queryKeys';
 import env from 'env';
 import { graphql } from 'gql/gql';
 
-type Test = {
+type Meta = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   _meta?:
     | {
@@ -32,7 +32,7 @@ export default function useBlockNumber(
 ): UseQueryResult<number | null | undefined> {
   const { subgraphAddress } = env;
 
-  return useQuery<Test, any, number | undefined, any>(
+  return useQuery<Meta, any, number | undefined, any>(
     QUERY_KEYS.blockNumber,
     async () => request(subgraphAddress, GET_BLOCK_NUMBER),
     {

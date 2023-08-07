@@ -1,9 +1,8 @@
 import { BigNumber } from 'ethers';
 import { useState, useEffect } from 'react';
+import { usePublicClient } from 'wagmi';
 
-import useContractErc20 from 'hooks/contracts/useContractErc20';
-
-import useTokenAllowance from './useTokenAllowance';
+import { readContractERC20 } from 'hooks/contracts/readContracts';
 
 // eslint-disable-next-line no-shadow
 export enum ApprovalState {
@@ -17,17 +16,19 @@ export default function useApprovalState(
   spender: string,
   minAmountToBeApproved: BigNumber,
 ): ApprovalState {
-  const contract = useContractErc20();
+  const publicClient = usePublicClient();
   const [approvalState, setApprovalState] = useState(ApprovalState.UNKNOWN);
 
-  const isContractDefined = !!contract;
-
   useEffect(() => {
-    if (!isContractDefined || !signerAddress) {
+    if (!signerAddress) {
       return;
     }
 
-    useTokenAllowance(contract, signerAddress, spender).then(allowance => {
+    readContractERC20({
+      args: [signerAddress, spender],
+      functionName: 'allowance',
+      publicClient,
+    }).then(allowance => {
       const allowanceBigNumber = BigNumber.from(allowance);
       const state = allowanceBigNumber.gte(minAmountToBeApproved)
         ? ApprovalState.APPROVED
@@ -35,6 +36,6 @@ export default function useApprovalState(
       setApprovalState(state);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isContractDefined, signerAddress, spender, minAmountToBeApproved.toHexString()]);
+  }, [signerAddress, spender, minAmountToBeApproved.toHexString()]);
   return approvalState;
 }
