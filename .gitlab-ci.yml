@@ -57,6 +57,8 @@ default:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: manual
       allow_failure: true
+  on_version_tag:
+    - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/'
 
 
 .scripts:
@@ -274,14 +276,15 @@ Build images:
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_version_tag]
   parallel:
     matrix:
       - SERVICE:
-          - contracts-v1
+          # - contracts-v1
           - coin-prices-server
-          - client
-          - subgraph
-          - backend
+          # - client
+          # - subgraph
+          # - backend
   variables:
     IMAGE_NAME: $SERVICE
     GOOGLE_APPLICATION_CREDENTIALS: /kaniko/config.json
@@ -452,7 +455,7 @@ Destroy UAT App:
     name: persistent/uat
     deployment_tier: testing
 
-Deploy PROD App:
+Deploy Release Candidate app:
   stage: deploy
   image: !reference [.images, alpine_git]
   rules:
@@ -485,6 +488,17 @@ Deploy PROD App:
   environment:
     name: persistent/prod
     url: https://client.testnet.octant.wildland.dev
+
+Deploy production app:
+  stage: deploy
+  rules:
+    - !reference [.rules, on_version_tag]
+  variables:
+    DEV_IMAGE_TAG: $CI_COMMIT_SHA
+    PROD_IMAGE_TAG: $CI_COMMIT_TAG
+  trigger:
+    project: wildland/devops/pipelines/octant-production
+    branch: master
 
 pages:
   stage: deploy
