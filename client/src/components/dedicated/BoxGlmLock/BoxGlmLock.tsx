@@ -10,6 +10,7 @@ import ModalGlmLock from 'components/dedicated/ModalGlmLock/ModalGlmLock';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
+import useMetaStore from 'store/meta/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
 import BoxGlmLockProps from './types';
@@ -19,6 +20,10 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
     keyPrefix: 'components.dedicated.boxGlmLock',
   });
   const { isConnected } = useAccount();
+  const { isAppWaitingForTransactionToBeIndexed } = useMetaStore(state => ({
+    isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
+  }));
+
   const [isModalGlmLockOpen, setIsModalGlmLockOpen] = useState<boolean>(false);
   const [isModalEffectiveLockedBalanceOpen, setIsModalEffectiveLockedBalanceOpen] =
     useState<boolean>(false);
@@ -35,7 +40,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
     {
       doubleValueProps: {
         cryptoCurrency: 'golem',
-        isFetching: isFetchingDepositValue,
+        isFetching: isFetchingDepositValue || isAppWaitingForTransactionToBeIndexed,
         valueCrypto: depositsValue,
       },
       isDisabled: isPreLaunch && !isConnected,
@@ -46,7 +51,8 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
       doubleValueProps: {
         coinPricesServerDowntimeText: '...',
         cryptoCurrency: 'golem',
-        isFetching: isFetchingDepositEffectiveAtCurrentEpoch,
+        isFetching:
+          isFetchingDepositEffectiveAtCurrentEpoch || isAppWaitingForTransactionToBeIndexed,
         valueCrypto: depositEffectiveAtCurrentEpoch,
       },
       isDisabled: isPreLaunch && !isConnected,

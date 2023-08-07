@@ -1,12 +1,15 @@
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
+import { usePublicClient } from 'wagmi';
 
 import { QUERY_KEYS } from 'api/queryKeys';
-import useContractProposals from 'hooks/contracts/useContractProposals';
+import { readContractProposals } from 'hooks/contracts/readContracts';
 
 export default function useProposalsCid(): UseQueryResult<string> {
-  const contractProposals = useContractProposals();
+  const publicClient = usePublicClient();
 
-  return useQuery(QUERY_KEYS.proposalsCid, () => contractProposals?.methods.cid().call(), {
-    enabled: !!contractProposals,
-  });
+  return useQuery(
+    QUERY_KEYS.proposalsCid,
+    () => readContractProposals({ functionName: 'cid', publicClient }),
+    {},
+  );
 }

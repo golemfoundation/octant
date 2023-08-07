@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 import React, { ReactElement, useEffect, useState } from 'react';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount, useNetwork, useWaitForTransaction } from 'wagmi';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -9,10 +9,10 @@ import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
 import { ALLOCATION_ITEMS_KEY, ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
-import web3, { alchemyProvider } from 'hooks/contracts/web3';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
+import useDepositValue from 'hooks/queries/useDepositValue';
 import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -79,9 +79,16 @@ const App = (): ReactElement => {
     isInitialized: meta.isInitialized,
     setValuesFromLocalStorage,
   }));
-  const { blockNumberWithLatestTx, setBlockNumberWithLatestTx } = useMetaStore(state => ({
+  const {
+    blockNumberWithLatestTx,
+    setBlockNumberWithLatestTx,
+    transactionHashesToWaitFor,
+    setTransactionHashesToWaitFor,
+  } = useMetaStore(state => ({
     blockNumberWithLatestTx: state.data.blockNumberWithLatestTx,
     setBlockNumberWithLatestTx: state.setBlockNumberWithLatestTx,
+    setTransactionHashesToWaitFor: state.setTransactionHashesToWaitFor,
+    transactionHashesToWaitFor: state.data.transactionHashesToWaitFor,
   }));
   const queryClient = useQueryClient();
   const { address, isConnected } = useAccount();
@@ -107,6 +114,15 @@ const App = (): ReactElement => {
   const { refetch: refetchDepositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
   const { refetch: refetchHistory } = useHistory();
   const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
+  const { refetch: refetchDeposit } = useDepositValue();
+  const { data: transactionReceipt, isLoading: isLoadingTransactionReceipt } =
+    useWaitForTransaction({
+      hash: transactionHashesToWaitFor
+        ? (transactionHashesToWaitFor[0] as `0x${string}`)
+        : undefined,
+      onReplaced: response =>
+        setTransactionHashesToWaitFor([response.transactionReceipt.transactionHash] as string[]),
+    });
 
   const [isAccountChanging, setIsAccountChanging] = useState(false);
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
@@ -120,38 +136,14 @@ const App = (): ReactElement => {
   useEffect(() => {
     if (chainIdLocal && chainIdLocal !== networkConfig.id) {
       triggerToast({
-        message: `Please change network to ${networkConfig.name}${networkConfig.isTestnet ? ' testnet' : ''}`,
+        message: `Please change network to ${networkConfig.name}${
+          networkConfig.isTestnet ? ' testnet' : ''
+        }`,
         title: 'Wrong network',
         type: 'error',
       });
     }
   }, [chainIdLocal]);
-
-  useEffect(() => {
-    if (!chain || !chain.id || chain.id !== networkConfig.id) {
-      /**
-       * When user doesn't have any provider, we provide Alchemy provider.
-       */
-      web3.setProvider(alchemyProvider);
-      return;
-    }
-    if (window.ethereum) {
-      web3.setProvider(window.ethereum);
-      return;
-    }
-    /**
-     * Current provider is a predecessor of window.ethereum,
-     * possibly still used by some old browsers.
-     */
-    if (window.web3?.currentProvider) {
-      web3.setProvider(window.web3.currentProvider);
-      return;
-    }
-    /**
-     * When user doesn't have any provider, we provide Alchemy provider.
-     */
-    web3.setProvider(alchemyProvider);
-  }, [chain]);
 
   useEffect(() => {
     localStorageService.init();
@@ -192,6 +184,19 @@ const App = (): ReactElement => {
   }, [isDecisionWindowOpen, isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal]);
 
   useEffect(() => {
+    if (transactionReceipt && !isLoadingTransactionReceipt) {
+      // Setting blockNumberWithLatestTx triggers refetch logic in other hook.
+      setBlockNumberWithLatestTx(Number(transactionReceipt.blockNumber));
+      setTransactionHashesToWaitFor(metaInitialState.transactionHashesToWaitFor);
+    }
+  }, [
+    transactionReceipt,
+    isLoadingTransactionReceipt,
+    setBlockNumberWithLatestTx,
+    setTransactionHashesToWaitFor,
+  ]);
+
+  useEffect(() => {
     /**
      * Locking and unlocking GLMs require updating history and effective deposit.
      * Both these values are coming from backend, which takes them from subgraph (history - always, effective deposit only during epoch 1).
@@ -207,6 +212,7 @@ const App = (): ReactElement => {
     if (blockNumber && blockNumberWithLatestTx && blockNumber > blockNumberWithLatestTx) {
       refetchHistory();
       refetchLockedSummaryLatest();
+      refetchDeposit();
 
       if (currentEpoch === 1) {
         refetchDepositEffectiveAtCurrentEpoch();
@@ -219,6 +225,7 @@ const App = (): ReactElement => {
     blockNumber,
     setBlockNumberWithLatestTx,
     blockNumberWithLatestTx,
+    refetchDeposit,
     refetchHistory,
     refetchDepositEffectiveAtCurrentEpoch,
     refetchLockedSummaryLatest,

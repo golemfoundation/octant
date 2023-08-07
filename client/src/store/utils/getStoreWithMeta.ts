@@ -11,14 +11,17 @@ export function getStoreWithMeta<StoreData, StoreMethods>({
   initialState,
   getStoreMethods,
 }: {
-  getStoreMethods: (set: SetState<StoreWithIsInitialized<StoreData, StoreMethods>>) => StoreMethods;
+  getStoreMethods: (
+    set: SetState<StoreWithIsInitialized<StoreData, StoreMethods>>,
+    get: () => StoreWithIsInitialized<StoreData, StoreMethods>,
+  ) => StoreMethods;
   initialState: StoreData;
 }): UseBoundStore<StoreApi<StoreWithIsInitialized<StoreData, StoreMethods>>> {
-  return create<StoreWithIsInitialized<StoreData, StoreMethods>>(set => ({
+  return create<StoreWithIsInitialized<StoreData, StoreMethods>>((set, get) => ({
     data: initialState,
     meta: {
       isInitialized: false,
     },
-    ...getStoreMethods(set),
+    ...getStoreMethods(set, get),
   }));
 }

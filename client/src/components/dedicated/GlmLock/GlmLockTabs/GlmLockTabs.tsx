@@ -20,6 +20,7 @@ import GlmLockTabsProps from './types';
 const GlmLockTabs: FC<GlmLockTabsProps> = ({
   className,
   currentMode,
+  isTransactionHashesToWaitFor,
   step,
   onClose,
   onInputsFocusChange,
@@ -149,7 +150,7 @@ const GlmLockTabs: FC<GlmLockTabsProps> = ({
         className={styles.button}
         isDisabled={isButtonDisabled}
         isHigh
-        isLoading={formik.isSubmitting}
+        isLoading={formik.isSubmitting || isTransactionHashesToWaitFor}
         label={buttonLabel}
         variant="cta"
         {...buttonCtaProps}

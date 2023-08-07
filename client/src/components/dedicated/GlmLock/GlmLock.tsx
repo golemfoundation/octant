@@ -1,18 +1,17 @@
 import { MaxUint256 } from '@ethersproject/constants';
-import { TransactionReceipt } from 'ethereum-abi-types-generator';
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { Formik } from 'formik';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
+import { useAccount, useWalletClient } from 'wagmi';
 
 import GlmLockBudget from 'components/dedicated/GlmLock/GlmLockBudget/GlmLockBudget';
 import GlmLockNotification from 'components/dedicated/GlmLock/GlmLockNotification/GlmLockNotification';
 import GlmLockStepper from 'components/dedicated/GlmLock/GlmLockStepper/GlmLockStepper';
 import GlmLockTabs from 'components/dedicated/GlmLock/GlmLockTabs/GlmLockTabs';
 import env from 'env';
-import useContractErc20 from 'hooks/contracts/useContractErc20';
+import { writeContractERC20 } from 'hooks/contracts/writeContracts';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
 import useApprovalState, { ApprovalState } from 'hooks/helpers/useMaxApproveCallback';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
@@ -30,15 +29,12 @@ import { formInitialValues, validationSchema } from './utils';
 const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseModal }) => {
   const { i18n } = useTranslation();
   const { address } = useAccount();
+  const { data: walletClient } = useWalletClient();
   const { isDesktop } = useMediaQuery();
-  const { setBlockNumberWithLatestTx } = useMetaStore(state => ({
-    setBlockNumberWithLatestTx: state.setBlockNumberWithLatestTx,
+  const { setTransactionHashesToWaitFor, transactionHashesToWaitFor } = useMetaStore(state => ({
+    setTransactionHashesToWaitFor: state.setTransactionHashesToWaitFor,
+    transactionHashesToWaitFor: state.data.transactionHashesToWaitFor,
   }));
-
-  const { data: availableFundsGlm } = useAvailableFundsGlm();
-  const { data: proposalsAddresses } = useProposalsContract();
-  const { data: depositsValue, refetch: refetchDeposit } = useDepositValue();
-  const contract = useContractErc20();
 
   /**
    * Value to depose so that we don't ask for allowance when user
@@ -46,45 +42,38 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
    */
   const [valueToDepose, setValueToDepose] = useState<BigNumber>(BigNumber.from(0));
   const [step, setStep] = useState<Step>(1);
-  const [transactionHash, setTransactionHash] = useState<string>('');
   const [isCryptoOrFiatInputFocused, setIsCryptoOrFiatInputFocused] = useState(false);
+
+  const { data: availableFundsGlm } = useAvailableFundsGlm();
+  const { data: proposalsAddresses } = useProposalsContract();
+  const { data: depositsValue } = useDepositValue();
+
   const approvalState = useApprovalState(address, env.contractDepositsAddress, valueToDepose);
   const showBudgetBox = isDesktop || (!isDesktop && !isCryptoOrFiatInputFocused);
 
-  const onRefetch = async (blockNumber: number): Promise<void> => {
-    // History and effective deposits are refetched in App.tsx. Look for a comment there.
-    setBlockNumberWithLatestTx(blockNumber);
-    await refetchDeposit();
-  };
-
   const onMutate = async (): Promise<void> => {
-    if (!contract || !address || !availableFundsGlm) {
+    if (!walletClient || !availableFundsGlm) {
       return;
     }
 
     setStep(2);
 
     if (currentMode === 'lock' && approvalState !== ApprovalState.APPROVED) {
-      await contract.methods
-        .approve(env.contractDepositsAddress, MaxUint256.toString())
-        .send({ from: address })
-        .catch((error: Error) => {
-          // eslint-disable-next-line no-console
-          console.warn(`Failed to approve max amount for token ${contract.address}`, error);
-          throw error;
-        });
+      await writeContractERC20({
+        args: [env.contractDepositsAddress, MaxUint256.toString()],
+        functionName: 'approve',
+        walletClient,
+      });
     }
   };
 
-  const onSuccess = async (transactionResponse: TransactionReceipt): Promise<void> => {
-    await onRefetch(transactionResponse.blockNumber);
-    setTransactionHash(transactionResponse!.transactionHash);
+  const onSuccess = async (transactionHashResponse: string): Promise<void> => {
+    setTransactionHashesToWaitFor([transactionHashResponse]);
     setStep(3);
   };
 
   const onReset = (newMode: CurrentMode = 'lock'): void => {
     onCurrentModeChange(newMode);
-    setTransactionHash('');
     setStep(1);
   };
 
@@ -136,7 +125,9 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
               className={styles.element}
               currentMode={currentMode}
               isLockingApproved={isLockingApproved}
-              transactionHash={transactionHash}
+              transactionHash={
+                transactionHashesToWaitFor ? transactionHashesToWaitFor[0] : undefined
+              }
               type={step === 3 ? 'success' : 'info'}
             />
           ) : (
@@ -145,6 +136,9 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
           <GlmLockTabs
             className={styles.element}
             currentMode={currentMode}
+            isTransactionHashesToWaitFor={
+              !!transactionHashesToWaitFor && transactionHashesToWaitFor.length > 0
+            }
             onClose={onCloseModal}
             onInputsFocusChange={setIsCryptoOrFiatInputFocused}
             onReset={onReset}
