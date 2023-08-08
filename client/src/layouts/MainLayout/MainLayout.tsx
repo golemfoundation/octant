@@ -50,7 +50,6 @@ const MainLayout: FC<MainLayoutProps> = ({
   const { pathname } = useLocation();
   const { data: isUserTOSAccepted } = useUserTOS();
 
-  const isEpoch1 = currentEpoch === 1;
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isAllocationRoot = !!useMatch(ROOT_ROUTES.allocation.absolute);
   const isProposalRoot =
@@ -126,7 +125,8 @@ const MainLayout: FC<MainLayoutProps> = ({
                     >
                       <div className={styles.walletInfo}>
                         <div className={styles.address}>{truncateEthAddress(address)}</div>
-                        {!isEpoch1 &&
+                        {!!currentEpoch &&
+                          currentEpoch > 1 &&
                           (showAllocationPeriod ? (
                             <div className={styles.allocationPeriod}>
                               <Trans
