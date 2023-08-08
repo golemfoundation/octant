@@ -32,14 +32,14 @@ class Healthcheck(JSONWizard):
 
 def get_blockchain_info() -> ChainInfo:
     smart_contracts = [
-        SmartContract("GLM", config.GLM_CONTRACT_ADDRESS),
-        SmartContract("GNT", config.GNT_CONTRACT_ADDRESS),
-        SmartContract("Epochs", config.EPOCHS_CONTRACT_ADDRESS),
         SmartContract("Auth", config.AUTH_CONTRACT_ADDRESS),
         SmartContract("Deposits", config.DEPOSITS_CONTRACT_ADDRESS),
+        SmartContract("Epochs", config.EPOCHS_CONTRACT_ADDRESS),
+        SmartContract("GLM", config.GLM_CONTRACT_ADDRESS),
+        SmartContract("GNT", config.GNT_CONTRACT_ADDRESS),
         SmartContract("Proposals", config.PROPOSALS_CONTRACT_ADDRESS),
-        SmartContract("WithdrawalsTarget", config.WITHDRAWALS_TARGET_CONTRACT_ADDRESS),
         SmartContract("Vault", config.VAULT_CONTRACT_ADDRESS),
+        SmartContract("WithdrawalsTarget", config.WITHDRAWALS_TARGET_CONTRACT_ADDRESS),
     ]
 
     return ChainInfo(
