@@ -23,13 +23,6 @@
   }
 }
 
-.layoutBody {
-  @media #{$desktop-up} {
-    align-items: start;
-    min-height: 0;
-  }
-}
-
 .wrapper {
   display: flex;
   width: 100%;
