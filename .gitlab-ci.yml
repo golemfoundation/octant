@@ -499,23 +499,3 @@ Deploy production app:
   trigger:
     project: wildland/devops/pipelines/octant-production
     branch: master
-
-pages:
-  stage: deploy
-  image: !reference [.images, node ]
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "master"'
-      when: manual
-  script:
-    - cd contracts-v1
-    - yarn install --non-interactive --cache-folder .yarn
-    - yarn compile
-    - cd ../client
-    - yarn install --non-interactive
-    - yarn build:staging
-    - cd ..
-    - mv client/dist public
-    - echo '/governance/octant/* /:splat 200' > public/_redirects
-  artifacts:
-    paths:
-      - public
