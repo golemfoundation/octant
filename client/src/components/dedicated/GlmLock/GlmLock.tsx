@@ -4,7 +4,7 @@ import { parseUnits } from 'ethers/lib/utils';
 import { Formik } from 'formik';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount, useWalletClient, usePublicClient } from 'wagmi';
+import { useAccount, useWalletClient, usePublicClient, useWaitForTransaction } from 'wagmi';
 
 import GlmLockBudget from 'components/dedicated/GlmLock/GlmLockBudget/GlmLockBudget';
 import GlmLockNotification from 'components/dedicated/GlmLock/GlmLockNotification/GlmLockNotification';
@@ -32,10 +32,18 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { isDesktop } = useMediaQuery();
+  const [transactionHashForEtherscan, setTransactionHashForEtherscan] = useState<
+    string | undefined
+  >(undefined);
   const { setTransactionHashesToWaitFor, transactionHashesToWaitFor } = useMetaStore(state => ({
     setTransactionHashesToWaitFor: state.setTransactionHashesToWaitFor,
     transactionHashesToWaitFor: state.data.transactionHashesToWaitFor,
   }));
+  useWaitForTransaction({
+    hash: transactionHashesToWaitFor ? (transactionHashesToWaitFor[0] as `0x${string}`) : undefined,
+    onReplaced: response =>
+      setTransactionHashForEtherscan(response.transactionReceipt.transactionHash),
+  });
 
   /**
    * Value to depose so that we don't ask for allowance when user
@@ -75,12 +83,20 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
   };
 
   const onSuccess = async (transactionHashResponse: string): Promise<void> => {
+    /**
+     * setTransactionHashesToWaitFor goes to App.tsx when app waits for tx to resolve and fetch
+     * block from subgraph and is set to null there on success.
+     *
+     * setTransactionHashForEtherscan is here for the link
+     */
     setTransactionHashesToWaitFor([transactionHashResponse]);
+    setTransactionHashForEtherscan(transactionHashResponse);
     setStep(3);
   };
 
   const onReset = (newMode: CurrentMode = 'lock'): void => {
     onCurrentModeChange(newMode);
+    setTransactionHashForEtherscan(undefined);
     setStep(1);
   };
 
@@ -110,6 +126,8 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
   };
 
   const isLockingApproved = approvalState === ApprovalState.APPROVED;
+  const isApprovalKnown = approvalState !== ApprovalState.UNKNOWN;
+
   return (
     <Formik
       initialValues={formInitialValues}
@@ -127,14 +145,13 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
           {isDesktop && (
             <GlmLockStepper className={styles.element} currentMode={currentMode} step={step} />
           )}
-          {(step === 2 && currentMode === 'lock' && !isLockingApproved) || step === 3 ? (
+          {(step === 2 && currentMode === 'lock' && isApprovalKnown && !isLockingApproved) ||
+          step === 3 ? (
             <GlmLockNotification
               className={styles.element}
               currentMode={currentMode}
               isLockingApproved={isLockingApproved}
-              transactionHash={
-                transactionHashesToWaitFor ? transactionHashesToWaitFor[0] : undefined
-              }
+              transactionHash={transactionHashForEtherscan}
               type={step === 3 ? 'success' : 'info'}
             />
           ) : (
