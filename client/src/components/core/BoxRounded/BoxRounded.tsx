@@ -73,16 +73,17 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
       >
         {tabs && (
           <div className={cx(styles.tabs, isGrey && styles.isGrey)}>
-            {tabs.map(({ title: tabTitle, onClick: tabOnClick, isActive }, index) => (
+            {tabs.map(({ title: tabTitle, onClick: tabOnClick, isActive, isDisabled }, index) => (
               <div
                 // eslint-disable-next-line react/no-array-index-key
                 key={index}
                 className={cx(
                   styles.tab,
                   isActive && styles.isActive,
+                  isDisabled && styles.isDisabled,
                   tabOnClick && styles.isClickable,
                 )}
-                onClick={tabOnClick}
+                onClick={isDisabled ? undefined : tabOnClick}
               >
                 {tabTitle}
                 {isActive ? (
