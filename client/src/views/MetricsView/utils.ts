@@ -1,3 +1,3 @@
 export function roundLockedRatio(lockedRatio: string | undefined): number {
-  return lockedRatio ? Math.round(parseFloat(lockedRatio) * 100) : 0;
+  return lockedRatio ? parseFloat((parseFloat(lockedRatio) * 100).toFixed(2)) : 0;
 }

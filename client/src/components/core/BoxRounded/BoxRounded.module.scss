@@ -62,6 +62,10 @@ $padding: 2.2rem;
     cursor: pointer;
   }
 
+  &.isDisabled {
+    cursor: default;
+  }
+
   &.isActive {
     color: $color-octant-green2;
   }
