@@ -18,6 +18,7 @@ import MainLayout from 'layouts/MainLayout/MainLayout';
 import useTipsStore from 'store/tips/store';
 
 import styles from './MetricsView.module.scss';
+import { roundLockedRatio } from './utils';
 
 const MetricsView = (): ReactElement => {
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'views.metrics' });
@@ -49,6 +50,8 @@ const MetricsView = (): ReactElement => {
   const { isDesktop } = useMediaQuery();
   const isCheckStatsTipVisible = !!currentEpoch && currentEpoch > 0 && !wasCheckStatusAlreadyClosed;
   const isEpoch1 = currentEpoch === 1;
+
+  const lockedRatioRounded = roundLockedRatio(lockedSummaryLatest?.lockedRatio);
 
   return (
     <MainLayout dataTest="MetricsView">
@@ -83,13 +86,11 @@ const MetricsView = (): ReactElement => {
         >
           <DoubleValue
             isFetching={isFetchingLockedSummaryLatest}
-            valueString={lockedSummaryLatest?.lockedRatio}
+            valueString={lockedRatioRounded.toString()}
           />
           <ProgressBar
             className={styles.lockedRatioProgressBar}
-            progressPercentage={
-              lockedSummaryLatest ? parseInt(lockedSummaryLatest?.lockedRatio, 10) * 100 : 0
-            }
+            progressPercentage={lockedRatioRounded}
           />
         </BoxRounded>
         <BoxRounded
