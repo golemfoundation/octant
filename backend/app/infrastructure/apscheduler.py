@@ -20,7 +20,7 @@ def vault_confirm_withdrawals():
 
 
 @scheduler.task(
-    "interval", id="glm-transfer", seconds=15, misfire_grace_time=900, max_instances=1
+    "interval", id="glm-transfer", seconds=60, misfire_grace_time=900, max_instances=1
 )
 def glm_transfer():
     with scheduler.app.app_context():

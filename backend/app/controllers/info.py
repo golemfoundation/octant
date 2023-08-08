@@ -52,17 +52,20 @@ def get_blockchain_info() -> ChainInfo:
 def healthcheck() -> (Healthcheck, int):
     try:
         is_chain_rpc_healthy = w3.eth.chain_id == config.CHAIN_ID
-    except Exception:
+    except Exception as e:
+        app.logger.warning(f"[Healthcheck] blockchain is down with an error: {e}")
         is_chain_rpc_healthy = False
 
     try:
         is_db_healthy = database.info.is_db_responsive()
-    except Exception:
+    except Exception as e:
+        app.logger.warning(f"[Healthcheck] db is down with an error: {e}")
         is_db_healthy = False
 
     try:
         is_subgraph_healthy = graphql.info.get_indexed_block_num() > 0
-    except Exception:
+    except Exception as e:
+        app.logger.warning(f"[Healthcheck] subgraph is down with an error: {e}")
         is_subgraph_healthy = False
 
     healthcheck_status = Healthcheck(
