@@ -6,7 +6,7 @@ import { ROOT } from 'src/routes/RootRoutes/routes';
 import Chainable = Cypress.Chainable;
 
 const connectWallet = (isTOSAccepted: boolean): Chainable<any> => {
-  cy.intercept('/user/*/tos', { body: { accepted: isTOSAccepted } });
+  cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
   cy.disconnectMetamaskWalletFromAllDapps();
   visitWithLoader(ROOT.absolute);
   cy.get('[data-test=MainLayout__Button--connect]').click();
@@ -273,6 +273,13 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     beforeEach(() => {
+      cy.intercept(
+        {
+          method: 'POST',
+          url: '/user/*/tos',
+        },
+        { body: { accepted: true }, statusCode: 200 },
+      );
       connectWallet(false);
     });
 
@@ -319,6 +326,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
 
     it('user cannot change steps by swiping on screen (difference less than 5px)', () => {
       checkChangeStepsBySwipingOnScreenDifferenceLessThanl5px(false);
+    });
+
+    it('TOS acceptance changes onboarding step to next step', () => {
+      checkCurrentElement(0, true);
+      cy.get('[data-test=TOS_InputCheckbox]').check();
+      cy.switchToMetamaskNotification();
+      cy.confirmMetamaskSignatureRequest();
+      checkCurrentElement(1, true);
     });
   });
 });
