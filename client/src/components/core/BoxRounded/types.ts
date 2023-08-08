@@ -22,6 +22,7 @@ export default interface BoxRoundedProps {
   suffix?: string;
   tabs?: {
     isActive?: boolean;
+    isDisabled?: boolean;
     onClick?: () => void;
     title: string;
   }[];

@@ -88,11 +88,13 @@ const GlmLockTabs: FC<GlmLockTabsProps> = ({
       tabs={[
         {
           isActive: currentMode === 'lock',
+          isDisabled: isLoading,
           onClick: () => onReset('lock'),
           title: t('lock'),
         },
         {
           isActive: currentMode === 'unlock',
+          isDisabled: isLoading,
           onClick: () => onReset('unlock'),
           title: t('unlock'),
         },
