@@ -20,7 +20,7 @@ import GlmLockTabsProps from './types';
 const GlmLockTabs: FC<GlmLockTabsProps> = ({
   className,
   currentMode,
-  isTransactionHashesToWaitFor,
+  isLoading,
   step,
   onClose,
   onInputsFocusChange,
@@ -36,7 +36,7 @@ const GlmLockTabs: FC<GlmLockTabsProps> = ({
   const { data: availableFundsGlm } = useAvailableFundsGlm();
   const { data: depositsValue } = useDepositValue();
 
-  const isMaxDisabled = formik.isSubmitting || step > 1;
+  const isMaxDisabled = isLoading || step > 1;
 
   const onSetValue = (value: string): void => {
     formik.setFieldValue('valueToDeposeOrWithdraw', value);
@@ -66,7 +66,7 @@ const GlmLockTabs: FC<GlmLockTabsProps> = ({
         };
 
   const buttonLabel = useMemo(() => {
-    if (formik.isSubmitting) {
+    if (isLoading) {
       return t('glmLockTabs.waitingForConformation');
     }
     if (step === 3) {
@@ -76,7 +76,7 @@ const GlmLockTabs: FC<GlmLockTabsProps> = ({
       return t('unlock');
     }
     return t('lock');
-  }, [currentMode, step, t, formik.isSubmitting, i18n]);
+  }, [currentMode, step, t, isLoading, i18n]);
 
   const isButtonDisabled =
     !formik.isValid || parseUnits(formik.values.valueToDeposeOrWithdraw || '0').isZero();
@@ -102,7 +102,7 @@ const GlmLockTabs: FC<GlmLockTabsProps> = ({
         {t('glmLockTabs.useMax')}
       </div>
       <InputsCryptoFiat
-        areInputsDisabled={formik.isSubmitting}
+        areInputsDisabled={isLoading}
         cryptoCurrency="golem"
         error={formik.values.valueToDeposeOrWithdraw && formik.errors.valueToDeposeOrWithdraw}
         inputCryptoProps={{
@@ -150,7 +150,7 @@ const GlmLockTabs: FC<GlmLockTabsProps> = ({
         className={styles.button}
         isDisabled={isButtonDisabled}
         isHigh
-        isLoading={formik.isSubmitting || isTransactionHashesToWaitFor}
+        isLoading={isLoading}
         label={buttonLabel}
         variant="cta"
         {...buttonCtaProps}
