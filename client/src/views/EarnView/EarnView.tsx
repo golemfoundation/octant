@@ -48,7 +48,7 @@ const EarnView = (): ReactElement => {
   }, [isPollingForCurrentEpoch, currentEpoch, setIsPollingForCurrentEpoch]);
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
-  const isConnectWalletTipVisible = !isConnected && !wasConnectWalletAlreadyClosed;
+  const isConnectWalletTipVisible = !isPreLaunch && !isConnected && !wasConnectWalletAlreadyClosed;
   const isWithdrawTipVisible =
     !!currentEpoch &&
     currentEpoch > 1 &&
@@ -61,7 +61,7 @@ const EarnView = (): ReactElement => {
   const duration = preLaunchEndTimestamp - preLaunchStartTimestamp;
 
   return (
-    <MainLayout classNameBody={styles.layoutBody} dataTest="EarnView">
+    <MainLayout dataTest="EarnView">
       <TipTile
         dataTest="EarnView__TipTile--connectWallet"
         image="images/tip-connect-wallet.webp"
