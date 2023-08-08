@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
@@ -22,6 +22,7 @@ const EarnView = (): ReactElement => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'views.earn',
   });
+  const [isPollingForCurrentEpoch, setIsPollingForCurrentEpoch] = useState<boolean>(false);
   const { isDesktop } = useMediaQuery();
   const { isConnected } = useAccount();
   const { data: withdrawableUserEth } = useWithdrawableUserEth();
@@ -29,13 +30,22 @@ const EarnView = (): ReactElement => {
     setWasWithdrawAlreadyClosed: state.setWasWithdrawAlreadyClosed,
     wasWithdrawAlreadyClosed: state.data.wasWithdrawAlreadyClosed,
   }));
-  const { data: currentEpoch, refetch: refetchCurrentEpoch } = useCurrentEpoch();
+  const { data: currentEpoch } = useCurrentEpoch({
+    refetchInterval: isPollingForCurrentEpoch ? 5000 : false,
+  });
   const { wasConnectWalletAlreadyClosed, setWasConnectWalletAlreadyClosed } = useTipsStore(
     state => ({
       setWasConnectWalletAlreadyClosed: state.setWasConnectWalletAlreadyClosed,
       wasConnectWalletAlreadyClosed: state.data.wasConnectWalletAlreadyClosed,
     }),
   );
+
+  useEffect(() => {
+    // When Epoch 0 ends, we poll for Epoch 1 from the backend.
+    if (isPollingForCurrentEpoch && currentEpoch === 1) {
+      setIsPollingForCurrentEpoch(false);
+    }
+  }, [isPollingForCurrentEpoch, currentEpoch, setIsPollingForCurrentEpoch]);
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isConnectWalletTipVisible = !isConnected && !wasConnectWalletAlreadyClosed;
@@ -46,8 +56,8 @@ const EarnView = (): ReactElement => {
     !withdrawableUserEth.isZero() &&
     !wasWithdrawAlreadyClosed;
 
-  const preLaunchEndTimestamp = Date.UTC(2023, 7, 8, 16, 0, 0, 0); // 08.08.2023 18:00 CEST
   const preLaunchStartTimestamp = Date.UTC(2023, 7, 4, 10, 0, 0, 0); // 04.08.2023 12:00 CEST
+  const preLaunchEndTimestamp = Date.UTC(2023, 7, 8, 16, 0, 0, 0); // 08.08.2023 18:00 CEST
   const duration = preLaunchEndTimestamp - preLaunchStartTimestamp;
 
   return (
@@ -79,7 +89,7 @@ const EarnView = (): ReactElement => {
               <TimeCounter
                 className={styles.preLaunchTimer}
                 duration={duration}
-                onCountingFinish={refetchCurrentEpoch}
+                onCountingFinish={() => setIsPollingForCurrentEpoch(true)}
                 timestamp={preLaunchEndTimestamp}
               />
             </BoxRounded>
