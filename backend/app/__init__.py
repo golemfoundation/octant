@@ -57,7 +57,7 @@ def register_request_context(app):
     def initialize_graphql_client():
         client = Client()
         transport = AIOHTTPTransport(
-            url=app.config["SUBGRAPH_ENDPOINT"],
+            url=app.config["SUBGRAPH_ENDPOINT"], timeout=2, ssl_close_timeout=2
         )
         client.transport = transport
         client.fetch_schema_from_transport = True
