@@ -4,7 +4,7 @@ import { parseUnits } from 'ethers/lib/utils';
 import { Formik } from 'formik';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount, useWalletClient } from 'wagmi';
+import { useAccount, useWalletClient, usePublicClient } from 'wagmi';
 
 import GlmLockBudget from 'components/dedicated/GlmLock/GlmLockBudget/GlmLockBudget';
 import GlmLockNotification from 'components/dedicated/GlmLock/GlmLockNotification/GlmLockNotification';
@@ -29,6 +29,7 @@ import { formInitialValues, validationSchema } from './utils';
 const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseModal }) => {
   const { i18n } = useTranslation();
   const { address } = useAccount();
+  const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { isDesktop } = useMediaQuery();
   const { setTransactionHashesToWaitFor, transactionHashesToWaitFor } = useMetaStore(state => ({
@@ -48,7 +49,11 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
   const { data: proposalsAddresses } = useProposalsContract();
   const { data: depositsValue } = useDepositValue();
 
-  const approvalState = useApprovalState(address, env.contractDepositsAddress, valueToDepose);
+  const [approvalState, approveCallback] = useApprovalState(
+    address,
+    env.contractDepositsAddress,
+    valueToDepose,
+  );
   const showBudgetBox = isDesktop || (!isDesktop && !isCryptoOrFiatInputFocused);
 
   const onMutate = async (): Promise<void> => {
@@ -58,12 +63,14 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
 
     setStep(2);
 
-    if (currentMode === 'lock' && approvalState !== ApprovalState.APPROVED) {
-      await writeContractERC20({
+    const approvalStateCurrent = await approveCallback();
+    if (currentMode === 'lock' && approvalStateCurrent !== ApprovalState.APPROVED) {
+      const hash = await writeContractERC20({
         args: [env.contractDepositsAddress, MaxUint256.toString()],
         functionName: 'approve',
         walletClient,
       });
+      await publicClient.waitForTransactionReceipt({ hash });
     }
   };
 

@@ -1,3 +1,4 @@
+import { Hash } from 'viem';
 import { WalletClient } from 'wagmi';
 
 import env from 'env';
@@ -16,7 +17,7 @@ export function writeContractERC20({
   walletClient,
   functionName,
   args,
-}: WriteContract): Promise<any> {
+}: WriteContract): Promise<Hash> {
   return walletClient.writeContract({
     abi: ERC20.abi,
     address: env.contractGlmAddress as `0x{string}`,
@@ -29,7 +30,7 @@ export function writeContractDeposits({
   walletClient,
   functionName,
   args,
-}: WriteContract): Promise<any> {
+}: WriteContract): Promise<Hash> {
   return walletClient.writeContract({
     abi: Deposits.abi,
     address: env.contractDepositsAddress as `0x{string}`,
@@ -42,7 +43,7 @@ export function writeContractVault({
   walletClient,
   functionName,
   args,
-}: WriteContract): Promise<any> {
+}: WriteContract): Promise<Hash> {
   return walletClient.writeContract({
     abi: Vault.abi,
     address: env.contractVaultAddress as `0x{string}`,
