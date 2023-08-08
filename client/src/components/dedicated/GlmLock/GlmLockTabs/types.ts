@@ -5,7 +5,7 @@ import { CurrentMode } from 'components/dedicated/GlmLock/types';
 export default interface GlmLockTabsProps {
   className?: string;
   currentMode: CurrentMode;
-  isTransactionHashesToWaitFor: boolean;
+  isLoading: boolean;
   onClose: () => void;
   onInputsFocusChange: (value: boolean) => void;
   onReset: (mode: CurrentMode) => void;
