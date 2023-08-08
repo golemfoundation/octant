@@ -2,7 +2,7 @@ import { MaxUint256 } from '@ethersproject/constants';
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { Formik } from 'formik';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount, useWalletClient, usePublicClient, useWaitForTransaction } from 'wagmi';
 
@@ -39,11 +39,14 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
     setTransactionHashesToWaitFor: state.setTransactionHashesToWaitFor,
     transactionHashesToWaitFor: state.data.transactionHashesToWaitFor,
   }));
-  useWaitForTransaction({
-    hash: transactionHashesToWaitFor ? (transactionHashesToWaitFor[0] as `0x${string}`) : undefined,
-    onReplaced: response =>
-      setTransactionHashForEtherscan(response.transactionReceipt.transactionHash),
-  });
+  const { data: transactionReceipt, isLoading: isLoadingTransactionReceipt } =
+    useWaitForTransaction({
+      hash: transactionHashesToWaitFor
+        ? (transactionHashesToWaitFor[0] as `0x${string}`)
+        : undefined,
+      onReplaced: response =>
+        setTransactionHashForEtherscan(response.transactionReceipt.transactionHash),
+    });
 
   /**
    * Value to depose so that we don't ask for allowance when user
@@ -56,6 +59,12 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
   const { data: availableFundsGlm } = useAvailableFundsGlm();
   const { data: proposalsAddresses } = useProposalsContract();
   const { data: depositsValue } = useDepositValue();
+
+  useEffect(() => {
+    if (transactionReceipt && !isLoadingTransactionReceipt) {
+      setStep(3);
+    }
+  }, [transactionReceipt, isLoadingTransactionReceipt, setStep]);
 
   const [approvalState, approveCallback] = useApprovalState(
     address,
@@ -91,7 +100,6 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
      */
     setTransactionHashesToWaitFor([transactionHashResponse]);
     setTransactionHashForEtherscan(transactionHashResponse);
-    setStep(3);
   };
 
   const onReset = (newMode: CurrentMode = 'lock'): void => {
@@ -160,8 +168,9 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
           <GlmLockTabs
             className={styles.element}
             currentMode={currentMode}
-            isTransactionHashesToWaitFor={
-              !!transactionHashesToWaitFor && transactionHashesToWaitFor.length > 0
+            isLoading={
+              (!!transactionHashesToWaitFor && transactionHashesToWaitFor.length > 0) ||
+              props.isSubmitting
             }
             onClose={onCloseModal}
             onInputsFocusChange={setIsCryptoOrFiatInputFocused}
