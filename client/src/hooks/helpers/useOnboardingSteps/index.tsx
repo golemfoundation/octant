@@ -1,5 +1,5 @@
 import { formatUnits } from 'ethers/lib/utils';
-import React, { useState, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import ButtonClaimGlm from 'components/dedicated/ButtonClaimGlm/ButtonGlmClaim';
@@ -9,20 +9,19 @@ import TOS from 'components/dedicated/TOS/TOS';
 import useGlmClaim from 'hooks/mutations/useGlmClaim';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useGlmClaimCheck from 'hooks/queries/useGlmClaimCheck';
-import useUserTOS from 'hooks/queries/useUserTOS';
 
 import defaultSteps from './steps';
 import stepsEpoch1 from './stepsEpoch1';
 
-const useOnboardingSteps = (isOnboardingDone: boolean): Step[] => {
+const useOnboardingSteps = (
+  isUserTOSAcceptedInitial: boolean | undefined,
+  isOnboardingDone: boolean,
+): Step[] => {
   const { i18n } = useTranslation();
 
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: isUserTOSAccepted } = useUserTOS();
   const { data: glmClaimCheck, isError, isFetched } = useGlmClaimCheck(isOnboardingDone);
   const glmClaimMutation = useGlmClaim(glmClaimCheck?.value);
-
-  const [isUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
 
   const isUserToClaimAvailable = isFetched && !isError && !!glmClaimCheck;
   const isUserEligibleToClaimFetched = isUserToClaimAvailable || (isFetched && isError);

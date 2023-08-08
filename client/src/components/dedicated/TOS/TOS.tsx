@@ -26,7 +26,12 @@ const TOS: FC = () => {
 
   return (
     <BoxRounded className={styles.box} hasPadding={false} isGrey>
-      <InputCheckbox inputId="tos-input" isChecked={isTOSChecked} onChange={handleCheckbox} />
+      <InputCheckbox
+        dataTest="TOS_InputCheckbox"
+        inputId="tos-input"
+        isChecked={isTOSChecked}
+        onChange={handleCheckbox}
+      />
       <label className={styles.text} htmlFor="tos-input">
         <Trans
           components={[<Button className={styles.link} href={TERMS_OF_USE} variant="link3" />]}

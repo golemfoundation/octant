@@ -21,13 +21,19 @@ const ModalOnboarding: FC = () => {
   }));
   const { isConnected } = useAccount();
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
+  const [isUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
 
-  const stepsToUse = useOnboardingSteps(isOnboardingDone);
+  const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial, isOnboardingDone);
 
   useEffect(() => {
     if (!isUserTOSAccepted) {
       setIsOnboardingDone(false);
     }
+
+    if (!isUserTOSAcceptedInitial && isUserTOSAccepted) {
+      setCurrentStepIndex(prev => prev + 1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setIsOnboardingDone, isUserTOSAccepted]);
 
   const currentStep = stepsToUse.length > 0 ? stepsToUse[currentStepIndex] : null;
