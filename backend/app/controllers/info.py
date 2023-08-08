@@ -7,6 +7,7 @@ from flask import current_app as app
 from app import database
 from app.extensions import w3
 from app.infrastructure import graphql
+from app.infrastructure.exception_handler import ExceptionHandler
 from app.settings import config
 
 
@@ -54,18 +55,21 @@ def healthcheck() -> (Healthcheck, int):
         is_chain_rpc_healthy = w3.eth.chain_id == config.CHAIN_ID
     except Exception as e:
         app.logger.warning(f"[Healthcheck] blockchain is down with an error: {e}")
+        ExceptionHandler.print_stacktrace(e)
         is_chain_rpc_healthy = False
 
     try:
         is_db_healthy = database.info.is_db_responsive()
     except Exception as e:
         app.logger.warning(f"[Healthcheck] db is down with an error: {e}")
+        ExceptionHandler.print_stacktrace(e)
         is_db_healthy = False
 
     try:
         is_subgraph_healthy = graphql.info.get_indexed_block_num() > 0
     except Exception as e:
         app.logger.warning(f"[Healthcheck] subgraph is down with an error: {e}")
+        ExceptionHandler.print_stacktrace(e)
         is_subgraph_healthy = False
 
     healthcheck_status = Healthcheck(
