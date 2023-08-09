@@ -17,7 +17,9 @@ echo "Network:      $NETWORK"
 echo "Label:        $LABEL"
 echo "Subgraph URL: $SUBGRAPH_URL"
 echo "IPFS URL:     $IPFS_URL"
-echo "EPOCHS addr:  $EPOCHS_ADDRESS"
+echo "GNT addr:     $GNT_CONTRACT_ADDRESS"
+echo "GLM addr:     $GLM_CONTRACT_ADDRESS"
+echo "EPOCHS addr:  $EPOCHS_CONTRACT_ADDRESS"
 echo
 echo "Replace hardcoded contract addresses"
 for i in src/*template*; do
@@ -25,6 +27,11 @@ for i in src/*template*; do
     F=$(echo $i | sed 's/template\.//')
     envsubst < $i > $F
 done
+if [ "$1" = "--no-run" ]; then
+    echo "Exiting, since --no-run was passed"
+    exit 0;
+fi
+
 echo "Code generation"
 npx graph codegen
 echo "Build graph"

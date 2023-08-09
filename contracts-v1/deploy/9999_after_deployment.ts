@@ -1,3 +1,4 @@
+import { execSync } from 'child_process';
 import fs from 'fs';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
@@ -67,6 +68,7 @@ VAULT_CONTRACT_ADDRESS=${vault.address}
       fs.copyFileSync(templateFn, networksFn);
     }
 
+    // this populates networks.json (used by docker among others)
     const json = JSON.parse(fs.readFileSync(networksFn).toString());
     json.localhost.GNT.address = gntAddress;
     json.localhost.GLM.address = glmAddress;
@@ -74,6 +76,12 @@ VAULT_CONTRACT_ADDRESS=${vault.address}
     json.localhost.Deposits.address = deposits.address;
     json.localhost.Vault.address = vault.address;
     fs.writeFileSync(networksFn, JSON.stringify(json, null, 2));
+
+    // need to update subgraph/src/*.ts files too
+    execSync('../subgraph/entrypoint.sh --no-run', {
+      cwd: '../subgraph/',
+      env: { NETWORK: 'localhost' },
+    });
   }
 };
 
