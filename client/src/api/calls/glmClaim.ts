@@ -1,7 +1,7 @@
 import env from 'env';
 import apiService from 'services/apiService';
 
-export function apiPostGlmClaim(signature: string): Promise<undefined> {
+export function apiPostGlmClaim(signature: string): Promise<any> {
   return apiService.post(`${env.serverEndpoint}glm/claim`, { signature }).then(({ data }) => data);
 }
 

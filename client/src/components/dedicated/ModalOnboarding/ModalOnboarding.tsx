@@ -14,16 +14,16 @@ import useOnboardingStore from 'store/onboarding/store';
 import styles from './ModalOnboarding.module.scss';
 
 const ModalOnboarding: FC = () => {
+  const { isConnected } = useAccount();
   const { data: isUserTOSAccepted } = useUserTOS();
   const { setIsOnboardingDone, isOnboardingDone } = useOnboardingStore(state => ({
     isOnboardingDone: state.data.isOnboardingDone,
     setIsOnboardingDone: state.setIsOnboardingDone,
   }));
-  const { isConnected } = useAccount();
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const [isUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
 
-  const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial, isOnboardingDone);
+  const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial, isOnboardingDone, () => setCurrentStepIndex(prev => prev + 1));
 
   useEffect(() => {
     if (!isUserTOSAccepted) {
