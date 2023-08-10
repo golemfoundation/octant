@@ -4,8 +4,8 @@ import { newMockEvent, createMockedFunction } from 'matchstick-as';
 import { Locked as LockedEvent, Unlocked as UnlockedEvent } from '../generated/Deposits/Deposits';
 import { Withdrawn } from '../generated/Vault/Vault';
 
-export const GLM_ADDRESS = Address.fromString('0x71432DD1ae7DB41706ee6a22148446087BdD0906');
-export const GNT_ADDRESS = Address.fromString('0xE6de13D64F6036E4E3f5fC84B5EB620C5C7c1050');
+export const GLM_ADDRESS = Address.fromString('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512');
+export const GNT_ADDRESS = Address.fromString('0x5FbDB2315678afecb367f032d93F642f64180aa3');
 
 export function createLockedEvent(
   depositBefore: BigInt,
