@@ -1,8 +1,8 @@
 import { BigNumber } from 'ethers';
 
-import { ProposalWithRewards } from 'hooks/queries/useProposalsWithRewards';
+import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
 
-export interface AllocationItemWithAllocations extends ProposalWithRewards {
+export interface AllocationItemWithAllocations extends ProposalIpfsWithRewards {
   isAllocatedTo: boolean;
   value: BigNumber;
 }

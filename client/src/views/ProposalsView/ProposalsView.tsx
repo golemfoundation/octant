@@ -2,11 +2,12 @@ import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ProposalItem from 'components/dedicated/ProposalItem/ProposalItem';
+import ProposalItemSkeleton from 'components/dedicated/ProposalItemSkeleton/ProposalItemSkeleton';
 import TipTile from 'components/dedicated/TipTile/TipTile';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
-import useProposalsWithRewards from 'hooks/queries/useProposalsWithRewards';
+import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useTipsStore from 'store/tips/store';
 
@@ -19,13 +20,13 @@ const ProposalsView = (): ReactElement => {
   const { data: proposalsAddresses } = useProposalsContract();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
+  const { data: proposalsWithRewards } = useProposalsIpfsWithRewards();
   const { wasAddFavouritesAlreadyClosed, setWasAddFavouritesAlreadyClosed } = useTipsStore(
     state => ({
       setWasAddFavouritesAlreadyClosed: state.setWasAddFavouritesAlreadyClosed,
       wasAddFavouritesAlreadyClosed: state.data.wasAddFavouritesAlreadyClosed,
     }),
   );
-  const proposalsWithRewards = useProposalsWithRewards();
 
   const isEpoch1 = currentEpoch === 1;
 
@@ -50,14 +51,19 @@ const ProposalsView = (): ReactElement => {
         title={t('tip.title')}
       />
       <div className={styles.list} data-test="ProposalsView__List">
-        {proposalsWithRewards.map((proposal, index) => (
-          <ProposalItem
-            key={proposal.address}
-            className={styles.element}
-            dataTest={`ProposalsView__ProposalItem--${index}`}
-            {...proposal}
-          />
-        ))}
+        {proposalsWithRewards.length > 0
+          ? proposalsWithRewards.map((proposalWithRewards, index) => (
+              <ProposalItem
+                key={proposalWithRewards.address}
+                className={styles.element}
+                dataTest={`ProposalsView__ProposalItem--${index}`}
+                {...proposalWithRewards}
+              />
+            ))
+          : (proposalsAddresses || []).map((_, index) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <ProposalItemSkeleton key={index} className={styles.element} />
+            ))}
       </div>
     </MainLayout>
   );

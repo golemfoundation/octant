@@ -10,7 +10,6 @@ import ProposalRewards from 'components/dedicated/ProposalRewards/ProposalReward
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
@@ -18,7 +17,15 @@ import useAllocationsStore from 'store/allocations/store';
 import styles from './ProposalItem.module.scss';
 import ProposalItemProps from './types';
 
-const ProposalItem: FC<ProposalItemProps> = ({ address, className, dataTest }) => {
+const ProposalItem: FC<ProposalItemProps> = ({
+  address,
+  className,
+  dataTest,
+  introDescription,
+  isLoadingError,
+  name,
+  profileImageSmall,
+}) => {
   const { ipfsGateway } = env;
   const navigate = useNavigate();
   const { data: userAllocations } = useUserAllocations();
@@ -26,13 +33,8 @@ const ProposalItem: FC<ProposalItemProps> = ({ address, className, dataTest }) =
     allocations: state.data.allocations,
     setAllocations: state.setAllocations,
   }));
-  const { data: proposalsIpfs } = useProposalsIpfs([address]);
   const { data: currentEpoch } = useCurrentEpoch();
   const isAddedToAllocate = allocations!.includes(address);
-
-  const isLoading = !proposalsIpfs || proposalsIpfs.length === 0;
-  const proposal = proposalsIpfs[0] || {};
-  const { isLoadingError, profileImageSmall, name, introDescription } = proposal;
 
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
     allocations,
@@ -43,7 +45,6 @@ const ProposalItem: FC<ProposalItemProps> = ({ address, className, dataTest }) =
   const isAllocatedTo = !!userAllocations?.elements.find(
     ({ address: userAllocationAddress }) => userAllocationAddress === address,
   );
-  const isLoadingStates = isLoadingError || isLoading;
   const isEpoch1 = currentEpoch === 1;
 
   return (
@@ -51,18 +52,18 @@ const ProposalItem: FC<ProposalItemProps> = ({ address, className, dataTest }) =
       className={cx(
         styles.root,
         className,
-        !isLoadingStates && styles.isClickable,
+        !isLoadingError && styles.isClickable,
         isEpoch1 && styles.isEpoch1,
       )}
       data-test={dataTest}
       onClick={
-        isLoadingStates
+        isLoadingError
           ? () => {}
           : () => navigate(`${ROOT_ROUTES.proposal.absolute}/${currentEpoch}/${address}`)
       }
     >
-      {isLoadingStates ? (
-        <ProposalLoadingStates isLoading={isLoading} isLoadingError={isLoadingError} />
+      {isLoadingError ? (
+        <ProposalLoadingStates isLoadingError={isLoadingError} />
       ) : (
         <Fragment>
           <div className={styles.header}>
