@@ -1,3 +1,11 @@
+.mainLayoutBody {
+  @media #{$tablet-down} {
+    padding-left: 0;
+    padding-right: 0;
+    background: $color-white;
+  }
+}
+
 .divider {
   background: $color-octant-grey2;
   height: 0.1rem;
