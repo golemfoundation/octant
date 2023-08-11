@@ -33,6 +33,8 @@ const ProposalsView = (): ReactElement => {
   const areMatchedProposalsReady =
     !!currentEpoch && ((currentEpoch > 1 && matchedProposalRewards) || isEpoch1);
 
+  const isAddToFavouritesTipVisible = !wasAddFavouritesAlreadyClosed && !isEpoch1;
+
   return (
     <MainLayout
       dataTest="ProposalsView"
@@ -45,7 +47,7 @@ const ProposalsView = (): ReactElement => {
         dataTest="ProposalsView__TipTile"
         image="images/favourites.webp"
         infoLabel={i18n.t('common.gettingStarted')}
-        isOpen={!wasAddFavouritesAlreadyClosed && !isEpoch1}
+        isOpen={isAddToFavouritesTipVisible}
         onClose={() => setWasAddFavouritesAlreadyClosed(true)}
         text={t('tip.text')}
         title={t('tip.title')}
