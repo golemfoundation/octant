@@ -1,15 +1,41 @@
 import dataclasses
 
 from flask import current_app as app
-from flask_restx import Resource, Namespace, fields
+from flask_restx import Namespace, fields
 
-from app.infrastructure import OctantResource
 from app.controllers import allocations
 from app.extensions import api
+from app.infrastructure import OctantResource
+from app.infrastructure.routes.common_models import proposals_rewards_model
 from app.settings import config
 
 ns = Namespace("allocations", description="Octant allocations")
 api.add_namespace(ns)
+
+user_allocations_payload_item = api.model(
+    "UserAllocationPayloadItem",
+    {
+        "proposalAddress": fields.String(
+            required=True,
+            description="Proposal address",
+        ),
+        "amount": fields.String(
+            required=True,
+            description="Funds allocated by user for the proposal in WEI",
+        ),
+    },
+)
+
+user_allocations_payload = api.model(
+    "AllocationPayload",
+    {
+        "allocations": fields.List(
+            fields.Nested(user_allocations_payload_item),
+            description="User allocation payload",
+        )
+    },
+)
+
 
 user_allocations_model = api.model(
     "UserAllocations",
@@ -49,6 +75,24 @@ proposal_donors_model = api.model(
 )
 
 if config.EPOCH_2_FEATURES_ENABLED:
+
+    @ns.route("/simulate/<string:user_address>")
+    @ns.doc(
+        description="Simulates an allocation and get estimated proposal rewards",
+        params={
+            "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)",
+        },
+    )
+    class AllocationSimulation(OctantResource):
+        @ns.expect(user_allocations_payload)
+        @ns.marshal_with(proposals_rewards_model)
+        @ns.response(200, "User allocation successfully simulated")
+        def post(self, user_address: str):
+            app.logger.debug("Simulating an allocation")
+            proposal_rewards = allocations.simulate_allocation(ns.payload, user_address)
+            app.logger.debug(f"Simulated allocation rewards: {proposal_rewards}")
+
+            return {"rewards": proposal_rewards}
 
     @ns.route("/user/<string:user_address>/epoch/<int:epoch>")
     @ns.doc(

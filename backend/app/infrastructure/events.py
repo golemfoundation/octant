@@ -1,21 +1,21 @@
 import json
-import logging
 from typing import List
 
 from flask import current_app as app
 from flask_socketio import emit
 
 from app.controllers import allocations
+from app.controllers.allocations import allocate
 from app.controllers.rewards import (
     get_allocation_threshold,
     get_proposals_rewards,
     ProposalReward,
 )
-from app.core.allocations import allocate, AllocationRequest
+from app.core.allocations import AllocationRequest
 from app.core.common import AccountFunds
 from app.exceptions import OctantException
-from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler
 from app.extensions import socketio
+from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler
 
 
 @socketio.on("connect")
