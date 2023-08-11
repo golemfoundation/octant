@@ -17,6 +17,8 @@ This project uses Poetry, you can install it [here](https://python-poetry.org/do
 
 Before running shell commands, copy `.env.template` as `.env` and adjust variables. If you want to run server in production setup, set `OCTANT_ENV=production`
 
+If you want to run locally, modify .env to `EPOCH_0_END` and `EPOCH_1_END` to low values, to make sure that backend fetches epoch number from the contract.
+
 Then run the following commands to bootstrap your environment
 
 #### Development
@@ -31,8 +33,7 @@ poetry install --no-interaction --no-ansi -v --with prod --without dev
 poetry shell
 ```
 
-Run the following commands to create your a
-pp's
+Run the following commands to create your app's
 database tables and perform the initial migration
 
 ```bash
