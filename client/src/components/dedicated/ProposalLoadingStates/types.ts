@@ -1,4 +1,4 @@
 export default interface ProposalLoadingStatesProps {
-  isLoading: boolean;
+  isLoading?: boolean;
   isLoadingError: boolean;
 }

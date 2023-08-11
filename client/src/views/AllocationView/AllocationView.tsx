@@ -19,6 +19,7 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
+import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useAllocationsStore from 'store/allocations/store';
@@ -43,6 +44,8 @@ const AllocationView = (): ReactElement => {
   const [allocationsEdited, setAllocationsEdited] = useState<string[]>([]);
   const { data: proposalsContract } = useProposalsContract();
   const { data: proposalsIpfs } = useProposalsIpfs(proposalsContract);
+  const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards();
+
   const {
     data: userAllocations,
     isFetching: isFetchingUserAllocation,
@@ -51,8 +54,7 @@ const AllocationView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { data: matchedProposalRewards, refetch: refetchMatchedProposalRewards } =
-    useMatchedProposalRewards();
+  const { refetch: refetchMatchedProposalRewards } = useMatchedProposalRewards();
   const { allocations, rewardsForProposals, setAllocations } = useAllocationsStore(state => ({
     allocations: state.data.allocations,
     rewardsForProposals: state.data.rewardsForProposals,
@@ -161,9 +163,7 @@ const AllocationView = (): ReactElement => {
   const allocationsWithRewards = getAllocationsWithRewards({
     allocationValues,
     areAllocationsAvailableOrAlreadyDone,
-    currentEpoch,
-    matchedProposalRewards,
-    proposalsContract,
+    proposalsIpfsWithRewards,
     userAllocationsElements: userAllocations?.elements,
   });
 
