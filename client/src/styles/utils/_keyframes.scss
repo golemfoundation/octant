@@ -10,15 +10,6 @@
   }
 }
 
-@keyframes fadeIn {
-  0% {
-    bottom: -100%;
-  }
-  100% {
-    bottom: 0;
-  }
-}
-
 @keyframes spin {
   0% {
     transform: rotate(0deg);
