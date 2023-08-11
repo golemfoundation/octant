@@ -10,10 +10,10 @@ import useProposalsContract from './useProposalsContract';
 
 export default function useProposalsIpfs(proposalsAddresses?: string[]): {
   data: ExtendedProposal[];
-  isLoading: boolean;
+  isFetching: boolean;
   refetch: () => void;
 } {
-  const { data: proposalsCid, isLoading: isLoadingProposalsCid } = useProposalsCid();
+  const { data: proposalsCid, isFetching: isFetchingProposalsCid } = useProposalsCid();
   const { refetch } = useProposalsContract();
 
   const proposalsIpfsResults: UseQueryResult<BackendProposal>[] = useQueries({
@@ -24,15 +24,15 @@ export default function useProposalsIpfs(proposalsAddresses?: string[]): {
     })),
   });
 
-  const isProposalsIpfsResultsLoading =
-    isLoadingProposalsCid ||
+  const isProposalsIpfsResultsFetching =
+    isFetchingProposalsCid ||
     proposalsIpfsResults.length === 0 ||
-    proposalsIpfsResults.some(({ isLoading }) => isLoading);
+    proposalsIpfsResults.some(({ isFetching }) => isFetching);
 
-  if (isProposalsIpfsResultsLoading) {
+  if (isProposalsIpfsResultsFetching) {
     return {
       data: [],
-      isLoading: isProposalsIpfsResultsLoading,
+      isFetching: isProposalsIpfsResultsFetching,
       refetch,
     };
   }
@@ -47,7 +47,7 @@ export default function useProposalsIpfs(proposalsAddresses?: string[]): {
 
   return {
     data: proposalsIpfsResultsWithAddresses,
-    isLoading: false,
+    isFetching: false,
     refetch,
   };
 }

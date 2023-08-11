@@ -1,9 +1,11 @@
-import React, { ReactElement } from 'react';
+import cx from 'classnames';
+import React, { FC } from 'react';
 
 import styles from './ProposalItemSkeleton.module.scss';
+import ProposalItemSkeletonProps from './types';
 
-const ProposalItemSkeleton = (): ReactElement => (
-  <div className={styles.root} data-test="ProposalItemSkeleton">
+const ProposalItemSkeleton: FC<ProposalItemSkeletonProps> = ({ className }) => (
+  <div className={cx(styles.root, className)} data-test="ProposalItemSkeleton">
     <div className={styles.image} />
     <div className={styles.title} />
     <div className={styles.description} />

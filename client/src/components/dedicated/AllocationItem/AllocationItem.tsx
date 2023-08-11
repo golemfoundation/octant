@@ -12,7 +12,6 @@ import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThresho
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
-import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import useAllocationsStore from 'store/allocations/store';
 import { checkMark, pencil } from 'svg/misc';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
@@ -25,9 +24,12 @@ const AllocationItem: FC<AllocationItemProps> = ({
   className,
   isAllocatedTo,
   isDisabled,
+  isLoadingError,
   isLocked,
   isManuallyEdited,
+  name,
   onSelectItem,
+  profileImageSmall,
   value,
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.allocation.allocationItem' });
@@ -37,16 +39,11 @@ const AllocationItem: FC<AllocationItemProps> = ({
   const { data: proposalRewardsThreshold, isLoading: isLoadingRewardsThreshold } =
     useProposalRewardsThreshold();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
-  const { data: proposalsIpfs, isLoading: isLoadingProposalsIpfs } = useProposalsIpfs([address]);
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
   }));
-  const { name, isLoadingError, profileImageSmall } = proposalsIpfs[0] || {};
 
-  const isLoading =
-    currentEpoch === undefined ||
-    (isLoadingRewardsThreshold && currentEpoch > 1) ||
-    isLoadingProposalsIpfs;
+  const isLoading = currentEpoch === undefined || (isLoadingRewardsThreshold && currentEpoch > 1);
   const isLoadingStates = isLoadingError || isLoading;
 
   const percentToRender = rewardsForProposals.isZero()
