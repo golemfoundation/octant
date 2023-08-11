@@ -4,16 +4,20 @@ import pytest
 from eth_account import Account
 
 from app import database
+from app.controllers.allocations import allocate
 from app.controllers.rewards import (
     get_allocation_threshold,
     get_rewards_budget,
     get_proposals_rewards,
 )
-from app.core.allocations import allocate, calculate_threshold, AllocationRequest
+from app.core.allocations import (
+    AllocationRequest,
+)
 from app.core.rewards import (
     calculate_total_rewards,
     calculate_all_individual_rewards,
     get_matched_rewards_from_epoch,
+    calculate_matched_rewards_threshold,
 )
 from .conftest import allocate_user_rewards, MOCKED_PENDING_EPOCH_NO, MOCK_PROPOSALS
 from .test_allocations import (
@@ -71,7 +75,9 @@ def test_get_allocation_threshold(app, user_accounts, proposal_accounts):
         user_accounts, proposal_accounts
     )
 
-    assert get_allocation_threshold(None) == calculate_threshold(total_allocated, 5)
+    assert get_allocation_threshold(None) == calculate_matched_rewards_threshold(
+        total_allocated, 5
+    )
 
 
 def test_get_rewards_budget(app, user_accounts, proposal_accounts):

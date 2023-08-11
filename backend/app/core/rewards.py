@@ -20,3 +20,7 @@ def get_matched_rewards_from_epoch(epoch: int) -> int:
     snapshot = database.pending_epoch_snapshot.get_by_epoch_num(epoch)
 
     return calculate_matched_rewards(snapshot)
+
+
+def calculate_matched_rewards_threshold(total_allocated: int, proposals_no: int) -> int:
+    return int(total_allocated / (proposals_no * 2))

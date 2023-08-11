@@ -1,12 +1,13 @@
 import dataclasses
 
 from flask import current_app as app
-from flask_restx import Resource, Namespace, fields
+from flask_restx import Namespace, fields
 
-from app.infrastructure import OctantResource
 from app.controllers import rewards
 from app.core import user
 from app.extensions import api
+from app.infrastructure import OctantResource
+from app.infrastructure.routes.common_models import proposals_rewards_model
 from app.settings import config
 
 ns = Namespace("rewards", description="Octant rewards")
@@ -27,24 +28,6 @@ threshold_model = api.model(
         "threshold": fields.String(
             required=True,
             description="Threshold, that projects have to pass to be eligible for receiving rewards",
-        ),
-    },
-)
-
-proposal_model = api.model(
-    "Proposal",
-    {
-        "address": fields.String(
-            required=True,
-            description="Proposal address",
-        ),
-        "allocated": fields.String(
-            required=True,
-            description="User allocated funds for the proposal",
-        ),
-        "matched": fields.String(
-            required=True,
-            description="Matched rewards funds for the proposal",
         ),
     },
 )
@@ -155,17 +138,14 @@ if config.EPOCH_2_FEATURES_ENABLED:
         "for the given epoch started already?",
     )
     @ns.route("/proposals/epoch/<int:epoch>")
-    class Proposals(OctantResource):
-        @ns.marshal_with(proposal_model)
+    class ProposalsRewards(OctantResource):
+        @ns.marshal_with(proposals_rewards_model)
         def get(self, epoch):
             app.logger.debug(f"Getting proposal rewards for epoch {epoch}")
-            proposal_rewards = [
-                dataclasses.asdict(proposal)
-                for proposal in rewards.get_proposals_rewards(epoch)
-            ]
+            proposal_rewards = rewards.get_proposals_rewards(epoch)
             app.logger.debug(f"Proposal rewards in epoch: {epoch}: {proposal_rewards}")
 
-            return proposal_rewards
+            return {"rewards": proposal_rewards}
 
     @ns.doc(
         description="Returns total of allocated and budget for matched rewards for a given epoch",

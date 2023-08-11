@@ -14,7 +14,8 @@ from app.contracts.epochs import Epochs
 from app.contracts.erc20 import ERC20
 from app.contracts.proposals import Proposals
 from app.contracts.vault import Vault
-from app.core.allocations import AllocationRequest, allocate, Allocation
+from app.controllers.allocations import allocate
+from app.core.allocations import AllocationRequest, Allocation
 from app.core.rewards import calculate_matched_rewards
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.extensions import db, w3
@@ -105,11 +106,11 @@ def patch_glm_and_gnt(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_epochs(monkeypatch):
-    monkeypatch.setattr("app.core.allocations.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.controllers.allocations.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.controllers.snapshots.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.core.proposals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.controllers.rewards.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.controllers.epochs.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.core.proposals.epochs", MOCK_EPOCHS)
 
     MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
     MOCK_EPOCHS.get_current_epoch.return_value = MOCKED_CURRENT_EPOCH_NO

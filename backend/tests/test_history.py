@@ -4,7 +4,8 @@ from typing import List
 import pytest
 from eth_account.signers.local import LocalAccount
 
-from app.core.allocations import allocate, AllocationRequest
+from app.controllers.allocations import allocate
+from app.core.allocations import AllocationRequest
 from app.core.history import (
     get_locks,
     get_unlocks,
