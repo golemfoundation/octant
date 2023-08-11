@@ -19,7 +19,7 @@ import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
-import useProposalsWithRewards from 'hooks/queries/useProposalsWithRewards';
+import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import i18n from 'i18n';
 import MainLayout from 'layouts/MainLayout/MainLayout';
@@ -49,7 +49,7 @@ const ProposalView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: userAllocations } = useUserAllocations();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
-  const proposalsWithRewards = useProposalsWithRewards();
+  const { data: proposalsWithRewards } = useProposalsIpfsWithRewards();
 
   useEffect(() => {
     if (loadedAddresses.length === 0) {

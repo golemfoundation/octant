@@ -1,9 +1,9 @@
 import { BigNumber } from 'ethers';
 
 import { AllocationItemWithAllocations } from 'components/dedicated/AllocationItem/types';
-import { ProposalRewards } from 'hooks/queries/useMatchedProposalRewards';
+import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
 import { UserAllocationElement } from 'hooks/queries/useUserAllocations';
-import getSortedElementsByTotalValueOfAllocations from 'utils/getSortedElementsByTotalValueOfAllocations';
+import getSortedElementsByTotalValueOfAllocationsAndAlphabetical from 'utils/getSortedElementsByTotalValueOfAllocationsAndAlphabetical';
 
 import { AllocationValues } from './types';
 
@@ -65,39 +65,38 @@ export function getAllocationValuesInitialState({
 }
 
 export function getAllocationsWithRewards({
-  proposalsContract,
+  proposalsIpfsWithRewards,
   allocationValues,
   areAllocationsAvailableOrAlreadyDone,
-  currentEpoch,
-  matchedProposalRewards,
   userAllocationsElements,
 }: {
   allocationValues: AllocationValues | undefined;
   areAllocationsAvailableOrAlreadyDone: boolean;
-  currentEpoch: number | undefined;
-  matchedProposalRewards: ProposalRewards[] | undefined;
-  proposalsContract: string[] | undefined;
+  proposalsIpfsWithRewards: ProposalIpfsWithRewards[];
   userAllocationsElements: UserAllocationElement[] | undefined;
 }): AllocationItemWithAllocations[] {
-  let allocationsWithRewards =
-    proposalsContract && proposalsContract.length > 0 && areAllocationsAvailableOrAlreadyDone
-      ? allocationValues!.map(allocationValue => {
-          const proposalMatchedProposalRewards = matchedProposalRewards?.find(
-            ({ address }) => address === allocationValue.address,
-          );
-          const isAllocatedTo = !!userAllocationsElements?.find(
-            ({ address }) => address === allocationValue.address,
-          );
+  const isDataDefined =
+    proposalsIpfsWithRewards &&
+    proposalsIpfsWithRewards.length > 0 &&
+    areAllocationsAvailableOrAlreadyDone;
+  let allocationsWithRewards = isDataDefined
+    ? allocationValues!.map(allocationValue => {
+        const proposal = proposalsIpfsWithRewards.find(
+          ({ address }) => address === allocationValue.address,
+        )!;
+        const isAllocatedTo = !!userAllocationsElements?.find(
+          ({ address }) => address === allocationValue.address,
+        );
 
-          return {
-            isAllocatedTo,
-            percentage: proposalMatchedProposalRewards?.percentage,
-            totalValueOfAllocations: proposalMatchedProposalRewards?.sum,
-            ...allocationValue,
-          };
-        })
-      : [];
+        return {
+          isAllocatedTo,
+          ...allocationValue,
+          ...proposal,
+        };
+      })
+    : [];
 
+  // TODO OCT-804 check sorting algorithm.
   allocationsWithRewards.sort(({ value: valueA }, { value: valueB }) => {
     if (valueA.lt(valueB)) {
       return 1;
@@ -108,12 +107,9 @@ export function getAllocationsWithRewards({
     return 0;
   });
 
-  allocationsWithRewards =
-    !!currentEpoch && currentEpoch > 1 && matchedProposalRewards
-      ? (getSortedElementsByTotalValueOfAllocations(
-          allocationsWithRewards,
-        ) as AllocationItemWithAllocations[])
-      : allocationsWithRewards;
+  allocationsWithRewards = getSortedElementsByTotalValueOfAllocationsAndAlphabetical(
+    allocationsWithRewards as AllocationItemWithAllocations[],
+  ) as AllocationItemWithAllocations[];
 
   return allocationsWithRewards;
 }

@@ -1,6 +1,6 @@
-import { ProposalWithRewards } from 'hooks/queries/useProposalsWithRewards';
+import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
 
-export default interface ProposalItemProps extends ProposalWithRewards {
+export default interface ProposalItemProps extends ProposalIpfsWithRewards {
   className?: string;
   dataTest?: string;
 }

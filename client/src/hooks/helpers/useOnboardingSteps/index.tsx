@@ -16,12 +16,13 @@ import stepsEpoch1 from './stepsEpoch1';
 const useOnboardingSteps = (
   isUserTOSAcceptedInitial: boolean | undefined,
   isOnboardingDone: boolean,
+  onGlmClaimSuccess: () => void,
 ): Step[] => {
   const { i18n } = useTranslation();
 
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: glmClaimCheck, isError, isFetched } = useGlmClaimCheck(isOnboardingDone);
-  const glmClaimMutation = useGlmClaim(glmClaimCheck?.value);
+  const glmClaimMutation = useGlmClaim(glmClaimCheck?.value, { onSuccess: onGlmClaimSuccess });
 
   const isUserToClaimAvailable = isFetched && !isError && !!glmClaimCheck;
   const isUserEligibleToClaimFetched = isUserToClaimAvailable || (isFetched && isError);
@@ -33,7 +34,7 @@ const useOnboardingSteps = (
     return [];
   }
 
-  const steps = [
+  return [
     ...(isUserTOSAcceptedInitial === false
       ? [
           {
@@ -73,8 +74,6 @@ const useOnboardingSteps = (
       : []),
     ...(currentEpoch === 1 ? stepsEpoch1 : defaultSteps),
   ];
-
-  return steps;
 };
 
 export default useOnboardingSteps;
