@@ -1,45 +1,10 @@
 from flask import current_app as app
 from web3 import exceptions
 
-from app.extensions import w3
-from app.settings import config
-
-abi = [
-    {
-        "inputs": [],
-        "name": "getCurrentEpoch",
-        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-        "stateMutability": "view",
-        "type": "function",
-    },
-    {
-        "inputs": [],
-        "name": "getPendingEpoch",
-        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-        "stateMutability": "view",
-        "type": "function",
-    },
-    {
-        "inputs": [],
-        "name": "getFinalizedEpoch",
-        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-        "stateMutability": "view",
-        "type": "function",
-    },
-    {
-        "inputs": [],
-        "name": "isDecisionWindowOpen",
-        "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
-        "stateMutability": "view",
-        "type": "function",
-    },
-]
+from app.contracts.smart_contract import SmartContract
 
 
-class Epochs:
-    def __init__(self):
-        self.contract = w3.eth.contract(address=config.EPOCHS_CONTRACT_ADDRESS, abi=abi)
-
+class Epochs(SmartContract):
     def is_decision_window_open(self) -> bool:
         app.logger.debug("[Epochs contract] Checking if decision window is open")
         return self.contract.functions.isDecisionWindowOpen().call()
@@ -70,6 +35,3 @@ class Epochs:
             app.logger.warning("[Epochs contract] No finalized epoch")
             # HN:Epochs/not-finalized
             return 0
-
-
-epochs = Epochs()

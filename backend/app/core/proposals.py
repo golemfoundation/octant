@@ -3,14 +3,13 @@ from itertools import groupby
 from typing import Optional, List
 
 from app import database
-from app.contracts.epochs import epochs
-from app.contracts.proposals import proposals
 from app.core.common import AccountFunds
 from app.core.rewards import (
     get_matched_rewards_from_epoch,
     calculate_matched_rewards_threshold,
 )
 from app.database import allocations as allocation_db
+from app.extensions import epochs, proposals
 
 
 def get_number_of_proposals(epoch: Optional[int]) -> int:
@@ -19,10 +18,10 @@ def get_number_of_proposals(epoch: Optional[int]) -> int:
 
 
 def get_proposal_allocation_threshold(epoch: int) -> int:
-    proposals_no = get_number_of_proposals(epoch)
+    proposals_count = get_number_of_proposals(epoch)
     total_allocated = allocation_db.get_alloc_sum_by_epoch(epoch)
 
-    return calculate_matched_rewards_threshold(total_allocated, proposals_no)
+    return calculate_matched_rewards_threshold(total_allocated, proposals_count)
 
 
 def get_proposal_rewards_above_threshold(

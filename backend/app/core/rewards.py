@@ -22,5 +22,7 @@ def get_matched_rewards_from_epoch(epoch: int) -> int:
     return calculate_matched_rewards(snapshot)
 
 
-def calculate_matched_rewards_threshold(total_allocated: int, proposals_no: int) -> int:
-    return int(total_allocated / (proposals_no * 2))
+def calculate_matched_rewards_threshold(
+    total_allocated: int, proposals_count: int
+) -> int:
+    return int(total_allocated / (proposals_count * 2))

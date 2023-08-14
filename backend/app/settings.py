@@ -23,7 +23,6 @@ class Config(object):
     SUBGRAPH_ENDPOINT = os.getenv("SUBGRAPH_ENDPOINT")
     WEB3_PROVIDER = Web3.HTTPProvider(os.getenv("ETH_RPC_PROVIDER_URL"))
     SCHEDULER_ENABLED = _parse_bool(os.getenv("SCHEDULER_ENABLED"))
-    EPOCH_2_FEATURES_ENABLED = _parse_bool(os.getenv("EPOCH_2_FEATURES_ENABLED"))
 
     # Epoch ending dates
     EPOCH_0_END = int(os.getenv("EPOCH_0_END", 1690848000))
@@ -90,15 +89,7 @@ class TestConfig(Config):
     TESTING = True
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = "sqlite://"
-
-
-def get_config():
-    # Load the appropriate configuration based on the OCTANT_ENV environment variable
-    env = os.getenv("OCTANT_ENV")
-    if env == "production":
-        return ProdConfig
-    else:
-        return DevConfig
-
-
-config = get_config()
+    EPOCH_0_END = 1690848000
+    EPOCH_1_END = 1698796800
+    GLM_WITHDRAWAL_AMOUNT = 1000_000000000_000000000
+    GLM_SENDER_NONCE = 0

@@ -10,6 +10,12 @@ from gql.transport.aiohttp import log as gql_logger
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
+from app.contracts import abi
+from app.contracts.epochs import Epochs
+from app.contracts.erc20 import ERC20
+from app.contracts.proposals import Proposals
+from app.contracts.vault import Vault
+
 # Flask extensions
 api = Api(
     version="1.0.0",
@@ -23,8 +29,13 @@ migrate = Migrate()
 cors = CORS()
 scheduler = APScheduler()
 
-# Other extensions
+# Blockchain extensions
 w3 = Web3()
+glm = ERC20(abi=abi.ERC20)
+gnt = ERC20(abi=abi.ERC20)
+epochs = Epochs(abi=abi.EPOCHS)
+proposals = Proposals(abi=abi.PROPOSALS)
+vault = Vault(abi=abi.VAULT)
 
 
 def init_logger(app):
@@ -42,6 +53,12 @@ def init_web3(app):
     w3.provider = app.config["WEB3_PROVIDER"]
     if geth_poa_middleware not in w3.middleware_onion:
         w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+
+    glm.init_web3(w3, app.config["GLM_CONTRACT_ADDRESS"])
+    gnt.init_web3(w3, app.config["GNT_CONTRACT_ADDRESS"])
+    epochs.init_web3(w3, app.config["EPOCHS_CONTRACT_ADDRESS"])
+    proposals.init_web3(w3, app.config["PROPOSALS_CONTRACT_ADDRESS"])
+    vault.init_web3(w3, app.config["VAULT_CONTRACT_ADDRESS"])
 
 
 def init_scheduler(app):

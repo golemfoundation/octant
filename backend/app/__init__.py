@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, g
 from gql import Client
 from gql.transport.aiohttp import AIOHTTPTransport
@@ -15,19 +17,20 @@ from app.extensions import (
 )
 from app.infrastructure import events, routes, apscheduler
 from app.infrastructure.exception_handler import ExceptionHandler
+from app.settings import ProdConfig, DevConfig
 
 
-def create_app(config_object=None):
+def create_app(config=None):
+    if config is None:
+        env = os.getenv("OCTANT_ENV")
+        config = ProdConfig if env == "production" else DevConfig
+
     app = Flask(
         __name__,
-        template_folder=f"{settings.config.PROJECT_ROOT}/templates",
-        static_folder=f"{settings.config.PROJECT_ROOT}/static",
+        template_folder=f"{config.PROJECT_ROOT}/templates",
+        static_folder=f"{config.PROJECT_ROOT}/static",
     )
-
-    if config_object is not None:
-        app.config.from_object(config_object)
-    else:
-        app.config.from_object(settings.config)
+    app.config.from_object(config)
 
     register_extensions(app)
     register_errorhandlers(app)

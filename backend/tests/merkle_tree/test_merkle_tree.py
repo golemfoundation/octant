@@ -1,24 +1,31 @@
 import json
 
+import pytest
+from flask import current_app as app
 from hexbytes import HexBytes
 from multiproof import StandardMerkleTree
 from multiproof.standart import LeafValue
 
 from app.core.common import AccountFunds
-from app.settings import config
-
 from app.core.merkle_tree import build_merkle_tree, get_proof
 
 
+@pytest.fixture(autouse=True)
+def before(app):
+    pass
+
+
 def test_merkle_tree():
-    with open(f"{config.TEST_DIR}/merkle_tree/testInputs.json", "r") as f:
+    with open(f"{app.config['TEST_DIR']}/merkle_tree/testInputs.json", "r") as f:
         test_inputs = json.load(f)
 
     leaves = [AccountFunds(addr, amount) for addr, amount in test_inputs]
     merkle_tree = build_merkle_tree(leaves)
 
     # validate whole dumped tree
-    with open(f"{config.TEST_DIR}/merkle_tree/expectedMerkleTree.json", "r") as f:
+    with open(
+        f"{app.config['TEST_DIR']}/merkle_tree/expectedMerkleTree.json", "r"
+    ) as f:
         expected_merkle_tree_json = json.load(f)
 
         tree = [HexBytes(val) for val in expected_merkle_tree_json["tree"]]
@@ -39,7 +46,7 @@ def test_merkle_tree():
     assert merkle_tree.leaf_encoding == expected_merkle_tree.leaf_encoding
 
     # validate proofs
-    with open(f"{config.TEST_DIR}/merkle_tree/expectedProofs.json", "r") as f:
+    with open(f"{app.config['TEST_DIR']}/merkle_tree/expectedProofs.json", "r") as f:
         expected_proofs = json.load(f)
     for i, test_input in enumerate(test_inputs):
         assert get_proof(merkle_tree, test_input[0]) == expected_proofs[i]

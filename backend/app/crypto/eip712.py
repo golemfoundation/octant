@@ -3,18 +3,22 @@ from typing import Union
 from eth_account import Account
 from eth_account.messages import encode_structured_data
 from eth_account.signers.local import LocalAccount
+from flask import current_app as app
 
 from app.extensions import w3
-from app.settings import config
 
-domain = {
-    "name": "Octant",
-    "version": "1.0.0",
-    "chainId": config.CHAIN_ID,
-}
+
+def build_domain():
+    return {
+        "name": "Octant",
+        "version": "1.0.0",
+        "chainId": app.config["CHAIN_ID"],
+    }
 
 
 def build_allocations_eip712_data(message: dict) -> dict:
+    domain = build_domain()
+
     # Convert amount value to int
     message["allocations"] = [
         {**allocation, "amount": int(allocation["amount"])}
@@ -45,6 +49,8 @@ def build_allocations_eip712_data(message: dict) -> dict:
 
 
 def build_claim_glm_eip712_data() -> dict:
+    domain = build_domain()
+
     claim_glm_types = {
         "EIP712Domain": [
             {"name": "name", "type": "string"},
@@ -60,7 +66,9 @@ def build_claim_glm_eip712_data() -> dict:
         "types": claim_glm_types,
         "domain": domain,
         "primaryType": "ClaimGLMPayload",
-        "message": {"msg": f"Claim {int(config.GLM_WITHDRAWAL_AMOUNT / 1e18)} GLMs"},
+        "message": {
+            "msg": f"Claim {int(app.config['GLM_WITHDRAWAL_AMOUNT'] / 1e18)} GLMs"
+        },
     }
 
 

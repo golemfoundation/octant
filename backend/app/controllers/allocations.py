@@ -1,7 +1,6 @@
 from typing import List, Dict
 
 from app import database
-from app.contracts import epochs
 from app.controllers import rewards
 from app.core.allocations import (
     AllocationRequest,
@@ -11,7 +10,7 @@ from app.core.allocations import (
     add_allocations_to_db,
 )
 from app.core.common import AccountFunds
-from app.extensions import db
+from app.extensions import db, epochs
 
 
 def allocate(request: AllocationRequest):

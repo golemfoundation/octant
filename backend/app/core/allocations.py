@@ -4,10 +4,10 @@ from typing import List, Dict
 from dataclass_wizard import JSONWizard
 
 from app import database, exceptions
-from app.contracts.proposals import proposals
 from app.core.epochs import has_pending_epoch_snapshot
 from app.core.user import get_budget
 from app.crypto.eip712 import recover_address, build_allocations_eip712_data
+from app.extensions import proposals
 
 
 @dataclass(frozen=True)
