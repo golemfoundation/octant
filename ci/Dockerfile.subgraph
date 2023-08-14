@@ -7,7 +7,7 @@ COPY ./ ./
 RUN yarn install --ignore-scripts --frozen-lockfile
 
 FROM root AS deploy
-RUN apk add jq gettext-base
+RUN apk add jq gettext-envsubst
 ARG VERSION_TAG
 ENV VERSION_TAG=$VERSION_TAG
 COPY --from=build /app/ /app/
