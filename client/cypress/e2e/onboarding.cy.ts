@@ -5,10 +5,19 @@ import { ROOT } from 'src/routes/RootRoutes/routes';
 
 import Chainable = Cypress.Chainable;
 
-const connectWallet = (isTOSAccepted: boolean): Chainable<any> => {
+const connectWallet = (
+  isTOSAccepted: boolean,
+  shouldVisit = true,
+  shouldReload = false,
+): Chainable<any> => {
   cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
   cy.disconnectMetamaskWalletFromAllDapps();
-  visitWithLoader(ROOT.absolute);
+  if (shouldVisit) {
+    visitWithLoader(ROOT.absolute);
+  }
+  if (shouldReload) {
+    cy.reload();
+  }
   cy.get('[data-test=MainLayout__Button--connect]').click();
   cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
   cy.switchToMetamaskNotification();
@@ -263,6 +272,18 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     it('user cannot change steps by swiping on screen (difference less than 5px)', () => {
       checkChangeStepsBySwipingOnScreenDifferenceLessThanl5px(true);
     });
+
+    it('user cannot change steps by swiping on screen (difference less than 5px)', () => {
+      checkChangeStepsBySwipingOnScreenDifferenceLessThanl5px(true);
+    });
+
+    it('user is able to close the onboarding, and after disconnecting & connecting, onboarding does not show up again', () => {
+      cy.get('[data-test=ModalOnboarding]').should('be.visible');
+      cy.get('[data-test=ModalOnboarding__Button]').click();
+      cy.get('[data-test=ModalOnboarding]').should('not.exist');
+      connectWallet(true, false, true);
+      cy.get('[data-test=ModalOnboarding]').should('not.exist');
+    });
   });
 });
 
@@ -334,6 +355,16 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.switchToMetamaskNotification();
       cy.confirmMetamaskSignatureRequest();
       checkCurrentElement(1, true);
+    });
+
+    it('TOS acceptance allows the user to close the modal by clicking button in the top-right', () => {
+      checkCurrentElement(0, true);
+      cy.get('[data-test=TOS_InputCheckbox]').check();
+      cy.switchToMetamaskNotification();
+      cy.confirmMetamaskSignatureRequest();
+      checkCurrentElement(1, true);
+      cy.get('[data-test=ModalOnboarding__Button]').click();
+      cy.get('[data-test=ModalOnboarding]').should('not.exist');
     });
   });
 });
