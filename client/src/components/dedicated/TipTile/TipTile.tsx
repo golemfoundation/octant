@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
-import React from 'react';
+import React, { useRef } from 'react';
 
 import Button from 'components/core/Button/Button';
 import Img from 'components/core/Img/Img';
@@ -23,22 +23,37 @@ const TipTile: React.FC<TipTileProps> = ({
 }) => {
   const { isDesktop } = useMediaQuery();
 
+  const shouldSkipEntranceAnimation = useRef(isOpen);
+
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          animate={{
-            height: isDesktop ? ['0', '22.4rem', '22.4rem'] : ['0', '20rem', '20rem'],
-            marginBottom: ['0', '2.4rem', '2.4rem'],
-            opacity: [0, 0, 1],
-          }}
+          animate={
+            shouldSkipEntranceAnimation.current !== isOpen
+              ? {
+                  height: isDesktop ? ['0', '22.4rem', '22.4rem'] : ['0', '20rem', '20rem'],
+                  marginBottom: ['0', '2.4rem', '2.4rem'],
+                  opacity: [0, 0, 1],
+                }
+              : {}
+          }
           className={cx(styles.root, className)}
           data-test={dataTest}
           exit={{
             height: isDesktop ? ['22.4rem', '22.4rem', '0'] : ['20rem', '20rem', '0'],
-            marginBottom: isDesktop ? ['2.8rem', '2.8rem', '0'] : ['1.6rem', '1.6rem', '0'],
+            marginBottom: isDesktop ? ['2.4rem', '2.4rem', '0'] : ['1.6rem', '1.6rem', '0'],
             opacity: [1, 0.1, 0],
           }}
+          initial={
+            shouldSkipEntranceAnimation.current
+              ? {
+                  height: '22.4rem',
+                  marginBottom: '2.4rem',
+                  opacity: 1,
+                }
+              : {}
+          }
           transition={{
             delay: 0.01,
             duration: 0.3,

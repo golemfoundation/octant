@@ -18,7 +18,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: depositsValue, isFetching: isFetchingDepositsValue } = useDepositValue();
-  const { data: individualReward, isLoading: isLoadingIndividualReward } = useIndividualReward();
+  const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const { data: userAllocations, isFetching: isFetchingUserAllocation } = useUserAllocations();
   const {
     wasLockGLMAlreadyClosed,
@@ -49,7 +49,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   const isRewardsTipVisible =
     !isEpoch1 &&
     isConnected &&
-    !isLoadingIndividualReward &&
+    !isFetchingIndividualReward &&
     !!individualReward &&
     !individualReward.isZero() &&
     !wasRewardsAlreadyClosed;
