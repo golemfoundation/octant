@@ -80,7 +80,7 @@ VAULT_CONTRACT_ADDRESS=${vault.address}
     // need to update subgraph/src/*.ts files too
     execSync('../subgraph/entrypoint.sh --no-run', {
       cwd: '../subgraph/',
-      env: { NETWORK: 'localhost' },
+      env: { ...process.env, NETWORK: 'localhost' },
     });
   }
 };
