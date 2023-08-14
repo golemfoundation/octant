@@ -8,7 +8,6 @@ from app import database
 from app.extensions import w3
 from app.infrastructure import graphql
 from app.infrastructure.exception_handler import ExceptionHandler
-from app.settings import config
 
 
 @dataclass(frozen=True)
@@ -33,26 +32,28 @@ class Healthcheck(JSONWizard):
 
 def get_blockchain_info() -> ChainInfo:
     smart_contracts = [
-        SmartContract("Auth", config.AUTH_CONTRACT_ADDRESS),
-        SmartContract("Deposits", config.DEPOSITS_CONTRACT_ADDRESS),
-        SmartContract("Epochs", config.EPOCHS_CONTRACT_ADDRESS),
-        SmartContract("GLM", config.GLM_CONTRACT_ADDRESS),
-        SmartContract("GNT", config.GNT_CONTRACT_ADDRESS),
-        SmartContract("Proposals", config.PROPOSALS_CONTRACT_ADDRESS),
-        SmartContract("Vault", config.VAULT_CONTRACT_ADDRESS),
-        SmartContract("WithdrawalsTarget", config.WITHDRAWALS_TARGET_CONTRACT_ADDRESS),
+        SmartContract("Auth", app.config["AUTH_CONTRACT_ADDRESS"]),
+        SmartContract("Deposits", app.config["DEPOSITS_CONTRACT_ADDRESS"]),
+        SmartContract("Epochs", app.config["EPOCHS_CONTRACT_ADDRESS"]),
+        SmartContract("GLM", app.config["GLM_CONTRACT_ADDRESS"]),
+        SmartContract("GNT", app.config["GNT_CONTRACT_ADDRESS"]),
+        SmartContract("Proposals", app.config["PROPOSALS_CONTRACT_ADDRESS"]),
+        SmartContract("Vault", app.config["VAULT_CONTRACT_ADDRESS"]),
+        SmartContract(
+            "WithdrawalsTarget", app.config["WITHDRAWALS_TARGET_CONTRACT_ADDRESS"]
+        ),
     ]
 
     return ChainInfo(
-        chain_name=config.CHAIN_NAME,
-        chain_id=config.CHAIN_ID,
+        chain_name=app.config["CHAIN_NAME"],
+        chain_id=app.config["CHAIN_ID"],
         smart_contracts=smart_contracts,
     )
 
 
 def healthcheck() -> (Healthcheck, int):
     try:
-        is_chain_rpc_healthy = w3.eth.chain_id == config.CHAIN_ID
+        is_chain_rpc_healthy = w3.eth.chain_id == app.config["CHAIN_ID"]
     except Exception as e:
         app.logger.warning(f"[Healthcheck] blockchain is down with an error: {e}")
         ExceptionHandler.print_stacktrace(e)

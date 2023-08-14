@@ -2,11 +2,9 @@ from flask import current_app as app
 from flask import render_template, make_response, send_from_directory
 from flask_restx import Resource, Namespace, fields
 
-from app import settings
 from app.controllers import info
-from app.infrastructure import OctantResource
 from app.extensions import api
-from app.settings import config
+from app.infrastructure import OctantResource
 
 ns = Namespace("info", description="Information about Octant's backend API")
 api.add_namespace(ns)
@@ -54,24 +52,21 @@ healthcheck_model = api.model(
 )
 
 
-if config.EPOCH_2_FEATURES_ENABLED:
+@ns.route("/websockets-api")
+@ns.doc(description="The documentation for websockets can be found under this path")
+class WebsocketsDocs(OctantResource):
+    def get(self):
+        headers = {"Content-Type": "text/html"}
+        return make_response(render_template("websockets-api-docs.html"), 200, headers)
 
-    @ns.route("/websockets-api")
-    @ns.doc(description="The documentation for websockets can be found under this path")
-    class WebsocketsDocs(OctantResource):
-        def get(self):
-            headers = {"Content-Type": "text/html"}
-            return make_response(
-                render_template("websockets-api-docs.html"), 200, headers
-            )
 
-    @ns.route("/websockets-api.yaml")
-    class WebsocketsDocsYaml(OctantResource):
-        def get(self):
-            docs_folder = f"{settings.config.PROJECT_ROOT}/docs"
-            return send_from_directory(
-                docs_folder, "websockets-api.yaml", mimetype="text/plain"
-            )
+@ns.route("/websockets-api.yaml")
+class WebsocketsDocsYaml(OctantResource):
+    def get(self):
+        docs_folder = f"{app.config['PROJECT_ROOT']}/docs"
+        return send_from_directory(
+            docs_folder, "websockets-api.yaml", mimetype="text/plain"
+        )
 
 
 @ns.route("/chain-info")
@@ -90,9 +85,9 @@ class Version(OctantResource):
     @api.marshal_with(app_version_model)
     def get(self):
         return {
-            "id": config.DEPLOYMENT_ID,
-            "env": config.ENV,
-            "chain": config.CHAIN_NAME,
+            "id": app.config["DEPLOYMENT_ID"],
+            "env": app.config["ENV"],
+            "chain": app.config["CHAIN_NAME"],
         }
 
 

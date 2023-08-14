@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from typing import List
 
 from app import database
-from app.contracts.vault import vault
 from app.core.merkle_tree import get_proof_by_address_and_epoch
+from app.extensions import vault
 
 
 @dataclass(frozen=True)

@@ -1,10 +1,10 @@
-from flask_restx import Resource, Namespace, fields
+from flask import current_app as app
+from flask_restx import Namespace, fields
 
-from app.infrastructure import OctantResource
 from app.controllers import glm_claim
 from app.exceptions import GlmClaimed
 from app.extensions import api
-from app.settings import config
+from app.infrastructure import OctantResource
 
 ns = Namespace("glm", description="Operations related to GLM smart contract")
 api.add_namespace(ns)
@@ -54,7 +54,7 @@ check_claim_model = api.model(
 class Claim(OctantResource):
     @ns.expect(claim_glm_request)
     def post(self):
-        if not config.GLM_CLAIM_ENABLED:
+        if not app.config["GLM_CLAIM_ENABLED"]:
             return {"message": "GLM claiming is disabled"}, 403
         glm_claim.claim(ns.payload["signature"])
         return {}, 201
@@ -80,9 +80,9 @@ class Claim(OctantResource):
 class CheckClaim(OctantResource):
     @ns.marshal_with(check_claim_model)
     def get(self, user_address: str):
-        if not config.GLM_CLAIM_ENABLED:
+        if not app.config["GLM_CLAIM_ENABLED"]:
             return {"message": "GLM claiming is disabled"}, 403
-        claimable = str(config.GLM_WITHDRAWAL_AMOUNT)
+        claimable = str(app.config["GLM_WITHDRAWAL_AMOUNT"])
         try:
             glm_claim.check(user_address)
         except GlmClaimed:

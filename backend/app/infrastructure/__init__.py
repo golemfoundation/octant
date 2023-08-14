@@ -1,8 +1,6 @@
 from flask_restx import Resource
-from flask import g as request_context
 
 from app.infrastructure.exception_handler import ExceptionHandler
-
 
 default_decorators = {
     "delete": ExceptionHandler.print_stacktrace_on_exception(True, True),

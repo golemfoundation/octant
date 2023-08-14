@@ -1,9 +1,16 @@
+import pytest
+
 from app.crypto.eip712 import (
     sign,
     recover_address,
     build_allocations_eip712_data,
     build_claim_glm_eip712_data,
 )
+
+
+@pytest.fixture(autouse=True)
+def before(app):
+    pass
 
 
 def test_sign_and_recover_address_from_allocations(user_accounts):

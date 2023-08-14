@@ -1,5 +1,5 @@
 from flask import current_app as app
-from flask_restx import Resource, Namespace, fields
+from flask_restx import Namespace, fields
 from flask_restx import reqparse
 
 import app.controllers.user as user_controller

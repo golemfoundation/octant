@@ -8,10 +8,10 @@ from dataclass_wizard import JSONWizard
 
 from app import database
 from app import exceptions
-from app.contracts.epochs import epochs
 from app.core import proposals, merkle_tree, epochs as core_epochs
 from app.core.proposals import get_proposals_with_allocations
 from app.core.rewards import calculate_matched_rewards, get_matched_rewards_from_epoch
+from app.extensions import epochs
 
 
 @dataclass(frozen=True)

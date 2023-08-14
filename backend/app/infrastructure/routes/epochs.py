@@ -1,9 +1,9 @@
 from flask import current_app as app
-from flask_restx import fields, Namespace, Resource
+from flask_restx import fields, Namespace
 
-from app.infrastructure import OctantResource
 from app.controllers import epochs
 from app.extensions import api
+from app.infrastructure import OctantResource
 
 ns = Namespace("epochs", description="Octant epochs")
 api.add_namespace(ns)
