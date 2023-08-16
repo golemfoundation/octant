@@ -43,7 +43,7 @@ describe('getValueFiatToDisplay', () => {
     ).toEqual('Conversion offline');
   });
 
-  it('should return the correct fiat value with prefix when all parameters are valid', () => {
+  it('should return the correct fiat value with prefix when all parameters are valid & isUsingHairSpace', () => {
     expect(
       // @ts-expect-error error here is caused by lack of typing for defaultProps.
       getValueFiatToDisplay({
@@ -52,12 +52,32 @@ describe('getValueFiatToDisplay', () => {
     ).toEqual('$58\u200a242.34');
   });
 
-  it('should return fiat value in JPY as an integer', () => {
+  it('should return the correct fiat value with prefix when all parameters are valid & !isUsingHairSpace', () => {
+    expect(
+      // @ts-expect-error error here is caused by lack of typing for defaultProps.
+      getValueFiatToDisplay({
+        ...defaultProps,
+        isUsingHairSpace: false,
+      }),
+    ).toEqual('$58 242.34');
+  });
+
+  it('should return fiat value in JPY as an integer & isUsingHairSpace', () => {
     expect(
       // @ts-expect-error error here is caused by lack of typing for defaultProps.
       getValueFiatToDisplay({
         ...propsJPY,
       }),
     ).toEqual('JPY 58\u200a243');
+  });
+
+  it('should return fiat value in JPY as an integer & !isUsingHairSpace', () => {
+    expect(
+      // @ts-expect-error error here is caused by lack of typing for defaultProps.
+      getValueFiatToDisplay({
+        ...propsJPY,
+        isUsingHairSpace: false,
+      }),
+    ).toEqual('JPY 58 243');
   });
 });

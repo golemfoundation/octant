@@ -54,8 +54,17 @@ const testCases = [
 
 describe('getFormattedGlmValue', () => {
   for (const { argument, expectedValue } of testCases) {
-    it(`returns ${expectedValue} for an argument ${formatUnits(argument)}`, () => {
+    it(`returns ${expectedValue} for an argument ${formatUnits(
+      argument,
+    )} when isUsingHairSpace`, () => {
       expect(getFormattedGlmValue(argument).fullString).toBe(expectedValue);
+    });
+
+    const expectedValueNormalSpace = expectedValue.replace(/\u200a/g, ' ');
+    it(`returns ${expectedValueNormalSpace} for an argument ${formatUnits(
+      argument,
+    )} when !isUsingHairSpace`, () => {
+      expect(getFormattedGlmValue(argument, false).fullString).toBe(expectedValueNormalSpace);
     });
   }
 });

@@ -7,18 +7,20 @@ import getFormattedGlmValue from './getFormattedGlmValue';
 
 export type ValueCryptoToDisplay = {
   cryptoCurrency?: CryptoCurrency;
+  isUsingHairSpace?: boolean;
   valueCrypto?: BigNumber;
 };
 
 export default function getValueCryptoToDisplay({
-  valueCrypto,
   cryptoCurrency,
+  isUsingHairSpace = true,
+  valueCrypto,
 }: ValueCryptoToDisplay): string {
   if (!cryptoCurrency || !valueCrypto) {
     return '0.0';
   }
 
   return cryptoCurrency === 'ethereum'
-    ? getFormattedEthValue(valueCrypto).fullString
-    : getFormattedGlmValue(valueCrypto).fullString;
+    ? getFormattedEthValue(valueCrypto, isUsingHairSpace).fullString
+    : getFormattedGlmValue(valueCrypto, isUsingHairSpace).fullString;
 }
