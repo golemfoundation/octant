@@ -14,14 +14,14 @@ describe('getValueCryptoToDisplay', () => {
   test('returns the formatted ETH value if cryptoCurrency is ethereum', () => {
     const valueCrypto = parseUnits('1');
     const cryptoCurrency = 'ethereum';
-    const formattedEthValue = getFormattedEthValue(valueCrypto).fullString;
+    const formattedEthValue = getFormattedEthValue(valueCrypto, true).fullString;
     expect(getValueCryptoToDisplay({ cryptoCurrency, valueCrypto })).toBe(formattedEthValue);
   });
 
   test('returns the formatted crypto value and ticker if cryptoCurrency is not ethereum', () => {
     const valueCrypto = parseUnits('1');
     const cryptoCurrency = 'golem';
-    const formattedCryptoValue = getFormattedGlmValue(valueCrypto).fullString;
+    const formattedCryptoValue = getFormattedGlmValue(valueCrypto, true).fullString;
     expect(getValueCryptoToDisplay({ cryptoCurrency, valueCrypto })).toBe(formattedCryptoValue);
   });
 });

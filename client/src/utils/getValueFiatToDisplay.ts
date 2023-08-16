@@ -9,17 +9,19 @@ import getNumberWithSpaces from './getNumberWithSpaces';
 
 export default function getValueFiatToDisplay({
   coinPricesServerDowntimeText = 'Conversion offline',
-  cryptoValues,
   cryptoCurrency,
+  cryptoValues,
   displayCurrency,
-  valueCrypto,
   error,
+  isUsingHairSpace = true,
+  valueCrypto,
 }: {
   coinPricesServerDowntimeText?: DoubleValueProps['coinPricesServerDowntimeText'];
   cryptoCurrency: DoubleValueProps['cryptoCurrency'];
   cryptoValues?: Response;
   displayCurrency: NonNullable<SettingsData['displayCurrency']>;
   error?: any;
+  isUsingHairSpace?: boolean;
   valueCrypto: DoubleValueProps['valueCrypto'];
 }): string {
   if (error) {
@@ -38,5 +40,5 @@ export default function getValueFiatToDisplay({
     displayCurrency === 'jpy' ? 0 : 2,
   );
 
-  return `${prefix}${getNumberWithSpaces(valueFiat)}`;
+  return `${prefix}${getNumberWithSpaces(valueFiat, isUsingHairSpace)}`;
 }
