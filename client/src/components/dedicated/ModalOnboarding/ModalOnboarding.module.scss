@@ -48,13 +48,15 @@
   }
 }
 
-.onboardingModalImageWrapper {
+.onboardingModalImageWrapper,
+.onboardingModalImageContainer {
   height: 24rem;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   background: $color-octant-grey12;
+  overflow: hidden;
 
   &.claimGlm {
     padding: 7.2rem 0 6.4rem;
