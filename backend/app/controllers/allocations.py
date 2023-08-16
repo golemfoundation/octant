@@ -13,7 +13,7 @@ from app.core.common import AccountFunds
 from app.extensions import db, epochs
 
 
-def allocate(request: AllocationRequest):
+def allocate(request: AllocationRequest) -> str:
     user_address = recover_user_address(request)
     user_allocations = deserialize_payload(request.payload)
     epoch = epochs.get_pending_epoch()
@@ -23,6 +23,8 @@ def allocate(request: AllocationRequest):
         epoch, user_address, user_allocations, request.override_existing_allocations
     )
     db.session.commit()
+
+    return user_address
 
 
 def simulate_allocation(payload: Dict, user_address: str):

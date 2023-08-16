@@ -36,8 +36,11 @@ def handle_disconnect():
 def handle_allocate(msg):
     msg = json.loads(msg)
     payload, signature = msg["payload"], msg["signature"]
-    app.logger.info(f"User allocation: payload: {payload}, signature: {signature}")
-    allocate(AllocationRequest(payload, signature, override_existing_allocations=True))
+    app.logger.info(f"User allocation payload: {payload}, signature: {signature}")
+    user_address = allocate(
+        AllocationRequest(payload, signature, override_existing_allocations=True)
+    )
+    app.logger.info(f"User: {user_address} allocated successfully")
 
     threshold = get_allocation_threshold()
     emit("threshold", json.dumps({"threshold": str(threshold)}), broadcast=True)
