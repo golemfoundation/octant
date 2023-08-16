@@ -4,6 +4,7 @@ from flask import current_app as app
 from flask_restx import Namespace, fields
 
 from app.controllers import allocations
+from app.core.allocations import AllocationRequest
 from app.extensions import api
 from app.infrastructure import OctantResource
 from app.infrastructure.routes.common_models import proposals_rewards_model
@@ -25,13 +26,24 @@ user_allocations_payload_item = api.model(
     },
 )
 
-user_allocations_payload = api.model(
+allocation_payload = api.model(
     "AllocationPayload",
     {
         "allocations": fields.List(
             fields.Nested(user_allocations_payload_item),
             description="User allocation payload",
         )
+    },
+)
+
+user_allocation_request = api.model(
+    "UserAllocationRequest",
+    {
+        "payload": fields.Nested(allocation_payload),
+        "signature": fields.String(
+            required=True,
+            description="EIP-712 signature of the allocation payload as a hexadecimal string",
+        ),
     },
 )
 
@@ -74,6 +86,22 @@ proposal_donors_model = api.model(
 )
 
 
+@ns.route("/allocate")
+@ns.doc(description="Allocates user's funds to proposals")
+class Allocation(OctantResource):
+    @ns.expect(user_allocation_request)
+    @ns.response(201, "User allocated successfully")
+    def post(self):
+        payload, signature = ns.payload["payload"], ns.payload["signature"]
+        app.logger.info(f"User allocation payload: {payload}, signature: {signature}")
+        user_address = allocations.allocate(
+            AllocationRequest(payload, signature, override_existing_allocations=True)
+        )
+        app.logger.info(f"User: {user_address} allocated successfully")
+
+        return {}, 201
+
+
 @ns.route("/simulate/<string:user_address>")
 @ns.doc(
     description="Simulates an allocation and get estimated proposal rewards",
@@ -82,7 +110,7 @@ proposal_donors_model = api.model(
     },
 )
 class AllocationSimulation(OctantResource):
-    @ns.expect(user_allocations_payload)
+    @ns.expect(allocation_payload)
     @ns.marshal_with(proposals_rewards_model)
     @ns.response(200, "User allocation successfully simulated")
     def post(self, user_address: str):
