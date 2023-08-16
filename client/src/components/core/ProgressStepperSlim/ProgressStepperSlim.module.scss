@@ -46,6 +46,9 @@ $stepHeight: 0.8rem;
   background: $color-octant-grey4;
   height: 100%;
   width: 0.8rem;
+  transition: background $transition-time-5;
+  transition-delay: $transition-time-4;
+  transition-timing-function: ease-out;
 
   &:first-child {
     margin-left: 0;
