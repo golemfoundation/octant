@@ -8,7 +8,7 @@ Documentation is available [here](https://docs.octant.app/).
 
 ---
 
-Documentation, configuration, deployment is available in directories of this repository. `contracts` should be an entry point.
+Documentation, configuration, deployment is available in directories of this repository. `contracts-v1` should be an entry point.
 
 ---
 
