@@ -6,6 +6,7 @@ import { useAccount } from 'wagmi';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Img from 'components/core/Img/Img';
 import Svg from 'components/core/Svg/Svg';
+import AllocationItemSkeleton from 'components/dedicated/AllocationItem/AllocationItemSkeleton/AllocationItemSkeleton';
 import ProposalLoadingStates from 'components/dedicated/ProposalLoadingStates/ProposalLoadingStates';
 import env from 'env';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
@@ -36,15 +37,14 @@ const AllocationItem: FC<AllocationItemProps> = ({
   const { ipfsGateway } = env;
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: proposalRewardsThreshold, isLoading: isLoadingRewardsThreshold } =
+  const { data: proposalRewardsThreshold, isFetching: isFetchingRewardsThreshold } =
     useProposalRewardsThreshold();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
   }));
 
-  const isLoading = currentEpoch === undefined || (isLoadingRewardsThreshold && currentEpoch > 1);
-  const isLoadingStates = isLoadingError || isLoading;
+  const isLoading = currentEpoch === undefined || isFetchingRewardsThreshold;
 
   const percentToRender = rewardsForProposals.isZero()
     ? 0
@@ -64,9 +64,13 @@ const AllocationItem: FC<AllocationItemProps> = ({
       className={cx(styles.root, className)}
       onClick={isConnected && !isDisabled ? () => onSelectItem(address) : undefined}
     >
-      {isLoadingStates ? (
-        <ProposalLoadingStates isLoading={isLoading} isLoadingError={isLoadingError} />
-      ) : (
+      {(isLoading || isLoadingError) && (
+        <ProposalLoadingStates isLoading={isLoading} isLoadingError={isLoadingError}>
+          <AllocationItemSkeleton />
+        </ProposalLoadingStates>
+      )}
+
+      {!isLoading && !isLoadingError && (
         <Fragment>
           {(isAllocatedTo || isManuallyEdited) && (
             <div className={styles.icons}>
