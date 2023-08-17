@@ -163,6 +163,45 @@ def before(app, graphql_client):
                 "epoch_end_deposit": "320_448372019_117283735",
             },
         ),
+        (
+            [
+                {
+                    "__typename": "Locked",
+                    "timestamp": 1100,
+                    "amount": "90_000000000_000000000",
+                }
+            ],
+            {
+                "effective_deposit": "0",
+                "epoch_end_deposit": "90_000000000_000000000",
+            },
+        ),
+        (
+            [
+                {
+                    "__typename": "Locked",
+                    "timestamp": 1900,
+                    "amount": "100_000000000_000000000",
+                }
+            ],
+            {
+                "effective_deposit": "10_000000000_000000000",
+                "epoch_end_deposit": "100_000000000_000000000",
+            },
+        ),
+        (
+            [
+                {
+                    "__typename": "Locked",
+                    "timestamp": 1910,
+                    "amount": "100_000000000_000000000",
+                }
+            ],
+            {
+                "effective_deposit": "0",
+                "epoch_end_deposit": "100_000000000_000000000",
+            },
+        ),
     ],
 )
 def test_update_user_deposits(mocker, events, expected):
