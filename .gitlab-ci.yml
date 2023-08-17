@@ -3,6 +3,7 @@ variables:
   FF_USE_FASTZIP: "true"
   CACHE_COMPRESSION_LEVEL: "fast"
   TRANSFER_METER_FREQUENCY: "2s"
+  MASTER_BRANCH: "master"
   IMAGE_TAG: $CI_COMMIT_SHA
   EPOCH_0_END: 1690848000
   EPOCH_1_END: 1698796800
@@ -53,6 +54,12 @@ default:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
       allow_failure: true
+  on_push_to_master_branch:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $MASTER_BRANCH
+  on_push_to_master_branch_manual:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $MASTER_BRANCH
+      when: manual
+      allow_failure: true
   on_mr_manual:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: manual
@@ -78,6 +85,7 @@ Build backend:
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
   script:
     - !reference [.scripts, install_packages]
     - ci/build_backend.sh
@@ -93,6 +101,7 @@ Build contracts:
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
   script:
     - !reference [.scripts, install_packages]
     - ci/build_contracts_v1.sh
@@ -124,6 +133,7 @@ Build services:
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
   dependencies:
     - Build contracts
   needs:
@@ -155,6 +165,7 @@ Lint and typecheck yarn:
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
   script:
     - cd $SERVICE
     - !reference [ .scripts, yarn_install ]
@@ -178,6 +189,7 @@ Lint and typecheck poetry:
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
   script:
     - cd backend
     - !reference [ .scripts, poetry_install ]
@@ -195,6 +207,7 @@ Backend tests:
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
   dependencies:
     - Build backend
   script:
@@ -220,6 +233,7 @@ Unit tests:
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
   dependencies:
   script:
     - cd $SERVICE
@@ -248,6 +262,7 @@ Documentation:
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
   dependencies:
   script:
     - cd $SERVICE
@@ -276,6 +291,7 @@ Build images:
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
     - !reference [.rules, on_version_tag]
   parallel:
     matrix:
@@ -309,6 +325,7 @@ Deploy contracts:
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
   variables:
     NETWORK: sepolia
   artifacts:
@@ -328,6 +345,7 @@ Cypress E2E Tests Epoch 1:
   rules:
     - !reference [.rules, on_mr]
     - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
   variables:
     NETWORK_NAME: sepolia
     PRIVATE_KEY: $GOERLI_PRIVATE_KEY
@@ -379,6 +397,7 @@ Force destroy E2E env:
   rules:
     - !reference [.rules, on_mr_manual]
     - !reference [.rules, on_push_to_default_branch_manual]
+    - !reference [.rules, on_push_to_master_branch_manual ]
   allow_failure: true
   script:
     - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh e2e
@@ -459,7 +478,7 @@ Deploy Release Candidate app:
   stage: deploy
   image: !reference [.images, alpine_git]
   rules:
-    - !reference [.rules, on_push_to_default_branch_manual]
+    - !reference [.rules, on_push_to_master_branch_manual]
   resource_group: production
   variables:
     ARGO_REPOSITORY: "https://wildland-bot:${HOUSEKEEPER_CI_TOKEN}@gitlab.com/wildland/devops/iac/k8s/wildland-k8s-devops.git"
