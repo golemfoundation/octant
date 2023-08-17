@@ -2,7 +2,7 @@ from typing import List, Tuple, Dict
 
 from app import database
 from app.core.common import UserDeposit
-from app.core.deposits.cut_off import apply_cutoff
+from app.core.deposits.cut_off import apply_min_value_cutoff
 from app.core.deposits.events import get_all_users_weighted_deposits, WeightedDeposit
 from app.database.models import Deposit
 
@@ -63,7 +63,9 @@ def handle_deposit(
         effective_deposit = _calculate_effective_deposit(deposits_events)
         epoch_end_deposit = deposits_events[-1].amount
     elif previous_deposit:
-        effective_deposit = apply_cutoff(int(previous_deposit.epoch_end_deposit))
+        effective_deposit = apply_min_value_cutoff(
+            int(previous_deposit.epoch_end_deposit)
+        )
         epoch_end_deposit = int(previous_deposit.epoch_end_deposit)
 
     if epoch_end_deposit > MINIMUM_DEPOSIT:
@@ -75,4 +77,4 @@ def handle_deposit(
 
 
 def _calculate_effective_deposit(deposits: List[WeightedDeposit]) -> int:
-    return apply_cutoff(min([amount for amount, _ in deposits]))
+    return apply_min_value_cutoff(min([amount for amount, _ in deposits]))

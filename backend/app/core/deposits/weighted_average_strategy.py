@@ -1,7 +1,7 @@
 from typing import List, Tuple
 
 from app.core.common import UserDeposit
-from app.core.deposits.cut_off import apply_cutoff
+from app.core.deposits.cut_off import apply_weighted_average_cutoff
 from app.core.deposits.events import (
     get_all_users_weighted_deposits,
     WeightedDeposit,
@@ -69,4 +69,5 @@ def _calculate_effective_deposit(deposits: List[WeightedDeposit]) -> int:
     if denominator == 0:
         return 0
 
-    return apply_cutoff(int(numerator / denominator))
+    locked_amount = deposits[-1].amount
+    return apply_weighted_average_cutoff(locked_amount, int(numerator / denominator))
