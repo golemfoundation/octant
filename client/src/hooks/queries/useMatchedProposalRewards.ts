@@ -26,11 +26,11 @@ export default function useMatchedProposalRewards(
     {
       enabled: !!currentEpoch && currentEpoch > 1,
       select: response => {
-        const totalDonations = response?.reduce(
+        const totalDonations = response?.rewards.reduce(
           (acc, { allocated, matched }) => acc.add(parseUnits(allocated)).add(parseUnits(matched)),
           BigNumber.from(0),
         );
-        return response?.map(({ address, allocated, matched }) => {
+        return response?.rewards.map(({ address, allocated, matched }) => {
           const allocatedBigNum = parseUnits(allocated);
           const matchedBigNum = parseUnits(matched);
 
