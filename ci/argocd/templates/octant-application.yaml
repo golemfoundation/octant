@@ -44,6 +44,8 @@ spec:
           value: "true"
         - name: "backendServer.snapshotter.enabled"
           value: "false"
+        - name: "ingress.tlsToReplicate.enable"
+          value: "true"
         # From Deploy contracts job
         - name: contracts.addresses.startBlock
           value: "$BLOCK_NUMBER"
