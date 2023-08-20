@@ -82,7 +82,7 @@ http://localhost:5000/docs/chain-info
 - `OCTANT_BACKEND_SECRET_KEY` - A secret key which used to sign session cookies for protection against cookie data tampering, required by Flask
 - `ETH_RPC_PROVIDER_URL` - RPC provider to Ethereum node client
 - `SUBGRAPH_ENDPOINT` - Endpoint to subgraph graphQL containing indexed Octant contracts
-- `OCTANT_ENV` - production | development | test
+- `OCTANT_ENV` - production | development | compose | test
 - `EPOCH_0_END` - Timestamp in second when epoch 0 will finish
 - `EPOCH_1_END` - Timestamp in second when epoch 1 will finish
 - `CHAIN_ID` - Id of the blockchain network. Eg. 1 for Mainnet or 11155111 for Sepolia
