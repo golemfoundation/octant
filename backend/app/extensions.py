@@ -1,12 +1,9 @@
-import logging
-
 from flask_apscheduler import APScheduler
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_restx import Api
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
-from gql.transport.aiohttp import log as gql_logger
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
@@ -15,6 +12,8 @@ from app.contracts.epochs import Epochs
 from app.contracts.erc20 import ERC20
 from app.contracts.proposals import Proposals
 from app.contracts.vault import Vault
+
+from app.logging import init_logger
 
 # Flask extensions
 api = Api(
@@ -36,17 +35,6 @@ gnt = ERC20(abi=abi.ERC20)
 epochs = Epochs(abi=abi.EPOCHS)
 proposals = Proposals(abi=abi.PROPOSALS)
 vault = Vault(abi=abi.VAULT)
-
-
-def init_logger(app):
-    gql_logger.setLevel(logging.WARNING)
-    logging.getLogger("apscheduler.executors.default").setLevel(logging.WARNING)
-
-    if app.config["ENV"] == "prod":
-        app.logger.setLevel(logging.INFO)
-    else:
-        app.logger.setLevel(logging.DEBUG)
-        app.logger.debug("Development mode")
 
 
 def init_web3(app):
