@@ -67,6 +67,7 @@ class ProdConfig(Config):
     ENV = "prod"
     PROPAGATE_EXCEPTIONS = True
     DEBUG = False
+    LOG_LVL = os.getenv("OCTANT_LOG_LEVEL", "INFO")
     SQLALCHEMY_DATABASE_URI = os.getenv("DB_URI")
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_size": 3, "max_overflow": 5}
 
@@ -76,6 +77,7 @@ class DevConfig(Config):
 
     ENV = "dev"
     DEBUG = True
+    LOG_LVL = os.getenv("OCTANT_LOG_LEVEL", "DEBUG")
     DB_NAME = "dev.db"
     # Put the db file in project root
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
@@ -88,6 +90,7 @@ class TestConfig(Config):
     ENV = "test"
     TESTING = True
     DEBUG = True
+    LOG_LVL = "ERROR"
     SQLALCHEMY_DATABASE_URI = "sqlite://"
     EPOCH_0_END = 1690848000
     EPOCH_1_END = 1698796800

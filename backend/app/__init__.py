@@ -10,11 +10,11 @@ from app.extensions import (
     migrate,
     cors,
     socketio,
-    init_logger,
     init_web3,
     api,
     init_scheduler,
 )
+from app.logging import init_logger
 from app.infrastructure import events, routes, apscheduler
 from app.infrastructure.exception_handler import ExceptionHandler
 from app.settings import ProdConfig, DevConfig
