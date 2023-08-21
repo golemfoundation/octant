@@ -16,13 +16,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     await proposals.connect(TestFoundation).setEpochs(epochs.address);
   } else if (['sepolia', 'goerli'].includes(hre.network.name)) {
     // Testnet networks setup
-    const { deployer } = await hre.ethers.getNamedSigners();
+    const { TestFoundation } = await hre.ethers.getNamedSigners();
     const epochs: Epochs = await hre.ethers.getContract(EPOCHS);
     const proposals: Proposals = await hre.ethers.getContract(PROPOSALS);
-    await proposals.connect(deployer).setEpochs(epochs.address);
+    await proposals.connect(TestFoundation).setEpochs(epochs.address);
 
     const target: WithdrawalsTarget = await hre.ethers.getContract(WITHDRAWALS_TARGET);
-    await deployer.sendTransaction({ to: target.address, value: parseEther('0.0001') });
+    await TestFoundation.sendTransaction({ to: target.address, value: parseEther('0.0001') });
   } else if (hre.network.name === 'mainnet') {
     // Mainnet setup
   }
