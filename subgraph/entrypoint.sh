@@ -17,8 +17,8 @@ echo "Subgraph URL: $SUBGRAPH_URL"
 echo "IPFS URL:     $IPFS_URL"
 echo "EPOCHS addr:  $EPOCHS_ADDRESS"
 echo
-# echo "Replace hardcoded contract address"
-# sed -i'' -E "s/Address.fromString\(.+\)/Address.fromString\('$EPOCHS_ADDRESS')/g" src/epochs.ts
+echo "Replace hardcoded contract address"
+sed -i'' -E "s/Address.fromString\(.+\)/Address.fromString\('$EPOCHS_ADDRESS')/g" src/epochs.ts
 echo "Code generation"
 npx graph codegen
 echo "Build graph"

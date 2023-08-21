@@ -97,7 +97,7 @@ yarn verify:sepolia
 ## GLM Faucet
 Update `.env` with your private key:
 ```bash
-TESTNET_PRIVATE_KEY=<your private key>
+TESTNET_DEPLOYER_PRIVATE_KEY=<your private key>
 ```
 Send Test GLM.
 ```bash

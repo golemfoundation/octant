@@ -15,7 +15,7 @@ spec:
     namespace: $DEPLOYMENT_ID
   sources:
   - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-    targetRevision: 0.2.6
+    targetRevision: 0.2.7
     chart: octant
     helm:
       parameters:
@@ -25,25 +25,25 @@ spec:
         # From CI/CD vars
         - name: "secureIngress"
           value: "$SECURE_INGRESS"
-        - name: "contracts.epochDuration"
-          value: "$EPOCH_DURATION"
-        - name: "contracts.decisionWindow"
-          value: "$DECISION_WINDOW"
-        - name: "backendServer.epoch0End"
-          value: "$EPOCH_0_END"
+        ## Client
         - name: "webClient.alchemyId"
           value: "$VITE_ALCHEMY_ID"
+        ## Backend
+        - name: "backendServer.epoch0End"
+          value: "$EPOCH_0_END"
+        - name: "backendServer.epoch1End"
+          value: "$EPOCH_1_END"
+        - name: "backendServer.schedulerEnabled"
+          value: "$SCHEDULER_ENABLED"
+        - name: "backendServer.vaultConfirmWithdrawals"
+          value: "$VAULT_CONFIRM_WITHDRAWALS_ENABLED"
         - name: "backendServer.glmClaim.senderNonce"
           value: "$GLM_SENDER_NONCE"
-        # Hardcoded in this file
-        - name: "contracts.addresses.multisigAddress"
-          value: "$MULTISIG_ADDRESS"
-        - name: "backendServer.schedulerEnabled"
-          value: "true"
         - name: "backendServer.glmClaim.enabled"
-          value: "true"
+          value: "$GLM_CLAIM_ENABLED"
         - name: "backendServer.snapshotter.enabled"
-          value: "false"
+          value: "$SNAPSHOTTER_ENABLED"
+        # Hardcoded in this file
         - name: "ingress.tlsToReplicate.enable"
           value: "true"
         # From Deploy contracts job

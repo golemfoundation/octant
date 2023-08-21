@@ -9,11 +9,12 @@ import { HardhatUserConfig } from 'hardhat/types';
 
 import {
   ETHERSCAN_API_KEY,
-  TESTNET_PRIVATE_KEY,
-  TESTNET_RPC_URL,
-  MAINNET_PRIVATE_KEY,
-  MAINNET_RPC_URL,
   IS_GAS_REPORTING_ENABLED,
+  MAINNET_DEPLOYER_PRIVATE_KEY,
+  MAINNET_RPC_URL,
+  TESTNET_DEPLOYER_PRIVATE_KEY,
+  TESTNET_MULTISIG_PRIVATE_KEY,
+  TESTNET_RPC_URL,
 } from './env';
 
 import './tasks/clean';
@@ -52,6 +53,8 @@ const config: HardhatUserConfig = {
     },
     TestFoundation: {
       default: 6,
+      goerli: 1,
+      sepolia: 1,
     },
     deployer: {
       default: 0,
@@ -60,7 +63,7 @@ const config: HardhatUserConfig = {
   },
   networks: {
     goerli: {
-      accounts: [TESTNET_PRIVATE_KEY],
+      accounts: [TESTNET_DEPLOYER_PRIVATE_KEY, TESTNET_MULTISIG_PRIVATE_KEY],
       chainId: 5,
       url: TESTNET_RPC_URL,
     },
@@ -74,12 +77,12 @@ const config: HardhatUserConfig = {
       url: 'http://127.0.0.1:8545',
     },
     mainnet: {
-      accounts: [MAINNET_PRIVATE_KEY],
+      accounts: [MAINNET_DEPLOYER_PRIVATE_KEY],
       chainId: 1,
       url: MAINNET_RPC_URL,
     },
     sepolia: {
-      accounts: [TESTNET_PRIVATE_KEY],
+      accounts: [TESTNET_DEPLOYER_PRIVATE_KEY, TESTNET_MULTISIG_PRIVATE_KEY],
       chainId: 11155111,
       url: TESTNET_RPC_URL,
     },
