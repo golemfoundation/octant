@@ -1,4 +1,4 @@
-import { UseMutationOptions, UseMutationResult, useMutation } from '@tanstack/react-query';
+import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
 import { useSignTypedData } from 'wagmi';
 
 import { apiPostAllocate } from 'api/calls/allocate';
@@ -13,8 +13,8 @@ const domain = {
 
 const types = {
   Allocation: [
-    { name: 'proposalAddress', type: 'string' },
-    { name: 'amount', type: 'string' },
+    { name: 'proposalAddress', type: 'address' },
+    { name: 'amount', type: 'uint256' },
   ],
   AllocationPayload: [{ name: 'allocations', type: 'Allocation[]' }],
 };

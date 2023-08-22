@@ -55,7 +55,10 @@ def test_fails_when_data_to_recover_has_changed(user_accounts):
 
     changed_payload = {
         "allocations": [
-            {"proposalAddress": "0x0", "amount": 150000},
+            {
+                "proposalAddress": "0x0000000000000000000000000000000000000000",
+                "amount": 150000,
+            },
         ]
     }
     eip712_data = build_allocations_eip712_data(changed_payload)

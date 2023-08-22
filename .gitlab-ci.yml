@@ -444,6 +444,7 @@ Deploy UAT App:
     ENV_TYPE: "uat"
   rules:
     - !reference [.rules, on_mr_manual]
+    - !reference [.rules, on_push_to_default_branch_manual]
   environment:
     name: persistent/uat
     url: https://uat-client.octant.wildland.dev
@@ -469,6 +470,7 @@ Destroy UAT App:
     ENV_TYPE: "uat"
   rules:
     - !reference [.rules, on_mr_manual]
+    - !reference [ .rules, on_push_to_default_branch_manual ]
   needs: []
   environment:
     name: persistent/uat
