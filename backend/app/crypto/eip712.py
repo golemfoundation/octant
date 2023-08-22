@@ -32,7 +32,7 @@ def build_allocations_eip712_data(message: dict) -> dict:
             {"name": "chainId", "type": "uint256"},
         ],
         "Allocation": [
-            {"name": "proposalAddress", "type": "string"},
+            {"name": "proposalAddress", "type": "address"},
             {"name": "amount", "type": "uint256"},
         ],
         "AllocationPayload": [
