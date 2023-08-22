@@ -28,7 +28,6 @@ def config(app_level):
         "filters": {"below_error": {"()": BelowFilter, "level": "ERROR"}},
         "handlers": {
             "stdout": {
-                "level": "INFO",
                 "class": "logging.StreamHandler",
                 "formatter": "generic",
                 "stream": "ext://sys.stdout",
