@@ -15,7 +15,7 @@
     "create-subgraph": "graph create --node http://127.0.0.1:8020 octant",
     "deploy:goerli": "graph deploy --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020 --network goerli octant",
     "deploy:sepolia": "graph deploy --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020 --network sepolia octant",
-    "deploy:localhost": "graph deploy --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020 octant",
+    "deploy:localhost": "graph deploy --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020 octant --network localhost",
     "eslint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "eslint:fix": "yarn prettier && yarn eslint --fix",
     "install-root-packages": "cd .. && yarn install && cd subgraph",

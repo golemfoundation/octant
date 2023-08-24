@@ -43,6 +43,6 @@
     "eslint-plugin-typescript-sort-keys": "^2.1.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.1.0",
-    "typescript": "^5.0.2"
+    "typescript": "5.0.2"
   }
 }

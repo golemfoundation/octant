@@ -84,6 +84,14 @@ class DevConfig(Config):
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{DB_PATH}"
 
 
+class ComposeConfig(Config):
+    """Dev configuration with web backend and its database running in docker-compose."""
+
+    ENV = "dev"
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = os.getenv("DB_URI")
+
+
 class TestConfig(Config):
     """Test configuration."""
 
@@ -96,3 +104,17 @@ class TestConfig(Config):
     EPOCH_1_END = 1698796800
     GLM_WITHDRAWAL_AMOUNT = 1000_000000000_000000000
     GLM_SENDER_NONCE = 0
+
+
+def get_config():
+    # Load the appropriate configuration based on the OCTANT_ENV environment variable
+    env = os.getenv("OCTANT_ENV")
+    if env == "production":
+        return ProdConfig
+    elif env == "compose":
+        return ComposeConfig
+    else:
+        return DevConfig
+
+
+config = get_config()

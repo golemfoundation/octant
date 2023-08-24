@@ -1,4 +1,4 @@
-import { Address, Bytes, ethereum, log } from '@graphprotocol/graph-ts';
+import { Address, ethereum, log, Bytes } from '@graphprotocol/graph-ts';
 
 import { Epochs } from '../generated/Epochs/Epochs';
 import { Epoch } from '../generated/schema';
@@ -6,7 +6,7 @@ import { Epoch } from '../generated/schema';
 export function handleBlock(block: ethereum.Block): void {
   const epochsContract = Epochs.bind(
     // eslint-disable-next-line no-template-curly-in-string
-    Address.fromString('0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9'),
+    Address.fromString('${EPOCHS_CONTRACT_ADDRESS}'),
   );
   const currentEpoch = epochsContract.try_getCurrentEpoch();
   if (currentEpoch.reverted) {

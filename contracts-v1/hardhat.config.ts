@@ -26,6 +26,7 @@ import './tasks/target-check';
 import './tasks/target-deploy';
 import './tasks/target-upgrade';
 import './tasks/target-withdraw';
+import './tasks/status';
 
 const config: HardhatUserConfig = {
   docgen: {
