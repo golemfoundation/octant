@@ -25,7 +25,7 @@ default:
 
 .images:
   python:
-    name: acidrain/python-poetry:3.11-slim-1.5.1
+    name: acidrain/python-poetry:3.11-1.5.1
     pull_policy: if-not-present
   node:
     name: registry.gitlab.com/wildland/devops/container-builder/octant/node-extended:latest
@@ -69,10 +69,6 @@ default:
 
 
 .scripts:
-  install_packages:
-    - apt update && apt install -y --no-install-recommends git ca-certificates
-  install_libpq5:
-    - apt update && apt install -y --no-install-recommends libpq5
   yarn_install:
     - yarn install --cache-folder .yarn --non-interactive --frozen-lockfile
   poetry_install:
@@ -87,7 +83,6 @@ Build backend:
     - !reference [.rules, on_push_to_default_branch ]
     - !reference [.rules, on_push_to_master_branch ]
   script:
-    - !reference [.scripts, install_packages]
     - ci/build_backend.sh
   cache:
     - key: $CI_COMMIT_REF_SLUG-poetry-backend
@@ -103,7 +98,6 @@ Build contracts:
     - !reference [.rules, on_push_to_default_branch ]
     - !reference [.rules, on_push_to_master_branch ]
   script:
-    - !reference [.scripts, install_packages]
     - ci/build_contracts_v1.sh
   cache:
     - key: $CI_COMMIT_REF_SLUG-yarn-root
@@ -139,7 +133,6 @@ Build services:
   needs:
     - Build contracts
   script:
-    - !reference [.scripts, install_packages]
     - ci/build_$SERVICE.sh
   cache:
     - key: $CI_COMMIT_REF_SLUG-yarn-root
@@ -234,10 +227,8 @@ Unit tests:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
     - !reference [.rules, on_push_to_master_branch ]
-  dependencies:
   script:
     - cd $SERVICE
-    - !reference [ .scripts, install_libpq5 ]
     - !reference [ .scripts, yarn_install ]
     - yarn test
   cache:
@@ -263,7 +254,6 @@ Documentation:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
     - !reference [.rules, on_push_to_master_branch ]
-  dependencies:
   script:
     - cd $SERVICE
     - !reference [ .scripts, yarn_install ]
