@@ -27,10 +27,6 @@ for i in src/*template*; do
     F=$(echo $i | sed 's/template\.//')
     envsubst < $i > $F
 done
-if [ "$1" = "--no-run" ]; then
-    echo "Exiting, since --no-run was passed"
-    exit 0;
-fi
 
 echo "Code generation"
 npx graph codegen
