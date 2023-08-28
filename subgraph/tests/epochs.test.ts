@@ -14,7 +14,7 @@ import { createBlockEvent } from './utils';
 import { handleBlock } from '../src/epochs';
 
 const EPOCH_ENTITY_TYPE = 'Epoch';
-const EPOCHS_ADDRESS = '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9';
+const EPOCHS_ADDRESS = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
 
 describe('Describe entity assertions', () => {
   afterAll(() => {

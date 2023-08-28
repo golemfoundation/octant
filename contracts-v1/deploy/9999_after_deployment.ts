@@ -59,7 +59,6 @@ VAULT_CONTRACT_ADDRESS=${vault.address}
 
   if (['localhost'].includes(hre.network.name)) {
     // Update networks.json for local (developer's) subgraph instance.
-    // It's used by both graph-node and entrypoint.sh
     const networksFn = '../subgraph/networks.json';
     const templateFn = '../subgraph/networks.template.json';
     try {
@@ -78,7 +77,7 @@ VAULT_CONTRACT_ADDRESS=${vault.address}
     fs.writeFileSync(networksFn, JSON.stringify(json, null, 2));
 
     // need to update subgraph/src/*.ts files too
-    execSync('../subgraph/entrypoint.sh --no-run', {
+    execSync('../subgraph/configure-network.sh', {
       cwd: '../subgraph/',
       env: { ...process.env, NETWORK: 'localhost' },
     });
