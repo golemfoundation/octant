@@ -3,20 +3,15 @@ import React, { FC, useState, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Button from 'components/core/Button/Button';
-import Identicon from 'components/core/Identicon/Identicon';
-import Loader from 'components/core/Loader/Loader';
-import useCryptoValues from 'hooks/queries/useCryptoValues';
+import DonorsItem from 'components/dedicated/DonorsItem/DonorsItem';
+import DonorsItemSkeleton from 'components/dedicated/DonorsItem/DonorsItemSkeleton/DonorsItemSkeleton';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useProposalDonors from 'hooks/queries/useProposalDonors';
-import useSettingsStore from 'store/settings/store';
-import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
-import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
-import truncateEthAddress from 'utils/truncateEthAddress';
 
 import styles from './DonorsList.module.scss';
 import DonorsListProps from './types';
 
-const SHORT_LIST_LENGTH = 4;
+const SHORT_LIST_LENGTH = 5;
 
 const DonorsList: FC<DonorsListProps> = ({
   className,
@@ -24,15 +19,6 @@ const DonorsList: FC<DonorsListProps> = ({
   proposalAddress,
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.donorsList' });
-  const {
-    data: { displayCurrency, isCryptoMainValueDisplay },
-  } = useSettingsStore(({ data }) => ({
-    data: {
-      displayCurrency: data.displayCurrency,
-      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
-    },
-  }));
-  const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
   const [isDonorsListExpanded, setIsDonorsListExpanded] = useState<boolean>(false);
   const { data: proposalDonors, isFetching } = useProposalDonors(proposalAddress);
   const { data: currentEpoch } = useCurrentEpoch();
@@ -46,48 +32,41 @@ const DonorsList: FC<DonorsListProps> = ({
           {t('donationsNotEnabled')}
         </div>
       )}
-      {!isEpoch1 && isFetching && (
-        <Loader className={styles.loader} dataTest={`${dataTest}__Loader`} />
-      )}
-      {!isEpoch1 && !isFetching && (
+      {!isEpoch1 && (
         <Fragment>
           <div className={styles.header}>
-            <span>{t('donors')}</span>{' '}
-            {proposalDonors && (
-              <div className={styles.count} data-test={`${dataTest}__count`}>
-                {isEpoch1 ? '--' : proposalDonors.length}
-              </div>
-            )}
+            <span className={styles.headerLabel}>{t('donors')}</span>{' '}
+            <div className={styles.count} data-test={`${dataTest}__count`}>
+              {isFetching ? '--' : proposalDonors?.length}
+            </div>
           </div>
-          {proposalDonors
-            ?.slice(0, isDonorsListExpanded ? proposalDonors.length : SHORT_LIST_LENGTH)
-            ?.map(({ amount, address }) => (
-              <div key={`${proposalAddress}-${address}`} className={styles.donor}>
-                <Identicon className={styles.identicon} username={address} />
-                <div className={styles.address}>{truncateEthAddress(address)}</div>
-                <div>
-                  {isCryptoMainValueDisplay
-                    ? getValueCryptoToDisplay({
-                        cryptoCurrency: 'ethereum',
-                        valueCrypto: amount,
-                      })
-                    : getValueFiatToDisplay({
-                        cryptoCurrency: 'ethereum',
-                        cryptoValues,
-                        displayCurrency: displayCurrency!,
-                        error,
-                        valueCrypto: amount,
-                      })}
-                </div>
-              </div>
-            ))}
-          {proposalDonors && proposalDonors.length > SHORT_LIST_LENGTH && (
-            <Button
-              className={styles.buttonDonors}
-              label={isDonorsListExpanded ? `- ${t('seeLess')}` : `+ ${t('seeAll')}`}
-              onClick={() => setIsDonorsListExpanded(!isDonorsListExpanded)}
-              variant="secondary2"
-            />
+          {isFetching ? (
+            // eslint-disable-next-line react/no-array-index-key
+            [...Array(SHORT_LIST_LENGTH)].map((_, idx) => <DonorsItemSkeleton key={idx} />)
+          ) : (
+            <Fragment>
+              {proposalDonors
+                ?.slice(0, isDonorsListExpanded ? proposalDonors.length : SHORT_LIST_LENGTH)
+                ?.map(({ amount, address }) => (
+                  <DonorsItem
+                    key={address}
+                    amount={amount}
+                    className={styles.donorsItem}
+                    donorAddress={address}
+                  />
+                ))}
+              {proposalDonors && proposalDonors.length > SHORT_LIST_LENGTH && (
+                <Button
+                  className={styles.buttonDonors}
+                  label={isDonorsListExpanded ? `- ${t('seeLess')}` : t('viewAll')}
+                  onClick={() => setIsDonorsListExpanded(!isDonorsListExpanded)}
+                  variant="secondary2"
+                />
+              )}
+            </Fragment>
+          )}
+          {(isFetching || (proposalDonors && proposalDonors?.length > 0)) && (
+            <div className={styles.divider} />
           )}
         </Fragment>
       )}

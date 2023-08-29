@@ -1,5 +1,68 @@
-.singleValue {
-  height: 100%;
+.root {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.selectedValue {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  .label {
+    padding: 0.2rem 0.8rem;
+  }
+
+  .chevron {
+    margin: 0 1.2rem;
+    width: 3.6rem;
+
+    &.isMenuOpen {
+      transform: rotateX(180deg);
+      transition: 0.3s all;
+    }
+  }
+}
+
+.overlay {
+  @media #{$tablet-down} {
+    @include overlay(100%, 100%);
+  }
+}
+
+.menu {
+  position: fixed;
+  top: auto;
+  bottom: 0;
+  right: 0;
+  margin: 0;
+  padding: 2.4rem 0;
+  border-radius: $border-radius-16;
+  z-index: $z-index-5;
+  box-shadow: $box-shadow-1;
+  height: auto;
+  width: 100%;
+  background: $color-white;
+
+  @media #{$desktop-up} {
+    position: absolute;
+    top: -2rem;
+    right: -0.73rem;
+    bottom: auto;
+    width: 12.8rem;
+    padding: 1.6rem 0;
+  }
+}
+
+.buttonClose {
+  position: absolute;
+  top: 1.6rem;
+  right: 1.6rem;
+  z-index: $z-index-4;
+
+  @media #{$desktop-up} {
+    display: none;
+  }
 }
 
 .option {
@@ -28,48 +91,5 @@
 
   &:hover {
     background: $color-octant-grey7;
-  }
-}
-
-.menu {
-  position: fixed;
-  top: auto;
-  bottom: 0;
-  right: 0;
-  margin: 0;
-  padding: 2.4rem 0;
-  border-radius: $border-radius-16;
-  z-index: $z-index-5;
-  box-shadow: $box-shadow-1;
-  height: auto;
-  width: 100%;
-  animation: fadeIn 0.25s linear;
-  background: $color-white;
-
-  @media #{$desktop-up} {
-    position: absolute;
-    top: -2.2rem;
-    right: -0.63rem;
-    bottom: auto;
-    width: 12.8rem;
-    padding: 1.6rem 0;
-    animation: none;
-  }
-}
-
-.overlay {
-  @media #{$tablet-down} {
-    @include overlay(100%, 100%);
-  }
-}
-
-.buttonClose {
-  position: absolute;
-  top: 1.6rem;
-  right: 1.6rem;
-  z-index: $z-index-4;
-
-  @media #{$desktop-up} {
-    display: none;
   }
 }

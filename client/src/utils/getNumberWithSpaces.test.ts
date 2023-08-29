@@ -81,8 +81,13 @@ const testCases = [
 
 describe('getNumberWithSpaces', () => {
   for (const { value, expectedValue } of testCases) {
-    it(`returns ${expectedValue} for an argument: ${value}`, () => {
+    it(`returns ${expectedValue} for an argument: ${value} when isUsingHairSpace`, () => {
       expect(getNumberWithSpaces(value)).toBe(expectedValue);
+    });
+
+    const expectedValueNormalSpace = expectedValue.replace(/\u200a/g, ' ');
+    it(`returns ${expectedValueNormalSpace} for an argument: ${value} when !isUsingHairSpace`, () => {
+      expect(getNumberWithSpaces(value, false)).toBe(expectedValueNormalSpace);
     });
   }
 });

@@ -2,10 +2,12 @@ import env from 'env';
 import apiService from 'services/apiService';
 
 export type Response = {
-  address: string;
-  allocated: string;
-  matched: string;
-}[];
+  rewards: {
+    address: string;
+    allocated: string;
+    matched: string;
+  }[];
+};
 
 export function apiGetMatchedProposalRewards(epoch: number): Promise<Response> {
   return apiService
