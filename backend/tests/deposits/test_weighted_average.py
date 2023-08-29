@@ -57,7 +57,7 @@ def before(app, graphql_client):
             [
                 {
                     "__typename": "Locked",
-                    "timestamp": 2000,
+                    "timestamp": 1999,
                     "amount": "100_000000000_000000000",
                 },
             ],
@@ -209,7 +209,9 @@ def test_update_user_deposits(mocker, events, expected):
 
     epoch = 1
 
-    mock_graphql(mocker, epochs_events=[create_epoch_event()], deposit_events=events)
+    mock_graphql(
+        mocker, epochs_events=[create_epoch_event(epoch=epoch)], deposit_events=events
+    )
 
     user_deposits, total_ed = get_users_deposits(epoch)
 
