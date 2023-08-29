@@ -31,8 +31,8 @@ export default function useMatchedProposalRewards(
           BigNumber.from(0),
         );
         return response?.rewards.map(({ address, allocated, matched }) => {
-          const allocatedBigNum = parseUnits(allocated);
-          const matchedBigNum = parseUnits(matched);
+          const allocatedBigNum = parseUnits(allocated, 'wei');
+          const matchedBigNum = parseUnits(matched, 'wei');
 
           const sum = allocatedBigNum.add(matchedBigNum);
           const percentage =

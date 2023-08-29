@@ -30,7 +30,7 @@ export default function useProposalRewardsThreshold(
 
   return useQuery(
     QUERY_KEYS.proposalRewardsThreshold,
-    () => apiGetProjectThreshold(currentEpoch!),
+    () => apiGetProjectThreshold(currentEpoch! - 1),
     {
       enabled: !!currentEpoch && currentEpoch > 1,
       refetchInterval: 5000,
