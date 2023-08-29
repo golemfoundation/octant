@@ -1,21 +1,17 @@
-$verticalDistanceBetweenElements: $layoutMarginHorizontal;
+$elementMargin: 1.6rem;
 
 .list {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
   justify-content: space-between;
-
-  @media #{$desktop-up} {
-    margin: 0 (-(calc($verticalDistanceBetweenElements / 2)));
-  }
 }
 
 .element {
-  margin-bottom: 2.4rem;
+  margin-bottom: $elementMargin;
 
   @media #{$desktop-up} {
-    @include flexBasisGutter(2, 1.6rem);
+    @include flexBasisGutter(2, $elementMargin);
   }
 }
 

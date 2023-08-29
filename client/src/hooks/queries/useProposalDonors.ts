@@ -23,7 +23,7 @@ type ProposalDonors = {
 const mapDataToProposalDonors = (data: Response): ProposalDonors =>
   data.map(({ address, amount }) => ({
     address,
-    amount: parseUnits(amount),
+    amount: parseUnits(amount, 'wei'),
   }));
 
 export default function useProposalDonors(
@@ -43,7 +43,7 @@ export default function useProposalDonors(
 
   return useQuery(
     QUERY_KEYS.proposalDonors(proposalAddress),
-    () => apiGetProposalDonors(proposalAddress, currentEpoch!),
+    () => apiGetProposalDonors(proposalAddress, currentEpoch! - 1),
     {
       enabled: !!currentEpoch && !!address && !!proposalAddress && currentEpoch > 1,
       refetchInterval: 5000,
