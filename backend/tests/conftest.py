@@ -16,7 +16,7 @@ from app.contracts.proposals import Proposals
 from app.contracts.vault import Vault
 from app.controllers.allocations import allocate
 from app.core.allocations import AllocationRequest, Allocation
-from app.core.rewards import calculate_matched_rewards
+from app.core.rewards.rewards import calculate_matched_rewards
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.extensions import db, w3
 from app.settings import TestConfig

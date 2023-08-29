@@ -4,7 +4,7 @@ from typing import Optional, List
 
 from app import database
 from app.core.common import AccountFunds
-from app.core.rewards import (
+from app.core.rewards.rewards import (
     get_matched_rewards_from_epoch,
     calculate_matched_rewards_threshold,
 )

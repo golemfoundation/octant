@@ -14,7 +14,7 @@ from app.core.allocations import (
     AllocationRequest,
     Allocation,
 )
-from app.core.rewards import calculate_matched_rewards_threshold
+from app.core.rewards.rewards import calculate_matched_rewards_threshold
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.extensions import db
 from tests.conftest import (
