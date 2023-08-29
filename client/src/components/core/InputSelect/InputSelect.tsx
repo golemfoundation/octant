@@ -1,67 +1,29 @@
 import cx from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { FC, useState } from 'react';
-import Select, { SingleValue } from 'react-select';
+import React, { FC, Fragment, useEffect, useRef, useState } from 'react';
 
 import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
-import { cross, tick } from 'svg/misc';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
+import { chevronBottom, cross, tick } from 'svg/misc';
 
-import './InputSelect.scss';
 import styles from './InputSelect.module.scss';
 import InputSelectProps, { Option } from './types';
-
-const CustomSingleValue = ({ dataTest, innerProps, children }) => (
-  <div {...innerProps} className={styles.singleValue} data-test={`${dataTest}__CustomSingleValue`}>
-    {children}
-  </div>
-);
-
-const CustomOption = ({ dataTest, innerRef, innerProps, children, isSelected }) => {
-  return (
-    <div
-      ref={innerRef}
-      className={styles.option}
-      data-test={`${dataTest}__CustomOption--${children}`}
-      {...innerProps}
-    >
-      {isSelected && <Svg classNameSvg={styles.iconTick} img={tick} size={1} />}
-      {children}
-    </div>
-  );
-};
-
-const CustomMenu = ({ innerRef, innerProps, children }) => (
-  <div ref={innerRef} {...innerProps} className={styles.menu}>
-    {children}
-  </div>
-);
-
-const CustomMenuList = ({ innerRef, innerProps, setIsMenuOpen, children }) => (
-  <div ref={innerRef} {...innerProps}>
-    {children}
-    <Button
-      className={styles.buttonClose}
-      Icon={<Svg img={cross} size={1} />}
-      onClick={() => setIsMenuOpen(false)}
-      variant="iconOnly"
-    />
-  </div>
-);
 
 const InputSelect: FC<InputSelectProps> = ({
   dataTest = 'InputSelect',
   options,
   onChange,
   selectedOption,
-  isDisabled,
 }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [_selectedOption, _setSelectedOption] = useState<SingleValue<Option>>(
-    selectedOption || options[0],
-  );
+  const { isDesktop } = useMediaQuery();
 
-  const onOptionClick = (option: SingleValue<Option>): void => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [_selectedOption, _setSelectedOption] = useState<Option>(selectedOption || options[0]);
+
+  const onOptionClick = (option: Option): void => {
     _setSelectedOption(option);
     setIsMenuOpen(false);
 
@@ -70,39 +32,84 @@ const InputSelect: FC<InputSelectProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (!isMenuOpen || !isDesktop) {
+      return;
+    }
+
+    const listener = e => {
+      if (ref.current && ref.current.contains(e.target)) {
+        return;
+      }
+
+      setIsMenuOpen(false);
+    };
+
+    document.addEventListener('click', listener);
+
+    return () => document.removeEventListener('click', listener);
+  }, [isMenuOpen, isDesktop]);
+
   return (
-    <div data-test={dataTest}>
-      <Select
-        classNamePrefix="InputSelect"
-        components={{
-          /* eslint-disable react/no-unstable-nested-components */
-          Menu: args => <CustomMenu {...args} />,
-          MenuList: args => <CustomMenuList {...args} setIsMenuOpen={setIsMenuOpen} />,
-          Option: args => <CustomOption dataTest={dataTest} {...args} />,
-          SingleValue: args => <CustomSingleValue {...args} dataTest={dataTest} />,
-          /* eslint-enable react/no-unstable-nested-components */
-        }}
-        isDisabled={isDisabled}
-        isSearchable={false}
-        menuIsOpen={isMenuOpen}
-        onBlur={() => setIsMenuOpen(false)}
-        onChange={option => onOptionClick(option)}
-        onMenuOpen={() => setIsMenuOpen(true)}
-        options={options}
-        value={_selectedOption}
-      />
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            key="menu-overlay"
-            animate={{ opacity: 1 }}
-            className={cx(styles.overlay, styles.isOpen)}
-            exit={{ opacity: 0 }}
-            initial={{ opacity: 0 }}
-            onClick={() => setIsMenuOpen(false)}
-          />
-        )}
-      </AnimatePresence>
+    <div className={styles.root} data-test={dataTest}>
+      <div ref={ref} className={styles.selectedValue} onClick={() => setIsMenuOpen(true)}>
+        <span className={styles.label} data-test={`${dataTest}__SingleValue`}>
+          {_selectedOption?.label}
+        </span>
+        <Svg
+          classNameSvg={cx(styles.chevron, isMenuOpen && styles.isMenuOpen)}
+          img={chevronBottom}
+          size={1.2}
+        />
+        <AnimatePresence>
+          {isMenuOpen && (
+            <Fragment>
+              <motion.div
+                key="menu-overlay"
+                animate={{ opacity: 1 }}
+                className={cx(styles.overlay, styles.isOpen)}
+                exit={{ opacity: 0 }}
+                initial={{ opacity: 0 }}
+                onClick={e => {
+                  e.stopPropagation();
+                  setIsMenuOpen(false);
+                }}
+              />
+              <motion.div
+                key="menu"
+                animate={{ y: '0%' }}
+                className={styles.menu}
+                exit={{ opacity: isDesktop ? 0 : 1, y: '100%' }}
+                initial={{ y: '100%' }}
+                transition={{ damping: 1, duration: isDesktop ? 0 : 0.3 }}
+              >
+                <Button
+                  className={styles.buttonClose}
+                  Icon={<Svg img={cross} size={1} />}
+                  onClick={() => setIsMenuOpen(false)}
+                  variant="iconOnly"
+                />
+                {options.map(option => (
+                  <div
+                    key={option.value}
+                    className={styles.option}
+                    data-test={`${dataTest}__Option--${option.label}`}
+                    onClick={e => {
+                      e.stopPropagation();
+                      onOptionClick(option);
+                    }}
+                  >
+                    {option.value === _selectedOption?.value && (
+                      <Svg classNameSvg={styles.iconTick} img={tick} size={1} />
+                    )}
+                    {option.label}
+                  </div>
+                ))}
+              </motion.div>
+            </Fragment>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 };

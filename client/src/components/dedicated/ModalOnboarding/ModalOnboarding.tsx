@@ -1,4 +1,5 @@
 import cx from 'classnames';
+import { AnimatePresence, AnimationProps, motion } from 'framer-motion';
 import React, { useState, useEffect, useCallback, FC } from 'react';
 import { useAccount } from 'wagmi';
 
@@ -13,6 +14,13 @@ import useOnboardingStore from 'store/onboarding/store';
 
 import styles from './ModalOnboarding.module.scss';
 
+const motionAnimationProps: AnimationProps = {
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: 8 },
+  initial: { opacity: 0, y: 8 },
+  transition: { duration: 0.15, ease: 'easeOut' },
+};
+
 const ModalOnboarding: FC = () => {
   const { isConnected } = useAccount();
   const { data: isUserTOSAccepted } = useUserTOS();
@@ -23,7 +31,9 @@ const ModalOnboarding: FC = () => {
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const [isUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
 
-  const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial, isOnboardingDone, () => setCurrentStepIndex(prev => prev + 1));
+  const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial, isOnboardingDone, () =>
+    setCurrentStepIndex(prev => prev + 1),
+  );
 
   useEffect(() => {
     if (isUserTOSAccepted !== undefined && !isUserTOSAccepted) {
@@ -127,14 +137,28 @@ const ModalOnboarding: FC = () => {
     <Modal
       bodyClassName={styles.onboardingModalBody}
       dataTest="ModalOnboarding"
-      header={currentStep?.header}
+      header={
+        <AnimatePresence mode="wait">
+          <motion.div key={currentStepIndex} {...motionAnimationProps}>
+            {currentStep?.header}
+          </motion.div>
+        </AnimatePresence>
+      }
       headerClassName={styles.onboardingModalHeader}
       Image={
-        currentStep && (
-          <div className={cx(styles.onboardingModalImageWrapper, currentStep.imageClassName)}>
-            <Img className={styles.onboardingModalImage} src={currentStep.image} />
-          </div>
-        )
+        <div className={styles.onboardingModalImageWrapper}>
+          <AnimatePresence mode="wait">
+            {currentStep && (
+              <motion.div
+                key={currentStepIndex}
+                {...motionAnimationProps}
+                className={cx(styles.onboardingModalImageContainer, currentStep.imageClassName)}
+              >
+                <Img className={styles.onboardingModalImage} src={currentStep.image} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       }
       isCloseButtonDisabled={!isUserTOSAccepted}
       isOpen={isModalOpen}
@@ -143,15 +167,19 @@ const ModalOnboarding: FC = () => {
       onTouchMove={handleTouchMove}
       onTouchStart={handleTouchStart}
     >
-      <Text className={styles.onboardingModalText}>
-        {currentStep ? (
-          currentStep.text
-        ) : (
-          <div className={styles.loaderWrapper}>
-            <Loader className={styles.loader} />
-          </div>
-        )}
-      </Text>
+      <AnimatePresence mode="wait">
+        <motion.div key={currentStepIndex} {...motionAnimationProps}>
+          <Text className={styles.onboardingModalText}>
+            {currentStep ? (
+              currentStep.text
+            ) : (
+              <div className={styles.loaderWrapper}>
+                <Loader className={styles.loader} />
+              </div>
+            )}
+          </Text>
+        </motion.div>
+      </AnimatePresence>
       <ProgressStepperSlim
         className={styles.progressBar}
         currentStepIndex={currentStepIndex}

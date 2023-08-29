@@ -38,6 +38,7 @@ export function getValuesToDisplay({
     valueString ||
     getValueCryptoToDisplay({
       cryptoCurrency,
+      isUsingHairSpace: isCryptoMainValueDisplay,
       valueCrypto,
     });
   const valueFiatToDisplay = getValueFiatToDisplay({
@@ -46,6 +47,7 @@ export function getValuesToDisplay({
     cryptoValues,
     displayCurrency,
     error,
+    isUsingHairSpace: !isCryptoMainValueDisplay,
     valueCrypto,
   });
 

@@ -5,9 +5,12 @@ import { FormattedCryptoValue } from 'types/formattedCryptoValue';
 
 import getNumberWithSpaces from './getNumberWithSpaces';
 
-export default function getFormattedGlmValue(value: BigNumber): FormattedCryptoValue {
+export default function getFormattedGlmValue(
+  value: BigNumber,
+  isUsingHairSpace = true,
+): FormattedCryptoValue {
   const valueString = parseFloat(formatUnits(value)).toFixed(0);
-  const formattedValue = getNumberWithSpaces(valueString);
+  const formattedValue = getNumberWithSpaces(valueString, isUsingHairSpace);
   const suffix = 'GLM';
 
   return {

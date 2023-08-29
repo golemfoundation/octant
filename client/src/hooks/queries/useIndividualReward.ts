@@ -19,7 +19,7 @@ export default function useIndividualReward(
     () => apiGetIndividualRewards(currentEpoch! - 1, address!),
     {
       enabled: !!currentEpoch && currentEpoch > 1 && !!address,
-      select: response => parseUnits(response.budget),
+      select: response => parseUnits(response.budget, 'wei'),
       ...options,
     },
   );

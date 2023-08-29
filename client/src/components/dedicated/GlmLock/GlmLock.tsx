@@ -1,4 +1,3 @@
-import { MaxUint256 } from '@ethersproject/constants';
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { Formik } from 'formik';
@@ -10,6 +9,7 @@ import GlmLockBudget from 'components/dedicated/GlmLock/GlmLockBudget/GlmLockBud
 import GlmLockNotification from 'components/dedicated/GlmLock/GlmLockNotification/GlmLockNotification';
 import GlmLockStepper from 'components/dedicated/GlmLock/GlmLockStepper/GlmLockStepper';
 import GlmLockTabs from 'components/dedicated/GlmLock/GlmLockTabs/GlmLockTabs';
+import { MAX_GLM_ALLOWANCE } from 'constants/allowance';
 import env from 'env';
 import { writeContractERC20 } from 'hooks/contracts/writeContracts';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
@@ -83,7 +83,7 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
     const approvalStateCurrent = await approveCallback();
     if (currentMode === 'lock' && approvalStateCurrent !== ApprovalState.APPROVED) {
       const hash = await writeContractERC20({
-        args: [env.contractDepositsAddress, MaxUint256.toString()],
+        args: [env.contractDepositsAddress, MAX_GLM_ALLOWANCE.toString()],
         functionName: 'approve',
         walletClient,
       });

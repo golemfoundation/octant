@@ -102,9 +102,9 @@
       },
       "donorsList": {
         "donors": "Donors",
-        "seeAll": "See all",
         "seeLess": "See less",
-        "donationsNotEnabled": "Donations are not enabled in this epoch"
+        "donationsNotEnabled": "Donations are not enabled in this epoch",
+        "viewAll": "View all"
       },
       "glmLock": {
         "lock": "Lock",

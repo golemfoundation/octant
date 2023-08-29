@@ -9,7 +9,10 @@ import { dotAndZeroes } from './regExp';
 const GWEI_5 = BigNumber.from(10).pow(14);
 const WEI_5 = BigNumber.from(10).pow(5);
 
-export default function getFormattedEthValue(value: BigNumber): FormattedCryptoValue {
+export default function getFormattedEthValue(
+  value: BigNumber,
+  isUsingHairSpace = true,
+): FormattedCryptoValue {
   let returnObject: { suffix: string; value: string };
 
   const isInGweiRange = value.lt(GWEI_5);
@@ -30,7 +33,7 @@ export default function getFormattedEthValue(value: BigNumber): FormattedCryptoV
     formattedValue = formattedValue.replace(dotAndZeroes, '');
   }
 
-  formattedValue = getNumberWithSpaces(formattedValue);
+  formattedValue = getNumberWithSpaces(formattedValue, isUsingHairSpace);
 
   returnObject.value = formattedValue;
 
