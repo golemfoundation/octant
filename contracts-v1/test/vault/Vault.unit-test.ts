@@ -486,4 +486,43 @@ makeTestsEnv(VAULT, testEnv => {
       );
     });
   });
+
+  describe('Reentrancy Test', async () => {
+    it('should prevent reentrancy in batchWithdraw', async () => {
+      const {
+        vault,
+        signers: { TestFoundation },
+      } = testEnv;
+      const batchWithdrawReentrencyFactory = await ethers.getContractFactory(
+        'BatchWithdrawReentrencyTest',
+      );
+      const maliciousContract = await batchWithdrawReentrencyFactory.deploy(vault.address);
+
+      const leaves: Leaf[] = [
+        {
+          address: maliciousContract.address,
+          amount: parseEther('10'),
+        },
+      ];
+      const merkleTree = buildMerkleTree(leaves);
+
+      await vault.connect(TestFoundation).setMerkleRoot(1, merkleTree.root);
+      await TestFoundation.sendTransaction({ to: vault.address, value: parseEther('200') });
+
+      const attackerProof = getProof(merkleTree, maliciousContract.address);
+
+      // Try the reentrancy attack
+      await expect(
+        maliciousContract.attack([
+          {
+            amount: parseEther('10'),
+            epoch: 1,
+            proof: attackerProof,
+          },
+        ]),
+      ).to.be.revertedWith('HN:Common/failed-to-send');
+
+      expect(await ethers.provider.getBalance(maliciousContract.address)).eq(0);
+    });
+  });
 });

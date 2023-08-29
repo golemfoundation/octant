@@ -3,6 +3,7 @@
 pragma solidity 0.8.18;
 
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./OctantBase.sol";
 
 import {CommonErrors, VaultErrors} from "./Errors.sol";
@@ -11,7 +12,7 @@ import {CommonErrors, VaultErrors} from "./Errors.sol";
  * @title Vault
  * @dev This contract allows for claiming the rewards from Octant.
  */
-contract Vault is OctantBase {
+contract Vault is OctantBase, ReentrancyGuard {
     event EmergencyWithdrawn(address user, uint256 amount);
     event Withdrawn(address user, uint256 amount, uint256 epoch);
     event MerkleRootSet(uint256 epoch, bytes32 root);
@@ -56,7 +57,7 @@ contract Vault is OctantBase {
      * than the lastClaimedEpoch.
      * @param payloads An array of WithdrawPayload structs.
      */
-    function batchWithdraw(WithdrawPayload[] calldata payloads) external {
+    function batchWithdraw(WithdrawPayload[] calldata payloads) external nonReentrant {
         require(payloads.length > 0, VaultErrors.EMPTY_PAYLOADS);
 
         uint256 amount = 0;
@@ -82,10 +83,10 @@ contract Vault is OctantBase {
             amount += payloads[i].amount;
         }
         lastClaimedEpoch[msg.sender] = claimedEpoch;
+        emit Withdrawn(msg.sender, amount, claimedEpoch);
+
         (bool success, ) = payable(msg.sender).call{value: amount}("");
         require(success, CommonErrors.FAILED_TO_SEND);
-
-        emit Withdrawn(msg.sender, amount, claimedEpoch);
     }
 
     /**
