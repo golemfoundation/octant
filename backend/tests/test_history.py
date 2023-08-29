@@ -14,7 +14,13 @@ from app.core.history import (
     get_withdrawals,
 )
 from app.crypto.eip712 import sign, build_allocations_eip712_data
-from tests.conftest import create_payload, MOCK_PROPOSALS, MOCK_EPOCHS, mock_graphql
+from tests.conftest import (
+    create_payload,
+    MOCK_PROPOSALS,
+    MOCK_EPOCHS,
+    USER1_ADDRESS,
+    mock_graphql,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -164,7 +170,7 @@ def before(
 )
 def test_history_locks(mocker, locks, unlocks, expected_history):
     mock_graphql(mocker, deposit_events=locks + unlocks)
-    user_address = "0xca50c6c165d19ab38cc7935ff84f214a483a5494"
+    user_address = USER1_ADDRESS
 
     # Test various functions from core/history
     history = get_locks(user_address, 0) + get_unlocks(user_address, 0)

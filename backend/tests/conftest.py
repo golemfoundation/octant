@@ -9,6 +9,7 @@ from flask import g as request_context
 from gql import Client
 from web3 import Web3
 
+from tests.helpers.gql_client import MockGQLClient
 from app import create_app, database
 from app.contracts.epochs import Epochs
 from app.contracts.erc20 import ERC20
@@ -251,46 +252,48 @@ def create_epoch_event(start=1000, end=2000, **kwargs):
     }
 
 
+def _split_deposit_events(deposit_events):
+    deposit_events = deposit_events if deposit_events is not None else []
+
+    locks_events = []
+    unlocks_events = []
+    timestamp = 1001
+    for event in deposit_events:
+        if event["__typename"] == "Locked":
+            locks_events.append(
+                {
+                    "depositBefore": "0",
+                    "timestamp": timestamp,
+                    "user": USER1_ADDRESS,
+                    **event,
+                }
+            )
+        else:
+            unlocks_events.append(
+                {
+                    "depositBefore": "0",
+                    "timestamp": timestamp,
+                    "user": USER1_ADDRESS,
+                    **event,
+                }
+            )
+        timestamp += 1
+    return locks_events, unlocks_events
+
+
 def mock_graphql(
     mocker,
     deposit_events=None,
     epochs_events=None,
     withdrawals_events=None,
 ):
+    lockeds, unlockeds = _split_deposit_events(deposit_events)
     # Mock the execute method of the GraphQL client
+    mock_client = MockGQLClient(
+        epoches=epochs_events,
+        lockeds=lockeds,
+        unlockeds=unlockeds,
+        withdrawals=withdrawals_events,
+    )
     mocker.patch.object(request_context.graphql_client, "execute")
-
-    # Define the mock responses for the execute method
-    gql_execution = []
-    if epochs_events is not None:
-        gql_execution.append({"epoches": epochs_events})
-    if deposit_events is not None:
-        timestamp = 1001
-        locks_events = []
-        unlocks_events = []
-        for event in deposit_events:
-            if event["__typename"] == "Locked":
-                locks_events.append(
-                    {
-                        "depositBefore": "0",
-                        "timestamp": timestamp,
-                        "user": USER1_ADDRESS,
-                        **event,
-                    }
-                )
-            else:
-                unlocks_events.append(
-                    {
-                        "depositBefore": "0",
-                        "timestamp": timestamp,
-                        "user": USER1_ADDRESS,
-                        **event,
-                    }
-                )
-            timestamp += 1
-        gql_execution.append({"lockeds": locks_events})
-        gql_execution.append({"unlockeds": unlocks_events})
-    if withdrawals_events is not None:
-        gql_execution.append({"withdrawals": withdrawals_events})
-
-    request_context.graphql_client.execute.side_effect = gql_execution
+    request_context.graphql_client.execute.side_effect = mock_client.execute
