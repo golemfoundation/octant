@@ -24,7 +24,7 @@ export default function useProposalRewardsThreshold(
 
   return useQuery(
     QUERY_KEYS.proposalRewardsThreshold,
-    () => apiGetProjectThreshold(currentEpoch!),
+    () => apiGetProjectThreshold(currentEpoch! - 1),
     {
       enabled: !!currentEpoch && currentEpoch > 1,
       select: response => parseUnits(response.threshold, 'wei'),
