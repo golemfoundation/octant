@@ -33,16 +33,12 @@ def add(epoch: int, user: User, effective_deposit: int, epoch_end_deposit: int):
 
 
 def add_all(epoch: int, deposits: List[UserDeposit]):
-    new_deposits = []
     for d in deposits:
         user = database.user.get_or_add_user(d.user_address)
-        new_deposits.append(
+        user.deposits.append(
             Deposit(
                 epoch=epoch,
-                user=user,
                 effective_deposit=str(d.effective_deposit),
                 epoch_end_deposit=str(d.deposit),
             )
         )
-
-    db.session.add_all(new_deposits)
