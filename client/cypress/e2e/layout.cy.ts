@@ -1,4 +1,4 @@
-import { checkLocationWithLoader } from 'cypress/utils/e2e';
+import { navigateWithCheck } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
@@ -34,9 +34,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('bottom navbar allows to change views', () => {
-      navigationTabs.forEach(({ label, to }) => {
-        cy.get(`[data-test=Navbar__Button--${label}]`).click();
-        checkLocationWithLoader(to);
+      navigationTabs.forEach(({ to }) => {
+        navigateWithCheck(to);
       });
     });
 
