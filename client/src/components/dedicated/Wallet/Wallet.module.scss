@@ -9,6 +9,12 @@
   padding-bottom: 0;
 }
 
+.titleSuffix {
+  @include ethereumAddress();
+  font-size: $font-size-12;
+  color: $color-octant-grey6;
+}
+
 .walletCurrency {
   display: flex;
   align-items: center;

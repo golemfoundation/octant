@@ -72,3 +72,12 @@
   background-size: 80rem 10rem;
   animation: wave 2s infinite ease-out;
 }
+
+@mixin ethereumAddress() {
+  /**
+   * Default behaviour of Inter font replaces x mark between numbers with a multiplication symbol.
+   * You can check it in https://fonts.google.com/specimen/Inter/tester (type ex. 0x34 and press enter).
+   * This mixin solves this problem.
+   */
+  font-variant-ligatures: no-contextual;
+}

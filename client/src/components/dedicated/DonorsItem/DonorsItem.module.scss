@@ -17,12 +17,12 @@
   }
 
   .address {
+    @include ethereumAddress();
     flex: 1;
     text-align: left;
     font-size: $font-size-14;
     font-weight: $font-weight-semibold;
     color: $color-octant-dark;
-    font-variant-ligatures: no-contextual;
   }
 
   .value {

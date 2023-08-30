@@ -77,7 +77,11 @@ const Wallet: FC<WalletProps> = ({ onDisconnect }) => {
         isGrey
         isVertical
         title={t('wallet')}
-        titleSuffix={address ? truncateEthAddress(address) : undefined}
+        titleSuffix={
+          address ? (
+            <div className={styles.titleSuffix}>{truncateEthAddress(address)}</div>
+          ) : undefined
+        }
       >
         <Sections sections={sections} />
       </BoxRounded>
