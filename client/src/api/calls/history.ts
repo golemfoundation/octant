@@ -1,7 +1,7 @@
 import env from 'env';
 import apiService from 'services/apiService';
 
-type HistoryItem = {
+export type HistoryItem = {
   // BigNumber (wei) string
   amount: string;
   timestamp: string;
