@@ -171,7 +171,7 @@ const ProposalView = (): ReactElement => {
     );
   }
 
-  const onShareClick = ({ name, address }) => {
+  const onShareClick = ({ name, address }): boolean | Promise<boolean> => {
     const { origin, pathname } = window.location;
     const url = `${origin}${pathname}#${ROOT_ROUTES.proposal.absolute}/${currentEpoch}/${address}`;
 
@@ -183,15 +183,16 @@ const ProposalView = (): ReactElement => {
         url,
       });
 
-      return;
+      return false;
     }
 
-    window.navigator.clipboard.writeText(url).then(() => {
+    return window.navigator.clipboard.writeText(url).then(() => {
       setIsLinkCopied(true);
 
       setTimeout(() => {
         setIsLinkCopied(false);
       }, 1000);
+      return true;
     });
   };
 
@@ -240,19 +241,19 @@ const ProposalView = (): ReactElement => {
                       />
                       <div className={styles.actionsWrapper}>
                         <Tooltip
-                          showForce={isLinkCopied}
+                          className={styles.tooltip}
+                          onClickCallback={() =>
+                            onShareClick({
+                              address,
+                              name,
+                            })
+                          }
                           text={isLinkCopied ? i18n.t('common.copied') : i18n.t('common.copy')}
-                          wrapperClassname={styles.shareWrapper}
+                          variant="small"
                         >
                           <Svg
                             classNameSvg={cx(styles.shareIcon, isLinkCopied && styles.isCopied)}
                             img={share}
-                            onClick={() =>
-                              onShareClick({
-                                address,
-                                name,
-                              })
-                            }
                             size={3.2}
                           />
                         </Tooltip>
