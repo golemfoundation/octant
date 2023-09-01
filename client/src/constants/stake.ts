@@ -2,4 +2,4 @@ import { parseUnits } from 'ethers/lib/utils';
 
 import networkConfig from './networkConfig';
 
-export const ETH_STAKED = parseUnits((networkConfig.isTestnet ? 32 * 2 : 32 * 2060).toString());
+export const ETH_STAKED = parseUnits((32 * (networkConfig.isTestnet ? 2 : 2410)).toString());
