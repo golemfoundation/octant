@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 
 import DoubleValueProps from 'components/core/DoubleValue/types';
 import { SvgImageConfig } from 'components/core/Svg/types';
+import TooltipProps from 'components/core/Tooltip/types';
 
 export interface SectionProps {
   additionalContent?: ReactNode;
@@ -21,6 +22,11 @@ export interface SectionProps {
   labelSuffix?: ReactNode;
   onClick?: () => void;
   onTooltipClick?: () => void;
+  tooltipProps?: {
+    dataTest: TooltipProps['dataTest'];
+    position: TooltipProps['position'];
+    text: TooltipProps['text'];
+  };
 }
 
 export default interface SectionsProps {

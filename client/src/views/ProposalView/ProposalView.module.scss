@@ -126,8 +126,7 @@
 .actionsWrapper {
   display: flex;
 
-  .shareWrapper {
-    position: relative;
+  .tooltip {
     margin-right: 3.2rem;
 
     @media #{$desktop-up} {

@@ -3,7 +3,7 @@ import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
+Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(`earn: ${device}`, { viewportHeight, viewportWidth }, () => {
     before(() => {
       /**
@@ -54,31 +54,11 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=BoxGlmLock__Section--effective]').should('be.visible');
     });
 
-    it('"Effective" section tooltip svg icon opens "ModalEffectiveLockedBalance"', () => {
-      cy.get('[data-test=BoxGlmLock__Section--effective__Svg]').click();
-      cy.get('[data-test=ModalEffectiveLockedBalance]').should('be.visible');
-    });
-
-    it('"ModalEffectiveLockedBalance" has overflow enabled', () => {
-      cy.get('[data-test=BoxGlmLock__Section--effective__Svg]').click();
-      cy.get('[data-test=ModalEffectiveLockedBalance__overflow]').should('exist');
-    });
-
-    it('Clicking background when "ModalEffectiveLockedBalance" is open, closes Modal', () => {
-      cy.get('[data-test=BoxGlmLock__Section--effective__Svg]').click();
-      cy.get('[data-test=ModalEffectiveLockedBalance__overflow]').click({ force: true });
-      cy.get('[data-test=ModalEffectiveLockedBalance]').should('not.exist');
-    });
-
-    it('"ModalEffectiveLockedBalance" has "cross" icon button in header', () => {
-      cy.get('[data-test=BoxGlmLock__Section--effective__Svg]').click();
-      cy.get('[data-test=ModalEffectiveLockedBalance__Button]').should('be.visible');
-    });
-
-    it('Clicking on "X" mark in "ModalEffectiveLockedBalance", closes Modal', () => {
-      cy.get('[data-test=BoxGlmLock__Section--effective__Svg]').click();
-      cy.get('[data-test=ModalEffectiveLockedBalance__Button]').click();
-      cy.get('[data-test=ModalEffectiveLockedBalance]').should('not.exist');
-    });
+    if (!isDesktop) {
+      it('"Effective" section tooltip svg icon opens "TooltipEffectiveLockedBalance"', () => {
+        cy.get('[data-test=BoxGlmLock__Section--effective__Svg]').click();
+        cy.get('[data-test=TooltipEffectiveLockedBalance]').should('be.visible');
+      });
+    }
   });
 });

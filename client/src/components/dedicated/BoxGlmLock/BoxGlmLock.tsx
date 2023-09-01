@@ -5,7 +5,6 @@ import { useAccount } from 'wagmi';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Sections from 'components/core/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/core/BoxRounded/Sections/types';
-import ModalEffectiveLockedBalance from 'components/dedicated/ModalEffectiveLockedBalance/ModalEffectiveLockedBalance';
 import ModalGlmLock from 'components/dedicated/ModalGlmLock/ModalGlmLock';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
@@ -25,8 +24,6 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
   }));
 
   const [isModalGlmLockOpen, setIsModalGlmLockOpen] = useState<boolean>(false);
-  const [isModalEffectiveLockedBalanceOpen, setIsModalEffectiveLockedBalanceOpen] =
-    useState<boolean>(false);
   const {
     data: depositEffectiveAtCurrentEpoch,
     isFetching: isFetchingDepositEffectiveAtCurrentEpoch,
@@ -57,7 +54,11 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
       },
       isDisabled: isPreLaunch && !isConnected,
       label: t('effective'),
-      onTooltipClick: () => setIsModalEffectiveLockedBalanceOpen(true),
+      tooltipProps: {
+        dataTest: 'TooltipEffectiveLockedBalance',
+        position: 'bottom-right',
+        text: t('tooltipText'),
+      },
     },
   ];
 
@@ -84,13 +85,6 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
       >
         <Sections sections={sections} />
       </BoxRounded>
-      <ModalEffectiveLockedBalance
-        modalProps={{
-          dataTest: 'ModalEffectiveLockedBalance',
-          isOpen: isModalEffectiveLockedBalanceOpen,
-          onClosePanel: () => setIsModalEffectiveLockedBalanceOpen(false),
-        }}
-      />
       <ModalGlmLock
         modalProps={{
           isOpen: isModalGlmLockOpen,
