@@ -12,6 +12,23 @@ Deposits: [0x879133Fd79b7F48CE1c368b0fCA9ea168eaF117c](https://etherscan.io/addr
 
 Proposals: [0x91B904e8B0F9133D0766059065C2A1F6c6CAfA27](https://etherscan.io/address/0x91b904e8b0f9133d0766059065c2a1f6c6cafa27)
 
+Epochs: [0xc292eBCa7855CB464755Aa638f9784c131F27D59](https://etherscan.io/address/0xc292eBCa7855CB464755Aa638f9784c131F27D59)
+
+Vault: [0xc64783f0BE60A81A716535287539a694403183ba](https://etherscan.io/address/0xc64783f0BE60A81A716535287539a694403183ba)
+
+
+### Sepolia
+
+Auth: [0xc64783f0BE60A81A716535287539a694403183ba](https://sepolia.etherscan.io/address/0xc64783f0BE60A81A716535287539a694403183ba)
+
+Deposits: [0x93ac82bdB106B515a2f6A83b6d3e8cC5d1d1CB9E](https://sepolia.etherscan.io/address/0x93ac82bdB106B515a2f6A83b6d3e8cC5d1d1CB9E#code)
+
+Proposals: [0xB259fe6EC190cffF893b247AE688eFBF4261D2fc](https://sepolia.etherscan.io/address/0xB259fe6EC190cffF893b247AE688eFBF4261D2fc)
+
+Epochs: [0x37a32d673a96D73ccFb6f98bcA1f86d6aCCfCCb4](https://sepolia.etherscan.io/address/0x37a32d673a96D73ccFb6f98bcA1f86d6aCCfCCb4)
+
+Vault: [0xdDF6e522CBE53e647908E0D27E54E7e873852939](https://sepolia.etherscan.io/address/0xdDF6e522CBE53e647908E0D27E54E7e873852939)
+
 ## Configuration
 
 Ensure that the `.env`  file is present. See `.env.template`.
