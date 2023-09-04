@@ -21,7 +21,7 @@ export default function useWithdrawableUserEth(
       enabled: !!address && !!currentEpoch && currentEpoch > 1,
       select: data => {
         const sum = data.reduce((prev, { amount }) => prev + parseFloat(amount), 0);
-        return parseUnits(sum.toString());
+        return parseUnits(sum.toString(), 'wei');
       },
       ...options,
     },

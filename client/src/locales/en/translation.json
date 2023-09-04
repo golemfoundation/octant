@@ -72,7 +72,8 @@
         "current": "Current",
         "editLockedGLM": "Edit Locked GLM",
         "effective": "Effective",
-        "lockedBalance": "Locked balance"
+        "lockedBalance": "Locked balance",
+        "tooltipText": "Effective balance is the part of your locked GLM that is earning rewards. In Epoch 1, this is any amount over the minimum, currently set at 10 GLM. From Epoch 2 this will change."
       },
       "boxPersonalAllocation": {
         "personalAllocation": "Personal allocation",
@@ -155,9 +156,6 @@
       },
       "modalConnectWallet": {
         "connectVia": "Connect via"
-      },
-      "modalEffectiveLockedBalance": {
-        "text": "Effective Balance refers to Locked GLM that has been locked for a full epoch and is generating rewards. Rewards for GLM locked during Epoch <0>T</0> will be available in Epoch <1>T+2</1>. <br/> <br/> Consider locking 100 GLM in Epoch 1 and 1000 GLM in Epoch 2. During Epoch 2 Locked Balance will be 1100 GLM, but Effective Balance will be 100 GLM, because the 1000 GLM has not been locked for a full epoch yet. <br/> <br/> During Epoch 3, rewards will be generated on the entire balance, so Effective Balance will become 1100 GLM."
       },
       "modalGlmLock": {
         "unlockGLM": "Unlock GLM"

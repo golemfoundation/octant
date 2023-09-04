@@ -1,3 +1,5 @@
+import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
+
 import Chainable = Cypress.Chainable;
 
 export const loadersShouldNotExist = (): Chainable<any> => {
@@ -13,4 +15,10 @@ export const checkLocationWithLoader = (url: string): Chainable<any> => {
 export const visitWithLoader = (urlEnter: string, urlEnd?: string): Chainable<any> => {
   cy.visit(`#${urlEnter}`);
   return checkLocationWithLoader(urlEnd || urlEnter);
+};
+
+export const navigateWithCheck = (urlEnter: string): Chainable<any> => {
+  const { label } = navigationTabs.find(({ to }) => to === urlEnter)!;
+  cy.get(`[data-test=Navbar__Button--${label}]`).click();
+  return checkLocationWithLoader(urlEnter);
 };

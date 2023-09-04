@@ -1,4 +1,3 @@
-import { parseUnits } from 'ethers/lib/utils';
 import React, { FC, memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -38,15 +37,15 @@ const HistoryItem: FC<HistoryItemProps> = ({ type, amount, projectsNumber }) => 
   }, [t, type]);
 
   const values = getValuesToDisplay({
-    cryptoCurrency: type === 'allocation' ? 'ethereum' : 'golem',
+    cryptoCurrency: ['allocation', 'withdrawal'].includes(type) ? 'ethereum' : 'golem',
     cryptoValues,
     displayCurrency: displayCurrency!,
     error,
     isCryptoMainValueDisplay,
-    valueCrypto: parseUnits(amount, 'wei'),
+    valueCrypto: amount,
   });
 
-  const img = type === 'allocation' || type === 'withdrawal' ? allocate : donation;
+  const img = ['allocation', 'withdrawal'].includes(type) ? allocate : donation;
 
   return (
     <BoxRounded className={styles.box}>

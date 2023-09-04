@@ -109,7 +109,7 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
               {title}
               <div className={styles.subtitle}>{subtitle}</div>
             </div>
-            {titleSuffix && <div className={styles.titleSuffix}>{titleSuffix}</div>}
+            {titleSuffix}
             {isExpandable && (
               <Button
                 Icon={

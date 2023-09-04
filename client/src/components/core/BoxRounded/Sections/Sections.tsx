@@ -3,23 +3,24 @@ import React, { FC, Fragment } from 'react';
 
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import Svg from 'components/core/Svg/Svg';
+import Tooltip from 'components/core/Tooltip/Tooltip';
 import { questionMark } from 'svg/misc';
 
 import styles from './Sections.module.scss';
 import SectionsProps, { SectionProps } from './types';
 
 const Section: FC<SectionProps> = ({
+  additionalContent,
+  className,
+  dataTest = 'Section',
+  doubleValueProps,
+  icon,
+  isDisabled,
   label,
   labelClassName,
-  icon,
-  onTooltipClick,
-  doubleValueProps,
-  dataTest = 'Section',
-  className,
-  additionalContent,
-  onClick,
   labelSuffix,
-  isDisabled,
+  onClick,
+  tooltipProps,
 }) => (
   <>
     <div
@@ -30,14 +31,10 @@ const Section: FC<SectionProps> = ({
       <div className={cx(styles.label, labelClassName)}>
         {icon ? <Svg img={icon} size={4} /> : label}
         {labelSuffix && labelSuffix}
-        {onTooltipClick && (
-          <Svg
-            classNameSvg={styles.tooltip}
-            dataTest={`${dataTest}__Svg`}
-            img={questionMark}
-            onClick={onTooltipClick}
-            size={1.6}
-          />
+        {tooltipProps && (
+          <Tooltip {...tooltipProps} childrenClassName={styles.tooltip}>
+            <Svg dataTest={`${dataTest}__Svg`} img={questionMark} size={1.6} />
+          </Tooltip>
         )}
       </div>
       <DoubleValue

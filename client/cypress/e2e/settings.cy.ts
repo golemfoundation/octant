@@ -1,4 +1,4 @@
-import { visitWithLoader } from 'cypress/utils/e2e';
+import { visitWithLoader, navigateWithCheck } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { FIAT_CURRENCIES_SYMBOLS, DISPLAY_CURRENCIES } from 'src/constants/currencies';
 import {
@@ -68,7 +68,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('"Use crypto as main value display" option by default displays crypto value as primary in DoubleValue component', () => {
-      cy.get('[data-test=Navbar__Button--Metrics]').click();
+      navigateWithCheck(ROOT_ROUTES.metrics.absolute);
 
       const cryptoValue = getValueCryptoToDisplay({
         cryptoCurrency: 'ethereum',
@@ -87,7 +87,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
 
     it('"Use crypto as main value display" option changes DoubleValue sections order', () => {
       cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').uncheck();
-      cy.get('[data-test=Navbar__Button--Metrics]').click();
+      navigateWithCheck(ROOT_ROUTES.metrics.absolute);
 
       const cryptoValue = getValueCryptoToDisplay({
         cryptoCurrency: 'ethereum',
@@ -116,7 +116,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           i < DISPLAY_CURRENCIES.length - 1 ? DISPLAY_CURRENCIES[i + 1].toUpperCase() : undefined;
 
         cy.get('[data-test=InputSelect__SingleValue]').contains(displayCurrencyToUppercase);
-        cy.get('[data-test=Navbar__Button--Metrics]').click();
+        navigateWithCheck(ROOT_ROUTES.metrics.absolute);
 
         if (FIAT_CURRENCIES_SYMBOLS[displayCurrency]) {
           cy.get('[data-test=MetricsView__DoubleValue--ethStaked__secondary]').contains(
@@ -128,7 +128,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           );
         }
 
-        cy.get('[data-test=Navbar__Button--Settings]').click();
+        navigateWithCheck(ROOT_ROUTES.settings.absolute);
         cy.get('[data-test=InputSelect]').click();
         cy.get(`[data-test=InputSelect__Option--${nextDisplayCurrencyToUppercase}]`).click();
       }
@@ -157,7 +157,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     it('"Always show Octant tips" works (checked)', () => {
       cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').check();
 
-      cy.get('[data-test=Navbar__Button--Earn]').click();
+      navigateWithCheck(ROOT_ROUTES.earn.absolute);
       cy.get('[data-test=EarnView__TipTile--connectWallet]').should('exist');
       cy.get('[data-test=EarnView__TipTile--connectWallet]').should('be.visible');
 
@@ -173,7 +173,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     it('"Always show Octant tips" works (unchecked)', () => {
       cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').uncheck();
 
-      cy.get('[data-test=Navbar__Button--Earn]').click();
+      navigateWithCheck(ROOT_ROUTES.earn.absolute);
       cy.get('[data-test=EarnView__TipTile--connectWallet]').should('exist');
       cy.get('[data-test=EarnView__TipTile--connectWallet]').should('be.visible');
 
