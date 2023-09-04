@@ -29,10 +29,6 @@ spec:
         - name: "webClient.alchemyId"
           value: "$VITE_ALCHEMY_ID"
         ## Backend
-        - name: "backendServer.epoch0End"
-          value: "$EPOCH_0_END"
-        - name: "backendServer.epoch1End"
-          value: "$EPOCH_1_END"
         - name: "backendServer.schedulerEnabled"
           value: "$SCHEDULER_ENABLED"
         - name: "backendServer.vaultConfirmWithdrawals"
@@ -82,4 +78,3 @@ spec:
     kind: "Secret"
     jsonPointers:
     - /data
-

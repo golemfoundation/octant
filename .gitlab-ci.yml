@@ -5,8 +5,6 @@ variables:
   TRANSFER_METER_FREQUENCY: "2s"
   MASTER_BRANCH: "master"
   IMAGE_TAG: $CI_COMMIT_SHA
-  EPOCH_0_END: 1690848000
-  EPOCH_1_END: 1698796800
 
 stages:
   - build
@@ -343,8 +341,6 @@ Cypress E2E Tests Epoch 1:
     CI: "true"
     METAMASK_VERSION: "10.25.0"
     SECRET_WORDS: test test test test test test test test test test test junk
-    EPOCH_0_END: 0
-    EPOCH_1_END: 1698796800
   artifacts:
     when: on_failure
     name: cypress
@@ -418,8 +414,6 @@ Deploy MR App:
     - .deploy
   variables:
     ENV_TYPE: "mr"
-    EPOCH_0_END: 0
-    EPOCH_1_END: 1698796800
   rules:
     - !reference [.rules, on_mr_manual]
   environment:
