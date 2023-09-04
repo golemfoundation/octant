@@ -1,21 +1,21 @@
 import json
-import logging
 from typing import List
 
 from flask import current_app as app
 from flask_socketio import emit
 
 from app.controllers import allocations
+from app.controllers.allocations import allocate
 from app.controllers.rewards import (
     get_allocation_threshold,
     get_proposals_rewards,
     ProposalReward,
 )
-from app.core.allocations import allocate, AllocationRequest
+from app.core.allocations import AllocationRequest
 from app.core.common import AccountFunds
 from app.exceptions import OctantException
-from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler
 from app.extensions import socketio
+from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler
 
 
 @socketio.on("connect")
@@ -36,8 +36,11 @@ def handle_disconnect():
 def handle_allocate(msg):
     msg = json.loads(msg)
     payload, signature = msg["payload"], msg["signature"]
-    app.logger.info(f"User allocation: payload: {payload}, signature: {signature}")
-    allocate(AllocationRequest(payload, signature, override_existing_allocations=True))
+    app.logger.info(f"User allocation payload: {payload}, signature: {signature}")
+    user_address = allocate(
+        AllocationRequest(payload, signature, override_existing_allocations=True)
+    )
+    app.logger.info(f"User: {user_address} allocated successfully")
 
     threshold = get_allocation_threshold()
     emit("threshold", json.dumps({"threshold": str(threshold)}), broadcast=True)

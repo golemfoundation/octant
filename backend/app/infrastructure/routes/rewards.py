@@ -1,13 +1,13 @@
 import dataclasses
 
 from flask import current_app as app
-from flask_restx import Resource, Namespace, fields
+from flask_restx import Namespace, fields
 
-from app.infrastructure import OctantResource
 from app.controllers import rewards
 from app.core import user
 from app.extensions import api
-from app.settings import config
+from app.infrastructure import OctantResource
+from app.infrastructure.routes.common_models import proposals_rewards_model
 
 ns = Namespace("rewards", description="Octant rewards")
 api.add_namespace(ns)
@@ -31,24 +31,6 @@ threshold_model = api.model(
     },
 )
 
-proposal_model = api.model(
-    "Proposal",
-    {
-        "address": fields.String(
-            required=True,
-            description="Proposal address",
-        ),
-        "allocated": fields.String(
-            required=True,
-            description="User allocated funds for the proposal",
-        ),
-        "matched": fields.String(
-            required=True,
-            description="Matched rewards funds for the proposal",
-        ),
-    },
-)
-
 budget_model = api.model(
     "Budget",
     {
@@ -66,7 +48,6 @@ budget_model = api.model(
         ),
     },
 )
-
 
 epoch_rewards_merkle_tree_leaf_model = api.model(
     "EpochRewardsMerkleTreeLeaf",
@@ -100,113 +81,111 @@ epoch_rewards_merkle_tree_model = api.model(
     },
 )
 
-if config.EPOCH_2_FEATURES_ENABLED:
 
-    @ns.route("/budget/<string:user_address>/epoch/<int:epoch>")
-    @ns.doc(
-        description="Returns user's rewards budget available to allocate for given epoch",
-        params={
-            "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed "
-            "with 0x)",
-            "epoch": "Epoch number",
-        },
-    )
-    class UserBudget(OctantResource):
-        @ns.marshal_with(user_budget_model)
-        @ns.response(200, "Budget successfully retrieved")
-        def get(self, user_address, epoch):
-            app.logger.debug(f"Getting user {user_address} budget in epoch {epoch}")
-            budget = user.get_budget(user_address, epoch)
-            app.logger.debug(f"User {user_address} budget in epoch {epoch}: {budget}")
+@ns.route("/budget/<string:user_address>/epoch/<int:epoch>")
+@ns.doc(
+    description="Returns user's rewards budget available to allocate for given epoch",
+    params={
+        "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed "
+        "with 0x)",
+        "epoch": "Epoch number",
+    },
+)
+class UserBudget(OctantResource):
+    @ns.marshal_with(user_budget_model)
+    @ns.response(200, "Budget successfully retrieved")
+    def get(self, user_address, epoch):
+        app.logger.debug(f"Getting user {user_address} budget in epoch {epoch}")
+        budget = user.get_budget(user_address, epoch)
+        app.logger.debug(f"User {user_address} budget in epoch {epoch}: {budget}")
 
-            return {"budget": budget}
+        return {"budget": budget}
 
-    @ns.route("/threshold/<int:epoch>")
-    @ns.doc(
-        description="Returns allocation threshold for the projects to be eligible for rewards",
-        params={
-            "epoch": "Epoch number",
-        },
-    )
-    @ns.response(200, "Returns allocation threshold value as uint256")
-    class Threshold(OctantResource):
-        @ns.marshal_with(threshold_model)
-        @ns.response(200, "Threshold successfully retrieved")
-        def get(self, epoch):
-            app.logger.debug(f"Getting threshold for epoch {epoch}")
-            threshold = rewards.get_allocation_threshold(epoch)
-            app.logger.debug(f"Threshold in epoch: {epoch}: {threshold}")
 
-            return {"threshold": threshold}
+@ns.route("/threshold/<int:epoch>")
+@ns.doc(
+    description="Returns allocation threshold for the projects to be eligible for rewards",
+    params={
+        "epoch": "Epoch number",
+    },
+)
+@ns.response(200, "Returns allocation threshold value as uint256")
+class Threshold(OctantResource):
+    @ns.marshal_with(threshold_model)
+    @ns.response(200, "Threshold successfully retrieved")
+    def get(self, epoch):
+        app.logger.debug(f"Getting threshold for epoch {epoch}")
+        threshold = rewards.get_allocation_threshold(epoch)
+        app.logger.debug(f"Threshold in epoch: {epoch}: {threshold}")
 
-    @ns.doc(
-        description="Returns proposals with matched rewards for a given epoch",
-        params={
-            "epoch": "Epoch number",
-        },
-    )
-    @ns.response(
-        200,
-        "",
-    )
-    @ns.response(
-        400,
-        "Invalid epoch number given. Has the allocation window "
-        "for the given epoch started already?",
-    )
-    @ns.route("/proposals/epoch/<int:epoch>")
-    class Proposals(OctantResource):
-        @ns.marshal_with(proposal_model)
-        def get(self, epoch):
-            app.logger.debug(f"Getting proposal rewards for epoch {epoch}")
-            proposal_rewards = [
-                dataclasses.asdict(proposal)
-                for proposal in rewards.get_proposals_rewards(epoch)
-            ]
-            app.logger.debug(f"Proposal rewards in epoch: {epoch}: {proposal_rewards}")
+        return {"threshold": threshold}
 
-            return proposal_rewards
 
-    @ns.doc(
-        description="Returns total of allocated and budget for matched rewards for a given epoch",
-        params={
-            "epoch": "Epoch number",
-        },
-    )
-    @ns.response(200, "")
-    @ns.route("/budget/epoch/<int:epoch>")
-    class Budget(OctantResource):
-        @ns.marshal_with(budget_model)
-        def get(self, epoch):
-            app.logger.debug(
-                f"Getting total of allocated and matched budget for epoch {epoch}"
-            )
-            budget = rewards.get_rewards_budget(epoch)
-            app.logger.debug(
-                f"Total of allocated and matched budget for epoch {epoch}: {budget}"
-            )
+@ns.doc(
+    description="Returns proposals with matched rewards for a given epoch",
+    params={
+        "epoch": "Epoch number",
+    },
+)
+@ns.response(
+    200,
+    "",
+)
+@ns.response(
+    400,
+    "Invalid epoch number given. Has the allocation window "
+    "for the given epoch started already?",
+)
+@ns.route("/proposals/epoch/<int:epoch>")
+class ProposalsRewards(OctantResource):
+    @ns.marshal_with(proposals_rewards_model)
+    def get(self, epoch):
+        app.logger.debug(f"Getting proposal rewards for epoch {epoch}")
+        proposal_rewards = rewards.get_proposals_rewards(epoch)
+        app.logger.debug(f"Proposal rewards in epoch: {epoch}: {proposal_rewards}")
 
-            return dataclasses.asdict(budget)
+        return {"rewards": proposal_rewards}
 
-    @ns.doc(
-        description="Returns merkle tree leaves with rewards for a given epoch",
-        params={
-            "epoch": "Epoch number",
-        },
-    )
-    @ns.response(
-        200,
-        "",
-    )
-    @ns.response(400, "Invalid epoch number given")
-    @ns.route("/merkle_tree/<int:epoch>")
-    class RewardsMerkleTree(OctantResource):
-        @ns.marshal_with(epoch_rewards_merkle_tree_model)
-        def get(self, epoch: int):
-            app.logger.debug(f"Getting merkle tree leaves for epoch {epoch}")
-            merkle_tree_leaves = rewards.get_rewards_merkle_tree(epoch)
-            app.logger.debug(
-                f"Merkle tree leaves for epoch {epoch}: {merkle_tree_leaves}"
-            )
 
-            return merkle_tree_leaves.to_dict()
+@ns.doc(
+    description="Returns total of allocated and budget for matched rewards for a given epoch",
+    params={
+        "epoch": "Epoch number",
+    },
+)
+@ns.response(200, "")
+@ns.route("/budget/epoch/<int:epoch>")
+class Budget(OctantResource):
+    @ns.marshal_with(budget_model)
+    def get(self, epoch):
+        app.logger.debug(
+            f"Getting total of allocated and matched budget for epoch {epoch}"
+        )
+        budget = rewards.get_rewards_budget(epoch)
+        app.logger.debug(
+            f"Total of allocated and matched budget for epoch {epoch}: {budget}"
+        )
+
+        return dataclasses.asdict(budget)
+
+
+@ns.doc(
+    description="Returns merkle tree leaves with rewards for a given epoch",
+    params={
+        "epoch": "Epoch number",
+    },
+)
+@ns.response(
+    200,
+    "",
+)
+@ns.response(400, "Invalid epoch number given")
+@ns.route("/merkle_tree/<int:epoch>")
+class RewardsMerkleTree(OctantResource):
+    @ns.marshal_with(epoch_rewards_merkle_tree_model)
+    def get(self, epoch: int):
+        app.logger.debug(f"Getting merkle tree leaves for epoch {epoch}")
+        merkle_tree_leaves = rewards.get_rewards_merkle_tree(epoch)
+        app.logger.debug(f"Merkle tree leaves for epoch {epoch}: {merkle_tree_leaves}")
+
+        return merkle_tree_leaves.to_dict()

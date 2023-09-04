@@ -1,9 +1,9 @@
 from flask import current_app as app
-from flask_restx import Resource, Namespace, fields
+from flask_restx import Namespace, fields
 
-from app.infrastructure import OctantResource
 from app.controllers import history
 from app.extensions import api
+from app.infrastructure import OctantResource
 
 ns = Namespace("history", description="User operations overview")
 api.add_namespace(ns)

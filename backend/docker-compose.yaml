@@ -9,13 +9,16 @@ services:
     build: .
     ports:
       - '5000:5000'
+    environment:
+      OCTANT_ENV: compose
+      DB_URI: "postgresql://user:password@db:5433/octant"
     depends_on:
       - db
 
   db:
     image: 'postgres:13'
     ports:
-      - '5432:5432'
+      - '5433:5432'
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password

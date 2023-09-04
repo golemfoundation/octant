@@ -2,23 +2,21 @@
 # Docker entrypoint
 set -e
 
-NETWORK=${NETWORK:-"sepolia"}
+export NETWORK=${NETWORK:-"sepolia"}
 SUBGRAPH_URL=${SUBGRAPH_URL:-"http://127.0.0.1:8020"}
 IPFS_URL=${IPFS_URL:-"http://127.0.0.1:5001"}
 LABEL=${VERSION_TAG:-"VM_$HOSTNAME"}
 NODE_NAME=${NODE_NAME:-"octant"}
-NETWORK_FILE=${NETWORK_FILE:-"./networks.json"}
-EPOCHS_ADDRESS=$(cat $NETWORK_FILE | jq -r ".${NETWORK}.Epochs.address")
+export NETWORK_FILE=${NETWORK_FILE:-"./networks.json"}
 
 echo "Node name:    $NODE_NAME"
 echo "Network:      $NETWORK"
 echo "Label:        $LABEL"
 echo "Subgraph URL: $SUBGRAPH_URL"
 echo "IPFS URL:     $IPFS_URL"
-echo "EPOCHS addr:  $EPOCHS_ADDRESS"
-echo
-# echo "Replace hardcoded contract address"
-# sed -i'' -E "s/Address.fromString\(.+\)/Address.fromString\('$EPOCHS_ADDRESS')/g" src/epochs.ts
+
+./configure-network.sh
+
 echo "Code generation"
 npx graph codegen
 echo "Build graph"

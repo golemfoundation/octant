@@ -23,9 +23,14 @@ import './tasks/mine';
 import './tasks/prepare-local-test-env';
 import './tasks/send-glm';
 import './tasks/target-check';
+import './tasks/auth-check';
+import './tasks/deposits-check';
+import './tasks/proposals-check';
 import './tasks/target-deploy';
 import './tasks/target-upgrade';
 import './tasks/target-withdraw';
+import './tasks/status';
+import './tasks/verify-deployment';
 
 const config: HardhatUserConfig = {
   docgen: {

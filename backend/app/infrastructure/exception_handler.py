@@ -7,7 +7,7 @@ from app.exceptions import OctantException
 
 UNEXPECTED_EXCEPTION = "An unexpected error has occurred"
 
-LOGGER = logging.getLogger("gunicorn.error")
+LOGGER = logging.getLogger("app")
 
 
 class ExceptionHandler:

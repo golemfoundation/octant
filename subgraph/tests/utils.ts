@@ -2,9 +2,10 @@ import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { newMockEvent, createMockedFunction } from 'matchstick-as';
 
 import { Locked as LockedEvent, Unlocked as UnlockedEvent } from '../generated/Deposits/Deposits';
+import { Withdrawn } from '../generated/Vault/Vault';
 
-export const GLM_ADDRESS = Address.fromString('0x71432DD1ae7DB41706ee6a22148446087BdD0906');
-export const GNT_ADDRESS = Address.fromString('0xE6de13D64F6036E4E3f5fC84B5EB620C5C7c1050');
+export const GLM_ADDRESS = Address.fromString('0x7DD9c5Cba05E151C895FDe1CF355C9A1D5DA6429');
+export const GNT_ADDRESS = Address.fromString('0xa74476443119A942dE498590Fe1f2454d7D4aC0d');
 
 export function createLockedEvent(
   depositBefore: BigInt,
@@ -59,6 +60,23 @@ export function createUnlockedEvent(
   unlockedEvent.parameters.push(new ethereum.EventParam('user', ethereum.Value.fromAddress(user)));
 
   return unlockedEvent;
+}
+
+// eslint-disable-next-line no-undef
+export function createWithdrawnEvent(amount: BigInt, user: Address, epoch: i32): Withdrawn {
+  // eslint-disable-next-line no-undef
+  const withdrawnEvent = changetype<Withdrawn>(newMockEvent());
+
+  withdrawnEvent.parameters = [];
+
+  withdrawnEvent.parameters.push(new ethereum.EventParam('user', ethereum.Value.fromAddress(user)));
+
+  withdrawnEvent.parameters.push(
+    new ethereum.EventParam('amount', ethereum.Value.fromUnsignedBigInt(amount)),
+  );
+  withdrawnEvent.parameters.push(new ethereum.EventParam('epoch', ethereum.Value.fromI32(epoch)));
+
+  return withdrawnEvent;
 }
 
 export function createBlockEvent(): ethereum.Block {

@@ -1,11 +1,10 @@
 from flask import Response
 from flask import current_app as app
-from flask_restx import Resource, Namespace, fields
+from flask_restx import Namespace, fields
 
-from app.infrastructure import OctantResource
 from app.controllers import snapshots
 from app.extensions import api
-from app.settings import config
+from app.infrastructure import OctantResource
 
 ns = Namespace("snapshots", description="Database snapshots")
 api.add_namespace(ns)
@@ -28,44 +27,44 @@ epoch_status_model = api.model(
     },
 )
 
-if config.EPOCH_2_FEATURES_ENABLED:
 
-    @ns.route("/pending")
-    @ns.doc(
-        description="Take a database snapshot of the recently completed epoch. \
+@ns.route("/pending")
+@ns.doc(
+    description="Take a database snapshot of the recently completed epoch. \
         This endpoint should be executed at the beginning of an epoch to activate \
         a decision window."
-    )
-    @ns.response(
-        200,
-        "Snapshot could not be created due to an existing snapshot for previous epoch",
-    )
-    @ns.response(201, "Snapshot created successfully")
-    class PendingEpochSnapshot(OctantResource):
-        def post(self):
-            app.logger.info("Initiating pending epoch snapshot")
-            epoch = snapshots.snapshot_pending_epoch()
-            app.logger.info(f"Saved pending epoch snapshot for epoch: {epoch}")
+)
+@ns.response(
+    200,
+    "Snapshot could not be created due to an existing snapshot for previous epoch",
+)
+@ns.response(201, "Snapshot created successfully")
+class PendingEpochSnapshot(OctantResource):
+    def post(self):
+        app.logger.info("Initiating pending epoch snapshot")
+        epoch = snapshots.snapshot_pending_epoch()
+        app.logger.info(f"Saved pending epoch snapshot for epoch: {epoch}")
 
-            return ({"epoch": epoch}, 201) if epoch is not None else Response()
+        return ({"epoch": epoch}, 201) if epoch is not None else Response()
 
-    @ns.route("/finalized")
-    @ns.doc(
-        description="Take a database snapshot of the recently completed allocations. \
+
+@ns.route("/finalized")
+@ns.doc(
+    description="Take a database snapshot of the recently completed allocations. \
         This endpoint should be executed at the end of the decision window"
-    )
-    @ns.response(
-        200,
-        "Snapshot could not be created due to an existing snapshot for previous epoch",
-    )
-    @ns.response(201, "Snapshot created successfully")
-    class FinalizedEpochSnapshot(OctantResource):
-        def post(self):
-            app.logger.info("Initiating finalized epoch snapshot")
-            epoch = snapshots.snapshot_finalized_epoch()
-            app.logger.info(f"Saved finalized epoch snapshot for epoch: {epoch}")
+)
+@ns.response(
+    200,
+    "Snapshot could not be created due to an existing snapshot for previous epoch",
+)
+@ns.response(201, "Snapshot created successfully")
+class FinalizedEpochSnapshot(OctantResource):
+    def post(self):
+        app.logger.info("Initiating finalized epoch snapshot")
+        epoch = snapshots.snapshot_finalized_epoch()
+        app.logger.info(f"Saved finalized epoch snapshot for epoch: {epoch}")
 
-            return ({"epoch": epoch}, 201) if epoch is not None else Response()
+        return ({"epoch": epoch}, 201) if epoch is not None else Response()
 
 
 @ns.route("/status/<int:epoch>")

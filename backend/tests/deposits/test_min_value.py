@@ -253,7 +253,9 @@ def test_get_user_deposits(mocker, state_before, events, expected):
             int(state_before["effective_deposit"]),
             int(state_before["epoch_end_deposit"]),
         )
-    mock_graphql(mocker, epochs_events=[create_epoch_event()], deposit_events=events)
+    mock_graphql(
+        mocker, epochs_events=[create_epoch_event(epoch=EPOCH)], deposit_events=events
+    )
 
     user_deposits, total_ed = get_users_deposits(EPOCH)
 
@@ -272,7 +274,9 @@ def test_add_multiple_user_deposits(mocker):
         create_deposit_event(amount="200000000000000000000"),
         create_deposit_event(amount="400000000000000000000", user=USER2_ADDRESS),
     ]
-    mock_graphql(mocker, epochs_events=[create_epoch_event()], deposit_events=events)
+    mock_graphql(
+        mocker, epochs_events=[create_epoch_event(epoch=EPOCH)], deposit_events=events
+    )
 
     user_deposits, total_ed = get_users_deposits(EPOCH)
 
@@ -316,7 +320,9 @@ def test_update_multiple_user_deposits(mocker):
         300000000000000000000,
         300000000000000000000,
     )
-    mock_graphql(mocker, epochs_events=[create_epoch_event()], deposit_events=events)
+    mock_graphql(
+        mocker, epochs_events=[create_epoch_event(epoch=EPOCH)], deposit_events=events
+    )
 
     user_deposits, total_ed = get_users_deposits(EPOCH)
 
@@ -359,7 +365,9 @@ def test_add_and_update_deposits(mocker):
         0,
         int(events[1]["depositBefore"]),
     )
-    mock_graphql(mocker, epochs_events=[create_epoch_event()], deposit_events=events)
+    mock_graphql(
+        mocker, epochs_events=[create_epoch_event(epoch=EPOCH)], deposit_events=events
+    )
 
     user_deposits, total_ed = get_users_deposits(EPOCH)
 

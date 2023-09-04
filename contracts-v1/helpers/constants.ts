@@ -4,7 +4,8 @@
 export const AUTH = 'Auth';
 export const PROPOSALS = 'Proposals';
 export const DEPOSITS = 'Deposits';
-export const TOKEN = 'Token';
+export const TOKEN = 'GLM';
+export const GNT = 'GNT';
 export const FAUCET = 'TestGLMFaucet';
 export const EPOCHS = 'Epochs';
 export const WITHDRAWALS_TARGET = 'WithdrawalsTarget';

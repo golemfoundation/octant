@@ -4,16 +4,20 @@ import pytest
 from eth_account import Account
 
 from app import database
+from app.controllers.allocations import allocate
 from app.controllers.rewards import (
     get_allocation_threshold,
     get_rewards_budget,
     get_proposals_rewards,
 )
-from app.core.allocations import allocate, calculate_threshold, AllocationRequest
-from app.core.rewards import (
+from app.core.allocations import (
+    AllocationRequest,
+)
+from app.core.rewards.rewards import (
     calculate_total_rewards,
     calculate_all_individual_rewards,
     get_matched_rewards_from_epoch,
+    calculate_matched_rewards_threshold,
 )
 from .conftest import allocate_user_rewards, MOCKED_PENDING_EPOCH_NO, MOCK_PROPOSALS
 from .test_allocations import (
@@ -39,30 +43,66 @@ def before(
 
 
 @pytest.mark.parametrize(
-    "eth_proceeds,locked_ratio,expected",
+    "eth_proceeds,locked_ratio,pending_epoch,expected",
     [
-        (4_338473610_477382755, Decimal("0.0000004"), 2743891_635528535),
-        (600_000000000_000000000, Decimal("0.0003298799699"), 10_897558862_607717064),
-        (10_000000000_000000000, Decimal("0.43"), 6_557438524_302000652),
-        (1200_000000000_000000000, Decimal("1"), 1200_000000000_000000000),
+        (4_338473610_477382755, Decimal("0.0000004"), 1, 5487783_271057070),
+        (4_338473610_477382755, Decimal("0.0000004"), 2, 2743891_635528535),
+        (
+            600_000000000_000000000,
+            Decimal("0.0003298799699"),
+            1,
+            21_795117725_215434128,
+        ),
+        (
+            600_000000000_000000000,
+            Decimal("0.0003298799699"),
+            2,
+            10_897558862_607717064,
+        ),
+        (10_000000000_000000000, Decimal("0.2"), 1, 8_944271909_999158784),
+        (10_000000000_000000000, Decimal("0.2"), 2, 4472135954999579392),
+        (10_000000000_000000000, Decimal("0.2"), 3, 4472135954999579392),
+        (10_000000000_000000000, Decimal("0.25"), 1, 10_000000000_000000000),
+        (10_000000000_000000000, Decimal("0.25"), 2, 5_000000000_000000000),
+        (10_000000000_000000000, Decimal("0.25"), 3, 5_000000000_000000000),
+        (10_000000000_000000000, Decimal("0.43"), 1, 10_000000000_000000000),
+        (10_000000000_000000000, Decimal("0.43"), 2, 6_557438524_302000652),
+        (10_000000000_000000000, Decimal("0.43"), 3, 6_557438524_302000652),
+        (1200_000000000_000000000, Decimal("1"), 1, 1200_000000000_000000000),
+        (1200_000000000_000000000, Decimal("1"), 2, 1200_000000000_000000000),
+        (1200_000000000_000000000, Decimal("1"), 3, 1200_000000000_000000000),
     ],
 )
-def test_calculate_total_rewards(eth_proceeds, locked_ratio, expected):
-    result = calculate_total_rewards(eth_proceeds, locked_ratio)
+def test_calculate_total_rewards(eth_proceeds, locked_ratio, pending_epoch, expected):
+    result = calculate_total_rewards(eth_proceeds, locked_ratio, pending_epoch)
     assert result == expected
 
 
 @pytest.mark.parametrize(
-    "eth_proceeds,locked_ratio,expected",
+    "eth_proceeds,locked_ratio,pending_epoch,expected",
     [
-        (4_338473610_477382755, Decimal("0.0000004"), 1735_389444190),
-        (600_000000000_000000000, Decimal("0.0003298799699"), 197927981_940000000),
-        (10_000000000_000000000, Decimal("0.43"), 4_300000000_000000000),
-        (1200_000000000_000000000, Decimal("1"), 1200_000000000_000000000),
+        (4_338473610_477382755, Decimal("0.0000004"), 1, 3470_778888380),
+        (4_338473610_477382755, Decimal("0.0000004"), 2, 1735_389444190),
+        (600_000000000_000000000, Decimal("0.0003298799699"), 1, 395855963_880000000),
+        (600_000000000_000000000, Decimal("0.0003298799699"), 2, 197927981_940000000),
+        (10_000000000_000000000, Decimal("0.2"), 1, 4_000000000_000000000),
+        (10_000000000_000000000, Decimal("0.2"), 2, 2_000000000_000000000),
+        (10_000000000_000000000, Decimal("0.2"), 3, 2_000000000_000000000),
+        (10_000000000_000000000, Decimal("0.25"), 1, 5_000000000_000000000),
+        (10_000000000_000000000, Decimal("0.25"), 2, 2_500000000_000000000),
+        (10_000000000_000000000, Decimal("0.25"), 3, 2_500000000_000000000),
+        (10_000000000_000000000, Decimal("0.43"), 1, 5_000000000_000000000),
+        (10_000000000_000000000, Decimal("0.43"), 2, 4_300000000_000000000),
+        (10_000000000_000000000, Decimal("0.43"), 3, 4_300000000_000000000),
+        (1200_000000000_000000000, Decimal("1"), 1, 600_000000000_000000000),
+        (1200_000000000_000000000, Decimal("1"), 2, 1200_000000000_000000000),
+        (1200_000000000_000000000, Decimal("1"), 3, 1200_000000000_000000000),
     ],
 )
-def test_calculate_all_individual_rewards(eth_proceeds, locked_ratio, expected):
-    result = calculate_all_individual_rewards(eth_proceeds, locked_ratio)
+def test_calculate_all_individual_rewards(
+    eth_proceeds, locked_ratio, pending_epoch, expected
+):
+    result = calculate_all_individual_rewards(eth_proceeds, locked_ratio, pending_epoch)
     assert result == expected
 
 
@@ -71,7 +111,9 @@ def test_get_allocation_threshold(app, user_accounts, proposal_accounts):
         user_accounts, proposal_accounts
     )
 
-    assert get_allocation_threshold(None) == calculate_threshold(total_allocated, 5)
+    assert get_allocation_threshold(None) == calculate_matched_rewards_threshold(
+        total_allocated, 5
+    )
 
 
 def test_get_rewards_budget(app, user_accounts, proposal_accounts):

@@ -1,5 +1,6 @@
 from eth_account import Account as EthAccount
 from eth_account.signers.local import LocalAccount
+from flask import current_app as app
 from hexbytes import HexBytes
 
 from app.extensions import w3
@@ -19,6 +20,7 @@ class Account(LocalAccount):
     def send_eth(self, to: str, value: int, nonce: int = None) -> HexBytes:
         nonce = nonce if nonce is not None else self.nonce
         transaction = {
+            "chainId": app.config["CHAIN_ID"],
             "from": self.address,
             "to": to,
             "value": value,

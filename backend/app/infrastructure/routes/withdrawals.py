@@ -1,12 +1,11 @@
 import dataclasses
 
 from flask import current_app as app
-from flask_restx import Resource, Namespace, fields
+from flask_restx import Namespace, fields
 
-from app.infrastructure import OctantResource
 from app.controllers import withdrawals
 from app.extensions import api
-from app.settings import config
+from app.infrastructure import OctantResource
 
 ns = Namespace("withdrawals", description="Octant withdrawals")
 api.add_namespace(ns)
@@ -30,26 +29,25 @@ withdrawable_rewards_model = api.model(
     },
 )
 
-if config.EPOCH_2_FEATURES_ENABLED:
 
-    @ns.doc(
-        description="Returns a list containing amount and merkle proofs for all not claimed epochs",
-        params={
-            "address": "User or proposal address",
-        },
-    )
-    @ns.response(
-        200,
-        "",
-    )
-    @ns.route("/<string:address>")
-    class Withdrawals(OctantResource):
-        @ns.marshal_with(withdrawable_rewards_model)
-        def get(self, address):
-            app.logger.debug(f"Getting withdrawable eth for address: {address}")
-            result = [
-                dataclasses.asdict(w) for w in withdrawals.get_withdrawable_eth(address)
-            ]
-            app.logger.debug(f"Withdrawable eth for address: {address}: {result}")
+@ns.doc(
+    description="Returns a list containing amount and merkle proofs for all not claimed epochs",
+    params={
+        "address": "User or proposal address",
+    },
+)
+@ns.response(
+    200,
+    "",
+)
+@ns.route("/<string:address>")
+class Withdrawals(OctantResource):
+    @ns.marshal_with(withdrawable_rewards_model)
+    def get(self, address):
+        app.logger.debug(f"Getting withdrawable eth for address: {address}")
+        result = [
+            dataclasses.asdict(w) for w in withdrawals.get_withdrawable_eth(address)
+        ]
+        app.logger.debug(f"Withdrawable eth for address: {address}: {result}")
 
-            return result
+        return result

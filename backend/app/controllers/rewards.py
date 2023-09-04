@@ -6,12 +6,16 @@ from typing import Optional
 
 from dataclass_wizard import JSONWizard
 
+from app.core.epochs import epoch_snapshots as core_epoch_snapshots
 from app import database
 from app import exceptions
-from app.contracts.epochs import epochs
-from app.core import proposals, merkle_tree, epochs as core_epochs
+from app.core import proposals, merkle_tree
 from app.core.proposals import get_proposals_with_allocations
-from app.core.rewards import calculate_matched_rewards, get_matched_rewards_from_epoch
+from app.core.rewards.rewards import (
+    calculate_matched_rewards,
+    get_matched_rewards_from_epoch,
+)
+from app.extensions import epochs
 
 
 @dataclass(frozen=True)
@@ -92,7 +96,7 @@ def get_proposals_rewards(epoch: int = None) -> List[ProposalReward]:
 
 
 def get_rewards_merkle_tree(epoch: int) -> RewardsMerkleTree:
-    if not core_epochs.has_finalized_epoch_snapshot(epoch):
+    if not core_epoch_snapshots.has_finalized_epoch_snapshot(epoch):
         raise exceptions.InvalidEpoch
 
     mt = merkle_tree.get_merkle_tree_for_epoch(epoch)

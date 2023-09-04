@@ -1,18 +1,22 @@
 import pytest
 
 from app import database, exceptions
+from app.controllers import rewards
 from app.controllers.allocations import (
     get_all_by_user_and_epoch,
     get_all_by_proposal_and_epoch,
     get_sum_by_epoch,
+    allocate,
+    simulate_allocation,
 )
 from app.core.allocations import (
-    allocate,
     deserialize_payload,
-    calculate_threshold,
     AllocationRequest,
+    Allocation,
 )
+from app.core.rewards.rewards import calculate_matched_rewards_threshold
 from app.crypto.eip712 import sign, build_allocations_eip712_data
+from app.extensions import db
 from tests.conftest import (
     create_payload,
     MOCKED_PENDING_EPOCH_NO,
@@ -24,6 +28,7 @@ from tests.conftest import (
 
 @pytest.fixture(autouse=True)
 def before(
+    app,
     proposal_accounts,
     patch_epochs,
     patch_proposals,
@@ -35,7 +40,120 @@ def before(
     ]
 
 
-def test_user_allocates_for_the_first_time(app, user_accounts, proposal_accounts):
+def test_simulate_allocation_single_user(
+    user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
+):
+    # Test data
+    user1 = database.user.get_by_address(user_accounts[0].address)
+    user1_allocations = [
+        Allocation(proposal_accounts[0].address, 10 * 10**18),
+        Allocation(proposal_accounts[1].address, 20 * 10**18),
+        Allocation(proposal_accounts[2].address, 30 * 10**18),
+    ]
+    database.allocations.add_all(MOCKED_PENDING_EPOCH_NO, user1.id, user1_allocations)
+    db.session.commit()
+
+    payload = create_payload(proposal_accounts[0:2], [40 * 10**18, 50 * 10**18])
+    proposal_rewards_before = rewards.get_proposals_rewards()
+
+    assert len(proposal_rewards_before) == 3
+    assert (
+        proposal_rewards_before[0].address
+        == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
+    )
+    assert proposal_rewards_before[0].allocated == 20000000000000000000
+    assert proposal_rewards_before[0].matched == 636044282804413348
+    assert (
+        proposal_rewards_before[1].address
+        == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
+    )
+    assert proposal_rewards_before[1].allocated == 10000000000000000000
+    assert proposal_rewards_before[1].matched == 318022141402206674
+    assert (
+        proposal_rewards_before[2].address
+        == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
+    )
+    assert proposal_rewards_before[2].allocated == 30000000000000000000
+    assert proposal_rewards_before[2].matched == 954066424206620023
+
+    # Call simulate allocation method
+    result = simulate_allocation(payload, user_accounts[0].address)
+
+    assert len(result) == 2
+    assert result[0].address == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
+    assert result[0].allocated == 50000000000000000000
+    assert result[0].matched == 1060073804674022248
+    assert result[1].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
+    assert result[1].allocated == 40000000000000000000
+    assert result[1].matched == 848059043739217798
+
+    # Ensure changes made in the simulation are not saved to db
+    proposal_rewards_after = rewards.get_proposals_rewards()
+    assert proposal_rewards_before == proposal_rewards_after
+
+
+def test_simulate_allocation_multiple_users(
+    user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
+):
+    # Test data
+    user1 = database.user.get_by_address(user_accounts[0].address)
+    user2 = database.user.get_by_address(user_accounts[1].address)
+    user1_allocations = [
+        Allocation(proposal_accounts[0].address, 10 * 10**18),
+        Allocation(proposal_accounts[1].address, 20 * 10**18),
+        Allocation(proposal_accounts[2].address, 30 * 10**18),
+    ]
+    user2_allocations = [
+        Allocation(proposal_accounts[1].address, 40 * 10**18),
+        Allocation(proposal_accounts[2].address, 50 * 10**18),
+    ]
+    database.allocations.add_all(MOCKED_PENDING_EPOCH_NO, user1.id, user1_allocations)
+    database.allocations.add_all(MOCKED_PENDING_EPOCH_NO, user2.id, user2_allocations)
+    db.session.commit()
+
+    payload = create_payload(proposal_accounts[0:2], [60 * 10**18, 70 * 10**18])
+    proposal_rewards_before = rewards.get_proposals_rewards()
+
+    assert len(proposal_rewards_before) == 3
+    assert (
+        proposal_rewards_before[0].address
+        == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
+    )
+    assert proposal_rewards_before[0].allocated == 60000000000000000000
+    assert proposal_rewards_before[0].matched == 817771220748531448
+    assert (
+        proposal_rewards_before[1].address
+        == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
+    )
+    assert proposal_rewards_before[1].allocated == 10000000000000000000
+    assert proposal_rewards_before[1].matched == 0
+    assert (
+        proposal_rewards_before[2].address
+        == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
+    )
+    assert proposal_rewards_before[2].allocated == 80000000000000000000
+    assert proposal_rewards_before[2].matched == 1090361627664708598
+
+    # Call simulate allocation method
+    result = simulate_allocation(payload, user_accounts[0].address)
+
+    assert len(result) == 3
+    assert result[0].address == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
+    assert result[0].allocated == 110000000000000000000
+    assert result[0].matched == 954066424206620023
+    assert result[1].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
+    assert result[1].allocated == 60000000000000000000
+    assert result[1].matched == 520399867749065467
+    assert result[2].address == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
+    assert result[2].allocated == 50000000000000000000
+    assert result[2].matched == 433666556457554556
+
+    # Ensure changes made in the simulation are not saved to db
+    proposal_rewards_after = rewards.get_proposals_rewards()
+    assert proposal_rewards_before == proposal_rewards_after
+
+
+def test_user_allocates_for_the_first_time(user_accounts, proposal_accounts):
     # Test data
     payload = create_payload(proposal_accounts[0:2], None)
     signature = sign(user_accounts[0], build_allocations_eip712_data(payload))
@@ -50,9 +168,7 @@ def test_user_allocates_for_the_first_time(app, user_accounts, proposal_accounts
     check_allocation_threshold(payload)
 
 
-def test_multiple_users_allocate_for_the_first_time(
-    app, user_accounts, proposal_accounts
-):
+def test_multiple_users_allocate_for_the_first_time(user_accounts, proposal_accounts):
     # Test data
     payload1 = create_payload(proposal_accounts[0:2], None)
     signature1 = sign(user_accounts[0], build_allocations_eip712_data(payload1))
@@ -76,7 +192,7 @@ def test_multiple_users_allocate_for_the_first_time(
     check_allocation_threshold(payload1, payload2)
 
 
-def test_allocate_updates_with_more_proposals(app, user_accounts, proposal_accounts):
+def test_allocate_updates_with_more_proposals(user_accounts, proposal_accounts):
     # Test data
     initial_payload = create_payload(proposal_accounts[0:2], None)
     initial_signature = sign(
@@ -110,7 +226,7 @@ def test_allocate_updates_with_more_proposals(app, user_accounts, proposal_accou
     check_allocation_threshold(updated_payload)
 
 
-def test_allocate_updates_with_less_proposals(app, user_accounts, proposal_accounts):
+def test_allocate_updates_with_less_proposals(user_accounts, proposal_accounts):
     # Test data
     initial_payload = create_payload(proposal_accounts[0:3], None)
     initial_signature = sign(
@@ -144,7 +260,7 @@ def test_allocate_updates_with_less_proposals(app, user_accounts, proposal_accou
     check_allocation_threshold(updated_payload)
 
 
-def test_multiple_users_change_their_allocations(app, user_accounts, proposal_accounts):
+def test_multiple_users_change_their_allocations(user_accounts, proposal_accounts):
     # Create initial payloads and signatures for both users
     initial_payload1 = create_payload(proposal_accounts[0:2], None)
     initial_signature1 = sign(
@@ -197,7 +313,7 @@ def test_multiple_users_change_their_allocations(app, user_accounts, proposal_ac
     check_allocation_threshold(updated_payload1, updated_payload2)
 
 
-def test_allocation_validation_errors(app, proposal_accounts, user_accounts):
+def test_allocation_validation_errors(proposal_accounts, user_accounts):
     # Test data
     payload = create_payload(proposal_accounts[0:3], None)
     signature = sign(user_accounts[0], build_allocations_eip712_data(payload))
@@ -234,7 +350,7 @@ def test_allocation_validation_errors(app, proposal_accounts, user_accounts):
     allocate(AllocationRequest(payload, signature, override_existing_allocations=True))
 
 
-def test_project_allocates_funds_to_itself(app, proposal_accounts, user_accounts):
+def test_project_allocates_funds_to_itself(proposal_accounts, user_accounts):
     # Test data
     payload = create_payload(proposal_accounts[0:3], None)
     signature = sign(proposal_accounts[0], build_allocations_eip712_data(payload))
@@ -336,4 +452,6 @@ def check_allocation_threshold(*payloads):
 
     expected_threshold = int(total_allocations / (projects_no * 2))
 
-    assert expected_threshold == calculate_threshold(total_allocations, projects_no)
+    assert expected_threshold == calculate_matched_rewards_threshold(
+        total_allocations, projects_no
+    )

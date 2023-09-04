@@ -3,12 +3,31 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
+    name: Epochs
+    network: localhost
+    source:
+      abi: Epochs
+      startBlock: 1
+      address: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6"
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Epoch
+      abis:
+        - name: Epochs
+          file: ./abis/Epochs.json
+      file: ./src/epochs.ts
+      blockHandlers:
+        - handler: handleBlock
+  - kind: ethereum
     name: Deposits
-    network: sepolia
+    network: localhost
     source:
       abi: Deposits
-      address: "0x20cE1d488D7740C83DdBA78CD3789A2c2e337188"
-      startBlock: 3910975
+      address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
+      startBlock: 1
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -27,3 +46,23 @@ dataSources:
         - event: Unlocked(uint256,uint256,uint256,address)
           handler: handleUnlocked
       file: ./src/deposits.ts
+  - kind: ethereum
+    name: Vault
+    network: localhost
+    source:
+      abi: Vault
+      startBlock: 1
+      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Withdrawal
+      abis:
+        - name: Vault
+          file: ./abis/Vault.json
+      eventHandlers:
+        - event: Withdrawn(address,uint256,uint256)
+          handler: handleWithdrawn
+      file: ./src/vault.ts

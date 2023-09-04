@@ -23,7 +23,6 @@ class Config(object):
     SUBGRAPH_ENDPOINT = os.getenv("SUBGRAPH_ENDPOINT")
     WEB3_PROVIDER = Web3.HTTPProvider(os.getenv("ETH_RPC_PROVIDER_URL"))
     SCHEDULER_ENABLED = _parse_bool(os.getenv("SCHEDULER_ENABLED"))
-    EPOCH_2_FEATURES_ENABLED = _parse_bool(os.getenv("EPOCH_2_FEATURES_ENABLED"))
 
     # Epoch ending dates
     EPOCH_0_END = int(os.getenv("EPOCH_0_END", 1690848000))
@@ -68,6 +67,7 @@ class ProdConfig(Config):
     ENV = "prod"
     PROPAGATE_EXCEPTIONS = True
     DEBUG = False
+    LOG_LVL = os.getenv("OCTANT_LOG_LEVEL", "INFO")
     SQLALCHEMY_DATABASE_URI = os.getenv("DB_URI")
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_size": 3, "max_overflow": 5}
 
@@ -77,10 +77,19 @@ class DevConfig(Config):
 
     ENV = "dev"
     DEBUG = True
+    LOG_LVL = os.getenv("OCTANT_LOG_LEVEL", "DEBUG")
     DB_NAME = "dev.db"
     # Put the db file in project root
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{DB_PATH}"
+
+
+class ComposeConfig(Config):
+    """Dev configuration with web backend and its database running in docker-compose."""
+
+    ENV = "dev"
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = os.getenv("DB_URI")
 
 
 class TestConfig(Config):
@@ -89,7 +98,12 @@ class TestConfig(Config):
     ENV = "test"
     TESTING = True
     DEBUG = True
+    LOG_LVL = "ERROR"
     SQLALCHEMY_DATABASE_URI = "sqlite://"
+    EPOCH_0_END = 1690848000
+    EPOCH_1_END = 1698796800
+    GLM_WITHDRAWAL_AMOUNT = 1000_000000000_000000000
+    GLM_SENDER_NONCE = 0
 
 
 def get_config():
@@ -97,6 +111,8 @@ def get_config():
     env = os.getenv("OCTANT_ENV")
     if env == "production":
         return ProdConfig
+    elif env == "compose":
+        return ComposeConfig
     else:
         return DevConfig
 

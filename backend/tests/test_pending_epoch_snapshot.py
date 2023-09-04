@@ -36,7 +36,9 @@ def test_take_snapshot_without_effective_deposits(mocker, user_accounts):
             amount="400000000000000000000", timestamp=1500, user=user2
         ),
     ]
-    mock_graphql(mocker, epochs_events=[create_epoch_event()], deposit_events=events)
+    mock_graphql(
+        mocker, epochs_events=[create_epoch_event(epoch=42)], deposit_events=events
+    )
 
     result = snapshot_pending_epoch()
 
@@ -82,7 +84,9 @@ def test_take_snapshot_with_effective_deposits(
             user=user2,
         ),
     ]
-    mock_graphql(mocker, epochs_events=[create_epoch_event()], deposit_events=events)
+    mock_graphql(
+        mocker, epochs_events=[create_epoch_event(epoch=43)], deposit_events=events
+    )
 
     result = snapshot_pending_epoch()
 

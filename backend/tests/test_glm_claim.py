@@ -22,9 +22,6 @@ def test_users_can_check_eligibility(app, user_accounts):
         check(account1.address)
 
 
-@pytest.mark.skip(
-    reason="https://linear.app/golemfoundation/issue/OCT-612/use-testconfig-in-tests"
-)
 def test_users_can_claim_glms(app, user_accounts):
     account1 = user_accounts[0]
     account2 = user_accounts[1]
@@ -38,17 +35,14 @@ def test_users_can_claim_glms(app, user_accounts):
     claim(account2_signature)
 
     user1_after_claim = database.claims.get_by_address(account1.address)
-    assert user1_after_claim.claim_nonce == 9
+    assert user1_after_claim.claim_nonce == 0
     assert user1_after_claim.claimed is True
 
     user2_after_claim = database.claims.get_by_address(account2.address)
-    assert user2_after_claim.claim_nonce == 10
+    assert user2_after_claim.claim_nonce == 1
     assert user2_after_claim.claimed is True
 
 
-@pytest.mark.skip(
-    reason="https://linear.app/golemfoundation/issue/OCT-612/use-testconfig-in-tests"
-)
 def test_user_cannot_claim_twice(app, user_accounts):
     account1 = user_accounts[0]
     database.claims.add_claim(account1.address)
@@ -62,7 +56,7 @@ def test_user_cannot_claim_twice(app, user_accounts):
         claim(account1_signature)
 
     user1_after_claim = database.claims.get_by_address(account1.address)
-    assert user1_after_claim.claim_nonce == 9
+    assert user1_after_claim.claim_nonce == 0
     assert user1_after_claim.claimed is True
 
 

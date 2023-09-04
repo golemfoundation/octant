@@ -1,9 +1,16 @@
+import pytest
+
 from app.crypto.eip712 import (
     sign,
     recover_address,
     build_allocations_eip712_data,
     build_claim_glm_eip712_data,
 )
+
+
+@pytest.fixture(autouse=True)
+def before(app):
+    pass
 
 
 def test_sign_and_recover_address_from_allocations(user_accounts):
@@ -48,7 +55,10 @@ def test_fails_when_data_to_recover_has_changed(user_accounts):
 
     changed_payload = {
         "allocations": [
-            {"proposalAddress": "0x0", "amount": 150000},
+            {
+                "proposalAddress": "0x0000000000000000000000000000000000000000",
+                "amount": 150000,
+            },
         ]
     }
     eip712_data = build_allocations_eip712_data(changed_payload)
