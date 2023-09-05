@@ -4,6 +4,7 @@ from typing import List
 
 from eth_utils import to_checksum_address
 from sqlalchemy.orm import Query
+from sqlalchemy import func
 
 from app.core.common import AccountFunds
 from app.database.models import Allocation, User
@@ -20,18 +21,38 @@ def get_all_by_epoch(epoch: int, with_deleted=False) -> List[Allocation]:
     return query.all()
 
 
-def get_all_by_user(user_address: str, with_deleted=False) -> List[Allocation]:
+def get_user_allocations_history(
+    user_address: str, from_datetime: datetime, limit: int
+) -> List[Allocation]:
     user: User = get_by_address(user_address)
 
     if user is None:
         return []
 
-    query: Query = Allocation.query.filter_by(user_id=user.id)
+    user_allocations: Query = (
+        Allocation.query.filter(
+            Allocation.user_id == user.id, Allocation.created_at <= from_datetime
+        )
+        .order_by(Allocation.created_at.desc())
+        .limit(limit)
+        .subquery()
+    )
 
-    if not with_deleted:
-        query = query.filter(Allocation.deleted_at.is_(None))
+    timestamp_at_limit_query = (
+        db.session.query(
+            func.min(user_allocations.c.created_at).label("limit_timestamp")
+        )
+        .group_by(user_allocations.c.user_id)
+        .subquery()
+    )
 
-    return query.all()
+    allocations = Allocation.query.filter(
+        Allocation.user_id == user.id,
+        Allocation.created_at <= from_datetime,
+        Allocation.created_at >= timestamp_at_limit_query.c.limit_timestamp,
+    ).order_by(Allocation.created_at.desc())
+
+    return allocations.all()
 
 
 def get_all_by_user_addr_and_epoch(
@@ -106,7 +127,7 @@ def get_alloc_sum_by_epoch(epoch: int) -> int:
 
 
 def add_all(epoch: int, user_id: int, allocations):
-    now = datetime.now()
+    now = datetime.utcnow()
 
     new_allocations = [
         Allocation(
@@ -126,7 +147,7 @@ def soft_delete_all_by_epoch_and_user_id(epoch: int, user_id: int):
         epoch=epoch, user_id=user_id, deleted_at=None
     ).all()
 
-    now = datetime.now()
+    now = datetime.utcnow()
 
     for allocation in existing_allocations:
         allocation.deleted_at = now
