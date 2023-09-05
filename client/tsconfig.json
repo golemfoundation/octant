@@ -23,7 +23,7 @@
     "strict": true,
     "target": "es2022"
   },
-  "include": ["codegen.ts", "src/**/*"],
+  "include": ["codegen.ts", "global.d.ts", "src/**/*"],
   "exclude": [
     "/client/cypress",
     /**
