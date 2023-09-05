@@ -2,6 +2,7 @@ import { ethers } from 'hardhat';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
+import { AUTH_ADDRESS } from '../env';
 import { AUTH, VAULT } from '../helpers/constants';
 
 // This function needs to be declared this way, otherwise it's not understood by test runner.
@@ -10,10 +11,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
-  const auth = await ethers.getContract(AUTH);
+  const authAddress = AUTH_ADDRESS || (await ethers.getContract(AUTH)).address;
 
   await deploy(VAULT, {
-    args: [auth.address],
+    args: [authAddress],
     autoMine: true,
     from: deployer,
     log: true,
