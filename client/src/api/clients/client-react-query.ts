@@ -23,4 +23,9 @@ const clientReactQuery = new QueryClient({
   }),
 });
 
+// Expose clientReactQuery for Cypress to get the data and verify it.
+if (window.Cypress) {
+  window.clientReactQuery = clientReactQuery;
+}
+
 export default clientReactQuery;

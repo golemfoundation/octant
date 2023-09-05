@@ -70,14 +70,12 @@ const MetricsView = (): ReactElement => {
         title={t('tip.title')}
       />
       <div className={styles.boxesGroup}>
-        {!isEpoch1 && (
-          <MetricsTimeSection
-            className={styles.box}
-            currentEpoch={currentEpoch}
-            isDecisionWindowOpen={isDecisionWindowOpen}
-            onCountingFinish={onCountingFinish}
-          />
-        )}
+        <MetricsTimeSection
+          className={styles.box}
+          currentEpoch={currentEpoch}
+          isDecisionWindowOpen={isDecisionWindowOpen}
+          onCountingFinish={onCountingFinish}
+        />
         <BoxRounded
           alignment="left"
           className={cx(styles.box, styles.totalSupply, isEpoch1 && styles.isEpoch1)}
