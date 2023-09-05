@@ -32,6 +32,7 @@
           python
           yarn16
           pkgs.poetry
+          pkgs.envsubst
           # (pkgs.poetry.override { python3 = pkgs.python311; })
         ] ++ darwinInputs;
       };

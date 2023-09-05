@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import List
+from typing import List, Tuple, Optional
+from operator import attrgetter
 
 from dataclass_wizard import JSONWizard
 from app.core import history
+from app.core.pagination import Paginator, Cursor
 
 
 class OpType(StrEnum):
@@ -20,43 +22,36 @@ class HistoryEntry(JSONWizard):
     timestamp: int  # Should be in microseconds precision
 
 
-def user_history(user_address: str) -> List[HistoryEntry]:
-    allocations = [
-        HistoryEntry(
-            type=OpType.ALLOCATION,
-            amount=r.amount,
-            timestamp=r.timestamp,
-        )
-        for r in history.get_allocations(user_address, 0)
-    ]
+def user_history(
+    user_address: str, cursor: str = None, limit: int = 20
+) -> Tuple[List[HistoryEntry], Optional[str]]:
+    limit = limit if limit < 100 else 100
 
-    locks = [
-        HistoryEntry(
-            type=OpType.LOCK,
-            amount=r.amount,
-            timestamp=r.timestamp,
-        )
-        for r in history.get_locks(user_address, 0)
-    ]
+    (from_timestamp, offset_at_timestamp) = Cursor.decode(cursor)
+    query_limit = Paginator.query_limit(limit, offset_at_timestamp)
 
-    unlocks = [
-        HistoryEntry(
-            type=OpType.UNLOCK,
-            amount=r.amount,
-            timestamp=r.timestamp,
-        )
-        for r in history.get_unlocks(user_address, 0)
-    ]
+    all = _collect_history_records(user_address, from_timestamp, query_limit)
+    return Paginator.extract_page(all, offset_at_timestamp, limit)
 
-    withdrawals = [
-        HistoryEntry(
-            type=OpType.WITHDRAWAL,
-            amount=r.amount,
-            timestamp=r.timestamp,
-        )
-        for r in history.get_withdrawals(user_address, 0)
-    ]
 
-    combined = allocations + locks + unlocks + withdrawals
+def _collect_history_records(
+    user_address, from_timestamp, query_limit
+) -> List[HistoryEntry]:
+    events = []
+    for event_getter, event_type in [
+        (history.get_allocations, OpType.ALLOCATION),
+        (history.get_locks, OpType.LOCK),
+        (history.get_unlocks, OpType.UNLOCK),
+        (history.get_withdrawals, OpType.WITHDRAWAL),
+    ]:
+        events += [
+            HistoryEntry(
+                type=event_type,
+                amount=e.amount,
+                timestamp=e.timestamp.timestamp_us(),
+            )
+            for e in event_getter(user_address, from_timestamp, query_limit)
+        ]
 
-    return sorted(combined, key=lambda x: x.timestamp, reverse=True)
+    sort_keys = attrgetter("timestamp", "type", "amount")
+    return sorted(events, key=sort_keys, reverse=True)
