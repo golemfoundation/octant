@@ -22,7 +22,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     decisionWindow = 120;
     epochDuration = 300;
   }
-  const start = EPOCHS_START || now - epochDuration;
+  const start = EPOCHS_START || now;
 
   await deploy(EPOCHS, {
     args: [start, epochDuration, decisionWindow, authAddress],

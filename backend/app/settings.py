@@ -24,10 +24,6 @@ class Config(object):
     WEB3_PROVIDER = Web3.HTTPProvider(os.getenv("ETH_RPC_PROVIDER_URL"))
     SCHEDULER_ENABLED = _parse_bool(os.getenv("SCHEDULER_ENABLED"))
 
-    # Epoch ending dates
-    EPOCH_0_END = int(os.getenv("EPOCH_0_END", 1690848000))
-    EPOCH_1_END = int(os.getenv("EPOCH_1_END", 1698796800))
-
     # Smart contract addresses
     GNT_CONTRACT_ADDRESS = os.getenv("GNT_CONTRACT_ADDRESS")
     GLM_CONTRACT_ADDRESS = os.getenv("GLM_CONTRACT_ADDRESS")
@@ -100,8 +96,6 @@ class TestConfig(Config):
     DEBUG = True
     LOG_LVL = "ERROR"
     SQLALCHEMY_DATABASE_URI = "sqlite://"
-    EPOCH_0_END = 1690848000
-    EPOCH_1_END = 1698796800
     GLM_WITHDRAWAL_AMOUNT = 1000_000000000_000000000
     GLM_SENDER_NONCE = 0
 

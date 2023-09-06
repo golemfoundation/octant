@@ -1,6 +1,7 @@
 import { visitWithLoader } from 'cypress/utils/e2e';
 import { getNamesOfProposals } from 'cypress/utils/proposals';
 import viewports from 'cypress/utils/viewports';
+import { QUERY_KEYS } from 'src/api/queryKeys';
 import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
@@ -28,13 +29,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     let proposalNames: string[] = [];
 
     beforeEach(() => {
-      cy.intercept('GET', '/epochs/current').as('requestGetCurrentEpoch');
-
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       visitWithLoader(ROOT_ROUTES.proposals.absolute);
       cy.get('[data-test^=ProposalItemSkeleton').should('not.exist');
-
-      cy.wait('@requestGetCurrentEpoch').its('response.body.currentEpoch').as('currentEpoch');
 
       /**
        * This could be done in before hook, but CY wipes the state after each test
@@ -54,16 +51,19 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       proposalView.get('[data-test=ProposalView__proposal__Img]').should('be.visible');
       proposalView.get('[data-test=ProposalView__proposal__name]').should('be.visible');
 
-      cy.get('@currentEpoch').then(currentEpoch => {
-        // @ts-expect-error currentEpoch is a number
+      cy.window().then(window => {
+        // @ts-expect-error missing typing for client window elements.
+        const currentEpoch = Number(window.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch));
         getButtonAddToAllocate(currentEpoch, isDesktop).should('be.visible');
       });
       proposalView.get('[data-test=ProposalView__proposal__Button]').should('be.visible');
       proposalView.get('[data-test=ProposalView__proposal__Description]').should('be.visible');
 
-      cy.get('@currentEpoch').then(currentEpoch => {
+      cy.window().then(window => {
+        // @ts-expect-error missing typing for client window elements.
+        const currentEpoch = Number(window.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch));
+
         switch (currentEpoch) {
-          // @ts-expect-error currentEpoch is a number
           case 1:
             return cy
               .get('[data-test=ProposalView__proposal__DonorsList__donationsNotEnabled]')
@@ -83,15 +83,18 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
 
     it('entering proposal view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar', () => {
       cy.get('[data-test^=ProposalsView__ProposalItem').first().click();
-      cy.get('@currentEpoch').then(currentEpoch => {
-        // @ts-expect-error currentEpoch is a number
+
+      cy.window().then(window => {
+        // @ts-expect-error missing typing for client window elements.
+        const currentEpoch = Number(window.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch));
         getButtonAddToAllocate(currentEpoch, isDesktop).click();
       });
 
       // cy.get('@buttonAddToAllocate').click();
       cy.get('[data-test=Navbar__numberOfAllocations]').contains(1);
-      cy.get('@currentEpoch').then(currentEpoch => {
-        // @ts-expect-error currentEpoch is a number
+      cy.window().then(window => {
+        // @ts-expect-error missing typing for client window elements.
+        const currentEpoch = Number(window.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch));
         getButtonAddToAllocate(currentEpoch, isDesktop).click();
       });
       cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');

@@ -92,8 +92,6 @@ http://localhost:5000/docs/chain-info
 - `ETH_RPC_PROVIDER_URL` - RPC provider to Ethereum node client
 - `SUBGRAPH_ENDPOINT` - Endpoint to subgraph graphQL containing indexed Octant contracts
 - `OCTANT_ENV` - production | development | compose | test
-- `EPOCH_0_END` - Timestamp in second when epoch 0 will finish
-- `EPOCH_1_END` - Timestamp in second when epoch 1 will finish
 - `CHAIN_ID` - Id of the blockchain network. Eg. 1 for Mainnet or 11155111 for Sepolia
 - `CHAIN_NAME` - Name of the blockchain network corresponding to the CHAIN_ID.
 - `GNT_CONTRACT_ADDRESS, GLM_CONTRACT_ADDRESS, EPOCHS_CONTRACT_ADDRESS, AUTH_CONTRACT_ADDRESS, DEPOSITS_CONTRACT_ADDRESS, PROPOSALS_CONTRACT_ADDRESS, WITHDRAWALS_TARGET_CONTRACT_ADDRESS, VAULT_CONTRACT_ADDRESS` - Octant smart contract addresses
