@@ -43,6 +43,32 @@ describe('getValueFiatToDisplay', () => {
     ).toEqual('Conversion offline');
   });
 
+  it('should return 0.00 when there is a parameter missing', () => {
+    expect(
+      // @ts-expect-error error here is caused by lack of typing for defaultProps.
+      getValueFiatToDisplay({
+        ...defaultProps,
+        cryptoCurrency: undefined,
+      }),
+    ).toEqual('$0.00');
+
+    expect(
+      // @ts-expect-error error here is caused by lack of typing for defaultProps.
+      getValueFiatToDisplay({
+        ...defaultProps,
+        cryptoValues: undefined,
+      }),
+    ).toEqual('$0.00');
+
+    expect(
+      // @ts-expect-error error here is caused by lack of typing for defaultProps.
+      getValueFiatToDisplay({
+        ...defaultProps,
+        valueCrypto: undefined,
+      }),
+    ).toEqual('$0.00');
+  });
+
   it('should return the correct fiat value with prefix when all parameters are valid & isUsingHairSpace', () => {
     expect(
       // @ts-expect-error error here is caused by lack of typing for defaultProps.

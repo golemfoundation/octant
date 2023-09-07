@@ -14,12 +14,8 @@ export type ValueCryptoToDisplay = {
 export default function getValueCryptoToDisplay({
   cryptoCurrency,
   isUsingHairSpace = true,
-  valueCrypto,
+  valueCrypto = BigNumber.from(0),
 }: ValueCryptoToDisplay): string {
-  if (!cryptoCurrency || !valueCrypto) {
-    return '0.0';
-  }
-
   return cryptoCurrency === 'ethereum'
     ? getFormattedEthValue(valueCrypto, isUsingHairSpace).fullString
     : getFormattedGlmValue(valueCrypto, isUsingHairSpace).fullString;
