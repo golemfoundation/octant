@@ -30,8 +30,8 @@ export default function getValueFiatToDisplay({
 
   const prefix = FIAT_CURRENCIES_SYMBOLS[displayCurrency] || `${displayCurrency.toUpperCase()} `;
 
-  if (!cryptoCurrency || !cryptoValues || !displayCurrency || !valueCrypto) {
-    return `${prefix}0.0`;
+  if (!cryptoCurrency || !cryptoValues || !valueCrypto) {
+    return `${prefix}0.00`;
   }
 
   const exchangeRate = cryptoValues[cryptoCurrency][displayCurrency];
