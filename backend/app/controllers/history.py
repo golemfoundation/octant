@@ -25,7 +25,7 @@ class HistoryEntry(JSONWizard):
 def user_history(
     user_address: str, cursor: str = None, limit: int = 20
 ) -> Tuple[List[HistoryEntry], Optional[str]]:
-    limit = limit if limit < 100 else 100
+    limit = limit if limit is not None and limit < 100 else 100
 
     (from_timestamp, offset_at_timestamp) = Cursor.decode(cursor)
     query_limit = Paginator.query_limit(limit, offset_at_timestamp)
