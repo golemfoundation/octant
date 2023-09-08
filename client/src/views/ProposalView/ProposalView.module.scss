@@ -113,13 +113,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
 
-  .buttonWebsite {
-    align-self: stretch;
-    justify-content: flex-start;
-    border-top: 0.1rem solid $color-octant-grey4;
-    border-bottom: 0.1rem solid $color-octant-grey4;
-    padding: 2rem 0;
+.buttonWebsite {
+  text-align: left;
+  align-self: stretch;
+  justify-content: flex-start;
+  border-bottom: 0.1rem solid $color-octant-grey4;
+  padding: 0.5rem 0 6.4rem;
+
+
+  @media #{$tablet-down} {
+    padding-bottom: 3.4rem;
   }
 }
 
