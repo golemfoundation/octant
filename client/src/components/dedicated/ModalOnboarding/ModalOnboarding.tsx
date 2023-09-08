@@ -137,13 +137,7 @@ const ModalOnboarding: FC = () => {
     <Modal
       bodyClassName={styles.onboardingModalBody}
       dataTest="ModalOnboarding"
-      header={
-        <AnimatePresence mode="wait">
-          <motion.div key={currentStepIndex} {...motionAnimationProps}>
-            {currentStep?.header}
-          </motion.div>
-        </AnimatePresence>
-      }
+      header={currentStep?.header}
       headerClassName={styles.onboardingModalHeader}
       Image={
         <div className={styles.onboardingModalImageWrapper}>
@@ -167,19 +161,15 @@ const ModalOnboarding: FC = () => {
       onTouchMove={handleTouchMove}
       onTouchStart={handleTouchStart}
     >
-      <AnimatePresence mode="wait">
-        <motion.div key={currentStepIndex} {...motionAnimationProps}>
-          <Text className={styles.onboardingModalText}>
-            {currentStep ? (
-              currentStep.text
-            ) : (
-              <div className={styles.loaderWrapper}>
-                <Loader className={styles.loader} />
-              </div>
-            )}
-          </Text>
-        </motion.div>
-      </AnimatePresence>
+      <Text className={styles.onboardingModalText}>
+        {currentStep ? (
+          currentStep.text
+        ) : (
+          <div className={styles.loaderWrapper}>
+            <Loader className={styles.loader} />
+          </div>
+        )}
+      </Text>
       <ProgressStepperSlim
         className={styles.progressBar}
         currentStepIndex={currentStepIndex}
