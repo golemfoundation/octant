@@ -30,7 +30,10 @@ const Navbar: FC<NavbarProps> = ({ navigationBottomSuffix, tabs }) => {
     if (!scope?.current || allocations.length === allocationsPrevRef.current.length) {
       return;
     }
-    animate(scope?.current, { scale: [1.1, 1] });
+    animate([
+      [scope?.current, { scale: [isDesktop ? 1.4 : 1.5] }, { duration: 0.15, ease: 'easeOut' }],
+      [scope?.current, { scale: 1 }, { duration: 0.15, ease: 'easeOut' }],
+    ]);
     allocationsPrevRef.current = allocations;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allocations]);
