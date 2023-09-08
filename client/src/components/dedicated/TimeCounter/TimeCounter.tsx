@@ -70,8 +70,9 @@ const TimeCounter: FC<TimeCounterProps> = ({
   }, [shouldDoRefetch, timestamp, time, onCountingFinish]);
 
   const shouldShowLoader = !timestamp || !duration || !time || shouldDoRefetch;
+  // Progress should increase the closer we are to the timestamp.
   const progressPercentage =
-    timestamp && duration ? ((timestamp - Date.now()) / duration) * 100 : 0;
+    timestamp && duration ? 100 - ((timestamp - Date.now()) / duration) * 100 : 0;
 
   return (
     <div className={cx(styles.root, className)}>
