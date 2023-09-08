@@ -1,6 +1,7 @@
 import cx from 'classnames';
+import { BigNumber } from 'ethers';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -10,6 +11,7 @@ import Header from 'components/core/Header/Header';
 import Svg from 'components/core/Svg/Svg';
 import AllocationSummaryProject from 'components/dedicated/AllocationSummaryProject/AllocationSummaryProject';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
+import useAllocateSimulate from 'hooks/mutations/allocations/useAllocateSimulate';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useAllocationsStore from 'store/allocations/store';
 import { chevronBottom } from 'svg/misc';
@@ -37,6 +39,17 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
 
   const sections: SectionProps[] = [];
   const personalAllocation = individualReward?.sub(rewardsForProposals);
+
+  const {
+    data: allocateSimulate,
+    mutateAsync,
+    isLoading: isLoadingAllocateSimulate,
+  } = useAllocateSimulate();
+
+  useEffect(() => {
+    mutateAsync(allocationValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!personalAllocation?.isZero()) {
     sections.push({
@@ -89,15 +102,18 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
         /* eslint-disable-next-line @typescript-eslint/naming-convention */
         onClick: () => setAreDonationsVisible(prev => !prev),
       },
-      // TODO OCT-573: fetch the data and render it.
-      // {
-      //   doubleValueProps: {
-      //     cryptoCurrency: 'ethereum',
-      //     valueCrypto: parseUnits('0.250'),
-      //   },
-      //   label: t('matchFundingEstimate'),
-      //   labelClassName: cx(styles.sectionLabel, styles.matchFundingLabel),
-      // },
+      {
+        doubleValueProps: {
+          cryptoCurrency: 'ethereum',
+          isFetching: isLoadingAllocateSimulate,
+          valueCrypto: allocateSimulate?.rewards.reduce(
+            (acc, curr) => acc.add(curr.matched),
+            BigNumber.from(0),
+          ),
+        },
+        label: t('matchFundingEstimate'),
+        labelClassName: cx(styles.sectionLabel, styles.matchFundingLabel),
+      },
     );
   }
 
