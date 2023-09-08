@@ -5,6 +5,8 @@ import { apiPostAllocate } from 'api/calls/allocate';
 import networkConfig from 'constants/networkConfig';
 import { AllocationValues } from 'views/AllocationView/types';
 
+import { getAllocationsMapped } from './utils';
+
 const domain = {
   chainId: networkConfig.id,
   name: 'Octant',
@@ -26,10 +28,7 @@ export default function useAllocate(
 
   return useMutation({
     mutationFn: async (allocations: AllocationValues) => {
-      const allocationsMapped = allocations.map(({ address, value }) => ({
-        amount: value.toString(),
-        proposalAddress: address,
-      }));
+      const allocationsMapped = getAllocationsMapped(allocations);
 
       const message = {
         allocations: allocationsMapped,

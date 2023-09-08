@@ -104,7 +104,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
                 : proposalMatchedProposalRewards &&
                   proposalRewardsThreshold && (
                     <Trans
-                      i18nKey="views.allocation.allocationItem"
+                      i18nKey="views.allocation.allocationItem.standard"
                       values={{
                         sum: getFormattedEthValue(proposalMatchedProposalRewards?.sum).value,
                         threshold: getFormattedEthValue(proposalRewardsThreshold).fullString,
