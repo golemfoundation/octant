@@ -22,10 +22,16 @@ const WithdrawEth: FC = () => {
     keyPrefix: 'components.dedicated.withdrawEth',
   });
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: withdrawableUserEth, isFetching: isFetchingWithdrawableUserEth } =
-    useWithdrawableUserEth();
-  const { data: withdrawableRewards, isFetched: isWithdrawableRewardsFetched } =
-    useWithdrawableRewards();
+  const {
+    data: withdrawableUserEth,
+    isFetching: isFetchingWithdrawableUserEth,
+    refetch: refetchWithdrawableUserEth,
+  } = useWithdrawableUserEth();
+  const {
+    data: withdrawableRewards,
+    isFetched: isWithdrawableRewardsFetched,
+    refetch: refetchWithdrawableRewards,
+  } = useWithdrawableRewards();
   const { data: isDecisionWindowOpen, refetch: refetchIsDecisionWindowOpen } =
     useIsDecisionWindowOpen();
   const { data: currentEpochProps } = useCurrentEpochProps();
@@ -35,6 +41,8 @@ const WithdrawEth: FC = () => {
       triggerToast({
         title: i18n.t('common.transactionSuccessful'),
       });
+      refetchWithdrawableUserEth();
+      refetchWithdrawableRewards();
     },
   });
 

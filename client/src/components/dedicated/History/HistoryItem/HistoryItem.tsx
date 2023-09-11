@@ -48,7 +48,7 @@ const HistoryItem: FC<HistoryItemProps> = ({ type, amount, projectsNumber }) => 
   const img = ['allocation', 'withdrawal'].includes(type) ? allocate : donation;
 
   return (
-    <BoxRounded className={styles.box}>
+    <BoxRounded className={styles.box} hasPadding={false}>
       <div className={styles.iconAndTitle}>
         <Svg img={img} size={4} />
         <div className={styles.titleAndSubtitle}>

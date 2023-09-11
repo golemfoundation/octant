@@ -1,3 +1,5 @@
+import { BigNumber } from 'ethers';
+
 import { Response } from 'api/calls/cryptoValues';
 import { SettingsData } from 'store/settings/types';
 import getNumberWithSpaces from 'utils/getNumberWithSpaces';
@@ -22,7 +24,7 @@ export function getValuesToDisplay({
   displayCurrency: NonNullable<SettingsData['displayCurrency']>;
   error: any;
   isCryptoMainValueDisplay: SettingsData['isCryptoMainValueDisplay'];
-  valueCrypto: DoubleValueProps['valueCrypto'];
+  valueCrypto?: BigNumber;
   valueString?: DoubleValueProps['valueString'];
 }): {
   primary: string;

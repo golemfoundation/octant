@@ -13,5 +13,5 @@ export default function useIsDonationAboveThreshold(proposalAddress: string): bo
     return false;
   }
 
-  return proposalMatchedProposalRewards.sum >= proposalRewardsThreshold;
+  return proposalMatchedProposalRewards.sum.gte(proposalRewardsThreshold);
 }

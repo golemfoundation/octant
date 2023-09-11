@@ -9,6 +9,7 @@ import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import ModalWithdrawEth from 'components/dedicated//ModalWithdrawEth/ModalWithdrawEth';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
 import useAllocationsStore from 'store/allocations/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
@@ -21,6 +22,7 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
   });
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: userAllocations, isFetching: isFetchingUserAllocations } = useUserAllocations();
   const { data: withdrawableUserEth, isFetching: isFetchingWithdrawableUserEth } =
     useWithdrawableUserEth();
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
@@ -47,8 +49,10 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
-        isFetching: isFetchingIndividualReward,
-        valueCrypto: currentEpoch === 1 ? BigNumber.from(0) : pendingCrypto,
+        isFetching: isFetchingIndividualReward || isFetchingUserAllocations,
+        valueCrypto: userAllocations?.hasUserAlreadyDoneAllocation
+          ? BigNumber.from(0)
+          : pendingCrypto,
       },
       label: t('pending'),
     },

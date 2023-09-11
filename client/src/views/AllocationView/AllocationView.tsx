@@ -12,7 +12,7 @@ import AllocationNavigation from 'components/dedicated/AllocationNavigation/Allo
 import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
 import AllocationTipTiles from 'components/dedicated/AllocationTipTiles/AllocationTipTiles';
 import ModalAllocationValuesEdit from 'components/dedicated/ModalAllocationValuesEdit/ModalAllocationValuesEdit';
-import useAllocate from 'hooks/mutations/useAllocate';
+import useAllocate from 'hooks/mutations/allocations/useAllocate';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -83,7 +83,7 @@ const AllocationView = (): ReactElement => {
     if (
       currentEpoch === undefined ||
       isLocked === undefined ||
-      (!userAllocations && currentEpoch > 1) ||
+      (isConnected && !userAllocations && currentEpoch > 1) ||
       !rewardsForProposals
     ) {
       return;
@@ -113,7 +113,7 @@ const AllocationView = (): ReactElement => {
      * Only when userAllocations are fetched OR after rewardsForProposals value changes.
      */
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentEpoch, allocations, userAllocations, rewardsForProposals]);
+  }, [currentEpoch, allocations, userAllocations?.elements.length, rewardsForProposals]);
 
   const onAllocate = () => {
     mutateAsync(allocationValues);
@@ -127,10 +127,9 @@ const AllocationView = (): ReactElement => {
       setIsLocked(userAllocations.hasUserAlreadyDoneAllocation);
       return;
     }
-    if (currentEpoch <= 1) {
-      setIsLocked(false);
-    }
-  }, [currentEpoch, userAllocations]);
+    setIsLocked(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentEpoch, userAllocations?.elements.length]);
 
   const onChangeAllocationItemValue = (proposalAddressToModify: string, newValue: BigNumber) => {
     const isProposalAddressToModifyEdited = allocationsEdited.includes(proposalAddressToModify);
