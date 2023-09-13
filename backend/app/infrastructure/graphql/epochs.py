@@ -7,7 +7,7 @@ from app import exceptions
 def get_epoch_by_number(epoch_number):
     query = gql(
         """
-        query GetEpoch($epochNo: Int!) {
+query GetEpoch($epochNo: Int!) {
   epoches(where: {epoch: $epochNo}) {
     fromTs
     toTs
@@ -32,3 +32,20 @@ def get_epoch_by_number(epoch_number):
             f"[Subgraph] No epoch properties received for epoch number: {epoch_number}"
         )
         raise exceptions.EpochNotIndexed(epoch_number)
+
+
+def get_epochs():
+    query = gql(
+        """
+query {
+  epoches {
+    epoch
+    fromTs
+    toTs
+  }
+}
+    """
+    )
+
+    data = request_context.graphql_client.execute(query)["epoches"]
+    return data
