@@ -3,7 +3,7 @@ import { afterAll, assert, beforeAll, clearStore, describe, test } from 'matchst
 
 import { createWithdrawnEvent } from './utils';
 
-import { handleWithdrawn } from '../src/vault';
+import { handleWithdrawn } from '../generated/vault';
 
 const WITHDRAWAL_ENTITY_TYPE = 'Withdrawal';
 

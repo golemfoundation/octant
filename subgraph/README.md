@@ -12,7 +12,6 @@ can't be removed, unfortunately). You can do it manually, check `networks.templa
 deploy new contracts (check [Deployment section in project root's Readme.md file](../README.md#deployment)).
 This will generate the file for you.
 
-Additionally you have to replace epochs contract address in the `src/epochs.ts` file.
 
 ### Local
 

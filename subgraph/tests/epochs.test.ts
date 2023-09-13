@@ -11,7 +11,7 @@ import {
 
 import { createBlockEvent } from './utils';
 
-import { handleBlock } from '../src/epochs';
+import { handleBlock } from '../generated/epochs';
 
 const EPOCH_ENTITY_TYPE = 'Epoch';
 const EPOCHS_ADDRESS = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';

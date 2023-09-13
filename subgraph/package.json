@@ -19,7 +19,7 @@
     "eslint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "eslint:fix": "yarn prettier && yarn eslint --fix",
     "install-root-packages": "cd .. && yarn install && cd subgraph",
-    "precodegen": "ls networks.json || cp networks.template.json networks.json; ls src/epochs.ts || ./configure-network.sh",
+    "precodegen": "ls networks.json || cp networks.template.json networks.json; ./configure-network.sh",
     "preeslint": "yarn codegen",
     "preinstall": "yarn install-root-packages",
     "pretest": "yarn codegen",
