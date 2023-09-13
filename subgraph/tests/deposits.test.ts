@@ -3,7 +3,7 @@ import { afterAll, assert, beforeAll, clearStore, describe, test } from 'matchst
 
 import { createLockedEvent, createUnlockedEvent, mockGLMAndGNT } from './utils';
 
-import { handleLocked, handleUnlocked } from '../src/deposits';
+import { handleLocked, handleUnlocked } from '../generated/deposits';
 
 const LOCK_ENTITY_TYPE = 'Locked';
 const UNLOCK_ENTITY_TYPE = 'Unlocked';

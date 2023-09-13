@@ -8,7 +8,7 @@ dataSources:
     source:
       abi: Epochs
       startBlock: 1
-      address: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6"
+      address: "0x0000000000000000000000000000000000000000"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -18,7 +18,7 @@ dataSources:
       abis:
         - name: Epochs
           file: ./abis/Epochs.json
-      file: ./src/epochs.ts
+      file: ./generated/epochs.ts
       blockHandlers:
         - handler: handleBlock
   - kind: ethereum
@@ -26,7 +26,7 @@ dataSources:
     network: localhost
     source:
       abi: Deposits
-      address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
+      address: "0x0000000000000000000000000000000000000000"
       startBlock: 1
     mapping:
       kind: ethereum/events
@@ -45,14 +45,14 @@ dataSources:
           handler: handleLocked
         - event: Unlocked(uint256,uint256,uint256,address)
           handler: handleUnlocked
-      file: ./src/deposits.ts
+      file: ./generated/deposits.ts
   - kind: ethereum
     name: Vault
     network: localhost
     source:
       abi: Vault
       startBlock: 1
-      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
+      address: "0x0000000000000000000000000000000000000000"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -65,4 +65,4 @@ dataSources:
       eventHandlers:
         - event: Withdrawn(address,uint256,uint256)
           handler: handleWithdrawn
-      file: ./src/vault.ts
+      file: ./generated/vault.ts
