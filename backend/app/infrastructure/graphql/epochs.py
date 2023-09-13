@@ -43,9 +43,14 @@ query {
     fromTs
     toTs
   }
+  _meta {
+    block {
+      number
+    }
+  }
 }
     """
     )
 
-    data = request_context.graphql_client.execute(query)["epoches"]
+    data = request_context.graphql_client.execute(query)
     return data

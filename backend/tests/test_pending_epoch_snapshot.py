@@ -1,7 +1,7 @@
 import pytest
 
-from app import database
-from app.controllers.snapshots import snapshot_pending_epoch
+from app import database, exceptions
+from app.controllers.snapshots import pending_snapshot_status, snapshot_pending_epoch
 from tests.conftest import (
     mock_graphql,
     ETH_PROCEEDS,
@@ -109,3 +109,24 @@ def test_take_snapshot_with_effective_deposits(
     assert deposits[user2].user.address == user2
     assert deposits[user2].effective_deposit == "7500000000000000000000"
     assert deposits[user2].epoch_end_deposit == "7900000000000000000000"
+
+
+@pytest.mark.parametrize(
+    "epoch, snapshot, expected",
+    [
+        (1, 1, "not_applicable"),
+        (1, 1, "not_applicable"),
+        (2, 1, "done"),
+        (2, 0, "in_progress"),
+        (5, 3, "in_progress"),
+        (3, 0, "error"),  # snapshot not performed on time
+        (3, 0, "error"),  # snapshot not performed on time
+    ],
+)
+def test_pending_snapshot_status(epoch, snapshot, expected):
+    output = None
+    try:
+        output = pending_snapshot_status(epoch, snapshot)
+    except exceptions.OctantException:
+        output = "error"
+    assert output == expected
