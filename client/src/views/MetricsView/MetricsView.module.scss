@@ -56,10 +56,6 @@
   }
 
   .totalSupply {
-    &.isEpoch1 {
-      order: 3;
-    }
-
     @media #{$tablet-down} {
       order: 3;
     }
