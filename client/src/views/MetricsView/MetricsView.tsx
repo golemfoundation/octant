@@ -49,7 +49,6 @@ const MetricsView = (): ReactElement => {
 
   const { isDesktop } = useMediaQuery();
   const isCheckStatsTipVisible = !!currentEpoch && currentEpoch > 0 && !wasCheckStatusAlreadyClosed;
-  const isEpoch1 = currentEpoch === 1;
 
   const lockedRatioRounded = roundLockedRatio(lockedSummaryLatest?.lockedRatio);
 
@@ -78,7 +77,7 @@ const MetricsView = (): ReactElement => {
         />
         <BoxRounded
           alignment="left"
-          className={cx(styles.box, styles.totalSupply, isEpoch1 && styles.isEpoch1)}
+          className={cx(styles.box, styles.totalSupply)}
           isVertical
           title={t('glmLockedTotalSupplyPercentage')}
         >
@@ -93,7 +92,7 @@ const MetricsView = (): ReactElement => {
         </BoxRounded>
         <BoxRounded
           alignment="left"
-          className={cx(styles.box, styles.ethStaked, isEpoch1 && styles.order1)}
+          className={cx(styles.box, styles.ethStaked)}
           isVertical
           title={t('ethStaked')}
         >
@@ -105,7 +104,7 @@ const MetricsView = (): ReactElement => {
         </BoxRounded>
         <BoxRounded
           alignment="left"
-          className={cx(styles.box, styles.glmLocked, isEpoch1 && styles.order2)}
+          className={cx(styles.box, styles.glmLocked)}
           isVertical
           title={t('glmLocked')}
         >
