@@ -1,3 +1,5 @@
+import { BigNumber } from 'ethers';
+
 import AllocationInputsProps, { InputFocused } from 'components/dedicated/AllocationInputs/types';
 
 export default interface AllocationInputsRewardsAvailableProps {
@@ -5,6 +7,6 @@ export default interface AllocationInputsRewardsAvailableProps {
   inputFocused: InputFocused;
   isThereSomethingToDistribute: boolean;
   isValueExceeded: boolean;
-  restToDistribute: AllocationInputsProps['restToDistribute'];
+  restToDistribute: BigNumber;
   valueCryptoTotal: AllocationInputsProps['valueCryptoTotal'];
 }
