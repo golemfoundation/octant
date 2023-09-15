@@ -1,15 +1,11 @@
-import loadable from '@loadable/component';
 import { BigNumber } from 'ethers';
 import React, { FC, useState, useEffect } from 'react';
 
 import Modal from 'components/core/Modal/Modal';
+import AllocationInputs from 'components/dedicated/AllocationInputs/AllocationInputs';
 
 import styles from './ModalAllocationValuesEdit.module.scss';
 import ModalAllocationValuesEditProps from './types';
-
-const AllocationInputs = loadable(
-  () => import('components/dedicated/AllocationInputs/AllocationInputs'),
-);
 
 const ModalAllocationValuesEdit: FC<ModalAllocationValuesEditProps> = ({
   modalProps,
@@ -17,7 +13,8 @@ const ModalAllocationValuesEdit: FC<ModalAllocationValuesEditProps> = ({
   onValueChange,
   ...rest
 }) => {
-  const [localValueCryptoSelected, setLocalValueCryptoSelected] = useState<BigNumber>();
+  const [localValueCryptoSelected, setLocalValueCryptoSelected] =
+    useState<BigNumber>(valueCryptoSelected);
 
   const valueCryptoSelectedHexString = valueCryptoSelected?.toHexString();
   useEffect(() => {
