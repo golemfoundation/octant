@@ -1,13 +1,11 @@
-import loadable from '@loadable/component';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Modal from 'components/core/Modal/Modal';
+import GlmLock from 'components/dedicated/GlmLock/GlmLock';
 import { CurrentMode } from 'components/dedicated/GlmLock/types';
 
 import ModalGlmLockProps from './types';
-
-const GlmLock = loadable(() => import('components/dedicated/GlmLock/GlmLock'));
 
 const ModalGlmLock: FC<ModalGlmLockProps> = ({ modalProps }) => {
   const { t, i18n } = useTranslation('translation', {

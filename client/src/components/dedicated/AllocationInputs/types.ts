@@ -12,7 +12,7 @@ export default interface AllocationInputsProps {
   onClose: () => void;
   onCloseAndSave: () => void;
   onValueChange: (value: BigNumber) => void;
-  restToDistribute: BigNumber;
+  restToDistribute?: BigNumber;
   valueCryptoSelected: BigNumber;
   valueCryptoTotal: BigNumber;
 }
