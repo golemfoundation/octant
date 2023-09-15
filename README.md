@@ -33,7 +33,6 @@ subgraph$ yarn deploy:localhost
 After this step - check graph's console, it should enumerate blocks it has indexed.
 For the backend, change .env:
 
-- change EPOCH_0_END and EPOCH_1_END to some low value to ensure backend actually asks the contract
 - set contract addresses to ones printed by contract deployment script
 - update ETH_RPC_PROVIDER and SUBGRAPH_ENDPOINT
 
