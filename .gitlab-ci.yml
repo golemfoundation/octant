@@ -445,6 +445,7 @@ Deploy UAT App:
   rules:
     - !reference [.rules, on_mr_manual]
     - !reference [.rules, on_push_to_default_branch_manual]
+    - !reference [.rules, on_push_to_master_branch_manual ]
   environment:
     name: persistent/uat
     url: https://uat-client.octant.wildland.dev
@@ -463,6 +464,7 @@ Deploy Master App:
   rules:
     - !reference [.rules, on_mr_manual]
     - !reference [.rules, on_push_to_default_branch_manual]
+    - !reference [.rules, on_push_to_master_branch_manual ]
   environment:
     name: persistent/master
     url: https://master-client.octant.wildland.dev
@@ -489,6 +491,7 @@ Destroy UAT App:
   rules:
     - !reference [.rules, on_mr_manual]
     - !reference [.rules, on_push_to_default_branch_manual]
+    - !reference [.rules, on_push_to_master_branch_manual ]
   needs: []
   environment:
     name: persistent/uat
@@ -502,6 +505,7 @@ Destroy Master App:
   rules:
     - !reference [.rules, on_mr_manual]
     - !reference [.rules, on_push_to_default_branch_manual]
+    - !reference [.rules, on_push_to_master_branch_manual ]
   needs: []
   environment:
     name: persistent/master
