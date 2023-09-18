@@ -330,6 +330,7 @@ Deploy contracts:
     - contracts
     - octant
   script:
+    - export EPOCHS_START=$(date +%s)
     - /app/entrypoint.sh $NETWORK $CI_PROJECT_DIR/build.env
 
 Cypress E2E Tests Epoch 1:
@@ -372,7 +373,7 @@ Cypress E2E Tests Epoch 1:
     - set -e
     # Setup NVM to use Node version 16
     - source /usr/share/nvm/init-nvm.sh
-    - nvm install 16
+    - nvm use 16
     - npm i -g yarn
     - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh e2e
     - bash $CI_PROJECT_DIR/ci/argocd/application.sh create

@@ -39,7 +39,7 @@ flask db upgrade
 ```
 
 *Note: if you are trying to run local environment attached to psql instance,
-instead of sqlite; please run the following command, so that psql connectors are available 
+instead of sqlite; please run the following command, so that psql connectors are available
 and also set `DB_URI` environment accordingly e.g. `DB_URI="postgresql://user:password@localhost:5433/octant"`*
 
 ```bash
@@ -48,14 +48,8 @@ poetry install --with prod
 
 Start the server
 
-#### Development
 ```bash
 python3 startup.py
-```
-
-#### Production
-```bash
-gunicorn -c gunicorn_config.py startup:app
 ```
 
 ## Test

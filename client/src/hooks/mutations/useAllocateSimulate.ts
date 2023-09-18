@@ -2,9 +2,8 @@ import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/re
 import { useAccount } from 'wagmi';
 
 import { apiPostAllocateSimulate } from 'api/calls/allocate';
+import { getAllocationsMapped } from 'hooks/utils/utils';
 import { AllocationValues } from 'views/AllocationView/types';
-
-import { getAllocationsMapped } from './utils';
 
 type Response = {
   rewards: {

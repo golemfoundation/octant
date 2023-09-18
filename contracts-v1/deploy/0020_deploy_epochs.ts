@@ -24,6 +24,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   }
   const start = EPOCHS_START || now;
 
+  // eslint-disable-next-line no-console
+  console.log(`start=${start}`);
+
   await deploy(EPOCHS, {
     args: [start, epochDuration, decisionWindow, authAddress],
     autoMine: true,

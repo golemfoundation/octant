@@ -12,7 +12,7 @@ import AllocationNavigation from 'components/dedicated/AllocationNavigation/Allo
 import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
 import AllocationTipTiles from 'components/dedicated/AllocationTipTiles/AllocationTipTiles';
 import ModalAllocationValuesEdit from 'components/dedicated/ModalAllocationValuesEdit/ModalAllocationValuesEdit';
-import useAllocate from 'hooks/mutations/allocations/useAllocate';
+import useAllocate from 'hooks/events/useAllocate';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -61,8 +61,8 @@ const AllocationView = (): ReactElement => {
     setAllocations: state.setAllocations,
   }));
 
-  const { mutateAsync, isLoading: isLoadingAllocate } = useAllocate({
-    async onSuccess() {
+  const allocateEvent = useAllocate({
+    onSuccess: async () => {
       setCurrentView('edit');
       setSelectedItemAddress(null);
       triggerToast({
@@ -116,7 +116,7 @@ const AllocationView = (): ReactElement => {
   }, [currentEpoch, allocations, userAllocations?.elements.length, rewardsForProposals]);
 
   const onAllocate = () => {
-    mutateAsync(allocationValues);
+    allocateEvent.emit(allocationValues);
   };
 
   useEffect(() => {
@@ -190,7 +190,7 @@ const AllocationView = (): ReactElement => {
           <AllocationNavigation
             areButtonsDisabled={areButtonsDisabled}
             currentView={currentView}
-            isLoading={isLoadingAllocate}
+            isLoading={allocateEvent.isLoading}
             onAllocate={onAllocate}
             onResetValues={onResetAllocationValues}
             setCurrentView={setCurrentView}
@@ -210,7 +210,7 @@ const AllocationView = (): ReactElement => {
             />
           )}
           {areAllocationsAvailableOrAlreadyDone ? (
-            <div className={cx(styles.box, styles.boxes)}>
+            <div className={styles.boxes}>
               {allocationsWithRewards!.map((allocation, index) => (
                 <AllocationItem
                   // eslint-disable-next-line react/no-array-index-key
