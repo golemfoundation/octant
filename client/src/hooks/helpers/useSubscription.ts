@@ -17,7 +17,9 @@ export default function useSubscription<TData>(
     }
 
     websocketService().then(socket => {
-      socket.default.on(event, callback);
+      socket.default.on(event, data => {
+        callback(data);
+      });
     });
 
     return () => {

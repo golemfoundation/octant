@@ -67,16 +67,19 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           case 1:
             return cy
               .get('[data-test=ProposalView__proposal__DonorsList__donationsNotEnabled]')
+              .first()
               .should('be.visible');
           default:
             cy.get('[data-test=ProposalView__proposal__DonorsList]').first().should('be.visible');
-            cy.get('[data-test=ProposalView__proposal__DonorsList__count]')
+            cy.get('[data-test=ProposalView__proposal__DonorsList]')
+              .first()
+              .get('[data-test=DonorsItemSkeleton]')
+              .should('not.exist');
+            return cy
+              .get('[data-test=ProposalView__proposal__DonorsList__count]')
               .first()
               .should('be.visible')
               .should('have.text', '0');
-            return cy
-              .get('[data-test=ProposalView__proposal__DonorsList__Loader]')
-              .should('be.visible');
         }
       });
     });

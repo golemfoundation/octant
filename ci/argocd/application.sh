@@ -9,6 +9,10 @@ ARGO_REPOSITORY_BRANCH="octant"
 
 set +a
 
+# Move blocks 5 minutes in the past to make sure we start from epoch 1 and not accidently from epoch 2
+
+export BLOCK_NUMBER=$(echo $BLOCK_NUMBER | python3 -c "print(int(input()) - 25)")
+
 ## ArgoCD repository commit
 
 gpg --import <(echo $HOUSEKEEPER_GPG_KEY | base64 -d)

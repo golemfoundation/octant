@@ -11,7 +11,7 @@ import Header from 'components/core/Header/Header';
 import Svg from 'components/core/Svg/Svg';
 import AllocationSummaryProject from 'components/dedicated/AllocationSummaryProject/AllocationSummaryProject';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
-import useAllocateSimulate from 'hooks/mutations/allocations/useAllocateSimulate';
+import useAllocateSimulate from 'hooks/mutations/useAllocateSimulate';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useAllocationsStore from 'store/allocations/store';
 import { chevronBottom } from 'svg/misc';
