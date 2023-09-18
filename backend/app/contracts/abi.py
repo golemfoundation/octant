@@ -29,7 +29,6 @@ EPOCHS = [
     },
 ]
 
-
 ERC20 = [
     {
         "inputs": [],
@@ -56,7 +55,6 @@ ERC20 = [
         "type": "function",
     },
 ]
-
 
 PROPOSALS = [
     {
@@ -91,6 +89,19 @@ VAULT = [
         "name": "setMerkleRoot",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function",
+    },
+]
+
+GNOSIS_SAFE = [
+    {
+        "inputs": [
+            {"internalType": "bytes", "name": "_data", "type": "bytes"},
+            {"internalType": "bytes", "name": "_signature", "type": "bytes"},
+        ],
+        "name": "isValidSignature",
+        "outputs": [{"internalType": "bytes4", "name": "", "type": "bytes4"}],
+        "stateMutability": "view",
         "type": "function",
     },
 ]

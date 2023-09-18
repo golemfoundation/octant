@@ -50,6 +50,8 @@ MOCK_VAULT = MagicMock(spec=Vault)
 MOCK_GET_ETH_BALANCE = MagicMock()
 MOCK_GET_USER_BUDGET = Mock()
 MOCK_HAS_PENDING_SNAPSHOT = Mock()
+MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
+MOCK_IS_CONTRACT = Mock()
 MOCK_MATCHED_REWARDS = MagicMock(spec=calculate_matched_rewards)
 
 
@@ -131,6 +133,23 @@ def patch_proposals(monkeypatch, proposal_accounts):
 def patch_vault(monkeypatch):
     monkeypatch.setattr("app.controllers.withdrawals.vault", MOCK_VAULT)
     MOCK_VAULT.get_last_claimed_epoch.return_value = 0
+
+
+@pytest.fixture(scope="function")
+def patch_is_contract(monkeypatch):
+    monkeypatch.setattr(
+        "app.crypto.terms_and_conditions_consent.is_contract", MOCK_IS_CONTRACT
+    )
+    MOCK_IS_CONTRACT.return_value = False
+
+
+@pytest.fixture(scope="function")
+def patch_eip1271_is_valid_signature(monkeypatch):
+    monkeypatch.setattr(
+        "app.crypto.terms_and_conditions_consent.is_valid_signature",
+        MOCK_EIP1271_IS_VALID_SIGNATURE,
+    )
+    MOCK_EIP1271_IS_VALID_SIGNATURE.return_value = True
 
 
 @pytest.fixture(scope="function")

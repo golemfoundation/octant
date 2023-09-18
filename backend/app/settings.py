@@ -96,6 +96,8 @@ class TestConfig(Config):
     DEBUG = True
     LOG_LVL = "ERROR"
     SQLALCHEMY_DATABASE_URI = "sqlite://"
+    CHAIN_ID = 11155111
+    CHAIN_NAME = "sepolia"
     GLM_WITHDRAWAL_AMOUNT = 1000_000000000_000000000
     GLM_SENDER_NONCE = 0
 
