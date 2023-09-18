@@ -1,4 +1,5 @@
 from flask import jsonify
+from requests.exceptions import RequestException
 
 
 class OctantException(Exception):
@@ -136,3 +137,19 @@ class DuplicateConsent(OctantException):
 
     def __init__(self, address: str):
         super().__init__(self.description.format(address), self.code)
+
+
+class ExternalApiException(OctantException):
+    description = "API call to {} failed. Error: {}"
+    code = 500
+
+    def __init__(self, api_url: str, e: RequestException, status_code: int = None):
+        if status_code is not None:
+            self.code = status_code
+        else:
+            if hasattr(e, "response") and e.response is not None:
+                self.code = e.response.status_code
+        super().__init__(
+            self.description.format(api_url, str(e)),
+            self.code,
+        )

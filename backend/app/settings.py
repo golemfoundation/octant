@@ -23,6 +23,7 @@ class Config(object):
     SUBGRAPH_ENDPOINT = os.getenv("SUBGRAPH_ENDPOINT")
     WEB3_PROVIDER = Web3.HTTPProvider(os.getenv("ETH_RPC_PROVIDER_URL"))
     SCHEDULER_ENABLED = _parse_bool(os.getenv("SCHEDULER_ENABLED"))
+    CACHE_TYPE = "SimpleCache"
 
     # Smart contract addresses
     GNT_CONTRACT_ADDRESS = os.getenv("GNT_CONTRACT_ADDRESS")
