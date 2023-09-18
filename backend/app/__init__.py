@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, g
+from flask_caching import Cache
 from gql import Client
 from gql.transport.aiohttp import AIOHTTPTransport
 
@@ -10,6 +11,7 @@ from app.extensions import (
     migrate,
     cors,
     socketio,
+    cache,
     init_web3,
     api,
     init_scheduler,
@@ -45,6 +47,7 @@ def register_extensions(app):
     db.init_app(app)
     migrate.init_app(app, db)
     socketio.init_app(app)
+    cache.init_app(app)
     init_scheduler(app)
     init_logger(app)
     init_web3(app)

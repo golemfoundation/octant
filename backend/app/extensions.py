@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 from flask_restx import Api
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
+from flask_caching import Cache
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
@@ -27,6 +28,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 cors = CORS()
 scheduler = APScheduler()
+cache = Cache()
 
 # Blockchain extensions
 w3 = Web3()
