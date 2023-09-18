@@ -1,18 +1,22 @@
 import pytest
-
 from eth_account.messages import encode_defunct
 
 from app import database
-from app.crypto.terms_and_conditions_consent import (
-    verify_signed_message,
-    build_consent_message,
-)
+from app import exceptions
 from app.core.user import (
     has_user_agreed_to_terms_of_service,
     add_user_terms_of_service_consent,
 )
+from app.crypto.terms_and_conditions_consent import (
+    verify_signed_message,
+    build_consent_message,
+)
+from tests.conftest import MOCK_IS_CONTRACT
 
-from app import exceptions
+
+@pytest.fixture(autouse=True)
+def before(patch_is_contract):
+    pass
 
 
 @pytest.fixture
@@ -56,6 +60,14 @@ def _build_user_signature(user, user_address=None):
 
 
 def test_verifies_valid_signature(alice):
+    signature = _build_user_signature(alice)
+
+    assert verify_signed_message(alice.address, signature)
+
+
+def test_verifies_valid_multisig_signature(alice, patch_eip1271_is_valid_signature):
+    MOCK_IS_CONTRACT.return_value = True
+
     signature = _build_user_signature(alice)
 
     assert verify_signed_message(alice.address, signature)
