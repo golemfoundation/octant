@@ -10,6 +10,12 @@ from app.core.deposits.deposits import get_users_deposits, calculate_locked_rati
 from app.core.epochs.epoch_snapshots import (
     has_pending_epoch_snapshot,
     has_finalized_epoch_snapshot,
+    get_last_pending_snapshot,
+    get_last_finalized_snapshot,
+    pending_snapshot_status,
+    finalized_snapshot_status,
+    PendingSnapshotStatus,
+    FinalizedSnapshotStatus,
 )
 from app.core.proposals import get_proposal_rewards_above_threshold
 from app.core.rewards.rewards import (
@@ -27,6 +33,30 @@ class EpochStatus(JSONWizard):
     is_finalized: bool
 
 
+def get_pending_snapshot_status() -> PendingSnapshotStatus:
+    current_epoch = epochs.get_current_epoch()
+    last_snapshot_epoch = get_last_pending_snapshot()
+    return pending_snapshot_status(current_epoch, last_snapshot_epoch)
+
+
+def get_finalized_snapshot_status() -> FinalizedSnapshotStatus:
+    current_epoch = epochs.get_current_epoch()
+    last_snapshot_epoch = get_last_finalized_snapshot()
+    is_open = epochs.is_decision_window_open()
+    try:
+        return finalized_snapshot_status(current_epoch, last_snapshot_epoch, is_open)
+    except exceptions.SnapshotTooEarly:
+        app.logger.error(
+            f"Database inconsistent? Current epoch {current_epoch}, last finalized snapshot for epoch {last_snapshot_epoch}, while voting window is open"
+        )
+        return FinalizedSnapshotStatus.ERROR
+    except exceptions.MissingSnapshot:
+        app.logger.error(
+            f"Database inconsistent? Current epoch {current_epoch}, last finalized snapshot for epoch {last_snapshot_epoch}"
+        )
+        return FinalizedSnapshotStatus.ERROR
+
+
 def snapshot_pending_epoch() -> Optional[int]:
     current_epoch = epochs.get_current_epoch()
     pending_epoch = epochs.get_pending_epoch()
@@ -34,11 +64,7 @@ def snapshot_pending_epoch() -> Optional[int]:
         f"[*] Blockchain [current epoch: {current_epoch}] [pending epoch: {pending_epoch}] "
     )
 
-    try:
-        last_snapshot = pending_epoch_snapshot.get_last_snapshot()
-        last_snapshot_epoch = last_snapshot.epoch
-    except exceptions.MissingSnapshot:
-        last_snapshot_epoch = 0
+    last_snapshot_epoch = get_last_pending_snapshot()
 
     app.logger.info(f"[*] Most recent pending snapshot: {last_snapshot_epoch}")
 
@@ -77,11 +103,7 @@ def snapshot_finalized_epoch() -> Optional[int]:
         f"[*] Blockchain [current epoch: {current_epoch}] [finalized epoch: {finalized_epoch}] "
     )
 
-    try:
-        last_snapshot = finalized_epoch_snapshot.get_last_snapshot()
-        last_snapshot_epoch = last_snapshot.epoch
-    except exceptions.MissingSnapshot:
-        last_snapshot_epoch = 0
+    last_snapshot_epoch = get_last_finalized_snapshot()
 
     app.logger.info(f"[*] Most recent finalized snapshot: {last_snapshot_epoch}")
 

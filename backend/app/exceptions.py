@@ -86,6 +86,16 @@ class MissingSnapshot(OctantException):
         super().__init__(self.description, self.code)
 
 
+class SnapshotTooEarly(OctantException):
+    code = 500
+    description = (
+        "Is database inconsistent? Snapshot was taken before end of the voting period."
+    )
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
 class MissingAddress(OctantException):
     code = 400
     description = (
