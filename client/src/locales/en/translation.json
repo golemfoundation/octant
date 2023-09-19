@@ -326,7 +326,8 @@
       }
     },
     "proposal": {
-      "loadingProblem": "Loading of this proposal encountered a problem."
+      "loadingProblem": "Loading of this proposal encountered a problem.",
+      "backToTop": "Back to Top"
     },
     "proposals": {
       "tip": {
