@@ -9,7 +9,7 @@ import { HashRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { WagmiConfig } from 'wagmi';
 
-import env, { envViteKeys } from 'env';
+import env, { envViteKeys, envsAllowedToBeEmpty } from 'env';
 
 import { ethereumClient } from './api/clients/client-ethereum';
 import clientReactQuery from './api/clients/client-react-query';
@@ -26,7 +26,10 @@ const root = document.getElementById('root')!;
   );
   const emptyEnvKeys = Object.keys(emptyEnvs);
 
-  if (emptyEnvKeys.length > 0) {
+  if (
+    emptyEnvKeys.length > 0 &&
+    emptyEnvKeys.some(element => !envsAllowedToBeEmpty.includes(element))
+  ) {
     const errorMessage =
       'The application crashed because values for the following envs are missing';
     const emptyEnvKeysWithLinebreaksConsole = emptyEnvKeys.map(element => `\n-- ${element}`);

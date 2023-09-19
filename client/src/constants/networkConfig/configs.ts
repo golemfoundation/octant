@@ -1,12 +1,11 @@
-import { sepolia, mainnet } from 'wagmi/chains';
+import { sepolia, mainnet, localhost } from 'wagmi/chains';
 
 import { NetworkConfig } from './types';
 
-// TODO Following OCT-316 proper local config needs to be defined.
 export const localNetworkConfig: NetworkConfig = {
-  chains: [],
+  chains: [localhost],
   etherscanAddress: '',
-  id: -1,
+  id: 1337,
   isTestnet: true,
   name: 'Local',
 };
