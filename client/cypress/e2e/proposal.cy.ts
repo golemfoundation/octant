@@ -62,11 +62,15 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       cy.window().then(window => {
         // @ts-expect-error missing typing for client window elements.
         const currentEpoch = Number(window.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch));
+        cy.get('[data-test=ProposalView__proposal__DonorsList]')
+          .first()
+          .scrollIntoView({ offset: { left: 0, top: 100 } });
 
         switch (currentEpoch) {
           case 1:
             return cy
               .get('[data-test=ProposalView__proposal__DonorsList__donationsNotEnabled]')
+              .first()
               .should('be.visible');
           default:
             cy.get('[data-test=ProposalView__proposal__DonorsList]').first().should('be.visible');
@@ -76,6 +80,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
               .should('have.text', '0');
             return cy
               .get('[data-test=ProposalView__proposal__DonorsList__Loader]')
+              .first()
               .should('be.visible');
         }
       });
@@ -100,70 +105,54 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
     });
 
-    it('entering proposal 1 view allows infinite scroll down in 1, 2, 3, ... , n - 1 , n, 0, 1, 2, ... order', () => {
+    it('Entering proposal view allows scroll only to the last project', () => {
       cy.get('[data-test^=ProposalsView__ProposalItem]').first().click();
 
-      for (let i = 0; i < proposalNames.length; i++) {
-        cy.get('[data-test=ProposalView__proposal]').eq(i).scrollIntoView();
-        cy.get('[data-test=ProposalView__proposal]')
-          .eq(i)
-          .get('[data-test=ProposalView__proposal__name]')
-          .contains(proposalNames[i]);
-        cy.get('[data-test=ProposalView__proposal__DonorsList]')
-          .eq(i)
-          .scrollIntoView({ offset: { left: 0, top: 100 } });
-      }
-
-      // Second iteration, from the start.
-      for (let i = proposalNames.length; i < proposalNames.length * 2; i++) {
-        cy.get('[data-test=ProposalView__proposal]').eq(i).scrollIntoView();
-        cy.get('[data-test=ProposalView__proposal]')
-          .eq(i)
-          .get('[data-test=ProposalView__proposal__name]')
-          .contains(proposalNames[i - proposalNames.length]);
-        cy.get('[data-test=ProposalView__proposal__DonorsList]')
-          .eq(i)
-          .scrollIntoView({ offset: { left: 0, top: 100 } });
+      for (let i = 0; i <= proposalNames.length; i++) {
+        if (i < proposalNames.length) {
+          cy.get('[data-test=ProposalView__proposal]').eq(i).scrollIntoView();
+          cy.get('[data-test=ProposalView__proposal]')
+            .eq(i)
+            .get('[data-test=ProposalView__proposal__name]')
+            .contains(proposalNames[i]);
+          cy.get('[data-test=ProposalView__proposal__DonorsList]')
+            .eq(i)
+            .scrollIntoView({ offset: { left: 0, top: 100 } });
+        } else {
+          cy.get('[data-test=ProposalView__proposal]').should('have.length', proposalNames.length);
+          cy.get('[data-test=ProposalView__proposal]')
+            .eq(i - 1)
+            .should('be.visible');
+        }
       }
     });
 
-    it('entering proposal 2 view allows infinite scroll down in 0, 1, 3, ..., n - 1, n, 0, 1, 2 order', () => {
-      const elementToEnter = 2;
-      const proposalNamesWithoutElementToEnter = [...proposalNames];
-      proposalNamesWithoutElementToEnter.splice(elementToEnter, 1);
-      cy.get('[data-test^=ProposalsView__ProposalItem]').eq(elementToEnter).click();
-      const proposalNamesWithoutSecondElement = [
-        proposalNames[elementToEnter],
-        ...proposalNamesWithoutElementToEnter,
-        ...proposalNames,
-      ];
-      for (let i = 0; i < proposalNamesWithoutSecondElement.length; i++) {
-        cy.get('[data-test=ProposalView__proposal]').eq(i).scrollIntoView();
-        cy.get('[data-test=ProposalView__proposal]')
-          .eq(i)
-          .get('[data-test=ProposalView__proposal__name]')
-          .contains(proposalNamesWithoutSecondElement[i]);
-        cy.get('[data-test=ProposalView__proposal__DonorsList]')
-          .eq(i)
-          .scrollIntoView({ offset: { left: 0, top: 100 } });
-      }
+    it('"Back to top" button is displayed if the user has scrolled past the start of the final project description', () => {
+      cy.get('[data-test^=ProposalsView__ProposalItem]').first().click();
 
-      // Second iteration, from the start.
-      for (
-        let i = proposalNamesWithoutSecondElement.length;
-        i < proposalNamesWithoutSecondElement.length * 2;
-        i++
-      ) {
-        cy.get('[data-test=ProposalView__proposal]').eq(i).scrollIntoView();
-        cy.get('[data-test=ProposalView__proposal]')
-          .eq(i)
-          .get('[data-test=ProposalView__proposal__name]')
-          .contains(
-            proposalNamesWithoutSecondElement[i - proposalNamesWithoutSecondElement.length],
-          );
+      for (let i = 0; i < proposalNames.length - 1; i++) {
         cy.get('[data-test=ProposalView__proposal__DonorsList]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: 100 } });
+
+        if (i === proposalNames.length - 1) {
+          cy.get('[data-test=ProposalView__proposal__ButtonBackToTop]').should('be.visible');
+        }
+      }
+    });
+
+    it('Clicking on "Back to top" button scrolls to the top of view (first project is visible)', () => {
+      cy.get('[data-test^=ProposalsView__ProposalItem]').first().click();
+
+      for (let i = 0; i < proposalNames.length - 1; i++) {
+        cy.get('[data-test=ProposalView__proposal__DonorsList]')
+          .eq(i)
+          .scrollIntoView({ offset: { left: 0, top: 100 } });
+
+        if (i === proposalNames.length - 1) {
+          cy.get('[data-test=ProposalView__proposal__ButtonBackToTop]').click();
+          cy.get('[data-test=ProposalView__proposal]').eq(0).should('be.visible');
+        }
       }
     });
   });
