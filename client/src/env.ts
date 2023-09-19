@@ -1,5 +1,7 @@
 import { Env, EnvViteKeys } from 'types/env';
 
+export const envsAllowedToBeEmpty = ['VITE_JSON_RPC_ENDPOINT'];
+
 export const envViteKeys: EnvViteKeys = {
   alchemyId: 'VITE_ALCHEMY_ID',
   contractDepositsAddress: 'VITE_DEPOSITS_ADDRESS',
@@ -9,6 +11,7 @@ export const envViteKeys: EnvViteKeys = {
   contractVaultAddress: 'VITE_VAULT_ADDRESS',
   cryptoValuesEndpoint: 'VITE_CRYPTO_VALUES_ENDPOINT',
   ipfsGateway: 'VITE_IPFS_GATEWAY',
+  jsonRpcEndpoint: 'VITE_JSON_RPC_ENDPOINT',
   network: 'VITE_NETWORK',
   serverEndpoint: 'VITE_SERVER_ENDPOINT',
   subgraphAddress: 'VITE_SUBGRAPH_ADDRESS',
@@ -33,6 +36,8 @@ const env: Env = {
   cryptoValuesEndpoint: import.meta.env[envViteKeys.cryptoValuesEndpoint],
   // @ts-expect-error TS does not understand the way vite imports envs.
   ipfsGateway: import.meta.env[envViteKeys.ipfsGateway],
+  // @ts-expect-error TS does not understand the way vite imports envs.
+  jsonRpcEndpoint: import.meta.env[envViteKeys.jsonRpcEndpoint],
   // @ts-expect-error TS does not understand the way vite imports envs.
   network: import.meta.env[envViteKeys.network],
   // @ts-expect-error TS does not understand the way vite imports envs.

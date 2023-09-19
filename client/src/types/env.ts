@@ -7,6 +7,7 @@ export type EnvViteKeys = {
   contractVaultAddress: 'VITE_VAULT_ADDRESS';
   cryptoValuesEndpoint: 'VITE_CRYPTO_VALUES_ENDPOINT';
   ipfsGateway: 'VITE_IPFS_GATEWAY';
+  jsonRpcEndpoint: 'VITE_JSON_RPC_ENDPOINT';
   network: 'VITE_NETWORK';
   serverEndpoint: 'VITE_SERVER_ENDPOINT';
   subgraphAddress: 'VITE_SUBGRAPH_ADDRESS';
@@ -23,6 +24,7 @@ export type Env = {
   contractVaultAddress: string;
   cryptoValuesEndpoint: string;
   ipfsGateway: string;
+  jsonRpcEndpoint?: string;
   network: 'Local' | 'Mainnet' | 'Sepolia';
   serverEndpoint: string;
   subgraphAddress: string;
