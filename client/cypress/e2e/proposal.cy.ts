@@ -45,6 +45,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       cy.get('[data-test*=Loader]').should('not.exist');
     });
 
+    it('entering proposal view directly renders content', () => {
+      cy.get('[data-test^=ProposalsView__ProposalItem').first().click();
+      cy.reload();
+      const proposalView = cy.get('[data-test=ProposalView__proposal').first();
+      proposalView.get('[data-test=ProposalView__proposal__Img]').should('be.visible');
+      proposalView.get('[data-test=ProposalView__proposal__name]').should('be.visible');
+    });
+
     it('entering proposal view renders all its elements', () => {
       cy.get('[data-test^=ProposalsView__ProposalItem').first().click();
       const proposalView = cy.get('[data-test=ProposalView__proposal').first();
