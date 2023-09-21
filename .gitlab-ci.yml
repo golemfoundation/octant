@@ -17,6 +17,8 @@ stages:
   - cleanup
 
 default:
+  tags:
+    - metal
   interruptible: true
 
 .images:
@@ -301,6 +303,7 @@ Deploy contracts:
   image:
     name: ${GCP_DOCKER_IMAGE_REGISTRY}/contracts-v1:${IMAGE_TAG}
     entrypoint: [""]
+  resource_group: sepolia_contracts
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
