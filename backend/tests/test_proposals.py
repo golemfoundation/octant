@@ -2,6 +2,7 @@ import pytest
 from eth_account import Account
 
 from app.core.proposals import get_proposal_rewards_above_threshold
+from app.controllers.allocations import get_allocation_nonce
 from tests.conftest import (
     allocate_user_rewards,
     MOCKED_PENDING_EPOCH_NO,
@@ -73,19 +74,22 @@ def before(
 )
 def test_proposals_rewards_above_threshold(
     app,
-    user_accounts,
+    tos_users,
     proposal_accounts,
     user_allocations: dict,
     expected_rewards: dict,
 ):
     for user_index, allocations in user_allocations.items():
-        user_account = user_accounts[user_index]
+        user_account = tos_users[user_index]
 
         for allocation in allocations:
             proposal_account: Account = proposal_accounts[allocation[0]]
             allocation_amount = allocation[1]
 
-            allocate_user_rewards(user_account, proposal_account, allocation_amount)
+            nonce = get_allocation_nonce(user_account.address)
+            allocate_user_rewards(
+                user_account, proposal_account, allocation_amount, nonce
+            )
 
     expected = {}
 

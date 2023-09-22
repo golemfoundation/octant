@@ -32,7 +32,10 @@ allocation_payload = api.model(
         "allocations": fields.List(
             fields.Nested(user_allocations_payload_item),
             description="User allocation payload",
-        )
+        ),
+        "nonce": fields.Integer(
+            required=True, description="Allocation signature nonce"
+        ),
     },
 )
 
@@ -180,3 +183,25 @@ class ProposalDonors(OctantResource):
         app.logger.debug(f"Proposal donors {donors}")
 
         return donors
+
+
+allocation_nonce_model = api.model(
+    "AllocationNonce",
+    {
+        "allocation_nonce": fields.Integer(
+            required=True,
+            description="Current value of nonce used to sign allocations message. Note: this has nothing to do with Ethereum account nonce!",
+        ),
+    },
+)
+
+
+@ns.route("/users/<string:user_address>/allocation_nonce")
+@ns.doc(
+    description="Return current value of allocation nonce. It is neeeded to sign allocations.",
+)
+class AllocationNonce(OctantResource):
+    @ns.marshal_with(allocation_nonce_model)
+    @ns.response(200, "User allocations nonce successfully retrieved")
+    def get(self, user_address: str):
+        return {"allocation_nonce": allocations.get_allocation_nonce(user_address)}

@@ -20,6 +20,7 @@ import {
 import './tasks/clean';
 import './tasks/increase-time';
 import './tasks/mine';
+import './tasks/next-epoch';
 import './tasks/prepare-local-test-env';
 import './tasks/send-glm';
 import './tasks/target-check';

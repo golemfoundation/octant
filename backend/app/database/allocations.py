@@ -126,13 +126,14 @@ def get_alloc_sum_by_epoch(epoch: int) -> int:
     return sum([int(a.amount) for a in allocations])
 
 
-def add_all(epoch: int, user_id: int, allocations):
+def add_all(epoch: int, user_id: int, nonce: int, allocations):
     now = datetime.utcnow()
 
     new_allocations = [
         Allocation(
             epoch=epoch,
             user_id=user_id,
+            nonce=nonce,
             proposal_address=to_checksum_address(a.proposal_address),
             amount=str(a.amount),
             created_at=now,

@@ -1,6 +1,7 @@
 import { useSignTypedData } from 'wagmi';
 
 import networkConfig from 'constants/networkConfig';
+import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import { getAllocationsMapped } from 'hooks/utils/utils';
 import { WebsocketEmitEvent } from 'types/websocketEvents';
 import { AllocationValues } from 'views/AllocationView/types';
@@ -24,7 +25,10 @@ const types = {
     { name: 'proposalAddress', type: 'string' },
     { name: 'amount', type: 'uint256' },
   ],
-  AllocationPayload: [{ name: 'allocations', type: 'Allocation[]' }],
+  AllocationPayload: [
+    { name: 'allocations', type: 'Allocation[]' },
+    { name: 'nonce', type: 'integer' },
+  ],
 };
 
 export default function useAllocate({ onSuccess }: UseAllocateProps): UseAllocate {
@@ -56,14 +60,19 @@ export default function useAllocate({ onSuccess }: UseAllocateProps): UseAllocat
   const allocate = (allocations: AllocationValues) => {
     const allocationsMapped = getAllocationsMapped(allocations);
 
-    const message = {
-      allocations: allocationsMapped,
-    };
+    useUserAllocationNonce({
+      onSuccess: nonce => {
+        const message = {
+          allocations: allocationsMapped,
+          nonce,
+        };
 
-    signTypedData({
-      message,
-      primaryType: 'Allocation',
-      types,
+        signTypedData({
+          message,
+          primaryType: 'Allocation',
+          types,
+        });
+      },
     });
   };
 

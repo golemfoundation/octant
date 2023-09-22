@@ -18,7 +18,11 @@ class User(BaseModel):
 
     id = Column(db.Integer, primary_key=True)
     address = Column(db.String(42), unique=True, nullable=False)
-    allocation_nonce = Column(db.Integer, nullable=False, default=0)
+    allocation_nonce = Column(
+        db.Integer,
+        nullable=True,
+        comment="Allocations signing nonce, last used value. Range [0..inf)",
+    )
 
 
 class UserConsents(BaseModel):
@@ -36,6 +40,7 @@ class Allocation(BaseModel):
     id = Column(db.Integer, primary_key=True)
     epoch = Column(db.Integer, nullable=False)
     user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    nonce = Column(db.Integer, nullable=False)
     user = relationship("User", backref=db.backref("allocations", lazy=True))
     proposal_address = Column(db.String(42), nullable=False)
     amount = Column(db.String, nullable=False)

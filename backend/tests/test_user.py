@@ -2,6 +2,7 @@ import pytest
 from eth_account import Account
 
 from app.core.user import get_budget, get_claimed_rewards
+from app.controllers.allocations import get_allocation_nonce
 from tests.conftest import allocate_user_rewards, MOCKED_PENDING_EPOCH_NO
 
 
@@ -74,7 +75,10 @@ def test_get_claimed_rewards(
             proposal_account: Account = proposal_accounts[allocation[0]]
             allocation_amount = allocation[1]
 
-            allocate_user_rewards(user_account, proposal_account, allocation_amount)
+            nonce = get_allocation_nonce(user_account.address)
+            allocate_user_rewards(
+                user_account, proposal_account, allocation_amount, nonce
+            )
 
     expected = {}
 
