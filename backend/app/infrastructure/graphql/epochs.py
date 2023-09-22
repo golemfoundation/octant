@@ -52,5 +52,6 @@ query {
     """
     )
 
+    app.logger.debug("[Subgraph] Getting list of all epochs")
     data = request_context.graphql_client.execute(query)
     return data

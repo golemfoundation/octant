@@ -4,7 +4,7 @@ import pytest
 from eth_account import Account
 
 from app import database
-from app.controllers.allocations import allocate
+from app.controllers.allocations import allocate, get_allocation_nonce
 from app.controllers.rewards import (
     get_allocation_threshold,
     get_rewards_budget,
@@ -19,12 +19,16 @@ from app.core.rewards.rewards import (
     get_matched_rewards_from_epoch,
     calculate_matched_rewards_threshold,
 )
-from .conftest import allocate_user_rewards, MOCKED_PENDING_EPOCH_NO, MOCK_PROPOSALS
+from .conftest import (
+    allocate_user_rewards,
+    deserialize_allocations,
+    MOCKED_PENDING_EPOCH_NO,
+    MOCK_PROPOSALS,
+)
 from .test_allocations import (
     sign,
     create_payload,
     build_allocations_eip712_data,
-    deserialize_payload,
 )
 
 
@@ -106,17 +110,15 @@ def test_calculate_all_individual_rewards(
     assert result == expected
 
 
-def test_get_allocation_threshold(app, user_accounts, proposal_accounts):
-    total_allocated = _allocate_random_individual_rewards(
-        user_accounts, proposal_accounts
-    )
+def test_get_allocation_threshold(app, tos_users, proposal_accounts):
+    total_allocated = _allocate_random_individual_rewards(tos_users, proposal_accounts)
 
     assert get_allocation_threshold(None) == calculate_matched_rewards_threshold(
         total_allocated, 5
     )
 
 
-def test_get_rewards_budget(app, user_accounts, proposal_accounts):
+def test_get_rewards_budget(app, tos_users, proposal_accounts):
     glm_supply = 1000000000_000000000_000000000
     eth_proceeds = 402_410958904_110000000
     total_ed = 22700_000000000_099999994
@@ -135,9 +137,7 @@ def test_get_rewards_budget(app, user_accounts, proposal_accounts):
     )
 
     expected_matched = get_matched_rewards_from_epoch(MOCKED_PENDING_EPOCH_NO)
-    total_allocated = _allocate_random_individual_rewards(
-        user_accounts, proposal_accounts
-    )
+    total_allocated = _allocate_random_individual_rewards(tos_users, proposal_accounts)
 
     rewards = get_rewards_budget(None)
 
@@ -197,19 +197,22 @@ def test_get_rewards_budget(app, user_accounts, proposal_accounts):
 )
 def test_proposals_rewards(
     app,
-    user_accounts,
+    tos_users,
     proposal_accounts,
     user_allocations: dict,
     expected_matches: dict,
 ):
     for user_index, allocations in user_allocations.items():
-        user_account = user_accounts[user_index]
+        user_account = tos_users[user_index]
 
         for allocation in allocations:
             proposal_account: Account = proposal_accounts[allocation[0]]
             allocation_amount = allocation[1]
 
-            allocate_user_rewards(user_account, proposal_account, allocation_amount)
+            nonce = get_allocation_nonce(user_account.address)
+            allocate_user_rewards(
+                user_account, proposal_account, allocation_amount, nonce
+            )
 
     expected_rewards = {}
 
@@ -227,10 +230,10 @@ def _allocate_random_individual_rewards(user_accounts, proposal_accounts) -> int
 
     Returns the sum of these allocations
     """
-    payload1 = create_payload(proposal_accounts[0:2], None)
+    payload1 = create_payload(proposal_accounts[0:2], None, 0)
     signature1 = sign(user_accounts[0], build_allocations_eip712_data(payload1))
 
-    payload2 = create_payload(proposal_accounts[0:3], None)
+    payload2 = create_payload(proposal_accounts[0:3], None, 0)
     signature2 = sign(user_accounts[1], build_allocations_eip712_data(payload2))
 
     # Call allocate method for both users
@@ -241,7 +244,7 @@ def _allocate_random_individual_rewards(user_accounts, proposal_accounts) -> int
         AllocationRequest(payload2, signature2, override_existing_allocations=True)
     )
 
-    allocations1 = sum([int(a.amount) for a in deserialize_payload(payload1)])
-    allocations2 = sum([int(a.amount) for a in deserialize_payload(payload2)])
+    allocations1 = sum([int(a.amount) for a in deserialize_allocations(payload1)])
+    allocations2 = sum([int(a.amount) for a in deserialize_allocations(payload2)])
 
     return allocations1 + allocations2

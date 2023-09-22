@@ -139,6 +139,14 @@ class DuplicateConsent(OctantException):
         super().__init__(self.description.format(address), self.code)
 
 
+class WrongAllocationsNonce(OctantException):
+    code = 400
+    description = "Attempt to use wrong value of nonce ({} instead of {}) when signing allocations"
+
+    def __init__(self, used: int, expected: int):
+        super().__init__(self.description.format(used, expected), self.code)
+
+
 class ExternalApiException(OctantException):
     description = "API call to {} failed. Error: {}"
     code = 500

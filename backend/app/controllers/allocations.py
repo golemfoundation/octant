@@ -1,6 +1,6 @@
 from typing import List, Dict
 
-from app import database
+from app import database, exceptions
 from app.controllers import rewards
 from app.core.allocations import (
     AllocationRequest,
@@ -8,6 +8,7 @@ from app.core.allocations import (
     deserialize_payload,
     verify_allocations,
     add_allocations_to_db,
+    next_allocation_nonce,
 )
 from app.core.common import AccountFunds
 from app.extensions import db, epochs
@@ -15,23 +16,35 @@ from app.extensions import db, epochs
 
 def allocate(request: AllocationRequest) -> str:
     user_address = recover_user_address(request)
-    user_allocations = deserialize_payload(request.payload)
+    nonce, user_allocations = deserialize_payload(request.payload)
     epoch = epochs.get_pending_epoch()
     verify_allocations(epoch, user_address, user_allocations)
 
+    user = database.user.get_by_address(user_address)
+    expected_nonce = next_allocation_nonce(user)
+    if nonce != expected_nonce:
+        raise exceptions.WrongAllocationsNonce(nonce, expected_nonce)
+
+    user.allocation_nonce = nonce
+
     add_allocations_to_db(
-        epoch, user_address, user_allocations, request.override_existing_allocations
+        epoch,
+        user_address,
+        nonce,
+        user_allocations,
+        request.override_existing_allocations,
     )
+
     db.session.commit()
 
     return user_address
 
 
 def simulate_allocation(payload: Dict, user_address: str):
-    user_allocations = deserialize_payload(payload)
+    nonce, user_allocations = deserialize_payload(payload)
     epoch = epochs.get_pending_epoch()
     verify_allocations(epoch, user_address, user_allocations)
-    add_allocations_to_db(epoch, user_address, user_allocations, True)
+    add_allocations_to_db(epoch, user_address, nonce, user_allocations, True)
     proposal_rewards = rewards.get_proposals_rewards(epoch)
 
     db.session.rollback()
@@ -40,7 +53,7 @@ def simulate_allocation(payload: Dict, user_address: str):
 
 
 def get_all_by_user_and_epoch(
-    user_address: str, epoch: int = None
+    user_address: str, epoch: int | None = None
 ) -> List[AccountFunds]:
     epoch = epochs.get_pending_epoch() if epoch is None else epoch
 
@@ -61,6 +74,11 @@ def get_all_by_proposal_and_epoch(
     return [AccountFunds(a.user.address, a.amount) for a in allocations]
 
 
-def get_sum_by_epoch(epoch: int = None) -> int:
+def get_sum_by_epoch(epoch: int | None = None) -> int:
     epoch = epochs.get_pending_epoch() if epoch is None else epoch
     return database.allocations.get_alloc_sum_by_epoch(epoch)
+
+
+def get_allocation_nonce(user_address: str) -> int:
+    user = database.user.get_by_address(user_address)
+    return next_allocation_nonce(user)

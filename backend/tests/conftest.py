@@ -15,7 +15,7 @@ from app.contracts.epochs import Epochs
 from app.contracts.erc20 import ERC20
 from app.contracts.proposals import Proposals
 from app.contracts.vault import Vault
-from app.controllers.allocations import allocate
+from app.controllers.allocations import allocate, deserialize_payload
 from app.core.allocations import AllocationRequest, Allocation
 from app.core.rewards.rewards import calculate_matched_rewards
 from app.crypto.eip712 import sign, build_allocations_eip712_data
@@ -85,6 +85,13 @@ def user_accounts():
         w3.eth.account.from_mnemonic(MNEMONIC, account_path=f"m/44'/60'/0'/0/{i}")
         for i in range(10)
     ]
+
+
+@pytest.fixture(scope="function")
+def tos_users(user_accounts):
+    for acc in user_accounts:
+        database.user_consents.add_consent(acc.address, "127.0.0.1")
+    return user_accounts
 
 
 @pytest.fixture(scope="function")
@@ -219,20 +226,26 @@ def mock_allocations_db(app, user_accounts, proposal_accounts):
         Allocation(proposal_accounts[1].address, 1050 * 10**18),
         Allocation(proposal_accounts[3].address, 500 * 10**18),
     ]
-    database.allocations.add_all(MOCKED_PENDING_EPOCH_NO, user1.id, user1_allocations)
-    database.allocations.add_all(MOCKED_PENDING_EPOCH_NO, user2.id, user2_allocations)
+    database.allocations.add_all(
+        MOCKED_PENDING_EPOCH_NO, user1.id, 0, user1_allocations
+    )
+    database.allocations.add_all(
+        MOCKED_PENDING_EPOCH_NO, user2.id, 0, user2_allocations
+    )
     db.session.commit()
 
 
-def allocate_user_rewards(user_account: Account, proposal_account, allocation_amount):
-    payload = create_payload([proposal_account], [allocation_amount])
+def allocate_user_rewards(
+    user_account: Account, proposal_account, allocation_amount, nonce: int = 0
+):
+    payload = create_payload([proposal_account], [allocation_amount], nonce)
     signature = sign(user_account, build_allocations_eip712_data(payload))
     request = AllocationRequest(payload, signature, override_existing_allocations=False)
 
     allocate(request)
 
 
-def create_payload(proposals, amounts: Optional[List[int]]):
+def create_payload(proposals, amounts: Optional[List[int]], nonce: int = 0):
     if amounts is None:
         amounts = [randint(1 * 10**18, 100_000_000 * 10**18) for _ in proposals]
 
@@ -244,7 +257,11 @@ def create_payload(proposals, amounts: Optional[List[int]]):
         for proposal, amount in zip(proposals, amounts)
     ]
 
-    return {"allocations": allocations}
+    return {"allocations": allocations, "nonce": nonce}
+
+
+def deserialize_allocations(payload) -> List[Allocation]:
+    return deserialize_payload(payload)[1]
 
 
 def create_deposit_event(

@@ -7,6 +7,7 @@ export type ApiPostAllocateSimulateData = {
     amount: string;
     proposalAddress: string;
   }[];
+  nonce: number;
 };
 
 export type ApiPostAllocateData = {
@@ -26,5 +27,11 @@ export function apiPostAllocateSimulate(
 ): Promise<any> {
   return apiService
     .post(`${env.serverEndpoint}allocations/simulate/${userAddress}`, allocateData)
+    .then(({ data }) => data);
+}
+
+export function apiGetUserAllocationNonce(userAddress: string): Promise<number> {
+  return apiService
+    .get(`${env.serverEndpoint}allocations/users/${userAddress}/allocationNonce`)
     .then(({ data }) => data);
 }

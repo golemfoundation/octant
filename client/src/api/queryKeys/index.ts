@@ -5,6 +5,7 @@ export const ROOTS: Root = {
   depositAt: 'depositAt',
   proposalDonors: 'proposalDonors',
   proposalsIpfsResults: 'proposalsIpfsResults',
+  userAllocationNonce: 'userAllocationNonce',
   userHistoricAllocations: 'userHistoricAllocations',
   userTOS: 'userTOS',
 };
@@ -30,6 +31,7 @@ export const QUERY_KEYS: QueryKeys = {
   proposalsContract: ['proposalsContract'],
   proposalsIpfsResults: proposalAddress => [ROOTS.proposalsIpfsResults, proposalAddress],
   unlocks: ['unlocks'],
+  userAllocationNonce: userAddress => ['userAllocationNonce', userAddress],
   userAllocations: ['userAllocations'],
   userHistoricAllocations: userAddress => [ROOTS.userHistoricAllocations, userAddress],
   userTOS: userAddress => [ROOTS.userTOS, userAddress],

@@ -251,13 +251,13 @@ def test_history_withdrawals(mocker, withdrawals, expected_history_sorted_by_ts)
     assert history == expected_history_sorted_by_ts
 
 
-def test_history_allocations(proposal_accounts, user_accounts):
+def test_history_allocations(proposal_accounts, tos_users):
     # Setup constant data
     proposals = proposal_accounts[0:3]
-    user1: LocalAccount = user_accounts[0]
+    user1: LocalAccount = tos_users[0]
 
     # Test data for epoch no 3
-    payload = create_payload(proposals, [100, 200, 300])
+    payload = create_payload(proposals, [100, 200, 300], 0)
     signature = sign(user1, build_allocations_eip712_data(payload))
     MOCK_EPOCHS.get_pending_epoch.return_value = 3
 
@@ -282,7 +282,7 @@ def test_history_allocations(proposal_accounts, user_accounts):
     )
 
     # Allocate different data, but for the same epoch no 3
-    payload = create_payload(proposals, [200, 200, 400])
+    payload = create_payload(proposals, [200, 200, 400], 1)
     signature = sign(user1, build_allocations_eip712_data(payload))
 
     allocate(
@@ -309,7 +309,7 @@ def test_history_allocations(proposal_accounts, user_accounts):
     )
 
     # Allocate data, for different epoch (no 4)
-    payload = create_payload(proposals, [10, 20, 30])
+    payload = create_payload(proposals, [10, 20, 30], 2)
     signature = sign(user1, build_allocations_eip712_data(payload))
     MOCK_EPOCHS.get_pending_epoch.return_value = 4
 
@@ -528,13 +528,13 @@ def test_complete_user_history(
     expected_history,
     page_limit,
     proposal_accounts,
-    user_accounts,
+    tos_users,
 ):
     # given
 
     mock_graphql(mocker, deposit_events=deposits, withdrawals_events=withdrawals)
 
-    user1 = user_accounts[0]
+    user1 = tos_users[0]
     proposals = proposal_accounts[0:3]
     payload = create_payload(proposals, [100, 200, 300])
     signature = sign(user1, build_allocations_eip712_data(payload))

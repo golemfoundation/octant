@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 from dataclass_wizard import JSONWizard
 
@@ -8,6 +8,8 @@ from app.core.epochs.epoch_snapshots import has_pending_epoch_snapshot
 from app.core.user import get_budget
 from app.crypto.eip712 import recover_address, build_allocations_eip712_data
 from app.extensions import proposals
+
+from app.database.models import User
 
 
 @dataclass(frozen=True)
@@ -26,6 +28,7 @@ class AllocationRequest:
 def add_allocations_to_db(
     epoch: int,
     user_address: str,
+    nonce: int,
     allocations: List[Allocation],
     delete_existing_user_epoch_allocations: bool,
 ):
@@ -36,7 +39,7 @@ def add_allocations_to_db(
     if delete_existing_user_epoch_allocations:
         database.allocations.soft_delete_all_by_epoch_and_user_id(epoch, user.id)
 
-    database.allocations.add_all(epoch, user.id, allocations)
+    database.allocations.add_all(epoch, user.id, nonce, allocations)
 
 
 def recover_user_address(request: AllocationRequest) -> str:
@@ -44,11 +47,12 @@ def recover_user_address(request: AllocationRequest) -> str:
     return recover_address(eip712_data, request.signature)
 
 
-def deserialize_payload(payload) -> List[Allocation]:
-    return [
+def deserialize_payload(payload) -> Tuple[int, List[Allocation]]:
+    allocations = [
         Allocation.from_dict(allocation_data)
         for allocation_data in payload["allocations"]
     ]
+    return payload["nonce"], allocations
 
 
 def verify_allocations(epoch: int, user_address: str, allocations: List[Allocation]):
@@ -84,3 +88,11 @@ def verify_allocations(epoch: int, user_address: str, allocations: List[Allocati
 
     if proposals_sum > user_budget:
         raise exceptions.RewardsBudgetExceeded
+
+
+def next_allocation_nonce(user: User | None) -> int:
+    if user is None:
+        return 0
+    if user.allocation_nonce is None:
+        return 0
+    return user.allocation_nonce + 1
