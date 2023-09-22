@@ -24,17 +24,23 @@ default:
 .images:
   python:
     name: acidrain/python-poetry:3.11-1.5.1
+    pull_policy: if-not-present
   node:
     name: registry.gitlab.com/wildland/devops/container-builder/octant/node-extended:latest
+    pull_policy: if-not-present
   kaniko:
     name: gcr.io/kaniko-project/executor:$KANIKO_VERSION-debug
+    pull_policy: if-not-present
     entrypoint: [""]
   git_improved:
     name: mikecode/git-gettext:ubuntu
+    pull_policy: if-not-present
   synpress:
     name: registry.gitlab.com/wildland/devops/container-builder/octant/synpress-arch:179ba913
+    pull_policy: if-not-present
   alpine_git:
     name: alpine/git
+    pull_policy: if-not-present
     entrypoint: [""]
 
 .rules:
