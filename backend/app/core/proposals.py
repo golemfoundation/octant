@@ -12,16 +12,18 @@ from app.database import allocations as allocation_db
 from app.extensions import epochs, proposals
 
 
-def get_number_of_proposals(epoch: Optional[int]) -> int:
+def get_proposals_addresses(epoch: Optional[int]) -> List[str]:
     epoch = epochs.get_current_epoch() if epoch is None else epoch
-    return len(proposals.get_proposal_addresses(epoch))
+    return proposals.get_proposal_addresses(epoch)
 
 
 def get_proposal_allocation_threshold(epoch: int) -> int:
-    proposals_count = get_number_of_proposals(epoch)
+    proposals_addresses = get_proposals_addresses(epoch)
     total_allocated = allocation_db.get_alloc_sum_by_epoch(epoch)
 
-    return calculate_matched_rewards_threshold(total_allocated, proposals_count)
+    return calculate_matched_rewards_threshold(
+        total_allocated, len(proposals_addresses)
+    )
 
 
 def get_proposal_rewards_above_threshold(

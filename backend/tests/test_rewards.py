@@ -220,8 +220,10 @@ def test_proposals_rewards(
         proposal_address = proposal_accounts[proposal_index].address
         expected_rewards[proposal_address] = expected_reward
 
-    for proposal in get_proposals_rewards(MOCKED_PENDING_EPOCH_NO):
-        assert expected_rewards.get(proposal.address) == proposal.matched
+    proposals = get_proposals_rewards(MOCKED_PENDING_EPOCH_NO)
+    assert len(proposals) == 5
+    for proposal in proposals:
+        assert expected_rewards.get(proposal.address, 0) == proposal.matched
 
 
 def _allocate_random_individual_rewards(user_accounts, proposal_accounts) -> int:
