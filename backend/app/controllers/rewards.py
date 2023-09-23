@@ -18,7 +18,7 @@ from app.core.rewards.rewards import (
 from app.extensions import epochs
 
 
-@dataclass(frozen=True)
+@dataclass()
 class ProposalReward(JSONWizard):
     address: str
     allocated: int
@@ -71,16 +71,23 @@ def get_allocation_threshold(epoch: int = None) -> int:
 def get_proposals_rewards(epoch: int = None) -> List[ProposalReward]:
     epoch = epochs.get_pending_epoch() if epoch is None else epoch
     matched_rewards = get_matched_rewards_from_epoch(epoch)
-    projects = get_proposals_with_allocations(epoch)
+    proposals_with_allocations = get_proposals_with_allocations(epoch)
     threshold = get_allocation_threshold(epoch)
 
     total_allocated_above_threshold = sum(
-        [allocated for _, allocated in projects if allocated >= threshold]
+        [
+            allocated
+            for _, allocated in proposals_with_allocations
+            if allocated >= threshold
+        ]
     )
 
-    rewards = []
+    rewards = {
+        address: ProposalReward(address, 0, 0)
+        for address in proposals.get_proposals_addresses(epoch)
+    }
 
-    for address, allocated in projects:
+    for address, allocated in proposals_with_allocations:
         if allocated >= threshold:
             matched = int(
                 Decimal(allocated)
@@ -90,9 +97,11 @@ def get_proposals_rewards(epoch: int = None) -> List[ProposalReward]:
         else:
             matched = 0
 
-        rewards.append(ProposalReward(address, allocated, matched))
+        proposal_rewards = rewards[address]
+        proposal_rewards.allocated = allocated
+        proposal_rewards.matched = matched
 
-    return rewards
+    return list(rewards.values())
 
 
 def get_rewards_merkle_tree(epoch: int) -> RewardsMerkleTree:

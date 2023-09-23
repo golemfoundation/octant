@@ -56,36 +56,57 @@ def test_simulate_allocation_single_user(
     payload = create_payload(proposal_accounts[0:2], [40 * 10**18, 50 * 10**18])
     proposal_rewards_before = rewards.get_proposals_rewards()
 
-    assert len(proposal_rewards_before) == 3
+    assert len(proposal_rewards_before) == 5
     assert (
         proposal_rewards_before[0].address
-        == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
-    )
-    assert proposal_rewards_before[0].allocated == 20000000000000000000
-    assert proposal_rewards_before[0].matched == 636044282804413348
-    assert (
-        proposal_rewards_before[1].address
         == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
     )
-    assert proposal_rewards_before[1].allocated == 10000000000000000000
-    assert proposal_rewards_before[1].matched == 318022141402206674
+    assert proposal_rewards_before[0].allocated == 10000000000000000000
+    assert proposal_rewards_before[0].matched == 318022141402206674
+    assert (
+        proposal_rewards_before[1].address
+        == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
+    )
+    assert proposal_rewards_before[1].allocated == 20000000000000000000
+    assert proposal_rewards_before[1].matched == 636044282804413348
     assert (
         proposal_rewards_before[2].address
         == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
     )
     assert proposal_rewards_before[2].allocated == 30000000000000000000
     assert proposal_rewards_before[2].matched == 954066424206620023
+    assert (
+        proposal_rewards_before[3].address
+        == "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec"
+    )
+    assert proposal_rewards_before[3].allocated == 0
+    assert proposal_rewards_before[3].matched == 0
+    assert (
+        proposal_rewards_before[4].address
+        == "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097"
+    )
+    assert proposal_rewards_before[4].allocated == 0
+    assert proposal_rewards_before[4].matched == 0
 
     # Call simulate allocation method
     result = simulate_allocation(payload, user_accounts[0].address)
 
-    assert len(result) == 2
-    assert result[0].address == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
-    assert result[0].allocated == 50000000000000000000
-    assert result[0].matched == 1060073804674022248
-    assert result[1].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
-    assert result[1].allocated == 40000000000000000000
-    assert result[1].matched == 848059043739217798
+    assert len(result) == 5
+    assert result[0].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
+    assert result[0].allocated == 40000000000000000000
+    assert result[0].matched == 848059043739217798
+    assert result[1].address == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
+    assert result[1].allocated == 50000000000000000000
+    assert result[1].matched == 1060073804674022248
+    assert result[2].address == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
+    assert result[2].allocated == 0
+    assert result[2].matched == 0
+    assert result[3].address == "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec"
+    assert result[3].allocated == 0
+    assert result[3].matched == 0
+    assert result[4].address == "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097"
+    assert result[4].allocated == 0
+    assert result[4].matched == 0
 
     # Ensure changes made in the simulation are not saved to db
     proposal_rewards_after = rewards.get_proposals_rewards()
@@ -114,39 +135,57 @@ def test_simulate_allocation_multiple_users(
     payload = create_payload(proposal_accounts[0:2], [60 * 10**18, 70 * 10**18])
     proposal_rewards_before = rewards.get_proposals_rewards()
 
-    assert len(proposal_rewards_before) == 3
+    assert len(proposal_rewards_before) == 5
     assert (
         proposal_rewards_before[0].address
-        == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
-    )
-    assert proposal_rewards_before[0].allocated == 60000000000000000000
-    assert proposal_rewards_before[0].matched == 817771220748531448
-    assert (
-        proposal_rewards_before[1].address
         == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
     )
-    assert proposal_rewards_before[1].allocated == 10000000000000000000
-    assert proposal_rewards_before[1].matched == 0
+    assert proposal_rewards_before[0].allocated == 10000000000000000000
+    assert proposal_rewards_before[0].matched == 0
+    assert (
+        proposal_rewards_before[1].address
+        == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
+    )
+    assert proposal_rewards_before[1].allocated == 60000000000000000000
+    assert proposal_rewards_before[1].matched == 817771220748531448
     assert (
         proposal_rewards_before[2].address
         == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
     )
     assert proposal_rewards_before[2].allocated == 80000000000000000000
     assert proposal_rewards_before[2].matched == 1090361627664708598
+    assert (
+        proposal_rewards_before[3].address
+        == "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec"
+    )
+    assert proposal_rewards_before[3].allocated == 0
+    assert proposal_rewards_before[3].matched == 0
+    assert (
+        proposal_rewards_before[4].address
+        == "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097"
+    )
+    assert proposal_rewards_before[4].allocated == 0
+    assert proposal_rewards_before[4].matched == 0
 
     # Call simulate allocation method
     result = simulate_allocation(payload, user_accounts[0].address)
 
-    assert len(result) == 3
-    assert result[0].address == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
-    assert result[0].allocated == 110000000000000000000
-    assert result[0].matched == 954066424206620023
-    assert result[1].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
-    assert result[1].allocated == 60000000000000000000
-    assert result[1].matched == 520399867749065467
+    assert len(result) == 5
+    assert result[0].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
+    assert result[0].allocated == 60000000000000000000
+    assert result[0].matched == 520399867749065467
+    assert result[1].address == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
+    assert result[1].allocated == 110000000000000000000
+    assert result[1].matched == 954066424206620023
     assert result[2].address == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
     assert result[2].allocated == 50000000000000000000
     assert result[2].matched == 433666556457554556
+    assert result[3].address == "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec"
+    assert result[3].allocated == 0
+    assert result[3].matched == 0
+    assert result[4].address == "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097"
+    assert result[4].allocated == 0
+    assert result[4].matched == 0
 
     # Ensure changes made in the simulation are not saved to db
     proposal_rewards_after = rewards.get_proposals_rewards()
