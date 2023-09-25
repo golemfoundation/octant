@@ -600,4 +600,8 @@ def _compare_two_unordered_lists(list1, list2) -> bool:
         if i not in list2:
             return False
 
+    for i in list2:
+        if i not in list1:
+            return False
+
     return True

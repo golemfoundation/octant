@@ -1,11 +1,14 @@
 import pytest
 
+import dataclasses
+
 from app import database, exceptions
 from app.controllers import rewards
 from app.controllers.allocations import (
     get_all_by_user_and_epoch,
     get_all_by_proposal_and_epoch,
     get_allocation_nonce,
+    get_all_by_epoch,
     get_sum_by_epoch,
     allocate,
     simulate_allocation,
@@ -419,6 +422,54 @@ def test_get_by_user_and_epoch(mock_allocations_db, user_accounts, proposal_acco
     assert result[1].amount == str(5 * 10**18)
     assert result[2].address == proposal_accounts[2].address
     assert result[2].amount == str(300 * 10**18)
+
+
+def test_get_by_all_epoch(
+    mock_pending_epoch_snapshot_db,
+    mock_allocations_db,
+    user_accounts,
+    proposal_accounts,
+):
+    expected_result = [
+        {
+            "donor": user_accounts[0].address,
+            "proposal": proposal_accounts[0].address,
+            "amount": str(10 * 10**18),
+        },
+        {
+            "donor": user_accounts[0].address,
+            "proposal": proposal_accounts[1].address,
+            "amount": str(5 * 10**18),
+        },
+        {
+            "donor": user_accounts[0].address,
+            "proposal": proposal_accounts[2].address,
+            "amount": str(300 * 10**18),
+        },
+        {
+            "donor": user_accounts[1].address,
+            "proposal": proposal_accounts[1].address,
+            "amount": str(1050 * 10**18),
+        },
+        {
+            "donor": user_accounts[1].address,
+            "proposal": proposal_accounts[3].address,
+            "amount": str(500 * 10**18),
+        },
+    ]
+
+    result = get_all_by_epoch(MOCKED_PENDING_EPOCH_NO)
+
+    assert len(result) == len(expected_result)
+    for i in result:
+        assert dataclasses.asdict(i) in expected_result
+
+
+def test_get_by_epoch_fails_for_current_or_future_epoch(
+    mock_allocations_db, user_accounts, proposal_accounts
+):
+    with pytest.raises(exceptions.EpochAllocationPeriodNotStartedYet):
+        get_all_by_epoch(MOCKED_PENDING_EPOCH_NO + 1)
 
 
 def test_get_by_proposal_and_epoch(

@@ -1,4 +1,7 @@
 from flask_restx import Resource
+from flask import make_response
+from io import StringIO
+import csv
 
 from app.infrastructure.exception_handler import ExceptionHandler
 
@@ -23,3 +26,25 @@ class OctantResource(Resource):
             attr = decorator(attr)
 
         return attr
+
+    @classmethod
+    def response_mimetype(cls, request):
+        return request.accept_mimetypes.best_match(cls.representations)
+
+    @staticmethod
+    def encode_csv_response(data, code, headers):
+        # first row should contain an empty object to enable header resolution
+        header = data[0].keys()
+        data = data[1:]
+
+        si = StringIO()
+        cw = csv.DictWriter(si, fieldnames=header, dialect=csv.excel)
+
+        cw.writeheader()
+        cw.writerows(data)
+
+        return make_response(si.getvalue(), code, headers)
+
+    @staticmethod
+    def encode_json_response(data, code, headers):
+        return make_response(data, code, headers)
