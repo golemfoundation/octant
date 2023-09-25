@@ -121,9 +121,19 @@ def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.controllers.rewards.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.controllers.epochs.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.proposals.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.core.user.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.core.epochs.details.epochs", MOCK_EPOCHS)
 
     MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
     MOCK_EPOCHS.get_current_epoch.return_value = MOCKED_CURRENT_EPOCH_NO
+    # props content: from, to, fromTs, duration, decisionWindow
+    MOCK_EPOCHS.get_future_epoch_props.return_value = [
+        2,
+        0,
+        1697731200,
+        7776000,
+        1209600,
+    ]
 
 
 @pytest.fixture(scope="function")
@@ -280,10 +290,14 @@ def create_deposit_event(
     }
 
 
-def create_epoch_event(start=1000, end=2000, **kwargs):
+def create_epoch_event(
+    start=1000, end=2000, duration=1000, decision_window=500, **kwargs
+):
     return {
         "fromTs": start,
         "toTs": end,
+        "duration": duration,
+        "decisionWindow": decision_window,
         **kwargs,
     }
 

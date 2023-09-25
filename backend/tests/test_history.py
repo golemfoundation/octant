@@ -16,7 +16,7 @@ from app.core.history import (
     get_withdrawals,
 )
 from app.crypto.eip712 import sign, build_allocations_eip712_data
-from app.utils.timestamp import from_timestamp_s, now
+from app.utils.time import from_timestamp_s, now
 
 from tests.conftest import (
     create_payload,

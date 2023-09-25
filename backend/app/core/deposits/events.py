@@ -1,12 +1,8 @@
-from collections import defaultdict
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
 from itertools import groupby
 from operator import itemgetter
-from typing import Dict, List
+from typing import Dict, List, Optional
 
-from eth_utils import to_checksum_address
-
-from app.infrastructure import graphql
 from app.infrastructure.graphql.locks import (
     get_locks_by_timestamp_range,
     get_locks_by_address_and_timestamp_range,
@@ -15,124 +11,98 @@ from app.infrastructure.graphql.unlocks import (
     get_unlocks_by_timestamp_range,
     get_unlocks_by_address_and_timestamp_range,
 )
+from app.utils.subgraph_events import create_deposit_event
 
 
-@dataclass(frozen=True)
-class WeightedDeposit:
-    """
-    Class representing a weighted deposit.
+class EventGenerator(ABC):
+    def __init__(self, epoch_start: int, epoch_end: int):
+        self.epoch_start = epoch_start
+        self.epoch_end = epoch_end
 
-    Attributes:
-        amount: The deposit amount.
-        weight: The duration the deposit remained locked.
-    """
+    @abstractmethod
+    def get_user_events(self, user_address: Optional[str]) -> List[Dict]:
+        pass
 
-    amount: int
-    weight: int
-
-    def __iter__(self):
-        yield self.amount
-        yield self.weight
+    @abstractmethod
+    def get_all_users_events(self) -> Dict[str, List[Dict]]:
+        pass
 
 
-def get_all_users_weighted_deposits(epoch_no: int) -> Dict[str, List[WeightedDeposit]]:
-    """
-    Get a list of weighted deposits per user for a given epoch number. The weight of the deposit
-    is calculated based on the time duration it remained locked in a given epoch.
-    """
-    epoch = graphql.epochs.get_epoch_by_number(epoch_no)
-    start, end = int(epoch["fromTs"]), int(epoch["toTs"])
-    events = _get_all_users_events_from_subgraph(start, end)
+class SubgraphEventsGenerator(EventGenerator):
+    def __init__(self, epoch_start: int, epoch_end: int):
+        super().__init__(epoch_start, epoch_end)
 
-    weighted_deposits = defaultdict(list)
+    def get_user_events(self, user_address: Optional[str]) -> List[Dict]:
+        """
+        Get user lock and unlock events from the subgraph within the given timestamp range, sort them by timestamp,
 
-    for user_address, user_events in events.items():
-        weighted_amounts = _calculated_deposit_weights(start, end, user_events)
-        weighted_deposits[to_checksum_address(user_address)] = weighted_amounts
+        Returns:
+            A list of event dictionaries sorted by timestamp.
+        """
+        events = get_locks_by_address_and_timestamp_range(
+            user_address, self.epoch_start, self.epoch_end
+        ) + get_unlocks_by_address_and_timestamp_range(
+            user_address, self.epoch_start, self.epoch_end
+        )
+        return sorted(events, key=itemgetter("timestamp"))
 
-    return weighted_deposits
+    def get_all_users_events(self) -> Dict[str, List[Dict]]:
+        """
+        Get all lock and unlock events from the subgraph within the given timestamp range, sort them by user and timestamp,
+        and group them by user.
 
-
-def get_user_weighted_deposits(
-    start: int, end: int, user_address: str
-) -> List[WeightedDeposit]:
-    """
-    Get a list of weighted deposits per user for a given time range. The weight of the deposit
-    is calculated based on the time duration it remained locked in a given epoch.
-    """
-    user_events = _get_user_events_from_subgraph(start, end, user_address)
-    if len(user_events) == 0:
-        return []
-    return _calculated_deposit_weights(start, end, user_events)
-
-
-def _calculated_deposit_weights(
-    start: int, end: int, user_events: List[Dict]
-) -> List[WeightedDeposit]:
-    weighted_amounts = []
-
-    # Calculate deposit from the epoch start to the first event
-    first_event = user_events[0]
-    amount = int(first_event["depositBefore"])
-    weight = first_event["timestamp"] - start
-    weighted_amounts.append(WeightedDeposit(amount, weight))
-
-    # Calculate deposit between all events
-    for prev_event, next_event in zip(user_events, user_events[1:]):
-        amount = int(next_event["depositBefore"])
-        weight = next_event["timestamp"] - prev_event["timestamp"]
-        weighted_amounts.append(WeightedDeposit(amount, weight))
-
-    # Calculate deposit from the last event to the epoch end
-    last_event = user_events[-1]
-    amount = _calculate_deposit_after_event(last_event)
-    weight = end - last_event["timestamp"]
-    weighted_amounts.append(WeightedDeposit(amount, weight))
-
-    return weighted_amounts
+        Returns:
+            A dictionary where keys are user addresses and values are lists of event dictionaries sorted by timestamp.
+        """
+        events = get_locks_by_timestamp_range(
+            self.epoch_start, self.epoch_end
+        ) + get_unlocks_by_timestamp_range(self.epoch_start, self.epoch_end)
+        sorted_events = sorted(events, key=itemgetter("user", "timestamp"))
+        return {k: list(g) for k, g in groupby(sorted_events, key=itemgetter("user"))}
 
 
-def _get_all_users_events_from_subgraph(start: int, end: int) -> Dict[str, List[Dict]]:
-    """
-    Get all lock and unlock events from the subgraph within the given timestamp range, sort them by user and timestamp,
-    and group them by user.
+class SimulatedEventsGenerator(EventGenerator):
+    def __init__(
+        self,
+        epoch_start: int,
+        epoch_end: int,
+        lock_duration: int,
+        amount: int,
+        epoch_remaining_duration: int,
+    ):
+        super().__init__(epoch_start, epoch_end)
+        self.lock_duration = lock_duration
+        self.amount = amount
+        self.epoch_remaining_duration = epoch_remaining_duration
 
-    Args:
-        start: The start timestamp.
-        end: The end timestamp.
+    def get_user_events(self, user_address: Optional[str]) -> List[Dict]:
+        """
+        Retrieve a simulated lock event for a user based on two potential scenarios:
 
-    Returns:
-        A dictionary where keys are user addresses and values are lists of event dictionaries sorted by timestamp.
-    """
-    events = get_locks_by_timestamp_range(start, end) + get_unlocks_by_timestamp_range(
-        start, end
-    )
-    sorted_events = sorted(events, key=itemgetter("user", "timestamp"))
-    return {k: list(g) for k, g in groupby(sorted_events, key=itemgetter("user"))}
+        1. The user maintains their lock for a portion of the epoch.
+        2. The user retains their lock for the entire remaining duration of the epoch.
+        This could encompass the full duration of the epoch if we're considering a future epoch
+        and the user intends to lock for a duration exceeding that epoch.
+         Alternatively, it could be just a fraction of the epoch if it's the current epoch and
+          the user desires to lock for a longer period.
 
+        Returns:
+            A list containing a single lock event.
+        """
 
-def _get_user_events_from_subgraph(
-    start: int, end: int, user_address: str
-) -> List[Dict]:
-    """
-    Get user lock and unlock events from the subgraph within the given timestamp range, sort them by timestamp,
+        if self.lock_duration < self.epoch_remaining_duration:
+            return [
+                create_deposit_event(
+                    amount=self.amount, timestamp=self.epoch_end - self.lock_duration
+                ),
+            ]
+        else:
+            return [
+                create_deposit_event(
+                    amount=self.amount,
+                    timestamp=self.epoch_end - self.epoch_remaining_duration,
+                ),
+            ]
 
-    Args:
-        user_address: User address.
-        start: The start timestamp.
-        end: The end timestamp.
-
-    Returns:
-        A list of event dictionaries sorted by timestamp.
-    """
-    events = get_locks_by_address_and_timestamp_range(
-        user_address, start, end
-    ) + get_unlocks_by_address_and_timestamp_range(user_address, start, end)
-    return sorted(events, key=itemgetter("timestamp"))
-
-
-def _calculate_deposit_after_event(event: Dict) -> int:
-    if event["__typename"] == "Locked":
-        return int(event["depositBefore"]) + int(event["amount"])
-    else:
-        return int(event["depositBefore"]) - int(event["amount"])
+    def get_all_users_events(self) -> Dict[str, List[Dict]]:
+        raise NotImplementedError()

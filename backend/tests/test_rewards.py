@@ -18,6 +18,7 @@ from app.core.rewards.rewards import (
     calculate_all_individual_rewards,
     get_matched_rewards_from_epoch,
     calculate_matched_rewards_threshold,
+    estimate_epoch_eth_staking_proceeds,
 )
 from .conftest import (
     allocate_user_rewards,
@@ -224,6 +225,17 @@ def test_proposals_rewards(
     assert len(proposals) == 5
     for proposal in proposals:
         assert expected_rewards.get(proposal.address, 0) == proposal.matched
+
+
+@pytest.mark.parametrize(
+    "days, result",
+    [
+        (72, 680_547945205_479374848),
+        (90, 850_684931506_849316864),
+    ],
+)
+def test_estimate_epoch_eth_staking_proceeds(days, result):
+    assert estimate_epoch_eth_staking_proceeds(days) == result
 
 
 def _allocate_random_individual_rewards(user_accounts, proposal_accounts) -> int:

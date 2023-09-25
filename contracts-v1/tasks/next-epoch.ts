@@ -44,7 +44,7 @@ task(
   do {
     // eslint-disable-next-line no-await-in-loop
     req = await axios.get('http://localhost:5000/epochs/indexed');
-  } while ((req.data.indexedEpoch !== undefined) && (req.data.indexedEpoch !== req.data.currentEpoch))
+  } while (req.data.indexedEpoch !== undefined && req.data.indexedEpoch !== req.data.currentEpoch);
   // ! now it is safe to call finalized
   req = await axios.post('http://localhost:5000/snapshots/finalized');
   console.log(`Finalized epoch snapshot creation status: ${req.status}`);
@@ -60,7 +60,7 @@ task(
   do {
     // eslint-disable-next-line no-await-in-loop
     req = await axios.get('http://localhost:5000/epochs/indexed');
-  } while ((req.data.indexedEpoch !== undefined) && (req.data.indexedEpoch !== req.data.currentEpoch))
+  } while (req.data.indexedEpoch !== undefined && req.data.indexedEpoch !== req.data.currentEpoch);
   req = await axios.post('http://localhost:5000/snapshots/pending');
   console.log(`Pending epoch snapshot creation status: ${req.status}`);
 });

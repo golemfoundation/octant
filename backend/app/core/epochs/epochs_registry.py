@@ -14,9 +14,9 @@ class EpochsRegistry:
 
     @classmethod
     def register_epoch_settings(
-        cls, epoch_number: int, rewardsStrategy: RewardsStrategy
+        cls, epoch_number: int, rewards_strategy: RewardsStrategy
     ):
-        cls.rewards_registry[epoch_number] = EpochSettings(rewardsStrategy)
+        cls.rewards_registry[epoch_number] = EpochSettings(rewards_strategy)
 
     @classmethod
     def get_epoch_settings(cls, epoch_number: int) -> EpochSettings:

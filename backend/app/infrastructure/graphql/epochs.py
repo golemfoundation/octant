@@ -11,6 +11,8 @@ query GetEpoch($epochNo: Int!) {
   epoches(where: {epoch: $epochNo}) {
     fromTs
     toTs
+    duration
+    decisionWindow
   }
 }
     """

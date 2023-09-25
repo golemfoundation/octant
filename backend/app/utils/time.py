@@ -43,3 +43,11 @@ def from_datetime(dt: DateTime) -> Timestamp:
 def now() -> Timestamp:
     now = DateTime.utcnow().timestamp()
     return from_timestamp_s(now)
+
+
+def sec_to_days(sec: int) -> int:
+    return int(sec / 86400)
+
+
+def days_to_sec(days: int) -> int:
+    return int(days * 86400)
