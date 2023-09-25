@@ -49,6 +49,21 @@ budget_model = api.model(
     },
 )
 
+estimated_budget_request = ns.model(
+    "EstimatedBudget",
+    {
+        "days": fields.Integer(
+            required=True,
+            description="Number of days when GLM are locked",
+        ),
+        "glm_amount": fields.String(
+            required=True,
+            description="Amount of estimated GLM locked in WEI",
+        ),
+    },
+)
+
+
 epoch_rewards_merkle_tree_leaf_model = api.model(
     "EpochRewardsMerkleTreeLeaf",
     {
@@ -98,6 +113,25 @@ class UserBudget(OctantResource):
         app.logger.debug(f"Getting user {user_address} budget in epoch {epoch}")
         budget = user.get_budget(user_address, epoch)
         app.logger.debug(f"User {user_address} budget in epoch {epoch}: {budget}")
+
+        return {"budget": budget}
+
+
+@ns.route("/estimated_budget")
+@ns.doc(
+    description="Returns estimated rewards budget available when GLM locked by given period of time"
+)
+class EstimatedUserBudget(OctantResource):
+    @ns.expect(estimated_budget_request)
+    @ns.marshal_with(user_budget_model)
+    @ns.response(200, "Budget successfully retrieved")
+    def post(self):
+        days, glm_amount = ns.payload["days"], int(ns.payload["glm_amount"])
+        app.logger.debug(
+            f"Getting user estimated budget for {days} days and {glm_amount} GLM"
+        )
+        budget = user.estimate_budget(days, glm_amount)
+        app.logger.debug(f"Estimated user budget: {budget}")
 
         return {"budget": budget}
 

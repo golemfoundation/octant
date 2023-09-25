@@ -3,7 +3,10 @@ from typing import List, Tuple, Dict
 from app import database
 from app.core.common import UserDeposit
 from app.core.deposits.cut_off import apply_min_value_cutoff
-from app.core.deposits.events import get_all_users_weighted_deposits, WeightedDeposit
+from app.core.deposits.weighted_deposits import (
+    get_all_users_weighted_deposits,
+    WeightedDeposit,
+)
 from app.database.models import Deposit
 
 MINIMUM_DEPOSIT = 0

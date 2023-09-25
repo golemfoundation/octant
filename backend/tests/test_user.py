@@ -1,9 +1,20 @@
 import pytest
 from eth_account import Account
+from freezegun import freeze_time
 
-from app.core.user import get_budget, get_claimed_rewards
+from app import exceptions
+from app.constants import GLM_TOTAL_SUPPLY_WEI
+from app.controllers.user import MAX_DAYS_TO_ESTIMATE_BUDGET
+from app.core.user import get_budget, get_claimed_rewards, estimate_budget
+from app.controllers import user as user_controller
+from tests.conftest import (
+    allocate_user_rewards,
+    MOCKED_PENDING_EPOCH_NO,
+    mock_graphql,
+    create_epoch_event,
+    MOCK_EPOCHS,
+)
 from app.controllers.allocations import get_allocation_nonce
-from tests.conftest import allocate_user_rewards, MOCKED_PENDING_EPOCH_NO
 
 
 @pytest.fixture(autouse=True)
@@ -17,6 +28,74 @@ def test_get_user_budget(user_accounts, mock_pending_epoch_snapshot_db):
     result = get_budget(user_accounts[0].address, MOCKED_PENDING_EPOCH_NO)
 
     assert result == expected_result
+
+
+@pytest.mark.parametrize(
+    "days,amount,expected",
+    [
+        (0, 0, 0),
+        (15, 90, 0),
+        (15, 1000_000000000_000000000, 283561_643835616),
+        (15, 300000_000000000_000000000, 85068493_150684920),
+        (70, 90_000000000_000000000, 0),
+        (70, 1000_000000000_000000000, 1323287_671232876),
+        (70, 300000_000000000_000000000, 396986301_369862962),
+        (150, 90_000000000_000000000, 0),
+        (150, 1000_000000000_000000000, 2094491_433599694),
+        (150, 300000_000000000_000000000, 628347430_079908649),
+        (252, 90_000000000_000000000, 0),
+        (252, 1000_000000000_000000000, 3054736_291856924),
+        (252, 300000_000000000_000000000, 917580306_792237419),
+        (365250, 300000_000000000_000000000, 1035_911909073_915555410),
+    ],
+)
+@freeze_time("2023-08-09 01:48:47")
+def test_estimate_budget(
+    mocker, graphql_client, patch_epochs, patch_glm_and_gnt, days, amount, expected
+):
+    MOCK_EPOCHS.get_current_epoch.return_value = 1
+    epochs = [
+        create_epoch_event(
+            start=1691510400,
+            end=1697731200,
+            duration=6220800,
+            decision_window=1209600,
+            epoch=1,
+        ),
+        create_epoch_event(
+            start=1697731200,
+            end=1703952000,
+            duration=7776000,
+            decision_window=1209600,
+            epoch=2,
+        ),
+        create_epoch_event(
+            start=1703952000,
+            end=1710172800,
+            duration=7776000,
+            decision_window=1209600,
+            epoch=3,
+        ),
+    ]
+    mock_graphql(mocker, epochs_events=epochs)
+
+    result = estimate_budget(days, amount)
+
+    assert result == expected
+
+
+def test_estimate_budget_validates_inputs():
+    with pytest.raises(exceptions.RewardsException):
+        user_controller.estimate_budget(-1, 1000)
+
+    with pytest.raises(exceptions.RewardsException):
+        user_controller.estimate_budget(MAX_DAYS_TO_ESTIMATE_BUDGET + 1, 1000)
+
+    with pytest.raises(exceptions.RewardsException):
+        user_controller.estimate_budget(100, -1)
+
+    with pytest.raises(exceptions.RewardsException):
+        user_controller.estimate_budget(100, GLM_TOTAL_SUPPLY_WEI + 1)
 
 
 @pytest.mark.parametrize(

@@ -139,6 +139,11 @@ class DuplicateConsent(OctantException):
         super().__init__(self.description.format(address), self.code)
 
 
+class RewardsException(OctantException):
+    def __init__(self, description: str, code: int = 500):
+        super().__init__(description, code)
+
+
 class WrongAllocationsNonce(OctantException):
     code = 400
     description = "Attempt to use wrong value of nonce ({} instead of {}) when signing allocations"

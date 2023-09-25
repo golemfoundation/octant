@@ -1,15 +1,12 @@
-import datetime
 from dataclasses import dataclass
 from enum import StrEnum
 from typing import List
 
 from app.database import allocations
-from app.utils.timestamp import (
+from app.utils.time import (
     Timestamp,
     from_datetime,
     from_timestamp_s,
-    from_timestamp_us,
-    now,
 )
 
 from app.infrastructure.graphql import locks, unlocks, withdrawals

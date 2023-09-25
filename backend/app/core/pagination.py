@@ -1,7 +1,7 @@
 import base64
 from typing import List, Tuple, Optional
 
-from app.utils.timestamp import now, from_timestamp_us, Timestamp
+from app.utils.time import now, from_timestamp_us, Timestamp
 
 
 class Cursor:

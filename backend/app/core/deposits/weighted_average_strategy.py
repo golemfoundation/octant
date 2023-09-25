@@ -2,10 +2,11 @@ from typing import List, Tuple
 
 from app.core.common import UserDeposit
 from app.core.deposits.cut_off import apply_weighted_average_cutoff
-from app.core.deposits.events import (
+from app.core.deposits.events import SubgraphEventsGenerator
+from app.core.deposits.weighted_deposits import (
     get_all_users_weighted_deposits,
-    WeightedDeposit,
     get_user_weighted_deposits,
+    WeightedDeposit,
 )
 
 
@@ -45,7 +46,7 @@ def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
     user_deposits = []
 
     for address, deposits in weighted_deposits.items():
-        effective_deposit = _calculate_effective_deposit(deposits)
+        effective_deposit = calculate_effective_deposit(deposits)
         total_ed = total_ed + effective_deposit
         user_deposits.append(
             UserDeposit(address, effective_deposit, deposits[-1].amount)
@@ -55,11 +56,12 @@ def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
 
 
 def get_estimated_effective_deposit(start: int, end: int, user_address: str) -> int:
-    user_deposit_events = get_user_weighted_deposits(start, end, user_address)
-    return _calculate_effective_deposit(user_deposit_events)
+    event_generator = SubgraphEventsGenerator(start, end)
+    user_deposit_events = get_user_weighted_deposits(event_generator, user_address)
+    return calculate_effective_deposit(user_deposit_events)
 
 
-def _calculate_effective_deposit(deposits: List[WeightedDeposit]) -> int:
+def calculate_effective_deposit(deposits: List[WeightedDeposit]) -> int:
     numerator = 0
     denominator = 0
     for amount, weight in deposits:
