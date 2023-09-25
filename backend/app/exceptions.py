@@ -31,6 +31,14 @@ class EpochNotStartedYet(OctantException):
         super().__init__(self.description, self.code)
 
 
+class EpochAllocationPeriodNotStartedYet(OctantException):
+    code = 400
+    description = "Allocation period for epoch {} has not yet started."
+
+    def __init__(self, epoch):
+        super().__init__(self.description.format(epoch), self.code)
+
+
 class EpochNotIndexed(OctantException):
     code = 400
     description = "Epoch {} has not yet been indexed in the Graph."

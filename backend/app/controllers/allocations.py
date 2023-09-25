@@ -1,4 +1,6 @@
 from typing import List, Dict
+from dataclasses import dataclass
+from dataclass_wizard import JSONWizard
 
 from app import database, exceptions
 from app.controllers import rewards
@@ -11,7 +13,15 @@ from app.core.allocations import (
     next_allocation_nonce,
 )
 from app.core.common import AccountFunds
+from app.core.epochs import epoch_snapshots
 from app.extensions import db, epochs
+
+
+@dataclass(frozen=True)
+class EpochAllocationRecord(JSONWizard):
+    donor: str
+    amount: int  # in wei
+    proposal: str
 
 
 def allocate(request: AllocationRequest) -> str:
@@ -72,6 +82,18 @@ def get_all_by_proposal_and_epoch(
         proposal_address, epoch
     )
     return [AccountFunds(a.user.address, a.amount) for a in allocations]
+
+
+def get_all_by_epoch(epoch: int) -> List[EpochAllocationRecord]:
+    if epoch > epoch_snapshots.get_last_pending_snapshot():
+        raise exceptions.EpochAllocationPeriodNotStartedYet(epoch)
+
+    allocations = database.allocations.get_all_by_epoch(epoch)
+
+    return [
+        EpochAllocationRecord(a.user.address, a.amount, a.proposal_address)
+        for a in allocations
+    ]
 
 
 def get_sum_by_epoch(epoch: int | None = None) -> int:

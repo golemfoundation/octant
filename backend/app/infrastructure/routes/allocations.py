@@ -1,6 +1,6 @@
 import dataclasses
 
-from flask import current_app as app
+from flask import current_app as app, request
 from flask_restx import Namespace, fields
 
 from app.controllers import allocations
@@ -84,6 +84,23 @@ proposal_donors_model = api.model(
         "amount": fields.String(
             required=True,
             description="Funds allocated by donor for the proposal in WEI",
+        ),
+    },
+)
+epoch_donations_model = api.model(
+    "EpochDonations",
+    {
+        "donor": fields.String(
+            required=True,
+            description="Donor address",
+        ),
+        "amount": fields.String(
+            required=True,
+            description="Funds allocated by donor for the proposal in WEI",
+        ),
+        "proposal": fields.String(
+            required=True,
+            description="Proposal address",
         ),
     },
 )
@@ -183,6 +200,45 @@ class ProposalDonors(OctantResource):
         app.logger.debug(f"Proposal donors {donors}")
 
         return donors
+
+
+@ns.route("/proposal/epoch/<int:epoch>")
+@ns.doc(
+    description="Returns list of donations in particular epoch",
+    params={
+        "epoch": "Epoch number",
+    },
+)
+class EpochDonations(OctantResource):
+    representations = {
+        "application/json": OctantResource.encode_json_response,
+        "text/csv": OctantResource.encode_csv_response,
+    }
+
+    @ns.produces(["application/json", "text/csv"])
+    @ns.response(200, "Returns list of donations for given epoch")
+    @ns.marshal_with(epoch_donations_model)
+    def get(self, epoch: int):
+        app.logger.debug(f"Getting donations in epoch {epoch}")
+
+        headers = {}
+        data = []
+
+        if EpochDonations.response_mimetype(request) == "text/csv":
+            headers[
+                "Content-Disposition"
+            ] = f"attachment;filename=donations_epoch_{epoch}.csv"
+
+            # for csv header resoultion - in case of empty list,
+            # endpoint marshalling will automatically create expected object with nulled fields
+            data.append({})
+
+        donations = [dataclasses.asdict(w) for w in allocations.get_all_by_epoch(epoch)]
+        data += donations
+
+        app.logger.debug(f"Donations for epoch {epoch}:  {donations}")
+
+        return data, 200, headers
 
 
 allocation_nonce_model = api.model(

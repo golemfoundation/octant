@@ -216,22 +216,43 @@ def mock_allocations_db(app, user_accounts, proposal_accounts):
     user1 = database.user.get_or_add_user(user_accounts[0].address)
     user2 = database.user.get_or_add_user(user_accounts[1].address)
     db.session.commit()
+
     user1_allocations = [
         Allocation(proposal_accounts[0].address, 10 * 10**18),
         Allocation(proposal_accounts[1].address, 5 * 10**18),
         Allocation(proposal_accounts[2].address, 300 * 10**18),
     ]
 
+    user1_allocations_prev_epoch = [
+        Allocation(proposal_accounts[0].address, 101 * 10**18),
+        Allocation(proposal_accounts[1].address, 51 * 10**18),
+        Allocation(proposal_accounts[2].address, 3001 * 10**18),
+    ]
+
     user2_allocations = [
         Allocation(proposal_accounts[1].address, 1050 * 10**18),
         Allocation(proposal_accounts[3].address, 500 * 10**18),
     ]
+
+    user2_allocations_prev_epoch = [
+        Allocation(proposal_accounts[1].address, 10501 * 10**18),
+        Allocation(proposal_accounts[3].address, 5001 * 10**18),
+    ]
+
     database.allocations.add_all(
-        MOCKED_PENDING_EPOCH_NO, user1.id, 0, user1_allocations
+        MOCKED_PENDING_EPOCH_NO - 1, user1.id, 0, user1_allocations_prev_epoch
     )
     database.allocations.add_all(
-        MOCKED_PENDING_EPOCH_NO, user2.id, 0, user2_allocations
+        MOCKED_PENDING_EPOCH_NO - 1, user2.id, 0, user2_allocations_prev_epoch
     )
+
+    database.allocations.add_all(
+        MOCKED_PENDING_EPOCH_NO, user1.id, 1, user1_allocations
+    )
+    database.allocations.add_all(
+        MOCKED_PENDING_EPOCH_NO, user2.id, 1, user2_allocations
+    )
+
     db.session.commit()
 
 
