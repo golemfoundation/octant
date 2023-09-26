@@ -30,6 +30,7 @@ export const QUERY_KEYS: QueryKeys = {
   proposalsCid: ['proposalsCid'],
   proposalsContract: ['proposalsContract'],
   proposalsIpfsResults: proposalAddress => [ROOTS.proposalsIpfsResults, proposalAddress],
+  syncStatus: ['syncStatus'],
   unlocks: ['unlocks'],
   userAllocationNonce: userAddress => ['userAllocationNonce', userAddress],
   userAllocations: ['userAllocations'],
