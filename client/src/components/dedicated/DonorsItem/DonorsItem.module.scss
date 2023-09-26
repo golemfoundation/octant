@@ -4,6 +4,7 @@
   font-size: $font-size-14;
   font-weight: $font-weight-semibold;
   color: $color-octant-grey6;
+  min-height: 3.2rem;
 
   .identicon {
     display: flex;
@@ -14,6 +15,7 @@
     border-radius: $border-radius-10;
     background: $color-white;
     margin-right: 1.5rem;
+    border: 0.1rem solid $color-octant-grey12;
   }
 
   .address {

@@ -70,24 +70,24 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       cy.window().then(window => {
         // @ts-expect-error missing typing for client window elements.
         const currentEpoch = Number(window.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch));
-        cy.get('[data-test=ProposalView__proposal__DonorsList]')
+        cy.get('[data-test=ProposalView__proposal__Donors]')
           .first()
           .scrollIntoView({ offset: { left: 0, top: 100 } });
 
         switch (currentEpoch) {
           case 1:
             return cy
-              .get('[data-test=ProposalView__proposal__DonorsList__donationsNotEnabled]')
+              .get('[data-test=ProposalView__proposal__Donors__donationsNotEnabled]')
               .first()
               .should('be.visible');
           default:
-            cy.get('[data-test=ProposalView__proposal__DonorsList]').first().should('be.visible');
-            cy.get('[data-test=ProposalView__proposal__DonorsList__count]')
+            cy.get('[data-test=ProposalView__proposal__Donors]').first().should('be.visible');
+            cy.get('[data-test=ProposalView__proposal__Donors__DonorsHeader__count]')
               .first()
               .should('be.visible')
               .should('have.text', '0');
             return cy
-              .get('[data-test=ProposalView__proposal__DonorsList__Loader]')
+              .get('[data-test=ProposalView__proposal__Donors__Loader]')
               .first()
               .should('be.visible');
         }
@@ -123,7 +123,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             .eq(i)
             .get('[data-test=ProposalView__proposal__name]')
             .contains(proposalNames[i]);
-          cy.get('[data-test=ProposalView__proposal__DonorsList]')
+          cy.get('[data-test=ProposalView__proposal__Donors]')
             .eq(i)
             .scrollIntoView({ offset: { left: 0, top: 100 } });
         } else {
@@ -139,7 +139,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       cy.get('[data-test^=ProposalsView__ProposalItem]').first().click();
 
       for (let i = 0; i < proposalNames.length - 1; i++) {
-        cy.get('[data-test=ProposalView__proposal__DonorsList]')
+        cy.get('[data-test=ProposalView__proposal__Donors]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: 100 } });
 
@@ -153,7 +153,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       cy.get('[data-test^=ProposalsView__ProposalItem]').first().click();
 
       for (let i = 0; i < proposalNames.length - 1; i++) {
-        cy.get('[data-test=ProposalView__proposal__DonorsList]')
+        cy.get('[data-test=ProposalView__proposal__Donors]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: 100 } });
 
