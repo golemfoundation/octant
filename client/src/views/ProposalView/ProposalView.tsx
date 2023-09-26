@@ -13,7 +13,7 @@ import Loader from 'components/core/Loader/Loader';
 import Svg from 'components/core/Svg/Svg';
 import Tooltip from 'components/core/Tooltip/Tooltip';
 import ButtonAddToAllocate from 'components/dedicated/ButtonAddToAllocate/ButtonAddToAllocate';
-import DonorsList from 'components/dedicated/DonorsList/DonorsList';
+import Donors from 'components/dedicated/Donors/Donors';
 import ProposalRewards from 'components/dedicated/ProposalRewards/ProposalRewards';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import env from 'env';
@@ -291,9 +291,9 @@ const ProposalView = (): ReactElement => {
                     />
                   </div>
                 </div>
-                <DonorsList
+                <Donors
                   className={styles.donors}
-                  dataTest="ProposalView__proposal__DonorsList"
+                  dataTest="ProposalView__proposal__Donors"
                   proposalAddress={address}
                 />
               </Fragment>

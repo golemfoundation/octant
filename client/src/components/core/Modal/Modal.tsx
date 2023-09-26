@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { motion, AnimatePresence } from 'framer-motion';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 
 import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
@@ -54,6 +54,7 @@ const Modal: FC<ModalProps> = ({
   showCloseButton = true,
   isCloseButtonDisabled = false,
   isOverflowOnClickDisabled = false,
+  overflowClassName,
 }) => {
   const { isDesktop } = useMediaQuery();
 
@@ -63,6 +64,15 @@ const Modal: FC<ModalProps> = ({
     }
     onClosePanel();
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      return;
+    }
+
+    document.body.style.overflow = 'scroll';
+  }, [isOpen]);
 
   return (
     <AnimatePresence>
@@ -76,6 +86,7 @@ const Modal: FC<ModalProps> = ({
             styles.overflow,
             isOpen && styles.isOpen,
             isOverflowOnClickDisabled && styles.isOverflowOnClickDisabled,
+            overflowClassName,
           )}
           data-test={`${dataTest}__overflow`}
           exit={{ opacity: 0 }}

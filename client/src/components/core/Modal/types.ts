@@ -17,6 +17,7 @@ export default interface ModalProps {
   onModalClosed?: () => void;
   onTouchMove?: (e: TouchEvent<HTMLDivElement>) => void;
   onTouchStart?: (e: TouchEvent<HTMLDivElement>) => void;
+  overflowClassName?: string;
   showCloseButton?: boolean;
   variant?: 'standard' | 'small';
 }

@@ -101,11 +101,12 @@
         "yourTotal": "Your total",
         "matchFundingEstimate": "Match Funding estimate"
       },
-      "donorsList": {
-        "donors": "Donors",
-        "seeLess": "See less",
+      "donors": {
         "donationsNotEnabled": "Donations are not enabled in this epoch",
         "viewAll": "View all"
+      },
+      "donorsHeader": {
+        "donors": "Donors"
       },
       "glmLock": {
         "lock": "Lock",
