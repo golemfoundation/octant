@@ -9,6 +9,7 @@ import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import ModalWithdrawEth from 'components/dedicated//ModalWithdrawEth/ModalWithdrawEth';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useSyncStatus from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
 import useAllocationsStore from 'store/allocations/store';
@@ -31,6 +32,8 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
     setRewardsForProposals: state.setRewardsForProposals,
   }));
 
+  const { data: syncStatusData } = useSyncStatus();
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
@@ -50,9 +53,11 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
         isFetching: isFetchingIndividualReward || isFetchingUserAllocations,
-        valueCrypto: userAllocations?.hasUserAlreadyDoneAllocation
-          ? BigNumber.from(0)
-          : pendingCrypto,
+        valueCrypto:
+          syncStatusData?.finalizedSnapshot === 'done' ||
+          !userAllocations?.hasUserAlreadyDoneAllocation
+            ? BigNumber.from(0)
+            : pendingCrypto,
       },
       label: t('pending'),
     },

@@ -31,6 +31,7 @@ export type QueryKeys = {
   proposalsCid: ['proposalsCid'];
   proposalsContract: ['proposalsContract'];
   proposalsIpfsResults: (proposalAddress: string) => [Root['proposalsIpfsResults'], string];
+  syncStatus: ['syncStatus'];
   unlocks: ['unlocks'];
   userAllocations: ['userAllocations'];
   userHistoricAllocations: (userAddress: string) => [Root['userHistoricAllocations'], string];
