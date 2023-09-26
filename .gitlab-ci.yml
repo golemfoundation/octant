@@ -33,7 +33,7 @@ default:
     pull_policy: if-not-present
     entrypoint: [""]
   git_improved:
-    name: mikecode/git-gettext:ubuntu
+    name: registry.gitlab.com/wildland/devops/container-builder/gitops-builder:latest
     pull_policy: if-not-present
   synpress:
     name: registry.gitlab.com/wildland/devops/container-builder/octant/synpress-arch:179ba913
