@@ -8,6 +8,7 @@ import Loader from 'components/core/Loader/Loader';
 import Modal from 'components/core/Modal/Modal';
 import ProgressStepperSlim from 'components/core/ProgressStepperSlim/ProgressStepperSlim';
 import Text from 'components/core/Text/Text';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useOnboardingSteps from 'hooks/helpers/useOnboardingSteps';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import useOnboardingStore from 'store/onboarding/store';
@@ -28,6 +29,7 @@ const ModalOnboarding: FC = () => {
     isOnboardingDone: state.data.isOnboardingDone,
     setIsOnboardingDone: state.setIsOnboardingDone,
   }));
+  const { isDesktop } = useMediaQuery();
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const [isUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
 
@@ -61,22 +63,6 @@ const ModalOnboarding: FC = () => {
       return;
     }
     const touchDown = e.touches[0].clientX;
-    const touchStartXDiff = 15;
-
-    const canChangeToNextStep =
-      window.innerWidth - touchDown <= touchStartXDiff &&
-      currentStepIndex !== stepsToUse.length - 1;
-    const canChangeToPrevStep = touchDown <= touchStartXDiff && currentStepIndex > 0;
-
-    if (canChangeToNextStep) {
-      setCurrentStepIndex(currentStepIndex + 1);
-      return;
-    }
-
-    if (canChangeToPrevStep) {
-      setCurrentStepIndex(currentStepIndex - 1);
-      return;
-    }
 
     setTouchStart(touchDown);
   };
@@ -95,14 +81,44 @@ const ModalOnboarding: FC = () => {
     const canChangeToPrevStep = diff <= -touchMoveXDiff && currentStepIndex > 0;
 
     if (canChangeToNextStep) {
-      setCurrentStepIndex(currentStepIndex + 1);
+      setCurrentStepIndex(prev => prev + 1);
     }
 
     if (canChangeToPrevStep) {
-      setCurrentStepIndex(currentStepIndex - 1);
+      setCurrentStepIndex(prev => prev - 1);
     }
 
     setTouchStart(null);
+  };
+
+  const handleModalEdgeClick: React.MouseEventHandler<HTMLDivElement> = e => {
+    if (!isUserTOSAccepted) {
+      return;
+    }
+
+    const offsetParent = (e.target as HTMLDivElement).offsetParent as HTMLElement;
+    const offsetLeftParent = offsetParent.offsetLeft;
+    const onboardingModalWidth = isDesktop
+      ? (e.target as HTMLDivElement).clientWidth!
+      : window.innerWidth;
+    const { clientX } = e;
+
+    const clickDiff = 25;
+
+    const isLeftEdgeClick = clientX - offsetLeftParent <= clickDiff;
+    const isRightEdgeClick =
+      Math.abs(clientX - offsetLeftParent - onboardingModalWidth) <= clickDiff;
+
+    const canChangeToPrevStep = isLeftEdgeClick && currentStepIndex > 0;
+    const canChangeToNextStep = isRightEdgeClick && currentStepIndex !== stepsToUse.length - 1;
+
+    if (canChangeToNextStep) {
+      setCurrentStepIndex(prev => prev + 1);
+    }
+
+    if (canChangeToPrevStep) {
+      setCurrentStepIndex(prev => prev - 1);
+    }
   };
 
   useEffect(() => {
@@ -157,6 +173,7 @@ const ModalOnboarding: FC = () => {
       isCloseButtonDisabled={!isUserTOSAccepted}
       isOpen={isModalOpen}
       isOverflowOnClickDisabled={!isUserTOSAccepted}
+      onClick={handleModalEdgeClick}
       onClosePanel={onOnboardingExit}
       onTouchMove={handleTouchMove}
       onTouchStart={handleTouchStart}

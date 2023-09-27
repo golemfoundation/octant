@@ -1,75 +1,39 @@
 import cx from 'classnames';
-import React, { FC, useState, Fragment } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { FC } from 'react';
 
-import Button from 'components/core/Button/Button';
 import DonorsItem from 'components/dedicated/DonorsItem/DonorsItem';
 import DonorsItemSkeleton from 'components/dedicated/DonorsItem/DonorsItemSkeleton/DonorsItemSkeleton';
-import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import { DONORS_SHORT_LIST_LENGTH } from 'constants/donors';
 import useProposalDonors from 'hooks/queries/useProposalDonors';
 
 import styles from './DonorsList.module.scss';
 import DonorsListProps from './types';
 
-const SHORT_LIST_LENGTH = 5;
-
 const DonorsList: FC<DonorsListProps> = ({
   className,
   dataTest = 'DonorsList',
   proposalAddress,
+  showFullList = false,
 }) => {
-  const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.donorsList' });
-  const [isDonorsListExpanded, setIsDonorsListExpanded] = useState<boolean>(false);
   const { data: proposalDonors, isFetching } = useProposalDonors(proposalAddress);
-  const { data: currentEpoch } = useCurrentEpoch();
-
-  const isEpoch1 = currentEpoch === 1;
 
   return (
     <div className={cx(styles.root, className)} data-test={dataTest}>
-      {isEpoch1 && (
-        <div className={styles.donationsNotEnabled} data-test={`${dataTest}__donationsNotEnabled`}>
-          {t('donationsNotEnabled')}
-        </div>
-      )}
-      {!isEpoch1 && (
-        <Fragment>
-          <div className={styles.header}>
-            <span className={styles.headerLabel}>{t('donors')}</span>{' '}
-            <div className={styles.count} data-test={`${dataTest}__count`}>
-              {isFetching ? '--' : proposalDonors?.length}
-            </div>
-          </div>
-          {isFetching ? (
+      {isFetching
+        ? [...Array(DONORS_SHORT_LIST_LENGTH)].map((_, idx) => (
             // eslint-disable-next-line react/no-array-index-key
-            [...Array(SHORT_LIST_LENGTH)].map((_, idx) => <DonorsItemSkeleton key={idx} />)
-          ) : (
-            <Fragment>
-              {proposalDonors
-                ?.slice(0, isDonorsListExpanded ? proposalDonors.length : SHORT_LIST_LENGTH)
-                ?.map(({ amount, address }) => (
-                  <DonorsItem
-                    key={address}
-                    amount={amount}
-                    className={styles.donorsItem}
-                    donorAddress={address}
-                  />
-                ))}
-              {proposalDonors && proposalDonors.length > SHORT_LIST_LENGTH && (
-                <Button
-                  className={styles.buttonDonors}
-                  label={isDonorsListExpanded ? `- ${t('seeLess')}` : t('viewAll')}
-                  onClick={() => setIsDonorsListExpanded(!isDonorsListExpanded)}
-                  variant="secondary2"
-                />
-              )}
-            </Fragment>
-          )}
-          {(isFetching || (proposalDonors && proposalDonors?.length > 0)) && (
-            <div className={styles.divider} />
-          )}
-        </Fragment>
-      )}
+            <DonorsItemSkeleton key={idx} dataTest={`${dataTest}__DonorsItemSkeleton`} />
+          ))
+        : proposalDonors
+            ?.slice(0, showFullList ? proposalDonors.length : DONORS_SHORT_LIST_LENGTH)
+            ?.map(({ amount, address }) => (
+              <DonorsItem
+                key={address}
+                amount={amount}
+                className={styles.donorsItem}
+                donorAddress={address}
+              />
+            ))}
     </div>
   );
 };

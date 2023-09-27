@@ -54,6 +54,7 @@ const MainLayout: FC<MainLayoutProps> = ({
   const isAllocationRoot = !!useMatch(ROOT_ROUTES.allocation.absolute);
   const isProposalRoot =
     !!useMatch(ROOT_ROUTES.proposal.absolute) ||
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     !!useMatch(ROOT_ROUTES.proposalWithAddress.absolute);
   const isProposalsRoot = !!useMatch(ROOT_ROUTES.proposals.absolute);
 

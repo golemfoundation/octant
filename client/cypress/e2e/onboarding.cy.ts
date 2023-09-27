@@ -71,43 +71,54 @@ const checkChangeStepsWithArrowKeys = (isTOSAccepted: boolean) => {
   });
 };
 
-const checkChangeStepsByTouchingEdgeOfTheScreenUpTo15px = (isTOSAccepted: boolean) => {
+const checkChangeStepsByClickingEdgeOfTheScreenUpTo25px = (isTOSAccepted: boolean) => {
   checkCurrentElement(0, true);
 
-  [
-    { clientX: window.innerWidth - 15, el: 1 },
-    { clientX: window.innerWidth - 10, el: 2 },
-    { clientX: window.innerWidth - 5, el: 3 },
-    { clientX: window.innerWidth, el: 3 },
-    { clientX: 15, el: 2 },
-    { clientX: 10, el: 1 },
-    { clientX: 5, el: 0 },
-    { clientX: 0, el: 0 },
-  ].forEach(({ clientX, el }) => {
-    cy.get('[data-test=ModalOnboarding]').trigger('touchstart', { touches: [{ clientX }] });
-    checkCurrentElement(el, isTOSAccepted || el === 0);
+  cy.get('[data-test=ModalOnboarding]').then(element => {
+    const leftEdgeX = element.offsetParent().offset()?.left as number;
+    const rightEdgeX = (leftEdgeX as number) + element.innerWidth()!;
 
-    if (!isTOSAccepted) {
-      checkCurrentElement(0, true);
-    }
+    [
+      { clientX: rightEdgeX - 25, el: 1 },
+      { clientX: rightEdgeX - 10, el: 2 },
+      { clientX: rightEdgeX - 5, el: 3 },
+      // rightEdgeX === browser right frame
+      { clientX: rightEdgeX - 1, el: 3 },
+      { clientX: leftEdgeX + 25, el: 2 },
+      { clientX: leftEdgeX + 10, el: 1 },
+      { clientX: leftEdgeX + 5, el: 0 },
+      { clientX: leftEdgeX, el: 0 },
+    ].forEach(({ clientX, el }) => {
+      cy.get('[data-test=ModalOnboarding]').click(clientX, element.height()! / 2);
+      checkCurrentElement(el, isTOSAccepted || el === 0);
+
+      if (!isTOSAccepted) {
+        checkCurrentElement(0, true);
+      }
+    });
   });
 };
 
-const checkChangeStepsByTouchingEdgeOfTheScreenMoreThan15px = (isTOSAccepted: boolean) => {
+const checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px = (isTOSAccepted: boolean) => {
   checkCurrentElement(0, true);
 
-  [
-    { clientX: window.innerWidth - 15, el: 1 },
-    { clientX: window.innerWidth - 16, el: 1 },
-    { clientX: 16, el: 1 },
-    { clientX: 15, el: 0 },
-  ].forEach(({ clientX, el }) => {
-    cy.get('[data-test=ModalOnboarding]').trigger('touchstart', { touches: [{ clientX }] });
-    checkCurrentElement(el, isTOSAccepted || el === 0);
+  cy.get('[data-test=ModalOnboarding]').then(element => {
+    const leftEdgeX = element.offsetParent().offset()?.left as number;
+    const rightEdgeX = (leftEdgeX as number) + element.innerWidth()!;
 
-    if (!isTOSAccepted) {
-      checkCurrentElement(0, true);
-    }
+    [
+      { clientX: rightEdgeX - 25, el: 1 },
+      { clientX: rightEdgeX - 26, el: 1 },
+      { clientX: leftEdgeX + 26, el: 1 },
+      { clientX: leftEdgeX + 25, el: 0 },
+    ].forEach(({ clientX, el }) => {
+      cy.get('[data-test=ModalOnboarding]').click(clientX, element.height()! / 2);
+      checkCurrentElement(el, isTOSAccepted || el === 0);
+
+      if (!isTOSAccepted) {
+        checkCurrentElement(0, true);
+      }
+    });
   });
 };
 
@@ -257,12 +268,12 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       checkChangeStepsWithArrowKeys(true);
     });
 
-    it('user can change steps by touching the edge of the screen (up to 15px from each edge)', () => {
-      checkChangeStepsByTouchingEdgeOfTheScreenUpTo15px(true);
+    it('user can change steps by clicking the edge of the screen (up to 25px from each edge)', () => {
+      checkChangeStepsByClickingEdgeOfTheScreenUpTo25px(true);
     });
 
-    it('user cannot change steps by touching the edge of the screen (more than 15px from each edge)', () => {
-      checkChangeStepsByTouchingEdgeOfTheScreenMoreThan15px(true);
+    it('user cannot change steps by clicking the edge of the screen (more than 25px from each edge)', () => {
+      checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px(true);
     });
 
     it('user can change steps by swiping on screen (difference more than or equal 5px)', () => {
@@ -333,12 +344,12 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       checkChangeStepsWithArrowKeys(false);
     });
 
-    it('user cannot change steps by touching the edge of the screen (up to 15px from each edge)', () => {
-      checkChangeStepsByTouchingEdgeOfTheScreenUpTo15px(false);
+    it('user can change steps by clicking the edge of the screen (up to 25px from each edge)', () => {
+      checkChangeStepsByClickingEdgeOfTheScreenUpTo25px(false);
     });
 
-    it('user cannot change steps by touching the edge of the screen (more than 15px from each edge)', () => {
-      checkChangeStepsByTouchingEdgeOfTheScreenMoreThan15px(false);
+    it('user cannot change steps by clicking the edge of the screen (more than 25px from each edge)', () => {
+      checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px(false);
     });
 
     it('user cannot change steps by swiping on screen (difference more than or equal 5px)', () => {

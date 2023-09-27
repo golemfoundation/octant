@@ -1,8 +1,37 @@
 .mainLayoutBody {
+  background: $color-octant-grey7;
+  padding-bottom: 12.8rem;
+
   @media #{$tablet-down} {
     padding-left: 0;
     padding-right: 0;
-    background: $color-white;
+    padding-top: 0;
+    padding-bottom: 9.6rem;
+  }
+}
+
+.backToTopWrapper {
+  position: fixed;
+  bottom: 12.8rem;
+
+  @media #{$desktop-up} {
+    bottom: 16rem;
+  }
+}
+
+.backToTop {
+  cursor: pointer;
+  font-size: $font-size-12;
+  padding: 1rem 0;
+  width: 11.2rem;
+
+  .backToTopIcon {
+    transform: rotate(-90deg);
+    margin-left: 0.4rem;
+
+    path {
+      fill: $color-white;
+    }
   }
 }
 
@@ -29,8 +58,13 @@
   padding-bottom: 4rem;
   background: $color-white;
 
+  &:first-child {
+    padding-top: 10.4rem;
+  }
+
   @media #{$desktop-up} {
     &:first-child {
+      padding-top: 0;
       border-radius: $border-radius-16 $border-radius-16 0 0;
     }
   }
@@ -104,7 +138,7 @@
     font-weight: $font-weight-bold;
 
     @media #{$tablet-down} {
-      font-size: $font-size-16;
+      font-size: $font-size-20;
     }
   }
 }
@@ -121,7 +155,6 @@
   justify-content: flex-start;
   border-bottom: 0.1rem solid $color-octant-grey4;
   padding: 0.5rem 0 6.4rem;
-
 
   @media #{$tablet-down} {
     padding-bottom: 3.4rem;

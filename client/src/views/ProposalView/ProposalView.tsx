@@ -1,4 +1,6 @@
 import cx from 'classnames';
+import { AnimatePresence, motion } from 'framer-motion';
+import throttle from 'lodash/throttle';
 import React, { ReactElement, Fragment, useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
@@ -11,7 +13,7 @@ import Loader from 'components/core/Loader/Loader';
 import Svg from 'components/core/Svg/Svg';
 import Tooltip from 'components/core/Tooltip/Tooltip';
 import ButtonAddToAllocate from 'components/dedicated/ButtonAddToAllocate/ButtonAddToAllocate';
-import DonorsList from 'components/dedicated/DonorsList/DonorsList';
+import Donors from 'components/dedicated/Donors/Donors';
 import ProposalRewards from 'components/dedicated/ProposalRewards/ProposalRewards';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import env from 'env';
@@ -25,7 +27,7 @@ import i18n from 'i18n';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
-import { share } from 'svg/misc';
+import { arrowRight, share } from 'svg/misc';
 import { chevronLeft } from 'svg/navigation';
 import { ExtendedProposal } from 'types/extended-proposal';
 import decodeBase64ToUtf8 from 'utils/decodeBase64ToUtf8';
@@ -36,6 +38,7 @@ import styles from './ProposalView.module.scss';
 const ProposalView = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.proposal' });
   const { ipfsGateway } = env;
+  const [isBackToTopButtonVisible, setIsBackToTopButtonVisible] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadedAddresses, setLoadedAddresses] = useState<string[]>([]);
   const [loadedProposals, setLoadedProposals] = useState<ExtendedProposal[]>([]);
@@ -69,64 +72,7 @@ const ProposalView = (): ReactElement => {
     }
   }, [loadedProposals, proposalsIpfs, setLoadedProposals]);
 
-  useEffect(() => {
-    if (
-      !isLoading ||
-      loadedAddresses.length === 0 ||
-      loadedProposals.length === 0 ||
-      proposalsWithRewards.length === 0
-    ) {
-      return;
-    }
-
-    const initialElement = loadedProposals[0];
-    const currentElement = proposalsWithRewards!.find(
-      ({ address }) => address === loadedAddresses[loadedAddresses.length - 1],
-    );
-    const currentElementIndex = proposalsWithRewards.indexOf(currentElement!);
-    const isFirstProposalLoaded = !!loadedProposals.find(
-      ({ address }) => address === proposalsWithRewards![0].address,
-    );
-
-    if (
-      currentElementIndex < proposalsWithRewards.length - 1 &&
-      loadedProposals.length < proposalsWithRewards.length &&
-      !isFirstProposalLoaded
-    ) {
-      const nextIndex = 0;
-      const nextAddress = proposalsWithRewards[nextIndex].address;
-      setLoadedAddresses(prevLoadedAddresses => [...prevLoadedAddresses, nextAddress]);
-      return;
-    }
-
-    let nextIndex =
-      currentElementIndex < proposalsWithRewards!.length - 1
-        ? currentElementIndex + 1
-        : (proposalsWithRewards!.length % currentElementIndex) - 1;
-    let nextAddress = proposalsWithRewards[nextIndex].address;
-
-    /**
-     * During first iteration we want to skip initialElement.
-     * When user enters project index number 2, next ones are 0, 1, 3, ..., n - 1, n, 0, 1, 2, ...
-     * Triggers when initialElement is not the first one.
-     */
-
-    if (
-      nextAddress !== initialElement.address ||
-      loadedProposals.length >= proposalsWithRewards.length
-    ) {
-      setLoadedAddresses(prevLoadedAddresses => [...prevLoadedAddresses, nextAddress]);
-      return;
-    }
-
-    nextIndex += 1;
-    nextAddress = proposalsWithRewards[nextIndex].address;
-    setLoadedAddresses(prevLoadedAddresses => [...prevLoadedAddresses, nextAddress]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading]);
-
   const onLoadNextProposal = () => {
-    // isLoading prevents onLoadNextProposal from being called infinitely.
     if (
       isLoading ||
       loadedAddresses.length === 0 ||
@@ -136,6 +82,13 @@ const ProposalView = (): ReactElement => {
       return;
     }
 
+    const lastItemIndex = proposalsWithRewards.findIndex(
+      el => el.address === loadedProposals[loadedProposals.length - 1].address,
+    );
+    const nextItemIndex = lastItemIndex === proposalsWithRewards.length - 1 ? 0 : lastItemIndex + 1;
+    const nextAddress = proposalsWithRewards[nextItemIndex].address;
+
+    setLoadedAddresses(prevLoadedAddresses => [...prevLoadedAddresses, nextAddress]);
     setIsLoading(true);
   };
 
@@ -155,27 +108,11 @@ const ProposalView = (): ReactElement => {
     !!currentEpoch && ((currentEpoch > 1 && matchedProposalRewards) || isEpoch1);
   const initialElement = loadedProposals[0] || {};
 
-  if (!initialElement || !areMatchedProposalsReady) {
-    return <MainLayout isLoading navigationTabs={navigationTabs} />;
-  }
-
-  if (!initialElement || (initialElement && initialElement.isLoadingError)) {
-    triggerToast({
-      title: t('loadingProblem'),
-      type: 'warning',
-    });
-    return (
-      <Routes>
-        <Route element={<Navigate to={ROOT_ROUTES.proposals.absolute} />} path="*" />
-      </Routes>
-    );
-  }
-
   const onShareClick = ({ name, address }): boolean | Promise<boolean> => {
     const { origin, pathname } = window.location;
     const url = `${origin}${pathname}#${ROOT_ROUTES.proposal.absolute}/${currentEpoch}/${address}`;
 
-    if (window.navigator.share as any) {
+    if ((window.navigator.share as any) && !window.navigator.userAgent.includes('Macintosh')) {
       window.navigator.share({
         title: i18n.t('meta.fundrasingOnOctant', {
           projectName: name,
@@ -196,6 +133,53 @@ const ProposalView = (): ReactElement => {
     });
   };
 
+  useEffect(() => {
+    if (
+      !loadedProposals.length ||
+      !proposalsWithRewards.length ||
+      loadedProposals.length !== proposalsWithRewards.length
+    ) {
+      return;
+    }
+
+    const target = document.querySelector(
+      `.ProposalView__proposal__Description--${proposalsWithRewards.length - 1}`,
+    ) as HTMLDivElement | undefined;
+
+    if (!target) {
+      return;
+    }
+
+    const listener = throttle(() => {
+      const showBackToTop =
+        window.scrollY + window.innerHeight >= target.offsetTop + target.offsetHeight / 2;
+
+      setIsBackToTopButtonVisible(showBackToTop);
+    }, 100);
+
+    document.addEventListener('scroll', listener);
+
+    return () => {
+      document.removeEventListener('scroll', listener);
+    };
+  }, [loadedProposals.length, proposalsWithRewards.length]);
+
+  if (!initialElement || !areMatchedProposalsReady) {
+    return <MainLayout isLoading navigationTabs={navigationTabs} />;
+  }
+
+  if (!initialElement || (initialElement && initialElement.isLoadingError)) {
+    triggerToast({
+      title: t('loadingProblem'),
+      type: 'warning',
+    });
+    return (
+      <Routes>
+        <Route element={<Navigate to={ROOT_ROUTES.proposals.absolute} />} path="*" />
+      </Routes>
+    );
+  }
+
   return (
     <MainLayout
       classNameBody={styles.mainLayoutBody}
@@ -203,7 +187,7 @@ const ProposalView = (): ReactElement => {
       navigationTabs={navigationTabs}
     >
       <InfiniteScroll
-        hasMore
+        hasMore={loadedProposals?.length !== proposalsWithRewards?.length}
         initialLoad
         loader={
           <div key={-1} className={styles.loaderWrapper}>
@@ -216,6 +200,7 @@ const ProposalView = (): ReactElement => {
       >
         {loadedProposals.map(
           ({ address, description, name, profileImageSmall, website }, index) => {
+            // eslint-disable-next-line react-hooks/rules-of-hooks
             const { onAddRemoveFromAllocate } = useIdsInAllocation({
               allocations: allocations!,
               setAllocations,
@@ -299,15 +284,16 @@ const ProposalView = (): ReactElement => {
                   </div>
                   <div className={styles.body}>
                     <Description
+                      className={`ProposalView__proposal__Description--${index}`}
                       dataTest="ProposalView__proposal__Description"
                       innerHtml={decodeBase64ToUtf8(description!)}
                       variant="big"
                     />
                   </div>
                 </div>
-                <DonorsList
+                <Donors
                   className={styles.donors}
-                  dataTest="ProposalView__proposal__DonorsList"
+                  dataTest="ProposalView__proposal__Donors"
                   proposalAddress={address}
                 />
               </Fragment>
@@ -315,6 +301,29 @@ const ProposalView = (): ReactElement => {
           },
         )}
       </InfiniteScroll>
+      <AnimatePresence>
+        {isBackToTopButtonVisible && (
+          <motion.div
+            animate={{ opacity: 1 }}
+            className={styles.backToTopWrapper}
+            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            transition={{ duration: 0.1 }}
+          >
+            <Button
+              className={styles.backToTop}
+              dataTest="ProposalView__proposal__ButtonBackToTop"
+              onClick={() => {
+                window.scrollTo({ behavior: 'smooth', top: 0 });
+              }}
+              variant="cta"
+            >
+              {t('backToTop')}
+              <Svg classNameSvg={styles.backToTopIcon} img={arrowRight} size={1.2} />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </MainLayout>
   );
 };

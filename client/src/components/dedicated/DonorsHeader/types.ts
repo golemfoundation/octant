@@ -1,6 +1,5 @@
-export default interface DonorsListProps {
+export default interface DonorsHeaderProps {
   className?: string;
   dataTest?: string;
   proposalAddress: string;
-  showFullList?: boolean;
 }
