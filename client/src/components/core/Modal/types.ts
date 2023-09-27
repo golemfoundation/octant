@@ -1,4 +1,4 @@
-import { ReactNode, TouchEvent } from 'react';
+import { ReactNode, TouchEvent, MouseEventHandler } from 'react';
 
 export default interface ModalProps {
   Image?: ReactNode;
@@ -13,6 +13,7 @@ export default interface ModalProps {
   isOpen: boolean;
   isOverflowEnabled?: boolean;
   isOverflowOnClickDisabled?: boolean;
+  onClick?: MouseEventHandler<HTMLDivElement>;
   onClosePanel: () => void;
   onModalClosed?: () => void;
   onTouchMove?: (e: TouchEvent<HTMLDivElement>) => void;

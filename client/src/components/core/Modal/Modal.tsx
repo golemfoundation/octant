@@ -51,6 +51,7 @@ const Modal: FC<ModalProps> = ({
   onModalClosed,
   onTouchMove,
   onTouchStart,
+  onClick,
   showCloseButton = true,
   isCloseButtonDisabled = false,
   isOverflowOnClickDisabled = false,
@@ -108,6 +109,7 @@ const Modal: FC<ModalProps> = ({
             }
             onModalClosed();
           }}
+          onClick={onClick}
           onTouchMove={onTouchMove}
           onTouchStart={onTouchStart}
           transition={{ duration: 0.1, ease: 'easeOut' }}
