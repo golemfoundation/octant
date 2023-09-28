@@ -118,7 +118,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
 
       for (let i = 0; i <= proposalNames.length; i++) {
         if (i < proposalNames.length) {
-          cy.get('[data-test=ProposalView__proposal]').eq(i).scrollIntoView();
+          cy.get('[data-test=ProposalView__proposal]')
+            .eq(i)
+            .scrollIntoView({ offset: { left: 0, top: -100 } });
           cy.get('[data-test=ProposalView__proposal]')
             .eq(i)
             .get('[data-test=ProposalView__proposal__name]')
