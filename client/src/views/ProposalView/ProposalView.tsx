@@ -72,6 +72,25 @@ const ProposalView = (): ReactElement => {
     }
   }, [loadedProposals, proposalsIpfs, setLoadedProposals]);
 
+  useEffect(() => {
+    if (!isLoading) {
+      return;
+    }
+
+    const lastItemIndex = proposalsWithRewards.findIndex(
+      el => el.address === loadedProposals[loadedProposals.length - 1].address,
+    );
+    const nextItemIndex = lastItemIndex === proposalsWithRewards.length - 1 ? 0 : lastItemIndex + 1;
+    const nextAddress = proposalsWithRewards[nextItemIndex].address;
+
+    if (!loadedAddresses.includes(nextAddress)) {
+      setLoadedAddresses(prevLoadedAddresses => [...prevLoadedAddresses, nextAddress]);
+    }
+
+    setIsLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]);
+
   const onLoadNextProposal = () => {
     if (
       isLoading ||
@@ -82,13 +101,6 @@ const ProposalView = (): ReactElement => {
       return;
     }
 
-    const lastItemIndex = proposalsWithRewards.findIndex(
-      el => el.address === loadedProposals[loadedProposals.length - 1].address,
-    );
-    const nextItemIndex = lastItemIndex === proposalsWithRewards.length - 1 ? 0 : lastItemIndex + 1;
-    const nextAddress = proposalsWithRewards[nextItemIndex].address;
-
-    setLoadedAddresses(prevLoadedAddresses => [...prevLoadedAddresses, nextAddress]);
     setIsLoading(true);
   };
 

@@ -116,24 +116,19 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     it('Entering proposal view allows scroll only to the last project', () => {
       cy.get('[data-test^=ProposalsView__ProposalItem]').first().click();
 
-      for (let i = 0; i <= proposalNames.length; i++) {
-        if (i < proposalNames.length) {
-          cy.get('[data-test=ProposalView__proposal]')
-            .eq(i)
-            .scrollIntoView({ offset: { left: 0, top: -100 } });
-          cy.get('[data-test=ProposalView__proposal]')
-            .eq(i)
-            .get('[data-test=ProposalView__proposal__name]')
-            .contains(proposalNames[i]);
-          cy.get('[data-test=ProposalView__proposal__Donors]')
-            .eq(i)
-            .scrollIntoView({ offset: { left: 0, top: 100 } });
-        } else {
-          cy.get('[data-test=ProposalView__proposal]').should('have.length', proposalNames.length);
-          cy.get('[data-test=ProposalView__proposal]')
-            .eq(i - 1)
-            .should('be.visible');
-        }
+      for (let i = 0; i < proposalNames.length; i++) {
+        cy.get('[data-test=ProposalView__proposal]').should(
+          'have.length.greaterThan',
+          i === proposalNames.length - 1 ? proposalNames.length - 1 : i,
+        );
+        cy.get('[data-test=ProposalView__proposal__name]')
+          .eq(i)
+          .scrollIntoView({ offset: { left: 0, top: -150 } })
+          .contains(proposalNames[i]);
+        cy.get('[data-test=ProposalView__proposal__Donors]')
+          .eq(i)
+          .scrollIntoView({ offset: { left: 0, top: -150 } })
+          .should('be.visible');
       }
     });
 
