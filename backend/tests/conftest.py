@@ -121,7 +121,7 @@ def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.controllers.rewards.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.controllers.epochs.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.proposals.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.core.user.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.core.user.budget.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.epochs.details.epochs", MOCK_EPOCHS)
 
     MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO

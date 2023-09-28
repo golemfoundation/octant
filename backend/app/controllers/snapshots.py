@@ -5,7 +5,7 @@ from dataclass_wizard import JSONWizard
 from flask import current_app as app
 
 from app import exceptions, database
-from app.core import glm, user as user_core, merkle_tree
+from app.core import glm, merkle_tree
 from app.core.deposits.deposits import get_users_deposits, calculate_locked_ratio
 from app.core.epochs.epoch_snapshots import (
     has_pending_epoch_snapshot,
@@ -22,6 +22,7 @@ from app.core.rewards.rewards import (
     calculate_total_rewards,
     calculate_all_individual_rewards,
 )
+from app.core.user import rewards as user_core_rewards
 from app.database import pending_epoch_snapshot, finalized_epoch_snapshot
 from app.extensions import db, w3, epochs
 
@@ -114,7 +115,9 @@ def snapshot_finalized_epoch() -> Optional[int]:
     proposal_rewards, proposal_rewards_sum = get_proposal_rewards_above_threshold(
         finalized_epoch
     )
-    user_rewards, user_rewards_sum = user_core.get_claimed_rewards(finalized_epoch)
+    user_rewards, user_rewards_sum = user_core_rewards.get_claimed_rewards(
+        finalized_epoch
+    )
     all_rewards = user_rewards + proposal_rewards
 
     if len(all_rewards) > 0:

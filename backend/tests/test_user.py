@@ -5,7 +5,8 @@ from freezegun import freeze_time
 from app import exceptions
 from app.constants import GLM_TOTAL_SUPPLY_WEI
 from app.controllers.user import MAX_DAYS_TO_ESTIMATE_BUDGET
-from app.core.user import get_budget, get_claimed_rewards, estimate_budget
+from app.core.user.budget import get_budget, estimate_budget
+from app.core.user.rewards import get_claimed_rewards
 from app.controllers import user as user_controller
 from tests.conftest import (
     allocate_user_rewards,

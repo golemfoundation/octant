@@ -1,9 +1,10 @@
 from app.constants import GLM_TOTAL_SUPPLY_WEI
-from app.core import user
-from app.core.user import (
+from app.core.user import budget
+from app.core.user.tos import (
     has_user_agreed_to_terms_of_service,
     add_user_terms_of_service_consent,
 )
+
 from app.exceptions import RewardsException
 
 from app.extensions import db
@@ -33,4 +34,4 @@ def estimate_budget(days: int, glm_amount: int) -> int:
             f"Glm amount must be between 0 and {GLM_TOTAL_SUPPLY_WEI}", 400
         )
 
-    return user.estimate_budget(days, glm_amount)
+    return budget.estimate_budget(days, glm_amount)
