@@ -83,6 +83,15 @@ const ProposalView = (): ReactElement => {
     const nextItemIndex = lastItemIndex === proposalsWithRewards.length - 1 ? 0 : lastItemIndex + 1;
     const nextAddress = proposalsWithRewards[nextItemIndex].address;
 
+    /**
+     * While in CY, onLoadNextProposal is sometimes called twice in a row for the same proposal.
+     *
+     * The reason for it is unknown, but without below check the same proposal can be loaded twice.
+     * This results in random failure of the CY tests for project view.
+     *
+     * During "normal" usage problem could not be reproduced,
+     * yet might be possible, so better avoid that.
+     */
     if (!loadedAddresses.includes(nextAddress)) {
       setLoadedAddresses(prevLoadedAddresses => [...prevLoadedAddresses, nextAddress]);
     }
