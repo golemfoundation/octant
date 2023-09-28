@@ -55,7 +55,7 @@ const AllocationView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { data: userNonce } = useUserAllocationNonce();
+  const { data: userNonce, isFetching: isFetchingUserNonce } = useUserAllocationNonce();
   const { refetch: refetchMatchedProposalRewards } = useMatchedProposalRewards();
   const { allocations, rewardsForProposals, setAllocations } = useAllocationsStore(state => ({
     allocations: state.data.allocations,
@@ -159,7 +159,7 @@ const AllocationView = (): ReactElement => {
   };
 
   const isLoading =
-    userNonce === undefined ||
+    (!isConnected && isFetchingUserNonce) ||
     allocationValues === undefined ||
     (isConnected && isFetchingUserAllocation);
   const areButtonsDisabled =
