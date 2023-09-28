@@ -13,6 +13,7 @@ import AllocationSummaryProject from 'components/dedicated/AllocationSummaryProj
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useAllocateSimulate from 'hooks/mutations/useAllocateSimulate';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import useAllocationsStore from 'store/allocations/store';
 import { chevronBottom } from 'svg/misc';
 
@@ -30,6 +31,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
   });
   const { isDesktop } = useMediaQuery();
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
+  const { data: userNonce, isLoading: isLoadingUserNonce } = useUserAllocationNonce();
   const [areDonationsVisible, setAreDonationsVisible] = useState(isDesktop);
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
@@ -44,12 +46,15 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
     data: allocateSimulate,
     mutateAsync,
     isLoading: isLoadingAllocateSimulate,
-  } = useAllocateSimulate();
+  } = useAllocateSimulate(userNonce!);
 
   useEffect(() => {
+    if (!userNonce) {
+      return;
+    }
     mutateAsync(allocationValues);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userNonce]);
 
   if (!personalAllocation?.isZero()) {
     sections.push({
@@ -105,7 +110,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
       {
         doubleValueProps: {
           cryptoCurrency: 'ethereum',
-          isFetching: isLoadingAllocateSimulate,
+          isFetching: isLoadingAllocateSimulate || isLoadingUserNonce,
           valueCrypto: allocateSimulate?.rewards.reduce(
             (acc, curr) => acc.add(curr.matched),
             BigNumber.from(0),

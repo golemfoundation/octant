@@ -20,6 +20,7 @@ import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
+import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useAllocationsStore from 'store/allocations/store';
@@ -54,6 +55,7 @@ const AllocationView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const { data: userNonce } = useUserAllocationNonce();
   const { refetch: refetchMatchedProposalRewards } = useMatchedProposalRewards();
   const { allocations, rewardsForProposals, setAllocations } = useAllocationsStore(state => ({
     allocations: state.data.allocations,
@@ -62,6 +64,7 @@ const AllocationView = (): ReactElement => {
   }));
 
   const allocateEvent = useAllocate({
+    nonce: userNonce!,
     onSuccess: async () => {
       setCurrentView('edit');
       setSelectedItemAddress(null);
@@ -116,6 +119,9 @@ const AllocationView = (): ReactElement => {
   }, [currentEpoch, allocations, userAllocations?.elements.length, rewardsForProposals]);
 
   const onAllocate = () => {
+    if (!userNonce) {
+      return;
+    }
     allocateEvent.emit(allocationValues);
   };
 
@@ -152,7 +158,10 @@ const AllocationView = (): ReactElement => {
     setAllocationValues(newAllocationValues);
   };
 
-  const isLoading = allocationValues === undefined || (isConnected && isFetchingUserAllocation);
+  const isLoading =
+    userNonce === undefined ||
+    allocationValues === undefined ||
+    (isConnected && isFetchingUserAllocation);
   const areButtonsDisabled =
     isLoading || !isConnected || !isDecisionWindowOpen || !!individualReward?.isZero();
   const areAllocationsAvailableOrAlreadyDone =

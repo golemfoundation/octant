@@ -2,7 +2,6 @@ import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/re
 import { useAccount } from 'wagmi';
 
 import { apiPostAllocateSimulate } from 'api/calls/allocate';
-import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import { getAllocationsMapped } from 'hooks/utils/utils';
 import { AllocationValues } from 'views/AllocationView/types';
 
@@ -15,22 +14,20 @@ type Response = {
 };
 
 export default function useAllocateSimulate(
+  nonce: number,
   options?: UseMutationOptions<any, unknown, AllocationValues>,
 ): UseMutationResult<Response, unknown, AllocationValues> {
   const { address: userAddress } = useAccount();
 
   return useMutation({
     mutationFn: async allocations =>
-      useUserAllocationNonce({
-        onSuccess: data =>
-          apiPostAllocateSimulate(
-            {
-              allocations: getAllocationsMapped(allocations),
-              nonce: data,
-            },
-            userAddress as string,
-          ),
-      }),
+      apiPostAllocateSimulate(
+        {
+          allocations: getAllocationsMapped(allocations),
+          nonce,
+        },
+        userAddress as string,
+      ),
     ...options,
   });
 }
