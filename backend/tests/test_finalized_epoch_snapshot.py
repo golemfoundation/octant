@@ -5,7 +5,7 @@ from app.controllers.snapshots import (
     finalized_snapshot_status,
     snapshot_finalized_epoch,
 )
-from app.core.user import get_claimed_rewards
+from app.core.user.rewards import get_claimed_rewards
 from tests.conftest import (
     allocate_user_rewards,
     TOTAL_REWARDS,
