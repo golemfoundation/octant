@@ -99,7 +99,7 @@ const ModalOnboarding: FC = () => {
     const offsetParent = (e.target as HTMLDivElement).offsetParent as HTMLElement;
     const offsetLeftParent = offsetParent.offsetLeft;
     const onboardingModalWidth = isDesktop
-      ? (e.target as HTMLDivElement).clientWidth!
+      ? (e.target as HTMLDivElement).offsetParent!.clientWidth!
       : window.innerWidth;
     const { clientX } = e;
 
