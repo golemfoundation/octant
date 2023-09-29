@@ -22,6 +22,16 @@ class HistoryEntry(JSONWizard):
     timestamp: int  # Should be in microseconds precision
 
 
+@dataclass(frozen=True)
+class TransactionHistoryEntry(HistoryEntry):
+    transaction_hash: str
+
+
+@dataclass(frozen=True)
+class AllocationHistoryEntry(HistoryEntry):
+    project_address: str
+
+
 def user_history(
     user_address: str, cursor: str = None, limit: int = 20
 ) -> Tuple[List[HistoryEntry], Optional[str]]:
@@ -37,18 +47,27 @@ def user_history(
 def _collect_history_records(
     user_address, from_timestamp, query_limit
 ) -> List[HistoryEntry]:
-    events = []
+    events = [
+        AllocationHistoryEntry(
+            type=OpType.ALLOCATION,
+            amount=e.amount,
+            timestamp=e.timestamp.timestamp_us(),
+            project_address=e.project_address,
+        )
+        for e in history.get_allocations(user_address, from_timestamp, query_limit)
+    ]
+
     for event_getter, event_type in [
-        (history.get_allocations, OpType.ALLOCATION),
         (history.get_locks, OpType.LOCK),
         (history.get_unlocks, OpType.UNLOCK),
         (history.get_withdrawals, OpType.WITHDRAWAL),
     ]:
         events += [
-            HistoryEntry(
+            TransactionHistoryEntry(
                 type=event_type,
                 amount=e.amount,
                 timestamp=e.timestamp.timestamp_us(),
+                transaction_hash=e.transaction_hash,
             )
             for e in event_getter(user_address, from_timestamp, query_limit)
         ]

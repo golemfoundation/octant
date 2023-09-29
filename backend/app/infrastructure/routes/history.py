@@ -23,6 +23,14 @@ history_item = api.model(
             required=True,
             description="Timestamp in microseconds when the action occurred (since Unix epoch)",
         ),
+        "transactionHash": fields.String(
+            required=False,
+            description="Hash of the transaction corresponding to the history item. Field available for locks, unlocks and withdrawals.",
+        ),
+        "projectAddress": fields.String(
+            required=False,
+            description="Allocation project address. Field available only for allocation items.",
+        ),
     },
 )
 
@@ -58,12 +66,12 @@ class History(OctantResource):
         user_history, next_cursor = history.user_history(
             user_address, page_cursor, page_limit
         )
+
         app.logger.debug(f"User: {user_address} history: {user_history}")
 
-        response = (
-            {"history": user_history, "next_cursor": next_cursor}
-            if next_cursor is not None
-            else {"history": user_history}
-        )
+        response = {
+            "history": [r.to_dict() for r in user_history],
+            "next_cursor": next_cursor,
+        }
 
         return response

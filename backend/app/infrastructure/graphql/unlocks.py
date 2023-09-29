@@ -15,6 +15,7 @@ def get_user_unlocks_history(user_address: str, from_timestamp: int, limit: int)
             __typename
             amount
             timestamp
+            transactionHash
           }
         }
     """
@@ -61,6 +62,7 @@ def get_unlocks_by_timestamp_range(from_ts, to_ts):
             amount
             timestamp
             user
+            transactionHash
           }
         }
         """
@@ -97,6 +99,7 @@ def get_unlocks_by_address_and_timestamp_range(
             amount
             timestamp
             user
+            transactionHash
           }
         }
         """
