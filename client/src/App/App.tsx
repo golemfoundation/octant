@@ -1,10 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
+import isEqual from 'lodash/isEqual';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { useAccount, useNetwork, useWaitForTransaction } from 'wagmi';
 
 import 'react-toastify/dist/ReactToastify.css';
 
+import { Response as ResponseSyncStatus } from 'api/calls/syncStatus';
 import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
 import { ALLOCATION_ITEMS_KEY, ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
@@ -17,6 +19,7 @@ import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
+import useSyncStatus from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import useBlockNumber from 'hooks/subgraph/useBlockNumber';
@@ -124,14 +127,19 @@ const App = (): ReactElement => {
         setTransactionHashesToWaitFor([response.transactionReceipt.transactionHash] as string[]),
     });
 
-  const [isAccountChanging, setIsAccountChanging] = useState(false);
+  const [isFlushRequired, setIsFlushRequired] = useState(false);
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
-  const [currentAddressLocal, setCurrentAddressLocal] = useState<null | string>(null);
+  const [currentAddressLocal, setCurrentAddressLocal] = useState<string | null>(null);
   const [currentEpochLocal, setCurrentEpochLocal] = useState<number | null>(null);
   const [isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal] = useState<boolean | null>(null);
+  const [syncStatusLocal, setSyncStatusLocal] = useState<ResponseSyncStatus | null>(null);
   const [chainIdLocal, setChainIdLocal] = useState<number | null>(null);
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const { isFetching: isFetchingUserTOS } = useUserTOS();
+  const isSyncingInProgress = syncStatusLocal?.pendingSnapshot === 'in_progress';
+  const { data: syncStatus } = useSyncStatus({
+    refetchInterval: isSyncingInProgress ? 5000 : false,
+  });
 
   useEffect(() => {
     if (chainIdLocal && chainIdLocal !== networkConfig.id) {
@@ -152,6 +160,12 @@ const App = (): ReactElement => {
     setValuesFromLocalStorageTips();
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (syncStatus && !isEqual(syncStatus, syncStatusLocal)) {
+      setSyncStatusLocal(syncStatus);
+    }
+  }, [syncStatus, syncStatusLocal, setSyncStatusLocal]);
 
   useEffect(() => {
     if (chain && chain.id && chain.id !== chainIdLocal) {
@@ -232,49 +246,54 @@ const App = (): ReactElement => {
   ]);
 
   useEffect(() => {
-    const doesChainIdRequireFlush = chain && chain.id && chain.id !== chainIdLocal;
-    const doesIsConnectedRequireFlush = !isConnected && isConnectedLocal;
     const doesAddressRequireFlush =
       !!address && !!currentAddressLocal && address !== currentAddressLocal;
+    const doesChainIdRequireFlush = chain && chain.id && chain.id !== chainIdLocal;
     const doesCurrentEpochRequireFlush =
       !!currentEpoch && !!currentEpochLocal && currentEpoch !== currentEpochLocal;
+    const doesIsConnectedRequireFlush = !isConnected && isConnectedLocal;
     const doesIsDecisionWindowOpenRequireFlush =
       !!isDecisionWindowOpen &&
       !!isDecisionWindowOpenLocal &&
       isDecisionWindowOpen !== isDecisionWindowOpenLocal;
+    const doesSyncStatusRequireFlush =
+      !!syncStatus && !!syncStatusLocal && !isEqual(syncStatus, syncStatusLocal);
     if (
-      doesChainIdRequireFlush ||
-      doesIsConnectedRequireFlush ||
       doesAddressRequireFlush ||
+      doesChainIdRequireFlush ||
       doesCurrentEpochRequireFlush ||
-      doesIsDecisionWindowOpenRequireFlush
+      doesIsConnectedRequireFlush ||
+      doesIsDecisionWindowOpenRequireFlush ||
+      doesSyncStatusRequireFlush
     ) {
-      setIsAccountChanging(true);
+      setIsFlushRequired(true);
     }
   }, [
-    isConnected,
-    isConnectedLocal,
     address,
     chain,
     chainIdLocal,
     currentAddressLocal,
     currentEpoch,
     currentEpochLocal,
+    isConnected,
+    isConnectedLocal,
     isDecisionWindowOpen,
     isDecisionWindowOpenLocal,
     queryClient,
+    syncStatus,
+    syncStatusLocal,
   ]);
 
   useEffect(() => {
     (() => {
-      if (isAccountChanging) {
+      if (isFlushRequired) {
         queryClient.clear();
         queryClient.refetchQueries().then(() => {
-          setIsAccountChanging(false);
+          setIsFlushRequired(false);
         });
       }
     })();
-  }, [isAccountChanging, setIsAccountChanging, queryClient]);
+  }, [isFlushRequired, setIsFlushRequired, queryClient]);
 
   useEffect(() => {
     /**
@@ -364,7 +383,7 @@ const App = (): ReactElement => {
     (!isPreLaunch && !isAllocationsInitialized) ||
     !isOnboardingInitialized ||
     !isSettingsInitialized ||
-    isAccountChanging ||
+    isFlushRequired ||
     !isTipsStoreInitialized ||
     isFetchingUserTOS;
 
@@ -374,8 +393,8 @@ const App = (): ReactElement => {
 
   return (
     <>
-      <RootRoutes />
-      <ModalOnboarding />
+      <RootRoutes isSyncingInProgress={isSyncingInProgress} />
+      {!isSyncingInProgress && <ModalOnboarding />}
     </>
   );
 };
