@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import InfiniteScroll from 'react-infinite-scroller';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import HistoryItemSkeleton from 'components/dedicated/History//HistoryItemSkeleton/HistoryItemSkeleton';
@@ -20,13 +21,15 @@ const History: FC<HistoryProps> = ({ className }) => {
   }));
 
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: history, isFetching: isFetchingHistory } = useHistory();
 
-  const isListAvailable = history !== undefined;
+  const { fetchNextPage, history, hasNextPage, isFetching } = useHistory();
+
+  const onLoadNextHistoryPart = () => {
+    fetchNextPage();
+  };
+
   const isPreLaunch = getIsPreLaunch(currentEpoch);
-  const showLoader =
-    isAppWaitingForTransactionToBeIndexed ||
-    (!isListAvailable && isFetchingHistory && !isPreLaunch);
+  const showLoader = isAppWaitingForTransactionToBeIndexed || (isFetching && !isPreLaunch);
 
   return (
     <BoxRounded
@@ -38,7 +41,19 @@ const History: FC<HistoryProps> = ({ className }) => {
       isVertical
       title={i18n.t('common.history')}
     >
-      {showLoader ? <HistoryItemSkeleton /> : <HistoryList history={history} />}
+      {showLoader ? (
+        <HistoryItemSkeleton />
+      ) : (
+        <InfiniteScroll
+          hasMore={hasNextPage}
+          initialLoad
+          loader={<HistoryItemSkeleton key="history-loader" />}
+          loadMore={onLoadNextHistoryPart}
+          pageStart={0}
+        >
+          <HistoryList history={history} />
+        </InfiniteScroll>
+      )}
     </BoxRounded>
   );
 };
