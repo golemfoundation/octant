@@ -5,11 +5,11 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import { getValuesToDisplay } from 'components/core/DoubleValue/utils';
 import Svg from 'components/core/Svg/Svg';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
+import { HistoryItemProps } from 'hooks/queries/useHistory';
 import useSettingsStore from 'store/settings/store';
 import { allocate, donation } from 'svg/history';
 
 import styles from './HistoryItem.module.scss';
-import HistoryItemProps from './types';
 
 const HistoryItem: FC<HistoryItemProps> = ({ type, amount, projectsNumber }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.historyItem' });
