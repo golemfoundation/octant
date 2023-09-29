@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 import React, { ReactElement, useEffect, useState } from 'react';
-import { useAccount, useNetwork, useWaitForTransaction } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -9,22 +9,17 @@ import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
 import { ALLOCATION_ITEMS_KEY, ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
+import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
-import useDepositValue from 'hooks/queries/useDepositValue';
-import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useUserTOS from 'hooks/queries/useUserTOS';
-import useBlockNumber from 'hooks/subgraph/useBlockNumber';
-import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import localStorageService from 'services/localStorageService';
 import useAllocationsStore from 'store/allocations/store';
-import useMetaStore, { initialState as metaInitialState } from 'store/meta/store';
 import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
 import useTipsStore from 'store/tips/store';
@@ -36,6 +31,7 @@ import 'styles/index.scss';
 import 'i18n';
 
 const App = (): ReactElement => {
+  useManageTransactionsPending();
   const { chain } = useNetwork();
   const {
     allocations,
@@ -79,17 +75,6 @@ const App = (): ReactElement => {
     isInitialized: meta.isInitialized,
     setValuesFromLocalStorage,
   }));
-  const {
-    blockNumberWithLatestTx,
-    setBlockNumberWithLatestTx,
-    transactionHashesToWaitFor,
-    setTransactionHashesToWaitFor,
-  } = useMetaStore(state => ({
-    blockNumberWithLatestTx: state.data.blockNumberWithLatestTx,
-    setBlockNumberWithLatestTx: state.setBlockNumberWithLatestTx,
-    setTransactionHashesToWaitFor: state.setTransactionHashesToWaitFor,
-    transactionHashesToWaitFor: state.data.transactionHashesToWaitFor,
-  }));
   const queryClient = useQueryClient();
   const { address, isConnected } = useAccount();
   useCryptoValues(displayCurrency, {
@@ -108,21 +93,6 @@ const App = (): ReactElement => {
   const { data: proposals } = useProposalsContract();
   const { data: userAllocations } = useUserAllocations();
   const { data: individualReward } = useIndividualReward();
-  const { data: blockNumber } = useBlockNumber(
-    blockNumberWithLatestTx !== metaInitialState.blockNumberWithLatestTx,
-  );
-  const { refetch: refetchDepositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
-  const { refetch: refetchHistory } = useHistory();
-  const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
-  const { refetch: refetchDeposit } = useDepositValue();
-  const { data: transactionReceipt, isLoading: isLoadingTransactionReceipt } =
-    useWaitForTransaction({
-      hash: transactionHashesToWaitFor
-        ? (transactionHashesToWaitFor[0] as `0x${string}`)
-        : undefined,
-      onReplaced: response =>
-        setTransactionHashesToWaitFor([response.transactionReceipt.transactionHash] as string[]),
-    });
 
   const [isAccountChanging, setIsAccountChanging] = useState(false);
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
@@ -182,54 +152,6 @@ const App = (): ReactElement => {
       setIsDecisionWindowOpenLocal(isDecisionWindowOpen);
     }
   }, [isDecisionWindowOpen, isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal]);
-
-  useEffect(() => {
-    if (transactionReceipt && !isLoadingTransactionReceipt) {
-      // Setting blockNumberWithLatestTx triggers refetch logic in other hook.
-      setBlockNumberWithLatestTx(Number(transactionReceipt.blockNumber));
-      setTransactionHashesToWaitFor(metaInitialState.transactionHashesToWaitFor);
-    }
-  }, [
-    transactionReceipt,
-    isLoadingTransactionReceipt,
-    setBlockNumberWithLatestTx,
-    setTransactionHashesToWaitFor,
-  ]);
-
-  useEffect(() => {
-    /**
-     * Locking and unlocking GLMs require updating history and effective deposit.
-     * Both these values are coming from backend, which takes them from subgraph (history - always, effective deposit only during epoch 1).
-     *
-     * The problem is that value in subgraph (and consequently in the backend)
-     * is updated only after block is indexed in the subgraph.
-     *
-     * So, after lock / unlock is done, blockNumberWithLatestTx is set to the value from transaction,
-     * polling starts in useBlockNumber hook and after the number
-     * of block changes, refetchHistory and refetchDepositEffectiveAtCurrentEpoch
-     * is triggered and blockNumberWithLatestTx to null.
-     */
-    if (blockNumber && blockNumberWithLatestTx && blockNumber > blockNumberWithLatestTx) {
-      refetchHistory();
-      refetchLockedSummaryLatest();
-      refetchDeposit();
-
-      if (currentEpoch === 1) {
-        refetchDepositEffectiveAtCurrentEpoch();
-      }
-
-      setBlockNumberWithLatestTx(metaInitialState.blockNumberWithLatestTx);
-    }
-  }, [
-    currentEpoch,
-    blockNumber,
-    setBlockNumberWithLatestTx,
-    blockNumberWithLatestTx,
-    refetchDeposit,
-    refetchHistory,
-    refetchDepositEffectiveAtCurrentEpoch,
-    refetchLockedSummaryLatest,
-  ]);
 
   useEffect(() => {
     const doesChainIdRequireFlush = chain && chain.id && chain.id !== chainIdLocal;

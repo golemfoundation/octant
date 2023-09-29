@@ -5,11 +5,36 @@ import { MetaData, MetaMethods } from './types';
 export const initialState: MetaData = {
   blockNumberWithLatestTx: null,
   isAppWaitingForTransactionToBeIndexed: false,
-  transactionHashesToWaitFor: null,
+  transactionsPending: null,
 };
 
 export default getStoreWithMeta<MetaData, MetaMethods>({
   getStoreMethods: (set, get) => ({
+    addTransactionPending: payload => {
+      set(state => {
+        const newTransactionsPending = state.data.transactionsPending
+          ? [...state.data.transactionsPending, { ...payload, isFetching: false }]
+          : [{ ...payload, isFetching: false }];
+        return {
+          data: { ...state.data, transactionsPending: newTransactionsPending },
+        };
+      });
+      get().setIsAppWaitingForTransactionToBeIndexed();
+    },
+    removeTransactionPending: payload => {
+      set(state => {
+        const transactionsPendingFiltered =
+          state.data.transactionsPending?.filter(transaction => transaction.hash !== payload) || [];
+        const newTransactionsPending =
+          transactionsPendingFiltered.length === 0
+            ? initialState.transactionsPending
+            : transactionsPendingFiltered;
+        return {
+          data: { ...state.data, transactionsPending: newTransactionsPending },
+        };
+      });
+      get().setIsAppWaitingForTransactionToBeIndexed();
+    },
     reset: () => set({ data: initialState }),
     setBlockNumberWithLatestTx: payload => {
       set(state => ({
@@ -22,7 +47,7 @@ export default getStoreWithMeta<MetaData, MetaMethods>({
       const isBlockNumberWithLatestTxSet =
         get().data.blockNumberWithLatestTx !== initialState.blockNumberWithLatestTx;
       const isTransactionHashesToWaitForSet =
-        get().data.transactionHashesToWaitFor !== initialState.transactionHashesToWaitFor;
+        get().data.transactionsPending !== initialState.transactionsPending;
       set(state => ({
         data: {
           ...state.data,
@@ -31,10 +56,38 @@ export default getStoreWithMeta<MetaData, MetaMethods>({
         },
       }));
     },
-    setTransactionHashesToWaitFor: payload => {
+    setTransactionIsFetching: payload => {
+      set(state => {
+        const newTransactionsPending = state.data.transactionsPending
+          ? [...state.data.transactionsPending]
+          : initialState.transactionsPending;
+        if (newTransactionsPending) {
+          newTransactionsPending.find(({ hash }) => hash === payload)!.isFetching = true;
+        }
+        return {
+          data: { ...state.data, transactionsPending: newTransactionsPending },
+        };
+      });
+      get().setIsAppWaitingForTransactionToBeIndexed();
+    },
+    setTransactionsPending: payload => {
       set(state => ({
-        data: { ...state.data, transactionHashesToWaitFor: payload },
+        data: { ...state.data, transactionsPending: payload },
       }));
+      get().setIsAppWaitingForTransactionToBeIndexed();
+    },
+    updateTransactionHash: ({ oldHash, newHash }) => {
+      set(state => {
+        const newTransactionsPending = state.data.transactionsPending
+          ? [...state.data.transactionsPending]
+          : initialState.transactionsPending;
+        if (newTransactionsPending) {
+          newTransactionsPending.find(({ hash }) => hash === oldHash)!.hash = newHash;
+        }
+        return {
+          data: { ...state.data, transactionsPending: newTransactionsPending },
+        };
+      });
       get().setIsAppWaitingForTransactionToBeIndexed();
     },
   }),
