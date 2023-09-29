@@ -15,6 +15,7 @@ def get_user_locks_history(user_address: str, from_timestamp: int, limit: int):
             __typename
             amount
             timestamp
+            transactionHash
           }
         }
         """
@@ -60,6 +61,7 @@ def get_locks_by_timestamp_range(from_ts: int, to_ts: int):
             amount
             timestamp
             user
+            transactionHash
           }
         }
         """
@@ -93,6 +95,7 @@ def get_locks_by_address_and_timestamp_range(
             amount
             timestamp
             user
+            transactionHash
           }
         }
         """

@@ -22,11 +22,12 @@ class LockItem:
     type: OpType
     amount: int
     timestamp: Timestamp
+    transaction_hash: str
 
 
 @dataclass(frozen=True)
 class AllocationItem:
-    address: str
+    project_address: str
     epoch: int
     amount: int
     timestamp: Timestamp
@@ -37,6 +38,7 @@ class WithdrawalItem:
     amount: int
     address: str
     timestamp: Timestamp
+    transaction_hash: str
 
 
 def get_locks(
@@ -47,6 +49,7 @@ def get_locks(
             type=OpType.LOCK,
             amount=int(r["amount"]),
             timestamp=from_timestamp_s(r["timestamp"]),
+            transaction_hash=r["transactionHash"],
         )
         for r in locks.get_user_locks_history(
             user_address, int(from_timestamp.timestamp_s()), limit
@@ -62,6 +65,7 @@ def get_unlocks(
             type=OpType.UNLOCK,
             amount=int(r["amount"]),
             timestamp=from_timestamp_s(r["timestamp"]),
+            transaction_hash=r["transactionHash"],
         )
         for r in unlocks.get_user_unlocks_history(
             user_address, int(from_timestamp.timestamp_s()), limit
@@ -74,7 +78,7 @@ def get_allocations(
 ) -> List[AllocationItem]:
     return [
         AllocationItem(
-            address=r.proposal_address,
+            project_address=r.proposal_address,
             epoch=r.epoch,
             amount=int(r.amount),
             timestamp=from_datetime(r.created_at),
@@ -93,6 +97,7 @@ def get_withdrawals(
             address=r["user"],
             amount=int(r["amount"]),
             timestamp=from_timestamp_s(r["timestamp"]),
+            transaction_hash=r["transactionHash"],
         )
         for r in withdrawals.get_user_withdrawals_history(
             user_address, int(from_timestamp.timestamp_s()), limit

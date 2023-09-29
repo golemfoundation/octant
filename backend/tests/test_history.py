@@ -51,11 +51,13 @@ def before(
                     "__typename": "Locked",
                     "amount": "500000000000000000000",
                     "timestamp": 1679645896,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000555555",
                 },
                 {
                     "__typename": "Locked",
                     "amount": "300000000000000000000",
                     "timestamp": 1679645700,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000333333",
                 },
             ],
             [
@@ -63,6 +65,7 @@ def before(
                     "__typename": "Unlocked",
                     "amount": "400000000000000000000",
                     "timestamp": 1679645800,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000444444",
                 },
             ],
             [
@@ -70,16 +73,19 @@ def before(
                     "type": "lock",
                     "amount": 300000000000000000000,
                     "timestamp": from_timestamp_s(1679645700),
+                    "transaction_hash": "0xa16081f360e3847006db660bae1c000000333333",
                 },
                 {
                     "type": "unlock",
                     "amount": 400000000000000000000,
                     "timestamp": from_timestamp_s(1679645800),
+                    "transaction_hash": "0xa16081f360e3847006db660bae1c000000444444",
                 },
                 {
                     "type": "lock",
                     "amount": 500000000000000000000,
                     "timestamp": from_timestamp_s(1679645896),
+                    "transaction_hash": "0xa16081f360e3847006db660bae1c000000555555",
                 },
             ],
         ),
@@ -89,11 +95,13 @@ def before(
                     "__typename": "Locked",
                     "amount": "500000000000000000000",
                     "timestamp": 1679645900,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000555555",
                 },
                 {
                     "__typename": "Locked",
                     "amount": "300000000000000000000",
                     "timestamp": 1679645910,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000333333",
                 },
             ],
             [
@@ -101,6 +109,7 @@ def before(
                     "__typename": "Unlocked",
                     "amount": "400000000000000000000",
                     "timestamp": 1679645950,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000444444",
                 },
             ],
             [
@@ -108,16 +117,19 @@ def before(
                     "type": "lock",
                     "amount": 500000000000000000000,
                     "timestamp": from_timestamp_s(1679645900),
+                    "transaction_hash": "0xa16081f360e3847006db660bae1c000000555555",
                 },
                 {
                     "type": "lock",
                     "amount": 300000000000000000000,
                     "timestamp": from_timestamp_s(1679645910),
+                    "transaction_hash": "0xa16081f360e3847006db660bae1c000000333333",
                 },
                 {
                     "type": "unlock",
                     "amount": 400000000000000000000,
                     "timestamp": from_timestamp_s(1679645950),
+                    "transaction_hash": "0xa16081f360e3847006db660bae1c000000444444",
                 },
             ],
         ),
@@ -127,6 +139,7 @@ def before(
                     "__typename": "Locked",
                     "amount": "500000000000000000000",
                     "timestamp": 1679645900,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000555555",
                 },
             ],
             [
@@ -134,11 +147,13 @@ def before(
                     "__typename": "Unlocked",
                     "amount": "400000000000000000000",
                     "timestamp": 1679645800,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000444444",
                 },
                 {
                     "__typename": "Unlocked",
                     "amount": "600000000000000000000",
                     "timestamp": 1679646000,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000666666",
                 },
             ],
             [
@@ -146,16 +161,19 @@ def before(
                     "type": "unlock",
                     "amount": 400000000000000000000,
                     "timestamp": from_timestamp_s(1679645800),
+                    "transaction_hash": "0xa16081f360e3847006db660bae1c000000444444",
                 },
                 {
                     "type": "lock",
                     "amount": 500000000000000000000,
                     "timestamp": from_timestamp_s(1679645900),
+                    "transaction_hash": "0xa16081f360e3847006db660bae1c000000555555",
                 },
                 {
                     "type": "unlock",
                     "amount": 600000000000000000000,
                     "timestamp": from_timestamp_s(1679646000),
+                    "transaction_hash": "0xa16081f360e3847006db660bae1c000000666666",
                 },
             ],
         ),
@@ -180,6 +198,7 @@ def test_history_locks(mocker, locks, unlocks, expected_history):
     history = get_locks(user_address, from_timestamp_s(1679647000), 100) + get_unlocks(
         user_address, from_timestamp_s(1679647000), 100
     )
+
     history = [
         dataclasses.asdict(item)
         for item in sorted(history, key=lambda x: x.timestamp.timestamp_us())
@@ -197,11 +216,13 @@ def test_history_locks(mocker, locks, unlocks, expected_history):
                     "user": "0x1000000000000000000000000000000000000000",
                     "amount": 200000000000000000000,
                     "timestamp": 100,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000222222",
                 },
                 {
                     "user": "0x1000000000000000000000000000000000000000",
                     "amount": 100000000000000000000,
                     "timestamp": 200,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000111111",
                 },
             ],
             [
@@ -209,11 +230,13 @@ def test_history_locks(mocker, locks, unlocks, expected_history):
                     "address": "0x1000000000000000000000000000000000000000",
                     "amount": 100000000000000000000,
                     "timestamp": from_timestamp_s(200),
+                    "transaction_hash": "0xa16081f360e3847006db660bae1c000000111111",
                 },
                 {
                     "address": "0x1000000000000000000000000000000000000000",
                     "amount": 200000000000000000000,
                     "timestamp": from_timestamp_s(100),
+                    "transaction_hash": "0xa16081f360e3847006db660bae1c000000222222",
                 },
             ],
         ),
@@ -223,6 +246,7 @@ def test_history_locks(mocker, locks, unlocks, expected_history):
                     "user": "0x1000000000000000000000000000000000000000",
                     "amount": 300000000000000000000,
                     "timestamp": 100,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000333333",
                 },
             ],
             [
@@ -230,6 +254,7 @@ def test_history_locks(mocker, locks, unlocks, expected_history):
                     "address": "0x1000000000000000000000000000000000000000",
                     "amount": 300000000000000000000,
                     "timestamp": from_timestamp_s(100),
+                    "transaction_hash": "0xa16081f360e3847006db660bae1c000000333333",
                 },
             ],
         ),
@@ -349,31 +374,37 @@ def test_history_allocations(proposal_accounts, tos_users):
                     "__typename": "Locked",
                     "amount": "500000000000000000000",
                     "timestamp": 1000000001,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000555555",
                 },
                 {
                     "__typename": "Locked",
                     "amount": "300000000000000000000",
                     "timestamp": 1000000002,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000333333",
                 },
                 {
                     "__typename": "Unlocked",
                     "amount": "400000000000000000000",
                     "timestamp": 1000000003,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000444444",
                 },
                 {
                     "__typename": "Locked",
                     "amount": "300000000000000000000",
                     "timestamp": 1000000004,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000333332",
                 },
                 {
                     "__typename": "Unlocked",
                     "amount": "100000000000000000000",
                     "timestamp": 1000000006,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000111113",
                 },
                 {
                     "__typename": "Unlocked",
                     "amount": "100000000000000000000",
                     "timestamp": 1000000007,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000111112",
                 },
             ],
             [
@@ -381,11 +412,13 @@ def test_history_allocations(proposal_accounts, tos_users):
                     "user": USER1_ADDRESS,
                     "amount": 100000000000000000000,
                     "timestamp": 1000000005,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000111111",
                 },
                 {
                     "user": USER1_ADDRESS,
                     "amount": 100000000000000000000,
                     "timestamp": 1000000008,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000111115",
                 },
             ],
             [
@@ -393,41 +426,49 @@ def test_history_allocations(proposal_accounts, tos_users):
                     "type": "withdrawal",
                     "amount": 100000000000000000000,
                     "timestamp": from_timestamp_s(1000000008).timestamp_us(),
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000111115",
                 },
                 {
                     "type": "unlock",
                     "amount": 100000000000000000000,
                     "timestamp": from_timestamp_s(1000000007).timestamp_us(),
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000111112",
                 },
                 {
                     "type": "unlock",
                     "amount": 100000000000000000000,
                     "timestamp": from_timestamp_s(1000000006).timestamp_us(),
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000111113",
                 },
                 {
                     "type": "withdrawal",
                     "amount": 100000000000000000000,
                     "timestamp": from_timestamp_s(1000000005).timestamp_us(),
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000111111",
                 },
                 {
                     "type": "lock",
                     "amount": 300000000000000000000,
                     "timestamp": from_timestamp_s(1000000004).timestamp_us(),
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000333332",
                 },
                 {
                     "type": "unlock",
                     "amount": 400000000000000000000,
                     "timestamp": from_timestamp_s(1000000003).timestamp_us(),
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000444444",
                 },
                 {
                     "type": "lock",
                     "amount": 300000000000000000000,
                     "timestamp": from_timestamp_s(1000000002).timestamp_us(),
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000333333",
                 },
                 {
                     "type": "lock",
                     "amount": 500000000000000000000,
                     "timestamp": from_timestamp_s(1000000001).timestamp_us(),
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000555555",
                 },
             ],
         ),
@@ -437,31 +478,37 @@ def test_history_allocations(proposal_accounts, tos_users):
                     "__typename": "Locked",
                     "amount": "500000000000000000000",
                     "timestamp": 1000000001,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000000000",
                 },
                 {
                     "__typename": "Locked",
                     "amount": "300000000000000000000",
                     "timestamp": 1000000001,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000000000",
                 },
                 {
                     "__typename": "Unlocked",
                     "amount": "400000000000000000000",
                     "timestamp": 1000000001,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000000000",
                 },
                 {
                     "__typename": "Locked",
                     "amount": "300000000000000000000",
                     "timestamp": 1000000001,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000000000",
                 },
                 {
                     "__typename": "Unlocked",
                     "amount": "100000000000000000000",
                     "timestamp": 1000000001,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000000000",
                 },
                 {
                     "__typename": "Unlocked",
                     "amount": "100000000000000000000",
                     "timestamp": 1000000001,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000000000",
                 },
             ],
             [
@@ -469,11 +516,13 @@ def test_history_allocations(proposal_accounts, tos_users):
                     "user": USER1_ADDRESS,
                     "amount": 100000000000000000000,
                     "timestamp": 1000000001,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000000000",
                 },
                 {
                     "user": USER1_ADDRESS,
                     "amount": 100000000000000000000,
                     "timestamp": 1000000001,
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000000000",
                 },
             ],
             [
@@ -481,41 +530,49 @@ def test_history_allocations(proposal_accounts, tos_users):
                     "type": "withdrawal",
                     "amount": 100000000000000000000,
                     "timestamp": from_timestamp_s(1000000001).timestamp_us(),
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000000000",
                 },
                 {
                     "type": "withdrawal",
                     "amount": 100000000000000000000,
                     "timestamp": from_timestamp_s(1000000001).timestamp_us(),
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000000000",
                 },
                 {
                     "type": "unlock",
                     "amount": 400000000000000000000,
                     "timestamp": from_timestamp_s(1000000001).timestamp_us(),
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000000000",
                 },
                 {
                     "type": "unlock",
                     "amount": 100000000000000000000,
                     "timestamp": from_timestamp_s(1000000001).timestamp_us(),
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000000000",
                 },
                 {
                     "type": "unlock",
                     "amount": 100000000000000000000,
                     "timestamp": from_timestamp_s(1000000001).timestamp_us(),
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000000000",
                 },
                 {
                     "type": "lock",
                     "amount": 500000000000000000000,
                     "timestamp": from_timestamp_s(1000000001).timestamp_us(),
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000000000",
                 },
                 {
                     "type": "lock",
                     "amount": 300000000000000000000,
                     "timestamp": from_timestamp_s(1000000001).timestamp_us(),
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000000000",
                 },
                 {
                     "type": "lock",
                     "amount": 300000000000000000000,
                     "timestamp": from_timestamp_s(1000000001).timestamp_us(),
+                    "transactionHash": "0xa16081f360e3847006db660bae1c000000000000",
                 },
             ],
         ),
@@ -555,6 +612,7 @@ def test_complete_user_history(
                 "type": "allocation",
                 "amount": a.amount,
                 "timestamp": a.timestamp.timestamp_us(),
+                "projectAddress": a.project_address,
             }
             for a in allocations
         ],
@@ -585,11 +643,11 @@ def test_complete_user_history(
     assert cursor is None
 
     assert len(history) == len(expected_history)
-    assert [dataclasses.asdict(r) for r in history] == expected_history
+    assert [r.to_dict() for r in history] == expected_history
 
 
 def _allocation_items_to_tuples(allocation_items: List[AllocationItem]) -> List[tuple]:
-    return [(a.address, a.epoch, a.amount) for a in allocation_items]
+    return [(a.project_address, a.epoch, a.amount) for a in allocation_items]
 
 
 def _compare_two_unordered_lists(list1, list2) -> bool:
