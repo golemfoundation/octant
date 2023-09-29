@@ -1,8 +1,8 @@
 import { Hash } from 'viem';
 
-import { HistoryItem } from 'hooks/queries/useHistory';
+import { HistoryItemProps } from 'hooks/queries/useHistory';
 
-export type TransactionPending = HistoryItem & {
+export type TransactionPending = HistoryItemProps & {
   hash: Hash;
   isFetching: boolean;
 };
@@ -21,5 +21,5 @@ export interface MetaMethods {
   setIsAppWaitingForTransactionToBeIndexed: () => void;
   setTransactionIsFetching: (payload: Hash) => void;
   setTransactionsPending: (payload: MetaData['transactionsPending']) => void;
-  updateTransactionHash: (payload: { newHash: Hash, oldHash: Hash; }) => void;
+  updateTransactionHash: (payload: { newHash: Hash; oldHash: Hash }) => void;
 }
