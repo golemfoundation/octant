@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import HistoryItemSkeleton from 'components/dedicated/History//HistoryItemSkeleton/HistoryItemSkeleton';
 import HistoryList from 'components/dedicated/History/HistoryList/HistoryList';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useHistory from 'hooks/queries/useHistory';
 import useMetaStore from 'store/meta/store';
@@ -21,6 +22,7 @@ const History: FC<HistoryProps> = ({ className }) => {
 
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: history, isFetching: isFetchingHistory } = useHistory();
+  const isProjectAdminMode = useIsProjectAdminMode();
 
   const isListAvailable = history !== undefined;
   const isPreLaunch = getIsPreLaunch(currentEpoch);
@@ -31,7 +33,7 @@ const History: FC<HistoryProps> = ({ className }) => {
   return (
     <BoxRounded
       childrenWrapperClassName={styles.childrenWrapper}
-      className={cx(styles.root, className)}
+      className={cx(styles.root, isProjectAdminMode && styles.isProjectAdminMode, className)}
       dataTest="History"
       hasPadding={false}
       hasSections

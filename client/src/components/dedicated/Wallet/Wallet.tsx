@@ -11,7 +11,9 @@ import Button from 'components/core/Button/Button';
 import RewardsBox from 'components/dedicated/RewardsBox/RewardsBox';
 import useAvailableFundsEth from 'hooks/helpers/useAvailableFundsEth';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import { golem, ethereum } from 'svg/logo';
+import { CryptoCurrency } from 'types/cryptoCurrency';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
 import WalletProps from './types';
@@ -29,6 +31,8 @@ const Wallet: FC<WalletProps> = ({ onDisconnect }) => {
     useAvailableFundsGlm();
 
   const { disconnect } = useDisconnect();
+
+  const isProjectAdminMode = useIsProjectAdminMode();
 
   /**
    * Setting values in local state prevents flickering
@@ -56,15 +60,19 @@ const Wallet: FC<WalletProps> = ({ onDisconnect }) => {
       },
       icon: ethereum,
     },
-    {
-      doubleValueProps: {
-        coinPricesServerDowntimeText: '...',
-        cryptoCurrency: 'golem',
-        isFetching: isFetchingAvailableFundsGlm,
-        valueCrypto: availableFundsGlmLocal,
-      },
-      icon: golem,
-    },
+    ...(!isProjectAdminMode
+      ? [
+          {
+            doubleValueProps: {
+              coinPricesServerDowntimeText: '...' as const,
+              cryptoCurrency: 'golem' as CryptoCurrency,
+              isFetching: isFetchingAvailableFundsGlm,
+              valueCrypto: availableFundsGlmLocal,
+            },
+            icon: golem,
+          },
+        ]
+      : []),
   ];
 
   return (

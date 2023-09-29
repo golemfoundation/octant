@@ -30,3 +30,16 @@ export const navigationTabs: NavigationTab[] = [
     to: ROOT_ROUTES.settings.absolute,
   },
 ];
+
+export const adminNavigationTabs: NavigationTab[] = [
+  {
+    icon: earn,
+    label: 'Home',
+    to: ROOT_ROUTES.earn.absolute,
+  },
+  {
+    icon: settings,
+    label: 'Settings',
+    to: ROOT_ROUTES.settings.absolute,
+  },
+];

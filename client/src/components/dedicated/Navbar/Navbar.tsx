@@ -5,6 +5,7 @@ import { useAccount } from 'wagmi';
 
 import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
@@ -23,6 +24,7 @@ const Navbar: FC<NavbarProps> = ({ navigationBottomSuffix, tabs }) => {
 
   const { isDesktop } = useMediaQuery();
   const [scope, animate] = useAnimate();
+  const isProjectAdminMode = useIsProjectAdminMode();
 
   const areTabsDisabled = isConnected && !isUserTOSAccepted;
 
@@ -45,7 +47,7 @@ const Navbar: FC<NavbarProps> = ({ navigationBottomSuffix, tabs }) => {
           {navigationBottomSuffix && (
             <div className={styles.navigationBottomSuffix}>{navigationBottomSuffix}</div>
           )}
-          <div className={styles.buttons}>
+          <div className={cx(styles.buttons, isProjectAdminMode && styles.isProjectAdminMode)}>
             {tabs.map(({ icon, label, to, isActive, isDisabled = false }, index) => (
               <Button
                 // eslint-disable-next-line react/no-array-index-key

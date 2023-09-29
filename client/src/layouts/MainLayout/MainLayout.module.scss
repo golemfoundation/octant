@@ -124,9 +124,33 @@ $bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerHeight);
   align-items: flex-end;
 }
 
+.addressWrapper {
+  display: flex;
+
+  .adminBadge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-size-10;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+    font-weight: $font-weight-bold;
+    background: $color-octant-green;
+    color: $color-white;
+    border-radius: $border-radius-04;
+    height: 1.6rem;
+    width: 4.4rem;
+    margin-right: 0.8rem;
+  }
+}
+
 .address {
   @include ethereumAddress();
   font-weight: $font-weight-bold;
+
+  &.isProjectAdminMode {
+    color: $color-octant-green;
+  }
 }
 
 .budget,
