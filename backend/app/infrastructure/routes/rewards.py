@@ -4,7 +4,7 @@ from flask import current_app as app
 from flask_restx import Namespace, fields
 
 from app.controllers import rewards
-from app.core import user
+from app.controllers.user import estimate_budget, get_budget
 from app.extensions import api
 from app.infrastructure import OctantResource
 from app.infrastructure.routes.common_models import proposals_rewards_model
@@ -111,7 +111,7 @@ class UserBudget(OctantResource):
     @ns.response(200, "Budget successfully retrieved")
     def get(self, user_address, epoch):
         app.logger.debug(f"Getting user {user_address} budget in epoch {epoch}")
-        budget = user.get_budget(user_address, epoch)
+        budget = get_budget(user_address, epoch)
         app.logger.debug(f"User {user_address} budget in epoch {epoch}: {budget}")
 
         return {"budget": budget}
@@ -130,7 +130,7 @@ class EstimatedUserBudget(OctantResource):
         app.logger.debug(
             f"Getting user estimated budget for {days} days and {glm_amount} GLM"
         )
-        budget = user.estimate_budget(days, glm_amount)
+        budget = estimate_budget(days, glm_amount)
         app.logger.debug(f"Estimated user budget: {budget}")
 
         return {"budget": budget}

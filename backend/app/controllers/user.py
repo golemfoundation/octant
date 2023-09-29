@@ -9,7 +9,6 @@ from app.exceptions import RewardsException
 
 from app.extensions import db
 
-
 MAX_DAYS_TO_ESTIMATE_BUDGET = 365250
 
 
@@ -21,6 +20,10 @@ def post_user_terms_of_service_consent(user_address: str, signature: str, user_i
     add_user_terms_of_service_consent(user_address, signature, user_ip)
 
     db.session.commit()
+
+
+def get_budget(user_address: str, epoch: int) -> int:
+    return budget.get_budget(user_address, epoch)
 
 
 def estimate_budget(days: int, glm_amount: int) -> int:
