@@ -20,9 +20,11 @@
   background: $color-white;
   box-shadow: $box-shadow-1;
   pointer-events: initial;
+  width: 34.2rem;
 
   @media #{$desktop-up} {
     border-radius: $border-radius-40;
+    width: 43.2rem;
   }
 
   .navigationBottomSuffix {
@@ -40,6 +42,10 @@
     align-items: center;
     height: 7.2rem;
     margin: 0 1.1rem 0 1.1rem;
+
+    &.isProjectAdminMode {
+      justify-content: center;
+    }
 
     @media #{$desktop-up} {
       margin: 1.2rem 2.4rem 2rem 2.4rem;
@@ -68,6 +74,10 @@
 
       &:not(:last-child) {
         margin-right: 1.6rem;
+
+        &.isProjectAdminMode {
+          margin-right: 2.4rem;
+        }
       }
     }
   }

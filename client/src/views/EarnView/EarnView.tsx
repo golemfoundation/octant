@@ -9,6 +9,7 @@ import BoxPersonalAllocation from 'components/dedicated/BoxPersonalAllocation/Bo
 import History from 'components/dedicated/History/History';
 import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
 import TipTile from 'components/dedicated/TipTile/TipTile';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
@@ -39,6 +40,8 @@ const EarnView = (): ReactElement => {
       wasConnectWalletAlreadyClosed: state.data.wasConnectWalletAlreadyClosed,
     }),
   );
+
+  const isProjectAdminMode = useIsProjectAdminMode();
 
   useEffect(() => {
     // When Epoch 0 ends, we poll for Epoch 1 from the backend.
@@ -94,7 +97,7 @@ const EarnView = (): ReactElement => {
               />
             </BoxRounded>
           )}
-          <BoxGlmLock classNameBox={styles.box} />
+          {!isProjectAdminMode && <BoxGlmLock classNameBox={styles.box} />}
           <BoxPersonalAllocation className={styles.box} />
         </div>
         <History className={styles.column} />

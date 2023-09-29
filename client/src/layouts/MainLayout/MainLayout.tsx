@@ -10,9 +10,13 @@ import Svg from 'components/core/Svg/Svg';
 import ModalConnectWallet from 'components/dedicated/ModalConnectWallet/ModalConnectWallet';
 import Navbar from 'components/dedicated/Navbar/Navbar';
 import WalletModal from 'components/dedicated/WalletModal/WalletModal';
-import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
+import {
+  adminNavigationTabs,
+  navigationTabs as navigationTabsDefault,
+} from 'constants/navigationTabs/navigationTabs';
 import networkConfig from 'constants/networkConfig';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -49,6 +53,7 @@ const MainLayout: FC<MainLayoutProps> = ({
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { pathname } = useLocation();
   const { data: isUserTOSAccepted } = useUserTOS();
+  const isProjectAdminMode = useIsProjectAdminMode();
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isAllocationRoot = !!useMatch(ROOT_ROUTES.allocation.absolute);
@@ -60,7 +65,7 @@ const MainLayout: FC<MainLayoutProps> = ({
 
   const showAllocationPeriod = isAllocationRoot || isProposalRoot || isProposalsRoot;
 
-  const tabsWithIsActive = navigationTabs.map(tab => ({
+  const tabsWithIsActive = (isProjectAdminMode ? adminNavigationTabs : navigationTabs).map(tab => ({
     ...tab,
     isActive: tab.isActive || pathname === tab.to,
     isDisabled: isPreLaunch && tab.to !== ROOT_ROUTES.earn.absolute,
@@ -125,7 +130,19 @@ const MainLayout: FC<MainLayoutProps> = ({
                       onClick={() => isUserTOSAccepted && setIsWalletModalOpen(true)}
                     >
                       <div className={styles.walletInfo}>
-                        <div className={styles.address}>{truncateEthAddress(address)}</div>
+                        <div className={styles.addressWrapper}>
+                          {isProjectAdminMode && (
+                            <div className={styles.adminBadge}>{t('admin')}</div>
+                          )}
+                          <div
+                            className={cx(
+                              styles.address,
+                              isProjectAdminMode && styles.isProjectAdminMode,
+                            )}
+                          >
+                            {truncateEthAddress(address)}
+                          </div>
+                        </div>
                         {!!currentEpoch &&
                           currentEpoch > 1 &&
                           (showAllocationPeriod ? (

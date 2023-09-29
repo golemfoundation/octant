@@ -90,7 +90,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
           cryptoCurrency: 'ethereum',
           valueCrypto: rewardsForProposals,
         },
-        label: t('donations'),
+        label: i18n.t('common.donations'),
         labelClassName: styles.sectionLabel,
         labelSuffix: (
           <Svg

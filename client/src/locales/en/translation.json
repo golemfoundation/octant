@@ -32,7 +32,8 @@
     "history": "History",
     "availableNow": "Available now",
     "copy": "Copy link",
-    "copied": "Copied"
+    "copied": "Copied",
+    "donations": "Donations"
   },
   "components": {
     "dedicated": {
@@ -59,7 +60,6 @@
       },
       "allocationSummary": {
         "matchFundingEstimate": "Match funding (estimate)",
-        "donations": "Donations",
         "confirmYourAllocations": "Confirm your allocations",
         "confirmAllocations": "Confirm allocations"
       },
@@ -205,7 +205,8 @@
       "noRewardsYet": "No rewards yet",
       "loadingRewardBudget": "Loading reward budget...",
       "allocationStartsIn": "Allocation starts in <0>{{allocationPeriod}}</0>",
-      "allocationEndsIn": "Allocation ends in <0>{{allocationPeriod}}</0>"
+      "allocationEndsIn": "Allocation ends in <0>{{allocationPeriod}}</0>",
+      "admin": "Admin"
     }
   },
   "meta": {

@@ -9,6 +9,7 @@ import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
 import { ALLOCATION_ITEMS_KEY, ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
@@ -16,6 +17,7 @@ import useDepositValue from 'hooks/queries/useDepositValue';
 import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useProposalsAllIpfs from 'hooks/queries/useProposalsAllIpfs';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useUserTOS from 'hooks/queries/useUserTOS';
@@ -32,6 +34,7 @@ import getIsPreLaunch from 'utils/getIsPreLaunch';
 import triggerToast from 'utils/triggerToast';
 
 import { getValidatedProposalsFromLocalStorage } from './utils';
+
 import 'styles/index.scss';
 import 'i18n';
 
@@ -106,6 +109,7 @@ const App = (): ReactElement => {
     refetchOnWindowFocus: true,
   });
   const { data: proposals } = useProposalsContract();
+  const { isFetching: isFetchingProposalsAllIpfs } = useProposalsAllIpfs();
   const { data: userAllocations } = useUserAllocations();
   const { data: individualReward } = useIndividualReward();
   const { data: blockNumber } = useBlockNumber(
@@ -123,6 +127,8 @@ const App = (): ReactElement => {
       onReplaced: response =>
         setTransactionHashesToWaitFor([response.transactionReceipt.transactionHash] as string[]),
     });
+
+  const isProjectAdminMode = useIsProjectAdminMode();
 
   const [isAccountChanging, setIsAccountChanging] = useState(false);
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
@@ -366,7 +372,8 @@ const App = (): ReactElement => {
     !isSettingsInitialized ||
     isAccountChanging ||
     !isTipsStoreInitialized ||
-    isFetchingUserTOS;
+    isFetchingUserTOS ||
+    isFetchingProposalsAllIpfs;
 
   if (isLoading) {
     return <AppLoader />;
@@ -375,7 +382,7 @@ const App = (): ReactElement => {
   return (
     <>
       <RootRoutes />
-      <ModalOnboarding />
+      {!isProjectAdminMode && <ModalOnboarding />}
     </>
   );
 };
