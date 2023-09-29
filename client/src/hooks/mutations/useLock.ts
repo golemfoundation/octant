@@ -6,18 +6,20 @@ import { useWalletClient } from 'wagmi';
 import { writeContractDeposits } from 'hooks/contracts/writeContracts';
 
 export default function useLock(
-  options?: UseMutationOptions<Hash, unknown, BigNumber>,
-): UseMutationResult<Hash, unknown, BigNumber> {
+  options?: UseMutationOptions<{ hash: Hash; value: BigNumber }, unknown, BigNumber>,
+): UseMutationResult<{ hash: Hash; value: BigNumber }, unknown, BigNumber> {
   const { data: walletClient } = useWalletClient();
 
   return useMutation({
-    mutationFn: async value => {
-      return writeContractDeposits({
+    mutationFn: async value =>
+      writeContractDeposits({
         args: [BigInt(value.toHexString())],
         functionName: 'lock',
         walletClient: walletClient!,
-      });
-    },
+      }).then(data => ({
+        hash: data,
+        value,
+      })),
     ...options,
   });
 }

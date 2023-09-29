@@ -47,6 +47,7 @@ const WithdrawEth: FC = () => {
   });
 
   const withdrawEth = () => {
+    // TODO OCT-827 Add adding transactionPending here.
     if (!withdrawableRewards?.length) {
       return;
     }

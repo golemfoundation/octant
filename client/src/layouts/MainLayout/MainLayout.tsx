@@ -52,10 +52,9 @@ const MainLayout: FC<MainLayoutProps> = ({
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isAllocationRoot = !!useMatch(ROOT_ROUTES.allocation.absolute);
-  const isProposalRoot =
-    !!useMatch(ROOT_ROUTES.proposal.absolute) ||
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    !!useMatch(ROOT_ROUTES.proposalWithAddress.absolute);
+  const isUseMatchProposal = !!useMatch(ROOT_ROUTES.proposalWithAddress.absolute);
+  const isUseMatchProposalWithAddress = !!useMatch(ROOT_ROUTES.proposalWithAddress.absolute);
+  const isProposalRoot = isUseMatchProposal || isUseMatchProposalWithAddress;
   const isProposalsRoot = !!useMatch(ROOT_ROUTES.proposals.absolute);
 
   const showAllocationPeriod = isAllocationRoot || isProposalRoot || isProposalsRoot;

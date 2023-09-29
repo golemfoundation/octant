@@ -1,12 +1,25 @@
+import { Hash } from 'viem';
+
+import { HistoryItem } from 'hooks/queries/useHistory';
+
+export type TransactionPending = HistoryItem & {
+  hash: Hash;
+  isFetching: boolean;
+};
+
 export interface MetaData {
   blockNumberWithLatestTx: number | null;
   isAppWaitingForTransactionToBeIndexed: boolean;
-  transactionHashesToWaitFor: string[] | null;
+  transactionsPending: null | TransactionPending[];
 }
 
 export interface MetaMethods {
+  addTransactionPending: (payload: Omit<TransactionPending, 'isFetching'>) => void;
+  removeTransactionPending: (hash: Hash) => void;
   reset: () => void;
   setBlockNumberWithLatestTx: (payload: MetaData['blockNumberWithLatestTx']) => void;
   setIsAppWaitingForTransactionToBeIndexed: () => void;
-  setTransactionHashesToWaitFor: (payload: MetaData['transactionHashesToWaitFor']) => void;
+  setTransactionIsFetching: (payload: Hash) => void;
+  setTransactionsPending: (payload: MetaData['transactionsPending']) => void;
+  updateTransactionHash: (payload: { newHash: Hash, oldHash: Hash; }) => void;
 }
