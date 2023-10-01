@@ -15,7 +15,7 @@ spec:
     namespace: $DEPLOYMENT_ID
   sources:
   - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-    targetRevision: 0.2.15
+    targetRevision: 0.2.21
     chart: octant
     helm:
       parameters:
@@ -25,6 +25,15 @@ spec:
         ## Client
         - name: "webClient.alchemyId"
           value: "$VITE_ALCHEMY_ID"
+        - name: "webClient.jsonRpcEndpoint"
+          value: "$FRONTEND_RPC_URL"
+        - name: "webClient.viteNetwork"
+          value: "$NETWORK_NAME"
+        ## Graph Node
+        - name: graphNode.graph.env.NETWORK
+          value: "$NETWORK_NAME"
+        - name: graphNode.graph.env.RPC_URL
+          value: "$BACKEND_RPC_URL"
         ## Backend
         - name: "backendServer.schedulerEnabled"
           value: "$SCHEDULER_ENABLED"
@@ -36,12 +45,18 @@ spec:
           value: "$GLM_CLAIM_ENABLED"
         - name: "backendServer.snapshotter.enabled"
           value: "$SNAPSHOTTER_ENABLED"
+        - name: "backendServer.rpcUrl"
+          value: "$BACKEND_RPC_URL"
         # Hardcoded in this file
         - name: "ingress.tlsToReplicate.enable"
           value: "true"
         - name: "secureIngress"
           value: "false"
         # From Deploy contracts job
+        - name: contracts.network
+          value: "$NETWORK_NAME"
+        - name: contracts.network_id
+          value: "$NETWORK_ID"
         - name: contracts.addresses.startBlock
           value: "$BLOCK_NUMBER"
         - name: contracts.addresses.auth
@@ -60,6 +75,9 @@ spec:
           value: "$GLM_CONTRACT_ADDRESS"
         - name: contracts.addresses.gnt
           value: "$GNT_CONTRACT_ADDRESS"
+  - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
+    targetRevision: 0.0.3
+    chart: octant-anvil
   syncPolicy:
     automated:
       prune: true

@@ -3,7 +3,7 @@ import fs from 'fs';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
-import { GLM_ADDRESS, GNT_ADDRESS } from '../env';
+import { GLM_ADDRESS, GNT_ADDRESS, SKIP_LOCAL_SUBGRAPH_UPDATE } from '../env';
 import {
   AUTH,
   EPOCHS,
@@ -58,29 +58,31 @@ VAULT_CONTRACT_ADDRESS=${vault.address}
   fs.appendFileSync('deployments/clientEnv', contractAddresses);
 
   if (['localhost'].includes(hre.network.name)) {
-    // Update networks.json for local (developer's) subgraph instance.
-    const networksFn = '../subgraph/networks.json';
-    const templateFn = '../subgraph/networks.template.json';
-    try {
-      fs.accessSync(networksFn, fs.constants.W_OK);
-    } catch (_err) {
-      fs.copyFileSync(templateFn, networksFn);
+    if (SKIP_LOCAL_SUBGRAPH_UPDATE === 'false') {
+      // Update networks.json for local (developer's) subgraph instance.
+      const networksFn = '../subgraph/networks.json';
+      const templateFn = '../subgraph/networks.template.json';
+      try {
+        fs.accessSync(networksFn, fs.constants.W_OK);
+      } catch (_err) {
+        fs.copyFileSync(templateFn, networksFn);
+      }
+
+      // this populates networks.json (used by docker among others)
+      const json = JSON.parse(fs.readFileSync(networksFn).toString());
+      json.localhost.GNT.address = gntAddress;
+      json.localhost.GLM.address = glmAddress;
+      json.localhost.Epochs.address = epochs.address;
+      json.localhost.Deposits.address = deposits.address;
+      json.localhost.Vault.address = vault.address;
+      fs.writeFileSync(networksFn, JSON.stringify(json, null, 2));
+
+      // need to update subgraph/src/*.ts files too
+      execSync('../subgraph/configure-network.sh', {
+        cwd: '../subgraph/',
+        env: { ...process.env, NETWORK: 'localhost' },
+      });
     }
-
-    // this populates networks.json (used by docker among others)
-    const json = JSON.parse(fs.readFileSync(networksFn).toString());
-    json.localhost.GNT.address = gntAddress;
-    json.localhost.GLM.address = glmAddress;
-    json.localhost.Epochs.address = epochs.address;
-    json.localhost.Deposits.address = deposits.address;
-    json.localhost.Vault.address = vault.address;
-    fs.writeFileSync(networksFn, JSON.stringify(json, null, 2));
-
-    // need to update subgraph/src/*.ts files too
-    execSync('../subgraph/configure-network.sh', {
-      cwd: '../subgraph/',
-      env: { ...process.env, NETWORK: 'localhost' },
-    });
   }
 };
 

@@ -15,6 +15,7 @@ import {
   TESTNET_DEPLOYER_PRIVATE_KEY,
   TESTNET_MULTISIG_PRIVATE_KEY,
   TESTNET_RPC_URL,
+  LOCAL_RPC_URL,
 } from './env';
 
 import './tasks/clean';
@@ -80,7 +81,7 @@ const config: HardhatUserConfig = {
     localhost: {
       chainId: 1337,
       initialBaseFeePerGas: 0,
-      url: 'http://127.0.0.1:8545',
+      url: LOCAL_RPC_URL,
     },
     mainnet: {
       accounts: [MAINNET_DEPLOYER_PRIVATE_KEY],
