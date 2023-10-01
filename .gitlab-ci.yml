@@ -363,7 +363,7 @@ Run E2E App:
   variables:
     ENV_TYPE: "e2e"
   environment:
-    name: e2e/$CI_MERGE_REQUEST_IID
+    name: e2e/$CI_PIPELINE_IID
     url: https://mr-$CI_MERGE_REQUEST_IID-e2e-client.octant.wildland.dev
     deployment_tier: development
     on_stop: Destroy E2E App
@@ -472,9 +472,7 @@ Wait for MR:
   image: !reference [.images, git_improved ]
   <<: *env_resolve_init
   rules:
-    - !reference [.rules, on_mr]
-    - !reference [.rules, on_push_to_default_branch ]
-    - !reference [.rules, on_push_to_master_branch ]
+    - !reference [.rules, on_mr ]
   script:
     - set -ex
     - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
@@ -487,7 +485,7 @@ Wait for UAT:
   image: !reference [.images, git_improved ]
   <<: *env_resolve_init
   rules:
-    - !reference [.rules, on_mr]
+    - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
     - !reference [.rules, on_push_to_master_branch ]
   script:
@@ -534,7 +532,7 @@ Destroy E2E App:
     - !reference [.rules, on_push_to_master_branch_manual ]
   needs: []
   environment:
-    name: e2e/$CI_MERGE_REQUEST_IID
+    name: e2e/$CI_PIPELINE_IID
     deployment_tier: development
 
 Destroy MR App:
