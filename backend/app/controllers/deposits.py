@@ -1,6 +1,10 @@
+from typing import Tuple
+
 from app.controllers import epochs as epochs_controller
 from app.core.deposits import deposits as deposits_core
 from app.database import deposits as deposits_db
+
+from app.infrastructure import graphql
 
 
 def get_by_user_and_epoch(user_address: str, epoch: int) -> int:
@@ -15,3 +19,9 @@ def get_by_user_and_epoch(user_address: str, epoch: int) -> int:
     if deposit is None:
         return 0
     return deposit.effective_deposit
+
+
+def get_estimated_total_effective_deposit() -> Tuple[int, int]:
+    current_epoch = epochs_controller.get_current_epoch()
+    total = deposits_core.get_estimated_total_effective_deposit(current_epoch)
+    return current_epoch, total
