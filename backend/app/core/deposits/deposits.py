@@ -44,3 +44,8 @@ def estimate_locked_ratio(
     deposits = get_user_weighted_deposits(events_generator)
     effective_deposit = estimate_effective_deposit(deposits)
     return calculate_locked_ratio(effective_deposit, GLM_TOTAL_SUPPLY_WEI)
+
+
+def get_estimated_total_effective_deposit(epoch: int) -> int:
+    _, total = get_users_deposits(epoch)
+    return total
