@@ -5,15 +5,16 @@ variables:
   TRANSFER_METER_FREQUENCY: "2s"
   MASTER_BRANCH: "master"
   IMAGE_TAG: $CI_COMMIT_SHA
+  SECRET_WORDS: test test test test test test test test test test test junk
 
 stages:
   - build
   - lint_and_typecheck
   - test
-  - publish
-  - contracts
-  - e2e
+  - docker
   - deploy
+  - application
+  - status
   - cleanup
 
 default:
@@ -36,7 +37,7 @@ default:
     name: registry.gitlab.com/wildland/devops/container-builder/gitops-builder:latest
     pull_policy: if-not-present
   synpress:
-    name: registry.gitlab.com/wildland/devops/container-builder/octant/synpress-arch:179ba913
+    name: registry.gitlab.com/wildland/devops/container-builder/octant/synpress-arch:08da1d10
     pull_policy: if-not-present
   alpine_git:
     name: alpine/git
@@ -273,13 +274,13 @@ Documentation:
     expire_in: 3 days
 
 Build images:
-  stage: publish
-  image: !reference [.images, kaniko ]
+  stage: docker
+  image: !reference [ .images, kaniko ]
   rules:
-    - !reference [.rules, on_mr ]
-    - !reference [.rules, on_push_to_default_branch ]
-    - !reference [.rules, on_push_to_master_branch ]
-    - !reference [.rules, on_version_tag]
+    - !reference [ .rules, on_mr ]
+    - !reference [ .rules, on_push_to_default_branch ]
+    - !reference [ .rules, on_push_to_master_branch ]
+    - !reference [ .rules, on_version_tag ]
   parallel:
     matrix:
       - SERVICE:
@@ -304,50 +305,286 @@ Build images:
       --cache-repo=$KANIKO_CACHE_REPO
       --insecure-pull
 
-Deploy contracts:
-  stage: contracts
+.env_resolve: &env_resolve_init
+  before_script:
+    - set -ex
+    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh $ENV_TYPE
+
+.deploy_anvil:
+  stage: deploy
+  image: !reference [.images, git_improved ]
+  <<: *env_resolve_init
+  resource_group: gitops
+  script:
+    - set -ex
+    - bash $CI_PROJECT_DIR/ci/argocd/application.sh create
+  environment:
+    action: start
+
+.deploy_app:
+  stage: application
+  image: !reference [.images, git_improved ]
+  <<: *env_resolve_init
+  resource_group: gitops
+  script:
+    - set -ex
+    - bash $CI_PROJECT_DIR/ci/argocd/application.sh update
+
+.deploy_anvil_contracts:
+  stage: application
   image:
     name: ${GCP_DOCKER_IMAGE_REGISTRY}/contracts-v1:${IMAGE_TAG}
     entrypoint: [""]
-  resource_group: sepolia_contracts
+  <<: *env_resolve_init
+  artifacts:
+    reports:
+      dotenv: build.env
+  variables:
+    NETWORK: 'localhost'
+    SKIP_LOCAL_SUBGRAPH_UPDATE: 'true'
+    PROPOSALS_ADDRESSES: '0x13aB14d9f8a40a0a19f7c8Ba8B23a3F12D25fD12,0x50b641Fb1CC42bE8a292263c68f0612b8182dA51,0x519a0307b7364D21aB1227bf37689271233B3F93,0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91d,0x608309bF063599DdaaF79409879917032377AC44,0x6d614D51D1Ed4eE97A37614F431771Fdb92D5Ae7,0x839a14166Af647F9DD5CdeA616c0354286Cc1593,0xBfD2704FEbD0d6A3f82Ed338731Fdf63077F76Fa,0xdE49c0928ECC3cfb5d07F69f5C82949168Fc6805,0xeAe7825257E71ba345FFcC54D0581ccE819738B9'
+    PROPOSALS_CID: QmXq3Eaz5xQF51J7mWzxDmfrVjDuGdhnirthttJ9Q2WTF8
+    DECISION_WINDOW: 9000 # 2.5h
+    EPOCH_DURATION: 10800 # 3.0h
+  script:
+    - set -ex
+    - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
+    - export EPOCHS_START=$(date +%s)
+    - export LOCAL_RPC_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
+    - /app/entrypoint.sh $NETWORK $CI_PROJECT_DIR/build.env
+
+Run E2E App:
+  extends:
+    - .deploy_anvil
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
     - !reference [.rules, on_push_to_master_branch ]
   variables:
-    NETWORK: 'sepolia'
-    GLM_ADDRESS: '0x71432DD1ae7DB41706ee6a22148446087BdD0906'
-    GNT_ADDRESS: '0xE6de13D64F6036E4E3f5fC84B5EB620C5C7c1050'
-    MULTISIG_ADDRESS: '0x1042952cdbe3b36fDbeC833372bEF265d7B32ABb'
-    PROPOSALS_ADDRESSES: '0x13aB14d9f8a40a0a19f7c8Ba8B23a3F12D25fD12,0x50b641Fb1CC42bE8a292263c68f0612b8182dA51,0x519a0307b7364D21aB1227bf37689271233B3F93,0x5a873cB89BAd323b1acfd998C36aAc6b1a90a91d,0x608309bF063599DdaaF79409879917032377AC44,0x6d614D51D1Ed4eE97A37614F431771Fdb92D5Ae7,0x839a14166Af647F9DD5CdeA616c0354286Cc1593,0xBfD2704FEbD0d6A3f82Ed338731Fdf63077F76Fa,0xdE49c0928ECC3cfb5d07F69f5C82949168Fc6805,0xeAe7825257E71ba345FFcC54D0581ccE819738B9'
-    PROPOSALS_CID: QmXq3Eaz5xQF51J7mWzxDmfrVjDuGdhnirthttJ9Q2WTF8
-    DECISION_WINDOW: 9000 # 2.5h
-    EPOCH_DURATION: 10800 # 3.0h
-  artifacts:
-    reports:
-      dotenv: build.env
-  script:
-    - export EPOCHS_START=$(date +%s)
-    - /app/entrypoint.sh $NETWORK $CI_PROJECT_DIR/build.env
+    ENV_TYPE: "e2e"
+  environment:
+    name: e2e/$CI_PIPELINE_IID
+    url: https://mr-$CI_MERGE_REQUEST_IID-e2e-client.octant.wildland.dev
+    deployment_tier: development
+    on_stop: Destroy E2E App
+    auto_stop_in: 6 hours
 
-Cypress E2E Tests Epoch 1:
-  stage: e2e
-  image: !reference [.images, synpress ]
-  dependencies:
-    - Deploy contracts
+Run MR App:
+  extends:
+    - .deploy_anvil
+  rules:
+    - !reference [.rules, on_mr_manual ]
+  variables:
+    ENV_TYPE: "mr"
+  environment:
+    name: mr/$CI_MERGE_REQUEST_IID
+    url: https://mr-$CI_MERGE_REQUEST_IID-client.octant.wildland.dev
+    deployment_tier: development
+    on_stop: Destroy MR App
+
+E2E contracts:
+  extends:
+    - .deploy_anvil_contracts
+  needs: ["Run E2E App"]
+  rules:
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
+  variables:
+    ENV_TYPE: "e2e"
+
+MR contracts:
+  extends:
+    - .deploy_anvil_contracts
+  needs: ["Run MR App"]
+  rules:
+    - !reference [.rules, on_mr ]
+  variables:
+    ENV_TYPE: "mr"
+
+E2E app deploy:
+  extends:
+    - .deploy_app
+  needs: ["E2E contracts"]
+  dependencies: ["E2E contracts"]
+  rules:
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
+  variables:
+    ENV_TYPE: "e2e"
+    NETWORK_NAME: "local"
+    NETWORK_ID: "1337"
+    SNAPSHOTTER_ENABLED: "true"
+    SCHEDULER_ENABLED: "false"
+
+MR app deploy:
+  extends:
+    - .deploy_app
+  needs: ["MR contracts"]
+  dependencies: ["MR contracts"]
+  rules:
+    - !reference [.rules, on_mr ]
+  variables:
+    ENV_TYPE: "mr"
+    NETWORK_NAME: "local"
+    NETWORK_ID: "1337"
+    SNAPSHOTTER_ENABLED: "true"
+    SCHEDULER_ENABLED: "false"
+
+Run UAT App:
+  stage: deploy
+  extends:
+    - .deploy_app
+  rules:
+    - !reference [.rules, on_mr_manual ]
+    - !reference [.rules, on_push_to_default_branch_manual ]
+    - !reference [.rules, on_push_to_master_branch_manual ]
+  variables:
+    ENV_TYPE: "uat"
+    NETWORK_NAME: "sepolia"
+    NETWORK_ID: "11155111"
+    SNAPSHOTTER_ENABLED: "true"
+    SCHEDULER_ENABLED: "true"
+    GLM_CLAIM_ENABLED: "true"
+    VAULT_CONFIRM_WITHDRAWALS_ENABLED: "true"
+
+Run Master App:
+  stage: deploy
+  extends:
+    - .deploy_app
+  rules:
+    - !reference [.rules, on_mr_manual ]
+    - !reference [.rules, on_push_to_default_branch_manual ]
+    - !reference [.rules, on_push_to_master_branch_manual ]
+  variables:
+    ENV_TYPE: "master"
+    NETWORK_NAME: "sepolia"
+    NETWORK_ID: "11155111"
+    SNAPSHOTTER_ENABLED: "true"
+    SCHEDULER_ENABLED: "true"
+    GLM_CLAIM_ENABLED: "true"
+    VAULT_CONFIRM_WITHDRAWALS_ENABLED: "true"
+
+Wait for MR:
+  stage: status
+  needs: ["MR app deploy"]
+  image: !reference [.images, git_improved ]
+  <<: *env_resolve_init
+  rules:
+    - !reference [.rules, on_mr ]
+  script:
+    - set -ex
+    - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
+  variables:
+    ENV_TYPE: "mr"
+
+Wait for UAT:
+  stage: status
+  needs: ["Run UAT App"]
+  image: !reference [.images, git_improved ]
+  <<: *env_resolve_init
+  rules:
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
+  script:
+    - set -ex
+    - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
+  variables:
+    ENV_TYPE: "uat"
+
+Wait for Master:
+  stage: status
+  needs: ["Run Master App"]
+  image: !reference [.images, git_improved ]
+  <<: *env_resolve_init
   rules:
     - !reference [.rules, on_mr]
     - !reference [.rules, on_push_to_default_branch ]
     - !reference [.rules, on_push_to_master_branch ]
+  script:
+    - set -ex
+    - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
   variables:
-    NETWORK_NAME: sepolia
-    PRIVATE_KEY: $GOERLI_PRIVATE_KEY
-    CYPRESS_DOCKER_RUN: "true"
-    CI: "true"
-    METAMASK_VERSION: "10.25.0"
-    SECRET_WORDS: test test test test test test test test test test test junk
-    SNAPSHOTTER_ENABLED: "true"
-    SCHEDULER_ENABLED: "false"
+    ENV_TYPE: "master"
+
+.destroy_app:
+  stage: cleanup
+  image: !reference [.images, git_improved ]
+  resource_group: gitops
+  <<: *env_resolve_init
+  script:
+    - set -ex
+    - bash $CI_PROJECT_DIR/ci/argocd/application.sh destroy
+  environment:
+    action: stop
+
+Destroy E2E App:
+  extends:
+    - .destroy_app
+  needs: ["Run E2E App"]
+  variables:
+    ENV_TYPE: "e2e"
+  rules:
+    - !reference [.rules, on_mr_manual ]
+    - !reference [.rules, on_push_to_default_branch_manual ]
+    - !reference [.rules, on_push_to_master_branch_manual ]
+  needs: []
+  environment:
+    name: e2e/$CI_PIPELINE_IID
+    deployment_tier: development
+
+Destroy MR App:
+  extends:
+    - .destroy_app
+  needs: ["Run MR App"]
+  variables:
+    ENV_TYPE: "mr"
+  rules:
+    - !reference [.rules, on_mr_manual ]
+  needs: []
+  environment:
+    name: mr/$CI_MERGE_REQUEST_IID
+    deployment_tier: development
+
+Destroy UAT App:
+  extends:
+    - .destroy_app
+  variables:
+    ENV_TYPE: "uat"
+  rules:
+    - !reference [.rules, on_mr_manual ]
+    - !reference [.rules, on_push_to_default_branch_manual ]
+    - !reference [.rules, on_push_to_master_branch_manual ]
+  needs: []
+  environment:
+    name: persistent/uat
+    deployment_tier: testing
+
+Destroy Master App:
+  extends:
+    - .destroy_app
+  variables:
+    ENV_TYPE: "master"
+  rules:
+    - !reference [.rules, on_mr_manual ]
+    - !reference [.rules, on_push_to_default_branch_manual ]
+    - !reference [.rules, on_push_to_master_branch_manual ]
+  needs: []
+  environment:
+    name: persistent/master
+    deployment_tier: testing
+
+E2E Epoch 1:
+  stage: application
+  needs: ["E2E app deploy"]
+  image: !reference [.images, synpress ]
+  <<: *env_resolve_init
+  rules:
+    - !reference [.rules, on_mr]
+    - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
   artifacts:
     when: on_failure
     name: cypress
@@ -372,142 +609,28 @@ Cypress E2E Tests Epoch 1:
     - source /usr/share/nvm/init-nvm.sh
     - nvm use 16
     - npm i -g yarn
-    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh e2e
-    - bash $CI_PROJECT_DIR/ci/argocd/application.sh create
     - cd client
     - yarn install --cache-folder .yarn --frozen-lockfile --prefer-offline --no-audit
+    # Wait for the E2E app to become ready
+    - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
     - export OCTANT_BASE_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_web_client_url.sh)
     - set +e
     - yarn synpress:run || CY_EXIT_CODE=$?
     - if [[ "$CY_EXIT_CODE" == "0" ]]; then rm -r $CI_PROJECT_DIR/client/cypress/videos $CI_PROJECT_DIR/client/cypress/screenshots; fi
     - set -e
-    - bash $CI_PROJECT_DIR/ci/argocd/application.sh delete
+    # Trigger the stop job
+    - |
+      JOB_ID=$(curl --fail -s -XGET --header "PRIVATE-TOKEN: $CI_JOB_CONTROLLER" https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/pipelines/$CI_PIPELINE_ID/jobs | jq '.[] | select(.name == "Destroy E2E App") | .id')
+
+      curl -s --fail -X POST \
+           -H "PRIVATE-TOKEN: $CI_JOB_CONTROLLER" \
+           "$CI_API_V4_URL/projects/$CI_PROJECT_ID/jobs/$JOB_ID/play"
     - exit $CY_EXIT_CODE
-
-Force destroy E2E env:
-  stage: e2e
-  image: !reference [.images, git_improved ]
-  rules:
-    - !reference [.rules, on_mr_manual]
-    - !reference [.rules, on_push_to_default_branch_manual]
-    - !reference [.rules, on_push_to_master_branch_manual ]
-  allow_failure: true
-  script:
-    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh e2e
-    - bash $CI_PROJECT_DIR/ci/argocd/application.sh destroy
-
-.deploy:
-  stage: deploy
-  image: !reference [.images, git_improved ]
-  dependencies:
-    - Deploy contracts
-  script:
-    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh $ENV_TYPE
-    - bash $CI_PROJECT_DIR/ci/argocd/application.sh create
-  environment:
-    action: start
-
-.destroy:
-  stage: cleanup
-  image: !reference [.images, git_improved ]
-  script:
-    - source $CI_PROJECT_DIR/ci/argocd/resolve_env.sh $ENV_TYPE
-    - bash $CI_PROJECT_DIR/ci/argocd/application.sh destroy
-  environment:
-    action: stop
-
-Deploy MR App:
-  extends:
-    - .deploy
   variables:
-    ENV_TYPE: "mr"
-    SNAPSHOTTER_ENABLED: "true"
-    SCHEDULER_ENABLED: "false"
-    REDEPLOY_SUBGRAPH: "true"
-  rules:
-    - !reference [.rules, on_mr_manual]
-  environment:
-    name: mr/$CI_MERGE_REQUEST_IID
-    deployment_tier: development
-    on_stop: Destroy MR App
-
-Deploy UAT App:
-  extends:
-    - .deploy
-  variables:
-    ENV_TYPE: "uat"
-    SNAPSHOTTER_ENABLED: "true"
-    SCHEDULER_ENABLED: "true"
-    GLM_CLAIM_ENABLED: "true"
-    VAULT_CONFIRM_WITHDRAWALS_ENABLED: "true"
-  rules:
-    - !reference [.rules, on_mr_manual]
-    - !reference [.rules, on_push_to_default_branch_manual]
-    - !reference [.rules, on_push_to_master_branch_manual ]
-  environment:
-    name: persistent/uat
-    url: https://uat-client.octant.wildland.dev
-    deployment_tier: testing
-    on_stop: Destroy UAT App
-
-Deploy Master App:
-  extends:
-    - .deploy
-  variables:
-    ENV_TYPE: "master"
-    SNAPSHOTTER_ENABLED: "true"
-    SCHEDULER_ENABLED: "true"
-    GLM_CLAIM_ENABLED: "true"
-    VAULT_CONFIRM_WITHDRAWALS_ENABLED: "true"
-  rules:
-    - !reference [.rules, on_mr_manual]
-    - !reference [.rules, on_push_to_default_branch_manual]
-    - !reference [.rules, on_push_to_master_branch_manual ]
-  environment:
-    name: persistent/master
-    url: https://master-client.octant.wildland.dev
-    deployment_tier: testing
-    on_stop: Destroy Master App
-
-Destroy MR App:
-  extends:
-    - .destroy
-  variables:
-    ENV_TYPE: "mr"
-  rules:
-    - !reference [.rules, on_mr_manual]
-  needs: []
-  environment:
-    name: mr/$CI_MERGE_REQUEST_IID
-    deployment_tier: development
-
-Destroy UAT App:
-  extends:
-    - .destroy
-  variables:
-    ENV_TYPE: "uat"
-  rules:
-    - !reference [.rules, on_mr_manual]
-    - !reference [.rules, on_push_to_default_branch_manual]
-    - !reference [.rules, on_push_to_master_branch_manual ]
-  needs: []
-  environment:
-    name: persistent/uat
-    deployment_tier: testing
-
-Destroy Master App:
-  extends:
-    - .destroy
-  variables:
-    ENV_TYPE: "master"
-  rules:
-    - !reference [.rules, on_mr_manual]
-    - !reference [.rules, on_push_to_default_branch_manual]
-    - !reference [.rules, on_push_to_master_branch_manual ]
-  needs: []
-  environment:
-    name: persistent/master
-    deployment_tier: testing
+    ENV_TYPE: "e2e"
+    CYPRESS_DOCKER_RUN: "true"
+    CI: "true"
+    METAMASK_VERSION: "10.25.0"
 
 Deploy Release Candidate app:
   stage: deploy

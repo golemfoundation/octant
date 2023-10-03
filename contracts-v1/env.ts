@@ -5,6 +5,11 @@ require('dotenv').config();
 // NETWORK VARIABLES
 // ----------------
 
+// LOCAL
+
+const LOCAL_RPC_URL = process.env.LOCAL_RPC_URL || 'http://127.0.0.1:8545';
+const SKIP_LOCAL_SUBGRAPH_UPDATE = process.env.SKIP_LOCAL_SUBGRAPH_UPDATE || 'false';
+
 // TESTNETS
 const TESTNET_RPC_URL = process.env.TESTNET_RPC_URL || '';
 const TESTNET_DEPLOYER_PRIVATE_KEY =
@@ -64,4 +69,6 @@ export {
   EPOCH_DURATION,
   DECISION_WINDOW,
   IS_GAS_REPORTING_ENABLED,
+  LOCAL_RPC_URL,
+  SKIP_LOCAL_SUBGRAPH_UPDATE,
 };

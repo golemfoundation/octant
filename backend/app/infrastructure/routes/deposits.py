@@ -10,6 +10,7 @@ from app.infrastructure import OctantResource
 ns = Namespace("deposits", description="Octant deposits")
 api.add_namespace(ns)
 
+
 total_effective_model = api.model(
     "TotalEffective",
     {
@@ -18,6 +19,19 @@ total_effective_model = api.model(
         ),
     },
 )
+
+
+estimated_total_effective_model = api.model(
+    "EstimatedTotalEffective",
+    {
+        "amount": fields.String(
+            required=True,
+            description="Estimate total effective deposit in current epoch. Computed with (false) assumption that no more deposits or withdrawals will be made until end of the epoch. Amount in wei, GLM token",
+        ),
+        "epoch": fields.Integer(required=True, description="Epoch number"),
+    },
+)
+
 
 locked_ratio_model = api.model(
     "LockedRatio",
@@ -56,6 +70,18 @@ class TotalEffectiveDeposit(OctantResource):
         )
 
         return {"totalEffective": total_effective_deposit}
+
+
+@ns.route("/total_effective/estimated")
+@ns.doc(
+    description="Returns value of estimated total effective deposits for current epoch."
+)
+class EstimatedTotalEffectiveDeposit(OctantResource):
+    @ns.marshal_with(total_effective_model)
+    @ns.response(200, "Epoch estimated total effective deposit successfully retrieved")
+    def get(self):
+        epoch, total = deposits_controller.get_estimated_total_effective_deposit()
+        return {"estimatedTotalEffective": str(total), "epoch": epoch}
 
 
 @ns.route("/<int:epoch>/locked_ratio")
