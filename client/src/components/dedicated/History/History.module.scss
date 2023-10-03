@@ -4,6 +4,10 @@
 
   @media #{$desktop-up} {
     max-height: 100%;
+
+    &.isProjectAdminMode {
+      min-height: 22.5rem;
+    }
   }
 }
 

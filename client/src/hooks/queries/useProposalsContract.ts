@@ -13,7 +13,9 @@ export default function useProposalsContract(): UseQueryResult<string[]> {
   const publicClient = usePublicClient();
 
   return useQuery(
-    QUERY_KEYS.proposalsContract,
+    currentEpoch
+      ? QUERY_KEYS.proposalsContract(isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!)
+      : [''],
     // When decision window is open, fetch proposals from the previous epoch, because that's what users should be allocating to.
     () =>
       readContractProposals({

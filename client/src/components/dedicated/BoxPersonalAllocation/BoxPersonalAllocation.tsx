@@ -7,12 +7,14 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Sections from 'components/core/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import ModalWithdrawEth from 'components/dedicated//ModalWithdrawEth/ModalWithdrawEth';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useSyncStatus from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
 import useAllocationsStore from 'store/allocations/store';
+import { CryptoCurrency } from 'types/cryptoCurrency';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
 import BoxPersonalAllocationProps from './types';
@@ -40,27 +42,33 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
 
   const pendingCrypto = individualReward?.sub(rewardsForProposals);
 
+  const isProjectAdminMode = useIsProjectAdminMode();
+
   const sections: SectionProps[] = [
     {
       doubleValueProps: {
-        cryptoCurrency: 'ethereum',
+        cryptoCurrency: 'ethereum' as CryptoCurrency,
         isFetching: isFetchingWithdrawableUserEth,
         valueCrypto: currentEpoch === 1 ? BigNumber.from(0) : withdrawableUserEth,
       },
       label: i18n.t('common.availableNow'),
     },
-    {
-      doubleValueProps: {
-        cryptoCurrency: 'ethereum',
-        isFetching: isFetchingIndividualReward || isFetchingUserAllocations,
-        valueCrypto:
-          syncStatusData?.finalizedSnapshot === 'done' ||
-          !userAllocations?.hasUserAlreadyDoneAllocation
-            ? BigNumber.from(0)
-            : pendingCrypto,
-      },
-      label: t('pending'),
-    },
+    ...(!isProjectAdminMode
+      ? [
+          {
+            doubleValueProps: {
+              cryptoCurrency: 'ethereum' as CryptoCurrency,
+              isFetching: isFetchingIndividualReward || isFetchingUserAllocations,
+              valueCrypto:
+                syncStatusData?.finalizedSnapshot === 'done' ||
+                !userAllocations?.hasUserAlreadyDoneAllocation
+                  ? BigNumber.from(0)
+                  : pendingCrypto,
+            },
+            label: t('pending'),
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -73,13 +81,13 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
           isHigh: true,
           label: t('withdrawToWallet'),
           onClick: () => setIsModalOpen(true),
-          variant: 'secondary',
+          variant: isProjectAdminMode ? 'cta' : 'secondary',
         }}
         className={className}
         dataTest="BoxPersonalAllocation"
         hasSections
         isVertical
-        title={t('personalAllocation')}
+        title={isProjectAdminMode ? i18n.t('common.donations') : t('personalAllocation')}
       >
         <Sections sections={sections} />
       </BoxRounded>

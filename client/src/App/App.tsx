@@ -11,11 +11,13 @@ import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
 import { ALLOCATION_ITEMS_KEY, ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useProposalsAllIpfs from 'hooks/queries/useProposalsAllIpfs';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useSyncStatus from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -30,6 +32,7 @@ import getIsPreLaunch from 'utils/getIsPreLaunch';
 import triggerToast from 'utils/triggerToast';
 
 import { getValidatedProposalsFromLocalStorage } from './utils';
+
 import 'styles/index.scss';
 import 'i18n';
 
@@ -94,10 +97,11 @@ const App = (): ReactElement => {
     refetchOnWindowFocus: true,
   });
   const { data: proposals } = useProposalsContract();
+  const { isFetching: isFetchingProposalsAllIpfs } = useProposalsAllIpfs();
   const { data: userAllocations } = useUserAllocations();
   const { data: individualReward } = useIndividualReward();
-
   const [isFlushRequired, setIsFlushRequired] = useState(false);
+  const isProjectAdminMode = useIsProjectAdminMode();
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
   const [currentAddressLocal, setCurrentAddressLocal] = useState<string | null>(null);
   const [currentEpochLocal, setCurrentEpochLocal] = useState<number | null>(null);
@@ -307,7 +311,8 @@ const App = (): ReactElement => {
     !isSettingsInitialized ||
     isFlushRequired ||
     !isTipsStoreInitialized ||
-    isFetchingUserTOS;
+    isFetchingUserTOS ||
+    isFetchingProposalsAllIpfs;
 
   if (isLoading) {
     return <AppLoader />;
@@ -316,7 +321,7 @@ const App = (): ReactElement => {
   return (
     <>
       <RootRoutes isSyncingInProgress={isSyncingInProgress} />
-      {!isSyncingInProgress && <ModalOnboarding />}
+      {!isSyncingInProgress && !isProjectAdminMode && <ModalOnboarding />}
     </>
   );
 };

@@ -1,6 +1,7 @@
 import React, { Fragment, FC } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 import AllocationView from 'views/AllocationView/AllocationView';
@@ -20,43 +21,48 @@ const Protected: FC<ProtectedProps> = ({ children, isSyncingInProgress }) =>
 const RootRoutes: FC<RootRoutesProps> = props => {
   const { data: currentEpoch } = useCurrentEpoch();
   const isPreLaunch = getIsPreLaunch(currentEpoch);
+  const isProjectAdminMode = useIsProjectAdminMode();
 
   return (
     <Routes>
       {!isPreLaunch && (
         <>
-          <Route
-            element={
-              <Protected {...props}>
-                <AllocationView />
-              </Protected>
-            }
-            path={`${ROOT_ROUTES.allocation.relative}/*`}
-          />
-          <Route
-            element={
-              <Protected {...props}>
-                <MetricsView />
-              </Protected>
-            }
-            path={`${ROOT_ROUTES.metrics.relative}/*`}
-          />
-          <Route
-            element={
-              <Protected {...props}>
-                <ProposalsView />
-              </Protected>
-            }
-            path={`${ROOT_ROUTES.proposals.relative}/*`}
-          />
-          <Route
-            element={
-              <Protected {...props}>
-                <ProposalView />
-              </Protected>
-            }
-            path={`${ROOT_ROUTES.proposalWithAddress.relative}/*`}
-          />
+          {!isProjectAdminMode && (
+            <>
+              <Route
+                element={
+                  <Protected {...props}>
+                    <AllocationView />
+                  </Protected>
+                }
+                path={`${ROOT_ROUTES.allocation.relative}/*`}
+              />
+              <Route
+                element={
+                  <Protected {...props}>
+                    <MetricsView />
+                  </Protected>
+                }
+                path={`${ROOT_ROUTES.metrics.relative}/*`}
+              />
+              <Route
+                element={
+                  <Protected {...props}>
+                    <ProposalsView />
+                  </Protected>
+                }
+                path={`${ROOT_ROUTES.proposals.relative}/*`}
+              />
+              <Route
+                element={
+                  <Protected {...props}>
+                    <ProposalView />
+                  </Protected>
+                }
+                path={`${ROOT_ROUTES.proposalWithAddress.relative}/*`}
+              />
+            </>
+          )}
           <Route
             element={
               <Protected {...props}>
@@ -77,7 +83,13 @@ const RootRoutes: FC<RootRoutesProps> = props => {
       />
       <Route
         element={
-          <Navigate to={isPreLaunch ? ROOT_ROUTES.earn.absolute : ROOT_ROUTES.proposals.absolute} />
+          <Navigate
+            to={
+              isPreLaunch || isProjectAdminMode
+                ? ROOT_ROUTES.earn.absolute
+                : ROOT_ROUTES.proposals.absolute
+            }
+          />
         }
         path="*"
       />

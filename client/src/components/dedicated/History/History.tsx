@@ -6,6 +6,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import HistoryItemSkeleton from 'components/dedicated/History//HistoryItemSkeleton/HistoryItemSkeleton';
 import HistoryList from 'components/dedicated/History/HistoryList/HistoryList';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useHistory from 'hooks/queries/useHistory';
 import useMetaStore from 'store/meta/store';
@@ -21,20 +22,20 @@ const History: FC<HistoryProps> = ({ className }) => {
   }));
 
   const { data: currentEpoch } = useCurrentEpoch();
-
-  const { fetchNextPage, history, hasNextPage, isFetching } = useHistory();
+  const { fetchNextPage, history, hasNextPage, isFetching: isFetchingHistory } = useHistory();
+  const isProjectAdminMode = useIsProjectAdminMode();
 
   const onLoadNextHistoryPart = () => {
     fetchNextPage();
   };
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
-  const showLoader = isAppWaitingForTransactionToBeIndexed || (isFetching && !isPreLaunch);
+  const showLoader = isAppWaitingForTransactionToBeIndexed || (isFetchingHistory && !isPreLaunch);
 
   return (
     <BoxRounded
       childrenWrapperClassName={styles.childrenWrapper}
-      className={cx(styles.root, className)}
+      className={cx(styles.root, isProjectAdminMode && styles.isProjectAdminMode, className)}
       dataTest="History"
       hasPadding={false}
       hasSections

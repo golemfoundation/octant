@@ -13,6 +13,7 @@ export const envViteKeys: EnvViteKeys = {
   ipfsGateway: 'VITE_IPFS_GATEWAY',
   jsonRpcEndpoint: 'VITE_JSON_RPC_ENDPOINT',
   network: 'VITE_NETWORK',
+  projectsAllIpfsGateway: 'VITE_PROJECTS_ALL_IPFS_GATEWAY',
   serverEndpoint: 'VITE_SERVER_ENDPOINT',
   subgraphAddress: 'VITE_SUBGRAPH_ADDRESS',
   walletConnectProjectId: 'VITE_WALLET_CONNECT_PROJECT_ID',
@@ -40,6 +41,8 @@ const env: Env = {
   jsonRpcEndpoint: import.meta.env[envViteKeys.jsonRpcEndpoint],
   // @ts-expect-error TS does not understand the way vite imports envs.
   network: import.meta.env[envViteKeys.network],
+  // @ts-expect-error TS does not understand the way vite imports envs.
+  projectsAllIpfsGateway: import.meta.env[envViteKeys.projectsAllIpfsGateway],
   // @ts-expect-error TS does not understand the way vite imports envs.
   serverEndpoint: import.meta.env[envViteKeys.serverEndpoint],
   // @ts-expect-error TS does not understand the way vite imports envs.
