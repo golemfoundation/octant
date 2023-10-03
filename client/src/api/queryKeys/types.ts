@@ -4,6 +4,7 @@ export type Root = {
   cryptoValues: 'cryptoValues';
   depositAt: 'depositAt';
   proposalDonors: 'proposalDonors';
+  proposalsContract: 'proposalsContract';
   proposalsIpfsResults: 'proposalsIpfsResults';
   userAllocationNonce: 'userAllocationNonce';
   userHistoricAllocations: 'userHistoricAllocations';
@@ -29,8 +30,9 @@ export type QueryKeys = {
   matchedProposalRewards: ['matchedProposalRewards'];
   proposalDonors: (proposalAddress: string) => [Root['proposalDonors'], string];
   proposalRewardsThreshold: ['proposalRewardsThreshold'];
+  proposalsAllIpfs: ['proposalsAllIpfs'];
   proposalsCid: ['proposalsCid'];
-  proposalsContract: ['proposalsContract'];
+  proposalsContract: (epochNumber: number) => [Root['proposalsContract'], string];
   proposalsIpfsResults: (proposalAddress: string) => [Root['proposalsIpfsResults'], string];
   syncStatus: ['syncStatus'];
   unlocks: ['unlocks'];

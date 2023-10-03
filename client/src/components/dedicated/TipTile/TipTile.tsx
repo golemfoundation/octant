@@ -5,6 +5,7 @@ import React, { useRef } from 'react';
 import Button from 'components/core/Button/Button';
 import Img from 'components/core/Img/Img';
 import Svg from 'components/core/Svg/Svg';
+import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import { cross, info } from 'svg/misc';
 
@@ -22,12 +23,12 @@ const TipTile: React.FC<TipTileProps> = ({
   title,
 }) => {
   const { isDesktop } = useMediaQuery();
-
+  const isProjectAdminMode = useIsProjectAdminMode();
   const shouldSkipEntranceAnimation = useRef(isOpen);
 
   return (
     <AnimatePresence>
-      {isOpen && (
+      {!isProjectAdminMode && isOpen && (
         <motion.div
           animate={
             shouldSkipEntranceAnimation.current !== isOpen
