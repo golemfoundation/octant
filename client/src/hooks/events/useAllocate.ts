@@ -27,7 +27,7 @@ const types = {
   ],
   AllocationPayload: [
     { name: 'allocations', type: 'Allocation[]' },
-    { name: 'nonce', type: 'integer' },
+    { name: 'nonce', type: 'uint256' },
   ],
 };
 
