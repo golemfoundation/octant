@@ -94,3 +94,11 @@ class EpochZeroClaim(BaseModel):
     address = Column(db.String(42), primary_key=True, nullable=False)
     claimed = Column(db.Boolean, default=False)
     claim_nonce = db.Column(db.Integer(), unique=True, nullable=True)
+
+
+class PatronEvent(BaseModel):
+    __tablename__ = "patrons_events"
+
+    id = Column(db.Integer, primary_key=True)
+    address = Column(db.String(42), nullable=False)
+    toggle = db.Column(db.Boolean, nullable=False)
