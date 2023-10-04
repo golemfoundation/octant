@@ -1,21 +1,10 @@
-import { Address, BigInt, BigDecimal } from '@graphprotocol/graph-ts';
+import { BigInt, BigDecimal } from '@graphprotocol/graph-ts';
 
 import { Locked as LockedEvent, Unlocked as UnlockedEvent } from '../generated/Deposits/Deposits';
-import { ERC20 } from '../generated/Deposits/ERC20';
 import { Locked, Unlocked, LockedSummaryLatest, LockedSummarySnapshot } from '../generated/schema';
 
 export function addLockedSummary<T>(event: T): void {
-  const burnAddress = Address.fromString('0x0000000000000000000000000000000000000000');
-
-  // Load GLM and GNT contracts
-  // eslint-disable-next-line no-template-curly-in-string
-  const glmContract = ERC20.bind(Address.fromString('${GLM_CONTRACT_ADDRESS}'));
-  // eslint-disable-next-line no-template-curly-in-string
-  const gntContract = ERC20.bind(Address.fromString('${GNT_CONTRACT_ADDRESS}'));
-  // Calculate current total supply
-  const glmSupply = glmContract.totalSupply().minus(glmContract.balanceOf(burnAddress));
-  const gntSupply = gntContract.totalSupply().minus(gntContract.balanceOf(burnAddress));
-  const totalSupply = glmSupply.plus(gntSupply);
+  const totalSupply = BigInt.fromString('1000000000000000000000000000');
 
   // Load latest locked summary
   let latestLockedSummary = LockedSummaryLatest.load('latest');

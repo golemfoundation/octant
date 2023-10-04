@@ -1,18 +1,8 @@
 from flask import current_app as app
 
 from app import database
-from app.constants import BURN_ADDRESS
 from app.crypto.account import Account
-from app.extensions import glm, gnt
-
-
-def get_current_glm_supply() -> int:
-    return (
-        glm.total_supply()
-        + gnt.total_supply()
-        - glm.balance_of(BURN_ADDRESS)
-        - gnt.balance_of(BURN_ADDRESS)
-    )
+from app.extensions import glm
 
 
 def transfer_claimed():

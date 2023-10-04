@@ -19,7 +19,7 @@ flask-apscheduler = "^1.12.4"
 gql = { extras = ["aiohttp"], version = "^3.4.0" }
 requests = "^2.28.2"
 web3 = "^6.5.0"
-multiproof = {git = "https://github.com/stakewise/multiproof.git", rev = "v0.1.2"}
+multiproof = { git = "https://github.com/stakewise/multiproof.git", rev = "v0.1.2" }
 dataclass-wizard = "^0.22.2"
 flask-caching = "^2.0.2"
 eventlet = "^0.33.3"
@@ -45,15 +45,14 @@ line-length = 88
 exclude = '''
 /(
   \.venv
-  | migrations
 )/
 '''
 
 [tool.flake8]
 max-line-length = 88
-select = ["C","E","F","W","B"]
+select = ["C", "E", "F", "W", "B"]
 extend-ignore = ["E203", "E501", "W503", "F401"]
-exclude = [ "./migrations", "./.venv"]
+exclude = ["./migrations", "./.venv"]
 
 [build-system]
 requires = ["poetry-core"]

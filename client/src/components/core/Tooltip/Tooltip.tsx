@@ -18,6 +18,7 @@ const Tooltip: FC<TooltipProps> = ({
   text,
   className,
   variant = 'normal',
+  tooltipClassName,
 }) => {
   const { isDesktop } = useMediaQuery();
   const [isVisible, setIsVisible] = useState(false);
@@ -74,9 +75,10 @@ const Tooltip: FC<TooltipProps> = ({
                 styles.tooltip,
                 styles[`position--${position}`],
                 styles[`variant--${variant}`],
+                tooltipClassName,
               )}
               exit={{ opacity: 0, y: 8 }}
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, x: position === 'top' ? '-50%' : '0%', y: 8 }}
             >
               {text}
             </motion.div>

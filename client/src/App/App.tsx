@@ -13,11 +13,11 @@ import { ALLOCATION_ITEMS_KEY, ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constant
 import networkConfig from 'constants/networkConfig';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
+import useAllProposals from 'hooks/queries/useAllProposals';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useProposalsAllIpfs from 'hooks/queries/useProposalsAllIpfs';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useSyncStatus from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -97,7 +97,7 @@ const App = (): ReactElement => {
     refetchOnWindowFocus: true,
   });
   const { data: proposals } = useProposalsContract();
-  const { isFetching: isFetchingProposalsAllIpfs } = useProposalsAllIpfs();
+  const { isFetching: isFetchingAllProposals } = useAllProposals();
   const { data: userAllocations } = useUserAllocations();
   const { data: individualReward } = useIndividualReward();
   const [isFlushRequired, setIsFlushRequired] = useState(false);
@@ -312,7 +312,7 @@ const App = (): ReactElement => {
     isFlushRequired ||
     !isTipsStoreInitialized ||
     isFetchingUserTOS ||
-    isFetchingProposalsAllIpfs;
+    isFetchingAllProposals;
 
   if (isLoading) {
     return <AppLoader />;

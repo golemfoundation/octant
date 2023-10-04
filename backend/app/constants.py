@@ -1,7 +1,3 @@
-# This is the Ethereum "burn" address. Tokens or Ether sent to this address are effectively "burned" or made
-# inaccessible forever, as the private key for this address is not known and cannot be derived. It's a common
-# pattern for projects to send tokens to this address if they want to reduce the supply.
-BURN_ADDRESS = "0x0000000000000000000000000000000000000000"
 MAINNET_VALIDATORS_ETHEREUM_ADDRESS = "0x4f80Ce44aFAb1e5E940574F135802E12ad2A5eF0"
 
 # bytes4(keccak256("isValidSignature(bytes,bytes)")

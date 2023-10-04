@@ -26,9 +26,6 @@ from app.settings import TestConfig
 MNEMONIC = "test test test test test test test test test test test junk"
 MOCKED_PENDING_EPOCH_NO = 42
 MOCKED_CURRENT_EPOCH_NO = 43
-GLM_CONTRACT_SUPPLY = 700000000_000000000_000000000
-GNT_CONTRACT_SUPPLY = 300000000_000000000_000000000
-GLM_SUPPLY = GLM_CONTRACT_SUPPLY + GNT_CONTRACT_SUPPLY
 ETH_PROCEEDS = 402_410958904_110000000
 TOTAL_ED = 22700_000000000_099999994
 USER1_ED = 1500_000055377_000000000
@@ -40,8 +37,6 @@ USER1_ADDRESS = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
 USER2_ADDRESS = "0x2345678901234567890123456789012345678904"
 
 # Contracts mocks
-MOCK_GLM = MagicMock(spec=ERC20)
-MOCK_GNT = MagicMock(spec=ERC20)
 MOCK_EPOCHS = MagicMock(spec=Epochs)
 MOCK_PROPOSALS = MagicMock(spec=Proposals)
 MOCK_VAULT = MagicMock(spec=Vault)
@@ -101,17 +96,6 @@ def proposal_accounts():
         w3.eth.account.from_mnemonic(MNEMONIC, account_path=f"m/44'/60'/0'/0/{i}")
         for i in range(10, 20)
     ]
-
-
-@pytest.fixture(scope="function")
-def patch_glm_and_gnt(monkeypatch):
-    monkeypatch.setattr("app.core.glm.glm", MOCK_GLM)
-    monkeypatch.setattr("app.core.glm.gnt", MOCK_GNT)
-
-    MOCK_GLM.total_supply.return_value = GLM_CONTRACT_SUPPLY
-    MOCK_GNT.total_supply.return_value = GNT_CONTRACT_SUPPLY
-    MOCK_GLM.balance_of.return_value = 0
-    MOCK_GNT.balance_of.return_value = 0
 
 
 @pytest.fixture(scope="function")
@@ -207,7 +191,6 @@ def patch_matched_rewards(monkeypatch):
 def mock_pending_epoch_snapshot_db(app, user_accounts):
     database.pending_epoch_snapshot.add_snapshot(
         MOCKED_PENDING_EPOCH_NO,
-        GLM_SUPPLY,
         ETH_PROCEEDS,
         TOTAL_ED,
         LOCKED_RATIO,
