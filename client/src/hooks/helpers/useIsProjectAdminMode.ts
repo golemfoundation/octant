@@ -1,12 +1,12 @@
 import { useAccount } from 'wagmi';
 
-import useProposalsAllIpfs from 'hooks/queries/useProposalsAllIpfs';
+import useAllProposals from 'hooks/queries/useAllProposals';
 
 const useIsProjectAdminMode = (): boolean => {
   const { isConnected, address } = useAccount();
-  const { data: proposalsAllIpfs } = useProposalsAllIpfs();
+  const { data: allProposals } = useAllProposals();
 
-  return isConnected && !!proposalsAllIpfs?.includes(address as `0x${string}`);
+  return isConnected && !!allProposals?.includes(address as `0x${string}`);
 };
 
 export default useIsProjectAdminMode;
