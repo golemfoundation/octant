@@ -11,14 +11,14 @@ def calculate_total_rewards(
     eth_proceeds: int, locked_ratio: Decimal, pending_epoch: int
 ) -> int:
     registry = EpochsRegistry.get_epoch_settings(pending_epoch)
-    return registry.rewardsStrategy.calculate_total_rewards(eth_proceeds, locked_ratio)
+    return registry.rewards_strategy.calculate_total_rewards(eth_proceeds, locked_ratio)
 
 
 def calculate_all_individual_rewards(
     eth_proceeds: int, locked_ratio: Decimal, pending_epoch: int
 ) -> int:
     registry = EpochsRegistry.get_epoch_settings(pending_epoch)
-    return registry.rewardsStrategy.calculate_all_individual_rewards(
+    return registry.rewards_strategy.calculate_all_individual_rewards(
         eth_proceeds, locked_ratio
     )
 
