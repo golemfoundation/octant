@@ -14,6 +14,7 @@ from tests.conftest import (
     mock_graphql,
     create_epoch_event,
     MOCK_EPOCHS,
+    create_deposit_event,
 )
 from app.controllers.allocations import get_allocation_nonce
 
@@ -36,23 +37,28 @@ def test_get_user_budget(user_accounts, mock_pending_epoch_snapshot_db):
     [
         (0, 0, 0),
         (15, 90, 0),
-        (15, 1000_000000000_000000000, 283561_643835616),
-        (15, 300000_000000000_000000000, 85068493_150684920),
+        (15, 1000_000000000_000000000, 358680_289461910),
+        (15, 300000_000000000_000000000, 107604086_838573260),
         (70, 90_000000000_000000000, 0),
-        (70, 1000_000000000_000000000, 1323287_671232876),
-        (70, 300000_000000000_000000000, 396986301_369862962),
+        (70, 1000_000000000_000000000, 1673841_350822250),
+        (70, 300000_000000000_000000000, 502152405_246675214),
         (150, 90_000000000_000000000, 0),
-        (150, 1000_000000000_000000000, 2094491_433599694),
-        (150, 300000_000000000_000000000, 628347430_079908649),
+        (150, 1000_000000000_000000000, 2453013_311931494),
+        (150, 300000_000000000_000000000, 7359039935_79448585),
         (252, 90_000000000_000000000, 0),
-        (252, 1000_000000000_000000000, 3054736_291856924),
-        (252, 300000_000000000_000000000, 917580306_792237419),
-        (365250, 300000_000000000_000000000, 1035_911909073_915555410),
+        (252, 1000_000000000_000000000, 3413258_170188724),
+        (252, 300000_000000000_000000000, 1_025136870_291777355),
+        (365250, 300000_000000000_000000000, 1036_019465637_415095346),
     ],
 )
 @freeze_time("2023-08-09 01:48:47")
 def test_estimate_budget(mocker, graphql_client, patch_epochs, days, amount, expected):
     MOCK_EPOCHS.get_current_epoch.return_value = 1
+    deposits = [
+        create_deposit_event(
+            amount=str(100000000_000000000_000000000), timestamp=1691510401
+        ),
+    ]
     epochs = [
         create_epoch_event(
             start=1691510400,
@@ -76,7 +82,7 @@ def test_estimate_budget(mocker, graphql_client, patch_epochs, days, amount, exp
             epoch=3,
         ),
     ]
-    mock_graphql(mocker, epochs_events=epochs)
+    mock_graphql(mocker, deposit_events=deposits, epochs_events=epochs)
 
     result = estimate_budget(days, amount)
 
