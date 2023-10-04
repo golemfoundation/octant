@@ -5,13 +5,18 @@ import { useAccount } from 'wagmi';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Sections from 'components/core/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/core/BoxRounded/Sections/types';
+import Svg from 'components/core/Svg/Svg';
+import Tooltip from 'components/core/Tooltip/Tooltip';
 import ModalGlmLock from 'components/dedicated/ModalGlmLock/ModalGlmLock';
+import ModalRewardsCalculator from 'components/dedicated/ModalRewardsCalculator/ModalRewardsCalculator';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useMetaStore from 'store/meta/store';
+import { calculator } from 'svg/misc';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
+import styles from './BoxGlmLock.module.scss';
 import BoxGlmLockProps from './types';
 
 const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
@@ -24,6 +29,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
   }));
 
   const [isModalGlmLockOpen, setIsModalGlmLockOpen] = useState<boolean>(false);
+  const [isModalRewardsCalculatorOpen, setIsModalRewardsCalculatorOpen] = useState(false);
   const {
     data: depositEffectiveAtCurrentEpoch,
     isFetching: isFetchingDepositEffectiveAtCurrentEpoch,
@@ -82,6 +88,20 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
         hasSections
         isVertical
         title={t('lockedBalance')}
+        titleSuffix={
+          <Tooltip
+            text={i18n.t('common.calculateRewards')}
+            tooltipClassName={styles.tooltip}
+            variant="small"
+          >
+            <div
+              className={styles.calculateRewards}
+              onClick={() => setIsModalRewardsCalculatorOpen(true)}
+            >
+              <Svg img={calculator} size={2.4} />
+            </div>
+          </Tooltip>
+        }
       >
         <Sections sections={sections} />
       </BoxRounded>
@@ -89,6 +109,12 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
         modalProps={{
           isOpen: isModalGlmLockOpen,
           onClosePanel: () => setIsModalGlmLockOpen(false),
+        }}
+      />
+      <ModalRewardsCalculator
+        modalProps={{
+          isOpen: isModalRewardsCalculatorOpen,
+          onClosePanel: () => setIsModalRewardsCalculatorOpen(false),
         }}
       />
     </Fragment>

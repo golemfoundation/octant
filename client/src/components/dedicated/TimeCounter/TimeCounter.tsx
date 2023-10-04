@@ -36,7 +36,7 @@ const TimeCounter: FC<TimeCounterProps> = ({
   onCountingFinish,
   variant = 'standard',
 }) => {
-  const { t } = useTranslation('translation', {
+  const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.timeCounter',
   });
   const [time, setTime] = useState<Duration | undefined>(undefined);
@@ -81,7 +81,7 @@ const TimeCounter: FC<TimeCounterProps> = ({
       ) : (
         <Fragment>
           <div className={cx(styles.counters, styles[`variant--${variant}`])}>
-            <CounterSection label={t('days')} value={time.days} variant={variant} />
+            <CounterSection label={i18n.t('common.days')} value={time.days} variant={variant} />
             <CounterSection
               label={t('hours')}
               labelSmall={t('hrs')}
