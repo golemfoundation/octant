@@ -12,6 +12,7 @@ import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboardin
 import { ALLOCATION_ITEMS_KEY, ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
+import useAllProposals from 'hooks/queries/useAllProposals';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
@@ -19,7 +20,6 @@ import useDepositValue from 'hooks/queries/useDepositValue';
 import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useProposalsAllIpfs from 'hooks/queries/useProposalsAllIpfs';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useSyncStatus from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -112,7 +112,7 @@ const App = (): ReactElement => {
     refetchOnWindowFocus: true,
   });
   const { data: proposals } = useProposalsContract();
-  const { isFetching: isFetchingProposalsAllIpfs } = useProposalsAllIpfs();
+  const { isFetching: isFetchingAllProposals } = useAllProposals();
   const { data: userAllocations } = useUserAllocations();
   const { data: individualReward } = useIndividualReward();
   const { data: blockNumber } = useBlockNumber(
@@ -390,7 +390,7 @@ const App = (): ReactElement => {
     isFlushRequired ||
     !isTipsStoreInitialized ||
     isFetchingUserTOS ||
-    isFetchingProposalsAllIpfs;
+    isFetchingAllProposals;
 
   if (isLoading) {
     return <AppLoader />;

@@ -9,7 +9,6 @@ export type EnvViteKeys = {
   ipfsGateway: 'VITE_IPFS_GATEWAY';
   jsonRpcEndpoint: 'VITE_JSON_RPC_ENDPOINT';
   network: 'VITE_NETWORK';
-  projectsAllIpfsGateway: 'VITE_PROJECTS_ALL_IPFS_GATEWAY';
   serverEndpoint: 'VITE_SERVER_ENDPOINT';
   subgraphAddress: 'VITE_SUBGRAPH_ADDRESS';
   walletConnectProjectId: 'VITE_WALLET_CONNECT_PROJECT_ID';
@@ -27,7 +26,6 @@ export type Env = {
   ipfsGateway: string;
   jsonRpcEndpoint?: string;
   network: 'Local' | 'Mainnet' | 'Sepolia';
-  projectsAllIpfsGateway: string;
   serverEndpoint: string;
   subgraphAddress: string;
   walletConnectProjectId: string;
