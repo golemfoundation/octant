@@ -10,7 +10,6 @@ export const envViteKeys: EnvViteKeys = {
   cryptoValuesEndpoint: 'VITE_CRYPTO_VALUES_ENDPOINT',
   ipfsGateway: 'VITE_IPFS_GATEWAY',
   network: 'VITE_NETWORK',
-  projectsAllIpfsGateway: 'VITE_PROJECTS_ALL_IPFS_GATEWAY',
   serverEndpoint: 'VITE_SERVER_ENDPOINT',
   subgraphAddress: 'VITE_SUBGRAPH_ADDRESS',
   walletConnectProjectId: 'VITE_WALLET_CONNECT_PROJECT_ID',
@@ -36,8 +35,6 @@ const env: Env = {
   ipfsGateway: import.meta.env[envViteKeys.ipfsGateway],
   // @ts-expect-error TS does not understand the way vite imports envs.
   network: import.meta.env[envViteKeys.network],
-  // @ts-expect-error TS does not understand the way vite imports envs.
-  projectsAllIpfsGateway: import.meta.env[envViteKeys.projectsAllIpfsGateway],
   // @ts-expect-error TS does not understand the way vite imports envs.
   serverEndpoint: import.meta.env[envViteKeys.serverEndpoint],
   // @ts-expect-error TS does not understand the way vite imports envs.
