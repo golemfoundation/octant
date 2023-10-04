@@ -11,11 +11,11 @@ proposals_rewards_model_item = api.model(
         ),
         "allocated": fields.String(
             required=True,
-            description="User allocated funds for the proposal",
+            description="User allocated funds for the proposal, wei",
         ),
         "matched": fields.String(
             required=True,
-            description="Matched rewards funds for the proposal",
+            description="Matched rewards funds for the proposal, wei",
         ),
     },
 )
@@ -24,7 +24,13 @@ proposals_rewards_model = api.model(
     "ProposalRewards",
     {
         "rewards": fields.List(
-            fields.Nested(proposals_rewards_model_item), description="Proposal rewards"
-        )
+            fields.Nested(proposals_rewards_model_item),
+            required=True,
+            description="Proposal rewards",
+        ),
+        "leverage": fields.String(
+            required=False,
+            description="Leverage of the allocated funds, percents",
+        ),
     },
 )

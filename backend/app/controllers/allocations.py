@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from dataclasses import dataclass
 from dataclass_wizard import JSONWizard
 
@@ -50,7 +50,9 @@ def allocate(request: AllocationRequest) -> str:
     return user_address
 
 
-def simulate_allocation(payload: Dict, user_address: str):
+def simulate_allocation(
+    payload: Dict, user_address: str
+) -> Tuple[int, List[rewards.ProposalReward]]:
     nonce, user_allocations = deserialize_payload(payload)
     epoch = epochs.get_pending_epoch()
     verify_allocations(epoch, user_address, user_allocations)
@@ -59,7 +61,11 @@ def simulate_allocation(payload: Dict, user_address: str):
 
     db.session.rollback()
 
-    return proposal_rewards
+    individual_allocation = sum(map(lambda x: x.allocated, proposal_rewards))
+    matched_funds = sum(map(lambda x: x.matched, proposal_rewards))
+    leverage = (matched_funds / individual_allocation) * 100
+
+    return int(leverage), proposal_rewards
 
 
 def get_all_by_user_and_epoch(

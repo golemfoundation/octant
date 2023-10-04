@@ -124,21 +124,25 @@ class Allocation(OctantResource):
 
 @ns.route("/simulate/<string:user_address>")
 @ns.doc(
-    description="Simulates an allocation and get estimated proposal rewards",
+    description="Simulates an allocation and get estimated proposal rewards and expected leverage",
     params={
         "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)",
     },
 )
-class AllocationSimulation(OctantResource):
+class AllocationLeverage(OctantResource):
     @ns.expect(allocation_payload)
     @ns.marshal_with(proposals_rewards_model)
     @ns.response(200, "User allocation successfully simulated")
     def post(self, user_address: str):
         app.logger.debug("Simulating an allocation")
-        proposal_rewards = allocations.simulate_allocation(ns.payload, user_address)
-        app.logger.debug(f"Simulated allocation rewards: {proposal_rewards}")
+        leverage, proposal_rewards = allocations.simulate_allocation(
+            ns.payload, user_address
+        )
+        app.logger.debug(
+            f"Simulated leverage: {leverage}, allocation rewards: {proposal_rewards}"
+        )
 
-        return {"rewards": proposal_rewards}
+        return {"rewards": proposal_rewards, "leverage": leverage}
 
 
 @ns.route("/user/<string:user_address>/epoch/<int:epoch>")
