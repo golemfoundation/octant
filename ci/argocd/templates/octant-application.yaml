@@ -14,84 +14,82 @@ spec:
     name: in-cluster
     namespace: $DEPLOYMENT_ID
   sources:
-  - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-    targetRevision: 0.2.21
-    chart: octant
-    helm:
-      parameters:
-        # From gitlab-ci.yml
-        - name: "image.tag"
-          value: "$IMAGE_TAG"
-        ## Client
-        - name: "webClient.alchemyId"
-          value: "$VITE_ALCHEMY_ID"
-        - name: "webClient.jsonRpcEndpoint"
-          value: "$FRONTEND_RPC_URL"
-        - name: "webClient.viteNetwork"
-          value: "$NETWORK_NAME"
-        ## Graph Node
-        - name: graphNode.graph.env.NETWORK
-          value: "$NETWORK_NAME"
-        - name: graphNode.graph.env.RPC_URL
-          value: "$BACKEND_RPC_URL"
-        ## Backend
-        - name: "backendServer.schedulerEnabled"
-          value: "$SCHEDULER_ENABLED"
-        - name: "backendServer.vaultConfirmWithdrawals"
-          value: "$VAULT_CONFIRM_WITHDRAWALS_ENABLED"
-        - name: "backendServer.glmClaim.senderNonce"
-          value: "$GLM_SENDER_NONCE"
-        - name: "backendServer.glmClaim.enabled"
-          value: "$GLM_CLAIM_ENABLED"
-        - name: "backendServer.snapshotter.enabled"
-          value: "$SNAPSHOTTER_ENABLED"
-        - name: "backendServer.rpcUrl"
-          value: "$BACKEND_RPC_URL"
-        # Hardcoded in this file
-        - name: "ingress.tlsToReplicate.enable"
-          value: "true"
-        - name: "secureIngress"
-          value: "false"
-        # From Deploy contracts job
-        - name: contracts.network
-          value: "$NETWORK_NAME"
-        - name: contracts.network_id
-          value: "$NETWORK_ID"
-        - name: contracts.addresses.startBlock
-          value: "$BLOCK_NUMBER"
-        - name: contracts.addresses.auth
-          value: "$AUTH_CONTRACT_ADDRESS"
-        - name: contracts.addresses.deposits
-          value: "$DEPOSITS_CONTRACT_ADDRESS"
-        - name: contracts.addresses.epochs
-          value: "$EPOCHS_CONTRACT_ADDRESS"
-        - name: contracts.addresses.proposals
-          value: "$PROPOSALS_CONTRACT_ADDRESS"
-        - name: contracts.addresses.vault
-          value: "$VAULT_CONTRACT_ADDRESS"
-        - name: contracts.addresses.withdrawals_target
-          value: "$WITHDRAWALS_TARGET_CONTRACT_ADDRESS"
-        - name: contracts.addresses.glm
-          value: "$GLM_CONTRACT_ADDRESS"
-        - name: contracts.addresses.gnt
-          value: "$GNT_CONTRACT_ADDRESS"
-  - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-    targetRevision: 0.0.3
-    chart: octant-anvil
+    - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
+      targetRevision: 0.2.21
+      chart: octant
+      helm:
+        parameters:
+          # From gitlab-ci.yml
+          - name: 'image.tag'
+            value: '$IMAGE_TAG'
+          ## Client
+          - name: 'webClient.alchemyId'
+            value: '$VITE_ALCHEMY_ID'
+          - name: 'webClient.jsonRpcEndpoint'
+            value: '$FRONTEND_RPC_URL'
+          - name: 'webClient.viteNetwork'
+            value: '$NETWORK_NAME'
+          ## Graph Node
+          - name: graphNode.graph.env.NETWORK
+            value: '$NETWORK_NAME'
+          - name: graphNode.graph.env.RPC_URL
+            value: '$BACKEND_RPC_URL'
+          ## Backend
+          - name: 'backendServer.schedulerEnabled'
+            value: '$SCHEDULER_ENABLED'
+          - name: 'backendServer.vaultConfirmWithdrawals'
+            value: '$VAULT_CONFIRM_WITHDRAWALS_ENABLED'
+          - name: 'backendServer.glmClaim.senderNonce'
+            value: '$GLM_SENDER_NONCE'
+          - name: 'backendServer.glmClaim.enabled'
+            value: '$GLM_CLAIM_ENABLED'
+          - name: 'backendServer.snapshotter.enabled'
+            value: '$SNAPSHOTTER_ENABLED'
+          - name: 'backendServer.rpcUrl'
+            value: '$BACKEND_RPC_URL'
+          # Hardcoded in this file
+          - name: 'ingress.tlsToReplicate.enable'
+            value: 'true'
+          - name: 'secureIngress'
+            value: 'false'
+          # From Deploy contracts job
+          - name: contracts.network
+            value: '$NETWORK_NAME'
+          - name: contracts.network_id
+            value: '$NETWORK_ID'
+          - name: contracts.addresses.startBlock
+            value: '$BLOCK_NUMBER'
+          - name: contracts.addresses.auth
+            value: '$AUTH_CONTRACT_ADDRESS'
+          - name: contracts.addresses.deposits
+            value: '$DEPOSITS_CONTRACT_ADDRESS'
+          - name: contracts.addresses.epochs
+            value: '$EPOCHS_CONTRACT_ADDRESS'
+          - name: contracts.addresses.proposals
+            value: '$PROPOSALS_CONTRACT_ADDRESS'
+          - name: contracts.addresses.vault
+            value: '$VAULT_CONTRACT_ADDRESS'
+          - name: contracts.addresses.withdrawals_target
+            value: '$WITHDRAWALS_TARGET_CONTRACT_ADDRESS'
+          - name: contracts.addresses.glm
+            value: '$GLM_CONTRACT_ADDRESS'
+    - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
+      targetRevision: 0.0.3
+      chart: octant-anvil
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-    - RespectIgnoreDifferences=true
+      - RespectIgnoreDifferences=true
   ignoreDifferences:
-  - group: "batch"
-    kind: "Job"
-    jsonPointers:
-    - /metadata/annotations
-    - /spec/template/metadata
-    - /spec/template/labels
-  - group: ""
-    kind: "Secret"
-    jsonPointers:
-    - /data
+    - group: 'batch'
+      kind: 'Job'
+      jsonPointers:
+        - /metadata/annotations
+        - /spec/template/metadata
+        - /spec/template/labels
+    - group: ''
+      kind: 'Secret'
+      jsonPointers:
+        - /data

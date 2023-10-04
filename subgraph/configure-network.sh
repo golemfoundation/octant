@@ -7,12 +7,10 @@ NETWORK_FILE=${NETWORK_FILE:-"./networks.json"}
 
 ARTIFACTS_DIR="./generated"
 
-export GNT_CONTRACT_ADDRESS=$(cat $NETWORK_FILE | jq -r ".${NETWORK}.GNT.address")
 export GLM_CONTRACT_ADDRESS=$(cat $NETWORK_FILE | jq -r ".${NETWORK}.GLM.address")
 export EPOCHS_CONTRACT_ADDRESS=$(cat $NETWORK_FILE | jq -r ".${NETWORK}.Epochs.address")
 
 echo "Network:      $NETWORK"
-echo "GNT addr:     $GNT_CONTRACT_ADDRESS"
 echo "GLM addr:     $GLM_CONTRACT_ADDRESS"
 echo "EPOCHS addr:  $EPOCHS_CONTRACT_ADDRESS"
 echo

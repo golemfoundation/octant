@@ -120,7 +120,6 @@ def test_get_allocation_threshold(app, tos_users, proposal_accounts):
 
 
 def test_get_rewards_budget(app, tos_users, proposal_accounts):
-    glm_supply = 1000000000_000000000_000000000
     eth_proceeds = 402_410958904_110000000
     total_ed = 22700_000000000_099999994
     locked_ratio = Decimal("0.000022700000000000099999994")
@@ -129,7 +128,6 @@ def test_get_rewards_budget(app, tos_users, proposal_accounts):
 
     database.pending_epoch_snapshot.add_snapshot(
         MOCKED_PENDING_EPOCH_NO,
-        glm_supply,
         eth_proceeds,
         total_ed,
         locked_ratio,

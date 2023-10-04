@@ -33,7 +33,6 @@ cache = Cache()
 # Blockchain extensions
 w3 = Web3()
 glm = ERC20(abi=abi.ERC20)
-gnt = ERC20(abi=abi.ERC20)
 epochs = Epochs(abi=abi.EPOCHS)
 proposals = Proposals(abi=abi.PROPOSALS)
 vault = Vault(abi=abi.VAULT)
@@ -45,7 +44,6 @@ def init_web3(app):
         w3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
     glm.init_web3(w3, app.config["GLM_CONTRACT_ADDRESS"])
-    gnt.init_web3(w3, app.config["GNT_CONTRACT_ADDRESS"])
     epochs.init_web3(w3, app.config["EPOCHS_CONTRACT_ADDRESS"])
     proposals.init_web3(w3, app.config["PROPOSALS_CONTRACT_ADDRESS"])
     vault.init_web3(w3, app.config["VAULT_CONTRACT_ADDRESS"])

@@ -1,43 +1,34 @@
 {
-   "localhost" : {
-      "Deposits" : {
-         "address" : "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
-      },
-      "Epochs" : {
-         "address" : "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
-      },
-      "GLM" : {
-         "address" : "0x7DD9c5Cba05E151C895FDe1CF355C9A1D5DA6429"
-      },
-      "GNT" : {
-         "address" : "0xa74476443119A942dE498590Fe1f2454d7D4aC0d"
-      },
-      "Vault" : {
-         "address" : "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
-      }
-   },
-   "mainnet" : {
-      "GLM" : {
-         "address" : "0x7DD9c5Cba05E151C895FDe1CF355C9A1D5DA6429"
-      },
-      "GNT" : {
-         "address" : "0xa74476443119A942dE498590Fe1f2454d7D4aC0d"
-      }
-   },
-   "sepolia" : {
-      "Deposits" : {
-         "address" : "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-         "startBlock" : 8415400
-      },
-      "Epochs" : {
-         "address" : "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-         "startBlock" : 8415400
-      },
-      "GLM" : {
-         "address" : "0x71432DD1ae7DB41706ee6a22148446087BdD0906"
-      },
-      "GNT" : {
-         "address" : "0xE6de13D64F6036E4E3f5fC84B5EB620C5C7c1050"
-      }
-   }
+  "localhost": {
+    "Deposits": {
+      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
+    },
+    "Epochs": {
+      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+    },
+    "GLM": {
+      "address": "0x7DD9c5Cba05E151C895FDe1CF355C9A1D5DA6429"
+    },
+    "Vault": {
+      "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
+    }
+  },
+  "mainnet": {
+    "GLM": {
+      "address": "0x7DD9c5Cba05E151C895FDe1CF355C9A1D5DA6429"
+    }
+  },
+  "sepolia": {
+    "Deposits": {
+      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      "startBlock": 8415400
+    },
+    "Epochs": {
+      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      "startBlock": 8415400
+    },
+    "GLM": {
+      "address": "0x71432DD1ae7DB41706ee6a22148446087BdD0906"
+    }
+  }
 }

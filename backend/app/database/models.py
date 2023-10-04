@@ -26,7 +26,7 @@ class User(BaseModel):
 
 
 class UserConsents(BaseModel):
-    __tablename__ = "user_consents"  # terms of serivce consents
+    __tablename__ = "user_consents"  # terms of service consents
 
     id = Column(db.Integer, primary_key=True)
     user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
@@ -52,7 +52,6 @@ class PendingEpochSnapshot(BaseModel):
 
     id = Column(db.Integer, primary_key=True)
     epoch = Column(db.Integer, nullable=False, unique=True)
-    glm_supply = Column(db.String, nullable=False)
     eth_proceeds = Column(db.String, nullable=False)
     total_effective_deposit = Column(db.String, nullable=False)
     locked_ratio = Column(db.String, nullable=False)

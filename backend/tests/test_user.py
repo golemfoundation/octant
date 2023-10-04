@@ -51,9 +51,7 @@ def test_get_user_budget(user_accounts, mock_pending_epoch_snapshot_db):
     ],
 )
 @freeze_time("2023-08-09 01:48:47")
-def test_estimate_budget(
-    mocker, graphql_client, patch_epochs, patch_glm_and_gnt, days, amount, expected
-):
+def test_estimate_budget(mocker, graphql_client, patch_epochs, days, amount, expected):
     MOCK_EPOCHS.get_current_epoch.return_value = 1
     epochs = [
         create_epoch_event(
