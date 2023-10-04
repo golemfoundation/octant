@@ -1,13 +1,13 @@
 import cx from 'classnames';
 import React, { forwardRef } from 'react';
 
+import Button from 'components/core/Button/Button';
+import Loader from 'components/core/Loader/Loader';
 import Svg from 'components/core/Svg/Svg';
 import { cross } from 'svg/misc';
 
 import styles from './InputText.module.scss';
 import InputTextProps from './types';
-
-import Button from '../Button/Button';
 
 const InputText = forwardRef<HTMLInputElement, InputTextProps>(
   (
@@ -25,6 +25,8 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
       textAlign = 'left',
       value,
       variant = 'simple',
+      suffixClassName,
+      showLoader = false,
       ...rest
     },
     ref,
@@ -60,7 +62,12 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
     };
 
     const suffixProps = {
-      className: cx(styles.suffix, styles[`variant--${variant}`], isDisabled && styles.isDisabled),
+      className: cx(
+        styles.suffix,
+        styles[`variant--${variant}`],
+        isDisabled && styles.isDisabled,
+        suffixClassName,
+      ),
     };
 
     if (variant === 'borderless') {
@@ -82,6 +89,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
                 variant="iconOnly2"
               />
             )}
+            {showLoader && <Loader className={styles.loader} />}
             {suffix && <div {...suffixProps}>{suffix}</div>}
           </div>
           {error && isErrorInlineVisible && <div className={styles.error}>{error}</div>}

@@ -13,6 +13,7 @@ export const ROOTS: Root = {
 
 export const QUERY_KEYS: QueryKeys = {
   blockNumber: ['blockNumber'],
+  calculateRewards: (amount, days) => ['calculateRewards', amount, days.toString()],
   cryptoValues: fiatCurrency => [ROOTS.cryptoValues, fiatCurrency],
   currentEpoch: ['currentEpoch'],
   currentEpochEnd: ['currentEpochEnd'],

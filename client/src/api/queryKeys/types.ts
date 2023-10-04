@@ -13,6 +13,7 @@ export type Root = {
 
 export type QueryKeys = {
   blockNumber: ['blockNumber'];
+  calculateRewards: (amount: string, days: number) => ['calculateRewards', string, string];
   cryptoValues: (
     fiatCurrency: NonNullable<SettingsData['displayCurrency']>,
   ) => [Root['cryptoValues'], NonNullable<SettingsData['displayCurrency']>];

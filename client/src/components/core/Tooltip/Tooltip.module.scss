@@ -16,7 +16,8 @@
   align-items: center;
   cursor: pointer;
 
-  &.isVisible, &:hover {
+  &.isVisible,
+  &:hover {
     svg path {
       stroke: $color-octant-dark;
     }
@@ -31,7 +32,7 @@
   width: 100%;
   pointer-events: none;
 
-  &.position--{
+  &.position-- {
     &bottom-right {
       @media #{$tablet-down} {
         top: initial;
@@ -46,14 +47,14 @@
 .tooltip {
   text-align: left;
   position: absolute;
-  left: -50%;
+  left: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: $color-white;
   font-weight: $font-weight-medium;
 
-  &.variant--{
+  &.variant-- {
     &normal {
       width: 34.2rem;
       padding: 1.8rem 2.4rem;

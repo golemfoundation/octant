@@ -33,10 +33,17 @@
     "availableNow": "Available now",
     "copy": "Copy link",
     "copied": "Copied",
+    "calculateRewards": "Calculate rewards",
+    "days": "Days",
     "donations": "Donations"
   },
   "components": {
     "dedicated": {
+      "rewardsCalculator": {
+        "enterGLMAmount": "Enter a GLM amount",
+        "lockFor": "Lock for",
+        "estimatedRewards": "Estimated rewards"
+      },
       "allocationEmptyState": {
         "text": "Add some projects or lock GLM tokens to prepare for the next allocation period",
         "epoch1textMobile": "Allocations start in Epoch 2, <br/> please check back in then",
@@ -175,7 +182,6 @@
         "rewards": "Rewards"
       },
       "timeCounter": {
-        "days": "Days",
         "hours": "Hours",
         "hrs": "Hrs",
         "min": "Min",

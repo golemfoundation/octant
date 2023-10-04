@@ -101,3 +101,9 @@ export const share: SvgImageConfig = {
     '<path stroke="#9EA39E" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 13.5h1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1h1M16 9v10M13.5 11 16 8.5l2.5 2.5"/>',
   viewBox: '0 0 32 32',
 };
+
+export const calculator: SvgImageConfig = {
+  markup:
+    '<circle cx="10.126" cy="13.125" r="1.125" fill="#171717"/><circle cx="13.876" cy="13.125" r="1.125" fill="#171717"/><circle cx="13.876" cy="16.125" r="1.125" fill="#171717"/><circle cx="10.126" cy="16.125" r="1.125" fill="#171717"/><path stroke="#171717" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.84 4.5H7.16C6.52 4.5 6 5.02 6 5.66v12.68c0 .64.52 1.16 1.16 1.16h9.68c.64 0 1.16-.52 1.16-1.16V5.66c0-.64-.52-1.16-1.16-1.16Z"/><path stroke="#171717" stroke-width="1.5" d="M6.063 9.75h12.25"/>',
+  viewBox: '0 0 24 24',
+};
