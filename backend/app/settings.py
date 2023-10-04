@@ -26,7 +26,6 @@ class Config(object):
     CACHE_TYPE = "SimpleCache"
 
     # Smart contract addresses
-    GNT_CONTRACT_ADDRESS = os.getenv("GNT_CONTRACT_ADDRESS")
     GLM_CONTRACT_ADDRESS = os.getenv("GLM_CONTRACT_ADDRESS")
     EPOCHS_CONTRACT_ADDRESS = os.getenv("EPOCHS_CONTRACT_ADDRESS")
     AUTH_CONTRACT_ADDRESS = os.getenv("AUTH_CONTRACT_ADDRESS")

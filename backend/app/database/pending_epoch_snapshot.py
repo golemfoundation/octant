@@ -31,7 +31,6 @@ def get_last_snapshot() -> PendingEpochSnapshot:
 
 def add_snapshot(
     epoch: int,
-    glm_supply: int,
     eth_proceeds: int,
     total_ed: int,
     locked_ratio: Decimal,
@@ -40,7 +39,6 @@ def add_snapshot(
 ):
     snapshot = PendingEpochSnapshot(
         epoch=epoch,
-        glm_supply=str(glm_supply),
         eth_proceeds=str(eth_proceeds),
         total_effective_deposit=str(total_ed),
         locked_ratio="{:f}".format(locked_ratio),

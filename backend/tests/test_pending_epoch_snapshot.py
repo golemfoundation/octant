@@ -14,7 +14,7 @@ from tests.conftest import (
 
 
 @pytest.fixture(autouse=True)
-def before(app, graphql_client, patch_glm_and_gnt, patch_epochs, patch_eth_get_balance):
+def before(app, graphql_client, patch_epochs, patch_eth_get_balance):
     pass
 
 
@@ -46,7 +46,6 @@ def test_take_snapshot_without_effective_deposits(mocker, user_accounts):
     snapshot = database.pending_epoch_snapshot.get_last_snapshot()
     assert snapshot.epoch == 42
     assert snapshot.created_at is not None
-    assert snapshot.glm_supply == "1000000000000000000000000000"
     assert snapshot.eth_proceeds == str(ETH_PROCEEDS)
     assert snapshot.total_effective_deposit == "0"
     assert snapshot.locked_ratio == "0"
@@ -94,7 +93,6 @@ def test_take_snapshot_with_effective_deposits(
     snapshot = database.pending_epoch_snapshot.get_last_snapshot()
     assert snapshot.epoch == 43
     assert snapshot.created_at is not None
-    assert snapshot.glm_supply == "1000000000000000000000000000"
     assert snapshot.eth_proceeds == str(ETH_PROCEEDS)
     assert snapshot.total_effective_deposit == "9000000055377000000000"
     assert snapshot.locked_ratio == "0.000009000000055377"

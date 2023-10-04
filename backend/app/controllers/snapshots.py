@@ -5,7 +5,7 @@ from dataclass_wizard import JSONWizard
 from flask import current_app as app
 
 from app import exceptions, database
-from app.core import glm, merkle_tree
+from app.core import merkle_tree
 from app.core.deposits.deposits import get_users_deposits, calculate_locked_ratio
 from app.core.epochs.epoch_snapshots import (
     has_pending_epoch_snapshot,
@@ -25,6 +25,7 @@ from app.core.rewards.rewards import (
 from app.core.user import rewards as user_core_rewards
 from app.database import pending_epoch_snapshot, finalized_epoch_snapshot
 from app.extensions import db, w3, epochs
+from app.constants import GLM_TOTAL_SUPPLY_WEI
 
 
 @dataclass(frozen=True)
@@ -73,10 +74,9 @@ def snapshot_pending_epoch() -> Optional[int]:
         app.logger.info("[+] Pending snapshots are up to date")
         return None
 
-    glm_supply = glm.get_current_glm_supply()
     eth_proceeds = w3.eth.get_balance(app.config["WITHDRAWALS_TARGET_CONTRACT_ADDRESS"])
     user_deposits, total_effective_deposit = get_users_deposits(pending_epoch)
-    locked_ratio = calculate_locked_ratio(total_effective_deposit, glm_supply)
+    locked_ratio = calculate_locked_ratio(total_effective_deposit, GLM_TOTAL_SUPPLY_WEI)
     total_rewards = calculate_total_rewards(eth_proceeds, locked_ratio, pending_epoch)
     all_individual_rewards = calculate_all_individual_rewards(
         eth_proceeds, locked_ratio, pending_epoch
@@ -85,7 +85,6 @@ def snapshot_pending_epoch() -> Optional[int]:
     database.deposits.add_all(pending_epoch, user_deposits)
     pending_epoch_snapshot.add_snapshot(
         pending_epoch,
-        glm_supply,
         eth_proceeds,
         total_effective_deposit,
         locked_ratio,
