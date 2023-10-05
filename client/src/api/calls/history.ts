@@ -4,7 +4,9 @@ import apiService from 'services/apiService';
 export type ResponseHistoryItem = {
   // BigNumber (wei) string
   amount: string;
+  projectAddress?: string;
   timestamp: string;
+  transactionHash?: string;
   type: 'lock' | 'unlock' | 'allocation' | 'withdrawal';
 };
 

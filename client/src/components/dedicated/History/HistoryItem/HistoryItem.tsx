@@ -1,17 +1,18 @@
-import React, { FC, memo, useMemo } from 'react';
+import React, { FC, Fragment, memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import { getValuesToDisplay } from 'components/core/DoubleValue/utils';
-import Svg from 'components/core/Svg/Svg';
+import HistoryItemDetailsModal from 'components/dedicated/History/HistoryItemDetailsModal/HistoryItemDetailsModal';
+import HistoryTransactionLabel from 'components/dedicated/History/HistoryTransactionLabel/HistoryTransactionLabel';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import { HistoryItemProps } from 'hooks/queries/useHistory';
 import useSettingsStore from 'store/settings/store';
-import { allocate, donation } from 'svg/history';
 
 import styles from './HistoryItem.module.scss';
 
-const HistoryItem: FC<HistoryItemProps> = ({ type, amount, projectsNumber }) => {
+const HistoryItem: FC<HistoryItemProps> = props => {
+  const { type, amount, projectsNumber } = props;
   const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.historyItem' });
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
@@ -22,6 +23,7 @@ const HistoryItem: FC<HistoryItemProps> = ({ type, amount, projectsNumber }) => 
     },
   }));
   const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const title = useMemo(() => {
     switch (type) {
@@ -45,12 +47,9 @@ const HistoryItem: FC<HistoryItemProps> = ({ type, amount, projectsNumber }) => 
     valueCrypto: amount,
   });
 
-  const img = ['allocation', 'withdrawal'].includes(type) ? allocate : donation;
-
   return (
-    <BoxRounded className={styles.box} hasPadding={false}>
-      <div className={styles.iconAndTitle}>
-        <Svg img={img} size={4} />
+    <Fragment>
+      <BoxRounded className={styles.box} hasPadding={false} onClick={() => setIsModalOpen(true)}>
         <div className={styles.titleAndSubtitle}>
           <div className={styles.title}>{title}</div>
           {!!projectsNumber && (
@@ -58,13 +57,21 @@ const HistoryItem: FC<HistoryItemProps> = ({ type, amount, projectsNumber }) => 
               {projectsNumber} {t('projects')}
             </div>
           )}
+          <HistoryTransactionLabel type="confirmed" />
         </div>
-      </div>
-      <div className={styles.values}>
-        <div className={styles.primary}>{values.primary}</div>
-        <div className={styles.secondary}>{values.secondary}</div>
-      </div>
-    </BoxRounded>
+        <div className={styles.values}>
+          <div className={styles.primary}>{values.primary}</div>
+          <div className={styles.secondary}>{values.secondary}</div>
+        </div>
+      </BoxRounded>
+      <HistoryItemDetailsModal
+        {...props}
+        modalProps={{
+          isOpen: isModalOpen,
+          onClosePanel: () => setIsModalOpen(false),
+        }}
+      />
+    </Fragment>
   );
 };
 

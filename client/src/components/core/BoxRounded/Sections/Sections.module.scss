@@ -6,6 +6,10 @@
   width: 100%;
   border-bottom: 0.1rem solid $color-octant-grey4;
 
+  &.hasBottomDivider:not(:last-child) {
+    border-bottom: 0.1rem  solid $color-octant-grey2;
+  }
+
   &.isDisabled {
     .label {
       color: $color-octant-grey3;

@@ -6,15 +6,18 @@ import TooltipProps from 'components/core/Tooltip/types';
 
 export interface SectionProps {
   additionalContent?: ReactNode;
+  childrenLeft?: ReactNode;
+  childrenRight?: ReactNode;
   className?: string;
   dataTest?: string;
-  doubleValueProps: {
+  doubleValueProps?: {
     coinPricesServerDowntimeText?: DoubleValueProps['coinPricesServerDowntimeText'];
     cryptoCurrency: DoubleValueProps['cryptoCurrency'];
     isDisabled?: DoubleValueProps['isDisabled'];
     isFetching?: DoubleValueProps['isFetching'];
     valueCrypto: DoubleValueProps['valueCrypto'];
   };
+  hasBottomDivider?: boolean;
   icon?: SvgImageConfig;
   isDisabled?: boolean;
   label?: string;
@@ -30,5 +33,6 @@ export interface SectionProps {
 }
 
 export default interface SectionsProps {
+  hasBottomDivider?: SectionProps['hasBottomDivider'];
   sections: SectionProps[];
 }
