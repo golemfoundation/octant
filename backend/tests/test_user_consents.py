@@ -7,7 +7,7 @@ from app.core.user.tos import (
     has_user_agreed_to_terms_of_service,
     add_user_terms_of_service_consent,
 )
-from app.crypto.terms_and_conditions_consent import (
+from app.crypto.eth_sign.terms_and_conditions_consent import (
     verify_signed_message,
     build_consent_message,
 )
