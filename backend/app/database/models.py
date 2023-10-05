@@ -53,6 +53,7 @@ class AllocationSignature(BaseModel):
 
     id = Column(db.Integer, primary_key=True)
     user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    user = relationship("User", backref=db.backref("allocations_signatures", lazy=True))
     nonce = Column(db.Integer, nullable=False)
     epoch = Column(db.Integer, nullable=False)
     signature = Column(db.String(132), nullable=False)

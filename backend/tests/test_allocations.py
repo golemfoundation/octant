@@ -541,6 +541,25 @@ def test_nonces(tos_users, proposal_accounts):
         )
 
 
+def test_stores_allocation_request_signature(tos_users, proposal_accounts):
+    nonce0 = get_allocation_nonce(tos_users[0].address)
+    payload = create_payload(
+        proposal_accounts[0:2], [10 * 10**18, 20 * 10**18], nonce0
+    )
+    signature = sign(tos_users[0], build_allocations_eip712_data(payload))
+
+    allocate(AllocationRequest(payload, signature, override_existing_allocations=True))
+
+    alloc_signature = database.allocations.get_allocation_signature_by_user_nonce(
+        tos_users[0].address, nonce0
+    )
+
+    assert alloc_signature is not None
+
+    assert alloc_signature.epoch == MOCKED_PENDING_EPOCH_NO
+    assert alloc_signature.signature == signature
+
+
 def check_allocations(user_address, expected_payload, expected_count):
     epoch = MOCKED_PENDING_EPOCH_NO
     expected_allocations = deserialize_allocations(expected_payload)

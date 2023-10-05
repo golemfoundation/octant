@@ -10,6 +10,7 @@ from app.core.allocations import (
     deserialize_payload,
     verify_allocations,
     add_allocations_to_db,
+    store_allocations_signature,
     next_allocation_nonce,
 )
 from app.core.common import AccountFunds
@@ -44,6 +45,8 @@ def allocate(request: AllocationRequest) -> str:
         user_allocations,
         request.override_existing_allocations,
     )
+
+    store_allocations_signature(epoch, user_address, nonce, request.signature)
 
     db.session.commit()
 
