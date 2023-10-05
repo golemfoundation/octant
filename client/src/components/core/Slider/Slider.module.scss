@@ -86,14 +86,14 @@ $thumbSizeMobile: $heightRootMobile;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: $thumbSizeMobile / 2;
-  height: $thumbSizeMobile / 2;
+  width: calc($thumbSizeMobile / 2);
+  height: calc($thumbSizeMobile / 2);
   background: $color-octant-grey12;
   border-radius: 50%;
 
   @media #{$desktop-up} {
-    height: $thumbSize / 2;
-    width: $thumbSize / 2;
+    height: calc($thumbSize / 2);
+    width: calc($thumbSize / 2);
   }
 }
 
