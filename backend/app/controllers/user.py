@@ -4,9 +4,8 @@ from app.core.user.tos import (
     has_user_agreed_to_terms_of_service,
     add_user_terms_of_service_consent,
 )
-
-from app.exceptions import RewardsException
-
+from app.database import user as user_db
+from app.exceptions import RewardsException, UserNotFound
 from app.extensions import db
 
 MAX_DAYS_TO_ESTIMATE_BUDGET = 365250
@@ -38,3 +37,18 @@ def estimate_budget(days: int, glm_amount: int) -> int:
         )
 
     return budget.estimate_budget(days, glm_amount)
+
+
+def get_patron_mode_status(user_address: str) -> bool:
+    user = user_db.get_by_address(user_address)
+    if not user:
+        raise UserNotFound(user_address)
+
+    return user.patron_mode
+
+
+def toggle_patron_mode(user_address: str) -> bool:
+    status = user_db.toggle_patron_mode(user_address)
+    db.session.commit()
+
+    return status

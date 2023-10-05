@@ -1,7 +1,5 @@
 from app import database
-from app.crypto.eth_sign.terms_and_conditions_consent import (
-    verify_signed_message,
-)
+from app.crypto.eth_sign import terms_and_conditions_consent
 from app.exceptions import DuplicateConsent, InvalidSignature
 
 
@@ -16,7 +14,7 @@ def add_user_terms_of_service_consent(
     if has_user_agreed_to_terms_of_service(user_address):
         raise DuplicateConsent(user_address)
 
-    if not verify_signed_message(user_address, consent_signature):
+    if not terms_and_conditions_consent.verify(user_address, consent_signature):
         raise InvalidSignature(user_address, consent_signature)
 
     database.user_consents.add_consent(user_address, ip_address)
