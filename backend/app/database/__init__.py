@@ -8,5 +8,4 @@ from . import (
     rewards,
     claims,
     user_consents,
-    patrons_events,
 )
