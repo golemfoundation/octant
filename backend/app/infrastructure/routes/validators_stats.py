@@ -31,7 +31,7 @@ active_validators_model = api.model(
 
 @ns.route("/active/summary")
 @ns.doc(
-    description="Return the amount of all active Octant validators and the sum of their effective balances in gwei."
+    description="Return the number of all active Octant validators and the sum of their effective balances in gwei."
 )
 class ActiveValidatorsSummary(OctantResource):
     @ns.marshal_with(active_validators_model)
