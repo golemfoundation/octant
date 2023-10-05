@@ -2,10 +2,13 @@ from dataclasses import dataclass
 from typing import List, Dict, Tuple
 
 from dataclass_wizard import JSONWizard
+from eth_utils import to_checksum_address
 
 from app import database, exceptions
 from app.core.epochs.epoch_snapshots import has_pending_epoch_snapshot
 from app.core.user.budget import get_budget
+from app.core.user.patron_mode import get_patron_mode_status
+
 from app.crypto.eip712 import recover_address, build_allocations_eip712_data
 from app.extensions import proposals
 
@@ -61,6 +64,12 @@ def verify_allocations(epoch: int, user_address: str, allocations: List[Allocati
 
     if not has_pending_epoch_snapshot(epoch):
         raise exceptions.MissingSnapshot
+
+    patron_mode_enabled = get_patron_mode_status(
+        user_address=to_checksum_address(user_address)
+    )
+    if patron_mode_enabled:
+        raise exceptions.NotAllowedInPatronMode(user_address)
 
     # Check if the list of proposal addresses is a subset of
     # proposal addresses in the Proposals contract

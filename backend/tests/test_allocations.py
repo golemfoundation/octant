@@ -13,6 +13,7 @@ from app.controllers.allocations import (
     allocate,
     simulate_allocation,
 )
+from app.core.user.patron_mode import toggle_patron_mode
 from app.core.allocations import (
     AllocationRequest,
     Allocation,
@@ -117,6 +118,17 @@ def test_simulate_allocation_single_user(
     # Ensure changes made in the simulation are not saved to db
     proposal_rewards_after = rewards.get_proposals_rewards()
     assert proposal_rewards_before == proposal_rewards_after
+
+
+def test_simulate_allocation_in_patron_mode(
+    user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
+):
+    payload = create_payload(proposal_accounts[0:2], [40 * 10**18, 50 * 10**18])
+    toggle_patron_mode(user_accounts[0].address)
+
+    # Call simulate allocation method
+    with pytest.raises(exceptions.NotAllowedInPatronMode):
+        simulate_allocation(payload, user_accounts[0].address)
 
 
 def test_simulate_allocation_multiple_users(
@@ -401,12 +413,30 @@ def test_allocation_validation_errors(proposal_accounts, user_accounts, tos_user
 
 def test_project_allocates_funds_to_itself(proposal_accounts):
     # Test data
+    database.user.get_or_add_user(proposal_accounts[0].address)
     payload = create_payload(proposal_accounts[0:3], None)
     signature = sign(proposal_accounts[0], build_allocations_eip712_data(payload))
 
     with pytest.raises(exceptions.ProposalAllocateToItself):
         allocate(
             AllocationRequest(payload, signature, override_existing_allocations=True)
+        )
+
+
+def test_allocate_by_user_in_patron_mode(tos_users, proposal_accounts):
+    # Test data
+    initial_payload = create_payload(proposal_accounts[0:3], None, 0)
+    initial_signature = sign(
+        tos_users[0], build_allocations_eip712_data(initial_payload)
+    )
+    toggle_patron_mode(tos_users[0].address)
+
+    # Call allocate method
+    with pytest.raises(exceptions.NotAllowedInPatronMode):
+        allocate(
+            AllocationRequest(
+                initial_payload, initial_signature, override_existing_allocations=True
+            )
         )
 
 
