@@ -138,16 +138,14 @@ def patch_vault(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_is_contract(monkeypatch):
-    monkeypatch.setattr(
-        "app.crypto.terms_and_conditions_consent.is_contract", MOCK_IS_CONTRACT
-    )
+    monkeypatch.setattr("app.crypto.eth_sign.signature.is_contract", MOCK_IS_CONTRACT)
     MOCK_IS_CONTRACT.return_value = False
 
 
 @pytest.fixture(scope="function")
 def patch_eip1271_is_valid_signature(monkeypatch):
     monkeypatch.setattr(
-        "app.crypto.terms_and_conditions_consent.is_valid_signature",
+        "app.crypto.eth_sign.signature.is_valid_signature",
         MOCK_EIP1271_IS_VALID_SIGNATURE,
     )
     MOCK_EIP1271_IS_VALID_SIGNATURE.return_value = True

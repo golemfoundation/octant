@@ -29,6 +29,35 @@ tos_consent_post_parser.add_argument(
 )
 
 
+user_patron_mode_status_model = api.model(
+    "PatronModeStatus",
+    {
+        "status": fields.Boolean(
+            required=True,
+            description="Flag indicating whether user has enabled patron mode",
+        ),
+    },
+)
+
+tos_consent_post_parser = reqparse.RequestParser()
+tos_consent_post_parser.add_argument(
+    "signature", required=True, type=str, location="json"
+)
+tos_consent_post_parser.add_argument(
+    "x-real-ip", required=True, location="headers", case_sensitive=False
+)
+
+user_patron_mode_request = api.model(
+    "PatronModeRequest",
+    {
+        "signature": fields.String(
+            required=True,
+            description="signature of the patron mode status message as a hexadecimal string",
+        ),
+    },
+)
+
+
 @ns.route("/<string:user_address>/tos")
 @ns.doc(
     params={
@@ -71,3 +100,44 @@ class TermsOfService(OctantResource):
         app.logger.info(f"User {user_address} ToS consent status updated")
 
         return {"accepted": True}, 201
+
+
+@ns.route("/<string:user_address>/patron-mode")
+@ns.doc(
+    params={
+        "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)"
+    }
+)
+class PatronMode(OctantResource):
+    @ns.doc(
+        description="Returns true if given user has enabled patron mode, false in the other case.",
+    )
+    @ns.marshal_with(user_patron_mode_status_model)
+    @ns.response(200, "User's patron mode status retrieved")
+    def get(self, user_address: str):
+        app.logger.debug(f"Getting user {user_address} patron mode status")
+        patron_mode_status = user_controller.get_patron_mode_status(user_address)
+        app.logger.debug(
+            f"User {user_address} patron mode status: {patron_mode_status}"
+        )
+
+        return {"status": patron_mode_status}
+
+    @ns.doc(
+        description="Toggle patron mode status",
+    )
+    @ns.expect(user_patron_mode_request)
+    @ns.marshal_with(user_patron_mode_status_model)
+    @ns.response(204, "User's patron mode status updated.")
+    @ns.response(400, "Could not update patron mode status.")
+    def patch(self, user_address: str):
+        app.logger.info(f"Updating user {user_address} patron mode status")
+
+        signature = ns.payload.get("signature")
+
+        patron_mode_status = user_controller.toggle_patron_mode(user_address, signature)
+        app.logger.info(
+            f"User {user_address} patron mode status updated to {patron_mode_status}"
+        )
+
+        return {"status": patron_mode_status}, 204
