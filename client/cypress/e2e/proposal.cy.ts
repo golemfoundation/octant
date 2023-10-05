@@ -40,13 +40,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       if (proposalNames.length === 0) {
         proposalNames = getNamesOfProposals();
       }
-
-      // Wait for all loaders (in ProposalItem) to disappear.
-      cy.get('[data-test*=Loader]').should('not.exist');
     });
 
     it('entering proposal view directly renders content', () => {
-      cy.get('[data-test^=ProposalsView__ProposalItem').first().click();
+      cy.get('[data-test^=ProposalsView__ProposalsListItem').first().click();
       cy.reload();
       const proposalView = cy.get('[data-test=ProposalView__proposal').first();
       proposalView.get('[data-test=ProposalView__proposal__Img]').should('be.visible');
@@ -54,7 +51,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('entering proposal view renders all its elements', () => {
-      cy.get('[data-test^=ProposalsView__ProposalItem').first().click();
+      cy.get('[data-test^=ProposalsView__ProposalsListItem').first().click();
       const proposalView = cy.get('[data-test=ProposalView__proposal').first();
       proposalView.get('[data-test=ProposalView__proposal__Img]').should('be.visible');
       proposalView.get('[data-test=ProposalView__proposal__name]').should('be.visible');
@@ -95,7 +92,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('entering proposal view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar', () => {
-      cy.get('[data-test^=ProposalsView__ProposalItem').first().click();
+      cy.get('[data-test^=ProposalsView__ProposalsListItem').first().click();
 
       cy.window().then(window => {
         // @ts-expect-error missing typing for client window elements.
@@ -114,7 +111,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Entering proposal view allows scroll only to the last project', () => {
-      cy.get('[data-test^=ProposalsView__ProposalItem]').first().click();
+      cy.get('[data-test^=ProposalsView__ProposalsListItem]').first().click();
 
       for (let i = 0; i < proposalNames.length; i++) {
         cy.get('[data-test=ProposalView__proposal]').should(
@@ -133,7 +130,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('"Back to top" button is displayed if the user has scrolled past the start of the final project description', () => {
-      cy.get('[data-test^=ProposalsView__ProposalItem]').first().click();
+      cy.get('[data-test^=ProposalsView__ProposalsListItem]').first().click();
 
       for (let i = 0; i < proposalNames.length - 1; i++) {
         cy.get('[data-test=ProposalView__proposal__Donors]')
@@ -147,7 +144,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Clicking on "Back to top" button scrolls to the top of view (first project is visible)', () => {
-      cy.get('[data-test^=ProposalsView__ProposalItem]').first().click();
+      cy.get('[data-test^=ProposalsView__ProposalsListItem]').first().click();
 
       for (let i = 0; i < proposalNames.length - 1; i++) {
         cy.get('[data-test=ProposalView__proposal__Donors]')

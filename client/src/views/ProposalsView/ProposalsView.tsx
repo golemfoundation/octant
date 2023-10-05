@@ -1,13 +1,12 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import InfiniteScroll from 'react-infinite-scroller';
 
-import ProposalItem from 'components/dedicated/ProposalItem/ProposalItem';
-import ProposalItemSkeleton from 'components/dedicated/ProposalItemSkeleton/ProposalItemSkeleton';
+import Loader from 'components/core/Loader/Loader';
+import ProposalsList from 'components/dedicated/ProposalsList/ProposalsList';
 import TipTile from 'components/dedicated/TipTile/TipTile';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
-import useProposalsContract from 'hooks/queries/useProposalsContract';
-import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useTipsStore from 'store/tips/store';
 
@@ -17,10 +16,11 @@ const ProposalsView = (): ReactElement => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'views.proposals',
   });
-  const { data: proposalsAddresses } = useProposalsContract();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: matchedProposalRewards } = useMatchedProposalRewards();
-  const { data: proposalsWithRewards } = useProposalsIpfsWithRewards();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen({
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+  });
   const { wasAddFavouritesAlreadyClosed, setWasAddFavouritesAlreadyClosed } = useTipsStore(
     state => ({
       setWasAddFavouritesAlreadyClosed: state.setWasAddFavouritesAlreadyClosed,
@@ -28,20 +28,22 @@ const ProposalsView = (): ReactElement => {
     }),
   );
 
-  const isEpoch1 = currentEpoch === 1;
+  const [loadedArchivedEpochsNumber, setLoadedArchivedEpochsNumber] = useState(0);
 
-  const areMatchedProposalsReady =
-    !!currentEpoch && ((currentEpoch > 1 && matchedProposalRewards) || isEpoch1);
+  const isEpoch1 = currentEpoch === 1;
 
   const isAddToFavouritesTipVisible = !wasAddFavouritesAlreadyClosed && !isEpoch1;
 
+  const lastArchivedEpochNumber = isDecisionWindowOpen ? currentEpoch! - 2 : currentEpoch! - 1;
+
+  const archivedEpochs = currentEpoch
+    ? Array.from(Array(lastArchivedEpochNumber)).map((_, idx, array) => array.length - idx)
+    : [];
+
+  const onLoadNextEpochArchive = () => setLoadedArchivedEpochsNumber(prev => prev + 1);
+
   return (
-    <MainLayout
-      dataTest="ProposalsView"
-      isLoading={
-        !proposalsAddresses || proposalsAddresses.length === 0 || !areMatchedProposalsReady
-      }
-    >
+    <MainLayout dataTest="ProposalsView">
       <TipTile
         className={styles.tip}
         dataTest="ProposalsView__TipTile"
@@ -52,21 +54,23 @@ const ProposalsView = (): ReactElement => {
         text={t('tip.text')}
         title={t('tip.title')}
       />
-      <div className={styles.list} data-test="ProposalsView__List">
-        {proposalsWithRewards.length > 0
-          ? proposalsWithRewards.map((proposalWithRewards, index) => (
-              <ProposalItem
-                key={proposalWithRewards.address}
-                className={styles.element}
-                dataTest={`ProposalsView__ProposalItem--${index}`}
-                {...proposalWithRewards}
-              />
-            ))
-          : (proposalsAddresses || []).map((_, index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <ProposalItemSkeleton key={index} className={styles.element} />
-            ))}
-      </div>
+      <ProposalsList />
+      <InfiniteScroll
+        hasMore={loadedArchivedEpochsNumber !== lastArchivedEpochNumber}
+        initialLoad
+        loader={
+          <div key={-1} className={styles.loaderWrapper}>
+            <Loader />
+          </div>
+        }
+        loadMore={onLoadNextEpochArchive}
+        pageStart={0}
+        useWindow
+      >
+        {archivedEpochs.slice(0, loadedArchivedEpochsNumber).map(epoch => (
+          <ProposalsList key={epoch} epoch={epoch} />
+        ))}
+      </InfiniteScroll>
     </MainLayout>
   );
 };

@@ -13,23 +13,23 @@ import Chainable = Cypress.Chainable;
 chai.use(chaiColors);
 
 function checkProposalItemElements(index, name): Chainable<any> {
-  cy.get('[data-test^=ProposalsView__ProposalItem')
+  cy.get('[data-test^=ProposalsView__ProposalsListItem')
     .eq(index)
-    .find('[data-test=ProposalItem__imageProfile]')
+    .find('[data-test=ProposalsListItem__imageProfile]')
     .should('be.visible');
-  cy.get('[data-test^=ProposalsView__ProposalItem]')
+  cy.get('[data-test^=ProposalsView__ProposalsListItem]')
     .eq(index)
     .should('be.visible')
-    .get('[data-test=ProposalItem__name]')
+    .get('[data-test=ProposalsListItem__name]')
     .should('be.visible')
     .contains(name);
-  cy.get('[data-test^=ProposalsView__ProposalItem')
+  cy.get('[data-test^=ProposalsView__ProposalsListItem')
     .eq(index)
-    .find('[data-test=ProposalItem__IntroDescription]')
+    .find('[data-test=ProposalsListItem__IntroDescription]')
     .should('be.visible');
-  cy.get('[data-test^=ProposalsView__ProposalItem')
+  cy.get('[data-test^=ProposalsView__ProposalsListItem')
     .eq(index)
-    .find('[data-test=ProposalItem__ButtonAddToAllocate]')
+    .find('[data-test=ProposalsListItem__ButtonAddToAllocate]')
     .should('be.visible');
 
   return cy.window().then(window => {
@@ -45,44 +45,44 @@ function checkProposalItemElements(index, name): Chainable<any> {
         return cy;
       default:
         return cy
-          .get('[data-test^=ProposalsView__ProposalItem')
+          .get('[data-test^=ProposalsView__ProposalsListItem')
           .eq(index)
           .find('[data-test=ProposalRewards__notAvailable]')
           .should('be.visible');
       // TODO OCT-663 Make CY check if rewards are available (Epoch 2, decision window open).
       // return cy
-      //   .get('[data-test^=ProposalsView__ProposalItem')
+      //   .get('[data-test^=ProposalsView__ProposalsListItem')
       //   .eq(index)
-      //   .find('[data-test=ProposalRewards__totalDonated__label]')
+      //   .find('[data-test=ProposalRewards__currentTotal__label]')
       //   .should('be.visible');
     }
   });
 }
 
 function addProposalToAllocate(index, numberOfAddedProposals): Chainable<any> {
-  cy.get('[data-test^=ProposalsView__ProposalItem')
+  cy.get('[data-test^=ProposalsView__ProposalsListItem')
     .eq(index)
-    .find('[data-test=ProposalItem__imageProfile]')
+    .find('[data-test=ProposalsListItem__imageProfile]')
     .should('be.visible');
-  cy.get('[data-test^=ProposalsView__ProposalItem')
+  cy.get('[data-test^=ProposalsView__ProposalsListItem')
     .eq(index)
-    .find('[data-test=ProposalItem__IntroDescription]')
+    .find('[data-test=ProposalsListItem__IntroDescription]')
     .should('be.visible');
-  cy.get('[data-test^=ProposalsView__ProposalItem')
+  cy.get('[data-test^=ProposalsView__ProposalsListItem')
     .eq(index)
-    .find('[data-test=ProposalItem__ButtonAddToAllocate]')
+    .find('[data-test=ProposalsListItem__ButtonAddToAllocate]')
     .scrollIntoView()
     .click();
-  cy.get('[data-test^=ProposalsView__ProposalItem')
+  cy.get('[data-test^=ProposalsView__ProposalsListItem')
     .eq(index)
-    .find('[data-test=ProposalItem__ButtonAddToAllocate]')
+    .find('[data-test=ProposalsListItem__ButtonAddToAllocate]')
     .find('svg')
     .find('path')
     .then($el => $el.css('fill'))
     .should('be.colored', '#FF6157');
-  cy.get('[data-test^=ProposalsView__ProposalItem')
+  cy.get('[data-test^=ProposalsView__ProposalsListItem')
     .eq(index)
-    .find('[data-test=ProposalItem__ButtonAddToAllocate]')
+    .find('[data-test=ProposalsListItem__ButtonAddToAllocate]')
     .find('svg')
     .find('path')
     .then($el => $el.css('stroke'))
@@ -95,9 +95,9 @@ function removeProposalFromAllocate(
   numberOfAddedProposals,
   index,
 ): Chainable<any> {
-  cy.get('[data-test^=ProposalsView__ProposalItem')
+  cy.get('[data-test^=ProposalsView__ProposalsListItem')
     .eq(index)
-    .find('[data-test=ProposalItem__ButtonAddToAllocate]')
+    .find('[data-test=ProposalsListItem__ButtonAddToAllocate]')
     .scrollIntoView()
     .click();
   if (index < numberOfProposals - 1) {
@@ -127,7 +127,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
 
     it('user is able to see all the projects in the view', () => {
       for (let i = 0; i < proposalNames.length; i++) {
-        cy.get('[data-test^=ProposalsView__ProposalItem]').eq(i).scrollIntoView();
+        cy.get('[data-test^=ProposalsView__ProposalsListItem]').eq(i).scrollIntoView();
         checkProposalItemElements(i, proposalNames[i]);
       }
     });

@@ -848,6 +848,15 @@ export type GetBlockNumberQuery = {
   _meta?: { __typename?: '_Meta_'; block: { __typename?: '_Block_'; number: number } } | null;
 };
 
+export type GetEpochsEndTimeQueryVariables = Exact<{
+  lastEpoch?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+export type GetEpochsEndTimeQuery = {
+  __typename?: 'Query';
+  epoches: Array<{ __typename?: 'Epoch'; epoch: number; toTs: any }>;
+};
+
 export type GetLockedSummaryLatestQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetLockedSummaryLatestQuery = {
@@ -892,6 +901,46 @@ export const GetBlockNumberDocument = {
     },
   ],
 } as unknown as DocumentNode<GetBlockNumberQuery, GetBlockNumberQueryVariables>;
+export const GetEpochsEndTimeDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetEpochsEndTime' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'lastEpoch' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'epoches' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'first' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'lastEpoch' } },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'epoch' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'toTs' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetEpochsEndTimeQuery, GetEpochsEndTimeQueryVariables>;
 export const GetLockedSummaryLatestDocument = {
   kind: 'Document',
   definitions: [

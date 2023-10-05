@@ -16,6 +16,7 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
   address,
   canFoundedAtHide = true,
   className,
+  isArchivedProposal,
   MiddleElement,
 }) => {
   const { t, i18n } = useTranslation('translation', {
@@ -58,19 +59,23 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
               proposalMatchedProposalRewards?.sum,
               proposalRewardsThreshold,
             )}
-            variant="orange"
+            variant={isArchivedProposal ? 'grey' : 'orange'}
           />
         )}
       </div>
       <div className={styles.values}>
         {isDataDefined ? (
           <div className={styles.value}>
-            <span className={styles.label} data-test="ProposalRewards__totalDonated__label">
-              {t('totalDonated')}
+            <span className={styles.label} data-test="ProposalRewards__currentTotal__label">
+              {t(isArchivedProposal ? 'totalRaised' : 'currentTotal')}
             </span>
             <span
-              className={cx(styles.number, !isDonationAboveThreshold && styles.isBelowCutOff)}
-              data-test="ProposalRewards__totalDonated__number"
+              className={cx(
+                styles.number,
+                !isDonationAboveThreshold && styles.isBelowCutOff,
+                isArchivedProposal && styles.isArchivedProposal,
+              )}
+              data-test="ProposalRewards__currentTotal__number"
             >
               {totalValueOfAllocationsToDisplay}
             </span>
@@ -87,7 +92,9 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
         {isDataDefined && (
           <div className={cx(styles.value, isFundedAtHidden && styles.isHidden)}>
             <span className={styles.label}>{t('fundedAt')}</span>
-            <span className={styles.number}>{cutOffValueToDisplay}</span>
+            <span className={cx(styles.number, isArchivedProposal && styles.isArchivedProposal)}>
+              {cutOffValueToDisplay}
+            </span>
           </div>
         )}
       </div>

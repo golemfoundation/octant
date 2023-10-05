@@ -16,15 +16,18 @@ export type ProposalRewards = {
 };
 
 export default function useMatchedProposalRewards(
+  epoch?: number,
   options?: UseQueryOptions<Response, unknown, ProposalRewards[], any>,
 ): UseQueryResult<ProposalRewards[]> {
   const { data: currentEpoch } = useCurrentEpoch();
 
   return useQuery(
-    QUERY_KEYS.matchedProposalRewards,
-    () => apiGetMatchedProposalRewards(currentEpoch! - 1),
+    epoch || currentEpoch
+      ? QUERY_KEYS.matchedProposalRewards(epoch ? epoch - 1 : currentEpoch! - 1)
+      : [''],
+    () => apiGetMatchedProposalRewards(epoch ? epoch - 1 : currentEpoch! - 1),
     {
-      enabled: !!currentEpoch && currentEpoch > 1,
+      enabled: epoch !== undefined || (!!currentEpoch && currentEpoch > 1),
       select: response => {
         const totalDonations = response?.rewards.reduce(
           (acc, { allocated, matched }) => acc.add(parseUnits(allocated)).add(parseUnits(matched)),
