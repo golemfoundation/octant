@@ -1,3 +1,5 @@
+import { BigNumber } from 'ethers';
+
 import { visitWithLoader, navigateWithCheck } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { FIAT_CURRENCIES_SYMBOLS, DISPLAY_CURRENCIES } from 'src/constants/currencies';
@@ -8,7 +10,6 @@ import {
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
-import { ETH_STAKED } from 'src/constants/stake';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import getValueCryptoToDisplay from 'src/utils/getValueCryptoToDisplay';
 
@@ -68,40 +69,36 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('"Use crypto as main value display" option by default displays crypto value as primary in DoubleValue component', () => {
-      navigateWithCheck(ROOT_ROUTES.metrics.absolute);
+      navigateWithCheck(ROOT_ROUTES.earn.absolute);
 
       const cryptoValue = getValueCryptoToDisplay({
-        cryptoCurrency: 'ethereum',
-        valueCrypto: ETH_STAKED,
+        cryptoCurrency: 'golem',
+        valueCrypto: BigNumber.from(0),
       });
 
-      cy.get('[data-test=MetricsView__DoubleValue--ethStaked]').within(() => {
-        cy.get('[data-test=MetricsView__DoubleValue--ethStaked__primary]')
-          .invoke('text')
-          .should('eq', cryptoValue);
-        cy.get('[data-test=MetricsView__DoubleValue--ethStaked__secondary]')
-          .invoke('text')
-          .should('not.eq', cryptoValue);
-      });
+      cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__primary]')
+        .invoke('text')
+        .should('eq', cryptoValue);
+      cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__secondary]')
+        .invoke('text')
+        .should('not.eq', cryptoValue);
     });
 
     it('"Use crypto as main value display" option changes DoubleValue sections order', () => {
       cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').uncheck();
-      navigateWithCheck(ROOT_ROUTES.metrics.absolute);
+      navigateWithCheck(ROOT_ROUTES.earn.absolute);
 
       const cryptoValue = getValueCryptoToDisplay({
-        cryptoCurrency: 'ethereum',
-        valueCrypto: ETH_STAKED,
+        cryptoCurrency: 'golem',
+        valueCrypto: BigNumber.from(0),
       });
 
-      cy.get('[data-test=MetricsView__DoubleValue--ethStaked]').within(() => {
-        cy.get('[data-test=MetricsView__DoubleValue--ethStaked__primary]')
-          .invoke('text')
-          .should('not.eq', cryptoValue);
-        cy.get('[data-test=MetricsView__DoubleValue--ethStaked__secondary]')
-          .invoke('text')
-          .should('eq', cryptoValue);
-      });
+      cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__primary]')
+        .invoke('text')
+        .should('not.eq', cryptoValue);
+      cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__secondary]')
+        .invoke('text')
+        .should('eq', cryptoValue);
     });
 
     it('"Choose a display currency" option works', () => {
@@ -116,14 +113,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           i < DISPLAY_CURRENCIES.length - 1 ? DISPLAY_CURRENCIES[i + 1].toUpperCase() : undefined;
 
         cy.get('[data-test=InputSelect__SingleValue]').contains(displayCurrencyToUppercase);
-        navigateWithCheck(ROOT_ROUTES.metrics.absolute);
+        navigateWithCheck(ROOT_ROUTES.earn.absolute);
 
         if (FIAT_CURRENCIES_SYMBOLS[displayCurrency]) {
-          cy.get('[data-test=MetricsView__DoubleValue--ethStaked__secondary]').contains(
+          cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__secondary]').contains(
             FIAT_CURRENCIES_SYMBOLS[displayCurrency],
           );
         } else {
-          cy.get('[data-test=MetricsView__DoubleValue--ethStaked__secondary]').contains(
+          cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__secondary]').contains(
             displayCurrencyToUppercase,
           );
         }

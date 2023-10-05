@@ -16,10 +16,18 @@
 
 .bar {
   width: 100%;
-  height: 0.8rem;
   background-color: $color-octant-grey2;
   border-radius: 0.4rem;
   overflow: hidden;
+
+  &.variant-- {
+    &thin {
+      height: 0.4rem;
+    }
+    &normal {
+      height: 0.8rem;
+    }
+  }
 }
 
 .filled {
@@ -33,7 +41,7 @@
     border-right: 0.2rem solid $color-white;
   }
 
-  &.variant-- {
+  &.color-- {
     &green {
       background: $color-octant-green;
     }
