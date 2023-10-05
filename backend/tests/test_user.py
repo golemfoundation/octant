@@ -2,9 +2,13 @@ import pytest
 from eth_account import Account
 from freezegun import freeze_time
 
-from app import exceptions
+from app import exceptions, database
 from app.constants import GLM_TOTAL_SUPPLY_WEI
-from app.controllers.user import MAX_DAYS_TO_ESTIMATE_BUDGET
+from app.controllers.user import (
+    MAX_DAYS_TO_ESTIMATE_BUDGET,
+    get_patron_mode_status,
+    toggle_patron_mode,
+)
 from app.core.user.budget import get_budget, estimate_budget
 from app.core.user.rewards import get_claimed_rewards
 from app.controllers import user as user_controller
@@ -20,7 +24,7 @@ from app.controllers.allocations import get_allocation_nonce
 
 
 @pytest.fixture(autouse=True)
-def before(patch_epochs, patch_proposals):
+def before(app, patch_epochs, patch_proposals):
     pass
 
 
@@ -176,3 +180,27 @@ def test_get_claimed_rewards(
         assert expected.get(user.address) == user.amount
 
     assert rewards_sum == sum(expected_rewards.values())
+
+
+def test_get_patron_mode_status_raise_error_when_user_does_not_exist(user_accounts):
+    with pytest.raises(exceptions.UserNotFound):
+        get_patron_mode_status(user_accounts[0].address)
+
+
+def test_patron_mode_status_toggle_raise_error_when_user_does_not_exist(user_accounts):
+    with pytest.raises(exceptions.UserNotFound):
+        toggle_patron_mode(user_accounts[0].address)
+
+
+def test_patron_mode_status_toggle(user_accounts):
+    database.user.add_user(user_accounts[0].address)
+    status = get_patron_mode_status(user_accounts[0].address)
+    assert status is False
+
+    toggle_patron_mode(user_accounts[0].address)
+    status = get_patron_mode_status(user_accounts[0].address)
+    assert status is True
+
+    toggle_patron_mode(user_accounts[0].address)
+    status = get_patron_mode_status(user_accounts[0].address)
+    assert status is False

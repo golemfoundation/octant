@@ -31,7 +31,7 @@ def get_or_add_user(user_address: str) -> User:
 
 
 def toggle_patron_mode(user_address: str) -> User:
-    user = User(address=to_checksum_address(user_address))
+    user = get_by_address(user_address)
     if not user:
         raise UserNotFound(user_address)
     user.patron_mode = not user.patron_mode
