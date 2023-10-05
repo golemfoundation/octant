@@ -6,10 +6,17 @@
         fill: $color-octant-orange;
       }
 
-      &[data-is-initial-load-done="true"] {
+      &[data-is-initial-load-done='true'] {
         animation-name: scale1;
         animation-duration: $transition-time-1;
       }
+    }
+  }
+
+  &.isArchivedProposal.isAllocatedTo {
+    svg circle {
+      stroke: $color-octant-grey6;
+      fill: $color-octant-grey6;
     }
   }
 }

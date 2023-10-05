@@ -5,4 +5,5 @@ export default interface ProposalRewardsProps {
   address: string;
   canFoundedAtHide?: boolean;
   className?: string;
+  isArchivedProposal?: boolean;
 }

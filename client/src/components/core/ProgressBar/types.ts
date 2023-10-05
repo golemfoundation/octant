@@ -1,4 +1,4 @@
-export const PROGRESS_BAR_VARIANTS = ['green', 'orange'] as const;
+export const PROGRESS_BAR_VARIANTS = ['green', 'orange', 'grey'] as const;
 export type ProgressBarVariant = (typeof PROGRESS_BAR_VARIANTS)[number];
 
 export default interface ProgressBarProps {

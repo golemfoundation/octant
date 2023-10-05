@@ -168,8 +168,12 @@
         "text": "Loading of a proposal <br/> encountered an error."
       },
       "proposalRewards": {
-        "totalDonated": "Total donated",
+        "currentTotal": "Current total",
+        "totalRaised": "Total raised",
         "fundedAt": "Funded at"
+      },
+      "proposalsList": {
+        "epochArchive": "Epoch {{epoch}} Archive"
       },
       "rewardsBox": {
         "rewards": "Rewards"
