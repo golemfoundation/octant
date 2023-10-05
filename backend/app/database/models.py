@@ -6,6 +6,7 @@ from app.extensions import db
 Column = db.Column
 Model = db.Model
 relationship = db.relationship
+UniqueConstraint = db.UniqueConstraint
 
 
 class BaseModel(Model):
@@ -45,6 +46,20 @@ class Allocation(BaseModel):
     proposal_address = Column(db.String(42), nullable=False)
     amount = Column(db.String, nullable=False)
     deleted_at = Column(db.TIMESTAMP, nullable=True)
+
+
+class AllocationSignature(BaseModel):
+    __tablename__ = "allocations_signatures"
+
+    id = Column(db.Integer, primary_key=True)
+    user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    nonce = Column(db.Integer, nullable=False)
+    epoch = Column(db.Integer, nullable=False)
+    signature = Column(db.String(132), nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "nonce", name="user_nonce_unique_constraint"),
+    )
 
 
 class PendingEpochSnapshot(BaseModel):
