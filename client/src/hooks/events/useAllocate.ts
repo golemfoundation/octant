@@ -22,12 +22,12 @@ const domain = {
 
 const types = {
   Allocation: [
-    { name: 'proposalAddress', type: 'string' },
+    { name: 'proposalAddress', type: 'address' },
     { name: 'amount', type: 'uint256' },
   ],
   AllocationPayload: [
     { name: 'allocations', type: 'Allocation[]' },
-    { name: 'nonce', type: 'integer' },
+    { name: 'nonce', type: 'uint256' },
   ],
 };
 
