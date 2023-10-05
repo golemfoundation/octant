@@ -238,14 +238,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=ModalOnboarding__ProgressStepperSlim__element]')
         .eq(steps.length - 1)
         .click();
-      cy.get('[data-test=ProposalsView__List]').should('be.visible');
+      cy.get('[data-test=ProposalsView__ProposalsList]').should('be.visible');
     });
 
     it('user is able to close the modal by clicking button in the top-right', () => {
       cy.get('[data-test=ModalOnboarding]').should('be.visible');
       cy.get('[data-test=ModalOnboarding__Button]').click();
       cy.get('[data-test=ModalOnboarding]').should('not.exist');
-      cy.get('[data-test=ProposalsView__List]').should('be.visible');
+      cy.get('[data-test=ProposalsView__ProposalsList]').should('be.visible');
     });
 
     it('renders every time page is refreshed when "Always show Allocate onboarding" option is checked', () => {

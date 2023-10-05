@@ -3,7 +3,7 @@ export default interface TimeCounterProps {
   duration?: number;
   onCountingFinish?: () => void;
   timestamp?: number;
-  variant?: 'standard' | 'small';
+  variant?: 'standard' | 'small' | 'metrics';
 }
 
 export interface CounterSectionsProps {

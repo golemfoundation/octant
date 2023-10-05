@@ -5,7 +5,13 @@
   justify-content: center;
   width: 100%;
   max-width: 34rem;
-  height: 6rem; // solves flickering problem when Loader disappears and content (higher) loads.
+
+  &.variant-- {
+    &small,
+    &standard {
+      height: 6rem; // solves flickering problem when Loader disappears and content (higher) loads.
+    }
+  }
 }
 
 .counters {
@@ -19,7 +25,8 @@
       border-radius: $border-radius-04;
       padding: 1.6rem;
     }
-    &standard {
+    &standard,
+    &metrics {
       margin: 0 0 1.6rem 0;
     }
   }
@@ -35,11 +42,18 @@
   color: $color-octant-dark;
 
   &.variant-- {
-    &standard {
+    &standard,
+    &metrics {
       font-size: $font-size-20;
     }
     &small {
       font-size: $font-size-14;
+    }
+    &metrics {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 3.2rem;
     }
   }
 }
@@ -56,10 +70,33 @@
       text-transform: uppercase;
       margin-top: 0.2rem;
     }
+    &metrics {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 2rem;
+      font-size: $font-size-10;
+      color: $color-octant-grey6;
+      font-weight: $font-weight-bold;
+    }
   }
 }
 
 .divider {
   color: $color-octant-grey3;
   font-size: $font-size-20;
+
+  &.variant-- {
+    &metrics {
+      margin-top: 0.2rem;
+    }
+  }
+}
+
+.progressBar {
+  &.variant-- {
+    &metrics {
+      height: 0.4rem;
+    }
+  }
 }

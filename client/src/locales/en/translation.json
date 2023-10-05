@@ -155,10 +155,6 @@
         "projects": "Projects",
         "withdrawnFunds": "Withdrawn funds"
       },
-      "metricsTimeSection": {
-        "epochEndsIn": "Epoch {{currentEpoch}} ends in",
-        "epochAllocationEndsIn": "Epoch {{currentEpoch}} Allocation ends in"
-      },
       "modalAllocationEditSelection": {
         "uncheckToRemove": "Uncheck to remove"
       },
@@ -175,8 +171,12 @@
         "text": "Loading of a proposal <br/> encountered an error."
       },
       "proposalRewards": {
-        "totalDonated": "Total donated",
+        "currentTotal": "Current total",
+        "totalRaised": "Total raised",
         "fundedAt": "Funded at"
+      },
+      "proposalsList": {
+        "epochArchive": "Epoch {{epoch}} Archive"
       },
       "rewardsBox": {
         "rewards": "Rewards"
@@ -272,15 +272,19 @@
       }
     },
     "metrics": {
-      "ethStaked": "ETH Staked",
-      "glmLockedTotalSupplyPercentage": "GLM Locked as % of Total Supply",
-      "glmLocked": "GLM Locked",
+      "totalProjects": "Total projects",
+      "totalEthStaked": "Total ETH Staked",
+      "totalGlmLocked": "Total GLM Locked",
+      "of1BTotalSupply": "of 1B total supply",
+      "totalAddresses": "Total addresses",
+      "largestGlmLock": "largest GLM lock",
+      "epochAllocationStartsIn": "Epoch {{currentEpoch}} allocation starts in",
+      "epochAllocationEndsIn": "Epoch {{currentEpoch}} allocation ends in",
+      "totalProjectsSinceEpoch0": "{{projectsAmount}} total since E0",
       "tip": {
         "title": "Check the stats",
         "text": "View the data about all the decisions taken in the previous epoch here in <0>Metrics</0>"
-      },
-      "totalValueStakedDescription": "The total value staked on Octant to date, showing ETH staked by the Golem Foundation and GLM locked by Octant users.",
-      "valueLocked": "Value Locked"
+      }
     },
     "onboarding": {
       "steps": {

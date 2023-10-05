@@ -16,16 +16,20 @@ type Response = {
 };
 
 export default function useUserAllocations(
-  options?: UseQueryOptions<ApiResponse, unknown, Response | undefined, ['userAllocations']>,
+  epoch?: number,
+  options?: UseQueryOptions<ApiResponse, unknown, Response | undefined, any>,
 ): UseQueryResult<Response | undefined> {
   const { address } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
 
   return useQuery(
-    QUERY_KEYS.userAllocations,
-    () => apiGetUserAllocations(address as string, (currentEpoch! - 1) as number),
+    epoch || currentEpoch
+      ? QUERY_KEYS.userAllocations(epoch ? epoch - 1 : currentEpoch! - 1)
+      : [''],
+    () =>
+      apiGetUserAllocations(address as string, epoch ? epoch - 1 : ((currentEpoch! - 1) as number)),
     {
-      enabled: !!currentEpoch && currentEpoch > 1 && !!address,
+      enabled: (epoch !== undefined || (!!currentEpoch && currentEpoch > 1)) && !!address,
       select: response => {
         const userAllocationsFromBackend = response!.map(element => ({
           address: element.address,

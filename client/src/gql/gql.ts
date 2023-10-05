@@ -15,8 +15,14 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 const documents = {
   '\n  query GetBlockNumber {\n    _meta {\n      block {\n        number\n      }\n    }\n  }\n':
     types.GetBlockNumberDocument,
+  '\n  query GetEpochsEndTime($lastEpoch: Int) {\n    epoches(first: $lastEpoch) {\n      epoch\n      toTs\n    }\n  }\n':
+    types.GetEpochsEndTimeDocument,
+  '\n  query GetLargestLockedAmount {\n    lockeds(orderBy: amount, orderDirection: desc, first: 1) {\n      amount\n    }\n  }\n':
+    types.GetLargestLockedAmountDocument,
   '\n  query GetLockedSummaryLatest {\n    lockedSummaryLatest(id: "latest") {\n      id\n      lockedTotal\n      lockedRatio\n    }\n  }\n':
     types.GetLockedSummaryLatestDocument,
+  '\n  query GetTotalAddresses {\n    lockeds(first: 1000) {\n      user\n    }\n  }\n':
+    types.GetTotalAddressesDocument,
 };
 
 /**
@@ -43,8 +49,26 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
+  source: '\n  query GetEpochsEndTime($lastEpoch: Int) {\n    epoches(first: $lastEpoch) {\n      epoch\n      toTs\n    }\n  }\n',
+): (typeof documents)['\n  query GetEpochsEndTime($lastEpoch: Int) {\n    epoches(first: $lastEpoch) {\n      epoch\n      toTs\n    }\n  }\n'];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query GetLargestLockedAmount {\n    lockeds(orderBy: amount, orderDirection: desc, first: 1) {\n      amount\n    }\n  }\n',
+): (typeof documents)['\n  query GetLargestLockedAmount {\n    lockeds(orderBy: amount, orderDirection: desc, first: 1) {\n      amount\n    }\n  }\n'];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
   source: '\n  query GetLockedSummaryLatest {\n    lockedSummaryLatest(id: "latest") {\n      id\n      lockedTotal\n      lockedRatio\n    }\n  }\n',
 ): (typeof documents)['\n  query GetLockedSummaryLatest {\n    lockedSummaryLatest(id: "latest") {\n      id\n      lockedTotal\n      lockedRatio\n    }\n  }\n'];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query GetTotalAddresses {\n    lockeds(first: 1000) {\n      user\n    }\n  }\n',
+): (typeof documents)['\n  query GetTotalAddresses {\n    lockeds(first: 1000) {\n      user\n    }\n  }\n'];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

@@ -13,16 +13,16 @@ export interface ProposalIpfsWithRewards extends ExtendedProposal {
   totalValueOfAllocations: BigNumber | undefined;
 }
 
-export default function useProposalsIpfsWithRewards(): {
+export default function useProposalsIpfsWithRewards(epoch?: number): {
   data: ProposalIpfsWithRewards[];
   isFetching: boolean;
 } {
   const { data: proposalsAddresses, isFetching: isFetchingProposalsContract } =
-    useProposalsContract();
+    useProposalsContract(epoch);
   const { data: proposalsIpfs, isFetching: isFetchingProposalsIpfs } =
     useProposalsIpfs(proposalsAddresses);
   const { data: matchedProposalRewards, isFetching: isFetchingMatchedProposalRewards } =
-    useMatchedProposalRewards();
+    useMatchedProposalRewards(epoch);
 
   const proposalsWithRewards = (proposalsIpfs || []).map(proposal => {
     const proposalMatchedProposalRewards = matchedProposalRewards?.find(

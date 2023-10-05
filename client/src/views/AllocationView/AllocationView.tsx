@@ -47,12 +47,12 @@ const AllocationView = (): ReactElement => {
   const { data: proposalsIpfs } = useProposalsIpfs(proposalsContract);
   const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards();
 
+  const { data: currentEpoch } = useCurrentEpoch();
   const {
     data: userAllocations,
     isFetching: isFetchingUserAllocation,
     refetch: refetchUserAllocations,
-  } = useUserAllocations({ refetchOnMount: true });
-  const { data: currentEpoch } = useCurrentEpoch();
+  } = useUserAllocations(currentEpoch, { refetchOnMount: true });
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: userNonce, isFetching: isFetchingUserNonce } = useUserAllocationNonce();
