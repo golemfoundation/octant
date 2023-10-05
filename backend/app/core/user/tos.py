@@ -1,5 +1,5 @@
 from app import database
-from app.crypto.terms_and_conditions_consent import (
+from app.crypto.eth_sign.terms_and_conditions_consent import (
     verify_signed_message,
 )
 from app.exceptions import DuplicateConsent, InvalidSignature
