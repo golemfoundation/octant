@@ -155,6 +155,24 @@
         "projects": "Projects",
         "withdrawnFunds": "Withdrawn funds"
       },
+      "historyItemModal": {
+        "header": {
+          "lock": "Locked GLM",
+          "unlock": "Unlocked GLM",
+          "allocation": "Epoch {{epoch}} Allocations",
+          "withdrawal": "Withdrew ETH"
+        },
+        "sections": {
+          "amount": "Amount",
+          "gasPrice": "Gas price",
+          "viewOnEtherscan": "View on Etherscan",
+          "when": "When"
+        }
+      },
+      "historyTransactionLabel": {
+        "confirmed": "Confirmed",
+        "pending": "Pending"
+      },
       "metricsTimeSection": {
         "epochEndsIn": "Epoch {{currentEpoch}} ends in",
         "epochAllocationEndsIn": "Epoch {{currentEpoch}} Allocation ends in"
