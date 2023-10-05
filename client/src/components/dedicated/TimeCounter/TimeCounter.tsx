@@ -24,7 +24,9 @@ const CounterSection: FC<CounterSectionsProps> = ({
         <div className={cx(styles.value, styles[`variant--${variant}`])}>{value}</div>
         <div className={cx(styles.label, styles[`variant--${variant}`])}>{labelFinal}</div>
       </div>
-      {isDividerVisible && <div className={styles.divider}>:</div>}
+      {isDividerVisible && (
+        <div className={cx(styles.divider, styles[`variant--${variant}`])}>:</div>
+      )}
     </Fragment>
   );
 };
@@ -75,7 +77,7 @@ const TimeCounter: FC<TimeCounterProps> = ({
     timestamp && duration ? 100 - ((timestamp - Date.now()) / duration) * 100 : 0;
 
   return (
-    <div className={cx(styles.root, className)}>
+    <div className={cx(styles.root, styles[`variant--${variant}`], className)}>
       {shouldShowLoader ? (
         <Loader />
       ) : (
@@ -102,7 +104,12 @@ const TimeCounter: FC<TimeCounterProps> = ({
               variant={variant}
             />
           </div>
-          {variant === 'standard' && <ProgressBar progressPercentage={progressPercentage} />}
+          {['standard', 'metrics'].includes(variant) && (
+            <ProgressBar
+              progressPercentage={progressPercentage}
+              variant={variant === 'metrics' ? 'thin' : 'normal'}
+            />
+          )}
         </Fragment>
       )}
     </div>

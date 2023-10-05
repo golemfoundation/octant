@@ -29,6 +29,7 @@ export type QueryKeys = {
   individualProposalRewards: ['individualProposalRewards'];
   individualReward: ['individualReward'];
   isDecisionWindowOpen: ['isDecisionWindowOpen'];
+  largestLockedAmount: ['largestLockedAmount'];
   lockedSummaryLatest: ['lockedSummaryLatest'];
   matchedProposalRewards: (epochNumber: number) => [Root['matchedProposalRewards'], string];
   proposalDonors: (proposalAddress: string) => [Root['proposalDonors'], string];
@@ -37,6 +38,7 @@ export type QueryKeys = {
   proposalsCid: ['proposalsCid'];
   proposalsContract: (epochNumber: number) => [Root['proposalsContract'], string];
   proposalsIpfsResults: (proposalAddress: string) => [Root['proposalsIpfsResults'], string];
+  totalAddresses: ['totalAddresses'];
   unlocks: ['unlocks'];
   userAllocations: (epochNumber: number) => [Root['userAllocations'], string];
   userHistoricAllocations: (userAddress: string) => [Root['userHistoricAllocations'], string];

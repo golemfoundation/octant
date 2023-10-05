@@ -55,11 +55,11 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
           <div className={styles.line} />
         ) : (
           <ProgressBar
+            color={isArchivedProposal ? 'grey' : 'orange'}
             progressPercentage={getProgressPercentage(
               proposalMatchedProposalRewards?.sum,
               proposalRewardsThreshold,
             )}
-            variant={isArchivedProposal ? 'grey' : 'orange'}
           />
         )}
       </div>

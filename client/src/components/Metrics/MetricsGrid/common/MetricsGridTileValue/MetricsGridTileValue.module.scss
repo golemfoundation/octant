@@ -1,0 +1,31 @@
+.root {
+  padding: 0.7rem 2.4rem 0;
+
+  &.size {
+    &--S {
+      padding: 1.1rem 2.4rem 0;
+
+      .value {
+        font-size: $font-size-24;
+        padding: 1.1rem 0 1.1rem;
+      }
+    }
+  }
+
+  .value {
+    padding: 1.2rem 0 0.4rem;
+    font-size: $font-size-32;
+    font-weight: $font-weight-bold;
+    color: $color-octant-dark;
+  }
+
+  .subvalue {
+    font-size: $font-size-10;
+    color: $color-octant-grey6;
+    font-weight: $font-weight-bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.4rem;
+  }
+}

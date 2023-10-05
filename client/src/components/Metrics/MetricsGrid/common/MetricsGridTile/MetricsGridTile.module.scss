@@ -1,0 +1,54 @@
+.root {
+  padding: 0;
+  display: flex;
+  background: $color-white;
+  border-radius: $border-radius-16;
+
+  &.size {
+    &--S {
+      height: 14.4rem;
+      grid-column: span 1;
+      grid-row: span 1;
+    }
+
+    &--M {
+      height: 14.4rem;
+      grid-column: span 2;
+      grid-row: span 1;
+    }
+
+    &--L {
+      height: 30.4rem;
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+  }
+}
+
+.group {
+  position: relative;
+  width: 100%;
+
+  &:nth-child(2) {
+    &::before {
+      content: '';
+      top: 4.8rem;
+      height: 4.8rem;
+      width: 0.1rem;
+      position: absolute;
+      left: 0;
+      background: $color-octant-grey4;
+    }
+  }
+
+  .groupTitle {
+    text-align: left;
+    padding: 2.2rem 1.6rem 0 2.4rem;
+    font-size: $font-size-10;
+    color: $color-octant-green;
+    margin: 0;
+    text-transform: uppercase;
+    font-weight: $font-weight-bold;
+    letter-spacing: 0.03rem;
+  }
+}

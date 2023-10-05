@@ -857,6 +857,13 @@ export type GetEpochsEndTimeQuery = {
   epoches: Array<{ __typename?: 'Epoch'; epoch: number; toTs: any }>;
 };
 
+export type GetLargestLockedAmountQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetLargestLockedAmountQuery = {
+  __typename?: 'Query';
+  lockeds: Array<{ __typename?: 'Locked'; amount: any }>;
+};
+
 export type GetLockedSummaryLatestQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetLockedSummaryLatestQuery = {
@@ -867,6 +874,13 @@ export type GetLockedSummaryLatestQuery = {
     lockedTotal: any;
     lockedRatio: any;
   } | null;
+};
+
+export type GetTotalAddressesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetTotalAddressesQuery = {
+  __typename?: 'Query';
+  lockeds: Array<{ __typename?: 'Locked'; user: any }>;
 };
 
 export const GetBlockNumberDocument = {
@@ -941,6 +955,46 @@ export const GetEpochsEndTimeDocument = {
     },
   ],
 } as unknown as DocumentNode<GetEpochsEndTimeQuery, GetEpochsEndTimeQueryVariables>;
+export const GetLargestLockedAmountDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetLargestLockedAmount' },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'lockeds' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'orderBy' },
+                value: { kind: 'EnumValue', value: 'amount' },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'orderDirection' },
+                value: { kind: 'EnumValue', value: 'desc' },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'first' },
+                value: { kind: 'IntValue', value: '1' },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'amount' } }],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetLargestLockedAmountQuery, GetLargestLockedAmountQueryVariables>;
 export const GetLockedSummaryLatestDocument = {
   kind: 'Document',
   definitions: [
@@ -975,3 +1029,33 @@ export const GetLockedSummaryLatestDocument = {
     },
   ],
 } as unknown as DocumentNode<GetLockedSummaryLatestQuery, GetLockedSummaryLatestQueryVariables>;
+export const GetTotalAddressesDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetTotalAddresses' },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'lockeds' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'first' },
+                value: { kind: 'IntValue', value: '1000' },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'user' } }],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetTotalAddressesQuery, GetTotalAddressesQueryVariables>;
