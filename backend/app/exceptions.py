@@ -182,3 +182,11 @@ class ExternalApiException(OctantException):
             self.description.format(api_url, str(e)),
             self.code,
         )
+
+
+class NotAllowedInPatronMode(OctantException):
+    code = 403
+    description = "This action is not allowed in patron mode; user address: {}"
+
+    def __init__(self, user_address: str):
+        super().__init__(self.description.format(user_address), self.code)
