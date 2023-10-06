@@ -45,6 +45,7 @@ $proposalItemPadding: 2.4rem;
   .body {
     padding: 0 $proposalItemPadding;
     text-align: left;
+    min-height: 12.4rem;
   }
 
   .name {
@@ -63,6 +64,6 @@ $proposalItemPadding: 2.4rem;
   }
 
   .proposalRewards {
-    padding: 0 $proposalItemPadding $proposalItemPadding;
+    padding: 0 $proposalItemPadding 0;
   }
 }

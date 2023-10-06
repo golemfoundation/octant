@@ -15,6 +15,7 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
   onClick,
   isAddedToAllocate,
   isAllocatedTo,
+  isArchivedProposal,
 }) => {
   const ref = useRef<HTMLButtonElement>(null);
 
@@ -29,6 +30,7 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
         styles.root,
         isAddedToAllocate && styles.isAddedToAllocate,
         isAllocatedTo && styles.isAllocatedTo,
+        isArchivedProposal && styles.isArchivedProposal,
         className,
       )}
       dataParameters={{

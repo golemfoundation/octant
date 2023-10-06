@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import Description from 'components/core/Description/Description';
 import Img from 'components/core/Img/Img';
 import ButtonAddToAllocate from 'components/dedicated/ButtonAddToAllocate/ButtonAddToAllocate';
-import ProposalItemSkeleton from 'components/dedicated/ProposalItemSkeleton/ProposalItemSkeleton';
 import ProposalLoadingStates from 'components/dedicated/ProposalLoadingStates/ProposalLoadingStates';
 import ProposalRewards from 'components/dedicated/ProposalRewards/ProposalRewards';
+import ProposalItemSkeleton from 'components/dedicated/ProposalsList/ProposalsListItemSkeleton/ProposalsListItemSkeleton';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -15,10 +15,10 @@ import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
 
-import styles from './ProposalItem.module.scss';
-import ProposalItemProps from './types';
+import styles from './ProposalsListItem.module.scss';
+import ProposalsListItemProps from './types';
 
-const ProposalItem: FC<ProposalItemProps> = ({
+const ProposalsListItem: FC<ProposalsListItemProps> = ({
   address,
   className,
   dataTest,
@@ -26,10 +26,11 @@ const ProposalItem: FC<ProposalItemProps> = ({
   isLoadingError,
   name,
   profileImageSmall,
+  epoch,
 }) => {
   const { ipfsGateway } = env;
   const navigate = useNavigate();
-  const { data: userAllocations } = useUserAllocations();
+  const { data: userAllocations } = useUserAllocations(epoch);
   const { allocations, setAllocations } = useAllocationsStore(state => ({
     allocations: state.data.allocations,
     setAllocations: state.setAllocations,
@@ -47,6 +48,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
     ({ address: userAllocationAddress }) => userAllocationAddress === address,
   );
   const isEpoch1 = currentEpoch === 1;
+  const isArchivedProposal = epoch !== undefined;
 
   return (
     <div
@@ -60,7 +62,7 @@ const ProposalItem: FC<ProposalItemProps> = ({
       onClick={
         isLoadingError
           ? () => {}
-          : () => navigate(`${ROOT_ROUTES.proposal.absolute}/${currentEpoch}/${address}`)
+          : () => navigate(`${ROOT_ROUTES.proposal.absolute}/${epoch || currentEpoch}/${address}`)
       }
     >
       {isLoadingError ? (
@@ -72,32 +74,56 @@ const ProposalItem: FC<ProposalItemProps> = ({
           <div className={styles.header}>
             <Img
               className={styles.imageProfile}
-              dataTest="ProposalItem__imageProfile"
+              dataTest={
+                epoch
+                  ? 'ProposalsListItem__imageProfile--archive'
+                  : 'ProposalsListItem__imageProfile'
+              }
               src={`${ipfsGateway}${profileImageSmall}`}
             />
-            <ButtonAddToAllocate
-              className={styles.button}
-              dataTest="ProposalItem__ButtonAddToAllocate"
-              isAddedToAllocate={isAddedToAllocate}
-              isAllocatedTo={isAllocatedTo}
-              onClick={() => onAddRemoveFromAllocate(address)}
-            />
+            {((isArchivedProposal && isAllocatedTo) || !isArchivedProposal) && (
+              <ButtonAddToAllocate
+                className={styles.button}
+                dataTest={
+                  epoch
+                    ? 'ProposalsListItem__ButtonAddToAllocate--archive'
+                    : 'ProposalsListItem__ButtonAddToAllocate'
+                }
+                isAddedToAllocate={isAddedToAllocate}
+                isAllocatedTo={isAllocatedTo}
+                isArchivedProposal={isArchivedProposal}
+                onClick={() => onAddRemoveFromAllocate(address)}
+              />
+            )}
           </div>
           <div className={styles.body}>
-            <div className={styles.name} data-test="ProposalItem__name">
+            <div
+              className={styles.name}
+              data-test={epoch ? 'ProposalsListItem__name--archive' : 'ProposalsListItem__name'}
+            >
               {name}
             </div>
             <Description
               className={styles.introDescription}
-              dataTest="ProposalItem__IntroDescription"
+              dataTest={
+                epoch
+                  ? 'ProposalsListItem__IntroDescription--archive'
+                  : 'ProposalsListItem__IntroDescription'
+              }
               text={introDescription!}
             />
           </div>
-          {!isEpoch1 && <ProposalRewards address={address} className={styles.proposalRewards} />}
+          {!isEpoch1 && (
+            <ProposalRewards
+              address={address}
+              className={styles.proposalRewards}
+              isArchivedProposal={isArchivedProposal}
+            />
+          )}
         </Fragment>
       )}
     </div>
   );
 };
 
-export default ProposalItem;
+export default ProposalsListItem;

@@ -13,6 +13,7 @@ export interface SectionProps {
   doubleValueProps?: {
     coinPricesServerDowntimeText?: DoubleValueProps['coinPricesServerDowntimeText'];
     cryptoCurrency: DoubleValueProps['cryptoCurrency'];
+    dataTest?: DoubleValueProps['dataTest'];
     isDisabled?: DoubleValueProps['isDisabled'];
     isFetching?: DoubleValueProps['isFetching'];
     valueCrypto: DoubleValueProps['valueCrypto'];

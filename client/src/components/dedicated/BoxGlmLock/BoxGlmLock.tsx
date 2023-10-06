@@ -54,6 +54,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
       doubleValueProps: {
         coinPricesServerDowntimeText: '...',
         cryptoCurrency: 'golem',
+        dataTest: 'BoxGlmLock__Section--effective__DoubleValue',
         isFetching:
           isFetchingDepositEffectiveAtCurrentEpoch || isAppWaitingForTransactionToBeIndexed,
         valueCrypto: depositEffectiveAtCurrentEpoch,

@@ -1,0 +1,10 @@
+.metricsGrid {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 1.6rem;
+  width: 100%;
+
+  @media #{$desktop-up} {
+    grid-template-columns: 16.3rem 16.3rem 16.3rem 16.3rem;
+  }
+}
