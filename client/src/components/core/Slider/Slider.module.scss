@@ -62,7 +62,7 @@ $thumbSizeMobile: $heightRootMobile;
   background: $color-white;
   border-radius: 50%;
   cursor: pointer;
-  filter: drop-shadow(rgba(0, 0, 0, 0.15) 0px 0px 5px);
+  filter: drop-shadow(rgba(0, 0, 0, 0.15) 0 0 0.5rem);
 
   &:focus-visible {
     outline: none;
