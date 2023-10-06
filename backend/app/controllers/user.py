@@ -1,10 +1,11 @@
 from app.constants import GLM_TOTAL_SUPPLY_WEI
-from app.core.user import budget, patron_mode
+from app.core.user import budget, patron_mode as patron_mode_core
 from app.core.user.tos import (
     has_user_agreed_to_terms_of_service,
     add_user_terms_of_service_consent,
 )
-from app.exceptions import RewardsException
+from app.crypto.eth_sign import patron_mode as patron_mode_crypto
+from app.exceptions import RewardsException, InvalidSignature
 from app.extensions import db
 
 MAX_DAYS_TO_ESTIMATE_BUDGET = 365250
@@ -39,10 +40,15 @@ def estimate_budget(days: int, glm_amount: int) -> int:
 
 
 def get_patron_mode_status(user_address: str) -> bool:
-    return patron_mode.get_patron_mode_status(user_address)
+    return patron_mode_core.get_patron_mode_status(user_address)
 
 
-def toggle_patron_mode(user_address: str) -> bool:
-    status = patron_mode.toggle_patron_mode(user_address)
+def toggle_patron_mode(user_address: str, signature: str) -> bool:
+    patron_mode_status = patron_mode_core.get_patron_mode_status(user_address)
+
+    if not patron_mode_crypto.verify(user_address, not patron_mode_status, signature):
+        raise InvalidSignature(user_address, signature)
+
+    patron_mode_status = patron_mode_core.toggle_patron_mode(user_address)
     db.session.commit()
-    return status
+    return patron_mode_status
