@@ -13,7 +13,7 @@ from tests.conftest import (
     MOCK_EPOCHS,
 )
 
-MOCKED_FINALIZED_EPOCH_NO = 42
+MOCKED_FINALIZED_EPOCH_NO = 1
 
 
 @pytest.fixture(autouse=True)
@@ -34,18 +34,18 @@ def test_finalized_epoch_snapshot_with_rewards(
     allocate_user_rewards(user_accounts[1], proposal_accounts[1], user2_allocation)
 
     result = snapshot_finalized_epoch()
-    assert result == 42
+    assert result == 1
 
     rewards = database.rewards.get_by_epoch(result)
     assert len(rewards) == 4
     assert rewards[0].address == user_accounts[1].address
-    assert rewards[0].amount == str(3016082_191780824)
+    assert rewards[0].amount == str(7632344_664345202)
     assert rewards[1].address == proposal_accounts[1].address
-    assert rewards[1].amount == str(1_272090565_608826698)
+    assert rewards[1].amount == str(146_742934210_334165604)
     assert rewards[2].address == proposal_accounts[0].address
-    assert rewards[2].amount == str(636045282_804413348)
+    assert rewards[2].amount == str(73_371467105_167082802)
     assert rewards[3].address == user_accounts[0].address
-    assert rewards[3].amount == str(602616_460640476)
+    assert rewards[3].amount == str(1525868_989237987)
 
     snapshot = database.finalized_epoch_snapshot.get_by_epoch_num(result)
     _, claimed_rewards_sum = get_claimed_rewards(result)
@@ -60,7 +60,7 @@ def test_finalized_epoch_snapshot_with_rewards(
     )
     assert (
         snapshot.withdrawals_merkle_root
-        == "0x1b1ee37b6b2d3d1eee6a90e412324fb0d4935a09ecc9ab2f66bc03addcd2ca58"
+        == "0x4a84cd8687de55d841146df889d47e253dc9f9a397f800cbeaf5a9b37f436211"
     )
     assert snapshot.created_at is not None
 
@@ -69,7 +69,7 @@ def test_finalized_epoch_snapshot_without_rewards(
     user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
 ):
     result = snapshot_finalized_epoch()
-    assert result == 42
+    assert result == 1
 
     rewards = database.rewards.get_by_epoch(result)
     assert len(rewards) == 0
@@ -96,7 +96,6 @@ def test_finalized_epoch_snapshot_without_rewards(
     ],
 )
 def test_finalized_snapshot_status(epoch, snapshot, is_open, expected):
-    output = None
     try:
         output = finalized_snapshot_status(epoch, snapshot, is_open)
     except exceptions.OctantException:

@@ -364,7 +364,7 @@ Run E2E App:
     ENV_TYPE: "e2e"
   environment:
     name: e2e/$CI_PIPELINE_IID
-    url: https://mr-$CI_MERGE_REQUEST_IID-e2e-client.octant.wildland.dev
+    url: https://mr-$CI_MERGE_REQUEST_IID-e2e-$CI_PIPELINE_ID-client.octant.wildland.dev
     deployment_tier: development
     on_stop: Destroy E2E App
     auto_stop_in: 6 hours
