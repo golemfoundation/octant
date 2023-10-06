@@ -25,8 +25,7 @@ def before(patch_epochs, patch_proposals):
 
 
 def test_get_user_budget(user_accounts, mock_pending_epoch_snapshot_db):
-    expected_result = 603616_460640476
-
+    expected_result = 1526868_989237987
     result = get_budget(user_accounts[0].address, MOCKED_PENDING_EPOCH_NO)
 
     assert result == expected_result
@@ -129,18 +128,18 @@ def test_estimate_budget_validates_inputs():
                 1: [(1, 200000_000000000), (3, 400000_000000000)],
             },
             {
-                0: 103616_460640476,
-                1: 2418082_191780824,
+                0: 1026868_989237987,
+                1: 7034344_664345202,
             },
         ),
         # ------------------------------------
         (
             {
-                0: [(1, 603616_460640476)],
+                0: [(1, 1526868_989237987)],
                 1: [(2, 0)],
             },
             {
-                1: 3018082_191780824,
+                1: 7634344_664345202,
             },
         ),
     ],
