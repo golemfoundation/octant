@@ -38,7 +38,7 @@ def get_proposal_rewards_above_threshold(
     )
 
     rewards_sum = 0
-    rewards = []
+    rewards: List[AccountFunds] = []
 
     for address, allocated in projects:
         if allocated >= threshold:
@@ -48,7 +48,7 @@ def get_proposal_rewards_above_threshold(
                 * matched_rewards
             )
             rewards_sum += allocated + matched
-            rewards.append(AccountFunds(address, allocated + matched))
+            rewards.append(AccountFunds(address, allocated + matched, matched))
 
     return rewards, rewards_sum
 

@@ -11,6 +11,18 @@ def get_by_epoch(epoch: int) -> List[RewardDB]:
     return RewardDB.query.filter_by(epoch=epoch).order_by(RewardDB.address.asc()).all()
 
 
+def get_by_epoch_and_address_list(
+    epoch: int, address_list: List[str]
+) -> List[RewardDB]:
+    return (
+        RewardDB.query.filter(
+            RewardDB.epoch == epoch, RewardDB.address.in_(address_list)
+        )
+        .order_by(RewardDB.address.asc())
+        .all()
+    )
+
+
 def get_by_address_and_epoch_gt(address: str, epoch: int) -> List[RewardDB]:
     return (
         RewardDB.query.filter(
@@ -21,7 +33,18 @@ def get_by_address_and_epoch_gt(address: str, epoch: int) -> List[RewardDB]:
     )
 
 
-def add(epoch: int, address: str, amount: int):
+def add_proposal_reward(epoch: int, address: str, amount: int, matched: int):
+    db.session.add(
+        RewardDB(
+            epoch=epoch,
+            address=to_checksum_address(address),
+            amount=str(amount),
+            matched=str(matched),
+        )
+    )
+
+
+def add_user_reward(epoch: int, address: str, amount: int):
     db.session.add(
         RewardDB(
             epoch=epoch,
@@ -37,6 +60,7 @@ def add_all(epoch: int, rewards: List[AccountFunds]):
             epoch=epoch,
             address=to_checksum_address(r.address),
             amount=str(r.amount),
+            matched=str(r.matched),
         )
         for r in rewards
     ]

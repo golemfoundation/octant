@@ -87,6 +87,7 @@ class Reward(BaseModel):
     epoch = Column(db.Integer, nullable=False)
     address = Column(db.String(42), nullable=False)
     amount = Column(db.String, nullable=False)
+    matched = Column(db.String, nullable=True)
 
 
 class EpochZeroClaim(BaseModel):

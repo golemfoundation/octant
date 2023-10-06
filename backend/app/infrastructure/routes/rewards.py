@@ -167,15 +167,14 @@ class Threshold(OctantResource):
 )
 @ns.response(
     400,
-    "Invalid epoch number given. Has the allocation window "
-    "for the given epoch started already?",
+    "Invalid epoch number given. The epoch must be finalized",
 )
 @ns.route("/proposals/epoch/<int:epoch>")
 class ProposalsRewards(OctantResource):
     @ns.marshal_with(proposals_rewards_model)
     def get(self, epoch):
-        app.logger.debug(f"Getting proposal rewards for epoch {epoch}")
-        proposal_rewards = rewards.get_proposals_rewards(epoch)
+        app.logger.debug(f"Getting proposal rewards for a finalized epoch {epoch}")
+        proposal_rewards = rewards.get_finalized_epoch_proposals_rewards(epoch)
         app.logger.debug(f"Proposal rewards in epoch: {epoch}: {proposal_rewards}")
 
         return {"rewards": proposal_rewards}

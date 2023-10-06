@@ -104,6 +104,22 @@ def get_proposals_rewards(epoch: int = None) -> List[ProposalReward]:
     return list(rewards.values())
 
 
+def get_finalized_epoch_proposals_rewards(epoch: int = None) -> List[ProposalReward]:
+    finalized_epoch = epochs.get_finalized_epoch()
+    if epoch > finalized_epoch:
+        raise exceptions.MissingSnapshot()
+
+    proposals_address_list = proposals.get_proposals_addresses(epoch)
+    raw_proposals_rewards = database.rewards.get_by_epoch_and_address_list(
+        epoch, proposals_address_list
+    )
+
+    return [
+        ProposalReward(reward.address, reward.amount - reward.matched, reward.matched)
+        for reward in raw_proposals_rewards
+    ]
+
+
 def get_rewards_merkle_tree(epoch: int) -> RewardsMerkleTree:
     if not core_epoch_snapshots.has_finalized_epoch_snapshot(epoch):
         raise exceptions.InvalidEpoch
