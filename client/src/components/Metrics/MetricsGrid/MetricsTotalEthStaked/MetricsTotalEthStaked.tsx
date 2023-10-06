@@ -1,5 +1,5 @@
 import { formatUnits } from 'ethers/lib/utils';
-import React, { ReactElement } from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/common/MetricsGridTile/MetricsGridTile';
@@ -9,7 +9,9 @@ import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useSettingsStore from 'store/settings/store';
 import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 
-const MetricsTotalEthStaked = (): ReactElement => {
+import MetricsTotalEthStakedProps from './types';
+
+const MetricsTotalEthStaked: FC<MetricsTotalEthStakedProps> = ({ isLoading = false }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
   const {
@@ -38,7 +40,13 @@ const MetricsTotalEthStaked = (): ReactElement => {
     <MetricsGridTile
       groups={[
         {
-          children: <MetricsGridTileValue subvalue={ethStakedFiatValue} value={ethStakedValue} />,
+          children: (
+            <MetricsGridTileValue
+              isLoading={isLoading}
+              subvalue={ethStakedFiatValue}
+              value={ethStakedValue}
+            />
+          ),
           title: t('totalEthStaked'),
         },
       ]}
