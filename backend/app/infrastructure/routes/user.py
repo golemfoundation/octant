@@ -140,4 +140,4 @@ class PatronMode(OctantResource):
             f"User {user_address} patron mode status updated to {patron_mode_status}"
         )
 
-        return {"status": patron_mode_status}, 204
+        return {"status": patron_mode_status}, 200
