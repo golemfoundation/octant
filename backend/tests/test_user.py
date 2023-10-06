@@ -24,7 +24,7 @@ from app.controllers.allocations import get_allocation_nonce
 
 
 @pytest.fixture(autouse=True)
-def before(app, patch_epochs, patch_proposals):
+def before(app, patch_epochs, patch_proposals, patch_is_contract):
     pass
 
 
