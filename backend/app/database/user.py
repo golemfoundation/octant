@@ -30,11 +30,11 @@ def get_or_add_user(user_address: str) -> User:
     return user
 
 
-def toggle_patron_mode(user_address: str) -> User:
+def toggle_patron_mode(user_address: str) -> bool:
     user = get_by_address(user_address)
     if not user:
         raise UserNotFound(user_address)
     user.patron_mode = not user.patron_mode
     db.session.add(user)
 
-    return user
+    return user.patron_mode
