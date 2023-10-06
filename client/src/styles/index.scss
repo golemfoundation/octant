@@ -9,6 +9,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  // Hides grey overlay on tap (mobile) https://linear.app/golemfoundation/issue/OCT-765/fix-bottom-navbar-glitch-on-tapping-navbar-items-mobile-only , https://linear.app/golemfoundation/issue/OCT-766/fix-visual-glitches-with-settings-toggle-switches-mobile-only
   -webkit-tap-highlight-color: transparent;
 }
 
