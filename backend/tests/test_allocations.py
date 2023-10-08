@@ -69,19 +69,19 @@ def test_simulate_allocation_single_user(
         == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
     )
     assert proposal_rewards_before[0].allocated == 10000000000000000000
-    assert proposal_rewards_before[0].matched == 318022141402206674
+    assert proposal_rewards_before[0].matched == 36_685733052_583541401
     assert (
         proposal_rewards_before[1].address
         == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
     )
     assert proposal_rewards_before[1].allocated == 20000000000000000000
-    assert proposal_rewards_before[1].matched == 636044282804413348
+    assert proposal_rewards_before[1].matched == 73_371466105_167082802
     assert (
         proposal_rewards_before[2].address
         == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
     )
     assert proposal_rewards_before[2].allocated == 30000000000000000000
-    assert proposal_rewards_before[2].matched == 954066424206620023
+    assert proposal_rewards_before[2].matched == 110_057199157_750624203
     assert (
         proposal_rewards_before[3].address
         == "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec"
@@ -101,10 +101,10 @@ def test_simulate_allocation_single_user(
     assert len(result) == 5
     assert result[0].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
     assert result[0].allocated == 40000000000000000000
-    assert result[0].matched == 848059043739217798
+    assert result[0].matched == 97_828621473_556110403
     assert result[1].address == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
     assert result[1].allocated == 50000000000000000000
-    assert result[1].matched == 1060073804674022248
+    assert result[1].matched == 122_28577684_1945138003
     assert result[2].address == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
     assert result[2].allocated == 0
     assert result[2].matched == 0
@@ -169,13 +169,13 @@ def test_simulate_allocation_multiple_users(
         == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
     )
     assert proposal_rewards_before[1].allocated == 60000000000000000000
-    assert proposal_rewards_before[1].matched == 817771220748531448
+    assert proposal_rewards_before[1].matched == 94_334742135_214820745
     assert (
         proposal_rewards_before[2].address
         == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
     )
     assert proposal_rewards_before[2].allocated == 80000000000000000000
-    assert proposal_rewards_before[2].matched == 1090361627664708598
+    assert proposal_rewards_before[2].matched == 125_779656180_286427661
     assert (
         proposal_rewards_before[3].address
         == "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec"
@@ -195,13 +195,13 @@ def test_simulate_allocation_multiple_users(
     assert len(result) == 5
     assert result[0].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
     assert result[0].allocated == 60000000000000000000
-    assert result[0].matched == 520399867749065467
+    assert result[0].matched == 60_031199540_591249565
     assert result[1].address == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
     assert result[1].allocated == 110000000000000000000
-    assert result[1].matched == 954066424206620023
+    assert result[1].matched == 110_057199157_750624203
     assert result[2].address == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
     assert result[2].allocated == 50000000000000000000
-    assert result[2].matched == 433666556457554556
+    assert result[2].matched == 50_025999617_159374637
     assert result[3].address == "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec"
     assert result[3].allocated == 0
     assert result[3].matched == 0

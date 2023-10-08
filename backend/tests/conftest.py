@@ -12,7 +12,6 @@ from web3 import Web3
 from tests.helpers.gql_client import MockGQLClient
 from app import create_app, database
 from app.contracts.epochs import Epochs
-from app.contracts.erc20 import ERC20
 from app.contracts.proposals import Proposals
 from app.contracts.vault import Vault
 from app.controllers.allocations import allocate, deserialize_payload
@@ -24,15 +23,15 @@ from app.settings import TestConfig
 
 # Consts
 MNEMONIC = "test test test test test test test test test test test junk"
-MOCKED_PENDING_EPOCH_NO = 42
-MOCKED_CURRENT_EPOCH_NO = 43
+MOCKED_PENDING_EPOCH_NO = 1
+MOCKED_CURRENT_EPOCH_NO = 2
 ETH_PROCEEDS = 402_410958904_110000000
-TOTAL_ED = 22700_000000000_099999994
+TOTAL_ED = 100022700_000000000_099999994
 USER1_ED = 1500_000055377_000000000
 USER2_ED = 7500_000000000_000000000
-LOCKED_RATIO = Decimal("0.000022700000000000099999994")
-TOTAL_REWARDS = 1_917267577_180363384
-ALL_INDIVIDUAL_REWARDS = 9134728_767123337
+LOCKED_RATIO = Decimal("0.100022700000000000099999994")
+TOTAL_REWARDS = 321_928767123_288031232
+ALL_INDIVIDUAL_REWARDS = 101_814368807_786782825
 USER1_ADDRESS = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
 USER2_ADDRESS = "0x2345678901234567890123456789012345678904"
 
