@@ -19,6 +19,7 @@ from tests.conftest import (
     create_epoch_event,
     MOCK_EPOCHS,
     create_deposit_event,
+    USER1_BUDGET,
 )
 from app.controllers.allocations import get_allocation_nonce
 
@@ -29,7 +30,7 @@ def before(app, patch_epochs, patch_proposals, patch_is_contract):
 
 
 def test_get_user_budget(user_accounts, mock_pending_epoch_snapshot_db):
-    expected_result = 1526868_989237987
+    expected_result = USER1_BUDGET
     result = get_budget(user_accounts[0].address, MOCKED_PENDING_EPOCH_NO)
 
     assert result == expected_result
@@ -133,7 +134,7 @@ def test_estimate_budget_validates_inputs():
             },
             {
                 0: 1026868_989237987,
-                1: 7034344_664345202,
+                1: 4998519_420519815,
             },
         ),
         # ------------------------------------
@@ -143,7 +144,7 @@ def test_estimate_budget_validates_inputs():
                 1: [(2, 0)],
             },
             {
-                1: 7634344_664345202,
+                1: 5598519_420519815,
             },
         ),
     ],

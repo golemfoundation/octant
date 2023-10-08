@@ -39,7 +39,7 @@ def test_finalized_epoch_snapshot_with_rewards(
     rewards = database.rewards.get_by_epoch(result)
     assert len(rewards) == 4
     assert rewards[0].address == user_accounts[1].address
-    assert rewards[0].amount == str(7632344_664345202)
+    assert rewards[0].amount == str(5596519_420519815)
     assert rewards[1].address == proposal_accounts[1].address
     assert rewards[1].amount == str(146_742934210_334165604)
     assert rewards[2].address == proposal_accounts[0].address
@@ -60,7 +60,7 @@ def test_finalized_epoch_snapshot_with_rewards(
     )
     assert (
         snapshot.withdrawals_merkle_root
-        == "0x4a84cd8687de55d841146df889d47e253dc9f9a397f800cbeaf5a9b37f436211"
+        == "0x81c1e5cfcd6a938330bb2d36d7301e7425158c6851566d3c96de6346d8a6cd2f"
     )
     assert snapshot.created_at is not None
 

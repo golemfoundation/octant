@@ -16,10 +16,14 @@ from app.core.rewards.rewards import (
     calculate_all_individual_rewards,
     calculate_matched_rewards_threshold,
 )
+from app.database.user import toggle_patron_mode
+from app.extensions import db
 from .conftest import (
     allocate_user_rewards,
     deserialize_allocations,
     MOCK_PROPOSALS,
+    USER2_BUDGET,
+    USER3_BUDGET,
 )
 from .test_allocations import (
     sign,
@@ -35,7 +39,6 @@ def before(
     patch_proposals,
     patch_has_pending_epoch_snapshot,
     patch_user_budget,
-    patch_matched_rewards,
 ):
     MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts[0:5]
@@ -163,8 +166,9 @@ def test_get_allocation_threshold(app, tos_users, proposal_accounts):
         ),
     ],
 )
-def test_proposals_rewards(
+def test_proposals_rewards_without_patrons(
     app,
+    patch_matched_rewards,
     tos_users,
     proposal_accounts,
     user_allocations: dict,
@@ -192,6 +196,59 @@ def test_proposals_rewards(
     assert len(proposals) == 5
     for proposal in proposals:
         assert expected_rewards.get(proposal.address, 0) == proposal.matched
+
+
+def test_proposals_rewards_with_patron(
+    app, mock_pending_epoch_snapshot_db, tos_users, proposal_accounts
+):
+    allocate_amount = 1 * 10**9
+    matched_before_patron = 220_114398315_501248407
+    patron_budget = USER2_BUDGET
+    user = tos_users[0]
+    patron = tos_users[1]
+    proposal = proposal_accounts[0]
+    nonce = get_allocation_nonce(user.address)
+    allocate_user_rewards(user, proposal, allocate_amount, nonce)
+
+    result_before_patron_mode_enabled = get_estimated_proposals_rewards()
+    assert result_before_patron_mode_enabled[0].allocated == allocate_amount
+    assert result_before_patron_mode_enabled[0].matched == matched_before_patron
+
+    toggle_patron_mode(patron.address)
+    db.session.commit()
+
+    result_after_patron_mode_enabled = get_estimated_proposals_rewards()
+    assert result_after_patron_mode_enabled[0].allocated == allocate_amount
+    assert (
+        result_after_patron_mode_enabled[0].matched
+        == matched_before_patron + patron_budget
+    )
+
+
+def test_proposals_rewards_with_multiple_patrons(
+    app, mock_pending_epoch_snapshot_db, tos_users, proposal_accounts
+):
+    allocate_amount = 1 * 10**9
+    matched_before_patrons = 220_114398315_501248407
+    patron1_budget = USER2_BUDGET
+    patron2_budget = USER3_BUDGET
+    user = tos_users[0]
+    patron1 = tos_users[1]
+    patron2 = tos_users[2]
+    proposal = proposal_accounts[0]
+    nonce = get_allocation_nonce(user.address)
+    allocate_user_rewards(user, proposal, allocate_amount, nonce)
+
+    toggle_patron_mode(patron1.address)
+    toggle_patron_mode(patron2.address)
+    db.session.commit()
+
+    result_after_patron_mode_enabled = get_estimated_proposals_rewards()
+    assert result_after_patron_mode_enabled[0].allocated == allocate_amount
+    assert (
+        result_after_patron_mode_enabled[0].matched
+        == matched_before_patrons + patron1_budget + patron2_budget
+    )
 
 
 def _allocate_random_individual_rewards(user_accounts, proposal_accounts) -> int:

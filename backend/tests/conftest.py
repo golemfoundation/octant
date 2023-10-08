@@ -28,7 +28,12 @@ MOCKED_CURRENT_EPOCH_NO = 2
 ETH_PROCEEDS = 402_410958904_110000000
 TOTAL_ED = 100022700_000000000_099999994
 USER1_ED = 1500_000055377_000000000
-USER2_ED = 7500_000000000_000000000
+USER2_ED = 5500_000000000_000000000
+USER3_ED = 2000_000000000_000000000
+USER1_BUDGET = 1526868_989237987
+USER2_BUDGET = 5598519_420519815
+USER3_BUDGET = 2035825_243825387
+
 LOCKED_RATIO = Decimal("0.100022700000000000099999994")
 TOTAL_REWARDS = 321_928767123_288031232
 ALL_INDIVIDUAL_REWARDS = 101_814368807_786782825
@@ -202,8 +207,10 @@ def mock_pending_epoch_snapshot_db(app, user_accounts):
     )
     user1 = database.user.get_or_add_user(user_accounts[0].address)
     user2 = database.user.get_or_add_user(user_accounts[1].address)
+    user3 = database.user.get_or_add_user(user_accounts[2].address)
     database.deposits.add(MOCKED_PENDING_EPOCH_NO, user1, USER1_ED, USER1_ED)
     database.deposits.add(MOCKED_PENDING_EPOCH_NO, user2, USER2_ED, USER2_ED)
+    database.deposits.add(MOCKED_PENDING_EPOCH_NO, user3, USER3_ED, USER3_ED)
     db.session.commit()
 
 
