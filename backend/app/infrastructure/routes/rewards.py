@@ -1,5 +1,3 @@
-import dataclasses
-
 from flask import current_app as app
 from flask_restx import Namespace, fields
 
@@ -196,28 +194,6 @@ class EstimatedProposalsRewards(OctantResource):
         app.logger.debug(f"Proposal rewards in pending epoch: {proposal_rewards}")
 
         return {"rewards": proposal_rewards}
-
-
-@ns.doc(
-    description="Returns total of allocated and budget for matched rewards for a given epoch",
-    params={
-        "epoch": "Epoch number",
-    },
-)
-@ns.response(200, "")
-@ns.route("/budget/epoch/<int:epoch>")
-class Budget(OctantResource):
-    @ns.marshal_with(budget_model)
-    def get(self, epoch):
-        app.logger.debug(
-            f"Getting total of allocated and matched budget for epoch {epoch}"
-        )
-        budget = rewards.get_rewards_budget(epoch)
-        app.logger.debug(
-            f"Total of allocated and matched budget for epoch {epoch}: {budget}"
-        )
-
-        return dataclasses.asdict(budget)
 
 
 @ns.doc(

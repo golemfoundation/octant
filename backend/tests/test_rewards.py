@@ -3,11 +3,9 @@ from decimal import Decimal
 import pytest
 from eth_account import Account
 
-from app import database
 from app.controllers.allocations import allocate, get_allocation_nonce
 from app.controllers.rewards import (
     get_allocation_threshold,
-    get_rewards_budget,
     get_estimated_proposals_rewards,
 )
 from app.core.allocations import (
@@ -16,13 +14,11 @@ from app.core.allocations import (
 from app.core.rewards.rewards import (
     calculate_total_rewards,
     calculate_all_individual_rewards,
-    get_estimated_matched_rewards,
     calculate_matched_rewards_threshold,
 )
 from .conftest import (
     allocate_user_rewards,
     deserialize_allocations,
-    MOCKED_PENDING_EPOCH_NO,
     MOCK_PROPOSALS,
 )
 from .test_allocations import (
@@ -116,32 +112,6 @@ def test_get_allocation_threshold(app, tos_users, proposal_accounts):
     assert get_allocation_threshold(None) == calculate_matched_rewards_threshold(
         total_allocated, 5
     )
-
-
-def test_get_rewards_budget(app, tos_users, proposal_accounts):
-    eth_proceeds = 402_410958904_110000000
-    total_ed = 22700_000000000_099999994
-    locked_ratio = Decimal("0.000022700000000000099999994")
-    total_rewards = 1_917267577_180363384
-    all_individual_rewards = 9134728_767123337
-
-    database.pending_epoch_snapshot.add_snapshot(
-        MOCKED_PENDING_EPOCH_NO,
-        eth_proceeds,
-        total_ed,
-        locked_ratio,
-        total_rewards,
-        all_individual_rewards,
-    )
-
-    expected_matched = get_estimated_matched_rewards()
-    total_allocated = _allocate_random_individual_rewards(tos_users, proposal_accounts)
-
-    rewards = get_rewards_budget(None)
-
-    assert rewards.epoch == MOCKED_PENDING_EPOCH_NO
-    assert rewards.allocated == total_allocated
-    assert rewards.matched == expected_matched
 
 
 @pytest.mark.parametrize(

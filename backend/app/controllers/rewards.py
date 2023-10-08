@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from decimal import Decimal
 from functools import reduce
 from typing import List
-from typing import Optional
 
 from dataclass_wizard import JSONWizard
 
@@ -13,7 +12,6 @@ from app.core import proposals, merkle_tree
 from app.core.epochs.epoch_snapshots import has_pending_epoch_snapshot
 from app.core.proposals import get_proposals_with_allocations
 from app.core.rewards.rewards import (
-    calculate_matched_rewards,
     get_estimated_matched_rewards,
 )
 from app.extensions import epochs
@@ -24,13 +22,6 @@ class ProposalReward(JSONWizard):
     address: str
     allocated: int
     matched: int
-
-
-@dataclass(frozen=True)
-class Rewards(JSONWizard):
-    epoch: int
-    allocated: int
-    matched: Optional[int]
 
 
 @dataclass(frozen=True)
@@ -46,22 +37,6 @@ class RewardsMerkleTree(JSONWizard):
     root: str
     leaves: List[RewardsMerkleTreeLeaf]
     leaf_encoding: List[str]
-
-
-def get_rewards_budget(epoch: int = None) -> Rewards:
-    epoch = epochs.get_pending_epoch() if epoch is None else epoch
-    matched = None
-
-    try:
-        snapshot = database.pending_epoch_snapshot.get_by_epoch_num(epoch)
-        matched = calculate_matched_rewards(snapshot)
-    except exceptions.InvalidEpoch:
-        # This means the epoch is still ongoing (or hasn't yet started)
-        # thus the matched rewards value is not yet known.
-        pass
-
-    allocated = database.allocations.get_alloc_sum_by_epoch(epoch)
-    return Rewards(epoch, allocated, matched)
 
 
 def get_allocation_threshold(epoch: int = None) -> int:
