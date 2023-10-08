@@ -8,7 +8,7 @@ from app.controllers.allocations import allocate, get_allocation_nonce
 from app.controllers.rewards import (
     get_allocation_threshold,
     get_rewards_budget,
-    get_proposals_rewards,
+    get_estimated_proposals_rewards,
 )
 from app.core.allocations import (
     AllocationRequest,
@@ -16,9 +16,8 @@ from app.core.allocations import (
 from app.core.rewards.rewards import (
     calculate_total_rewards,
     calculate_all_individual_rewards,
-    get_matched_rewards_from_epoch,
+    get_estimated_matched_rewards,
     calculate_matched_rewards_threshold,
-    estimate_epoch_eth_staking_proceeds,
 )
 from .conftest import (
     allocate_user_rewards,
@@ -135,7 +134,7 @@ def test_get_rewards_budget(app, tos_users, proposal_accounts):
         all_individual_rewards,
     )
 
-    expected_matched = get_matched_rewards_from_epoch(MOCKED_PENDING_EPOCH_NO)
+    expected_matched = get_estimated_matched_rewards()
     total_allocated = _allocate_random_individual_rewards(tos_users, proposal_accounts)
 
     rewards = get_rewards_budget(None)
@@ -219,21 +218,10 @@ def test_proposals_rewards(
         proposal_address = proposal_accounts[proposal_index].address
         expected_rewards[proposal_address] = expected_reward
 
-    proposals = get_proposals_rewards(MOCKED_PENDING_EPOCH_NO)
+    proposals = get_estimated_proposals_rewards()
     assert len(proposals) == 5
     for proposal in proposals:
         assert expected_rewards.get(proposal.address, 0) == proposal.matched
-
-
-@pytest.mark.parametrize(
-    "days, result",
-    [
-        (72, 680_547945205_479374848),
-        (90, 850_684931506_849316864),
-    ],
-)
-def test_estimate_epoch_eth_staking_proceeds(days, result):
-    assert estimate_epoch_eth_staking_proceeds(days) == result
 
 
 def _allocate_random_individual_rewards(user_accounts, proposal_accounts) -> int:

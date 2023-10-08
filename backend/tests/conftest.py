@@ -162,8 +162,14 @@ def patch_eth_get_balance(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_has_pending_epoch_snapshot(monkeypatch):
-    monkeypatch.setattr(
-        "app.core.allocations.has_pending_epoch_snapshot", MOCK_HAS_PENDING_SNAPSHOT
+    (
+        monkeypatch.setattr(
+            "app.core.allocations.has_pending_epoch_snapshot", MOCK_HAS_PENDING_SNAPSHOT
+        ),
+        monkeypatch.setattr(
+            "app.controllers.rewards.has_pending_epoch_snapshot",
+            MOCK_HAS_PENDING_SNAPSHOT,
+        ),
     )
     MOCK_HAS_PENDING_SNAPSHOT.return_value = True
 
@@ -177,10 +183,10 @@ def patch_user_budget(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_matched_rewards(monkeypatch):
     monkeypatch.setattr(
-        "app.controllers.rewards.get_matched_rewards_from_epoch", MOCK_MATCHED_REWARDS
+        "app.controllers.rewards.get_estimated_matched_rewards", MOCK_MATCHED_REWARDS
     )
     monkeypatch.setattr(
-        "app.core.proposals.get_matched_rewards_from_epoch", MOCK_MATCHED_REWARDS
+        "app.core.proposals.get_estimated_matched_rewards", MOCK_MATCHED_REWARDS
     )
     MOCK_MATCHED_REWARDS.return_value = 10_000000000_000000000
 

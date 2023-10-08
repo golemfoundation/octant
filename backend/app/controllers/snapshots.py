@@ -111,9 +111,11 @@ def snapshot_finalized_epoch() -> Optional[int]:
         app.logger.info("[+] Finalized snapshots are up to date")
         return None
 
-    proposal_rewards, proposal_rewards_sum = get_proposal_rewards_above_threshold(
-        finalized_epoch
-    )
+    (
+        proposal_rewards,
+        proposal_rewards_sum,
+        matched_rewards,
+    ) = get_proposal_rewards_above_threshold(finalized_epoch)
     user_rewards, user_rewards_sum = user_core_rewards.get_claimed_rewards(
         finalized_epoch
     )
@@ -127,11 +129,12 @@ def snapshot_finalized_epoch() -> Optional[int]:
         merkle_root = rewards_merkle_tree.root
         finalized_epoch_snapshot.add_snapshot(
             finalized_epoch,
+            matched_rewards,
             merkle_root,
             proposal_rewards_sum + user_rewards_sum,
         )
     else:
-        finalized_epoch_snapshot.add_snapshot(finalized_epoch)
+        finalized_epoch_snapshot.add_snapshot(finalized_epoch, matched_rewards)
     db.session.commit()
 
     return finalized_epoch

@@ -170,12 +170,30 @@ class Threshold(OctantResource):
     "Invalid epoch number given. The epoch must be finalized",
 )
 @ns.route("/proposals/epoch/<int:epoch>")
-class ProposalsRewards(OctantResource):
+class FinalizedProposalsRewards(OctantResource):
     @ns.marshal_with(proposals_rewards_model)
     def get(self, epoch):
         app.logger.debug(f"Getting proposal rewards for a finalized epoch {epoch}")
         proposal_rewards = rewards.get_finalized_epoch_proposals_rewards(epoch)
         app.logger.debug(f"Proposal rewards in epoch: {epoch}: {proposal_rewards}")
+
+        return {"rewards": proposal_rewards}
+
+
+@ns.doc(
+    description="Returns proposals with estimated matched rewards for the pending epoch"
+)
+@ns.response(
+    200,
+    "",
+)
+@ns.route("/proposals/estimated")
+class EstimatedProposalsRewards(OctantResource):
+    @ns.marshal_with(proposals_rewards_model)
+    def get(self):
+        app.logger.debug("Getting proposal rewards for the pending epoch")
+        proposal_rewards = rewards.get_estimated_proposals_rewards()
+        app.logger.debug(f"Proposal rewards in pending epoch: {proposal_rewards}")
 
         return {"rewards": proposal_rewards}
 

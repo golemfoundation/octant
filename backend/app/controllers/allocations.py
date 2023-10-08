@@ -55,7 +55,7 @@ def simulate_allocation(payload: Dict, user_address: str):
     epoch = epochs.get_pending_epoch()
     verify_allocations(epoch, user_address, user_allocations)
     add_allocations_to_db(epoch, user_address, nonce, user_allocations, True)
-    proposal_rewards = rewards.get_proposals_rewards(epoch)
+    proposal_rewards = rewards.get_estimated_proposals_rewards()
 
     db.session.rollback()
 

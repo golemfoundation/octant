@@ -11,6 +11,10 @@ def get_all() -> List[User]:
     return User.query.all()
 
 
+def get_all_patrons() -> List[User]:
+    return User.query.filter_by(patron_mode=True).all()
+
+
 def get_by_address(user_address: str) -> Optional[User]:
     return User.query.filter_by(address=to_checksum_address(user_address)).first()
 

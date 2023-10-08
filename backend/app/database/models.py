@@ -65,6 +65,7 @@ class FinalizedEpochSnapshot(BaseModel):
 
     id = Column(db.Integer, primary_key=True)
     epoch = Column(db.Integer, nullable=False, unique=True)
+    matched_rewards = Column(db.String, nullable=False)
     withdrawals_merkle_root = Column(db.String)
     total_withdrawals = Column(db.String)
 

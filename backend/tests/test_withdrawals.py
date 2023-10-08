@@ -172,7 +172,7 @@ def test_get_withdrawable_eth(app, user_accounts, expected_rewards):
         user_account = user_accounts[user_index].address
 
         for epoch, amount, _ in rewards:
-            database.rewards.add(epoch, user_account, amount)
+            database.rewards.add_user_reward(epoch, user_account, amount)
         db.session.commit()
 
     # Asserts
@@ -190,10 +190,10 @@ def test_get_withdrawable_eth(app, user_accounts, expected_rewards):
 def test_get_withdrawable_eth_returns_only_not_claimed_rewards(app, user_accounts):
     MOCK_VAULT.get_last_claimed_epoch.return_value = 2
 
-    database.rewards.add(1, user_accounts[0].address, 100_000000000)
-    database.rewards.add(2, user_accounts[0].address, 200_000000000)
-    database.rewards.add(3, user_accounts[0].address, 300_000000000)
-    database.rewards.add(4, user_accounts[0].address, 400_000000000)
+    database.rewards.add_user_reward(1, user_accounts[0].address, 100_000000000)
+    database.rewards.add_user_reward(2, user_accounts[0].address, 200_000000000)
+    database.rewards.add_user_reward(3, user_accounts[0].address, 300_000000000)
+    database.rewards.add_user_reward(4, user_accounts[0].address, 400_000000000)
     db.session.commit()
 
     result = get_withdrawable_eth(user_accounts[0].address)
@@ -206,10 +206,10 @@ def test_get_withdrawable_eth_returns_only_not_claimed_rewards(app, user_account
 
 
 def test_get_withdrawable_eth_result_sorted_by_epochs(app, user_accounts):
-    database.rewards.add(2, user_accounts[0].address, 200_000000000)
-    database.rewards.add(4, user_accounts[0].address, 400_000000000)
-    database.rewards.add(1, user_accounts[0].address, 100_000000000)
-    database.rewards.add(3, user_accounts[0].address, 300_000000000)
+    database.rewards.add_user_reward(2, user_accounts[0].address, 200_000000000)
+    database.rewards.add_user_reward(4, user_accounts[0].address, 400_000000000)
+    database.rewards.add_user_reward(1, user_accounts[0].address, 100_000000000)
+    database.rewards.add_user_reward(3, user_accounts[0].address, 300_000000000)
     db.session.commit()
 
     result = get_withdrawable_eth(user_accounts[0].address)

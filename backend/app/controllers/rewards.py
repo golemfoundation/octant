@@ -10,10 +10,11 @@ from app.core.epochs import epoch_snapshots as core_epoch_snapshots
 from app import database
 from app import exceptions
 from app.core import proposals, merkle_tree
+from app.core.epochs.epoch_snapshots import has_pending_epoch_snapshot
 from app.core.proposals import get_proposals_with_allocations
 from app.core.rewards.rewards import (
     calculate_matched_rewards,
-    get_matched_rewards_from_epoch,
+    get_estimated_matched_rewards,
 )
 from app.extensions import epochs
 
@@ -68,9 +69,13 @@ def get_allocation_threshold(epoch: int = None) -> int:
     return proposals.get_proposal_allocation_threshold(epoch)
 
 
-def get_proposals_rewards(epoch: int = None) -> List[ProposalReward]:
-    epoch = epochs.get_pending_epoch() if epoch is None else epoch
-    matched_rewards = get_matched_rewards_from_epoch(epoch)
+def get_estimated_proposals_rewards() -> List[ProposalReward]:
+    epoch = epochs.get_pending_epoch()
+
+    if not has_pending_epoch_snapshot(epoch):
+        raise exceptions.MissingSnapshot
+
+    matched_rewards = get_estimated_matched_rewards()
     proposals_with_allocations = get_proposals_with_allocations(epoch)
     threshold = get_allocation_threshold(epoch)
 

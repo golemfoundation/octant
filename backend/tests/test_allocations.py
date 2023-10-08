@@ -61,7 +61,7 @@ def test_simulate_allocation_single_user(
     db.session.commit()
 
     payload = create_payload(proposal_accounts[0:2], [40 * 10**18, 50 * 10**18])
-    proposal_rewards_before = rewards.get_proposals_rewards()
+    proposal_rewards_before = rewards.get_estimated_proposals_rewards()
 
     assert len(proposal_rewards_before) == 5
     assert (
@@ -116,7 +116,7 @@ def test_simulate_allocation_single_user(
     assert result[4].matched == 0
 
     # Ensure changes made in the simulation are not saved to db
-    proposal_rewards_after = rewards.get_proposals_rewards()
+    proposal_rewards_after = rewards.get_estimated_proposals_rewards()
     assert proposal_rewards_before == proposal_rewards_after
 
 
@@ -155,7 +155,7 @@ def test_simulate_allocation_multiple_users(
     db.session.commit()
 
     payload = create_payload(proposal_accounts[0:2], [60 * 10**18, 70 * 10**18])
-    proposal_rewards_before = rewards.get_proposals_rewards()
+    proposal_rewards_before = rewards.get_estimated_proposals_rewards()
 
     assert len(proposal_rewards_before) == 5
     assert (
@@ -210,7 +210,7 @@ def test_simulate_allocation_multiple_users(
     assert result[4].matched == 0
 
     # Ensure changes made in the simulation are not saved to db
-    proposal_rewards_after = rewards.get_proposals_rewards()
+    proposal_rewards_after = rewards.get_estimated_proposals_rewards()
     assert proposal_rewards_before == proposal_rewards_after
 
 
