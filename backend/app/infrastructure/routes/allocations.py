@@ -35,6 +35,16 @@ user_allocations_payload_item = api.model(
     },
 )
 
+allocation_nonce_model = api.model(
+    "AllocationNonce",
+    {
+        "allocationNonce": fields.Integer(
+            required=True,
+            description="Current value of nonce used to sign allocations message. Note: this has nothing to do with Ethereum account nonce!",
+        ),
+    },
+)
+
 allocation_payload = api.model(
     "AllocationPayload",
     {
