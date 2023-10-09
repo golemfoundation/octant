@@ -115,12 +115,7 @@ def test_simulate_allocation_single_user(
     assert result[4].matched == 0
 
     # check leverage value
-    expected = int(
-        100
-        * sum([848059043_739217798, 1_060073804_674022248])
-        / sum([40 * 10**18, 50 * 10**18])
-    )
-    assert expected == leverage
+    assert leverage == 2.445715536838903
 
     # Ensure changes made in the simulation are not saved to db
     proposal_rewards_after = rewards.get_proposals_rewards()

@@ -93,16 +93,15 @@ def verify_allocations(epoch: int, user_address: str, allocations: List[Allocati
 
 def calculate_user_allocations_leverage(
     proposal_rewards: List[rewards.ProposalReward],
-) -> int:
-    individual_allocation = sum(map(lambda x: x.allocated, proposal_rewards))
+) -> float:
+    allocated = sum(map(lambda x: x.allocated, proposal_rewards))
 
-    if individual_allocation == 0:
+    if allocated == 0:
         raise exceptions.EmptyAllocations()
 
     matched_funds = sum(map(lambda x: x.matched, proposal_rewards))
-    leverage = (matched_funds / individual_allocation) * 100
 
-    return int(leverage)
+    return matched_funds / allocated
 
 
 def next_allocation_nonce(user: User | None) -> int:

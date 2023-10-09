@@ -43,7 +43,7 @@ def allocate(request: AllocationRequest) -> str:
 
 def simulate_allocation(
     payload: Dict, user_address: str
-) -> Tuple[int, List[rewards.ProposalReward]]:
+) -> Tuple[float, List[rewards.ProposalReward]]:
     _make_allocation(payload, user_address, True)
     pending_epoch = epochs.get_pending_epoch()
     simulated_rewards = rewards.get_proposals_rewards(pending_epoch)
