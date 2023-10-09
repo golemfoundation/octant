@@ -92,6 +92,9 @@ class MockGQLClient:
         if limit_clause is None:
             return None
 
+        if limit_clause["value"]["kind"] == "int_value":
+            return int(limit_clause["value"]["value"])
+
         limit_var_name = (
             limit_clause["value"]["name"]["value"]
             if limit_clause["value"]["kind"] == "variable"

@@ -102,9 +102,9 @@ class LockedRatio(OctantResource):
 
 @ns.route("/users/<string:address>/<int:epoch>")
 @ns.doc(
-    description="Returns user's effective deposit for particular epoch.",
+    description="Returns user's effective deposit for a finialized or pending epoch.",
     params={
-        "epoch": "Epoch number or keyword 'current'",
+        "epoch": "Epoch number",
         "address": "User ethereum address in hexadecimal form (case-insensitive, prefixed with 0x)",
     },
 )
@@ -113,10 +113,38 @@ class UserEffectiveDeposit(OctantResource):
     @ns.response(200, "User effective deposit successfully retrieved")
     def get(self, address: str, epoch: int):
         app.logger.debug(f"Getting user {address} effective deposit in epoch {epoch}")
-        result = deposits_controller.get_by_user_and_epoch(
+        result = deposits_controller.get_user_effective_deposit_by_epoch(
             to_checksum_address(address), epoch
         )
         app.logger.debug(f"User {address} effective deposit in epoch {epoch}: {result}")
+
+        return {
+            "effectiveDeposit": result,
+        }
+
+
+@ns.route("/users/<string:address>/estimated_effective_deposit")
+@ns.doc(
+    description="Returns user's estimated effective deposit for the current epoch.",
+    params={
+        "address": "User ethereum address in hexadecimal form (case-insensitive, prefixed with 0x)",
+    },
+)
+class UserEstimatedEffectiveDeposit(OctantResource):
+    @ns.marshal_with(user_effective_deposit_model)
+    @ns.response(200, "User estimated effective deposit successfully retrieved")
+    def get(self, address: str):
+        app.logger.debug(
+            f"Getting user {address} estimated effective deposit in the current epoch"
+        )
+        result = (
+            deposits_controller.get_user_estimated_effective_deposit_for_current_epoch(
+                to_checksum_address(address)
+            )
+        )
+        app.logger.debug(
+            f"User {address} estimated effective deposit in the current epoch: {result}"
+        )
 
         return {
             "effectiveDeposit": result,

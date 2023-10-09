@@ -4,6 +4,7 @@ export type Root = {
   cryptoValues: 'cryptoValues';
   depositAt: 'depositAt';
   epochesEndTime: 'epochesEndTime';
+  estimatedEffectiveDeposit: 'estimatedEffectiveDeposit';
   matchedProposalRewards: 'matchedProposalRewards';
   proposalDonors: 'proposalDonors';
   proposalsContract: 'proposalsContract';
@@ -23,9 +24,9 @@ export type QueryKeys = {
   currentEpoch: ['currentEpoch'];
   currentEpochEnd: ['currentEpochEnd'];
   currentEpochProps: ['currentEpochProps'];
-  depositAtGivenEpoch: (epochNumber: number) => [Root['depositAt'], string];
   depositsValue: ['depositsValue'];
   epochesEndTime: (epochNumber: number) => [Root['epochesEndTime'], string];
+  estimatedEffectiveDeposit: (userAddress: string) => [Root['estimatedEffectiveDeposit'], string];
   glmClaimCheck: ['glmClaimCheck'];
   history: ['history'];
   individualProposalRewards: ['individualProposalRewards'];
