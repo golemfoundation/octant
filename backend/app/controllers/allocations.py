@@ -11,6 +11,7 @@ from app.core.allocations import (
     verify_allocations,
     add_allocations_to_db,
     next_allocation_nonce,
+    calculate_user_allocations_leverage,
 )
 from app.core.common import AccountFunds
 from app.core.epochs import epoch_snapshots
@@ -61,11 +62,9 @@ def simulate_allocation(
 
     db.session.rollback()
 
-    individual_allocation = sum(map(lambda x: x.allocated, proposal_rewards))
-    matched_funds = sum(map(lambda x: x.matched, proposal_rewards))
-    leverage = (matched_funds / individual_allocation) * 100
+    leverage = calculate_user_allocations_leverage(simulated_rewards)
 
-    return int(leverage), proposal_rewards
+    return leverage, simulated_rewards
 
 
 def get_all_by_user_and_epoch(

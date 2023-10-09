@@ -4,6 +4,7 @@ from typing import List, Dict, Tuple
 from dataclass_wizard import JSONWizard
 
 from app import database, exceptions
+from app.controllers import rewards
 from app.core.epochs.epoch_snapshots import has_pending_epoch_snapshot
 from app.core.user.budget import get_budget
 from app.crypto.eip712 import recover_address, build_allocations_eip712_data
@@ -88,6 +89,20 @@ def verify_allocations(epoch: int, user_address: str, allocations: List[Allocati
 
     if proposals_sum > user_budget:
         raise exceptions.RewardsBudgetExceeded
+
+
+def calculate_user_allocations_leverage(
+    proposal_rewards: List[rewards.ProposalReward],
+) -> int:
+    individual_allocation = sum(map(lambda x: x.allocated, proposal_rewards))
+
+    if individual_allocation == 0:
+        raise exceptions.EmptyAllocations()
+
+    matched_funds = sum(map(lambda x: x.matched, proposal_rewards))
+    leverage = (matched_funds / individual_allocation) * 100
+
+    return int(leverage)
 
 
 def next_allocation_nonce(user: User | None) -> int:
