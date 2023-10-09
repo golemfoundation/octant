@@ -174,3 +174,19 @@ class ExternalApiException(OctantException):
             self.description.format(api_url, str(e)),
             self.code,
         )
+
+
+class InvalidEpochException(OctantException):
+    code = 400
+    description = "The epoch {} is not pending or finalized"
+
+    def __init__(self, epoch: int):
+        super().__init__(self.description.format(epoch), self.code)
+
+
+class EffectiveDepositNotFoundException(OctantException):
+    code = 400
+    description = "The effective deposit for a user {} in the epoch {} is not found"
+
+    def __init__(self, epoch: int, user_address: str):
+        super().__init__(self.description.format(user_address, epoch), self.code)

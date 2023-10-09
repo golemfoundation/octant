@@ -10,8 +10,8 @@ import Tooltip from 'components/core/Tooltip/Tooltip';
 import ModalGlmLock from 'components/dedicated/ModalGlmLock/ModalGlmLock';
 import ModalRewardsCalculator from 'components/dedicated/ModalRewardsCalculator/ModalRewardsCalculator';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
+import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
 import useMetaStore from 'store/meta/store';
 import { calculator } from 'svg/misc';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
@@ -29,11 +29,9 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
   }));
 
   const [isModalGlmLockOpen, setIsModalGlmLockOpen] = useState<boolean>(false);
+  const { data: estimatedEffectiveDeposit, isFetching: isFetchingEstimatedEffectiveDeposit } =
+    useEstimatedEffectiveDeposit();
   const [isModalRewardsCalculatorOpen, setIsModalRewardsCalculatorOpen] = useState(false);
-  const {
-    data: depositEffectiveAtCurrentEpoch,
-    isFetching: isFetchingDepositEffectiveAtCurrentEpoch,
-  } = useDepositEffectiveAtCurrentEpoch();
   const { data: depositsValue, isFetching: isFetchingDepositValue } = useDepositValue();
   const { data: currentEpoch } = useCurrentEpoch();
 
@@ -55,9 +53,8 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
         coinPricesServerDowntimeText: '...',
         cryptoCurrency: 'golem',
         dataTest: 'BoxGlmLock__Section--effective__DoubleValue',
-        isFetching:
-          isFetchingDepositEffectiveAtCurrentEpoch || isAppWaitingForTransactionToBeIndexed,
-        valueCrypto: depositEffectiveAtCurrentEpoch,
+        isFetching: isFetchingEstimatedEffectiveDeposit || isAppWaitingForTransactionToBeIndexed,
+        valueCrypto: estimatedEffectiveDeposit,
       },
       isDisabled: isPreLaunch && !isConnected,
       label: t('effective'),

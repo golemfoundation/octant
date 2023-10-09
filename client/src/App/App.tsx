@@ -15,8 +15,8 @@ import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useAllProposals from 'hooks/queries/useAllProposals';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
+import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
 import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -118,7 +118,7 @@ const App = (): ReactElement => {
   const { data: blockNumber } = useBlockNumber(
     blockNumberWithLatestTx !== metaInitialState.blockNumberWithLatestTx,
   );
-  const { refetch: refetchDepositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
+  const { refetch: refetchEstimatedEffectiveDeposit } = useEstimatedEffectiveDeposit();
   const { refetch: refetchHistory } = useHistory();
   const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
   const { refetch: refetchDeposit } = useDepositValue();
@@ -233,7 +233,7 @@ const App = (): ReactElement => {
       refetchDeposit();
 
       if (currentEpoch === 1) {
-        refetchDepositEffectiveAtCurrentEpoch();
+        refetchEstimatedEffectiveDeposit();
       }
 
       setBlockNumberWithLatestTx(metaInitialState.blockNumberWithLatestTx);
@@ -245,7 +245,7 @@ const App = (): ReactElement => {
     blockNumberWithLatestTx,
     refetchDeposit,
     refetchHistory,
-    refetchDepositEffectiveAtCurrentEpoch,
+    refetchEstimatedEffectiveDeposit,
     refetchLockedSummaryLatest,
   ]);
 
