@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/common/MetricsGridTile/MetricsGridTile';
@@ -6,7 +6,9 @@ import MetricsGridTileValue from 'components/Metrics/MetricsGrid/common/MetricsG
 import useAllProposals from 'hooks/queries/useAllProposals';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 
-const MetricsTotalProjects = (): ReactElement => {
+import MetricsTotalProjectsProps from './types';
+
+const MetricsTotalProjects: FC<MetricsTotalProjectsProps> = ({ isLoading = false }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
   const { data: allProposals } = useAllProposals();
@@ -18,6 +20,7 @@ const MetricsTotalProjects = (): ReactElement => {
         {
           children: (
             <MetricsGridTileValue
+              isLoading={isLoading}
               subvalue={t('totalProjectsSinceEpoch0', {
                 projectsAmount: allProposals.length,
               })}

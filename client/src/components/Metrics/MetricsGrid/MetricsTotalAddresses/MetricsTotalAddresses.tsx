@@ -1,11 +1,13 @@
-import React, { ReactElement } from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/common/MetricsGridTile/MetricsGridTile';
 import MetricsGridTileValue from 'components/Metrics/MetricsGrid/common/MetricsGridTileValue/MetricsGridTileValue';
 import useTotalAddresses from 'hooks/subgraph/useTotalAddresses';
 
-const MetricsTotalAddresses = (): ReactElement => {
+import MetricsTotalAddressesProps from './types';
+
+const MetricsTotalAddresses: FC<MetricsTotalAddressesProps> = ({ isLoading = false }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { data: totalAddresses } = useTotalAddresses();
 
@@ -15,7 +17,13 @@ const MetricsTotalAddresses = (): ReactElement => {
     <MetricsGridTile
       groups={[
         {
-          children: <MetricsGridTileValue value={totalAddressesValue} />,
+          children: (
+            <MetricsGridTileValue
+              isLoading={isLoading}
+              showSubvalueLoader={false}
+              value={totalAddressesValue}
+            />
+          ),
           title: t('totalAddresses'),
         },
       ]}

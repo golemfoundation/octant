@@ -44,11 +44,17 @@
   .groupTitle {
     text-align: left;
     padding: 2.2rem 1.6rem 0 2.4rem;
+    display: flex;
+    align-items: center;
     font-size: $font-size-10;
     color: $color-octant-green;
     margin: 0;
     text-transform: uppercase;
     font-weight: $font-weight-bold;
     letter-spacing: 0.03rem;
+
+    &.hasTitileBottomPadding {
+      padding-bottom: 2.2rem;
+    }
   }
 }
