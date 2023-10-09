@@ -37,6 +37,7 @@ const TimeCounter: FC<TimeCounterProps> = ({
   duration,
   onCountingFinish,
   variant = 'standard',
+  isLoading = false,
 }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.timeCounter',
@@ -71,16 +72,23 @@ const TimeCounter: FC<TimeCounterProps> = ({
     return () => clearTimeout(timer);
   }, [shouldDoRefetch, timestamp, time, onCountingFinish]);
 
-  const shouldShowLoader = !timestamp || !duration || !time || shouldDoRefetch;
+  const shouldShowLoader = !timestamp || !duration || !time || shouldDoRefetch || isLoading;
   // Progress should increase the closer we are to the timestamp.
   const progressPercentage =
     timestamp && duration ? 100 - ((timestamp - Date.now()) / duration) * 100 : 0;
 
   return (
     <div className={cx(styles.root, styles[`variant--${variant}`], className)}>
-      {shouldShowLoader ? (
-        <Loader />
-      ) : (
+      {shouldShowLoader &&
+        (variant === 'metrics' ? (
+          <div className={styles.metricsSkeleton}>
+            <div className={styles.timerSkeleton} />
+            <div className={styles.progressBarSkeleton} />
+          </div>
+        ) : (
+          <Loader />
+        ))}
+      {!shouldShowLoader && (
         <Fragment>
           <div className={cx(styles.counters, styles[`variant--${variant}`])}>
             <CounterSection label={t('days')} value={time.days} variant={variant} />

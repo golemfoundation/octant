@@ -1,19 +1,34 @@
 .root {
-  padding: 0.7rem 2.4rem 0;
+  padding: 0 2.4rem 0;
 
   &.size {
     &--S {
-      padding: 1.1rem 2.4rem 0;
-
       .value {
         font-size: $font-size-24;
-        padding: 1.1rem 0 1.1rem;
+      }
+    }
+  }
+
+  &.isLoading {
+    .value {
+      @include skeleton();
+      width: 100%;
+    }
+
+    .subvalue {
+      @include skeleton();
+      width: 100%;
+
+      &.isThinSubvalueLoader {
+        height: 0.4rem;
+        margin-top: 1.8rem;
       }
     }
   }
 
   .value {
-    padding: 1.2rem 0 0.4rem;
+    height: 3.2rem;
+    line-height: 3.2rem;
     font-size: $font-size-32;
     font-weight: $font-weight-bold;
     color: $color-octant-dark;
@@ -26,6 +41,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 2.4rem;
+    height: 1.6rem;
+    line-height: 1.6rem;
+    margin-top: 1.2rem;
   }
 }

@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 
 type MetricsGridTileGroup = {
   children: ReactNode;
+  hasTitileBottomPadding?: boolean;
   title: string;
   titleSuffix?: string;
 };

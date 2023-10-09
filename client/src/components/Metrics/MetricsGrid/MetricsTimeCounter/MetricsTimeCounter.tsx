@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
@@ -11,19 +11,18 @@ import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 
 import styles from './MetricsTimeCounter.module.scss';
+import MetricsTimeCounterProps from './types';
 
-const MetricsTimeCounter = (): ReactElement => {
+const MetricsTimeCounter: FC<MetricsTimeCounterProps> = ({ isLoading = false }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
-  const { data: currentEpoch } = useCurrentEpoch();
-  const { data: currentEpochProps } = useCurrentEpochProps();
-  const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
-
-  const { refetch: refetchCurrentEpochProps } = useCurrentEpochProps();
-  const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
-  const { refetch: refetchCurrentEpoch } = useCurrentEpoch({
+  const { data: currentEpoch, refetch: refetchCurrentEpoch } = useCurrentEpoch({
     refetchOnWindowFocus: true,
   });
+  const { data: currentEpochProps, refetch: refetchCurrentEpochProps } = useCurrentEpochProps();
+  const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
+
+  const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
   const { refetch: refetchProposals } = useProposalsContract();
   const { data: isDecisionWindowOpen, refetch: refetchIsDecisionWindowOpen } =
     useIsDecisionWindowOpen();
@@ -53,11 +52,13 @@ const MetricsTimeCounter = (): ReactElement => {
           children: (
             <TimeCounter
               className={styles.timeCounter}
+              isLoading={isLoading}
               onCountingFinish={onCountingFinish}
               variant="metrics"
               {...counterProps}
             />
           ),
+          hasTitileBottomPadding: false,
           title: t(isDecisionWindowOpen ? 'epochAllocationEndsIn' : 'epochAllocationStartsIn', {
             currentEpoch,
           }),
