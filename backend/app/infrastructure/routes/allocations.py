@@ -14,7 +14,7 @@ api.add_namespace(ns)
 allocation_nonce_model = api.model(
     "AllocationNonce",
     {
-        "allocation_nonce": fields.Integer(
+        "allocationNonce": fields.Integer(
             required=True,
             description="Current value of nonce used to sign allocations message. Note: this has nothing to do with Ethereum account nonce!",
         ),
