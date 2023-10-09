@@ -37,7 +37,10 @@ def allocate(request: AllocationRequest) -> str:
     )
     user.allocation_nonce = next_nonce
 
-    store_allocations_signature(epoch, user_address, nonce, request.signature)
+    pending_epoch = epochs.get_pending_epoch()
+    store_allocations_signature(
+        pending_epoch, user_address, next_nonce, request.signature
+    )
 
     db.session.commit()
 
