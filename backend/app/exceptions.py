@@ -190,3 +190,11 @@ class EffectiveDepositNotFoundException(OctantException):
 
     def __init__(self, epoch: int, user_address: str):
         super().__init__(self.description.format(user_address, epoch), self.code)
+
+
+class EmptyAllocations(OctantException):
+    code = 400
+    description = "Attempted to get allocations leverage on empty or zeroed allocations"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)

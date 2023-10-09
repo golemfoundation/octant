@@ -1,6 +1,7 @@
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from dataclasses import dataclass
 from dataclass_wizard import JSONWizard
+from typing import Optional
 
 from app import database, exceptions
 from app.controllers import rewards
@@ -10,7 +11,9 @@ from app.core.allocations import (
     deserialize_payload,
     verify_allocations,
     add_allocations_to_db,
+    store_allocations_signature,
     next_allocation_nonce,
+    calculate_user_allocations_leverage,
 )
 from app.core.common import AccountFunds
 from app.core.epochs import epoch_snapshots
@@ -26,23 +29,17 @@ class EpochAllocationRecord(JSONWizard):
 
 def allocate(request: AllocationRequest) -> str:
     user_address = recover_user_address(request)
-    nonce, user_allocations = deserialize_payload(request.payload)
-    epoch = epochs.get_pending_epoch()
-    verify_allocations(epoch, user_address, user_allocations)
-
     user = database.user.get_by_address(user_address)
-    expected_nonce = next_allocation_nonce(user)
-    if nonce != expected_nonce:
-        raise exceptions.WrongAllocationsNonce(nonce, expected_nonce)
+    next_nonce = next_allocation_nonce(user)
 
-    user.allocation_nonce = nonce
+    _make_allocation(
+        request.payload, user_address, request.override_existing_allocations, next_nonce
+    )
+    user.allocation_nonce = next_nonce
 
-    add_allocations_to_db(
-        epoch,
-        user_address,
-        nonce,
-        user_allocations,
-        request.override_existing_allocations,
+    pending_epoch = epochs.get_pending_epoch()
+    store_allocations_signature(
+        pending_epoch, user_address, next_nonce, request.signature
     )
 
     db.session.commit()
@@ -50,16 +47,17 @@ def allocate(request: AllocationRequest) -> str:
     return user_address
 
 
-def simulate_allocation(payload: Dict, user_address: str):
-    nonce, user_allocations = deserialize_payload(payload)
-    epoch = epochs.get_pending_epoch()
-    verify_allocations(epoch, user_address, user_allocations)
-    add_allocations_to_db(epoch, user_address, nonce, user_allocations, True)
-    proposal_rewards = rewards.get_proposals_rewards(epoch)
-
+def simulate_allocation(
+    payload: Dict, user_address: str
+) -> Tuple[float, List[rewards.ProposalReward]]:
+    _make_allocation(payload, user_address, True)
+    pending_epoch = epochs.get_pending_epoch()
+    simulated_rewards = rewards.get_proposals_rewards(pending_epoch)
     db.session.rollback()
 
-    return proposal_rewards
+    leverage = calculate_user_allocations_leverage(simulated_rewards)
+
+    return leverage, simulated_rewards
 
 
 def get_all_by_user_and_epoch(
@@ -104,3 +102,26 @@ def get_sum_by_epoch(epoch: int | None = None) -> int:
 def get_allocation_nonce(user_address: str) -> int:
     user = database.user.get_by_address(user_address)
     return next_allocation_nonce(user)
+
+
+def _make_allocation(
+    payload: Dict,
+    user_address: str,
+    delete_existing_user_epoch_allocations: bool,
+    expected_nonce: Optional[int] = None,
+):
+    nonce, user_allocations = deserialize_payload(payload)
+    epoch = epochs.get_pending_epoch()
+
+    verify_allocations(epoch, user_address, user_allocations)
+
+    if expected_nonce is not None and nonce != expected_nonce:
+        raise exceptions.WrongAllocationsNonce(nonce, expected_nonce)
+
+    add_allocations_to_db(
+        epoch,
+        user_address,
+        nonce,
+        user_allocations,
+        delete_existing_user_epoch_allocations,
+    )
