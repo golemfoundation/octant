@@ -50,7 +50,7 @@ def allocate(request: AllocationRequest) -> str:
 def simulate_allocation(
     payload: Dict, user_address: str
 ) -> Tuple[float, List[rewards.ProposalReward]]:
-    # TODO: nonce should not be required by the the endpoint, but
+    # TODO: nonce should not be required by the endpoint, but
     # the code below requires it to work.
     payload["nonce"] = -1
 
