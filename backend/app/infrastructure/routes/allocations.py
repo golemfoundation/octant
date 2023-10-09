@@ -7,7 +7,6 @@ from app.controllers import allocations
 from app.core.allocations import AllocationRequest
 from app.extensions import api
 from app.infrastructure import OctantResource
-from app.infrastructure.routes.common_models import proposals_rewards_model
 
 ns = Namespace("allocations", description="Octant allocations")
 api.add_namespace(ns)
