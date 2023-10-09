@@ -13,8 +13,8 @@ export default getStoreWithMeta<MetaData, MetaMethods>({
     addTransactionPending: payload => {
       set(state => {
         const newTransactionsPending = state.data.transactionsPending
-          ? [...state.data.transactionsPending, { ...payload, isFetching: false }]
-          : [{ ...payload, isFetching: false }];
+          ? [...state.data.transactionsPending, { ...payload, isWaitingForTransaction: false }]
+          : [{ ...payload, isWaitingForTransaction: false }];
         return {
           data: { ...state.data, transactionsPending: newTransactionsPending },
         };
@@ -24,7 +24,9 @@ export default getStoreWithMeta<MetaData, MetaMethods>({
     removeTransactionPending: payload => {
       set(state => {
         const transactionsPendingFiltered =
-          state.data.transactionsPending?.filter(transaction => transaction.hash !== payload) || [];
+          state.data.transactionsPending?.filter(
+            transaction => transaction.transactionHash !== payload,
+          ) || [];
         const newTransactionsPending =
           transactionsPendingFiltered.length === 0
             ? initialState.transactionsPending
@@ -56,13 +58,15 @@ export default getStoreWithMeta<MetaData, MetaMethods>({
         },
       }));
     },
-    setTransactionIsFetching: payload => {
+    setTransactionIsWaitingForTransaction: payload => {
       set(state => {
         const newTransactionsPending = state.data.transactionsPending
           ? [...state.data.transactionsPending]
           : initialState.transactionsPending;
         if (newTransactionsPending) {
-          newTransactionsPending.find(({ hash }) => hash === payload)!.isFetching = true;
+          newTransactionsPending.find(
+            ({ transactionHash }) => transactionHash === payload,
+          )!.isWaitingForTransaction = true;
         }
         return {
           data: { ...state.data, transactionsPending: newTransactionsPending },
@@ -82,7 +86,9 @@ export default getStoreWithMeta<MetaData, MetaMethods>({
           ? [...state.data.transactionsPending]
           : initialState.transactionsPending;
         if (newTransactionsPending) {
-          newTransactionsPending.find(({ hash }) => hash === oldHash)!.hash = newHash;
+          newTransactionsPending.find(
+            ({ transactionHash }) => transactionHash === oldHash,
+          )!.transactionHash = newHash;
         }
         return {
           data: { ...state.data, transactionsPending: newTransactionsPending },

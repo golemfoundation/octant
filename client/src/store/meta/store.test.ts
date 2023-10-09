@@ -42,14 +42,14 @@ describe('useMetaStore', () => {
       transactionPending2,
       transactionPending3,
     ]);
-    removeTransactionPending(transactionPending2.hash);
+    removeTransactionPending(transactionPending2.transactionHash);
     expect(useMetaStore.getState().data.transactionsPending).toEqual([
       transactionPending1,
       transactionPending3,
     ]);
-    removeTransactionPending(transactionPending3.hash);
+    removeTransactionPending(transactionPending3.transactionHash);
     expect(useMetaStore.getState().data.transactionsPending).toEqual([transactionPending1]);
-    removeTransactionPending(transactionPending1.hash);
+    removeTransactionPending(transactionPending1.transactionHash);
     expect(useMetaStore.getState().data.transactionsPending).toEqual(null);
   });
 
@@ -91,16 +91,19 @@ describe('useMetaStore', () => {
     expect(useMetaStore.getState().data.isAppWaitingForTransactionToBeIndexed).toEqual(false);
   });
 
-  it('should correctly setTransactionIsFetching', () => {
-    const { setTransactionsPending, setTransactionIsFetching } = useMetaStore.getState();
+  it('should correctly setTransactionIsWaitingForTransaction', () => {
+    const { setTransactionsPending, setTransactionIsWaitingForTransaction } =
+      useMetaStore.getState();
 
     expect(useMetaStore.getState().data.transactionsPending).toEqual(null);
     setTransactionsPending([transactionPending1, transactionPending2]);
     expect(
-      useMetaStore.getState().data.transactionsPending!.some(({ isFetching }) => isFetching),
+      useMetaStore
+        .getState()
+        .data.transactionsPending!.some(({ isWaitingForTransaction }) => isWaitingForTransaction),
     ).toBe(false);
 
-    setTransactionIsFetching(transactionPending1.hash);
+    setTransactionIsWaitingForTransaction(transactionPending1.transactionHash);
     expect(useMetaStore.getState().data.transactionsPending).toEqual([
       transactionPending1,
       transactionPending2,
@@ -108,8 +111,9 @@ describe('useMetaStore', () => {
     expect(
       useMetaStore
         .getState()
-        .data.transactionsPending!.find(({ hash }) => hash === transactionPending1.hash)!
-        .isFetching,
+        .data.transactionsPending!.find(
+          ({ transactionHash }) => transactionHash === transactionPending1.transactionHash,
+        )!.isWaitingForTransaction,
     ).toBe(true);
   });
 
@@ -129,11 +133,11 @@ describe('useMetaStore', () => {
 
     expect(useMetaStore.getState().data.transactionsPending).toEqual(null);
     setTransactionsPending([transactionPending1, transactionPending2]);
-    updateTransactionHash({ newHash: '0x999', oldHash: transactionPending1.hash });
+    updateTransactionHash({ newHash: '0x999', oldHash: transactionPending1.transactionHash });
 
     const transaction = useMetaStore
       .getState()
-      .data.transactionsPending!.find(({ hash }) => hash === '0x999')!;
+      .data.transactionsPending!.find(({ transactionHash }) => transactionHash === '0x999')!;
     expect(transaction.amount).toEqual(BigNumber.from(10));
     expect(transaction.timestamp).toBe('100');
     expect(transaction.type).toBe('lock');

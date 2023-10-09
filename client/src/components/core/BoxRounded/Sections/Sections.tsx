@@ -25,12 +25,14 @@ const Section: FC<SectionProps> = ({
   labelSuffix,
   onClick,
   tooltipProps,
+  variant = 'standard',
 }) => (
   <>
     <div
       className={cx(
         styles.root,
         className,
+        styles[`variant--${variant}`],
         hasBottomDivider && styles.hasBottomDivider,
         isDisabled && styles.isDisabled,
       )}
@@ -53,7 +55,7 @@ const Section: FC<SectionProps> = ({
       {!isEmpty(doubleValueProps) && (
         <DoubleValue
           textAlignment="right"
-          variant="small"
+          variant={variant === 'standard' ? 'small' : 'tiny'}
           {...doubleValueProps}
           isDisabled={isDisabled}
         />

@@ -5,5 +5,12 @@
   text-transform: uppercase;
   border-radius: $border-radius-04;
   padding: 0.2rem 0.5rem;
-  background: $color-octant-green;
+
+  &.isPending {
+    background: $color-octant-orange4;
+  }
+
+  &:not(.isPending) {
+    background: $color-octant-green;
+  }
 }

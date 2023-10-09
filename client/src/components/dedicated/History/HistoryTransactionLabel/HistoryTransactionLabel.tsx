@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -8,7 +9,11 @@ const HistoryTransactionLabel: FC<HistoryTransactionLabelProps> = ({ type }) => 
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.historyTransactionLabel',
   });
-  return <div className={styles.root}>{type === 'confirmed' ? t('confirmed') : t('pending')}</div>;
+  return (
+    <div className={cx(styles.root, type === 'pending' && styles.isPending)}>
+      {type === 'confirmed' ? t('confirmed') : t('pending')}
+    </div>
+  );
 };
 
 export default HistoryTransactionLabel;

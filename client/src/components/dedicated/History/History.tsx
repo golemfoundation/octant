@@ -17,8 +17,8 @@ import HistoryProps from './types';
 
 const History: FC<HistoryProps> = ({ className }) => {
   const { i18n } = useTranslation('translation');
-  const { isAppWaitingForTransactionToBeIndexed } = useMetaStore(state => ({
-    isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
+  const { transactionsPending } = useMetaStore(state => ({
+    transactionsPending: state.data.transactionsPending,
   }));
 
   const { data: currentEpoch } = useCurrentEpoch();
@@ -30,7 +30,14 @@ const History: FC<HistoryProps> = ({ className }) => {
   };
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
-  const showLoader = isAppWaitingForTransactionToBeIndexed || (isFetchingHistory && !isPreLaunch);
+  const showLoader = isFetchingHistory && !isPreLaunch;
+
+  const transactionsPendingIsFetching = transactionsPending
+    ? transactionsPending.map(transactionPending => ({
+        ...transactionPending,
+        isPending: true,
+      }))
+    : [];
 
   return (
     <BoxRounded
@@ -52,7 +59,7 @@ const History: FC<HistoryProps> = ({ className }) => {
           loadMore={onLoadNextHistoryPart}
           pageStart={0}
         >
-          <HistoryList history={history} />
+          <HistoryList history={[...transactionsPendingIsFetching, ...history]} />
         </InfiniteScroll>
       )}
     </BoxRounded>

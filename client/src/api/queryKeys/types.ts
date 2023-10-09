@@ -3,6 +3,7 @@ import { SettingsData } from 'store/settings/types';
 export type Root = {
   cryptoValues: 'cryptoValues';
   depositAt: 'depositAt';
+  epochTimestampHappenedIn: 'epochTimestampHappenedIn';
   epochesEndTime: 'epochesEndTime';
   matchedProposalRewards: 'matchedProposalRewards';
   proposalDonors: 'proposalDonors';
@@ -10,7 +11,6 @@ export type Root = {
   proposalsIpfsResults: 'proposalsIpfsResults';
   userAllocationNonce: 'userAllocationNonce';
   userAllocations: 'userAllocations';
-  userHistoricAllocations: 'userHistoricAllocations';
   userTOS: 'userTOS';
 };
 
@@ -25,6 +25,7 @@ export type QueryKeys = {
   currentEpochProps: ['currentEpochProps'];
   depositAtGivenEpoch: (epochNumber: number) => [Root['depositAt'], string];
   depositsValue: ['depositsValue'];
+  epochTimestampHappenedIn: (timestamp: number) => [Root['epochTimestampHappenedIn'], string];
   epochesEndTime: (epochNumber: number) => [Root['epochesEndTime'], string];
   glmClaimCheck: ['glmClaimCheck'];
   history: ['history'];
@@ -45,7 +46,6 @@ export type QueryKeys = {
   unlocks: ['unlocks'];
   userAllocationNonce: (userAddress: string) => [Root['userAllocationNonce'], string];
   userAllocations: (epochNumber: number) => [Root['userAllocations'], string];
-  userHistoricAllocations: (userAddress: string) => [Root['userHistoricAllocations'], string];
   userTOS: (userAddress: string) => [Root['userTOS'], string];
-  withdrawableUserEth: ['withdrawableUserEth'];
+  withdrawableRewards: ['withdrawableRewards'];
 };

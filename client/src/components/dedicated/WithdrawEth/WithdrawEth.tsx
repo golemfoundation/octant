@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC } from 'react';
+import React, { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -12,24 +12,23 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
-import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
+import useMetaStore from 'store/meta/store';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './WithdrawEth.module.scss';
 
-const WithdrawEth: FC = () => {
+const WithdrawEth = (): ReactElement => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.withdrawEth',
   });
+
+  const { addTransactionPending } = useMetaStore(state => ({
+    addTransactionPending: state.addTransactionPending,
+  }));
   const { data: currentEpoch } = useCurrentEpoch();
   const {
-    data: withdrawableUserEth,
-    isFetching: isFetchingWithdrawableUserEth,
-    refetch: refetchWithdrawableUserEth,
-  } = useWithdrawableUserEth();
-  const {
     data: withdrawableRewards,
-    isFetched: isWithdrawableRewardsFetched,
+    isFetching: isWithdrawableRewardsFetching,
     refetch: refetchWithdrawableRewards,
   } = useWithdrawableRewards();
   const { data: isDecisionWindowOpen, refetch: refetchIsDecisionWindowOpen } =
@@ -41,22 +40,29 @@ const WithdrawEth: FC = () => {
       triggerToast({
         title: i18n.t('common.transactionSuccessful'),
       });
-      refetchWithdrawableUserEth();
       refetchWithdrawableRewards();
     },
   });
 
-  const withdrawEth = () => {
-    // TODO OCT-827 Add adding transactionPending here.
-    if (!withdrawableRewards?.length) {
+  const withdrawEth = async () => {
+    if (!withdrawableRewards?.array.length) {
       return;
     }
-    const value: BatchWithdrawRequest[] = withdrawableRewards.map(({ amount, epoch, proof }) => ({
-      amount: BigInt(amount),
-      epoch: BigInt(epoch.toString()),
-      proof,
-    }));
-    withdrawEthMutation.mutateAsync(value);
+    const value: BatchWithdrawRequest[] = withdrawableRewards.array.map(
+      ({ amount, epoch, proof }) => ({
+        amount: BigInt(amount),
+        epoch: BigInt(epoch.toString()),
+        proof,
+      }),
+    );
+    const { hash } = await withdrawEthMutation.mutateAsync(value);
+    addTransactionPending({
+      amount: withdrawableRewards!.sum,
+      // GET /history uses microseconds. Normalization here.
+      timestamp: (Date.now() * 1000).toString(),
+      transactionHash: hash,
+      type: 'withdrawal',
+    });
   };
 
   return (
@@ -84,13 +90,13 @@ const WithdrawEth: FC = () => {
       >
         <DoubleValue
           cryptoCurrency="ethereum"
-          isFetching={isFetchingWithdrawableUserEth}
-          valueCrypto={withdrawableUserEth}
+          isFetching={isWithdrawableRewardsFetching}
+          valueCrypto={withdrawableRewards?.sum}
         />
       </BoxRounded>
       <Button
         className={cx(styles.element, styles.button)}
-        isDisabled={!isWithdrawableRewardsFetched}
+        isDisabled={!isWithdrawableRewardsFetching}
         isHigh
         isLoading={withdrawEthMutation.isLoading}
         label={t('requestWithdrawal')}
