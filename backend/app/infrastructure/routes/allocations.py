@@ -121,27 +121,36 @@ class Allocation(OctantResource):
         return {}, 201
 
 
-@ns.route("/simulate/<string:user_address>")
+user_leverage_model = api.model(
+    "UserLeverage",
+    {
+        "leverage": fields.String(
+            required=False,
+            description="Leverage of the allocated funds, percents",
+        ),
+    },
+)
+
+
+@ns.route("/leverage/<string:user_address>")
 @ns.doc(
-    description="Simulates an allocation and get estimated proposal rewards and expected leverage",
+    description="Simulates an allocation and get the expected leverage",
     params={
         "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)",
     },
 )
 class AllocationLeverage(OctantResource):
     @ns.expect(allocation_payload)
-    @ns.marshal_with(proposals_rewards_model)
-    @ns.response(200, "User allocation successfully simulated")
+    @ns.marshal_with(user_leverage_model)
+    @ns.response(200, "User leverage successfully estimated")
     def post(self, user_address: str):
-        app.logger.debug("Simulating an allocation")
+        app.logger.debug("Estimating user leverage")
         leverage, proposal_rewards = allocations.simulate_allocation(
             ns.payload, user_address
         )
-        app.logger.debug(
-            f"Simulated leverage: {leverage}, allocation rewards: {proposal_rewards}"
-        )
+        app.logger.debug(f"Estimated leverage: {leverage}")
 
-        return {"rewards": proposal_rewards, "leverage": leverage}
+        return {"leverage": leverage}
 
 
 @ns.route("/user/<string:user_address>/epoch/<int:epoch>")
