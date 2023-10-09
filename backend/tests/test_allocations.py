@@ -95,7 +95,7 @@ def test_simulate_allocation_single_user(
     assert proposal_rewards_before[4].matched == 0
 
     # Call simulate allocation method
-    result = simulate_allocation(payload, user_accounts[0].address)
+    leverage, result = simulate_allocation(payload, user_accounts[0].address)
 
     assert len(result) == 5
     assert result[0].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
@@ -113,6 +113,9 @@ def test_simulate_allocation_single_user(
     assert result[4].address == "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097"
     assert result[4].allocated == 0
     assert result[4].matched == 0
+
+    # check leverage value
+    assert leverage == 2.445715536838903
 
     # Ensure changes made in the simulation are not saved to db
     proposal_rewards_after = rewards.get_proposals_rewards()
@@ -178,7 +181,7 @@ def test_simulate_allocation_multiple_users(
     assert proposal_rewards_before[4].matched == 0
 
     # Call simulate allocation method
-    result = simulate_allocation(payload, user_accounts[0].address)
+    _, result = simulate_allocation(payload, user_accounts[0].address)
 
     assert len(result) == 5
     assert result[0].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"

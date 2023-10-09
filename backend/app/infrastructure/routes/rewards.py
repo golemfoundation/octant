@@ -7,7 +7,6 @@ from app.controllers import rewards
 from app.controllers.user import estimate_budget, get_budget
 from app.extensions import api
 from app.infrastructure import OctantResource
-from app.infrastructure.routes.common_models import proposals_rewards_model
 
 ns = Namespace("rewards", description="Octant rewards")
 api.add_namespace(ns)
@@ -92,6 +91,35 @@ epoch_rewards_merkle_tree_model = api.model(
         ),
         "leafEncoding": fields.List(
             fields.String, required=True, description="Merkle tree leaf encoding"
+        ),
+    },
+)
+
+proposals_rewards_model_item = api.model(
+    "Proposal",
+    {
+        "address": fields.String(
+            required=True,
+            description="Proposal address",
+        ),
+        "allocated": fields.String(
+            required=True,
+            description="User allocated funds for the proposal, wei",
+        ),
+        "matched": fields.String(
+            required=True,
+            description="Matched rewards funds for the proposal, wei",
+        ),
+    },
+)
+
+proposals_rewards_model = api.model(
+    "ProposalRewards",
+    {
+        "rewards": fields.List(
+            fields.Nested(proposals_rewards_model_item),
+            required=True,
+            description="Proposal rewards",
         ),
     },
 )
