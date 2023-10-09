@@ -1,8 +1,19 @@
+from typing import Literal, TypedDict
 from flask import current_app as app, g as request_context
 from gql import gql
 
 
-def get_user_unlocks_history(user_address: str, from_timestamp: int, limit: int):
+class UnlockEvent(TypedDict):
+    __typename: Literal["Unlocked"]
+    depositBefore: int
+    amount: int
+    timestamp: int
+    user: str
+
+
+def get_user_unlocks_history(
+    user_address: str, from_timestamp: int, limit: int
+) -> list[UnlockEvent]:
     query = gql(
         """
         query GetUnlocks($userAddress: Bytes!, $fromTimestamp: Int!, $limit: Int!) {
@@ -13,9 +24,11 @@ def get_user_unlocks_history(user_address: str, from_timestamp: int, limit: int)
             first: $limit
           ) {
             __typename
+            depositBefore
             amount
             timestamp
             transactionHash
+            user
           }
         }
     """
@@ -49,7 +62,7 @@ def get_user_unlocks_history(user_address: str, from_timestamp: int, limit: int)
     return result
 
 
-def get_unlocks_by_timestamp_range(from_ts, to_ts):
+def get_unlocks_by_timestamp_range(from_ts, to_ts) -> list[UnlockEvent]:
     query = gql(
         """
         query GetUnlocks($fromTimestamp: Int!, $toTimestamp: Int!) {
@@ -86,7 +99,7 @@ def get_unlocks_by_timestamp_range(from_ts, to_ts):
 
 def get_unlocks_by_address_and_timestamp_range(
     user_address: str, from_ts: int, to_ts: int
-):
+) -> list[UnlockEvent]:
     query = gql(
         """
         query GetUnlocks($userAddress: Bytes!, $fromTimestamp: Int!, $toTimestamp: Int!) {
@@ -120,3 +133,39 @@ def get_unlocks_by_address_and_timestamp_range(
     app.logger.debug(f"[Subgraph] Received unlocks: {result}")
 
     return result
+
+
+def get_last_unlock_before(user_address: str, before: int) -> UnlockEvent | None:
+    query = gql(
+        """
+        query GetUnlocks($userAddress: Bytes!, $beforeTimestamp: Int!) {
+          unlockeds(
+            orderBy: timestamp
+            orderDirection: desc
+            first: 1
+            where: {user: $userAddress, timestamp_lt: $beforeTimestamp}
+          ) {
+            __typename
+            depositBefore
+            amount
+            timestamp
+            user
+          }
+        }
+        """
+    )
+
+    variables = {
+        "userAddress": user_address,
+        "beforeTimestamp": before,
+    }
+
+    app.logger.debug(
+        f"[Subgraph] Getting user {user_address} last unlock before {before}"
+    )
+    unlocks = request_context.graphql_client.execute(query, variable_values=variables)[
+        "unlockeds"
+    ]
+    app.logger.debug(f"[Subgraph] Received unlocks: {unlocks}")
+
+    return unlocks[0] if unlocks else None

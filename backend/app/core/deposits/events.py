@@ -12,6 +12,7 @@ from app.infrastructure.graphql.unlocks import (
     get_unlocks_by_address_and_timestamp_range,
 )
 from app.utils.subgraph_events import create_deposit_event
+from app.infrastructure.graphql import get_last_deposit_event
 
 
 class EventGenerator(ABC):
@@ -29,9 +30,6 @@ class EventGenerator(ABC):
 
 
 class SubgraphEventsGenerator(EventGenerator):
-    def __init__(self, epoch_start: int, epoch_end: int):
-        super().__init__(epoch_start, epoch_end)
-
     def get_user_events(self, user_address: Optional[str]) -> List[Dict]:
         """
         Get user lock and unlock events from the subgraph within the given timestamp range, sort them by timestamp,
@@ -39,10 +37,24 @@ class SubgraphEventsGenerator(EventGenerator):
         Returns:
             A list of event dictionaries sorted by timestamp.
         """
-        events = get_locks_by_address_and_timestamp_range(
-            user_address, self.epoch_start, self.epoch_end
-        ) + get_unlocks_by_address_and_timestamp_range(
-            user_address, self.epoch_start, self.epoch_end
+        events = []
+
+        event_before_epoch_start = get_last_deposit_event(
+            user_address, self.epoch_start
+        )
+        if event_before_epoch_start is not None:
+            event_before_epoch_start["timestamp"] = self.epoch_start
+            events = [event_before_epoch_start]
+
+        events.extend(
+            get_locks_by_address_and_timestamp_range(
+                user_address, self.epoch_start, self.epoch_end
+            )
+        )
+        events.extend(
+            get_unlocks_by_address_and_timestamp_range(
+                user_address, self.epoch_start, self.epoch_end
+            )
         )
         return sorted(events, key=itemgetter("timestamp"))
 

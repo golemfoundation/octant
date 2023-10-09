@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { usePublicClient } from 'wagmi';
 
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
+import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
 import useBlockNumber from 'hooks/subgraph/useBlockNumber';
 import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 import useMetaStore, { initialState as metaInitialState } from 'store/meta/store';
@@ -31,7 +31,7 @@ export default function useManageTransactionsPending(): void {
     blockNumberWithLatestTx !== metaInitialState.blockNumberWithLatestTx,
   );
 
-  const { refetch: refetchDepositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
+  const { refetch: refetchEstimatedEffectiveDeposit } = useEstimatedEffectiveDeposit();
   const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
   const { refetch: refetchDeposit } = useDepositValue();
 
@@ -84,10 +84,7 @@ export default function useManageTransactionsPending(): void {
     if (blockNumber && blockNumberWithLatestTx && blockNumber > blockNumberWithLatestTx) {
       refetchLockedSummaryLatest();
       refetchDeposit();
-
-      if (currentEpoch === 1) {
-        refetchDepositEffectiveAtCurrentEpoch();
-      }
+      refetchEstimatedEffectiveDeposit();
 
       setBlockNumberWithLatestTx(metaInitialState.blockNumberWithLatestTx);
     }
@@ -97,7 +94,7 @@ export default function useManageTransactionsPending(): void {
     setBlockNumberWithLatestTx,
     blockNumberWithLatestTx,
     refetchDeposit,
-    refetchDepositEffectiveAtCurrentEpoch,
     refetchLockedSummaryLatest,
+    refetchEstimatedEffectiveDeposit,
   ]);
 }
