@@ -530,7 +530,6 @@ Destroy E2E App:
     - !reference [.rules, on_mr_manual ]
     - !reference [.rules, on_push_to_default_branch_manual ]
     - !reference [.rules, on_push_to_master_branch_manual ]
-  needs: []
   environment:
     name: e2e/$CI_PIPELINE_IID
     deployment_tier: development
@@ -543,7 +542,6 @@ Destroy MR App:
     ENV_TYPE: "mr"
   rules:
     - !reference [.rules, on_mr_manual ]
-  needs: []
   environment:
     name: mr/$CI_MERGE_REQUEST_IID
     deployment_tier: development
