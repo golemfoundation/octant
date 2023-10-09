@@ -30,7 +30,9 @@ export function apiPostAllocateSimulate(
     .then(({ data }) => data);
 }
 
-export function apiGetUserAllocationNonce(userAddress: string): Promise<number> {
+export function apiGetUserAllocationNonce(
+  userAddress: string,
+): Promise<{ allocation_nonce: number }> {
   return apiService
     .get(`${env.serverEndpoint}allocations/users/${userAddress}/allocation_nonce`)
     .then(({ data }) => data);

@@ -12,7 +12,7 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useSyncStatus from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
-import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
+import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
 import useAllocationsStore from 'store/allocations/store';
 import { CryptoCurrency } from 'types/cryptoCurrency';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
@@ -26,8 +26,8 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: userAllocations, isFetching: isFetchingUserAllocations } = useUserAllocations();
-  const { data: withdrawableUserEth, isFetching: isFetchingWithdrawableUserEth } =
-    useWithdrawableUserEth();
+  const { data: withdrawableRewards, isFetching: isWithdrawableRewardsFetching } =
+    useWithdrawableRewards();
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
@@ -48,8 +48,8 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum' as CryptoCurrency,
-        isFetching: isFetchingWithdrawableUserEth,
-        valueCrypto: currentEpoch === 1 ? BigNumber.from(0) : withdrawableUserEth,
+        isFetching: isWithdrawableRewardsFetching,
+        valueCrypto: currentEpoch === 1 ? BigNumber.from(0) : withdrawableRewards?.sum,
       },
       label: i18n.t('common.availableNow'),
     },

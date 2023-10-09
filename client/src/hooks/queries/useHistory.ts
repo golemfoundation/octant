@@ -12,11 +12,16 @@ import { apiGetHistory, Response, ResponseHistoryItem } from 'api/calls/history'
 import { QUERY_KEYS } from 'api/queryKeys';
 
 export type ResponseHistoryItemWithProjectsNumber = ResponseHistoryItem & {
+  projects?: {
+    address: string;
+    amount: BigNumber;
+  }[];
   projectsNumber?: number;
 };
 
 export interface HistoryItemProps extends Omit<ResponseHistoryItemWithProjectsNumber, 'amount'> {
   amount: BigNumber;
+  isPending?: boolean;
 }
 
 export default function useHistory(
@@ -47,10 +52,22 @@ export default function useHistory(
         if (elIdx > -1) {
           acc1[elIdx].amount = `${parseInt(acc1[elIdx].amount, 10) + parseInt(curr.amount, 10)}`;
           acc1[elIdx].projectsNumber = (acc1[elIdx].projectsNumber as number) + 1;
+          // @ts-expect-error This property will be defined already, as per logic after the if.
+          acc1[elIdx].projects.push({
+            address: curr.projectAddress!,
+            amount: parseUnits(curr.amount, 'wei'),
+          });
           return acc1;
         }
         // eslint-disable-next-line dot-notation
         curr['projectsNumber'] = 1;
+        // eslint-disable-next-line dot-notation
+        curr['projects'] = [
+          {
+            address: curr.projectAddress!,
+            amount: parseUnits(curr.amount, 'wei'),
+          },
+        ];
       }
 
       acc1.push(curr);

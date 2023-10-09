@@ -9,6 +9,7 @@ import { QUERY_KEYS } from 'api/queryKeys';
 import useCurrentEpoch from './useCurrentEpoch';
 
 export default function useIndividualReward(
+  epoch?: number,
   options?: UseQueryOptions<Response, unknown, BigNumber, any>,
 ): UseQueryResult<BigNumber> {
   const { address } = useAccount();
@@ -16,7 +17,7 @@ export default function useIndividualReward(
 
   return useQuery(
     QUERY_KEYS.individualReward,
-    () => apiGetIndividualRewards(currentEpoch! - 1, address!),
+    () => apiGetIndividualRewards(epoch || currentEpoch! - 1, address!),
     {
       enabled: !!currentEpoch && currentEpoch > 1 && !!address,
       select: response => parseUnits(response.budget, 'wei'),

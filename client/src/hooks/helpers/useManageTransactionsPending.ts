@@ -4,7 +4,6 @@ import { usePublicClient } from 'wagmi';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
-import useHistory from 'hooks/queries/useHistory';
 import useBlockNumber from 'hooks/subgraph/useBlockNumber';
 import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 import useMetaStore, { initialState as metaInitialState } from 'store/meta/store';
@@ -14,7 +13,7 @@ export default function useManageTransactionsPending(): void {
   const {
     blockNumberWithLatestTx,
     transactionsPending,
-    setTransactionIsFetching,
+    setTransactionIsWaitingForTransaction,
     updateTransactionHash,
     removeTransactionPending,
     setBlockNumberWithLatestTx,
@@ -22,7 +21,7 @@ export default function useManageTransactionsPending(): void {
     blockNumberWithLatestTx: state.data.blockNumberWithLatestTx,
     removeTransactionPending: state.removeTransactionPending,
     setBlockNumberWithLatestTx: state.setBlockNumberWithLatestTx,
-    setTransactionIsFetching: state.setTransactionIsFetching,
+    setTransactionIsWaitingForTransaction: state.setTransactionIsWaitingForTransaction,
     transactionsPending: state.data.transactionsPending,
     updateTransactionHash: state.updateTransactionHash,
   }));
@@ -33,7 +32,6 @@ export default function useManageTransactionsPending(): void {
   );
 
   const { refetch: refetchDepositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
-  const { refetch: refetchHistory } = useHistory();
   const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
   const { refetch: refetchDeposit } = useDepositValue();
 
@@ -43,16 +41,16 @@ export default function useManageTransactionsPending(): void {
     }
 
     transactionsPending
-      .filter(({ isFetching }) => !isFetching)
+      .filter(({ isWaitingForTransaction }) => !isWaitingForTransaction)
       .forEach(transaction => {
-        setTransactionIsFetching(transaction.hash);
+        setTransactionIsWaitingForTransaction(transaction.transactionHash);
         publicClient
           .waitForTransactionReceipt({
-            hash: transaction.hash,
+            hash: transaction.transactionHash,
             onReplaced: response => {
               updateTransactionHash({
                 newHash: response.transactionReceipt.transactionHash,
-                oldHash: transaction.hash,
+                oldHash: transaction.transactionHash,
               });
             },
           })
@@ -84,7 +82,6 @@ export default function useManageTransactionsPending(): void {
      * is triggered and blockNumberWithLatestTx to null.
      */
     if (blockNumber && blockNumberWithLatestTx && blockNumber > blockNumberWithLatestTx) {
-      refetchHistory();
       refetchLockedSummaryLatest();
       refetchDeposit();
 
@@ -100,7 +97,6 @@ export default function useManageTransactionsPending(): void {
     setBlockNumberWithLatestTx,
     blockNumberWithLatestTx,
     refetchDeposit,
-    refetchHistory,
     refetchDepositEffectiveAtCurrentEpoch,
     refetchLockedSummaryLatest,
   ]);

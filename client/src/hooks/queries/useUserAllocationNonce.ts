@@ -5,7 +5,7 @@ import { apiGetUserAllocationNonce } from 'api/calls/allocate';
 import { QUERY_KEYS } from 'api/queryKeys';
 
 export default function useUserAllocationNonce(
-  options?: UseQueryOptions<number, unknown, number, any>,
+  options?: UseQueryOptions<{ allocation_nonce: number }, unknown, number, any>,
 ): UseQueryResult<number> {
   const { address } = useAccount();
 
@@ -14,6 +14,7 @@ export default function useUserAllocationNonce(
     () => apiGetUserAllocationNonce(address!),
     {
       enabled: !!address,
+      select: response => response.allocation_nonce,
       ...options,
     },
   );

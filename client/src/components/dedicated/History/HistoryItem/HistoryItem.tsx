@@ -12,7 +12,7 @@ import useSettingsStore from 'store/settings/store';
 import styles from './HistoryItem.module.scss';
 
 const HistoryItem: FC<HistoryItemProps> = props => {
-  const { type, amount, projectsNumber } = props;
+  const { type, amount } = props;
   const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.historyItem' });
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
@@ -28,7 +28,7 @@ const HistoryItem: FC<HistoryItemProps> = props => {
   const title = useMemo(() => {
     switch (type) {
       case 'allocation':
-        return t('allocatedFunds');
+        return t('allocatedRewards');
       case 'lock':
         return t('lockedGLM');
       case 'unlock':
@@ -52,12 +52,9 @@ const HistoryItem: FC<HistoryItemProps> = props => {
       <BoxRounded className={styles.box} hasPadding={false} onClick={() => setIsModalOpen(true)}>
         <div className={styles.titleAndSubtitle}>
           <div className={styles.title}>{title}</div>
-          {!!projectsNumber && (
-            <div className={styles.subtitle}>
-              {projectsNumber} {t('projects')}
-            </div>
+          {type !== 'allocation' && (
+            <HistoryTransactionLabel type={props.isPending ? 'pending' : 'confirmed'} />
           )}
-          <HistoryTransactionLabel type="confirmed" />
         </div>
         <div className={styles.values}>
           <div className={styles.primary}>{values.primary}</div>

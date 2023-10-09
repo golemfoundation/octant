@@ -3,19 +3,21 @@ import { useTranslation } from 'react-i18next';
 
 import Modal from 'components/core/Modal/Modal';
 import HistoryItemDetails from 'components/dedicated/History/HistoryItemDetails/HistoryItemDetails';
-import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useEpochTimestampHappenedIn from 'hooks/subgraph/useEpochTimestampHappenedIn';
 
 import HistoryItemDetailsModalProps from './types';
 
 const HistoryItemDetailsModal: FC<HistoryItemDetailsModalProps> = ({
   modalProps,
   type,
+  timestamp,
+  isPending,
   ...rest
 }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.historyItemModal',
   });
-  const { data: currentEpoch } = useCurrentEpoch();
+  const { data: epochTimestampHappenedIn } = useEpochTimestampHappenedIn(timestamp);
 
   const header = useMemo(() => {
     switch (type) {
@@ -24,18 +26,19 @@ const HistoryItemDetailsModal: FC<HistoryItemDetailsModalProps> = ({
       case 'unlock':
         return t('header.unlock');
       case 'allocation':
-        // TODO: OCT-813 adjust epoch here to the actual epoch given allocation history entry happened in.
-        return t('header.allocation', { epoch: currentEpoch });
+        return t('header.allocation', {
+          epoch: epochTimestampHappenedIn ? epochTimestampHappenedIn - 1 : '?',
+        });
       case 'withdrawal':
         return t('header.withdrawal');
       default:
         return '';
     }
-  }, [t, type, currentEpoch]);
+  }, [t, type, epochTimestampHappenedIn]);
 
   return (
     <Modal header={header} {...modalProps}>
-      <HistoryItemDetails type={type} {...rest} />
+      <HistoryItemDetails timestamp={timestamp} type={type} {...rest} />
     </Modal>
   );
 };

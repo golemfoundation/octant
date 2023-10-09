@@ -149,7 +149,7 @@
         "emptyHistory": "You haven’t made any transactions yet"
       },
       "historyItem": {
-        "allocatedFunds": "Allocated funds",
+        "allocatedRewards": "Allocated rewards",
         "lockedGLM": "Locked GLM",
         "unlockedGLM": "Unlocked GLM",
         "projects": "Projects",
@@ -157,16 +157,18 @@
       },
       "historyItemModal": {
         "header": {
-          "lock": "Locked GLM",
-          "unlock": "Unlocked GLM",
           "allocation": "Epoch {{epoch}} Allocations",
-          "withdrawal": "Withdrew ETH"
+          "lock": "Locked GLM",
+          "unlock": "Unlocked GLM"
         },
         "sections": {
+          "allocationPersonal": "Personal",
+          "allocationProjects": "Projects ({{projectsNumber}})",
           "amount": "Amount",
           "gasPrice": "Gas price",
           "viewOnEtherscan": "View on Etherscan",
-          "when": "When"
+          "when": "When",
+          "withdrawal": "Withdrew ETH"
         }
       },
       "historyTransactionLabel": {

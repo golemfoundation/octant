@@ -31,9 +31,11 @@ export interface SectionProps {
     position: TooltipProps['position'];
     text: TooltipProps['text'];
   };
+  variant?: 'small' | 'standard';
 }
 
 export default interface SectionsProps {
   hasBottomDivider?: SectionProps['hasBottomDivider'];
   sections: SectionProps[];
+  variant?: SectionProps['variant'];
 }

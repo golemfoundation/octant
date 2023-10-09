@@ -18,6 +18,10 @@
       stroke: $color-octant-grey3;
     }
   }
+
+  @media #{$tablet-down} {
+    height: 5.6rem;
+  }
 }
 
 .label {

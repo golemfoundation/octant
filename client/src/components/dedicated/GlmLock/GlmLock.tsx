@@ -91,8 +91,9 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
   const onSuccess = async ({ hash, value }): Promise<void> => {
     addTransactionPending({
       amount: value,
-      hash,
-      timestamp: Date.now().toString(),
+      // GET /history uses microseconds. Normalization here.
+      timestamp: (Date.now() * 1000).toString(),
+      transactionHash: hash,
       type: currentMode,
     });
     setTransactionHashForEtherscan(hash);
