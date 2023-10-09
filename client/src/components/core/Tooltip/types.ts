@@ -8,7 +8,7 @@ export default interface TooltipProps {
   onClickCallback?: () => boolean | Promise<boolean>;
   position?: 'bottom-right' | 'top';
   showForce?: boolean;
-  text: string;
+  text: string | ReactNode;
   tooltipClassName?: string;
   variant?: 'small' | 'normal';
 }

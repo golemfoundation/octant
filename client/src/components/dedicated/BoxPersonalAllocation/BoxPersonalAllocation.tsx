@@ -1,3 +1,4 @@
+import { format } from 'date-fns-tz';
 import { BigNumber } from 'ethers';
 import React, { FC, Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,15 +8,16 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Sections from 'components/core/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import ModalWithdrawEth from 'components/dedicated//ModalWithdrawEth/ModalWithdrawEth';
+import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
 import useAllocationsStore from 'store/allocations/store';
-import { CryptoCurrency } from 'types/cryptoCurrency';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
+import styles from './BoxPersonalAllocation.module.scss';
 import BoxPersonalAllocationProps from './types';
 
 const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) => {
@@ -24,6 +26,7 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
   });
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
+  const { timeCurrentAllocationEnd } = useEpochAndAllocationTimestamps();
   const { data: userAllocations, isFetching: isFetchingUserAllocations } = useUserAllocations();
   const { data: withdrawableUserEth, isFetching: isFetchingWithdrawableUserEth } =
     useWithdrawableUserEth();
@@ -42,28 +45,43 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
   const isProjectAdminMode = useIsProjectAdminMode();
 
   const sections: SectionProps[] = [
-    {
-      doubleValueProps: {
-        cryptoCurrency: 'ethereum' as CryptoCurrency,
-        isFetching: isFetchingWithdrawableUserEth,
-        valueCrypto: currentEpoch === 1 ? BigNumber.from(0) : withdrawableUserEth,
-      },
-      label: i18n.t('common.availableNow'),
-    },
     ...(!isProjectAdminMode
       ? [
           {
             doubleValueProps: {
-              cryptoCurrency: 'ethereum' as CryptoCurrency,
+              cryptoCurrency: 'ethereum',
               isFetching: isFetchingIndividualReward || isFetchingUserAllocations,
               valueCrypto: userAllocations?.hasUserAlreadyDoneAllocation
                 ? BigNumber.from(0)
                 : pendingCrypto,
             },
             label: t('pending'),
-          },
+            tooltipProps: {
+              position: 'bottom-right',
+              text: (
+                <div className={styles.pendingTooltip}>
+                  <div className={styles.pendingTooltipLabel}>
+                    {t('pendingFundsAvailableAfter')}
+                  </div>
+                  <div className={styles.pendingTooltipDate}>
+                    {timeCurrentAllocationEnd
+                      ? format(new Date(timeCurrentAllocationEnd), 'haaa z, d LLLL')
+                      : ''}
+                  </div>
+                </div>
+              ),
+            },
+          } as SectionProps,
         ]
       : []),
+    {
+      doubleValueProps: {
+        cryptoCurrency: 'ethereum',
+        isFetching: isFetchingWithdrawableUserEth,
+        valueCrypto: currentEpoch === 1 ? BigNumber.from(0) : withdrawableUserEth,
+      },
+      label: i18n.t('common.availableNow'),
+    },
   ];
 
   return (
