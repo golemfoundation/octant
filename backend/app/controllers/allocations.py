@@ -11,6 +11,7 @@ from app.core.allocations import (
     deserialize_payload,
     verify_allocations,
     add_allocations_to_db,
+    store_allocations_signature,
     next_allocation_nonce,
     calculate_user_allocations_leverage,
 )
@@ -35,6 +36,8 @@ def allocate(request: AllocationRequest) -> str:
         request.payload, user_address, request.override_existing_allocations, next_nonce
     )
     user.allocation_nonce = next_nonce
+
+    store_allocations_signature(epoch, user_address, nonce, request.signature)
 
     db.session.commit()
 

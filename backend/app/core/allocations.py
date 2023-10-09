@@ -43,6 +43,12 @@ def add_allocations_to_db(
     database.allocations.add_all(epoch, user.id, nonce, allocations)
 
 
+def store_allocations_signature(
+    epoch: int, user_address: str, nonce: int, signature: str
+):
+    database.allocations.add_allocation_signature(user_address, epoch, nonce, signature)
+
+
 def recover_user_address(request: AllocationRequest) -> str:
     eip712_data = build_allocations_eip712_data(request.payload)
     return recover_address(eip712_data, request.signature)
