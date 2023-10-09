@@ -265,7 +265,7 @@ class EpochDonations(OctantResource):
 
 @ns.route("/users/<string:user_address>/allocation_nonce")
 @ns.doc(
-    description="Return current value of allocation nonce. It is neeeded to sign allocations.",
+    description="Return current value of allocation nonce. It is needed to sign allocations.",
 )
 class AllocationNonce(OctantResource):
     @ns.marshal_with(allocation_nonce_model)
