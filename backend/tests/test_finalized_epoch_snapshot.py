@@ -6,7 +6,6 @@ from app.controllers.snapshots import (
     finalized_snapshot_status,
     snapshot_finalized_epoch,
 )
-from app.controllers.rewards import get_finalized_epoch_proposals_rewards
 from app.core.user.rewards import get_claimed_rewards
 from tests.conftest import (
     allocate_user_rewards,
@@ -121,35 +120,6 @@ def test_finalized_epoch_snapshot_with_patrons_enabled(
         == "0x7d73cf5edadc99cb7843ce9b076468e97ee9038f5f351d23fc7e0c48aa528303"
     )
     assert snapshot.created_at is not None
-
-
-def test_finalized_epoch_proposal_rewards_with_patrons_enabled(
-    user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
-):
-    user1_allocation = 1000_000000000
-    user2_allocation = 2000_000000000
-
-    database.user.toggle_patron_mode(user_accounts[2].address)
-    db.session.commit()
-
-    allocate_user_rewards(user_accounts[0], proposal_accounts[0], user1_allocation)
-    allocate_user_rewards(user_accounts[1], proposal_accounts[1], user2_allocation)
-
-    epoch = snapshot_finalized_epoch()
-    assert epoch == 1
-
-    all_rewards = database.rewards.get_by_epoch(epoch)
-    assert len(all_rewards) == 4
-
-    proposal_rewards = get_finalized_epoch_proposals_rewards(epoch)
-    assert len(proposal_rewards) == 2
-
-    assert proposal_rewards[0].address == proposal_accounts[1].address
-    assert proposal_rewards[0].allocated == 2_000_000_000_000
-    assert proposal_rewards[0].matched == 146_744289427_163382529
-    assert proposal_rewards[1].address == proposal_accounts[0].address
-    assert proposal_rewards[1].allocated == 1_000_000_000_000
-    assert proposal_rewards[1].matched == 73_372144713_581691264
 
 
 def test_finalized_epoch_snapshot_without_rewards(

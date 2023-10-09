@@ -7,6 +7,10 @@ from app.controllers.allocations import allocate, get_allocation_nonce
 from app.controllers.rewards import (
     get_allocation_threshold,
     get_estimated_proposals_rewards,
+    get_finalized_epoch_proposals_rewards,
+)
+from app.controllers.snapshots import (
+    snapshot_finalized_epoch,
 )
 from app.core.allocations import (
     AllocationRequest,
@@ -16,6 +20,7 @@ from app.core.rewards.rewards import (
     calculate_all_individual_rewards,
     calculate_matched_rewards_threshold,
 )
+from app import database
 from app.database.user import toggle_patron_mode
 from app.extensions import db
 from .conftest import (
@@ -249,6 +254,35 @@ def test_proposals_rewards_with_multiple_patrons(
         result_after_patron_mode_enabled[0].matched
         == matched_before_patrons + patron1_budget + patron2_budget
     )
+
+
+def test_finalized_epoch_proposal_rewards_with_patrons_enabled(
+    user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
+):
+    user1_allocation = 1000_000000000
+    user2_allocation = 2000_000000000
+
+    toggle_patron_mode(user_accounts[2].address)
+    db.session.commit()
+
+    allocate_user_rewards(user_accounts[0], proposal_accounts[0], user1_allocation)
+    allocate_user_rewards(user_accounts[1], proposal_accounts[1], user2_allocation)
+
+    epoch = snapshot_finalized_epoch()
+    assert epoch == 1
+
+    all_rewards = database.rewards.get_by_epoch(epoch)
+    assert len(all_rewards) == 4
+
+    proposal_rewards = get_finalized_epoch_proposals_rewards(epoch)
+    assert len(proposal_rewards) == 2
+
+    assert proposal_rewards[0].address == proposal_accounts[1].address
+    assert proposal_rewards[0].allocated == 2_000_000_000_000
+    assert proposal_rewards[0].matched == 146_744289427_163382529
+    assert proposal_rewards[1].address == proposal_accounts[0].address
+    assert proposal_rewards[1].allocated == 1_000_000_000_000
+    assert proposal_rewards[1].matched == 73_372144713_581691264
 
 
 def _allocate_random_individual_rewards(user_accounts, proposal_accounts) -> int:
