@@ -7,7 +7,7 @@ from sqlalchemy.orm import Query
 from sqlalchemy import func
 
 from app.core.common import AccountFunds
-from app.database.models import Allocation, User
+from app.database.models import Allocation, AllocationSignature, User
 from app.database.user import get_by_address
 from app.extensions import db
 
@@ -141,6 +141,27 @@ def add_all(epoch: int, user_id: int, nonce: int, allocations):
         for a in allocations
     ]
     db.session.add_all(new_allocations)
+
+
+def add_allocation_signature(user_address: str, epoch: int, nonce: int, signature: str):
+    user: User = get_by_address(user_address)
+
+    allocation_request = AllocationSignature(
+        user=user, epoch=epoch, nonce=nonce, signature=signature
+    )
+
+    db.session.add(allocation_request)
+
+
+def get_allocation_signature_by_user_nonce(
+    user_address: str, nonce: int
+) -> AllocationSignature | None:
+    user: User = get_by_address(user_address)
+
+    if user is None:
+        return None
+
+    return AllocationSignature.query.filter_by(user_id=user.id, nonce=nonce).first()
 
 
 def soft_delete_all_by_epoch_and_user_id(epoch: int, user_id: int):

@@ -5,6 +5,7 @@ from dataclass_wizard import JSONWizard
 from eth_utils import to_checksum_address
 
 from app import database, exceptions
+from app.controllers import rewards
 from app.core.epochs.epoch_snapshots import has_pending_epoch_snapshot
 from app.core.user.budget import get_budget
 from app.core.user.patron_mode import get_patron_mode_status
@@ -43,6 +44,12 @@ def add_allocations_to_db(
         database.allocations.soft_delete_all_by_epoch_and_user_id(epoch, user.id)
 
     database.allocations.add_all(epoch, user.id, nonce, allocations)
+
+
+def store_allocations_signature(
+    epoch: int, user_address: str, nonce: int, signature: str
+):
+    database.allocations.add_allocation_signature(user_address, epoch, nonce, signature)
 
 
 def recover_user_address(request: AllocationRequest) -> str:
@@ -97,6 +104,19 @@ def verify_allocations(epoch: int, user_address: str, allocations: List[Allocati
 
     if proposals_sum > user_budget:
         raise exceptions.RewardsBudgetExceeded
+
+
+def calculate_user_allocations_leverage(
+    proposal_rewards: List[rewards.ProposalReward],
+) -> float:
+    allocated = sum(map(lambda x: x.allocated, proposal_rewards))
+
+    if allocated == 0:
+        raise exceptions.EmptyAllocations()
+
+    matched_funds = sum(map(lambda x: x.matched, proposal_rewards))
+
+    return matched_funds / allocated
 
 
 def next_allocation_nonce(user: User | None) -> int:

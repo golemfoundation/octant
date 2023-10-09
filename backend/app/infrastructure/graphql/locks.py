@@ -1,8 +1,19 @@
+from typing import Literal, TypedDict
 from flask import current_app as app, g as request_context
 from gql import gql
 
 
-def get_user_locks_history(user_address: str, from_timestamp: int, limit: int):
+class LockEvent(TypedDict):
+    __typename: Literal["Locked"]
+    depositBefore: int
+    amount: int
+    timestamp: int
+    user: str
+
+
+def get_user_locks_history(
+    user_address: str, from_timestamp: int, limit: int
+) -> list[LockEvent]:
     query = gql(
         """
         query GetLocks($userAddress: Bytes!, $fromTimestamp: Int!, $limit: Int!) {
@@ -13,8 +24,10 @@ def get_user_locks_history(user_address: str, from_timestamp: int, limit: int):
             first: $limit
           ) {
             __typename
+            depositBefore
             amount
             timestamp
+            user
           }
         }
         """
@@ -47,7 +60,7 @@ def get_user_locks_history(user_address: str, from_timestamp: int, limit: int):
     return result
 
 
-def get_locks_by_timestamp_range(from_ts: int, to_ts: int):
+def get_locks_by_timestamp_range(from_ts: int, to_ts: int) -> list[LockEvent]:
     query = gql(
         """
         query GetLocks($fromTimestamp: Int!, $toTimestamp: Int!) {
@@ -78,9 +91,45 @@ def get_locks_by_timestamp_range(from_ts: int, to_ts: int):
     return result
 
 
+def get_last_lock_before(user_address: str, before: int) -> LockEvent | None:
+    query = gql(
+        """
+        query GetLocks($userAddress: Bytes!, $beforeTimestamp: Int!) {
+          lockeds(
+            orderBy: timestamp
+            orderDirection: desc
+            first: 1
+            where: {user: $userAddress, timestamp_lt: $beforeTimestamp}
+          ) {
+            __typename
+            depositBefore
+            amount
+            timestamp
+            user
+          }
+        }
+        """
+    )
+
+    variables = {
+        "userAddress": user_address,
+        "beforeTimestamp": before,
+    }
+
+    app.logger.debug(
+        f"[Subgraph] Getting user {user_address} last lock before {before}"
+    )
+    locks = request_context.graphql_client.execute(query, variable_values=variables)[
+        "lockeds"
+    ]
+    app.logger.debug(f"[Subgraph] Received locks: {locks}")
+
+    return locks[0] if locks else None
+
+
 def get_locks_by_address_and_timestamp_range(
     user_address: str, from_ts: int, to_ts: int
-):
+) -> list[LockEvent]:
     query = gql(
         """
         query GetLocks($userAddress: Bytes!, $fromTimestamp: Int!, $toTimestamp: Int!) {
