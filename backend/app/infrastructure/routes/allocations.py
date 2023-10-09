@@ -11,6 +11,16 @@ from app.infrastructure import OctantResource
 ns = Namespace("allocations", description="Octant allocations")
 api.add_namespace(ns)
 
+allocation_nonce_model = api.model(
+    "AllocationNonce",
+    {
+        "allocation_nonce": fields.Integer(
+            required=True,
+            description="Current value of nonce used to sign allocations message. Note: this has nothing to do with Ethereum account nonce!",
+        ),
+    },
+)
+
 user_allocations_payload_item = api.model(
     "UserAllocationPayloadItem",
     {
@@ -253,17 +263,6 @@ class EpochDonations(OctantResource):
         return data, 200, headers
 
 
-allocation_nonce_model = api.model(
-    "AllocationNonce",
-    {
-        "allocation_nonce": fields.Integer(
-            required=True,
-            description="Current value of nonce used to sign allocations message. Note: this has nothing to do with Ethereum account nonce!",
-        ),
-    },
-)
-
-
 @ns.route("/users/<string:user_address>/allocation_nonce")
 @ns.doc(
     description="Return current value of allocation nonce. It is neeeded to sign allocations.",
@@ -272,4 +271,4 @@ class AllocationNonce(OctantResource):
     @ns.marshal_with(allocation_nonce_model)
     @ns.response(200, "User allocations nonce successfully retrieved")
     def get(self, user_address: str):
-        return {"allocation_nonce": allocations.get_allocation_nonce(user_address)}
+        return {"allocationNonce": allocations.get_allocation_nonce(user_address)}
