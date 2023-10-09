@@ -1,6 +1,7 @@
 export default interface TimeCounterProps {
   className?: string;
   duration?: number;
+  isLoading?: boolean;
   onCountingFinish?: () => void;
   timestamp?: number;
   variant?: 'standard' | 'small' | 'metrics';

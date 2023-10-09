@@ -25,9 +25,12 @@
       border-radius: $border-radius-04;
       padding: 1.6rem;
     }
-    &standard,
-    &metrics {
+    &standard {
       margin: 0 0 1.6rem 0;
+    }
+
+    &metrics {
+      margin: 0 0 2.2rem 0;
     }
   }
 }
@@ -53,7 +56,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 3.2rem;
     }
   }
 }
@@ -98,5 +100,22 @@
     &metrics {
       height: 0.4rem;
     }
+  }
+}
+
+.metricsSkeleton {
+  width: 29.4rem;
+
+  .timerSkeleton {
+    @include skeleton();
+    width: 100%;
+    height: 4.4rem;
+  }
+
+  .progressBarSkeleton {
+    @include skeleton();
+    width: 100%;
+    height: 0.4rem;
+    margin-top: 2.2rem;
   }
 }

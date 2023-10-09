@@ -1,12 +1,19 @@
 $heightRoot: 4rem;
+$heightRootMobile: 3.2rem;
 $heightTrack: 0.8rem;
 $thumbSize: $heightRoot;
+$thumbSizeMobile: $heightRootMobile;
 
 .root {
   position: relative;
-  height: $heightRoot;
+  height: $heightRootMobile;
   width: 100%;
-  padding: 0 calc($thumbSize / 2);
+  padding: 0 calc($thumbSizeMobile / 2);
+
+  @media #{$desktop-up} {
+    height: $heightRoot;
+    padding: 0 calc($thumbSize / 2);
+  }
 }
 
 .slider {
@@ -14,8 +21,12 @@ $thumbSize: $heightRoot;
   top: 50%;
   left: 0;
   transform: translate(0, -50%);
-  height: $heightRoot;
+  height: $heightRootMobile;
   width: 100%;
+
+  @media #{$desktop-up} {
+    height: $heightRoot;
+  }
 }
 
 .track {
@@ -46,15 +57,20 @@ $thumbSize: $heightRoot;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: $thumbSize;
-  width: $thumbSize;
+  height: $thumbSizeMobile;
+  width: $thumbSizeMobile;
   background: $color-white;
   border-radius: 50%;
-  box-shadow: $box-shadow-1;
   cursor: pointer;
+  filter: drop-shadow(rgba(0, 0, 0, 0.15) 0 0 0.5rem);
 
   &:focus-visible {
     outline: none;
+  }
+
+  @media #{$desktop-up} {
+    height: $thumbSize;
+    width: $thumbSize;
   }
 }
 
@@ -70,10 +86,15 @@ $thumbSize: $heightRoot;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: calc($thumbSizeMobile / 2);
+  height: calc($thumbSizeMobile / 2);
   background: $color-octant-grey12;
   border-radius: 50%;
+
+  @media #{$desktop-up} {
+    height: calc($thumbSize / 2);
+    width: calc($thumbSize / 2);
+  }
 }
 
 .pinlock {

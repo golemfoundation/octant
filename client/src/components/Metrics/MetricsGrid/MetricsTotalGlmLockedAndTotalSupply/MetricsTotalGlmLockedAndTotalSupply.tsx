@@ -1,5 +1,5 @@
 import { formatUnits } from 'ethers/lib/utils';
-import React, { ReactElement, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
@@ -11,9 +11,12 @@ import useSettingsStore from 'store/settings/store';
 import getFormattedValueWithSymbolSuffix from 'utils/getFormattedValueWithSymbolSuffix';
 import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 
+import MetricsTotalGlmLockedAndTotalSupplyProps from './types';
 import { roundLockedRatio } from './utils';
 
-const MetricsTotalGlmLockedAndTotalSupply = (): ReactElement => {
+const MetricsTotalGlmLockedAndTotalSupply: FC<MetricsTotalGlmLockedAndTotalSupplyProps> = ({
+  isLoading = false,
+}) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { data: lockedSummaryLatest } = useLockedSummaryLatest();
   const {
@@ -57,6 +60,7 @@ const MetricsTotalGlmLockedAndTotalSupply = (): ReactElement => {
         {
           children: (
             <MetricsGridTileValue
+              isLoading={isLoading}
               size="S"
               subvalue={lockedGlmTotalFiatValue}
               value={lockedGlmTotalValue}
@@ -67,6 +71,8 @@ const MetricsTotalGlmLockedAndTotalSupply = (): ReactElement => {
         {
           children: (
             <MetricsGridTileValue
+              isLoading={isLoading}
+              isThinSubvalueLoader
               size="S"
               subvalue={<ProgressBar progressPercentage={lockedRatioRounded} variant="thin" />}
               value={`${lockedRatioRounded.toString()}%`}

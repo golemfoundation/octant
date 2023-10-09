@@ -1,5 +1,5 @@
 import { formatUnits } from 'ethers/lib/utils';
-import React, { ReactElement, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/common/MetricsGridTile/MetricsGridTile';
@@ -10,7 +10,9 @@ import useSettingsStore from 'store/settings/store';
 import getFormattedValueWithSymbolSuffix from 'utils/getFormattedValueWithSymbolSuffix';
 import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 
-const MetricsLargestGlmLock = (): ReactElement => {
+import MetricsLargestGlmLockProps from './types';
+
+const MetricsLargestGlmLock: FC<MetricsLargestGlmLockProps> = ({ isLoading = false }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { data: largestLockedAmount } = useLargestLockedAmount();
   const {
@@ -51,6 +53,7 @@ const MetricsLargestGlmLock = (): ReactElement => {
         {
           children: (
             <MetricsGridTileValue
+              isLoading={isLoading}
               subvalue={largestLockedAmountFiatValue}
               value={largestLockedAmountValue}
             />
