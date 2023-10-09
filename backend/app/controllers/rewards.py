@@ -95,7 +95,11 @@ def get_finalized_epoch_proposals_rewards(epoch: int = None) -> List[ProposalRew
     )
 
     return [
-        ProposalReward(reward.address, reward.amount - reward.matched, reward.matched)
+        ProposalReward(
+            reward.address,
+            int(reward.amount) - int(reward.matched),
+            int(reward.matched),
+        )
         for reward in raw_proposals_rewards
     ]
 
