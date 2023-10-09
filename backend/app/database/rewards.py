@@ -60,7 +60,7 @@ def add_all(epoch: int, rewards: List[AccountFunds]):
             epoch=epoch,
             address=to_checksum_address(r.address),
             amount=str(r.amount),
-            matched=str(r.matched),
+            matched=str(r.matched) if r.matched is not None else None,
         )
         for r in rewards
     ]

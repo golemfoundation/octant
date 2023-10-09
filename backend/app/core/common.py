@@ -14,7 +14,7 @@ class UserDeposit(JSONWizard):
 class AccountFunds(JSONWizard):
     address: str
     amount: int
-    matched: int = 0
+    matched: int = None
 
     def __iter__(self):
         yield self.address
