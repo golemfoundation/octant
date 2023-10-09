@@ -126,7 +126,7 @@ user_leverage_model = api.model(
     {
         "leverage": fields.String(
             required=False,
-            description="Leverage of the allocated funds, percents",
+            description="Leverage of the allocated funds",
         ),
     },
 )
