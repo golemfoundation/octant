@@ -2,9 +2,13 @@ import pytest
 from eth_account import Account
 from freezegun import freeze_time
 
-from app import exceptions
+from app import exceptions, database
 from app.constants import GLM_TOTAL_SUPPLY_WEI
-from app.controllers.user import MAX_DAYS_TO_ESTIMATE_BUDGET
+from app.controllers.user import (
+    MAX_DAYS_TO_ESTIMATE_BUDGET,
+    get_patron_mode_status,
+    toggle_patron_mode,
+)
 from app.core.user.budget import get_budget, estimate_budget
 from app.core.user.rewards import get_claimed_rewards
 from app.controllers import user as user_controller
@@ -15,17 +19,18 @@ from tests.conftest import (
     create_epoch_event,
     MOCK_EPOCHS,
     create_deposit_event,
+    USER1_BUDGET,
 )
 from app.controllers.allocations import get_allocation_nonce
 
 
 @pytest.fixture(autouse=True)
-def before(patch_epochs, patch_proposals):
+def before(app, patch_epochs, patch_proposals, patch_is_contract):
     pass
 
 
 def test_get_user_budget(user_accounts, mock_pending_epoch_snapshot_db):
-    expected_result = 1526868_989237987
+    expected_result = USER1_BUDGET
     result = get_budget(user_accounts[0].address, MOCKED_PENDING_EPOCH_NO)
 
     assert result == expected_result
@@ -129,7 +134,7 @@ def test_estimate_budget_validates_inputs():
             },
             {
                 0: 1026868_989237987,
-                1: 7034344_664345202,
+                1: 4998519_420519815,
             },
         ),
         # ------------------------------------
@@ -139,7 +144,7 @@ def test_estimate_budget_validates_inputs():
                 1: [(2, 0)],
             },
             {
-                1: 7634344_664345202,
+                1: 5598519_420519815,
             },
         ),
     ],
@@ -175,3 +180,54 @@ def test_get_claimed_rewards(
         assert expected.get(user.address) == user.amount
 
     assert rewards_sum == sum(expected_rewards.values())
+
+
+def test_get_patron_mode_status_raise_error_when_user_does_not_exist(user_accounts):
+    with pytest.raises(exceptions.UserNotFound):
+        get_patron_mode_status(user_accounts[0].address)
+
+
+def test_patron_mode_status_toggle_raises_error_when_user_does_not_exist(user_accounts):
+    with pytest.raises(exceptions.UserNotFound):
+        toggle_patron_mode(user_accounts[0].address, "abcd")
+
+
+def test_patron_mode_status_toggle_raises_error_when_signature_is_invalid(
+    user_accounts,
+):
+    invalid_sig = "ab181bbf991fca4134510f6d79df07f2e5f6ea5a2b3326b955dbc6b3e4c4dfd1444cd94aaa4c08e80843b2e8f9caef09298f38b3a5b3358de58ffa9a3b4313c91b"
+    database.user.add_user(user_accounts[0].address)
+    with pytest.raises(exceptions.InvalidSignature):
+        toggle_patron_mode(user_accounts[0].address, invalid_sig)
+
+
+def test_patron_mode_status_toggle(user_accounts):
+    database.user.add_user(user_accounts[0].address)
+    status = get_patron_mode_status(user_accounts[0].address)
+    assert status is False
+
+    toggle_true_sig = "52d249ca8ac8f40c01613635dac8a9b01eb50230ad1467451a058170726650b92223e80032a4bff4d25c3554e9d1347043c53b4c2dc9f1ba3f071bd3a1c8b9121b"
+    toggle_patron_mode(user_accounts[0].address, toggle_true_sig)
+    status = get_patron_mode_status(user_accounts[0].address)
+    assert status is True
+
+    toggle_false_sig = "979b997cb2b990f104ed4d342a364207a019649eda00497780033d154ee07c44141a6be33cecdde879b1b4238c1622660e70baddb745def53d6733e4aacaeb181b"
+    toggle_patron_mode(user_accounts[0].address, toggle_false_sig)
+    status = get_patron_mode_status(user_accounts[0].address)
+    assert status is False
+
+
+def test_patron_mode_toggle_fails_when_use_sig_to_enable_for_disable(user_accounts):
+    database.user.add_user(user_accounts[0].address)
+    toggle_false_sig = "979b997cb2b990f104ed4d342a364207a019649eda00497780033d154ee07c44141a6be33cecdde879b1b4238c1622660e70baddb745def53d6733e4aacaeb181b"
+    with pytest.raises(exceptions.InvalidSignature):
+        toggle_patron_mode(user_accounts[0].address, toggle_false_sig)
+
+
+def test_patron_mode_toggle_fails_when_use_sig_to_disable_for_enable(user_accounts):
+    database.user.add_user(user_accounts[0].address)
+    toggle_true_sig = "52d249ca8ac8f40c01613635dac8a9b01eb50230ad1467451a058170726650b92223e80032a4bff4d25c3554e9d1347043c53b4c2dc9f1ba3f071bd3a1c8b9121b"
+    toggle_patron_mode(user_accounts[0].address, toggle_true_sig)
+
+    with pytest.raises(exceptions.InvalidSignature):
+        toggle_patron_mode(user_accounts[0].address, toggle_true_sig)

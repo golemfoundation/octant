@@ -97,12 +97,17 @@ def test_proposals_rewards_above_threshold(
         proposal_address = proposal_accounts[proposal_index].address
         expected[proposal_address] = expected_reward
 
-    proposals_rewards, rewards_sum = get_proposal_rewards_above_threshold(
-        MOCKED_PENDING_EPOCH_NO
-    )
+    (
+        proposals_rewards,
+        rewards_sum,
+        matched_rewards,
+    ) = get_proposal_rewards_above_threshold(MOCKED_PENDING_EPOCH_NO)
     assert len(proposals_rewards) == len(expected)
 
     for proposal in proposals_rewards:
         assert expected.get(proposal.address) == proposal.amount
 
     assert rewards_sum == sum(expected_rewards.values())
+    assert sum([proposal.matched for proposal in proposals_rewards]) == pytest.approx(
+        matched_rewards, 0.000000000000000001
+    )

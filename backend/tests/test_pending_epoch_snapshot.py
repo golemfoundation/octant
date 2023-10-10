@@ -62,7 +62,7 @@ def test_snapshot_epoch_1(mocker, user_accounts):
     assert deposits[user2].epoch_end_deposit == "400000000000000000000"
 
 
-def test_snapshot_epoch_2(mocker, user_accounts, mock_pending_epoch_snapshot_db):
+def test_snapshot_epoch_2(mocker, user_accounts):
     user1 = user_accounts[0].address
     user2 = user_accounts[1].address
     MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO + 1

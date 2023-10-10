@@ -24,6 +24,7 @@ class User(BaseModel):
         nullable=True,
         comment="Allocations signing nonce, last used value. Range [0..inf)",
     )
+    patron_mode = Column(db.Boolean, default=False, nullable=True)
 
 
 class UserConsents(BaseModel):
@@ -80,6 +81,7 @@ class FinalizedEpochSnapshot(BaseModel):
 
     id = Column(db.Integer, primary_key=True)
     epoch = Column(db.Integer, nullable=False, unique=True)
+    matched_rewards = Column(db.String, nullable=False)
     withdrawals_merkle_root = Column(db.String)
     total_withdrawals = Column(db.String)
 
@@ -102,6 +104,7 @@ class Reward(BaseModel):
     epoch = Column(db.Integer, nullable=False)
     address = Column(db.String(42), nullable=False)
     amount = Column(db.String, nullable=False)
+    matched = Column(db.String, nullable=True)
 
 
 class EpochZeroClaim(BaseModel):

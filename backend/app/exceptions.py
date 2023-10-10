@@ -139,6 +139,14 @@ class InvalidSignature(OctantException):
         super().__init__(self.description.format(signature, address), self.code)
 
 
+class UserNotFound(OctantException):
+    code = 404
+    description = "User with address {} not found"
+
+    def __init__(self, address: str):
+        super().__init__(self.description.format(address), self.code)
+
+
 class DuplicateConsent(OctantException):
     code = 400
     description = "Given user {} has already accepted the Terms of Service"
@@ -174,6 +182,14 @@ class ExternalApiException(OctantException):
             self.description.format(api_url, str(e)),
             self.code,
         )
+
+
+class NotAllowedInPatronMode(OctantException):
+    code = 403
+    description = "This action is not allowed in patron mode; user address: {}"
+
+    def __init__(self, user_address: str):
+        super().__init__(self.description.format(user_address), self.code)
 
 
 class InvalidEpochException(OctantException):

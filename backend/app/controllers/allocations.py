@@ -50,9 +50,12 @@ def allocate(request: AllocationRequest) -> str:
 def simulate_allocation(
     payload: Dict, user_address: str
 ) -> Tuple[float, List[rewards.ProposalReward]]:
+    # TODO: nonce should not be required by the endpoint, but
+    # the code below requires it to work.
+    payload["nonce"] = -1
+
     _make_allocation(payload, user_address, True)
-    pending_epoch = epochs.get_pending_epoch()
-    simulated_rewards = rewards.get_proposals_rewards(pending_epoch)
+    simulated_rewards = rewards.get_estimated_proposals_rewards()
     db.session.rollback()
 
     leverage = calculate_user_allocations_leverage(simulated_rewards)

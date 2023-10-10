@@ -1,5 +1,3 @@
-import dataclasses
-
 from flask import current_app as app
 from flask_restx import Namespace, fields
 
@@ -195,40 +193,35 @@ class Threshold(OctantResource):
 )
 @ns.response(
     400,
-    "Invalid epoch number given. Has the allocation window "
-    "for the given epoch started already?",
+    "Invalid epoch number given. The epoch must be finalized",
 )
 @ns.route("/proposals/epoch/<int:epoch>")
-class ProposalsRewards(OctantResource):
+class FinalizedProposalsRewards(OctantResource):
     @ns.marshal_with(proposals_rewards_model)
     def get(self, epoch):
-        app.logger.debug(f"Getting proposal rewards for epoch {epoch}")
-        proposal_rewards = rewards.get_proposals_rewards(epoch)
+        app.logger.debug(f"Getting proposal rewards for a finalized epoch {epoch}")
+        proposal_rewards = rewards.get_finalized_epoch_proposals_rewards(epoch)
         app.logger.debug(f"Proposal rewards in epoch: {epoch}: {proposal_rewards}")
 
         return {"rewards": proposal_rewards}
 
 
 @ns.doc(
-    description="Returns total of allocated and budget for matched rewards for a given epoch",
-    params={
-        "epoch": "Epoch number",
-    },
+    description="Returns proposals with estimated matched rewards for the pending epoch"
 )
-@ns.response(200, "")
-@ns.route("/budget/epoch/<int:epoch>")
-class Budget(OctantResource):
-    @ns.marshal_with(budget_model)
-    def get(self, epoch):
-        app.logger.debug(
-            f"Getting total of allocated and matched budget for epoch {epoch}"
-        )
-        budget = rewards.get_rewards_budget(epoch)
-        app.logger.debug(
-            f"Total of allocated and matched budget for epoch {epoch}: {budget}"
-        )
+@ns.response(
+    200,
+    "",
+)
+@ns.route("/proposals/estimated")
+class EstimatedProposalsRewards(OctantResource):
+    @ns.marshal_with(proposals_rewards_model)
+    def get(self):
+        app.logger.debug("Getting proposal rewards for the pending epoch")
+        proposal_rewards = rewards.get_estimated_proposals_rewards()
+        app.logger.debug(f"Proposal rewards in pending epoch: {proposal_rewards}")
 
-        return dataclasses.asdict(budget)
+        return {"rewards": proposal_rewards}
 
 
 @ns.doc(

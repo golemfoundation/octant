@@ -58,6 +58,16 @@ allocation_payload = api.model(
     },
 )
 
+leverage_payload = api.model(
+    "LeveragePayload",
+    {
+        "allocations": fields.List(
+            fields.Nested(user_allocations_payload_item),
+            description="User allocation payload",
+        ),
+    },
+)
+
 user_allocation_request = api.model(
     "UserAllocationRequest",
     {
@@ -160,7 +170,7 @@ user_leverage_model = api.model(
     },
 )
 class AllocationLeverage(OctantResource):
-    @ns.expect(allocation_payload)
+    @ns.expect(leverage_payload)
     @ns.marshal_with(user_leverage_model)
     @ns.response(200, "User leverage successfully estimated")
     def post(self, user_address: str):

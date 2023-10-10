@@ -8,7 +8,7 @@ from app.controllers import allocations
 from app.controllers.allocations import allocate
 from app.controllers.rewards import (
     get_allocation_threshold,
-    get_proposals_rewards,
+    get_estimated_proposals_rewards,
     ProposalReward,
 )
 from app.core.allocations import AllocationRequest
@@ -23,7 +23,7 @@ def handle_connect():
     app.logger.debug("Client connected")
     threshold = get_allocation_threshold()
     emit("threshold", {"threshold": str(threshold)})
-    proposal_rewards = get_proposals_rewards()
+    proposal_rewards = get_estimated_proposals_rewards()
     emit("proposal_rewards", _serialize_proposal_rewards(proposal_rewards))
 
 
@@ -47,7 +47,7 @@ def handle_allocate(msg):
     allocations_sum = allocations.get_sum_by_epoch()
     emit("allocations_sum", {"amount": str(allocations_sum)}, broadcast=True)
 
-    proposal_rewards = get_proposals_rewards()
+    proposal_rewards = get_estimated_proposals_rewards()
     emit(
         "proposal_rewards",
         _serialize_proposal_rewards(proposal_rewards),

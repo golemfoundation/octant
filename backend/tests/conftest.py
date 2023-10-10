@@ -28,7 +28,12 @@ MOCKED_CURRENT_EPOCH_NO = 2
 ETH_PROCEEDS = 402_410958904_110000000
 TOTAL_ED = 100022700_000000000_099999994
 USER1_ED = 1500_000055377_000000000
-USER2_ED = 7500_000000000_000000000
+USER2_ED = 5500_000000000_000000000
+USER3_ED = 2000_000000000_000000000
+USER1_BUDGET = 1526868_989237987
+USER2_BUDGET = 5598519_420519815
+USER3_BUDGET = 2035825_243825387
+
 LOCKED_RATIO = Decimal("0.100022700000000000099999994")
 TOTAL_REWARDS = 321_928767123_288031232
 ALL_INDIVIDUAL_REWARDS = 101_814368807_786782825
@@ -137,16 +142,14 @@ def patch_vault(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_is_contract(monkeypatch):
-    monkeypatch.setattr(
-        "app.crypto.terms_and_conditions_consent.is_contract", MOCK_IS_CONTRACT
-    )
+    monkeypatch.setattr("app.crypto.eth_sign.signature.is_contract", MOCK_IS_CONTRACT)
     MOCK_IS_CONTRACT.return_value = False
 
 
 @pytest.fixture(scope="function")
 def patch_eip1271_is_valid_signature(monkeypatch):
     monkeypatch.setattr(
-        "app.crypto.terms_and_conditions_consent.is_valid_signature",
+        "app.crypto.eth_sign.signature.is_valid_signature",
         MOCK_EIP1271_IS_VALID_SIGNATURE,
     )
     MOCK_EIP1271_IS_VALID_SIGNATURE.return_value = True
@@ -163,8 +166,14 @@ def patch_eth_get_balance(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_has_pending_epoch_snapshot(monkeypatch):
-    monkeypatch.setattr(
-        "app.core.allocations.has_pending_epoch_snapshot", MOCK_HAS_PENDING_SNAPSHOT
+    (
+        monkeypatch.setattr(
+            "app.core.allocations.has_pending_epoch_snapshot", MOCK_HAS_PENDING_SNAPSHOT
+        ),
+        monkeypatch.setattr(
+            "app.controllers.rewards.has_pending_epoch_snapshot",
+            MOCK_HAS_PENDING_SNAPSHOT,
+        ),
     )
     MOCK_HAS_PENDING_SNAPSHOT.return_value = True
 
@@ -178,10 +187,10 @@ def patch_user_budget(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_matched_rewards(monkeypatch):
     monkeypatch.setattr(
-        "app.controllers.rewards.get_matched_rewards_from_epoch", MOCK_MATCHED_REWARDS
+        "app.controllers.rewards.get_estimated_matched_rewards", MOCK_MATCHED_REWARDS
     )
     monkeypatch.setattr(
-        "app.core.proposals.get_matched_rewards_from_epoch", MOCK_MATCHED_REWARDS
+        "app.core.proposals.get_estimated_matched_rewards", MOCK_MATCHED_REWARDS
     )
     MOCK_MATCHED_REWARDS.return_value = 10_000000000_000000000
 
@@ -198,8 +207,10 @@ def mock_pending_epoch_snapshot_db(app, user_accounts):
     )
     user1 = database.user.get_or_add_user(user_accounts[0].address)
     user2 = database.user.get_or_add_user(user_accounts[1].address)
+    user3 = database.user.get_or_add_user(user_accounts[2].address)
     database.deposits.add(MOCKED_PENDING_EPOCH_NO, user1, USER1_ED, USER1_ED)
     database.deposits.add(MOCKED_PENDING_EPOCH_NO, user2, USER2_ED, USER2_ED)
+    database.deposits.add(MOCKED_PENDING_EPOCH_NO, user3, USER3_ED, USER3_ED)
     db.session.commit()
 
 
