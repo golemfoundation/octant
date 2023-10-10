@@ -29,11 +29,13 @@ def get_last_snapshot() -> FinalizedEpochSnapshot:
 
 def add_snapshot(
     epoch: int,
+    matched_rewards: int,
     withdrawals_merkle_root: str = None,
     total_withdrawals: int = None,
 ):
     snapshot = FinalizedEpochSnapshot(
         epoch=epoch,
+        matched_rewards=str(matched_rewards),
         withdrawals_merkle_root=withdrawals_merkle_root,
         total_withdrawals=str(total_withdrawals)
         if total_withdrawals is not None

@@ -1,8 +1,9 @@
 from decimal import Decimal
 
 from app import database
-from app.constants import ESTIMATED_STAKING_APR, ESTIMATED_STAKED_AMOUNT
 from app.core.epochs.epochs_registry import EpochsRegistry
+from app.core.user.budget import get_patrons_budget
+from app.database import finalized_epoch_snapshot
 from app.database.models import PendingEpochSnapshot
 from app.exceptions import RewardsException
 
@@ -23,14 +24,26 @@ def calculate_all_individual_rewards(
     )
 
 
-def calculate_matched_rewards(snapshot: PendingEpochSnapshot) -> int:
-    return int(snapshot.total_rewards) - int(snapshot.all_individual_rewards)
+def calculate_matched_rewards(
+    snapshot: PendingEpochSnapshot, patrons_rewards: int
+) -> int:
+    return (
+        int(snapshot.total_rewards)
+        - int(snapshot.all_individual_rewards)
+        + patrons_rewards
+    )
 
 
 def get_matched_rewards_from_epoch(epoch: int) -> int:
-    snapshot = database.pending_epoch_snapshot.get_by_epoch_num(epoch)
+    snapshot = finalized_epoch_snapshot.get_by_epoch_num(epoch)
+    return int(snapshot.matched_rewards)
 
-    return calculate_matched_rewards(snapshot)
+
+def get_estimated_matched_rewards() -> int:
+    snapshot = database.pending_epoch_snapshot.get_last_snapshot()
+    patrons_rewards = get_patrons_budget(snapshot)
+
+    return calculate_matched_rewards(snapshot, patrons_rewards)
 
 
 def calculate_matched_rewards_threshold(
@@ -41,11 +54,3 @@ def calculate_matched_rewards_threshold(
             "Proposals are missing, cannot calculate the rewards threshold"
         )
     return int(total_allocated / (proposals_count * 2))
-
-
-def estimate_epoch_eth_staking_proceeds(epoch_duration_days: int) -> int:
-    if epoch_duration_days <= 0:
-        return 0
-    return int(
-        int(ESTIMATED_STAKED_AMOUNT * ESTIMATED_STAKING_APR) / 365 * epoch_duration_days
-    )
