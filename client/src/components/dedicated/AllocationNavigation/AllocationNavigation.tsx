@@ -25,7 +25,7 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
           onClick: onResetValues,
         }
       : {
-          label: t('edit'),
+          label: t('back'),
           onClick: () => setCurrentView('edit'),
         };
   const buttonNextProps =
