@@ -46,14 +46,6 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
   const isProjectAdminMode = useIsProjectAdminMode();
 
   const sections: SectionProps[] = [
-    {
-      doubleValueProps: {
-        cryptoCurrency: 'ethereum',
-        isFetching: isWithdrawableRewardsFetching,
-        valueCrypto: currentEpoch === 1 ? BigNumber.from(0) : withdrawableRewards?.sum,
-      },
-      label: i18n.t('common.availableNow'),
-    },
     ...(!isProjectAdminMode
       ? [
           {
@@ -101,7 +93,11 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
         alignment="left"
         buttonProps={{
           dataTest: 'BoxPersonalAllocation__Button',
-          isDisabled: isPreLaunch || !isConnected,
+          isDisabled:
+            isPreLaunch ||
+            !isConnected ||
+            isWithdrawableRewardsFetching ||
+            withdrawableRewards?.sum.isZero(),
           isHigh: true,
           label: t('withdrawToWallet'),
           onClick: () => setIsModalOpen(true),

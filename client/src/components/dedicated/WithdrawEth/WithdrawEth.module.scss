@@ -3,12 +3,6 @@
   height: 100%;
 }
 
-.element {
-  &:not(:last-child) {
-    margin: 0 auto 1.6rem;
-  }
-}
-
 .inputs {
   display: flex;
   justify-content: space-between;
@@ -20,10 +14,7 @@
   @include flexBasisGutter(2, 1.6rem);
 }
 
-.timeCounter {
-  margin-top: 1.6rem;
-}
-
 .button {
   width: 100%;
+  margin: 2.4rem 0;
 }

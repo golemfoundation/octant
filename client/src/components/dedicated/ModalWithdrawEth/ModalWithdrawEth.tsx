@@ -13,7 +13,7 @@ const ModalWithdrawEth: FC<ModalEthWithdrawingProps> = ({ modalProps }) => {
 
   return (
     <Modal header={t('withdrawETH')} {...modalProps}>
-      <WithdrawEth />
+      <WithdrawEth onCloseModal={modalProps.onClosePanel} />
     </Modal>
   );
 };

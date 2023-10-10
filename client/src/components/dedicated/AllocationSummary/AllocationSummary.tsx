@@ -6,7 +6,7 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Sections from 'components/core/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import Header from 'components/core/Header/Header';
-import ProjectRow from 'components/dedicated/History/HistoryItemDetails/HistoryItemDetailsAllocation/ProjectRow/ProjectRow';
+import ProjectAllocationDetailRow from 'components/dedicated/ProjectAllocationDetailRow/ProjectAllocationDetailRow';
 import useAllocateSimulate from 'hooks/mutations/useAllocateSimulate';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
@@ -84,7 +84,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
       <Sections sections={sections} variant="small" />
       <div className={styles.projects}>
         {allocationValuesPositive?.map(({ address, value }) => (
-          <ProjectRow key={address} address={address} amount={value} />
+          <ProjectAllocationDetailRow key={address} address={address} amount={value} />
         ))}
       </div>
     </BoxRounded>
