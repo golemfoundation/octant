@@ -54,9 +54,9 @@
         "connectWallet": "In order to manipulate allocation values and vote, please connect your wallet first."
       },
       "allocationNavigation": {
-        "next": "Next",
+        "back": "Back",
         "confirm": "Confirm",
-        "edit": "Edit",
+        "next": "Next",
         "reset": "Reset allocations"
       },
       "allocationRewardsBox": {
@@ -68,7 +68,8 @@
       "allocationSummary": {
         "matchFundingEstimate": "Match funding (estimate)",
         "confirmYourAllocations": "Confirm your allocations",
-        "confirmAllocations": "Confirm allocations"
+        "confirmAllocations": "Confirm allocations",
+        "allocationProjects": "Projects ({{projectsNumber}})"
       },
       "allocationInputsRewardsAvailable": {
         "resetAllocations": "Reset allocations to manually edit this project",
