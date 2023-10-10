@@ -38,7 +38,13 @@ class EpochStatus(JSONWizard):
 def get_pending_snapshot_status() -> PendingSnapshotStatus:
     current_epoch = epochs.get_current_epoch()
     last_snapshot_epoch = get_last_pending_snapshot()
-    return pending_snapshot_status(current_epoch, last_snapshot_epoch)
+    try:
+        return pending_snapshot_status(current_epoch, last_snapshot_epoch)
+    except exceptions.MissingSnapshot:
+        app.logger.error(
+            f"Database inconsistent? Current epoch {current_epoch}, last pending snapshot for epoch {last_snapshot_epoch}"
+        )
+        return PendingSnapshotStatus.ERROR
 
 
 def get_finalized_snapshot_status() -> FinalizedSnapshotStatus:
