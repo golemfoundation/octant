@@ -14,6 +14,7 @@ import AllocationTipTiles from 'components/dedicated/AllocationTipTiles/Allocati
 import ModalAllocationValuesEdit from 'components/dedicated/ModalAllocationValuesEdit/ModalAllocationValuesEdit';
 import useAllocate from 'hooks/events/useAllocate';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
@@ -48,6 +49,7 @@ const AllocationView = (): ReactElement => {
   const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards();
 
   const { data: currentEpoch } = useCurrentEpoch();
+  const { refetch: refetchHistory } = useHistory();
   const {
     data: userAllocations,
     isFetching: isFetchingUserAllocation,
@@ -55,7 +57,11 @@ const AllocationView = (): ReactElement => {
   } = useUserAllocations(currentEpoch, { refetchOnMount: true });
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { data: userNonce, isFetching: isFetchingUserNonce } = useUserAllocationNonce();
+  const {
+    data: userNonce,
+    isFetching: isFetchingUserNonce,
+    refetch: refetchUserAllocationNonce,
+  } = useUserAllocationNonce();
   const { refetch: refetchMatchedProposalRewards } = useMatchedProposalRewards();
   const { allocations, rewardsForProposals, setAllocations } = useAllocationsStore(state => ({
     allocations: state.data.allocations,
@@ -73,6 +79,8 @@ const AllocationView = (): ReactElement => {
       });
       await refetchMatchedProposalRewards();
       await refetchUserAllocations();
+      await refetchUserAllocationNonce();
+      await refetchHistory();
       setAllocations([
         ...allocations.filter(allocation => {
           const allocationValue = allocationValues.find(({ address }) => address === allocation);

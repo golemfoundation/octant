@@ -42,16 +42,16 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
         socket.default.emit(
           WebsocketEmitEvent.allocate,
           JSON.stringify({
-            // @ts-expect-error TODO solve types issue.
-            payload: variables.value,
-            signature: data.substring(2),
+            payload: variables.message,
+            signature: data,
           }),
+          () => {
+            if (onSuccess) {
+              onSuccess();
+            }
+          },
         );
       });
-
-      if (onSuccess) {
-        onSuccess();
-      }
     },
     primaryType: 'AllocationPayload',
     types,
@@ -66,7 +66,7 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
 
     signTypedData({
       message,
-      primaryType: 'Allocation',
+      primaryType: 'AllocationPayload',
       types,
     });
   };

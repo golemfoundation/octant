@@ -6,6 +6,10 @@
   width: 100%;
   border-bottom: 0.1rem solid $color-octant-grey4;
 
+  &.hasBottomDivider:not(:last-child) {
+    border-bottom: 0.1rem  solid $color-octant-grey2;
+  }
+
   &.isDisabled {
     .label {
       color: $color-octant-grey3;
@@ -13,6 +17,10 @@
     .tooltip > * {
       stroke: $color-octant-grey3;
     }
+  }
+
+  @media #{$tablet-down} {
+    height: 5.6rem;
   }
 }
 

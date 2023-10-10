@@ -14,7 +14,7 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useSyncStatus from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
-import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
+import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
 import useAllocationsStore from 'store/allocations/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
@@ -25,21 +25,19 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.boxPersonalAllocation',
   });
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
   const { timeCurrentAllocationEnd } = useEpochAndAllocationTimestamps();
   const { data: userAllocations, isFetching: isFetchingUserAllocations } = useUserAllocations();
-  const { data: withdrawableUserEth, isFetching: isFetchingWithdrawableUserEth } =
-    useWithdrawableUserEth();
+  const { data: withdrawableRewards, isFetching: isWithdrawableRewardsFetching } =
+    useWithdrawableRewards();
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
     setRewardsForProposals: state.setRewardsForProposals,
   }));
-
   const { data: syncStatusData } = useSyncStatus();
-
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
 
@@ -82,8 +80,8 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
-        isFetching: isFetchingWithdrawableUserEth,
-        valueCrypto: currentEpoch === 1 ? BigNumber.from(0) : withdrawableUserEth,
+        isFetching: isWithdrawableRewardsFetching,
+        valueCrypto: currentEpoch === 1 ? BigNumber.from(0) : withdrawableRewards?.sum,
       },
       label: i18n.t('common.availableNow'),
     },
@@ -95,7 +93,11 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
         alignment="left"
         buttonProps={{
           dataTest: 'BoxPersonalAllocation__Button',
-          isDisabled: isPreLaunch || !isConnected,
+          isDisabled:
+            isPreLaunch ||
+            !isConnected ||
+            isWithdrawableRewardsFetching ||
+            withdrawableRewards?.sum.isZero(),
           isHigh: true,
           label: t('withdrawToWallet'),
           onClick: () => setIsModalOpen(true),

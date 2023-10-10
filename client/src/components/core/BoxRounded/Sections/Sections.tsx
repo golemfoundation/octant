@@ -1,4 +1,5 @@
 import cx from 'classnames';
+import isEmpty from 'lodash/isEmpty';
 import React, { FC, Fragment } from 'react';
 
 import DoubleValue from 'components/core/DoubleValue/DoubleValue';
@@ -11,9 +12,12 @@ import SectionsProps, { SectionProps } from './types';
 
 const Section: FC<SectionProps> = ({
   additionalContent,
+  childrenLeft,
+  childrenRight,
   className,
   dataTest = 'Section',
   doubleValueProps,
+  hasBottomDivider = false,
   icon,
   isDisabled,
   label,
@@ -21,38 +25,51 @@ const Section: FC<SectionProps> = ({
   labelSuffix,
   onClick,
   tooltipProps,
+  variant = 'standard',
 }) => (
   <>
     <div
-      className={cx(styles.root, className, isDisabled && styles.isDisabled)}
+      className={cx(
+        styles.root,
+        className,
+        styles[`variant--${variant}`],
+        hasBottomDivider && styles.hasBottomDivider,
+        isDisabled && styles.isDisabled,
+      )}
       data-test={dataTest}
       onClick={onClick}
     >
-      <div className={cx(styles.label, labelClassName)}>
-        {icon ? <Svg img={icon} size={4} /> : label}
-        {labelSuffix && labelSuffix}
-        {tooltipProps && (
-          <Tooltip {...tooltipProps} childrenClassName={styles.tooltip}>
-            <Svg dataTest={`${dataTest}__Svg`} img={questionMark} size={1.6} />
-          </Tooltip>
-        )}
-      </div>
-      <DoubleValue
-        textAlignment="right"
-        variant="small"
-        {...doubleValueProps}
-        isDisabled={isDisabled}
-      />
+      {(label || icon) && (
+        <div className={cx(styles.label, labelClassName)}>
+          {icon ? <Svg img={icon} size={4} /> : label}
+          {labelSuffix && labelSuffix}
+          {tooltipProps && (
+            <Tooltip {...tooltipProps} childrenClassName={styles.tooltip}>
+              <Svg dataTest={`${dataTest}__Svg`} img={questionMark} size={1.6} />
+            </Tooltip>
+          )}
+        </div>
+      )}
+      {childrenLeft}
+      {childrenRight}
+      {!isEmpty(doubleValueProps) && (
+        <DoubleValue
+          textAlignment="right"
+          variant={variant === 'standard' ? 'small' : 'tiny'}
+          {...doubleValueProps}
+          isDisabled={isDisabled}
+        />
+      )}
     </div>
     {!!additionalContent && additionalContent}
   </>
 );
 
-const Sections: FC<SectionsProps> = ({ sections }) => (
+const Sections: FC<SectionsProps> = ({ sections, ...rest }) => (
   <Fragment>
     {sections.map((section, index) => (
       // eslint-disable-next-line react/no-array-index-key
-      <Section key={index} {...section} />
+      <Section key={index} {...section} {...rest} />
     ))}
   </Fragment>
 );

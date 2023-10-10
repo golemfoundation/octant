@@ -15,6 +15,8 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 const documents = {
   '\n  query GetBlockNumber {\n    _meta {\n      block {\n        number\n      }\n    }\n  }\n':
     types.GetBlockNumberDocument,
+  '\n  query GetEpochTimestampHappenedIn($timestamp: BigInt) {\n    epoches(where: { fromTs_lte: $timestamp, toTs_gte: $timestamp }) {\n      epoch\n    }\n  }\n':
+    types.GetEpochTimestampHappenedInDocument,
   '\n  query GetEpochsEndTime($lastEpoch: Int) {\n    epoches(first: $lastEpoch) {\n      epoch\n      toTs\n    }\n  }\n':
     types.GetEpochsEndTimeDocument,
   '\n  query GetLargestLockedAmount {\n    lockeds(orderBy: amount, orderDirection: desc, first: 1) {\n      amount\n    }\n  }\n':
@@ -45,6 +47,12 @@ export function graphql(source: string): unknown;
 export function graphql(
   source: '\n  query GetBlockNumber {\n    _meta {\n      block {\n        number\n      }\n    }\n  }\n',
 ): (typeof documents)['\n  query GetBlockNumber {\n    _meta {\n      block {\n        number\n      }\n    }\n  }\n'];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query GetEpochTimestampHappenedIn($timestamp: BigInt) {\n    epoches(where: { fromTs_lte: $timestamp, toTs_gte: $timestamp }) {\n      epoch\n    }\n  }\n',
+): (typeof documents)['\n  query GetEpochTimestampHappenedIn($timestamp: BigInt) {\n    epoches(where: { fromTs_lte: $timestamp, toTs_gte: $timestamp }) {\n      epoch\n    }\n  }\n'];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -4,13 +4,12 @@ export default interface TimeCounterProps {
   isLoading?: boolean;
   onCountingFinish?: () => void;
   timestamp?: number;
-  variant?: 'standard' | 'small' | 'metrics';
+  variant?: 'standard' | 'metrics';
 }
 
 export interface CounterSectionsProps {
   isDividerVisible?: boolean;
   label: string;
-  labelSmall?: string;
   value?: number;
   variant: TimeCounterProps['variant'];
 }

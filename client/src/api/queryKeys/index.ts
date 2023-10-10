@@ -3,6 +3,7 @@ import { Root, QueryKeys } from './types';
 export const ROOTS: Root = {
   cryptoValues: 'cryptoValues',
   depositAt: 'depositAt',
+  epochTimestampHappenedIn: 'epochTimestampHappenedIn',
   epochesEndTime: 'epochesEndTime',
   estimatedEffectiveDeposit: 'estimatedEffectiveDeposit',
   matchedProposalRewards: 'matchedProposalRewards',
@@ -11,7 +12,6 @@ export const ROOTS: Root = {
   proposalsIpfsResults: 'proposalsIpfsResults',
   userAllocationNonce: 'userAllocationNonce',
   userAllocations: 'userAllocations',
-  userHistoricAllocations: 'userHistoricAllocations',
   userTOS: 'userTOS',
 };
 
@@ -23,6 +23,7 @@ export const QUERY_KEYS: QueryKeys = {
   currentEpochEnd: ['currentEpochEnd'],
   currentEpochProps: ['currentEpochProps'],
   depositsValue: ['depositsValue'],
+  epochTimestampHappenedIn: timestamp => [ROOTS.epochTimestampHappenedIn, timestamp.toString()],
   epochesEndTime: epochNumber => [ROOTS.epochesEndTime, epochNumber.toString()],
   estimatedEffectiveDeposit: userAddress => [ROOTS.estimatedEffectiveDeposit, userAddress],
   glmClaimCheck: ['glmClaimCheck'],
@@ -44,7 +45,6 @@ export const QUERY_KEYS: QueryKeys = {
   unlocks: ['unlocks'],
   userAllocationNonce: userAddress => ['userAllocationNonce', userAddress],
   userAllocations: epochNumber => [ROOTS.userAllocations, epochNumber.toString()],
-  userHistoricAllocations: userAddress => [ROOTS.userHistoricAllocations, userAddress],
   userTOS: userAddress => [ROOTS.userTOS, userAddress],
-  withdrawableUserEth: ['withdrawableUserEth'],
+  withdrawableRewards: ['withdrawableRewards'],
 };

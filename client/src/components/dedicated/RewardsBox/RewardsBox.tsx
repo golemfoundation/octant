@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Sections from 'components/core/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/core/BoxRounded/Sections/types';
-import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
+import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
 
 import styles from './RewardsBox.module.scss';
 import RewardsBoxProps from './types';
@@ -14,15 +14,15 @@ const RewardsBox: FC<RewardsBoxProps> = ({ buttonProps, className, isGrey, isDis
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.rewardsBox',
   });
-  const { data: withdrawableUserEth, isFetching: isFetchingWithdrawableUserEth } =
-    useWithdrawableUserEth();
+  const { data: withdrawableRewards, isFetching: isWithdrawableRewardsFetching } =
+    useWithdrawableRewards();
 
   const sections: SectionProps[] = [
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
-        isFetching: isFetchingWithdrawableUserEth,
-        valueCrypto: withdrawableUserEth,
+        isFetching: isWithdrawableRewardsFetching,
+        valueCrypto: withdrawableRewards?.sum,
       },
       label: i18n.t('common.availableNow'),
     },

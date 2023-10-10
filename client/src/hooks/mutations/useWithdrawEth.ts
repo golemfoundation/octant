@@ -11,18 +11,28 @@ export interface BatchWithdrawRequest {
 }
 
 export default function useWithdrawEth(
-  options?: UseMutationOptions<Hash, unknown, BatchWithdrawRequest[]>,
-): UseMutationResult<Hash, unknown, BatchWithdrawRequest[]> {
+  options?: UseMutationOptions<
+    { hash: Hash; value: BatchWithdrawRequest[] },
+    unknown,
+    BatchWithdrawRequest[]
+  >,
+): UseMutationResult<
+  { hash: Hash; value: BatchWithdrawRequest[] },
+  unknown,
+  BatchWithdrawRequest[]
+> {
   const { data: walletClient } = useWalletClient();
 
   return useMutation({
-    mutationFn: async value => {
-      return writeContractVault({
+    mutationFn: async value =>
+      writeContractVault({
         args: [value],
         functionName: 'batchWithdraw',
         walletClient: walletClient!,
-      });
-    },
+      }).then(data => ({
+        hash: data,
+        value,
+      })),
     ...options,
   });
 }

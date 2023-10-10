@@ -35,6 +35,14 @@
     &small {
       font-size: $font-size-18;
     }
+
+    &tiny {
+      font-size: $font-size-14;
+
+      @media #{$tablet-down} {
+        font-size: $font-size-12;
+      }
+    }
   }
 }
 

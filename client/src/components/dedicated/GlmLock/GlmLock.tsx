@@ -35,15 +35,12 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
   const [transactionHashForEtherscan, setTransactionHashForEtherscan] = useState<
     string | undefined
   >(undefined);
-  const { setTransactionHashesToWaitFor, transactionHashesToWaitFor } = useMetaStore(state => ({
-    setTransactionHashesToWaitFor: state.setTransactionHashesToWaitFor,
-    transactionHashesToWaitFor: state.data.transactionHashesToWaitFor,
+  const { addTransactionPending } = useMetaStore(state => ({
+    addTransactionPending: state.addTransactionPending,
   }));
   const { data: transactionReceipt, isLoading: isLoadingTransactionReceipt } =
     useWaitForTransaction({
-      hash: transactionHashesToWaitFor
-        ? (transactionHashesToWaitFor[0] as `0x${string}`)
-        : undefined,
+      hash: transactionHashForEtherscan as `0x${string}` | undefined,
       onReplaced: response =>
         setTransactionHashForEtherscan(response.transactionReceipt.transactionHash),
     });
@@ -91,15 +88,15 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
     }
   };
 
-  const onSuccess = async (transactionHashResponse: string): Promise<void> => {
-    /**
-     * setTransactionHashesToWaitFor goes to App.tsx when app waits for tx to resolve and fetch
-     * block from subgraph and is set to null there on success.
-     *
-     * setTransactionHashForEtherscan is here for the link
-     */
-    setTransactionHashesToWaitFor([transactionHashResponse]);
-    setTransactionHashForEtherscan(transactionHashResponse);
+  const onSuccess = async ({ hash, value }): Promise<void> => {
+    addTransactionPending({
+      amount: value,
+      // GET /history uses microseconds. Normalization here.
+      timestamp: (Date.now() * 1000).toString(),
+      transactionHash: hash,
+      type: currentMode,
+    });
+    setTransactionHashForEtherscan(hash);
   };
 
   const onReset = (newMode: CurrentMode = 'lock'): void => {
@@ -168,10 +165,7 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
           <GlmLockTabs
             className={styles.element}
             currentMode={currentMode}
-            isLoading={
-              (!!transactionHashesToWaitFor && transactionHashesToWaitFor.length > 0) ||
-              props.isSubmitting
-            }
+            isLoading={isLoadingTransactionReceipt || props.isSubmitting}
             onClose={onCloseModal}
             onInputsFocusChange={setIsCryptoOrFiatInputFocused}
             onReset={onReset}

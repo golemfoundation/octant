@@ -15,6 +15,7 @@ def get_user_withdrawals_history(user_address: str, from_timestamp: int, limit: 
             amount
             timestamp
             user
+            transactionHash
           }
         }
         """
@@ -62,6 +63,7 @@ def get_withdrawals_by_address_and_timestamp_range(
             amount
             timestamp
             user
+            transactionHash
           }
         }
         """

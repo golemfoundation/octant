@@ -27,6 +27,7 @@ def get_user_unlocks_history(
             depositBefore
             amount
             timestamp
+            transactionHash
             user
           }
         }
@@ -74,6 +75,7 @@ def get_unlocks_by_timestamp_range(from_ts, to_ts) -> list[UnlockEvent]:
             amount
             timestamp
             user
+            transactionHash
           }
         }
         """
@@ -110,6 +112,7 @@ def get_unlocks_by_address_and_timestamp_range(
             amount
             timestamp
             user
+            transactionHash
           }
         }
         """

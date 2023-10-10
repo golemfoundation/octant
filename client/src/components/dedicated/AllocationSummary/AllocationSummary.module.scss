@@ -1,3 +1,11 @@
+.root {
+  padding: 0 5.6rem;
+
+  @media #{$tablet-down} {
+    padding: 0 2.4rem;
+  }
+}
+
 .header {
   padding: 2.9rem 0;
   margin: 0;
@@ -10,29 +18,9 @@
   }
 }
 
-.sectionLabel {
-  color: $color-octant-dark;
-
-  @media #{$desktop-up} {
-    font-size: $font-size-16;
-  }
-}
-
-.matchFundingLabel {
-  font-size: $font-size-12;
-
-  @media #{$desktop-up} {
-    font-size: $font-size-16;
-  }
-}
-
 .icon {
   transition: $transition-time-2 all;
   margin-left: 1rem;
-
-  &.areDonationsVisible {
-    transform: rotate(-180deg);
-  }
 }
 
 .detailsWrapper {
@@ -51,4 +39,11 @@
 
 .donations {
   cursor: pointer;
+}
+
+.projects {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  margin: 4rem 0;
 }

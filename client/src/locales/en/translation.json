@@ -54,9 +54,9 @@
         "connectWallet": "In order to manipulate allocation values and vote, please connect your wallet first."
       },
       "allocationNavigation": {
-        "next": "Next",
+        "back": "Back",
         "confirm": "Confirm",
-        "edit": "Edit",
+        "next": "Next",
         "reset": "Reset allocations"
       },
       "allocationRewardsBox": {
@@ -68,7 +68,8 @@
       "allocationSummary": {
         "matchFundingEstimate": "Match funding (estimate)",
         "confirmYourAllocations": "Confirm your allocations",
-        "confirmAllocations": "Confirm allocations"
+        "confirmAllocations": "Confirm allocations",
+        "allocationProjects": "Projects ({{projectsNumber}})"
       },
       "allocationInputsRewardsAvailable": {
         "resetAllocations": "Reset allocations to manually edit this project",
@@ -150,11 +151,35 @@
         "emptyHistory": "You haven’t made any transactions yet"
       },
       "historyItem": {
-        "allocatedFunds": "Allocated funds",
+        "allocatedRewards": "Allocated rewards",
         "lockedGLM": "Locked GLM",
         "unlockedGLM": "Unlocked GLM",
         "projects": "Projects",
         "withdrawnFunds": "Withdrawn funds"
+      },
+      "historyItemModal": {
+        "header": {
+          "allocation": "Epoch {{epoch}} Allocations",
+          "lock": "Locked GLM",
+          "unlock": "Unlocked GLM"
+        },
+        "sections": {
+          "allocationPersonal": "Personal",
+          "allocationProjects": "Projects ({{projectsNumber}})",
+          "amount": "Amount",
+          "gasPrice": "Gas price",
+          "viewOnEtherscan": "View on Etherscan",
+          "when": "When",
+          "withdrawal": "Withdrew ETH"
+        }
+      },
+      "historyTransactionLabel": {
+        "confirmed": "Confirmed",
+        "pending": "Pending"
+      },
+      "metricsTimeSection": {
+        "epochEndsIn": "Epoch {{currentEpoch}} ends in",
+        "epochAllocationEndsIn": "Epoch {{currentEpoch}} Allocation ends in"
       },
       "modalAllocationEditSelection": {
         "uncheckToRemove": "Uncheck to remove"
@@ -184,10 +209,7 @@
       },
       "timeCounter": {
         "hours": "Hours",
-        "hrs": "Hrs",
-        "min": "Min",
         "minutes": "Minutes",
-        "sec": "Sec",
         "seconds": "Seconds"
       },
       "tos": {
@@ -201,8 +223,10 @@
       "withdrawEth": {
         "withdrawalsDistributedEpoch": "Withdrawals are distributed when Epoch {{currentEpoch}} ends",
         "rewardsBudget": "Rewards Budget",
-        "amountToWithdraw": "Amount to withdraw",
-        "requestWithdrawal": "Request withdrawal"
+        "amount": "Amount",
+        "estimatedGasPrice": "Est. gas price",
+        "withdrawAll": "Withdraw all",
+        "waitingForConfirmation": "Waiting for confirmation"
       }
     }
   },
