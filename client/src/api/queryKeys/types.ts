@@ -8,6 +8,7 @@ export type Root = {
   estimatedEffectiveDeposit: 'estimatedEffectiveDeposit';
   matchedProposalRewards: 'matchedProposalRewards';
   proposalDonors: 'proposalDonors';
+  proposalRewardsThreshold: 'proposalRewardsThreshold';
   proposalsContract: 'proposalsContract';
   proposalsIpfsResults: 'proposalsIpfsResults';
   userAllocationNonce: 'userAllocationNonce';
@@ -37,7 +38,7 @@ export type QueryKeys = {
   lockedSummaryLatest: ['lockedSummaryLatest'];
   matchedProposalRewards: (epochNumber: number) => [Root['matchedProposalRewards'], string];
   proposalDonors: (proposalAddress: string) => [Root['proposalDonors'], string];
-  proposalRewardsThreshold: ['proposalRewardsThreshold'];
+  proposalRewardsThreshold: (epochNumber: number) => [Root['proposalRewardsThreshold'], string];
   proposalsAllIpfs: ['proposalsAllIpfs'];
   proposalsCid: ['proposalsCid'];
   proposalsContract: (epochNumber: number) => [Root['proposalsContract'], string];

@@ -10,20 +10,21 @@ import { WebsocketListenEvent } from 'types/websocketEvents';
 import useCurrentEpoch from './useCurrentEpoch';
 
 export default function useProposalRewardsThreshold(
+  epoch?: number,
   options?: UseQueryOptions<Response, unknown, BigNumber, any>,
 ): UseQueryResult<BigNumber> {
   const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();
 
   useSubscription<{ threshold: string }>(WebsocketListenEvent.threshold, data => {
-    queryClient.setQueryData(QUERY_KEYS.proposalRewardsThreshold, data);
+    queryClient.setQueryData(QUERY_KEYS.proposalRewardsThreshold(currentEpoch! - 1), data);
   });
 
   return useQuery(
-    QUERY_KEYS.proposalRewardsThreshold,
-    () => apiGetProjectThreshold(currentEpoch! - 1),
+    QUERY_KEYS.proposalRewardsThreshold(epoch ? epoch - 1 : currentEpoch! - 1),
+    () => apiGetProjectThreshold(epoch ? epoch - 1 : currentEpoch! - 1),
     {
-      enabled: !!currentEpoch && currentEpoch > 1,
+      enabled: (epoch !== undefined && epoch > 1) || (!!currentEpoch && currentEpoch > 1),
       select: response => parseUnits(response.threshold, 'wei'),
       staleTime: Infinity,
       ...options,

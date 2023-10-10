@@ -114,11 +114,7 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
             />
           </div>
           {!isEpoch1 && (
-            <ProposalRewards
-              address={address}
-              className={styles.proposalRewards}
-              isArchivedProposal={isArchivedProposal}
-            />
+            <ProposalRewards address={address} className={styles.proposalRewards} epoch={epoch} />
           )}
         </Fragment>
       )}
