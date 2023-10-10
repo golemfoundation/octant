@@ -209,10 +209,7 @@
       },
       "timeCounter": {
         "hours": "Hours",
-        "hrs": "Hrs",
-        "min": "Min",
         "minutes": "Minutes",
-        "sec": "Sec",
         "seconds": "Seconds"
       },
       "tos": {
@@ -226,8 +223,10 @@
       "withdrawEth": {
         "withdrawalsDistributedEpoch": "Withdrawals are distributed when Epoch {{currentEpoch}} ends",
         "rewardsBudget": "Rewards Budget",
-        "amountToWithdraw": "Amount to withdraw",
-        "requestWithdrawal": "Request withdrawal"
+        "amount": "Amount",
+        "estimatedGasPrice": "Est. gas price",
+        "withdrawAll": "Withdraw all",
+        "waitingForConfirmation": "Waiting for confirmation"
       }
     }
   },

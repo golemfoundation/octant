@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
 
-export default interface ProjectRowProps {
+export default interface ProjectAllocationDetailRowProps {
   address: string;
   amount: BigNumber;
 }

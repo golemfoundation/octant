@@ -13,23 +13,17 @@ import TimeCounterProps, { CounterSectionsProps } from './types';
 const CounterSection: FC<CounterSectionsProps> = ({
   value = 0,
   label,
-  labelSmall,
   isDividerVisible = true,
   variant,
-}) => {
-  const labelFinal = variant === 'small' && labelSmall ? labelSmall : label;
-  return (
-    <Fragment>
-      <div className={styles.counterSection}>
-        <div className={cx(styles.value, styles[`variant--${variant}`])}>{value}</div>
-        <div className={cx(styles.label, styles[`variant--${variant}`])}>{labelFinal}</div>
-      </div>
-      {isDividerVisible && (
-        <div className={cx(styles.divider, styles[`variant--${variant}`])}>:</div>
-      )}
-    </Fragment>
-  );
-};
+}) => (
+  <Fragment>
+    <div className={styles.counterSection}>
+      <div className={cx(styles.value, styles[`variant--${variant}`])}>{value}</div>
+      <div className={cx(styles.label, styles[`variant--${variant}`])}>{label}</div>
+    </div>
+    {isDividerVisible && <div className={cx(styles.divider, styles[`variant--${variant}`])}>:</div>}
+  </Fragment>
+);
 
 const TimeCounter: FC<TimeCounterProps> = ({
   className,
@@ -92,22 +86,11 @@ const TimeCounter: FC<TimeCounterProps> = ({
         <Fragment>
           <div className={cx(styles.counters, styles[`variant--${variant}`])}>
             <CounterSection label={i18n.t('common.days')} value={time.days} variant={variant} />
-            <CounterSection
-              label={t('hours')}
-              labelSmall={t('hrs')}
-              value={time.hours}
-              variant={variant}
-            />
-            <CounterSection
-              label={t('minutes')}
-              labelSmall={t('min')}
-              value={time.minutes}
-              variant={variant}
-            />
+            <CounterSection label={t('hours')} value={time.hours} variant={variant} />
+            <CounterSection label={t('minutes')} value={time.minutes} variant={variant} />
             <CounterSection
               isDividerVisible={false}
               label={t('seconds')}
-              labelSmall={t('sec')}
               value={time.seconds}
               variant={variant}
             />

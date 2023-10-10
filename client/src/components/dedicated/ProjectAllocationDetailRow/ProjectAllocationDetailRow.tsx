@@ -8,10 +8,10 @@ import useSettingsStore from 'store/settings/store';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 
-import styles from './ProjectRow.module.scss';
-import ProjectRowProps from './types';
+import styles from './ProjectAllocationDetailRow.module.scss';
+import ProjectAllocationDetailRowProps from './types';
 
-const ProjectRow: FC<ProjectRowProps> = ({ address, amount }) => {
+const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({ address, amount }) => {
   const { ipfsGateway } = env;
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
@@ -57,4 +57,4 @@ const ProjectRow: FC<ProjectRowProps> = ({ address, amount }) => {
   );
 };
 
-export default ProjectRow;
+export default ProjectAllocationDetailRow;

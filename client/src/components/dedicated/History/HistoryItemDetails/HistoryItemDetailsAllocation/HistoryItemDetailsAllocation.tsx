@@ -6,12 +6,12 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Sections from 'components/core/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import HistoryItemDateAndTime from 'components/dedicated/History/HistoryItemDetails/HistoryItemDateAndTime/HistoryItemDateAndTime';
+import ProjectAllocationDetailRow from 'components/dedicated/ProjectAllocationDetailRow/ProjectAllocationDetailRow';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useEpochTimestampHappenedIn from 'hooks/subgraph/useEpochTimestampHappenedIn';
 
 import styles from './HistoryItemDetailsAllocation.module.scss';
-import ProjectRow from './ProjectRow/ProjectRow';
 import HistoryItemDetailsAllocationProps from './types';
 
 const HistoryItemDetailsAllocation: FC<HistoryItemDetailsAllocationProps> = ({
@@ -71,7 +71,9 @@ const HistoryItemDetailsAllocation: FC<HistoryItemDetailsAllocationProps> = ({
         <Sections hasBottomDivider sections={sections} variant="small" />
       </BoxRounded>
       <BoxRounded alignment="left" className={styles.projects} isGrey isVertical>
-        {projects?.map(project => <ProjectRow key={project.address} {...project} />)}
+        {projects?.map(project => (
+          <ProjectAllocationDetailRow key={project.address} {...project} />
+        ))}
       </BoxRounded>
     </Fragment>
   );
