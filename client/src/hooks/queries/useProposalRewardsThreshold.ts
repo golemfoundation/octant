@@ -33,7 +33,6 @@ export default function useProposalRewardsThreshold(
     () => apiGetProjectThreshold(currentEpoch! - 1),
     {
       enabled: !!currentEpoch && currentEpoch > 1,
-      refetchInterval: 5000,
       select: response => parseUnits(response.threshold, 'wei'),
       ...options,
     },
