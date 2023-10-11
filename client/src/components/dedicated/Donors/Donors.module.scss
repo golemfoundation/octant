@@ -13,14 +13,24 @@
 
   .donorsHeader {
     justify-content: space-between;
-    border-bottom: 0.1rem solid $color-octant-grey12;
-    padding-bottom: 1.4rem;
+    padding-bottom: 1.6rem;
   }
 
-  .donationsNotEnabled {
+  .body {
+    border-top: 0.1rem solid $color-octant-grey12;
+    border-bottom: 0.1rem solid $color-octant-grey12;
+    min-height: 21.6rem;
+  }
+
+  .noDataInformation {
     font-size: $font-size-14;
     font-weight: $font-weight-semibold;
     color: $color-octant-grey6;
+
+    &.noDonationsYet {
+      text-align: left;
+      margin-top: 2rem;
+    }
   }
 
   .divider {
