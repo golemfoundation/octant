@@ -104,6 +104,7 @@
       },
       "donors": {
         "donationsNotEnabled": "Donations are not enabled in this epoch",
+        "noDonationsYet": "No donations yet",
         "viewAll": "View all"
       },
       "donorsHeader": {

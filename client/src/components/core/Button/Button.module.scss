@@ -73,6 +73,10 @@ $paddingVertical: 1rem;
     box-shadow: $box-shadow-1;
     min-height: 0;
     width: auto;
+
+    &.isDisabled {
+      color: $color-octant-grey2;
+    }
   }
 
   &iconVertical {
