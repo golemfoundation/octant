@@ -44,6 +44,8 @@ const Tooltip: FC<TooltipProps> = ({
     }
   };
 
+  const isTooltipVisible = isVisible || !!showForce;
+
   return (
     <div className={cx(styles.root, styles[`position--${position}`], className)}>
       <div
@@ -65,9 +67,12 @@ const Tooltip: FC<TooltipProps> = ({
       >
         {children}
       </div>
+      {isTooltipVisible && !isDesktop && (
+        <div className={styles.overlay} onClick={() => setIsVisible(false)} />
+      )}
       <div className={cx(styles.tooltipWrapper, styles[`position--${position}`])}>
         <AnimatePresence>
-          {(isVisible || showForce) && (
+          {isTooltipVisible && (
             <motion.div
               animate={{ opacity: 1, y: 0 }}
               className={cx(
