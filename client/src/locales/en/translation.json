@@ -73,7 +73,7 @@
         "editLockedGLM": "Edit Locked GLM",
         "effective": "Effective",
         "lockedBalance": "Locked balance",
-        "tooltipText": "Effective balance is the part of your locked GLM that is earning rewards. In Epoch 1, this is any amount over the minimum, currently set at 10 GLM. From Epoch 2 this will change."
+        "tooltipText": "Effective balance is the part of your locked GLM that is currently earning rewards. For example, GLM locked during allocation only earn rewards in the next epoch, so they are not immediately effective."
       },
       "boxPersonalAllocation": {
         "personalAllocation": "Personal allocation",
