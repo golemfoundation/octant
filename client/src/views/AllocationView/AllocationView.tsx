@@ -209,7 +209,10 @@ const AllocationView = (): ReactElement => {
               onUnlock={() => setIsLocked(prev => !prev)}
             />
           )}
-          {areAllocationsAvailableOrAlreadyDone ? (
+          {!areAllocationsAvailableOrAlreadyDone && individualReward?.isZero() && (
+            <AllocationEmptyState />
+          )}
+          {areAllocationsAvailableOrAlreadyDone && (
             <div className={cx(styles.box, styles.boxes)}>
               {allocationsWithRewards!.map((allocation, index) => (
                 <AllocationItem
@@ -226,8 +229,6 @@ const AllocationView = (): ReactElement => {
                 />
               ))}
             </div>
-          ) : (
-            <AllocationEmptyState />
           )}
           <ModalAllocationValuesEdit
             isLimitVisible
