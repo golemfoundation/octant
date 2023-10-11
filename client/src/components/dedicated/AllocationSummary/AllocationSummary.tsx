@@ -37,7 +37,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
   } = useAllocateSimulate(userNonce!);
 
   useEffect(() => {
-    if (!userNonce) {
+    if (userNonce === undefined) {
       return;
     }
     mutateAsync(allocationValues);
