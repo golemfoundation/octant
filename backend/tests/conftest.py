@@ -54,6 +54,28 @@ MOCK_IS_CONTRACT = Mock()
 MOCK_MATCHED_REWARDS = MagicMock(spec=calculate_matched_rewards)
 
 
+def pytest_addoption(parser):
+    parser.addoption(
+        "--runapi",
+        action="store_true",
+        default=False,
+        help="run api tests; they require chain and indexer running",
+    )
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "api: mark test as API test")
+
+
+def pytest_collection_modifyitems(config, items):
+    if config.getoption("--runapi"):
+        return
+    skip_api = pytest.mark.skip(reason="need --runapi option to run")
+    for item in items:
+        if "api" in item.keywords:
+            item.add_marker(skip_api)
+
+
 @pytest.fixture(scope="function")
 def app():
     """An application for the tests."""
