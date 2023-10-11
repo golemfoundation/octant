@@ -127,7 +127,7 @@ const AllocationView = (): ReactElement => {
   }, [currentEpoch, allocations, userAllocations?.elements.length, rewardsForProposals]);
 
   const onAllocate = () => {
-    if (!userNonce) {
+    if (userNonce === undefined) {
       return;
     }
     allocateEvent.emit(allocationValues);
