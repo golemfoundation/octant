@@ -2,10 +2,19 @@ import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 
-import { apiGetMatchedProposalRewards, Response } from 'api/calls/matchedProposalRewards';
+import {
+  apiGetEstimatedMatchedProposalRewards,
+  Response as EstimatedMatchedProposalRewardsResponse,
+} from 'api/calls/estimatedMatchedProposalRewards';
+import {
+  apiGetMatchedProposalRewards,
+  Response as MatchedProposalRewardsResponse,
+} from 'api/calls/matchedProposalRewards';
 import { QUERY_KEYS } from 'api/queryKeys';
 
 import useCurrentEpoch from './useCurrentEpoch';
+
+type Response = MatchedProposalRewardsResponse | EstimatedMatchedProposalRewardsResponse;
 
 export type ProposalRewards = {
   address: string;
@@ -22,12 +31,11 @@ export default function useMatchedProposalRewards(
   const { data: currentEpoch } = useCurrentEpoch();
 
   return useQuery(
-    epoch || currentEpoch
-      ? QUERY_KEYS.matchedProposalRewards(epoch ? epoch - 1 : currentEpoch! - 1)
-      : [''],
-    () => apiGetMatchedProposalRewards(epoch ? epoch - 1 : currentEpoch! - 1),
+    QUERY_KEYS.matchedProposalRewards(epoch ? epoch - 1 : currentEpoch! - 1),
+    () =>
+      epoch ? apiGetMatchedProposalRewards(epoch - 1) : apiGetEstimatedMatchedProposalRewards(),
     {
-      enabled: epoch !== undefined || (!!currentEpoch && currentEpoch > 1),
+      enabled: (epoch !== undefined && epoch > 1) || (!!currentEpoch && currentEpoch > 1),
       select: response => {
         const totalDonations = response?.rewards.reduce(
           (acc, { allocated, matched }) => acc.add(parseUnits(allocated)).add(parseUnits(matched)),

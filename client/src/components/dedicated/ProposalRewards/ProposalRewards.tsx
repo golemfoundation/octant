@@ -16,20 +16,22 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
   address,
   canFoundedAtHide = true,
   className,
-  isArchivedProposal,
   MiddleElement,
+  epoch,
 }) => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.proposalRewards',
   });
 
-  const { data: proposalRewardsThreshold } = useProposalRewardsThreshold();
-  const { data: matchedProposalRewards } = useMatchedProposalRewards();
+  const isArchivedProposal = epoch !== undefined;
+
+  const { data: proposalRewardsThreshold } = useProposalRewardsThreshold(epoch);
+  const { data: matchedProposalRewards } = useMatchedProposalRewards(epoch);
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ address: proposalAddress }) => address === proposalAddress,
   );
 
-  const isDonationAboveThreshold = useIsDonationAboveThreshold(address);
+  const isDonationAboveThreshold = useIsDonationAboveThreshold(address, epoch);
 
   const isFundedAtHidden =
     (proposalRewardsThreshold && proposalRewardsThreshold.isZero()) ||
