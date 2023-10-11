@@ -95,22 +95,26 @@
     align-items: center;
     justify-content: space-between;
     align-self: stretch;
+    margin-bottom: 1.6rem;
   }
 
   .buttonAddToAllocate {
     &Primary {
+      margin-left: 3.2rem;
+
       @media #{$desktop-up} {
-        visibility: hidden;
+        display: none;
+        margin-left: 2.6rem;
 
         &.isEpoch1 {
-          visibility: initial;
+          display: initial;
         }
       }
     }
     &Secondary {
-      visibility: hidden;
+      display: none;
       @media #{$desktop-up} {
-        visibility: initial;
+        display: initial;
       }
     }
   }
@@ -119,7 +123,6 @@
     width: 6.4rem;
     height: 6.4rem;
     border-radius: 50%;
-    margin-bottom: 1.6rem;
 
     @media #{$tablet-down} {
       width: 4.8rem;
@@ -128,9 +131,13 @@
   }
 
   .proposalRewards {
-    margin: 3.2rem 0 5rem;
+    margin: 6.4rem 0 5rem;
     border-bottom: 0.2rem solid $color-octant-grey4;
-    padding-bottom: 2.4rem;
+    padding-bottom: 1.2rem;
+
+    @media #{$tablet-down} {
+      margin: 3.4rem 0 5rem;
+    }
   }
 
   .name {
@@ -151,26 +158,11 @@
 
 .buttonWebsite {
   text-align: left;
-  align-self: stretch;
   justify-content: flex-start;
-  border-bottom: 0.1rem solid $color-octant-grey4;
-  padding: 0.5rem 0 6.4rem;
-
-  @media #{$tablet-down} {
-    padding-bottom: 3.4rem;
-  }
 }
 
 .actionsWrapper {
   display: flex;
-
-  .tooltip {
-    margin-right: 3.2rem;
-
-    @media #{$desktop-up} {
-      margin-right: 2.6rem;
-    }
-  }
 
   .shareIcon {
     border-radius: $border-radius-10;

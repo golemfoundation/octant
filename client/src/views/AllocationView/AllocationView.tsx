@@ -167,8 +167,8 @@ const AllocationView = (): ReactElement => {
   };
 
   const isLoading =
-    (!isConnected && isFetchingUserNonce) ||
     allocationValues === undefined ||
+    (isConnected && isFetchingUserNonce) ||
     (isConnected && isFetchingUserAllocation);
   const areButtonsDisabled =
     isLoading || !isConnected || !isDecisionWindowOpen || !!individualReward?.isZero();
@@ -226,8 +226,11 @@ const AllocationView = (): ReactElement => {
               onUnlock={() => setIsLocked(prev => !prev)}
             />
           )}
-          {areAllocationsAvailableOrAlreadyDone ? (
-            <div className={styles.boxes}>
+          {!areAllocationsAvailableOrAlreadyDone && individualReward?.isZero() && (
+            <AllocationEmptyState />
+          )}
+          {areAllocationsAvailableOrAlreadyDone && (
+            <div className={cx(styles.box, styles.boxes)}>
               {allocationsWithRewards!.map((allocation, index) => (
                 <AllocationItem
                   // eslint-disable-next-line react/no-array-index-key
@@ -243,8 +246,6 @@ const AllocationView = (): ReactElement => {
                 />
               ))}
             </div>
-          ) : (
-            <AllocationEmptyState />
           )}
           <ModalAllocationValuesEdit
             isLimitVisible

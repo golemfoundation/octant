@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import TipTile from 'components/dedicated/TipTile/TipTile';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
@@ -15,6 +16,7 @@ import AllocationTipTilesProps from './types';
 
 const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'views.allocation.tip' });
+  const { isDesktop } = useMediaQuery();
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: depositsValue, isFetching: isFetchingDepositsValue } = useDepositValue();
@@ -70,7 +72,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
         infoLabel={i18n.t('common.gettingStarted')}
         isOpen={isLockGlmTipVisible}
         onClose={() => setWasLockGLMAlreadyClosed(true)}
-        text={t(isEpoch1 ? 'lockGlm.text.epoch1' : 'lockGlm.text.standard')}
+        text={t('lockGlm.text')}
         title={t('lockGlm.title')}
       />
       <TipTile
@@ -78,7 +80,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
         infoLabel={i18n.t('common.octantTips')}
         isOpen={isRewardsTipVisible}
         onClose={() => setWasRewardsAlreadyClosed(true)}
-        text={t('rewards.text')}
+        text={isDesktop ? t('rewards.text.desktop') : t('rewards.text.mobile')}
         title={t('rewards.title')}
       />
       <TipTile

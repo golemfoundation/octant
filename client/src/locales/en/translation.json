@@ -81,7 +81,7 @@
         "editLockedGLM": "Edit Locked GLM",
         "effective": "Effective",
         "lockedBalance": "Locked balance",
-        "tooltipText": "Effective balance is the part of your locked GLM that is earning rewards. In Epoch 1, this is any amount over the minimum, currently set at 10 GLM. From Epoch 2 this will change."
+        "tooltipText": "Effective balance is the part of your locked GLM that is currently earning rewards. For example, GLM locked during allocation only earn rewards in the next epoch, so they are not immediately effective."
       },
       "boxPersonalAllocation": {
         "personalAllocation": "Personal allocation",
@@ -112,6 +112,7 @@
       },
       "donors": {
         "donationsNotEnabled": "Donations are not enabled in this epoch",
+        "noDonationsYet": "No donations yet",
         "viewAll": "View all"
       },
       "donorsHeader": {
@@ -260,14 +261,14 @@
       "tip": {
         "lockGlm": {
           "title": "Lock GLM to earn",
-          "text": {
-            "standard": "Lock GLM tokens for at least one full epoch to earn ETH rewards you can donate or withdraw",
-            "epoch1": "Lock GLM tokens for as long as\u00a0you can to earn ETH rewards you can donate or withdraw"
-          }
+          "text": "Lock GLM tokens for as long as possible to earn ETH rewards you can donate or withdraw"
         },
         "rewards": {
-          "title": "You have rewards!",
-          "text": "During allocation period you can donate rewards to projects and allocate them to yourself"
+          "title": "Time to allocate",
+          "text": {
+            "desktop": "Add projects and use the slider to divide rewards between yourself and your chosen projects",
+            "mobile": "Add projects and use the slider to divide rewards between yourself & your chosen projects"
+          }
         },
         "changedYourMind": {
           "title": "Changed your mind?",

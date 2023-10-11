@@ -4,13 +4,11 @@
 }
 
 .navigationWrapper {
+  @include layoutFloatingElementWidth();
   display: flex;
   justify-content: center;
   position: fixed;
   bottom: $layoutMarginHorizontal;
-  left: 0;
-  width: 100%;
-  padding: 0 $layoutMarginHorizontal;
   z-index: $z-index-4;
   pointer-events: none;
 }

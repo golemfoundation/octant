@@ -27,7 +27,7 @@ const Donors: FC<DonorsProps> = ({ className, dataTest = 'Donors', proposalAddre
   return (
     <div className={cx(styles.root, className)} data-test={dataTest}>
       {isEpoch1 && (
-        <div className={styles.donationsNotEnabled} data-test={`${dataTest}__donationsNotEnabled`}>
+        <div className={styles.noDataInformation} data-test={`${dataTest}__donationsNotEnabled`}>
           {t('donationsNotEnabled')}
         </div>
       )}
@@ -38,7 +38,15 @@ const Donors: FC<DonorsProps> = ({ className, dataTest = 'Donors', proposalAddre
             dataTest={`${dataTest}__DonorsHeader`}
             proposalAddress={proposalAddress}
           />
-          <DonorsList dataTest={`${dataTest}__DonorsList`} proposalAddress={proposalAddress} />
+          <div className={styles.body}>
+            {proposalDonors && proposalDonors.length > 0 ? (
+              <DonorsList dataTest={`${dataTest}__DonorsList`} proposalAddress={proposalAddress} />
+            ) : (
+              <div className={cx(styles.noDataInformation, styles.noDonationsYet)}>
+                {t('noDonationsYet')}
+              </div>
+            )}
+          </div>
           <Button
             className={cx(styles.buttonDonors, isListExpandable && styles.isListExpandable)}
             dataTest={`${dataTest}__Button`}
