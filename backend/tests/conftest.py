@@ -76,9 +76,22 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker(skip_api)
 
 
+@pytest.fixture()
+def client():
+    """An application for the integration / API tests."""
+    _app = create_app(TestConfig)
+
+    with _app.test_client() as client:
+        with _app.app_context():
+            db.create_all()
+            yield client
+            db.session.close()
+            db.drop_all()
+
+
 @pytest.fixture(scope="function")
 def app():
-    """An application for the tests."""
+    """An application for the unit tests."""
     _app = create_app(TestConfig)
 
     with _app.app_context():
