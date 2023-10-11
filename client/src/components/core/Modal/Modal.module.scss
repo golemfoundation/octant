@@ -33,6 +33,7 @@ $desktop-width: 47.2rem;
         .header {
           font-size: $font-size-20;
           margin: 2.4rem $modalVariantSmallPaddingDesktop !important;
+          line-height: initial;
         }
       }
     }
