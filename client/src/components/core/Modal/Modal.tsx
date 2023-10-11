@@ -66,13 +66,31 @@ const Modal: FC<ModalProps> = ({
     onClosePanel();
   };
 
+  const _onModalClosed = () => {
+    if (onModalClosed) {
+      onModalClosed();
+    }
+    /**
+     * Here, not in the useEffect, since it needs to be done after modal disappear
+     * to remove the move of the body when the scrollbar reappears.
+     */
+    document.body.style.overflowY = 'scroll';
+    document.body.style.paddingRight = `0`;
+  };
+
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
+    if (!isOpen) {
       return;
     }
-
-    document.body.style.overflow = 'scroll';
+    /**
+     * Overflow hidden is added to prevent scrolling of the body while modal is open.
+     * Scrollbar width is added as padding to offset modal's disappearance.
+     */
+    const documentWidth = document.documentElement.clientWidth;
+    const windowWidth = window.innerWidth;
+    const scrollBarWidth = windowWidth - documentWidth; // scrollbar width
+    document.body.style.paddingRight = `${scrollBarWidth}px`;
+    document.body.style.overflowY = 'hidden';
   }, [isOpen]);
 
   return (
@@ -104,10 +122,10 @@ const Modal: FC<ModalProps> = ({
           exit="showHide"
           initial="showHide"
           onAnimationComplete={definition => {
-            if (definition !== 'showHide' || !onModalClosed) {
+            if (definition !== 'showHide' || !_onModalClosed) {
               return;
             }
-            onModalClosed();
+            _onModalClosed();
           }}
           onClick={onClick}
           onTouchMove={onTouchMove}
