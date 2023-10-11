@@ -12,8 +12,7 @@ $bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerHeight);
 
 .root,
 .headerWrapper {
-  min-width: 39rem;
-  max-width: 70rem + $layoutMarginHorizontal * 2;
+  @include layoutFloatingElementWidth();
   margin: 0 auto;
 }
 

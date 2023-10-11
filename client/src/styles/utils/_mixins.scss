@@ -5,7 +5,7 @@
   left: 0;
   height: $height;
   width: $width;
-  z-index: $z-index-4;
+  z-index: $z-index-5;
   cursor: pointer;
 
   // This class needs to be aligned with whatever triggers the overflow to open, e.g. Modal.tsx.
@@ -80,4 +80,10 @@
    * This mixin solves this problem.
    */
   font-variant-ligatures: no-contextual;
+}
+
+@mixin layoutFloatingElementWidth() {
+  width: 100%;
+  min-width: 39rem;
+  max-width: 70rem + $layoutMarginHorizontal * 2;
 }
