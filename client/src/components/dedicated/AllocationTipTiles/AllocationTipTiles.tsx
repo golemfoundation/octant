@@ -70,7 +70,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
         infoLabel={i18n.t('common.gettingStarted')}
         isOpen={isLockGlmTipVisible}
         onClose={() => setWasLockGLMAlreadyClosed(true)}
-        text={t(isEpoch1 ? 'lockGlm.text.epoch1' : 'lockGlm.text.standard')}
+        text={t('lockGlm.text')}
         title={t('lockGlm.title')}
       />
       <TipTile
