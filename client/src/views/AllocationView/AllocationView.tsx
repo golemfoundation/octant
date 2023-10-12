@@ -170,11 +170,16 @@ const AllocationView = (): ReactElement => {
     allocationValues === undefined ||
     (isConnected && isFetchingUserNonce) ||
     (isConnected && isFetchingUserAllocation);
-  const areButtonsDisabled =
-    isLoading || !isConnected || !isDecisionWindowOpen || !!individualReward?.isZero();
   const areAllocationsAvailableOrAlreadyDone =
     (allocationValues !== undefined && !isEmpty(allocations)) ||
     !!userAllocations?.hasUserAlreadyDoneAllocation;
+  const areButtonsDisabled =
+    isLoading ||
+    !isConnected ||
+    !isDecisionWindowOpen ||
+    isLocked ||
+    (!areAllocationsAvailableOrAlreadyDone && !rewardsForProposals.isZero()) ||
+    !!individualReward?.isZero();
 
   const allocationsWithRewards = getAllocationsWithRewards({
     allocationValues,
@@ -201,9 +206,7 @@ const AllocationView = (): ReactElement => {
       dataTest="AllocationView"
       isLoading={isLoading}
       navigationBottomSuffix={
-        !isEpoch1 &&
-        areAllocationsAvailableOrAlreadyDone &&
-        !isLocked && (
+        !isEpoch1 && (
           <AllocationNavigation
             areButtonsDisabled={areButtonsDisabled}
             currentView={currentView}

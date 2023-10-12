@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import React, { FC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -23,6 +24,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
   }));
 
   const allocationValuesPositive = allocationValues.filter(({ value }) => !value.isZero());
+  const areAllocationValuesPositive = allocationValuesPositive?.length > 0;
 
   const sections: SectionProps[] = [];
   const personalAllocation = individualReward?.sub(rewardsForProposals);
@@ -34,7 +36,9 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
   } = useAllocateLeverage();
 
   useEffect(() => {
-    mutateAsync(allocationValues);
+    if (areAllocationValuesPositive) {
+      mutateAsync(allocationValues);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -49,7 +53,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
     });
   }
 
-  if (allocationValuesPositive.length > 0) {
+  if (areAllocationValuesPositive) {
     sections.push(
       {
         doubleValueProps: {
@@ -76,14 +80,20 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
   }
 
   return (
-    <BoxRounded className={styles.root} hasPadding={false} isVertical>
+    <BoxRounded
+      className={cx(styles.root, areAllocationValuesPositive && styles.areAllocationValuesPositive)}
+      hasPadding={false}
+      isVertical
+    >
       <Header className={styles.header} text={t('confirmYourAllocations')} />
       <Sections sections={sections} variant="small" />
-      <div className={styles.projects}>
-        {allocationValuesPositive?.map(({ address, value }) => (
-          <ProjectAllocationDetailRow key={address} address={address} amount={value} />
-        ))}
-      </div>
+      {areAllocationValuesPositive && (
+        <div className={styles.projects}>
+          {allocationValuesPositive?.map(({ address, value }) => (
+            <ProjectAllocationDetailRow key={address} address={address} amount={value} />
+          ))}
+        </div>
+      )}
     </BoxRounded>
   );
 };
