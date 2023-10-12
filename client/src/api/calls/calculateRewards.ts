@@ -2,7 +2,7 @@ import env from 'env';
 import apiService from 'services/apiService';
 
 export type PostCalculateRewardsResponse = {
-  budget: number;
+  budget: string;
 };
 
 export function apiPostCalculateRewards(
