@@ -20,19 +20,9 @@ def before(patch_is_contract):
 
 
 @pytest.fixture
-def alice(user_accounts):
-    return user_accounts[0]
-
-
-@pytest.fixture
 def consenting_alice(app, alice):
     database.user_consents.add_consent(alice.address, "127.0.0.1")
     return alice
-
-
-@pytest.fixture
-def bob(user_accounts):
-    return user_accounts[1]
 
 
 @pytest.fixture
