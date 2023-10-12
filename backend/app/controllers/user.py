@@ -4,6 +4,7 @@ from app.core.user.tos import (
     has_user_agreed_to_terms_of_service,
     add_user_terms_of_service_consent,
 )
+from app.controllers import allocations as allocations_controller
 from app.crypto.eth_sign import patron_mode as patron_mode_crypto
 from app.exceptions import RewardsException, InvalidSignature
 from app.extensions import db
@@ -50,5 +51,8 @@ def toggle_patron_mode(user_address: str, signature: str) -> bool:
         raise InvalidSignature(user_address, signature)
 
     patron_mode_status = patron_mode_core.toggle_patron_mode(user_address)
+
+    allocations_controller.revoke_previous_user_allocation(user_address)
+
     db.session.commit()
     return patron_mode_status
