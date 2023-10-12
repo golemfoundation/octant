@@ -1,6 +1,10 @@
 .root {
   padding: 0 5.6rem;
 
+  &:not(.areAllocationValuesPositive) {
+    padding-bottom: 4rem;
+  }
+
   @media #{$tablet-down} {
     padding: 0 2.4rem;
   }
