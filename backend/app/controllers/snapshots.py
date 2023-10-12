@@ -53,7 +53,7 @@ def get_finalized_snapshot_status() -> FinalizedSnapshotStatus:
     try:
         is_open = epochs.is_decision_window_open()
     except Exception:
-        is_open = False;
+        is_open = False
     try:
         return finalized_snapshot_status(current_epoch, last_snapshot_epoch, is_open)
     except exceptions.SnapshotTooEarly:

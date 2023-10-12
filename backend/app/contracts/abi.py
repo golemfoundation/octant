@@ -8,6 +8,13 @@ EPOCHS = [
     },
     {
         "inputs": [],
+        "name": "getCurrentEpochEnd",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "view",
+        "type": "function",
+    },
+    {
+        "inputs": [],
         "name": "getPendingEpoch",
         "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
         "stateMutability": "view",
@@ -16,6 +23,20 @@ EPOCHS = [
     {
         "inputs": [],
         "name": "getFinalizedEpoch",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "view",
+        "type": "function",
+    },
+    {
+        "inputs": [],
+        "name": "getEpochDuration",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "view",
+        "type": "function",
+    },
+    {
+        "inputs": [],
+        "name": "getDecisionWindow",
         "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
         "stateMutability": "view",
         "type": "function",
@@ -47,6 +68,20 @@ EPOCHS = [
         "stateMutability": "view",
         "type": "function",
     },
+    {
+        "inputs": [],
+        "name": "isStarted",
+        "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
+        "stateMutability": "view",
+        "type": "function",
+    },
+    {
+        "inputs": [],
+        "name": "start",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "view",
+        "type": "function",
+    },
 ]
 
 ERC20 = [
@@ -70,6 +105,16 @@ ERC20 = [
             {"internalType": "uint256", "name": "amount", "type": "uint256"},
         ],
         "name": "transfer",
+        "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
+        "stateMutability": "nonpayable",
+        "type": "function",
+    },
+    {
+        "inputs": [
+            {"internalType": "address", "name": "usr", "type": "address"},
+            {"internalType": "uint256", "name": "wad", "type": "uint256"},
+        ],
+        "name": "approve",
         "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
         "stateMutability": "nonpayable",
         "type": "function",
@@ -124,4 +169,14 @@ GNOSIS_SAFE = [
         "stateMutability": "view",
         "type": "function",
     },
+]
+
+DEPOSITS = [
+    {
+        "inputs": [{"internalType": "uint256", "name": "amount", "type": "uint256"}],
+        "name": "lock",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function",
+    }
 ]

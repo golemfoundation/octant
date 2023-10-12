@@ -19,7 +19,7 @@ from app.core.allocations import AllocationRequest, Allocation
 from app.core.rewards.rewards import calculate_matched_rewards
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.extensions import db, w3
-from app.settings import TestConfig
+from app.settings import TestConfig, DevConfig
 
 # Consts
 MNEMONIC = "test test test test test test test test test test test junk"
@@ -79,11 +79,12 @@ def pytest_collection_modifyitems(config, items):
 @pytest.fixture()
 def client():
     """An application for the integration / API tests."""
-    _app = create_app(TestConfig)
+    _app = create_app(DevConfig)
 
     with _app.test_client() as client:
         with _app.app_context():
             db.create_all()
+            client.app = _app
             yield client
             db.session.close()
             db.drop_all()
