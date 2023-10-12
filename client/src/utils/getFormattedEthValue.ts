@@ -13,7 +13,7 @@ export default function getFormattedEthValue(
   value: BigNumber,
   isUsingHairSpace = true,
 ): FormattedCryptoValue {
-  let returnObject: { suffix: string; value: string };
+  let returnObject: Omit<FormattedCryptoValue, 'fullString'>;
 
   const isInGweiRange = value.lt(GWEI_5);
 
