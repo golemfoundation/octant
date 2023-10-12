@@ -416,7 +416,9 @@ E2E app deploy:
     NETWORK_NAME: "local"
     NETWORK_ID: "1337"
     SNAPSHOTTER_ENABLED: "true"
-    SCHEDULER_ENABLED: "false"
+    SCHEDULER_ENABLED: "true"
+    GLM_CLAIM_ENABLED: "true"
+    VAULT_CONFIRM_WITHDRAWALS_ENABLED: "true"
 
 MR app deploy:
   extends:
@@ -430,7 +432,9 @@ MR app deploy:
     NETWORK_NAME: "local"
     NETWORK_ID: "1337"
     SNAPSHOTTER_ENABLED: "true"
-    SCHEDULER_ENABLED: "false"
+    SCHEDULER_ENABLED: "true"
+    GLM_CLAIM_ENABLED: "true"
+    VAULT_CONFIRM_WITHDRAWALS_ENABLED: "true"
 
 Run UAT App:
   stage: deploy

@@ -27,12 +27,29 @@
 .label {
   display: flex;
   align-items: center;
-  font-size: $font-size-14;
   color: $color-octant-dark;
   margin-right: 1.6rem;
+
+  &.variant--{
+    &small {
+      font-size: $font-size-14;
+
+      @media #{$tablet-down} {
+        font-size: $font-size-12;
+      }
+    }
+    &:not(&small) {
+      font-size: $font-size-14;
+    }
+  }
 }
 
 .tooltip {
   margin-left: 1.2rem;
   cursor: pointer;
+}
+
+.childrenRight {
+  font-size: $font-size-14;
+  font-weight: $font-weight-semibold;
 }
