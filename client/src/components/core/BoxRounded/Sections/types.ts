@@ -27,7 +27,7 @@ export interface SectionProps {
   onClick?: () => void;
   onTooltipClick?: () => void;
   tooltipProps?: {
-    dataTest: TooltipProps['dataTest'];
+    dataTest?: TooltipProps['dataTest'];
     position: TooltipProps['position'];
     text: TooltipProps['text'];
   };
