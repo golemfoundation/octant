@@ -8,7 +8,7 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Sections from 'components/core/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import Button from 'components/core/Button/Button';
-import RewardsBox from 'components/dedicated/RewardsBox/RewardsBox';
+import WalletPersonalAllocation from 'components/dedicated/WalletPersonalAllocation/WalletPersonalAllocation';
 import useAvailableFundsEth from 'hooks/helpers/useAvailableFundsEth';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
@@ -77,7 +77,7 @@ const Wallet: FC<WalletProps> = ({ onDisconnect }) => {
 
   return (
     <Fragment>
-      <RewardsBox className={cx(styles.element, styles.box)} isGrey />
+      <WalletPersonalAllocation className={cx(styles.element, styles.box)} isGrey />
       <BoxRounded
         alignment="left"
         className={cx(styles.element, styles.box)}
