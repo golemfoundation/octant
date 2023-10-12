@@ -139,6 +139,13 @@
   }
 }
 
+.loader {
+  position: absolute;
+  right: 7rem;
+  height: 1.6rem;
+  width: 1.6rem;
+}
+
 .error {
   position: absolute;
   top: 100%;
@@ -148,11 +155,4 @@
   color: $color-octant-orange;
   font-weight: $font-weight-bold;
   margin-top: 0.5rem;
-}
-
-.loader {
-  position: absolute;
-  right: 7rem;
-  height: 1.6rem;
-  width: 1.6rem;
 }
