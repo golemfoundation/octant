@@ -7,12 +7,17 @@ import Sections from 'components/core/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
 
-import styles from './RewardsBox.module.scss';
-import RewardsBoxProps from './types';
+import WalletPersonalAllocationProps from './types';
+import styles from './WalletPersonalAllocation.module.scss';
 
-const RewardsBox: FC<RewardsBoxProps> = ({ buttonProps, className, isGrey, isDisabled }) => {
+const WalletPersonalAllocation: FC<WalletPersonalAllocationProps> = ({
+  buttonProps,
+  className,
+  isGrey,
+  isDisabled,
+}) => {
   const { i18n, t } = useTranslation('translation', {
-    keyPrefix: 'components.dedicated.rewardsBox',
+    keyPrefix: 'components.dedicated.walletPersonalAllocation',
   });
   const { data: withdrawableUserEth, isFetching: isFetchingWithdrawableUserEth } =
     useWithdrawableUserEth();
@@ -33,15 +38,15 @@ const RewardsBox: FC<RewardsBoxProps> = ({ buttonProps, className, isGrey, isDis
       alignment="left"
       buttonProps={buttonProps}
       className={cx(styles.root, className, isDisabled && styles.isDisabled)}
-      dataTest="RewardsBox__BoxRounded"
+      dataTest="WalletPersonalAllocation__BoxRounded"
       hasSections
       isGrey={isGrey}
       isVertical
-      title={t('rewards')}
+      title={t('label')}
     >
       <Sections sections={sections} />
     </BoxRounded>
   );
 };
 
-export default RewardsBox;
+export default WalletPersonalAllocation;

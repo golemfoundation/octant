@@ -173,8 +173,8 @@
       "proposalsList": {
         "epochArchive": "Epoch {{epoch}} Archive"
       },
-      "rewardsBox": {
-        "rewards": "Rewards"
+      "walletPersonalAllocation": {
+        "label": "Personal allocation"
       },
       "timeCounter": {
         "days": "Days",
