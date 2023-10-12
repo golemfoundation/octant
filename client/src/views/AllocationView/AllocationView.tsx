@@ -226,7 +226,7 @@ const AllocationView = (): ReactElement => {
               onUnlock={() => setIsLocked(prev => !prev)}
             />
           )}
-          {!areAllocationsAvailableOrAlreadyDone && individualReward?.isZero() && (
+          {(!areAllocationsAvailableOrAlreadyDone || individualReward?.isZero()) && (
             <AllocationEmptyState />
           )}
           {areAllocationsAvailableOrAlreadyDone && (

@@ -253,7 +253,7 @@ const App = (): ReactElement => {
      * This hook adds userAllocations to the store.
      * This needs to be done after store is populated with values from localStorage.
      */
-    if (!userAllocations || isAllocationsInitialized) {
+    if (!userAllocations || !isAllocationsInitialized) {
       return;
     }
     const userAllocationsAddresses = userAllocations.elements.map(
