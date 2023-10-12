@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import React, { FC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -7,9 +6,8 @@ import Sections from 'components/core/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import Header from 'components/core/Header/Header';
 import ProjectAllocationDetailRow from 'components/dedicated/ProjectAllocationDetailRow/ProjectAllocationDetailRow';
-import useAllocateSimulate from 'hooks/mutations/useAllocateSimulate';
+import useAllocateLeverage from 'hooks/mutations/useAllocateLeverage';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
-import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import useAllocationsStore from 'store/allocations/store';
 
 import styles from './AllocationSummary.module.scss';
@@ -20,7 +18,6 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
     keyPrefix: 'components.dedicated.allocationSummary',
   });
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
-  const { data: userNonce, isLoading: isLoadingUserNonce } = useUserAllocationNonce();
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
   }));
@@ -31,18 +28,15 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
   const personalAllocation = individualReward?.sub(rewardsForProposals);
 
   const {
-    data: allocateSimulate,
+    data: allocateLeverage,
     mutateAsync,
-    isLoading: isLoadingAllocateSimulate,
-  } = useAllocateSimulate(userNonce!);
+    isLoading: isLoadingAllocateLeverage,
+  } = useAllocateLeverage();
 
   useEffect(() => {
-    if (userNonce === undefined) {
-      return;
-    }
     mutateAsync(allocationValues);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userNonce]);
+  }, []);
 
   if (!personalAllocation?.isZero()) {
     sections.push({
@@ -65,15 +59,18 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
         label: t('allocationProjects', { projectsNumber: allocationValuesPositive.length }),
       },
       {
-        doubleValueProps: {
-          cryptoCurrency: 'ethereum',
-          isFetching: isLoadingAllocateSimulate || isLoadingUserNonce,
-          valueCrypto: allocateSimulate?.rewards.reduce(
-            (acc, curr) => acc.add(curr.matched),
-            BigNumber.from(0),
-          ),
+        childrenRight: isLoadingAllocateLeverage ? (
+          <div className={styles.loader} />
+        ) : (
+          <div className={styles.text}>
+            {allocateLeverage ? parseInt(allocateLeverage.leverage, 10) : 0}x
+          </div>
+        ),
+        label: t('estimatedLeverage'),
+        tooltipProps: {
+          position: 'bottom-right',
+          text: <span>{t('tooltip')}</span>,
         },
-        label: t('matchFundingEstimate'),
       },
     );
   }

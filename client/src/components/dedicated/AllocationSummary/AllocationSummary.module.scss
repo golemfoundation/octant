@@ -18,27 +18,10 @@
   }
 }
 
-.icon {
-  transition: $transition-time-2 all;
-  margin-left: 1rem;
-}
-
-.detailsWrapper {
-  overflow: hidden;
-  width: 100%;
-
-  .details {
-    padding: 1.8rem 0 2.6rem;
-    border-bottom: 0.1rem solid $color-octant-grey4;
-
-    @media #{$desktop-up} {
-      padding: 1.6rem 0;
-    }
-  }
-}
-
-.donations {
-  cursor: pointer;
+.loader {
+  @include skeleton();
+  height: 1.6rem;
+  width: 10rem;
 }
 
 .projects {

@@ -66,10 +66,11 @@
         "withdraw": "Withdraw {{percentWithdraw}}%"
       },
       "allocationSummary": {
-        "matchFundingEstimate": "Match funding (estimate)",
+        "estimatedLeverage": "Est. leverage",
         "confirmYourAllocations": "Confirm your allocations",
         "confirmAllocations": "Confirm allocations",
-        "allocationProjects": "Projects ({{projectsNumber}})"
+        "allocationProjects": "Projects ({{projectsNumber}})",
+        "tooltip": "Leverage shows the multiple of your donation the projects you chose will receive in matched funding. Note that it may change wildly during an epoch, and be very different to your final matched funding."
       },
       "allocationInputsRewardsAvailable": {
         "resetAllocations": "Reset allocations to manually edit this project",

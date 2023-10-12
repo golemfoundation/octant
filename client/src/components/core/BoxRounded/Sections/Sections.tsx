@@ -32,7 +32,6 @@ const Section: FC<SectionProps> = ({
       className={cx(
         styles.root,
         className,
-        styles[`variant--${variant}`],
         hasBottomDivider && styles.hasBottomDivider,
         isDisabled && styles.isDisabled,
       )}
@@ -40,7 +39,7 @@ const Section: FC<SectionProps> = ({
       onClick={onClick}
     >
       {(label || icon) && (
-        <div className={cx(styles.label, labelClassName)}>
+        <div className={cx(styles.label, styles[`variant--${variant}`], labelClassName)}>
           {icon ? <Svg img={icon} size={4} /> : label}
           {labelSuffix && labelSuffix}
           {tooltipProps && (
@@ -51,7 +50,7 @@ const Section: FC<SectionProps> = ({
         </div>
       )}
       {childrenLeft}
-      {childrenRight}
+      <div className={styles.childrenRight}>{childrenRight}</div>
       {!isEmpty(doubleValueProps) && (
         <DoubleValue
           textAlignment="right"
