@@ -41,7 +41,7 @@ def add_allocations_to_db(
         user = database.user.add_user(user_address)
 
     if delete_existing_user_epoch_allocations:
-        database.allocations.soft_delete_all_by_epoch_and_user_id(epoch, user.id)
+        revoke_previous_allocation(user.address, epoch)
 
     database.allocations.add_all(epoch, user.id, nonce, allocations)
 
@@ -104,6 +104,14 @@ def verify_allocations(epoch: int, user_address: str, allocations: List[Allocati
 
     if proposals_sum > user_budget:
         raise exceptions.RewardsBudgetExceeded
+
+
+def revoke_previous_allocation(user_address: str, epoch: int):
+    user = database.user.get_by_address(user_address)
+    if user is None:
+        raise exceptions.UserNotFound
+
+    database.allocations.soft_delete_all_by_epoch_and_user_id(epoch, user.id)
 
 
 def calculate_user_allocations_leverage(

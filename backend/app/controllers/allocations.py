@@ -11,6 +11,7 @@ from app.core.allocations import (
     deserialize_payload,
     verify_allocations,
     add_allocations_to_db,
+    revoke_previous_allocation,
     store_allocations_signature,
     next_allocation_nonce,
     calculate_user_allocations_leverage,
@@ -105,6 +106,11 @@ def get_sum_by_epoch(epoch: int | None = None) -> int:
 def get_allocation_nonce(user_address: str) -> int:
     user = database.user.get_by_address(user_address)
     return next_allocation_nonce(user)
+
+
+def revoke_previous_user_allocation(user_address: str):
+    pending_epoch = epochs.get_pending_epoch()
+    revoke_previous_allocation(user_address, pending_epoch)
 
 
 def _make_allocation(
