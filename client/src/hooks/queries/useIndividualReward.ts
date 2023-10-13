@@ -15,9 +15,11 @@ export default function useIndividualReward(
   const { address } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
 
+  const epochToUse = epoch || currentEpoch! - 1;
+
   return useQuery(
-    QUERY_KEYS.individualReward,
-    () => apiGetIndividualRewards(epoch || currentEpoch! - 1, address!),
+    QUERY_KEYS.individualReward(epochToUse),
+    () => apiGetIndividualRewards(epochToUse, address!),
     {
       enabled: !!currentEpoch && currentEpoch > 1 && !!address,
       select: response => parseUnits(response.budget, 'wei'),

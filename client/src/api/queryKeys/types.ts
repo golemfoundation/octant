@@ -6,6 +6,7 @@ export type Root = {
   epochTimestampHappenedIn: 'epochTimestampHappenedIn';
   epochesEndTime: 'epochesEndTime';
   estimatedEffectiveDeposit: 'estimatedEffectiveDeposit';
+  individualReward: 'individualReward';
   matchedProposalRewards: 'matchedProposalRewards';
   proposalDonors: 'proposalDonors';
   proposalRewardsThreshold: 'proposalRewardsThreshold';
@@ -32,7 +33,7 @@ export type QueryKeys = {
   glmClaimCheck: ['glmClaimCheck'];
   history: ['history'];
   individualProposalRewards: ['individualProposalRewards'];
-  individualReward: ['individualReward'];
+  individualReward: (epochNumber: number) => [Root['individualReward'], string];
   isDecisionWindowOpen: ['isDecisionWindowOpen'];
   largestLockedAmount: ['largestLockedAmount'];
   lockedSummaryLatest: ['lockedSummaryLatest'];

@@ -8,13 +8,13 @@ import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import HistoryItemDateAndTime from 'components/dedicated/History/HistoryItemDetails/HistoryItemDateAndTime/HistoryItemDateAndTime';
 import ProjectAllocationDetailRow from 'components/dedicated/ProjectAllocationDetailRow/ProjectAllocationDetailRow';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
-import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useEpochTimestampHappenedIn from 'hooks/subgraph/useEpochTimestampHappenedIn';
 
 import styles from './HistoryItemDetailsAllocation.module.scss';
 import HistoryItemDetailsAllocationProps from './types';
 
 const HistoryItemDetailsAllocation: FC<HistoryItemDetailsAllocationProps> = ({
+  amount,
   projectsNumber,
   projects,
   timestamp,
@@ -27,35 +27,22 @@ const HistoryItemDetailsAllocation: FC<HistoryItemDetailsAllocationProps> = ({
 
   const allocationEpoch = epochTimestampHappenedIn ? epochTimestampHappenedIn - 1 : undefined;
 
-  const { data: userAllocations, isFetching: isFetchingUserAllocations } =
-    useUserAllocations(allocationEpoch);
   const { data: individualReward, isFetching: isFetchingIndividualReward } =
     useIndividualReward(allocationEpoch);
-
-  const userAllocationsSum = userAllocations?.elements.reduce(
-    (acc, curr) => acc.add(curr.value),
-    BigNumber.from(0),
-  );
 
   const sections: SectionProps[] = [
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
-        isFetching:
-          isFetchingEpochTimestampHappenedIn ||
-          isFetchingIndividualReward ||
-          isFetchingUserAllocations,
-        valueCrypto:
-          individualReward && userAllocationsSum
-            ? individualReward.sub(userAllocationsSum)
-            : BigNumber.from(0),
+        isFetching: isFetchingEpochTimestampHappenedIn || isFetchingIndividualReward,
+        valueCrypto: individualReward ? individualReward.sub(amount) : BigNumber.from(0),
       },
       label: t('sections.allocationPersonal'),
     },
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
-        valueCrypto: userAllocationsSum,
+        valueCrypto: amount,
       },
       label: t('sections.allocationProjects', { projectsNumber }),
     },

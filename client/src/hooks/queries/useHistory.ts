@@ -34,7 +34,6 @@ export default function useHistory(
     getNextPageParam: lastPage => lastPage.next_cursor,
     queryFn: ({ pageParam = '' }) => apiGetHistory(address as string, pageParam),
     queryKey: QUERY_KEYS.history,
-
     staleTime: Infinity,
     ...options,
   });
@@ -43,40 +42,41 @@ export default function useHistory(
     query.data?.pages.reduce<any[]>((acc, curr) => [...acc, ...curr.history], []) || [];
 
   const history = historyFromPages
-    .reduce<ResponseHistoryItemWithProjectsNumber[]>((acc1, curr) => {
+    .map<HistoryItemProps>(({ amount, ...rest }) => ({
+      amount: parseUnits(amount, 'wei'),
+      ...rest,
+    }))
+    .reduce<HistoryItemProps[]>((acc1, curr) => {
       if (curr.type === 'allocation') {
         const elIdx = acc1.findIndex(
           val => val.type === 'allocation' && val.timestamp === curr.timestamp,
         );
 
         if (elIdx > -1) {
-          acc1[elIdx].amount = `${parseInt(acc1[elIdx].amount, 10) + parseInt(curr.amount, 10)}`;
+          acc1[elIdx].amount = acc1[elIdx].amount.add(curr.amount);
           acc1[elIdx].projectsNumber = (acc1[elIdx].projectsNumber as number) + 1;
+          // console.log(1, getFormattedEthValue(curr.amount));
           // @ts-expect-error This property will be defined already, as per logic after the if.
           acc1[elIdx].projects.push({
             address: curr.projectAddress!,
-            amount: parseUnits(curr.amount, 'wei'),
+            amount: curr.amount,
           });
           return acc1;
         }
         // eslint-disable-next-line dot-notation
         curr['projectsNumber'] = 1;
+        // console.log(2, getFormattedEthValue(curr.amount));
         // eslint-disable-next-line dot-notation
         curr['projects'] = [
           {
             address: curr.projectAddress!,
-            amount: parseUnits(curr.amount, 'wei'),
+            amount: curr.amount,
           },
         ];
       }
-
       acc1.push(curr);
       return acc1;
-    }, [])
-    .map<HistoryItemProps>(({ amount, ...rest }) => ({
-      amount: parseUnits(amount, 'wei'),
-      ...rest,
-    }));
+    }, []);
 
   return {
     ...query,
