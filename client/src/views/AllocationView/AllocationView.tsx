@@ -257,7 +257,9 @@ const AllocationView = (): ReactElement => {
               isOpen: selectedItemAddress !== null,
               onClosePanel: () => setSelectedItemAddress(null),
             }}
-            onValueChange={newValue => onChangeAllocationItemValue(selectedItemAddress!, newValue)}
+            onUpdateValue={newValue => {
+              onChangeAllocationItemValue(selectedItemAddress!, newValue);
+            }}
             restToDistribute={restToDistribute}
             valueCryptoSelected={
               selectedItemAddress && allocationValues

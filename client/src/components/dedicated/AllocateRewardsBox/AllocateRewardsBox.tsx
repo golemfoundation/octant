@@ -112,7 +112,7 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
           isOpen: modalMode !== 'closed',
           onClosePanel: () => setModalMode('closed'),
         }}
-        onValueChange={newValue => {
+        onUpdateValue={newValue => {
           setRewardsForProposals(
             modalMode === 'donate' ? newValue : individualReward.sub(newValue),
           );
