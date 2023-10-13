@@ -72,5 +72,14 @@ def _collect_history_records(
             for e in event_getter(user_address, from_timestamp, query_limit)
         ]
 
-    sort_keys = attrgetter("timestamp", "type", "amount")
-    return sorted(events, key=sort_keys, reverse=True)
+    return sorted(events, key=_sort_keys, reverse=True)
+
+
+def _sort_keys(elem: AllocationHistoryEntry | TransactionHistoryEntry):
+    return (
+        elem.timestamp,
+        elem.type,
+        elem.amount,
+        getattr(elem, "project_address", None),
+        getattr(elem, "transaction_hash", None),
+    )
