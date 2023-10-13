@@ -23,11 +23,8 @@ export default function useUserAllocations(
   const { data: currentEpoch } = useCurrentEpoch();
 
   return useQuery(
-    epoch || currentEpoch
-      ? QUERY_KEYS.userAllocations(epoch ? epoch - 1 : currentEpoch! - 1)
-      : [''],
-    () =>
-      apiGetUserAllocations(address as string, epoch ? epoch - 1 : ((currentEpoch! - 1) as number)),
+    epoch || currentEpoch ? QUERY_KEYS.userAllocations(epoch || currentEpoch! - 1) : [''],
+    () => apiGetUserAllocations(address as string, epoch || ((currentEpoch! - 1) as number)),
     {
       enabled: (epoch !== undefined || (!!currentEpoch && currentEpoch > 1)) && !!address,
       select: response => {
