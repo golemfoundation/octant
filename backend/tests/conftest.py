@@ -61,6 +61,12 @@ def pytest_addoption(parser):
         default=False,
         help="run api tests; they require chain and indexer running",
     )
+    parser.addoption(
+        "--onlyapi",
+        action="store_true",
+        default=False,
+        help="run api tests exclusively; they require chain and indexer running",
+    )
 
 
 def pytest_configure(config):
@@ -70,10 +76,16 @@ def pytest_configure(config):
 def pytest_collection_modifyitems(config, items):
     if config.getoption("--runapi"):
         return
-    skip_api = pytest.mark.skip(reason="need --runapi option to run")
-    for item in items:
-        if "api" in item.keywords:
-            item.add_marker(skip_api)
+    elif config.getoption("--onlyapi"):
+        skip_nonapi = pytest.mark.skip(reason="--onlyapi option is on")
+        for item in items:
+            if "api" not in item.keywords:
+                item.add_marker(skip_nonapi)
+    else:
+        skip_api = pytest.mark.skip(reason="need --runapi option to run")
+        for item in items:
+            if "api" in item.keywords:
+                item.add_marker(skip_api)
 
 
 @pytest.fixture()
