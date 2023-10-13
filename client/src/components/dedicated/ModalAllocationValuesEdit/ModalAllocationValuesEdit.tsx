@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC } from 'react';
 
 import Modal from 'components/core/Modal/Modal';
 import AllocationInputs from 'components/dedicated/AllocationInputs/AllocationInputs';
@@ -9,39 +9,18 @@ import ModalAllocationValuesEditProps from './types';
 
 const ModalAllocationValuesEdit: FC<ModalAllocationValuesEditProps> = ({
   modalProps,
-  valueCryptoSelected,
-  onValueChange,
+  onUpdateValue,
   ...rest
 }) => {
-  const [localValueCryptoSelected, setLocalValueCryptoSelected] =
-    useState<BigNumber>(valueCryptoSelected);
-
-  const valueCryptoSelectedHexString = valueCryptoSelected?.toHexString();
-  useEffect(() => {
-    setLocalValueCryptoSelected(valueCryptoSelected);
-    // .toHexString(), because React can't compare objects as deps in hooks, causing infinite loop.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [valueCryptoSelectedHexString]);
-
-  const handleOnModalClosed = () => {
+  const handleOnModalClosed = (newValue: BigNumber) => {
     modalProps.onClosePanel();
-
-    if (localValueCryptoSelected) {
-      onValueChange(localValueCryptoSelected);
-    }
+    onUpdateValue(newValue);
   };
 
   return (
     <Modal {...modalProps} bodyClassName={styles.root} variant="small">
       <div className={styles.body}>
-        <AllocationInputs
-          className={styles.inputs}
-          onClose={modalProps.onClosePanel}
-          onCloseAndSave={handleOnModalClosed}
-          onValueChange={setLocalValueCryptoSelected}
-          valueCryptoSelected={localValueCryptoSelected}
-          {...rest}
-        />
+        <AllocationInputs className={styles.inputs} onClose={handleOnModalClosed} {...rest} />
       </div>
     </Modal>
   );

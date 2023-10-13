@@ -9,9 +9,7 @@ export type InputFocused = 'crypto' | 'percent' | null;
 export default interface AllocationInputsProps {
   className?: string;
   isLimitVisible?: boolean;
-  onClose: () => void;
-  onCloseAndSave: () => void;
-  onValueChange: (value: BigNumber) => void;
+  onClose: (newValue: BigNumber) => void;
   restToDistribute?: BigNumber;
   valueCryptoSelected: BigNumber;
   valueCryptoTotal: BigNumber;
