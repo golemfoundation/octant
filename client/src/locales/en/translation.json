@@ -163,7 +163,8 @@
         "header": {
           "allocation": "Epoch {{epoch}} Allocations",
           "lock": "Locked GLM",
-          "unlock": "Unlocked GLM"
+          "unlock": "Unlocked GLM",
+          "withdrawal": "Withdrew ETH"
         },
         "sections": {
           "allocationPersonal": "Personal",
