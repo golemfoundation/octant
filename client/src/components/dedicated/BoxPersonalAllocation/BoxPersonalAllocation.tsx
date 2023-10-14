@@ -16,6 +16,7 @@ import useSyncStatus from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
 import useAllocationsStore from 'store/allocations/store';
+import useMetaStore from 'store/meta/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
 import styles from './BoxPersonalAllocation.module.scss';
@@ -36,6 +37,9 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
     setRewardsForProposals: state.setRewardsForProposals,
+  }));
+  const { isAppWaitingForTransactionToBeIndexed } = useMetaStore(state => ({
+    isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
   }));
   const { data: syncStatusData } = useSyncStatus();
 
@@ -99,6 +103,7 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
             isWithdrawableRewardsFetching ||
             withdrawableRewards?.sum.isZero(),
           isHigh: true,
+          isLoading: isAppWaitingForTransactionToBeIndexed,
           label: t('withdrawToWallet'),
           onClick: () => setIsModalOpen(true),
           variant: isProjectAdminMode ? 'cta' : 'secondary',

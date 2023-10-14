@@ -10,32 +10,22 @@ import Button from 'components/core/Button/Button';
 import useWithdrawEth, { BatchWithdrawRequest } from 'hooks/mutations/useWithdrawEth';
 import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
 import useMetaStore from 'store/meta/store';
-import triggerToast from 'utils/triggerToast';
 
 import WithdrawEthProps from './types';
 import styles from './WithdrawEth.module.scss';
 
 const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
-  const { t, i18n } = useTranslation('translation', {
+  const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.withdrawEth',
   });
   const { data: feeData, isFetching: isFetchingFeeData } = useFeeData();
-  const { addTransactionPending } = useMetaStore(state => ({
+  const { isAppWaitingForTransactionToBeIndexed, addTransactionPending } = useMetaStore(state => ({
     addTransactionPending: state.addTransactionPending,
+    isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
   }));
-  const {
-    data: withdrawableRewards,
-    isFetching: isWithdrawableRewardsFetching,
-    refetch: refetchWithdrawableRewards,
-  } = useWithdrawableRewards();
-  const withdrawEthMutation = useWithdrawEth({
-    onSuccess: () => {
-      triggerToast({
-        title: i18n.t('common.transactionSuccessful'),
-      });
-      refetchWithdrawableRewards();
-    },
-  });
+  const { data: withdrawableRewards, isFetching: isWithdrawableRewardsFetching } =
+    useWithdrawableRewards();
+  const withdrawEthMutation = useWithdrawEth();
 
   const withdrawEth = async () => {
     if (!withdrawableRewards?.array.length) {
@@ -86,7 +76,7 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
           className={styles.button}
           isDisabled={!isWithdrawableRewardsFetching || withdrawableRewards?.sum.isZero()}
           isHigh
-          isLoading={withdrawEthMutation.isLoading}
+          isLoading={withdrawEthMutation.isLoading || isAppWaitingForTransactionToBeIndexed}
           label={withdrawEthMutation.isLoading ? t('waitingForConfirmation') : t('withdrawAll')}
           onClick={withdrawEth}
           variant="cta"
