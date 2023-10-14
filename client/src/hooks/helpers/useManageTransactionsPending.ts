@@ -4,11 +4,10 @@ import { usePublicClient } from 'wagmi';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
+import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
 import useBlockNumber from 'hooks/subgraph/useBlockNumber';
 import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 import useMetaStore, { initialState as metaInitialState } from 'store/meta/store';
-
-import useWithdrawableRewards from '../queries/useWithdrawableRewards';
 
 export default function useManageTransactionsPending(): void {
   const publicClient = usePublicClient();
