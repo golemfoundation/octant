@@ -84,7 +84,7 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
-        isFetching: isWithdrawableRewardsFetching,
+        isFetching: isWithdrawableRewardsFetching || isAppWaitingForTransactionToBeIndexed,
         valueCrypto: currentEpoch === 1 ? BigNumber.from(0) : withdrawableRewards?.sum,
       },
       label: i18n.t('common.availableNow'),

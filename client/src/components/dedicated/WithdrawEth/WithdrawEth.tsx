@@ -53,7 +53,7 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
-        isFetching: isWithdrawableRewardsFetching,
+        isFetching: isWithdrawableRewardsFetching || isAppWaitingForTransactionToBeIndexed,
         valueCrypto: withdrawableRewards?.sum,
       },
       label: t('amount'),
