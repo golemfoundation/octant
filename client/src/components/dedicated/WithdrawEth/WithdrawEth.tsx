@@ -76,9 +76,13 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
         <Sections hasBottomDivider sections={sections} />
         <Button
           className={styles.button}
-          isDisabled={!isWithdrawableRewardsFetching || withdrawableRewards?.sum.isZero()}
+          isDisabled={
+            isWithdrawableRewardsFetching ||
+            isAppWaitingForTransactionToBeIndexed ||
+            withdrawableRewards?.sum.isZero()
+          }
           isHigh
-          isLoading={withdrawEthMutation.isLoading || isAppWaitingForTransactionToBeIndexed}
+          isLoading={withdrawEthMutation.isLoading}
           label={withdrawEthMutation.isLoading ? t('waitingForConfirmation') : t('withdrawAll')}
           onClick={withdrawEth}
           variant="cta"
