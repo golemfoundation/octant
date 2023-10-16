@@ -16,7 +16,7 @@ import useSyncStatus from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
 import useAllocationsStore from 'store/allocations/store';
-import useMetaStore from 'store/meta/store';
+import useTransactionLocalStore from 'store/transactionLocal/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
 import styles from './BoxPersonalAllocation.module.scss';
@@ -38,7 +38,7 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
     rewardsForProposals: state.data.rewardsForProposals,
     setRewardsForProposals: state.setRewardsForProposals,
   }));
-  const { isAppWaitingForTransactionToBeIndexed } = useMetaStore(state => ({
+  const { isAppWaitingForTransactionToBeIndexed } = useTransactionLocalStore(state => ({
     isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
   }));
   const { data: syncStatusData } = useSyncStatus();
