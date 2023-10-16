@@ -17,10 +17,6 @@
 
 .boxesWrapper {
   width: 100%;
-
-  @media #{$desktop-up} {
-    padding-right: 1.6rem;
-  }
 }
 
 .wrapper {
