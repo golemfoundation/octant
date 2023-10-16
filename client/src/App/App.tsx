@@ -28,6 +28,7 @@ import useAllocationsStore from 'store/allocations/store';
 import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
 import useTipsStore from 'store/tips/store';
+import useTransactionLocalStore from 'store/transactionLocal/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 import triggerToast from 'utils/triggerToast';
 
@@ -45,10 +46,12 @@ const App = (): ReactElement => {
     addAllocations,
     isAllocationsInitialized,
     setRewardsForProposals,
+    reset: resetAllocationsStore,
   } = useAllocationsStore(state => ({
     addAllocations: state.addAllocations,
     allocations: state.data.allocations,
     isAllocationsInitialized: state.meta.isInitialized,
+    reset: state.reset,
     setAllocations: state.setAllocations,
     setRewardsForProposals: state.setRewardsForProposals,
   }));
@@ -77,9 +80,12 @@ const App = (): ReactElement => {
   const {
     isInitialized: isOnboardingInitialized,
     setValuesFromLocalStorage: setValuesFromLocalStorageOnboarding,
-  } = useOnboardingStore(({ meta, setValuesFromLocalStorage }) => ({
-    isInitialized: meta.isInitialized,
-    setValuesFromLocalStorage,
+  } = useOnboardingStore(state => ({
+    isInitialized: state.meta.isInitialized,
+    setValuesFromLocalStorage: state.setValuesFromLocalStorage,
+  }));
+  const { reset: resetTransactionLocalStore } = useTransactionLocalStore(state => ({
+    reset: state.reset,
   }));
   const queryClient = useQueryClient();
   const { address, isConnected } = useAccount();
@@ -115,6 +121,20 @@ const App = (): ReactElement => {
     refetchInterval: isSyncingInProgress ? 5000 : false,
   });
 
+  const initializeStore = (shouldDoReset = false) => {
+    // Store is populated with data from LS, hence init here.
+    localStorageService.init();
+    setValuesFromLocalStorageSettings();
+    setValuesFromLocalStorageOnboarding();
+    setValuesFromLocalStorageTips();
+
+    // On init load reset is not required, when changing account -- yes.
+    if (shouldDoReset) {
+      resetAllocationsStore();
+      resetTransactionLocalStore();
+    }
+  };
+
   useEffect(() => {
     if (chainIdLocal && chainIdLocal !== networkConfig.id) {
       triggerToast({
@@ -128,10 +148,7 @@ const App = (): ReactElement => {
   }, [chainIdLocal]);
 
   useEffect(() => {
-    localStorageService.init();
-    setValuesFromLocalStorageSettings();
-    setValuesFromLocalStorageOnboarding();
-    setValuesFromLocalStorageTips();
+    initializeStore();
     // eslint-disable-next-line
   }, []);
 
@@ -151,6 +168,14 @@ const App = (): ReactElement => {
     if (isConnected !== isConnectedLocal) {
       setIsConnectedLocal(isConnected);
     }
+    /**
+     * When user signs out of the app and only then, initialize store.
+     * TODO OCT-1022: simplify entire logic of flushing and reset.
+     */
+    if (!isConnected && isConnectedLocal) {
+      initializeStore(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, isConnectedLocal, setIsConnectedLocal]);
 
   useEffect(() => {
