@@ -9,7 +9,7 @@ import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import Button from 'components/core/Button/Button';
 import useWithdrawEth, { BatchWithdrawRequest } from 'hooks/mutations/useWithdrawEth';
 import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
-import useMetaStore from 'store/meta/store';
+import useTransactionLocalStore from 'store/transactionLocal/store';
 import triggerToast from 'utils/triggerToast';
 
 import WithdrawEthProps from './types';
@@ -20,7 +20,7 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
     keyPrefix: 'components.dedicated.withdrawEth',
   });
   const { data: feeData, isFetching: isFetchingFeeData } = useFeeData();
-  const { addTransactionPending } = useMetaStore(state => ({
+  const { addTransactionPending } = useTransactionLocalStore(state => ({
     addTransactionPending: state.addTransactionPending,
   }));
   const {

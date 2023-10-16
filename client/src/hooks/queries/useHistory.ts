@@ -19,14 +19,13 @@ export type ResponseHistoryItemWithProjectsNumber = ResponseHistoryItem & {
   projectsNumber?: number;
 };
 
-export interface HistoryItemProps extends Omit<ResponseHistoryItemWithProjectsNumber, 'amount'> {
+export interface HistoryElement extends Omit<ResponseHistoryItemWithProjectsNumber, 'amount'> {
   amount: BigNumber;
-  isPending?: boolean;
 }
 
 export default function useHistory(
   options?: UseInfiniteQueryOptions<Response, unknown, Response, any>,
-): UseInfiniteQueryResult<Response> & { history: HistoryItemProps[] } {
+): UseInfiniteQueryResult<Response> & { history: HistoryElement[] } {
   const { address } = useAccount();
 
   const query = useInfiniteQuery({
@@ -42,11 +41,11 @@ export default function useHistory(
     query.data?.pages.reduce<any[]>((acc, curr) => [...acc, ...curr.history], []) || [];
 
   const history = historyFromPages
-    .map<HistoryItemProps>(({ amount, ...rest }) => ({
+    .map<HistoryElement>(({ amount, ...rest }) => ({
       amount: parseUnits(amount, 'wei'),
       ...rest,
     }))
-    .reduce<HistoryItemProps[]>((acc1, curr) => {
+    .reduce<HistoryElement[]>((acc1, curr) => {
       if (curr.type === 'allocation') {
         const elIdx = acc1.findIndex(
           val => val.type === 'allocation' && val.timestamp === curr.timestamp,
@@ -55,7 +54,6 @@ export default function useHistory(
         if (elIdx > -1) {
           acc1[elIdx].amount = acc1[elIdx].amount.add(curr.amount);
           acc1[elIdx].projectsNumber = (acc1[elIdx].projectsNumber as number) + 1;
-          // console.log(1, getFormattedEthValue(curr.amount));
           // @ts-expect-error This property will be defined already, as per logic after the if.
           acc1[elIdx].projects.push({
             address: curr.projectAddress!,

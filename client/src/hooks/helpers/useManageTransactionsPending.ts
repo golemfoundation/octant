@@ -6,34 +6,39 @@ import useDepositValue from 'hooks/queries/useDepositValue';
 import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
 import useBlockNumber from 'hooks/subgraph/useBlockNumber';
 import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
-import useMetaStore, { initialState as metaInitialState } from 'store/meta/store';
+import useTransactionLocalStore, {
+  initialState as metaInitialState,
+} from 'store/transactionLocal/store';
+
+import useAvailableFundsGlm from './useAvailableFundsGlm';
 
 export default function useManageTransactionsPending(): void {
   const publicClient = usePublicClient();
   const {
     blockNumberWithLatestTx,
     transactionsPending,
-    setTransactionIsWaitingForTransaction,
+    setTransactionIsWaitingForTransactionInitialized,
     updateTransactionHash,
-    removeTransactionPending,
+    setTransactionIsFinalized,
     setBlockNumberWithLatestTx,
-  } = useMetaStore(state => ({
+  } = useTransactionLocalStore(state => ({
     blockNumberWithLatestTx: state.data.blockNumberWithLatestTx,
     removeTransactionPending: state.removeTransactionPending,
     setBlockNumberWithLatestTx: state.setBlockNumberWithLatestTx,
-    setTransactionIsWaitingForTransaction: state.setTransactionIsWaitingForTransaction,
+    setTransactionIsFinalized: state.setTransactionIsFinalized,
+    setTransactionIsWaitingForTransactionInitialized:
+      state.setTransactionIsWaitingForTransactionInitialized,
     transactionsPending: state.data.transactionsPending,
     updateTransactionHash: state.updateTransactionHash,
   }));
-
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: blockNumber } = useBlockNumber(
     blockNumberWithLatestTx !== metaInitialState.blockNumberWithLatestTx,
   );
-
+  const { refetch: refetchAvailableFundsGlm } = useAvailableFundsGlm();
+  const { refetch: refetchDeposit } = useDepositValue();
   const { refetch: refetchEstimatedEffectiveDeposit } = useEstimatedEffectiveDeposit();
   const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
-  const { refetch: refetchDeposit } = useDepositValue();
 
   useEffect(() => {
     if (!transactionsPending) {
@@ -41,9 +46,9 @@ export default function useManageTransactionsPending(): void {
     }
 
     transactionsPending
-      .filter(({ isWaitingForTransaction }) => !isWaitingForTransaction)
+      .filter(({ isWaitingForTransactionInitialized }) => !isWaitingForTransactionInitialized)
       .forEach(transaction => {
-        setTransactionIsWaitingForTransaction(transaction.transactionHash);
+        setTransactionIsWaitingForTransactionInitialized(transaction.transactionHash);
         publicClient
           .waitForTransactionReceipt({
             hash: transaction.transactionHash,
@@ -55,7 +60,7 @@ export default function useManageTransactionsPending(): void {
             },
           })
           .then(transactionReceipt => {
-            removeTransactionPending(transactionReceipt.transactionHash);
+            setTransactionIsFinalized(transactionReceipt.transactionHash);
             const transactionReceiptBlockNumber = Number(transactionReceipt.blockNumber);
             if (
               !blockNumberWithLatestTx ||
@@ -85,16 +90,18 @@ export default function useManageTransactionsPending(): void {
       refetchLockedSummaryLatest();
       refetchDeposit();
       refetchEstimatedEffectiveDeposit();
+      refetchAvailableFundsGlm();
 
       setBlockNumberWithLatestTx(metaInitialState.blockNumberWithLatestTx);
     }
   }, [
-    currentEpoch,
     blockNumber,
-    setBlockNumberWithLatestTx,
     blockNumberWithLatestTx,
+    currentEpoch,
+    refetchAvailableFundsGlm,
     refetchDeposit,
-    refetchLockedSummaryLatest,
     refetchEstimatedEffectiveDeposit,
+    refetchLockedSummaryLatest,
+    setBlockNumberWithLatestTx,
   ]);
 }

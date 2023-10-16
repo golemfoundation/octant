@@ -6,13 +6,13 @@ import { getValuesToDisplay } from 'components/core/DoubleValue/utils';
 import HistoryItemDetailsModal from 'components/dedicated/History/HistoryItemDetailsModal/HistoryItemDetailsModal';
 import HistoryTransactionLabel from 'components/dedicated/History/HistoryTransactionLabel/HistoryTransactionLabel';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
-import { HistoryItemProps } from 'hooks/queries/useHistory';
 import useSettingsStore from 'store/settings/store';
 
 import styles from './HistoryItem.module.scss';
+import HistoryItemProps from './types';
 
 const HistoryItem: FC<HistoryItemProps> = props => {
-  const { type, amount } = props;
+  const { type, amount, isFinalized = true } = props;
   const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.historyItem' });
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
@@ -52,9 +52,7 @@ const HistoryItem: FC<HistoryItemProps> = props => {
       <BoxRounded className={styles.box} hasPadding={false} onClick={() => setIsModalOpen(true)}>
         <div className={styles.titleAndSubtitle}>
           <div className={styles.title}>{title}</div>
-          {type !== 'allocation' && (
-            <HistoryTransactionLabel type={props.isPending ? 'pending' : 'confirmed'} />
-          )}
+          {type !== 'allocation' && <HistoryTransactionLabel isFinalized={isFinalized} />}
         </div>
         <div className={styles.values}>
           <div className={styles.primary}>{values.primary}</div>
