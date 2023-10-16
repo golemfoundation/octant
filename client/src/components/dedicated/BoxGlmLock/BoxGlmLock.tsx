@@ -88,6 +88,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
         title={t('lockedBalance')}
         titleSuffix={
           <Tooltip
+            shouldShowOnClickMobile={false}
             text={i18n.t('common.calculateRewards')}
             tooltipClassName={styles.tooltip}
             variant="small"
