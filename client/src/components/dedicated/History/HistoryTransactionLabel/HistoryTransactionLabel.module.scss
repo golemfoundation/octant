@@ -6,11 +6,11 @@
   border-radius: $border-radius-04;
   padding: 0.2rem 0.5rem;
 
-  &.isPending {
-    background: $color-octant-orange4;
+  &.isFinalized {
+    background: $color-octant-green;
   }
 
-  &:not(.isPending) {
-    background: $color-octant-green;
+  &:not(.isFinalized) {
+    background: $color-octant-orange4;
   }
 }

@@ -44,6 +44,13 @@
     left: 0;
   }
 
+  .skeleton {
+    @include skeleton();
+    height: 1.7rem;
+    width: 10rem;
+  }
+
+
   .budgetLabel {
     color: $color-octant-grey6;
   }

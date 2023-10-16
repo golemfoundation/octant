@@ -19,7 +19,7 @@ import useLock from 'hooks/mutations/useLock';
 import useUnlock from 'hooks/mutations/useUnlock';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
-import useMetaStore from 'store/meta/store';
+import useTransactionLocalStore from 'store/transactionLocal/store';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './GlmLock.module.scss';
@@ -35,7 +35,7 @@ const GlmLock: FC<GlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseMo
   const [transactionHashForEtherscan, setTransactionHashForEtherscan] = useState<
     string | undefined
   >(undefined);
-  const { addTransactionPending } = useMetaStore(state => ({
+  const { addTransactionPending } = useTransactionLocalStore(state => ({
     addTransactionPending: state.addTransactionPending,
   }));
   const { data: transactionReceipt, isLoading: isLoadingTransactionReceipt } =
