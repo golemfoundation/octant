@@ -3,6 +3,8 @@ from eth_account import Account
 from freezegun import freeze_time
 
 from app import exceptions, database
+from app.extensions import db
+
 from app.constants import GLM_TOTAL_SUPPLY_WEI
 from app.controllers.user import (
     MAX_DAYS_TO_ESTIMATE_BUDGET,
@@ -11,7 +13,12 @@ from app.controllers.user import (
 )
 from app.core.user.budget import get_budget, estimate_budget
 from app.core.user.rewards import get_claimed_rewards
+from app.core.allocations import add_allocations_to_db, Allocation
+
+from app.controllers import allocations as allocations_controller
 from app.controllers import user as user_controller
+
+
 from tests.conftest import (
     allocate_user_rewards,
     MOCKED_PENDING_EPOCH_NO,
@@ -21,12 +28,28 @@ from tests.conftest import (
     create_deposit_event,
     USER1_BUDGET,
 )
-from app.controllers.allocations import get_allocation_nonce
 
 
 @pytest.fixture(autouse=True)
 def before(app, patch_epochs, patch_proposals, patch_is_contract):
     pass
+
+
+@pytest.fixture()
+def make_allocations(app, proposal_accounts):
+    def make_allocations(user, epoch):
+        nonce = allocations_controller.get_allocation_nonce(user.address)
+
+        allocations = [
+            Allocation(proposal_accounts[0].address, 10 * 10**18),
+            Allocation(proposal_accounts[1].address, 20 * 10**18),
+            Allocation(proposal_accounts[2].address, 30 * 10**18),
+        ]
+        add_allocations_to_db(epoch, user.address, nonce, allocations, True)
+
+        db.session.commit()
+
+    return make_allocations
 
 
 def test_get_user_budget(user_accounts, mock_pending_epoch_snapshot_db):
@@ -163,7 +186,7 @@ def test_get_claimed_rewards(
             proposal_account: Account = proposal_accounts[allocation[0]]
             allocation_amount = allocation[1]
 
-            nonce = get_allocation_nonce(user_account.address)
+            nonce = allocations_controller.get_allocation_nonce(user_account.address)
             allocate_user_rewards(
                 user_account, proposal_account, allocation_amount, nonce
             )
@@ -231,3 +254,62 @@ def test_patron_mode_toggle_fails_when_use_sig_to_disable_for_enable(user_accoun
 
     with pytest.raises(exceptions.InvalidSignature):
         toggle_patron_mode(user_accounts[0].address, toggle_true_sig)
+
+
+def test_patron_mode_revokes_allocations_for_the_epoch(alice, make_allocations):
+    toggle_true_sig = "52d249ca8ac8f40c01613635dac8a9b01eb50230ad1467451a058170726650b92223e80032a4bff4d25c3554e9d1347043c53b4c2dc9f1ba3f071bd3a1c8b9121b"
+    make_allocations(alice, MOCKED_PENDING_EPOCH_NO)
+    assert len(allocations_controller.get_all_by_user_and_epoch(alice.address)) == 3
+
+    toggle_patron_mode(alice.address, toggle_true_sig)
+
+    user_active_allocations = allocations_controller.get_all_by_user_and_epoch(
+        alice.address
+    )
+    assert len(user_active_allocations) == 0
+
+
+def test_when_patron_mode_changes_revoked_allocations_are_not_restored(
+    alice, make_allocations
+):
+    toggle_true_sig = "52d249ca8ac8f40c01613635dac8a9b01eb50230ad1467451a058170726650b92223e80032a4bff4d25c3554e9d1347043c53b4c2dc9f1ba3f071bd3a1c8b9121b"
+    toggle_false_sig = "979b997cb2b990f104ed4d342a364207a019649eda00497780033d154ee07c44141a6be33cecdde879b1b4238c1622660e70baddb745def53d6733e4aacaeb181b"
+    make_allocations(alice, MOCKED_PENDING_EPOCH_NO)
+
+    toggle_patron_mode(alice.address, toggle_true_sig)
+    toggle_patron_mode(alice.address, toggle_false_sig)
+
+    user_active_allocations = allocations_controller.get_all_by_user_and_epoch(
+        alice.address
+    )
+    assert len(user_active_allocations) == 0
+
+
+def test_patron_mode_does_not_revoke_allocations_from_previous_epochs(
+    alice, make_allocations
+):
+    toggle_true_sig = "52d249ca8ac8f40c01613635dac8a9b01eb50230ad1467451a058170726650b92223e80032a4bff4d25c3554e9d1347043c53b4c2dc9f1ba3f071bd3a1c8b9121b"
+    make_allocations(alice, MOCKED_PENDING_EPOCH_NO - 1)
+    make_allocations(alice, MOCKED_PENDING_EPOCH_NO)
+
+    user_active_allocations_pre = allocations_controller.get_all_by_user_and_epoch(
+        alice.address
+    )
+    user_prev_epoch_allocations_pre = allocations_controller.get_all_by_user_and_epoch(
+        alice.address, MOCKED_PENDING_EPOCH_NO - 1
+    )
+
+    assert len(user_active_allocations_pre) == 3
+    assert len(user_prev_epoch_allocations_pre) == 3
+
+    toggle_patron_mode(alice.address, toggle_true_sig)
+
+    user_active_allocations_post = allocations_controller.get_all_by_user_and_epoch(
+        alice.address
+    )
+    user_prev_epoch_allocations_post = allocations_controller.get_all_by_user_and_epoch(
+        alice.address, MOCKED_PENDING_EPOCH_NO - 1
+    )
+
+    assert user_active_allocations_post != user_active_allocations_pre
+    assert user_prev_epoch_allocations_post == user_prev_epoch_allocations_pre
