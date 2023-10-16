@@ -646,6 +646,90 @@ def test_complete_user_history(
     assert [r.to_dict() for r in history] == expected_history
 
 
+@pytest.fixture()
+def graphql_similar_events(mocker):
+    def create_events(type):
+        return [
+            {
+                "user": USER1_ADDRESS,
+                "__typename": type,
+                "amount": "100",
+                "timestamp": 100,
+                "transactionHash": "0x1111111111111111111111111111111111111111",
+            },
+            {
+                "user": USER1_ADDRESS,
+                "__typename": type,
+                "amount": "100",
+                "timestamp": 100,
+                "transactionHash": "0x0000000000000000000000000000000000000000",
+            },
+        ]
+
+    deposits = create_events("Locked") + create_events("Unlocked")
+    withdrawals = create_events("Withdrawal")
+
+    mock_graphql(mocker, deposit_events=deposits, withdrawals_events=withdrawals)
+
+    return deposits, withdrawals
+
+
+@pytest.fixture()
+def similar_allocations(tos_users, proposal_accounts):
+    alice = tos_users[0]
+    proposals = proposal_accounts[0:5]
+    payload = create_payload(proposals, [100, 100, 100, 100, 100])
+    signature = sign(alice, build_allocations_eip712_data(payload))
+    MOCK_EPOCHS.get_pending_epoch.return_value = 3
+
+    allocate(
+        AllocationRequest(
+            payload=payload,
+            signature=signature,
+            override_existing_allocations=True,
+        )
+    )
+
+    allocations = get_allocations(alice.address, now(), 10)
+
+    return allocations
+
+
+@pytest.mark.parametrize("page_limit", [1, 2, 3, 5, 8, 13])
+def test_history_items_are_deterministically_sorted_by_tx_hash_and_proposal_address(
+    page_limit, similar_allocations, graphql_similar_events
+):
+    history = []
+    cursor = None
+
+    while True:
+        curr_page, cursor = user_history(USER1_ADDRESS, cursor, limit=page_limit)
+        history += curr_page
+
+        if cursor is None:
+            break
+
+    # then
+
+    assert len(history) == 5 + 2 + 2 + 2
+
+    comparable_items = list(
+        map(
+            lambda x: (
+                x.timestamp,
+                x.type,
+                x.amount,
+                getattr(x, "transaction_hash", None),
+                getattr(x, "project_address", None),
+            ),
+            history,
+        )
+    )
+
+    for a, b in zip(comparable_items, comparable_items[1:]):
+        assert a > b
+
+
 def _allocation_items_to_tuples(allocation_items: List[AllocationItem]) -> List[tuple]:
     return [(a.project_address, a.epoch, a.amount) for a in allocation_items]
 

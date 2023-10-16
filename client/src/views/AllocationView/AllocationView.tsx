@@ -220,7 +220,7 @@ const AllocationView = (): ReactElement => {
     >
       {currentView === 'edit' ? (
         <Fragment>
-          <AllocationTipTiles className={cx(styles.box, styles.isTipTiles)} />
+          <AllocationTipTiles className={styles.box} />
           {!isEpoch1 && individualReward && !individualReward.isZero() && (
             <AllocateRewardsBox
               className={styles.box}
@@ -230,7 +230,7 @@ const AllocationView = (): ReactElement => {
             />
           )}
           {areAllocationsAvailableOrAlreadyDone && (
-            <div className={cx(styles.box, styles.boxes)}>
+            <Fragment>
               {allocationsWithRewards!.map((allocation, index) => (
                 <AllocationItem
                   // eslint-disable-next-line react/no-array-index-key
@@ -245,7 +245,10 @@ const AllocationView = (): ReactElement => {
                   {...allocation}
                 />
               ))}
-            </div>
+            </Fragment>
+          )}
+          {!areAllocationsAvailableOrAlreadyDone && individualReward?.isZero() && (
+            <AllocationEmptyState />
           )}
           {!areAllocationsAvailableOrAlreadyDone && individualReward?.isZero() && (
             <AllocationEmptyState />

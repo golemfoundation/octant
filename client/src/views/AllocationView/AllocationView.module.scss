@@ -1,20 +1,10 @@
-.boxes {
-  width: 100%;
-  margin-top: 1.6rem;
-}
-
 .box {
+  &:not(:last-child) {
+    margin: 0 auto 1.6rem;
+  }
+
   &.isAllocation {
     padding: 0;
-  }
-
-  &:not(:first-child) {
-    margin: 1.6rem auto 0;
-  }
-
-  &.isTipTiles {
-    width: 100%;
-    margin: 0;
   }
 }
 

@@ -11,7 +11,7 @@ const HistoryItemDetailsModal: FC<HistoryItemDetailsModalProps> = ({
   modalProps,
   type,
   timestamp,
-  isPending,
+  isWaitingForTransactionInitialized,
   ...rest
 }) => {
   const { t } = useTranslation('translation', {

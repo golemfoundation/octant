@@ -1,5 +1,4 @@
-import cx from 'classnames';
-import React, { FC } from 'react';
+import React, { FC, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
@@ -11,7 +10,6 @@ import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useTipsStore from 'store/tips/store';
 
-import styles from './AllocationTipTiles.module.scss';
 import AllocationTipTilesProps from './types';
 
 const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
@@ -62,12 +60,10 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
     !!userAllocations?.hasUserAlreadyDoneAllocation &&
     !wasChangedYourMindAlreadyClosed;
 
-  const isAnyTipTileVisible =
-    isLockGlmTipVisible || isRewardsTipVisible || isChangedYourMindTipVisible;
-
   return (
-    <div className={cx(styles.root, isAnyTipTileVisible && styles.isAnyTipTileVisible, className)}>
+    <Fragment>
       <TipTile
+        className={className}
         image="images/lock-glm.webp"
         infoLabel={i18n.t('common.gettingStarted')}
         isOpen={isLockGlmTipVisible}
@@ -76,6 +72,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
         title={t('lockGlm.title')}
       />
       <TipTile
+        className={className}
         image="images/rewards.webp"
         infoLabel={i18n.t('common.octantTips')}
         isOpen={isRewardsTipVisible}
@@ -85,6 +82,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
       />
       <TipTile
         key="TipTile--changedYourMind"
+        className={className}
         image="images/tip-changed-your-mind.webp"
         infoLabel={i18n.t('common.octantTips')}
         isOpen={isChangedYourMindTipVisible}
@@ -92,7 +90,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
         text={t('changedYourMind.text')}
         title={t('changedYourMind.title')}
       />
-    </div>
+    </Fragment>
   );
 };
 

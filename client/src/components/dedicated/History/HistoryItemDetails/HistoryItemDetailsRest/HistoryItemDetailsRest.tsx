@@ -19,13 +19,14 @@ const HistoryItemDetailsRest: FC<HistoryItemDetailsRestProps> = ({
   type,
   timestamp,
   transactionHash,
-  isPending,
+  isFinalized = true,
+  isWaitingForTransactionInitialized,
 }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.historyItemModal',
   });
   const { data: transaction, isFetching: isFetchingTransaction } = useTransaction({
-    hash: isPending ? undefined : (transactionHash as `0x{string}`),
+    hash: isWaitingForTransactionInitialized ? undefined : (transactionHash as `0x{string}`),
   });
 
   const sections: SectionProps[] = [
@@ -40,13 +41,13 @@ const HistoryItemDetailsRest: FC<HistoryItemDetailsRestProps> = ({
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
         // Gas price is not known for pending transactions.
-        isFetching: isFetchingTransaction || isPending,
+        isFetching: isFetchingTransaction || isWaitingForTransactionInitialized,
         valueCrypto: BigNumber.from(transaction ? transaction.gasPrice : 0),
       },
       label: t('sections.gasPrice'),
     },
     {
-      childrenLeft: <HistoryTransactionLabel type={isPending ? 'pending' : 'confirmed'} />,
+      childrenLeft: <HistoryTransactionLabel isFinalized={isFinalized} />,
       childrenRight: (
         <Button
           className={styles.viewOnEtherscan}

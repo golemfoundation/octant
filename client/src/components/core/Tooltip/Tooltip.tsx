@@ -14,6 +14,7 @@ const Tooltip: FC<TooltipProps> = ({
   dataTest,
   onClickCallback,
   position = 'top',
+  shouldShowOnClickMobile = true,
   showForce,
   text,
   className,
@@ -40,7 +41,7 @@ const Tooltip: FC<TooltipProps> = ({
       return;
     }
 
-    if (!isDesktop) {
+    if (!isDesktop && shouldShowOnClickMobile) {
       setIsVisible(_isVisible => !_isVisible);
     }
   };

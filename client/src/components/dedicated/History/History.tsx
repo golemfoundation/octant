@@ -9,7 +9,7 @@ import HistoryList from 'components/dedicated/History/HistoryList/HistoryList';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useHistory from 'hooks/queries/useHistory';
-import useMetaStore from 'store/meta/store';
+import useTransactionLocalStore from 'store/transactionLocal/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
 import styles from './History.module.scss';
@@ -17,7 +17,7 @@ import HistoryProps from './types';
 
 const History: FC<HistoryProps> = ({ className }) => {
   const { i18n } = useTranslation('translation');
-  const { transactionsPending } = useMetaStore(state => ({
+  const { transactionsPending } = useTransactionLocalStore(state => ({
     transactionsPending: state.data.transactionsPending,
   }));
 
@@ -32,12 +32,17 @@ const History: FC<HistoryProps> = ({ className }) => {
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const showLoader = isFetchingHistory && !isPreLaunch;
 
-  const transactionsPendingIsFetching = transactionsPending
-    ? transactionsPending.map(transactionPending => ({
-        ...transactionPending,
-        isPending: true,
-      }))
-    : [];
+  const transactionsPendingSorted = transactionsPending?.sort(
+    ({ timestamp: timestampA }, { timestamp: timestampB }) => {
+      if (timestampA < timestampB) {
+        return 1;
+      }
+      if (timestampA > timestampB) {
+        return -1;
+      }
+      return 0;
+    },
+  );
 
   return (
     <BoxRounded
@@ -59,7 +64,7 @@ const History: FC<HistoryProps> = ({ className }) => {
           loadMore={onLoadNextHistoryPart}
           pageStart={0}
         >
-          <HistoryList history={[...transactionsPendingIsFetching, ...history]} />
+          <HistoryList history={[...(transactionsPendingSorted || []), ...history]} />
         </InfiniteScroll>
       )}
     </BoxRounded>
