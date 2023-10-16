@@ -101,9 +101,9 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
             isPreLaunch ||
             !isConnected ||
             isWithdrawableRewardsFetching ||
+            isAppWaitingForTransactionToBeIndexed ||
             withdrawableRewards?.sum.isZero(),
           isHigh: true,
-          isLoading: isAppWaitingForTransactionToBeIndexed,
           label: t('withdrawToWallet'),
           onClick: () => setIsModalOpen(true),
           variant: isProjectAdminMode ? 'cta' : 'secondary',
