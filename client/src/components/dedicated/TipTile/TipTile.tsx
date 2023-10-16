@@ -34,7 +34,7 @@ const TipTile: React.FC<TipTileProps> = ({
             shouldSkipEntranceAnimation.current !== isOpen
               ? {
                   height: isDesktop ? ['0', '22.4rem', '22.4rem'] : ['0', '20rem', '20rem'],
-                  marginBottom: ['0', '2.4rem', '2.4rem'],
+                  marginBottom: ['0', '1.6rem', '1.6rem'],
                   opacity: [0, 0, 1],
                 }
               : {}
@@ -43,14 +43,14 @@ const TipTile: React.FC<TipTileProps> = ({
           data-test={dataTest}
           exit={{
             height: isDesktop ? ['22.4rem', '22.4rem', '0'] : ['20rem', '20rem', '0'],
-            marginBottom: isDesktop ? ['2.4rem', '2.4rem', '0'] : ['1.6rem', '1.6rem', '0'],
+            marginBottom: isDesktop ? ['1.6rem', '1.6rem', '0'] : ['1.6rem', '1.6rem', '0'],
             opacity: [1, 0.1, 0],
           }}
           initial={
             shouldSkipEntranceAnimation.current
               ? {
                   height: '22.4rem',
-                  marginBottom: '2.4rem',
+                  marginBottom: '1.6rem',
                   opacity: 1,
                 }
               : {}
