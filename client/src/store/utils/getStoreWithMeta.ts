@@ -5,6 +5,7 @@ type StoreWithIsInitialized<StoreData, StoreMethods> = {
   meta: {
     isInitialized: boolean;
   };
+  reset: () => void;
 } & StoreMethods;
 
 export function getStoreWithMeta<StoreData, StoreMethods>({
@@ -23,5 +24,7 @@ export function getStoreWithMeta<StoreData, StoreMethods>({
       isInitialized: false,
     },
     ...getStoreMethods(set, get),
+    // @ts-expect-error Unknown types error.
+    reset: () => set({ data: initialState, meta: { isInitialized: false } }),
   }));
 }
