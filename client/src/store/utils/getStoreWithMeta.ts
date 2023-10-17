@@ -24,7 +24,7 @@ export function getStoreWithMeta<StoreData, StoreMethods>({
       isInitialized: false,
     },
     ...getStoreMethods(set, get),
-    // @ts-expect-error Unknown types error.
+    // @ts-expect-error TODO (no ticket yet): unknown types error.
     reset: () => set({ data: initialState, meta: { isInitialized: false } }),
   }));
 }
