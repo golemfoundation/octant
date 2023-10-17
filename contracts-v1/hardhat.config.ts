@@ -24,6 +24,7 @@ import './tasks/mine';
 import './tasks/next-epoch';
 import './tasks/prepare-local-test-env';
 import './tasks/send-glm';
+import './tasks/send-eth-and-glm';
 import './tasks/target-check';
 import './tasks/auth-check';
 import './tasks/deposits-check';
