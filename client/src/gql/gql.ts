@@ -23,8 +23,8 @@ const documents = {
     types.GetLargestLockedAmountDocument,
   '\n  query GetLockedSummaryLatest {\n    lockedSummaryLatest(id: "latest") {\n      id\n      lockedTotal\n      lockedRatio\n    }\n  }\n':
     types.GetLockedSummaryLatestDocument,
-  '\n  query GetTotalAddresses {\n    lockeds(first: 1000) {\n      user\n    }\n  }\n':
-    types.GetTotalAddressesDocument,
+  '\n  query GetLockedsData($first: Int = 100, $skip: Int = 0) {\n    lockeds(first: $first, skip: $skip) {\n      user\n      timestamp\n      amount\n    }\n  }\n':
+    types.GetLockedsDataDocument,
 };
 
 /**
@@ -75,8 +75,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query GetTotalAddresses {\n    lockeds(first: 1000) {\n      user\n    }\n  }\n',
-): (typeof documents)['\n  query GetTotalAddresses {\n    lockeds(first: 1000) {\n      user\n    }\n  }\n'];
+  source: '\n  query GetLockedsData($first: Int = 100, $skip: Int = 0) {\n    lockeds(first: $first, skip: $skip) {\n      user\n      timestamp\n      amount\n    }\n  }\n',
+): (typeof documents)['\n  query GetLockedsData($first: Int = 100, $skip: Int = 0) {\n    lockeds(first: $first, skip: $skip) {\n      user\n      timestamp\n      amount\n    }\n  }\n'];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

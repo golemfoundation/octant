@@ -1,0 +1,28 @@
+.hint {
+  background: $color-octant-green;
+  width: 9.2rem;
+  height: 3.6rem;
+  border-radius: $border-radius-04;
+  padding: 0.4rem 0.8rem;
+  text-align: left;
+  color: $color-white;
+
+  .yValue {
+    font-size: $font-size-12;
+    font-weight: $font-weight-bold;
+    letter-spacing: 0.036rem;
+    text-transform: uppercase;
+  }
+  .xValue {
+    font-size: $font-size-10;
+    font-weight: $font-weight-bold;
+    opacity: 0.7;
+    color: $color-white;
+  }
+}
+
+:export {
+  colorOctantGreen: $color-octant-green;
+  colorOctantGreen_15: $color-octant-green-15;
+  colorOctantGreen_50: $color-octant-green-50;
+}

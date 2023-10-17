@@ -4,7 +4,7 @@ type MetricsGridTileGroup = {
   children: ReactNode;
   hasTitileBottomPadding?: boolean;
   title: string;
-  titleSuffix?: string;
+  titleSuffix?: string | ReactNode;
 };
 
 type MetricsGridTileProps =
