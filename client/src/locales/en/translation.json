@@ -69,7 +69,7 @@
         "confirmYourAllocations": "Confirm your allocations",
         "confirmAllocations": "Confirm allocations",
         "allocationProjects": "Projects ({{projectsNumber}})",
-        "tooltip": "Leverage shows the multiple of your donation the projects you chose will receive in matched funding. Note that it may change wildly during an epoch, and be very different to your final matched funding."
+        "tooltip": "<0>Leverage</0> shows the multiplier effect of your donation to the projects you chose. Note that leverage will fluctuate significantly and might be very different at the end of the allocation window."
       },
       "allocationInputsRewardsAvailable": {
         "resetAllocations": "Reset allocations to manually edit this project",
