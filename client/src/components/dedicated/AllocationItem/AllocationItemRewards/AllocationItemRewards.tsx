@@ -34,6 +34,15 @@ const AllocationItemProposalRewards: FC<AllocationItemProposalRewardsProps> = ({
 
   const isThresholdUnknown = isEpoch1 || !isRewardsDataDefined;
 
+  const proposalMatchedProposalRewardsFormatted = proposalMatchedProposalRewards
+    ? getFormattedEthValue(proposalMatchedProposalRewards?.sum)
+    : undefined;
+  const proposalRewardsThresholdFormatted = proposalRewardsThreshold
+    ? getFormattedEthValue(proposalRewardsThreshold)
+    : undefined;
+  const areSuffixesTheSame =
+    proposalMatchedProposalRewardsFormatted?.suffix === proposalRewardsThresholdFormatted?.suffix;
+
   return (
     <div className={cx(styles.root, className, isEpoch1 && styles.isEpoch1)}>
       <div
@@ -49,7 +58,9 @@ const AllocationItemProposalRewards: FC<AllocationItemProposalRewardsProps> = ({
         <Trans
           i18nKey="views.allocation.allocationItem.standard"
           values={{
-            sum: getFormattedEthValue(proposalMatchedProposalRewards?.sum).value,
+            sum: areSuffixesTheSame
+              ? proposalMatchedProposalRewardsFormatted?.value
+              : proposalMatchedProposalRewardsFormatted?.fullString,
             threshold: getFormattedEthValue(proposalRewardsThreshold).fullString,
           }}
         />
