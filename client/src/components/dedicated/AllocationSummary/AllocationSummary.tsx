@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import React, { FC, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Sections from 'components/core/BoxRounded/Sections/Sections';
@@ -73,7 +73,14 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
         label: t('estimatedLeverage'),
         tooltipProps: {
           position: 'bottom-right',
-          text: <span>{t('tooltip')}</span>,
+          text: (
+            <div>
+              <Trans
+                components={[<span className={styles.bold} />]}
+                i18nKey="components.dedicated.allocationSummary.tooltip"
+              />
+            </div>
+          ),
         },
       },
     );
