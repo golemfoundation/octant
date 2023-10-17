@@ -8,6 +8,7 @@ import useSubscription from 'hooks/helpers/useSubscription';
 import { WebsocketListenEvent } from 'types/websocketEvents';
 
 import useCurrentEpoch from './useCurrentEpoch';
+import useIsDecisionWindowOpen from './useIsDecisionWindowOpen';
 
 export default function useProposalRewardsThreshold(
   epoch?: number,
@@ -15,6 +16,7 @@ export default function useProposalRewardsThreshold(
 ): UseQueryResult<BigNumber> {
   const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   useSubscription<{ threshold: string }>(WebsocketListenEvent.threshold, data => {
     queryClient.setQueryData(QUERY_KEYS.proposalRewardsThreshold(currentEpoch! - 1), data);
@@ -24,7 +26,9 @@ export default function useProposalRewardsThreshold(
     QUERY_KEYS.proposalRewardsThreshold(epoch ? epoch - 1 : currentEpoch! - 1),
     () => apiGetProjectThreshold(epoch ? epoch - 1 : currentEpoch! - 1),
     {
-      enabled: (epoch !== undefined && epoch > 1) || (!!currentEpoch && currentEpoch > 1),
+      enabled:
+        (epoch !== undefined && epoch > 1) ||
+        (!!currentEpoch && currentEpoch > 1 && isDecisionWindowOpen),
       select: response => parseUnits(response.threshold, 'wei'),
       staleTime: Infinity,
       ...options,
