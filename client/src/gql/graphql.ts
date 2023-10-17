@@ -21,6 +21,11 @@ export type Scalars = {
   BigDecimal: { input: any; output: any };
   BigInt: { input: any; output: any };
   Bytes: { input: any; output: any };
+  /**
+   * 8 bytes signed integer
+   *
+   */
+  Int8: { input: any; output: any };
 };
 
 export type BlockChangedFilter = {
@@ -876,11 +881,14 @@ export type GetLockedSummaryLatestQuery = {
   } | null;
 };
 
-export type GetTotalAddressesQueryVariables = Exact<{ [key: string]: never }>;
+export type GetLockedsDataQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
 
-export type GetTotalAddressesQuery = {
+export type GetLockedsDataQuery = {
   __typename?: 'Query';
-  lockeds: Array<{ __typename?: 'Locked'; user: any }>;
+  lockeds: Array<{ __typename?: 'Locked'; user: any; timestamp: number; amount: any }>;
 };
 
 export const GetBlockNumberDocument = {
@@ -1029,13 +1037,27 @@ export const GetLockedSummaryLatestDocument = {
     },
   ],
 } as unknown as DocumentNode<GetLockedSummaryLatestQuery, GetLockedSummaryLatestQueryVariables>;
-export const GetTotalAddressesDocument = {
+export const GetLockedsDataDocument = {
   kind: 'Document',
   definitions: [
     {
       kind: 'OperationDefinition',
       operation: 'query',
-      name: { kind: 'Name', value: 'GetTotalAddresses' },
+      name: { kind: 'Name', value: 'GetLockedsData' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'first' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          defaultValue: { kind: 'IntValue', value: '100' },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'skip' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          defaultValue: { kind: 'IntValue', value: '0' },
+        },
+      ],
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
@@ -1046,16 +1068,25 @@ export const GetTotalAddressesDocument = {
               {
                 kind: 'Argument',
                 name: { kind: 'Name', value: 'first' },
-                value: { kind: 'IntValue', value: '1000' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'first' } },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'skip' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'skip' } },
               },
             ],
             selectionSet: {
               kind: 'SelectionSet',
-              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'user' } }],
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'user' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'timestamp' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'amount' } },
+              ],
             },
           },
         ],
       },
     },
   ],
-} as unknown as DocumentNode<GetTotalAddressesQuery, GetTotalAddressesQueryVariables>;
+} as unknown as DocumentNode<GetLockedsDataQuery, GetLockedsDataQueryVariables>;

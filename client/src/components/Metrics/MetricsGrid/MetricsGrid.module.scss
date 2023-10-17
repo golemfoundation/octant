@@ -1,7 +1,9 @@
+$gridGap: 1.6rem;
+
 .metricsGrid {
   display: grid;
-  grid-template-columns: auto auto;
-  gap: 1.6rem;
+  grid-template-columns: calc(50% - calc($gridGap / 2)) calc(50% - calc($gridGap / 2));
+  gap: $gridGap;
   width: 100%;
 
   @media #{$desktop-up} {

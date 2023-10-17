@@ -274,6 +274,8 @@
       "of1BTotalSupply": "of 1B total supply",
       "totalAddresses": "Total addresses",
       "largestGlmLock": "largest GLM lock",
+      "cumulativeGlmLocked": "Cumulative GLM Locked",
+      "walletsWithGlmLocked": "Wallets with GLM locked",
       "epochAllocationStartsIn": "Epoch {{epoch}} allocation starts in",
       "epochAllocationEndsIn": "Epoch {{epoch}} allocation ends in",
       "totalProjectsSinceEpoch0": "{{projectsAmount}} total since E0",
