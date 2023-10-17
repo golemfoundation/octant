@@ -23,7 +23,6 @@ export const initialState: TipsData = {
 
 export default getStoreWithMeta<TipsData, TipsMethods>({
   getStoreMethods: set => ({
-    reset: () => set({ data: initialState }),
     setValuesFromLocalStorage: () =>
       set({
         data: {
