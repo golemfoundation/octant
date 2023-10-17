@@ -127,10 +127,22 @@ const AllocationView = (): ReactElement => {
   }, [currentEpoch, allocations, userAllocations?.elements.length, rewardsForProposals]);
 
   const onAllocate = () => {
-    if (userNonce === undefined) {
+    if (userNonce === undefined || proposalsContract === undefined) {
       return;
     }
-    allocateEvent.emit(allocationValues);
+    /**
+     * Whenever user wants to send an empty allocation (no projects, or all of them value 0)
+     * Push one element with value 0. It should be fixed on BE by creating "personal all" endpoint,
+     * but there is no ticket for it yet.
+     */
+    const allocationValuesNew = [...allocationValues];
+    if (allocationValuesNew.length === 0) {
+      allocationValuesNew.push({
+        address: proposalsContract[0],
+        value: BigNumber.from(0),
+      });
+    }
+    allocateEvent.emit(allocationValuesNew);
   };
 
   useEffect(() => {

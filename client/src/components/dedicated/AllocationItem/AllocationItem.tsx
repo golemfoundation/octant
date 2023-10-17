@@ -1,6 +1,5 @@
 import cx from 'classnames';
 import React, { FC, Fragment } from 'react';
-import { useTranslation, Trans } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -9,15 +8,14 @@ import Svg from 'components/core/Svg/Svg';
 import AllocationItemSkeleton from 'components/dedicated/AllocationItem/AllocationItemSkeleton/AllocationItemSkeleton';
 import ProposalLoadingStates from 'components/dedicated/ProposalLoadingStates/ProposalLoadingStates';
 import env from 'env';
-import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
 import useAllocationsStore from 'store/allocations/store';
 import { checkMark, pencil } from 'svg/misc';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './AllocationItem.module.scss';
+import AllocationItemRewards from './AllocationItemRewards/AllocationItemRewards';
 import AllocationItemProps from './types';
 
 const AllocationItem: FC<AllocationItemProps> = ({
@@ -33,13 +31,10 @@ const AllocationItem: FC<AllocationItemProps> = ({
   profileImageSmall,
   value,
 }) => {
-  const { t } = useTranslation('translation', { keyPrefix: 'views.allocation.allocationItem' });
   const { ipfsGateway } = env;
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: proposalRewardsThreshold, isFetching: isFetchingRewardsThreshold } =
-    useProposalRewardsThreshold();
-  const { data: matchedProposalRewards } = useMatchedProposalRewards();
+  const { isFetching: isFetchingRewardsThreshold } = useProposalRewardsThreshold();
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
   }));
@@ -50,12 +45,6 @@ const AllocationItem: FC<AllocationItemProps> = ({
     ? 0
     : value.mul(100).div(rewardsForProposals).toNumber();
   const valueToRender = getFormattedEthValue(value).fullString;
-
-  const isDonationAboveThreshold = useIsDonationAboveThreshold(address);
-
-  const proposalMatchedProposalRewards = matchedProposalRewards?.find(
-    ({ address: matchedProposalRewardsAddress }) => address === matchedProposalRewardsAddress,
-  );
 
   const isEpoch1 = currentEpoch === 1;
 
@@ -82,7 +71,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
               )}
             </div>
           )}
-          <div className={styles.nameAndEthNeeded}>
+          <div className={styles.nameAndRewards}>
             <div className={styles.name}>
               <Img
                 className={styles.image}
@@ -91,27 +80,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
               />
               {name}
             </div>
-            <div className={cx(styles.ethNeeded, isEpoch1 && styles.isEpoch1)}>
-              <div
-                className={cx(
-                  styles.dot,
-                  isDonationAboveThreshold && styles.isDonationAboveThreshold,
-                  isEpoch1 && styles.isEpoch1,
-                )}
-              />
-              {isEpoch1
-                ? t('epoch1')
-                : proposalMatchedProposalRewards &&
-                  proposalRewardsThreshold && (
-                    <Trans
-                      i18nKey="views.allocation.allocationItem.standard"
-                      values={{
-                        sum: getFormattedEthValue(proposalMatchedProposalRewards?.sum).value,
-                        threshold: getFormattedEthValue(proposalRewardsThreshold).fullString,
-                      }}
-                    />
-                  )}
-            </div>
+            <AllocationItemRewards address={address} className={styles.rewards} />
           </div>
           <div className={cx(styles.allocated, isEpoch1 && styles.isEpoch1)}>
             <div className={styles.allocatedPercentage}>{percentToRender}%</div>

@@ -4,6 +4,7 @@ import { usePublicClient } from 'wagmi';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
+import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
 import useBlockNumber from 'hooks/subgraph/useBlockNumber';
 import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 import useTransactionLocalStore, {
@@ -36,9 +37,10 @@ export default function useManageTransactionsPending(): void {
     blockNumberWithLatestTx !== metaInitialState.blockNumberWithLatestTx,
   );
   const { refetch: refetchAvailableFundsGlm } = useAvailableFundsGlm();
-  const { refetch: refetchDeposit } = useDepositValue();
   const { refetch: refetchEstimatedEffectiveDeposit } = useEstimatedEffectiveDeposit();
+  const { refetch: refetchDeposit } = useDepositValue();
   const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
+  const { refetch: refetchWithdrawableRewards } = useWithdrawableRewards();
 
   useEffect(() => {
     if (!transactionsPending) {
@@ -78,19 +80,22 @@ export default function useManageTransactionsPending(): void {
      * Locking and unlocking GLMs require updating history and effective deposit.
      * Both these values are coming from backend, which takes them from subgraph (history - always, effective deposit only during epoch 1).
      *
+     * Withdrawing ETH require updating withdrawable funds.
+     * This values comes from backend, which takes this data from subgraph.
+     *
      * The problem is that value in subgraph (and consequently in the backend)
      * is updated only after block is indexed in the subgraph.
      *
-     * So, after lock / unlock is done, blockNumberWithLatestTx is set to the value from transaction,
-     * polling starts in useBlockNumber hook and after the number
-     * of block changes, refetchHistory and refetchDepositEffectiveAtCurrentEpoch
-     * is triggered and blockNumberWithLatestTx to null.
+     * So, after lock, unlock or withdraw is done, blockNumberWithLatestTx is set to the value from transaction,
+     * polling starts in useBlockNumber hook and after the number of block changes,
+     * refetches are triggered and blockNumberWithLatestTx to null.
      */
     if (blockNumber && blockNumberWithLatestTx && blockNumber > blockNumberWithLatestTx) {
-      refetchLockedSummaryLatest();
+      refetchAvailableFundsGlm();
       refetchDeposit();
       refetchEstimatedEffectiveDeposit();
-      refetchAvailableFundsGlm();
+      refetchLockedSummaryLatest();
+      refetchWithdrawableRewards();
 
       setBlockNumberWithLatestTx(metaInitialState.blockNumberWithLatestTx);
     }
@@ -101,6 +106,7 @@ export default function useManageTransactionsPending(): void {
     refetchAvailableFundsGlm,
     refetchDeposit,
     refetchEstimatedEffectiveDeposit,
+    refetchWithdrawableRewards,
     refetchLockedSummaryLatest,
     setBlockNumberWithLatestTx,
   ]);
