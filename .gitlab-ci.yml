@@ -220,7 +220,12 @@ Unit tests:
           - contracts-v1
           - client
           - coin-prices-server
-          - subgraph
+#           Disabled because of 404.
+#           TODO OCT-1042 enable this job.
+#           https://gitlab.com/wildland/governance/octant/-/jobs/5313689201
+#           Downloading release from https://github.com/LimeChain/matchstick/releases/download/0.6.0/binary-linux-20
+#           Error fetching release: Request failed with status code 404
+#          - subgraph
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
