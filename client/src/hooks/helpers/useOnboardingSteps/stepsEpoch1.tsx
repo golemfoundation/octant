@@ -10,7 +10,7 @@ import i18n from 'i18n';
 const stepsEpoch1: Step[] = [
   {
     header: i18n.t('views.onboarding.stepsEpoch1.welcomeToOctant.header'),
-    image: 'images/onboarding/1_epoch1.webp',
+    image: 'images/onboarding/1.webp',
     imageClassName: styles.welcomeToOctant,
     text: (
       <Trans
