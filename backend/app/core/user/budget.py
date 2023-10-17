@@ -80,7 +80,7 @@ def _estimate_current_epoch_budget(
     total_locked_ratio: Decimal,
     total_effective_deposit: int,
 ):
-    eth_proceeds = estimate_epoch_eth_staking_proceeds(epoch.duration_days)
+    eth_proceeds = estimate_epoch_eth_staking_proceeds(epoch.duration_sec)
     current_epoch_rewards_strategy = EpochsRegistry.get_epoch_settings(
         epoch_num
     ).rewards_strategy
@@ -106,7 +106,7 @@ def _estimate_future_epochs_budget(
 ):
     budget = 0
     epoch = epochs_details.get_future_epoch_details()
-    eth_proceeds = estimate_epoch_eth_staking_proceeds(epoch.duration_days)
+    eth_proceeds = estimate_epoch_eth_staking_proceeds(epoch.duration_sec)
     # TODO We assume that there is only one strategy for all upcoming epochs. Using a proper strategy for the future epochs will be handled in this task: https://linear.app/golemfoundation/issue/OCT-943/prepare-a-budget-calculator-for-different-rewards-strategies-in-the
     future_epoch_rewards_strategy = EpochsRegistry.get_epoch_settings(
         current_epoch_num + 1
