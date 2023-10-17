@@ -305,8 +305,8 @@
       "of1BTotalSupply": "of 1B total supply",
       "totalAddresses": "Total addresses",
       "largestGlmLock": "largest GLM lock",
-      "epochAllocationStartsIn": "Epoch {{currentEpoch}} allocation starts in",
-      "epochAllocationEndsIn": "Epoch {{currentEpoch}} allocation ends in",
+      "epochAllocationStartsIn": "Epoch {{epoch}} allocation starts in",
+      "epochAllocationEndsIn": "Epoch {{epoch}} allocation ends in",
       "totalProjectsSinceEpoch0": "{{projectsAmount}} total since E0",
       "tip": {
         "title": "Check the stats",
