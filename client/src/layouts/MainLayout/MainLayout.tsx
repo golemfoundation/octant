@@ -164,7 +164,11 @@ const MainLayout: FC<MainLayoutProps> = ({
                             </div>
                           ) : (
                             <div className={styles.budget}>
-                              {getIndividualRewardText({ currentEpoch, individualReward })}
+                              {getIndividualRewardText({
+                                currentEpoch,
+                                individualReward,
+                                isDecisionWindowOpen,
+                              })}
                             </div>
                           ))}
                       </div>

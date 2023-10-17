@@ -59,9 +59,10 @@ const MetricsTimeCounter: FC<MetricsTimeCounterProps> = ({ isLoading = false }) 
             />
           ),
           hasTitileBottomPadding: false,
-          title: t(isDecisionWindowOpen ? 'epochAllocationEndsIn' : 'epochAllocationStartsIn', {
-            currentEpoch,
-          }),
+          // AW is part of the epoch it proceeds, so Epoch 1 AW is during Epoch 2.
+          title: isDecisionWindowOpen
+            ? t('epochAllocationEndsIn', { epoch: currentEpoch! - 1 })
+            : t('epochAllocationStartsIn', { epoch: currentEpoch }),
         },
       ]}
       size="M"

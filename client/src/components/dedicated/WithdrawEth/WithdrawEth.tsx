@@ -10,32 +10,24 @@ import Button from 'components/core/Button/Button';
 import useWithdrawEth, { BatchWithdrawRequest } from 'hooks/mutations/useWithdrawEth';
 import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
 import useTransactionLocalStore from 'store/transactionLocal/store';
-import triggerToast from 'utils/triggerToast';
 
 import WithdrawEthProps from './types';
 import styles from './WithdrawEth.module.scss';
 
 const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
-  const { t, i18n } = useTranslation('translation', {
+  const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.withdrawEth',
   });
   const { data: feeData, isFetching: isFetchingFeeData } = useFeeData();
-  const { addTransactionPending } = useTransactionLocalStore(state => ({
-    addTransactionPending: state.addTransactionPending,
-  }));
-  const {
-    data: withdrawableRewards,
-    isFetching: isWithdrawableRewardsFetching,
-    refetch: refetchWithdrawableRewards,
-  } = useWithdrawableRewards();
-  const withdrawEthMutation = useWithdrawEth({
-    onSuccess: () => {
-      triggerToast({
-        title: i18n.t('common.transactionSuccessful'),
-      });
-      refetchWithdrawableRewards();
-    },
-  });
+  const { isAppWaitingForTransactionToBeIndexed, addTransactionPending } = useTransactionLocalStore(
+    state => ({
+      addTransactionPending: state.addTransactionPending,
+      isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
+    }),
+  );
+  const { data: withdrawableRewards, isFetching: isWithdrawableRewardsFetching } =
+    useWithdrawableRewards();
+  const withdrawEthMutation = useWithdrawEth();
 
   const withdrawEth = async () => {
     if (!withdrawableRewards?.array.length) {
@@ -63,7 +55,7 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
-        isFetching: isWithdrawableRewardsFetching,
+        isFetching: isWithdrawableRewardsFetching || isAppWaitingForTransactionToBeIndexed,
         valueCrypto: withdrawableRewards?.sum,
       },
       label: t('amount'),
@@ -84,7 +76,11 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
         <Sections hasBottomDivider sections={sections} />
         <Button
           className={styles.button}
-          isDisabled={!isWithdrawableRewardsFetching || withdrawableRewards?.sum.isZero()}
+          isDisabled={
+            isWithdrawableRewardsFetching ||
+            isAppWaitingForTransactionToBeIndexed ||
+            withdrawableRewards?.sum.isZero()
+          }
           isHigh
           isLoading={withdrawEthMutation.isLoading}
           label={withdrawEthMutation.isLoading ? t('waitingForConfirmation') : t('withdrawAll')}

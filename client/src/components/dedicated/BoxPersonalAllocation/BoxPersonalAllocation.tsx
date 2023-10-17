@@ -16,6 +16,7 @@ import useSyncStatus from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
 import useAllocationsStore from 'store/allocations/store';
+import useTransactionLocalStore from 'store/transactionLocal/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
 import styles from './BoxPersonalAllocation.module.scss';
@@ -36,6 +37,9 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
     setRewardsForProposals: state.setRewardsForProposals,
+  }));
+  const { isAppWaitingForTransactionToBeIndexed } = useTransactionLocalStore(state => ({
+    isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
   }));
   const { data: syncStatusData } = useSyncStatus();
 
@@ -80,7 +84,7 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
-        isFetching: isWithdrawableRewardsFetching,
+        isFetching: isWithdrawableRewardsFetching || isAppWaitingForTransactionToBeIndexed,
         valueCrypto: currentEpoch === 1 ? BigNumber.from(0) : withdrawableRewards?.sum,
       },
       label: i18n.t('common.availableNow'),
@@ -97,6 +101,7 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
             isPreLaunch ||
             !isConnected ||
             isWithdrawableRewardsFetching ||
+            isAppWaitingForTransactionToBeIndexed ||
             withdrawableRewards?.sum.isZero(),
           isHigh: true,
           label: t('withdrawToWallet'),
