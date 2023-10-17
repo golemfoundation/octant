@@ -11,6 +11,7 @@ import ModalWithdrawEth from 'components/dedicated//ModalWithdrawEth/ModalWithdr
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useSyncStatus from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -29,7 +30,8 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { timeCurrentAllocationEnd } = useEpochAndAllocationTimestamps();
+  const { timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
+  const { data: currentEpochProps } = useCurrentEpochProps();
   const { data: userAllocations, isFetching: isFetchingUserAllocations } = useUserAllocations();
   const { data: withdrawableRewards, isFetching: isWithdrawableRewardsFetching } =
     useWithdrawableRewards();
@@ -71,8 +73,12 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
                     {t('pendingFundsAvailableAfter')}
                   </div>
                   <div className={styles.pendingTooltipDate}>
-                    {timeCurrentAllocationEnd
-                      ? format(new Date(timeCurrentAllocationEnd), 'haaa z, d LLLL')
+                    {/* TODO OCT-1041 fetch next epoch props instead of assuming the same length */}
+                    {currentEpochProps && timeCurrentEpochEnd
+                      ? format(
+                          new Date(timeCurrentEpochEnd + currentEpochProps.decisionWindow),
+                          'haaa z, d LLLL',
+                        )
                       : ''}
                   </div>
                 </div>
