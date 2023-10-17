@@ -9,6 +9,7 @@ import HistoryItemDateAndTime from 'components/dedicated/History/HistoryItemDeta
 import ProjectAllocationDetailRow from 'components/dedicated/ProjectAllocationDetailRow/ProjectAllocationDetailRow';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useEpochTimestampHappenedIn from 'hooks/subgraph/useEpochTimestampHappenedIn';
+import { CryptoCurrency } from 'types/cryptoCurrency';
 
 import styles from './HistoryItemDetailsAllocation.module.scss';
 import HistoryItemDetailsAllocationProps from './types';
@@ -30,6 +31,8 @@ const HistoryItemDetailsAllocation: FC<HistoryItemDetailsAllocationProps> = ({
   const { data: individualReward, isFetching: isFetchingIndividualReward } =
     useIndividualReward(allocationEpoch);
 
+  const isPersonalOnlyAllocation = amount.isZero();
+
   const sections: SectionProps[] = [
     {
       doubleValueProps: {
@@ -39,13 +42,17 @@ const HistoryItemDetailsAllocation: FC<HistoryItemDetailsAllocationProps> = ({
       },
       label: t('sections.allocationPersonal'),
     },
-    {
-      doubleValueProps: {
-        cryptoCurrency: 'ethereum',
-        valueCrypto: amount,
-      },
-      label: t('sections.allocationProjects', { projectsNumber }),
-    },
+    ...(isPersonalOnlyAllocation
+      ? []
+      : [
+          {
+            doubleValueProps: {
+              cryptoCurrency: 'ethereum' as CryptoCurrency,
+              valueCrypto: amount,
+            },
+            label: t('sections.allocationProjects', { projectsNumber }),
+          },
+        ]),
     {
       childrenRight: <HistoryItemDateAndTime timestamp={timestamp} />,
       label: t('sections.when'),
@@ -57,11 +64,13 @@ const HistoryItemDetailsAllocation: FC<HistoryItemDetailsAllocationProps> = ({
       <BoxRounded alignment="left" hasSections isGrey isVertical>
         <Sections hasBottomDivider sections={sections} variant="small" />
       </BoxRounded>
-      <BoxRounded alignment="left" className={styles.projects} isGrey isVertical>
-        {projects?.map(project => (
-          <ProjectAllocationDetailRow key={project.address} {...project} />
-        ))}
-      </BoxRounded>
+      {!isPersonalOnlyAllocation && (
+        <BoxRounded alignment="left" className={styles.projects} isGrey isVertical>
+          {projects?.map(project => (
+            <ProjectAllocationDetailRow key={project.address} {...project} />
+          ))}
+        </BoxRounded>
+      )}
     </Fragment>
   );
 };
