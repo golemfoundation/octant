@@ -11,11 +11,12 @@ const MetricsGridTile: FC<MetricsGridTileProps> = ({ size = 'M', groups, classNa
       <div key={`${group.title}__${idx}`} className={styles.group}>
         <div
           className={cx(
-            styles.groupTitle,
+            styles.groupTitleWrapper,
             group.hasTitileBottomPadding !== false && styles.hasTitileBottomPadding,
           )}
         >
-          {group.title}
+          <div className={styles.title}>{group.title}</div>
+          {group.titleSuffix && group.titleSuffix}
         </div>
         {group.children}
       </div>
