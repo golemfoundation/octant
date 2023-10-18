@@ -44,7 +44,14 @@ const AllocationItemProposalRewards: FC<AllocationItemProposalRewardsProps> = ({
     proposalMatchedProposalRewardsFormatted?.suffix === proposalRewardsThresholdFormatted?.suffix;
 
   return (
-    <div className={cx(styles.root, className, isEpoch1 && styles.isEpoch1)}>
+    <div
+      className={cx(
+        styles.root,
+        className,
+        isThresholdUnknown && styles.isThresholdUnknown,
+        isEpoch1 && styles.isEpoch1,
+      )}
+    >
       <div
         className={cx(
           styles.dot,
@@ -53,7 +60,7 @@ const AllocationItemProposalRewards: FC<AllocationItemProposalRewardsProps> = ({
         )}
       />
       {isEpoch1 && t('epoch1')}
-      {!isEpoch1 && !isRewardsDataDefined && i18n.t('common.allocationValuesNotAvailable')}
+      {!isEpoch1 && !isRewardsDataDefined && i18n.t('common.thresholdDataUnavailable')}
       {!isEpoch1 && isRewardsDataDefined && (
         <Trans
           i18nKey="views.allocation.allocationItem.standard"

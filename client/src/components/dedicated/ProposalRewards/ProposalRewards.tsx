@@ -84,10 +84,10 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
           </div>
         ) : (
           <div
-            className={styles.allocationValuesNotAvailable}
+            className={styles.thresholdDataUnavailable}
             data-test="ProposalRewards__notAvailable"
           >
-            {i18n.t('common.allocationValuesNotAvailable')}
+            {i18n.t('common.thresholdDataUnavailable')}
           </div>
         )}
         {MiddleElement}
