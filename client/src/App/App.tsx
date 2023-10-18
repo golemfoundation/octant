@@ -6,7 +6,6 @@ import { useAccount, useNetwork } from 'wagmi';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-import { Response as ResponseSyncStatus } from 'api/calls/syncStatus';
 import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
 import { ALLOCATION_ITEMS_KEY, ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
@@ -20,7 +19,7 @@ import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
-import useSyncStatus from 'hooks/queries/useSyncStatus';
+import useSyncStatus, { Response } from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
@@ -114,7 +113,7 @@ const App = (): ReactElement => {
   const [currentAddressLocal, setCurrentAddressLocal] = useState<string | null>(null);
   const [currentEpochLocal, setCurrentEpochLocal] = useState<number | null>(null);
   const [isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal] = useState<boolean | null>(null);
-  const [syncStatusLocal, setSyncStatusLocal] = useState<ResponseSyncStatus | null>(null);
+  const [syncStatusLocal, setSyncStatusLocal] = useState<Response | null>(null);
   const [chainIdLocal, setChainIdLocal] = useState<number | null>(null);
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const { isFetching: isFetchingUserTOS } = useUserTOS();
