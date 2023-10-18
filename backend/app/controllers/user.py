@@ -6,7 +6,7 @@ from app.core.user.tos import (
 )
 from app.controllers import allocations as allocations_controller
 from app.crypto.eth_sign import patron_mode as patron_mode_crypto
-from app.exceptions import RewardsException, InvalidSignature
+from app.exceptions import RewardsException, InvalidSignature, UserNotFound
 from app.extensions import db
 
 MAX_DAYS_TO_ESTIMATE_BUDGET = 365250
@@ -41,7 +41,10 @@ def estimate_budget(days: int, glm_amount: int) -> int:
 
 
 def get_patron_mode_status(user_address: str) -> bool:
-    return patron_mode_core.get_patron_mode_status(user_address)
+    try:
+        return patron_mode_core.get_patron_mode_status(user_address)
+    except UserNotFound:
+        return False
 
 
 def toggle_patron_mode(user_address: str, signature: str) -> bool:
