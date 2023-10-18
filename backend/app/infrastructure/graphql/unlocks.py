@@ -67,6 +67,8 @@ def get_unlocks_by_timestamp_range(from_ts, to_ts) -> list[UnlockEvent]:
         """
         query GetUnlocks($fromTimestamp: Int!, $toTimestamp: Int!) {
           unlockeds(
+            first: 1000,
+            skip: 0,
             orderBy: timestamp
             where: {timestamp_gte: $fromTimestamp, timestamp_lt: $toTimestamp}
           ) {
