@@ -267,6 +267,9 @@ const AllocationView = (): ReactElement => {
           )}
           <ModalAllocationValuesEdit
             isLimitVisible
+            isManuallyEdited={
+              selectedItemAddress ? allocationsEdited.includes(selectedItemAddress) : false
+            }
             modalProps={{
               header: t('modalAllocationValuesEdit.header', { allocation: selectedItemName }),
               isOpen: selectedItemAddress !== null,
