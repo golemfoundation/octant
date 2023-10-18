@@ -474,6 +474,22 @@ def test_allocate_by_user_in_patron_mode(tos_users, proposal_accounts):
         )
 
 
+def test_allocate_empty_allocations_list_should_fail(tos_users, proposal_accounts):
+    # Test data
+    initial_payload = create_payload([], None)
+    initial_signature = sign(
+        tos_users[0], build_allocations_eip712_data(initial_payload)
+    )
+
+    # Call allocate method
+    with pytest.raises(exceptions.EmptyAllocations):
+        allocate(
+            AllocationRequest(
+                initial_payload, initial_signature, override_existing_allocations=True
+            )
+        )
+
+
 def test_get_by_user_and_epoch(mock_allocations_db, user_accounts, proposal_accounts):
     result = get_all_by_user_and_epoch(
         user_accounts[0].address, MOCKED_PENDING_EPOCH_NO
