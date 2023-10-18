@@ -11,5 +11,6 @@ export default interface TooltipProps {
   showForce?: boolean;
   text: string | ReactNode;
   tooltipClassName?: string;
+  tooltipWrapperClassName?: string;
   variant?: 'small' | 'normal';
 }

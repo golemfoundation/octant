@@ -1,6 +1,6 @@
 import { format } from 'date-fns-tz';
 import { BigNumber } from 'ethers';
-import React, { FC, Fragment, useState } from 'react';
+import React, { FC, Fragment, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
@@ -14,6 +14,7 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useSyncStatus from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
@@ -52,6 +53,7 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
   const pendingCrypto = individualReward?.sub(rewardsForProposals);
 
   const isProjectAdminMode = useIsProjectAdminMode();
+  const { data: isPatronMode } = useIsPatronMode();
 
   const sections: SectionProps[] = [
     ...(!isProjectAdminMode
@@ -66,30 +68,32 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
                   ? BigNumber.from(0)
                   : pendingCrypto,
             },
-            label: t('pending'),
-            tooltipProps: {
-              position: 'bottom-right',
-              text: (
-                <div className={styles.pendingTooltip}>
-                  <div className={styles.pendingTooltipLabel}>
-                    {t('pendingFundsAvailableAfter')}
-                  </div>
-                  <div className={styles.pendingTooltipDate}>
-                    {/* TODO OCT-1041 fetch next epoch props instead of assuming the same length */}
-                    {currentEpochProps && timeCurrentEpochEnd && timeCurrentAllocationEnd
-                      ? format(
-                          new Date(
-                            isDecisionWindowOpen
-                              ? timeCurrentAllocationEnd
-                              : timeCurrentEpochEnd + currentEpochProps.decisionWindow,
-                          ),
-                          'haaa z, d LLLL',
-                        )
-                      : ''}
-                  </div>
-                </div>
-              ),
-            },
+            label: isPatronMode ? t('currentEpoch') : t('pending'),
+            tooltipProps: isPatronMode
+              ? undefined
+              : {
+                  position: 'bottom-right',
+                  text: (
+                    <div className={styles.pendingTooltip}>
+                      <div className={styles.pendingTooltipLabel}>
+                        {t('pendingFundsAvailableAfter')}
+                      </div>
+                      <div className={styles.pendingTooltipDate}>
+                        {/* TODO OCT-1041 fetch next epoch props instead of assuming the same length */}
+                        {currentEpochProps && timeCurrentEpochEnd && timeCurrentAllocationEnd
+                          ? format(
+                              new Date(
+                                isDecisionWindowOpen
+                                  ? timeCurrentAllocationEnd
+                                  : timeCurrentEpochEnd + currentEpochProps.decisionWindow,
+                              ),
+                              'haaa z, d LLLL',
+                            )
+                          : ''}
+                      </div>
+                    </div>
+                  ),
+                },
           } as SectionProps,
         ]
       : []),
@@ -99,32 +103,46 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
         isFetching: isWithdrawableRewardsFetching || isAppWaitingForTransactionToBeIndexed,
         valueCrypto: currentEpoch === 1 ? BigNumber.from(0) : withdrawableRewards?.sum,
       },
-      label: i18n.t('common.availableNow'),
+      label: isPatronMode && !isProjectAdminMode ? t('allTime') : i18n.t('common.availableNow'),
     },
   ];
+
+  const title = useMemo(() => {
+    if (isProjectAdminMode) {
+      return i18n.t('common.donations');
+    }
+    if (isPatronMode) {
+      return t('patronEarnings');
+    }
+    return t('personalAllocation');
+  }, [isProjectAdminMode, isPatronMode, i18n, t]);
 
   return (
     <Fragment>
       <BoxRounded
         alignment="left"
-        buttonProps={{
-          dataTest: 'BoxPersonalAllocation__Button',
-          isDisabled:
-            isPreLaunch ||
-            !isConnected ||
-            isWithdrawableRewardsFetching ||
-            isAppWaitingForTransactionToBeIndexed ||
-            withdrawableRewards?.sum.isZero(),
-          isHigh: true,
-          label: t('withdrawToWallet'),
-          onClick: () => setIsModalOpen(true),
-          variant: isProjectAdminMode ? 'cta' : 'secondary',
-        }}
+        buttonProps={
+          isPatronMode && !isProjectAdminMode
+            ? undefined
+            : {
+                dataTest: 'BoxPersonalAllocation__Button',
+                isDisabled:
+                  isPreLaunch ||
+                  !isConnected ||
+                  isWithdrawableRewardsFetching ||
+                  isAppWaitingForTransactionToBeIndexed ||
+                  withdrawableRewards?.sum.isZero(),
+                isHigh: true,
+                label: t('withdrawToWallet'),
+                onClick: () => setIsModalOpen(true),
+                variant: isProjectAdminMode ? 'cta' : 'secondary',
+              }
+        }
         className={className}
         dataTest="BoxPersonalAllocation"
         hasSections
         isVertical
-        title={isProjectAdminMode ? i18n.t('common.donations') : t('personalAllocation')}
+        title={title}
       >
         <Sections sections={sections} />
       </BoxRounded>
