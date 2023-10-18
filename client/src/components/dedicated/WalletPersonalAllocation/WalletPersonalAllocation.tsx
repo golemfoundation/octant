@@ -16,9 +16,7 @@ const WalletPersonalAllocation: FC<WalletPersonalAllocationProps> = ({
   isGrey,
   isDisabled,
 }) => {
-  const { i18n, t } = useTranslation('translation', {
-    keyPrefix: 'components.dedicated.walletPersonalAllocation',
-  });
+  const { i18n } = useTranslation('translation');
   const { data: withdrawableRewards, isFetching: isWithdrawableRewardsFetching } =
     useWithdrawableRewards();
 
@@ -42,7 +40,7 @@ const WalletPersonalAllocation: FC<WalletPersonalAllocationProps> = ({
       hasSections
       isGrey={isGrey}
       isVertical
-      title={t('label')}
+      title={i18n.t('common.personalAllocation')}
     >
       <Sections sections={sections} />
     </BoxRounded>

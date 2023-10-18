@@ -114,7 +114,7 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
     if (isPatronMode) {
       return t('patronEarnings');
     }
-    return t('personalAllocation');
+    return i18n.t('common.personalAllocation');
   }, [isProjectAdminMode, isPatronMode, i18n, t]);
 
   return (

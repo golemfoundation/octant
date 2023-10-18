@@ -32,6 +32,7 @@
     "lockGlm": "Lock GLM",
     "octantTips": "Octant tips",
     "personal": "Personal",
+    "personalAllocation": "Personal allocation",
     "proposalForbiddenOperation": "As a proposal you are not able to proceed with this operation",
     "thresholdDataUnavailable": "Threshold data unavailable",
     "valueCantBeEmpty": "Value can't be empty"
@@ -100,7 +101,6 @@
         "tooltipText": "Effective balance is the part of your locked GLM that is currently earning rewards. For example, GLM locked during allocation only earn rewards in the next epoch, so they are not immediately effective."
       },
       "boxPersonalAllocation": {
-        "personalAllocation": "Personal allocation",
         "patronEarnings": "Patron earnings",
         "pending": "Pending",
         "withdrawToWallet": "Withdraw to wallet",
@@ -224,9 +224,6 @@
       },
       "proposalsList": {
         "epochArchive": "Epoch {{epoch}} Archive"
-      },
-      "walletPersonalAllocation": {
-        "label": "Personal allocation"
       },
       "timeCounter": {
         "hours": "Hours",
