@@ -9,6 +9,7 @@ export interface TipsData {
 }
 
 export interface TipsMethods {
+  setInitialState: () => void;
   setValuesFromLocalStorage: () => void;
   setWasAddFavouritesAlreadyClosed: (payload: TipsData['wasAddFavouritesAlreadyClosed']) => void;
   setWasChangedYourMindAlreadyClosed: (
