@@ -30,7 +30,7 @@ const AllocationItemProposalRewards: FC<AllocationItemProposalRewardsProps> = ({
   );
 
   const isRewardsDataDefined =
-    proposalMatchedProposalRewards !== undefined && proposalRewardsThreshold !== undefined && false;
+    proposalMatchedProposalRewards !== undefined && proposalRewardsThreshold !== undefined;
 
   const isThresholdUnknown = isEpoch1 || !isRewardsDataDefined;
 
