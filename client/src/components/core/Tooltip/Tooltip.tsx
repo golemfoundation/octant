@@ -20,6 +20,7 @@ const Tooltip: FC<TooltipProps> = ({
   className,
   variant = 'normal',
   tooltipClassName,
+  tooltipWrapperClassName,
 }) => {
   const { isDesktop } = useMediaQuery();
   const [isVisible, setIsVisible] = useState(false);
@@ -72,7 +73,13 @@ const Tooltip: FC<TooltipProps> = ({
       {isTooltipVisible && !isDesktop && (
         <div className={styles.overlay} onClick={() => setIsVisible(false)} />
       )}
-      <div className={cx(styles.tooltipWrapper, styles[`position--${position}`])}>
+      <div
+        className={cx(
+          styles.tooltipWrapper,
+          styles[`position--${position}`],
+          tooltipWrapperClassName,
+        )}
+      >
         <AnimatePresence>
           {isTooltipVisible && (
             <motion.div

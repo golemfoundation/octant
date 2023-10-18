@@ -18,6 +18,7 @@ import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useSyncStatus from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -106,6 +107,7 @@ const App = (): ReactElement => {
   const { isFetching: isFetchingAllProposals } = useAllProposals();
   const { data: userAllocations } = useUserAllocations();
   const { data: individualReward } = useIndividualReward();
+  const { isFetching: isFetchingPatronModeStatus } = useIsPatronMode();
   const [isFlushRequired, setIsFlushRequired] = useState(false);
   const isProjectAdminMode = useIsProjectAdminMode();
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
@@ -337,7 +339,8 @@ const App = (): ReactElement => {
     isFlushRequired ||
     !isTipsStoreInitialized ||
     isFetchingUserTOS ||
-    isFetchingAllProposals;
+    isFetchingAllProposals ||
+    isFetchingPatronModeStatus;
 
   if (isLoading) {
     return <AppLoader />;
