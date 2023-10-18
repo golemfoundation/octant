@@ -6,7 +6,7 @@ from app.utils.time import sec_to_days
 
 
 class EpochDetails:
-    def __init__(self, start, duration, decision_window):
+    def __init__(self, start, duration, decision_window, remaining_sec=None):
         self.duration_sec = int(duration)
         self.duration_days = sec_to_days(self.duration_sec)
         self.decision_window_sec = int(decision_window)
@@ -14,13 +14,16 @@ class EpochDetails:
         self.start_sec = int(start)
         self.end_sec = self.start_sec + self.duration_sec
 
-        now_sec = int(datetime.utcnow().timestamp())
-        if now_sec > self.end_sec:
-            self.remaining_sec = 0
-        elif self.start_sec <= now_sec < self.end_sec:
-            self.remaining_sec = self.end_sec - now_sec
+        if remaining_sec is None:
+            now_sec = int(datetime.utcnow().timestamp())
+            if now_sec > self.end_sec:
+                self.remaining_sec = 0
+            elif self.start_sec <= now_sec < self.end_sec:
+                self.remaining_sec = self.end_sec - now_sec
+            else:
+                self.remaining_sec = self.duration_sec
         else:
-            self.remaining_sec = self.duration_sec
+            self.remaining_sec = remaining_sec
 
         self.remaining_days = sec_to_days(self.remaining_sec)
 
@@ -42,4 +45,5 @@ def get_future_epoch_details() -> EpochDetails:
         start=epoch_details[2],
         duration=epoch_details[3],
         decision_window=epoch_details[4],
+        remaining_sec=epoch_details[3],
     )
