@@ -83,7 +83,11 @@ def get_all_by_proposal_and_epoch(
     allocations = database.allocations.get_all_by_proposal_addr_and_epoch(
         proposal_address, epoch
     )
-    return [AccountFunds(a.user.address, a.amount) for a in allocations]
+    return [
+        AccountFunds(a.user.address, a.amount)
+        for a in allocations
+        if int(a.amount) != 0
+    ]
 
 
 def get_all_by_epoch(epoch: int) -> List[EpochAllocationRecord]:
@@ -95,6 +99,7 @@ def get_all_by_epoch(epoch: int) -> List[EpochAllocationRecord]:
     return [
         EpochAllocationRecord(a.user.address, a.amount, a.proposal_address)
         for a in allocations
+        if int(a.amount) != 0
     ]
 
 
