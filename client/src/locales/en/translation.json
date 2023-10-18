@@ -18,23 +18,23 @@
     }
   },
   "common": {
-    "allocationValuesNotAvailable": "Allocation values are not available",
-    "close": "Close",
+    "availableNow": "Available now",
     "budget": "Budget {{budget}}",
-    "lockGlm": "Lock GLM",
-    "gettingStarted": "Getting Started",
-    "octantTips": "Octant tips",
+    "calculateRewards": "Calculate rewards",
+    "close": "Close",
+    "copied": "Copied",
+    "copy": "Copy link",
+    "days": "Days",
+    "donations": "Donations",
     "done": "Done",
-    "valueCantBeEmpty": "Value can't be empty",
+    "gettingStarted": "Getting Started",
+    "history": "History",
+    "lockGlm": "Lock GLM",
+    "octantTips": "Octant tips",
     "personal": "Personal",
     "proposalForbiddenOperation": "As a proposal you are not able to proceed with this operation",
-    "history": "History",
-    "availableNow": "Available now",
-    "copy": "Copy link",
-    "copied": "Copied",
-    "calculateRewards": "Calculate rewards",
-    "days": "Days",
-    "donations": "Donations"
+    "thresholdDataUnavailable": "Threshold data unavailable",
+    "valueCantBeEmpty": "Value can't be empty"
   },
   "components": {
     "dedicated": {
