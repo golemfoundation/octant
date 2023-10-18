@@ -77,16 +77,17 @@ const AllocationView = (): ReactElement => {
       triggerToast({
         title: t('allocationSuccessful'),
       });
-      await refetchMatchedProposalRewards();
-      await refetchUserAllocations();
-      await refetchUserAllocationNonce();
-      await refetchHistory();
+      refetchMatchedProposalRewards();
+      refetchUserAllocations();
+      refetchUserAllocationNonce();
+      refetchHistory();
       setAllocations([
         ...allocations.filter(allocation => {
           const allocationValue = allocationValues.find(({ address }) => address === allocation);
           return !allocationValue?.value.isZero();
         }),
       ]);
+      setIsLocked(true);
     },
   });
 

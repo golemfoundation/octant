@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useSignTypedData } from 'wagmi';
 
 import networkConfig from 'constants/networkConfig';
@@ -32,7 +33,8 @@ const types = {
 };
 
 export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): UseAllocate {
-  const { signTypedData, isLoading } = useSignTypedData({
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { signTypedData } = useSignTypedData({
     domain,
     message: {
       value: 'Octant Allocation',
@@ -49,6 +51,7 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
             if (onSuccess) {
               onSuccess();
             }
+            setIsLoading(false);
           },
         );
       });
@@ -58,6 +61,7 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
   });
 
   const allocate = (allocations: AllocationValues) => {
+    setIsLoading(true);
     const allocationsMapped = getAllocationsMapped(allocations);
     const message = {
       allocations: allocationsMapped,
