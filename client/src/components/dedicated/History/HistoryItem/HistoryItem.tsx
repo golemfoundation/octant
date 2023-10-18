@@ -51,7 +51,10 @@ const HistoryItem: FC<HistoryItemProps> = props => {
           className={styles.values}
           cryptoCurrency={['allocation', 'withdrawal'].includes(type) ? 'ethereum' : 'golem'}
           isFetching={isFetchingEpochTimestampHappenedIn || isFetchingIndividualReward}
-          valueCrypto={isPersonalOnlyAllocation ? amount : personalAllocationValue}
+          textAlignment="right"
+          valueCrypto={
+            type === 'allocation' && isPersonalOnlyAllocation ? personalAllocationValue : amount
+          }
           variant="tiny"
         />
       </BoxRounded>
