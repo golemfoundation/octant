@@ -87,3 +87,30 @@
     color: $color-octant-grey6;
   }
 }
+
+.patronMode {
+  display: flex;
+  align-items: center;
+}
+
+.patronModeQuestionMarkWrapper {
+  width: 3.2rem;
+  height: 3.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    margin-top: 0.2rem;
+    path {
+      stroke: $color-octant-dark;
+    }
+    circle {
+      fill: $color-octant-dark;
+    }
+  }
+}
+
+.patronModeTooltipWrapper {
+  top: 3rem !important;
+}

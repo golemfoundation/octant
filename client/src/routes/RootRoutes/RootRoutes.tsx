@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 import AllocationView from 'views/AllocationView/AllocationView';
 import EarnView from 'views/EarnView/EarnView';
@@ -22,6 +23,7 @@ const RootRoutes: FC<RootRoutesProps> = props => {
   const { data: currentEpoch } = useCurrentEpoch();
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isProjectAdminMode = useIsProjectAdminMode();
+  const { data: isPatronMode } = useIsPatronMode();
 
   return (
     <Routes>
@@ -29,14 +31,16 @@ const RootRoutes: FC<RootRoutesProps> = props => {
         <>
           {!isProjectAdminMode && (
             <>
-              <Route
-                element={
-                  <Protected {...props}>
-                    <AllocationView />
-                  </Protected>
-                }
-                path={`${ROOT_ROUTES.allocation.relative}/*`}
-              />
+              {!isPatronMode && (
+                <Route
+                  element={
+                    <Protected {...props}>
+                      <AllocationView />
+                    </Protected>
+                  }
+                  path={`${ROOT_ROUTES.allocation.relative}/*`}
+                />
+              )}
               <Route
                 element={
                   <Protected {...props}>
