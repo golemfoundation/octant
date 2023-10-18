@@ -1,5 +1,6 @@
 $rowHeightDesktop: 6.4rem;
 $rowHeightMobile: 5.6rem;
+$nameAndRewardsMobilePadding: 2.7rem;
 
 .root {
   display: flex;
@@ -34,11 +35,11 @@ $rowHeightMobile: 5.6rem;
   color: $color-octant-dark;
   font-size: $font-size-14;
   font-weight: $font-weight-bold;
-  padding: 0 1.6rem;
   white-space: nowrap;
   border-bottom: 0.1rem solid $color-octant-grey12;
   width: 100%;
   text-align: left;
+  padding: 0 $nameAndRewardsMobilePadding;
 
   .image {
     display: none;
@@ -55,6 +56,15 @@ $rowHeightMobile: 5.6rem;
 
   @media #{$desktop-up} {
     font-size: $font-size-16;
+    padding: 0 1.6rem;
+  }
+}
+
+.rewards {
+  padding: 0 $nameAndRewardsMobilePadding;
+
+  @media #{$desktop-up} {
+    padding: 0 2.7rem;
   }
 }
 
