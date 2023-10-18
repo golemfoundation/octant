@@ -14,7 +14,9 @@ import HistoryItemProps from './types';
 
 const HistoryItem: FC<HistoryItemProps> = props => {
   const { type, amount, isFinalized = true } = props;
-  const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.historyItem' });
+  const { i18n, t } = useTranslation('translation', {
+    keyPrefix: 'components.dedicated.historyItem',
+  });
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { data: epochTimestampHappenedIn, isFetching: isFetchingEpochTimestampHappenedIn } =
     useEpochTimestampHappenedIn(props.timestamp);
@@ -30,7 +32,9 @@ const HistoryItem: FC<HistoryItemProps> = props => {
   const title = useMemo(() => {
     switch (type) {
       case 'allocation':
-        return t(isPersonalOnlyAllocation ? 'personalAllocation' : 'allocatedRewards');
+        return isPersonalOnlyAllocation
+          ? i18n.t('common.personalAllocation')
+          : t('allocatedRewards');
       case 'lock':
         return t('lockedGLM');
       case 'unlock':
@@ -38,7 +42,7 @@ const HistoryItem: FC<HistoryItemProps> = props => {
       default:
         return t('withdrawnFunds');
     }
-  }, [isPersonalOnlyAllocation, t, type]);
+  }, [i18n, isPersonalOnlyAllocation, t, type]);
 
   return (
     <Fragment>
