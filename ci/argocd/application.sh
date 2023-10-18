@@ -9,6 +9,10 @@ ARGO_REPOSITORY_BRANCH="octant"
 
 set +a
 
+# Move blocks 5 minutes in the past to make sure we start from epoch 1 and not accidently from epoch 2
+
+export BLOCK_NUMBER=$(echo $BLOCK_NUMBER | python3 -c "print(max(0, int(input()) - 25))")
+
 ## ArgoCD repository commit
 
 gpg --import <(echo $HOUSEKEEPER_GPG_KEY | base64 -d)
@@ -46,18 +50,38 @@ if [[ "$DEPLOYMENT_TYPE" == "e2e" && "$ACTION" == "create" ]]; then
 	fi
 fi
 
-# Substitute Argo Octant app env values
-
-cat $CI_PROJECT_DIR/ci/argocd/templates/octant-application.yaml | envsubst > $OCTANT_APP_DIR/$DEPLOYMENT_ID-app.yaml
-
 if [[ "$ACTION" == "create" ]]; then
+	# Get rid of octant app application source from the Argo app file.
+	# We only want anvil at this point
+
+	cat $CI_PROJECT_DIR/ci/argocd/templates/octant-application.yaml | envsubst | yq "del(.spec.sources[0])" > $OCTANT_APP_DIR/$DEPLOYMENT_ID-app.yaml
+
+	git add $OCTANT_APP_DIR/$DEPLOYMENT_ID-app.yaml
+	git commit -S -m "Added Octant Anvil deployment file for $DEPLOYMENT_ID branch at $(date +%Y-%m-%d)" || true
+	git push
+
+	sleep 10 # Wait for Argo to pickup the latest deployment
+elif [[ "$ACTION" == "update" ]]; then
+
+	if [[ "$NETWORK_NAME" == "local" || "$NETWORK_NAME" == "localhost" ]]; then
+		export FRONTEND_RPC_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
+		export BACKEND_RPC_URL=http://anvil:8545
+	else
+		# This will make webclient use default (wagmi) endpoint
+		export FRONTEND_RPC_URL=""
+		export BACKEND_RPC_URL=https://geth.wildland.dev
+	fi
+
+	# Substitute Argo Octant app env values
+	cat $CI_PROJECT_DIR/ci/argocd/templates/octant-application.yaml | envsubst > $OCTANT_APP_DIR/$DEPLOYMENT_ID-app.yaml
+
 	set +e
 	bash "${CI_PROJECT_DIR}/ci/argocd/does_app_exist.sh"
 	APP_EXISTS=$?
 	set -e
 
 	git add $OCTANT_APP_DIR/$DEPLOYMENT_ID-app.yaml
-	git commit -S -m "Added Octant deployment file for $DEPLOYMENT_ID branch at $(date +%Y-%m-%d)" || true
+	git commit -S -m "Added Octant App deployment file for $DEPLOYMENT_ID branch at $(date +%Y-%m-%d)" || true
 	git push
 
 	sleep 10 # Wait for Argo to pickup the latest deployment
@@ -114,24 +138,4 @@ else # assuming $ACTION =~ (delete|destroy)
 	git rm -f $OCTANT_APP_DIR/$DEPLOYMENT_ID-app.yaml
 	git commit -S -m "Removed Octant deployment file for $DEPLOYMENT_ID branch at $(date +%Y-%m-%d)"
 	git push
-fi
-
-popd
-
-set +e
-
-if [[ "$ACTION" == "create" ]]; then
-	## Wait for application to deploy
-
-	# timeout    (runs in the foreground on busybox)
-	#   -s TERM      signal to send after timeout
-	#   900          number of seconds until timeout
-	#   bash -c '..' the command to run
-
-	timeout --foreground -s TERM 900 bash -c \
-	    'until bash $CI_PROJECT_DIR/ci/argocd/is_app_deployed.sh; [ $? -eq 0 ]; do\
-	    echo "[-] Waiting for ${0}" app to deploy && sleep 10;\
-	    done' $DEPLOYMENT_ID
-
-	echo "[+] $DEPLOYMENT_ID is UP"
 fi

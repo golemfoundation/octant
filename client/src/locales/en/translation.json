@@ -18,25 +18,47 @@
     }
   },
   "common": {
-    "allocationValuesNotAvailable": "Allocation values are not available",
-    "close": "Close",
+    "availableNow": "Available now",
     "budget": "Budget {{budget}}",
-    "lockGlm": "Lock GLM",
-    "transactionSuccessful": "Transaction successful",
-    "gettingStarted": "Getting Started",
-    "octantTips": "Octant tips",
+    "calculateRewards": "Calculate rewards",
+    "close": "Close",
+    "copied": "Copied",
+    "copy": "Copy link",
+    "days": "Days",
+    "donations": "Donations",
     "done": "Done",
-    "valueCantBeEmpty": "Value can't be empty",
+    "gettingStarted": "Getting Started",
+    "history": "History",
+    "lockGlm": "Lock GLM",
+    "octantTips": "Octant tips",
     "personal": "Personal",
     "proposalForbiddenOperation": "As a proposal you are not able to proceed with this operation",
-    "history": "History",
-    "availableNow": "Available now",
-    "copy": "Copy link",
-    "copied": "Copied",
-    "donations": "Donations"
+    "thresholdDataUnavailable": "Threshold data unavailable",
+    "valueCantBeEmpty": "Value can't be empty"
   },
   "components": {
+    "settings": {
+      "patronMode": {
+        "enablePatronMode": "Enable patron mode",
+        "disablePatronMode": "Disable patron mode",
+        "patronModeSignatureMessage": "Signing this message will {{state}} patron mode for address {{address}}.",
+        "firstParagraph": "This mode is for token holders <br /> who want to support Octant.",
+        "secondParagraph": "It disables and removes all personal allocations and project donations.",
+        "thirdParagraph": "All rewards go directly to the matching fund with no action required by the patron. Learn more in the <0>Docs</0>.",
+        "fourthParagraphEnable": "Slide the switch below all the way to <br /> the right to enable patron mode.",
+        "fourthParagraphDisable": "Slide the switch below all the way to <br /> the left to disable patron mode.",
+        "patronModeEnabled": "Patron mode enabled",
+        "patronModeDisabled": "Patron mode disabled",
+        "slideRightToConfirm": "Slide right to confirm",
+        "slideLeftToConfirm": "Slide left to confirm"
+      }
+    },
     "dedicated": {
+      "rewardsCalculator": {
+        "enterGLMAmount": "Enter a GLM amount",
+        "lockFor": "Lock for",
+        "estimatedRewards": "Estimated rewards"
+      },
       "allocationEmptyState": {
         "text": "Add some projects or lock GLM tokens to prepare for the next allocation period",
         "epoch1textMobile": "Allocations start in Epoch 2, <br/> please check back in then",
@@ -47,9 +69,9 @@
         "connectWallet": "In order to manipulate allocation values and vote, please connect your wallet first."
       },
       "allocationNavigation": {
-        "next": "Next",
+        "back": "Back",
         "confirm": "Confirm",
-        "edit": "Edit",
+        "next": "Next",
         "reset": "Reset allocations"
       },
       "allocationRewardsBox": {
@@ -59,9 +81,11 @@
         "withdraw": "Withdraw {{percentWithdraw}}%"
       },
       "allocationSummary": {
-        "matchFundingEstimate": "Match funding (estimate)",
+        "estimatedLeverage": "Est. leverage",
         "confirmYourAllocations": "Confirm your allocations",
-        "confirmAllocations": "Confirm allocations"
+        "confirmAllocations": "Confirm allocations",
+        "allocationProjects": "Projects ({{projectsNumber}})",
+        "tooltip": "<0>Leverage</0> shows the multiplier effect of your donation to the projects you chose. Note that leverage will fluctuate significantly and might be very different at the end of the allocation window."
       },
       "allocationInputsRewardsAvailable": {
         "resetAllocations": "Reset allocations to manually edit this project",
@@ -77,9 +101,12 @@
       },
       "boxPersonalAllocation": {
         "personalAllocation": "Personal allocation",
+        "patronEarnings": "Patron earnings",
         "pending": "Pending",
         "withdrawToWallet": "Withdraw to wallet",
-        "pendingFundsAvailableAfter": "Pending funds available after"
+        "pendingFundsAvailableAfter": "Pending funds available after",
+        "allTime": "All time",
+        "currentEpoch": "Current epoch"
       },
       "budgetBox": {
         "approve2Transactions": "Please approve 2 transactions in your wallet. The first (required only once and for locking) allows ERC-20 tokens, and the second locks / unlocks GLM.",
@@ -144,11 +171,36 @@
         "emptyHistory": "You haven’t made any transactions yet"
       },
       "historyItem": {
-        "allocatedFunds": "Allocated funds",
+        "allocatedRewards": "Allocated rewards",
         "lockedGLM": "Locked GLM",
         "unlockedGLM": "Unlocked GLM",
         "projects": "Projects",
         "withdrawnFunds": "Withdrawn funds"
+      },
+      "historyItemModal": {
+        "header": {
+          "allocation": "Epoch {{epoch}} Allocations",
+          "lock": "Locked GLM",
+          "unlock": "Unlocked GLM",
+          "withdrawal": "Withdrew ETH"
+        },
+        "sections": {
+          "allocationPersonal": "Personal",
+          "allocationProjects": "Projects ({{projectsNumber}})",
+          "amount": "Amount",
+          "gasPrice": "Gas price",
+          "viewOnEtherscan": "View on Etherscan",
+          "when": "When",
+          "withdrawal": "Withdrew ETH"
+        }
+      },
+      "historyTransactionLabel": {
+        "confirmed": "Confirmed",
+        "pending": "Pending"
+      },
+      "metricsTimeSection": {
+        "epochEndsIn": "Epoch {{currentEpoch}} ends in",
+        "epochAllocationEndsIn": "Epoch {{currentEpoch}} Allocation ends in"
       },
       "modalAllocationEditSelection": {
         "uncheckToRemove": "Uncheck to remove"
@@ -177,12 +229,8 @@
         "label": "Personal allocation"
       },
       "timeCounter": {
-        "days": "Days",
         "hours": "Hours",
-        "hrs": "Hrs",
-        "min": "Min",
         "minutes": "Minutes",
-        "sec": "Sec",
         "seconds": "Seconds"
       },
       "tos": {
@@ -196,8 +244,10 @@
       "withdrawEth": {
         "withdrawalsDistributedEpoch": "Withdrawals are distributed when Epoch {{currentEpoch}} ends",
         "rewardsBudget": "Rewards Budget",
-        "amountToWithdraw": "Amount to withdraw",
-        "requestWithdrawal": "Request withdrawal"
+        "amount": "Amount",
+        "estimatedGasPrice": "Est. gas price",
+        "withdrawAll": "Withdraw all",
+        "waitingForConfirmation": "Waiting for confirmation"
       }
     }
   },
@@ -208,7 +258,8 @@
       "loadingRewardBudget": "Loading reward budget...",
       "allocationStartsIn": "Allocation starts in <0>{{allocationPeriod}}</0>",
       "allocationEndsIn": "Allocation ends in <0>{{allocationPeriod}}</0>",
-      "admin": "Admin"
+      "admin": "Admin",
+      "patron": "Patron"
     }
   },
   "meta": {
@@ -353,7 +404,11 @@
       "chooseDisplayCurrency": "Choose a display currency",
       "cryptoMainValueDisplay": "Use crypto as main value display",
       "alwaysShowOnboarding": "Always show onboarding",
-      "alwaysShowOctantTips": "Always show tips"
+      "alwaysShowOctantTips": "Always show tips",
+      "enablePatronMode": "Enable patron mode"
+    },
+    "syncStatus": {
+      "information": "We're synchronizing things to prepare the<br/>next epoch, so the app will be unavailable<br/>for a little while. Please check back soon."
     }
   }
 }

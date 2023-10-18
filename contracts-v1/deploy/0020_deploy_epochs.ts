@@ -2,7 +2,7 @@ import { ethers } from 'hardhat';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
-import { DECISION_WINDOW, EPOCH_DURATION, EPOCHS_START } from '../env';
+import { AUTH_ADDRESS, DECISION_WINDOW, EPOCH_DURATION, EPOCHS_START } from '../env';
 import { AUTH, EPOCHS } from '../helpers/constants';
 import { getLatestBlockTimestamp } from '../helpers/misc-utils';
 
@@ -12,19 +12,23 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
+  const authAddress = AUTH_ADDRESS || (await ethers.getContract(AUTH)).address;
+
   const now = await getLatestBlockTimestamp();
   let decisionWindow = DECISION_WINDOW;
   let epochDuration = EPOCH_DURATION;
+
   if (['hardhat', 'localhost'].includes(hre.network.name)) {
     decisionWindow = 120;
     epochDuration = 300;
   }
   const start = EPOCHS_START || now;
 
-  const auth = await ethers.getContract(AUTH);
+  // eslint-disable-next-line no-console
+  console.log(`start=${start}`);
 
   await deploy(EPOCHS, {
-    args: [start, epochDuration, decisionWindow, auth.address],
+    args: [start, epochDuration, decisionWindow, authAddress],
     autoMine: true,
     from: deployer,
     log: true,

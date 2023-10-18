@@ -1,53 +1,44 @@
 import cx from 'classnames';
-import { BigNumber } from 'ethers';
-import { AnimatePresence, motion } from 'framer-motion';
-import React, { FC, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { FC, useEffect } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Sections from 'components/core/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import Header from 'components/core/Header/Header';
-import Svg from 'components/core/Svg/Svg';
-import AllocationSummaryProject from 'components/dedicated/AllocationSummaryProject/AllocationSummaryProject';
-import useMediaQuery from 'hooks/helpers/useMediaQuery';
-import useAllocateSimulate from 'hooks/mutations/allocations/useAllocateSimulate';
+import ProjectAllocationDetailRow from 'components/dedicated/ProjectAllocationDetailRow/ProjectAllocationDetailRow';
+import useAllocateLeverage from 'hooks/mutations/useAllocateLeverage';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useAllocationsStore from 'store/allocations/store';
-import { chevronBottom } from 'svg/misc';
 
 import styles from './AllocationSummary.module.scss';
 import AllocationSummaryProps from './types';
-
-const variants = {
-  showHide: { height: 0, opacity: 0 },
-  visible: { height: 'auto', opacity: 1 },
-};
 
 const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationSummary',
   });
-  const { isDesktop } = useMediaQuery();
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
-  const [areDonationsVisible, setAreDonationsVisible] = useState(isDesktop);
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
   }));
 
   const allocationValuesPositive = allocationValues.filter(({ value }) => !value.isZero());
+  const areAllocationValuesPositive = allocationValuesPositive?.length > 0;
 
   const sections: SectionProps[] = [];
   const personalAllocation = individualReward?.sub(rewardsForProposals);
 
   const {
-    data: allocateSimulate,
+    data: allocateLeverage,
     mutateAsync,
-    isLoading: isLoadingAllocateSimulate,
-  } = useAllocateSimulate();
+    isLoading: isLoadingAllocateLeverage,
+  } = useAllocateLeverage();
 
   useEffect(() => {
-    mutateAsync(allocationValues);
+    if (areAllocationValuesPositive) {
+      mutateAsync(allocationValues);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -59,68 +50,57 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
         valueCrypto: individualReward?.sub(rewardsForProposals),
       },
       label: i18n.t('common.personal'),
-      labelClassName: styles.sectionLabel,
     });
   }
 
-  if (allocationValuesPositive.length > 0) {
+  if (areAllocationValuesPositive) {
     sections.push(
       {
-        additionalContent: (
-          <AnimatePresence initial={false}>
-            {areDonationsVisible && (
-              <motion.div
-                animate="visible"
-                className={styles.detailsWrapper}
-                exit="showHide"
-                initial="showHide"
-                variants={variants}
-              >
-                <div className={styles.details}>
-                  {allocationValuesPositive.map(({ address, ...rest }) => (
-                    <AllocationSummaryProject key={address} address={address} {...rest} />
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        ),
-        className: styles.donations,
         doubleValueProps: {
           cryptoCurrency: 'ethereum',
           valueCrypto: rewardsForProposals,
         },
-        label: i18n.t('common.donations'),
-        labelClassName: styles.sectionLabel,
-        labelSuffix: (
-          <Svg
-            classNameSvg={cx(styles.icon, areDonationsVisible && styles.areDonationsVisible)}
-            img={chevronBottom}
-            size={0.8}
-          />
-        ),
-        /* eslint-disable-next-line @typescript-eslint/naming-convention */
-        onClick: () => setAreDonationsVisible(prev => !prev),
+        label: t('allocationProjects', { projectsNumber: allocationValuesPositive.length }),
       },
       {
-        doubleValueProps: {
-          cryptoCurrency: 'ethereum',
-          isFetching: isLoadingAllocateSimulate,
-          valueCrypto: allocateSimulate?.rewards.reduce(
-            (acc, curr) => acc.add(curr.matched),
-            BigNumber.from(0),
+        childrenRight: isLoadingAllocateLeverage ? (
+          <div className={styles.loader} />
+        ) : (
+          <div className={styles.text}>
+            {allocateLeverage ? parseInt(allocateLeverage.leverage, 10) : 0}x
+          </div>
+        ),
+        label: t('estimatedLeverage'),
+        tooltipProps: {
+          position: 'bottom-right',
+          text: (
+            <div>
+              <Trans
+                components={[<span className={styles.bold} />]}
+                i18nKey="components.dedicated.allocationSummary.tooltip"
+              />
+            </div>
           ),
         },
-        label: t('matchFundingEstimate'),
-        labelClassName: cx(styles.sectionLabel, styles.matchFundingLabel),
       },
     );
   }
 
   return (
-    <BoxRounded hasPadding={false} isVertical>
+    <BoxRounded
+      className={cx(styles.root, areAllocationValuesPositive && styles.areAllocationValuesPositive)}
+      hasPadding={false}
+      isVertical
+    >
       <Header className={styles.header} text={t('confirmYourAllocations')} />
-      <Sections sections={sections} />
+      <Sections sections={sections} variant="small" />
+      {areAllocationValuesPositive && (
+        <div className={styles.projects}>
+          {allocationValuesPositive?.map(({ address, value }) => (
+            <ProjectAllocationDetailRow key={address} address={address} amount={value} />
+          ))}
+        </div>
+      )}
     </BoxRounded>
   );
 };

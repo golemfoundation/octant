@@ -12,10 +12,9 @@ from web3 import Web3
 from tests.helpers.gql_client import MockGQLClient
 from app import create_app, database
 from app.contracts.epochs import Epochs
-from app.contracts.erc20 import ERC20
 from app.contracts.proposals import Proposals
 from app.contracts.vault import Vault
-from app.controllers.allocations import allocate
+from app.controllers.allocations import allocate, deserialize_payload
 from app.core.allocations import AllocationRequest, Allocation
 from app.core.rewards.rewards import calculate_matched_rewards
 from app.crypto.eip712 import sign, build_allocations_eip712_data
@@ -24,24 +23,24 @@ from app.settings import TestConfig
 
 # Consts
 MNEMONIC = "test test test test test test test test test test test junk"
-MOCKED_PENDING_EPOCH_NO = 42
-MOCKED_CURRENT_EPOCH_NO = 43
-GLM_CONTRACT_SUPPLY = 700000000_000000000_000000000
-GNT_CONTRACT_SUPPLY = 300000000_000000000_000000000
-GLM_SUPPLY = GLM_CONTRACT_SUPPLY + GNT_CONTRACT_SUPPLY
+MOCKED_PENDING_EPOCH_NO = 1
+MOCKED_CURRENT_EPOCH_NO = 2
 ETH_PROCEEDS = 402_410958904_110000000
-TOTAL_ED = 22700_000000000_099999994
+TOTAL_ED = 100022700_000000000_099999994
 USER1_ED = 1500_000055377_000000000
-USER2_ED = 7500_000000000_000000000
-LOCKED_RATIO = Decimal("0.000022700000000000099999994")
-TOTAL_REWARDS = 1_917267577_180363384
-ALL_INDIVIDUAL_REWARDS = 9134728_767123337
-USER1_ADDRESS = "0xabcdef7890123456789012345678901234567893"
+USER2_ED = 5500_000000000_000000000
+USER3_ED = 2000_000000000_000000000
+USER1_BUDGET = 1526868_989237987
+USER2_BUDGET = 5598519_420519815
+USER3_BUDGET = 2035825_243825387
+
+LOCKED_RATIO = Decimal("0.100022700000000000099999994")
+TOTAL_REWARDS = 321_928767123_288031232
+ALL_INDIVIDUAL_REWARDS = 101_814368807_786782825
+USER1_ADDRESS = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
 USER2_ADDRESS = "0x2345678901234567890123456789012345678904"
 
 # Contracts mocks
-MOCK_GLM = MagicMock(spec=ERC20)
-MOCK_GNT = MagicMock(spec=ERC20)
 MOCK_EPOCHS = MagicMock(spec=Epochs)
 MOCK_PROPOSALS = MagicMock(spec=Proposals)
 MOCK_VAULT = MagicMock(spec=Vault)
@@ -50,6 +49,8 @@ MOCK_VAULT = MagicMock(spec=Vault)
 MOCK_GET_ETH_BALANCE = MagicMock()
 MOCK_GET_USER_BUDGET = Mock()
 MOCK_HAS_PENDING_SNAPSHOT = Mock()
+MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
+MOCK_IS_CONTRACT = Mock()
 MOCK_MATCHED_REWARDS = MagicMock(spec=calculate_matched_rewards)
 
 
@@ -86,6 +87,13 @@ def user_accounts():
 
 
 @pytest.fixture(scope="function")
+def tos_users(user_accounts):
+    for acc in user_accounts:
+        database.user_consents.add_consent(acc.address, "127.0.0.1")
+    return user_accounts
+
+
+@pytest.fixture(scope="function")
 def proposal_accounts():
     w3.eth.account.enable_unaudited_hdwallet_features()
     return [
@@ -95,14 +103,13 @@ def proposal_accounts():
 
 
 @pytest.fixture(scope="function")
-def patch_glm_and_gnt(monkeypatch):
-    monkeypatch.setattr("app.core.glm.glm", MOCK_GLM)
-    monkeypatch.setattr("app.core.glm.gnt", MOCK_GNT)
+def alice(user_accounts):
+    return user_accounts[0]
 
-    MOCK_GLM.total_supply.return_value = GLM_CONTRACT_SUPPLY
-    MOCK_GNT.total_supply.return_value = GNT_CONTRACT_SUPPLY
-    MOCK_GLM.balance_of.return_value = 0
-    MOCK_GNT.balance_of.return_value = 0
+
+@pytest.fixture(scope="function")
+def bob(user_accounts):
+    return user_accounts[1]
 
 
 @pytest.fixture(scope="function")
@@ -112,9 +119,19 @@ def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.controllers.rewards.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.controllers.epochs.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.proposals.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.core.user.budget.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.core.epochs.details.epochs", MOCK_EPOCHS)
 
     MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
     MOCK_EPOCHS.get_current_epoch.return_value = MOCKED_CURRENT_EPOCH_NO
+    # props content: from, to, fromTs, duration, decisionWindow
+    MOCK_EPOCHS.get_future_epoch_props.return_value = [
+        2,
+        0,
+        1697731200,
+        7776000,
+        1209600,
+    ]
 
 
 @pytest.fixture(scope="function")
@@ -134,6 +151,21 @@ def patch_vault(monkeypatch):
 
 
 @pytest.fixture(scope="function")
+def patch_is_contract(monkeypatch):
+    monkeypatch.setattr("app.crypto.eth_sign.signature.is_contract", MOCK_IS_CONTRACT)
+    MOCK_IS_CONTRACT.return_value = False
+
+
+@pytest.fixture(scope="function")
+def patch_eip1271_is_valid_signature(monkeypatch):
+    monkeypatch.setattr(
+        "app.crypto.eth_sign.signature.is_valid_signature",
+        MOCK_EIP1271_IS_VALID_SIGNATURE,
+    )
+    MOCK_EIP1271_IS_VALID_SIGNATURE.return_value = True
+
+
+@pytest.fixture(scope="function")
 def patch_eth_get_balance(monkeypatch):
     mock_eth = MagicMock(get_balance=MOCK_GET_ETH_BALANCE)
     mock_web3 = MagicMock(spec=Web3, eth=mock_eth)
@@ -144,8 +176,14 @@ def patch_eth_get_balance(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_has_pending_epoch_snapshot(monkeypatch):
-    monkeypatch.setattr(
-        "app.core.allocations.has_pending_epoch_snapshot", MOCK_HAS_PENDING_SNAPSHOT
+    (
+        monkeypatch.setattr(
+            "app.core.allocations.has_pending_epoch_snapshot", MOCK_HAS_PENDING_SNAPSHOT
+        ),
+        monkeypatch.setattr(
+            "app.controllers.rewards.has_pending_epoch_snapshot",
+            MOCK_HAS_PENDING_SNAPSHOT,
+        ),
     )
     MOCK_HAS_PENDING_SNAPSHOT.return_value = True
 
@@ -159,10 +197,10 @@ def patch_user_budget(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_matched_rewards(monkeypatch):
     monkeypatch.setattr(
-        "app.controllers.rewards.get_matched_rewards_from_epoch", MOCK_MATCHED_REWARDS
+        "app.controllers.rewards.get_estimated_matched_rewards", MOCK_MATCHED_REWARDS
     )
     monkeypatch.setattr(
-        "app.core.proposals.get_matched_rewards_from_epoch", MOCK_MATCHED_REWARDS
+        "app.core.proposals.get_estimated_matched_rewards", MOCK_MATCHED_REWARDS
     )
     MOCK_MATCHED_REWARDS.return_value = 10_000000000_000000000
 
@@ -171,7 +209,6 @@ def patch_matched_rewards(monkeypatch):
 def mock_pending_epoch_snapshot_db(app, user_accounts):
     database.pending_epoch_snapshot.add_snapshot(
         MOCKED_PENDING_EPOCH_NO,
-        GLM_SUPPLY,
         ETH_PROCEEDS,
         TOTAL_ED,
         LOCKED_RATIO,
@@ -180,8 +217,10 @@ def mock_pending_epoch_snapshot_db(app, user_accounts):
     )
     user1 = database.user.get_or_add_user(user_accounts[0].address)
     user2 = database.user.get_or_add_user(user_accounts[1].address)
+    user3 = database.user.get_or_add_user(user_accounts[2].address)
     database.deposits.add(MOCKED_PENDING_EPOCH_NO, user1, USER1_ED, USER1_ED)
     database.deposits.add(MOCKED_PENDING_EPOCH_NO, user2, USER2_ED, USER2_ED)
+    database.deposits.add(MOCKED_PENDING_EPOCH_NO, user3, USER3_ED, USER3_ED)
     db.session.commit()
 
 
@@ -190,30 +229,57 @@ def mock_allocations_db(app, user_accounts, proposal_accounts):
     user1 = database.user.get_or_add_user(user_accounts[0].address)
     user2 = database.user.get_or_add_user(user_accounts[1].address)
     db.session.commit()
+
     user1_allocations = [
         Allocation(proposal_accounts[0].address, 10 * 10**18),
         Allocation(proposal_accounts[1].address, 5 * 10**18),
         Allocation(proposal_accounts[2].address, 300 * 10**18),
     ]
 
+    user1_allocations_prev_epoch = [
+        Allocation(proposal_accounts[0].address, 101 * 10**18),
+        Allocation(proposal_accounts[1].address, 51 * 10**18),
+        Allocation(proposal_accounts[2].address, 3001 * 10**18),
+    ]
+
     user2_allocations = [
         Allocation(proposal_accounts[1].address, 1050 * 10**18),
         Allocation(proposal_accounts[3].address, 500 * 10**18),
     ]
-    database.allocations.add_all(MOCKED_PENDING_EPOCH_NO, user1.id, user1_allocations)
-    database.allocations.add_all(MOCKED_PENDING_EPOCH_NO, user2.id, user2_allocations)
+
+    user2_allocations_prev_epoch = [
+        Allocation(proposal_accounts[1].address, 10501 * 10**18),
+        Allocation(proposal_accounts[3].address, 5001 * 10**18),
+    ]
+
+    database.allocations.add_all(
+        MOCKED_PENDING_EPOCH_NO - 1, user1.id, 0, user1_allocations_prev_epoch
+    )
+    database.allocations.add_all(
+        MOCKED_PENDING_EPOCH_NO - 1, user2.id, 0, user2_allocations_prev_epoch
+    )
+
+    database.allocations.add_all(
+        MOCKED_PENDING_EPOCH_NO, user1.id, 1, user1_allocations
+    )
+    database.allocations.add_all(
+        MOCKED_PENDING_EPOCH_NO, user2.id, 1, user2_allocations
+    )
+
     db.session.commit()
 
 
-def allocate_user_rewards(user_account: Account, proposal_account, allocation_amount):
-    payload = create_payload([proposal_account], [allocation_amount])
+def allocate_user_rewards(
+    user_account: Account, proposal_account, allocation_amount, nonce: int = 0
+):
+    payload = create_payload([proposal_account], [allocation_amount], nonce)
     signature = sign(user_account, build_allocations_eip712_data(payload))
     request = AllocationRequest(payload, signature, override_existing_allocations=False)
 
     allocate(request)
 
 
-def create_payload(proposals, amounts: Optional[List[int]]):
+def create_payload(proposals, amounts: Optional[List[int]], nonce: int = 0):
     if amounts is None:
         amounts = [randint(1 * 10**18, 100_000_000 * 10**18) for _ in proposals]
 
@@ -225,7 +291,11 @@ def create_payload(proposals, amounts: Optional[List[int]]):
         for proposal, amount in zip(proposals, amounts)
     ]
 
-    return {"allocations": allocations}
+    return {"allocations": allocations, "nonce": nonce}
+
+
+def deserialize_allocations(payload) -> List[Allocation]:
+    return deserialize_payload(payload)[1]
 
 
 def create_deposit_event(
@@ -244,10 +314,14 @@ def create_deposit_event(
     }
 
 
-def create_epoch_event(start=1000, end=2000, **kwargs):
+def create_epoch_event(
+    start=1000, end=2000, duration=1000, decision_window=500, **kwargs
+):
     return {
         "fromTs": start,
         "toTs": end,
+        "duration": duration,
+        "decisionWindow": decision_window,
         **kwargs,
     }
 

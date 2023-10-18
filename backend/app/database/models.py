@@ -6,6 +6,7 @@ from app.extensions import db
 Column = db.Column
 Model = db.Model
 relationship = db.relationship
+UniqueConstraint = db.UniqueConstraint
 
 
 class BaseModel(Model):
@@ -18,11 +19,16 @@ class User(BaseModel):
 
     id = Column(db.Integer, primary_key=True)
     address = Column(db.String(42), unique=True, nullable=False)
-    allocation_nonce = Column(db.Integer, nullable=False, default=0)
+    allocation_nonce = Column(
+        db.Integer,
+        nullable=True,
+        comment="Allocations signing nonce, last used value. Range [0..inf)",
+    )
+    patron_mode = Column(db.Boolean, default=False, nullable=True)
 
 
 class UserConsents(BaseModel):
-    __tablename__ = "user_consents"  # terms of serivce consents
+    __tablename__ = "user_consents"  # terms of service consents
 
     id = Column(db.Integer, primary_key=True)
     user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
@@ -36,10 +42,26 @@ class Allocation(BaseModel):
     id = Column(db.Integer, primary_key=True)
     epoch = Column(db.Integer, nullable=False)
     user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    nonce = Column(db.Integer, nullable=False)
     user = relationship("User", backref=db.backref("allocations", lazy=True))
     proposal_address = Column(db.String(42), nullable=False)
     amount = Column(db.String, nullable=False)
     deleted_at = Column(db.TIMESTAMP, nullable=True)
+
+
+class AllocationSignature(BaseModel):
+    __tablename__ = "allocations_signatures"
+
+    id = Column(db.Integer, primary_key=True)
+    user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    user = relationship("User", backref=db.backref("allocations_signatures", lazy=True))
+    nonce = Column(db.Integer, nullable=False)
+    epoch = Column(db.Integer, nullable=False)
+    signature = Column(db.String(132), nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "nonce", name="user_nonce_unique_constraint"),
+    )
 
 
 class PendingEpochSnapshot(BaseModel):
@@ -47,7 +69,6 @@ class PendingEpochSnapshot(BaseModel):
 
     id = Column(db.Integer, primary_key=True)
     epoch = Column(db.Integer, nullable=False, unique=True)
-    glm_supply = Column(db.String, nullable=False)
     eth_proceeds = Column(db.String, nullable=False)
     total_effective_deposit = Column(db.String, nullable=False)
     locked_ratio = Column(db.String, nullable=False)
@@ -60,6 +81,7 @@ class FinalizedEpochSnapshot(BaseModel):
 
     id = Column(db.Integer, primary_key=True)
     epoch = Column(db.Integer, nullable=False, unique=True)
+    matched_rewards = Column(db.String, nullable=False)
     withdrawals_merkle_root = Column(db.String)
     total_withdrawals = Column(db.String)
 
@@ -82,6 +104,7 @@ class Reward(BaseModel):
     epoch = Column(db.Integer, nullable=False)
     address = Column(db.String(42), nullable=False)
     amount = Column(db.String, nullable=False)
+    matched = Column(db.String, nullable=True)
 
 
 class EpochZeroClaim(BaseModel):

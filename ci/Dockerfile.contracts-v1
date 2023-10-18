@@ -9,6 +9,7 @@ RUN yarn compile
 RUN rm -Rf cache/
 
 FROM root AS deploy
+RUN apk add curl bash jq coreutils bind-tools
 # When dependencies will be used instead of using only devDependencies
 #COPY ./ ./
 # RUN yarn install --prod --ignore-scripts --frozen-lockfile && yarn cache clean

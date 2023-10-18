@@ -1,34 +1,28 @@
 import pytest
-
 from eth_account.messages import encode_defunct
 
 from app import database
-from app.crypto.terms_and_conditions_consent import (
-    verify_signed_message,
-    build_consent_message,
-)
-from app.core.user import (
+from app import exceptions
+from app.core.user.tos import (
     has_user_agreed_to_terms_of_service,
     add_user_terms_of_service_consent,
 )
+from app.crypto.eth_sign import terms_and_conditions_consent
+from app.crypto.eth_sign.terms_and_conditions_consent import (
+    build_consent_message,
+)
+from tests.conftest import MOCK_IS_CONTRACT
 
-from app import exceptions
 
-
-@pytest.fixture
-def alice(user_accounts):
-    return user_accounts[0]
+@pytest.fixture(autouse=True)
+def before(patch_is_contract):
+    pass
 
 
 @pytest.fixture
 def consenting_alice(app, alice):
     database.user_consents.add_consent(alice.address, "127.0.0.1")
     return alice
-
-
-@pytest.fixture
-def bob(user_accounts):
-    return user_accounts[1]
 
 
 @pytest.fixture
@@ -58,13 +52,21 @@ def _build_user_signature(user, user_address=None):
 def test_verifies_valid_signature(alice):
     signature = _build_user_signature(alice)
 
-    assert verify_signed_message(alice.address, signature)
+    assert terms_and_conditions_consent.verify(alice.address, signature)
+
+
+def test_verifies_valid_multisig_signature(alice, patch_eip1271_is_valid_signature):
+    MOCK_IS_CONTRACT.return_value = True
+
+    signature = _build_user_signature(alice)
+
+    assert terms_and_conditions_consent.verify(alice.address, signature)
 
 
 def test_verifies_metamask_signature(metamask_valid_signature):
     (address, signature) = metamask_valid_signature
 
-    assert verify_signed_message(address, signature)
+    assert terms_and_conditions_consent.verify(address, signature)
 
 
 def test_rejects_someone_elses_signature(alice, bob):
@@ -74,13 +76,15 @@ def test_rejects_someone_elses_signature(alice, bob):
 
     # then
     # bob cannot verify neither as alice nor as himself
-    assert verify_signed_message(alice.address, signature) is False
-    assert verify_signed_message(bob.address, signature) is False
+    assert terms_and_conditions_consent.verify(alice.address, signature) is False
+    assert terms_and_conditions_consent.verify(bob.address, signature) is False
 
 
 def test_rejects_invalid_signature(alice):
     invalid_signature = "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-    assert verify_signed_message(alice.address, invalid_signature) is False
+    assert (
+        terms_and_conditions_consent.verify(alice.address, invalid_signature) is False
+    )
 
 
 def test_get_user_terms_of_service_consent(app, consenting_alice, unwilling_bob):

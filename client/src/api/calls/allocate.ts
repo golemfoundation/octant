@@ -1,7 +1,7 @@
 import env from 'env';
 import apiService from 'services/apiService';
 
-export type ApiPostAllocateSimulateData = {
+export type ApiPostAllocateLeverageData = {
   allocations: {
     // WEI
     amount: string;
@@ -9,22 +9,28 @@ export type ApiPostAllocateSimulateData = {
   }[];
 };
 
-export type ApiPostAllocateData = {
-  payload: ApiPostAllocateSimulateData;
-  signature: string;
+export type ApiPostAllocateLeverageResponse = {
+  // Float as a string, at least 15 decimal places.
+  leverage: string;
 };
 
-export function apiPostAllocate(allocateData: ApiPostAllocateData): Promise<any> {
+export type ApiGetUserAllocationNonceResponse = {
+  allocationNonce: number;
+};
+
+export function apiPostAllocateLeverage(
+  allocateData: ApiPostAllocateLeverageData,
+  userAddress: string,
+): Promise<ApiPostAllocateLeverageResponse> {
   return apiService
-    .post(`${env.serverEndpoint}allocations/allocate`, allocateData)
+    .post(`${env.serverEndpoint}allocations/leverage/${userAddress}`, allocateData)
     .then(({ data }) => data);
 }
 
-export function apiPostAllocateSimulate(
-  allocateData: ApiPostAllocateSimulateData,
+export function apiGetUserAllocationNonce(
   userAddress: string,
-): Promise<any> {
+): Promise<ApiGetUserAllocationNonceResponse> {
   return apiService
-    .post(`${env.serverEndpoint}allocations/simulate/${userAddress}`, allocateData)
+    .get(`${env.serverEndpoint}allocations/users/${userAddress}/allocation_nonce`)
     .then(({ data }) => data);
 }

@@ -1,0 +1,17 @@
+.root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: $color-octant-grey12;
+  color: $color-octant-grey6;
+  font-weight: $font-weight-semibold;
+  line-height: 2.4rem;
+}
+
+.gif {
+  margin-top: 1.6rem;
+  // gif is a little too high.
+  margin-bottom: -1.6rem;
+}

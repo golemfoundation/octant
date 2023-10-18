@@ -7,7 +7,6 @@ export interface AllocationsData {
 
 export interface AllocationsMethods {
   addAllocations: (proposalAddresses: string[]) => void;
-  reset: () => void;
   setAllocations: (proposalAddresses: string[]) => void;
   setRewardsForProposals: (rewardsForProposals: BigNumber) => void;
 }

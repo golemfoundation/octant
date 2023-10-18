@@ -2,9 +2,9 @@ from flask import current_app as app
 from flask import render_template, make_response, send_from_directory
 from flask_restx import Resource, Namespace, fields
 
-from app.controllers import info
-from app.extensions import api
-from app.infrastructure import OctantResource
+from app.controllers import info, epochs, snapshots
+from app.extensions import api, w3
+from app.infrastructure import OctantResource, graphql
 
 ns = Namespace("info", description="Information about Octant's backend API")
 api.add_namespace(ns)
@@ -50,6 +50,57 @@ healthcheck_model = api.model(
         ),
     },
 )
+
+sync_status_model = api.model(
+    "SyncStatus",
+    {
+        "blockchainEpoch": fields.Integer(
+            required=True, description="Current Epoch number per blockchain state"
+        ),
+        "indexedEpoch": fields.Integer(
+            required=True, description="Current Epoch number according to indexer"
+        ),
+        "blockchainHeight": fields.Integer(
+            required=True, description="Current block/slot number per blockchain"
+        ),
+        "indexedHeight": fields.Integer(
+            required=True, description="Current block/slot number according to indexer"
+        ),
+        "pendingSnapshot": fields.String(
+            required=True,
+            description="State of pending epoch snapshot (not_applicable, error, in_progress, done)",
+        ),
+        "finalizedSnapshot": fields.String(
+            required=True,
+            description="State of finalized epoch snapshot (not_applicable, error, too_early, in_progress, done)",
+        ),
+    },
+)
+
+
+@ns.route("/sync-status")
+@ns.doc(description="Returns synchronization status for indexer and database")
+class IndexedEpoch(OctantResource):
+    @ns.marshal_with(sync_status_model)
+    @ns.response(200, "Current epoch successfully retrieved")
+    def get(self):
+        sg_result = graphql.epochs.get_epochs()
+        sg_epochs = sorted(sg_result["epoches"], key=lambda d: d["epoch"])
+        sg_height = sg_result["_meta"]["block"]["number"]
+
+        finalized_status = snapshots.get_finalized_snapshot_status()
+        pending_status = snapshots.get_pending_snapshot_status()
+
+        b_epoch = epochs.get_current_epoch()
+        block = w3.eth.get_block("latest")
+        return {
+            "blockchainEpoch": b_epoch,
+            "indexedEpoch": sg_epochs[-1:][0]["epoch"] if sg_epochs else 0,
+            "blockchainHeight": block["number"],
+            "indexedHeight": sg_height,
+            "pendingSnapshot": pending_status,
+            "finalizedSnapshot": finalized_status,
+        }
 
 
 @ns.route("/websockets-api")

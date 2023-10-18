@@ -1,11 +1,10 @@
 import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
-import { newMockEvent, createMockedFunction } from 'matchstick-as';
+import { newMockEvent } from 'matchstick-as';
 
 import { Locked as LockedEvent, Unlocked as UnlockedEvent } from '../generated/Deposits/Deposits';
 import { Withdrawn } from '../generated/Vault/Vault';
 
 export const GLM_ADDRESS = Address.fromString('0x7DD9c5Cba05E151C895FDe1CF355C9A1D5DA6429');
-export const GNT_ADDRESS = Address.fromString('0xa74476443119A942dE498590Fe1f2454d7D4aC0d');
 
 export function createLockedEvent(
   depositBefore: BigInt,
@@ -97,26 +96,4 @@ export function createBlockEvent(): ethereum.Block {
     BigInt.fromI32(1),
     BigInt.fromI32(1),
   );
-}
-
-export function mockGLMAndGNT(): void {
-  // Mock GLM
-  createMockedFunction(GLM_ADDRESS, 'totalSupply', 'totalSupply():(uint256)').returns([
-    ethereum.Value.fromSignedBigInt(BigInt.fromString('627708950807659352199701196')),
-  ]);
-  createMockedFunction(GLM_ADDRESS, 'balanceOf', 'balanceOf(address):(uint256)')
-    .withArgs([
-      ethereum.Value.fromAddress(Address.fromString('0x0000000000000000000000000000000000000000')),
-    ])
-    .returns([ethereum.Value.fromI32(1000)]);
-
-  // Mock GNT
-  createMockedFunction(GNT_ADDRESS, 'totalSupply', 'totalSupply():(uint256)').returns([
-    ethereum.Value.fromSignedBigInt(BigInt.fromString('372291049192340647800298804')),
-  ]);
-  createMockedFunction(GNT_ADDRESS, 'balanceOf', 'balanceOf(address):(uint256)')
-    .withArgs([
-      ethereum.Value.fromAddress(Address.fromString('0x0000000000000000000000000000000000000000')),
-    ])
-    .returns([ethereum.Value.fromI32(2000)]);
 }

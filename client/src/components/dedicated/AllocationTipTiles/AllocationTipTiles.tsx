@@ -7,6 +7,7 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useTipsStore from 'store/tips/store';
 
@@ -17,6 +18,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   const { isDesktop } = useMediaQuery();
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: depositsValue, isFetching: isFetchingDepositsValue } = useDepositValue();
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const { data: userAllocations, isFetching: isFetchingUserAllocation } = useUserAllocations();
@@ -52,12 +54,14 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
     !isFetchingIndividualReward &&
     !!individualReward &&
     !individualReward.isZero() &&
+    !!isDecisionWindowOpen &&
     !wasRewardsAlreadyClosed;
 
   const isChangedYourMindTipVisible =
     !isEpoch1 &&
     !isFetchingUserAllocation &&
     !!userAllocations?.hasUserAlreadyDoneAllocation &&
+    !!isDecisionWindowOpen &&
     !wasChangedYourMindAlreadyClosed;
 
   return (

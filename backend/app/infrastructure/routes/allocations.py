@@ -1,16 +1,25 @@
 import dataclasses
 
-from flask import current_app as app
+from flask import current_app as app, request
 from flask_restx import Namespace, fields
 
 from app.controllers import allocations
 from app.core.allocations import AllocationRequest
 from app.extensions import api
 from app.infrastructure import OctantResource
-from app.infrastructure.routes.common_models import proposals_rewards_model
 
 ns = Namespace("allocations", description="Octant allocations")
 api.add_namespace(ns)
+
+allocation_nonce_model = api.model(
+    "AllocationNonce",
+    {
+        "allocationNonce": fields.Integer(
+            required=True,
+            description="Current value of nonce used to sign allocations message. Note: this has nothing to do with Ethereum account nonce!",
+        ),
+    },
+)
 
 user_allocations_payload_item = api.model(
     "UserAllocationPayloadItem",
@@ -26,13 +35,36 @@ user_allocations_payload_item = api.model(
     },
 )
 
+allocation_nonce_model = api.model(
+    "AllocationNonce",
+    {
+        "allocationNonce": fields.Integer(
+            required=True,
+            description="Current value of nonce used to sign allocations message. Note: this has nothing to do with Ethereum account nonce!",
+        ),
+    },
+)
+
 allocation_payload = api.model(
     "AllocationPayload",
     {
         "allocations": fields.List(
             fields.Nested(user_allocations_payload_item),
             description="User allocation payload",
-        )
+        ),
+        "nonce": fields.Integer(
+            required=True, description="Allocation signature nonce"
+        ),
+    },
+)
+
+leverage_payload = api.model(
+    "LeveragePayload",
+    {
+        "allocations": fields.List(
+            fields.Nested(user_allocations_payload_item),
+            description="User allocation payload",
+        ),
     },
 )
 
@@ -84,6 +116,23 @@ proposal_donors_model = api.model(
         ),
     },
 )
+epoch_donations_model = api.model(
+    "EpochDonations",
+    {
+        "donor": fields.String(
+            required=True,
+            description="Donor address",
+        ),
+        "amount": fields.String(
+            required=True,
+            description="Funds allocated by donor for the proposal in WEI",
+        ),
+        "proposal": fields.String(
+            required=True,
+            description="Proposal address",
+        ),
+    },
+)
 
 
 @ns.route("/allocate")
@@ -102,23 +151,36 @@ class Allocation(OctantResource):
         return {}, 201
 
 
-@ns.route("/simulate/<string:user_address>")
+user_leverage_model = api.model(
+    "UserLeverage",
+    {
+        "leverage": fields.String(
+            required=False,
+            description="Leverage of the allocated funds",
+        ),
+    },
+)
+
+
+@ns.route("/leverage/<string:user_address>")
 @ns.doc(
-    description="Simulates an allocation and get estimated proposal rewards",
+    description="Simulates an allocation and get the expected leverage",
     params={
         "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)",
     },
 )
-class AllocationSimulation(OctantResource):
-    @ns.expect(allocation_payload)
-    @ns.marshal_with(proposals_rewards_model)
-    @ns.response(200, "User allocation successfully simulated")
+class AllocationLeverage(OctantResource):
+    @ns.expect(leverage_payload)
+    @ns.marshal_with(user_leverage_model)
+    @ns.response(200, "User leverage successfully estimated")
     def post(self, user_address: str):
-        app.logger.debug("Simulating an allocation")
-        proposal_rewards = allocations.simulate_allocation(ns.payload, user_address)
-        app.logger.debug(f"Simulated allocation rewards: {proposal_rewards}")
+        app.logger.debug("Estimating user leverage")
+        leverage, proposal_rewards = allocations.simulate_allocation(
+            ns.payload, user_address
+        )
+        app.logger.debug(f"Estimated leverage: {leverage}")
 
-        return {"rewards": proposal_rewards}
+        return {"leverage": leverage}
 
 
 @ns.route("/user/<string:user_address>/epoch/<int:epoch>")
@@ -180,3 +242,53 @@ class ProposalDonors(OctantResource):
         app.logger.debug(f"Proposal donors {donors}")
 
         return donors
+
+
+@ns.route("/proposal/epoch/<int:epoch>")
+@ns.doc(
+    description="Returns list of donations in particular epoch",
+    params={
+        "epoch": "Epoch number",
+    },
+)
+class EpochDonations(OctantResource):
+    representations = {
+        "application/json": OctantResource.encode_json_response,
+        "text/csv": OctantResource.encode_csv_response,
+    }
+
+    @ns.produces(["application/json", "text/csv"])
+    @ns.response(200, "Returns list of donations for given epoch")
+    @ns.marshal_with(epoch_donations_model)
+    def get(self, epoch: int):
+        app.logger.debug(f"Getting donations in epoch {epoch}")
+
+        headers = {}
+        data = []
+
+        if EpochDonations.response_mimetype(request) == "text/csv":
+            headers[
+                "Content-Disposition"
+            ] = f"attachment;filename=donations_epoch_{epoch}.csv"
+
+            # for csv header resoultion - in case of empty list,
+            # endpoint marshalling will automatically create expected object with nulled fields
+            data.append({})
+
+        donations = [dataclasses.asdict(w) for w in allocations.get_all_by_epoch(epoch)]
+        data += donations
+
+        app.logger.debug(f"Donations for epoch {epoch}:  {donations}")
+
+        return data, 200, headers
+
+
+@ns.route("/users/<string:user_address>/allocation_nonce")
+@ns.doc(
+    description="Return current value of allocation nonce. It is needed to sign allocations.",
+)
+class AllocationNonce(OctantResource):
+    @ns.marshal_with(allocation_nonce_model)
+    @ns.response(200, "User allocations nonce successfully retrieved")
+    def get(self, user_address: str):
+        return {"allocationNonce": allocations.get_allocation_nonce(user_address)}

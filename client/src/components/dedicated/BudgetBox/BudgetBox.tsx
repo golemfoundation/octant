@@ -16,19 +16,20 @@ const BudgetBox: FC<BudgetBoxProps> = ({
   isWalletBalanceError,
   isCurrentlyLockedError,
 }) => {
-  const { data: availableFundsGlm } = useAvailableFundsGlm();
-  const { data: depositsValue } = useDepositValue();
+  const { data: depositsValue, isFetching: isFetchingDepositValue } = useDepositValue();
+  const { data: availableFundsGlm, isFetching: isFetchingAvailableFundsGlm } =
+    useAvailableFundsGlm();
 
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.budgetBox',
   });
 
-  const currentlyLocked = useMemo(
+  const depositsValueString = useMemo(
     () => getFormattedGlmValue(depositsValue || BigNumber.from(0)).fullString,
     [depositsValue],
   );
 
-  const walletBalance = getFormattedGlmValue(
+  const availableFundsGlmString = getFormattedGlmValue(
     BigNumber.from(availableFundsGlm ? availableFundsGlm!.value : 0),
   ).fullString;
 
@@ -36,15 +37,23 @@ const BudgetBox: FC<BudgetBoxProps> = ({
     <BoxRounded alignment="left" className={className} hasPadding={false} isGrey isVertical>
       <div className={styles.budgetRow}>
         <div className={styles.budgetLabel}>{t('currentlyLocked')}</div>
-        <div className={cx(styles.budgetValue, isCurrentlyLockedError && styles.isError)}>
-          {currentlyLocked}
-        </div>
+        {isFetchingDepositValue ? (
+          <div className={styles.skeleton} />
+        ) : (
+          <div className={cx(styles.budgetValue, isCurrentlyLockedError && styles.isError)}>
+            {depositsValueString}
+          </div>
+        )}
       </div>
       <div className={styles.budgetRow}>
         <div className={styles.budgetLabel}>{t('walletBalance')}</div>
-        <div className={cx(styles.budgetValue, isWalletBalanceError && styles.isError)}>
-          {walletBalance}
-        </div>
+        {isFetchingAvailableFundsGlm ? (
+          <div className={styles.skeleton} />
+        ) : (
+          <div className={cx(styles.budgetValue, isWalletBalanceError && styles.isError)}>
+            {availableFundsGlmString}
+          </div>
+        )}
       </div>
     </BoxRounded>
   );

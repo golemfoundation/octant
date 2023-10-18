@@ -2,6 +2,7 @@ import pytest
 from eth_account import Account
 
 from app.core.proposals import get_proposal_rewards_above_threshold
+from app.controllers.allocations import get_allocation_nonce
 from tests.conftest import (
     allocate_user_rewards,
     MOCKED_PENDING_EPOCH_NO,
@@ -73,19 +74,22 @@ def before(
 )
 def test_proposals_rewards_above_threshold(
     app,
-    user_accounts,
+    tos_users,
     proposal_accounts,
     user_allocations: dict,
     expected_rewards: dict,
 ):
     for user_index, allocations in user_allocations.items():
-        user_account = user_accounts[user_index]
+        user_account = tos_users[user_index]
 
         for allocation in allocations:
             proposal_account: Account = proposal_accounts[allocation[0]]
             allocation_amount = allocation[1]
 
-            allocate_user_rewards(user_account, proposal_account, allocation_amount)
+            nonce = get_allocation_nonce(user_account.address)
+            allocate_user_rewards(
+                user_account, proposal_account, allocation_amount, nonce
+            )
 
     expected = {}
 
@@ -93,12 +97,17 @@ def test_proposals_rewards_above_threshold(
         proposal_address = proposal_accounts[proposal_index].address
         expected[proposal_address] = expected_reward
 
-    proposals_rewards, rewards_sum = get_proposal_rewards_above_threshold(
-        MOCKED_PENDING_EPOCH_NO
-    )
+    (
+        proposals_rewards,
+        rewards_sum,
+        matched_rewards,
+    ) = get_proposal_rewards_above_threshold(MOCKED_PENDING_EPOCH_NO)
     assert len(proposals_rewards) == len(expected)
 
     for proposal in proposals_rewards:
         assert expected.get(proposal.address) == proposal.amount
 
     assert rewards_sum == sum(expected_rewards.values())
+    assert sum([proposal.matched for proposal in proposals_rewards]) == pytest.approx(
+        matched_rewards, 0.000000000000000001
+    )

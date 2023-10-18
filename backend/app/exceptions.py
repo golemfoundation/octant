@@ -1,4 +1,5 @@
 from flask import jsonify
+from requests.exceptions import RequestException
 
 
 class OctantException(Exception):
@@ -28,6 +29,14 @@ class EpochNotStartedYet(OctantException):
 
     def __init__(self):
         super().__init__(self.description, self.code)
+
+
+class EpochAllocationPeriodNotStartedYet(OctantException):
+    code = 400
+    description = "Allocation period for epoch {} has not yet started."
+
+    def __init__(self, epoch):
+        super().__init__(self.description.format(epoch), self.code)
 
 
 class EpochNotIndexed(OctantException):
@@ -86,6 +95,16 @@ class MissingSnapshot(OctantException):
         super().__init__(self.description, self.code)
 
 
+class SnapshotTooEarly(OctantException):
+    code = 500
+    description = (
+        "Is database inconsistent? Snapshot was taken before end of the voting period."
+    )
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
 class MissingAddress(OctantException):
     code = 400
     description = (
@@ -120,9 +139,78 @@ class InvalidSignature(OctantException):
         super().__init__(self.description.format(signature, address), self.code)
 
 
+class UserNotFound(OctantException):
+    code = 404
+    description = "User with address {} not found"
+
+    def __init__(self, address: str):
+        super().__init__(self.description.format(address), self.code)
+
+
 class DuplicateConsent(OctantException):
     code = 400
     description = "Given user {} has already accepted the Terms of Service"
 
     def __init__(self, address: str):
         super().__init__(self.description.format(address), self.code)
+
+
+class RewardsException(OctantException):
+    def __init__(self, description: str, code: int = 500):
+        super().__init__(description, code)
+
+
+class WrongAllocationsNonce(OctantException):
+    code = 400
+    description = "Attempt to use wrong value of nonce ({} instead of {}) when signing allocations"
+
+    def __init__(self, used: int, expected: int):
+        super().__init__(self.description.format(used, expected), self.code)
+
+
+class ExternalApiException(OctantException):
+    description = "API call to {} failed. Error: {}"
+    code = 500
+
+    def __init__(self, api_url: str, e: RequestException, status_code: int = None):
+        if status_code is not None:
+            self.code = status_code
+        else:
+            if hasattr(e, "response") and e.response is not None:
+                self.code = e.response.status_code
+        super().__init__(
+            self.description.format(api_url, str(e)),
+            self.code,
+        )
+
+
+class NotAllowedInPatronMode(OctantException):
+    code = 403
+    description = "This action is not allowed in patron mode; user address: {}"
+
+    def __init__(self, user_address: str):
+        super().__init__(self.description.format(user_address), self.code)
+
+
+class InvalidEpochException(OctantException):
+    code = 400
+    description = "The epoch {} is not pending or finalized"
+
+    def __init__(self, epoch: int):
+        super().__init__(self.description.format(epoch), self.code)
+
+
+class EffectiveDepositNotFoundException(OctantException):
+    code = 400
+    description = "The effective deposit for a user {} in the epoch {} is not found"
+
+    def __init__(self, epoch: int, user_address: str):
+        super().__init__(self.description.format(user_address, epoch), self.code)
+
+
+class EmptyAllocations(OctantException):
+    code = 400
+    description = "Passed empty or zeroed allocations"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)

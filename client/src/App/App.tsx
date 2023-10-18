@@ -1,35 +1,35 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
+import isEqual from 'lodash/isEqual';
 import React, { ReactElement, useEffect, useState } from 'react';
-import { useAccount, useNetwork, useWaitForTransaction } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 
 import 'react-toastify/dist/ReactToastify.css';
 
+import { Response as ResponseSyncStatus } from 'api/calls/syncStatus';
 import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
 import { ALLOCATION_ITEMS_KEY, ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
+import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
 import useAllProposals from 'hooks/queries/useAllProposals';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useDepositEffectiveAtCurrentEpoch from 'hooks/queries/useDepositEffectiveAtCurrentEpoch';
-import useDepositValue from 'hooks/queries/useDepositValue';
-import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
+import useSyncStatus from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useUserTOS from 'hooks/queries/useUserTOS';
-import useBlockNumber from 'hooks/subgraph/useBlockNumber';
-import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import localStorageService from 'services/localStorageService';
 import useAllocationsStore from 'store/allocations/store';
-import useMetaStore, { initialState as metaInitialState } from 'store/meta/store';
 import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
 import useTipsStore from 'store/tips/store';
+import useTransactionLocalStore from 'store/transactionLocal/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 import triggerToast from 'utils/triggerToast';
 
@@ -39,6 +39,7 @@ import 'styles/index.scss';
 import 'i18n';
 
 const App = (): ReactElement => {
+  useManageTransactionsPending();
   const { chain } = useNetwork();
   const {
     allocations,
@@ -46,10 +47,12 @@ const App = (): ReactElement => {
     addAllocations,
     isAllocationsInitialized,
     setRewardsForProposals,
+    reset: resetAllocationsStore,
   } = useAllocationsStore(state => ({
     addAllocations: state.addAllocations,
     allocations: state.data.allocations,
     isAllocationsInitialized: state.meta.isInitialized,
+    reset: state.reset,
     setAllocations: state.setAllocations,
     setRewardsForProposals: state.setRewardsForProposals,
   }));
@@ -78,20 +81,12 @@ const App = (): ReactElement => {
   const {
     isInitialized: isOnboardingInitialized,
     setValuesFromLocalStorage: setValuesFromLocalStorageOnboarding,
-  } = useOnboardingStore(({ meta, setValuesFromLocalStorage }) => ({
-    isInitialized: meta.isInitialized,
-    setValuesFromLocalStorage,
+  } = useOnboardingStore(state => ({
+    isInitialized: state.meta.isInitialized,
+    setValuesFromLocalStorage: state.setValuesFromLocalStorage,
   }));
-  const {
-    blockNumberWithLatestTx,
-    setBlockNumberWithLatestTx,
-    transactionHashesToWaitFor,
-    setTransactionHashesToWaitFor,
-  } = useMetaStore(state => ({
-    blockNumberWithLatestTx: state.data.blockNumberWithLatestTx,
-    setBlockNumberWithLatestTx: state.setBlockNumberWithLatestTx,
-    setTransactionHashesToWaitFor: state.setTransactionHashesToWaitFor,
-    transactionHashesToWaitFor: state.data.transactionHashesToWaitFor,
+  const { reset: resetTransactionLocalStore } = useTransactionLocalStore(state => ({
+    reset: state.reset,
   }));
   const queryClient = useQueryClient();
   const { address, isConnected } = useAccount();
@@ -112,32 +107,35 @@ const App = (): ReactElement => {
   const { isFetching: isFetchingAllProposals } = useAllProposals();
   const { data: userAllocations } = useUserAllocations();
   const { data: individualReward } = useIndividualReward();
-  const { data: blockNumber } = useBlockNumber(
-    blockNumberWithLatestTx !== metaInitialState.blockNumberWithLatestTx,
-  );
-  const { refetch: refetchDepositEffectiveAtCurrentEpoch } = useDepositEffectiveAtCurrentEpoch();
-  const { refetch: refetchHistory } = useHistory();
-  const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
-  const { refetch: refetchDeposit } = useDepositValue();
-  const { data: transactionReceipt, isLoading: isLoadingTransactionReceipt } =
-    useWaitForTransaction({
-      hash: transactionHashesToWaitFor
-        ? (transactionHashesToWaitFor[0] as `0x${string}`)
-        : undefined,
-      onReplaced: response =>
-        setTransactionHashesToWaitFor([response.transactionReceipt.transactionHash] as string[]),
-    });
-
+  const { isFetching: isFetchingPatronModeStatus } = useIsPatronMode();
+  const [isFlushRequired, setIsFlushRequired] = useState(false);
   const isProjectAdminMode = useIsProjectAdminMode();
-
-  const [isAccountChanging, setIsAccountChanging] = useState(false);
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
-  const [currentAddressLocal, setCurrentAddressLocal] = useState<null | string>(null);
+  const [currentAddressLocal, setCurrentAddressLocal] = useState<string | null>(null);
   const [currentEpochLocal, setCurrentEpochLocal] = useState<number | null>(null);
   const [isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal] = useState<boolean | null>(null);
+  const [syncStatusLocal, setSyncStatusLocal] = useState<ResponseSyncStatus | null>(null);
   const [chainIdLocal, setChainIdLocal] = useState<number | null>(null);
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const { isFetching: isFetchingUserTOS } = useUserTOS();
+  const isSyncingInProgress = syncStatusLocal?.pendingSnapshot === 'in_progress';
+  const { data: syncStatus } = useSyncStatus({
+    refetchInterval: isSyncingInProgress ? 5000 : false,
+  });
+
+  const initializeStore = (shouldDoReset = false) => {
+    // Store is populated with data from LS, hence init here.
+    localStorageService.init();
+    setValuesFromLocalStorageSettings();
+    setValuesFromLocalStorageOnboarding();
+    setValuesFromLocalStorageTips();
+
+    // On init load reset is not required, when changing account -- yes.
+    if (shouldDoReset) {
+      resetAllocationsStore();
+      resetTransactionLocalStore();
+    }
+  };
 
   useEffect(() => {
     if (chainIdLocal && chainIdLocal !== networkConfig.id) {
@@ -152,12 +150,15 @@ const App = (): ReactElement => {
   }, [chainIdLocal]);
 
   useEffect(() => {
-    localStorageService.init();
-    setValuesFromLocalStorageSettings();
-    setValuesFromLocalStorageOnboarding();
-    setValuesFromLocalStorageTips();
+    initializeStore();
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (syncStatus && !isEqual(syncStatus, syncStatusLocal)) {
+      setSyncStatusLocal(syncStatus);
+    }
+  }, [syncStatus, syncStatusLocal, setSyncStatusLocal]);
 
   useEffect(() => {
     if (chain && chain.id && chain.id !== chainIdLocal) {
@@ -169,6 +170,14 @@ const App = (): ReactElement => {
     if (isConnected !== isConnectedLocal) {
       setIsConnectedLocal(isConnected);
     }
+    /**
+     * When user signs out of the app and only then, initialize store.
+     * TODO OCT-1022: simplify entire logic of flushing and reset.
+     */
+    if (!isConnected && isConnectedLocal) {
+      initializeStore(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, isConnectedLocal, setIsConnectedLocal]);
 
   useEffect(() => {
@@ -190,72 +199,27 @@ const App = (): ReactElement => {
   }, [isDecisionWindowOpen, isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal]);
 
   useEffect(() => {
-    if (transactionReceipt && !isLoadingTransactionReceipt) {
-      // Setting blockNumberWithLatestTx triggers refetch logic in other hook.
-      setBlockNumberWithLatestTx(Number(transactionReceipt.blockNumber));
-      setTransactionHashesToWaitFor(metaInitialState.transactionHashesToWaitFor);
-    }
-  }, [
-    transactionReceipt,
-    isLoadingTransactionReceipt,
-    setBlockNumberWithLatestTx,
-    setTransactionHashesToWaitFor,
-  ]);
-
-  useEffect(() => {
-    /**
-     * Locking and unlocking GLMs require updating history and effective deposit.
-     * Both these values are coming from backend, which takes them from subgraph (history - always, effective deposit only during epoch 1).
-     *
-     * The problem is that value in subgraph (and consequently in the backend)
-     * is updated only after block is indexed in the subgraph.
-     *
-     * So, after lock / unlock is done, blockNumberWithLatestTx is set to the value from transaction,
-     * polling starts in useBlockNumber hook and after the number
-     * of block changes, refetchHistory and refetchDepositEffectiveAtCurrentEpoch
-     * is triggered and blockNumberWithLatestTx to null.
-     */
-    if (blockNumber && blockNumberWithLatestTx && blockNumber > blockNumberWithLatestTx) {
-      refetchHistory();
-      refetchLockedSummaryLatest();
-      refetchDeposit();
-
-      if (currentEpoch === 1) {
-        refetchDepositEffectiveAtCurrentEpoch();
-      }
-
-      setBlockNumberWithLatestTx(metaInitialState.blockNumberWithLatestTx);
-    }
-  }, [
-    currentEpoch,
-    blockNumber,
-    setBlockNumberWithLatestTx,
-    blockNumberWithLatestTx,
-    refetchDeposit,
-    refetchHistory,
-    refetchDepositEffectiveAtCurrentEpoch,
-    refetchLockedSummaryLatest,
-  ]);
-
-  useEffect(() => {
-    const doesChainIdRequireFlush = chain && chain.id && chain.id !== chainIdLocal;
-    const doesIsConnectedRequireFlush = !isConnected && isConnectedLocal;
     const doesAddressRequireFlush =
       !!address && !!currentAddressLocal && address !== currentAddressLocal;
+    const doesChainIdRequireFlush = chain && chain.id && chain.id !== chainIdLocal;
     const doesCurrentEpochRequireFlush =
       !!currentEpoch && !!currentEpochLocal && currentEpoch !== currentEpochLocal;
+    const doesIsConnectedRequireFlush = !isConnected && isConnectedLocal;
     const doesIsDecisionWindowOpenRequireFlush =
       !!isDecisionWindowOpen &&
       !!isDecisionWindowOpenLocal &&
       isDecisionWindowOpen !== isDecisionWindowOpenLocal;
+    const doesSyncStatusRequireFlush =
+      !!syncStatus && !!syncStatusLocal && !isEqual(syncStatus, syncStatusLocal);
     if (
-      doesChainIdRequireFlush ||
-      doesIsConnectedRequireFlush ||
       doesAddressRequireFlush ||
+      doesChainIdRequireFlush ||
       doesCurrentEpochRequireFlush ||
-      doesIsDecisionWindowOpenRequireFlush
+      doesIsConnectedRequireFlush ||
+      doesIsDecisionWindowOpenRequireFlush ||
+      doesSyncStatusRequireFlush
     ) {
-      setIsAccountChanging(true);
+      setIsFlushRequired(true);
     }
   }, [
     isConnected,
@@ -269,18 +233,20 @@ const App = (): ReactElement => {
     isDecisionWindowOpen,
     isDecisionWindowOpenLocal,
     queryClient,
+    syncStatus,
+    syncStatusLocal,
   ]);
 
   useEffect(() => {
     (() => {
-      if (isAccountChanging) {
+      if (isFlushRequired) {
         queryClient.clear();
         queryClient.refetchQueries().then(() => {
-          setIsAccountChanging(false);
+          setIsFlushRequired(false);
         });
       }
     })();
-  }, [isAccountChanging, setIsAccountChanging, queryClient]);
+  }, [isFlushRequired, setIsFlushRequired, queryClient]);
 
   useEffect(() => {
     /**
@@ -314,7 +280,7 @@ const App = (): ReactElement => {
      * This hook adds userAllocations to the store.
      * This needs to be done after store is populated with values from localStorage.
      */
-    if (!userAllocations || isAllocationsInitialized) {
+    if (!userAllocations || !isAllocationsInitialized) {
       return;
     }
     const userAllocationsAddresses = userAllocations.elements.map(
@@ -370,10 +336,11 @@ const App = (): ReactElement => {
     (!isPreLaunch && !isAllocationsInitialized) ||
     !isOnboardingInitialized ||
     !isSettingsInitialized ||
-    isAccountChanging ||
+    isFlushRequired ||
     !isTipsStoreInitialized ||
     isFetchingUserTOS ||
-    isFetchingAllProposals;
+    isFetchingAllProposals ||
+    isFetchingPatronModeStatus;
 
   if (isLoading) {
     return <AppLoader />;
@@ -381,8 +348,8 @@ const App = (): ReactElement => {
 
   return (
     <>
-      <RootRoutes />
-      {!isProjectAdminMode && <ModalOnboarding />}
+      <RootRoutes isSyncingInProgress={isSyncingInProgress} />
+      {!isSyncingInProgress && !isProjectAdminMode && <ModalOnboarding />}
     </>
   );
 };

@@ -23,9 +23,9 @@ class Config(object):
     SUBGRAPH_ENDPOINT = os.getenv("SUBGRAPH_ENDPOINT")
     WEB3_PROVIDER = Web3.HTTPProvider(os.getenv("ETH_RPC_PROVIDER_URL"))
     SCHEDULER_ENABLED = _parse_bool(os.getenv("SCHEDULER_ENABLED"))
+    CACHE_TYPE = "SimpleCache"
 
     # Smart contract addresses
-    GNT_CONTRACT_ADDRESS = os.getenv("GNT_CONTRACT_ADDRESS")
     GLM_CONTRACT_ADDRESS = os.getenv("GLM_CONTRACT_ADDRESS")
     EPOCHS_CONTRACT_ADDRESS = os.getenv("EPOCHS_CONTRACT_ADDRESS")
     AUTH_CONTRACT_ADDRESS = os.getenv("AUTH_CONTRACT_ADDRESS")
@@ -96,6 +96,8 @@ class TestConfig(Config):
     DEBUG = True
     LOG_LVL = "ERROR"
     SQLALCHEMY_DATABASE_URI = "sqlite://"
+    CHAIN_ID = 11155111
+    CHAIN_NAME = "sepolia"
     GLM_WITHDRAWAL_AMOUNT = 1000_000000000_000000000
     GLM_SENDER_NONCE = 0
 

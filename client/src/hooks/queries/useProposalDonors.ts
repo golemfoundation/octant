@@ -1,17 +1,11 @@
-import {
-  UseQueryOptions,
-  UseQueryResult,
-  useQuery,
-  //  useQueryClient
-} from '@tanstack/react-query';
+import { UseQueryOptions, UseQueryResult, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
-import { useAccount } from 'wagmi';
 
 import { apiGetProposalDonors, Response } from 'api/calls/poroposalDonors';
 import { QUERY_KEYS } from 'api/queryKeys';
-// import useSubscription from 'hooks/helpers/useSubscription';
-// import { WebsocketListenEvent } from 'types/websocketEvents';
+import useSubscription from 'hooks/helpers/useSubscription';
+import { WebsocketListenEvent } from 'types/websocketEvents';
 
 import useCurrentEpoch from './useCurrentEpoch';
 
@@ -30,24 +24,20 @@ export default function useProposalDonors(
   proposalAddress: string,
   options?: UseQueryOptions<Response, unknown, ProposalDonors, any>,
 ): UseQueryResult<ProposalDonors> {
-  // const queryClient = useQueryClient();
-  const { address } = useAccount();
+  const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();
 
-  // TODO: https://linear.app/golemfoundation/issue/OCT-808/handle-proposalrewardsthreshold-and-proposaldonors-update-via
-  // useSubscription<Response>(WebsocketListenEvent.proposalDonors, data => {
-  //   const updatedProposalDonors: ProposalDonors = mapDataToProposalDonors(data);
-
-  //   queryClient.setQueryData(QUERY_KEYS.proposalDonors(proposalAddress), updatedProposalDonors);
-  // });
+  useSubscription<Response>(WebsocketListenEvent.proposalDonors, data => {
+    queryClient.setQueryData(QUERY_KEYS.proposalDonors(proposalAddress), data);
+  });
 
   return useQuery(
     QUERY_KEYS.proposalDonors(proposalAddress),
     () => apiGetProposalDonors(proposalAddress, currentEpoch! - 1),
     {
-      enabled: !!currentEpoch && !!address && !!proposalAddress && currentEpoch > 1,
-      refetchInterval: 5000,
+      enabled: !!currentEpoch && !!proposalAddress && currentEpoch > 1,
       select: response => mapDataToProposalDonors(response),
+      staleTime: Infinity,
       ...options,
     },
   );

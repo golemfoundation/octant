@@ -1,3 +1,7 @@
-import { HistoryItem } from 'hooks/queries/useHistory';
+import { HistoryElement } from 'hooks/queries/useHistory';
+import { TransactionPending } from 'store/transactionLocal/types';
 
-export default interface HistoryItemProps extends HistoryItem {}
+export default interface HistoryItemProps extends HistoryElement {
+  isFinalized?: TransactionPending['isFinalized'];
+  isWaitingForTransactionInitialized?: TransactionPending['isWaitingForTransactionInitialized'];
+}

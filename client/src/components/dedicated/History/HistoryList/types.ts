@@ -1,5 +1,5 @@
-import { HistoryItem } from 'hooks/queries/useHistory';
+import HistoryItemProps from 'components/dedicated/History/HistoryItem/types';
 
 export default interface HistoryListProps {
-  history: HistoryItem[] | undefined;
+  history: HistoryItemProps[] | undefined;
 }

@@ -8,7 +8,7 @@ from app.controllers import allocations
 from app.controllers.allocations import allocate
 from app.controllers.rewards import (
     get_allocation_threshold,
-    get_proposals_rewards,
+    get_estimated_proposals_rewards,
     ProposalReward,
 )
 from app.core.allocations import AllocationRequest
@@ -22,9 +22,9 @@ from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, Exception
 def handle_connect():
     app.logger.debug("Client connected")
     threshold = get_allocation_threshold()
-    emit("threshold", json.dumps({"threshold": str(threshold)}))
-    proposal_rewards = get_proposals_rewards()
-    emit("proposal_rewards", json.dumps(_serialize_proposal_rewards(proposal_rewards)))
+    emit("threshold", {"threshold": str(threshold)})
+    proposal_rewards = get_estimated_proposals_rewards()
+    emit("proposal_rewards", _serialize_proposal_rewards(proposal_rewards))
 
 
 @socketio.on("disconnect")
@@ -43,36 +43,34 @@ def handle_allocate(msg):
     app.logger.info(f"User: {user_address} allocated successfully")
 
     threshold = get_allocation_threshold()
-    emit("threshold", json.dumps({"threshold": str(threshold)}), broadcast=True)
+    emit("threshold", {"threshold": str(threshold)}, broadcast=True)
     allocations_sum = allocations.get_sum_by_epoch()
-    emit(
-        "allocations_sum", json.dumps({"amount": str(allocations_sum)}), broadcast=True
-    )
+    emit("allocations_sum", {"amount": str(allocations_sum)}, broadcast=True)
 
-    proposal_rewards = get_proposals_rewards()
+    proposal_rewards = get_estimated_proposals_rewards()
     emit(
         "proposal_rewards",
-        json.dumps(_serialize_proposal_rewards(proposal_rewards)),
+        _serialize_proposal_rewards(proposal_rewards),
         broadcast=True,
     )
     for proposal in proposal_rewards:
         donors = allocations.get_all_by_proposal_and_epoch(proposal.address)
-        emit("proposal_donors", json.dumps(_serialize_donors(donors)), broadcast=True)
+        emit("proposal_donors", _serialize_donors(donors), broadcast=True)
 
 
 @socketio.on("proposal_donors")
 def handle_proposal_donors(proposal_address: str):
     donors = allocations.get_all_by_proposal_and_epoch(proposal_address)
-    emit("proposal_donors", json.dumps(_serialize_donors(donors)))
+    emit("proposal_donors", _serialize_donors(donors))
 
 
 @socketio.on_error_default
 def default_error_handler(e):
     ExceptionHandler.print_stacktrace(e)
     if isinstance(e, OctantException):
-        emit("exception", json.dumps({"message": str(e.message)}))
+        emit("exception", {"message": str(e.message)})
     else:
-        emit("exception", json.dumps({"message": UNEXPECTED_EXCEPTION}))
+        emit("exception", {"message": UNEXPECTED_EXCEPTION})
 
 
 def _serialize_proposal_rewards(proposal_rewards: List[ProposalReward]) -> List[dict]:

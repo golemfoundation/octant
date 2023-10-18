@@ -27,8 +27,27 @@ EPOCHS = [
         "stateMutability": "view",
         "type": "function",
     },
+    {
+        "inputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "name": "epochProps",
+        "outputs": [
+            {"internalType": "uint32", "name": "from", "type": "uint32"},
+            {"internalType": "uint32", "name": "to", "type": "uint32"},
+            {"internalType": "uint64", "name": "fromTs", "type": "uint64"},
+            {"internalType": "uint64", "name": "duration", "type": "uint64"},
+            {"internalType": "uint64", "name": "decisionWindow", "type": "uint64"},
+        ],
+        "stateMutability": "view",
+        "type": "function",
+    },
+    {
+        "inputs": [],
+        "name": "epochPropsIndex",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "view",
+        "type": "function",
+    },
 ]
-
 
 ERC20 = [
     {
@@ -56,7 +75,6 @@ ERC20 = [
         "type": "function",
     },
 ]
-
 
 PROPOSALS = [
     {
@@ -91,6 +109,19 @@ VAULT = [
         "name": "setMerkleRoot",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function",
+    },
+]
+
+GNOSIS_SAFE = [
+    {
+        "inputs": [
+            {"internalType": "bytes", "name": "_data", "type": "bytes"},
+            {"internalType": "bytes", "name": "_signature", "type": "bytes"},
+        ],
+        "name": "isValidSignature",
+        "outputs": [{"internalType": "bytes4", "name": "", "type": "bytes4"}],
+        "stateMutability": "view",
         "type": "function",
     },
 ]

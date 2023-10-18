@@ -12,14 +12,16 @@ import AllocationNavigation from 'components/dedicated/AllocationNavigation/Allo
 import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
 import AllocationTipTiles from 'components/dedicated/AllocationTipTiles/AllocationTipTiles';
 import ModalAllocationValuesEdit from 'components/dedicated/ModalAllocationValuesEdit/ModalAllocationValuesEdit';
-import useAllocate from 'hooks/mutations/allocations/useAllocate';
+import useAllocate from 'hooks/events/useAllocate';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
+import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useAllocationsStore from 'store/allocations/store';
@@ -47,13 +49,19 @@ const AllocationView = (): ReactElement => {
   const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards();
 
   const { data: currentEpoch } = useCurrentEpoch();
+  const { refetch: refetchHistory } = useHistory();
   const {
     data: userAllocations,
     isFetching: isFetchingUserAllocation,
     refetch: refetchUserAllocations,
-  } = useUserAllocations(currentEpoch, { refetchOnMount: true });
+  } = useUserAllocations(undefined, { refetchOnMount: true });
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const {
+    data: userNonce,
+    isFetching: isFetchingUserNonce,
+    refetch: refetchUserAllocationNonce,
+  } = useUserAllocationNonce();
   const { refetch: refetchMatchedProposalRewards } = useMatchedProposalRewards();
   const { allocations, rewardsForProposals, setAllocations } = useAllocationsStore(state => ({
     allocations: state.data.allocations,
@@ -61,21 +69,25 @@ const AllocationView = (): ReactElement => {
     setAllocations: state.setAllocations,
   }));
 
-  const { mutateAsync, isLoading: isLoadingAllocate } = useAllocate({
-    async onSuccess() {
+  const allocateEvent = useAllocate({
+    nonce: userNonce!,
+    onSuccess: async () => {
       setCurrentView('edit');
       setSelectedItemAddress(null);
       triggerToast({
         title: t('allocationSuccessful'),
       });
-      await refetchMatchedProposalRewards();
-      await refetchUserAllocations();
+      refetchMatchedProposalRewards();
+      refetchUserAllocations();
+      refetchUserAllocationNonce();
+      refetchHistory();
       setAllocations([
         ...allocations.filter(allocation => {
           const allocationValue = allocationValues.find(({ address }) => address === allocation);
           return !allocationValue?.value.isZero();
         }),
       ]);
+      setIsLocked(true);
     },
   });
 
@@ -116,7 +128,22 @@ const AllocationView = (): ReactElement => {
   }, [currentEpoch, allocations, userAllocations?.elements.length, rewardsForProposals]);
 
   const onAllocate = () => {
-    mutateAsync(allocationValues);
+    if (userNonce === undefined || proposalsContract === undefined) {
+      return;
+    }
+    /**
+     * Whenever user wants to send an empty allocation (no projects, or all of them value 0)
+     * Push one element with value 0. It should be fixed on BE by creating "personal all" endpoint,
+     * but there is no ticket for it yet.
+     */
+    const allocationValuesNew = [...allocationValues];
+    if (allocationValuesNew.length === 0) {
+      allocationValuesNew.push({
+        address: proposalsContract[0],
+        value: BigNumber.from(0),
+      });
+    }
+    allocateEvent.emit(allocationValuesNew);
   };
 
   useEffect(() => {
@@ -152,12 +179,21 @@ const AllocationView = (): ReactElement => {
     setAllocationValues(newAllocationValues);
   };
 
-  const isLoading = allocationValues === undefined || (isConnected && isFetchingUserAllocation);
-  const areButtonsDisabled =
-    isLoading || !isConnected || !isDecisionWindowOpen || !!individualReward?.isZero();
+  const isLoading =
+    allocationValues === undefined ||
+    (isConnected && isFetchingUserNonce) ||
+    (isConnected && isFetchingUserAllocation);
   const areAllocationsAvailableOrAlreadyDone =
     (allocationValues !== undefined && !isEmpty(allocations)) ||
     !!userAllocations?.hasUserAlreadyDoneAllocation;
+  const hasUserIndividualReward = !!individualReward && !individualReward.isZero();
+  const areButtonsDisabled =
+    isLoading ||
+    !isConnected ||
+    !isDecisionWindowOpen ||
+    isLocked ||
+    (!areAllocationsAvailableOrAlreadyDone && !rewardsForProposals.isZero()) ||
+    !!individualReward?.isZero();
 
   const allocationsWithRewards = getAllocationsWithRewards({
     allocationValues,
@@ -186,11 +222,12 @@ const AllocationView = (): ReactElement => {
       navigationBottomSuffix={
         !isEpoch1 &&
         areAllocationsAvailableOrAlreadyDone &&
+        hasUserIndividualReward &&
         !isLocked && (
           <AllocationNavigation
             areButtonsDisabled={areButtonsDisabled}
             currentView={currentView}
-            isLoading={isLoadingAllocate}
+            isLoading={allocateEvent.isLoading}
             onAllocate={onAllocate}
             onResetValues={onResetAllocationValues}
             setCurrentView={setCurrentView}
@@ -201,7 +238,7 @@ const AllocationView = (): ReactElement => {
       {currentView === 'edit' ? (
         <Fragment>
           <AllocationTipTiles className={styles.box} />
-          {!isEpoch1 && individualReward && !individualReward.isZero() && (
+          {!isEpoch1 && hasUserIndividualReward && (
             <AllocateRewardsBox
               className={styles.box}
               isDisabled={isLocked}
@@ -227,17 +264,22 @@ const AllocationView = (): ReactElement => {
               ))}
             </Fragment>
           )}
-          {!areAllocationsAvailableOrAlreadyDone && individualReward?.isZero() && (
+          {!areAllocationsAvailableOrAlreadyDone && !hasUserIndividualReward && (
             <AllocationEmptyState />
           )}
           <ModalAllocationValuesEdit
             isLimitVisible
+            isManuallyEdited={
+              selectedItemAddress ? allocationsEdited.includes(selectedItemAddress) : false
+            }
             modalProps={{
               header: t('modalAllocationValuesEdit.header', { allocation: selectedItemName }),
               isOpen: selectedItemAddress !== null,
               onClosePanel: () => setSelectedItemAddress(null),
             }}
-            onValueChange={newValue => onChangeAllocationItemValue(selectedItemAddress!, newValue)}
+            onUpdateValue={newValue => {
+              onChangeAllocationItemValue(selectedItemAddress!, newValue);
+            }}
             restToDistribute={restToDistribute}
             valueCryptoSelected={
               selectedItemAddress && allocationValues

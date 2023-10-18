@@ -18,7 +18,9 @@ export default interface InputTextProps {
   onClear?: () => void;
   onFocus?: FocusEventHandler<HTMLInputElement>;
   placeholder?: string;
+  showLoader?: boolean;
   suffix?: string;
+  suffixClassName?: string;
   textAlign?: 'left' | 'center';
   value?: string;
   variant?: InputTextVariant;

@@ -14,10 +14,13 @@ const Tooltip: FC<TooltipProps> = ({
   dataTest,
   onClickCallback,
   position = 'top',
+  shouldShowOnClickMobile = true,
   showForce,
   text,
   className,
   variant = 'normal',
+  tooltipClassName,
+  tooltipWrapperClassName,
 }) => {
   const { isDesktop } = useMediaQuery();
   const [isVisible, setIsVisible] = useState(false);
@@ -39,7 +42,7 @@ const Tooltip: FC<TooltipProps> = ({
       return;
     }
 
-    if (!isDesktop) {
+    if (!isDesktop && shouldShowOnClickMobile) {
       setIsVisible(_isVisible => !_isVisible);
     }
   };
@@ -70,7 +73,13 @@ const Tooltip: FC<TooltipProps> = ({
       {isTooltipVisible && !isDesktop && (
         <div className={styles.overlay} onClick={() => setIsVisible(false)} />
       )}
-      <div className={cx(styles.tooltipWrapper, styles[`position--${position}`])}>
+      <div
+        className={cx(
+          styles.tooltipWrapper,
+          styles[`position--${position}`],
+          tooltipWrapperClassName,
+        )}
+      >
         <AnimatePresence>
           {isTooltipVisible && (
             <motion.div
@@ -79,9 +88,10 @@ const Tooltip: FC<TooltipProps> = ({
                 styles.tooltip,
                 styles[`position--${position}`],
                 styles[`variant--${variant}`],
+                tooltipClassName,
               )}
               exit={{ opacity: 0, y: 8 }}
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, x: position === 'top' ? '-50%' : '0%', y: 8 }}
             >
               {text}
             </motion.div>

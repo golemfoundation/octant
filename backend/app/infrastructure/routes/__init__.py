@@ -15,6 +15,7 @@ from . import (
     glm_claim,
     epochs,
     user,
+    validators_stats,
 )
 
 
