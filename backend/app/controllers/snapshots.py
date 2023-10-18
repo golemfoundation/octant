@@ -66,8 +66,8 @@ def get_finalized_snapshot_status() -> FinalizedSnapshotStatus:
 
 
 def snapshot_pending_epoch() -> Optional[int]:
-    current_epoch = epochs.get_current_epoch()
-    pending_epoch = epochs.get_pending_epoch()
+    current_epoch = epochs.get_current_epoch() + 1
+    pending_epoch = epochs.get_pending_epoch() + 1
     app.logger.info(
         f"[*] Blockchain [current epoch: {current_epoch}] [pending epoch: {pending_epoch}] "
     )

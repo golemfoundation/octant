@@ -643,6 +643,7 @@ Deploy Release Candidate app:
   stage: deploy
   image: !reference [.images, alpine_git]
   rules:
+    - !reference [ .rules, on_mr_manual ]
     - !reference [.rules, on_push_to_master_branch_manual]
   resource_group: production
   variables:
