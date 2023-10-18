@@ -17,6 +17,7 @@ import { formInitialValues, validationSchema } from './utils';
 const AllocationInputs: FC<AllocationInputsProps> = ({
   className,
   isLimitVisible,
+  isManuallyEdited,
   onClose,
   valueCryptoSelected,
   valueCryptoTotal,
@@ -27,12 +28,16 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
   });
   const [inputFocused, setInputFocused] = useState<InputFocused>(null);
   const [percentage, setPercentage] = useState<string>('');
+  // Whenever editing already edited entry, restToDistribute should be increased by whatever is set here.
+  const restToDistributeAdjusted = isManuallyEdited
+    ? restToDistribute.add(valueCryptoSelected)
+    : restToDistribute;
 
   const formik = useFormik<FormFields>({
     initialValues: formInitialValues(valueCryptoSelected),
     onSubmit: () => {},
     validateOnChange: true,
-    validationSchema: validationSchema(valueCryptoTotal, restToDistribute),
+    validationSchema: validationSchema(valueCryptoTotal, restToDistributeAdjusted),
   });
 
   const valueCryptoSelectedHexString = valueCryptoSelected.toHexString();
@@ -94,7 +99,7 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
           inputFocused={inputFocused}
           isThereSomethingToDistribute={isThereSomethingToDistribute}
           isValueExceeded={!!formik.errors.valueCryptoSelected}
-          restToDistribute={restToDistribute}
+          restToDistribute={restToDistributeAdjusted}
           valueCryptoTotal={valueCryptoTotal}
         />
       )}
