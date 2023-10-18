@@ -1,10 +1,11 @@
 from app.database import user as user_db
+from app.exceptions import UserNotFound
 
 
 def get_patron_mode_status(user_address: str) -> bool:
     user = user_db.get_by_address(user_address)
     if not user:
-        return False
+        raise UserNotFound(user_address)
 
     return user.patron_mode
 
