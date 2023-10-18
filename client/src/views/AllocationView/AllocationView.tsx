@@ -123,9 +123,15 @@ const AllocationView = (): ReactElement => {
     /**
      * This hook should NOT run when user unlocks the allocation.
      * Only when userAllocations are fetched OR after rewardsForProposals value changes.
+     *
+     * Comparing userAllocations?.elements.length may not be enough -- what if user changes values
+     * but not the number of projects?
+     *
+     * Hence the check for userNonce. Whenever allocation is done we refetch userNonce and we should
+     * run this hook.
      */
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentEpoch, allocations, userAllocations?.elements.length, rewardsForProposals]);
+  }, [currentEpoch, allocations, userAllocations?.elements.length, userNonce, rewardsForProposals]);
 
   const onAllocate = () => {
     if (userNonce === undefined || proposalsContract === undefined) {
