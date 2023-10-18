@@ -43,3 +43,26 @@ export const adminNavigationTabs: NavigationTab[] = [
     to: ROOT_ROUTES.settings.absolute,
   },
 ];
+
+export const patronNavigationTabs: NavigationTab[] = [
+  {
+    icon: proposals,
+    label: 'Projects',
+    to: ROOT_ROUTES.proposals.absolute,
+  },
+  {
+    icon: earn,
+    label: 'Earn',
+    to: ROOT_ROUTES.earn.absolute,
+  },
+  {
+    icon: metrics,
+    label: 'Metrics',
+    to: ROOT_ROUTES.metrics.absolute,
+  },
+  {
+    icon: settings,
+    label: 'Settings',
+    to: ROOT_ROUTES.settings.absolute,
+  },
+];

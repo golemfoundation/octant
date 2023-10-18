@@ -8,6 +8,7 @@ export type Root = {
   estimatedEffectiveDeposit: 'estimatedEffectiveDeposit';
   individualReward: 'individualReward';
   matchedProposalRewards: 'matchedProposalRewards';
+  patronMode: 'patronMode';
   proposalDonors: 'proposalDonors';
   proposalRewardsThreshold: 'proposalRewardsThreshold';
   proposalsContract: 'proposalsContract';
@@ -38,6 +39,7 @@ export type QueryKeys = {
   largestLockedAmount: ['largestLockedAmount'];
   lockedSummaryLatest: ['lockedSummaryLatest'];
   matchedProposalRewards: (epochNumber: number) => [Root['matchedProposalRewards'], string];
+  patronMode: (userAddress: string) => [Root['patronMode'], string];
   proposalDonors: (proposalAddress: string) => [Root['proposalDonors'], string];
   proposalRewardsThreshold: (epochNumber: number) => [Root['proposalRewardsThreshold'], string];
   proposalsAllIpfs: ['proposalsAllIpfs'];
