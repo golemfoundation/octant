@@ -78,6 +78,10 @@ def verify_allocations(epoch: int, user_address: str, allocations: List[Allocati
     if patron_mode_enabled:
         raise exceptions.NotAllowedInPatronMode(user_address)
 
+    # Check if allocations list is empty
+    if len(allocations) == 0:
+        raise exceptions.EmptyAllocations()
+
     # Check if the list of proposal addresses is a subset of
     # proposal addresses in the Proposals contract
     proposal_addresses = [a.proposal_address for a in allocations]
