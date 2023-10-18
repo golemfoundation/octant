@@ -54,7 +54,7 @@ const AllocationView = (): ReactElement => {
     data: userAllocations,
     isFetching: isFetchingUserAllocation,
     refetch: refetchUserAllocations,
-  } = useUserAllocations(currentEpoch, { refetchOnMount: true });
+  } = useUserAllocations(undefined, { refetchOnMount: true });
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const {
@@ -185,6 +185,7 @@ const AllocationView = (): ReactElement => {
   const areAllocationsAvailableOrAlreadyDone =
     (allocationValues !== undefined && !isEmpty(allocations)) ||
     !!userAllocations?.hasUserAlreadyDoneAllocation;
+  const hasUserIndividualReward = !!individualReward && !individualReward.isZero();
   const areButtonsDisabled =
     isLoading ||
     !isConnected ||
@@ -218,7 +219,10 @@ const AllocationView = (): ReactElement => {
       dataTest="AllocationView"
       isLoading={isLoading}
       navigationBottomSuffix={
-        !isEpoch1 && (
+        !isEpoch1 &&
+        areAllocationsAvailableOrAlreadyDone &&
+        hasUserIndividualReward &&
+        !isLocked && (
           <AllocationNavigation
             areButtonsDisabled={areButtonsDisabled}
             currentView={currentView}
@@ -233,7 +237,7 @@ const AllocationView = (): ReactElement => {
       {currentView === 'edit' ? (
         <Fragment>
           <AllocationTipTiles className={styles.box} />
-          {!isEpoch1 && individualReward && !individualReward.isZero() && (
+          {!isEpoch1 && hasUserIndividualReward && (
             <AllocateRewardsBox
               className={styles.box}
               isDisabled={isLocked}
@@ -259,10 +263,7 @@ const AllocationView = (): ReactElement => {
               ))}
             </Fragment>
           )}
-          {!areAllocationsAvailableOrAlreadyDone && individualReward?.isZero() && (
-            <AllocationEmptyState />
-          )}
-          {!areAllocationsAvailableOrAlreadyDone && individualReward?.isZero() && (
+          {!areAllocationsAvailableOrAlreadyDone && !hasUserIndividualReward && (
             <AllocationEmptyState />
           )}
           <ModalAllocationValuesEdit
