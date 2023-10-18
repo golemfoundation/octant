@@ -205,9 +205,9 @@ def test_get_claimed_rewards(
     assert rewards_sum == sum(expected_rewards.values())
 
 
-def test_get_patron_mode_status_raise_error_when_user_does_not_exist(user_accounts):
-    with pytest.raises(exceptions.UserNotFound):
-        get_patron_mode_status(user_accounts[0].address)
+def test_get_patron_mode_status_return_false_when_user_does_not_exist(user_accounts):
+    result = get_patron_mode_status(user_accounts[0].address)
+    assert result is False
 
 
 def test_patron_mode_status_toggle_raises_error_when_user_does_not_exist(user_accounts):
