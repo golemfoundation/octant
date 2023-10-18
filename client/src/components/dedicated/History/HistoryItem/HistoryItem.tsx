@@ -1,12 +1,13 @@
+import { BigNumber } from 'ethers';
 import React, { FC, Fragment, memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import { getValuesToDisplay } from 'components/core/DoubleValue/utils';
+import DoubleValue from 'components/core/DoubleValue/DoubleValue';
 import HistoryItemDetailsModal from 'components/dedicated/History/HistoryItemDetailsModal/HistoryItemDetailsModal';
 import HistoryTransactionLabel from 'components/dedicated/History/HistoryTransactionLabel/HistoryTransactionLabel';
-import useCryptoValues from 'hooks/queries/useCryptoValues';
-import useSettingsStore from 'store/settings/store';
+import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useEpochTimestampHappenedIn from 'hooks/subgraph/useEpochTimestampHappenedIn';
 
 import styles from './HistoryItem.module.scss';
 import HistoryItemProps from './types';
@@ -14,21 +15,22 @@ import HistoryItemProps from './types';
 const HistoryItem: FC<HistoryItemProps> = props => {
   const { type, amount, isFinalized = true } = props;
   const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.historyItem' });
-  const {
-    data: { displayCurrency, isCryptoMainValueDisplay },
-  } = useSettingsStore(({ data }) => ({
-    data: {
-      displayCurrency: data.displayCurrency,
-      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
-    },
-  }));
-  const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const { data: epochTimestampHappenedIn, isFetching: isFetchingEpochTimestampHappenedIn } =
+    useEpochTimestampHappenedIn(props.timestamp);
+  const allocationEpoch = epochTimestampHappenedIn ? epochTimestampHappenedIn - 1 : undefined;
+  const { data: individualReward, isFetching: isFetchingIndividualReward } =
+    useIndividualReward(allocationEpoch);
+
+  const personalAllocationValue = individualReward
+    ? individualReward.sub(amount)
+    : BigNumber.from(0);
+  const isPersonalOnlyAllocation = amount.isZero();
 
   const title = useMemo(() => {
     switch (type) {
       case 'allocation':
-        return t('allocatedRewards');
+        return t(isPersonalOnlyAllocation ? 'personalAllocation' : 'allocatedRewards');
       case 'lock':
         return t('lockedGLM');
       case 'unlock':
@@ -36,16 +38,7 @@ const HistoryItem: FC<HistoryItemProps> = props => {
       default:
         return t('withdrawnFunds');
     }
-  }, [t, type]);
-
-  const values = getValuesToDisplay({
-    cryptoCurrency: ['allocation', 'withdrawal'].includes(type) ? 'ethereum' : 'golem',
-    cryptoValues,
-    displayCurrency: displayCurrency!,
-    error,
-    isCryptoMainValueDisplay,
-    valueCrypto: amount,
-  });
+  }, [isPersonalOnlyAllocation, t, type]);
 
   return (
     <Fragment>
@@ -54,10 +47,13 @@ const HistoryItem: FC<HistoryItemProps> = props => {
           <div className={styles.title}>{title}</div>
           {type !== 'allocation' && <HistoryTransactionLabel isFinalized={isFinalized} />}
         </div>
-        <div className={styles.values}>
-          <div className={styles.primary}>{values.primary}</div>
-          <div className={styles.secondary}>{values.secondary}</div>
-        </div>
+        <DoubleValue
+          className={styles.values}
+          cryptoCurrency={['allocation', 'withdrawal'].includes(type) ? 'ethereum' : 'golem'}
+          isFetching={isFetchingEpochTimestampHappenedIn || isFetchingIndividualReward}
+          valueCrypto={isPersonalOnlyAllocation ? amount : personalAllocationValue}
+          variant="tiny"
+        />
       </BoxRounded>
       <HistoryItemDetailsModal
         {...props}

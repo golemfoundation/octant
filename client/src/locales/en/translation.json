@@ -172,6 +172,7 @@
       },
       "historyItem": {
         "allocatedRewards": "Allocated rewards",
+        "personalAllocation": "Personal allocation",
         "lockedGLM": "Locked GLM",
         "unlockedGLM": "Unlocked GLM",
         "projects": "Projects",

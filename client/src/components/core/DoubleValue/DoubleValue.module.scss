@@ -28,20 +28,25 @@
   font-size: $font-size-24;
 
   &.variant-- {
-    &standard {
+    &big {
       font-size: $font-size-24;
     }
 
-    &small {
+    &standard {
       font-size: $font-size-18;
     }
 
-    &tiny {
+    &small {
       font-size: $font-size-14;
 
       @media #{$tablet-down} {
         font-size: $font-size-12;
       }
+    }
+
+    &tiny {
+      font-size: $font-size-12;
+      font-weight: $font-weight-bold;
     }
   }
 }

@@ -19,7 +19,7 @@ const DoubleValue: FC<DoubleValueProps> = ({
   textAlignment = 'left',
   valueCrypto,
   valueString,
-  variant = 'standard',
+  variant = 'big',
   isFetching = false,
 }) => {
   const {

@@ -54,7 +54,7 @@ const Section: FC<SectionProps> = ({
       {!isEmpty(doubleValueProps) && (
         <DoubleValue
           textAlignment="right"
-          variant={variant === 'standard' ? 'small' : 'tiny'}
+          variant={variant === 'standard' ? 'standard' : 'small'}
           {...doubleValueProps}
           isDisabled={isDisabled}
         />
