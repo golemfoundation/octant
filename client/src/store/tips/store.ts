@@ -23,6 +23,8 @@ export const initialState: TipsData = {
 
 export default getStoreWithMeta<TipsData, TipsMethods>({
   getStoreMethods: set => ({
+    // TODO: https://linear.app/golemfoundation/issue/OCT-1056/reset-and-flush-stores
+    setInitialState: () => set({ data: initialState }),
     setValuesFromLocalStorage: () =>
       set({
         data: {

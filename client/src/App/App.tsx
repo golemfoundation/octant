@@ -59,10 +59,10 @@ const App = (): ReactElement => {
   const {
     setValuesFromLocalStorage: setValuesFromLocalStorageTips,
     isInitialized: isTipsStoreInitialized,
-    reset: resetTipsStore,
-  } = useTipsStore(({ meta, setValuesFromLocalStorage, reset }) => ({
+    setInitialState: setInitialStateTips,
+  } = useTipsStore(({ meta, setValuesFromLocalStorage, setInitialState }) => ({
     isInitialized: meta.isInitialized,
-    reset,
+    setInitialState,
     setValuesFromLocalStorage,
   }));
   const {
@@ -329,8 +329,9 @@ const App = (): ReactElement => {
     if (!areOctantTipsAlwaysVisible) {
       return;
     }
-    resetTipsStore();
-  }, [areOctantTipsAlwaysVisible, resetTipsStore]);
+
+    setInitialStateTips();
+  }, [areOctantTipsAlwaysVisible, setInitialStateTips]);
   const isLoading =
     isLoadingCurrentEpoch ||
     (!isPreLaunch && !isAllocationsInitialized) ||
