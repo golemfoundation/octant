@@ -31,6 +31,37 @@ from tests.conftest import (
 )
 
 
+@pytest.fixture(scope="function")
+def get_all_by_epoch_expected_result(user_accounts, proposal_accounts):
+    return [
+        {
+            "donor": user_accounts[0].address,
+            "proposal": proposal_accounts[0].address,
+            "amount": str(10 * 10**18),
+        },
+        {
+            "donor": user_accounts[0].address,
+            "proposal": proposal_accounts[1].address,
+            "amount": str(5 * 10**18),
+        },
+        {
+            "donor": user_accounts[0].address,
+            "proposal": proposal_accounts[2].address,
+            "amount": str(300 * 10**18),
+        },
+        {
+            "donor": user_accounts[1].address,
+            "proposal": proposal_accounts[1].address,
+            "amount": str(1050 * 10**18),
+        },
+        {
+            "donor": user_accounts[1].address,
+            "proposal": proposal_accounts[3].address,
+            "amount": str(500 * 10**18),
+        },
+    ]
+
+
 @pytest.fixture(autouse=True)
 def before(
     app,
@@ -457,45 +488,16 @@ def test_get_by_user_and_epoch(mock_allocations_db, user_accounts, proposal_acco
     assert result[2].amount == str(300 * 10**18)
 
 
-def test_get_by_all_epoch(
+def test_get_all_by_epoch(
     mock_pending_epoch_snapshot_db,
     mock_allocations_db,
-    user_accounts,
-    proposal_accounts,
+    get_all_by_epoch_expected_result,
 ):
-    expected_result = [
-        {
-            "donor": user_accounts[0].address,
-            "proposal": proposal_accounts[0].address,
-            "amount": str(10 * 10**18),
-        },
-        {
-            "donor": user_accounts[0].address,
-            "proposal": proposal_accounts[1].address,
-            "amount": str(5 * 10**18),
-        },
-        {
-            "donor": user_accounts[0].address,
-            "proposal": proposal_accounts[2].address,
-            "amount": str(300 * 10**18),
-        },
-        {
-            "donor": user_accounts[1].address,
-            "proposal": proposal_accounts[1].address,
-            "amount": str(1050 * 10**18),
-        },
-        {
-            "donor": user_accounts[1].address,
-            "proposal": proposal_accounts[3].address,
-            "amount": str(500 * 10**18),
-        },
-    ]
-
     result = get_all_by_epoch(MOCKED_PENDING_EPOCH_NO)
 
-    assert len(result) == len(expected_result)
+    assert len(result) == len(get_all_by_epoch_expected_result)
     for i in result:
-        assert dataclasses.asdict(i) in expected_result
+        assert dataclasses.asdict(i) in get_all_by_epoch_expected_result
 
 
 def test_get_by_epoch_fails_for_current_or_future_epoch(
@@ -505,9 +507,51 @@ def test_get_by_epoch_fails_for_current_or_future_epoch(
         get_all_by_epoch(MOCKED_PENDING_EPOCH_NO + 1)
 
 
+def test_get_all_by_epoch_with_allocation_amount_equal_0(
+    mock_pending_epoch_snapshot_db,
+    mock_allocations_db,
+    user_accounts,
+    proposal_accounts,
+    get_all_by_epoch_expected_result,
+):
+    user = database.user.get_or_add_user(user_accounts[2].address)
+    db.session.commit()
+    user_allocations = [
+        Allocation(proposal_accounts[1].address, 0),
+    ]
+    database.allocations.add_all(MOCKED_PENDING_EPOCH_NO, user.id, 0, user_allocations)
+
+    result = get_all_by_epoch(MOCKED_PENDING_EPOCH_NO)
+
+    assert len(result) == len(get_all_by_epoch_expected_result)
+    for i in result:
+        assert dataclasses.asdict(i) in get_all_by_epoch_expected_result
+
+
 def test_get_by_proposal_and_epoch(
     mock_allocations_db, user_accounts, proposal_accounts
 ):
+    result = get_all_by_proposal_and_epoch(
+        proposal_accounts[1].address, MOCKED_PENDING_EPOCH_NO
+    )
+
+    assert len(result) == 2
+    assert result[0].address == user_accounts[0].address
+    assert result[0].amount == str(5 * 10**18)
+    assert result[1].address == user_accounts[1].address
+    assert result[1].amount == str(1050 * 10**18)
+
+
+def test_get_by_proposal_and_epoch_with_allocation_amount_equal_0(
+    mock_allocations_db, user_accounts, proposal_accounts
+):
+    user = database.user.get_or_add_user(user_accounts[2].address)
+    db.session.commit()
+    user_allocations = [
+        Allocation(proposal_accounts[1].address, 0),
+    ]
+    database.allocations.add_all(MOCKED_PENDING_EPOCH_NO, user.id, 0, user_allocations)
+
     result = get_all_by_proposal_and_epoch(
         proposal_accounts[1].address, MOCKED_PENDING_EPOCH_NO
     )
