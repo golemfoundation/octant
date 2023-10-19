@@ -6,9 +6,13 @@ import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import { chevronBottom, cross, tick } from 'svg/misc';
+import setDocumentOverflowModal from 'utils/setDocumentOverflowModal';
 
 import styles from './InputSelect.module.scss';
 import InputSelectProps, { Option } from './types';
+
+const durationOfTransitionDesktop = 0;
+const durationOfTransitionMobile = 0.3;
 
 const InputSelect: FC<InputSelectProps> = ({
   dataTest = 'InputSelect',
@@ -31,6 +35,14 @@ const InputSelect: FC<InputSelectProps> = ({
       onChange(option);
     }
   };
+
+  useEffect(() => {
+    setDocumentOverflowModal(
+      isMenuOpen,
+      (isDesktop ? durationOfTransitionDesktop : durationOfTransitionMobile) * 1000,
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMenuOpen]);
 
   useEffect(() => {
     if (!isMenuOpen || !isDesktop) {
@@ -81,7 +93,10 @@ const InputSelect: FC<InputSelectProps> = ({
                 className={styles.menu}
                 exit={{ opacity: isDesktop ? 0 : 1, y: '100%' }}
                 initial={{ y: '100%' }}
-                transition={{ damping: 1, duration: isDesktop ? 0 : 0.3 }}
+                transition={{
+                  damping: 1,
+                  duration: isDesktop ? durationOfTransitionDesktop : durationOfTransitionMobile,
+                }}
               >
                 <Button
                   className={styles.buttonClose}
