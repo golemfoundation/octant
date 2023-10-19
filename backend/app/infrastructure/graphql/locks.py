@@ -66,6 +66,8 @@ def get_locks_by_timestamp_range(from_ts: int, to_ts: int) -> list[LockEvent]:
         """
         query GetLocks($fromTimestamp: Int!, $toTimestamp: Int!) {
           lockeds(
+            first: 1000,
+            skip: 0,
             orderBy: timestamp
             where: {timestamp_gte: $fromTimestamp, timestamp_lt: $toTimestamp}
           ) {
