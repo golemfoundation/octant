@@ -21,7 +21,7 @@ const steps: Step[] = [
   },
   {
     header: i18n.t('views.onboarding.steps.stakingRewards.header'),
-    image: 'images/lock-glm.webp',
+    image: 'images/cycle.webp',
     imageClassName: styles.earnRewards,
     text: (
       <Trans
@@ -33,7 +33,7 @@ const steps: Step[] = [
   {
     header: i18n.t('views.onboarding.steps.allocateOrWithdraw.header'),
     image: 'images/favourites.webp',
-    imageClassName: styles.previewProjects,
+    imageClassName: styles.allocateOrWithdraw,
     text: (
       <Trans
         components={[<span className={styles.bold} />]}
@@ -44,7 +44,7 @@ const steps: Step[] = [
   {
     header: i18n.t('views.onboarding.steps.moreInformation.header'),
     image: 'images/rewards.webp',
-    imageClassName: styles.getReady,
+    imageClassName: styles.moreInformation,
     text: (
       <Trans
         components={[
