@@ -349,24 +349,6 @@
         },
         "welcomeToOctant": {
           "header": "Welcome to Octant",
-          "text": "Octant is a Golem Foundation experiment in decentralised governance and funding projects for the public good. <br/> <br/> To get started, connect your wallet and lock some GLM in the Earn tab. If you don’t have any GLM or you want to know more about locking, this <0> blog post </0> has all you need to know to get started."
-        },
-        "stakingRewards": {
-          "header": "Staking rewards",
-          "text": "If you lock more than 100 GLM, you will earn rewards in ETH for every epoch you have tokens locked. Tokens can be unlocked at any time. <br/> <br/> You can choose to withdraw your earnings or allocate them to public good projects, which you can browse in the <0>Projects</0> tab."
-        },
-        "allocateOrWithdraw": {
-          "header": "Allocate or Withdraw",
-          "text": "Projects you shortlist for allocation will appear here in the <0>Allocate</0> tab. You can allocate some, or all of your ETH rewards. <br/> <br/> Rewards allocated will have Golem Foundation match funding applied, so donating will multiply the impact of your earnings compared to withdrawing it."
-        },
-        "moreInformation": {
-          "header": "More information",
-          "text": "The <0>Metrics</0> tab shows a range of stats about the current and previous epochs to help inform your allocation decisions and generally provide an overview of Octant. <br/> <br/> Still have questions or want to reach out? <br /> Read the <1>Docs</1> or join us on <2>Discord</2>."
-        }
-      },
-      "stepsEpoch1": {
-        "welcomeToOctant": {
-          "header": "Welcome to Octant",
           "text": "To get started, lock some GLM in the <0>Earn</0> view, and take a look at the projects you can donate to in the <1>Projects</1> view.<br/><br/>If you already have GLM locked, you’ll have some rewards to use during E1 Allocation window, which runs from 19 Oct to 2 Nov."
         },
         "earnRewards": {
