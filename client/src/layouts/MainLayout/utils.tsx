@@ -18,7 +18,7 @@ export function getIndividualRewardText({
   if (currentEpoch === undefined || individualReward === undefined) {
     return i18n.t('layouts.main.loadingRewardBudget');
   }
-  return i18n.t('common.budget', {
+  return i18n.t('common.rewards', {
     rewards: getFormattedEthValue(individualReward).fullString,
   });
 }
