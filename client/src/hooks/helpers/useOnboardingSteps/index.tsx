@@ -7,11 +7,9 @@ import styles from 'components/dedicated/ModalOnboarding/ModalOnboarding.module.
 import { Step } from 'components/dedicated/ModalOnboarding/types';
 import TOS from 'components/dedicated/TOS/TOS';
 import useGlmClaim from 'hooks/mutations/useGlmClaim';
-import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useGlmClaimCheck from 'hooks/queries/useGlmClaimCheck';
 
-import defaultSteps from './steps';
-import stepsEpoch1 from './stepsEpoch1';
+import steps from './steps';
 
 const useOnboardingSteps = (
   isUserTOSAcceptedInitial: boolean | undefined,
@@ -20,7 +18,6 @@ const useOnboardingSteps = (
 ): Step[] => {
   const { i18n } = useTranslation();
 
-  const { data: currentEpoch } = useCurrentEpoch();
   const { data: glmClaimCheck, isError, isFetched } = useGlmClaimCheck(isOnboardingDone);
   const glmClaimMutation = useGlmClaim(glmClaimCheck?.value, { onSuccess: onGlmClaimSuccess });
 
@@ -72,7 +69,7 @@ const useOnboardingSteps = (
           },
         ]
       : []),
-    ...(currentEpoch === 1 ? stepsEpoch1 : defaultSteps),
+    ...steps,
   ];
 };
 
