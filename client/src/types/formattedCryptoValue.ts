@@ -1,5 +1,5 @@
 export type FormattedCryptoValue = {
   fullString: string;
-  suffix: string;
+  suffix: 'WEI' | 'GWEI' | 'ETH' | 'GLM';
   value: string;
 };

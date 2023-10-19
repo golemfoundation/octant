@@ -2,7 +2,6 @@ import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { useFormik } from 'formik';
-import isEmpty from 'lodash/isEmpty';
 import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -18,9 +17,8 @@ import { formInitialValues, validationSchema } from './utils';
 const AllocationInputs: FC<AllocationInputsProps> = ({
   className,
   isLimitVisible,
+  isManuallyEdited,
   onClose,
-  onCloseAndSave,
-  onValueChange,
   valueCryptoSelected,
   valueCryptoTotal,
   restToDistribute = valueCryptoTotal,
@@ -30,16 +28,21 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
   });
   const [inputFocused, setInputFocused] = useState<InputFocused>(null);
   const [percentage, setPercentage] = useState<string>('');
+  // Whenever editing already edited entry, restToDistribute should be increased by whatever is set here.
+  const restToDistributeAdjusted = isManuallyEdited
+    ? restToDistribute.add(valueCryptoSelected)
+    : restToDistribute;
 
   const formik = useFormik<FormFields>({
     initialValues: formInitialValues(valueCryptoSelected),
     onSubmit: () => {},
     validateOnChange: true,
-    validationSchema: validationSchema(valueCryptoTotal, restToDistribute),
+    validationSchema: validationSchema(valueCryptoTotal, restToDistributeAdjusted),
   });
 
   const valueCryptoSelectedHexString = valueCryptoSelected.toHexString();
   const valueCryptoTotalHexString = valueCryptoTotal.toHexString();
+
   useEffect(() => {
     setPercentage(
       valueCryptoTotal.isZero()
@@ -48,32 +51,28 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
     );
     formik.setFieldValue('valueCryptoSelected', formatUnits(valueCryptoSelected));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [valueCryptoSelectedHexString, valueCryptoTotalHexString]);
+  }, [
+    valueCryptoSelectedHexString,
+    valueCryptoTotalHexString,
+    valueCryptoSelected,
+    valueCryptoTotal,
+  ]);
 
-  const formikUpdateValues = (
-    newValueBigNumber: BigNumber,
-    newValueString: string,
-    newValuePercentage: string,
-  ) => {
+  const formikUpdateValues = (newValueString: string, newValuePercentage: string) => {
     setPercentage(newValuePercentage);
     formik.setFieldValue('valueCryptoSelected', newValueString);
-
-    formik.validateForm().then(errors => {
-      if (isEmpty(errors)) {
-        onValueChange(newValueBigNumber);
-      }
-    });
+    // https://github.com/jaredpalmer/formik/issues/2059#issuecomment-612733378
+    setTimeout(() => formik.setFieldTouched('valueCryptoSelected', true));
   };
 
   const onValuePercentageChange = (newValuePercentage: string) => {
     if (newValuePercentage && !percentageOnly.test(newValuePercentage)) {
       return;
     }
-
     const newValueBigNumber = newValuePercentage
-      ? valueCryptoTotal.mul(newValuePercentage).div(100)
+      ? valueCryptoTotal.mul(BigNumber.from(newValuePercentage)).div(100)
       : BigNumber.from(0);
-    formikUpdateValues(newValueBigNumber, formatUnits(newValueBigNumber), newValuePercentage);
+    formikUpdateValues(formatUnits(newValueBigNumber), newValuePercentage);
   };
 
   const onValueStringChange = (newValueString: string): void => {
@@ -87,7 +86,7 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
       ? newValueBigNumber.mul(100).div(valueCryptoTotal).toString()
       : '0';
     newPercentage = parseInt(newPercentage, 10) > 100 ? '100' : newPercentage;
-    formikUpdateValues(newValueBigNumber, newValueString, newPercentage);
+    formikUpdateValues(newValueString, newPercentage);
   };
 
   const isThereSomethingToDistribute = !restToDistribute.isZero();
@@ -100,7 +99,7 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
           inputFocused={inputFocused}
           isThereSomethingToDistribute={isThereSomethingToDistribute}
           isValueExceeded={!!formik.errors.valueCryptoSelected}
-          restToDistribute={restToDistribute}
+          restToDistribute={restToDistributeAdjusted}
           valueCryptoTotal={valueCryptoTotal}
         />
       )}
@@ -137,7 +136,7 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
         isHigh
         isLoading={formik.isSubmitting}
         label={isThereSomethingToDistribute ? t('done') : t('close')}
-        onClick={isThereSomethingToDistribute ? onCloseAndSave : onClose}
+        onClick={() => onClose(parseUnits(formik.values.valueCryptoSelected))}
         type="submit"
         variant="cta"
       />

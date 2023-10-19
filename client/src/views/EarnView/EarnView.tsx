@@ -12,7 +12,7 @@ import TipTile from 'components/dedicated/TipTile/TipTile';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
+import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useTipsStore from 'store/tips/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
@@ -26,7 +26,7 @@ const EarnView = (): ReactElement => {
   const [isPollingForCurrentEpoch, setIsPollingForCurrentEpoch] = useState<boolean>(false);
   const { isDesktop } = useMediaQuery();
   const { isConnected } = useAccount();
-  const { data: withdrawableUserEth } = useWithdrawableUserEth();
+  const { data: withdrawableRewards } = useWithdrawableRewards();
   const { wasWithdrawAlreadyClosed, setWasWithdrawAlreadyClosed } = useTipsStore(state => ({
     setWasWithdrawAlreadyClosed: state.setWasWithdrawAlreadyClosed,
     wasWithdrawAlreadyClosed: state.data.wasWithdrawAlreadyClosed,
@@ -55,8 +55,8 @@ const EarnView = (): ReactElement => {
   const isWithdrawTipVisible =
     !!currentEpoch &&
     currentEpoch > 1 &&
-    !!withdrawableUserEth &&
-    !withdrawableUserEth.isZero() &&
+    !!withdrawableRewards &&
+    !withdrawableRewards.sum.isZero() &&
     !wasWithdrawAlreadyClosed;
 
   const preLaunchStartTimestamp = Date.UTC(2023, 7, 4, 10, 0, 0, 0); // 04.08.2023 12:00 CEST

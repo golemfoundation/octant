@@ -15,13 +15,16 @@ import {
   TESTNET_DEPLOYER_PRIVATE_KEY,
   TESTNET_MULTISIG_PRIVATE_KEY,
   TESTNET_RPC_URL,
+  LOCAL_RPC_URL,
 } from './env';
 
 import './tasks/clean';
 import './tasks/increase-time';
 import './tasks/mine';
+import './tasks/next-epoch';
 import './tasks/prepare-local-test-env';
 import './tasks/send-glm';
+import './tasks/send-eth-and-glm';
 import './tasks/target-check';
 import './tasks/auth-check';
 import './tasks/deposits-check';
@@ -79,7 +82,7 @@ const config: HardhatUserConfig = {
     localhost: {
       chainId: 1337,
       initialBaseFeePerGas: 0,
-      url: 'http://127.0.0.1:8545',
+      url: LOCAL_RPC_URL,
     },
     mainnet: {
       accounts: [MAINNET_DEPLOYER_PRIVATE_KEY],

@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from decimal import Decimal
 from functools import reduce
 from typing import List
-from typing import Optional
 
 from dataclass_wizard import JSONWizard
 
@@ -10,26 +9,19 @@ from app.core.epochs import epoch_snapshots as core_epoch_snapshots
 from app import database
 from app import exceptions
 from app.core import proposals, merkle_tree
+from app.core.epochs.epoch_snapshots import has_pending_epoch_snapshot
 from app.core.proposals import get_proposals_with_allocations
 from app.core.rewards.rewards import (
-    calculate_matched_rewards,
-    get_matched_rewards_from_epoch,
+    get_estimated_matched_rewards,
 )
 from app.extensions import epochs
 
 
-@dataclass(frozen=True)
+@dataclass()
 class ProposalReward(JSONWizard):
     address: str
     allocated: int
     matched: int
-
-
-@dataclass(frozen=True)
-class Rewards(JSONWizard):
-    epoch: int
-    allocated: int
-    matched: Optional[int]
 
 
 @dataclass(frozen=True)
@@ -47,40 +39,35 @@ class RewardsMerkleTree(JSONWizard):
     leaf_encoding: List[str]
 
 
-def get_rewards_budget(epoch: int = None) -> Rewards:
-    epoch = epochs.get_pending_epoch() if epoch is None else epoch
-    matched = None
-
-    try:
-        snapshot = database.pending_epoch_snapshot.get_by_epoch_num(epoch)
-        matched = calculate_matched_rewards(snapshot)
-    except exceptions.InvalidEpoch:
-        # This means the epoch is still ongoing (or hasn't yet started)
-        # thus the matched rewards value is not yet known.
-        pass
-
-    allocated = database.allocations.get_alloc_sum_by_epoch(epoch)
-    return Rewards(epoch, allocated, matched)
-
-
 def get_allocation_threshold(epoch: int = None) -> int:
     epoch = epochs.get_pending_epoch() if epoch is None else epoch
     return proposals.get_proposal_allocation_threshold(epoch)
 
 
-def get_proposals_rewards(epoch: int = None) -> List[ProposalReward]:
-    epoch = epochs.get_pending_epoch() if epoch is None else epoch
-    matched_rewards = get_matched_rewards_from_epoch(epoch)
-    projects = get_proposals_with_allocations(epoch)
+def get_estimated_proposals_rewards() -> List[ProposalReward]:
+    epoch = epochs.get_pending_epoch()
+
+    if not has_pending_epoch_snapshot(epoch):
+        raise exceptions.MissingSnapshot
+
+    matched_rewards = get_estimated_matched_rewards()
+    proposals_with_allocations = get_proposals_with_allocations(epoch)
     threshold = get_allocation_threshold(epoch)
 
     total_allocated_above_threshold = sum(
-        [allocated for _, allocated in projects if allocated >= threshold]
+        [
+            allocated
+            for _, allocated in proposals_with_allocations
+            if allocated >= threshold
+        ]
     )
 
-    rewards = []
+    rewards = {
+        address: ProposalReward(address, 0, 0)
+        for address in proposals.get_proposals_addresses(epoch)
+    }
 
-    for address, allocated in projects:
+    for address, allocated in proposals_with_allocations:
         if allocated >= threshold:
             matched = int(
                 Decimal(allocated)
@@ -90,9 +77,31 @@ def get_proposals_rewards(epoch: int = None) -> List[ProposalReward]:
         else:
             matched = 0
 
-        rewards.append(ProposalReward(address, allocated, matched))
+        proposal_rewards = rewards[address]
+        proposal_rewards.allocated = allocated
+        proposal_rewards.matched = matched
 
-    return rewards
+    return list(rewards.values())
+
+
+def get_finalized_epoch_proposals_rewards(epoch: int = None) -> List[ProposalReward]:
+    finalized_epoch = epochs.get_finalized_epoch()
+    if epoch > finalized_epoch:
+        raise exceptions.MissingSnapshot()
+
+    proposals_address_list = proposals.get_proposals_addresses(epoch)
+    raw_proposals_rewards = database.rewards.get_by_epoch_and_address_list(
+        epoch, proposals_address_list
+    )
+
+    return [
+        ProposalReward(
+            reward.address,
+            int(reward.amount) - int(reward.matched),
+            int(reward.matched),
+        )
+        for reward in raw_proposals_rewards
+    ]
 
 
 def get_rewards_merkle_tree(epoch: int) -> RewardsMerkleTree:

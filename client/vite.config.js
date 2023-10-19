@@ -31,7 +31,7 @@ export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production';
   const isStaging = mode === 'staging';
   const localIdentName = isProduction ? '[hash:base64:5]' : '[name]__[local]--[hash:base64:5]';
-  const base = isProduction ? '/' : '/governance/octant/';
+  const base = '/';
 
   const plugins = [
     react(),

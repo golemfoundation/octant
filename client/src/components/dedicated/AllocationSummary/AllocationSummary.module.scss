@@ -1,3 +1,15 @@
+.root {
+  padding: 0 5.6rem;
+
+  &:not(.areAllocationValuesPositive) {
+    padding-bottom: 4rem;
+  }
+
+  @media #{$tablet-down} {
+    padding: 0 2.4rem;
+  }
+}
+
 .header {
   padding: 2.9rem 0;
   margin: 0;
@@ -10,45 +22,19 @@
   }
 }
 
-.sectionLabel {
-  color: $color-octant-dark;
-
-  @media #{$desktop-up} {
-    font-size: $font-size-16;
-  }
+.loader {
+  @include skeleton();
+  height: 1.6rem;
+  width: 10rem;
 }
 
-.matchFundingLabel {
-  font-size: $font-size-12;
-
-  @media #{$desktop-up} {
-    font-size: $font-size-16;
-  }
+.projects {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  margin: 4rem 0;
 }
 
-.icon {
-  transition: $transition-time-2 all;
-  margin-left: 1rem;
-
-  &.areDonationsVisible {
-    transform: rotate(-180deg);
-  }
-}
-
-.detailsWrapper {
-  overflow: hidden;
-  width: 100%;
-
-  .details {
-    padding: 1.8rem 0 2.6rem;
-    border-bottom: 0.1rem solid $color-octant-grey4;
-
-    @media #{$desktop-up} {
-      padding: 1.6rem 0;
-    }
-  }
-}
-
-.donations {
-  cursor: pointer;
+.bold {
+  font-weight: $font-weight-bold;
 }

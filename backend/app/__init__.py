@@ -1,8 +1,9 @@
 import os
 
 from flask import Flask, g
+from flask_caching import Cache
 from gql import Client
-from gql.transport.aiohttp import AIOHTTPTransport
+from gql.transport.requests import RequestsHTTPTransport
 
 from app import settings
 from app.extensions import (
@@ -10,6 +11,7 @@ from app.extensions import (
     migrate,
     cors,
     socketio,
+    cache,
     init_web3,
     api,
     init_scheduler,
@@ -45,6 +47,7 @@ def register_extensions(app):
     db.init_app(app)
     migrate.init_app(app, db)
     socketio.init_app(app)
+    cache.init_app(app)
     init_scheduler(app)
     init_logger(app)
     init_web3(app)
@@ -59,8 +62,8 @@ def register_request_context(app):
     @app.before_request
     def initialize_graphql_client():
         client = Client()
-        transport = AIOHTTPTransport(
-            url=app.config["SUBGRAPH_ENDPOINT"], timeout=2, ssl_close_timeout=2
+        transport = RequestsHTTPTransport(
+            url=app.config["SUBGRAPH_ENDPOINT"], timeout=2
         )
         client.transport = transport
         client.fetch_schema_from_transport = True

@@ -1,101 +1,93 @@
-import cx from 'classnames';
+import { BigNumber } from 'ethers';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFeeData } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
+import Sections from 'components/core/BoxRounded/Sections/Sections';
+import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import Button from 'components/core/Button/Button';
-import DoubleValue from 'components/core/DoubleValue/DoubleValue';
-import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
-import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useWithdrawEth, { BatchWithdrawRequest } from 'hooks/mutations/useWithdrawEth';
-import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
-import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
-import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
-import triggerToast from 'utils/triggerToast';
+import useTransactionLocalStore from 'store/transactionLocal/store';
 
+import WithdrawEthProps from './types';
 import styles from './WithdrawEth.module.scss';
 
-const WithdrawEth: FC = () => {
-  const { t, i18n } = useTranslation('translation', {
+const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
+  const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.withdrawEth',
   });
-  const { data: currentEpoch } = useCurrentEpoch();
-  const {
-    data: withdrawableUserEth,
-    isFetching: isFetchingWithdrawableUserEth,
-    refetch: refetchWithdrawableUserEth,
-  } = useWithdrawableUserEth();
-  const {
-    data: withdrawableRewards,
-    isFetched: isWithdrawableRewardsFetched,
-    refetch: refetchWithdrawableRewards,
-  } = useWithdrawableRewards();
-  const { data: isDecisionWindowOpen, refetch: refetchIsDecisionWindowOpen } =
-    useIsDecisionWindowOpen();
-  const { data: currentEpochProps } = useCurrentEpochProps();
-  const { timeCurrentAllocationEnd } = useEpochAndAllocationTimestamps();
-  const withdrawEthMutation = useWithdrawEth({
-    onSuccess: () => {
-      triggerToast({
-        title: i18n.t('common.transactionSuccessful'),
-      });
-      refetchWithdrawableUserEth();
-      refetchWithdrawableRewards();
-    },
-  });
+  const { data: feeData, isFetching: isFetchingFeeData } = useFeeData();
+  const { isAppWaitingForTransactionToBeIndexed, addTransactionPending } = useTransactionLocalStore(
+    state => ({
+      addTransactionPending: state.addTransactionPending,
+      isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
+    }),
+  );
+  const { data: withdrawableRewards, isFetching: isWithdrawableRewardsFetching } =
+    useWithdrawableRewards();
+  const withdrawEthMutation = useWithdrawEth();
 
-  const withdrawEth = () => {
-    if (!withdrawableRewards?.length) {
+  const withdrawEth = async () => {
+    if (!withdrawableRewards?.array.length) {
       return;
     }
-    const value: BatchWithdrawRequest[] = withdrawableRewards.map(({ amount, epoch, proof }) => ({
-      amount: BigInt(amount),
-      epoch: BigInt(epoch.toString()),
-      proof,
-    }));
-    withdrawEthMutation.mutateAsync(value);
+    const value: BatchWithdrawRequest[] = withdrawableRewards.array.map(
+      ({ amount, epoch, proof }) => ({
+        amount: BigInt(amount),
+        epoch: BigInt(epoch.toString()),
+        proof,
+      }),
+    );
+    const { hash } = await withdrawEthMutation.mutateAsync(value);
+    addTransactionPending({
+      amount: withdrawableRewards!.sum,
+      // GET /history uses microseconds. Normalization here.
+      timestamp: (Date.now() * 1000).toString(),
+      transactionHash: hash,
+      type: 'withdrawal',
+    });
+    onCloseModal();
   };
+
+  const sections: SectionProps[] = [
+    {
+      doubleValueProps: {
+        cryptoCurrency: 'ethereum',
+        isFetching: isWithdrawableRewardsFetching || isAppWaitingForTransactionToBeIndexed,
+        valueCrypto: withdrawableRewards?.sum,
+      },
+      label: t('amount'),
+    },
+    {
+      doubleValueProps: {
+        cryptoCurrency: 'ethereum',
+        isFetching: isFetchingFeeData,
+        valueCrypto: BigNumber.from(feeData === undefined ? 0 : feeData.gasPrice),
+      },
+      label: t('estimatedGasPrice'),
+    },
+  ];
 
   return (
     <div className={styles.root}>
-      {isDecisionWindowOpen && (
-        <BoxRounded className={styles.element} isGrey isVertical>
-          {t('withdrawalsDistributedEpoch', {
-            currentEpoch,
-          })}
-          <TimeCounter
-            className={styles.timeCounter}
-            duration={currentEpochProps?.decisionWindow}
-            onCountingFinish={refetchIsDecisionWindowOpen}
-            timestamp={timeCurrentAllocationEnd}
-            variant="small"
-          />
-        </BoxRounded>
-      )}
-      <BoxRounded
-        alignment="left"
-        className={styles.element}
-        isGrey
-        isVertical
-        title={t('rewardsBudget')}
-      >
-        <DoubleValue
-          cryptoCurrency="ethereum"
-          isFetching={isFetchingWithdrawableUserEth}
-          valueCrypto={withdrawableUserEth}
+      <BoxRounded className={styles.element} hasSections isGrey isVertical>
+        <Sections hasBottomDivider sections={sections} />
+        <Button
+          className={styles.button}
+          isDisabled={
+            isWithdrawableRewardsFetching ||
+            isAppWaitingForTransactionToBeIndexed ||
+            withdrawableRewards?.sum.isZero()
+          }
+          isHigh
+          isLoading={withdrawEthMutation.isLoading}
+          label={withdrawEthMutation.isLoading ? t('waitingForConfirmation') : t('withdrawAll')}
+          onClick={withdrawEth}
+          variant="cta"
         />
       </BoxRounded>
-      <Button
-        className={cx(styles.element, styles.button)}
-        isDisabled={!isWithdrawableRewardsFetched}
-        isHigh
-        isLoading={withdrawEthMutation.isLoading}
-        label={t('requestWithdrawal')}
-        onClick={withdrawEth}
-        variant="cta"
-      />
     </div>
   );
 };

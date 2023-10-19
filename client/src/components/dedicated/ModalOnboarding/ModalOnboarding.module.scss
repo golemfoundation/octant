@@ -50,7 +50,7 @@
 
 .onboardingModalImageWrapper,
 .onboardingModalImageContainer {
-  height: 24rem;
+  height: 28rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -59,23 +59,52 @@
   overflow: hidden;
 
   &.claimGlm {
-    padding: 7.2rem 0 6.4rem;
+    padding: 6rem 0 4.4rem;
+
+    @media #{$desktop-up} {
+      padding: 7.2rem 0 6.4rem;
+    }
   }
 
   &.welcomeToOctant {
-    padding: 4rem 0 3.2rem;
+    padding: 3.2rem 0 5.2rem;
+
+    @media #{$desktop-up} {
+      padding: 4rem 0 3.2rem;
+    }
   }
 
   &.earnRewards {
-    padding: 5.5rem 0 2.8rem;
+    padding: 4.8rem 0 4.8rem;
+
+    @media #{$desktop-up} {
+      padding: 5.8rem 0 2.4rem;
+    }
   }
 
-  &.previewProjects {
-    padding: 4.8rem 0 4rem;
+  &.donateToProjects,
+  &.allocateOrWithdraw {
+    padding: 5.2rem 0 5.6rem;
+
+    @media #{$desktop-up} {
+      padding: 4.8rem 0 4rem;
+    }
   }
 
-  &.getReady {
-    padding: 6.2rem 0 4.4rem;
+  &.slideIt {
+    padding: 6.6rem 0 5rem;
+
+    @media #{$desktop-up} {
+      padding: 6.4rem 0 4.8rem;
+    }
+  }
+
+  .moreInformation {
+    padding: 4rem 0 3.6rem;
+
+    @media #{$desktop-up} {
+      padding: 6.8rem 0 4.4rem;
+    }
   }
 
   .onboardingModalImage {
@@ -99,4 +128,8 @@
 .buttonClaimGlm {
   width: 100%;
   margin-top: 4.8rem;
+}
+
+.bold {
+  font-weight: $font-weight-bold;
 }

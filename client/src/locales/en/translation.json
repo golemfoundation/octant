@@ -18,25 +18,50 @@
     }
   },
   "common": {
-    "allocationValuesNotAvailable": "Allocation values are not available",
-    "close": "Close",
-    "budget": "Budget {{budget}}",
-    "lockGlm": "Lock GLM",
-    "transactionSuccessful": "Transaction successful",
-    "gettingStarted": "Getting Started",
-    "octantTips": "Octant tips",
-    "done": "Done",
-    "valueCantBeEmpty": "Value can't be empty",
-    "personal": "Personal",
-    "proposalForbiddenOperation": "As a proposal you are not able to proceed with this operation",
-    "history": "History",
     "availableNow": "Available now",
-    "copy": "Copy link",
+    "calculateRewards": "Calculate rewards",
+    "close": "Close",
     "copied": "Copied",
-    "donations": "Donations"
+    "copy": "Copy link",
+    "days": "Days",
+    "donations": "Donations",
+    "done": "Done",
+    "gettingStarted": "Getting Started",
+    "history": "History",
+    "lockGlm": "Lock GLM",
+    "octantTips": "Octant tips",
+    "personal": "Personal",
+    "personalAllocation": "Personal allocation",
+    "proposalForbiddenOperation": "As a proposal you are not able to proceed with this operation",
+    "rewards": "Rewards {{rewards}}",
+    "thresholdDataUnavailable": "Threshold data unavailable",
+    "noThresholdData": "No threshold data",
+    "valueCantBeEmpty": "Value can't be empty",
+    "lessThan1m": "less than 1m"
   },
   "components": {
+    "settings": {
+      "patronMode": {
+        "enablePatronMode": "Enable patron mode",
+        "disablePatronMode": "Disable patron mode",
+        "patronModeSignatureMessage": "Signing this message will {{state}} patron mode for address {{address}}.",
+        "firstParagraph": "This mode is for token holders <br /> who want to support Octant.",
+        "secondParagraph": "It disables and removes all personal allocations and project donations.",
+        "thirdParagraph": "All rewards go directly to the matching fund with no action required by the patron. Learn more in the <0>Docs</0>.",
+        "fourthParagraphEnable": "Slide the switch below all the way to <br /> the right to enable patron mode.",
+        "fourthParagraphDisable": "Slide the switch below all the way to <br /> the left to disable patron mode.",
+        "patronModeEnabled": "Patron mode enabled",
+        "patronModeDisabled": "Patron mode disabled",
+        "slideRightToConfirm": "Slide right to confirm",
+        "slideLeftToConfirm": "Slide left to confirm"
+      }
+    },
     "dedicated": {
+      "rewardsCalculator": {
+        "enterGLMAmount": "Enter a GLM amount",
+        "lockFor": "Lock for",
+        "estimatedRewards": "Estimated rewards"
+      },
       "allocationEmptyState": {
         "text": "Add some projects or lock GLM tokens to prepare for the next allocation period",
         "epoch1textMobile": "Allocations start in Epoch 2, <br/> please check back in then",
@@ -47,9 +72,9 @@
         "connectWallet": "In order to manipulate allocation values and vote, please connect your wallet first."
       },
       "allocationNavigation": {
-        "next": "Next",
+        "back": "Back",
         "confirm": "Confirm",
-        "edit": "Edit",
+        "next": "Next",
         "reset": "Reset allocations"
       },
       "allocationRewardsBox": {
@@ -59,9 +84,11 @@
         "withdraw": "Withdraw {{percentWithdraw}}%"
       },
       "allocationSummary": {
-        "matchFundingEstimate": "Match funding (estimate)",
+        "estimatedLeverage": "Est. leverage",
         "confirmYourAllocations": "Confirm your allocations",
-        "confirmAllocations": "Confirm allocations"
+        "confirmAllocations": "Confirm allocations",
+        "allocationProjects": "Projects ({{projectsNumber}})",
+        "tooltip": "<0>Leverage</0> shows the multiplier effect of your donation to the projects you chose. Note that leverage will fluctuate significantly and might be very different at the end of the allocation window."
       },
       "allocationInputsRewardsAvailable": {
         "resetAllocations": "Reset allocations to manually edit this project",
@@ -76,10 +103,12 @@
         "tooltipText": "Effective balance is the part of your locked GLM that is currently earning rewards. For example, GLM locked during allocation only earn rewards in the next epoch, so they are not immediately effective."
       },
       "boxPersonalAllocation": {
-        "personalAllocation": "Personal allocation",
+        "patronEarnings": "Patron earnings",
         "pending": "Pending",
         "withdrawToWallet": "Withdraw to wallet",
-        "pendingFundsAvailableAfter": "Pending funds available after"
+        "pendingFundsAvailableAfter": "Pending funds available after",
+        "allTime": "All time",
+        "currentEpoch": "Current epoch"
       },
       "budgetBox": {
         "approve2Transactions": "Please approve 2 transactions in your wallet. The first (required only once and for locking) allows ERC-20 tokens, and the second locks / unlocks GLM.",
@@ -144,11 +173,36 @@
         "emptyHistory": "You haven’t made any transactions yet"
       },
       "historyItem": {
-        "allocatedFunds": "Allocated funds",
+        "allocatedRewards": "Allocated rewards",
         "lockedGLM": "Locked GLM",
         "unlockedGLM": "Unlocked GLM",
         "projects": "Projects",
         "withdrawnFunds": "Withdrawn funds"
+      },
+      "historyItemModal": {
+        "header": {
+          "allocation": "Epoch {{epoch}} Allocations",
+          "lock": "Locked GLM",
+          "unlock": "Unlocked GLM",
+          "withdrawal": "Withdrew ETH"
+        },
+        "sections": {
+          "allocationPersonal": "Personal",
+          "allocationProjects": "Projects ({{projectsNumber}})",
+          "amount": "Amount",
+          "gasPrice": "Gas price",
+          "viewOnEtherscan": "View on Etherscan",
+          "when": "When",
+          "withdrawal": "Withdrew ETH"
+        }
+      },
+      "historyTransactionLabel": {
+        "confirmed": "Confirmed",
+        "pending": "Pending"
+      },
+      "metricsTimeSection": {
+        "epochEndsIn": "Epoch {{currentEpoch}} ends in",
+        "epochAllocationEndsIn": "Epoch {{currentEpoch}} Allocation ends in"
       },
       "modalAllocationEditSelection": {
         "uncheckToRemove": "Uncheck to remove"
@@ -173,16 +227,9 @@
       "proposalsList": {
         "epochArchive": "Epoch {{epoch}} Archive"
       },
-      "walletPersonalAllocation": {
-        "label": "Personal allocation"
-      },
       "timeCounter": {
-        "days": "Days",
         "hours": "Hours",
-        "hrs": "Hrs",
-        "min": "Min",
         "minutes": "Minutes",
-        "sec": "Sec",
         "seconds": "Seconds"
       },
       "tos": {
@@ -196,8 +243,10 @@
       "withdrawEth": {
         "withdrawalsDistributedEpoch": "Withdrawals are distributed when Epoch {{currentEpoch}} ends",
         "rewardsBudget": "Rewards Budget",
-        "amountToWithdraw": "Amount to withdraw",
-        "requestWithdrawal": "Request withdrawal"
+        "amount": "Amount",
+        "estimatedGasPrice": "Est. gas price",
+        "withdrawAll": "Withdraw all",
+        "waitingForConfirmation": "Waiting for confirmation"
       }
     }
   },
@@ -208,7 +257,8 @@
       "loadingRewardBudget": "Loading reward budget...",
       "allocationStartsIn": "Allocation starts in <0>{{allocationPeriod}}</0>",
       "allocationEndsIn": "Allocation ends in <0>{{allocationPeriod}}</0>",
-      "admin": "Admin"
+      "admin": "Admin",
+      "patron": "Patron"
     }
   },
   "meta": {
@@ -225,7 +275,8 @@
     "allocation": {
       "allocationItem": {
         "epoch1": "No funding threshold in Epoch 1",
-        "standard": "{{sum}} of {{threshold}}"
+        "standard": "<0>{{sum}}</0> -> {{threshold}} needed",
+        "thresholdReached": "{{sum}} -> Threshold reached"
       },
       "allocationSuccessful": "Allocation successful",
       "tip": {
@@ -301,37 +352,19 @@
         },
         "welcomeToOctant": {
           "header": "Welcome to Octant",
-          "text": "Octant is a Golem Foundation experiment in decentralised governance and funding projects for the public good. <br/> <br/> To get started, connect your wallet and lock some GLM in the Earn tab. If you don’t have any GLM or you want to know more about locking, this <0> blog post </0> has all you need to know to get started."
-        },
-        "stakingRewards": {
-          "header": "Staking rewards",
-          "text": "If you lock more than 100 GLM, you will earn rewards in ETH for every epoch you have tokens locked. Tokens can be unlocked at any time. <br/> <br/> You can choose to withdraw your earnings or allocate them to public good projects, which you can browse in the <0>Projects</0> tab."
-        },
-        "allocateOrWithdraw": {
-          "header": "Allocate or Withdraw",
-          "text": "Projects you shortlist for allocation will appear here in the <0>Allocate</0> tab. You can allocate some, or all of your ETH rewards. <br/> <br/> Rewards allocated will have Golem Foundation match funding applied, so donating will multiply the impact of your earnings compared to withdrawing it."
-        },
-        "moreInformation": {
-          "header": "More information",
-          "text": "The <0>Metrics</0> tab shows a range of stats about the current and previous epochs to help inform your allocation decisions and generally provide an overview of Octant. <br/> <br/> Still have questions or want to reach out? <br /> Read the <1>Docs</1> or join us on <2>Discord</2>."
-        }
-      },
-      "stepsEpoch1": {
-        "welcomeToOctant": {
-          "header": "Welcome to Octant Epoch 1",
-          "text": "Octant is a Golem Foundation experiment in decentralised governance and funding public good projects.<br/><br/>To get started, connect your wallet and lock some GLM in the Earn view. Take a look at the <0>FAQ</0> if you want to learn more."
+          "text": "To get started, lock some GLM in the <0>Earn</0> view, and take a look at the projects you can donate to in the <1>Projects</1> view.<br/><br/>If you already have GLM locked, you’ll have some rewards to use during E1 Allocation window, which runs from 19 Oct to 2 Nov."
         },
         "earnRewards": {
           "header": "Earn ETH rewards",
-          "text": "If you lock more than 100 GLM, you will earn ETH in Epoch 2. The longer you lock, the more rewards you earn.<br/><br/>Tokens can be unlocked anytime but if you want to maximise rewards, keep them locked for as long as you can."
+          "text": "ETH rewards are earned based on a weighted average, so the more GLM you lock and the longer you lock it for, the more you earn.<br/><br/>You can unlock at any time. Use the calculator in the <0>Earn</0> view to work out the return per epoch on a given amount of GLM."
         },
-        "previewProjects": {
-          "header": "Preview projects",
-          "text": "Epoch 1 is a preview, so you can't donate to projects yet, but you can read about and add them to the Allocate view ready for Epoch 2.<br/><br/>Just tap the heart icon on the project tile or in the detail page.The badge on the bottom navbar will count the projects you added."
+        "donateToProjects": {
+          "header": "Donate to projects",
+          "text": "Check out the lineup for Epoch 1 in the <0>Projects</0> view. Tap a project tile to read its details. Help your favourite projects out by donating to them.<br/><br/>Your donation will be fund-matched by Golem Foundation. Just tap the heart to add a project to the <1>Allocate</1> view where you can donate."
         },
-        "getReady": {
-          "header": "Get ready for Epoch 2",
-          "text": "Octant begins properly in Epoch 2. There is no set date for it yet, so if you want to be involved, keep an eye out for updates.<br/><br/>Visit <0>Octant.build</0>, join the <1>Discord</1> or get project updates on <2>Twitter</2>."
+        "slideIt": {
+          "header": "Just slide it",
+          "text": "Once you have rewards, use the slider in the <0>Allocate</0> view to divide your rewards into donations to projects or personal allocation.<br/><br/>Change your choices at any time during the Allocation window, just unlock the slider, make some edits and reconfirm in your wallet."
         }
       }
     },
@@ -353,7 +386,11 @@
       "chooseDisplayCurrency": "Choose a display currency",
       "cryptoMainValueDisplay": "Use crypto as main value display",
       "alwaysShowOnboarding": "Always show onboarding",
-      "alwaysShowOctantTips": "Always show tips"
+      "alwaysShowOctantTips": "Always show tips",
+      "enablePatronMode": "Enable patron mode"
+    },
+    "syncStatus": {
+      "information": "We're synchronizing things to prepare the<br/>next epoch, so the app will be unavailable<br/>for a little while. Please check back soon."
     }
   }
 }

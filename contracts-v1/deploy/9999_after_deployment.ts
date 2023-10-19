@@ -3,12 +3,11 @@ import fs from 'fs';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
-import { GLM_ADDRESS, GNT_ADDRESS } from '../env';
+import { GLM_ADDRESS, SKIP_LOCAL_SUBGRAPH_UPDATE } from '../env';
 import {
   AUTH,
   EPOCHS,
   DEPOSITS,
-  GNT,
   PROPOSALS,
   TOKEN,
   VAULT,
@@ -26,14 +25,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const deposits = await hre.ethers.getContract(DEPOSITS);
   const proposals = await hre.ethers.getContract(PROPOSALS);
   const vault = await hre.ethers.getContract(VAULT);
-  let gntAddress = GNT_ADDRESS;
   let glmAddress = GLM_ADDRESS;
 
   if (['hardhat', 'localhost'].includes(hre.network.name)) {
-    gntAddress = (await hre.ethers.getContract(GNT)).address;
     glmAddress = (await hre.ethers.getContract(TOKEN)).address;
   }
-  console.log(`GNT_CONTRACT_ADDRESS=${gntAddress}`);
   console.log(`GLM_CONTRACT_ADDRESS=${glmAddress}`);
   console.log(`DEPOSITS_CONTRACT_ADDRESS=${deposits.address}`);
   console.log(`EPOCHS_CONTRACT_ADDRESS=${epochs.address}`);
@@ -45,7 +41,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   /* eslint-disable no-console */
 
   const contractAddresses = `
-GNT_CONTRACT_ADDRESS=${gntAddress}
 GLM_CONTRACT_ADDRESS=${glmAddress}
 AUTH_CONTRACT_ADDRESS=${auth.address}
 DEPOSITS_CONTRACT_ADDRESS=${deposits.address}
@@ -58,29 +53,30 @@ VAULT_CONTRACT_ADDRESS=${vault.address}
   fs.appendFileSync('deployments/clientEnv', contractAddresses);
 
   if (['localhost'].includes(hre.network.name)) {
-    // Update networks.json for local (developer's) subgraph instance.
-    const networksFn = '../subgraph/networks.json';
-    const templateFn = '../subgraph/networks.template.json';
-    try {
-      fs.accessSync(networksFn, fs.constants.W_OK);
-    } catch (_err) {
-      fs.copyFileSync(templateFn, networksFn);
+    if (SKIP_LOCAL_SUBGRAPH_UPDATE === 'false') {
+      // Update networks.json for local (developer's) subgraph instance.
+      const networksFn = '../subgraph/networks.json';
+      const templateFn = '../subgraph/networks.template.json';
+      try {
+        fs.accessSync(networksFn, fs.constants.W_OK);
+      } catch (_err) {
+        fs.copyFileSync(templateFn, networksFn);
+      }
+
+      // this populates networks.json (used by docker among others)
+      const json = JSON.parse(fs.readFileSync(networksFn).toString());
+      json.localhost.GLM.address = glmAddress;
+      json.localhost.Epochs.address = epochs.address;
+      json.localhost.Deposits.address = deposits.address;
+      json.localhost.Vault.address = vault.address;
+      fs.writeFileSync(networksFn, JSON.stringify(json, null, 2));
+
+      // need to update subgraph/src/*.ts files too
+      execSync('../subgraph/configure-network.sh', {
+        cwd: '../subgraph/',
+        env: { ...process.env, NETWORK: 'localhost' },
+      });
     }
-
-    // this populates networks.json (used by docker among others)
-    const json = JSON.parse(fs.readFileSync(networksFn).toString());
-    json.localhost.GNT.address = gntAddress;
-    json.localhost.GLM.address = glmAddress;
-    json.localhost.Epochs.address = epochs.address;
-    json.localhost.Deposits.address = deposits.address;
-    json.localhost.Vault.address = vault.address;
-    fs.writeFileSync(networksFn, JSON.stringify(json, null, 2));
-
-    // need to update subgraph/src/*.ts files too
-    execSync('../subgraph/configure-network.sh', {
-      cwd: '../subgraph/',
-      env: { ...process.env, NETWORK: 'localhost' },
-    });
   }
 };
 

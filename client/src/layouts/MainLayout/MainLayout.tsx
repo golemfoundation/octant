@@ -13,6 +13,7 @@ import WalletModal from 'components/dedicated/WalletModal/WalletModal';
 import {
   adminNavigationTabs,
   navigationTabs as navigationTabsDefault,
+  patronNavigationTabs,
 } from 'constants/navigationTabs/navigationTabs';
 import networkConfig from 'constants/networkConfig';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
@@ -20,6 +21,7 @@ import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import { octant } from 'svg/logo';
@@ -43,6 +45,7 @@ const MainLayout: FC<MainLayoutProps> = ({
   classNameBody,
   navigationTabs = navigationTabsDefault,
 }) => {
+  const { data: isPatronMode } = useIsPatronMode();
   const { t } = useTranslation('translation', { keyPrefix: 'layouts.main' });
   const [isModalConnectWalletOpen, setIsModalConnectWalletOpen] = useState(false);
   const [isWalletModalOpen, setIsWalletModalOpen] = useState<boolean>(false);
@@ -57,19 +60,29 @@ const MainLayout: FC<MainLayoutProps> = ({
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isAllocationRoot = !!useMatch(ROOT_ROUTES.allocation.absolute);
-  const isProposalRoot =
-    !!useMatch(ROOT_ROUTES.proposal.absolute) ||
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    !!useMatch(ROOT_ROUTES.proposalWithAddress.absolute);
+  const isUseMatchProposal = !!useMatch(ROOT_ROUTES.proposalWithAddress.absolute);
+  const isUseMatchProposalWithAddress = !!useMatch(ROOT_ROUTES.proposalWithAddress.absolute);
+  const isProposalRoot = isUseMatchProposal || isUseMatchProposalWithAddress;
   const isProposalsRoot = !!useMatch(ROOT_ROUTES.proposals.absolute);
 
   const showAllocationPeriod = isAllocationRoot || isProposalRoot || isProposalsRoot;
 
-  const tabsWithIsActive = (isProjectAdminMode ? adminNavigationTabs : navigationTabs).map(tab => ({
-    ...tab,
-    isActive: tab.isActive || pathname === tab.to,
-    isDisabled: isPreLaunch && tab.to !== ROOT_ROUTES.earn.absolute,
-  }));
+  const tabsWithIsActive = useMemo(() => {
+    let tabs = navigationTabs;
+
+    if (isPatronMode) {
+      tabs = patronNavigationTabs;
+    }
+    if (isProjectAdminMode) {
+      tabs = adminNavigationTabs;
+    }
+
+    return tabs.map(tab => ({
+      ...tab,
+      isActive: tab.isActive || pathname === tab.to,
+      isDisabled: isPreLaunch && tab.to !== ROOT_ROUTES.earn.absolute,
+    }));
+  }, [isPatronMode, isProjectAdminMode, isPreLaunch, pathname, navigationTabs]);
 
   const allocationPeriod = useMemo(() => {
     if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
@@ -131,13 +144,22 @@ const MainLayout: FC<MainLayoutProps> = ({
                     >
                       <div className={styles.walletInfo}>
                         <div className={styles.addressWrapper}>
-                          {isProjectAdminMode && (
-                            <div className={styles.adminBadge}>{t('admin')}</div>
+                          {(isProjectAdminMode || isPatronMode) && (
+                            <div
+                              className={cx(
+                                styles.badge,
+                                isProjectAdminMode && styles.isProjectAdminMode,
+                              )}
+                            >
+                              {isProjectAdminMode ? t('admin') : t('patron')}
+                            </div>
                           )}
+
                           <div
                             className={cx(
                               styles.address,
                               isProjectAdminMode && styles.isProjectAdminMode,
+                              !isProjectAdminMode && isPatronMode && styles.isPatronMode,
                             )}
                           >
                             {truncateEthAddress(address)}
@@ -165,7 +187,11 @@ const MainLayout: FC<MainLayoutProps> = ({
                             </div>
                           ) : (
                             <div className={styles.budget}>
-                              {getIndividualRewardText({ currentEpoch, individualReward })}
+                              {getIndividualRewardText({
+                                currentEpoch,
+                                individualReward,
+                                isDecisionWindowOpen,
+                              })}
                             </div>
                           ))}
                       </div>

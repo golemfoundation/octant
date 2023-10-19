@@ -853,6 +853,15 @@ export type GetBlockNumberQuery = {
   _meta?: { __typename?: '_Meta_'; block: { __typename?: '_Block_'; number: number } } | null;
 };
 
+export type GetEpochTimestampHappenedInQueryVariables = Exact<{
+  timestamp?: InputMaybe<Scalars['BigInt']['input']>;
+}>;
+
+export type GetEpochTimestampHappenedInQuery = {
+  __typename?: 'Query';
+  epoches: Array<{ __typename?: 'Epoch'; epoch: number }>;
+};
+
 export type GetEpochsEndTimeQueryVariables = Exact<{
   lastEpoch?: InputMaybe<Scalars['Int']['input']>;
 }>;
@@ -923,6 +932,60 @@ export const GetBlockNumberDocument = {
     },
   ],
 } as unknown as DocumentNode<GetBlockNumberQuery, GetBlockNumberQueryVariables>;
+export const GetEpochTimestampHappenedInDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetEpochTimestampHappenedIn' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'timestamp' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'BigInt' } },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'epoches' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'where' },
+                value: {
+                  kind: 'ObjectValue',
+                  fields: [
+                    {
+                      kind: 'ObjectField',
+                      name: { kind: 'Name', value: 'fromTs_lte' },
+                      value: { kind: 'Variable', name: { kind: 'Name', value: 'timestamp' } },
+                    },
+                    {
+                      kind: 'ObjectField',
+                      name: { kind: 'Name', value: 'toTs_gte' },
+                      value: { kind: 'Variable', name: { kind: 'Name', value: 'timestamp' } },
+                    },
+                  ],
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'epoch' } }],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetEpochTimestampHappenedInQuery,
+  GetEpochTimestampHappenedInQueryVariables
+>;
 export const GetEpochsEndTimeDocument = {
   kind: 'Document',
   definitions: [

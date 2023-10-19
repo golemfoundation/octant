@@ -2,7 +2,7 @@ import { ethers } from 'hardhat';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 
-import { PROPOSALS_ADDRESSES, PROPOSALS_CID } from '../env';
+import { AUTH_ADDRESS, PROPOSALS_ADDRESSES, PROPOSALS_CID } from '../env';
 import { AUTH, PROPOSALS } from '../helpers/constants';
 
 // This function needs to be declared this way, otherwise it's not understood by test runner.
@@ -10,6 +10,9 @@ import { AUTH, PROPOSALS } from '../helpers/constants';
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
+
+  const authAddress = AUTH_ADDRESS || (await ethers.getContract(AUTH)).address;
+
   let proposalAddresses = PROPOSALS_ADDRESSES.split(',');
 
   /// for localhost and testnet same set of proposals is used
@@ -19,10 +22,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     proposalAddresses = unnamedAddresses.slice(0, 10);
   }
 
-  const auth = await ethers.getContract(AUTH);
-
   await deploy(PROPOSALS, {
-    args: [PROPOSALS_CID, proposalAddresses, auth.address],
+    args: [PROPOSALS_CID, proposalAddresses, authAddress],
     autoMine: true,
     from: deployer,
     log: true,

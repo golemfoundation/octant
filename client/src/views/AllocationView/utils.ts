@@ -96,7 +96,6 @@ export function getAllocationsWithRewards({
       })
     : [];
 
-  // TODO OCT-804 check sorting algorithm.
   allocationsWithRewards.sort(({ value: valueA }, { value: valueB }) => {
     if (valueA.lt(valueB)) {
       return 1;

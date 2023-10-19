@@ -74,12 +74,15 @@ const Modal: FC<ModalProps> = ({
      * Here, not in the useEffect, since it needs to be done after modal disappear
      * to remove the move of the body when the scrollbar reappears.
      */
-    document.body.style.overflowY = 'scroll';
-    document.body.style.paddingRight = `0`;
+    // document.body.style.overflowY = 'scroll';
+    // document.body.style.paddingRight = `0`;
   };
 
   useEffect(() => {
     if (!isOpen) {
+      // TODO OCT-1058 move this logic to _onModalClosed, after Modal unmounts.
+      document.body.style.overflowY = 'scroll';
+      document.body.style.paddingRight = `0`;
       return;
     }
     /**
@@ -94,7 +97,11 @@ const Modal: FC<ModalProps> = ({
   }, [isOpen]);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence
+      onExitComplete={() => {
+        _onModalClosed();
+      }}
+    >
       {isOverflowEnabled && isOpen && (
         <motion.div
           key="modal-overflow"
@@ -121,12 +128,6 @@ const Modal: FC<ModalProps> = ({
           data-test={dataTest}
           exit="showHide"
           initial="showHide"
-          onAnimationComplete={definition => {
-            if (definition !== 'showHide' || !_onModalClosed) {
-              return;
-            }
-            _onModalClosed();
-          }}
           onClick={onClick}
           onTouchMove={onTouchMove}
           onTouchStart={onTouchStart}

@@ -21,7 +21,6 @@ export default getStoreWithMeta<AllocationsData, AllocationsMethods>({
         return { data: { ...state.data, allocations: newAllocations } };
       });
     },
-    reset: () => set({ data: initialState }),
     setAllocations: payload => {
       localStorage.setItem(ALLOCATION_ITEMS_KEY, JSON.stringify(payload));
       set(state => ({

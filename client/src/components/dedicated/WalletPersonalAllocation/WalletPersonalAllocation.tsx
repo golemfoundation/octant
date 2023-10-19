@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Sections from 'components/core/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/core/BoxRounded/Sections/types';
-import useWithdrawableUserEth from 'hooks/queries/useWithdrawableUserEth';
+import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
 
 import WalletPersonalAllocationProps from './types';
 import styles from './WalletPersonalAllocation.module.scss';
@@ -16,18 +16,16 @@ const WalletPersonalAllocation: FC<WalletPersonalAllocationProps> = ({
   isGrey,
   isDisabled,
 }) => {
-  const { i18n, t } = useTranslation('translation', {
-    keyPrefix: 'components.dedicated.walletPersonalAllocation',
-  });
-  const { data: withdrawableUserEth, isFetching: isFetchingWithdrawableUserEth } =
-    useWithdrawableUserEth();
+  const { i18n } = useTranslation('translation');
+  const { data: withdrawableRewards, isFetching: isWithdrawableRewardsFetching } =
+    useWithdrawableRewards();
 
   const sections: SectionProps[] = [
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
-        isFetching: isFetchingWithdrawableUserEth,
-        valueCrypto: withdrawableUserEth,
+        isFetching: isWithdrawableRewardsFetching,
+        valueCrypto: withdrawableRewards?.sum,
       },
       label: i18n.t('common.availableNow'),
     },
@@ -42,7 +40,7 @@ const WalletPersonalAllocation: FC<WalletPersonalAllocationProps> = ({
       hasSections
       isGrey={isGrey}
       isVertical
-      title={t('label')}
+      title={i18n.t('common.personalAllocation')}
     >
       <Sections sections={sections} />
     </BoxRounded>

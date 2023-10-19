@@ -14,6 +14,9 @@
   <label for="privateKey">Private Key:</label><br>
   <input type="text" id="privateKey" name="privateKey" size="200"><br>
 
+  <label for="nonce">Nonce:</label><br>
+  <input type="text" id="nonce" name="nonce" size="200"><br>
+
   <div id="input-group-container"></div>
 
   <button type="button" id="add-input-group">Add Proposal and Amount</button>
@@ -93,6 +96,7 @@
   });
 
   const privateKeyInput = document.getElementById('privateKey');
+  const nonceInput = document.getElementById('nonce');
 
   const voteButton = document.getElementById('vote');
   voteButton.addEventListener('click', async () => {
@@ -123,11 +127,13 @@
       ],
       AllocationPayload: [
         { name: "allocations", type: "Allocation[]" },
+        { name: "nonce", type: "uint256" },
       ],
     };
 
     const message = {
-      allocations: allocations
+      allocations: allocations,
+      nonce: parseInt(nonceInput.value, 10)
     };
 
     const data = {

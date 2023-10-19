@@ -6,8 +6,8 @@ export type Response = {
   effectiveDeposit: string;
 };
 
-export function apiGetEffectiveDeposit(address: string, epoch: number): Promise<Response> {
+export function apiGetEstimatedEffectiveDeposit(address: string): Promise<Response> {
   return apiService
-    .get(`${env.serverEndpoint}deposits/users/${address}/${epoch}`)
+    .get(`${env.serverEndpoint}deposits/users/${address}/estimated_effective_deposit`)
     .then(({ data }) => data);
 }

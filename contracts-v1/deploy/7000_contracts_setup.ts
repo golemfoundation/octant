@@ -22,7 +22,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     await proposals.connect(TestFoundation).setEpochs(epochs.address);
 
     const target: WithdrawalsTarget = await hre.ethers.getContract(WITHDRAWALS_TARGET);
-    await TestFoundation.sendTransaction({ to: target.address, value: parseEther('0.0001') });
+    await TestFoundation.sendTransaction({ to: target.address, value: parseEther('0.01') });
   } else if (hre.network.name === 'mainnet') {
     // Mainnet setup
   }

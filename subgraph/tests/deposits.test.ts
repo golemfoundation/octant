@@ -1,9 +1,9 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts';
 import { afterAll, assert, beforeAll, clearStore, describe, test } from 'matchstick-as';
 
-import { createLockedEvent, createUnlockedEvent, mockGLMAndGNT } from './utils';
+import { createLockedEvent, createUnlockedEvent } from './utils';
 
-import { handleLocked, handleUnlocked } from '../src/deposits';
+import { handleLocked, handleUnlocked } from '../generated/deposits';
 
 const LOCK_ENTITY_TYPE = 'Locked';
 const UNLOCK_ENTITY_TYPE = 'Unlocked';
@@ -12,7 +12,6 @@ const LOCK_SUMMARY_LATEST_ENTITY_TYPE = 'LockedSummaryLatest';
 
 describe('Describe entity assertions', () => {
   beforeAll(() => {
-    mockGLMAndGNT();
     const lockedBefore = BigInt.fromString('100000000000000000000');
     const unlockedBefore = BigInt.fromString('400000000000000000000');
     const locked = BigInt.fromString('300000000000000000000');
@@ -121,13 +120,13 @@ describe('Describe entity assertions', () => {
       LOCK_SUMMARY_SNAPSHOT_ENTITY_TYPE,
       '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
       'lockedRatio',
-      '0.0000003000000000000000000000009',
+      '0.0000003',
     );
     assert.fieldEquals(
       LOCK_SUMMARY_SNAPSHOT_ENTITY_TYPE,
       '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
       'glmSupply',
-      '999999999999999999999997000',
+      '1000000000000000000000000000',
     );
     assert.fieldEquals(
       LOCK_SUMMARY_SNAPSHOT_ENTITY_TYPE,
@@ -158,13 +157,13 @@ describe('Describe entity assertions', () => {
       LOCK_SUMMARY_SNAPSHOT_ENTITY_TYPE,
       '0xa16081f360e3847006db660bae1c6d1b2e17ec2a02000000',
       'lockedRatio',
-      '0.0000001000000000000000000000003',
+      '0.0000001',
     );
     assert.fieldEquals(
       LOCK_SUMMARY_SNAPSHOT_ENTITY_TYPE,
       '0xa16081f360e3847006db660bae1c6d1b2e17ec2a02000000',
       'glmSupply',
-      '999999999999999999999997000',
+      '1000000000000000000000000000',
     );
     assert.fieldEquals(
       LOCK_SUMMARY_SNAPSHOT_ENTITY_TYPE,
@@ -194,17 +193,12 @@ describe('Describe entity assertions', () => {
       'lockedTotal',
       '100000000000000000000',
     );
-    assert.fieldEquals(
-      LOCK_SUMMARY_LATEST_ENTITY_TYPE,
-      'latest',
-      'lockedRatio',
-      '0.0000001000000000000000000000003',
-    );
+    assert.fieldEquals(LOCK_SUMMARY_LATEST_ENTITY_TYPE, 'latest', 'lockedRatio', '0.0000001');
     assert.fieldEquals(
       LOCK_SUMMARY_LATEST_ENTITY_TYPE,
       'latest',
       'glmSupply',
-      '999999999999999999999997000',
+      '1000000000000000000000000000',
     );
     assert.fieldEquals(LOCK_SUMMARY_LATEST_ENTITY_TYPE, 'latest', 'timestamp', '1');
     assert.fieldEquals(LOCK_SUMMARY_LATEST_ENTITY_TYPE, 'latest', 'blockNumber', '1');

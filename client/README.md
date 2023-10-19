@@ -4,6 +4,8 @@ Ensure that the `.env`  file is present. See `.env.template`.
 
 `VITE_NETWORK` sets network used by the application. Supported values are 'Local', 'Mainnet', 'Sepolia'. Whenever different value is set, app uses 'Sepolia' network config.
 
+`VITE_JSON_RPC_ENDPOINT`: when provided, app uses first JSON RPC provided with this endpint. When it's not provided, app uses alchemy provider first.
+
 `yanr generate-abi-typings` is used to generate typings for proposals ABIs that we have in codebase. In these typings custom adjustments are added, e.g. in some places `string` is wrongly instead of `BigInt`. Linter is also disabled there. Since ABIs do not change, this command doesn't need to rerun.
 
 ### Contracts

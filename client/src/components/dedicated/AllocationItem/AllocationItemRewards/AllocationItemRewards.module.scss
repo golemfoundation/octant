@@ -1,0 +1,25 @@
+.root {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  color: $color-octant-dark;
+  font-size: $font-size-12;
+  font-weight: $font-weight-semibold;
+
+  @media #{$tablet-down} {
+    font-size: $font-size-10;
+  }
+
+  &.isThresholdUnknown {
+    color: $color-octant-grey6;
+  }
+
+  &.isEpoch1 {
+    color: $color-octant-grey16;
+  }
+}
+
+.donationBelowThreshold {
+  color: $color-octant-orange;
+}

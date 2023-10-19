@@ -3,4 +3,13 @@
 module.exports = {
   root: true,
   extends: ['../.eslintrc.js'],
+  overrides: [
+    {
+      files: ['*.{ts,tsx}'],
+      parser: '@typescript-eslint/parser',
+      parserOptions: {
+        tsconfigRootDir: __dirname,
+      },
+    },
+  ],
 };

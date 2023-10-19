@@ -37,6 +37,7 @@ def build_allocations_eip712_data(message: dict) -> dict:
         ],
         "AllocationPayload": [
             {"name": "allocations", "type": "Allocation[]"},
+            {"name": "nonce", "type": "uint256"},
         ],
     }
 

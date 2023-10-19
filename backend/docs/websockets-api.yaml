@@ -39,6 +39,9 @@ channels:
             payload:
               type: object
               properties:
+                nonce:
+                  type: integer
+                  description: Allocation signature nonce
                 allocations:
                   type: array
                   items:
@@ -55,12 +58,13 @@ channels:
         examples:
           - payload:
               payload:
+                nonce: "0"
                 allocations:
                   - proposalAddress: "0x90F79bf6EB2c4f870365E785982E1f101E93b906"
-                    amount: 100
+                    amount: "100"
                   - proposalAddress: "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
-                    amount: 5000
-              signature: 8d704f19cde0f1f9d310e57621229b919a8e17187be332c4bd08bf797d0fb50232b4aa30639b741723e647667d87da1af38fd4601600f4d4e2c6f724abea03d61b
+                    amount: "5000"
+              signature: "8d704f19cde0f1f9d310e57621229b919a8e17187be332c4bd08bf797d0fb50232b4aa30639b741723e647667d87da1af38fd4601600f4d4e2c6f724abea03d61b"
 
   exception:
     subscribe:

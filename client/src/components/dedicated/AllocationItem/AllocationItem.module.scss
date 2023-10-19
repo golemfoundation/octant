@@ -1,5 +1,6 @@
 $rowHeightDesktop: 6.4rem;
 $rowHeightMobile: 5.6rem;
+$nameAndRewardsMobilePadding: 2.7rem;
 
 .root {
   display: flex;
@@ -13,14 +14,14 @@ $rowHeightMobile: 5.6rem;
   }
 }
 
-.nameAndEthNeeded {
+.nameAndRewards {
   display: flex;
   flex-direction: column;
   flex: 1;
   border-right: 0.1rem solid $color-octant-grey12;
 }
 
-.name, .ethNeeded {
+.name, .rewards {
   height: $rowHeightMobile;
 
   @media #{$desktop-up} {
@@ -34,11 +35,11 @@ $rowHeightMobile: 5.6rem;
   color: $color-octant-dark;
   font-size: $font-size-14;
   font-weight: $font-weight-bold;
-  padding: 0 1.6rem;
   white-space: nowrap;
   border-bottom: 0.1rem solid $color-octant-grey12;
   width: 100%;
   text-align: left;
+  padding: 0 $nameAndRewardsMobilePadding;
 
   .image {
     display: none;
@@ -55,37 +56,15 @@ $rowHeightMobile: 5.6rem;
 
   @media #{$desktop-up} {
     font-size: $font-size-16;
+    padding: 0 1.6rem;
   }
 }
 
-.ethNeeded {
-  width: 100%;
-  text-align: left;
-  padding: 0 2.7rem;
-  display: flex;
-  align-items: center;
-  color: $color-octant-dark;
-  font-size: $font-size-12;
-  font-weight: $font-weight-semibold;
+.rewards {
+  padding: 0 $nameAndRewardsMobilePadding;
 
-  &.isEpoch1 {
-    color: $color-octant-grey16;
-  }
-
-  .dot {
-    width: 1rem;
-    height: 1rem;
-    border-radius: 50%;
-    background: $color-octant-orange;
-    margin-right: 1.4rem;
-
-    &.isDonationAboveThreshold {
-      background: $color-octant-green;
-    }
-
-    &.isEpoch1 {
-      background: $color-octant-grey16;
-    }
+  @media #{$desktop-up} {
+    padding: 0 2.7rem;
   }
 }
 

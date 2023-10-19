@@ -69,6 +69,7 @@
       border-radius: $border-radius-04;
       background: $color-white;
       font-size: $font-size-14;
+      color: $color-octant-dark;
 
       &.isDisabled {
         background: $color-octant-grey12;
@@ -136,6 +137,13 @@
       }
     }
   }
+}
+
+.loader {
+  position: absolute;
+  right: 7rem;
+  height: 1.6rem;
+  width: 1.6rem;
 }
 
 .error {

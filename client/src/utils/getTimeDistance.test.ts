@@ -52,9 +52,9 @@ const testCases = [
     toTimestamp: 1685000000000,
   },
   {
-    expectedValue: 'less than a minute',
+    expectedValue: 'less than 1m',
     fromTimestamp: new Date(1685531978660).getTime(),
-    toTimestamp: new Date(1685531978660).getTime(),
+    toTimestamp: new Date(1685531919660).getTime(),
   },
   {
     expectedValue: '34 minutes',

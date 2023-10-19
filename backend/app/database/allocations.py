@@ -4,9 +4,10 @@ from typing import List
 
 from eth_utils import to_checksum_address
 from sqlalchemy.orm import Query
+from sqlalchemy import func
 
 from app.core.common import AccountFunds
-from app.database.models import Allocation, User
+from app.database.models import Allocation, AllocationSignature, User
 from app.database.user import get_by_address
 from app.extensions import db
 
@@ -20,18 +21,38 @@ def get_all_by_epoch(epoch: int, with_deleted=False) -> List[Allocation]:
     return query.all()
 
 
-def get_all_by_user(user_address: str, with_deleted=False) -> List[Allocation]:
+def get_user_allocations_history(
+    user_address: str, from_datetime: datetime, limit: int
+) -> List[Allocation]:
     user: User = get_by_address(user_address)
 
     if user is None:
         return []
 
-    query: Query = Allocation.query.filter_by(user_id=user.id)
+    user_allocations: Query = (
+        Allocation.query.filter(
+            Allocation.user_id == user.id, Allocation.created_at <= from_datetime
+        )
+        .order_by(Allocation.created_at.desc())
+        .limit(limit)
+        .subquery()
+    )
 
-    if not with_deleted:
-        query = query.filter(Allocation.deleted_at.is_(None))
+    timestamp_at_limit_query = (
+        db.session.query(
+            func.min(user_allocations.c.created_at).label("limit_timestamp")
+        )
+        .group_by(user_allocations.c.user_id)
+        .subquery()
+    )
 
-    return query.all()
+    allocations = Allocation.query.filter(
+        Allocation.user_id == user.id,
+        Allocation.created_at <= from_datetime,
+        Allocation.created_at >= timestamp_at_limit_query.c.limit_timestamp,
+    ).order_by(Allocation.created_at.desc())
+
+    return allocations.all()
 
 
 def get_all_by_user_addr_and_epoch(
@@ -105,13 +126,14 @@ def get_alloc_sum_by_epoch(epoch: int) -> int:
     return sum([int(a.amount) for a in allocations])
 
 
-def add_all(epoch: int, user_id: int, allocations):
-    now = datetime.now()
+def add_all(epoch: int, user_id: int, nonce: int, allocations):
+    now = datetime.utcnow()
 
     new_allocations = [
         Allocation(
             epoch=epoch,
             user_id=user_id,
+            nonce=nonce,
             proposal_address=to_checksum_address(a.proposal_address),
             amount=str(a.amount),
             created_at=now,
@@ -121,12 +143,33 @@ def add_all(epoch: int, user_id: int, allocations):
     db.session.add_all(new_allocations)
 
 
+def add_allocation_signature(user_address: str, epoch: int, nonce: int, signature: str):
+    user: User = get_by_address(user_address)
+
+    allocation_request = AllocationSignature(
+        user=user, epoch=epoch, nonce=nonce, signature=signature
+    )
+
+    db.session.add(allocation_request)
+
+
+def get_allocation_signature_by_user_nonce(
+    user_address: str, nonce: int
+) -> AllocationSignature | None:
+    user: User = get_by_address(user_address)
+
+    if user is None:
+        return None
+
+    return AllocationSignature.query.filter_by(user_id=user.id, nonce=nonce).first()
+
+
 def soft_delete_all_by_epoch_and_user_id(epoch: int, user_id: int):
     existing_allocations = Allocation.query.filter_by(
         epoch=epoch, user_id=user_id, deleted_at=None
     ).all()
 
-    now = datetime.now()
+    now = datetime.utcnow()
 
     for allocation in existing_allocations:
         allocation.deleted_at = now

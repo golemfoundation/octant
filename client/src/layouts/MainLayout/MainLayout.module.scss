@@ -126,7 +126,7 @@ $bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerHeight);
 .addressWrapper {
   display: flex;
 
-  .adminBadge {
+  .badge {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -134,12 +134,17 @@ $bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerHeight);
     text-transform: uppercase;
     letter-spacing: 0.05rem;
     font-weight: $font-weight-bold;
-    background: $color-octant-green;
     color: $color-white;
     border-radius: $border-radius-04;
     height: 1.6rem;
-    width: 4.4rem;
     margin-right: 0.8rem;
+    background: $color-octant-purple;
+    width: 5.6rem;
+
+    &.isProjectAdminMode {
+      background: $color-octant-green;
+      width: 4.4rem;
+    }
   }
 }
 
@@ -149,6 +154,10 @@ $bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerHeight);
 
   &.isProjectAdminMode {
     color: $color-octant-green;
+  }
+
+  &.isPatronMode {
+    color: $color-octant-purple;
   }
 }
 

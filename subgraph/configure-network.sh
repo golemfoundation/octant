@@ -1,21 +1,27 @@
 #!/usr/bin/env sh
 
-set -e
+set -ue
 
 NETWORK=${NETWORK:-"localhost"}
 NETWORK_FILE=${NETWORK_FILE:-"./networks.json"}
-export GNT_CONTRACT_ADDRESS=$(cat $NETWORK_FILE | jq -r ".${NETWORK}.GNT.address")
+
+ARTIFACTS_DIR="./generated"
+
 export GLM_CONTRACT_ADDRESS=$(cat $NETWORK_FILE | jq -r ".${NETWORK}.GLM.address")
 export EPOCHS_CONTRACT_ADDRESS=$(cat $NETWORK_FILE | jq -r ".${NETWORK}.Epochs.address")
 
 echo "Network:      $NETWORK"
-echo "GNT addr:     $GNT_CONTRACT_ADDRESS"
 echo "GLM addr:     $GLM_CONTRACT_ADDRESS"
 echo "EPOCHS addr:  $EPOCHS_CONTRACT_ADDRESS"
 echo
 echo "Replace hardcoded contract addresses"
-for i in src/*template*; do
+
+if [ ! -d "${ARTIFACTS_DIR}" ] ; then
+    mkdir -p "${ARTIFACTS_DIR}"
+fi 
+
+for i in `find src -type f -name "*.template.ts"`; do
     echo "Replacing in $i"
-    F=$(echo $i | sed 's/template\.//')
-    envsubst < $i > $F
+    F=$(echo $i | sed 's/\.template//g'| sed 's/src\///g')
+    envsubst < $i > "${ARTIFACTS_DIR}/${F}"
 done

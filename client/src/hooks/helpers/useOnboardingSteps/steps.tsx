@@ -1,10 +1,8 @@
 import React from 'react';
 import { Trans } from 'react-i18next';
 
-import Button from 'components/core/Button/Button';
 import styles from 'components/dedicated/ModalOnboarding/ModalOnboarding.module.scss';
 import { Step } from 'components/dedicated/ModalOnboarding/types';
-import { DISCORD_LINK, OCTANT_DOCS, BLOG_POST } from 'constants/urls';
 import i18n from 'i18n';
 
 const steps: Step[] = [
@@ -14,45 +12,41 @@ const steps: Step[] = [
     imageClassName: styles.welcomeToOctant,
     text: (
       <Trans
-        components={[<Button href={BLOG_POST} variant="link3" />]}
+        components={[<span className={styles.bold} />, <span className={styles.bold} />]}
         i18nKey="views.onboarding.steps.welcomeToOctant.text"
       />
     ),
   },
   {
-    header: i18n.t('views.onboarding.steps.stakingRewards.header'),
-    image: 'images/lock-glm.webp',
+    header: i18n.t('views.onboarding.steps.earnRewards.header'),
+    image: 'images/cycle.webp',
     imageClassName: styles.earnRewards,
     text: (
       <Trans
         components={[<span className={styles.bold} />]}
-        i18nKey="views.onboarding.steps.stakingRewards.text"
+        i18nKey="views.onboarding.steps.earnRewards.text"
       />
     ),
   },
   {
-    header: i18n.t('views.onboarding.steps.allocateOrWithdraw.header'),
+    header: i18n.t('views.onboarding.steps.donateToProjects.header'),
     image: 'images/favourites.webp',
-    imageClassName: styles.previewProjects,
+    imageClassName: styles.donateToProjects,
+    text: (
+      <Trans
+        components={[<span className={styles.bold} />, <span className={styles.bold} />]}
+        i18nKey="views.onboarding.steps.donateToProjects.text"
+      />
+    ),
+  },
+  {
+    header: i18n.t('views.onboarding.steps.slideIt.header'),
+    image: 'images/unlock-slider.webp',
+    imageClassName: styles.slideIt,
     text: (
       <Trans
         components={[<span className={styles.bold} />]}
-        i18nKey="views.onboarding.steps.allocateOrWithdraw.text"
-      />
-    ),
-  },
-  {
-    header: i18n.t('views.onboarding.steps.moreInformation.header'),
-    image: 'images/rewards.webp',
-    imageClassName: styles.getReady,
-    text: (
-      <Trans
-        components={[
-          <span className={styles.bold} />,
-          <Button href={OCTANT_DOCS} variant="link3" />,
-          <Button href={DISCORD_LINK} variant="link3" />,
-        ]}
-        i18nKey="views.onboarding.steps.moreInformation.text"
+        i18nKey="views.onboarding.steps.slideIt.text"
       />
     ),
   },

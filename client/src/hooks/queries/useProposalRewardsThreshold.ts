@@ -1,39 +1,36 @@
-import {
-  UseQueryOptions,
-  UseQueryResult,
-  useQuery,
-  //  useQueryClient
-} from '@tanstack/react-query';
+import { UseQueryOptions, UseQueryResult, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 
 import { apiGetProjectThreshold, Response } from 'api/calls/projectThreshold';
 import { QUERY_KEYS } from 'api/queryKeys';
-// import useSubscription from 'hooks/helpers/useSubscription';
-// import { WebsocketListenEvent } from 'types/websocketEvents';
+import useSubscription from 'hooks/helpers/useSubscription';
+import { WebsocketListenEvent } from 'types/websocketEvents';
 
 import useCurrentEpoch from './useCurrentEpoch';
+import useIsDecisionWindowOpen from './useIsDecisionWindowOpen';
 
 export default function useProposalRewardsThreshold(
+  epoch?: number,
   options?: UseQueryOptions<Response, unknown, BigNumber, any>,
 ): UseQueryResult<BigNumber> {
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
-  // TODO: https://linear.app/golemfoundation/issue/OCT-808/handle-proposalrewardsthreshold-and-proposaldonors-update-via
-  // useSubscription<{ threshold: string }>(WebsocketListenEvent.threshold, data => {
-  //   queryClient.setQueryData(
-  //     QUERY_KEYS.proposalRewardsThreshold,
-  //     parseUnits(data.threshold, 'wei'),
-  //   );
-  // });
+  useSubscription<{ threshold: string }>(WebsocketListenEvent.threshold, data => {
+    queryClient.setQueryData(QUERY_KEYS.proposalRewardsThreshold(currentEpoch! - 1), data);
+  });
 
   return useQuery(
-    QUERY_KEYS.proposalRewardsThreshold,
-    () => apiGetProjectThreshold(currentEpoch! - 1),
+    QUERY_KEYS.proposalRewardsThreshold(epoch ? epoch - 1 : currentEpoch! - 1),
+    () => apiGetProjectThreshold(epoch ? epoch - 1 : currentEpoch! - 1),
     {
-      enabled: !!currentEpoch && currentEpoch > 1,
+      enabled:
+        (epoch !== undefined && epoch > 1) ||
+        (!!currentEpoch && currentEpoch > 1 && isDecisionWindowOpen),
       select: response => parseUnits(response.threshold, 'wei'),
+      staleTime: Infinity,
       ...options,
     },
   );
