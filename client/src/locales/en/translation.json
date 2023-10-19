@@ -35,6 +35,7 @@
     "personalAllocation": "Personal allocation",
     "proposalForbiddenOperation": "As a proposal you are not able to proceed with this operation",
     "thresholdDataUnavailable": "Threshold data unavailable",
+    "noThresholdData": "No threshold data",
     "valueCantBeEmpty": "Value can't be empty"
   },
   "components": {
@@ -273,7 +274,8 @@
     "allocation": {
       "allocationItem": {
         "epoch1": "No funding threshold in Epoch 1",
-        "standard": "{{sum}} of {{threshold}}"
+        "standard": "<0>{{sum}}</0> -> {{threshold}} needed",
+        "thresholdReached": "{{sum}} -> Threshold reached"
       },
       "allocationSuccessful": "Allocation successful",
       "tip": {
