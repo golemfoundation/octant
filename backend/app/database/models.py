@@ -24,7 +24,7 @@ class User(BaseModel):
         nullable=True,
         comment="Allocations signing nonce, last used value. Range [0..inf)",
     )
-    patron_mode = Column(db.Boolean, default=False, nullable=True)
+    patron_mode = Column(db.Boolean, default=False, nullable=False)
 
 
 class UserConsents(BaseModel):
