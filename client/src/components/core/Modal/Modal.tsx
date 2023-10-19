@@ -6,11 +6,10 @@ import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import { cross } from 'svg/misc';
+import setDocumentOverflowModal from 'utils/setDocumentOverflowModal';
 
 import styles from './Modal.module.scss';
 import ModalProps from './types';
-
-import setDocumentOverflowModal from '../../../utils/setDocumentOverflowModal';
 
 const variantsCenter = {
   showHide: {
