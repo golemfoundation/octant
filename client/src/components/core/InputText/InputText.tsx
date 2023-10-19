@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 
 import Button from 'components/core/Button/Button';
 import Loader from 'components/core/Loader/Loader';
@@ -27,10 +27,12 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
       variant = 'simple',
       suffixClassName,
       showLoader = false,
+      shouldAutoFocusAndSelect = true,
       ...rest
     },
     ref,
   ) => {
+    const localRef = useRef<HTMLInputElement>(null);
     const rootProps = {
       className: cx(styles.root, className),
     };
@@ -51,7 +53,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
       ),
       disabled: isDisabled,
       onChange,
-      ref,
+      ref: ref || localRef,
       type: 'text',
       value,
       ...rest,
@@ -69,6 +71,15 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
         suffixClassName,
       ),
     };
+
+    useEffect(() => {
+      const inputRef = inputProps.ref as React.RefObject<HTMLInputElement> | null;
+      if (!shouldAutoFocusAndSelect || !inputRef?.current) {
+        return;
+      }
+      inputRef.current.focus();
+      inputRef.current.select();
+    }, [inputProps.ref, shouldAutoFocusAndSelect]);
 
     if (variant === 'borderless') {
       return <input {...inputProps} {...rest} />;
