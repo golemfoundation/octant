@@ -7,6 +7,10 @@
   font-size: $font-size-12;
   font-weight: $font-weight-semibold;
 
+  @media #{$tablet-down} {
+    font-size: $font-size-10;
+  }
+
   &.isThresholdUnknown {
     color: $color-octant-grey6;
   }
@@ -14,24 +18,8 @@
   &.isEpoch1 {
     color: $color-octant-grey16;
   }
+}
 
-  .dot {
-    width: 1rem;
-    min-width: 1rem;
-    max-width: 1rem;
-    height: 1rem;
-    min-height: 1rem;
-    max-height: 1rem;
-    border-radius: 50%;
-    background: $color-octant-orange;
-    margin-right: 1.4rem;
-
-    &.isDonationAboveThreshold {
-      background: $color-octant-green;
-    }
-
-    &.isThresholdUnknown {
-      background: $color-octant-grey16;
-    }
-  }
+.donationBelowThreshold {
+  color: $color-octant-orange;
 }

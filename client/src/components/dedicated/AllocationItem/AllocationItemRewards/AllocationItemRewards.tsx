@@ -1,8 +1,9 @@
 import cx from 'classnames';
 import React, { FC } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
@@ -18,12 +19,13 @@ const AllocationItemProposalRewards: FC<AllocationItemProposalRewardsProps> = ({
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'views.allocation.allocationItem',
   });
+  const { isDesktop } = useMediaQuery();
   const { data: currentEpoch } = useCurrentEpoch();
-  const isEpoch1 = currentEpoch === 1;
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
   const { data: proposalRewardsThreshold } = useProposalRewardsThreshold();
 
   const isDonationAboveThreshold = useIsDonationAboveThreshold(address);
+  const isEpoch1 = currentEpoch === 1;
 
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ address: matchedProposalRewardsAddress }) => address === matchedProposalRewardsAddress,
@@ -52,25 +54,29 @@ const AllocationItemProposalRewards: FC<AllocationItemProposalRewardsProps> = ({
         isEpoch1 && styles.isEpoch1,
       )}
     >
-      <div
-        className={cx(
-          styles.dot,
-          isDonationAboveThreshold && styles.isDonationAboveThreshold,
-          isThresholdUnknown && styles.isThresholdUnknown,
-        )}
-      />
       {isEpoch1 && t('epoch1')}
-      {!isEpoch1 && !isRewardsDataDefined && i18n.t('common.thresholdDataUnavailable')}
+      {!isEpoch1 &&
+        !isRewardsDataDefined &&
+        i18n.t(isDesktop ? 'common.thresholdDataUnavailable' : 'common.noThresholdData')}
       {!isEpoch1 && isRewardsDataDefined && (
-        <Trans
-          i18nKey="views.allocation.allocationItem.standard"
-          values={{
-            sum: areSuffixesTheSame
-              ? proposalMatchedProposalRewardsFormatted?.value
-              : proposalMatchedProposalRewardsFormatted?.fullString,
-            threshold: getFormattedEthValue(proposalRewardsThreshold).fullString,
-          }}
-        />
+        <div className={styles.threshold}>
+          {isDonationAboveThreshold ? (
+            t('thresholdReached', {
+              sum: proposalMatchedProposalRewardsFormatted?.fullString,
+            })
+          ) : (
+            <Trans
+              components={[<span className={styles.donationBelowThreshold} />]}
+              i18nKey="views.allocation.allocationItem.standard"
+              values={{
+                sum: areSuffixesTheSame
+                  ? proposalMatchedProposalRewardsFormatted?.value
+                  : proposalMatchedProposalRewardsFormatted?.fullString,
+                threshold: getFormattedEthValue(proposalRewardsThreshold).fullString,
+              }}
+            />
+          )}
+        </div>
       )}
     </div>
   );
