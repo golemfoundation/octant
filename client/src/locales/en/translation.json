@@ -36,7 +36,8 @@
     "rewards": "Rewards {{rewards}}",
     "thresholdDataUnavailable": "Threshold data unavailable",
     "noThresholdData": "No threshold data",
-    "valueCantBeEmpty": "Value can't be empty"
+    "valueCantBeEmpty": "Value can't be empty",
+    "lessThan1m": "less than 1m"
   },
   "components": {
     "settings": {
