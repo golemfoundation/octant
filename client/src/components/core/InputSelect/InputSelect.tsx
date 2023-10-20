@@ -21,6 +21,7 @@ const InputSelect: FC<InputSelectProps> = ({
   selectedOption,
 }) => {
   const { isDesktop } = useMediaQuery();
+  const durationOfTransition = isDesktop ? durationOfTransitionDesktop : durationOfTransitionMobile;
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -36,13 +37,12 @@ const InputSelect: FC<InputSelectProps> = ({
     }
   };
 
-  useEffect(() => {
-    setDocumentOverflowModal(
-      isMenuOpen,
-      (isDesktop ? durationOfTransitionDesktop : durationOfTransitionMobile) * 1000,
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMenuOpen]);
+  /**
+   * Scrollbar offset is handled in onAnimationComplete.
+   * However, in case Modal is unmounted forcibly, here is the cleanup adding scrollbar back.
+   */
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => () => setDocumentOverflowModal(false, durationOfTransition * 1000), []);
 
   useEffect(() => {
     if (!isMenuOpen || !isDesktop) {
@@ -93,9 +93,21 @@ const InputSelect: FC<InputSelectProps> = ({
                 className={styles.menu}
                 exit={{ opacity: isDesktop ? 0 : 1, y: '100%' }}
                 initial={{ y: '100%' }}
+                onAnimationComplete={definition => {
+                  // eslint-disable-next-line dot-notation
+                  if (definition['y'] === '100%') {
+                    setDocumentOverflowModal(false, durationOfTransition * 1000);
+                  }
+                }}
+                onAnimationStart={definition => {
+                  // eslint-disable-next-line dot-notation
+                  if (definition['y'] === '0%') {
+                    setDocumentOverflowModal(true, durationOfTransition * 1000);
+                  }
+                }}
                 transition={{
                   damping: 1,
-                  duration: isDesktop ? durationOfTransitionDesktop : durationOfTransitionMobile,
+                  duration: durationOfTransition,
                 }}
               >
                 <Button

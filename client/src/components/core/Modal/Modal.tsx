@@ -68,9 +68,11 @@ const Modal: FC<ModalProps> = ({
     onClosePanel();
   };
 
-  useEffect(() => {
-    setDocumentOverflowModal(isOpen, durationOfTransition * 1000);
-  }, [isOpen]);
+  /**
+   * Scrollbar offset is handled in onAnimationComplete.
+   * However, in case Modal is unmounted forcibly, here is the cleanup adding scrollbar back.
+   */
+  useEffect(() => () => setDocumentOverflowModal(false, durationOfTransition * 1000), []);
 
   return (
     <AnimatePresence>
@@ -100,6 +102,16 @@ const Modal: FC<ModalProps> = ({
           data-test={dataTest}
           exit="showHide"
           initial="showHide"
+          onAnimationComplete={definition => {
+            if (definition === 'showHide') {
+              setDocumentOverflowModal(false, durationOfTransition * 1000);
+            }
+          }}
+          onAnimationStart={definition => {
+            if (definition === 'visible') {
+              setDocumentOverflowModal(true, durationOfTransition * 1000);
+            }
+          }}
           onClick={onClick}
           onTouchMove={onTouchMove}
           onTouchStart={onTouchStart}
