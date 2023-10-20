@@ -22,13 +22,16 @@
       stroke: $color-octant-dark;
     }
   }
+
+  > * {
+     stroke: $color-octant-grey3;
+   }
 }
 
 .tooltipWrapper {
   position: absolute;
   top: 0;
   left: 0;
-  height: 100%;
   width: 100%;
   pointer-events: none;
 
@@ -89,6 +92,7 @@
       left: -1.2rem;
 
       @media #{$tablet-down} {
+        top: 0.3rem;
         left: 0;
       }
     }
