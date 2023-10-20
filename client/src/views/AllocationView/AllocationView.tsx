@@ -12,6 +12,7 @@ import AllocationNavigation from 'components/dedicated/AllocationNavigation/Allo
 import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
 import AllocationTipTiles from 'components/dedicated/AllocationTipTiles/AllocationTipTiles';
 import ModalAllocationValuesEdit from 'components/dedicated/ModalAllocationValuesEdit/ModalAllocationValuesEdit';
+import { ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
 import useAllocate from 'hooks/events/useAllocate';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useHistory from 'hooks/queries/useHistory';
@@ -44,6 +45,10 @@ const AllocationView = (): ReactElement => {
   const [selectedItemAddress, setSelectedItemAddress] = useState<null | string>(null);
   const [allocationValues, setAllocationValues] = useState<AllocationValues>([]);
   const [allocationsEdited, setAllocationsEdited] = useState<string[]>([]);
+  const [
+    areAllocationValuesEqualRewardsForProposals,
+    setAreAllocationValuesEqualRewardsForProposals,
+  ] = useState<boolean>(false);
   const { data: proposalsContract } = useProposalsContract();
   const { data: proposalsIpfs } = useProposalsIpfs(proposalsContract);
   const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards();
@@ -63,11 +68,13 @@ const AllocationView = (): ReactElement => {
     refetch: refetchUserAllocationNonce,
   } = useUserAllocationNonce();
   const { refetch: refetchMatchedProposalRewards } = useMatchedProposalRewards();
-  const { allocations, rewardsForProposals, setAllocations } = useAllocationsStore(state => ({
-    allocations: state.data.allocations,
-    rewardsForProposals: state.data.rewardsForProposals,
-    setAllocations: state.setAllocations,
-  }));
+  const { allocations, rewardsForProposals, setAllocations, setRewardsForProposals } =
+    useAllocationsStore(state => ({
+      allocations: state.data.allocations,
+      rewardsForProposals: state.data.rewardsForProposals,
+      setAllocations: state.setAllocations,
+      setRewardsForProposals: state.setRewardsForProposals,
+    }));
 
   const allocateEvent = useAllocate({
     nonce: userNonce!,
@@ -91,6 +98,51 @@ const AllocationView = (): ReactElement => {
     },
   });
 
+  useEffect(() => {
+    /**
+     * This hook adds rewardsForProposals to the store.
+     * It needs to be done here, since user can change rewardsForProposals and leave the view.
+     * When they reenter it, they need to see their latest allocation locked in the slider.
+     */
+    if (!individualReward || !userAllocations) {
+      return;
+    }
+
+    const localStorageRewardsForProposals = BigNumber.from(
+      JSON.parse(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROPOSALS) || 'null'),
+    );
+    if (userAllocations.elements.length > 0) {
+      const userAllocationsSum = userAllocations.elements.reduce(
+        (acc, curr) => acc.add(curr.value),
+        BigNumber.from(0),
+      );
+      setRewardsForProposals(userAllocationsSum);
+      return;
+    }
+    setRewardsForProposals(
+      localStorageRewardsForProposals.gt(individualReward)
+        ? BigNumber.from(0)
+        : localStorageRewardsForProposals,
+    );
+    // .toHexString(), because React can't compare objects as deps in hooks, causing infinite loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [individualReward?.toHexString(), userAllocations?.elements.length]);
+
+  const _setAllocationValues = (allocationValuesNew: AllocationValues) => {
+    setAllocationValues(allocationValuesNew);
+
+    const allocationValuesNewSum = allocationValuesNew.reduce(
+      (acc, { value }) => acc.add(value),
+      BigNumber.from(0),
+    );
+
+    if (!allocationValuesNewSum.eq(rewardsForProposals)) {
+      setAreAllocationValuesEqualRewardsForProposals(false);
+    } else {
+      setAreAllocationValuesEqualRewardsForProposals(true);
+    }
+  };
+
   const onResetAllocationValues = () => {
     if (
       currentEpoch === undefined ||
@@ -107,7 +159,7 @@ const AllocationView = (): ReactElement => {
       userAllocationsElements: userAllocations?.elements,
     });
     setAllocationsEdited([]);
-    setAllocationValues(allocationValuesNew);
+    _setAllocationValues(allocationValuesNew);
   };
 
   useEffect(() => {
@@ -181,8 +233,7 @@ const AllocationView = (): ReactElement => {
       proposalAddressToModify,
       rewardsForProposals,
     });
-
-    setAllocationValues(newAllocationValues);
+    _setAllocationValues(newAllocationValues);
   };
 
   const isLoading =
@@ -198,6 +249,7 @@ const AllocationView = (): ReactElement => {
     !isConnected ||
     !isDecisionWindowOpen ||
     isLocked ||
+    !areAllocationValuesEqualRewardsForProposals ||
     (!areAllocationsAvailableOrAlreadyDone && !rewardsForProposals.isZero()) ||
     !!individualReward?.isZero();
 
