@@ -58,7 +58,7 @@ def get_estimated_proposals_rewards() -> List[ProposalReward]:
         [
             allocated
             for _, allocated in proposals_with_allocations
-            if allocated >= threshold
+            if allocated > threshold
         ]
     )
 
@@ -68,7 +68,7 @@ def get_estimated_proposals_rewards() -> List[ProposalReward]:
     }
 
     for address, allocated in proposals_with_allocations:
-        if allocated >= threshold:
+        if allocated > threshold:
             matched = int(
                 Decimal(allocated)
                 / Decimal(total_allocated_above_threshold)
