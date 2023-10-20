@@ -203,6 +203,21 @@ def test_proposals_rewards_without_patrons(
         assert expected_rewards.get(proposal.address, 0) == proposal.matched
 
 
+def test_estimated_proposal_rewards_when_allocation_has_0_value(
+    app, mock_pending_epoch_snapshot_db, tos_users, proposal_accounts
+):
+    user = tos_users[0]
+    proposal = proposal_accounts[0]
+    allocate_user_rewards(user, proposal, 0, 0)
+
+    result = get_estimated_proposals_rewards()
+
+    assert len(result) == 5
+    for proposal in result:
+        assert proposal.allocated == 0
+        assert proposal.matched == 0
+
+
 def test_proposals_rewards_with_patron(
     app, mock_pending_epoch_snapshot_db, tos_users, proposal_accounts
 ):
