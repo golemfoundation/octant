@@ -1,5 +1,5 @@
 variables:
-  KANIKO_VERSION: v1.9.2
+  KANIKO_VERSION: v1.16.0
   FF_USE_FASTZIP: "true"
   CACHE_COMPRESSION_LEVEL: "fast"
   TRANSFER_METER_FREQUENCY: "2s"
@@ -14,6 +14,7 @@ stages:
   - docker
   - deploy
   - application
+  - env_test
   - status
   - cleanup
 
@@ -34,7 +35,7 @@ default:
     pull_policy: if-not-present
     entrypoint: [""]
   git_improved:
-    name: registry.gitlab.com/wildland/devops/container-builder/gitops-builder:latest
+    name: registry.gitlab.com/wildland/devops/container-builder/gitops-builder:5dc8b447
     pull_policy: if-not-present
   synpress:
     name: registry.gitlab.com/wildland/devops/container-builder/octant/synpress-arch:08da1d10
@@ -584,7 +585,7 @@ Destroy Master App:
     deployment_tier: testing
 
 #E2E Epoch 1:
-#  stage: application
+#  stage: env_test
 #  needs: ["E2E app deploy"]
 #  image: !reference [.images, synpress ]
 #  <<: *env_resolve_init
@@ -638,6 +639,22 @@ Destroy Master App:
 #    CYPRESS_DOCKER_RUN: "true"
 #    CI: "true"
 #    METAMASK_VERSION: "10.25.0"
+
+E2E API test:
+  stage: env_test
+  needs: ["E2E app deploy"]
+  image: !reference [.images, git_improved]
+  <<: *env_resolve_init
+  rules:
+    - !reference [.rules, on_mr]
+    - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
+  script:
+    - set -e
+    - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
+    - "ab -n 100 -c 10 https://${DEPLOYMENT_ID}-backend.octant.wildland.dev/info/healthcheck | tee | grep 'Failed requests:        0'"
+  variables:
+    ENV_TYPE: "e2e"
 
 Deploy Release Candidate app:
   stage: deploy
