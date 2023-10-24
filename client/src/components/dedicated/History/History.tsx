@@ -30,7 +30,7 @@ const History: FC<HistoryProps> = ({ className }) => {
   };
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
-  const showLoader = isFetchingHistory && !isPreLaunch;
+  const showLoader = isFetchingHistory && !isPreLaunch && !history?.length;
 
   const transactionsPendingSorted = transactionsPending?.sort(
     ({ timestamp: timestampA }, { timestamp: timestampB }) => {
