@@ -102,6 +102,7 @@ const RewardsCalculator: FC = () => {
         isButtonClearVisible={false}
         label={t('lockFor')}
         onChange={e => onDaysInputChange(e.target.value)}
+        shouldAutoFocusAndSelect={false}
         suffix={i18n.t('common.days').toUpperCase()}
         value={days}
       />
@@ -110,6 +111,7 @@ const RewardsCalculator: FC = () => {
         isButtonClearVisible={false}
         isDisabled
         label={t('estimatedRewards')}
+        shouldAutoFocusAndSelect={false}
         showLoader={isFetching}
         suffix={estimatedFormattedRewardsValue.suffix}
         suffixClassName={styles.estimatedRewardsSuffix}
