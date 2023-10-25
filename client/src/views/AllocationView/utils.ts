@@ -35,15 +35,18 @@ export function getAllocationValuesWithRewardsSplitted({
 export function getAllocationValuesInitialState({
   allocations,
   rewardsForProposals,
+  shouldSetEqualValues,
   userAllocationsElements,
-  isLocked,
 }: {
   allocations: string[];
-  isLocked: boolean;
   rewardsForProposals: BigNumber;
+  shouldSetEqualValues: boolean;
   userAllocationsElements: UserAllocationElement[] | undefined;
 }): AllocationValues {
-  const allocationValues = !isLocked
+  const userAllocationsElementsValuesSum = userAllocationsElements
+    ? userAllocationsElements.reduce((acc, curr) => acc.add(curr.value), BigNumber.from(0))
+    : undefined;
+  const allocationValues = shouldSetEqualValues
     ? allocations.map(allocation => ({
         address: allocation,
         value: rewardsForProposals.div(allocations.length),
@@ -52,9 +55,21 @@ export function getAllocationValuesInitialState({
         const userAllocationsElement = userAllocationsElements?.find(
           ({ address }) => address === allocation,
         );
+        const valueFromAllocation = userAllocationsElement
+          ? userAllocationsElement.value
+          : BigNumber.from(0);
+        // percentage of rewardsForProposals as part of userAllocationsElementsValuesSum.
+        const percentage = rewardsForProposals
+          .mul(100)
+          .div(userAllocationsElementsValuesSum!)
+          .toString();
+        // value for the project set as valueFromAllocation multiplied by percentage.
+        const value = rewardsForProposals.isZero()
+          ? valueFromAllocation
+          : valueFromAllocation.mul(percentage).div(100);
         return {
           address: allocation,
-          value: userAllocationsElement ? userAllocationsElement.value : BigNumber.from(0),
+          value,
         };
       });
 
