@@ -126,11 +126,7 @@ const SettingsView = (): ReactElement => {
         >
           <div className={styles.patronMode}>
             {t('enablePatronMode')}
-            <Tooltip
-              position="bottom-right"
-              text="Patron mode is for token holders who want to support Octant. It disables allocation to yourself or projects. All rewards go directly to the matching fund with no action required by the patron."
-              tooltipClassName={styles.patronModeTooltipWrapper}
-            >
+            <Tooltip position="bottom-right" text={t('patronModeTooltip')}>
               <Svg
                 classNameWrapper={styles.patronModeQuestionMarkWrapper}
                 displayMode="wrapperDefault"

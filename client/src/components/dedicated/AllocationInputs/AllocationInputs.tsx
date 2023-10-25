@@ -127,6 +127,7 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
         onBlur={() => setInputFocused(null)}
         onChange={({ target: { value: newValueString } }) => onValueStringChange(newValueString)}
         onFocus={() => setInputFocused('crypto')}
+        shouldAutoFocusAndSelect={false}
         suffix="ETH"
         textAlign="center"
         value={formik.values.valueCryptoSelected}

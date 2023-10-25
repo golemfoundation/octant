@@ -18,6 +18,7 @@ export default interface InputTextProps {
   onClear?: () => void;
   onFocus?: FocusEventHandler<HTMLInputElement>;
   placeholder?: string;
+  shouldAutoFocusAndSelect?: boolean;
   showLoader?: boolean;
   suffix?: string;
   suffixClassName?: string;
