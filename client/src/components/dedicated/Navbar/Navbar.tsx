@@ -5,6 +5,7 @@ import { useAccount } from 'wagmi';
 
 import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
+import { FIXED_ELEMENT_CLASSNAME } from 'constants/css';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useUserTOS from 'hooks/queries/useUserTOS';
@@ -42,7 +43,7 @@ const Navbar: FC<NavbarProps> = ({ navigationBottomSuffix, tabs }) => {
 
   return (
     <Fragment>
-      <div className={styles.navigationWrapper} data-test="Navbar">
+      <div className={cx(styles.navigationWrapper, FIXED_ELEMENT_CLASSNAME)} data-test="Navbar">
         <nav className={styles.navigation}>
           {navigationBottomSuffix && (
             <div className={styles.navigationBottomSuffix}>{navigationBottomSuffix}</div>
