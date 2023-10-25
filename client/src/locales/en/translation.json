@@ -60,7 +60,10 @@
       "rewardsCalculator": {
         "enterGLMAmount": "Enter a GLM amount",
         "lockFor": "Lock for",
-        "estimatedRewards": "Estimated rewards"
+        "estimatedRewards": "Estimated rewards",
+        "errors": {
+          "valueCryptoTooBig": "That isn’t a valid amount"
+        }
       },
       "allocationEmptyState": {
         "text": "Add some projects or lock GLM tokens to prepare for the next allocation period",
