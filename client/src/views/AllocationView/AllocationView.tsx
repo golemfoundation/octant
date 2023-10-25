@@ -45,6 +45,7 @@ const AllocationView = (): ReactElement => {
   const [selectedItemAddress, setSelectedItemAddress] = useState<null | string>(null);
   const [allocationValues, setAllocationValues] = useState<AllocationValues>([]);
   const [allocationsEdited, setAllocationsEdited] = useState<string[]>([]);
+  const [isResetDone, setIsResetDone] = useState<boolean>(false);
   const [
     areAllocationValuesEqualRewardsForProposals,
     setAreAllocationValuesEqualRewardsForProposals,
@@ -143,10 +144,9 @@ const AllocationView = (): ReactElement => {
     }
   };
 
-  const onResetAllocationValues = () => {
+  const onResetAllocationValues = (shouldSetEqualValues = true) => {
     if (
       currentEpoch === undefined ||
-      isLocked === undefined ||
       (isConnected && !userAllocations && currentEpoch > 1) ||
       !rewardsForProposals
     ) {
@@ -154,8 +154,8 @@ const AllocationView = (): ReactElement => {
     }
     const allocationValuesNew = getAllocationValuesInitialState({
       allocations,
-      isLocked,
       rewardsForProposals,
+      shouldSetEqualValues,
       userAllocationsElements: userAllocations?.elements,
     });
     setAllocationsEdited([]);
@@ -163,15 +163,7 @@ const AllocationView = (): ReactElement => {
   };
 
   useEffect(() => {
-    if (isLocked === undefined) {
-      return;
-    }
-    onResetAllocationValues();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLocked]);
-
-  useEffect(() => {
-    onResetAllocationValues();
+    onResetAllocationValues(false);
     /**
      * This hook should NOT run when user unlocks the allocation.
      * Only when userAllocations are fetched OR after rewardsForProposals value changes.
@@ -183,7 +175,12 @@ const AllocationView = (): ReactElement => {
      * run this hook.
      */
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentEpoch, allocations, userAllocations?.elements.length, userNonce, rewardsForProposals]);
+  }, [currentEpoch, allocations, userAllocations?.elements.length, userNonce]);
+
+  useEffect(() => {
+    onResetAllocationValues(isResetDone);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rewardsForProposals, isResetDone]);
 
   const onAllocate = () => {
     if (userNonce === undefined || proposalsContract === undefined) {
@@ -287,7 +284,7 @@ const AllocationView = (): ReactElement => {
             currentView={currentView}
             isLoading={allocateEvent.isLoading}
             onAllocate={onAllocate}
-            onResetValues={onResetAllocationValues}
+            onResetValues={() => setIsResetDone(true)}
             setCurrentView={setCurrentView}
           />
         )
