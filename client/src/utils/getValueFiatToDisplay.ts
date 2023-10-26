@@ -30,7 +30,13 @@ export default function getValueFiatToDisplay({
 
   const prefix = FIAT_CURRENCIES_SYMBOLS[displayCurrency] || `${displayCurrency.toUpperCase()} `;
 
-  if (!cryptoCurrency || !cryptoValues || !valueCrypto) {
+  /**
+   * We need to ensure particular cryptoValues[cryptoCurrency][displayCurrency] is already fetched.
+   * Otherwise, Cypress tests failed when changing the displayCurrency
+   * and requesting to see its fiat value immediately.
+   */
+  //
+  if (!cryptoCurrency || !cryptoValues || !cryptoValues[cryptoCurrency][displayCurrency] || !valueCrypto) {
     return `${prefix}0.00`;
   }
 

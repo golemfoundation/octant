@@ -11,13 +11,20 @@ const clientReactQuery = new QueryClient({
   },
   mutationCache: new MutationCache({
     onError: (error, query) => {
-      // @ts-expect-error Error is of type 'unknown', but it is an API error.
-      return handleError(error.reason, query);
+      /**
+       * error.cause.code 4001 identifies user denial of request / transaction rejection.
+       * https://docs.metamask.io/wallet/reference/rpc-api/#returns-2
+       */
+      // @ts-expect-error Error is of type 'unknown', but it is API or contract error.
+      const hasUserRejectedTransaction = error.cause.code === 4001;
+      // @ts-expect-error Error is of type 'unknown', but it is API or contract error.
+      const reason = hasUserRejectedTransaction ? 4001 : error.reason;
+      return handleError(reason, query);
     },
   }),
   queryCache: new QueryCache({
     onError: (error, query) => {
-      // @ts-expect-error Error is of type 'unknown', but it is an API error.
+      // @ts-expect-error Error is of type 'unknown', but it is API or contract error.
       return handleError(error.reason, query);
     },
   }),
