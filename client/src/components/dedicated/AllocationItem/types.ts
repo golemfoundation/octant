@@ -3,7 +3,10 @@ import { BigNumber } from 'ethers';
 import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
 
 export interface AllocationItemWithAllocations
-  extends Pick<ProposalIpfsWithRewards, 'address' | 'isLoadingError'> {
+  extends Pick<
+    ProposalIpfsWithRewards,
+    'address' | 'isLoadingError' | 'name' | 'profileImageSmall'
+  > {
   isAllocatedTo: boolean;
   value: BigNumber;
 }
