@@ -121,7 +121,7 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({
         onClear={handleClear}
         onFocus={() => setIsFiatInputFocused(true)}
         placeholder="0.00"
-        suffix={displayCurrency?.toUpperCase() || 'USD'}
+        suffix={displayCurrency.toUpperCase()}
         value={fiat}
         {...inputFiatPropsLabel}
         shouldAutoFocusAndSelect={!isCryptoMainValueDisplay}
