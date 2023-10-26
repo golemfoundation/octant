@@ -14,7 +14,10 @@
         "loadingEncounteredAnError": "Loading of history of operations encountered a problem. Please try again."
       },
       "userRejectedTransaction": "User rejected transaction",
-      "default": "Oops, something went wrong there. Please reload the app and try again."
+      "default": {
+        "title": "Sorry, something went wrong there",
+        "message": "Please reload the app and try again"
+      }
     }
   },
   "common": {

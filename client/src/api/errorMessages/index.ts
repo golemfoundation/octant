@@ -10,6 +10,10 @@ import { QueryMutationError, QueryMutationErrorConfig, IgnoredQueries } from './
 const IGNORED_QUERIES: IgnoredQueries = [ROOTS.cryptoValues, QUERY_KEYS.glmClaimCheck[0]];
 
 const errors: QueryMutationErrorConfig = {
+  4001: {
+    message: i18n.t('api.errorMessage.userRejectedTransaction'),
+    type: 'toast',
+  },
   'HN:Allocations/allocate-above-rewards-budget': {
     message: i18n.t('api.errorMessage.allocations.allocateAboveRewardsBudget'),
     type: 'toast',
@@ -34,10 +38,6 @@ const errors: QueryMutationErrorConfig = {
     message: i18n.t('api.errorMessage.history.loadingEncounteredAnError'),
     type: 'toast',
   },
-  'user rejected transaction': {
-    message: i18n.t('api.errorMessage.userRejectedTransaction'),
-    type: 'toast',
-  },
 };
 
 function getError(reason: string): QueryMutationError {
@@ -46,7 +46,8 @@ function getError(reason: string): QueryMutationError {
     return error;
   }
   return {
-    message: i18n.t('api.errorMessage.default'),
+    message: i18n.t('api.errorMessage.default.message'),
+    title: i18n.t('api.errorMessage.default.title'),
     type: 'toast',
   };
 }
@@ -58,9 +59,9 @@ export function handleError(reason: string, query?: Query | unknown): string | u
     return;
   }
 
-  const { message, type } = getError(reason);
+  const { message, title, type } = getError(reason);
   if (type === 'toast') {
-    triggerToast({ message, type: 'error' });
+    triggerToast({ message, title, type: 'error' });
     return;
   }
   return message;

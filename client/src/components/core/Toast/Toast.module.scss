@@ -4,7 +4,6 @@
   min-width: 34rem;
   padding: 2.4rem;
   font-size: $font-size-12;
-  font-weight: $font-weight-bold;
   background: $color-white;
   border-radius: $border-radius-16;
   overflow-wrap: break-word;
@@ -29,4 +28,5 @@
 .message {
   text-align: left;
   color: $color-octant-grey6;
+  font-weight: $font-weight-semibold;
 }
