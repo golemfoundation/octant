@@ -33,10 +33,10 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const onSetRewardsForProposalsThrottled = useCallback(
-    throttle(onSetRewardsForProposals, 150),
-    [],
-  );
+  const onSetRewardsForProposalsThrottled = useCallback(throttle(onSetRewardsForProposals, 150), [
+    isDisabled,
+    individualReward?.toHexString(),
+  ]);
 
   if (!individualReward || individualReward.isZero()) {
     return (

@@ -180,7 +180,7 @@ const AllocationView = (): ReactElement => {
   useEffect(() => {
     onResetAllocationValues(isResetDone);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rewardsForProposals, isResetDone]);
+  }, [rewardsForProposals.toHexString(), isResetDone]);
 
   const onAllocate = () => {
     if (userNonce === undefined || proposalsContract === undefined) {
