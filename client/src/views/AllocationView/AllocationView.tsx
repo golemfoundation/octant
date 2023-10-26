@@ -270,15 +270,15 @@ const AllocationView = (): ReactElement => {
 
   const isEpoch1 = currentEpoch === 1;
 
+  const showAllocationBottomNavigation =
+    !isEpoch1 && areAllocationsAvailableOrAlreadyDone && hasUserIndividualReward && !isLocked;
+
   return (
     <MainLayout
       dataTest="AllocationView"
       isLoading={isLoading}
       navigationBottomSuffix={
-        !isEpoch1 &&
-        areAllocationsAvailableOrAlreadyDone &&
-        hasUserIndividualReward &&
-        !isLocked && (
+        showAllocationBottomNavigation && (
           <AllocationNavigation
             areButtonsDisabled={areButtonsDisabled}
             currentView={currentView}
@@ -303,18 +303,20 @@ const AllocationView = (): ReactElement => {
           )}
           {areAllocationsAvailableOrAlreadyDone && (
             <Fragment>
-              {allocationsWithRewards!.map((allocation, index) => (
+              {allocationsWithRewards!.map(allocation => (
                 <AllocationItem
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={index}
+                  key={allocation.address}
+                  address={allocation.address}
                   className={cx(styles.box, styles.isAllocation)}
+                  isAllocatedTo={allocation.isAllocatedTo}
                   isDisabled={
                     isLocked || (restToDistribute.isZero() && allocationsEdited.length === 0)
                   }
+                  isLoadingError={allocation.isLoadingError}
                   isLocked={!!isLocked}
                   isManuallyEdited={allocationsEdited.includes(allocation.address)}
                   onSelectItem={setSelectedItemAddress}
-                  {...allocation}
+                  value={allocation.value}
                 />
               ))}
             </Fragment>

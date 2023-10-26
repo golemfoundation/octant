@@ -2,7 +2,8 @@ import { BigNumber } from 'ethers';
 
 import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
 
-export interface AllocationItemWithAllocations extends ProposalIpfsWithRewards {
+export interface AllocationItemWithAllocations
+  extends Pick<ProposalIpfsWithRewards, 'address' | 'isLoadingError'> {
   isAllocatedTo: boolean;
   value: BigNumber;
 }

@@ -1,5 +1,6 @@
 import cx from 'classnames';
-import React, { FC, useState } from 'react';
+import { throttle } from 'lodash';
+import React, { FC, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -23,6 +24,19 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
     rewardsForProposals: state.data.rewardsForProposals,
     setRewardsForProposals: state.setRewardsForProposals,
   }));
+
+  const onSetRewardsForProposals = (index: number) => {
+    if (!individualReward || isDisabled) {
+      return;
+    }
+    setRewardsForProposals(individualReward?.mul(index).div(100));
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const onSetRewardsForProposalsThrottled = useCallback(
+    throttle(onSetRewardsForProposals, 150),
+    [],
+  );
 
   if (!individualReward || individualReward.isZero()) {
     return (
@@ -62,13 +76,6 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
     },
   ];
 
-  const onSetRewardsForProposals = (index: number) => {
-    if (!individualReward || isDisabled) {
-      return;
-    }
-    setRewardsForProposals(individualReward?.mul(index).div(100));
-  };
-
   return (
     <BoxRounded
       className={cx(styles.root, className)}
@@ -86,7 +93,7 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
         isDisabled={isDisabled}
         max={100}
         min={0}
-        onChange={onSetRewardsForProposals}
+        onChange={onSetRewardsForProposalsThrottled}
         onUnlock={onUnlock}
         value={percentRewardsForProposals}
       />

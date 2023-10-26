@@ -3,7 +3,6 @@ import { BigNumber } from 'ethers';
 import { AllocationItemWithAllocations } from 'components/dedicated/AllocationItem/types';
 import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
 import { UserAllocationElement } from 'hooks/queries/useUserAllocations';
-import getSortedElementsByTotalValueOfAllocationsAndAlphabetical from 'utils/getSortedElementsByTotalValueOfAllocationsAndAlphabetical';
 
 import { AllocationValues } from './types';
 
@@ -59,10 +58,10 @@ export function getAllocationValuesInitialState({
           ? userAllocationsElement.value
           : BigNumber.from(0);
         // percentage of rewardsForProposals as part of userAllocationsElementsValuesSum.
-        const percentage = (rewardsForProposals && !!userAllocationsElementsValuesSum) ? 100 :
-          rewardsForProposals.mul(100)
-          .div(userAllocationsElementsValuesSum!)
-          .toString();
+        const percentage =
+          rewardsForProposals && !!userAllocationsElementsValuesSum
+            ? 100
+            : rewardsForProposals.mul(100).div(userAllocationsElementsValuesSum!).toString();
         // value for the project set as valueFromAllocation multiplied by percentage.
         const value = rewardsForProposals.isZero()
           ? valueFromAllocation
@@ -94,7 +93,7 @@ export function getAllocationsWithRewards({
     proposalsIpfsWithRewards &&
     proposalsIpfsWithRewards.length > 0 &&
     areAllocationsAvailableOrAlreadyDone;
-  let allocationsWithRewards = isDataDefined
+  const allocationsWithRewards = isDataDefined
     ? allocationValues!.map(allocationValue => {
         const proposal = proposalsIpfsWithRewards.find(
           ({ address }) => address === allocationValue.address,
@@ -111,21 +110,18 @@ export function getAllocationsWithRewards({
       })
     : [];
 
-  allocationsWithRewards.sort(({ value: valueA }, { value: valueB }) => {
-    if (valueA.lt(valueB)) {
-      return 1;
+  return allocationsWithRewards.sort(({ name: nameA }, { name: nameB }) => {
+    if (!nameA || !nameB) {
+      return 0;
     }
-    if (valueA.gt(valueB)) {
+    if (nameA < nameB) {
       return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
     }
     return 0;
   });
-
-  allocationsWithRewards = getSortedElementsByTotalValueOfAllocationsAndAlphabetical(
-    allocationsWithRewards as AllocationItemWithAllocations[],
-  ) as AllocationItemWithAllocations[];
-
-  return allocationsWithRewards;
 }
 
 export function getRestToDistribute({
