@@ -17,10 +17,7 @@
   &:not(:last-child) {
     margin-bottom: 1.4rem;
   }
-  &.isCryptoMainValueDisplay {
-    margin-bottom: 1.6rem;
-  }
-  &.isFiatMainValueDisplay {
+  &.isCryptoMainValueDisplay, &.isFiatMainValueDisplay {
     margin-bottom: 1.6rem;
   }
 }
