@@ -59,8 +59,8 @@ export function getAllocationValuesInitialState({
           ? userAllocationsElement.value
           : BigNumber.from(0);
         // percentage of rewardsForProposals as part of userAllocationsElementsValuesSum.
-        const percentage = rewardsForProposals
-          .mul(100)
+        const percentage = (rewardsForProposals && !!userAllocationsElementsValuesSum) ? 100 :
+          rewardsForProposals.mul(100)
           .div(userAllocationsElementsValuesSum!)
           .toString();
         // value for the project set as valueFromAllocation multiplied by percentage.
