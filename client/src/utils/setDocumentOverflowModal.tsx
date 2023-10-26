@@ -18,6 +18,14 @@ export default function setDocumentOverflowModal(isOpen: boolean, durationOfClos
    * with isOpen === true during change between mobile/desktop.
    * When it happens, since scrollbar is hidden, its width is 0, causing padding offsetting
    * the scrollbar to disappear.
+   *
+   * Scenarios to test for both Modal and InputSelect components:
+   * 1. Open on desktop, close the on desktop.
+   * 2. Open on mobile/tablet, close on mobile/tablet.
+   * 3. Open on desktop, change the viewport to mobile/tablet, close.
+   * 4. Open on mobile/tablet, change the viewport to desktop, close.
+   * In each scenario neither modal, body nor FIXED_ELEMENT_CLASSNAME elements should move
+   * during open/close of the modal.
    */
   if (scrollbarWidth === undefined) {
     const documentWidth = document.documentElement.clientWidth;
