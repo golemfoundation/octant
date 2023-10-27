@@ -89,7 +89,7 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
     formikUpdateValues(newValueString, newPercentage);
   };
 
-  const isThereSomethingToDistribute = !restToDistribute.isZero();
+  const isThereSomethingToDistribute = !restToDistributeAdjusted.isZero();
 
   return (
     <div className={cx(styles.root, className)}>
