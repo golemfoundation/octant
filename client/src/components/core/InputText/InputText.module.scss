@@ -90,6 +90,10 @@
     }
   }
 
+  &.hasSuffix {
+    padding: 1.6rem 7.2rem 1.6rem 1.6rem;
+  }
+
   &.textAlign-- {
     &left {
       text-align: left;
