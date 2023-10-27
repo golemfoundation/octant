@@ -103,44 +103,46 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
           valueCryptoTotal={valueCryptoTotal}
         />
       )}
-      <InputText
-        className={styles.element}
-        inputMode="decimal"
-        isButtonClearVisible={false}
-        isDisabled={!isThereSomethingToDistribute}
-        onBlur={() => setInputFocused(null)}
-        onChange={({ target: { value: newValuePercentage } }) =>
-          onValuePercentageChange(newValuePercentage)
-        }
-        onFocus={() => setInputFocused('percent')}
-        suffix="%"
-        textAlign="center"
-        value={percentage}
-      />
-      <InputText
-        className={styles.element}
-        error={formik.errors.valueCryptoSelected}
-        inputMode="decimal"
-        isButtonClearVisible={false}
-        isDisabled={!isThereSomethingToDistribute}
-        isErrorInlineVisible={false}
-        onBlur={() => setInputFocused(null)}
-        onChange={({ target: { value: newValueString } }) => onValueStringChange(newValueString)}
-        onFocus={() => setInputFocused('crypto')}
-        shouldAutoFocusAndSelect={false}
-        suffix="ETH"
-        textAlign="center"
-        value={formik.values.valueCryptoSelected}
-      />
-      <Button
-        isDisabled={!formik.isValid}
-        isHigh
-        isLoading={formik.isSubmitting}
-        label={isThereSomethingToDistribute ? t('done') : t('close')}
-        onClick={() => onClose(parseUnits(formik.values.valueCryptoSelected))}
-        type="submit"
-        variant="cta"
-      />
+      <div className={styles.inputsContainer}>
+        <InputText
+          className={styles.input}
+          error={formik.errors.valueCryptoSelected}
+          inputMode="decimal"
+          isButtonClearVisible={false}
+          isDisabled={!isThereSomethingToDistribute}
+          isErrorInlineVisible={false}
+          onBlur={() => setInputFocused(null)}
+          onChange={({ target: { value: newValueString } }) => onValueStringChange(newValueString)}
+          onFocus={() => setInputFocused('crypto')}
+          suffix="ETH"
+          textAlign="left"
+          value={formik.values.valueCryptoSelected}
+        />
+        <InputText
+          className={cx(styles.input, styles.percentageInput)}
+          inputMode="decimal"
+          isButtonClearVisible={false}
+          isDisabled={!isThereSomethingToDistribute}
+          onBlur={() => setInputFocused(null)}
+          onChange={({ target: { value: newValuePercentage } }) =>
+            onValuePercentageChange(newValuePercentage)
+          }
+          onFocus={() => setInputFocused('percent')}
+          shouldAutoFocusAndSelect={false}
+          suffix="%"
+          textAlign="left"
+          value={percentage}
+        />
+        <Button
+          isDisabled={!formik.isValid}
+          isHigh
+          isLoading={formik.isSubmitting}
+          label={isThereSomethingToDistribute ? t('done') : t('close')}
+          onClick={() => onClose(parseUnits(formik.values.valueCryptoSelected))}
+          type="submit"
+          variant="cta"
+        />
+      </div>
     </div>
   );
 };
