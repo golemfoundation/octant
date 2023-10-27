@@ -44,6 +44,9 @@ const AllocationView = (): ReactElement => {
   const [isLocked, setIsLocked] = useState<boolean | undefined>(undefined);
   const [selectedItemAddress, setSelectedItemAddress] = useState<null | string>(null);
   const [allocationValues, setAllocationValues] = useState<AllocationValues>([]);
+  const [isRewardsForProposalsSet, setIsRewardsForProposalsSet] = useState<boolean>(false);
+  const [hasZeroRewardsForProposalsBeenReached, setHasZeroRewardsForProposalsBeenReached] =
+    useState<boolean>(false);
   const [allocationsEdited, setAllocationsEdited] = useState<string[]>([]);
   const [
     areAllocationValuesEqualRewardsForProposals,
@@ -117,13 +120,14 @@ const AllocationView = (): ReactElement => {
         BigNumber.from(0),
       );
       setRewardsForProposals(userAllocationsSum);
-      return;
+    } else {
+      setRewardsForProposals(
+        localStorageRewardsForProposals.gt(individualReward)
+          ? BigNumber.from(0)
+          : localStorageRewardsForProposals,
+      );
     }
-    setRewardsForProposals(
-      localStorageRewardsForProposals.gt(individualReward)
-        ? BigNumber.from(0)
-        : localStorageRewardsForProposals,
-    );
+    setIsRewardsForProposalsSet(true);
     // .toHexString(), because React can't compare objects as deps in hooks, causing infinite loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [individualReward?.toHexString(), userAllocations?.elements.length]);
@@ -143,35 +147,36 @@ const AllocationView = (): ReactElement => {
     }
   };
 
-  const onResetAllocationValues = () => {
+  const onResetAllocationValues = (
+    shouldSetEqualValues = true,
+    shouldResetAllocationsEdited = true,
+  ) => {
     if (
+      !isRewardsForProposalsSet ||
       currentEpoch === undefined ||
-      isLocked === undefined ||
       (isConnected && !userAllocations && currentEpoch > 1) ||
       !rewardsForProposals
     ) {
       return;
     }
     const allocationValuesNew = getAllocationValuesInitialState({
+      allocationValues,
       allocations,
-      isLocked,
+      allocationsEdited,
+      hasZeroRewardsForProposalsBeenReached,
       rewardsForProposals,
+      shouldSetEqualValues,
       userAllocationsElements: userAllocations?.elements,
     });
-    setAllocationsEdited([]);
+    if (shouldResetAllocationsEdited) {
+      setAllocationsEdited([]);
+    }
     _setAllocationValues(allocationValuesNew);
   };
 
   useEffect(() => {
-    if (isLocked === undefined) {
-      return;
-    }
-    onResetAllocationValues();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLocked]);
-
-  useEffect(() => {
-    onResetAllocationValues();
+    const shouldSetEqualValues = !userAllocations || userAllocations.elements.length === 0;
+    onResetAllocationValues(shouldSetEqualValues);
     /**
      * This hook should NOT run when user unlocks the allocation.
      * Only when userAllocations are fetched OR after rewardsForProposals value changes.
@@ -179,11 +184,51 @@ const AllocationView = (): ReactElement => {
      * Comparing userAllocations?.elements.length may not be enough -- what if user changes values
      * but not the number of projects?
      *
-     * Hence the check for userNonce. Whenever allocation is done we refetch userNonce and we should
-     * run this hook.
+     * Hence the check for userNonce. Whenever allocation is done we refetch userNonce
+     * and we should run this hook.
      */
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentEpoch, allocations, userAllocations?.elements.length, userNonce, rewardsForProposals]);
+  }, [
+    currentEpoch,
+    allocations,
+    isRewardsForProposalsSet,
+    userAllocations?.elements.length,
+    userNonce,
+  ]);
+
+  useEffect(() => {
+    if (!isRewardsForProposalsSet) {
+      return;
+    }
+
+    if (rewardsForProposals.isZero() && hasZeroRewardsForProposalsBeenReached) {
+      onResetAllocationValues(true, false);
+      return;
+    }
+
+    if (rewardsForProposals.isZero() && !hasZeroRewardsForProposalsBeenReached) {
+      setAllocationValues(allocationValues.map(allocation => ({
+        ...allocation,
+        value: BigNumber.from(0),
+      })));
+      setAllocationsEdited([]);
+      setHasZeroRewardsForProposalsBeenReached(true);
+      return;
+    }
+
+    if (!rewardsForProposals.isZero()) {
+      if (hasZeroRewardsForProposalsBeenReached) {
+        setHasZeroRewardsForProposalsBeenReached(false);
+      }
+      const shouldSetEqualValues =
+        !hasZeroRewardsForProposalsBeenReached &&
+        !!userAllocations &&
+        userAllocations?.elements.length === 0 &&
+        allocationsEdited.length === 0;
+      onResetAllocationValues(shouldSetEqualValues, false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rewardsForProposals, hasZeroRewardsForProposalsBeenReached]);
 
   const onAllocate = () => {
     if (userNonce === undefined || proposalsContract === undefined) {
@@ -286,8 +331,11 @@ const AllocationView = (): ReactElement => {
             areButtonsDisabled={areButtonsDisabled}
             currentView={currentView}
             isLoading={allocateEvent.isLoading}
+            isPrevResetButtonEnabled={
+              !areAllocationValuesEqualRewardsForProposals && areButtonsDisabled
+            }
             onAllocate={onAllocate}
-            onResetValues={onResetAllocationValues}
+            onResetValues={() => onResetAllocationValues()}
             setCurrentView={setCurrentView}
           />
         )
