@@ -5,7 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { Web3Modal } from '@web3modal/react';
 import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom/client';
-import { HashRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { WagmiConfig } from 'wagmi';
 
@@ -51,9 +51,9 @@ const root = document.getElementById('root')!;
     <Fragment>
       <WagmiConfig config={wagmiConfig}>
         <QueryClientProvider client={clientReactQuery}>
-          <HashRouter>
+          <BrowserRouter>
             <App />
-          </HashRouter>
+          </BrowserRouter>
           <ToastContainer
             position="top-center"
             style={{ overflowWrap: 'break-word', width: '350px' }}

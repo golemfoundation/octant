@@ -8,12 +8,12 @@ export const loadersShouldNotExist = (): Chainable<any> => {
 };
 
 export const checkLocationWithLoader = (url: string): Chainable<any> => {
-  cy.hash().should('eq', `#${url}`);
+  cy.location('pathname').should('eq', url);
   return loadersShouldNotExist();
 };
 
 export const visitWithLoader = (urlEnter: string, urlEnd?: string): Chainable<any> => {
-  cy.visit(`#${urlEnter}`);
+  cy.visit(urlEnter);
   return checkLocationWithLoader(urlEnd || urlEnter);
 };
 
