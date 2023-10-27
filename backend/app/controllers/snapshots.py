@@ -50,7 +50,10 @@ def get_pending_snapshot_status() -> PendingSnapshotStatus:
 def get_finalized_snapshot_status() -> FinalizedSnapshotStatus:
     current_epoch = epochs.get_current_epoch()
     last_snapshot_epoch = get_last_finalized_snapshot()
-    is_open = epochs.is_decision_window_open()
+    try:
+        is_open = epochs.is_decision_window_open()
+    except Exception:
+        is_open = False
     try:
         return finalized_snapshot_status(current_epoch, last_snapshot_epoch, is_open)
     except exceptions.SnapshotTooEarly:
