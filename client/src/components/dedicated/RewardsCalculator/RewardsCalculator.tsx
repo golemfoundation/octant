@@ -3,6 +3,7 @@ import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { useFormik } from 'formik';
 import debounce from 'lodash/debounce';
+import isEmpty from 'lodash/isEmpty';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -89,7 +90,7 @@ const RewardsCalculator: FC = () => {
 
   useEffect(() => {
     formik.validateForm().then(error => {
-      if (error) {
+      if (!isEmpty(error)) {
         return;
       }
       fetchEstimatedRewardsDebounced(formik.values.valueCrypto, formik.values.days);
