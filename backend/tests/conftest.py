@@ -8,7 +8,7 @@ import pytest
 from eth_account import Account
 from flask import g as request_context
 from flask.testing import FlaskClient
-from gql import Client
+import gql
 from web3 import Web3
 
 from tests.helpers.gql_client import MockGQLClient
@@ -107,11 +107,6 @@ def flask_client() -> FlaskClient:
             db.drop_all()
 
 
-@pytest.fixture
-def client(flask_client: FlaskClient) -> Client:
-    return Client(flask_client)
-
-
 class UserAccount:
     def __init__(self, account: CryptoAccount):
         self._account = account
@@ -177,6 +172,11 @@ class Client:
         return self._flask_client.application.config
 
 
+@pytest.fixture
+def client(flask_client: FlaskClient) -> Client:
+    return Client(flask_client)
+
+
 @pytest.fixture(scope="function")
 def app():
     """An application for the unit tests."""
@@ -197,7 +197,7 @@ def app():
 
 @pytest.fixture(scope="function")
 def graphql_client(app):
-    request_context.graphql_client = Client()
+    request_context.graphql_client = gql.Client()
 
 
 @pytest.fixture(scope="function")
