@@ -125,7 +125,7 @@ def snapshot_finalized_epoch() -> Optional[int]:
         proposal_rewards_sum,
         matched_rewards,
     ) = get_proposal_rewards_above_threshold(finalized_epoch)
-    user_rewards, user_rewards_sum = user_core_rewards.get_claimed_rewards(
+    user_rewards, user_rewards_sum = user_core_rewards.get_all_claimed_rewards(
         finalized_epoch
     )
     all_rewards = user_rewards + proposal_rewards
