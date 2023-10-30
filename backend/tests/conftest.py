@@ -241,6 +241,7 @@ def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.controllers.snapshots.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.controllers.rewards.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.controllers.epochs.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.controllers.withdrawals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.proposals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.user.budget.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.epochs.details.epochs", MOCK_EPOCHS)
@@ -314,6 +315,8 @@ def patch_has_pending_epoch_snapshot(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_user_budget(monkeypatch):
     monkeypatch.setattr("app.core.allocations.get_budget", MOCK_GET_USER_BUDGET)
+    monkeypatch.setattr("app.core.user.rewards.get_budget", MOCK_GET_USER_BUDGET)
+
     MOCK_GET_USER_BUDGET.return_value = 10 * 10**18 * 10**18
 
 
@@ -483,6 +486,7 @@ def mock_graphql(
     deposit_events=None,
     epochs_events=None,
     withdrawals_events=None,
+    merkle_roots_events=None,
 ):
     lockeds, unlockeds = _split_deposit_events(deposit_events)
     # Mock the execute method of the GraphQL client
@@ -491,6 +495,7 @@ def mock_graphql(
         lockeds=lockeds,
         unlockeds=unlockeds,
         withdrawals=withdrawals_events,
+        merkle_roots=merkle_roots_events,
     )
     mocker.patch.object(request_context.graphql_client, "execute")
     request_context.graphql_client.execute.side_effect = mock_client.execute

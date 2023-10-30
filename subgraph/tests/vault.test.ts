@@ -1,13 +1,14 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts';
 import { afterAll, assert, beforeAll, clearStore, describe, test } from 'matchstick-as';
 
-import { createWithdrawnEvent } from './utils';
+import { createWithdrawnEvent, createMerkleRootSetEvent } from './utils';
 
-import { handleWithdrawn } from '../generated/vault';
+import { handleWithdrawn, handleMerkleRootSet } from '../generated/vault';
 
 const WITHDRAWAL_ENTITY_TYPE = 'Withdrawal';
+const MERKLE_ROOT_ENTITY_TYPE = 'VaultMerkleRoot';
 
-describe('Describe entity assertions', () => {
+describe('Withdrawals', () => {
   beforeAll(() => {
     const amount = BigInt.fromI32(42424242);
     const epoch = 3;
@@ -20,7 +21,7 @@ describe('Describe entity assertions', () => {
     clearStore();
   });
 
-  test('Withdrawal test', () => {
+  test('Test add entity when new event occurs', () => {
     assert.entityCount(WITHDRAWAL_ENTITY_TYPE, 1);
     assert.fieldEquals(
       WITHDRAWAL_ENTITY_TYPE,
@@ -54,6 +55,53 @@ describe('Describe entity assertions', () => {
     );
     assert.fieldEquals(
       WITHDRAWAL_ENTITY_TYPE,
+      '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
+      'transactionHash',
+      '0xa16081f360e3847006db660bae1c6d1b2e17ec2a',
+    );
+  });
+});
+
+describe('Merkle root', () => {
+  beforeAll(() => {
+    const epoch = 1;
+    const merkleRoot = '0x422a0c21e83cbb3f32430d924b5cb4f40b4e2a0bf8e053a3da0e2ed85d1ab4ea';
+    const merkleRootSetEvent = createMerkleRootSetEvent(epoch, merkleRoot);
+    handleMerkleRootSet(merkleRootSetEvent);
+  });
+
+  afterAll(() => {
+    clearStore();
+  });
+
+  test('Test add entity when new event occurs', () => {
+    assert.entityCount(MERKLE_ROOT_ENTITY_TYPE, 1);
+    assert.fieldEquals(
+      MERKLE_ROOT_ENTITY_TYPE,
+      '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
+      'root',
+      '0x422a0c21e83cbb3f32430d924b5cb4f40b4e2a0bf8e053a3da0e2ed85d1ab4ea',
+    );
+    assert.fieldEquals(
+      MERKLE_ROOT_ENTITY_TYPE,
+      '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
+      'epoch',
+      '1',
+    );
+    assert.fieldEquals(
+      MERKLE_ROOT_ENTITY_TYPE,
+      '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
+      'timestamp',
+      '1',
+    );
+    assert.fieldEquals(
+      MERKLE_ROOT_ENTITY_TYPE,
+      '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
+      'blockNumber',
+      '1',
+    );
+    assert.fieldEquals(
+      MERKLE_ROOT_ENTITY_TYPE,
       '0xa16081f360e3847006db660bae1c6d1b2e17ec2a01000000',
       'transactionHash',
       '0xa16081f360e3847006db660bae1c6d1b2e17ec2a',
