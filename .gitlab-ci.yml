@@ -27,17 +27,17 @@ default:
     name: acidrain/python-poetry:3.11-1.5.1
     pull_policy: if-not-present
   node:
-    name: registry.gitlab.com/wildland/devops/container-builder/octant/node-extended:latest
+    name: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:latest
     pull_policy: if-not-present
   kaniko:
     name: gcr.io/kaniko-project/executor:$KANIKO_VERSION-debug
     pull_policy: if-not-present
     entrypoint: [""]
   git_improved:
-    name: registry.gitlab.com/wildland/devops/container-builder/gitops-builder:latest
+    name: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:latest
     pull_policy: if-not-present
   synpress:
-    name: registry.gitlab.com/wildland/devops/container-builder/octant/synpress-arch:08da1d10
+    name: registry.gitlab.com/golemfoundation/devops/container-builder/octant/synpress-arch:08da1d10
     pull_policy: if-not-present
   alpine_git:
     name: alpine/git
@@ -222,7 +222,7 @@ Unit tests:
           - coin-prices-server
 #           Disabled because of 404.
 #           TODO OCT-1042 enable this job.
-#           https://gitlab.com/wildland/governance/octant/-/jobs/5313689201
+#           https://gitlab.com/golemfoundation/governance/octant/-/jobs/5313689201
 #           Downloading release from https://github.com/LimeChain/matchstick/releases/download/0.6.0/binary-linux-20
 #           Error fetching release: Request failed with status code 404
 #          - subgraph
@@ -646,7 +646,7 @@ Deploy Release Candidate app:
     - !reference [.rules, on_push_to_master_branch_manual]
   resource_group: production
   variables:
-    ARGO_REPOSITORY: "https://wildland-bot:${HOUSEKEEPER_CI_TOKEN}@gitlab.com/wildland/devops/iac/k8s/wildland-k8s-devops.git"
+    ARGO_REPOSITORY: "https://wildland-bot:${HOUSEKEEPER_CI_TOKEN}@gitlab.com/golemfoundation/devops/iac/k8s/wildland-k8s-devops.git"
     ARGO_REPOSITORY_BRANCH: "gitlab/octant-testing"
   script: |
     set -ex
@@ -681,5 +681,5 @@ Deploy production app:
     DEV_IMAGE_TAG: $CI_COMMIT_SHA
     PROD_IMAGE_TAG: $CI_COMMIT_TAG
   trigger:
-    project: wildland/devops/pipelines/octant-production
+    project: golemfoundation/devops/pipelines/octant-production
     branch: master
