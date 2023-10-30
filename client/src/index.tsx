@@ -19,6 +19,14 @@ import { PROJECT_ID } from './constants/walletConnect';
 
 const root = document.getElementById('root')!;
 
+if (window.location.hash) {
+  const hashRoute = `${window.location.origin}/${window.location.hash}`;
+
+  if (window.location.href.includes(hashRoute)) {
+    window.location.replace(`${window.location.hash.replace('#', '')}`);
+  }
+}
+
 (() => {
   const emptyEnvs = Object.entries(env).reduce(
     (acc, [key, value]) => (!value ? { ...acc, [envViteKeys[key]]: value } : acc),
