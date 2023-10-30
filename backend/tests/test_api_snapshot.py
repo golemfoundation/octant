@@ -24,18 +24,20 @@ def wait_for_sync(client: Client, target):
             return res["indexedEpoch"]
 
 
-def move_to_next_epoch():
-    assert epochs.get_current_epoch() == 1
+def move_to_next_epoch(target) -> bool:
+    assert epochs.get_current_epoch() == target - 1
     now = w3.eth.get_block("latest").timestamp
     nextEpochAt = epochs.get_current_epoch_end()
     forward = nextEpochAt - now + 10
     w3.provider.make_request("evm_increaseTime", [forward])
     w3.provider.make_request("evm_mine", [])
-    assert epochs.get_current_epoch() == 2
+    assert epochs.get_current_epoch() == target
 
 
 @pytest.mark.api
-def test_pending_snapshot(client: Client, deployer: UserAccount, account: UserAccount):
+def test_pending_snapshot(
+    client: Client, deployer: UserAccount, ua_alice: UserAccount, ua_bob: UserAccount
+):
     res = client.sync_status()
     assert res["indexedEpoch"] == res["blockchainEpoch"]
     assert res["indexedEpoch"] > 0
@@ -46,11 +48,13 @@ def test_pending_snapshot(client: Client, deployer: UserAccount, account: UserAc
     )
 
     # lock GLM from two accounts
-    deployer.transfer(account, 10000)
-    account.lock(10000)
+    deployer.transfer(ua_alice, 10000)
+    ua_alice.lock(10000)
+    deployer.transfer(ua_bob, 15000)
+    ua_bob.lock(15000)
 
-    # forward time to the end of the epoch
-    move_to_next_epoch()
+    # forward time to the beginning of the epoch 2
+    move_to_next_epoch(2)
 
     # wait for indexer to catch up
     epoch_no = wait_for_sync(client, 2)
@@ -60,6 +64,11 @@ def test_pending_snapshot(client: Client, deployer: UserAccount, account: UserAc
     res = client.pending_snapshot()
     assert res["epoch"] > 0
 
-    # check if users have a budget
-    res = client.get_rewards_budget(address=account.address, epoch=1)
-    assert int(res["budget"]) > 0
+    # check if both users have a budget
+    res = client.get_rewards_budget(address=ua_alice.address, epoch=1)
+    alice_budget = int(res["budget"])
+    assert alice_budget > 0
+
+    res = client.get_rewards_budget(address=ua_bob.address, epoch=1)
+    bob_budget = int(res["budget"])
+    assert bob_budget > 0
