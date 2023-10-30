@@ -10,7 +10,7 @@ import Svg from 'components/core/Svg/Svg';
 import ModalConnectWallet from 'components/dedicated/ModalConnectWallet/ModalConnectWallet';
 import Navbar from 'components/dedicated/Navbar/Navbar';
 import WalletModal from 'components/dedicated/WalletModal/WalletModal';
-import { FIXED_ELEMENT_CLASSNAME } from 'constants/css';
+import { ELEMENT_POSITION_FIXED_CLASSNAME, ELEMENT_OVERFLOW_HIDDEN_CLASSNAME } from 'constants/css';
 import {
   adminNavigationTabs,
   navigationTabs as navigationTabsDefault,
@@ -124,7 +124,7 @@ const MainLayout: FC<MainLayoutProps> = ({
         {isHeaderVisible && (
           <Fragment>
             <div className={styles.headerBlur} />
-            <div className={cx(styles.headerWrapper, FIXED_ELEMENT_CLASSNAME)}>
+            <div className={cx(styles.headerWrapper, ELEMENT_POSITION_FIXED_CLASSNAME)}>
               <div className={styles.header} data-test="MainLayout__Header">
                 <div className={styles.logoWrapper}>
                   <Link data-test="MainLayout__Logo" to={ROOT_ROUTES.proposals.absolute}>
@@ -227,6 +227,7 @@ const MainLayout: FC<MainLayoutProps> = ({
             styles.body,
             isLoading && styles.isLoading,
             !!navigationBottomSuffix && styles.isNavigationBottomSuffix,
+            ELEMENT_OVERFLOW_HIDDEN_CLASSNAME,
             classNameBody,
           )}
         >
