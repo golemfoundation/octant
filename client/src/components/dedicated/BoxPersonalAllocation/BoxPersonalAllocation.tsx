@@ -99,6 +99,7 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
       : []),
     {
       doubleValueProps: {
+        coinPricesServerDowntimeText: !isProjectAdminMode ? '...' : undefined,
         cryptoCurrency: 'ethereum',
         isFetching: isWithdrawableRewardsFetching || isAppWaitingForTransactionToBeIndexed,
         valueCrypto: currentEpoch === 1 ? BigNumber.from(0) : withdrawableRewards?.sum,

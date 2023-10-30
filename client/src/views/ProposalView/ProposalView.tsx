@@ -130,8 +130,8 @@ const ProposalView = (): ReactElement => {
   const initialElement = loadedProposals[0] || {};
 
   const onShareClick = ({ name, address }): boolean | Promise<boolean> => {
-    const { origin, pathname } = window.location;
-    const url = `${origin}${pathname}#${ROOT_ROUTES.proposal.absolute}/${currentEpoch}/${address}`;
+    const { origin } = window.location;
+    const url = `${origin}${ROOT_ROUTES.proposal.absolute}/${currentEpoch}/${address}`;
 
     if ((window.navigator.share as any) && !window.navigator.userAgent.includes('Macintosh')) {
       window.navigator.share({

@@ -2,6 +2,7 @@ import { QueryKeys, Root } from 'api/queryKeys/types';
 
 export type QueryMutationError = {
   message: string;
+  title?: string;
   type: 'inline' | 'toast';
 };
 

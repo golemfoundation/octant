@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
 
 import { AllocationItemWithAllocations } from 'components/dedicated/AllocationItem/types';
 import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
@@ -23,43 +24,105 @@ export function getAllocationValuesWithRewardsSplitted({
     BigNumber.from(0),
   );
 
+  if (restToDistribute.isZero()) {
+    return allocationValues;
+  }
+
   if (allocationValuesSum.lt(restToDistribute)) {
     allocationValuesNew[allocationValuesNew.length - 1].value = allocationValuesNew[
       allocationValuesNew.length - 1
     ].value.add(restToDistribute.sub(allocationValuesSum));
+  }
+  /**
+   * Since percentage calcualted in getAllocationValuesInitialState is not perfect,
+   * chances are allocationValuesSum is bigger than restToDistribute.
+   */
+  if (allocationValuesSum.gt(restToDistribute)) {
+    const difference = allocationValuesSum.sub(restToDistribute);
+    const lastElement = allocationValuesNew[allocationValuesNew.length - 1];
+
+    if (lastElement.value.gte(difference)) {
+      allocationValuesNew[allocationValuesNew.length - 1].value =
+        allocationValuesNew[allocationValuesNew.length - 1].value.sub(difference);
+    } else {
+      const elementIndexToChange = allocationValuesNew.findIndex(element =>
+        element.value.gt(difference),
+      );
+      allocationValuesNew[elementIndexToChange].value =
+        allocationValuesNew[elementIndexToChange].value.sub(difference);
+    }
   }
 
   return allocationValuesNew;
 }
 
 export function getAllocationValuesInitialState({
+  allocationValues,
   allocations,
   rewardsForProposals,
+  hasZeroRewardsForProposalsBeenReached,
+  allocationsEdited,
+  shouldSetEqualValues,
   userAllocationsElements,
-  isLocked,
 }: {
+  allocationValues: AllocationValues;
   allocations: string[];
-  isLocked: boolean;
+  allocationsEdited: string[];
+  hasZeroRewardsForProposalsBeenReached: boolean;
   rewardsForProposals: BigNumber;
+  shouldSetEqualValues: boolean;
   userAllocationsElements: UserAllocationElement[] | undefined;
 }): AllocationValues {
-  const allocationValues = !isLocked
-    ? allocations.map(allocation => ({
-        address: allocation,
-        value: rewardsForProposals.div(allocations.length),
-      }))
-    : allocations.map(allocation => {
-        const userAllocationsElement = userAllocationsElements?.find(
-          ({ address }) => address === allocation,
-        );
-        return {
-          address: allocation,
-          value: userAllocationsElement ? userAllocationsElement.value : BigNumber.from(0),
-        };
-      });
+  if (
+    shouldSetEqualValues ||
+    userAllocationsElements === undefined ||
+    (hasZeroRewardsForProposalsBeenReached && allocationsEdited.length === 0)
+  ) {
+    const allocationValuesNew = allocations.map(allocation => ({
+      address: allocation,
+      value: rewardsForProposals.div(allocations.length),
+    }));
+
+    return getAllocationValuesWithRewardsSplitted({
+      allocationValues: allocationValuesNew,
+      restToDistribute: rewardsForProposals,
+    });
+  }
+
+  const userSum = (allocationValues.length > 0 ? allocationValues : userAllocationsElements).reduce(
+    (acc, curr) => acc.add(curr.value),
+    BigNumber.from(0),
+  );
+
+  const allocationValuesNew = allocations.map(allocation => {
+    const userAllocationsElement = userAllocationsElements?.find(
+      ({ address }) => address === allocation,
+    );
+    const allocationValue = allocationValues.find(({ address }) => address === allocation);
+    /**
+     * Current allocationValue is more important that what user set in userAllocations.
+     * allocationValues is the current state, so after manual edits.
+     */
+    const valueUser =
+      (!rewardsForProposals.isZero() && allocationValue?.value) ||
+      userAllocationsElement?.value ||
+      BigNumber.from(0);
+    const percentage = !userSum.isZero()
+      ? (parseFloat(rewardsForProposals.toString()) * 100) / parseFloat(userSum?.toString())
+      : undefined;
+    // Value for the project set as valueUser multiplied by percentage.
+    const value =
+      percentage === undefined
+        ? parseFloat(valueUser.toString())
+        : (parseFloat(valueUser.toString()) * percentage) / 100;
+    return {
+      address: allocation,
+      value: parseUnits(Math.floor(value).toString(), 'wei'),
+    };
+  });
 
   return getAllocationValuesWithRewardsSplitted({
-    allocationValues,
+    allocationValues: allocationValuesNew,
     restToDistribute: rewardsForProposals,
   });
 }
@@ -124,7 +187,7 @@ export function getRestToDistribute({
   individualReward: BigNumber | undefined;
   rewardsForProposals: BigNumber;
 }): BigNumber {
-  if (!individualReward) {
+  if (!individualReward || !rewardsForProposals) {
     return BigNumber.from(0);
   }
 

@@ -49,6 +49,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
         styles[`textAlign--${textAlign}`],
         isDisabled && styles.isDisabled,
         !!error && styles.isError,
+        suffix && styles.hasSuffix,
         styles.className,
       ),
       disabled: isDisabled,
