@@ -4,7 +4,7 @@ set -exa
 
 ACTION=$1
 
-ARGO_REPOSITORY="https://wildland-bot:${HOUSEKEEPER_CI_TOKEN}@gitlab.com/wildland/devops/iac/k8s/wildland-k8s-devops.git"
+ARGO_REPOSITORY="https://wildland-bot:${HOUSEKEEPER_CI_TOKEN}@gitlab.com/golemfoundation/devops/iac/k8s/wildland-k8s-devops.git"
 ARGO_REPOSITORY_BRANCH="octant"
 
 set +a
