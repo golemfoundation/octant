@@ -90,6 +90,13 @@ def get_all_by_proposal_and_epoch(
     ]
 
 
+def get_abstainers(epoch: int) -> List[str]:
+    allocs = get_all_by_epoch(epoch, include_zeroes=True)
+    active = [alloc.donor for alloc in allocs]
+    all_with_budget = [budget["user"] for budget in rewards.get_all_budgets(epoch)]
+    return list(set(all_with_budget) - set(active))
+
+
 def get_all_by_epoch(
     epoch: int, include_zeroes: bool = False
 ) -> List[EpochAllocationRecord]:

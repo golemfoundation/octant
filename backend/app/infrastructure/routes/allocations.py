@@ -203,7 +203,12 @@ class EpochAllocations(OctantResource):
         app.logger.debug(f"Getting latest allocations in epoch {epoch}")
         alloc_flat = allocations.get_all_by_epoch(epoch, include_zeroes=True)
         columns = sorted([entry.proposal for entry in alloc_flat])
-        alloc_as_dict = [dataclasses.asdict(w) for w in alloc_flat]
+        abstainers = allocations.get_abstainers(epoch)
+        alloc_dicts = [dataclasses.asdict(w) for w in alloc_flat]
+        abstainers_dicts = [
+            {"donor": abst, "amount": None, "proposal": columns[0]}
+            for abst in abstainers
+        ]
 
         headers = {}
         if EpochAllocations.response_mimetype(request) == "text/csv":
@@ -215,9 +220,11 @@ class EpochAllocations(OctantResource):
                 csv_header[col] = None
             data.append(csv_header)
 
-        data += OctantResource.csv_matrix(
-            alloc_as_dict, columns, "proposal", "donor", "amount"
+        votes = OctantResource.csv_matrix(
+            alloc_dicts + abstainers_dicts, columns, "proposal", "donor", "amount"
         )
+
+        data += sorted(votes, key=lambda row: row["donor"])
         return data, 200, headers
 
 
