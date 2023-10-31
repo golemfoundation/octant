@@ -33,7 +33,7 @@ const ProposalsList: FC<ProposalsListProps> = ({ epoch, isFirstArchive }) => {
     });
   }, [epoch, epochsEndTime]);
 
-  if (env.areCurrentEpochsProjectsVisible && epoch === undefined && !isDecisionWindowOpen) {
+  if (env.areCurrentEpochsProjectsVisible === 'true' && epoch === undefined && !isDecisionWindowOpen) {
     return null;
   }
 
