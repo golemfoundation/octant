@@ -23,6 +23,7 @@ import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
 import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
+import useWithdrawals from 'hooks/queries/useWithdrawals';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useAllocationsStore from 'store/allocations/store';
 import triggerToast from 'utils/triggerToast';
@@ -57,6 +58,7 @@ const AllocationView = (): ReactElement => {
   } = useUserAllocations(undefined, { refetchOnMount: true });
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const { refetch: refetchWithdrawals } = useWithdrawals();
   const {
     data: userNonce,
     isFetching: isFetchingUserNonce,
@@ -81,6 +83,7 @@ const AllocationView = (): ReactElement => {
       refetchUserAllocations();
       refetchUserAllocationNonce();
       refetchHistory();
+      refetchWithdrawals();
       setAllocations([
         ...allocations.filter(allocation => {
           const allocationValue = allocationValues.find(({ address }) => address === allocation);
