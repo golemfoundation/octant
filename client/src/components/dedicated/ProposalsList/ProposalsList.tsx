@@ -33,7 +33,9 @@ const ProposalsList: FC<ProposalsListProps> = ({ epoch, isFirstArchive }) => {
     });
   }, [epoch, epochsEndTime]);
 
-  if (env.areCurrentEpochsProjectsVisible === 'true' && epoch === undefined && !isDecisionWindowOpen) {
+  const shouldCurrentProjectsBeHidden = env.areCurrentEpochsProjectsVisible === 'true' && !isDecisionWindowOpen;
+
+  if (shouldCurrentProjectsBeHidden && epoch === undefined) {
     return null;
   }
 
@@ -44,9 +46,9 @@ const ProposalsList: FC<ProposalsListProps> = ({ epoch, isFirstArchive }) => {
     >
       {epoch && (
         <>
-          {env.areCurrentEpochsProjectsVisible !== 'true' && !isFirstArchive && (
+          {shouldCurrentProjectsBeHidden && isFirstArchive ? (
             <div className={styles.divider} />
-          )}
+          ) : null}
           <div className={styles.epochArchive}>
             {t('epochArchive', { epoch })}
             <span className={styles.epochArchiveEnded}>{epochEndedLabel}</span>
