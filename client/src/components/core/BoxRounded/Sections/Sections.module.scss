@@ -4,18 +4,18 @@
   justify-content: space-between;
   height: 7.2rem;
   width: 100%;
-  border-bottom: 0.1rem solid $color-octant-grey4;
+  border-bottom: 0.1rem solid $color-octant-grey3;
 
   &.hasBottomDivider:not(:last-child) {
-    border-bottom: 0.1rem  solid $color-octant-grey2;
+    border-bottom: 0.1rem  solid $color-octant-grey1;
   }
 
   &.isDisabled {
     .label {
-      color: $color-octant-grey3;
+      color: $color-octant-grey2;
     }
     .tooltip > * {
-      stroke: $color-octant-grey3;
+      stroke: $color-octant-grey2;
     }
   }
 

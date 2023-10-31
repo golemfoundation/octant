@@ -36,7 +36,12 @@ export default function getValueFiatToDisplay({
    * and requesting to see its fiat value immediately.
    */
   //
-  if (!cryptoCurrency || !cryptoValues || !cryptoValues[cryptoCurrency][displayCurrency] || !valueCrypto) {
+  if (
+    !cryptoCurrency ||
+    !cryptoValues ||
+    !cryptoValues[cryptoCurrency][displayCurrency] ||
+    !valueCrypto
+  ) {
     return `${prefix}0.00`;
   }
 

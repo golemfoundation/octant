@@ -40,15 +40,15 @@ $thumbSizeMobile: $heightRootMobile;
   }
 
   &:nth-child(2) {
-    background: $color-octant-orange3;
+    background: $color-octant-orange2;
   }
 
   &.isDisabled {
     &:nth-child(1) {
-      background: $color-octant-grey6;
+      background: $color-octant-grey5;
     }
     &:nth-child(2) {
-      background: $color-octant-grey3;
+      background: $color-octant-grey2;
     }
   }
 }
@@ -88,7 +88,7 @@ $thumbSizeMobile: $heightRootMobile;
   justify-content: center;
   width: calc($thumbSizeMobile / 2);
   height: calc($thumbSizeMobile / 2);
-  background: $color-octant-grey12;
+  background: $color-octant-grey8;
   border-radius: 50%;
 
   @media #{$desktop-up} {
