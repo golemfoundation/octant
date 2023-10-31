@@ -17,7 +17,6 @@ export default function useIsDecisionWindowOpen(
         publicClient,
       }),
     {
-      select: () => false,
       ...options,
     },
   );
