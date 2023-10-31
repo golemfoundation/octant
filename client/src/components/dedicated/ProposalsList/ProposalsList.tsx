@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next';
 
 import ProposalsListItem from 'components/dedicated/ProposalsList/ProposalsListItem/ProposalsListItem';
 import ProposalsListItemSkeleton from 'components/dedicated/ProposalsList/ProposalsListItemSkeleton/ProposalsListItemSkeleton';
-import env from 'env';
-import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
 import useEpochsEndTime from 'hooks/subgraph/useEpochsEndTime';
@@ -13,7 +11,11 @@ import useEpochsEndTime from 'hooks/subgraph/useEpochsEndTime';
 import styles from './ProposalsList.module.scss';
 import ProposalsListProps from './types';
 
-const ProposalsList: FC<ProposalsListProps> = ({ epoch, isFirstArchive }) => {
+const ProposalsList: FC<ProposalsListProps> = ({
+  epoch,
+  isFirstArchive,
+  shouldCurrentProjectsBeVisible,
+}) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.proposalsList',
   });
@@ -21,7 +23,6 @@ const ProposalsList: FC<ProposalsListProps> = ({ epoch, isFirstArchive }) => {
   const { data: proposalsAddresses } = useProposalsContract(epoch);
   const { data: proposalsWithRewards } = useProposalsIpfsWithRewards(epoch);
   const { data: epochsEndTime } = useEpochsEndTime();
-  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   const epochEndedLabel = useMemo(() => {
     if (!epoch || !epochsEndTime) {
@@ -33,12 +34,6 @@ const ProposalsList: FC<ProposalsListProps> = ({ epoch, isFirstArchive }) => {
     });
   }, [epoch, epochsEndTime]);
 
-  const shouldCurrentProjectsBeHidden = env.areCurrentEpochsProjectsVisible === 'true' && !isDecisionWindowOpen;
-
-  if (shouldCurrentProjectsBeHidden && epoch === undefined) {
-    return null;
-  }
-
   return (
     <div
       className={styles.list}
@@ -46,9 +41,9 @@ const ProposalsList: FC<ProposalsListProps> = ({ epoch, isFirstArchive }) => {
     >
       {epoch && (
         <>
-          {shouldCurrentProjectsBeHidden && isFirstArchive ? (
+          {!shouldCurrentProjectsBeVisible && isFirstArchive ? null : (
             <div className={styles.divider} />
-          ) : null}
+          )}
           <div className={styles.epochArchive}>
             {t('epochArchive', { epoch })}
             <span className={styles.epochArchiveEnded}>{epochEndedLabel}</span>
