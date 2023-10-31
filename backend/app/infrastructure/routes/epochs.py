@@ -61,3 +61,52 @@ class IndexedEpoch(OctantResource):
             "currentEpoch": current_epoch,
             "indexedEpoch": sg_epochs[-1:][0]["epoch"],
         }
+
+
+epoch_stats_model = api.model(
+    "EpochStats",
+    {
+        "epoch": fields.Integer(required=True, description="Epoch number"),
+        "staking_proceeds": fields.String(
+            required=True, description="ETH proceeds from staking for the given epoch."
+        ),
+        "total_effective_deposit": fields.String(
+            required=True, description="Effectively locked GLMs for the given epoch"
+        ),
+        "total_rewards": fields.String(
+            required=True, description="Total rewards for the given epoch."
+        ),
+        "individual_rewards": fields.String(
+            required=True, description="Total rewards budget allocated to users rewards"
+        ),
+        "total_withdrawals": fields.String(
+            required=True,
+            description="Rewards users decided to withdraw for the given epoch.",
+        ),
+        "patrons_budget": fields.String(
+            required=True, description="Matching fund budget coming from patrons."
+        ),
+        "matched_rewards": fields.String(
+            required=True, description="Total matched rewards for the given epoch."
+        ),
+    },
+)
+
+
+@ns.route("/info/<int:epoch>")
+@ns.doc(
+    description="Returns statistics on a given epoch. Returns data only for historic and currently pending epochs.",
+    params={
+        "epoch": "Epoch number",
+    },
+)
+class EpochStats(OctantResource):
+    @ns.marshal_with(epoch_stats_model)
+    @ns.response(200, "Epoch statistics successfully retrieved.")
+    @ns.response(400, "Epoch snapshot does not exist yet.")
+    def get(self, epoch: int):
+        app.logger.debug(f"Getting epoch stats for epoch: {epoch}")
+        stats = epochs.get_epoch_stats(epoch)
+        app.logger.debug(f"Got: {stats}")
+
+        return stats

@@ -35,6 +35,23 @@ class EpochStatus(JSONWizard):
     is_finalized: bool
 
 
+@dataclass(frozen=True)
+class PendingEpochSnapshot(JSONWizard):
+    epoch: int
+    eth_proceeds: str
+    total_effective_deposit: str
+    total_rewards: str
+    all_individual_rewards: str
+
+
+@dataclass(frozen=True)
+class FinalizedEpochSnapshot(JSONWizard):
+    epoch: int
+    matched_rewards: str
+    withdrawals_merkle_root: str
+    total_withdrawals: str
+
+
 def get_pending_snapshot_status() -> PendingSnapshotStatus:
     current_epoch = epochs.get_current_epoch()
     last_snapshot_epoch = get_last_pending_snapshot()
@@ -173,3 +190,26 @@ def get_epoch_status(epoch: int) -> EpochStatus:
         raise exceptions.InvalidEpoch()
 
     return EpochStatus(is_cur, is_pen, is_fin)
+
+
+def get_pending_snapshot(epoch: Optional[int]) -> PendingEpochSnapshot:
+    snapshot = database.pending_epoch_snapshot.get_by_epoch_num(epoch)
+
+    return PendingEpochSnapshot(
+        epoch=snapshot.epoch,
+        eth_proceeds=snapshot.eth_proceeds,
+        total_effective_deposit=snapshot.total_effective_deposit,
+        total_rewards=snapshot.total_rewards,
+        all_individual_rewards=snapshot.all_individual_rewards,
+    )
+
+
+def get_finalized_snapshot(epoch: Optional[int]) -> FinalizedEpochSnapshot:
+    snapshot = database.finalized_epoch_snapshot.get_by_epoch_num(epoch)
+
+    return FinalizedEpochSnapshot(
+        epoch=snapshot.epoch,
+        matched_rewards=snapshot.matched_rewards,
+        withdrawals_merkle_root=snapshot.withdrawals_merkle_root,
+        total_withdrawals=snapshot.total_withdrawals,
+    )
