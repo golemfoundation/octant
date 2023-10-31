@@ -11,7 +11,7 @@
       left: 0;
       font-size: $font-size-08;
       font-weight: $font-weight-bold;
-      color: $color-octant-grey6;
+      color: $color-octant-grey5;
       z-index: $z-index-2;
     }
 
@@ -19,7 +19,7 @@
       text-align: left;
       font-size: $font-size-10;
       font-weight: $font-weight-bold;
-      color: $color-octant-grey6;
+      color: $color-octant-grey5;
       margin: 0 0 0.5rem 0;
     }
   }
@@ -48,10 +48,10 @@
       background: transparent;
 
       &.isDisabled {
-        color: $color-octant-grey2;
+        color: $color-octant-grey1;
 
         &::placeholder {
-          color: $color-octant-grey2;
+          color: $color-octant-grey1;
         }
       }
     }
@@ -65,18 +65,18 @@
     &simple {
       height: 4.8rem;
       padding: 1.6rem 0 1.6rem 1.6rem;
-      border: 0.1rem solid $color-octant-grey2;
+      border: 0.1rem solid $color-octant-grey1;
       border-radius: $border-radius-04;
       background: $color-white;
       font-size: $font-size-14;
       color: $color-octant-dark;
 
       &.isDisabled {
-        background: $color-octant-grey12;
+        background: $color-octant-grey8;
       }
 
       &::placeholder {
-        color: $color-octant-grey15;
+        color: $color-octant-dark-30;
         font-weight: $font-weight-semibold;
       }
 
@@ -133,11 +133,11 @@
       padding: 0.4rem 0.8rem;
       font-size: $font-size-12;
       color: $color-octant-dark;
-      background: $color-octant-grey2;
+      background: $color-octant-grey1;
       border-radius: $border-radius-04;
 
       &.isDisabled {
-        color: $color-octant-grey6;
+        color: $color-octant-grey5;
       }
     }
   }
