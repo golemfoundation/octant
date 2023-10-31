@@ -34,6 +34,12 @@ def calculate_matched_rewards(
     )
 
 
+def calculate_patrons_rewards(
+    matched_rewards: int, total_rewards: int, all_individual_rewards: int
+) -> int:
+    return matched_rewards - total_rewards + all_individual_rewards
+
+
 def get_matched_rewards_from_epoch(epoch: int) -> int:
     snapshot = finalized_epoch_snapshot.get_by_epoch_num(epoch)
     return int(snapshot.matched_rewards)
