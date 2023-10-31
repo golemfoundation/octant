@@ -15,7 +15,6 @@ export default interface ModalProps {
   isOverflowOnClickDisabled?: boolean;
   onClick?: MouseEventHandler<HTMLDivElement>;
   onClosePanel: () => void;
-  onModalClosed?: () => void;
   onTouchMove?: (e: TouchEvent<HTMLDivElement>) => void;
   onTouchStart?: (e: TouchEvent<HTMLDivElement>) => void;
   overflowClassName?: string;

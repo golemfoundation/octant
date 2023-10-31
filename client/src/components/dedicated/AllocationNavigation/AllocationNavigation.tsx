@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Button from 'components/core/Button/Button';
@@ -10,6 +10,7 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
   areButtonsDisabled,
   currentView,
   isLoading,
+  isPrevResetButtonEnabled = true,
   onAllocate,
   onResetValues,
   setCurrentView,
@@ -38,11 +39,19 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
           label: t('confirm'),
           onClick: onAllocate,
         };
+
+  const isPrevResetButtonDisabled = useMemo(() => {
+    if (isPrevResetButtonEnabled) {
+      return false;
+    }
+    return areButtonsDisabled || isLoading;
+  }, [isPrevResetButtonEnabled, areButtonsDisabled, isLoading]);
+
   return (
     <div className={styles.root}>
       <Button
         className={styles.button}
-        isDisabled={areButtonsDisabled || isLoading}
+        isDisabled={isPrevResetButtonDisabled}
         {...buttonPreviousProps}
       />
       <Button

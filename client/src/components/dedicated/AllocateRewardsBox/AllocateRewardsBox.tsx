@@ -1,6 +1,6 @@
 import cx from 'classnames';
-import { throttle } from 'lodash';
-import React, { FC, useCallback, useState } from 'react';
+import throttle from 'lodash/throttle';
+import React, { FC, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -33,7 +33,7 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const onSetRewardsForProposalsThrottled = useCallback(throttle(onSetRewardsForProposals, 150), [
+  const onSetRewardsForProposalsThrottled = useCallback(throttle(onSetRewardsForProposals, 250), [
     isDisabled,
     individualReward?.toHexString(),
   ]);

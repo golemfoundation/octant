@@ -6,6 +6,7 @@ import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import { cross } from 'svg/misc';
+import setDocumentOverflowModal from 'utils/setDocumentOverflowModal';
 
 import styles from './Modal.module.scss';
 import ModalProps from './types';
@@ -35,6 +36,8 @@ const variantsBottom = {
   },
 };
 
+const durationOfTransition = 0.1;
+
 const Modal: FC<ModalProps> = ({
   bodyClassName,
   headerClassName,
@@ -48,7 +51,6 @@ const Modal: FC<ModalProps> = ({
   isOverflowEnabled = true,
   isFullScreen,
   onClosePanel,
-  onModalClosed,
   onTouchMove,
   onTouchStart,
   onClick,
@@ -66,42 +68,14 @@ const Modal: FC<ModalProps> = ({
     onClosePanel();
   };
 
-  const _onModalClosed = () => {
-    if (onModalClosed) {
-      onModalClosed();
-    }
-    /**
-     * Here, not in the useEffect, since it needs to be done after modal disappear
-     * to remove the move of the body when the scrollbar reappears.
-     */
-    // document.body.style.overflowY = 'scroll';
-    // document.body.style.paddingRight = `0`;
-  };
-
-  useEffect(() => {
-    if (!isOpen) {
-      // TODO OCT-1058 move this logic to _onModalClosed, after Modal unmounts.
-      document.body.style.overflowY = 'scroll';
-      document.body.style.paddingRight = `0`;
-      return;
-    }
-    /**
-     * Overflow hidden is added to prevent scrolling of the body while modal is open.
-     * Scrollbar width is added as padding to offset modal's disappearance.
-     */
-    const documentWidth = document.documentElement.clientWidth;
-    const windowWidth = window.innerWidth;
-    const scrollBarWidth = windowWidth - documentWidth; // scrollbar width
-    document.body.style.paddingRight = `${scrollBarWidth}px`;
-    document.body.style.overflowY = 'hidden';
-  }, [isOpen]);
+  /**
+   * Scrollbar offset is handled in onAnimationComplete.
+   * However, in case Modal is unmounted forcibly, here is the cleanup adding scrollbar back.
+   */
+  useEffect(() => () => setDocumentOverflowModal(false, durationOfTransition * 1000), []);
 
   return (
-    <AnimatePresence
-      onExitComplete={() => {
-        _onModalClosed();
-      }}
-    >
+    <AnimatePresence>
       {isOverflowEnabled && isOpen && (
         <motion.div
           key="modal-overflow"
@@ -128,10 +102,20 @@ const Modal: FC<ModalProps> = ({
           data-test={dataTest}
           exit="showHide"
           initial="showHide"
+          onAnimationComplete={definition => {
+            if (definition === 'showHide') {
+              setDocumentOverflowModal(false, durationOfTransition * 1000);
+            }
+          }}
+          onAnimationStart={definition => {
+            if (definition === 'visible') {
+              setDocumentOverflowModal(true, durationOfTransition * 1000);
+            }
+          }}
           onClick={onClick}
           onTouchMove={onTouchMove}
           onTouchStart={onTouchStart}
-          transition={{ duration: 0.1, ease: 'easeOut' }}
+          transition={{ duration: durationOfTransition, ease: 'easeOut' }}
           variants={isDesktop || variant === 'small' ? variantsCenter : variantsBottom}
         >
           {Image && Image}
