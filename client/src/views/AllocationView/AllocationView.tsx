@@ -207,10 +207,12 @@ const AllocationView = (): ReactElement => {
     }
 
     if (rewardsForProposals.isZero() && !hasZeroRewardsForProposalsBeenReached) {
-      setAllocationValues(allocationValues.map(allocation => ({
-        ...allocation,
-        value: BigNumber.from(0),
-      })));
+      setAllocationValues(
+        allocationValues.map(allocation => ({
+          ...allocation,
+          value: BigNumber.from(0),
+        })),
+      );
       setAllocationsEdited([]);
       setHasZeroRewardsForProposalsBeenReached(true);
       return;
@@ -344,15 +346,15 @@ const AllocationView = (): ReactElement => {
       {currentView === 'edit' ? (
         <Fragment>
           <AllocationTipTiles className={styles.box} />
-          {!isEpoch1 && hasUserIndividualReward && (
+          {!isEpoch1 && (
             <AllocateRewardsBox
               className={styles.box}
-              isDisabled={isLocked}
+              isDisabled={isLocked || !isDecisionWindowOpen}
               /* eslint-disable-next-line @typescript-eslint/naming-convention */
               onUnlock={() => setIsLocked(prev => !prev)}
             />
           )}
-          {areAllocationsAvailableOrAlreadyDone && (
+          {areAllocationsAvailableOrAlreadyDone && isDecisionWindowOpen && (
             <Fragment>
               {allocationsWithRewards!.map((allocation, index) => (
                 <AllocationItem
@@ -369,9 +371,6 @@ const AllocationView = (): ReactElement => {
                 />
               ))}
             </Fragment>
-          )}
-          {!areAllocationsAvailableOrAlreadyDone && !hasUserIndividualReward && (
-            <AllocationEmptyState />
           )}
           <ModalAllocationValuesEdit
             isLimitVisible
