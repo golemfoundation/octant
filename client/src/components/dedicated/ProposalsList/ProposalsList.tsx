@@ -12,9 +12,9 @@ import styles from './ProposalsList.module.scss';
 import ProposalsListProps from './types';
 
 const ProposalsList: FC<ProposalsListProps> = ({
+  areCurrentEpochsProjectsHidden,
   epoch,
   isFirstArchive,
-  shouldCurrentProjectsBeVisible,
 }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.proposalsList',
@@ -41,7 +41,7 @@ const ProposalsList: FC<ProposalsListProps> = ({
     >
       {epoch && (
         <>
-          {!shouldCurrentProjectsBeVisible && isFirstArchive ? null : (
+          {areCurrentEpochsProjectsHidden && isFirstArchive ? null : (
             <div className={styles.divider} />
           )}
           <div className={styles.epochArchive}>
