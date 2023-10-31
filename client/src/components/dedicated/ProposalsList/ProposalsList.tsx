@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 
 import ProposalsListItem from 'components/dedicated/ProposalsList/ProposalsListItem/ProposalsListItem';
 import ProposalsListItemSkeleton from 'components/dedicated/ProposalsList/ProposalsListItemSkeleton/ProposalsListItemSkeleton';
+import env from 'env';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
 import useEpochsEndTime from 'hooks/subgraph/useEpochsEndTime';
@@ -11,7 +13,7 @@ import useEpochsEndTime from 'hooks/subgraph/useEpochsEndTime';
 import styles from './ProposalsList.module.scss';
 import ProposalsListProps from './types';
 
-const ProposalsList: FC<ProposalsListProps> = ({ epoch }) => {
+const ProposalsList: FC<ProposalsListProps> = ({ epoch, isFirstArchive }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.proposalsList',
   });
@@ -19,6 +21,7 @@ const ProposalsList: FC<ProposalsListProps> = ({ epoch }) => {
   const { data: proposalsAddresses } = useProposalsContract(epoch);
   const { data: proposalsWithRewards } = useProposalsIpfsWithRewards(epoch);
   const { data: epochsEndTime } = useEpochsEndTime();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   const epochEndedLabel = useMemo(() => {
     if (!epoch || !epochsEndTime) {
@@ -30,6 +33,10 @@ const ProposalsList: FC<ProposalsListProps> = ({ epoch }) => {
     });
   }, [epoch, epochsEndTime]);
 
+  if (env.areCurrentEpochsProjectsVisible && epoch === undefined && !isDecisionWindowOpen) {
+    return null;
+  }
+
   return (
     <div
       className={styles.list}
@@ -37,7 +44,9 @@ const ProposalsList: FC<ProposalsListProps> = ({ epoch }) => {
     >
       {epoch && (
         <>
-          <div className={styles.divider} />
+          {env.areCurrentEpochsProjectsVisible !== 'true' && !isFirstArchive && (
+            <div className={styles.divider} />
+          )}
           <div className={styles.epochArchive}>
             {t('epochArchive', { epoch })}
             <span className={styles.epochArchiveEnded}>{epochEndedLabel}</span>

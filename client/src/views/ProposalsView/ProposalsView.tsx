@@ -67,8 +67,8 @@ const ProposalsView = (): ReactElement => {
         pageStart={0}
         useWindow
       >
-        {archivedEpochs.slice(0, loadedArchivedEpochsNumber).map(epoch => (
-          <ProposalsList key={epoch} epoch={epoch} />
+        {archivedEpochs.slice(0, loadedArchivedEpochsNumber).map((epoch, index) => (
+          <ProposalsList key={epoch} epoch={epoch} isFirstArchive={index === 0} />
         ))}
       </InfiniteScroll>
     </MainLayout>

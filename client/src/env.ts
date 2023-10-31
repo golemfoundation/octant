@@ -4,6 +4,7 @@ export const envsAllowedToBeEmpty = ['VITE_JSON_RPC_ENDPOINT'];
 
 export const envViteKeys: EnvViteKeys = {
   alchemyId: 'VITE_ALCHEMY_ID',
+  areCurrentEpochsProjectsVisible: 'VITE_ARE_CURRENT_EPOCHS_PROJECTS_VISIBLE',
   contractDepositsAddress: 'VITE_DEPOSITS_ADDRESS',
   contractEpochsAddress: 'VITE_EPOCHS_ADDRESS',
   contractGlmAddress: 'VITE_GLM_ADDRESS',
@@ -20,8 +21,12 @@ export const envViteKeys: EnvViteKeys = {
 };
 
 const env: Env = {
+  
   // @ts-expect-error TS does not understand the way vite imports envs.
-  alchemyId: import.meta.env[envViteKeys.alchemyId],
+alchemyId: import.meta.env[envViteKeys.alchemyId],
+  
+  // @ts-expect-error TS does not understand the way vite imports envs.
+areCurrentEpochsProjectsVisible: import.meta.env[envViteKeys.areCurrentEpochsProjectsVisible],
   // @ts-expect-error TS does not understand the way vite imports envs.
   contractDepositsAddress: import.meta.env[envViteKeys.contractDepositsAddress],
   // @ts-expect-error TS does not understand the way vite imports envs.
