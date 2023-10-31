@@ -1,3 +1,4 @@
+import { AllocationItemWithAllocations } from 'components/dedicated/AllocationItem/types';
 import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
 
 const compareNames = (nameA: string | undefined, nameB: string | undefined) => {
@@ -14,8 +15,8 @@ const compareNames = (nameA: string | undefined, nameB: string | undefined) => {
 };
 
 export default function getSortedElementsByTotalValueOfAllocationsAndAlphabetical(
-  elements: ProposalIpfsWithRewards[],
-): ProposalIpfsWithRewards[] {
+  elements: (ProposalIpfsWithRewards | AllocationItemWithAllocations)[],
+): (ProposalIpfsWithRewards | AllocationItemWithAllocations)[] {
   return elements.sort(
     (
       { totalValueOfAllocations: totalValueOfAllocationsA, name: nameA },

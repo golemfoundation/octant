@@ -4,6 +4,7 @@ import { parseUnits } from 'ethers/lib/utils';
 import { AllocationItemWithAllocations } from 'components/dedicated/AllocationItem/types';
 import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
 import { UserAllocationElement } from 'hooks/queries/useUserAllocations';
+import getSortedElementsByTotalValueOfAllocationsAndAlphabetical from 'utils/getSortedElementsByTotalValueOfAllocationsAndAlphabetical';
 
 import { AllocationValues } from './types';
 
@@ -141,7 +142,7 @@ export function getAllocationsWithRewards({
     proposalsIpfsWithRewards &&
     proposalsIpfsWithRewards.length > 0 &&
     areAllocationsAvailableOrAlreadyDone;
-  const allocationsWithRewards = isDataDefined
+  let allocationsWithRewards = isDataDefined
     ? allocationValues!.map(allocationValue => {
         const proposal = proposalsIpfsWithRewards.find(
           ({ address }) => address === allocationValue.address,
@@ -158,18 +159,21 @@ export function getAllocationsWithRewards({
       })
     : [];
 
-  return allocationsWithRewards.sort(({ name: nameA }, { name: nameB }) => {
-    if (!nameA || !nameB) {
-      return 0;
-    }
-    if (nameA < nameB) {
-      return -1;
-    }
-    if (nameA > nameB) {
+  allocationsWithRewards.sort(({ value: valueA }, { value: valueB }) => {
+    if (valueA.lt(valueB)) {
       return 1;
+    }
+    if (valueA.gt(valueB)) {
+      return -1;
     }
     return 0;
   });
+
+  allocationsWithRewards = getSortedElementsByTotalValueOfAllocationsAndAlphabetical(
+    allocationsWithRewards as AllocationItemWithAllocations[],
+  ) as AllocationItemWithAllocations[];
+
+  return allocationsWithRewards;
 }
 
 export function getRestToDistribute({

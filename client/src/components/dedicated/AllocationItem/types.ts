@@ -2,16 +2,13 @@ import { BigNumber } from 'ethers';
 
 import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
 
-export interface AllocationItemWithAllocations
-  extends Pick<
-    ProposalIpfsWithRewards,
-    'address' | 'isLoadingError' | 'name' | 'profileImageSmall'
-  > {
+export interface AllocationItemWithAllocations extends ProposalIpfsWithRewards {
   isAllocatedTo: boolean;
   value: BigNumber;
 }
 
-export default interface AllocationItemProps extends AllocationItemWithAllocations {
+export default interface AllocationItemProps
+  extends Omit<AllocationItemWithAllocations, 'totalValueOfAllocations' | 'percentage'> {
   className?: string;
   isDisabled: boolean;
   isLocked: boolean;
