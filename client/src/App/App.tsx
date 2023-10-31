@@ -1,5 +1,4 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
 import isEqual from 'lodash/isEqual';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { useAccount, useNetwork } from 'wagmi';
@@ -8,14 +7,13 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
-import { ALLOCATION_ITEMS_KEY, ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
+import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
 import useAllProposals from 'hooks/queries/useAllProposals';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
@@ -45,7 +43,6 @@ const App = (): ReactElement => {
     setAllocations,
     addAllocations,
     isAllocationsInitialized,
-    setRewardsForProposals,
     reset: resetAllocationsStore,
   } = useAllocationsStore(state => ({
     addAllocations: state.addAllocations,
@@ -53,7 +50,6 @@ const App = (): ReactElement => {
     isAllocationsInitialized: state.meta.isInitialized,
     reset: state.reset,
     setAllocations: state.setAllocations,
-    setRewardsForProposals: state.setRewardsForProposals,
   }));
   const {
     setValuesFromLocalStorage: setValuesFromLocalStorageTips,
@@ -105,7 +101,6 @@ const App = (): ReactElement => {
   const { data: proposals } = useProposalsContract();
   const { isFetching: isFetchingAllProposals } = useAllProposals();
   const { data: userAllocations } = useUserAllocations();
-  const { data: individualReward } = useIndividualReward();
   const { isFetching: isFetchingPatronModeStatus } = useIsPatronMode();
   const [isFlushRequired, setIsFlushRequired] = useState(false);
   const isProjectAdminMode = useIsProjectAdminMode();
@@ -295,34 +290,6 @@ const App = (): ReactElement => {
       addAllocations(userAllocationsAddresses);
     }
   }, [isAllocationsInitialized, isConnected, userAllocations, allocations, addAllocations]);
-
-  useEffect(() => {
-    /**
-     * This hook adds rewardsForProposals to the store.
-     */
-    if (!individualReward || !userAllocations) {
-      return;
-    }
-
-    const localStorageRewardsForProposals = BigNumber.from(
-      JSON.parse(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROPOSALS) || 'null'),
-    );
-    if (userAllocations.elements.length > 0) {
-      const userAllocationsSum = userAllocations.elements.reduce(
-        (acc, curr) => acc.add(curr.value),
-        BigNumber.from(0),
-      );
-      setRewardsForProposals(userAllocationsSum);
-      return;
-    }
-    setRewardsForProposals(
-      localStorageRewardsForProposals.gt(individualReward)
-        ? BigNumber.from(0)
-        : localStorageRewardsForProposals,
-    );
-    // .toHexString(), because React can't compare objects as deps in hooks, causing infinite loop.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [individualReward?.toHexString(), userAllocations?.elements.length]);
 
   useEffect(() => {
     if (!areOctantTipsAlwaysVisible) {

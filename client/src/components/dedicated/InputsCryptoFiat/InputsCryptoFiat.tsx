@@ -108,6 +108,7 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({
         onChange={e => onCryptoValueChange(e.target.value)}
         onClear={handleClear}
         onFocus={() => setIsCryptoInputFocused(true)}
+        shouldAutoFocusAndSelect={isCryptoMainValueDisplay}
       />
       <InputText
         autocomplete="off"
@@ -120,9 +121,10 @@ const InputsCryptoFiat: FC<InputsCryptoFiatProps> = ({
         onClear={handleClear}
         onFocus={() => setIsFiatInputFocused(true)}
         placeholder="0.00"
-        suffix={displayCurrency?.toUpperCase() || 'USD'}
+        suffix={displayCurrency.toUpperCase()}
         value={fiat}
         {...inputFiatPropsLabel}
+        shouldAutoFocusAndSelect={!isCryptoMainValueDisplay}
       />
     </div>
   );

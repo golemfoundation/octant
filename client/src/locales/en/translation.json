@@ -14,7 +14,10 @@
         "loadingEncounteredAnError": "Loading of history of operations encountered a problem. Please try again."
       },
       "userRejectedTransaction": "User rejected transaction",
-      "default": "Oops, something went wrong there. Please reload the app and try again."
+      "default": {
+        "title": "Sorry, something went wrong there",
+        "message": "Please reload the app and try again"
+      }
     }
   },
   "common": {
@@ -60,7 +63,10 @@
       "rewardsCalculator": {
         "enterGLMAmount": "Enter a GLM amount",
         "lockFor": "Lock for",
-        "estimatedRewards": "Estimated rewards"
+        "estimatedRewards": "Estimated rewards",
+        "errors": {
+          "valueCryptoTooBig": "That isn’t a valid amount"
+        }
       },
       "allocationEmptyState": {
         "text": "Add some projects or lock GLM tokens to prepare for the next allocation period",
@@ -387,7 +393,8 @@
       "cryptoMainValueDisplay": "Use crypto as main value display",
       "alwaysShowOnboarding": "Always show onboarding",
       "alwaysShowOctantTips": "Always show tips",
-      "enablePatronMode": "Enable patron mode"
+      "enablePatronMode": "Enable patron mode",
+      "patronModeTooltip":  "Patron mode is for token holders who want to support Octant. It disables allocation to yourself or projects. All rewards go directly to the matching fund with no action required by the patron."
     },
     "syncStatus": {
       "information": "We're synchronizing things to prepare the<br/>next epoch, so the app will be unavailable<br/>for a little while. Please check back soon."

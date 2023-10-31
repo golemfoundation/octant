@@ -41,3 +41,9 @@ body {
   font-size: $font-size-16;
   overflow-y: scroll;
 }
+
+.isScrollbarOffsetEnabled {
+  @media #{$desktop-up} {
+    padding-right: 0 !important;
+  }
+}
