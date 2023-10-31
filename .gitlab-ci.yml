@@ -28,7 +28,7 @@ default:
     name: acidrain/python-poetry:3.11-1.5.1
     pull_policy: if-not-present
   node:
-    name: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:latest
+    name: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:5dc8b447
     pull_policy: if-not-present
   kaniko:
     name: gcr.io/kaniko-project/executor:$KANIKO_VERSION-debug
@@ -38,7 +38,7 @@ default:
     name: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:5dc8b447
     pull_policy: if-not-present
   synpress:
-    name: registry.gitlab.com/golemfoundation/devops/container-builder/octant/synpress-arch:08da1d10
+    name: registry.gitlab.com/golemfoundation/devops/container-builder/octant/synpress-arch:5dc8b447
     pull_policy: if-not-present
   alpine_git:
     name: alpine/git

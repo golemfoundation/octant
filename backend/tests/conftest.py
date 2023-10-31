@@ -1,7 +1,7 @@
 from decimal import Decimal
 import json
 from random import randint
-from typing import Optional, List
+from typing import List, Mapping, Optional
 from unittest.mock import MagicMock, Mock
 
 import pytest
@@ -58,6 +58,8 @@ MOCK_MATCHED_REWARDS = MagicMock(spec=calculate_matched_rewards)
 
 DEPLOYER_PRIV = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 ALICE = "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
+BOB = "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a"
+CAROL = "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6"
 
 
 def pytest_addoption(parser):
@@ -126,11 +128,9 @@ class UserAccount:
 
     def transfer(self, account: "UserAccount", value: int):
         glm.transfer(self._account, account.address, w3.to_wei(value, "ether"))
-        glm.approve(
-            account._account, deposits.contract.address, w3.to_wei(value, "ether")
-        )
 
     def lock(self, value: int):
+        glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
         deposits.lock(self._account, w3.to_wei(value, "ether"))
 
     @property
@@ -144,8 +144,18 @@ def deployer() -> UserAccount:
 
 
 @pytest.fixture
-def account() -> UserAccount:
+def ua_alice() -> UserAccount:
     return UserAccount(CryptoAccount.from_key(ALICE))
+
+
+@pytest.fixture
+def ua_bob() -> UserAccount:
+    return UserAccount(CryptoAccount.from_key(BOB))
+
+
+@pytest.fixture
+def ua_carol() -> UserAccount:
+    return UserAccount(CryptoAccount.from_key(CAROL))
 
 
 class Client:
