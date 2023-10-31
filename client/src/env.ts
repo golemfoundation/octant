@@ -21,12 +21,10 @@ export const envViteKeys: EnvViteKeys = {
 };
 
 const env: Env = {
-  
   // @ts-expect-error TS does not understand the way vite imports envs.
-alchemyId: import.meta.env[envViteKeys.alchemyId],
-  
+  alchemyId: import.meta.env[envViteKeys.alchemyId],
   // @ts-expect-error TS does not understand the way vite imports envs.
-areCurrentEpochsProjectsVisible: import.meta.env[envViteKeys.areCurrentEpochsProjectsVisible],
+  areCurrentEpochsProjectsVisible: import.meta.env[envViteKeys.areCurrentEpochsProjectsVisible],
   // @ts-expect-error TS does not understand the way vite imports envs.
   contractDepositsAddress: import.meta.env[envViteKeys.contractDepositsAddress],
   // @ts-expect-error TS does not understand the way vite imports envs.
