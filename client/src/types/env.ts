@@ -1,6 +1,6 @@
 export type EnvViteKeys = {
   alchemyId: 'VITE_ALCHEMY_ID';
-  areCurrentEpochsProjectsHidden: 'VITE_ARE_CURRENT_EPOCHS_PROJECTS_HIDDEN';
+  areCurrentEpochsProjectsHiddenOutsideAllocationWindow: 'VITE_ARE_CURRENT_EPOCHS_PROJECTS_HIDDEN_OUTSIDE_ALLOCATION_WINDOW';
   contractDepositsAddress: 'VITE_DEPOSITS_ADDRESS';
   contractEpochsAddress: 'VITE_EPOCHS_ADDRESS';
   contractGlmAddress: 'VITE_GLM_ADDRESS';
@@ -18,7 +18,7 @@ export type EnvViteKeys = {
 
 export type Env = {
   alchemyId: string;
-  areCurrentEpochsProjectsHidden: string;
+  areCurrentEpochsProjectsHiddenOutsideAllocationWindow: string;
   contractDepositsAddress: string;
   contractEpochsAddress: string;
   contractGlmAddress: string;

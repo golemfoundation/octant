@@ -12,7 +12,7 @@ import styles from './ProposalsList.module.scss';
 import ProposalsListProps from './types';
 
 const ProposalsList: FC<ProposalsListProps> = ({
-  areCurrentEpochsProjectsHidden,
+  areCurrentEpochsProjectsHiddenOutsideAllocationWindow,
   epoch,
   isFirstArchive,
 }) => {
@@ -41,7 +41,7 @@ const ProposalsList: FC<ProposalsListProps> = ({
     >
       {epoch && (
         <>
-          {areCurrentEpochsProjectsHidden && isFirstArchive ? null : (
+          {areCurrentEpochsProjectsHiddenOutsideAllocationWindow && isFirstArchive ? null : (
             <div className={styles.divider} />
           )}
           <div className={styles.epochArchive}>

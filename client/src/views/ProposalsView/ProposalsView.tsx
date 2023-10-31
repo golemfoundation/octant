@@ -43,8 +43,8 @@ const ProposalsView = (): ReactElement => {
 
   const onLoadNextEpochArchive = () => setLoadedArchivedEpochsNumber(prev => prev + 1);
 
-  const areCurrentEpochsProjectsHidden =
-    env.areCurrentEpochsProjectsHidden === 'true' && !isDecisionWindowOpen;
+  const areCurrentEpochsProjectsHiddenOutsideAllocationWindow =
+    env.areCurrentEpochsProjectsHiddenOutsideAllocationWindow === 'true' && !isDecisionWindowOpen;
 
   return (
     <MainLayout dataTest="ProposalsView">
@@ -58,8 +58,12 @@ const ProposalsView = (): ReactElement => {
         text={t('tip.text')}
         title={t('tip.title')}
       />
-      {!areCurrentEpochsProjectsHidden && (
-        <ProposalsList areCurrentEpochsProjectsHidden={areCurrentEpochsProjectsHidden} />
+      {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
+        <ProposalsList
+          areCurrentEpochsProjectsHiddenOutsideAllocationWindow={
+            areCurrentEpochsProjectsHiddenOutsideAllocationWindow
+          }
+        />
       )}
       <InfiniteScroll
         hasMore={loadedArchivedEpochsNumber !== lastArchivedEpochNumber}
@@ -76,7 +80,9 @@ const ProposalsView = (): ReactElement => {
         {archivedEpochs.slice(0, loadedArchivedEpochsNumber).map((epoch, index) => (
           <ProposalsList
             key={epoch}
-            areCurrentEpochsProjectsHidden={areCurrentEpochsProjectsHidden}
+            areCurrentEpochsProjectsHiddenOutsideAllocationWindow={
+              areCurrentEpochsProjectsHiddenOutsideAllocationWindow
+            }
             epoch={epoch}
             isFirstArchive={index === 0}
           />
