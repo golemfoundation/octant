@@ -201,7 +201,7 @@ class EpochAllocations(OctantResource):
     def get(self, epoch: int):
         data = []
         app.logger.debug(f"Getting latest allocations in epoch {epoch}")
-        alloc_flat = allocations.get_all_by_epoch(epoch)
+        alloc_flat = allocations.get_all_by_epoch(epoch, include_zeroes=True)
         columns = sorted([entry.proposal for entry in alloc_flat])
         alloc_as_dict = [dataclasses.asdict(w) for w in alloc_flat]
 

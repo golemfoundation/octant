@@ -90,7 +90,9 @@ def get_all_by_proposal_and_epoch(
     ]
 
 
-def get_all_by_epoch(epoch: int) -> List[EpochAllocationRecord]:
+def get_all_by_epoch(
+    epoch: int, include_zeroes: bool = False
+) -> List[EpochAllocationRecord]:
     if epoch > epoch_snapshots.get_last_pending_snapshot():
         raise exceptions.EpochAllocationPeriodNotStartedYet(epoch)
 
@@ -99,7 +101,7 @@ def get_all_by_epoch(epoch: int) -> List[EpochAllocationRecord]:
     return [
         EpochAllocationRecord(a.user.address, a.amount, a.proposal_address)
         for a in allocations
-        if int(a.amount) != 0
+        if int(a.amount) != 0 or include_zeroes
     ]
 
 
