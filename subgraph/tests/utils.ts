@@ -1,7 +1,8 @@
 import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
-import { newMockEvent } from 'matchstick-as';
+import { newMockCallWithIO, newMockEvent } from 'matchstick-as';
 
 import { Locked as LockedEvent, Unlocked as UnlockedEvent } from '../generated/Deposits/Deposits';
+import { SetProposalAddressesCall } from '../generated/Proposals/Proposals';
 import { MerkleRootSet, Withdrawn } from '../generated/Vault/Vault';
 
 export const GLM_ADDRESS = Address.fromString('0x7DD9c5Cba05E151C895FDe1CF355C9A1D5DA6429');
@@ -90,6 +91,27 @@ export function createMerkleRootSetEvent(epoch: i32, merkleRoot: string): Merkle
   );
 
   return merkleRootEvent;
+}
+
+export function createSetProposalAddressesCall(
+  // eslint-disable-next-line no-undef
+  epochNumber: i32,
+  epochProjects: Address[],
+): SetProposalAddressesCall {
+  // eslint-disable-next-line no-undef
+  const call = changetype<SetProposalAddressesCall>(
+    newMockCallWithIO(
+      [
+        new ethereum.EventParam('_epoch', ethereum.Value.fromI32(epochNumber)),
+        new ethereum.EventParam(
+          '_proposalAddresses',
+          ethereum.Value.fromAddressArray(epochProjects),
+        ),
+      ],
+      [],
+    ),
+  );
+  return call;
 }
 
 export function createBlockEvent(): ethereum.Block {
