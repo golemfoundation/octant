@@ -296,8 +296,17 @@ const App = (): ReactElement => {
     /**
      * This hook adds userAllocations to the store.
      * This needs to be done after store is populated with values from localStorage.
+     *
+     * When areCurrentEpochsProjectsHiddenOutsideAllocationWindow === true we don't add
+     * userAllocations to the store. AllocationView is empty, user can't add projects to it,
+     * Navbar badge is not visible.
      */
-    if (!userAllocations || !isAllocationsInitialized) {
+    if (
+      !userAllocations ||
+      !isAllocationsInitialized ||
+      isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow ||
+      areCurrentEpochsProjectsHiddenOutsideAllocationWindow
+    ) {
       return;
     }
     const userAllocationsAddresses = userAllocations.elements.map(
@@ -312,7 +321,15 @@ const App = (): ReactElement => {
     ) {
       addAllocations(userAllocationsAddresses);
     }
-  }, [isAllocationsInitialized, isConnected, userAllocations, allocations, addAllocations]);
+  }, [
+    addAllocations,
+    allocations,
+    areCurrentEpochsProjectsHiddenOutsideAllocationWindow,
+    isAllocationsInitialized,
+    isConnected,
+    isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow,
+    userAllocations,
+  ]);
 
   useEffect(() => {
     if (!areOctantTipsAlwaysVisible) {
