@@ -68,3 +68,24 @@ dataSources:
         - event: MerkleRootSet(uint256,bytes32)
           handler: handleMerkleRootSet
       file: ./generated/vault.ts
+  - kind: ethereum
+    name: Proposals
+    network: localhost
+    source:
+      abi: Proposals
+      address: "0x91B904e8B0F9133D0766059065C2A1F6c6CAfA27"
+      startBlock: 1
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - EpochProjects
+        - AllEpochsProjects
+      abis:
+        - name: Proposals
+          file: ./abis/Proposals.json
+      callHandlers:
+        - function: setProposalAddresses(uint256,address[])
+          handler: handleSetProposalAddresses
+      file: ./src/proposals.ts
