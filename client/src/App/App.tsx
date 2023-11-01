@@ -9,6 +9,7 @@ import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
+import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
 import useAllProposals from 'hooks/queries/useAllProposals';
@@ -102,6 +103,10 @@ const App = (): ReactElement => {
   const { isFetching: isFetchingAllProposals } = useAllProposals();
   const { data: userAllocations } = useUserAllocations();
   const { isFetching: isFetchingPatronModeStatus } = useIsPatronMode();
+  const {
+    data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow,
+    isLoading: isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow,
+  } = useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow();
   const [isFlushRequired, setIsFlushRequired] = useState(false);
   const isProjectAdminMode = useIsProjectAdminMode();
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
@@ -247,7 +252,17 @@ const App = (): ReactElement => {
      * This hook validates allocations in localStorage
      * and populates store with them or sets empty array.
      */
-    if (!proposals || proposals.length === 0 || isAllocationsInitialized) {
+    if (
+      !proposals ||
+      proposals.length === 0 ||
+      isAllocationsInitialized ||
+      isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow
+    ) {
+      return;
+    }
+
+    if (areCurrentEpochsProjectsHiddenOutsideAllocationWindow) {
+      setAllocations([]);
       return;
     }
 
@@ -267,7 +282,15 @@ const App = (): ReactElement => {
     if (validatedProposalsInLocalStorage) {
       setAllocations(validatedProposalsInLocalStorage);
     }
-  }, [isAllocationsInitialized, allocations, isConnected, proposals, setAllocations]);
+  }, [
+    allocations,
+    areCurrentEpochsProjectsHiddenOutsideAllocationWindow,
+    isAllocationsInitialized,
+    isConnected,
+    isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow,
+    proposals,
+    setAllocations,
+  ]);
 
   useEffect(() => {
     /**

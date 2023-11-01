@@ -1,5 +1,5 @@
 export default interface ProposalsListProps {
-  areCurrentEpochsProjectsHiddenOutsideAllocationWindow: boolean;
+  areCurrentEpochsProjectsHiddenOutsideAllocationWindow?: boolean;
   epoch?: number;
   isFirstArchive?: boolean;
 }

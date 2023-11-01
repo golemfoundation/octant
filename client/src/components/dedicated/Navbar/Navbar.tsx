@@ -6,6 +6,7 @@ import { useAccount } from 'wagmi';
 import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
 import { ELEMENT_POSITION_FIXED_CLASSNAME } from 'constants/css';
+import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useUserTOS from 'hooks/queries/useUserTOS';
@@ -26,6 +27,8 @@ const Navbar: FC<NavbarProps> = ({ navigationBottomSuffix, tabs }) => {
   const { isDesktop } = useMediaQuery();
   const [scope, animate] = useAnimate();
   const isProjectAdminMode = useIsProjectAdminMode();
+  const { data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow } =
+    useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow();
 
   const areTabsDisabled = isConnected && !isUserTOSAccepted;
 
@@ -65,15 +68,17 @@ const Navbar: FC<NavbarProps> = ({ navigationBottomSuffix, tabs }) => {
                 to={to}
                 variant="iconVertical"
               >
-                {to === ROOT_ROUTES.allocation.absolute && allocations.length > 0 && (
-                  <div
-                    ref={scope}
-                    className={styles.numberOfAllocations}
-                    data-test="Navbar__numberOfAllocations"
-                  >
-                    {allocations.length}
-                  </div>
-                )}
+                {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow &&
+                  to === ROOT_ROUTES.allocation.absolute &&
+                  allocations.length > 0 && (
+                    <div
+                      ref={scope}
+                      className={styles.numberOfAllocations}
+                      data-test="Navbar__numberOfAllocations"
+                    >
+                      {allocations.length}
+                    </div>
+                  )}
               </Button>
             ))}
           </div>

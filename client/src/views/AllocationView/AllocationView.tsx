@@ -207,10 +207,12 @@ const AllocationView = (): ReactElement => {
     }
 
     if (rewardsForProposals.isZero() && !hasZeroRewardsForProposalsBeenReached) {
-      setAllocationValues(allocationValues.map(allocation => ({
-        ...allocation,
-        value: BigNumber.from(0),
-      })));
+      setAllocationValues(
+        allocationValues.map(allocation => ({
+          ...allocation,
+          value: BigNumber.from(0),
+        })),
+      );
       setAllocationsEdited([]);
       setHasZeroRewardsForProposalsBeenReached(true);
       return;
@@ -370,9 +372,8 @@ const AllocationView = (): ReactElement => {
               ))}
             </Fragment>
           )}
-          {!areAllocationsAvailableOrAlreadyDone && !hasUserIndividualReward && (
-            <AllocationEmptyState />
-          )}
+          {((!areAllocationsAvailableOrAlreadyDone && !hasUserIndividualReward) ||
+            !isDecisionWindowOpen) && <AllocationEmptyState />}
           <ModalAllocationValuesEdit
             isLimitVisible
             isManuallyEdited={
