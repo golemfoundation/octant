@@ -261,6 +261,11 @@ const App = (): ReactElement => {
       return;
     }
 
+    /**
+     * When areCurrentEpochsProjectsHiddenOutsideAllocationWindow we set empty array.
+     * We remove whatever user has in localStorage.
+     * They can't add nor remove elements from allocate, they should not have anything there.
+     */
     if (areCurrentEpochsProjectsHiddenOutsideAllocationWindow) {
       setAllocations([]);
       return;
