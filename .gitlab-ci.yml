@@ -370,18 +370,18 @@ Build images:
 #    on_stop: Destroy E2E App
 #    auto_stop_in: 6 hours
 
-Run MR App:
-  extends:
-    - .deploy_anvil
-  rules:
-    - !reference [.rules, on_mr_manual ]
-  variables:
-    ENV_TYPE: "mr"
-  environment:
-    name: mr/$CI_MERGE_REQUEST_IID
-    url: https://mr-$CI_MERGE_REQUEST_IID-client.octant.wildland.dev
-    deployment_tier: development
-    on_stop: Destroy MR App
+#Run MR App:
+#  extends:
+#    - .deploy_anvil
+#  rules:
+#    - !reference [.rules, on_mr_manual ]
+#  variables:
+#    ENV_TYPE: "mr"
+#  environment:
+#    name: mr/$CI_MERGE_REQUEST_IID
+#    url: https://mr-$CI_MERGE_REQUEST_IID-client.octant.wildland.dev
+#    deployment_tier: development
+#    on_stop: Destroy MR App
 
 #E2E contracts:
 #  extends:
