@@ -12,7 +12,7 @@
 .titleSuffix {
   @include ethereumAddress();
   font-size: $font-size-12;
-  color: $color-octant-grey6;
+  color: $color-octant-grey5;
 }
 
 .walletCurrency {

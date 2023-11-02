@@ -21,4 +21,4 @@ from app import create_app  # noqa
 app = create_app()
 
 if __name__ == "__main__":
-    eventlet.wsgi.server(eventlet.listen(("0.0.0.0", 5000)), app)
+    eventlet.wsgi.server(eventlet.listen(("0.0.0.0", 5000)), app, log=app.logger)

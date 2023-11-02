@@ -6,7 +6,7 @@ from app.controllers.snapshots import (
     finalized_snapshot_status,
     snapshot_finalized_epoch,
 )
-from app.core.user.rewards import get_claimed_rewards
+from app.core.user.rewards import get_all_claimed_rewards
 from tests.conftest import (
     allocate_user_rewards,
     TOTAL_REWARDS,
@@ -54,7 +54,7 @@ def test_finalized_epoch_snapshot_with_rewards(
     assert rewards[3].matched is None
 
     snapshot = database.finalized_epoch_snapshot.get_by_epoch_num(result)
-    _, claimed_rewards_sum = get_claimed_rewards(result)
+    _, claimed_rewards_sum = get_all_claimed_rewards(result)
     rewards_back_to_gf = (
         ALL_INDIVIDUAL_REWARDS
         - claimed_rewards_sum
@@ -103,7 +103,7 @@ def test_finalized_epoch_snapshot_with_patrons_enabled(
     assert rewards[3].matched is None
 
     snapshot = database.finalized_epoch_snapshot.get_by_epoch_num(result)
-    _, claimed_rewards_sum = get_claimed_rewards(result)
+    _, claimed_rewards_sum = get_all_claimed_rewards(result)
     rewards_back_to_gf = (
         ALL_INDIVIDUAL_REWARDS
         - claimed_rewards_sum

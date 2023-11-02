@@ -2,7 +2,7 @@ import logging
 
 from logging.config import dictConfig
 
-from gql.transport.aiohttp import log as gql_logger
+from gql.transport.requests import log as gql_logger
 
 
 class BelowFilter(logging.Filter):

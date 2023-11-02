@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import AllocateRewardsBox from 'components/dedicated/AllocateRewardsBox/AllocateRewardsBox';
-import AllocationEmptyState from 'components/dedicated/AllocationEmptyState/AllocationEmptyState';
 import AllocationItem from 'components/dedicated/AllocationItem/AllocationItem';
 import AllocationNavigation from 'components/dedicated/AllocationNavigation/AllocationNavigation';
 import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
@@ -24,6 +23,7 @@ import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
 import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
+import useWithdrawals from 'hooks/queries/useWithdrawals';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import useAllocationsStore from 'store/allocations/store';
 import triggerToast from 'utils/triggerToast';
@@ -65,6 +65,7 @@ const AllocationView = (): ReactElement => {
   } = useUserAllocations(undefined, { refetchOnMount: true });
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const { refetch: refetchWithdrawals } = useWithdrawals();
   const {
     data: userNonce,
     isFetching: isFetchingUserNonce,
@@ -91,6 +92,7 @@ const AllocationView = (): ReactElement => {
       refetchUserAllocations();
       refetchUserAllocationNonce();
       refetchHistory();
+      refetchWithdrawals();
       setAllocations([
         ...allocations.filter(allocation => {
           const allocationValue = allocationValues.find(({ address }) => address === allocation);
@@ -346,12 +348,12 @@ const AllocationView = (): ReactElement => {
       {currentView === 'edit' ? (
         <Fragment>
           <AllocationTipTiles className={styles.box} />
-          {!isEpoch1 && hasUserIndividualReward && (
+          {!isEpoch1 && (
             <AllocateRewardsBox
               className={styles.box}
-              isDisabled={isLocked}
+              isDisabled={isLocked || !isDecisionWindowOpen || !hasUserIndividualReward}
               /* eslint-disable-next-line @typescript-eslint/naming-convention */
-              onUnlock={() => setIsLocked(prev => !prev)}
+              onUnlock={isDecisionWindowOpen ? () => setIsLocked(prev => !prev) : () => {}}
             />
           )}
           {areAllocationsAvailableOrAlreadyDone && (
@@ -373,9 +375,6 @@ const AllocationView = (): ReactElement => {
                 />
               ))}
             </Fragment>
-          )}
-          {!areAllocationsAvailableOrAlreadyDone && !hasUserIndividualReward && (
-            <AllocationEmptyState />
           )}
           <ModalAllocationValuesEdit
             isLimitVisible

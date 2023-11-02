@@ -17,8 +17,10 @@ import Donors from 'components/dedicated/Donors/Donors';
 import ProposalRewards from 'components/dedicated/ProposalRewards/ProposalRewards';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import env from 'env';
+import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
@@ -43,7 +45,7 @@ const ProposalView = (): ReactElement => {
   const [loadedAddresses, setLoadedAddresses] = useState<string[]>([]);
   const [loadedProposals, setLoadedProposals] = useState<ExtendedProposal[]>([]);
   const [isLinkCopied, setIsLinkCopied] = useState(false);
-  const { proposalAddress: proposalAddressUrl } = useParams();
+  const { proposalAddress: proposalAddressUrl, epoch: epochUrl } = useParams();
   const { allocations, setAllocations } = useAllocationsStore(state => ({
     allocations: state.data.allocations,
     setAllocations: state.setAllocations,
@@ -52,7 +54,10 @@ const ProposalView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: userAllocations } = useUserAllocations();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: proposalsWithRewards } = useProposalsIpfsWithRewards();
+  const { data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow } =
+    useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow();
 
   useEffect(() => {
     if (loadedAddresses.length === 0) {
@@ -124,14 +129,14 @@ const ProposalView = (): ReactElement => {
   }, []);
 
   const isEpoch1 = currentEpoch === 1;
-
   const areMatchedProposalsReady =
-    !!currentEpoch && ((currentEpoch > 1 && matchedProposalRewards) || isEpoch1);
+    !!currentEpoch &&
+    ((currentEpoch > 1 && matchedProposalRewards) || isEpoch1 || !isDecisionWindowOpen);
   const initialElement = loadedProposals[0] || {};
 
   const onShareClick = ({ name, address }): boolean | Promise<boolean> => {
     const { origin } = window.location;
-    const url = `${origin}${ROOT_ROUTES.proposal.absolute}/${currentEpoch}/${address}`;
+    const url = `${origin}${ROOT_ROUTES.proposal.absolute}/${epochUrl}/${address}`;
 
     if ((window.navigator.share as any) && !window.navigator.userAgent.includes('Macintosh')) {
       window.navigator.share({
@@ -189,7 +194,11 @@ const ProposalView = (): ReactElement => {
     return <MainLayout isLoading navigationTabs={navigationTabs} />;
   }
 
-  if (!initialElement || (initialElement && initialElement.isLoadingError)) {
+  if (
+    !initialElement ||
+    (initialElement && initialElement.isLoadingError) ||
+    (areCurrentEpochsProjectsHiddenOutsideAllocationWindow && epochUrl === currentEpoch.toString())
+  ) {
     triggerToast({
       title: t('loadingProblem'),
       type: 'warning',

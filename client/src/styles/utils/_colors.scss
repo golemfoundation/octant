@@ -4,34 +4,23 @@ $color-white: #ffffff;
 
 $color-octant-dark: #171717;
 $color-octant-dark-30: #17171730;
-$color-octant-grey1: #cdcdcd;
-$color-octant-grey2: #ebebeb;
-$color-octant-grey3: #cdd1cd;
-$color-octant-grey4: #f8f8f8;
-$color-octant-grey5: #b5b5b5;
-$color-octant-grey6: #9ea39e;
-$color-octant-grey7: #fafafa;
-$color-octant-grey8: #d9d9d9;
-$color-octant-grey10: #9e9fa3;
-$color-octant-grey11: #e0e0e0;
-$color-octant-grey12: #f3f3f3;
-$color-octant-grey13: #9c9c9c;
-$color-octant-grey14: #d7d7d7;
-$color-octant-grey15: #bababa;
-$color-octant-grey16: #cdd1cd;
-$color-octant-grey17: #323232;
+$color-octant-grey1: #ebebeb;
+$color-octant-grey2: #cdd1cd;
+$color-octant-grey3: #f8f8f8;
+$color-octant-grey5: #9ea39e;
+$color-octant-grey6: #fafafa;
+$color-octant-grey7: #e0e0e0; // skeleton
+$color-octant-grey8: #f3f3f3;
+$color-octant-grey9: #d7d7d7; // TODO OCT-1001 Remove this color. It will become unused.
+$color-octant-grey10: #323232;
 $color-octant-green: #2d9b87;
-$color-octant-green-15: rgba(45, 155, 135, 0.15);
-$color-octant-green-50: rgba(45, 155, 135, 0.5);
-$color-octant-green-80: rgba(45, 155, 135, 0.8);
+$color-octant-green-15: rgba(45, 155, 135, 0.15); // used in the metrics chart, not documented
+$color-octant-green-50: rgba(45, 155, 135, 0.5); // used in the metrics chart, not documented
+$color-octant-green-80: rgba(45, 155, 135, 0.8); // used in the metrics chart, not documented
 $color-octant-green2: #5b8a81;
 $color-octant-green3: #1d4558;
-$color-octant-green4: #d1e7e3;
-$color-octant-green5: #ade2b3;
-$color-octant-red: #d0623f;
-$color-octant-red2: #e23600;
+$color-octant-green4: #d1e7e3; // TODO OCT-1001 Remove this color. It will become unused.
 $color-octant-orange: #ff6157;
-$color-octant-orange2: #ff9501;
-$color-octant-orange3: #ff9601;
-$color-octant-orange4: #f6c54b;
+$color-octant-orange2: #ff9601;
+$color-octant-orange3: #f6c54b;
 $color-octant-purple: #685b8a;

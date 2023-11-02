@@ -2,7 +2,7 @@ import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { newMockEvent } from 'matchstick-as';
 
 import { Locked as LockedEvent, Unlocked as UnlockedEvent } from '../generated/Deposits/Deposits';
-import { Withdrawn } from '../generated/Vault/Vault';
+import { MerkleRootSet, Withdrawn } from '../generated/Vault/Vault';
 
 export const GLM_ADDRESS = Address.fromString('0x7DD9c5Cba05E151C895FDe1CF355C9A1D5DA6429');
 
@@ -76,6 +76,20 @@ export function createWithdrawnEvent(amount: BigInt, user: Address, epoch: i32):
   withdrawnEvent.parameters.push(new ethereum.EventParam('epoch', ethereum.Value.fromI32(epoch)));
 
   return withdrawnEvent;
+}
+// eslint-disable-next-line no-undef
+export function createMerkleRootSetEvent(epoch: i32, merkleRoot: string): MerkleRootSet {
+  // eslint-disable-next-line no-undef
+  const merkleRootEvent = changetype<MerkleRootSet>(newMockEvent());
+
+  merkleRootEvent.parameters = [];
+
+  merkleRootEvent.parameters.push(new ethereum.EventParam('epoch', ethereum.Value.fromI32(epoch)));
+  merkleRootEvent.parameters.push(
+    new ethereum.EventParam('root', ethereum.Value.fromBytes(Bytes.fromHexString(merkleRoot))),
+  );
+
+  return merkleRootEvent;
 }
 
 export function createBlockEvent(): ethereum.Block {

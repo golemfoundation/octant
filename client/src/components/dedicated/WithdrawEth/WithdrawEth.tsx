@@ -8,7 +8,7 @@ import Sections from 'components/core/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/core/BoxRounded/Sections/types';
 import Button from 'components/core/Button/Button';
 import useWithdrawEth, { BatchWithdrawRequest } from 'hooks/mutations/useWithdrawEth';
-import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
+import useWithdrawals from 'hooks/queries/useWithdrawals';
 import useTransactionLocalStore from 'store/transactionLocal/store';
 
 import WithdrawEthProps from './types';
@@ -25,15 +25,14 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
       isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
     }),
   );
-  const { data: withdrawableRewards, isFetching: isWithdrawableRewardsFetching } =
-    useWithdrawableRewards();
+  const { data: withdrawals, isFetching: isWithdrawableRewardsFetching } = useWithdrawals();
   const withdrawEthMutation = useWithdrawEth();
 
   const withdrawEth = async () => {
-    if (!withdrawableRewards?.array.length) {
+    if (!withdrawals?.withdrawalsAvailable.length) {
       return;
     }
-    const value: BatchWithdrawRequest[] = withdrawableRewards.array.map(
+    const value: BatchWithdrawRequest[] = withdrawals.withdrawalsAvailable.map(
       ({ amount, epoch, proof }) => ({
         amount: BigInt(amount),
         epoch: BigInt(epoch.toString()),
@@ -42,7 +41,7 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
     );
     const { hash } = await withdrawEthMutation.mutateAsync(value);
     addTransactionPending({
-      amount: withdrawableRewards!.sum,
+      amount: withdrawals.sums.available,
       // GET /history uses microseconds. Normalization here.
       timestamp: (Date.now() * 1000).toString(),
       transactionHash: hash,
@@ -56,7 +55,7 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
         isFetching: isWithdrawableRewardsFetching || isAppWaitingForTransactionToBeIndexed,
-        valueCrypto: withdrawableRewards?.sum,
+        valueCrypto: withdrawals?.sums.available,
       },
       label: t('amount'),
     },
@@ -79,7 +78,7 @@ const WithdrawEth: FC<WithdrawEthProps> = ({ onCloseModal }) => {
           isDisabled={
             isWithdrawableRewardsFetching ||
             isAppWaitingForTransactionToBeIndexed ||
-            withdrawableRewards?.sum.isZero()
+            withdrawals?.sums.available.isZero()
           }
           isHigh
           isLoading={withdrawEthMutation.isLoading}

@@ -35,7 +35,7 @@
 }
 
 .divider {
-  background: $color-octant-grey2;
+  background: $color-octant-grey1;
   height: 0.1rem;
   width: 100%;
   margin: 3.4rem 0 4.6rem;
@@ -131,7 +131,7 @@
 
   .proposalRewards {
     margin: 6.4rem 0 5rem;
-    border-bottom: 0.2rem solid $color-octant-grey4;
+    border-bottom: 0.2rem solid $color-octant-grey3;
     padding-bottom: 1.2rem;
 
     @media #{$tablet-down} {
@@ -169,7 +169,7 @@
     @media #{$desktop-up} {
       &:hover {
         cursor: pointer;
-        background: $color-octant-grey12;
+        background: $color-octant-grey8;
 
         path {
           stroke: $color-octant-dark;
@@ -177,7 +177,7 @@
       }
 
       &.isCopied {
-        background: $color-octant-grey2;
+        background: $color-octant-grey1;
 
         path {
           stroke: $color-octant-dark;

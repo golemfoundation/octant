@@ -1,10 +1,10 @@
 import cx from 'classnames';
+import { BigNumber } from 'ethers';
 import throttle from 'lodash/throttle';
 import React, { FC, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import Loader from 'components/core/Loader/Loader';
 import Slider from 'components/core/Slider/Slider';
 import ModalAllocationValuesEdit from 'components/dedicated/ModalAllocationValuesEdit/ModalAllocationValuesEdit';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
@@ -25,6 +25,8 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
     setRewardsForProposals: state.setRewardsForProposals,
   }));
 
+  const hasUserIndividualReward = !!individualReward && !individualReward.isZero();
+
   const onSetRewardsForProposals = (index: number) => {
     if (!individualReward || isDisabled) {
       return;
@@ -38,27 +40,13 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
     individualReward?.toHexString(),
   ]);
 
-  if (!individualReward || individualReward.isZero()) {
-    return (
-      <BoxRounded
-        className={cx(styles.root, className)}
-        isVertical
-        subtitle={t('subtitle', {
-          individualReward: getValueCryptoToDisplay({
-            cryptoCurrency: 'ethereum',
-            valueCrypto: individualReward,
-          }),
-        })}
-        title={t('title')}
-      >
-        <Loader />
-      </BoxRounded>
-    );
-  }
-
-  const percentRewardsForProposals = rewardsForProposals.mul(100).div(individualReward).toNumber();
+  const percentRewardsForProposals = !hasUserIndividualReward
+    ? 50
+    : rewardsForProposals.mul(100).div(individualReward).toNumber();
   const percentWithdraw = 100 - percentRewardsForProposals;
-  const rewardsForWithdraw = individualReward.sub(rewardsForProposals);
+  const rewardsForWithdraw = !hasUserIndividualReward
+    ? BigNumber.from(0)
+    : individualReward.sub(rewardsForProposals);
   const sections = [
     {
       header: t('donate', { percentRewardsForProposals }),
@@ -80,12 +68,16 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
     <BoxRounded
       className={cx(styles.root, className)}
       isVertical
-      subtitle={t('subtitle', {
-        individualReward: getValueCryptoToDisplay({
-          cryptoCurrency: 'ethereum',
-          valueCrypto: individualReward,
-        }),
-      })}
+      subtitle={
+        hasUserIndividualReward
+          ? t('subtitle', {
+              individualReward: getValueCryptoToDisplay({
+                cryptoCurrency: 'ethereum',
+                valueCrypto: individualReward,
+              }),
+            })
+          : t('subtitleNoRewards')
+      }
       title={t('title')}
     >
       <Slider
@@ -121,11 +113,11 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
         }}
         onUpdateValue={newValue => {
           setRewardsForProposals(
-            modalMode === 'donate' ? newValue : individualReward.sub(newValue),
+            modalMode === 'donate' ? newValue : individualReward!.sub(newValue),
           );
         }}
         valueCryptoSelected={modalMode === 'donate' ? rewardsForProposals : rewardsForWithdraw}
-        valueCryptoTotal={individualReward}
+        valueCryptoTotal={individualReward!}
       />
     </BoxRounded>
   );

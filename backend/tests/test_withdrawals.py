@@ -2,12 +2,20 @@ import pytest
 
 from app import database, db
 from app.controllers.withdrawals import get_withdrawable_eth
-from tests.conftest import MOCK_VAULT
+from app.core.allocations import Allocation
+from tests.conftest import (
+    MOCK_VAULT,
+    mock_graphql,
+    MOCK_EPOCHS,
+    MOCKED_PENDING_EPOCH_NO,
+    MOCK_GET_USER_BUDGET,
+)
 
 
 @pytest.fixture(autouse=True)
-def before(patch_vault):
-    pass
+def before(mocker, app, graphql_client, patch_vault, patch_epochs):
+    merkle_roots = [{"epoch": 1}, {"epoch": 2}, {"epoch": 3}, {"epoch": 4}]
+    mock_graphql(mocker, merkle_roots_events=merkle_roots)
 
 
 @pytest.mark.parametrize(
@@ -166,7 +174,9 @@ def before(patch_vault):
         ),
     ],
 )
-def test_get_withdrawable_eth(app, user_accounts, expected_rewards):
+def test_get_withdrawable_eth(user_accounts, expected_rewards):
+    MOCK_EPOCHS.get_pending_epoch.return_value = 0
+
     # Populate db
     for user_index, rewards in expected_rewards.items():
         user_account = user_accounts[user_index].address
@@ -183,11 +193,12 @@ def test_get_withdrawable_eth(app, user_accounts, expected_rewards):
         assert len(result) == len(rewards)
         for act, exp in zip(result, rewards):
             assert act.epoch == exp[0]
-            assert act.amount == str(exp[1])
+            assert act.amount == exp[1]
             assert act.proof == exp[2]
 
 
-def test_get_withdrawable_eth_returns_only_user_not_claimed_rewards(app, user_accounts):
+def test_get_withdrawable_eth_returns_only_user_not_claimed_rewards(user_accounts):
+    MOCK_EPOCHS.get_pending_epoch.return_value = 0
     MOCK_VAULT.get_last_claimed_epoch.return_value = 2
 
     database.rewards.add_user_reward(1, user_accounts[0].address, 100_000000000)
@@ -200,14 +211,15 @@ def test_get_withdrawable_eth_returns_only_user_not_claimed_rewards(app, user_ac
 
     assert len(result) == 2
     assert result[0].epoch == 3
-    assert result[0].amount == str(300_000000000)
+    assert result[0].amount == 300_000000000
     assert result[1].epoch == 4
-    assert result[1].amount == str(400_000000000)
+    assert result[1].amount == 400_000000000
 
 
 def test_get_withdrawable_eth_returns_only_proposal_not_claimed_rewards(
-    app, proposal_accounts
+    proposal_accounts,
 ):
+    MOCK_EPOCHS.get_pending_epoch.return_value = 0
     MOCK_VAULT.get_last_claimed_epoch.return_value = 2
 
     database.rewards.add_proposal_reward(
@@ -228,12 +240,14 @@ def test_get_withdrawable_eth_returns_only_proposal_not_claimed_rewards(
 
     assert len(result) == 2
     assert result[0].epoch == 3
-    assert result[0].amount == str(300_000000000)
+    assert result[0].amount == 300_000000000
     assert result[1].epoch == 4
-    assert result[1].amount == str(400_000000000)
+    assert result[1].amount == 400_000000000
 
 
-def test_get_withdrawable_eth_result_sorted_by_epochs(app, user_accounts):
+def test_get_withdrawable_eth_result_sorted_by_epochs(user_accounts):
+    MOCK_EPOCHS.get_pending_epoch.return_value = 0
+
     database.rewards.add_user_reward(2, user_accounts[0].address, 200_000000000)
     database.rewards.add_user_reward(4, user_accounts[0].address, 400_000000000)
     database.rewards.add_user_reward(1, user_accounts[0].address, 100_000000000)
@@ -246,3 +260,128 @@ def test_get_withdrawable_eth_result_sorted_by_epochs(app, user_accounts):
     assert result[1].epoch == 2
     assert result[2].epoch == 3
     assert result[3].epoch == 4
+
+
+def test_get_withdrawable_eth_in_pending_epoch_with_allocation(
+    user_accounts, proposal_accounts, patch_user_budget
+):
+    MOCK_GET_USER_BUDGET.return_value = 1 * 10**18
+    user = database.user.get_or_add_user(user_accounts[0].address)
+    db.session.commit()
+
+    user_allocations = [Allocation(proposal_accounts[0].address, 10_000000000)]
+    database.allocations.add_all(MOCKED_PENDING_EPOCH_NO, user.id, 0, user_allocations)
+    database.allocations.add_allocation_signature(
+        user_accounts[0].address, MOCKED_PENDING_EPOCH_NO, 0, "0x00"
+    )
+    db.session.commit()
+
+    result = get_withdrawable_eth(user_accounts[0].address)
+
+    assert len(result) == 1
+    assert result[0].epoch == 1
+    assert result[0].amount == 999999990_000000000
+    assert result[0].proof == []
+    assert result[0].status == "pending"
+
+
+def test_get_withdrawable_eth_in_pending_epoch_without_allocation(
+    user_accounts, proposal_accounts
+):
+    database.user.add_user(user_accounts[0].address)
+    db.session.commit()
+    result = get_withdrawable_eth(user_accounts[0].address)
+
+    assert len(result) == 1
+    assert result[0].epoch == 1
+    assert result[0].amount == 0
+    assert result[0].proof == []
+    assert result[0].status == "pending"
+
+
+def test_get_withdrawable_eth_in_pending_epoch_in_epoch_3(
+    user_accounts, proposal_accounts, patch_user_budget
+):
+    MOCK_EPOCHS.get_pending_epoch.return_value = 2
+    MOCK_GET_USER_BUDGET.return_value = 1 * 10**18
+
+    user = database.user.add_user(user_accounts[0].address)
+    database.rewards.add_user_reward(1, user_accounts[0].address, 100_000000000)
+    database.rewards.add_user_reward(1, user_accounts[1].address, 200_000000000)
+    db.session.commit()
+
+    user_allocations = [Allocation(proposal_accounts[0].address, 10_000000000)]
+    database.allocations.add_all(
+        MOCKED_PENDING_EPOCH_NO + 1, user.id, 0, user_allocations
+    )
+    database.allocations.add_allocation_signature(
+        user_accounts[0].address, MOCKED_PENDING_EPOCH_NO + 1, 0, "0x00"
+    )
+
+    db.session.commit()
+
+    result = get_withdrawable_eth(user_accounts[0].address)
+
+    assert len(result) == 2
+    assert result[0].epoch == 2
+    assert result[0].amount == 999999990000000000
+    assert result[0].proof == []
+    assert result[0].status == "pending"
+
+    assert result[1].epoch == 1
+    assert result[1].amount == 100000000000
+    assert result[1].proof == [
+        "0xeba8e145c1102400c42b1fc5de1fea439aeaa93a6b46ef370ecbc8f15140a2dd"
+    ]
+    assert result[1].status == "available"
+
+
+def test_get_withdrawable_eth_in_finalized_epoch_when_merkle_root_not_set_yet_epoch_1(
+    mocker, user_accounts, proposal_accounts, patch_user_budget
+):
+    MOCK_EPOCHS.get_pending_epoch.return_value = 0
+    mock_graphql(mocker, merkle_roots_events=[])
+
+    database.rewards.add_user_reward(1, user_accounts[0].address, 100_000000000)
+    database.rewards.add_user_reward(1, user_accounts[1].address, 200_000000000)
+    db.session.commit()
+
+    result = get_withdrawable_eth(user_accounts[0].address)
+
+    assert len(result) == 1
+    assert result[0].epoch == 1
+    assert result[0].amount == 100000000000
+    assert result[0].proof == [
+        "0xeba8e145c1102400c42b1fc5de1fea439aeaa93a6b46ef370ecbc8f15140a2dd"
+    ]
+    assert result[0].status == "pending"
+
+
+def test_get_withdrawable_eth_in_finalized_epoch_when_merkle_root_not_set_yet_epoch_2(
+    mocker, user_accounts, proposal_accounts, patch_user_budget
+):
+    MOCK_EPOCHS.get_pending_epoch.return_value = 0
+    mock_graphql(mocker, merkle_roots_events=[{"epoch": 1}])
+
+    database.rewards.add_user_reward(1, user_accounts[0].address, 100_000000000)
+    database.rewards.add_user_reward(1, user_accounts[1].address, 200_000000000)
+    database.rewards.add_user_reward(2, user_accounts[0].address, 100_000000000)
+    database.rewards.add_user_reward(2, user_accounts[1].address, 200_000000000)
+    db.session.commit()
+
+    result = get_withdrawable_eth(user_accounts[0].address)
+
+    assert len(result) == 2
+    assert result[0].epoch == 1
+    assert result[0].amount == 100000000000
+    assert result[0].proof == [
+        "0xeba8e145c1102400c42b1fc5de1fea439aeaa93a6b46ef370ecbc8f15140a2dd"
+    ]
+    assert result[0].status == "available"
+
+    assert result[1].epoch == 2
+    assert result[1].amount == 100000000000
+    assert result[1].proof == [
+        "0xeba8e145c1102400c42b1fc5de1fea439aeaa93a6b46ef370ecbc8f15140a2dd"
+    ]
+    assert result[1].status == "pending"

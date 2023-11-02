@@ -33,15 +33,13 @@ if (window.location.hash) {
     {},
   );
   const emptyEnvKeys = Object.keys(emptyEnvs);
+  const requiredEnvKeys = emptyEnvKeys.filter(element => !envsAllowedToBeEmpty.includes(element));
 
-  if (
-    emptyEnvKeys.length > 0 &&
-    emptyEnvKeys.some(element => !envsAllowedToBeEmpty.includes(element))
-  ) {
+  if (requiredEnvKeys.length > 0) {
     const errorMessage =
       'The application crashed because values for the following envs are missing';
-    const emptyEnvKeysWithLinebreaksConsole = emptyEnvKeys.map(element => `\n-- ${element}`);
-    const emptyEnvKeysWithLinebreaksUI = emptyEnvKeys.map(element => `<br />-- ${element}`);
+    const emptyEnvKeysWithLinebreaksConsole = requiredEnvKeys.map(element => `\n-- ${element}`);
+    const emptyEnvKeysWithLinebreaksUI = requiredEnvKeys.map(element => `<br />-- ${element}`);
 
     ReactDOM.createRoot(root).render(
       <div

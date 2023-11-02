@@ -2,14 +2,14 @@
   width: 1.6rem;
   height: 1.6rem;
   position: relative;
-  border: 0.1rem solid $color-octant-grey3;
+  border: 0.1rem solid $color-octant-grey2;
   border-radius: 0.3rem;
 
   &.disabled {
     .svgChecked {
       & > rect {
-        fill: $color-octant-grey3;
-        stroke: $color-octant-grey3;
+        fill: $color-octant-grey2;
+        stroke: $color-octant-grey2;
       }
     }
 
