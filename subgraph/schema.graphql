@@ -72,7 +72,7 @@ type EpochProjectsInfo @entity {
     projectsAddresses: [Bytes!]! # list of projects' addresses
 }
 
-type AllEpochProjectsInfo @entity {
+type AllEpochsProjectsInfo @entity {
     id: Bytes!
     projectsAddresses: [Bytes!]! # list of ALL projects' addresses
 }
