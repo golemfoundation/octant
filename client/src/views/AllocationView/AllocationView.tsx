@@ -351,12 +351,12 @@ const AllocationView = (): ReactElement => {
           {!isEpoch1 && (
             <AllocateRewardsBox
               className={styles.box}
-              isDisabled={isLocked || !isDecisionWindowOpen}
+              isDisabled={isLocked || !isDecisionWindowOpen || !hasUserIndividualReward}
               /* eslint-disable-next-line @typescript-eslint/naming-convention */
-              onUnlock={() => setIsLocked(prev => !prev)}
+              onUnlock={isDecisionWindowOpen ? () => setIsLocked(prev => !prev) : () => {}}
             />
           )}
-          {areAllocationsAvailableOrAlreadyDone && isDecisionWindowOpen && (
+          {areAllocationsAvailableOrAlreadyDone && (
             <Fragment>
               {allocationsWithRewards!.map((allocation, index) => (
                 <AllocationItem

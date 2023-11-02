@@ -14,11 +14,7 @@ import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 import styles from './AllocateRewardsBox.module.scss';
 import AllocateRewardsBoxProps from './types';
 
-const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({
-  className,
-  isDisabled: isDisabledProp,
-  onUnlock,
-}) => {
+const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled, onUnlock }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationRewardsBox',
   });
@@ -30,8 +26,6 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({
   }));
 
   const hasUserIndividualReward = !!individualReward && !individualReward.isZero();
-
-  const isDisabled = isDisabledProp || !hasUserIndividualReward;
 
   const onSetRewardsForProposals = (index: number) => {
     if (!individualReward || isDisabled) {
