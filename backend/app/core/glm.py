@@ -11,7 +11,7 @@ def transfer_claimed():
     for claim in claims:
         app.logger.debug(f"Transferring GLM to user: {claim.address}")
         try:
-            tx_hash = glm.transfer(claim.address, claim.claim_nonce)
+            tx_hash = glm.glm_fund(claim.address, claim.claim_nonce)
             app.logger.info(
                 f"GLM transferred to user: {claim.address}, tx: {tx_hash.hex()}"
             )

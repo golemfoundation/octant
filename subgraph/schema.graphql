@@ -28,6 +28,15 @@ type Withdrawal @entity(immutable: true) {
     transactionHash: Bytes!
 }
 
+type VaultMerkleRoot @entity(immutable: true) {
+    id: Bytes!
+    epoch: Int!
+    root: Bytes!
+    blockNumber: Int!
+    timestamp: Int!
+    transactionHash: Bytes!
+}
+
 type LockedSummaryLatest @entity {
     id: String!
     glmSupply: BigInt!

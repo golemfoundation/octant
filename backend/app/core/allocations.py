@@ -137,3 +137,12 @@ def next_allocation_nonce(user: User | None) -> int:
     if user.allocation_nonce is None:
         return 0
     return user.allocation_nonce + 1
+
+
+def has_user_allocated_rewards(user_address: str, epoch: int) -> List[str]:
+    allocation_signature = (
+        database.allocations.get_allocation_signature_by_user_and_epoch(
+            user_address, epoch
+        )
+    )
+    return allocation_signature is not None

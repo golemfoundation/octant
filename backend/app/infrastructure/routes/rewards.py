@@ -1,7 +1,7 @@
-from flask import current_app as app
+from flask import current_app as app, request
 from flask_restx import Namespace, fields
 
-from app.controllers import rewards
+from app.controllers import rewards, allocations
 from app.controllers.user import estimate_budget, get_budget
 from app.extensions import api
 from app.infrastructure import OctantResource
@@ -17,6 +17,18 @@ user_budget_model = api.model(
         ),
     },
 )
+
+
+epoch_budget_model = api.model(
+    "EpochBudgetItem",
+    {
+        "user": fields.String(required=True, description="User address"),
+        "budget": fields.String(
+            required=True, description="User budget for given epoch, BigNumber (wei)"
+        ),
+    },
+)
+
 
 threshold_model = api.model(
     "Threshold",
@@ -141,6 +153,40 @@ class UserBudget(OctantResource):
         app.logger.debug(f"User {user_address} budget in epoch {epoch}: {budget}")
 
         return {"budget": budget}
+
+
+@ns.route("/budgets/epoch/<int:epoch>")
+@ns.doc(
+    description="Returns all users rewards budgets for the epoch.",
+    params={
+        "epoch": "Epoch number",
+    },
+)
+class EpochBudgets(OctantResource):
+    representations = {
+        "application/json": OctantResource.encode_json_response,
+        "text/csv": OctantResource.encode_csv_response,
+    }
+
+    @ns.produces(["application/json", "text/csv"])
+    @ns.marshal_with(epoch_budget_model)
+    @ns.response(200, "Epoch individual budgets successfully retrieved")
+    def get(self, epoch):
+        headers = {}
+        data = []
+
+        if EpochBudgets.response_mimetype(request) == "text/csv":
+            headers[
+                "Content-Disposition"
+            ] = f"attachment;filename=budgets_epoch_{epoch}.csv"
+
+            # for csv header resoultion - in case of empty list,
+            # endpoint marshalling will automatically create expected object with nulled fields
+            data.append({})
+
+        app.logger.debug(f"Get budgets for all users in epoch {epoch}")
+        data += rewards.get_all_budgets(epoch)
+        return data, 200, headers
 
 
 @ns.route("/estimated_budget")

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Sections from 'components/core/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/core/BoxRounded/Sections/types';
-import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
+import useWithdrawals from 'hooks/queries/useWithdrawals';
 
 import WalletPersonalAllocationProps from './types';
 import styles from './WalletPersonalAllocation.module.scss';
@@ -17,15 +17,14 @@ const WalletPersonalAllocation: FC<WalletPersonalAllocationProps> = ({
   isDisabled,
 }) => {
   const { i18n } = useTranslation('translation');
-  const { data: withdrawableRewards, isFetching: isWithdrawableRewardsFetching } =
-    useWithdrawableRewards();
+  const { data: withdrawals, isFetching: isFetchingWithdrawals } = useWithdrawals();
 
   const sections: SectionProps[] = [
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
-        isFetching: isWithdrawableRewardsFetching,
-        valueCrypto: withdrawableRewards?.sum,
+        isFetching: isFetchingWithdrawals,
+        valueCrypto: withdrawals?.sums.available,
       },
       label: i18n.t('common.availableNow'),
     },

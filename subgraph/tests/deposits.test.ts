@@ -10,7 +10,7 @@ const UNLOCK_ENTITY_TYPE = 'Unlocked';
 const LOCK_SUMMARY_SNAPSHOT_ENTITY_TYPE = 'LockedSummarySnapshot';
 const LOCK_SUMMARY_LATEST_ENTITY_TYPE = 'LockedSummaryLatest';
 
-describe('Describe entity assertions', () => {
+describe('Locks and unlocks', () => {
   beforeAll(() => {
     const lockedBefore = BigInt.fromString('100000000000000000000');
     const unlockedBefore = BigInt.fromString('400000000000000000000');

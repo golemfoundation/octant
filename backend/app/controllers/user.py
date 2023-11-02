@@ -1,3 +1,6 @@
+from typing import List
+
+from app import database
 from app.constants import GLM_TOTAL_SUPPLY_WEI
 from app.core.user import budget, patron_mode as patron_mode_core
 from app.core.user.tos import (
@@ -24,6 +27,10 @@ def post_user_terms_of_service_consent(user_address: str, signature: str, user_i
 
 def get_budget(user_address: str, epoch: int) -> int:
     return budget.get_budget(user_address, epoch)
+
+
+def get_all_users() -> List[str]:
+    return [user.address for user in database.user.get_all()]
 
 
 def estimate_budget(days: int, glm_amount: int) -> int:
