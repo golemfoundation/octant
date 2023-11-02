@@ -23,8 +23,8 @@ export default function useProposalRewardsThreshold(
   });
 
   return useQuery(
-    QUERY_KEYS.proposalRewardsThreshold(epoch ? epoch - 1 : currentEpoch! - 1),
-    () => apiGetProjectThreshold(epoch ? epoch - 1 : currentEpoch! - 1),
+    QUERY_KEYS.proposalRewardsThreshold(epoch || currentEpoch! - 1),
+    () => apiGetProjectThreshold(epoch || currentEpoch! - 1),
     {
       enabled:
         (epoch !== undefined && epoch > 0) ||
