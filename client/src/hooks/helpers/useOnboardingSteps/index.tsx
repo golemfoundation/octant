@@ -8,8 +8,9 @@ import { Step } from 'components/dedicated/ModalOnboarding/types';
 import TOS from 'components/dedicated/TOS/TOS';
 import useGlmClaim from 'hooks/mutations/useGlmClaim';
 import useGlmClaimCheck from 'hooks/queries/useGlmClaimCheck';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 
-import steps from './steps';
+import { stepsDecisionWindowOpen, stepsDecisionWindowClosed } from './steps';
 
 const useOnboardingSteps = (
   isUserTOSAcceptedInitial: boolean | undefined,
@@ -18,6 +19,7 @@ const useOnboardingSteps = (
 ): Step[] => {
   const { i18n } = useTranslation();
 
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: glmClaimCheck, isError, isFetched } = useGlmClaimCheck(isOnboardingDone);
   const glmClaimMutation = useGlmClaim(glmClaimCheck?.value, { onSuccess: onGlmClaimSuccess });
 
@@ -69,7 +71,7 @@ const useOnboardingSteps = (
           },
         ]
       : []),
-    ...steps,
+    ...(isDecisionWindowOpen ? stepsDecisionWindowOpen : stepsDecisionWindowClosed),
   ];
 };
 
