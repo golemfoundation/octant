@@ -227,6 +227,7 @@
       },
       "proposalRewards": {
         "currentTotal": "Current total",
+        "totalRaised": "Total raised",
         "totalDonated": "Total donated",
         "fundedAt": "Funded at",
         "didNotReach": "Did not reach"

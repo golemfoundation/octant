@@ -43,11 +43,7 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
   const isDonationAboveThreshold = useIsDonationAboveThreshold(address, epoch);
 
   const isFundedAtHidden =
-    (proposalRewardsThreshold && proposalRewardsThreshold.isZero()) ||
-    (canFoundedAtHide && isDonationAboveThreshold);
-
-  const isMatchedRewardsAndThresholdDefined =
-    proposalMatchedProposalRewards !== undefined && proposalRewardsThreshold !== undefined;
+    proposalDonorsRewardsSum?.isZero() || (canFoundedAtHide && isDonationAboveThreshold);
 
   const totalValueOfAllocationsToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
@@ -65,11 +61,9 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
   });
 
   const showProgressBar =
+    !isDonationAboveThreshold &&
     proposalRewardsThreshold !== undefined &&
-    ((isArchivedProposal &&
-      proposalDonorsRewardsSum !== undefined &&
-      !isMatchedRewardsAndThresholdDefined) ||
-      (!isArchivedProposal && !isDonationAboveThreshold && isMatchedRewardsAndThresholdDefined));
+    proposalDonorsRewardsSum !== undefined;
 
   return (
     <div className={cx(styles.root, className)} data-test="ProposalRewards">
@@ -78,9 +72,7 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
           <ProgressBar
             color={isArchivedProposal ? 'grey' : 'orange'}
             progressPercentage={getProgressPercentage(
-              isArchivedProposal
-                ? (proposalDonorsRewardsSum as BigNumber)
-                : (proposalMatchedProposalRewards?.sum as BigNumber),
+              proposalDonorsRewardsSum,
               proposalRewardsThreshold,
             )}
           />
@@ -92,7 +84,7 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
         {proposalMatchedProposalRewards !== undefined || proposalDonors !== undefined ? (
           <div className={styles.value}>
             <span className={styles.label} data-test="ProposalRewards__currentTotal__label">
-              {t(isArchivedProposal ? 'totalDonated' : 'currentTotal')}
+              {t(isDonationAboveThreshold ? 'totalRaised' : 'totalDonated')}
             </span>
             <span
               className={cx(
@@ -116,21 +108,12 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
           </div>
         )}
         {MiddleElement}
-        {isMatchedRewardsAndThresholdDefined ? (
-          <div className={cx(styles.value, isFundedAtHidden && styles.isHidden)}>
-            <span className={styles.label}>{t('fundedAt')}</span>
-            <span className={cx(styles.number, isArchivedProposal && styles.isArchivedProposal)}>
-              {cutOffValueToDisplay}
-            </span>
-          </div>
-        ) : (
-          <div className={cx(styles.value)}>
-            <span className={styles.label}>{t('didNotReach')}</span>
-            <span className={cx(styles.number, isArchivedProposal && styles.isArchivedProposal)}>
-              {cutOffValueToDisplay}
-            </span>
-          </div>
-        )}
+        <div className={cx(styles.value, isFundedAtHidden && styles.isHidden)}>
+          <span className={styles.label}>{t(isArchivedProposal ? 'didNotReach' : 'fundedAt')}</span>
+          <span className={cx(styles.number, isArchivedProposal && styles.isArchivedProposal)}>
+            {cutOffValueToDisplay}
+          </span>
+        </div>
       </div>
     </div>
   );
