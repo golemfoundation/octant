@@ -7,7 +7,6 @@ import { apiGetIndividualRewards, Response } from 'api/calls/individualRewards';
 import { QUERY_KEYS } from 'api/queryKeys';
 
 import useCurrentEpoch from './useCurrentEpoch';
-import useIsDecisionWindowOpen from './useIsDecisionWindowOpen';
 
 export default function useIndividualReward(
   epoch?: number,
@@ -15,7 +14,6 @@ export default function useIndividualReward(
 ): UseQueryResult<BigNumber> {
   const { address } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   const epochToUse = epoch || currentEpoch! - 1;
 
@@ -23,8 +21,7 @@ export default function useIndividualReward(
     QUERY_KEYS.individualReward(epochToUse),
     () => apiGetIndividualRewards(epochToUse, address!),
     {
-      enabled:
-        ((!!currentEpoch && currentEpoch > 1 && !!isDecisionWindowOpen) || !!epoch) && !!address,
+      enabled: ((!!currentEpoch && currentEpoch > 1) || !!epoch) && !!address,
       select: response => parseUnits(response.budget, 'wei'),
       ...options,
     },

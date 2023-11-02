@@ -21,7 +21,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  color: $color-octant-grey5;
+  color: $color-octant-dark-30;
   flex: 1;
 
   &.isCurrent {
@@ -48,7 +48,7 @@
   height: 1.6rem;
   border: 0.2rem solid $color-octant-green3;
   border-radius: 50%;
-  background: $color-octant-grey4;
+  background: $color-octant-grey3;
   margin: 0 0 0.5rem 0;
 
   &.isCurrent,
@@ -71,7 +71,7 @@
   }
 
   &.isAvailable::after {
-    background: $color-octant-grey6;
+    background: $color-octant-grey5;
   }
 
   &.isDone {

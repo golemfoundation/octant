@@ -1,10 +1,13 @@
 import cx from 'classnames';
+import { BigNumber } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
+import useProposalDonors from 'hooks/queries/useProposalDonors';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
@@ -27,18 +30,20 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
 
   const { data: proposalRewardsThreshold } = useProposalRewardsThreshold(epoch);
   const { data: matchedProposalRewards } = useMatchedProposalRewards(epoch);
+  const { data: proposalDonors } = useProposalDonors(address);
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ address: proposalAddress }) => address === proposalAddress,
+  );
+
+  const proposalDonorsRewardsSum = proposalDonors?.reduce(
+    (prev, curr) => prev.add(formatUnits(curr.amount, 'wei')),
+    BigNumber.from(0),
   );
 
   const isDonationAboveThreshold = useIsDonationAboveThreshold(address, epoch);
 
   const isFundedAtHidden =
-    (proposalRewardsThreshold && proposalRewardsThreshold.isZero()) ||
-    (canFoundedAtHide && isDonationAboveThreshold);
-
-  const isDataDefined =
-    proposalMatchedProposalRewards !== undefined && proposalRewardsThreshold !== undefined;
+    proposalDonorsRewardsSum?.isZero() || (canFoundedAtHide && isDonationAboveThreshold);
 
   const totalValueOfAllocationsToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
@@ -50,26 +55,36 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
     valueCrypto: proposalRewardsThreshold,
   });
 
+  const proposalDonorsRewardsSumToDisplay = getValueCryptoToDisplay({
+    cryptoCurrency: 'ethereum',
+    valueCrypto: proposalDonorsRewardsSum,
+  });
+
+  const showProgressBar =
+    !isDonationAboveThreshold &&
+    proposalRewardsThreshold !== undefined &&
+    proposalDonorsRewardsSum !== undefined;
+
   return (
     <div className={cx(styles.root, className)} data-test="ProposalRewards">
       <div className={styles.separator}>
-        {isDonationAboveThreshold || !isDataDefined ? (
-          <div className={styles.line} />
-        ) : (
+        {showProgressBar ? (
           <ProgressBar
             color={isArchivedProposal ? 'grey' : 'orange'}
             progressPercentage={getProgressPercentage(
-              proposalMatchedProposalRewards?.sum,
+              proposalDonorsRewardsSum,
               proposalRewardsThreshold,
             )}
           />
+        ) : (
+          <div className={styles.line} />
         )}
       </div>
       <div className={styles.values}>
-        {isDataDefined ? (
+        {proposalMatchedProposalRewards !== undefined || proposalDonors !== undefined ? (
           <div className={styles.value}>
             <span className={styles.label} data-test="ProposalRewards__currentTotal__label">
-              {t(isArchivedProposal ? 'totalRaised' : 'currentTotal')}
+              {t(isDonationAboveThreshold ? 'totalRaised' : 'totalDonated')}
             </span>
             <span
               className={cx(
@@ -79,7 +94,9 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
               )}
               data-test="ProposalRewards__currentTotal__number"
             >
-              {totalValueOfAllocationsToDisplay}
+              {isDonationAboveThreshold
+                ? totalValueOfAllocationsToDisplay
+                : proposalDonorsRewardsSumToDisplay}
             </span>
           </div>
         ) : (
@@ -91,14 +108,12 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
           </div>
         )}
         {MiddleElement}
-        {isDataDefined && (
-          <div className={cx(styles.value, isFundedAtHidden && styles.isHidden)}>
-            <span className={styles.label}>{t('fundedAt')}</span>
-            <span className={cx(styles.number, isArchivedProposal && styles.isArchivedProposal)}>
-              {cutOffValueToDisplay}
-            </span>
-          </div>
-        )}
+        <div className={cx(styles.value, isFundedAtHidden && styles.isHidden)}>
+          <span className={styles.label}>{t(isArchivedProposal ? 'didNotReach' : 'fundedAt')}</span>
+          <span className={cx(styles.number, isArchivedProposal && styles.isArchivedProposal)}>
+            {cutOffValueToDisplay}
+          </span>
+        </div>
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ $stepHeight: 0.8rem;
 
 .stepWrapper {
   width: 1.8rem;
-  margin: 0.8rem 0rem 2rem;
+  margin: 0.8rem 0 2rem;
   padding: $progressStepperSlimStepPadding 0;
   height: $stepHeight;
   box-sizing: content-box;
@@ -35,7 +35,7 @@ $stepHeight: 0.8rem;
   &:hover {
     .step {
       &:not(.isCurrent) {
-        background: $color-octant-grey2;
+        background: $color-octant-grey1;
       }
     }
   }
@@ -43,7 +43,7 @@ $stepHeight: 0.8rem;
 
 .step {
   border-radius: calc($stepHeight / 2);
-  background: $color-octant-grey4;
+  background: $color-octant-grey3;
   height: 100%;
   width: 0.8rem;
   transition: background $transition-time-5;
