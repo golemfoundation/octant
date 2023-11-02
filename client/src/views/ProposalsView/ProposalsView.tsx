@@ -47,16 +47,18 @@ const ProposalsView = (): ReactElement => {
 
   return (
     <MainLayout dataTest="ProposalsView">
-      <TipTile
-        className={styles.tip}
-        dataTest="ProposalsView__TipTile"
-        image="images/favourites.webp"
-        infoLabel={i18n.t('common.gettingStarted')}
-        isOpen={isAddToFavouritesTipVisible}
-        onClose={() => setWasAddFavouritesAlreadyClosed(true)}
-        text={t('tip.text')}
-        title={t('tip.title')}
-      />
+      {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
+        <TipTile
+          className={styles.tip}
+          dataTest="ProposalsView__TipTile"
+          image="images/favourites.webp"
+          infoLabel={i18n.t('common.gettingStarted')}
+          isOpen={isAddToFavouritesTipVisible}
+          onClose={() => setWasAddFavouritesAlreadyClosed(true)}
+          text={t('tip.text')}
+          title={t('tip.title')}
+        />
+      )}
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <ProposalsList
           areCurrentEpochsProjectsHiddenOutsideAllocationWindow={

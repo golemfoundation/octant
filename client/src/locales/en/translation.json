@@ -68,11 +68,6 @@
           "valueCryptoTooBig": "That isn’t a valid amount"
         }
       },
-      "allocationEmptyState": {
-        "text": "Add some projects or lock GLM tokens to prepare for the next allocation period",
-        "epoch1textMobile": "Allocations start in Epoch 2, <br/> please check back in then",
-        "epoch1textDesktop": "Check out some projects or lock some GLM <br/> to prepare for the next allocation period"
-      },
       "allocationInfoBoxes": {
         "decisionWindowClosed": "The decision window is now closed. Allocating funds is not possible.",
         "connectWallet": "In order to manipulate allocation values and vote, please connect your wallet first."
@@ -86,6 +81,7 @@
       "allocationRewardsBox": {
         "title": "Allocate rewards",
         "subtitle": "{{individualReward}} available",
+        "subtitleNoRewards": "No rewards available yet",
         "donate": "Donate {{percentRewardsForProposals}}%",
         "withdraw": "Withdraw {{percentWithdraw}}%"
       },
@@ -228,7 +224,9 @@
       "proposalRewards": {
         "currentTotal": "Current total",
         "totalRaised": "Total raised",
-        "fundedAt": "Funded at"
+        "totalDonated": "Total donated",
+        "fundedAt": "Funded at",
+        "didNotReach": "Did not reach"
       },
       "proposalsList": {
         "epochArchive": "Epoch {{epoch}} Archive"
@@ -422,7 +420,7 @@
       "alwaysShowOnboarding": "Always show onboarding",
       "alwaysShowOctantTips": "Always show tips",
       "enablePatronMode": "Enable patron mode",
-      "patronModeTooltip":  "Patron mode is for token holders who want to support Octant. It disables allocation to yourself or projects. All rewards go directly to the matching fund with no action required by the patron."
+      "patronModeTooltip": "Patron mode is for token holders who want to support Octant. It disables allocation to yourself or projects. All rewards go directly to the matching fund with no action required by the patron."
     },
     "syncStatus": {
       "information": "We're synchronizing things to prepare the<br/>next epoch, so the app will be unavailable<br/>for a little while. Please check back soon."
