@@ -554,20 +554,20 @@ Destroy MR App:
   environment:
     name: mr/$CI_MERGE_REQUEST_IID
     deployment_tier: development
-#
-#Destroy UAT App:
-#  extends:
-#    - .destroy_app
-#  variables:
-#    ENV_TYPE: "uat"
-#  rules:
-#    - !reference [.rules, on_mr_manual ]
-#    - !reference [.rules, on_push_to_default_branch_manual ]
-#    - !reference [.rules, on_push_to_master_branch_manual ]
-#  needs: []
-#  environment:
-#    name: persistent/uat
-#    deployment_tier: testing
+
+Destroy UAT App:
+  extends:
+    - .destroy_app
+  variables:
+    ENV_TYPE: "uat"
+  rules:
+    - !reference [.rules, on_mr_manual ]
+    - !reference [.rules, on_push_to_default_branch_manual ]
+    - !reference [.rules, on_push_to_master_branch_manual ]
+  needs: []
+  environment:
+    name: persistent/uat
+    deployment_tier: testing
 
 Destroy Master App:
   extends:
