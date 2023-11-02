@@ -63,7 +63,6 @@ export default function useHistory(
         }
         // eslint-disable-next-line dot-notation
         curr['projectsNumber'] = 1;
-        // console.log(2, getFormattedEthValue(curr.amount));
         // eslint-disable-next-line dot-notation
         curr['projects'] = [
           {

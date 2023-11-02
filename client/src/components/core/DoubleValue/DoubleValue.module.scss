@@ -7,10 +7,10 @@
   }
 
   &.isDisabled {
-    color: $color-octant-grey3;
+    color: $color-octant-grey2;
 
     .secondary {
-      color: $color-octant-grey3;
+      color: $color-octant-grey2;
     }
   }
 
@@ -53,7 +53,7 @@
 
 .secondary {
   font-size: $font-size-12;
-  color: $color-octant-grey6;
+  color: $color-octant-grey5;
 
   &.isError {
     color: $color-octant-orange;

@@ -16,7 +16,9 @@ function App() {
     fileReader.readAsText(merkleTreeFile, 'UTF-8');
     fileReader.onload = e => {
       if (!e?.target) return;
-      const tree = StandardMerkleTree.load(JSON.parse(e.target.result as string));
+      const treeJson = JSON.parse(e.target.result as string);
+      const leaves = treeJson.leaves.map((obj: { address: string; amount: string; }) => [obj.address, obj.amount]);
+      const tree = StandardMerkleTree.of(leaves, treeJson.leafEncoding);
       setUploadedMerkleTree(tree);
     };
   };

@@ -53,8 +53,7 @@ const AllocationItemProposalRewards: FC<AllocationItemProposalRewardsProps> = ({
       className={cx(
         styles.root,
         className,
-        isThresholdUnknown && styles.isThresholdUnknown,
-        isEpoch1 && styles.isEpoch1,
+        (isEpoch1 || isThresholdUnknown) && styles.isThresholdUnknown,
       )}
     >
       {isEpoch1 && t('epoch1')}

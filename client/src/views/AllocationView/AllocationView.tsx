@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import AllocateRewardsBox from 'components/dedicated/AllocateRewardsBox/AllocateRewardsBox';
-import AllocationEmptyState from 'components/dedicated/AllocationEmptyState/AllocationEmptyState';
 import AllocationItem from 'components/dedicated/AllocationItem/AllocationItem';
 import AllocationNavigation from 'components/dedicated/AllocationNavigation/AllocationNavigation';
 import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
@@ -349,12 +348,12 @@ const AllocationView = (): ReactElement => {
       {currentView === 'edit' ? (
         <Fragment>
           <AllocationTipTiles className={styles.box} />
-          {!isEpoch1 && hasUserIndividualReward && (
+          {!isEpoch1 && (
             <AllocateRewardsBox
               className={styles.box}
-              isDisabled={isLocked}
+              isDisabled={isLocked || !isDecisionWindowOpen || !hasUserIndividualReward}
               /* eslint-disable-next-line @typescript-eslint/naming-convention */
-              onUnlock={() => setIsLocked(prev => !prev)}
+              onUnlock={isDecisionWindowOpen ? () => setIsLocked(prev => !prev) : () => {}}
             />
           )}
           {areAllocationsAvailableOrAlreadyDone && (
@@ -374,9 +373,6 @@ const AllocationView = (): ReactElement => {
                 />
               ))}
             </Fragment>
-          )}
-          {!areAllocationsAvailableOrAlreadyDone && !hasUserIndividualReward && (
-            <AllocationEmptyState />
           )}
           <ModalAllocationValuesEdit
             isLimitVisible

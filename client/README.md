@@ -2,9 +2,11 @@
 
 Ensure that the `.env`  file is present. See `.env.template`.
 
-`VITE_NETWORK` sets network used by the application. Supported values are 'Local', 'Mainnet', 'Sepolia'. Whenever different value is set, app uses 'Sepolia' network config.
+### Envs
 
-`VITE_JSON_RPC_ENDPOINT`: when provided, app uses first JSON RPC provided with this endpint. When it's not provided, app uses alchemy provider first.
+1. `VITE_NETWORK` sets network used by the application. Supported values are 'Local', 'Mainnet', 'Sepolia'. Whenever different value is set, app uses 'Sepolia' network config.
+2. `VITE_JSON_RPC_ENDPOINT`: when provided, app uses first JSON RPC provided with this endpint. When it's not provided, app uses alchemy provider first.
+3. `areCurrentEpochsProjectsHiddenOutsideAllocationWindow` when set to 'true' makes current epoch's projects hidden when allocation window is closed.
 
 `yanr generate-abi-typings` is used to generate typings for proposals ABIs that we have in codebase. In these typings custom adjustments are added, e.g. in some places `string` is wrongly instead of `BigInt`. Linter is also disabled there. Since ABIs do not change, this command doesn't need to rerun.
 
@@ -17,9 +19,7 @@ Client uses 5 contracts. Following are their names and envs which should have th
 4. Proposals (`VITE_PROPOSALS_ADDRESS)`.
 5. Vault (`VITE_VAULT_ADDRESS`).
 
-Epochs & Vault are not available during Epoch 1. They will be deployed and the client will be redeployed with their addresses before the start of Epoch 2.
-
-Values for all envs are required. In order to deploy client without Epochs & Vault contracts please use any placeholder value for their envs (e.g. `placeholder`), i.e. `VITE_EPOCHS_ADDRESS=placeholder`.
+Values for all but `VITE_JSON_RPC_ENDPOINT` envs are required. In order to deploy client without Epochs & Vault contracts please use any placeholder value for their envs (e.g. `placeholder`), i.e. `VITE_EPOCHS_ADDRESS=placeholder`.
 
 ## Proposals
 
@@ -77,17 +77,6 @@ export interface BackendProposal {
 ## Codegen
 
 [Codegen](https://the-guild.dev/graphql/codegen) is used to generate GQL typed queries, mutations & subscriptions. Types are fetched from the server on `yarn codegen` command and put in `src/gql` directory, which is commited. It's done so that whenever server is not available starting frontend application is not blocked. When the server becomes more stable or local environment is available, we will not commit `src/gql` directory.
-
-## Known technical problems
-
-Typechain combines responses from contracts so that an array and object are joined together, e.g.:
-```
-export type AllocationStructOutput = [BigNumber, BigNumber] & {
-    allocation: BigNumber;
-    proposalId: BigNumber;
-};
-```
-The problem with this approach is that the `react-query` package used for fetching and managing data from contracts does drop the latter object part on all but first after rerender requests. Hence, the remapping of array elements to named variables is required during response parsing phase.
 
 ## Packages
 
