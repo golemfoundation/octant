@@ -475,18 +475,18 @@ Run Master App:
     GLM_CLAIM_ENABLED: "true"
     VAULT_CONFIRM_WITHDRAWALS_ENABLED: "true"
 
-Wait for MR:
-  stage: status
-  needs: ["MR app deploy"]
-  image: !reference [.images, git_improved ]
-  <<: *env_resolve_init
-  rules:
-    - !reference [.rules, on_mr ]
-  script:
-    - set -ex
-    - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
-  variables:
-    ENV_TYPE: "mr"
+#Wait for MR:
+#  stage: status
+#  needs: ["MR app deploy"]
+#  image: !reference [.images, git_improved ]
+#  <<: *env_resolve_init
+#  rules:
+#    - !reference [.rules, on_mr ]
+#  script:
+#    - set -ex
+#    - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
+#  variables:
+#    ENV_TYPE: "mr"
 
 Wait for UAT:
   stage: status
