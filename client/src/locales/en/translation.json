@@ -68,11 +68,6 @@
           "valueCryptoTooBig": "That isn’t a valid amount"
         }
       },
-      "allocationEmptyState": {
-        "text": "Add some projects or lock GLM tokens to prepare for the next allocation period",
-        "epoch1textMobile": "Allocations start in Epoch 2, <br/> please check back in then",
-        "epoch1textDesktop": "Check out some projects or lock some GLM <br/> to prepare for the next allocation period"
-      },
       "allocationInfoBoxes": {
         "decisionWindowClosed": "The decision window is now closed. Allocating funds is not possible.",
         "connectWallet": "In order to manipulate allocation values and vote, please connect your wallet first."
@@ -86,6 +81,7 @@
       "allocationRewardsBox": {
         "title": "Allocate rewards",
         "subtitle": "{{individualReward}} available",
+        "subtitleNoRewards": "No rewards available yet",
         "donate": "Donate {{percentRewardsForProposals}}%",
         "withdraw": "Withdraw {{percentWithdraw}}%"
       },
