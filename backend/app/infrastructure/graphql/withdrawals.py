@@ -27,7 +27,7 @@ def get_user_withdrawals_history(user_address: str, from_timestamp: int, limit: 
         "limit": limit,
     }
 
-    app.logger.info(
+    app.logger.debug(
         f"[Subgraph] Getting user {user_address} withdrawals before ts {from_timestamp}"
     )
     partial_result = request_context.graphql_client.execute(
@@ -45,7 +45,7 @@ def get_user_withdrawals_history(user_address: str, from_timestamp: int, limit: 
             filter(lambda x: x["timestamp"] != limit_timestamp, partial_result)
         )
         result = result_without_events_at_timestamp_limit + events_at_timestamp_limit
-    app.logger.info(f"[Subgraph] Received withdrawals: {result}")
+    app.logger.debug(f"[Subgraph] Received withdrawals: {result}")
 
     return result
 
@@ -75,7 +75,7 @@ def get_withdrawals_by_address_and_timestamp_range(
         "toTimestamp": to_timestamp,
     }
 
-    app.logger.info(
+    app.logger.debug(
         f"[Subgraph] Getting user {user_address} withdrawals in timestamp range {from_timestamp} - {to_timestamp}"
     )
 
@@ -83,6 +83,6 @@ def get_withdrawals_by_address_and_timestamp_range(
         "withdrawals"
     ]
 
-    app.logger.info(f"[Subgraph] Received withdrawals: {result}")
+    app.logger.debug(f"[Subgraph] Received withdrawals: {result}")
 
     return result

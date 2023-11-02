@@ -50,5 +50,5 @@ export const QUERY_KEYS: QueryKeys = {
   userAllocationNonce: userAddress => ['userAllocationNonce', userAddress],
   userAllocations: epochNumber => [ROOTS.userAllocations, epochNumber.toString()],
   userTOS: userAddress => [ROOTS.userTOS, userAddress],
-  withdrawableRewards: ['withdrawableRewards'],
+  withdrawals: ['withdrawals'],
 };

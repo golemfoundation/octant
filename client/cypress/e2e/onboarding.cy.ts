@@ -13,7 +13,7 @@ const connectWallet = (
   cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
   cy.disconnectMetamaskWalletFromAllDapps();
   if (shouldVisit) {
-    visitWithLoader(ROOT.absolute);
+    visitWithLoader(ROOT.absolute, ROOT_ROUTES.proposals.absolute);
   }
   if (shouldReload) {
     cy.reload();

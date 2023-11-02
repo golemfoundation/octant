@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from decimal import Decimal
 from functools import reduce
-from typing import List
+from typing import List, Tuple
 
 from dataclass_wizard import JSONWizard
 
@@ -9,12 +9,14 @@ from app.core.epochs import epoch_snapshots as core_epoch_snapshots
 from app import database
 from app import exceptions
 from app.core import proposals, merkle_tree
+from app.core.user.budget import get_budget
 from app.core.epochs.epoch_snapshots import has_pending_epoch_snapshot
 from app.core.proposals import get_proposals_with_allocations
 from app.core.rewards.rewards import (
     get_estimated_matched_rewards,
 )
 from app.extensions import epochs
+from app.controllers.user import get_all_users
 
 
 @dataclass()
@@ -58,7 +60,7 @@ def get_estimated_proposals_rewards() -> List[ProposalReward]:
         [
             allocated
             for _, allocated in proposals_with_allocations
-            if allocated >= threshold
+            if allocated > threshold
         ]
     )
 
@@ -68,7 +70,7 @@ def get_estimated_proposals_rewards() -> List[ProposalReward]:
     }
 
     for address, allocated in proposals_with_allocations:
-        if allocated >= threshold:
+        if allocated > threshold:
             matched = int(
                 Decimal(allocated)
                 / Decimal(total_allocated_above_threshold)
@@ -123,3 +125,13 @@ def get_rewards_merkle_tree(epoch: int) -> RewardsMerkleTree:
         leaves=leaves,
         leaf_encoding=merkle_tree.LEAF_ENCODING,
     )
+
+
+def get_all_budgets(epoch: int) -> List[Tuple[str, int]]:
+    all_users = get_all_users()
+    budgets = []
+    for user in sorted(all_users):
+        budget = get_budget(user, epoch)
+        budgets += [{"user": user, "budget": budget}]
+
+    return budgets

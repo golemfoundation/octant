@@ -65,4 +65,6 @@ dataSources:
       eventHandlers:
         - event: Withdrawn(address,uint256,uint256)
           handler: handleWithdrawn
+        - event: MerkleRootSet(uint256,bytes32)
+          handler: handleMerkleRootSet
       file: ./generated/vault.ts

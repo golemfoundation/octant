@@ -13,14 +13,14 @@
     height: 0.2rem;
     width: 100%;
     content: '';
-    background: $color-octant-grey4;
+    background: $color-octant-grey3;
   }
 
   .values {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: $color-octant-grey6;
+    color: $color-octant-grey5;
 
     .value {
       display: flex;
@@ -34,7 +34,7 @@
           color: $color-black;
 
           &.isArchivedProposal {
-            color: $color-octant-grey6;
+            color: $color-octant-grey5;
           }
         }
       }
@@ -62,7 +62,7 @@
         }
 
         &.isArchivedProposal {
-          color: $color-octant-grey6;
+          color: $color-octant-grey5;
         }
       }
     }
@@ -70,13 +70,9 @@
 
   .percentage {
     position: relative;
-    color: $color-octant-red2;
+    color: $color-octant-orange;
     margin: 0 0 0 1rem;
     padding: 0 0 0 1rem;
-
-    &.isAboveThreshold {
-      color: $color-octant-green5;
-    }
 
     &:before {
       content: '';
@@ -85,7 +81,7 @@
       left: 0;
       width: 0.2rem;
       height: 100%;
-      background: $color-octant-grey2;
+      background: $color-octant-grey1;
     }
   }
 

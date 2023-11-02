@@ -26,6 +26,10 @@ withdrawable_rewards_model = api.model(
             required=True,
             description="List of merkle proofs needed to withdraw funds from smart contract",
         ),
+        "status": fields.String(
+            required=True,
+            description="User withdrawable rewards status (pending, available)",
+        ),
     },
 )
 

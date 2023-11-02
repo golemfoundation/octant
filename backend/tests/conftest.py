@@ -1,12 +1,14 @@
 from decimal import Decimal
+import json
 from random import randint
-from typing import Optional, List
+from typing import List, Mapping, Optional
 from unittest.mock import MagicMock, Mock
 
 import pytest
 from eth_account import Account
 from flask import g as request_context
-from gql import Client
+from flask.testing import FlaskClient
+import gql
 from web3 import Web3
 
 from tests.helpers.gql_client import MockGQLClient
@@ -18,8 +20,9 @@ from app.controllers.allocations import allocate, deserialize_payload
 from app.core.allocations import AllocationRequest, Allocation
 from app.core.rewards.rewards import calculate_matched_rewards
 from app.crypto.eip712 import sign, build_allocations_eip712_data
-from app.extensions import db, w3
-from app.settings import TestConfig
+from app.extensions import db, w3, deposits, glm
+from app.settings import TestConfig, DevConfig
+from app.crypto.account import Account as CryptoAccount
 
 # Consts
 MNEMONIC = "test test test test test test test test test test test junk"
@@ -53,10 +56,140 @@ MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
 MOCK_IS_CONTRACT = Mock()
 MOCK_MATCHED_REWARDS = MagicMock(spec=calculate_matched_rewards)
 
+DEPLOYER_PRIV = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+ALICE = "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
+BOB = "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a"
+CAROL = "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6"
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--runapi",
+        action="store_true",
+        default=False,
+        help="run api tests; they require chain and indexer running",
+    )
+    parser.addoption(
+        "--onlyapi",
+        action="store_true",
+        default=False,
+        help="run api tests exclusively; they require chain and indexer running",
+    )
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "api: mark test as API test")
+
+
+def pytest_collection_modifyitems(config, items):
+    if config.getoption("--runapi"):
+        return
+    elif config.getoption("--onlyapi"):
+        skip_nonapi = pytest.mark.skip(reason="--onlyapi option is on")
+        for item in items:
+            if "api" not in item.keywords:
+                item.add_marker(skip_nonapi)
+    else:
+        skip_api = pytest.mark.skip(reason="need --runapi option to run")
+        for item in items:
+            if "api" in item.keywords:
+                item.add_marker(skip_api)
+
+
+@pytest.fixture
+def flask_client() -> FlaskClient:
+    """An application for the integration / API tests."""
+    _app = create_app(DevConfig)
+
+    with _app.test_client() as client:
+        with _app.app_context():
+            db.create_all()
+            yield client
+            db.session.close()
+            db.drop_all()
+
+
+class UserAccount:
+    def __init__(self, account: CryptoAccount):
+        self._account = account
+
+    def fund_octant(self, address: str, value: int):
+        signed_txn = w3.eth.account.sign_transaction(
+            dict(
+                nonce=w3.eth.get_transaction_count(self.address),
+                gasPrice=w3.eth.gas_price,
+                gas=1000000,
+                to=address,
+                value=w3.to_wei(value, "ether"),
+            ),
+            self._account.key,
+        )
+        w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+
+    def transfer(self, account: "UserAccount", value: int):
+        glm.transfer(self._account, account.address, w3.to_wei(value, "ether"))
+
+    def lock(self, value: int):
+        glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
+        deposits.lock(self._account, w3.to_wei(value, "ether"))
+
+    @property
+    def address(self):
+        return self._account.address
+
+
+@pytest.fixture
+def deployer() -> UserAccount:
+    return UserAccount(CryptoAccount.from_key(DEPLOYER_PRIV))
+
+
+@pytest.fixture
+def ua_alice() -> UserAccount:
+    return UserAccount(CryptoAccount.from_key(ALICE))
+
+
+@pytest.fixture
+def ua_bob() -> UserAccount:
+    return UserAccount(CryptoAccount.from_key(BOB))
+
+
+@pytest.fixture
+def ua_carol() -> UserAccount:
+    return UserAccount(CryptoAccount.from_key(CAROL))
+
+
+class Client:
+    def __init__(self, flask_client: FlaskClient):
+        self._flask_client = flask_client
+
+    def root(self):
+        return self._flask_client.get("/").text
+
+    def sync_status(self):
+        rv = self._flask_client.get("/info/sync-status").text
+        return json.loads(rv)
+
+    def pending_snapshot(self):
+        rv = self._flask_client.post("/snapshots/pending").text
+        return json.loads(rv)
+
+    def get_rewards_budget(self, address: str, epoch: int):
+        rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").text
+        return json.loads(rv)
+
+    @property
+    def config(self):
+        return self._flask_client.application.config
+
+
+@pytest.fixture
+def client(flask_client: FlaskClient) -> Client:
+    return Client(flask_client)
+
 
 @pytest.fixture(scope="function")
 def app():
-    """An application for the tests."""
+    """An application for the unit tests."""
     _app = create_app(TestConfig)
 
     with _app.app_context():
@@ -74,7 +207,7 @@ def app():
 
 @pytest.fixture(scope="function")
 def graphql_client(app):
-    request_context.graphql_client = Client()
+    request_context.graphql_client = gql.Client()
 
 
 @pytest.fixture(scope="function")
@@ -118,6 +251,7 @@ def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.controllers.snapshots.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.controllers.rewards.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.controllers.epochs.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.controllers.withdrawals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.proposals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.user.budget.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.epochs.details.epochs", MOCK_EPOCHS)
@@ -191,6 +325,8 @@ def patch_has_pending_epoch_snapshot(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_user_budget(monkeypatch):
     monkeypatch.setattr("app.core.allocations.get_budget", MOCK_GET_USER_BUDGET)
+    monkeypatch.setattr("app.core.user.rewards.get_budget", MOCK_GET_USER_BUDGET)
+
     MOCK_GET_USER_BUDGET.return_value = 10 * 10**18 * 10**18
 
 
@@ -360,6 +496,7 @@ def mock_graphql(
     deposit_events=None,
     epochs_events=None,
     withdrawals_events=None,
+    merkle_roots_events=None,
 ):
     lockeds, unlockeds = _split_deposit_events(deposit_events)
     # Mock the execute method of the GraphQL client
@@ -368,6 +505,7 @@ def mock_graphql(
         lockeds=lockeds,
         unlockeds=unlockeds,
         withdrawals=withdrawals_events,
+        merkle_roots=merkle_roots_events,
     )
     mocker.patch.object(request_context.graphql_client, "execute")
     request_context.graphql_client.execute.side_effect = mock_client.execute

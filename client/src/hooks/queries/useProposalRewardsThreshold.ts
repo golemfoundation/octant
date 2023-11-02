@@ -27,7 +27,7 @@ export default function useProposalRewardsThreshold(
     () => apiGetProjectThreshold(epoch ? epoch - 1 : currentEpoch! - 1),
     {
       enabled:
-        (epoch !== undefined && epoch > 1) ||
+        (epoch !== undefined && epoch > 0) ||
         (!!currentEpoch && currentEpoch > 1 && isDecisionWindowOpen),
       select: response => parseUnits(response.threshold, 'wei'),
       staleTime: Infinity,

@@ -10,11 +10,19 @@ filters = {
 
 
 class MockGQLClient:
-    def __init__(self, withdrawals=None, lockeds=None, unlockeds=None, epoches=None):
+    def __init__(
+        self,
+        withdrawals=None,
+        lockeds=None,
+        unlockeds=None,
+        epoches=None,
+        merkle_roots=None,
+    ):
         self.withdrawals = withdrawals if withdrawals is not None else []
         self.epoches = epoches if epoches is not None else []
         self.lockeds = lockeds if lockeds is not None else []
         self.unlockeds = unlockeds if unlockeds is not None else []
+        self.vaultMerkleRoots = merkle_roots if merkle_roots is not None else []
 
     def execute(self, query: DocumentNode, variable_values=None):
         query = query.to_dict()["definitions"][0]
@@ -36,15 +44,17 @@ class MockGQLClient:
     def _extract_filters(query, variables):
         query_arguments = query["selection_set"]["selections"][0]["arguments"]
         where_clause = next(
-            (v for v in query_arguments if v["name"]["value"] == "where"), []
+            (v for v in query_arguments if v["name"]["value"] == "where"), {}
         )
 
-        filter_clauses = where_clause["value"]["fields"]
+        entity_filters = []
+        if where_clause:
+            filter_clauses = where_clause["value"]["fields"]
 
-        entity_filters = [
-            MockGQLClient._build_filter(filter_clause, variables)
-            for filter_clause in filter_clauses
-        ]
+            entity_filters = [
+                MockGQLClient._build_filter(filter_clause, variables)
+                for filter_clause in filter_clauses
+            ]
 
         return lambda entity: all([f(entity) for f in entity_filters])
 
