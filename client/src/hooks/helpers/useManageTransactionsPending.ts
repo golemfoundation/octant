@@ -4,7 +4,7 @@ import { usePublicClient } from 'wagmi';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useEstimatedEffectiveDeposit from 'hooks/queries/useEstimatedEffectiveDeposit';
-import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
+import useWithdrawals from 'hooks/queries/useWithdrawals';
 import useBlockNumber from 'hooks/subgraph/useBlockNumber';
 import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 import useTransactionLocalStore, {
@@ -40,7 +40,7 @@ export default function useManageTransactionsPending(): void {
   const { refetch: refetchEstimatedEffectiveDeposit } = useEstimatedEffectiveDeposit();
   const { refetch: refetchDeposit } = useDepositValue();
   const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
-  const { refetch: refetchWithdrawableRewards } = useWithdrawableRewards();
+  const { refetch: refetchWithdrawals } = useWithdrawals();
 
   useEffect(() => {
     if (!transactionsPending) {
@@ -95,7 +95,7 @@ export default function useManageTransactionsPending(): void {
       refetchDeposit();
       refetchEstimatedEffectiveDeposit();
       refetchLockedSummaryLatest();
-      refetchWithdrawableRewards();
+      refetchWithdrawals();
 
       setBlockNumberWithLatestTx(metaInitialState.blockNumberWithLatestTx);
     }
@@ -106,8 +106,8 @@ export default function useManageTransactionsPending(): void {
     refetchAvailableFundsGlm,
     refetchDeposit,
     refetchEstimatedEffectiveDeposit,
-    refetchWithdrawableRewards,
     refetchLockedSummaryLatest,
+    refetchWithdrawals,
     setBlockNumberWithLatestTx,
   ]);
 }

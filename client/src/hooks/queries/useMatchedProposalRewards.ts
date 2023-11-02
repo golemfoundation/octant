@@ -65,7 +65,7 @@ export default function useMatchedProposalRewards(
     () => (epoch ? apiGetMatchedProposalRewards(epoch) : apiGetEstimatedMatchedProposalRewards()),
     {
       enabled:
-        (epoch !== undefined && epoch > 1) ||
+        (epoch !== undefined && epoch > 0) ||
         (!!currentEpoch && currentEpoch > 1 && isDecisionWindowOpen),
       select: response => parseResponse(response),
       ...options,

@@ -1,5 +1,5 @@
 variables:
-  KANIKO_VERSION: v1.9.2
+  KANIKO_VERSION: v1.16.0
   FF_USE_FASTZIP: "true"
   CACHE_COMPRESSION_LEVEL: "fast"
   TRANSFER_METER_FREQUENCY: "2s"
@@ -14,6 +14,7 @@ stages:
   - docker
   - deploy
   - application
+  - env_test
   - status
   - cleanup
 
@@ -27,17 +28,17 @@ default:
     name: acidrain/python-poetry:3.11-1.5.1
     pull_policy: if-not-present
   node:
-    name: registry.gitlab.com/wildland/devops/container-builder/octant/node-extended:latest
+    name: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:5dc8b447
     pull_policy: if-not-present
   kaniko:
     name: gcr.io/kaniko-project/executor:$KANIKO_VERSION-debug
     pull_policy: if-not-present
     entrypoint: [""]
   git_improved:
-    name: registry.gitlab.com/wildland/devops/container-builder/gitops-builder:latest
+    name: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:5dc8b447
     pull_policy: if-not-present
   synpress:
-    name: registry.gitlab.com/wildland/devops/container-builder/octant/synpress-arch:08da1d10
+    name: registry.gitlab.com/golemfoundation/devops/container-builder/octant/synpress-arch:5dc8b447
     pull_policy: if-not-present
   alpine_git:
     name: alpine/git
@@ -220,12 +221,7 @@ Unit tests:
           - contracts-v1
           - client
           - coin-prices-server
-#           Disabled because of 404.
-#           TODO OCT-1042 enable this job.
-#           https://gitlab.com/wildland/governance/octant/-/jobs/5313689201
-#           Downloading release from https://github.com/LimeChain/matchstick/releases/download/0.6.0/binary-linux-20
-#           Error fetching release: Request failed with status code 404
-#          - subgraph
+          - subgraph
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
@@ -347,8 +343,8 @@ Build images:
   variables:
     NETWORK: 'localhost'
     SKIP_LOCAL_SUBGRAPH_UPDATE: 'true'
-    PROPOSALS_ADDRESSES: '0x1c01595f9534E33d411035AE99a4317faeC4f6Fe,0x02Cb3C150BEdca124d0aE8CcCb72fefbe705c953,0x6e8873085530406995170Da467010565968C7C62,0x7DAC9Fc15C1Db4379D75A6E3f330aE849dFfcE18,0xAb6D6a37c5110d1377832c451C33e4fA16A9BA05,0xcC7d34C76A9d08aa0109F7Bae35f29C1CE35355A,0xD165df4296C85e780509fa1eace0150d945d49Fd,0xde21F729137C5Af1b01d73aF1dC21eFfa2B8a0d6,0xF6CBDd6Ea6EC3C4359e33de0Ac823701Cc56C6c4,0x0B7246eF74Ca7b37Fdc3D15be4f0b49876622F95,0x2DCDF80f439843D7E0aD1fEF9E7a439B7917eAc9,0x4A9a27d614a74Ee5524909cA27bdBcBB7eD3b315,0x4ADc8CC149A03F44386Bee80bab36F9e8022b195,0x8c89a6bf53cCF63e7B4465Cc1b1330723B4BdcB7,0x20a1B17087482de88Fac6D7B5aE23A7175fd1395,0x78e084445C3F1006617e1f36794dd2261ecE4AE3,0x149D46eC060e75AE188876AdB6b24024637003C7,0x532Fb5D00f40ced99B16d1E295C77Cda2Eb1BB4F,0x3455FbB4D34C6b47999B66c83aA7BD8FDDade638,0x9531C059098e3d194fF87FebB587aB07B30B1306,0xCf3efCE169acEC1B281C05E863F78acCF62BD944,0xd1B8dB70Ded72dB850713b2ce7e1A4FfAfAD95d1,0xF0652a820dd39EC956659E0018Da022132f2f40a,0xfFbD35255008F86322051F2313D4b343540e0e00'
-    PROPOSALS_CID: QmV6M6BwSCEWgUaDfv2e5u2D2DSuM2HX6is5RsXfw1R5s5
+    PROPOSALS_ADDRESSES: '0x1c01595f9534E33d411035AE99a4317faeC4f6Fe,0x02Cb3C150BEdca124d0aE8CcCb72fefbe705c953,0x6e8873085530406995170Da467010565968C7C62,0x7DAC9Fc15C1Db4379D75A6E3f330aE849dFfcE18,0xAb6D6a37c5110d1377832c451C33e4fA16A9BA05,0xcC7d34C76A9d08aa0109F7Bae35f29C1CE35355A,0xD165df4296C85e780509fa1eace0150d945d49Fd,0xde21F729137C5Af1b01d73aF1dC21eFfa2B8a0d6,0xF6CBDd6Ea6EC3C4359e33de0Ac823701Cc56C6c4,0x0B7246eF74Ca7b37Fdc3D15be4f0b49876622F95,0x2DCDF80f439843D7E0aD1fEF9E7a439B7917eAc9,0x4A9a27d614a74Ee5524909cA27bdBcBB7eD3b315,0x4ADc8CC149A03F44386Bee80bab36F9e8022b195,0x8c89a6bf53cCF63e7B4465Cc1b1330723B4BdcB7,0x20a1B17087482de88Fac6D7B5aE23A7175fd1395,0x78e084445C3F1006617e1f36794dd2261ecE4AE3,0x149D46eC060e75AE188876AdB6b24024637003C7,0x15c941a44a343B8c46a28F2BB9aFc7a54E255A4f,0x3455FbB4D34C6b47999B66c83aA7BD8FDDade638,0x9531C059098e3d194fF87FebB587aB07B30B1306,0xCf3efCE169acEC1B281C05E863F78acCF62BD944,0xd1B8dB70Ded72dB850713b2ce7e1A4FfAfAD95d1,0xF0652a820dd39EC956659E0018Da022132f2f40a,0xfFbD35255008F86322051F2313D4b343540e0e00'
+    PROPOSALS_CID: QmSQEFD35gKxdPEmngNt1CWe3kSwiiGqBn1Z3FZvWb8mvK
     DECISION_WINDOW: 9000 # 2.5h
     EPOCH_DURATION: 10800 # 3.0h
   script:
@@ -646,7 +642,7 @@ Deploy Release Candidate app:
     - !reference [.rules, on_push_to_master_branch_manual]
   resource_group: production
   variables:
-    ARGO_REPOSITORY: "https://wildland-bot:${HOUSEKEEPER_CI_TOKEN}@gitlab.com/wildland/devops/iac/k8s/wildland-k8s-devops.git"
+    ARGO_REPOSITORY: "https://wildland-bot:${HOUSEKEEPER_CI_TOKEN}@gitlab.com/golemfoundation/devops/iac/k8s/wildland-k8s-devops.git"
     ARGO_REPOSITORY_BRANCH: "gitlab/octant-testing"
   script: |
     set -ex
@@ -681,5 +677,5 @@ Deploy production app:
     DEV_IMAGE_TAG: $CI_COMMIT_SHA
     PROD_IMAGE_TAG: $CI_COMMIT_TAG
   trigger:
-    project: wildland/devops/pipelines/octant-production
+    project: golemfoundation/devops/pipelines/octant-production
     branch: master

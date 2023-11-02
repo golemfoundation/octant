@@ -90,7 +90,16 @@ def get_all_by_proposal_and_epoch(
     ]
 
 
-def get_all_by_epoch(epoch: int) -> List[EpochAllocationRecord]:
+def get_abstainers(epoch: int) -> List[str]:
+    allocs = get_all_by_epoch(epoch, include_zeroes=True)
+    active = [alloc.donor for alloc in allocs]
+    all_with_budget = [budget["user"] for budget in rewards.get_all_budgets(epoch)]
+    return list(set(all_with_budget) - set(active))
+
+
+def get_all_by_epoch(
+    epoch: int, include_zeroes: bool = False
+) -> List[EpochAllocationRecord]:
     if epoch > epoch_snapshots.get_last_pending_snapshot():
         raise exceptions.EpochAllocationPeriodNotStartedYet(epoch)
 
@@ -99,7 +108,7 @@ def get_all_by_epoch(epoch: int) -> List[EpochAllocationRecord]:
     return [
         EpochAllocationRecord(a.user.address, a.amount, a.proposal_address)
         for a in allocations
-        if int(a.amount) != 0
+        if int(a.amount) != 0 or include_zeroes
     ]
 
 

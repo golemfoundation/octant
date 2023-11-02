@@ -18,7 +18,7 @@ $nameAndRewardsMobilePadding: 2.7rem;
   display: flex;
   flex-direction: column;
   flex: 1;
-  border-right: 0.1rem solid $color-octant-grey12;
+  border-right: 0.1rem solid $color-octant-grey8;
 }
 
 .name, .rewards {
@@ -36,7 +36,7 @@ $nameAndRewardsMobilePadding: 2.7rem;
   font-size: $font-size-14;
   font-weight: $font-weight-bold;
   white-space: nowrap;
-  border-bottom: 0.1rem solid $color-octant-grey12;
+  border-bottom: 0.1rem solid $color-octant-grey8;
   width: 100%;
   text-align: left;
   padding: 0 $nameAndRewardsMobilePadding;
@@ -91,7 +91,7 @@ $nameAndRewardsMobilePadding: 2.7rem;
   }
 
   .allocatedAmount {
-    color: $color-octant-grey6;
+    color: $color-octant-grey5;
     font-size: $font-size-10;
     font-weight: $font-weight-bold;
 

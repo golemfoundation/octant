@@ -14,7 +14,7 @@
     align-items: center;
     justify-content: center;
     border-radius: $border-radius-08;
-    box-shadow: 0rem 0.4rem 2.5rem 0rem $color-black-05;
+    box-shadow: 0 0.4rem 2.5rem 0 $color-black-05;
     cursor: pointer;
     z-index: 1;
 
@@ -31,7 +31,7 @@
 
 .label {
   position: absolute;
-  color: $color-octant-grey6;
+  color: $color-octant-grey5;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -63,7 +63,7 @@
   colorOctantGreen: $color-octant-green;
   colorOctantGreen_80: $color-octant-green-80;
   colorOctantDark: $color-octant-dark;
-  colorOctantGrey6: $color-octant-grey6;
-  colorOctantGrey12: $color-octant-grey12;
+  colorOctantGrey6: $color-octant-grey5;
+  colorOctantGrey12: $color-octant-grey8;
   colorWhite: $color-white;
 }

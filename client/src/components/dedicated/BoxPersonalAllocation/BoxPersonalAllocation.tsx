@@ -1,5 +1,4 @@
 import { format } from 'date-fns-tz';
-import { BigNumber } from 'ethers';
 import React, { FC, Fragment, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
@@ -12,13 +11,9 @@ import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocation
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
-import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
-import useSyncStatus from 'hooks/queries/useSyncStatus';
-import useUserAllocations from 'hooks/queries/useUserAllocations';
-import useWithdrawableRewards from 'hooks/queries/useWithdrawableRewards';
-import useAllocationsStore from 'store/allocations/store';
+import useWithdrawals from 'hooks/queries/useWithdrawals';
 import useTransactionLocalStore from 'store/transactionLocal/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
@@ -33,27 +28,16 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { timeCurrentEpochEnd, timeCurrentAllocationEnd } = useEpochAndAllocationTimestamps();
+  const { timeCurrentEpochStart, timeCurrentAllocationEnd } = useEpochAndAllocationTimestamps();
   const { data: currentEpochProps } = useCurrentEpochProps();
-  const { data: userAllocations, isFetching: isFetchingUserAllocations } = useUserAllocations();
-  const { data: withdrawableRewards, isFetching: isWithdrawableRewardsFetching } =
-    useWithdrawableRewards();
-  const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
-  const { rewardsForProposals } = useAllocationsStore(state => ({
-    rewardsForProposals: state.data.rewardsForProposals,
-    setRewardsForProposals: state.setRewardsForProposals,
-  }));
+  const { data: withdrawals, isFetching: isFetchingWithdrawals } = useWithdrawals();
+  const { data: isPatronMode } = useIsPatronMode();
   const { isAppWaitingForTransactionToBeIndexed } = useTransactionLocalStore(state => ({
     isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
   }));
-  const { data: syncStatusData } = useSyncStatus();
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
-
-  const pendingCrypto = individualReward?.sub(rewardsForProposals);
-
   const isProjectAdminMode = useIsProjectAdminMode();
-  const { data: isPatronMode } = useIsPatronMode();
 
   const sections: SectionProps[] = [
     ...(!isProjectAdminMode
@@ -61,12 +45,8 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
           {
             doubleValueProps: {
               cryptoCurrency: 'ethereum',
-              isFetching: isFetchingIndividualReward || isFetchingUserAllocations,
-              valueCrypto:
-                syncStatusData?.finalizedSnapshot === 'done' ||
-                !userAllocations?.hasUserAlreadyDoneAllocation
-                  ? BigNumber.from(0)
-                  : pendingCrypto,
+              isFetching: isFetchingWithdrawals,
+              valueCrypto: withdrawals?.sums.pending,
             },
             label: isPatronMode ? t('currentEpoch') : t('pending'),
             tooltipProps: isPatronMode
@@ -80,12 +60,13 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
                       </div>
                       <div className={styles.pendingTooltipDate}>
                         {/* TODO OCT-1041 fetch next epoch props instead of assuming the same length */}
-                        {currentEpochProps && timeCurrentEpochEnd && timeCurrentAllocationEnd
+                        {currentEpochProps && timeCurrentEpochStart && timeCurrentAllocationEnd
                           ? format(
                               new Date(
                                 isDecisionWindowOpen
                                   ? timeCurrentAllocationEnd
-                                  : timeCurrentEpochEnd + currentEpochProps.decisionWindow,
+                                  : // When AW is closed, it's when the last AW closed.
+                                    timeCurrentEpochStart + currentEpochProps.decisionWindow,
                               ),
                               'haaa z, d LLLL',
                             )
@@ -99,9 +80,10 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
       : []),
     {
       doubleValueProps: {
+        coinPricesServerDowntimeText: !isProjectAdminMode ? '...' : undefined,
         cryptoCurrency: 'ethereum',
-        isFetching: isWithdrawableRewardsFetching || isAppWaitingForTransactionToBeIndexed,
-        valueCrypto: currentEpoch === 1 ? BigNumber.from(0) : withdrawableRewards?.sum,
+        isFetching: isFetchingWithdrawals || isAppWaitingForTransactionToBeIndexed,
+        valueCrypto: withdrawals?.sums.available,
       },
       label: isPatronMode && !isProjectAdminMode ? t('allTime') : i18n.t('common.availableNow'),
     },
@@ -129,9 +111,9 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
                 isDisabled:
                   isPreLaunch ||
                   !isConnected ||
-                  isWithdrawableRewardsFetching ||
+                  isFetchingWithdrawals ||
                   isAppWaitingForTransactionToBeIndexed ||
-                  withdrawableRewards?.sum.isZero(),
+                  withdrawals?.sums.available?.isZero(),
                 isHigh: true,
                 label: t('withdrawToWallet'),
                 onClick: () => setIsModalOpen(true),

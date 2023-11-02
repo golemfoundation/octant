@@ -5,7 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { Web3Modal } from '@web3modal/react';
 import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom/client';
-import { HashRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { WagmiConfig } from 'wagmi';
 
@@ -19,21 +19,27 @@ import { PROJECT_ID } from './constants/walletConnect';
 
 const root = document.getElementById('root')!;
 
+if (window.location.hash) {
+  const hashRoute = `${window.location.origin}/${window.location.hash}`;
+
+  if (window.location.href.includes(hashRoute)) {
+    window.location.replace(`${window.location.hash.replace('#', '')}`);
+  }
+}
+
 (() => {
   const emptyEnvs = Object.entries(env).reduce(
     (acc, [key, value]) => (!value ? { ...acc, [envViteKeys[key]]: value } : acc),
     {},
   );
   const emptyEnvKeys = Object.keys(emptyEnvs);
+  const requiredEnvKeys = emptyEnvKeys.filter(element => !envsAllowedToBeEmpty.includes(element));
 
-  if (
-    emptyEnvKeys.length > 0 &&
-    emptyEnvKeys.some(element => !envsAllowedToBeEmpty.includes(element))
-  ) {
+  if (requiredEnvKeys.length > 0) {
     const errorMessage =
       'The application crashed because values for the following envs are missing';
-    const emptyEnvKeysWithLinebreaksConsole = emptyEnvKeys.map(element => `\n-- ${element}`);
-    const emptyEnvKeysWithLinebreaksUI = emptyEnvKeys.map(element => `<br />-- ${element}`);
+    const emptyEnvKeysWithLinebreaksConsole = requiredEnvKeys.map(element => `\n-- ${element}`);
+    const emptyEnvKeysWithLinebreaksUI = requiredEnvKeys.map(element => `<br />-- ${element}`);
 
     ReactDOM.createRoot(root).render(
       <div
@@ -51,9 +57,9 @@ const root = document.getElementById('root')!;
     <Fragment>
       <WagmiConfig config={wagmiConfig}>
         <QueryClientProvider client={clientReactQuery}>
-          <HashRouter>
+          <BrowserRouter>
             <App />
-          </HashRouter>
+          </BrowserRouter>
           <ToastContainer
             position="top-center"
             style={{ overflowWrap: 'break-word', width: '350px' }}

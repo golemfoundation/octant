@@ -36,8 +36,14 @@ body {
   min-width: 32rem;
   height: 100%;
   min-height: 100%;
-  background: $color-octant-grey4;
+  background: $color-octant-grey3;
   color: $color-octant-dark;
   font-size: $font-size-16;
   overflow-y: scroll;
+}
+
+.isScrollbarOffsetEnabled {
+  @media #{$desktop-up} {
+    padding-right: 0 !important;
+  }
 }

@@ -17,8 +17,8 @@ $padding: 2.2rem;
   }
 
   &.isGrey {
-    color: $color-octant-grey10;
-    background: $color-octant-grey4;
+    color: $color-octant-grey5;
+    background: $color-octant-grey3;
   }
 
   &.isClickable {
@@ -45,7 +45,7 @@ $padding: 2.2rem;
   justify-content: flex-start;
   align-self: stretch;
   height: 3.8rem;
-  border-bottom: 0.1rem solid $color-octant-grey4;
+  border-bottom: 0.1rem solid $color-octant-grey3;
   margin: 0 0 2rem 0;
 
   &.isGrey {
@@ -56,7 +56,7 @@ $padding: 2.2rem;
 .tab {
   position: relative;
   font-size: $font-size-14;
-  color: $color-octant-grey3;
+  color: $color-octant-grey2;
 
   &.isClickable {
     cursor: pointer;
@@ -80,7 +80,7 @@ $padding: 2.2rem;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  color: $color-octant-grey6;
+  color: $color-octant-grey5;
   font-size: $font-size-14;
   font-weight: $font-weight-bold;
   margin: 0 0 0.5rem 0;
@@ -94,7 +94,7 @@ $padding: 2.2rem;
     font-size: $font-size-16;
     height: 5.6rem;
     margin: 0;
-    border-bottom: 0.1rem solid $color-octant-grey4;
+    border-bottom: 0.1rem solid $color-octant-grey3;
 
     &.isGrey {
       border-bottom: 0.1rem solid $color-white;
@@ -110,7 +110,7 @@ $padding: 2.2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 0.1rem solid $color-octant-grey4;
+    border-bottom: 0.1rem solid $color-octant-grey3;
     height: 4.8rem;
     align-self: stretch;
   }
@@ -123,20 +123,20 @@ $padding: 2.2rem;
     }
 
     path {
-      stroke: $color-octant-grey6;
+      stroke: $color-octant-grey5;
     }
   }
 
   .subtitle {
     font-size: $font-size-12;
-    color: $color-octant-grey6;
+    color: $color-octant-grey5;
   }
 }
 
 .expandableChildren {
   width: 100%;
   padding: 1.5rem 0;
-  border-bottom: 0.1rem solid $color-octant-grey4;
+  border-bottom: 0.1rem solid $color-octant-grey3;
 }
 
 .children {
@@ -156,7 +156,7 @@ $padding: 2.2rem;
   align-items: center;
   color: $color-octant-green2;
   font-size: $font-size-12;
-  border-top: 0.1rem solid $color-octant-grey4;
+  border-top: 0.1rem solid $color-octant-grey3;
   align-self: stretch;
   height: 4rem;
 }

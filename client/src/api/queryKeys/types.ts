@@ -52,5 +52,5 @@ export type QueryKeys = {
   userAllocationNonce: (userAddress: string) => [Root['userAllocationNonce'], string];
   userAllocations: (epochNumber: number) => [Root['userAllocations'], string];
   userTOS: (userAddress: string) => [Root['userTOS'], string];
-  withdrawableRewards: ['withdrawableRewards'];
+  withdrawals: ['withdrawals'];
 };

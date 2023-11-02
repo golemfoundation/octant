@@ -46,9 +46,9 @@ $paddingVertical: 1rem;
     background: $color-octant-dark;
 
     &.isDisabled {
-      color: $color-octant-grey2;
-      background: $color-octant-grey1;
-      border-color: $color-octant-grey1;
+      color: $color-octant-grey1;
+      background: $color-octant-grey2;
+      border-color: $color-octant-grey2;
     }
   }
 
@@ -60,13 +60,13 @@ $paddingVertical: 1rem;
     &.isDisabled {
       cursor: auto;
       background: $color-white;
-      border-color: $color-octant-grey1;
-      color: $color-octant-grey1;
+      border-color: $color-octant-grey2;
+      color: $color-octant-grey2;
     }
   }
 
   &secondary2 {
-    color: $color-octant-grey6;
+    color: $color-octant-grey5;
     height: 3.2rem;
     border-radius: 1.6rem;
     background: $color-white;
@@ -75,30 +75,30 @@ $paddingVertical: 1rem;
     width: auto;
 
     &.isDisabled {
-      color: $color-octant-grey2;
+      color: $color-octant-grey1;
     }
   }
 
   &iconVertical {
-    color: $color-octant-grey3;
+    color: $color-octant-grey2;
     display: flex;
     flex-direction: column;
     border: 0;
     font-size: $font-size-10;
 
     svg {
-      color: $color-octant-grey3;
-      stroke: $color-octant-grey3;
+      color: $color-octant-grey2;
+      stroke: $color-octant-grey2;
 
       path,
       circle,
       rect {
-        color: $color-octant-grey3;
-        stroke: $color-octant-grey3;
+        color: $color-octant-grey2;
+        stroke: $color-octant-grey2;
       }
 
       circle {
-        fill: $color-octant-grey3;
+        fill: $color-octant-grey2;
       }
     }
 
@@ -134,7 +134,7 @@ $paddingVertical: 1rem;
     padding: 0;
 
     &:hover {
-      background: $color-octant-grey4;
+      background: $color-octant-grey3;
     }
   }
 
@@ -142,7 +142,7 @@ $paddingVertical: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: $color-octant-grey4;
+    background: $color-octant-grey3;
     border-radius: 50%;
     height: 2.4rem;
     max-height: 2.4rem;
@@ -153,7 +153,7 @@ $paddingVertical: 1rem;
     padding: 0;
 
     svg path {
-      stroke: $color-octant-grey6;
+      stroke: $color-octant-grey5;
     }
   }
 
@@ -205,7 +205,7 @@ $paddingVertical: 1rem;
     position: relative;
     height: auto;
     display: inline-flex;
-    color: $color-octant-grey6;
+    color: $color-octant-grey5;
     padding: 0;
     font-size: 1.2rem;
     min-height: 2.4rem;
@@ -215,7 +215,7 @@ $paddingVertical: 1rem;
     }
 
     svg path {
-      stroke: $color-octant-grey6;
+      stroke: $color-octant-grey5;
     }
   }
 }
@@ -239,5 +239,5 @@ $paddingVertical: 1rem;
   width: 1.6rem;
   height: 1.6rem;
   border-color: $color-white;
-  border-top-color: $color-octant-grey14;
+  border-top-color: $color-octant-grey9;
 }

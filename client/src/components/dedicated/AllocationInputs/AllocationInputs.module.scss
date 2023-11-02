@@ -1,20 +1,26 @@
-.element {
-  &:not(:last-child) {
-    margin: 0 0 1.6rem;
-  }
-  &:last-child {
-    margin: 0 0 2.4rem;
-  }
-}
-
 .root {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.inputs {
+.inputsContainer {
+  width: 100%;
+  background: $color-octant-grey3;
+  padding: 2.4rem;
   display: flex;
   flex-direction: column;
-  padding: 0 0 2.4rem;
+  border-radius: $border-radius-16;
+
+  .input {
+    input {
+      @media #{$desktop-up} {
+        font-size: $font-size-16;
+      }
+    }
+  }
+
+  .percentageInput {
+    margin: 1.6rem 0 2.4rem;
+  }
 }
