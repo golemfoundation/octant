@@ -18,6 +18,10 @@ export default function useProposalRewardsThreshold(
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
+  /**
+   * Socket returns estimated data for current epoch only.
+   * When hook is called for other epoch, subscribe should not be used.
+   */
   useSubscription<{ threshold: string }>(WebsocketListenEvent.threshold, data => {
     // eslint-disable-next-line chai-friendly/no-unused-expressions
     epoch
