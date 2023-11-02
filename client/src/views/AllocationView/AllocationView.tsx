@@ -375,9 +375,8 @@ const AllocationView = (): ReactElement => {
               ))}
             </Fragment>
           )}
-          {!areAllocationsAvailableOrAlreadyDone && !hasUserIndividualReward && (
-            <AllocationEmptyState />
-          )}
+          {((!areAllocationsAvailableOrAlreadyDone && !hasUserIndividualReward) ||
+            !isDecisionWindowOpen) && <AllocationEmptyState />}
           <ModalAllocationValuesEdit
             isLimitVisible
             isManuallyEdited={

@@ -11,7 +11,11 @@ import useEpochsEndTime from 'hooks/subgraph/useEpochsEndTime';
 import styles from './ProposalsList.module.scss';
 import ProposalsListProps from './types';
 
-const ProposalsList: FC<ProposalsListProps> = ({ epoch }) => {
+const ProposalsList: FC<ProposalsListProps> = ({
+  areCurrentEpochsProjectsHiddenOutsideAllocationWindow,
+  epoch,
+  isFirstArchive,
+}) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.proposalsList',
   });
@@ -37,7 +41,9 @@ const ProposalsList: FC<ProposalsListProps> = ({ epoch }) => {
     >
       {epoch && (
         <>
-          <div className={styles.divider} />
+          {areCurrentEpochsProjectsHiddenOutsideAllocationWindow && isFirstArchive ? null : (
+            <div className={styles.divider} />
+          )}
           <div className={styles.epochArchive}>
             {t('epochArchive', { epoch })}
             <span className={styles.epochArchiveEnded}>{epochEndedLabel}</span>

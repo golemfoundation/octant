@@ -28,7 +28,7 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { timeCurrentEpochEnd, timeCurrentAllocationEnd } = useEpochAndAllocationTimestamps();
+  const { timeCurrentEpochStart, timeCurrentAllocationEnd } = useEpochAndAllocationTimestamps();
   const { data: currentEpochProps } = useCurrentEpochProps();
   const { data: withdrawals, isFetching: isFetchingWithdrawals } = useWithdrawals();
   const { data: isPatronMode } = useIsPatronMode();
@@ -60,12 +60,13 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
                       </div>
                       <div className={styles.pendingTooltipDate}>
                         {/* TODO OCT-1041 fetch next epoch props instead of assuming the same length */}
-                        {currentEpochProps && timeCurrentEpochEnd && timeCurrentAllocationEnd
+                        {currentEpochProps && timeCurrentEpochStart && timeCurrentAllocationEnd
                           ? format(
                               new Date(
                                 isDecisionWindowOpen
                                   ? timeCurrentAllocationEnd
-                                  : timeCurrentEpochEnd + currentEpochProps.decisionWindow,
+                                  : // When AW is closed, it's when the last AW closed.
+                                    timeCurrentEpochStart + currentEpochProps.decisionWindow,
                               ),
                               'haaa z, d LLLL',
                             )

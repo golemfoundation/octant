@@ -5,6 +5,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import Loader from 'components/core/Loader/Loader';
 import ProposalsList from 'components/dedicated/ProposalsList/ProposalsList';
 import TipTile from 'components/dedicated/TipTile/TipTile';
+import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import MainLayout from 'layouts/MainLayout/MainLayout';
@@ -21,6 +22,8 @@ const ProposalsView = (): ReactElement => {
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
+  const { data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow } =
+    useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow();
   const { wasAddFavouritesAlreadyClosed, setWasAddFavouritesAlreadyClosed } = useTipsStore(
     state => ({
       setWasAddFavouritesAlreadyClosed: state.setWasAddFavouritesAlreadyClosed,
@@ -54,7 +57,13 @@ const ProposalsView = (): ReactElement => {
         text={t('tip.text')}
         title={t('tip.title')}
       />
-      <ProposalsList />
+      {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
+        <ProposalsList
+          areCurrentEpochsProjectsHiddenOutsideAllocationWindow={
+            areCurrentEpochsProjectsHiddenOutsideAllocationWindow
+          }
+        />
+      )}
       <InfiniteScroll
         hasMore={loadedArchivedEpochsNumber !== lastArchivedEpochNumber}
         initialLoad
@@ -67,8 +76,15 @@ const ProposalsView = (): ReactElement => {
         pageStart={0}
         useWindow
       >
-        {archivedEpochs.slice(0, loadedArchivedEpochsNumber).map(epoch => (
-          <ProposalsList key={epoch} epoch={epoch} />
+        {archivedEpochs.slice(0, loadedArchivedEpochsNumber).map((epoch, index) => (
+          <ProposalsList
+            key={epoch}
+            areCurrentEpochsProjectsHiddenOutsideAllocationWindow={
+              areCurrentEpochsProjectsHiddenOutsideAllocationWindow
+            }
+            epoch={epoch}
+            isFirstArchive={index === 0}
+          />
         ))}
       </InfiniteScroll>
     </MainLayout>
