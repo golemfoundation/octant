@@ -3,7 +3,7 @@
 }
 
 .bold {
-  @include boldText();
+  font-weight: $font-weight-superbold;
 }
 
 .onboardingModalBody {
@@ -128,8 +128,4 @@
 .buttonClaimGlm {
   width: 100%;
   margin-top: 4.8rem;
-}
-
-.bold {
-  font-weight: $font-weight-bold;
 }
