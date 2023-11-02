@@ -19,7 +19,10 @@ export default function useProposalRewardsThreshold(
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   useSubscription<{ threshold: string }>(WebsocketListenEvent.threshold, data => {
-    queryClient.setQueryData(QUERY_KEYS.proposalRewardsThreshold(currentEpoch! - 1), data);
+    // eslint-disable-next-line chai-friendly/no-unused-expressions
+    epoch
+      ? null
+      : queryClient.setQueryData(QUERY_KEYS.proposalRewardsThreshold(currentEpoch! - 1), data);
   });
 
   return useQuery(
