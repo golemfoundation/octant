@@ -22,7 +22,7 @@
       width: 100%;
       z-index: $z-index-4;
       cursor: pointer;
-      background-color: $color-octant-grey4;
+      background-color: $color-octant-grey3;
       opacity: 0.8;
     }
   }
@@ -59,15 +59,15 @@
     linear,
     left top,
     right top,
-    color-stop(8%, $color-octant-grey12),
-    color-stop(18%, $color-octant-grey11),
-    color-stop(35%, $color-octant-grey12)
+    color-stop(8%, $color-octant-grey8),
+    color-stop(18%, $color-octant-grey7),
+    color-stop(35%, $color-octant-grey8)
   );
   background: linear-gradient(
     to right,
-    color-stop(8%, $color-octant-grey12),
-    color-stop(18%, $color-octant-grey11),
-    color-stop(35%, $color-octant-grey12)
+    color-stop(8%, $color-octant-grey8),
+    color-stop(18%, $color-octant-grey7),
+    color-stop(35%, $color-octant-grey8)
   );
   background-size: 80rem 10rem;
   animation: wave 2s infinite ease-out;

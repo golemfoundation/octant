@@ -20,6 +20,7 @@ import env from 'env';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
@@ -53,6 +54,7 @@ const ProposalView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: userAllocations } = useUserAllocations();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: proposalsWithRewards } = useProposalsIpfsWithRewards();
   const { data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow } =
     useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow();
@@ -127,9 +129,9 @@ const ProposalView = (): ReactElement => {
   }, []);
 
   const isEpoch1 = currentEpoch === 1;
-
   const areMatchedProposalsReady =
-    !!currentEpoch && ((currentEpoch > 1 && matchedProposalRewards) || isEpoch1);
+    !!currentEpoch &&
+    ((currentEpoch > 1 && matchedProposalRewards) || isEpoch1 || !isDecisionWindowOpen);
   const initialElement = loadedProposals[0] || {};
 
   const onShareClick = ({ name, address }): boolean | Promise<boolean> => {

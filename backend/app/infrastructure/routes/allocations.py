@@ -79,7 +79,6 @@ user_allocation_request = api.model(
     },
 )
 
-
 user_allocations_model = api.model(
     "UserAllocations",
     {
@@ -116,6 +115,7 @@ proposal_donors_model = api.model(
         ),
     },
 )
+
 epoch_donations_model = api.model(
     "EpochDonations",
     {
@@ -181,6 +181,51 @@ class AllocationLeverage(OctantResource):
         app.logger.debug(f"Estimated leverage: {leverage}")
 
         return {"leverage": leverage}
+
+
+@ns.route("/epoch/<int:epoch>")
+@ns.doc(
+    description="Returns all latest allocations in a particular epoch",
+    params={
+        "epoch": "Epoch number",
+    },
+)
+class EpochAllocations(OctantResource):
+    representations = {
+        "application/json": OctantResource.encode_json_response,
+        "text/csv": OctantResource.encode_csv_response,
+    }
+
+    @ns.produces(["application/json", "text/csv"])
+    @ns.response(200, "Epoch allocations successfully retrieved")
+    def get(self, epoch: int):
+        data = []
+        app.logger.debug(f"Getting latest allocations in epoch {epoch}")
+        alloc_flat = allocations.get_all_by_epoch(epoch, include_zeroes=True)
+        columns = sorted([entry.proposal for entry in alloc_flat])
+        abstainers = allocations.get_abstainers(epoch)
+        alloc_dicts = [dataclasses.asdict(w) for w in alloc_flat]
+        abstainers_dicts = [
+            {"donor": abst, "amount": None, "proposal": columns[0]}
+            for abst in abstainers
+        ]
+
+        headers = {}
+        if EpochAllocations.response_mimetype(request) == "text/csv":
+            headers[
+                "Content-Disposition"
+            ] = f"attachment;filename=allocations_epoch_{epoch}.csv"
+            csv_header = {}
+            for col in ["donor"] + columns:
+                csv_header[col] = None
+            data.append(csv_header)
+
+        votes = OctantResource.csv_matrix(
+            alloc_dicts + abstainers_dicts, columns, "proposal", "donor", "amount"
+        )
+
+        data += sorted(votes, key=lambda row: row["donor"])
+        return data, 200, headers
 
 
 @ns.route("/user/<string:user_address>/epoch/<int:epoch>")

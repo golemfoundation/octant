@@ -12,7 +12,7 @@ from app.controllers.user import (
     toggle_patron_mode,
 )
 from app.core.user.budget import get_budget, estimate_budget
-from app.core.user.rewards import get_claimed_rewards
+from app.core.user.rewards import get_all_claimed_rewards
 from app.core.allocations import add_allocations_to_db, Allocation
 
 from app.controllers import allocations as allocations_controller
@@ -197,7 +197,7 @@ def test_get_claimed_rewards(
         user_address = user_accounts[user_index].address
         expected[user_address] = expected_reward
 
-    user_rewards, rewards_sum = get_claimed_rewards(MOCKED_PENDING_EPOCH_NO)
+    user_rewards, rewards_sum = get_all_claimed_rewards(MOCKED_PENDING_EPOCH_NO)
     assert len(user_rewards) == len(expected)
     for user in user_rewards:
         assert expected.get(user.address) == user.amount

@@ -3,12 +3,13 @@ from datetime import datetime
 from typing import List
 
 from eth_utils import to_checksum_address
-from sqlalchemy.orm import Query
 from sqlalchemy import func
+from sqlalchemy.orm import Query
 
 from app.core.common import AccountFunds
 from app.database.models import Allocation, AllocationSignature, User
 from app.database.user import get_by_address
+from app.exceptions import UserNotFound
 from app.extensions import db
 
 
@@ -174,3 +175,13 @@ def soft_delete_all_by_epoch_and_user_id(epoch: int, user_id: int):
     for allocation in existing_allocations:
         allocation.deleted_at = now
         db.session.add(allocation)
+
+
+def get_allocation_signature_by_user_and_epoch(
+    user_address: str, epoch: int
+) -> AllocationSignature | None:
+    user: User = get_by_address(user_address)
+    if user is None:
+        raise UserNotFound(user_address)
+
+    return AllocationSignature.query.filter_by(user_id=user.id, epoch=epoch).first()

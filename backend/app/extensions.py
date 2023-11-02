@@ -10,6 +10,7 @@ from web3.middleware import geth_poa_middleware
 
 from app.contracts import abi
 from app.contracts.epochs import Epochs
+from app.contracts.deposits import Deposits
 from app.contracts.erc20 import ERC20
 from app.contracts.proposals import Proposals
 from app.contracts.vault import Vault
@@ -34,6 +35,7 @@ cache = Cache()
 w3 = Web3()
 glm = ERC20(abi=abi.ERC20)
 epochs = Epochs(abi=abi.EPOCHS)
+deposits = Deposits(abi=abi.DEPOSITS)
 proposals = Proposals(abi=abi.PROPOSALS)
 vault = Vault(abi=abi.VAULT)
 
@@ -47,6 +49,7 @@ def init_web3(app):
     epochs.init_web3(w3, app.config["EPOCHS_CONTRACT_ADDRESS"])
     proposals.init_web3(w3, app.config["PROPOSALS_CONTRACT_ADDRESS"])
     vault.init_web3(w3, app.config["VAULT_CONTRACT_ADDRESS"])
+    deposits.init_web3(w3, app.config["DEPOSITS_CONTRACT_ADDRESS"])
 
 
 def init_scheduler(app):
