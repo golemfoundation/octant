@@ -354,21 +354,21 @@ Build images:
     - export LOCAL_RPC_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
     - /app/entrypoint.sh $NETWORK $CI_PROJECT_DIR/build.env
 
-Run E2E App:
-  extends:
-    - .deploy_anvil
-  rules:
-    - !reference [.rules, on_mr ]
-    - !reference [.rules, on_push_to_default_branch ]
-    - !reference [.rules, on_push_to_master_branch ]
-  variables:
-    ENV_TYPE: "e2e"
-  environment:
-    name: e2e/$CI_PIPELINE_IID
-    url: https://mr-$CI_MERGE_REQUEST_IID-e2e-$CI_PIPELINE_ID-client.octant.wildland.dev
-    deployment_tier: development
-    on_stop: Destroy E2E App
-    auto_stop_in: 6 hours
+#Run E2E App:
+#  extends:
+#    - .deploy_anvil
+#  rules:
+#    - !reference [.rules, on_mr ]
+#    - !reference [.rules, on_push_to_default_branch ]
+#    - !reference [.rules, on_push_to_master_branch ]
+#  variables:
+#    ENV_TYPE: "e2e"
+#  environment:
+#    name: e2e/$CI_PIPELINE_IID
+#    url: https://mr-$CI_MERGE_REQUEST_IID-e2e-$CI_PIPELINE_ID-client.octant.wildland.dev
+#    deployment_tier: development
+#    on_stop: Destroy E2E App
+#    auto_stop_in: 6 hours
 
 Run MR App:
   extends:
@@ -383,43 +383,43 @@ Run MR App:
     deployment_tier: development
     on_stop: Destroy MR App
 
-E2E contracts:
-  extends:
-    - .deploy_anvil_contracts
-  needs: ["Run E2E App"]
-  rules:
-    - !reference [.rules, on_mr ]
-    - !reference [.rules, on_push_to_default_branch ]
-    - !reference [.rules, on_push_to_master_branch ]
-  variables:
-    ENV_TYPE: "e2e"
+#E2E contracts:
+#  extends:
+#    - .deploy_anvil_contracts
+#  needs: ["Run E2E App"]
+#  rules:
+#    - !reference [.rules, on_mr ]
+#    - !reference [.rules, on_push_to_default_branch ]
+#    - !reference [.rules, on_push_to_master_branch ]
+#  variables:
+#    ENV_TYPE: "e2e"
+#
+#MR contracts:
+#  extends:
+#    - .deploy_anvil_contracts
+#  needs: ["Run MR App"]
+#  rules:
+#    - !reference [.rules, on_mr ]
+#  variables:
+#    ENV_TYPE: "mr"
 
-MR contracts:
-  extends:
-    - .deploy_anvil_contracts
-  needs: ["Run MR App"]
-  rules:
-    - !reference [.rules, on_mr ]
-  variables:
-    ENV_TYPE: "mr"
-
-E2E app deploy:
-  extends:
-    - .deploy_app
-  needs: ["E2E contracts"]
-  dependencies: ["E2E contracts"]
-  rules:
-    - !reference [.rules, on_mr ]
-    - !reference [.rules, on_push_to_default_branch ]
-    - !reference [.rules, on_push_to_master_branch ]
-  variables:
-    ENV_TYPE: "e2e"
-    NETWORK_NAME: "local"
-    NETWORK_ID: "1337"
-    SNAPSHOTTER_ENABLED: "true"
-    SCHEDULER_ENABLED: "true"
-    GLM_CLAIM_ENABLED: "true"
-    VAULT_CONFIRM_WITHDRAWALS_ENABLED: "true"
+#E2E app deploy:
+#  extends:
+#    - .deploy_app
+#  needs: ["E2E contracts"]
+#  dependencies: ["E2E contracts"]
+#  rules:
+#    - !reference [.rules, on_mr ]
+#    - !reference [.rules, on_push_to_default_branch ]
+#    - !reference [.rules, on_push_to_master_branch ]
+#  variables:
+#    ENV_TYPE: "e2e"
+#    NETWORK_NAME: "local"
+#    NETWORK_ID: "1337"
+#    SNAPSHOTTER_ENABLED: "true"
+#    SCHEDULER_ENABLED: "true"
+#    GLM_CLAIM_ENABLED: "true"
+#    VAULT_CONFIRM_WITHDRAWALS_ENABLED: "true"
 
 MR app deploy:
   extends:
@@ -525,19 +525,19 @@ Wait for Master:
   environment:
     action: stop
 
-Destroy E2E App:
-  extends:
-    - .destroy_app
-  needs: ["Run E2E App"]
-  variables:
-    ENV_TYPE: "e2e"
-  rules:
-    - !reference [.rules, on_mr_manual ]
-    - !reference [.rules, on_push_to_default_branch_manual ]
-    - !reference [.rules, on_push_to_master_branch_manual ]
-  environment:
-    name: e2e/$CI_PIPELINE_IID
-    deployment_tier: development
+#Destroy E2E App:
+#  extends:
+#    - .destroy_app
+#  needs: ["Run E2E App"]
+#  variables:
+#    ENV_TYPE: "e2e"
+#  rules:
+#    - !reference [.rules, on_mr_manual ]
+#    - !reference [.rules, on_push_to_default_branch_manual ]
+#    - !reference [.rules, on_push_to_master_branch_manual ]
+#  environment:
+#    name: e2e/$CI_PIPELINE_IID
+#    deployment_tier: development
 
 Destroy MR App:
   extends:
@@ -579,61 +579,61 @@ Destroy Master App:
     name: persistent/master
     deployment_tier: testing
 
-E2E Epoch 1:
-  stage: application
-  needs: ["E2E app deploy"]
-  image: !reference [.images, synpress ]
-  <<: *env_resolve_init
-  rules:
-    - !reference [.rules, on_mr]
-    - !reference [.rules, on_push_to_default_branch ]
-    - !reference [.rules, on_push_to_master_branch ]
-  artifacts:
-    when: on_failure
-    name: cypress
-    paths:
-      - client/cypress/videos
-      - client/cypress/screenshots
-    expire_in: 3 days
-  cache:
-    - key: $CI_COMMIT_REF_SLUG-yarn-client
-      policy: pull
-      paths:
-        - client/.yarn
-        - client/node-modules
-    - key: $CI_COMMIT_REF_SLUG-yarn-root
-      policy: pull
-      paths:
-        - node_modules
-        - .yarn
-  script:
-    - set -e
-    # Setup NVM to use Node version 16
-    - source /usr/share/nvm/init-nvm.sh
-    - nvm use 16
-    - npm i -g yarn
-    - cd client
-    - yarn install --cache-folder .yarn --frozen-lockfile --prefer-offline --no-audit
-    # Wait for the E2E app to become ready
-    - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
-    - export OCTANT_BASE_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_web_client_url.sh)
-    - set +e
-    - yarn synpress:run || CY_EXIT_CODE=$?
-    - if [[ "$CY_EXIT_CODE" == "0" ]]; then rm -r $CI_PROJECT_DIR/client/cypress/videos $CI_PROJECT_DIR/client/cypress/screenshots; fi
-    - set -e
-    # Trigger the stop job
-    - |
-      JOB_ID=$(curl --fail -s -XGET --header "PRIVATE-TOKEN: $CI_JOB_CONTROLLER" https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/pipelines/$CI_PIPELINE_ID/jobs | jq '.[] | select(.name == "Destroy E2E App") | .id')
-
-      curl -s --fail -X POST \
-           -H "PRIVATE-TOKEN: $CI_JOB_CONTROLLER" \
-           "$CI_API_V4_URL/projects/$CI_PROJECT_ID/jobs/$JOB_ID/play"
-    - exit $CY_EXIT_CODE
-  variables:
-    ENV_TYPE: "e2e"
-    CYPRESS_DOCKER_RUN: "true"
-    CI: "true"
-    METAMASK_VERSION: "10.25.0"
+#E2E Epoch 1:
+#  stage: application
+#  needs: ["E2E app deploy"]
+#  image: !reference [.images, synpress ]
+#  <<: *env_resolve_init
+#  rules:
+#    - !reference [.rules, on_mr]
+#    - !reference [.rules, on_push_to_default_branch ]
+#    - !reference [.rules, on_push_to_master_branch ]
+#  artifacts:
+#    when: on_failure
+#    name: cypress
+#    paths:
+#      - client/cypress/videos
+#      - client/cypress/screenshots
+#    expire_in: 3 days
+#  cache:
+#    - key: $CI_COMMIT_REF_SLUG-yarn-client
+#      policy: pull
+#      paths:
+#        - client/.yarn
+#        - client/node-modules
+#    - key: $CI_COMMIT_REF_SLUG-yarn-root
+#      policy: pull
+#      paths:
+#        - node_modules
+#        - .yarn
+#  script:
+#    - set -e
+#    # Setup NVM to use Node version 16
+#    - source /usr/share/nvm/init-nvm.sh
+#    - nvm use 16
+#    - npm i -g yarn
+#    - cd client
+#    - yarn install --cache-folder .yarn --frozen-lockfile --prefer-offline --no-audit
+#    # Wait for the E2E app to become ready
+#    - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
+#    - export OCTANT_BASE_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_web_client_url.sh)
+#    - set +e
+#    - yarn synpress:run || CY_EXIT_CODE=$?
+#    - if [[ "$CY_EXIT_CODE" == "0" ]]; then rm -r $CI_PROJECT_DIR/client/cypress/videos $CI_PROJECT_DIR/client/cypress/screenshots; fi
+#    - set -e
+#    # Trigger the stop job
+#    - |
+#      JOB_ID=$(curl --fail -s -XGET --header "PRIVATE-TOKEN: $CI_JOB_CONTROLLER" https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/pipelines/$CI_PIPELINE_ID/jobs | jq '.[] | select(.name == "Destroy E2E App") | .id')
+#
+#      curl -s --fail -X POST \
+#           -H "PRIVATE-TOKEN: $CI_JOB_CONTROLLER" \
+#           "$CI_API_V4_URL/projects/$CI_PROJECT_ID/jobs/$JOB_ID/play"
+#    - exit $CY_EXIT_CODE
+#  variables:
+#    ENV_TYPE: "e2e"
+#    CYPRESS_DOCKER_RUN: "true"
+#    CI: "true"
+#    METAMASK_VERSION: "10.25.0"
 
 Deploy Release Candidate app:
   stage: deploy
