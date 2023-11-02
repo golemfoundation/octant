@@ -9,6 +9,7 @@ import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
+import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
 import useAllProposals from 'hooks/queries/useAllProposals';
@@ -116,6 +117,7 @@ const App = (): ReactElement => {
   const { data: syncStatus } = useSyncStatus({
     refetchInterval: isSyncingInProgress ? 5000 : false,
   });
+  const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
 
   const initializeStore = (shouldDoReset = false) => {
     // Store is populated with data from LS, hence init here.
@@ -130,6 +132,24 @@ const App = (): ReactElement => {
       resetTransactionLocalStore();
     }
   };
+
+  // Listener to reload app after allocation window status changes (insted of refetching a lot of stuff without reloading)
+  useEffect(() => {
+    if (isDecisionWindowOpen === undefined || !timeCurrentAllocationEnd || !timeCurrentEpochEnd) {
+      return;
+    }
+    const timestamp = isDecisionWindowOpen ? timeCurrentAllocationEnd : timeCurrentEpochEnd;
+
+    const timeToChangeAllocationWindowStatusIntervalId = setInterval(() => {
+      const timeDifference = Math.ceil(timestamp - Date.now());
+      if (timeDifference <= 0) {
+        clearInterval(timeToChangeAllocationWindowStatusIntervalId);
+        window.location.reload();
+      }
+    }, 1000);
+
+    return () => clearInterval(timeToChangeAllocationWindowStatusIntervalId);
+  }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
   useEffect(() => {
     if (chainIdLocal && chainIdLocal !== networkConfig.id) {
