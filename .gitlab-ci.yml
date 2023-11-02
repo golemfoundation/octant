@@ -424,22 +424,22 @@ Build images:
 #    SCHEDULER_ENABLED: "true"
 #    GLM_CLAIM_ENABLED: "true"
 #    VAULT_CONFIRM_WITHDRAWALS_ENABLED: "true"
-#
-#MR app deploy:
-#  extends:
-#    - .deploy_app
-#  needs: ["MR contracts"]
-#  dependencies: ["MR contracts"]
-#  rules:
-#    - !reference [.rules, on_mr ]
-#  variables:
-#    ENV_TYPE: "mr"
-#    NETWORK_NAME: "local"
-#    NETWORK_ID: "1337"
-#    SNAPSHOTTER_ENABLED: "true"
-#    SCHEDULER_ENABLED: "true"
-#    GLM_CLAIM_ENABLED: "true"
-#    VAULT_CONFIRM_WITHDRAWALS_ENABLED: "true"
+
+MR app deploy:
+  extends:
+    - .deploy_app
+  needs: ["MR contracts"]
+  dependencies: ["MR contracts"]
+  rules:
+    - !reference [.rules, on_mr ]
+  variables:
+    ENV_TYPE: "mr"
+    NETWORK_NAME: "local"
+    NETWORK_ID: "1337"
+    SNAPSHOTTER_ENABLED: "true"
+    SCHEDULER_ENABLED: "true"
+    GLM_CLAIM_ENABLED: "true"
+    VAULT_CONFIRM_WITHDRAWALS_ENABLED: "true"
 
 Run UAT App:
   stage: deploy
@@ -475,18 +475,18 @@ Run Master App:
     GLM_CLAIM_ENABLED: "true"
     VAULT_CONFIRM_WITHDRAWALS_ENABLED: "true"
 
-#Wait for MR:
-#  stage: status
-#  needs: ["MR app deploy"]
-#  image: !reference [.images, git_improved ]
-#  <<: *env_resolve_init
-#  rules:
-#    - !reference [.rules, on_mr ]
-#  script:
-#    - set -ex
-#    - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
-#  variables:
-#    ENV_TYPE: "mr"
+Wait for MR:
+  stage: status
+  needs: ["MR app deploy"]
+  image: !reference [.images, git_improved ]
+  <<: *env_resolve_init
+  rules:
+    - !reference [.rules, on_mr ]
+  script:
+    - set -ex
+    - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
+  variables:
+    ENV_TYPE: "mr"
 
 Wait for UAT:
   stage: status
