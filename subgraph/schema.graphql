@@ -69,6 +69,7 @@ type Epoch @entity(immutable: true) {
 type EpochProjectsInfo @entity {
     id: Bytes!
     epoch: Int!
+    proposalsCid: String!
     projectsAddresses: [Bytes!]! # list of projects' addresses
 }
 

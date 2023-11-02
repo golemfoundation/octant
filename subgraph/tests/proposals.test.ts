@@ -62,6 +62,7 @@ describe('handleSetProposalAddresses', () => {
     epochProjects.epoch = 0;
     // eslint-disable-next-line no-undef
     epochProjects.projectsAddresses = changetype<Bytes[]>(epoch0Addresses);
+    epochProjects.proposalsCid = '';
     epochProjects.save();
   });
 

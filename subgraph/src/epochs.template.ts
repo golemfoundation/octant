@@ -1,30 +1,30 @@
-import { Address, ethereum, log, Bytes } from '@graphprotocol/graph-ts';
+import { Address, ethereum, Bytes, BigInt } from '@graphprotocol/graph-ts';
+
+import { requestCurrentEpoch } from './contracts-utils';
 
 import { Epochs } from '../generated/Epochs/Epochs';
 import { Epoch } from '../generated/schema';
 
 export function handleBlock(block: ethereum.Block): void {
-  const epochsContract = Epochs.bind(
-    // eslint-disable-next-line no-template-curly-in-string
-    Address.fromString('${EPOCHS_CONTRACT_ADDRESS}'),
-  );
-  const currentEpoch = epochsContract.try_getCurrentEpoch();
-  if (currentEpoch.reverted) {
-    log.info('Call to getCurrentEpoch() reverted!', []);
+  // eslint-disable-next-line no-template-curly-in-string
+  const epochsContractAddress = '${EPOCHS_CONTRACT_ADDRESS}';
+  const currentEpoch: BigInt | null = requestCurrentEpoch(epochsContractAddress);
+  if (currentEpoch === null) {
     return;
   }
 
-  const epochNo = currentEpoch.value.toI32();
-  let epoch = Epoch.load(Bytes.fromI32(epochNo));
+  const epochNumber = currentEpoch.toI32();
+  let epoch = Epoch.load(Bytes.fromI32(epochNumber));
   if (epoch == null) {
-    epoch = new Epoch(Bytes.fromI32(epochNo));
+    epoch = new Epoch(Bytes.fromI32(epochNumber));
 
+    const epochsContract = Epochs.bind(Address.fromString(epochsContractAddress));
     const decisionWindow = epochsContract.getDecisionWindow();
     const duration = epochsContract.getEpochDuration();
     const epochEnd = epochsContract.getCurrentEpochEnd();
     const epochStart = epochEnd.minus(duration);
 
-    epoch.epoch = epochNo;
+    epoch.epoch = epochNumber;
     epoch.fromTs = epochStart;
     epoch.toTs = epochEnd;
     epoch.duration = duration;
