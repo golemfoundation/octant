@@ -76,7 +76,7 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
       className={cx(styles.root, className)}
       isVertical
       subtitle={
-        isDecisionWindowOpen
+        isDecisionWindowOpenAndHasIndividualReward
           ? t('subtitle', {
               individualReward: getValueCryptoToDisplay({
                 cryptoCurrency: 'ethereum',
