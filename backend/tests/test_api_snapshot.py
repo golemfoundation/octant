@@ -7,6 +7,12 @@ from .conftest import Client, UserAccount
 # Please note that tests here assume that they talk to blockchain and indexer
 # whose state is not reset between tests.
 
+PROPOSALS = [
+    "0x1c01595f9534E33d411035AE99a4317faeC4f6Fe",
+    "0x02Cb3C150BEdca124d0aE8CcCb72fefbe705c953",
+    "0x6e8873085530406995170Da467010565968C7C62",
+]
+
 
 @pytest.mark.api
 def test_root(client):
@@ -72,3 +78,21 @@ def test_pending_snapshot(
     res = client.get_rewards_budget(address=ua_bob.address, epoch=1)
     bob_budget = int(res["budget"])
     assert bob_budget > 0
+
+
+@pytest.mark.api
+def test_pending_snapshot_2(
+    client: Client, deployer: UserAccount, ua_alice: UserAccount, ua_bob: UserAccount
+):
+    res = client.sync_status()
+    assert res["indexedEpoch"] == res["blockchainEpoch"]
+    assert res["indexedEpoch"] > 0
+
+    # fund Octant
+    deployer.fund_octant(
+        address=client.config["WITHDRAWALS_TARGET_CONTRACT_ADDRESS"], value=400
+    )
+
+    # lock GLM from two accounts
+    deployer.transfer(ua_alice, 10000)
+    ua_alice.allocate(1000, PROPOSALS[0])

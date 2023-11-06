@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 from random import randint
 from typing import List, Optional
@@ -103,8 +105,9 @@ def flask_client() -> FlaskClient:
 
 
 class UserAccount:
-    def __init__(self, account: CryptoAccount):
+    def __init__(self, account: CryptoAccount, client: Client):
         self._account = account
+        self._client = client
 
     def fund_octant(self, address: str, value: int):
         signed_txn = w3.eth.account.sign_transaction(
@@ -126,29 +129,46 @@ class UserAccount:
         glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
         deposits.lock(self._account, w3.to_wei(value, "ether"))
 
+    def allocate(self, amount: int, address: str):
+        nonce = self._client.get_allocation_nonce(self.address)
+
+        payload = {
+            "allocations": [
+                {
+                    "proposalAddress": address,
+                    "amount": amount,
+                }
+            ],
+            "nonce": nonce,
+        }
+
+        signature = sign(self._account, build_allocations_eip712_data(payload))
+        resp = self._client.allocate(payload, signature)
+        print(resp)
+
     @property
     def address(self):
         return self._account.address
 
 
 @pytest.fixture
-def deployer() -> UserAccount:
-    return UserAccount(CryptoAccount.from_key(DEPLOYER_PRIV))
+def deployer(client: Client) -> UserAccount:
+    return UserAccount(CryptoAccount.from_key(DEPLOYER_PRIV), client)
 
 
 @pytest.fixture
-def ua_alice() -> UserAccount:
-    return UserAccount(CryptoAccount.from_key(ALICE))
+def ua_alice(client: Client) -> UserAccount:
+    return UserAccount(CryptoAccount.from_key(ALICE), client)
 
 
 @pytest.fixture
-def ua_bob() -> UserAccount:
-    return UserAccount(CryptoAccount.from_key(BOB))
+def ua_bob(client: Client) -> UserAccount:
+    return UserAccount(CryptoAccount.from_key(BOB), client)
 
 
 @pytest.fixture
-def ua_carol() -> UserAccount:
-    return UserAccount(CryptoAccount.from_key(CAROL))
+def ua_carol(client: Client) -> UserAccount:
+    return UserAccount(CryptoAccount.from_key(CAROL), client)
 
 
 class Client:
@@ -168,6 +188,19 @@ class Client:
 
     def get_rewards_budget(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").text
+        return json.loads(rv)
+
+    def get_allocation_nonce(self, address: str) -> int:
+        rv = self._flask_client.get(
+            f"/allocations/users/{address}/allocation_nonce"
+        ).text
+        return json.loads(rv)["allocationNonce"]
+
+    def allocate(self, payload: dict, signature: str) -> int:
+        rv = self._flask_client.post(
+            "/allocations/allocate", json={"payload": payload, "signature": signature}
+        )
+        assert rv.status_code == 201, rv.text
         return json.loads(rv)
 
     @property
