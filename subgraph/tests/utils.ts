@@ -2,7 +2,7 @@ import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { newMockCallWithIO, newMockEvent } from 'matchstick-as';
 
 import { Locked as LockedEvent, Unlocked as UnlockedEvent } from '../generated/Deposits/Deposits';
-import { SetProposalAddressesCall } from '../generated/Proposals/Proposals';
+import { SetCIDCall, SetProposalAddressesCall } from '../generated/Proposals/Proposals';
 import { MerkleRootSet, Withdrawn } from '../generated/Vault/Vault';
 
 export const GLM_ADDRESS = Address.fromString('0x7DD9c5Cba05E151C895FDe1CF355C9A1D5DA6429');
@@ -110,6 +110,14 @@ export function createSetProposalAddressesCall(
       ],
       [],
     ),
+  );
+  return call;
+}
+
+export function createSetCIDCall(cid: string): SetCIDCall {
+  // eslint-disable-next-line no-undef
+  const call = changetype<SetCIDCall>(
+    newMockCallWithIO([new ethereum.EventParam('_newCID', ethereum.Value.fromString(cid))], []),
   );
   return call;
 }

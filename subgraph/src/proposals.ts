@@ -17,11 +17,15 @@ const epochsContractAddress = '';
 // eslint-disable-next-line no-template-curly-in-string
 const proposalsContractAddress = '';
 
-function getCurrentAddresses(epochNumber: number): Address[] | null {
-  if (epochNumber > EPOCH_1) {
+function getCurrentAddresses(epochNumber: BigInt): Address[] | null {
+  const epoch = epochNumber.toI32();
+  if (epoch > EPOCH_1) {
     // We assume the current Epoch is 2 or higher
     // Get the list of proposals addresses from the previous Epoch and assign it to the entity of the current Epoch
-    const currentAddresses = requestProposalAddresses(proposalsContractAddress, epochNumber - 1);
+    const currentAddresses = requestProposalAddresses(
+      proposalsContractAddress,
+      epochNumber.minus(BigInt.fromI32(1)),
+    );
     if (currentAddresses == null) {
       return null;
     }
@@ -53,12 +57,11 @@ export function handleSetCID(call: SetCIDCall): void {
     return;
   }
 
-  const epochNumber = currentEpoch.toI32();
-  const epochAsId = Bytes.fromI32(epochNumber);
+  const epochAsId = Bytes.fromI32(currentEpoch.toI32());
 
   let epochProjectsInfo: EpochProjectsInfo | null = EpochProjectsInfo.load(epochAsId);
   if (epochProjectsInfo == null) {
-    const currentAddresses: Address[] | null = getCurrentAddresses(epochNumber);
+    const currentAddresses: Address[] | null = getCurrentAddresses(currentEpoch);
     if (currentAddresses == null) {
       return;
     }
@@ -74,11 +77,6 @@ export function handleSetCID(call: SetCIDCall): void {
 }
 
 export function handleSetProposalAddresses(call: SetProposalAddressesCall): void {
-  const currentEpoch: BigInt | null = requestCurrentEpoch(epochsContractAddress);
-  if (currentEpoch === null) {
-    return;
-  }
-
   const epochAsId = Bytes.fromI32(call.inputs._epoch.toI32());
 
   // Update a specific Epoch addresses list
@@ -90,7 +88,7 @@ export function handleSetProposalAddresses(call: SetProposalAddressesCall): void
       return;
     }
     epochProjectsInfo = createNewEpochProjectsInfo(
-      currentEpoch,
+      call.inputs._epoch,
       call.inputs._proposalAddresses,
       cid,
     );
