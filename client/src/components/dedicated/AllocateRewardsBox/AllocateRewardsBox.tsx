@@ -8,6 +8,7 @@ import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Slider from 'components/core/Slider/Slider';
 import ModalAllocationValuesEdit from 'components/dedicated/ModalAllocationValuesEdit/ModalAllocationValuesEdit';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useAllocationsStore from 'store/allocations/store';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
@@ -19,6 +20,7 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
     keyPrefix: 'components.dedicated.allocationRewardsBox',
   });
   const { data: individualReward } = useIndividualReward();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const [modalMode, setModalMode] = useState<'closed' | 'donate' | 'withdraw'>('closed');
   const { rewardsForProposals, setRewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
@@ -26,6 +28,8 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
   }));
 
   const hasUserIndividualReward = !!individualReward && !individualReward.isZero();
+  const isDecisionWindowOpenAndHasIndividualReward =
+    hasUserIndividualReward && isDecisionWindowOpen;
 
   const onSetRewardsForProposals = (index: number) => {
     if (!individualReward || isDisabled) {
@@ -40,19 +44,22 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
     individualReward?.toHexString(),
   ]);
 
-  const percentRewardsForProposals = !hasUserIndividualReward
-    ? 50
-    : rewardsForProposals.mul(100).div(individualReward).toNumber();
+  const percentRewardsForProposals = isDecisionWindowOpenAndHasIndividualReward
+    ? rewardsForProposals.mul(100).div(individualReward).toNumber()
+    : 50;
   const percentWithdraw = 100 - percentRewardsForProposals;
-  const rewardsForWithdraw = !hasUserIndividualReward
-    ? BigNumber.from(0)
-    : individualReward.sub(rewardsForProposals);
+  const rewardsForProposalsFinal = isDecisionWindowOpenAndHasIndividualReward
+    ? rewardsForProposals
+    : BigNumber.from(0);
+  const rewardsForWithdraw = isDecisionWindowOpenAndHasIndividualReward
+    ? individualReward?.sub(rewardsForProposals)
+    : BigNumber.from(0);
   const sections = [
     {
       header: t('donate', { percentRewardsForProposals }),
       value: getValueCryptoToDisplay({
         cryptoCurrency: 'ethereum',
-        valueCrypto: rewardsForProposals,
+        valueCrypto: rewardsForProposalsFinal,
       }),
     },
     {
@@ -69,7 +76,7 @@ const AllocateRewardsBox: FC<AllocateRewardsBoxProps> = ({ className, isDisabled
       className={cx(styles.root, className)}
       isVertical
       subtitle={
-        hasUserIndividualReward
+        isDecisionWindowOpenAndHasIndividualReward
           ? t('subtitle', {
               individualReward: getValueCryptoToDisplay({
                 cryptoCurrency: 'ethereum',

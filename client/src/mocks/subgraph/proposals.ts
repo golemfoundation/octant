@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 
 import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
 
-export const mockedProposalA: ProposalIpfsWithRewards = {
+export const mockedProposalATotalValueOfAllocations1: ProposalIpfsWithRewards = {
   address: 'address',
   isLoadingError: false,
   name: 'A',
@@ -10,45 +10,45 @@ export const mockedProposalA: ProposalIpfsWithRewards = {
   totalValueOfAllocations: BigNumber.from(1),
 };
 
-export const mockedProposalANoAllocation = {
-  ...mockedProposalA,
+export const mockedProposalATotalValueOfAllocationsUndefined = {
+  ...mockedProposalATotalValueOfAllocations1,
   totalValueOfAllocations: undefined,
 };
 
-export const mockedProposalAHigherAllocation: ProposalIpfsWithRewards = {
-  ...mockedProposalA,
+export const mockedProposalATotalValueOfAllocations2: ProposalIpfsWithRewards = {
+  ...mockedProposalATotalValueOfAllocations1,
   totalValueOfAllocations: BigNumber.from(2),
 };
 
-export const mockedProposalB: ProposalIpfsWithRewards = {
-  ...mockedProposalA,
+export const mockedProposalBTotalValueOfAllocations2: ProposalIpfsWithRewards = {
+  ...mockedProposalATotalValueOfAllocations1,
   name: 'B',
   totalValueOfAllocations: BigNumber.from(2),
 };
 
-export const mockedProposalBNoAllocation = {
-  ...mockedProposalB,
+export const mockedProposalBTotalValueOfAllocationsUndefined = {
+  ...mockedProposalBTotalValueOfAllocations2,
   totalValueOfAllocations: undefined,
 };
 
-export const mockedProposalC: ProposalIpfsWithRewards = {
-  ...mockedProposalA,
+export const mockedProposalCTotalValueOfAllocations3: ProposalIpfsWithRewards = {
+  ...mockedProposalATotalValueOfAllocations1,
   name: 'C',
   totalValueOfAllocations: BigNumber.from(3),
 };
 
-export const mockedProposalCNoAllocation = {
-  ...mockedProposalC,
+export const mockedProposalCTotalValueOfAllocationsUndefined = {
+  ...mockedProposalCTotalValueOfAllocations3,
   totalValueOfAllocations: undefined,
 };
 
-export const mockedProposalD: ProposalIpfsWithRewards = {
-  ...mockedProposalA,
+export const mockedProposalDTotalValueOfAllocations4: ProposalIpfsWithRewards = {
+  ...mockedProposalATotalValueOfAllocations1,
   name: 'D',
   totalValueOfAllocations: BigNumber.from(4),
 };
 
-export const mockedProposalDNoAllocation = {
-  ...mockedProposalD,
+export const mockedProposalDTotalValueOfAllocationsUndefined = {
+  ...mockedProposalDTotalValueOfAllocations4,
   totalValueOfAllocations: undefined,
 };
