@@ -21,7 +21,7 @@ const Comparison: FC<ComparisonProps> = ({ uploadedMerkleTree }) => {
 
     axios
       // @ts-expect-error TS does not understand the way vite imports envs.
-      .get(`${import.meta.env.VITE_SERVER_ENDPOINT}${epoch}`)
+      .get(`${import.meta.env.VITE_SERVER_ENDPOINT}rewards/merkle_tree/${epoch}`)
       .then(({ data }) => {
         const serverMerkleTreeRoot = data.root;
         setRootsAreTheSame(serverMerkleTreeRoot === uploadedMerkleTree.root);
