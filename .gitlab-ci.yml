@@ -16,7 +16,7 @@ stages:
   - application
   - env_test
   - status
-  - cleanup
+#  - cleanup
 
 default:
   tags:
