@@ -129,7 +129,7 @@ class UserAccount:
         glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
         deposits.lock(self._account, w3.to_wei(value, "ether"))
 
-    def allocate(self, amount: int, address: str):
+    def allocate(self, amount: int, addresses: list[str]):
         nonce = self._client.get_allocation_nonce(self.address)
 
         payload = {
@@ -138,13 +138,13 @@ class UserAccount:
                     "proposalAddress": address,
                     "amount": amount,
                 }
+                for address in addresses
             ],
             "nonce": nonce,
         }
 
         signature = sign(self._account, build_allocations_eip712_data(payload))
-        resp = self._client.allocate(payload, signature)
-        print(resp)
+        self._client.allocate(payload, signature)
 
     @property
     def address(self):
@@ -190,6 +190,10 @@ class Client:
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").text
         return json.loads(rv)
 
+    def get_epoch_allocations(self, epoch: int):
+        rv = self._flask_client.get(f"/allocations/epoch/{epoch}").text
+        return json.loads(rv)
+
     def get_allocation_nonce(self, address: str) -> int:
         rv = self._flask_client.get(
             f"/allocations/users/{address}/allocation_nonce"
@@ -201,7 +205,6 @@ class Client:
             "/allocations/allocate", json={"payload": payload, "signature": signature}
         )
         assert rv.status_code == 201, rv.text
-        return json.loads(rv)
 
     @property
     def config(self):

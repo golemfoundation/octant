@@ -8,9 +8,9 @@ from .conftest import Client, UserAccount
 # whose state is not reset between tests.
 
 PROPOSALS = [
-    "0x1c01595f9534E33d411035AE99a4317faeC4f6Fe",
-    "0x02Cb3C150BEdca124d0aE8CcCb72fefbe705c953",
-    "0x6e8873085530406995170Da467010565968C7C62",
+    "0x13aB14d9f8a40a0a19f7c8Ba8B23a3F12D25fD12",
+    "0x50b641Fb1CC42bE8a292263c68f0612b8182dA51",
+    "0x519a0307b7364D21aB1227bf37689271233B3F93",
 ]
 
 
@@ -79,20 +79,14 @@ def test_pending_snapshot(
     bob_budget = int(res["budget"])
     assert bob_budget > 0
 
+    ua_alice.allocate(1000, PROPOSALS)
+    ua_bob.allocate(1000, PROPOSALS[:1])
 
-@pytest.mark.api
-def test_pending_snapshot_2(
-    client: Client, deployer: UserAccount, ua_alice: UserAccount, ua_bob: UserAccount
-):
-    res = client.sync_status()
-    assert res["indexedEpoch"] == res["blockchainEpoch"]
-    assert res["indexedEpoch"] > 0
+    allocations = client.get_epoch_allocations(1)
 
-    # fund Octant
-    deployer.fund_octant(
-        address=client.config["WITHDRAWALS_TARGET_CONTRACT_ADDRESS"], value=400
-    )
-
-    # lock GLM from two accounts
-    deployer.transfer(ua_alice, 10000)
-    ua_alice.allocate(1000, PROPOSALS[0])
+    assert len(allocations) == 2
+    for allocation in allocations:
+        for key, val in allocation.items():
+            if key == "donor":
+                continue
+            assert int(val) > 0
