@@ -8,7 +8,7 @@ export type DoubleValueVariant = (typeof DOUBLE_VALUE_VARIANTS)[number];
 export default interface DoubleValueProps {
   className?: string;
   coinPricesServerDowntimeText?: 'Conversion offline' | '...';
-  cryptoCurrency?: CryptoCurrency;
+  cryptoCurrency: CryptoCurrency;
   dataTest?: string;
   isDisabled?: boolean;
   isError?: boolean;

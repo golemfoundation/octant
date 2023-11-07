@@ -48,14 +48,6 @@ describe('getValueFiatToDisplay', () => {
       // @ts-expect-error error here is caused by lack of typing for defaultProps.
       getValueFiatToDisplay({
         ...defaultProps,
-        cryptoCurrency: undefined,
-      }),
-    ).toEqual('$0.00');
-
-    expect(
-      // @ts-expect-error error here is caused by lack of typing for defaultProps.
-      getValueFiatToDisplay({
-        ...defaultProps,
         cryptoValues: undefined,
       }),
     ).toEqual('$0.00');
