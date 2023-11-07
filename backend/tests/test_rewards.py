@@ -20,7 +20,7 @@ from app.core.rewards.rewards import (
     calculate_all_individual_rewards,
     calculate_matched_rewards_threshold,
 )
-from app import database
+from app import database, exceptions
 from app.database.user import toggle_patron_mode
 from app.extensions import db
 from .conftest import (
@@ -29,6 +29,7 @@ from .conftest import (
     MOCK_PROPOSALS,
     USER2_BUDGET,
     USER3_BUDGET,
+    MOCK_EPOCHS,
 )
 from .test_allocations import (
     sign,
@@ -120,6 +121,13 @@ def test_get_allocation_threshold(app, tos_users, proposal_accounts):
     assert get_allocation_threshold(None) == calculate_matched_rewards_threshold(
         total_allocated, 5
     )
+
+
+def test_get_allocation_threshold_raises_when_not_in_allocation_period(app):
+    MOCK_EPOCHS.get_pending_epoch.return_value = None
+
+    with pytest.raises(exceptions.NotInDecisionWindow):
+        get_allocation_threshold(None)
 
 
 @pytest.mark.parametrize(
@@ -216,6 +224,13 @@ def test_estimated_proposal_rewards_when_allocation_has_0_value(
     for proposal in result:
         assert proposal.allocated == 0
         assert proposal.matched == 0
+
+
+def test_estimated_proposal_rewards_raises_when_not_in_allocation_period(app):
+    MOCK_EPOCHS.get_pending_epoch.return_value = None
+
+    with pytest.raises(exceptions.NotInDecisionWindow):
+        get_estimated_proposals_rewards()
 
 
 def test_proposals_rewards_with_patron(
