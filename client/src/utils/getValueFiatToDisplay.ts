@@ -34,11 +34,17 @@ export default function getValueFiatToDisplay({
    * We need to ensure particular cryptoValues[cryptoCurrency][displayCurrency] is already fetched.
    * Otherwise, Cypress tests failed when changing the displayCurrency
    * and requesting to see its fiat value immediately.
+   *
+   * We need to ensure cryptoValues[cryptoCurrency] is defined too.
+   * For the reason unknown coin-prices-server sometimes returns data (cryptoValues defined),
+   * yet cryptoValues[cryptoCurrency] is unknown, resulting in a crash.
+   * This happens in E2E runs only.
    */
   //
   if (
     !cryptoCurrency ||
     !cryptoValues ||
+    !cryptoValues[cryptoCurrency] ||
     !cryptoValues[cryptoCurrency][displayCurrency] ||
     !valueCrypto
   ) {
