@@ -13,6 +13,7 @@
     "prettier:ts:pure": "prettier --parser typescript --write",
     "type-check": "tsc --noEmit true",
     "localenv:build-images": "./localenv/scripts/images.sh",
+    "localenv:build-anvil": "docker build --tag octant/anvil:latest -f localenv/anvil/Dockerfile localenv/anvil",
     "localenv:up": "docker compose -p octant -f ./localenv/docker-compose.yaml up -d",
     "localenv:down": "docker compose -p octant -f ./localenv/docker-compose.yaml down",
     "localenv:force-clean": "docker system prune --volumes -f"
