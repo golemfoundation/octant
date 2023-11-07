@@ -11,7 +11,11 @@
     "prettier:js:pure": "prettier --write",
     "prettier:ts": "yarn prettier:ts:pure './**/*.{ts,tsx}'",
     "prettier:ts:pure": "prettier --parser typescript --write",
-    "type-check": "tsc --noEmit true"
+    "type-check": "tsc --noEmit true",
+    "localenv:build-images": "./localenv/scripts/images.sh",
+    "localenv:up": "docker compose -p octant -f ./localenv/docker-compose.yaml up -d",
+    "localenv:down": "docker compose -p octant -f ./localenv/docker-compose.yaml down",
+    "localenv:force-clean": "docker system prune --volumes -f"
   },
   "repository": {
     "type": "git",
