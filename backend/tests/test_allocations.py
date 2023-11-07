@@ -419,7 +419,7 @@ def test_allocation_validation_errors(proposal_accounts, user_accounts, tos_user
     ]
 
     # Set invalid epoch on purpose (mimicking no pending epoch)
-    MOCK_EPOCHS.get_pending_epoch.return_value = 0
+    MOCK_EPOCHS.get_pending_epoch.return_value = None
 
     # Call allocate method, expect exception
     with pytest.raises(exceptions.NotInDecisionWindow):
