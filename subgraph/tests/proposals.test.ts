@@ -18,7 +18,7 @@ import { EpochProjectsInfo } from '../generated/schema';
 // https://thegraph.com/docs/en/developer/matchstick/#tests-structure-0-5-0
 
 const EPOCHS_CONTRACT_ADDRESS = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
-const PROPOSALS_CONTRACT_ADDRESS = '0x91B904e8B0F9133D0766059065C2A1F6c6CAfA27';
+const PROPOSALS_CONTRACT_ADDRESS = '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9';
 
 const epoch1Addresses = [
   Address.fromString('0x00De4B13153673BCAE2616b67bf822500d325Fc3'),
