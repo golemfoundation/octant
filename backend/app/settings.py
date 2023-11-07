@@ -65,7 +65,7 @@ class ProdConfig(Config):
     DEBUG = False
     LOG_LVL = os.getenv("OCTANT_LOG_LEVEL", "INFO")
     SQLALCHEMY_DATABASE_URI = os.getenv("DB_URI")
-    SQLALCHEMY_ENGINE_OPTIONS = {"pool_size": 3, "max_overflow": 5}
+    SQLALCHEMY_ENGINE_OPTIONS = {"pool_size": 3, "max_overflow": 100}
 
 
 class DevConfig(Config):
