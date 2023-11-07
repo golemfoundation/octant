@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 
 from flask import current_app as app
 from web3 import exceptions
@@ -24,14 +24,14 @@ class Epochs(SmartContract):
             # HN:Epochs/not-started-yet
             return 0
 
-    def get_pending_epoch(self) -> int:
+    def get_pending_epoch(self) -> Optional[int]:
         try:
             app.logger.debug("[Epochs contract] Getting pending epoch")
             return self.contract.functions.getPendingEpoch().call()
         except exceptions.ContractLogicError:
             app.logger.warning("[Epochs contract] No pending epoch")
             # HN:Epochs/not-pending
-            return 0
+            return None
 
     def get_finalized_epoch(self) -> int:
         try:
