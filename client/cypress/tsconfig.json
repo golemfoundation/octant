@@ -1,8 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "sourceMap": false,
-    "inlineSourceMap": false,
+    "inlineSourceMap": true,
     "allowJs": true,
     "baseUrl": "../",
     "types": [
