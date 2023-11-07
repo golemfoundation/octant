@@ -20,7 +20,6 @@
     "noUnusedParameters": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "inlineSourceMap": true,
     "strict": true,
     "target": "es2022"
   },
