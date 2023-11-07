@@ -657,18 +657,18 @@ Deploy Release Candidate app:
 
     cd $GIT_DIR
 
-    echo "(debug) before update ===""
+    echo '(debug) before update ==='
     cat mainnet/octant-image.values.yaml
     cat testnet/octant-image.values.yaml
-    echo "(end debug) ===""
+    echo '(end debug) ==='
 
     yq -i -e ".[].value.value = \"$IMAGE_TAG\"" mainnet/octant-image.values.yaml
     yq -i -e ".[].value.value = \"$IMAGE_TAG\"" testnet/octant-image.values.yaml
 
-    echo "(debug) after update ===""
+    echo '(debug) after update ==='
     cat mainnet/octant-image.values.yaml
     cat testnet/octant-image.values.yaml
-    echo "(end debug) ===""
+    echo '(end debug) ==='
 
     git add mainnet/octant-image.values.yaml
     git add testnet/octant-image.values.yaml
