@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, memo } from 'react';
 import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
@@ -92,4 +92,4 @@ const AllocationItem: FC<AllocationItemProps> = ({
   );
 };
 
-export default AllocationItem;
+export default memo(AllocationItem);

@@ -37,11 +37,11 @@ const useOnboardingSteps = (
     ...(isUserTOSAcceptedInitial === false
       ? [
           {
-            header: i18n.t('views.onboarding.steps.usingTheApp.header'),
+            header: i18n.t('views.onboarding.stepsCommon.usingTheApp.header'),
             image: '/images/onboarding/octant.webp',
             text: (
               <Fragment>
-                <div>{i18n.t('views.onboarding.steps.usingTheApp.text')}</div>
+                <div>{i18n.t('views.onboarding.stepsCommon.usingTheApp.text')}</div>
                 <TOS />
               </Fragment>
             ),
@@ -51,13 +51,13 @@ const useOnboardingSteps = (
     ...(isUserEligibleToClaimGlm && glmClaimCheck?.value
       ? [
           {
-            header: i18n.t('views.onboarding.steps.claimGlm.header'),
+            header: i18n.t('views.onboarding.stepsCommon.claimGlm.header'),
             image: 'images/tip-withdraw.webp',
             imageClassName: styles.claimGlm,
             text: (
               <Fragment>
                 <Trans
-                  i18nKey="views.onboarding.steps.claimGlm.text"
+                  i18nKey="views.onboarding.stepsCommon.claimGlm.text"
                   values={{
                     value: parseInt(formatUnits(glmClaimCheck.value), 10).toString(),
                   }}
