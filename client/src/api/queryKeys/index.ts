@@ -38,7 +38,11 @@ export const QUERY_KEYS: QueryKeys = {
   lockedSummaryLatest: ['lockedSummaryLatest'],
   matchedProposalRewards: epochNumber => [ROOTS.matchedProposalRewards, epochNumber.toString()],
   patronMode: userAddress => [ROOTS.patronMode, userAddress],
-  proposalDonors: proposalAddress => [ROOTS.proposalDonors, proposalAddress],
+  proposalDonors: (proposalAddress, epochNumber) => [
+    ROOTS.proposalDonors,
+    proposalAddress,
+    epochNumber.toString(),
+  ],
   proposalRewardsThreshold: epochNumber => [ROOTS.proposalRewardsThreshold, epochNumber.toString()],
   proposalsAllIpfs: ['proposalsAllIpfs'],
   proposalsCid: ['proposalsCid'],

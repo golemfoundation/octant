@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import React, { FC } from 'react';
+import { useParams } from 'react-router-dom';
 
 import DonorsItem from 'components/dedicated/DonorsItem/DonorsItem';
 import DonorsItemSkeleton from 'components/dedicated/DonorsItem/DonorsItemSkeleton/DonorsItemSkeleton';
@@ -15,7 +16,11 @@ const DonorsList: FC<DonorsListProps> = ({
   proposalAddress,
   showFullList = false,
 }) => {
-  const { data: proposalDonors, isFetching } = useProposalDonors(proposalAddress);
+  const { epoch } = useParams();
+  const { data: proposalDonors, isFetching } = useProposalDonors(
+    proposalAddress,
+    parseInt(epoch!, 10),
+  );
 
   return (
     <div className={cx(styles.root, className)} data-test={dataTest}>

@@ -29,15 +29,17 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
 
   const { data: proposalRewardsThreshold } = useProposalRewardsThreshold(epoch);
   const { data: matchedProposalRewards } = useMatchedProposalRewards(epoch);
-  const { data: proposalDonors } = useProposalDonors(address);
+  const { data: proposalDonors } = useProposalDonors(address, epoch);
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ address: proposalAddress }) => address === proposalAddress,
   );
 
-  const proposalDonorsRewardsSum = proposalDonors?.reduce(
-    (prev, curr) => prev.add(formatUnits(curr.amount, 'wei')),
-    BigNumber.from(0),
-  );
+  const proposalDonorsRewardsSum = isArchivedProposal
+    ? proposalDonors?.reduce(
+        (prev, curr) => prev.add(formatUnits(curr.amount, 'wei')),
+        BigNumber.from(0),
+      )
+    : proposalMatchedProposalRewards?.sum;
 
   const isDonationAboveThreshold = useIsDonationAboveThreshold(address, epoch);
 
