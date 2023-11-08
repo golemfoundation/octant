@@ -5,47 +5,25 @@
   align-self: stretch;
   justify-content: space-between;
 
-  .separator {
-    margin: 0 0 1.2rem 0;
-  }
-
-  .line {
+  .divider {
     height: 0.2rem;
     width: 100%;
     content: '';
     background: $color-octant-grey3;
   }
 
-  .values {
+  .sections {
+    margin-top: 1.2rem;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    color: $color-octant-grey5;
 
-    .value {
-      display: flex;
-      flex-direction: column;
+    &.isArchivedProposal {
+      margin-top: 1.6rem;
+    }
+
+    .section {
       font-weight: $font-weight-bold;
-
-      &:first-child {
-        align-items: flex-start;
-
-        .number {
-          color: $color-black;
-
-          &.isArchivedProposal {
-            color: $color-octant-grey5;
-          }
-        }
-      }
-
-      &:last-child {
-        align-items: flex-end;
-      }
-
-      &.isHidden {
-        visibility: hidden;
-      }
+      color: $color-octant-grey5;
 
       .label {
         font-size: $font-size-12;
@@ -54,38 +32,31 @@
         align-items: center;
       }
 
-      .number {
-        font-size: $font-size-16;
+      &.leftSection {
+        text-align: left;
 
-        &.isBelowCutOff {
-          color: $color-octant-orange;
+        .label {
+          justify-content: flex-start;
         }
 
-        &.isArchivedProposal {
-          color: $color-octant-grey5;
+        .value {
+          &.greenValue {
+            color: $color-octant-green;
+          }
+
+          &.redValue {
+            color: $color-octant-orange;
+          }
+        }
+      }
+
+      &.rightSection {
+        text-align: right;
+
+        .label {
+          justify-content: flex-end;
         }
       }
     }
-  }
-
-  .percentage {
-    position: relative;
-    color: $color-octant-orange;
-    margin: 0 0 0 1rem;
-    padding: 0 0 0 1rem;
-
-    &:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 0.2rem;
-      height: 100%;
-      background: $color-octant-grey1;
-    }
-  }
-
-  .thresholdDataUnavailable {
-    font-size: $font-size-12;
   }
 }

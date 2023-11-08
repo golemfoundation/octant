@@ -12,13 +12,13 @@ const DonorsHeader: FC<DonorsHeaderProps> = ({
   dataTest = 'DonorsHeader',
   className,
 }) => {
-  const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.donorsHeader' });
+  const { i18n } = useTranslation('translation');
 
   const { data: proposalDonors, isFetching } = useProposalDonors(proposalAddress);
 
   return (
     <div className={cx(styles.header, className)} data-test={dataTest}>
-      <span className={styles.headerLabel}>{t('donors')}</span>{' '}
+      <span className={styles.headerLabel}>{i18n.t('common.donors')}</span>{' '}
       <div className={styles.count} data-test={`${dataTest}__count`}>
         {isFetching ? '--' : proposalDonors?.length}
       </div>

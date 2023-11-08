@@ -1,12 +1,13 @@
-import { formatDistanceToNow } from 'date-fns';
+import { format, isSameYear } from 'date-fns';
 import React, { FC, memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ProposalsListItem from 'components/dedicated/ProposalsList/ProposalsListItem/ProposalsListItem';
 import ProposalsListItemSkeleton from 'components/dedicated/ProposalsList/ProposalsListItemSkeleton/ProposalsListItemSkeleton';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
-import useEpochsEndTime from 'hooks/subgraph/useEpochsEndTime';
+import useEpochsStartEndTime from 'hooks/subgraph/useEpochsStartEndTime';
 
 import styles from './ProposalsList.module.scss';
 import ProposalsListProps from './types';
@@ -20,19 +21,31 @@ const ProposalsList: FC<ProposalsListProps> = ({
     keyPrefix: 'components.dedicated.proposalsList',
   });
 
+  const { isDesktop } = useMediaQuery();
+
   const { data: proposalsAddresses } = useProposalsContract(epoch);
   const { data: proposalsWithRewards } = useProposalsIpfsWithRewards(epoch);
-  const { data: epochsEndTime } = useEpochsEndTime();
+  const { data: epochsStartEndTime } = useEpochsStartEndTime();
 
-  const epochEndedLabel = useMemo(() => {
-    if (!epoch || !epochsEndTime) {
+  const epochDurationLabel = useMemo(() => {
+    if (!epoch || !epochsStartEndTime) {
       return '';
     }
 
-    return formatDistanceToNow(new Date(parseInt(epochsEndTime[epoch - 1].toTs, 10) * 1000), {
-      addSuffix: true,
-    });
-  }, [epoch, epochsEndTime]);
+    const epochData = epochsStartEndTime[epoch - 1];
+    const epochStartTimestamp = parseInt(epochData.fromTs, 10) * 1000;
+    const epochEndTimestamp = parseInt(epochData.toTs, 10) * 1000;
+
+    const isEpochEndedAtTheSameYear = isSameYear(epochStartTimestamp, epochEndTimestamp);
+
+    const epochStartLabel = format(
+      epochStartTimestamp,
+      `${isDesktop ? 'dd MMMM' : 'MMM'} ${isEpochEndedAtTheSameYear ? '' : 'yyyy'}`,
+    );
+    const epochEndLabel = format(epochEndTimestamp, `${isDesktop ? 'dd MMMM' : 'MMM'} yyyy`);
+
+    return `${epochStartLabel} -> ${epochEndLabel}`;
+  }, [epoch, epochsStartEndTime, isDesktop]);
 
   return (
     <div
@@ -46,7 +59,7 @@ const ProposalsList: FC<ProposalsListProps> = ({
           )}
           <div className={styles.epochArchive}>
             {t('epochArchive', { epoch })}
-            <span className={styles.epochArchiveEnded}>{epochEndedLabel}</span>
+            <span className={styles.epochDuration}>{epochDurationLabel}</span>
           </div>
         </>
       )}

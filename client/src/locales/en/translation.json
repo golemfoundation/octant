@@ -40,7 +40,8 @@
     "thresholdDataUnavailable": "Threshold data unavailable",
     "noThresholdData": "No threshold data",
     "valueCantBeEmpty": "Value can't be empty",
-    "lessThan1m": "less than 1m"
+    "lessThan1m": "less than 1m",
+    "donors": "Donors"
   },
   "components": {
     "settings": {
@@ -138,9 +139,6 @@
         "noDonationsYet": "No donations yet",
         "viewAll": "View all"
       },
-      "donorsHeader": {
-        "donors": "Donors"
-      },
       "glmLock": {
         "lock": "Lock",
         "unlock": "Unlock",
@@ -222,11 +220,14 @@
         "text": "Loading of a proposal <br/> encountered an error."
       },
       "proposalRewards": {
+        "epoch": "Epoch {{epoch}}",
         "currentTotal": "Current total",
         "totalRaised": "Total raised",
         "totalDonated": "Total donated",
+        "fundedIn": "Funded in",
         "fundedAt": "Funded at",
-        "didNotReach": "Did not reach"
+        "didNotReach": "Did not reach",
+        "didNotReachThreshold": "Did not reach threshold"
       },
       "proposalsList": {
         "epochArchive": "Epoch {{epoch}} Archive"
@@ -251,6 +252,9 @@
         "estimatedGasPrice": "Est. gas price",
         "withdrawAll": "Withdraw all",
         "waitingForConfirmation": "Waiting for confirmation"
+      },
+      "buttonAddToAllocate": {
+        "donated": "Donated"
       }
     }
   },
