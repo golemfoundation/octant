@@ -33,6 +33,7 @@ export default function useProposalDonors(
    * When hook is called for other epoch, subscribe should not be used.
    */
   useSubscription<Response>(WebsocketListenEvent.proposalDonors, data => {
+    // eslint-disable-next-line chai-friendly/no-unused-expressions
     epoch
       ? null
       : queryClient.setQueryData(
