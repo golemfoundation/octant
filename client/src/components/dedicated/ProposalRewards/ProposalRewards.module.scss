@@ -22,9 +22,20 @@
       font-weight: $font-weight-bold;
       color: $color-octant-grey5;
 
+      .label, .value {
+        &.isFetching {
+          @include skeleton();
+          text-indent: 1000%; // moves text outside of view.
+          white-space: nowrap;
+          overflow: hidden;
+          width: 8.8rem;
+        }
+      }
+
       .label {
         font-size: $font-size-12;
-        height: 2.4rem;
+        height: 1.6rem;
+        margin-bottom: 0.4rem;
         display: flex;
         align-items: center;
       }

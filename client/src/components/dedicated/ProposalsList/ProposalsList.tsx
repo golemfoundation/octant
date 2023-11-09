@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import { format, isSameYear } from 'date-fns';
 import React, { FC, memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +25,8 @@ const ProposalsList: FC<ProposalsListProps> = ({
   const { isDesktop } = useMediaQuery();
 
   const { data: proposalsAddresses } = useProposalsContract(epoch);
-  const { data: proposalsWithRewards } = useProposalsIpfsWithRewards(epoch);
+  const { data: proposalsWithRewards, isFetching: isFetchingProposalsWithRewards } =
+    useProposalsIpfsWithRewards(epoch);
   const { data: epochsStartEndTime } = useEpochsStartEndTime();
 
   const epochDurationLabel = useMemo(() => {
@@ -66,11 +68,18 @@ const ProposalsList: FC<ProposalsListProps> = ({
           )}
           <div className={styles.epochArchive}>
             {t('epochArchive', { epoch })}
-            <span className={styles.epochDuration}>{epochDurationLabel}</span>
+            <span
+              className={cx(
+                styles.epochDurationLabel,
+                epochDurationLabel === '' && styles.isFetching,
+              )}
+            >
+              {epochDurationLabel}
+            </span>
           </div>
         </>
       )}
-      {proposalsWithRewards.length > 0
+      {proposalsWithRewards.length > 0 && !isFetchingProposalsWithRewards
         ? proposalsWithRewards.map((proposalWithRewards, index) => (
             <ProposalsListItem
               key={proposalWithRewards.address}

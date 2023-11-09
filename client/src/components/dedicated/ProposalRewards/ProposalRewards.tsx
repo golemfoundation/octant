@@ -27,9 +27,14 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
 
   const isArchivedProposal = epoch !== undefined;
 
-  const { data: proposalRewardsThreshold } = useProposalRewardsThreshold(epoch);
-  const { data: matchedProposalRewards } = useMatchedProposalRewards(epoch);
-  const { data: proposalDonors } = useProposalDonors(address, epoch);
+  const { data: proposalRewardsThreshold, isFetching: isFetchingProposalRewardsThreshold } =
+    useProposalRewardsThreshold(epoch);
+  const { data: matchedProposalRewards, isFetching: isFetchingMatchedProposalRewards } =
+    useMatchedProposalRewards(epoch);
+  const { data: proposalDonors, isFetching: isFetchingProposalDonors } = useProposalDonors(
+    address,
+    epoch,
+  );
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ address: proposalAddress }) => address === proposalAddress,
   );
@@ -109,6 +114,10 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, rightSectionValueUseMemoDeps);
 
+  const isFetching =
+    isFetchingProposalRewardsThreshold ||
+    isFetchingMatchedProposalRewards ||
+    isFetchingProposalDonors;
   return (
     <div className={cx(styles.root, className)} data-test="ProposalRewards">
       {showProgressBar ? (
@@ -124,7 +133,10 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
       )}
       <div className={styles.sections}>
         <div className={cx(styles.section, styles.leftSection)}>
-          <div className={styles.label} data-test="ProposalRewards__currentTotal__label">
+          <div
+            className={cx(styles.label, isFetching && styles.isFetching)}
+            data-test="ProposalRewards__currentTotal__label"
+          >
             {leftSectionLabel}
           </div>
           <div
@@ -132,6 +144,7 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
               styles.value,
               isDonationAboveThreshold && isArchivedProposal && styles.greenValue,
               !isDonationAboveThreshold && !isArchivedProposal && styles.redValue,
+              isFetching && styles.isFetching,
             )}
             data-test="ProposalRewards__currentTotal__number"
           >
@@ -142,8 +155,12 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
         </div>
         {!(isDonationAboveThreshold && !isArchivedProposal) && (
           <div className={cx(styles.section, styles.rightSection)}>
-            <div className={styles.label}>{rightSectionLabel}</div>
-            <div className={styles.value}>{rightSectionValue}</div>
+            <div className={cx(styles.label, isFetching && styles.isFetching)}>
+              {rightSectionLabel}
+            </div>
+            <div className={cx(styles.value, isFetching && styles.isFetching)}>
+              {rightSectionValue}
+            </div>
           </div>
         )}
       </div>
