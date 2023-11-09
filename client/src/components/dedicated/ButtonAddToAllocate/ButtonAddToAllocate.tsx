@@ -38,6 +38,7 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
       }}
       dataTest={dataTest}
       Icon={<Svg img={isAllocatedTo ? checkMark : heart} size={3.2} />}
+      isDisabled={isArchivedProposal}
       onClick={onClick}
       variant="iconOnly"
     />

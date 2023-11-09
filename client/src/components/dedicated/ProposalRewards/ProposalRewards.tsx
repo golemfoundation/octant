@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
@@ -17,10 +17,9 @@ import { getProgressPercentage } from './utils';
 
 const ProposalRewards: FC<ProposalRewardsProps> = ({
   address,
-  canFoundedAtHide = true,
   className,
-  MiddleElement,
   epoch,
+  isProposalView,
 }) => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.proposalRewards',
@@ -28,31 +27,30 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
 
   const isArchivedProposal = epoch !== undefined;
 
-  const { data: proposalRewardsThreshold } = useProposalRewardsThreshold(epoch);
-  const { data: matchedProposalRewards } = useMatchedProposalRewards(epoch);
-  const { data: proposalDonors } = useProposalDonors(address);
+  const { data: proposalRewardsThreshold, isFetching: isFetchingProposalRewardsThreshold } =
+    useProposalRewardsThreshold(epoch);
+  const { data: matchedProposalRewards, isFetching: isFetchingMatchedProposalRewards } =
+    useMatchedProposalRewards(epoch);
+  const { data: proposalDonors, isFetching: isFetchingProposalDonors } = useProposalDonors(
+    address,
+    epoch,
+  );
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ address: proposalAddress }) => address === proposalAddress,
   );
 
-  const proposalDonorsRewardsSum = proposalDonors?.reduce(
-    (prev, curr) => prev.add(formatUnits(curr.amount, 'wei')),
-    BigNumber.from(0),
-  );
+  const proposalDonorsRewardsSum = isArchivedProposal
+    ? proposalDonors?.reduce(
+        (acc, curr) => acc.add(formatUnits(curr.amount, 'wei')),
+        BigNumber.from(0),
+      )
+    : proposalMatchedProposalRewards?.sum;
 
   const isDonationAboveThreshold = useIsDonationAboveThreshold(address, epoch);
-
-  const isFundedAtHidden =
-    proposalDonorsRewardsSum?.isZero() || (canFoundedAtHide && isDonationAboveThreshold);
 
   const totalValueOfAllocationsToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
     valueCrypto: proposalMatchedProposalRewards?.sum,
-  });
-
-  const cutOffValueToDisplay = getValueCryptoToDisplay({
-    cryptoCurrency: 'ethereum',
-    valueCrypto: proposalRewardsThreshold,
   });
 
   const proposalDonorsRewardsSumToDisplay = getValueCryptoToDisplay({
@@ -65,58 +63,108 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
     proposalRewardsThreshold !== undefined &&
     proposalDonorsRewardsSum !== undefined;
 
+  const leftSectionLabel = useMemo(() => {
+    if (isDonationAboveThreshold && !isArchivedProposal) {
+      return t('currentTotal');
+    }
+    if (isDonationAboveThreshold && isArchivedProposal) {
+      return t('totalRaised');
+    }
+    return t('totalDonated');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isArchivedProposal, isDonationAboveThreshold]);
+
+  const rightSectionLabel = useMemo(() => {
+    if (isDonationAboveThreshold && isArchivedProposal && isProposalView) {
+      return t('fundedIn');
+    }
+    if (isDonationAboveThreshold && isArchivedProposal) {
+      return i18n.t('common.donors');
+    }
+    if (isArchivedProposal && isProposalView) {
+      return t('didNotReachThreshold');
+    }
+    if (isArchivedProposal) {
+      return t('didNotReach');
+    }
+    return t('fundedAt');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isArchivedProposal, isDonationAboveThreshold, isProposalView]);
+
+  const rightSectionValueUseMemoDeps = [
+    isArchivedProposal,
+    isDonationAboveThreshold,
+    isProposalView,
+    epoch,
+    proposalDonors?.length,
+    proposalRewardsThreshold?.toHexString(),
+  ];
+
+  const rightSectionValue = useMemo(() => {
+    if (isDonationAboveThreshold && isArchivedProposal && isProposalView) {
+      return t('epoch', { epoch });
+    }
+    if (isDonationAboveThreshold && isArchivedProposal) {
+      return proposalDonors?.length;
+    }
+    return getValueCryptoToDisplay({
+      cryptoCurrency: 'ethereum',
+      valueCrypto: proposalRewardsThreshold,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, rightSectionValueUseMemoDeps);
+
+  const isFetching =
+    isFetchingProposalRewardsThreshold ||
+    isFetchingMatchedProposalRewards ||
+    isFetchingProposalDonors;
   return (
     <div className={cx(styles.root, className)} data-test="ProposalRewards">
-      <div className={styles.separator}>
-        {showProgressBar ? (
-          <ProgressBar
-            color={isArchivedProposal ? 'grey' : 'orange'}
-            progressPercentage={getProgressPercentage(
-              proposalDonorsRewardsSum,
-              proposalRewardsThreshold,
-            )}
-          />
-        ) : (
-          <div className={styles.line} />
-        )}
-      </div>
-      <div className={styles.values}>
-        {proposalMatchedProposalRewards !== undefined || proposalDonors !== undefined ? (
-          <div className={styles.value}>
-            <span className={styles.label} data-test="ProposalRewards__currentTotal__label">
-              {t(isDonationAboveThreshold ? 'totalRaised' : 'totalDonated')}
-            </span>
-            <span
-              className={cx(
-                styles.number,
-                !isDonationAboveThreshold && styles.isBelowCutOff,
-                isArchivedProposal && styles.isArchivedProposal,
-              )}
-              data-test="ProposalRewards__currentTotal__number"
-            >
-              {isDonationAboveThreshold
-                ? totalValueOfAllocationsToDisplay
-                : proposalDonorsRewardsSumToDisplay}
-            </span>
-          </div>
-        ) : (
+      {showProgressBar ? (
+        <ProgressBar
+          color={isArchivedProposal ? 'grey' : 'orange'}
+          progressPercentage={getProgressPercentage(
+            proposalDonorsRewardsSum,
+            proposalRewardsThreshold,
+          )}
+        />
+      ) : (
+        <div className={styles.divider} />
+      )}
+      <div className={styles.sections}>
+        <div className={cx(styles.section, styles.leftSection)}>
           <div
-            className={styles.thresholdDataUnavailable}
-            data-test="ProposalRewards__notAvailable"
+            className={cx(styles.label, isFetching && styles.isFetching)}
+            data-test="ProposalRewards__currentTotal__label"
           >
-            {i18n.t('common.thresholdDataUnavailable')}
+            {leftSectionLabel}
+          </div>
+          <div
+            className={cx(
+              styles.value,
+              isDonationAboveThreshold && isArchivedProposal && styles.greenValue,
+              !isDonationAboveThreshold && !isArchivedProposal && styles.redValue,
+              isFetching && styles.isFetching,
+            )}
+            data-test="ProposalRewards__currentTotal__number"
+          >
+            {isDonationAboveThreshold
+              ? totalValueOfAllocationsToDisplay
+              : proposalDonorsRewardsSumToDisplay}
+          </div>
+        </div>
+        {!(isDonationAboveThreshold && !isArchivedProposal) && (
+          <div className={cx(styles.section, styles.rightSection)}>
+            <div className={cx(styles.label, isFetching && styles.isFetching)}>
+              {rightSectionLabel}
+            </div>
+            <div className={cx(styles.value, isFetching && styles.isFetching)}>
+              {rightSectionValue}
+            </div>
           </div>
         )}
-        {MiddleElement}
-        <div className={cx(styles.value, isFundedAtHidden && styles.isHidden)}>
-          <span className={styles.label}>{t(isArchivedProposal ? 'didNotReach' : 'fundedAt')}</span>
-          <span className={cx(styles.number, isArchivedProposal && styles.isArchivedProposal)}>
-            {cutOffValueToDisplay}
-          </span>
-        </div>
       </div>
     </div>
   );
 };
-
 export default ProposalRewards;

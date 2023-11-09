@@ -40,7 +40,10 @@ export type QueryKeys = {
   lockedSummaryLatest: ['lockedSummaryLatest'];
   matchedProposalRewards: (epochNumber: number) => [Root['matchedProposalRewards'], string];
   patronMode: (userAddress: string) => [Root['patronMode'], string];
-  proposalDonors: (proposalAddress: string) => [Root['proposalDonors'], string];
+  proposalDonors: (
+    proposalAddress: string,
+    epochNumber: number,
+  ) => [Root['proposalDonors'], string, string];
   proposalRewardsThreshold: (epochNumber: number) => [Root['proposalRewardsThreshold'], string];
   proposalsAllIpfs: ['proposalsAllIpfs'];
   proposalsCid: ['proposalsCid'];

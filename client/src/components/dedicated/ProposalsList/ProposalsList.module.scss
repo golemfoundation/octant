@@ -29,10 +29,17 @@ $elementMargin: 1.6rem;
   border-radius: $border-radius-16;
   margin: 1.6rem 0;
 
-  .epochArchiveEnded {
+  .epochDurationLabel {
     color: $color-octant-grey5;
     font-size: $font-size-12;
     font-weight: $font-weight-medium;
+
+    &.isFetching {
+      @include skeleton();
+      text-indent: 1000%; // moves text outside of view.
+      white-space: nowrap;
+      overflow: hidden;
+    }
   }
 }
 
