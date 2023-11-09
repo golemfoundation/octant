@@ -17,7 +17,7 @@ const documents = {
     types.GetBlockNumberDocument,
   '\n  query GetEpochTimestampHappenedIn($timestamp: BigInt) {\n    epoches(where: { fromTs_lte: $timestamp, toTs_gte: $timestamp }) {\n      epoch\n    }\n  }\n':
     types.GetEpochTimestampHappenedInDocument,
-  '\n  query GetEpochsStartEndTime($lastEpoch: Int) {\n    epoches(first: $lastEpoch) {\n      epoch\n      toTs\n      fromTs\n    }\n  }\n':
+  '\n  query GetEpochsStartEndTime($lastEpoch: Int) {\n    epoches(first: $lastEpoch) {\n      epoch\n      toTs\n      fromTs\n      decisionWindow\n    }\n  }\n':
     types.GetEpochsStartEndTimeDocument,
   '\n  query GetLargestLockedAmount {\n    lockeds(orderBy: amount, orderDirection: desc, first: 1) {\n      amount\n    }\n  }\n':
     types.GetLargestLockedAmountDocument,
@@ -57,8 +57,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query GetEpochsStartEndTime($lastEpoch: Int) {\n    epoches(first: $lastEpoch) {\n      epoch\n      toTs\n      fromTs\n    }\n  }\n',
-): (typeof documents)['\n  query GetEpochsStartEndTime($lastEpoch: Int) {\n    epoches(first: $lastEpoch) {\n      epoch\n      toTs\n      fromTs\n    }\n  }\n'];
+  source: '\n  query GetEpochsStartEndTime($lastEpoch: Int) {\n    epoches(first: $lastEpoch) {\n      epoch\n      toTs\n      fromTs\n      decisionWindow\n    }\n  }\n',
+): (typeof documents)['\n  query GetEpochsStartEndTime($lastEpoch: Int) {\n    epoches(first: $lastEpoch) {\n      epoch\n      toTs\n      fromTs\n      decisionWindow\n    }\n  }\n'];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

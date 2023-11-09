@@ -34,15 +34,22 @@ const ProposalsList: FC<ProposalsListProps> = ({
 
     const epochData = epochsStartEndTime[epoch - 1];
     const epochStartTimestamp = parseInt(epochData.fromTs, 10) * 1000;
-    const epochEndTimestamp = parseInt(epochData.toTs, 10) * 1000;
+    const epochEndTimestampPlusDecisionWindowDuration =
+      (parseInt(epochData.toTs, 10) + parseInt(epochData.decisionWindow, 10)) * 1000;
 
-    const isEpochEndedAtTheSameYear = isSameYear(epochStartTimestamp, epochEndTimestamp);
+    const isEpochEndedAtTheSameYear = isSameYear(
+      epochStartTimestamp,
+      epochEndTimestampPlusDecisionWindowDuration,
+    );
 
     const epochStartLabel = format(
       epochStartTimestamp,
       `${isDesktop ? 'dd MMMM' : 'MMM'} ${isEpochEndedAtTheSameYear ? '' : 'yyyy'}`,
     );
-    const epochEndLabel = format(epochEndTimestamp, `${isDesktop ? 'dd MMMM' : 'MMM'} yyyy`);
+    const epochEndLabel = format(
+      epochEndTimestampPlusDecisionWindowDuration,
+      `${isDesktop ? 'dd MMMM' : 'MMM'} yyyy`,
+    );
 
     return `${epochStartLabel} -> ${epochEndLabel}`;
   }, [epoch, epochsStartEndTime, isDesktop]);

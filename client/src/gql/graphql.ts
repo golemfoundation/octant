@@ -984,7 +984,13 @@ export type GetEpochsStartEndTimeQueryVariables = Exact<{
 
 export type GetEpochsStartEndTimeQuery = {
   __typename?: 'Query';
-  epoches: Array<{ __typename?: 'Epoch'; epoch: number; toTs: any; fromTs: any }>;
+  epoches: Array<{
+    __typename?: 'Epoch';
+    epoch: number;
+    toTs: any;
+    fromTs: any;
+    decisionWindow: any;
+  }>;
 };
 
 export type GetLargestLockedAmountQueryVariables = Exact<{ [key: string]: never }>;
@@ -1135,6 +1141,7 @@ export const GetEpochsStartEndTimeDocument = {
                 { kind: 'Field', name: { kind: 'Name', value: 'epoch' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'toTs' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'fromTs' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'decisionWindow' } },
               ],
             },
           },

@@ -9,6 +9,8 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 
 type EpochsStartEndTime = {
   epoches: {
+    // decision window duration
+    decisionWindow: string;
     epoch: number;
     // timestamp
     fromTs: string;
@@ -23,6 +25,7 @@ const GET_EPOCHS_START_END_TIME = graphql(`
       epoch
       toTs
       fromTs
+      decisionWindow
     }
   }
 `);
