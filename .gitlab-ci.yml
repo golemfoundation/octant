@@ -248,7 +248,7 @@ Documentation:
   parallel:
     matrix:
       - SERVICE:
-         - contracts-v1
+          - contracts-v1
   rules:
     - !reference [.rules, on_mr ]
     - !reference [.rules, on_push_to_default_branch ]
