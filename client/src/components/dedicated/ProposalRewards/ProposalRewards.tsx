@@ -118,12 +118,11 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
             proposalDonorsRewardsSum,
             proposalRewardsThreshold,
           )}
-          variant={isArchivedProposal ? 'ultraThin' : 'normal'}
         />
       ) : (
         <div className={styles.divider} />
       )}
-      <div className={cx(styles.sections, isArchivedProposal, styles.isArchivedProposal)}>
+      <div className={styles.sections}>
         <div className={cx(styles.section, styles.leftSection)}>
           <div className={styles.label} data-test="ProposalRewards__currentTotal__label">
             {leftSectionLabel}

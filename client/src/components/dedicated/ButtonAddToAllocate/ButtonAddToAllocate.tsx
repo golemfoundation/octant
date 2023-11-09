@@ -1,10 +1,8 @@
 import cx from 'classnames';
 import React, { FC, useRef, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
-import Tooltip from 'components/core/Tooltip/Tooltip';
 import { IS_INITIAL_LOAD_DONE } from 'constants/dataAttributes';
 import { checkMark, heart } from 'svg/misc';
 
@@ -19,9 +17,6 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
   isAllocatedTo,
   isArchivedProposal,
 }) => {
-  const { t } = useTranslation('translation', {
-    keyPrefix: 'components.dedicated.buttonAddToAllocate',
-  });
   const ref = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -42,15 +37,7 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
         [IS_INITIAL_LOAD_DONE]: 'false',
       }}
       dataTest={dataTest}
-      Icon={
-        isArchivedProposal && isAllocatedTo ? (
-          <Tooltip position="top" text={t('donated')} variant="small">
-            <Svg img={checkMark} size={3.2} />
-          </Tooltip>
-        ) : (
-          <Svg img={isAllocatedTo ? checkMark : heart} size={3.2} />
-        )
-      }
+      Icon={<Svg img={isAllocatedTo ? checkMark : heart} size={3.2} />}
       isDisabled={isArchivedProposal}
       onClick={onClick}
       variant="iconOnly"

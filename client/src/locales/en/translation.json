@@ -252,9 +252,6 @@
         "estimatedGasPrice": "Est. gas price",
         "withdrawAll": "Withdraw all",
         "waitingForConfirmation": "Waiting for confirmation"
-      },
-      "buttonAddToAllocate": {
-        "donated": "Donated"
       }
     }
   },

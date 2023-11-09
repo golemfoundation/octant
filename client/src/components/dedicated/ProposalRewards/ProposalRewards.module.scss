@@ -6,6 +6,7 @@
   justify-content: space-between;
 
   .divider {
+    margin: 0.3rem 0;
     height: 0.2rem;
     width: 100%;
     content: '';
@@ -16,10 +17,6 @@
     margin-top: 1.2rem;
     display: flex;
     justify-content: space-between;
-
-    &.isArchivedProposal {
-      margin-top: 1.6rem;
-    }
 
     .section {
       font-weight: $font-weight-bold;
