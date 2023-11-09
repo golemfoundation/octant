@@ -36,7 +36,7 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
 
   const proposalDonorsRewardsSum = isArchivedProposal
     ? proposalDonors?.reduce(
-        (prev, curr) => prev.add(formatUnits(curr.amount, 'wei')),
+        (acc, curr) => acc.add(formatUnits(curr.amount, 'wei')),
         BigNumber.from(0),
       )
     : proposalMatchedProposalRewards?.sum;

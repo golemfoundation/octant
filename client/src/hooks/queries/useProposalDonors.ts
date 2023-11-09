@@ -1,9 +1,11 @@
-import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query';
+import { UseQueryOptions, UseQueryResult, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 
 import { apiGetProposalDonors, Response } from 'api/calls/poroposalDonors';
 import { QUERY_KEYS } from 'api/queryKeys';
+import useSubscription from 'hooks/helpers/useSubscription';
+import { WebsocketListenEvent } from 'types/websocketEvents';
 
 import useCurrentEpoch from './useCurrentEpoch';
 
@@ -23,7 +25,21 @@ export default function useProposalDonors(
   epoch?: number,
   options?: UseQueryOptions<Response, unknown, ProposalDonors, any>,
 ): UseQueryResult<ProposalDonors> {
+  const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();
+
+  /**
+   * Socket returns proposal donors for current epoch only.
+   * When hook is called for other epoch, subscribe should not be used.
+   */
+  useSubscription<Response>(WebsocketListenEvent.proposalDonors, data => {
+    epoch
+      ? null
+      : queryClient.setQueryData(
+          QUERY_KEYS.proposalDonors(proposalAddress, currentEpoch! - 1),
+          data,
+        );
+  });
 
   return useQuery(
     QUERY_KEYS.proposalDonors(proposalAddress, epoch || currentEpoch! - 1),
