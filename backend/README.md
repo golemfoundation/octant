@@ -1,15 +1,5 @@
 # Octant backend server
 
-## Running
-
-### Docker
-
-```
-docker-compose up --build
-```
-
-### Local
-
 ### Prerequisites
 
 This project uses Poetry, you can install it [here](https://python-poetry.org/docs/#installation).

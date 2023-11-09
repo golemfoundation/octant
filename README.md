@@ -7,42 +7,41 @@ Developed by the [Golem Foundation](https://golem.foundation/) to test various h
 Documentation is available [here](https://docs.octant.app/).
 
 ---
+## Runing development environment
 
 Below is development setup instructions. More documentation, configuration, deployment information is available in directories of this repository.
 
-
-Prerequisites: please make sure that anvil, jq and envsubst tools are in your PATH. envsubst is packaged in gettext-base in Debian. Anvil is provided by https://github.com/foundry-rs/foundry.
-
-Procedure:
-
-```bash
-contracts-v1$ yarn start-node
-
-contracts-v1$ rm -rf deployments/localhost; yarn deploy:localhost
-
-subgraph$ yarn clean
-
-subgraph$ yarn build:localhost
-
-subgraph$ yarn start # if you are running on linux, use yarn start:linux instead and change RPC_PROVIDER to localhost
-subgraph$ yarn create-subgraph
-
-subgraph$ yarn deploy:localhost
+For the first build of contracts it is highly recommended to run the following command first:
+```bash 
+yarn localenv:build-anvil
 ```
 
-After this step - check graph's console, it should enumerate blocks it has indexed.
-For the backend, change .env:
-
-- set contract addresses to ones printed by contract deployment script
-- update ETH_RPC_PROVIDER and SUBGRAPH_ENDPOINT
-
-The last step is running backend. To do it natively, do
-
+Build images with the following command:
 ```bash
-backend$ rm dev.db; flask db upgrade; python3 startup.py
+yarn localenv:build-images
+````
+
+Run local environment
+```sh
+yarn localenv:up
 ```
 
-TODO: write section about using client with local setup.
+To stop the environment, simply, run:
+```sh
+yarn localenv:down
+```
+
+Local environemnt is available at [http://octant.localhost:8080](http://octant.localhost:8080) and at [http://localhost:8080](http://localhost:8080).
+
+*NOTICE:* in order to make it work using octant.localhost domain one should add the following lines to `/ect/hosts` file.
+
+```
+127.0.0.1 octant.localhost
+127.0.0.1 rpc.octant.localhost
+127.0.0.1 graph.octant.localhost
+127.0.0.1 backend.octant.localhost
+127.0.0.1 client.octant.localhost
+```
 
 ---
 
