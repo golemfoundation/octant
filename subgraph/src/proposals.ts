@@ -7,7 +7,7 @@ import {
 } from './contracts-utils';
 
 import { SetCIDCall, SetProposalAddressesCall } from '../generated/Proposals/Proposals';
-import { AllEpochsProjectsInfo, EpochProjectsInfo } from '../generated/schema';
+import { AccumulatedProjectsMetadata, EpochProjectsMetadata } from '../generated/schema';
 
 const ALL_EPOCHS_PROJECT_INFO_VERSION = 0;
 const EPOCH_1 = 1;
@@ -31,24 +31,24 @@ function getCurrentAddresses(epochNumber: BigInt): Address[] | null {
     }
     return currentAddresses;
   }
-  // We assume we are in Epoch 1 and since the EpochProjectsInfo entity doesn't exist for current Epoch, the projects addresses list is still empty
+  // We assume we are in Epoch 1 and since the EpochProjectsMetadata entity doesn't exist for current Epoch, the projects addresses list is still empty
   return [];
 }
 
-function createNewEpochProjectsInfo(
+function createNewEpochProjectsMetadata(
   epoch: BigInt,
   addresses: Address[],
   newCid: string,
-): EpochProjectsInfo {
+): EpochProjectsMetadata {
   const epochNumber = epoch.toI32();
   const epochAsId = Bytes.fromI32(epochNumber);
 
-  const epochProjectsInfo = new EpochProjectsInfo(epochAsId);
-  epochProjectsInfo.epoch = epochNumber;
-  epochProjectsInfo.proposalsCid = newCid;
+  const epochProjectsMetadata = new EpochProjectsMetadata(epochAsId);
+  epochProjectsMetadata.epoch = epochNumber;
+  epochProjectsMetadata.proposalsCid = newCid;
   // eslint-disable-next-line no-undef
-  epochProjectsInfo.projectsAddresses = changetype<Bytes[]>(addresses);
-  return epochProjectsInfo;
+  epochProjectsMetadata.projectsAddresses = changetype<Bytes[]>(addresses);
+  return epochProjectsMetadata;
 }
 
 export function handleSetCID(call: SetCIDCall): void {
@@ -59,65 +59,67 @@ export function handleSetCID(call: SetCIDCall): void {
 
   const epochAsId = Bytes.fromI32(currentEpoch.toI32());
 
-  let epochProjectsInfo: EpochProjectsInfo | null = EpochProjectsInfo.load(epochAsId);
-  if (epochProjectsInfo == null) {
+  let epochProjectsMetadata: EpochProjectsMetadata | null = EpochProjectsMetadata.load(epochAsId);
+  if (epochProjectsMetadata == null) {
     const currentAddresses: Address[] | null = getCurrentAddresses(currentEpoch);
     if (currentAddresses == null) {
       return;
     }
-    epochProjectsInfo = createNewEpochProjectsInfo(
+    epochProjectsMetadata = createNewEpochProjectsMetadata(
       currentEpoch,
       currentAddresses,
       call.inputs._newCID,
     );
   } else {
-    epochProjectsInfo.proposalsCid = call.inputs._newCID;
+    epochProjectsMetadata.proposalsCid = call.inputs._newCID;
   }
-  epochProjectsInfo.save();
+  epochProjectsMetadata.save();
 }
 
 export function handleSetProposalAddresses(call: SetProposalAddressesCall): void {
   const epochAsId = Bytes.fromI32(call.inputs._epoch.toI32());
 
   // Update a specific Epoch addresses list
-  let epochProjectsInfo: EpochProjectsInfo | null = EpochProjectsInfo.load(epochAsId);
-  if (epochProjectsInfo === null) {
-    // We assume the EpochProjectsInfo entity doesn't exist for current Epoch, which means the CID hasn't been set for this Epoch yet, so we use the one set before
+  let epochProjectsMetadata: EpochProjectsMetadata | null = EpochProjectsMetadata.load(epochAsId);
+  if (epochProjectsMetadata === null) {
+    // We assume the EpochProjectsMetadata entity doesn't exist for current Epoch, which means the CID hasn't been set for this Epoch yet, so we use the one set before
     const cid: string | null = requestCurrentProposalsCID(proposalsContractAddress);
     if (cid === null) {
       return;
     }
-    epochProjectsInfo = createNewEpochProjectsInfo(
+    epochProjectsMetadata = createNewEpochProjectsMetadata(
       call.inputs._epoch,
       call.inputs._proposalAddresses,
       cid,
     );
   } else {
     // eslint-disable-next-line no-undef
-    epochProjectsInfo.projectsAddresses = changetype<Bytes[]>(call.inputs._proposalAddresses);
+    epochProjectsMetadata.projectsAddresses = changetype<Bytes[]>(call.inputs._proposalAddresses);
   }
-  epochProjectsInfo.save();
+  epochProjectsMetadata.save();
 
   // Update ALL Epochs addresses list
-  let allEpochsProjectInfo: AllEpochsProjectsInfo | null = AllEpochsProjectsInfo.load(
+  let accumulatedProjectsMetadata: AccumulatedProjectsMetadata | null = AccumulatedProjectsMetadata.load(
     Bytes.fromI32(ALL_EPOCHS_PROJECT_INFO_VERSION),
   );
-  if (allEpochsProjectInfo === null) {
-    allEpochsProjectInfo = new AllEpochsProjectsInfo(
+  if (accumulatedProjectsMetadata === null) {
+    accumulatedProjectsMetadata = new AccumulatedProjectsMetadata(
       Bytes.fromI32(ALL_EPOCHS_PROJECT_INFO_VERSION),
     );
     // eslint-disable-next-line no-undef
-    allEpochsProjectInfo.projectsAddresses = changetype<Bytes[]>(call.inputs._proposalAddresses);
+    accumulatedProjectsMetadata.projectsAddresses = changetype<Bytes[]>(
+      call.inputs._proposalAddresses,
+    );
   } else {
     // eslint-disable-next-line no-undef
     const inputAddresses = changetype<Bytes[]>(call.inputs._proposalAddresses);
-    const currentAddresses = allEpochsProjectInfo.projectsAddresses;
+    const currentAddresses = accumulatedProjectsMetadata.projectsAddresses;
     for (let i = 0; i < inputAddresses.length; i++) {
       if (!currentAddresses.includes(inputAddresses[i])) {
         currentAddresses.push(inputAddresses[i]);
       }
     }
-    allEpochsProjectInfo.projectsAddresses = currentAddresses;
+    accumulatedProjectsMetadata.projectsAddresses = currentAddresses;
   }
-  allEpochsProjectInfo.save();
+  accumulatedProjectsMetadata.save();
 }

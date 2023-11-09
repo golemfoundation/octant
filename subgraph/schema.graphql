@@ -66,14 +66,14 @@ type Epoch @entity(immutable: true) {
     toTs: BigInt!
 }
 
-type EpochProjectsInfo @entity {
+type EpochProjectsMetadata @entity {
     id: Bytes!
     epoch: Int!
     proposalsCid: String!
     projectsAddresses: [Bytes!]! # list of projects' addresses
 }
 
-type AllEpochsProjectsInfo @entity {
+type AccumulatedProjectsMetadata @entity {
     id: Bytes!
     projectsAddresses: [Bytes!]! # list of ALL projects' addresses
 }
