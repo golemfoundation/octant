@@ -47,6 +47,7 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
 
   const totalValueOfAllocationsToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
+    shouldIgnoreGwei: true,
     valueCrypto: proposalMatchedProposalRewards?.sum,
   });
 

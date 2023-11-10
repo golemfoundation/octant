@@ -11,7 +11,9 @@ const WEI_5 = BigNumber.from(10).pow(5);
 
 export default function getFormattedEthValue(
   value: BigNumber,
+  // eslint-disable-next-line default-param-last
   isUsingHairSpace = true,
+  shouldIgnoreGwei?: boolean,
 ): FormattedCryptoValue {
   let returnObject: Omit<FormattedCryptoValue, 'fullString'>;
 
@@ -22,6 +24,9 @@ export default function getFormattedEthValue(
   } else if (value.lt(WEI_5)) {
     returnObject = { suffix: 'WEI', value: formatUnits(value, 'wei') };
   } else if (isInGweiRange) {
+    if (shouldIgnoreGwei) {
+      return { fullString: '< 0.0001 ETH', suffix: 'ETH', value: '< 0.0001' };
+    }
     returnObject = { suffix: 'GWEI', value: formatUnits(value, 'gwei') };
   } else {
     returnObject = { suffix: 'ETH', value: formatUnits(value) };
