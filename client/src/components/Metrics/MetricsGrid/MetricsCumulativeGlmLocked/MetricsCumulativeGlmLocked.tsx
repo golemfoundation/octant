@@ -5,13 +5,13 @@ import { useTranslation } from 'react-i18next';
 import AreaChart from 'components/core/AreaChart/AreaChart';
 import ChartTimeSlicer from 'components/Metrics/MetricsGrid/common/ChartTimeSlicer/ChartTimeSlicer';
 import MetricsGridTile from 'components/Metrics/MetricsGrid/common/MetricsGridTile/MetricsGridTile';
-import useLockedsData from 'hooks/subgraph/useLockedsData';
+import useLockedSummarySnapshots from 'hooks/subgraph/useLockedSummarySnapshots';
 
 import styles from './MetricsCumulativeGlmLocked.module.scss';
 
 const MetricsCumulativeGlmLocked: FC = () => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
-  const { data } = useLockedsData();
+  const { data } = useLockedSummarySnapshots();
 
   const [dateToFilter, setDateToFilter] = useState<Date | null>(null);
 

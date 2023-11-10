@@ -1012,6 +1012,20 @@ export type GetLockedSummaryLatestQuery = {
   } | null;
 };
 
+export type GetLockedSummarySnapshotsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+export type GetLockedSummarySnapshotsQuery = {
+  __typename?: 'Query';
+  lockedSummarySnapshots: Array<{
+    __typename?: 'LockedSummarySnapshot';
+    lockedTotal: any;
+    timestamp: number;
+  }>;
+};
+
 export type GetLockedsDataQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
   skip?: InputMaybe<Scalars['Int']['input']>;
@@ -1224,6 +1238,66 @@ export const GetLockedSummaryLatestDocument = {
     },
   ],
 } as unknown as DocumentNode<GetLockedSummaryLatestQuery, GetLockedSummaryLatestQueryVariables>;
+export const GetLockedSummarySnapshotsDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetLockedSummarySnapshots' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'first' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          defaultValue: { kind: 'IntValue', value: '1000' },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'skip' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          defaultValue: { kind: 'IntValue', value: '0' },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'lockedSummarySnapshots' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'first' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'first' } },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'skip' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'skip' } },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'orderBy' },
+                value: { kind: 'EnumValue', value: 'timestamp' },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'lockedTotal' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'timestamp' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetLockedSummarySnapshotsQuery,
+  GetLockedSummarySnapshotsQueryVariables
+>;
 export const GetLockedsDataDocument = {
   kind: 'Document',
   definitions: [
