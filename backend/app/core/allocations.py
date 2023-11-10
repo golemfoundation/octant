@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Optional
 
 from dataclass_wizard import JSONWizard
 from eth_utils import to_checksum_address
@@ -65,8 +65,10 @@ def deserialize_payload(payload) -> Tuple[int, List[Allocation]]:
     return payload["nonce"], allocations
 
 
-def verify_allocations(epoch: int, user_address: str, allocations: List[Allocation]):
-    if epoch == 0:
+def verify_allocations(
+    epoch: Optional[int], user_address: str, allocations: List[Allocation]
+):
+    if epoch is None:
         raise exceptions.NotInDecisionWindow
 
     if not has_pending_epoch_snapshot(epoch):

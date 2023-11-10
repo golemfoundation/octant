@@ -30,7 +30,7 @@ def get_withdrawable_eth(address: str) -> List[WithdrawableEth]:
 
     withdrawable_eth = []
 
-    if pending_epoch > 0:
+    if pending_epoch is not None:
         pending_rewards = get_user_claimed_rewards(address, pending_epoch)
         withdrawable_eth.append(
             WithdrawableEth(
