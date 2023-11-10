@@ -30,6 +30,7 @@ const DonorsItem: FC<DonorsItemProps> = ({ donorAddress, amount, className }) =>
         {isCryptoMainValueDisplay
           ? getValueCryptoToDisplay({
               cryptoCurrency: 'ethereum',
+              shouldIgnoreGwei: true,
               valueCrypto: amount,
             })
           : getValueFiatToDisplay({

@@ -15,10 +15,20 @@ type ProposalDonors = {
 }[];
 
 const mapDataToProposalDonors = (data: Response): ProposalDonors =>
-  data.map(({ address, amount }) => ({
-    address,
-    amount: parseUnits(amount, 'wei'),
-  }));
+  data
+    .map(({ address, amount }) => ({
+      address,
+      amount: parseUnits(amount, 'wei'),
+    }))
+    .sort((a, b) => {
+      if (a.amount.gt(b.amount)) {
+        return 1;
+      }
+      if (a.amount.lt(b.amount)) {
+        return -1;
+      }
+      return 0;
+    });
 
 export default function useProposalDonors(
   proposalAddress: string,
