@@ -36,6 +36,7 @@ export const QUERY_KEYS: QueryKeys = {
   isDecisionWindowOpen: ['isDecisionWindowOpen'],
   largestLockedAmount: ['largestLockedAmount'],
   lockedSummaryLatest: ['lockedSummaryLatest'],
+  lockedSummarySnapshots: ['lockedSummarySnapshots'],
   matchedProposalRewards: epochNumber => [ROOTS.matchedProposalRewards, epochNumber.toString()],
   patronMode: userAddress => [ROOTS.patronMode, userAddress],
   proposalDonors: (proposalAddress, epochNumber) => [

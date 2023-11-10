@@ -23,6 +23,8 @@ const documents = {
     types.GetLargestLockedAmountDocument,
   '\n  query GetLockedSummaryLatest {\n    lockedSummaryLatest(id: "latest") {\n      id\n      lockedTotal\n      lockedRatio\n    }\n  }\n':
     types.GetLockedSummaryLatestDocument,
+  '\n  query GetLockedSummarySnapshots($first: Int = 1000, $skip: Int = 0) {\n    lockedSummarySnapshots(first: $first, skip: $skip, orderBy: timestamp) {\n      lockedTotal\n      timestamp\n    }\n  }\n':
+    types.GetLockedSummarySnapshotsDocument,
   '\n  query GetLockedsData($first: Int = 100, $skip: Int = 0) {\n    lockeds(first: $first, skip: $skip) {\n      user\n      timestamp\n      amount\n    }\n  }\n':
     types.GetLockedsDataDocument,
 };
@@ -71,6 +73,12 @@ export function graphql(
 export function graphql(
   source: '\n  query GetLockedSummaryLatest {\n    lockedSummaryLatest(id: "latest") {\n      id\n      lockedTotal\n      lockedRatio\n    }\n  }\n',
 ): (typeof documents)['\n  query GetLockedSummaryLatest {\n    lockedSummaryLatest(id: "latest") {\n      id\n      lockedTotal\n      lockedRatio\n    }\n  }\n'];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query GetLockedSummarySnapshots($first: Int = 1000, $skip: Int = 0) {\n    lockedSummarySnapshots(first: $first, skip: $skip, orderBy: timestamp) {\n      lockedTotal\n      timestamp\n    }\n  }\n',
+): (typeof documents)['\n  query GetLockedSummarySnapshots($first: Int = 1000, $skip: Int = 0) {\n    lockedSummarySnapshots(first: $first, skip: $skip, orderBy: timestamp) {\n      lockedTotal\n      timestamp\n    }\n  }\n'];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
