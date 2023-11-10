@@ -1,10 +1,11 @@
 import { Address, BigInt, Bytes } from '@graphprotocol/graph-ts';
 
+
 import {
   requestCurrentEpoch,
   requestCurrentProposalsCID,
   requestProposalAddresses,
-} from './contracts-utils';
+} from "./contracts-utils";
 
 import { SetCIDCall, SetProposalAddressesCall } from '../generated/Proposals/Proposals';
 import { AccumulatedProjectsMetadata, EpochProjectsMetadata } from '../generated/schema';

@@ -8,7 +8,7 @@ export function requestCurrentEpoch(epochsContractAddress: string): BigInt | nul
 
   const currentEpoch = epochsContract.try_getCurrentEpoch();
   if (currentEpoch.reverted) {
-    log.info('Call to getCurrentEpoch() reverted!', []);
+    log.error('Call to getCurrentEpoch() reverted!', []);
     return null;
   }
   return currentEpoch.value;
@@ -23,7 +23,7 @@ export function requestProposalAddresses(
   // eslint-disable-next-line no-undef
   const currentAddresses = proposalsContract.try_getProposalAddresses(epochNumber);
   if (currentAddresses.reverted) {
-    log.info('Call to getProposalAddresses() reverted!', []);
+    log.error('Call to getProposalAddresses() reverted!', []);
     return null;
   }
   return currentAddresses.value;
@@ -34,7 +34,7 @@ export function requestCurrentProposalsCID(proposalsContractsAddress: string): s
 
   const cid = proposalsContract.try_cid();
   if (cid.reverted) {
-    log.info('Call to cid() reverted!', []);
+    log.error('Call to cid() reverted!', []);
     return null;
   }
   return cid.value;
