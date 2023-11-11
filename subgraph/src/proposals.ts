@@ -1,14 +1,13 @@
 import { Address, BigInt, Bytes } from '@graphprotocol/graph-ts';
 
-
+import { SetCIDCall, SetProposalAddressesCall } from '../generated/Proposals/Proposals';
+import { AccumulatedProjectsMetadata, EpochProjectsMetadata } from '../generated/schema';
 import {
   requestCurrentEpoch,
   requestCurrentProposalsCID,
   requestProposalAddresses,
-} from "../src/contracts-utils";
-
-import { SetCIDCall, SetProposalAddressesCall } from '../generated/Proposals/Proposals';
-import { AccumulatedProjectsMetadata, EpochProjectsMetadata } from '../generated/schema';
+  // eslint-disable-next-line import/no-useless-path-segments
+} from '../src/contracts-utils';
 
 const ALL_EPOCHS_PROJECT_INFO_VERSION = 0;
 const EPOCH_1 = 1;

@@ -1,7 +1,7 @@
 import { Address, ethereum, Bytes, BigInt } from '@graphprotocol/graph-ts';
 
-
-import { requestCurrentEpoch } from "../src/contracts-utils";
+// eslint-disable-next-line import/no-useless-path-segments
+import { requestCurrentEpoch } from './contracts-utils';
 
 import { Epochs } from '../generated/Epochs/Epochs';
 import { Epoch } from '../generated/schema';
