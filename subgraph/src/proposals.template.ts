@@ -5,7 +5,7 @@ import {
   requestCurrentEpoch,
   requestCurrentProposalsCID,
   requestProposalAddresses,
-} from "./contracts-utils";
+} from "../src/contracts-utils";
 
 import { SetCIDCall, SetProposalAddressesCall } from '../generated/Proposals/Proposals';
 import { AccumulatedProjectsMetadata, EpochProjectsMetadata } from '../generated/schema';
