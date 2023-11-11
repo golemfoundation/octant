@@ -1,11 +1,9 @@
 import { Address, ethereum, Bytes, BigInt } from '@graphprotocol/graph-ts';
 
-// eslint-disable-next-line import/no-useless-path-segments
-
-import { requestCurrentEpoch } from "./contracts-utils";
-
 import { Epochs } from '../generated/Epochs/Epochs';
 import { Epoch } from '../generated/schema';
+// eslint-disable-next-line import/no-useless-path-segments
+import { requestCurrentEpoch } from '../src/contracts-utils';
 
 export function handleBlock(block: ethereum.Block): void {
   // eslint-disable-next-line no-template-curly-in-string
