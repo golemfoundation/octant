@@ -88,4 +88,4 @@ dataSources:
       callHandlers:
         - function: setProposalAddresses(uint256,address[])
           handler: handleSetProposalAddresses
-      file: ./src/proposals.ts
+      file: ./generated/proposals.ts
