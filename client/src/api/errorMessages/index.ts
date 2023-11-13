@@ -7,7 +7,11 @@ import triggerToast from 'utils/triggerToast';
 
 import { QueryMutationError, QueryMutationErrorConfig, IgnoredQueries } from './types';
 
-const IGNORED_QUERIES: IgnoredQueries = [ROOTS.cryptoValues, QUERY_KEYS.glmClaimCheck[0]];
+const IGNORED_QUERIES: IgnoredQueries = [
+  ROOTS.cryptoValues,
+  ROOTS.proposalsIpfsResults,
+  QUERY_KEYS.glmClaimCheck[0],
+];
 
 const errors: QueryMutationErrorConfig = {
   4001: {

@@ -17,6 +17,9 @@
       "default": {
         "title": "Sorry, something went wrong there",
         "message": "Please reload the app and try again"
+      },
+      "ipfs": {
+        "message": "We seem to be having trouble loading data from IPFS, please hang on or try reloading"
       }
     }
   },
@@ -215,9 +218,6 @@
       },
       "modalWithdrawEth": {
         "withdrawETH": "Withdraw ETH"
-      },
-      "proposalLoadingStates": {
-        "text": "Loading of a proposal <br/> encountered an error."
       },
       "proposalRewards": {
         "epoch": "Epoch {{epoch}}",

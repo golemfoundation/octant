@@ -10,4 +10,8 @@ export type QueryMutationErrorConfig = {
   [key: string]: QueryMutationError;
 };
 
-export type IgnoredQueries = [Root['cryptoValues'], QueryKeys['glmClaimCheck'][0]];
+export type IgnoredQueries = [
+  Root['cryptoValues'],
+  Root['proposalsIpfsResults'],
+  QueryKeys['glmClaimCheck'][0],
+];
