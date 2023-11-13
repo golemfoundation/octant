@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import Description from 'components/core/Description/Description';
 import Img from 'components/core/Img/Img';
 import ButtonAddToAllocate from 'components/dedicated/ButtonAddToAllocate/ButtonAddToAllocate';
-import ProposalLoadingStates from 'components/dedicated/ProposalLoadingStates/ProposalLoadingStates';
 import ProposalRewards from 'components/dedicated/ProposalRewards/ProposalRewards';
 import ProposalItemSkeleton from 'components/dedicated/ProposalsList/ProposalsListItemSkeleton/ProposalsListItemSkeleton';
 import env from 'env';
@@ -66,9 +65,7 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
       }
     >
       {isLoadingError ? (
-        <ProposalLoadingStates isLoadingError={isLoadingError}>
-          <ProposalItemSkeleton />
-        </ProposalLoadingStates>
+        <ProposalItemSkeleton />
       ) : (
         <Fragment>
           <div className={styles.header}>
