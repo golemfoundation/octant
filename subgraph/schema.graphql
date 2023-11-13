@@ -66,7 +66,7 @@ type Epoch @entity(immutable: true) {
     toTs: BigInt!
 }
 
-type EpochProjectsMetadata @entity {
+type EpochProjectsMetadata @entity(immutable: true) {
     id: Bytes!
     epoch: Int!
     proposalsCid: String!
