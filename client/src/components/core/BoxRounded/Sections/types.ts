@@ -16,6 +16,7 @@ export interface SectionProps {
     dataTest?: DoubleValueProps['dataTest'];
     isDisabled?: DoubleValueProps['isDisabled'];
     isFetching?: DoubleValueProps['isFetching'];
+    shouldIgnoreGwei?: DoubleValueProps['shouldIgnoreGwei'];
     valueCrypto: DoubleValueProps['valueCrypto'];
   };
   hasBottomDivider?: boolean;

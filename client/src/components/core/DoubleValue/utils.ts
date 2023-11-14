@@ -17,6 +17,7 @@ export function getValuesToDisplay({
   valueString,
   isCryptoMainValueDisplay,
   error,
+  shouldIgnoreGwei,
 }: {
   coinPricesServerDowntimeText?: DoubleValueProps['coinPricesServerDowntimeText'];
   cryptoCurrency: DoubleValueProps['cryptoCurrency'];
@@ -24,6 +25,7 @@ export function getValuesToDisplay({
   displayCurrency: NonNullable<SettingsData['displayCurrency']>;
   error: any;
   isCryptoMainValueDisplay: SettingsData['isCryptoMainValueDisplay'];
+  shouldIgnoreGwei?: DoubleValueProps['shouldIgnoreGwei'];
   valueCrypto?: BigNumber;
   valueString?: DoubleValueProps['valueString'];
 }): {
@@ -41,6 +43,7 @@ export function getValuesToDisplay({
     getValueCryptoToDisplay({
       cryptoCurrency,
       isUsingHairSpace: isCryptoMainValueDisplay,
+      shouldIgnoreGwei,
       valueCrypto,
     });
   const valueFiatToDisplay = getValueFiatToDisplay({

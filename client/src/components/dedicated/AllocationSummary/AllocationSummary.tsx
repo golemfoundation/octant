@@ -47,6 +47,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
         isFetching: isFetchingIndividualReward,
+        shouldIgnoreGwei: true,
         valueCrypto: individualReward?.sub(rewardsForProposals),
       },
       label: i18n.t('common.personal'),
@@ -58,6 +59,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
       {
         doubleValueProps: {
           cryptoCurrency: 'ethereum',
+          shouldIgnoreGwei: true,
           valueCrypto: rewardsForProposals,
         },
         label: t('allocationProjects', { projectsNumber: allocationValuesPositive.length }),

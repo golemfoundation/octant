@@ -7,7 +7,8 @@ export interface AllocationItemWithAllocations extends ProposalIpfsWithRewards {
   value: BigNumber;
 }
 
-export default interface AllocationItemProps extends AllocationItemWithAllocations {
+export default interface AllocationItemProps
+  extends Omit<AllocationItemWithAllocations, 'totalValueOfAllocations' | 'percentage'> {
   className?: string;
   isDisabled: boolean;
   isLocked: boolean;
