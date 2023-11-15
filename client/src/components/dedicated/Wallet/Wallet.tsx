@@ -25,10 +25,8 @@ const Wallet: FC<WalletProps> = ({ onDisconnect }) => {
   });
   const { address } = useAccount();
 
-  const { data: availableFundsEth, isFetching: isFetchingAvailableFundsEth } =
-    useAvailableFundsEth();
-  const { data: availableFundsGlm, isFetching: isFetchingAvailableFundsGlm } =
-    useAvailableFundsGlm();
+  const { data: availableFundsEth, isFetched: isFetchedAvailableFundsEth } = useAvailableFundsEth();
+  const { data: availableFundsGlm, isFetched: isFetchedAvailableFundsGlm } = useAvailableFundsGlm();
 
   const { disconnect } = useDisconnect();
 
@@ -55,7 +53,7 @@ const Wallet: FC<WalletProps> = ({ onDisconnect }) => {
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
-        isFetching: isFetchingAvailableFundsEth,
+        isFetching: !isFetchedAvailableFundsEth,
         valueCrypto: availableFundsEthLocal,
       },
       icon: ethereum,
@@ -66,7 +64,7 @@ const Wallet: FC<WalletProps> = ({ onDisconnect }) => {
             doubleValueProps: {
               coinPricesServerDowntimeText: '...' as const,
               cryptoCurrency: 'golem' as CryptoCurrency,
-              isFetching: isFetchingAvailableFundsGlm,
+              isFetching: !isFetchedAvailableFundsGlm,
               valueCrypto: availableFundsGlmLocal,
             },
             icon: golem,
