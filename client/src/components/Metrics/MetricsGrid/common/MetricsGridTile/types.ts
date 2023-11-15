@@ -10,11 +10,13 @@ type MetricsGridTileGroup = {
 type MetricsGridTileProps =
   | {
       className?: string;
+      dataTest?: string;
       groups: [MetricsGridTileGroup];
       size?: 'S' | 'L';
     }
   | {
       className?: string;
+      dataTest?: string;
       groups: [MetricsGridTileGroup, MetricsGridTileGroup?];
       size: 'M';
     };
