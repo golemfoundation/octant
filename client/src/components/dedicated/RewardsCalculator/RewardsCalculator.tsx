@@ -3,15 +3,15 @@ import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { useFormik } from 'formik';
 import debounce from 'lodash/debounce';
-import isEmpty from 'lodash/isEmpty';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { apiPostCalculateRewards } from 'api/calls/calculateRewards';
 import clientReactQuery from 'api/clients/client-react-query';
-import { QUERY_KEYS } from 'api/queryKeys';
+import { QUERY_KEYS, ROOTS } from 'api/queryKeys';
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import InputText from 'components/core/InputText/InputText';
+import { GLM_TOTAL_SUPPLY } from 'constants/currencies';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import i18n from 'i18n';
 import useSettingsStore from 'store/settings/store';
@@ -27,7 +27,7 @@ const RewardsCalculator: FC = () => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.rewardsCalculator',
   });
-  const [estimatedRewards, setEstimatedRewards] = useState<BigNumber>(BigNumber.from(0));
+  const [estimatedRewards, setEstimatedRewards] = useState<BigNumber | undefined>();
   const [isFetching, setIsFetching] = useState(false);
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
@@ -42,18 +42,27 @@ const RewardsCalculator: FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchEstimatedRewardsDebounced = useCallback(
     debounce((amountGlm, d) => {
-      if (!amountGlm || !d) {
-        setEstimatedRewards(BigNumber.from(0));
+      const isFetchingRewards = clientReactQuery.isFetching({ queryKey: [ROOTS.calculateRewards] });
+
+      if (!amountGlm || !d || parseUnits(amountGlm).gt(GLM_TOTAL_SUPPLY)) {
+        if (isFetchingRewards) {
+          clientReactQuery.cancelQueries({ queryKey: [ROOTS.calculateRewards] });
+        }
+        setEstimatedRewards(undefined);
         setIsFetching(false);
         return;
       }
 
-      const amountGlmWEI = formatUnits(parseUnits(amountGlm, 'ether'), 'wei');
+      if (isFetchingRewards) {
+        clientReactQuery.cancelQueries({ queryKey: [ROOTS.calculateRewards] });
+      }
 
+      const amountGlmWEI = formatUnits(parseUnits(amountGlm, 'ether'), 'wei');
       setIsFetching(true);
+
       clientReactQuery
         .fetchQuery({
-          queryFn: () => apiPostCalculateRewards(amountGlmWEI, parseInt(d, 10)),
+          queryFn: ({ signal }) => apiPostCalculateRewards(amountGlmWEI, parseInt(d, 10), signal),
           queryKey: QUERY_KEYS.calculateRewards(amountGlmWEI, parseInt(d, 10)),
         })
         .then(res => {
@@ -89,10 +98,7 @@ const RewardsCalculator: FC = () => {
   };
 
   useEffect(() => {
-    formik.validateForm().then(error => {
-      if (!isEmpty(error)) {
-        return;
-      }
+    formik.validateForm().then(() => {
       fetchEstimatedRewardsDebounced(formik.values.valueCrypto, formik.values.days);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -113,10 +119,11 @@ const RewardsCalculator: FC = () => {
     : '';
 
   return (
-    <BoxRounded isGrey isVertical>
+    <BoxRounded dataTest="RewardsCalculator" isGrey isVertical>
       <InputText
         autocomplete="off"
         className={styles.input}
+        dataTest="RewardsCalculator__InputText--crypto"
         error={formik.errors.valueCrypto}
         inputMode="decimal"
         isButtonClearVisible={false}
@@ -127,6 +134,7 @@ const RewardsCalculator: FC = () => {
       />
       <InputText
         className={styles.input}
+        dataTest="RewardsCalculator__InputText--days"
         inputMode="numeric"
         isButtonClearVisible={false}
         label={t('lockFor')}
@@ -143,28 +151,30 @@ const RewardsCalculator: FC = () => {
       >
         <InputText
           className={cx(styles.input, isCryptoMainValueDisplay && styles.isCryptoMainValueDisplay)}
+          dataTest="RewardsCalculator__InputText--estimatedRewards--crypto"
           isButtonClearVisible={false}
           isDisabled
           shouldAutoFocusAndSelect={false}
+          showLoader={isFetching}
           suffix={estimatedFormattedRewardsValue.suffix}
           suffixClassName={styles.estimatedRewardsSuffix}
           value={estimatedFormattedRewardsValue.value}
           {...(isCryptoMainValueDisplay && {
             label: t('estimatedRewards'),
-            showLoader: isFetching,
           })}
         />
         <InputText
           className={cx(styles.input, !isCryptoMainValueDisplay && styles.isFiatMainValueDisplay)}
+          dataTest="RewardsCalculator__InputText--estimatedRewards--fiat"
           isButtonClearVisible={false}
           isDisabled
           shouldAutoFocusAndSelect={false}
+          showLoader={isFetching}
           suffix={displayCurrency.toUpperCase()}
           suffixClassName={styles.estimatedRewardsSuffix}
           value={fiat}
           {...(!isCryptoMainValueDisplay && {
             label: t('estimatedRewards'),
-            showLoader: isFetching,
           })}
         />
       </div>
