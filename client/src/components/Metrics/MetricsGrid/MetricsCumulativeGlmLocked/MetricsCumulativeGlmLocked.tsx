@@ -33,6 +33,7 @@ const MetricsCumulativeGlmLocked: FC = () => {
 
   return (
     <MetricsGridTile
+      dataTest="MetricsCumulativeGlmLocked"
       groups={[
         {
           children: (

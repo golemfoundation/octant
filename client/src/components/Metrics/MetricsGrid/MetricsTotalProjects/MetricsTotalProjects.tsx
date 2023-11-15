@@ -16,6 +16,7 @@ const MetricsTotalProjects: FC<MetricsTotalProjectsProps> = ({ isLoading = false
 
   return (
     <MetricsGridTile
+      dataTest="MetricsTotalProjects"
       groups={[
         {
           children: (
