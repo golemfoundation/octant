@@ -51,7 +51,10 @@ const Navbar: FC<NavbarProps> = ({ navigationBottomSuffix, tabs }) => {
           {navigationBottomSuffix && (
             <div className={styles.navigationBottomSuffix}>{navigationBottomSuffix}</div>
           )}
-          <div className={cx(styles.buttons, isProjectAdminMode && styles.isProjectAdminMode)}>
+          <div
+            className={cx(styles.buttons, isProjectAdminMode && styles.isProjectAdminMode)}
+            data-test="Navbar__buttons"
+          >
             {tabs.map(({ icon, label, to, isActive, isDisabled = false }, index) => (
               <Button
                 // eslint-disable-next-line react/no-array-index-key
