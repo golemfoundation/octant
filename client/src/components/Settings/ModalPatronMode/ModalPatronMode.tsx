@@ -17,6 +17,7 @@ const ModalPatronMode: FC<ModalPatronModeProps> = ({ modalProps }) => {
 
   return (
     <Modal
+      dataTest="ModalPatronMode"
       header={isPatronModeEnabled ? t('disablePatronMode') : t('enablePatronMode')}
       {...modalProps}
       className={styles.root}

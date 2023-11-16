@@ -151,6 +151,7 @@ const MainLayout: FC<MainLayoutProps> = ({
                                 styles.badge,
                                 isProjectAdminMode && styles.isProjectAdminMode,
                               )}
+                              data-test="ProfileInfo__badge"
                             >
                               {isProjectAdminMode ? t('admin') : t('patron')}
                             </div>

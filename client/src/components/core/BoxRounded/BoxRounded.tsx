@@ -105,7 +105,7 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
               isPaddingMovedToElements && styles.isPaddingMovedToElements,
             )}
           >
-            <div className={styles.title}>
+            <div className={styles.title} data-test={`${dataTest}__title`}>
               {title}
               <div className={styles.subtitle}>{subtitle}</div>
             </div>
