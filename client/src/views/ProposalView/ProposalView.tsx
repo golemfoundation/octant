@@ -55,7 +55,7 @@ const ProposalView = (): ReactElement => {
   const { data: userAllocations } = useUserAllocations();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { data: proposalsWithRewards } = useProposalsIpfsWithRewards();
+  const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards();
   const { data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow } =
     useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow();
 
@@ -85,11 +85,12 @@ const ProposalView = (): ReactElement => {
       return;
     }
 
-    const lastItemIndex = proposalsWithRewards.findIndex(
+    const lastItemIndex = proposalsIpfsWithRewards.findIndex(
       el => el.address === loadedProposals[loadedProposals.length - 1].address,
     );
-    const nextItemIndex = lastItemIndex === proposalsWithRewards.length - 1 ? 0 : lastItemIndex + 1;
-    const nextAddress = proposalsWithRewards[nextItemIndex].address;
+    const nextItemIndex =
+      lastItemIndex === proposalsIpfsWithRewards.length - 1 ? 0 : lastItemIndex + 1;
+    const nextAddress = proposalsIpfsWithRewards[nextItemIndex].address;
 
     /**
      * While in CY, onLoadNextProposal is sometimes called twice in a row for the same proposal.
@@ -113,7 +114,7 @@ const ProposalView = (): ReactElement => {
       isLoading ||
       loadedAddresses.length === 0 ||
       loadedProposals.length === 0 ||
-      proposalsWithRewards.length === 0
+      proposalsIpfsWithRewards.length === 0
     ) {
       return;
     }
@@ -165,14 +166,14 @@ const ProposalView = (): ReactElement => {
   useEffect(() => {
     if (
       !loadedProposals.length ||
-      !proposalsWithRewards.length ||
-      loadedProposals.length !== proposalsWithRewards.length
+      !proposalsIpfsWithRewards.length ||
+      loadedProposals.length !== proposalsIpfsWithRewards.length
     ) {
       return;
     }
 
     const target = document.querySelector(
-      `.ProposalView__proposal__Description--${proposalsWithRewards.length - 1}`,
+      `.ProposalView__proposal__Description--${proposalsIpfsWithRewards.length - 1}`,
     ) as HTMLDivElement | undefined;
 
     if (!target) {
@@ -191,7 +192,7 @@ const ProposalView = (): ReactElement => {
     return () => {
       document.removeEventListener('scroll', listener);
     };
-  }, [loadedProposals.length, proposalsWithRewards.length]);
+  }, [loadedProposals.length, proposalsIpfsWithRewards.length]);
 
   if (!initialElement || !areMatchedProposalsReady) {
     return <MainLayout isLoading navigationTabs={navigationTabs} />;
@@ -220,7 +221,7 @@ const ProposalView = (): ReactElement => {
       navigationTabs={navigationTabs}
     >
       <InfiniteScroll
-        hasMore={loadedProposals?.length !== proposalsWithRewards?.length}
+        hasMore={loadedProposals?.length !== proposalsIpfsWithRewards?.length}
         initialLoad
         loader={
           <div key={-1} className={styles.loaderWrapper}>
@@ -247,6 +248,9 @@ const ProposalView = (): ReactElement => {
               isArchivedProposal,
               onClick: () => onAddRemoveFromAllocate(address),
             };
+            const proposalIpfsWithRewards = proposalsIpfsWithRewards.find(
+              element => element.address === address,
+            )!;
             return (
               // eslint-disable-next-line react/no-array-index-key
               <Fragment key={`${address}-${index}`}>
@@ -300,6 +304,8 @@ const ProposalView = (): ReactElement => {
                         className={styles.proposalRewards}
                         epoch={isArchivedProposal ? parseInt(epochUrl!, 10) : undefined}
                         isProposalView
+                        numberOfDonors={proposalIpfsWithRewards.numberOfDonors}
+                        totalValueOfAllocations={proposalIpfsWithRewards.totalValueOfAllocations}
                       />
                     ) : (
                       <div className={styles.divider} />

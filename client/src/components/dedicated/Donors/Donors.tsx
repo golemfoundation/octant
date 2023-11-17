@@ -8,8 +8,8 @@ import DonorsHeader from 'components/dedicated/DonorsHeader/DonorsHeader';
 import DonorsList from 'components/dedicated/DonorsList/DonorsList';
 import ModalDonorsFullList from 'components/dedicated/ModalDonorsFullList/ModalDonorsFullList';
 import { DONORS_SHORT_LIST_LENGTH } from 'constants/donors';
+import useProposalDonors from 'hooks/queries/donors/useProposalDonors';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useProposalDonors from 'hooks/queries/useProposalDonors';
 
 import styles from './Donors.module.scss';
 import DonorsProps from './types';

@@ -18,16 +18,14 @@ import styles from './ProposalsListItem.module.scss';
 import ProposalsListItemProps from './types';
 
 const ProposalsListItem: FC<ProposalsListItemProps> = ({
-  address,
   className,
   dataTest,
-  introDescription,
-  isLoadingError,
-  name,
-  profileImageSmall,
   epoch,
+  proposalIpfsWithRewards,
 }) => {
   const { ipfsGateway } = env;
+  const { address, isLoadingError, profileImageSmall, name, introDescription } =
+    proposalIpfsWithRewards;
   const navigate = useNavigate();
   const { data: userAllocations } = useUserAllocations(epoch);
   const { allocations, setAllocations } = useAllocationsStore(state => ({
@@ -35,7 +33,7 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
     setAllocations: state.setAllocations,
   }));
   const { data: currentEpoch } = useCurrentEpoch();
-  const isAddedToAllocate = allocations!.includes(address);
+  const isAddedToAllocate = allocations!.includes(proposalIpfsWithRewards.address);
 
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
     allocations,
@@ -109,7 +107,13 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
             />
           </div>
           {!isEpoch1 && (
-            <ProposalRewards address={address} className={styles.proposalRewards} epoch={epoch} />
+            <ProposalRewards
+              address={address}
+              className={styles.proposalRewards}
+              epoch={epoch}
+              numberOfDonors={proposalIpfsWithRewards.numberOfDonors}
+              totalValueOfAllocations={proposalIpfsWithRewards.totalValueOfAllocations}
+            />
           )}
         </Fragment>
       )}
