@@ -47,3 +47,9 @@ body {
     padding-right: 0 !important;
   }
 }
+
+.bodyFixed {
+  position: fixed;
+  top: var(--st, 0);
+  inline-size: 100%;
+}
