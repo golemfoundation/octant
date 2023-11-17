@@ -8,7 +8,10 @@ export interface AllocationItemWithAllocations extends ProposalIpfsWithRewards {
 }
 
 export default interface AllocationItemProps
-  extends Omit<AllocationItemWithAllocations, 'totalValueOfAllocations' | 'percentage'> {
+  extends Omit<
+    AllocationItemWithAllocations,
+    'totalValueOfAllocations' | 'percentage' | 'numberOfDonors'
+  > {
   className?: string;
   isDisabled: boolean;
   isLocked: boolean;
