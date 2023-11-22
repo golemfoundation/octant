@@ -29,9 +29,11 @@ def get_estimated_total_effective_deposit(epoch: int) -> int:
     return total
 
 
-def get_estimated_effective_deposit(start: int, end: int, user_address: str) -> int:
+def get_estimated_effective_deposit(
+    epoch_details: EpochDetails, user_address: str
+) -> int:
     return weighted_average_strategy.get_estimated_effective_deposit(
-        start, end, user_address
+        epoch_details, user_address
     )
 
 
