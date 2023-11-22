@@ -21,6 +21,18 @@ from app.infrastructure import events, routes, apscheduler
 from app.infrastructure.exception_handler import ExceptionHandler
 from app.settings import ProdConfig, DevConfig
 
+from app.core.epochs.epochs_registry import EpochsRegistry
+from app.core.rewards.all_proceeds_with_op_cost_rewards_strategy import (
+    AllProceedsWithOperationalCostStrategy,
+)
+from app.core.rewards.standard_rewards_strategy import StandardRewardsStrategy
+from app.core.deposits.weighted_deposits.timebased_calculator import (
+    TimebasedWeightsCalculator,
+)
+from app.core.deposits.weighted_deposits.timebased_without_unlocks_calculator import (
+    TimebasedWithoutUnlocksWeightsCalculator,
+)
+
 
 def create_app(config=None):
     if config is None:
@@ -37,6 +49,17 @@ def create_app(config=None):
     register_extensions(app)
     register_errorhandlers(app)
     register_request_context(app)
+
+    EpochsRegistry.register_epoch_settings(
+        1,
+        rewards_strategy=AllProceedsWithOperationalCostStrategy(),
+        user_deposits_weights_calculator=TimebasedWeightsCalculator,
+    )
+    EpochsRegistry.register_epoch_settings(
+        2,
+        rewards_strategy=StandardRewardsStrategy(),
+        user_deposits_weights_calculator=TimebasedWithoutUnlocksWeightsCalculator,
+    )
 
     return app
 
