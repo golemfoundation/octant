@@ -51,6 +51,9 @@ class TimebasedWeightsCalculator(WeightsCalculator):
     def _calculated_deposit_weights(
         cls, start: int, end: int, user_events: List[Dict]
     ) -> List[WeightedDeposit]:
+        if len(user_events) == 0:
+            return []
+
         weighted_amounts = []
 
         # Calculate deposit from the epoch start to the first event
@@ -71,7 +74,7 @@ class TimebasedWeightsCalculator(WeightsCalculator):
         weight = end - last_event["timestamp"]
         weighted_amounts.append(WeightedDeposit(amount, weight))
 
-        return weighted_amounts
+        return list(filter(lambda wd: wd.weight != 0, weighted_amounts))
 
     @classmethod
     def _calculate_deposit_after_event(cls, event: Dict) -> int:
