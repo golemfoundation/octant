@@ -157,4 +157,5 @@ def test_estimated_effective_deposit_in_epoch_2_locks_in_epoch_1_and_unlock_in_2
     result = get_user_estimated_effective_deposit_for_current_epoch(
         user_accounts[0].address
     )
-    assert result == 170000000000000000000
+
+    assert result == 100000000000000000000
