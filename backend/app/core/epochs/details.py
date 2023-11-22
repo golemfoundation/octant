@@ -6,7 +6,8 @@ from app.utils.time import sec_to_days
 
 
 class EpochDetails:
-    def __init__(self, start, duration, decision_window, remaining_sec=None):
+    def __init__(self, epoch_no, start, duration, decision_window, remaining_sec=None):
+        self.epoch_no = int(epoch_no)
         self.duration_sec = int(duration)
         self.duration_days = sec_to_days(self.duration_sec)
         self.decision_window_sec = int(decision_window)
@@ -32,6 +33,7 @@ def get_epoch_details(epoch: int) -> EpochDetails:
     epoch_details = graphql.epochs.get_epoch_by_number(epoch)
 
     return EpochDetails(
+        epoch_no=epoch,
         start=epoch_details["fromTs"],
         duration=epoch_details["duration"],
         decision_window=epoch_details["decisionWindow"],
@@ -40,8 +42,10 @@ def get_epoch_details(epoch: int) -> EpochDetails:
 
 def get_future_epoch_details() -> EpochDetails:
     epoch_details = epochs.get_future_epoch_props()
+    epoch_no = epochs.get_current_epoch()
 
     return EpochDetails(
+        epoch_no=epoch_no,
         start=epoch_details[2],
         duration=epoch_details[3],
         decision_window=epoch_details[4],

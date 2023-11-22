@@ -1,6 +1,9 @@
 from typing import List, Tuple
 
 from app.core.common import UserDeposit
+
+from app.core.epochs.epochs_registry import EpochsRegistry
+
 from app.core.deposits.cut_off import apply_weighted_average_cutoff
 from app.core.deposits.events import SubgraphEventsGenerator
 from app.core.deposits.weighted_deposits import (
@@ -41,7 +44,10 @@ def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
             - A list of UserDeposit instances.
             - The total effective deposit.
     """
-    weighted_deposits = get_all_users_weighted_deposits(epoch_no)
+    epoch_settigns = EpochsRegistry.get_epoch_settings(epoch_no)
+    weighted_deposits = get_all_users_weighted_deposits(
+        epoch_settigns.user_deposits_weights_calculator, epoch_no
+    )
     total_ed = 0
     user_deposits = []
 
