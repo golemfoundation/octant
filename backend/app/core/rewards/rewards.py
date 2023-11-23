@@ -11,8 +11,10 @@ from app.exceptions import RewardsException
 def calculate_total_rewards(
     eth_proceeds: int, locked_ratio: Decimal, pending_epoch: int
 ) -> int:
-    registry = EpochsRegistry.get_epoch_settings(pending_epoch)
-    return registry.rewards_strategy.calculate_total_rewards(eth_proceeds, locked_ratio)
+    epoch_settings = EpochsRegistry.get_epoch_settings(pending_epoch)
+    return epoch_settings.rewards_strategy.calculate_total_rewards(
+        eth_proceeds, locked_ratio
+    )
 
 
 def calculate_all_individual_rewards(

@@ -44,9 +44,9 @@ def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
             - A list of UserDeposit instances.
             - The total effective deposit.
     """
-    epoch_settigns = EpochsRegistry.get_epoch_settings(epoch_no)
+    epoch_settings = EpochsRegistry.get_epoch_settings(epoch_no)
     weighted_deposits = get_all_users_weighted_deposits(
-        epoch_settigns.user_deposits_weights_calculator, epoch_no
+        epoch_settings.user_deposits_weights_calculator, epoch_no
     )
     total_ed = 0
     user_deposits = []
