@@ -120,7 +120,6 @@ const App = (): ReactElement => {
   const [currentEpochLocal, setCurrentEpochLocal] = useState<number | null>(null);
   const [isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal] = useState<boolean | null>(null);
   const [syncStatusLocal, setSyncStatusLocal] = useState<Response | null>(null);
-  const [chainIdLocal, setChainIdLocal] = useState<number | null>(null);
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const { isFetching: isFetchingUserTOS } = useUserTOS();
   const isSyncingInProgress = syncStatusLocal?.pendingSnapshot === 'in_progress';
@@ -145,7 +144,7 @@ const App = (): ReactElement => {
     }
   };
 
-  // Listener to reload app after allocation window status changes (insted of refetching a lot of stuff without reloading)
+  // Listener to reload app after allocation window status changes (instead of refetching a lot of stuff without reloading)
   useEffect(() => {
     if (isDecisionWindowOpen === undefined || !timeCurrentAllocationEnd || !timeCurrentEpochEnd) {
       return;
@@ -164,7 +163,7 @@ const App = (): ReactElement => {
   }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
   useEffect(() => {
-    if (chainIdLocal && chainIdLocal !== networkConfig.id) {
+    if (chain && chain.id !== networkConfig.id) {
       triggerToast({
         message: t('message', {
           isTestnet: networkConfig.isTestnet ? ' testnet' : '',
@@ -175,7 +174,7 @@ const App = (): ReactElement => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainIdLocal]);
+  }, [chain?.id]);
 
   useEffect(() => {
     // Possible solution for invalid cached `isConnect` value. This snippet resets data from `useConnect` hook and try ty refetch wallet balance (eth + glm) when wallet is disconnected and app still has old data in cache (query cache update).
@@ -193,12 +192,6 @@ const App = (): ReactElement => {
       setSyncStatusLocal(syncStatus);
     }
   }, [syncStatus, syncStatusLocal, setSyncStatusLocal]);
-
-  useEffect(() => {
-    if (chain && chain.id && chain.id !== chainIdLocal) {
-      setChainIdLocal(chain.id);
-    }
-  }, [chain, chainIdLocal, setChainIdLocal]);
 
   useEffect(() => {
     if (isConnected !== isConnectedLocal) {
@@ -235,7 +228,6 @@ const App = (): ReactElement => {
   useEffect(() => {
     const doesAddressRequireFlush =
       !!address && !!currentAddressLocal && address !== currentAddressLocal;
-    const doesChainIdRequireFlush = chain && chain.id && chain.id !== chainIdLocal;
     const doesCurrentEpochRequireFlush =
       !!currentEpoch && !!currentEpochLocal && currentEpoch !== currentEpochLocal;
     const doesIsConnectedRequireFlush = !isConnected && isConnectedLocal;
@@ -247,7 +239,6 @@ const App = (): ReactElement => {
       !!syncStatus && !!syncStatusLocal && !isEqual(syncStatus, syncStatusLocal);
     if (
       doesAddressRequireFlush ||
-      doesChainIdRequireFlush ||
       doesCurrentEpochRequireFlush ||
       doesIsConnectedRequireFlush ||
       doesIsDecisionWindowOpenRequireFlush ||
@@ -259,8 +250,6 @@ const App = (): ReactElement => {
     isConnected,
     isConnectedLocal,
     address,
-    chain,
-    chainIdLocal,
     currentAddressLocal,
     currentEpoch,
     currentEpochLocal,
