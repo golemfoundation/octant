@@ -117,8 +117,6 @@ const App = (): ReactElement => {
   const isProjectAdminMode = useIsProjectAdminMode();
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
   const [currentAddressLocal, setCurrentAddressLocal] = useState<string | null>(null);
-  const [currentEpochLocal, setCurrentEpochLocal] = useState<number | null>(null);
-  const [isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal] = useState<boolean | null>(null);
   const [syncStatusLocal, setSyncStatusLocal] = useState<Response | null>(null);
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const { isFetching: isFetchingUserTOS } = useUserTOS();
@@ -214,36 +212,12 @@ const App = (): ReactElement => {
   }, [address, currentAddressLocal, setCurrentAddressLocal]);
 
   useEffect(() => {
-    if (currentEpoch && currentEpoch !== currentEpochLocal) {
-      setCurrentEpochLocal(currentEpoch);
-    }
-  }, [currentEpoch, currentEpochLocal, setCurrentEpochLocal]);
-
-  useEffect(() => {
-    if (isDecisionWindowOpen && isDecisionWindowOpen !== isDecisionWindowOpenLocal) {
-      setIsDecisionWindowOpenLocal(isDecisionWindowOpen);
-    }
-  }, [isDecisionWindowOpen, isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal]);
-
-  useEffect(() => {
     const doesAddressRequireFlush =
       !!address && !!currentAddressLocal && address !== currentAddressLocal;
-    const doesCurrentEpochRequireFlush =
-      !!currentEpoch && !!currentEpochLocal && currentEpoch !== currentEpochLocal;
     const doesIsConnectedRequireFlush = !isConnected && isConnectedLocal;
-    const doesIsDecisionWindowOpenRequireFlush =
-      !!isDecisionWindowOpen &&
-      !!isDecisionWindowOpenLocal &&
-      isDecisionWindowOpen !== isDecisionWindowOpenLocal;
     const doesSyncStatusRequireFlush =
       !!syncStatus && !!syncStatusLocal && !isEqual(syncStatus, syncStatusLocal);
-    if (
-      doesAddressRequireFlush ||
-      doesCurrentEpochRequireFlush ||
-      doesIsConnectedRequireFlush ||
-      doesIsDecisionWindowOpenRequireFlush ||
-      doesSyncStatusRequireFlush
-    ) {
+    if (doesAddressRequireFlush || doesIsConnectedRequireFlush || doesSyncStatusRequireFlush) {
       setIsFlushRequired(true);
     }
   }, [
@@ -251,10 +225,6 @@ const App = (): ReactElement => {
     isConnectedLocal,
     address,
     currentAddressLocal,
-    currentEpoch,
-    currentEpochLocal,
-    isDecisionWindowOpen,
-    isDecisionWindowOpenLocal,
     queryClient,
     syncStatus,
     syncStatusLocal,
