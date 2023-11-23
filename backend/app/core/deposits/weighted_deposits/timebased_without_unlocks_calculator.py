@@ -47,7 +47,7 @@ class TimebasedWithoutUnlocksWeightsCalculator(TimebasedWeightsCalculator):
 
         if elem.amount >= last_deposit_amount:
             deposits.append(WeightedDeposit(last_deposit_amount, elem.weight))
-            return (deposits, last_deposit_amount)
+            return deposits, last_deposit_amount
         else:
             deposits.append(elem)
-            return (deposits, elem.amount)
+            return deposits, elem.amount

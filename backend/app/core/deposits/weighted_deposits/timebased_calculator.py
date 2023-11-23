@@ -41,8 +41,6 @@ class TimebasedWeightsCalculator(WeightsCalculator):
         is calculated based on the time duration it remained locked in a given epoch.
         """
         user_events = events_generator.get_user_events(user_address)
-        if len(user_events) == 0:
-            return []
         return cls._calculated_deposit_weights(
             events_generator.epoch_start, events_generator.epoch_end, user_events
         )
