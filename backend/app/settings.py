@@ -64,8 +64,17 @@ class ProdConfig(Config):
     PROPAGATE_EXCEPTIONS = True
     DEBUG = False
     LOG_LVL = os.getenv("OCTANT_LOG_LEVEL", "INFO")
+    SQLALCHEMY_CONNECTION_POOL_SIZE = int(
+        os.getenv("SQLALCHEMY_CONNECTION_POOL_SIZE", 3)
+    )
+    SQLALCHEMY_CONNECTION_POOL_MAX_OVERFLOW = int(
+        os.getenv("SQLALCHEMY_CONNECTION_POOL_MAX_OVERFLOW", 100)
+    )
     SQLALCHEMY_DATABASE_URI = os.getenv("DB_URI")
-    SQLALCHEMY_ENGINE_OPTIONS = {"pool_size": 3, "max_overflow": 100}
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_size": SQLALCHEMY_CONNECTION_POOL_SIZE,
+        "max_overflow": SQLALCHEMY_CONNECTION_POOL_MAX_OVERFLOW,
+    }
 
 
 class DevConfig(Config):
