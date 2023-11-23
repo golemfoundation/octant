@@ -32,9 +32,6 @@ export default function useAppConnectManager(
   const { t } = useTranslation('translation', { keyPrefix: 'toasts.wrongNetwork' });
   const { chain } = useNetwork();
   const { reset } = useConnect();
-  const { reset: resetAllocationsStore } = useAllocationsStore(state => ({
-    reset: state.reset,
-  }));
   const { address, isConnected } = useAccount();
   const queryClient = useQueryClient();
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
@@ -50,6 +47,9 @@ export default function useAppConnectManager(
     refetchInterval: isSyncingInProgress ? 5000 : false,
   });
 
+  const { reset: resetAllocationsStore } = useAllocationsStore(state => ({
+    reset: state.reset,
+  }));
   const { setValuesFromLocalStorage: setValuesFromLocalStorageTips } = useTipsStore(state => ({
     setValuesFromLocalStorage: state.setValuesFromLocalStorage,
   }));

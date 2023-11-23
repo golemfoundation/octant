@@ -11,8 +11,8 @@ import getIsPreLaunch from 'utils/getIsPreLaunch';
 export default function useAppIsLoading(isFlushRequired: boolean): boolean {
   const { isFetching: isFetchingAllProposals } = useAllProposals();
   const { isFetching: isFetchingPatronModeStatus } = useIsPatronMode();
-  const { data: currentEpoch, isLoading: isLoadingCurrentEpoch } = useCurrentEpoch();
   const { isFetching: isFetchingUserTOS } = useUserTOS();
+  const { data: currentEpoch, isLoading: isLoadingCurrentEpoch } = useCurrentEpoch();
   const isPreLaunch = getIsPreLaunch(currentEpoch);
 
   const { isInitialized: isOnboardingInitialized } = useOnboardingStore(state => ({
