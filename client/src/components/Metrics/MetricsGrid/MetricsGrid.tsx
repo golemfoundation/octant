@@ -54,7 +54,7 @@ const MetricsGrid = (): ReactElement => {
     isFetchingProposalsContract;
 
   return (
-    <div className={styles.metricsGrid}>
+    <div className={styles.metricsGrid} data-test="MetricsGrid">
       <MetricsTimeCounter isLoading={isLoading} />
       <MetricsTotalProjects isLoading={isLoading} />
       <MetricsTotalEthStaked isLoading={isLoading} />

@@ -41,6 +41,7 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({ addre
             {isCryptoMainValueDisplay
               ? getValueCryptoToDisplay({
                   cryptoCurrency: 'ethereum',
+                  shouldIgnoreGwei: true,
                   valueCrypto: amount,
                 })
               : getValueFiatToDisplay({

@@ -1,17 +1,18 @@
 import { isAfter } from 'date-fns';
-import React, { FC, useState } from 'react';
+import { maxBy } from 'lodash';
+import React, { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import AreaChart from 'components/core/AreaChart/AreaChart';
 import ChartTimeSlicer from 'components/Metrics/MetricsGrid/common/ChartTimeSlicer/ChartTimeSlicer';
 import MetricsGridTile from 'components/Metrics/MetricsGrid/common/MetricsGridTile/MetricsGridTile';
-import useLockedsData from 'hooks/subgraph/useLockedsData';
+import useLockedSummarySnapshots from 'hooks/subgraph/useLockedSummarySnapshots';
 
 import styles from './MetricsCumulativeGlmLocked.module.scss';
 
 const MetricsCumulativeGlmLocked: FC = () => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
-  const { data } = useLockedsData();
+  const { data } = useLockedSummarySnapshots();
 
   const [dateToFilter, setDateToFilter] = useState<Date | null>(null);
 
@@ -22,17 +23,26 @@ const MetricsCumulativeGlmLocked: FC = () => {
       }
       return isAfter(dateTime, dateToFilter);
     })
-    .map(({ dateTime, cummulativeGlmAmount }) => ({
+    .map(({ dateTime, cumulativeGlmAmount }) => ({
       x: dateTime,
-      y: cummulativeGlmAmount,
+      y: cumulativeGlmAmount,
     }));
 
-  const chartYDomain = data
-    ? [0, data.groupedByDate[data.groupedByDate.length - 1].cummulativeGlmAmount / 0.6]
-    : undefined;
+  const chartYDomain = useMemo(() => {
+    if (!areaChartData?.length) {
+      return undefined;
+    }
+    const maxValue = maxBy(areaChartData, ({ y }) => y)?.y;
+    if (!maxValue) {
+      return undefined;
+    }
+    return [0, maxValue / 0.6];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [areaChartData?.length]);
 
   return (
     <MetricsGridTile
+      dataTest="MetricsCumulativeGlmLocked"
       groups={[
         {
           children: (

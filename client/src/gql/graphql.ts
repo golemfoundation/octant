@@ -410,6 +410,8 @@ export type Query = {
   lockeds: Array<Locked>;
   unlocked?: Maybe<Unlocked>;
   unlockeds: Array<Unlocked>;
+  vaultMerkleRoot?: Maybe<VaultMerkleRoot>;
+  vaultMerkleRoots: Array<VaultMerkleRoot>;
   withdrawal?: Maybe<Withdrawal>;
   withdrawals: Array<Withdrawal>;
 };
@@ -498,6 +500,22 @@ export type QueryUnlockedsArgs = {
   where?: InputMaybe<Unlocked_Filter>;
 };
 
+export type QueryVaultMerkleRootArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+export type QueryVaultMerkleRootsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<VaultMerkleRoot_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<VaultMerkleRoot_Filter>;
+};
+
 export type QueryWithdrawalArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
@@ -528,6 +546,8 @@ export type Subscription = {
   lockeds: Array<Locked>;
   unlocked?: Maybe<Unlocked>;
   unlockeds: Array<Unlocked>;
+  vaultMerkleRoot?: Maybe<VaultMerkleRoot>;
+  vaultMerkleRoots: Array<VaultMerkleRoot>;
   withdrawal?: Maybe<Withdrawal>;
   withdrawals: Array<Withdrawal>;
 };
@@ -614,6 +634,22 @@ export type SubscriptionUnlockedsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Unlocked_Filter>;
+};
+
+export type SubscriptionVaultMerkleRootArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+export type SubscriptionVaultMerkleRootsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<VaultMerkleRoot_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<VaultMerkleRoot_Filter>;
 };
 
 export type SubscriptionWithdrawalArgs = {
@@ -720,6 +756,86 @@ export enum Unlocked_OrderBy {
   Timestamp = 'timestamp',
   TransactionHash = 'transactionHash',
   User = 'user',
+}
+
+export type VaultMerkleRoot = {
+  __typename?: 'VaultMerkleRoot';
+  blockNumber: Scalars['Int']['output'];
+  epoch: Scalars['Int']['output'];
+  id: Scalars['Bytes']['output'];
+  root: Scalars['Bytes']['output'];
+  timestamp: Scalars['Int']['output'];
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type VaultMerkleRoot_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<VaultMerkleRoot_Filter>>>;
+  blockNumber?: InputMaybe<Scalars['Int']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['Int']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['Int']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['Int']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['Int']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['Int']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  epoch?: InputMaybe<Scalars['Int']['input']>;
+  epoch_gt?: InputMaybe<Scalars['Int']['input']>;
+  epoch_gte?: InputMaybe<Scalars['Int']['input']>;
+  epoch_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  epoch_lt?: InputMaybe<Scalars['Int']['input']>;
+  epoch_lte?: InputMaybe<Scalars['Int']['input']>;
+  epoch_not?: InputMaybe<Scalars['Int']['input']>;
+  epoch_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  id?: InputMaybe<Scalars['Bytes']['input']>;
+  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<VaultMerkleRoot_Filter>>>;
+  root?: InputMaybe<Scalars['Bytes']['input']>;
+  root_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  root_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  root_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  root_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  root_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  root_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  root_not?: InputMaybe<Scalars['Bytes']['input']>;
+  root_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  root_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  timestamp?: InputMaybe<Scalars['Int']['input']>;
+  timestamp_gt?: InputMaybe<Scalars['Int']['input']>;
+  timestamp_gte?: InputMaybe<Scalars['Int']['input']>;
+  timestamp_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  timestamp_lt?: InputMaybe<Scalars['Int']['input']>;
+  timestamp_lte?: InputMaybe<Scalars['Int']['input']>;
+  timestamp_not?: InputMaybe<Scalars['Int']['input']>;
+  timestamp_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum VaultMerkleRoot_OrderBy {
+  BlockNumber = 'blockNumber',
+  Epoch = 'epoch',
+  Id = 'id',
+  Root = 'root',
+  Timestamp = 'timestamp',
+  TransactionHash = 'transactionHash',
 }
 
 export type Withdrawal = {
@@ -862,13 +978,19 @@ export type GetEpochTimestampHappenedInQuery = {
   epoches: Array<{ __typename?: 'Epoch'; epoch: number }>;
 };
 
-export type GetEpochsEndTimeQueryVariables = Exact<{
+export type GetEpochsStartEndTimeQueryVariables = Exact<{
   lastEpoch?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
-export type GetEpochsEndTimeQuery = {
+export type GetEpochsStartEndTimeQuery = {
   __typename?: 'Query';
-  epoches: Array<{ __typename?: 'Epoch'; epoch: number; toTs: any }>;
+  epoches: Array<{
+    __typename?: 'Epoch';
+    epoch: number;
+    toTs: any;
+    fromTs: any;
+    decisionWindow: any;
+  }>;
 };
 
 export type GetLargestLockedAmountQueryVariables = Exact<{ [key: string]: never }>;
@@ -888,6 +1010,20 @@ export type GetLockedSummaryLatestQuery = {
     lockedTotal: any;
     lockedRatio: any;
   } | null;
+};
+
+export type GetLockedSummarySnapshotsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+export type GetLockedSummarySnapshotsQuery = {
+  __typename?: 'Query';
+  lockedSummarySnapshots: Array<{
+    __typename?: 'LockedSummarySnapshot';
+    lockedTotal: any;
+    timestamp: number;
+  }>;
 };
 
 export type GetLockedsDataQueryVariables = Exact<{
@@ -986,13 +1122,13 @@ export const GetEpochTimestampHappenedInDocument = {
   GetEpochTimestampHappenedInQuery,
   GetEpochTimestampHappenedInQueryVariables
 >;
-export const GetEpochsEndTimeDocument = {
+export const GetEpochsStartEndTimeDocument = {
   kind: 'Document',
   definitions: [
     {
       kind: 'OperationDefinition',
       operation: 'query',
-      name: { kind: 'Name', value: 'GetEpochsEndTime' },
+      name: { kind: 'Name', value: 'GetEpochsStartEndTime' },
       variableDefinitions: [
         {
           kind: 'VariableDefinition',
@@ -1018,6 +1154,8 @@ export const GetEpochsEndTimeDocument = {
               selections: [
                 { kind: 'Field', name: { kind: 'Name', value: 'epoch' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'toTs' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'fromTs' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'decisionWindow' } },
               ],
             },
           },
@@ -1025,7 +1163,7 @@ export const GetEpochsEndTimeDocument = {
       },
     },
   ],
-} as unknown as DocumentNode<GetEpochsEndTimeQuery, GetEpochsEndTimeQueryVariables>;
+} as unknown as DocumentNode<GetEpochsStartEndTimeQuery, GetEpochsStartEndTimeQueryVariables>;
 export const GetLargestLockedAmountDocument = {
   kind: 'Document',
   definitions: [
@@ -1100,6 +1238,66 @@ export const GetLockedSummaryLatestDocument = {
     },
   ],
 } as unknown as DocumentNode<GetLockedSummaryLatestQuery, GetLockedSummaryLatestQueryVariables>;
+export const GetLockedSummarySnapshotsDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetLockedSummarySnapshots' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'first' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          defaultValue: { kind: 'IntValue', value: '1000' },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'skip' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          defaultValue: { kind: 'IntValue', value: '0' },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'lockedSummarySnapshots' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'first' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'first' } },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'skip' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'skip' } },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'orderBy' },
+                value: { kind: 'EnumValue', value: 'timestamp' },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'lockedTotal' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'timestamp' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetLockedSummarySnapshotsQuery,
+  GetLockedSummarySnapshotsQueryVariables
+>;
 export const GetLockedsDataDocument = {
   kind: 'Document',
   definitions: [

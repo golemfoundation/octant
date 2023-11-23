@@ -90,7 +90,7 @@ const Slider: FC<SliderProps> = ({ className, isDisabled, onChange, value, onUnl
                 style={{ opacity: isDisabled ? 1 : 0 }}
                 transition={{ duration: animationDuration }}
               >
-                <Svg classNameSvg={styles.iconLock} img={lock} size="auto" />
+                <Svg classNameSvg={styles.iconLock} img={lock} size={[0.7, 1]} />
               </motion.div>
               <motion.div
                 key="unlock"
@@ -105,7 +105,7 @@ const Slider: FC<SliderProps> = ({ className, isDisabled, onChange, value, onUnl
                 style={{ opacity: 0 }}
                 transition={{ duration: animationDuration }}
               >
-                <Svg classNameSvg={styles.iconLock} img={unlock} size="auto" />
+                <Svg classNameSvg={styles.iconLock} img={unlock} size={[0.7, 1]} />
               </motion.div>
             </motion.div>
           </motion.div>

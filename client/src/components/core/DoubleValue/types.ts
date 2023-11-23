@@ -13,6 +13,7 @@ export default interface DoubleValueProps {
   isDisabled?: boolean;
   isError?: boolean;
   isFetching?: boolean;
+  shouldIgnoreGwei?: boolean;
   textAlignment?: 'left' | 'right';
   valueCrypto?: BigNumber;
   valueString?: string;

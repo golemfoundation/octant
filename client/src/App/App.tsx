@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import isEqual from 'lodash/isEqual';
 import React, { ReactElement, useEffect, useState } from 'react';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount, useConnect, useNetwork } from 'wagmi';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -10,6 +10,8 @@ import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboardin
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
+import useAvailableFundsEth from 'hooks/helpers/useAvailableFundsEth';
+import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
@@ -40,6 +42,7 @@ import 'i18n';
 const App = (): ReactElement => {
   useManageTransactionsPending();
   const { chain } = useNetwork();
+  const { reset } = useConnect();
   const {
     allocations,
     setAllocations,
@@ -123,6 +126,8 @@ const App = (): ReactElement => {
     refetchInterval: isSyncingInProgress ? 5000 : false,
   });
   const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
+  const { refetch: refetchAvailableFundsEth } = useAvailableFundsEth();
+  const { refetch: refetchAvailableFundsGlm } = useAvailableFundsGlm();
 
   const initializeStore = (shouldDoReset = false) => {
     // Store is populated with data from LS, hence init here.
@@ -169,6 +174,12 @@ const App = (): ReactElement => {
   }, [chainIdLocal]);
 
   useEffect(() => {
+    // Possible solution for invalid cached `isConnect` value. This snippet resets data from `useConnect` hook and try ty refetch wallet balance (eth + glm) when wallet is disconnected and app still has old data in cache (query cache update).
+    if (isConnected) {
+      reset();
+      refetchAvailableFundsEth();
+      refetchAvailableFundsGlm();
+    }
     initializeStore();
     // eslint-disable-next-line
   }, []);

@@ -1,6 +1,7 @@
 import { SettingsData } from 'store/settings/types';
 
 export type Root = {
+  calculateRewards: 'calculateRewards';
   cryptoValues: 'cryptoValues';
   depositAt: 'depositAt';
   epochTimestampHappenedIn: 'epochTimestampHappenedIn';
@@ -20,7 +21,7 @@ export type Root = {
 
 export type QueryKeys = {
   blockNumber: ['blockNumber'];
-  calculateRewards: (amount: string, days: number) => ['calculateRewards', string, string];
+  calculateRewards: (amount: string, days: number) => [Root['calculateRewards'], string, string];
   cryptoValues: (
     fiatCurrency: NonNullable<SettingsData['displayCurrency']>,
   ) => [Root['cryptoValues'], NonNullable<SettingsData['displayCurrency']>];
@@ -38,9 +39,13 @@ export type QueryKeys = {
   isDecisionWindowOpen: ['isDecisionWindowOpen'];
   largestLockedAmount: ['largestLockedAmount'];
   lockedSummaryLatest: ['lockedSummaryLatest'];
+  lockedSummarySnapshots: ['lockedSummarySnapshots'];
   matchedProposalRewards: (epochNumber: number) => [Root['matchedProposalRewards'], string];
   patronMode: (userAddress: string) => [Root['patronMode'], string];
-  proposalDonors: (proposalAddress: string) => [Root['proposalDonors'], string];
+  proposalDonors: (
+    proposalAddress: string,
+    epochNumber: number,
+  ) => [Root['proposalDonors'], string, string];
   proposalRewardsThreshold: (epochNumber: number) => [Root['proposalRewardsThreshold'], string];
   proposalsAllIpfs: ['proposalsAllIpfs'];
   proposalsCid: ['proposalsCid'];

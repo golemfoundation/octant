@@ -34,6 +34,7 @@ const MetricsTimeCounter: FC<MetricsTimeCounterProps> = ({ isLoading = false }) 
 
   return (
     <MetricsGridTile
+      dataTest="MetricsTimeCounter"
       groups={[
         {
           children: (

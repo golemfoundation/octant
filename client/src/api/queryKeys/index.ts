@@ -1,6 +1,7 @@
 import { Root, QueryKeys } from './types';
 
 export const ROOTS: Root = {
+  calculateRewards: 'calculateRewards',
   cryptoValues: 'cryptoValues',
   depositAt: 'depositAt',
   epochTimestampHappenedIn: 'epochTimestampHappenedIn',
@@ -20,7 +21,7 @@ export const ROOTS: Root = {
 
 export const QUERY_KEYS: QueryKeys = {
   blockNumber: ['blockNumber'],
-  calculateRewards: (amount, days) => ['calculateRewards', amount, days.toString()],
+  calculateRewards: (amount, days) => [ROOTS.calculateRewards, amount, days.toString()],
   cryptoValues: fiatCurrency => [ROOTS.cryptoValues, fiatCurrency],
   currentEpoch: ['currentEpoch'],
   currentEpochEnd: ['currentEpochEnd'],
@@ -36,9 +37,14 @@ export const QUERY_KEYS: QueryKeys = {
   isDecisionWindowOpen: ['isDecisionWindowOpen'],
   largestLockedAmount: ['largestLockedAmount'],
   lockedSummaryLatest: ['lockedSummaryLatest'],
+  lockedSummarySnapshots: ['lockedSummarySnapshots'],
   matchedProposalRewards: epochNumber => [ROOTS.matchedProposalRewards, epochNumber.toString()],
   patronMode: userAddress => [ROOTS.patronMode, userAddress],
-  proposalDonors: proposalAddress => [ROOTS.proposalDonors, proposalAddress],
+  proposalDonors: (proposalAddress, epochNumber) => [
+    ROOTS.proposalDonors,
+    proposalAddress,
+    epochNumber.toString(),
+  ],
   proposalRewardsThreshold: epochNumber => [ROOTS.proposalRewardsThreshold, epochNumber.toString()],
   proposalsAllIpfs: ['proposalsAllIpfs'],
   proposalsCid: ['proposalsCid'],
@@ -47,7 +53,7 @@ export const QUERY_KEYS: QueryKeys = {
   syncStatus: ['syncStatus'],
   totalAddresses: ['totalAddresses'],
   unlocks: ['unlocks'],
-  userAllocationNonce: userAddress => ['userAllocationNonce', userAddress],
+  userAllocationNonce: userAddress => [ROOTS.userAllocationNonce, userAddress],
   userAllocations: epochNumber => [ROOTS.userAllocations, epochNumber.toString()],
   userTOS: userAddress => [ROOTS.userTOS, userAddress],
   withdrawals: ['withdrawals'],

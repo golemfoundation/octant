@@ -1,12 +1,11 @@
 import cx from 'classnames';
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, memo } from 'react';
 import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Img from 'components/core/Img/Img';
 import Svg from 'components/core/Svg/Svg';
 import AllocationItemSkeleton from 'components/dedicated/AllocationItem/AllocationItemSkeleton/AllocationItemSkeleton';
-import ProposalLoadingStates from 'components/dedicated/ProposalLoadingStates/ProposalLoadingStates';
 import env from 'env';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
@@ -53,12 +52,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
       className={cx(styles.root, className)}
       onClick={isConnected && !isDisabled ? () => onSelectItem(address) : undefined}
     >
-      {(isLoading || isLoadingError) && (
-        <ProposalLoadingStates isLoading={isLoading} isLoadingError={isLoadingError}>
-          <AllocationItemSkeleton />
-        </ProposalLoadingStates>
-      )}
-
+      {(isLoading || isLoadingError) && <AllocationItemSkeleton />}
       {!isLoading && !isLoadingError && (
         <Fragment>
           {(isAllocatedTo || isManuallyEdited) && (
@@ -92,4 +86,4 @@ const AllocationItem: FC<AllocationItemProps> = ({
   );
 };
 
-export default AllocationItem;
+export default memo(AllocationItem);

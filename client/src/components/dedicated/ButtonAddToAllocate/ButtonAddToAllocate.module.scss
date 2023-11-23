@@ -13,10 +13,21 @@
     }
   }
 
-  &.isArchivedProposal.isAllocatedTo {
-    svg circle {
-      stroke: $color-octant-grey5;
-      fill: $color-octant-grey5;
+  &.isArchivedProposal {
+    &:hover {
+      background: transparent;
+      cursor: default;
+    }
+
+    svg path {
+      stroke: $color-octant-grey1;
+    }
+
+    &.isAllocatedTo {
+      svg circle {
+        stroke: $color-octant-grey5;
+        fill: $color-octant-grey5;
+      }
     }
   }
 }

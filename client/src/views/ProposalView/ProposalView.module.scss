@@ -98,23 +98,10 @@
   }
 
   .buttonAddToAllocate {
-    &Primary {
-      margin-left: 3.2rem;
+    margin-left: 3.2rem;
 
-      @media #{$desktop-up} {
-        display: none;
-        margin-left: 2.6rem;
-
-        &.isEpoch1 {
-          display: initial;
-        }
-      }
-    }
-    &Secondary {
-      display: none;
-      @media #{$desktop-up} {
-        display: initial;
-      }
+    @media #{$desktop-up} {
+      margin-left: 2.6rem;
     }
   }
 

@@ -90,6 +90,7 @@ const Tooltip: FC<TooltipProps> = ({
                 styles[`variant--${variant}`],
                 tooltipClassName,
               )}
+              data-test={`${dataTest}__content`}
               exit={{ opacity: 0, y: 8 }}
               initial={{ opacity: 0, x: position === 'top' ? '-50%' : '0%', y: 8 }}
             >

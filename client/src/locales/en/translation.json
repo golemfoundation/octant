@@ -17,6 +17,9 @@
       "default": {
         "title": "Sorry, something went wrong there",
         "message": "Please reload the app and try again"
+      },
+      "ipfs": {
+        "message": "We seem to be having trouble loading data from IPFS, please hang on or try reloading"
       }
     }
   },
@@ -40,7 +43,8 @@
     "thresholdDataUnavailable": "Threshold data unavailable",
     "noThresholdData": "No threshold data",
     "valueCantBeEmpty": "Value can't be empty",
-    "lessThan1m": "less than 1m"
+    "lessThan1m": "less than 1m",
+    "donors": "Donors"
   },
   "components": {
     "settings": {
@@ -138,9 +142,6 @@
         "noDonationsYet": "No donations yet",
         "viewAll": "View all"
       },
-      "donorsHeader": {
-        "donors": "Donors"
-      },
       "glmLock": {
         "lock": "Lock",
         "unlock": "Unlock",
@@ -218,15 +219,15 @@
       "modalWithdrawEth": {
         "withdrawETH": "Withdraw ETH"
       },
-      "proposalLoadingStates": {
-        "text": "Loading of a proposal <br/> encountered an error."
-      },
       "proposalRewards": {
+        "epoch": "Epoch {{epoch}}",
         "currentTotal": "Current total",
         "totalRaised": "Total raised",
         "totalDonated": "Total donated",
+        "fundedIn": "Funded in",
         "fundedAt": "Funded at",
-        "didNotReach": "Did not reach"
+        "didNotReach": "Did not reach",
+        "didNotReachThreshold": "Did not reach threshold"
       },
       "proposalsList": {
         "epochArchive": "Epoch {{epoch}} Archive"

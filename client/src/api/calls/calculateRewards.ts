@@ -9,11 +9,18 @@ export function apiPostCalculateRewards(
   // WEI
   amount: string,
   days: number,
+  signal?: AbortSignal,
 ): Promise<PostCalculateRewardsResponse> {
   return apiService
-    .post(`${env.serverEndpoint}rewards/estimated_budget`, {
-      days,
-      glm_amount: amount,
-    })
+    .post(
+      `${env.serverEndpoint}rewards/estimated_budget`,
+      {
+        days,
+        glm_amount: amount,
+      },
+      {
+        signal,
+      },
+    )
     .then(({ data }) => data);
 }

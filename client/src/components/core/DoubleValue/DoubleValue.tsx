@@ -21,6 +21,7 @@ const DoubleValue: FC<DoubleValueProps> = ({
   valueString,
   variant = 'big',
   isFetching = false,
+  shouldIgnoreGwei,
 }) => {
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
@@ -39,6 +40,7 @@ const DoubleValue: FC<DoubleValueProps> = ({
     displayCurrency: displayCurrency!,
     error,
     isCryptoMainValueDisplay,
+    shouldIgnoreGwei,
     valueCrypto,
     valueString,
   });

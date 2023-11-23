@@ -15,7 +15,17 @@ const testCases = [
   { argument: BigNumber.from(10).pow(4).sub(1), expectedValue: '9999 WEI' },
   { argument: BigNumber.from(10).pow(4), expectedValue: '10\u200a000 WEI' },
   { argument: BigNumber.from(10).pow(5).sub(1), expectedValue: '99\u200a999 WEI' },
+  {
+    argument: BigNumber.from(10).pow(5).sub(1),
+    expectedValue: '99\u200a999 WEI',
+    shouldIgnoreGwei: true,
+  },
   { argument: BigNumber.from(10).pow(5), expectedValue: '0 GWEI' },
+  {
+    argument: BigNumber.from(10).pow(5),
+    expectedValue: '< 0.0001 ETH',
+    shouldIgnoreGwei: true,
+  },
   { argument: BigNumber.from(10).pow(6).sub(1), expectedValue: '0 GWEI' },
   { argument: BigNumber.from(10).pow(6), expectedValue: '0 GWEI' },
   { argument: BigNumber.from(10).pow(7).sub(1), expectedValue: '0 GWEI' },
@@ -23,6 +33,11 @@ const testCases = [
   { argument: BigNumber.from(10).pow(8).sub(1), expectedValue: '0 GWEI' },
   { argument: BigNumber.from(10).pow(8), expectedValue: '0 GWEI' },
   { argument: BigNumber.from(10).pow(9).sub(1), expectedValue: '1 GWEI' },
+  {
+    argument: BigNumber.from(10).pow(9).sub(1),
+    expectedValue: '< 0.0001 ETH',
+    shouldIgnoreGwei: true,
+  },
   { argument: BigNumber.from(10).pow(9), expectedValue: '1 GWEI' },
   { argument: BigNumber.from(10).pow(10).sub(1), expectedValue: '10 GWEI' },
   { argument: BigNumber.from(10).pow(10), expectedValue: '10 GWEI' },
@@ -33,6 +48,11 @@ const testCases = [
   { argument: BigNumber.from(10).pow(13).sub(1), expectedValue: '10\u200a000 GWEI' },
   { argument: BigNumber.from(10).pow(13), expectedValue: '10\u200a000 GWEI' },
   { argument: BigNumber.from(10).pow(14).sub(1), expectedValue: '100\u200a000 GWEI' },
+  {
+    argument: BigNumber.from(10).pow(14).sub(1),
+    expectedValue: '< 0.0001 ETH',
+    shouldIgnoreGwei: true,
+  },
   { argument: BigNumber.from(10).pow(14), expectedValue: '0.0001 ETH' },
   { argument: BigNumber.from(10).pow(15).sub(1), expectedValue: '0.001 ETH' },
   { argument: BigNumber.from(10).pow(15), expectedValue: '0.001 ETH' },
@@ -53,18 +73,20 @@ const testCases = [
 ];
 
 describe('getFormattedEthValue', () => {
-  for (const { argument, expectedValue } of testCases) {
+  for (const { argument, expectedValue, shouldIgnoreGwei } of testCases) {
     it(`returns ${expectedValue} for an argument ${formatUnits(
       argument,
     )} when isUsingHairSpace`, () => {
-      expect(getFormattedEthValue(argument).fullString).toBe(expectedValue);
+      expect(getFormattedEthValue(argument, true, shouldIgnoreGwei).fullString).toBe(expectedValue);
     });
 
     const expectedValueNormalSpace = expectedValue.replace(/\u200a/g, ' ');
     it(`returns ${expectedValueNormalSpace} for an argument ${formatUnits(
       argument,
     )} when !isUsingHairSpace`, () => {
-      expect(getFormattedEthValue(argument, false).fullString).toBe(expectedValueNormalSpace);
+      expect(getFormattedEthValue(argument, false, shouldIgnoreGwei).fullString).toBe(
+        expectedValueNormalSpace,
+      );
     });
   }
 });

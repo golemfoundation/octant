@@ -33,6 +33,7 @@ const HistoryItemDetailsRest: FC<HistoryItemDetailsRestProps> = ({
     {
       doubleValueProps: {
         cryptoCurrency: type === 'withdrawal' ? 'ethereum' : 'golem',
+        shouldIgnoreGwei: true,
         valueCrypto: amount,
       },
       label: t('sections.amount'),
@@ -42,6 +43,7 @@ const HistoryItemDetailsRest: FC<HistoryItemDetailsRestProps> = ({
         cryptoCurrency: 'ethereum',
         // Gas price is not known for pending transactions.
         isFetching: isFetchingTransaction || isWaitingForTransactionInitialized,
+        shouldIgnoreGwei: true,
         valueCrypto: BigNumber.from(transaction ? transaction.gasPrice : 0),
       },
       label: t('sections.gasPrice'),
