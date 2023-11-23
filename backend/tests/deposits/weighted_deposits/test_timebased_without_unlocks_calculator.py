@@ -10,16 +10,18 @@ from app.core.deposits.weighted_deposits.timebased_without_unlocks_calculator im
 
 from tests.helpers.mock_events_generator import (
     MockEventGenerator,
-    event_generator_builder,
+    MockEventGeneratorFactory,
 )
 
 EPOCH_START = 123
 EPOCH_END = 323
 EPOCH_DURATION = EPOCH_END - EPOCH_START
 
+EVENT_GENERATOR_FACTORY = MockEventGeneratorFactory(EPOCH_START, EPOCH_END)
 
-def event_generator(events):
-    return event_generator_builder(EPOCH_START, EPOCH_END)(events)
+
+def event_generator(events, **kwargs):
+    return EVENT_GENERATOR_FACTORY.build(events, **kwargs)
 
 
 def test_computes_weighted_deposit_for_none_events_for_one_user(alice):
@@ -221,7 +223,7 @@ def test_scenario_i_from_xls(alice):
         ]
     }
 
-    generator = event_generator_builder(0, 1000)(deposits)
+    generator = event_generator(deposits, epoch_start=0, epoch_end=1000)
 
     expected_result = {
         alice.address: [
@@ -252,7 +254,7 @@ def test_scenario_ii_from_xls(alice):
         ]
     }
 
-    generator = event_generator_builder(0, 1000)(deposits)
+    generator = event_generator(deposits, epoch_start=0, epoch_end=1000)
 
     expected_result = {
         alice.address: [
@@ -291,7 +293,7 @@ def test_scenario_iii_from_xls(alice):
         ]
     }
 
-    generator = event_generator_builder(0, 1000)(deposits)
+    generator = event_generator(deposits, epoch_start=0, epoch_end=1000)
 
     expected_result = {
         alice.address: [
