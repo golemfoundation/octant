@@ -9,18 +9,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
 import networkConfig from 'constants/networkConfig';
+import useAppIsLoading from 'hooks/helpers/useAppIsLoading';
 import useAppPopulateState from 'hooks/helpers/useAppPopulateState';
 import useAvailableFundsEth from 'hooks/helpers/useAvailableFundsEth';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
-import useAllProposals from 'hooks/queries/useAllProposals';
-import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useSyncStatus, { Response } from 'hooks/queries/useSyncStatus';
-import useUserTOS from 'hooks/queries/useUserTOS';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import localStorageService from 'services/localStorageService';
 import useAllocationsStore from 'store/allocations/store';
@@ -28,7 +25,6 @@ import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
 import useTipsStore from 'store/tips/store';
 import useTransactionLocalStore from 'store/transactionLocal/store';
-import getIsPreLaunch from 'utils/getIsPreLaunch';
 import triggerToast from 'utils/triggerToast';
 
 import 'styles/index.scss';
@@ -40,50 +36,39 @@ const App = (): ReactElement => {
   useAppPopulateState();
   const { chain } = useNetwork();
   const { reset } = useConnect();
-  const { isAllocationsInitialized, reset: resetAllocationsStore } = useAllocationsStore(state => ({
-    isAllocationsInitialized: state.meta.isInitialized,
+  const { reset: resetAllocationsStore } = useAllocationsStore(state => ({
     reset: state.reset,
   }));
-  const {
-    setValuesFromLocalStorage: setValuesFromLocalStorageTips,
-    isInitialized: isTipsStoreInitialized,
-  } = useTipsStore(state => ({
-    isInitialized: state.meta.isInitialized,
+  const { setValuesFromLocalStorage: setValuesFromLocalStorageTips } = useTipsStore(state => ({
     setValuesFromLocalStorage: state.setValuesFromLocalStorage,
   }));
-  const { isSettingsInitialized, setValuesFromLocalStorageSettings } = useSettingsStore(state => ({
-    isSettingsInitialized: state.meta.isInitialized,
-    setValuesFromLocalStorageSettings: state.setValuesFromLocalStorage,
-  }));
-  const {
-    isInitialized: isOnboardingInitialized,
-    setValuesFromLocalStorage: setValuesFromLocalStorageOnboarding,
-  } = useOnboardingStore(state => ({
-    isInitialized: state.meta.isInitialized,
-    setValuesFromLocalStorage: state.setValuesFromLocalStorage,
-  }));
+  const { setValuesFromLocalStorage: setValuesFromLocalStorageSettings } = useSettingsStore(
+    state => ({
+      setValuesFromLocalStorage: state.setValuesFromLocalStorage,
+    }),
+  );
+  const { setValuesFromLocalStorage: setValuesFromLocalStorageOnboarding } = useOnboardingStore(
+    state => ({
+      setValuesFromLocalStorage: state.setValuesFromLocalStorage,
+    }),
+  );
   const { reset: resetTransactionLocalStore } = useTransactionLocalStore(state => ({
     reset: state.reset,
   }));
   const queryClient = useQueryClient();
   const { address, isConnected } = useAccount();
-  const { data: currentEpoch, isLoading: isLoadingCurrentEpoch } = useCurrentEpoch({
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
-  });
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen({
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
-  const { isFetching: isFetchingAllProposals } = useAllProposals();
-  const { isFetching: isFetchingPatronModeStatus } = useIsPatronMode();
   const [isFlushRequired, setIsFlushRequired] = useState(false);
+
+  const isLoading = useAppIsLoading(isFlushRequired);
+
   const isProjectAdminMode = useIsProjectAdminMode();
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
   const [currentAddressLocal, setCurrentAddressLocal] = useState<string | null>(null);
   const [syncStatusLocal, setSyncStatusLocal] = useState<Response | null>(null);
-  const isPreLaunch = getIsPreLaunch(currentEpoch);
-  const { isFetching: isFetchingUserTOS } = useUserTOS();
   const isSyncingInProgress = syncStatusLocal?.pendingSnapshot === 'in_progress';
   const { data: syncStatus } = useSyncStatus({
     refetchInterval: isSyncingInProgress ? 5000 : false,
@@ -208,17 +193,6 @@ const App = (): ReactElement => {
       }
     })();
   }, [isFlushRequired, setIsFlushRequired, queryClient]);
-
-  const isLoading =
-    isLoadingCurrentEpoch ||
-    (!isPreLaunch && !isAllocationsInitialized) ||
-    !isOnboardingInitialized ||
-    !isSettingsInitialized ||
-    isFlushRequired ||
-    !isTipsStoreInitialized ||
-    isFetchingUserTOS ||
-    isFetchingAllProposals ||
-    isFetchingPatronModeStatus;
 
   if (isLoading) {
     return <AppLoader />;
