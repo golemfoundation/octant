@@ -1,7 +1,7 @@
 from decimal import Decimal
 import json
 from random import randint
-from typing import List, Mapping, Optional
+from typing import List, Optional
 from unittest.mock import MagicMock, Mock
 
 import pytest

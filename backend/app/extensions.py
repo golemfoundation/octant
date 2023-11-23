@@ -15,8 +15,6 @@ from app.contracts.erc20 import ERC20
 from app.contracts.proposals import Proposals
 from app.contracts.vault import Vault
 
-from app.logging import init_logger
-
 # Flask extensions
 api = Api(
     version="1.0.0",

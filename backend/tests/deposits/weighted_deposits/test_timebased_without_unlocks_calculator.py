@@ -1,8 +1,3 @@
-import pytest
-
-from typing import Tuple, List, Dict
-
-from app.core.deposits.events import EventGenerator
 from app.core.deposits.weighted_deposits import WeightedDeposit
 from app.core.deposits.weighted_deposits.timebased_without_unlocks_calculator import (
     TimebasedWithoutUnlocksWeightsCalculator as Calculator,
@@ -20,7 +15,7 @@ EPOCH_DURATION = EPOCH_END - EPOCH_START
 EVENT_GENERATOR_FACTORY = MockEventGeneratorFactory(EPOCH_START, EPOCH_END)
 
 
-def event_generator(events, **kwargs):
+def event_generator(events, **kwargs) -> MockEventGenerator:
     return EVENT_GENERATOR_FACTORY.build(events, **kwargs)
 
 
@@ -211,7 +206,7 @@ def test_computes_users_deposits_for_many_users(alice, bob):
     )
 
 
-def test_scenario_i_from_xls(alice):
+def test_many_locks_and_unlocks_scenario(alice):
     deposits = {
         alice: [
             (0, 5000),
@@ -238,7 +233,7 @@ def test_scenario_i_from_xls(alice):
     )
 
 
-def test_scenario_ii_from_xls(alice):
+def test_repetitive_locks(alice):
     deposits = {
         alice: [
             (100, 1000),
@@ -277,7 +272,7 @@ def test_scenario_ii_from_xls(alice):
     )
 
 
-def test_scenario_iii_from_xls(alice):
+def test_repetitive_locks_with_unlock_in_the_middle(alice):
     deposits = {
         alice: [
             (100, 1000),

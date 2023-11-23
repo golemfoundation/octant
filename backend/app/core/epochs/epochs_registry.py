@@ -9,9 +9,6 @@ from app.core.deposits.weighted_deposits.weights_calculator import WeightsCalcul
 from app.core.deposits.weighted_deposits.timebased_calculator import (
     TimebasedWeightsCalculator,
 )
-from app.core.deposits.weighted_deposits.timebased_without_unlocks_calculator import (
-    TimebasedWithoutUnlocksWeightsCalculator,
-)
 
 
 @dataclass(frozen=True)

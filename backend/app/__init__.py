@@ -1,11 +1,9 @@
 import os
 
 from flask import Flask, g
-from flask_caching import Cache
 from gql import Client
 from gql.transport.requests import RequestsHTTPTransport
 
-from app import settings
 from app.extensions import (
     db,
     migrate,

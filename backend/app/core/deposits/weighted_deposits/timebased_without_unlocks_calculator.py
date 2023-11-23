@@ -2,7 +2,6 @@ from typing import List, Dict, Tuple
 
 from itertools import groupby
 from functools import reduce
-from collections import defaultdict
 
 from app.core.deposits.weighted_deposits.weighted_deposit import WeightedDeposit
 from app.core.deposits.weighted_deposits.timebased_calculator import (

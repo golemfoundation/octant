@@ -1,6 +1,4 @@
-import pytest
-
-from app.core.epochs.epochs_registry import EpochsRegistry, EpochSettings
+from app.core.epochs.epochs_registry import EpochsRegistry
 
 from app.core.rewards.standard_rewards_strategy import StandardRewardsStrategy
 from app.core.rewards.all_proceeds_with_op_cost_rewards_strategy import (

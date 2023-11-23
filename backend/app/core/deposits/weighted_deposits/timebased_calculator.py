@@ -3,12 +3,10 @@ from typing import List, Dict
 
 from eth_utils import to_checksum_address
 
-from app.core.deposits.events import SubgraphEventsGenerator, EventGenerator
+from app.core.deposits.events import EventGenerator
 
 from app.core.deposits.weighted_deposits.weighted_deposit import WeightedDeposit
 from app.core.deposits.weighted_deposits.weights_calculator import WeightsCalculator
-
-from app.core.epochs import details as epochs_details
 
 
 class TimebasedWeightsCalculator(WeightsCalculator):
