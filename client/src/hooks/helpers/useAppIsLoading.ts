@@ -29,6 +29,7 @@ export default function useAppIsLoading(isFlushRequired: boolean): boolean {
   }));
 
   return (
+    currentEpoch === undefined ||
     isFetchingCurrentEpoch ||
     (!isPreLaunch && !isAllocationsInitialized) ||
     !isOnboardingInitialized ||
