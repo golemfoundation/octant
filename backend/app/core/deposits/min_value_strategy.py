@@ -13,7 +13,7 @@ from app.database.models import Deposit
 MINIMUM_DEPOSIT = 0
 
 
-def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
+def get_users_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
     """
     Get the user deposits for a given epoch number as a minimal value strategy.
 
