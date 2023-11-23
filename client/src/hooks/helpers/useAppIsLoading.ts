@@ -12,7 +12,7 @@ export default function useAppIsLoading(isFlushRequired: boolean): boolean {
   const { isFetching: isFetchingAllProposals } = useAllProposals();
   const { isFetching: isFetchingPatronModeStatus } = useIsPatronMode();
   const { isFetching: isFetchingUserTOS } = useUserTOS();
-  const { data: currentEpoch, isLoading: isLoadingCurrentEpoch } = useCurrentEpoch();
+  const { data: currentEpoch, isFetching: isFetchingCurrentEpoch } = useCurrentEpoch();
   const isPreLaunch = getIsPreLaunch(currentEpoch);
 
   const { isInitialized: isOnboardingInitialized } = useOnboardingStore(state => ({
@@ -29,7 +29,7 @@ export default function useAppIsLoading(isFlushRequired: boolean): boolean {
   }));
 
   return (
-    isLoadingCurrentEpoch ||
+    isFetchingCurrentEpoch ||
     (!isPreLaunch && !isAllocationsInitialized) ||
     !isOnboardingInitialized ||
     !isSettingsInitialized ||
