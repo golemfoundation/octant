@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
 // import useAppConnectManager from 'hooks/helpers/useAppConnectManager';
-import useAppIsLoading from 'hooks/helpers/useAppIsLoading';
+// import useAppIsLoading from 'hooks/helpers/useAppIsLoading';
 import useAppPopulateState from 'hooks/helpers/useAppPopulateState';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
@@ -19,15 +19,19 @@ import networkConfig from '../constants/networkConfig';
 import useAvailableFundsEth from '../hooks/helpers/useAvailableFundsEth';
 import useAvailableFundsGlm from '../hooks/helpers/useAvailableFundsGlm';
 import useEpochAndAllocationTimestamps from '../hooks/helpers/useEpochAndAllocationTimestamps';
+import useAllProposals from '../hooks/queries/useAllProposals';
 import useCurrentEpoch from '../hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from '../hooks/queries/useIsDecisionWindowOpen';
+import useIsPatronMode from '../hooks/queries/useIsPatronMode';
 import useSyncStatus, { Response } from '../hooks/queries/useSyncStatus';
+import useUserTOS from '../hooks/queries/useUserTOS';
 import localStorageService from '../services/localStorageService';
 import useAllocationsStore from '../store/allocations/store';
 import useOnboardingStore from '../store/onboarding/store';
 import useSettingsStore from '../store/settings/store';
 import useTipsStore from '../store/tips/store';
 import useTransactionLocalStore from '../store/transactionLocal/store';
+import getIsPreLaunch from '../utils/getIsPreLaunch';
 import triggerToast from '../utils/triggerToast';
 
 import 'styles/index.scss';
@@ -50,7 +54,7 @@ const App = (): ReactElement => {
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
-  const { data: currentEpoch } = useCurrentEpoch();
+  const { data: currentEpoch, isFetching: isFetchingCurrentEpoch } = useCurrentEpoch();
 
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
   const [currentAddressLocal, setCurrentAddressLocal] = useState<string | null>(null);
@@ -233,7 +237,35 @@ const App = (): ReactElement => {
   // ---
 
   // const { isSyncingInProgress } = useAppConnectManager(isFlushRequired, setIsFlushRequired);
-  const isLoading = useAppIsLoading(isFlushRequired);
+
+  const { isFetching: isFetchingAllProposals } = useAllProposals();
+  const { isFetching: isFetchingPatronModeStatus } = useIsPatronMode();
+  const { isFetching: isFetchingUserTOS } = useUserTOS();
+  const isPreLaunch = getIsPreLaunch(currentEpoch);
+
+  const { isInitialized: isOnboardingInitialized } = useOnboardingStore(state => ({
+    isInitialized: state.meta.isInitialized,
+  }));
+  const { isInitialized: isSettingsInitialized } = useSettingsStore(state => ({
+    isInitialized: state.meta.isInitialized,
+  }));
+  const { isInitialized: isTipsStoreInitialized } = useTipsStore(state => ({
+    isInitialized: state.meta.isInitialized,
+  }));
+  const { isInitialized: isAllocationsInitialized } = useAllocationsStore(state => ({
+    isInitialized: state.meta.isInitialized,
+  }));
+  const isLoading =
+    currentEpoch === undefined ||
+    isFetchingCurrentEpoch ||
+    (!isPreLaunch && !isAllocationsInitialized) ||
+    !isOnboardingInitialized ||
+    !isSettingsInitialized ||
+    isFlushRequired ||
+    !isTipsStoreInitialized ||
+    isFetchingUserTOS ||
+    isFetchingAllProposals ||
+    isFetchingPatronModeStatus;
   const isProjectAdminMode = useIsProjectAdminMode();
 
   if (isLoading) {
