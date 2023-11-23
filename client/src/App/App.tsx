@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import isEqual from 'lodash/isEqual';
 import React, { ReactElement, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccount, useConnect, useNetwork } from 'wagmi';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -40,6 +41,7 @@ import 'styles/index.scss';
 import 'i18n';
 
 const App = (): ReactElement => {
+  const { t } = useTranslation('translation', { keyPrefix: 'toasts.wrongNetwork' });
   useManageTransactionsPending();
   const { chain } = useNetwork();
   const { reset } = useConnect();
@@ -154,7 +156,7 @@ const App = (): ReactElement => {
       const timeDifference = Math.ceil(timestamp - Date.now());
       if (timeDifference <= 0) {
         clearInterval(timeToChangeAllocationWindowStatusIntervalId);
-        window.location.reload();
+        setIsFlushRequired(true);
       }
     }, 1000);
 
@@ -164,13 +166,15 @@ const App = (): ReactElement => {
   useEffect(() => {
     if (chainIdLocal && chainIdLocal !== networkConfig.id) {
       triggerToast({
-        message: `Please change network to ${networkConfig.name}${
-          networkConfig.isTestnet ? ' testnet' : ''
-        }`,
-        title: 'Wrong network',
+        message: t('message', {
+          isTestnet: networkConfig.isTestnet ? ' testnet' : '',
+          networkName: networkConfig.name,
+        }),
+        title: t('title'),
         type: 'error',
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainIdLocal]);
 
   useEffect(() => {
