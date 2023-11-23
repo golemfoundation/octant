@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import isEqual from 'lodash/isEqual';
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount, useConnect, useNetwork } from 'wagmi';
 
@@ -8,22 +8,18 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
-import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
-import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
+import useAppPopulateState from 'hooks/helpers/useAppPopulateState';
 import useAvailableFundsEth from 'hooks/helpers/useAvailableFundsEth';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
 import useAllProposals from 'hooks/queries/useAllProposals';
-import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
-import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useSyncStatus, { Response } from 'hooks/queries/useSyncStatus';
-import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import localStorageService from 'services/localStorageService';
@@ -35,49 +31,28 @@ import useTransactionLocalStore from 'store/transactionLocal/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 import triggerToast from 'utils/triggerToast';
 
-import { getValidatedProposalsFromLocalStorage } from './utils';
-
 import 'styles/index.scss';
 import 'i18n';
 
 const App = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'toasts.wrongNetwork' });
   useManageTransactionsPending();
+  useAppPopulateState();
   const { chain } = useNetwork();
   const { reset } = useConnect();
-  const {
-    allocations,
-    setAllocations,
-    addAllocations,
-    isAllocationsInitialized,
-    reset: resetAllocationsStore,
-  } = useAllocationsStore(state => ({
-    addAllocations: state.addAllocations,
-    allocations: state.data.allocations,
+  const { isAllocationsInitialized, reset: resetAllocationsStore } = useAllocationsStore(state => ({
     isAllocationsInitialized: state.meta.isInitialized,
     reset: state.reset,
-    setAllocations: state.setAllocations,
   }));
   const {
     setValuesFromLocalStorage: setValuesFromLocalStorageTips,
     isInitialized: isTipsStoreInitialized,
-    setInitialState: setInitialStateTips,
-  } = useTipsStore(({ meta, setValuesFromLocalStorage, setInitialState }) => ({
-    isInitialized: meta.isInitialized,
-    setInitialState,
-    setValuesFromLocalStorage,
+  } = useTipsStore(state => ({
+    isInitialized: state.meta.isInitialized,
+    setValuesFromLocalStorage: state.setValuesFromLocalStorage,
   }));
-  const {
-    areOctantTipsAlwaysVisible,
-    displayCurrency,
-    isSettingsInitialized,
-    setValuesFromLocalStorageSettings,
-    setIsCryptoMainValueDisplay,
-  } = useSettingsStore(state => ({
-    areOctantTipsAlwaysVisible: state.data.areOctantTipsAlwaysVisible,
-    displayCurrency: state.data.displayCurrency,
+  const { isSettingsInitialized, setValuesFromLocalStorageSettings } = useSettingsStore(state => ({
     isSettingsInitialized: state.meta.isInitialized,
-    setIsCryptoMainValueDisplay: state.setIsCryptoMainValueDisplay,
     setValuesFromLocalStorageSettings: state.setValuesFromLocalStorage,
   }));
   const {
@@ -92,11 +67,6 @@ const App = (): ReactElement => {
   }));
   const queryClient = useQueryClient();
   const { address, isConnected } = useAccount();
-  useCryptoValues(displayCurrency, {
-    onError: () => {
-      setIsCryptoMainValueDisplay(true);
-    },
-  });
   const { data: currentEpoch, isLoading: isLoadingCurrentEpoch } = useCurrentEpoch({
     refetchOnMount: true,
     refetchOnWindowFocus: true,
@@ -105,14 +75,8 @@ const App = (): ReactElement => {
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
-  const { data: proposals } = useProposalsContract();
   const { isFetching: isFetchingAllProposals } = useAllProposals();
-  const { data: userAllocations } = useUserAllocations();
   const { isFetching: isFetchingPatronModeStatus } = useIsPatronMode();
-  const {
-    data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow,
-    isLoading: isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow,
-  } = useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow();
   const [isFlushRequired, setIsFlushRequired] = useState(false);
   const isProjectAdminMode = useIsProjectAdminMode();
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
@@ -175,7 +139,11 @@ const App = (): ReactElement => {
   }, [chain?.id]);
 
   useEffect(() => {
-    // Possible solution for invalid cached `isConnect` value. This snippet resets data from `useConnect` hook and try ty refetch wallet balance (eth + glm) when wallet is disconnected and app still has old data in cache (query cache update).
+    /**
+     * Possible solution for invalid cached `isConnect` value.
+     * This snippet resets data from `useConnect` hook and try ty refetch wallet balance (eth + glm)
+     * when wallet is disconnected and app still has old data in cache (query cache update).
+     */
     if (isConnected) {
       reset();
       refetchAvailableFundsEth();
@@ -241,102 +209,6 @@ const App = (): ReactElement => {
     })();
   }, [isFlushRequired, setIsFlushRequired, queryClient]);
 
-  useEffect(() => {
-    /**
-     * This hook validates allocations in localStorage
-     * and populates store with them or sets empty array.
-     */
-    if (
-      !proposals ||
-      proposals.length === 0 ||
-      isAllocationsInitialized ||
-      isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow
-    ) {
-      return;
-    }
-
-    /**
-     * When areCurrentEpochsProjectsHiddenOutsideAllocationWindow we set empty array.
-     * We remove whatever user has in localStorage.
-     * They can't add nor remove elements from allocate, they should not have anything there.
-     */
-    if (areCurrentEpochsProjectsHiddenOutsideAllocationWindow) {
-      setAllocations([]);
-      return;
-    }
-
-    const localStorageAllocationItems = JSON.parse(
-      localStorage.getItem(ALLOCATION_ITEMS_KEY) || 'null',
-    );
-
-    if (!localStorageAllocationItems || localStorageAllocationItems.length === 0) {
-      setAllocations([]);
-      return;
-    }
-
-    const validatedProposalsInLocalStorage = getValidatedProposalsFromLocalStorage(
-      localStorageAllocationItems,
-      proposals,
-    );
-    if (validatedProposalsInLocalStorage) {
-      setAllocations(validatedProposalsInLocalStorage);
-    }
-  }, [
-    allocations,
-    areCurrentEpochsProjectsHiddenOutsideAllocationWindow,
-    isAllocationsInitialized,
-    isConnected,
-    isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow,
-    proposals,
-    setAllocations,
-  ]);
-
-  useEffect(() => {
-    /**
-     * This hook adds userAllocations to the store.
-     * This needs to be done after store is populated with values from localStorage.
-     *
-     * When areCurrentEpochsProjectsHiddenOutsideAllocationWindow === true we don't add
-     * userAllocations to the store. AllocationView is empty, user can't add projects to it,
-     * Navbar badge is not visible.
-     */
-    if (
-      !userAllocations ||
-      !isAllocationsInitialized ||
-      isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow ||
-      areCurrentEpochsProjectsHiddenOutsideAllocationWindow
-    ) {
-      return;
-    }
-    const userAllocationsAddresses = userAllocations.elements.map(
-      ({ address: userAllocationAddress }) => userAllocationAddress,
-    );
-    if (
-      isConnected &&
-      userAllocations &&
-      userAllocations.elements.length > 0 &&
-      !!allocations &&
-      !allocations.some(allocation => userAllocationsAddresses.includes(allocation))
-    ) {
-      addAllocations(userAllocationsAddresses);
-    }
-  }, [
-    addAllocations,
-    allocations,
-    areCurrentEpochsProjectsHiddenOutsideAllocationWindow,
-    isAllocationsInitialized,
-    isConnected,
-    isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow,
-    userAllocations,
-  ]);
-
-  useEffect(() => {
-    if (!areOctantTipsAlwaysVisible) {
-      return;
-    }
-
-    setInitialStateTips();
-  }, [areOctantTipsAlwaysVisible, setInitialStateTips]);
   const isLoading =
     isLoadingCurrentEpoch ||
     (!isPreLaunch && !isAllocationsInitialized) ||
@@ -353,10 +225,10 @@ const App = (): ReactElement => {
   }
 
   return (
-    <>
+    <Fragment>
       <RootRoutes isSyncingInProgress={isSyncingInProgress} />
       {!isSyncingInProgress && !isProjectAdminMode && <ModalOnboarding />}
-    </>
+    </Fragment>
   );
 };
 
