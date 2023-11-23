@@ -121,13 +121,6 @@ export default function useAppConnectManager(
     if (isConnected !== isConnectedLocal) {
       setIsConnectedLocal(isConnected);
     }
-    /**
-     * When user signs out of the app and only then, initialize store.
-     * TODO OCT-1022: simplify entire logic of flushing and reset.
-     */
-    if (!isConnected && isConnectedLocal) {
-      initializeStore(true);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, isConnectedLocal, setIsConnectedLocal]);
 
@@ -146,11 +139,15 @@ export default function useAppConnectManager(
     if (doesAddressRequireFlush || doesIsConnectedRequireFlush || doesSyncStatusRequireFlush) {
       setIsFlushRequired(true);
     }
+    if (doesIsConnectedRequireFlush) {
+      initializeStore(true);
+    }
   }, [
     isConnected,
     isConnectedLocal,
     address,
     currentAddressLocal,
+    initializeStore,
     queryClient,
     syncStatus,
     syncStatusLocal,
