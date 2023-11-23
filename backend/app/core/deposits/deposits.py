@@ -2,7 +2,7 @@ from _decimal import Decimal
 from typing import Tuple, List
 
 from app.core.common import UserDeposit
-from app.core.deposits import weighted_average_strategy, min_value_strategy
+from app.core.deposits import weighted_average_strategy
 from app.core.deposits.events import SimulatedEventsGenerator
 from app.core.deposits.weighted_deposits import (
     get_user_weighted_deposits,
@@ -16,12 +16,7 @@ def calculate_locked_ratio(total_effective_deposit: int, glm_supply: int) -> Dec
 
 
 def get_users_deposits(epoch: int) -> Tuple[List[UserDeposit], int]:
-    if epoch == 1:
-        return weighted_average_strategy.get_user_deposits(
-            epoch
-        )  # only applicable for epoch 1
-    else:
-        return min_value_strategy.get_user_deposits(epoch)
+    return weighted_average_strategy.get_user_deposits(epoch)
 
 
 def get_estimated_total_effective_deposit(epoch: int) -> int:

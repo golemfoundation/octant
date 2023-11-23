@@ -92,18 +92,18 @@ def test_snapshot_epoch_2(mocker, user_accounts):
     assert snapshot.epoch == 2
     assert snapshot.created_at is not None
     assert snapshot.eth_proceeds == str(ETH_PROCEEDS)
-    assert snapshot.total_effective_deposit == "9000000055377000000000"
-    assert snapshot.locked_ratio == "0.000009000000055377"
-    assert snapshot.all_individual_rewards == "3621698652421301"
-    assert snapshot.total_rewards == "1207232880426381939"
+    assert snapshot.total_effective_deposit == "9340000055377000000000"
+    assert snapshot.locked_ratio == "0.000009340000055377"
+    assert snapshot.all_individual_rewards == "3758518378448699"
+    assert snapshot.total_rewards == "1229824778059972898"
 
     deposits = database.deposits.get_all_by_epoch(result)
     assert len(deposits) == 2
     assert deposits[user1].user.address == user1
-    assert deposits[user1].effective_deposit == "1500000055377000000000"
+    assert deposits[user1].effective_deposit == "1640000055377000000000"
     assert deposits[user1].epoch_end_deposit == "1700000055377000000000"
     assert deposits[user2].user.address == user2
-    assert deposits[user2].effective_deposit == "7500000000000000000000"
+    assert deposits[user2].effective_deposit == "7700000000000000000000"
     assert deposits[user2].epoch_end_deposit == "7900000000000000000000"
 
 
