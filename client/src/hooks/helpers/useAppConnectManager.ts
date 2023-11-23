@@ -19,24 +19,31 @@ import useAvailableFundsEth from './useAvailableFundsEth';
 import useAvailableFundsGlm from './useAvailableFundsGlm';
 import useEpochAndAllocationTimestamps from './useEpochAndAllocationTimestamps';
 
+import useCurrentEpoch from '../queries/useCurrentEpoch';
+
 export default function useAppConnectManager(
   isFlushRequired: boolean,
   setIsFlushRequired: (isFlushRequiredNew: boolean) => void,
 ): {
   isSyncingInProgress: boolean;
 } {
+  const { t } = useTranslation('translation', { keyPrefix: 'toasts.wrongNetwork' });
+  const queryClient = useQueryClient();
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const { reset } = useConnect();
+
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen({
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
-  const { t } = useTranslation('translation', { keyPrefix: 'toasts.wrongNetwork' });
-  const { chain } = useNetwork();
-  const { reset } = useConnect();
-  const { address, isConnected } = useAccount();
-  const queryClient = useQueryClient();
+  const { data: currentEpoch } = useCurrentEpoch();
+
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
   const [currentAddressLocal, setCurrentAddressLocal] = useState<string | null>(null);
   const [syncStatusLocal, setSyncStatusLocal] = useState<Response | null>(null);
+  const [currentEpochLocal, setCurrentEpochLocal] = useState<number | null>(null);
+  const [isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal] = useState<boolean | null>(null);
 
   const isSyncingInProgress = syncStatusLocal?.pendingSnapshot === 'in_progress';
 
@@ -131,18 +138,46 @@ export default function useAppConnectManager(
   }, [address, currentAddressLocal, setCurrentAddressLocal]);
 
   useEffect(() => {
+    if (currentEpoch && currentEpoch !== currentEpochLocal) {
+      setCurrentEpochLocal(currentEpoch);
+    }
+  }, [currentEpoch, currentEpochLocal, setCurrentEpochLocal]);
+
+  useEffect(() => {
+    if (isDecisionWindowOpen && isDecisionWindowOpen !== isDecisionWindowOpenLocal) {
+      setIsDecisionWindowOpenLocal(isDecisionWindowOpen);
+    }
+  }, [isDecisionWindowOpen, isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal]);
+
+  useEffect(() => {
     const doesAddressRequireFlush =
       !!address && !!currentAddressLocal && address !== currentAddressLocal;
     const doesIsConnectedRequireFlush = !isConnected && isConnectedLocal;
     const doesSyncStatusRequireFlush =
       !!syncStatus && !!syncStatusLocal && !isEqual(syncStatus, syncStatusLocal);
-    if (doesAddressRequireFlush || doesIsConnectedRequireFlush || doesSyncStatusRequireFlush) {
+    const doesCurrentEpochRequireFlush =
+      !!currentEpoch && !!currentEpochLocal && currentEpoch !== currentEpochLocal;
+    const doesIsDecisionWindowOpenRequireFlush =
+      !!isDecisionWindowOpen &&
+      !!isDecisionWindowOpenLocal &&
+      isDecisionWindowOpen !== isDecisionWindowOpenLocal;
+    if (
+      doesCurrentEpochRequireFlush ||
+      doesIsDecisionWindowOpenRequireFlush ||
+      doesAddressRequireFlush ||
+      doesIsConnectedRequireFlush ||
+      doesSyncStatusRequireFlush
+    ) {
       setIsFlushRequired(true);
     }
     if (doesIsConnectedRequireFlush) {
       initializeStore(true);
     }
   }, [
+    currentEpoch,
+    currentEpochLocal,
+    isDecisionWindowOpen,
+    isDecisionWindowOpenLocal,
     isConnected,
     isConnectedLocal,
     address,
