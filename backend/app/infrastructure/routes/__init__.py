@@ -3,7 +3,7 @@ from flask import send_from_directory
 from app import settings
 from app.infrastructure import OctantResource
 from app.extensions import api
-from . import (
+from . import (  # noqa
     info,
     history,
     snapshots,

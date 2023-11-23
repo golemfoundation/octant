@@ -15,7 +15,7 @@ from app.extensions import (
     init_scheduler,
 )
 from app.logging import init_logger
-from app.infrastructure import events, routes, apscheduler
+from app.infrastructure import events, routes, apscheduler  # noqa
 from app.infrastructure.exception_handler import ExceptionHandler
 from app.settings import ProdConfig, DevConfig
 
