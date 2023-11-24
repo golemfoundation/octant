@@ -37,7 +37,10 @@ export default function useAppConnectManager(
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
-  const { data: currentEpoch } = useCurrentEpoch();
+  const { data: currentEpoch } = useCurrentEpoch({
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+  });
 
   const [isConnectedLocal, setIsConnectedLocal] = useState<boolean>(false);
   const [currentAddressLocal, setCurrentAddressLocal] = useState<string | null>(null);
