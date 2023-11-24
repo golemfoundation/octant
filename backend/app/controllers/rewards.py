@@ -94,8 +94,8 @@ def get_estimated_proposals_rewards() -> Optional[List[ProposalReward]]:
 
 
 def get_finalized_epoch_proposals_rewards(epoch: int = None) -> List[ProposalReward]:
-    finalized_epoch = epochs.get_finalized_epoch()
-    if epoch > finalized_epoch:
+    last_finalized_epoch = core_epoch_snapshots.get_last_finalized_snapshot()
+    if epoch > last_finalized_epoch:
         raise exceptions.MissingSnapshot()
 
     proposals_address_list = proposals.get_proposals_addresses(epoch)

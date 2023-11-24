@@ -315,6 +315,29 @@ def test_finalized_epoch_proposal_rewards_with_patrons_enabled(
     assert proposal_rewards[1].matched == 73_372144713_581691264
 
 
+def test_cannot_get_proposal_rewards_when_snapshot_not_taken(
+    user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
+):
+    user1_allocation = 1000_000000000
+    user2_allocation = 2000_000000000
+
+    toggle_patron_mode(user_accounts[2].address)
+    db.session.commit()
+
+    allocate_user_rewards(user_accounts[0], proposal_accounts[0], user1_allocation)
+    allocate_user_rewards(user_accounts[1], proposal_accounts[1], user2_allocation)
+
+    with pytest.raises(exceptions.MissingSnapshot):
+        get_finalized_epoch_proposals_rewards(1)
+
+    epoch = snapshot_finalized_epoch()
+    assert epoch == 1
+
+    rewards = get_finalized_epoch_proposals_rewards(1)
+
+    assert len(rewards) != 0
+
+
 def _allocate_random_individual_rewards(user_accounts, proposal_accounts) -> int:
     """
     Allocates individual rewards from 2 users for 5 projects total
