@@ -26,7 +26,8 @@ export type ProposalRewards = {
 
 function parseResponse(response: Response): ProposalRewards[] {
   const totalDonations = response?.rewards.reduce(
-    (acc, { allocated, matched }) => acc.add(parseUnits(allocated)).add(parseUnits(matched)),
+    (acc, { allocated, matched }) =>
+      acc.add(parseUnits(allocated, 'wei')).add(parseUnits(matched, 'wei')),
     BigNumber.from(0),
   );
   return response?.rewards.map(({ address, allocated, matched }) => {
@@ -55,9 +56,12 @@ export default function useMatchedProposalRewards(
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   useSubscription<Response['rewards']>(WebsocketListenEvent.proposalRewards, data => {
-    queryClient.setQueryData(QUERY_KEYS.matchedProposalRewards(currentEpoch! - 1), {
-      rewards: data,
-    });
+    // eslint-disable-next-line chai-friendly/no-unused-expressions
+    epoch
+      ? null
+      : queryClient.setQueryData(QUERY_KEYS.matchedProposalRewards(currentEpoch! - 1), {
+          rewards: data,
+        });
   });
 
   return useQuery(

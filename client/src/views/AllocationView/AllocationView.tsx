@@ -358,20 +358,20 @@ const AllocationView = (): ReactElement => {
           )}
           {areAllocationsAvailableOrAlreadyDone && (
             <Fragment>
-              {allocationsWithRewards!.map(allocation => (
+              {allocationsWithRewards!.map(({ address, isAllocatedTo, isLoadingError, value }) => (
                 <AllocationItem
-                  key={allocation.address}
-                  address={allocation.address}
+                  key={address}
+                  address={address}
                   className={cx(styles.box, styles.isAllocation)}
-                  isAllocatedTo={allocation.isAllocatedTo}
+                  isAllocatedTo={isAllocatedTo}
                   isDisabled={
                     isLocked || (restToDistribute.isZero() && allocationsEdited.length === 0)
                   }
-                  isLoadingError={allocation.isLoadingError}
+                  isLoadingError={isLoadingError}
                   isLocked={!!isLocked}
-                  isManuallyEdited={allocationsEdited.includes(allocation.address)}
+                  isManuallyEdited={allocationsEdited.includes(address)}
                   onSelectItem={setSelectedItemAddress}
-                  value={allocation.value}
+                  value={value}
                 />
               ))}
             </Fragment>

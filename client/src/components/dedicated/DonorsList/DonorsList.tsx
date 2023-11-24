@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import DonorsItem from 'components/dedicated/DonorsItem/DonorsItem';
 import DonorsItemSkeleton from 'components/dedicated/DonorsItem/DonorsItemSkeleton/DonorsItemSkeleton';
 import { DONORS_SHORT_LIST_LENGTH } from 'constants/donors';
-import useProposalDonors from 'hooks/queries/useProposalDonors';
+import useProposalDonors from 'hooks/queries/donors/useProposalDonors';
 
 import styles from './DonorsList.module.scss';
 import DonorsListProps from './types';
