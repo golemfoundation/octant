@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useAccount, useConnect, useNetwork } from 'wagmi';
 
 import networkConfig from 'constants/networkConfig';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useSyncStatus, { Response } from 'hooks/queries/useSyncStatus';
 import localStorageService from 'services/localStorageService';
@@ -18,8 +19,6 @@ import triggerToast from 'utils/triggerToast';
 import useAvailableFundsEth from './useAvailableFundsEth';
 import useAvailableFundsGlm from './useAvailableFundsGlm';
 import useEpochAndAllocationTimestamps from './useEpochAndAllocationTimestamps';
-
-import useCurrentEpoch from '../queries/useCurrentEpoch';
 
 export default function useAppConnectManager(
   isFlushRequired: boolean,
