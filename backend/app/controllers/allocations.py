@@ -124,6 +124,10 @@ def get_allocation_nonce(user_address: str) -> int:
 
 def revoke_previous_user_allocation(user_address: str):
     pending_epoch = epochs.get_pending_epoch()
+
+    if pending_epoch is None:
+        raise exceptions.NotInDecisionWindow
+
     revoke_previous_allocation(user_address, pending_epoch)
 
 
