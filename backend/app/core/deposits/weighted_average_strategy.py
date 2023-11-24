@@ -1,4 +1,5 @@
 from typing import List, Tuple
+from decimal import Decimal
 
 from app.core.common import UserDeposit
 
@@ -87,4 +88,5 @@ def calculate_effective_deposit(deposits: List[WeightedDeposit]) -> int:
         return 0
 
     locked_amount = deposits[-1].amount
-    return apply_weighted_average_cutoff(locked_amount, int(numerator / denominator))
+    effective_deposit = int(Decimal(numerator) / Decimal(denominator))
+    return apply_weighted_average_cutoff(locked_amount, effective_deposit)

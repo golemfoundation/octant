@@ -135,7 +135,7 @@ def epoch_details():
                 },
             ],
             {
-                "effective_deposit": "269_433886492_855795712",
+                "effective_deposit": "269_433886492_855790068",
                 "epoch_end_deposit": "520_448372019_117283735",
             },
         ),
@@ -166,7 +166,7 @@ def epoch_details():
                 },
             ],
             {
-                "effective_deposit": "119_433886492_855795712",
+                "effective_deposit": "119_433886492_855790068",
                 "epoch_end_deposit": "320_448372019_117283735",
             },
         ),
