@@ -9,20 +9,18 @@ import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
+import useAppIsLoading from 'hooks/helpers/useAppIsLoading';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 import useAvailableFundsEth from 'hooks/helpers/useAvailableFundsEth';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
-import useAllProposals from 'hooks/queries/useAllProposals';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useSyncStatus, { Response } from 'hooks/queries/useSyncStatus';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
-import useUserTOS from 'hooks/queries/useUserTOS';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import localStorageService from 'services/localStorageService';
 import useAllocationsStore from 'store/allocations/store';
@@ -30,7 +28,6 @@ import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
 import useTipsStore from 'store/tips/store';
 import useTransactionLocalStore from 'store/transactionLocal/store';
-import getIsPreLaunch from 'utils/getIsPreLaunch';
 import getValidatedProposalsFromLocalStorage from 'utils/getValidatedProposalsFromLocalStorage';
 import triggerToast from 'utils/triggerToast';
 
@@ -55,7 +52,6 @@ const App = (): ReactElement => {
   }));
   const {
     setValuesFromLocalStorage: setValuesFromLocalStorageTips,
-    isInitialized: isTipsStoreInitialized,
     setInitialState: setInitialStateTips,
   } = useTipsStore(({ meta, setValuesFromLocalStorage, setInitialState }) => ({
     isInitialized: meta.isInitialized,
@@ -65,7 +61,6 @@ const App = (): ReactElement => {
   const {
     areOctantTipsAlwaysVisible,
     displayCurrency,
-    isSettingsInitialized,
     setValuesFromLocalStorageSettings,
     setIsCryptoMainValueDisplay,
   } = useSettingsStore(state => ({
@@ -75,13 +70,12 @@ const App = (): ReactElement => {
     setIsCryptoMainValueDisplay: state.setIsCryptoMainValueDisplay,
     setValuesFromLocalStorageSettings: state.setValuesFromLocalStorage,
   }));
-  const {
-    isInitialized: isOnboardingInitialized,
-    setValuesFromLocalStorage: setValuesFromLocalStorageOnboarding,
-  } = useOnboardingStore(state => ({
-    isInitialized: state.meta.isInitialized,
-    setValuesFromLocalStorage: state.setValuesFromLocalStorage,
-  }));
+  const { setValuesFromLocalStorage: setValuesFromLocalStorageOnboarding } = useOnboardingStore(
+    state => ({
+      isInitialized: state.meta.isInitialized,
+      setValuesFromLocalStorage: state.setValuesFromLocalStorage,
+    }),
+  );
   const { reset: resetTransactionLocalStore } = useTransactionLocalStore(state => ({
     reset: state.reset,
   }));
@@ -92,7 +86,7 @@ const App = (): ReactElement => {
       setIsCryptoMainValueDisplay(true);
     },
   });
-  const { data: currentEpoch, isLoading: isLoadingCurrentEpoch } = useCurrentEpoch({
+  const { data: currentEpoch } = useCurrentEpoch({
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
@@ -101,9 +95,7 @@ const App = (): ReactElement => {
     refetchOnWindowFocus: true,
   });
   const { data: proposals } = useProposalsContract();
-  const { isFetching: isFetchingAllProposals } = useAllProposals();
   const { data: userAllocations } = useUserAllocations();
-  const { isFetching: isFetchingPatronModeStatus } = useIsPatronMode();
   const {
     data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow,
     isLoading: isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow,
@@ -116,8 +108,6 @@ const App = (): ReactElement => {
   const [isDecisionWindowOpenLocal, setIsDecisionWindowOpenLocal] = useState<boolean | null>(null);
   const [syncStatusLocal, setSyncStatusLocal] = useState<Response | null>(null);
   const [chainIdLocal, setChainIdLocal] = useState<number | null>(null);
-  const isPreLaunch = getIsPreLaunch(currentEpoch);
-  const { isFetching: isFetchingUserTOS } = useUserTOS();
   const isSyncingInProgress = syncStatusLocal?.pendingSnapshot === 'in_progress';
   const { data: syncStatus } = useSyncStatus({
     refetchInterval: isSyncingInProgress ? 5000 : false,
@@ -125,6 +115,8 @@ const App = (): ReactElement => {
   const { reset } = useConnect();
   const { refetch: refetchAvailableFundsEth } = useAvailableFundsEth();
   const { refetch: refetchAvailableFundsGlm } = useAvailableFundsGlm();
+
+  const isLoading = useAppIsLoading(isFlushRequired);
 
   const initializeStore = (shouldDoReset = false) => {
     // Store is populated with data from LS, hence init here.
@@ -353,16 +345,6 @@ const App = (): ReactElement => {
 
     setInitialStateTips();
   }, [areOctantTipsAlwaysVisible, setInitialStateTips]);
-  const isLoading =
-    isLoadingCurrentEpoch ||
-    (!isPreLaunch && !isAllocationsInitialized) ||
-    !isOnboardingInitialized ||
-    !isSettingsInitialized ||
-    isFlushRequired ||
-    !isTipsStoreInitialized ||
-    isFetchingUserTOS ||
-    isFetchingAllProposals ||
-    isFetchingPatronModeStatus;
 
   if (isLoading) {
     return <AppLoader />;
