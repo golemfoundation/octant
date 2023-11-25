@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import isEqual from 'lodash/isEqual';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount, useConnect, useNetwork } from 'wagmi';
 
@@ -76,7 +76,7 @@ export default function useAppConnectManager(
     reset: state.reset,
   }));
 
-  const initializeStore = useCallback((shouldDoReset = false) => {
+  const initializeStore = (shouldDoReset = false) => {
     // Store is populated with data from LS, hence init here.
     localStorageService.init();
     setValuesFromLocalStorageSettings();
@@ -89,7 +89,7 @@ export default function useAppConnectManager(
       resetTransactionLocalStore();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
 
   useEffect(() => {
     if (chain && chain.id !== networkConfig.id) {
@@ -175,6 +175,7 @@ export default function useAppConnectManager(
     if (doesIsConnectedRequireFlush) {
       initializeStore(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     currentEpoch,
     currentEpochLocal,
@@ -184,7 +185,6 @@ export default function useAppConnectManager(
     isConnectedLocal,
     address,
     currentAddressLocal,
-    initializeStore,
     queryClient,
     syncStatus,
     syncStatusLocal,
