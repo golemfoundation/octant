@@ -18,7 +18,7 @@ import triggerToast from 'utils/triggerToast';
 
 import useAvailableFundsEth from './useAvailableFundsEth';
 import useAvailableFundsGlm from './useAvailableFundsGlm';
-import useEpochAndAllocationTimestamps from './useEpochAndAllocationTimestamps';
+// import useEpochAndAllocationTimestamps from './useEpochAndAllocationTimestamps';
 
 export default function useAppConnectManager(
   isFlushRequired: boolean,
@@ -51,7 +51,7 @@ export default function useAppConnectManager(
 
   const { refetch: refetchAvailableFundsEth } = useAvailableFundsEth();
   const { refetch: refetchAvailableFundsGlm } = useAvailableFundsGlm();
-  const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
+  // const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
   const { data: syncStatus } = useSyncStatus({
     refetchInterval: isSyncingInProgress ? 5000 : false,
   });
