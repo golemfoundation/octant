@@ -18,7 +18,7 @@ import triggerToast from 'utils/triggerToast';
 
 import useAvailableFundsEth from './useAvailableFundsEth';
 import useAvailableFundsGlm from './useAvailableFundsGlm';
-// import useEpochAndAllocationTimestamps from './useEpochAndAllocationTimestamps';
+import useEpochAndAllocationTimestamps from './useEpochAndAllocationTimestamps';
 
 export default function useAppConnectManager(
   isFlushRequired: boolean,
@@ -51,7 +51,7 @@ export default function useAppConnectManager(
 
   const { refetch: refetchAvailableFundsEth } = useAvailableFundsEth();
   const { refetch: refetchAvailableFundsGlm } = useAvailableFundsGlm();
-  // const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
+  const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
   const { data: syncStatus } = useSyncStatus({
     refetchInterval: isSyncingInProgress ? 5000 : false,
   });
@@ -202,22 +202,22 @@ export default function useAppConnectManager(
     })();
   }, [isFlushRequired, setIsFlushRequired, queryClient]);
 
-  // useEffect(() => {
-  //   if (isDecisionWindowOpen === undefined || !timeCurrentAllocationEnd || !timeCurrentEpochEnd) {
-  //     return;
-  //   }
-  //   const timestamp = isDecisionWindowOpen ? timeCurrentAllocationEnd : timeCurrentEpochEnd;
-  //
-  //   const timeToChangeAllocationWindowStatusIntervalId = setInterval(() => {
-  //     const timeDifference = Math.ceil(timestamp - Date.now());
-  //     if (timeDifference <= 0) {
-  //       clearInterval(timeToChangeAllocationWindowStatusIntervalId);
-  //       setIsFlushRequired(true);
-  //     }
-  //   }, 1000);
-  //
-  //   return () => clearInterval(timeToChangeAllocationWindowStatusIntervalId);
-  // }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd, setIsFlushRequired]);
+  useEffect(() => {
+    if (isDecisionWindowOpen === undefined || !timeCurrentAllocationEnd || !timeCurrentEpochEnd) {
+      return;
+    }
+    const timestamp = isDecisionWindowOpen ? timeCurrentAllocationEnd : timeCurrentEpochEnd;
+
+    const timeToChangeAllocationWindowStatusIntervalId = setInterval(() => {
+      const timeDifference = Math.ceil(timestamp - Date.now());
+      if (timeDifference <= 0) {
+        clearInterval(timeToChangeAllocationWindowStatusIntervalId);
+        setIsFlushRequired(true);
+      }
+    }, 1000);
+
+    return () => clearInterval(timeToChangeAllocationWindowStatusIntervalId);
+  }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
   return { isSyncingInProgress };
 }
