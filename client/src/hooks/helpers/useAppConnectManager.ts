@@ -217,6 +217,7 @@ export default function useAppConnectManager(
     }, 1000);
 
     return () => clearInterval(timeToChangeAllocationWindowStatusIntervalId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
   return { isSyncingInProgress };
