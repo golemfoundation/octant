@@ -202,23 +202,23 @@ export default function useAppConnectManager(
     })();
   }, [isFlushRequired, setIsFlushRequired, queryClient]);
 
-  useEffect(() => {
-    if (isDecisionWindowOpen === undefined || !timeCurrentAllocationEnd || !timeCurrentEpochEnd) {
-      return;
-    }
-    const timestamp = isDecisionWindowOpen ? timeCurrentAllocationEnd : timeCurrentEpochEnd;
-
-    const timeToChangeAllocationWindowStatusIntervalId = setInterval(() => {
-      const timeDifference = Math.ceil(timestamp - Date.now());
-      if (timeDifference <= 0) {
-        clearInterval(timeToChangeAllocationWindowStatusIntervalId);
-        setIsFlushRequired(true);
-      }
-    }, 1000);
-
-    return () => clearInterval(timeToChangeAllocationWindowStatusIntervalId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
+  // useEffect(() => {
+  //   if (isDecisionWindowOpen === undefined || !timeCurrentAllocationEnd || !timeCurrentEpochEnd) {
+  //     return;
+  //   }
+  //   const timestamp = isDecisionWindowOpen ? timeCurrentAllocationEnd : timeCurrentEpochEnd;
+  //
+  //   const timeToChangeAllocationWindowStatusIntervalId = setInterval(() => {
+  //     const timeDifference = Math.ceil(timestamp - Date.now());
+  //     if (timeDifference <= 0) {
+  //       clearInterval(timeToChangeAllocationWindowStatusIntervalId);
+  //       setIsFlushRequired(true);
+  //     }
+  //   }, 1000);
+  //
+  //   return () => clearInterval(timeToChangeAllocationWindowStatusIntervalId);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
   return { isSyncingInProgress };
 }
