@@ -6,8 +6,8 @@ from app.core.rewards.rewards_strategy import RewardsStrategy
 from app.core.rewards.standard_rewards_strategy import StandardRewardsStrategy
 
 from app.core.deposits.weighted_deposits.weights_calculator import WeightsCalculator
-from app.core.deposits.weighted_deposits.timebased_calculator import (
-    TimebasedWeightsCalculator,
+from app.core.deposits.weighted_deposits.timebased_without_unlocks_calculator import (
+    TimebasedWithoutUnlocksWeightsCalculator,
 )
 
 
@@ -16,7 +16,7 @@ class EpochSettings:
     rewards_strategy: RewardsStrategy = StandardRewardsStrategy()
     user_deposits_weights_calculator: Type[
         WeightsCalculator
-    ] = TimebasedWeightsCalculator
+    ] = TimebasedWithoutUnlocksWeightsCalculator
 
 
 class EpochsRegistry:

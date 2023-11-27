@@ -33,4 +33,7 @@ def test_default_settings(app):
     settings = EpochsRegistry.get_epoch_settings(-1)
 
     assert isinstance(settings.rewards_strategy, StandardRewardsStrategy)
-    assert settings.user_deposits_weights_calculator == TimebasedWeightsCalculator
+    assert (
+        settings.user_deposits_weights_calculator
+        == TimebasedWithoutUnlocksWeightsCalculator
+    )
