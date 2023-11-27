@@ -36,6 +36,8 @@ spec:
             value: '$NETWORK_NAME'
           - name: graphNode.graph.env.RPC_URL
             value: '$BACKEND_RPC_URL'
+          - name: graphNode.graph.env.GRAPHQL_MAX_FIRST
+            value: '100000'
           ## Backend
           - name: 'backendServer.schedulerEnabled'
             value: '$SCHEDULER_ENABLED'
