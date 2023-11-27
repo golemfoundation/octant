@@ -52,7 +52,7 @@ exclude = '''
 [tool.flake8]
 max-line-length = 88
 select = ["C", "E", "F", "W", "B"]
-extend-ignore = ["E203", "E501", "W503", "F401"]
+extend-ignore = ["E203", "E501", "W503"]
 exclude = ["./migrations", "./.venv"]
 
 [build-system]

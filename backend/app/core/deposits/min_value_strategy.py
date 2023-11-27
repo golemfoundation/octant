@@ -2,6 +2,7 @@ from typing import List, Tuple, Dict
 
 from app import database
 from app.core.common import UserDeposit
+from app.core.epochs.epochs_registry import EpochsRegistry
 from app.core.deposits.cut_off import apply_min_value_cutoff
 from app.core.deposits.weighted_deposits import (
     get_all_users_weighted_deposits,
@@ -12,7 +13,7 @@ from app.database.models import Deposit
 MINIMUM_DEPOSIT = 0
 
 
-def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
+def get_users_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
     """
     Get the user deposits for a given epoch number as a minimal value strategy.
 
@@ -33,8 +34,12 @@ def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
             - A list of UserDeposit instances.
             - The total effective deposit.
     """
+
+    epoch_settings = EpochsRegistry.get_epoch_settings(epoch_no)
     previous_db_deposits = database.deposits.get_all_by_epoch(epoch_no - 1)
-    epoch_deposits = get_all_users_weighted_deposits(epoch_no)
+    epoch_deposits = get_all_users_weighted_deposits(
+        epoch_settings.user_deposits_weights_calculator, epoch_no
+    )
     total_effective_deposit = 0
     user_deposits = []
 

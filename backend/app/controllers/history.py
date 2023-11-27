@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from enum import StrEnum
 from typing import List, Tuple, Optional
-from operator import attrgetter
 
 from dataclass_wizard import JSONWizard
 from app.core import history
