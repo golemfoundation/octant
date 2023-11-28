@@ -55,6 +55,8 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
         !isLoadingError && styles.isClickable,
         isEpoch1 && styles.isEpoch1,
       )}
+      data-address={address}
+      data-epoch={epoch}
       data-test={dataTest}
       onClick={
         isLoadingError

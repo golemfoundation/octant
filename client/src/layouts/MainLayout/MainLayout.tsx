@@ -230,6 +230,7 @@ const MainLayout: FC<MainLayoutProps> = ({
             !!navigationBottomSuffix && styles.isNavigationBottomSuffix,
             classNameBody,
           )}
+          data-test="MainLayout__body"
         >
           {isLoading ? (
             <Loader className={styles.loader} dataTest="MainLayout__Loader" />
