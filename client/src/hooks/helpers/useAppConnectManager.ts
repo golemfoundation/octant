@@ -20,6 +20,7 @@ import useAvailableFundsEth from './useAvailableFundsEth';
 import useAvailableFundsGlm from './useAvailableFundsGlm';
 import useEpochAndAllocationTimestamps from './useEpochAndAllocationTimestamps';
 
+let timeToChangeAllocationWindowStatusIntervalId;
 export default function useAppConnectManager(
   isFlushRequired: boolean,
   setIsFlushRequired: (isFlushRequiredNew: boolean) => void,
@@ -203,20 +204,29 @@ export default function useAppConnectManager(
   }, [isFlushRequired, setIsFlushRequired, queryClient]);
 
   useEffect(() => {
-    if (isDecisionWindowOpen === undefined || !timeCurrentAllocationEnd || !timeCurrentEpochEnd) {
+    if (
+      isDecisionWindowOpen === undefined ||
+      !timeCurrentAllocationEnd ||
+      !timeCurrentEpochEnd ||
+      timeToChangeAllocationWindowStatusIntervalId
+    ) {
       return;
     }
     const timestamp = isDecisionWindowOpen ? timeCurrentAllocationEnd : timeCurrentEpochEnd;
 
-    const timeToChangeAllocationWindowStatusIntervalId = setInterval(() => {
+    timeToChangeAllocationWindowStatusIntervalId = setInterval(() => {
       const timeDifference = Math.ceil(timestamp - Date.now());
       if (timeDifference <= 0) {
         clearInterval(timeToChangeAllocationWindowStatusIntervalId);
+        timeToChangeAllocationWindowStatusIntervalId = undefined;
         window.location.reload();
       }
     }, 1000);
 
-    return () => clearInterval(timeToChangeAllocationWindowStatusIntervalId);
+    return () => {
+      clearInterval(timeToChangeAllocationWindowStatusIntervalId);
+      timeToChangeAllocationWindowStatusIntervalId = undefined;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
