@@ -5,9 +5,13 @@
   align-self: stretch;
   justify-content: space-between;
 
-  .divider {
+  .progressBar {
     margin: 0.3rem 0;
+  }
+
+  .divider {
     height: 0.2rem;
+    margin: 0.3rem 0;
     width: 100%;
     content: '';
     background: $color-octant-grey3;
@@ -22,7 +26,8 @@
       font-weight: $font-weight-bold;
       color: $color-octant-grey5;
 
-      .label, .value {
+      .label,
+      .value {
         &.isFetching {
           @include skeleton();
           text-indent: 1000%; // moves text outside of view.
