@@ -265,12 +265,13 @@ const ProposalView = (): ReactElement => {
                       <div className={styles.actionsWrapper}>
                         <Tooltip
                           className={styles.tooltip}
-                          onClickCallback={() =>
+                          hideAfterClick
+                          onClickCallback={() => {
                             onShareClick({
                               address,
                               name,
-                            })
-                          }
+                            });
+                          }}
                           text={isLinkCopied ? i18n.t('common.copied') : i18n.t('common.copy')}
                           variant="small"
                         >

@@ -1,16 +1,17 @@
 .root {
+  z-index: $z-index-4;
+
   &:not(.isAllocatedTo) {
     &.isAddedToAllocate {
       svg path {
         stroke: $color-octant-orange;
         fill: $color-octant-orange;
       }
-
-      &[data-is-initial-load-done='true'] {
-        animation-name: scale1;
-        animation-duration: $transition-time-1;
-      }
     }
+  }
+
+  .svgWrapper {
+    display: flex;
   }
 
   &.isArchivedProposal {
