@@ -210,6 +210,8 @@ export default function useAppConnectManager(
       !timeCurrentEpochEnd ||
       timeToChangeAllocationWindowStatusIntervalId
     ) {
+      clearInterval(timeToChangeAllocationWindowStatusIntervalId);
+      timeToChangeAllocationWindowStatusIntervalId = undefined;
       return;
     }
     const timestamp = isDecisionWindowOpen ? timeCurrentAllocationEnd : timeCurrentEpochEnd;
