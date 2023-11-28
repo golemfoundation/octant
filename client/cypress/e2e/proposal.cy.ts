@@ -7,24 +7,13 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 import Chainable = Cypress.Chainable;
 
-const getButtonAddToAllocate = (currentEpoch: number, isDesktop: boolean): Chainable<any> => {
+const getButtonAddToAllocate = (): Chainable<any> => {
   const proposalView = cy.get('[data-test=ProposalView__proposal').first();
 
-  switch (currentEpoch) {
-    case 1:
-      return proposalView.find('[data-test=ProposalView__proposal__ButtonAddToAllocate--primary]');
-    default:
-      return proposalView.find(
-        `[data-test=${
-          isDesktop
-            ? 'ProposalView__proposal__ButtonAddToAllocate--secondary'
-            : 'ProposalView__proposal__ButtonAddToAllocate--primary'
-        }]`,
-      );
-  }
+  return proposalView.find('[data-test=ProposalView__proposal__ButtonAddToAllocate]');
 };
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
+Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
   describe(`proposal: ${device}`, { viewportHeight, viewportWidth }, () => {
     let proposalNames: string[] = [];
 
@@ -55,12 +44,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       const proposalView = cy.get('[data-test=ProposalView__proposal').first();
       proposalView.get('[data-test=ProposalView__proposal__Img]').should('be.visible');
       proposalView.get('[data-test=ProposalView__proposal__name]').should('be.visible');
-
-      cy.window().then(window => {
-        // @ts-expect-error missing typing for client window elements.
-        const currentEpoch = Number(window.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch));
-        getButtonAddToAllocate(currentEpoch, isDesktop).should('be.visible');
-      });
+      getButtonAddToAllocate().should('be.visible');
       proposalView.get('[data-test=ProposalView__proposal__Button]').should('be.visible');
       proposalView.get('[data-test=ProposalView__proposal__Description]').should('be.visible');
 
@@ -94,19 +78,11 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     it('entering proposal view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar', () => {
       cy.get('[data-test^=ProposalsView__ProposalsListItem').first().click();
 
-      cy.window().then(window => {
-        // @ts-expect-error missing typing for client window elements.
-        const currentEpoch = Number(window.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch));
-        getButtonAddToAllocate(currentEpoch, isDesktop).click();
-      });
+      getButtonAddToAllocate().click();
 
       // cy.get('@buttonAddToAllocate').click();
       cy.get('[data-test=Navbar__numberOfAllocations]').contains(1);
-      cy.window().then(window => {
-        // @ts-expect-error missing typing for client window elements.
-        const currentEpoch = Number(window.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch));
-        getButtonAddToAllocate(currentEpoch, isDesktop).click();
-      });
+      getButtonAddToAllocate().click();
       cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
     });
 

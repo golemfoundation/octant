@@ -99,6 +99,10 @@ http://localhost:5000/docs/chain-info
 ### Optional
 
 - `DB_URI` - Only used in production setup. Sets the postgres URI, eg. postgresql://user:password@localhost/octant
+
+- `SQLALCHEMY_CONNECTION_POOL_SIZE` - Size of pool of connections to db, that is always maintained. More on connection pools can be found [here](https://docs.sqlalchemy.org/en/20/core/pooling.html#sqlalchemy.pool.QueuePool.params.pool_size).
+- `SQLALCHEMY_CONNECTION_POOL_MAX_OVERFLOW` - Max number of additional connections, that can be established once pool exhausts during spikes. More on connection pools can be found [here](https://docs.sqlalchemy.org/en/20/core/pooling.html#sqlalchemy.pool.QueuePool.params.max_overflow).
+
 - `SCHEDULER_ENABLED` - The app can run background tasks which are handled by [Flask-APScheduler](https://github.com/viniciuschiele/flask-apscheduler). Set this env var to `True` to enable it.
 - `SCHEDULER_API_ENABLED` - Flask-APScheduler comes with a [build-in API](https://viniciuschiele.github.io/flask-apscheduler/rst/api.html). Enable it by setting this var to `True`
 - `TESTNET_MULTISIG_PRIVATE_KEY` - Multisig private key, which is allowed to send transactions to `Vault.sol`. Needed for automatic withdrawals confirmations for test purposes.

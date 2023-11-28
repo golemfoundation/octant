@@ -59,6 +59,9 @@ const ProposalView = (): ReactElement => {
   const { data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow } =
     useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow();
 
+  const isArchivedProposal =
+    epochUrl && currentEpoch ? parseInt(epochUrl!, 10) < currentEpoch : false;
+
   useEffect(() => {
     if (loadedAddresses.length === 0) {
       setLoadedAddresses([proposalAddressUrl!]);
@@ -241,6 +244,7 @@ const ProposalView = (): ReactElement => {
               isAllocatedTo: !!userAllocations?.elements.find(
                 ({ address: userAllocationAddress }) => userAllocationAddress === address,
               ),
+              isArchivedProposal,
               onClick: () => onAddRemoveFromAllocate(address),
             };
             return (
@@ -273,11 +277,8 @@ const ProposalView = (): ReactElement => {
                           />
                         </Tooltip>
                         <ButtonAddToAllocate
-                          className={cx(
-                            styles.buttonAddToAllocatePrimary,
-                            isEpoch1 && styles.isEpoch1,
-                          )}
-                          dataTest="ProposalView__proposal__ButtonAddToAllocate--primary"
+                          className={cx(styles.buttonAddToAllocate, isEpoch1 && styles.isEpoch1)}
+                          dataTest="ProposalView__proposal__ButtonAddToAllocate"
                           {...buttonAddToAllocateProps}
                         />
                       </div>
@@ -296,17 +297,9 @@ const ProposalView = (): ReactElement => {
                     {!isEpoch1 ? (
                       <ProposalRewards
                         address={address}
-                        canFoundedAtHide={false}
                         className={styles.proposalRewards}
-                        MiddleElement={
-                          isEpoch1 ? null : (
-                            <ButtonAddToAllocate
-                              className={styles.buttonAddToAllocateSecondary}
-                              dataTest="ProposalView__proposal__ButtonAddToAllocate--secondary"
-                              {...buttonAddToAllocateProps}
-                            />
-                          )
-                        }
+                        epoch={isArchivedProposal ? parseInt(epochUrl!, 10) : undefined}
+                        isProposalView
                       />
                     ) : (
                       <div className={styles.divider} />

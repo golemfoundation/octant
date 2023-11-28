@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import Description from 'components/core/Description/Description';
 import Img from 'components/core/Img/Img';
 import ButtonAddToAllocate from 'components/dedicated/ButtonAddToAllocate/ButtonAddToAllocate';
-import ProposalLoadingStates from 'components/dedicated/ProposalLoadingStates/ProposalLoadingStates';
 import ProposalRewards from 'components/dedicated/ProposalRewards/ProposalRewards';
 import ProposalItemSkeleton from 'components/dedicated/ProposalsList/ProposalsListItemSkeleton/ProposalsListItemSkeleton';
 import env from 'env';
@@ -66,9 +65,7 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
       }
     >
       {isLoadingError ? (
-        <ProposalLoadingStates isLoadingError={isLoadingError}>
-          <ProposalItemSkeleton />
-        </ProposalLoadingStates>
+        <ProposalItemSkeleton />
       ) : (
         <Fragment>
           <div className={styles.header}>
@@ -81,20 +78,18 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
               }
               src={`${ipfsGateway}${profileImageSmall}`}
             />
-            {((isArchivedProposal && isAllocatedTo) || !isArchivedProposal) && (
-              <ButtonAddToAllocate
-                className={styles.button}
-                dataTest={
-                  epoch
-                    ? 'ProposalsListItem__ButtonAddToAllocate--archive'
-                    : 'ProposalsListItem__ButtonAddToAllocate'
-                }
-                isAddedToAllocate={isAddedToAllocate}
-                isAllocatedTo={isAllocatedTo}
-                isArchivedProposal={isArchivedProposal}
-                onClick={() => onAddRemoveFromAllocate(address)}
-              />
-            )}
+            <ButtonAddToAllocate
+              className={styles.button}
+              dataTest={
+                epoch
+                  ? 'ProposalsListItem__ButtonAddToAllocate--archive'
+                  : 'ProposalsListItem__ButtonAddToAllocate'
+              }
+              isAddedToAllocate={isAddedToAllocate}
+              isAllocatedTo={isAllocatedTo}
+              isArchivedProposal={isArchivedProposal}
+              onClick={() => onAddRemoveFromAllocate(address)}
+            />
           </div>
           <div className={styles.body}>
             <div

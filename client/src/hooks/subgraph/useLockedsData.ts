@@ -1,14 +1,13 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { getTime, startOfDay } from 'date-fns';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import request from 'graphql-request';
-import sortBy from 'lodash/sortBy';
-import uniq from 'lodash/uniq';
 
 import { QUERY_KEYS } from 'api/queryKeys';
 import env from 'env';
 import { graphql } from 'gql/gql';
 import { GetLockedsDataQuery } from 'gql/graphql';
+import getMetricsChartDataGroupedByDate, {
+  GroupedUsersByDateItem,
+} from 'utils/getMetricsChartDataGroupedByDate';
 
 const GET_LOCKEDS_DATA = graphql(`
   query GetLockedsData($first: Int = 100, $skip: Int = 0) {
@@ -21,7 +20,6 @@ const GET_LOCKEDS_DATA = graphql(`
 `);
 
 type GroupedByDateItem = {
-  cummulativeGlmAmount: number;
   dateTime: number;
   users: `0x${string}`[];
 };
@@ -68,35 +66,10 @@ export default function useLockedsData(): UseQueryResult<UseLockedsDataResponse>
           return undefined;
         }
 
-        const groupedByDate = sortBy(data.lockeds, l => l.timestamp).reduce<GroupedByDate>(
-          (acc, curr) => {
-            // formatting from WEI to GLM (int)
-            const glmAmount = parseFloat(formatUnits(parseUnits(curr.amount, 'wei')));
-
-            // grouping by start of day in user's timezone
-            const dateTime = getTime(startOfDay(curr.timestamp * 1000));
-
-            const idx = acc.findIndex(v => v.dateTime === dateTime);
-            if (idx < 0) {
-              acc.push({
-                cummulativeGlmAmount:
-                  acc.length > 0 ? acc[acc.length - 1].cummulativeGlmAmount + glmAmount : glmAmount,
-                dateTime,
-                users:
-                  acc.length > 0 ? uniq([...acc[acc.length - 1].users, curr.user]) : [curr.user],
-              });
-              return acc;
-            }
-
-            // eslint-disable-next-line operator-assignment
-            acc[idx].users = uniq([...acc[idx].users, curr.user]);
-            // eslint-disable-next-line operator-assignment
-            acc[idx].cummulativeGlmAmount = acc[idx].cummulativeGlmAmount + glmAmount;
-
-            return acc;
-          },
-          [],
-        );
+        const groupedByDate = getMetricsChartDataGroupedByDate(
+          data.lockeds,
+          'lockeds',
+        ) as GroupedUsersByDateItem[];
 
         const totalAddressesWithoutDuplicates =
           groupedByDate[groupedByDate.length - 1].users.length;

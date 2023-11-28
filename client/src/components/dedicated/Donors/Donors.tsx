@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import React, { FC, useState, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 
 import Button from 'components/core/Button/Button';
 import DonorsHeader from 'components/dedicated/DonorsHeader/DonorsHeader';
@@ -14,8 +15,12 @@ import styles from './Donors.module.scss';
 import DonorsProps from './types';
 
 const Donors: FC<DonorsProps> = ({ className, dataTest = 'Donors', proposalAddress }) => {
+  const { epoch } = useParams();
   const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.donors' });
-  const { data: proposalDonors, isFetching } = useProposalDonors(proposalAddress);
+  const { data: proposalDonors, isFetching } = useProposalDonors(
+    proposalAddress,
+    parseInt(epoch!, 10),
+  );
   const { data: currentEpoch } = useCurrentEpoch();
 
   const [isFullDonorsListModalOpen, setIsFullDonorsListModalOpen] = useState(false);

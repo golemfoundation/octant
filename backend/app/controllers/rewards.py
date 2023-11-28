@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from decimal import Decimal
 from functools import reduce
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 from dataclass_wizard import JSONWizard
 
@@ -43,18 +43,25 @@ class RewardsMerkleTree(JSONWizard):
 
 def get_allocation_threshold(epoch: int = None) -> int:
     epoch = epochs.get_pending_epoch() if epoch is None else epoch
+
+    if epoch is None:
+        raise exceptions.NotInDecisionWindow
+
     return proposals.get_proposal_allocation_threshold(epoch)
 
 
-def get_estimated_proposals_rewards() -> List[ProposalReward]:
-    epoch = epochs.get_pending_epoch()
+def get_estimated_proposals_rewards() -> Optional[List[ProposalReward]]:
+    pending_epoch = epochs.get_pending_epoch()
 
-    if not has_pending_epoch_snapshot(epoch):
+    if pending_epoch is None:
+        raise exceptions.NotInDecisionWindow
+
+    if not has_pending_epoch_snapshot(pending_epoch):
         raise exceptions.MissingSnapshot
 
     matched_rewards = get_estimated_matched_rewards()
-    proposals_with_allocations = get_proposals_with_allocations(epoch)
-    threshold = get_allocation_threshold(epoch)
+    proposals_with_allocations = get_proposals_with_allocations(pending_epoch)
+    threshold = get_allocation_threshold(pending_epoch)
 
     total_allocated_above_threshold = sum(
         [
@@ -66,7 +73,7 @@ def get_estimated_proposals_rewards() -> List[ProposalReward]:
 
     rewards = {
         address: ProposalReward(address, 0, 0)
-        for address in proposals.get_proposals_addresses(epoch)
+        for address in proposals.get_proposals_addresses(pending_epoch)
     }
 
     for address, allocated in proposals_with_allocations:
@@ -87,8 +94,8 @@ def get_estimated_proposals_rewards() -> List[ProposalReward]:
 
 
 def get_finalized_epoch_proposals_rewards(epoch: int = None) -> List[ProposalReward]:
-    finalized_epoch = epochs.get_finalized_epoch()
-    if epoch > finalized_epoch:
+    last_finalized_epoch = core_epoch_snapshots.get_last_finalized_snapshot()
+    if epoch > last_finalized_epoch:
         raise exceptions.MissingSnapshot()
 
     proposals_address_list = proposals.get_proposals_addresses(epoch)

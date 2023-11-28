@@ -96,7 +96,7 @@ def snapshot_pending_epoch() -> Optional[int]:
 
     app.logger.info(f"[*] Most recent pending snapshot: {last_snapshot_epoch}")
 
-    if pending_epoch <= last_snapshot_epoch:
+    if pending_epoch is None or pending_epoch <= last_snapshot_epoch:
         app.logger.info("[+] Pending snapshots are up to date")
         return None
 

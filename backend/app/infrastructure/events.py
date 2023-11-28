@@ -14,17 +14,20 @@ from app.controllers.rewards import (
 from app.core.allocations import AllocationRequest
 from app.core.common import AccountFunds
 from app.exceptions import OctantException
-from app.extensions import socketio
+from app.extensions import socketio, epochs
 from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler
 
 
 @socketio.on("connect")
 def handle_connect():
     app.logger.debug("Client connected")
-    threshold = get_allocation_threshold()
-    emit("threshold", {"threshold": str(threshold)})
-    proposal_rewards = get_estimated_proposals_rewards()
-    emit("proposal_rewards", _serialize_proposal_rewards(proposal_rewards))
+
+    if epochs.get_pending_epoch() is not None:
+        threshold = get_allocation_threshold()
+        emit("threshold", {"threshold": str(threshold)})
+
+        proposal_rewards = get_estimated_proposals_rewards()
+        emit("proposal_rewards", _serialize_proposal_rewards(proposal_rewards))
 
 
 @socketio.on("disconnect")

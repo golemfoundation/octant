@@ -1,6 +1,6 @@
 import { visitWithLoader, navigateWithCheck } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
-import steps from 'src/hooks/helpers/useOnboardingSteps/steps';
+import { stepsDecisionWindowClosed } from 'src/hooks/helpers/useOnboardingSteps/steps';
 import { ROOT, ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 import Chainable = Cypress.Chainable;
@@ -55,9 +55,9 @@ const checkChangeStepsWithArrowKeys = (isTOSAccepted: boolean) => {
   [
     { el: 1, key: 'ArrowRight' },
     { el: 2, key: 'ArrowRight' },
-    { el: 3, key: 'ArrowRight' },
-    { el: 3, key: 'ArrowRight' },
-    { el: 2, key: 'ArrowLeft' },
+    { el: 2, key: 'ArrowRight' },
+    // { el: 3, key: 'ArrowRight' },
+    // { el: 2, key: 'ArrowLeft' },
     { el: 1, key: 'ArrowLeft' },
     { el: 0, key: 'ArrowLeft' },
     { el: 0, key: 'ArrowLeft' },
@@ -81,10 +81,10 @@ const checkChangeStepsByClickingEdgeOfTheScreenUpTo25px = (isTOSAccepted: boolea
     [
       { clientX: rightEdgeX - 25, el: 1 },
       { clientX: rightEdgeX - 10, el: 2 },
-      { clientX: rightEdgeX - 5, el: 3 },
+      // { clientX: rightEdgeX - 5, el: 3 },
       // rightEdgeX === browser right frame
-      { clientX: rightEdgeX - 1, el: 3 },
-      { clientX: leftEdgeX + 25, el: 2 },
+      // { clientX: rightEdgeX - 1, el: 3 },
+      // { clientX: leftEdgeX + 25, el: 2 },
       { clientX: leftEdgeX + 10, el: 1 },
       { clientX: leftEdgeX + 5, el: 0 },
       { clientX: leftEdgeX, el: 0 },
@@ -137,15 +137,15 @@ const checkChangeStepsBySwipingOnScreenDifferenceMoreThanOrEqual5px = (isTOSAcce
       touchStartClientX: window.innerWidth / 2,
     },
     {
-      el: 3,
+      el: 2,
       touchMoveClientX: window.innerWidth / 2 - 5,
       touchStartClientX: window.innerWidth / 2,
     },
-    {
-      el: 3,
-      touchMoveClientX: window.innerWidth / 2 - 5,
-      touchStartClientX: window.innerWidth / 2,
-    },
+    // {
+    //   el: 3,
+    //   touchMoveClientX: window.innerWidth / 2 - 5,
+    //   touchStartClientX: window.innerWidth / 2,
+    // },
     {
       el: 2,
       touchMoveClientX: window.innerWidth / 2 + 5,
@@ -231,12 +231,12 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('user is able to click through entire onboarding flow', () => {
-      for (let i = 1; i < steps.length - 1; i++) {
+      for (let i = 1; i < stepsDecisionWindowClosed.length - 1; i++) {
         checkProgressStepperSlimIsCurrentAndClickNext(i);
       }
 
       cy.get('[data-test=ModalOnboarding__ProgressStepperSlim__element]')
-        .eq(steps.length - 1)
+        .eq(stepsDecisionWindowClosed.length - 1)
         .click();
       cy.get('[data-test=ProposalsView__ProposalsList]').should('be.visible');
     });
@@ -318,12 +318,12 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     it('onboarding should have one more step (TOS)', () => {
       cy.get('[data-test=ModalOnboarding__ProgressStepperSlim__element]').should(
         'have.length',
-        steps.length + 1,
+        stepsDecisionWindowClosed.length + 1,
       );
     });
 
     it('user is not able to click through entire onboarding flow', () => {
-      for (let i = 1; i < steps.length; i++) {
+      for (let i = 1; i < stepsDecisionWindowClosed.length; i++) {
         checkProgressStepperSlimIsCurrentAndClickNext(i, i === 1);
       }
     });

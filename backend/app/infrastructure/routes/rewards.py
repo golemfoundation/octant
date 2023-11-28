@@ -1,7 +1,7 @@
 from flask import current_app as app, request
 from flask_restx import Namespace, fields
 
-from app.controllers import rewards, allocations
+from app.controllers import rewards
 from app.controllers.user import estimate_budget, get_budget
 from app.extensions import api
 from app.infrastructure import OctantResource

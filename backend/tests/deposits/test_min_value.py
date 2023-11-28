@@ -2,7 +2,8 @@ import pytest
 from eth_utils import to_checksum_address
 
 from app import database
-from app.core.deposits.deposits import get_users_deposits, calculate_locked_ratio
+from app.core.deposits.deposits import calculate_locked_ratio
+from app.core.deposits.min_value_strategy import get_users_deposits
 from tests.conftest import (
     USER1_ADDRESS,
     USER2_ADDRESS,

@@ -10,15 +10,15 @@ const ProposalsListItemSkeleton: FC<ProposalsListItemSkeletonProps> = ({ classNa
     <div className={styles.title} />
     <div className={styles.description} />
     <div className={styles.description} />
-    <div className={styles.description} />
+    <div className={cx(styles.description, styles.isLast)} />
     <div className={styles.proposalRewards}>
       <div>
         <div className={styles.row} />
-        <div className={styles.row} />
+        <div className={cx(styles.row, styles.value)} />
       </div>
       <div>
         <div className={styles.row} />
-        <div className={styles.row} />
+        <div className={cx(styles.row, styles.value)} />
       </div>
     </div>
   </div>

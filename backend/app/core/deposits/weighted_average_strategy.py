@@ -1,6 +1,10 @@
 from typing import List, Tuple
+from decimal import Decimal
 
 from app.core.common import UserDeposit
+
+from app.core.epochs.epochs_registry import EpochsRegistry
+from app.core.epochs.details import EpochDetails
 from app.core.deposits.cut_off import apply_weighted_average_cutoff
 from app.core.deposits.events import SubgraphEventsGenerator
 from app.core.deposits.weighted_deposits import (
@@ -41,7 +45,10 @@ def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
             - A list of UserDeposit instances.
             - The total effective deposit.
     """
-    weighted_deposits = get_all_users_weighted_deposits(epoch_no)
+    epoch_settings = EpochsRegistry.get_epoch_settings(epoch_no)
+    weighted_deposits = get_all_users_weighted_deposits(
+        epoch_settings.user_deposits_weights_calculator, epoch_no
+    )
     total_ed = 0
     user_deposits = []
 
@@ -55,9 +62,18 @@ def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
     return user_deposits, total_ed
 
 
-def get_estimated_effective_deposit(start: int, end: int, user_address: str) -> int:
-    event_generator = SubgraphEventsGenerator(start, end)
-    user_deposit_events = get_user_weighted_deposits(event_generator, user_address)
+def get_estimated_effective_deposit(
+    epoch_details: EpochDetails, user_address: str
+) -> int:
+    event_generator = SubgraphEventsGenerator(
+        epoch_details.start_sec, epoch_details.end_sec
+    )
+    calculator = EpochsRegistry.get_epoch_settings(
+        epoch_details.epoch_no
+    ).user_deposits_weights_calculator
+    user_deposit_events = get_user_weighted_deposits(
+        calculator, event_generator, user_address
+    )
     return calculate_effective_deposit(user_deposit_events)
 
 
@@ -72,4 +88,5 @@ def calculate_effective_deposit(deposits: List[WeightedDeposit]) -> int:
         return 0
 
     locked_amount = deposits[-1].amount
-    return apply_weighted_average_cutoff(locked_amount, int(numerator / denominator))
+    effective_deposit = int(Decimal(numerator) / Decimal(denominator))
+    return apply_weighted_average_cutoff(locked_amount, effective_deposit)
