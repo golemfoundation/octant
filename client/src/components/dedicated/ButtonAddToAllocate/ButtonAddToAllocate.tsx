@@ -1,9 +1,11 @@
 import cx from 'classnames';
-import React, { FC, useRef, useEffect } from 'react';
+import { useAnimate } from 'framer-motion';
+import React, { FC, useMemo, useState, memo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Button from 'components/core/Button/Button';
 import Svg from 'components/core/Svg/Svg';
-import { IS_INITIAL_LOAD_DONE } from 'constants/dataAttributes';
+import Tooltip from 'components/core/Tooltip/Tooltip';
 import { checkMark, heart } from 'svg/misc';
 
 import styles from './ButtonAddToAllocate.module.scss';
@@ -17,15 +19,36 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
   isAllocatedTo,
   isArchivedProposal,
 }) => {
-  const ref = useRef<HTMLButtonElement>(null);
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'components.dedicated.buttonAddToAllocate',
+  });
+  const [scope, animate] = useAnimate();
+  const [isTooltipClicked, setIsTooltipClicked] = useState(false);
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
 
-  useEffect(() => {
-    ref?.current?.setAttribute(IS_INITIAL_LOAD_DONE, 'true');
-  }, []);
+  const tooltipText = useMemo(() => {
+    if (isAddedToAllocate && isTooltipClicked) {
+      return t('saved');
+    }
+    if (!isAddedToAllocate && isTooltipClicked) {
+      return t('removed');
+    }
+    if (isAddedToAllocate && !isTooltipClicked) {
+      return t('removeFromAllocate');
+    }
+    return t('saveToAllocate');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAddedToAllocate, isTooltipClicked]);
+
+  const handleTooltipVisibilityChange = (isVisible: boolean) => {
+    setIsTooltipVisible(isVisible);
+    if (!isVisible) {
+      setIsTooltipClicked(false);
+    }
+  };
 
   return (
     <Button
-      ref={ref}
       className={cx(
         styles.root,
         isAddedToAllocate && styles.isAddedToAllocate,
@@ -33,11 +56,28 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
         isArchivedProposal && styles.isArchivedProposal,
         className,
       )}
-      dataParameters={{
-        [IS_INITIAL_LOAD_DONE]: 'false',
-      }}
       dataTest={dataTest}
-      Icon={<Svg img={isAllocatedTo ? checkMark : heart} size={3.2} />}
+      Icon={
+        <Tooltip
+          hideAfterClick
+          isDisabled={isArchivedProposal}
+          onClickCallback={() => {
+            if (isTooltipVisible) {
+              setIsTooltipClicked(true);
+            }
+            animate(scope?.current, { scale: [1.2, 1] }, { duration: 0.25, ease: 'easeIn' });
+          }}
+          onVisibilityChange={handleTooltipVisibilityChange}
+          position="top"
+          showDelay={1000}
+          text={tooltipText}
+          variant="small"
+        >
+          <div ref={scope} className={styles.svgWrapper}>
+            <Svg img={isAllocatedTo ? checkMark : heart} size={3.2} />
+          </div>
+        </Tooltip>
+      }
       isDisabled={isArchivedProposal}
       onClick={onClick}
       variant="iconOnly"
@@ -45,4 +85,4 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
   );
 };
 
-export default ButtonAddToAllocate;
+export default memo(ButtonAddToAllocate);
