@@ -7,5 +7,5 @@ export default interface ProgressBarProps {
   labelLeft?: string;
   labelRight?: string;
   progressPercentage: number;
-  variant?: 'thin' | 'normal';
+  variant?: 'ultraThin' | 'thin' | 'normal';
 }

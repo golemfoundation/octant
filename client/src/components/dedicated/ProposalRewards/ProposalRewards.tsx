@@ -101,11 +101,13 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
     <div className={cx(styles.root, className)} data-test="ProposalRewards">
       {showProgressBar ? (
         <ProgressBar
+          className={styles.progressBar}
           color={isArchivedProposal ? 'grey' : 'orange'}
           progressPercentage={getProgressPercentage(
             totalValueOfAllocations,
             proposalRewardsThreshold,
           )}
+          variant="ultraThin"
         />
       ) : (
         <div className={styles.divider} />
