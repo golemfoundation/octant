@@ -204,14 +204,11 @@ export default function useAppConnectManager(
   }, [isFlushRequired, setIsFlushRequired, queryClient]);
 
   useEffect(() => {
-    if (
-      isDecisionWindowOpen === undefined ||
-      !timeCurrentAllocationEnd ||
-      !timeCurrentEpochEnd ||
-      timeToChangeAllocationWindowStatusIntervalId
-    ) {
-      clearInterval(timeToChangeAllocationWindowStatusIntervalId);
-      timeToChangeAllocationWindowStatusIntervalId = undefined;
+    if (isDecisionWindowOpen === undefined || !timeCurrentAllocationEnd || !timeCurrentEpochEnd) {
+      if (timeToChangeAllocationWindowStatusIntervalId) {
+        clearInterval(timeToChangeAllocationWindowStatusIntervalId);
+        timeToChangeAllocationWindowStatusIntervalId = undefined;
+      }
       return;
     }
     const timestamp = isDecisionWindowOpen ? timeCurrentAllocationEnd : timeCurrentEpochEnd;
