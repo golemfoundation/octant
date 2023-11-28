@@ -204,7 +204,12 @@ export default function useAppConnectManager(
   }, [isFlushRequired, setIsFlushRequired, queryClient]);
 
   useEffect(() => {
-    if (isDecisionWindowOpen === undefined || !timeCurrentAllocationEnd || !timeCurrentEpochEnd) {
+    if (
+      isDecisionWindowOpen === undefined ||
+      !timeCurrentAllocationEnd ||
+      !timeCurrentEpochEnd ||
+      isFlushRequired
+    ) {
       if (timeToChangeAllocationWindowStatusIntervalId) {
         clearInterval(timeToChangeAllocationWindowStatusIntervalId);
         timeToChangeAllocationWindowStatusIntervalId = undefined;
