@@ -40,7 +40,11 @@ const Section: FC<SectionProps> = ({
     >
       {(label || icon) && (
         <div className={cx(styles.label, styles[`variant--${variant}`], labelClassName)}>
-          {icon ? <Svg img={icon} size={4} /> : label}
+          {icon ? (
+            <Svg img={icon} size={4} />
+          ) : (
+            <span data-test={`${dataTest}__label`}>{label}</span>
+          )}
           {labelSuffix && labelSuffix}
           {tooltipProps && (
             <Tooltip {...tooltipProps} childrenClassName={styles.tooltip}>

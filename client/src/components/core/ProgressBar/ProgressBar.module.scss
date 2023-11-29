@@ -21,6 +21,9 @@
   overflow: hidden;
 
   &.variant-- {
+    &ultraThin {
+      height: 0.2rem;
+    }
     &thin {
       height: 0.4rem;
     }

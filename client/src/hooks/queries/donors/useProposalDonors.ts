@@ -1,40 +1,19 @@
 import { UseQueryOptions, UseQueryResult, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 
 import { apiGetProposalDonors, Response } from 'api/calls/poroposalDonors';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useSubscription from 'hooks/helpers/useSubscription';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import { WebsocketListenEvent } from 'types/websocketEvents';
 
-import useCurrentEpoch from './useCurrentEpoch';
-
-type ProposalDonors = {
-  address: string;
-  amount: BigNumber;
-}[];
-
-const mapDataToProposalDonors = (data: Response): ProposalDonors =>
-  data
-    .map(({ address, amount }) => ({
-      address,
-      amount: parseUnits(amount, 'wei'),
-    }))
-    .sort((a, b) => {
-      if (a.amount.gt(b.amount)) {
-        return 1;
-      }
-      if (a.amount.lt(b.amount)) {
-        return -1;
-      }
-      return 0;
-    });
+import { ProposalDonor } from './types';
+import { mapDataToProposalDonors } from './utils';
 
 export default function useProposalDonors(
   proposalAddress: string,
   epoch?: number,
-  options?: UseQueryOptions<Response, unknown, ProposalDonors, any>,
-): UseQueryResult<ProposalDonors> {
+  options?: UseQueryOptions<Response, unknown, ProposalDonor[], any>,
+): UseQueryResult<ProposalDonor[]> {
   const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();
 
@@ -42,6 +21,7 @@ export default function useProposalDonors(
    * Socket returns proposal donors for current epoch only.
    * When hook is called for other epoch, subscribe should not be used.
    */
+  // TODO OCT-1139 check if socket works correctly, update if needed.
   useSubscription<Response>(WebsocketListenEvent.proposalDonors, data => {
     // eslint-disable-next-line chai-friendly/no-unused-expressions
     epoch

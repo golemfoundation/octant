@@ -19,7 +19,7 @@ const GET_LOCKED_SUMMARY_SNAPSHOTS = graphql(`
 `);
 
 type GroupedByDateItem = {
-  cummulativeGlmAmount: number;
+  cumulativeGlmAmount: number;
   dateTime: number;
 };
 

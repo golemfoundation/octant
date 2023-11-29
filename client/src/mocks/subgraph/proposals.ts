@@ -6,6 +6,7 @@ export const mockedProposalATotalValueOfAllocations1: ProposalIpfsWithRewards = 
   address: 'address',
   isLoadingError: false,
   name: 'A',
+  numberOfDonors: 10,
   percentage: 1,
   totalValueOfAllocations: BigNumber.from(1),
 };

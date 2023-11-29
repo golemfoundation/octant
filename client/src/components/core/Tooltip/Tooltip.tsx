@@ -21,24 +21,35 @@ const Tooltip: FC<TooltipProps> = ({
   variant = 'normal',
   tooltipClassName,
   tooltipWrapperClassName,
+  isDisabled = false,
+  hideAfterClick,
+  onVisibilityChange,
+  showDelay,
 }) => {
   const { isDesktop } = useMediaQuery();
   const [isVisible, setIsVisible] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
+  const [delayTimerId, setDelayTimerId] = useState<NodeJS.Timeout | undefined>();
 
-  useEffect(() => {
-    setIsVisible(!!showForce);
-  }, [showForce]);
+  const clearDelayTimer = () => {
+    clearTimeout(delayTimerId);
+    setDelayTimerId(undefined);
+  };
 
   const onClick = async () => {
-    if (onClickCallback) {
-      const shouldSetIsVisible = await onClickCallback();
+    if (delayTimerId) {
+      clearDelayTimer();
+    }
 
-      if (shouldSetIsVisible) {
-        setIsVisible(true);
-        setTimeout(() => {
-          setIsVisible(false);
-        }, 1000);
-      }
+    if (onClickCallback) {
+      onClickCallback();
+    }
+
+    if (hideAfterClick) {
+      setIsClicked(true);
+      setTimeout(() => {
+        setIsVisible(false);
+      }, 1000);
       return;
     }
 
@@ -47,7 +58,23 @@ const Tooltip: FC<TooltipProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (!onVisibilityChange) {
+      return;
+    }
+    onVisibilityChange(isVisible);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVisible]);
+
+  useEffect(() => {
+    setIsVisible(!!showForce);
+  }, [showForce]);
+
   const isTooltipVisible = isVisible || !!showForce;
+
+  if (isDisabled) {
+    return children;
+  }
 
   return (
     <div className={cx(styles.root, styles[`position--${position}`], className)}>
@@ -59,13 +86,29 @@ const Tooltip: FC<TooltipProps> = ({
           if (!isDesktop) {
             return;
           }
+          if (delayTimerId) {
+            clearDelayTimer();
+          }
+          if (hideAfterClick) {
+            setIsClicked(false);
+          }
+
           setIsVisible(false);
         }}
         onMouseOver={() => {
-          if (!isDesktop) {
+          if (!isDesktop || (hideAfterClick && isClicked)) {
             return;
           }
-          setIsVisible(true);
+
+          if (!showDelay) {
+            setIsVisible(true);
+            return;
+          }
+
+          if (showDelay && !delayTimerId) {
+            const timerId = setTimeout(() => setIsVisible(true), showDelay);
+            setDelayTimerId(timerId);
+          }
         }}
       >
         {children}
@@ -90,6 +133,7 @@ const Tooltip: FC<TooltipProps> = ({
                 styles[`variant--${variant}`],
                 tooltipClassName,
               )}
+              data-test={`${dataTest}__content`}
               exit={{ opacity: 0, y: 8 }}
               initial={{ opacity: 0, x: position === 'top' ? '-50%' : '0%', y: 8 }}
             >

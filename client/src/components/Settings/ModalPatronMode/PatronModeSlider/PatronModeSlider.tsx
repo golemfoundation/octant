@@ -33,6 +33,7 @@ const buttonArrowColorStart = styles.colorOctantDark;
 const buttonArrowColorEnd = styles.colorWhite;
 
 const PatronModeSlider: FC<PatronModeSliderProps> = ({ onPatronModeStatusChange }) => {
+  const dataTest = 'PatronModeSlider';
   const queryClient = useQueryClient();
   const { address } = useAccount();
   const { data: isPatronMode } = useIsPatronMode();
@@ -115,13 +116,14 @@ const PatronModeSlider: FC<PatronModeSliderProps> = ({ onPatronModeStatusChange 
   });
 
   return (
-    <motion.div ref={ref} className={styles.root} style={{ backgroundColor }}>
+    <motion.div ref={ref} className={styles.root} data-test={dataTest} style={{ backgroundColor }}>
       <AnimatePresence>
         {isArrowButtonVisible && (
           <motion.div
             key="arrow-button"
             ref={buttonRef}
             className={styles.button}
+            data-test={`${dataTest}__button`}
             drag="x"
             dragConstraints={{ left: constraints[0], right: constraints[1] }}
             dragElastic={false}
@@ -141,9 +143,13 @@ const PatronModeSlider: FC<PatronModeSliderProps> = ({ onPatronModeStatusChange 
                 return;
               }
 
+              const shouldAnimateButtonToTheLeftEdge = isPatronMode
+                ? xPosition < constraints[1] / 2
+                : xPosition <= constraints[1] / 2;
+
               animateButton(
                 buttonRef.current,
-                { x: xPosition <= constraints[1] / 2 ? constraints[0] : constraints[1] },
+                { x: shouldAnimateButtonToTheLeftEdge ? constraints[0] : constraints[1] },
                 {
                   bounce: 0,
                   bounceDamping: 0,
@@ -163,9 +169,11 @@ const PatronModeSlider: FC<PatronModeSliderProps> = ({ onPatronModeStatusChange 
                 styles.arrowRightSvg,
                 isPatronModeEnabled && styles.isPatronModeEnabled,
               )}
+              data-test={`${dataTest}__button__arrow`}
             >
               <motion.path
                 d="m7.99 13.253-1.278-1.264 4.439-4.44H0V5.704h11.15L6.713 1.271 7.99 0l6.627 6.627-6.627 6.626Z"
+                data-test={`${dataTest}__button__arrow__path`}
                 style={{ fill: buttonArrowColor }}
               />
             </svg>
@@ -175,6 +183,7 @@ const PatronModeSlider: FC<PatronModeSliderProps> = ({ onPatronModeStatusChange 
           <motion.div
             key="slider-info-label"
             className={styles.label}
+            data-test={`${dataTest}__label`}
             style={{ opacity: labelOpacity }}
           >
             {isPatronModeEnabled ? t('slideLeftToConfirm') : t('slideRightToConfirm')}
@@ -184,6 +193,7 @@ const PatronModeSlider: FC<PatronModeSliderProps> = ({ onPatronModeStatusChange 
             key="patron-mode-status-label"
             animate={{ opacity: 1 }}
             className={styles.patronModeLabel}
+            data-test={`${dataTest}__status-label`}
             initial={{ opacity: 0 }}
             transition={{ duration: 0.1, ease: 'easeIn' }}
           >

@@ -27,6 +27,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
       variant = 'simple',
       suffixClassName,
       showLoader = false,
+      dataTest = 'InputText',
       shouldAutoFocusAndSelect = true,
       ...rest
     },
@@ -52,6 +53,8 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
         suffix && styles.hasSuffix,
         styles.className,
       ),
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      'data-test': dataTest,
       disabled: isDisabled,
       onChange,
       ref: ref || localRef,
@@ -101,10 +104,14 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
                 variant="iconOnly2"
               />
             )}
-            {showLoader && <Loader className={styles.loader} />}
+            {showLoader && <Loader className={styles.loader} dataTest={`${dataTest}__Loader`} />}
             {suffix && <div {...suffixProps}>{suffix}</div>}
           </div>
-          {error && isErrorInlineVisible && <div className={styles.error}>{error}</div>}
+          {error && isErrorInlineVisible && (
+            <div className={styles.error} data-test={`${dataTest}__error`}>
+              {error}
+            </div>
+          )}
         </label>
       </div>
     );

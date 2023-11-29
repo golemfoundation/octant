@@ -38,6 +38,7 @@ const MetricsTotalEthStaked: FC<MetricsTotalEthStakedProps> = ({ isLoading = fal
 
   return (
     <MetricsGridTile
+      dataTest="MetricsTotalEthStaked"
       groups={[
         {
           children: (

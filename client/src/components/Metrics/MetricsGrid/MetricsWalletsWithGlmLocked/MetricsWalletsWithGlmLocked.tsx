@@ -33,6 +33,7 @@ const MetricsWalletsWithGlmLocked: FC = () => {
 
   return (
     <MetricsGridTile
+      dataTest="MetricsWalletsWithGlmLocked"
       groups={[
         {
           children: (

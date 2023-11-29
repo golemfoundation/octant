@@ -1,0 +1,7 @@
+.root {
+  // Identicon fix for safari, safari mobile and Metamask browser on IOS (default width and height is 0px).
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
