@@ -5,9 +5,9 @@ import React, { Fragment, ReactElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
-import AllocateRewardsBox from 'components/Allocation/AllocateRewardsBox';
 import AllocationItem from 'components/Allocation/AllocationItem';
 import AllocationNavigation from 'components/Allocation/AllocationNavigation';
+import AllocationRewardsBox from 'components/Allocation/AllocationRewardsBox';
 import AllocationSummary from 'components/Allocation/AllocationSummary';
 import AllocationTipTiles from 'components/Allocation/AllocationTipTiles';
 import ModalAllocationValuesEdit from 'components/Allocation/ModalAllocationValuesEdit';
@@ -349,7 +349,7 @@ const AllocationView = (): ReactElement => {
         <Fragment>
           <AllocationTipTiles className={styles.box} />
           {!isEpoch1 && (
-            <AllocateRewardsBox
+            <AllocationRewardsBox
               className={styles.box}
               isDisabled={isLocked || !isDecisionWindowOpen || !hasUserIndividualReward}
               /* eslint-disable-next-line @typescript-eslint/naming-convention */

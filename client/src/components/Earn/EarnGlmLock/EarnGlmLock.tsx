@@ -5,10 +5,10 @@ import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount, useWalletClient, usePublicClient, useWaitForTransaction } from 'wagmi';
 
-import EarnGlmLockBudget from 'components/Earn/EarnGlmLockBudget';
-import EarnGlmLockNotification from 'components/Earn/EarnGlmLockNotification';
-import EarnGlmLockStepper from 'components/Earn/EarnGlmLockStepper';
-import EarnGlmLockTabs from 'components/Earn/EarnGlmLockTabs';
+import EarnGlmLockBudget from 'components/Earn/EarnGlmLock/EarnGlmLockBudget';
+import EarnGlmLockNotification from 'components/Earn/EarnGlmLock/EarnGlmLockNotification';
+import EarnGlmLockStepper from 'components/Earn/EarnGlmLock/EarnGlmLockStepper';
+import EarnGlmLockTabs from 'components/Earn/EarnGlmLock/EarnGlmLockTabs';
 import env from 'env';
 import { writeContractERC20 } from 'hooks/contracts/writeContracts';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';

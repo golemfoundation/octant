@@ -4,9 +4,9 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Link, useLocation, useMatch } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
-import LayoutNavbar from 'components/shared/LayoutNavbar';
-import ModalLayoutConnectWallet from 'components/shared/ModalLayoutConnectWallet';
-import ModalLayoutWallet from 'components/shared/ModalLayoutWallet';
+import LayoutNavbar from 'components/shared/Layout/LayoutNavbar';
+import ModalLayoutConnectWallet from 'components/shared/Layout/ModalLayoutConnectWallet';
+import ModalLayoutWallet from 'components/shared/Layout/ModalLayoutWallet';
 import Button from 'components/ui/Button';
 import Loader from 'components/ui/Loader';
 import Svg from 'components/ui/Svg';

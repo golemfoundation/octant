@@ -2,8 +2,8 @@ import cx from 'classnames';
 import React, { FC, Fragment, memo } from 'react';
 import { useAccount } from 'wagmi';
 
-import AllocationItemRewards from 'components/Allocation/AllocationItem/AllocationItemRewards';
-import AllocationItemSkeleton from 'components/Allocation/AllocationItem/AllocationItemSkeleton';
+import AllocationItemRewards from 'components/Allocation/AllocationItemRewards';
+import AllocationItemSkeleton from 'components/Allocation/AllocationItemSkeleton';
 import BoxRounded from 'components/ui/BoxRounded';
 import Img from 'components/ui/Img';
 import Svg from 'components/ui/Svg';

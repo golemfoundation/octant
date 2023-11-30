@@ -2,7 +2,7 @@ import React, { ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 
-import ProposalsList from 'components/Proposals/ProposalsList/ProposalsList';
+import ProposalsList from 'components/Proposals/ProposalsList';
 import Layout from 'components/shared/Layout';
 import TipTile from 'components/shared/TipTile';
 import Loader from 'components/ui/Loader';

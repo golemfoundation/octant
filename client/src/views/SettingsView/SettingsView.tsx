@@ -2,7 +2,7 @@ import React, { Fragment, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
-import ModalPatronMode from 'components/Settings/ModalPatronMode/ModalPatronMode';
+import ModalSettingsPatronMode from 'components/Settings/ModalSettingsPatronMode';
 import Layout from 'components/shared/Layout';
 import BoxRounded from 'components/ui/BoxRounded';
 import Button from 'components/ui/Button';
@@ -175,7 +175,7 @@ const SettingsView = (): ReactElement => {
           </BoxRounded>
         </Fragment>
       )}
-      <ModalPatronMode
+      <ModalSettingsPatronMode
         modalProps={{
           isOpen: isPatronModeModalOpen,
           onClosePanel: () => setIsPatronModeModalOpen(false),

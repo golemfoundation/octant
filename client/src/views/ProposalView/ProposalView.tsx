@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 
-import Donors from 'components/Proposal/ProposalDonors/ProposalDonors';
+import Donors from 'components/Proposal/ProposalDonors';
 import ButtonAddToAllocate from 'components/shared/ButtonAddToAllocate';
 import Layout from 'components/shared/Layout';
 import Rewards from 'components/shared/Rewards';

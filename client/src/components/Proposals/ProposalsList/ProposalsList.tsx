@@ -3,8 +3,8 @@ import { format, isSameYear } from 'date-fns';
 import React, { FC, memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import ProposalsListItem from 'components/Proposals/ProposalsList/ProposalsListItem';
-import ProposalsListSkeletonItem from 'components/Proposals/ProposalsList/ProposalsListSkeletonItem';
+import ProposalsListItem from 'components/Proposals/ProposalsListItem';
+import ProposalsListSkeletonItem from 'components/Proposals/ProposalsListSkeletonItem';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
