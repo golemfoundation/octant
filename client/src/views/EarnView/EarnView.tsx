@@ -6,6 +6,7 @@ import { useAccount } from 'wagmi';
 import EarnBoxGlmLock from 'components/Earn/EarnBoxGlmLock';
 import EarnBoxPersonalAllocation from 'components/Earn/EarnBoxPersonalAllocation';
 import EarnHistory from 'components/Earn/EarnHistory';
+import Layout from 'components/shared/Layout';
 import TimeCounter from 'components/shared/TimeCounter';
 import TipTile from 'components/shared/TipTile';
 import BoxRounded from 'components/ui/BoxRounded';
@@ -13,7 +14,6 @@ import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useWithdrawals from 'hooks/queries/useWithdrawals';
-import MainLayout from 'layouts/MainLayout/MainLayout';
 import useTipsStore from 'store/tips/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
@@ -64,7 +64,7 @@ const EarnView = (): ReactElement => {
   const duration = preLaunchEndTimestamp - preLaunchStartTimestamp;
 
   return (
-    <MainLayout dataTest="EarnView">
+    <Layout dataTest="EarnView">
       <TipTile
         dataTest="EarnView__TipTile--connectWallet"
         image="images/tip-connect-wallet.webp"
@@ -102,7 +102,7 @@ const EarnView = (): ReactElement => {
         </div>
         <EarnHistory className={styles.column} />
       </div>
-    </MainLayout>
+    </Layout>
   );
 };
 

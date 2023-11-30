@@ -2,13 +2,13 @@ import React, { ReactElement } from 'react';
 
 import MetricsGrid from 'components/Metrics/MetricsGrid/MetricsGrid';
 import MetricsTipTile from 'components/Metrics/MetricsTipTile/MetricsTipTile';
-import MainLayout from 'layouts/MainLayout/MainLayout';
+import Layout from 'components/shared/Layout';
 
 const MetricsView = (): ReactElement => (
-  <MainLayout dataTest="MetricsView">
+  <Layout dataTest="MetricsView">
     <MetricsTipTile />
     <MetricsGrid />
-  </MainLayout>
+  </Layout>
 );
 
 export default MetricsView;

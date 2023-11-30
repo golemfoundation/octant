@@ -2,7 +2,7 @@ import cx from 'classnames';
 import React, { FC, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 
-import ProjectAllocationDetailRow from 'components/dedicated/ProjectAllocationDetailRow/ProjectAllocationDetailRow';
+import ProjectAllocationDetailRow from 'components/shared/ProjectAllocationDetailRow';
 import BoxRounded from 'components/ui/BoxRounded';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/ui/BoxRounded/Sections/types';

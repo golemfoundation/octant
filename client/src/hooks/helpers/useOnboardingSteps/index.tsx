@@ -2,10 +2,10 @@ import { formatUnits } from 'ethers/lib/utils';
 import React, { Fragment } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
-import ButtonClaimGlm from 'components/dedicated/ButtonClaimGlm/ButtonGlmClaim';
-import styles from 'components/dedicated/ModalOnboarding/ModalOnboarding.module.scss';
-import { Step } from 'components/dedicated/ModalOnboarding/types';
-import TOS from 'components/dedicated/TOS/TOS';
+import styles from 'components/shared/ModalOnboarding/ModalOnboarding.module.scss';
+import { Step } from 'components/shared/ModalOnboarding/types';
+import ModalOnboardingButtonClaimGlm from 'components/shared/ModalOnboardingButtonClaimGlm';
+import ModalOnboardingTOS from 'components/shared/ModalOnboardingTOS';
 import useGlmClaim from 'hooks/mutations/useGlmClaim';
 import useGlmClaimCheck from 'hooks/queries/useGlmClaimCheck';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -42,7 +42,7 @@ const useOnboardingSteps = (
             text: (
               <Fragment>
                 <div>{i18n.t('views.onboarding.stepsCommon.usingTheApp.text')}</div>
-                <TOS />
+                <ModalOnboardingTOS />
               </Fragment>
             ),
           },
@@ -62,7 +62,7 @@ const useOnboardingSteps = (
                     value: parseInt(formatUnits(glmClaimCheck.value), 10).toString(),
                   }}
                 />
-                <ButtonClaimGlm
+                <ModalOnboardingButtonClaimGlm
                   className={styles.buttonClaimGlm}
                   glmClaimMutation={glmClaimMutation}
                 />

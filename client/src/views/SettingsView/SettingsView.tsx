@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import ModalPatronMode from 'components/Settings/ModalPatronMode/ModalPatronMode';
+import Layout from 'components/shared/Layout';
 import BoxRounded from 'components/ui/BoxRounded';
 import Button from 'components/ui/Button';
 import InputSelect from 'components/ui/InputSelect';
@@ -14,7 +15,6 @@ import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
-import MainLayout from 'layouts/MainLayout/MainLayout';
 import useSettingsStore from 'store/settings/store';
 import { SettingsData } from 'store/settings/types';
 import { octantWordmark } from 'svg/logo';
@@ -63,7 +63,7 @@ const SettingsView = (): ReactElement => {
   const isProjectAdminMode = useIsProjectAdminMode();
 
   return (
-    <MainLayout dataTest="SettingsView">
+    <Layout dataTest="SettingsView">
       {!isProjectAdminMode && (
         <BoxRounded
           alignment="left"
@@ -181,7 +181,7 @@ const SettingsView = (): ReactElement => {
           onClosePanel: () => setIsPatronModeModalOpen(false),
         }}
       />
-    </MainLayout>
+    </Layout>
   );
 };
 

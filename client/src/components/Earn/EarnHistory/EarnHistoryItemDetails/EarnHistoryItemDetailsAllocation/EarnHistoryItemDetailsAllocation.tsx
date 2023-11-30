@@ -2,8 +2,8 @@ import { BigNumber } from 'ethers';
 import React, { FC, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import ProjectAllocationDetailRow from 'components/dedicated/ProjectAllocationDetailRow/ProjectAllocationDetailRow';
 import EarnHistoryItemDateAndTime from 'components/Earn/EarnHistory/EarnHistoryItemDetails/EarnHistoryItemDateAndTime';
+import ProjectAllocationDetailRow from 'components/shared/ProjectAllocationDetailRow';
 import BoxRounded from 'components/ui/BoxRounded';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
