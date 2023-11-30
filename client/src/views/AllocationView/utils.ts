@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 
-import { AllocationItemWithAllocations } from 'components/dedicated/AllocationItem/types';
+import { AllocationItemWithAllocations } from 'components/Allocation/AllocationItem/types';
 import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
 import { UserAllocationElement } from 'hooks/queries/useUserAllocations';
 import getSortedElementsByTotalValueOfAllocationsAndAlphabetical from 'utils/getSortedElementsByTotalValueOfAllocationsAndAlphabetical';

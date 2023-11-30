@@ -64,6 +64,12 @@
       }
     },
     "dedicated": {
+      "buttonAddToAllocate": {
+        "saveToAllocate": "Save to allocate",
+        "saved": "Saved",
+        "removeFromAllocate": "Remove from allocate",
+        "removed": "Removed"
+      },
       "rewardsCalculator": {
         "enterGLMAmount": "Enter a GLM amount",
         "lockFor": "Lock for",

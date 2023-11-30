@@ -1,0 +1,34 @@
+.root {
+  z-index: $z-index-4;
+
+  &:not(.isAllocatedTo) {
+    &.isAddedToAllocate {
+      svg path {
+        stroke: $color-octant-orange;
+        fill: $color-octant-orange;
+      }
+    }
+  }
+
+  .svgWrapper {
+    display: flex;
+  }
+
+  &.isArchivedProposal {
+    &:hover {
+      background: transparent;
+      cursor: default;
+    }
+
+    svg path {
+      stroke: $color-octant-grey1;
+    }
+
+    &.isAllocatedTo {
+      svg circle {
+        stroke: $color-octant-grey5;
+        fill: $color-octant-grey5;
+      }
+    }
+  }
+}
