@@ -1,5 +1,6 @@
 import React, { Fragment, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
 
 import BoxRounded from 'components/core/BoxRounded/BoxRounded';
 import Button from 'components/core/Button/Button';
@@ -35,6 +36,7 @@ const SettingsView = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
   const { isDesktop } = useMediaQuery();
   const { data: currentEpoch } = useCurrentEpoch();
+  const { isConnected } = useAccount();
   const {
     setDisplayCurrency,
     setIsAllocateOnboardingAlwaysVisible,
@@ -117,7 +119,7 @@ const SettingsView = (): ReactElement => {
           onChange={({ target: { checked: isChecked } }) => setIsCryptoMainValueDisplay(isChecked)}
         />
       </BoxRounded>
-      {!isProjectAdminMode && (
+      {isConnected && !isProjectAdminMode && (
         <BoxRounded
           className={styles.box}
           hasPadding={false}
@@ -126,7 +128,11 @@ const SettingsView = (): ReactElement => {
         >
           <div className={styles.patronMode}>
             {t('enablePatronMode')}
-            <Tooltip position="bottom-right" text={t('patronModeTooltip')}>
+            <Tooltip
+              dataTest="Tooltip__patronMode"
+              position="bottom-right"
+              text={t('patronModeTooltip')}
+            >
               <Svg
                 classNameWrapper={styles.patronModeQuestionMarkWrapper}
                 displayMode="wrapperDefault"

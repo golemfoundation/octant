@@ -56,6 +56,7 @@ const MetricsTotalGlmLockedAndTotalSupply: FC<MetricsTotalGlmLockedAndTotalSuppl
 
   return (
     <MetricsGridTile
+      dataTest="MetricsTotalGlmLockedAndTotalSupply"
       groups={[
         {
           children: (

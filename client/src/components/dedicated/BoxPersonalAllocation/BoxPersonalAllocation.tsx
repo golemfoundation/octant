@@ -43,6 +43,7 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
     ...(!isProjectAdminMode
       ? [
           {
+            dataTest: 'BoxPersonalAllocation__Section',
             doubleValueProps: {
               cryptoCurrency: 'ethereum',
               isFetching: isFetchingWithdrawals,
@@ -79,6 +80,7 @@ const BoxPersonalAllocation: FC<BoxPersonalAllocationProps> = ({ className }) =>
         ]
       : []),
     {
+      dataTest: 'BoxPersonalAllocation__Section',
       doubleValueProps: {
         coinPricesServerDowntimeText: !isProjectAdminMode ? '...' : undefined,
         cryptoCurrency: 'ethereum',

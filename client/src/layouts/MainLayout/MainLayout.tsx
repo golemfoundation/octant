@@ -10,7 +10,7 @@ import Svg from 'components/core/Svg/Svg';
 import ModalConnectWallet from 'components/dedicated/ModalConnectWallet/ModalConnectWallet';
 import Navbar from 'components/dedicated/Navbar/Navbar';
 import WalletModal from 'components/dedicated/WalletModal/WalletModal';
-import { ELEMENT_POSITION_FIXED_CLASSNAME, ELEMENT_OVERFLOW_HIDDEN_CLASSNAME } from 'constants/css';
+import { ELEMENT_POSITION_FIXED_CLASSNAME } from 'constants/css';
 import {
   adminNavigationTabs,
   navigationTabs as navigationTabsDefault,
@@ -151,6 +151,7 @@ const MainLayout: FC<MainLayoutProps> = ({
                                 styles.badge,
                                 isProjectAdminMode && styles.isProjectAdminMode,
                               )}
+                              data-test="ProfileInfo__badge"
                             >
                               {isProjectAdminMode ? t('admin') : t('patron')}
                             </div>
@@ -227,7 +228,6 @@ const MainLayout: FC<MainLayoutProps> = ({
             styles.body,
             isLoading && styles.isLoading,
             !!navigationBottomSuffix && styles.isNavigationBottomSuffix,
-            ELEMENT_OVERFLOW_HIDDEN_CLASSNAME,
             classNameBody,
           )}
         >

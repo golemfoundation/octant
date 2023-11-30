@@ -3,7 +3,7 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { sortBy, uniq } from 'lodash';
 
 export type GroupedGlmAmountByDateItem = {
-  cummulativeGlmAmount: number;
+  cumulativeGlmAmount: number;
   dateTime: number;
 };
 
@@ -32,7 +32,7 @@ const getMetricsChartDataGroupedByDate = (
             }
           : {
               // formatting from WEI to GLM (int)
-              cummulativeGlmAmount: parseFloat(formatUnits(parseUnits(curr.lockedTotal, 'wei'))),
+              cumulativeGlmAmount: parseFloat(formatUnits(parseUnits(curr.lockedTotal, 'wei'))),
             }),
       });
       return acc;
@@ -44,7 +44,7 @@ const getMetricsChartDataGroupedByDate = (
     } else {
       // formatting from WEI to GLM (int)
       // eslint-disable-next-line operator-assignment
-      acc[idx].cummulativeGlmAmount = parseFloat(formatUnits(parseUnits(curr.lockedTotal, 'wei')));
+      acc[idx].cumulativeGlmAmount = parseFloat(formatUnits(parseUnits(curr.lockedTotal, 'wei')));
     }
 
     return acc;

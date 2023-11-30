@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
-import useProposalDonors from 'hooks/queries/useProposalDonors';
+import useProposalDonors from 'hooks/queries/donors/useProposalDonors';
 
 import styles from './DonorsHeader.module.scss';
 import DonorsHeaderProps from './types';

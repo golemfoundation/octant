@@ -17,8 +17,7 @@ const BudgetBox: FC<BudgetBoxProps> = ({
   isCurrentlyLockedError,
 }) => {
   const { data: depositsValue, isFetching: isFetchingDepositValue } = useDepositValue();
-  const { data: availableFundsGlm, isFetching: isFetchingAvailableFundsGlm } =
-    useAvailableFundsGlm();
+  const { data: availableFundsGlm, isFetched: isFetchedAvailableFundsGlm } = useAvailableFundsGlm();
 
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.budgetBox',
@@ -47,7 +46,7 @@ const BudgetBox: FC<BudgetBoxProps> = ({
       </div>
       <div className={styles.budgetRow}>
         <div className={styles.budgetLabel}>{t('walletBalance')}</div>
-        {isFetchingAvailableFundsGlm ? (
+        {!isFetchedAvailableFundsGlm ? (
           <div className={styles.skeleton} />
         ) : (
           <div className={cx(styles.budgetValue, isWalletBalanceError && styles.isError)}>

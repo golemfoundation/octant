@@ -74,11 +74,13 @@
       background: $color-octant-grey10;
     }
     &small {
-      width: 6.4rem;
+      min-width: 6.4rem;
       height: 2.4rem;
       font-size: $font-size-10;
       border-radius: $border-radius-04;
       background: $color-octant-dark;
+      white-space: nowrap;
+      padding: 0 0.8rem;
     }
   }
 

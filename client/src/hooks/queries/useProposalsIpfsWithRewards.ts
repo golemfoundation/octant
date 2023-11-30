@@ -3,12 +3,14 @@ import { BigNumber } from 'ethers';
 import { ExtendedProposal } from 'types/extended-proposal';
 import getSortedElementsByTotalValueOfAllocationsAndAlphabetical from 'utils/getSortedElementsByTotalValueOfAllocationsAndAlphabetical';
 
+import useProposalsDonors from './donors/useProposalsDonors';
 import useMatchedProposalRewards from './useMatchedProposalRewards';
 import useProposalsContract from './useProposalsContract';
 import useProposalsIpfs from './useProposalsIpfs';
 
 export interface ProposalIpfsWithRewards extends ExtendedProposal {
   address: string;
+  numberOfDonors: number;
   percentage: number | undefined;
   totalValueOfAllocations: BigNumber | undefined;
 }
@@ -23,21 +25,45 @@ export default function useProposalsIpfsWithRewards(epoch?: number): {
     useProposalsIpfs(proposalsAddresses);
   const { data: matchedProposalRewards, isFetching: isFetchingMatchedProposalRewards } =
     useMatchedProposalRewards(epoch);
+  const { data: proposalsDonors, isFetching: isFetchingProposalsDonors } =
+    useProposalsDonors(epoch);
+
+  const isFetching =
+    isFetchingProposalsContract ||
+    isFetchingProposalsIpfs ||
+    isFetchingMatchedProposalRewards ||
+    isFetchingProposalsDonors;
+  if (isFetching) {
+    return {
+      data: [],
+      isFetching,
+    };
+  }
 
   const proposalsWithRewards = (proposalsIpfs || []).map(proposal => {
     const proposalMatchedProposalRewards = matchedProposalRewards?.find(
       ({ address }) => address === proposal.address,
     );
+    /**
+     * For epochs finalized proposalMatchedProposalRewards contains data only for projects that
+     * passed threshold. For those that did not, we reduce on their donors and get the value.
+     */
+    const totalValueOfAllocations =
+      proposalMatchedProposalRewards?.sum ||
+      proposalsDonors[proposal.address].reduce(
+        (acc, curr) => acc.add(curr.amount),
+        BigNumber.from(0),
+      );
     return {
+      numberOfDonors: proposalsDonors[proposal.address].length,
       percentage: proposalMatchedProposalRewards?.percentage,
-      totalValueOfAllocations: proposalMatchedProposalRewards?.sum,
+      totalValueOfAllocations,
       ...proposal,
     };
   });
 
   return {
     data: getSortedElementsByTotalValueOfAllocationsAndAlphabetical(proposalsWithRewards),
-    isFetching:
-      isFetchingProposalsContract || isFetchingProposalsIpfs || isFetchingMatchedProposalRewards,
+    isFetching,
   };
 }

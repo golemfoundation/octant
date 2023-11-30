@@ -238,6 +238,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=ModalOnboarding__ProgressStepperSlim__element]')
         .eq(stepsDecisionWindowClosed.length - 1)
         .click();
+      cy.get('[data-test=ModalOnboarding__Button]').click();
+      cy.get('[data-test=ModalOnboarding]').should('not.exist');
       cy.get('[data-test=ProposalsView__ProposalsList]').should('be.visible');
     });
 

@@ -6,6 +6,7 @@ export type InputTextVariant = (typeof INPUT_TEXT_VARIANTS)[number];
 export default interface InputTextProps {
   autocomplete?: string;
   className?: string;
+  dataTest?: string;
   error?: string;
   inputMode?: HTMLAttributes<HTMLInputElement>['inputMode'];
   isButtonClearVisible?: boolean;

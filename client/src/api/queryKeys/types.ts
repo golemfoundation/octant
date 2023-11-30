@@ -1,6 +1,7 @@
 import { SettingsData } from 'store/settings/types';
 
 export type Root = {
+  calculateRewards: 'calculateRewards';
   cryptoValues: 'cryptoValues';
   depositAt: 'depositAt';
   epochTimestampHappenedIn: 'epochTimestampHappenedIn';
@@ -20,7 +21,7 @@ export type Root = {
 
 export type QueryKeys = {
   blockNumber: ['blockNumber'];
-  calculateRewards: (amount: string, days: number) => ['calculateRewards', string, string];
+  calculateRewards: (amount: string, days: number) => [Root['calculateRewards'], string, string];
   cryptoValues: (
     fiatCurrency: NonNullable<SettingsData['displayCurrency']>,
   ) => [Root['cryptoValues'], NonNullable<SettingsData['displayCurrency']>];

@@ -49,6 +49,7 @@ const MetricsLargestGlmLock: FC<MetricsLargestGlmLockProps> = ({ isLoading = fal
 
   return (
     <MetricsGridTile
+      dataTest="MetricsLargestGlmLock"
       groups={[
         {
           children: (

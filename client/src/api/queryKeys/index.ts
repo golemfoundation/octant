@@ -1,6 +1,7 @@
 import { Root, QueryKeys } from './types';
 
 export const ROOTS: Root = {
+  calculateRewards: 'calculateRewards',
   cryptoValues: 'cryptoValues',
   depositAt: 'depositAt',
   epochTimestampHappenedIn: 'epochTimestampHappenedIn',
@@ -20,7 +21,7 @@ export const ROOTS: Root = {
 
 export const QUERY_KEYS: QueryKeys = {
   blockNumber: ['blockNumber'],
-  calculateRewards: (amount, days) => ['calculateRewards', amount, days.toString()],
+  calculateRewards: (amount, days) => [ROOTS.calculateRewards, amount, days.toString()],
   cryptoValues: fiatCurrency => [ROOTS.cryptoValues, fiatCurrency],
   currentEpoch: ['currentEpoch'],
   currentEpochEnd: ['currentEpochEnd'],
@@ -52,7 +53,7 @@ export const QUERY_KEYS: QueryKeys = {
   syncStatus: ['syncStatus'],
   totalAddresses: ['totalAddresses'],
   unlocks: ['unlocks'],
-  userAllocationNonce: userAddress => ['userAllocationNonce', userAddress],
+  userAllocationNonce: userAddress => [ROOTS.userAllocationNonce, userAddress],
   userAllocations: epochNumber => [ROOTS.userAllocations, epochNumber.toString()],
   userTOS: userAddress => [ROOTS.userTOS, userAddress],
   withdrawals: ['withdrawals'],

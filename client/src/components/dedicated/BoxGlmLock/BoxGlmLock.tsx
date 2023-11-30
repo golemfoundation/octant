@@ -88,6 +88,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
         title={t('lockedBalance')}
         titleSuffix={
           <Tooltip
+            dataTest="Tooltip__rewardsCalculator"
             shouldShowOnClickMobile={false}
             text={i18n.t('common.calculateRewards')}
             tooltipClassName={styles.tooltip}
@@ -95,6 +96,7 @@ const BoxGlmLock: FC<BoxGlmLockProps> = ({ classNameBox }) => {
           >
             <div
               className={styles.calculateRewards}
+              data-test="Tooltip__rewardsCalculator__body"
               onClick={() => setIsModalRewardsCalculatorOpen(true)}
             >
               <Svg img={calculator} size={2.4} />

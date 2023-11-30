@@ -25,7 +25,7 @@ const ProposalsList: FC<ProposalsListProps> = ({
   const { isDesktop } = useMediaQuery();
 
   const { data: proposalsAddresses } = useProposalsContract(epoch);
-  const { data: proposalsWithRewards, isFetching: isFetchingProposalsWithRewards } =
+  const { data: proposalsIpfsWithRewards, isFetching: isFetchingProposalsWithRewards } =
     useProposalsIpfsWithRewards(epoch);
   const { data: epochsStartEndTime } = useEpochsStartEndTime();
 
@@ -79,10 +79,10 @@ const ProposalsList: FC<ProposalsListProps> = ({
           </div>
         </>
       )}
-      {proposalsWithRewards.length > 0 && !isFetchingProposalsWithRewards
-        ? proposalsWithRewards.map((proposalWithRewards, index) => (
+      {proposalsIpfsWithRewards.length > 0 && !isFetchingProposalsWithRewards
+        ? proposalsIpfsWithRewards.map((proposalIpfsWithRewards, index) => (
             <ProposalsListItem
-              key={proposalWithRewards.address}
+              key={proposalIpfsWithRewards.address}
               className={styles.element}
               dataTest={
                 epoch
@@ -90,7 +90,7 @@ const ProposalsList: FC<ProposalsListProps> = ({
                   : `ProposalsView__ProposalsListItem--${index}`
               }
               epoch={epoch}
-              {...proposalWithRewards}
+              proposalIpfsWithRewards={proposalIpfsWithRewards}
             />
           ))
         : (proposalsAddresses || []).map((_, index) => (

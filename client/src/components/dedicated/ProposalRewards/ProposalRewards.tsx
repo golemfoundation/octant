@@ -1,13 +1,9 @@
 import cx from 'classnames';
-import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ProgressBar from 'components/core/ProgressBar/ProgressBar';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
-import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
-import useProposalDonors from 'hooks/queries/useProposalDonors';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
@@ -20,6 +16,8 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
   className,
   epoch,
   isProposalView,
+  numberOfDonors,
+  totalValueOfAllocations,
 }) => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.proposalRewards',
@@ -29,40 +27,23 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
 
   const { data: proposalRewardsThreshold, isFetching: isFetchingProposalRewardsThreshold } =
     useProposalRewardsThreshold(epoch);
-  const { data: matchedProposalRewards, isFetching: isFetchingMatchedProposalRewards } =
-    useMatchedProposalRewards(epoch);
-  const { data: proposalDonors, isFetching: isFetchingProposalDonors } = useProposalDonors(
-    address,
-    epoch,
-  );
-  const proposalMatchedProposalRewards = matchedProposalRewards?.find(
-    ({ address: proposalAddress }) => address === proposalAddress,
-  );
-
-  const proposalDonorsRewardsSum = isArchivedProposal
-    ? proposalDonors?.reduce(
-        (acc, curr) => acc.add(formatUnits(curr.amount, 'wei')),
-        BigNumber.from(0),
-      )
-    : proposalMatchedProposalRewards?.sum;
-
   const isDonationAboveThreshold = useIsDonationAboveThreshold(address, epoch);
 
   const totalValueOfAllocationsToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
     shouldIgnoreGwei: true,
-    valueCrypto: proposalMatchedProposalRewards?.sum,
+    valueCrypto: totalValueOfAllocations,
   });
 
   const proposalDonorsRewardsSumToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
-    valueCrypto: proposalDonorsRewardsSum,
+    valueCrypto: totalValueOfAllocations,
   });
 
   const showProgressBar =
     !isDonationAboveThreshold &&
     proposalRewardsThreshold !== undefined &&
-    proposalDonorsRewardsSum !== undefined;
+    totalValueOfAllocations !== undefined;
 
   const leftSectionLabel = useMemo(() => {
     if (isDonationAboveThreshold && !isArchivedProposal) {
@@ -97,7 +78,7 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
     isDonationAboveThreshold,
     isProposalView,
     epoch,
-    proposalDonors?.length,
+    numberOfDonors,
     proposalRewardsThreshold?.toHexString(),
   ];
 
@@ -106,7 +87,7 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
       return t('epoch', { epoch });
     }
     if (isDonationAboveThreshold && isArchivedProposal) {
-      return proposalDonors?.length;
+      return numberOfDonors;
     }
     return getValueCryptoToDisplay({
       cryptoCurrency: 'ethereum',
@@ -115,19 +96,18 @@ const ProposalRewards: FC<ProposalRewardsProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, rightSectionValueUseMemoDeps);
 
-  const isFetching =
-    isFetchingProposalRewardsThreshold ||
-    isFetchingMatchedProposalRewards ||
-    isFetchingProposalDonors;
+  const isFetching = isFetchingProposalRewardsThreshold;
   return (
     <div className={cx(styles.root, className)} data-test="ProposalRewards">
       {showProgressBar ? (
         <ProgressBar
+          className={styles.progressBar}
           color={isArchivedProposal ? 'grey' : 'orange'}
           progressPercentage={getProgressPercentage(
-            proposalDonorsRewardsSum,
+            totalValueOfAllocations,
             proposalRewardsThreshold,
           )}
+          variant="ultraThin"
         />
       ) : (
         <div className={styles.divider} />
