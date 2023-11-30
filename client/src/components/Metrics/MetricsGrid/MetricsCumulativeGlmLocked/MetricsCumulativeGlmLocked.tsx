@@ -3,9 +3,9 @@ import { maxBy } from 'lodash';
 import React, { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import AreaChart from 'components/core/AreaChart/AreaChart';
 import ChartTimeSlicer from 'components/Metrics/MetricsGrid/common/ChartTimeSlicer/ChartTimeSlicer';
 import MetricsGridTile from 'components/Metrics/MetricsGrid/common/MetricsGridTile/MetricsGridTile';
+import AreaChart from 'components/ui/AreaChart';
 import useLockedSummarySnapshots from 'hooks/subgraph/useLockedSummarySnapshots';
 
 import styles from './MetricsCumulativeGlmLocked.module.scss';

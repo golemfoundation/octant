@@ -1,4 +1,4 @@
-import InputTextProps from 'components/core/InputText/types';
+import InputTextProps from 'components/ui/InputText/types';
 import { CryptoCurrency } from 'types/cryptoCurrency';
 
 export default interface InputsCryptoFiatProps {

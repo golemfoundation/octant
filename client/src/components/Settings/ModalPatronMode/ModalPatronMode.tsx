@@ -1,8 +1,8 @@
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import Modal from 'components/core/Modal/Modal';
 import PatronMode from 'components/Settings/ModalPatronMode/PatronMode/PatronMode';
+import Modal from 'components/ui/Modal';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 
 import styles from './ModalPatronMode.module.scss';

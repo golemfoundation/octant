@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { useAccount, useConnect } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 
-import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import Loader from 'components/core/Loader/Loader';
-import Svg from 'components/core/Svg/Svg';
+import BoxRounded from 'components/ui/BoxRounded';
+import Loader from 'components/ui/Loader';
+import Svg from 'components/ui/Svg';
 import { browserWallet, walletConnect } from 'svg/wallet';
 
 import styles from './ConnectWallet.module.scss';

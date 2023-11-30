@@ -2,9 +2,9 @@ import { isAfter } from 'date-fns';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import AreaChart from 'components/core/AreaChart/AreaChart';
 import ChartTimeSlicer from 'components/Metrics/MetricsGrid//common/ChartTimeSlicer/ChartTimeSlicer';
 import MetricsGridTile from 'components/Metrics/MetricsGrid//common/MetricsGridTile/MetricsGridTile';
+import AreaChart from 'components/ui/AreaChart';
 import useLockedsData from 'hooks/subgraph/useLockedsData';
 
 import styles from './MetricsWalletsWithGlmLocked.module.scss';

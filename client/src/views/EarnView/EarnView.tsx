@@ -3,12 +3,12 @@ import React, { ReactElement, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
-import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import BoxGlmLock from 'components/dedicated/BoxGlmLock/BoxGlmLock';
-import BoxPersonalAllocation from 'components/dedicated/BoxPersonalAllocation/BoxPersonalAllocation';
-import History from 'components/dedicated/History/History';
-import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
-import TipTile from 'components/dedicated/TipTile/TipTile';
+import EarnBoxGlmLock from 'components/Earn/EarnBoxGlmLock';
+import EarnBoxPersonalAllocation from 'components/Earn/EarnBoxPersonalAllocation';
+import EarnHistory from 'components/Earn/EarnHistory';
+import TimeCounter from 'components/shared/TimeCounter';
+import TipTile from 'components/shared/TipTile';
+import BoxRounded from 'components/ui/BoxRounded';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -97,10 +97,10 @@ const EarnView = (): ReactElement => {
               />
             </BoxRounded>
           )}
-          {!isProjectAdminMode && <BoxGlmLock classNameBox={styles.box} />}
-          <BoxPersonalAllocation className={styles.box} />
+          {!isProjectAdminMode && <EarnBoxGlmLock classNameBox={styles.box} />}
+          <EarnBoxPersonalAllocation className={styles.box} />
         </div>
-        <History className={styles.column} />
+        <EarnHistory className={styles.column} />
       </div>
     </MainLayout>
   );

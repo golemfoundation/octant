@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react';
 import { Trans } from 'react-i18next';
 
-import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import Button from 'components/core/Button/Button';
-import InputCheckbox from 'components/core/InputCheckbox/InputCheckbox';
+import BoxRounded from 'components/ui/BoxRounded';
+import Button from 'components/ui/Button';
+import InputCheckbox from 'components/ui/InputCheckbox';
 import { TERMS_OF_USE } from 'constants/urls';
 import useUserAcceptsTOS from 'hooks/mutations/useUserAcceptsTOS';
 import useUserTOS from 'hooks/queries/useUserTOS';

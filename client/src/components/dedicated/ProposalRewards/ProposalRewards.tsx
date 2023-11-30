@@ -2,7 +2,7 @@ import cx from 'classnames';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import ProgressBar from 'components/core/ProgressBar/ProgressBar';
+import ProgressBar from 'components/ui/ProgressBar';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';

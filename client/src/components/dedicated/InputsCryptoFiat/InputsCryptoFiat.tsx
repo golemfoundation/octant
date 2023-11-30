@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import React, { FC, useDeferredValue, useEffect, useState } from 'react';
 
-import InputText from 'components/core/InputText/InputText';
+import InputText from 'components/ui/InputText';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useSettingsStore from 'store/settings/store';
 import {

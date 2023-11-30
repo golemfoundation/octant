@@ -2,9 +2,9 @@ import cx from 'classnames';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import Sections from 'components/core/BoxRounded/Sections/Sections';
-import { SectionProps } from 'components/core/BoxRounded/Sections/types';
+import BoxRounded from 'components/ui/BoxRounded';
+import Sections from 'components/ui/BoxRounded/Sections/Sections';
+import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
 import useWithdrawals from 'hooks/queries/useWithdrawals';
 
 import WalletPersonalAllocationProps from './types';

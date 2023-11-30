@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import Modal from 'components/core/Modal/Modal';
 import Wallet from 'components/dedicated/Wallet/Wallet';
+import Modal from 'components/ui/Modal';
 
 import WalletModalProps from './types';
 

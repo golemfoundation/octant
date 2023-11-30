@@ -3,10 +3,10 @@ import React, { FC, useState, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
-import Button from 'components/core/Button/Button';
 import DonorsHeader from 'components/dedicated/DonorsHeader/DonorsHeader';
 import DonorsList from 'components/dedicated/DonorsList/DonorsList';
 import ModalDonorsFullList from 'components/dedicated/ModalDonorsFullList/ModalDonorsFullList';
+import Button from 'components/ui/Button';
 import { DONORS_SHORT_LIST_LENGTH } from 'constants/donors';
 import useProposalDonors from 'hooks/queries/donors/useProposalDonors';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';

@@ -4,12 +4,12 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Link, useLocation, useMatch } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
-import Button from 'components/core/Button/Button';
-import Loader from 'components/core/Loader/Loader';
-import Svg from 'components/core/Svg/Svg';
 import ModalConnectWallet from 'components/dedicated/ModalConnectWallet/ModalConnectWallet';
 import Navbar from 'components/dedicated/Navbar/Navbar';
 import WalletModal from 'components/dedicated/WalletModal/WalletModal';
+import Button from 'components/ui/Button';
+import Loader from 'components/ui/Loader';
+import Svg from 'components/ui/Svg';
 import { ELEMENT_POSITION_FIXED_CLASSNAME } from 'constants/css';
 import {
   adminNavigationTabs,

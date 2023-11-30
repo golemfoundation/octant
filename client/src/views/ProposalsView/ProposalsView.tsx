@@ -2,9 +2,9 @@ import React, { ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 
-import Loader from 'components/core/Loader/Loader';
 import ProposalsList from 'components/dedicated/ProposalsList/ProposalsList';
-import TipTile from 'components/dedicated/TipTile/TipTile';
+import TipTile from 'components/shared/TipTile';
+import Loader from 'components/ui/Loader';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';

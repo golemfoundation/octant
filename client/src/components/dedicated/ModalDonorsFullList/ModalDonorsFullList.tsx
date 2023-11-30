@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 
-import Modal from 'components/core/Modal/Modal';
 import DonorsHeader from 'components/dedicated//DonorsHeader/DonorsHeader';
 import DonorsList from 'components/dedicated/DonorsList/DonorsList';
+import Modal from 'components/ui/Modal';
 
 import styles from './ModalDonorsFullList.module.scss';
 import ModalDonorsFullListProps from './types';

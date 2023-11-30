@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import Button from 'components/core/Button/Button';
+import Button from 'components/ui/Button';
 
 import ButtonGlmClaim from './types';
 

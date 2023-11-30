@@ -4,11 +4,11 @@ import React, { FC, Fragment, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount, useDisconnect } from 'wagmi';
 
-import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import Sections from 'components/core/BoxRounded/Sections/Sections';
-import { SectionProps } from 'components/core/BoxRounded/Sections/types';
-import Button from 'components/core/Button/Button';
 import WalletPersonalAllocation from 'components/dedicated/WalletPersonalAllocation/WalletPersonalAllocation';
+import BoxRounded from 'components/ui/BoxRounded';
+import Sections from 'components/ui/BoxRounded/Sections/Sections';
+import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
+import Button from 'components/ui/Button';
 import useAvailableFundsEth from 'hooks/helpers/useAvailableFundsEth';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';

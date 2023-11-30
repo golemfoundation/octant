@@ -1,8 +1,8 @@
 import React, { ReactElement } from 'react';
 import { Trans } from 'react-i18next';
 
-import Img from 'components/core/Img/Img';
-import Svg from 'components/core/Svg/Svg';
+import Img from 'components/ui/Img';
+import Svg from 'components/ui/Svg';
 import { octantSemiTransparent } from 'svg/logo';
 
 import styles from './SyncView.module.scss';

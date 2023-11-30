@@ -1,7 +1,7 @@
 import { formatUnits } from 'ethers/lib/utils';
 
 import { Response } from 'api/calls/cryptoValues';
-import DoubleValueProps from 'components/core/DoubleValue/types';
+import DoubleValueProps from 'components/ui/DoubleValue/types';
 import { FIAT_CURRENCIES_SYMBOLS } from 'constants/currencies';
 import { SettingsData } from 'store/settings/types';
 

@@ -2,10 +2,10 @@ import cx from 'classnames';
 import React, { FC, useState } from 'react';
 import { Trans } from 'react-i18next';
 
-import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import Button from 'components/core/Button/Button';
-import Svg from 'components/core/Svg/Svg';
 import PatronModeSlider from 'components/Settings/ModalPatronMode/PatronModeSlider/PatronModeSlider';
+import BoxRounded from 'components/ui/BoxRounded';
+import Button from 'components/ui/Button';
+import Svg from 'components/ui/Svg';
 import { OCTANT_DOCS } from 'constants/urls';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import { notificationIconWarning } from 'svg/misc';

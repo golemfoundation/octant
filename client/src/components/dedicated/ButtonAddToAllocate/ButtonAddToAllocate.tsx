@@ -3,9 +3,9 @@ import { useAnimate } from 'framer-motion';
 import React, { FC, useMemo, useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import Button from 'components/core/Button/Button';
-import Svg from 'components/core/Svg/Svg';
-import Tooltip from 'components/core/Tooltip/Tooltip';
+import Button from 'components/ui/Button';
+import Svg from 'components/ui/Svg';
+import Tooltip from 'components/ui/Tooltip';
 import { checkMark, heart } from 'svg/misc';
 
 import styles from './ButtonAddToAllocate.module.scss';

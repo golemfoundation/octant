@@ -2,11 +2,11 @@ import cx from 'classnames';
 import React, { FC, Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import Description from 'components/core/Description/Description';
-import Img from 'components/core/Img/Img';
 import ButtonAddToAllocate from 'components/dedicated/ButtonAddToAllocate/ButtonAddToAllocate';
 import ProposalRewards from 'components/dedicated/ProposalRewards/ProposalRewards';
 import ProposalItemSkeleton from 'components/dedicated/ProposalsList/ProposalsListItemSkeleton/ProposalsListItemSkeleton';
+import Description from 'components/ui/Description';
+import Img from 'components/ui/Img';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';

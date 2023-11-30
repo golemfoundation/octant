@@ -5,8 +5,8 @@ import { useAccount, useConnect, useNetwork } from 'wagmi';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-import AppLoader from 'components/dedicated/AppLoader/AppLoader';
 import ModalOnboarding from 'components/dedicated/ModalOnboarding/ModalOnboarding';
+import AppLoader from 'components/shared/AppLoader';
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import networkConfig from 'constants/networkConfig';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';

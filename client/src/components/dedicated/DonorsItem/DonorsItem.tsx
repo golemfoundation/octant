@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import React, { FC, memo } from 'react';
 
-import Identicon from 'components/core/Identicon/Identicon';
+import Identicon from 'components/ui/Identicon';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useSettingsStore from 'store/settings/store';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';

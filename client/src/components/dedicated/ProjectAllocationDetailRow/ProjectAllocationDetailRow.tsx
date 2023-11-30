@@ -1,6 +1,6 @@
 import React, { FC, Fragment } from 'react';
 
-import Img from 'components/core/Img/Img';
+import Img from 'components/ui/Img';
 import env from 'env';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';

@@ -5,12 +5,12 @@ import React, { Fragment, ReactElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
-import AllocateRewardsBox from 'components/dedicated/AllocateRewardsBox/AllocateRewardsBox';
-import AllocationItem from 'components/dedicated/AllocationItem/AllocationItem';
-import AllocationNavigation from 'components/dedicated/AllocationNavigation/AllocationNavigation';
-import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
-import AllocationTipTiles from 'components/dedicated/AllocationTipTiles/AllocationTipTiles';
-import ModalAllocationValuesEdit from 'components/dedicated/ModalAllocationValuesEdit/ModalAllocationValuesEdit';
+import AllocateRewardsBox from 'components/Allocation/AllocateRewardsBox';
+import AllocationItem from 'components/Allocation/AllocationItem';
+import AllocationNavigation from 'components/Allocation/AllocationNavigation';
+import AllocationSummary from 'components/Allocation/AllocationSummary';
+import AllocationTipTiles from 'components/Allocation/AllocationTipTiles';
+import ModalAllocationValuesEdit from 'components/Allocation/ModalAllocationValuesEdit';
 import { ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
 import useAllocate from 'hooks/events/useAllocate';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';

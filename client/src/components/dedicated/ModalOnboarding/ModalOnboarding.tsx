@@ -3,11 +3,11 @@ import { AnimatePresence, AnimationProps, motion } from 'framer-motion';
 import React, { useState, useEffect, useCallback, FC } from 'react';
 import { useAccount } from 'wagmi';
 
-import Img from 'components/core/Img/Img';
-import Loader from 'components/core/Loader/Loader';
-import Modal from 'components/core/Modal/Modal';
-import ProgressStepperSlim from 'components/core/ProgressStepperSlim/ProgressStepperSlim';
-import Text from 'components/core/Text/Text';
+import Img from 'components/ui/Img';
+import Loader from 'components/ui/Loader';
+import Modal from 'components/ui/Modal';
+import ProgressStepperSlim from 'components/ui/ProgressStepperSlim';
+import Text from 'components/ui/Text';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useOnboardingSteps from 'hooks/helpers/useOnboardingSteps';
 import useUserTOS from 'hooks/queries/useUserTOS';

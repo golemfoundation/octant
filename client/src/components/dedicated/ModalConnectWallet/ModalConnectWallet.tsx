@@ -2,8 +2,8 @@ import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
-import Modal from 'components/core/Modal/Modal';
 import ConnectWallet from 'components/dedicated/ConnectWallet/ConnectWallet';
+import Modal from 'components/ui/Modal';
 
 import ModalConnectWalletProps from './types';
 

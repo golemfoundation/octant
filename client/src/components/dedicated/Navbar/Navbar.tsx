@@ -3,8 +3,8 @@ import { useAnimate } from 'framer-motion';
 import React, { FC, Fragment, useEffect, useRef } from 'react';
 import { useAccount } from 'wagmi';
 
-import Button from 'components/core/Button/Button';
-import Svg from 'components/core/Svg/Svg';
+import Button from 'components/ui/Button';
+import Svg from 'components/ui/Svg';
 import { ELEMENT_POSITION_FIXED_CLASSNAME } from 'constants/css';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';

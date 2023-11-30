@@ -1,4 +1,4 @@
-import BoxRoundedProps from 'components/core/BoxRounded/types';
+import BoxRoundedProps from 'components/ui/BoxRounded/types';
 
 export default interface WalletPersonalAllocationProps {
   buttonProps?: BoxRoundedProps['buttonProps'];
