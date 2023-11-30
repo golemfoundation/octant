@@ -27,6 +27,7 @@ from app.crypto.account import Account as CryptoAccount
 # Consts
 MNEMONIC = "test test test test test test test test test test test junk"
 MOCKED_PENDING_EPOCH_NO = 1
+MOCKED_FINALIZED_EPOCH_NO = 1
 MOCKED_CURRENT_EPOCH_NO = 2
 ETH_PROCEEDS = 402_410958904_110000000
 TOTAL_ED = 100022700_000000000_099999994
@@ -40,6 +41,7 @@ USER3_BUDGET = 2035825_243825387
 LOCKED_RATIO = Decimal("0.100022700000000000099999994")
 TOTAL_REWARDS = 321_928767123_288031232
 ALL_INDIVIDUAL_REWARDS = 101_814368807_786782825
+MATCHED_REWARDS = TOTAL_REWARDS - ALL_INDIVIDUAL_REWARDS
 USER1_ADDRESS = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
 USER2_ADDRESS = "0x2345678901234567890123456789012345678904"
 
@@ -255,6 +257,7 @@ def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.core.proposals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.user.budget.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.epochs.details.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.context.epochs", MOCK_EPOCHS)
 
     MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
     MOCK_EPOCHS.get_current_epoch.return_value = MOCKED_CURRENT_EPOCH_NO
@@ -357,6 +360,15 @@ def mock_pending_epoch_snapshot_db(app, user_accounts):
     database.deposits.add(MOCKED_PENDING_EPOCH_NO, user1, USER1_ED, USER1_ED)
     database.deposits.add(MOCKED_PENDING_EPOCH_NO, user2, USER2_ED, USER2_ED)
     database.deposits.add(MOCKED_PENDING_EPOCH_NO, user3, USER3_ED, USER3_ED)
+    db.session.commit()
+
+
+@pytest.fixture(scope="function")
+def mock_finalized_epoch_snapshot_db(app, user_accounts):
+    database.finalized_epoch_snapshot.add_snapshot(
+        MOCKED_FINALIZED_EPOCH_NO, MATCHED_REWARDS
+    )
+
     db.session.commit()
 
 
