@@ -25,27 +25,15 @@ from tests.conftest import (
 
 
 @pytest.fixture(autouse=True)
-def before(app, user_accounts, patch_epochs):
+def before(app, patch_epochs):
+    pass
+
+
+def test_basic_context():
     MOCK_EPOCHS.get_current_epoch.return_value = 3
     MOCK_EPOCHS.get_pending_epoch.return_value = 2
     MOCK_EPOCHS.get_finalized_epoch.return_value = 1
 
-    database.pending_epoch_snapshot.add_snapshot(
-        2,
-        ETH_PROCEEDS,
-        TOTAL_ED,
-        LOCKED_RATIO,
-        TOTAL_REWARDS,
-        ALL_INDIVIDUAL_REWARDS,
-    )
-    user1 = database.user.get_or_add_user(user_accounts[0].address)
-    user2 = database.user.get_or_add_user(user_accounts[1].address)
-    database.deposits.add(2, user1, USER1_ED, USER1_ED)
-    database.deposits.add(2, user2, USER2_ED, USER2_ED)
-    db.session.commit()
-
-
-def test_basic_context():
     context = ContextBuilder().build()
 
     assert context.current_epoch == 3
@@ -69,7 +57,7 @@ def test_current_epoch_context(user_accounts):
     )
 
 
-def test_pending_epoch_context(user_accounts):
+def test_pending_epoch_context(user_accounts, mock_pending_epoch_snapshot_db):
     context = (
         ContextBuilder()
         .with_pending_epoch_context(
@@ -80,11 +68,11 @@ def test_pending_epoch_context(user_accounts):
 
     assert isinstance(
         context.pending_epoch_context.epoch_settings.rewards_strategy,
-        StandardRewardsStrategy,
+        AllProceedsWithOperationalCostStrategy,
     )
     assert (
         context.pending_epoch_context.epoch_settings.user_deposits_weights_calculator
-        == TimebasedWithoutUnlocksWeightsCalculator
+        == TimebasedWeightsCalculator
     )
     assert context.pending_epoch_context.pending_snapshot is not None
     assert len(context.pending_epoch_context.users_context) == 2

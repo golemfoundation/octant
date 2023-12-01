@@ -360,6 +360,10 @@ def mock_pending_epoch_snapshot_db(app, user_accounts):
     database.deposits.add(MOCKED_PENDING_EPOCH_NO, user1, USER1_ED, USER1_ED)
     database.deposits.add(MOCKED_PENDING_EPOCH_NO, user2, USER2_ED, USER2_ED)
     database.deposits.add(MOCKED_PENDING_EPOCH_NO, user3, USER3_ED, USER3_ED)
+    database.budgets.add(MOCKED_PENDING_EPOCH_NO, user1, USER1_BUDGET)
+    database.budgets.add(MOCKED_PENDING_EPOCH_NO, user2, USER2_BUDGET)
+    database.budgets.add(MOCKED_PENDING_EPOCH_NO, user3, USER3_BUDGET)
+
     db.session.commit()
 
 

@@ -97,6 +97,16 @@ class Deposit(BaseModel):
     epoch_end_deposit = Column(db.String, nullable=False)
 
 
+class Budget(BaseModel):
+    __tablename__ = "budgets"
+
+    id = Column(db.Integer, primary_key=True)
+    epoch = Column(db.Integer, nullable=False)
+    user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    user = relationship("User", backref=db.backref("budgets", lazy=True))
+    budget = Column(db.String, nullable=False)
+
+
 class Reward(BaseModel):
     __tablename__ = "rewards"
 

@@ -21,6 +21,15 @@ def get_by_user_address_and_epoch(user_address: str, epoch: int) -> Optional[Dep
     return query.one_or_none()
 
 
+def get_by_users_addresses_and_epoch(
+    users_addresses: List[str], epoch: int
+) -> Dict[str, Deposit]:
+    query = Deposit.query.join(User)
+    query = query.filter(User.address.in_(users_addresses), Deposit.epoch == epoch)
+    deposits = query.all()
+    return {deposit.user.address: deposit for deposit in deposits}
+
+
 def add(epoch: int, user: User, effective_deposit: int, epoch_end_deposit: int):
     deposit = Deposit(
         epoch=epoch,

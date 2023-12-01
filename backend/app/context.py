@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, List
+from typing import Optional, List, Dict
 
 from app import EpochsRegistry
 from app.core.epochs.epochs_registry import EpochSettings
@@ -8,6 +8,7 @@ from app.database import (
     finalized_epoch_snapshot,
     user as user_db,
     deposits,
+    budgets,
 )
 from app.database.models import PendingEpochSnapshot, FinalizedEpochSnapshot, User
 from app.extensions import epochs
@@ -29,7 +30,7 @@ class CurrentEpochContext:
 class PendingEpochContext:
     epoch_settings: EpochSettings
     pending_snapshot: PendingEpochSnapshot = None
-    users_context: Optional[List[UserContext]] = None
+    users_context: Optional[Dict[str, UserContext]] = None
 
 
 @dataclass(frozen=True)
@@ -71,24 +72,28 @@ class ContextBuilder:
         pending_snapshot = pending_epoch_snapshot.get_by_epoch_num(
             self.context.pending_epoch
         )
-        users_context = []
+        users_context = {}
 
         if users_addresses is not None:
-            for address in users_addresses:
-                user_effective_deposit = None
-                user_budget = None
-                user = user_db.get_by_address(address)
-                if user is not None:
-                    user_effective_deposit = deposits.get_by_user_address_and_epoch(
-                        address, self.context.pending_epoch
-                    )
-                users_context.append(
-                    UserContext(
-                        user=user,
-                        user_effective_deposit=user_effective_deposit,
-                        user_budget=user_budget,
-                    )
+            users_deposits = deposits.get_by_users_addresses_and_epoch(
+                users_addresses, self.context.pending_epoch
+            )
+            users_with_deposits_addresses = list(users_deposits.keys())
+            users_budgets = budgets.get_by_users_addresses_and_epoch(
+                users_with_deposits_addresses, self.context.pending_epoch
+            )
+            users = user_db.get_by_users_addresses(users_with_deposits_addresses)
+
+            users_context = {
+                address: UserContext(
+                    user=users.get(address),
+                    user_effective_deposit=users_deposits.get(
+                        address
+                    ).effective_deposit,
+                    user_budget=users_budgets.get(address).budget,
                 )
+                for address in users_with_deposits_addresses
+            }
 
         self.context.pending_epoch_context = PendingEpochContext(
             epoch_settings=epoch_settings,
