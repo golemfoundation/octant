@@ -1,26 +1,16 @@
 import pytest
 
-from app.core.rewards.all_proceeds_with_op_cost_rewards_strategy import (
-    AllProceedsWithOperationalCostStrategy,
-)
-from app.core.rewards.standard_rewards_strategy import StandardRewardsStrategy
-from app.extensions import db
-
 from app import (
-    database,
     TimebasedWithoutUnlocksWeightsCalculator,
     TimebasedWeightsCalculator,
 )
 from app.context import ContextBuilder
+from app.core.rewards.all_proceeds_with_op_cost_rewards_strategy import (
+    AllProceedsWithOperationalCostStrategy,
+)
+from app.core.rewards.standard_rewards_strategy import StandardRewardsStrategy
 from tests.conftest import (
     MOCK_EPOCHS,
-    ETH_PROCEEDS,
-    TOTAL_ED,
-    LOCKED_RATIO,
-    TOTAL_REWARDS,
-    ALL_INDIVIDUAL_REWARDS,
-    USER1_ED,
-    USER2_ED,
 )
 
 
