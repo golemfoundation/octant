@@ -155,14 +155,12 @@ export default function useAppConnectManager(
   ]);
 
   useEffect(() => {
-    (() => {
-      if (isFlushRequired) {
-        queryClient.clear();
-        queryClient.refetchQueries().then(() => {
-          setIsFlushRequired(false);
-        });
-      }
-    })();
+    if (isFlushRequired) {
+      queryClient.clear();
+      queryClient.refetchQueries().then(() => {
+        setIsFlushRequired(false);
+      });
+    }
   }, [isFlushRequired, setIsFlushRequired, queryClient]);
 
   useEffect(() => {
