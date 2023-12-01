@@ -1,4 +1,5 @@
 from datetime import datetime as dt
+from typing import Optional
 
 from app.extensions import db
 
@@ -25,6 +26,20 @@ class User(BaseModel):
         comment="Allocations signing nonce, last used value. Range [0..inf)",
     )
     patron_mode = Column(db.Boolean, default=False, nullable=False)
+
+    def get_effective_deposit(self, epoch: int) -> Optional[int]:
+        effective_deposit = None
+        for d in self.deposits:
+            if d.epoch == epoch:
+                effective_deposit = d.effective_deposit
+        return int(effective_deposit) if effective_deposit is not None else None
+
+    def get_budget(self, epoch: int) -> Optional[int]:
+        budget = None
+        for b in self.budgets:
+            if b.epoch == epoch:
+                budget = b.budget
+        return int(budget) if budget is not None else None
 
 
 class UserConsents(BaseModel):

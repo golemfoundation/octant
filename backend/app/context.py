@@ -7,18 +7,9 @@ from app.database import (
     pending_epoch_snapshot,
     finalized_epoch_snapshot,
     user as user_db,
-    deposits,
-    budgets,
 )
 from app.database.models import PendingEpochSnapshot, FinalizedEpochSnapshot, User
 from app.extensions import epochs
-
-
-@dataclass(frozen=True)
-class UserContext:
-    user: Optional[User]
-    user_effective_deposit: Optional[int]
-    user_budget: Optional[int]
 
 
 @dataclass(frozen=True)
@@ -30,7 +21,7 @@ class CurrentEpochContext:
 class PendingEpochContext:
     epoch_settings: EpochSettings
     pending_snapshot: PendingEpochSnapshot = None
-    users_context: Optional[Dict[str, UserContext]] = None
+    users_context: Optional[Dict[str, User]] = None
 
 
 @dataclass(frozen=True)
@@ -72,28 +63,10 @@ class ContextBuilder:
         pending_snapshot = pending_epoch_snapshot.get_by_epoch_num(
             self.context.pending_epoch
         )
-        users_context = {}
+        users_context = None
 
         if users_addresses is not None:
-            users_deposits = deposits.get_by_users_addresses_and_epoch(
-                users_addresses, self.context.pending_epoch
-            )
-            users_with_deposits_addresses = list(users_deposits.keys())
-            users_budgets = budgets.get_by_users_addresses_and_epoch(
-                users_with_deposits_addresses, self.context.pending_epoch
-            )
-            users = user_db.get_by_users_addresses(users_with_deposits_addresses)
-
-            users_context = {
-                address: UserContext(
-                    user=users.get(address),
-                    user_effective_deposit=users_deposits.get(
-                        address
-                    ).effective_deposit,
-                    user_budget=users_budgets.get(address).budget,
-                )
-                for address in users_with_deposits_addresses
-            }
+            users_context = user_db.get_by_users_addresses(users_addresses)
 
         self.context.pending_epoch_context = PendingEpochContext(
             epoch_settings=epoch_settings,
