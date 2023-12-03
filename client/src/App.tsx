@@ -20,6 +20,7 @@ const App = (): ReactElement => {
   const [isFlushRequired, setIsFlushRequired] = useState(false);
   const { isSyncingInProgress } = useAppConnectManager(isFlushRequired, setIsFlushRequired);
   const isLoading = useAppIsLoading(isFlushRequired);
+  
   const isProjectAdminMode = useIsProjectAdminMode();
 
   if (isLoading) {
