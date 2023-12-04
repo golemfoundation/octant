@@ -14,7 +14,7 @@ import env, { envViteKeys, envsAllowedToBeEmpty } from 'env';
 import { ethereumClient } from './api/clients/client-ethereum';
 import clientReactQuery from './api/clients/client-react-query';
 import { wagmiConfig } from './api/clients/client-wagmi';
-import App from './App/App';
+import App from './App';
 import { PROJECT_ID } from './constants/walletConnect';
 
 const root = document.getElementById('root')!;

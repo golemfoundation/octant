@@ -7,8 +7,6 @@ import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocation
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useProposalsContract from 'hooks/queries/useProposalsContract';
-import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 
 import styles from './MetricsGridTimeCounter.module.scss';
 import MetricsGridTimeCounterProps from './types';
@@ -16,24 +14,13 @@ import MetricsGridTimeCounterProps from './types';
 const MetricsGridTimeCounter: FC<MetricsGridTimeCounterProps> = ({ isLoading = false }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
-  const { data: currentEpoch, refetch: refetchCurrentEpoch } = useCurrentEpoch({
+  const { data: currentEpoch } = useCurrentEpoch({
     refetchOnWindowFocus: true,
   });
-  const { data: currentEpochProps, refetch: refetchCurrentEpochProps } = useCurrentEpochProps();
+  const { data: currentEpochProps } = useCurrentEpochProps();
   const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
 
-  const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
-  const { refetch: refetchProposals } = useProposalsContract();
-  const { data: isDecisionWindowOpen, refetch: refetchIsDecisionWindowOpen } =
-    useIsDecisionWindowOpen();
-
-  const onCountingFinish = () => {
-    refetchCurrentEpoch();
-    refetchLockedSummaryLatest();
-    refetchIsDecisionWindowOpen();
-    refetchProposals();
-    refetchCurrentEpochProps();
-  };
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   const counterProps = isDecisionWindowOpen
     ? {
@@ -54,7 +41,6 @@ const MetricsGridTimeCounter: FC<MetricsGridTimeCounterProps> = ({ isLoading = f
             <TimeCounter
               className={styles.timeCounter}
               isLoading={isLoading}
-              onCountingFinish={onCountingFinish}
               variant="metrics"
               {...counterProps}
             />

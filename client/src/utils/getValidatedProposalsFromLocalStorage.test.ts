@@ -1,4 +1,4 @@
-import { getValidatedProposalsFromLocalStorage } from './utils';
+import getValidatedProposalsFromLocalStorage from './getValidatedProposalsFromLocalStorage';
 
 describe('getValidatedProposalsFromLocalStorage', () => {
   it('properly validates proposals in local storage against those provided from backend', () => {

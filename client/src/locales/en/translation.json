@@ -280,6 +280,10 @@
     "cantRemoveProjectWithDonations": {
       "title": "You can't remove projects with donations",
       "message": "Set your donation to zero in Allocate view to enable project removal"
+    },
+    "wrongNetwork":  {
+      "title": "Wrong network",
+      "message": "Please change network to {{networkName}}{{isTestnet}}"
     }
   },
   "views": {
