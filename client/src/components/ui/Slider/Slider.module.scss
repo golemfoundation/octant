@@ -62,6 +62,8 @@ $thumbSizeMobile: $heightRootMobile;
   background: $color-white;
   border-radius: 50%;
   cursor: pointer;
+  // fixes problem with filter: drop-shadow lag on Safari -> https://github.com/mdn/browser-compat-data/issues/17726
+  transform: translateZ(0);
   filter: drop-shadow(rgba(0, 0, 0, 0.15) 0 0 0.5rem);
 
   &:focus-visible {
