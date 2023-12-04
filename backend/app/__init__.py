@@ -30,6 +30,7 @@ from app.core.deposits.weighted_deposits.timebased_calculator import (
 from app.core.deposits.weighted_deposits.timebased_without_unlocks_calculator import (
     TimebasedWithoutUnlocksWeightsCalculator,
 )
+from app.v2.engine.epochs_settings import register_epoch_settings
 
 
 def create_app(config=None):
@@ -47,17 +48,7 @@ def create_app(config=None):
     register_extensions(app)
     register_errorhandlers(app)
     register_request_context(app)
-
-    EpochsRegistry.register_epoch_settings(
-        1,
-        rewards_strategy=AllProceedsWithOperationalCostStrategy(),
-        user_deposits_weights_calculator=TimebasedWeightsCalculator,
-    )
-    EpochsRegistry.register_epoch_settings(
-        2,
-        rewards_strategy=StandardRewardsStrategy(),
-        user_deposits_weights_calculator=TimebasedWithoutUnlocksWeightsCalculator,
-    )
+    register_epoch_settings()
 
     return app
 
