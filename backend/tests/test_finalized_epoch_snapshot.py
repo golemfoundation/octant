@@ -7,6 +7,7 @@ from app.controllers.snapshots import (
     snapshot_finalized_epoch,
 )
 from app.core.user.rewards import get_all_claimed_rewards
+from app.core.user.patron_mode import toggle_patron_mode
 from tests.conftest import (
     allocate_user_rewards,
     TOTAL_REWARDS,
@@ -78,7 +79,7 @@ def test_finalized_epoch_snapshot_with_patrons_enabled(
     user1_allocation = 1000_000000000
     user2_allocation = 2000_000000000
 
-    database.user.toggle_patron_mode(user_accounts[2].address)
+    toggle_patron_mode(user_accounts[2].address)
     db.session.commit()
 
     allocate_user_rewards(user_accounts[0], proposal_accounts[0], user1_allocation)

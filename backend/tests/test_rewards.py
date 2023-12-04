@@ -21,7 +21,7 @@ from app.core.rewards.rewards import (
     calculate_matched_rewards_threshold,
 )
 from app import database, exceptions
-from app.database.user import toggle_patron_mode
+from app.core.user.patron_mode import toggle_patron_mode
 from app.extensions import db
 from .conftest import (
     allocate_user_rewards,
