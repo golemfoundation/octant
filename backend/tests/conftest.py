@@ -275,6 +275,11 @@ def bob(user_accounts):
 
 
 @pytest.fixture(scope="function")
+def carol(user_accounts):
+    return user_accounts[2]
+
+
+@pytest.fixture(scope="function")
 def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.controllers.allocations.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.controllers.snapshots.epochs", MOCK_EPOCHS)
