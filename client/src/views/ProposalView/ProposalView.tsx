@@ -194,7 +194,7 @@ const ProposalView = (): ReactElement => {
     };
   }, [loadedProposals.length, proposalsIpfsWithRewards.length]);
 
-  if (!initialElement || !areMatchedProposalsReady) {
+  if (!initialElement || !areMatchedProposalsReady || proposalsIpfsWithRewards.length === 0) {
     return <Layout isLoading navigationTabs={navigationTabs} />;
   }
 
