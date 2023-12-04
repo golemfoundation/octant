@@ -12,23 +12,30 @@ class OpType(StrEnum):
     UNLOCK = "unlock"
     ALLOCATION = "allocation"
     WITHDRAWAL = "withdrawal"
+    PATRON_MODE_TOGGLE = "patron_mode_toggle"
 
 
 @dataclass(frozen=True)
 class HistoryEntry(JSONWizard):
     type: OpType
-    amount: int
     timestamp: int  # Should be in microseconds precision
 
 
 @dataclass(frozen=True)
 class TransactionHistoryEntry(HistoryEntry):
     transaction_hash: str
+    amount: int
 
 
 @dataclass(frozen=True)
 class AllocationHistoryEntry(HistoryEntry):
     project_address: str
+    amount: int
+
+
+@dataclass(frozen=True)
+class PatronModeToggle(HistoryEntry):
+    patron_mode_enabled: bool
 
 
 def user_history(
@@ -56,6 +63,17 @@ def _collect_history_records(
         for e in history.get_allocations(user_address, from_timestamp, query_limit)
     ]
 
+    events += [
+        PatronModeToggle(
+            type=OpType.PATRON_MODE_TOGGLE,
+            timestamp=e.timestamp.timestamp_us(),
+            patron_mode_enabled=e.patron_mode_enabled,
+        )
+        for e in history.get_patron_mode_toggles(
+            user_address, from_timestamp, query_limit
+        )
+    ]
+
     for event_getter, event_type in [
         (history.get_locks, OpType.LOCK),
         (history.get_unlocks, OpType.UNLOCK),
@@ -78,7 +96,8 @@ def _sort_keys(elem: AllocationHistoryEntry | TransactionHistoryEntry):
     return (
         elem.timestamp,
         elem.type,
-        elem.amount,
+        getattr(elem, "amount", None),
         getattr(elem, "project_address", None),
         getattr(elem, "transaction_hash", None),
+        getattr(elem, "patron_mode_enabled", None),
     )

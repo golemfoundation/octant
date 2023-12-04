@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 from typing import List
 
-from app.database import allocations
+from app.database import allocations, patrons
 from app.utils.time import (
     Timestamp,
     from_datetime,
@@ -39,6 +39,12 @@ class WithdrawalItem:
     address: str
     timestamp: Timestamp
     transaction_hash: str
+
+
+@dataclass(frozen=True)
+class PatronModeToggleItem:
+    timestamp: Timestamp
+    patron_mode_enabled: bool
 
 
 def get_locks(
@@ -101,5 +107,19 @@ def get_withdrawals(
         )
         for r in withdrawals.get_user_withdrawals_history(
             user_address, int(from_timestamp.timestamp_s()), limit
+        )
+    ]
+
+
+def get_patron_mode_toggles(
+    user_address: str, from_timestamp: Timestamp, limit: int
+) -> List[PatronModeToggleItem]:
+    return [
+        PatronModeToggleItem(
+            patron_mode_enabled=event.patron_mode_enabled,
+            timestamp=from_datetime(event.created_at),
+        )
+        for event in patrons.get_user_history(
+            user_address, from_timestamp.datetime(), limit
         )
     ]

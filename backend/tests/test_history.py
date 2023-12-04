@@ -3,6 +3,7 @@ import math
 from typing import List
 
 import pytest
+from freezegun import freeze_time
 from eth_account.signers.local import LocalAccount
 
 from app.controllers.allocations import allocate
@@ -14,7 +15,10 @@ from app.core.history import (
     get_allocations,
     AllocationItem,
     get_withdrawals,
+    get_patron_mode_toggles,
+    PatronModeToggleItem,
 )
+from app.core.user.patron_mode import toggle_patron_mode
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.utils.time import from_timestamp_s, now
 
@@ -274,6 +278,27 @@ def test_history_withdrawals(mocker, withdrawals, expected_history_sorted_by_ts)
     history = [dataclasses.asdict(i) for i in history]
 
     assert history == expected_history_sorted_by_ts
+
+
+@freeze_time("2023-11-01 01:48:47")
+def test_history_patron_mode_toggles(tos_users):
+    alice: LocalAccount = tos_users[0]
+
+    toggle_patron_mode(alice.address)
+    toggle_patron_mode(alice.address)
+
+    history = get_patron_mode_toggles(alice.address, now(), 100)
+
+    assert history == [
+        PatronModeToggleItem(timestamp=now(), patron_mode_enabled=True),
+        PatronModeToggleItem(timestamp=now(), patron_mode_enabled=False),
+    ]
+
+    history_with_small_limit = get_patron_mode_toggles(alice.address, now(), 1)
+    assert history_with_small_limit == [
+        PatronModeToggleItem(timestamp=now(), patron_mode_enabled=True),
+        PatronModeToggleItem(timestamp=now(), patron_mode_enabled=False),
+    ]
 
 
 def test_history_allocations(proposal_accounts, tos_users):
@@ -578,6 +603,7 @@ def test_history_allocations(proposal_accounts, tos_users):
         ),
     ],
 )
+@freeze_time("2023-11-01 01:48:47", tick=True, auto_tick_seconds=1)
 def test_complete_user_history(
     mocker,
     deposits,
@@ -622,7 +648,19 @@ def test_complete_user_history(
 
     assert len(allocations) == 3
 
-    expected_history = allocations + expected_history
+    assert toggle_patron_mode(user1.address)
+    assert not toggle_patron_mode(user1.address)
+
+    toggles = [
+        {
+            "type": "patron_mode_toggle",
+            "timestamp": t.timestamp.timestamp_us(),
+            "patronModeEnabled": t.patron_mode_enabled,
+        }
+        for t in get_patron_mode_toggles(user1.address, now(), 10)
+    ]
+
+    expected_history = toggles + allocations + expected_history
 
     # when
 
