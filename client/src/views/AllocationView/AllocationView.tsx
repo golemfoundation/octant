@@ -358,22 +358,26 @@ const AllocationView = (): ReactElement => {
           )}
           {areAllocationsAvailableOrAlreadyDone && (
             <Fragment>
-              {allocationsWithRewards!.map(({ address, isAllocatedTo, isLoadingError, value }) => (
-                <AllocationItem
-                  key={address}
-                  address={address}
-                  className={cx(styles.box, styles.isAllocation)}
-                  isAllocatedTo={isAllocatedTo}
-                  isDisabled={
-                    isLocked || (restToDistribute.isZero() && allocationsEdited.length === 0)
-                  }
-                  isLoadingError={isLoadingError}
-                  isLocked={!!isLocked}
-                  isManuallyEdited={allocationsEdited.includes(address)}
-                  onSelectItem={setSelectedItemAddress}
-                  value={value}
-                />
-              ))}
+              {allocationsWithRewards!.map(
+                ({ address, isAllocatedTo, isLoadingError, value, profileImageSmall, name }) => (
+                  <AllocationItem
+                    key={address}
+                    address={address}
+                    className={cx(styles.box, styles.isAllocation)}
+                    isAllocatedTo={isAllocatedTo}
+                    isDisabled={
+                      isLocked || (restToDistribute.isZero() && allocationsEdited.length === 0)
+                    }
+                    isLoadingError={isLoadingError}
+                    isLocked={!!isLocked}
+                    isManuallyEdited={allocationsEdited.includes(address)}
+                    name={name}
+                    onSelectItem={setSelectedItemAddress}
+                    profileImageSmall={profileImageSmall}
+                    value={value}
+                  />
+                ),
+              )}
             </Fragment>
           )}
           <ModalAllocationValuesEdit
