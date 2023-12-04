@@ -24,6 +24,8 @@ from app.extensions import db
 from tests.conftest import (
     create_payload,
     deserialize_allocations,
+    create_epoch_event,
+    mock_graphql,
     MOCKED_PENDING_EPOCH_NO,
     MOCK_PROPOSALS,
     MOCK_EPOCHS,
@@ -65,6 +67,8 @@ def get_all_by_epoch_expected_result(user_accounts, proposal_accounts):
 @pytest.fixture(autouse=True)
 def before(
     app,
+    mocker,
+    graphql_client,
     proposal_accounts,
     patch_epochs,
     patch_proposals,
@@ -74,6 +78,10 @@ def before(
     MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts[0:5]
     ]
+
+    mock_graphql(
+        mocker, epochs_events=[create_epoch_event(epoch=MOCKED_PENDING_EPOCH_NO)]
+    )
 
 
 def test_simulate_allocation_single_user(

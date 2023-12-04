@@ -1,4 +1,5 @@
 import pytest
+from freezegun import freeze_time
 
 from app import database, exceptions
 from app.extensions import db
@@ -9,6 +10,8 @@ from app.controllers.snapshots import (
 from app.core.user.rewards import get_all_claimed_rewards
 from app.core.user.patron_mode import toggle_patron_mode
 from tests.conftest import (
+    create_epoch_event,
+    mock_graphql,
     allocate_user_rewards,
     TOTAL_REWARDS,
     ALL_INDIVIDUAL_REWARDS,
@@ -21,13 +24,22 @@ MOCKED_FINALIZED_EPOCH_NO = 1
 
 @pytest.fixture(autouse=True)
 def before(
+    mocker,
+    graphql_client,
     patch_epochs,
     patch_proposals,
     patch_has_pending_epoch_snapshot,
 ):
     MOCK_EPOCHS.get_finalized_epoch.return_value = MOCKED_FINALIZED_EPOCH_NO
 
+    epoch = create_epoch_event(
+        start=1698802327, end=1698803327, duration=1000, epoch=MOCKED_FINALIZED_EPOCH_NO
+    )
 
+    mock_graphql(mocker, epochs_events=[epoch])
+
+
+@freeze_time("2023-11-01 01:48:47")
 def test_finalized_epoch_snapshot_with_rewards(
     user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
 ):
@@ -73,6 +85,7 @@ def test_finalized_epoch_snapshot_with_rewards(
     assert snapshot.created_at is not None
 
 
+@freeze_time("2023-11-01 01:48:47")
 def test_finalized_epoch_snapshot_with_patrons_enabled(
     user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
 ):
@@ -123,6 +136,7 @@ def test_finalized_epoch_snapshot_with_patrons_enabled(
     assert snapshot.created_at is not None
 
 
+@freeze_time("2023-11-01 01:48:47")
 def test_finalized_epoch_snapshot_without_rewards(
     user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
 ):
