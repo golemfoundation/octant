@@ -1,4 +1,4 @@
-import { AllocationItemWithAllocations } from 'components/dedicated/AllocationItem/types';
+import { AllocationItemWithAllocations } from 'components/Allocation/AllocationItem/types';
 import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
 
 const compareNames = (nameA: string | undefined, nameB: string | undefined) => {

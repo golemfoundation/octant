@@ -1,8 +1,8 @@
 import React from 'react';
 import { Trans } from 'react-i18next';
 
-import styles from 'components/dedicated/ModalOnboarding/ModalOnboarding.module.scss';
-import { Step } from 'components/dedicated/ModalOnboarding/types';
+import styles from 'components/shared/ModalOnboarding/ModalOnboarding.module.scss';
+import { Step } from 'components/shared/ModalOnboarding/types';
 import i18n from 'i18n';
 
 export const stepsDecisionWindowOpen: Step[] = [

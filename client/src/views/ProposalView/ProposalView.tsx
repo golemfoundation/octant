@@ -6,15 +6,16 @@ import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 
-import Button from 'components/core/Button/Button';
-import Description from 'components/core/Description/Description';
-import Img from 'components/core/Img/Img';
-import Loader from 'components/core/Loader/Loader';
-import Svg from 'components/core/Svg/Svg';
-import Tooltip from 'components/core/Tooltip/Tooltip';
-import ButtonAddToAllocate from 'components/dedicated/ButtonAddToAllocate/ButtonAddToAllocate';
-import Donors from 'components/dedicated/Donors/Donors';
-import ProposalRewards from 'components/dedicated/ProposalRewards/ProposalRewards';
+import Donors from 'components/Proposal/ProposalDonors';
+import ButtonAddToAllocate from 'components/shared/ButtonAddToAllocate';
+import Layout from 'components/shared/Layout';
+import Rewards from 'components/shared/Rewards';
+import Button from 'components/ui/Button';
+import Description from 'components/ui/Description';
+import Img from 'components/ui/Img';
+import Loader from 'components/ui/Loader';
+import Svg from 'components/ui/Svg';
+import Tooltip from 'components/ui/Tooltip';
 import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import env from 'env';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
@@ -26,7 +27,6 @@ import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import i18n from 'i18n';
-import MainLayout from 'layouts/MainLayout/MainLayout';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
 import { arrowRight, share } from 'svg/misc';
@@ -194,8 +194,8 @@ const ProposalView = (): ReactElement => {
     };
   }, [loadedProposals.length, proposalsIpfsWithRewards.length]);
 
-  if (!initialElement || !areMatchedProposalsReady) {
-    return <MainLayout isLoading navigationTabs={navigationTabs} />;
+  if (!initialElement || !areMatchedProposalsReady || proposalsIpfsWithRewards.length === 0) {
+    return <Layout isLoading navigationTabs={navigationTabs} />;
   }
 
   if (
@@ -215,7 +215,7 @@ const ProposalView = (): ReactElement => {
   }
 
   return (
-    <MainLayout
+    <Layout
       classNameBody={styles.mainLayoutBody}
       dataTest="ProposalView"
       navigationTabs={navigationTabs}
@@ -300,7 +300,7 @@ const ProposalView = (): ReactElement => {
                       {website!.label || website!.url}
                     </Button>
                     {!isEpoch1 ? (
-                      <ProposalRewards
+                      <Rewards
                         address={address}
                         className={styles.proposalRewards}
                         epoch={isArchivedProposal ? parseInt(epochUrl!, 10) : undefined}
@@ -354,7 +354,7 @@ const ProposalView = (): ReactElement => {
           </motion.div>
         )}
       </AnimatePresence>
-    </MainLayout>
+    </Layout>
   );
 };
 

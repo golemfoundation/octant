@@ -3,17 +3,17 @@ import React, { ReactElement, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
-import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import BoxGlmLock from 'components/dedicated/BoxGlmLock/BoxGlmLock';
-import BoxPersonalAllocation from 'components/dedicated/BoxPersonalAllocation/BoxPersonalAllocation';
-import History from 'components/dedicated/History/History';
-import TimeCounter from 'components/dedicated/TimeCounter/TimeCounter';
-import TipTile from 'components/dedicated/TipTile/TipTile';
+import EarnBoxGlmLock from 'components/Earn/EarnBoxGlmLock';
+import EarnBoxPersonalAllocation from 'components/Earn/EarnBoxPersonalAllocation';
+import EarnHistory from 'components/Earn/EarnHistory';
+import Layout from 'components/shared/Layout';
+import TimeCounter from 'components/shared/TimeCounter';
+import TipTile from 'components/shared/TipTile';
+import BoxRounded from 'components/ui/BoxRounded';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useWithdrawals from 'hooks/queries/useWithdrawals';
-import MainLayout from 'layouts/MainLayout/MainLayout';
 import useTipsStore from 'store/tips/store';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 
@@ -64,7 +64,7 @@ const EarnView = (): ReactElement => {
   const duration = preLaunchEndTimestamp - preLaunchStartTimestamp;
 
   return (
-    <MainLayout dataTest="EarnView">
+    <Layout dataTest="EarnView">
       <TipTile
         dataTest="EarnView__TipTile--connectWallet"
         image="images/tip-connect-wallet.webp"
@@ -97,12 +97,12 @@ const EarnView = (): ReactElement => {
               />
             </BoxRounded>
           )}
-          {!isProjectAdminMode && <BoxGlmLock classNameBox={styles.box} />}
-          <BoxPersonalAllocation className={styles.box} />
+          {!isProjectAdminMode && <EarnBoxGlmLock classNameBox={styles.box} />}
+          <EarnBoxPersonalAllocation className={styles.box} />
         </div>
-        <History className={styles.column} />
+        <EarnHistory className={styles.column} />
       </div>
-    </MainLayout>
+    </Layout>
   );
 };
 
