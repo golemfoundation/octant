@@ -1,5 +1,7 @@
-.browserWalletTile {
-  margin-bottom: 1.6rem;
+.walletTile {
+  &:not(:last-child) {
+    margin-bottom: 1.6rem;
+  }
 }
 
 .icon {
