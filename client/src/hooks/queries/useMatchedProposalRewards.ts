@@ -55,13 +55,14 @@ export default function useMatchedProposalRewards(
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
-  useSubscription<Response['rewards']>(WebsocketListenEvent.proposalRewards, data => {
-    // eslint-disable-next-line chai-friendly/no-unused-expressions
-    epoch
-      ? null
-      : queryClient.setQueryData(QUERY_KEYS.matchedProposalRewards(currentEpoch! - 1), {
-          rewards: data,
-        });
+  useSubscription<Response['rewards']>({
+    callback: data => {
+      queryClient.setQueryData(QUERY_KEYS.matchedProposalRewards(currentEpoch! - 1), {
+        rewards: data,
+      });
+    },
+    enabled: epoch === undefined,
+    event: WebsocketListenEvent.proposalRewards,
   });
 
   return useQuery(
