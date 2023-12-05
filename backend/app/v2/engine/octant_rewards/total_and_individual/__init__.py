@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from decimal import Decimal
 
@@ -6,3 +7,15 @@ from decimal import Decimal
 class TotalAndAllIndividualPayload:
     eth_proceeds: int = None
     locked_ratio: Decimal = None
+
+
+class TotalAndAllIndividualRewards(ABC):
+    @abstractmethod
+    def calculate_total_rewards(self, payload: TotalAndAllIndividualPayload) -> int:
+        pass
+
+    @abstractmethod
+    def calculate_all_individual_rewards(
+        self, payload: TotalAndAllIndividualPayload
+    ) -> int:
+        pass

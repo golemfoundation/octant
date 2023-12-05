@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 
@@ -7,3 +8,8 @@ class UserBudgetPayload:
     total_effective_deposit: int = None
     all_individual_rewards: int = None
 
+
+class UserBudget(ABC):
+    @abstractmethod
+    def calculate_budget(self, payload: UserBudgetPayload) -> int:
+        pass
