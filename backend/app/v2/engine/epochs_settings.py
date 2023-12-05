@@ -5,20 +5,25 @@ from app import TimebasedWeightsCalculator
 from app.core.deposits.weighted_deposits.timebased_without_unlocks_calculator import (
     TimebasedWithoutUnlocksWeightsCalculator,
 )
+from app.v2.engine.octant_rewards.locked_ratio.default import DefaultLockedRatio
 
-from app.v2.base.octant_rewards.locked_ratio.default import DefaultLockedRatioStrategy
-from app.v2.base.octant_rewards.total_and_individual.all_proceeds_with_op_cost import \
-    AllProceedsWithOperationalCostStrategy
-from app.v2.base.octant_rewards.total_and_individual.default import DefaultRewardsStrategy
-from app.v2.base.user.budget.default import DefaultUserBudget
+from app.v2.engine.octant_rewards.matched.default import DefaultMatchedRewards
+from app.v2.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import \
+    AllProceedsWithOperationalCost
+from app.v2.engine.octant_rewards.total_and_individual.default import \
+    DefaultTotalAndIndividualRewards
+from app.v2.engine.projects.threshold.default import DefaultProjectThreshold
+from app.v2.engine.user.budget.default import DefaultUserBudget
 
 
 @dataclass(frozen=True)
 class EpochSettings:
-    rewards_strategy = DefaultRewardsStrategy()
+    total_and_all_individual_rewards = DefaultTotalAndIndividualRewards()
+    matched_rewards = DefaultMatchedRewards()
     user_deposits_weights_calculator = TimebasedWithoutUnlocksWeightsCalculator()
-    locked_ratio = DefaultLockedRatioStrategy()
+    locked_ratio = DefaultLockedRatio()
     user_budget = DefaultUserBudget()
+    project_threshold = DefaultProjectThreshold()
 
 
 SETTINGS: dict[int, EpochSettings] = defaultdict(lambda: EpochSettings())
@@ -30,9 +35,6 @@ def get_epoch_settings(epoch_number: int) -> EpochSettings:
 
 def register_epoch_settings():
     SETTINGS[1] = EpochSettings(
-        rewards_strategy=AllProceedsWithOperationalCostStrategy(),
+        total_and_all_individual_rewards=AllProceedsWithOperationalCost(),
         user_deposits_weights_calculator=TimebasedWeightsCalculator(),
-    )
-    SETTINGS[2] = EpochSettings(
-        user_deposits_weights_calculator=TimebasedWithoutUnlocksWeightsCalculator(),
     )

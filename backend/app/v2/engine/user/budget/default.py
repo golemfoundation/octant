@@ -1,15 +1,12 @@
 from decimal import Decimal
 
+from app.v2.engine.user.budget import UserBudgetPayload
+
 
 class DefaultUserBudget:
-    def calculate_budget(
-        self,
-        user_effective_deposit: int,
-        total_effective_deposit: int,
-        all_individual_rewards: int,
-    ):
-        individual_share = Decimal(user_effective_deposit) / Decimal(
-            total_effective_deposit
+    def calculate_budget(self, payload: UserBudgetPayload) -> int:
+        individual_share = Decimal(payload.user_effective_deposit) / Decimal(
+            payload.total_effective_deposit
         )
 
-        return int(Decimal(all_individual_rewards) * individual_share)
+        return int(Decimal(payload.all_individual_rewards) * individual_share)

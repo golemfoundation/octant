@@ -42,7 +42,7 @@ def test_current_epoch_context(user_accounts):
     context = ContextBuilder().with_current_epoch_context().build()
 
     assert isinstance(
-        context.current_epoch_context.epoch_settings.rewards_strategy,
+        context.current_epoch_context.epoch_settings.total_and_all_individual_rewards,
         StandardRewardsStrategy,
     )
     assert (
@@ -61,7 +61,7 @@ def test_pending_epoch_context(user_accounts, mock_pending_epoch_snapshot_db):
     )
 
     assert isinstance(
-        context.pending_epoch_context.epoch_settings.rewards_strategy,
+        context.pending_epoch_context.epoch_settings.total_and_all_individual_rewards,
         AllProceedsWithOperationalCostStrategy,
     )
     assert (
@@ -82,7 +82,7 @@ def test_finalized_epoch_context(user_accounts, mock_finalized_epoch_snapshot_db
     context = ContextBuilder().with_finalized_epoch_context().build()
 
     assert isinstance(
-        context.finalized_epoch_context.epoch_settings.rewards_strategy,
+        context.finalized_epoch_context.epoch_settings.total_and_all_individual_rewards,
         AllProceedsWithOperationalCostStrategy,
     )
     assert (
