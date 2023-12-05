@@ -9,10 +9,12 @@ ARTIFACTS_DIR="./generated"
 
 export GLM_CONTRACT_ADDRESS=$(cat $NETWORK_FILE | jq -r ".${NETWORK}.GLM.address")
 export EPOCHS_CONTRACT_ADDRESS=$(cat $NETWORK_FILE | jq -r ".${NETWORK}.Epochs.address")
+export PROPOSALS_CONTRACT_ADDRESS=$(cat $NETWORK_FILE | jq -r ".${NETWORK}.Proposals.address")
 
-echo "Network:      $NETWORK"
-echo "GLM addr:     $GLM_CONTRACT_ADDRESS"
-echo "EPOCHS addr:  $EPOCHS_CONTRACT_ADDRESS"
+echo "Network:         $NETWORK"
+echo "GLM addr:        $GLM_CONTRACT_ADDRESS"
+echo "EPOCHS addr:     $EPOCHS_CONTRACT_ADDRESS"
+echo "PROPOSALS addr:  $PROPOSALS_CONTRACT_ADDRESS"
 echo
 echo "Replace hardcoded contract addresses"
 
