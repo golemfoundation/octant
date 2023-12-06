@@ -146,7 +146,8 @@
       "donors": {
         "donationsNotEnabled": "Donations are not enabled in this epoch",
         "noDonationsYet": "No donations yet",
-        "viewAll": "View all"
+        "viewAll": "View all",
+        "totalDonated": "Total donated"
       },
       "glmLock": {
         "lock": "Lock",
