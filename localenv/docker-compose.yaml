@@ -2,6 +2,7 @@ version: "3.8"
 services:
   anvil:
     image: octant/anvil:latest
+    platform: linux/amd64
     ports:
       - "8545:8545"
     networks:
