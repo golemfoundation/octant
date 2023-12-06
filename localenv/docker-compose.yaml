@@ -126,5 +126,17 @@ services:
     networks:
       - octant
 
+  control-plane:
+    image: octant/control-plane:latest
+    ports:
+      - "8080:80"
+    networks:
+      - octant
+    depends_on:
+      - backend
+      - anvil
+      - graph-node
+      - contracts-deployer
+
 networks:
   octant:

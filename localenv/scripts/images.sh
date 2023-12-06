@@ -94,6 +94,14 @@ build_subgraph_deployer(){
   echo Finished building subgraph deployer image!
 }
 
+build_control_plane(){
+  echo Building control plane image ...
+
+  build_image control-plane "${OCTANT_ROOT}/localenv/control-plane/Dockerfile" "${OCTANT_ROOT}/localenv/control-plane"
+
+  echo Finished building control plane image!
+}
+
 build_contracts(){
   build_contracts_base
   build_contracts_deployer
@@ -105,6 +113,7 @@ build_subgraph(){
 }
 
 ### Localenv tooling
+build_control_plane &
 build_anvil &
 
 ### PROD-like images
