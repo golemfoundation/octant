@@ -34,4 +34,7 @@ class DefaultProjectRewards(ProjectRewards):
                     AccountFunds(address, allocated + matched, matched)
                 )
 
-        return project_rewards, project_rewards_sum
+        return (
+            sorted(project_rewards, key=lambda r: r.amount, reverse=True),
+            project_rewards_sum,
+        )

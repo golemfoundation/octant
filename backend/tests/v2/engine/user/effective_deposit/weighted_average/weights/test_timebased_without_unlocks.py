@@ -26,7 +26,7 @@ def create_payload(
     return DepositWeightsPayload(epoch_start, epoch_end, events)
 
 
-def test_computes_weighted_deposit_for_none_events_for_one_user():
+def test_computes_weighted_deposit_for_none_events():
     deposits = []
     payload = create_payload(deposits)
     uut = TimebasedWithoutUnlocksWeights()
@@ -36,7 +36,7 @@ def test_computes_weighted_deposit_for_none_events_for_one_user():
     assert result == []
 
 
-def test_computes_weighted_deposit_for_one_event_for_one_user():
+def test_computes_weighted_deposit_for_one_event():
     deposits = [(EPOCH_START, 100)]
     payload = create_payload(deposits)
     uut = TimebasedWithoutUnlocksWeights()
@@ -46,7 +46,7 @@ def test_computes_weighted_deposit_for_one_event_for_one_user():
     assert result == [WeightedDeposit(100, 200)]
 
 
-def test_computes_weighted_deposit_for_two_events_for_one_user():
+def test_computes_weighted_deposit_for_two_events():
     deposits = [(EPOCH_START, 100), (EPOCH_START + 50, -20)]
     payload = create_payload(deposits)
     uut = TimebasedWithoutUnlocksWeights()

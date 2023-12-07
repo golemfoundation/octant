@@ -238,6 +238,11 @@ def proposal_accounts():
 
 
 @pytest.fixture(scope="function")
+def proposal_addresses(proposal_accounts):
+    return [p.address for p in proposal_accounts]
+
+
+@pytest.fixture(scope="function")
 def alice(user_accounts):
     return user_accounts[0]
 
