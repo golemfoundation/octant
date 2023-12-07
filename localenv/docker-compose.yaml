@@ -127,6 +127,13 @@ services:
     networks:
       - octant
 
+  epochs-snapshotter:
+    image: 'octant/snapshotter:latest'
+    depends_on:
+      - backend
+    networks:
+      - octant
+
   control-plane:
     image: octant/control-plane:latest
     ports:

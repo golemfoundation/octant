@@ -16,7 +16,8 @@
     "localenv:build-anvil": "docker build --tag octant/anvil:latest -f localenv/anvil/Dockerfile localenv/anvil",
     "localenv:up": "docker compose -p octant -f ./localenv/docker-compose.yaml up -d",
     "localenv:down": "docker compose -p octant -f ./localenv/docker-compose.yaml down",
-    "localenv:force-clean": "docker system prune --volumes -f"
+    "localenv:force-clean": "docker system prune --volumes -f",
+    "localenv:reload": "yarn localenv:down && yarn localenv:build-images && yarn localenv:up"
   },
   "repository": {
     "type": "git",

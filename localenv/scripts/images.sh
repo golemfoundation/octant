@@ -102,6 +102,14 @@ build_control_plane(){
   echo Finished building control plane image!
 }
 
+build_snapshotter(){
+  echo Building snapshotter image ...
+
+  build_image snapshotter "${OCTANT_ROOT}/localenv/snapshotter/Dockerfile" "${OCTANT_ROOT}/localenv/snapshotter"
+
+  echo Finished building snapshotter image!
+}
+
 build_contracts(){
   build_contracts_base
   build_contracts_deployer
@@ -114,6 +122,7 @@ build_subgraph(){
 
 ### Localenv tooling
 build_control_plane &
+build_snapshotter &
 build_anvil &
 
 ### PROD-like images
