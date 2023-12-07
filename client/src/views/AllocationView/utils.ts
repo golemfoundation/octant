@@ -60,24 +60,16 @@ export function getAllocationValuesInitialState({
   allocationValues,
   allocations,
   rewardsForProposals,
-  hasZeroRewardsForProposalsBeenReached,
   allocationsEdited,
-  shouldSetEqualValues,
   userAllocationsElements,
 }: {
   allocationValues: AllocationValues;
   allocations: string[];
   allocationsEdited: string[];
-  hasZeroRewardsForProposalsBeenReached: boolean;
   rewardsForProposals: BigNumber;
-  shouldSetEqualValues: boolean;
   userAllocationsElements: UserAllocationElement[] | undefined;
 }): AllocationValues {
-  if (
-    shouldSetEqualValues ||
-    userAllocationsElements === undefined ||
-    (hasZeroRewardsForProposalsBeenReached && allocationsEdited.length === 0)
-  ) {
+  if (userAllocationsElements === undefined || allocationsEdited.length === 0) {
     const allocationValuesNew = allocations.map(allocation => ({
       address: allocation,
       value: rewardsForProposals.div(allocations.length),

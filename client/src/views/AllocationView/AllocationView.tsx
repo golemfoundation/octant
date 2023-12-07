@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import { BigNumber } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
 import isEmpty from 'lodash/isEmpty';
 import React, { Fragment, ReactElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +11,6 @@ import AllocationNavigation from 'components/Allocation/AllocationNavigation';
 import AllocationRewardsBox from 'components/Allocation/AllocationRewardsBox';
 import AllocationSummary from 'components/Allocation/AllocationSummary';
 import AllocationTipTiles from 'components/Allocation/AllocationTipTiles';
-import ModalAllocationValuesEdit from 'components/Allocation/ModalAllocationValuesEdit';
 import Layout from 'components/shared/Layout';
 import { ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
 import useAllocate from 'hooks/events/useAllocate';
@@ -20,7 +20,6 @@ import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
-import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
 import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -33,7 +32,6 @@ import { AllocationValues, CurrentView } from './types';
 import {
   getAllocationValuesInitialState,
   getAllocationsWithRewards,
-  getRestToDistribute,
   getNewAllocationValues,
 } from './utils';
 
@@ -42,18 +40,10 @@ const AllocationView = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.allocation' });
   const [currentView, setCurrentView] = useState<CurrentView>('edit');
   const [isLocked, setIsLocked] = useState<boolean | undefined>(undefined);
-  const [selectedItemAddress, setSelectedItemAddress] = useState<null | string>(null);
   const [allocationValues, setAllocationValues] = useState<AllocationValues>([]);
   const [isRewardsForProposalsSet, setIsRewardsForProposalsSet] = useState<boolean>(false);
-  const [hasZeroRewardsForProposalsBeenReached, setHasZeroRewardsForProposalsBeenReached] =
-    useState<boolean>(false);
   const [allocationsEdited, setAllocationsEdited] = useState<string[]>([]);
-  const [
-    areAllocationValuesEqualRewardsForProposals,
-    setAreAllocationValuesEqualRewardsForProposals,
-  ] = useState<boolean>(false);
   const { data: proposalsContract } = useProposalsContract();
-  const { data: proposalsIpfs } = useProposalsIpfs(proposalsContract);
   const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards();
 
   const { data: currentEpoch } = useCurrentEpoch();
@@ -84,7 +74,6 @@ const AllocationView = (): ReactElement => {
     nonce: userNonce!,
     onSuccess: async () => {
       setCurrentView('edit');
-      setSelectedItemAddress(null);
       triggerToast({
         title: t('allocationSuccessful'),
       });
@@ -109,6 +98,9 @@ const AllocationView = (): ReactElement => {
      * It needs to be done here, since user can change rewardsForProposals and leave the view.
      * When they reenter it, they need to see their latest allocation locked in the slider.
      */
+    if (!isConnected) {
+      setIsRewardsForProposalsSet(true);
+    }
     if (!individualReward || !userAllocations) {
       return;
     }
@@ -132,27 +124,9 @@ const AllocationView = (): ReactElement => {
     setIsRewardsForProposalsSet(true);
     // .toHexString(), because React can't compare objects as deps in hooks, causing infinite loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [individualReward?.toHexString(), userAllocations?.elements.length]);
+  }, [isConnected, individualReward?.toHexString(), userAllocations?.elements.length]);
 
-  const _setAllocationValues = (allocationValuesNew: AllocationValues) => {
-    setAllocationValues(allocationValuesNew);
-
-    const allocationValuesNewSum = allocationValuesNew.reduce(
-      (acc, { value }) => acc.add(value),
-      BigNumber.from(0),
-    );
-
-    if (!allocationValuesNewSum.eq(rewardsForProposals)) {
-      setAreAllocationValuesEqualRewardsForProposals(false);
-    } else {
-      setAreAllocationValuesEqualRewardsForProposals(true);
-    }
-  };
-
-  const onResetAllocationValues = (
-    shouldSetEqualValues = true,
-    shouldResetAllocationsEdited = true,
-  ) => {
+  const onResetAllocationValues = () => {
     if (
       !isRewardsForProposalsSet ||
       currentEpoch === undefined ||
@@ -165,30 +139,14 @@ const AllocationView = (): ReactElement => {
       allocationValues,
       allocations,
       allocationsEdited,
-      hasZeroRewardsForProposalsBeenReached,
       rewardsForProposals,
-      shouldSetEqualValues,
       userAllocationsElements: userAllocations?.elements,
     });
-    if (shouldResetAllocationsEdited) {
-      setAllocationsEdited([]);
-    }
-    _setAllocationValues(allocationValuesNew);
+    setAllocationValues(allocationValuesNew);
   };
 
   useEffect(() => {
-    const shouldSetEqualValues = !userAllocations || userAllocations.elements.length === 0;
-    onResetAllocationValues(shouldSetEqualValues);
-    /**
-     * This hook should NOT run when user unlocks the allocation.
-     * Only when userAllocations are fetched OR after rewardsForProposals value changes.
-     *
-     * Comparing userAllocations?.elements.length may not be enough -- what if user changes values
-     * but not the number of projects?
-     *
-     * Hence the check for userNonce. Whenever allocation is done we refetch userNonce
-     * and we should run this hook.
-     */
+    onResetAllocationValues();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     currentEpoch,
@@ -203,12 +161,12 @@ const AllocationView = (): ReactElement => {
       return;
     }
 
-    if (rewardsForProposals.isZero() && hasZeroRewardsForProposalsBeenReached) {
-      onResetAllocationValues(true, false);
+    if (rewardsForProposals.isZero()) {
+      onResetAllocationValues();
       return;
     }
 
-    if (rewardsForProposals.isZero() && !hasZeroRewardsForProposalsBeenReached) {
+    if (rewardsForProposals.isZero()) {
       setAllocationValues(
         allocationValues.map(allocation => ({
           ...allocation,
@@ -216,23 +174,14 @@ const AllocationView = (): ReactElement => {
         })),
       );
       setAllocationsEdited([]);
-      setHasZeroRewardsForProposalsBeenReached(true);
       return;
     }
 
     if (!rewardsForProposals.isZero()) {
-      if (hasZeroRewardsForProposalsBeenReached) {
-        setHasZeroRewardsForProposalsBeenReached(false);
-      }
-      const shouldSetEqualValues =
-        !hasZeroRewardsForProposalsBeenReached &&
-        !!userAllocations &&
-        userAllocations?.elements.length === 0 &&
-        allocationsEdited.length === 0;
-      onResetAllocationValues(shouldSetEqualValues, false);
+      onResetAllocationValues();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rewardsForProposals, hasZeroRewardsForProposalsBeenReached]);
+  }, [rewardsForProposals]);
 
   const onAllocate = () => {
     if (userNonce === undefined || proposalsContract === undefined) {
@@ -265,7 +214,8 @@ const AllocationView = (): ReactElement => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentEpoch, userAllocations?.elements.length]);
 
-  const onChangeAllocationItemValue = (proposalAddressToModify: string, newValue: BigNumber) => {
+  const onChangeAllocationItemValue = (proposalAddressToModify: string, newValue: string) => {
+    const newValueBigNumber = parseUnits(newValue, 'wei');
     const isProposalAddressToModifyEdited = allocationsEdited.includes(proposalAddressToModify);
     const allocationsEditedNew = isProposalAddressToModifyEdited
       ? allocationsEdited
@@ -278,11 +228,11 @@ const AllocationView = (): ReactElement => {
       allocationValues,
       allocationsEdited: allocationsEditedNew,
       individualReward,
-      newValue,
+      newValue: newValueBigNumber,
       proposalAddressToModify,
       rewardsForProposals,
     });
-    _setAllocationValues(newAllocationValues);
+    setAllocationValues(newAllocationValues);
   };
 
   const isLoading =
@@ -298,7 +248,6 @@ const AllocationView = (): ReactElement => {
     !isConnected ||
     !isDecisionWindowOpen ||
     isLocked ||
-    !areAllocationValuesEqualRewardsForProposals ||
     (!areAllocationsAvailableOrAlreadyDone && !rewardsForProposals.isZero()) ||
     !!individualReward?.isZero();
 
@@ -307,17 +256,6 @@ const AllocationView = (): ReactElement => {
     areAllocationsAvailableOrAlreadyDone,
     proposalsIpfsWithRewards,
     userAllocationsElements: userAllocations?.elements,
-  });
-
-  const selectedItemName = selectedItemAddress
-    ? proposalsIpfs?.find(({ address }) => address === selectedItemAddress)!.name
-    : '';
-
-  const restToDistribute = getRestToDistribute({
-    allocationValues,
-    allocationsEdited,
-    individualReward,
-    rewardsForProposals,
   });
 
   const isEpoch1 = currentEpoch === 1;
@@ -335,9 +273,6 @@ const AllocationView = (): ReactElement => {
             areButtonsDisabled={areButtonsDisabled}
             currentView={currentView}
             isLoading={allocateEvent.isLoading}
-            isPrevResetButtonEnabled={
-              !areAllocationValuesEqualRewardsForProposals && areButtonsDisabled
-            }
             onAllocate={onAllocate}
             onResetValues={() => onResetAllocationValues()}
             setCurrentView={setCurrentView}
@@ -365,14 +300,10 @@ const AllocationView = (): ReactElement => {
                     address={address}
                     className={cx(styles.box, styles.isAllocation)}
                     isAllocatedTo={isAllocatedTo}
-                    isDisabled={
-                      isLocked || (restToDistribute.isZero() && allocationsEdited.length === 0)
-                    }
                     isLoadingError={isLoadingError}
-                    isLocked={!!isLocked}
                     isManuallyEdited={allocationsEdited.includes(address)}
                     name={name}
-                    onSelectItem={setSelectedItemAddress}
+                    onChange={onChangeAllocationItemValue}
                     profileImageSmall={profileImageSmall}
                     value={value}
                   />
@@ -380,27 +311,6 @@ const AllocationView = (): ReactElement => {
               )}
             </Fragment>
           )}
-          <ModalAllocationValuesEdit
-            isLimitVisible
-            isManuallyEdited={
-              selectedItemAddress ? allocationsEdited.includes(selectedItemAddress) : false
-            }
-            modalProps={{
-              header: t('modalAllocationValuesEdit.header', { allocation: selectedItemName }),
-              isOpen: selectedItemAddress !== null,
-              onClosePanel: () => setSelectedItemAddress(null),
-            }}
-            onUpdateValue={newValue => {
-              onChangeAllocationItemValue(selectedItemAddress!, newValue);
-            }}
-            restToDistribute={restToDistribute}
-            valueCryptoSelected={
-              selectedItemAddress && allocationValues
-                ? allocationValues.find(({ address }) => address === selectedItemAddress)!.value
-                : BigNumber.from(0)
-            }
-            valueCryptoTotal={rewardsForProposals}
-          />
         </Fragment>
       ) : (
         <AllocationSummary allocationValues={allocationValues} />

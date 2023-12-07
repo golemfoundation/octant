@@ -290,8 +290,7 @@
     "allocation": {
       "allocationItem": {
         "epoch1": "No funding threshold in Epoch 1",
-        "standard": "<0>{{sum}}</0> -> {{threshold}} needed",
-        "thresholdReached": "{{sum}} -> Threshold reached"
+        "standard": "{{sum}} / {{threshold}}"
       },
       "allocationSuccessful": "Allocation successful",
       "tip": {

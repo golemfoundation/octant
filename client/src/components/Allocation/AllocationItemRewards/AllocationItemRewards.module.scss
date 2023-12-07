@@ -2,10 +2,12 @@
   width: 100%;
   text-align: left;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  color: $color-octant-dark;
+  color: $color-octant-orange;
   font-size: $font-size-12;
   font-weight: $font-weight-semibold;
+  line-height: 2.4rem;
 
   @media #{$tablet-down} {
     font-size: $font-size-10;
@@ -14,8 +16,22 @@
   &.isThresholdUnknown {
     color: $color-octant-grey5;
   }
+
+  &.isDonationAboveThreshold {
+    color: $color-octant-green;
+  }
 }
 
-.donationBelowThreshold {
-  color: $color-octant-orange;
+.progressBar {
+  height: 0.2rem;
+  width: 100%;
+  background: $color-octant-grey1;
+
+  .filled {
+    background: $color-octant-orange;
+
+    &.isDonationAboveThreshold {
+      background: $color-octant-green;
+    }
+  }
 }

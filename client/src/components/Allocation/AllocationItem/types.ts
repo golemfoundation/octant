@@ -13,8 +13,6 @@ export default interface AllocationItemProps
     'totalValueOfAllocations' | 'percentage' | 'numberOfDonors'
   > {
   className?: string;
-  isDisabled: boolean;
-  isLocked: boolean;
   isManuallyEdited?: boolean;
-  onSelectItem: (proposalAddress: string) => void;
+  onChange: (address: string, newValue: string) => void;
 }

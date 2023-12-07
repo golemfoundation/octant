@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC } from 'react';
+import React, { FC, Fragment } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
@@ -10,12 +10,9 @@ import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThresho
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './AllocationItemRewards.module.scss';
-import AllocationItemProposalRewardsProps from './types';
+import AllocationItemRewardsProps from './types';
 
-const AllocationItemProposalRewards: FC<AllocationItemProposalRewardsProps> = ({
-  className,
-  address,
-}) => {
+const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({ className, address }) => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'views.allocation.allocationItem',
   });
@@ -54,6 +51,10 @@ const AllocationItemProposalRewards: FC<AllocationItemProposalRewardsProps> = ({
         styles.root,
         className,
         (isEpoch1 || isThresholdUnknown) && styles.isThresholdUnknown,
+        !isEpoch1 &&
+          !isThresholdUnknown &&
+          isDonationAboveThreshold &&
+          styles.isDonationAboveThreshold,
       )}
     >
       {isEpoch1 && t('epoch1')}
@@ -61,27 +62,24 @@ const AllocationItemProposalRewards: FC<AllocationItemProposalRewardsProps> = ({
         !isRewardsDataDefined &&
         i18n.t(isDesktop ? 'common.thresholdDataUnavailable' : 'common.noThresholdData')}
       {!isEpoch1 && isRewardsDataDefined && (
-        <div className={styles.threshold}>
-          {isDonationAboveThreshold ? (
-            t('thresholdReached', {
-              sum: proposalMatchedProposalRewardsFormatted?.fullString,
-            })
-          ) : (
-            <Trans
-              components={[<span className={styles.donationBelowThreshold} />]}
-              i18nKey="views.allocation.allocationItem.standard"
-              values={{
-                sum: areSuffixesTheSame
-                  ? proposalMatchedProposalRewardsFormatted?.value
-                  : proposalMatchedProposalRewardsFormatted?.fullString,
-                threshold: getFormattedEthValue(proposalRewardsThreshold).fullString,
-              }}
-            />
-          )}
-        </div>
+        <Fragment>
+          <Trans
+            components={[<span className={styles.donationBelowThreshold} />]}
+            i18nKey="views.allocation.allocationItem.standard"
+            values={{
+              sum: areSuffixesTheSame
+                ? proposalMatchedProposalRewardsFormatted?.value
+                : proposalMatchedProposalRewardsFormatted?.fullString,
+              threshold: proposalRewardsThresholdFormatted?.fullString,
+            }}
+          />
+          <div className={styles.progressBar}>
+            <div className={styles.filled} />
+          </div>
+        </Fragment>
       )}
     </div>
   );
 };
 
-export default AllocationItemProposalRewards;
+export default AllocationItemRewards;
