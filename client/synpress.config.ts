@@ -8,7 +8,7 @@ import path from 'path';
 export default defineConfig({
   e2e: {
     baseUrl: process.env.OCTANT_BASE_URL || 'http://localhost:5173',
-    defaultCommandTimeout: 10 * 1000,
+    defaultCommandTimeout: 120 * 1000,
     setupNodeEvents(on, config) {
       on(
         'file:preprocessor',

@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
-import TipTile from 'components/dedicated/TipTile/TipTile';
+import TipTile from 'components/shared/TipTile';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useTipsStore from 'store/tips/store';

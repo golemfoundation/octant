@@ -39,6 +39,14 @@ const middleware = async (req: Request, res: Response) => {
 
   try {
     data = await data.json();
+    // eslint-disable-next-line no-prototype-builtins
+    if (data.hasOwnProperty('status')) {
+      // eslint-disable-next-line no-console
+      console.error(`Error (${data.status.error_code}): ${data.status.error_message}`);
+      res.status(data.status.error_code).send(data);
+      return res.end();
+    }
+
     appCache.set(cacheKey, data);
     return res.send(data);
   } catch (e) {

@@ -5,12 +5,13 @@ import React, { Fragment, ReactElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
-import AllocateRewardsBox from 'components/dedicated/AllocateRewardsBox/AllocateRewardsBox';
-import AllocationItem from 'components/dedicated/AllocationItem/AllocationItem';
-import AllocationNavigation from 'components/dedicated/AllocationNavigation/AllocationNavigation';
-import AllocationSummary from 'components/dedicated/AllocationSummary/AllocationSummary';
-import AllocationTipTiles from 'components/dedicated/AllocationTipTiles/AllocationTipTiles';
-import ModalAllocationValuesEdit from 'components/dedicated/ModalAllocationValuesEdit/ModalAllocationValuesEdit';
+import AllocationItem from 'components/Allocation/AllocationItem';
+import AllocationNavigation from 'components/Allocation/AllocationNavigation';
+import AllocationRewardsBox from 'components/Allocation/AllocationRewardsBox';
+import AllocationSummary from 'components/Allocation/AllocationSummary';
+import AllocationTipTiles from 'components/Allocation/AllocationTipTiles';
+import ModalAllocationValuesEdit from 'components/Allocation/ModalAllocationValuesEdit';
+import Layout from 'components/shared/Layout';
 import { ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
 import useAllocate from 'hooks/events/useAllocate';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -24,7 +25,6 @@ import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewar
 import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useWithdrawals from 'hooks/queries/useWithdrawals';
-import MainLayout from 'layouts/MainLayout/MainLayout';
 import useAllocationsStore from 'store/allocations/store';
 import triggerToast from 'utils/triggerToast';
 
@@ -326,7 +326,7 @@ const AllocationView = (): ReactElement => {
     !isEpoch1 && areAllocationsAvailableOrAlreadyDone && hasUserIndividualReward && !isLocked;
 
   return (
-    <MainLayout
+    <Layout
       dataTest="AllocationView"
       isLoading={isLoading}
       navigationBottomSuffix={
@@ -349,7 +349,7 @@ const AllocationView = (): ReactElement => {
         <Fragment>
           <AllocationTipTiles className={styles.box} />
           {!isEpoch1 && (
-            <AllocateRewardsBox
+            <AllocationRewardsBox
               className={styles.box}
               isDisabled={isLocked || !isDecisionWindowOpen || !hasUserIndividualReward}
               /* eslint-disable-next-line @typescript-eslint/naming-convention */
@@ -358,22 +358,26 @@ const AllocationView = (): ReactElement => {
           )}
           {areAllocationsAvailableOrAlreadyDone && (
             <Fragment>
-              {allocationsWithRewards!.map(({ address, isAllocatedTo, isLoadingError, value }) => (
-                <AllocationItem
-                  key={address}
-                  address={address}
-                  className={cx(styles.box, styles.isAllocation)}
-                  isAllocatedTo={isAllocatedTo}
-                  isDisabled={
-                    isLocked || (restToDistribute.isZero() && allocationsEdited.length === 0)
-                  }
-                  isLoadingError={isLoadingError}
-                  isLocked={!!isLocked}
-                  isManuallyEdited={allocationsEdited.includes(address)}
-                  onSelectItem={setSelectedItemAddress}
-                  value={value}
-                />
-              ))}
+              {allocationsWithRewards!.map(
+                ({ address, isAllocatedTo, isLoadingError, value, profileImageSmall, name }) => (
+                  <AllocationItem
+                    key={address}
+                    address={address}
+                    className={cx(styles.box, styles.isAllocation)}
+                    isAllocatedTo={isAllocatedTo}
+                    isDisabled={
+                      isLocked || (restToDistribute.isZero() && allocationsEdited.length === 0)
+                    }
+                    isLoadingError={isLoadingError}
+                    isLocked={!!isLocked}
+                    isManuallyEdited={allocationsEdited.includes(address)}
+                    name={name}
+                    onSelectItem={setSelectedItemAddress}
+                    profileImageSmall={profileImageSmall}
+                    value={value}
+                  />
+                ),
+              )}
             </Fragment>
           )}
           <ModalAllocationValuesEdit
@@ -401,7 +405,7 @@ const AllocationView = (): ReactElement => {
       ) : (
         <AllocationSummary allocationValues={allocationValues} />
       )}
-    </MainLayout>
+    </Layout>
   );
 };
 

@@ -1,4 +1,4 @@
-import { SvgImageConfig } from 'components/core/Svg/types';
+import { SvgImageConfig } from 'components/ui/Svg/types';
 import { Path } from 'utils/routing';
 
 export interface NavigationTab {

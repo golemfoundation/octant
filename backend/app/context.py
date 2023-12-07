@@ -2,15 +2,14 @@ from dataclasses import dataclass
 from typing import Optional, List, Dict
 
 from app import EpochsRegistry
+from app.core.epochs.epochs_registry import EpochSettings
 from app.database import (
     pending_epoch_snapshot,
     finalized_epoch_snapshot,
     user as user_db,
 )
 from app.database.models import PendingEpochSnapshot, FinalizedEpochSnapshot, User
-from app.exceptions import InvalidEpoch
 from app.extensions import epochs
-from app.v2.engine.epochs_settings import EpochSettings
 
 
 @dataclass(frozen=True)
