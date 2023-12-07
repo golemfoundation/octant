@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-set -ueo pipefail
+set -ue
 
 NETWORK=${NETWORK:-"localhost"}
 NETWORK_FILE=${NETWORK_FILE:-"./networks.json"}
