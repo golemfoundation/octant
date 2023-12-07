@@ -8,7 +8,7 @@ from app.v2.engine.octant_rewards.total_and_individual import (
     TotalAndAllIndividualRewards,
 )
 from app.v2.engine.octant_rewards.total_and_individual.default import (
-    DefaultTotalAndIndividualRewards,
+    DefaultTotalAndAllIndividualRewards,
 )
 
 
@@ -16,6 +16,6 @@ from app.v2.engine.octant_rewards.total_and_individual.default import (
 class OctantRewardsSettings:
     locked_ratio: LockedRatio = DefaultLockedRatio()
     total_and_all_individual_rewards: TotalAndAllIndividualRewards = (
-        DefaultTotalAndIndividualRewards()
+        DefaultTotalAndAllIndividualRewards()
     )
     matched_rewards: MatchedRewards = DefaultMatchedRewards()

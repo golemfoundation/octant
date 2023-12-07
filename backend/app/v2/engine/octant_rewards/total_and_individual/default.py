@@ -4,7 +4,7 @@ from app.v2.engine.octant_rewards.total_and_individual import (
 )
 
 
-class DefaultTotalAndIndividualRewards(TotalAndAllIndividualRewards):
+class DefaultTotalAndAllIndividualRewards(TotalAndAllIndividualRewards):
     def calculate_total_rewards(self, payload: TotalAndAllIndividualPayload) -> int:
         return int(payload.eth_proceeds * payload.locked_ratio.sqrt())
 
