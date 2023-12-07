@@ -9,6 +9,7 @@ class UserBudgetPayload:
     all_individual_rewards: int = None
 
 
+@dataclass
 class UserBudget(ABC):
     @abstractmethod
     def calculate_budget(self, payload: UserBudgetPayload) -> int:

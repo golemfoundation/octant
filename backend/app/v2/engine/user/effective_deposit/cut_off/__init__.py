@@ -8,6 +8,7 @@ class CutOffPayload:
     effective_amount: int = None
 
 
+@dataclass
 class CutOff(ABC):
     @abstractmethod
     def apply_cutoff(self, payload: CutOffPayload) -> int:

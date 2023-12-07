@@ -9,6 +9,7 @@ class TotalAndAllIndividualPayload:
     locked_ratio: Decimal = None
 
 
+@dataclass
 class TotalAndAllIndividualRewards(ABC):
     @abstractmethod
     def calculate_total_rewards(self, payload: TotalAndAllIndividualPayload) -> int:

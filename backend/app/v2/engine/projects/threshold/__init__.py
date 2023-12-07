@@ -8,6 +8,7 @@ class ProjectThresholdPayload:
     proposals_count: int = None
 
 
+@dataclass
 class ProjectThreshold(ABC):
     @abstractmethod
     def calculate_threshold(self, payload: ProjectThresholdPayload) -> int:

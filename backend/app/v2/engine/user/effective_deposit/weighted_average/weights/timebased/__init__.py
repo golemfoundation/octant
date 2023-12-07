@@ -28,6 +28,7 @@ class DepositWeightsPayload:
     user_events: List[Dict] = None
 
 
+@dataclass
 class TimebasedWeights(ABC):
     @abstractmethod
     def calculate_deposit_weights(

@@ -8,6 +8,7 @@ class LockedRatioPayload:
     total_effective_deposit: int = None
 
 
+@dataclass
 class LockedRatio(ABC):
     @abstractmethod
     def calculate_locked_ratio(self, payload: LockedRatioPayload) -> Decimal:

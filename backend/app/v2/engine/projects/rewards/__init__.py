@@ -12,6 +12,7 @@ class ProjectRewardsPayload:
     threshold: int = None
 
 
+@dataclass
 class ProjectRewards(ABC):
     @abstractmethod
     def calculate_project_rewards(

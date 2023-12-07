@@ -9,6 +9,7 @@ class MatchedRewardsPayload:
     patrons_rewards: int = None
 
 
+@dataclass
 class MatchedRewards(ABC):
     @abstractmethod
     def calculate_matched_rewards(self, payload: MatchedRewardsPayload) -> int:

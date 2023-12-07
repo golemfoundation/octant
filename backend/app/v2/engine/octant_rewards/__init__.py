@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from app.v2.engine.octant_rewards.locked_ratio import LockedRatio
 from app.v2.engine.octant_rewards.locked_ratio.default import DefaultLockedRatio
@@ -14,8 +14,8 @@ from app.v2.engine.octant_rewards.total_and_individual.default import (
 
 @dataclass
 class OctantRewardsSettings:
-    locked_ratio: LockedRatio = DefaultLockedRatio()
-    total_and_all_individual_rewards: TotalAndAllIndividualRewards = (
-        DefaultTotalAndAllIndividualRewards()
+    locked_ratio: LockedRatio = field(default_factory=DefaultLockedRatio)
+    total_and_all_individual_rewards: TotalAndAllIndividualRewards = field(
+        default_factory=DefaultTotalAndAllIndividualRewards
     )
-    matched_rewards: MatchedRewards = DefaultMatchedRewards()
+    matched_rewards: MatchedRewards = field(default_factory=DefaultMatchedRewards)

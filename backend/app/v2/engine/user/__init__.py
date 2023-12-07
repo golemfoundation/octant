@@ -10,4 +10,4 @@ class UserSettings:
     effective_deposit: EffectiveDepositSettings = field(
         default_factory=EffectiveDepositSettings
     )
-    budget: UserBudget = DefaultUserBudget()
+    budget: UserBudget = field(default_factory=DefaultUserBudget)
