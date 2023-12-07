@@ -1,5 +1,5 @@
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from app.v2.engine.octant_rewards import OctantRewardsSettings
 from app.v2.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (
@@ -14,9 +14,9 @@ from app.v2.engine.user.effective_deposit.weighted_average.weights.timebased.def
 
 @dataclass
 class EpochSettings:
-    octant_rewards: OctantRewardsSettings = OctantRewardsSettings()
-    user: UserSettings = UserSettings()
-    project: ProjectSettings = ProjectSettings()
+    octant_rewards: OctantRewardsSettings = field(default_factory=OctantRewardsSettings)
+    user: UserSettings = field(default_factory=UserSettings)
+    project: ProjectSettings = field(default_factory=ProjectSettings)
 
 
 SETTINGS: dict[int, EpochSettings] = defaultdict(lambda: EpochSettings())

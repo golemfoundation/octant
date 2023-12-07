@@ -6,9 +6,12 @@ from app.v2.engine.octant_rewards import DefaultTotalAndAllIndividualRewards
 from app.v2.engine.octant_rewards.total_and_individual import (
     TotalAndAllIndividualPayload,
 )
-from app.v2.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import \
-    AllProceedsWithOperationalCost
-from app.v2.engine.octant_rewards.total_and_individual.double import DoubleTotalAndIndividualRewards
+from app.v2.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (
+    AllProceedsWithOperationalCost,
+)
+from app.v2.engine.octant_rewards.total_and_individual.double import (
+    DoubleTotalAndIndividualRewards,
+)
 
 
 @pytest.mark.parametrize(
