@@ -53,9 +53,10 @@ const AllocationItem: FC<AllocationItemProps> = ({
           <InputText
             className={cx(styles.input, isEpoch1 && styles.isEpoch1)}
             onChange={event => onChange(address, event.target.value)}
+            placeholder="0.000"
             suffix="ETH"
             textAlign="right"
-            value={valueToRender}
+            value={value.isZero() ? undefined : valueToRender}
             variant="allocation"
           />
         </Fragment>
