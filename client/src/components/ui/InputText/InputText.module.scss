@@ -1,164 +1,194 @@
 .root {
   position: relative;
-  width: 100%;
-}
 
-.label {
-  &.variant-- {
-    &boxRounded {
-      position: absolute;
-      top: -1.2rem;
-      left: 0;
-      font-size: $font-size-08;
-      font-weight: $font-weight-bold;
-      color: $color-octant-grey5;
-      z-index: $z-index-2;
-    }
+  .inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
 
-    &simple {
-      text-align: left;
-      font-size: $font-size-10;
-      font-weight: $font-weight-bold;
-      color: $color-octant-grey5;
-      margin: 0 0 0.5rem 0;
-    }
-  }
-}
+    .input {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      // Hides copy/paste popup on safari mobile when an input value is selected
+      -webkit-user-select: none;
 
-.inputWrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
+      &:focus-visible {
+        outline: 0;
+      }
 
-.input {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  // Hides copy/paste popup on safari mobile when an input value is selected
-  -webkit-user-select: none;
-
-  &:focus-visible {
-    outline: 0;
-  }
-
-  &.variant-- {
-    &borderless {
-      text-align: center;
-      font-size: $font-size-20;
-      background: transparent;
-
-      &.isDisabled {
-        color: $color-octant-grey1;
-
-        &::placeholder {
-          color: $color-octant-grey1;
+      &.textAlign-- {
+        &left {
+          text-align: left;
+        }
+        &center {
+          text-align: center;
+        }
+        &right {
+          text-align: right;
         }
       }
     }
 
-    &boxRounded {
-      font-size: $font-size-14;
-      font-weight: $font-weight-bold;
+    .suffix {
+      position: absolute;
       background: transparent;
     }
 
-    &simple {
-      height: 4.8rem;
-      padding: 1.6rem 0 1.6rem 1.6rem;
-      border: 0.1rem solid $color-octant-grey1;
-      border-radius: $border-radius-04;
-      background: $color-white;
-      font-size: $font-size-14;
-      color: $color-octant-dark;
-
-      &.isDisabled {
-        background: $color-octant-grey8;
-      }
-
-      &::placeholder {
-        color: $color-octant-dark-30;
-        font-weight: $font-weight-semibold;
-      }
-
-      &:focus-visible {
-        border-color: $color-octant-green;
-      }
-
-      &.isError {
-        border-color: $color-octant-orange;
-      }
+    .loader {
+      position: absolute;
+      right: 7rem;
+      height: 1.6rem;
+      width: 1.6rem;
     }
   }
-
-  &.hasSuffix {
-    padding: 1.6rem 7.2rem 1.6rem 1.6rem;
-  }
-
-  &.textAlign-- {
-    &left {
-      text-align: left;
-    }
-    &center {
-      text-align: center;
-    }
-  }
-}
-
-.buttonClear {
-  position: absolute;
-  right: 1.6rem;
-
-  &.isSuffix {
-    right: 6.4rem;
-  }
-}
-
-.suffix {
-  position: absolute;
-  background: transparent;
 
   &.variant-- {
-    &boxRounded {
-      top: 50%;
-      z-index: $z-index-2;
-      right: 2.4rem;
-      transform: translate(0, -50%);
-      font-weight: $font-weight-bold;
+    &allocation {
+      width: 14.2rem;
+
+      @media #{$desktop-up} {
+        width: 26rem;
+      }
+
+      .input {
+        height: 4.8rem;
+        font-size: $font-size-14;
+        font-weight: $font-weight-bold;
+        background: $color-white;
+        border-radius: $border-radius-08;
+        padding: 0 0.8rem 0 0.8rem;
+
+        @media #{$tablet-down} {
+          &.smallFontSize {
+            font-size: $font-size-12;
+          }
+        }
+
+        &.isDisabled {
+          background: $color-octant-grey8;
+        }
+
+        &::placeholder {
+          color: $color-octant-grey5;
+        }
+
+        &:focus-visible {
+          background-color: $color-octant-green5;
+        }
+
+        &.isError {
+          background-color: $color-octant-orange4;
+        }
+
+        &.hasSuffix {
+          padding: 0 5rem 0 0.8rem;
+        }
+
+        @media #{$desktop-up} {
+          height: 5.6rem;
+          font-size: $font-size-18;
+
+          &.hasSuffix {
+            padding: 0 5.2rem 0 2.8rem;
+          }
+        }
+      }
+
+      .suffix {
+        right: 0.8rem;
+        z-index: $z-index-2;
+        font-weight: $font-weight-bold;
+        padding: 0.2rem 0.4rem;
+        font-size: $font-size-12;
+        color: $color-octant-dark;
+        line-height: 1.6rem;
+        background: $color-octant-grey1;
+        border-radius: $border-radius-04;
+
+        &.isError {
+          background: $color-white;
+        }
+      }
     }
 
     &simple {
-      right: 1.6rem;
-      z-index: $z-index-2;
-      font-weight: $font-weight-bold;
-      padding: 0.4rem 0.8rem;
-      font-size: $font-size-12;
-      color: $color-octant-dark;
-      background: $color-octant-grey1;
-      border-radius: $border-radius-04;
+      width: 100%;
 
-      &.isDisabled {
+      .label {
+        text-align: left;
+        font-size: $font-size-10;
+        font-weight: $font-weight-bold;
         color: $color-octant-grey5;
+        margin: 0 0 0.5rem 0;
+      }
+
+      .input {
+        height: 4.8rem;
+        padding: 1.6rem 0 1.6rem 1.6rem;
+        border: 0.1rem solid $color-octant-grey1;
+        border-radius: $border-radius-04;
+        background: $color-white;
+        font-size: $font-size-14;
+        color: $color-octant-dark;
+
+        &.isDisabled {
+          background: $color-octant-grey8;
+        }
+
+        &::placeholder {
+          color: $color-octant-dark-30;
+          font-weight: $font-weight-semibold;
+        }
+
+        &:focus-visible {
+          border-color: $color-octant-green;
+        }
+
+        &.isError {
+          border-color: $color-octant-orange;
+        }
+
+        &.hasSuffix {
+          padding: 1.6rem 7.2rem 1.6rem 1.6rem;
+        }
+      }
+
+      .suffix {
+        right: 1.6rem;
+        z-index: $z-index-2;
+        font-weight: $font-weight-bold;
+        padding: 0.4rem 0.8rem;
+        font-size: $font-size-12;
+        color: $color-octant-dark;
+        background: $color-octant-grey1;
+        border-radius: $border-radius-04;
+
+        &.isDisabled {
+          color: $color-octant-grey5;
+        }
+      }
+
+      .buttonClear {
+        position: absolute;
+        right: 1.6rem;
+
+        &.isSuffix {
+          right: 6.4rem;
+        }
+      }
+
+      .error {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        text-align: left;
+        font-size: $font-size-10;
+        color: $color-octant-orange;
+        font-weight: $font-weight-bold;
+        margin-top: 0.5rem;
       }
     }
   }
-}
-
-.loader {
-  position: absolute;
-  right: 7rem;
-  height: 1.6rem;
-  width: 1.6rem;
-}
-
-.error {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  text-align: left;
-  font-size: $font-size-10;
-  color: $color-octant-orange;
-  font-weight: $font-weight-bold;
-  margin-top: 0.5rem;
 }
