@@ -1,5 +1,9 @@
 .root {
   padding: 2.4rem 2.8rem;
+
+  @media #{$tablet-down} {
+    padding: 1.6rem 2.4rem;
+  }
 }
 
 .boxRoundedChildren {
@@ -9,6 +13,7 @@
 
 .projectData {
   display: flex;
+  align-items: center;
 }
 
 .image {

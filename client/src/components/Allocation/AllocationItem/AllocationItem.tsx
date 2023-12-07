@@ -35,6 +35,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
     <BoxRounded
       childrenWrapperClassName={styles.boxRoundedChildren}
       className={cx(styles.root, className)}
+      hasPadding={false}
     >
       {(isLoading || isLoadingError) && <AllocationItemSkeleton />}
       {!isLoading && !isLoadingError && (
