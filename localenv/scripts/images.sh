@@ -60,7 +60,9 @@ build_backend(){
   echo Building backend image ... 
 
   dockerfile=$(create_tmp_dockerfile backend)
-  build_image backend ${dockerfile} "${OCTANT_ROOT}/backend"
+  build_image backend-base ${dockerfile} "${OCTANT_ROOT}/backend"
+
+  build_image backend "${OCTANT_ROOT}/localenv/backend/Dockerfile" "${OCTANT_ROOT}/localenv/backend"
 
   echo Finished building backend image!
 }
