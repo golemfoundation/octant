@@ -107,3 +107,9 @@ export const calculator: SvgImageConfig = {
     '<circle cx="10.126" cy="13.125" r="1.125" fill="#171717"/><circle cx="13.876" cy="13.125" r="1.125" fill="#171717"/><circle cx="13.876" cy="16.125" r="1.125" fill="#171717"/><circle cx="10.126" cy="16.125" r="1.125" fill="#171717"/><path stroke="#171717" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.84 4.5H7.16C6.52 4.5 6 5.02 6 5.66v12.68c0 .64.52 1.16 1.16 1.16h9.68c.64 0 1.16-.52 1.16-1.16V5.66c0-.64-.52-1.16-1.16-1.16Z"/><path stroke="#171717" stroke-width="1.5" d="M6.063 9.75h12.25"/>',
   viewBox: '0 0 24 24',
 };
+
+export const bin: SvgImageConfig = {
+  markup:
+    '<path stroke="#FF6157" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19.787 23.454H6.863a1.846 1.846 0 0 1-1.846-1.846V4.992h16.616v16.616a1.846 1.846 0 0 1-1.846 1.846ZM10.556 17.915v-7.384M16.094 17.915v-7.384M1.325 4.992h24M16.094 1.3h-5.538A1.846 1.846 0 0 0 8.71 3.146v1.846h9.23V3.146A1.846 1.846 0 0 0 16.095 1.3Z"/>',
+  viewBox: '0 0 27 25',
+};

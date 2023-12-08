@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
+import { AnimatePresence } from 'framer-motion';
 import isEmpty from 'lodash/isEmpty';
 import React, { Fragment, ReactElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -292,7 +293,7 @@ const AllocationView = (): ReactElement => {
             />
           )}
           {areAllocationsAvailableOrAlreadyDone && (
-            <Fragment>
+            <AnimatePresence initial={false}>
               {allocationsWithRewards!.map(
                 ({ address, isAllocatedTo, isLoadingError, value, profileImageSmall, name }) => (
                   <AllocationItem
@@ -309,7 +310,7 @@ const AllocationView = (): ReactElement => {
                   />
                 ),
               )}
-            </Fragment>
+            </AnimatePresence>
           )}
         </Fragment>
       ) : (
