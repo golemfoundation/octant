@@ -107,10 +107,14 @@ const AllocationItem: FC<AllocationItemProps> = ({
         onDragEnd={e => {
           animate(
             ref.current,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore-next-line
             { x: e.x < startX ? constraints[0] : constraints[1] },
             { duration: 0.2 },
           );
         }}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore-next-line
         onDragStart={e => setStartX(e.x)}
         style={{ x }}
       >
