@@ -44,7 +44,8 @@
     "noThresholdData": "No threshold data",
     "valueCantBeEmpty": "Value can't be empty",
     "lessThan1m": "less than 1m",
-    "donors": "Donors"
+    "donors": "Donors",
+    "available": "Available"
   },
   "components": {
     "settings": {
@@ -92,8 +93,10 @@
         "title": "Allocate rewards",
         "subtitle": "{{individualReward}} available",
         "subtitleNoRewards": "No rewards available yet",
-        "donate": "Donate {{percentRewardsForProposals}}%",
-        "withdraw": "Withdraw {{percentWithdraw}}%"
+        "donate": "Donate",
+        "donated": "Donated",
+        "allocated": "Allocated",
+        "manual": "Manual"
       },
       "allocationSummary": {
         "estimatedLeverage": "Est. leverage",
@@ -159,8 +162,7 @@
           "useMax": "Use max",
           "amountToLock": "Amount to lock",
           "amountToUnlock": "Amount to unlock",
-          "locked": "Locked",
-          "available": "Available"
+          "locked": "Locked"
         },
         "glmLockNotification": {
           "success": {
@@ -281,7 +283,7 @@
       "title": "You can't remove projects with donations",
       "message": "Set your donation to zero in Allocate view to enable project removal"
     },
-    "wrongNetwork":  {
+    "wrongNetwork": {
       "title": "Wrong network",
       "message": "Please change network to {{networkName}}{{isTestnet}}"
     }

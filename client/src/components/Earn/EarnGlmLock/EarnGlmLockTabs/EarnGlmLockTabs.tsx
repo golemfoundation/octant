@@ -141,7 +141,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
                     ).value
                   }
                 </div>
-                {t('glmLockTabs.available')}
+                {i18n.t('common.available')}
               </div>
             )}
           </div>

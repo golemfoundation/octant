@@ -286,7 +286,8 @@ const AllocationView = (): ReactElement => {
           {!isEpoch1 && (
             <AllocationRewardsBox
               className={styles.box}
-              isDisabled={isLocked || !isDecisionWindowOpen || !hasUserIndividualReward}
+              isDisabled={!isDecisionWindowOpen || !hasUserIndividualReward}
+              isLocked={isLocked}
               /* eslint-disable-next-line @typescript-eslint/naming-convention */
               onUnlock={isDecisionWindowOpen ? () => setIsLocked(prev => !prev) : () => {}}
             />

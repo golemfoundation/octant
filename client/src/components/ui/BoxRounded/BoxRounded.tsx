@@ -34,6 +34,7 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
       dataTest = 'BoxRounded',
       textAlign = 'center',
       childrenWrapperClassName,
+      titleClassName,
     },
     ref,
   ) => {
@@ -105,8 +106,10 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
               isPaddingMovedToElements && styles.isPaddingMovedToElements,
             )}
           >
-            <div className={styles.title} data-test={`${dataTest}__title`}>
-              {title}
+            <div>
+              <div className={cx(styles.title, titleClassName)} data-test={`${dataTest}__title`}>
+                {title}
+              </div>
               <div className={styles.subtitle}>{subtitle}</div>
             </div>
             {titleSuffix}
