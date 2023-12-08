@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import throttle from 'lodash/throttle';
-import React, { FC, useState, useCallback } from 'react';
+import React, { FC, useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ModalAllocationValuesEdit from 'components/Allocation/ModalAllocationValuesEdit';
@@ -19,8 +19,10 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
   className,
   isDisabled,
   onUnlock,
+  isManuallyEdited,
+  isLocked,
 }) => {
-  const { t } = useTranslation('translation', {
+  const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationRewardsBox',
   });
   const { data: individualReward } = useIndividualReward();
@@ -60,14 +62,14 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
     : BigNumber.from(0);
   const sections = [
     {
-      header: t('donate', { percentRewardsForProposals }),
+      header: isLocked ? t('donated') : t('donate'),
       value: getValueCryptoToDisplay({
         cryptoCurrency: 'ethereum',
         valueCrypto: rewardsForProposalsFinal,
       }),
     },
     {
-      header: t('withdraw', { percentWithdraw }),
+      header: i18n.t('common.personal'),
       value: getValueCryptoToDisplay({
         cryptoCurrency: 'ethereum',
         valueCrypto: rewardsForWithdraw,
@@ -75,31 +77,41 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
     },
   ];
 
+  const subtitle = useMemo(() => {
+    if (isLocked) {
+      return t('allocated');
+    }
+    if (isDecisionWindowOpenAndHasIndividualReward) {
+      return i18n.t('common.available');
+    }
+    return t('subtitleNoRewards');
+  }, [isLocked, isDecisionWindowOpenAndHasIndividualReward, t, i18n]);
+
   return (
     <BoxRounded
       className={cx(styles.root, className)}
+      hasPadding={false}
       isVertical
-      subtitle={
-        isDecisionWindowOpenAndHasIndividualReward
-          ? t('subtitle', {
-              individualReward: getValueCryptoToDisplay({
-                cryptoCurrency: 'ethereum',
-                valueCrypto: individualReward,
-              }),
-            })
-          : t('subtitleNoRewards')
-      }
-      title={t('title')}
+      subtitle={subtitle}
+      title={getValueCryptoToDisplay({
+        cryptoCurrency: 'ethereum',
+        valueCrypto: individualReward,
+      })}
+      titleClassName={cx(styles.title, (isDisabled || isLocked) && styles.greyTitle)}
     >
-      <Slider
-        className={styles.slider}
-        isDisabled={isDisabled}
-        max={100}
-        min={0}
-        onChange={onSetRewardsForProposalsThrottled}
-        onUnlock={onUnlock}
-        value={percentRewardsForProposals}
-      />
+      {!isDisabled && isManuallyEdited && <div className={styles.isManualBadge}>{t('manual')}</div>}
+      <div className={cx(styles.sliderWrapper, isManuallyEdited && styles.isManuallyEdited)}>
+        <Slider
+          className={styles.slider}
+          hideThumb={isLocked}
+          isDisabled={isDisabled}
+          max={100}
+          min={0}
+          onChange={onSetRewardsForProposalsThrottled}
+          onUnlock={onUnlock}
+          value={percentRewardsForProposals}
+        />
+      </div>
       <div className={styles.sections}>
         {sections.map(({ header, value }, index) => (
           <div
@@ -108,8 +120,10 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
             className={cx(styles.section, isDisabled && styles.isDisabled)}
             onClick={() => (isDisabled ? {} : setModalMode(index === 0 ? 'donate' : 'withdraw'))}
           >
-            <div>{header}</div>
-            <div className={styles.value}>{value}</div>
+            <div className={styles.header}>{header}</div>
+            <div className={cx(styles.value, (isLocked || isDisabled) && styles.isDisabled)}>
+              {value}
+            </div>
           </div>
         ))}
       </div>

@@ -28,5 +28,6 @@ export default interface BoxRoundedProps {
   }[];
   textAlign?: 'center' | 'left' | 'right' | 'justify';
   title?: string;
+  titleClassName?: string;
   titleSuffix?: ReactNode;
 }
