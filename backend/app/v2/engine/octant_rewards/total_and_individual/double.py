@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from app.v2.engine.octant_rewards.total_and_individual import (
     TotalAndAllIndividualPayload,
     TotalAndAllIndividualRewards,
@@ -5,8 +7,8 @@ from app.v2.engine.octant_rewards.total_and_individual import (
 
 
 class DoubleTotalAndIndividualRewards(TotalAndAllIndividualRewards):
-    DOUBLING_GLM_SUPPLY_LIMIT = 0.25
-    REWARDS_MULTIPLY_RATIO_LIMIT = 0.5
+    DOUBLING_GLM_SUPPLY_LIMIT = Decimal("0.25")
+    REWARDS_MULTIPLY_RATIO_LIMIT = Decimal("0.5")
     REWARDS_MULTIPLY_FACTOR = 2
 
     def calculate_total_rewards(self, payload: TotalAndAllIndividualPayload) -> int:
