@@ -9,6 +9,7 @@ from app.database import (
     user as user_db,
 )
 from app.database.models import PendingEpochSnapshot, FinalizedEpochSnapshot, User
+from app.exceptions import InvalidEpoch
 from app.extensions import epochs
 
 
@@ -66,7 +67,7 @@ class ContextBuilder:
             )
         except InvalidEpoch:
             pending_snapshot = None
-        users_context = None
+        users_context: Optional[Dict[str, User]] = None
 
         if users_addresses is not None:
             users_context = user_db.get_by_users_addresses(users_addresses)
