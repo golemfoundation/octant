@@ -1,4 +1,42 @@
+$removeButtonHeightWidthMobile: 8rem;
+$removeButtonHeightWidthDesktop: 10.4rem;
+
 .root {
+  width: 100%;
+  position: relative;
+}
+
+.removeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: $removeButtonHeightWidthMobile;
+  width: $removeButtonHeightWidthMobile;
+  border-radius: $border-radius-16;
+  background: $color-white;
+  position: absolute;
+  right: 0;
+  top: 0;
+  cursor: pointer;
+  transition: all $transition-time-4;
+
+  &:hover {
+    background: $color-octant-grey8;
+  }
+
+  &:active {
+    background-color: $color-octant-grey1;
+  }
+
+  @media #{$desktop-up} {
+    height: $removeButtonHeightWidthDesktop;
+    width: $removeButtonHeightWidthDesktop;
+  }
+}
+
+.box {
+  position: relative;
+  z-index: $z-index-2;
   padding: 2.4rem 2.8rem;
 
   @media #{$tablet-down} {
