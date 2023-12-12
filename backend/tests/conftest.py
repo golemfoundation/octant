@@ -23,6 +23,7 @@ from app.crypto.account import Account as CryptoAccount
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.extensions import db, w3, deposits, glm
 from app.settings import TestConfig, DevConfig
+
 from tests.helpers.constants import (
     MNEMONIC,
     MOCKED_PENDING_EPOCH_NO,
@@ -35,6 +36,7 @@ from tests.helpers.constants import (
     USER1_ED,
     USER2_ED,
     USER3_ED,
+    USER_MOCKED_BUDGET,
     DEPLOYER_PRIV,
     ALICE,
     BOB,
@@ -52,6 +54,7 @@ MOCK_VAULT = MagicMock(spec=Vault)
 MOCK_GET_ETH_BALANCE = MagicMock()
 MOCK_GET_USER_BUDGET = Mock()
 MOCK_HAS_PENDING_SNAPSHOT = Mock()
+MOCK_LAST_FINALIZED_SNAPSHOT = Mock()
 MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
 MOCK_IS_CONTRACT = Mock()
 MOCK_MATCHED_REWARDS = MagicMock(spec=calculate_matched_rewards)
@@ -357,11 +360,25 @@ def patch_has_pending_epoch_snapshot(monkeypatch):
 
 
 @pytest.fixture(scope="function")
+def patch_last_finalized_snapshot(monkeypatch):
+    (
+        monkeypatch.setattr(
+            "app.controllers.snapshots.get_last_finalized_snapshot",
+            MOCK_LAST_FINALIZED_SNAPSHOT,
+        ),
+    )
+    MOCK_LAST_FINALIZED_SNAPSHOT.return_value = 1
+
+
+@pytest.fixture(scope="function")
 def patch_user_budget(monkeypatch):
     monkeypatch.setattr("app.core.allocations.get_budget", MOCK_GET_USER_BUDGET)
     monkeypatch.setattr("app.core.user.rewards.get_budget", MOCK_GET_USER_BUDGET)
+    monkeypatch.setattr(
+        "app.core.history.user_controller.get_budget", MOCK_GET_USER_BUDGET
+    )
 
-    MOCK_GET_USER_BUDGET.return_value = 10 * 10**18 * 10**18
+    MOCK_GET_USER_BUDGET.return_value = USER_MOCKED_BUDGET
 
 
 @pytest.fixture(scope="function")

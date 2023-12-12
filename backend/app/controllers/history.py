@@ -12,7 +12,7 @@ class OpType(StrEnum):
     UNLOCK = "unlock"
     ALLOCATION = "allocation"
     WITHDRAWAL = "withdrawal"
-    PATRON_MODE_TOGGLE = "patron_mode_toggle"
+    PATRON_MODE_DONATION = "patron_mode_donation"
 
 
 @dataclass(frozen=True)
@@ -34,8 +34,9 @@ class AllocationHistoryEntry(HistoryEntry):
 
 
 @dataclass(frozen=True)
-class PatronModeToggle(HistoryEntry):
-    patron_mode_enabled: bool
+class PatronModeDonation(HistoryEntry):
+    epoch: int
+    amount: int
 
 
 def user_history(
@@ -64,14 +65,13 @@ def _collect_history_records(
     ]
 
     events += [
-        PatronModeToggle(
-            type=OpType.PATRON_MODE_TOGGLE,
+        PatronModeDonation(
+            type=OpType.PATRON_MODE_DONATION,
             timestamp=e.timestamp.timestamp_us(),
-            patron_mode_enabled=e.patron_mode_enabled,
+            epoch=e.epoch,
+            amount=e.amount,
         )
-        for e in history.get_patron_mode_toggles(
-            user_address, from_timestamp, query_limit
-        )
+        for e in history.get_patron_donations(user_address, from_timestamp, query_limit)
     ]
 
     for event_getter, event_type in [

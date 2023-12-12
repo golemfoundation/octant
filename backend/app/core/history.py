@@ -2,13 +2,18 @@ from dataclasses import dataclass
 from enum import StrEnum
 from typing import List
 
-from app.database import allocations, patrons
+from eth_utils import to_checksum_address
+
+from app.database import allocations
+from app.core.user.patron_mode import get_patrons_at_timestamp
+from app.core.epochs import details as epochs_details
 from app.utils.time import (
     Timestamp,
     from_datetime,
     from_timestamp_s,
 )
 
+from app.controllers import snapshots as snapshots_controller, user as user_controller
 from app.infrastructure.graphql import locks, unlocks, withdrawals
 
 
@@ -42,9 +47,10 @@ class WithdrawalItem:
 
 
 @dataclass(frozen=True)
-class PatronModeToggleItem:
+class PatronDonationItem:
     timestamp: Timestamp
-    patron_mode_enabled: bool
+    epoch: int
+    amount: int
 
 
 def get_locks(
@@ -111,15 +117,36 @@ def get_withdrawals(
     ]
 
 
-def get_patron_mode_toggles(
+def get_patron_donations(
     user_address: str, from_timestamp: Timestamp, limit: int
-) -> List[PatronModeToggleItem]:
-    return [
-        PatronModeToggleItem(
-            patron_mode_enabled=event.patron_mode_enabled,
-            timestamp=from_datetime(event.created_at),
+) -> List[PatronDonationItem]:
+    user_address = to_checksum_address(user_address)
+
+    last_finalized_snapshot = snapshots_controller.get_last_finalized_snapshot()
+
+    epochs = epochs_details.get_epochs_details(
+        last_finalized_snapshot - limit, last_finalized_snapshot
+    )
+    epochs.reverse()
+
+    events = []
+
+    for epoch in epochs:
+        epoch_finalization_timestamp = from_timestamp_s(
+            epoch.end_sec + epoch.decision_window_sec
         )
-        for event in patrons.get_user_history(
-            user_address, from_timestamp.datetime(), limit
-        )
-    ]
+
+        if epoch_finalization_timestamp <= from_timestamp:
+            patrons_at_epoch = get_patrons_at_timestamp(epoch_finalization_timestamp)
+            if user_address in patrons_at_epoch:
+                donation = user_controller.get_budget(user_address, epoch.epoch_no)
+
+                events.append(
+                    PatronDonationItem(
+                        epoch=epoch.epoch_no,
+                        timestamp=epoch_finalization_timestamp,
+                        amount=donation,
+                    )
+                )
+
+    return events

@@ -14,7 +14,7 @@ history_item = api.model(
     {
         "type": fields.String(
             required=True,
-            description="Type of action (lock, unlock, allocation, withdrawal, patron_mode_toggle)",
+            description="Type of action (lock, unlock, allocation, withdrawal, patron_mode_donation)",
         ),
         "amount": fields.String(
             required=True, description="Amount involved in the action, BigNumber (wei)"
@@ -31,9 +31,9 @@ history_item = api.model(
             required=False,
             description="Allocation project address. Field available only for allocation items.",
         ),
-        "patronModeEnabled": fields.Boolean(
+        "epoch": fields.Boolean(
             required=False,
-            description="Boolean flag determinig, whether user has enabled or disabled patron mode at given history record.",
+            description="Epoch in which action occured. Field available only for patron_mode_donation items. ",
         ),
     },
 )

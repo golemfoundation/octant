@@ -15,8 +15,8 @@ from app.core.history import (
     get_allocations,
     AllocationItem,
     get_withdrawals,
-    get_patron_mode_toggles,
-    PatronModeToggleItem,
+    get_patron_donations,
+    PatronDonationItem,
 )
 from app.core.user.patron_mode import toggle_patron_mode
 from app.crypto.eip712 import sign, build_allocations_eip712_data
@@ -24,11 +24,29 @@ from app.utils.time import from_timestamp_s, now
 
 from tests.conftest import (
     create_payload,
+    create_epoch_event,
     MOCK_PROPOSALS,
     MOCK_EPOCHS,
     mock_graphql,
 )
-from tests.helpers.constants import USER1_ADDRESS
+from tests.helpers.constants import USER1_ADDRESS, USER_MOCKED_BUDGET
+
+epochs = [
+    create_epoch_event(
+        start=1698803300,
+        end=1698804300,
+        duration=1000,
+        decision_window=500,
+        epoch=1,
+    ),
+    create_epoch_event(
+        start=1698804300,
+        end=1698805300,
+        duration=1000,
+        decision_window=500,
+        epoch=2,
+    ),
+]
 
 
 @pytest.fixture(autouse=True)
@@ -280,25 +298,40 @@ def test_history_withdrawals(mocker, withdrawals, expected_history_sorted_by_ts)
     assert history == expected_history_sorted_by_ts
 
 
-@freeze_time("2023-11-01 01:48:47")
-def test_history_patron_mode_toggles(tos_users):
+@freeze_time(
+    "2023-11-01 02:12:00", tick=True, auto_tick_seconds=1
+)  # somewhere within first epoch, though we assume first epoch is already finalized
+def test_history_patron_mode_donations(
+    mocker, tos_users, patch_last_finalized_snapshot, patch_user_budget
+):
+    mock_graphql(mocker, epochs_events=epochs)
+    epoch_one_finalization_timestamp = from_timestamp_s(
+        epochs[0]["toTs"] + epochs[0]["decisionWindow"]
+    )
+    query_time = from_timestamp_s(1698805300)  # epoch 2 end time
     alice: LocalAccount = tos_users[0]
 
-    toggle_patron_mode(alice.address)
+    patron_mode_donation_event = PatronDonationItem(
+        timestamp=epoch_one_finalization_timestamp, epoch=1, amount=USER_MOCKED_BUDGET
+    )
+
+    # when: alice is not a patron
+    # then:  history is empty
+    assert get_patron_donations(alice.address, query_time, 100) == []
+
+    # when: alice decides to become a patron
     toggle_patron_mode(alice.address)
 
-    history = get_patron_mode_toggles(alice.address, now(), 100)
-
-    assert history == [
-        PatronModeToggleItem(timestamp=now(), patron_mode_enabled=True),
-        PatronModeToggleItem(timestamp=now(), patron_mode_enabled=False),
+    # then: donation appears in alice's history
+    assert get_patron_donations(alice.address, query_time, 100) == [
+        patron_mode_donation_event
     ]
 
-    history_with_small_limit = get_patron_mode_toggles(alice.address, now(), 1)
-    assert history_with_small_limit == [
-        PatronModeToggleItem(timestamp=now(), patron_mode_enabled=True),
-        PatronModeToggleItem(timestamp=now(), patron_mode_enabled=False),
-    ]
+    # when: alice decides revokes her patron status
+    toggle_patron_mode(alice.address)
+
+    # then:  history is empty
+    assert get_patron_donations(alice.address, query_time, 100) == []
 
 
 def test_history_allocations(proposal_accounts, tos_users):
@@ -657,7 +690,7 @@ def test_complete_user_history(
             "timestamp": t.timestamp.timestamp_us(),
             "patronModeEnabled": t.patron_mode_enabled,
         }
-        for t in get_patron_mode_toggles(user1.address, now(), 10)
+        for t in get_patron_donations(user1.address, now(), 10)
     ]
 
     expected_history = toggles + allocations + expected_history

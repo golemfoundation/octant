@@ -3,8 +3,6 @@ from datetime import datetime
 from itertools import groupby
 
 from eth_utils import to_checksum_address
-from sqlalchemy import func
-from sqlalchemy.orm import Query
 
 from app.database.models import PatronModeEvent
 
@@ -35,34 +33,6 @@ def get_last_event(
         last_event_query.filter(PatronModeEvent.created_at <= dt)
 
     return last_event_query.first()
-
-
-def get_user_history(user_address: str, from_datetime: datetime, limit: int):
-    user_address = to_checksum_address(user_address)
-
-    user_toggles: Query = (
-        PatronModeEvent.query.filter(
-            PatronModeEvent.user_address == user_address,
-            PatronModeEvent.created_at <= from_datetime,
-        )
-        .order_by(PatronModeEvent.created_at.desc())
-        .limit(limit)
-        .subquery()
-    )
-
-    timestamp_at_limit_query = (
-        db.session.query(func.min(user_toggles.c.created_at).label("limit_timestamp"))
-        .group_by(user_toggles.c.user_address)
-        .subquery()
-    )
-
-    toggles = PatronModeEvent.query.filter(
-        PatronModeEvent.user_address == user_address,
-        PatronModeEvent.created_at <= from_datetime,
-        PatronModeEvent.created_at >= timestamp_at_limit_query.c.limit_timestamp,
-    ).order_by(PatronModeEvent.created_at.desc())
-
-    return toggles.all()
 
 
 def get_all_patrons_at_timestamp(dt: datetime) -> List[str]:
