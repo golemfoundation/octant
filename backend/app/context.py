@@ -9,6 +9,7 @@ from app.database import (
     user as user_db,
 )
 from app.database.models import PendingEpochSnapshot, FinalizedEpochSnapshot, User
+from app.exceptions import InvalidEpoch
 from app.extensions import epochs
 
 
@@ -60,9 +61,12 @@ class ContextBuilder:
 
     def with_pending_epoch_context(self, users_addresses: List[str] = None):
         epoch_settings = EpochsRegistry.get_epoch_settings(self.context.pending_epoch)
-        pending_snapshot = pending_epoch_snapshot.get_by_epoch_num(
-            self.context.pending_epoch
-        )
+        try:
+            pending_snapshot = pending_epoch_snapshot.get_by_epoch_num(
+                self.context.pending_epoch
+            )
+        except InvalidEpoch:
+            pending_snapshot = None
         users_context: Optional[Dict[str, User]] = None
 
         if users_addresses is not None:
@@ -77,9 +81,12 @@ class ContextBuilder:
 
     def with_finalized_epoch_context(self):
         epoch_settings = EpochsRegistry.get_epoch_settings(self.context.finalized_epoch)
-        finalized_snapshot = finalized_epoch_snapshot.get_by_epoch_num(
-            self.context.finalized_epoch
-        )
+        try:
+            finalized_snapshot = finalized_epoch_snapshot.get_by_epoch_num(
+                self.context.finalized_epoch
+            )
+        except InvalidEpoch:
+            finalized_snapshot = None
         self.context.finalized_epoch_context = FinalizedEpochContext(
             epoch_settings=epoch_settings, finalized_snapshot=finalized_snapshot
         )

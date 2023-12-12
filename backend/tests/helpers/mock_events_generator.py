@@ -3,8 +3,6 @@ from itertools import accumulate
 
 from app.core.deposits.events import EventGenerator
 
-from tests.conftest import UserAccount
-
 
 class MockEventGenerator(EventGenerator):
     def __init__(
@@ -31,7 +29,7 @@ class MockEventGeneratorFactory:
 
     def build(
         self,
-        events: Dict[UserAccount, List[Tuple[int, int]]],
+        events: Dict[str, List[Tuple[int, int]]],
         epoch_start: Optional[int] = None,
         epoch_end: Optional[int] = None,
     ) -> MockEventGenerator:
@@ -39,8 +37,8 @@ class MockEventGeneratorFactory:
         epoch_end = epoch_end if epoch_end is not None else self.epoch_end
 
         events = {
-            user.address: self._map_user_events(user_events)
-            for user, user_events in events.items()
+            user_address: self._map_user_events(user_events)
+            for user_address, user_events in events.items()
         }
 
         return MockEventGenerator(epoch_start, epoch_end, events)
