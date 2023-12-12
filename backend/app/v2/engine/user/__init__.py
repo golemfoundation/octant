@@ -2,12 +2,15 @@ from dataclasses import dataclass, field
 
 from app.v2.engine.user.budget import UserBudget
 from app.v2.engine.user.budget.default import DefaultUserBudget
-from app.v2.engine.user.effective_deposit import EffectiveDepositSettings
+from app.v2.engine.user.effective_deposit import UserEffectiveDeposit
+from app.v2.engine.user.effective_deposit.weighted_average.default import (
+    DefaultWeightedAverageEffectiveDeposit,
+)
 
 
 @dataclass
 class UserSettings:
-    effective_deposit: EffectiveDepositSettings = field(
-        default_factory=EffectiveDepositSettings
+    effective_deposit: UserEffectiveDeposit = field(
+        default_factory=DefaultWeightedAverageEffectiveDeposit
     )
     budget: UserBudget = field(default_factory=DefaultUserBudget)

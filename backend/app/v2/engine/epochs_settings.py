@@ -6,7 +6,7 @@ from app.v2.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost
     AllProceedsWithOperationalCost,
 )
 from app.v2.engine.projects import ProjectSettings
-from app.v2.engine.user import UserSettings, EffectiveDepositSettings
+from app.v2.engine.user import UserSettings, DefaultWeightedAverageEffectiveDeposit
 from app.v2.engine.user.effective_deposit.weighted_average.weights.timebased.default import (
     DefaultTimebasedWeights,
 )
@@ -32,7 +32,7 @@ def register_epoch_settings():
             total_and_all_individual_rewards=AllProceedsWithOperationalCost(),
         ),
         user=UserSettings(
-            effective_deposit=EffectiveDepositSettings(
+            effective_deposit=DefaultWeightedAverageEffectiveDeposit(
                 timebased_weights=DefaultTimebasedWeights(),
             ),
         ),
