@@ -107,14 +107,12 @@ const AllocationItem: FC<AllocationItemProps> = ({
         onDragEnd={e => {
           animate(
             ref.current,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore-next-line
+            // @ts-expect-error e is wrongly typed, doesn't see x property.
             { x: e.x < startX ? constraints[0] : constraints[1] },
             { duration: 0.2 },
           );
         }}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore-next-line
+        // @ts-expect-error e is wrongly typed, doesn't see x property.
         onDragStart={e => setStartX(e.x)}
         style={{ x }}
       >
