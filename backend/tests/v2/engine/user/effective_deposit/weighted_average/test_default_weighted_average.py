@@ -173,7 +173,7 @@ def test_multiple_users_deposits_timebased_without_unlocks():
             (EPOCH_START, 1000_000000000_000000000),
             (EPOCH_START + 100, 100_000000000_000000000),
             (EPOCH_START + 150, 2000_000000000_000000000),
-        ]
+        ],
     }
     payload = create_payload(deposits)
     uut = DefaultWeightedAverageEffectiveDeposit()
@@ -182,7 +182,7 @@ def test_multiple_users_deposits_timebased_without_unlocks():
 
     assert result[0] == [
         UserDeposit(USER1_ADDRESS, 150_000000000_000000000, 300_000000000_000000000),
-        UserDeposit(USER2_ADDRESS, 1550_000000000_000000000, 3100_000000000_000000000)
+        UserDeposit(USER2_ADDRESS, 1550_000000000_000000000, 3100_000000000_000000000),
     ]
     assert result[1] == 1700_000000000_000000000
 
@@ -198,7 +198,7 @@ def test_multiple_users_deposits_default_timebased():
             (EPOCH_START, 1000_000000000_000000000),
             (EPOCH_START + 100, 100_000000000_000000000),
             (EPOCH_START + 150, 2000_000000000_000000000),
-        ]
+        ],
     }
     payload = create_payload(deposits)
     uut = DefaultWeightedAverageEffectiveDeposit(
@@ -209,6 +209,6 @@ def test_multiple_users_deposits_default_timebased():
 
     assert result[0] == [
         UserDeposit(USER1_ADDRESS, 200_000000000_000000000, 300_000000000_000000000),
-        UserDeposit(USER2_ADDRESS, 1550_000000000_000000000, 3100_000000000_000000000)
+        UserDeposit(USER2_ADDRESS, 1550_000000000_000000000, 3100_000000000_000000000),
     ]
     assert result[1] == 1750_000000000_000000000

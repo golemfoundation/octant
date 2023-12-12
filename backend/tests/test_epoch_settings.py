@@ -9,12 +9,12 @@ from app.v2.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost
 )
 from app.v2.engine.projects import DefaultProjectRewards, DefaultProjectThreshold
 from app.v2.engine.user import DefaultUserBudget, DefaultWeightedAverageEffectiveDeposit
-from app.v2.engine.user.effective_deposit import (
-    CutOff10GLM,
-    TimebasedWithoutUnlocksWeights,
-)
+from app.v2.engine.user.effective_deposit.cut_off.cutoff_10glm import CutOff10GLM
 from app.v2.engine.user.effective_deposit.weighted_average.weights.timebased.default import (
     DefaultTimebasedWeights,
+)
+from app.v2.engine.user.effective_deposit.weighted_average.weights.timebased.without_unlocks import (
+    TimebasedWithoutUnlocksWeights,
 )
 
 

@@ -5,17 +5,18 @@ from typing import Tuple, List
 from app.v2.engine.user.effective_deposit import (
     UserEffectiveDeposit,
     UserEffectiveDepositPayload,
-    CutOff,
-    CutOff10GLM,
-    TimebasedWeights,
-    TimebasedWithoutUnlocksWeights,
     UserDeposit,
 )
-from app.v2.engine.user.effective_deposit.cut_off import CutOffPayload
+from app.v2.engine.user.effective_deposit.cut_off import CutOffPayload, CutOff
+from app.v2.engine.user.effective_deposit.cut_off.cutoff_10glm import CutOff10GLM
 from app.v2.engine.user.effective_deposit.weighted_average.weights.timebased import (
     DepositWeightsPayload,
     WeightedDeposit,
     calculate_deposit_after_event,
+    TimebasedWeights,
+)
+from app.v2.engine.user.effective_deposit.weighted_average.weights.timebased.without_unlocks import (
+    TimebasedWithoutUnlocksWeights,
 )
 
 

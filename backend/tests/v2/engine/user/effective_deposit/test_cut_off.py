@@ -1,8 +1,8 @@
 import pytest
 
-from app.v2.engine.user.effective_deposit import CutOff10GLM
 from app.v2.engine.user.effective_deposit.cut_off import CutOffPayload
 from app.v2.engine.user.effective_deposit.cut_off.cutoff_100glm import CutOff100GLM
+from app.v2.engine.user.effective_deposit.cut_off.cutoff_10glm import CutOff10GLM
 
 
 @pytest.mark.parametrize(

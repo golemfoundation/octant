@@ -1,7 +1,9 @@
-from app.v2.engine.user.effective_deposit import TimebasedWithoutUnlocksWeights
 from app.v2.engine.user.effective_deposit.weighted_average.weights.timebased import (
     DepositWeightsPayload,
     WeightedDeposit,
+)
+from app.v2.engine.user.effective_deposit.weighted_average.weights.timebased.without_unlocks import (
+    TimebasedWithoutUnlocksWeights,
 )
 from tests.conftest import USER1_ADDRESS
 
