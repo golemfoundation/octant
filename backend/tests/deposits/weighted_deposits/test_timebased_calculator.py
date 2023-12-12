@@ -20,7 +20,7 @@ def event_generator(events, **kwargs) -> MockEventGenerator:
 
 
 def test_computes_weighted_deposit_for_none_events_for_one_user(alice):
-    deposits = {alice: []}
+    deposits = {alice.address: []}
     generator = event_generator(deposits)
 
     expected_result = {alice.address: []}
@@ -33,7 +33,7 @@ def test_computes_weighted_deposit_for_none_events_for_one_user(alice):
 
 
 def test_computes_weighted_deposit_for_one_event_for_one_user(alice):
-    deposits = {alice: [(EPOCH_START, 100)]}
+    deposits = {alice.address: [(EPOCH_START, 100)]}
     generator = event_generator(deposits)
 
     expected_result = {alice.address: [WeightedDeposit(100, 200)]}
@@ -46,7 +46,7 @@ def test_computes_weighted_deposit_for_one_event_for_one_user(alice):
 
 
 def test_computes_weighted_deposit_for_two_events_for_one_user(alice):
-    deposits = {alice: [(EPOCH_START, 100), (EPOCH_START + 50, 120)]}
+    deposits = {alice.address: [(EPOCH_START, 100), (EPOCH_START + 50, 120)]}
     generator = event_generator(deposits)
 
     expected_result = {
@@ -61,7 +61,7 @@ def test_computes_weighted_deposit_for_two_events_for_one_user(alice):
 
 
 def test_weights_sum_up_to_epoch_duration(alice):
-    deposits = {alice: [(EPOCH_START, 100), (EPOCH_START + 50, 120)]}
+    deposits = {alice.address: [(EPOCH_START, 100), (EPOCH_START + 50, 120)]}
     generator = event_generator(deposits)
 
     assert (
@@ -76,7 +76,7 @@ def test_weights_sum_up_to_epoch_duration(alice):
 
 
 def test_computes_user_deposits_when_deposited_during_epoch(alice):
-    deposits = {alice: [(EPOCH_START + 17, 100)]}
+    deposits = {alice.address: [(EPOCH_START + 17, 100)]}
     generator = event_generator(deposits)
 
     expected_result = {
@@ -94,7 +94,7 @@ def test_computes_user_deposits_when_deposited_during_epoch(alice):
 
 
 def test_computes_user_deposits_when_unlocked_at_epoch_beginning(alice):
-    deposits = {alice: [(EPOCH_START, 100), (EPOCH_START, -100)]}
+    deposits = {alice.address: [(EPOCH_START, 100), (EPOCH_START, -100)]}
     generator = event_generator(deposits)
 
     expected_result = {alice.address: [WeightedDeposit(0, EPOCH_DURATION)]}
@@ -107,7 +107,7 @@ def test_computes_user_deposits_when_unlocked_at_epoch_beginning(alice):
 
 
 def test_computes_user_deposits_when_unlocked(alice):
-    deposits = {alice: [(EPOCH_START, 100), (EPOCH_START + 150, -100)]}
+    deposits = {alice.address: [(EPOCH_START, 100), (EPOCH_START + 150, -100)]}
     generator = event_generator(deposits)
 
     expected_result = {
@@ -126,7 +126,7 @@ def test_computes_user_deposits_when_unlocked(alice):
 
 def test_computes_user_deposits_for_a_sequence_of_locks_and_unlocks(alice):
     deposits = {
-        alice: [
+        alice.address: [
             (EPOCH_START + 10, 100),
             (EPOCH_START + 12, -90),
             (EPOCH_START + 12, 1000),
@@ -172,8 +172,8 @@ def test_computes_user_deposits_for_a_sequence_of_locks_and_unlocks(alice):
 
 def test_computes_users_deposits_for_many_users(alice, bob):
     deposits = {
-        alice: [(EPOCH_START, 100), (EPOCH_START + 150, -100)],
-        bob: [(EPOCH_START, 321), (EPOCH_START + 172, 1100)],
+        alice.address: [(EPOCH_START, 100), (EPOCH_START + 150, -100)],
+        bob.address: [(EPOCH_START, 321), (EPOCH_START + 172, 1100)],
     }
     generator = event_generator(deposits)
 
@@ -202,7 +202,7 @@ def test_computes_users_deposits_for_many_users(alice, bob):
 
 def test_many_locks_and_unlocks_scenario(alice):
     deposits = {
-        alice: [
+        alice.address: [
             (0, 5000),
             (100, 5000),
             (300, -2000),
@@ -232,7 +232,7 @@ def test_many_locks_and_unlocks_scenario(alice):
 
 def test_repetitive_locks(alice):
     deposits = {
-        alice: [
+        alice.address: [
             (100, 1000),
             (200, 1000),
             (300, 1000),
@@ -271,7 +271,7 @@ def test_repetitive_locks(alice):
 
 def test_repetitive_locks_with_unlock_in_the_middle(alice):
     deposits = {
-        alice: [
+        alice.address: [
             (100, 1000),
             (200, 1000),
             (300, 1000),
