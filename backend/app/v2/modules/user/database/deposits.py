@@ -1,9 +1,9 @@
 from typing import List, Dict
 
 from app import database
-from app.core.common import UserDeposit
 from app.database.models import Deposit
 from app.extensions import db
+from app.v2.engine.user.effective_deposit import UserDeposit
 
 
 def save_deposits(epoch: int, deposits: List[UserDeposit]):

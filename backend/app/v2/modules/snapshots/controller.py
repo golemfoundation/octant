@@ -5,6 +5,7 @@ from app.core.deposits.events import EventGenerator
 from app.v2.modules.octant_rewards.service.octant_rewards import OctantRewardsService
 from app.v2.modules.snapshots.service.pending_snapshot import PendingSnapshotsService
 from app.v2.modules.staking.service.proceeds import StakingProceedsService
+from app.v2.modules.user.service.budgets import UserBudgetsService
 from app.v2.modules.user.service.deposits import UserDepositsService
 
 
@@ -15,14 +16,16 @@ def snapshot_pending_epoch() -> Optional[int]:
 
     event_generator = EventGenerator(epoch_start=start, epoch_end=end)
     user_deposits_service = UserDepositsService(event_generator)
+    user_budgets_service = UserBudgetsService()
     staking_proceeds_service = StakingProceedsService()
     octant_rewards_service = OctantRewardsService(staking_proceeds_service)
 
-    snapshots_service = PendingSnapshotsService(
+    pending_snapshots_service = PendingSnapshotsService(
         user_deposits_service=user_deposits_service,
+        user_budgets_service=user_budgets_service,
         octant_rewards_service=octant_rewards_service,
     )
 
-    return snapshots_service.snapshot_pending_epoch(
+    return pending_snapshots_service.snapshot_pending_epoch(
         context.pending_epoch, context.pending_epoch_context
     )

@@ -52,7 +52,7 @@ def test_get_effective_deposits_in_pending_epoch(
     generator = create_events_generator(epoch_start, epoch_end, deposits)
     context = ContextBuilder().with_pending_epoch_context().build()
     service = UserDepositsService(generator)
-    result = service.get_effective_deposits(context.pending_epoch_context)
+    result = service.calculate_effective_deposits(context.pending_epoch_context)
 
     assert result[0] == [
         UserDeposit(alice.address, alice_expected, 300_000000000_000000000),

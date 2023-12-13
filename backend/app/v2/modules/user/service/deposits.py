@@ -15,7 +15,7 @@ from app.v2.engine.user.effective_deposit import (
 class UserDepositsService:
     events_generator: EventGenerator
 
-    def get_effective_deposits(
+    def calculate_effective_deposits(
         self, context: EpochContext
     ) -> Tuple[List[UserDeposit], int]:
         epoch_details = context.epoch_details

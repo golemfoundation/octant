@@ -11,6 +11,11 @@ class UserDeposit(JSONWizard):
     effective_deposit: int
     deposit: int
 
+    def __iter__(self):
+        yield self.user_address
+        yield self.effective_deposit
+        yield self.deposit
+
 
 @dataclass
 class UserEffectiveDepositPayload:

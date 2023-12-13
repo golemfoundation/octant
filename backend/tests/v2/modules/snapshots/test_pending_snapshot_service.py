@@ -14,6 +14,8 @@ from tests.conftest import (
     TOTAL_REWARDS,
     ALL_INDIVIDUAL_REWARDS,
     LOCKED_RATIO,
+    USER1_BUDGET,
+    USER2_BUDGET,
 )
 
 
@@ -25,7 +27,7 @@ def before(app, patch_epochs, mock_epoch_details):
 @pytest.fixture(scope="function")
 def user_deposits_service_mock(alice, bob):
     user_deposits_service_mock = Mock()
-    user_deposits_service_mock.get_effective_deposits.return_value = (
+    user_deposits_service_mock.calculate_effective_deposits.return_value = (
         [
             UserDeposit(
                 alice.address, 270_000000000_000000000, 300_000000000_000000000
@@ -37,6 +39,17 @@ def user_deposits_service_mock(alice, bob):
         3060_000000000_000000000,
     )
     return user_deposits_service_mock
+
+
+@pytest.fixture(scope="function")
+def user_budgets_service_mock(alice, bob):
+    user_budgets_service_mock = Mock()
+    user_budgets_service_mock.calculate_budgets.return_value = [
+        (alice.address, USER1_BUDGET),
+        (bob.address, USER2_BUDGET),
+    ]
+
+    return user_budgets_service_mock
 
 
 @pytest.fixture(scope="function")
@@ -61,12 +74,19 @@ def octant_rewards_service_mock(alice, bob):
     ],
 )
 def test_save_pending_epoch_snapshot(
-    epoch, user_deposits_service_mock, octant_rewards_service_mock, alice, bob
+    epoch,
+    user_deposits_service_mock,
+    octant_rewards_service_mock,
+    user_budgets_service_mock,
+    alice,
+    bob,
 ):
     MOCK_EPOCHS.get_pending_epoch.return_value = epoch
     context = ContextBuilder().with_pending_epoch_context().build()
     service = PendingSnapshotsService(
-        user_deposits_service_mock, octant_rewards_service_mock
+        user_deposits_service=user_deposits_service_mock,
+        user_budgets_service=user_budgets_service_mock,
+        octant_rewards_service=octant_rewards_service_mock,
     )
 
     result = service.snapshot_pending_epoch(epoch, context.pending_epoch_context)
@@ -90,16 +110,26 @@ def test_save_pending_epoch_snapshot(
     assert deposits[bob.address].effective_deposit == "2790000000000000000000"
     assert deposits[bob.address].epoch_end_deposit == "3100000000000000000000"
 
+    budgets = user_module.database.budgets.get_all_by_epoch(epoch)
+    assert len(budgets) == 2
+    assert budgets[alice.address].user.address == alice.address
+    assert budgets[alice.address].budget == "1526868989237987"
+    assert budgets[bob.address].user.address == bob.address
+    assert budgets[bob.address].budget == "5598519420519815"
+
 
 def test_return_none_when_snapshot_is_already_taken(
     user_deposits_service_mock,
+    user_budgets_service_mock,
     octant_rewards_service_mock,
     mock_pending_epoch_snapshot_db,
 ):
     MOCK_EPOCHS.get_pending_epoch.return_value = 1
     context = ContextBuilder().with_pending_epoch_context().build()
     service = PendingSnapshotsService(
-        user_deposits_service_mock, octant_rewards_service_mock
+        user_deposits_service=user_deposits_service_mock,
+        user_budgets_service=user_budgets_service_mock,
+        octant_rewards_service=octant_rewards_service_mock,
     )
 
     result = service.snapshot_pending_epoch(1, context.pending_epoch_context)
