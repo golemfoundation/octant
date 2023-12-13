@@ -6,8 +6,8 @@ from flask import current_app as app
 from app.context.context import PendingEpochContext
 from app.extensions import db
 from app.v2.modules.octant_rewards.service.octant_rewards import OctantRewardsService
-from app.v2.modules.snapshots.database import save_snapshot
-from app.v2.modules.user.database import save_deposits
+from app.v2.modules.snapshots.database.pending_snapshot import save_snapshot
+from app.v2.modules.user.database.deposits import save_deposits
 from app.v2.modules.user.service.deposits import UserDepositsService
 
 

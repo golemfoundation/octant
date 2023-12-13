@@ -1,10 +1,9 @@
-from typing import List
-
-from app.extensions import db
+from typing import List, Dict
 
 from app import database
 from app.core.common import UserDeposit
 from app.database.models import Deposit
+from app.extensions import db
 
 
 def save_deposits(epoch: int, deposits: List[UserDeposit]):
@@ -18,3 +17,8 @@ def save_deposits(epoch: int, deposits: List[UserDeposit]):
             )
         )
         db.session.add(user)
+
+
+def get_all_by_epoch(epoch: int) -> Dict[str, Deposit]:
+    deposits = Deposit.query.filter_by(epoch=epoch).all()
+    return {deposit.user.address: deposit for deposit in deposits}

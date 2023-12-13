@@ -1,6 +1,8 @@
+from sqlalchemy import desc
+
+from app.database.models import PendingEpochSnapshot
 from app.extensions import db
 
-from app.infrastructure.routes.snapshots import PendingEpochSnapshot
 from app.v2.modules.octant_rewards.service.octant_rewards import OctantRewardsDTO
 
 
@@ -16,3 +18,11 @@ def save_snapshot(
         all_individual_rewards=str(rewards_dto.all_individual_rewards),
     )
     db.session.add(snapshot)
+
+
+def get_last_snapshot() -> PendingEpochSnapshot:
+    return (
+        db.session.query(PendingEpochSnapshot)
+        .order_by(desc(PendingEpochSnapshot.epoch))
+        .first()
+    )
