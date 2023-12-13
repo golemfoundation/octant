@@ -23,6 +23,7 @@ from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.extensions import db, w3, deposits, glm
 from app.settings import TestConfig, DevConfig
 from app.crypto.account import Account as CryptoAccount
+from tests.helpers.mocked_epoch_details import EPOCH_EVENTS
 
 # Consts
 MNEMONIC = "test test test test test test test test test test test junk"
@@ -253,6 +254,11 @@ def bob(user_accounts):
 
 
 @pytest.fixture(scope="function")
+def mock_epoch_details(mocker, graphql_client):
+    mock_graphql(mocker, epochs_events=list(EPOCH_EVENTS.values()))
+
+
+@pytest.fixture(scope="function")
 def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.controllers.allocations.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.controllers.snapshots.epochs", MOCK_EPOCHS)
@@ -262,7 +268,7 @@ def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.core.proposals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.user.budget.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.epochs.details.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.context.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.context.context.epochs", MOCK_EPOCHS)
 
     MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
     MOCK_EPOCHS.get_current_epoch.return_value = MOCKED_CURRENT_EPOCH_NO
