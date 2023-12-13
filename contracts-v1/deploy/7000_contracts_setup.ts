@@ -9,8 +9,8 @@ import { Epochs, Proposals, WithdrawalsTarget } from '../typechain';
 // This function needs to be declared this way, otherwise it's not understood by test runner.
 // eslint-disable-next-line func-names
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  if (['hardhat', 'localhost'].includes(hre.network.name)) {
-    // Test networks setup
+  if (['hardhat'].includes(hre.network.name)) {
+    // Test setup
     const { TestFoundation } = await hre.ethers.getNamedSigners();
     const epochs: Epochs = await hre.ethers.getContract(EPOCHS);
     const proposals: Proposals = await hre.ethers.getContract(PROPOSALS);
@@ -19,8 +19,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const proposalAddresses = unnamedAddresses.slice(0, 10);
     await proposals.connect(TestFoundation).setEpochs(epochs.address);
     await proposals.connect(TestFoundation).setProposalAddresses(1, proposalAddresses);
-  } else if (['sepolia', 'goerli'].includes(hre.network.name)) {
-    // Testnet networks setup
+  } else if (['sepolia', 'goerli', 'localhost'].includes(hre.network.name)) {
+    // Testnet and localhost networks setup
     const { TestFoundation } = await hre.ethers.getNamedSigners();
     const epochs: Epochs = await hre.ethers.getContract(EPOCHS);
     const proposals: Proposals = await hre.ethers.getContract(PROPOSALS);
