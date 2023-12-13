@@ -21,7 +21,8 @@ $nameAndRewardsMobilePadding: 2.7rem;
   border-right: 0.1rem solid $color-octant-grey8;
 }
 
-.name, .rewards {
+.name,
+.rewards {
   height: $rowHeightMobile;
 
   @media #{$desktop-up} {
@@ -52,7 +53,6 @@ $nameAndRewardsMobilePadding: 2.7rem;
       display: initial;
     }
   }
-
 
   @media #{$desktop-up} {
     font-size: $font-size-16;
