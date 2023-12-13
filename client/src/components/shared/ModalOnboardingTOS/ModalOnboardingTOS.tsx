@@ -25,7 +25,7 @@ const ModalOnboardingTOS: FC = () => {
   };
 
   return (
-    <BoxRounded className={styles.box} hasPadding={false} isGrey>
+    <BoxRounded className={styles.box} dataTest="ModalOnboardingTOS" hasPadding={false} isGrey>
       <InputCheckbox
         dataTest="TOS_InputCheckbox"
         inputId="tos-input"

@@ -22,11 +22,12 @@ export default function useProposalRewardsThreshold(
    * Socket returns estimated data for current epoch only.
    * When hook is called for other epoch, subscribe should not be used.
    */
-  useSubscription<{ threshold: string }>(WebsocketListenEvent.threshold, data => {
-    // eslint-disable-next-line chai-friendly/no-unused-expressions
-    epoch
-      ? null
-      : queryClient.setQueryData(QUERY_KEYS.proposalRewardsThreshold(currentEpoch! - 1), data);
+  useSubscription<{ threshold: string }>({
+    callback: data => {
+      queryClient.setQueryData(QUERY_KEYS.proposalRewardsThreshold(currentEpoch! - 1), data);
+    },
+    enabled: epoch === undefined,
+    event: WebsocketListenEvent.threshold,
   });
 
   return useQuery(
