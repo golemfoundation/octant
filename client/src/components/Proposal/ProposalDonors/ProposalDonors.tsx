@@ -54,7 +54,10 @@ const ProposalDonors: FC<ProposalDonorsProps> = ({
                 proposalAddress={proposalAddress}
               />
             ) : (
-              <div className={cx(styles.noDataInformation, styles.noDonationsYet)}>
+              <div
+                className={cx(styles.noDataInformation, styles.noDonationsYet)}
+                data-test={`${dataTest}__noDonationsYet`}
+              >
                 {t('noDonationsYet')}
               </div>
             )}

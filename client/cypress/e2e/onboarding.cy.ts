@@ -55,7 +55,7 @@ const checkChangeStepsWithArrowKeys = (isTOSAccepted: boolean) => {
   [
     { el: 1, key: 'ArrowRight' },
     { el: 2, key: 'ArrowRight' },
-    { el: 2, key: 'ArrowRight' },
+    // { el: 3, key: 'ArrowRight' },
     // { el: 3, key: 'ArrowRight' },
     // { el: 2, key: 'ArrowLeft' },
     { el: 1, key: 'ArrowLeft' },
@@ -317,11 +317,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       connectWallet(false);
     });
 
-    it('onboarding should have one more step (TOS)', () => {
-      cy.get('[data-test=ModalOnboarding__ProgressStepperSlim__element]').should(
-        'have.length',
-        stepsDecisionWindowClosed.length + 1,
-      );
+    it('onboarding TOS step should be first and active', () => {
+      checkCurrentElement(0, true);
+      cy.get('[data-test=ModalOnboardingTOS]').should('be.visible');
     });
 
     it('user is not able to click through entire onboarding flow', () => {

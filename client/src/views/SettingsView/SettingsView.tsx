@@ -97,6 +97,7 @@ const SettingsView = (): ReactElement => {
         <div className={styles.currencySelectorWrapper}>
           <div className={styles.spacer} />
           <InputSelect
+            dataTest="SettingsView__InputSelect--currency"
             onChange={option =>
               setDisplayCurrency(option!.value as SettingsData['displayCurrency'])
             }

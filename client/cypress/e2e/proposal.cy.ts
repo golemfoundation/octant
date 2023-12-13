@@ -1,7 +1,6 @@
 import { visitWithLoader } from 'cypress/utils/e2e';
 import { getNamesOfProposals } from 'cypress/utils/proposals';
 import viewports from 'cypress/utils/viewports';
-import { QUERY_KEYS } from 'src/api/queryKeys';
 import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
@@ -48,31 +47,19 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       proposalView.get('[data-test=ProposalView__proposal__Button]').should('be.visible');
       proposalView.get('[data-test=ProposalView__proposal__Description]').should('be.visible');
 
-      cy.window().then(window => {
-        // @ts-expect-error missing typing for client window elements.
-        const currentEpoch = Number(window.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch));
-        cy.get('[data-test=ProposalView__proposal__Donors]')
-          .first()
-          .scrollIntoView({ offset: { left: 0, top: 100 } });
+      cy.get('[data-test=ProposalView__proposal__Donors]')
+        .first()
+        .scrollIntoView({ offset: { left: 0, top: 100 } });
 
-        switch (currentEpoch) {
-          case 1:
-            return cy
-              .get('[data-test=ProposalView__proposal__Donors__donationsNotEnabled]')
-              .first()
-              .should('be.visible');
-          default:
-            cy.get('[data-test=ProposalView__proposal__Donors]').first().should('be.visible');
-            cy.get('[data-test=ProposalView__proposal__Donors__DonorsHeader__count]')
-              .first()
-              .should('be.visible')
-              .should('have.text', '0');
-            return cy
-              .get('[data-test=ProposalView__proposal__Donors__Loader]')
-              .first()
-              .should('be.visible');
-        }
-      });
+      cy.get('[data-test=ProposalView__proposal__Donors]').first().should('be.visible');
+      cy.get('[data-test=ProposalView__proposal__Donors__DonorsHeader__count]')
+        .first()
+        .should('be.visible')
+        .should('have.text', '0');
+      return cy
+        .get('[data-test=ProposalView__proposal__Donors__noDonationsYet]')
+        .first()
+        .should('be.visible');
     });
 
     it('entering proposal view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar', () => {

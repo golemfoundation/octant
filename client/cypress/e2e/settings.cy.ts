@@ -112,7 +112,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         const nextDisplayCurrencyToUppercase =
           i < DISPLAY_CURRENCIES.length - 1 ? DISPLAY_CURRENCIES[i + 1].toUpperCase() : undefined;
 
-        cy.get('[data-test=InputSelect__SingleValue]').contains(displayCurrencyToUppercase);
+        cy.get('[data-test=SettingsView__InputSelect--currency__SingleValue]').contains(
+          displayCurrencyToUppercase,
+        );
         navigateWithCheck(ROOT_ROUTES.earn.absolute);
 
         if (FIAT_CURRENCIES_SYMBOLS[displayCurrency]) {
@@ -126,8 +128,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         }
 
         navigateWithCheck(ROOT_ROUTES.settings.absolute);
-        cy.get('[data-test=InputSelect]').click();
-        cy.get(`[data-test=InputSelect__Option--${nextDisplayCurrencyToUppercase}]`).click();
+        cy.get('[data-test=SettingsView__InputSelect--currency]').click();
+        cy.get(
+          `[data-test=SettingsView__InputSelect--currency__Option--${nextDisplayCurrencyToUppercase}]`,
+        ).click();
       }
     });
 

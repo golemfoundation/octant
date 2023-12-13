@@ -15,13 +15,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const authAddress = AUTH_ADDRESS || (await ethers.getContract(AUTH)).address;
 
   const now = await getLatestBlockTimestamp();
-  let decisionWindow = DECISION_WINDOW;
-  let epochDuration = EPOCH_DURATION;
 
-  if (['hardhat', 'localhost'].includes(hre.network.name)) {
-    decisionWindow = 120;
-    epochDuration = 300;
-  }
+  const decisionWindow = DECISION_WINDOW;
+  const epochDuration = EPOCH_DURATION;
   const start = EPOCHS_START || now;
 
   // eslint-disable-next-line no-console
