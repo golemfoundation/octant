@@ -12,6 +12,7 @@ import gql
 from web3 import Web3
 
 from tests.helpers.gql_client import MockGQLClient
+
 from app import create_app, database
 from app.contracts.epochs import Epochs
 from app.contracts.proposals import Proposals
@@ -446,18 +447,6 @@ def create_deposit_event(
         "depositBefore": deposit_before,
         "amount": amount,
         "user": user,
-        **kwargs,
-    }
-
-
-def create_epoch_event(
-    start=1000, end=2000, duration=1000, decision_window=500, **kwargs
-):
-    return {
-        "fromTs": start,
-        "toTs": end,
-        "duration": duration,
-        "decisionWindow": decision_window,
         **kwargs,
     }
 

@@ -7,11 +7,12 @@ from app.core.deposits.deposits import (
     get_users_deposits,
     get_estimated_effective_deposit,
 )
+
+from tests.helpers import create_epoch_event
 from tests.conftest import (
     USER1_ADDRESS,
     mock_graphql,
     create_deposit_event,
-    create_epoch_event,
 )
 
 
