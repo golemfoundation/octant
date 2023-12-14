@@ -1,4 +1,6 @@
+from typing import Dict, List, Tuple
 from datetime import datetime
+from itertools import chain, repeat, accumulate
 
 
 def generate_epoch_events(
@@ -16,7 +18,7 @@ def generate_epoch_events(
             duration=duration,
             decision_window=decision_window,
             epoch=epoch_no,
-            **kwargs
+            **kwargs,
         )
         events.append(event)
         epoch_start = epoch_end
@@ -24,14 +26,69 @@ def generate_epoch_events(
     return events
 
 
-def create_epoch_event( 
+# pass mapping user_address => [(timestamp, amount)]
+def create_deposit_events(events: Dict[str, List[Tuple[int, int]]]):
+    def flatten(list_of_lists):
+        return list(chain(*list_of_lists))
+
+    events = flatten(
+        [create_user_deposit_events(*user_events) for user_events in events.items()]
+    )
+
+    return sorted(events, key=lambda event: event["timestamp"])
+
+
+def create_user_deposit_events(user, events):
+    events.sort(key=lambda event: event[0])  # sort by timestamp, for sanity
+
+    events_and_deposits = zip(
+        repeat(user),
+        events,
+        accumulate(map(lambda event: event[1], events), initial=0),
+    )
+    print(events_and_deposits)
+    return list(map(_tuple_to_event_dict, events_and_deposits))
+
+
+def _tuple_to_event_dict(tuple: Tuple[str, Tuple[int, int], int]):
+    user, event, deposit_before = tuple
+    return create_deposit_event(
+        user=user,
+        typename="Locked" if event[1] > 0 else "Unlocked",
+        timestamp=event[0],
+        amount=abs(event[1]),
+        deposit_before=deposit_before,
+    )
+
+
+def create_deposit_event(
+    user,
+    typename="Locked",
+    deposit_before="0",
+    amount="100000000000000000000",
+    **kwargs,
+):
+    str_keys = ["depositBefore", "transactionHash", "user", "amount", "__typename"]
+    int_keys = ["blockNumber", "timestamp"]
+
+    event = {
+        "__typename": typename,
+        "depositBefore": deposit_before,
+        "amount": amount,
+        "user": user,
+        **kwargs,
+    }
+
+    return _convert_values(event, str_keys, int_keys)
+
+
+def create_epoch_event(
     start=1000, end=2000, duration=1000, decision_window=500, epoch=1, **kwargs
 ):
-
     str_keys = ["decisionWindow", "duration", "fromTs", "toTs"]
     int_keys = ["epoch"]
 
-    event =  {
+    event = {
         "epoch": epoch,
         "fromTs": start,
         "toTs": end,
@@ -43,11 +100,10 @@ def create_epoch_event(
     return _convert_values(event, str_keys, int_keys)
 
 
-def _convert_values(event_dict, str_keys, int_keys =  None):
-    inf_keys = int_keys if int_keys is not None else []  
+def _convert_values(event_dict, str_keys, int_keys=None):
+    int_keys = int_keys if int_keys is not None else []
 
-    event = [ (k, str(v)) for k, v in event_dict.items() if k in str_keys ]
-    event += [ (k, int(v)) for k, v in event_dict.items() if k in int_keys ]
+    event = [(k, str(v)) for k, v in event_dict.items() if k in str_keys]
+    event += [(k, int(v)) for k, v in event_dict.items() if k in int_keys]
 
     return dict(event)
-    

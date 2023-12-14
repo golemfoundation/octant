@@ -1,4 +1,6 @@
-from tests.helpers.subgraph.events import (
+from .subgraph.events import (  # noqa
     create_epoch_event,
     generate_epoch_events,
-)  # noqa
+    create_deposit_event,
+    create_deposit_events,
+)
