@@ -2,7 +2,7 @@ import pytest
 
 from app.context.context import ContextBuilder
 from app.v2.engine.user.effective_deposit import UserDeposit
-from app.v2.modules.user.service.deposits import UserDepositsService
+from app.v2.modules.user.deposits.service import UserDepositsCalculator
 from tests.conftest import MOCK_EPOCHS
 from tests.helpers.mock_events_generator import (
     MockEventGeneratorFactory,
@@ -51,7 +51,7 @@ def test_get_effective_deposits_in_pending_epoch(
     }
     generator = create_events_generator(epoch_start, epoch_end, deposits)
     context = ContextBuilder().with_pending_epoch_context().build()
-    service = UserDepositsService(generator)
+    service = UserDepositsCalculator(generator)
     result = service.calculate_effective_deposits(context.pending_epoch_context)
 
     assert result[0] == [

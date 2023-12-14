@@ -2,8 +2,7 @@ from sqlalchemy import desc
 
 from app.database.models import PendingEpochSnapshot
 from app.extensions import db
-
-from app.v2.modules.octant_rewards.service.octant_rewards import OctantRewardsDTO
+from app.v2.modules.octant_rewards.service import OctantRewardsDTO
 
 
 def save_snapshot(

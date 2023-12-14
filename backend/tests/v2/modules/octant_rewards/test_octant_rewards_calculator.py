@@ -4,7 +4,7 @@ from unittest.mock import Mock
 import pytest
 
 from app.context.context import ContextBuilder
-from app.v2.modules.octant_rewards.service.octant_rewards import OctantRewardsService
+from app.v2.modules.octant_rewards.service import OctantRewardsCalculator
 from tests.conftest import MOCK_EPOCHS, TOTAL_ED, ETH_PROCEEDS
 
 
@@ -27,14 +27,14 @@ def test_get_rewards_in_pending_epoch(
     individual_expected,
 ):
     MOCK_EPOCHS.get_pending_epoch.return_value = epoch
-    staking_proceeds_service_mock = Mock()
-    staking_proceeds_service_mock.get_withdrawals_target_balance.return_value = (
+    staking_proceeds_reader_mock = Mock()
+    staking_proceeds_reader_mock.get_withdrawals_target_balance.return_value = (
         ETH_PROCEEDS
     )
     context = ContextBuilder().with_pending_epoch_context().build()
-    service = OctantRewardsService(staking_proceeds_service_mock)
+    service = OctantRewardsCalculator(staking_proceeds_reader_mock)
 
-    result = service.get_rewards(context.pending_epoch_context, TOTAL_ED)
+    result = service.calculate_rewards(context.pending_epoch_context, TOTAL_ED)
 
     assert result.eth_proceeds == ETH_PROCEEDS
     assert result.locked_ratio == Decimal("0.100022700000000000099999994")

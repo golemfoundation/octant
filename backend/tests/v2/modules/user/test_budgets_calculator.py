@@ -2,7 +2,7 @@ import pytest
 
 from app.context.context import ContextBuilder
 from app.v2.engine.user.effective_deposit import UserDeposit
-from app.v2.modules.user.service.budgets import UserBudgetsService
+from app.v2.modules.user.budgets.service import UserBudgetsCalculator
 from tests.conftest import MOCK_EPOCHS, TOTAL_ED, ALL_INDIVIDUAL_REWARDS
 
 
@@ -28,7 +28,7 @@ def test_get_effective_deposits_in_pending_epoch(
         UserDeposit(bob.address, 2790_000000000_000000000, 3100_000000000_000000000),
     ]
     context = ContextBuilder().with_pending_epoch_context().build()
-    service = UserBudgetsService()
+    service = UserBudgetsCalculator()
     result = service.calculate_budgets(
         context.pending_epoch_context, deposits, TOTAL_ED, ALL_INDIVIDUAL_REWARDS
     )

@@ -6,10 +6,11 @@ from flask import current_app as app
 from app.context.context import EpochContext
 from app.v2.engine.user.budget import UserBudgetPayload
 from app.v2.engine.user.effective_deposit import UserDeposit
+from app.v2.modules.user.budgets.db import save_budgets
 
 
 @dataclass
-class UserBudgetsService:
+class UserBudgetsCalculator:
     def calculate_budgets(
         self,
         context: EpochContext,
@@ -34,3 +35,9 @@ class UserBudgetsService:
             budgets.append((address, user_budget))
 
         return budgets
+
+
+@dataclass
+class UserBudgetsCreator:
+    def save_budgets(self, epoch: int, budgets: List[Tuple[str, int]]):
+        save_budgets(epoch=epoch, budgets=budgets)
