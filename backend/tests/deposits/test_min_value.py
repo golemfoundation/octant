@@ -9,8 +9,9 @@ from tests.conftest import (
     USER2_ADDRESS,
     mock_graphql,
     create_deposit_event,
-    create_epoch_event,
 )
+
+from tests.helpers import create_epoch_event
 
 EPOCH = 42
 
