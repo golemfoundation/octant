@@ -435,22 +435,6 @@ def deserialize_allocations(payload) -> List[Allocation]:
     return deserialize_payload(payload)[1]
 
 
-def create_deposit_event(
-    typename="Locked",
-    deposit_before="0",
-    amount="100000000000000000000",
-    user=USER1_ADDRESS,
-    **kwargs,
-):
-    return {
-        "__typename": typename,
-        "depositBefore": deposit_before,
-        "amount": amount,
-        "user": user,
-        **kwargs,
-    }
-
-
 def _split_deposit_events(deposit_events):
     deposit_events = deposit_events if deposit_events is not None else []
 

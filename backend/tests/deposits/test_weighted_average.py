@@ -8,11 +8,13 @@ from app.core.deposits.deposits import (
     get_estimated_effective_deposit,
 )
 
-from tests.helpers import create_epoch_event
+from tests.helpers import (
+    create_epoch_event,
+    create_deposit_events,
+)
 from tests.conftest import (
     USER1_ADDRESS,
     mock_graphql,
-    create_deposit_event,
 )
 
 
@@ -235,15 +237,14 @@ def test_update_user_deposits(mocker, events, expected):
 
 def test_estimated_effective_deposit_when_user_has_events(mocker, epoch_details):
     """Epochs start == 1000, epoch end == 2000"""
-    events = [
-        create_deposit_event(amount="1000_000000000_000000000", timestamp=1500),
-        create_deposit_event(
-            typename="Unlocked",
-            deposit_before="1000_000000000_000000000",
-            amount="500_000000000_000000000",
-            timestamp=1750,
-        ),
-    ]
+    events = create_deposit_events(
+        {
+            USER1_ADDRESS: [
+                (1500, 1000_000000000_000000000),
+                (1750, -500_000000000_000000000),
+            ]
+        }
+    )
     mock_graphql(mocker, deposit_events=events)
 
     result = get_estimated_effective_deposit(epoch_details, USER1_ADDRESS)

@@ -19,13 +19,17 @@ from app.controllers import allocations as allocations_controller
 from app.controllers import user as user_controller
 
 
-from tests.helpers import generate_epoch_events, create_epoch_event
+from tests.helpers import (
+    generate_epoch_events,
+    create_epoch_event,
+    create_deposit_event,
+)
 from tests.conftest import (
     allocate_user_rewards,
     MOCKED_PENDING_EPOCH_NO,
     mock_graphql,
     MOCK_EPOCHS,
-    create_deposit_event,
+    USER1_ADDRESS,
     USER1_BUDGET,
 )
 
@@ -83,7 +87,9 @@ def test_estimate_budget(mocker, graphql_client, patch_epochs, days, amount, exp
     MOCK_EPOCHS.get_current_epoch.return_value = 1
     deposits = [
         create_deposit_event(
-            amount=str(100000000_000000000_000000000), timestamp=1691510401
+            user=USER1_ADDRESS,
+            amount=100000000_000000000_000000000,
+            timestamp=1691510401,
         ),
     ]
     epochs = [
