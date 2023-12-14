@@ -30,9 +30,7 @@ def create_events_generator(epoch_start, epoch_end, deposits) -> MockEventGenera
         (3, 270_000000000_000000000, 2790_000000000_000000000),
     ],
 )
-def test_get_effective_deposits_in_pending_epoch(
-    epoch, alice_expected, bob_expected, alice, bob
-):
+def test_get_budgets_in_pending_epoch(epoch, alice_expected, bob_expected, alice, bob):
     MOCK_EPOCHS.get_pending_epoch.return_value = epoch
     epoch_start = EPOCH_EVENTS[epoch]["fromTs"]
     epoch_end = EPOCH_EVENTS[epoch]["toTs"]
