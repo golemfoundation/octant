@@ -15,7 +15,7 @@ from app.v2.engine.user.effective_deposit import (
 class UserDepositsCalculator:
     events_generator: EventGenerator
 
-    def calculate_effective_deposits(
+    def calculate_all_effective_deposits(
         self, context: EpochContext
     ) -> Tuple[List[UserDeposit], int]:
         epoch_details = context.epoch_details
@@ -34,11 +34,44 @@ class UserDepositsCalculator:
             )
         )
 
+    def calculate_effective_deposit(
+        self, context: EpochContext, user_address: str
+    ) -> UserDeposit:
+        epoch_details = context.epoch_details
+        start = epoch_details.start_sec
+        end = epoch_details.end_sec
+        events = {user_address: self.events_generator.get_user_events(user_address)}
+        app.logger.debug(
+            f"Calculating effective deposits for user {user_address} in epoch {epoch_details.epoch_no}"
+        )
+
+        effective_deposit_calculator = context.epoch_settings.user.effective_deposit
+
+        (
+            user_deposits,
+            _,
+        ) = effective_deposit_calculator.calculate_users_effective_deposits(
+            UserEffectiveDepositPayload(
+                epoch_start=start, epoch_end=end, lock_events_by_addr=events
+            )
+        )
+        return user_deposits[0]
+
 
 @dataclass
 class UserDepositsEstimator:
     user_deposits_calculator: UserDepositsCalculator
 
     def estimate_total_effective_deposit(self, context: CurrentEpochContext) -> int:
-        _, total = self.user_deposits_calculator.calculate_effective_deposits(context)
+        _, total = self.user_deposits_calculator.calculate_all_effective_deposits(
+            context
+        )
         return total
+
+    def estimate_user_effective_deposit(
+        self, context: CurrentEpochContext, user_address: str
+    ) -> int:
+        user_deposit = self.user_deposits_calculator.calculate_effective_deposit(
+            context, user_address
+        )
+        return user_deposit.effective_deposit

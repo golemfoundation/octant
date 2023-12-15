@@ -26,7 +26,7 @@ def before(app, patch_epochs, mock_epoch_details):
 @pytest.fixture(scope="function")
 def user_deposits_calculator_mock(alice, bob):
     user_deposits_calculator_mock = Mock()
-    user_deposits_calculator_mock.calculate_effective_deposits.return_value = (
+    user_deposits_calculator_mock.calculate_all_effective_deposits.return_value = (
         [
             UserDeposit(
                 alice.address, 270_000000000_000000000, 300_000000000_000000000

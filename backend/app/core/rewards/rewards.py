@@ -21,11 +21,6 @@ def calculate_patrons_rewards(
     return matched_rewards - total_rewards + all_individual_rewards
 
 
-def get_matched_rewards_from_epoch(epoch: int) -> int:
-    snapshot = finalized_epoch_snapshot.get_by_epoch_num(epoch)
-    return int(snapshot.matched_rewards)
-
-
 def get_estimated_matched_rewards() -> int:
     snapshot = database.pending_epoch_snapshot.get_last_snapshot()
     patrons_rewards = get_patrons_budget(snapshot)

@@ -6,7 +6,10 @@ import app.controllers.deposits as deposits_controller
 from app.database import pending_epoch_snapshot
 from app.extensions import api
 from app.infrastructure import OctantResource
-from app.v2.modules.user.deposits.controller import estimate_total_effective_deposit
+from app.v2.modules.user.deposits.controller import (
+    estimate_total_effective_deposit,
+    estimate_user_effective_deposit,
+)
 
 ns = Namespace("deposits", description="Octant deposits")
 api.add_namespace(ns)
@@ -18,18 +21,6 @@ total_effective_model = api.model(
         "totalEffective": fields.String(
             required=True, description="total effective deposit in given epoch"
         ),
-    },
-)
-
-
-estimated_total_effective_model = api.model(
-    "EstimatedTotalEffective",
-    {
-        "amount": fields.String(
-            required=True,
-            description="Estimate total effective deposit in current epoch. Computed with (false) assumption that no more deposits or withdrawals will be made until end of the epoch. Amount in wei, GLM token",
-        ),
-        "epoch": fields.Integer(required=True, description="Epoch number"),
     },
 )
 
@@ -81,8 +72,8 @@ class EstimatedTotalEffectiveDeposit(OctantResource):
     @ns.marshal_with(total_effective_model)
     @ns.response(200, "Epoch estimated total effective deposit successfully retrieved")
     def get(self):
-        epoch, total = estimate_total_effective_deposit()
-        return {"estimatedTotalEffective": str(total), "epoch": epoch}
+        total = estimate_total_effective_deposit()
+        return {"totalEffective": total}
 
 
 @ns.route("/<int:epoch>/locked_ratio")
@@ -138,11 +129,7 @@ class UserEstimatedEffectiveDeposit(OctantResource):
         app.logger.debug(
             f"Getting user {address} estimated effective deposit in the current epoch"
         )
-        result = (
-            deposits_controller.get_user_estimated_effective_deposit_for_current_epoch(
-                to_checksum_address(address)
-            )
-        )
+        result = estimate_user_effective_deposit(to_checksum_address(address))
         app.logger.debug(
             f"User {address} estimated effective deposit in the current epoch: {result}"
         )

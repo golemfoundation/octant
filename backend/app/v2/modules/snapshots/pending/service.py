@@ -36,7 +36,7 @@ class PendingSnapshotsCreator:
         (
             user_deposits,
             total_effective_deposit,
-        ) = self.user_deposits_calculator.calculate_effective_deposits(context)
+        ) = self.user_deposits_calculator.calculate_all_effective_deposits(context)
 
         rewards_dto = self.octant_rewards_calculator.calculate_rewards(
             context, total_effective_deposit

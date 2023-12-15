@@ -7,14 +7,6 @@ from app.core.epochs.details import EpochDetails
 from app.core.epochs.epochs_registry import EpochsRegistry
 
 
-def get_estimated_effective_deposit(
-    epoch_details: EpochDetails, user_address: str
-) -> int:
-    return weighted_average_strategy.get_estimated_effective_deposit(
-        epoch_details, user_address
-    )
-
-
 def estimate_effective_deposit(
     epoch: EpochDetails, amount: int, lock_duration: int
 ) -> int:
