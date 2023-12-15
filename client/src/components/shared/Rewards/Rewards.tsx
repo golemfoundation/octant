@@ -52,7 +52,7 @@ const Rewards: FC<RewardsProps> = ({
     if (isDonationAboveThreshold && isArchivedProposal) {
       return t('totalRaised');
     }
-    return t('totalDonated');
+    return i18n.t('common.totalDonated');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isArchivedProposal, isDonationAboveThreshold]);
 

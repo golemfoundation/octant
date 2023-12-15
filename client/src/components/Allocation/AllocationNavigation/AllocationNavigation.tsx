@@ -7,47 +7,33 @@ import styles from './AllocationNavigation.module.scss';
 import AllocationNavigationProps from './types';
 
 const AllocationNavigation: FC<AllocationNavigationProps> = ({
-  areButtonsDisabled,
-  currentView,
   isLoading,
   onAllocate,
   onResetValues,
-  setCurrentView,
+  onEdit,
+  isLocked,
+  isLeftButtonDisabled,
+  isRightButtonDisabled,
 }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationNavigation',
   });
 
-  const buttonPreviousProps =
-    currentView === 'edit'
-      ? {
-          label: t('reset'),
-          onClick: onResetValues,
-        }
-      : {
-          label: t('back'),
-          onClick: () => setCurrentView('edit'),
-        };
-  const buttonNextProps =
-    currentView === 'edit'
-      ? {
-          label: t('next'),
-          onClick: () => setCurrentView('summary'),
-        }
-      : {
-          label: t('confirm'),
-          onClick: onAllocate,
-        };
-
   return (
     <div className={styles.root}>
-      <Button className={styles.button} isDisabled={areButtonsDisabled} {...buttonPreviousProps} />
       <Button
         className={styles.button}
-        isDisabled={areButtonsDisabled}
+        isDisabled={isLeftButtonDisabled}
+        label={t('reset')}
+        onClick={onResetValues}
+      />
+      <Button
+        className={styles.button}
+        isDisabled={isRightButtonDisabled}
         isLoading={isLoading}
+        label={isLocked ? t('edit') : t('confirm')}
+        onClick={isLocked ? onEdit : onAllocate}
         variant="cta"
-        {...buttonNextProps}
       />
     </div>
   );

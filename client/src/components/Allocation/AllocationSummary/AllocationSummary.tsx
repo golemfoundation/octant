@@ -1,15 +1,15 @@
 import cx from 'classnames';
 import React, { FC, useEffect } from 'react';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
-import ProjectAllocationDetailRow from 'components/shared/ProjectAllocationDetailRow';
+import AllocationSummaryProject from 'components/Allocation/AllocationSummaryProject';
 import BoxRounded from 'components/ui/BoxRounded';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
-import Header from 'components/ui/Header';
 import useAllocateLeverage from 'hooks/mutations/useAllocateLeverage';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useAllocationsStore from 'store/allocations/store';
+import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './AllocationSummary.module.scss';
 import AllocationSummaryProps from './types';
@@ -18,22 +18,49 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationSummary',
   });
-  const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
+  const { data: individualReward } = useIndividualReward();
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
   }));
+  const { data: allocateLeverage, mutateAsync } = useAllocateLeverage();
 
   const allocationValuesPositive = allocationValues.filter(({ value }) => !value.isZero());
   const areAllocationValuesPositive = allocationValuesPositive?.length > 0;
 
-  const sections: SectionProps[] = [];
   const personalAllocation = individualReward?.sub(rewardsForProposals);
 
-  const {
-    data: allocateLeverage,
-    mutateAsync,
-    isLoading: isLoadingAllocateLeverage,
-  } = useAllocateLeverage();
+  const rewardsForProposalsToDisplay = getFormattedEthValue(rewardsForProposals, true, true);
+
+  const sections: SectionProps[] = [
+    {
+      childrenLeft: (
+        <div className={styles.leftSection}>
+          <div className={styles.label}>{i18n.t('common.totalDonated')}</div>
+          <div className={styles.label}>
+            {t('matchFunding')}
+            <span className={styles.matchFundingLeverage}>
+              {allocateLeverage ? parseInt(allocateLeverage.leverage, 10) : 0}x
+            </span>
+          </div>
+        </div>
+      ),
+      childrenRight: (
+        <div className={styles.rightSection}>
+          <div className={styles.value}>{rewardsForProposalsToDisplay.value}</div>
+          {/* TODO: Display real value */}
+          <div className={styles.value}>10.7635</div>
+        </div>
+      ),
+      className: styles.section,
+    },
+    {
+      childrenLeft: <div className={styles.label}>{t('totalImpact')}</div>,
+      // TODO: Display real value
+      childrenRight: <div className={styles.value}>10.8885 ETH</div>,
+
+      className: styles.section,
+    },
+  ];
 
   useEffect(() => {
     if (areAllocationValuesPositive) {
@@ -42,68 +69,35 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!personalAllocation?.isZero()) {
-    sections.push({
-      doubleValueProps: {
-        cryptoCurrency: 'ethereum',
-        isFetching: isFetchingIndividualReward,
-        shouldIgnoreGwei: true,
-        valueCrypto: individualReward?.sub(rewardsForProposals),
-      },
-      label: i18n.t('common.personal'),
-    });
-  }
-
-  if (areAllocationValuesPositive) {
-    sections.push(
-      {
-        doubleValueProps: {
-          cryptoCurrency: 'ethereum',
-          shouldIgnoreGwei: true,
-          valueCrypto: rewardsForProposals,
-        },
-        label: t('allocationProjects', { projectsNumber: allocationValuesPositive.length }),
-      },
-      {
-        childrenRight: isLoadingAllocateLeverage ? (
-          <div className={styles.loader} />
-        ) : (
-          <div className={styles.text}>
-            {allocateLeverage ? parseInt(allocateLeverage.leverage, 10) : 0}x
-          </div>
-        ),
-        label: t('estimatedLeverage'),
-        tooltipProps: {
-          position: 'bottom-right',
-          text: (
-            <div>
-              <Trans
-                components={[<span className={styles.bold} />]}
-                i18nKey="components.dedicated.allocationSummary.tooltip"
-              />
-            </div>
-          ),
-        },
-      },
-    );
-  }
-
   return (
-    <BoxRounded
-      className={cx(styles.root, areAllocationValuesPositive && styles.areAllocationValuesPositive)}
-      hasPadding={false}
-      isVertical
-    >
-      <Header className={styles.header} text={t('confirmYourAllocations')} />
-      <Sections sections={sections} variant="small" />
-      {areAllocationValuesPositive && (
-        <div className={styles.projects}>
-          {allocationValuesPositive?.map(({ address, value }) => (
-            <ProjectAllocationDetailRow key={address} address={address} amount={value} />
-          ))}
-        </div>
+    <>
+      <BoxRounded
+        className={cx(
+          styles.root,
+          areAllocationValuesPositive && styles.areAllocationValuesPositive,
+        )}
+        hasPadding={false}
+        isVertical
+      >
+        {areAllocationValuesPositive && (
+          <div className={styles.projects}>
+            {allocationValuesPositive?.map(({ address, value }) => (
+              <AllocationSummaryProject key={address} address={address} amount={value} />
+            ))}
+          </div>
+        )}
+        <Sections sections={sections} variant="small" />
+      </BoxRounded>
+      {personalAllocation?.isZero() !== true && (
+        <BoxRounded className={styles.personalRewardBox}>
+          <div className={styles.personalReward}>
+            <div className={styles.label}>{i18n.t('common.personal')}</div>
+            {/* TODO: Display real value */}
+            <div className={styles.value}>0.3125 ETH</div>
+          </div>
+        </BoxRounded>
       )}
-    </BoxRounded>
+    </>
   );
 };
 

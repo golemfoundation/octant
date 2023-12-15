@@ -1,10 +1,9 @@
-import { CurrentView } from 'views/AllocationView/types';
-
 export default interface AllocationNavigationProps {
-  areButtonsDisabled: boolean;
-  currentView: CurrentView;
+  isLeftButtonDisabled: boolean;
   isLoading: boolean;
+  isLocked?: boolean;
+  isRightButtonDisabled: boolean;
   onAllocate: () => void;
+  onEdit: () => void;
   onResetValues: () => void;
-  setCurrentView: (newView: CurrentView) => void;
 }
