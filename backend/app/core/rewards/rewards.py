@@ -1,29 +1,8 @@
-from decimal import Decimal
-
 from app import database
-from app.core.epochs.epochs_registry import EpochsRegistry
 from app.core.user.budget import get_patrons_budget
 from app.database import finalized_epoch_snapshot
 from app.database.models import PendingEpochSnapshot
 from app.exceptions import RewardsException
-
-
-def calculate_total_rewards(
-    eth_proceeds: int, locked_ratio: Decimal, pending_epoch: int
-) -> int:
-    epoch_settings = EpochsRegistry.get_epoch_settings(pending_epoch)
-    return epoch_settings.rewards_strategy.calculate_total_rewards(
-        eth_proceeds, locked_ratio
-    )
-
-
-def calculate_all_individual_rewards(
-    eth_proceeds: int, locked_ratio: Decimal, pending_epoch: int
-) -> int:
-    registry = EpochsRegistry.get_epoch_settings(pending_epoch)
-    return registry.rewards_strategy.calculate_all_individual_rewards(
-        eth_proceeds, locked_ratio
-    )
 
 
 def calculate_matched_rewards(

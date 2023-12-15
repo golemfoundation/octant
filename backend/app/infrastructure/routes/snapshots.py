@@ -5,6 +5,7 @@ from flask_restx import Namespace, fields
 from app.controllers import snapshots
 from app.extensions import api
 from app.infrastructure import OctantResource
+from app.v2.modules.snapshots.pending.controller import snapshot_pending_epoch
 
 ns = Namespace("snapshots", description="Database snapshots")
 api.add_namespace(ns)
@@ -42,7 +43,7 @@ epoch_status_model = api.model(
 class PendingEpochSnapshot(OctantResource):
     def post(self):
         app.logger.info("Initiating pending epoch snapshot")
-        epoch = snapshots.snapshot_pending_epoch()
+        epoch = snapshot_pending_epoch()
         app.logger.info(f"Saved pending epoch snapshot for epoch: {epoch}")
 
         return ({"epoch": epoch}, 201) if epoch is not None else Response()

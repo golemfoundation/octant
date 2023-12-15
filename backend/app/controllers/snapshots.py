@@ -6,7 +6,6 @@ from flask import current_app as app
 
 from app import exceptions, database
 from app.core import merkle_tree
-from app.core.deposits.deposits import get_users_deposits, calculate_locked_ratio
 from app.core.epochs.epoch_snapshots import (
     has_pending_epoch_snapshot,
     has_finalized_epoch_snapshot,
@@ -18,14 +17,9 @@ from app.core.epochs.epoch_snapshots import (
     FinalizedSnapshotStatus,
 )
 from app.core.proposals import get_proposal_rewards_above_threshold
-from app.core.rewards.rewards import (
-    calculate_total_rewards,
-    calculate_all_individual_rewards,
-)
 from app.core.user import rewards as user_core_rewards
-from app.database import pending_epoch_snapshot, finalized_epoch_snapshot
-from app.extensions import db, w3, epochs
-from app.constants import GLM_TOTAL_SUPPLY_WEI
+from app.database import finalized_epoch_snapshot
+from app.extensions import db, epochs
 
 
 @dataclass(frozen=True)
@@ -83,43 +77,6 @@ def get_finalized_snapshot_status() -> FinalizedSnapshotStatus:
             f"Database inconsistent? Current epoch {current_epoch}, last finalized snapshot for epoch {last_snapshot_epoch}"
         )
         return FinalizedSnapshotStatus.ERROR
-
-
-def snapshot_pending_epoch() -> Optional[int]:
-    current_epoch = epochs.get_current_epoch()
-    pending_epoch = epochs.get_pending_epoch()
-    app.logger.info(
-        f"[*] Blockchain [current epoch: {current_epoch}] [pending epoch: {pending_epoch}] "
-    )
-
-    last_snapshot_epoch = get_last_pending_snapshot()
-
-    app.logger.info(f"[*] Most recent pending snapshot: {last_snapshot_epoch}")
-
-    if pending_epoch is None or pending_epoch <= last_snapshot_epoch:
-        app.logger.info("[+] Pending snapshots are up to date")
-        return None
-
-    eth_proceeds = w3.eth.get_balance(app.config["WITHDRAWALS_TARGET_CONTRACT_ADDRESS"])
-    user_deposits, total_effective_deposit = get_users_deposits(pending_epoch)
-    locked_ratio = calculate_locked_ratio(total_effective_deposit, GLM_TOTAL_SUPPLY_WEI)
-    total_rewards = calculate_total_rewards(eth_proceeds, locked_ratio, pending_epoch)
-    all_individual_rewards = calculate_all_individual_rewards(
-        eth_proceeds, locked_ratio, pending_epoch
-    )
-
-    database.deposits.add_all(pending_epoch, user_deposits)
-    pending_epoch_snapshot.save_snapshot(
-        pending_epoch,
-        eth_proceeds,
-        total_effective_deposit,
-        locked_ratio,
-        total_rewards,
-        all_individual_rewards,
-    )
-    db.session.commit()
-
-    return pending_epoch
 
 
 def snapshot_finalized_epoch() -> Optional[int]:
