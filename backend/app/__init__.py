@@ -18,11 +18,6 @@ from app.logging import init_logger
 from app.infrastructure import events, routes, apscheduler  # noqa
 from app.infrastructure.exception_handler import ExceptionHandler
 from app.settings import ProdConfig, DevConfig
-
-from app.core.rewards.all_proceeds_with_op_cost_rewards_strategy import (
-    AllProceedsWithOperationalCostStrategy,
-)
-from app.core.rewards.standard_rewards_strategy import StandardRewardsStrategy
 from app.v2.engine.epochs_settings import register_epoch_settings
 
 

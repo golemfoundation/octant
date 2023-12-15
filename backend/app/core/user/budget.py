@@ -1,13 +1,7 @@
 from decimal import Decimal
 
 from app import database
-from app.constants import GLM_TOTAL_SUPPLY_WEI
-from app.core.epochs import details as epochs_details
-from app.core.epochs.details import EpochDetails
-from app.core.staking import estimate_epoch_eth_staking_proceeds
 from app.database.models import PendingEpochSnapshot
-from app.extensions import epochs
-from app.utils.time import days_to_sec
 
 
 def get_budget(user_address: str, epoch: int) -> int:

@@ -3,6 +3,7 @@ from app.v2.context.context import ContextBuilder, Context
 from app.v2.modules.user.deposits.service import (
     UserDepositsEstimator,
     UserDepositsCalculator,
+    UserDepositsReader,
 )
 
 
@@ -13,6 +14,13 @@ def estimate_total_effective_deposit() -> int:
     return deposits_estimator.estimate_total_effective_deposit(
         context.current_epoch_context
     )
+
+
+def get_user_effective_deposit(user_address: str, epoch: int) -> int:
+    context = ContextBuilder().with_users_context([user_address]).build()
+    deposits_reader = UserDepositsReader()
+
+    return deposits_reader.get_user_effective_deposit(context, user_address, epoch)
 
 
 def estimate_user_effective_deposit(user_address: str) -> int:

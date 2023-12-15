@@ -4,7 +4,8 @@ from typing import Tuple, List
 from flask import current_app as app
 
 from app.core.deposits.events import EventGenerator
-from app.v2.context.context import EpochContext, CurrentEpochContext
+from app.exceptions import EffectiveDepositNotFoundException
+from app.v2.context.context import EpochContext, CurrentEpochContext, Context
 from app.v2.engine.user.effective_deposit import (
     UserDeposit,
     UserEffectiveDepositPayload,
@@ -75,3 +76,16 @@ class UserDepositsEstimator:
             context, user_address
         )
         return user_deposit.effective_deposit
+
+
+@dataclass
+class UserDepositsReader:
+    def get_user_effective_deposit(
+        self, context: Context, user_address: str, epoch: int
+    ) -> int:
+        user = context.users_context[user_address]
+        effective_deposit = user.get_effective_deposit(epoch)
+        if effective_deposit is None:
+            raise EffectiveDepositNotFoundException(epoch, user_address)
+
+        return effective_deposit

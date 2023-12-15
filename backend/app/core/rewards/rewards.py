@@ -1,6 +1,5 @@
 from app import database
 from app.core.user.budget import get_patrons_budget
-from app.database import finalized_epoch_snapshot
 from app.database.models import PendingEpochSnapshot
 from app.exceptions import RewardsException
 

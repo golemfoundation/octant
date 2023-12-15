@@ -2,13 +2,13 @@ from eth_utils import to_checksum_address
 from flask import current_app as app
 from flask_restx import Namespace, fields
 
-import app.controllers.deposits as deposits_controller
 from app.database import pending_epoch_snapshot
 from app.extensions import api
 from app.infrastructure import OctantResource
 from app.v2.modules.user.deposits.controller import (
     estimate_total_effective_deposit,
     estimate_user_effective_deposit,
+    get_user_effective_deposit,
 )
 
 ns = Namespace("deposits", description="Octant deposits")
@@ -105,9 +105,7 @@ class UserEffectiveDeposit(OctantResource):
     @ns.response(200, "User effective deposit successfully retrieved")
     def get(self, address: str, epoch: int):
         app.logger.debug(f"Getting user {address} effective deposit in epoch {epoch}")
-        result = deposits_controller.get_user_effective_deposit_by_epoch(
-            to_checksum_address(address), epoch
-        )
+        result = get_user_effective_deposit(to_checksum_address(address), epoch)
         app.logger.debug(f"User {address} effective deposit in epoch {epoch}: {result}")
 
         return {

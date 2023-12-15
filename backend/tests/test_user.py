@@ -3,29 +3,21 @@ from eth_account import Account
 from freezegun import freeze_time
 
 from app import exceptions, database
-from app.extensions import db
-
 from app.constants import GLM_TOTAL_SUPPLY_WEI
+from app.controllers import allocations as allocations_controller
+from app.controllers import user as user_controller
 from app.controllers.user import (
     MAX_DAYS_TO_ESTIMATE_BUDGET,
     get_patron_mode_status,
     toggle_patron_mode,
 )
-from app.core.user.budget import get_budget, estimate_budget
-from app.core.user.rewards import get_all_claimed_rewards
 from app.core.allocations import add_allocations_to_db, Allocation
-
-from app.controllers import allocations as allocations_controller
-from app.controllers import user as user_controller
-
-
+from app.core.user.budget import get_budget
+from app.core.user.rewards import get_all_claimed_rewards
+from app.extensions import db
 from tests.conftest import (
     allocate_user_rewards,
     MOCKED_PENDING_EPOCH_NO,
-    mock_graphql,
-    create_epoch_event,
-    MOCK_EPOCHS,
-    create_deposit_event,
     USER1_BUDGET,
 )
 
