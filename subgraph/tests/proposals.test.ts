@@ -60,7 +60,7 @@ const epoch2Addresses = [
   Address.fromString('0xfFbD35255008F86322051F2313D4b343540e0e00'),
 ];
 
-describe('handleSetProposalAddresses', () => {
+describe('handleSetProposalAddresses|handleSetCID', () => {
   beforeEach(() => {
     const epochProjects = new ProjectsMetadataPerEpoch(Bytes.fromI32(1));
     epochProjects.epoch = 1;
@@ -85,7 +85,7 @@ describe('handleSetProposalAddresses', () => {
       'getProposalAddresses',
       'getProposalAddresses(uint256):(address[])',
     )
-      .withArgs([ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(1))])
+      .withArgs([ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(2))])
       .returns([ethereum.Value.fromAddressArray(epoch2Addresses)]);
   });
 

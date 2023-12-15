@@ -10,7 +10,6 @@ import {
 } from '../src/contracts-utils';
 
 const ALL_EPOCHS_PROJECT_INFO_VERSION = 0;
-const EPOCH_1 = 1;
 
 // eslint-disable-next-line no-template-curly-in-string
 const epochsContractAddress = '${EPOCHS_CONTRACT_ADDRESS}';
@@ -18,21 +17,11 @@ const epochsContractAddress = '${EPOCHS_CONTRACT_ADDRESS}';
 const proposalsContractAddress = '${PROPOSALS_CONTRACT_ADDRESS}';
 
 function getCurrentAddresses(epochNumber: BigInt): Address[] | null {
-  const epoch = epochNumber.toI32();
-  if (epoch > EPOCH_1) {
-    // We assume the current Epoch is 2 or higher
-    // Get the list of proposals addresses from the previous Epoch and assign it to the entity of the current Epoch
-    const currentAddresses = requestProposalAddresses(
-      proposalsContractAddress,
-      epochNumber.minus(BigInt.fromI32(1)),
-    );
-    if (currentAddresses == null) {
-      return null;
-    }
-    return currentAddresses;
+  const currentAddresses = requestProposalAddresses(proposalsContractAddress, epochNumber);
+  if (currentAddresses == null) {
+    return null;
   }
-  // We assume we are in Epoch 1 and since the ProjectsMetadataPerEpoch entity doesn't exist for current Epoch, the projects addresses list is still empty
-  return [];
+  return currentAddresses;
 }
 
 function createNewProjectsMetadataPerEpoch(
