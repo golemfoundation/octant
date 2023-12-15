@@ -367,7 +367,7 @@ def patch_last_finalized_snapshot(monkeypatch):
             MOCK_LAST_FINALIZED_SNAPSHOT,
         ),
     )
-    MOCK_LAST_FINALIZED_SNAPSHOT.return_value = 1
+    MOCK_LAST_FINALIZED_SNAPSHOT.return_value = 3
 
 
 @pytest.fixture(scope="function")
@@ -468,7 +468,7 @@ def allocate_user_rewards(
 
 def create_payload(proposals, amounts: Optional[List[int]], nonce: int = 0):
     if amounts is None:
-        amounts = [randint(1 * 10**18, 100_000_000 * 10**18) for _ in proposals]
+        amounts = [randint(1 * 10**18, 1000 * 10**18) for _ in proposals]
 
     allocations = [
         {
