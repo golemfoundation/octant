@@ -1,5 +1,3 @@
-from typing import Tuple
-
 from app.controllers import epochs as epochs_controller
 from app.core.deposits import deposits as deposits_core
 from app.database import deposits as deposits_db
@@ -21,9 +19,3 @@ def get_user_estimated_effective_deposit_for_current_epoch(user_address: str) ->
     current_epoch = epochs_controller.get_current_epoch()
     epoch_info = epoch_details.get_epoch_details(current_epoch)
     return deposits_core.get_estimated_effective_deposit(epoch_info, user_address)
-
-
-def get_estimated_total_effective_deposit() -> Tuple[int, int]:
-    current_epoch = epochs_controller.get_current_epoch()
-    total = deposits_core.get_estimated_total_effective_deposit(current_epoch)
-    return current_epoch, total

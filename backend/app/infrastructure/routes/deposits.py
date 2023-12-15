@@ -6,6 +6,7 @@ import app.controllers.deposits as deposits_controller
 from app.database import pending_epoch_snapshot
 from app.extensions import api
 from app.infrastructure import OctantResource
+from app.v2.modules.user.deposits.controller import estimate_total_effective_deposit
 
 ns = Namespace("deposits", description="Octant deposits")
 api.add_namespace(ns)
@@ -80,7 +81,7 @@ class EstimatedTotalEffectiveDeposit(OctantResource):
     @ns.marshal_with(total_effective_model)
     @ns.response(200, "Epoch estimated total effective deposit successfully retrieved")
     def get(self):
-        epoch, total = deposits_controller.get_estimated_total_effective_deposit()
+        epoch, total = estimate_total_effective_deposit()
         return {"estimatedTotalEffective": str(total), "epoch": epoch}
 
 

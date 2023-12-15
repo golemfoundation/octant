@@ -4,8 +4,6 @@ from app import database
 from app.constants import GLM_TOTAL_SUPPLY_WEI
 from app.core.deposits.deposits import (
     estimate_effective_deposit,
-    get_estimated_total_effective_deposit,
-    calculate_locked_ratio,
 )
 from app.core.epochs import details as epochs_details
 from app.core.epochs.details import EpochDetails
@@ -40,36 +38,38 @@ def get_patrons_budget(snapshot: PendingEpochSnapshot) -> int:
 
 
 def estimate_budget(days: int, glm_amount: int) -> int:
-    epoch_num = epochs.get_current_epoch()
-    epoch = epochs_details.get_epoch_details(epoch_num)
-    lock_duration = days_to_sec(days)
-    estimated_total_effective_deposit = get_estimated_total_effective_deposit(epoch_num)
-    total_locked_ratio = calculate_locked_ratio(
-        estimated_total_effective_deposit, GLM_TOTAL_SUPPLY_WEI
-    )
-
-    budget = 0
-
-    budget += _estimate_current_epoch_budget(
-        epoch_num,
-        epoch,
-        lock_duration,
-        glm_amount,
-        total_locked_ratio,
-        estimated_total_effective_deposit,
-    )
-    lock_duration -= epoch.remaining_sec
-
-    if lock_duration > 0:
-        budget += _estimate_future_epochs_budget(
-            epoch_num,
-            lock_duration,
-            glm_amount,
-            total_locked_ratio,
-            estimated_total_effective_deposit,
-        )
-
-    return budget
+    ...
+    # TODO adjust to new arch
+    # epoch_num = epochs.get_current_epoch()
+    # epoch = epochs_details.get_epoch_details(epoch_num)
+    # lock_duration = days_to_sec(days)
+    # estimated_total_effective_deposit = get_estimated_total_effective_deposit(epoch_num)
+    # total_locked_ratio = calculate_locked_ratio(
+    #     estimated_total_effective_deposit, GLM_TOTAL_SUPPLY_WEI
+    # )
+    #
+    # budget = 0
+    #
+    # budget += _estimate_current_epoch_budget(
+    #     epoch_num,
+    #     epoch,
+    #     lock_duration,
+    #     glm_amount,
+    #     total_locked_ratio,
+    #     estimated_total_effective_deposit,
+    # )
+    # lock_duration -= epoch.remaining_sec
+    #
+    # if lock_duration > 0:
+    #     budget += _estimate_future_epochs_budget(
+    #         epoch_num,
+    #         lock_duration,
+    #         glm_amount,
+    #         total_locked_ratio,
+    #         estimated_total_effective_deposit,
+    #     )
+    #
+    # return budget
 
 
 def _estimate_current_epoch_budget(

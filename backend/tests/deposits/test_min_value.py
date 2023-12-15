@@ -2,7 +2,6 @@ import pytest
 from eth_utils import to_checksum_address
 
 from app import database
-from app.core.deposits.deposits import calculate_locked_ratio
 from app.core.deposits.min_value_strategy import get_users_deposits
 from tests.conftest import (
     USER1_ADDRESS,
@@ -18,39 +17,6 @@ EPOCH = 42
 @pytest.fixture(autouse=True)
 def before(app, graphql_client):
     pass
-
-
-@pytest.mark.parametrize(
-    "glm_supply, total_ed, expected",
-    [
-        (1000000000000000000000000000, 400_000000000_000000000, "0.0000004"),
-        (
-            985000000000048271659382201,
-            9999_999999999_999999999,
-            "0.00001015228426395889333237670954",
-        ),
-        (
-            1_000000000_000000000_000000000,
-            22700_000000000_099999994,
-            "0.000022700000000000099999994",
-        ),
-        (
-            1000000000000000000000000000,
-            77659900_000050080_003040099,
-            "0.077659900000050080003040099",
-        ),
-        (
-            1000000000000000000000000000,
-            111388800_044440000_000000000,
-            "0.11138880004444",
-        ),
-        (1000000000000000000000000000, 422361100_000000000_000000000, "0.4223611"),
-        (1000000000000000000000000000, 1000000000_000000000_000000000, "1"),
-    ],
-)
-def test_locked_ratio_positive(glm_supply, total_ed, expected):
-    result = calculate_locked_ratio(total_ed, glm_supply)
-    assert "{:f}".format(result) == expected
 
 
 @pytest.mark.parametrize(

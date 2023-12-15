@@ -4,7 +4,7 @@ from typing import Tuple, List
 from flask import current_app as app
 
 from app.core.deposits.events import EventGenerator
-from app.v2.context.context import EpochContext
+from app.v2.context.context import EpochContext, CurrentEpochContext
 from app.v2.engine.user.effective_deposit import (
     UserDeposit,
     UserEffectiveDepositPayload,
@@ -33,3 +33,12 @@ class UserDepositsCalculator:
                 epoch_start=start, epoch_end=end, lock_events_by_addr=events
             )
         )
+
+
+@dataclass
+class UserDepositsEstimator:
+    user_deposits_calculator: UserDepositsCalculator
+
+    def estimate_total_effective_deposit(self, context: CurrentEpochContext) -> int:
+        _, total = self.user_deposits_calculator.calculate_effective_deposits(context)
+        return total
