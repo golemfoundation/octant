@@ -25,7 +25,7 @@ default:
 
 .images:
   python:
-    name: acidrain/python-poetry:3.11-1.5.1
+    name: registry.gitlab.com/golemfoundation/devops/container-builder/octant/python-poetry-ext:42c80766
     pull_policy: if-not-present
   node:
     name: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:5dc8b447
@@ -35,7 +35,7 @@ default:
     pull_policy: if-not-present
     entrypoint: [""]
   git_improved:
-    name: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:5dc8b447
+    name: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:2ea6d57c
     pull_policy: if-not-present
   synpress:
     name: registry.gitlab.com/golemfoundation/devops/container-builder/octant/synpress-arch:5dc8b447
@@ -73,6 +73,9 @@ default:
   poetry_install:
     - poetry config virtualenvs.in-project true
     - poetry install
+  jq_install:
+    - curl -sSfL https://github.com/jqlang/jq/releases/download/jq-1.7/jq-linux-amd64 -o/usr/local/bin/jq
+    - chmod +x /usr/local/bin/jq
 
 Build backend:
   stage: build
@@ -347,7 +350,7 @@ Build images:
     PROPOSALS_CID: QmSQEFD35gKxdPEmngNt1CWe3kSwiiGqBn1Z3FZvWb8mvK
     DECISION_WINDOW: 1209600 # 14 days
     EPOCH_DURATION: 7776000 # 90 days
-    FORWARD_FIRST_EPOCH: 'true'
+    FORWARD_FIRST_EPOCH: 'false'
   script:
     - set -ex
     - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
@@ -370,6 +373,22 @@ Run E2E App:
     deployment_tier: development
     on_stop: Destroy E2E App
     auto_stop_in: 6 hours
+
+Run API Test App:
+  extends:
+    - .deploy_anvil
+  rules:
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
+  variables:
+    ENV_TYPE: "apitest"
+    ANVIL_BLOCK_TIME: "0"
+  environment:
+    name: apitest/$CI_PIPELINE_IID
+    deployment_tier: development
+    on_stop: Destroy API Test App
+    auto_stop_in: 2 hours
 
 Run MR App:
   extends:
@@ -394,6 +413,18 @@ E2E contracts:
     - !reference [.rules, on_push_to_master_branch ]
   variables:
     ENV_TYPE: "e2e"
+    FORWARD_FIRST_EPOCH: 'true'
+
+API Test contracts:
+  extends:
+    - .deploy_anvil_contracts
+  needs: ["Run API Test App"]
+  rules:
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
+  variables:
+    ENV_TYPE: "apitest"
 
 MR contracts:
   extends:
@@ -421,6 +452,27 @@ E2E app deploy:
     SCHEDULER_ENABLED: "true"
     GLM_CLAIM_ENABLED: "true"
     VAULT_CONFIRM_WITHDRAWALS_ENABLED: "true"
+
+API Test app deploy:
+  extends:
+    - .deploy_app
+  needs: ["API Test contracts"]
+  dependencies: ["API Test contracts"]
+  rules:
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
+  variables:
+    ENV_TYPE: "apitest"
+    NETWORK_NAME: "local"
+    NETWORK_ID: "1337"
+    SNAPSHOTTER_ENABLED: "false"
+    SCHEDULER_ENABLED: "false"
+    BACKEND_SERVER_PGSQL: "false"
+    WEB_CLIENT_REPLICAS: "0"
+    COIN_PRICES_SERVER_REPLICAS: "0"
+    BACKEND_SERVER_REPLICAS: "0"
+    ANVIL_BLOCK_TIME: "0"
 
 MR app deploy:
   extends:
@@ -540,6 +592,20 @@ Destroy E2E App:
     name: e2e/$CI_PIPELINE_IID
     deployment_tier: development
 
+Destroy API Test App:
+  extends:
+    - .destroy_app
+  needs: ["Run API Test App"]
+  variables:
+    ENV_TYPE: "apitest"
+  rules:
+    - !reference [.rules, on_mr_manual ]
+    - !reference [.rules, on_push_to_default_branch_manual ]
+    - !reference [.rules, on_push_to_master_branch_manual ]
+  environment:
+    name: apitest/$CI_PIPELINE_IID
+    deployment_tier: development
+
 Destroy MR App:
   extends:
     - .destroy_app
@@ -579,6 +645,49 @@ Destroy Master App:
   environment:
     name: persistent/master
     deployment_tier: testing
+
+API Tests:
+  stage: application
+  needs: ["API Test app deploy", "API Test contracts"]
+  image: !reference [.images, python ]
+  <<: *env_resolve_init
+  rules:
+    - !reference [.rules, on_mr ]
+    - !reference [.rules, on_push_to_default_branch ]
+    - !reference [.rules, on_push_to_master_branch ]
+  dependencies:
+    - API Test contracts
+  script:
+    - set -e
+    - cd backend
+    - !reference [ .scripts, poetry_install ]
+    # Wait for Argo app
+    - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
+    - export ETH_RPC_PROVIDER_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
+    - export SUBGRAPH_ENDPOINT=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_graph_url.sh)/subgraphs/name/octant
+    # Run the API tests
+    - set +e
+    - poetry run pytest --onlyapi || PYTEST_EXIT_CODE=$?
+    - set -e
+    # Trigger the stop job
+    - |
+      JOB_ID=$(curl --fail -s -XGET --header "PRIVATE-TOKEN: $CI_JOB_CONTROLLER" https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/pipelines/$CI_PIPELINE_ID/jobs | jq '.[] | select(.name == "Destroy API Test App") | .id')
+
+      curl -s --fail -X POST \
+           -H "PRIVATE-TOKEN: $CI_JOB_CONTROLLER" \
+           "$CI_API_V4_URL/projects/$CI_PROJECT_ID/jobs/$JOB_ID/play"
+    - exit $PYTEST_EXIT_CODE
+  variables:
+    ENV_TYPE: "apitest"
+    CHAIN_ID: "1337"
+    CHAIN_NAME: "localhost"
+    OCTANT_BACKEND_SECRET_KEY: "some-random-key"
+    OCTANT_ENV: "production"
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-poetry-backend
+      policy: pull
+      paths:
+        - backend/.venv
 
 E2E Epoch 1:
   stage: application
