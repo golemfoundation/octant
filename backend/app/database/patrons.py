@@ -2,15 +2,12 @@ from typing import List, Optional
 from datetime import datetime
 from itertools import groupby
 
-from eth_utils import to_checksum_address
-
 from app.database.models import PatronModeEvent
 
 from app.extensions import db
 
 
 def add_patron_mode_event(user_address: str, status: bool):
-    user_address = to_checksum_address(user_address)
     db.session.add(
         PatronModeEvent(
             user_address=user_address,
@@ -23,8 +20,6 @@ def add_patron_mode_event(user_address: str, status: bool):
 def get_last_event(
     user_address: str, dt: Optional[datetime] = None
 ) -> [PatronModeEvent]:
-    user_address = to_checksum_address(user_address)
-
     last_event_query = PatronModeEvent.query.filter_by(
         user_address=user_address
     ).order_by(PatronModeEvent.created_at.desc())

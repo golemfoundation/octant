@@ -2,6 +2,8 @@ from flask import current_app as app, request
 from flask_restx import Namespace, fields
 from flask_restx import reqparse
 
+from eth_utils import to_checksum_address
+
 import app.controllers.user as user_controller
 from app.extensions import api
 from app.infrastructure import OctantResource
@@ -115,6 +117,8 @@ class PatronMode(OctantResource):
     @ns.marshal_with(user_patron_mode_status_model)
     @ns.response(200, "User's patron mode status retrieved")
     def get(self, user_address: str):
+        user_address = to_checksum_address(user_address)
+
         app.logger.debug(f"Getting user {user_address} patron mode status")
         patron_mode_status = user_controller.get_patron_mode_status(user_address)
         app.logger.debug(
@@ -131,10 +135,10 @@ class PatronMode(OctantResource):
     @ns.response(204, "User's patron mode status updated.")
     @ns.response(400, "Could not update patron mode status.")
     def patch(self, user_address: str):
-        app.logger.info(f"Updating user {user_address} patron mode status")
-
+        user_address = to_checksum_address(user_address)
         signature = ns.payload.get("signature")
 
+        app.logger.info(f"Updating user {user_address} patron mode status")
         patron_mode_status = user_controller.toggle_patron_mode(user_address, signature)
         app.logger.info(
             f"User {user_address} patron mode status updated to {patron_mode_status}"
