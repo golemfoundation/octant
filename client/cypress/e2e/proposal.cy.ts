@@ -7,9 +7,9 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import Chainable = Cypress.Chainable;
 
 const getButtonAddToAllocate = (): Chainable<any> => {
-  const proposalView = cy.get('[data-test=ProposalView__proposal').first();
+  const proposalView = cy.get('[data-test=ProposalListItem').first();
 
-  return proposalView.find('[data-test=ProposalView__proposal__ButtonAddToAllocate]');
+  return proposalView.find('[data-test=ProposalListItemHeader__ButtonAddToAllocate]');
 };
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
@@ -33,31 +33,31 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     it('entering proposal view directly renders content', () => {
       cy.get('[data-test^=ProposalsView__ProposalsListItem').first().click();
       cy.reload();
-      const proposalView = cy.get('[data-test=ProposalView__proposal').first();
-      proposalView.get('[data-test=ProposalView__proposal__Img]').should('be.visible');
-      proposalView.get('[data-test=ProposalView__proposal__name]').should('be.visible');
+      const proposalView = cy.get('[data-test=ProposalListItem').first();
+      proposalView.get('[data-test=ProposalListItemHeader__Img]').should('be.visible');
+      proposalView.get('[data-test=ProposalListItemHeader__name]').should('be.visible');
     });
 
     it('entering proposal view renders all its elements', () => {
       cy.get('[data-test^=ProposalsView__ProposalsListItem').first().click();
-      const proposalView = cy.get('[data-test=ProposalView__proposal').first();
-      proposalView.get('[data-test=ProposalView__proposal__Img]').should('be.visible');
-      proposalView.get('[data-test=ProposalView__proposal__name]').should('be.visible');
+      const proposalView = cy.get('[data-test=ProposalListItem').first();
+      proposalView.get('[data-test=ProposalListItemHeader__Img]').should('be.visible');
+      proposalView.get('[data-test=ProposalListItemHeader__name]').should('be.visible');
       getButtonAddToAllocate().should('be.visible');
-      proposalView.get('[data-test=ProposalView__proposal__Button]').should('be.visible');
-      proposalView.get('[data-test=ProposalView__proposal__Description]').should('be.visible');
+      proposalView.get('[data-test=ProposalListItemHeader__Button]').should('be.visible');
+      proposalView.get('[data-test=ProposalListItem__Description]').should('be.visible');
 
-      cy.get('[data-test=ProposalView__proposal__Donors]')
+      cy.get('[data-test=ProposalListItem__Donors]')
         .first()
         .scrollIntoView({ offset: { left: 0, top: 100 } });
 
-      cy.get('[data-test=ProposalView__proposal__Donors]').first().should('be.visible');
-      cy.get('[data-test=ProposalView__proposal__Donors__DonorsHeader__count]')
+      cy.get('[data-test=ProposalListItem__Donors]').first().should('be.visible');
+      cy.get('[data-test=ProposalListItem__Donors__DonorsHeader__count]')
         .first()
         .should('be.visible')
         .should('have.text', '0');
       return cy
-        .get('[data-test=ProposalView__proposal__Donors__noDonationsYet]')
+        .get('[data-test=ProposalListItem__Donors__noDonationsYet]')
         .first()
         .should('be.visible');
     });
@@ -77,15 +77,15 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test^=ProposalsView__ProposalsListItem]').first().click();
 
       for (let i = 0; i < proposalNames.length; i++) {
-        cy.get('[data-test=ProposalView__proposal]').should(
+        cy.get('[data-test=ProposalListItem]').should(
           'have.length.greaterThan',
           i === proposalNames.length - 1 ? proposalNames.length - 1 : i,
         );
-        cy.get('[data-test=ProposalView__proposal__name]')
+        cy.get('[data-test=ProposalListItemHeader__name]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: -150 } })
           .contains(proposalNames[i]);
-        cy.get('[data-test=ProposalView__proposal__Donors]')
+        cy.get('[data-test=ProposalListItem__Donors]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: -150 } })
           .should('be.visible');
@@ -96,12 +96,12 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test^=ProposalsView__ProposalsListItem]').first().click();
 
       for (let i = 0; i < proposalNames.length - 1; i++) {
-        cy.get('[data-test=ProposalView__proposal__Donors]')
+        cy.get('[data-test=ProposalListItem__Donors]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: 100 } });
 
         if (i === proposalNames.length - 1) {
-          cy.get('[data-test=ProposalView__proposal__ButtonBackToTop]').should('be.visible');
+          cy.get('[data-test=ProposalBackToTopButton__Button]').should('be.visible');
         }
       }
     });
@@ -110,13 +110,13 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test^=ProposalsView__ProposalsListItem]').first().click();
 
       for (let i = 0; i < proposalNames.length - 1; i++) {
-        cy.get('[data-test=ProposalView__proposal__Donors]')
+        cy.get('[data-test=ProposalListItem__Donors]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: 100 } });
 
         if (i === proposalNames.length - 1) {
-          cy.get('[data-test=ProposalView__proposal__ButtonBackToTop]').click();
-          cy.get('[data-test=ProposalView__proposal]').eq(0).should('be.visible');
+          cy.get('[data-test=ProposalBackToTopButton__Button]').click();
+          cy.get('[data-test=ProposalListItem]').eq(0).should('be.visible');
         }
       }
     });
