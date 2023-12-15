@@ -45,7 +45,8 @@
     "valueCantBeEmpty": "Value can't be empty",
     "lessThan1m": "less than 1m",
     "donors": "Donors",
-    "available": "Available"
+    "available": "Available",
+    "totalDonated": "Total donated"
   },
   "components": {
     "settings": {
@@ -84,10 +85,9 @@
         "connectWallet": "In order to manipulate allocation values and vote, please connect your wallet first."
       },
       "allocationNavigation": {
-        "back": "Back",
         "confirm": "Confirm",
-        "next": "Next",
-        "reset": "Reset allocations"
+        "reset": "Reset",
+        "edit": "Edit"
       },
       "allocationRewardsBox": {
         "title": "Allocate rewards",
@@ -99,6 +99,8 @@
         "manual": "Manual"
       },
       "allocationSummary": {
+        "matchFunding": "Match funding",
+        "totalImpact": "Total impact",
         "estimatedLeverage": "Est. leverage",
         "confirmYourAllocations": "Confirm your allocations",
         "confirmAllocations": "Confirm allocations",
@@ -150,8 +152,7 @@
       "donors": {
         "donationsNotEnabled": "Donations are not enabled in this epoch",
         "noDonationsYet": "No donations yet",
-        "viewAll": "View all",
-        "totalDonated": "Total donated"
+        "viewAll": "View all"
       },
       "glmLock": {
         "lock": "Lock",
@@ -233,7 +234,6 @@
         "epoch": "Epoch {{epoch}}",
         "currentTotal": "Current total",
         "totalRaised": "Total raised",
-        "totalDonated": "Total donated",
         "fundedIn": "Funded in",
         "fundedAt": "Funded at",
         "didNotReach": "Did not reach",

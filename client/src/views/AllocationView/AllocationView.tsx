@@ -29,7 +29,7 @@ import useAllocationsStore from 'store/allocations/store';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './AllocationView.module.scss';
-import { AllocationValues, CurrentView } from './types';
+import { AllocationValues } from './types';
 import {
   getAllocationValuesInitialState,
   getAllocationsWithRewards,
@@ -39,7 +39,6 @@ import {
 const AllocationView = (): ReactElement => {
   const { isConnected } = useAccount();
   const { t } = useTranslation('translation', { keyPrefix: 'views.allocation' });
-  const [currentView, setCurrentView] = useState<CurrentView>('edit');
   const [isLocked, setIsLocked] = useState<boolean | undefined>(undefined);
   const [allocationValues, setAllocationValues] = useState<AllocationValues>([]);
   const [isRewardsForProposalsSet, setIsRewardsForProposalsSet] = useState<boolean>(false);
@@ -74,7 +73,6 @@ const AllocationView = (): ReactElement => {
   const allocateEvent = useAllocate({
     nonce: userNonce!,
     onSuccess: async () => {
-      setCurrentView('edit');
       triggerToast({
         title: t('allocationSuccessful'),
       });
@@ -248,7 +246,6 @@ const AllocationView = (): ReactElement => {
     isLoading ||
     !isConnected ||
     !isDecisionWindowOpen ||
-    isLocked ||
     (!areAllocationsAvailableOrAlreadyDone && !rewardsForProposals.isZero()) ||
     !!individualReward?.isZero();
 
@@ -262,7 +259,7 @@ const AllocationView = (): ReactElement => {
   const isEpoch1 = currentEpoch === 1;
 
   const showAllocationBottomNavigation =
-    !isEpoch1 && areAllocationsAvailableOrAlreadyDone && hasUserIndividualReward && !isLocked;
+    !isEpoch1 && areAllocationsAvailableOrAlreadyDone && hasUserIndividualReward;
 
   return (
     <Layout
@@ -271,52 +268,51 @@ const AllocationView = (): ReactElement => {
       navigationBottomSuffix={
         showAllocationBottomNavigation && (
           <AllocationNavigation
-            areButtonsDisabled={areButtonsDisabled}
-            currentView={currentView}
+            isLeftButtonDisabled={areButtonsDisabled || !!isLocked}
             isLoading={allocateEvent.isLoading}
+            isLocked={isLocked}
+            isRightButtonDisabled={areButtonsDisabled}
             onAllocate={onAllocate}
+            onEdit={() => setIsLocked(false)}
             onResetValues={() => onResetAllocationValues()}
-            setCurrentView={setCurrentView}
           />
         )
       }
     >
-      {currentView === 'edit' ? (
-        <Fragment>
-          <AllocationTipTiles className={styles.box} />
-          {!isEpoch1 && (
-            <AllocationRewardsBox
-              className={styles.box}
-              isDisabled={!isDecisionWindowOpen || !hasUserIndividualReward}
-              isLocked={isLocked}
-              /* eslint-disable-next-line @typescript-eslint/naming-convention */
-              onUnlock={isDecisionWindowOpen ? () => setIsLocked(prev => !prev) : () => {}}
-            />
-          )}
-          {areAllocationsAvailableOrAlreadyDone && (
-            <AnimatePresence initial={false}>
-              {allocationsWithRewards!.map(
-                ({ address, isAllocatedTo, isLoadingError, value, profileImageSmall, name }) => (
-                  <AllocationItem
-                    key={address}
-                    address={address}
-                    className={cx(styles.box, styles.isAllocation)}
-                    isAllocatedTo={isAllocatedTo}
-                    isLoadingError={isLoadingError}
-                    isManuallyEdited={allocationsEdited.includes(address)}
-                    name={name}
-                    onChange={onChangeAllocationItemValue}
-                    profileImageSmall={profileImageSmall}
-                    value={value}
-                  />
-                ),
-              )}
-            </AnimatePresence>
-          )}
-        </Fragment>
-      ) : (
-        <AllocationSummary allocationValues={allocationValues} />
-      )}
+      <Fragment>
+        <AllocationTipTiles className={styles.box} />
+        {!isEpoch1 && (
+          <AllocationRewardsBox
+            className={styles.box}
+            isDisabled={!isDecisionWindowOpen || !hasUserIndividualReward}
+            isLocked={isLocked}
+            /* eslint-disable-next-line @typescript-eslint/naming-convention */
+            onUnlock={isDecisionWindowOpen ? () => setIsLocked(prev => !prev) : () => {}}
+          />
+        )}
+        {isLocked ? (
+          <AllocationSummary allocationValues={allocationValues} />
+        ) : (
+          <AnimatePresence initial={false}>
+            {allocationsWithRewards!.map(
+              ({ address, isAllocatedTo, isLoadingError, value, profileImageSmall, name }) => (
+                <AllocationItem
+                  key={address}
+                  address={address}
+                  className={cx(styles.box, styles.isAllocation)}
+                  isAllocatedTo={isAllocatedTo}
+                  isLoadingError={isLoadingError}
+                  isManuallyEdited={allocationsEdited.includes(address)}
+                  name={name}
+                  onChange={onChangeAllocationItemValue}
+                  profileImageSmall={profileImageSmall}
+                  value={value}
+                />
+              ),
+            )}
+          </AnimatePresence>
+        )}
+      </Fragment>
     </Layout>
   );
 };
