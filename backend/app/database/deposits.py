@@ -3,8 +3,8 @@ from typing import List, Optional, Dict
 from eth_utils import to_checksum_address
 
 from app import db, database
-from app.core.common import UserDeposit
 from app.database.models import Deposit, User
+from app.v2.engine.user.effective_deposit import UserDeposit
 
 
 def get_all_by_epoch(epoch: int) -> Dict[str, Deposit]:
@@ -41,7 +41,7 @@ def add(epoch: int, user: User, effective_deposit: int, epoch_end_deposit: int):
     db.session.add(deposit)
 
 
-def add_all(epoch: int, deposits: List[UserDeposit]):
+def save_deposits(epoch: int, deposits: List[UserDeposit]):
     for d in deposits:
         user = database.user.get_or_add_user(d.user_address)
         user.deposits.append(

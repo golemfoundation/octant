@@ -109,7 +109,7 @@ def snapshot_pending_epoch() -> Optional[int]:
     )
 
     database.deposits.add_all(pending_epoch, user_deposits)
-    pending_epoch_snapshot.add_snapshot(
+    pending_epoch_snapshot.save_snapshot(
         pending_epoch,
         eth_proceeds,
         total_effective_deposit,

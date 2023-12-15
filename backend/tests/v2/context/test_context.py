@@ -1,6 +1,6 @@
 import pytest
 
-from app.context.context import ContextBuilder
+from app.v2.context.context import ContextBuilder
 from app.v2.engine.epochs_settings import EpochSettings
 from app.v2.engine.octant_rewards import OctantRewardsSettings
 from app.v2.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (
@@ -52,13 +52,7 @@ def test_current_epoch_context(user_accounts):
 
 
 def test_pending_epoch_context(user_accounts, mock_pending_epoch_snapshot_db):
-    context = (
-        ContextBuilder()
-        .with_pending_epoch_context(
-            [user_accounts[0].address, user_accounts[1].address]
-        )
-        .build()
-    )
+    context = ContextBuilder().with_pending_epoch_context().build()
     pending_epoch_context = context.pending_epoch_context
     epoch_details = pending_epoch_context.epoch_details
 
@@ -78,11 +72,20 @@ def test_pending_epoch_context(user_accounts, mock_pending_epoch_snapshot_db):
     assert epoch_details.end_sec == 2000
 
     assert context.pending_epoch_context.pending_snapshot is not None
-    assert len(context.pending_epoch_context.users_context) == 2
-    user1 = context.pending_epoch_context.users_context[user_accounts[0].address]
+
+
+def test_users_context(user_accounts, mock_pending_epoch_snapshot_db):
+    context = (
+        ContextBuilder()
+        .with_users_context([user_accounts[0].address, user_accounts[1].address])
+        .build()
+    )
+    assert context.pending_epoch == 1
+    assert len(context.users_context) == 2
+    user1 = context.users_context[user_accounts[0].address]
     assert user1.get_effective_deposit(1) == USER1_ED
     assert user1.get_budget(1) == USER1_BUDGET
-    user2 = context.pending_epoch_context.users_context[user_accounts[1].address]
+    user2 = context.users_context[user_accounts[1].address]
     assert user2.get_effective_deposit(1) == USER2_ED
     assert user2.get_budget(1) == USER2_BUDGET
 

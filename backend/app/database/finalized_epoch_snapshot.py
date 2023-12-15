@@ -1,10 +1,12 @@
 from sqlalchemy import desc
+from typing_extensions import deprecated
 
 from app import exceptions
 from app.database.models import FinalizedEpochSnapshot
 from app.extensions import db
 
 
+@deprecated("Exceptions should be raised in services, use `get_by_epoch` instead")
 def get_by_epoch_num(epoch) -> FinalizedEpochSnapshot:
     snapshot = FinalizedEpochSnapshot.query.filter_by(epoch=epoch).first()
 
@@ -12,6 +14,10 @@ def get_by_epoch_num(epoch) -> FinalizedEpochSnapshot:
         raise exceptions.InvalidEpoch()
 
     return snapshot
+
+
+def get_by_epoch(epoch: int) -> FinalizedEpochSnapshot:
+    return FinalizedEpochSnapshot.query.filter_by(epoch=epoch).first()
 
 
 def get_last_snapshot() -> FinalizedEpochSnapshot:

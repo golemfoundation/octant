@@ -3,13 +3,12 @@ from typing import Tuple, List
 
 from flask import current_app as app
 
-from app.context.context import EpochContext
 from app.core.deposits.events import EventGenerator
+from app.v2.context.context import EpochContext
 from app.v2.engine.user.effective_deposit import (
     UserDeposit,
     UserEffectiveDepositPayload,
 )
-from app.v2.modules.user.deposits.db import save_deposits
 
 
 @dataclass
@@ -34,9 +33,3 @@ class UserDepositsCalculator:
                 epoch_start=start, epoch_end=end, lock_events_by_addr=events
             )
         )
-
-
-@dataclass
-class UserDepositsCreator:
-    def save_deposits(self, epoch: int, deposits: List[UserDeposit]):
-        save_deposits(epoch=epoch, deposits=deposits)

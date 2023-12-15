@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from app.context.context import ContextBuilder
+from app.v2.context.context import ContextBuilder
 from app.v2.modules.octant_rewards.service import OctantRewardsCalculator
 from tests.conftest import MOCK_EPOCHS, TOTAL_ED, ETH_PROCEEDS
 

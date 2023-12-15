@@ -2,16 +2,11 @@ from unittest.mock import Mock
 
 import pytest
 
-from app.context.context import ContextBuilder
+from app import database
+from app.v2.context.context import ContextBuilder
 from app.v2.engine.user.effective_deposit import UserDeposit
 from app.v2.modules.octant_rewards.service import OctantRewardsDTO
-
-from app.v2.modules.snapshots.pending.db import get_last_snapshot
 from app.v2.modules.snapshots.pending.service import PendingSnapshotsCreator
-from app.v2.modules.user.budgets.service import UserBudgetsCreator
-from app.v2.modules.user.deposits import db as deposits_db
-from app.v2.modules.user.budgets import db as budgets_db
-from app.v2.modules.user.deposits.service import UserDepositsCreator
 from tests.conftest import (
     MOCK_EPOCHS,
     ETH_PROCEEDS,
@@ -89,16 +84,14 @@ def test_save_pending_epoch_snapshot(
     context = ContextBuilder().with_pending_epoch_context().build()
     service = PendingSnapshotsCreator(
         user_deposits_calculator=user_deposits_calculator_mock,
-        user_deposits_creator=UserDepositsCreator(),
         user_budgets_calculator=user_budgets_calculator_mock,
-        user_budgets_creator=UserBudgetsCreator(),
         octant_rewards_calculator=octant_rewards_calculator_mock,
     )
 
     result = service.snapshot_pending_epoch(epoch, context.pending_epoch_context)
 
     assert result == epoch
-    snapshot = get_last_snapshot()
+    snapshot = database.pending_epoch_snapshot.get_last_snapshot()
     assert snapshot.epoch == epoch
     assert snapshot.created_at is not None
     assert snapshot.eth_proceeds == str(ETH_PROCEEDS)
@@ -107,7 +100,7 @@ def test_save_pending_epoch_snapshot(
     assert snapshot.all_individual_rewards == "101814368807786782825"
     assert snapshot.total_rewards == "321928767123288031232"
 
-    deposits = deposits_db.get_all_by_epoch(epoch)
+    deposits = database.deposits.get_all_by_epoch(epoch)
     assert len(deposits) == 2
     assert deposits[alice.address].user.address == alice.address
     assert deposits[alice.address].effective_deposit == "270000000000000000000"
@@ -116,7 +109,7 @@ def test_save_pending_epoch_snapshot(
     assert deposits[bob.address].effective_deposit == "2790000000000000000000"
     assert deposits[bob.address].epoch_end_deposit == "3100000000000000000000"
 
-    budgets = budgets_db.get_all_by_epoch(epoch)
+    budgets = database.budgets.get_all_by_epoch(epoch)
     assert len(budgets) == 2
     assert budgets[alice.address].user.address == alice.address
     assert budgets[alice.address].budget == "1526868989237987"
@@ -134,9 +127,7 @@ def test_return_none_when_snapshot_is_already_taken(
     context = ContextBuilder().with_pending_epoch_context().build()
     service = PendingSnapshotsCreator(
         user_deposits_calculator=user_deposits_calculator_mock,
-        user_deposits_creator=UserDepositsCreator(),
         user_budgets_calculator=user_budgets_calculator_mock,
-        user_budgets_creator=UserBudgetsCreator(),
         octant_rewards_calculator=octant_rewards_calculator_mock,
     )
 

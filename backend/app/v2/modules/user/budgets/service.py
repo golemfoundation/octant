@@ -3,10 +3,9 @@ from typing import List, Tuple
 
 from flask import current_app as app
 
-from app.context.context import EpochContext
+from app.v2.context.context import EpochContext
 from app.v2.engine.user.effective_deposit import UserDeposit
 from app.v2.modules.user.budgets.core import calculate_budgets
-from app.v2.modules.user.budgets.db import save_budgets
 
 
 @dataclass
@@ -29,9 +28,3 @@ class UserBudgetsCalculator:
             total_effective_deposits,
             individual_rewards,
         )
-
-
-@dataclass
-class UserBudgetsCreator:
-    def save_budgets(self, epoch: int, budgets: List[Tuple[str, int]]):
-        save_budgets(epoch=epoch, budgets=budgets)

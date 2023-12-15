@@ -3,26 +3,26 @@ from typing import Optional
 
 from flask import current_app as app
 
-from app.context.context import PendingEpochContext
+from app import database
+from app.database.pending_epoch_snapshot import save_snapshot
 from app.extensions import db
-from app.v2.modules.octant_rewards.service import OctantRewardsCalculator
-from app.v2.modules.snapshots.pending.db import save_snapshot
+from app.v2.context.context import PendingEpochContext
+from app.v2.modules.octant_rewards.service import (
+    OctantRewardsCalculator,
+    OctantRewardsDTO,
+)
 from app.v2.modules.user.budgets.service import (
     UserBudgetsCalculator,
-    UserBudgetsCreator,
 )
 from app.v2.modules.user.deposits.service import (
     UserDepositsCalculator,
-    UserDepositsCreator,
 )
 
 
 @dataclass
 class PendingSnapshotsCreator:
     user_deposits_calculator: UserDepositsCalculator
-    user_deposits_creator: UserDepositsCreator
     user_budgets_calculator: UserBudgetsCalculator
-    user_budgets_creator: UserBudgetsCreator
     octant_rewards_calculator: OctantRewardsCalculator
 
     def snapshot_pending_epoch(
@@ -48,10 +48,22 @@ class PendingSnapshotsCreator:
             rewards_dto.all_individual_rewards,
         )
 
-        self.user_deposits_creator.save_deposits(pending_epoch, user_deposits)
-        self.user_budgets_creator.save_budgets(pending_epoch, user_budgets)
-        save_snapshot(pending_epoch, rewards_dto, total_effective_deposit)
+        database.deposits.save_deposits(pending_epoch, user_deposits)
+        database.budgets.save_budgets(pending_epoch, user_budgets)
+        self._save_snapshot(pending_epoch, rewards_dto, total_effective_deposit)
 
         db.session.commit()
 
         return pending_epoch
+
+    def _save_snapshot(
+        self, epoch: int, rewards: OctantRewardsDTO, total_effective_deposit: int
+    ):
+        save_snapshot(
+            epoch=epoch,
+            eth_proceeds=rewards.eth_proceeds,
+            total_rewards=rewards.total_rewards,
+            all_individual_rewards=rewards.all_individual_rewards,
+            locked_ratio=rewards.locked_ratio,
+            total_ed=total_effective_deposit,
+        )

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from decimal import Decimal
 
-from app.context.context import EpochContext
+from app.v2.context.context import EpochContext
 from app.v2.engine.octant_rewards.locked_ratio import LockedRatioPayload
 from app.v2.engine.octant_rewards.total_and_individual import (
     TotalAndAllIndividualPayload,

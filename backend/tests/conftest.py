@@ -268,7 +268,7 @@ def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.core.proposals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.user.budget.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.epochs.details.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.context.context.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.v2.context.context.epochs", MOCK_EPOCHS)
 
     MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
     MOCK_EPOCHS.get_current_epoch.return_value = MOCKED_CURRENT_EPOCH_NO
@@ -357,7 +357,7 @@ def patch_matched_rewards(monkeypatch):
 
 @pytest.fixture(scope="function")
 def mock_pending_epoch_snapshot_db(app, user_accounts):
-    database.pending_epoch_snapshot.add_snapshot(
+    database.pending_epoch_snapshot.save_snapshot(
         MOCKED_PENDING_EPOCH_NO,
         ETH_PROCEEDS,
         TOTAL_ED,

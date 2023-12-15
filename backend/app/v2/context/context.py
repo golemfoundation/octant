@@ -1,17 +1,12 @@
 from abc import ABC
 from dataclasses import dataclass
-from typing import Optional, List, Dict
+from typing import List, Dict
 
-from app.context import epoch
-from app.context.epoch import EpochDetails
-from app.database import (
-    pending_epoch_snapshot,
-    finalized_epoch_snapshot,
-    user as user_db,
-)
+from app import database
 from app.database.models import PendingEpochSnapshot, FinalizedEpochSnapshot, User
-from app.exceptions import InvalidEpoch
 from app.extensions import epochs
+from app.v2.context import epoch
+from app.v2.context.epoch import EpochDetails
 from app.v2.engine.epochs_settings import EpochSettings, get_epoch_settings
 
 
@@ -29,7 +24,6 @@ class CurrentEpochContext(EpochContext):
 @dataclass(frozen=True)
 class PendingEpochContext(EpochContext):
     pending_snapshot: PendingEpochSnapshot = None
-    users_context: Optional[Dict[str, User]] = None
 
 
 @dataclass(frozen=True)
@@ -45,6 +39,7 @@ class Context:
     current_epoch_context: CurrentEpochContext = None
     pending_epoch_context: PendingEpochContext = None
     finalized_epoch_context: FinalizedEpochContext = None
+    users_context: Dict[str, User] = None
     future_epoch_details: EpochDetails = None
 
 
@@ -67,37 +62,25 @@ class ContextBuilder:
         )
         return self
 
-    def with_pending_epoch_context(self, users_addresses: List[str] = None):
+    def with_pending_epoch_context(self):
         epoch_settings = get_epoch_settings(self.context.pending_epoch)
         epoch_details = epoch.get_epoch_details(self.context.pending_epoch)
-        try:
-            pending_snapshot = pending_epoch_snapshot.get_by_epoch_num(
-                self.context.pending_epoch
-            )
-        except InvalidEpoch:
-            pending_snapshot = None
-        users_context: Optional[Dict[str, User]] = None
-
-        if users_addresses is not None:
-            users_context = user_db.get_by_users_addresses(users_addresses)
-
+        pending_snapshot = database.pending_epoch_snapshot.get_by_epoch(
+            self.context.pending_epoch
+        )
         self.context.pending_epoch_context = PendingEpochContext(
             epoch_settings=epoch_settings,
             epoch_details=epoch_details,
             pending_snapshot=pending_snapshot,
-            users_context=users_context,
         )
         return self
 
     def with_finalized_epoch_context(self):
         epoch_settings = get_epoch_settings(self.context.finalized_epoch)
         epoch_details = epoch.get_epoch_details(self.context.finalized_epoch)
-        try:
-            finalized_snapshot = finalized_epoch_snapshot.get_by_epoch_num(
-                self.context.finalized_epoch
-            )
-        except InvalidEpoch:
-            finalized_snapshot = None
+        finalized_snapshot = database.finalized_epoch_snapshot.get_by_epoch(
+            self.context.finalized_epoch
+        )
         self.context.finalized_epoch_context = FinalizedEpochContext(
             epoch_settings=epoch_settings,
             epoch_details=epoch_details,
@@ -105,9 +88,15 @@ class ContextBuilder:
         )
         return self
 
+    def with_users_context(self, users_addresses: List[str]):
+        users_context = database.user.get_by_users_addresses(users_addresses)
+        self.context.users_context = users_context
+        return self
+
     def with_future_epoch_context(self):
         epoch_details = epoch.get_future_epoch_details()
         self.context.future_epoch_context = epoch_details
+        return self
 
     def build(self) -> Context:
         return self.context

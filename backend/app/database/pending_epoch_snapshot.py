@@ -1,4 +1,7 @@
+from typing import Optional
+
 from sqlalchemy import desc
+from typing_extensions import deprecated
 
 from app.database.models import PendingEpochSnapshot
 from app.extensions import db
@@ -7,6 +10,7 @@ from app import exceptions
 from decimal import Decimal
 
 
+@deprecated("Exceptions should be raised in services, use `get_by_epoch` instead")
 def get_by_epoch_num(epoch) -> PendingEpochSnapshot:
     snapshot = PendingEpochSnapshot.query.filter_by(epoch=epoch).first()
 
@@ -14,6 +18,10 @@ def get_by_epoch_num(epoch) -> PendingEpochSnapshot:
         raise exceptions.InvalidEpoch()
 
     return snapshot
+
+
+def get_by_epoch(epoch: int) -> Optional[PendingEpochSnapshot]:
+    return PendingEpochSnapshot.query.filter_by(epoch=epoch).first()
 
 
 def get_last_snapshot() -> PendingEpochSnapshot:
@@ -29,7 +37,7 @@ def get_last_snapshot() -> PendingEpochSnapshot:
     return snapshot
 
 
-def add_snapshot(
+def save_snapshot(
     epoch: int,
     eth_proceeds: int,
     total_ed: int,
