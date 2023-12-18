@@ -42,12 +42,12 @@ export type QueryKeys = {
   lockedSummarySnapshots: ['lockedSummarySnapshots'];
   matchedProposalRewards: (epochNumber: number) => [Root['matchedProposalRewards'], string];
   patronMode: (userAddress: string) => [Root['patronMode'], string];
+  projectsMetadataAccumulateds: ['projectsMetadataAccumulateds'];
   proposalDonors: (
     proposalAddress: string,
     epochNumber: number,
   ) => [Root['proposalDonors'], string, string];
   proposalRewardsThreshold: (epochNumber: number) => [Root['proposalRewardsThreshold'], string];
-  proposalsAllIpfs: ['proposalsAllIpfs'];
   proposalsCid: ['proposalsCid'];
   proposalsContract: (epochNumber: number) => [Root['proposalsContract'], string];
   proposalsIpfsResults: (proposalAddress: string) => [Root['proposalsIpfsResults'], string];
