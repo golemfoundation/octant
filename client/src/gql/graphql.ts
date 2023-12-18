@@ -21,11 +21,6 @@ export type Scalars = {
   BigDecimal: { input: any; output: any };
   BigInt: { input: any; output: any };
   Bytes: { input: any; output: any };
-  /**
-   * 8 bytes signed integer
-   *
-   */
-  Int8: { input: any; output: any };
 };
 
 export type BlockChangedFilter = {
@@ -396,6 +391,106 @@ export enum OrderDirection {
   Desc = 'desc',
 }
 
+export type ProjectsMetadataAccumulated = {
+  __typename?: 'ProjectsMetadataAccumulated';
+  id: Scalars['Bytes']['output'];
+  projectsAddresses: Array<Scalars['Bytes']['output']>;
+};
+
+export type ProjectsMetadataAccumulated_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<ProjectsMetadataAccumulated_Filter>>>;
+  id?: InputMaybe<Scalars['Bytes']['input']>;
+  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<ProjectsMetadataAccumulated_Filter>>>;
+  projectsAddresses?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  projectsAddresses_contains?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  projectsAddresses_contains_nocase?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  projectsAddresses_not?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  projectsAddresses_not_contains?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  projectsAddresses_not_contains_nocase?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum ProjectsMetadataAccumulated_OrderBy {
+  Id = 'id',
+  ProjectsAddresses = 'projectsAddresses',
+}
+
+export type ProjectsMetadataPerEpoch = {
+  __typename?: 'ProjectsMetadataPerEpoch';
+  epoch: Scalars['Int']['output'];
+  id: Scalars['Bytes']['output'];
+  projectsAddresses: Array<Scalars['Bytes']['output']>;
+  proposalsCid: Scalars['String']['output'];
+};
+
+export type ProjectsMetadataPerEpoch_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<ProjectsMetadataPerEpoch_Filter>>>;
+  epoch?: InputMaybe<Scalars['Int']['input']>;
+  epoch_gt?: InputMaybe<Scalars['Int']['input']>;
+  epoch_gte?: InputMaybe<Scalars['Int']['input']>;
+  epoch_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  epoch_lt?: InputMaybe<Scalars['Int']['input']>;
+  epoch_lte?: InputMaybe<Scalars['Int']['input']>;
+  epoch_not?: InputMaybe<Scalars['Int']['input']>;
+  epoch_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  id?: InputMaybe<Scalars['Bytes']['input']>;
+  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<ProjectsMetadataPerEpoch_Filter>>>;
+  projectsAddresses?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  projectsAddresses_contains?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  projectsAddresses_contains_nocase?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  projectsAddresses_not?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  projectsAddresses_not_contains?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  projectsAddresses_not_contains_nocase?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  proposalsCid?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_contains?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_ends_with?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_gt?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_gte?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  proposalsCid_lt?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_lte?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_not?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_not_contains?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  proposalsCid_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_starts_with?: InputMaybe<Scalars['String']['input']>;
+  proposalsCid_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum ProjectsMetadataPerEpoch_OrderBy {
+  Epoch = 'epoch',
+  Id = 'id',
+  ProjectsAddresses = 'projectsAddresses',
+  ProposalsCid = 'proposalsCid',
+}
+
 export type Query = {
   __typename?: 'Query';
   /** Access to subgraph metadata */
@@ -408,6 +503,10 @@ export type Query = {
   lockedSummarySnapshot?: Maybe<LockedSummarySnapshot>;
   lockedSummarySnapshots: Array<LockedSummarySnapshot>;
   lockeds: Array<Locked>;
+  projectsMetadataAccumulated?: Maybe<ProjectsMetadataAccumulated>;
+  projectsMetadataAccumulateds: Array<ProjectsMetadataAccumulated>;
+  projectsMetadataPerEpoch?: Maybe<ProjectsMetadataPerEpoch>;
+  projectsMetadataPerEpoches: Array<ProjectsMetadataPerEpoch>;
   unlocked?: Maybe<Unlocked>;
   unlockeds: Array<Unlocked>;
   vaultMerkleRoot?: Maybe<VaultMerkleRoot>;
@@ -484,6 +583,38 @@ export type QueryLockedsArgs = {
   where?: InputMaybe<Locked_Filter>;
 };
 
+export type QueryProjectsMetadataAccumulatedArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+export type QueryProjectsMetadataAccumulatedsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<ProjectsMetadataAccumulated_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<ProjectsMetadataAccumulated_Filter>;
+};
+
+export type QueryProjectsMetadataPerEpochArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+export type QueryProjectsMetadataPerEpochesArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<ProjectsMetadataPerEpoch_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<ProjectsMetadataPerEpoch_Filter>;
+};
+
 export type QueryUnlockedArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID']['input'];
@@ -544,6 +675,10 @@ export type Subscription = {
   lockedSummarySnapshot?: Maybe<LockedSummarySnapshot>;
   lockedSummarySnapshots: Array<LockedSummarySnapshot>;
   lockeds: Array<Locked>;
+  projectsMetadataAccumulated?: Maybe<ProjectsMetadataAccumulated>;
+  projectsMetadataAccumulateds: Array<ProjectsMetadataAccumulated>;
+  projectsMetadataPerEpoch?: Maybe<ProjectsMetadataPerEpoch>;
+  projectsMetadataPerEpoches: Array<ProjectsMetadataPerEpoch>;
   unlocked?: Maybe<Unlocked>;
   unlockeds: Array<Unlocked>;
   vaultMerkleRoot?: Maybe<VaultMerkleRoot>;
@@ -618,6 +753,38 @@ export type SubscriptionLockedsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<Locked_Filter>;
+};
+
+export type SubscriptionProjectsMetadataAccumulatedArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+export type SubscriptionProjectsMetadataAccumulatedsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<ProjectsMetadataAccumulated_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<ProjectsMetadataAccumulated_Filter>;
+};
+
+export type SubscriptionProjectsMetadataPerEpochArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+export type SubscriptionProjectsMetadataPerEpochesArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<ProjectsMetadataPerEpoch_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<ProjectsMetadataPerEpoch_Filter>;
 };
 
 export type SubscriptionUnlockedArgs = {
@@ -1036,6 +1203,16 @@ export type GetLockedsDataQuery = {
   lockeds: Array<{ __typename?: 'Locked'; user: any; timestamp: number; amount: any }>;
 };
 
+export type GetProjectsMetadataAccumulatedsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetProjectsMetadataAccumulatedsQuery = {
+  __typename?: 'Query';
+  projectsMetadataAccumulateds: Array<{
+    __typename?: 'ProjectsMetadataAccumulated';
+    projectsAddresses: Array<any>;
+  }>;
+};
+
 export const GetBlockNumberDocument = {
   kind: 'Document',
   definitions: [
@@ -1351,3 +1528,29 @@ export const GetLockedsDataDocument = {
     },
   ],
 } as unknown as DocumentNode<GetLockedsDataQuery, GetLockedsDataQueryVariables>;
+export const GetProjectsMetadataAccumulatedsDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetProjectsMetadataAccumulateds' },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'projectsMetadataAccumulateds' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'projectsAddresses' } }],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetProjectsMetadataAccumulatedsQuery,
+  GetProjectsMetadataAccumulatedsQueryVariables
+>;

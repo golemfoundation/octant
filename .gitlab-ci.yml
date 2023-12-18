@@ -689,7 +689,7 @@ API Tests:
       paths:
         - backend/.venv
 
-E2E Epoch 1:
+E2E Epoch 2:
   stage: application
   needs: ["E2E app deploy"]
   image: !reference [.images, synpress ]
