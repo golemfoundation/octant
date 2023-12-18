@@ -4,6 +4,8 @@ from copy import deepcopy
 from operator import itemgetter
 from typing import Dict, List, Optional
 
+from eth_utils import to_checksum_address
+
 from app.infrastructure.graphql.locks import (
     get_locks_by_timestamp_range,
     get_locks_by_address_and_timestamp_range,
@@ -43,6 +45,8 @@ class SubgraphEventsGenerator(EventGenerator):
         Returns:
             A list of event dictionaries sorted by timestamp.
         """
+
+        user_address = to_checksum_address(user_address)
 
         if self._user_events_cache is not None:
             if user_address in self._user_events_cache:
@@ -86,7 +90,8 @@ class SubgraphEventsGenerator(EventGenerator):
         sorted_events = sorted(events, key=itemgetter("user", "timestamp"))
 
         self._user_events_cache = {
-            k: list(g) for k, g in groupby(sorted_events, key=itemgetter("user"))
+            to_checksum_address(k): list(g)
+            for k, g in groupby(sorted_events, key=itemgetter("user"))
         }
 
         return deepcopy(self._user_events_cache)

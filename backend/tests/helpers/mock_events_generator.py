@@ -18,7 +18,7 @@ class MockEventGenerator(EventGenerator):
         }
 
     def get_user_events(self, user_address: Optional[str]) -> List[Dict]:
-        return self.events[user_address]
+        return self.events[user_address.lower()]
 
     def get_all_users_events(self) -> Dict[str, List[Dict]]:
         return self.events
@@ -39,7 +39,7 @@ class MockEventGeneratorFactory:
         epoch_end = epoch_end if epoch_end is not None else self.epoch_end
 
         events = {
-            user.address: self._map_user_events(user_events)
+            user.address.lower(): self._map_user_events(user_events)
             for user, user_events in events.items()
         }
 

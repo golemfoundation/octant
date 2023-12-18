@@ -469,24 +469,11 @@ def _split_deposit_events(deposit_events):
     unlocks_events = []
     timestamp = 1001
     for event in deposit_events:
+        event = {"timestamp": timestamp, **event}
         if event["__typename"] == "Locked":
-            locks_events.append(
-                {
-                    "depositBefore": "0",
-                    "timestamp": timestamp,
-                    "user": USER1_ADDRESS,
-                    **event,
-                }
-            )
+            locks_events.append(create_deposit_event(typename="Locked", **event))
         else:
-            unlocks_events.append(
-                {
-                    "depositBefore": "0",
-                    "timestamp": timestamp,
-                    "user": USER1_ADDRESS,
-                    **event,
-                }
-            )
+            unlocks_events.append(create_deposit_event(typename="Unlocked", **event))
         timestamp += 1
     return locks_events, unlocks_events
 
