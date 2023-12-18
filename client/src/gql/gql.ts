@@ -27,6 +27,8 @@ const documents = {
     types.GetLockedSummarySnapshotsDocument,
   '\n  query GetLockedsData($first: Int = 100, $skip: Int = 0) {\n    lockeds(first: $first, skip: $skip) {\n      user\n      timestamp\n      amount\n    }\n  }\n':
     types.GetLockedsDataDocument,
+  '\n  query GetProjectsMetadataAccumulateds {\n    projectsMetadataAccumulateds {\n      projectsAddresses\n    }\n  }\n':
+    types.GetProjectsMetadataAccumulatedsDocument,
 };
 
 /**
@@ -85,6 +87,12 @@ export function graphql(
 export function graphql(
   source: '\n  query GetLockedsData($first: Int = 100, $skip: Int = 0) {\n    lockeds(first: $first, skip: $skip) {\n      user\n      timestamp\n      amount\n    }\n  }\n',
 ): (typeof documents)['\n  query GetLockedsData($first: Int = 100, $skip: Int = 0) {\n    lockeds(first: $first, skip: $skip) {\n      user\n      timestamp\n      amount\n    }\n  }\n'];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query GetProjectsMetadataAccumulateds {\n    projectsMetadataAccumulateds {\n      projectsAddresses\n    }\n  }\n',
+): (typeof documents)['\n  query GetProjectsMetadataAccumulateds {\n    projectsMetadataAccumulateds {\n      projectsAddresses\n    }\n  }\n'];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
