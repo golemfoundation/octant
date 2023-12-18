@@ -51,6 +51,19 @@ def test_one_user_deposit_at_the_beginning_of_an_epoch():
     assert result[1] == 100_000000000_000000000
 
 
+def test_user_without_address():
+    deposits = {None: [(EPOCH_START, 100_000000000_000000000)]}
+    payload = create_payload(deposits)
+    uut = DefaultWeightedAverageEffectiveDeposit()
+
+    result = uut.calculate_users_effective_deposits(payload)
+
+    assert result[0] == [
+        UserDeposit(None, 100_000000000_000000000, 100_000000000_000000000)
+    ]
+    assert result[1] == 100_000000000_000000000
+
+
 def test_one_user_deposit_below_locked_amount_cutoff():
     deposits = {USER1_ADDRESS: [(EPOCH_START, 90_000000000_000000000)]}
     payload = create_payload(deposits)

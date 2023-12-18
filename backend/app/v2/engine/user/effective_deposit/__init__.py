@@ -7,7 +7,7 @@ from dataclass_wizard import JSONWizard
 
 @dataclass(frozen=True)
 class UserDeposit(JSONWizard):
-    user_address: str
+    user_address: str | None
     effective_deposit: int
     deposit: int
 

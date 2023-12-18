@@ -1,7 +1,7 @@
 def create_deposit_event(
     typename="Locked",
-    deposit_before="0",
-    amount="100000000000000000000",
+    deposit_before=0,
+    amount=100000000000000000000,
     **kwargs,
 ):
     return {

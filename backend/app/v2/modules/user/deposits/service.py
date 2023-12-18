@@ -3,18 +3,19 @@ from typing import Tuple, List
 
 from flask import current_app as app
 
-from app.core.deposits.events import EventGenerator
 from app.exceptions import EffectiveDepositNotFoundException
+from app.extensions import glm
 from app.v2.context.context import EpochContext, CurrentEpochContext, Context
 from app.v2.engine.user.effective_deposit import (
     UserDeposit,
     UserEffectiveDepositPayload,
 )
+from app.v2.modules.user.deposits.events_generator import EventsGenerator
 
 
 @dataclass
 class UserDepositsCalculator:
-    events_generator: EventGenerator
+    events_generator: EventsGenerator
 
     def calculate_all_effective_deposits(
         self, context: EpochContext
@@ -36,7 +37,7 @@ class UserDepositsCalculator:
         )
 
     def calculate_effective_deposit(
-        self, context: EpochContext, user_address: str
+        self, context: EpochContext, user_address: str = None
     ) -> UserDeposit:
         epoch_details = context.epoch_details
         start = epoch_details.start_sec
@@ -77,6 +78,23 @@ class UserDepositsEstimator:
         )
         return user_deposit.effective_deposit
 
+    def estimate_effective_deposit(
+        self, context: EpochContext, glm_amount: int, lock_duration_sec: int
+    ) -> int:
+        events_generator = self.user_deposits_calculator.events_generator
+        events_generator.update_epoch(
+            context.epoch_details.start_sec, context.epoch_details.end_sec
+        )
+        events_generator.create_user_events(
+            glm_amount=glm_amount,
+            lock_duration_sec=lock_duration_sec,
+            epoch_remaining_duration_sec=context.epoch_details.remaining_sec,
+        )
+        user_deposit = self.user_deposits_calculator.calculate_effective_deposit(
+            context
+        )
+        return user_deposit.effective_deposit
+
 
 @dataclass
 class UserDepositsReader:
@@ -89,3 +107,6 @@ class UserDepositsReader:
             raise EffectiveDepositNotFoundException(epoch, user_address)
 
         return effective_deposit
+
+    def get_total_deposited(self) -> int:
+        return glm.balance_of(app.config["DEPOSITS_CONTRACT_ADDRESS"])

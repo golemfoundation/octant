@@ -1,6 +1,6 @@
 import pytest
 
-from app.v2.context.context import ContextBuilder
+from app.v2.context.builder import ContextBuilder
 from app.v2.engine.user.effective_deposit import UserDeposit
 from app.v2.modules.user.deposits.service import UserDepositsCalculator
 from tests.conftest import MOCK_EPOCHS

@@ -1,7 +1,7 @@
 import pytest
 
-from app.core.staking import estimate_epoch_eth_staking_proceeds
 from app.utils.time import days_to_sec
+from app.v2.modules.staking.proceeds.core import estimate_staking_proceeds
 
 
 @pytest.mark.parametrize(
@@ -13,4 +13,4 @@ from app.utils.time import days_to_sec
 )
 def test_estimate_epoch_eth_staking_proceeds(days, result):
     seconds = days_to_sec(days)
-    assert estimate_epoch_eth_staking_proceeds(seconds) == result
+    assert estimate_staking_proceeds(seconds) == result

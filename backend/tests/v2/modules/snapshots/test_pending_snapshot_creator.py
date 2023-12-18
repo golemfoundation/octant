@@ -3,7 +3,7 @@ from unittest.mock import Mock
 import pytest
 
 from app import database
-from app.v2.context.context import ContextBuilder
+from app.v2.context.builder import ContextBuilder
 from app.v2.engine.user.effective_deposit import UserDeposit
 from app.v2.modules.octant_rewards.service import OctantRewardsDTO
 from app.v2.modules.snapshots.pending.service import PendingSnapshotsCreator
@@ -64,6 +64,16 @@ def octant_rewards_calculator_mock(alice, bob):
     return octant_rewards_calculator_mock
 
 
+@pytest.fixture(scope="function")
+def staking_proceeds_calculator_mock():
+    staking_proceeds_reader_mock = Mock()
+    staking_proceeds_reader_mock.get_withdrawals_target_balance.return_value = (
+        ETH_PROCEEDS
+    )
+
+    return staking_proceeds_reader_mock
+
+
 @pytest.mark.parametrize(
     "epoch",
     [
@@ -77,6 +87,7 @@ def test_save_pending_epoch_snapshot(
     user_deposits_calculator_mock,
     octant_rewards_calculator_mock,
     user_budgets_calculator_mock,
+    staking_proceeds_calculator_mock,
     alice,
     bob,
 ):
@@ -86,6 +97,7 @@ def test_save_pending_epoch_snapshot(
         user_deposits_calculator=user_deposits_calculator_mock,
         user_budgets_calculator=user_budgets_calculator_mock,
         octant_rewards_calculator=octant_rewards_calculator_mock,
+        staking_proceeds_calculator=staking_proceeds_calculator_mock,
     )
 
     result = service.snapshot_pending_epoch(epoch, context.pending_epoch_context)
@@ -121,14 +133,18 @@ def test_return_none_when_snapshot_is_already_taken(
     user_deposits_calculator_mock,
     user_budgets_calculator_mock,
     octant_rewards_calculator_mock,
+    staking_proceeds_calculator_mock,
     mock_pending_epoch_snapshot_db,
 ):
     MOCK_EPOCHS.get_pending_epoch.return_value = 1
-    context = ContextBuilder().with_pending_epoch_context().build()
+    context = (
+        ContextBuilder().with_pending_epoch_context().with_octant_rewards().build()
+    )
     service = PendingSnapshotsCreator(
         user_deposits_calculator=user_deposits_calculator_mock,
         user_budgets_calculator=user_budgets_calculator_mock,
         octant_rewards_calculator=octant_rewards_calculator_mock,
+        staking_proceeds_calculator=staking_proceeds_calculator_mock,
     )
 
     result = service.snapshot_pending_epoch(1, context.pending_epoch_context)

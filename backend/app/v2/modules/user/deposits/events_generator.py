@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
+from collections import defaultdict
 from itertools import groupby
 from operator import itemgetter
-from typing import Dict, List, Optional
+from typing import Dict, List
 
+from app.infrastructure.graphql import get_last_deposit_event
 from app.infrastructure.graphql.locks import (
     get_locks_by_timestamp_range,
     get_locks_by_address_and_timestamp_range,
@@ -12,16 +14,27 @@ from app.infrastructure.graphql.unlocks import (
     get_unlocks_by_address_and_timestamp_range,
 )
 from app.utils.subgraph_events import create_deposit_event
-from app.infrastructure.graphql import get_last_deposit_event
 
 
-class EventGenerator(ABC):
+class EventsGenerator(ABC):
     def __init__(self, epoch_start: int, epoch_end: int):
         self.epoch_start = epoch_start
         self.epoch_end = epoch_end
 
+    def create_user_events(
+        self,
+        glm_amount: int,
+        lock_duration_sec: int,
+        epoch_remaining_duration_sec: int,
+        user_address: str = None,
+    ):
+        raise NotImplementedError()
+
+    def update_epoch(self, start: int, end: int):
+        raise NotImplementedError()
+
     @abstractmethod
-    def get_user_events(self, user_address: Optional[str]) -> List[Dict]:
+    def get_user_events(self, user_address: str = None) -> List[Dict]:
         pass
 
     @abstractmethod
@@ -29,8 +42,8 @@ class EventGenerator(ABC):
         pass
 
 
-class SubgraphEventsGenerator(EventGenerator):
-    def get_user_events(self, user_address: Optional[str]) -> List[Dict]:
+class SubgraphEventsGenerator(EventsGenerator):
+    def get_user_events(self, user_address: str = None) -> List[Dict]:
         """
         Get user lock and unlock events from the subgraph within the given timestamp range, sort them by timestamp,
 
@@ -73,48 +86,48 @@ class SubgraphEventsGenerator(EventGenerator):
         return {k: list(g) for k, g in groupby(sorted_events, key=itemgetter("user"))}
 
 
-class SimulatedEventsGenerator(EventGenerator):
+class SimulatedEventsGenerator(EventsGenerator):
     def __init__(
         self,
         epoch_start: int,
         epoch_end: int,
-        lock_duration: int,
-        amount: int,
-        epoch_remaining_duration: int,
     ):
         super().__init__(epoch_start, epoch_end)
-        self.lock_duration = lock_duration
-        self.amount = amount
-        self.epoch_remaining_duration = epoch_remaining_duration
+        self.events = defaultdict(lambda: [])
 
-    def get_user_events(self, user_address: Optional[str]) -> List[Dict]:
-        """
-        Retrieve a simulated lock event for a user based on two potential scenarios:
-
-        1. The user maintains their lock for a portion of the epoch.
-        2. The user retains their lock for the entire remaining duration of the epoch.
-        This could encompass the full duration of the epoch if we're considering a future epoch
-        and the user intends to lock for a duration exceeding that epoch.
-         Alternatively, it could be just a fraction of the epoch if it's the current epoch and
-          the user desires to lock for a longer period.
-
-        Returns:
-            A list containing a single lock event.
-        """
-
-        if self.lock_duration < self.epoch_remaining_duration:
-            return [
+    def create_user_events(
+        self,
+        glm_amount: int,
+        lock_duration_sec: int,
+        epoch_remaining_duration_sec: int,
+        user_address: str = None,
+    ):
+        self.events = defaultdict(lambda: [])
+        user_events = [
+            create_deposit_event(
+                amount=glm_amount,
+                timestamp=self.epoch_end - epoch_remaining_duration_sec,
+            )
+        ]
+        if lock_duration_sec < epoch_remaining_duration_sec:
+            user_events.append(
                 create_deposit_event(
-                    amount=self.amount, timestamp=self.epoch_end - self.lock_duration
-                ),
-            ]
-        else:
-            return [
-                create_deposit_event(
-                    amount=self.amount,
-                    timestamp=self.epoch_end - self.epoch_remaining_duration,
-                ),
-            ]
+                    typename="Unlocked",
+                    deposit_before=glm_amount,
+                    amount=glm_amount,
+                    timestamp=self.epoch_end
+                    - epoch_remaining_duration_sec
+                    + lock_duration_sec,
+                )
+            )
+        self.events[user_address] = user_events
+
+    def update_user_events(self, start: int, end: int):
+        self.epoch_start = start
+        self.epoch_end = end
+
+    def get_user_events(self, user_address: str = None) -> List[Dict]:
+        return self.events[user_address]
 
     def get_all_users_events(self) -> Dict[str, List[Dict]]:
-        raise NotImplementedError()
+        return self.events

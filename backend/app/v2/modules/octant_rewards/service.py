@@ -1,12 +1,11 @@
 from dataclasses import dataclass
 from decimal import Decimal
 
-from app.v2.context.context import EpochContext
+from app.v2.engine.octant_rewards import OctantRewardsSettings
 from app.v2.engine.octant_rewards.locked_ratio import LockedRatioPayload
 from app.v2.engine.octant_rewards.total_and_individual import (
     TotalAndAllIndividualPayload,
 )
-from app.v2.modules.staking.proceeds.service import StakingBalanceReader
 
 
 @dataclass
@@ -19,16 +18,15 @@ class OctantRewardsDTO:
 
 @dataclass
 class OctantRewardsCalculator:
-    staking_proceeds_reader: StakingBalanceReader
-
     def calculate_rewards(
-        self, context: EpochContext, total_effective_deposit: int
+        self,
+        octant_rewards_settings: OctantRewardsSettings,
+        eth_proceeds: int,
+        total_effective_deposit: int,
     ) -> OctantRewardsDTO:
-        octant_rewards = context.epoch_settings.octant_rewards
-        locked_ratio_calculator = octant_rewards.locked_ratio
-        rewards_calculator = octant_rewards.total_and_all_individual_rewards
+        locked_ratio_calculator = octant_rewards_settings.locked_ratio
+        rewards_calculator = octant_rewards_settings.total_and_all_individual_rewards
 
-        eth_proceeds = self.staking_proceeds_reader.get_withdrawals_target_balance()
         locked_ratio = locked_ratio_calculator.calculate_locked_ratio(
             LockedRatioPayload(total_effective_deposit)
         )

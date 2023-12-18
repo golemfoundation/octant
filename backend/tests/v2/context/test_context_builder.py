@@ -1,6 +1,6 @@
 import pytest
 
-from app.v2.context.context import ContextBuilder
+from app.v2.context.builder import ContextBuilder
 from app.v2.engine.epochs_settings import EpochSettings
 from app.v2.engine.octant_rewards import OctantRewardsSettings
 from app.v2.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (
@@ -71,13 +71,11 @@ def test_pending_epoch_context(user_accounts, mock_pending_epoch_snapshot_db):
     assert epoch_details.start_sec == 1000
     assert epoch_details.end_sec == 2000
 
-    assert context.pending_epoch_context.pending_snapshot is not None
-
 
 def test_users_context(user_accounts, mock_pending_epoch_snapshot_db):
     context = (
         ContextBuilder()
-        .with_users_context([user_accounts[0].address, user_accounts[1].address])
+        .with_users([user_accounts[0].address, user_accounts[1].address])
         .build()
     )
     assert context.pending_epoch == 1

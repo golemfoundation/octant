@@ -1,10 +1,10 @@
 from typing import List, Dict, Optional, Tuple
 from itertools import accumulate
 
-from app.core.deposits.events import EventGenerator
+from app.v2.modules.user.deposits.events_generator import EventsGenerator
 
 
-class MockEventGenerator(EventGenerator):
+class MockEventGenerator(EventsGenerator):
     def __init__(
         self, epoch_start: int, epoch_end: int, user_events: Dict[str, List[Dict]]
     ):
@@ -15,7 +15,7 @@ class MockEventGenerator(EventGenerator):
             for user, events in user_events.items()
         }
 
-    def get_user_events(self, user_address: Optional[str]) -> List[Dict]:
+    def get_user_events(self, user_address: str = None) -> List[Dict]:
         return self.events[user_address]
 
     def get_all_users_events(self) -> Dict[str, List[Dict]]:

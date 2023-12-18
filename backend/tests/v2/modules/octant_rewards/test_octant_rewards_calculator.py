@@ -1,9 +1,8 @@
 from decimal import Decimal
-from unittest.mock import Mock
 
 import pytest
 
-from app.v2.context.context import ContextBuilder
+from app.v2.context.builder import ContextBuilder
 from app.v2.modules.octant_rewards.service import OctantRewardsCalculator
 from tests.conftest import MOCK_EPOCHS, TOTAL_ED, ETH_PROCEEDS
 
@@ -22,19 +21,17 @@ def before(app, patch_epochs, mock_epoch_details):
     ],
 )
 def test_get_rewards_in_pending_epoch(
-    epoch,
-    total_expected,
-    individual_expected,
+    epoch, total_expected, individual_expected, mock_pending_epoch_snapshot_db
 ):
     MOCK_EPOCHS.get_pending_epoch.return_value = epoch
-    staking_proceeds_reader_mock = Mock()
-    staking_proceeds_reader_mock.get_withdrawals_target_balance.return_value = (
-        ETH_PROCEEDS
-    )
     context = ContextBuilder().with_pending_epoch_context().build()
-    service = OctantRewardsCalculator(staking_proceeds_reader_mock)
+    service = OctantRewardsCalculator()
 
-    result = service.calculate_rewards(context.pending_epoch_context, TOTAL_ED)
+    result = service.calculate_rewards(
+        context.pending_epoch_context.epoch_settings.octant_rewards,
+        ETH_PROCEEDS,
+        TOTAL_ED,
+    )
 
     assert result.eth_proceeds == ETH_PROCEEDS
     assert result.locked_ratio == Decimal("0.100022700000000000099999994")

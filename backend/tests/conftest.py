@@ -266,7 +266,7 @@ def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.controllers.epochs.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.controllers.withdrawals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.proposals.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.v2.context.context.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.v2.context.builder.epochs", MOCK_EPOCHS)
 
     MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
     MOCK_EPOCHS.get_current_epoch.return_value = MOCKED_CURRENT_EPOCH_NO

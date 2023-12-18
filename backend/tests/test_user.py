@@ -3,11 +3,8 @@ from eth_account import Account
 from freezegun import freeze_time
 
 from app import exceptions, database
-from app.constants import GLM_TOTAL_SUPPLY_WEI
 from app.controllers import allocations as allocations_controller
-from app.controllers import user as user_controller
 from app.controllers.user import (
-    MAX_DAYS_TO_ESTIMATE_BUDGET,
     get_patron_mode_status,
     toggle_patron_mode,
 )
@@ -73,7 +70,6 @@ def test_get_user_budget(user_accounts, mock_pending_epoch_snapshot_db):
 @freeze_time("2023-08-09 01:48:47")
 def test_estimate_budget(mocker, graphql_client, patch_epochs, days, amount, expected):
     ...
-    # TODO adjust to new arch
     # MOCK_EPOCHS.get_current_epoch.return_value = 1
     # deposits = [
     #     create_deposit_event(
@@ -108,20 +104,6 @@ def test_estimate_budget(mocker, graphql_client, patch_epochs, days, amount, exp
     # result = estimate_budget(days, amount)
     #
     # assert result == expected
-
-
-def test_estimate_budget_validates_inputs():
-    with pytest.raises(exceptions.RewardsException):
-        user_controller.estimate_budget(-1, 1000)
-
-    with pytest.raises(exceptions.RewardsException):
-        user_controller.estimate_budget(MAX_DAYS_TO_ESTIMATE_BUDGET + 1, 1000)
-
-    with pytest.raises(exceptions.RewardsException):
-        user_controller.estimate_budget(100, -1)
-
-    with pytest.raises(exceptions.RewardsException):
-        user_controller.estimate_budget(100, GLM_TOTAL_SUPPLY_WEI + 1)
 
 
 @pytest.mark.parametrize(

@@ -1,102 +1,57 @@
 from abc import ABC
 from dataclasses import dataclass
-from typing import List, Dict
+from decimal import Decimal
+from typing import Dict
 
-from app import database
-from app.database.models import PendingEpochSnapshot, FinalizedEpochSnapshot, User
-from app.extensions import epochs
-from app.v2.context import epoch
+from app.database.models import FinalizedEpochSnapshot, User
 from app.v2.context.epoch import EpochDetails
-from app.v2.engine.epochs_settings import EpochSettings, get_epoch_settings
+from app.v2.engine.epochs_settings import EpochSettings
 
 
 @dataclass(frozen=True)
+class OctantRewards:
+    eth_proceeds: int
+    locked_ratio: Decimal
+    total_effective_deposit: int
+    total_rewards: int
+    individual_rewards: int
+
+
+@dataclass
 class EpochContext(ABC):
     epoch_settings: EpochSettings
     epoch_details: EpochDetails
+    octant_rewards: OctantRewards = None
 
 
-@dataclass(frozen=True)
+@dataclass
 class CurrentEpochContext(EpochContext):
     pass
 
 
-@dataclass(frozen=True)
+@dataclass
 class PendingEpochContext(EpochContext):
-    pending_snapshot: PendingEpochSnapshot = None
+    pass
 
 
-@dataclass(frozen=True)
+@dataclass
 class FinalizedEpochContext(EpochContext):
+    # TODO remove finalized snapshot, include matched_rewards in OctantRewards and add with_personal_allocations and with_project_rewards functions to builder
     finalized_snapshot: FinalizedEpochSnapshot = None
 
 
 @dataclass
+class FutureEpochContext(EpochContext):
+    pass
+
+
+@dataclass
 class Context:
-    current_epoch: int
-    pending_epoch: int
     finalized_epoch: int
-    current_epoch_context: CurrentEpochContext = None
-    pending_epoch_context: PendingEpochContext = None
+    pending_epoch: int
+    current_epoch: int
     finalized_epoch_context: FinalizedEpochContext = None
+    pending_epoch_context: PendingEpochContext = None
+    current_epoch_context: CurrentEpochContext = None
+    future_epoch_context: FutureEpochContext = None
     users_context: Dict[str, User] = None
-    future_epoch_details: EpochDetails = None
-
-
-class ContextBuilder:
-    def __init__(self):
-        current_epoch = epochs.get_current_epoch()
-        pending_epoch = epochs.get_pending_epoch()
-        finalized_epoch = epochs.get_finalized_epoch()
-        self.context = Context(
-            current_epoch=current_epoch,
-            pending_epoch=pending_epoch,
-            finalized_epoch=finalized_epoch,
-        )
-
-    def with_current_epoch_context(self):
-        epoch_settings = get_epoch_settings(self.context.current_epoch)
-        epoch_details = epoch.get_epoch_details(self.context.current_epoch)
-        self.context.current_epoch_context = CurrentEpochContext(
-            epoch_settings=epoch_settings, epoch_details=epoch_details
-        )
-        return self
-
-    def with_pending_epoch_context(self):
-        epoch_settings = get_epoch_settings(self.context.pending_epoch)
-        epoch_details = epoch.get_epoch_details(self.context.pending_epoch)
-        pending_snapshot = database.pending_epoch_snapshot.get_by_epoch(
-            self.context.pending_epoch
-        )
-        self.context.pending_epoch_context = PendingEpochContext(
-            epoch_settings=epoch_settings,
-            epoch_details=epoch_details,
-            pending_snapshot=pending_snapshot,
-        )
-        return self
-
-    def with_finalized_epoch_context(self):
-        epoch_settings = get_epoch_settings(self.context.finalized_epoch)
-        epoch_details = epoch.get_epoch_details(self.context.finalized_epoch)
-        finalized_snapshot = database.finalized_epoch_snapshot.get_by_epoch(
-            self.context.finalized_epoch
-        )
-        self.context.finalized_epoch_context = FinalizedEpochContext(
-            epoch_settings=epoch_settings,
-            epoch_details=epoch_details,
-            finalized_snapshot=finalized_snapshot,
-        )
-        return self
-
-    def with_users_context(self, users_addresses: List[str]):
-        users_context = database.user.get_by_users_addresses(users_addresses)
-        self.context.users_context = users_context
-        return self
-
-    def with_future_epoch_context(self):
-        epoch_details = epoch.get_future_epoch_details()
-        self.context.future_epoch_context = epoch_details
-        return self
-
-    def build(self) -> Context:
-        return self.context
