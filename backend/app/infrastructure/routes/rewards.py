@@ -8,6 +8,7 @@ from app.infrastructure import OctantResource
 from app.infrastructure.routes.validations.user_validations import (
     validate_estimate_budget_inputs,
 )
+from app.utils.time import days_to_sec
 from app.v2.modules.user.budgets.controller import estimate_budget
 
 
@@ -208,7 +209,8 @@ class EstimatedUserBudget(OctantResource):
             f"Getting user estimated budget for {days} days and {glm_amount} GLM"
         )
         validate_estimate_budget_inputs(days, glm_amount)
-        budget = estimate_budget(days, glm_amount)
+        lock_duration_sec = days_to_sec(days)
+        budget = estimate_budget(lock_duration_sec, glm_amount)
         app.logger.debug(f"Estimated user budget: {budget}")
 
         return {"budget": budget}

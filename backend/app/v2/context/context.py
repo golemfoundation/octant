@@ -1,7 +1,7 @@
 from abc import ABC
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Dict
+from typing import Dict, Optional
 
 from app.database.models import FinalizedEpochSnapshot, User
 from app.v2.context.epoch import EpochDetails
@@ -50,8 +50,8 @@ class Context:
     finalized_epoch: int
     pending_epoch: int
     current_epoch: int
-    finalized_epoch_context: FinalizedEpochContext = None
-    pending_epoch_context: PendingEpochContext = None
-    current_epoch_context: CurrentEpochContext = None
-    future_epoch_context: FutureEpochContext = None
-    users_context: Dict[str, User] = None
+    finalized_epoch_context: Optional[FinalizedEpochContext] = None
+    pending_epoch_context: Optional[PendingEpochContext] = None
+    current_epoch_context: Optional[CurrentEpochContext] = None
+    future_epoch_context: Optional[FutureEpochContext] = None
+    users_context: Optional[Dict[str, User]] = None

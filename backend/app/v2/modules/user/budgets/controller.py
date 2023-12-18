@@ -7,7 +7,7 @@ from app.v2.modules.user.deposits.service import (
 )
 
 
-def estimate_budget(days: int, glm_amount: int) -> int:
+def estimate_budget(lock_duration_sec: int, glm_amount: int) -> int:
     context = (
         ContextBuilder()
         .with_current_epoch_context()
@@ -25,4 +25,4 @@ def estimate_budget(days: int, glm_amount: int) -> int:
         user_deposits_estimator=user_deposits_estimator
     )
 
-    return user_budget_estimator.estimate_budget(context, days, glm_amount)
+    return user_budget_estimator.estimate_budget(context, lock_duration_sec, glm_amount)

@@ -3,7 +3,6 @@ from typing import List, Tuple
 
 from flask import current_app as app
 
-from app.utils.time import days_to_sec
 from app.v2.context.context import (
     EpochContext,
     Context,
@@ -44,9 +43,11 @@ class UserBudgetsCalculator:
 class UserBudgetsEstimator:
     user_deposits_estimator: UserDepositsEstimator
 
-    def estimate_budget(self, context: Context, days: int, glm_amount: int) -> int:
+    def estimate_budget(
+        self, context: Context, lock_duration_sec: int, glm_amount: int
+    ) -> int:
         epoch_context = context.current_epoch_context
-        remaining_lock_duration = days_to_sec(days)
+        remaining_lock_duration = lock_duration_sec
         budget = self.estimate_epoch_budget(
             epoch_context,
             remaining_lock_duration,
@@ -56,15 +57,16 @@ class UserBudgetsEstimator:
 
         if remaining_lock_duration > 0:
             epoch_context = context.future_epoch_context
-            full_epochs_num, remaining_sec = divmod(
-                remaining_lock_duration, epoch_context.epoch_details.duration_sec
+            epoch_duration = epoch_context.epoch_details.duration_sec
+            full_epochs_num, remaining_future_epoch_sec = divmod(
+                remaining_lock_duration, epoch_duration
             )
             budget += full_epochs_num * self.estimate_epoch_budget(
                 epoch_context,
-                remaining_lock_duration,
+                epoch_duration,
                 glm_amount,
             )
-            remaining_lock_duration = remaining_sec
+            remaining_lock_duration = remaining_future_epoch_sec
 
         if remaining_lock_duration > 0:
             budget += self.estimate_epoch_budget(
