@@ -4,12 +4,12 @@ from eth_utils import to_checksum_address
 from app import database
 from app.core.deposits.deposits import calculate_locked_ratio
 from app.core.deposits.min_value_strategy import get_users_deposits
+
+from tests.helpers import create_epoch_event, create_deposit_event
 from tests.conftest import (
     USER1_ADDRESS,
     USER2_ADDRESS,
     mock_graphql,
-    create_deposit_event,
-    create_epoch_event,
 )
 
 EPOCH = 42
@@ -272,7 +272,7 @@ def test_get_user_deposits(mocker, state_before, events, expected):
 
 def test_add_multiple_user_deposits(mocker):
     events = [
-        create_deposit_event(amount="200000000000000000000"),
+        create_deposit_event(amount="200000000000000000000", user=USER1_ADDRESS),
         create_deposit_event(amount="400000000000000000000", user=USER2_ADDRESS),
     ]
     mock_graphql(
@@ -298,7 +298,9 @@ def test_add_multiple_user_deposits(mocker):
 def test_update_multiple_user_deposits(mocker):
     events = [
         create_deposit_event(
-            deposit_before="200000000000000000000", amount="200000000000000000000"
+            deposit_before="200000000000000000000",
+            amount="200000000000000000000",
+            user=USER1_ADDRESS,
         ),
         create_deposit_event(
             deposit_before="300000000000000000000",
@@ -343,7 +345,7 @@ def test_update_multiple_user_deposits(mocker):
 
 def test_add_and_update_deposits(mocker):
     events = [
-        create_deposit_event(amount="200000000000000000000"),
+        create_deposit_event(amount="200000000000000000000", user=USER1_ADDRESS),
         create_deposit_event(
             deposit_before="300000000000000000000",
             amount="400000000000000000000",
