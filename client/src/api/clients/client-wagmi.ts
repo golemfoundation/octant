@@ -1,4 +1,4 @@
-// import { LedgerConnector } from '@wagmi/connectors/ledger';
+import { LedgerConnector } from '@wagmi/connectors/ledger';
 import { w3mConnectors } from '@web3modal/ethereum';
 import { configureChains, createConfig, ChainProviderFn } from 'wagmi';
 import { localhost, mainnet, sepolia } from 'wagmi/chains';
@@ -33,14 +33,13 @@ export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: [
     ...w3mConnectors({ chains: CHAINS, projectId: PROJECT_ID }),
-    // TODO OCT-1186 https://linear.app/golemfoundation/issue/OCT-1186/enable-ledger-support-once-malicious
-    // new LedgerConnector({
-    //   chains: CHAINS,
-    //   options: {
-    //     projectId: PROJECT_ID,
-    //   },
-    //   // unknown typing conflict.
-    // }) as any,
+    new LedgerConnector({
+      chains: CHAINS,
+      options: {
+        projectId: PROJECT_ID,
+      },
+      // unknown typing conflict.
+    }) as any,
   ],
   publicClient,
 });
