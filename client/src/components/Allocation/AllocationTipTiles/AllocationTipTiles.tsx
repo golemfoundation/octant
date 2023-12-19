@@ -54,6 +54,7 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
     !isFetchingIndividualReward &&
     !!individualReward &&
     !individualReward.isZero() &&
+    !isFetchingUserAllocation &&
     !userAllocations?.hasUserAlreadyDoneAllocation &&
     !!isDecisionWindowOpen &&
     !wasRewardsAlreadyClosed;
