@@ -1,4 +1,4 @@
-from datetime import datetime as DateTime
+from datetime import datetime as DateTime, timezone
 
 
 class Timestamp:
@@ -41,8 +41,9 @@ def from_datetime(dt: DateTime) -> Timestamp:
 
 
 def now() -> Timestamp:
-    now = DateTime.utcnow().timestamp()
-    return from_timestamp_s(now)
+    utc_time = DateTime.now(timezone.utc)
+    unix_timestamp = utc_time.timestamp()
+    return from_timestamp_s(unix_timestamp)
 
 
 def sec_to_days(sec: int) -> int:
