@@ -17,7 +17,9 @@
     "localenv:up": "docker compose -p octant -f ./localenv/docker-compose.yaml up -d",
     "localenv:down": "docker compose -p octant -f ./localenv/docker-compose.yaml down",
     "localenv:force-clean": "docker system prune --volumes -f",
-    "localenv:reload": "yarn localenv:down && yarn localenv:build-images && yarn localenv:up"
+    "localenv:reload": "yarn localenv:down && yarn localenv:build-images && yarn localenv:up",
+    "apitest:up": "docker compose -p octant -f ./localenv/docker-apitest.yaml up -d",
+    "apitest:down": "docker compose -p octant -f ./localenv/docker-apitest.yaml down"
   },
   "repository": {
     "type": "git",
