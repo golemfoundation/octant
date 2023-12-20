@@ -3,6 +3,7 @@ services:
   anvil:
     image: octant/anvil:latest
     platform: linux/amd64
+    command: '--block-time "${BLOCK_TIME:-5}"'
     ports:
       - "8545:8545"
     networks:
