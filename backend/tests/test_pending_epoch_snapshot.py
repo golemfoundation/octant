@@ -2,14 +2,14 @@ import pytest
 
 from app import database, exceptions
 from app.controllers.snapshots import pending_snapshot_status, snapshot_pending_epoch
+
+from tests.helpers import create_epoch_event, create_deposit_event
 from tests.conftest import (
     mock_graphql,
     ETH_PROCEEDS,
     MOCK_EPOCHS,
     MOCKED_PENDING_EPOCH_NO,
     MOCKED_CURRENT_EPOCH_NO,
-    create_deposit_event,
-    create_epoch_event,
 )
 
 
