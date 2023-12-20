@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from app.v2.modules.user.budgets.service import UserBudgetsEstimator
+from app.v2.modules.user.budgets.service import UserBudgetsService
 from tests.helpers.context import get_epoch_context, get_context
 
 
@@ -16,7 +16,7 @@ def test_estimate_budget_effective_deposit_is_zero():
         current_epoch_context=current_context, future_epoch_context=future_context
     )
 
-    service = UserBudgetsEstimator(user_deposits_estimator_mock)
+    service = UserBudgetsService(user_deposits_estimator_mock)
 
     result = service.estimate_budget(context, 500, 0)
 
@@ -47,7 +47,7 @@ def test_estimate_budget(lock_duration, expected):
         current_epoch_context=current_context, future_epoch_context=future_context
     )
 
-    service = UserBudgetsEstimator(user_deposits_estimator_mock)
+    service = UserBudgetsService(user_deposits_estimator_mock)
 
     result = service.estimate_budget(context, lock_duration, 500_000000000_000000000)
 

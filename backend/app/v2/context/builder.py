@@ -1,6 +1,7 @@
 from typing import List
 
 from app import database
+from app.exceptions import SnapshotAlreadyExists
 from app.extensions import epochs
 from app.v2.context import epoch
 from app.v2.context.context import (
@@ -9,13 +10,10 @@ from app.v2.context.context import (
     PendingEpochContext,
     FinalizedEpochContext,
     FutureEpochContext,
-)
-from app.v2.context.rewards import (
-    get_future_octant_rewards,
-    get_current_octant_rewards,
-    get_octant_rewards,
+    EpochContext, PrePendingEpochContext,
 )
 from app.v2.engine.epochs_settings import get_epoch_settings
+from app.v2.modules.octant_rewards.service.factory import get_octant_rewards_service
 
 
 class ContextBuilder:
@@ -29,11 +27,23 @@ class ContextBuilder:
             finalized_epoch=finalized_epoch,
         )
 
+    def with_epoch_context(self, epoch_num: int):
+        epoch_settings = get_epoch_settings(epoch_num)
+        epoch_details = epoch.get_epoch_details(epoch_num)
+        self.context.epoch_context = EpochContext(
+            epoch_num=epoch_num,
+            epoch_settings=epoch_settings,
+            epoch_details=epoch_details,
+        )
+        return self
+
     def with_current_epoch_context(self):
         epoch_settings = get_epoch_settings(self.context.current_epoch)
         epoch_details = epoch.get_epoch_details(self.context.current_epoch)
         self.context.current_epoch_context = CurrentEpochContext(
-            epoch_settings=epoch_settings, epoch_details=epoch_details
+            epoch_num=self.context.current_epoch,
+            epoch_settings=epoch_settings,
+            epoch_details=epoch_details,
         )
         return self
 
@@ -41,6 +51,24 @@ class ContextBuilder:
         epoch_settings = get_epoch_settings(self.context.pending_epoch)
         epoch_details = epoch.get_epoch_details(self.context.pending_epoch)
         self.context.pending_epoch_context = PendingEpochContext(
+            epoch_num=self.context.pending_epoch,
+            epoch_settings=epoch_settings,
+            epoch_details=epoch_details,
+        )
+        return self
+
+    def with_pre_pending_epoch_context(self):
+        snapshot = database.pending_epoch_snapshot.get_by_epoch(
+            self.context.pending_epoch
+        )
+
+        if snapshot is not None:
+            raise SnapshotAlreadyExists()
+
+        epoch_settings = get_epoch_settings(self.context.pending_epoch)
+        epoch_details = epoch.get_epoch_details(self.context.pending_epoch)
+        self.context.pending_epoch_context = PrePendingEpochContext(
+            epoch_num=self.context.pending_epoch,
             epoch_settings=epoch_settings,
             epoch_details=epoch_details,
         )
@@ -53,6 +81,7 @@ class ContextBuilder:
             self.context.finalized_epoch
         )
         self.context.finalized_epoch_context = FinalizedEpochContext(
+            epoch_num=self.context.finalized_epoch,
             epoch_settings=epoch_settings,
             epoch_details=epoch_details,
             finalized_snapshot=finalized_snapshot,
@@ -64,6 +93,7 @@ class ContextBuilder:
         epoch_settings = get_epoch_settings(self.context.current_epoch + 1)
         epoch_details = epoch.get_future_epoch_details()
         self.context.future_epoch_context = FutureEpochContext(
+            epoch_num=self.context.current_epoch + 1,
             epoch_settings=epoch_settings,
             epoch_details=epoch_details,
         )
@@ -76,25 +106,28 @@ class ContextBuilder:
 
     def with_octant_rewards(self):
         if self.context.finalized_epoch_context is not None:
-            pending_snapshot = database.pending_epoch_snapshot.get_by_epoch(
-                self.context.finalized_epoch
-            )
-            rewards = get_octant_rewards(pending_snapshot)
+            service = get_octant_rewards_service(self.context.finalized_epoch_context)
+            rewards = service.get_octant_rewards(self.context.finalized_epoch_context)
             self.context.finalized_epoch_context.octant_rewards = rewards
 
         if self.context.pending_epoch_context is not None:
-            pending_snapshot = database.pending_epoch_snapshot.get_by_epoch(
-                self.context.pending_epoch
-            )
-            rewards = get_octant_rewards(pending_snapshot)
+            service = get_octant_rewards_service(self.context.pending_epoch_context)
+            rewards = service.get_octant_rewards(self.context.pending_epoch_context)
             self.context.pending_epoch_context.octant_rewards = rewards
 
+        if self.context.pre_pending_epoch_context is not None:
+            service = get_octant_rewards_service(self.context.pre_pending_epoch_context)
+            rewards = service.get_octant_rewards(self.context.pre_pending_epoch_context)
+            self.context.pre_pending_epoch_context.octant_rewards = rewards
+
         if self.context.current_epoch_context is not None:
-            rewards = get_current_octant_rewards(self.context.current_epoch_context)
+            service = get_octant_rewards_service(self.context.current_epoch_context)
+            rewards = service.get_octant_rewards(self.context.current_epoch_context)
             self.context.current_epoch_context.octant_rewards = rewards
 
         if self.context.future_epoch_context is not None:
-            rewards = get_future_octant_rewards(self.context.future_epoch_context)
+            service = get_octant_rewards_service(self.context.future_epoch_context)
+            rewards = service.get_octant_rewards(self.context.future_epoch_context)
             self.context.future_epoch_context.octant_rewards = rewards
         return self
 

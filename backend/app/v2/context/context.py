@@ -19,6 +19,7 @@ class OctantRewards:
 
 @dataclass
 class EpochContext(ABC):
+    epoch_num: int
     epoch_settings: EpochSettings
     epoch_details: EpochDetails
     octant_rewards: OctantRewards = None
@@ -30,7 +31,17 @@ class CurrentEpochContext(EpochContext):
 
 
 @dataclass
+class PrePendingEpochContext(EpochContext):
+    pass
+
+
+@dataclass
 class PendingEpochContext(EpochContext):
+    pass
+
+
+@dataclass
+class PreFinalizedEpochContext(EpochContext):
     pass
 
 
@@ -50,8 +61,11 @@ class Context:
     finalized_epoch: int
     pending_epoch: int
     current_epoch: int
+    epoch_context: Optional[EpochContext] = None
     finalized_epoch_context: Optional[FinalizedEpochContext] = None
+    pre_finalized_epoch_context: Optional[PreFinalizedEpochContext] = None
     pending_epoch_context: Optional[PendingEpochContext] = None
+    pre_pending_epoch_context: Optional[PrePendingEpochContext] = None
     current_epoch_context: Optional[CurrentEpochContext] = None
     future_epoch_context: Optional[FutureEpochContext] = None
     users_context: Optional[Dict[str, User]] = None

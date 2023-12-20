@@ -2,7 +2,7 @@ from app.v2.context.context import (
     Context,
     CurrentEpochContext,
     EpochContext,
-    OctantRewards,
+    OctantRewardsContext,
 )
 from app.v2.context.epoch import EpochDetails
 from app.v2.engine.epochs_settings import get_epoch_settings
@@ -37,7 +37,7 @@ def get_octant_rewards(
     locked_ratio=LOCKED_RATIO,
     **kwargs
 ):
-    return OctantRewards(
+    return OctantRewardsContext(
         eth_proceeds=eth_proceeds,
         total_effective_deposit=total_effective_deposit,
         total_rewards=total_rewards,

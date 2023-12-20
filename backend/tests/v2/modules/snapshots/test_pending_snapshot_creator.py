@@ -100,7 +100,7 @@ def test_save_pending_epoch_snapshot(
         staking_proceeds_calculator=staking_proceeds_calculator_mock,
     )
 
-    result = service.snapshot_pending_epoch(epoch, context.pending_epoch_context)
+    result = service.create_pending_epoch_snapshot(epoch, context.pending_epoch_context)
 
     assert result == epoch
     snapshot = database.pending_epoch_snapshot.get_last_snapshot()
@@ -147,6 +147,6 @@ def test_return_none_when_snapshot_is_already_taken(
         staking_proceeds_calculator=staking_proceeds_calculator_mock,
     )
 
-    result = service.snapshot_pending_epoch(1, context.pending_epoch_context)
+    result = service.create_pending_epoch_snapshot(1, context.pending_epoch_context)
 
     assert result is None

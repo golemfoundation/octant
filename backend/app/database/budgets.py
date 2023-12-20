@@ -6,9 +6,9 @@ from app import db, database
 from app.database.models import User, Budget
 
 
-def get_all_by_epoch(epoch: int) -> Dict[str, Budget]:
+def get_all_by_epoch(epoch: int) -> Dict[str, int]:
     budgets = Budget.query.filter_by(epoch=epoch).all()
-    return {budget.user.address: budget for budget in budgets}
+    return {budget.user.address: budget.budget for budget in budgets}
 
 
 def get_by_users_addresses_and_epoch(

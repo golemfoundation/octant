@@ -11,6 +11,7 @@ from flask.testing import FlaskClient
 import gql
 from web3 import Web3
 
+from app.contracts.erc20 import ERC20
 from tests.helpers.gql_client import MockGQLClient
 from app import create_app, database
 from app.contracts.epochs import Epochs
@@ -50,6 +51,7 @@ USER2_ADDRESS = "0x2345678901234567890123456789012345678904"
 MOCK_EPOCHS = MagicMock(spec=Epochs)
 MOCK_PROPOSALS = MagicMock(spec=Proposals)
 MOCK_VAULT = MagicMock(spec=Vault)
+MOCK_GLM = MagicMock(spec=ERC20)
 
 # Other mocks
 MOCK_GET_ETH_BALANCE = MagicMock()
@@ -267,6 +269,7 @@ def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.controllers.withdrawals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.proposals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.v2.context.builder.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.v2.context.epoch.epochs", MOCK_EPOCHS)
 
     MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
     MOCK_EPOCHS.get_current_epoch.return_value = MOCKED_CURRENT_EPOCH_NO
@@ -288,6 +291,13 @@ def patch_proposals(monkeypatch, proposal_accounts):
     MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts
     ]
+
+
+@pytest.fixture(scope="function")
+def patch_glm(monkeypatch):
+    monkeypatch.setattr("app.v2.modules.user.deposits.service.glm", MOCK_GLM)
+
+    MOCK_GLM.balance_of.return_value = TOTAL_ED
 
 
 @pytest.fixture(scope="function")

@@ -3,7 +3,7 @@ from decimal import Decimal
 import pytest
 
 from app.v2.context.builder import ContextBuilder
-from app.v2.modules.octant_rewards.service import OctantRewardsCalculator
+from app.v2.modules.octant_rewards.service import OctantRewardsService
 from tests.conftest import MOCK_EPOCHS, TOTAL_ED, ETH_PROCEEDS
 
 
@@ -25,7 +25,7 @@ def test_get_rewards_in_pending_epoch(
 ):
     MOCK_EPOCHS.get_pending_epoch.return_value = epoch
     context = ContextBuilder().with_pending_epoch_context().build()
-    service = OctantRewardsCalculator()
+    service = OctantRewardsService()
 
     result = service.calculate_rewards(
         context.pending_epoch_context.epoch_settings.octant_rewards,

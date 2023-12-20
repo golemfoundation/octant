@@ -1,6 +1,7 @@
 import pytest
 
 from app.v2.context.builder import ContextBuilder
+from app.v2.context.context import EpochContext
 from app.v2.engine.epochs_settings import EpochSettings
 from app.v2.engine.octant_rewards import OctantRewardsSettings
 from app.v2.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (
@@ -16,11 +17,16 @@ from tests.conftest import (
     USER2_BUDGET,
     USER1_ED,
     USER2_ED,
+    ETH_PROCEEDS,
+    LOCKED_RATIO,
+    TOTAL_REWARDS,
+    ALL_INDIVIDUAL_REWARDS,
+    TOTAL_ED,
 )
 
 
 @pytest.fixture(autouse=True)
-def before(app, patch_epochs, mock_epoch_details):
+def before(app, patch_epochs, patch_glm, mock_epoch_details):
     pass
 
 
@@ -108,3 +114,63 @@ def test_finalized_epoch_context(user_accounts, mock_finalized_epoch_snapshot_db
     assert epoch_details.epoch_no == 1
     assert epoch_details.start_sec == 1000
     assert epoch_details.end_sec == 2000
+
+
+def test_octant_rewards_context(user_accounts, mock_pending_epoch_snapshot_db):
+    MOCK_EPOCHS.get_finalized_epoch.return_value = 1
+    context = (
+        ContextBuilder()
+        .with_finalized_epoch_context()
+        .with_pending_epoch_context()
+        .with_current_epoch_context()
+        .with_future_epoch_context()
+        .with_octant_rewards()
+        .build()
+    )
+    check_octant_rewards(
+        context.finalized_epoch_context,
+        ETH_PROCEEDS,
+        LOCKED_RATIO,
+        ALL_INDIVIDUAL_REWARDS,
+        TOTAL_REWARDS,
+        TOTAL_ED,
+    )
+    check_octant_rewards(
+        context.pending_epoch_context,
+        ETH_PROCEEDS,
+        LOCKED_RATIO,
+        ALL_INDIVIDUAL_REWARDS,
+        TOTAL_REWARDS,
+        TOTAL_ED,
+    )
+    check_octant_rewards(
+        context.current_epoch_context,
+        ETH_PROCEEDS,
+        LOCKED_RATIO,
+        ALL_INDIVIDUAL_REWARDS,
+        TOTAL_REWARDS,
+        TOTAL_ED,
+    )
+    check_octant_rewards(
+        context.future_epoch_context,
+        850_684931506_849316864,
+        LOCKED_RATIO,
+        85_087803698_630137250,
+        269_040726399_252457638,
+        TOTAL_ED,
+    )
+
+
+def check_octant_rewards(
+    context: EpochContext,
+    eth_proceeds,
+    locked_ratio,
+    individual_rewards,
+    total_rewards,
+    total_effective_deposit,
+):
+    assert context.octant_rewards.eth_proceeds == eth_proceeds
+    assert context.octant_rewards.locked_ratio == locked_ratio
+    assert context.octant_rewards.individual_rewards == individual_rewards
+    assert context.octant_rewards.total_rewards == total_rewards
+    assert context.octant_rewards.total_effective_deposit == total_effective_deposit
