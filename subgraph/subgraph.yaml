@@ -88,4 +88,6 @@ dataSources:
       callHandlers:
         - function: setProposalAddresses(uint256,address[])
           handler: handleSetProposalAddresses
+        - function: setCID(string)
+          handler: handleSetCID
       file: ./generated/proposals.ts
