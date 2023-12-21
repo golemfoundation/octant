@@ -27,10 +27,9 @@ from .conftest import (
     allocate_user_rewards,
     deserialize_allocations,
     MOCK_PROPOSALS,
-    USER2_BUDGET,
-    USER3_BUDGET,
     MOCK_EPOCHS,
 )
+from .helpers.constants import USER2_BUDGET, USER3_BUDGET
 from .test_allocations import (
     sign,
     create_payload,

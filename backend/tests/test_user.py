@@ -29,9 +29,8 @@ from tests.conftest import (
     MOCKED_PENDING_EPOCH_NO,
     mock_graphql,
     MOCK_EPOCHS,
-    USER1_ADDRESS,
-    USER1_BUDGET,
 )
+from tests.helpers.constants import USER1_BUDGET, USER1_ADDRESS
 
 
 @pytest.fixture(autouse=True)

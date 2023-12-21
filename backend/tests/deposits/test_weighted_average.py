@@ -13,9 +13,9 @@ from tests.helpers import (
     create_deposit_events,
 )
 from tests.conftest import (
-    USER1_ADDRESS,
     mock_graphql,
 )
+from tests.helpers.constants import USER1_ADDRESS
 
 
 @pytest.fixture(autouse=True)

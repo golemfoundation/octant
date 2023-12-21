@@ -2,6 +2,8 @@ from typing import Dict, List, Tuple
 from datetime import datetime
 from itertools import chain, repeat, accumulate
 
+from tests.helpers.constants import USER1_ADDRESS
+
 
 def generate_epoch_events(
     start=None, duration=1000, decision_window=500, first_epoch=1, epoches=5, **kwargs
@@ -56,13 +58,13 @@ def _tuple_to_event_dict(tuple: Tuple[str, Tuple[int, int], int]):
         user=user,
         typename="Locked" if event[1] > 0 else "Unlocked",
         timestamp=event[0],
-        amount=abs(event[1]),
-        deposit_before=deposit_before,
+        amount=str(abs(event[1])),
+        deposit_before=str(deposit_before),
     )
 
 
 def create_deposit_event(
-    user,
+    user=USER1_ADDRESS,
     typename="Locked",
     deposit_before="0",
     amount="100000000000000000000",

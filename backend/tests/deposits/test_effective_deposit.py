@@ -11,8 +11,8 @@ from tests.helpers import (
 from tests.conftest import (
     mock_graphql,
     MOCK_EPOCHS,
-    USER1_ADDRESS,
 )
+from tests.helpers.constants import USER1_ADDRESS
 
 epochs = generate_epoch_events(start=1000, epoches=2)
 

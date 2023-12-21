@@ -12,8 +12,8 @@ from tests.conftest import (
     TOTAL_REWARDS,
     ALL_INDIVIDUAL_REWARDS,
     MOCK_EPOCHS,
-    USER3_BUDGET,
 )
+from tests.helpers.constants import USER3_BUDGET
 
 MOCKED_FINALIZED_EPOCH_NO = 1
 
