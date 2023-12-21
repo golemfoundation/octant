@@ -21,10 +21,12 @@ from app.core.allocations import (
 from app.core.rewards.rewards import calculate_matched_rewards_threshold
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.extensions import db
+
+from tests.helpers import create_epoch_event
+
 from tests.conftest import (
     create_payload,
     deserialize_allocations,
-    create_epoch_event,
     mock_graphql,
     MOCKED_PENDING_EPOCH_NO,
     MOCK_PROPOSALS,

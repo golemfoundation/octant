@@ -9,8 +9,10 @@ from app.controllers.snapshots import (
 )
 from app.core.user.rewards import get_all_claimed_rewards
 from app.core.user.patron_mode import toggle_patron_mode
+
+from tests.helpers import create_epoch_event
+
 from tests.conftest import (
-    create_epoch_event,
     mock_graphql,
     allocate_user_rewards,
     TOTAL_REWARDS,

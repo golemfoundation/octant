@@ -24,8 +24,10 @@ from app.core.rewards.rewards import (
 from app import database, exceptions
 from app.core.user.patron_mode import toggle_patron_mode
 from app.extensions import db
-from .conftest import (
-    create_epoch_event,
+
+from tests.helpers import create_epoch_event
+
+from tests.conftest import (
     mock_graphql,
     allocate_user_rewards,
     deserialize_allocations,

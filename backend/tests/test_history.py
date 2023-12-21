@@ -22,9 +22,10 @@ from app.core.user.patron_mode import toggle_patron_mode
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.utils.time import from_timestamp_s, now
 
+from tests.helpers import create_epoch_event
+
 from tests.conftest import (
     create_payload,
-    create_epoch_event,
     MOCK_PROPOSALS,
     MOCK_EPOCHS,
     mock_graphql,
@@ -64,7 +65,7 @@ epochs = [
 
 
 def _epoch_finalization_timestamp(epoch):
-    return from_timestamp_s(epoch["toTs"] + epochs[0]["decisionWindow"])
+    return from_timestamp_s(int(epoch["toTs"]) + int(epoch["decisionWindow"]))
 
 
 @pytest.fixture(autouse=True)
