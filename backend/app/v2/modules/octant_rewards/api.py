@@ -2,7 +2,7 @@ from abc import abstractmethod, ABC
 from dataclasses import dataclass
 from decimal import Decimal
 
-from app.v2.context.context import EpochContext
+from app.v2.context.context import Context
 from app.v2.modules.staking.proceeds.api import StakingProceedsService
 from app.v2.modules.user.deposits.api import UserDepositsService
 
@@ -22,5 +22,5 @@ class OctantRewardsService(ABC):
     user_deposits_service: UserDepositsService
 
     @abstractmethod
-    def get_octant_rewards(self, context: EpochContext) -> OctantRewards:
+    def get_octant_rewards(self, context: Context) -> OctantRewards:
         pass
