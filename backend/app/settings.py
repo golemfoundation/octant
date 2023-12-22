@@ -118,6 +118,10 @@ class TestConfig(Config):
     CHAIN_NAME = "sepolia"
     GLM_WITHDRAWAL_AMOUNT = 1000_000000000_000000000
     GLM_SENDER_NONCE = 0
+    # The number is calculated as 9_537357664_505573437 - 6_050000000_000000000
+    # Where:
+    # 9_537357664_505573437 - the amount of unclaimed and allocated under threshold
+    # 6_050000000_000000000 - extra operations cost during the epoch
     EPOCH_2_STAKING_PROCEEDS_SURPLUS = 3_487357664_505573437
 
 
