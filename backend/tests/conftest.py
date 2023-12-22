@@ -1,17 +1,14 @@
-from decimal import Decimal
 import json
 from random import randint
 from typing import List, Optional
 from unittest.mock import MagicMock, Mock
 
+import gql
 import pytest
 from eth_account import Account
 from flask import g as request_context
 from flask.testing import FlaskClient
-import gql
 from web3 import Web3
-
-from tests.helpers.gql_client import MockGQLClient
 
 from app import create_app, database
 from app.contracts.epochs import Epochs
@@ -20,29 +17,29 @@ from app.contracts.vault import Vault
 from app.controllers.allocations import allocate, deserialize_payload
 from app.core.allocations import AllocationRequest, Allocation
 from app.core.rewards.rewards import calculate_matched_rewards
+from app.crypto.account import Account as CryptoAccount
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.extensions import db, w3, deposits, glm
 from app.settings import TestConfig, DevConfig
-from app.crypto.account import Account as CryptoAccount
-
-# Consts
-MNEMONIC = "test test test test test test test test test test test junk"
-MOCKED_PENDING_EPOCH_NO = 1
-MOCKED_CURRENT_EPOCH_NO = 2
-ETH_PROCEEDS = 402_410958904_110000000
-TOTAL_ED = 100022700_000000000_099999994
-USER1_ED = 1500_000055377_000000000
-USER2_ED = 5500_000000000_000000000
-USER3_ED = 2000_000000000_000000000
-USER1_BUDGET = 1526868_989237987
-USER2_BUDGET = 5598519_420519815
-USER3_BUDGET = 2035825_243825387
-
-LOCKED_RATIO = Decimal("0.100022700000000000099999994")
-TOTAL_REWARDS = 321_928767123_288031232
-ALL_INDIVIDUAL_REWARDS = 101_814368807_786782825
-USER1_ADDRESS = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
-USER2_ADDRESS = "0x2345678901234567890123456789012345678904"
+from tests.helpers.constants import (
+    MNEMONIC,
+    MOCKED_PENDING_EPOCH_NO,
+    MOCKED_CURRENT_EPOCH_NO,
+    ETH_PROCEEDS,
+    TOTAL_ED,
+    LOCKED_RATIO,
+    TOTAL_REWARDS,
+    ALL_INDIVIDUAL_REWARDS,
+    USER1_ED,
+    USER2_ED,
+    USER3_ED,
+    DEPLOYER_PRIV,
+    ALICE,
+    BOB,
+    CAROL,
+)
+from tests.helpers.gql_client import MockGQLClient
+from tests.helpers.subgraph.events import create_deposit_event
 
 # Contracts mocks
 MOCK_EPOCHS = MagicMock(spec=Epochs)
@@ -56,11 +53,6 @@ MOCK_HAS_PENDING_SNAPSHOT = Mock()
 MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
 MOCK_IS_CONTRACT = Mock()
 MOCK_MATCHED_REWARDS = MagicMock(spec=calculate_matched_rewards)
-
-DEPLOYER_PRIV = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
-ALICE = "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
-BOB = "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a"
-CAROL = "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6"
 
 
 def pytest_addoption(parser):
@@ -442,24 +434,11 @@ def _split_deposit_events(deposit_events):
     unlocks_events = []
     timestamp = 1001
     for event in deposit_events:
+        event = {"timestamp": timestamp, **event}
         if event["__typename"] == "Locked":
-            locks_events.append(
-                {
-                    "depositBefore": "0",
-                    "timestamp": timestamp,
-                    "user": USER1_ADDRESS,
-                    **event,
-                }
-            )
+            locks_events.append(create_deposit_event(typename="Locked", **event))
         else:
-            unlocks_events.append(
-                {
-                    "depositBefore": "0",
-                    "timestamp": timestamp,
-                    "user": USER1_ADDRESS,
-                    **event,
-                }
-            )
+            unlocks_events.append(create_deposit_event(typename="Unlocked", **event))
         timestamp += 1
     return locks_events, unlocks_events
 

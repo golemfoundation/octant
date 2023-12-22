@@ -7,10 +7,9 @@ from app.core.deposits.min_value_strategy import get_users_deposits
 
 from tests.helpers import create_epoch_event, create_deposit_event
 from tests.conftest import (
-    USER1_ADDRESS,
-    USER2_ADDRESS,
     mock_graphql,
 )
+from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS
 
 EPOCH = 42
 

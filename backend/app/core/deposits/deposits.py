@@ -39,7 +39,9 @@ def estimate_effective_deposit(
     events_generator = SimulatedEventsGenerator(
         epoch.start_sec, epoch.end_sec, lock_duration, amount, epoch.remaining_sec
     )
-    deposits = get_user_weighted_deposits(
+    deposits_data = get_user_weighted_deposits(
         epoch_settings.user_deposits_weights_calculator, events_generator
     )
-    return weighted_average_strategy.calculate_effective_deposit(deposits)
+    return weighted_average_strategy.calculate_effective_deposit(
+        deposits_data.weighted_deposits, deposits_data.epoch_end_locked_amount
+    )
