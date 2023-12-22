@@ -56,6 +56,11 @@ class Config(object):
     GLM_SENDER_PRIVATE_KEY = os.getenv("GLM_SENDER_PRIVATE_KEY")
     GLM_SENDER_NONCE = int(os.getenv("GLM_SENDER_NONCE", 0))
 
+    # TODO Remove this setting after the new architecture is merged
+    EPOCH_2_STAKING_PROCEEDS_SURPLUS = int(
+        os.getenv("EPOCH_2_STAKING_PROCEEDS_SURPLUS", 0)
+    )
+
 
 class ProdConfig(Config):
     """Production configuration."""
@@ -113,6 +118,7 @@ class TestConfig(Config):
     CHAIN_NAME = "sepolia"
     GLM_WITHDRAWAL_AMOUNT = 1000_000000000_000000000
     GLM_SENDER_NONCE = 0
+    EPOCH_2_STAKING_PROCEEDS_SURPLUS = 3_487357664_505573437
 
 
 def get_config():
