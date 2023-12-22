@@ -1,4 +1,4 @@
-import { visitWithLoader, navigateWithCheck } from 'cypress/utils/e2e';
+import { visitWithLoader, navigateWithCheck, mockCoinPricesServer } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { stepsDecisionWindowClosed } from 'src/hooks/helpers/useOnboardingSteps/steps';
 import { ROOT, ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
@@ -25,6 +25,7 @@ const connectWallet = (
 };
 
 const beforeSetup = () => {
+  mockCoinPricesServer();
   cy.clearLocalStorage();
   cy.setupMetamask();
   cy.activateShowTestnetNetworksInMetamask();

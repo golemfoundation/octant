@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
 
-import { visitWithLoader, navigateWithCheck } from 'cypress/utils/e2e';
+import { visitWithLoader, navigateWithCheck, mockCoinPricesServer } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { FIAT_CURRENCIES_SYMBOLS, DISPLAY_CURRENCIES } from 'src/constants/currencies';
 import {
@@ -16,6 +16,7 @@ import getValueCryptoToDisplay from 'src/utils/getValueCryptoToDisplay';
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
   describe(`settings: ${device}`, { viewportHeight, viewportWidth }, () => {
     beforeEach(() => {
+      mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       visitWithLoader(ROOT_ROUTES.settings.absolute);
