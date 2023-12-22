@@ -10,10 +10,18 @@ NETWORK_FILE=${NETWORK_FILE:-"./networks.json"}
 ARTIFACTS_DIR="./generated"
 mkdir -p "${ARTIFACTS_DIR}"
 
-echo "Generating network file ${NETWORK_FILE} from ${NETWORK_TEMPLATE_FILE}" 
-echo 
 
-envsubst <$NETWORK_TEMPLATE_FILE >$NETWORK_FILE
+if [[ -f "${NETWORK_FILE}" ]]; then
+    echo "Network file ${NETWORK_FILE} already exists. Skipping its generation..." 
+    echo 
+
+else
+    echo "Generating network file ${NETWORK_FILE} from ${NETWORK_TEMPLATE_FILE}" 
+    echo 
+
+    envsubst <$NETWORK_TEMPLATE_FILE >$NETWORK_FILE
+fi
+
 
 export GLM_CONTRACT_ADDRESS=$(jq -r ".${NETWORK}.GLM.address" <$NETWORK_FILE)
 export EPOCHS_CONTRACT_ADDRESS=$(jq -r ".${NETWORK}.Epochs.address" <$NETWORK_FILE)
