@@ -8,7 +8,8 @@ import { InjectedConnector } from 'wagmi/connectors/injected';
 import BoxRounded from 'components/ui/BoxRounded';
 import Loader from 'components/ui/Loader';
 import Svg from 'components/ui/Svg';
-import { browserWallet, walletConnect } from 'svg/wallet';
+import networkConfig from 'constants/networkConfig';
+import { browserWallet, walletConnect, ledgerConnect } from 'svg/wallet';
 
 import styles from './LayoutConnectWallet.module.scss';
 
@@ -25,11 +26,10 @@ const LayoutConnectWallet: FC = () => {
     ({ id, ready }) => id === 'injected' && ready,
   ) as InjectedConnector;
 
-  // TODO OCT-1186 https://linear.app/golemfoundation/issue/OCT-1186/enable-ledger-support-once-malicious
-  // const ledgerWalletConnector = connectors.find(
-  //   // eslint-disable-next-line @typescript-eslint/naming-convention
-  //   ({ id, ready }) => id === 'ledger' && ready,
-  // ) as InjectedConnector;
+  const ledgerWalletConnector = connectors.find(
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    ({ id, ready }) => id === 'ledger' && ready,
+  ) as InjectedConnector;
 
   const isBrowserWalletConnecting = isLoading && pendingConnector?.id === connector?.id;
 
@@ -42,7 +42,7 @@ const LayoutConnectWallet: FC = () => {
     await open();
   };
 
-  // const openLedgerWallet = (): void => connect({ connector: ledgerWalletConnector });
+  const openLedgerWallet = (): void => connect({ connector: ledgerWalletConnector });
 
   return (
     <>
@@ -92,29 +92,28 @@ const LayoutConnectWallet: FC = () => {
           {t('walletConnect')}
         </div>
       </BoxRounded>
-      {/* TODO OCT-1186 https://linear.app/golemfoundation/issue/OCT-1186/enable-ledger-support-once-malicious  */}
-      {/* {!networkConfig.isTestnet && ( */}
-      {/*  <BoxRounded  */}
-      {/*    className={styles.walletTile}  */}
-      {/*    dataTest="ConnectWallet__BoxRounded--ledgerConnect" */}
-      {/*    isGrey */}
-      {/*    justifyContent="start" */}
-      {/*    onClick={!isOpen && isBrowserWalletConnecting ? undefined : openLedgerWallet} */}
-      {/*  > */}
-      {/*    <Svg */}
-      {/*      classNameSvg={cx(!isOpen && isBrowserWalletConnecting && styles.iconGrey)} */}
-      {/*      classNameWrapper={styles.icon} */}
-      {/*      displayMode="wrapperCustom" */}
-      {/*      img={ledgerConnect} */}
-      {/*      size={2.4} */}
-      {/*    /> */}
-      {/*    <div */}
-      {/*      className={cx(styles.label, !isOpen && isBrowserWalletConnecting && styles.labelGrey)} */}
-      {/*    > */}
-      {/*      {t('ledgerConnect')} */}
-      {/*    </div> */}
-      {/*  </BoxRounded> */}
-      {/* )}  */}
+      {!networkConfig.isTestnet && (
+        <BoxRounded
+          className={styles.walletTile}
+          dataTest="ConnectWallet__BoxRounded--ledgerConnect"
+          isGrey
+          justifyContent="start"
+          onClick={!isOpen && isBrowserWalletConnecting ? undefined : openLedgerWallet}
+        >
+          <Svg
+            classNameSvg={cx(!isOpen && isBrowserWalletConnecting && styles.iconGrey)}
+            classNameWrapper={styles.icon}
+            displayMode="wrapperCustom"
+            img={ledgerConnect}
+            size={2.4}
+          />
+          <div
+            className={cx(styles.label, !isOpen && isBrowserWalletConnecting && styles.labelGrey)}
+          >
+            {t('ledgerConnect')}
+          </div>
+        </BoxRounded>
+      )}
     </>
   );
 };
