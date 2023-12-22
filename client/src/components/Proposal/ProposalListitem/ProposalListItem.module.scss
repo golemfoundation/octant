@@ -1,0 +1,32 @@
+.proposal {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 4rem;
+  background: $color-white;
+  padding-left: 5.6rem;
+  padding-right: 5.6rem;
+
+  &:first-child {
+    padding-top: 10.4rem;
+  }
+
+  @media #{$desktop-up} {
+    &:first-child {
+      padding-top: 0;
+      border-radius: $border-radius-16 $border-radius-16 0 0;
+    }
+
+    padding-left: 11rem;
+    padding-right: 11rem;
+  }
+}
+
+.proposalRewards {
+  margin: 6.4rem 0 5rem;
+  border-bottom: 0.2rem solid $color-octant-grey3;
+  padding-bottom: 1.2rem;
+
+  @media #{$tablet-down} {
+    margin: 3.4rem 0 5rem;
+  }
+}

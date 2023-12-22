@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import chaiColors from 'chai-colors';
 
-import { visitWithLoader } from 'cypress/utils/e2e';
+import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
 import { getNamesOfProposals } from 'cypress/utils/proposals';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
@@ -102,8 +102,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     let proposalNames: string[] = [];
 
     beforeEach(() => {
+      mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
-
       visitWithLoader(ROOT_ROUTES.proposals.absolute);
       cy.get('[data-test^=ProposalItemSkeleton').should('not.exist');
 

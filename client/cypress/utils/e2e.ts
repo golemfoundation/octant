@@ -22,3 +22,10 @@ export const navigateWithCheck = (urlEnter: string): Chainable<any> => {
   cy.get(`[data-test=Navbar__Button--${label}]`).click();
   return checkLocationWithLoader(urlEnter);
 };
+
+export const mockCoinPricesServer = (): Chainable<any> => {
+  return cy.intercept('GET', '/simple/price?*', {
+    body: { ethereum: { usd: 2041.91 }, golem: { usd: 0.260878 } },
+    statusCode: 200,
+  });
+};
