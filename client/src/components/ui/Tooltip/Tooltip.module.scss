@@ -1,0 +1,113 @@
+.root {
+  position: relative;
+
+  &.position-- {
+    &bottom-right {
+      @media #{$tablet-down} {
+        position: static;
+      }
+    }
+  }
+}
+
+.children {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  &.isVisible,
+  &:hover {
+    svg path {
+      stroke: $color-octant-dark;
+    }
+  }
+}
+
+.tooltipWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+
+  &.position-- {
+    &bottom-right {
+      @media #{$tablet-down} {
+        top: initial;
+        left: $layoutMarginHorizontal;
+        right: $layoutMarginHorizontal;
+        width: auto;
+      }
+    }
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  z-index: $z-index-5;
+}
+
+.tooltip {
+  text-align: left;
+  position: absolute;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-white;
+  font-weight: $font-weight-semibold;
+  z-index: $z-index-6;
+
+  &.variant-- {
+    &normal {
+      width: 34.2rem;
+      padding: 1.8rem 2.4rem;
+      font-size: $font-size-12;
+      line-height: 2rem;
+      border-radius: $border-radius-16;
+      background: $color-octant-grey10;
+    }
+    &small {
+      min-width: 6.4rem;
+      height: 2.4rem;
+      font-size: $font-size-10;
+      border-radius: $border-radius-04;
+      background: $color-octant-dark;
+      white-space: nowrap;
+      padding: 0 0.8rem;
+    }
+  }
+
+  &.position-- {
+    &bottom-right {
+      top: 2rem;
+      left: -1.2rem;
+
+      @media #{$tablet-down} {
+        top: 0.3rem;
+        left: 0;
+      }
+    }
+    &top {
+      top: -3.8rem;
+      &::after {
+        border-left: solid transparent 0.6rem;
+        border-right: solid transparent 0.6rem;
+        border-top: solid $color-octant-dark 0.6rem;
+        content: ' ';
+        height: 0;
+        position: absolute;
+        width: 0;
+        bottom: -0.6rem;
+        left: 50%;
+        transform: translateX(-50%) rotate(0deg);
+      }
+    }
+  }
+}

@@ -1,0 +1,106 @@
+$rowHeightDesktop: 6.4rem;
+$rowHeightMobile: 5.6rem;
+$nameAndRewardsMobilePadding: 2.7rem;
+
+.root {
+  display: flex;
+  position: relative;
+  user-select: none;
+
+  .icons {
+    position: absolute;
+    right: 0.4rem;
+    top: 0.4rem;
+  }
+}
+
+.nameAndRewards {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-right: 0.1rem solid $color-octant-grey8;
+}
+
+.name,
+.rewards {
+  height: $rowHeightMobile;
+
+  @media #{$desktop-up} {
+    height: $rowHeightDesktop;
+  }
+}
+
+.name {
+  display: flex;
+  align-items: center;
+  color: $color-octant-dark;
+  font-size: $font-size-14;
+  font-weight: $font-weight-bold;
+  white-space: nowrap;
+  border-bottom: 0.1rem solid $color-octant-grey8;
+  width: 100%;
+  text-align: left;
+  padding: 0 $nameAndRewardsMobilePadding;
+
+  .image {
+    display: none;
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 50%;
+    margin: 0 1.6rem 0 0;
+
+    @media #{$desktop-up} {
+      display: initial;
+    }
+  }
+
+  @media #{$desktop-up} {
+    font-size: $font-size-16;
+    padding: 0 1.6rem;
+  }
+}
+
+.rewards {
+  padding: 0 $nameAndRewardsMobilePadding;
+
+  @media #{$desktop-up} {
+    padding: 0 2.7rem;
+  }
+}
+
+.allocated {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 12rem;
+
+  &.isEpoch1 {
+    opacity: 0.5;
+  }
+
+  .allocatedPercentage {
+    color: $color-octant-green;
+    font-size: $font-size-14;
+    font-weight: $font-weight-bold;
+
+    @media #{$desktop-up} {
+      font-size: $font-size-20;
+    }
+  }
+
+  .allocatedAmount {
+    color: $color-octant-grey5;
+    font-size: $font-size-10;
+    font-weight: $font-weight-bold;
+
+    @media #{$desktop-up} {
+      font-size: $font-size-14;
+    }
+  }
+
+  @media #{$desktop-up} {
+    width: 16.4rem;
+  }
+}

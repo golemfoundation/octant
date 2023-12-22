@@ -2,19 +2,19 @@ import React, { Fragment, ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
-import BoxRounded from 'components/core/BoxRounded/BoxRounded';
-import Button from 'components/core/Button/Button';
-import InputSelect from 'components/core/InputSelect/InputSelect';
-import InputToggle from 'components/core/InputToggle/InputToggle';
-import Svg from 'components/core/Svg/Svg';
-import Tooltip from 'components/core/Tooltip/Tooltip';
-import ModalPatronMode from 'components/Settings/ModalPatronMode/ModalPatronMode';
+import ModalSettingsPatronMode from 'components/Settings/ModalSettingsPatronMode';
+import Layout from 'components/shared/Layout';
+import BoxRounded from 'components/ui/BoxRounded';
+import Button from 'components/ui/Button';
+import InputSelect from 'components/ui/InputSelect';
+import InputToggle from 'components/ui/InputToggle';
+import Svg from 'components/ui/Svg';
+import Tooltip from 'components/ui/Tooltip';
 import { TERMS_OF_USE } from 'constants/urls';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
-import MainLayout from 'layouts/MainLayout/MainLayout';
 import useSettingsStore from 'store/settings/store';
 import { SettingsData } from 'store/settings/types';
 import { octantWordmark } from 'svg/logo';
@@ -63,7 +63,7 @@ const SettingsView = (): ReactElement => {
   const isProjectAdminMode = useIsProjectAdminMode();
 
   return (
-    <MainLayout dataTest="SettingsView">
+    <Layout dataTest="SettingsView">
       {!isProjectAdminMode && (
         <BoxRounded
           alignment="left"
@@ -97,6 +97,7 @@ const SettingsView = (): ReactElement => {
         <div className={styles.currencySelectorWrapper}>
           <div className={styles.spacer} />
           <InputSelect
+            dataTest="SettingsView__InputSelect--currency"
             onChange={option =>
               setDisplayCurrency(option!.value as SettingsData['displayCurrency'])
             }
@@ -175,13 +176,13 @@ const SettingsView = (): ReactElement => {
           </BoxRounded>
         </Fragment>
       )}
-      <ModalPatronMode
+      <ModalSettingsPatronMode
         modalProps={{
           isOpen: isPatronModeModalOpen,
           onClosePanel: () => setIsPatronModeModalOpen(false),
         }}
       />
-    </MainLayout>
+    </Layout>
   );
 };
 

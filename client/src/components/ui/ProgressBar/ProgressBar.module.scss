@@ -1,0 +1,58 @@
+.root {
+  position: relative;
+  width: 100%;
+}
+
+.labels {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 1.4rem 0;
+
+  .label {
+    color: $color-octant-green2;
+    font-size: $font-size-10;
+  }
+}
+
+.bar {
+  width: 100%;
+  background-color: $color-octant-grey1;
+  border-radius: 0.4rem;
+  overflow: hidden;
+
+  &.variant-- {
+    &ultraThin {
+      height: 0.2rem;
+    }
+    &thin {
+      height: 0.4rem;
+    }
+    &normal {
+      height: 0.8rem;
+    }
+  }
+}
+
+.filled {
+  height: 100%;
+  // shorthand doesn't work here.
+  border-radius: inherit;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+
+  &.isBorderVisible {
+    border-right: 0.2rem solid $color-white;
+  }
+
+  &.color-- {
+    &green {
+      background: $color-octant-green;
+    }
+    &orange {
+      background: $color-octant-orange;
+    }
+    &grey {
+      background: $color-octant-grey5;
+    }
+  }
+}

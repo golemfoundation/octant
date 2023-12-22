@@ -2,13 +2,13 @@ import React, { ReactElement, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 
-import Loader from 'components/core/Loader/Loader';
-import ProposalsList from 'components/dedicated/ProposalsList/ProposalsList';
-import TipTile from 'components/dedicated/TipTile/TipTile';
+import ProposalsList from 'components/Proposals/ProposalsList';
+import Layout from 'components/shared/Layout';
+import TipTile from 'components/shared/TipTile';
+import Loader from 'components/ui/Loader';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import MainLayout from 'layouts/MainLayout/MainLayout';
 import useTipsStore from 'store/tips/store';
 
 import styles from './ProposalsView.module.scss';
@@ -51,7 +51,7 @@ const ProposalsView = (): ReactElement => {
   const onLoadNextEpochArchive = () => setLoadedArchivedEpochsNumber(prev => prev + 1);
 
   return (
-    <MainLayout dataTest="ProposalsView">
+    <Layout dataTest="ProposalsView">
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <TipTile
           className={styles.tip}
@@ -96,7 +96,7 @@ const ProposalsView = (): ReactElement => {
           ))}
         </InfiniteScroll>
       )}
-    </MainLayout>
+    </Layout>
   );
 };
 

@@ -1,13 +1,13 @@
 import React, { ReactElement } from 'react';
 
-import MetricsCumulativeGlmLocked from 'components/Metrics/MetricsGrid/MetricsCumulativeGlmLocked/MetricsCumulativeGlmLocked';
-import MetricsLargestGlmLock from 'components/Metrics/MetricsGrid/MetricsLargestGlmLock/MetricsLargestGlmLock';
-import MetricsTimeCounter from 'components/Metrics/MetricsGrid/MetricsTimeCounter/MetricsTimeCounter';
-import MetricsTotalAddresses from 'components/Metrics/MetricsGrid/MetricsTotalAddresses/MetricsTotalAddresses';
-import MetricsTotalEthStaked from 'components/Metrics/MetricsGrid/MetricsTotalEthStaked/MetricsTotalEthStaked';
-import MetricsTotalGlmLockedAndTotalSupply from 'components/Metrics/MetricsGrid/MetricsTotalGlmLockedAndTotalSupply/MetricsTotalGlmLockedAndTotalSupply';
-import MetricsTotalProjects from 'components/Metrics/MetricsGrid/MetricsTotalProjects/MetricsTotalProjects';
-import MetricsWalletsWithGlmLocked from 'components/Metrics/MetricsGrid/MetricsWalletsWithGlmLocked/MetricsWalletsWithGlmLocked';
+import MetricsGridCumulativeGlmLocked from 'components/Metrics/MetricsGrid/MetricsGridCumulativeGlmLocked';
+import MetricsGridLargestGlmLock from 'components/Metrics/MetricsGrid/MetricsGridLargestGlmLock';
+import MetricsGridTimeCounter from 'components/Metrics/MetricsGrid/MetricsGridTimeCounter';
+import MetricsGridTotalAddresses from 'components/Metrics/MetricsGrid/MetricsGridTotalAddresses';
+import MetricsGridTotalEthStaked from 'components/Metrics/MetricsGrid/MetricsGridTotalEthStaked';
+import MetricsGridTotalGlmLockedAndTotalSupply from 'components/Metrics/MetricsGrid/MetricsGridTotalGlmLockedAndTotalSupply';
+import MetricsGridTotalProjects from 'components/Metrics/MetricsGrid/MetricsGridTotalProjects';
+import MetricsGridWalletsWithGlmLocked from 'components/Metrics/MetricsGrid/MetricsGridWalletsWithGlmLocked';
 import useAllProposals from 'hooks/queries/useAllProposals';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -55,14 +55,14 @@ const MetricsGrid = (): ReactElement => {
 
   return (
     <div className={styles.metricsGrid} data-test="MetricsGrid">
-      <MetricsTimeCounter isLoading={isLoading} />
-      <MetricsTotalProjects isLoading={isLoading} />
-      <MetricsTotalEthStaked isLoading={isLoading} />
-      <MetricsTotalGlmLockedAndTotalSupply isLoading={isLoading} />
-      <MetricsWalletsWithGlmLocked />
-      <MetricsCumulativeGlmLocked />
-      <MetricsTotalAddresses isLoading={isLoading} />
-      <MetricsLargestGlmLock isLoading={isLoading} />
+      <MetricsGridTimeCounter isLoading={isLoading} />
+      <MetricsGridTotalProjects isLoading={isLoading} />
+      <MetricsGridTotalEthStaked isLoading={isLoading} />
+      <MetricsGridTotalGlmLockedAndTotalSupply isLoading={isLoading} />
+      <MetricsGridWalletsWithGlmLocked />
+      <MetricsGridCumulativeGlmLocked />
+      <MetricsGridTotalAddresses isLoading={isLoading} />
+      <MetricsGridLargestGlmLock isLoading={isLoading} />
     </div>
   );
 };

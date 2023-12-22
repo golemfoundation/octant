@@ -1,4 +1,4 @@
-import { SvgImageConfig } from 'components/core/Svg/types';
+import { SvgImageConfig } from 'components/ui/Svg/types';
 
 export const browserWallet: SvgImageConfig = {
   markup:
@@ -10,4 +10,10 @@ export const walletConnect: SvgImageConfig = {
   markup:
     '<path fill="#171717" d="M4.913 2.846c3.914-3.795 10.26-3.795 14.174 0l.47.456a.475.475 0 0 1 0 .687l-1.61 1.562a.256.256 0 0 1-.355 0l-.648-.628c-2.73-2.647-7.157-2.647-9.888 0l-.694.673a.256.256 0 0 1-.354 0L4.396 4.034a.475.475 0 0 1 0-.687l.517-.501Zm17.506 3.23 1.434 1.39a.475.475 0 0 1 0 .687l-6.466 6.268a.512.512 0 0 1-.709 0l-4.59-4.448a.128.128 0 0 0-.176 0l-4.59 4.448a.512.512 0 0 1-.709 0L.147 8.154a.475.475 0 0 1 0-.687l1.434-1.39a.512.512 0 0 1 .709 0l4.59 4.449a.128.128 0 0 0 .176 0l4.59-4.45a.512.512 0 0 1 .708 0l4.59 4.45a.128.128 0 0 0 .177 0l4.59-4.45a.512.512 0 0 1 .708 0Z"/>',
   viewBox: '0 0 24 15',
+};
+
+export const ledgerConnect: SvgImageConfig = {
+  markup:
+    '<path stroke="#000" stroke-width="2" d="M10 6v8h5M9 1H1v5M9 20H1v-5M15 1h8v5M15 20h8v-5"/>',
+  viewBox: '0 0 24 21',
 };

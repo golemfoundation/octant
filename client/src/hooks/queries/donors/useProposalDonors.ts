@@ -22,14 +22,12 @@ export default function useProposalDonors(
    * When hook is called for other epoch, subscribe should not be used.
    */
   // TODO OCT-1139 check if socket works correctly, update if needed.
-  useSubscription<Response>(WebsocketListenEvent.proposalDonors, data => {
-    // eslint-disable-next-line chai-friendly/no-unused-expressions
-    epoch
-      ? null
-      : queryClient.setQueryData(
-          QUERY_KEYS.proposalDonors(proposalAddress, currentEpoch! - 1),
-          data,
-        );
+  useSubscription<Response>({
+    callback: data => {
+      queryClient.setQueryData(QUERY_KEYS.proposalDonors(proposalAddress, currentEpoch! - 1), data);
+    },
+    enabled: epoch === undefined,
+    event: WebsocketListenEvent.proposalDonors,
   });
 
   return useQuery(

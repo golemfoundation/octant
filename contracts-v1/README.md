@@ -16,6 +16,12 @@ Epochs: [0xc292eBCa7855CB464755Aa638f9784c131F27D59](https://etherscan.io/addres
 
 Vault: [0xc64783f0BE60A81A716535287539a694403183ba](https://etherscan.io/address/0xc64783f0BE60A81A716535287539a694403183ba)
 
+GLM Token: [0x7DD9c5Cba05E151C895FDe1CF355C9A1D5DA6429](https://etherscan.io/address/0x7DD9c5Cba05E151C895FDe1CF355C9A1D5DA6429)
+
+GNT Token: [0xa74476443119A942dE498590Fe1f2454d7D4aC0d](https://etherscan.io/address/0xa74476443119A942dE498590Fe1f2454d7D4aC0d)
+
+Withdrawal Target: [0xba1951dF0C0A52af23857c5ab48B4C43A57E7ed1](https://etherscan.io/address/0xba1951df0c0a52af23857c5ab48b4c43a57e7ed1)
+
 
 ### Sepolia
 

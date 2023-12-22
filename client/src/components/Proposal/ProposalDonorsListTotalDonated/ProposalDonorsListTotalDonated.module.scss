@@ -1,0 +1,13 @@
+.root {
+  min-height: 6.4rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: $font-size-14;
+  font-weight: $font-weight-bold;
+  color: $color-octant-dark;
+  align-items: center;
+
+  @media #{$desktop-up} {
+    min-height: 7.2rem;
+  }
+}
