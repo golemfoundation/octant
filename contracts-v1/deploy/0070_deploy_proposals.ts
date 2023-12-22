@@ -14,9 +14,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const authAddress = AUTH_ADDRESS || (await ethers.getContract(AUTH)).address;
 
   let proposalAddresses = PROPOSALS_ADDRESSES.split(',');
+  for (const item of proposalAddresses) {
+    /* eslint-disable no-console */
+    console.log("proposal address: ", item);
+  }
 
   /// for localhost and testnet same set of proposals is used
-  /// for hardhat - test propsals are used
+  /// for hardhat - test proposals are used
   if (hre.network.name === 'hardhat') {
     const unnamedAddresses = await hre.getUnnamedAccounts();
     proposalAddresses = unnamedAddresses.slice(0, 10);

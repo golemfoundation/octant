@@ -52,11 +52,15 @@ def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
     total_ed = 0
     user_deposits = []
 
-    for address, deposits in weighted_deposits.items():
-        effective_deposit = calculate_effective_deposit(deposits)
+    for address, deposits_data in weighted_deposits.items():
+        effective_deposit = calculate_effective_deposit(
+            deposits_data.weighted_deposits, deposits_data.epoch_end_locked_amount
+        )
         total_ed = total_ed + effective_deposit
         user_deposits.append(
-            UserDeposit(address, effective_deposit, deposits[-1].amount)
+            UserDeposit(
+                address, effective_deposit, deposits_data.epoch_end_locked_amount
+            )
         )
 
     return user_deposits, total_ed
@@ -71,13 +75,18 @@ def get_estimated_effective_deposit(
     calculator = EpochsRegistry.get_epoch_settings(
         epoch_details.epoch_no
     ).user_deposits_weights_calculator
-    user_deposit_events = get_user_weighted_deposits(
+    user_deposits_data = get_user_weighted_deposits(
         calculator, event_generator, user_address
     )
-    return calculate_effective_deposit(user_deposit_events)
+
+    return calculate_effective_deposit(
+        user_deposits_data.weighted_deposits, user_deposits_data.epoch_end_locked_amount
+    )
 
 
-def calculate_effective_deposit(deposits: List[WeightedDeposit]) -> int:
+def calculate_effective_deposit(
+    deposits: List[WeightedDeposit], locked_amount: int
+) -> int:
     numerator = 0
     denominator = 0
     for amount, weight in deposits:
@@ -87,6 +96,5 @@ def calculate_effective_deposit(deposits: List[WeightedDeposit]) -> int:
     if denominator == 0:
         return 0
 
-    locked_amount = deposits[-1].amount
     effective_deposit = int(Decimal(numerator) / Decimal(denominator))
     return apply_weighted_average_cutoff(locked_amount, effective_deposit)

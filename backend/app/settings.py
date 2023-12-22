@@ -75,6 +75,7 @@ class ProdConfig(Config):
         "pool_size": SQLALCHEMY_CONNECTION_POOL_SIZE,
         "max_overflow": SQLALCHEMY_CONNECTION_POOL_MAX_OVERFLOW,
     }
+    X_REAL_IP_REQUIRED = _parse_bool(os.getenv("X_REAL_IP_REQUIRED", "true"))
 
 
 class DevConfig(Config):
@@ -88,6 +89,7 @@ class DevConfig(Config):
     # Put the db file in project root
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{DB_PATH}"
+    X_REAL_IP_REQUIRED = _parse_bool(os.getenv("X_REAL_IP_REQUIRED", "false"))
 
 
 class ComposeConfig(Config):
@@ -96,6 +98,7 @@ class ComposeConfig(Config):
     ENV = "dev"
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv("DB_URI")
+    X_REAL_IP_REQUIRED = _parse_bool(os.getenv("X_REAL_IP_REQUIRED", "false"))
 
 
 class TestConfig(Config):

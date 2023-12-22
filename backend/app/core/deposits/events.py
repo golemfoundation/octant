@@ -1,7 +1,10 @@
 from abc import ABC, abstractmethod
 from itertools import groupby
+from copy import deepcopy
 from operator import itemgetter
 from typing import Dict, List, Optional
+
+from eth_utils import to_checksum_address
 
 from app.infrastructure.graphql.locks import (
     get_locks_by_timestamp_range,
@@ -30,6 +33,11 @@ class EventGenerator(ABC):
 
 
 class SubgraphEventsGenerator(EventGenerator):
+    def __init__(self, epoch_start: int, epoch_end: int):
+        super().__init__(epoch_start, epoch_end)
+
+        self._user_events_cache = None
+
     def get_user_events(self, user_address: Optional[str]) -> List[Dict]:
         """
         Get user lock and unlock events from the subgraph within the given timestamp range, sort them by timestamp,
@@ -37,6 +45,15 @@ class SubgraphEventsGenerator(EventGenerator):
         Returns:
             A list of event dictionaries sorted by timestamp.
         """
+
+        user_address = to_checksum_address(user_address)
+
+        if self._user_events_cache is not None:
+            if user_address in self._user_events_cache:
+                return deepcopy(self._user_events_cache[user_address])
+            else:
+                return []
+
         events = []
 
         event_before_epoch_start = get_last_deposit_event(
@@ -56,6 +73,7 @@ class SubgraphEventsGenerator(EventGenerator):
                 user_address, self.epoch_start, self.epoch_end
             )
         )
+
         return sorted(events, key=itemgetter("timestamp"))
 
     def get_all_users_events(self) -> Dict[str, List[Dict]]:
@@ -70,7 +88,13 @@ class SubgraphEventsGenerator(EventGenerator):
             self.epoch_start, self.epoch_end
         ) + get_unlocks_by_timestamp_range(self.epoch_start, self.epoch_end)
         sorted_events = sorted(events, key=itemgetter("user", "timestamp"))
-        return {k: list(g) for k, g in groupby(sorted_events, key=itemgetter("user"))}
+
+        self._user_events_cache = {
+            to_checksum_address(k): list(g)
+            for k, g in groupby(sorted_events, key=itemgetter("user"))
+        }
+
+        return deepcopy(self._user_events_cache)
 
 
 class SimulatedEventsGenerator(EventGenerator):

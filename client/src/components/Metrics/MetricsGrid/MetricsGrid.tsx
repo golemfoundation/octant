@@ -8,12 +8,12 @@ import MetricsGridTotalEthStaked from 'components/Metrics/MetricsGrid/MetricsGri
 import MetricsGridTotalGlmLockedAndTotalSupply from 'components/Metrics/MetricsGrid/MetricsGridTotalGlmLockedAndTotalSupply';
 import MetricsGridTotalProjects from 'components/Metrics/MetricsGrid/MetricsGridTotalProjects';
 import MetricsGridWalletsWithGlmLocked from 'components/Metrics/MetricsGrid/MetricsGridWalletsWithGlmLocked';
-import useAllProposals from 'hooks/queries/useAllProposals';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
+import useAllProposals from 'hooks/subgraph/useAllProposals';
 import useLargestLockedAmount from 'hooks/subgraph/useLargestLockedAmount';
 import useLockedsData from 'hooks/subgraph/useLockedsData';
 import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';

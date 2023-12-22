@@ -22,9 +22,9 @@ from tests.conftest import (
     create_payload,
     MOCK_PROPOSALS,
     MOCK_EPOCHS,
-    USER1_ADDRESS,
     mock_graphql,
 )
+from tests.helpers.constants import USER1_ADDRESS
 
 
 @pytest.fixture(autouse=True)

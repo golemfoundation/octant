@@ -3,38 +3,23 @@ import pytest
 from app.controllers.deposits import (
     get_user_estimated_effective_deposit_for_current_epoch,
 )
+
+from tests.helpers import (
+    generate_epoch_events,
+    create_deposit_events,
+)
 from tests.conftest import (
-    create_epoch_event,
     mock_graphql,
-    create_deposit_event,
     MOCK_EPOCHS,
 )
+from tests.helpers.constants import USER1_ADDRESS
 
-epochs = [
-    create_epoch_event(
-        start=1000,
-        end=2000,
-        duration=1000,
-        decision_window=500,
-        epoch=1,
-    ),
-    create_epoch_event(
-        start=2000,
-        end=3000,
-        duration=1000,
-        decision_window=500,
-        epoch=2,
-    ),
-]
+epochs = generate_epoch_events(start=1000, epoches=2)
 
 
 @pytest.fixture
 def events():
-    return [
-        create_deposit_event(
-            deposit_before="0", amount="200000000000000000000", timestamp=1500
-        )
-    ]
+    return create_deposit_events({USER1_ADDRESS: [(1500, 200000000000000000000)]})
 
 
 @pytest.fixture(autouse=True)
@@ -42,120 +27,96 @@ def before(app, mocker, patch_epochs, graphql_client, events):
     mock_graphql(mocker, epochs_events=epochs, deposit_events=events)
 
 
-def test_estimated_effective_deposit_in_epoch_1(user_accounts):
+def test_estimated_effective_deposit_in_epoch_1():
     MOCK_EPOCHS.get_current_epoch.return_value = 1
 
-    result = get_user_estimated_effective_deposit_for_current_epoch(
-        user_accounts[0].address
-    )
+    result = get_user_estimated_effective_deposit_for_current_epoch(USER1_ADDRESS)
     assert result == 100000000000000000000
 
 
-def test_estimated_effective_deposit_in_epoch_2(user_accounts):
+def test_estimated_effective_deposit_in_epoch_2():
     MOCK_EPOCHS.get_current_epoch.return_value = 2
 
-    result = get_user_estimated_effective_deposit_for_current_epoch(
-        user_accounts[0].address
-    )
+    result = get_user_estimated_effective_deposit_for_current_epoch(USER1_ADDRESS)
     assert result == 200000000000000000000
 
 
 @pytest.mark.parametrize(
     "events",
     [
-        [
-            create_deposit_event(
-                deposit_before="0", amount="200000000000000000000", timestamp=1500
-            ),
-            create_deposit_event(
-                typename="Unlocked",
-                deposit_before="200000000000000000000",
-                amount="100000000000000000000",
-                timestamp=1700,
-            ),
-        ]
+        create_deposit_events(
+            {
+                USER1_ADDRESS: [
+                    (1500, 200000000000000000000),
+                    (1700, -100000000000000000000),
+                ]
+            }
+        )
     ],
 )
 def test_estimated_effective_deposit_in_epoch_2_lock_unlock_events(user_accounts):
     MOCK_EPOCHS.get_current_epoch.return_value = 2
 
-    result = get_user_estimated_effective_deposit_for_current_epoch(
-        user_accounts[0].address
-    )
+    result = get_user_estimated_effective_deposit_for_current_epoch(USER1_ADDRESS)
     assert result == 100000000000000000000
 
 
 @pytest.mark.parametrize(
     "events",
     [
-        [
-            create_deposit_event(
-                deposit_before="0", amount="200000000000000000000", timestamp=1200
-            ),
-            create_deposit_event(
-                deposit_before="200000000000000000000",
-                amount="100000000000000000000",
-                timestamp=1700,
-            ),
-        ]
+        create_deposit_events(
+            {
+                USER1_ADDRESS: [
+                    (1200, 200000000000000000000),
+                    (1700, 100000000000000000000),
+                ]
+            }
+        )
     ],
 )
 def test_estimated_effective_deposit_in_epoch_2_two_lock_events(user_accounts):
     MOCK_EPOCHS.get_current_epoch.return_value = 2
 
-    result = get_user_estimated_effective_deposit_for_current_epoch(
-        user_accounts[0].address
-    )
+    result = get_user_estimated_effective_deposit_for_current_epoch(USER1_ADDRESS)
     assert result == 300000000000000000000
 
 
 @pytest.mark.parametrize(
     "events",
     [
-        [
-            create_deposit_event(
-                deposit_before="0", amount="200000000000000000000", timestamp=1200
-            ),
-            create_deposit_event(
-                deposit_before="200000000000000000000",
-                amount="100000000000000000000",
-                timestamp=2700,
-            ),
-        ]
+        create_deposit_events(
+            {
+                USER1_ADDRESS: [
+                    (1200, 200000000000000000000),
+                    (2700, 100000000000000000000),
+                ]
+            }
+        )
     ],
 )
-def test_estimated_effective_deposit_in_epoch_2_locks_in_epoch_1_and_2(user_accounts):
+def test_estimated_effective_deposit_in_epoch_2_locks_in_epoch_1_and_2():
     MOCK_EPOCHS.get_current_epoch.return_value = 2
 
-    result = get_user_estimated_effective_deposit_for_current_epoch(
-        user_accounts[0].address
-    )
+    result = get_user_estimated_effective_deposit_for_current_epoch(USER1_ADDRESS)
     assert result == 230000000000000000000
 
 
 @pytest.mark.parametrize(
     "events",
     [
-        [
-            create_deposit_event(
-                deposit_before="0", amount="200000000000000000000", timestamp=1200
-            ),
-            create_deposit_event(
-                typename="Unlocked",
-                deposit_before="200000000000000000000",
-                amount="100000000000000000000",
-                timestamp=2700,
-            ),
-        ]
+        create_deposit_events(
+            {
+                USER1_ADDRESS: [
+                    (1200, 200000000000000000000),
+                    (2700, -100000000000000000000),
+                ]
+            }
+        )
     ],
 )
-def test_estimated_effective_deposit_in_epoch_2_locks_in_epoch_1_and_unlock_in_2(
-    user_accounts,
-):
+def test_estimated_effective_deposit_in_epoch_2_locks_in_epoch_1_and_unlock_in_2():
     MOCK_EPOCHS.get_current_epoch.return_value = 2
 
-    result = get_user_estimated_effective_deposit_for_current_epoch(
-        user_accounts[0].address
-    )
+    result = get_user_estimated_effective_deposit_for_current_epoch(USER1_ADDRESS)
 
     assert result == 100000000000000000000

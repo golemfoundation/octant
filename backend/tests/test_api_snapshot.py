@@ -2,6 +2,7 @@ import pytest
 
 
 from app.extensions import w3, epochs
+from app.core.proposals import get_proposals_addresses
 from .conftest import Client, UserAccount
 
 # Please note that tests here assume that they talk to blockchain and indexer
@@ -42,6 +43,8 @@ def test_pending_snapshot(
     assert res["indexedEpoch"] == res["blockchainEpoch"]
     assert res["indexedEpoch"] > 0
 
+    alice_proposals = get_proposals_addresses(1)[:3]
+
     # fund Octant
     deployer.fund_octant(
         address=client.config["WITHDRAWALS_TARGET_CONTRACT_ADDRESS"], value=400
@@ -72,3 +75,15 @@ def test_pending_snapshot(
     res = client.get_rewards_budget(address=ua_bob.address, epoch=1)
     bob_budget = int(res["budget"])
     assert bob_budget > 0
+
+    ua_alice.allocate(1000, alice_proposals)
+    ua_bob.allocate(1000, alice_proposals[:1])
+
+    allocations = client.get_epoch_allocations(1)
+
+    assert len(allocations) == 2
+    for allocation in allocations:
+        for key, val in allocation.items():
+            if key == "donor":
+                continue
+            assert int(val) > 0

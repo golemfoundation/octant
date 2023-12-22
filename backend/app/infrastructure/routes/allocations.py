@@ -151,12 +151,31 @@ class Allocation(OctantResource):
         return {}, 201
 
 
+matched_reward = api.model(
+    "Proposal",
+    {
+        "address": fields.String(
+            required=True,
+            description="Proposal address",
+        ),
+        "value": fields.String(
+            required=True,
+            description="Matched rewards funds for the proposal, wei",
+        ),
+    },
+)
+
 user_leverage_model = api.model(
     "UserLeverage",
     {
         "leverage": fields.String(
-            required=False,
+            required=True,
             description="Leverage of the allocated funds",
+        ),
+        "matched": fields.List(
+            fields.Nested(matched_reward),
+            required=True,
+            description="List of matched rewards for each project",
         ),
     },
 )
@@ -178,9 +197,16 @@ class AllocationLeverage(OctantResource):
         leverage, proposal_rewards = allocations.simulate_allocation(
             ns.payload, user_address
         )
-        app.logger.debug(f"Estimated leverage: {leverage}")
+        matched = [
+            {"address": p.address, "value": p.matched}
+            for p in proposal_rewards
+            if p.matched > 0
+        ]
 
-        return {"leverage": leverage}
+        app.logger.debug(f"Estimated leverage: {leverage}")
+        app.logger.debug(f"Matched rewards:  {matched}")
+
+        return {"leverage": leverage, "matched": matched}
 
 
 @ns.route("/epoch/<int:epoch>")
