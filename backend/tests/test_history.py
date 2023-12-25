@@ -3,6 +3,7 @@ import math
 from typing import List
 
 import pytest
+from freezegun import freeze_time
 from eth_account.signers.local import LocalAccount
 
 from app.controllers.allocations import allocate
@@ -14,9 +15,14 @@ from app.core.history import (
     get_allocations,
     AllocationItem,
     get_withdrawals,
+    get_patron_donations,
+    PatronDonationItem,
 )
+from app.core.user.patron_mode import toggle_patron_mode
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.utils.time import from_timestamp_s, now
+
+from tests.helpers import create_epoch_event
 
 from tests.conftest import (
     create_payload,
@@ -24,7 +30,42 @@ from tests.conftest import (
     MOCK_EPOCHS,
     mock_graphql,
 )
-from tests.helpers.constants import USER1_ADDRESS
+from tests.helpers.constants import USER1_ADDRESS, USER_MOCKED_BUDGET
+
+epochs = [
+    create_epoch_event(
+        start=1698803300,
+        end=1698804300,  # "2023-11-01 02:05:00"
+        duration=1000,
+        decision_window=500,
+        epoch=1,
+    ),
+    create_epoch_event(
+        start=1698804300,
+        end=1698805300,  # "2023-11-01 02:21:40"
+        duration=1000,
+        decision_window=500,
+        epoch=2,
+    ),
+    create_epoch_event(
+        start=1698805300,
+        end=1698806300,  # "2023-11-01 02:38:20"
+        duration=1000,
+        decision_window=500,
+        epoch=3,
+    ),
+    create_epoch_event(
+        start=1698806300,
+        end=1698807300,
+        duration=1000,
+        decision_window=500,
+        epoch=4,
+    ),
+]
+
+
+def _epoch_finalization_timestamp(epoch):
+    return from_timestamp_s(int(epoch["toTs"]) + int(epoch["decisionWindow"]))
 
 
 @pytest.fixture(autouse=True)
@@ -274,6 +315,75 @@ def test_history_withdrawals(mocker, withdrawals, expected_history_sorted_by_ts)
     history = [dataclasses.asdict(i) for i in history]
 
     assert history == expected_history_sorted_by_ts
+
+
+@freeze_time("2023-11-01 02:12:00")
+def test_history_patron_mode_donations_empty_for_non_patron(
+    mocker, tos_users, patch_last_finalized_snapshot, patch_user_budget
+):
+    mock_graphql(mocker, epochs_events=epochs)
+    query_time = from_timestamp_s(1698805300)  # epoch 2 end time
+    alice: LocalAccount = tos_users[0]
+
+    assert get_patron_donations(alice.address, query_time, 100) == []
+
+
+@freeze_time("2023-11-01 02:12:00")
+def test_history_patron_mode_donations_returns_event_consecutive_epochs(
+    mocker, tos_users, patch_last_finalized_snapshot, patch_user_budget
+):
+    mock_graphql(mocker, epochs_events=epochs)
+    alice: LocalAccount = tos_users[0]
+    toggle_patron_mode(alice.address)  # set patron mode within first epoch
+
+    for finalized_epoch_idx in range(0, 3):
+        epoch_finalization_timestamp = _epoch_finalization_timestamp(
+            epochs[finalized_epoch_idx]
+        )
+        query_time = from_timestamp_s(epoch_finalization_timestamp.timestamp_s() + 1)
+
+        expected_events = [
+            PatronDonationItem(
+                timestamp=_epoch_finalization_timestamp(epochs[event_epoch]),
+                epoch=epochs[event_epoch]["epoch"],
+                amount=USER_MOCKED_BUDGET,
+            )
+            for event_epoch in range(0, finalized_epoch_idx + 1)
+        ]
+
+        assert get_patron_donations(alice.address, query_time, 100) == list(
+            reversed(expected_events)
+        )
+
+
+@freeze_time()
+def test_history_patron_mode_donations_does_not_return_event_when_user_stopped_being_a_patron(
+    mocker, tos_users, patch_last_finalized_snapshot, patch_user_budget
+):
+    mock_graphql(mocker, epochs_events=epochs)
+    alice: LocalAccount = tos_users[0]
+
+    with freeze_time("2023-11-01 02:12:00") as frozen_time:
+        toggle_patron_mode(alice.address)  # set patron mode within first epoch
+        frozen_time.move_to("2023-11-01 02:38:00")  # forward time till third epoch
+        toggle_patron_mode(alice.address)  # set patron mode within third epoch
+
+    query_time = _epoch_finalization_timestamp(epochs[3])
+
+    expected_events = [
+        PatronDonationItem(
+            timestamp=_epoch_finalization_timestamp(epochs[1]),
+            epoch=2,
+            amount=USER_MOCKED_BUDGET,
+        ),
+        PatronDonationItem(
+            timestamp=_epoch_finalization_timestamp(epochs[0]),
+            epoch=1,
+            amount=USER_MOCKED_BUDGET,
+        ),
+    ]
+
+    assert get_patron_donations(alice.address, query_time, 100) == expected_events
 
 
 def test_history_allocations(proposal_accounts, tos_users):
@@ -578,6 +688,7 @@ def test_history_allocations(proposal_accounts, tos_users):
         ),
     ],
 )
+@freeze_time("2023-11-01 01:48:47", tick=True, auto_tick_seconds=1)
 def test_complete_user_history(
     mocker,
     deposits,
@@ -622,7 +733,19 @@ def test_complete_user_history(
 
     assert len(allocations) == 3
 
-    expected_history = allocations + expected_history
+    assert toggle_patron_mode(user1.address)
+    assert not toggle_patron_mode(user1.address)
+
+    toggles = [
+        {
+            "type": "patron_mode_toggle",
+            "timestamp": t.timestamp.timestamp_us(),
+            "patronModeEnabled": t.patron_mode_enabled,
+        }
+        for t in get_patron_donations(user1.address, now(), 10)
+    ]
+
+    expected_history = toggles + allocations + expected_history
 
     # when
 
