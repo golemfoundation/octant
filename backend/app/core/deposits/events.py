@@ -1,11 +1,14 @@
 from abc import ABC, abstractmethod
-from itertools import groupby
 from copy import deepcopy
-from operator import itemgetter
+from dataclasses import dataclass
+from enum import StrEnum
+from itertools import groupby
+from operator import attrgetter
 from typing import Dict, List, Optional
 
 from eth_utils import to_checksum_address
 
+from app.core.epochs.details import EpochDetails
 from app.infrastructure.graphql.locks import (
     get_locks_by_timestamp_range,
     get_locks_by_address_and_timestamp_range,
@@ -14,8 +17,37 @@ from app.infrastructure.graphql.unlocks import (
     get_unlocks_by_timestamp_range,
     get_unlocks_by_address_and_timestamp_range,
 )
-from app.utils.subgraph_events import create_deposit_event
 from app.infrastructure.graphql import get_last_deposit_event
+
+
+class EventType(StrEnum):
+    LOCK = "Locked"
+    UNLOCK = "Unlocked"
+
+
+@dataclass(frozen=True)
+class DepositEvent:
+    user: Optional[str]
+    type: EventType
+    timestamp: int
+    amount: int
+    deposit_before: int
+
+    @staticmethod
+    def from_dict(dict: Dict):
+        type = EventType(dict["__typename"])
+        user = to_checksum_address(dict["user"]) if dict["user"] is not None else None
+        timestamp = int(dict["timestamp"])
+        amount = int(dict["amount"])
+        deposit_before = int(dict["depositBefore"])
+
+        return DepositEvent(
+            user=user,
+            type=type,
+            timestamp=timestamp,
+            amount=amount,
+            deposit_before=deposit_before,
+        )
 
 
 class EventGenerator(ABC):
@@ -24,21 +56,21 @@ class EventGenerator(ABC):
         self.epoch_end = epoch_end
 
     @abstractmethod
-    def get_user_events(self, user_address: Optional[str]) -> List[Dict]:
+    def get_user_events(self, user_address: Optional[str]) -> List[DepositEvent]:
         pass
 
     @abstractmethod
-    def get_all_users_events(self) -> Dict[str, List[Dict]]:
+    def get_all_users_events(self) -> Dict[str, List[DepositEvent]]:
         pass
 
 
-class SubgraphEventsGenerator(EventGenerator):
-    def __init__(self, epoch_start: int, epoch_end: int):
-        super().__init__(epoch_start, epoch_end)
-
+class EpochEventsGenerator(EventGenerator):
+    def __init__(self, epoch_details: EpochDetails):
+        super().__init__(epoch_details.start_sec, epoch_details.end_sec)
+        self._epoch_no = epoch_details.epoch_no
         self._user_events_cache = None
 
-    def get_user_events(self, user_address: Optional[str]) -> List[Dict]:
+    def get_user_events(self, user_address: Optional[str]) -> List[DepositEvent]:
         """
         Get user lock and unlock events from the subgraph within the given timestamp range, sort them by timestamp,
 
@@ -74,9 +106,11 @@ class SubgraphEventsGenerator(EventGenerator):
             )
         )
 
-        return sorted(events, key=itemgetter("timestamp"))
+        events = list(map(DepositEvent.from_dict, events))
 
-    def get_all_users_events(self) -> Dict[str, List[Dict]]:
+        return sorted(events, key=attrgetter("timestamp"))
+
+    def get_all_users_events(self) -> Dict[str, List[DepositEvent]]:
         """
         Get all lock and unlock events from the subgraph within the given timestamp range, sort them by user and timestamp,
         and group them by user.
@@ -87,11 +121,12 @@ class SubgraphEventsGenerator(EventGenerator):
         events = get_locks_by_timestamp_range(
             self.epoch_start, self.epoch_end
         ) + get_unlocks_by_timestamp_range(self.epoch_start, self.epoch_end)
-        sorted_events = sorted(events, key=itemgetter("user", "timestamp"))
+
+        events = list(map(DepositEvent.from_dict, events))
+        sorted_events = sorted(events, key=attrgetter("user", "timestamp"))
 
         self._user_events_cache = {
-            to_checksum_address(k): list(g)
-            for k, g in groupby(sorted_events, key=itemgetter("user"))
+            k: list(g) for k, g in groupby(sorted_events, key=attrgetter("user"))
         }
 
         return deepcopy(self._user_events_cache)
@@ -111,7 +146,7 @@ class SimulatedEventsGenerator(EventGenerator):
         self.amount = amount
         self.epoch_remaining_duration = epoch_remaining_duration
 
-    def get_user_events(self, user_address: Optional[str]) -> List[Dict]:
+    def get_user_events(self, user_address: Optional[str]) -> List[DepositEvent]:
         """
         Retrieve a simulated lock event for a user based on two potential scenarios:
 
@@ -128,17 +163,24 @@ class SimulatedEventsGenerator(EventGenerator):
 
         if self.lock_duration < self.epoch_remaining_duration:
             return [
-                create_deposit_event(
-                    amount=self.amount, timestamp=self.epoch_end - self.lock_duration
-                ),
+                DepositEvent(
+                    user=user_address,
+                    type=EventType.LOCK,
+                    timestamp=self.epoch_end - self.lock_duration,
+                    amount=self.amount,
+                    deposit_before=0,
+                )
             ]
         else:
             return [
-                create_deposit_event(
-                    amount=self.amount,
+                DepositEvent(
+                    user=user_address,
+                    type=EventType.LOCK,
                     timestamp=self.epoch_end - self.epoch_remaining_duration,
-                ),
+                    amount=self.amount,
+                    deposit_before=0,
+                )
             ]
 
-    def get_all_users_events(self) -> Dict[str, List[Dict]]:
+    def get_all_users_events(self) -> Dict[str, List[DepositEvent]]:
         raise NotImplementedError()
