@@ -8,6 +8,7 @@ from typing import Dict, List, Optional
 
 from eth_utils import to_checksum_address
 
+from app import database
 from app.core.epochs.details import EpochDetails
 from app.infrastructure.graphql.locks import (
     get_locks_by_timestamp_range,
@@ -17,7 +18,6 @@ from app.infrastructure.graphql.unlocks import (
     get_unlocks_by_timestamp_range,
     get_unlocks_by_address_and_timestamp_range,
 )
-from app.infrastructure.graphql import get_last_deposit_event
 
 
 class EventType(StrEnum):
@@ -86,15 +86,9 @@ class EpochEventsGenerator(EventGenerator):
             else:
                 return []
 
+        epoch_start_locked_amount = self._get_user_epoch_start_deposit(user_address)
+
         events = []
-
-        event_before_epoch_start = get_last_deposit_event(
-            user_address, self.epoch_start
-        )
-        if event_before_epoch_start is not None:
-            event_before_epoch_start["timestamp"] = self.epoch_start
-            events = [event_before_epoch_start]
-
         events.extend(
             get_locks_by_address_and_timestamp_range(
                 user_address, self.epoch_start, self.epoch_end
@@ -107,8 +101,12 @@ class EpochEventsGenerator(EventGenerator):
         )
 
         events = list(map(DepositEvent.from_dict, events))
+        sorted_events = sorted(events, key=attrgetter("timestamp"))
 
-        return sorted(events, key=attrgetter("timestamp"))
+        if epoch_start_locked_amount is not None:
+            sorted_events.insert(0, epoch_start_locked_amount)
+
+        return sorted_events
 
     def get_all_users_events(self) -> Dict[str, List[DepositEvent]]:
         """
@@ -118,18 +116,62 @@ class EpochEventsGenerator(EventGenerator):
         Returns:
             A dictionary where keys are user addresses and values are lists of event dictionaries sorted by timestamp.
         """
-        events = get_locks_by_timestamp_range(
-            self.epoch_start, self.epoch_end
-        ) + get_unlocks_by_timestamp_range(self.epoch_start, self.epoch_end)
 
-        events = list(map(DepositEvent.from_dict, events))
-        sorted_events = sorted(events, key=attrgetter("user", "timestamp"))
+        if self._user_events_cache is not None:
+            return deepcopy(self._user_events_cache)
+
+        epoch_start_events = self._get_epoch_start_deposits()
+        print(f"epoch start events: {epoch_start_events}")
+
+        epoch_events = get_locks_by_timestamp_range(self.epoch_start, self.epoch_end)
+        epoch_events += get_unlocks_by_timestamp_range(self.epoch_start, self.epoch_end)
+        epoch_events = list(map(DepositEvent.from_dict, epoch_events))
+        sorted_events = sorted(epoch_events, key=attrgetter("user", "timestamp"))
 
         self._user_events_cache = {
             k: list(g) for k, g in groupby(sorted_events, key=attrgetter("user"))
         }
 
+        for event in epoch_start_events:
+            if event.user in self._user_events_cache:
+                self._user_events_cache[event.user].insert(0, event)
+                print(f"here: {self._user_events_cache[event.user]}")
+            else:
+                self._user_events_cache[event.user] = [event]
+
         return deepcopy(self._user_events_cache)
+
+    def _get_user_epoch_start_deposit(self, user_address):
+        epoch_start_locked_amount = database.deposits.get_by_user_address_and_epoch(
+            user_address, self._epoch_no - 1
+        )
+
+        if epoch_start_locked_amount is None:
+            return None
+
+        return DepositEvent(
+            user=user_address,
+            type=EventType.LOCK,
+            timestamp=self.epoch_start,
+            amount=0,  # it is not a deposit in fact
+            deposit_before=int(epoch_start_locked_amount.epoch_end_deposit),
+        )
+
+    def _get_epoch_start_deposits(self):
+        epoch_start_locked_amounts = database.deposits.get_all_by_epoch(
+            self._epoch_no - 1
+        )
+
+        return [
+            DepositEvent(
+                user=user,
+                type=EventType.LOCK,
+                timestamp=self.epoch_start,
+                amount=0,  # it is not a deposit in fact
+                deposit_before=int(deposit.epoch_end_deposit),
+            )
+            for user, deposit in epoch_start_locked_amounts.items()
+        ]
 
 
 class SimulatedEventsGenerator(EventGenerator):
