@@ -6,6 +6,7 @@ from . import (  # noqa
     info,
     deposits,
     rewards,
+    patrons,
     claims,
     user_consents,
 )

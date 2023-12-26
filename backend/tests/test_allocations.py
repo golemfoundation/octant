@@ -21,9 +21,13 @@ from app.core.allocations import (
 from app.core.rewards.rewards import calculate_matched_rewards_threshold
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.extensions import db
+
+from tests.helpers import create_epoch_event
+
 from tests.conftest import (
     create_payload,
     deserialize_allocations,
+    mock_graphql,
     MOCKED_PENDING_EPOCH_NO,
     MOCK_PROPOSALS,
     MOCK_EPOCHS,
@@ -65,6 +69,8 @@ def get_all_by_epoch_expected_result(user_accounts, proposal_accounts):
 @pytest.fixture(autouse=True)
 def before(
     app,
+    mocker,
+    graphql_client,
     proposal_accounts,
     patch_epochs,
     patch_proposals,
@@ -74,6 +80,10 @@ def before(
     MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts[0:5]
     ]
+
+    mock_graphql(
+        mocker, epochs_events=[create_epoch_event(epoch=MOCKED_PENDING_EPOCH_NO)]
+    )
 
 
 def test_simulate_allocation_single_user(
