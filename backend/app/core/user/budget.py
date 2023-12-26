@@ -11,9 +11,10 @@ from app.core.epochs import details as epochs_details
 from app.core.epochs.details import EpochDetails
 from app.core.epochs.epochs_registry import EpochsRegistry
 from app.core.staking import estimate_epoch_eth_staking_proceeds
+from app.core.user.patron_mode import get_patrons_at_timestamp
 from app.database.models import PendingEpochSnapshot
 from app.extensions import epochs
-from app.utils.time import days_to_sec
+from app.utils.time import days_to_sec, from_timestamp_s
 
 
 def get_budget(user_address: str, epoch: int) -> int:
@@ -31,10 +32,11 @@ def get_budget(user_address: str, epoch: int) -> int:
 
 
 def get_patrons_budget(snapshot: PendingEpochSnapshot) -> int:
-    patrons = database.user.get_all_patrons()
+    epoch_details = epochs_details.get_epoch_details(snapshot.epoch)
+    patrons = get_patrons_at_timestamp(from_timestamp_s(epoch_details.end_sec))
     patrons_rewards = 0
     for patron in patrons:
-        patrons_rewards += get_budget(patron.address, snapshot.epoch)
+        patrons_rewards += get_budget(patron, snapshot.epoch)
 
     return patrons_rewards
 

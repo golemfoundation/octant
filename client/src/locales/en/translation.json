@@ -191,7 +191,8 @@
         "lockedGLM": "Locked GLM",
         "unlockedGLM": "Unlocked GLM",
         "projects": "Projects",
-        "withdrawnFunds": "Withdrawn funds"
+        "withdrawnFunds": "Withdrawn funds",
+        "epochDonation": "Epoch {{epoch}} donation"
       },
       "historyItemModal": {
         "header": {
@@ -207,7 +208,8 @@
           "gasPrice": "Gas price",
           "viewOnEtherscan": "View on Etherscan",
           "when": "When",
-          "withdrawal": "Withdrew ETH"
+          "withdrawal": "Withdrew ETH",
+          "matchingFundDonation": "Matching fund donation"
         }
       },
       "historyTransactionLabel": {

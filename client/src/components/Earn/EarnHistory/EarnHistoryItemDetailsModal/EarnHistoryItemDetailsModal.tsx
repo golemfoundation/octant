@@ -14,13 +14,17 @@ const EarnHistoryItemDetailsModal: FC<EarnHistoryItemDetailsModalProps> = ({
   isWaitingForTransactionInitialized,
   ...rest
 }) => {
-  const { t } = useTranslation('translation', {
+  const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.historyItemModal',
   });
   const { data: epochTimestampHappenedIn } = useEpochTimestampHappenedIn(timestamp);
 
   const header = useMemo(() => {
     switch (type) {
+      case 'patron_mode_donation':
+        return i18n.t('components.dedicated.historyItem.epochDonation', {
+          epoch: epochTimestampHappenedIn,
+        });
       case 'lock':
         return t('header.lock');
       case 'unlock':
@@ -34,7 +38,7 @@ const EarnHistoryItemDetailsModal: FC<EarnHistoryItemDetailsModalProps> = ({
       default:
         return '';
     }
-  }, [t, type, epochTimestampHappenedIn]);
+  }, [t, type, epochTimestampHappenedIn, i18n]);
 
   return (
     <Modal header={header} {...modalProps}>
