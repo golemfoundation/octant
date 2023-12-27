@@ -48,7 +48,6 @@ def create_user_deposit_events(user, events):
         events,
         accumulate(map(lambda event: event[1], events), initial=0),
     )
-    print(events_and_deposits)
     return list(map(_tuple_to_event_dict, events_and_deposits))
 
 

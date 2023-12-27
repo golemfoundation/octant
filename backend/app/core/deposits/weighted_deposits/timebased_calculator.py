@@ -1,9 +1,7 @@
 from collections import defaultdict
 from typing import List, Dict
 
-from eth_utils import to_checksum_address
-
-from app.core.deposits.events import EventGenerator
+from app.core.deposits.events import EventGenerator, DepositEvent, EventType
 
 from app.core.deposits.weighted_deposits.weighted_deposit import WeightedDeposit
 from app.core.deposits.weighted_deposits.weights_calculator import WeightsCalculator
@@ -26,7 +24,7 @@ class TimebasedWeightsCalculator(WeightsCalculator):
             weighted_amounts = cls._calculated_deposit_weights(
                 events_generator.epoch_start, events_generator.epoch_end, user_events
             )
-            weighted_deposits[to_checksum_address(user_address)] = weighted_amounts
+            weighted_deposits[user_address] = weighted_amounts
 
         return weighted_deposits
 
@@ -45,7 +43,7 @@ class TimebasedWeightsCalculator(WeightsCalculator):
 
     @classmethod
     def _calculated_deposit_weights(
-        cls, start: int, end: int, user_events: List[Dict]
+        cls, start: int, end: int, user_events: List[DepositEvent]
     ) -> List[WeightedDeposit]:
         if len(user_events) == 0:
             return []
@@ -54,27 +52,29 @@ class TimebasedWeightsCalculator(WeightsCalculator):
 
         # Calculate deposit from the epoch start to the first event
         first_event = user_events[0]
-        amount = int(first_event["depositBefore"])
-        weight = first_event["timestamp"] - start
+        amount = first_event.deposit_before
+        weight = first_event.timestamp - start
         weighted_amounts.append(WeightedDeposit(amount, weight))
 
         # Calculate deposit between all events
         for prev_event, next_event in zip(user_events, user_events[1:]):
-            amount = int(next_event["depositBefore"])
-            weight = next_event["timestamp"] - prev_event["timestamp"]
+            amount = next_event.deposit_before
+            weight = next_event.timestamp - prev_event.timestamp
             weighted_amounts.append(WeightedDeposit(amount, weight))
 
         # Calculate deposit from the last event to the epoch end
         last_event = user_events[-1]
         amount = cls._calculate_deposit_after_event(last_event)
-        weight = end - last_event["timestamp"]
+        weight = end - last_event.timestamp
         weighted_amounts.append(WeightedDeposit(amount, weight))
 
         return list(filter(lambda wd: wd.weight != 0, weighted_amounts))
 
     @classmethod
-    def _calculate_deposit_after_event(cls, event: Dict) -> int:
-        if event["__typename"] == "Locked":
-            return int(event["depositBefore"]) + int(event["amount"])
+    def _calculate_deposit_after_event(cls, event: DepositEvent) -> int:
+        if event.type == EventType.LOCK:
+            return event.deposit_before + event.amount
+        elif event.type == EventType.UNLOCK:
+            return event.deposit_before - event.amount
         else:
-            return int(event["depositBefore"]) - int(event["amount"])
+            raise TypeError

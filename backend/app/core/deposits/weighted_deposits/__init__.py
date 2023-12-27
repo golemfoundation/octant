@@ -3,7 +3,12 @@ from dataclasses import dataclass
 
 
 from app.core.epochs import details as epochs_details
-from app.core.deposits.events import SubgraphEventsGenerator, EventGenerator
+from app.core.deposits.events import (
+    EpochEventsGenerator,
+    EventGenerator,
+    DepositEvent,
+    EventType,
+)
 
 from app.core.deposits.weighted_deposits.weights_calculator import WeightsCalculator
 from app.core.deposits.weighted_deposits.weighted_deposit import WeightedDeposit
@@ -23,7 +28,7 @@ def get_all_users_weighted_deposits(
     """
 
     epoch = epochs_details.get_epoch_details(epoch_no)
-    events_generator = SubgraphEventsGenerator(epoch.start_sec, epoch.end_sec)
+    events_generator = EpochEventsGenerator(epoch)
 
     weighted_deposits = weights_calculator.compute_all_users_weigted_deposits(
         events_generator
@@ -66,15 +71,14 @@ def get_user_weighted_deposits(
     )
 
 
-def _get_user_locked_amount(user_deposits: List[Dict]):
+def _get_user_locked_amount(user_deposits: List[DepositEvent]):
     if user_deposits == []:
         return 0
 
     last_deposit_event = user_deposits[-1]
+    lock_unlock_mulitiplier = 1 if last_deposit_event.type == EventType.LOCK else -1
 
-    deposit_before = int(last_deposit_event["depositBefore"])
-    deposit_amount = int(last_deposit_event["amount"])
-
-    lock_unlock_mulitiplier = 1 if last_deposit_event["__typename"] == "Locked" else -1
-
-    return deposit_before + deposit_amount * lock_unlock_mulitiplier
+    return (
+        last_deposit_event.deposit_before
+        + last_deposit_event.amount * lock_unlock_mulitiplier
+    )
