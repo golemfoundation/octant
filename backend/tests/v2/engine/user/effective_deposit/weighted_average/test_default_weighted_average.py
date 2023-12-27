@@ -13,16 +13,13 @@ from tests.helpers.mock_events_generator import MockEventGeneratorFactory
 EPOCH_START = 123
 EPOCH_END = 323
 EPOCH_DURATION = EPOCH_END - EPOCH_START
-
-EVENT_GENERATOR_FACTORY = MockEventGeneratorFactory(EPOCH_START, EPOCH_END)
+EVENT_GENERATOR_FACTORY = MockEventGeneratorFactory()
 
 
 def create_payload(
     deposits, epoch_start=EPOCH_START, epoch_end=EPOCH_END
 ) -> UserEffectiveDepositPayload:
-    generator = EVENT_GENERATOR_FACTORY.build(
-        deposits, epoch_start=epoch_start, epoch_end=epoch_end
-    )
+    generator = EVENT_GENERATOR_FACTORY.build(deposits)
     events = generator.get_all_users_events()
     return UserEffectiveDepositPayload(epoch_start, epoch_end, events)
 
