@@ -1,6 +1,5 @@
-from app.v2.context.context import CurrentEpochContext
-from app.v2.modules.staking.proceeds.service.factory import get_staking_proceeds_service
-from app.v2.modules.staking.proceeds.service.impl.current import (
+from app.v2.modules.staking.proceeds.service.service import get_staking_proceeds_service
+from app.v2.modules.staking.proceeds.service.service import (
     CurrentStakingProceedsService,
 )
 

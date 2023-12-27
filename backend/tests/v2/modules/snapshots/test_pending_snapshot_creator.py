@@ -5,8 +5,8 @@ import pytest
 from app import database
 from app.v2.context.builder import ContextBuilder
 from app.v2.engine.user.effective_deposit import UserDeposit
-from app.v2.modules.octant_rewards.service import OctantRewardsDTO
-from app.v2.modules.snapshots.pending.service import PendingSnapshotsCreator
+from app.v2.modules.octant_rewards.service.service import OctantRewardsDTO
+from app.v2.modules.snapshots.pending.service.service import PendingSnapshotsCreator
 from tests.conftest import (
     MOCK_EPOCHS,
     ETH_PROCEEDS,

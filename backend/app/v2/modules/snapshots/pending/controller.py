@@ -1,12 +1,11 @@
 from typing import Optional
 
-from app.v2.context.builder import ContextBuilder
-from app.v2.modules.snapshots.pending.service.factory import get_snapshots_service
+from app.v2.context.epoch_state import EpochState
+from app.v2.context.manager import state_context
+from app.v2.modules.registry import get_services
 
 
 def create_pending_epoch_snapshot() -> Optional[int]:
-    context = (
-        ContextBuilder().with_pre_pending_epoch_context().with_octant_rewards().build()
-    )
-    service = get_snapshots_service(context.pre_pending_epoch_context)
-    return service.create_pending_epoch_snapshot(context.pre_pending_epoch_context)
+    with state_context(EpochState.PRE_PENDING) as context:
+        service = get_services(EpochState.PRE_PENDING).snapshots_service
+        return service.create_pending_epoch_snapshot(context)

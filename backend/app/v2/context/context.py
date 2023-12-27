@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Dict, Optional
 
-from app.database.models import User
 from app.v2.context.epoch_details import EpochDetails
 from app.v2.context.epoch_state import EpochState
 from app.v2.engine.epochs_settings import EpochSettings
@@ -23,4 +21,3 @@ class Context:
     epoch_details: EpochDetails
     epoch_settings: EpochSettings
     octant_rewards: OctantRewards = None
-    users_context: Optional[Dict[str, User]] = None

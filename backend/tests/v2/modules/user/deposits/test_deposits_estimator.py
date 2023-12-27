@@ -4,7 +4,7 @@ import pytest
 
 from app.v2.context.builder import ContextBuilder
 from app.v2.engine.user.effective_deposit import UserDeposit
-from app.v2.modules.user.deposits.service import UserDepositsService
+from app.v2.modules.user.deposits.service.service import UserDepositsService
 from tests.conftest import USER1_ADDRESS
 
 

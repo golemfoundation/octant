@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from app.v2.modules.user.budgets.service import UserBudgetsService
+from app.v2.modules.user.budgets.service.service import UserBudgetsService
 from tests.helpers.context import get_epoch_context, get_context
 
 

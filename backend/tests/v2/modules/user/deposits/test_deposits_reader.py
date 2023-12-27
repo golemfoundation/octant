@@ -4,7 +4,7 @@ from app import database
 from app.exceptions import EffectiveDepositNotFoundException
 from app.extensions import db
 from app.v2.context.builder import ContextBuilder
-from app.v2.modules.user.deposits.service import UserDepositsReader
+from app.v2.modules.user.deposits.service.service import UserDepositsReader
 from tests.conftest import USER1_ADDRESS, USER1_ED
 
 

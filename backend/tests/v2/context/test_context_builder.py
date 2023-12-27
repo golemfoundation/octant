@@ -1,7 +1,7 @@
 import pytest
 
 from app.v2.context.builder import ContextBuilder
-from app.v2.context.context import EpochContext
+from app.v2.context.context import Context
 from app.v2.engine.epochs_settings import EpochSettings
 from app.v2.engine.octant_rewards import OctantRewardsSettings
 from app.v2.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (

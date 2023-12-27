@@ -1,14 +1,10 @@
-from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Optional
 
 from app import database
-from app.extensions import db
-from app.v2.context.context import EpochContext, OctantRewards
+from app.v2.context.context import OctantRewards, Context
 from app.v2.modules.snapshots.pending.core import calculate_user_budgets
-from app.v2.modules.snapshots.pending.service.impl.default import (
-    DefaultSnapshotsService,
-)
+from app.v2.modules.user.deposits.service.service import UserDepositsService
 
 
 def save_snapshot(epoch: int, rewards: OctantRewards):
@@ -23,10 +19,11 @@ def save_snapshot(epoch: int, rewards: OctantRewards):
 
 
 @dataclass
-class PrePendingSnapshotsService(DefaultSnapshotsService):
-    @abstractmethod
-    def create_pending_epoch_snapshot(self, context: EpochContext) -> Optional[int]:
-        pending_epoch = context.epoch_num
+class PrePendingSnapshotsService:
+    user_deposits_service: UserDepositsService
+
+    def create_pending_epoch_snapshot(self, context: Context) -> Optional[int]:
+        pending_epoch = context.epoch_details.epoch_num
         rewards = context.octant_rewards
         (
             user_deposits,
@@ -39,7 +36,5 @@ class PrePendingSnapshotsService(DefaultSnapshotsService):
         database.deposits.save_deposits(pending_epoch, user_deposits)
         database.budgets.save_budgets(pending_epoch, user_budgets)
         save_snapshot(pending_epoch, rewards)
-
-        db.session.commit()
 
         return pending_epoch

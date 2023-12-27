@@ -1,8 +1,6 @@
 from flask import jsonify
 from requests.exceptions import RequestException
 
-from app.v2.context.epoch_state import EpochState
-
 
 class OctantException(Exception):
     status_code = 500

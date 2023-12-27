@@ -3,7 +3,7 @@ from decimal import Decimal
 import pytest
 
 from app.v2.context.builder import ContextBuilder
-from app.v2.modules.octant_rewards.service import OctantRewardsService
+from app.v2.modules.octant_rewards.service.service import OctantRewardsService
 from tests.conftest import MOCK_EPOCHS, TOTAL_ED, ETH_PROCEEDS
 
 

@@ -1,7 +1,7 @@
 from app.v2.context.context import (
     Context,
-    CurrentEpochContext,
-    EpochContext,
+    CurrentContext,
+    Context,
     OctantRewardsContext,
 )
 from app.v2.context.epoch import EpochDetails

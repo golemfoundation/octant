@@ -1,16 +1,18 @@
 from dataclasses import dataclass
 
-from app.v2.context.context import EpochContext
-from app.v2.modules.octant_rewards.api import OctantRewards
+from app.v2.context.context import Context
 from app.v2.modules.octant_rewards.core import calculate_rewards
-from app.v2.modules.octant_rewards.service.impl.default import (
-    DefaultOctantRewardsService,
-)
+from app.v2.modules.octant_rewards.service.service import OctantRewards
+from app.v2.modules.staking.proceeds.service.service import StakingProceedsService
+from app.v2.modules.user.deposits.service.service import UserDepositsService
 
 
 @dataclass
-class PrePendingOctantRewardsService(DefaultOctantRewardsService):
-    def get_octant_rewards(self, context: EpochContext) -> OctantRewards:
+class CalculatedOctantRewards:
+    staking_proceeds_service: StakingProceedsService
+    user_deposits_service: UserDepositsService
+
+    def get_octant_rewards(self, context: Context) -> OctantRewards:
         eth_proceeds = self.staking_proceeds_service.get_staking_proceeds(context)
         total_effective_deposit = (
             self.user_deposits_service.get_total_effective_deposit(context)

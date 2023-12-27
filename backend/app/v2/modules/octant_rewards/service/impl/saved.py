@@ -2,14 +2,16 @@ from dataclasses import dataclass
 
 from app import database
 from app.exceptions import MissingSnapshot
-from app.v2.context.context import EpochContext
-from app.v2.modules.octant_rewards.api import OctantRewardsService, OctantRewards
+from app.v2.context.context import Context
+from app.v2.modules.octant_rewards.service.service import OctantRewards
 
 
 @dataclass
-class DefaultOctantRewardsService(OctantRewardsService):
-    def get_octant_rewards(self, context: EpochContext) -> OctantRewards:
-        snapshot = database.pending_epoch_snapshot.get_by_epoch(context.epoch_num)
+class SavedOctantRewards:
+    def get_octant_rewards(self, context: Context) -> OctantRewards:
+        snapshot = database.pending_epoch_snapshot.get_by_epoch(
+            context.epoch_details.epoch_num
+        )
         if snapshot is None:
             raise MissingSnapshot()
 

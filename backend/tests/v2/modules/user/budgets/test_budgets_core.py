@@ -1,6 +1,6 @@
 from app.v2.engine.user import DefaultUserBudget
 from app.v2.engine.user.effective_deposit import UserDeposit
-from app.v2.modules.user.budgets.core import calculate_budgets
+from app.v2.modules.user.budgets.core.core import calculate_budgets
 from tests.conftest import (
     TOTAL_ED,
     ALL_INDIVIDUAL_REWARDS,

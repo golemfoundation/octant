@@ -2,7 +2,7 @@ import pytest
 
 from app.v2.context.builder import ContextBuilder
 from app.v2.engine.user.effective_deposit import UserDeposit
-from app.v2.modules.user.budgets.service import UserBudgetsCalculator
+from app.v2.modules.user.budgets.service.service import UserBudgetsCalculator
 from tests.conftest import MOCK_EPOCHS, TOTAL_ED, ALL_INDIVIDUAL_REWARDS
 
 
