@@ -54,6 +54,13 @@ def test_returns_locks_and_unlocks_for_first_epoch(mocker, events):
                 ALICE_ADDRESS,
                 EventType.LOCK,
                 timestamp=1000,
+                amount=0,
+                deposit_before=0,
+            ),
+            DepositEvent(
+                ALICE_ADDRESS,
+                EventType.LOCK,
+                timestamp=1000,
                 amount=3300,
                 deposit_before=0,
             ),
@@ -66,6 +73,13 @@ def test_returns_locks_and_unlocks_for_first_epoch(mocker, events):
             ),
         ],
         BOB_ADDRESS: [
+            DepositEvent(
+                BOB_ADDRESS,
+                EventType.LOCK,
+                timestamp=1000,
+                amount=0,
+                deposit_before=0,
+            ),
             DepositEvent(
                 BOB_ADDRESS,
                 EventType.LOCK,
@@ -145,6 +159,13 @@ def test_returns_locks_and_unlocks_for_second_epoch(
             ),
         ],
         dave: [
+            DepositEvent(
+                dave,
+                EventType.LOCK,
+                timestamp=2000,
+                amount=0,
+                deposit_before=0,
+            ),
             DepositEvent(
                 dave,
                 EventType.LOCK,

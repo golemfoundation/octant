@@ -95,8 +95,7 @@ class EpochEventsGenerator(EventGenerator):
         events = list(map(DepositEvent.from_dict, events))
         sorted_events = sorted(events, key=attrgetter("timestamp"))
 
-        if epoch_start_locked_amount is not None:
-            sorted_events.insert(0, epoch_start_locked_amount)
+        sorted_events.insert(0, epoch_start_locked_amount)
 
         return sorted_events
 
@@ -126,6 +125,20 @@ class EpochEventsGenerator(EventGenerator):
             else:
                 user_events[event.user] = [event]
 
+        epoch_start_users = list(map(attrgetter("user"), epoch_start_events))
+        for user_address in user_events:
+            if user_address not in epoch_start_users:
+                user_events[user_address].insert(
+                    0,
+                    DepositEvent(
+                        user_address,
+                        EventType.LOCK,
+                        timestamp=self.epoch_start,
+                        amount=0,
+                        deposit_before=0,
+                    ),
+                )
+
         return user_events
 
     def _get_user_epoch_start_deposit(self, user_address):
@@ -133,15 +146,18 @@ class EpochEventsGenerator(EventGenerator):
             user_address, self._epoch_no - 1
         )
 
-        if epoch_start_locked_amount is None:
-            return None
+        deposit_before = (
+            int(epoch_start_locked_amount.epoch_end_deposit)
+            if epoch_start_locked_amount is not None
+            else 0
+        )
 
         return DepositEvent(
             user=user_address,
             type=EventType.LOCK,
             timestamp=self.epoch_start,
             amount=0,  # it is not a deposit in fact
-            deposit_before=int(epoch_start_locked_amount.epoch_end_deposit),
+            deposit_before=deposit_before,
         )
 
     def _get_epoch_start_deposits(self):
