@@ -19,7 +19,7 @@ def save_snapshot(epoch: int, rewards: OctantRewards):
 
 
 @dataclass
-class PrePendingSnapshotsService:
+class PrePendingSnapshots:
     user_deposits_service: UserDepositsService
 
     def create_pending_epoch_snapshot(self, context: Context) -> Optional[int]:

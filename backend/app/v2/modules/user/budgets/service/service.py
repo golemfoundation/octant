@@ -8,6 +8,6 @@ def estimate_budget(
     lock_duration_sec: int,
     glm_amount: int,
 ) -> int:
-    return core.budget_calculator.estimate_budget(
+    return core.estimate_budget(
         current_context, future_context, lock_duration_sec, glm_amount
     )

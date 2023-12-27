@@ -38,7 +38,7 @@ def estimate_epoch_budget(
     epoch_details = context.epoch_details
     epoch_settings = context.epoch_settings
     rewards = context.octant_rewards
-    events = simulate_user_events(epoch_details, lock_duration, glm_amount)
+    events = {"": simulate_user_events(epoch_details, lock_duration, glm_amount)}
     user_effective_deposits, _ = calculate_effective_deposits(
         epoch_details, epoch_settings, events
     )

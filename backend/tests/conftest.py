@@ -12,6 +12,7 @@ import gql
 from web3 import Web3
 
 from app.contracts.erc20 import ERC20
+from app.v2.engine.user.effective_deposit import UserDeposit
 from tests.helpers.gql_client import MockGQLClient
 from app import create_app, database
 from app.contracts.epochs import Epochs
@@ -440,6 +441,33 @@ def mock_allocations_db(app, user_accounts, proposal_accounts):
     )
 
     db.session.commit()
+
+
+@pytest.fixture(scope="function")
+def mock_user_deposits():
+    user_deposits_service_mock = Mock()
+    user_deposits_service_mock.get_total_effective_deposit.return_value = TOTAL_ED
+    user_deposits_service_mock.get_all_effective_deposits.return_value = (
+        [
+            UserDeposit(
+                USER1_ADDRESS, 270_000000000_000000000, 300_000000000_000000000
+            ),
+            UserDeposit(
+                USER2_ADDRESS, 2790_000000000_000000000, 3100_000000000_000000000
+            ),
+        ],
+        3060_000000000_000000000,
+    )
+
+    return user_deposits_service_mock
+
+
+@pytest.fixture(scope="function")
+def mock_staking_proceeds():
+    staking_proceeds_service_mock = Mock()
+    staking_proceeds_service_mock.get_staking_proceeds.return_value = ETH_PROCEEDS
+
+    return staking_proceeds_service_mock
 
 
 def allocate_user_rewards(

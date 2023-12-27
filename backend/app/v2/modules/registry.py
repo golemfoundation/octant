@@ -10,7 +10,7 @@ from app.v2.modules.octant_rewards.service.impl.calculated import (
 from app.v2.modules.octant_rewards.service.impl.saved import SavedOctantRewards
 from app.v2.modules.octant_rewards.service.service import OctantRewardsService
 from app.v2.modules.snapshots.pending.service.impl.pre_pending import (
-    PrePendingSnapshotsService,
+    PrePendingSnapshots,
 )
 from app.v2.modules.snapshots.pending.service.service import SnapshotsService
 from app.v2.modules.staking.proceeds.service.impl.contract_balance import (
@@ -60,7 +60,7 @@ def register_services():
     calculated_user_deposits = CalculatedUserDeposits(
         events_generator=subgraph_events_generator
     )
-    pre_pending_snapshots = PrePendingSnapshotsService(
+    pre_pending_snapshots = PrePendingSnapshots(
         user_deposits_service=calculated_user_deposits
     )
 

@@ -1,4 +1,4 @@
-from typing import Tuple, List
+from typing import Tuple, List, Dict
 
 from app.v2.context.epoch_details import EpochDetails
 from app.v2.engine.epochs_settings import EpochSettings
@@ -9,7 +9,7 @@ from app.v2.engine.user.effective_deposit import (
 
 
 def calculate_effective_deposits(
-    epoch_details: EpochDetails, epoch_settings: EpochSettings, events
+    epoch_details: EpochDetails, epoch_settings: EpochSettings, events: Dict[str, List[Dict]]
 ) -> Tuple[List[UserDeposit], int]:
     start = epoch_details.start_sec
     end = epoch_details.end_sec
