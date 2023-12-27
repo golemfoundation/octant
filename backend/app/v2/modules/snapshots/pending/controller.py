@@ -6,6 +6,6 @@ from app.v2.modules.registry import get_services
 
 
 def create_pending_epoch_snapshot() -> Optional[int]:
-    with state_context(EpochState.PRE_PENDING) as context:
-        service = get_services(EpochState.PRE_PENDING).snapshots_service
-        return service.create_pending_epoch_snapshot(context)
+    context = state_context(EpochState.PRE_PENDING)
+    service = get_services(EpochState.PRE_PENDING).snapshots_service
+    return service.create_pending_epoch_snapshot(context)

@@ -268,8 +268,8 @@ def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.controllers.epochs.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.controllers.withdrawals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.core.proposals.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.v2.context.builder.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.v2.context.epoch.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.v2.context.epoch_state.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.v2.context.epoch_details.epochs", MOCK_EPOCHS)
 
     MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
     MOCK_EPOCHS.get_current_epoch.return_value = MOCKED_CURRENT_EPOCH_NO
@@ -295,7 +295,9 @@ def patch_proposals(monkeypatch, proposal_accounts):
 
 @pytest.fixture(scope="function")
 def patch_glm(monkeypatch):
-    monkeypatch.setattr("app.v2.modules.user.deposits.service.glm", MOCK_GLM)
+    monkeypatch.setattr(
+        "app.v2.modules.user.deposits.service.impl.contract_balance.glm", MOCK_GLM
+    )
 
     MOCK_GLM.balance_of.return_value = TOTAL_ED
 

@@ -3,9 +3,7 @@ from typing import List, Dict, Tuple
 
 
 class MockEventGenerator:
-    def __init__(
-        self, user_events: Dict[str, List[Dict]]
-    ):
+    def __init__(self, user_events: Dict[str, List[Dict]]):
         self.events = {
             user: sorted(events, key=lambda x: x["timestamp"])
             for user, events in user_events.items()
@@ -23,7 +21,6 @@ class MockEventGeneratorFactory:
         self,
         events: Dict[str, List[Tuple[int, int]]],
     ) -> MockEventGenerator:
-
         events = {
             user_address: self._map_user_events(user_events)
             for user_address, user_events in events.items()

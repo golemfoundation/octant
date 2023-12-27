@@ -63,29 +63,29 @@ def register_services():
     pre_pending_snapshots = PrePendingSnapshotsService(
         user_deposits_service=calculated_user_deposits
     )
-    calculated_octant_rewards = partial(
-        CalculatedOctantRewards,
-        estimated_staking_proceeds,
-        contract_balance_user_deposits,
-    )
 
     SERVICE_REGISTRY[EpochState.FUTURE] = _build_registry(
         staking_proceeds=estimated_staking_proceeds,
         user_deposits=contract_balance_user_deposits,
-        octant_rewards=calculated_octant_rewards(),
+        octant_rewards=CalculatedOctantRewards(
+            estimated_staking_proceeds,
+            contract_balance_user_deposits,
+        ),
     )
     SERVICE_REGISTRY[EpochState.CURRENT] = _build_registry(
         staking_proceeds=estimated_staking_proceeds,
         user_deposits=calculated_user_deposits,
-        octant_rewards=calculated_octant_rewards(
-            estimated_staking_proceeds, calculated_user_deposits
+        octant_rewards=CalculatedOctantRewards(
+            estimated_staking_proceeds,
+            calculated_user_deposits,
         ),
     )
     SERVICE_REGISTRY[EpochState.PRE_PENDING] = _build_registry(
         staking_proceeds=contract_balance_staking_proceeds,
         user_deposits=calculated_user_deposits,
-        octant_rewards=calculated_octant_rewards(
-            contract_balance_staking_proceeds, calculated_user_deposits
+        octant_rewards=CalculatedOctantRewards(
+            contract_balance_staking_proceeds,
+            calculated_user_deposits,
         ),
         snapshots_service=pre_pending_snapshots,
     )

@@ -19,7 +19,7 @@ def get_epoch_state(epoch_num: int) -> EpochState:
     current_epoch_num = epochs.get_current_epoch()
     pending_epoch = epochs.get_pending_epoch()
     pending_snapshot = database.pending_epoch_snapshot.get_by_epoch(epoch_num)
-    finalized_snapshot = database.pending_epoch_snapshot.get_by_epoch(epoch_num)
+    finalized_snapshot = database.finalized_epoch_snapshot.get_by_epoch(epoch_num)
 
     if epoch_num > current_epoch_num:
         return EpochState.FUTURE
@@ -61,7 +61,7 @@ def validate_epoch_num(epoch_num: int):
 
 def validate_epoch_state(epoch_num: int, epoch_state: EpochState):
     pending_snapshot = database.pending_epoch_snapshot.get_by_epoch(epoch_num)
-    finalized_snapshot = database.pending_epoch_snapshot.get_by_epoch(epoch_num)
+    finalized_snapshot = database.finalized_epoch_snapshot.get_by_epoch(epoch_num)
 
     if epoch_state == EpochState.PRE_PENDING:
         if pending_snapshot is not None:
