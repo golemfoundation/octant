@@ -121,7 +121,6 @@ class EpochEventsGenerator(EventGenerator):
             return deepcopy(self._user_events_cache)
 
         epoch_start_events = self._get_epoch_start_deposits()
-        print(f"epoch start events: {epoch_start_events}")
 
         epoch_events = get_locks_by_timestamp_range(self.epoch_start, self.epoch_end)
         epoch_events += get_unlocks_by_timestamp_range(self.epoch_start, self.epoch_end)
@@ -135,7 +134,6 @@ class EpochEventsGenerator(EventGenerator):
         for event in epoch_start_events:
             if event.user in self._user_events_cache:
                 self._user_events_cache[event.user].insert(0, event)
-                print(f"here: {self._user_events_cache[event.user]}")
             else:
                 self._user_events_cache[event.user] = [event]
 
