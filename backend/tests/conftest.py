@@ -463,6 +463,23 @@ def mock_user_deposits():
 
 
 @pytest.fixture(scope="function")
+def mock_events_generator():
+    events = [
+        {
+            "__typename": "Locked",
+            "amount": 100_000000000_000000000,
+            "depositBefore": 0,
+            "timestamp": 1500,
+        }
+    ]
+    events_generator_mock = Mock()
+    events_generator_mock.get_all_users_events.return_value = {USER1_ADDRESS: events}
+    events_generator_mock.get_user_events.return_value = events
+
+    return events_generator_mock
+
+
+@pytest.fixture(scope="function")
 def mock_staking_proceeds():
     staking_proceeds_service_mock = Mock()
     staking_proceeds_service_mock.get_staking_proceeds.return_value = ETH_PROCEEDS

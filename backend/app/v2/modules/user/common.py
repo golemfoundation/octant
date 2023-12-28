@@ -9,7 +9,9 @@ from app.v2.engine.user.effective_deposit import (
 
 
 def calculate_effective_deposits(
-    epoch_details: EpochDetails, epoch_settings: EpochSettings, events: Dict[str, List[Dict]]
+    epoch_details: EpochDetails,
+    epoch_settings: EpochSettings,
+    events: Dict[str, List[Dict]],
 ) -> Tuple[List[UserDeposit], int]:
     start = epoch_details.start_sec
     end = epoch_details.end_sec

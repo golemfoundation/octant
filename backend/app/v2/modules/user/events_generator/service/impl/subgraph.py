@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from itertools import groupby
 from operator import itemgetter
 from typing import List, Dict
@@ -14,6 +15,7 @@ from app.infrastructure.graphql.unlocks import (
 from app.v2.context.context import Context
 
 
+@dataclass
 class SubgraphEventsGenerator:
     def get_user_events(self, context: Context, user_address: str = None) -> List[Dict]:
         """

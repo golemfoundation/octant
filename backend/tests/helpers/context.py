@@ -40,7 +40,9 @@ def get_octant_rewards(
     )
 
 
-def get_context(epoch_num: int = 1, epoch_state: EpochState = EpochState.CURRENT, **kwargs) -> Context:
+def get_context(
+    epoch_num: int = 1, epoch_state: EpochState = EpochState.CURRENT, **kwargs
+) -> Context:
     epoch_details = get_epoch_details(epoch_num, **kwargs)
     epoch_settings = get_epoch_settings(epoch_num)
     octant_rewards = get_octant_rewards(**kwargs)

@@ -55,7 +55,7 @@ def get_epoch_number(epoch_state: EpochState) -> int:
 
 
 def validate_epoch_num(epoch_num: int):
-    if epoch_num is None or epoch_num is 0:
+    if not epoch_num:
         raise InvalidEpoch()
 
 

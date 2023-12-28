@@ -1,6 +1,5 @@
 from collections import defaultdict
 from dataclasses import dataclass
-from functools import partial
 from typing import Dict, Optional
 
 from app.v2.context.epoch_state import EpochState

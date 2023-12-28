@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Tuple, List
 
 from app import database
@@ -6,6 +7,7 @@ from app.v2.context.context import Context
 from app.v2.engine.user.effective_deposit import UserDeposit
 
 
+@dataclass
 class SavedUserDeposits:
     def get_all_effective_deposits(
         self, context: Context
@@ -24,4 +26,4 @@ class SavedUserDeposits:
         )
         if deposit is None:
             raise EffectiveDepositNotFoundException(epoch_num, user_address)
-        return deposit.effective_deposit
+        return int(deposit.effective_deposit)

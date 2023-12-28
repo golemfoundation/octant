@@ -25,8 +25,12 @@ from tests.helpers.context import get_context
     ],
 )
 def test_estimate_budget(days, amount, expected):
-    current_context = get_context(1, start=10000000, duration=6220800, remaining_sec=6000000)
-    future_context = get_context(2, start=16220800, duration=7776000, remaining_sec=7776000)
+    current_context = get_context(
+        1, start=10000000, duration=6220800, remaining_sec=6000000
+    )
+    future_context = get_context(
+        2, start=16220800, duration=7776000, remaining_sec=7776000
+    )
     lock_duration = days_to_sec(days)
 
     result = estimate_budget(current_context, future_context, lock_duration, amount)
