@@ -3,7 +3,7 @@ import pytest
 
 from app.extensions import w3, epochs
 from app.legacy.core.proposals import get_proposals_addresses
-from .conftest import Client, UserAccount
+from tests.conftest import Client, UserAccount
 
 # Please note that tests here assume that they talk to blockchain and indexer
 # whose state is not reset between tests.

@@ -29,7 +29,7 @@ from tests.conftest import (
     MOCK_EPOCHS,
 )
 from tests.helpers import create_epoch_event
-from .helpers.constants import USER2_BUDGET, USER3_BUDGET
+from tests.helpers.constants import USER2_BUDGET, USER3_BUDGET
 from .test_allocations import (
     sign,
     create_payload,

@@ -16,7 +16,7 @@ def before(app):
 
 
 def test_merkle_tree():
-    with open(f"{app.config['TEST_DIR']}/merkle_tree/testInputs.json", "r") as f:
+    with open(f"{app.config['TEST_DIR']}/legacy/merkle_tree/testInputs.json", "r") as f:
         test_inputs = json.load(f)
 
     leaves = [AccountFunds(addr, amount) for addr, amount in test_inputs]
@@ -24,7 +24,7 @@ def test_merkle_tree():
 
     # validate whole dumped tree
     with open(
-        f"{app.config['TEST_DIR']}/merkle_tree/expectedMerkleTree.json", "r"
+        f"{app.config['TEST_DIR']}/legacy/merkle_tree/expectedMerkleTree.json", "r"
     ) as f:
         expected_merkle_tree_json = json.load(f)
 
@@ -46,7 +46,9 @@ def test_merkle_tree():
     assert merkle_tree.leaf_encoding == expected_merkle_tree.leaf_encoding
 
     # validate proofs
-    with open(f"{app.config['TEST_DIR']}/merkle_tree/expectedProofs.json", "r") as f:
+    with open(
+        f"{app.config['TEST_DIR']}/legacy/merkle_tree/expectedProofs.json", "r"
+    ) as f:
         expected_proofs = json.load(f)
     for i, test_input in enumerate(test_inputs):
         assert get_proof(merkle_tree, test_input[0]) == expected_proofs[i]
