@@ -1,4 +1,5 @@
 import pytest
+from freezegun import freeze_time
 
 from app import database, exceptions
 from app.extensions import db
@@ -7,26 +8,40 @@ from app.controllers.snapshots import (
     snapshot_finalized_epoch,
 )
 from app.core.user.rewards import get_all_claimed_rewards
+from app.core.user.patron_mode import toggle_patron_mode
+
+from tests.helpers import create_epoch_event
+
 from tests.conftest import (
+    mock_graphql,
     allocate_user_rewards,
     TOTAL_REWARDS,
     ALL_INDIVIDUAL_REWARDS,
     MOCK_EPOCHS,
-    USER3_BUDGET,
 )
+from tests.helpers.constants import USER3_BUDGET
 
 MOCKED_FINALIZED_EPOCH_NO = 1
 
 
 @pytest.fixture(autouse=True)
 def before(
+    mocker,
+    graphql_client,
     patch_epochs,
     patch_proposals,
     patch_has_pending_epoch_snapshot,
 ):
     MOCK_EPOCHS.get_finalized_epoch.return_value = MOCKED_FINALIZED_EPOCH_NO
 
+    epoch = create_epoch_event(
+        start=1698802327, end=1698803327, duration=1000, epoch=MOCKED_FINALIZED_EPOCH_NO
+    )
 
+    mock_graphql(mocker, epochs_events=[epoch])
+
+
+@freeze_time("2023-11-01 01:48:47")
 def test_finalized_epoch_snapshot_with_rewards(
     user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
 ):
@@ -72,13 +87,14 @@ def test_finalized_epoch_snapshot_with_rewards(
     assert snapshot.created_at is not None
 
 
+@freeze_time("2023-11-01 01:48:47")
 def test_finalized_epoch_snapshot_with_patrons_enabled(
     user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
 ):
     user1_allocation = 1000_000000000
     user2_allocation = 2000_000000000
 
-    database.user.toggle_patron_mode(user_accounts[2].address)
+    toggle_patron_mode(user_accounts[2].address)
     db.session.commit()
 
     allocate_user_rewards(user_accounts[0], proposal_accounts[0], user1_allocation)
@@ -122,6 +138,7 @@ def test_finalized_epoch_snapshot_with_patrons_enabled(
     assert snapshot.created_at is not None
 
 
+@freeze_time("2023-11-01 01:48:47")
 def test_finalized_epoch_snapshot_without_rewards(
     user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
 ):

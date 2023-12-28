@@ -7,7 +7,7 @@ export type ResponseHistoryItem = {
   projectAddress?: string;
   timestamp: string;
   transactionHash?: string;
-  type: 'lock' | 'unlock' | 'allocation' | 'withdrawal';
+  type: 'lock' | 'unlock' | 'allocation' | 'withdrawal' | 'patron_mode_donation';
 };
 
 export type Response = { history: ResponseHistoryItem[]; next_cursor?: string };

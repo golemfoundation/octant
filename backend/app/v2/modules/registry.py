@@ -26,8 +26,8 @@ from app.v2.modules.user.deposits.service.impl.contract_balance import (
 )
 from app.v2.modules.user.deposits.service.impl.saved import SavedUserDeposits
 from app.v2.modules.user.deposits.service.service import UserDepositsService
-from app.v2.modules.user.events_generator.service.impl.subgraph import (
-    SubgraphEventsGenerator,
+from app.v2.modules.user.events_generator.service.impl.db_and_graph import (
+    DbAndGraphEventsGenerator,
 )
 
 
@@ -52,7 +52,7 @@ def register_services():
     saved_staking_proceeds = SavedStakingProceeds()
     contract_balance_staking_proceeds = ContractBalanceStakingProceeds()
     estimated_staking_proceeds = EstimatedStakingProceeds()
-    subgraph_events_generator = SubgraphEventsGenerator()
+    subgraph_events_generator = DbAndGraphEventsGenerator()
     saved_user_deposits = SavedUserDeposits()
     contract_balance_user_deposits = ContractBalanceUserDeposits()
     saved_octant_rewards = SavedOctantRewards()

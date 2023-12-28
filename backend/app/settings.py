@@ -56,6 +56,11 @@ class Config(object):
     GLM_SENDER_PRIVATE_KEY = os.getenv("GLM_SENDER_PRIVATE_KEY")
     GLM_SENDER_NONCE = int(os.getenv("GLM_SENDER_NONCE", 0))
 
+    # TODO Remove this setting after the new architecture is merged
+    EPOCH_2_STAKING_PROCEEDS_SURPLUS = int(
+        os.getenv("EPOCH_2_STAKING_PROCEEDS_SURPLUS", 0)
+    )
+
 
 class ProdConfig(Config):
     """Production configuration."""
@@ -75,6 +80,7 @@ class ProdConfig(Config):
         "pool_size": SQLALCHEMY_CONNECTION_POOL_SIZE,
         "max_overflow": SQLALCHEMY_CONNECTION_POOL_MAX_OVERFLOW,
     }
+    X_REAL_IP_REQUIRED = _parse_bool(os.getenv("X_REAL_IP_REQUIRED", "true"))
 
 
 class DevConfig(Config):
@@ -88,6 +94,7 @@ class DevConfig(Config):
     # Put the db file in project root
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{DB_PATH}"
+    X_REAL_IP_REQUIRED = _parse_bool(os.getenv("X_REAL_IP_REQUIRED", "false"))
 
 
 class ComposeConfig(Config):
@@ -96,6 +103,7 @@ class ComposeConfig(Config):
     ENV = "dev"
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv("DB_URI")
+    X_REAL_IP_REQUIRED = _parse_bool(os.getenv("X_REAL_IP_REQUIRED", "false"))
 
 
 class TestConfig(Config):
@@ -110,6 +118,11 @@ class TestConfig(Config):
     CHAIN_NAME = "sepolia"
     GLM_WITHDRAWAL_AMOUNT = 1000_000000000_000000000
     GLM_SENDER_NONCE = 0
+    # The number is calculated as 9_537357664_505573437 - 6_050000000_000000000
+    # Where:
+    # 9_537357664_505573437 - the amount of unclaimed and allocated under threshold
+    # 6_050000000_000000000 - extra operations cost during the epoch
+    EPOCH_2_STAKING_PROCEEDS_SURPLUS = 3_487357664_505573437
 
 
 def get_config():

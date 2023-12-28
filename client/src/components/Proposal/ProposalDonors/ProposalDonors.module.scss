@@ -18,8 +18,6 @@
 
   .body {
     border-top: 0.1rem solid $color-octant-grey8;
-    border-bottom: 0.1rem solid $color-octant-grey8;
-    min-height: 21.6rem;
   }
 
   .noDataInformation {
@@ -30,6 +28,7 @@
     &.noDonationsYet {
       text-align: left;
       margin-top: 2rem;
+      min-height: 21.6rem;
     }
   }
 

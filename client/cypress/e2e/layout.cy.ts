@@ -1,4 +1,4 @@
-import { navigateWithCheck } from 'cypress/utils/e2e';
+import { navigateWithCheck, mockCoinPricesServer } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
@@ -14,6 +14,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     beforeEach(() => {
+      mockCoinPricesServer();
       cy.disconnectMetamaskWalletFromAllDapps();
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');

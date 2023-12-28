@@ -12,10 +12,10 @@ fi
 
 export DEPLOYMENT_TYPE=$TYPE
 
-if [[ "$TYPE" == "e2e" ]]; then
+if [[ "$TYPE" =~ ^(e2e|apitest)$ ]]; then
 	## E2E tests deployment
 	## 	the environment will be removed when after E2E tests are finished
-	export DEPLOYMENT_ID="${CI_PREFIX}-e2e-${CI_PIPELINE_ID}"
+	export DEPLOYMENT_ID="${CI_PREFIX}-${TYPE}-${CI_PIPELINE_ID}"
 elif [[ "$TYPE" =~ ^(uat|master)$ ]]; then
 	## MASTER/UAT/other-persistent-envs
 	## 	  contracts are never taken from a pre-defined, manually deployed set

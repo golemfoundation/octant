@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List, Dict
+from typing import List
+
+from app.v2.engine.user.effective_deposit import DepositEvent, EventType
 
 
 @dataclass(frozen=True)
@@ -25,7 +27,7 @@ class WeightedDeposit:
 class DepositWeightsPayload:
     start: int = None
     end: int = None
-    user_events: List[Dict] = None
+    user_events: List[DepositEvent] = None
 
 
 @dataclass
@@ -47,27 +49,29 @@ class TimebasedWeights(ABC):
 
         # Calculate deposit from the epoch start to the first event
         first_event = user_events[0]
-        amount = int(first_event["depositBefore"])
-        weight = first_event["timestamp"] - payload.start
+        amount = int(first_event.deposit_before)
+        weight = first_event.timestamp - payload.start
         weighted_amounts.append(WeightedDeposit(amount, weight))
 
         # Calculate deposit between all events
         for prev_event, next_event in zip(user_events, user_events[1:]):
-            amount = int(next_event["depositBefore"])
-            weight = next_event["timestamp"] - prev_event["timestamp"]
+            amount = int(next_event.deposit_before)
+            weight = next_event.timestamp - prev_event.timestamp
             weighted_amounts.append(WeightedDeposit(amount, weight))
 
         # Calculate deposit from the last event to the epoch end
         last_event = user_events[-1]
         amount = calculate_deposit_after_event(last_event)
-        weight = payload.end - last_event["timestamp"]
+        weight = payload.end - last_event.timestamp
         weighted_amounts.append(WeightedDeposit(amount, weight))
 
-        return list(filter(lambda wd: wd.weight != 0, weighted_amounts))
+        return [wd for wd in weighted_amounts if wd.weight != 0]
 
 
-def calculate_deposit_after_event(event: Dict) -> int:
-    if event["__typename"] == "Locked":
-        return int(event["depositBefore"]) + int(event["amount"])
+def calculate_deposit_after_event(event: DepositEvent) -> int:
+    if event.type == EventType.LOCK:
+        return event.deposit_before + event.amount
+    elif event.type == EventType.UNLOCK:
+        return event.deposit_before - event.amount
     else:
-        return int(event["depositBefore"]) - int(event["amount"])
+        raise TypeError

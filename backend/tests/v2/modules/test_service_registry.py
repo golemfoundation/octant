@@ -20,8 +20,8 @@ from app.v2.modules.user.deposits.service.impl.contract_balance import (
     ContractBalanceUserDeposits,
 )
 from app.v2.modules.user.deposits.service.impl.saved import SavedUserDeposits
-from app.v2.modules.user.events_generator.service.impl.subgraph import (
-    SubgraphEventsGenerator,
+from app.v2.modules.user.events_generator.service.impl.db_and_graph import (
+    DbAndGraphEventsGenerator,
 )
 
 
@@ -39,23 +39,23 @@ from app.v2.modules.user.events_generator.service.impl.subgraph import (
         ),
         (
             EpochState.CURRENT,
-            CalculatedUserDeposits(SubgraphEventsGenerator()),
+            CalculatedUserDeposits(DbAndGraphEventsGenerator()),
             EstimatedStakingProceeds(),
             CalculatedOctantRewards(
                 EstimatedStakingProceeds(),
-                CalculatedUserDeposits(SubgraphEventsGenerator()),
+                CalculatedUserDeposits(DbAndGraphEventsGenerator()),
             ),
             None,
         ),
         (
             EpochState.PRE_PENDING,
-            CalculatedUserDeposits(SubgraphEventsGenerator()),
+            CalculatedUserDeposits(DbAndGraphEventsGenerator()),
             ContractBalanceStakingProceeds(),
             CalculatedOctantRewards(
                 ContractBalanceStakingProceeds(),
-                CalculatedUserDeposits(SubgraphEventsGenerator()),
+                CalculatedUserDeposits(DbAndGraphEventsGenerator()),
             ),
-            PrePendingSnapshots(CalculatedUserDeposits(SubgraphEventsGenerator())),
+            PrePendingSnapshots(CalculatedUserDeposits(DbAndGraphEventsGenerator())),
         ),
         (
             EpochState.PENDING,

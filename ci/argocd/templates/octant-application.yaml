@@ -15,7 +15,7 @@ spec:
     namespace: $DEPLOYMENT_ID
   sources:
     - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-      targetRevision: 0.2.28
+      targetRevision: 0.2.29
       chart: octant
       helm:
         parameters:
@@ -23,6 +23,8 @@ spec:
           - name: 'image.tag'
             value: '$IMAGE_TAG'
           ## Client
+          - name: webClient.replicas
+            value: '${WEB_CLIENT_REPLICAS:-1}'
           - name: 'webClient.alchemyId'
             value: '$VITE_ALCHEMY_ID'
           - name: 'webClient.jsonRpcEndpoint'
@@ -38,7 +40,16 @@ spec:
             value: '$BACKEND_RPC_URL'
           - name: graphNode.graph.env.GRAPHQL_MAX_FIRST
             value: '100000'
+          - name: graphHealtchecker.replicas
+            value: '${GRAPH_HEALTHCHECKER_REPLICAS:-1}'
+          ## Coin Prices Server
+          - name: coinPricesServer.replicas
+            value: '${COIN_PRICES_SERVER_REPLICAS:-2}'
           ## Backend
+          - name: backendServer.replicas
+            value: '${BACKEND_SERVER_REPLICAS:-3}'
+          - name: backendPgsql.deploy
+            value: '${BACKEND_SERVER_PGSQL:-true}'
           - name: 'backendServer.schedulerEnabled'
             value: '$SCHEDULER_ENABLED'
           - name: 'backendServer.vaultConfirmWithdrawals'
@@ -89,8 +100,12 @@ spec:
           - name: ingress.cloudflareProxied.graph-ipfs
             value: 'true'
     - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-      targetRevision: 0.0.4-rc2
+      targetRevision: 0.0.6
       chart: octant-anvil
+      helm:
+        parameters:
+          - name: 'anvil.block_time'
+            value: '${ANVIL_BLOCK_TIME:-5}'
   syncPolicy:
     automated:
       prune: true

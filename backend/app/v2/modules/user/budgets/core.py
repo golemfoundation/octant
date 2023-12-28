@@ -1,30 +1,35 @@
-from typing import List, Dict
+from typing import List
 
-from app.utils.subgraph_events import create_deposit_event
+from app.constants import ZERO_ADDRESS
 from app.v2.context.context import Context
 from app.v2.context.epoch_details import EpochDetails
 from app.v2.engine.user.budget import UserBudgetPayload
+from app.v2.engine.user.effective_deposit import DepositEvent, EventType
 from app.v2.modules.user.common import calculate_effective_deposits
 
 
 def simulate_user_events(
     epoch_details: EpochDetails, lock_duration: int, glm_amount: int
-) -> List[Dict]:
+) -> List[DepositEvent]:
     end = epoch_details.end_sec
     remaining = epoch_details.remaining_sec
     user_events = [
-        create_deposit_event(
-            amount=glm_amount,
+        DepositEvent(
+            user=ZERO_ADDRESS,
+            type=EventType.LOCK,
             timestamp=end - remaining,
+            amount=glm_amount,
+            deposit_before=0,
         )
     ]
     if lock_duration < remaining:
         user_events.append(
-            create_deposit_event(
-                typename="Unlocked",
-                deposit_before=glm_amount,
-                amount=glm_amount,
+            DepositEvent(
+                user=ZERO_ADDRESS,
+                type=EventType.UNLOCK,
                 timestamp=end - remaining + lock_duration,
+                amount=glm_amount,
+                deposit_before=glm_amount,
             )
         )
     return user_events
@@ -38,7 +43,9 @@ def estimate_epoch_budget(
     epoch_details = context.epoch_details
     epoch_settings = context.epoch_settings
     rewards = context.octant_rewards
-    events = {"": simulate_user_events(epoch_details, lock_duration, glm_amount)}
+    events = {
+        ZERO_ADDRESS: simulate_user_events(epoch_details, lock_duration, glm_amount)
+    }
     user_effective_deposits, _ = calculate_effective_deposits(
         epoch_details, epoch_settings, events
     )

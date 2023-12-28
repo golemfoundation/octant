@@ -1,18 +1,24 @@
-from itertools import accumulate
+from collections import defaultdict
+from operator import attrgetter
 from typing import List, Dict, Tuple
+
+from app.v2.engine.user.effective_deposit import DepositEvent
+from tests.helpers.subgraph.events import create_deposit_events
 
 
 class MockEventGenerator:
-    def __init__(self, user_events: Dict[str, List[Dict]]):
+    def __init__(self, user_events: Dict[str, List[DepositEvent]]):
         self.events = {
-            user: sorted(events, key=lambda x: x["timestamp"])
+            user: sorted(
+                map(DepositEvent.from_dict, events), key=attrgetter("timestamp")
+            )
             for user, events in user_events.items()
         }
 
-    def get_user_events(self, user_address: str = None) -> List[Dict]:
-        return self.events[user_address]
+    def get_user_events(self, user_address: str) -> List[DepositEvent]:
+        return self.events.get(user_address, [])
 
-    def get_all_users_events(self) -> Dict[str, List[Dict]]:
+    def get_all_users_events(self) -> Dict[str, List[DepositEvent]]:
         return self.events
 
 
@@ -21,31 +27,8 @@ class MockEventGeneratorFactory:
         self,
         events: Dict[str, List[Tuple[int, int]]],
     ) -> MockEventGenerator:
-        events = {
-            user_address: self._map_user_events(user_events)
-            for user_address, user_events in events.items()
-        }
+        events_by_user = defaultdict(list)
+        for event in create_deposit_events(events):
+            events_by_user[event["user"]].append(event)
 
-        return MockEventGenerator(events)
-
-    @staticmethod
-    def _tuple_to_event_dict(
-        event_and_deposit_before: Tuple[Tuple[int, int], int]
-    ) -> Dict:
-        user_event, deposit_before = event_and_deposit_before
-        return {
-            "timestamp": user_event[0],
-            "amount": abs(user_event[1]),
-            "__typename": "Locked" if user_event[1] > 0 else "Unlocked",
-            "depositBefore": deposit_before,
-        }
-
-    @staticmethod
-    def _map_user_events(user_events: List[Tuple[int, int]]) -> List[Dict]:
-        user_events.sort(key=lambda event: event[0])  # sort by timestamp, for sanity
-        events_and_deposits = zip(
-            user_events, accumulate(map(lambda event: event[1], user_events), initial=0)
-        )
-        return list(
-            map(MockEventGeneratorFactory._tuple_to_event_dict, events_and_deposits)
-        )
+        return MockEventGenerator(events_by_user)

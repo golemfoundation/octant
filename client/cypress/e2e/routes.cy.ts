@@ -1,10 +1,11 @@
-import { visitWithLoader } from 'cypress/utils/e2e';
+import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { ROOT, ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
   describe(`routes (wallet not connected): ${device}`, { viewportHeight, viewportWidth }, () => {
     before(() => {
+      mockCoinPricesServer();
       cy.clearLocalStorage();
     });
 

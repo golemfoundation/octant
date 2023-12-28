@@ -133,7 +133,8 @@
       "connectWallet": {
         "browserWallet": "Browser wallet",
         "connecting": "Connecting ...",
-        "walletConnect": "WalletConnect"
+        "walletConnect": "WalletConnect",
+        "ledgerConnect": "Ledger"
       },
       "donationEstimateBox": {
         "donationEstimate": "Donation estimate",
@@ -146,7 +147,8 @@
       "donors": {
         "donationsNotEnabled": "Donations are not enabled in this epoch",
         "noDonationsYet": "No donations yet",
-        "viewAll": "View all"
+        "viewAll": "View all",
+        "totalDonated": "Total donated"
       },
       "glmLock": {
         "lock": "Lock",
@@ -186,7 +188,8 @@
         "lockedGLM": "Locked GLM",
         "unlockedGLM": "Unlocked GLM",
         "projects": "Projects",
-        "withdrawnFunds": "Withdrawn funds"
+        "withdrawnFunds": "Withdrawn funds",
+        "epochDonation": "Epoch {{epoch}} donation"
       },
       "historyItemModal": {
         "header": {
@@ -202,7 +205,8 @@
           "gasPrice": "Gas price",
           "viewOnEtherscan": "View on Etherscan",
           "when": "When",
-          "withdrawal": "Withdrew ETH"
+          "withdrawal": "Withdrew ETH",
+          "matchingFundDonation": "Matching fund donation"
         }
       },
       "historyTransactionLabel": {
@@ -281,7 +285,7 @@
       "title": "You can't remove projects with donations",
       "message": "Set your donation to zero in Allocate view to enable project removal"
     },
-    "wrongNetwork":  {
+    "wrongNetwork": {
       "title": "Wrong network",
       "message": "Please change network to {{networkName}}{{isTestnet}}"
     }

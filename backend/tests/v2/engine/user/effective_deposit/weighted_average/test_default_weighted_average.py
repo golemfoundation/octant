@@ -1,3 +1,4 @@
+from app.constants import ZERO_ADDRESS
 from app.v2.engine.user import DefaultWeightedAverageEffectiveDeposit
 from app.v2.engine.user.effective_deposit import (
     UserEffectiveDepositPayload,
@@ -7,7 +8,7 @@ from app.v2.engine.user.effective_deposit.cut_off.cutoff_100glm import CutOff100
 from app.v2.engine.user.effective_deposit.weighted_average.weights.timebased.default import (
     DefaultTimebasedWeights,
 )
-from tests.conftest import USER1_ADDRESS, USER2_ADDRESS
+from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS
 from tests.helpers.mock_events_generator import MockEventGeneratorFactory
 
 EPOCH_START = 123
@@ -48,15 +49,15 @@ def test_one_user_deposit_at_the_beginning_of_an_epoch():
     assert result[1] == 100_000000000_000000000
 
 
-def test_user_without_address():
-    deposits = {None: [(EPOCH_START, 100_000000000_000000000)]}
+def test_user_with_zero_address():
+    deposits = {ZERO_ADDRESS: [(EPOCH_START, 100_000000000_000000000)]}
     payload = create_payload(deposits)
     uut = DefaultWeightedAverageEffectiveDeposit()
 
     result = uut.calculate_users_effective_deposits(payload)
 
     assert result[0] == [
-        UserDeposit(None, 100_000000000_000000000, 100_000000000_000000000)
+        UserDeposit(ZERO_ADDRESS, 100_000000000_000000000, 100_000000000_000000000)
     ]
     assert result[1] == 100_000000000_000000000
 

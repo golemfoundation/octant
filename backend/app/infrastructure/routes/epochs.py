@@ -51,7 +51,8 @@ class IndexedEpoch(OctantResource):
     @ns.response(200, "Current epoch successfully retrieved")
     def get(self):
         app.logger.debug("Getting current epoch number")
-        sg_epochs = sorted(graphql.epochs.get_epochs(), key=lambda d: d["epoch"])
+        sg_epochs = graphql.epochs.get_epochs()
+        sg_epochs = sorted(sg_epochs["epoches"], key=lambda d: d["epoch"])
         app.logger.debug(f"All indexed epochs: {sg_epochs}")
         app.logger.debug(f"Last indexed epoch: {sg_epochs[-1:][0]}")
         current_epoch = epochs.get_current_epoch()

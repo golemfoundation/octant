@@ -1,5 +1,6 @@
 import pytest
 from eth_account import Account
+from freezegun import freeze_time
 
 from app.controllers.allocations import allocate, get_allocation_nonce
 from app.controllers.rewards import (
@@ -17,16 +18,19 @@ from app.core.rewards.rewards import (
     calculate_matched_rewards_threshold,
 )
 from app import database, exceptions
-from app.database.user import toggle_patron_mode
+from app.core.user.patron_mode import toggle_patron_mode
 from app.extensions import db
-from .conftest import (
+
+from tests.helpers import create_epoch_event
+
+from tests.conftest import (
+    mock_graphql,
     allocate_user_rewards,
     deserialize_allocations,
     MOCK_PROPOSALS,
-    USER2_BUDGET,
-    USER3_BUDGET,
     MOCK_EPOCHS,
 )
+from .helpers.constants import USER2_BUDGET, USER3_BUDGET
 from .test_allocations import (
     sign,
     create_payload,
@@ -36,6 +40,8 @@ from .test_allocations import (
 
 @pytest.fixture(autouse=True)
 def before(
+    mocker,
+    graphql_client,
     proposal_accounts,
     patch_epochs,
     patch_proposals,
@@ -45,6 +51,10 @@ def before(
     MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts[0:5]
     ]
+
+    epoch = create_epoch_event(start=1698802327, end=1698803327, duration=1000, epoch=1)
+
+    mock_graphql(mocker, epochs_events=[epoch])
 
 
 def test_get_allocation_threshold(app, tos_users, proposal_accounts):
@@ -165,6 +175,7 @@ def test_estimated_proposal_rewards_raises_when_not_in_allocation_period(app):
         get_estimated_proposals_rewards()
 
 
+@freeze_time("2023-11-01 01:48:47")
 def test_proposals_rewards_with_patron(
     app, mock_pending_epoch_snapshot_db, tos_users, proposal_accounts
 ):
@@ -192,6 +203,7 @@ def test_proposals_rewards_with_patron(
     )
 
 
+@freeze_time("2023-11-01 01:48:47")
 def test_proposals_rewards_with_multiple_patrons(
     app, mock_pending_epoch_snapshot_db, tos_users, proposal_accounts
 ):
@@ -218,6 +230,7 @@ def test_proposals_rewards_with_multiple_patrons(
     )
 
 
+@freeze_time("2023-11-01 01:48:47")
 def test_finalized_epoch_proposal_rewards_with_patrons_enabled(
     user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
 ):
@@ -247,6 +260,7 @@ def test_finalized_epoch_proposal_rewards_with_patrons_enabled(
     assert proposal_rewards[1].matched == 73_372144713_581691264
 
 
+@freeze_time("2023-11-01 01:48:47")
 def test_cannot_get_proposal_rewards_when_snapshot_not_taken(
     user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
 ):

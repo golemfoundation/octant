@@ -5,13 +5,14 @@ from app.v2.engine.epochs_settings import EpochSettings
 from app.v2.engine.user.effective_deposit import (
     UserDeposit,
     UserEffectiveDepositPayload,
+    DepositEvent,
 )
 
 
 def calculate_effective_deposits(
     epoch_details: EpochDetails,
     epoch_settings: EpochSettings,
-    events: Dict[str, List[Dict]],
+    events: Dict[str, List[DepositEvent]],
 ) -> Tuple[List[UserDeposit], int]:
     start = epoch_details.start_sec
     end = epoch_details.end_sec

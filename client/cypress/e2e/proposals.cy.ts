@@ -1,10 +1,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import chaiColors from 'chai-colors';
 
-import { visitWithLoader } from 'cypress/utils/e2e';
+import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
 import { getNamesOfProposals } from 'cypress/utils/proposals';
 import viewports from 'cypress/utils/viewports';
-import { QUERY_KEYS } from 'src/api/queryKeys';
 import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
@@ -32,31 +31,17 @@ function checkProposalItemElements(index, name): Chainable<any> {
     .find('[data-test=ProposalsListItem__ButtonAddToAllocate]')
     .should('be.visible');
 
-  return cy.window().then(window => {
-    // @ts-expect-error missing typing for client window elements.
-    const currentEpoch = Number(window.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch));
-
-    switch (currentEpoch) {
-      case 0:
-        // In Epoch 0 rewards are not shown.
-        return cy;
-      case 1:
-        // In Epoch 1 rewards are not shown.
-        return cy;
-      default:
-        return cy
-          .get('[data-test^=ProposalsView__ProposalsListItem')
-          .eq(index)
-          .find('[data-test=ProposalRewards__notAvailable]')
-          .should('be.visible');
-      // TODO OCT-663 Make CY check if rewards are available (Epoch 2, decision window open).
-      // return cy
-      //   .get('[data-test^=ProposalsView__ProposalsListItem')
-      //   .eq(index)
-      //   .find('[data-test=ProposalRewards__currentTotal__label]')
-      //   .should('be.visible');
-    }
-  });
+  return cy
+    .get('[data-test^=ProposalsView__ProposalsListItem')
+    .eq(index)
+    .find('[data-test=ProposalRewards]')
+    .should('be.visible');
+  // TODO OCT-663 Make CY check if rewards are available (Epoch 2, decision window open).
+  // return cy
+  //   .get('[data-test^=ProposalsView__ProposalsListItem')
+  //   .eq(index)
+  //   .find('[data-test=ProposalRewards__currentTotal__label]')
+  //   .should('be.visible');
 }
 
 function addProposalToAllocate(index, numberOfAddedProposals): Chainable<any> {
@@ -71,7 +56,10 @@ function addProposalToAllocate(index, numberOfAddedProposals): Chainable<any> {
   cy.get('[data-test^=ProposalsView__ProposalsListItem')
     .eq(index)
     .find('[data-test=ProposalsListItem__ButtonAddToAllocate]')
-    .scrollIntoView()
+    .scrollIntoView();
+  cy.get('[data-test^=ProposalsView__ProposalsListItem')
+    .eq(index)
+    .find('[data-test=ProposalsListItem__ButtonAddToAllocate]')
     .click();
   cy.get('[data-test^=ProposalsView__ProposalsListItem')
     .eq(index)
@@ -98,7 +86,10 @@ function removeProposalFromAllocate(
   cy.get('[data-test^=ProposalsView__ProposalsListItem')
     .eq(index)
     .find('[data-test=ProposalsListItem__ButtonAddToAllocate]')
-    .scrollIntoView()
+    .scrollIntoView();
+  cy.get('[data-test^=ProposalsView__ProposalsListItem')
+    .eq(index)
+    .find('[data-test=ProposalsListItem__ButtonAddToAllocate]')
     .click();
   if (index < numberOfProposals - 1) {
     return cy.get('[data-test=Navbar__numberOfAllocations]').contains(numberOfAddedProposals - 1);
@@ -111,8 +102,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     let proposalNames: string[] = [];
 
     beforeEach(() => {
+      mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
-
       visitWithLoader(ROOT_ROUTES.proposals.absolute);
       cy.get('[data-test^=ProposalItemSkeleton').should('not.exist');
 
