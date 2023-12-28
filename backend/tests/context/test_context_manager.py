@@ -18,7 +18,7 @@ from tests.conftest import (
 
 
 @pytest.fixture(autouse=True)
-def before(app, patch_epochs, patch_glm, mock_epoch_details):
+def before(app, patch_epochs, patch_glm, patch_eth_get_balance, mock_epoch_details):
     pass
 
 

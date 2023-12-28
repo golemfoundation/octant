@@ -30,7 +30,7 @@ from tests.conftest import (
 )
 from tests.helpers import create_epoch_event
 from tests.helpers.constants import USER2_BUDGET, USER3_BUDGET
-from .test_allocations import (
+from tests.legacy.test_allocations import (
     sign,
     create_payload,
     build_allocations_eip712_data,

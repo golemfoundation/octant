@@ -373,7 +373,9 @@ def patch_eth_get_balance(monkeypatch):
     mock_eth = MagicMock(get_balance=MOCK_GET_ETH_BALANCE)
     mock_web3 = MagicMock(spec=Web3, eth=mock_eth)
 
-    monkeypatch.setattr("app.legacy.controllers.snapshots.w3", mock_web3)
+    monkeypatch.setattr(
+        "app.modules.staking.proceeds.service.impl.contract_balance.w3", mock_web3
+    )
     MOCK_GET_ETH_BALANCE.return_value = ETH_PROCEEDS
 
 
