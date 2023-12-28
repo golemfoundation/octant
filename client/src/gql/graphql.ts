@@ -1129,6 +1129,16 @@ export enum _SubgraphErrorPolicy_ {
   Deny = 'deny',
 }
 
+export type GetProjectsMetadataAccumulatedsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetProjectsMetadataAccumulatedsQuery = {
+  __typename?: 'Query';
+  projectsMetadataAccumulateds: Array<{
+    __typename?: 'ProjectsMetadataAccumulated';
+    projectsAddresses: Array<any>;
+  }>;
+};
+
 export type GetBlockNumberQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetBlockNumberQuery = {
@@ -1203,16 +1213,43 @@ export type GetLockedsDataQuery = {
   lockeds: Array<{ __typename?: 'Locked'; user: any; timestamp: number; amount: any }>;
 };
 
-export type GetProjectsMetadataAccumulatedsQueryVariables = Exact<{ [key: string]: never }>;
+export type GetProjectsMetadataPerEpochesQueryVariables = Exact<{ [key: string]: never }>;
 
-export type GetProjectsMetadataAccumulatedsQuery = {
+export type GetProjectsMetadataPerEpochesQuery = {
   __typename?: 'Query';
-  projectsMetadataAccumulateds: Array<{
-    __typename?: 'ProjectsMetadataAccumulated';
-    projectsAddresses: Array<any>;
+  projectsMetadataPerEpoches: Array<{
+    __typename?: 'ProjectsMetadataPerEpoch';
+    epoch: number;
+    proposalsCid: string;
   }>;
 };
 
+export const GetProjectsMetadataAccumulatedsDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetProjectsMetadataAccumulateds' },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'projectsMetadataAccumulateds' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'projectsAddresses' } }],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetProjectsMetadataAccumulatedsQuery,
+  GetProjectsMetadataAccumulatedsQueryVariables
+>;
 export const GetBlockNumberDocument = {
   kind: 'Document',
   definitions: [
@@ -1528,22 +1565,37 @@ export const GetLockedsDataDocument = {
     },
   ],
 } as unknown as DocumentNode<GetLockedsDataQuery, GetLockedsDataQueryVariables>;
-export const GetProjectsMetadataAccumulatedsDocument = {
+export const GetProjectsMetadataPerEpochesDocument = {
   kind: 'Document',
   definitions: [
     {
       kind: 'OperationDefinition',
       operation: 'query',
-      name: { kind: 'Name', value: 'GetProjectsMetadataAccumulateds' },
+      name: { kind: 'Name', value: 'GetProjectsMetadataPerEpoches' },
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
           {
             kind: 'Field',
-            name: { kind: 'Name', value: 'projectsMetadataAccumulateds' },
+            name: { kind: 'Name', value: 'projectsMetadataPerEpoches' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'orderBy' },
+                value: { kind: 'EnumValue', value: 'epoch' },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'orderDirection' },
+                value: { kind: 'EnumValue', value: 'asc' },
+              },
+            ],
             selectionSet: {
               kind: 'SelectionSet',
-              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'projectsAddresses' } }],
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'epoch' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'proposalsCid' } },
+              ],
             },
           },
         ],
@@ -1551,6 +1603,6 @@ export const GetProjectsMetadataAccumulatedsDocument = {
     },
   ],
 } as unknown as DocumentNode<
-  GetProjectsMetadataAccumulatedsQuery,
-  GetProjectsMetadataAccumulatedsQueryVariables
+  GetProjectsMetadataPerEpochesQuery,
+  GetProjectsMetadataPerEpochesQueryVariables
 >;

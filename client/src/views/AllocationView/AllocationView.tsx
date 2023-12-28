@@ -20,7 +20,6 @@ import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
-import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
 import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -53,7 +52,6 @@ const AllocationView = (): ReactElement => {
     setAreAllocationValuesEqualRewardsForProposals,
   ] = useState<boolean>(false);
   const { data: proposalsContract } = useProposalsContract();
-  const { data: proposalsIpfs } = useProposalsIpfs(proposalsContract);
   const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards();
 
   const { data: currentEpoch } = useCurrentEpoch();
@@ -310,7 +308,7 @@ const AllocationView = (): ReactElement => {
   });
 
   const selectedItemName = selectedItemAddress
-    ? proposalsIpfs?.find(({ address }) => address === selectedItemAddress)!.name
+    ? proposalsIpfsWithRewards?.find(({ address }) => address === selectedItemAddress)!.name
     : '';
 
   const restToDistribute = getRestToDistribute({
