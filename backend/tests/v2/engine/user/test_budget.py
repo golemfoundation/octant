@@ -1,5 +1,5 @@
-from app.v2.engine.user import DefaultUserBudget
-from app.v2.engine.user.budget import UserBudgetPayload
+from app.engine.user import DefaultUserBudget
+from app.engine.user.budget import UserBudgetPayload
 from tests.conftest import USER1_ED, TOTAL_ED, ALL_INDIVIDUAL_REWARDS
 
 

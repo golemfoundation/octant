@@ -1,7 +1,7 @@
 from flask import current_app as app
 from flask_restx import fields, Namespace
 
-from app.controllers import epochs
+from app.legacy.controllers import epochs
 from app.extensions import api
 from app.infrastructure import OctantResource, graphql
 

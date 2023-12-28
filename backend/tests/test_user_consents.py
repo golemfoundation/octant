@@ -1,14 +1,14 @@
 import pytest
 from eth_account.messages import encode_defunct
 
-from app import database
 from app import exceptions
-from app.core.user.tos import (
+from app.infrastructure import database
+from app.legacy.core.user.tos import (
     has_user_agreed_to_terms_of_service,
     add_user_terms_of_service_consent,
 )
-from app.crypto.eth_sign import terms_and_conditions_consent
-from app.crypto.eth_sign.terms_and_conditions_consent import (
+from app.legacy.crypto.eth_sign import terms_and_conditions_consent
+from app.legacy.crypto.eth_sign.terms_and_conditions_consent import (
     build_consent_message,
 )
 from tests.conftest import MOCK_IS_CONTRACT

@@ -1,11 +1,11 @@
 from app.constants import ZERO_ADDRESS
-from app.v2.engine.user import DefaultWeightedAverageEffectiveDeposit
-from app.v2.engine.user.effective_deposit import (
+from app.engine.user import DefaultWeightedAverageEffectiveDeposit
+from app.engine.user.effective_deposit import (
     UserEffectiveDepositPayload,
     UserDeposit,
 )
-from app.v2.engine.user.effective_deposit.cut_off.cutoff_100glm import CutOff100GLM
-from app.v2.engine.user.effective_deposit.weighted_average.weights.timebased.default import (
+from app.engine.user.effective_deposit.cut_off.cutoff_100glm import CutOff100GLM
+from app.engine.user.effective_deposit.weighted_average.weights.timebased.default import (
     DefaultTimebasedWeights,
 )
 from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS

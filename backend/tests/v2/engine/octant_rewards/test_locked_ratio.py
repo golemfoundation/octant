@@ -2,8 +2,8 @@ from decimal import Decimal
 
 import pytest
 
-from app.v2.engine.octant_rewards import DefaultLockedRatio
-from app.v2.engine.octant_rewards.locked_ratio import LockedRatioPayload
+from app.engine.octant_rewards import DefaultLockedRatio
+from app.engine.octant_rewards.locked_ratio import LockedRatioPayload
 
 
 @pytest.mark.parametrize(

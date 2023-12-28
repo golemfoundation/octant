@@ -1,17 +1,15 @@
 import pytest
 from freezegun import freeze_time
 
-from app import database, exceptions
+from app import exceptions
 from app.extensions import db
-from app.controllers.snapshots import (
+from app.infrastructure import database
+from app.legacy.controllers.snapshots import (
     finalized_snapshot_status,
     snapshot_finalized_epoch,
 )
-from app.core.user.rewards import get_all_claimed_rewards
-from app.core.user.patron_mode import toggle_patron_mode
-
-from tests.helpers import create_epoch_event
-
+from app.legacy.core.user.patron_mode import toggle_patron_mode
+from app.legacy.core.user.rewards import get_all_claimed_rewards
 from tests.conftest import (
     mock_graphql,
     allocate_user_rewards,
@@ -19,6 +17,7 @@ from tests.conftest import (
     ALL_INDIVIDUAL_REWARDS,
     MOCK_EPOCHS,
 )
+from tests.helpers import create_epoch_event
 from tests.helpers.constants import USER3_BUDGET
 
 MOCKED_FINALIZED_EPOCH_NO = 1

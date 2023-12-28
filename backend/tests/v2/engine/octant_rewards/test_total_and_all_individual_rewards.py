@@ -2,14 +2,12 @@ from decimal import Decimal
 
 import pytest
 
-from app.v2.engine.octant_rewards import DefaultTotalAndAllIndividualRewards
-from app.v2.engine.octant_rewards.total_and_individual import (
-    TotalAndAllIndividualPayload,
-)
-from app.v2.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (
+from app.engine.octant_rewards import DefaultTotalAndAllIndividualRewards
+from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividualPayload
+from app.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (
     AllProceedsWithOperationalCost,
 )
-from app.v2.engine.octant_rewards.total_and_individual.double import (
+from app.engine.octant_rewards.total_and_individual.double import (
     DoubleTotalAndIndividualRewards,
 )
 

@@ -2,10 +2,10 @@ from flask import Response
 from flask import current_app as app
 from flask_restx import Namespace, fields
 
-from app.controllers import snapshots
+from app.legacy.controllers import snapshots
 from app.extensions import api
 from app.infrastructure import OctantResource
-from app.v2.modules.snapshots.pending.controller import create_pending_epoch_snapshot
+from app.modules.snapshots.pending.controller import create_pending_epoch_snapshot
 
 ns = Namespace("snapshots", description="Database snapshots")
 api.add_namespace(ns)

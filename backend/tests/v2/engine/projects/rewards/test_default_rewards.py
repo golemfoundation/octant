@@ -1,8 +1,7 @@
 import pytest
 
-from app.core.common import AccountFunds
-from app.v2.engine.projects import DefaultProjectRewards
-from app.v2.engine.projects.rewards import ProjectRewardsPayload
+from app.engine.projects import DefaultProjectRewards
+from app.engine.projects.rewards import ProjectRewardsPayload, AccountFunds
 
 THRESHOLD = 100_000000000
 MATCHED_REWARDS = 100_000000000_000000000

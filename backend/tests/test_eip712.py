@@ -1,6 +1,6 @@
 import pytest
 
-from app.crypto.eip712 import (
+from app.legacy.crypto.eip712 import (
     sign,
     recover_address,
     build_allocations_eip712_data,

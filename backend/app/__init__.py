@@ -18,8 +18,8 @@ from app.logging import init_logger
 from app.infrastructure import events, routes, apscheduler  # noqa
 from app.infrastructure.exception_handler import ExceptionHandler
 from app.settings import ProdConfig, DevConfig
-from app.v2.engine.epochs_settings import register_epoch_settings
-from app.v2.modules.registry import register_services
+from app.engine.epochs_settings import register_epoch_settings
+from app.modules.registry import register_services
 
 
 def create_app(config=None):

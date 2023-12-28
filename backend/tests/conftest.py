@@ -12,19 +12,20 @@ from flask import g as request_context
 from flask.testing import FlaskClient
 from web3 import Web3
 
-from app import create_app, database
-from app.contracts.epochs import Epochs
-from app.contracts.erc20 import ERC20
-from app.contracts.proposals import Proposals
-from app.contracts.vault import Vault
-from app.controllers.allocations import allocate, deserialize_payload
-from app.core.allocations import AllocationRequest, Allocation
-from app.core.rewards.rewards import calculate_matched_rewards
-from app.crypto.account import Account as CryptoAccount
-from app.crypto.eip712 import sign, build_allocations_eip712_data
+from app import create_app
+from app.infrastructure import database
+from app.infrastructure.contracts.epochs import Epochs
+from app.infrastructure.contracts.erc20 import ERC20
+from app.infrastructure.contracts.proposals import Proposals
+from app.infrastructure.contracts.vault import Vault
+from app.legacy.controllers.allocations import allocate, deserialize_payload
+from app.legacy.core.allocations import AllocationRequest, Allocation
+from app.legacy.core.rewards.rewards import calculate_matched_rewards
+from app.legacy.crypto.account import Account as CryptoAccount
+from app.legacy.crypto.eip712 import sign, build_allocations_eip712_data
 from app.extensions import db, w3, deposits, glm
 from app.settings import TestConfig, DevConfig
-from app.v2.engine.user.effective_deposit import UserDeposit, DepositEvent, EventType
+from app.engine.user.effective_deposit import UserDeposit, DepositEvent, EventType
 from tests.helpers.constants import (
     MNEMONIC,
     MOCKED_PENDING_EPOCH_NO,
@@ -304,14 +305,14 @@ def mock_epoch_details(mocker, graphql_client):
 
 @pytest.fixture(scope="function")
 def patch_epochs(monkeypatch):
-    monkeypatch.setattr("app.controllers.allocations.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.controllers.snapshots.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.controllers.rewards.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.controllers.epochs.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.controllers.withdrawals.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.core.proposals.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.v2.context.epoch_state.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.v2.context.epoch_details.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.legacy.controllers.allocations.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.legacy.controllers.snapshots.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.legacy.controllers.rewards.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.legacy.controllers.epochs.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.legacy.controllers.withdrawals.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.legacy.core.proposals.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.context.epoch_state.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.context.epoch_details.epochs", MOCK_EPOCHS)
 
     MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
     MOCK_EPOCHS.get_current_epoch.return_value = MOCKED_CURRENT_EPOCH_NO
@@ -327,8 +328,8 @@ def patch_epochs(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_proposals(monkeypatch, proposal_accounts):
-    monkeypatch.setattr("app.core.allocations.proposals", MOCK_PROPOSALS)
-    monkeypatch.setattr("app.core.proposals.proposals", MOCK_PROPOSALS)
+    monkeypatch.setattr("app.legacy.core.allocations.proposals", MOCK_PROPOSALS)
+    monkeypatch.setattr("app.legacy.core.proposals.proposals", MOCK_PROPOSALS)
 
     MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts
@@ -338,7 +339,7 @@ def patch_proposals(monkeypatch, proposal_accounts):
 @pytest.fixture(scope="function")
 def patch_glm(monkeypatch):
     monkeypatch.setattr(
-        "app.v2.modules.user.deposits.service.impl.contract_balance.glm", MOCK_GLM
+        "app.modules.user.deposits.service.impl.contract_balance.glm", MOCK_GLM
     )
 
     MOCK_GLM.balance_of.return_value = TOTAL_ED
@@ -346,20 +347,22 @@ def patch_glm(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_vault(monkeypatch):
-    monkeypatch.setattr("app.controllers.withdrawals.vault", MOCK_VAULT)
+    monkeypatch.setattr("app.legacy.controllers.withdrawals.vault", MOCK_VAULT)
     MOCK_VAULT.get_last_claimed_epoch.return_value = 0
 
 
 @pytest.fixture(scope="function")
 def patch_is_contract(monkeypatch):
-    monkeypatch.setattr("app.crypto.eth_sign.signature.is_contract", MOCK_IS_CONTRACT)
+    monkeypatch.setattr(
+        "app.legacy.crypto.eth_sign.signature.is_contract", MOCK_IS_CONTRACT
+    )
     MOCK_IS_CONTRACT.return_value = False
 
 
 @pytest.fixture(scope="function")
 def patch_eip1271_is_valid_signature(monkeypatch):
     monkeypatch.setattr(
-        "app.crypto.eth_sign.signature.is_valid_signature",
+        "app.legacy.crypto.eth_sign.signature.is_valid_signature",
         MOCK_EIP1271_IS_VALID_SIGNATURE,
     )
     MOCK_EIP1271_IS_VALID_SIGNATURE.return_value = True
@@ -370,7 +373,7 @@ def patch_eth_get_balance(monkeypatch):
     mock_eth = MagicMock(get_balance=MOCK_GET_ETH_BALANCE)
     mock_web3 = MagicMock(spec=Web3, eth=mock_eth)
 
-    monkeypatch.setattr("app.controllers.snapshots.w3", mock_web3)
+    monkeypatch.setattr("app.legacy.controllers.snapshots.w3", mock_web3)
     MOCK_GET_ETH_BALANCE.return_value = ETH_PROCEEDS
 
 
@@ -378,10 +381,11 @@ def patch_eth_get_balance(monkeypatch):
 def patch_has_pending_epoch_snapshot(monkeypatch):
     (
         monkeypatch.setattr(
-            "app.core.allocations.has_pending_epoch_snapshot", MOCK_HAS_PENDING_SNAPSHOT
+            "app.legacy.core.allocations.has_pending_epoch_snapshot",
+            MOCK_HAS_PENDING_SNAPSHOT,
         ),
         monkeypatch.setattr(
-            "app.controllers.rewards.has_pending_epoch_snapshot",
+            "app.legacy.controllers.rewards.has_pending_epoch_snapshot",
             MOCK_HAS_PENDING_SNAPSHOT,
         ),
     )
@@ -392,7 +396,7 @@ def patch_has_pending_epoch_snapshot(monkeypatch):
 def patch_last_finalized_snapshot(monkeypatch):
     (
         monkeypatch.setattr(
-            "app.controllers.snapshots.get_last_finalized_snapshot",
+            "app.legacy.controllers.snapshots.get_last_finalized_snapshot",
             MOCK_LAST_FINALIZED_SNAPSHOT,
         ),
     )
@@ -401,10 +405,10 @@ def patch_last_finalized_snapshot(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_user_budget(monkeypatch):
-    monkeypatch.setattr("app.core.allocations.get_budget", MOCK_GET_USER_BUDGET)
-    monkeypatch.setattr("app.core.user.rewards.get_budget", MOCK_GET_USER_BUDGET)
+    monkeypatch.setattr("app.legacy.core.allocations.get_budget", MOCK_GET_USER_BUDGET)
+    monkeypatch.setattr("app.legacy.core.user.rewards.get_budget", MOCK_GET_USER_BUDGET)
     monkeypatch.setattr(
-        "app.core.history.user_controller.get_budget", MOCK_GET_USER_BUDGET
+        "app.legacy.core.history.user_controller.get_budget", MOCK_GET_USER_BUDGET
     )
 
     MOCK_GET_USER_BUDGET.return_value = USER_MOCKED_BUDGET
@@ -413,10 +417,11 @@ def patch_user_budget(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_matched_rewards(monkeypatch):
     monkeypatch.setattr(
-        "app.controllers.rewards.get_estimated_matched_rewards", MOCK_MATCHED_REWARDS
+        "app.legacy.controllers.rewards.get_estimated_matched_rewards",
+        MOCK_MATCHED_REWARDS,
     )
     monkeypatch.setattr(
-        "app.core.proposals.get_estimated_matched_rewards", MOCK_MATCHED_REWARDS
+        "app.legacy.core.proposals.get_estimated_matched_rewards", MOCK_MATCHED_REWARDS
     )
     MOCK_MATCHED_REWARDS.return_value = 10_000000000_000000000
 

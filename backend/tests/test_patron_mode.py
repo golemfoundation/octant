@@ -1,20 +1,20 @@
 import pytest
 from freezegun import freeze_time
 
-from app import exceptions, database as db
-from app.utils.time import now
-
-from app.core.user.patron_mode import (
+from app import exceptions
+from app.infrastructure import database
+from app.legacy.core.user.patron_mode import (
     get_patron_mode_status,
     toggle_patron_mode,
     get_patrons_at_timestamp,
 )
+from app.legacy.utils.time import now
 
 
 @pytest.fixture(autouse=True)
 def before(request, app, alice, bob):
-    db.user.add_user(alice.address)
-    db.user.add_user(bob.address)
+    database.user.add_user(alice.address)
+    database.user.add_user(bob.address)
 
     freezer = freeze_time("2023-12-01 12:00:00", tick=True)
     freezer.start()

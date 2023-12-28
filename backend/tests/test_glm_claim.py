@@ -1,7 +1,8 @@
 import pytest
 
-from app import database, db, exceptions
-from app.controllers.glm_claim import claim, check
+from app import db, exceptions
+from app.infrastructure import database
+from app.legacy.controllers.glm_claim import claim, check
 
 
 def test_users_can_check_eligibility(app, user_accounts):

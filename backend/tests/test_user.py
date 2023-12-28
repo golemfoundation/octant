@@ -1,16 +1,17 @@
 import pytest
 from eth_account import Account
 
-from app import exceptions, database
-from app.controllers import allocations as allocations_controller
-from app.controllers.user import (
+from app import exceptions
+from app.extensions import db
+from app.infrastructure import database
+from app.legacy.controllers import allocations as allocations_controller
+from app.legacy.controllers.user import (
     get_patron_mode_status,
     toggle_patron_mode,
 )
-from app.core.allocations import add_allocations_to_db, Allocation
-from app.core.user.budget import get_budget
-from app.core.user.rewards import get_all_claimed_rewards
-from app.extensions import db
+from app.legacy.core.allocations import add_allocations_to_db, Allocation
+from app.legacy.core.user.budget import get_budget
+from app.legacy.core.user.rewards import get_all_claimed_rewards
 from tests.conftest import (
     allocate_user_rewards,
     MOCKED_PENDING_EPOCH_NO,

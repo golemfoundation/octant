@@ -1,7 +1,7 @@
-from app.v2.context.context import OctantRewards, Context
-from app.v2.context.epoch_details import EpochDetails
-from app.v2.context.epoch_state import EpochState
-from app.v2.engine.epochs_settings import get_epoch_settings
+from app.context.context import OctantRewards, Context
+from app.context.epoch_details import EpochDetails
+from app.context.epoch_state import EpochState
+from app.engine.epochs_settings import get_epoch_settings
 from tests.conftest import (
     ETH_PROCEEDS,
     TOTAL_ED,

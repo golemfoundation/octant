@@ -2,27 +2,25 @@ import pytest
 from eth_account import Account
 from freezegun import freeze_time
 
-from app.controllers.allocations import allocate, get_allocation_nonce
-from app.controllers.rewards import (
+from app import exceptions
+from app.extensions import db
+from app.infrastructure import database
+from app.legacy.controllers.allocations import allocate, get_allocation_nonce
+from app.legacy.controllers.rewards import (
     get_allocation_threshold,
     get_estimated_proposals_rewards,
     get_finalized_epoch_proposals_rewards,
 )
-from app.controllers.snapshots import (
+from app.legacy.controllers.snapshots import (
     snapshot_finalized_epoch,
 )
-from app.core.allocations import (
+from app.legacy.core.allocations import (
     AllocationRequest,
 )
-from app.core.rewards.rewards import (
+from app.legacy.core.rewards.rewards import (
     calculate_matched_rewards_threshold,
 )
-from app import database, exceptions
-from app.core.user.patron_mode import toggle_patron_mode
-from app.extensions import db
-
-from tests.helpers import create_epoch_event
-
+from app.legacy.core.user.patron_mode import toggle_patron_mode
 from tests.conftest import (
     mock_graphql,
     allocate_user_rewards,
@@ -30,6 +28,7 @@ from tests.conftest import (
     MOCK_PROPOSALS,
     MOCK_EPOCHS,
 )
+from tests.helpers import create_epoch_event
 from .helpers.constants import USER2_BUDGET, USER3_BUDGET
 from .test_allocations import (
     sign,

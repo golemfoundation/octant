@@ -1,7 +1,7 @@
 import pytest
 
-from app.utils.time import days_to_sec
-from app.v2.modules.user.budgets.service.service import estimate_budget
+from app.legacy.utils.time import days_to_sec
+from app.modules.user.budgets.service.service import estimate_budget
 from tests.helpers.context import get_context
 
 

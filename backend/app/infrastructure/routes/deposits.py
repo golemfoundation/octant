@@ -2,10 +2,10 @@ from eth_utils import to_checksum_address
 from flask import current_app as app
 from flask_restx import Namespace, fields
 
-from app.database import pending_epoch_snapshot
+from app.infrastructure.database import pending_epoch_snapshot
 from app.extensions import api
 from app.infrastructure import OctantResource
-from app.v2.modules.user.deposits.controller import (
+from app.modules.user.deposits.controller import (
     estimate_total_effective_deposit,
     estimate_user_effective_deposit,
     get_user_effective_deposit,

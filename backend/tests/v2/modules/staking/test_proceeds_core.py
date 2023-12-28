@@ -1,7 +1,7 @@
 import pytest
 
-from app.utils.time import days_to_sec
-from app.v2.modules.staking.proceeds.core import estimate_staking_proceeds
+from app.legacy.utils.time import days_to_sec
+from app.modules.staking.proceeds.core import estimate_staking_proceeds
 
 
 @pytest.mark.parametrize(

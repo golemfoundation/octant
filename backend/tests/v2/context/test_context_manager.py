@@ -1,8 +1,9 @@
 import pytest
 
-from app import database, db
-from app.v2.context.epoch_state import EpochState
-from app.v2.context.manager import epoch_context, state_context
+from app import db
+from app.context.epoch_state import EpochState
+from app.context.manager import epoch_context, state_context
+from app.infrastructure import database
 from tests.conftest import (
     MOCK_EPOCHS,
     LOCKED_RATIO,

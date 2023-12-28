@@ -6,10 +6,10 @@ import pytest
 from freezegun import freeze_time
 from eth_account.signers.local import LocalAccount
 
-from app.controllers.allocations import allocate
-from app.controllers.history import user_history
-from app.core.allocations import AllocationRequest
-from app.core.history import (
+from app.legacy.controllers.allocations import allocate
+from app.legacy.controllers.history import user_history
+from app.legacy.core.allocations import AllocationRequest
+from app.legacy.core.history import (
     get_locks,
     get_unlocks,
     get_allocations,
@@ -18,9 +18,9 @@ from app.core.history import (
     get_patron_donations,
     PatronDonationItem,
 )
-from app.core.user.patron_mode import toggle_patron_mode
-from app.crypto.eip712 import sign, build_allocations_eip712_data
-from app.utils.time import from_timestamp_s, now
+from app.legacy.core.user.patron_mode import toggle_patron_mode
+from app.legacy.crypto.eip712 import sign, build_allocations_eip712_data
+from app.legacy.utils.time import from_timestamp_s, now
 
 from tests.helpers import create_epoch_event
 

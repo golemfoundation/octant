@@ -9,8 +9,8 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import orm
 
-from datetime import datetime, timezone
-from app.database.models import PatronModeEvent
+from datetime import datetime
+from app.infrastructure.database import PatronModeEvent
 from eth_utils import to_checksum_address
 
 

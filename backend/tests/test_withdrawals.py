@@ -1,8 +1,9 @@
 import pytest
 
-from app import database, db
-from app.controllers.withdrawals import get_withdrawable_eth
-from app.core.allocations import Allocation
+from app import db
+from app.infrastructure import database
+from app.legacy.controllers.withdrawals import get_withdrawable_eth
+from app.legacy.core.allocations import Allocation
 from tests.conftest import (
     MOCK_VAULT,
     mock_graphql,

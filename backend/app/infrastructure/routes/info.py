@@ -2,7 +2,7 @@ from flask import current_app as app
 from flask import render_template, make_response, send_from_directory
 from flask_restx import Resource, Namespace, fields
 
-from app.controllers import info, epochs, snapshots
+from app.legacy.controllers import epochs, info, snapshots
 from app.extensions import api, w3
 from app.infrastructure import OctantResource, graphql
 

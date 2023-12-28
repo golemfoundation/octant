@@ -9,7 +9,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import orm
 
-from app.database.models import User
+from app.infrastructure.database import User
 
 
 # revision identifiers, used by Alembic.

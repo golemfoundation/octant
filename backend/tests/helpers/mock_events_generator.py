@@ -2,7 +2,7 @@ from collections import defaultdict
 from operator import attrgetter
 from typing import List, Dict, Tuple
 
-from app.v2.engine.user.effective_deposit import DepositEvent
+from app.engine.user.effective_deposit import DepositEvent
 from tests.helpers.subgraph.events import create_deposit_events
 
 

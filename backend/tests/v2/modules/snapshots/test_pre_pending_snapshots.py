@@ -1,7 +1,7 @@
 import pytest
 
-from app import database
-from app.v2.modules.snapshots.pending.service.impl.pre_pending import (
+from app.infrastructure import database
+from app.modules.snapshots.pending.service.impl.pre_pending import (
     PrePendingSnapshots,
 )
 from tests.conftest import ETH_PROCEEDS, USER1_ADDRESS, USER2_ADDRESS

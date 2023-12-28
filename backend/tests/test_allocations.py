@@ -1,10 +1,12 @@
-import pytest
-
 import dataclasses
 
-from app import database, exceptions
-from app.controllers import rewards
-from app.controllers.allocations import (
+import pytest
+
+from app import exceptions
+from app.extensions import db
+from app.infrastructure import database
+from app.legacy.controllers import rewards
+from app.legacy.controllers.allocations import (
     get_all_by_user_and_epoch,
     get_all_by_proposal_and_epoch,
     get_allocation_nonce,
@@ -13,17 +15,13 @@ from app.controllers.allocations import (
     allocate,
     simulate_allocation,
 )
-from app.core.user.patron_mode import toggle_patron_mode
-from app.core.allocations import (
+from app.legacy.core.allocations import (
     AllocationRequest,
     Allocation,
 )
-from app.core.rewards.rewards import calculate_matched_rewards_threshold
-from app.crypto.eip712 import sign, build_allocations_eip712_data
-from app.extensions import db
-
-from tests.helpers import create_epoch_event
-
+from app.legacy.core.rewards.rewards import calculate_matched_rewards_threshold
+from app.legacy.core.user.patron_mode import toggle_patron_mode
+from app.legacy.crypto.eip712 import sign, build_allocations_eip712_data
 from tests.conftest import (
     create_payload,
     deserialize_allocations,
@@ -33,6 +31,7 @@ from tests.conftest import (
     MOCK_EPOCHS,
     MOCK_GET_USER_BUDGET,
 )
+from tests.helpers import create_epoch_event
 
 
 @pytest.fixture(scope="function")

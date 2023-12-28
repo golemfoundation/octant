@@ -1,7 +1,7 @@
 import pytest
 
-from app.v2.engine.projects import DefaultProjectThreshold
-from app.v2.engine.projects.threshold import ProjectThresholdPayload
+from app.engine.projects import DefaultProjectThreshold
+from app.engine.projects.threshold import ProjectThresholdPayload
 
 
 @pytest.mark.parametrize(

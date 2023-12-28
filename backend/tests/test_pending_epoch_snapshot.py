@@ -1,7 +1,7 @@
 import pytest
 
 from app import exceptions
-from app.controllers.snapshots import pending_snapshot_status
+from app.legacy.controllers.snapshots import pending_snapshot_status
 
 
 @pytest.mark.parametrize(

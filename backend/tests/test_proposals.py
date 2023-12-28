@@ -1,8 +1,8 @@
 import pytest
 from eth_account import Account
 
-from app.core.proposals import get_proposal_rewards_above_threshold
-from app.controllers.allocations import get_allocation_nonce
+from app.legacy.controllers.allocations import get_allocation_nonce
+from app.legacy.core.proposals import get_proposal_rewards_above_threshold
 from tests.conftest import (
     allocate_user_rewards,
     MOCKED_PENDING_EPOCH_NO,

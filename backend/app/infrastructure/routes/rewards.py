@@ -1,15 +1,15 @@
 from flask import current_app as app, request
 from flask_restx import Namespace, fields
 
-from app.controllers import rewards
-from app.controllers.user import get_budget
+from app.legacy.controllers import rewards
+from app.legacy.controllers.user import get_budget
 from app.extensions import api
 from app.infrastructure import OctantResource
 from app.infrastructure.routes.validations.user_validations import (
     validate_estimate_budget_inputs,
 )
-from app.utils.time import days_to_sec
-from app.v2.modules.user.budgets.controller import estimate_budget
+from app.legacy.utils.time import days_to_sec
+from app.modules.user.budgets.controller import estimate_budget
 
 
 ns = Namespace("rewards", description="Octant rewards")

@@ -2,7 +2,7 @@ import pytest
 
 
 from app.extensions import w3, epochs
-from app.core.proposals import get_proposals_addresses
+from app.legacy.core.proposals import get_proposals_addresses
 from .conftest import Client, UserAccount
 
 # Please note that tests here assume that they talk to blockchain and indexer

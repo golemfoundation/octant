@@ -1,7 +1,7 @@
 import pytest
 
-from app.v2.engine.user.effective_deposit import DepositEvent, EventType
-from app.v2.modules.user.events_generator.service.impl.db_and_graph import (
+from app.engine.user.effective_deposit import DepositEvent, EventType
+from app.modules.user.events_generator.service.impl.db_and_graph import (
     DbAndGraphEventsGenerator,
 )
 from tests.conftest import mock_graphql

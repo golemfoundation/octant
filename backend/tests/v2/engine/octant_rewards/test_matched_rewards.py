@@ -1,5 +1,5 @@
-from app.v2.engine.octant_rewards import DefaultMatchedRewards
-from app.v2.engine.octant_rewards.matched import MatchedRewardsPayload
+from app.engine.octant_rewards import DefaultMatchedRewards
+from app.engine.octant_rewards.matched import MatchedRewardsPayload
 from tests.conftest import TOTAL_REWARDS, ALL_INDIVIDUAL_REWARDS
 
 

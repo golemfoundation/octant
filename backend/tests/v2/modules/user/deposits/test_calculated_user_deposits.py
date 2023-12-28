@@ -1,5 +1,5 @@
-from app.v2.engine.user.effective_deposit import UserDeposit
-from app.v2.modules.user.deposits.service.impl.calculated import CalculatedUserDeposits
+from app.engine.user.effective_deposit import UserDeposit
+from app.modules.user.deposits.service.impl.calculated import CalculatedUserDeposits
 from tests.conftest import USER1_ADDRESS
 from tests.helpers.context import get_context
 

@@ -6,8 +6,8 @@ from hexbytes import HexBytes
 from multiproof import StandardMerkleTree
 from multiproof.standart import LeafValue
 
-from app.core.common import AccountFunds
-from app.core.merkle_tree import build_merkle_tree, get_proof
+from app.legacy.core.common import AccountFunds
+from app.legacy.core.merkle_tree import build_merkle_tree, get_proof
 
 
 @pytest.fixture(autouse=True)

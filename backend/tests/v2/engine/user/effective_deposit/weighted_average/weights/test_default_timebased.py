@@ -1,8 +1,8 @@
-from app.v2.engine.user.effective_deposit.weighted_average.weights.timebased import (
+from app.engine.user.effective_deposit.weighted_average.weights.timebased import (
     DepositWeightsPayload,
     WeightedDeposit,
 )
-from app.v2.engine.user.effective_deposit.weighted_average.weights.timebased.default import (
+from app.engine.user.effective_deposit.weighted_average.weights.timebased.default import (
     DefaultTimebasedWeights,
 )
 from tests.helpers.constants import USER1_ADDRESS
