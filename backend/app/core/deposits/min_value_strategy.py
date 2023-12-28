@@ -62,14 +62,16 @@ def handle_deposit(
     previous_db_deposits: Dict[str, Deposit],
     epoch_deposits: Dict[str, List[WeightedDeposit]],
 ):
-    deposits_events = epoch_deposits.get(address)
+    deposits_events_data = epoch_deposits.get(address)
     previous_deposit = previous_db_deposits.get(address, None)
     effective_deposit = 0
     epoch_end_deposit = 0
 
-    if deposits_events:
-        effective_deposit = _calculate_effective_deposit(deposits_events)
-        epoch_end_deposit = deposits_events[-1].amount
+    if deposits_events_data:
+        effective_deposit = _calculate_effective_deposit(
+            deposits_events_data.weighted_deposits
+        )
+        epoch_end_deposit = deposits_events_data.epoch_end_locked_amount
     elif previous_deposit:
         effective_deposit = apply_min_value_cutoff(
             int(previous_deposit.epoch_end_deposit)

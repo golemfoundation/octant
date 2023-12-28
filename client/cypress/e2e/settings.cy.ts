@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
 
-import { visitWithLoader, navigateWithCheck } from 'cypress/utils/e2e';
+import { visitWithLoader, navigateWithCheck, mockCoinPricesServer } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { FIAT_CURRENCIES_SYMBOLS, DISPLAY_CURRENCIES } from 'src/constants/currencies';
 import {
@@ -16,6 +16,7 @@ import getValueCryptoToDisplay from 'src/utils/getValueCryptoToDisplay';
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
   describe(`settings: ${device}`, { viewportHeight, viewportWidth }, () => {
     beforeEach(() => {
+      mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       visitWithLoader(ROOT_ROUTES.settings.absolute);
@@ -112,7 +113,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         const nextDisplayCurrencyToUppercase =
           i < DISPLAY_CURRENCIES.length - 1 ? DISPLAY_CURRENCIES[i + 1].toUpperCase() : undefined;
 
-        cy.get('[data-test=InputSelect__SingleValue]').contains(displayCurrencyToUppercase);
+        cy.get('[data-test=SettingsView__InputSelect--currency__SingleValue]').contains(
+          displayCurrencyToUppercase,
+        );
         navigateWithCheck(ROOT_ROUTES.earn.absolute);
 
         if (FIAT_CURRENCIES_SYMBOLS[displayCurrency]) {
@@ -126,8 +129,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         }
 
         navigateWithCheck(ROOT_ROUTES.settings.absolute);
-        cy.get('[data-test=InputSelect]').click();
-        cy.get(`[data-test=InputSelect__Option--${nextDisplayCurrencyToUppercase}]`).click();
+        cy.get('[data-test=SettingsView__InputSelect--currency]').click();
+        cy.get(
+          `[data-test=SettingsView__InputSelect--currency__Option--${nextDisplayCurrencyToUppercase}]`,
+        ).click();
       }
     });
 

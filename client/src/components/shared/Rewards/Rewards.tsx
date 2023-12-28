@@ -25,8 +25,7 @@ const Rewards: FC<RewardsProps> = ({
 
   const isArchivedProposal = epoch !== undefined;
 
-  const { data: proposalRewardsThreshold, isFetching: isFetchingProposalRewardsThreshold } =
-    useProposalRewardsThreshold(epoch);
+  const { data: proposalRewardsThreshold, isFetching } = useProposalRewardsThreshold(epoch);
   const isDonationAboveThreshold = useIsDonationAboveThreshold(address, epoch);
 
   const totalValueOfAllocationsToDisplay = getValueCryptoToDisplay({
@@ -96,7 +95,6 @@ const Rewards: FC<RewardsProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, rightSectionValueUseMemoDeps);
 
-  const isFetching = isFetchingProposalRewardsThreshold;
   return (
     <div className={cx(styles.root, className)} data-test="ProposalRewards">
       {showProgressBar ? (

@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from app.core.deposits.weighted_deposits import WeightedDeposit
 from app.core.deposits.weighted_deposits.timebased_calculator import (
     TimebasedWeightsCalculator as Calculator,
@@ -23,7 +25,7 @@ def test_computes_weighted_deposit_for_none_events_for_one_user(alice):
     deposits = {alice.address: []}
     generator = event_generator(deposits)
 
-    expected_result = {alice.address: []}
+    expected_result = defaultdict(list)
 
     assert Calculator.compute_all_users_weigted_deposits(generator) == expected_result
     assert (

@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsGridTileValue from 'components/Metrics/MetricsGrid/MetricsGridTileValue';
-import useAllProposals from 'hooks/queries/useAllProposals';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
+import useAllProposals from 'hooks/subgraph/useAllProposals';
 
 import MetricsGridTotalProjectsProps from './types';
 
@@ -23,7 +23,7 @@ const MetricsGridTotalProjects: FC<MetricsGridTotalProjectsProps> = ({ isLoading
             <MetricsGridTileValue
               isLoading={isLoading}
               subvalue={t('totalProjectsSinceEpoch0', {
-                projectsAmount: allProposals.length,
+                projectsAmount: allProposals?.length,
               })}
               value={proposalsContract?.length.toString() ?? ''}
             />

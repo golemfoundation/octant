@@ -11,7 +11,15 @@
     "prettier:js:pure": "prettier --write",
     "prettier:ts": "yarn prettier:ts:pure './**/*.{ts,tsx}'",
     "prettier:ts:pure": "prettier --parser typescript --write",
-    "type-check": "tsc --noEmit true"
+    "type-check": "tsc --noEmit true",
+    "localenv:build-images": "./localenv/scripts/images.sh",
+    "localenv:build-anvil": "docker build --tag octant/anvil:latest -f localenv/anvil/Dockerfile localenv/anvil",
+    "localenv:up": "docker compose -p octant -f ./localenv/docker-compose.yaml up -d",
+    "localenv:down": "docker compose -p octant -f ./localenv/docker-compose.yaml down",
+    "localenv:force-clean": "docker system prune --volumes -f",
+    "localenv:reload": "yarn localenv:down && yarn localenv:build-images && yarn localenv:up",
+    "apitest:up": "docker compose -p octant -f ./localenv/docker-apitest.yaml up -d",
+    "apitest:down": "docker compose -p octant -f ./localenv/docker-apitest.yaml down"
   },
   "repository": {
     "type": "git",

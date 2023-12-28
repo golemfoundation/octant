@@ -4,13 +4,11 @@ from app import database, exceptions
 from app.controllers.snapshots import pending_snapshot_status, snapshot_pending_epoch
 from tests.conftest import (
     mock_graphql,
-    ETH_PROCEEDS,
     MOCK_EPOCHS,
     MOCKED_PENDING_EPOCH_NO,
     MOCKED_CURRENT_EPOCH_NO,
-    create_deposit_event,
-    create_epoch_event,
 )
+from tests.helpers import create_epoch_event, create_deposit_event
 
 
 @pytest.fixture(autouse=True)
@@ -46,11 +44,11 @@ def test_snapshot_epoch_1(mocker, user_accounts):
     snapshot = database.pending_epoch_snapshot.get_last_snapshot()
     assert snapshot.epoch == 1
     assert snapshot.created_at is not None
-    assert snapshot.eth_proceeds == str(ETH_PROCEEDS)
+    assert snapshot.eth_proceeds == "398923601239604426563"
     assert snapshot.total_effective_deposit == "340000000000000000000"
     assert snapshot.locked_ratio == "0.00000034"
-    assert snapshot.all_individual_rewards == "187715115466274781"
-    assert snapshot.total_rewards == "321928767123288031232"
+    assert snapshot.all_individual_rewards == "186088346283726599"
+    assert snapshot.total_rewards == "319138880991683543040"
 
     deposits = database.deposits.get_all_by_epoch(result)
     assert len(deposits) == 2
@@ -91,11 +89,11 @@ def test_snapshot_epoch_2(mocker, user_accounts):
     snapshot = database.pending_epoch_snapshot.get_last_snapshot()
     assert snapshot.epoch == 2
     assert snapshot.created_at is not None
-    assert snapshot.eth_proceeds == str(ETH_PROCEEDS)
+    assert snapshot.eth_proceeds == "398923601239604426563"
     assert snapshot.total_effective_deposit == "9340000055377000000000"
     assert snapshot.locked_ratio == "0.000009340000055377"
-    assert snapshot.all_individual_rewards == "3758518378448699"
-    assert snapshot.total_rewards == "1229824778059972898"
+    assert snapshot.all_individual_rewards == "3725946457669097"
+    assert snapshot.total_rewards == "1219166920039788378"
 
     deposits = database.deposits.get_all_by_epoch(result)
     assert len(deposits) == 2

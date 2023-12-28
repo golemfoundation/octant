@@ -7,7 +7,7 @@ from app.v2.engine.user.effective_deposit.cut_off.cutoff_100glm import CutOff100
 from app.v2.engine.user.effective_deposit.weighted_average.weights.timebased.default import (
     DefaultTimebasedWeights,
 )
-from tests.conftest import USER1_ADDRESS, USER2_ADDRESS
+from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS
 from tests.helpers.mock_events_generator import MockEventGeneratorFactory
 
 EPOCH_START = 123

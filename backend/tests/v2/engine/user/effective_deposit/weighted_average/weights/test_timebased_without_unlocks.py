@@ -5,7 +5,7 @@ from app.v2.engine.user.effective_deposit.weighted_average.weights.timebased imp
 from app.v2.engine.user.effective_deposit.weighted_average.weights.timebased.without_unlocks import (
     TimebasedWithoutUnlocksWeights,
 )
-from tests.conftest import USER1_ADDRESS
+from tests.helpers.constants import USER1_ADDRESS
 
 from tests.helpers.mock_events_generator import (
     MockEventGeneratorFactory,

@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import ProposalDonorsListItem from 'components/Proposal/ProposalDonorsListItem';
 import ProposalDonorsListSkeletonItem from 'components/Proposal/ProposalDonorsListSkeletonItem';
+import ProposalDonorsListTotalDonated from 'components/Proposal/ProposalDonorsListTotalDonated';
 import { DONORS_SHORT_LIST_LENGTH } from 'constants/donors';
 import useProposalDonors from 'hooks/queries/donors/useProposalDonors';
 
@@ -24,24 +25,29 @@ const ProposalDonorsList: FC<ProposalDonorsListProps> = ({
 
   return (
     <div className={cx(styles.root, className)} data-test={dataTest}>
-      {isFetching
-        ? [...Array(DONORS_SHORT_LIST_LENGTH)].map((_, idx) => (
-            <ProposalDonorsListSkeletonItem
-              // eslint-disable-next-line react/no-array-index-key
-              key={idx}
-              dataTest={`${dataTest}__DonorsItemSkeleton`}
-            />
-          ))
-        : proposalDonors
-            ?.slice(0, showFullList ? proposalDonors.length : DONORS_SHORT_LIST_LENGTH)
-            ?.map(({ amount, address }) => (
-              <ProposalDonorsListItem
-                key={address}
-                amount={amount}
-                className={styles.donorsItem}
-                donorAddress={address}
-              />
-            ))}
+      {isFetching ? (
+        [...Array(DONORS_SHORT_LIST_LENGTH)].map((_, idx) => (
+          <ProposalDonorsListSkeletonItem
+            // eslint-disable-next-line react/no-array-index-key
+            key={idx}
+            dataTest={`${dataTest}__DonorsItemSkeleton`}
+          />
+        ))
+      ) : (
+        <>
+          <div className={cx(styles.list, showFullList && styles.fullList)}>
+            {proposalDonors
+              ?.slice(0, showFullList ? proposalDonors.length : DONORS_SHORT_LIST_LENGTH)
+              ?.map(({ amount, address }) => (
+                <ProposalDonorsListItem key={address} amount={amount} donorAddress={address} />
+              ))}
+          </div>
+          <ProposalDonorsListTotalDonated
+            className={cx(styles.totalDonated, showFullList && styles.fullList)}
+            proposalDonors={proposalDonors}
+          />
+        </>
+      )}
     </div>
   );
 };

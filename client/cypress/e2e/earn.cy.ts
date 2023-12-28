@@ -1,4 +1,4 @@
-import { visitWithLoader } from 'cypress/utils/e2e';
+import { visitWithLoader, mockCoinPricesServer } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
@@ -17,6 +17,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     beforeEach(() => {
+      mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       visitWithLoader(ROOT_ROUTES.earn.absolute);
