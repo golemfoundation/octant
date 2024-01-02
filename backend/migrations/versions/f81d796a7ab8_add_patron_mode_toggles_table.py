@@ -10,9 +10,9 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 from datetime import datetime
-from app.infrastructure.database import PatronModeEvent
 from eth_utils import to_checksum_address
 
+from app.infrastructure.database.models import PatronModeEvent
 
 # revision identifiers, used by Alembic.
 revision = "f81d796a7ab8"

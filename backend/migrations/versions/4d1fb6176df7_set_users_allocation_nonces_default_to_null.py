@@ -8,7 +8,7 @@ Create Date: 2023-10-19 11:24:17.909296
 from alembic import op
 from sqlalchemy import orm
 
-from app.infrastructure.database import User
+from app.infrastructure.database.models import User
 
 # revision identifiers, used by Alembic.
 revision = "4d1fb6176df7"
