@@ -4,27 +4,34 @@ import { useTranslation } from 'react-i18next';
 
 import { apiGetProposal } from 'api/calls/proposals';
 import { QUERY_KEYS } from 'api/queryKeys';
+import useProposalsCid from 'hooks/subgraph/useProposalsCid';
 import { ExtendedProposal } from 'types/extended-proposal';
 import { BackendProposal } from 'types/gen/backendproposal';
 import triggerToast from 'utils/triggerToast';
 
-import useProposalsCid from './useProposalsCid';
+import useCurrentEpoch from './useCurrentEpoch';
 import useProposalsContract from './useProposalsContract';
 
-export default function useProposalsIpfs(proposalsAddresses?: string[]): {
-  data: ExtendedProposal[];
-  isFetching: boolean;
-  refetch: () => void;
-} {
+export default function useProposalsIpfs(
+  proposalsAddresses?: string[],
+  epoch?: number,
+): { data: ExtendedProposal[]; isFetching: boolean; refetch: () => void } {
   const { t } = useTranslation('translation', { keyPrefix: 'api.errorMessage' });
-  const { data: proposalsCid, isFetching: isFetchingProposalsCid } = useProposalsCid();
-  const { refetch } = useProposalsContract();
+  const { data: currentEpoch } = useCurrentEpoch();
+
+  const { data: proposalsCid, isFetching: isFetchingProposalsCid } = useProposalsCid(
+    epoch ?? currentEpoch!,
+    {
+      enabled: epoch !== undefined || currentEpoch !== undefined,
+    },
+  );
+  const { refetch } = useProposalsContract(epoch);
 
   const proposalsIpfsResults: UseQueryResult<BackendProposal>[] = useQueries({
     queries: (proposalsAddresses || []).map(address => ({
-      enabled: !!address && !!proposalsCid,
+      enabled: !!address && !!proposalsCid && (currentEpoch !== undefined || epoch !== undefined),
       queryFn: () => apiGetProposal(`${proposalsCid}/${address}`),
-      queryKey: QUERY_KEYS.proposalsIpfsResults(address),
+      queryKey: QUERY_KEYS.proposalsIpfsResults(address, epoch ?? currentEpoch!),
       retry: false,
     })),
   });
