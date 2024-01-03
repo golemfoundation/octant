@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from typing import Optional
 
 from app.context.context import OctantRewards, Context
+from app.extensions import db
 from app.infrastructure import database
 from app.modules.snapshots.pending.core import calculate_user_budgets
 from app.modules.user.deposits.service.service import UserDepositsService
@@ -22,7 +22,7 @@ def save_snapshot(epoch: int, rewards: OctantRewards):
 class PrePendingSnapshots:
     user_deposits_service: UserDepositsService
 
-    def create_pending_epoch_snapshot(self, context: Context) -> Optional[int]:
+    def create_pending_epoch_snapshot(self, context: Context) -> int:
         pending_epoch = context.epoch_details.epoch_num
         rewards = context.octant_rewards
         (
@@ -36,5 +36,6 @@ class PrePendingSnapshots:
         database.deposits.save_deposits(pending_epoch, user_deposits)
         database.budgets.save_budgets(pending_epoch, user_budgets)
         save_snapshot(pending_epoch, rewards)
+        db.session.commit()
 
         return pending_epoch

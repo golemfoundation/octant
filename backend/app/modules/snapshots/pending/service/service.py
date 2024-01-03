@@ -1,8 +1,8 @@
-from typing import Optional, Protocol
+from typing import Protocol
 
 from app.context.context import Context
 
 
 class SnapshotsService(Protocol):
-    def create_pending_epoch_snapshot(self, context: Context) -> Optional[int]:
+    def create_pending_epoch_snapshot(self, context: Context) -> int:
         ...

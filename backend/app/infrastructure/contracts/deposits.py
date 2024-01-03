@@ -9,3 +9,6 @@ class Deposits(SmartContract):
         )
         signed_tx = self.w3.eth.account.sign_transaction(transaction, account.key)
         return self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+
+    def balance_of(self, owner: str) -> int:
+        return self.contract.functions.deposits(owner).call()

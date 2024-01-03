@@ -3,6 +3,7 @@ import pytest
 from app import db
 from app.context.epoch_state import EpochState
 from app.context.manager import epoch_context, state_context
+from app.exceptions import InvalidEpoch
 from app.infrastructure import database
 from tests.conftest import (
     MOCK_EPOCHS,
@@ -76,6 +77,28 @@ def test_context_from_state(
     assert context.epoch_settings is not None
     assert context.epoch_details is not None
     assert context.octant_rewards is not None
+
+
+@pytest.mark.parametrize(
+    "current, pending, finalized, state, pending_snapshot, finalized_snapshot",
+    [
+        (2, None, 0, EpochState.PRE_PENDING, False, False),
+        (2, 1, 0, EpochState.PRE_PENDING, True, False),
+        (2, 1, 0, EpochState.PENDING, False, False),
+        (2, 1, 0, EpochState.FINALIZING, False, False),
+        (2, None, 1, EpochState.FINALIZING, False, False),
+        (2, None, 1, EpochState.FINALIZING, True, True),
+        (2, None, 1, EpochState.FINALIZED, False, False),
+        (2, None, 1, EpochState.FINALIZED, True, False),
+    ],
+)
+def test_cannot_get_context_in_invalid_state(
+    current, pending, finalized, state, pending_snapshot, finalized_snapshot
+):
+    _setup(current, pending, finalized, pending_snapshot, finalized_snapshot)
+
+    with pytest.raises(InvalidEpoch):
+        state_context(state)
 
 
 def _setup(current, pending, finalized, pending_snapshot, finalized_snapshot):

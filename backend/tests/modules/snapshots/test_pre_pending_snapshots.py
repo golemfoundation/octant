@@ -1,4 +1,5 @@
 import pytest
+from sqlalchemy.exc import IntegrityError
 
 from app.infrastructure import database
 from app.modules.snapshots.pending.service.impl.pre_pending import (
@@ -42,3 +43,12 @@ def test_save_pending_epoch_snapshot(mock_user_deposits):
     assert len(budgets) == 2
     assert budgets[USER1_ADDRESS] == 274836407916427
     assert budgets[USER2_ADDRESS] == 2839976215136415
+
+
+def test_cannot_save_pending_epoch_snapshot_twice(mock_user_deposits):
+    context = get_context()
+    service = PrePendingSnapshots(user_deposits_service=mock_user_deposits)
+
+    service.create_pending_epoch_snapshot(context)
+    with pytest.raises(IntegrityError):
+        service.create_pending_epoch_snapshot(context)
