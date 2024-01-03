@@ -44,6 +44,7 @@ def save_snapshot(
     locked_ratio: Decimal,
     total_rewards: int,
     all_individual_rewards: int,
+    operational_cost: int,
 ):
     snapshot = PendingEpochSnapshot(
         epoch=epoch,
@@ -52,5 +53,6 @@ def save_snapshot(
         locked_ratio="{:f}".format(locked_ratio),
         total_rewards=str(total_rewards),
         all_individual_rewards=str(all_individual_rewards),
+        operational_cost=str(operational_cost),
     )
     db.session.add(snapshot)

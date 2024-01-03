@@ -29,7 +29,15 @@ from tests.conftest import (
     MOCK_EPOCHS,
 )
 from tests.helpers import create_epoch_event
-from tests.helpers.constants import USER2_BUDGET, USER3_BUDGET
+from tests.helpers.constants import (
+    USER2_BUDGET,
+    USER3_BUDGET,
+    MOCKED_PENDING_EPOCH_NO,
+    ETH_PROCEEDS,
+    TOTAL_ED,
+    LOCKED_RATIO,
+    OPERATIONAL_COST,
+)
 from tests.legacy.test_allocations import (
     sign,
     create_payload,
@@ -50,9 +58,7 @@ def before(
     MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts[0:5]
     ]
-
     epoch = create_epoch_event(start=1698802327, end=1698803327, duration=1000, epoch=1)
-
     mock_graphql(mocker, epochs_events=[epoch])
 
 
@@ -122,12 +128,22 @@ def test_get_allocation_threshold_raises_when_not_in_allocation_period(app):
 )
 def test_proposals_rewards_without_patrons(
     app,
-    patch_matched_rewards,
     tos_users,
     proposal_accounts,
     user_allocations: dict,
     expected_matches: dict,
 ):
+    database.pending_epoch_snapshot.save_snapshot(
+        MOCKED_PENDING_EPOCH_NO,
+        ETH_PROCEEDS,
+        TOTAL_ED,
+        LOCKED_RATIO,
+        20_000000000_000000000,
+        10_000000000_000000000,
+        OPERATIONAL_COST,
+    )
+    db.session.commit()
+
     for user_index, allocations in user_allocations.items():
         user_account = tos_users[user_index]
 

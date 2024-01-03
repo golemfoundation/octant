@@ -96,6 +96,7 @@ class PendingEpochSnapshot(BaseModel):
     locked_ratio = Column(db.String, nullable=False)
     total_rewards = Column(db.String, nullable=False)
     all_individual_rewards = Column(db.String, nullable=False)
+    operational_cost = Column(db.String, nullable=False)
 
 
 class FinalizedEpochSnapshot(BaseModel):
@@ -104,6 +105,8 @@ class FinalizedEpochSnapshot(BaseModel):
     id = Column(db.Integer, primary_key=True)
     epoch = Column(db.Integer, nullable=False, unique=True)
     matched_rewards = Column(db.String, nullable=False)
+    patrons_rewards = Column(db.String, nullable=False)
+    leftover = Column(db.String, nullable=False)
     withdrawals_merkle_root = Column(db.String)
     total_withdrawals = Column(db.String)
 

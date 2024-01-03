@@ -4,7 +4,8 @@ from app.context.epoch_state import EpochState
 from app.modules.octant_rewards.service.impl.calculated import (
     CalculatedOctantRewards,
 )
-from app.modules.octant_rewards.service.impl.saved import SavedOctantRewards
+from app.modules.octant_rewards.service.impl.finalized import FinalizedOctantRewards
+from app.modules.octant_rewards.service.impl.pending import PendingOctantRewards
 from app.modules.registry import register_services, get_services
 from app.modules.snapshots.pending.service.impl.pre_pending import (
     PrePendingSnapshots,
@@ -62,21 +63,21 @@ from app.modules.user.events_generator.service.impl.db_and_graph import (
             EpochState.PENDING,
             SavedUserDeposits(),
             SavedStakingProceeds(),
-            SavedOctantRewards(),
+            PendingOctantRewards(),
             None,
         ),
         (
             EpochState.FINALIZING,
             SavedUserDeposits(),
             SavedStakingProceeds(),
-            SavedOctantRewards(),
+            PendingOctantRewards(),
             None,
         ),
         (
             EpochState.FINALIZED,
             SavedUserDeposits(),
             SavedStakingProceeds(),
-            SavedOctantRewards(),
+            FinalizedOctantRewards(),
             None,
         ),
     ],

@@ -8,11 +8,12 @@ from app.engine.epochs_settings import EpochSettings
 
 @dataclass(frozen=True)
 class OctantRewards:
-    eth_proceeds: int
+    staking_proceeds: int
     locked_ratio: Decimal
     total_effective_deposit: int
     total_rewards: int
     individual_rewards: int
+    operational_cost: int
 
 
 @dataclass

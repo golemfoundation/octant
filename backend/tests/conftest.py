@@ -50,6 +50,9 @@ from tests.helpers.constants import (
     MATCHED_REWARDS,
     USER1_ADDRESS,
     USER2_ADDRESS,
+    OPERATIONAL_COST,
+    LEFTOVER,
+    TOTAL_WITHDRAWALS,
 )
 from tests.helpers.gql_client import MockGQLClient
 from tests.helpers.mocked_epoch_details import EPOCH_EVENTS
@@ -308,7 +311,6 @@ def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.legacy.controllers.allocations.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.controllers.snapshots.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.controllers.rewards.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.legacy.controllers.epochs.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.controllers.withdrawals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.core.proposals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.context.epoch_state.epochs", MOCK_EPOCHS)
@@ -316,6 +318,8 @@ def patch_epochs(monkeypatch):
 
     MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
     MOCK_EPOCHS.get_current_epoch.return_value = MOCKED_CURRENT_EPOCH_NO
+    MOCK_EPOCHS.get_finalized_epoch.return_value = MOCKED_FINALIZED_EPOCH_NO
+
     # props content: from, to, fromTs, duration, decisionWindow
     MOCK_EPOCHS.get_future_epoch_props.return_value = [
         2,
@@ -385,11 +389,7 @@ def patch_has_pending_epoch_snapshot(monkeypatch):
         monkeypatch.setattr(
             "app.legacy.core.allocations.has_pending_epoch_snapshot",
             MOCK_HAS_PENDING_SNAPSHOT,
-        ),
-        monkeypatch.setattr(
-            "app.legacy.controllers.rewards.has_pending_epoch_snapshot",
-            MOCK_HAS_PENDING_SNAPSHOT,
-        ),
+        )
     )
     MOCK_HAS_PENDING_SNAPSHOT.return_value = True
 
@@ -417,18 +417,6 @@ def patch_user_budget(monkeypatch):
 
 
 @pytest.fixture(scope="function")
-def patch_matched_rewards(monkeypatch):
-    monkeypatch.setattr(
-        "app.legacy.controllers.rewards.get_estimated_matched_rewards",
-        MOCK_MATCHED_REWARDS,
-    )
-    monkeypatch.setattr(
-        "app.legacy.core.proposals.get_estimated_matched_rewards", MOCK_MATCHED_REWARDS
-    )
-    MOCK_MATCHED_REWARDS.return_value = 10_000000000_000000000
-
-
-@pytest.fixture(scope="function")
 def mock_pending_epoch_snapshot_db(app, user_accounts):
     database.pending_epoch_snapshot.save_snapshot(
         MOCKED_PENDING_EPOCH_NO,
@@ -437,6 +425,7 @@ def mock_pending_epoch_snapshot_db(app, user_accounts):
         LOCKED_RATIO,
         TOTAL_REWARDS,
         ALL_INDIVIDUAL_REWARDS,
+        OPERATIONAL_COST,
     )
     user1 = database.user.get_or_add_user(user_accounts[0].address)
     user2 = database.user.get_or_add_user(user_accounts[1].address)
@@ -454,7 +443,11 @@ def mock_pending_epoch_snapshot_db(app, user_accounts):
 @pytest.fixture(scope="function")
 def mock_finalized_epoch_snapshot_db(app, user_accounts):
     database.finalized_epoch_snapshot.add_snapshot(
-        MOCKED_FINALIZED_EPOCH_NO, MATCHED_REWARDS
+        MOCKED_FINALIZED_EPOCH_NO,
+        MATCHED_REWARDS,
+        0,
+        LEFTOVER,
+        total_withdrawals=TOTAL_WITHDRAWALS,
     )
 
     db.session.commit()

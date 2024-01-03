@@ -10,11 +10,12 @@ from app.modules.user.deposits.service.service import UserDepositsService
 def save_snapshot(epoch: int, rewards: OctantRewards):
     database.pending_epoch_snapshot.save_snapshot(
         epoch=epoch,
-        eth_proceeds=rewards.eth_proceeds,
+        eth_proceeds=rewards.staking_proceeds,
         total_rewards=rewards.total_rewards,
         all_individual_rewards=rewards.individual_rewards,
         locked_ratio=rewards.locked_ratio,
         total_ed=rewards.total_effective_deposit,
+        operational_cost=rewards.operational_cost,
     )
 
 

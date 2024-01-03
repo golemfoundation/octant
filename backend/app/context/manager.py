@@ -5,17 +5,19 @@ from app.engine.epochs_settings import get_epoch_settings
 from app.modules.registry import get_services
 
 
-def epoch_context(epoch_num: int) -> Context:
+def epoch_context(epoch_num: int, with_rewards=True) -> Context:
     epoch_state = get_epoch_state(epoch_num)
-    return build_context(epoch_num, epoch_state)
+    return build_context(epoch_num, epoch_state, with_rewards)
 
 
-def state_context(epoch_state: EpochState) -> Context:
+def state_context(epoch_state: EpochState, with_rewards=True) -> Context:
     epoch_num = get_epoch_number(epoch_state)
-    return build_context(epoch_num, epoch_state)
+    return build_context(epoch_num, epoch_state, with_rewards)
 
 
-def build_context(epoch_num: int, epoch_state: EpochState) -> Context:
+def build_context(
+    epoch_num: int, epoch_state: EpochState, with_rewards: bool
+) -> Context:
     epoch_details = get_epoch_details(epoch_num, epoch_state)
     epoch_settings = get_epoch_settings(epoch_num)
     context = Context(
@@ -23,7 +25,8 @@ def build_context(epoch_num: int, epoch_state: EpochState) -> Context:
         epoch_details=epoch_details,
         epoch_settings=epoch_settings,
     )
-    service = get_services(epoch_state).octant_rewards_service
-    context.octant_rewards = service.get_octant_rewards(context)
+    if with_rewards:
+        service = get_services(epoch_state).octant_rewards_service
+        context.octant_rewards = service.get_octant_rewards(context)
 
     return context

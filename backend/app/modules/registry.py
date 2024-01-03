@@ -6,7 +6,9 @@ from app.context.epoch_state import EpochState
 from app.modules.octant_rewards.service.impl.calculated import (
     CalculatedOctantRewards,
 )
-from app.modules.octant_rewards.service.impl.saved import SavedOctantRewards
+
+from app.modules.octant_rewards.service.impl.finalized import FinalizedOctantRewards
+from app.modules.octant_rewards.service.impl.pending import PendingOctantRewards
 from app.modules.octant_rewards.service.service import OctantRewardsService
 from app.modules.snapshots.pending.service.impl.pre_pending import (
     PrePendingSnapshots,
@@ -55,7 +57,8 @@ def register_services():
     subgraph_events_generator = DbAndGraphEventsGenerator()
     saved_user_deposits = SavedUserDeposits()
     contract_balance_user_deposits = ContractBalanceUserDeposits()
-    saved_octant_rewards = SavedOctantRewards()
+    pending_octant_rewards = PendingOctantRewards()
+    finalized_octant_rewards = FinalizedOctantRewards()
     calculated_user_deposits = CalculatedUserDeposits(
         events_generator=subgraph_events_generator
     )
@@ -91,17 +94,17 @@ def register_services():
     SERVICE_REGISTRY[EpochState.PENDING] = _build_registry(
         staking_proceeds=saved_staking_proceeds,
         user_deposits=saved_user_deposits,
-        octant_rewards=saved_octant_rewards,
+        octant_rewards=pending_octant_rewards,
     )
     SERVICE_REGISTRY[EpochState.FINALIZING] = _build_registry(
         staking_proceeds=saved_staking_proceeds,
         user_deposits=saved_user_deposits,
-        octant_rewards=saved_octant_rewards,
+        octant_rewards=pending_octant_rewards,
     )
     SERVICE_REGISTRY[EpochState.FINALIZED] = _build_registry(
         staking_proceeds=saved_staking_proceeds,
         user_deposits=saved_user_deposits,
-        octant_rewards=saved_octant_rewards,
+        octant_rewards=finalized_octant_rewards,
     )
 
 

@@ -15,7 +15,6 @@ from tests.conftest import (
     allocate_user_rewards,
     TOTAL_REWARDS,
     ALL_INDIVIDUAL_REWARDS,
-    MOCK_EPOCHS,
 )
 from tests.helpers import create_epoch_event
 from tests.helpers.constants import USER3_BUDGET
@@ -31,8 +30,6 @@ def before(
     patch_proposals,
     patch_has_pending_epoch_snapshot,
 ):
-    MOCK_EPOCHS.get_finalized_epoch.return_value = MOCKED_FINALIZED_EPOCH_NO
-
     epoch = create_epoch_event(
         start=1698802327, end=1698803327, duration=1000, epoch=MOCKED_FINALIZED_EPOCH_NO
     )
@@ -79,6 +76,8 @@ def test_finalized_epoch_snapshot_with_rewards(
     assert int(snapshot.total_withdrawals) == pytest.approx(
         TOTAL_REWARDS - rewards_back_to_gf, 0.000000000000000001
     )
+    assert snapshot.leftover == "101807243419376993792"
+    assert snapshot.patrons_rewards == "0"
     assert (
         snapshot.withdrawals_merkle_root
         == "0x81c1e5cfcd6a938330bb2d36d7301e7425158c6851566d3c96de6346d8a6cd2f"
@@ -130,6 +129,8 @@ def test_finalized_epoch_snapshot_with_patrons_enabled(
     assert int(snapshot.total_withdrawals) == pytest.approx(
         TOTAL_REWARDS - rewards_back_to_gf, 0.000000000000000001
     )
+    assert snapshot.leftover == "101805207594133168405"
+    assert snapshot.patrons_rewards == "2035825243825387"
     assert (
         snapshot.withdrawals_merkle_root
         == "0x7d73cf5edadc99cb7843ce9b076468e97ee9038f5f351d23fc7e0c48aa528303"
@@ -149,7 +150,7 @@ def test_finalized_epoch_snapshot_without_rewards(
 
     snapshot = database.finalized_epoch_snapshot.get_by_epoch_num(result)
     assert snapshot.matched_rewards == "220114398315501248407"
-    assert snapshot.total_withdrawals is None
+    assert snapshot.total_withdrawals == "0"
     assert snapshot.withdrawals_merkle_root is None
     assert snapshot.created_at is not None
 

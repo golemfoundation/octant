@@ -11,12 +11,11 @@ from app.infrastructure import database
 from app.legacy.controllers.user import get_all_users
 from app.legacy.core import proposals, merkle_tree
 from app.legacy.core.epochs import epoch_snapshots as core_epoch_snapshots
-from app.legacy.core.epochs.epoch_snapshots import has_pending_epoch_snapshot
 from app.legacy.core.proposals import get_proposals_with_allocations
 from app.legacy.core.rewards.rewards import (
-    get_estimated_matched_rewards,
+    calculate_matched_rewards,
 )
-from app.legacy.core.user.budget import get_budget
+from app.legacy.core.user.budget import get_budget, get_patrons_budget
 
 
 @dataclass()
@@ -56,10 +55,13 @@ def get_estimated_proposals_rewards() -> Optional[List[ProposalReward]]:
     if pending_epoch is None:
         raise exceptions.NotInDecisionWindow
 
-    if not has_pending_epoch_snapshot(pending_epoch):
+    pending_snapshot = database.pending_epoch_snapshot.get_by_epoch(pending_epoch)
+
+    if not pending_snapshot:
         raise exceptions.MissingSnapshot
 
-    matched_rewards = get_estimated_matched_rewards()
+    patrons_rewards = get_patrons_budget(pending_snapshot)
+    matched_rewards = calculate_matched_rewards(pending_snapshot, patrons_rewards)
     proposals_with_allocations = get_proposals_with_allocations(pending_epoch)
     threshold = get_allocation_threshold(pending_epoch)
 
