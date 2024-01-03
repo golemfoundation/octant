@@ -95,6 +95,14 @@ class MissingSnapshot(OctantException):
         super().__init__(self.description, self.code)
 
 
+class SnapshotAlreadyExists(OctantException):
+    code = 400
+    description = "Snapshot for given epoch already exists"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
 class SnapshotTooEarly(OctantException):
     code = 500
     description = (

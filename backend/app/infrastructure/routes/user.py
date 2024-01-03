@@ -4,7 +4,7 @@ from flask_restx import reqparse
 
 from eth_utils import to_checksum_address
 
-import app.controllers.user as user_controller
+import app.legacy.controllers.user as user_controller
 from app.extensions import api
 from app.infrastructure import OctantResource
 from app.settings import config

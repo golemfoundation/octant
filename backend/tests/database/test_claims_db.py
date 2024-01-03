@@ -1,4 +1,5 @@
-from app import database, db
+from app import db
+from app.infrastructure import database
 
 
 def test_get_claims_by_glm_withdrawn_and_nonce_get(app, user_accounts):

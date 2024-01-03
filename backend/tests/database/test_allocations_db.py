@@ -1,4 +1,4 @@
-from app import database
+from app.infrastructure import database
 from tests.conftest import MOCKED_PENDING_EPOCH_NO
 
 

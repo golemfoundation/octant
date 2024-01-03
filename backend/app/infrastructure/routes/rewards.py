@@ -1,10 +1,16 @@
 from flask import current_app as app, request
 from flask_restx import Namespace, fields
 
-from app.controllers import rewards
-from app.controllers.user import estimate_budget, get_budget
+from app.legacy.controllers import rewards
+from app.legacy.controllers.user import get_budget
 from app.extensions import api
 from app.infrastructure import OctantResource
+from app.infrastructure.routes.validations.user_validations import (
+    validate_estimate_budget_inputs,
+)
+from app.legacy.utils.time import days_to_sec
+from app.modules.user.budgets.controller import estimate_budget
+
 
 ns = Namespace("rewards", description="Octant rewards")
 api.add_namespace(ns)
@@ -202,7 +208,9 @@ class EstimatedUserBudget(OctantResource):
         app.logger.debug(
             f"Getting user estimated budget for {days} days and {glm_amount} GLM"
         )
-        budget = estimate_budget(days, glm_amount)
+        validate_estimate_budget_inputs(days, glm_amount)
+        lock_duration_sec = days_to_sec(days)
+        budget = estimate_budget(lock_duration_sec, glm_amount)
         app.logger.debug(f"Estimated user budget: {budget}")
 
         return {"budget": budget}

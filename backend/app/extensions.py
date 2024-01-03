@@ -8,12 +8,12 @@ from flask_caching import Cache
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
-from app.contracts import abi
-from app.contracts.epochs import Epochs
-from app.contracts.deposits import Deposits
-from app.contracts.erc20 import ERC20
-from app.contracts.proposals import Proposals
-from app.contracts.vault import Vault
+from app.infrastructure.contracts import abi
+from app.infrastructure.contracts.epochs import Epochs
+from app.infrastructure.contracts.deposits import Deposits
+from app.infrastructure.contracts.erc20 import ERC20
+from app.infrastructure.contracts.proposals import Proposals
+from app.infrastructure.contracts.vault import Vault
 
 # Flask extensions
 api = Api(

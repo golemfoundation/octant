@@ -4,15 +4,15 @@ from typing import List
 from flask import current_app as app
 from flask_socketio import emit
 
-from app.controllers import allocations
-from app.controllers.allocations import allocate
-from app.controllers.rewards import (
+from app.legacy.controllers import allocations
+from app.legacy.controllers.allocations import allocate
+from app.legacy.controllers.rewards import (
     get_allocation_threshold,
     get_estimated_proposals_rewards,
     ProposalReward,
 )
-from app.core.allocations import AllocationRequest
-from app.core.common import AccountFunds
+from app.legacy.core.allocations import AllocationRequest
+from app.legacy.core.common import AccountFunds
 from app.exceptions import OctantException
 from app.extensions import socketio, epochs
 from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler

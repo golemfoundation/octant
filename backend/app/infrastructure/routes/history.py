@@ -2,7 +2,7 @@ from flask import current_app as app
 from flask_restx import Namespace, fields
 from flask import request
 
-from app.controllers import history
+from app.legacy.controllers import history
 from app.extensions import api
 from app.infrastructure import OctantResource
 

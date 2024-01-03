@@ -3,8 +3,8 @@ import dataclasses
 from flask import current_app as app, request
 from flask_restx import Namespace, fields
 
-from app.controllers import allocations
-from app.core.allocations import AllocationRequest
+from app.legacy.controllers import allocations
+from app.legacy.core.allocations import AllocationRequest
 from app.extensions import api
 from app.infrastructure import OctantResource
 
