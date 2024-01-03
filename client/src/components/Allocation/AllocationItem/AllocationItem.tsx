@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import { formatUnits } from 'ethers/lib/utils';
 import {
   motion,
   useAnimate,
@@ -8,6 +7,7 @@ import {
   useTransform,
 } from 'framer-motion';
 import React, { FC, Fragment, memo, useEffect, useRef, useState } from 'react';
+import { useAccount } from 'wagmi';
 
 import AllocationItemRewards from 'components/Allocation/AllocationItemRewards';
 import AllocationItemSkeleton from 'components/Allocation/AllocationItemSkeleton';
@@ -16,13 +16,13 @@ import Img from 'components/ui/Img';
 import InputText from 'components/ui/InputText';
 import Svg from 'components/ui/Svg';
 import env from 'env';
-import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
-import useUserAllocations from 'hooks/queries/useUserAllocations';
-import useAllocationsStore from 'store/allocations/store';
 import { bin } from 'svg/misc';
+import { comma, floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 
 import styles from './AllocationItem.module.scss';
 import AllocationItemProps from './types';
@@ -30,38 +30,55 @@ import AllocationItemProps from './types';
 const AllocationItem: FC<AllocationItemProps> = ({
   address,
   className,
+  isError,
   isLoadingError,
   name,
   onChange,
+  onRemoveAllocationElement,
   profileImageSmall,
   value,
+  setAddressesWithError,
 }) => {
   const { ipfsGateway } = env;
+  const { isConnected } = useAccount();
+  const { data: individualReward } = useIndividualReward();
   const { data: currentEpoch } = useCurrentEpoch();
   const { isFetching: isFetchingRewardsThreshold } = useProposalRewardsThreshold();
-  const { data: userAllocations } = useUserAllocations();
-  const { allocations, setAllocations } = useAllocationsStore(state => ({
-    allocations: state.data.allocations,
-    setAllocations: state.setAllocations,
-  }));
-  const { onAddRemoveFromAllocate } = useIdsInAllocation({
-    allocations,
-    setAllocations,
-    userAllocationsElements: userAllocations?.elements,
-  });
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { isDesktop } = useMediaQuery();
   const [ref, animate] = useAnimate();
   const removeButtonRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
+  const [localValue, setLocalValue] = useState<AllocationItemProps['value']>('');
   const [constraints, setConstraints] = useState([0, 0]);
   const [startX, setStartX] = useState(0);
   const x = useMotionValue(0);
 
   const removeButtonScaleTransform = useTransform(x, [constraints[1], constraints[0]], [0.8, 1]);
 
-  const valueToRender = formatUnits(value, 'ether');
   const isEpoch1 = currentEpoch === 1;
   const isLoading = currentEpoch === undefined || isFetchingRewardsThreshold;
+
+  const _onChange = (newValue: string) => {
+    const valueComma = newValue.replace(comma, '.');
+    if (valueComma && !floatNumberWithUpTo18DecimalPlaces.test(valueComma)) {
+      return;
+    }
+
+    setLocalValue(valueComma);
+
+    if (!isError) {
+      onChange({ address, value: valueComma }, true);
+    }
+  };
+
+  useEffect(() => {
+    if (isError || !isDecisionWindowOpen) {
+      return;
+    }
+    setLocalValue(value);
+  }, [value, isDecisionWindowOpen, isError]);
 
   useMotionValueEvent(x, 'change', latest => {
     if (latest < constraints[0]) {
@@ -83,6 +100,34 @@ const AllocationItem: FC<AllocationItemProps> = ({
     setConstraints([(itemHeight + removeButtonLeftPadding) * -1, 0]);
   }, [ref, removeButtonRef, isDesktop, isLoading]);
 
+  useEffect(() => {
+    if (isError) {
+      const timeout = setTimeout(() => {
+        if (!inputRef?.current) {
+          return;
+        }
+        onChange({ address, value: '0' }, true);
+        setAddressesWithError(addressesWithError =>
+          addressesWithError.filter(addressWithError => addressWithError !== address),
+        );
+        setLocalValue(value);
+
+        // Trick to make inputRef.current.select() work.
+        setTimeout(() => {
+          if (!inputRef?.current) {
+            return;
+          }
+          inputRef.current.select();
+        }, 0);
+      }, 2000);
+
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address, isError, inputRef, localValue]);
+
   return (
     <motion.div
       className={cx(styles.root, className)}
@@ -93,7 +138,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
       <motion.div
         ref={removeButtonRef}
         className={styles.removeButton}
-        onClick={() => onAddRemoveFromAllocate(address)}
+        onClick={onRemoveAllocationElement}
         style={{ scale: removeButtonScaleTransform }}
       >
         <Svg img={bin} size={isDesktop ? [2.4, 2.2] : [2, 1.8]} />
@@ -136,12 +181,16 @@ const AllocationItem: FC<AllocationItemProps> = ({
                 </div>
               </div>
               <InputText
-                className={cx(styles.input, isEpoch1 && styles.isEpoch1)}
-                onChange={event => onChange(address, event.target.value)}
+                ref={inputRef}
+                className={cx(styles.input, isEpoch1 && styles.isEpoch1, isError && styles.isError)}
+                error={isError}
+                isDisabled={!isConnected || individualReward?.isZero() || !isDecisionWindowOpen}
+                onChange={event => _onChange(event.target.value)}
                 placeholder="0.000"
+                shouldAutoFocusAndSelect={false}
                 suffix="ETH"
                 textAlign="right"
-                value={value.isZero() ? undefined : valueToRender}
+                value={localValue}
                 variant="allocation"
               />
             </Fragment>

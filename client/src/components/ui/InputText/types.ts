@@ -7,7 +7,7 @@ export default interface InputTextProps {
   autocomplete?: string;
   className?: string;
   dataTest?: string;
-  error?: string;
+  error?: string | boolean;
   inputMode?: HTMLAttributes<HTMLInputElement>['inputMode'];
   isButtonClearVisible?: boolean;
   isDisabled?: boolean;

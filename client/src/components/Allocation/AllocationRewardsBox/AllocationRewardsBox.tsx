@@ -18,9 +18,10 @@ import AllocationRewardsBoxProps from './types';
 const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
   className,
   isDisabled,
-  onUnlock,
   isManuallyEdited,
   isLocked,
+  isError,
+  setRewardsForProposalsCallback,
 }) => {
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationRewardsBox',
@@ -41,14 +42,16 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
     if (!individualReward || isDisabled) {
       return;
     }
-    setRewardsForProposals(individualReward?.mul(index).div(100));
+    const rewardsForProposalsNew = individualReward?.mul(index).div(100);
+    setRewardsForProposals(rewardsForProposalsNew);
+    setRewardsForProposalsCallback({ rewardsForProposalsNew });
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const onSetRewardsForProposalsThrottled = useCallback(throttle(onSetRewardsForProposals, 250), [
-    isDisabled,
-    individualReward?.toHexString(),
-  ]);
+  const onSetRewardsForProposalsThrottled = useCallback(
+    throttle(onSetRewardsForProposals, 250, { trailing: true }),
+    [isDisabled, individualReward?.toHexString(), setRewardsForProposalsCallback],
+  );
 
   const percentRewardsForProposals = isDecisionWindowOpenAndHasIndividualReward
     ? rewardsForProposals.mul(100).div(individualReward).toNumber()
@@ -105,10 +108,10 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
           className={styles.slider}
           hideThumb={isLocked}
           isDisabled={isDisabled}
+          isError={isError}
           max={100}
           min={0}
           onChange={onSetRewardsForProposalsThrottled}
-          onUnlock={onUnlock}
           value={percentRewardsForProposals}
         />
       </div>

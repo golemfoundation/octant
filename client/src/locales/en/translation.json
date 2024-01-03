@@ -86,8 +86,8 @@
       },
       "allocationNavigation": {
         "confirm": "Confirm",
-        "reset": "Reset",
-        "edit": "Edit"
+        "edit": "Edit",
+        "reset": "Reset"
       },
       "allocationRewardsBox": {
         "title": "Allocate rewards",

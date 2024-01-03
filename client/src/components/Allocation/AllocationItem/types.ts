@@ -1,10 +1,11 @@
-import { BigNumber } from 'ethers';
+import React from 'react';
 
 import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
+import { AllocationValue } from 'views/AllocationView/types';
 
 export interface AllocationItemWithAllocations extends ProposalIpfsWithRewards {
   isAllocatedTo: boolean;
-  value: BigNumber;
+  value: string;
 }
 
 export default interface AllocationItemProps
@@ -13,6 +14,8 @@ export default interface AllocationItemProps
     'totalValueOfAllocations' | 'percentage' | 'numberOfDonors'
   > {
   className?: string;
-  isManuallyEdited?: boolean;
-  onChange: (address: string, newValue: string) => void;
+  isError: boolean;
+  onChange: (newAllocationValue: AllocationValue, isManualModeEnforced?: boolean) => void;
+  onRemoveAllocationElement: () => void;
+  setAddressesWithError: React.Dispatch<React.SetStateAction<string[]>>;
 }

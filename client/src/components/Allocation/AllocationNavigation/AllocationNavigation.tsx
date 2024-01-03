@@ -7,33 +7,46 @@ import styles from './AllocationNavigation.module.scss';
 import AllocationNavigationProps from './types';
 
 const AllocationNavigation: FC<AllocationNavigationProps> = ({
+  isLeftButtonDisabled,
+  areButtonsDisabled,
+  currentView,
   isLoading,
   onAllocate,
   onResetValues,
-  onEdit,
-  isLocked,
-  isLeftButtonDisabled,
-  isRightButtonDisabled,
+  setCurrentView,
 }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationNavigation',
   });
 
+  const commonProps = {
+    isDisabled: areButtonsDisabled,
+  };
+  const buttonPreviousProps = {
+    isDisabled: isLeftButtonDisabled,
+    label: t('reset'),
+    onClick: onResetValues,
+  };
+  const buttonNextProps =
+    currentView === 'edit'
+      ? {
+          label: t('confirm'),
+          onClick: onAllocate,
+        }
+      : {
+          label: t('edit'),
+          onClick: () => setCurrentView('edit'),
+        };
+
   return (
     <div className={styles.root}>
+      <Button className={styles.button} {...commonProps} {...buttonPreviousProps} />
       <Button
         className={styles.button}
-        isDisabled={isLeftButtonDisabled}
-        label={t('reset')}
-        onClick={onResetValues}
-      />
-      <Button
-        className={styles.button}
-        isDisabled={isRightButtonDisabled}
         isLoading={isLoading}
-        label={isLocked ? t('edit') : t('confirm')}
-        onClick={isLocked ? onEdit : onAllocate}
         variant="cta"
+        {...commonProps}
+        {...buttonNextProps}
       />
     </div>
   );

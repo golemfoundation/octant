@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { AnimatePresence } from 'framer-motion';
 import isEmpty from 'lodash/isEmpty';
 import React, { Fragment, ReactElement, useEffect, useState } from 'react';
@@ -8,13 +8,15 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import AllocationItem from 'components/Allocation/AllocationItem';
+import AllocationItemSkeleton from 'components/Allocation/AllocationItemSkeleton';
 import AllocationNavigation from 'components/Allocation/AllocationNavigation';
 import AllocationRewardsBox from 'components/Allocation/AllocationRewardsBox';
 import AllocationSummary from 'components/Allocation/AllocationSummary';
 import AllocationTipTiles from 'components/Allocation/AllocationTipTiles';
 import Layout from 'components/shared/Layout';
-import { ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
 import useAllocate from 'hooks/events/useAllocate';
+import useAllocationViewSetRewardsForProposals from 'hooks/helpers/useAllocationViewSetRewardsForProposals';
+import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
@@ -29,30 +31,41 @@ import useAllocationsStore from 'store/allocations/store';
 import triggerToast from 'utils/triggerToast';
 
 import styles from './AllocationView.module.scss';
-import { AllocationValues } from './types';
+import { AllocationValue, AllocationValues, CurrentView, PercentageProportions } from './types';
 import {
   getAllocationValuesInitialState,
   getAllocationsWithRewards,
-  getNewAllocationValues,
+  getAllocationValuesAfterManualChange,
 } from './utils';
 
 const AllocationView = (): ReactElement => {
   const { isConnected } = useAccount();
   const { t } = useTranslation('translation', { keyPrefix: 'views.allocation' });
-  const [isLocked, setIsLocked] = useState<boolean | undefined>(undefined);
+  const [currentView, setCurrentView] = useState<CurrentView>('edit');
   const [allocationValues, setAllocationValues] = useState<AllocationValues>([]);
-  const [isRewardsForProposalsSet, setIsRewardsForProposalsSet] = useState<boolean>(false);
-  const [allocationsEdited, setAllocationsEdited] = useState<string[]>([]);
+  const [isManualMode, setIsManualMode] = useState<boolean>(false);
+  const [addressesWithError, setAddressesWithError] = useState<string[]>([]);
+  const [percentageProportions, setPercentageProportions] = useState<PercentageProportions>({});
   const { data: proposalsContract } = useProposalsContract();
   const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards();
+  const { isRewardsForProposalsSet } = useAllocationViewSetRewardsForProposals();
 
   const { data: currentEpoch } = useCurrentEpoch();
   const { refetch: refetchHistory } = useHistory();
   const {
-    data: userAllocations,
+    data: userAllocationsOriginal,
     isFetching: isFetchingUserAllocation,
     refetch: refetchUserAllocations,
   } = useUserAllocations(undefined, { refetchOnMount: true });
+
+  const userAllocations = userAllocationsOriginal && {
+    ...userAllocationsOriginal,
+    elements: userAllocationsOriginal.elements.map(element => ({
+      ...element,
+      value: formatUnits(element.value),
+    })),
+  };
+
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { refetch: refetchWithdrawals } = useWithdrawals();
@@ -69,10 +82,16 @@ const AllocationView = (): ReactElement => {
       setAllocations: state.setAllocations,
       setRewardsForProposals: state.setRewardsForProposals,
     }));
+  const { onAddRemoveFromAllocate } = useIdsInAllocation({
+    allocations,
+    setAllocations,
+    userAllocationsElements: userAllocationsOriginal?.elements,
+  });
 
   const allocateEvent = useAllocate({
     nonce: userNonce!,
     onSuccess: async () => {
+      setCurrentView('summary');
       triggerToast({
         title: t('allocationSuccessful'),
       });
@@ -84,103 +103,74 @@ const AllocationView = (): ReactElement => {
       setAllocations([
         ...allocations.filter(allocation => {
           const allocationValue = allocationValues.find(({ address }) => address === allocation);
-          return !allocationValue?.value.isZero();
+          return allocationValue && allocationValue.value !== '0.0';
         }),
       ]);
-      setIsLocked(true);
+      setCurrentView('summary');
     },
   });
 
-  useEffect(() => {
-    /**
-     * This hook adds rewardsForProposals to the store.
-     * It needs to be done here, since user can change rewardsForProposals and leave the view.
-     * When they reenter it, they need to see their latest allocation locked in the slider.
-     */
-    if (!isConnected) {
-      setIsRewardsForProposalsSet(true);
-    }
-    if (!individualReward || !userAllocations) {
+  const setPercentageProportionsWrapper = (
+    allocationValuesNew: AllocationValues,
+    rewardsForProposalsNew: BigNumber,
+  ) => {
+    if (!individualReward) {
       return;
     }
+    const percentageProportionsNew = allocationValuesNew.reduce((acc, curr) => {
+      const valueAsPercentageOfRewardsForProposals = (
+        (parseFloat(curr.value.toString()) * 100) /
+        parseFloat(formatUnits(rewardsForProposalsNew))
+      ).toFixed();
+      return {
+        ...acc,
+        [curr.address]: valueAsPercentageOfRewardsForProposals,
+      };
+    }, {});
+    setPercentageProportions(percentageProportionsNew);
+  };
 
-    const localStorageRewardsForProposals = BigNumber.from(
-      JSON.parse(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROPOSALS) || 'null'),
-    );
-    if (userAllocations.elements.length > 0) {
-      const userAllocationsSum = userAllocations.elements.reduce(
-        (acc, curr) => acc.add(curr.value),
-        BigNumber.from(0),
-      );
-      setRewardsForProposals(userAllocationsSum);
-    } else {
-      setRewardsForProposals(
-        localStorageRewardsForProposals.gt(individualReward)
-          ? BigNumber.from(0)
-          : localStorageRewardsForProposals,
-      );
-    }
-    setIsRewardsForProposalsSet(true);
-    // .toHexString(), because React can't compare objects as deps in hooks, causing infinite loop.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, individualReward?.toHexString(), userAllocations?.elements.length]);
-
-  const onResetAllocationValues = () => {
+  const onResetAllocationValues = ({
+    allocationValuesNew = allocationValues,
+    rewardsForProposalsNew = rewardsForProposals,
+    shouldReset = false,
+  } = {}) => {
     if (
+      isFetchingUserAllocation ||
       !isRewardsForProposalsSet ||
       currentEpoch === undefined ||
-      (isConnected && !userAllocations && currentEpoch > 1) ||
-      !rewardsForProposals
+      (isConnected && !userAllocations && isDecisionWindowOpen && currentEpoch > 1) ||
+      !rewardsForProposalsNew
     ) {
       return;
     }
-    const allocationValuesNew = getAllocationValuesInitialState({
-      allocationValues,
+
+    const allocationValuesReset = getAllocationValuesInitialState({
+      allocationValues: allocationValuesNew,
       allocations,
-      allocationsEdited,
-      rewardsForProposals,
-      userAllocationsElements: userAllocations?.elements,
+      isManualMode,
+      percentageProportions,
+      rewardsForProposals: rewardsForProposalsNew,
+      shouldReset,
+      userAllocationsElements: userAllocations?.elements || [],
     });
-    setAllocationValues(allocationValuesNew);
-  };
 
-  useEffect(() => {
-    onResetAllocationValues();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    currentEpoch,
-    allocations,
-    isRewardsForProposalsSet,
-    userAllocations?.elements.length,
-    userNonce,
-  ]);
-
-  useEffect(() => {
-    if (!isRewardsForProposalsSet) {
-      return;
-    }
-
-    if (rewardsForProposals.isZero()) {
-      onResetAllocationValues();
-      return;
-    }
-
-    if (rewardsForProposals.isZero()) {
-      setAllocationValues(
-        allocationValues.map(allocation => ({
-          ...allocation,
-          value: BigNumber.from(0),
-        })),
+    if (shouldReset) {
+      setRewardsForProposals(
+        allocationValuesReset.reduce(
+          (acc, curr) => acc.add(parseUnits(curr.value)),
+          BigNumber.from(0),
+        ),
       );
-      setAllocationsEdited([]);
-      return;
+      setPercentageProportionsWrapper(allocationValuesReset, rewardsForProposals);
+
+      if (userAllocations?.elements.length === 0) {
+        setIsManualMode(false);
+      }
     }
 
-    if (!rewardsForProposals.isZero()) {
-      onResetAllocationValues();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rewardsForProposals]);
+    setAllocationValues(allocationValuesReset);
+  };
 
   const onAllocate = () => {
     if (userNonce === undefined || proposalsContract === undefined) {
@@ -195,43 +185,90 @@ const AllocationView = (): ReactElement => {
     if (allocationValuesNew.length === 0) {
       allocationValuesNew.push({
         address: proposalsContract[0],
-        value: BigNumber.from(0),
+        value: '0',
       });
     }
     allocateEvent.emit(allocationValuesNew);
   };
 
   useEffect(() => {
+    if (!userAllocations || isManualMode) {
+      return;
+    }
+    if (userAllocations.elements.length > 0) {
+      setIsManualMode(true);
+      setCurrentView('summary');
+      return;
+    }
+    setIsManualMode(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userAllocations?.elements.length]);
+
+  useEffect(() => {
+    if (!isRewardsForProposalsSet || isFetchingUserAllocation) {
+      return;
+    }
+
+    if (userAllocations && userAllocations.elements.length > 0) {
+      setAllocationValues(userAllocations.elements);
+      setPercentageProportionsWrapper(userAllocations.elements, rewardsForProposals);
+      onResetAllocationValues({ allocationValuesNew: userAllocations.elements });
+      return;
+    }
+    onResetAllocationValues();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    currentEpoch,
+    allocations,
+    isRewardsForProposalsSet,
+    isFetchingUserAllocation,
+    userAllocations?.elements.length,
+    userNonce,
+    isRewardsForProposalsSet,
+  ]);
+
+  useEffect(() => {
     if (!currentEpoch) {
       return;
     }
-    if (userAllocations && currentEpoch > 1) {
-      setIsLocked(userAllocations.hasUserAlreadyDoneAllocation);
+    if (userAllocations && currentEpoch > 1 && userAllocations.hasUserAlreadyDoneAllocation) {
+      setCurrentView('summary');
       return;
     }
-    setIsLocked(false);
+    setCurrentView('edit');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentEpoch, userAllocations?.elements.length]);
 
-  const onChangeAllocationItemValue = (proposalAddressToModify: string, newValue: string) => {
-    const newValueBigNumber = parseUnits(newValue, 'wei');
-    const isProposalAddressToModifyEdited = allocationsEdited.includes(proposalAddressToModify);
-    const allocationsEditedNew = isProposalAddressToModifyEdited
-      ? allocationsEdited
-      : [...allocationsEdited, proposalAddressToModify];
-    if (!isProposalAddressToModifyEdited) {
-      setAllocationsEdited(allocationsEditedNew);
+  const onChangeAllocationItemValue = (
+    newAllocationValue: AllocationValue,
+    isManualModeEnforced = false,
+  ) => {
+    const { allocationValuesArrayNew, rewardsForProposalsNew } =
+      getAllocationValuesAfterManualChange({
+        allocationValues,
+        individualReward,
+        // When deleting by button isManualMode does not trigger manual mode. When typing, it does.
+        isManualMode: isManualModeEnforced ? true : isManualMode,
+        newAllocationValue,
+        rewardsForProposals,
+        setAddressesWithError,
+      });
+
+    setAllocationValues(allocationValuesArrayNew);
+    setRewardsForProposals(rewardsForProposalsNew);
+
+    if (isManualModeEnforced) {
+      setPercentageProportionsWrapper(allocationValuesArrayNew, rewardsForProposalsNew);
     }
 
-    const newAllocationValues = getNewAllocationValues({
-      allocationValues,
-      allocationsEdited: allocationsEditedNew,
-      individualReward,
-      newValue: newValueBigNumber,
-      proposalAddressToModify,
-      rewardsForProposals,
-    });
-    setAllocationValues(newAllocationValues);
+    if (isManualModeEnforced) {
+      setIsManualMode(true);
+    }
+  };
+
+  const onRemoveAllocationElement = (address: string) => {
+    onAddRemoveFromAllocate(address);
+    onChangeAllocationItemValue({ address, value: '0' });
   };
 
   const isLoading =
@@ -268,51 +305,66 @@ const AllocationView = (): ReactElement => {
       navigationBottomSuffix={
         showAllocationBottomNavigation && (
           <AllocationNavigation
-            isLeftButtonDisabled={areButtonsDisabled || !!isLocked}
+            areButtonsDisabled={areButtonsDisabled}
+            currentView={currentView}
+            isLeftButtonDisabled={currentView === 'summary'}
             isLoading={allocateEvent.isLoading}
-            isLocked={isLocked}
-            isRightButtonDisabled={areButtonsDisabled}
             onAllocate={onAllocate}
-            onEdit={() => setIsLocked(false)}
-            onResetValues={() => onResetAllocationValues()}
+            onResetValues={() => onResetAllocationValues({ shouldReset: true })}
+            setCurrentView={setCurrentView}
           />
         )
       }
     >
-      <Fragment>
-        <AllocationTipTiles className={styles.box} />
-        {!isEpoch1 && (
-          <AllocationRewardsBox
-            className={styles.box}
-            isDisabled={!isDecisionWindowOpen || !hasUserIndividualReward}
-            isLocked={isLocked}
-            /* eslint-disable-next-line @typescript-eslint/naming-convention */
-            onUnlock={isDecisionWindowOpen ? () => setIsLocked(prev => !prev) : () => {}}
-          />
-        )}
-        {isLocked ? (
-          <AllocationSummary allocationValues={allocationValues} />
-        ) : (
-          <AnimatePresence initial={false}>
-            {allocationsWithRewards!.map(
-              ({ address, isAllocatedTo, isLoadingError, value, profileImageSmall, name }) => (
-                <AllocationItem
-                  key={address}
-                  address={address}
-                  className={cx(styles.box, styles.isAllocation)}
-                  isAllocatedTo={isAllocatedTo}
-                  isLoadingError={isLoadingError}
-                  isManuallyEdited={allocationsEdited.includes(address)}
-                  name={name}
-                  onChange={onChangeAllocationItemValue}
-                  profileImageSmall={profileImageSmall}
-                  value={value}
-                />
-              ),
-            )}
-          </AnimatePresence>
-        )}
-      </Fragment>
+      {currentView === 'edit' ? (
+        <Fragment>
+          <AllocationTipTiles className={styles.box} />
+          {!isEpoch1 && (
+            <AllocationRewardsBox
+              className={styles.box}
+              isDisabled={!isDecisionWindowOpen || !hasUserIndividualReward}
+              isManuallyEdited={isManualMode}
+              setRewardsForProposalsCallback={onResetAllocationValues}
+              isError={addressesWithError.length > 0}
+              // @ts-expect-error false negative error regarding types comparison
+              isLocked={currentView === 'summary'}
+            />
+          )}
+          {areAllocationsAvailableOrAlreadyDone && (
+            <AnimatePresence initial={false}>
+              {allocationsWithRewards.length > 0
+                ? allocationsWithRewards!.map(
+                    ({
+                      address,
+                      isAllocatedTo,
+                      isLoadingError,
+                      value,
+                      profileImageSmall,
+                      name,
+                    }) => (
+                      <AllocationItem
+                        key={address}
+                        address={address}
+                        className={cx(styles.box, styles.isAllocation)}
+                        isAllocatedTo={isAllocatedTo}
+                        isError={addressesWithError.includes(address)}
+                        isLoadingError={isLoadingError}
+                        name={name}
+                        onChange={onChangeAllocationItemValue}
+                        onRemoveAllocationElement={() => onRemoveAllocationElement(address)}
+                        profileImageSmall={profileImageSmall}
+                        setAddressesWithError={setAddressesWithError}
+                        value={value}
+                      />
+                    ),
+                  )
+                : allocations.map(allocation => <AllocationItemSkeleton key={allocation} />)}
+            </AnimatePresence>
+          )}
+        </Fragment>
+      ) : (
+        <AllocationSummary allocationValues={allocationValues} />
+      )}
     </Layout>
   );
 };

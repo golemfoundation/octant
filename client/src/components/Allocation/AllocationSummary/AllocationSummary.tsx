@@ -1,4 +1,5 @@
 import cx from 'classnames';
+import { parseUnits } from 'ethers/lib/utils';
 import React, { FC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -24,7 +25,9 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
   }));
   const { data: allocateLeverage, mutateAsync } = useAllocateLeverage();
 
-  const allocationValuesPositive = allocationValues.filter(({ value }) => !value.isZero());
+  const allocationValuesPositive = allocationValues.filter(
+    ({ value }) => !parseUnits(value).isZero(),
+  );
   const areAllocationValuesPositive = allocationValuesPositive?.length > 0;
 
   const personalAllocation = individualReward?.sub(rewardsForProposals);
@@ -82,7 +85,11 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
         {areAllocationValuesPositive && (
           <div className={styles.projects}>
             {allocationValuesPositive?.map(({ address, value }) => (
-              <AllocationSummaryProject key={address} address={address} amount={value} />
+              <AllocationSummaryProject
+                key={address}
+                address={address}
+                amount={parseUnits(value)}
+              />
             ))}
           </div>
         )}
