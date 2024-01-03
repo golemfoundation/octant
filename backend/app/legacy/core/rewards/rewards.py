@@ -1,7 +1,5 @@
 from app.exceptions import RewardsException
-from app.infrastructure import database
 from app.infrastructure.database.models import PendingEpochSnapshot
-from app.legacy.core.user.budget import get_patrons_budget
 
 
 def calculate_matched_rewards(
@@ -12,19 +10,6 @@ def calculate_matched_rewards(
         - int(snapshot.all_individual_rewards)
         + patrons_rewards
     )
-
-
-def calculate_patrons_rewards(
-    matched_rewards: int, total_rewards: int, all_individual_rewards: int
-) -> int:
-    return matched_rewards - total_rewards + all_individual_rewards
-
-
-def get_estimated_matched_rewards() -> int:
-    snapshot = database.pending_epoch_snapshot.get_last_snapshot()
-    patrons_rewards = get_patrons_budget(snapshot)
-
-    return calculate_matched_rewards(snapshot, patrons_rewards)
 
 
 def calculate_matched_rewards_threshold(

@@ -1,4 +1,4 @@
-"""empty message
+"""add user budgets table
 
 Revision ID: 794617984fc3
 Revises: f81d796a7ab8

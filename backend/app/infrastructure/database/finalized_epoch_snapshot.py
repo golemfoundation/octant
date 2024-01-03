@@ -36,15 +36,17 @@ def get_last_snapshot() -> FinalizedEpochSnapshot:
 def add_snapshot(
     epoch: int,
     matched_rewards: int,
+    patrons_rewards: int,
+    leftover: int,
     withdrawals_merkle_root: str = None,
-    total_withdrawals: int = None,
+    total_withdrawals: int = 0,
 ):
     snapshot = FinalizedEpochSnapshot(
         epoch=epoch,
         matched_rewards=str(matched_rewards),
         withdrawals_merkle_root=withdrawals_merkle_root,
-        total_withdrawals=str(total_withdrawals)
-        if total_withdrawals is not None
-        else None,
+        patrons_rewards=str(patrons_rewards),
+        leftover=str(leftover),
+        total_withdrawals=str(total_withdrawals),
     )
     db.session.add(snapshot)

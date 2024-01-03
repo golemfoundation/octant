@@ -7,6 +7,7 @@ from decimal import Decimal
 class TotalAndAllIndividualPayload:
     eth_proceeds: int = None
     locked_ratio: Decimal = None
+    operational_cost: int = None
 
 
 @dataclass

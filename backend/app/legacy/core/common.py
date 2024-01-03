@@ -4,13 +4,6 @@ from dataclass_wizard import JSONWizard
 
 
 @dataclass(frozen=True)
-class UserDeposit(JSONWizard):
-    user_address: str
-    effective_deposit: int
-    deposit: int
-
-
-@dataclass(frozen=True)
 class AccountFunds(JSONWizard):
     address: str
     amount: int

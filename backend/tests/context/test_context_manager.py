@@ -16,6 +16,7 @@ from tests.conftest import (
     MATCHED_REWARDS,
     MOCKED_FINALIZED_EPOCH_NO,
 )
+from tests.helpers.constants import OPERATIONAL_COST, LEFTOVER
 
 
 @pytest.fixture(autouse=True)
@@ -113,9 +114,10 @@ def _setup(current, pending, finalized, pending_snapshot, finalized_snapshot):
             LOCKED_RATIO,
             TOTAL_REWARDS,
             ALL_INDIVIDUAL_REWARDS,
+            OPERATIONAL_COST,
         )
     if finalized_snapshot:
         database.finalized_epoch_snapshot.add_snapshot(
-            MOCKED_FINALIZED_EPOCH_NO, MATCHED_REWARDS
+            MOCKED_FINALIZED_EPOCH_NO, MATCHED_REWARDS, 0, LEFTOVER
         )
     db.session.commit()

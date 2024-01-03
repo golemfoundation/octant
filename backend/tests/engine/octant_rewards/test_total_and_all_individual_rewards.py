@@ -70,7 +70,8 @@ def test_default_total_and_all_individual_rewards(
 def test_all_proceeds_with_op_cost_total_and_all_individual_rewards(
     eth_proceeds, locked_ratio, exp_total, exp_all_individual
 ):
-    payload = TotalAndAllIndividualPayload(eth_proceeds, Decimal(locked_ratio))
+    op_cost = int(eth_proceeds * Decimal("0.2"))
+    payload = TotalAndAllIndividualPayload(eth_proceeds, Decimal(locked_ratio), op_cost)
     uut = AllProceedsWithOperationalCost()
 
     total_rewards = uut.calculate_total_rewards(payload)
