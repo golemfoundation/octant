@@ -8,6 +8,7 @@ import SliderProps from './types';
 const Slider: FC<SliderProps> = ({
   className,
   isDisabled,
+  isError,
   onChange,
   value,
   onUnlock,
@@ -48,7 +49,7 @@ const Slider: FC<SliderProps> = ({
         renderThumb={props =>
           isDisabled || hideThumb ? null : (
             <div onClick={handleClick} {...props}>
-              <div className={styles.thumbInnerCircle} />
+              <div className={cx(styles.thumbInnerCircle, isError && styles.isError)} />
             </div>
           )
         }

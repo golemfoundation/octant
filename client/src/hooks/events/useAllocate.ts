@@ -13,7 +13,10 @@ type UseAllocateProps = {
   onSuccess: () => void;
 };
 
-type UseAllocate = { emit: (allocations: AllocationValues) => void; isLoading: boolean };
+type UseAllocate = {
+  emit: (allocations: { address: string; value: string }[]) => void;
+  isLoading: boolean;
+};
 
 const domain = {
   chainId: networkConfig.id,

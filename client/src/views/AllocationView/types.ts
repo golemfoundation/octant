@@ -1,9 +1,23 @@
 import { BigNumber } from 'ethers';
 
-export type AllocationValues = {
+import { UserAllocationElement } from 'hooks/queries/useUserAllocations';
+
+export type UserAllocationElementString = Omit<UserAllocationElement, 'value'> & {
+  value: string;
+};
+
+export type CurrentView = 'edit' | 'summary';
+
+export type PercentageProportions = {
+  [key: string]: number;
+};
+
+export type AllocationValue = {
   address: string;
-  value: BigNumber;
-}[];
+  value: string;
+};
+
+export type AllocationValues = AllocationValue[];
 
 export type AllocationWithPositiveValueBigNumber = {
   proposalAddress: string;

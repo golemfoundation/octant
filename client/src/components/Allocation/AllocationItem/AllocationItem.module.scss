@@ -82,4 +82,8 @@ $removeButtonHeightWidthDesktop: 10.4rem;
   &.isEpoch1 {
     opacity: 0.5;
   }
+
+  &.isError {
+    animation: horizontal-shaking 0.25s;
+  }
 }

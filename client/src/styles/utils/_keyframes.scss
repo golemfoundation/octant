@@ -27,3 +27,19 @@
     background-position: 46.8rem 0;
   }
 }
+
+@keyframes horizontal-shaking {
+  0% { transform: translateX(0) }
+  25% { transform: translateX(0.5rem) }
+  50% { transform: translateX(-0.5rem) }
+  75% { transform: translateX(0.5rem) }
+  100% { transform: translateX(0) }
+}
+
+@keyframes pulsatingBackground {
+  0% { background: $color-octant-grey8; }
+  25% { background: $color-octant-orange; }
+  50% { background: $color-octant-grey8; }
+  75% { background: $color-octant-orange; }
+  100% { background: $color-octant-grey8; }
+}

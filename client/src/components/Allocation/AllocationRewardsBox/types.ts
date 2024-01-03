@@ -1,7 +1,8 @@
 export default interface AllocationRewardsBoxProps {
   className?: string;
   isDisabled?: boolean;
+  isError: boolean;
   isLocked?: boolean;
   isManuallyEdited?: boolean;
-  onUnlock?: () => void;
+  setRewardsForProposalsCallback: ({ rewardsForProposalsNew }) => void;
 }
