@@ -1,8 +1,3 @@
-from typing import Dict
-
-from flask import current_app as app
-from web3 import exceptions
-
 from app.contracts.smart_contract import SmartContract
 
 

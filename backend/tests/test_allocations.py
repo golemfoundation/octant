@@ -21,9 +21,13 @@ from app.core.allocations import (
 from app.core.rewards.rewards import calculate_matched_rewards_threshold
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.extensions import db
+
+from tests.helpers import create_epoch_event
+
 from tests.conftest import (
     create_payload,
     deserialize_allocations,
+    mock_graphql,
     MOCKED_PENDING_EPOCH_NO,
     MOCK_PROPOSALS,
     MOCK_EPOCHS,
@@ -65,6 +69,8 @@ def get_all_by_epoch_expected_result(user_accounts, proposal_accounts):
 @pytest.fixture(autouse=True)
 def before(
     app,
+    mocker,
+    graphql_client,
     proposal_accounts,
     patch_epochs,
     patch_proposals,
@@ -74,6 +80,10 @@ def before(
     MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts[0:5]
     ]
+
+    mock_graphql(
+        mocker, epochs_events=[create_epoch_event(epoch=MOCKED_PENDING_EPOCH_NO)]
+    )
 
 
 def test_simulate_allocation_single_user(
@@ -130,16 +140,16 @@ def test_simulate_allocation_single_user(
     leverage, result = simulate_allocation(payload, user_accounts[0].address)
 
     assert len(result) == 5
-    assert result[0].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
-    assert result[0].allocated == 40000000000000000000
-    assert result[0].matched == 97_828621473_556110403
+    assert result[0].address == "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec"
+    assert result[0].allocated == 0
+    assert result[0].matched == 0
     assert result[1].address == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
     assert result[1].allocated == 50000000000000000000
     assert result[1].matched == 122_28577684_1945138003
-    assert result[2].address == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
-    assert result[2].allocated == 0
-    assert result[2].matched == 0
-    assert result[3].address == "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec"
+    assert result[2].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
+    assert result[2].allocated == 40000000000000000000
+    assert result[2].matched == 97_828621473_556110403
+    assert result[3].address == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
     assert result[3].allocated == 0
     assert result[3].matched == 0
     assert result[4].address == "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097"
@@ -227,18 +237,18 @@ def test_simulate_allocation_multiple_users(
     _, result = simulate_allocation(payload, user_accounts[0].address)
 
     assert len(result) == 5
-    assert result[0].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
-    assert result[0].allocated == 60000000000000000000
-    assert result[0].matched == 60_031199540_591249565
+    assert result[0].address == "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec"
+    assert result[0].allocated == 0
+    assert result[0].matched == 0
     assert result[1].address == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
-    assert result[1].allocated == 110000000000000000000
-    assert result[1].matched == 110_057199157_750624203
-    assert result[2].address == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
-    assert result[2].allocated == 50000000000000000000
-    assert result[2].matched == 50_025999617_159374637
-    assert result[3].address == "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec"
-    assert result[3].allocated == 0
-    assert result[3].matched == 0
+    assert result[1].allocated == 110_000000000_000000000
+    assert result[1].matched == 12_228577684_194513800
+    assert result[2].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
+    assert result[2].allocated == 60_000000000_000000000
+    assert result[2].matched == 60_031199540_591249565
+    assert result[3].address == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
+    assert result[3].allocated == 50_000000000_000000000
+    assert result[3].matched == -72_259777224_785763366
     assert result[4].address == "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097"
     assert result[4].allocated == 0
     assert result[4].matched == 0
@@ -419,7 +429,7 @@ def test_allocation_validation_errors(proposal_accounts, user_accounts, tos_user
     ]
 
     # Set invalid epoch on purpose (mimicking no pending epoch)
-    MOCK_EPOCHS.get_pending_epoch.return_value = 0
+    MOCK_EPOCHS.get_pending_epoch.return_value = None
 
     # Call allocate method, expect exception
     with pytest.raises(exceptions.NotInDecisionWindow):

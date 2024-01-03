@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from enum import StrEnum
 from typing import List, Tuple, Optional
-from operator import attrgetter
 
 from dataclass_wizard import JSONWizard
 from app.core import history
@@ -13,23 +12,31 @@ class OpType(StrEnum):
     UNLOCK = "unlock"
     ALLOCATION = "allocation"
     WITHDRAWAL = "withdrawal"
+    PATRON_MODE_DONATION = "patron_mode_donation"
 
 
 @dataclass(frozen=True)
 class HistoryEntry(JSONWizard):
     type: OpType
-    amount: int
     timestamp: int  # Should be in microseconds precision
 
 
 @dataclass(frozen=True)
 class TransactionHistoryEntry(HistoryEntry):
     transaction_hash: str
+    amount: int
 
 
 @dataclass(frozen=True)
 class AllocationHistoryEntry(HistoryEntry):
     project_address: str
+    amount: int
+
+
+@dataclass(frozen=True)
+class PatronModeDonation(HistoryEntry):
+    epoch: int
+    amount: int
 
 
 def user_history(
@@ -57,6 +64,16 @@ def _collect_history_records(
         for e in history.get_allocations(user_address, from_timestamp, query_limit)
     ]
 
+    events += [
+        PatronModeDonation(
+            type=OpType.PATRON_MODE_DONATION,
+            timestamp=e.timestamp.timestamp_us(),
+            epoch=e.epoch,
+            amount=e.amount,
+        )
+        for e in history.get_patron_donations(user_address, from_timestamp, query_limit)
+    ]
+
     for event_getter, event_type in [
         (history.get_locks, OpType.LOCK),
         (history.get_unlocks, OpType.UNLOCK),
@@ -79,7 +96,8 @@ def _sort_keys(elem: AllocationHistoryEntry | TransactionHistoryEntry):
     return (
         elem.timestamp,
         elem.type,
-        elem.amount,
+        getattr(elem, "amount", None),
         getattr(elem, "project_address", None),
         getattr(elem, "transaction_hash", None),
+        getattr(elem, "patron_mode_enabled", None),
     )

@@ -1,10 +1,9 @@
 from flask import send_from_directory
-from flask_restx import Resource
 
 from app import settings
 from app.infrastructure import OctantResource
 from app.extensions import api
-from . import (
+from . import (  # noqa
     info,
     history,
     snapshots,

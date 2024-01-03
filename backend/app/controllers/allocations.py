@@ -5,6 +5,7 @@ from typing import Optional
 
 from app import database, exceptions
 from app.controllers import rewards
+from app.controllers.rewards import ProposalReward
 from app.core.allocations import (
     AllocationRequest,
     recover_user_address,
@@ -55,13 +56,28 @@ def simulate_allocation(
     # the code below requires it to work.
     payload["nonce"] = -1
 
-    _make_allocation(payload, user_address, True)
-    simulated_rewards = rewards.get_estimated_proposals_rewards()
+    revoke_previous_user_allocation(user_address)
+    base_rewards = sorted(
+        rewards.get_estimated_proposals_rewards(), key=lambda p: p.address
+    )
+    _make_allocation(payload, user_address, False)
+    simulated_rewards = sorted(
+        rewards.get_estimated_proposals_rewards(), key=lambda p: p.address
+    )
     db.session.rollback()
 
     leverage = calculate_user_allocations_leverage(simulated_rewards)
 
-    return leverage, simulated_rewards
+    rewards_diff = [
+        ProposalReward(
+            base.address,
+            int(simulated.allocated),
+            int(simulated.matched) - int(base.matched),
+        )
+        for base, simulated in zip(base_rewards, simulated_rewards)
+    ]
+
+    return leverage, rewards_diff
 
 
 def get_all_by_user_and_epoch(
@@ -124,6 +140,10 @@ def get_allocation_nonce(user_address: str) -> int:
 
 def revoke_previous_user_allocation(user_address: str):
     pending_epoch = epochs.get_pending_epoch()
+
+    if pending_epoch is None:
+        raise exceptions.NotInDecisionWindow
+
     revoke_previous_allocation(user_address, pending_epoch)
 
 

@@ -1,21 +1,31 @@
 import pytest
 from eth_utils import to_checksum_address
 
+from app.core.epochs.details import EpochDetails
+
 from app.core.deposits.deposits import (
     get_users_deposits,
     get_estimated_effective_deposit,
 )
-from tests.conftest import (
-    USER1_ADDRESS,
-    mock_graphql,
-    create_deposit_event,
+
+from tests.helpers import (
     create_epoch_event,
+    create_deposit_events,
 )
+from tests.conftest import (
+    mock_graphql,
+)
+from tests.helpers.constants import USER1_ADDRESS
 
 
 @pytest.fixture(autouse=True)
 def before(app, graphql_client):
     pass
+
+
+@pytest.fixture()
+def epoch_details():
+    return EpochDetails(1, 1000, 1000, 500)
 
 
 @pytest.mark.parametrize(
@@ -78,7 +88,7 @@ def before(app, graphql_client):
                 },
             ],
             {
-                "effective_deposit": "999_500000000_000000000",
+                "effective_deposit": "500_000000000_000000000",
                 "epoch_end_deposit": "500_000000000_000000000",
             },
         ),
@@ -128,7 +138,7 @@ def before(app, graphql_client):
                 },
             ],
             {
-                "effective_deposit": "269_433886492_855795712",
+                "effective_deposit": "269_433886492_855790068",
                 "epoch_end_deposit": "520_448372019_117283735",
             },
         ),
@@ -159,7 +169,7 @@ def before(app, graphql_client):
                 },
             ],
             {
-                "effective_deposit": "119_433886492_855795712",
+                "effective_deposit": "104_433886492_855790068",
                 "epoch_end_deposit": "320_448372019_117283735",
             },
         ),
@@ -207,7 +217,7 @@ def before(app, graphql_client):
 def test_update_user_deposits(mocker, events, expected):
     """Epochs start == 1000, epoch end == 2000"""
 
-    epoch = 1
+    epoch = 2
 
     mock_graphql(
         mocker, epochs_events=[create_epoch_event(epoch=epoch)], deposit_events=events
@@ -225,28 +235,29 @@ def test_update_user_deposits(mocker, events, expected):
         assert user_deposits == []
 
 
-def test_estimated_effective_deposit_when_user_has_events(mocker):
+def test_estimated_effective_deposit_when_user_has_events(mocker, epoch_details):
     """Epochs start == 1000, epoch end == 2000"""
-    events = [
-        create_deposit_event(amount="1000_000000000_000000000", timestamp=1500),
-        create_deposit_event(
-            typename="Unlocked",
-            deposit_before="1000_000000000_000000000",
-            amount="500_000000000_000000000",
-            timestamp=1750,
-        ),
-    ]
+    events = create_deposit_events(
+        {
+            USER1_ADDRESS: [
+                (1500, 1000_000000000_000000000),
+                (1750, -500_000000000_000000000),
+            ]
+        }
+    )
     mock_graphql(mocker, deposit_events=events)
 
-    result = get_estimated_effective_deposit(1000, 2000, USER1_ADDRESS)
+    result = get_estimated_effective_deposit(epoch_details, USER1_ADDRESS)
 
     assert result == 375_000000000_000000000
 
 
-def test_estimated_effective_deposit_when_user_does_not_have_events(mocker):
+def test_estimated_effective_deposit_when_user_does_not_have_events(
+    mocker, epoch_details
+):
     """Epochs start == 1000, epoch end == 2000"""
     mock_graphql(mocker, deposit_events=[])
 
-    result = get_estimated_effective_deposit(1000, 2000, USER1_ADDRESS)
+    result = get_estimated_effective_deposit(epoch_details, USER1_ADDRESS)
 
     assert result == 0

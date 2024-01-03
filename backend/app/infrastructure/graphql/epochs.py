@@ -9,6 +9,7 @@ def get_epoch_by_number(epoch_number):
         """
 query GetEpoch($epochNo: Int!) {
   epoches(where: {epoch: $epochNo}) {
+    epoch
     fromTs
     toTs
     duration
@@ -34,6 +35,30 @@ query GetEpoch($epochNo: Int!) {
             f"[Subgraph] No epoch properties received for epoch number: {epoch_number}"
         )
         raise exceptions.EpochNotIndexed(epoch_number)
+
+
+def get_epochs_by_range(from_epoch, to_epoch):
+    query = gql(
+        """
+query GetEpochs($fromEpoch: Int!, $toEpoch: Int!) {
+  epoches(where: {epoch_gte: $fromEpoch, epoch_lte: $toEpoch}) {
+    toTs
+    fromTs
+    epoch
+    duration
+    decisionWindow
+  }
+}
+"""
+    )
+
+    variables = {"fromEpoch": from_epoch, "toEpoch": to_epoch}
+
+    app.logger.debug(
+        f"[Subgraph] Getting list of epochs within range <{from_epoch, to_epoch}>"
+    )
+    data = request_context.graphql_client.execute(query, variable_values=variables)
+    return data["epoches"]
 
 
 def get_epochs():

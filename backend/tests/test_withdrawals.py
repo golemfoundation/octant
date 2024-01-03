@@ -175,7 +175,7 @@ def before(mocker, app, graphql_client, patch_vault, patch_epochs):
     ],
 )
 def test_get_withdrawable_eth(user_accounts, expected_rewards):
-    MOCK_EPOCHS.get_pending_epoch.return_value = 0
+    MOCK_EPOCHS.get_pending_epoch.return_value = None
 
     # Populate db
     for user_index, rewards in expected_rewards.items():
@@ -198,7 +198,7 @@ def test_get_withdrawable_eth(user_accounts, expected_rewards):
 
 
 def test_get_withdrawable_eth_returns_only_user_not_claimed_rewards(user_accounts):
-    MOCK_EPOCHS.get_pending_epoch.return_value = 0
+    MOCK_EPOCHS.get_pending_epoch.return_value = None
     MOCK_VAULT.get_last_claimed_epoch.return_value = 2
 
     database.rewards.add_user_reward(1, user_accounts[0].address, 100_000000000)
@@ -219,7 +219,7 @@ def test_get_withdrawable_eth_returns_only_user_not_claimed_rewards(user_account
 def test_get_withdrawable_eth_returns_only_proposal_not_claimed_rewards(
     proposal_accounts,
 ):
-    MOCK_EPOCHS.get_pending_epoch.return_value = 0
+    MOCK_EPOCHS.get_pending_epoch.return_value = None
     MOCK_VAULT.get_last_claimed_epoch.return_value = 2
 
     database.rewards.add_proposal_reward(
@@ -246,7 +246,7 @@ def test_get_withdrawable_eth_returns_only_proposal_not_claimed_rewards(
 
 
 def test_get_withdrawable_eth_result_sorted_by_epochs(user_accounts):
-    MOCK_EPOCHS.get_pending_epoch.return_value = 0
+    MOCK_EPOCHS.get_pending_epoch.return_value = None
 
     database.rewards.add_user_reward(2, user_accounts[0].address, 200_000000000)
     database.rewards.add_user_reward(4, user_accounts[0].address, 400_000000000)
@@ -339,7 +339,7 @@ def test_get_withdrawable_eth_in_pending_epoch_in_epoch_3(
 def test_get_withdrawable_eth_in_finalized_epoch_when_merkle_root_not_set_yet_epoch_1(
     mocker, user_accounts, proposal_accounts, patch_user_budget
 ):
-    MOCK_EPOCHS.get_pending_epoch.return_value = 0
+    MOCK_EPOCHS.get_pending_epoch.return_value = None
     mock_graphql(mocker, merkle_roots_events=[])
 
     database.rewards.add_user_reward(1, user_accounts[0].address, 100_000000000)
@@ -360,7 +360,7 @@ def test_get_withdrawable_eth_in_finalized_epoch_when_merkle_root_not_set_yet_ep
 def test_get_withdrawable_eth_in_finalized_epoch_when_merkle_root_not_set_yet_epoch_2(
     mocker, user_accounts, proposal_accounts, patch_user_budget
 ):
-    MOCK_EPOCHS.get_pending_epoch.return_value = 0
+    MOCK_EPOCHS.get_pending_epoch.return_value = None
     mock_graphql(mocker, merkle_roots_events=[{"epoch": 1}])
 
     database.rewards.add_user_reward(1, user_accounts[0].address, 100_000000000)
