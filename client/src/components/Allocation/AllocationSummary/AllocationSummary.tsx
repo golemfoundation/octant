@@ -7,7 +7,7 @@ import AllocationSummaryProject from 'components/Allocation/AllocationSummaryPro
 import BoxRounded from 'components/ui/BoxRounded';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
-import useAllocateLeverage from 'hooks/mutations/useAllocateLeverage';
+import useAllocateSimulate from 'hooks/mutations/useAllocateSimulate';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useAllocationsStore from 'store/allocations/store';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
@@ -23,7 +23,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
   }));
-  const { data: allocateLeverage, mutateAsync } = useAllocateLeverage();
+  const { data: allocateLeverage, mutateAsync } = useAllocateSimulate();
 
   const allocationValuesPositive = allocationValues.filter(
     ({ value }) => !parseUnits(value).isZero(),

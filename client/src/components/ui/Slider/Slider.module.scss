@@ -87,7 +87,7 @@ $thumbSizeMobile: $heightRootMobile;
   border-radius: 50%;
 
   &.isError {
-    animation: pulsatingBackground 1.5s;
+    animation: pulsatingBackgroundGreyOrange 1.5s;
   }
 
   @media #{$desktop-up} {

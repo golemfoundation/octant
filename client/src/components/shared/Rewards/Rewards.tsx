@@ -26,7 +26,7 @@ const Rewards: FC<RewardsProps> = ({
   const isArchivedProposal = epoch !== undefined;
 
   const { data: proposalRewardsThreshold, isFetching } = useProposalRewardsThreshold(epoch);
-  const isDonationAboveThreshold = useIsDonationAboveThreshold(address, epoch);
+  const isDonationAboveThreshold = useIsDonationAboveThreshold({ epoch, proposalAddress: address });
 
   const totalValueOfAllocationsToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',

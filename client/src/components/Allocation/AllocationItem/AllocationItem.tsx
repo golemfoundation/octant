@@ -38,6 +38,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   profileImageSmall,
   value,
   setAddressesWithError,
+  rewardsProps,
 }) => {
   const { ipfsGateway } = env;
   const { isConnected } = useAccount();
@@ -177,7 +178,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
                 />
                 <div className={styles.nameAndRewards}>
                   <div className={styles.name}>{name}</div>
-                  <AllocationItemRewards address={address} />
+                  <AllocationItemRewards address={address} value={value} {...rewardsProps} />
                 </div>
               </div>
               <InputText

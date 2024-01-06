@@ -26,6 +26,7 @@
   "common": {
     "availableNow": "Available now",
     "calculateRewards": "Calculate rewards",
+    "calculating": "Calculating...",
     "close": "Close",
     "copied": "Copied",
     "copy": "Copy link",
@@ -296,7 +297,8 @@
     "allocation": {
       "allocationItem": {
         "epoch1": "No funding threshold in Epoch 1",
-        "standard": "{{sum}} / {{threshold}}"
+        "standard": "{{sum}} / {{threshold}}",
+        "simulate": "{{value}} {{matched}}"
       },
       "allocationSuccessful": "Allocation successful",
       "tip": {
