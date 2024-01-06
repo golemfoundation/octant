@@ -12,7 +12,7 @@ import styles from './AllocationSummaryProject.module.scss';
 import AllocationSummaryProjectProps from './types';
 
 const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({ address, amount }) => {
-  const isDonationAboveThreshold = useIsDonationAboveThreshold(address);
+  const isDonationAboveThreshold = useIsDonationAboveThreshold({ proposalAddress: address });
   const { data: proposalIpfs, isFetching: isFetchingProposalIpfs } = useProposalsIpfs([address]);
 
   const { data: matchedProposalRewards } = useMatchedProposalRewards();

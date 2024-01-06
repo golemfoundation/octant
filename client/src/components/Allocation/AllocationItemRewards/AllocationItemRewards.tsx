@@ -1,5 +1,6 @@
 import cx from 'classnames';
-import React, { FC, Fragment } from 'react';
+import { parseUnits } from 'ethers/lib/utils';
+import React, { FC, useEffect, useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
@@ -11,8 +12,15 @@ import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './AllocationItemRewards.module.scss';
 import AllocationItemRewardsProps from './types';
+import { getFilled, getRewardsSumWithValueAndSimulation } from './utils';
 
-const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({ className, address }) => {
+const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
+  className,
+  address,
+  simulatedMatched,
+  isLoadingAllocateSimulate,
+  value = '0',
+}) => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'views.allocation.allocationItem',
   });
@@ -20,8 +28,32 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({ className, addr
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
   const { data: proposalRewardsThreshold } = useProposalRewardsThreshold();
+  const [isSimulateVisible, setIsSimulateVisible] = useState<boolean>(false);
 
-  const isDonationAboveThreshold = useIsDonationAboveThreshold(address);
+  // value can an empty string, which crashes parseUnits. Hence the alternative.
+  const valueToUse = value || '0';
+
+  const onClick = () => {
+    if (!isDesktop) {
+      setIsSimulateVisible(_isSimulateVisible => !_isSimulateVisible);
+    }
+  };
+
+  useEffect(() => {
+    if (simulatedMatched === undefined) {
+      return;
+    }
+    setIsSimulateVisible(true);
+
+    const timeout = setTimeout(() => {
+      setIsSimulateVisible(false);
+    }, 2000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [simulatedMatched]);
+
   const isEpoch1 = currentEpoch === 1;
 
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
@@ -36,16 +68,35 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({ className, addr
 
   const isThresholdUnknown = isEpoch1 || !isRewardsDataDefined;
 
-  const proposalMatchedProposalRewardsFormatted = proposalMatchedProposalRewards
-    ? getFormattedEthValue(proposalMatchedProposalRewards?.sum)
+  const rewardsSumWithValueAndSimulation = getRewardsSumWithValueAndSimulation(
+    valueToUse,
+    simulatedMatched,
+    proposalMatchedProposalRewards?.sum,
+  );
+  const valueFormatted = getFormattedEthValue(parseUnits(valueToUse));
+  const simulatedMatchedFormatted = simulatedMatched
+    ? getFormattedEthValue(parseUnits(simulatedMatched, 'wei'))
     : undefined;
+  const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
+    rewardsSumWithValueAndSimulation,
+  );
   const proposalRewardsThresholdFormatted = proposalRewardsThreshold
     ? getFormattedEthValue(proposalRewardsThreshold)
     : undefined;
-  const areSuffixesTheSame =
-    proposalMatchedProposalRewardsFormatted?.suffix === proposalRewardsThresholdFormatted?.suffix;
+
+  const areValueAndSimulatedSuffixesTheSame =
+    valueFormatted.suffix === simulatedMatchedFormatted?.suffix;
+  const areTotalSuffixesTheSame =
+    rewardsSumWithValueAndSimulationFormatted?.suffix === proposalRewardsThresholdFormatted?.suffix;
+
+  const filled = getFilled(proposalRewardsThreshold, rewardsSumWithValueAndSimulation);
+  const isDonationAboveThreshold = useIsDonationAboveThreshold({
+    proposalAddress: address,
+    rewardsSumWithValueAndSimulation,
+  });
 
   return (
+    // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
     <div
       className={cx(
         styles.root,
@@ -55,28 +106,59 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({ className, addr
           !isThresholdUnknown &&
           isDonationAboveThreshold &&
           styles.isDonationAboveThreshold,
+        isLoadingAllocateSimulate && styles.isLoadingAllocateSimulate,
       )}
+      onClick={onClick}
+      onMouseLeave={() => {
+        setIsSimulateVisible(false);
+      }}
+      onMouseOver={() => {
+        setIsSimulateVisible(true);
+      }}
     >
       {isEpoch1 && t('epoch1')}
       {!isEpoch1 &&
+        !isLoadingAllocateSimulate &&
         !isRewardsDataDefined &&
+        !simulatedMatched &&
         i18n.t(isDesktop ? 'common.thresholdDataUnavailable' : 'common.noThresholdData')}
-      {!isEpoch1 && isRewardsDataDefined && (
-        <Fragment>
+      {!isEpoch1 && isLoadingAllocateSimulate && i18n.t('common.calculating')}
+      {!isEpoch1 &&
+        !isLoadingAllocateSimulate &&
+        (isRewardsDataDefined || simulatedMatched) &&
+        (isSimulateVisible ? (
           <Trans
-            components={[<span className={styles.donationBelowThreshold} />]}
+            i18nKey="views.allocation.allocationItem.simulate"
+            values={{
+              matched: simulatedMatchedFormatted
+                ? `+ ${simulatedMatchedFormatted?.fullString}`
+                : '',
+              value: areValueAndSimulatedSuffixesTheSame
+                ? valueFormatted?.value
+                : valueFormatted?.fullString,
+            }}
+          />
+        ) : (
+          <Trans
             i18nKey="views.allocation.allocationItem.standard"
             values={{
-              sum: areSuffixesTheSame
-                ? proposalMatchedProposalRewardsFormatted?.value
-                : proposalMatchedProposalRewardsFormatted?.fullString,
+              sum: areTotalSuffixesTheSame
+                ? rewardsSumWithValueAndSimulationFormatted?.value
+                : rewardsSumWithValueAndSimulationFormatted?.fullString,
               threshold: proposalRewardsThresholdFormatted?.fullString,
             }}
           />
-          <div className={styles.progressBar}>
-            <div className={styles.filled} />
-          </div>
-        </Fragment>
+        ))}
+      {!isEpoch1 && (isLoadingAllocateSimulate || filled < 100) && (
+        <div className={styles.progressBar}>
+          {!isLoadingAllocateSimulate && (
+            <div
+              className={cx(styles.filled, !parseUnits(valueToUse).isZero() && styles.isPulsing)}
+              style={{ width: `${filled}%` }}
+            />
+          )}
+          {isLoadingAllocateSimulate && <div className={styles.simulateLoader} />}
+        </div>
       )}
     </div>
   );

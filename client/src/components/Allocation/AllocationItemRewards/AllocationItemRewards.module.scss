@@ -20,18 +20,40 @@
   &.isDonationAboveThreshold {
     color: $color-octant-green;
   }
+
+  &.isLoadingAllocateSimulate {
+    color: $color-octant-grey5;
+  }
 }
 
 .progressBar {
+  position: relative;
   height: 0.2rem;
-  width: 100%;
+  width: 10rem;
   background: $color-octant-grey1;
+  overflow: hidden;
+
+  .simulateLoader {
+    height: 100%;
+    background: $color-octant-grey5;
+    width: 75%;
+    position: absolute;
+    animation: movingLeftAndRight 1s linear infinite;
+  }
 
   .filled {
-    background: $color-octant-orange;
+    height: 100%;
+
+    &:not(.isDonationAboveThreshold) {
+      background: $color-octant-orange;
+    }
 
     &.isDonationAboveThreshold {
       background: $color-octant-green;
+    }
+
+    &.isPulsing {
+      animation: pulsatingOpacity 1s linear infinite;
     }
   }
 }

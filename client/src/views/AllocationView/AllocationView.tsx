@@ -2,8 +2,9 @@ import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { AnimatePresence } from 'framer-motion';
+import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
-import React, { Fragment, ReactElement, useEffect, useState } from 'react';
+import React, { Fragment, ReactElement, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
@@ -17,6 +18,7 @@ import Layout from 'components/shared/Layout';
 import useAllocate from 'hooks/events/useAllocate';
 import useAllocationViewSetRewardsForProposals from 'hooks/helpers/useAllocationViewSetRewardsForProposals';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
+import useAllocateSimulate from 'hooks/mutations/useAllocateSimulate';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
@@ -49,6 +51,12 @@ const AllocationView = (): ReactElement => {
   const { data: proposalsContract } = useProposalsContract();
   const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards();
   const { isRewardsForProposalsSet } = useAllocationViewSetRewardsForProposals();
+  const {
+    data: allocationSimulated,
+    mutateAsync: mutateAsyncAllocateSimulate,
+    isLoading: isLoadingAllocateSimulate,
+    reset: resetAllocateSimulate,
+  } = useAllocateSimulate();
 
   const { data: currentEpoch } = useCurrentEpoch();
   const { refetch: refetchHistory } = useHistory();
@@ -109,6 +117,19 @@ const AllocationView = (): ReactElement => {
       setCurrentView('summary');
     },
   });
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const mutateAsyncAllocateSimulateDebounced = useCallback(
+    debounce(
+      _allocationValues => {
+        resetAllocateSimulate();
+        mutateAsyncAllocateSimulate(_allocationValues);
+      },
+      250,
+      { trailing: true },
+    ),
+    [],
+  );
 
   const setPercentageProportionsWrapper = (
     allocationValuesNew: AllocationValues,
@@ -239,6 +260,14 @@ const AllocationView = (): ReactElement => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentEpoch, userAllocations?.elements.length]);
 
+  useEffect(() => {
+    const areAllValuesZero = !allocationValues.some(element => element.value !== '0.0');
+    if (allocationValues.length === 0 || areAllValuesZero) {
+      return;
+    }
+    mutateAsyncAllocateSimulateDebounced(allocationValues);
+  }, [mutateAsyncAllocateSimulateDebounced, allocationValues]);
+
   const onChangeAllocationItemValue = (
     newAllocationValue: AllocationValue,
     isManualModeEnforced = false,
@@ -249,7 +278,7 @@ const AllocationView = (): ReactElement => {
         individualReward,
         // When deleting by button isManualMode does not trigger manual mode. When typing, it does.
         isManualMode: isManualModeEnforced ? true : isManualMode,
-        newAllocationValue,
+        newAllocationValue: newAllocationValue || '0',
         rewardsForProposals,
         setAddressesWithError,
       });
@@ -323,11 +352,11 @@ const AllocationView = (): ReactElement => {
             <AllocationRewardsBox
               className={styles.box}
               isDisabled={!isDecisionWindowOpen || !hasUserIndividualReward}
-              isManuallyEdited={isManualMode}
-              setRewardsForProposalsCallback={onResetAllocationValues}
               isError={addressesWithError.length > 0}
               // @ts-expect-error false negative error regarding types comparison
               isLocked={currentView === 'summary'}
+              isManuallyEdited={isManualMode}
+              setRewardsForProposalsCallback={onResetAllocationValues}
             />
           )}
           {areAllocationsAvailableOrAlreadyDone && (
@@ -353,6 +382,12 @@ const AllocationView = (): ReactElement => {
                         onChange={onChangeAllocationItemValue}
                         onRemoveAllocationElement={() => onRemoveAllocationElement(address)}
                         profileImageSmall={profileImageSmall}
+                        rewardsProps={{
+                          isLoadingAllocateSimulate,
+                          simulatedMatched: allocationSimulated?.matched.find(
+                            element => element.address === address,
+                          )?.value,
+                        }}
                         setAddressesWithError={setAddressesWithError}
                         value={value}
                       />
