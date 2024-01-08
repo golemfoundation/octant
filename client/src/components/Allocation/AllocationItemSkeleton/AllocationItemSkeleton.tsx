@@ -9,12 +9,8 @@ const AllocationItemSkeleton = (): ReactElement => (
         <div className={styles.circle} />
         <div className={styles.rectangle} />
       </div>
-      <div className={styles.row}>
-        <div className={styles.rectangle} />
-      </div>
     </div>
     <div className={styles.column2}>
-      <div className={styles.rectangle} />
       <div className={styles.rectangle} />
     </div>
   </div>
