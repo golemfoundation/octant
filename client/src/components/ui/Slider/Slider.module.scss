@@ -66,6 +66,10 @@ $thumbSizeMobile: $heightRootMobile;
   transform: translateZ(0);
   filter: drop-shadow(rgba(0, 0, 0, 0.15) 0 0 0.5rem);
 
+  &.isHidden {
+    display: none;
+  }
+
   &:focus-visible {
     outline: none;
   }

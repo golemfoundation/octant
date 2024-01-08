@@ -133,8 +133,14 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
           <div
             // eslint-disable-next-line react/no-array-index-key
             key={index}
-            className={cx(styles.section, isDisabled && styles.isDisabled)}
-            onClick={() => (isDisabled ? {} : setModalMode(index === 0 ? 'donate' : 'withdraw'))}
+            className={cx(
+              styles.section,
+              isDisabled && styles.isDisabled,
+              isLocked && styles.isLocked,
+            )}
+            onClick={() =>
+              isLocked || isDisabled ? {} : setModalMode(index === 0 ? 'donate' : 'withdraw')
+            }
           >
             <div className={styles.header}>{header}</div>
             <div className={cx(styles.value, (isLocked || isDisabled) && styles.isDisabled)}>

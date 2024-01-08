@@ -46,14 +46,13 @@ const Slider: FC<SliderProps> = ({
         className={styles.slider}
         disabled={isDisabled}
         onChange={localOnChange}
-        renderThumb={props =>
-          isDisabled || hideThumb ? null : (
-            <div onClick={handleClick} {...props}>
-              <div className={cx(styles.thumbInnerCircle, isError && styles.isError)} />
-            </div>
-          )
-        }
-        thumbClassName={styles.thumb}
+        renderThumb={props => (
+          // Hiding the thumb by returning null here prevent ReactSlider from setting value on initial render.
+          <div onClick={handleClick} {...props}>
+            <div className={cx(styles.thumbInnerCircle, isError && styles.isError)} />
+          </div>
+        )}
+        thumbClassName={cx(styles.thumb, isDisabled || (hideThumb && styles.isHidden))}
         trackClassName={cx(styles.track, isDisabled && styles.isDisabled)}
         value={localValue}
         {...rest}

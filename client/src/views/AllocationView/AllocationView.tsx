@@ -4,7 +4,7 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { AnimatePresence } from 'framer-motion';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
-import React, { Fragment, ReactElement, useCallback, useEffect, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
@@ -345,58 +345,48 @@ const AllocationView = (): ReactElement => {
         )
       }
     >
+      <AllocationTipTiles className={styles.box} />
+      {!isEpoch1 && (
+        <AllocationRewardsBox
+          className={styles.box}
+          isDisabled={!isDecisionWindowOpen || !hasUserIndividualReward}
+          isError={addressesWithError.length > 0}
+          isLocked={currentView === 'summary'}
+          isManuallyEdited={isManualMode}
+          setRewardsForProposalsCallback={onResetAllocationValues}
+        />
+      )}
       {currentView === 'edit' ? (
-        <Fragment>
-          <AllocationTipTiles className={styles.box} />
-          {!isEpoch1 && (
-            <AllocationRewardsBox
-              className={styles.box}
-              isDisabled={!isDecisionWindowOpen || !hasUserIndividualReward}
-              isError={addressesWithError.length > 0}
-              // @ts-expect-error false negative error regarding types comparison
-              isLocked={currentView === 'summary'}
-              isManuallyEdited={isManualMode}
-              setRewardsForProposalsCallback={onResetAllocationValues}
-            />
-          )}
-          {areAllocationsAvailableOrAlreadyDone && (
-            <AnimatePresence initial={false}>
-              {allocationsWithRewards.length > 0
-                ? allocationsWithRewards!.map(
-                    ({
-                      address,
-                      isAllocatedTo,
-                      isLoadingError,
-                      value,
-                      profileImageSmall,
-                      name,
-                    }) => (
-                      <AllocationItem
-                        key={address}
-                        address={address}
-                        className={cx(styles.box, styles.isAllocation)}
-                        isAllocatedTo={isAllocatedTo}
-                        isError={addressesWithError.includes(address)}
-                        isLoadingError={isLoadingError}
-                        name={name}
-                        onChange={onChangeAllocationItemValue}
-                        onRemoveAllocationElement={() => onRemoveAllocationElement(address)}
-                        profileImageSmall={profileImageSmall}
-                        rewardsProps={{
-                          isLoadingAllocateSimulate,
-                          simulatedMatched: allocationSimulated?.matched.find(
-                            element => element.address === address,
-                          )?.value,
-                        }}
-                        setAddressesWithError={setAddressesWithError}
-                        value={value}
-                      />
-                    ),
-                  )
-                : allocations.map(allocation => <AllocationItemSkeleton key={allocation} />)}
-            </AnimatePresence>
-          )}
-        </Fragment>
+        areAllocationsAvailableOrAlreadyDone && (
+          <AnimatePresence initial={false}>
+            {allocationsWithRewards.length > 0
+              ? allocationsWithRewards!.map(
+                  ({ address, isAllocatedTo, isLoadingError, value, profileImageSmall, name }) => (
+                    <AllocationItem
+                      key={address}
+                      address={address}
+                      className={cx(styles.box, styles.isAllocation)}
+                      isAllocatedTo={isAllocatedTo}
+                      isError={addressesWithError.includes(address)}
+                      isLoadingError={isLoadingError}
+                      name={name}
+                      onChange={onChangeAllocationItemValue}
+                      onRemoveAllocationElement={() => onRemoveAllocationElement(address)}
+                      profileImageSmall={profileImageSmall}
+                      rewardsProps={{
+                        isLoadingAllocateSimulate,
+                        simulatedMatched: allocationSimulated?.matched.find(
+                          element => element.address === address,
+                        )?.value,
+                      }}
+                      setAddressesWithError={setAddressesWithError}
+                      value={value}
+                    />
+                  ),
+                )
+              : allocations.map(allocation => <AllocationItemSkeleton key={allocation} />)}
+          </AnimatePresence>
+        )
       ) : (
         <AllocationSummary
           allocationSimulated={allocationSimulated}

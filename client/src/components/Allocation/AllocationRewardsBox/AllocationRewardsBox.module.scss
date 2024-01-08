@@ -49,7 +49,7 @@
 }
 
 .section {
-  &:not(.isDisabled) {
+  &:not(.isDisabled):not(.isLocked) {
     cursor: pointer;
   }
 
