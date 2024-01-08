@@ -90,10 +90,6 @@ $thumbSizeMobile: $heightRootMobile;
   background: $color-octant-grey8;
   border-radius: 50%;
 
-  &.isError {
-    animation: pulsatingBackgroundGreyOrange 1.5s;
-  }
-
   @media #{$desktop-up} {
     height: calc($thumbSize / 2);
     width: calc($thumbSize / 2);

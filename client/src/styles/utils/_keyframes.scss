@@ -36,14 +36,6 @@
   100% { transform: translateX(0) }
 }
 
-@keyframes pulsatingBackgroundGreyOrange {
-  0% { background: $color-octant-grey8; }
-  25% { background: $color-octant-orange; }
-  50% { background: $color-octant-grey8; }
-  75% { background: $color-octant-orange; }
-  100% { background: $color-octant-grey8; }
-}
-
 @keyframes pulsatingOpacity {
    0% { opacity: 1 }
    25% { opacity: 0.5 }
