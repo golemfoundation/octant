@@ -6,7 +6,7 @@ from app.core.common import UserDeposit
 from app.core.epochs.epochs_registry import EpochsRegistry
 from app.core.epochs.details import EpochDetails
 from app.core.deposits.cut_off import apply_weighted_average_cutoff
-from app.core.deposits.events import SubgraphEventsGenerator
+from app.core.deposits.events import EpochEventsGenerator
 from app.core.deposits.weighted_deposits import (
     get_all_users_weighted_deposits,
     get_user_weighted_deposits,
@@ -69,9 +69,7 @@ def get_user_deposits(epoch_no: int) -> Tuple[List[UserDeposit], int]:
 def get_estimated_effective_deposit(
     epoch_details: EpochDetails, user_address: str
 ) -> int:
-    event_generator = SubgraphEventsGenerator(
-        epoch_details.start_sec, epoch_details.end_sec
-    )
+    event_generator = EpochEventsGenerator(epoch_details)
     calculator = EpochsRegistry.get_epoch_settings(
         epoch_details.epoch_no
     ).user_deposits_weights_calculator

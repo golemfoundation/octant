@@ -1,7 +1,8 @@
 from typing import List, Dict, Optional, Tuple
+from operator import attrgetter
 from collections import defaultdict
 
-from app.core.deposits.events import EventGenerator
+from app.core.deposits.events import EventGenerator, DepositEvent
 
 from tests.helpers import create_deposit_events
 from tests.conftest import UserAccount
@@ -9,16 +10,21 @@ from tests.conftest import UserAccount
 
 class MockEventGenerator(EventGenerator):
     def __init__(
-        self, epoch_start: int, epoch_end: int, user_events: Dict[str, List[Dict]]
+        self,
+        epoch_start: int,
+        epoch_end: int,
+        user_events: Dict[str, List[DepositEvent]],
     ):
         super().__init__(epoch_start, epoch_end)
 
         self.events = {
-            user: sorted(events, key=lambda x: x["timestamp"])
+            user: sorted(
+                map(DepositEvent.from_dict, events), key=attrgetter("timestamp")
+            )
             for user, events in user_events.items()
         }
 
-    def get_user_events(self, user_address: Optional[str]) -> List[Dict]:
+    def get_user_events(self, user_address: Optional[str]) -> List[DepositEvent]:
         return self.events[user_address] if user_address in self.events else []
 
     def get_all_users_events(self) -> Dict[str, List[Dict]]:
