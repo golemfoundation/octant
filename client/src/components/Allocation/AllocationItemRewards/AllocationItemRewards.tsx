@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { parseUnits } from 'ethers/lib/utils';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
@@ -9,10 +9,11 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
+import getRewardsSumWithValueAndSimulation from 'utils/getRewardsSumWithValueAndSimulation';
 
 import styles from './AllocationItemRewards.module.scss';
 import AllocationItemRewardsProps from './types';
-import { getFilled, getRewardsSumWithValueAndSimulation } from './utils';
+import { getFilled } from './utils';
 
 const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   className,
@@ -32,6 +33,15 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
 
   // value can an empty string, which crashes parseUnits. Hence the alternative.
   const valueToUse = value || '0';
+
+  const i18nKey = useMemo(() => {
+    if (simulatedMatched === undefined || simulatedMatched === '0') {
+      return 'views.allocation.allocationItem.simulate.matchedZero';
+    }
+    return isDesktop
+      ? 'views.allocation.allocationItem.simulate.desktop'
+      : 'views.allocation.allocationItem.simulate.mobile';
+  }, [isDesktop, simulatedMatched]);
 
   const onClick = () => {
     if (!isDesktop) {
@@ -128,11 +138,9 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
         (isRewardsDataDefined || simulatedMatched) &&
         (isSimulateVisible ? (
           <Trans
-            i18nKey="views.allocation.allocationItem.simulate"
+            i18nKey={i18nKey}
             values={{
-              matched: simulatedMatchedFormatted
-                ? `+ ${simulatedMatchedFormatted?.fullString}`
-                : '',
+              matched: simulatedMatchedFormatted?.fullString,
               value: areValueAndSimulatedSuffixesTheSame
                 ? valueFormatted?.value
                 : valueFormatted?.fullString,

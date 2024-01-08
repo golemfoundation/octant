@@ -23,6 +23,10 @@
       &.isDonationAboveThreshold {
         color: $color-octant-green;
       }
+
+      &.isLoadingAllocateSimulate {
+        color: $color-octant-grey5;
+      }
     }
   }
 
