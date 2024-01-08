@@ -96,6 +96,8 @@
         "subtitleNoRewards": "No rewards available yet",
         "donate": "Donate",
         "donated": "Donated",
+        "donateWithPercentage": "Donate {{percentage}}%",
+        "personalWithPercentage": "Personal {{percentage}}%",
         "allocated": "Allocated",
         "manual": "Manual"
       },

@@ -38,18 +38,31 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
   const isDecisionWindowOpenAndHasIndividualReward =
     hasUserIndividualReward && isDecisionWindowOpen;
 
-  const onSetRewardsForProposals = (index: number) => {
+  const onSetRewardsForProposals = (rewardsForProposalsNew: BigNumber) => {
     if (!individualReward || isDisabled) {
       return;
     }
-    const rewardsForProposalsNew = individualReward?.mul(index).div(100);
     setRewardsForProposals(rewardsForProposalsNew);
     setRewardsForProposalsCallback({ rewardsForProposalsNew });
   };
 
+  const onUpdateValueModal = (newValue: BigNumber) => {
+    const rewardsForProposalsNew =
+      modalMode === 'donate' ? newValue : individualReward!.sub(newValue);
+    onSetRewardsForProposals(rewardsForProposalsNew);
+  };
+
+  const onUpdateValueSlider = (index: number) => {
+    if (!individualReward || isDisabled) {
+      return;
+    }
+    const rewardsForProposalsNew = individualReward?.mul(index).div(100);
+    onSetRewardsForProposals(rewardsForProposalsNew);
+  };
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const onSetRewardsForProposalsThrottled = useCallback(
-    throttle(onSetRewardsForProposals, 250, { trailing: true }),
+  const onUpdateValueSliderThrottled = useCallback(
+    throttle(onUpdateValueSlider, 250, { trailing: true }),
     [isDisabled, individualReward?.toHexString(), setRewardsForProposalsCallback],
   );
 
@@ -111,7 +124,7 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
           isError={isError}
           max={100}
           min={0}
-          onChange={onSetRewardsForProposalsThrottled}
+          onChange={onUpdateValueSliderThrottled}
           value={percentRewardsForProposals}
         />
       </div>
@@ -134,16 +147,12 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
         modalProps={{
           header:
             modalMode === 'donate'
-              ? t('donate', { percentRewardsForProposals })
-              : t('withdraw', { percentWithdraw }),
+              ? t('donateWithPercentage', { percentage: percentRewardsForProposals })
+              : t('personalWithPercentage', { percentage: percentWithdraw }),
           isOpen: modalMode !== 'closed',
           onClosePanel: () => setModalMode('closed'),
         }}
-        onUpdateValue={newValue => {
-          setRewardsForProposals(
-            modalMode === 'donate' ? newValue : individualReward!.sub(newValue),
-          );
-        }}
+        onUpdateValue={newValue => onUpdateValueModal(newValue)}
         valueCryptoSelected={modalMode === 'donate' ? rewardsForProposals : rewardsForWithdraw}
         valueCryptoTotal={individualReward!}
       />
