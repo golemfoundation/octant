@@ -52,7 +52,7 @@ const Slider: FC<SliderProps> = ({
             <div className={cx(styles.thumbInnerCircle, isError && styles.isError)} />
           </div>
         )}
-        thumbClassName={cx(styles.thumb, isDisabled || (hideThumb && styles.isHidden))}
+        thumbClassName={cx(styles.thumb, (isDisabled || hideThumb) && styles.isHidden)}
         trackClassName={cx(styles.track, isDisabled && styles.isDisabled)}
         value={localValue}
         {...rest}
