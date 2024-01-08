@@ -398,7 +398,11 @@ const AllocationView = (): ReactElement => {
           )}
         </Fragment>
       ) : (
-        <AllocationSummary allocationValues={allocationValues} />
+        <AllocationSummary
+          allocationSimulated={allocationSimulated}
+          allocationValues={allocationValues}
+          isLoadingAllocateSimulate={isLoadingAllocateSimulate}
+        />
       )}
     </Layout>
   );

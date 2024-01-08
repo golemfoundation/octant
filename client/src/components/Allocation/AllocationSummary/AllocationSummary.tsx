@@ -1,14 +1,13 @@
 import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import AllocationSummaryProject from 'components/Allocation/AllocationSummaryProject';
 import BoxRounded from 'components/ui/BoxRounded';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
-import useAllocateSimulate from 'hooks/mutations/useAllocateSimulate';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useAllocationsStore from 'store/allocations/store';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
@@ -16,7 +15,11 @@ import getFormattedEthValue from 'utils/getFormattedEthValue';
 import styles from './AllocationSummary.module.scss';
 import AllocationSummaryProps from './types';
 
-const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => {
+const AllocationSummary: FC<AllocationSummaryProps> = ({
+  allocationValues,
+  allocationSimulated,
+  isLoadingAllocateSimulate,
+}) => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationSummary',
   });
@@ -24,11 +27,6 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
   }));
-  const {
-    data: allocationSimulated,
-    mutateAsync: mutateAsyncAllocateSimulate,
-    isLoading: isLoadingAllocateSimulate,
-  } = useAllocateSimulate();
 
   const allocationSimulatedMatchingFundSum = allocationSimulated?.matched.reduce((acc, curr) => {
     return acc.add(parseUnits(curr.value, 'wei'));
@@ -61,8 +59,13 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
           <div className={styles.label}>{i18n.t('common.totalDonated')}</div>
           <div className={styles.label}>
             {t('matchFunding')}
-            <span className={styles.matchFundingLeverage}>
-              {allocationSimulated ? parseInt(allocationSimulated.leverage, 10) : 0}x
+            <span
+              className={cx(
+                styles.matchFundingLeverage,
+                isLoadingAllocateSimulate && styles.isLoading,
+              )}
+            >
+              {allocationSimulated ? `${parseInt(allocationSimulated.leverage, 10)}x` : undefined}
             </span>
           </div>
         </div>
@@ -71,7 +74,10 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
         <div className={styles.rightSection}>
           <div className={styles.value}>{rewardsForProposalsToDisplay.value}</div>
           <div
-            className={cx(styles.value, !!allocationSimulatedMatchingFundSum && styles.isLoading)}
+            className={cx(
+              styles.value,
+              !allocationSimulatedMatchingFundSumToDisplay && styles.isLoading,
+            )}
           >
             {allocationSimulatedMatchingFundSumToDisplay}
           </div>
@@ -86,13 +92,6 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
       className: styles.section,
     },
   ];
-
-  useEffect(() => {
-    if (areAllocationValuesPositive) {
-      mutateAsyncAllocateSimulate(allocationValues);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <>
@@ -126,7 +125,9 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
         <BoxRounded className={styles.personalRewardBox}>
           <div className={styles.personalReward}>
             <div className={styles.label}>{i18n.t('common.personal')}</div>
-            <div className={styles.value}>{personalToDisplay}</div>
+            <div className={cx(styles.value, !personalToDisplay && styles.isLoading)}>
+              {personalToDisplay}
+            </div>
           </div>
         </BoxRounded>
       )}
