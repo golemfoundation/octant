@@ -47,6 +47,10 @@ $removeButtonHeightWidthDesktop: 10.4rem;
 .boxRoundedChildren {
   display: flex;
   justify-content: space-between;
+
+  &.isThereAnyError {
+    opacity: 0.5;
+  }
 }
 
 .projectData {

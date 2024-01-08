@@ -164,7 +164,10 @@ const AllocationItem: FC<AllocationItemProps> = ({
         style={{ x }}
       >
         <BoxRounded
-          childrenWrapperClassName={styles.boxRoundedChildren}
+          childrenWrapperClassName={cx(
+            styles.boxRoundedChildren,
+            !isError && isThereAnyError && styles.isThereAnyError,
+          )}
           className={styles.box}
           hasPadding={false}
         >
