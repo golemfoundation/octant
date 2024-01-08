@@ -1,4 +1,5 @@
 import cx from 'classnames';
+import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import React, { FC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +24,15 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
   }));
-  const { data: allocateLeverage, mutateAsync } = useAllocateSimulate();
+  const {
+    data: allocationSimulated,
+    mutateAsync: mutateAsyncAllocateSimulate,
+    isLoading: isLoadingAllocateSimulate,
+  } = useAllocateSimulate();
+
+  const allocationSimulatedMatchingFundSum = allocationSimulated?.matched.reduce((acc, curr) => {
+    return acc.add(parseUnits(curr.value, 'wei'));
+  }, BigNumber.from(0));
 
   const allocationValuesPositive = allocationValues.filter(
     ({ value }) => !parseUnits(value).isZero(),
@@ -33,6 +42,17 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
   const personalAllocation = individualReward?.sub(rewardsForProposals);
 
   const rewardsForProposalsToDisplay = getFormattedEthValue(rewardsForProposals, true, true);
+  const allocationSimulatedMatchingFundSumToDisplay = allocationSimulatedMatchingFundSum
+    ? getFormattedEthValue(allocationSimulatedMatchingFundSum).value
+    : undefined;
+  const totalImpactToDisplay = getFormattedEthValue(
+    allocationSimulatedMatchingFundSum
+      ? allocationSimulatedMatchingFundSum.add(rewardsForProposals)
+      : rewardsForProposals,
+  );
+  const personalToDisplay = individualReward
+    ? getFormattedEthValue(individualReward?.sub(rewardsForProposals)).fullString
+    : undefined;
 
   const sections: SectionProps[] = [
     {
@@ -42,7 +62,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
           <div className={styles.label}>
             {t('matchFunding')}
             <span className={styles.matchFundingLeverage}>
-              {allocateLeverage ? parseInt(allocateLeverage.leverage, 10) : 0}x
+              {allocationSimulated ? parseInt(allocationSimulated.leverage, 10) : 0}x
             </span>
           </div>
         </div>
@@ -50,16 +70,18 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
       childrenRight: (
         <div className={styles.rightSection}>
           <div className={styles.value}>{rewardsForProposalsToDisplay.value}</div>
-          {/* TODO: Display real value */}
-          <div className={styles.value}>10.7635</div>
+          <div
+            className={cx(styles.value, !!allocationSimulatedMatchingFundSum && styles.isLoading)}
+          >
+            {allocationSimulatedMatchingFundSumToDisplay}
+          </div>
         </div>
       ),
       className: styles.section,
     },
     {
       childrenLeft: <div className={styles.label}>{t('totalImpact')}</div>,
-      // TODO: Display real value
-      childrenRight: <div className={styles.value}>10.8885 ETH</div>,
+      childrenRight: <div className={styles.value}>{totalImpactToDisplay.fullString}</div>,
 
       className: styles.section,
     },
@@ -67,7 +89,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
 
   useEffect(() => {
     if (areAllocationValuesPositive) {
-      mutateAsync(allocationValues);
+      mutateAsyncAllocateSimulate(allocationValues);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -89,6 +111,11 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
                 key={address}
                 address={address}
                 amount={parseUnits(value)}
+                isLoadingAllocateSimulate={isLoadingAllocateSimulate}
+                simulatedMatched={
+                  allocationSimulated?.matched.find(element => element.address === address)?.value
+                }
+                value={value}
               />
             ))}
           </div>
@@ -99,8 +126,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({ allocationValues }) => 
         <BoxRounded className={styles.personalRewardBox}>
           <div className={styles.personalReward}>
             <div className={styles.label}>{i18n.t('common.personal')}</div>
-            {/* TODO: Display real value */}
-            <div className={styles.value}>0.3125 ETH</div>
+            <div className={styles.value}>{personalToDisplay}</div>
           </div>
         </BoxRounded>
       )}

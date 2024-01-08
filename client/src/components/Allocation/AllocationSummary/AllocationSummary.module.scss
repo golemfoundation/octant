@@ -99,6 +99,10 @@
   font-weight: $font-weight-bold;
   color: $color-octant-dark;
 
+  &.isLoading {
+    @include skeleton();
+  }
+
   @media #{$desktop-up} {
     font-size: $font-size-16;
   }
