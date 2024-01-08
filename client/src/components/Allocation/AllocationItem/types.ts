@@ -16,6 +16,7 @@ export default interface AllocationItemProps
   > {
   className?: string;
   isError: boolean;
+  isThereAnyError: boolean;
   onChange: (newAllocationValue: AllocationValue, isManualModeEnforced?: boolean) => void;
   onRemoveAllocationElement: () => void;
   rewardsProps: {

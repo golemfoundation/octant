@@ -52,6 +52,10 @@
       background: $color-octant-green;
     }
 
+    &.isError {
+      width: 0;
+    }
+
     &.isPulsing {
       animation: pulsatingOpacity 1s linear infinite;
     }

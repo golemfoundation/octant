@@ -262,11 +262,11 @@ const AllocationView = (): ReactElement => {
 
   useEffect(() => {
     const areAllValuesZero = !allocationValues.some(element => element.value !== '0.0');
-    if (allocationValues.length === 0 || areAllValuesZero) {
+    if (allocationValues.length === 0 || areAllValuesZero || addressesWithError.length > 0) {
       return;
     }
     mutateAsyncAllocateSimulateDebounced(allocationValues);
-  }, [mutateAsyncAllocateSimulateDebounced, allocationValues]);
+  }, [mutateAsyncAllocateSimulateDebounced, addressesWithError, allocationValues]);
 
   const onChangeAllocationItemValue = (
     newAllocationValue: AllocationValue,
@@ -369,6 +369,7 @@ const AllocationView = (): ReactElement => {
                       isAllocatedTo={isAllocatedTo}
                       isError={addressesWithError.includes(address)}
                       isLoadingError={isLoadingError}
+                      isThereAnyError={addressesWithError.length > 0}
                       name={name}
                       onChange={onChangeAllocationItemValue}
                       onRemoveAllocationElement={() => onRemoveAllocationElement(address)}

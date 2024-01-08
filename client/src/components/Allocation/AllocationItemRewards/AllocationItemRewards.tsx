@@ -19,6 +19,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   className,
   address,
   simulatedMatched,
+  isError,
   isLoadingAllocateSimulate,
   value = '0',
 }) => {
@@ -161,7 +162,11 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
         <div className={styles.progressBar}>
           {!isLoadingAllocateSimulate && (
             <div
-              className={cx(styles.filled, !parseUnits(valueToUse).isZero() && styles.isPulsing)}
+              className={cx(
+                styles.filled,
+                isError && styles.isError,
+                !parseUnits(valueToUse).isZero() && styles.isPulsing,
+              )}
               style={{ width: `${filled}%` }}
             />
           )}

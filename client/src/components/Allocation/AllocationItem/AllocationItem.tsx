@@ -31,6 +31,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   address,
   className,
   isError,
+  isThereAnyError,
   isLoadingError,
   name,
   onChange,
@@ -178,14 +179,24 @@ const AllocationItem: FC<AllocationItemProps> = ({
                 />
                 <div className={styles.nameAndRewards}>
                   <div className={styles.name}>{name}</div>
-                  <AllocationItemRewards address={address} value={value} {...rewardsProps} />
+                  <AllocationItemRewards
+                    address={address}
+                    isError={isError}
+                    value={value}
+                    {...rewardsProps}
+                  />
                 </div>
               </div>
               <InputText
                 ref={inputRef}
                 className={cx(styles.input, isEpoch1 && styles.isEpoch1, isError && styles.isError)}
                 error={isError}
-                isDisabled={!isConnected || individualReward?.isZero() || !isDecisionWindowOpen}
+                isDisabled={
+                  !isConnected ||
+                  individualReward?.isZero() ||
+                  !isDecisionWindowOpen ||
+                  isThereAnyError
+                }
                 onChange={event => _onChange(event.target.value)}
                 placeholder="0.000"
                 shouldAutoFocusAndSelect={false}
