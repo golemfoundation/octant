@@ -43,6 +43,7 @@ from tests.helpers.constants import (
     CAROL,
 )
 from tests.helpers.gql_client import MockGQLClient
+from tests.helpers.mocked_epoch_details import EPOCH_EVENTS
 from tests.helpers.subgraph.events import create_deposit_event
 
 # Contracts mocks
@@ -280,6 +281,11 @@ def bob(user_accounts):
 @pytest.fixture(scope="function")
 def carol(user_accounts):
     return user_accounts[2]
+
+
+@pytest.fixture(scope="function")
+def mock_epoch_details(mocker, graphql_client):
+    mock_graphql(mocker, epochs_events=list(EPOCH_EVENTS.values()))
 
 
 @pytest.fixture(scope="function")
