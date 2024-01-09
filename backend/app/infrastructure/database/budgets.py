@@ -21,6 +21,13 @@ def get_by_users_addresses_and_epoch(
     return {budget.user.address: budget for budget in budgets}
 
 
+def get_sum_by_users_addresses_and_epoch(users_addresses: List[str], epoch: int) -> int:
+    query = Budget.query.join(User)
+    query = query.filter(User.address.in_(users_addresses), Budget.epoch == epoch)
+    budgets = query.all()
+    return sum([int(b.budget) for b in budgets])
+
+
 def get_by_user_address_and_epoch(user_address: str, epoch: int) -> Optional[Budget]:
     query = Budget.query.join(User)
     query = query.filter(

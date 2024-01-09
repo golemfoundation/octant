@@ -49,9 +49,13 @@ def estimate_epoch_budget(
     user_effective_deposits, _ = calculate_effective_deposits(
         epoch_details, epoch_settings, events
     )
+    effective_deposit = (
+        user_effective_deposits[0].effective_deposit if user_effective_deposits else 0
+    )
+
     return epoch_settings.user.budget.calculate_budget(
         UserBudgetPayload(
-            user_effective_deposit=user_effective_deposits[0].effective_deposit,
+            user_effective_deposit=effective_deposit,
             total_effective_deposit=rewards.total_effective_deposit,
             all_individual_rewards=rewards.individual_rewards,
         )

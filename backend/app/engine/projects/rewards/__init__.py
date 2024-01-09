@@ -9,7 +9,7 @@ from dataclass_wizard import JSONWizard
 class AccountFunds(JSONWizard):
     address: str
     amount: int
-    matched: int = None
+    matched: int
 
     def __iter__(self):
         yield self.address

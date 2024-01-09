@@ -19,6 +19,7 @@ def calculate_user_budgets(
                 all_individual_rewards=rewards.individual_rewards,
             )
         )
-        budgets.append((address, user_budget))
+        if user_budget:
+            budgets.append((address, user_budget))
 
     return budgets

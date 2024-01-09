@@ -1,16 +1,16 @@
 from flask import current_app as app, request
 from flask_restx import Namespace, fields
 
-from app.legacy.controllers import rewards
-from app.legacy.controllers.user import get_budget
 from app.extensions import api
 from app.infrastructure import OctantResource
 from app.infrastructure.routes.validations.user_validations import (
     validate_estimate_budget_inputs,
 )
+from app.legacy.controllers import rewards
+from app.legacy.controllers.user import get_budget
 from app.legacy.utils.time import days_to_sec
 from app.modules.user.budgets.controller import estimate_budget
-
+from app.modules.user.rewards.controller import get_unused_rewards
 
 ns = Namespace("rewards", description="Octant rewards")
 api.add_namespace(ns)
@@ -60,6 +60,22 @@ budget_model = api.model(
         "matched": fields.String(
             description="Total matched rewards for the proposals. Returns null if "
             "epoch is not in the allocation window",
+        ),
+    },
+)
+
+
+unused_rewards_model = api.model(
+    "UnusedRewards",
+    {
+        "addresses": fields.List(
+            fields.String,
+            required=True,
+            description="Users that neither allocated rewards nor toggled patron mode",
+        ),
+        "value": fields.String(
+            required=True,
+            description="Total unused rewards sum in an epoch (WEI)",
         ),
     },
 )
@@ -276,6 +292,28 @@ class EstimatedProposalsRewards(OctantResource):
         app.logger.debug(f"Proposal rewards in pending epoch: {proposal_rewards}")
 
         return {"rewards": proposal_rewards}
+
+
+@ns.route("/unused/<int:epoch>")
+class UnusedRewards(OctantResource):
+    @ns.doc(
+        description="Returns unallocated value and the number of users who didn't use their rewards in an epoch",
+        params={
+            "epoch": "Epoch number",
+        },
+    )
+    @ns.marshal_with(unused_rewards_model)
+    @ns.response(200, "Unused rewards found")
+    def get(self, epoch: int):
+        app.logger.debug(f"Getting unused rewards for epoch: {epoch}")
+        addresses, value = get_unused_rewards(epoch)
+        app.logger.debug(f"Unused rewards addresses: {addresses}")
+        app.logger.debug(f"Unused rewards value: {value}")
+
+        return {
+            "addresses": addresses,
+            "value": value,
+        }
 
 
 @ns.doc(

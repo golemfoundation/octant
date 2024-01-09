@@ -4,9 +4,9 @@ from typing import List
 
 from eth_utils import to_checksum_address
 
+from app.context import epoch_details
+from app.infrastructure import database
 from app.infrastructure.database import allocations
-from app.legacy.core.user.patron_mode import get_patrons_at_timestamp
-from app.legacy.core.epochs import epoch_details
 from app.legacy.utils.time import (
     Timestamp,
     from_datetime,
@@ -140,7 +140,9 @@ def get_patron_donations(
         )
 
         if epoch_finalization_timestamp <= from_timestamp:
-            patrons_at_epoch = get_patrons_at_timestamp(epoch_finalization_timestamp)
+            patrons_at_epoch = database.patrons.get_all_patrons_at_timestamp(
+                epoch_finalization_timestamp.datetime()
+            )
             if user_address in patrons_at_epoch:
                 donation = user_controller.get_budget(user_address, epoch.epoch_num)
 

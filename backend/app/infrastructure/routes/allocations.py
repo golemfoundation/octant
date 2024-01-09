@@ -7,6 +7,7 @@ from app.legacy.controllers import allocations
 from app.legacy.core.allocations import AllocationRequest
 from app.extensions import api
 from app.infrastructure import OctantResource
+from app.modules.user.allocations.controller import get_donors
 
 ns = Namespace("allocations", description="Octant allocations")
 api.add_namespace(ns)
@@ -114,6 +115,11 @@ proposal_donors_model = api.model(
             description="Funds allocated by donor for the proposal in WEI",
         ),
     },
+)
+
+donors_model = api.model(
+    "Donors",
+    {"donors": fields.List(fields.String, required=True, description="Donors address")},
 )
 
 epoch_donations_model = api.model(
@@ -363,3 +369,21 @@ class AllocationNonce(OctantResource):
     @ns.response(200, "User allocations nonce successfully retrieved")
     def get(self, user_address: str):
         return {"allocationNonce": allocations.get_allocation_nonce(user_address)}
+
+
+@ns.route("/donors/<int:epoch>")
+class Donors(OctantResource):
+    @ns.doc(
+        description="Returns donors addresses",
+        params={
+            "epoch": "Epoch number",
+        },
+    )
+    @ns.marshal_with(donors_model)
+    @ns.response(200, "Donors addresses retrieved")
+    def get(self, epoch: int):
+        app.logger.debug(f"Getting donors addresses for epoch {epoch}")
+        donors = get_donors(epoch)
+        app.logger.debug(f"Donors addresses: {donors}")
+
+        return {"donors": donors}

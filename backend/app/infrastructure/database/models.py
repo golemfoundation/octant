@@ -26,14 +26,6 @@ class User(BaseModel):
         comment="Allocations signing nonce, last used value. Range [0..inf)",
     )
 
-
-class PatronModeEvent(BaseModel):
-    __tablename__ = "patron_events"
-
-    id = Column(db.Integer, primary_key=True)
-    user_address = Column(db.String(42), nullable=False)
-    patron_mode_enabled = Column(db.Boolean, nullable=False)
-
     def get_effective_deposit(self, epoch: int) -> Optional[int]:
         effective_deposit = None
         for d in self.deposits:
@@ -47,6 +39,14 @@ class PatronModeEvent(BaseModel):
             if b.epoch == epoch:
                 budget = b.budget
         return int(budget) if budget is not None else None
+
+
+class PatronModeEvent(BaseModel):
+    __tablename__ = "patron_events"
+
+    id = Column(db.Integer, primary_key=True)
+    user_address = Column(db.String(42), nullable=False)
+    patron_mode_enabled = Column(db.Boolean, nullable=False)
 
 
 class UserConsents(BaseModel):
