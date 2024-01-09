@@ -33,7 +33,9 @@ def get_budget(user_address: str, epoch: int) -> int:
 
 def get_patrons_budget(snapshot: PendingEpochSnapshot) -> int:
     epoch_details = epochs_details.get_epoch_details(snapshot.epoch)
-    patrons = get_patrons_at_timestamp(from_timestamp_s(epoch_details.end_sec))
+    patrons = get_patrons_at_timestamp(
+        from_timestamp_s(epoch_details.end_sec + epoch_details.decision_window_sec)
+    )
     patrons_rewards = 0
     for patron in patrons:
         patrons_rewards += get_budget(patron, snapshot.epoch)

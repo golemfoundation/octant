@@ -1,19 +1,22 @@
+from datetime import timedelta, datetime, timezone
+
 import pytest
 from eth_account import Account
 from freezegun import freeze_time
 
 from app import exceptions, database
+from app.controllers.snapshots import get_pending_snapshot
 from app.extensions import db
-
 from app.constants import GLM_TOTAL_SUPPLY_WEI
 from app.controllers.user import (
     MAX_DAYS_TO_ESTIMATE_BUDGET,
     get_patron_mode_status,
     toggle_patron_mode,
 )
-from app.core.user.budget import get_budget, estimate_budget
+from app.core.user.budget import get_budget, estimate_budget, get_patrons_budget
 from app.core.user.rewards import get_all_claimed_rewards
 from app.core.allocations import add_allocations_to_db, Allocation
+from app.core.user.patron_mode import toggle_patron_mode as toggle_patron_mode_direct
 
 from app.controllers import allocations as allocations_controller
 from app.controllers import user as user_controller
@@ -30,7 +33,7 @@ from tests.conftest import (
     mock_graphql,
     MOCK_EPOCHS,
 )
-from tests.helpers.constants import USER1_BUDGET, USER1_ADDRESS
+from tests.helpers.constants import USER1_BUDGET, USER2_BUDGET, USER1_ADDRESS
 
 
 @pytest.fixture(autouse=True)
@@ -311,3 +314,50 @@ def test_patron_mode_does_not_revoke_allocations_from_previous_epochs(
 
     assert user_active_allocations_post != user_active_allocations_pre
     assert user_prev_epoch_allocations_post == user_prev_epoch_allocations_pre
+
+
+def test_patrons_budget(alice, bob, mock_pending_epoch_snapshot_db, mock_epoch_details):
+    alice_budget = USER1_BUDGET
+    bob_budget = USER2_BUDGET
+    pending_snapshot = get_pending_snapshot(MOCKED_PENDING_EPOCH_NO)
+
+    # Mocked Epoch 1 duration is between 1000s-2000s, with decision window of 500s.
+
+    with freeze_time(datetime.fromtimestamp(0, tz=timezone.utc)) as frozen_time:
+        # No patrons have been declared
+        assert get_patrons_budget(pending_snapshot) == 0
+
+        # Alice becomes a patron during Epoch 0
+        toggle_patron_mode_direct(alice.address)
+
+        # Move to Epoch 1 start
+        frozen_time.tick(delta=timedelta(seconds=1000))
+
+        # Alice declared herself as a patron at 0 tick, thus before Epoch 1 has started, still, she
+        # is considered a patron in Epoch 1
+        assert get_patrons_budget(pending_snapshot) == alice_budget
+
+        # Move to Epoch 2 but within Epoch 1 AW
+        frozen_time.tick(delta=timedelta(seconds=(1000 + 100)))
+
+        assert get_patrons_budget(pending_snapshot) == alice_budget
+
+        # Bob becomes patron during Epoch 1 AW
+        toggle_patron_mode_direct(bob.address)
+
+        assert get_patrons_budget(pending_snapshot) == alice_budget + bob_budget
+
+        # Alice stops being a patron during Epoch 1 AW
+        toggle_patron_mode_direct(alice.address)
+
+        assert get_patrons_budget(pending_snapshot) == bob_budget
+
+        # Move outside of Epoch 1 AW (we're now in Epoch 2 only)
+        frozen_time.tick(delta=timedelta(seconds=500))
+
+        # Alice becomes patron again, but in Epoch 2
+        toggle_patron_mode_direct(alice.address)
+
+        # Only Bob is a patron at the end of Epoch 1 AW as Alice became a patron again \
+        # during Epoch 2, but past Epoch 1 AW
+        assert get_patrons_budget(pending_snapshot) == bob_budget
