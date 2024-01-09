@@ -6,11 +6,11 @@ from eth_utils import to_checksum_address
 from sqlalchemy import func
 from sqlalchemy.orm import Query
 
-from app.legacy.core.common import AccountFunds
-from app.infrastructure.database.models import Allocation, AllocationSignature, User
-from app.infrastructure.database.user import get_by_address
 from app.exceptions import UserNotFound
 from app.extensions import db
+from app.infrastructure.database.models import Allocation, AllocationSignature, User
+from app.infrastructure.database.user import get_by_address
+from app.legacy.core.common import AccountFunds
 
 
 def get_all_by_epoch(epoch: int, with_deleted=False) -> List[Allocation]:
@@ -94,6 +94,13 @@ def get_all_by_epoch_and_user_id(
         query = query.filter(Allocation.deleted_at.is_(None))
 
     return query.all()
+
+
+def get_users_with_allocations(epoch_num: int) -> List[str]:
+    users = User.query.filter(
+        User.allocations.any(epoch=epoch_num, deleted_at=None)
+    ).all()
+    return [u.address for u in users]
 
 
 def get_alloc_sum_by_epoch_and_user_address(epoch: int) -> List[AccountFunds]:

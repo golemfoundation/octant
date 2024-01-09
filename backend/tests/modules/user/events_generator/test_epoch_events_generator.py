@@ -1,6 +1,8 @@
 import pytest
 
+from app.extensions import db
 from app.engine.user.effective_deposit import DepositEvent, EventType
+from app.infrastructure import database
 from app.modules.user.events_generator.service.impl.db_and_graph import (
     DbAndGraphEventsGenerator,
 )
@@ -40,7 +42,7 @@ def events(dave):
                 (1800, USER2_ED - 200),
                 (2000, 300),
             ],
-            dave: [(2200, 300)],
+            dave: [(2200, 300), (3200, -300)],
         }
     )
 
@@ -184,6 +186,46 @@ def test_returns_locks_and_unlocks_for_second_epoch(
     assert generator.get_user_events(context, dave) == expected[dave]
 
     assert generator.get_all_users_events(context) == expected
+
+
+def test_returns_events_with_one_element_if_deposit_is_gt_0(mocker, dave, events):
+    user = database.user.add_user(dave)
+    database.deposits.add(2, user, 300, 300)
+    db.session.commit()
+    mock_graphql(mocker, events, EPOCHS)
+    context = get_context(3, start=3000)
+
+    generator = DbAndGraphEventsGenerator()
+
+    assert generator.get_user_events(context, dave) == [
+        DepositEvent(
+            dave,
+            EventType.LOCK,
+            timestamp=3000,
+            amount=0,
+            deposit_before=300,
+        ),
+        DepositEvent(
+            dave,
+            EventType.UNLOCK,
+            timestamp=3200,
+            amount=300,
+            deposit_before=300,
+        ),
+    ]
+
+
+def test_returns_empty_list_if_there_is_one_event_with_deposit_eq_0(
+    mocker, dave, events
+):
+    user = database.user.add_user(dave)
+    database.deposits.add(3, user, 0, 0)
+    mock_graphql(mocker, events, EPOCHS)
+    context = get_context(4, start=4000)
+
+    generator = DbAndGraphEventsGenerator()
+
+    assert generator.get_user_events(context, dave) == []
 
 
 def test_returned_events_are_sorted_by_timestamp(mocker, events):

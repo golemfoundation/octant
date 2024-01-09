@@ -2,16 +2,13 @@ from decimal import Decimal
 from itertools import groupby
 from typing import Optional, List, Tuple
 
+from app.context.epoch_details import get_epoch_details
+from app.context.epoch_state import EpochState
 from app.extensions import epochs, proposals
 from app.infrastructure import database
 from app.infrastructure.database import allocations as allocation_db
 from app.infrastructure.database.models import PendingEpochSnapshot
 from app.legacy.core.common import AccountFunds
-from app.legacy.core.rewards.rewards import (
-    calculate_matched_rewards_threshold,
-    calculate_matched_rewards,
-)
-from app.legacy.core.user.budget import get_patrons_budget
 
 
 def get_proposals_addresses(epoch: Optional[int]) -> List[str]:
@@ -23,16 +20,14 @@ def get_proposal_allocation_threshold(epoch: int) -> int:
     proposals_addresses = get_proposals_addresses(epoch)
     total_allocated = allocation_db.get_alloc_sum_by_epoch(epoch)
 
-    return calculate_matched_rewards_threshold(
-        total_allocated, len(proposals_addresses)
-    )
+    return int(total_allocated / (len(proposals_addresses) * 2))
 
 
 def get_finalized_rewards(
-    epoch: int, pending_snapshot: PendingEpochSnapshot
+    epoch: int, snapshot: PendingEpochSnapshot
 ) -> Tuple[List[AccountFunds], int, int, int]:
-    patrons_rewards = get_patrons_budget(pending_snapshot)
-    matched_rewards = calculate_matched_rewards(pending_snapshot, patrons_rewards)
+    patrons_rewards = _get_patrons_rewards(snapshot.epoch)
+    matched_rewards = _get_matched_rewards(snapshot, patrons_rewards)
     projects = get_proposals_with_allocations(epoch)
     threshold = get_proposal_allocation_threshold(epoch)
 
@@ -76,3 +71,19 @@ def get_proposals_with_allocations(epoch: int) -> (str, int):
     ]
 
     return allocations
+
+
+def _get_patrons_rewards(pending_epoch: int) -> int:
+    epoch_details = get_epoch_details(pending_epoch, EpochState.CURRENT)
+    patrons = database.patrons.get_all_patrons_at_timestamp(
+        epoch_details.finalized_timestamp.datetime()
+    )
+    return database.budgets.get_sum_by_users_addresses_and_epoch(patrons, pending_epoch)
+
+
+def _get_matched_rewards(snapshot: PendingEpochSnapshot, patrons_rewards: int) -> int:
+    return (
+        int(snapshot.total_rewards)
+        - int(snapshot.all_individual_rewards)
+        + patrons_rewards
+    )

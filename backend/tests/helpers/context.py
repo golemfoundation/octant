@@ -13,7 +13,12 @@ from tests.helpers.constants import OPERATIONAL_COST
 
 
 def get_epoch_details(
-    epoch_num: int, start=1000, duration=1000, decision_window=500, remaining_sec=1000
+    epoch_num: int,
+    start=1000,
+    duration=1000,
+    decision_window=500,
+    remaining_sec=1000,
+    **kwargs
 ):
     return EpochDetails(
         epoch_num=epoch_num,

@@ -1,3 +1,5 @@
+from typing import Protocol, Dict
+
 from app.context.context import Context
 from app.modules.user.budgets import core
 
@@ -11,3 +13,8 @@ def estimate_budget(
     return core.estimate_budget(
         current_context, future_context, lock_duration_sec, glm_amount
     )
+
+
+class UserBudgetsService(Protocol):
+    def get_all_budgets(self, context: Context) -> Dict[str, int]:
+        ...

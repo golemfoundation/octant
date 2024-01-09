@@ -4,6 +4,8 @@ from app.context.epoch_state import EpochState, get_epoch_state, get_epoch_numbe
 from app.engine.epochs_settings import get_epoch_settings
 from app.modules.registry import get_services
 
+from flask import current_app as app
+
 
 def epoch_context(epoch_num: int, with_rewards=True) -> Context:
     epoch_state = get_epoch_state(epoch_num)
@@ -29,4 +31,7 @@ def build_context(
         service = get_services(epoch_state).octant_rewards_service
         context.octant_rewards = service.get_octant_rewards(context)
 
+    app.logger.debug(
+        f"Epoch num: {epoch_details.epoch_num}, epoch state: {epoch_state}"
+    )
     return context

@@ -6,7 +6,6 @@ from app.infrastructure import database
 from app.legacy.core.user.patron_mode import (
     get_patron_mode_status,
     toggle_patron_mode,
-    get_patrons_at_timestamp,
 )
 from app.legacy.utils.time import now
 
@@ -50,21 +49,25 @@ def test_status_changes_accordingly_to_a_series_of_toggles(alice, bob):
 
 
 def test_returns_empty_patrons_list_when_no_events():
-    assert get_patrons_at_timestamp(now()) == []
+    assert database.patrons.get_all_patrons_at_timestamp(now().datetime()) == []
 
 
 def test_returns_alice_in_patrons_list(alice):
     toggle_patron_mode(alice.address)
-    assert get_patrons_at_timestamp(now()) == [alice.address]
+    assert database.patrons.get_all_patrons_at_timestamp(now().datetime()) == [
+        alice.address
+    ]
 
 
 def test_filters_patrons_by_selected_timestamp(alice):
-    timestamp_before_toggle = now()
+    timestamp_before_toggle = now().datetime()
 
     toggle_patron_mode(alice.address)
 
-    assert get_patrons_at_timestamp(timestamp_before_toggle) == []
-    assert get_patrons_at_timestamp(now()) == [alice.address]
+    assert database.patrons.get_all_patrons_at_timestamp(timestamp_before_toggle) == []
+    assert database.patrons.get_all_patrons_at_timestamp(now().datetime()) == [
+        alice.address
+    ]
 
 
 def test_subsequent_toggles_do_not_change_patron_mode_at_timestamp(alice, bob):
@@ -73,12 +76,14 @@ def test_subsequent_toggles_do_not_change_patron_mode_at_timestamp(alice, bob):
 
     toggle_patron_mode(bob.address)  # bob is a patorn
 
-    timestamp_after_first_serie = now()
+    timestamp_after_first_serie = now().datetime()
 
     toggle_patron_mode(alice.address)  # alice is a patron
     toggle_patron_mode(bob.address)  # bob is not a patron
 
-    assert get_patrons_at_timestamp(timestamp_after_first_serie) == [bob.address]
+    assert database.patrons.get_all_patrons_at_timestamp(
+        timestamp_after_first_serie
+    ) == [bob.address]
     assert get_patron_mode_status(alice.address)
     assert not get_patron_mode_status(bob.address)
 
@@ -89,15 +94,22 @@ def test_patrons_list_works_properly_for_a_series_of_toggles(alice, bob):
 
     toggle_patron_mode(bob.address)
 
-    assert get_patrons_at_timestamp(now()) == [bob.address]
+    assert database.patrons.get_all_patrons_at_timestamp(now().datetime()) == [
+        bob.address
+    ]
 
     toggle_patron_mode(alice.address)
     toggle_patron_mode(bob.address)
-    assert get_patrons_at_timestamp(now()) == [alice.address]
+    assert database.patrons.get_all_patrons_at_timestamp(now().datetime()) == [
+        alice.address
+    ]
 
     toggle_patron_mode(bob.address)
-    assert get_patrons_at_timestamp(now()) == [bob.address, alice.address]
+    assert database.patrons.get_all_patrons_at_timestamp(now().datetime()) == [
+        bob.address,
+        alice.address,
+    ]
 
     toggle_patron_mode(bob.address)
     toggle_patron_mode(alice.address)
-    assert get_patrons_at_timestamp(now()) == []
+    assert database.patrons.get_all_patrons_at_timestamp(now().datetime()) == []

@@ -7,12 +7,12 @@ from app.infrastructure.database.models import PatronModeEvent
 from app.extensions import db
 
 
-def add_patron_mode_event(user_address: str, status: bool):
+def add_patron_mode_event(user_address: str, status: bool, created_at=None):
     db.session.add(
         PatronModeEvent(
             user_address=user_address,
             patron_mode_enabled=status,
-            created_at=datetime.utcnow(),
+            created_at=created_at if created_at is not None else datetime.utcnow(),
         )
     )
 

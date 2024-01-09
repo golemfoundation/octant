@@ -12,13 +12,43 @@ class EventType(StrEnum):
     UNLOCK = "Unlocked"
 
 
-@dataclass(frozen=True)
+def _calculate_deposit_after_event(
+    event_type: EventType, before: int, amount: int
+) -> int:
+    match event_type:
+        case EventType.LOCK:
+            return before + amount
+        case EventType.UNLOCK:
+            return before - amount
+        case _:
+            raise TypeError
+
+
+@dataclass
 class DepositEvent:
     user: Optional[str]
     type: EventType
     timestamp: int
     amount: int
     deposit_before: int
+    deposit_after: int
+
+    def __init__(
+        self,
+        user: Optional,
+        type: EventType,
+        timestamp: int,
+        amount: int,
+        deposit_before: int,
+    ):
+        self.user = user
+        self.type = type
+        self.timestamp = timestamp
+        self.amount = amount
+        self.deposit_before = deposit_before
+        self.deposit_after = _calculate_deposit_after_event(
+            type, deposit_before, amount
+        )
 
     @staticmethod
     def from_dict(event: Dict):

@@ -17,9 +17,6 @@ from app.legacy.controllers.snapshots import (
 from app.legacy.core.allocations import (
     AllocationRequest,
 )
-from app.legacy.core.rewards.rewards import (
-    calculate_matched_rewards_threshold,
-)
 from app.legacy.core.user.patron_mode import toggle_patron_mode
 from tests.conftest import (
     mock_graphql,
@@ -65,9 +62,7 @@ def before(
 def test_get_allocation_threshold(app, tos_users, proposal_accounts):
     total_allocated = _allocate_random_individual_rewards(tos_users, proposal_accounts)
 
-    assert get_allocation_threshold(None) == calculate_matched_rewards_threshold(
-        total_allocated, 5
-    )
+    assert get_allocation_threshold(None) == int(total_allocated / 10)
 
 
 def test_get_allocation_threshold_raises_when_not_in_allocation_period(app):

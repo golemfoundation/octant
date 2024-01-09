@@ -1,9 +1,6 @@
-from typing import List
-
 from app.exceptions import UserNotFound
 from app.infrastructure import database
 from app.infrastructure.database import user as user_db
-from app.legacy.utils.time import Timestamp
 
 
 def get_patron_mode_status(user_address: str) -> bool:
@@ -24,7 +21,3 @@ def toggle_patron_mode(user_address: str) -> bool:
     database.patrons.add_patron_mode_event(user_address, next_status)
 
     return next_status
-
-
-def get_patrons_at_timestamp(timestamp: Timestamp) -> List[str]:
-    return database.patrons.get_all_patrons_at_timestamp(timestamp.datetime())

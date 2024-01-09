@@ -12,7 +12,6 @@ from app.engine.user.effective_deposit.cut_off.cutoff_10glm import CutOff10GLM
 from app.engine.user.effective_deposit.weighted_average.weights.timebased import (
     DepositWeightsPayload,
     WeightedDeposit,
-    calculate_deposit_after_event,
     TimebasedWeights,
 )
 from app.engine.user.effective_deposit.weighted_average.weights.timebased.without_unlocks import (
@@ -34,7 +33,7 @@ class DefaultWeightedAverageEffectiveDeposit(UserEffectiveDeposit):
         user_deposits = []
 
         for address, events in payload.lock_events_by_addr.items():
-            locked_amount = calculate_deposit_after_event(events[-1])
+            locked_amount = events[-1].deposit_after
             weighted_deposits = self.timebased_weights.calculate_deposit_weights(
                 DepositWeightsPayload(
                     start=payload.epoch_start, end=payload.epoch_end, user_events=events

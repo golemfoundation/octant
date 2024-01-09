@@ -51,6 +51,9 @@ class DbAndGraphEventsGenerator:
 
         sorted_events.insert(0, epoch_start_locked_amount)
 
+        if len(sorted_events) == 1 and sorted_events[0].deposit_after == 0:
+            return []
+
         return sorted_events
 
     def get_all_users_events(self, context: Context) -> Dict[str, List[DepositEvent]]:
