@@ -1,10 +1,11 @@
 from typing import List
 
 from app.constants import ZERO_ADDRESS
-from app.context.context import Context
 from app.context.epoch_details import EpochDetails
+from app.context.manager import Context
 from app.engine.user.budget import UserBudgetPayload
 from app.engine.user.effective_deposit import DepositEvent, EventType
+from app.modules.dto import OctantRewardsDTO
 from app.modules.user.common import calculate_effective_deposits
 
 
@@ -37,12 +38,12 @@ def simulate_user_events(
 
 def estimate_epoch_budget(
     context: Context,
+    rewards: OctantRewardsDTO,
     lock_duration: int,
     glm_amount: int,
 ) -> int:
     epoch_details = context.epoch_details
     epoch_settings = context.epoch_settings
-    rewards = context.octant_rewards
     events = {
         ZERO_ADDRESS: simulate_user_events(epoch_details, lock_duration, glm_amount)
     }
@@ -65,12 +66,15 @@ def estimate_epoch_budget(
 def estimate_budget(
     current_context: Context,
     future_context: Context,
+    current_rewards: OctantRewardsDTO,
+    future_rewards: OctantRewardsDTO,
     lock_duration_sec: int,
     glm_amount: int,
 ) -> int:
     remaining_lock_duration = lock_duration_sec
     budget = estimate_epoch_budget(
         current_context,
+        current_rewards,
         remaining_lock_duration,
         glm_amount,
     )
@@ -83,6 +87,7 @@ def estimate_budget(
         )
         budget += full_epochs_num * estimate_epoch_budget(
             future_context,
+            future_rewards,
             epoch_duration,
             glm_amount,
         )
@@ -91,6 +96,7 @@ def estimate_budget(
     if remaining_lock_duration > 0:
         budget += estimate_epoch_budget(
             future_context,
+            future_rewards,
             remaining_lock_duration,
             glm_amount,
         )

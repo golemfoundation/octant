@@ -55,6 +55,7 @@ from tests.helpers.constants import (
 )
 from tests.helpers.gql_client import MockGQLClient
 from tests.helpers.mocked_epoch_details import EPOCH_EVENTS
+from tests.helpers.octant_rewards import octant_rewards
 from tests.helpers.subgraph.events import create_deposit_event
 
 # Contracts mocks
@@ -341,7 +342,7 @@ def patch_proposals(monkeypatch, proposal_accounts):
 @pytest.fixture(scope="function")
 def patch_glm(monkeypatch):
     monkeypatch.setattr(
-        "app.modules.user.deposits.service.impl.contract_balance.glm", MOCK_GLM
+        "app.modules.user.deposits.service.contract_balance.glm", MOCK_GLM
     )
 
     MOCK_GLM.balance_of.return_value = TOTAL_ED
@@ -376,7 +377,7 @@ def patch_eth_get_balance(monkeypatch):
     mock_web3 = MagicMock(spec=Web3, eth=mock_eth)
 
     monkeypatch.setattr(
-        "app.modules.staking.proceeds.service.impl.contract_balance.w3", mock_web3
+        "app.modules.staking.proceeds.service.contract_balance.w3", mock_web3
     )
     MOCK_GET_ETH_BALANCE.return_value = ETH_PROCEEDS
 
@@ -502,6 +503,14 @@ def mock_allocations_db(app, user_accounts, proposal_accounts):
     )
 
     db.session.commit()
+
+
+@pytest.fixture(scope="function")
+def mock_octant_rewards():
+    octant_rewards_service_mock = Mock()
+    octant_rewards_service_mock.get_octant_rewards.return_value = octant_rewards()
+
+    return octant_rewards_service_mock
 
 
 @pytest.fixture(scope="function")

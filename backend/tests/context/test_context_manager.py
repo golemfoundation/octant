@@ -52,7 +52,6 @@ def test_context_from_epoch(
     assert context.epoch_details.epoch_num == epoch_num
     assert context.epoch_settings is not None
     assert context.epoch_details is not None
-    assert context.octant_rewards is not None
 
 
 @pytest.mark.parametrize(
@@ -77,7 +76,6 @@ def test_context_from_state(
     assert context.epoch_state == state
     assert context.epoch_settings is not None
     assert context.epoch_details is not None
-    assert context.octant_rewards is not None
 
 
 @pytest.mark.parametrize(
@@ -100,6 +98,28 @@ def test_cannot_get_context_in_invalid_state(
 
     with pytest.raises(InvalidEpoch):
         state_context(state)
+
+
+def test_epoch_state_gt():
+    assert (
+        EpochState.FUTURE
+        > EpochState.CURRENT
+        > EpochState.PRE_PENDING
+        > EpochState.PENDING
+        > EpochState.FINALIZING
+        > EpochState.FINALIZED
+    )
+
+
+def test_epoch_state_lt():
+    assert (
+        EpochState.FINALIZED
+        < EpochState.FINALIZING
+        < EpochState.PENDING
+        < EpochState.PRE_PENDING
+        < EpochState.CURRENT
+        < EpochState.FUTURE
+    )
 
 
 def _setup(current, pending, finalized, pending_snapshot, finalized_snapshot):

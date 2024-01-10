@@ -1,13 +1,13 @@
 from typing import List, Tuple
 
-from app.context.context import OctantRewards
 from app.engine.user.budget import UserBudgetPayload, UserBudget
 from app.engine.user.effective_deposit import UserDeposit
+from app.modules.dto import OctantRewardsDTO
 
 
 def calculate_user_budgets(
     budget_calculator: UserBudget,
-    rewards: OctantRewards,
+    rewards: OctantRewardsDTO,
     user_deposits: List[UserDeposit],
 ) -> List[Tuple[str, int]]:
     budgets = []

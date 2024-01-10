@@ -5,7 +5,7 @@ from typing import List, Dict
 
 from eth_utils import to_checksum_address
 
-from app.context.context import Context
+from app.context.manager import Context
 from app.engine.user.effective_deposit import DepositEvent, EventType
 from app.infrastructure import database
 from app.infrastructure.graphql.locks import (

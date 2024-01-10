@@ -1,10 +1,19 @@
 from dataclasses import dataclass
-from typing import Tuple, List
+from typing import Tuple, List, Protocol, Dict
 
-from app.context.context import Context
-from app.engine.user.effective_deposit import UserDeposit
+from app.context.manager import Context
+from app.engine.user.effective_deposit import UserDeposit, DepositEvent
 from app.modules.user.common import calculate_effective_deposits
-from app.modules.user.events_generator.service.service import EventsGenerator
+
+
+class EventsGenerator(Protocol):
+    def get_user_events(
+        self, context: Context, user_address: str
+    ) -> List[DepositEvent]:
+        ...
+
+    def get_all_users_events(self, context: Context) -> Dict[str, List[DepositEvent]]:
+        ...
 
 
 @dataclass

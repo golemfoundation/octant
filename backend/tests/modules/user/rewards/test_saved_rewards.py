@@ -1,6 +1,6 @@
 import pytest
 
-from app.modules.user.rewards.service.impl.saved import SavedUserRewards
+from app.modules.user.rewards.service.saved import SavedUserRewards
 from tests.helpers.constants import USER3_BUDGET
 from tests.helpers.context import get_context
 
@@ -16,9 +16,9 @@ def test_get_unused_rewards(
     context = get_context(1)
 
     service = SavedUserRewards(
-        budgets_service=mock_user_budgets,
-        allocations_service=mock_user_allocations,
-        patrons_mode_service=mock_patron_mode,
+        user_budgets=mock_user_budgets,
+        allocations=mock_user_allocations,
+        patrons_mode=mock_patron_mode,
     )
 
     result = service.get_unused_rewards(context)

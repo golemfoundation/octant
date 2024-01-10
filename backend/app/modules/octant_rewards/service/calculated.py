@@ -1,21 +1,30 @@
 from dataclasses import dataclass
+from typing import Protocol
 
-from app.context.context import Context
+from app.context.manager import Context
+from app.modules.dto import OctantRewardsDTO
 from app.modules.octant_rewards.core import calculate_rewards
-from app.modules.octant_rewards.service.service import OctantRewards
-from app.modules.staking.proceeds.service.service import StakingProceedsService
-from app.modules.user.deposits.service.service import UserDepositsService
+
+
+class StakingProceeds(Protocol):
+    def get_staking_proceeds(self, context: Context) -> int:
+        ...
+
+
+class EffectiveDeposits(Protocol):
+    def get_total_effective_deposit(self, context: Context) -> int:
+        ...
 
 
 @dataclass
 class CalculatedOctantRewards:
-    staking_proceeds_service: StakingProceedsService
-    user_deposits_service: UserDepositsService
+    staking_proceeds: StakingProceeds
+    effective_deposits: EffectiveDeposits
 
-    def get_octant_rewards(self, context: Context) -> OctantRewards:
-        eth_proceeds = self.staking_proceeds_service.get_staking_proceeds(context)
-        total_effective_deposit = (
-            self.user_deposits_service.get_total_effective_deposit(context)
+    def get_octant_rewards(self, context: Context) -> OctantRewardsDTO:
+        eth_proceeds = self.staking_proceeds.get_staking_proceeds(context)
+        total_effective_deposit = self.effective_deposits.get_total_effective_deposit(
+            context
         )
         rewards_settings = context.epoch_settings.octant_rewards
         (
@@ -25,7 +34,7 @@ class CalculatedOctantRewards:
             op_cost,
         ) = calculate_rewards(rewards_settings, eth_proceeds, total_effective_deposit)
 
-        return OctantRewards(
+        return OctantRewardsDTO(
             staking_proceeds=eth_proceeds,
             locked_ratio=locked_ratio,
             total_effective_deposit=total_effective_deposit,
