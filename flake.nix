@@ -2,7 +2,7 @@
   description = "The decentralised governance system from Golem Foundation";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/23.05";
+    nixpkgs.url = "github:nixos/nixpkgs/23.11";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -20,8 +20,8 @@
         epc         # for emacs
         importmagic # for emacs
       ]);
-      node = pkgs.nodejs-16_x;
-      yarn16 = pkgs.yarn.overrideAttrs (finalAttrs: previousAttrs: {
+      node = pkgs.nodejs_20;
+      yarn20 = pkgs.yarn.overrideAttrs (finalAttrs: previousAttrs: {
         buildInputs = [ node ];
       });
       darwinInputs = pkgs.lib.optionals pkgs.stdenv.isDarwin [ pkgs.xcbuild ];
@@ -30,7 +30,7 @@
         buildInputs = [
           node
           python
-          yarn16
+          yarn20
           pkgs.poetry
           pkgs.envsubst
           # (pkgs.poetry.override { python3 = pkgs.python311; })
