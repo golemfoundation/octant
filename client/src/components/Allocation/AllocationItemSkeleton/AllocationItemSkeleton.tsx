@@ -1,9 +1,11 @@
-import React, { ReactElement } from 'react';
+import cx from 'classnames';
+import React, { FC } from 'react';
 
 import styles from './AllocationItemSkeleton.module.scss';
+import AllocationItemSkeletonProps from './types';
 
-const AllocationItemSkeleton = (): ReactElement => (
-  <div className={styles.root}>
+const AllocationItemSkeleton: FC<AllocationItemSkeletonProps> = ({ className }) => (
+  <div className={cx(styles.root, className)}>
     <div className={styles.column1}>
       <div className={styles.row}>
         <div className={styles.circle} />

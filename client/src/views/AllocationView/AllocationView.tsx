@@ -1,4 +1,3 @@
-import cx from 'classnames';
 import { BigNumber } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { AnimatePresence } from 'framer-motion';
@@ -365,7 +364,7 @@ const AllocationView = (): ReactElement => {
                     <AllocationItem
                       key={address}
                       address={address}
-                      className={cx(styles.box, styles.isAllocation)}
+                      className={styles.box}
                       isAllocatedTo={isAllocatedTo}
                       isError={addressesWithError.includes(address)}
                       isLoadingError={isLoadingError}
@@ -385,7 +384,9 @@ const AllocationView = (): ReactElement => {
                     />
                   ),
                 )
-              : allocations.map(allocation => <AllocationItemSkeleton key={allocation} />)}
+              : allocations.map(allocation => (
+                  <AllocationItemSkeleton key={allocation} className={styles.box} />
+                ))}
           </AnimatePresence>
         )
       ) : (
