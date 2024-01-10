@@ -6,7 +6,7 @@ import {
   useMotionValueEvent,
   useTransform,
 } from 'framer-motion';
-import React, { FC, Fragment, memo, useEffect, useRef, useState } from 'react';
+import React, { FC, memo, useEffect, useRef, useState } from 'react';
 import { useAccount } from 'wagmi';
 
 import AllocationItemRewards from 'components/Allocation/AllocationItemRewards';
@@ -137,14 +137,16 @@ const AllocationItem: FC<AllocationItemProps> = ({
       layout
       transition={{ duration: 0.1, ease: 'easeOut' }}
     >
-      <motion.div
-        ref={removeButtonRef}
-        className={styles.removeButton}
-        onClick={onRemoveAllocationElement}
-        style={{ scale: removeButtonScaleTransform }}
-      >
-        <Svg img={bin} size={isDesktop ? [2.4, 2.2] : [2, 1.8]} />
-      </motion.div>
+      {!isLoading && !isLoadingError && (
+        <motion.div
+          ref={removeButtonRef}
+          className={styles.removeButton}
+          onClick={onRemoveAllocationElement}
+          style={{ scale: removeButtonScaleTransform }}
+        >
+          <Svg img={bin} size={isDesktop ? [2.4, 2.2] : [2, 1.8]} />
+        </motion.div>
+      )}
       <motion.div
         ref={ref}
         drag="x"
@@ -163,54 +165,52 @@ const AllocationItem: FC<AllocationItemProps> = ({
         onDragStart={e => setStartX(e.x)}
         style={{ x }}
       >
-        <BoxRounded
-          childrenWrapperClassName={cx(
-            styles.boxRoundedChildren,
-            !isError && isThereAnyError && styles.isThereAnyError,
-          )}
-          className={styles.box}
-          hasPadding={false}
-        >
-          {(isLoading || isLoadingError) && <AllocationItemSkeleton />}
-          {!isLoading && !isLoadingError && (
-            <Fragment>
-              <div className={styles.projectData}>
-                <Img
-                  className={styles.image}
-                  dataTest="ProposalItem__imageProfile"
-                  src={`${ipfsGateway}${profileImageSmall}`}
-                />
-                <div className={styles.nameAndRewards}>
-                  <div className={styles.name}>{name}</div>
-                  <AllocationItemRewards
-                    address={address}
-                    isError={isError}
-                    value={value}
-                    {...rewardsProps}
-                  />
-                </div>
-              </div>
-              <InputText
-                ref={inputRef}
-                className={cx(styles.input, isEpoch1 && styles.isEpoch1, isError && styles.isError)}
-                error={isError}
-                isDisabled={
-                  !isConnected ||
-                  individualReward?.isZero() ||
-                  !isDecisionWindowOpen ||
-                  isThereAnyError
-                }
-                onChange={event => _onChange(event.target.value)}
-                placeholder="0.000"
-                shouldAutoFocusAndSelect={false}
-                suffix="ETH"
-                textAlign="right"
-                value={localValue}
-                variant="allocation"
+        {(isLoading || isLoadingError) && <AllocationItemSkeleton />}
+        {!isLoading && !isLoadingError && (
+          <BoxRounded
+            childrenWrapperClassName={cx(
+              styles.boxRoundedChildren,
+              !isError && isThereAnyError && styles.isThereAnyError,
+            )}
+            className={styles.box}
+            hasPadding={false}
+          >
+            <div className={styles.projectData}>
+              <Img
+                className={styles.image}
+                dataTest="ProposalItem__imageProfile"
+                src={`${ipfsGateway}${profileImageSmall}`}
               />
-            </Fragment>
-          )}
-        </BoxRounded>
+              <div className={styles.nameAndRewards}>
+                <div className={styles.name}>{name}</div>
+                <AllocationItemRewards
+                  address={address}
+                  isError={isError}
+                  value={value}
+                  {...rewardsProps}
+                />
+              </div>
+            </div>
+            <InputText
+              ref={inputRef}
+              className={cx(styles.input, isEpoch1 && styles.isEpoch1, isError && styles.isError)}
+              error={isError}
+              isDisabled={
+                !isConnected ||
+                individualReward?.isZero() ||
+                !isDecisionWindowOpen ||
+                isThereAnyError
+              }
+              onChange={event => _onChange(event.target.value)}
+              placeholder="0.000"
+              shouldAutoFocusAndSelect={false}
+              suffix="ETH"
+              textAlign="right"
+              value={localValue}
+              variant="allocation"
+            />
+          </BoxRounded>
+        )}
       </motion.div>
     </motion.div>
   );
