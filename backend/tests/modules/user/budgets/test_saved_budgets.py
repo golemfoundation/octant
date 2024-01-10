@@ -2,7 +2,7 @@ import pytest
 
 from app.extensions import db
 from app.infrastructure import database
-from app.modules.user.budgets.service.impl.saved import SavedUserBudgets
+from app.modules.user.budgets.service.saved import SavedUserBudgets
 from tests.helpers.constants import USER1_BUDGET, USER2_BUDGET, USER3_BUDGET
 from tests.helpers.context import get_context
 

@@ -3,7 +3,7 @@ import pytest
 from app.extensions import db
 from app.infrastructure import database
 from app.modules.user.allocations.core import Allocation
-from app.modules.user.allocations.service.impl.saved import SavedUserAllocations
+from app.modules.user.allocations.service.saved import SavedUserAllocations
 from tests.helpers.context import get_context
 
 

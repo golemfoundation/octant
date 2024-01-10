@@ -1,18 +1,18 @@
 from dataclasses import dataclass
 from decimal import Decimal
 
-from app.context.context import Context
+from app.context.manager import Context
 from app.infrastructure import database
-from app.modules.octant_rewards.service.service import OctantRewards
+from app.modules.dto import OctantRewardsDTO
 
 
 @dataclass
 class PendingOctantRewards:
-    def get_octant_rewards(self, context: Context) -> OctantRewards:
+    def get_octant_rewards(self, context: Context) -> OctantRewardsDTO:
         pending_snapshot = database.pending_epoch_snapshot.get_by_epoch(
             context.epoch_details.epoch_num
         )
-        return OctantRewards(
+        return OctantRewardsDTO(
             staking_proceeds=int(pending_snapshot.eth_proceeds),
             locked_ratio=Decimal(pending_snapshot.locked_ratio),
             total_effective_deposit=int(pending_snapshot.total_effective_deposit),

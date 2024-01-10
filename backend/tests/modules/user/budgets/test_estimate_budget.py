@@ -1,8 +1,9 @@
 import pytest
 
 from app.legacy.utils.time import days_to_sec
-from app.modules.user.budgets.service.service import estimate_budget
+from app.modules.user.budgets.core import estimate_budget
 from tests.helpers.context import get_context
+from tests.helpers.octant_rewards import octant_rewards
 
 
 @pytest.mark.parametrize(
@@ -33,6 +34,13 @@ def test_estimate_budget(days, amount, expected):
     )
     lock_duration = days_to_sec(days)
 
-    result = estimate_budget(current_context, future_context, lock_duration, amount)
+    result = estimate_budget(
+        current_context,
+        future_context,
+        octant_rewards(),
+        octant_rewards(),
+        lock_duration,
+        amount,
+    )
 
     assert result == expected

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
-from app.context.context import Context
+from app.context.manager import Context
 from app.infrastructure import database
 
 

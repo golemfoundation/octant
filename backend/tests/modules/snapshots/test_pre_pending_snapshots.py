@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 
 from app.infrastructure import database
-from app.modules.snapshots.pending.service.impl.pre_pending import (
+from app.modules.snapshots.pending.service.pre_pending import (
     PrePendingSnapshots,
 )
 from tests.conftest import ETH_PROCEEDS, USER1_ADDRESS, USER2_ADDRESS
@@ -14,9 +14,11 @@ def before(app):
     pass
 
 
-def test_save_pending_epoch_snapshot(mock_user_deposits):
+def test_save_pending_epoch_snapshot(mock_user_deposits, mock_octant_rewards):
     context = get_context()
-    service = PrePendingSnapshots(user_deposits_service=mock_user_deposits)
+    service = PrePendingSnapshots(
+        effective_deposits=mock_user_deposits, octant_rewards=mock_octant_rewards
+    )
 
     result = service.create_pending_epoch_snapshot(context)
 
@@ -46,9 +48,13 @@ def test_save_pending_epoch_snapshot(mock_user_deposits):
     assert budgets[USER2_ADDRESS] == 2839976215136415
 
 
-def test_cannot_save_pending_epoch_snapshot_twice(mock_user_deposits):
+def test_cannot_save_pending_epoch_snapshot_twice(
+    mock_user_deposits, mock_octant_rewards
+):
     context = get_context()
-    service = PrePendingSnapshots(user_deposits_service=mock_user_deposits)
+    service = PrePendingSnapshots(
+        effective_deposits=mock_user_deposits, octant_rewards=mock_octant_rewards
+    )
 
     service.create_pending_epoch_snapshot(context)
     with pytest.raises(IntegrityError):

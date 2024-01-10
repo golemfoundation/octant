@@ -2,7 +2,7 @@ import pytest
 
 from app.infrastructure import database
 from app.legacy.utils.time import from_timestamp_s
-from app.modules.user.patron_mode.service.impl.events_based import (
+from app.modules.user.patron_mode.service.events_based import (
     EventsBasedUserPatronMode,
 )
 from tests.helpers.context import get_context

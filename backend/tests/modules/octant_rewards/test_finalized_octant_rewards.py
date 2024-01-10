@@ -1,4 +1,4 @@
-from app.modules.octant_rewards.service.impl.finalized import FinalizedOctantRewards
+from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
 from tests.conftest import ETH_PROCEEDS, TOTAL_ED
 from tests.helpers.constants import (
     TOTAL_REWARDS,
