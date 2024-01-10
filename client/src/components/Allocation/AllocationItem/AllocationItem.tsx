@@ -154,6 +154,16 @@ const AllocationItem: FC<AllocationItemProps> = ({
         dragElastic={false}
         dragMomentum={false}
         onDragEnd={e => {
+          if (e.type === 'pointercancel') {
+            /**
+             * Prevents horizontal scroll to be fired when user scrolls the view vertically
+             * on mobile devices.
+             *
+             * Without that whenever user holds the view on the AllocationItem and wants to drag
+             * the view vertically AllocationItem drags itself horizontally, exposing removeButton.
+             */
+            return;
+          }
           animate(
             ref.current,
             // @ts-expect-error e is wrongly typed, doesn't see x property.
