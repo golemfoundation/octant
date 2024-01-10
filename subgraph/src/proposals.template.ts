@@ -3,7 +3,7 @@ import { Address, BigInt, Bytes } from '@graphprotocol/graph-ts';
 import { SetCIDCall, SetProposalAddressesCall } from '../generated/Proposals/Proposals';
 import { ProjectsMetadataAccumulated, ProjectsMetadataPerEpoch } from '../generated/schema';
 import {
-  requestCurrentEpoch,
+  requestCurrentEpochWithDefault,
   requestCurrentProposalsCID,
   requestProposalAddresses,
   // eslint-disable-next-line import/no-useless-path-segments
@@ -41,7 +41,7 @@ function createNewProjectsMetadataPerEpoch(
 }
 
 export function handleSetCID(call: SetCIDCall): void {
-  const currentEpoch: BigInt = requestCurrentEpoch(epochsContractAddress);
+  const currentEpoch: BigInt = requestCurrentEpochWithDefault(epochsContractAddress);
   const epochAsId = Bytes.fromI32(currentEpoch.toI32());
 
   let projectsMetadataPerEpoch: ProjectsMetadataPerEpoch | null = ProjectsMetadataPerEpoch.load(
