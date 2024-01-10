@@ -56,6 +56,8 @@ $removeButtonHeightWidthDesktop: 10.4rem;
 .projectData {
   display: flex;
   align-items: center;
+  padding-right: 2.4rem;
+  min-width: 0;
 }
 
 .image {
@@ -69,10 +71,18 @@ $removeButtonHeightWidthDesktop: 10.4rem;
   }
 }
 
+.nameAndRewards {
+  min-width: 0;
+}
+
 .name {
+  min-width: 0;
   font-size: $font-size-18;
   line-height: 2.1rem;
   text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   @media #{$tablet-down} {
     font-size: $font-size-14;
@@ -89,5 +99,10 @@ $removeButtonHeightWidthDesktop: 10.4rem;
 
   &.isError {
     animation: horizontal-shaking 0.25s;
+  }
+
+  @media #{$tablet-down} {
+    max-width: 14.2rem;
+    min-width: 14.2rem;
   }
 }
