@@ -27,6 +27,7 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
       onToggle,
       justifyContent = 'center',
       subtitle,
+      subtitleClassName,
       suffix,
       tabs,
       title,
@@ -110,7 +111,7 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
               <div className={cx(styles.title, titleClassName)} data-test={`${dataTest}__title`}>
                 {title}
               </div>
-              <div className={styles.subtitle}>{subtitle}</div>
+              <div className={cx(styles.subtitle, subtitleClassName)}>{subtitle}</div>
             </div>
             {titleSuffix}
             {isExpandable && (

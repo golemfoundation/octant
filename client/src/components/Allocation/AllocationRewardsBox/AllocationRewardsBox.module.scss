@@ -1,17 +1,29 @@
 .root {
   position: relative;
   color: $color-octant-grey5;
-  padding: 1.6rem 2.4rem 2rem;
+  padding: 2.3rem 2.4rem;
+
+  @media #{$tablet-down} {
+    padding: 1.6rem;
+  }
 }
 
 .title {
   font-size: $font-size-18;
-  margin-bottom: 0.3rem;
+  margin: 0 0 0 0.8rem;
   color: $color-octant-green;
 
   &.greyTitle {
     color: $color-octant-grey5;
   }
+
+  @media #{$tablet-down} {
+    font-size: $font-size-16;
+  }
+}
+
+.subtitle {
+  margin-left: 0.8rem;
 }
 
 .isManualBadge {
@@ -40,12 +52,17 @@
   &.isManuallyEdited {
     background-color: $color-octant-green5;
   }
+
+  @media #{$tablet-down} {
+    margin: 1.1rem 0 0.8rem;
+  }
 }
 
 .sections {
   display: flex;
   justify-content: space-between;
   align-self: stretch;
+  margin: 0 0.8rem;
 }
 
 .section {
@@ -55,16 +72,17 @@
 
   .header {
     line-height: 1.6rem;
-    padding: 0.4rem 0;
+    padding: 0.4rem 0 0.1rem 0;
   }
 
   .value {
     line-height: 2rem;
-    font-size: $font-size-16;
+    font-size: $font-size-18;
     color: $color-octant-dark;
+    height: 1.6rem;
 
-    @media #{$desktop-up} {
-      font-size: $font-size-18;
+    @media #{$tablet-down} {
+      font-size: $font-size-16;
     }
   }
 
