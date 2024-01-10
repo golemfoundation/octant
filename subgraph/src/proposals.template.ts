@@ -41,11 +41,7 @@ function createNewProjectsMetadataPerEpoch(
 }
 
 export function handleSetCID(call: SetCIDCall): void {
-  const currentEpoch: BigInt | null = requestCurrentEpoch(epochsContractAddress);
-  if (currentEpoch === null) {
-    return;
-  }
-
+  const currentEpoch: BigInt = requestCurrentEpoch(epochsContractAddress);
   const epochAsId = Bytes.fromI32(currentEpoch.toI32());
 
   let projectsMetadataPerEpoch: ProjectsMetadataPerEpoch | null = ProjectsMetadataPerEpoch.load(

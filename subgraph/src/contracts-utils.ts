@@ -3,13 +3,13 @@ import { Address, BigInt, log } from '@graphprotocol/graph-ts';
 import { Epochs } from '../generated/Epochs/Epochs';
 import { Proposals } from '../generated/Proposals/Proposals';
 
-export function requestCurrentEpoch(epochsContractAddress: string): BigInt | null {
+export function requestCurrentEpoch(epochsContractAddress: string): BigInt {
   const epochsContract = Epochs.bind(Address.fromString(epochsContractAddress));
 
   const currentEpoch = epochsContract.try_getCurrentEpoch();
   if (currentEpoch.reverted) {
     log.error('Call to getCurrentEpoch() reverted!', []);
-    return null;
+    return BigInt.fromI32(0);
   }
   return currentEpoch.value;
 }
