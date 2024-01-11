@@ -25,16 +25,12 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   const {
     wasLockGLMAlreadyClosed,
     wasRewardsAlreadyClosed,
-    wasChangedYourMindAlreadyClosed,
     setWasLockGLMAlreadyClosed,
     setWasRewardsAlreadyClosed,
-    setWasChangedYourMindAlreadyClosed,
   } = useTipsStore(state => ({
-    setWasChangedYourMindAlreadyClosed: state.setWasChangedYourMindAlreadyClosed,
     setWasConnectWalletAlreadyClosed: state.setWasConnectWalletAlreadyClosed,
     setWasLockGLMAlreadyClosed: state.setWasLockGLMAlreadyClosed,
     setWasRewardsAlreadyClosed: state.setWasRewardsAlreadyClosed,
-    wasChangedYourMindAlreadyClosed: state.data.wasChangedYourMindAlreadyClosed,
     wasConnectWalletAlreadyClosed: state.data.wasConnectWalletAlreadyClosed,
     wasLockGLMAlreadyClosed: state.data.wasLockGLMAlreadyClosed,
     wasRewardsAlreadyClosed: state.data.wasRewardsAlreadyClosed,
@@ -59,13 +55,6 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
     !!isDecisionWindowOpen &&
     !wasRewardsAlreadyClosed;
 
-  const isChangedYourMindTipVisible =
-    !isEpoch1 &&
-    !isFetchingUserAllocation &&
-    !!userAllocations?.hasUserAlreadyDoneAllocation &&
-    !!isDecisionWindowOpen &&
-    !wasChangedYourMindAlreadyClosed;
-
   return (
     <Fragment>
       <TipTile
@@ -85,16 +74,6 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
         onClose={() => setWasRewardsAlreadyClosed(true)}
         text={isDesktop ? t('rewards.text.desktop') : t('rewards.text.mobile')}
         title={t('rewards.title')}
-      />
-      <TipTile
-        key="TipTile--changedYourMind"
-        className={className}
-        image="images/tip-changed-your-mind.webp"
-        infoLabel={i18n.t('common.octantTips')}
-        isOpen={isChangedYourMindTipVisible}
-        onClose={() => setWasChangedYourMindAlreadyClosed(true)}
-        text={t('changedYourMind.text')}
-        title={t('changedYourMind.title')}
       />
     </Fragment>
   );
