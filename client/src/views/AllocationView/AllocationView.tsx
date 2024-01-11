@@ -98,7 +98,6 @@ const AllocationView = (): ReactElement => {
   const allocateEvent = useAllocate({
     nonce: userNonce!,
     onSuccess: async () => {
-      setCurrentView('summary');
       triggerToast({
         title: t('allocationSuccessful'),
       });
@@ -217,7 +216,6 @@ const AllocationView = (): ReactElement => {
     }
     if (userAllocations.elements.length > 0) {
       setIsManualMode(true);
-      setCurrentView('summary');
       return;
     }
     setIsManualMode(false);
@@ -248,7 +246,7 @@ const AllocationView = (): ReactElement => {
   ]);
 
   useEffect(() => {
-    if (!currentEpoch) {
+    if (!currentEpoch || !isDecisionWindowOpen) {
       return;
     }
     if (userAllocations && currentEpoch > 1 && userAllocations.hasUserAlreadyDoneAllocation) {
@@ -257,7 +255,7 @@ const AllocationView = (): ReactElement => {
     }
     setCurrentView('edit');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentEpoch, userAllocations?.elements.length]);
+  }, [currentEpoch, isDecisionWindowOpen, userAllocations?.elements.length]);
 
   useEffect(() => {
     const areAllValuesZero = !allocationValues.some(element => element.value !== '0.0');

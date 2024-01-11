@@ -13,15 +13,11 @@
     font-size: $font-size-10;
   }
 
-  &.isThresholdUnknown {
-    color: $color-octant-grey5;
-  }
-
   &.isDonationAboveThreshold {
     color: $color-octant-green;
   }
 
-  &.isLoadingAllocateSimulate {
+  &.isLoadingAllocateSimulate, &.isSimulateVisible {
     color: $color-octant-grey5;
   }
 }
