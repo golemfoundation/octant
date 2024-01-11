@@ -318,10 +318,6 @@
             "desktop": "Add projects and use the slider to divide rewards between yourself and your chosen projects",
             "mobile": "Add projects and use the slider to divide rewards between yourself & your chosen projects"
           }
-        },
-        "changedYourMind": {
-          "title": "Changed your mind?",
-          "text": "To change your allocations, click the slider handle to unlock and make your changes"
         }
       },
       "modalAllocationValuesEdit": {

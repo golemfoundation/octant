@@ -5,7 +5,6 @@ import {
   WAS_LOCK_GLM_ALREADY_CLOSED_TIP,
   WAS_REWARDS_ALREADY_CLOSED_TIP,
   WAS_WITHDRAW_ALREADY_CLOSED_TIP,
-  WAS_CHANGED_YOUR_MIND_ALREADY_CLOSED_TIP,
 } from 'constants/localStorageKeys';
 import { getStoreWithMeta } from 'store/utils/getStoreWithMeta';
 
@@ -13,7 +12,6 @@ import { TipsMethods, TipsData } from './types';
 
 export const initialState: TipsData = {
   wasAddFavouritesAlreadyClosed: false,
-  wasChangedYourMindAlreadyClosed: false,
   wasCheckStatusAlreadyClosed: false,
   wasConnectWalletAlreadyClosed: false,
   wasLockGLMAlreadyClosed: false,
@@ -30,9 +28,6 @@ export default getStoreWithMeta<TipsData, TipsMethods>({
         data: {
           wasAddFavouritesAlreadyClosed: JSON.parse(
             localStorage.getItem(WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP) || 'false',
-          ),
-          wasChangedYourMindAlreadyClosed: JSON.parse(
-            localStorage.getItem(WAS_CHANGED_YOUR_MIND_ALREADY_CLOSED_TIP) || 'false',
           ),
           wasCheckStatusAlreadyClosed: JSON.parse(
             localStorage.getItem(WAS_CHECK_STATUS_ALREADY_CLOSED_TIP) || 'false',
@@ -58,11 +53,6 @@ export default getStoreWithMeta<TipsData, TipsMethods>({
     setWasAddFavouritesAlreadyClosed: payload => {
       localStorage.setItem(WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP, JSON.stringify(payload));
       set(state => ({ data: { ...state.data, wasAddFavouritesAlreadyClosed: payload } }));
-    },
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    setWasChangedYourMindAlreadyClosed: payload => {
-      localStorage.setItem(WAS_CHANGED_YOUR_MIND_ALREADY_CLOSED_TIP, JSON.stringify(payload));
-      set(state => ({ data: { ...state.data, wasChangedYourMindAlreadyClosed: payload } }));
     },
     // eslint-disable-next-line @typescript-eslint/naming-convention
     setWasCheckStatusAlreadyClosed: payload => {

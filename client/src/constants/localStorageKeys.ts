@@ -59,8 +59,3 @@ export const WAS_WITHDRAW_ALREADY_CLOSED_TIP = getLocalStorageKey(
   tipTilesPrefix,
   'wasWithdrawAlreadyClosed',
 );
-
-export const WAS_CHANGED_YOUR_MIND_ALREADY_CLOSED_TIP = getLocalStorageKey(
-  tipTilesPrefix,
-  'wasChangedYourMindAlreadyClosed',
-);
