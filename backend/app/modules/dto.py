@@ -19,3 +19,9 @@ class OctantRewardsDTO(JSONWizard):
     matched_rewards: Optional[int] = None
     total_withdrawals: Optional[int] = None
     leftover: Optional[int] = None
+
+
+@dataclass(frozen=True)
+class AllocationDTO(JSONWizard):
+    proposal_address: str
+    amount: int

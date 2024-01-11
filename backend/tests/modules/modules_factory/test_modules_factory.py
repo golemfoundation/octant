@@ -75,7 +75,9 @@ def test_pending_services_factory():
     events_based_patron_mode = EventsBasedUserPatronMode()
     saved_user_allocations = SavedUserAllocations()
     assert result.user_deposits_service == SavedUserDeposits()
-    assert result.octant_rewards_service == PendingOctantRewards()
+    assert result.octant_rewards_service == PendingOctantRewards(
+        patrons_mode=events_based_patron_mode
+    )
     assert result.user_allocations_service == saved_user_allocations
     assert result.user_patron_mode_service == events_based_patron_mode
     assert result.user_rewards_service == SavedUserRewards(
@@ -92,7 +94,9 @@ def test_finalizing_services_factory():
     events_based_patron_mode = EventsBasedUserPatronMode()
     saved_user_allocations = SavedUserAllocations()
     assert result.user_deposits_service == SavedUserDeposits()
-    assert result.octant_rewards_service == PendingOctantRewards()
+    assert result.octant_rewards_service == PendingOctantRewards(
+        patrons_mode=events_based_patron_mode
+    )
     assert result.user_allocations_service == saved_user_allocations
     assert result.user_patron_mode_service == events_based_patron_mode
     assert result.user_rewards_service == SavedUserRewards(

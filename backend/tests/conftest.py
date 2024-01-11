@@ -584,6 +584,7 @@ def mock_user_allocations(alice):
 def mock_patron_mode(bob):
     patron_mode_service_mock = Mock()
     patron_mode_service_mock.get_all_patrons_addresses.return_value = [bob.address]
+    patron_mode_service_mock.get_patrons_rewards.return_value = USER2_BUDGET
 
     return patron_mode_service_mock
 

@@ -4,6 +4,7 @@ from decimal import Decimal
 from app.context.manager import Context
 from app.infrastructure import database
 from app.modules.dto import OctantRewardsDTO
+from app.modules.octant_rewards.core import calculate_leverage
 
 
 @dataclass
@@ -28,3 +29,14 @@ class FinalizedOctantRewards:
             leftover=int(finalized_snapshot.leftover),
             total_withdrawals=int(finalized_snapshot.total_withdrawals),
         )
+
+    def get_leverage(self, context: Context) -> float:
+        allocations_sum = database.allocations.get_alloc_sum_by_epoch(
+            context.epoch_details.epoch_num
+        )
+        finalized_snapshot = database.finalized_epoch_snapshot.get_by_epoch(
+            context.epoch_details.epoch_num
+        )
+        matched_rewards = int(finalized_snapshot.matched_rewards)
+
+        return calculate_leverage(matched_rewards, allocations_sum)

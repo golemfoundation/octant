@@ -8,6 +8,7 @@ from app.modules.modules_factory.protocols import (
     UserRewards,
     UserEffectiveDeposits,
     TotalEffectiveDeposits,
+    Leverage,
 )
 from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
 from app.modules.user.allocations.service.saved import SavedUserAllocations
@@ -17,6 +18,10 @@ from app.modules.user.patron_mode.service.events_based import EventsBasedUserPat
 from app.modules.user.rewards.service.saved import SavedUserRewards
 
 
+class FinalizedOctantRewardsProtocol(OctantRewards, Leverage, Protocol):
+    pass
+
+
 class FinalizedUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protocol):
     pass
 
@@ -24,7 +29,7 @@ class FinalizedUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Proto
 @dataclass(frozen=True)
 class FinalizedServices:
     user_deposits_service: FinalizedUserDeposits
-    octant_rewards_service: OctantRewards
+    octant_rewards_service: FinalizedOctantRewardsProtocol
     user_allocations_service: UserAllocations
     user_patron_mode_service: UserPatronMode
     user_rewards_service: UserRewards
