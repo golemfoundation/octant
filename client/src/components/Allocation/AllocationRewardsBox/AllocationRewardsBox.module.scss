@@ -1,7 +1,7 @@
 .root {
   position: relative;
   color: $color-octant-grey5;
-  padding: 2.3rem 2.4rem;
+  padding: 2rem 2.4rem 2.3rem;
 
   @media #{$tablet-down} {
     padding: 1.6rem;
@@ -12,6 +12,7 @@
   font-size: $font-size-18;
   margin: 0 0 0 0.8rem;
   color: $color-octant-green;
+  line-height: 2.4rem;
 
   &.greyTitle {
     color: $color-octant-grey5;
@@ -19,6 +20,7 @@
 
   @media #{$tablet-down} {
     font-size: $font-size-16;
+    line-height: 2rem;
   }
 }
 
@@ -28,8 +30,8 @@
 
 .isManualBadge {
   position: absolute;
-  top: 1.6rem;
-  right: 1.6rem;
+  top: 2.4rem;
+  right: 2.4rem;
   border: 0.1rem solid $color-octant-green;
   padding: 0.2rem 0.5rem;
   text-transform: uppercase;
@@ -47,7 +49,7 @@
   background-color: $color-octant-grey6;
   border-radius: $border-radius-08;
   padding: 0 1.6rem;
-  margin: 2rem 0 0.8rem;
+  margin: 1.6rem 0 1.2rem;
 
   &.isManuallyEdited {
     background-color: $color-octant-green5;
@@ -94,21 +96,7 @@
     text-align: right;
   }
 
-  &:not(.isDisabled) {
-    &:first-child .value {
-      color: $color-octant-green;
-
-      &.isDisabled {
-        color: $color-octant-grey5;
-      }
-    }
-
-    &:last-child .value {
-      color: $color-octant-orange2;
-
-      &.isDisabled {
-        color: $color-octant-grey5;
-      }
-    }
+  &.isDisabled {
+    color: $color-octant-grey5;
   }
 }
