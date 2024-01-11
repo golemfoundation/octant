@@ -1,8 +1,4 @@
 .root {
-  &:not(.areAllocationValuesPositive) {
-    padding-bottom: 4rem;
-  }
-
   @media #{$tablet-down} {
     padding: 0 2.4rem;
   }
@@ -89,7 +85,10 @@
 
 .personalRewardBox {
   height: 6.4rem;
-  margin-top: 1.6rem;
+
+  &.areAllocationValuesPositive {
+    margin-top: 1.6rem;
+  }
 
   @media #{$desktop-up} {
     height: 8rem;
