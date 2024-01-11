@@ -9,6 +9,7 @@ from app.infrastructure.routes.validations.user_validations import (
 from app.legacy.controllers import rewards
 from app.legacy.controllers.user import get_budget
 from app.legacy.utils.time import days_to_sec
+from app.modules.octant_rewards.controller import get_leverage
 from app.modules.user.budgets.controller import estimate_budget
 from app.modules.user.rewards.controller import get_unused_rewards
 
@@ -24,7 +25,6 @@ user_budget_model = api.model(
     },
 )
 
-
 epoch_budget_model = api.model(
     "EpochBudgetItem",
     {
@@ -34,7 +34,6 @@ epoch_budget_model = api.model(
         ),
     },
 )
-
 
 threshold_model = api.model(
     "Threshold",
@@ -64,7 +63,6 @@ budget_model = api.model(
     },
 )
 
-
 unused_rewards_model = api.model(
     "UnusedRewards",
     {
@@ -77,6 +75,15 @@ unused_rewards_model = api.model(
             required=True,
             description="Total unused rewards sum in an epoch (WEI)",
         ),
+    },
+)
+
+leverage_model = api.model(
+    "Leverage",
+    {
+        "leverage": fields.Float(
+            required=True, description="Leverage of the allocated funds"
+        )
     },
 )
 
@@ -93,7 +100,6 @@ estimated_budget_request = ns.model(
         ),
     },
 )
-
 
 epoch_rewards_merkle_tree_leaf_model = api.model(
     "EpochRewardsMerkleTreeLeaf",
@@ -314,6 +320,24 @@ class UnusedRewards(OctantResource):
             "addresses": addresses,
             "value": value,
         }
+
+
+@ns.route("/leverage/<int:epoch>")
+class Leverage(OctantResource):
+    @ns.doc(
+        description="Returns leverage in given epoch",
+        params={
+            "epoch": "Epoch number",
+        },
+    )
+    @ns.marshal_with(leverage_model)
+    @ns.response(200, "Leverage in given epoch")
+    def get(self, epoch: int):
+        app.logger.debug(f"Getting leverage for epoch: {epoch}")
+        leverage = get_leverage(epoch)
+        app.logger.debug(f"Leverage: {leverage}")
+
+        return {"leverage": leverage}
 
 
 @ns.doc(
