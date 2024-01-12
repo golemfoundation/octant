@@ -10,6 +10,11 @@ class OctantRewards(Protocol):
         ...
 
 
+class Leverage(Protocol):
+    def get_leverage(self, context: Context) -> float:
+        ...
+
+
 class UserEffectiveDeposits(Protocol):
     def get_user_effective_deposit(self, context: Context, user_address: str) -> int:
         ...

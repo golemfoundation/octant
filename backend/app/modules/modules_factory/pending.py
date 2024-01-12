@@ -8,6 +8,7 @@ from app.modules.modules_factory.protocols import (
     UserRewards,
     UserEffectiveDeposits,
     TotalEffectiveDeposits,
+    Leverage,
 )
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
 from app.modules.user.allocations.service.saved import SavedUserAllocations
@@ -17,6 +18,10 @@ from app.modules.user.patron_mode.service.events_based import EventsBasedUserPat
 from app.modules.user.rewards.service.saved import SavedUserRewards
 
 
+class PendingOctantRewardsService(OctantRewards, Leverage, Protocol):
+    pass
+
+
 class PendingUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protocol):
     pass
 
@@ -24,7 +29,7 @@ class PendingUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protoco
 @dataclass(frozen=True)
 class PendingServices:
     user_deposits_service: PendingUserDeposits
-    octant_rewards_service: OctantRewards
+    octant_rewards_service: PendingOctantRewardsService
     user_allocations_service: UserAllocations
     user_patron_mode_service: UserPatronMode
     user_rewards_service: UserRewards
@@ -36,7 +41,9 @@ class PendingServices:
 
         return PendingServices(
             user_deposits_service=SavedUserDeposits(),
-            octant_rewards_service=PendingOctantRewards(),
+            octant_rewards_service=PendingOctantRewards(
+                patrons_mode=events_based_patron_mode
+            ),
             user_allocations_service=saved_user_allocations,
             user_patron_mode_service=events_based_patron_mode,
             user_rewards_service=SavedUserRewards(

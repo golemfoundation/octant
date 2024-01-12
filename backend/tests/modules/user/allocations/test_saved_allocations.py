@@ -2,7 +2,7 @@ import pytest
 
 from app.extensions import db
 from app.infrastructure import database
-from app.modules.user.allocations.core import Allocation
+from app.modules.dto import AllocationDTO
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 from tests.helpers.context import get_context
 
@@ -16,7 +16,7 @@ def test_get_all_donors_addresses(mock_users_db, proposal_accounts):
     user1, user2, user3 = mock_users_db
 
     allocation = [
-        Allocation(proposal_accounts[0].address, 100),
+        AllocationDTO(proposal_accounts[0].address, 100),
     ]
 
     database.allocations.add_all(1, user1.id, 0, allocation)
@@ -40,7 +40,7 @@ def test_return_only_not_removed_allocations(mock_users_db, proposal_accounts):
     user1, user2, _ = mock_users_db
 
     allocation = [
-        Allocation(proposal_accounts[0].address, 100),
+        AllocationDTO(proposal_accounts[0].address, 100),
     ]
 
     database.allocations.add_all(1, user1.id, 0, allocation)

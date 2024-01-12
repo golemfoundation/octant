@@ -1,3 +1,5 @@
+from app.infrastructure import database
+from app.modules.dto import AllocationDTO
 from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
 from tests.conftest import ETH_PROCEEDS, TOTAL_ED
 from tests.helpers.constants import (
@@ -8,6 +10,7 @@ from tests.helpers.constants import (
     TOTAL_WITHDRAWALS,
     MATCHED_REWARDS,
     LEFTOVER,
+    USER1_BUDGET,
 )
 from tests.helpers.context import get_context
 
@@ -30,3 +33,21 @@ def test_finalized_octant_rewards(
     assert result.total_withdrawals == TOTAL_WITHDRAWALS
     assert result.matched_rewards == MATCHED_REWARDS
     assert result.leftover == LEFTOVER
+
+
+def test_finalized_get_leverage(
+    proposal_accounts, mock_users_db, mock_finalized_epoch_snapshot_db
+):
+    user, _, _ = mock_users_db
+    database.allocations.add_all(
+        1,
+        user.id,
+        0,
+        [AllocationDTO(proposal_accounts[0].address, USER1_BUDGET)],
+    )
+    context = get_context()
+    service = FinalizedOctantRewards()
+
+    result = service.get_leverage(context)
+
+    assert result == 144160.63189897747
