@@ -1,6 +1,6 @@
 from collections import defaultdict
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from eth_utils import to_checksum_address
 from sqlalchemy import func
@@ -8,7 +8,8 @@ from sqlalchemy.orm import Query
 
 from app.exceptions import UserNotFound
 from app.extensions import db
-from app.infrastructure.database.models import Allocation, AllocationSignature, User
+from app.infrastructure.database.models import Allocation, User, \
+    AllocationRequest
 from app.infrastructure.database.user import get_by_address
 from app.legacy.core.common import AccountFunds
 
@@ -151,25 +152,35 @@ def add_all(epoch: int, user_id: int, nonce: int, allocations):
     db.session.add_all(new_allocations)
 
 
-def add_allocation_signature(user_address: str, epoch: int, nonce: int, signature: str):
+def add_allocation_request(
+    user_address: str,
+    epoch: int,
+    nonce: int,
+    signature: str,
+    is_manually_edited: Optional[bool] = None,
+):
     user: User = get_by_address(user_address)
 
-    allocation_request = AllocationSignature(
-        user=user, epoch=epoch, nonce=nonce, signature=signature
+    allocation_request = AllocationRequest(
+        user=user,
+        epoch=epoch,
+        nonce=nonce,
+        signature=signature,
+        is_manually_edited=is_manually_edited,
     )
 
     db.session.add(allocation_request)
 
 
-def get_allocation_signature_by_user_nonce(
+def get_allocation_request_by_user_nonce(
     user_address: str, nonce: int
-) -> AllocationSignature | None:
+) -> AllocationRequest | None:
     user: User = get_by_address(user_address)
 
     if user is None:
         return None
 
-    return AllocationSignature.query.filter_by(user_id=user.id, nonce=nonce).first()
+    return AllocationRequest.query.filter_by(user_id=user.id, nonce=nonce).first()
 
 
 def soft_delete_all_by_epoch_and_user_id(epoch: int, user_id: int):
@@ -184,11 +195,11 @@ def soft_delete_all_by_epoch_and_user_id(epoch: int, user_id: int):
         db.session.add(allocation)
 
 
-def get_allocation_signature_by_user_and_epoch(
+def get_allocation_request_by_user_and_epoch(
     user_address: str, epoch: int
-) -> AllocationSignature | None:
+) -> AllocationRequest | None:
     user: User = get_by_address(user_address)
     if user is None:
         raise UserNotFound(user_address)
 
-    return AllocationSignature.query.filter_by(user_id=user.id, epoch=epoch).first()
+    return AllocationRequest.query.filter_by(user_id=user.id, epoch=epoch).first()
