@@ -56,15 +56,16 @@ class Allocation(BaseModel):
     deleted_at = Column(db.TIMESTAMP, nullable=True)
 
 
-class AllocationSignature(BaseModel):
-    __tablename__ = "allocations_signatures"
+class AllocationRequest(BaseModel):
+    __tablename__ = "allocations_requests"
 
     id = Column(db.Integer, primary_key=True)
     user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
-    user = relationship("User", backref=db.backref("allocations_signatures", lazy=True))
+    user = relationship("User", backref=db.backref("allocations_requests", lazy=True))
     nonce = Column(db.Integer, nullable=False)
     epoch = Column(db.Integer, nullable=False)
     signature = Column(db.String(132), nullable=False)
+    is_manually_edited = Column(db.Boolean, nullable=True)
 
     __table_args__ = (
         UniqueConstraint("user_id", "nonce", name="user_nonce_unique_constraint"),
