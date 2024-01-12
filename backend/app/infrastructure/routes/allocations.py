@@ -77,11 +77,15 @@ user_allocation_request = api.model(
             required=True,
             description="EIP-712 signature of the allocation payload as a hexadecimal string",
         ),
+        "isManuallyEdited": fields.Boolean(
+            required=False,
+            description="Whether allocation was manually edited by user.",
+        ),
     },
 )
 
-user_allocations_model = api.model(
-    "UserAllocations",
+user_allocation_item = api.model(
+    "UserAllocationItem",
     {
         "address": fields.String(
             required=True,
@@ -90,6 +94,20 @@ user_allocations_model = api.model(
         "amount": fields.String(
             required=True,
             description="Funds allocated by user for the proposal in WEI",
+        ),
+    },
+)
+
+user_allocations_model = api.model(
+    "UserAllocations",
+    {
+        "allocations": fields.List(
+            fields.Nested(user_allocation_item),
+            description="User allocation item",
+        ),
+        "isManuallyEdited": fields.Boolean(
+            required=False,
+            description="Whether allocation was manually edited by user.",
         ),
     },
 )
@@ -148,9 +166,13 @@ class Allocation(OctantResource):
     @ns.response(201, "User allocated successfully")
     def post(self):
         payload, signature = ns.payload["payload"], ns.payload["signature"]
+        is_manually_edited = (
+            ns.payload["isManuallyEdited"] if "isManuallyEdited" in ns.payload else None
+        )
         app.logger.info(f"User allocation payload: {payload}, signature: {signature}")
         user_address = allocations.allocate(
-            AllocationRequest(payload, signature, override_existing_allocations=True)
+            AllocationRequest(payload, signature, override_existing_allocations=True),
+            is_manually_edited,
         )
         app.logger.info(f"User: {user_address} allocated successfully")
 
@@ -266,13 +288,20 @@ class UserAllocations(OctantResource):
     @ns.response(200, "User allocations successfully retrieved")
     def get(self, user_address: str, epoch: int):
         app.logger.debug(f"Getting user {user_address} allocation in epoch {epoch}")
-        user_allocation = [
-            dataclasses.asdict(w)
-            for w in allocations.get_all_by_user_and_epoch(user_address, epoch)
-        ]
-        app.logger.debug(f"User {user_address} allocation: {user_allocation}")
+        (
+            allocs,
+            is_manually_edited,
+        ) = allocations.get_last_request_by_user_and_epoch(user_address, epoch)
 
-        return user_allocation
+        user_allocations = [dataclasses.asdict(w) for w in allocs]
+        app.logger.debug(
+            f"User {user_address} allocation (manually edited: {is_manually_edited}): {user_allocations}"
+        )
+
+        return {
+            "allocations": user_allocations,
+            "is_manually_edited": is_manually_edited,
+        }
 
 
 @ns.route("/users/sum")
