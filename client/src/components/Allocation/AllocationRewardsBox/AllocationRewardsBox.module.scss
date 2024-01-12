@@ -83,6 +83,10 @@
     color: $color-octant-dark;
     height: 1.6rem;
 
+    &.isGrey {
+      color: $color-octant-grey5;
+    }
+
     @media #{$tablet-down} {
       font-size: $font-size-16;
     }
