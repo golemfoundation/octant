@@ -207,20 +207,20 @@ const AllocationView = (): ReactElement => {
         value: '0',
       });
     }
-    allocateEvent.emit(allocationValuesNew);
+    allocateEvent.emit(allocationValuesNew, isManualMode);
   };
 
   useEffect(() => {
     if (!userAllocations || isManualMode) {
       return;
     }
-    if (userAllocations.elements.length > 0) {
+    if (userAllocationsOriginal?.isManuallyEdited) {
       setIsManualMode(true);
       return;
     }
     setIsManualMode(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userAllocations?.elements.length]);
+  }, [userAllocations?.isManuallyEdited]);
 
   useEffect(() => {
     if (!isRewardsForProposalsSet || isFetchingUserAllocation) {
@@ -322,7 +322,10 @@ const AllocationView = (): ReactElement => {
   const isEpoch1 = currentEpoch === 1;
 
   const showAllocationBottomNavigation =
-    !isEpoch1 && areAllocationsAvailableOrAlreadyDone && hasUserIndividualReward && isDecisionWindowOpen;
+    !isEpoch1 &&
+    areAllocationsAvailableOrAlreadyDone &&
+    hasUserIndividualReward &&
+    isDecisionWindowOpen;
 
   return (
     <Layout
