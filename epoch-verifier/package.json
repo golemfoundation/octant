@@ -1,0 +1,27 @@
+{
+  "name": "epoch-verifier",
+  "version": "1.0.0",
+  "license": "GPL-3.0",
+  "scripts": {
+    "verify:uat": "npx ts-node src/verifier.ts",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "yarn run compile",
+    "pretest": "yarn run compile",
+    "posttest": "yarn run lint"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.11",
+    "@types/node": "20.8.2",
+    "gts": "^5.2.0",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.2.0"
+  },
+  "dependencies": {
+    "commander": "^11.1.0",
+    "ora": "^8.0.1"
+  }
+}
