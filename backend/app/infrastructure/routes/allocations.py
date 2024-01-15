@@ -301,7 +301,7 @@ class UserAllocations(OctantResource):
 
         return {
             "allocations": user_allocations,
-            "is_manually_edited": is_manually_edited,
+            "isManuallyEdited": is_manually_edited,
         }
 
 
