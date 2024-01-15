@@ -115,9 +115,7 @@ export function getAllocationValuesInitialState({
       return {
         address: allocation,
         // @ts-expect-error TS method collision.
-        value: formatUnits(rewardsForProposals.div(allocations.length)).toLocaleString('fullWide', {
-          useGrouping: false,
-        }),
+        value: '0'.toLocaleString('fullWide', { useGrouping: false }),
       };
     });
 

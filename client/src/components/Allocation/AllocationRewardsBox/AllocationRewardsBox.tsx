@@ -149,7 +149,9 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
             }
           >
             <div className={styles.header}>{header}</div>
-            <div className={cx(styles.value)}>{value}</div>
+            <div className={cx(styles.value, (isLocked || isDisabled || isError) && styles.isGrey)}>
+              {value}
+            </div>
           </div>
         ))}
       </div>
