@@ -10,6 +10,7 @@ import Img from 'components/ui/Img';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
@@ -33,6 +34,7 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
     setAllocations: state.setAllocations,
   }));
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const isAddedToAllocate = allocations!.includes(proposalIpfsWithRewards.address);
 
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
@@ -45,7 +47,7 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
     ({ address: userAllocationAddress }) => userAllocationAddress === address,
   );
   const isEpoch1 = currentEpoch === 1;
-  const isArchivedProposal = epoch !== undefined;
+  const isArchivedProposal = epoch !== undefined || !isDecisionWindowOpen;
 
   return (
     <div
