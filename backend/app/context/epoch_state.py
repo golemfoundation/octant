@@ -1,17 +1,22 @@
-from enum import StrEnum
+from enum import auto, Enum
 
 from app.exceptions import InvalidEpoch
 from app.extensions import epochs
 from app.infrastructure import database
 
 
-class EpochState(StrEnum):
-    FINALIZED = "finalized"
-    FINALIZING = "finalizing"
-    PENDING = "pending"
-    PRE_PENDING = "pre_pending"
-    CURRENT = "current"
-    FUTURE = "future"
+class EpochState(Enum):
+    FINALIZED = auto()
+    FINALIZING = auto()
+    PENDING = auto()
+    PRE_PENDING = auto()
+    CURRENT = auto()
+    FUTURE = auto()
+
+    def __gt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value > other.value
+        return NotImplemented
 
 
 def get_epoch_state(epoch_num: int) -> EpochState:

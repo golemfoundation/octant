@@ -23,6 +23,14 @@ class InvalidEpoch(OctantException):
         super().__init__(self.description, self.code)
 
 
+class NotImplementedForGivenEpochState(OctantException):
+    code = 400
+    description = "Functionality is not implemented for given epoch state"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
 class EpochNotStartedYet(OctantException):
     code = 400
     description = "Given epoch has not yet started."

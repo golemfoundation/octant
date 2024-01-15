@@ -3,7 +3,7 @@ import pytest
 from app.exceptions import EffectiveDepositNotFoundException
 from app.extensions import db
 from app.infrastructure import database
-from app.modules.user.deposits.service.impl.saved import SavedUserDeposits
+from app.modules.user.deposits.service.saved import SavedUserDeposits
 from tests.conftest import USER1_ADDRESS, USER1_ED
 from tests.helpers.context import get_context
 

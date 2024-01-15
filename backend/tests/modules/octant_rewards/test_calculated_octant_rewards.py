@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from app.modules.octant_rewards.service.impl.calculated import (
+from app.modules.octant_rewards.service.calculated import (
     CalculatedOctantRewards,
 )
 from tests.conftest import ETH_PROCEEDS, TOTAL_ED

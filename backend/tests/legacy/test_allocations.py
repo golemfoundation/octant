@@ -19,7 +19,6 @@ from app.legacy.core.allocations import (
     AllocationRequest,
     Allocation,
 )
-from app.legacy.core.rewards.rewards import calculate_matched_rewards_threshold
 from app.legacy.core.user.patron_mode import toggle_patron_mode
 from app.legacy.crypto.eip712 import sign, build_allocations_eip712_data
 from tests.conftest import (
@@ -681,7 +680,6 @@ def check_allocations(user_address, expected_payload, expected_count):
 
 def check_allocation_threshold(*payloads):
     epoch = MOCKED_PENDING_EPOCH_NO
-    projects_no = 5
     expected = [deserialize_allocations(payload) for payload in payloads]
 
     db_allocations = database.allocations.get_all_by_epoch(epoch)
@@ -692,9 +690,3 @@ def check_allocation_threshold(*payloads):
     )
 
     assert total_allocations == total_payload_allocations
-
-    expected_threshold = int(total_allocations / (projects_no * 2))
-
-    assert expected_threshold == calculate_matched_rewards_threshold(
-        total_allocations, projects_no
-    )

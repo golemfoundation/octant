@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List
 
-from app.engine.user.effective_deposit import DepositEvent, EventType
+from app.engine.user.effective_deposit import DepositEvent
 
 
 @dataclass(frozen=True)
@@ -49,29 +49,17 @@ class TimebasedWeights(ABC):
 
         # Calculate deposit from the epoch start to the first event
         first_event = user_events[0]
-        amount = int(first_event.deposit_before)
         weight = first_event.timestamp - payload.start
-        weighted_amounts.append(WeightedDeposit(amount, weight))
+        weighted_amounts.append(WeightedDeposit(first_event.deposit_before, weight))
 
         # Calculate deposit between all events
         for prev_event, next_event in zip(user_events, user_events[1:]):
-            amount = int(next_event.deposit_before)
             weight = next_event.timestamp - prev_event.timestamp
-            weighted_amounts.append(WeightedDeposit(amount, weight))
+            weighted_amounts.append(WeightedDeposit(next_event.deposit_before, weight))
 
         # Calculate deposit from the last event to the epoch end
         last_event = user_events[-1]
-        amount = calculate_deposit_after_event(last_event)
         weight = payload.end - last_event.timestamp
-        weighted_amounts.append(WeightedDeposit(amount, weight))
+        weighted_amounts.append(WeightedDeposit(last_event.deposit_after, weight))
 
         return [wd for wd in weighted_amounts if wd.weight != 0]
-
-
-def calculate_deposit_after_event(event: DepositEvent) -> int:
-    if event.type == EventType.LOCK:
-        return event.deposit_before + event.amount
-    elif event.type == EventType.UNLOCK:
-        return event.deposit_before - event.amount
-    else:
-        raise TypeError
