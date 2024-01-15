@@ -9,6 +9,18 @@
   color: $color-octant-grey5;
   line-height: 2.4rem;
 
+  /**
+   * When AW is open default color is orange, unless isDonationAboveThreshold.
+   * isRewardsDataDefined can be false when no allocations are yet made.
+   * That is why definition of color in &.isRewardsDataDefined is not enough.
+   */
+  &.isDecisionWindowOpen {
+    color: $color-octant-orange;
+  }
+  &:not(.isDecisionWindowOpen) {
+    color: $color-octant-grey5;
+  }
+
   &.isRewardsDataDefined {
     &:not(.isDonationAboveThreshold) {
       color: $color-octant-orange;
