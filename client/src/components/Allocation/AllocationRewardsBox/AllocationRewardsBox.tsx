@@ -98,7 +98,7 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
       return t('allocated');
     }
     if (isDecisionWindowOpenAndHasIndividualReward) {
-      return i18n.t('common.available');
+      return i18n.t('common.availableNow');
     }
     return t('subtitleNoRewards');
   }, [isLocked, isDecisionWindowOpenAndHasIndividualReward, t, i18n]);
@@ -112,7 +112,7 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
       subtitleClassName={styles.subtitle}
       title={getValueCryptoToDisplay({
         cryptoCurrency: 'ethereum',
-        valueCrypto: individualReward,
+        valueCrypto: isDecisionWindowOpen ? individualReward : BigNumber.from(0),
       })}
       titleClassName={cx(styles.title, (isDisabled || isLocked) && styles.greyTitle)}
     >
@@ -144,11 +144,7 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
             }
           >
             <div className={styles.header}>{header}</div>
-            <div
-              className={cx(styles.value, (isLocked || isDisabled || isError) && styles.isDisabled)}
-            >
-              {value}
-            </div>
+            <div className={cx(styles.value)}>{value}</div>
           </div>
         ))}
       </div>

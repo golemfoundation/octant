@@ -31,9 +31,22 @@ $thumbSizeMobile: $heightRootMobile;
 
 .track {
   height: $heightTrack;
-  border-radius: calc($heightTrack / 2);
   top: 50%;
   transform: translate(0, -50%);
+
+  &.isFull {
+    border-radius: calc($heightTrack / 2);
+  }
+
+  &:not(.isFull) {
+    &:nth-child(1) {
+      border-radius: calc($heightTrack / 2) 0 0 calc($heightTrack / 2);
+    }
+    &:nth-child(2) {
+      border-radius: 0 calc($heightTrack / 2) calc($heightTrack / 2) 0;
+    }
+  }
+
 
   &:nth-child(1) {
     background: $color-octant-green;

@@ -93,7 +93,7 @@
       "allocationRewardsBox": {
         "title": "Allocate rewards",
         "subtitle": "{{individualReward}} available",
-        "subtitleNoRewards": "No rewards available yet",
+        "subtitleNoRewards": "No rewards yet",
         "donate": "Donate",
         "donated": "Donated",
         "donateWithPercentage": "Donate {{percentage}}%",

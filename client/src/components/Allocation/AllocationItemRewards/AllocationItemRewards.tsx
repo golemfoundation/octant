@@ -105,12 +105,14 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
       className={cx(
         styles.root,
         className,
+        isLoadingAllocateSimulate && styles.isLoadingAllocateSimulate,
+        isSimulateVisible && styles.isSimulateVisible,
+        isRewardsDataDefined && styles.isRewardsDataDefined,
+        isDecisionWindowOpen && styles.isDecisionWindowOpen,
         !isEpoch1 &&
           !isThresholdUnknown &&
           isDonationAboveThreshold &&
           styles.isDonationAboveThreshold,
-        isLoadingAllocateSimulate && styles.isLoadingAllocateSimulate,
-        isSimulateVisible && styles.isSimulateVisible,
       )}
       onClick={onClick}
       onMouseLeave={() => {
@@ -125,6 +127,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
         !isLoadingAllocateSimulate &&
         !isRewardsDataDefined &&
         !simulatedMatched &&
+        !isDecisionWindowOpen &&
         i18n.t(isDesktop ? 'common.thresholdDataUnavailable' : 'common.noThresholdData')}
       {!isEpoch1 && isLoadingAllocateSimulate && i18n.t('common.calculating')}
       {!isEpoch1 &&
