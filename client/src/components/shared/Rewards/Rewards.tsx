@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import ProgressBar from 'components/ui/ProgressBar';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
@@ -22,8 +23,9 @@ const Rewards: FC<RewardsProps> = ({
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.proposalRewards',
   });
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
-  const isArchivedProposal = epoch !== undefined;
+  const isArchivedProposal = epoch !== undefined || !isDecisionWindowOpen;
 
   const { data: proposalRewardsThreshold, isFetching } = useProposalRewardsThreshold(epoch);
   const isDonationAboveThreshold = useIsDonationAboveThreshold({ epoch, proposalAddress: address });
