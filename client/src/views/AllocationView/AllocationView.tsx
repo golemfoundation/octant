@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers/lib/utils';
 import { AnimatePresence } from 'framer-motion';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
@@ -175,13 +175,8 @@ const AllocationView = (): ReactElement => {
     });
 
     if (shouldReset) {
-      setRewardsForProposals(
-        allocationValuesReset.reduce(
-          (acc, curr) => acc.add(parseUnits(curr.value)),
-          BigNumber.from(0),
-        ),
-      );
-      setPercentageProportionsWrapper(allocationValuesReset, rewardsForProposals);
+      setRewardsForProposals(BigNumber.from(0));
+      setPercentageProportionsWrapper(allocationValuesReset, rewardsForProposalsNew);
 
       if (userAllocations?.elements.length === 0) {
         setIsManualMode(false);
@@ -259,11 +254,21 @@ const AllocationView = (): ReactElement => {
 
   useEffect(() => {
     const areAllValuesZero = !allocationValues.some(element => element.value !== '0.0');
-    if (allocationValues.length === 0 || areAllValuesZero || addressesWithError.length > 0) {
+    if (
+      allocationValues.length === 0 ||
+      areAllValuesZero ||
+      addressesWithError.length > 0 ||
+      !isDecisionWindowOpen
+    ) {
       return;
     }
     mutateAsyncAllocateSimulateDebounced(allocationValues);
-  }, [mutateAsyncAllocateSimulateDebounced, addressesWithError, allocationValues]);
+  }, [
+    mutateAsyncAllocateSimulateDebounced,
+    addressesWithError,
+    allocationValues,
+    isDecisionWindowOpen,
+  ]);
 
   const onChangeAllocationItemValue = (
     newAllocationValue: AllocationValue,
