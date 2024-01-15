@@ -14,7 +14,7 @@ type UseAllocateProps = {
 };
 
 type UseAllocate = {
-  emit: (allocations: { address: string; value: string }[]) => void;
+  emit: (allocations: { address: string; value: string }[], isManuallyEdited: boolean) => void;
   isLoading: boolean;
 };
 
@@ -43,11 +43,13 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
       value: 'Octant Allocation',
     },
     onSuccess: async (data, variables) => {
+      const { isManuallyEdited, ...restVariables } = variables.message;
       websocketService().then(socket => {
         socket.default.emit(
           WebsocketEmitEvent.allocate,
           JSON.stringify({
-            payload: variables.message,
+            isManuallyEdited,
+            payload: restVariables,
             signature: data,
           }),
           () => {
@@ -63,11 +65,12 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
     types,
   });
 
-  const allocate = (allocations: AllocationValues) => {
+  const allocate = (allocations: AllocationValues, isManuallyEdited: boolean) => {
     setIsLoading(true);
     const allocationsMapped = getAllocationsMapped(allocations);
     const message = {
       allocations: allocationsMapped,
+      isManuallyEdited,
       nonce,
     };
 
