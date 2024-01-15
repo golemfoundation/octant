@@ -98,7 +98,7 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
       return t('allocated');
     }
     if (isDecisionWindowOpenAndHasIndividualReward) {
-      return i18n.t('common.available');
+      return i18n.t('common.availableNow');
     }
     return t('subtitleNoRewards');
   }, [isLocked, isDecisionWindowOpenAndHasIndividualReward, t, i18n]);
@@ -112,12 +112,17 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
       subtitleClassName={styles.subtitle}
       title={getValueCryptoToDisplay({
         cryptoCurrency: 'ethereum',
-        valueCrypto: individualReward,
+        valueCrypto: isDecisionWindowOpen ? individualReward : BigNumber.from(0),
       })}
       titleClassName={cx(styles.title, (isDisabled || isLocked) && styles.greyTitle)}
     >
       {!isDisabled && isManuallyEdited && <div className={styles.isManualBadge}>{t('manual')}</div>}
-      <div className={cx(styles.sliderWrapper, isManuallyEdited && styles.isManuallyEdited)}>
+      <div
+        className={cx(
+          styles.sliderWrapper,
+          isDecisionWindowOpen && isManuallyEdited && styles.isManuallyEdited,
+        )}
+      >
         <Slider
           className={styles.slider}
           hideThumb={isLocked}
@@ -144,9 +149,7 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
             }
           >
             <div className={styles.header}>{header}</div>
-            <div
-              className={cx(styles.value, (isLocked || isDisabled || isError) && styles.isDisabled)}
-            >
+            <div className={cx(styles.value, (isLocked || isDisabled || isError) && styles.isGrey)}>
               {value}
             </div>
           </div>

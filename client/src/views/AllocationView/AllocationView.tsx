@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
+import { formatUnits } from 'ethers/lib/utils';
 import { AnimatePresence } from 'framer-motion';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
@@ -98,7 +98,6 @@ const AllocationView = (): ReactElement => {
   const allocateEvent = useAllocate({
     nonce: userNonce!,
     onSuccess: async () => {
-      setCurrentView('summary');
       triggerToast({
         title: t('allocationSuccessful'),
       });
@@ -176,13 +175,8 @@ const AllocationView = (): ReactElement => {
     });
 
     if (shouldReset) {
-      setRewardsForProposals(
-        allocationValuesReset.reduce(
-          (acc, curr) => acc.add(parseUnits(curr.value)),
-          BigNumber.from(0),
-        ),
-      );
-      setPercentageProportionsWrapper(allocationValuesReset, rewardsForProposals);
+      setRewardsForProposals(BigNumber.from(0));
+      setPercentageProportionsWrapper(allocationValuesReset, rewardsForProposalsNew);
 
       if (userAllocations?.elements.length === 0) {
         setIsManualMode(false);
@@ -208,21 +202,20 @@ const AllocationView = (): ReactElement => {
         value: '0',
       });
     }
-    allocateEvent.emit(allocationValuesNew);
+    allocateEvent.emit(allocationValuesNew, isManualMode);
   };
 
   useEffect(() => {
     if (!userAllocations || isManualMode) {
       return;
     }
-    if (userAllocations.elements.length > 0) {
+    if (userAllocationsOriginal?.isManuallyEdited) {
       setIsManualMode(true);
-      setCurrentView('summary');
       return;
     }
     setIsManualMode(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userAllocations?.elements.length]);
+  }, [userAllocations?.isManuallyEdited]);
 
   useEffect(() => {
     if (!isRewardsForProposalsSet || isFetchingUserAllocation) {
@@ -248,7 +241,7 @@ const AllocationView = (): ReactElement => {
   ]);
 
   useEffect(() => {
-    if (!currentEpoch) {
+    if (!currentEpoch || !isDecisionWindowOpen) {
       return;
     }
     if (userAllocations && currentEpoch > 1 && userAllocations.hasUserAlreadyDoneAllocation) {
@@ -257,15 +250,25 @@ const AllocationView = (): ReactElement => {
     }
     setCurrentView('edit');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentEpoch, userAllocations?.elements.length]);
+  }, [currentEpoch, isDecisionWindowOpen, userAllocations?.elements.length]);
 
   useEffect(() => {
     const areAllValuesZero = !allocationValues.some(element => element.value !== '0.0');
-    if (allocationValues.length === 0 || areAllValuesZero || addressesWithError.length > 0) {
+    if (
+      allocationValues.length === 0 ||
+      areAllValuesZero ||
+      addressesWithError.length > 0 ||
+      !isDecisionWindowOpen
+    ) {
       return;
     }
     mutateAsyncAllocateSimulateDebounced(allocationValues);
-  }, [mutateAsyncAllocateSimulateDebounced, addressesWithError, allocationValues]);
+  }, [
+    mutateAsyncAllocateSimulateDebounced,
+    addressesWithError,
+    allocationValues,
+    isDecisionWindowOpen,
+  ]);
 
   const onChangeAllocationItemValue = (
     newAllocationValue: AllocationValue,
@@ -324,7 +327,10 @@ const AllocationView = (): ReactElement => {
   const isEpoch1 = currentEpoch === 1;
 
   const showAllocationBottomNavigation =
-    !isEpoch1 && areAllocationsAvailableOrAlreadyDone && hasUserIndividualReward && isDecisionWindowOpen;
+    !isEpoch1 &&
+    areAllocationsAvailableOrAlreadyDone &&
+    hasUserIndividualReward &&
+    isDecisionWindowOpen;
 
   return (
     <Layout

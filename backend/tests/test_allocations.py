@@ -653,7 +653,7 @@ def test_stores_allocation_request_signature(tos_users, proposal_accounts):
 
     allocate(AllocationRequest(payload, signature, override_existing_allocations=True))
 
-    alloc_signature = database.allocations.get_allocation_signature_by_user_nonce(
+    alloc_signature = database.allocations.get_allocation_request_by_user_nonce(
         tos_users[0].address, nonce0
     )
 

@@ -4,24 +4,38 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  color: $color-octant-orange;
   font-size: $font-size-12;
   font-weight: $font-weight-semibold;
+  color: $color-octant-grey5;
   line-height: 2.4rem;
+
+  /**
+   * When AW is open default color is orange, unless isDonationAboveThreshold.
+   * isRewardsDataDefined can be false when no allocations are yet made.
+   * That is why definition of color in &.isRewardsDataDefined is not enough.
+   */
+  &.isDecisionWindowOpen {
+    color: $color-octant-orange;
+  }
+  &:not(.isDecisionWindowOpen) {
+    color: $color-octant-grey5;
+  }
+
+  &.isRewardsDataDefined {
+    &:not(.isDonationAboveThreshold) {
+      color: $color-octant-orange;
+    }
+    &.isDonationAboveThreshold {
+      color: $color-octant-green;
+    }
+  }
 
   @media #{$tablet-down} {
     font-size: $font-size-10;
   }
 
-  &.isThresholdUnknown {
-    color: $color-octant-grey5;
-  }
 
-  &.isDonationAboveThreshold {
-    color: $color-octant-green;
-  }
-
-  &.isLoadingAllocateSimulate {
+  &.isLoadingAllocateSimulate, &.isSimulateVisible {
     color: $color-octant-grey5;
   }
 }

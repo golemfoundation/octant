@@ -39,9 +39,11 @@ def handle_disconnect():
 def handle_allocate(msg):
     msg = json.loads(msg)
     payload, signature = msg["payload"], msg["signature"]
+    is_manually_edited = msg["isManuallyEdited"] if "isManuallyEdited" in msg else None
     app.logger.info(f"User allocation payload: {payload}, signature: {signature}")
     user_address = allocate(
-        AllocationRequest(payload, signature, override_existing_allocations=True)
+        AllocationRequest(payload, signature, override_existing_allocations=True),
+        is_manually_edited,
     )
     app.logger.info(f"User: {user_address} allocated successfully")
 

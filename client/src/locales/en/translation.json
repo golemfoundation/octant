@@ -93,7 +93,7 @@
       "allocationRewardsBox": {
         "title": "Allocate rewards",
         "subtitle": "{{individualReward}} available",
-        "subtitleNoRewards": "No rewards available yet",
+        "subtitleNoRewards": "No rewards yet",
         "donate": "Donate",
         "donated": "Donated",
         "donateWithPercentage": "Donate {{percentage}}%",
@@ -301,7 +301,6 @@
         "epoch1": "No funding threshold in Epoch 1",
         "standard": "{{sum}} / {{threshold}}",
         "simulate": {
-          "matchedZero": "{{value}}",
           "mobile": "{{value}} + {{matched}}",
           "desktop": "{{value}} + {{matched}} matching"
         }

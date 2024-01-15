@@ -1,11 +1,12 @@
 import cx from 'classnames';
 import { parseUnits } from 'ethers/lib/utils';
-import React, { FC, useEffect, useState, useMemo } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
@@ -21,28 +22,20 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   simulatedMatched,
   isError,
   isLoadingAllocateSimulate,
-  value = '0',
+  value,
 }) => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'views.allocation.allocationItem',
   });
   const { isDesktop } = useMediaQuery();
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
   const { data: proposalRewardsThreshold } = useProposalRewardsThreshold();
   const [isSimulateVisible, setIsSimulateVisible] = useState<boolean>(false);
 
   // value can an empty string, which crashes parseUnits. Hence the alternative.
   const valueToUse = value || '0';
-
-  const i18nKey = useMemo(() => {
-    if (simulatedMatched === undefined || simulatedMatched === '0') {
-      return 'views.allocation.allocationItem.simulate.matchedZero';
-    }
-    return isDesktop
-      ? 'views.allocation.allocationItem.simulate.desktop'
-      : 'views.allocation.allocationItem.simulate.mobile';
-  }, [isDesktop, simulatedMatched]);
 
   const onClick = () => {
     if (!isDesktop) {
@@ -87,7 +80,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const valueFormatted = getFormattedEthValue(parseUnits(valueToUse));
   const simulatedMatchedFormatted = simulatedMatched
     ? getFormattedEthValue(parseUnits(simulatedMatched, 'wei'))
-    : undefined;
+    : getFormattedEthValue(parseUnits('0', 'wei'));
   const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
     rewardsSumWithValueAndSimulation,
   );
@@ -112,12 +105,14 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
       className={cx(
         styles.root,
         className,
-        (isEpoch1 || isThresholdUnknown) && styles.isThresholdUnknown,
+        isLoadingAllocateSimulate && styles.isLoadingAllocateSimulate,
+        isSimulateVisible && styles.isSimulateVisible,
+        isRewardsDataDefined && styles.isRewardsDataDefined,
+        isDecisionWindowOpen && styles.isDecisionWindowOpen,
         !isEpoch1 &&
           !isThresholdUnknown &&
           isDonationAboveThreshold &&
           styles.isDonationAboveThreshold,
-        isLoadingAllocateSimulate && styles.isLoadingAllocateSimulate,
       )}
       onClick={onClick}
       onMouseLeave={() => {
@@ -132,16 +127,21 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
         !isLoadingAllocateSimulate &&
         !isRewardsDataDefined &&
         !simulatedMatched &&
+        !isDecisionWindowOpen &&
         i18n.t(isDesktop ? 'common.thresholdDataUnavailable' : 'common.noThresholdData')}
       {!isEpoch1 && isLoadingAllocateSimulate && i18n.t('common.calculating')}
       {!isEpoch1 &&
+        isDecisionWindowOpen &&
         !isLoadingAllocateSimulate &&
-        (isRewardsDataDefined || simulatedMatched) &&
         (isSimulateVisible ? (
           <Trans
-            i18nKey={i18nKey}
+            i18nKey={
+              isDesktop
+                ? 'views.allocation.allocationItem.simulate.desktop'
+                : 'views.allocation.allocationItem.simulate.mobile'
+            }
             values={{
-              matched: simulatedMatchedFormatted?.fullString,
+              matched: simulatedMatchedFormatted.fullString,
               value: areValueAndSimulatedSuffixesTheSame
                 ? valueFormatted?.value
                 : valueFormatted?.fullString,
@@ -158,7 +158,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
             }}
           />
         ))}
-      {!isEpoch1 && (isLoadingAllocateSimulate || filled < 100) && (
+      {(!isEpoch1 || isLoadingAllocateSimulate) && (
         <div className={styles.progressBar}>
           {!isLoadingAllocateSimulate && (
             <div
