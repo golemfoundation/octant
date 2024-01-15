@@ -117,7 +117,12 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
       titleClassName={cx(styles.title, (isDisabled || isLocked) && styles.greyTitle)}
     >
       {!isDisabled && isManuallyEdited && <div className={styles.isManualBadge}>{t('manual')}</div>}
-      <div className={cx(styles.sliderWrapper, isManuallyEdited && styles.isManuallyEdited)}>
+      <div
+        className={cx(
+          styles.sliderWrapper,
+          isDecisionWindowOpen && isManuallyEdited && styles.isManuallyEdited,
+        )}
+      >
         <Slider
           className={styles.slider}
           hideThumb={isLocked}
