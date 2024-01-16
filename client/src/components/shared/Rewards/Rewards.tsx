@@ -124,7 +124,10 @@ const Rewards: FC<RewardsProps> = ({
             className={cx(
               styles.value,
               isDonationAboveThreshold && isArchivedProposal && styles.greenValue,
-              !isDonationAboveThreshold && !isArchivedProposal && styles.redValue,
+              isDecisionWindowOpen &&
+                !isDonationAboveThreshold &&
+                !isArchivedProposal &&
+                styles.redValue,
               isFetching && styles.isFetching,
             )}
             data-test="ProposalRewards__currentTotal__number"
