@@ -165,9 +165,9 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
               className={cx(
                 styles.filled,
                 isError && styles.isError,
-                !parseUnits(valueToUse).isZero() && styles.isPulsing,
+                isDecisionWindowOpen && !parseUnits(valueToUse).isZero() && styles.isPulsing,
               )}
-              style={{ width: `${filled}%` }}
+              style={{ width: `${isDecisionWindowOpen ? filled : 0}%` }}
             />
           )}
           {isLoadingAllocateSimulate && <div className={styles.simulateLoader} />}

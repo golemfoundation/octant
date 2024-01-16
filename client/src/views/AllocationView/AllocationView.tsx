@@ -171,7 +171,7 @@ const AllocationView = (): ReactElement => {
       percentageProportions,
       rewardsForProposals: rewardsForProposalsNew,
       shouldReset,
-      userAllocationsElements: userAllocations?.elements || [],
+      userAllocationsElements: isDecisionWindowOpen ? userAllocations?.elements || [] : [],
     });
 
     if (shouldReset) {
