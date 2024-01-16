@@ -5,6 +5,8 @@ $heightDesktop: 4.8rem;
   height: 10.4rem;
   width: 100%;
   padding: 2.4rem 2.8rem;
+  border-radius: $border-radius-16;
+  background: $color-white;
 
   @media #{$tablet-down} {
     height: 8rem;
