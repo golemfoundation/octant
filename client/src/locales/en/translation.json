@@ -120,7 +120,7 @@
         "editLockedGLM": "Edit Locked GLM",
         "effective": "Effective",
         "lockedBalance": "Locked balance",
-        "tooltipText": "Effective balance is the part of your locked GLM that is currently earning rewards. For example, GLM locked during allocation only earn rewards in the next epoch, so they are not immediately effective."
+        "tooltipText": "Effective lock (EL) is the part of your locked GLM that is currently earning rewards. Equal to your current balance, if that is unchanged during the ongoing epoch. Increase lock & EL increases proportionally to epoch time remaining. Decrease lock & this amount is removed from EL for the epoch."
       },
       "boxPersonalAllocation": {
         "patronEarnings": "Patron earnings",
