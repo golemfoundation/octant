@@ -41,6 +41,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   setAddressesWithError,
   rewardsProps,
 }) => {
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const { ipfsGateway } = env;
   const { isConnected } = useAccount();
   const { data: individualReward } = useIndividualReward();
@@ -149,12 +150,12 @@ const AllocationItem: FC<AllocationItemProps> = ({
       )}
       <motion.div
         ref={ref}
-        drag="x"
+        drag={isInputFocused ? false : 'x'}
         dragConstraints={{ left: constraints[0], right: constraints[1] }}
         dragElastic={false}
         dragMomentum={false}
         onDragEnd={e => {
-          if (e.type === 'pointercancel') {
+          if (e.type === 'pointercancel' || isInputFocused) {
             /**
              * Prevents horizontal scroll to be fired when user scrolls the view vertically
              * on mobile devices.
@@ -211,7 +212,12 @@ const AllocationItem: FC<AllocationItemProps> = ({
                 !isDecisionWindowOpen ||
                 isThereAnyError
               }
+              onBlur={() => setIsInputFocused(false)}
               onChange={event => _onChange(event.target.value)}
+              onFocus={() => {
+                inputRef.current?.select();
+                setIsInputFocused(true);
+              }}
               placeholder="0.000"
               shouldAutoFocusAndSelect={false}
               suffix="ETH"
