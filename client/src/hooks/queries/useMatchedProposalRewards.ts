@@ -81,6 +81,10 @@ export default function useMatchedProposalRewards(
       if (isDecisionWindowOpen) {
         return apiGetEstimatedMatchedProposalRewards();
       }
+      /**
+       * During currentEpoch and outside allocation window projects do not have matchedProposalRewards.
+       * Because hook is called anyway, hence the empty promise.
+       */
       // eslint-disable-next-line no-promise-executor-return
       return new Promise<ApiResponse>(resolve => resolve({ rewards: [] }));
     },
