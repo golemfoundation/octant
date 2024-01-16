@@ -61,7 +61,7 @@ export default function useAppPopulateState(): void {
      * We remove whatever user has in localStorage.
      * They can't add nor remove elements from allocate, they should not have anything there.
      */
-    if (!isDecisionWindowOpen || areCurrentEpochsProjectsHiddenOutsideAllocationWindow) {
+    if (areCurrentEpochsProjectsHiddenOutsideAllocationWindow) {
       setAllocations([]);
       return;
     }
@@ -83,7 +83,6 @@ export default function useAppPopulateState(): void {
       setAllocations(validatedProposalsInLocalStorage);
     }
   }, [
-    isDecisionWindowOpen,
     allocations,
     areCurrentEpochsProjectsHiddenOutsideAllocationWindow,
     isAllocationsInitialized,

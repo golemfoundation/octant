@@ -46,6 +46,12 @@
   width: 10rem;
   background: $color-octant-grey1;
   overflow: hidden;
+  margin: 0.8rem 0 0 0;
+
+
+  @media #{$tablet-down} {
+    margin: 0.4rem 0 0 0;
+  }
 
   .simulateLoader {
     height: 100%;

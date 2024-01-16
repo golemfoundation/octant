@@ -37,10 +37,10 @@ $removeButtonHeightWidthDesktop: 10.4rem;
 .box {
   position: relative;
   z-index: $z-index-2;
-  padding: 2.4rem 2.8rem;
+  padding: 2.4rem;
 
   @media #{$tablet-down} {
-    padding: 1.6rem 2.4rem;
+    padding: 1.6rem 1.6rem 1.6rem 2.4rem;
   }
 }
 
@@ -83,9 +83,12 @@ $removeButtonHeightWidthDesktop: 10.4rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin: 0 0 0.1rem 0;
 
   @media #{$tablet-down} {
     font-size: $font-size-14;
+    margin: 0;
+    line-height: 1.6rem;
   }
 }
 
