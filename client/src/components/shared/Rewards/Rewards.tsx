@@ -25,7 +25,7 @@ const Rewards: FC<RewardsProps> = ({
   });
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
-  const isArchivedProposal = epoch !== undefined || !isDecisionWindowOpen;
+  const isArchivedProposal = epoch !== undefined;
 
   const { data: proposalRewardsThreshold, isFetching } = useProposalRewardsThreshold(epoch);
   const isDonationAboveThreshold = useIsDonationAboveThreshold({ epoch, proposalAddress: address });
@@ -134,7 +134,7 @@ const Rewards: FC<RewardsProps> = ({
               : proposalDonorsRewardsSumToDisplay}
           </div>
         </div>
-        {!(isDonationAboveThreshold && !isArchivedProposal) && (
+        {isDecisionWindowOpen && (!isDonationAboveThreshold || isArchivedProposal) && (
           <div className={cx(styles.section, styles.rightSection)}>
             <div className={cx(styles.label, isFetching && styles.isFetching)}>
               {rightSectionLabel}

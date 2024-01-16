@@ -10,7 +10,6 @@ import Svg from 'components/ui/Svg';
 import Tooltip from 'components/ui/Tooltip';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
-import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
@@ -30,7 +29,6 @@ const ProposalListItemHeader: FC<ProposalListItemHeaderProps> = ({
   const { i18n } = useTranslation('translation', { keyPrefix: 'views.proposal' });
   const { epoch: epochUrl } = useParams();
   const { data: userAllocations } = useUserAllocations(epoch);
-  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { allocations, setAllocations } = useAllocationsStore(state => ({
     allocations: state.data.allocations,
     setAllocations: state.setAllocations,
@@ -43,7 +41,7 @@ const ProposalListItemHeader: FC<ProposalListItemHeaderProps> = ({
 
   const [isLinkCopied, setIsLinkCopied] = useState(false);
 
-  const isArchivedProposal = epoch !== undefined || !isDecisionWindowOpen;
+  const isArchivedProposal = epoch !== undefined;
 
   const onShareClick = (): boolean | Promise<boolean> => {
     const { origin } = window.location;
