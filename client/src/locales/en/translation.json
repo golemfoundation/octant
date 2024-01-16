@@ -307,10 +307,6 @@
       },
       "allocationSuccessful": "Allocation successful",
       "tip": {
-        "lockGlm": {
-          "title": "Lock GLM to earn",
-          "text": "Lock GLM tokens for as long as possible to earn ETH rewards you can donate or withdraw"
-        },
         "rewards": {
           "title": "Time to allocate",
           "text": {
@@ -335,6 +331,10 @@
             "mobile": "Connect wallet"
           },
           "text": "Please connect your wallet to Octant in order to participate in this and future epochs"
+        },
+        "lockGlm": {
+          "title": "Lock GLM to earn",
+          "text": "Lock GLM tokens for as long as possible to earn ETH rewards you can donate or withdraw"
         }
       },
       "preLaunch": {
