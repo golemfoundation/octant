@@ -57,21 +57,37 @@ export default function useMatchedProposalRewards(
 
   useSubscription<Response['rewards']>({
     callback: data => {
-      queryClient.setQueryData(QUERY_KEYS.matchedProposalRewards(currentEpoch! - 1), {
-        rewards: data,
-      });
+      queryClient.setQueryData(
+        QUERY_KEYS.matchedProposalRewards(
+          epoch || isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
+        ),
+        {
+          rewards: data,
+        },
+      );
     },
     enabled: epoch === undefined,
     event: WebsocketListenEvent.proposalRewards,
   });
 
   return useQuery(
-    QUERY_KEYS.matchedProposalRewards(epoch || currentEpoch! - 1),
-    () => (epoch ? apiGetMatchedProposalRewards(epoch) : apiGetEstimatedMatchedProposalRewards()),
+    QUERY_KEYS.matchedProposalRewards(
+      epoch || isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
+    ),
+    () => {
+      if (epoch) {
+        return apiGetMatchedProposalRewards(epoch);
+      }
+      if (isDecisionWindowOpen) {
+        return apiGetEstimatedMatchedProposalRewards();
+      }
+      // eslint-disable-next-line no-promise-executor-return
+      return new Promise<ApiResponse>(resolve => resolve({ rewards: [] }));
+    },
     {
       enabled:
-        (epoch !== undefined && epoch > 0) ||
-        (!!currentEpoch && currentEpoch > 1 && isDecisionWindowOpen),
+        isDecisionWindowOpen !== undefined &&
+        ((epoch !== undefined && epoch > 0) || (!!currentEpoch && currentEpoch > 1)),
       select: response => parseResponse(response),
       ...options,
     },
