@@ -24,19 +24,26 @@ export default function useProposalRewardsThreshold(
    */
   useSubscription<{ threshold: string }>({
     callback: data => {
-      queryClient.setQueryData(QUERY_KEYS.proposalRewardsThreshold(currentEpoch! - 1), data);
+      queryClient.setQueryData(
+        QUERY_KEYS.proposalRewardsThreshold(
+          isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
+        ),
+        data,
+      );
     },
-    enabled: epoch === undefined,
+    enabled: epoch === undefined && isDecisionWindowOpen !== undefined,
     event: WebsocketListenEvent.threshold,
   });
 
   return useQuery(
-    QUERY_KEYS.proposalRewardsThreshold(epoch || currentEpoch! - 1),
-    () => apiGetProjectThreshold(epoch || currentEpoch! - 1),
+    QUERY_KEYS.proposalRewardsThreshold(
+      epoch || isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
+    ),
+    () => apiGetProjectThreshold(epoch || isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
     {
       enabled:
-        (epoch !== undefined && epoch > 0) ||
-        (!!currentEpoch && currentEpoch > 1 && isDecisionWindowOpen),
+        isDecisionWindowOpen !== undefined &&
+        ((epoch !== undefined && epoch > 0) || (!!currentEpoch && currentEpoch > 1)),
       select: response => parseUnits(response.threshold, 'wei'),
       staleTime: Infinity,
       ...options,
