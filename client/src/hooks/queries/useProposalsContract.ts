@@ -15,7 +15,7 @@ export default function useProposalsContract(epoch?: number): UseQueryResult<str
   return useQuery(
     epoch || currentEpoch
       ? QUERY_KEYS.proposalsContract(
-          (epoch && epoch - 1) || isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
+          epoch || isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
         )
       : [''],
     // When decision window is open, fetch proposals from the previous epoch, because that's what users should be allocating to.
