@@ -63,7 +63,12 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
       onClick={
         isLoadingError
           ? () => {}
-          : () => navigate(`${ROOT_ROUTES.proposal.absolute}/${epoch || currentEpoch}/${address}`)
+          : () =>
+              navigate(
+                `${ROOT_ROUTES.proposal.absolute}/${
+                  epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch)
+                }/${address}`,
+              )
       }
     >
       {isLoadingError ? (

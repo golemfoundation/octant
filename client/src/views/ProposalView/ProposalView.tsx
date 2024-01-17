@@ -34,7 +34,7 @@ const ProposalView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
   const epochUrlInt = parseInt(epochUrl!, 10);
 
-  const epoch = currentEpoch && epochUrlInt < currentEpoch ? epochUrlInt : undefined;
+  const epoch = isDecisionWindowOpen && epochUrlInt === currentEpoch! - 1 ? undefined : epochUrlInt;
 
   const { data: matchedProposalRewards } = useMatchedProposalRewards(epoch);
   const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards(epoch);
