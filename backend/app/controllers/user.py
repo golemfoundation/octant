@@ -1,4 +1,5 @@
 from typing import List
+from flask import current_app as app
 
 from app import database
 from app.constants import GLM_TOTAL_SUPPLY_WEI
@@ -9,7 +10,12 @@ from app.core.user.tos import (
 )
 from app.controllers import allocations as allocations_controller
 from app.crypto.eth_sign import patron_mode as patron_mode_crypto
-from app.exceptions import RewardsException, InvalidSignature, UserNotFound
+from app.exceptions import (
+    RewardsException,
+    InvalidSignature,
+    UserNotFound,
+    NotInDecisionWindow,
+)
 from app.extensions import db
 
 MAX_DAYS_TO_ESTIMATE_BUDGET = 365250
@@ -62,7 +68,12 @@ def toggle_patron_mode(user_address: str, signature: str) -> bool:
 
     patron_mode_status = patron_mode_core.toggle_patron_mode(user_address)
 
-    allocations_controller.revoke_previous_user_allocation(user_address)
+    try:
+        allocations_controller.revoke_previous_user_allocation(user_address)
+    except NotInDecisionWindow:
+        app.logger.info(
+            f"Not in allocation period. Skipped revoking previous allocation for user {user_address}"
+        )
 
     db.session.commit()
     return patron_mode_status
