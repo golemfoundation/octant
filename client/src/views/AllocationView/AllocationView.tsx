@@ -328,7 +328,7 @@ const AllocationView = (): ReactElement => {
 
   const showAllocationBottomNavigation =
     !isEpoch1 &&
-    areAllocationsAvailableOrAlreadyDone &&
+    (areAllocationsAvailableOrAlreadyDone || rewardsForProposals.isZero()) &&
     hasUserIndividualReward &&
     isDecisionWindowOpen;
 
