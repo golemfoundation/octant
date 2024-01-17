@@ -377,7 +377,7 @@
       "stepsDecisionWindowOpen": {
         "welcomeToOctant": {
           "header": "Welcome to Octant",
-          "text": "To get started, lock some GLM in the <0>Earn</0> view, and take a look at the projects you can donate to in the <0>Projects</0> view.<br/><br/>If you already have GLM locked, you’ll have some rewards to use during E1 Allocation window, which runs from 19 Oct to 2 Nov."
+          "text": "To get started, lock some GLM in the <0>Earn</0> view, and take a look at the projects you can donate to in the <0>Projects</0> view.<br/><br/>If you already have GLM locked, you’ll have some rewards to use during E2 Allocation window, which runs from 17 to 31 Jan."
         },
         "earnRewards": {
           "header": "Earn ETH rewards",
@@ -389,7 +389,7 @@
         },
         "slideIt": {
           "header": "Just slide it",
-          "text": "Once you have rewards, use the slider in the <0>Allocate</0> view to divide your rewards into donations to projects or personal allocation.<br/><br/>Change your choices at any time during the Allocation window, just unlock the slider, make some edits and reconfirm in your wallet."
+          "text": "Once you have rewards, use the slider in the <0>Allocate</0> view to easily divide rewards between projects or yourself.<br/><br/>To change your choices at any time during allocation, just click Edit, make some changes and reconfirm in your wallet."
         }
       },
       "stepsDecisionWindowClosed": {
