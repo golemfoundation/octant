@@ -137,10 +137,13 @@ const AllocationView = (): ReactElement => {
       return;
     }
     const percentageProportionsNew = allocationValuesNew.reduce((acc, curr) => {
-      const valueAsPercentageOfRewardsForProposals = (
-        (parseFloat(curr.value.toString()) * 100) /
-        parseFloat(formatUnits(rewardsForProposalsNew))
-      ).toFixed();
+      const valueAsPercentageOfRewardsForProposals =
+        curr.value === '0'
+          ? '0'
+          : (
+              (parseFloat(curr.value.toString()) * 100) /
+              parseFloat(formatUnits(rewardsForProposalsNew))
+            ).toFixed();
       return {
         ...acc,
         [curr.address]: valueAsPercentageOfRewardsForProposals,
@@ -164,10 +167,25 @@ const AllocationView = (): ReactElement => {
       return;
     }
 
+    const allocationValuesNewSum = allocationValuesNew.reduce(
+      (acc, curr) => acc.add(parseUnits(curr.value)),
+      BigNumber.from(0),
+    );
+    const shouldIsManulModeBeChangedToFalse = allocationValuesNewSum.isZero();
+
+    /**
+     * Manual needs to be changed to false when values are 0.
+     * Percentages cant be calculated from 0, equal split cant be maintained, causing the app to crash.
+     * Mode needs to change to "auto".
+     */
+    if (shouldIsManulModeBeChangedToFalse) {
+      setIsManualMode(false);
+    }
+
     const allocationValuesReset = getAllocationValuesInitialState({
       allocationValues: allocationValuesNew,
       allocations,
-      isManualMode,
+      isManualMode: shouldIsManulModeBeChangedToFalse ? false : isManualMode,
       percentageProportions,
       rewardsForProposals: rewardsForProposalsNew,
       shouldReset,
@@ -183,7 +201,12 @@ const AllocationView = (): ReactElement => {
       setRewardsForProposals(allocationValuesResetSum);
       setPercentageProportionsWrapper(allocationValuesReset, allocationValuesResetSum);
 
-      setIsManualMode(userAllocations!.isManuallyEdited);
+      const shouldIsManualModeBeChangedToFalseNew = allocationValuesResetSum.isZero();
+      if (!shouldIsManualModeBeChangedToFalseNew) {
+        setIsManualMode(userAllocations!.isManuallyEdited);
+      } else {
+        setIsManualMode(false);
+      }
     }
 
     setAllocationValues(allocationValuesReset);
@@ -301,7 +324,9 @@ const AllocationView = (): ReactElement => {
   };
 
   const onRemoveAllocationElement = (address: string) => {
-    const hasUserAllocatedToThisProject = userAllocations?.elements.find(element => element.address === address);
+    const hasUserAllocatedToThisProject = userAllocations?.elements.find(
+      element => element.address === address,
+    );
     onAddRemoveFromAllocate(address);
     if (!hasUserAllocatedToThisProject) {
       onChangeAllocationItemValue({ address, value: '0' });

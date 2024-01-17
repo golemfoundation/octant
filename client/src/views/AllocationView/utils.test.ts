@@ -186,8 +186,8 @@ describe('getAllocationValuesInitialState', () => {
     });
   });
 
-  describe('Case C (userAllocations.length === 0 && !isManualMode) ', () => {
-    it('when isManualMode & !userAllocationsElements', () => {
+  describe('Case C (!isManualMode) ', () => {
+    it('when !isManualMode', () => {
       expect(
         getAllocationValuesInitialState({
           ...propsCommon,

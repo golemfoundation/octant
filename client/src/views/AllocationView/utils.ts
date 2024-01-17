@@ -124,7 +124,7 @@ export function getAllocationValuesInitialState({
       restToDistribute: BigNumber.from(0),
     });
   }
-  if (userAllocationsElements.length === 0 && !isManualMode) {
+  if (!isManualMode) {
     // Case C (see utils.test.ts).
     const allocationValuesNew = allocations.map(allocation => ({
       address: allocation,
