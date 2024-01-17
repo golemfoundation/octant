@@ -10,6 +10,7 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
+import useUserAllocations from 'hooks/queries/useUserAllocations';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 import getRewardsSumWithValueAndSimulation from 'utils/getRewardsSumWithValueAndSimulation';
 
@@ -30,6 +31,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   });
   const { isDesktop } = useMediaQuery();
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: userAllocations } = useUserAllocations();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
   const { data: proposalRewardsThreshold } = useProposalRewardsThreshold();
@@ -64,6 +66,9 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ address: matchedProposalRewardsAddress }) => address === matchedProposalRewardsAddress,
   );
+  const userAllocationToThisProject = userAllocations?.elements.find(
+    element => element.address === address,
+  )?.value;
 
   // Before the first allocation, threshold is 0, which should be mapped to not defined.
   const isRewardsDataDefined =
@@ -77,6 +82,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
     valueToUse,
     simulatedMatched,
     proposalMatchedProposalRewards?.allocated,
+    userAllocationToThisProject,
   );
   const valueFormatted = getFormattedEthValue(parseUnits(valueToUse));
   const simulatedMatchedFormatted = simulatedMatched
