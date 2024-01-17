@@ -7,7 +7,9 @@ from app.engine.octant_rewards import (
 from app.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (
     AllProceedsWithOperationalCost,
 )
-from app.engine.projects import DefaultProjectRewards, DefaultProjectThreshold
+from app.engine.projects import DefaultProjectRewards
+from app.engine.projects.rewards.allocations.default import DefaultProjectAllocations
+from app.engine.projects.rewards.threshold.default import DefaultProjectThreshold
 from app.engine.user import DefaultUserBudget, DefaultWeightedAverageEffectiveDeposit
 from app.engine.user.effective_deposit.cut_off.cutoff_10glm import CutOff10GLM
 from app.engine.user.effective_deposit.weighted_average.weights.timebased.default import (
@@ -63,4 +65,5 @@ def check_settings(settings, **kwargs):
     )
 
     assert settings.project.rewards == DefaultProjectRewards()
-    assert settings.project.threshold == DefaultProjectThreshold()
+    assert settings.project.rewards.projects_threshold == DefaultProjectThreshold()
+    assert settings.project.rewards.projects_allocations == DefaultProjectAllocations()

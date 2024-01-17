@@ -333,6 +333,7 @@ def patch_epochs(monkeypatch):
 def patch_proposals(monkeypatch, proposal_accounts):
     monkeypatch.setattr("app.legacy.core.allocations.proposals", MOCK_PROPOSALS)
     monkeypatch.setattr("app.legacy.core.proposals.proposals", MOCK_PROPOSALS)
+    monkeypatch.setattr("app.context.projects.proposals", MOCK_PROPOSALS)
 
     MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts
@@ -509,6 +510,7 @@ def mock_allocations_db(app, user_accounts, proposal_accounts):
 def mock_octant_rewards():
     octant_rewards_service_mock = Mock()
     octant_rewards_service_mock.get_octant_rewards.return_value = octant_rewards()
+    octant_rewards_service_mock.get_matched_rewards.return_value = MATCHED_REWARDS
 
     return octant_rewards_service_mock
 

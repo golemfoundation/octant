@@ -3,7 +3,7 @@ from typing import Protocol
 
 from app.modules.modules_factory.protocols import (
     OctantRewards,
-    UserAllocations,
+    DonorsAddresses,
     UserPatronMode,
     UserRewards,
     UserEffectiveDeposits,
@@ -30,7 +30,7 @@ class FinalizedUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Proto
 class FinalizedServices:
     user_deposits_service: FinalizedUserDeposits
     octant_rewards_service: FinalizedOctantRewardsProtocol
-    user_allocations_service: UserAllocations
+    user_allocations_service: DonorsAddresses
     user_patron_mode_service: UserPatronMode
     user_rewards_service: UserRewards
 

@@ -1,6 +1,6 @@
 import pytest
 
-from app.modules.octant_rewards.core import calculate_leverage
+from app.modules.common.leverage import calculate_leverage
 
 
 @pytest.mark.parametrize(

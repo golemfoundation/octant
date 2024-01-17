@@ -5,7 +5,6 @@ import pytest
 from app import exceptions
 from app.extensions import db
 from app.infrastructure import database
-from app.legacy.controllers import rewards
 from app.legacy.controllers.allocations import (
     get_all_by_user_and_epoch,
     get_all_by_proposal_and_epoch,
@@ -13,7 +12,6 @@ from app.legacy.controllers.allocations import (
     get_all_by_epoch,
     get_sum_by_epoch,
     allocate,
-    simulate_allocation,
 )
 from app.legacy.core.allocations import (
     AllocationRequest,
@@ -82,178 +80,6 @@ def before(
     mock_graphql(
         mocker, epochs_events=[create_epoch_event(epoch=MOCKED_PENDING_EPOCH_NO)]
     )
-
-
-def test_simulate_allocation_single_user(
-    user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
-):
-    # Test data
-    user1 = database.user.get_by_address(user_accounts[0].address)
-    user1_allocations = [
-        Allocation(proposal_accounts[0].address, 10 * 10**18),
-        Allocation(proposal_accounts[1].address, 20 * 10**18),
-        Allocation(proposal_accounts[2].address, 30 * 10**18),
-    ]
-    database.allocations.add_all(
-        MOCKED_PENDING_EPOCH_NO, user1.id, 0, user1_allocations
-    )
-    db.session.commit()
-
-    payload = create_payload(proposal_accounts[0:2], [40 * 10**18, 50 * 10**18])
-    proposal_rewards_before = rewards.get_estimated_proposals_rewards()
-
-    assert len(proposal_rewards_before) == 5
-    assert (
-        proposal_rewards_before[0].address
-        == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
-    )
-    assert proposal_rewards_before[0].allocated == 10000000000000000000
-    assert proposal_rewards_before[0].matched == 36_685733052_583541401
-    assert (
-        proposal_rewards_before[1].address
-        == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
-    )
-    assert proposal_rewards_before[1].allocated == 20000000000000000000
-    assert proposal_rewards_before[1].matched == 73_371466105_167082802
-    assert (
-        proposal_rewards_before[2].address
-        == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
-    )
-    assert proposal_rewards_before[2].allocated == 30000000000000000000
-    assert proposal_rewards_before[2].matched == 110_057199157_750624203
-    assert (
-        proposal_rewards_before[3].address
-        == "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec"
-    )
-    assert proposal_rewards_before[3].allocated == 0
-    assert proposal_rewards_before[3].matched == 0
-    assert (
-        proposal_rewards_before[4].address
-        == "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097"
-    )
-    assert proposal_rewards_before[4].allocated == 0
-    assert proposal_rewards_before[4].matched == 0
-
-    # Call simulate allocation method
-    leverage, result = simulate_allocation(payload, user_accounts[0].address)
-
-    assert len(result) == 5
-    assert result[0].address == "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec"
-    assert result[0].allocated == 0
-    assert result[0].matched == 0
-    assert result[1].address == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
-    assert result[1].allocated == 50000000000000000000
-    assert result[1].matched == 122_28577684_1945138003
-    assert result[2].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
-    assert result[2].allocated == 40000000000000000000
-    assert result[2].matched == 97_828621473_556110403
-    assert result[3].address == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
-    assert result[3].allocated == 0
-    assert result[3].matched == 0
-    assert result[4].address == "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097"
-    assert result[4].allocated == 0
-    assert result[4].matched == 0
-
-    # check leverage value
-    assert leverage == 2.445715536838903
-
-    # Ensure changes made in the simulation are not saved to db
-    proposal_rewards_after = rewards.get_estimated_proposals_rewards()
-    assert proposal_rewards_before == proposal_rewards_after
-
-
-def test_simulate_allocation_in_patron_mode(
-    user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
-):
-    payload = create_payload(proposal_accounts[0:2], [40 * 10**18, 50 * 10**18])
-    toggle_patron_mode(user_accounts[0].address)
-
-    # Call simulate allocation method
-    with pytest.raises(exceptions.NotAllowedInPatronMode):
-        simulate_allocation(payload, user_accounts[0].address)
-
-
-def test_simulate_allocation_multiple_users(
-    user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
-):
-    # Test data
-    user1 = database.user.get_by_address(user_accounts[0].address)
-    user2 = database.user.get_by_address(user_accounts[1].address)
-    user1_allocations = [
-        Allocation(proposal_accounts[0].address, 10 * 10**18),
-        Allocation(proposal_accounts[1].address, 20 * 10**18),
-        Allocation(proposal_accounts[2].address, 30 * 10**18),
-    ]
-    user2_allocations = [
-        Allocation(proposal_accounts[1].address, 40 * 10**18),
-        Allocation(proposal_accounts[2].address, 50 * 10**18),
-    ]
-    database.allocations.add_all(
-        MOCKED_PENDING_EPOCH_NO, user1.id, 0, user1_allocations
-    )
-    database.allocations.add_all(
-        MOCKED_PENDING_EPOCH_NO, user2.id, 0, user2_allocations
-    )
-    db.session.commit()
-
-    payload = create_payload(proposal_accounts[0:2], [60 * 10**18, 70 * 10**18])
-    proposal_rewards_before = rewards.get_estimated_proposals_rewards()
-
-    assert len(proposal_rewards_before) == 5
-    assert (
-        proposal_rewards_before[0].address
-        == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
-    )
-    assert proposal_rewards_before[0].allocated == 10000000000000000000
-    assert proposal_rewards_before[0].matched == 0
-    assert (
-        proposal_rewards_before[1].address
-        == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
-    )
-    assert proposal_rewards_before[1].allocated == 60000000000000000000
-    assert proposal_rewards_before[1].matched == 94_334742135_214820745
-    assert (
-        proposal_rewards_before[2].address
-        == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
-    )
-    assert proposal_rewards_before[2].allocated == 80000000000000000000
-    assert proposal_rewards_before[2].matched == 125_779656180_286427661
-    assert (
-        proposal_rewards_before[3].address
-        == "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec"
-    )
-    assert proposal_rewards_before[3].allocated == 0
-    assert proposal_rewards_before[3].matched == 0
-    assert (
-        proposal_rewards_before[4].address
-        == "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097"
-    )
-    assert proposal_rewards_before[4].allocated == 0
-    assert proposal_rewards_before[4].matched == 0
-
-    # Call simulate allocation method
-    _, result = simulate_allocation(payload, user_accounts[0].address)
-
-    assert len(result) == 5
-    assert result[0].address == "0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec"
-    assert result[0].allocated == 0
-    assert result[0].matched == 0
-    assert result[1].address == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
-    assert result[1].allocated == 110_000000000_000000000
-    assert result[1].matched == 12_228577684_194513800
-    assert result[2].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
-    assert result[2].allocated == 60_000000000_000000000
-    assert result[2].matched == 60_031199540_591249565
-    assert result[3].address == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
-    assert result[3].allocated == 50_000000000_000000000
-    assert result[3].matched == -72_259777224_785763366
-    assert result[4].address == "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097"
-    assert result[4].allocated == 0
-    assert result[4].matched == 0
-
-    # Ensure changes made in the simulation are not saved to db
-    proposal_rewards_after = rewards.get_estimated_proposals_rewards()
-    assert proposal_rewards_before == proposal_rewards_after
 
 
 def test_user_allocates_for_the_first_time(tos_users, proposal_accounts):
