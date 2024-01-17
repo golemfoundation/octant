@@ -37,9 +37,10 @@ export default function useProposalRewardsThreshold(
 
   return useQuery(
     QUERY_KEYS.proposalRewardsThreshold(
-      epoch || isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
+      epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
     ),
-    () => apiGetProjectThreshold(epoch || isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
+    () =>
+      apiGetProjectThreshold(epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!)),
     {
       enabled:
         isDecisionWindowOpen !== undefined &&
