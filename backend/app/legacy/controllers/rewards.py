@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from decimal import Decimal
 from functools import reduce
-from typing import List, Tuple, Optional
+from typing import List, Tuple
 
 from dataclass_wizard import JSONWizard
 
@@ -49,7 +49,7 @@ def get_allocation_threshold(epoch: int = None) -> int:
     return proposals.get_proposal_allocation_threshold(epoch)
 
 
-def get_estimated_proposals_rewards() -> Optional[List[ProposalReward]]:
+def get_estimated_proposals_rewards() -> List[ProposalReward]:
     pending_epoch = epochs.get_pending_epoch()
 
     if pending_epoch is None:

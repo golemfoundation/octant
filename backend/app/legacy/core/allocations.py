@@ -8,7 +8,6 @@ from app import exceptions
 from app.extensions import proposals
 from app.infrastructure import database
 from app.infrastructure.database.models import User
-from app.legacy.controllers import rewards
 from app.legacy.core.epochs.epoch_snapshots import has_pending_epoch_snapshot
 from app.legacy.core.user.budget import get_budget
 from app.legacy.core.user.patron_mode import get_patron_mode_status
@@ -117,19 +116,6 @@ def revoke_previous_allocation(user_address: str, epoch: int):
         raise exceptions.UserNotFound
 
     database.allocations.soft_delete_all_by_epoch_and_user_id(epoch, user.id)
-
-
-def calculate_user_allocations_leverage(
-    proposal_rewards: List[rewards.ProposalReward],
-) -> float:
-    allocated = sum(map(lambda x: x.allocated, proposal_rewards))
-
-    if allocated == 0:
-        raise exceptions.EmptyAllocations()
-
-    matched_funds = sum(map(lambda x: x.matched, proposal_rewards))
-
-    return matched_funds / allocated
 
 
 def next_allocation_nonce(user: User | None) -> int:

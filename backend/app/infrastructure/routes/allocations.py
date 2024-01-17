@@ -7,7 +7,7 @@ from app.legacy.controllers import allocations
 from app.legacy.core.allocations import AllocationRequest
 from app.extensions import api
 from app.infrastructure import OctantResource
-from app.modules.user.allocations.controller import get_donors
+from app.modules.user.allocations.controller import get_donors, simulate_allocation
 
 ns = Namespace("allocations", description="Octant allocations")
 api.add_namespace(ns)
@@ -200,14 +200,7 @@ class AllocationLeverage(OctantResource):
     @ns.response(200, "User leverage successfully estimated")
     def post(self, user_address: str):
         app.logger.debug("Estimating user leverage")
-        leverage, proposal_rewards = allocations.simulate_allocation(
-            ns.payload, user_address
-        )
-        matched = [
-            {"address": p.address, "value": p.matched}
-            for p in proposal_rewards
-            if p.matched > 0
-        ]
+        leverage, matched = simulate_allocation(ns.payload, user_address)
 
         app.logger.debug(f"Estimated leverage: {leverage}")
         app.logger.debug(f"Matched rewards:  {matched}")

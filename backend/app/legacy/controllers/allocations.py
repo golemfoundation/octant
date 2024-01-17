@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Dict, Tuple
+from typing import List, Dict
 from typing import Optional
 
 from dataclass_wizard import JSONWizard
@@ -8,7 +8,6 @@ from app import exceptions
 from app.extensions import db, epochs
 from app.infrastructure import database
 from app.legacy.controllers import rewards
-from app.legacy.controllers.rewards import ProposalReward
 from app.legacy.core.allocations import (
     AllocationRequest,
     recover_user_address,
@@ -18,7 +17,6 @@ from app.legacy.core.allocations import (
     revoke_previous_allocation,
     store_allocations_signature,
     next_allocation_nonce,
-    calculate_user_allocations_leverage,
 )
 from app.legacy.core.common import AccountFunds
 from app.legacy.core.epochs import epoch_snapshots
@@ -49,37 +47,6 @@ def allocate(request: AllocationRequest) -> str:
     db.session.commit()
 
     return user_address
-
-
-def simulate_allocation(
-    payload: Dict, user_address: str
-) -> Tuple[float, List[rewards.ProposalReward]]:
-    # TODO: nonce should not be required by the endpoint, but
-    # the code below requires it to work.
-    payload["nonce"] = -1
-
-    revoke_previous_user_allocation(user_address)
-    base_rewards = sorted(
-        rewards.get_estimated_proposals_rewards(), key=lambda p: p.address
-    )
-    _make_allocation(payload, user_address, False)
-    simulated_rewards = sorted(
-        rewards.get_estimated_proposals_rewards(), key=lambda p: p.address
-    )
-    db.session.rollback()
-
-    leverage = calculate_user_allocations_leverage(simulated_rewards)
-
-    rewards_diff = [
-        ProposalReward(
-            base.address,
-            int(simulated.allocated),
-            int(simulated.matched) - int(base.matched),
-        )
-        for base, simulated in zip(base_rewards, simulated_rewards)
-    ]
-
-    return leverage, rewards_diff
 
 
 def get_all_by_user_and_epoch(

@@ -3,7 +3,7 @@ from typing import Tuple, List, Protocol, Dict
 
 from app.context.manager import Context
 from app.engine.user.effective_deposit import UserDeposit, DepositEvent
-from app.modules.user.common import calculate_effective_deposits
+from app.modules.common.effective_deposits import calculate_effective_deposits
 
 
 class EventsGenerator(Protocol):

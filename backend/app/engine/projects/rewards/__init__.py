@@ -1,27 +1,29 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import List
 
 from dataclass_wizard import JSONWizard
 
+from app.engine.projects.rewards.allocations import AllocationPayload
 
-@dataclass(frozen=True)
-class AccountFunds(JSONWizard):
+
+@dataclass
+class ProjectRewardDTO(JSONWizard):
     address: str
-    amount: int
+    allocated: int
     matched: int
 
     def __iter__(self):
         yield self.address
-        yield self.amount
+        yield self.allocated
         yield self.matched
 
 
 @dataclass
 class ProjectRewardsPayload:
     matched_rewards: int = None
-    allocated_by_addr: List[Tuple[str, int]] = None
-    threshold: int = None
+    allocations: List[AllocationPayload] = None
+    projects: List[str] = None
 
 
 @dataclass
@@ -29,5 +31,5 @@ class ProjectRewards(ABC):
     @abstractmethod
     def calculate_project_rewards(
         self, payload: ProjectRewardsPayload
-    ) -> (List[AccountFunds], int):
+    ) -> (List[ProjectRewardDTO], int, int):
         pass

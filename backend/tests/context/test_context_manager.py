@@ -20,7 +20,14 @@ from tests.helpers.constants import OPERATIONAL_COST, LEFTOVER
 
 
 @pytest.fixture(autouse=True)
-def before(app, patch_epochs, patch_glm, patch_eth_get_balance, mock_epoch_details):
+def before(
+    app,
+    patch_epochs,
+    patch_glm,
+    patch_eth_get_balance,
+    patch_proposals,
+    mock_epoch_details,
+):
     pass
 
 
@@ -52,6 +59,8 @@ def test_context_from_epoch(
     assert context.epoch_details.epoch_num == epoch_num
     assert context.epoch_settings is not None
     assert context.epoch_details is not None
+    assert context.projects_details is not None
+    assert len(context.projects_details.projects) == 10
 
 
 @pytest.mark.parametrize(
@@ -76,6 +85,8 @@ def test_context_from_state(
     assert context.epoch_state == state
     assert context.epoch_settings is not None
     assert context.epoch_details is not None
+    assert context.projects_details is not None
+    assert len(context.projects_details.projects) == 10
 
 
 @pytest.mark.parametrize(

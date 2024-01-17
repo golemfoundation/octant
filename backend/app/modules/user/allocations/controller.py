@@ -1,9 +1,11 @@
-from typing import List
+from typing import List, Tuple, Dict
 
 from app.context.epoch_state import EpochState
-from app.context.manager import epoch_context
+from app.context.manager import epoch_context, state_context
 from app.exceptions import NotImplementedForGivenEpochState
+from app.modules.dto import AllocationDTO
 from app.modules.registry import get_services
+from app.modules.user.allocations.service.pending import PendingUserAllocations
 
 
 def get_donors(epoch_num: int) -> List[str]:
@@ -12,3 +14,31 @@ def get_donors(epoch_num: int) -> List[str]:
         raise NotImplementedForGivenEpochState()
     service = get_services(context.epoch_state).user_allocations_service
     return service.get_all_donors_addresses(context)
+
+
+def simulate_allocation(
+    payload: Dict, user_address: str
+) -> Tuple[float, List[Dict[str, str | int]]]:
+    context = state_context(EpochState.PENDING)
+    service: PendingUserAllocations = get_services(
+        context.epoch_state
+    ).user_allocations_service
+    user_allocations = _deserialize_payload(payload)
+    leverage, projects_rewards = service.simulate_allocation(
+        context, user_allocations, user_address
+    )
+
+    matched = [
+        {"address": p.address, "value": p.matched}
+        for p in projects_rewards
+        if p.matched > 0
+    ]
+
+    return leverage, matched
+
+
+def _deserialize_payload(payload: Dict) -> List[AllocationDTO]:
+    return [
+        AllocationDTO.from_dict(allocation_data)
+        for allocation_data in payload["allocations"]
+    ]

@@ -15,7 +15,7 @@ import os
 os.environ["EVENTLET_NO_GREENDNS"] = "yes"
 import eventlet  # noqa
 
-eventlet.monkey_patch()
+# eventlet.monkey_patch()
 from app import create_app  # noqa
 
 app = create_app()

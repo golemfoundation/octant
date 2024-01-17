@@ -14,6 +14,7 @@ from app.modules.staking.proceeds.service.contract_balance import (
 from app.modules.staking.proceeds.service.estimated import (
     EstimatedStakingProceeds,
 )
+from app.modules.user.allocations.service.pending import PendingUserAllocations
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
@@ -73,17 +74,18 @@ def test_pending_services_factory():
     result = get_services(EpochState.PENDING)
 
     events_based_patron_mode = EventsBasedUserPatronMode()
-    saved_user_allocations = SavedUserAllocations()
+    octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
+    user_allocations = PendingUserAllocations(octant_rewards=octant_rewards)
     assert result.user_deposits_service == SavedUserDeposits()
     assert result.octant_rewards_service == PendingOctantRewards(
         patrons_mode=events_based_patron_mode
     )
-    assert result.user_allocations_service == saved_user_allocations
+    assert result.user_allocations_service == user_allocations
     assert result.user_patron_mode_service == events_based_patron_mode
     assert result.user_rewards_service == SavedUserRewards(
         user_budgets=SavedUserBudgets(),
         patrons_mode=events_based_patron_mode,
-        allocations=saved_user_allocations,
+        allocations=user_allocations,
     )
 
 

@@ -4,6 +4,8 @@ from typing import Optional
 
 from dataclass_wizard import JSONWizard
 
+from app.engine.projects.rewards import AllocationPayload
+
 
 @dataclass
 class OctantRewardsDTO(JSONWizard):
@@ -22,6 +24,5 @@ class OctantRewardsDTO(JSONWizard):
 
 
 @dataclass(frozen=True)
-class AllocationDTO(JSONWizard):
-    proposal_address: str
-    amount: int
+class AllocationDTO(AllocationPayload, JSONWizard):
+    user_address: Optional[str] = None

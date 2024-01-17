@@ -5,8 +5,8 @@ from typing import Protocol
 from app.context.manager import Context
 from app.engine.octant_rewards.matched import MatchedRewardsPayload
 from app.infrastructure import database
+from app.modules.common.leverage import calculate_leverage
 from app.modules.dto import OctantRewardsDTO
-from app.modules.octant_rewards.core import calculate_leverage
 
 
 class UserPatronMode(Protocol):
