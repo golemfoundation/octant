@@ -121,10 +121,7 @@ export function getAllocationValuesInitialState({
 
     return getAllocationValuesWithRewardsSplitted({
       allocationValues: allocationValuesNew,
-      restToDistribute: allocationValuesNew.reduce(
-        (acc, curr) => acc.add(parseUnits(curr.value)),
-        BigNumber.from(0),
-      ),
+      restToDistribute: BigNumber.from(0),
     });
   }
   if (userAllocationsElements.length === 0 && !isManualMode) {

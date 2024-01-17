@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { AnimatePresence } from 'framer-motion';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
@@ -175,12 +175,15 @@ const AllocationView = (): ReactElement => {
     });
 
     if (shouldReset) {
-      setRewardsForProposals(BigNumber.from(0));
-      setPercentageProportionsWrapper(allocationValuesReset, rewardsForProposalsNew);
+      const allocationValuesResetSum = allocationValuesReset.reduce(
+        (acc, curr) => acc.add(parseUnits(curr.value)),
+        BigNumber.from(0),
+      );
 
-      if (userAllocations?.elements.length === 0) {
-        setIsManualMode(false);
-      }
+      setRewardsForProposals(allocationValuesResetSum);
+      setPercentageProportionsWrapper(allocationValuesReset, allocationValuesResetSum);
+
+      setIsManualMode(userAllocations!.isManuallyEdited);
     }
 
     setAllocationValues(allocationValuesReset);
