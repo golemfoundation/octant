@@ -76,7 +76,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const rewardsSumWithValueAndSimulation = getRewardsSumWithValueAndSimulation(
     valueToUse,
     simulatedMatched,
-    proposalMatchedProposalRewards?.sum,
+    proposalMatchedProposalRewards?.allocated,
   );
   const valueFormatted = getFormattedEthValue(parseUnits(valueToUse));
   const simulatedMatchedFormatted = simulatedMatched
