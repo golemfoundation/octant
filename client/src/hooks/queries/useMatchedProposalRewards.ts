@@ -59,7 +59,7 @@ export default function useMatchedProposalRewards(
     callback: data => {
       queryClient.setQueryData(
         QUERY_KEYS.matchedProposalRewards(
-          epoch || isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
+          epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
         ),
         {
           rewards: data,
@@ -72,7 +72,7 @@ export default function useMatchedProposalRewards(
 
   return useQuery(
     QUERY_KEYS.matchedProposalRewards(
-      epoch || isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
+      epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
     ),
     () => {
       if (epoch) {
