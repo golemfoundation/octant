@@ -1,5 +1,6 @@
 import cx from 'classnames';
 import { parseUnits } from 'ethers/lib/utils';
+import { motion } from 'framer-motion';
 import React, { FC, useEffect, useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 
@@ -158,19 +159,45 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
             }}
           />
         ))}
+
       {(!isEpoch1 || isLoadingAllocateSimulate) && (
         <div className={styles.progressBar}>
-          {!isLoadingAllocateSimulate && (
+          {isLoadingAllocateSimulate ? (
+            <div className={styles.simulateLoader} />
+          ) : (
             <div
-              className={cx(
-                styles.filled,
-                isError && styles.isError,
-                isDecisionWindowOpen && !parseUnits(valueToUse).isZero() && styles.isPulsing,
-              )}
+              className={cx(styles.filled, isError && styles.isError)}
               style={{ width: `${isDecisionWindowOpen ? filled : 0}%` }}
-            />
+            >
+              {isDecisionWindowOpen && !parseUnits(valueToUse).isZero() && (
+                <svg
+                  className={styles.linearGradientSvg}
+                  height="2"
+                  viewBox={`0 0 ${filled} 2`}
+                  width={filled}
+                >
+                  <motion.rect
+                    key={`linear-gradient-${filled}`}
+                    animate={{ x: [-192, filled] }}
+                    fill="url(#linear_gradient)"
+                    height="2"
+                    rx="1"
+                    transition={{ duration: 4, ease: 'linear', repeat: Infinity }}
+                    width={192}
+                  />
+                  <defs>
+                    <linearGradient id="linear_gradient">
+                      <stop stopColor={styles.colorOctantOrange5} />
+                      <stop offset="0.260417" stopColor={styles.colorOctantOrange} />
+                      <stop offset="0.510417" stopColor={styles.colorOctantOrange5} />
+                      <stop offset="0.760417" stopColor={styles.colorOctantOrange} />
+                      <stop offset="0.994792" stopColor={styles.colorOctantOrange5} />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              )}
+            </div>
           )}
-          {isLoadingAllocateSimulate && <div className={styles.simulateLoader} />}
         </div>
       )}
     </div>
