@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSignTypedData } from 'wagmi';
 
+import { handleError } from 'api/errorMessages';
 import networkConfig from 'constants/networkConfig';
 import { getAllocationsMapped } from 'hooks/utils/utils';
 import { WebsocketEmitEvent } from 'types/websocketEvents';
@@ -41,6 +42,14 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
     domain,
     message: {
       value: 'Octant Allocation',
+    },
+    onError: error => {
+      // @ts-expect-error Error is of type 'unknown', but it is API or contract error.
+      const hasUserRejectedTransaction = error.cause.code === 4001;
+      // @ts-expect-error Error is of type 'unknown', but it is API or contract error.
+      const reason = hasUserRejectedTransaction ? 4001 : error.reason;
+      handleError(reason);
+      setIsLoading(false);
     },
     onSuccess: async (data, variables) => {
       const { isManuallyEdited, ...restVariables } = variables.message;
