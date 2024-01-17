@@ -301,8 +301,11 @@ const AllocationView = (): ReactElement => {
   };
 
   const onRemoveAllocationElement = (address: string) => {
+    const hasUserAllocatedToThisProject = userAllocations?.elements.find(element => element.address === address);
     onAddRemoveFromAllocate(address);
-    onChangeAllocationItemValue({ address, value: '0' });
+    if (!hasUserAllocatedToThisProject) {
+      onChangeAllocationItemValue({ address, value: '0' });
+    }
   };
 
   const isLoading =
