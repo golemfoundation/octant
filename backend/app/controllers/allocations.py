@@ -59,10 +59,8 @@ def simulate_allocation(
     payload["nonce"] = -1
 
     revoke_previous_user_allocation(user_address)
-    base_rewards = sorted(
-        rewards.get_estimated_proposals_rewards(), key=lambda p: p.address
-    )
     _make_allocation(payload, user_address, False)
+
     simulated_rewards = sorted(
         rewards.get_estimated_proposals_rewards(), key=lambda p: p.address
     )
@@ -70,16 +68,16 @@ def simulate_allocation(
 
     leverage = calculate_user_allocations_leverage(simulated_rewards)
 
-    rewards_diff = [
+    simulated_proposals_rewards = [
         ProposalReward(
-            base.address,
+            simulated.address,
             int(simulated.allocated),
-            int(simulated.matched) - int(base.matched),
+            int(simulated.matched),
         )
-        for base, simulated in zip(base_rewards, simulated_rewards)
+        for simulated in simulated_rewards
     ]
 
-    return leverage, rewards_diff
+    return leverage, simulated_proposals_rewards
 
 
 def get_all_by_user_and_epoch(

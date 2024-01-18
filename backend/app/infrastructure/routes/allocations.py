@@ -205,7 +205,10 @@ user_leverage_model = api.model(
 
 @ns.route("/leverage/<string:user_address>")
 @ns.doc(
-    description="Simulates an allocation and get the expected leverage",
+    description=(
+        "Simulates an allocation and gets the expected leverage and resulting matched funds. "
+        "The endpoint returns matched funds assuming that previous user's allocation has been revoked and replaced by the allocation given in the payload."
+    ),
     params={
         "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)",
     },
@@ -219,11 +222,7 @@ class AllocationLeverage(OctantResource):
         leverage, proposal_rewards = allocations.simulate_allocation(
             ns.payload, user_address
         )
-        matched = [
-            {"address": p.address, "value": p.matched}
-            for p in proposal_rewards
-            if p.matched > 0
-        ]
+        matched = [{"address": p.address, "value": p.matched} for p in proposal_rewards]
 
         app.logger.debug(f"Estimated leverage: {leverage}")
         app.logger.debug(f"Matched rewards:  {matched}")
