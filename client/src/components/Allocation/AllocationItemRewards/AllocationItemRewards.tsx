@@ -1,4 +1,5 @@
 import cx from 'classnames';
+import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { motion } from 'framer-motion';
 import React, { FC, useEffect, useState } from 'react';
@@ -70,6 +71,10 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
     element => element.address === address,
   )?.value;
 
+  const isNewSimulatedPositive = userAllocationToThisProject
+    ? parseUnits(valueToUse).gte(userAllocationToThisProject)
+    : true;
+
   // Before the first allocation, threshold is 0, which should be mapped to not defined.
   const isRewardsDataDefined =
     proposalMatchedProposalRewards !== undefined &&
@@ -81,12 +86,25 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const rewardsSumWithValueAndSimulation = getRewardsSumWithValueAndSimulation(
     valueToUse,
     simulatedMatched,
-    proposalMatchedProposalRewards?.allocated,
+    simulatedMatched === undefined
+      ? proposalMatchedProposalRewards?.sum
+      : proposalMatchedProposalRewards?.allocated,
     userAllocationToThisProject,
   );
   const valueFormatted = getFormattedEthValue(parseUnits(valueToUse));
+  const simulatedMatchedBigNumber = simulatedMatched
+    ? parseUnits(simulatedMatched, 'wei')
+    : BigNumber.from(0);
   const simulatedMatchedFormatted = simulatedMatched
-    ? getFormattedEthValue(parseUnits(simulatedMatched, 'wei'))
+    ? getFormattedEthValue(
+        simulatedMatchedBigNumber
+          .sub(
+            proposalMatchedProposalRewards
+              ? proposalMatchedProposalRewards.matched
+              : BigNumber.from(0),
+          )
+          .abs(),
+      )
     : getFormattedEthValue(parseUnits('0', 'wei'));
   const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
     rewardsSumWithValueAndSimulation,
@@ -148,6 +166,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
                 : 'views.allocation.allocationItem.simulate.mobile'
             }
             values={{
+              character: isNewSimulatedPositive ? '+' : '-',
               matched: simulatedMatchedFormatted.fullString,
               value: areValueAndSimulatedSuffixesTheSame
                 ? valueFormatted?.value

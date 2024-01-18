@@ -28,6 +28,9 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   const { data: proposalRewardsThreshold } = useProposalRewardsThreshold();
   const { data: userAllocations } = useUserAllocations();
 
+  // value can an empty string, which crashes parseUnits. Hence the alternative.
+  const valueToUse = value || '0';
+
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ address: matchedProposalRewardsAddress }) => address === matchedProposalRewardsAddress,
   );
@@ -44,12 +47,12 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   const areSuffixesTheSame =
     proposalMatchedProposalRewardsFormatted?.suffix === proposalRewardsThresholdFormatted?.suffix;
 
-  // value can an empty string, which crashes parseUnits. Hence the alternative.
-  const valueToUse = value || '0';
   const rewardsSumWithValueAndSimulation = getRewardsSumWithValueAndSimulation(
     valueToUse,
     simulatedMatched,
-    proposalMatchedProposalRewards?.allocated,
+    simulatedMatched === undefined
+      ? proposalMatchedProposalRewards?.sum
+      : proposalMatchedProposalRewards?.allocated,
     userAllocationToThisProject,
   );
   const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
