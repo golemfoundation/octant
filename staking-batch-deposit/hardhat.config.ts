@@ -32,7 +32,7 @@ const config: HardhatUserConfig = {
     holesky: {
       accounts: [TESTNET_PRIVATE_KEY],
       chainId: 17000,
-      url: HOLESKY_RPC_URL,
+      url: "https://ethereum-holesky.publicnode.com",
     },
     hardhat: {
       accounts: {

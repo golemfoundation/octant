@@ -108,6 +108,15 @@ def pytest_collection_modifyitems(config, items):
                 item.add_marker(skip_api)
 
 
+def random_string() -> str:
+    import random
+    import string
+
+    length_of_string = 6
+    characters = string.ascii_letters + string.digits
+    return "".join(random.choices(characters, k=length_of_string))
+
+
 @pytest.fixture
 def flask_client() -> FlaskClient:
     """An application for the integration / API tests."""
