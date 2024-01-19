@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -9,6 +9,7 @@ import BoxRounded from 'components/ui/BoxRounded';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useAllocationsStore from 'store/allocations/store';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
@@ -16,7 +17,6 @@ import styles from './AllocationSummary.module.scss';
 import AllocationSummaryProps from './types';
 
 const AllocationSummary: FC<AllocationSummaryProps> = ({
-  allocationValues,
   allocationSimulated,
   isLoadingAllocateSimulate,
 }) => {
@@ -24,6 +24,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
     keyPrefix: 'components.dedicated.allocationSummary',
   });
   const { data: individualReward } = useIndividualReward();
+  const { data: userAllocations } = useUserAllocations();
   const { rewardsForProposals } = useAllocationsStore(state => ({
     rewardsForProposals: state.data.rewardsForProposals,
   }));
@@ -32,10 +33,9 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
     return acc.add(parseUnits(curr.value, 'wei'));
   }, BigNumber.from(0));
 
-  const allocationValuesPositive = allocationValues.filter(
-    ({ value }) => !parseUnits(value).isZero(),
-  );
-  const areAllocationValuesPositive = allocationValuesPositive?.length > 0;
+  const userAllocationsPositive =
+    userAllocations?.elements.filter(({ value }) => !value.isZero()) || [];
+  const areUserAllocationsPositive = userAllocationsPositive?.length > 0;
 
   const personalAllocation = individualReward?.sub(rewardsForProposals);
 
@@ -95,19 +95,19 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
 
   return (
     <>
-      {areAllocationValuesPositive && (
+      {areUserAllocationsPositive && (
         <BoxRounded className={styles.root} hasPadding={false} isVertical>
           <div className={styles.projects}>
-            {allocationValuesPositive?.map(({ address, value }) => (
+            {userAllocationsPositive?.map(({ address, value }) => (
               <AllocationSummaryProject
                 key={address}
                 address={address}
-                amount={parseUnits(value)}
+                amount={value}
                 isLoadingAllocateSimulate={isLoadingAllocateSimulate}
                 simulatedMatched={
                   allocationSimulated?.matched.find(element => element.address === address)?.value
                 }
-                value={value}
+                value={formatUnits(value)}
               />
             ))}
           </div>
@@ -118,7 +118,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
         <BoxRounded
           className={cx(
             styles.personalRewardBox,
-            areAllocationValuesPositive && styles.areAllocationValuesPositive,
+            areUserAllocationsPositive && styles.areAllocationValuesPositive,
           )}
         >
           <div className={styles.personalReward}>

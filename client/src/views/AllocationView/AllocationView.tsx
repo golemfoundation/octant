@@ -429,7 +429,6 @@ const AllocationView = (): ReactElement => {
       ) : (
         <AllocationSummary
           allocationSimulated={allocationSimulated}
-          allocationValues={allocationValues}
           isLoadingAllocateSimulate={isLoadingAllocateSimulate}
         />
       )}
