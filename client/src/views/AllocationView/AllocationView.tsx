@@ -339,7 +339,7 @@ const AllocationView = (): ReactElement => {
     (isConnected && isFetchingUserAllocation);
   const areAllocationsAvailableOrAlreadyDone =
     (allocationValues !== undefined && !isEmpty(allocations)) ||
-    !!userAllocations?.hasUserAlreadyDoneAllocation;
+    (!!userAllocations?.hasUserAlreadyDoneAllocation && userAllocations.elements.length > 0);
   const hasUserIndividualReward = !!individualReward && !individualReward.isZero();
   const areButtonsDisabled =
     isLoading ||

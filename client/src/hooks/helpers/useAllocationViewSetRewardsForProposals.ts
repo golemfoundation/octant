@@ -50,6 +50,12 @@ export default function useAllocationViewSetRewardsForProposals(): {
         BigNumber.from(0),
       );
       setRewardsForProposals(userAllocationsSum);
+    } else if (
+      userAllocations &&
+      userAllocations.elements.length === 0 &&
+      userAllocations.hasUserAlreadyDoneAllocation
+    ) {
+      setRewardsForProposals(BigNumber.from(0));
     } else {
       setRewardsForProposals(
         !individualReward ||

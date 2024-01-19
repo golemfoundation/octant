@@ -270,11 +270,15 @@ export function getAllocationValuesAfterManualChange({
     };
   }
 
+  const rewardsForProposalsNew = allocationValuesArrayNewSum.isZero()
+    ? BigNumber.from(0)
+    : rewardsForProposals;
+
   return {
     allocationValuesArrayNew: getAllocationValuesWithRewardsSplitted({
       allocationValues: allocationValuesArrayNew,
-      restToDistribute: rewardsForProposals,
+      restToDistribute: rewardsForProposalsNew,
     }),
-    rewardsForProposalsNew: rewardsForProposals,
+    rewardsForProposalsNew,
   };
 }
