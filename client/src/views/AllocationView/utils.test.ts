@@ -368,9 +368,9 @@ describe('getAllocationValuesAfterManualChange', () => {
       }),
     ).toEqual({
       allocationValuesArrayNew: [
-        { address: '0xA', value: '0.05' },
-        { address: '0xB', value: '0.333333333333333333' },
-        { address: '0xC', value: '0.616666666666666667' },
+        { address: '0xA', value: '0' },
+        { address: '0xB', value: '0' },
+        { address: '0xC', value: '0' },
       ],
       rewardsForProposalsNew: parseUnits('0'),
     });
