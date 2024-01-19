@@ -75,9 +75,17 @@ const ProposalView = (): ReactElement => {
      *
      * During "normal" usage problem could not be reproduced,
      * yet might be possible, so better avoid that.
+     *
+     * Issue is not resolved in the library:
+     * https://github.com/danbovey/react-infinite-scroller/issues/143
      */
     if (loadedProposals.findIndex(p => p.address === nextItem.address) < 0) {
-      setLoadedProposals(prev => [...prev, nextItem]);
+      setLoadedProposals(prev =>
+        [...prev, nextItem].filter(
+          (element, index, self) =>
+            index === self.findIndex(element2 => element2.address === element.address),
+        ),
+      );
     }
   };
 
