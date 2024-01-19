@@ -242,13 +242,13 @@ def test_simulate_allocation_multiple_users(
     assert result[0].matched == 0
     assert result[1].address == "0x71bE63f3384f5fb98995898A86B02Fb2426c5788"
     assert result[1].allocated == 110_000000000_000000000
-    assert result[1].matched == 12_228577684_194513800
+    assert result[1].matched == 110_057199157_750624203
     assert result[2].address == "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
     assert result[2].allocated == 60_000000000_000000000
     assert result[2].matched == 60_031199540_591249565
     assert result[3].address == "0xFABB0ac9d68B0B445fB7357272Ff202C5651694a"
     assert result[3].allocated == 50_000000000_000000000
-    assert result[3].matched == -72_259777224_785763366
+    assert result[3].matched == 50_025999617_159374637
     assert result[4].address == "0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097"
     assert result[4].allocated == 0
     assert result[4].matched == 0

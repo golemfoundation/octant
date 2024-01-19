@@ -121,13 +121,10 @@ export function getAllocationValuesInitialState({
 
     return getAllocationValuesWithRewardsSplitted({
       allocationValues: allocationValuesNew,
-      restToDistribute: allocationValuesNew.reduce(
-        (acc, curr) => acc.add(parseUnits(curr.value)),
-        BigNumber.from(0),
-      ),
+      restToDistribute: BigNumber.from(0),
     });
   }
-  if (userAllocationsElements.length === 0 && !isManualMode) {
+  if (!isManualMode) {
     // Case C (see utils.test.ts).
     const allocationValuesNew = allocations.map(allocation => ({
       address: allocation,
@@ -273,11 +270,15 @@ export function getAllocationValuesAfterManualChange({
     };
   }
 
+  const rewardsForProposalsNew = allocationValuesArrayNewSum.isZero()
+    ? BigNumber.from(0)
+    : rewardsForProposals;
+
   return {
     allocationValuesArrayNew: getAllocationValuesWithRewardsSplitted({
       allocationValues: allocationValuesArrayNew,
-      restToDistribute: rewardsForProposals,
+      restToDistribute: rewardsForProposalsNew,
     }),
-    rewardsForProposalsNew: rewardsForProposals,
+    rewardsForProposalsNew,
   };
 }

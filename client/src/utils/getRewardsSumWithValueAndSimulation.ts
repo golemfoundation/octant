@@ -4,9 +4,11 @@ import { parseUnits } from 'ethers/lib/utils';
 export default function getRewardsSumWithValueAndSimulation(
   value: string,
   simulatedMatched?: string,
-  proposalMatchedProposalRewardsSum?: BigNumber,
+  proposalMatchedProposalRewardsAllocated?: BigNumber,
+  userAllocationToThisProject?: BigNumber,
 ): BigNumber {
   return parseUnits(value)
     .add(simulatedMatched ? parseUnits(simulatedMatched, 'wei') : BigNumber.from(0))
-    .add(proposalMatchedProposalRewardsSum || BigNumber.from(0));
+    .sub(userAllocationToThisProject || BigNumber.from(0))
+    .add(proposalMatchedProposalRewardsAllocated || BigNumber.from(0));
 }

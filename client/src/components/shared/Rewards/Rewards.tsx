@@ -137,17 +137,18 @@ const Rewards: FC<RewardsProps> = ({
               : proposalDonorsRewardsSumToDisplay}
           </div>
         </div>
-        {(!isArchivedProposal && isDecisionWindowOpen) ||
-          ((!isDonationAboveThreshold || isArchivedProposal) && (
-            <div className={cx(styles.section, styles.rightSection)}>
-              <div className={cx(styles.label, isFetching && styles.isFetching)}>
-                {rightSectionLabel}
-              </div>
-              <div className={cx(styles.value, isFetching && styles.isFetching)}>
-                {rightSectionValue}
-              </div>
+        {((!isArchivedProposal && isDecisionWindowOpen && !isDonationAboveThreshold) ||
+          !isDonationAboveThreshold ||
+          isArchivedProposal) && (
+          <div className={cx(styles.section, styles.rightSection)}>
+            <div className={cx(styles.label, isFetching && styles.isFetching)}>
+              {rightSectionLabel}
             </div>
-          ))}
+            <div className={cx(styles.value, isFetching && styles.isFetching)}>
+              {rightSectionValue}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

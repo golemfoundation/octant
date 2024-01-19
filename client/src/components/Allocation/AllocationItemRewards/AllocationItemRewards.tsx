@@ -1,5 +1,7 @@
 import cx from 'classnames';
+import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
+import { motion } from 'framer-motion';
 import React, { FC, useEffect, useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 
@@ -9,6 +11,7 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
+import useUserAllocations from 'hooks/queries/useUserAllocations';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 import getRewardsSumWithValueAndSimulation from 'utils/getRewardsSumWithValueAndSimulation';
 
@@ -29,6 +32,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   });
   const { isDesktop } = useMediaQuery();
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: userAllocations } = useUserAllocations();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
   const { data: proposalRewardsThreshold } = useProposalRewardsThreshold();
@@ -63,6 +67,13 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ address: matchedProposalRewardsAddress }) => address === matchedProposalRewardsAddress,
   );
+  const userAllocationToThisProject = userAllocations?.elements.find(
+    element => element.address === address,
+  )?.value;
+
+  const isNewSimulatedPositive = userAllocationToThisProject
+    ? parseUnits(valueToUse).gte(userAllocationToThisProject)
+    : true;
 
   // Before the first allocation, threshold is 0, which should be mapped to not defined.
   const isRewardsDataDefined =
@@ -75,11 +86,25 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const rewardsSumWithValueAndSimulation = getRewardsSumWithValueAndSimulation(
     valueToUse,
     simulatedMatched,
-    proposalMatchedProposalRewards?.sum,
+    simulatedMatched === undefined
+      ? proposalMatchedProposalRewards?.sum
+      : proposalMatchedProposalRewards?.allocated,
+    userAllocationToThisProject,
   );
   const valueFormatted = getFormattedEthValue(parseUnits(valueToUse));
+  const simulatedMatchedBigNumber = simulatedMatched
+    ? parseUnits(simulatedMatched, 'wei')
+    : BigNumber.from(0);
   const simulatedMatchedFormatted = simulatedMatched
-    ? getFormattedEthValue(parseUnits(simulatedMatched, 'wei'))
+    ? getFormattedEthValue(
+        simulatedMatchedBigNumber
+          .sub(
+            proposalMatchedProposalRewards
+              ? proposalMatchedProposalRewards.matched
+              : BigNumber.from(0),
+          )
+          .abs(),
+      )
     : getFormattedEthValue(parseUnits('0', 'wei'));
   const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
     rewardsSumWithValueAndSimulation,
@@ -141,6 +166,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
                 : 'views.allocation.allocationItem.simulate.mobile'
             }
             values={{
+              character: isNewSimulatedPositive ? '+' : '-',
               matched: simulatedMatchedFormatted.fullString,
               value: areValueAndSimulatedSuffixesTheSame
                 ? valueFormatted?.value
@@ -158,19 +184,45 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
             }}
           />
         ))}
+
       {(!isEpoch1 || isLoadingAllocateSimulate) && (
         <div className={styles.progressBar}>
-          {!isLoadingAllocateSimulate && (
+          {isLoadingAllocateSimulate ? (
+            <div className={styles.simulateLoader} />
+          ) : (
             <div
-              className={cx(
-                styles.filled,
-                isError && styles.isError,
-                isDecisionWindowOpen && !parseUnits(valueToUse).isZero() && styles.isPulsing,
-              )}
+              className={cx(styles.filled, isError && styles.isError)}
               style={{ width: `${isDecisionWindowOpen ? filled : 0}%` }}
-            />
+            >
+              {isDecisionWindowOpen && !parseUnits(valueToUse).isZero() && (
+                <svg
+                  className={styles.linearGradientSvg}
+                  height="2"
+                  viewBox={`0 0 ${filled} 2`}
+                  width={filled}
+                >
+                  <motion.rect
+                    key={`linear-gradient-${filled}`}
+                    animate={{ x: [-192, filled] }}
+                    fill="url(#linear_gradient)"
+                    height="2"
+                    rx="1"
+                    transition={{ duration: 4, ease: 'linear', repeat: Infinity }}
+                    width={192}
+                  />
+                  <defs>
+                    <linearGradient id="linear_gradient">
+                      <stop stopColor={styles.colorOctantOrange5} />
+                      <stop offset="0.260417" stopColor={styles.colorOctantOrange} />
+                      <stop offset="0.510417" stopColor={styles.colorOctantOrange5} />
+                      <stop offset="0.760417" stopColor={styles.colorOctantOrange} />
+                      <stop offset="0.994792" stopColor={styles.colorOctantOrange5} />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              )}
+            </div>
           )}
-          {isLoadingAllocateSimulate && <div className={styles.simulateLoader} />}
         </div>
       )}
     </div>

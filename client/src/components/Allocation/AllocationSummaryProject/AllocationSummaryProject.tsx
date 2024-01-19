@@ -6,6 +6,7 @@ import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThresho
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
+import useUserAllocations from 'hooks/queries/useUserAllocations';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 import getRewardsSumWithValueAndSimulation from 'utils/getRewardsSumWithValueAndSimulation';
 
@@ -25,10 +26,17 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
 
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
   const { data: proposalRewardsThreshold } = useProposalRewardsThreshold();
+  const { data: userAllocations } = useUserAllocations();
+
+  // value can an empty string, which crashes parseUnits. Hence the alternative.
+  const valueToUse = value || '0';
 
   const proposalMatchedProposalRewards = matchedProposalRewards?.find(
     ({ address: matchedProposalRewardsAddress }) => address === matchedProposalRewardsAddress,
   );
+  const userAllocationToThisProject = userAllocations?.elements.find(
+    element => element.address === address,
+  )?.value;
 
   const proposalMatchedProposalRewardsFormatted = proposalMatchedProposalRewards
     ? getFormattedEthValue(proposalMatchedProposalRewards?.sum)
@@ -39,12 +47,13 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   const areSuffixesTheSame =
     proposalMatchedProposalRewardsFormatted?.suffix === proposalRewardsThresholdFormatted?.suffix;
 
-  // value can an empty string, which crashes parseUnits. Hence the alternative.
-  const valueToUse = value || '0';
   const rewardsSumWithValueAndSimulation = getRewardsSumWithValueAndSimulation(
     valueToUse,
     simulatedMatched,
-    proposalMatchedProposalRewards?.sum,
+    simulatedMatched === undefined
+      ? proposalMatchedProposalRewards?.sum
+      : proposalMatchedProposalRewards?.allocated,
+    userAllocationToThisProject,
   );
   const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
     rewardsSumWithValueAndSimulation,

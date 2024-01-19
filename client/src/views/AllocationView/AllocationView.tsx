@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { AnimatePresence } from 'framer-motion';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
@@ -137,10 +137,13 @@ const AllocationView = (): ReactElement => {
       return;
     }
     const percentageProportionsNew = allocationValuesNew.reduce((acc, curr) => {
-      const valueAsPercentageOfRewardsForProposals = (
-        (parseFloat(curr.value.toString()) * 100) /
-        parseFloat(formatUnits(rewardsForProposalsNew))
-      ).toFixed();
+      const valueAsPercentageOfRewardsForProposals =
+        curr.value === '0'
+          ? '0'
+          : (
+              (parseFloat(curr.value.toString()) * 100) /
+              parseFloat(formatUnits(rewardsForProposalsNew))
+            ).toFixed();
       return {
         ...acc,
         [curr.address]: valueAsPercentageOfRewardsForProposals,
@@ -164,10 +167,25 @@ const AllocationView = (): ReactElement => {
       return;
     }
 
+    const allocationValuesNewSum = allocationValuesNew.reduce(
+      (acc, curr) => acc.add(parseUnits(curr.value)),
+      BigNumber.from(0),
+    );
+    const shouldIsManulModeBeChangedToFalse = allocationValuesNewSum.isZero();
+
+    /**
+     * Manual needs to be changed to false when values are 0.
+     * Percentages cant be calculated from 0, equal split cant be maintained, causing the app to crash.
+     * Mode needs to change to "auto".
+     */
+    if (shouldIsManulModeBeChangedToFalse) {
+      setIsManualMode(false);
+    }
+
     const allocationValuesReset = getAllocationValuesInitialState({
       allocationValues: allocationValuesNew,
       allocations,
-      isManualMode,
+      isManualMode: shouldIsManulModeBeChangedToFalse ? false : isManualMode,
       percentageProportions,
       rewardsForProposals: rewardsForProposalsNew,
       shouldReset,
@@ -175,10 +193,18 @@ const AllocationView = (): ReactElement => {
     });
 
     if (shouldReset) {
-      setRewardsForProposals(BigNumber.from(0));
-      setPercentageProportionsWrapper(allocationValuesReset, rewardsForProposalsNew);
+      const allocationValuesResetSum = allocationValuesReset.reduce(
+        (acc, curr) => acc.add(parseUnits(curr.value)),
+        BigNumber.from(0),
+      );
 
-      if (userAllocations?.elements.length === 0) {
+      setRewardsForProposals(allocationValuesResetSum);
+      setPercentageProportionsWrapper(allocationValuesReset, allocationValuesResetSum);
+
+      const shouldIsManualModeBeChangedToFalseNew = allocationValuesResetSum.isZero();
+      if (!shouldIsManualModeBeChangedToFalseNew) {
+        setIsManualMode(userAllocations!.isManuallyEdited);
+      } else {
         setIsManualMode(false);
       }
     }
@@ -298,8 +324,13 @@ const AllocationView = (): ReactElement => {
   };
 
   const onRemoveAllocationElement = (address: string) => {
+    const hasUserAllocatedToThisProject = userAllocations?.elements.find(
+      element => element.address === address,
+    );
     onAddRemoveFromAllocate(address);
-    onChangeAllocationItemValue({ address, value: '0' });
+    if (!hasUserAllocatedToThisProject) {
+      onChangeAllocationItemValue({ address, value: '0' });
+    }
   };
 
   const isLoading =
@@ -308,7 +339,7 @@ const AllocationView = (): ReactElement => {
     (isConnected && isFetchingUserAllocation);
   const areAllocationsAvailableOrAlreadyDone =
     (allocationValues !== undefined && !isEmpty(allocations)) ||
-    !!userAllocations?.hasUserAlreadyDoneAllocation;
+    (!!userAllocations?.hasUserAlreadyDoneAllocation && userAllocations.elements.length > 0);
   const hasUserIndividualReward = !!individualReward && !individualReward.isZero();
   const areButtonsDisabled =
     isLoading ||
@@ -328,7 +359,7 @@ const AllocationView = (): ReactElement => {
 
   const showAllocationBottomNavigation =
     !isEpoch1 &&
-    areAllocationsAvailableOrAlreadyDone &&
+    (areAllocationsAvailableOrAlreadyDone || rewardsForProposals.isZero()) &&
     hasUserIndividualReward &&
     isDecisionWindowOpen;
 
@@ -398,7 +429,6 @@ const AllocationView = (): ReactElement => {
       ) : (
         <AllocationSummary
           allocationSimulated={allocationSimulated}
-          allocationValues={allocationValues}
           isLoadingAllocateSimulate={isLoadingAllocateSimulate}
         />
       )}

@@ -34,8 +34,8 @@
     font-size: $font-size-10;
   }
 
-
-  &.isLoadingAllocateSimulate, &.isSimulateVisible {
+  &.isLoadingAllocateSimulate,
+  &.isSimulateVisible {
     color: $color-octant-grey5;
   }
 }
@@ -61,23 +61,24 @@
     animation: movingLeftAndRight 1s linear infinite;
   }
 
+  .linearGradientSvg {
+    background: $color-octant-orange5;
+    border-radius: 0.2rem;
+    position: absolute;
+  }
+
   .filled {
     height: 100%;
-
-    &:not(.isDonationAboveThreshold) {
-      background: $color-octant-orange;
-    }
-
-    &.isDonationAboveThreshold {
-      background: $color-octant-green;
-    }
+    border-radius: 0.2rem;
+    background: $color-octant-orange;
 
     &.isError {
       width: 0;
     }
-
-    &.isPulsing {
-      animation: pulsatingOpacity 1s linear infinite;
-    }
   }
+}
+
+:export {
+  colorOctantOrange: $color-octant-orange;
+  colorOctantOrange5: $color-octant-orange5;
 }

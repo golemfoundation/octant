@@ -62,7 +62,11 @@ const EarnHistoryItem: FC<EarnHistoryItemProps> = props => {
         </div>
         <DoubleValue
           className={styles.values}
-          cryptoCurrency={['allocation', 'withdrawal'].includes(type) ? 'ethereum' : 'golem'}
+          cryptoCurrency={
+            ['allocation', 'withdrawal', 'patron_mode_donation'].includes(type)
+              ? 'ethereum'
+              : 'golem'
+          }
           isFetching={isFetchingEpochTimestampHappenedIn || isFetchingIndividualReward}
           textAlignment="right"
           valueCrypto={

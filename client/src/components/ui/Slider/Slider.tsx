@@ -44,7 +44,7 @@ const Slider: FC<SliderProps> = ({
     <div className={cx(styles.root, className)}>
       <ReactSlider
         className={styles.slider}
-        disabled={isDisabled}
+        disabled={isDisabled || hideThumb}
         onChange={localOnChange}
         renderThumb={props => (
           // Hiding the thumb by returning null here prevent ReactSlider from setting value on initial render.
