@@ -325,17 +325,6 @@ describe('getAllocationValuesAfterManualChange', () => {
     });
   });
 
-  it('correctly updates allocationValues when !isManualMode', () => {
-    expect(getAllocationValuesAfterManualChange(propsCommon)).toEqual({
-      allocationValuesArrayNew: [
-        { address: '0xA', value: '0.05' },
-        { address: '0xB', value: '0.333333333333333333' },
-        { address: '0xC', value: '0.616666666666666667' },
-      ],
-      rewardsForProposalsNew: parseUnits('1'),
-    });
-  });
-
   it('correctly updates allocationValues when isManualMode', () => {
     expect(
       getAllocationValuesAfterManualChange({
@@ -349,6 +338,41 @@ describe('getAllocationValuesAfterManualChange', () => {
         { address: '0xC', value: '0.333333333333333334' },
       ],
       rewardsForProposalsNew: parseUnits('0.716666666666666667'),
+    });
+  });
+
+  it('correctly updates allocationValues when !isManualMode', () => {
+    expect(getAllocationValuesAfterManualChange(propsCommon)).toEqual({
+      allocationValuesArrayNew: [
+        { address: '0xA', value: '0.05' },
+        { address: '0xB', value: '0.333333333333333333' },
+        { address: '0xC', value: '0.616666666666666667' },
+      ],
+      rewardsForProposalsNew: parseUnits('1'),
+    });
+  });
+
+  it('correctly updates allocationValues when !isManualMode, rewardsForProposalsNew is zero when all values are 0', () => {
+    expect(
+      getAllocationValuesAfterManualChange({
+        ...propsCommon,
+        allocationValues: [
+          { address: '0xA', value: '0.333333333333333333' },
+          { address: '0xB', value: '0' },
+          { address: '0xC', value: '0' },
+        ],
+        newAllocationValue: {
+          address: '0xA',
+          value: '0',
+        },
+      }),
+    ).toEqual({
+      allocationValuesArrayNew: [
+        { address: '0xA', value: '0.05' },
+        { address: '0xB', value: '0.333333333333333333' },
+        { address: '0xC', value: '0.616666666666666667' },
+      ],
+      rewardsForProposalsNew: parseUnits('0'),
     });
   });
 });
