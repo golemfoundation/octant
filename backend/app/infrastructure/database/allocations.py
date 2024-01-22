@@ -8,8 +8,7 @@ from sqlalchemy.orm import Query
 
 from app.exceptions import UserNotFound
 from app.extensions import db
-from app.infrastructure.database.models import Allocation, User, \
-    AllocationRequest
+from app.infrastructure.database.models import Allocation, User, AllocationRequest
 from app.infrastructure.database.user import get_by_address
 from app.legacy.core.common import AccountFunds
 

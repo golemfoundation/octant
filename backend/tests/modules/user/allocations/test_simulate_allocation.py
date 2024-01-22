@@ -36,10 +36,10 @@ def test_simulate_allocation_single_user():
     assert result == [
         ProjectRewardDTO(sorted_projects[0], 0, 0),
         ProjectRewardDTO(sorted_projects[1], 0, 0),
-        ProjectRewardDTO(sorted_projects[2], 50 * 10**18, 48_914310736_778055201),
+        ProjectRewardDTO(sorted_projects[2], 50 * 10**18, 122_285776841_945138003),
         ProjectRewardDTO(sorted_projects[3], 0, 0),
-        ProjectRewardDTO(sorted_projects[4], 40 * 10**18, 61_142888420_972569002),
-        ProjectRewardDTO(sorted_projects[5], 0, -110_057199157_750624203),
+        ProjectRewardDTO(sorted_projects[4], 40 * 10**18, 97_828621473_556110403),
+        ProjectRewardDTO(sorted_projects[5], 0, 0),
         ProjectRewardDTO(sorted_projects[6], 0, 0),
         ProjectRewardDTO(sorted_projects[7], 0, 0),
         ProjectRewardDTO(sorted_projects[8], 0, 0),
@@ -47,21 +47,21 @@ def test_simulate_allocation_single_user():
     ]
 
 
-def test_simulate_allocation_multiple_user(proposal_accounts):
+def test_simulate_allocation_multiple_user():
     context = get_context()
     project_settings = context.epoch_settings.project
     projects = context.projects_details.projects
     # Test data
     allocations_before = [
-        AllocationDTO(proposal_accounts[0].address, 10 * 10**18, USER1_ADDRESS),
-        AllocationDTO(proposal_accounts[1].address, 20 * 10**18, USER1_ADDRESS),
-        AllocationDTO(proposal_accounts[2].address, 30 * 10**18, USER1_ADDRESS),
-        AllocationDTO(proposal_accounts[0].address, 40 * 10**18, USER2_ADDRESS),
-        AllocationDTO(proposal_accounts[1].address, 50 * 10**18, USER2_ADDRESS),
+        AllocationDTO(projects[0], 10 * 10**18, USER1_ADDRESS),
+        AllocationDTO(projects[1], 20 * 10**18, USER1_ADDRESS),
+        AllocationDTO(projects[2], 30 * 10**18, USER1_ADDRESS),
+        AllocationDTO(projects[0], 40 * 10**18, USER2_ADDRESS),
+        AllocationDTO(projects[1], 50 * 10**18, USER2_ADDRESS),
     ]
     user_allocation = [
-        AllocationDTO(proposal_accounts[0].address, 60 * 10**18, USER1_ADDRESS),
-        AllocationDTO(proposal_accounts[1].address, 70 * 10**18, USER1_ADDRESS),
+        AllocationDTO(projects[0], 60 * 10**18, USER1_ADDRESS),
+        AllocationDTO(projects[1], 70 * 10**18, USER1_ADDRESS),
     ]
 
     # Call simulate allocation method
@@ -79,10 +79,10 @@ def test_simulate_allocation_multiple_user(proposal_accounts):
     assert result == [
         ProjectRewardDTO(sorted_projects[0], 0, 0),
         ProjectRewardDTO(sorted_projects[1], 0, 0),
-        ProjectRewardDTO(sorted_projects[2], 120 * 10**18, 17_342346533_948583208),
+        ProjectRewardDTO(sorted_projects[2], 120 * 10**18, 120_062399081_182499131),
         ProjectRewardDTO(sorted_projects[3], 0, 0),
-        ProjectRewardDTO(sorted_projects[4], 100 * 10**18, 26_680533129_151666473),
-        ProjectRewardDTO(sorted_projects[5], 0, -44_022879663_100249681),
+        ProjectRewardDTO(sorted_projects[4], 100 * 10**18, 100_051999234_318749275),
+        ProjectRewardDTO(sorted_projects[5], 0, 0),
         ProjectRewardDTO(sorted_projects[6], 0, 0),
         ProjectRewardDTO(sorted_projects[7], 0, 0),
         ProjectRewardDTO(sorted_projects[8], 0, 0),

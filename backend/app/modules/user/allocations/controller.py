@@ -18,7 +18,7 @@ def get_donors(epoch_num: int) -> List[str]:
 
 def simulate_allocation(
     payload: Dict, user_address: str
-) -> Tuple[float, List[Dict[str, str | int]]]:
+) -> Tuple[float, List[Dict[str, int]]]:
     context = state_context(EpochState.PENDING)
     service: PendingUserAllocations = get_services(
         context.epoch_state
@@ -28,11 +28,7 @@ def simulate_allocation(
         context, user_allocations, user_address
     )
 
-    matched = [
-        {"address": p.address, "value": p.matched}
-        for p in projects_rewards
-        if p.matched > 0
-    ]
+    matched = [{"address": p.address, "value": p.matched} for p in projects_rewards]
 
     return leverage, matched
 

@@ -15,7 +15,8 @@ from app.legacy.core.user.rewards import get_all_claimed_rewards
 from tests.conftest import (
     allocate_user_rewards,
     MOCKED_PENDING_EPOCH_NO,
-    USER1_BUDGET, MOCK_EPOCHS,
+    USER1_BUDGET,
+    MOCK_EPOCHS,
 )
 
 
