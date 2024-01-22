@@ -14,6 +14,7 @@ from web3 import Web3
 
 from app import create_app, database
 from app.contracts.epochs import Epochs
+from app.contracts.erc20 import ERC20
 from app.contracts.proposals import Proposals
 from app.contracts.vault import Vault
 from app.controllers.allocations import allocate, deserialize_payload
@@ -50,6 +51,7 @@ from tests.helpers.subgraph.events import create_deposit_event
 MOCK_EPOCHS = MagicMock(spec=Epochs)
 MOCK_PROPOSALS = MagicMock(spec=Proposals)
 MOCK_VAULT = MagicMock(spec=Vault)
+MOCK_GLM = MagicMock(spec=ERC20)
 
 # Other mocks
 MOCK_GET_ETH_BALANCE = MagicMock()
@@ -325,6 +327,12 @@ def patch_proposals(monkeypatch, proposal_accounts):
 def patch_vault(monkeypatch):
     monkeypatch.setattr("app.controllers.withdrawals.vault", MOCK_VAULT)
     MOCK_VAULT.get_last_claimed_epoch.return_value = 0
+
+
+@pytest.fixture(scope="function")
+def patch_glm(monkeypatch):
+    monkeypatch.setattr("app.core.user.budget.glm", MOCK_GLM)
+    MOCK_GLM.balance_of.return_value = TOTAL_ED
 
 
 @pytest.fixture(scope="function")

@@ -22,18 +22,14 @@ from app.controllers import allocations as allocations_controller
 from app.controllers import user as user_controller
 
 
-from tests.helpers import (
-    generate_epoch_events,
-    create_epoch_event,
-    create_deposit_event,
-)
+from tests.helpers import generate_epoch_events, create_epoch_event
 from tests.conftest import (
     allocate_user_rewards,
     MOCKED_PENDING_EPOCH_NO,
     mock_graphql,
     MOCK_EPOCHS,
 )
-from tests.helpers.constants import USER1_BUDGET, USER2_BUDGET, USER1_ADDRESS
+from tests.helpers.constants import USER1_BUDGET, USER2_BUDGET
 
 
 @pytest.fixture(autouse=True)
@@ -70,30 +66,25 @@ def test_get_user_budget(user_accounts, mock_pending_epoch_snapshot_db):
     [
         (0, 0, 0),
         (15, 90, 0),
-        (15, 1000_000000000_000000000, 358680_289461910),
-        (15, 300000_000000000_000000000, 107604086_838573287),
+        (15, 1000_000000000_000000000, 141780_821917808),
+        (15, 300000_000000000_000000000, 42534246_575342465),
         (70, 90_000000000_000000000, 0),
-        (70, 1000_000000000_000000000, 1673841_350822251),
-        (70, 300000_000000000_000000000, 502152405_246675339),
+        (70, 1000_000000000_000000000, 661643_835616438),
+        (70, 300000_000000000_000000000, 19849315_0684931507),
         (150, 90_000000000_000000000, 0),
-        (150, 1000_000000000_000000000, 2453013_311931494),
-        (150, 300000_000000000_000000000, 735903993_579448683),
+        (150, 1000_000000000_000000000, 1417808_219178081),
+        (150, 300000_000000000_000000000, 425342465_753424658),
         (252, 90_000000000_000000000, 0),
-        (252, 1000_000000000_000000000, 3413258_170188724),
-        (252, 300000_000000000_000000000, 1_025136870_291777451),
-        (365250, 300000_000000000_000000000, 1036_019465637_415067067),
+        (252, 1000_000000000_000000000, 2381917_808219177),
+        (252, 300000_000000000_000000000, 714575342_465753426),
+        (365250, 300000_000000000_000000000, 1035_708904109_589043041),
     ],
 )
 @freeze_time("2023-08-09 01:48:47")
-def test_estimate_budget(mocker, graphql_client, patch_epochs, days, amount, expected):
-    MOCK_EPOCHS.get_current_epoch.return_value = 1
-    deposits = [
-        create_deposit_event(
-            user=USER1_ADDRESS,
-            amount=100000000_000000000_000000000,
-            timestamp=1691510401,
-        ),
-    ]
+def test_estimate_budget(
+    mocker, graphql_client, patch_epochs, patch_glm, days, amount, expected
+):
+    MOCK_EPOCHS.get_current_epoch.return_value = 2
     epochs = [
         create_epoch_event(
             start=1691510400,
@@ -110,7 +101,7 @@ def test_estimate_budget(mocker, graphql_client, patch_epochs, days, amount, exp
         epoches=2,
     )
 
-    mock_graphql(mocker, deposit_events=deposits, epochs_events=epochs)
+    mock_graphql(mocker, epochs_events=epochs)
 
     result = estimate_budget(days, amount)
 

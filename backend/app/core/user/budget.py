@@ -4,7 +4,6 @@ from app import database
 from app.constants import GLM_TOTAL_SUPPLY_WEI
 from app.core.deposits.deposits import (
     estimate_effective_deposit,
-    get_estimated_total_effective_deposit,
     calculate_locked_ratio,
 )
 from app.core.epochs import details as epochs_details
@@ -13,8 +12,9 @@ from app.core.epochs.epochs_registry import EpochsRegistry
 from app.core.staking import estimate_epoch_eth_staking_proceeds
 from app.core.user.patron_mode import get_patrons_at_timestamp
 from app.database.models import PendingEpochSnapshot
-from app.extensions import epochs
+from app.extensions import glm, epochs
 from app.utils.time import days_to_sec, from_timestamp_s
+from flask import current_app as app
 
 
 def get_budget(user_address: str, epoch: int) -> int:
@@ -47,7 +47,9 @@ def estimate_budget(days: int, glm_amount: int) -> int:
     epoch_num = epochs.get_current_epoch()
     epoch = epochs_details.get_epoch_details(epoch_num)
     lock_duration = days_to_sec(days)
-    estimated_total_effective_deposit = get_estimated_total_effective_deposit(epoch_num)
+    estimated_total_effective_deposit = glm.balance_of(
+        app.config["DEPOSITS_CONTRACT_ADDRESS"]
+    )
     total_locked_ratio = calculate_locked_ratio(
         estimated_total_effective_deposit, GLM_TOTAL_SUPPLY_WEI
     )
