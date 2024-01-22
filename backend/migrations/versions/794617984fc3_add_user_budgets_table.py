@@ -1,7 +1,7 @@
 """add user budgets table
 
 Revision ID: 794617984fc3
-Revises: f81d796a7ab8
+Revises: 449308032075
 Create Date: 2024-01-02 12:03:50.556160
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "794617984fc3"
-down_revision = "f81d796a7ab8"
+down_revision = "449308032075"
 branch_labels = None
 depends_on = None
 
