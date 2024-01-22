@@ -44,10 +44,16 @@ def add_allocations_to_db(
     database.allocations.add_all(epoch, user.id, nonce, allocations)
 
 
-def store_allocations_signature(
-    epoch: int, user_address: str, nonce: int, signature: str
+def store_allocation_request(
+    epoch: int,
+    user_address: str,
+    nonce: int,
+    signature: str,
+    is_manually_edited: Optional[bool] = None,
 ):
-    database.allocations.add_allocation_signature(user_address, epoch, nonce, signature)
+    database.allocations.add_allocation_request(
+        user_address, epoch, nonce, signature, is_manually_edited
+    )
 
 
 def recover_user_address(request: AllocationRequest) -> str:
@@ -128,7 +134,7 @@ def next_allocation_nonce(user: User | None) -> int:
 
 def has_user_allocated_rewards(user_address: str, epoch: int) -> List[str]:
     allocation_signature = (
-        database.allocations.get_allocation_signature_by_user_and_epoch(
+        database.allocations.get_allocation_request_by_user_and_epoch(
             user_address, epoch
         )
     )

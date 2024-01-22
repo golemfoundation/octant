@@ -14,35 +14,19 @@ def simulate_allocation(
     all_projects: List[str],
     matched_rewards: int,
 ):
-    project_rewards_before, _ = _estimate_projects_rewards(
-        projects_settings,
-        all_allocations_before,
-        all_projects,
-        matched_rewards,
-    )
-
-    all_allocations_after = _replace_user_allocation(
+    simulated_allocations = _replace_user_allocation(
         all_allocations_before, user_allocations, user_address
     )
 
-    project_rewards_after, total_allocated = _estimate_projects_rewards(
+    simulated_projects_rewards, total_allocated = _estimate_projects_rewards(
         projects_settings,
-        all_allocations_after,
+        simulated_allocations,
         all_projects,
         matched_rewards,
     )
 
     leverage = calculate_leverage(matched_rewards, total_allocated)
-    rewards_diff = [
-        ProjectRewardDTO(
-            base.address,
-            simulated.allocated,
-            simulated.matched - base.matched,
-        )
-        for base, simulated in zip(project_rewards_before, project_rewards_after)
-    ]
-
-    return leverage, rewards_diff
+    return leverage, simulated_projects_rewards
 
 
 def _estimate_projects_rewards(

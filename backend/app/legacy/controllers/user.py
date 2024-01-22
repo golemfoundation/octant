@@ -1,6 +1,7 @@
 from typing import List
+from flask import current_app as app
 
-from app.exceptions import InvalidSignature, UserNotFound
+from app.exceptions import InvalidSignature, UserNotFound, NotInDecisionWindow
 from app.extensions import db
 from app.infrastructure import database
 from app.legacy.controllers import allocations as allocations_controller
@@ -47,7 +48,12 @@ def toggle_patron_mode(user_address: str, signature: str) -> bool:
 
     patron_mode_status = patron_mode_core.toggle_patron_mode(user_address)
 
-    allocations_controller.revoke_previous_user_allocation(user_address)
+    try:
+        allocations_controller.revoke_previous_user_allocation(user_address)
+    except NotInDecisionWindow:
+        app.logger.info(
+            f"Not in allocation period. Skipped revoking previous allocation for user {user_address}"
+        )
 
     db.session.commit()
     return patron_mode_status

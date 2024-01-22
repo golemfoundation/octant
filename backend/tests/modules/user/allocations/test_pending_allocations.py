@@ -85,7 +85,7 @@ def test_simulate_allocation(mock_users_db, mock_octant_rewards):
         ProjectRewardDTO(sorted_projects[1], 0, 0),
         ProjectRewardDTO(sorted_projects[2], 200_000000000, MATCHED_REWARDS),
         ProjectRewardDTO(sorted_projects[3], 0, 0),
-        ProjectRewardDTO(sorted_projects[4], 0, -MATCHED_REWARDS),
+        ProjectRewardDTO(sorted_projects[4], 0, 0),
         ProjectRewardDTO(sorted_projects[5], 0, 0),
         ProjectRewardDTO(sorted_projects[6], 0, 0),
         ProjectRewardDTO(sorted_projects[7], 0, 0),

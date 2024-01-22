@@ -16,6 +16,7 @@ from tests.conftest import (
     allocate_user_rewards,
     MOCKED_PENDING_EPOCH_NO,
     USER1_BUDGET,
+    MOCK_EPOCHS,
 )
 
 
@@ -231,3 +232,15 @@ def test_patron_mode_does_not_revoke_allocations_from_previous_epochs(
 
     assert user_active_allocations_post != user_active_allocations_pre
     assert user_prev_epoch_allocations_post == user_prev_epoch_allocations_pre
+
+
+def test_patron_mode_can_be_toggled_outside_allocation_period(user_accounts):
+    MOCK_EPOCHS.get_pending_epoch.return_value = None
+
+    database.user.add_user(user_accounts[0].address)
+    toggle_true_sig = "52d249ca8ac8f40c01613635dac8a9b01eb50230ad1467451a058170726650b92223e80032a4bff4d25c3554e9d1347043c53b4c2dc9f1ba3f071bd3a1c8b9121b"
+    toggle_patron_mode(user_accounts[0].address, toggle_true_sig)
+
+    status = get_patron_mode_status(user_accounts[0].address)
+
+    assert status is True

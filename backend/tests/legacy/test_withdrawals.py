@@ -272,7 +272,7 @@ def test_get_withdrawable_eth_in_pending_epoch_with_allocation(
 
     user_allocations = [Allocation(proposal_accounts[0].address, 10_000000000)]
     database.allocations.add_all(MOCKED_PENDING_EPOCH_NO, user.id, 0, user_allocations)
-    database.allocations.add_allocation_signature(
+    database.allocations.add_allocation_request(
         user_accounts[0].address, MOCKED_PENDING_EPOCH_NO, 0, "0x00"
     )
     db.session.commit()
@@ -315,7 +315,7 @@ def test_get_withdrawable_eth_in_pending_epoch_in_epoch_3(
     database.allocations.add_all(
         MOCKED_PENDING_EPOCH_NO + 1, user.id, 0, user_allocations
     )
-    database.allocations.add_allocation_signature(
+    database.allocations.add_allocation_request(
         user_accounts[0].address, MOCKED_PENDING_EPOCH_NO + 1, 0, "0x00"
     )
 
