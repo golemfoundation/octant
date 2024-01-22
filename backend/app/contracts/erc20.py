@@ -28,3 +28,6 @@ class ERC20(SmartContract):
         ).build_transaction({"from": owner.address, "nonce": nonce})
         signed_tx = self.w3.eth.account.sign_transaction(transaction, owner.key)
         return self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+
+    def balance_of(self, owner: str) -> int:
+        return self.contract.functions.balanceOf(owner).call()
