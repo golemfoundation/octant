@@ -95,7 +95,7 @@ class MockGQLClient:
     def _limit_result(entities, query, variables):
         limit = MockGQLClient._extract_limit(query, variables)
 
-        return entities[:limit] if limit is not None else entities
+        return list(entities)[:limit] if limit is not None else entities
 
     @staticmethod
     def _extract_limit(query, variables):

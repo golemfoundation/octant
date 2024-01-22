@@ -26,7 +26,7 @@ def get_epoch_by_number(epoch_number):
     query = gql(
         """
 query GetEpochs {
-  epoches {
+  epoches(first: 1000) {
     epoch
     fromTs
     toTs
@@ -60,7 +60,7 @@ def get_epochs_by_range(from_epoch, to_epoch):
     query = gql(
         """
 query GetEpochs {
-  epoches {
+  epoches(first: 1000) {
     epoch
     fromTs
     toTs
@@ -89,7 +89,7 @@ def get_epochs():
     query = gql(
         """
 query {
-  epoches {
+  epoches(first: 1000) {
     epoch
     fromTs
     toTs
