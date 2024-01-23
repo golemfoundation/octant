@@ -34,8 +34,23 @@ def upgrade():
                 "operational_cost", sa.String(), nullable=False, server_default="0"
             )
         )
-
     # ### end Alembic commands ###
+
+    # Update pending snapshots
+    op.execute(
+        "UPDATE pending_epoch_snapshots SET operational_cost = '82408409816289053184' WHERE epoch = 1"
+    )
+    op.execute(
+        "UPDATE pending_epoch_snapshots SET operational_cost = '241664279869852205390' WHERE epoch = 2"
+    )
+
+    # Update finalized snapshots
+    op.execute(
+        "UPDATE finalized_epoch_snapshots SET leftover = '9537357664505573437' WHERE epoch = 1"
+    )
+    op.execute(
+        "UPDATE finalized_epoch_snapshots SET patrons_rewards = '16050223937523865304' WHERE epoch = 1"
+    )
 
 
 def downgrade():
