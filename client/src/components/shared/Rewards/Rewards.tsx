@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import ProgressBar from 'components/ui/ProgressBar';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
@@ -22,11 +23,12 @@ const Rewards: FC<RewardsProps> = ({
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.proposalRewards',
   });
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   const isArchivedProposal = epoch !== undefined;
 
   const { data: proposalRewardsThreshold, isFetching } = useProposalRewardsThreshold(epoch);
-  const isDonationAboveThreshold = useIsDonationAboveThreshold(address, epoch);
+  const isDonationAboveThreshold = useIsDonationAboveThreshold({ epoch, proposalAddress: address });
 
   const totalValueOfAllocationsToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
@@ -51,7 +53,7 @@ const Rewards: FC<RewardsProps> = ({
     if (isDonationAboveThreshold && isArchivedProposal) {
       return t('totalRaised');
     }
-    return t('totalDonated');
+    return i18n.t('common.totalDonated');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isArchivedProposal, isDonationAboveThreshold]);
 
@@ -122,7 +124,10 @@ const Rewards: FC<RewardsProps> = ({
             className={cx(
               styles.value,
               isDonationAboveThreshold && isArchivedProposal && styles.greenValue,
-              !isDonationAboveThreshold && !isArchivedProposal && styles.redValue,
+              isDecisionWindowOpen &&
+                !isDonationAboveThreshold &&
+                !isArchivedProposal &&
+                styles.redValue,
               isFetching && styles.isFetching,
             )}
             data-test="ProposalRewards__currentTotal__number"
@@ -132,7 +137,9 @@ const Rewards: FC<RewardsProps> = ({
               : proposalDonorsRewardsSumToDisplay}
           </div>
         </div>
-        {!(isDonationAboveThreshold && !isArchivedProposal) && (
+        {((!isArchivedProposal && isDecisionWindowOpen && !isDonationAboveThreshold) ||
+          !isDonationAboveThreshold ||
+          isArchivedProposal) && (
           <div className={cx(styles.section, styles.rightSection)}>
             <div className={cx(styles.label, isFetching && styles.isFetching)}>
               {rightSectionLabel}

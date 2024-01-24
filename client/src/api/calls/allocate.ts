@@ -1,17 +1,24 @@
+import { GenericAbortSignal } from 'axios';
+
 import env from 'env';
 import apiService from 'services/apiService';
 
 export type ApiPostAllocateLeverageData = {
   allocations: {
-    // WEI
-    amount: string;
+    amount: string; // WEI
     proposalAddress: string;
   }[];
+};
+
+export type LeverageMatched = {
+  address: string;
+  value: string; // WEI;
 };
 
 export type ApiPostAllocateLeverageResponse = {
   // Float as a string, at least 15 decimal places.
   leverage: string;
+  matched: LeverageMatched[];
 };
 
 export type ApiGetUserAllocationNonceResponse = {
@@ -21,9 +28,10 @@ export type ApiGetUserAllocationNonceResponse = {
 export function apiPostAllocateLeverage(
   allocateData: ApiPostAllocateLeverageData,
   userAddress: string,
+  signal: GenericAbortSignal,
 ): Promise<ApiPostAllocateLeverageResponse> {
   return apiService
-    .post(`${env.serverEndpoint}allocations/leverage/${userAddress}`, allocateData)
+    .post(`${env.serverEndpoint}allocations/leverage/${userAddress}`, allocateData, { signal })
     .then(({ data }) => data);
 }
 

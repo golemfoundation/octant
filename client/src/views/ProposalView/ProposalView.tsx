@@ -34,7 +34,7 @@ const ProposalView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
   const epochUrlInt = parseInt(epochUrl!, 10);
 
-  const epoch = currentEpoch && epochUrlInt < currentEpoch ? epochUrlInt : undefined;
+  const epoch = isDecisionWindowOpen && epochUrlInt === currentEpoch! - 1 ? undefined : epochUrlInt;
 
   const { data: matchedProposalRewards } = useMatchedProposalRewards(epoch);
   const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards(epoch);
@@ -75,9 +75,17 @@ const ProposalView = (): ReactElement => {
      *
      * During "normal" usage problem could not be reproduced,
      * yet might be possible, so better avoid that.
+     *
+     * Issue is not resolved in the library:
+     * https://github.com/danbovey/react-infinite-scroller/issues/143
      */
     if (loadedProposals.findIndex(p => p.address === nextItem.address) < 0) {
-      setLoadedProposals(prev => [...prev, nextItem]);
+      setLoadedProposals(prev =>
+        [...prev, nextItem].filter(
+          (element, index, self) =>
+            index === self.findIndex(element2 => element2.address === element.address),
+        ),
+      );
     }
   };
 

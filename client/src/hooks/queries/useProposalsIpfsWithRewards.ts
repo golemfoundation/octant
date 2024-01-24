@@ -25,15 +25,18 @@ export default function useProposalsIpfsWithRewards(epoch?: number): {
     proposalsAddresses,
     epoch,
   );
-  const { data: matchedProposalRewards, isFetching: isFetchingMatchedProposalRewards } =
-    useMatchedProposalRewards(epoch);
+  const {
+    data: matchedProposalRewards,
+    isFetching: isFetchingMatchedProposalRewards,
+    isRefetching: isRefetchingMatchedProposalRewards,
+  } = useMatchedProposalRewards(epoch);
   const { data: proposalsDonors, isFetching: isFetchingProposalsDonors } =
     useProposalsDonors(epoch);
 
   const isFetching =
     isFetchingProposalsContract ||
     isFetchingProposalsIpfs ||
-    isFetchingMatchedProposalRewards ||
+    (isFetchingMatchedProposalRewards && !isRefetchingMatchedProposalRewards) ||
     isFetchingProposalsDonors;
   if (isFetching) {
     return {

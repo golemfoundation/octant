@@ -65,7 +65,7 @@ def get_epochs():
     query = gql(
         """
 query {
-  epoches {
+  epoches(first: 1000) {
     epoch
     fromTs
     toTs

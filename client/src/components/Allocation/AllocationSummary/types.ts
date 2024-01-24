@@ -1,5 +1,6 @@
-import { AllocationValues } from 'views/AllocationView/types';
+import { ApiPostAllocateLeverageResponse } from 'api/calls/allocate';
 
 export default interface AllocationSummaryProps {
-  allocationValues: AllocationValues;
+  allocationSimulated?: ApiPostAllocateLeverageResponse;
+  isLoadingAllocateSimulate: boolean;
 }

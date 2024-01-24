@@ -62,6 +62,7 @@ const EarnBoxGlmLock: FC<EarnBoxGlmLockProps> = ({ classNameBox }) => {
         dataTest: 'TooltipEffectiveLockedBalance',
         position: 'bottom-right',
         text: t('tooltipText'),
+        tooltipClassName: styles.effectiveTooltip,
       },
     },
   ];

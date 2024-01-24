@@ -4,6 +4,7 @@ import { apiGetProposalDonors, Response } from 'api/calls/poroposalDonors';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useSubscription from 'hooks/helpers/useSubscription';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import { WebsocketListenEvent } from 'types/websocketEvents';
 
 import { ProposalDonor } from './types';
@@ -16,6 +17,7 @@ export default function useProposalDonors(
 ): UseQueryResult<ProposalDonor[]> {
   const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   /**
    * Socket returns proposal donors for current epoch only.
@@ -24,15 +26,28 @@ export default function useProposalDonors(
   // TODO OCT-1139 check if socket works correctly, update if needed.
   useSubscription<Response>({
     callback: data => {
-      queryClient.setQueryData(QUERY_KEYS.proposalDonors(proposalAddress, currentEpoch! - 1), data);
+      queryClient.setQueryData(
+        QUERY_KEYS.proposalDonors(
+          proposalAddress,
+          epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
+        ),
+        data,
+      );
     },
-    enabled: epoch === undefined,
+    enabled: epoch === undefined && isDecisionWindowOpen !== undefined,
     event: WebsocketListenEvent.proposalDonors,
   });
 
   return useQuery(
-    QUERY_KEYS.proposalDonors(proposalAddress, epoch || currentEpoch! - 1),
-    () => apiGetProposalDonors(proposalAddress, epoch || currentEpoch! - 1),
+    QUERY_KEYS.proposalDonors(
+      proposalAddress,
+      epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
+    ),
+    () =>
+      apiGetProposalDonors(
+        proposalAddress,
+        epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
+      ),
     {
       enabled: !!proposalAddress && (epoch !== undefined || !!(currentEpoch && currentEpoch > 1)),
       select: response => mapDataToProposalDonors(response),
