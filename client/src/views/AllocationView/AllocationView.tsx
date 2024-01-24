@@ -288,12 +288,18 @@ const AllocationView = (): ReactElement => {
     ) {
       return;
     }
-    mutateAsyncAllocateSimulateDebounced(allocationValues);
+    mutateAsyncAllocateSimulateDebounced(
+      currentView === 'edit' ? allocationValues : userAllocations?.elements,
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    currentView,
     mutateAsyncAllocateSimulateDebounced,
     addressesWithError,
     allocationValues,
     isDecisionWindowOpen,
+    userAllocations?.elements?.length,
+    userNonce,
   ]);
 
   const onChangeAllocationItemValue = (
