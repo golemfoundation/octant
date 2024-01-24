@@ -31,7 +31,7 @@ history_item = api.model(
             required=False,
             description="Allocation project address. Field available only for allocation items.",
         ),
-        "epoch": fields.Boolean(
+        "epoch": fields.Integer(
             required=False,
             description="Epoch in which action occured. Field available only for patron_mode_donation items. ",
         ),

@@ -13,6 +13,7 @@ export type UserAllocationElement = { address: string; value: BigNumber };
 type Response = {
   elements: UserAllocationElement[];
   hasUserAlreadyDoneAllocation: boolean;
+  isManuallyEdited: boolean;
 };
 
 export default function useUserAllocations(
@@ -28,7 +29,7 @@ export default function useUserAllocations(
     {
       enabled: (epoch !== undefined || (!!currentEpoch && currentEpoch > 1)) && !!address,
       select: response => {
-        const userAllocationsFromBackend = response!.map(element => ({
+        const userAllocationsFromBackend = response!.allocations.map(element => ({
           address: element.address,
           value: parseUnits(element.amount, 'wei'),
         }));
@@ -40,6 +41,7 @@ export default function useUserAllocations(
            */
           elements: userAllocationsFromBackend.filter(({ value }) => !value.isZero()),
           hasUserAlreadyDoneAllocation: !!userAllocationsFromBackend?.length,
+          isManuallyEdited: !!response.isManuallyEdited,
         };
       },
       ...options,

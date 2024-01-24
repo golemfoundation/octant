@@ -10,6 +10,7 @@ import Img from 'components/ui/Img';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
@@ -28,6 +29,7 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
     proposalIpfsWithRewards;
   const navigate = useNavigate();
   const { data: userAllocations } = useUserAllocations(epoch);
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { allocations, setAllocations } = useAllocationsStore(state => ({
     allocations: state.data.allocations,
     setAllocations: state.setAllocations,
@@ -41,9 +43,11 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
     userAllocationsElements: userAllocations?.elements,
   });
 
-  const isAllocatedTo = !!userAllocations?.elements.find(
-    ({ address: userAllocationAddress }) => userAllocationAddress === address,
-  );
+  const isAllocatedTo =
+    (epoch !== undefined || !!isDecisionWindowOpen) &&
+    !!userAllocations?.elements.find(
+      ({ address: userAllocationAddress }) => userAllocationAddress === address,
+    );
   const isEpoch1 = currentEpoch === 1;
   const isArchivedProposal = epoch !== undefined;
 
@@ -59,7 +63,12 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
       onClick={
         isLoadingError
           ? () => {}
-          : () => navigate(`${ROOT_ROUTES.proposal.absolute}/${epoch || currentEpoch}/${address}`)
+          : () =>
+              navigate(
+                `${ROOT_ROUTES.proposal.absolute}/${
+                  epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch)
+                }/${address}`,
+              )
       }
     >
       {isLoadingError ? (

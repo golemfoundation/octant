@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSignTypedData } from 'wagmi';
 
+import { handleError } from 'api/errorMessages';
 import networkConfig from 'constants/networkConfig';
 import { getAllocationsMapped } from 'hooks/utils/utils';
 import { WebsocketEmitEvent } from 'types/websocketEvents';
@@ -13,7 +14,10 @@ type UseAllocateProps = {
   onSuccess: () => void;
 };
 
-type UseAllocate = { emit: (allocations: AllocationValues) => void; isLoading: boolean };
+type UseAllocate = {
+  emit: (allocations: { address: string; value: string }[], isManuallyEdited: boolean) => void;
+  isLoading: boolean;
+};
 
 const domain = {
   chainId: networkConfig.id,
@@ -39,12 +43,22 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
     message: {
       value: 'Octant Allocation',
     },
+    onError: error => {
+      // @ts-expect-error Error is of type 'unknown', but it is API or contract error.
+      const hasUserRejectedTransaction = error.cause.code === 4001;
+      // @ts-expect-error Error is of type 'unknown', but it is API or contract error.
+      const reason = hasUserRejectedTransaction ? 4001 : error.reason;
+      handleError(reason);
+      setIsLoading(false);
+    },
     onSuccess: async (data, variables) => {
+      const { isManuallyEdited, ...restVariables } = variables.message;
       websocketService().then(socket => {
         socket.default.emit(
           WebsocketEmitEvent.allocate,
           JSON.stringify({
-            payload: variables.message,
+            isManuallyEdited,
+            payload: restVariables,
             signature: data,
           }),
           () => {
@@ -60,11 +74,12 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
     types,
   });
 
-  const allocate = (allocations: AllocationValues) => {
+  const allocate = (allocations: AllocationValues, isManuallyEdited: boolean) => {
     setIsLoading(true);
     const allocationsMapped = getAllocationsMapped(allocations);
     const message = {
       allocations: allocationsMapped,
+      isManuallyEdited,
       nonce,
     };
 

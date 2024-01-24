@@ -3,6 +3,7 @@ import { useAccount } from 'wagmi';
 
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useAllocationsStore from 'store/allocations/store';
@@ -17,6 +18,7 @@ export default function useAppPopulateState(): void {
 
   const { data: proposals } = useProposalsContract();
   const { data: userAllocations } = useUserAllocations();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const {
     data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow,
     isLoading: isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow,
@@ -100,6 +102,7 @@ export default function useAppPopulateState(): void {
      * Navbar badge is not visible.
      */
     if (
+      !isDecisionWindowOpen ||
       !userAllocations ||
       !isAllocationsInitialized ||
       isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow ||
@@ -124,6 +127,7 @@ export default function useAppPopulateState(): void {
     allocations,
     areCurrentEpochsProjectsHiddenOutsideAllocationWindow,
     isAllocationsInitialized,
+    isDecisionWindowOpen,
     isConnected,
     isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow,
     userAllocations,

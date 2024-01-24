@@ -1,10 +1,4 @@
 .root {
-  padding: 0 5.6rem;
-
-  &:not(.areAllocationValuesPositive) {
-    padding-bottom: 4rem;
-  }
-
   @media #{$tablet-down} {
     padding: 0 2.4rem;
   }
@@ -32,9 +26,104 @@
   display: flex;
   flex-direction: column;
   align-self: stretch;
-  margin: 4rem 0;
 }
 
-.bold {
+.section {
+  height: 6.4rem;
+
+  @media #{$desktop-up} {
+    height: 8rem;
+  }
+
+  .leftSection {
+    text-align: left;
+
+    .label {
+      font-size: $font-size-12;
+      font-weight: $font-weight-bold;
+      color: $color-octant-dark;
+      line-height: 2.4rem;
+
+      .matchFundingLeverage {
+        padding: 0.1rem 0.4rem;
+        font-size: $font-size-10;
+        margin-left: 0.8rem;
+
+        &.isLoading {
+          @include skeleton();
+          width: 3rem;
+          height: 2.4rem;
+        }
+
+        &:not(.isLoading) {
+          border-radius: $border-radius-04;
+          border: 0.1rem solid $color-octant-dark;
+        }
+      }
+
+      @media #{$desktop-up} {
+        font-size: $font-size-14;
+      }
+    }
+  }
+
+  .rightSection {
+    text-align: right;
+
+    .value {
+      font-size: $font-size-12;
+      font-weight: $font-weight-bold;
+      color: $color-octant-grey5;
+      line-height: 2.4rem;
+    }
+
+    @media #{$desktop-up} {
+      font-size: $font-size-14;
+    }
+  }
+}
+
+.personalRewardBox {
+  height: 6.4rem;
+
+  &.areAllocationValuesPositive {
+    margin-top: 1.6rem;
+  }
+
+  @media #{$desktop-up} {
+    height: 8rem;
+  }
+}
+
+.personalReward {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.label,
+.value {
+  display: flex;
+  align-items: center;
+  font-size: $font-size-14;
   font-weight: $font-weight-bold;
+  color: $color-octant-dark;
+
+  &.isLoading {
+    @include skeleton();
+    height: 2.4rem;
+    width: 10rem;
+  }
+
+  @media #{$desktop-up} {
+    font-size: $font-size-16;
+  }
+}
+
+.label {
+  justify-content: flex-start;
+}
+
+.value {
+  justify-content: flex-end;
 }

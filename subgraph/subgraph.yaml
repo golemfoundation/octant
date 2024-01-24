@@ -85,6 +85,8 @@ dataSources:
       abis:
         - name: Proposals
           file: ./abis/Proposals.json
+        - name: Epochs
+          file: ./abis/Epochs.json
       callHandlers:
         - function: setProposalAddresses(uint256,address[])
           handler: handleSetProposalAddresses
