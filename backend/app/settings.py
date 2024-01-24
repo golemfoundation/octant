@@ -61,10 +61,6 @@ class Config(object):
         os.getenv("EPOCH_2_STAKING_PROCEEDS_SURPLUS", 0)
     )
 
-    SHOULD_HARDCODE_EPOCHS_1_AND_2 = _parse_bool(
-        os.getenv("SHOULD_HARDCODE_EPOCHS_1_AND_2", "false")
-    )
-
 
 class ProdConfig(Config):
     """Production configuration."""
