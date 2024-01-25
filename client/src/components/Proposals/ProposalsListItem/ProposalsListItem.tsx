@@ -85,18 +85,20 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
               }
               src={`${ipfsGateway}${profileImageSmall}`}
             />
-            <ButtonAddToAllocate
-              className={styles.button}
-              dataTest={
-                epoch
-                  ? 'ProposalsListItem__ButtonAddToAllocate--archive'
-                  : 'ProposalsListItem__ButtonAddToAllocate'
-              }
-              isAddedToAllocate={isAddedToAllocate}
-              isAllocatedTo={isAllocatedTo}
-              isArchivedProposal={isArchivedProposal}
-              onClick={() => onAddRemoveFromAllocate(address)}
-            />
+            {((isAllocatedTo && isArchivedProposal) || !isArchivedProposal) && (
+              <ButtonAddToAllocate
+                className={styles.button}
+                dataTest={
+                  epoch
+                    ? 'ProposalsListItem__ButtonAddToAllocate--archive'
+                    : 'ProposalsListItem__ButtonAddToAllocate'
+                }
+                isAddedToAllocate={isAddedToAllocate}
+                isAllocatedTo={isAllocatedTo}
+                isArchivedProposal={isArchivedProposal}
+                onClick={() => onAddRemoveFromAllocate(address)}
+              />
+            )}
           </div>
           <div className={styles.body}>
             <div
