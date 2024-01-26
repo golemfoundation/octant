@@ -28,6 +28,7 @@ from app.modules.user.events_generator.service.db_and_graph import (
 from app.modules.user.patron_mode.service.events_based import (
     EventsBasedUserPatronMode,
 )
+from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.user.rewards.service.saved import SavedUserRewards
 
 
@@ -64,7 +65,7 @@ def test_pre_pending_services_factory():
     )
     assert result.user_deposits_service == user_deposits
     assert result.octant_rewards_service == octant_rewards
-    assert result.snapshots_service == PrePendingSnapshots(
+    assert result.pending_snapshots_service == PrePendingSnapshots(
         effective_deposits=user_deposits, octant_rewards=octant_rewards
     )
 
@@ -76,17 +77,18 @@ def test_pending_services_factory():
     events_based_patron_mode = EventsBasedUserPatronMode()
     octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
     user_allocations = PendingUserAllocations(octant_rewards=octant_rewards)
+    user_rewards = CalculatedUserRewards(
+        user_budgets=SavedUserBudgets(),
+        patrons_mode=events_based_patron_mode,
+        allocations=user_allocations,
+    )
     assert result.user_deposits_service == SavedUserDeposits()
     assert result.octant_rewards_service == PendingOctantRewards(
         patrons_mode=events_based_patron_mode
     )
     assert result.user_allocations_service == user_allocations
     assert result.user_patron_mode_service == events_based_patron_mode
-    assert result.user_rewards_service == SavedUserRewards(
-        user_budgets=SavedUserBudgets(),
-        patrons_mode=events_based_patron_mode,
-        allocations=user_allocations,
-    )
+    assert result.user_rewards_service == user_rewards
 
 
 def test_finalizing_services_factory():
@@ -95,17 +97,19 @@ def test_finalizing_services_factory():
 
     events_based_patron_mode = EventsBasedUserPatronMode()
     saved_user_allocations = SavedUserAllocations()
+    user_rewards = CalculatedUserRewards(
+        user_budgets=SavedUserBudgets(),
+        patrons_mode=events_based_patron_mode,
+        allocations=saved_user_allocations,
+    )
+
     assert result.user_deposits_service == SavedUserDeposits()
     assert result.octant_rewards_service == PendingOctantRewards(
         patrons_mode=events_based_patron_mode
     )
     assert result.user_allocations_service == saved_user_allocations
     assert result.user_patron_mode_service == events_based_patron_mode
-    assert result.user_rewards_service == SavedUserRewards(
-        user_budgets=SavedUserBudgets(),
-        patrons_mode=events_based_patron_mode,
-        allocations=saved_user_allocations,
-    )
+    assert result.user_rewards_service == user_rewards
 
 
 def test_finalized_services_factory():

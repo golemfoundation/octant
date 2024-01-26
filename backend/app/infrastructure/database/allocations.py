@@ -5,14 +5,16 @@ from typing import List, Optional
 from eth_utils import to_checksum_address
 from sqlalchemy import func
 from sqlalchemy.orm import Query
+from typing_extensions import deprecated
 
 from app.exceptions import UserNotFound
 from app.extensions import db
 from app.infrastructure.database.models import Allocation, User, AllocationRequest
 from app.infrastructure.database.user import get_by_address
-from app.legacy.core.common import AccountFunds
+from app.modules.dto import AllocationDTO, AccountFundsDTO
 
 
+@deprecated("Use `get_all` function")
 def get_all_by_epoch(epoch: int, with_deleted=False) -> List[Allocation]:
     query: Query = Allocation.query.filter_by(epoch=epoch)
 
@@ -20,6 +22,24 @@ def get_all_by_epoch(epoch: int, with_deleted=False) -> List[Allocation]:
         query = query.filter(Allocation.deleted_at.is_(None))
 
     return query.all()
+
+
+def get_all(epoch: int, with_deleted=False) -> List[AllocationDTO]:
+    query: Query = Allocation.query.filter_by(epoch=epoch)
+
+    if not with_deleted:
+        query = query.filter(Allocation.deleted_at.is_(None))
+
+    allocations = query.all()
+
+    return [
+        AllocationDTO(
+            amount=int(a.amount),
+            proposal_address=a.proposal_address,
+            user_address=a.user.address,
+        )
+        for a in allocations
+    ]
 
 
 def get_user_allocations_history(
@@ -103,7 +123,7 @@ def get_users_with_allocations(epoch_num: int) -> List[str]:
     return [u.address for u in users]
 
 
-def get_alloc_sum_by_epoch_and_user_address(epoch: int) -> List[AccountFunds]:
+def get_alloc_sum_by_epoch_and_user_address(epoch: int) -> List[AccountFundsDTO]:
     allocations = (
         db.session.query(User, Allocation)
         .join(User, User.id == Allocation.user_id)
@@ -118,7 +138,10 @@ def get_alloc_sum_by_epoch_and_user_address(epoch: int) -> List[AccountFunds]:
         allocations_by_user[user.address] += int(allocation.amount)
 
     sorted_allocations = sorted(
-        [AccountFunds(address=i[0], amount=i[1]) for i in allocations_by_user.items()],
+        [
+            AccountFundsDTO(address=i[0], amount=i[1])
+            for i in allocations_by_user.items()
+        ],
         key=lambda item: item.address,
     )
 

@@ -44,7 +44,7 @@ class DefaultProjectRewards(ProjectRewards):
         )
 
         total_allocated_above_threshold = sum(
-            [allocated for _, allocated in allocated_by_addr if allocated >= threshold]
+            [allocated for _, allocated in allocated_by_addr if allocated > threshold]
         )
 
         project_rewards_sum = 0
@@ -55,7 +55,7 @@ class DefaultProjectRewards(ProjectRewards):
 
         for address, allocated in allocated_by_addr:
             matched = 0
-            if allocated >= threshold:
+            if allocated > threshold:
                 matched = int(
                     Decimal(allocated)
                     / Decimal(total_allocated_above_threshold)

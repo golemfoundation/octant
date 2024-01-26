@@ -3,7 +3,7 @@ from typing import Protocol, List, Dict, Tuple
 from app.context.manager import Context
 from app.engine.projects.rewards import ProjectRewardDTO
 from app.engine.user.effective_deposit import UserDeposit
-from app.modules.dto import OctantRewardsDTO, AllocationDTO
+from app.modules.dto import OctantRewardsDTO, AllocationDTO, FinalizedSnapshotDTO
 
 
 class OctantRewards(Protocol):
@@ -58,6 +58,13 @@ class UserRewards(Protocol):
         ...
 
 
-class SnapshotsService(Protocol):
+class PendingSnapshots(Protocol):
     def create_pending_epoch_snapshot(self, context: Context) -> int:
+        ...
+
+
+class FinalizedSnapshots(Protocol):
+    def simulate_finalized_epoch_snapshot(
+        self, context: Context
+    ) -> FinalizedSnapshotDTO:
         ...

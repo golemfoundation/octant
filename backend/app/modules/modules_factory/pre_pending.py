@@ -3,7 +3,7 @@ from typing import Protocol
 
 from app.modules.modules_factory.protocols import (
     OctantRewards,
-    SnapshotsService,
+    PendingSnapshots,
     UserEffectiveDeposits,
     AllUserEffectiveDeposits,
 )
@@ -26,7 +26,7 @@ class PrePendingUserDeposits(UserEffectiveDeposits, AllUserEffectiveDeposits, Pr
 class PrePendingServices:
     user_deposits_service: PrePendingUserDeposits
     octant_rewards_service: OctantRewards
-    snapshots_service: SnapshotsService
+    pending_snapshots_service: PendingSnapshots
 
     @staticmethod
     def create() -> "PrePendingServices":
@@ -41,7 +41,7 @@ class PrePendingServices:
         return PrePendingServices(
             user_deposits_service=user_deposits,
             octant_rewards_service=octant_rewards,
-            snapshots_service=PrePendingSnapshots(
+            pending_snapshots_service=PrePendingSnapshots(
                 effective_deposits=user_deposits, octant_rewards=octant_rewards
             ),
         )

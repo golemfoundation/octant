@@ -13,4 +13,4 @@ def create_pending_epoch_snapshot() -> Optional[int]:
     except InvalidEpoch:
         return None
     services: PrePendingServices = get_services(EpochState.PRE_PENDING)
-    return services.snapshots_service.create_pending_epoch_snapshot(context)
+    return services.pending_snapshots_service.create_pending_epoch_snapshot(context)

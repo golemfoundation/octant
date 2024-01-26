@@ -23,6 +23,7 @@ from app.legacy.core.allocations import AllocationRequest, Allocation
 from app.legacy.crypto.account import Account as CryptoAccount
 from app.legacy.crypto.eip712 import sign, build_allocations_eip712_data
 from app.extensions import db, w3, deposits, glm
+from app.modules.dto import AccountFundsDTO
 from app.settings import TestConfig, DevConfig
 from app.engine.user.effective_deposit import UserDeposit, DepositEvent, EventType
 from tests.helpers.constants import (
@@ -589,6 +590,20 @@ def mock_patron_mode(bob):
     patron_mode_service_mock.get_patrons_rewards.return_value = USER2_BUDGET
 
     return patron_mode_service_mock
+
+
+@pytest.fixture(scope="function")
+def mock_user_rewards(alice, bob):
+    user_rewards_service_mock = Mock()
+    user_rewards_service_mock.get_claimed_rewards.return_value = (
+        [
+            AccountFundsDTO(alice.address, 100_000000000),
+            AccountFundsDTO(bob.address, 200_000000000),
+        ],
+        300_000000000,
+    )
+
+    return user_rewards_service_mock
 
 
 def allocate_user_rewards(
