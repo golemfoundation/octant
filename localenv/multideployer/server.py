@@ -74,8 +74,10 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
     def get_env(self, name):
         if name in deployments:
+            print(f'Cached deployment of {name}')
             return deployments[name]
         else:
+            print(f'New deployment of {name}')
             new_deployment = self.new_deployment(name)
             deployments[name] = new_deployment
             return new_deployment
