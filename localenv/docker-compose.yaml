@@ -57,7 +57,7 @@ services:
       POSTGRES_USER: graph-node
       POSTGRES_PASSWORD: let-me-in
       POSTGRES_DB: graph-node
- 
+
   contracts-deployer:
     image: octant/contracts-deployer:latest
     depends_on:
@@ -85,7 +85,6 @@ services:
     networks:
       - octant
     environment:
-      LOCAL_CONTRACTS: true
       CONTRACTS_DEPLOYER_URL: http://contracts-deployer:8546
 
       NETWORK: localhost
@@ -97,7 +96,6 @@ services:
     ports:
       - '5000:5000'
     environment:
-      LOCAL_CONTRACTS: true
       CONTRACTS_DEPLOYER_URL: http://contracts-deployer:8546
 
       OCTANT_ENV: production
@@ -111,7 +109,7 @@ services:
     depends_on:
       - backend-postgres
       - anvil
-      - graph-node 
+      - graph-node
       - subgraph-deployer
       - contracts-deployer
     networks:
