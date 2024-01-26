@@ -1,9 +1,11 @@
 import json
-import subprocess
 import os
+import subprocess
+
 from http.server import BaseHTTPRequestHandler
 from urllib.parse import parse_qsl, urlparse
 from http.server import HTTPServer
+from typing import Dict
 
 subgraph_admin_url = os.environ["SUBGRAPH_ADMIN_URL"]
 subgraph_query_url = os.environ["SUBGRAPH_QUERY_URL"]
@@ -65,7 +67,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     def run_sync(self, query):
         return subprocess.run(query, capture_output=True, text=True)
 
-    def get_response(self):
+    def get_response(self) -> Dict[str, str]:
         name = self.query_data()["name"]
         contracts = subprocess.run(
             [
@@ -89,7 +91,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         setup_subgraph(addrs, name)
         addrs["SUBGRAPH_NAME"] = name
 
-        return json.dumps(addrs)
+        return addrs
 
     def url(self):
         return urlparse(self.path)
@@ -103,10 +105,19 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             self.send_response(400)
             self.wfile.write('Missing "name" field in GET query fields'.encode("utf-8"))
             return
+        results = self.get_response()
+        if ("Accept" in self.headers) and (
+            self.headers["Accept"] == "application/json"
+        ):
+            content_type = "application/json"
+            output = json.dumps(results).encode("utf-8")
+        else:
+            content_type = "text/plain"
+            output = "\n".join([f"{k}={v}" for k, v in results.items()]).encode("utf-8")
         self.send_response(200)
-        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Type", content_type)
         self.end_headers()
-        self.wfile.write(self.get_response().encode("utf-8"))
+        self.wfile.write(output)
 
 
 if __name__ == "__main__":
