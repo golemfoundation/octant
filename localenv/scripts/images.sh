@@ -77,24 +77,6 @@ build_client(){
   echo Finished building client image!
 }
 
-
-build_contracts_deployer(){
-  echo Building contracts deployer image ...
-
-  build_image contracts-deployer "${OCTANT_ROOT}/localenv/contracts-deployer/Dockerfile" "${OCTANT_ROOT}/localenv/contracts-deployer"
-
-  echo Finished building contracts deployer image!
-}
-
-build_subgraph_deployer(){
-  echo Building subgraph deployer image ...
-
-  build_image subgraph-deployer "${OCTANT_ROOT}/localenv/subgraph-deployer/Dockerfile" "${OCTANT_ROOT}/localenv/subgraph-deployer"
-
-  echo Finished building subgraph deployer image!
-}
-
-
 build_multideployer(){
     build_contracts_base
     build_subgraph_base
@@ -123,12 +105,10 @@ build_snapshotter(){
 
 build_contracts(){
     build_contracts_base
-    build_contracts_deployer
 }
 
 build_subgraph(){
-  build_subgraph_base
-  build_subgraph_deployer
+    build_subgraph_base
 }
 
 
@@ -136,12 +116,12 @@ build_subgraph(){
 build_control_plane &
 build_snapshotter &
 build_anvil &
+build_multideployer &
 
 ### PROD-like images
 build_contracts &
 build_subgraph &
 build_backend &
 build_client &
-build_multideployer &
 
 wait
