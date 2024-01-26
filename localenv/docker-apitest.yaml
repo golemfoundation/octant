@@ -1,13 +1,7 @@
 version: "3.8"
 services:
 
-  anvil:
-    image: octant/anvil:latest
-    platform: linux/amd64
-    ports:
-      - "8545:8545"
-    networks:
-      - octant
+  # note: anvil service is in separate .yaml files
 
   graph-node:
     image: graphprotocol/graph-node:v0.26.0

@@ -1,15 +1,8 @@
+# contains services shared by localenv and apitest environments
+
 version: "3.8"
 services:
-  anvil:
-    image: octant/anvil:latest
-    platform: linux/amd64
-    command: '--block-time "${BLOCK_TIME:-5}"'
-    ports:
-      - "8545:8545"
-    networks:
-      - octant
 
-  #### SUBGRAPH
   graph-node:
     image: graphprotocol/graph-node:v0.26.0
     platform: linux/amd64
@@ -34,6 +27,7 @@ services:
       ipfs: 'ipfs:5001'
       ethereum: localhost:http://anvil:8545
       GRAPH_LOG: info
+
   ipfs:
     image: ipfs/go-ipfs:v0.10.0
     platform: linux/amd64
@@ -58,6 +52,7 @@ services:
       POSTGRES_PASSWORD: let-me-in
       POSTGRES_DB: graph-node
 
+
   multideployer:
     image: octant/multideployer:latest
     networks:
@@ -79,59 +74,6 @@ services:
       IPFS_URL: http://ipfs:5001
       SUBGRAPH_ADMIN_URL: http://graph-node:8020
       SUBGRAPH_QUERY_URL: http://graph-node:8000
-
-  backend:
-    image: octant/backend:latest
-    ports:
-      - '5000:5000'
-    environment:
-      CONTRACTS_DEPLOYER_URL: 'http://multideployer:8022/?name=octant'
-
-      OCTANT_ENV: production
-      DB_URI: "postgresql://user:password@backend-postgres:5432/octant"
-      SUBGRAPH_ENDPOINT: "http://graph-node:8000/subgraphs/name/octant"
-
-      ETH_RPC_PROVIDER_URL: "http://anvil:8545"
-      CHAIN_ID: "1337"
-      CHAIN_NAME: "localhost"
-
-    depends_on:
-      - backend-postgres
-      - anvil
-      - graph-node
-      - multideployer
-    networks:
-      - octant
-
-  backend-postgres:
-    image: 'postgres:13'
-    ports:
-      - '5432:5432'
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: octant
-    networks:
-      - octant
-
-  epochs-snapshotter:
-    image: 'octant/snapshotter:latest'
-    depends_on:
-      - backend
-    networks:
-      - octant
-
-  control-plane:
-    image: octant/control-plane:latest
-    ports:
-      - "8080:80"
-    networks:
-      - octant
-    depends_on:
-      - backend
-      - anvil
-      - graph-node
-      - multideployer
 
 networks:
   octant:

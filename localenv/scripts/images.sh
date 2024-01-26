@@ -56,15 +56,18 @@ build_subgraph_base(){
 }
 
 build_backend(){
-
-  echo Building backend image ...
-
+  echo Building backend-base image ...
   dockerfile=$(create_tmp_dockerfile backend)
   build_image backend-base ${dockerfile} "${OCTANT_ROOT}/backend"
+  echo Finished building backend-base image!
 
+  echo Building backend image ...
   build_image backend "${OCTANT_ROOT}/localenv/backend/Dockerfile" "${OCTANT_ROOT}/localenv/backend"
-
   echo Finished building backend image!
+
+  echo Building backend-apitest image ...
+  build_image backend-apitest "${OCTANT_ROOT}/localenv/backend-apitest/Dockerfile" "${OCTANT_ROOT}/localenv/backend-apitest"
+  echo Finished building backend-apitest image!
 }
 
 build_client(){

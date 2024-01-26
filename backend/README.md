@@ -47,9 +47,23 @@ python3 startup.py
 
 ## Test
 
+To run unit tests, do
+
 ```bash
 pytest
 ```
+
+To run API tests, you need to first setup the env and next run the tests.
+
+```bash
+cd ..
+yarn apitest:up # in a first console
+yarn apitest:run # in a second console
+```
+
+When backend code is changed, don't forget to re-run `localenv/scripts/images.sh` after every change.
+
+To stop the env, run `yarn apitest:down`
 
 ## Lint
 
