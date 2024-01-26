@@ -12,6 +12,11 @@ subgraph_query_url = os.environ["SUBGRAPH_QUERY_URL"]
 rpc_url = os.environ["RPC_URL"]
 ipfs_url = os.environ["IPFS_URL"]
 
+# cache for already deployed environments
+# key is subgraph name
+# value is a dict
+deployments = {}
+
 
 def make_env(defs):
     os.environ.update(defs)
@@ -67,8 +72,15 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     def run_sync(self, query):
         return subprocess.run(query, capture_output=True, text=True)
 
-    def get_response(self) -> Dict[str, str]:
-        name = self.query_data()["name"]
+    def get_env(self, name):
+        if name in deployments:
+            return deployments[name]
+        else:
+            new_deployment = self.new_deployment(name)
+            deployments[name] = new_deployment
+            return new_deployment
+
+    def new_deployment(self, name) -> Dict[str, str]:
         contracts = subprocess.run(
             [
                 "npx",
@@ -105,7 +117,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
             self.send_response(400)
             self.wfile.write('Missing "name" field in GET query fields'.encode("utf-8"))
             return
-        results = self.get_response()
+        results = self.get_env(query["name"])
         if ("Accept" in self.headers) and (
             self.headers["Accept"] == "application/json"
         ):
