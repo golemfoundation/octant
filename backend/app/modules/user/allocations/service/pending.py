@@ -4,7 +4,7 @@ from typing import List, Tuple, Protocol
 from app.context.manager import Context
 from app.engine.projects.rewards import ProjectRewardDTO
 from app.infrastructure import database
-from app.modules.dto import AllocationDTO
+from app.modules.dto import AllocationDTO, AccountFundsDTO
 from app.modules.user.allocations import core
 
 
@@ -22,6 +22,13 @@ class PendingUserAllocations:
             context.epoch_details.epoch_num
         )
 
+    def get_all_users_with_allocations_sum(
+        self, context: Context
+    ) -> List[AccountFundsDTO]:
+        return database.allocations.get_alloc_sum_by_epoch_and_user_address(
+            context.epoch_details.epoch_num
+        )
+
     def simulate_allocation(
         self,
         context: Context,
@@ -31,17 +38,9 @@ class PendingUserAllocations:
         projects_settings = context.epoch_settings.project
         projects = context.projects_details.projects
         matched_rewards = self.octant_rewards.get_matched_rewards(context)
-        all_allocations_db = database.allocations.get_all_by_epoch(
+        all_allocations_before = database.allocations.get_all(
             context.epoch_details.epoch_num
         )
-        all_allocations_before = [
-            AllocationDTO(
-                amount=int(a.amount),
-                proposal_address=a.proposal_address,
-                user_address=a.user.address,
-            )
-            for a in all_allocations_db
-        ]
 
         return core.simulate_allocation(
             projects_settings,

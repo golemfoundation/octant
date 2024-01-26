@@ -13,6 +13,10 @@ class ProjectRewardDTO(JSONWizard):
     allocated: int
     matched: int
 
+    @property
+    def amount(self):
+        return self.allocated + self.matched
+
     def __iter__(self):
         yield self.address
         yield self.allocated

@@ -9,13 +9,17 @@ from app.modules.modules_factory.protocols import (
     UserEffectiveDeposits,
     TotalEffectiveDeposits,
     Leverage,
+    FinalizedSnapshots,
 )
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
+from app.modules.snapshots.finalized.service.simulated import (
+    SimulatedFinalizedSnapshots,
+)
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.saved import SavedUserDeposits
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
-from app.modules.user.rewards.service.saved import SavedUserRewards
+from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 
 
 class FinalizingOctantRewards(OctantRewards, Leverage, Protocol):
@@ -33,22 +37,29 @@ class FinalizingServices:
     user_allocations_service: DonorsAddresses
     user_patron_mode_service: UserPatronMode
     user_rewards_service: UserRewards
+    finalized_snapshots_service: FinalizedSnapshots
 
     @staticmethod
     def create() -> "FinalizingServices":
         events_based_patron_mode = EventsBasedUserPatronMode()
         saved_user_allocations = SavedUserAllocations()
+        octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
+        user_rewards = CalculatedUserRewards(
+            user_budgets=SavedUserBudgets(),
+            patrons_mode=events_based_patron_mode,
+            allocations=saved_user_allocations,
+        )
+        finalized_snapshots_service = SimulatedFinalizedSnapshots(
+            octant_rewards=octant_rewards,
+            user_rewards=user_rewards,
+            patrons_mode=events_based_patron_mode,
+        )
 
         return FinalizingServices(
             user_deposits_service=SavedUserDeposits(),
-            octant_rewards_service=PendingOctantRewards(
-                patrons_mode=events_based_patron_mode
-            ),
+            octant_rewards_service=octant_rewards,
             user_allocations_service=saved_user_allocations,
             user_patron_mode_service=events_based_patron_mode,
-            user_rewards_service=SavedUserRewards(
-                user_budgets=SavedUserBudgets(),
-                patrons_mode=events_based_patron_mode,
-                allocations=saved_user_allocations,
-            ),
+            user_rewards_service=user_rewards,
+            finalized_snapshots_service=finalized_snapshots_service,
         )

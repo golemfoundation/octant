@@ -32,14 +32,14 @@ def get_finalized_rewards(
     threshold = get_proposal_allocation_threshold(epoch)
 
     total_allocated_above_threshold = sum(
-        [allocated for _, allocated in projects if allocated >= threshold]
+        [allocated for _, allocated in projects if allocated > threshold]
     )
 
     proposal_rewards_sum = 0
     proposal_rewards: List[AccountFunds] = []
 
     for address, allocated in projects:
-        if allocated >= threshold:
+        if allocated > threshold:
             matched = int(
                 Decimal(allocated)
                 / Decimal(total_allocated_above_threshold)

@@ -1,10 +1,31 @@
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Optional
+from typing import Optional, List
 
 from dataclass_wizard import JSONWizard
 
-from app.engine.projects.rewards import AllocationPayload
+from app.engine.projects.rewards import AllocationPayload, ProjectRewardDTO
+
+
+@dataclass(frozen=True)
+class AccountFundsDTO(JSONWizard):
+    address: str
+    amount: int
+
+    def __iter__(self):
+        yield self.address
+        yield self.amount
+
+
+@dataclass(frozen=True)
+class FinalizedSnapshotDTO(JSONWizard):
+    patrons_rewards: int
+    matched_rewards: int
+    projects_rewards: List[ProjectRewardDTO]
+    user_rewards: List[AccountFundsDTO]
+    total_withdrawals: int
+    leftover: int
+    merkle_root: str
 
 
 @dataclass
