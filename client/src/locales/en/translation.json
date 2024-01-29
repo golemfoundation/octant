@@ -335,6 +335,11 @@
         "lockGlm": {
           "title": "Lock GLM to earn",
           "text": "Lock GLM tokens for as long as possible to earn ETH rewards you can donate or withdraw"
+        },
+        "allocateYourRewards": {
+          "title": "Allocate your rewards",
+          "textDesktop": "Unallocated rewards will be swept back for restaking at the end of this allocation window, so don't forget to allocate!",
+          "textMobile": "Unallocated rewards will be swept back for restaking at the end of this allocation window"
         }
       },
       "preLaunch": {
