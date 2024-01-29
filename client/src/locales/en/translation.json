@@ -417,6 +417,13 @@
       "backToTop": "Back to Top"
     },
     "proposals": {
+      "proposalsTimelineWidget": {
+        "applicationsOpen": "Applications open",
+        "projectUpdatesClose": "Project updates close",
+        "snapshotVote": "Snapshot vote",
+        "allocationWindow": "Allocation window",
+        "epochStarts": "Epoch {{epoch}} starts"
+      },
       "tip": {
         "title": "Add your favourites",
         "text": "Save projects to the Allocate view with the heart icon so you can donate rewards to them"
