@@ -8,6 +8,7 @@ Create Date: 2024-01-23 09:43:17.970959
 import os
 
 from alembic import op
+from dotenv import load_dotenv
 
 # revision identifiers, used by Alembic.
 revision = "2de1bc96061a"
@@ -19,6 +20,8 @@ depends_on = None
 def upgrade():
     if op.get_bind().engine.name == "sqlite":
         return
+
+    load_dotenv()
     op.execute(sqltext())
 
 
@@ -28,7 +31,7 @@ def downgrade():
 
 def sqltext():
     # Mainnet
-    if os.getenv("CHAIN_ID") == 1:
+    if os.getenv("CHAIN_ID") == "1":
         return """
         DO
         $do$
@@ -555,7 +558,7 @@ def sqltext():
     $do$
     """
     # Sepolia
-    if os.getenv("CHAIN_ID") == 11155111:
+    if os.getenv("CHAIN_ID") == "11155111":
         return """
         DO
         $do$
