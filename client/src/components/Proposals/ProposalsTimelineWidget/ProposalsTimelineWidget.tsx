@@ -17,32 +17,33 @@ const ProposalsTimelineWidget = (): ReactElement => {
 
   // LOOK AT ME
   // Each milestone must have a date in the appropriate Europe/Warsaw time zone!
+  // Dates only in ISO8601 (Safari)
   const milestones: Milestone[] = [
     {
-      from: new Date('2023-11-13 GMT+0100'),
+      from: new Date('2023-11-13T00:00:00+0100'),
       id: 'applications-open',
       label: t('applicationsOpen'),
-      to: new Date('2023-12-20 GMT+0100'),
+      to: new Date('2023-12-20T00:00:00+0100'),
     },
     {
-      from: new Date('2023-12-22 GMT+0100'),
+      from: new Date('2023-12-22T00:00:00+0100'),
       id: 'project-updates-close',
       label: t('projectUpdatesClose'),
     },
     {
-      from: new Date('2024-01-01 GMT+0100'),
+      from: new Date('2024-01-01T00:00:00+0100'),
       id: 'snapshot-vote',
       label: t('snapshotVote'),
-      to: new Date('2024-01-05 GMT+0100'),
+      to: new Date('2024-01-05T00:00:00+0100'),
     },
     {
-      from: new Date('2024-01-17 GMT+0100'),
+      from: new Date('2024-01-17T00:00:00+0100'),
       id: 'allocation-window',
       label: t('allocationWindow'),
-      to: new Date('2024-01-31 GMT+0100'),
+      to: new Date('2024-01-31T00:00:00+0100'),
     },
     {
-      from: new Date('2024-01-17 GMT+0100'),
+      from: new Date('2024-01-17T00:00:00+0100'),
       id: 'epoch-starts',
       label: t('epochStarts', { epoch: 'Three' }),
     },
