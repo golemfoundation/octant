@@ -5,6 +5,8 @@ Revises: 449308032075
 Create Date: 2024-01-02 16:17:53.740348
 
 """
+import os
+
 from alembic import op
 import sqlalchemy as sa
 
@@ -36,21 +38,9 @@ def upgrade():
         )
     # ### end Alembic commands ###
 
-    # Update pending snapshots
-    op.execute(
-        "UPDATE pending_epoch_snapshots SET operational_cost = '82408409816289053184' WHERE epoch = 1"
-    )
-    op.execute(
-        "UPDATE pending_epoch_snapshots SET operational_cost = '241664279869852205390' WHERE epoch = 2"
-    )
-
-    # Update finalized snapshots
-    op.execute(
-        "UPDATE finalized_epoch_snapshots SET leftover = '9537357664505573437' WHERE epoch = 1"
-    )
-    op.execute(
-        "UPDATE finalized_epoch_snapshots SET patrons_rewards = '16050223937523865304' WHERE epoch = 1"
-    )
+    if op.get_bind().engine.name == "sqlite":
+        return
+    _update_op_cost_leftover_and_patrons_rewards()
 
 
 def downgrade():
@@ -63,3 +53,38 @@ def downgrade():
         batch_op.drop_column("patrons_rewards")
 
     # ### end Alembic commands ###
+
+
+def _update_op_cost_leftover_and_patrons_rewards():
+    # Mainnet
+    if os.getenv("CHAIN_ID") == 1:
+        # Update pending snapshots
+        op.execute(
+            "UPDATE pending_epoch_snapshots SET operational_cost = '82408409816289053184' WHERE epoch = 1"
+        )
+        op.execute(
+            "UPDATE pending_epoch_snapshots SET operational_cost = '241664279869852205390' WHERE epoch = 2"
+        )
+
+        # Update finalized snapshots
+        op.execute(
+            "UPDATE finalized_epoch_snapshots SET leftover = '9537357664505573437' WHERE epoch = 1"
+        )
+        op.execute(
+            "UPDATE finalized_epoch_snapshots SET patrons_rewards = '16050223937523865304' WHERE epoch = 1"
+        )
+
+    # Sepolia
+    if os.getenv("CHAIN_ID") == 11155111:
+        # Update pending snapshots
+        op.execute(
+            "UPDATE pending_epoch_snapshots SET operational_cost = '22286773660600424828954' WHERE epoch = 1"
+        )
+        op.execute(
+            "UPDATE pending_epoch_snapshots SET operational_cost = '28130172997690715704718' WHERE epoch = 2"
+        )
+
+        # Update finalized snapshots
+        op.execute(
+            "UPDATE finalized_epoch_snapshots SET leftover = '2859407787364580036791' WHERE epoch = 1"
+        )

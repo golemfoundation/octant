@@ -5,6 +5,8 @@ Revises: 794617984fc3
 Create Date: 2024-01-23 09:43:17.970959
 
 """
+import os
+
 from alembic import op
 
 # revision identifiers, used by Alembic.
@@ -15,6 +17,8 @@ depends_on = None
 
 
 def upgrade():
+    if op.get_bind().engine.name == "sqlite":
+        return
     op.execute(sqltext())
 
 
@@ -23,10 +27,12 @@ def downgrade():
 
 
 def sqltext():
-    return """
-    DO
-    $do$
-    BEGIN
+    # Mainnet
+    if os.getenv("CHAIN_ID") == 1:
+        return """
+        DO
+        $do$
+        BEGIN
         IF EXISTS (SELECT * FROM pending_epoch_snapshots WHERE epoch = 1) THEN
         INSERT INTO budgets (epoch, user_id, budget, created_at) VALUES
         (1, 3426, '156893547962028', '2023-10-19'),
@@ -546,5 +552,21 @@ def sqltext():
         (1, 273, '1055324861441868', '2023-10-19');
         END IF;
     END
-$do$
-"""
+    $do$
+    """
+    # Sepolia
+    if os.getenv("CHAIN_ID") == 11155111:
+        return """
+        DO
+        $do$
+        BEGIN
+        IF EXISTS (SELECT * FROM pending_epoch_snapshots WHERE epoch = 1) THEN
+        INSERT INTO budgets (epoch, user_id, budget, created_at) VALUES
+        (1, 7, '167982969430662070', '2023-10-19'),
+        (1, 4, '4948410127355603012', '2023-10-19'),
+        (1, 2, '17657361601509649902', '2023-10-19'),
+        (1, 1, '2854459377237224433775', '2023-10-19');
+        END IF;
+    END
+    $do$
+    """
