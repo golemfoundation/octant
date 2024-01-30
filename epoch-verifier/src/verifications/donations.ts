@@ -1,7 +1,8 @@
+import { assertAll, assertEq } from "./utils";
+
 import { Context, allocationsByUser, individualDonationsByProposals, rewardsByProject } from "../data/context";
 import { Address, Reward } from "../data/models";
 import { VerificationResult } from "../runner";
-import { assertAll, assertEq } from "./utils";
 
 const PROPOSALS_NO = 24
 

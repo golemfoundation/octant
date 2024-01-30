@@ -1,6 +1,7 @@
+/* eslint-disable no-console */
 import { Context } from "./data/context"
 
-export type VerificationResult = {result: boolean, message: string} 
+export type VerificationResult = {message: string, result: boolean} 
 type VerifyFunc = (context: Context) => VerificationResult;
 
 export interface Verification {
@@ -16,18 +17,18 @@ export class Runner {
     this.verifications = []
   }
 
-  register(verification: Verification){
+  register(verification: Verification): void{
     this.verifications.push(verification)    
   }
 
-  async run(context: Context){
+  async run(context: Context): Promise<number> {
     console.log("Starting verifications ... ")
     
     const results = await Promise.all(this.verifications.map((v: Verification) => {
 
-      let task = new Promise<[string, VerificationResult]>((resolve, _) => {
+      const task = new Promise<[string, VerificationResult]>((resolve, _) => {
         console.log(`Verification ${v.name} started`)
-        let result = v.verify(context)
+        const result = v.verify(context)
 
         if (result.result){
           console.log(`Verification ${v.name} succeeded`)
@@ -36,7 +37,7 @@ export class Runner {
         resolve([v.name, result])
       })
 
-      let timeout = new Promise<never>((_, reject) => { 
+      const timeout = new Promise<never>((_, reject) => { 
         setTimeout(() => {
           reject(new Error(`Task ${v.name} timed out`))
         }, 15_000)
@@ -62,7 +63,7 @@ export class Runner {
 
     console.log(`Verifications have finished with ${ok.length} successes and ${failures.length} failures`)
 
-    process.exit(failures.length)
+    return failures.length
   }
   
 } 

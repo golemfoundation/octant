@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Axios } from "axios"
 
 import { AllocationImpl, Allocation, Deserializable, EpochInfo, EpochInfoImpl, RewardImpl, Reward, UserBudgetImpl, UserBudget } from "./models";
@@ -20,7 +21,7 @@ export class HttpFetcher {
 
     const dataUnwrapper = unwrapper ?? ((data: any) => data) 
 
-    let mapper = (data: any): Array<T> => dataUnwrapper(JSON.parse(data)).map((elem: any): T => new Factory().from(elem))
+    const mapper = (data: any): Array<T> => dataUnwrapper(JSON.parse(data)).map((elem: any): T => new Factory().from(elem))
     return this._do_get(url, resource, mapper)
   }
 
@@ -49,7 +50,7 @@ export class HttpFetcher {
   }
 
   async rewards(epoch: number): Promise<Reward[] | null>{
-      return this._get_array(`/rewards/proposals/epoch/${epoch}`, "proposals rewards", RewardImpl, (data: any) => data["rewards"])
+      return this._get_array(`/rewards/proposals/epoch/${epoch}`, "proposals rewards", RewardImpl, (data: any) => data.rewards)
   }
 
   async epochInfo(epoch: number): Promise<EpochInfo | null> {

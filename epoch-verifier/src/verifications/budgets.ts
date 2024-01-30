@@ -1,6 +1,7 @@
+import { assertAll, assertEq } from "./utils";
+
 import { Context } from "../data/context";
 import { VerificationResult } from "../runner";
-import { assertAll, assertEq } from "./utils";
 
 export function compareUserBudgetsVsTheirAllocations(context: Context): VerificationResult {
 

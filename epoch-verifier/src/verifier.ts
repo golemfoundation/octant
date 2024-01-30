@@ -1,9 +1,10 @@
+/* eslint-disable no-console */
 import { Command, Option } from "commander";
 
-import { HttpFetcher } from "./data/fetcher";
-import { register_verifications } from "./verifications";
-import { Runner } from "./runner";
 import { buildContext } from "./data/context";
+import { HttpFetcher } from "./data/fetcher";
+import { Runner } from "./runner";
+import { registerVerifications } from "./verifications";
 
 
 interface Options {
@@ -60,8 +61,10 @@ async function run(epoch: string, opts: any) {
   const context = buildContext(userBudgets!, allocations!, rewards!, epochInfo!)
 
   const runner = new Runner()
-  register_verifications(runner)
-  await runner.run(context)
+  registerVerifications(runner)
+  const failures = await runner.run(context)
+
+  process.exit(failures)
 
 }
 

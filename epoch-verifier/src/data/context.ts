@@ -2,9 +2,9 @@ import { Address, Allocation, EpochInfo, Reward, UserBudget, UserDonation } from
 
 export interface Context {
   allocations: Allocation[]
-  rewards: Reward[]
   budgets: Map<Address, bigint> 
   epochInfo: EpochInfo
+  rewards: Reward[]
 }
 
 export function buildContext(budgets: UserBudget[], allocations: Allocation[], rewards: Reward[], epochInfo: EpochInfo): Context{
@@ -13,10 +13,10 @@ export function buildContext(budgets: UserBudget[], allocations: Allocation[], r
   const filteredAllocs = allocations.filter(alloc => alloc.donations.length !== 0)
 
   const context = {
-    budgets: new Map(filteredBudgets.map((value) => [value.user, value.budget] as const)),
     allocations: filteredAllocs,
-    rewards: rewards,
-    epochInfo: epochInfo
+    budgets: new Map(filteredBudgets.map((value) => [value.user, value.budget] as const)),
+    epochInfo,
+    rewards
   } as Context 
 
   return context

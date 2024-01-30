@@ -6,12 +6,10 @@ function abs(v: bigint): bigint {
   if (v < BigInt(0)){
     return -v
   }
-  else {
-    return v
-  }
+  return v
 }
 
-export function assertEq(value: bigint, expected: bigint, maxMargin?: bigint, printWhenValuesWithinExpectedError: boolean = false): VerificationResult {
+export function assertEq(value: bigint, expected: bigint, maxMargin?: bigint, shouldPrintWhenValuesWithinExpectedError = false): VerificationResult {
   let msg = ""
   const margin = maxMargin ?? BigInt(0)
 
@@ -20,37 +18,37 @@ export function assertEq(value: bigint, expected: bigint, maxMargin?: bigint, pr
 
   const comparisonMsg = `Expected: ${expected}, got: ${value}, error: ${diff}`
   if (!isWithinMargin){
-    msg = "Comparison outside expected error margin. " + comparisonMsg 
+    msg = `Comparison outside expected error margin. ${comparisonMsg}`  
   }
-  else if (printWhenValuesWithinExpectedError){
+  else if (shouldPrintWhenValuesWithinExpectedError){
     msg = comparisonMsg
   }
 
-  return {result: isWithinMargin, message: msg}
+  return {message: msg, result: isWithinMargin}
   
 }
 
 export function assertAll<T>(elems: T[], predicate: Predicate<T>): VerificationResult {
-  let result = true
+  let isValid = true
   let msg = ""
   for (const elem of elems){
     const predicateResult = predicate(elem)
 
     if ( typeof predicateResult === "boolean" ){
       if(!predicateResult){
-        result = false
+        isValid = false
         msg += `\n\tFailed at ${elem}`
       }
     }
     else {
-      const {result: r, message: m} = predicateResult as VerificationResult
+      const { message: m, result: isSubpredicateValid} = predicateResult as VerificationResult
       msg += `\n\t${elem}: ${m}`      
-      if (!r){
-        result = false
+      if (!isSubpredicateValid){
+        isValid = false
       }
     }
   }
 
-  return {result, message: msg}
+  return {message: msg, result: isValid}
 }
 

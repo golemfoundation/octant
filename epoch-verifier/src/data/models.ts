@@ -1,3 +1,5 @@
+/* eslint-disable  max-classes-per-file */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 export type Address = string;
 
 export interface Deserializable<T> {
@@ -16,14 +18,14 @@ export interface UserDonation {
 }
 
 export interface Allocation {
-  user: Address;
   donations: UserDonation[];
+  user: Address;
 }
 
 export interface Reward {
-  proposal: Address,
   allocated: bigint,
-  matched: bigint
+  matched: bigint,
+  proposal: Address
 }
 
 export interface EpochInfo {
@@ -40,6 +42,7 @@ export interface EpochInfo {
   
 export class UserBudgetImpl implements Deserializable<UserBudget> {
   user: Address;
+
   budget: bigint;
 
   from(input: any) {
@@ -53,6 +56,7 @@ export class UserBudgetImpl implements Deserializable<UserBudget> {
 
 export class UserDonationImpl implements Deserializable<UserDonation> {
   proposal: Address;
+
   amount: bigint;
 
   from(input: any) {
@@ -65,6 +69,7 @@ export class UserDonationImpl implements Deserializable<UserDonation> {
 
 export class AllocationImpl implements Deserializable<Allocation> {
   user: Address;
+
   donations: UserDonation[]; 
 
   from(input: any) {
@@ -72,16 +77,18 @@ export class AllocationImpl implements Deserializable<Allocation> {
     this.donations = Object.entries(input)
     .filter(([k, _v]) => k !== "donor")
     .filter(([_k, v]) => v !== null)
-    .map(([proposal, amount]) => new UserDonationImpl().from({proposal: proposal, amount: amount}))
+    .map(([proposal, amount]) => new UserDonationImpl().from({amount, proposal}))
 
     return this
   }
 }
 
 export class RewardImpl implements Deserializable<Reward> {
-  proposal: Address;
   allocated: bigint;
+
   matched: bigint;
+
+  proposal: Address;
 
   from(input: any) {
     this.proposal = input.address
@@ -94,12 +101,19 @@ export class RewardImpl implements Deserializable<Reward> {
 
 export class EpochInfoImpl implements Deserializable<EpochInfo> {
   stakingProceeds: bigint
+  
   totalEffectiveDeposit: bigint
+  
   totalRewards: bigint
+  
   individualRewards: bigint
+  
   totalWithdrawals: bigint
+  
   patronsRewards: bigint
+  
   matchedRewards: bigint
+  
 
   from(input: any) {
     this.stakingProceeds = BigInt(input.staking_proceeds)   

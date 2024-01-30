@@ -2,7 +2,7 @@ import { Runner, Verification } from "./runner";
 import { budgetsAreEqualToIndividualRewards, compareUserBudgetsVsTheirAllocations } from "./verifications/budgets";
 import { verifyMatchedFunds, verifyProjectsBelowThreshold, verifyTotalWithdrawals, verifyRewardsVsUserDonations, verifyUserDonationsVsRewards, verifyMatchingFundFromEpochInfo } from "./verifications/donations";
 
-export function register_verifications(runner: Runner){
+export function registerVerifications(runner: Runner): void {
 
   const verifications: Verification[] = [
     {name: "User budgets vs allocations sums", verify: compareUserBudgetsVsTheirAllocations},
