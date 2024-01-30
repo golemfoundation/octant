@@ -45,7 +45,7 @@ class SimulatedFinalizedSnapshots(Model):
         matched_rewards = self.octant_rewards.get_matched_rewards(context)
         allocations = database.allocations.get_all(context.epoch_details.epoch_num)
 
-        projects_rewards, projects_rewards_sum, _ = get_projects_rewards(
+        projects_rewards, projects_rewards_sum, _, _ = get_projects_rewards(
             projects_settings,
             allocations,
             projects,

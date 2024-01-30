@@ -10,7 +10,7 @@ def get_projects_rewards(
     allocations: List[AllocationDTO],
     all_projects: List[str],
     matched_rewards: int,
-) -> (List[ProjectRewardDTO], int, int):
+) -> (List[ProjectRewardDTO], int, int, int):
     return project_settings.rewards.calculate_project_rewards(
         ProjectRewardsPayload(
             allocations=allocations,

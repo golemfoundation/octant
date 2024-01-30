@@ -35,5 +35,5 @@ class ProjectRewards(ABC):
     @abstractmethod
     def calculate_project_rewards(
         self, payload: ProjectRewardsPayload
-    ) -> (List[ProjectRewardDTO], int, int):
+    ) -> (List[ProjectRewardDTO], int, int, int):
         pass

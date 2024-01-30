@@ -30,7 +30,7 @@ class DefaultProjectRewards(ProjectRewards):
 
     def calculate_project_rewards(
         self, payload: ProjectRewardsPayload
-    ) -> (List[ProjectRewardDTO], int, int):
+    ) -> (List[ProjectRewardDTO], int, int, int):
         (
             allocated_by_addr,
             total_allocated,
@@ -71,4 +71,5 @@ class DefaultProjectRewards(ProjectRewards):
             sorted(rewards.values(), key=lambda r: r.allocated, reverse=True),
             project_rewards_sum,
             total_allocated,
+            threshold,
         )
