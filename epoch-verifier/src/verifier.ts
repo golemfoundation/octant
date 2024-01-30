@@ -14,9 +14,10 @@ interface Options {
 }
 
 const DEPLOYMENTS: {[key: string]: string} = {
-  mainnet: "https://backend-hello.mainnet.octant.app",
+  mainnet: "https://backend.mainnet.octant.app",
   master: "https://master-backend.octant.wildland.dev",
   rc: "https://backend.mainnet.octant.wildland.dev",
+  testnet: "https://backend.testnet.octant.app",
   uat: "https://uat-backend.octant.wildland.dev",
 }
 
