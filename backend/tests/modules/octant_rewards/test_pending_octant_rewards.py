@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 from app.infrastructure import database
 from app.modules.dto import AllocationDTO
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
@@ -14,7 +16,7 @@ from tests.helpers.context import get_context
 
 def test_pending_octant_rewards(mock_pending_epoch_snapshot_db):
     context = get_context()
-    service = PendingOctantRewards(None)
+    service = PendingOctantRewards(patrons_mode=Mock())
 
     result = service.get_octant_rewards(context)
 

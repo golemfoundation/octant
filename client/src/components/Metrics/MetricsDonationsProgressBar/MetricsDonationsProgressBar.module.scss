@@ -1,0 +1,51 @@
+.root {
+  padding: 0 2.4rem;
+}
+
+.progressBar {
+  margin-top: 1.2rem;
+}
+
+.wrapper {
+  margin-top: 2.6rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .donations {
+    text-align: left;
+    color: $color-octant-green;
+  }
+
+  .personal {
+    text-align: right;
+    color: $color-octant-orange2;
+  }
+
+  .percentage {
+    font-size: $font-size-16;
+    font-weight: $font-weight-bold;
+    margin-bottom: 0.2rem;
+    line-height: 2rem;
+  }
+
+  .label {
+    font-size: $font-size-10;
+    font-weight: $font-weight-bold;
+    letter-spacing: 0.03rem;
+    text-transform: uppercase;
+  }
+}
+
+.skeletonPercentage {
+  @include skeleton();
+  width: 6.4rem;
+  height: 2rem;
+  margin-bottom: 0.2rem;
+}
+
+.skeletonLabel {
+  @include skeleton();
+  width: 6.4rem;
+  height: 1.25rem;
+}

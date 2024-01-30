@@ -12,7 +12,7 @@ type MetricsGridTileProps =
       className?: string;
       dataTest?: string;
       groups: [MetricsGridTileGroup];
-      size?: 'S' | 'L';
+      size?: 'S' | 'L' | 'custom';
     }
   | {
       className?: string;

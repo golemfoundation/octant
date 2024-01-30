@@ -23,70 +23,99 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       visitWithLoader(ROOT_ROUTES.metrics.absolute);
     });
 
-    it('renders allocation timer tile', () => {
-      cy.get('[data-test=MetricsTimeCounter]').should('be.visible');
-    });
-
     it('renders total projects tile', () => {
-      cy.get('[data-test=MetricsTotalProjects]').should('be.visible');
+      cy.get('[data-test=MetricsGeneralGridTotalProjects]').should('be.visible');
     });
 
     it('renders total eth staked tile', () => {
-      cy.get('[data-test=MetricsTotalEthStaked]').should('be.visible');
+      cy.get('[data-test=MetricsGeneralGridTotalEthStaked]').should('be.visible');
     });
 
     it('renders tile with total glm locked and % of 1B total supply groups', () => {
-      cy.get('[data-test=MetricsTotalGlmLockedAndTotalSupply]').should('be.visible');
-      cy.get('[data-test=MetricsTotalGlmLockedAndTotalSupply]').children().should('have.length', 2);
+      cy.get('[data-test=MetricsGeneralGridTotalGlmLockedAndTotalSupply]').should('be.visible');
+      cy.get('[data-test=MetricsGeneralGridTotalGlmLockedAndTotalSupply]')
+        .children()
+        .should('have.length', 2);
     });
 
     it('renders wallet with glm locked graph tile', () => {
-      cy.get('[data-test=MetricsWalletsWithGlmLocked]').should('be.visible');
+      cy.get('[data-test=MetricsGeneralGridWalletsWithGlmLocked]').should('be.visible');
     });
 
     it('renders cumulative glm locked graph tile', () => {
-      cy.get('[data-test=MetricsCumulativeGlmLocked]').should('be.visible');
-    });
-
-    it('renders total addresses tile', () => {
-      cy.get('[data-test=MetricsTotalAddresses]').should('be.visible');
-    });
-
-    it('renders largest glm lock tile', () => {
-      cy.get('[data-test=MetricsLargestGlmLock]').should('be.visible');
+      cy.get('[data-test=MetricsGeneralGridCumulativeGlmLocked]').should('be.visible');
     });
 
     it('renders tiles in correct order', () => {
-      const tilesDataTest = [
-        'MetricsTimeCounter',
-        'MetricsTotalProjects',
-        'MetricsTotalEthStaked',
-        'MetricsTotalGlmLockedAndTotalSupply',
-        'MetricsWalletsWithGlmLocked',
-        'MetricsCumulativeGlmLocked',
-        'MetricsTotalAddresses',
-        'MetricsLargestGlmLock',
+      const metricsEpochGridTilesDataTest = [
+        'MetricsEpochGridTopProjects',
+        'MetricsEpochGridTotalDonationsAndPersonal',
+        'MetricsEpochGridDonationsVsPersonalAllocations',
+        'MetricsEpochGridFundsUsage',
+        'MetricsEpochGridTotalUsers',
+        'MetricsEpochGridPatrons',
+        'MetricsEpochGridCurrentDonors',
+        'MetricsEpochGridAverageLeverage',
+        'MetricsEpochGridRewardsUnusedAndUnallocatedValue',
+        'MetricsEpochGridBelowThreshold',
       ];
 
-      cy.get('[data-test=MetricsGrid]').children().should('have.length', tilesDataTest.length);
+      const metricsGeneralGridTilesDataTest = [
+        'MetricsGeneralGridTotalGlmLockedAndTotalSupply',
+        'MetricsGeneralGridTotalProjects',
+        'MetricsGeneralGridTotalEthStaked',
+        'MetricsGeneralGridCumulativeGlmLocked',
+        'MetricsGeneralGridWalletsWithGlmLocked',
+      ];
 
-      for (let i = 0; i < tilesDataTest.length; i++) {
-        cy.get('[data-test=MetricsGrid]')
+      cy.get('[data-test=MetricsEpoch__MetricsGrid]')
+        .children()
+        .should('have.length', metricsEpochGridTilesDataTest.length);
+
+      for (let i = 0; i < metricsEpochGridTilesDataTest.length; i++) {
+        cy.get('[data-test=MetricsEpoch__MetricsGrid]')
           .children()
           .eq(i)
           .invoke('data', 'test')
-          .should('eq', tilesDataTest[i]);
+          .should('eq', metricsEpochGridTilesDataTest[i]);
+      }
+
+      cy.get('[data-test=MetricsGeneral__MetricsGrid]')
+        .children()
+        .should('have.length', metricsGeneralGridTilesDataTest.length);
+
+      for (let i = 0; i < metricsGeneralGridTilesDataTest.length; i++) {
+        cy.get('[data-test=MetricsGeneral__MetricsGrid]')
+          .children()
+          .eq(i)
+          .invoke('data', 'test')
+          .should('eq', metricsGeneralGridTilesDataTest[i]);
       }
     });
 
     it('renders grid with 4 columns on desktop or with 2 columns on other devices', () => {
-      cy.get('[data-test=MetricsGrid]').then(el => {
+      cy.get('[data-test=MetricsEpoch__MetricsGrid]').then(el => {
         const width = parseInt(el.css('width'), 10);
         const rowGap = parseInt(el.css('rowGap'), 10);
 
         const columnWidth = isDesktop ? (width - 3 * rowGap) / 4 : (width - rowGap) / 2;
 
-        cy.get('[data-test=MetricsGrid]').should(
+        cy.get('[data-test=MetricsEpoch__MetricsGrid]').should(
+          'have.css',
+          'grid-template-columns',
+          isDesktop
+            ? `${columnWidth}px ${columnWidth}px ${columnWidth}px ${columnWidth}px`
+            : `${columnWidth}px ${columnWidth}px`,
+        );
+      });
+
+      cy.get('[data-test=MetricsGeneral__MetricsGrid]').then(el => {
+        const width = parseInt(el.css('width'), 10);
+        const rowGap = parseInt(el.css('rowGap'), 10);
+
+        const columnWidth = isDesktop ? (width - 3 * rowGap) / 4 : (width - rowGap) / 2;
+
+        cy.get('[data-test=MetricsGeneral__MetricsGrid]').should(
           'have.css',
           'grid-template-columns',
           isDesktop

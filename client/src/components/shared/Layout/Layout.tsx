@@ -45,6 +45,7 @@ const Layout: FC<LayoutProps> = ({
   isNavigationVisible = true,
   classNameBody,
   navigationTabs = navigationTabsDefault,
+  isAbsoluteHeaderPosition = false,
 }) => {
   const { data: isPatronMode } = useIsPatronMode();
   const { t } = useTranslation('translation', { keyPrefix: 'layouts.main' });
@@ -133,7 +134,13 @@ const Layout: FC<LayoutProps> = ({
         {isHeaderVisible && (
           <Fragment>
             <div className={styles.headerBlur} />
-            <div className={cx(styles.headerWrapper, ELEMENT_POSITION_FIXED_CLASSNAME)}>
+            <div
+              className={cx(
+                styles.headerWrapper,
+                ELEMENT_POSITION_FIXED_CLASSNAME,
+                isAbsoluteHeaderPosition && styles.isAbsoluteHeaderPosition,
+              )}
+            >
               <div className={styles.header} data-test="MainLayout__Header">
                 <div className={styles.logoWrapper}>
                   <Link data-test="MainLayout__Logo" to={ROOT_ROUTES.proposals.absolute}>

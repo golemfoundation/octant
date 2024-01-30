@@ -1,21 +1,21 @@
-from dataclasses import dataclass
 from decimal import Decimal
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 from app.context.manager import Context
 from app.engine.octant_rewards.matched import MatchedRewardsPayload
 from app.infrastructure import database
 from app.modules.common.leverage import calculate_leverage
 from app.modules.dto import OctantRewardsDTO
+from app.pydantic import Model
 
 
+@runtime_checkable
 class UserPatronMode(Protocol):
     def get_patrons_rewards(self, context: Context) -> int:
         ...
 
 
-@dataclass
-class PendingOctantRewards:
+class PendingOctantRewards(Model):
     patrons_mode: UserPatronMode
 
     def get_octant_rewards(self, context: Context) -> OctantRewardsDTO:

@@ -1,5 +1,4 @@
-from dataclasses import dataclass
-from typing import Protocol, List
+from typing import Protocol, List, runtime_checkable
 
 from app.context.manager import Context
 from app.infrastructure import database
@@ -7,13 +6,16 @@ from app.modules.common import merkle_tree
 from app.modules.common.project_rewards import get_projects_rewards
 from app.modules.dto import FinalizedSnapshotDTO, AccountFundsDTO, OctantRewardsDTO
 from app.modules.snapshots.finalized.core import calculate_leftover
+from app.pydantic import Model
 
 
+@runtime_checkable
 class UserPatronMode(Protocol):
     def get_patrons_rewards(self, context: Context) -> int:
         ...
 
 
+@runtime_checkable
 class OctantRewards(Protocol):
     def get_matched_rewards(self, context: Context) -> int:
         ...
@@ -22,13 +24,13 @@ class OctantRewards(Protocol):
         ...
 
 
+@runtime_checkable
 class UserRewards(Protocol):
     def get_claimed_rewards(self, context: Context) -> (List[AccountFundsDTO], int):
         ...
 
 
-@dataclass
-class SimulatedFinalizedSnapshots:
+class SimulatedFinalizedSnapshots(Model):
     patrons_mode: UserPatronMode
     octant_rewards: OctantRewards
     user_rewards: UserRewards

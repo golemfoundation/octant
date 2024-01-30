@@ -1,0 +1,15 @@
+.root {
+  @media #{$tablet-down} {
+    order: 2;
+  }
+}
+
+.areaChartWrapper {
+  height: 24.8rem;
+}
+
+.areaChart {
+  svg {
+    border-radius: 0 0 1.6rem 1.6rem;
+  }
+}

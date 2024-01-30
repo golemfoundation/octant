@@ -1,11 +1,10 @@
-from dataclasses import dataclass
 from typing import List
 
 from app.extensions import proposals
+from app.pydantic import Model
 
 
-@dataclass(frozen=True)
-class ProjectsDetails:
+class ProjectsDetails(Model):
     projects: List[str]
 
 

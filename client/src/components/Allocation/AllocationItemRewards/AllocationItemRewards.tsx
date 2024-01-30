@@ -143,6 +143,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
       onMouseLeave={() => {
         setIsSimulateVisible(false);
       }}
+      // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
       onMouseOver={() => {
         setIsSimulateVisible(true);
       }}

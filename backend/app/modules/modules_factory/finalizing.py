@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Protocol
 
 from app.modules.modules_factory.protocols import (
@@ -20,6 +19,7 @@ from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.saved import SavedUserDeposits
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
+from app.pydantic import Model
 
 
 class FinalizingOctantRewards(OctantRewards, Leverage, Protocol):
@@ -30,8 +30,7 @@ class FinalizingUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Prot
     pass
 
 
-@dataclass(frozen=True)
-class FinalizingServices:
+class FinalizingServices(Model):
     user_deposits_service: FinalizingUserDeposits
     octant_rewards_service: FinalizingOctantRewards
     user_allocations_service: DonorsAddresses

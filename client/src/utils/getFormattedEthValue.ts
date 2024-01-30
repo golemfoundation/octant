@@ -12,6 +12,7 @@ export default function getFormattedEthValue(
   // eslint-disable-next-line default-param-last
   isUsingHairSpace = true,
   shouldIgnoreGwei?: boolean,
+  shouldIgnoreWei?: boolean,
 ): FormattedCryptoValue {
   let returnObject: Omit<FormattedCryptoValue, 'fullString'>;
 
@@ -20,6 +21,9 @@ export default function getFormattedEthValue(
   if (value.isZero()) {
     returnObject = { suffix: 'ETH', value: formatUnits(value) };
   } else if (value.lt(WEI_5)) {
+    if (shouldIgnoreWei) {
+      return { fullString: '< 0.0001 ETH', suffix: 'ETH', value: '< 0.0001' };
+    }
     returnObject = { suffix: 'WEI', value: formatUnits(value, 'wei') };
   } else if (isInGweiRange) {
     if (shouldIgnoreGwei) {

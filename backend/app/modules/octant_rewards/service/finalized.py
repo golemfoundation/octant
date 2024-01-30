@@ -1,14 +1,13 @@
-from dataclasses import dataclass
 from decimal import Decimal
 
 from app.context.manager import Context
 from app.infrastructure import database
 from app.modules.common.leverage import calculate_leverage
 from app.modules.dto import OctantRewardsDTO
+from app.pydantic import Model
 
 
-@dataclass
-class FinalizedOctantRewards:
+class FinalizedOctantRewards(Model):
     def get_octant_rewards(self, context: Context) -> OctantRewardsDTO:
         pending_snapshot = database.pending_epoch_snapshot.get_by_epoch(
             context.epoch_details.epoch_num
