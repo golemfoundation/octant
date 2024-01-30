@@ -1,5 +1,6 @@
 import {
   WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP,
+  WAS_ALLOCATE_REWARDS_ALREADY_CLOSED_TIP,
   WAS_CHECK_STATUS_ALREADY_CLOSED_TIP,
   WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP,
   WAS_LOCK_GLM_ALREADY_CLOSED_TIP,
@@ -24,6 +25,7 @@ describe('useTipsStore', () => {
       setWasLockGLMAlreadyClosed,
       setWasRewardsAlreadyClosed,
       setWasWithdrawAlreadyClosed,
+      setWasAllocateRewardsAlreadyClosed,
       reset,
     } = useTipsStore.getState();
 
@@ -33,6 +35,7 @@ describe('useTipsStore', () => {
     setWasLockGLMAlreadyClosed(true);
     setWasRewardsAlreadyClosed(true);
     setWasWithdrawAlreadyClosed(true);
+    setWasAllocateRewardsAlreadyClosed(true);
 
     expect(useTipsStore.getState().data.wasAddFavouritesAlreadyClosed).toEqual(true);
     expect(useTipsStore.getState().data.wasCheckStatusAlreadyClosed).toEqual(true);
@@ -40,6 +43,7 @@ describe('useTipsStore', () => {
     expect(useTipsStore.getState().data.wasLockGLMAlreadyClosed).toEqual(true);
     expect(useTipsStore.getState().data.wasRewardsAlreadyClosed).toEqual(true);
     expect(useTipsStore.getState().data.wasWithdrawAlreadyClosed).toEqual(true);
+    expect(useTipsStore.getState().data.wasAllocateRewardsAlreadyClosed).toEqual(true);
 
     reset();
 
@@ -49,6 +53,7 @@ describe('useTipsStore', () => {
     expect(useTipsStore.getState().data.wasLockGLMAlreadyClosed).toEqual(false);
     expect(useTipsStore.getState().data.wasRewardsAlreadyClosed).toEqual(false);
     expect(useTipsStore.getState().data.wasWithdrawAlreadyClosed).toEqual(false);
+    expect(useTipsStore.getState().data.wasAllocateRewardsAlreadyClosed).toEqual(false);
   });
 
   it(`should set wasAddFavouritesAlreadyClosed state and localStorage item '${WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP}' to 'true'`, () => {
@@ -195,6 +200,32 @@ describe('useTipsStore', () => {
     expect(useTipsStore.getState().data.wasWithdrawAlreadyClosed).toEqual(wasWithdrawAlreadyClosed);
   });
 
+  it(`should set wasAllocateRewardsAlreadyClosed state and localStorage item '${WAS_ALLOCATE_REWARDS_ALREADY_CLOSED_TIP}' to 'true'`, () => {
+    const { setWasAllocateRewardsAlreadyClosed } = useTipsStore.getState();
+    const wasAllocateRewardsAlreadyClosed = true;
+
+    setWasAllocateRewardsAlreadyClosed(wasAllocateRewardsAlreadyClosed);
+    expect(localStorage.getItem(WAS_ALLOCATE_REWARDS_ALREADY_CLOSED_TIP)).toEqual(
+      JSON.stringify(wasAllocateRewardsAlreadyClosed),
+    );
+    expect(useTipsStore.getState().data.wasAllocateRewardsAlreadyClosed).toEqual(
+      wasAllocateRewardsAlreadyClosed,
+    );
+  });
+
+  it(`should set wasAllocateRewardsAlreadyClosed state and localStorage item '${WAS_ALLOCATE_REWARDS_ALREADY_CLOSED_TIP}' to 'false'`, () => {
+    const { setWasAllocateRewardsAlreadyClosed } = useTipsStore.getState();
+    const wasAllocateRewardsAlreadyClosed = false;
+
+    setWasAllocateRewardsAlreadyClosed(wasAllocateRewardsAlreadyClosed);
+    expect(localStorage.getItem(WAS_ALLOCATE_REWARDS_ALREADY_CLOSED_TIP)).toEqual(
+      JSON.stringify(wasAllocateRewardsAlreadyClosed),
+    );
+    expect(useTipsStore.getState().data.wasAllocateRewardsAlreadyClosed).toEqual(
+      wasAllocateRewardsAlreadyClosed,
+    );
+  });
+
   it('should set values from localStorage in state', () => {
     const { setValuesFromLocalStorage } = useTipsStore.getState();
 
@@ -208,6 +239,7 @@ describe('useTipsStore', () => {
     expect(useTipsStore.getState().data.wasLockGLMAlreadyClosed).toEqual(false);
     expect(useTipsStore.getState().data.wasRewardsAlreadyClosed).toEqual(false);
     expect(useTipsStore.getState().data.wasWithdrawAlreadyClosed).toEqual(false);
+    expect(useTipsStore.getState().data.wasAllocateRewardsAlreadyClosed).toEqual(false);
 
     const wasAddFavouritesAlreadyClosed = true;
     const wasCheckStatusAlreadyClosed = true;
@@ -215,6 +247,7 @@ describe('useTipsStore', () => {
     const wasLockGLMAlreadyClosed = true;
     const wasRewardsAlreadyClosed = true;
     const wasWithdrawAlreadyClosed = true;
+    const wasAllocateRewardsAlreadyClosed = true;
 
     localStorage.setItem(
       WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP,
@@ -231,6 +264,10 @@ describe('useTipsStore', () => {
     localStorage.setItem(WAS_LOCK_GLM_ALREADY_CLOSED_TIP, JSON.stringify(wasLockGLMAlreadyClosed));
     localStorage.setItem(WAS_REWARDS_ALREADY_CLOSED_TIP, JSON.stringify(wasRewardsAlreadyClosed));
     localStorage.setItem(WAS_WITHDRAW_ALREADY_CLOSED_TIP, JSON.stringify(wasWithdrawAlreadyClosed));
+    localStorage.setItem(
+      WAS_ALLOCATE_REWARDS_ALREADY_CLOSED_TIP,
+      JSON.stringify(wasAllocateRewardsAlreadyClosed),
+    );
 
     setValuesFromLocalStorage();
 
@@ -246,5 +283,8 @@ describe('useTipsStore', () => {
     expect(useTipsStore.getState().data.wasLockGLMAlreadyClosed).toEqual(wasLockGLMAlreadyClosed);
     expect(useTipsStore.getState().data.wasRewardsAlreadyClosed).toEqual(wasRewardsAlreadyClosed);
     expect(useTipsStore.getState().data.wasWithdrawAlreadyClosed).toEqual(wasWithdrawAlreadyClosed);
+    expect(useTipsStore.getState().data.wasAllocateRewardsAlreadyClosed).toEqual(
+      wasAllocateRewardsAlreadyClosed,
+    );
   });
 });

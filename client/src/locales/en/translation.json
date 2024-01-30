@@ -275,8 +275,8 @@
       "buttonConnect": "Connect",
       "noRewardsYet": "No rewards yet",
       "loadingRewardBudget": "Loading reward budget...",
-      "allocationStartsIn": "Allocation starts in <0>{{allocationPeriod}}</0>",
-      "allocationEndsIn": "Allocation ends in <0>{{allocationPeriod}}</0>",
+      "allocationStartsIn": "Allocation starts in <0>{{currentPeriod}}</0>",
+      "allocationEndsIn": "Allocation ends in <0>{{currentPeriod}}</0>",
       "admin": "Admin",
       "patron": "Patron"
     }
@@ -335,6 +335,11 @@
         "lockGlm": {
           "title": "Lock GLM to earn",
           "text": "Lock GLM tokens for as long as possible to earn ETH rewards you can donate or withdraw"
+        },
+        "allocateYourRewards": {
+          "title": "Allocate your rewards",
+          "textDesktop": "Unallocated rewards will be swept back for restaking at the end of this allocation window, so don't forget to allocate!",
+          "textMobile": "Unallocated rewards will be swept back for restaking at the end of this allocation window"
         }
       },
       "preLaunch": {
@@ -412,6 +417,13 @@
       "backToTop": "Back to Top"
     },
     "proposals": {
+      "proposalsTimelineWidget": {
+        "applicationsOpen": "Applications open",
+        "projectUpdatesClose": "Project updates close",
+        "snapshotVote": "Snapshot vote",
+        "allocationWindow": "Allocation window",
+        "epochStarts": "Epoch {{epoch}} starts"
+      },
       "tip": {
         "title": "Add your favourites",
         "text": "Save projects to the Allocate view with the heart icon so you can donate rewards to them"
