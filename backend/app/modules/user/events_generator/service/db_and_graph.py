@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from itertools import groupby
 from operator import attrgetter
 from typing import List, Dict
@@ -16,10 +15,10 @@ from app.infrastructure.graphql.unlocks import (
     get_unlocks_by_address_and_timestamp_range,
     get_unlocks_by_timestamp_range,
 )
+from app.pydantic import Model
 
 
-@dataclass
-class DbAndGraphEventsGenerator:
+class DbAndGraphEventsGenerator(Model):
     def get_user_events(
         self, context: Context, user_address: str
     ) -> List[DepositEvent]:

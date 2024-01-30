@@ -1,23 +1,24 @@
-from dataclasses import dataclass
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 from app.context.manager import Context
 from app.modules.dto import OctantRewardsDTO
 from app.modules.octant_rewards.core import calculate_rewards
+from app.pydantic import Model
 
 
+@runtime_checkable
 class StakingProceeds(Protocol):
     def get_staking_proceeds(self, context: Context) -> int:
         ...
 
 
+@runtime_checkable
 class EffectiveDeposits(Protocol):
     def get_total_effective_deposit(self, context: Context) -> int:
         ...
 
 
-@dataclass
-class CalculatedOctantRewards:
+class CalculatedOctantRewards(Model):
     staking_proceeds: StakingProceeds
     effective_deposits: EffectiveDeposits
 

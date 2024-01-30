@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Protocol
 
 from app.modules.modules_factory.protocols import (
@@ -12,14 +11,14 @@ from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
 from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
 )
+from app.pydantic import Model
 
 
 class CurrentUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protocol):
     pass
 
 
-@dataclass(frozen=True)
-class CurrentServices:
+class CurrentServices(Model):
     user_deposits_service: CurrentUserDeposits
     octant_rewards_service: OctantRewards
 
