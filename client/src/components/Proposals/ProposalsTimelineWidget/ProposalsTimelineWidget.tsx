@@ -1,7 +1,6 @@
 import { isAfter, isSameDay, isWithinInterval } from 'date-fns';
 import { motion, useMotionValue } from 'framer-motion';
 import React, { ReactElement, useLayoutEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import ProposalsTimelineWidgetItem from 'components/Proposals/ProposalsTimelineWidgetItem';
 import getMilestones, { Milestone } from 'constants/milestones';
@@ -9,13 +8,10 @@ import getMilestones, { Milestone } from 'constants/milestones';
 import styles from './ProposalsTimelineWidget.module.scss';
 
 const ProposalsTimelineWidget = (): ReactElement => {
-  const { t } = useTranslation('translation', {
-    keyPrefix: 'views.proposals.proposalsTimelineWidget',
-  });
   const constraintsRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
 
-  const milestonesWithIsActive = getMilestones(t).reduce(
+  const milestonesWithIsActive = getMilestones().reduce(
     (acc, curr) => {
       const currentDate = new Date();
       const isActive =
