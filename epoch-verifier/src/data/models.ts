@@ -116,13 +116,13 @@ export class EpochInfoImpl implements Deserializable<EpochInfo> {
   
 
   from(input: any) {
-    this.stakingProceeds = BigInt(input.staking_proceeds)   
-    this.totalEffectiveDeposit = BigInt(input.total_effective_deposit)   
-    this.totalRewards = BigInt(input.total_rewards)   
-    this.individualRewards = BigInt(input.individual_rewards)   
-    this.totalWithdrawals = BigInt(input.total_withdrawals)   
-    this.patronsRewards = BigInt(input.patrons_budget)   
-    this.matchedRewards = BigInt(input.matched_rewards)   
+    this.stakingProceeds = BigInt(input.stakingProceeds)   
+    this.totalEffectiveDeposit = BigInt(input.totalEffectiveDeposit)   
+    this.totalRewards = BigInt(input.totalRewards)   
+    this.individualRewards = BigInt(input.individualRewards)   
+    this.totalWithdrawals = BigInt(input.totalWithdrawals)   
+    this.patronsRewards = BigInt(input.patronsBudget)   
+    this.matchedRewards = BigInt(input.matchedRewards)   
 
     return this
   }
