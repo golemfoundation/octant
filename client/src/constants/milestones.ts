@@ -58,13 +58,14 @@ export default function getMilestones(t: TFunction): Milestone[] {
       to: new Date('2024-03-22T00:00:00+0100'),
     },
     {
-      from: new Date('2024-04-16T00:00:00+0100'),
+      // 2024-03-31 timezone changes from UTC+00100 to UTC+00200.
+      from: new Date('2024-04-16T00:00:00+0200'),
       id: 'e3-allocation-window',
       label: t('allocationWindow'),
-      to: new Date('2024-04-30T00:00:00+0100'),
+      to: new Date('2024-04-30T00:00:00+0200'),
     },
     {
-      from: new Date('2024-04-16T00:00:00+0100'),
+      from: new Date('2024-04-16T00:00:00+0200'),
       id: 'e4-epoch-starts',
       label: t('epochStarts', { epoch: 'Four' }),
     },
