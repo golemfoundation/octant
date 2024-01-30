@@ -1,12 +1,10 @@
-from dataclasses import dataclass
-
 from app.context.manager import Context
 from app.exceptions import EffectiveDepositNotFoundException
 from app.infrastructure import database
+from app.pydantic import Model
 
 
-@dataclass
-class SavedUserDeposits:
+class SavedUserDeposits(Model):
     def get_user_effective_deposit(self, context: Context, user_address: str) -> int:
         epoch_num = context.epoch_details.epoch_num
         deposit = database.deposits.get_by_user_address_and_epoch(

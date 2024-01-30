@@ -6,7 +6,7 @@ from tests.helpers.context import get_context
 
 def test_get_total_effective_deposit(mock_events_generator):
     context = get_context()
-    service = CalculatedUserDeposits(mock_events_generator)
+    service = CalculatedUserDeposits(events_generator=mock_events_generator)
 
     result = service.get_total_effective_deposit(context)
 
@@ -17,7 +17,7 @@ def test_get_user_effective_deposit(
     mock_events_generator,
 ):
     context = get_context()
-    service = CalculatedUserDeposits(mock_events_generator)
+    service = CalculatedUserDeposits(events_generator=mock_events_generator)
 
     result = service.get_user_effective_deposit(context, USER1_ADDRESS)
 
@@ -28,7 +28,7 @@ def test_get_all_deposits(
     mock_events_generator,
 ):
     context = get_context()
-    service = CalculatedUserDeposits(mock_events_generator)
+    service = CalculatedUserDeposits(events_generator=mock_events_generator)
 
     result = service.get_all_effective_deposits(context)
 

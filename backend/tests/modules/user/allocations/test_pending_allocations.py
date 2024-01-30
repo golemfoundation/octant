@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 import pytest
 
 from app.engine.projects.rewards import ProjectRewardDTO
@@ -29,7 +31,7 @@ def test_get_all_donors_addresses(mock_users_db, proposal_accounts):
     context_epoch_1 = get_context(1)
     context_epoch_2 = get_context(2)
 
-    service = PendingUserAllocations(None)
+    service = PendingUserAllocations(octant_rewards=Mock())
 
     result_epoch_1 = service.get_all_donors_addresses(context_epoch_1)
     result_epoch_2 = service.get_all_donors_addresses(context_epoch_2)
@@ -52,7 +54,7 @@ def test_return_only_not_removed_allocations(mock_users_db, proposal_accounts):
 
     context = get_context(1)
 
-    service = PendingUserAllocations(None)
+    service = PendingUserAllocations(octant_rewards=Mock())
 
     result = service.get_all_donors_addresses(context)
 
@@ -72,7 +74,7 @@ def test_simulate_allocation(mock_users_db, mock_octant_rewards):
         AllocationDTO(projects[1], 200_000000000),
     ]
 
-    service = PendingUserAllocations(mock_octant_rewards)
+    service = PendingUserAllocations(octant_rewards=mock_octant_rewards)
 
     leverage, rewards = service.simulate_allocation(
         context, next_allocations, user1.address
