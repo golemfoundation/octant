@@ -65,18 +65,13 @@ export function verifyMatchingFundFromEpochInfo(context: Context): VerificationR
 }
 
 export function verifyTotalWithdrawals(context: Context): VerificationResult {
-  const budgets = Array.from(context.budgets.values()).reduce((acc, budget) => acc + budget, BigInt(0)) 
-
   const allocs = allocationsByUser(context)
-  const totalAllocated = Array.from(allocs.values())
-    .flatMap((donations) => donations.map(donation => donation.amount))
-    .reduce((acc, val) => acc + val, BigInt(0))
 
-  const unclaimedAndPatronsBudget = Array.from(context.budgets.entries()).filter(([user,_]) => !allocs.has(user)).reduce((acc, [_, budget]) => acc + budget, BigInt(0))
-  const unclaimed = unclaimedAndPatronsBudget - context.epochInfo.patronsRewards
+  const claimed = Array.from(allocs.entries())
+    .map(([user, donations]) => [user, donations.reduce((acc, donation) => acc + donation.amount, BigInt(0))] as const)
+    .map(([user, donationsSum]) => context.budgets.get(user)! - donationsSum)
+    .reduce((acc, user_claimed) => acc + user_claimed, BigInt(0))
 
-  const claimed = budgets - totalAllocated - unclaimed - context.epochInfo.patronsRewards
   const rewards = context.rewards.reduce((acc, reward) => acc + reward.allocated + reward.matched, BigInt(0)) 
-
   return assertEq(claimed + rewards, context.epochInfo.totalWithdrawals)
 }

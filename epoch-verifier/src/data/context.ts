@@ -10,10 +10,11 @@ export interface Context {
 export function buildContext(budgets: UserBudget[], allocations: Allocation[], rewards: Reward[], epochInfo: EpochInfo): Context{
 
   const filteredBudgets = budgets.filter((ub) => ub.budget !== BigInt(0))
+  const filteredAllocs = allocations.filter(alloc => alloc.donations.length !== 0)
 
   const context = {
     budgets: new Map(filteredBudgets.map((value) => [value.user, value.budget] as const)),
-    allocations: allocations,
+    allocations: filteredAllocs,
     rewards: rewards,
     epochInfo: epochInfo
   } as Context 

@@ -71,6 +71,7 @@ export class AllocationImpl implements Deserializable<Allocation> {
     this.user = input.donor
     this.donations = Object.entries(input)
     .filter(([k, _v]) => k !== "donor")
+    .filter(([_k, v]) => v !== null)
     .map(([proposal, amount]) => new UserDonationImpl().from({proposal: proposal, amount: amount}))
 
     return this
@@ -101,13 +102,14 @@ export class EpochInfoImpl implements Deserializable<EpochInfo> {
   matchedRewards: bigint
 
   from(input: any) {
-    this.stakingProceeds = BigInt(input.staking_proceeds)
-    this.totalEffectiveDeposit = BigInt(input.total_effective_deposit)
-    this.totalRewards = BigInt(input.total_rewards)
-    this.individualRewards = BigInt(input.individual_rewards)
-    this.totalWithdrawals = BigInt(input.total_withdrawals ?? 0)
-    this.patronsRewards = BigInt(input.patrons_rewards ?? 0)
-    this.matchedRewards = BigInt(input.matched_rewards ?? 0)
+    this.stakingProceeds = BigInt(input.staking_proceeds)   
+    this.totalEffectiveDeposit = BigInt(input.total_effective_deposit)   
+    this.totalRewards = BigInt(input.total_rewards)   
+    this.individualRewards = BigInt(input.individual_rewards)   
+    this.totalWithdrawals = BigInt(input.total_withdrawals)   
+    this.patronsRewards = BigInt(input.patrons_budget)   
+    this.matchedRewards = BigInt(input.matched_rewards)   
+
     return this
   }
 }
