@@ -1,5 +1,4 @@
 import { Command, Option } from "commander";
-import { isNull } from "util";
 
 import { HttpFetcher } from "./data/fetcher";
 import { register_verifications } from "./verifications";
@@ -20,6 +19,8 @@ const DEPLOYMENTS: {[key: string]: string} = {
   testnet: "https://backend.testnet.octant.app",
   uat: "https://uat-backend.octant.wildland.dev",
 }
+
+const isNull = (obj: any) => obj === null
 
 function getDeploymentUrl(options: Options): string {
 
