@@ -61,7 +61,11 @@ const Button = <T extends ButtonProps>(
     'iconOnlyTransparent2',
     'iconVertical',
   ].includes(variant);
-  const IconToRender = isLoading ? <Loader className={styles.loader} /> : Icon;
+  const IconToRender = isLoading ? (
+    <Loader color={variant === 'cta' ? 'white' : 'grey'} variant="small" />
+  ) : (
+    Icon
+  );
 
   return (
     <Component
