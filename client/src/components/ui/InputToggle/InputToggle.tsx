@@ -11,6 +11,7 @@ const InputToggle: FC<InputToggleProps> = ({
   isDisabled,
   onChange,
 }) => (
+  // eslint-disable-next-line jsx-a11y/label-has-associated-control
   <label className={cx(styles.root, className, isDisabled && styles.isDisabled)}>
     <input
       checked={isChecked}

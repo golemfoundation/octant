@@ -67,29 +67,29 @@ class IndexedEpoch(OctantResource):
 epoch_stats_model = api.model(
     "EpochStats",
     {
-        "staking_proceeds": fields.String(
+        "stakingProceeds": fields.String(
             required=True, description="ETH proceeds from staking for the given epoch."
         ),
-        "total_effective_deposit": fields.String(
+        "totalEffectiveDeposit": fields.String(
             required=True, description="Effectively locked GLMs for the given epoch"
         ),
-        "total_rewards": fields.String(
+        "totalRewards": fields.String(
             required=True, description="Total rewards for the given epoch."
         ),
-        "individual_rewards": fields.String(
+        "individualRewards": fields.String(
             required=True, description="Total rewards budget allocated to users rewards"
         ),
-        "operational_cost": fields.String(
+        "operationalCost": fields.String(
             required=True, description="The amount needed to cover the Octant's costs"
         ),
-        "total_withdrawals": fields.String(
+        "totalWithdrawals": fields.String(
             required=False,
             description="Rewards users decided to withdraw for the given epoch.",
         ),
-        "patrons_rewards": fields.String(
+        "patronsRewards": fields.String(
             required=False, description="Matching fund budget coming from patrons."
         ),
-        "matched_rewards": fields.String(
+        "matchedRewards": fields.String(
             required=False, description="Total matched rewards for the given epoch."
         ),
         "leftover": fields.String(
@@ -116,4 +116,4 @@ class EpochStats(OctantResource):
         stats = get_octant_rewards(epoch)
         app.logger.debug(f"Got: {stats}")
 
-        return stats
+        return stats.to_dict()
