@@ -16,9 +16,20 @@
 
 .bar {
   width: 100%;
-  background-color: $color-octant-grey1;
   border-radius: 0.4rem;
   overflow: hidden;
+
+  &.trackColor-- {
+    &grey {
+      background-color: $color-octant-grey1;
+    }
+    &orange {
+      background-color: $color-octant-orange2;
+    }
+    &green {
+      background-color: $color-octant-green2;
+    }
+  }
 
   &.variant-- {
     &ultraThin {

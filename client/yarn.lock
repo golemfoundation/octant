@@ -2922,10 +2922,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-vis@^1.11.12":
-  version "1.11.12"
-  resolved "https://registry.yarnpkg.com/@types/react-vis/-/react-vis-1.11.12.tgz#1a2585897bf829c75bf479e66d0b16e8ee70c523"
-  integrity sha512-HEI+4UEM6KCfirTz3fzsB6V2wmwiGNwsOGzdo0FxOT6BpsyMTgkIawjM0iB1ASlPhpHQoZC84bmn2YroW7SriQ==
+"@types/react-vis@^1.11.14":
+  version "1.11.14"
+  resolved "https://registry.yarnpkg.com/@types/react-vis/-/react-vis-1.11.14.tgz#d68180e81c62bfe27dabc235f88d166c1fad749f"
+  integrity sha512-5pmfroXeHN1EK2ezh0f8M8W0NgLyyqldyKSnBvxbpgPzgAlkuZiFgy112xj2LywDAEZYXoeo2r3DTFGD8WTutA==
   dependencies:
     "@types/react" "*"
 

@@ -161,7 +161,7 @@ class PatronMode(OctantResource):
 @ns.route("/patrons/<int:epoch>")
 class Patrons(OctantResource):
     @ns.doc(
-        description="Returns a list of users who toggled patron mode and has a budget in given epoch",
+        description="Returns a list of users who toggled patron mode and has a positive budget in given epoch",
         params={
             "epoch": "Epoch number",
         },
