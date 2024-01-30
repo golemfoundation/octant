@@ -80,7 +80,9 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
                 variant="iconOnly2"
               />
             )}
-            {showLoader && <Loader className={styles.loader} dataTest={`${dataTest}__Loader`} />}
+            {showLoader && (
+              <Loader className={styles.loader} dataTest={`${dataTest}__Loader`} variant="small" />
+            )}
             {suffix && (
               <div
                 className={cx(
