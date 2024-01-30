@@ -22,17 +22,20 @@ def upgrade():
         return
 
     load_dotenv()
-    op.execute(sqltext())
+    # Mainnet
+    if os.getenv("CHAIN_ID") == "1":
+        op.execute(_mainnet_sqltext())
+    # Sepolia
+    if os.getenv("CHAIN_ID") == "11155111":
+        op.execute(_sepolia_sqltext())
 
 
 def downgrade():
     op.execute("DELETE FROM budgets WHERE epoch = 2")
 
 
-def sqltext():
-    # Mainnet
-    if os.getenv("CHAIN_ID") == "1":
-        return """
+def _mainnet_sqltext():
+    return """
         DO
         $do$
         BEGIN
@@ -628,9 +631,10 @@ def sqltext():
     END
     $do$
     """
-    # Sepolia
-    if os.getenv("CHAIN_ID") == "11155111":
-        return """
+
+
+def _sepolia_sqltext():
+    return """
         DO
         $do$
         BEGIN
