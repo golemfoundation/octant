@@ -11,13 +11,13 @@ ARTIFACTS_DIR="./generated"
 mkdir -p "${ARTIFACTS_DIR}"
 
 
-if [[ -f "${NETWORK_FILE}" ]]; then
-    echo "Network file ${NETWORK_FILE} already exists. Skipping its generation..." 
-    echo 
+if [ -f "${NETWORK_FILE}" ]; then
+    echo "Network file ${NETWORK_FILE} already exists. Skipping its generation..."
+    echo
 
 else
-    echo "Generating network file ${NETWORK_FILE} from ${NETWORK_TEMPLATE_FILE}" 
-    echo 
+    echo "Generating network file ${NETWORK_FILE} from ${NETWORK_TEMPLATE_FILE}"
+    echo
 
     envsubst <$NETWORK_TEMPLATE_FILE >$NETWORK_FILE
 fi
