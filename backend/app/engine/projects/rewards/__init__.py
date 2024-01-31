@@ -31,9 +31,17 @@ class ProjectRewardsPayload:
 
 
 @dataclass
+class ProjectRewardsResult:
+    rewards: List[ProjectRewardDTO]
+    rewards_sum: int
+    total_allocated: int
+    threshold: int
+
+
+@dataclass
 class ProjectRewards(ABC):
     @abstractmethod
     def calculate_project_rewards(
         self, payload: ProjectRewardsPayload
-    ) -> (List[ProjectRewardDTO], int, int, int):
+    ) -> ProjectRewardsResult:
         pass

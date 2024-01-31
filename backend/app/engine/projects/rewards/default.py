@@ -1,9 +1,9 @@
 from dataclasses import field, dataclass
 from decimal import Decimal
-from typing import List
 
 from app.engine.projects.rewards import (
     ProjectRewardsPayload,
+    ProjectRewardsResult,
     ProjectRewards,
     ProjectRewardDTO,
 )
@@ -30,7 +30,7 @@ class DefaultProjectRewards(ProjectRewards):
 
     def calculate_project_rewards(
         self, payload: ProjectRewardsPayload
-    ) -> (List[ProjectRewardDTO], int, int, int):
+    ) -> ProjectRewardsResult:
         (
             allocated_by_addr,
             total_allocated,
@@ -67,9 +67,9 @@ class DefaultProjectRewards(ProjectRewards):
             project_rewards.allocated = allocated
             project_rewards.matched = matched
 
-        return (
-            sorted(rewards.values(), key=lambda r: r.allocated, reverse=True),
-            project_rewards_sum,
-            total_allocated,
-            threshold,
+        return ProjectRewardsResult(
+            rewards=sorted(rewards.values(), key=lambda r: r.allocated, reverse=True),
+            rewards_sum=project_rewards_sum,
+            total_allocated=total_allocated,
+            threshold=threshold,
         )

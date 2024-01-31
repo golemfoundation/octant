@@ -18,19 +18,19 @@ def simulate_allocation(
         all_allocations_before, user_allocations, user_address
     )
 
-    simulated_projects_rewards, _, total_allocated, threshold = get_projects_rewards(
+    simulated_rewards = get_projects_rewards(
         projects_settings,
         simulated_allocations,
         all_projects,
         matched_rewards,
     )
 
-    leverage = calculate_leverage(matched_rewards, total_allocated)
+    leverage = calculate_leverage(matched_rewards, simulated_rewards.total_allocated)
 
     return (
         leverage,
-        threshold,
-        sorted(simulated_projects_rewards, key=lambda r: r.address),
+        simulated_rewards.threshold,
+        sorted(simulated_rewards.rewards, key=lambda r: r.address),
     )
 
 
