@@ -18,19 +18,19 @@ def get_donors(epoch_num: int) -> List[str]:
 
 def simulate_allocation(
     payload: Dict, user_address: str
-) -> Tuple[float, List[Dict[str, int]]]:
+) -> Tuple[float, int, List[Dict[str, int]]]:
     context = state_context(EpochState.PENDING)
     service: PendingUserAllocations = get_services(
         context.epoch_state
     ).user_allocations_service
     user_allocations = _deserialize_payload(payload)
-    leverage, projects_rewards = service.simulate_allocation(
+    leverage, threshold, projects_rewards = service.simulate_allocation(
         context, user_allocations, user_address
     )
 
     matched = [{"address": p.address, "value": p.matched} for p in projects_rewards]
 
-    return leverage, matched
+    return leverage, threshold, matched
 
 
 def _deserialize_payload(payload: Dict) -> List[AllocationDTO]:

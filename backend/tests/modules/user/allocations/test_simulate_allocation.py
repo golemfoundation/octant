@@ -21,7 +21,7 @@ def test_simulate_allocation_single_user():
     ]
 
     # Call simulate allocation method
-    leverage, result = simulate_allocation(
+    leverage, threshold, result = simulate_allocation(
         project_settings,
         allocations_before,
         user_allocation,
@@ -33,6 +33,7 @@ def test_simulate_allocation_single_user():
     sorted_projects = sorted(projects)
 
     assert leverage == 2.445715536838903
+    assert threshold == int(4.5 * 10**18)
     assert result == [
         ProjectRewardDTO(sorted_projects[0], 0, 0),
         ProjectRewardDTO(sorted_projects[1], 0, 0),
@@ -65,7 +66,7 @@ def test_simulate_allocation_multiple_user():
     ]
 
     # Call simulate allocation method
-    leverage, result = simulate_allocation(
+    leverage, threshold, result = simulate_allocation(
         project_settings,
         allocations_before,
         user_allocation,
@@ -76,6 +77,7 @@ def test_simulate_allocation_multiple_user():
 
     sorted_projects = sorted(projects)
     assert leverage == 1.0005199923431876
+    assert threshold == 11 * 10**18
     assert result == [
         ProjectRewardDTO(sorted_projects[0], 0, 0),
         ProjectRewardDTO(sorted_projects[1], 0, 0),
