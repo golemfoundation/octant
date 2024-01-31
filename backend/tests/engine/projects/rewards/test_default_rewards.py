@@ -124,6 +124,36 @@ def test_compute_rewards_when_one_project_is_below_threshold():
 
     assert result.threshold == 76_900000000
 
+
+def test_compute_rewards_when_one_project_is_at_threshold():
+    projects = get_project_details().projects
+
+    allocations = [
+        AllocationPayload(projects[0], 100_000000000),
+        AllocationPayload(projects[1], 400_000000000),
+        AllocationPayload(projects[2], 500_000000000),
+    ]
+    payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects[:5])
+    uut = DefaultProjectRewards()
+
+    result = uut.calculate_project_rewards(payload)
+
+    project_rewards = result.rewards
+    assert len(project_rewards) == 5
+    assert project_rewards[0] == ProjectRewardDTO(
+        projects[2], 500_000000000, 55555555555555555555
+    )
+    assert project_rewards[1] == ProjectRewardDTO(
+        projects[1], 400_000000000, 44444444444444444444
+    )
+
+    assert project_rewards[2] == ProjectRewardDTO(projects[0], 100_000000000, 0)
+    assert result.rewards_sum == pytest.approx(
+        MATCHED_REWARDS + 500_000000000 + 400_000000000, 0.00000000000000000001
+    )
+    assert result.threshold == 100_000000000
+
+
 def test_compute_rewards_when_multiple_projects_are_below_threshold():
     projects = get_project_details().projects
 
