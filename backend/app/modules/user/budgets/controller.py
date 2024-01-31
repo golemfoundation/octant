@@ -1,20 +1,21 @@
-from typing import List, Tuple
+from typing import List
 
 from app.context.epoch_state import EpochState
 from app.context.manager import state_context, epoch_context
 from app.exceptions import NotImplementedForGivenEpochState
+from app.modules.dto import AccountFundsDTO
 from app.modules.modules_factory.protocols import UserBudgets
 from app.modules.registry import get_services
 from app.modules.user.budgets import core
 
 
-def get_budgets(epoch_num: int) -> List[Tuple[str, int]]:
+def get_budgets(epoch_num: int) -> List[AccountFundsDTO]:
     context = epoch_context(epoch_num)
     if context.epoch_state > EpochState.PENDING:
         raise NotImplementedForGivenEpochState()
     service: UserBudgets = get_services(context.epoch_state).user_budgets_service
     budgets = service.get_all_budgets(context)
-    return list(budgets.items())
+    return [AccountFundsDTO(k, v) for k, v in budgets.items()]
 
 
 def estimate_budget(lock_duration_sec: int, glm_amount: int) -> int:

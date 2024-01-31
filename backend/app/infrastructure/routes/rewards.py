@@ -28,8 +28,8 @@ user_budget_model = api.model(
 epoch_budget_item = api.model(
     "EpochBudgetItem",
     {
-        "user": fields.String(required=True, description="User address"),
-        "budget": fields.String(
+        "address": fields.String(required=True, description="User address"),
+        "amount": fields.String(
             required=True, description="User budget for given epoch, BigNumber (wei)"
         ),
     },
