@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { useAccount, useConnect, useNetwork } from 'wagmi';
 
 import networkConfig from 'constants/networkConfig';
-import env from 'env';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useSyncStatus, { Response } from 'hooks/queries/useSyncStatus';
 import localStorageService from 'services/localStorageService';
@@ -164,10 +163,6 @@ export default function useAppConnectManager(
   }, [isFlushRequired, setIsFlushRequired, queryClient]);
 
   useEffect(() => {
-    // TODO OCT-1157 OCT-1158 remove this bypass.
-    if (env.network === 'Local') {
-      return;
-    }
     if (
       isDecisionWindowOpen === undefined ||
       !timeCurrentAllocationEnd ||
