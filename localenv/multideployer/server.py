@@ -35,7 +35,12 @@ def setup_subgraph(contracts, testname):
     env = dict(contracts)
     fn = f"/tmp/{testname}_subgraph_networks.json"
     env["NETWORK_FILE"] = fn
-    subprocess.run(["./configure-network.sh", fn], env=make_env(env), check=True)
+    subprocess.run(["./configure-network.sh"], env=make_env(env), check=True)
+    subprocess.run(
+        ["yarn", "codegen"],
+        env=make_env(env),
+        check=True,
+    )
     subprocess.run(
         ["yarn", "graph", "build", "--network", "localhost", "--network-file", fn],
         check=True,
@@ -74,10 +79,10 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
     def get_env(self, name):
         if name in deployments:
-            print(f'Cached deployment of {name}')
+            print(f"Cached deployment of {name}")
             return deployments[name]
         else:
-            print(f'New deployment of {name}')
+            print(f"New deployment of {name}")
             new_deployment = self.new_deployment(name)
             deployments[name] = new_deployment
             return new_deployment
