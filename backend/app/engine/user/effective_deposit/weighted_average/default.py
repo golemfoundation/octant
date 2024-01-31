@@ -33,7 +33,7 @@ class DefaultWeightedAverageEffectiveDeposit(UserEffectiveDeposit):
         user_deposits = []
 
         for address, events in payload.lock_events_by_addr.items():
-            locked_amount = events[-1].deposit_after
+            locked_amount = events[-1].deposit_after if events else 0
             weighted_deposits = self.timebased_weights.calculate_deposit_weights(
                 DepositWeightsPayload(
                     start=payload.epoch_start, end=payload.epoch_end, user_events=events
