@@ -1,4 +1,4 @@
-from flask import current_app as app, request
+from flask import current_app as app
 from flask_restx import Namespace, fields
 
 from app.extensions import api
@@ -10,7 +10,7 @@ from app.legacy.controllers import rewards
 from app.legacy.controllers.user import get_budget
 from app.legacy.utils.time import days_to_sec
 from app.modules.octant_rewards.controller import get_leverage
-from app.modules.user.budgets.controller import estimate_budget
+from app.modules.user.budgets.controller import estimate_budget, get_budgets
 from app.modules.user.rewards.controller import get_unused_rewards
 
 ns = Namespace("rewards", description="Octant rewards")
@@ -25,7 +25,7 @@ user_budget_model = api.model(
     },
 )
 
-epoch_budget_model = api.model(
+epoch_budget_item = api.model(
     "EpochBudgetItem",
     {
         "user": fields.String(required=True, description="User address"),
@@ -34,6 +34,18 @@ epoch_budget_model = api.model(
         ),
     },
 )
+
+epoch_budget_model = api.model(
+    "EpochBudgets",
+    {
+        "budgets": fields.List(
+            fields.Nested(epoch_budget_item),
+            required=True,
+            description="Users budgets for given epoch, BigNumber (wei)",
+        ),
+    },
+)
+
 
 threshold_model = api.model(
     "Threshold",
@@ -191,30 +203,13 @@ class UserBudget(OctantResource):
     },
 )
 class EpochBudgets(OctantResource):
-    representations = {
-        "application/json": OctantResource.encode_json_response,
-        "text/csv": OctantResource.encode_csv_response,
-    }
-
-    @ns.produces(["application/json", "text/csv"])
     @ns.marshal_with(epoch_budget_model)
     @ns.response(200, "Epoch individual budgets successfully retrieved")
-    def get(self, epoch):
-        headers = {}
-        data = []
-
-        if EpochBudgets.response_mimetype(request) == "text/csv":
-            headers[
-                "Content-Disposition"
-            ] = f"attachment;filename=budgets_epoch_{epoch}.csv"
-
-            # for csv header resoultion - in case of empty list,
-            # endpoint marshalling will automatically create expected object with nulled fields
-            data.append({})
-
+    def get(self, epoch: int):
         app.logger.debug(f"Get budgets for all users in epoch {epoch}")
-        data += rewards.get_all_budgets(epoch)
-        return data, 200, headers
+        budgets = get_budgets(epoch)
+        app.logger.debug(f"Budgets for all users in epoch {epoch}: {budgets}")
+        return {"budgets": budgets}
 
 
 @ns.route("/estimated_budget")

@@ -62,6 +62,12 @@ class UserPatronMode(Protocol):
 
 
 @runtime_checkable
+class UserBudgets(Protocol):
+    def get_all_budgets(self, context: Context) -> Dict[str, int]:
+        ...
+
+
+@runtime_checkable
 class UserRewards(Protocol):
     def get_unused_rewards(self, context: Context) -> Dict[str, int]:
         ...
