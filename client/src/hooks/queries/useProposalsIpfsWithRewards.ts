@@ -19,11 +19,14 @@ export default function useProposalsIpfsWithRewards(epoch?: number): {
   data: ProposalIpfsWithRewards[];
   isFetching: boolean;
 } {
+  // TODO OCT-1270 TODO OCT-1312 Remove this override.
+  const epochOverrideForDataFetch = epoch === 2 ? 3 : epoch;
+
   const { data: proposalsAddresses, isFetching: isFetchingProposalsContract } =
-    useProposalsContract(epoch);
+    useProposalsContract(epochOverrideForDataFetch);
   const { data: proposalsIpfs, isFetching: isFetchingProposalsIpfs } = useProposalsIpfs(
     proposalsAddresses,
-    epoch,
+    epochOverrideForDataFetch,
   );
   const {
     data: matchedProposalRewards,
