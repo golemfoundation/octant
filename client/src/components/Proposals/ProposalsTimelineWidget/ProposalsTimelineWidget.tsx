@@ -33,8 +33,13 @@ const ProposalsTimelineWidget = (): ReactElement => {
   );
 
   useLayoutEffect(() => {
-    const { id } = milestonesWithIsActive.find(({ isActive }) => isActive)!;
-    const el = document.getElementById(id);
+    const milestoneWithIsActive = milestonesWithIsActive.find(({ isActive }) => isActive);
+
+    if (!milestoneWithIsActive) {
+      return;
+    }
+    
+    const el = document.getElementById(milestoneWithIsActive.id);
     const elRight = el!.getBoundingClientRect()!.right;
     const containerRight = constraintsRef.current!.getBoundingClientRect().right;
     const elOffset = 24;
