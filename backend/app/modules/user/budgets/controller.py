@@ -18,6 +18,14 @@ def get_budgets(epoch_num: int) -> List[AccountFundsDTO]:
     return [AccountFundsDTO(k, v) for k, v in budgets.items()]
 
 
+def get_budget(user_address: str, epoch_num: int) -> int:
+    context = epoch_context(epoch_num)
+    if context.epoch_state > EpochState.PENDING:
+        raise NotImplementedForGivenEpochState()
+    service: UserBudgets = get_services(context.epoch_state).user_budgets_service
+    return service.get_budget(context, user_address)
+
+
 def estimate_budget(lock_duration_sec: int, glm_amount: int) -> int:
     current = state_context(EpochState.CURRENT)
     current_rewards = get_services(EpochState.CURRENT).octant_rewards_service
