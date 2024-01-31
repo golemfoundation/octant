@@ -31,22 +31,24 @@ def get_finalized_rewards(
     projects = get_proposals_with_allocations(epoch)
     threshold = get_proposal_allocation_threshold(epoch)
 
+    projects_above_threshold = [
+        (address, allocated) for address, allocated in projects if allocated > threshold
+    ]
     total_allocated_above_threshold = sum(
-        [allocated for _, allocated in projects if allocated > threshold]
+        [allocated for _, allocated in projects_above_threshold]
     )
 
     proposal_rewards_sum = 0
     proposal_rewards: List[AccountFunds] = []
 
-    for address, allocated in projects:
-        if allocated > threshold:
-            matched = int(
-                Decimal(allocated)
-                / Decimal(total_allocated_above_threshold)
-                * matched_rewards
-            )
-            proposal_rewards_sum += allocated + matched
-            proposal_rewards.append(AccountFunds(address, allocated + matched, matched))
+    for address, allocated in projects_above_threshold:
+        matched = int(
+            Decimal(allocated)
+            / Decimal(total_allocated_above_threshold)
+            * matched_rewards
+        )
+        proposal_rewards_sum += allocated + matched
+        proposal_rewards.append(AccountFunds(address, allocated + matched, matched))
 
     return proposal_rewards, proposal_rewards_sum, matched_rewards, patrons_rewards
 
