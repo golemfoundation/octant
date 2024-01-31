@@ -12,9 +12,7 @@ class SavedUserBudgets(Model):
 
     def get_budget(self, context: Context, user_address: str) -> int:
         epoch_num = context.epoch_details.epoch_num
-        budget = database.budgets.get_by_user_address_and_epoch(
-            user_address, context.epoch_details.epoch_num
-        )
+        budget = database.budgets.get_by_user_address_and_epoch(user_address, epoch_num)
 
         if budget is None:
             raise BudgetNotFound(user_address, epoch_num)
