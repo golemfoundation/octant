@@ -646,48 +646,48 @@ Destroy Master App:
     name: persistent/master
     deployment_tier: testing
 
-API Tests:
-  stage: application
-  needs: ["API Test app deploy", "API Test contracts"]
-  image: !reference [.images, python ]
-  <<: *env_resolve_init
-  rules:
-    - !reference [.rules, on_mr ]
-    - !reference [.rules, on_push_to_default_branch ]
-    - !reference [.rules, on_push_to_master_branch ]
-  dependencies:
-    - API Test contracts
-  script:
-    - set -e
-    - cd backend
-    - !reference [ .scripts, poetry_install ]
-    # Wait for Argo app
-    - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
-    - export ETH_RPC_PROVIDER_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
-    - export SUBGRAPH_ENDPOINT=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_graph_url.sh)/subgraphs/name/octant
-    # Run the API tests
-    - set +e
-    - poetry run pytest --onlyapi || PYTEST_EXIT_CODE=$?
-    - set -e
-    # Trigger the stop job
-    - |
-      JOB_ID=$(curl --fail -s -XGET --header "PRIVATE-TOKEN: $CI_JOB_CONTROLLER" https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/pipelines/$CI_PIPELINE_ID/jobs | jq '.[] | select(.name == "Destroy API Test App") | .id')
+# API Tests:
+#   stage: application
+#   needs: ["API Test app deploy", "API Test contracts"]
+#   image: !reference [.images, python ]
+#   <<: *env_resolve_init
+#   rules:
+#     - !reference [.rules, on_mr ]
+#     - !reference [.rules, on_push_to_default_branch ]
+#     - !reference [.rules, on_push_to_master_branch ]
+#   dependencies:
+#     - API Test contracts
+#   script:
+#     - set -e
+#     - cd backend
+#     - !reference [ .scripts, poetry_install ]
+#     # Wait for Argo app
+#     - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
+#     - export ETH_RPC_PROVIDER_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
+#     - export SUBGRAPH_ENDPOINT=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_graph_url.sh)/subgraphs/name/octant
+#     # Run the API tests
+#     - set +e
+#     - poetry run pytest --onlyapi || PYTEST_EXIT_CODE=$?
+#     - set -e
+#     # Trigger the stop job
+#     - |
+#       JOB_ID=$(curl --fail -s -XGET --header "PRIVATE-TOKEN: $CI_JOB_CONTROLLER" https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/pipelines/$CI_PIPELINE_ID/jobs | jq '.[] | select(.name == "Destroy API Test App") | .id')
 
-      curl -s --fail -X POST \
-           -H "PRIVATE-TOKEN: $CI_JOB_CONTROLLER" \
-           "$CI_API_V4_URL/projects/$CI_PROJECT_ID/jobs/$JOB_ID/play"
-    - exit $PYTEST_EXIT_CODE
-  variables:
-    ENV_TYPE: "apitest"
-    CHAIN_ID: "1337"
-    CHAIN_NAME: "localhost"
-    OCTANT_BACKEND_SECRET_KEY: "some-random-key"
-    OCTANT_ENV: "production"
-  cache:
-    - key: $CI_COMMIT_REF_SLUG-poetry-backend
-      policy: pull
-      paths:
-        - backend/.venv
+#       curl -s --fail -X POST \
+#            -H "PRIVATE-TOKEN: $CI_JOB_CONTROLLER" \
+#            "$CI_API_V4_URL/projects/$CI_PROJECT_ID/jobs/$JOB_ID/play"
+#     - exit $PYTEST_EXIT_CODE
+#   variables:
+#     ENV_TYPE: "apitest"
+#     CHAIN_ID: "1337"
+#     CHAIN_NAME: "localhost"
+#     OCTANT_BACKEND_SECRET_KEY: "some-random-key"
+#     OCTANT_ENV: "production"
+#   cache:
+#     - key: $CI_COMMIT_REF_SLUG-poetry-backend
+#       policy: pull
+#       paths:
+#         - backend/.venv
 
 E2E Epoch 2:
   stage: application

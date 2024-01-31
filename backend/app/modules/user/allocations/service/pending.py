@@ -1,20 +1,20 @@
-from dataclasses import dataclass
-from typing import List, Tuple, Protocol
+from typing import List, Tuple, Protocol, runtime_checkable
 
 from app.context.manager import Context
 from app.engine.projects.rewards import ProjectRewardDTO
 from app.infrastructure import database
 from app.modules.dto import AllocationDTO, AccountFundsDTO
 from app.modules.user.allocations import core
+from app.pydantic import Model
 
 
+@runtime_checkable
 class OctantRewards(Protocol):
     def get_matched_rewards(self, context: Context) -> int:
         ...
 
 
-@dataclass
-class PendingUserAllocations:
+class PendingUserAllocations(Model):
     octant_rewards: OctantRewards
 
     def get_all_donors_addresses(self, context: Context) -> List[str]:

@@ -1,12 +1,11 @@
-from dataclasses import dataclass
 from typing import List
 
 from app.context.manager import Context
 from app.infrastructure import database
+from app.pydantic import Model
 
 
-@dataclass
-class EventsBasedUserPatronMode:
+class EventsBasedUserPatronMode(Model):
     def get_all_patrons_addresses(
         self, context: Context, with_budget=True
     ) -> List[str]:

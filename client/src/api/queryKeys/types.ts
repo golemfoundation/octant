@@ -4,7 +4,13 @@ export type Root = {
   calculateRewards: 'calculateRewards';
   cryptoValues: 'cryptoValues';
   depositAt: 'depositAt';
+  epochBudgets: 'epochBudgets';
+  epochDonors: 'epochDonors';
+  epochInfo: 'epochInfo';
+  epochLeverage: 'epochLeverage';
+  epochPatrons: 'epochPatrons';
   epochTimestampHappenedIn: 'epochTimestampHappenedIn';
+  epochUnusedRewards: 'epochUnusedRewards';
   epochesEndTime: 'epochesEndTime';
   estimatedEffectiveDeposit: 'estimatedEffectiveDeposit';
   individualReward: 'individualReward';
@@ -29,7 +35,13 @@ export type QueryKeys = {
   currentEpochEnd: ['currentEpochEnd'];
   currentEpochProps: ['currentEpochProps'];
   depositsValue: ['depositsValue'];
+  epochBudgets: (epoch: number) => [Root['epochBudgets'], string];
+  epochDonors: (epoch: number) => [Root['epochDonors'], string];
+  epochInfo: (epoch: number) => [Root['epochInfo'], string];
+  epochLeverage: (epoch: number) => [Root['epochLeverage'], string];
+  epochPatrons: (epoch: number) => [Root['epochPatrons'], string];
   epochTimestampHappenedIn: (timestamp: number) => [Root['epochTimestampHappenedIn'], string];
+  epochUnusedRewards: (epoch: number) => [Root['epochUnusedRewards'], string];
   epochesEndTime: (epochNumber: number) => [Root['epochesEndTime'], string];
   estimatedEffectiveDeposit: (userAddress: string) => [Root['estimatedEffectiveDeposit'], string];
   glmClaimCheck: ['glmClaimCheck'];

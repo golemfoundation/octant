@@ -1,11 +1,12 @@
-from dataclasses import dataclass
-from typing import Tuple, List, Protocol, Dict
+from typing import Tuple, List, Protocol, Dict, runtime_checkable
 
 from app.context.manager import Context
 from app.engine.user.effective_deposit import UserDeposit, DepositEvent
 from app.modules.common.effective_deposits import calculate_effective_deposits
+from app.pydantic import Model
 
 
+@runtime_checkable
 class EventsGenerator(Protocol):
     def get_user_events(
         self, context: Context, user_address: str
@@ -16,8 +17,7 @@ class EventsGenerator(Protocol):
         ...
 
 
-@dataclass
-class CalculatedUserDeposits:
+class CalculatedUserDeposits(Model):
     events_generator: EventsGenerator
 
     def get_all_effective_deposits(

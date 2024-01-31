@@ -9,7 +9,9 @@ from tests.helpers.context import get_context
 
 def test_calculate_octant_rewards(mock_staking_proceeds, mock_user_deposits):
     context = get_context()
-    service = CalculatedOctantRewards(mock_staking_proceeds, mock_user_deposits)
+    service = CalculatedOctantRewards(
+        staking_proceeds=mock_staking_proceeds, effective_deposits=mock_user_deposits
+    )
 
     result = service.get_octant_rewards(context)
 

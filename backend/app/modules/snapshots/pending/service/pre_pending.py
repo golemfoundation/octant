@@ -1,5 +1,4 @@
-from dataclasses import dataclass
-from typing import Protocol, Tuple, List
+from typing import Protocol, Tuple, List, runtime_checkable
 
 from app.context.manager import Context
 from app.engine.user.effective_deposit import UserDeposit
@@ -7,8 +6,10 @@ from app.extensions import db
 from app.infrastructure import database
 from app.modules.dto import OctantRewardsDTO
 from app.modules.snapshots.pending.core import calculate_user_budgets
+from app.pydantic import Model
 
 
+@runtime_checkable
 class EffectiveDeposits(Protocol):
     def get_all_effective_deposits(
         self, context: Context
@@ -16,6 +17,7 @@ class EffectiveDeposits(Protocol):
         ...
 
 
+@runtime_checkable
 class OctantRewards(Protocol):
     def get_octant_rewards(self, context: Context) -> OctantRewardsDTO:
         ...
@@ -33,8 +35,7 @@ def save_snapshot(epoch: int, rewards: OctantRewardsDTO):
     )
 
 
-@dataclass
-class PrePendingSnapshots:
+class PrePendingSnapshots(Model):
     effective_deposits: EffectiveDeposits
     octant_rewards: OctantRewards
 
