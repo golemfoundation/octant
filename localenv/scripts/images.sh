@@ -25,19 +25,19 @@ build_image(){
 
   image_id=$(docker build -q --tag "${DOCKER_IMAGE_PREFIX}/${image}:${DOCKER_TAG}" -f ${dockerfile} "${context_dir}")
 
-  echo "Created ${image} image ${image_id}" 
+  echo "Created ${image} image ${image_id}"
 }
 
 build_anvil(){
-  echo Building anvil image ... 
+  echo Building anvil image ...
 
-  build_image anvil "${OCTANT_ROOT}/localenv/anvil/Dockerfile" "${OCTANT_ROOT}/localenv/anvil" 
+  build_image anvil "${OCTANT_ROOT}/localenv/anvil/Dockerfile" "${OCTANT_ROOT}/localenv/anvil"
 
   echo "Finished building anvil image!"
 }
 
 build_contracts_base(){
-  echo Building contracts images ... 
+  echo Building contracts images ...
 
   dockerfile=$(create_tmp_dockerfile contracts-v1)
   build_image contracts ${dockerfile} "${OCTANT_ROOT}/contracts-v1"
@@ -47,7 +47,7 @@ build_contracts_base(){
 }
 
 build_subgraph_base(){
-  echo Building subgraph images ... 
+  echo Building subgraph images ...
 
   dockerfile=$(create_tmp_dockerfile subgraph)
   build_image subgraph ${dockerfile} "${OCTANT_ROOT}/subgraph"
@@ -56,20 +56,23 @@ build_subgraph_base(){
 }
 
 build_backend(){
-  
-  echo Building backend image ... 
-
+  echo Building backend-base image ...
   dockerfile=$(create_tmp_dockerfile backend)
   build_image backend-base ${dockerfile} "${OCTANT_ROOT}/backend"
+  echo Finished building backend-base image!
 
+  echo Building backend image ...
   build_image backend "${OCTANT_ROOT}/localenv/backend/Dockerfile" "${OCTANT_ROOT}/localenv/backend"
-
   echo Finished building backend image!
+
+  echo Building backend-apitest image ...
+  build_image backend-apitest "${OCTANT_ROOT}/localenv/backend-apitest/Dockerfile" "${OCTANT_ROOT}/localenv/backend-apitest"
+  echo Finished building backend-apitest image!
 }
 
 build_client(){
-  
-  echo Building client image ... 
+
+  echo Building client image ...
 
   dockerfile=$(create_tmp_dockerfile client)
   build_image client ${dockerfile} "${OCTANT_ROOT}/client"
@@ -77,57 +80,50 @@ build_client(){
   echo Finished building client image!
 }
 
+build_multideployer(){
+    build_contracts_base
+    build_subgraph_base
+    echo Building multideployer image ...
 
-build_contracts_deployer(){
-  echo Building contracts deployer image ...
+    build_image multideployer "${OCTANT_ROOT}/localenv/multideployer/Dockerfile" "${OCTANT_ROOT}/localenv/multideployer"
 
-  build_image contracts-deployer "${OCTANT_ROOT}/localenv/contracts-deployer/Dockerfile" "${OCTANT_ROOT}/localenv/contracts-deployer"
-
-  echo Finished building contracts deployer image!
-}
-
-build_subgraph_deployer(){
-  echo Building subgraph deployer image ...
-
-  build_image subgraph-deployer "${OCTANT_ROOT}/localenv/subgraph-deployer/Dockerfile" "${OCTANT_ROOT}/localenv/subgraph-deployer"
-
-  echo Finished building subgraph deployer image!
+    echo Finished building multi image!
 }
 
 build_control_plane(){
-  echo Building control plane image ...
+    echo Building control plane image ...
 
-  build_image control-plane "${OCTANT_ROOT}/localenv/control-plane/Dockerfile" "${OCTANT_ROOT}/localenv/control-plane"
+    build_image control-plane "${OCTANT_ROOT}/localenv/control-plane/Dockerfile" "${OCTANT_ROOT}/localenv/control-plane"
 
-  echo Finished building control plane image!
+    echo Finished building control plane image!
 }
 
 build_snapshotter(){
-  echo Building snapshotter image ...
+    echo Building snapshotter image ...
 
-  build_image snapshotter "${OCTANT_ROOT}/localenv/snapshotter/Dockerfile" "${OCTANT_ROOT}/localenv/snapshotter"
+    build_image snapshotter "${OCTANT_ROOT}/localenv/snapshotter/Dockerfile" "${OCTANT_ROOT}/localenv/snapshotter"
 
-  echo Finished building snapshotter image!
+    echo Finished building snapshotter image!
 }
 
 build_contracts(){
-  build_contracts_base
-  build_contracts_deployer
+    build_contracts_base
 }
 
 build_subgraph(){
-  build_subgraph_base
-  build_subgraph_deployer
+    build_subgraph_base
 }
+
 
 ### Localenv tooling
 build_control_plane &
 build_snapshotter &
 build_anvil &
+build_multideployer &
 
 ### PROD-like images
-build_subgraph &
 build_contracts &
+build_subgraph &
 build_backend &
 build_client &
 
