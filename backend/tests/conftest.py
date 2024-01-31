@@ -411,7 +411,7 @@ def patch_user_budget(monkeypatch):
     monkeypatch.setattr("app.legacy.core.allocations.get_budget", MOCK_GET_USER_BUDGET)
     monkeypatch.setattr("app.legacy.core.user.rewards.get_budget", MOCK_GET_USER_BUDGET)
     monkeypatch.setattr(
-        "app.legacy.core.history.user_controller.get_budget", MOCK_GET_USER_BUDGET
+        "app.legacy.core.history.budget.get_budget", MOCK_GET_USER_BUDGET
     )
 
     MOCK_GET_USER_BUDGET.return_value = USER_MOCKED_BUDGET
