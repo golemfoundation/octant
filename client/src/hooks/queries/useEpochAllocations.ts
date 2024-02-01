@@ -2,23 +2,23 @@ import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 
-import { apiGetEpochDonations, Response } from 'api/calls/epochDonations';
+import { apiGetEpochAllocations, Response } from 'api/calls/epochAllocations';
 import { QUERY_KEYS } from 'api/queryKeys';
 
-type EpochDonor = {
+type EpochAllocation = {
   amount: BigNumber;
   user: string;
 };
 
-type EpochDonors = EpochDonor[];
+type EpochAllocations = EpochAllocation[];
 
-export default function useEpochDonors(
+export default function useEpochAllocations(
   epoch: number,
-  options?: UseQueryOptions<Response, unknown, EpochDonors, any>,
-): UseQueryResult<EpochDonors> {
-  return useQuery(QUERY_KEYS.epochDonors(epoch), () => apiGetEpochDonations(epoch), {
+  options?: UseQueryOptions<Response, unknown, EpochAllocations, any>,
+): UseQueryResult<EpochAllocations> {
+  return useQuery(QUERY_KEYS.epochAllocations(epoch), () => apiGetEpochAllocations(epoch), {
     select: response => {
-      return response.reduce((acc, curr) => {
+      return response.allocations.reduce((acc, curr) => {
         const donorIdx = acc.findIndex(({ user }) => user === curr.donor);
 
         if (donorIdx > -1) {
@@ -31,7 +31,7 @@ export default function useEpochDonors(
         }
 
         return acc;
-      }, [] as EpochDonors);
+      }, [] as EpochAllocations);
     },
     ...options,
   });

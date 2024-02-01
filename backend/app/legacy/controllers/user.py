@@ -1,18 +1,14 @@
-from typing import List
 from flask import current_app as app
 
 from app.exceptions import InvalidSignature, UserNotFound, NotInDecisionWindow
 from app.extensions import db
-from app.infrastructure import database
 from app.legacy.controllers import allocations as allocations_controller
-from app.legacy.core.user import budget, patron_mode as patron_mode_core
+from app.legacy.core.user import patron_mode as patron_mode_core
 from app.legacy.core.user.tos import (
     has_user_agreed_to_terms_of_service,
     add_user_terms_of_service_consent,
 )
 from app.legacy.crypto.eth_sign import patron_mode as patron_mode_crypto
-
-MAX_DAYS_TO_ESTIMATE_BUDGET = 365250
 
 
 def get_user_terms_of_service_consent_status(user_address: str) -> bool:
@@ -23,14 +19,6 @@ def post_user_terms_of_service_consent(user_address: str, signature: str, user_i
     add_user_terms_of_service_consent(user_address, signature, user_ip)
 
     db.session.commit()
-
-
-def get_budget(user_address: str, epoch: int) -> int:
-    return budget.get_budget(user_address, epoch)
-
-
-def get_all_users() -> List[str]:
-    return [user.address for user in database.user.get_all()]
 
 
 def get_patron_mode_status(user_address: str) -> bool:

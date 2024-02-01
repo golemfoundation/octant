@@ -89,6 +89,10 @@ const testCases = [
   },
   { argument: BigNumber.from(10).pow(14), expectedValue: '0.0001 ETH' },
   { argument: BigNumber.from(10).pow(15).sub(1), expectedValue: '0.001 ETH' },
+  { argument: BigNumber.from(10).pow(15).sub(1), ethPrecission: 1, expectedValue: '0 ETH' },
+  { argument: BigNumber.from(10).pow(15).sub(1), ethPrecission: 2, expectedValue: '0 ETH' },
+  { argument: BigNumber.from(10).pow(15).sub(1), ethPrecission: 3, expectedValue: '0.001 ETH' },
+  { argument: BigNumber.from(10).pow(15).sub(1), ethPrecission: 4, expectedValue: '0.001 ETH' },
   { argument: BigNumber.from(10).pow(15), expectedValue: '0.001 ETH' },
   { argument: BigNumber.from(10).pow(16).sub(1), expectedValue: '0.01 ETH' },
   { argument: BigNumber.from(10).pow(16), expectedValue: '0.01 ETH' },
@@ -107,12 +111,19 @@ const testCases = [
 ];
 
 describe('getFormattedEthValue', () => {
-  for (const { argument, expectedValue, shouldIgnoreGwei, shouldIgnoreWei } of testCases) {
+  for (const {
+    argument,
+    expectedValue,
+    shouldIgnoreGwei,
+    shouldIgnoreWei,
+    ethPrecission,
+  } of testCases) {
     it(`returns ${expectedValue} for an argument ${formatUnits(
       argument,
     )} when isUsingHairSpace`, () => {
       expect(
-        getFormattedEthValue(argument, true, shouldIgnoreGwei, shouldIgnoreWei).fullString,
+        getFormattedEthValue(argument, true, shouldIgnoreGwei, shouldIgnoreWei, ethPrecission)
+          .fullString,
       ).toBe(expectedValue);
     });
 
@@ -121,7 +132,8 @@ describe('getFormattedEthValue', () => {
       argument,
     )} when !isUsingHairSpace`, () => {
       expect(
-        getFormattedEthValue(argument, false, shouldIgnoreGwei, shouldIgnoreWei).fullString,
+        getFormattedEthValue(argument, false, shouldIgnoreGwei, shouldIgnoreWei, ethPrecission)
+          .fullString,
       ).toBe(expectedValueNormalSpace);
     });
   }

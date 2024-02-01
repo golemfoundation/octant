@@ -10,6 +10,7 @@ from app.modules.modules_factory.protocols import (
     Leverage,
     SimulateAllocation,
     FinalizedSnapshots,
+    UserBudgets,
 )
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
 from app.modules.snapshots.finalized.service.simulated import (
@@ -40,6 +41,7 @@ class PendingServices(Model):
     octant_rewards_service: PendingOctantRewardsService
     user_allocations_service: PendingUserAllocationsProtocol
     user_patron_mode_service: UserPatronMode
+    user_budgets_service: UserBudgets
     user_rewards_service: UserRewards
     finalized_snapshots_service: FinalizedSnapshots
 
@@ -48,8 +50,9 @@ class PendingServices(Model):
         events_based_patron_mode = EventsBasedUserPatronMode()
         octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
         saved_user_allocations = PendingUserAllocations(octant_rewards=octant_rewards)
+        saved_user_budgets = SavedUserBudgets()
         user_rewards = CalculatedUserRewards(
-            user_budgets=SavedUserBudgets(),
+            user_budgets=saved_user_budgets,
             patrons_mode=events_based_patron_mode,
             allocations=saved_user_allocations,
         )
@@ -65,5 +68,6 @@ class PendingServices(Model):
             user_allocations_service=saved_user_allocations,
             user_patron_mode_service=events_based_patron_mode,
             finalized_snapshots_service=finalized_snapshots_service,
+            user_budgets_service=saved_user_budgets,
             user_rewards_service=user_rewards,
         )

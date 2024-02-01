@@ -7,7 +7,6 @@ from dataclass_wizard import JSONWizard
 from app import exceptions
 from app.extensions import db, epochs
 from app.infrastructure import database
-from app.legacy.controllers import rewards
 from app.legacy.core.allocations import (
     AllocationRequest,
     recover_user_address,
@@ -89,13 +88,6 @@ def get_all_by_proposal_and_epoch(
         for a in allocations
         if int(a.amount) != 0
     ]
-
-
-def get_abstainers(epoch: int) -> List[str]:
-    allocs = get_all_by_epoch(epoch, include_zeroes=True)
-    active = [alloc.donor for alloc in allocs]
-    all_with_budget = [budget["user"] for budget in rewards.get_all_budgets(epoch)]
-    return list(set(all_with_budget) - set(active))
 
 
 def get_all_by_epoch(

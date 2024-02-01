@@ -7,6 +7,7 @@ from eth_utils import to_checksum_address
 from app.context import epoch_details
 from app.infrastructure import database
 from app.infrastructure.database import allocations
+from app.legacy.core.user import budget
 from app.legacy.utils.time import (
     Timestamp,
     from_datetime,
@@ -14,7 +15,6 @@ from app.legacy.utils.time import (
 )
 
 from app.legacy.controllers import (
-    user as user_controller,
     snapshots as snapshots_controller,
 )
 from app.infrastructure.graphql import locks, unlocks, withdrawals
@@ -144,7 +144,7 @@ def get_patron_donations(
                 epoch_finalization_timestamp.datetime()
             )
             if user_address in patrons_at_epoch:
-                donation = user_controller.get_budget(user_address, epoch.epoch_num)
+                donation = budget.get_budget(user_address, epoch.epoch_num)
 
                 events.append(
                     PatronDonationItem(
