@@ -131,8 +131,8 @@ donors_model = api.model(
     {"donors": fields.List(fields.String, required=True, description="Donors address")},
 )
 
-epoch_donations_item = api.model(
-    "EpochDonations",
+allocation_item = api.model(
+    "EpochAllocation",
     {
         "donor": fields.String(
             required=True,
@@ -152,8 +152,8 @@ epoch_donations_item = api.model(
 epoch_allocations_model = api.model(
     "AllocationsModel",
     {
-        "allocations": fields.Nested(
-            epoch_donations_item, required=True, description="Allocation"
+        "allocations": fields.List(
+            fields.Nested(allocation_item, required=True, description="Allocation")
         )
     },
 )
