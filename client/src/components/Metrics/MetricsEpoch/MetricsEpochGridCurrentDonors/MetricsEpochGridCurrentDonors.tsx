@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsGridTileValue from 'components/Metrics/MetricsGrid/MetricsGridTileValue';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
-import useEpochDonors from 'hooks/queries/useEpochDonors';
+import useEpochAllocations from 'hooks/queries/useEpochAllocations';
 
 import MetricsEpochGridCurrentDonorsProps from './types';
 
@@ -14,9 +14,9 @@ const MetricsEpochGridCurrentDonors: FC<MetricsEpochGridCurrentDonorsProps> = ({
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { epoch } = useMetricsEpoch();
-  const { data: epochDonors } = useEpochDonors(epoch);
+  const { data: epochAllocations } = useEpochAllocations(epoch);
 
-  const currentDonorsString = `${epochDonors?.length || 0}`;
+  const currentDonorsString = `${epochAllocations?.length || 0}`;
 
   return (
     <MetricsGridTile

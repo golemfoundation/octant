@@ -15,6 +15,7 @@ export default function getFormattedEthValue(
   isUsingHairSpace = true,
   shouldIgnoreGwei?: boolean,
   shouldIgnoreWei?: boolean,
+  ethPrecission = 4,
 ): FormattedCryptoValue {
   let returnObject: Omit<FormattedCryptoValue, 'fullString'>;
 
@@ -36,7 +37,7 @@ export default function getFormattedEthValue(
     returnObject = { suffix: 'ETH', value: formatUnits(value) };
   }
 
-  let formattedValue = parseFloat(returnObject.value).toFixed(isInGweiRange ? 0 : 4);
+  let formattedValue = parseFloat(returnObject.value).toFixed(isInGweiRange ? 0 : ethPrecission);
 
   if (!isInGweiRange) {
     formattedValue = formattedValue.replace(dotAndZeroes, '');
