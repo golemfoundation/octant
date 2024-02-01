@@ -57,7 +57,7 @@ def downgrade():
 
 def _update_op_cost_leftover_and_patrons_rewards():
     # Mainnet
-    if os.getenv("CHAIN_ID") == 1:
+    if os.getenv("CHAIN_ID") == "1":
         # Update pending snapshots
         op.execute(
             "UPDATE pending_epoch_snapshots SET operational_cost = '82408409816289053184' WHERE epoch = 1"
@@ -73,9 +73,15 @@ def _update_op_cost_leftover_and_patrons_rewards():
         op.execute(
             "UPDATE finalized_epoch_snapshots SET patrons_rewards = '16050223937523865304' WHERE epoch = 1"
         )
+        op.execute(
+            "UPDATE finalized_epoch_snapshots SET leftover = '359759748331066181593' WHERE epoch = 2"
+        )
+        op.execute(
+            "UPDATE finalized_epoch_snapshots SET patrons_rewards = '8695859401745522' WHERE epoch = 2"
+        )
 
     # Sepolia
-    if os.getenv("CHAIN_ID") == 11155111:
+    if os.getenv("CHAIN_ID") == "11155111":
         # Update pending snapshots
         op.execute(
             "UPDATE pending_epoch_snapshots SET operational_cost = '22286773660600424828954' WHERE epoch = 1"
@@ -87,4 +93,7 @@ def _update_op_cost_leftover_and_patrons_rewards():
         # Update finalized snapshots
         op.execute(
             "UPDATE finalized_epoch_snapshots SET leftover = '2859407787364580036791' WHERE epoch = 1"
+        )
+        op.execute(
+            "UPDATE finalized_epoch_snapshots SET leftover = '3574815154956933931971' WHERE epoch = 2"
         )
