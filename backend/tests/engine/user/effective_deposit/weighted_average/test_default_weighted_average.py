@@ -36,6 +36,17 @@ def test_empty_deposits():
     assert result[1] == 0
 
 
+def test_user_with_empty_events():
+    events = {USER1_ADDRESS: []}
+    payload = UserEffectiveDepositPayload(EPOCH_START, EPOCH_END, events)
+    uut = DefaultWeightedAverageEffectiveDeposit()
+
+    result = uut.calculate_users_effective_deposits(payload)
+
+    assert result[0] == [UserDeposit(USER1_ADDRESS, 0, 0)]
+    assert result[1] == 0
+
+
 def test_lock_0GLM():
     deposits = {USER1_ADDRESS: [(EPOCH_START, 0)]}
     payload = create_payload(deposits)

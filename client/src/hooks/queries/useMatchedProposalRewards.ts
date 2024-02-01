@@ -100,7 +100,16 @@ export default function useMatchedProposalRewards(
         ((epoch !== undefined && epoch > 0) || (!!currentEpoch && currentEpoch > 1)),
       select: response => parseResponse(response),
       ...options,
-      refetchInterval: 5000,
+      /**
+       * Refetching is required during AW.
+       * As we don't want to wait for a socket fix in OCT-1321 to release to production,
+       * we disable refetching for now.
+       * It impacts testing environments where AW open, but not production.
+       *
+       * TODO OCT-1320 remove this comment and commented refetchInterval. Enable socket.
+       */
+      //
+      // refetchInterval: 5000,
     },
   );
 }

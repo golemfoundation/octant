@@ -87,6 +87,14 @@ class RewardsBudgetExceeded(OctantException):
         super().__init__(self.description, self.code)
 
 
+class BudgetNotFound(OctantException):
+    code = 404
+    description = "User {} does not have a budget for epoch {}"
+
+    def __init__(self, user_address, epoch_num):
+        super().__init__(self.description.format(user_address, epoch_num), self.code)
+
+
 class DuplicatedProposals(OctantException):
     code = 400
     description = "The following proposals are duplicated in the payload: {}"

@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import json
+import os
 from random import randint
-from typing import List, Optional
+import time
+from typing import Dict, List, Optional
 from unittest.mock import MagicMock, Mock
+import urllib.request
 
 import gql
 import pytest
@@ -108,10 +111,28 @@ def pytest_collection_modifyitems(config, items):
                 item.add_marker(skip_api)
 
 
+def setup_deployment() -> Dict[str, str]:
+    deployer = os.getenv("CONTRACTS_DEPLOYER_URL")
+    testname = f"octant_test_{random_string()}"
+    f = urllib.request.urlopen(f"{deployer}/?name={testname}")
+    deployment = f.read().decode().split("\n")
+    deployment = {var.split("=")[0]: var.split("=")[1] for var in deployment}
+    return deployment
+
+
+def random_string() -> str:
+    import random
+    import string
+
+    length_of_string = 6
+    characters = string.ascii_letters + string.digits
+    return "".join(random.choices(characters, k=length_of_string))
+
+
 @pytest.fixture
-def flask_client() -> FlaskClient:
+def flask_client(deployment) -> FlaskClient:
     """An application for the integration / API tests."""
-    _app = create_app(DevConfig)
+    _app = create_app(deployment)
 
     with _app.test_client() as client:
         with _app.app_context():
@@ -119,6 +140,27 @@ def flask_client() -> FlaskClient:
             yield client
             db.session.close()
             db.drop_all()
+
+
+@pytest.fixture(scope="function")
+def deployment(pytestconfig):
+    """
+    Deploy contracts and a subgraph under a single-use name.
+    """
+    envs = setup_deployment()
+    graph_name = envs["SUBGRAPH_NAME"]
+    conf = DevConfig
+    graph_url = os.environ["SUBGRAPH_URL"]
+    conf.SUBGRAPH_ENDPOINT = f"{graph_url}/subgraphs/name/{graph_name}"
+    conf.GLM_CONTRACT_ADDRESS = envs["GLM_CONTRACT_ADDRESS"]
+    conf.DEPOSITS_CONTRACT_ADDRESS = envs["DEPOSITS_CONTRACT_ADDRESS"]
+    conf.EPOCHS_CONTRACT_ADDRESS = envs["EPOCHS_CONTRACT_ADDRESS"]
+    conf.PROPOSALS_CONTRACT_ADDRESS = envs["PROPOSALS_CONTRACT_ADDRESS"]
+    conf.WITHDRAWALS_TARGET_CONTRACT_ADDRESS = envs[
+        "WITHDRAWALS_TARGET_CONTRACT_ADDRESS"
+    ]
+    conf.VAULT_CONTRACT_ADDRESS = envs["VAULT_CONTRACT_ADDRESS"]
+    yield conf
 
 
 class UserAccount:
@@ -198,6 +240,14 @@ class Client:
     def sync_status(self):
         rv = self._flask_client.get("/info/sync-status").text
         return json.loads(rv)
+
+    def wait_for_sync(self, target):
+        while True:
+            res = self.sync_status()
+            if res["indexedEpoch"] == res["blockchainEpoch"]:
+                if res["indexedEpoch"] == target:
+                    return
+            time.sleep(0.5)
 
     def pending_snapshot(self):
         rv = self._flask_client.post("/snapshots/pending").text
@@ -411,7 +461,7 @@ def patch_user_budget(monkeypatch):
     monkeypatch.setattr("app.legacy.core.allocations.get_budget", MOCK_GET_USER_BUDGET)
     monkeypatch.setattr("app.legacy.core.user.rewards.get_budget", MOCK_GET_USER_BUDGET)
     monkeypatch.setattr(
-        "app.legacy.core.history.user_controller.get_budget", MOCK_GET_USER_BUDGET
+        "app.legacy.core.history.budget.get_budget", MOCK_GET_USER_BUDGET
     )
 
     MOCK_GET_USER_BUDGET.return_value = USER_MOCKED_BUDGET
