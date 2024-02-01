@@ -4,7 +4,7 @@ import apiService from 'services/apiService';
 export type Response = {
   budgets: {
     // WEI
-    address: string; 
+    address: string;
     amount: string; // address
   }[];
 };

@@ -149,8 +149,8 @@ const PieChart: FC<PieChartProps> = ({ data, isLoading }) => {
             }}
             getX={getX as any}
             getY={getY as any}
-            value={point}
             style={{ zIndex: 1 }}
+            value={point}
           >
             <div className={styles.hint} style={{ backgroundColor: point.color }}>
               <div className={styles.xValue}>{point.label}</div>
