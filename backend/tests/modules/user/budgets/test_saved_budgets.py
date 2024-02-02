@@ -37,3 +37,19 @@ def test_get_all_budgets(alice, bob, carol):
         bob.address: USER2_BUDGET,
     }
     assert result_epoch_2 == {carol.address: USER3_BUDGET}
+
+
+def test_get_budget(alice):
+    budgets = [
+        (alice.address, USER1_BUDGET),
+    ]
+    database.budgets.save_budgets(1, budgets)
+    db.session.commit()
+
+    context = get_context(1)
+
+    service = SavedUserBudgets()
+
+    result = service.get_budget(context, alice.address)
+
+    assert result == USER1_BUDGET
