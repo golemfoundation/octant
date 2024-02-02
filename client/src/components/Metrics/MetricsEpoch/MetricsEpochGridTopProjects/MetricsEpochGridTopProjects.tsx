@@ -42,6 +42,7 @@ const MetricsEpochGridTopProjects: FC<MetricsEpochGridTopProjectsProps> = ({
         {
           children: (
             <MetricsProjectsList
+              epoch={epoch}
               isLoading={isLoading}
               numberOfSkeletons={numberOfProjects}
               projects={projects}

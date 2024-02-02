@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsProjectsList from 'components/Metrics/MetricsProjectsList';
 import Img from 'components/ui/Img';
+import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 
 import styles from './MetricsPersonalGridAllocations.module.scss';
@@ -11,6 +12,7 @@ import MetricsPersonalGridAllocationsProps from './types';
 
 const MetricsPersonalGridAllocations: FC<MetricsPersonalGridAllocationsProps> = ({ isLoading }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
+  const { lastEpoch } = useMetricsEpoch();
   const { data: userAllocations } = useUserAllocations();
   const projects = userAllocations?.elements || [];
 
@@ -26,7 +28,14 @@ const MetricsPersonalGridAllocations: FC<MetricsPersonalGridAllocationsProps> = 
       );
     }
 
-    return <MetricsProjectsList isLoading={isLoading} numberOfSkeletons={4} projects={projects} />;
+    return (
+      <MetricsProjectsList
+        epoch={lastEpoch}
+        isLoading={isLoading}
+        numberOfSkeletons={4}
+        projects={projects}
+      />
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, areAllocationsEmpty, projects.length, t]);
 

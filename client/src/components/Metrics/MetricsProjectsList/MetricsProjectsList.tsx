@@ -8,6 +8,7 @@ import styles from './MetricsProjectsList.module.scss';
 import MetricsProjectsListProps from './types';
 
 const MetricsProjectsList: FC<MetricsProjectsListProps> = ({
+  epoch,
   projects,
   isLoading,
   numberOfSkeletons,
@@ -24,6 +25,7 @@ const MetricsProjectsList: FC<MetricsProjectsListProps> = ({
               <MetricsProjectsListItem
                 key={project.address}
                 address={project.address}
+                epoch={epoch}
                 value={getFormattedEthValue(project.value, true, true, true).value}
               />
             ))}
