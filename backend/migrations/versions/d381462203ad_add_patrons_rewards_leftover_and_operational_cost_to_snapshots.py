@@ -9,7 +9,7 @@ import os
 
 from alembic import op
 import sqlalchemy as sa
-
+from dotenv import load_dotenv
 
 # revision identifiers, used by Alembic.
 revision = "d381462203ad"
@@ -40,7 +40,14 @@ def upgrade():
 
     if op.get_bind().engine.name == "sqlite":
         return
-    _update_op_cost_leftover_and_patrons_rewards()
+
+    load_dotenv()
+    # Mainnet
+    if os.getenv("CHAIN_ID") == "1":
+        _execute_mainnet_sql()
+    # Sepolia
+    if os.getenv("CHAIN_ID") == "11155111":
+        _execute_sepolia_sql()
 
 
 def downgrade():
@@ -55,45 +62,42 @@ def downgrade():
     # ### end Alembic commands ###
 
 
-def _update_op_cost_leftover_and_patrons_rewards():
-    # Mainnet
-    if os.getenv("CHAIN_ID") == "1":
-        # Update pending snapshots
-        op.execute(
-            "UPDATE pending_epoch_snapshots SET operational_cost = '82408409816289053184' WHERE epoch = 1"
-        )
-        op.execute(
-            "UPDATE pending_epoch_snapshots SET operational_cost = '241664279869852205390' WHERE epoch = 2"
-        )
+def _execute_mainnet_sql():
+    # Update pending snapshots
+    op.execute(
+        "UPDATE pending_epoch_snapshots SET operational_cost = '82408409816289053184' WHERE epoch = 1"
+    )
+    op.execute(
+        "UPDATE pending_epoch_snapshots SET operational_cost = '241664279869852205390' WHERE epoch = 2"
+    )
 
-        # Update finalized snapshots
-        op.execute(
-            "UPDATE finalized_epoch_snapshots SET leftover = '9537357664505573437' WHERE epoch = 1"
-        )
-        op.execute(
-            "UPDATE finalized_epoch_snapshots SET patrons_rewards = '16050223937523865304' WHERE epoch = 1"
-        )
-        op.execute(
-            "UPDATE finalized_epoch_snapshots SET leftover = '359759748331066181593' WHERE epoch = 2"
-        )
-        op.execute(
-            "UPDATE finalized_epoch_snapshots SET patrons_rewards = '8695859401745522' WHERE epoch = 2"
-        )
+    # Update finalized snapshots
+    op.execute(
+        "UPDATE finalized_epoch_snapshots SET leftover = '9537357664505573437' WHERE epoch = 1"
+    )
+    op.execute(
+        "UPDATE finalized_epoch_snapshots SET patrons_rewards = '16050223937523865304' WHERE epoch = 1"
+    )
+    op.execute(
+        "UPDATE finalized_epoch_snapshots SET leftover = '359759748331066181593' WHERE epoch = 2"
+    )
+    op.execute(
+        "UPDATE finalized_epoch_snapshots SET patrons_rewards = '8695859401745522' WHERE epoch = 2"
+    )
 
-    # Sepolia
-    if os.getenv("CHAIN_ID") == "11155111":
-        # Update pending snapshots
-        op.execute(
-            "UPDATE pending_epoch_snapshots SET operational_cost = '22286773660600424828954' WHERE epoch = 1"
-        )
-        op.execute(
-            "UPDATE pending_epoch_snapshots SET operational_cost = '28130172997690715704718' WHERE epoch = 2"
-        )
 
-        # Update finalized snapshots
-        op.execute(
-            "UPDATE finalized_epoch_snapshots SET leftover = '2859407787364580036791' WHERE epoch = 1"
-        )
-        op.execute(
-            "UPDATE finalized_epoch_snapshots SET leftover = '3574815154956933931971' WHERE epoch = 2"
-        )
+def _execute_sepolia_sql():
+    op.execute(
+        "UPDATE pending_epoch_snapshots SET operational_cost = '22286773660600424828954' WHERE epoch = 1"
+    )
+    op.execute(
+        "UPDATE pending_epoch_snapshots SET operational_cost = '28130172997690715704718' WHERE epoch = 2"
+    )
+
+    # Update finalized snapshots
+    op.execute(
+        "UPDATE finalized_epoch_snapshots SET leftover = '2859407787364580036791' WHERE epoch = 1"
+    )
+    op.execute(
+        "UPDATE finalized_epoch_snapshots SET leftover = '3574815154956933931971' WHERE epoch = 2"
+    )
