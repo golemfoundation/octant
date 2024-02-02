@@ -8,6 +8,7 @@ import { getValuesToDisplay } from 'components/ui/DoubleValue/utils';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
 import useProposalsDonors from 'hooks/queries/donors/useProposalsDonors';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
 import i18n from 'i18n';
@@ -29,14 +30,17 @@ const MetricsEpochGridBelowThreshold: FC<MetricsEpochGridBelowThresholdProps> = 
     },
   }));
   const { epoch, lastEpoch } = useMetricsEpoch();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
   const { data: matchedProposalRewards } = useMatchedProposalRewards(
-    epoch === lastEpoch ? undefined : epoch,
+    isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
-  const { data: proposalsDonors } = useProposalsDonors(epoch === lastEpoch ? undefined : epoch);
+  const { data: proposalsDonors } = useProposalsDonors(
+    isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
+  );
 
   const { data: proposalRewardsThreshold } = useProposalRewardsThreshold(
-    epoch === lastEpoch ? undefined : epoch,
+    isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
 
   const projectsBelowThreshold =

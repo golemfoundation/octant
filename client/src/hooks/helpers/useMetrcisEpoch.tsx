@@ -1,7 +1,6 @@
 import React, { FC, ReactNode, createContext, useContext, useMemo, useState } from 'react';
 
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 
 type MetricsEpochContextType = {
   epoch: number;
@@ -17,8 +16,7 @@ export const MetricsEpochContext = createContext<MetricsEpochContextType>({
 
 export const MetricsEpochProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const lastEpoch = isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!;
+  const lastEpoch = currentEpoch! - 1;
   const [epoch, setEpoch] = useState(lastEpoch);
 
   const value = useMemo(
