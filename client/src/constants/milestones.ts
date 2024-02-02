@@ -30,13 +30,13 @@ export default function getMilestones(): Milestone[] {
       to: new Date('2024-01-05T00:00:00+0100'),
     },
     {
-      from: new Date('2024-01-17T16:00:00+0100'),
+      from: new Date('2024-01-17T17:00:00+0100'),
       id: 'e2-allocation-window',
       label: i18n.t('views.proposals.proposalsTimelineWidget.allocationWindow'),
-      to: new Date('2024-01-31T16:00:00+0100'),
+      to: new Date('2024-01-31T17:00:00+0100'),
     },
     {
-      from: new Date('2024-01-17T16:00:00+0100'),
+      from: new Date('2024-01-17T17:00:00+0100'),
       id: 'e3-epoch-starts',
       label: i18n.t('views.proposals.proposalsTimelineWidget.epochStarts', { epoch: 'Three' }),
     },
@@ -59,13 +59,13 @@ export default function getMilestones(): Milestone[] {
     },
     {
       // 2024-03-31 timezone changes from UTC+00100 to UTC+00200.
-      from: new Date('2024-04-16T16:00:00+0200'),
+      from: new Date('2024-04-16T18:00:00+0200'),
       id: 'e3-allocation-window',
       label: i18n.t('views.proposals.proposalsTimelineWidget.allocationWindow'),
-      to: new Date('2024-04-30T16:00:00+0200'),
+      to: new Date('2024-04-30T18:00:00+0200'),
     },
     {
-      from: new Date('2024-04-16T16:00:00+0200'),
+      from: new Date('2024-04-16T18:00:00+0200'),
       id: 'e4-epoch-starts',
       label: i18n.t('views.proposals.proposalsTimelineWidget.epochStarts', { epoch: 'Four' }),
     },
