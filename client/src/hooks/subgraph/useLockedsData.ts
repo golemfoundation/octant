@@ -62,7 +62,7 @@ export default function useLockedsData(): UseQueryResult<UseLockedsDataResponse>
     {
       refetchOnMount: false,
       select: data => {
-        if (!data?.lockeds) {
+        if (!data?.lockeds?.length) {
           return undefined;
         }
 

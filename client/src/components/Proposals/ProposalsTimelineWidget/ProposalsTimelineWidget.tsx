@@ -38,7 +38,7 @@ const ProposalsTimelineWidget = (): ReactElement => {
     if (!milestoneWithIsActive) {
       return;
     }
-    
+
     const el = document.getElementById(milestoneWithIsActive.id);
     const elRight = el!.getBoundingClientRect()!.right;
     const containerRight = constraintsRef.current!.getBoundingClientRect().right;
