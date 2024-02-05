@@ -16,7 +16,7 @@ const MetricsEpochGridDonationsVsPersonalAllocations: FC<
   const totalPersonalNumber = parseFloat(formatUnits(totalPersonal));
 
   const donationsValue =
-    totalPersonalNumber && totalDonationsNumber
+    totalDonationsNumber > 0
       ? (totalDonationsNumber / (totalPersonalNumber + totalDonationsNumber)) * 100
       : 0;
 
