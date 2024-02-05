@@ -25,7 +25,7 @@ from app.legacy.controllers.allocations import allocate, deserialize_payload
 from app.legacy.core.allocations import AllocationRequest, Allocation
 from app.legacy.crypto.account import Account as CryptoAccount
 from app.legacy.crypto.eip712 import sign, build_allocations_eip712_data
-from app.extensions import db, w3, deposits, glm
+from app.extensions import db, w3, deposits, glm, gql_factory
 from app.modules.dto import AccountFundsDTO
 from app.settings import TestConfig, DevConfig
 from app.engine.user.effective_deposit import UserDeposit, DepositEvent, EventType
@@ -717,5 +717,5 @@ def mock_graphql(
         withdrawals=withdrawals_events,
         merkle_roots=merkle_roots_events,
     )
-    mocker.patch.object(request_context.graphql_client, "execute")
-    request_context.graphql_client.execute.side_effect = mock_client.execute
+    mocker.patch.object(gql_factory, "build")
+    gql_factory.build.return_value = mock_client
