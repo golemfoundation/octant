@@ -24,7 +24,12 @@ export default function useLargestLockedAmount(): UseQueryResult<BigNumber> {
     async () => request(subgraphAddress, GET_LARGEST_LOCKED_AMOUNT),
     {
       refetchOnMount: false,
-      select: data => parseUnits(data.lockeds[0].amount, 'wei'),
+      select: data => {
+        if (!data?.lockeds?.length) {
+          return BigNumber.from(0);
+        }
+        return parseUnits(data.lockeds[0].amount, 'wei');
+      },
     },
   );
 }
