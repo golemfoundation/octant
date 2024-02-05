@@ -53,6 +53,7 @@ const EarnHistory: FC<EarnHistoryProps> = ({ className }) => {
       hasSections
       isVertical
       title={i18n.t('common.history')}
+      titleClassName={styles.title}
     >
       {showLoader ? (
         <EarnHistorySkeleton />

@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC, useState, Fragment, useMemo } from 'react';
+import React, { FC, useState, Fragment, useMemo, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useLocation, useMatch } from 'react-router-dom';
 import { useAccount } from 'wagmi';
@@ -69,6 +69,17 @@ const Layout: FC<LayoutProps> = ({
 
   const showAllocationPeriod = isAllocationRoot || isProposalRoot || isProposalsRoot;
 
+  const getCurrentPeriod = () => {
+    if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
+      return getTimeDistance(Date.now(), new Date(timeCurrentAllocationEnd).getTime());
+    }
+    if (!isDecisionWindowOpen && timeCurrentEpochEnd) {
+      return getTimeDistance(Date.now(), new Date(timeCurrentEpochEnd).getTime());
+    }
+    return '';
+  };
+  const [currentPeriod, setCurrentPeriod] = useState(() => getCurrentPeriod());
+
   const tabsWithIsActive = useMemo(() => {
     let tabs = navigationTabs;
 
@@ -86,17 +97,6 @@ const Layout: FC<LayoutProps> = ({
     }));
   }, [isPatronMode, isProjectAdminMode, isPreLaunch, pathname, navigationTabs]);
 
-  const allocationPeriod = useMemo(() => {
-    if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
-      return getTimeDistance(Date.now(), new Date(timeCurrentAllocationEnd).getTime());
-    }
-    if (!isDecisionWindowOpen && timeCurrentEpochEnd) {
-      return getTimeDistance(Date.now(), new Date(timeCurrentEpochEnd).getTime());
-    }
-
-    return '';
-  }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
-
   const isAllocationPeriodIsHighlighted = useMemo(() => {
     if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
       return getDifferenceInWeeks(Date.now(), new Date(timeCurrentAllocationEnd).getTime()) < 1;
@@ -105,6 +105,15 @@ const Layout: FC<LayoutProps> = ({
       return getDifferenceInWeeks(Date.now(), new Date(timeCurrentEpochEnd).getTime()) < 1;
     }
     return false;
+  }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentPeriod(getCurrentPeriod());
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+    // eslint-disable-next-line  react-hooks/exhaustive-deps
   }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
   return (
@@ -191,7 +200,7 @@ const Layout: FC<LayoutProps> = ({
                                     ? 'layouts.main.allocationEndsIn'
                                     : 'layouts.main.allocationStartsIn'
                                 }
-                                values={{ allocationPeriod }}
+                                values={{ currentPeriod }}
                               />
                             </div>
                           ) : (
@@ -238,11 +247,7 @@ const Layout: FC<LayoutProps> = ({
             classNameBody,
           )}
         >
-          {isLoading ? (
-            <Loader className={styles.loader} dataTest="MainLayout__Loader" />
-          ) : (
-            children
-          )}
+          {isLoading ? <Loader dataTest="MainLayout__Loader" /> : children}
         </div>
         {isNavigationVisible && (
           <LayoutNavbar navigationBottomSuffix={navigationBottomSuffix} tabs={tabsWithIsActive} />

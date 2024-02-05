@@ -1,6 +1,9 @@
 import cx from 'classnames';
-import { BigNumber } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
+// import { BigNumber } from 'ethers';
+import {
+  formatUnits,
+  // parseUnits
+} from 'ethers/lib/utils';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -29,9 +32,9 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
     rewardsForProposals: state.data.rewardsForProposals,
   }));
 
-  const allocationSimulatedMatchingFundSum = allocationSimulated?.matched.reduce((acc, curr) => {
-    return acc.add(parseUnits(curr.value, 'wei'));
-  }, BigNumber.from(0));
+  // const allocationSimulatedMatchingFundSum = allocationSimulated?.matched.reduce((acc, curr) => {
+  //   return acc.add(parseUnits(curr.value, 'wei'));
+  // }, BigNumber.from(0));
 
   const userAllocationsPositive =
     userAllocations?.elements.filter(({ value }) => !value.isZero()) || [];
@@ -40,12 +43,14 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
   const personalAllocation = individualReward?.sub(rewardsForProposals);
 
   const rewardsForProposalsToDisplay = getFormattedEthValue(rewardsForProposals, true, true);
-  const allocationSimulatedMatchingFundSumToDisplay = allocationSimulatedMatchingFundSum
-    ? getFormattedEthValue(allocationSimulatedMatchingFundSum).value
-    : undefined;
+  const matchingFundSumToDisplay =
+    rewardsForProposals && allocationSimulated?.leverage
+      ? getFormattedEthValue(rewardsForProposals.mul(parseInt(allocationSimulated.leverage, 10)))
+          .value
+      : undefined;
   const totalImpactToDisplay = getFormattedEthValue(
-    allocationSimulatedMatchingFundSum
-      ? allocationSimulatedMatchingFundSum.add(rewardsForProposals)
+    rewardsForProposals && allocationSimulated
+      ? rewardsForProposals.mul(parseInt(allocationSimulated.leverage, 10) + 1)
       : rewardsForProposals,
   );
   const personalToDisplay = individualReward
@@ -73,13 +78,8 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
       childrenRight: (
         <div className={styles.rightSection}>
           <div className={styles.value}>{rewardsForProposalsToDisplay.value}</div>
-          <div
-            className={cx(
-              styles.value,
-              !allocationSimulatedMatchingFundSumToDisplay && styles.isLoading,
-            )}
-          >
-            {allocationSimulatedMatchingFundSumToDisplay}
+          <div className={cx(styles.value, !matchingFundSumToDisplay && styles.isLoading)}>
+            {matchingFundSumToDisplay}
           </div>
         </div>
       ),

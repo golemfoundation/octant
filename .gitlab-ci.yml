@@ -60,6 +60,10 @@ default:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $MASTER_BRANCH
       when: manual
       allow_failure: true
+  on_release_branch_manual:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^release\/.+/
+      when: manual
+      allow_failure: true
   on_mr_manual:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: manual
@@ -750,6 +754,7 @@ Deploy Release Candidate app:
   image: !reference [.images, alpine_git]
   rules:
     - !reference [.rules, on_push_to_master_branch_manual]
+    - !reference [.rules, on_release_branch_manual]
   resource_group: production
   variables:
     ARGO_REPOSITORY: "https://wildland-bot:${HOUSEKEEPER_CI_TOKEN}@gitlab.com/golemfoundation/devops/iac/k8s/wildland-k8s-devops.git"

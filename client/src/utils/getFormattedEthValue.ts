@@ -1,13 +1,11 @@
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 
+import { GWEI_5, WEI_5 } from 'constants/bigNumber';
 import { FormattedCryptoValue } from 'types/formattedCryptoValue';
 
 import getNumberWithSpaces from './getNumberWithSpaces';
 import { dotAndZeroes } from './regExp';
-
-const GWEI_5 = BigNumber.from(10).pow(14);
-const WEI_5 = BigNumber.from(10).pow(5);
 
 export default function getFormattedEthValue(
   value: BigNumber,
