@@ -3,6 +3,7 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { AnimatePresence } from 'framer-motion';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
@@ -28,8 +29,8 @@ import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewar
 import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useWithdrawals from 'hooks/queries/useWithdrawals';
+import toastService from 'services/toastService';
 import useAllocationsStore from 'store/allocations/store';
-import triggerToast from 'utils/triggerToast';
 
 import styles from './AllocationView.module.scss';
 import { AllocationValue, AllocationValues, CurrentView, PercentageProportions } from './types';
@@ -82,23 +83,33 @@ const AllocationView = (): ReactElement => {
     refetch: refetchUserAllocationNonce,
   } = useUserAllocationNonce();
   const { refetch: refetchMatchedProposalRewards } = useMatchedProposalRewards();
-  const { allocations, rewardsForProposals, setAllocations, setRewardsForProposals } =
-    useAllocationsStore(state => ({
-      allocations: state.data.allocations,
-      rewardsForProposals: state.data.rewardsForProposals,
-      setAllocations: state.setAllocations,
-      setRewardsForProposals: state.setRewardsForProposals,
-    }));
-  const { onAddRemoveFromAllocate } = useIdsInAllocation({
+  const {
     allocations,
+    rewardsForProposals,
     setAllocations,
+    addAllocations,
+    removeAllocations,
+    setRewardsForProposals,
+  } = useAllocationsStore(state => ({
+    addAllocations: state.addAllocations,
+    allocations: state.data.allocations,
+    removeAllocations: state.removeAllocations,
+    rewardsForProposals: state.data.rewardsForProposals,
+    setAllocations: state.setAllocations,
+    setRewardsForProposals: state.setRewardsForProposals,
+  }));
+  const { onAddRemoveFromAllocate } = useIdsInAllocation({
+    addAllocations,
+    allocations,
+    removeAllocations,
     userAllocationsElements: userAllocationsOriginal?.elements,
   });
 
   const allocateEvent = useAllocate({
     nonce: userNonce!,
     onSuccess: async () => {
-      triggerToast({
+      toastService.showToast({
+        name: 'allocationSuccessful',
         title: t('allocationSuccessful'),
       });
       refetchMatchedProposalRewards();
@@ -137,13 +148,12 @@ const AllocationView = (): ReactElement => {
       return;
     }
     const percentageProportionsNew = allocationValuesNew.reduce((acc, curr) => {
-      const valueAsPercentageOfRewardsForProposals =
-        curr.value === '0'
-          ? '0'
-          : (
-              (parseFloat(curr.value.toString()) * 100) /
-              parseFloat(formatUnits(rewardsForProposalsNew))
-            ).toFixed();
+      const valueAsPercentageOfRewardsForProposals = ['0', ''].includes(curr.value) // 0 from the user, empty when removed entirely.
+        ? '0'
+        : (
+            (parseFloat(curr.value.toString()) * 100) /
+            parseFloat(formatUnits(rewardsForProposalsNew))
+          ).toFixed();
       return {
         ...acc,
         [curr.address]: valueAsPercentageOfRewardsForProposals,
@@ -167,6 +177,17 @@ const AllocationView = (): ReactElement => {
       return;
     }
 
+    const userAllocationsAddresses = userAllocations?.elements.map(({ address }) => address);
+    if (shouldReset && userAllocationsAddresses) {
+      const userAllocationsAddressesToAdd = userAllocationsAddresses?.filter(
+        element => !allocations.includes(element),
+      );
+
+      userAllocationsAddressesToAdd?.forEach((element, index, array) => {
+        onAddRemoveFromAllocate(element, [...allocations, ...array.slice(0, index)]);
+      });
+    }
+
     const allocationValuesNewSum = allocationValuesNew.reduce(
       (acc, curr) => acc.add(parseUnits(curr.value)),
       BigNumber.from(0),
@@ -184,7 +205,10 @@ const AllocationView = (): ReactElement => {
 
     const allocationValuesReset = getAllocationValuesInitialState({
       allocationValues: allocationValuesNew,
-      allocations,
+      allocations:
+        shouldReset && userAllocationsAddresses
+          ? [...new Set([...allocations, ...userAllocationsAddresses])]
+          : allocations,
       isManualMode: shouldIsManulModeBeChangedToFalse ? false : isManualMode,
       percentageProportions,
       rewardsForProposals: rewardsForProposalsNew,
@@ -267,10 +291,17 @@ const AllocationView = (): ReactElement => {
   ]);
 
   useEffect(() => {
-    if (!currentEpoch || !isDecisionWindowOpen) {
+    if (
+      !currentEpoch ||
+      !isDecisionWindowOpen ||
+      !userAllocations ||
+      currentEpoch < 2 ||
+      !userAllocations.hasUserAlreadyDoneAllocation
+    ) {
       return;
     }
-    if (userAllocations && currentEpoch > 1 && userAllocations.hasUserAlreadyDoneAllocation) {
+    const userAllocationsAddresses = userAllocations.elements.map(({ address }) => address);
+    if (isEqual(userAllocationsAddresses.sort(), allocations.sort())) {
       setCurrentView('summary');
       return;
     }
@@ -330,13 +361,8 @@ const AllocationView = (): ReactElement => {
   };
 
   const onRemoveAllocationElement = (address: string) => {
-    const hasUserAllocatedToThisProject = userAllocations?.elements.find(
-      element => element.address === address,
-    );
     onAddRemoveFromAllocate(address);
-    if (!hasUserAllocatedToThisProject) {
-      onChangeAllocationItemValue({ address, value: '0' });
-    }
+    onChangeAllocationItemValue({ address, value: '0' });
   };
 
   const isLoading =

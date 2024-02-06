@@ -18,8 +18,8 @@ import useLock from 'hooks/mutations/useLock';
 import useUnlock from 'hooks/mutations/useUnlock';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
+import toastService from 'services/toastService';
 import useTransactionLocalStore from 'store/transactionLocal/store';
-import triggerToast from 'utils/triggerToast';
 
 import styles from './EarnGlmLock.module.scss';
 import EarnGlmLockProps, { CurrentMode, Step } from './types';
@@ -115,10 +115,12 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
     const isSignedInAsAProposal = proposalsAddresses!.includes(address!);
 
     if (isSignedInAsAProposal) {
-      return triggerToast({
+      toastService.showToast({
+        name: 'proposalForbiddenOperation',
         title: i18n.t('common.proposalForbiddenOperation'),
         type: 'error',
       });
+      return;
     }
 
     const valueToDeposeOrWithdrawBigNumber = parseUnits(valueToDeposeOrWithdraw, 18);
