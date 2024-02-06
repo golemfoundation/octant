@@ -6,6 +6,7 @@ import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsProjectsList from 'components/Metrics/MetricsProjectsList';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
 
 import styles from './MetricsEpochGridTopProjects.module.scss';
@@ -18,8 +19,9 @@ const MetricsEpochGridTopProjects: FC<MetricsEpochGridTopProjectsProps> = ({
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { epoch, lastEpoch } = useMetricsEpoch();
   const { isDesktop } = useMediaQuery();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards(
-    epoch === lastEpoch ? undefined : epoch,
+    isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
 
   const numberOfProjects = isDesktop ? 10 : 5;
@@ -40,6 +42,7 @@ const MetricsEpochGridTopProjects: FC<MetricsEpochGridTopProjectsProps> = ({
         {
           children: (
             <MetricsProjectsList
+              epoch={epoch}
               isLoading={isLoading}
               numberOfSkeletons={numberOfProjects}
               projects={projects}

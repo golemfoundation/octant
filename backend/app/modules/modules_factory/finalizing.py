@@ -9,6 +9,7 @@ from app.modules.modules_factory.protocols import (
     TotalEffectiveDeposits,
     Leverage,
     FinalizedSnapshots,
+    UserBudgets,
 )
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
 from app.modules.snapshots.finalized.service.simulated import (
@@ -35,6 +36,7 @@ class FinalizingServices(Model):
     octant_rewards_service: FinalizingOctantRewards
     user_allocations_service: DonorsAddresses
     user_patron_mode_service: UserPatronMode
+    user_budgets_service: UserBudgets
     user_rewards_service: UserRewards
     finalized_snapshots_service: FinalizedSnapshots
 
@@ -42,9 +44,10 @@ class FinalizingServices(Model):
     def create() -> "FinalizingServices":
         events_based_patron_mode = EventsBasedUserPatronMode()
         saved_user_allocations = SavedUserAllocations()
+        saved_user_budgets = SavedUserBudgets()
         octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
         user_rewards = CalculatedUserRewards(
-            user_budgets=SavedUserBudgets(),
+            user_budgets=saved_user_budgets,
             patrons_mode=events_based_patron_mode,
             allocations=saved_user_allocations,
         )
@@ -59,6 +62,7 @@ class FinalizingServices(Model):
             octant_rewards_service=octant_rewards,
             user_allocations_service=saved_user_allocations,
             user_patron_mode_service=events_based_patron_mode,
+            user_budgets_service=saved_user_budgets,
             user_rewards_service=user_rewards,
             finalized_snapshots_service=finalized_snapshots_service,
         )

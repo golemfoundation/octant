@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsProjectsList from 'components/Metrics/MetricsProjectsList';
 import Img from 'components/ui/Img';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 
 import styles from './MetricsPersonalGridAllocations.module.scss';
@@ -11,10 +12,13 @@ import MetricsPersonalGridAllocationsProps from './types';
 
 const MetricsPersonalGridAllocations: FC<MetricsPersonalGridAllocationsProps> = ({ isLoading }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
+  const { data: currentEpoch } = useCurrentEpoch();
   const { data: userAllocations } = useUserAllocations();
   const projects = userAllocations?.elements || [];
 
   const areAllocationsEmpty = !isLoading && userAllocations?.elements.length === 0;
+
+  const epoch = currentEpoch! - 1;
 
   const children = useMemo(() => {
     if (areAllocationsEmpty) {
@@ -26,7 +30,14 @@ const MetricsPersonalGridAllocations: FC<MetricsPersonalGridAllocationsProps> = 
       );
     }
 
-    return <MetricsProjectsList isLoading={isLoading} numberOfSkeletons={4} projects={projects} />;
+    return (
+      <MetricsProjectsList
+        epoch={epoch}
+        isLoading={isLoading}
+        numberOfSkeletons={4}
+        projects={projects}
+      />
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, areAllocationsEmpty, projects.length, t]);
 

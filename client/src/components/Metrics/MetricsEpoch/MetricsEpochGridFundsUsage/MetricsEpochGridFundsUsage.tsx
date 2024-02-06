@@ -35,22 +35,22 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     {
       label: t('leftover'),
       value: getNumberValue(leftover),
-      valueLabel: getFormattedEthValue(leftover).fullString,
+      valueLabel: getFormattedEthValue(leftover, true, false, false, 2).fullString,
     },
     {
       label: t('projectCosts'),
       value: getNumberValue(projectCosts),
-      valueLabel: getFormattedEthValue(projectCosts).fullString,
+      valueLabel: getFormattedEthValue(projectCosts, true, false, false, 2).fullString,
     },
     {
       label: t('matchRewards'),
       value: getNumberValue(matchRewards),
-      valueLabel: getFormattedEthValue(matchRewards).fullString,
+      valueLabel: getFormattedEthValue(matchRewards, true, false, false, 2).fullString,
     },
     {
       label: t('userRewards'),
       value: getNumberValue(userRewards),
-      valueLabel: getFormattedEthValue(userRewards).fullString,
+      valueLabel: getFormattedEthValue(userRewards, true, false, false, 2).fullString,
     },
   ];
 

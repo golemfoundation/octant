@@ -13,14 +13,14 @@ import useEpochTimestampHappenedIn from 'hooks/subgraph/useEpochTimestampHappene
 import styles from './EarnHistoryItem.module.scss';
 import EarnHistoryItemProps from './types';
 
-const EarnHistoryItem: FC<EarnHistoryItemProps> = props => {
-  const { type, amount, isFinalized = true, timestamp } = props;
+const EarnHistoryItem: FC<EarnHistoryItemProps> = ({ isLast, ...rest }) => {
+  const { type, amount, isFinalized = true, timestamp } = rest;
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.historyItem',
   });
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { data: epochTimestampHappenedIn, isFetching: isFetchingEpochTimestampHappenedIn } =
-    useEpochTimestampHappenedIn(props.timestamp);
+    useEpochTimestampHappenedIn(rest.timestamp);
   const allocationEpoch = epochTimestampHappenedIn ? epochTimestampHappenedIn - 1 : undefined;
   const { data: individualReward, isFetching: isFetchingIndividualReward } =
     useIndividualReward(allocationEpoch);
@@ -49,7 +49,12 @@ const EarnHistoryItem: FC<EarnHistoryItemProps> = props => {
 
   return (
     <Fragment>
-      <BoxRounded className={styles.box} hasPadding={false} onClick={() => setIsModalOpen(true)}>
+      <BoxRounded
+        childrenWrapperClassName={styles.child}
+        className={styles.box}
+        hasPadding={false}
+        onClick={() => setIsModalOpen(true)}
+      >
         <div className={styles.titleAndSubtitle}>
           <div className={styles.title}>{title}</div>
           {type === 'patron_mode_donation' ? (
@@ -75,8 +80,9 @@ const EarnHistoryItem: FC<EarnHistoryItemProps> = props => {
           variant="tiny"
         />
       </BoxRounded>
+      {!isLast && <div className={styles.separator} />}
       <EarnHistoryItemDetailsModal
-        {...props}
+        {...rest}
         modalProps={{
           isOpen: isModalOpen,
           onClosePanel: () => setIsModalOpen(false),

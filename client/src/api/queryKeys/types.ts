@@ -4,8 +4,8 @@ export type Root = {
   calculateRewards: 'calculateRewards';
   cryptoValues: 'cryptoValues';
   depositAt: 'depositAt';
+  epochAllocations: 'epochAllocations';
   epochBudgets: 'epochBudgets';
-  epochDonors: 'epochDonors';
   epochInfo: 'epochInfo';
   epochLeverage: 'epochLeverage';
   epochPatrons: 'epochPatrons';
@@ -35,8 +35,8 @@ export type QueryKeys = {
   currentEpochEnd: ['currentEpochEnd'];
   currentEpochProps: ['currentEpochProps'];
   depositsValue: ['depositsValue'];
+  epochAllocations: (epoch: number) => [Root['epochAllocations'], string];
   epochBudgets: (epoch: number) => [Root['epochBudgets'], string];
-  epochDonors: (epoch: number) => [Root['epochDonors'], string];
   epochInfo: (epoch: number) => [Root['epochInfo'], string];
   epochLeverage: (epoch: number) => [Root['epochLeverage'], string];
   epochPatrons: (epoch: number) => [Root['epochPatrons'], string];

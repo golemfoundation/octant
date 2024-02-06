@@ -26,7 +26,7 @@ const MetricsEpochGridAverageLeverage: FC<MetricsEpochGridAverageLeverageProps> 
             <MetricsGridTileValue
               isLoading={isLoading}
               showSubvalueLoader={false}
-              value={`${epochLeverage?.toFixed(0)}x`}
+              value={`${epochLeverage?.toFixed(0) ?? 0}x`}
             />
           ),
           title: t('averageLeverage'),

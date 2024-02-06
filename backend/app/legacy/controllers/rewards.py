@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from decimal import Decimal
 from functools import reduce
-from typing import List, Tuple
+from typing import List
 
 from dataclass_wizard import JSONWizard
 
@@ -11,11 +11,9 @@ from app.context.epoch_state import EpochState
 from app.extensions import epochs
 from app.infrastructure import database
 from app.infrastructure.database.models import PendingEpochSnapshot
-from app.legacy.controllers.user import get_all_users
 from app.legacy.core import proposals, merkle_tree
 from app.legacy.core.epochs import epoch_snapshots as core_epoch_snapshots
 from app.legacy.core.proposals import get_proposals_with_allocations
-from app.legacy.core.user.budget import get_budget
 
 
 @dataclass()
@@ -134,16 +132,6 @@ def get_rewards_merkle_tree(epoch: int) -> RewardsMerkleTree:
         leaves=leaves,
         leaf_encoding=merkle_tree.LEAF_ENCODING,
     )
-
-
-def get_all_budgets(epoch: int) -> List[Tuple[str, int]]:
-    all_users = get_all_users()
-    budgets = []
-    for user in sorted(all_users):
-        budget = get_budget(user, epoch)
-        budgets += [{"user": user, "budget": budget}]
-
-    return budgets
 
 
 def _get_patrons_rewards(pending_epoch: int) -> int:

@@ -21,12 +21,12 @@ export default function useEpochBudgets(
     select: response => {
       let budgetsSum = BigNumber.from(0);
 
-      const budgets = response.map(el => {
-        const budgetBigNumber = parseUnits(el.budget, 'wei');
+      const budgets = response.budgets.map(({ address, amount }) => {
+        const budgetBigNumber = parseUnits(amount, 'wei');
         budgetsSum = budgetsSum.add(budgetBigNumber);
         return {
-          ...el,
           budget: budgetBigNumber,
+          user: address,
         };
       });
 

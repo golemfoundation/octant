@@ -1,6 +1,6 @@
 .root {
   width: 100%;
-  padding: 0 2.4rem;
+  padding: 0 0.8rem;
 
   @media #{$desktop-up} {
     max-height: 100%;
@@ -9,6 +9,10 @@
       min-height: 22.5rem;
     }
   }
+}
+
+.title {
+  padding: 0 1.6rem;
 }
 
 .childrenWrapper {

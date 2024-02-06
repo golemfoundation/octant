@@ -6,9 +6,9 @@ import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import styles from './MetricsProjectsListItem.module.scss';
 import MetricsProjectsListItemProps from './types';
 
-const MetricsProjectsListItem: FC<MetricsProjectsListItemProps> = ({ address, value }) => {
+const MetricsProjectsListItem: FC<MetricsProjectsListItemProps> = ({ address, epoch, value }) => {
   const { ipfsGateway } = env;
-  const { data: proposalsIpfs } = useProposalsIpfs([address]);
+  const { data: proposalsIpfs } = useProposalsIpfs([address], epoch);
 
   const image = proposalsIpfs.at(0)?.profileImageSmall;
   const name = proposalsIpfs.at(0)?.name;

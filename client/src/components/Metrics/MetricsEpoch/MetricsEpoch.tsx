@@ -19,8 +19,8 @@ import useProposalsDonors from 'hooks/queries/donors/useProposalsDonors';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useCurrentEpochEnd from 'hooks/queries/useCurrentEpochEnd';
 import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
+import useEpochAllocations from 'hooks/queries/useEpochAllocations';
 import useEpochBudgets from 'hooks/queries/useEpochBudgets';
-import useEpochDonors from 'hooks/queries/useEpochDonors';
 import useEpochInfo from 'hooks/queries/useEpochInfo';
 import useEpochLeverage from 'hooks/queries/useEpochLeverage';
 import useEpochPatrons from 'hooks/queries/useEpochPatrons';
@@ -39,25 +39,27 @@ const MetricsEpoch = (): ReactElement => {
   const { epoch, lastEpoch } = useMetricsEpoch();
   const { isFetching: isFetchingCurrentEpoch } = useCurrentEpoch();
   const { isFetching: isFetchingCurrentEpochProps } = useCurrentEpochProps();
-  const { isFetching: isFetchingDecisionWindow } = useIsDecisionWindowOpen();
+  const { data: isDecisionWindowOpen, isFetching: isFetchingDecisionWindow } =
+    useIsDecisionWindowOpen();
   const { isFetching: isFetchingLockedsData } = useLockedsData();
   const { isFetching: isFetchingLargestLockedAmount } = useLargestLockedAmount();
   const { isFetching: isFetchingCurrentEpochEnd } = useCurrentEpochEnd();
   const { isFetching: isFetchingEpochsStartEndTime } = useEpochsStartEndTime();
   const { isFetching: isFetchingMatchedProposalRewards } = useMatchedProposalRewards(
-    epoch === lastEpoch ? undefined : epoch,
+    isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
   const { isFetching: isFetchingProposalsIpfsWithRewards } = useProposalsIpfsWithRewards(
-    epoch === lastEpoch ? undefined : epoch,
+    isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
   const { isFetching: isFetchingProposalsDonors } = useProposalsDonors(
-    epoch === lastEpoch ? undefined : epoch,
+    isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
   const { isFetching: isFetchingProposalRewardsThreshold } = useProposalRewardsThreshold(
-    epoch === lastEpoch ? undefined : epoch,
+    isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
   const { isFetching: isFetchingEpochLeverage } = useEpochLeverage(epoch);
-  const { data: epochDonors, isFetching: isFetchingEpochDonors } = useEpochDonors(epoch);
+  const { data: epochAllocations, isFetching: isFetchingEpochAllocations } =
+    useEpochAllocations(epoch);
   const { data: epochInfo, isFetching: isFetchingEpochInfo } = useEpochInfo(epoch);
   const { isFetching: isFetchingEpochPatrons } = useEpochPatrons(epoch);
   const { data: epochBudgets, isFetching: isFetchingEpochBudgets } = useEpochBudgets(epoch);
@@ -66,7 +68,7 @@ const MetricsEpoch = (): ReactElement => {
 
   const patronsRewards = epochInfo?.patronsRewards || BigNumber.from(0);
   const sumOfDonations =
-    epochDonors?.reduce((acc, curr) => acc.add(curr.amount), BigNumber.from(0)) ||
+    epochAllocations?.reduce((acc, curr) => acc.add(curr.amount), BigNumber.from(0)) ||
     BigNumber.from(0);
   const totalDonations = sumOfDonations.add(patronsRewards);
   const unusedRewards = epochUnusedRewards?.value || BigNumber.from(0);
@@ -84,7 +86,7 @@ const MetricsEpoch = (): ReactElement => {
     isFetchingCurrentEpochEnd ||
     isFetchingEpochsStartEndTime ||
     isFetchingProposalsIpfsWithRewards ||
-    isFetchingEpochDonors ||
+    isFetchingEpochAllocations ||
     isFetchingEpochInfo ||
     isFetchingEpochLeverage ||
     isFetchingEpochUnusedRewards ||
