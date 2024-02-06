@@ -34,9 +34,8 @@ type UseLockedSummarySnapshotsResponse =
 export default function useLockedSummarySnapshots(): UseQueryResult<UseLockedSummarySnapshotsResponse> {
   const { subgraphAddress } = env;
 
-  return useQuery<GetLockedSummarySnapshotsQuery, any, UseLockedSummarySnapshotsResponse, any>(
-    QUERY_KEYS.lockedSummarySnapshots,
-    async () => {
+  return useQuery<GetLockedSummarySnapshotsQuery, any, UseLockedSummarySnapshotsResponse, any>({
+    queryFn: async () => {
       const pageSize = 1000;
       const lockedSummarySnapshots: GetLockedSummarySnapshotsQuery['lockedSummarySnapshots'] = [];
 
@@ -57,22 +56,21 @@ export default function useLockedSummarySnapshots(): UseQueryResult<UseLockedSum
 
       return { lockedSummarySnapshots };
     },
-    {
-      refetchOnMount: false,
-      select: data => {
-        if (!data?.lockedSummarySnapshots) {
-          return undefined;
-        }
+    queryKey: QUERY_KEYS.lockedSummarySnapshots,
+    refetchOnMount: false,
+    select: data => {
+      if (!data?.lockedSummarySnapshots) {
+        return undefined;
+      }
 
-        const groupedByDate = getMetricsChartDataGroupedByDate(
-          data.lockedSummarySnapshots,
-          'lockedSummarySnapshots',
-        ) as GroupedGlmAmountByDateItem[];
+      const groupedByDate = getMetricsChartDataGroupedByDate(
+        data.lockedSummarySnapshots,
+        'lockedSummarySnapshots',
+      ) as GroupedGlmAmountByDateItem[];
 
-        return {
-          groupedByDate,
-        };
-      },
+      return {
+        groupedByDate,
+      };
     },
-  );
+  });
 }

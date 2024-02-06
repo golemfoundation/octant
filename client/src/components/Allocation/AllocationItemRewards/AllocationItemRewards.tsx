@@ -140,12 +140,9 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
           styles.isDonationAboveThreshold,
       )}
       onClick={onClick}
-      onMouseLeave={() => {
-        setIsSimulateVisible(false);
-      }}
-      onMouseOver={() => {
-        setIsSimulateVisible(true);
-      }}
+      onMouseLeave={() => setIsSimulateVisible(false)}
+      // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+      onMouseOver={() => setIsSimulateVisible(true)}
     >
       {isEpoch1 && t('epoch1')}
       {!isEpoch1 &&

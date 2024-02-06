@@ -13,7 +13,7 @@ import useIsDecisionWindowOpen from './useIsDecisionWindowOpen';
 export default function useProposalRewardsThreshold(
   epoch?: number,
   options?: UseQueryOptions<Response, unknown, BigNumber, any>,
-): UseQueryResult<BigNumber> {
+): UseQueryResult<BigNumber, unknown> {
   const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
@@ -35,19 +35,17 @@ export default function useProposalRewardsThreshold(
     event: WebsocketListenEvent.threshold,
   });
 
-  return useQuery(
-    QUERY_KEYS.proposalRewardsThreshold(
+  return useQuery({
+    enabled:
+      isDecisionWindowOpen !== undefined &&
+      ((epoch !== undefined && epoch > 0) || (!!currentEpoch && currentEpoch > 1)),
+    queryFn: () =>
+      apiGetProjectThreshold(epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!)),
+    queryKey: QUERY_KEYS.proposalRewardsThreshold(
       epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
     ),
-    () =>
-      apiGetProjectThreshold(epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!)),
-    {
-      enabled:
-        isDecisionWindowOpen !== undefined &&
-        ((epoch !== undefined && epoch > 0) || (!!currentEpoch && currentEpoch > 1)),
-      select: response => parseUnits(response.threshold, 'wei'),
-      staleTime: Infinity,
-      ...options,
-    },
-  );
+    select: response => parseUnits(response.threshold, 'wei'),
+    staleTime: Infinity,
+    ...options,
+  });
 }

@@ -81,8 +81,8 @@ const EarnWithdrawEth: FC<EarnWithdrawEthProps> = ({ onCloseModal }) => {
             withdrawals?.sums.available.isZero()
           }
           isHigh
-          isLoading={withdrawEthMutation.isLoading}
-          label={withdrawEthMutation.isLoading ? t('waitingForConfirmation') : t('withdrawAll')}
+          isLoading={withdrawEthMutation.isPending}
+          label={withdrawEthMutation.isPending ? t('waitingForConfirmation') : t('withdrawAll')}
           onClick={withdrawEth}
           variant="cta"
         />

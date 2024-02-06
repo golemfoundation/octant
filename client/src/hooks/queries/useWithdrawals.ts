@@ -18,12 +18,14 @@ interface Withdrawals {
 
 export default function useWithdrawals(
   options?: UseQueryOptions<Response, unknown, Withdrawals, any>,
-): UseQueryResult<Withdrawals> {
+): UseQueryResult<Withdrawals, unknown> {
   const { address } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
 
-  return useQuery(QUERY_KEYS.withdrawals, () => apiGetWithdrawals(address as string), {
+  return useQuery({
     enabled: !!address && !!currentEpoch && currentEpoch > 1,
+    queryFn: () => apiGetWithdrawals(address as string),
+    queryKey: QUERY_KEYS.withdrawals,
     select: data => {
       const sums = data.reduce(
         (acc, curr) => {
