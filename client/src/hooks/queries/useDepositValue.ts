@@ -9,17 +9,15 @@ export default function useDepositValue(): UseQueryResult<BigNumber> {
   const { address } = useAccount();
   const publicClient = usePublicClient();
 
-  return useQuery(
-    QUERY_KEYS.depositsValue,
-    () =>
+  return useQuery({
+    enabled: !!address,
+    queryFn: () =>
       readContractDeposits({
         args: [address],
         functionName: 'deposits',
         publicClient,
       }),
-    {
-      enabled: !!address,
-      select: response => BigNumber.from(response),
-    },
-  );
+    queryKey: QUERY_KEYS.depositsValue,
+    select: response => BigNumber.from(response),
+  });
 }

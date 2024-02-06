@@ -13,8 +13,10 @@ export type UseEpochUnusedRewards = {
 export default function useEpochUnusedRewards(
   epoch: number,
   options?: UseQueryOptions<Response, unknown, UseEpochUnusedRewards, any>,
-): UseQueryResult<UseEpochUnusedRewards> {
-  return useQuery(QUERY_KEYS.epochUnusedRewards(epoch), () => apiGetEpochUnusedRewards(epoch), {
+): UseQueryResult<UseEpochUnusedRewards, unknown> {
+  return useQuery({
+    queryFn: () => apiGetEpochUnusedRewards(epoch),
+    queryKey: QUERY_KEYS.epochUnusedRewards(epoch),
     select: response => ({
       addresses: response.addresses,
       value: parseUnits(response.value, 'wei'),

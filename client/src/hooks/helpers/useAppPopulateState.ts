@@ -147,9 +147,13 @@ export default function useAppPopulateState(): void {
     setInitialStateTips();
   }, [areOctantTipsAlwaysVisible, setInitialStateTips]);
 
-  useCryptoValues(displayCurrency, {
-    onError: () => {
-      setIsCryptoMainValueDisplay(true);
-    },
-  });
+  const cryptoValuesQuery = useCryptoValues(displayCurrency);
+
+  useEffect(() => {
+    if (!cryptoValuesQuery.error) {
+      return;
+    }
+    setIsCryptoMainValueDisplay(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cryptoValuesQuery.error]);
 }

@@ -36,16 +36,14 @@ export default function useEpochsStartEndTime(): UseQueryResult<
   const { subgraphAddress } = env;
   const { data: currentEpoch } = useCurrentEpoch();
 
-  return useQuery<GetEpochsStartEndTimeQuery, any, EpochsStartEndTime['epoches'] | null, any>(
-    QUERY_KEYS.epochesEndTime(currentEpoch!),
-    async () =>
+  return useQuery<GetEpochsStartEndTimeQuery, any, EpochsStartEndTime['epoches'] | null, any>({
+    enabled: !!currentEpoch,
+    queryFn: async () =>
       request(subgraphAddress, GET_EPOCHS_START_END_TIME, {
         lastEpoch: currentEpoch,
       }),
-    {
-      enabled: !!currentEpoch,
-      refetchOnMount: false,
-      select: data => data.epoches,
-    },
-  );
+    queryKey: QUERY_KEYS.epochesEndTime(currentEpoch!),
+    refetchOnMount: false,
+    select: data => data.epoches,
+  });
 }

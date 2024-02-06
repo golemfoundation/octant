@@ -12,21 +12,19 @@ export interface EpochProps {
 export default function useCurrentEpochProps(): UseQueryResult<EpochProps> {
   const publicClient = usePublicClient();
 
-  return useQuery<{ decisionWindow: BigInt; duration: BigInt }, any, EpochProps>(
-    QUERY_KEYS.currentEpochProps,
-    () =>
+  return useQuery<{ decisionWindow: BigInt; duration: BigInt }, any, EpochProps>({
+    queryFn: () =>
       readContractEpochs({
         functionName: 'getCurrentEpochProps',
         publicClient,
       }),
-    {
-      select: response => {
-        const { duration, decisionWindow } = response!;
-        return {
-          decisionWindow: Number(decisionWindow) * 1000,
-          duration: Number(duration) * 1000,
-        };
-      },
+    queryKey: QUERY_KEYS.currentEpochProps,
+    select: response => {
+      const { duration, decisionWindow } = response!;
+      return {
+        decisionWindow: Number(decisionWindow) * 1000,
+        duration: Number(duration) * 1000,
+      };
     },
-  );
+  });
 }

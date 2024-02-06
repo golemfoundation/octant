@@ -16,8 +16,10 @@ type EpochBudgets = {
 export default function useEpochBudgets(
   epoch: number,
   options?: UseQueryOptions<Response, unknown, EpochBudgets, any>,
-): UseQueryResult<EpochBudgets> {
-  return useQuery(QUERY_KEYS.epochBudgets(epoch), () => apiGetEpochBudgets(epoch), {
+): UseQueryResult<EpochBudgets, unknown> {
+  return useQuery({
+    queryFn: () => apiGetEpochBudgets(epoch),
+    queryKey: QUERY_KEYS.epochBudgets(epoch),
     select: response => {
       let budgetsSum = BigNumber.from(0);
 
