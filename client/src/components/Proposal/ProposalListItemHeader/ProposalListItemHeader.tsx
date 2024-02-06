@@ -29,13 +29,15 @@ const ProposalListItemHeader: FC<ProposalListItemHeaderProps> = ({
   const { i18n } = useTranslation('translation', { keyPrefix: 'views.proposal' });
   const { epoch: epochUrl } = useParams();
   const { data: userAllocations } = useUserAllocations(epoch);
-  const { allocations, setAllocations } = useAllocationsStore(state => ({
+  const { allocations, addAllocations, removeAllocations } = useAllocationsStore(state => ({
+    addAllocations: state.addAllocations,
     allocations: state.data.allocations,
-    setAllocations: state.setAllocations,
+    removeAllocations: state.removeAllocations,
   }));
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
+    addAllocations,
     allocations: allocations!,
-    setAllocations,
+    removeAllocations,
     userAllocationsElements: userAllocations?.elements,
   });
 

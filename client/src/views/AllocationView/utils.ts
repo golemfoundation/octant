@@ -275,10 +275,13 @@ export function getAllocationValuesAfterManualChange({
     : rewardsForProposals;
 
   return {
-    allocationValuesArrayNew: getAllocationValuesWithRewardsSplitted({
-      allocationValues: allocationValuesArrayNew,
-      restToDistribute: rewardsForProposalsNew,
-    }),
+    allocationValuesArrayNew:
+      allocationValuesArrayNew.length === 1
+        ? allocationValuesArrayNew
+        : getAllocationValuesWithRewardsSplitted({
+            allocationValues: allocationValuesArrayNew,
+            restToDistribute: rewardsForProposalsNew,
+          }),
     rewardsForProposalsNew,
   };
 }

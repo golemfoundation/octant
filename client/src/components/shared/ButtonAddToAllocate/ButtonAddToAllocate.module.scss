@@ -1,6 +1,13 @@
 .root {
   z-index: $z-index-4;
 
+  &.isAllocatedTo {
+    svg path {
+      stroke: $color-white;
+      // fill: $color-white; -- no fill here, it makes the stroke bigger.
+    }
+  }
+
   &:not(.isAllocatedTo) {
     &.isAddedToAllocate {
       svg path {

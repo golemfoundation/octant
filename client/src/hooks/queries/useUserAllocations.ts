@@ -10,7 +10,7 @@ import useCurrentEpoch from './useCurrentEpoch';
 
 export type UserAllocationElement = { address: string; value: BigNumber };
 
-type Response = {
+export type Response = {
   elements: UserAllocationElement[];
   hasUserAlreadyDoneAllocation: boolean;
   isManuallyEdited: boolean;

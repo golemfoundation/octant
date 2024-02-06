@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import ProposalItemSkeleton from 'components/Proposals/ProposalsListSkeletonItem/ProposalsListSkeletonItem';
@@ -30,24 +30,34 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
   const navigate = useNavigate();
   const { data: userAllocations } = useUserAllocations(epoch);
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { allocations, setAllocations } = useAllocationsStore(state => ({
+  const { allocations, addAllocations, removeAllocations } = useAllocationsStore(state => ({
+    addAllocations: state.addAllocations,
     allocations: state.data.allocations,
-    setAllocations: state.setAllocations,
+    removeAllocations: state.removeAllocations,
   }));
   const { data: currentEpoch } = useCurrentEpoch();
   const isAddedToAllocate = allocations!.includes(proposalIpfsWithRewards.address);
 
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
+    addAllocations,
     allocations,
-    setAllocations,
+    removeAllocations,
     userAllocationsElements: userAllocations?.elements,
   });
 
-  const isAllocatedTo =
-    (epoch !== undefined || !!isDecisionWindowOpen) &&
-    !!userAllocations?.elements.find(
+  const isAllocatedTo = useMemo(() => {
+    const isInUserAllocations = !!userAllocations?.elements.find(
       ({ address: userAllocationAddress }) => userAllocationAddress === address,
     );
+    const isInAllocations = allocations.includes(address);
+    if (epoch !== undefined) {
+      return isInUserAllocations;
+    }
+    if (isDecisionWindowOpen) {
+      return isInUserAllocations && isInAllocations;
+    }
+    return false;
+  }, [address, allocations, userAllocations, epoch, isDecisionWindowOpen]);
   const isEpoch1 = currentEpoch === 1;
   const isArchivedProposal = epoch !== undefined;
 

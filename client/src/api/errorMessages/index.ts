@@ -3,7 +3,7 @@ import { Query } from '@tanstack/react-query';
 
 import { ROOTS, QUERY_KEYS } from 'api/queryKeys';
 import i18n from 'i18n';
-import triggerToast from 'utils/triggerToast';
+import toastService from 'services/toastService';
 
 import { QueryMutationError, QueryMutationErrorConfig, IgnoredQueries } from './types';
 
@@ -65,7 +65,7 @@ export function handleError(reason: string, query?: Query | unknown): string | u
 
   const { message, title, type } = getError(reason);
   if (type === 'toast') {
-    triggerToast({ message, title, type: 'error' });
+    toastService.showToast({ message, name: 'backendError', title, type: 'error' });
     return;
   }
   return message;
