@@ -1,22 +1,8 @@
-import debounce from 'lodash/debounce';
-
-import { TOAST_DEBOUNCE_TIME } from 'constants/toasts';
 import { UserAllocationElement } from 'hooks/queries/useUserAllocations';
 import i18n from 'i18n';
-import triggerToast from 'utils/triggerToast';
+import toastService from 'services/toastService';
 
-import { OnAddRemoveAllocationElementLocalStorage } from './types';
-
-export const toastDebouncedCantRemoveAllocatedProject = debounce(
-  () =>
-    triggerToast({
-      message: i18n.t('toasts.cantRemoveProjectWithDonations.message'),
-      title: i18n.t('toasts.cantRemoveProjectWithDonations.title'),
-      type: 'warning',
-    }),
-  TOAST_DEBOUNCE_TIME,
-  { leading: true },
-);
+import { GetShouldProjectBeAddedOrRemovedFromAllocation } from './types';
 
 export function isProposalAlreadyAllocatedOn(
   userAllocationsElements: undefined | UserAllocationElement[],
@@ -25,29 +11,43 @@ export function isProposalAlreadyAllocatedOn(
   if (!userAllocationsElements) {
     return false;
   }
-  const allocation = userAllocationsElements.find(
+  const userAllocationsElement = userAllocationsElements.find(
     ({ address: userAllocationAddress }) => userAllocationAddress === address,
   );
-  return !!allocation && allocation.value.gt(0);
+  return !!userAllocationsElement && userAllocationsElement.value.gt(0);
 }
 
-export function onAddRemoveAllocationElementLocalStorage({
+export function getShouldProjectBeAddedOrRemovedFromAllocation({
   allocations,
   address,
   userAllocationsElements,
-}: OnAddRemoveAllocationElementLocalStorage): string[] | undefined {
-  if (isProposalAlreadyAllocatedOn(userAllocationsElements, address)) {
-    toastDebouncedCantRemoveAllocatedProject();
-    return;
-  }
+}: GetShouldProjectBeAddedOrRemovedFromAllocation): 'add' | 'remove' {
+  const userAllocationsAddresses = userAllocationsElements?.map(element => element.address);
   const isItemAlreadyAdded = allocations.includes(address);
   const newIds = allocations ? [...allocations] : [];
 
   if (isItemAlreadyAdded) {
+    if (isProposalAlreadyAllocatedOn(userAllocationsElements, address)) {
+      toastService.showToast({
+        message: i18n.t('toasts.confirmChanges.title'),
+        name: 'confirmChanges',
+        type: 'warning',
+      });
+    }
+
     newIds.splice(newIds.indexOf(address), 1);
-  } else {
-    newIds.push(address);
+    return 'remove';
   }
 
-  return newIds;
+  newIds.push(address);
+
+  // When newIds include all elements of userAllocationsAddresses, hideToast.
+  if (
+    userAllocationsAddresses &&
+    userAllocationsAddresses.every(element => newIds.includes(element))
+  ) {
+    toastService.hideToast('confirmChanges');
+  }
+
+  return 'add';
 }

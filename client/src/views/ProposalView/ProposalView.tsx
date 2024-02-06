@@ -18,8 +18,8 @@ import useProposalsIpfsWithRewards, {
   ProposalIpfsWithRewards,
 } from 'hooks/queries/useProposalsIpfsWithRewards';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
+import toastService from 'services/toastService';
 import { chevronLeft } from 'svg/navigation';
-import triggerToast from 'utils/triggerToast';
 
 import styles from './ProposalView.module.scss';
 
@@ -138,7 +138,8 @@ const ProposalView = (): ReactElement => {
     (initialElement && initialElement.isLoadingError) ||
     (areCurrentEpochsProjectsHiddenOutsideAllocationWindow && epochUrl === currentEpoch.toString())
   ) {
-    triggerToast({
+    toastService.showToast({
+      name: 'proposalLoadingProblem',
       title: t('loadingProblem'),
       type: 'warning',
     });
