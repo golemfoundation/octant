@@ -54,7 +54,7 @@ const AllocationView = (): ReactElement => {
   const {
     data: allocationSimulated,
     mutateAsync: mutateAsyncAllocateSimulate,
-    isLoading: isLoadingAllocateSimulate,
+    isPending: isLoadingAllocateSimulate,
     reset: resetAllocateSimulate,
   } = useAllocateSimulate();
 

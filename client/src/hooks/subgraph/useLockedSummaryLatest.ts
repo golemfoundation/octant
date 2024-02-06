@@ -31,21 +31,19 @@ export default function useLockedSummaryLatest(): UseQueryResult<
 > {
   const { subgraphAddress } = env;
 
-  return useQuery<GetLockedSummaryLatestQuery, any, LockedSummaryLatest | null, any>(
-    QUERY_KEYS.lockedSummaryLatest,
-    async () => request(subgraphAddress, GET_LOCKED_SUMMARY_LATEST),
-    {
-      refetchOnMount: false,
-      select: data => {
-        if (!data.lockedSummaryLatest) {
-          return null;
-        }
-        return {
-          id: data!.lockedSummaryLatest.id,
-          lockedRatio: data!.lockedSummaryLatest.lockedRatio,
-          lockedTotal: parseUnits(data.lockedSummaryLatest.lockedTotal, 'wei'),
-        };
-      },
+  return useQuery<GetLockedSummaryLatestQuery, any, LockedSummaryLatest | null, any>({
+    queryFn: async () => request(subgraphAddress, GET_LOCKED_SUMMARY_LATEST),
+    queryKey: QUERY_KEYS.lockedSummaryLatest,
+    refetchOnMount: false,
+    select: data => {
+      if (!data.lockedSummaryLatest) {
+        return null;
+      }
+      return {
+        id: data!.lockedSummaryLatest.id,
+        lockedRatio: data!.lockedSummaryLatest.lockedRatio,
+        lockedTotal: parseUnits(data.lockedSummaryLatest.lockedTotal, 'wei'),
+      };
     },
-  );
+  });
 }

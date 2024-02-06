@@ -6,16 +6,14 @@ import { QUERY_KEYS } from 'api/queryKeys';
 
 export default function useUserAllocationNonce(
   options?: UseQueryOptions<ApiGetUserAllocationNonceResponse, unknown, number, any>,
-): UseQueryResult<number> {
+): UseQueryResult<number, unknown> {
   const { address } = useAccount();
 
-  return useQuery(
-    QUERY_KEYS.userAllocationNonce(address!),
-    () => apiGetUserAllocationNonce(address!),
-    {
-      enabled: !!address,
-      select: response => response.allocationNonce,
-      ...options,
-    },
-  );
+  return useQuery({
+    enabled: !!address,
+    queryFn: () => apiGetUserAllocationNonce(address!),
+    queryKey: QUERY_KEYS.userAllocationNonce(address!),
+    select: response => response.allocationNonce,
+    ...options,
+  });
 }

@@ -55,7 +55,7 @@ function parseResponse(response: Response): ProposalRewards[] {
 export default function useMatchedProposalRewards(
   epoch?: number,
   options?: UseQueryOptions<Response, unknown, ProposalRewards[], any>,
-): UseQueryResult<ProposalRewards[]> {
+): UseQueryResult<ProposalRewards[], unknown> {
   // const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
@@ -76,11 +76,11 @@ export default function useMatchedProposalRewards(
   //   event: WebsocketListenEvent.proposalRewards,
   // });
 
-  return useQuery(
-    QUERY_KEYS.matchedProposalRewards(
-      epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
-    ),
-    () => {
+  return useQuery({
+    enabled:
+      isDecisionWindowOpen !== undefined &&
+      ((epoch !== undefined && epoch > 0) || (!!currentEpoch && currentEpoch > 1)),
+    queryFn: () => {
       if (epoch) {
         return apiGetMatchedProposalRewards(epoch);
       }
@@ -94,13 +94,11 @@ export default function useMatchedProposalRewards(
       // eslint-disable-next-line no-promise-executor-return
       return new Promise<ApiResponse>(resolve => resolve({ rewards: [] }));
     },
-    {
-      enabled:
-        isDecisionWindowOpen !== undefined &&
-        ((epoch !== undefined && epoch > 0) || (!!currentEpoch && currentEpoch > 1)),
-      select: response => parseResponse(response),
-      ...options,
-      refetchInterval: 5000,
-    },
-  );
+    queryKey: QUERY_KEYS.matchedProposalRewards(
+      epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
+    ),
+    select: response => parseResponse(response),
+    ...options,
+    refetchInterval: 5000,
+  });
 }

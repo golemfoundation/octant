@@ -17,7 +17,7 @@ const ModalOnboardingButtonClaimGlm: FC<ModalOnboardingButtonClaimGlmProps> = ({
     <Button
       className={className}
       isDisabled={glmClaimMutation.status === 'success'}
-      isLoading={glmClaimMutation.isLoading}
+      isLoading={glmClaimMutation.isPending}
       label={t(glmClaimMutation.status === 'success' ? 'withdrawn' : 'withdraw')}
       onClick={() => glmClaimMutation.mutateAsync('')}
       variant="cta"

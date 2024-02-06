@@ -1,5 +1,4 @@
-import differenceInDays from 'date-fns/differenceInDays';
-import intervalToDuration from 'date-fns/intervalToDuration';
+import { differenceInDays, intervalToDuration } from 'date-fns';
 
 export type DurationWithoutMonthsAndYears = {
   days: number;
@@ -20,8 +19,8 @@ export default function getDurationBetweenTimestamps(
   });
   return {
     days: differenceInDaysValue,
-    hours: interval.hours,
-    minutes: interval.minutes,
-    seconds: interval.seconds,
+    hours: Math.abs(interval.hours ?? 0),
+    minutes: Math.abs(interval.minutes ?? 0),
+    seconds: Math.abs(interval.seconds ?? 0),
   };
 }

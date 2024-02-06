@@ -11,19 +11,17 @@ import useCurrentEpoch from './useCurrentEpoch';
 export default function useIndividualReward(
   epoch?: number,
   options?: UseQueryOptions<Response, unknown, BigNumber, any>,
-): UseQueryResult<BigNumber> {
+): UseQueryResult<BigNumber, unknown> {
   const { address } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
 
   const epochToUse = epoch || currentEpoch! - 1;
 
-  return useQuery(
-    QUERY_KEYS.individualReward(epochToUse),
-    () => apiGetIndividualRewards(epochToUse, address!),
-    {
-      enabled: ((!!currentEpoch && currentEpoch > 1) || !!epoch) && !!address,
-      select: response => parseUnits(response.budget, 'wei'),
-      ...options,
-    },
-  );
+  return useQuery({
+    enabled: ((!!currentEpoch && currentEpoch > 1) || !!epoch) && !!address,
+    queryFn: () => apiGetIndividualRewards(epochToUse, address!),
+    queryKey: QUERY_KEYS.individualReward(epochToUse),
+    select: response => parseUnits(response.budget, 'wei'),
+    ...options,
+  });
 }

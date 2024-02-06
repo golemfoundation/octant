@@ -21,11 +21,14 @@ const GET_PROJECTS_METADATA_PER_EPOCHES = graphql(`
 
 export default function useProposalsCid(
   epoch: number,
-  options?: UseQueryOptions<
-    GetProjectsMetadataPerEpochesQuery,
-    unknown,
-    QueryData,
-    QueryKeys['projectsMetadataPerEpoches']
+  options?: Omit<
+    UseQueryOptions<
+      GetProjectsMetadataPerEpochesQuery,
+      unknown,
+      QueryData,
+      QueryKeys['projectsMetadataPerEpoches']
+    >,
+    'queryKey'
   >,
 ): UseQueryResult<QueryData> {
   const { subgraphAddress } = env;
@@ -35,19 +38,17 @@ export default function useProposalsCid(
     any,
     QueryData,
     QueryKeys['projectsMetadataPerEpoches']
-  >(
-    QUERY_KEYS.projectsMetadataPerEpoches,
-    async () => request(subgraphAddress, GET_PROJECTS_METADATA_PER_EPOCHES),
-    {
-      select: data => {
-        // Returns proposalsCid for the current or previous (lower, nearest) epoch
-        const epochProposalsCid = _last(
-          data.projectsMetadataPerEpoches.filter(p => p.epoch <= epoch),
-        )?.proposalsCid;
+  >({
+    queryFn: async () => request(subgraphAddress, GET_PROJECTS_METADATA_PER_EPOCHES),
+    queryKey: QUERY_KEYS.projectsMetadataPerEpoches,
+    select: data => {
+      // Returns proposalsCid for the current or previous (lower, nearest) epoch
+      const epochProposalsCid = _last(
+        data.projectsMetadataPerEpoches.filter(p => p.epoch <= epoch),
+      )?.proposalsCid;
 
-        return epochProposalsCid;
-      },
-      ...options,
+      return epochProposalsCid;
     },
-  );
+    ...options,
+  });
 }

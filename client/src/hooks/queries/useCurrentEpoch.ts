@@ -5,20 +5,18 @@ import { QUERY_KEYS } from 'api/queryKeys';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
 
 export default function useCurrentEpoch(
-  options?: UseQueryOptions<BigInt, unknown, number, ['currentEpoch']>,
-): UseQueryResult<number> {
+  options?: Omit<UseQueryOptions<BigInt, unknown, number, any>, 'queryKey'>,
+): UseQueryResult<number, unknown> {
   const publicClient = usePublicClient();
 
-  return useQuery(
-    QUERY_KEYS.currentEpoch,
-    () =>
+  return useQuery({
+    queryFn: () =>
       readContractEpochs({
         functionName: 'getCurrentEpoch',
         publicClient,
       }),
-    {
-      select: res => Number(res),
-      ...options,
-    },
-  );
+    queryKey: QUERY_KEYS.currentEpoch,
+    select: res => Number(res),
+    ...options,
+  });
 }
