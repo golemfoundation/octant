@@ -85,6 +85,7 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
                   isDisabled && styles.isDisabled,
                   tabOnClick && styles.isClickable,
                 )}
+                data-test={`${dataTest}__tab--${index}`}
                 onClick={isDisabled ? undefined : tabOnClick}
               >
                 {tabTitle}

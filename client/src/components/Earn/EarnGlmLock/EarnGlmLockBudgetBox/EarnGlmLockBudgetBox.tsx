@@ -33,13 +33,23 @@ const EarnGlmLockBudgetBox: FC<EarnGlmLockBudgetBoxProps> = ({
   ).fullString;
 
   return (
-    <BoxRounded alignment="left" className={className} hasPadding={false} isGrey isVertical>
+    <BoxRounded
+      alignment="left"
+      className={className}
+      dataTest="BudgetBox"
+      hasPadding={false}
+      isGrey
+      isVertical
+    >
       <div className={styles.budgetRow}>
         <div className={styles.budgetLabel}>{t('currentlyLocked')}</div>
         {isFetchingDepositValue ? (
           <div className={styles.skeleton} />
         ) : (
-          <div className={cx(styles.budgetValue, isCurrentlyLockedError && styles.isError)}>
+          <div
+            className={cx(styles.budgetValue, isCurrentlyLockedError && styles.isError)}
+            data-test="BudgetBox__currentlyLocked__value"
+          >
             {depositsValueString}
           </div>
         )}
@@ -49,7 +59,10 @@ const EarnGlmLockBudgetBox: FC<EarnGlmLockBudgetBoxProps> = ({
         {!isFetchedAvailableFundsGlm ? (
           <div className={styles.skeleton} />
         ) : (
-          <div className={cx(styles.budgetValue, isWalletBalanceError && styles.isError)}>
+          <div
+            className={cx(styles.budgetValue, isWalletBalanceError && styles.isError)}
+            data-test="BudgetBox__walletBalance__value"
+          >
             {availableFundsGlmString}
           </div>
         )}

@@ -67,7 +67,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
 
   const buttonLabel = useMemo(() => {
     if (isLoading) {
-      return t('glmLockTabs.waitingForConformation');
+      return i18n.t('common.waitingForConfirmation');
     }
     if (step === 3) {
       return i18n.t('common.close');
@@ -150,6 +150,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
       />
       <Button
         className={styles.button}
+        dataTest="GlmLockTabs__Button"
         isDisabled={isButtonDisabled}
         isHigh
         isLoading={isLoading}
