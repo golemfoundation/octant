@@ -5,18 +5,16 @@ import { useFormik } from 'formik';
 import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import AllocationInputsRewardsAvailable from 'components/Allocation/AllocationInputsRewardsAvailable';
 import Button from 'components/ui/Button';
 import InputText from 'components/ui/InputText';
 import { comma, floatNumberWithUpTo18DecimalPlaces, percentageOnly } from 'utils/regExp';
 
 import styles from './AllocationInputs.module.scss';
-import AllocationInputsProps, { FormFields, InputFocused } from './types';
+import AllocationInputsProps, { FormFields } from './types';
 import { formInitialValues, validationSchema } from './utils';
 
 const AllocationInputs: FC<AllocationInputsProps> = ({
   className,
-  isLimitVisible,
   isManuallyEdited,
   onClose,
   valueCryptoSelected,
@@ -26,7 +24,6 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
   const { t } = useTranslation('translation', {
     keyPrefix: 'common',
   });
-  const [inputFocused, setInputFocused] = useState<InputFocused>(null);
   const [percentage, setPercentage] = useState<string>('');
   // Whenever editing already edited entry, restToDistribute should be increased by whatever is set here.
   const restToDistributeAdjusted = isManuallyEdited
@@ -93,16 +90,6 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
 
   return (
     <div className={cx(styles.root, className)}>
-      {isLimitVisible && (
-        <AllocationInputsRewardsAvailable
-          className={styles.element}
-          inputFocused={inputFocused}
-          isThereSomethingToDistribute={isThereSomethingToDistribute}
-          isValueExceeded={!!formik.errors.valueCryptoSelected}
-          restToDistribute={restToDistributeAdjusted}
-          valueCryptoTotal={valueCryptoTotal}
-        />
-      )}
       <div className={styles.inputsContainer}>
         <InputText
           className={styles.input}
@@ -111,9 +98,7 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
           isButtonClearVisible={false}
           isDisabled={!isThereSomethingToDistribute}
           isErrorInlineVisible={false}
-          onBlur={() => setInputFocused(null)}
           onChange={({ target: { value: newValueString } }) => onValueStringChange(newValueString)}
-          onFocus={() => setInputFocused('crypto')}
           suffix="ETH"
           textAlign="left"
           value={formik.values.valueCryptoSelected}
@@ -123,11 +108,9 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
           inputMode="decimal"
           isButtonClearVisible={false}
           isDisabled={!isThereSomethingToDistribute}
-          onBlur={() => setInputFocused(null)}
           onChange={({ target: { value: newValuePercentage } }) =>
             onValuePercentageChange(newValuePercentage)
           }
-          onFocus={() => setInputFocused('percent')}
           shouldAutoFocusAndSelect={false}
           suffix="%"
           textAlign="left"

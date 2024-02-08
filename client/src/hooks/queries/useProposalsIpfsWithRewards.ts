@@ -19,19 +19,27 @@ export default function useProposalsIpfsWithRewards(epoch?: number): {
   data: ProposalIpfsWithRewards[];
   isFetching: boolean;
 } {
+  // TODO OCT-1270 TODO OCT-1312 Remove this override.
+  const epochOverrideForDataFetch = epoch === 2 ? 3 : epoch;
+
   const { data: proposalsAddresses, isFetching: isFetchingProposalsContract } =
-    useProposalsContract(epoch);
-  const { data: proposalsIpfs, isFetching: isFetchingProposalsIpfs } =
-    useProposalsIpfs(proposalsAddresses);
-  const { data: matchedProposalRewards, isFetching: isFetchingMatchedProposalRewards } =
-    useMatchedProposalRewards(epoch);
+    useProposalsContract(epochOverrideForDataFetch);
+  const { data: proposalsIpfs, isFetching: isFetchingProposalsIpfs } = useProposalsIpfs(
+    proposalsAddresses,
+    epochOverrideForDataFetch,
+  );
+  const {
+    data: matchedProposalRewards,
+    isFetching: isFetchingMatchedProposalRewards,
+    isRefetching: isRefetchingMatchedProposalRewards,
+  } = useMatchedProposalRewards(epoch);
   const { data: proposalsDonors, isFetching: isFetchingProposalsDonors } =
     useProposalsDonors(epoch);
 
   const isFetching =
     isFetchingProposalsContract ||
     isFetchingProposalsIpfs ||
-    isFetchingMatchedProposalRewards ||
+    (isFetchingMatchedProposalRewards && !isRefetchingMatchedProposalRewards) ||
     isFetchingProposalsDonors;
   if (isFetching) {
     return {

@@ -29,19 +29,24 @@ const ProposalListItemHeader: FC<ProposalListItemHeaderProps> = ({
   const { i18n } = useTranslation('translation', { keyPrefix: 'views.proposal' });
   const { epoch: epochUrl } = useParams();
   const { data: userAllocations } = useUserAllocations(epoch);
-  const { allocations, setAllocations } = useAllocationsStore(state => ({
+  const { allocations, addAllocations, removeAllocations } = useAllocationsStore(state => ({
+    addAllocations: state.addAllocations,
     allocations: state.data.allocations,
-    setAllocations: state.setAllocations,
+    removeAllocations: state.removeAllocations,
   }));
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
+    addAllocations,
     allocations: allocations!,
-    setAllocations,
+    removeAllocations,
     userAllocationsElements: userAllocations?.elements,
   });
 
   const [isLinkCopied, setIsLinkCopied] = useState(false);
 
   const isArchivedProposal = epoch !== undefined;
+  const isAllocatedTo = !!userAllocations?.elements.find(
+    ({ address: userAllocationAddress }) => userAllocationAddress === address,
+  );
 
   const onShareClick = (): boolean | Promise<boolean> => {
     const { origin } = window.location;
@@ -90,18 +95,16 @@ const ProposalListItemHeader: FC<ProposalListItemHeaderProps> = ({
               size={3.2}
             />
           </Tooltip>
-          <ButtonAddToAllocate
-            className={styles.buttonAddToAllocate}
-            dataTest="ProposalListItemHeader__ButtonAddToAllocate"
-            isAddedToAllocate={allocations.includes(address)}
-            isAllocatedTo={
-              !!userAllocations?.elements.find(
-                ({ address: userAllocationAddress }) => userAllocationAddress === address,
-              )
-            }
-            isArchivedProposal={isArchivedProposal}
-            onClick={() => onAddRemoveFromAllocate(address)}
-          />
+          {((isAllocatedTo && isArchivedProposal) || !isArchivedProposal) && (
+            <ButtonAddToAllocate
+              className={styles.buttonAddToAllocate}
+              dataTest="ProposalListItemHeader__ButtonAddToAllocate"
+              isAddedToAllocate={allocations.includes(address)}
+              isAllocatedTo={isAllocatedTo}
+              isArchivedProposal={isArchivedProposal}
+              onClick={() => onAddRemoveFromAllocate(address)}
+            />
+          )}
         </div>
       </div>
       <span className={styles.name} data-test="ProposalListItemHeader__name">

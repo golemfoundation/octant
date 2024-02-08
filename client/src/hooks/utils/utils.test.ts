@@ -1,6 +1,3 @@
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
-
 import { getAllocationsMapped } from './utils';
 
 describe('getAllocationsMapped', () => {
@@ -9,19 +6,19 @@ describe('getAllocationsMapped', () => {
       getAllocationsMapped([
         {
           address: '0x123',
-          value: BigNumber.from(0),
+          value: '0',
         },
         {
           address: '0x456',
-          value: BigNumber.from(100),
+          value: '1',
         },
         {
           address: '0x789',
-          value: BigNumber.from(999),
+          value: '0.5',
         },
         {
           address: '0x101112',
-          value: parseUnits('1', 'ether'),
+          value: '0.00000000003',
         },
       ]),
     ).toEqual([
@@ -30,15 +27,55 @@ describe('getAllocationsMapped', () => {
         proposalAddress: '0x123',
       },
       {
-        amount: '100',
+        amount: '1000000000000000000',
         proposalAddress: '0x456',
       },
       {
-        amount: '999',
+        amount: '500000000000000000',
         proposalAddress: '0x789',
       },
       {
-        amount: '1000000000000000000',
+        amount: '30000000',
+        proposalAddress: '0x101112',
+      },
+    ]);
+  });
+
+  it('correctly maps allocations when any value is empty (removed by the user entirely)', () => {
+    expect(
+      getAllocationsMapped([
+        {
+          address: '0x123',
+          value: '',
+        },
+        {
+          address: '0x456',
+          value: '',
+        },
+        {
+          address: '0x789',
+          value: '0.5',
+        },
+        {
+          address: '0x101112',
+          value: '0.00000000003',
+        },
+      ]),
+    ).toEqual([
+      {
+        amount: '0',
+        proposalAddress: '0x123',
+      },
+      {
+        amount: '0',
+        proposalAddress: '0x456',
+      },
+      {
+        amount: '500000000000000000',
+        proposalAddress: '0x789',
+      },
+      {
+        amount: '30000000',
         proposalAddress: '0x101112',
       },
     ]);

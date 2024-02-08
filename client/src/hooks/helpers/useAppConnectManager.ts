@@ -5,16 +5,15 @@ import { useTranslation } from 'react-i18next';
 import { useAccount, useConnect, useNetwork } from 'wagmi';
 
 import networkConfig from 'constants/networkConfig';
-import env from 'env';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useSyncStatus, { Response } from 'hooks/queries/useSyncStatus';
 import localStorageService from 'services/localStorageService';
+import toastService from 'services/toastService';
 import useAllocationsStore from 'store/allocations/store';
 import useOnboardingStore from 'store/onboarding/store';
 import useSettingsStore from 'store/settings/store';
 import useTipsStore from 'store/tips/store';
 import useTransactionLocalStore from 'store/transactionLocal/store';
-import triggerToast from 'utils/triggerToast';
 
 import useAvailableFundsEth from './useAvailableFundsEth';
 import useAvailableFundsGlm from './useAvailableFundsGlm';
@@ -84,11 +83,12 @@ export default function useAppConnectManager(
 
   useEffect(() => {
     if (chain && chain.id !== networkConfig.id) {
-      triggerToast({
+      toastService.showToast({
         message: t('message', {
           isTestnet: networkConfig.isTestnet ? ' testnet' : '',
           networkName: networkConfig.name,
         }),
+        name: 'changeNetwork',
         title: t('title'),
         type: 'error',
       });
@@ -164,10 +164,6 @@ export default function useAppConnectManager(
   }, [isFlushRequired, setIsFlushRequired, queryClient]);
 
   useEffect(() => {
-    // TODO OCT-1157 OCT-1158 remove this bypass.
-    if (env.network === 'Local') {
-      return;
-    }
     if (
       isDecisionWindowOpen === undefined ||
       !timeCurrentAllocationEnd ||

@@ -14,17 +14,20 @@ from app.controllers.rewards import (
 from app.core.allocations import AllocationRequest
 from app.core.common import AccountFunds
 from app.exceptions import OctantException
-from app.extensions import socketio
+from app.extensions import socketio, epochs
 from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler
 
 
 @socketio.on("connect")
 def handle_connect():
     app.logger.debug("Client connected")
-    threshold = get_allocation_threshold()
-    emit("threshold", {"threshold": str(threshold)})
-    proposal_rewards = get_estimated_proposals_rewards()
-    emit("proposal_rewards", _serialize_proposal_rewards(proposal_rewards))
+
+    if epochs.get_pending_epoch() is not None:
+        threshold = get_allocation_threshold()
+        emit("threshold", {"threshold": str(threshold)})
+
+        proposal_rewards = get_estimated_proposals_rewards()
+        emit("proposal_rewards", _serialize_proposal_rewards(proposal_rewards))
 
 
 @socketio.on("disconnect")
@@ -36,9 +39,11 @@ def handle_disconnect():
 def handle_allocate(msg):
     msg = json.loads(msg)
     payload, signature = msg["payload"], msg["signature"]
+    is_manually_edited = msg["isManuallyEdited"] if "isManuallyEdited" in msg else None
     app.logger.info(f"User allocation payload: {payload}, signature: {signature}")
     user_address = allocate(
-        AllocationRequest(payload, signature, override_existing_allocations=True)
+        AllocationRequest(payload, signature, override_existing_allocations=True),
+        is_manually_edited,
     )
     app.logger.info(f"User: {user_address} allocated successfully")
 

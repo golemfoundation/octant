@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import ProposalItemSkeleton from 'components/Proposals/ProposalsListSkeletonItem/ProposalsListSkeletonItem';
@@ -10,6 +10,7 @@ import Img from 'components/ui/Img';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
@@ -28,22 +29,35 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
     proposalIpfsWithRewards;
   const navigate = useNavigate();
   const { data: userAllocations } = useUserAllocations(epoch);
-  const { allocations, setAllocations } = useAllocationsStore(state => ({
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const { allocations, addAllocations, removeAllocations } = useAllocationsStore(state => ({
+    addAllocations: state.addAllocations,
     allocations: state.data.allocations,
-    setAllocations: state.setAllocations,
+    removeAllocations: state.removeAllocations,
   }));
   const { data: currentEpoch } = useCurrentEpoch();
   const isAddedToAllocate = allocations!.includes(proposalIpfsWithRewards.address);
 
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
+    addAllocations,
     allocations,
-    setAllocations,
+    removeAllocations,
     userAllocationsElements: userAllocations?.elements,
   });
 
-  const isAllocatedTo = !!userAllocations?.elements.find(
-    ({ address: userAllocationAddress }) => userAllocationAddress === address,
-  );
+  const isAllocatedTo = useMemo(() => {
+    const isInUserAllocations = !!userAllocations?.elements.find(
+      ({ address: userAllocationAddress }) => userAllocationAddress === address,
+    );
+    const isInAllocations = allocations.includes(address);
+    if (epoch !== undefined) {
+      return isInUserAllocations;
+    }
+    if (isDecisionWindowOpen) {
+      return isInUserAllocations && isInAllocations;
+    }
+    return false;
+  }, [address, allocations, userAllocations, epoch, isDecisionWindowOpen]);
   const isEpoch1 = currentEpoch === 1;
   const isArchivedProposal = epoch !== undefined;
 
@@ -61,7 +75,12 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
       onClick={
         isLoadingError
           ? () => {}
-          : () => navigate(`${ROOT_ROUTES.proposal.absolute}/${epoch || currentEpoch}/${address}`)
+          : () =>
+              navigate(
+                `${ROOT_ROUTES.proposal.absolute}/${
+                  epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch)
+                }/${address}`,
+              )
       }
     >
       {isLoadingError ? (
@@ -78,18 +97,20 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
               }
               src={`${ipfsGateway}${profileImageSmall}`}
             />
-            <ButtonAddToAllocate
-              className={styles.button}
-              dataTest={
-                epoch
-                  ? 'ProposalsListItem__ButtonAddToAllocate--archive'
-                  : 'ProposalsListItem__ButtonAddToAllocate'
-              }
-              isAddedToAllocate={isAddedToAllocate}
-              isAllocatedTo={isAllocatedTo}
-              isArchivedProposal={isArchivedProposal}
-              onClick={() => onAddRemoveFromAllocate(address)}
-            />
+            {((isAllocatedTo && isArchivedProposal) || !isArchivedProposal) && (
+              <ButtonAddToAllocate
+                className={styles.button}
+                dataTest={
+                  epoch
+                    ? 'ProposalsListItem__ButtonAddToAllocate--archive'
+                    : 'ProposalsListItem__ButtonAddToAllocate'
+                }
+                isAddedToAllocate={isAddedToAllocate}
+                isAllocatedTo={isAllocatedTo}
+                isArchivedProposal={isArchivedProposal}
+                onClick={() => onAddRemoveFromAllocate(address)}
+              />
+            )}
           </div>
           <div className={styles.body}>
             <div

@@ -11,7 +11,11 @@ import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 import styles from './ProjectAllocationDetailRow.module.scss';
 import ProjectAllocationDetailRowProps from './types';
 
-const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({ address, amount }) => {
+const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({
+  address,
+  amount,
+  epoch,
+}) => {
   const { ipfsGateway } = env;
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
@@ -22,8 +26,10 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({ addre
     },
   }));
   const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
-  const { data: proposalIpfs, isFetching: isFetchingProposalIpfs } = useProposalsIpfs([address]);
-
+  const { data: proposalIpfs, isFetching: isFetchingProposalIpfs } = useProposalsIpfs(
+    [address],
+    epoch,
+  );
   return (
     <div className={styles.root}>
       {isFetchingProposalIpfs ? (

@@ -20,7 +20,7 @@ $bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerHeight);
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: $z-index-3;
+  z-index: $z-index-5;
 }
 
 .header {

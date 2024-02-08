@@ -13,6 +13,8 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
+  '\n  query GetProjectsMetadataAccumulateds {\n    projectsMetadataAccumulateds {\n      projectsAddresses\n    }\n  }\n':
+    types.GetProjectsMetadataAccumulatedsDocument,
   '\n  query GetBlockNumber {\n    _meta {\n      block {\n        number\n      }\n    }\n  }\n':
     types.GetBlockNumberDocument,
   '\n  query GetEpochTimestampHappenedIn($timestamp: BigInt) {\n    epoches(where: { fromTs_lte: $timestamp, toTs_gte: $timestamp }) {\n      epoch\n    }\n  }\n':
@@ -27,6 +29,8 @@ const documents = {
     types.GetLockedSummarySnapshotsDocument,
   '\n  query GetLockedsData($first: Int = 100, $skip: Int = 0) {\n    lockeds(first: $first, skip: $skip) {\n      user\n      timestamp\n      amount\n    }\n  }\n':
     types.GetLockedsDataDocument,
+  '\n  query GetProjectsMetadataPerEpoches {\n    projectsMetadataPerEpoches(orderBy: epoch, orderDirection: asc) {\n      epoch\n      proposalsCid\n    }\n  }\n':
+    types.GetProjectsMetadataPerEpochesDocument,
 };
 
 /**
@@ -43,6 +47,12 @@ const documents = {
  */
 export function graphql(source: string): unknown;
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query GetProjectsMetadataAccumulateds {\n    projectsMetadataAccumulateds {\n      projectsAddresses\n    }\n  }\n',
+): (typeof documents)['\n  query GetProjectsMetadataAccumulateds {\n    projectsMetadataAccumulateds {\n      projectsAddresses\n    }\n  }\n'];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -85,6 +95,12 @@ export function graphql(
 export function graphql(
   source: '\n  query GetLockedsData($first: Int = 100, $skip: Int = 0) {\n    lockeds(first: $first, skip: $skip) {\n      user\n      timestamp\n      amount\n    }\n  }\n',
 ): (typeof documents)['\n  query GetLockedsData($first: Int = 100, $skip: Int = 0) {\n    lockeds(first: $first, skip: $skip) {\n      user\n      timestamp\n      amount\n    }\n  }\n'];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query GetProjectsMetadataPerEpoches {\n    projectsMetadataPerEpoches(orderBy: epoch, orderDirection: asc) {\n      epoch\n      proposalsCid\n    }\n  }\n',
+): (typeof documents)['\n  query GetProjectsMetadataPerEpoches {\n    projectsMetadataPerEpoches(orderBy: epoch, orderDirection: asc) {\n      epoch\n      proposalsCid\n    }\n  }\n'];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

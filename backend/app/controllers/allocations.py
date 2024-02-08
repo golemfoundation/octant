@@ -5,6 +5,7 @@ from typing import Optional
 
 from app import database, exceptions
 from app.controllers import rewards
+from app.controllers.rewards import ProposalReward
 from app.core.allocations import (
     AllocationRequest,
     recover_user_address,
@@ -12,7 +13,7 @@ from app.core.allocations import (
     verify_allocations,
     add_allocations_to_db,
     revoke_previous_allocation,
-    store_allocations_signature,
+    store_allocation_request,
     next_allocation_nonce,
     calculate_user_allocations_leverage,
 )
@@ -28,7 +29,9 @@ class EpochAllocationRecord(JSONWizard):
     proposal: str
 
 
-def allocate(request: AllocationRequest) -> str:
+def allocate(
+    request: AllocationRequest, is_manually_edited: Optional[bool] = None
+) -> str:
     user_address = recover_user_address(request)
     user = database.user.get_by_address(user_address)
     next_nonce = next_allocation_nonce(user)
@@ -39,8 +42,8 @@ def allocate(request: AllocationRequest) -> str:
     user.allocation_nonce = next_nonce
 
     pending_epoch = epochs.get_pending_epoch()
-    store_allocations_signature(
-        pending_epoch, user_address, next_nonce, request.signature
+    store_allocation_request(
+        pending_epoch, user_address, next_nonce, request.signature, is_manually_edited
     )
 
     db.session.commit()
@@ -55,24 +58,51 @@ def simulate_allocation(
     # the code below requires it to work.
     payload["nonce"] = -1
 
-    _make_allocation(payload, user_address, True)
-    simulated_rewards = rewards.get_estimated_proposals_rewards()
+    revoke_previous_user_allocation(user_address)
+    _make_allocation(payload, user_address, False)
+
+    simulated_rewards = sorted(
+        rewards.get_estimated_proposals_rewards(), key=lambda p: p.address
+    )
     db.session.rollback()
 
     leverage = calculate_user_allocations_leverage(simulated_rewards)
 
-    return leverage, simulated_rewards
+    simulated_proposals_rewards = [
+        ProposalReward(
+            simulated.address,
+            int(simulated.allocated),
+            int(simulated.matched),
+        )
+        for simulated in simulated_rewards
+    ]
+
+    return leverage, simulated_proposals_rewards
 
 
 def get_all_by_user_and_epoch(
     user_address: str, epoch: int | None = None
 ) -> List[AccountFunds]:
-    epoch = epochs.get_pending_epoch() if epoch is None else epoch
-
-    allocations = database.allocations.get_all_by_user_addr_and_epoch(
-        user_address, epoch
-    )
+    allocations = _get_user_allocations_for_epoch(user_address, epoch)
     return [AccountFunds(a.proposal_address, a.amount) for a in allocations]
+
+
+def get_last_request_by_user_and_epoch(
+    user_address: str, epoch: int | None = None
+) -> (List[AccountFunds], Optional[bool]):
+    allocations = _get_user_allocations_for_epoch(user_address, epoch)
+
+    is_manually_edited = None
+    if allocations:
+        allocation_nonce = allocations[0].nonce
+        alloc_request = database.allocations.get_allocation_request_by_user_nonce(
+            user_address, allocation_nonce
+        )
+        is_manually_edited = alloc_request.is_manually_edited
+
+    return [
+        AccountFunds(a.proposal_address, a.amount) for a in allocations
+    ], is_manually_edited
 
 
 def get_all_by_proposal_and_epoch(
@@ -124,6 +154,10 @@ def get_allocation_nonce(user_address: str) -> int:
 
 def revoke_previous_user_allocation(user_address: str):
     pending_epoch = epochs.get_pending_epoch()
+
+    if pending_epoch is None:
+        raise exceptions.NotInDecisionWindow
+
     revoke_previous_allocation(user_address, pending_epoch)
 
 
@@ -148,3 +182,8 @@ def _make_allocation(
         user_allocations,
         delete_existing_user_epoch_allocations,
     )
+
+
+def _get_user_allocations_for_epoch(user_address: str, epoch: int | None = None):
+    epoch = epochs.get_pending_epoch() if epoch is None else epoch
+    return database.allocations.get_all_by_user_addr_and_epoch(user_address, epoch)

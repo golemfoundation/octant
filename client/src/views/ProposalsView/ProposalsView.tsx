@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import ProposalsList from 'components/Proposals/ProposalsList';
+import ProposalsTimelineWidget from 'components/Proposals/ProposalsTimelineWidget';
 import Layout from 'components/shared/Layout';
 import TipTile from 'components/shared/TipTile';
 import Loader from 'components/ui/Loader';
@@ -64,6 +65,7 @@ const ProposalsView = (): ReactElement => {
           title={t('tip.title')}
         />
       )}
+      <ProposalsTimelineWidget />
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <ProposalsList
           areCurrentEpochsProjectsHiddenOutsideAllocationWindow={

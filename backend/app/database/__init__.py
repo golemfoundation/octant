@@ -1,4 +1,4 @@
-from . import (
+from . import (  # noqa
     user,
     allocations,
     pending_epoch_snapshot,
@@ -6,6 +6,7 @@ from . import (
     info,
     deposits,
     rewards,
+    patrons,
     claims,
     user_consents,
 )

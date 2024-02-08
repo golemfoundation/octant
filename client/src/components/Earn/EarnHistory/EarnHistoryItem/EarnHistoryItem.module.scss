@@ -1,9 +1,16 @@
 .box {
-  padding: 2.1rem 0;
+  display: flex;
+  position: relative;
   border-radius: 0;
+  padding: 0.8rem 0;
+}
 
-  &:not(:last-child) {
-    border-bottom: 0.1rem solid $color-octant-grey8;
+.child {
+  padding: 1.3rem 1.6rem;
+  border-radius: $border-radius-06;
+
+  &:hover {
+    background: $color-octant-grey6;
   }
 }
 
@@ -16,4 +23,20 @@
 
 .title {
   font-size: $font-size-14;
+}
+
+.separator {
+  $marginLeft: 1.6rem;
+  width: calc(100% - $marginLeft * 2);
+  height: 0.1rem;
+  margin-left: $marginLeft;
+  background: $color-octant-grey8;
+}
+
+.patronDonationTimestamp {
+  color: $color-octant-grey5;
+  font-size: $font-size-10;
+  font-weight: $font-weight-semibold;
+  margin-top: 0.2rem;
+  line-height: 1.5rem;
 }

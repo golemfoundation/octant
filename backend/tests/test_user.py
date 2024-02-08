@@ -1,33 +1,35 @@
+from datetime import timedelta, datetime, timezone
+
 import pytest
 from eth_account import Account
 from freezegun import freeze_time
 
 from app import exceptions, database
+from app.controllers.snapshots import get_pending_snapshot
 from app.extensions import db
-
 from app.constants import GLM_TOTAL_SUPPLY_WEI
 from app.controllers.user import (
     MAX_DAYS_TO_ESTIMATE_BUDGET,
     get_patron_mode_status,
     toggle_patron_mode,
 )
-from app.core.user.budget import get_budget, estimate_budget
+from app.core.user.budget import get_budget, estimate_budget, get_patrons_budget
 from app.core.user.rewards import get_all_claimed_rewards
 from app.core.allocations import add_allocations_to_db, Allocation
+from app.core.user.patron_mode import toggle_patron_mode as toggle_patron_mode_direct
 
 from app.controllers import allocations as allocations_controller
 from app.controllers import user as user_controller
 
 
+from tests.helpers import generate_epoch_events, create_epoch_event
 from tests.conftest import (
     allocate_user_rewards,
     MOCKED_PENDING_EPOCH_NO,
     mock_graphql,
-    create_epoch_event,
     MOCK_EPOCHS,
-    create_deposit_event,
-    USER1_BUDGET,
 )
+from tests.helpers.constants import USER1_BUDGET, USER2_BUDGET
 
 
 @pytest.fixture(autouse=True)
@@ -64,28 +66,25 @@ def test_get_user_budget(user_accounts, mock_pending_epoch_snapshot_db):
     [
         (0, 0, 0),
         (15, 90, 0),
-        (15, 1000_000000000_000000000, 358680_289461910),
-        (15, 300000_000000000_000000000, 107604086_838573286),
+        (15, 1000_000000000_000000000, 141780_821917808),
+        (15, 300000_000000000_000000000, 42534246_575342465),
         (70, 90_000000000_000000000, 0),
-        (70, 1000_000000000_000000000, 1673841_350822251),
-        (70, 300000_000000000_000000000, 502152405_246675335),
+        (70, 1000_000000000_000000000, 661643_835616438),
+        (70, 300000_000000000_000000000, 19849315_0684931507),
         (150, 90_000000000_000000000, 0),
-        (150, 1000_000000000_000000000, 2453013_311931494),
-        (150, 300000_000000000_000000000, 735903993_579448709),
+        (150, 1000_000000000_000000000, 1417808_219178081),
+        (150, 300000_000000000_000000000, 425342465_753424658),
         (252, 90_000000000_000000000, 0),
-        (252, 1000_000000000_000000000, 3413258_170188724),
-        (252, 300000_000000000_000000000, 1_025136870_291777479),
-        (365250, 300000_000000000_000000000, 1036_019465637_415095470),
+        (252, 1000_000000000_000000000, 2381917_808219177),
+        (252, 300000_000000000_000000000, 714575342_465753426),
+        (365250, 300000_000000000_000000000, 1035_708904109_589043041),
     ],
 )
 @freeze_time("2023-08-09 01:48:47")
-def test_estimate_budget(mocker, graphql_client, patch_epochs, days, amount, expected):
-    MOCK_EPOCHS.get_current_epoch.return_value = 1
-    deposits = [
-        create_deposit_event(
-            amount=str(100000000_000000000_000000000), timestamp=1691510401
-        ),
-    ]
+def test_estimate_budget(
+    mocker, graphql_client, patch_epochs, patch_glm, days, amount, expected
+):
+    MOCK_EPOCHS.get_current_epoch.return_value = 2
     epochs = [
         create_epoch_event(
             start=1691510400,
@@ -93,23 +92,16 @@ def test_estimate_budget(mocker, graphql_client, patch_epochs, days, amount, exp
             duration=6220800,
             decision_window=1209600,
             epoch=1,
-        ),
-        create_epoch_event(
-            start=1697731200,
-            end=1703952000,
-            duration=7776000,
-            decision_window=1209600,
-            epoch=2,
-        ),
-        create_epoch_event(
-            start=1703952000,
-            end=1710172800,
-            duration=7776000,
-            decision_window=1209600,
-            epoch=3,
-        ),
-    ]
-    mock_graphql(mocker, deposit_events=deposits, epochs_events=epochs)
+        )
+    ] + generate_epoch_events(
+        first_epoch=2,
+        start=1697731200,
+        duration=7776000,
+        decision_window=1209600,
+        epoches=2,
+    )
+
+    mock_graphql(mocker, epochs_events=epochs)
 
     result = estimate_budget(days, amount)
 
@@ -313,3 +305,62 @@ def test_patron_mode_does_not_revoke_allocations_from_previous_epochs(
 
     assert user_active_allocations_post != user_active_allocations_pre
     assert user_prev_epoch_allocations_post == user_prev_epoch_allocations_pre
+
+
+def test_patron_mode_can_be_toggled_outside_allocation_period(user_accounts):
+    MOCK_EPOCHS.get_pending_epoch.return_value = None
+
+    database.user.add_user(user_accounts[0].address)
+    toggle_true_sig = "52d249ca8ac8f40c01613635dac8a9b01eb50230ad1467451a058170726650b92223e80032a4bff4d25c3554e9d1347043c53b4c2dc9f1ba3f071bd3a1c8b9121b"
+    toggle_patron_mode(user_accounts[0].address, toggle_true_sig)
+
+    status = get_patron_mode_status(user_accounts[0].address)
+
+    assert status is True
+
+
+def test_patrons_budget(alice, bob, mock_pending_epoch_snapshot_db, mock_epoch_details):
+    alice_budget = USER1_BUDGET
+    bob_budget = USER2_BUDGET
+    pending_snapshot = get_pending_snapshot(MOCKED_PENDING_EPOCH_NO)
+
+    # Mocked Epoch 1 duration is between 1000s-2000s, with decision window of 500s.
+
+    with freeze_time(datetime.fromtimestamp(0, tz=timezone.utc)) as frozen_time:
+        # No patrons have been declared
+        assert get_patrons_budget(pending_snapshot) == 0
+
+        # Alice becomes a patron during Epoch 0
+        toggle_patron_mode_direct(alice.address)
+
+        # Move to Epoch 1 start
+        frozen_time.tick(delta=timedelta(seconds=1000))
+
+        # Alice declared herself as a patron at 0 tick, thus before Epoch 1 has started, still, she
+        # is considered a patron in Epoch 1
+        assert get_patrons_budget(pending_snapshot) == alice_budget
+
+        # Move to Epoch 2 but within Epoch 1 AW
+        frozen_time.tick(delta=timedelta(seconds=(1000 + 100)))
+
+        assert get_patrons_budget(pending_snapshot) == alice_budget
+
+        # Bob becomes patron during Epoch 1 AW
+        toggle_patron_mode_direct(bob.address)
+
+        assert get_patrons_budget(pending_snapshot) == alice_budget + bob_budget
+
+        # Alice stops being a patron during Epoch 1 AW
+        toggle_patron_mode_direct(alice.address)
+
+        assert get_patrons_budget(pending_snapshot) == bob_budget
+
+        # Move outside of Epoch 1 AW (we're now in Epoch 2 only)
+        frozen_time.tick(delta=timedelta(seconds=500))
+
+        # Alice becomes patron again, but in Epoch 2
+        toggle_patron_mode_direct(alice.address)
+
+        # Only Bob is a patron at the end of Epoch 1 AW as Alice became a patron again \
+        # during Epoch 2, but past Epoch 1 AW
+        assert get_patrons_budget(pending_snapshot) == bob_budget

@@ -1,65 +1,66 @@
-from decimal import Decimal
+from __future__ import annotations
+
 import json
 from random import randint
-from typing import List, Mapping, Optional
+from typing import List, Optional
 from unittest.mock import MagicMock, Mock
 
+import gql
 import pytest
 from eth_account import Account
 from flask import g as request_context
 from flask.testing import FlaskClient
-import gql
 from web3 import Web3
 
-from tests.helpers.gql_client import MockGQLClient
 from app import create_app, database
 from app.contracts.epochs import Epochs
+from app.contracts.erc20 import ERC20
 from app.contracts.proposals import Proposals
 from app.contracts.vault import Vault
 from app.controllers.allocations import allocate, deserialize_payload
 from app.core.allocations import AllocationRequest, Allocation
 from app.core.rewards.rewards import calculate_matched_rewards
+from app.crypto.account import Account as CryptoAccount
 from app.crypto.eip712 import sign, build_allocations_eip712_data
 from app.extensions import db, w3, deposits, glm
 from app.settings import TestConfig, DevConfig
-from app.crypto.account import Account as CryptoAccount
 
-# Consts
-MNEMONIC = "test test test test test test test test test test test junk"
-MOCKED_PENDING_EPOCH_NO = 1
-MOCKED_CURRENT_EPOCH_NO = 2
-ETH_PROCEEDS = 402_410958904_110000000
-TOTAL_ED = 100022700_000000000_099999994
-USER1_ED = 1500_000055377_000000000
-USER2_ED = 5500_000000000_000000000
-USER3_ED = 2000_000000000_000000000
-USER1_BUDGET = 1526868_989237987
-USER2_BUDGET = 5598519_420519815
-USER3_BUDGET = 2035825_243825387
-
-LOCKED_RATIO = Decimal("0.100022700000000000099999994")
-TOTAL_REWARDS = 321_928767123_288031232
-ALL_INDIVIDUAL_REWARDS = 101_814368807_786782825
-USER1_ADDRESS = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
-USER2_ADDRESS = "0x2345678901234567890123456789012345678904"
+from tests.helpers.constants import (
+    MNEMONIC,
+    MOCKED_PENDING_EPOCH_NO,
+    MOCKED_CURRENT_EPOCH_NO,
+    ETH_PROCEEDS,
+    TOTAL_ED,
+    LOCKED_RATIO,
+    TOTAL_REWARDS,
+    ALL_INDIVIDUAL_REWARDS,
+    USER1_ED,
+    USER2_ED,
+    USER3_ED,
+    USER_MOCKED_BUDGET,
+    DEPLOYER_PRIV,
+    ALICE,
+    BOB,
+    CAROL,
+)
+from tests.helpers.gql_client import MockGQLClient
+from tests.helpers.mocked_epoch_details import EPOCH_EVENTS
+from tests.helpers.subgraph.events import create_deposit_event
 
 # Contracts mocks
 MOCK_EPOCHS = MagicMock(spec=Epochs)
 MOCK_PROPOSALS = MagicMock(spec=Proposals)
 MOCK_VAULT = MagicMock(spec=Vault)
+MOCK_GLM = MagicMock(spec=ERC20)
 
 # Other mocks
 MOCK_GET_ETH_BALANCE = MagicMock()
 MOCK_GET_USER_BUDGET = Mock()
 MOCK_HAS_PENDING_SNAPSHOT = Mock()
+MOCK_LAST_FINALIZED_SNAPSHOT = Mock()
 MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
 MOCK_IS_CONTRACT = Mock()
 MOCK_MATCHED_REWARDS = MagicMock(spec=calculate_matched_rewards)
-
-DEPLOYER_PRIV = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
-ALICE = "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
-BOB = "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a"
-CAROL = "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6"
 
 
 def pytest_addoption(parser):
@@ -110,8 +111,9 @@ def flask_client() -> FlaskClient:
 
 
 class UserAccount:
-    def __init__(self, account: CryptoAccount):
+    def __init__(self, account: CryptoAccount, client: Client):
         self._account = account
+        self._client = client
 
     def fund_octant(self, address: str, value: int):
         signed_txn = w3.eth.account.sign_transaction(
@@ -133,29 +135,46 @@ class UserAccount:
         glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
         deposits.lock(self._account, w3.to_wei(value, "ether"))
 
+    def allocate(self, amount: int, addresses: list[str]):
+        nonce = self._client.get_allocation_nonce(self.address)
+
+        payload = {
+            "allocations": [
+                {
+                    "proposalAddress": address,
+                    "amount": amount,
+                }
+                for address in addresses
+            ],
+            "nonce": nonce,
+        }
+
+        signature = sign(self._account, build_allocations_eip712_data(payload))
+        self._client.allocate(payload, signature)
+
     @property
     def address(self):
         return self._account.address
 
 
 @pytest.fixture
-def deployer() -> UserAccount:
-    return UserAccount(CryptoAccount.from_key(DEPLOYER_PRIV))
+def deployer(client: Client) -> UserAccount:
+    return UserAccount(CryptoAccount.from_key(DEPLOYER_PRIV), client)
 
 
 @pytest.fixture
-def ua_alice() -> UserAccount:
-    return UserAccount(CryptoAccount.from_key(ALICE))
+def ua_alice(client: Client) -> UserAccount:
+    return UserAccount(CryptoAccount.from_key(ALICE), client)
 
 
 @pytest.fixture
-def ua_bob() -> UserAccount:
-    return UserAccount(CryptoAccount.from_key(BOB))
+def ua_bob(client: Client) -> UserAccount:
+    return UserAccount(CryptoAccount.from_key(BOB), client)
 
 
 @pytest.fixture
-def ua_carol() -> UserAccount:
-    return UserAccount(CryptoAccount.from_key(CAROL))
+def ua_carol(client: Client) -> UserAccount:
+    return UserAccount(CryptoAccount.from_key(CAROL), client)
 
 
 class Client:
@@ -176,6 +195,22 @@ class Client:
     def get_rewards_budget(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").text
         return json.loads(rv)
+
+    def get_epoch_allocations(self, epoch: int):
+        rv = self._flask_client.get(f"/allocations/epoch/{epoch}").text
+        return json.loads(rv)
+
+    def get_allocation_nonce(self, address: str) -> int:
+        rv = self._flask_client.get(
+            f"/allocations/users/{address}/allocation_nonce"
+        ).text
+        return json.loads(rv)["allocationNonce"]
+
+    def allocate(self, payload: dict, signature: str) -> int:
+        rv = self._flask_client.post(
+            "/allocations/allocate", json={"payload": payload, "signature": signature}
+        )
+        assert rv.status_code == 201, rv.text
 
     @property
     def config(self):
@@ -246,6 +281,16 @@ def bob(user_accounts):
 
 
 @pytest.fixture(scope="function")
+def carol(user_accounts):
+    return user_accounts[2]
+
+
+@pytest.fixture(scope="function")
+def mock_epoch_details(mocker, graphql_client):
+    mock_graphql(mocker, epochs_events=list(EPOCH_EVENTS.values()))
+
+
+@pytest.fixture(scope="function")
 def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.controllers.allocations.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.controllers.snapshots.epochs", MOCK_EPOCHS)
@@ -282,6 +327,12 @@ def patch_proposals(monkeypatch, proposal_accounts):
 def patch_vault(monkeypatch):
     monkeypatch.setattr("app.controllers.withdrawals.vault", MOCK_VAULT)
     MOCK_VAULT.get_last_claimed_epoch.return_value = 0
+
+
+@pytest.fixture(scope="function")
+def patch_glm(monkeypatch):
+    monkeypatch.setattr("app.core.user.budget.glm", MOCK_GLM)
+    MOCK_GLM.balance_of.return_value = TOTAL_ED
 
 
 @pytest.fixture(scope="function")
@@ -323,11 +374,25 @@ def patch_has_pending_epoch_snapshot(monkeypatch):
 
 
 @pytest.fixture(scope="function")
+def patch_last_finalized_snapshot(monkeypatch):
+    (
+        monkeypatch.setattr(
+            "app.controllers.snapshots.get_last_finalized_snapshot",
+            MOCK_LAST_FINALIZED_SNAPSHOT,
+        ),
+    )
+    MOCK_LAST_FINALIZED_SNAPSHOT.return_value = 3
+
+
+@pytest.fixture(scope="function")
 def patch_user_budget(monkeypatch):
     monkeypatch.setattr("app.core.allocations.get_budget", MOCK_GET_USER_BUDGET)
     monkeypatch.setattr("app.core.user.rewards.get_budget", MOCK_GET_USER_BUDGET)
+    monkeypatch.setattr(
+        "app.core.history.user_controller.get_budget", MOCK_GET_USER_BUDGET
+    )
 
-    MOCK_GET_USER_BUDGET.return_value = 10 * 10**18 * 10**18
+    MOCK_GET_USER_BUDGET.return_value = USER_MOCKED_BUDGET
 
 
 @pytest.fixture(scope="function")
@@ -417,7 +482,7 @@ def allocate_user_rewards(
 
 def create_payload(proposals, amounts: Optional[List[int]], nonce: int = 0):
     if amounts is None:
-        amounts = [randint(1 * 10**18, 100_000_000 * 10**18) for _ in proposals]
+        amounts = [randint(1 * 10**18, 1000 * 10**18) for _ in proposals]
 
     allocations = [
         {
@@ -434,34 +499,6 @@ def deserialize_allocations(payload) -> List[Allocation]:
     return deserialize_payload(payload)[1]
 
 
-def create_deposit_event(
-    typename="Locked",
-    deposit_before="0",
-    amount="100000000000000000000",
-    user=USER1_ADDRESS,
-    **kwargs,
-):
-    return {
-        "__typename": typename,
-        "depositBefore": deposit_before,
-        "amount": amount,
-        "user": user,
-        **kwargs,
-    }
-
-
-def create_epoch_event(
-    start=1000, end=2000, duration=1000, decision_window=500, **kwargs
-):
-    return {
-        "fromTs": start,
-        "toTs": end,
-        "duration": duration,
-        "decisionWindow": decision_window,
-        **kwargs,
-    }
-
-
 def _split_deposit_events(deposit_events):
     deposit_events = deposit_events if deposit_events is not None else []
 
@@ -469,24 +506,11 @@ def _split_deposit_events(deposit_events):
     unlocks_events = []
     timestamp = 1001
     for event in deposit_events:
+        event = {"timestamp": timestamp, **event}
         if event["__typename"] == "Locked":
-            locks_events.append(
-                {
-                    "depositBefore": "0",
-                    "timestamp": timestamp,
-                    "user": USER1_ADDRESS,
-                    **event,
-                }
-            )
+            locks_events.append(create_deposit_event(typename="Locked", **event))
         else:
-            unlocks_events.append(
-                {
-                    "depositBefore": "0",
-                    "timestamp": timestamp,
-                    "user": USER1_ADDRESS,
-                    **event,
-                }
-            )
+            unlocks_events.append(create_deposit_event(typename="Unlocked", **event))
         timestamp += 1
     return locks_events, unlocks_events
 

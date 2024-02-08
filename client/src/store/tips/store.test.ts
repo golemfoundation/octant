@@ -1,11 +1,11 @@
 import {
   WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP,
+  WAS_ALLOCATE_REWARDS_ALREADY_CLOSED_TIP,
   WAS_CHECK_STATUS_ALREADY_CLOSED_TIP,
   WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP,
   WAS_LOCK_GLM_ALREADY_CLOSED_TIP,
   WAS_REWARDS_ALREADY_CLOSED_TIP,
   WAS_WITHDRAW_ALREADY_CLOSED_TIP,
-  WAS_CHANGED_YOUR_MIND_ALREADY_CLOSED_TIP,
 } from 'constants/localStorageKeys';
 
 import useTipsStore from './store';
@@ -25,7 +25,7 @@ describe('useTipsStore', () => {
       setWasLockGLMAlreadyClosed,
       setWasRewardsAlreadyClosed,
       setWasWithdrawAlreadyClosed,
-      setWasChangedYourMindAlreadyClosed,
+      setWasAllocateRewardsAlreadyClosed,
       reset,
     } = useTipsStore.getState();
 
@@ -35,7 +35,7 @@ describe('useTipsStore', () => {
     setWasLockGLMAlreadyClosed(true);
     setWasRewardsAlreadyClosed(true);
     setWasWithdrawAlreadyClosed(true);
-    setWasChangedYourMindAlreadyClosed(true);
+    setWasAllocateRewardsAlreadyClosed(true);
 
     expect(useTipsStore.getState().data.wasAddFavouritesAlreadyClosed).toEqual(true);
     expect(useTipsStore.getState().data.wasCheckStatusAlreadyClosed).toEqual(true);
@@ -43,7 +43,7 @@ describe('useTipsStore', () => {
     expect(useTipsStore.getState().data.wasLockGLMAlreadyClosed).toEqual(true);
     expect(useTipsStore.getState().data.wasRewardsAlreadyClosed).toEqual(true);
     expect(useTipsStore.getState().data.wasWithdrawAlreadyClosed).toEqual(true);
-    expect(useTipsStore.getState().data.wasChangedYourMindAlreadyClosed).toEqual(true);
+    expect(useTipsStore.getState().data.wasAllocateRewardsAlreadyClosed).toEqual(true);
 
     reset();
 
@@ -53,7 +53,7 @@ describe('useTipsStore', () => {
     expect(useTipsStore.getState().data.wasLockGLMAlreadyClosed).toEqual(false);
     expect(useTipsStore.getState().data.wasRewardsAlreadyClosed).toEqual(false);
     expect(useTipsStore.getState().data.wasWithdrawAlreadyClosed).toEqual(false);
-    expect(useTipsStore.getState().data.wasChangedYourMindAlreadyClosed).toEqual(false);
+    expect(useTipsStore.getState().data.wasAllocateRewardsAlreadyClosed).toEqual(false);
   });
 
   it(`should set wasAddFavouritesAlreadyClosed state and localStorage item '${WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP}' to 'true'`, () => {
@@ -200,16 +200,29 @@ describe('useTipsStore', () => {
     expect(useTipsStore.getState().data.wasWithdrawAlreadyClosed).toEqual(wasWithdrawAlreadyClosed);
   });
 
-  it(`should set wasChangedYourMindAlreadyClosed state and localStorage item '${WAS_CHANGED_YOUR_MIND_ALREADY_CLOSED_TIP}' to 'false'`, () => {
-    const { setWasChangedYourMindAlreadyClosed } = useTipsStore.getState();
-    const wasChangedYourMindAlreadyClosed = false;
+  it(`should set wasAllocateRewardsAlreadyClosed state and localStorage item '${WAS_ALLOCATE_REWARDS_ALREADY_CLOSED_TIP}' to 'true'`, () => {
+    const { setWasAllocateRewardsAlreadyClosed } = useTipsStore.getState();
+    const wasAllocateRewardsAlreadyClosed = true;
 
-    setWasChangedYourMindAlreadyClosed(wasChangedYourMindAlreadyClosed);
-    expect(localStorage.getItem(WAS_CHANGED_YOUR_MIND_ALREADY_CLOSED_TIP)).toEqual(
-      JSON.stringify(wasChangedYourMindAlreadyClosed),
+    setWasAllocateRewardsAlreadyClosed(wasAllocateRewardsAlreadyClosed);
+    expect(localStorage.getItem(WAS_ALLOCATE_REWARDS_ALREADY_CLOSED_TIP)).toEqual(
+      JSON.stringify(wasAllocateRewardsAlreadyClosed),
     );
-    expect(useTipsStore.getState().data.wasChangedYourMindAlreadyClosed).toEqual(
-      wasChangedYourMindAlreadyClosed,
+    expect(useTipsStore.getState().data.wasAllocateRewardsAlreadyClosed).toEqual(
+      wasAllocateRewardsAlreadyClosed,
+    );
+  });
+
+  it(`should set wasAllocateRewardsAlreadyClosed state and localStorage item '${WAS_ALLOCATE_REWARDS_ALREADY_CLOSED_TIP}' to 'false'`, () => {
+    const { setWasAllocateRewardsAlreadyClosed } = useTipsStore.getState();
+    const wasAllocateRewardsAlreadyClosed = false;
+
+    setWasAllocateRewardsAlreadyClosed(wasAllocateRewardsAlreadyClosed);
+    expect(localStorage.getItem(WAS_ALLOCATE_REWARDS_ALREADY_CLOSED_TIP)).toEqual(
+      JSON.stringify(wasAllocateRewardsAlreadyClosed),
+    );
+    expect(useTipsStore.getState().data.wasAllocateRewardsAlreadyClosed).toEqual(
+      wasAllocateRewardsAlreadyClosed,
     );
   });
 
@@ -226,7 +239,7 @@ describe('useTipsStore', () => {
     expect(useTipsStore.getState().data.wasLockGLMAlreadyClosed).toEqual(false);
     expect(useTipsStore.getState().data.wasRewardsAlreadyClosed).toEqual(false);
     expect(useTipsStore.getState().data.wasWithdrawAlreadyClosed).toEqual(false);
-    expect(useTipsStore.getState().data.wasChangedYourMindAlreadyClosed).toEqual(false);
+    expect(useTipsStore.getState().data.wasAllocateRewardsAlreadyClosed).toEqual(false);
 
     const wasAddFavouritesAlreadyClosed = true;
     const wasCheckStatusAlreadyClosed = true;
@@ -234,7 +247,7 @@ describe('useTipsStore', () => {
     const wasLockGLMAlreadyClosed = true;
     const wasRewardsAlreadyClosed = true;
     const wasWithdrawAlreadyClosed = true;
-    const wasChangedYourMindAlreadyClosed = true;
+    const wasAllocateRewardsAlreadyClosed = true;
 
     localStorage.setItem(
       WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP,
@@ -252,8 +265,8 @@ describe('useTipsStore', () => {
     localStorage.setItem(WAS_REWARDS_ALREADY_CLOSED_TIP, JSON.stringify(wasRewardsAlreadyClosed));
     localStorage.setItem(WAS_WITHDRAW_ALREADY_CLOSED_TIP, JSON.stringify(wasWithdrawAlreadyClosed));
     localStorage.setItem(
-      WAS_CHANGED_YOUR_MIND_ALREADY_CLOSED_TIP,
-      JSON.stringify(wasChangedYourMindAlreadyClosed),
+      WAS_ALLOCATE_REWARDS_ALREADY_CLOSED_TIP,
+      JSON.stringify(wasAllocateRewardsAlreadyClosed),
     );
 
     setValuesFromLocalStorage();
@@ -270,8 +283,8 @@ describe('useTipsStore', () => {
     expect(useTipsStore.getState().data.wasLockGLMAlreadyClosed).toEqual(wasLockGLMAlreadyClosed);
     expect(useTipsStore.getState().data.wasRewardsAlreadyClosed).toEqual(wasRewardsAlreadyClosed);
     expect(useTipsStore.getState().data.wasWithdrawAlreadyClosed).toEqual(wasWithdrawAlreadyClosed);
-    expect(useTipsStore.getState().data.wasChangedYourMindAlreadyClosed).toEqual(
-      wasChangedYourMindAlreadyClosed,
+    expect(useTipsStore.getState().data.wasAllocateRewardsAlreadyClosed).toEqual(
+      wasAllocateRewardsAlreadyClosed,
     );
   });
 });

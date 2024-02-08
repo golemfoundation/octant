@@ -3,6 +3,7 @@ import { useAccount } from 'wagmi';
 
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useAllocationsStore from 'store/allocations/store';
@@ -17,6 +18,7 @@ export default function useAppPopulateState(): void {
 
   const { data: proposals } = useProposalsContract();
   const { data: userAllocations } = useUserAllocations();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const {
     data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow,
     isLoading: isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow,
@@ -100,6 +102,7 @@ export default function useAppPopulateState(): void {
      * Navbar badge is not visible.
      */
     if (
+      !isDecisionWindowOpen ||
       !userAllocations ||
       !isAllocationsInitialized ||
       isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow ||
@@ -115,18 +118,25 @@ export default function useAppPopulateState(): void {
       userAllocations &&
       userAllocations.elements.length > 0 &&
       !!allocations &&
-      !allocations.some(allocation => userAllocationsAddresses.includes(allocation))
+      (!allocations.every(allocation => userAllocationsAddresses.includes(allocation)) ||
+        !userAllocationsAddresses.every(address => allocations.includes(address)))
     ) {
-      addAllocations(userAllocationsAddresses);
+      addAllocations(userAllocationsAddresses.filter(element => !allocations.includes(element)));
     }
+    /**
+     * This hook should not run on allocations change.
+     * allocations are changed by the user by adding/removing them from the list,
+     * it should not repopulate the store because it would cause infinite loop.
+     */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     addAllocations,
-    allocations,
     areCurrentEpochsProjectsHiddenOutsideAllocationWindow,
     isAllocationsInitialized,
+    isDecisionWindowOpen,
     isConnected,
     isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow,
-    userAllocations,
+    userAllocations?.elements.length,
   ]);
 
   useEffect(() => {
@@ -137,9 +147,13 @@ export default function useAppPopulateState(): void {
     setInitialStateTips();
   }, [areOctantTipsAlwaysVisible, setInitialStateTips]);
 
-  useCryptoValues(displayCurrency, {
-    onError: () => {
-      setIsCryptoMainValueDisplay(true);
-    },
-  });
+  const cryptoValuesQuery = useCryptoValues(displayCurrency);
+
+  useEffect(() => {
+    if (!cryptoValuesQuery.error) {
+      return;
+    }
+    setIsCryptoMainValueDisplay(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cryptoValuesQuery.error]);
 }

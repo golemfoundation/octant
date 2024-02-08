@@ -1,5 +1,6 @@
 $border-radius-standard: 0.5rem;
 $border-radius-04: 0.4rem;
+$border-radius-06: 0.6rem;
 $border-radius-08: 0.8rem;
 $border-radius-10: 1rem;
 $border-radius-16: 1.6rem;
@@ -19,8 +20,9 @@ $transition-time-5: 0.15s;
 $z-index-2: 2;
 $z-index-3: 3;
 $z-index-4: 4;
-$z-index-5: 5; // overlays
-$z-index-6: 6; // modals
+$z-index-5: 5;
+$z-index-6: 6; // overlays
+$z-index-7: 7; // modals
 
 // distances
 $headerHeight: 7.2rem;

@@ -26,6 +26,7 @@
   "common": {
     "availableNow": "Available now",
     "calculateRewards": "Calculate rewards",
+    "calculating": "Calculating...",
     "close": "Close",
     "copied": "Copied",
     "copy": "Copy link",
@@ -44,7 +45,9 @@
     "noThresholdData": "No threshold data",
     "valueCantBeEmpty": "Value can't be empty",
     "lessThan1m": "less than 1m",
-    "donors": "Donors"
+    "donors": "Donors",
+    "available": "Available",
+    "totalDonated": "Total donated"
   },
   "components": {
     "settings": {
@@ -83,19 +86,24 @@
         "connectWallet": "In order to manipulate allocation values and vote, please connect your wallet first."
       },
       "allocationNavigation": {
-        "back": "Back",
         "confirm": "Confirm",
-        "next": "Next",
-        "reset": "Reset allocations"
+        "edit": "Edit",
+        "reset": "Reset"
       },
       "allocationRewardsBox": {
         "title": "Allocate rewards",
         "subtitle": "{{individualReward}} available",
-        "subtitleNoRewards": "No rewards available yet",
-        "donate": "Donate {{percentRewardsForProposals}}%",
-        "withdraw": "Withdraw {{percentWithdraw}}%"
+        "subtitleNoRewards": "No rewards yet",
+        "donate": "Donate",
+        "donated": "Donated",
+        "donateWithPercentage": "Donate {{percentage}}%",
+        "personalWithPercentage": "Personal {{percentage}}%",
+        "allocated": "Allocated",
+        "manual": "Manual"
       },
       "allocationSummary": {
+        "matchFunding": "Match funding",
+        "totalImpact": "Total impact",
         "estimatedLeverage": "Est. leverage",
         "confirmYourAllocations": "Confirm your allocations",
         "confirmAllocations": "Confirm allocations",
@@ -112,7 +120,7 @@
         "editLockedGLM": "Edit Locked GLM",
         "effective": "Effective",
         "lockedBalance": "Locked balance",
-        "tooltipText": "Effective balance is the part of your locked GLM that is currently earning rewards. For example, GLM locked during allocation only earn rewards in the next epoch, so they are not immediately effective."
+        "tooltipText": "Effective lock (EL) is the part of your locked GLM that is currently earning rewards. Equal to your current balance, if that is unchanged during the ongoing epoch. Increase lock & EL increases proportionally to epoch time remaining. Decrease lock & this amount is removed from EL for the epoch."
       },
       "boxPersonalAllocation": {
         "patronEarnings": "Patron earnings",
@@ -147,8 +155,7 @@
       "donors": {
         "donationsNotEnabled": "Donations are not enabled in this epoch",
         "noDonationsYet": "No donations yet",
-        "viewAll": "View all",
-        "totalDonated": "Total donated"
+        "viewAll": "View all"
       },
       "glmLock": {
         "lock": "Lock",
@@ -161,8 +168,7 @@
           "useMax": "Use max",
           "amountToLock": "Amount to lock",
           "amountToUnlock": "Amount to unlock",
-          "locked": "Locked",
-          "available": "Available"
+          "locked": "Locked"
         },
         "glmLockNotification": {
           "success": {
@@ -188,7 +194,8 @@
         "lockedGLM": "Locked GLM",
         "unlockedGLM": "Unlocked GLM",
         "projects": "Projects",
-        "withdrawnFunds": "Withdrawn funds"
+        "withdrawnFunds": "Withdrawn funds",
+        "epochDonation": "Epoch {{epoch}} donation"
       },
       "historyItemModal": {
         "header": {
@@ -204,7 +211,8 @@
           "gasPrice": "Gas price",
           "viewOnEtherscan": "View on Etherscan",
           "when": "When",
-          "withdrawal": "Withdrew ETH"
+          "withdrawal": "Withdrew ETH",
+          "matchingFundDonation": "Matching fund donation"
         }
       },
       "historyTransactionLabel": {
@@ -231,7 +239,6 @@
         "epoch": "Epoch {{epoch}}",
         "currentTotal": "Current total",
         "totalRaised": "Total raised",
-        "totalDonated": "Total donated",
         "fundedIn": "Funded in",
         "fundedAt": "Funded at",
         "didNotReach": "Did not reach",
@@ -268,8 +275,8 @@
       "buttonConnect": "Connect",
       "noRewardsYet": "No rewards yet",
       "loadingRewardBudget": "Loading reward budget...",
-      "allocationStartsIn": "Allocation starts in <0>{{allocationPeriod}}</0>",
-      "allocationEndsIn": "Allocation ends in <0>{{allocationPeriod}}</0>",
+      "allocationStartsIn": "Allocation starts in <0>{{currentPeriod}}</0>",
+      "allocationEndsIn": "Allocation ends in <0>{{currentPeriod}}</0>",
       "admin": "Admin",
       "patron": "Patron"
     }
@@ -279,9 +286,8 @@
     "fundrasingOnOctant": "{{projectName}} is fundrasing on Octant"
   },
   "toasts": {
-    "cantRemoveProjectWithDonations": {
-      "title": "You can't remove projects with donations",
-      "message": "Set your donation to zero in Allocate view to enable project removal"
+    "confirmChanges": {
+      "title": "Please confirm your allocation to keep your changes"
     },
     "wrongNetwork": {
       "title": "Wrong network",
@@ -292,25 +298,20 @@
     "allocation": {
       "allocationItem": {
         "epoch1": "No funding threshold in Epoch 1",
-        "standard": "<0>{{sum}}</0> -> {{threshold}} needed",
-        "thresholdReached": "{{sum}} -> Threshold reached"
+        "standard": "{{sum}} / {{threshold}}",
+        "simulate": {
+          "mobile": "{{value}} {{character}} {{matched}}",
+          "desktop": "{{value}} {{character}} {{matched}} matching"
+        }
       },
       "allocationSuccessful": "Allocation successful",
       "tip": {
-        "lockGlm": {
-          "title": "Lock GLM to earn",
-          "text": "Lock GLM tokens for as long as possible to earn ETH rewards you can donate or withdraw"
-        },
         "rewards": {
           "title": "Time to allocate",
           "text": {
             "desktop": "Add projects and use the slider to divide rewards between yourself and your chosen projects",
             "mobile": "Add projects and use the slider to divide rewards between yourself & your chosen projects"
           }
-        },
-        "changedYourMind": {
-          "title": "Changed your mind?",
-          "text": "To change your allocations, click the slider handle to unlock and make your changes"
         }
       },
       "modalAllocationValuesEdit": {
@@ -329,6 +330,15 @@
             "mobile": "Connect wallet"
           },
           "text": "Please connect your wallet to Octant in order to participate in this and future epochs"
+        },
+        "lockGlm": {
+          "title": "Lock GLM to earn",
+          "text": "Lock GLM tokens for as long as possible to earn ETH rewards you can donate or withdraw"
+        },
+        "allocateYourRewards": {
+          "title": "Allocate your rewards",
+          "textDesktop": "Unallocated rewards will be swept back for restaking at the end of this allocation window, so don't forget to allocate!",
+          "textMobile": "Unallocated rewards will be swept back for restaking at the end of this allocation window"
         }
       },
       "preLaunch": {
@@ -371,7 +381,7 @@
       "stepsDecisionWindowOpen": {
         "welcomeToOctant": {
           "header": "Welcome to Octant",
-          "text": "To get started, lock some GLM in the <0>Earn</0> view, and take a look at the projects you can donate to in the <0>Projects</0> view.<br/><br/>If you already have GLM locked, you’ll have some rewards to use during E1 Allocation window, which runs from 19 Oct to 2 Nov."
+          "text": "To get started, lock some GLM in the <0>Earn</0> view, and take a look at the projects you can donate to in the <0>Projects</0> view.<br/><br/>If you already have GLM locked, you’ll have some rewards to use during E2 Allocation window, which runs from 17 to 31 Jan."
         },
         "earnRewards": {
           "header": "Earn ETH rewards",
@@ -383,7 +393,7 @@
         },
         "slideIt": {
           "header": "Just slide it",
-          "text": "Once you have rewards, use the slider in the <0>Allocate</0> view to divide your rewards into donations to projects or personal allocation.<br/><br/>Change your choices at any time during the Allocation window, just unlock the slider, make some edits and reconfirm in your wallet."
+          "text": "Once you have rewards, use the slider in the <0>Allocate</0> view to easily divide rewards between projects or yourself.<br/><br/>To change your choices at any time during allocation, just click Edit, make some changes and reconfirm in your wallet."
         }
       },
       "stepsDecisionWindowClosed": {
@@ -406,6 +416,13 @@
       "backToTop": "Back to Top"
     },
     "proposals": {
+      "proposalsTimelineWidget": {
+        "applicationsOpen": "Applications open",
+        "projectUpdatesClose": "Project updates close",
+        "snapshotVote": "Snapshot vote",
+        "allocationWindow": "Allocation window",
+        "epochStarts": "Epoch {{epoch}} starts"
+      },
       "tip": {
         "title": "Add your favourites",
         "text": "Save projects to the Allocate view with the heart icon so you can donate rewards to them"

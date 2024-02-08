@@ -25,20 +25,21 @@ export interface HistoryElement extends Omit<ResponseHistoryItemWithProjectsNumb
 
 export default function useHistory(
   options?: UseInfiniteQueryOptions<Response, unknown, Response, any>,
-): UseInfiniteQueryResult<Response> & { history: HistoryElement[] } {
+): UseInfiniteQueryResult<Response, unknown> & { history: HistoryElement[] } {
   const { address } = useAccount();
 
   const query = useInfiniteQuery({
     enabled: !!address,
     getNextPageParam: lastPage => lastPage.next_cursor,
-    queryFn: ({ pageParam = '' }) => apiGetHistory(address as string, pageParam),
+    initialPageParam: '',
+    queryFn: ({ pageParam }) => apiGetHistory(address as string, pageParam),
     queryKey: QUERY_KEYS.history,
     staleTime: Infinity,
     ...options,
   });
 
   const historyFromPages: ResponseHistoryItem[] =
-    query.data?.pages.reduce<any[]>((acc, curr) => [...acc, ...curr.history], []) || [];
+    (query.data as any)?.pages.reduce((acc, curr) => [...acc, ...curr.history], []) || [];
 
   const history = historyFromPages
     .map<HistoryElement>(({ amount, ...rest }) => ({

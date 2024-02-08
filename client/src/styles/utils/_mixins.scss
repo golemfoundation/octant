@@ -5,7 +5,7 @@
   left: 0;
   height: $height;
   width: $width;
-  z-index: $z-index-5;
+  z-index: $z-index-6;
   cursor: pointer;
 
   // This class needs to be aligned with whatever triggers the overflow to open, e.g. Modal.tsx.
@@ -32,7 +32,7 @@
   flex-grow: 0;
   flex-shrink: 0;
   flex-basis: calc(
-    #{calc(100 / $elementsCount)}% - #{calc($gutterSize * ($elementsCount - 1) / $elementsCount)}
+    #{calc(100% / $elementsCount)} - #{calc($gutterSize * ($elementsCount - 1) / $elementsCount)}
   );
 }
 

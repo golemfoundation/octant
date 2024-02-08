@@ -8,7 +8,6 @@
 .yarn/
 docker-compose.yml
 networks.json
-networks.template.json
 nix/
 node_modules/
 README.md

@@ -1,4 +1,4 @@
-import { format } from 'date-fns-tz';
+import { format } from 'date-fns';
 import React, { FC, Fragment, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';

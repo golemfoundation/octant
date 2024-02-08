@@ -20,9 +20,7 @@ def get_user_effective_deposit_by_epoch(user_address: str, epoch: int) -> int:
 def get_user_estimated_effective_deposit_for_current_epoch(user_address: str) -> int:
     current_epoch = epochs_controller.get_current_epoch()
     epoch_info = epoch_details.get_epoch_details(current_epoch)
-    return deposits_core.get_estimated_effective_deposit(
-        epoch_info.start_sec, epoch_info.end_sec, user_address
-    )
+    return deposits_core.get_estimated_effective_deposit(epoch_info, user_address)
 
 
 def get_estimated_total_effective_deposit() -> Tuple[int, int]:

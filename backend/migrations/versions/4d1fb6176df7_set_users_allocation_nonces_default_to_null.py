@@ -6,7 +6,6 @@ Create Date: 2023-10-19 11:24:17.909296
 
 """
 from alembic import op
-import sqlalchemy as sa
 from sqlalchemy import orm
 
 from app.database.models import User

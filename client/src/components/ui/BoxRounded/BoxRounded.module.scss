@@ -75,6 +75,10 @@ $padding: 2.2rem;
   }
 }
 
+.title {
+  text-align: left;
+}
+
 .titleWrapper {
   display: flex;
   align-items: center;
@@ -84,10 +88,6 @@ $padding: 2.2rem;
   font-size: $font-size-14;
   font-weight: $font-weight-bold;
   margin: 0 0 0.5rem 0;
-
-  .title {
-    text-align: left;
-  }
 
   &.hasSections {
     color: $color-octant-dark;
@@ -130,6 +130,7 @@ $padding: 2.2rem;
   .subtitle {
     font-size: $font-size-12;
     color: $color-octant-grey5;
+    text-align: left;
   }
 }
 

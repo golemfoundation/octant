@@ -1,4 +1,4 @@
-from datetime import datetime as DateTime
+from datetime import datetime as DateTime, timezone
 
 
 class Timestamp:
@@ -27,6 +27,14 @@ class Timestamp:
         else:
             return False
 
+    def __le__(self, o):
+        if isinstance(o, Timestamp):
+            return self._timestamp_us <= o._timestamp_us
+        else:
+            raise TypeError(
+                f"'<=' not supported between instances of type '{type(self)}' and '{type(o)}'"
+            )
+
 
 def from_timestamp_s(timestamp_s: float) -> Timestamp:
     return Timestamp(int(timestamp_s * 10**6))
@@ -41,8 +49,9 @@ def from_datetime(dt: DateTime) -> Timestamp:
 
 
 def now() -> Timestamp:
-    now = DateTime.utcnow().timestamp()
-    return from_timestamp_s(now)
+    utc_time = DateTime.now(timezone.utc)
+    unix_timestamp = utc_time.timestamp()
+    return from_timestamp_s(unix_timestamp)
 
 
 def sec_to_days(sec: int) -> int:

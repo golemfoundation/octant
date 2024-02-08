@@ -67,7 +67,11 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
       {!isPersonalOnlyAllocation && (
         <BoxRounded alignment="left" className={styles.projects} isGrey isVertical>
           {projects?.map(project => (
-            <ProjectAllocationDetailRow key={project.address} {...project} />
+            <ProjectAllocationDetailRow
+              key={project.address}
+              {...project}
+              epoch={epochTimestampHappenedIn}
+            />
           ))}
         </BoxRounded>
       )}

@@ -34,23 +34,16 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
     ref,
   ) => {
     const localRef = useRef<HTMLInputElement>(null);
-    const rootProps = {
-      className: cx(styles.root, className),
-    };
-
-    const inputWrapperProps = {
-      className: cx(styles.inputWrapper, isDisabled && styles.isDisabled),
-    };
 
     const inputProps = {
       autoComplete: autocomplete,
       className: cx(
         styles.input,
-        styles[`variant--${variant}`],
         styles[`textAlign--${textAlign}`],
         isDisabled && styles.isDisabled,
         !!error && styles.isError,
         suffix && styles.hasSuffix,
+        variant === 'allocation' && value && value.length > 8 && styles.smallFontSize,
         styles.className,
       ),
       // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -63,19 +56,6 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
       ...rest,
     };
 
-    const labelProps = {
-      className: cx(styles.label, styles[`variant--${variant}`]),
-    };
-
-    const suffixProps = {
-      className: cx(
-        styles.suffix,
-        styles[`variant--${variant}`],
-        isDisabled && styles.isDisabled,
-        suffixClassName,
-      ),
-    };
-
     useEffect(() => {
       const inputRef = inputProps.ref as React.RefObject<HTMLInputElement> | null;
       if (!shouldAutoFocusAndSelect || !inputRef?.current) {
@@ -85,15 +65,11 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
       inputRef.current.select();
     }, [inputProps.ref, shouldAutoFocusAndSelect]);
 
-    if (variant === 'borderless') {
-      return <input {...inputProps} {...rest} />;
-    }
-
     return (
-      <div {...rootProps}>
+      <div className={cx(styles.root, styles[`variant--${variant}`], className)}>
         <label>
-          {label && <div {...labelProps}>{label}</div>}
-          <div {...inputWrapperProps}>
+          {label && <div className={styles.label}>{label}</div>}
+          <div className={cx(styles.inputWrapper, isDisabled && styles.isDisabled)}>
             <input {...inputProps} />
             {variant === 'simple' && value && isButtonClearVisible && (
               <Button
@@ -104,10 +80,23 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
                 variant="iconOnly2"
               />
             )}
-            {showLoader && <Loader className={styles.loader} dataTest={`${dataTest}__Loader`} />}
-            {suffix && <div {...suffixProps}>{suffix}</div>}
+            {showLoader && (
+              <Loader className={styles.loader} dataTest={`${dataTest}__Loader`} variant="small" />
+            )}
+            {suffix && (
+              <div
+                className={cx(
+                  styles.suffix,
+                  isDisabled && styles.isDisabled,
+                  !!error && styles.isError,
+                  suffixClassName,
+                )}
+              >
+                {suffix}
+              </div>
+            )}
           </div>
-          {error && isErrorInlineVisible && (
+          {error && isErrorInlineVisible && variant !== 'allocation' && (
             <div className={styles.error} data-test={`${dataTest}__error`}>
               {error}
             </div>
