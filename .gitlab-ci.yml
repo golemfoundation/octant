@@ -728,6 +728,7 @@ E2E Epoch 2:
     - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
     - export OCTANT_BASE_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_web_client_url.sh)
     - export RPC_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
+    - export VITE_JSON_RPC_ENDPOINT=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
     - set +e
     - yarn synpress:run || CY_EXIT_CODE=$?
     - if [[ "$CY_EXIT_CODE" == "0" ]]; then rm -r $CI_PROJECT_DIR/client/cypress/videos $CI_PROJECT_DIR/client/cypress/screenshots; fi
