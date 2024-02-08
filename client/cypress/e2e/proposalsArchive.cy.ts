@@ -1,7 +1,17 @@
-import { checkLocationWithLoader, visitWithLoader } from 'cypress/utils/e2e';
+import { checkLocationWithLoader, moveToNextEpoch, visitWithLoader } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
+
+describe('move to the next epoch', () => {
+  it('moves to the next epoch', () => {
+    cy.wrap(null, { timeout: 60000 }).then(() => {
+      return moveToNextEpoch().then(isEpochChanged => {
+        expect(isEpochChanged).to.be.true;
+      });
+    });
+  });
+});
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
   describe(`proposals archive: ${device}`, { viewportHeight, viewportWidth }, () => {
@@ -25,22 +35,25 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
             cy.get('[data-test=ProposalsView__ProposalsList__header--archive]').should(
               'be.visible',
             );
+
             // list test
             cy.get('[data-test=ProposalsView__ProposalsList--archive]')
+              .first()
               .should('be.visible')
               .children()
               .then(childrenArchive => {
-                const numberOfArchivedProposals = childrenArchive.length - 2; // header + divider (2)
+                const numberOfArchivedProposals = childrenArchive.length - 2; // archived proposals tiles - (header + divider)[2]
 
                 for (let i = 0; i < numberOfArchivedProposals; i++) {
-                  cy.get(
-                    `[data-test=ProposalsView__ProposalsListItem--archive--${i}]`,
-                  ).scrollIntoView();
+                  cy.get(`[data-test=ProposalsView__ProposalsListItem--archive--${i}]`)
+                    .first()
+                    .scrollIntoView();
                   cy.window().then(window =>
                     window.scrollTo(0, window.scrollY - mainLayoutPaddingTop),
                   );
                   // list item test
                   cy.get(`[data-test=ProposalsView__ProposalsListItem--archive--${i}]`)
+                    .first()
                     .should('be.visible')
                     .within(() => {
                       // rewards test
@@ -49,21 +62,22 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
 
                   if (numberOfArchivedProposals - 1) {
                     cy.get('[data-test=ProposalsViem__Loader--archive]').should('not.exist');
-                    cy.get('[data-test=ProposalsView__ProposalsList--archive]').should(
-                      'have.length',
-                      1,
-                    );
+                    cy.get('[data-test=ProposalsView__ProposalsList--archive]')
+                      .first()
+                      .should('have.length', 1);
                   }
 
                   cy.get(`[data-test=ProposalsView__ProposalsListItem--archive--${i}]`)
+                    .first()
                     .invoke('data', 'address')
                     .then(address => {
                       cy.get(`[data-test=ProposalsView__ProposalsListItem--archive--${i}]`)
+                        .first()
                         .invoke('data', 'epoch')
                         .then(epoch => {
-                          cy.get(
-                            `[data-test=ProposalsView__ProposalsListItem--archive--${i}]`,
-                          ).click();
+                          cy.get(`[data-test=ProposalsView__ProposalsListItem--archive--${i}]`)
+                            .first()
+                            .click();
                           checkLocationWithLoader(
                             `${ROOT_ROUTES.proposal.absolute}/${epoch}/${address}`,
                           );
