@@ -149,16 +149,23 @@ channels:
           items:
             type: object
             properties:
-              address:
+              proposal:
                 type: string
-              amount:
-                type: string
+              donors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    amount:
+                      type: string
         examples:
           - payload:
-              - address: "0x9eB7B2006DC686Ae7330234d9913B8F7283659D1"
-                amount: "100000000000"
-              - address: "0x17F6AD8Ef982297579C203069C1DbfFE4348c372"
-                amount: "200000000"
+              - proposal: "0x9eB7B2006DC686Ae7330234d9913B8F7283659D1"
+              - donors:
+                  - address: "0x17F6AD8Ef982297579C203069C1DbfFE4348c372"
+                    amount: "200000000"
     publish:
       summary: Proposal donors event
       operationId: handle_proposal_donors
