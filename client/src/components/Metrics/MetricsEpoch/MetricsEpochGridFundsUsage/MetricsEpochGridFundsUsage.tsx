@@ -21,7 +21,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   const { epoch } = useMetricsEpoch();
   const { data: epochInfo } = useEpochInfo(epoch);
 
-  const getNumberValue = (value: BigNumber) => Number(Number(formatUnits(value)).toFixed(3));
+  const getNumberValue = (value: BigNumber) => Number(Number(formatUnits(value, 'wei')).toFixed(3));
 
   const leftover = epochInfo ? epochInfo.leftover : BigNumber.from(0);
 
