@@ -772,27 +772,15 @@ Deploy Release Candidate app:
 
     cd $GIT_DIR
 
-    echo '(debug) before update ==='
-    cat mainnet/octant-image.values.yaml
-    cat testnet/octant-image.values.yaml
-    echo '(end debug) ==='
-
     yq -i -e ".[].value.value = \"$IMAGE_TAG\"" mainnet/octant-image.values.yaml
-    yq -i -e ".[].value.value = \"$IMAGE_TAG\"" testnet/octant-image.values.yaml
-
-    echo '(debug) after update ==='
-    cat mainnet/octant-image.values.yaml
-    cat testnet/octant-image.values.yaml
-    echo '(end debug) ==='
 
     git add mainnet/octant-image.values.yaml
-    git add testnet/octant-image.values.yaml
     git commit -S -m "Changed octant image tag to $IMAGE_TAG at $(date +%Y-%m-%d)" || true
 
     git push
   environment:
     name: persistent/prod
-    url: https://client.testnet.octant.wildland.dev
+    url: https://client.mainnet.octant.wildland.dev
 
 Deploy production app:
   stage: deploy
