@@ -52,11 +52,14 @@ const EarnHistoryItem: FC<EarnHistoryItemProps> = ({ isLast, ...rest }) => {
       <BoxRounded
         childrenWrapperClassName={styles.child}
         className={styles.box}
+        dataTest="HistoryItem"
         hasPadding={false}
         onClick={() => setIsModalOpen(true)}
       >
         <div className={styles.titleAndSubtitle}>
-          <div className={styles.title}>{title}</div>
+          <div className={styles.title} data-test="HistoryItem__title">
+            {title}
+          </div>
           {type === 'patron_mode_donation' ? (
             <div className={styles.patronDonationTimestamp}>
               {getHistoryItemDateAndTime(timestamp)}
@@ -72,6 +75,7 @@ const EarnHistoryItem: FC<EarnHistoryItemProps> = ({ isLast, ...rest }) => {
               ? 'ethereum'
               : 'golem'
           }
+          dataTest="HistoryItem__DoubleValue"
           isFetching={isFetchingEpochTimestampHappenedIn || isFetchingIndividualReward}
           textAlignment="right"
           valueCrypto={

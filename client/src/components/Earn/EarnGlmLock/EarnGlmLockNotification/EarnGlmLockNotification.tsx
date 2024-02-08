@@ -60,7 +60,13 @@ const EarnGlmLockNotification: FC<EarnGlmLockNotificationProps> = ({
   }, [type, currentMode, isLockingApproved]);
 
   return (
-    <BoxRounded className={className} hasPadding={false} isGrey isVertical>
+    <BoxRounded
+      className={className}
+      dataTest={`GlmLockNotification--${type}`}
+      hasPadding={false}
+      isGrey
+      isVertical
+    >
       <div className={styles.notification}>
         <Svg
           classNameWrapper={styles.iconWrapper}

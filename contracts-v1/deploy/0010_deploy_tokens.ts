@@ -7,10 +7,10 @@ import { TOKEN } from '../helpers/constants';
 // eslint-disable-next-line func-names
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = hre.deployments;
-  const { deployer } = await hre.getNamedAccounts();
+  const { deployer, Alice, Bob } = await hre.getNamedAccounts();
 
   await deploy(TOKEN, {
-    args: [],
+    args: [[deployer, Alice, Bob]],
     autoMine: true,
     contract: 'Token',
     from: deployer,
