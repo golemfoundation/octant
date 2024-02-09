@@ -77,6 +77,32 @@ MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
 MOCK_IS_CONTRACT = Mock()
 
 
+def mock_etherscan_api(*args, **kwargs):
+    if kwargs["tx_type"] == "txlist":
+        return [
+            {
+                "hash": "0x48da2e43af550ff80da0d31340e48a3e32d4e2612ae851b653cc17f859e235dd",
+                "to": "0x1234123456123456123456123456123456123456",
+                "value": "63731797601781525",
+                "isError": "0",
+                "functionName": "",
+            }
+        ]
+    elif kwargs["tx_type"] == "txlistinternal":
+        return [
+            {
+                "hash": "0x6281a4a2007cdcce0485b0e7866e69eddcacdf2b6266601046bfc99c2fc288b8",
+                "to": "0x1234123456123456123456123456123456123456",
+                "value": "3081369209350255",
+                "isError": "0",
+            }
+        ]
+    else:
+        return [
+            {"amount": "1498810", "withdrawalIndex": "11446030"},
+        ]
+
+
 def pytest_addoption(parser):
     parser.addoption(
         "--runapi",
@@ -465,6 +491,14 @@ def patch_user_budget(monkeypatch):
     )
 
     MOCK_GET_USER_BUDGET.return_value = USER_MOCKED_BUDGET
+
+
+@pytest.fixture(scope="function")
+def patch_etherscan_api(monkeypatch):
+    monkeypatch.setattr(
+        "app.modules.staking.proceeds.service.aggregated.get_transactions",
+        mock_etherscan_api,
+    )
 
 
 @pytest.fixture(scope="function")

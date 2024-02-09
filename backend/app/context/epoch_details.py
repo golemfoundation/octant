@@ -17,7 +17,10 @@ class EpochDetails:
         self.decision_window_sec = int(decision_window)
         self.decision_window_days = sec_to_days(self.decision_window_sec)
         self.start_sec = int(start)
+        # TODO impl start block and end block (https://linear.app/golemfoundation/issue/OCT-1329/aggregate-values-from-a-db-to-get-staking-proceeds)
+        self.start_block = 0
         self.end_sec = self.start_sec + self.duration_sec
+        self.end_block = 99999999999999999
         self.finalized_sec = self.end_sec + self.decision_window_sec
         self.finalized_timestamp = from_timestamp_s(self.finalized_sec)
 
