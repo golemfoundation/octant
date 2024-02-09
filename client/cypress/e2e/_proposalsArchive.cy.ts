@@ -19,7 +19,8 @@ describe('move to the next epoch', () => {
 });
 
 // Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
-describe(`proposals archive:`, () => { // ${device}`, { viewportHeight, viewportWidth },
+describe(`proposals archive:`, () => {
+  // ${device}`, { viewportHeight, viewportWidth },
   beforeEach(() => {
     localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
     localStorage.setItem(IS_ONBOARDING_DONE, 'true');
