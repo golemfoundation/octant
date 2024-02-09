@@ -10,24 +10,24 @@ import { CHAINS, PROJECT_ID } from 'constants/walletConnect';
 import env from 'env';
 
 const providers: ChainProviderFn<typeof mainnet | typeof sepolia | typeof localhost>[] = [
-  jsonRpcProvider({
-    rpc: () => ({
-      http: env.jsonRpcEndpoint!,
-    }),
-  }),
   alchemyProvider({ apiKey: env.alchemyId }),
   publicProvider(),
 ];
 
-// if (env.jsonRpcEndpoint) {
-//   providers.unshift(
-//     jsonRpcProvider({
-//       rpc: () => ({
-//         http: env.jsonRpcEndpoint!,
-//       }),
-//     }),
-//   );
-// }
+// @ts-expect-error
+window.jsonRpcEndpoint = env.jsonRpcEndpoint;
+// @ts-expect-error
+window.cyEnv = env;
+
+if (env.jsonRpcEndpoint) {
+  providers.unshift(
+    jsonRpcProvider({
+      rpc: () => ({
+        http: env.jsonRpcEndpoint!,
+      }),
+    }),
+  );
+}
 
 const { publicClient } = configureChains<typeof mainnet | typeof sepolia | typeof localhost>(
   CHAINS,

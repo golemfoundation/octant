@@ -28,7 +28,8 @@
     "test": "TZ=UTC jest",
     "type-check": "tsc --noEmit true",
     "synpress:open": "synpress open --configFile synpress.config.ts",
-    "synpress:run": "synpress run --configFile synpress.config.ts --config excludeSpecPattern=./cypress/e2e/disabled-on-ci.cy.ts",
+    "synpress:run": "synpress run --configFile synpress.config.ts --config specPattern=./cypress/e2e/_*.cy.ts",
+    "synpress:run-1": "synpress run --configFile synpress.config.ts --config excludeSpecPattern=./cypress/e2e/disabled-on-ci.cy.ts",
     "synpress:run-disabled-on-ci": "synpress run --configFile synpress.config.ts --config specPattern=./cypress/e2e/disabled-on-ci.cy.ts"
   },
   "dependencies": {
