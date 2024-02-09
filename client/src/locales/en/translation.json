@@ -41,8 +41,10 @@
     "personalAllocation": "Personal allocation",
     "proposalForbiddenOperation": "As a proposal you are not able to proceed with this operation",
     "rewards": "Rewards {{rewards}}",
-    "thresholdDataUnavailable": "Threshold data unavailable",
-    "noThresholdData": "No threshold data",
+    "thresholdDataUnavailable": {
+      "desktop": "Threshold data unavailable",
+      "mobile": "No threshold data"
+    },
     "valueCantBeEmpty": "Value can't be empty",
     "lessThan1m": "less than 1m",
     "donors": "Donors",
