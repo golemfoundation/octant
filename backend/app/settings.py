@@ -22,6 +22,7 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SUBGRAPH_ENDPOINT = os.getenv("SUBGRAPH_ENDPOINT")
     WEB3_PROVIDER = Web3.HTTPProvider(os.getenv("ETH_RPC_PROVIDER_URL"))
+    ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY")
     SCHEDULER_ENABLED = _parse_bool(os.getenv("SCHEDULER_ENABLED"))
     CACHE_TYPE = "SimpleCache"
 
@@ -123,6 +124,7 @@ class TestConfig(Config):
     # 9_537357664_505573437 - the amount of unclaimed and allocated under threshold
     # 6_050000000_000000000 - extra operations cost during the epoch
     EPOCH_2_STAKING_PROCEEDS_SURPLUS = 3_487357664_505573437
+    WITHDRAWALS_TARGET_CONTRACT_ADDRESS = "0x1234123456123456123456123456123456123456"
 
 
 def get_config():
