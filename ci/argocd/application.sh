@@ -70,6 +70,7 @@ elif [[ "$ACTION" == "update" ]]; then
 	else
 		# This will make webclient use default (wagmi) endpoint
 		export FRONTEND_RPC_URL=""
+        export VITE_JSON_RPC_ENDPOINT=""
 		export BACKEND_RPC_URL=https://geth.wildland.dev
 	fi
 
