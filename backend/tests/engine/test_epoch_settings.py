@@ -1,9 +1,12 @@
+from decimal import Decimal
+
 from app.engine.epochs_settings import get_epoch_settings, register_epoch_settings
 from app.engine.octant_rewards import (
     DefaultLockedRatio,
     DefaultMatchedRewards,
     DefaultTotalAndAllIndividualRewards,
 )
+from app.engine.octant_rewards import OpCostPercent
 from app.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (
     AllProceedsWithOperationalCost,
 )
@@ -25,8 +28,9 @@ def test_default_epoch_settings():
     settings = get_epoch_settings(-1)
     check_settings(
         settings,
-        total_and_all_individual_rewards=DefaultTotalAndAllIndividualRewards,
-        timebased_weights=TimebasedWithoutUnlocksWeights,
+        total_and_all_individual_rewards=DefaultTotalAndAllIndividualRewards(),
+        timebased_weights=TimebasedWithoutUnlocksWeights(),
+        operational_cost=OpCostPercent(Decimal("0.25")),
     )
 
 
@@ -35,8 +39,9 @@ def test_epoch_1_settings():
     settings = get_epoch_settings(1)
     check_settings(
         settings,
-        total_and_all_individual_rewards=AllProceedsWithOperationalCost,
-        timebased_weights=DefaultTimebasedWeights,
+        total_and_all_individual_rewards=AllProceedsWithOperationalCost(),
+        timebased_weights=DefaultTimebasedWeights(),
+        operational_cost=OpCostPercent(Decimal("0.20")),
     )
 
 
@@ -45,23 +50,41 @@ def test_epoch_2_settings():
     settings = get_epoch_settings(2)
     check_settings(
         settings,
-        total_and_all_individual_rewards=DefaultTotalAndAllIndividualRewards,
-        timebased_weights=TimebasedWithoutUnlocksWeights,
+        total_and_all_individual_rewards=DefaultTotalAndAllIndividualRewards(),
+        timebased_weights=TimebasedWithoutUnlocksWeights(),
+        operational_cost=OpCostPercent(Decimal("0.25")),
     )
 
 
-def check_settings(settings, **kwargs):
+def test_epoch_3_settings():
+    register_epoch_settings()
+    settings = get_epoch_settings(3)
+    check_settings(
+        settings,
+        operational_cost=OpCostPercent(Decimal("0.25")),
+        total_and_all_individual_rewards=DefaultTotalAndAllIndividualRewards(),
+        timebased_weights=TimebasedWithoutUnlocksWeights(),
+    )
+
+
+def check_settings(
+    settings,
+    total_and_all_individual_rewards=None,
+    operational_cost=None,
+    timebased_weights=None,
+):
     assert settings.octant_rewards.locked_ratio == DefaultLockedRatio()
     assert settings.octant_rewards.matched_rewards == DefaultMatchedRewards()
     assert (
         settings.octant_rewards.total_and_all_individual_rewards
-        == kwargs["total_and_all_individual_rewards"]()
+        == total_and_all_individual_rewards
     )
+    assert settings.octant_rewards.operational_cost == operational_cost
 
     assert settings.user.budget == DefaultUserBudget()
     assert settings.user.effective_deposit.cut_off == CutOff10GLM()
     assert settings.user.effective_deposit == DefaultWeightedAverageEffectiveDeposit(
-        timebased_weights=kwargs["timebased_weights"]()
+        timebased_weights=timebased_weights
     )
 
     assert settings.project.rewards == DefaultProjectRewards()
