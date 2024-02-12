@@ -10,7 +10,6 @@ import { QueryMutationError, QueryMutationErrorConfig, IgnoredQueries } from './
 const IGNORED_QUERIES: IgnoredQueries = [
   ROOTS.cryptoValues,
   ROOTS.proposalsIpfsResults,
-  ROOTS.individualReward,
   QUERY_KEYS.glmClaimCheck[0],
 ];
 

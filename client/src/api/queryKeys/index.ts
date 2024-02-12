@@ -68,6 +68,7 @@ export const QUERY_KEYS: QueryKeys = {
   ],
   syncStatus: ['syncStatus'],
   totalAddresses: ['totalAddresses'],
+  totalWithdrawals: ['totalWithdrawals'],
   unlocks: ['unlocks'],
   userAllocationNonce: userAddress => [ROOTS.userAllocationNonce, userAddress],
   userAllocations: epochNumber => [ROOTS.userAllocations, epochNumber.toString()],
