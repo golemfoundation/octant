@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import React, { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -8,22 +9,25 @@ import styles from './MetricsDonationsProgressBar.module.scss';
 import MetricsDonationsProgressBarProps from './types';
 
 const MetricsDonationsProgressBar: FC<MetricsDonationsProgressBarProps> = ({
+  isDisabled,
   isLoading,
   donationsValue,
 }) => {
   const { i18n } = useTranslation('translation');
-  const donationsPercentage = donationsValue.toFixed(2).replace(dotAndZeroes, '');
-  const personalPercentage = (100 - donationsValue).toFixed(2).replace(dotAndZeroes, '');
+  const donationsPercentage = isDisabled ? 0 : donationsValue.toFixed(2).replace(dotAndZeroes, '');
+  const personalPercentage = isDisabled
+    ? 0
+    : (100 - donationsValue).toFixed(2).replace(dotAndZeroes, '');
 
   return (
     <div className={styles.root}>
       <ProgressBar
         className={styles.progressBar}
         progressPercentage={donationsValue}
-        trackColor={isLoading ? 'grey' : 'orange'}
+        trackColor={isDisabled || isLoading ? 'grey' : 'orange'}
         variant="thin"
       />
-      <div className={styles.wrapper}>
+      <div className={cx(styles.wrapper, isDisabled && styles.isDisabled)}>
         <div className={styles.donations}>
           {isLoading ? (
             <>

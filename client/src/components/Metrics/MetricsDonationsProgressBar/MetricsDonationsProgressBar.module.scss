@@ -12,6 +12,12 @@
   justify-content: space-between;
   align-items: center;
 
+  &.isDisabled {
+    .percentage, .label {
+      color: $color-octant-grey5;
+    }
+  }
+
   .donations {
     text-align: left;
     color: $color-octant-green;

@@ -4,9 +4,8 @@ import { useTranslation } from 'react-i18next';
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsGridTileValue from 'components/Metrics/MetricsGrid/MetricsGridTileValue';
 import { getValuesToDisplay } from 'components/ui/DoubleValue/utils';
+import useMetricsPersonalDataRewardsUsage from 'hooks/helpers/useMetricsPersonalDataRewardsUsage';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
-import useIndividualReward from 'hooks/queries/useIndividualReward';
-import useWithdrawals from 'hooks/queries/useWithdrawals';
 import useSettingsStore from 'store/settings/store';
 
 import MetricsPersonalGridTotalRewardsWithdrawalsProps from './types';
@@ -24,17 +23,16 @@ const MetricsPersonalGridTotalRewardsWithdrawals: FC<
     },
   }));
   const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
-  const { data: individualReward } = useIndividualReward();
-  const { data: withdrawals } = useWithdrawals();
+  const { data: metricsPersonalDataRewardsUsage } = useMetricsPersonalDataRewardsUsage();
 
-  const totalRewardsValues = getValuesToDisplay({
+  const totalRewardsUsedValues = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
     cryptoValues,
     displayCurrency: displayCurrency!,
     error,
     isCryptoMainValueDisplay: true,
     shouldIgnoreGwei: false,
-    valueCrypto: individualReward,
+    valueCrypto: metricsPersonalDataRewardsUsage?.totalRewardsUsed,
   });
 
   const totalWithdrawalsValues = getValuesToDisplay({
@@ -44,7 +42,7 @@ const MetricsPersonalGridTotalRewardsWithdrawals: FC<
     error,
     isCryptoMainValueDisplay: true,
     shouldIgnoreGwei: false,
-    valueCrypto: withdrawals?.sums.available,
+    valueCrypto: metricsPersonalDataRewardsUsage?.totalWithdrawals,
   });
 
   return (
@@ -55,8 +53,8 @@ const MetricsPersonalGridTotalRewardsWithdrawals: FC<
             <MetricsGridTileValue
               isLoading={isLoading}
               size="S"
-              subvalue={totalRewardsValues.secondary}
-              value={totalRewardsValues.primary}
+              subvalue={totalRewardsUsedValues.secondary}
+              value={totalRewardsUsedValues.primary}
             />
           ),
           title: t('totalRewards'),
