@@ -3,21 +3,6 @@ import { checkLocationWithLoader, moveToNextEpoch, visitWithLoader } from 'cypre
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
-describe('move to the next epoch', () => {
-  it('moves to the next epoch', () => {
-    // visitWithLoader(ROOT_ROUTES.proposals.absolute);
-    // @ts-expect-error
-    cy.log('window.jsonRpcEndpoint:', window.jsonRpcEndpoint);
-    // @ts-expect-error
-    cy.log('window.cyEnv:', JSON.stringify(window.cyEnv));
-    cy.wrap(null, { timeout: 60000 }).then(() => {
-      return moveToNextEpoch().then(isEpochChanged => {
-        expect(isEpochChanged).to.be.true;
-      });
-    });
-  });
-});
-
 // Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
 describe(`proposals archive:`, () => {
   // ${device}`, { viewportHeight, viewportWidth },
@@ -25,6 +10,10 @@ describe(`proposals archive:`, () => {
     localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
     localStorage.setItem(IS_ONBOARDING_DONE, 'true');
     visitWithLoader(ROOT_ROUTES.proposals.absolute);
+  });
+
+  it('moves to the next epoch', () => {
+    cy.wrap(moveToNextEpoch(), { timeout: 60000 }).should('be.true');
   });
 
   it('renders archive elements + clicking on epoch archive ProposalsListItem opens ProposalView for particular epoch and project', () => {
