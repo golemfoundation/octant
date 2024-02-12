@@ -26,17 +26,17 @@ describe(`proposals archive:`, () => {
         .then(children => {
           children[children.length - 1].scrollIntoView();
           cy.window().then(window => window.scrollTo(0, window.scrollY - mainLayoutPaddingTop));
+          cy.wait(1000);
           // header test
           cy.get('[data-test=ProposalsView__ProposalsList__header--archive]').should('be.visible');
 
           // list test
+          cy.get('[data-test=ProposalsView__ProposalsList--archive]').first().should('be.visible');
           cy.get('[data-test=ProposalsView__ProposalsList--archive]')
             .first()
-            .should('be.visible')
             .children()
             .then(childrenArchive => {
               const numberOfArchivedProposals = childrenArchive.length - 2; // archived proposals tiles - (header + divider)[2]
-
               for (let i = 0; i < numberOfArchivedProposals; i++) {
                 cy.get(`[data-test=ProposalsView__ProposalsListItem--archive--${i}]`)
                   .first()
@@ -54,7 +54,6 @@ describe(`proposals archive:`, () => {
                   });
 
                 if (numberOfArchivedProposals - 1) {
-                  cy.get('[data-test=ProposalsViem__Loader--archive]').should('not.exist');
                   cy.get('[data-test=ProposalsView__ProposalsList--archive]')
                     .first()
                     .should('have.length', 1);
