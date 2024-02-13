@@ -66,7 +66,26 @@ const MetricsNavigation = (): ReactElement => {
 
     const callback = entries => {
       entries.forEach(entry => {
+        if (!entry.intersectionRatio) {
+          return;
+        }
+
         if (!entry.isIntersecting) {
+          if (metricsPersonalTarget.isSameNode(entry.target)) {
+            setActiveSection('general');
+            return;
+          }
+
+          if (metricsGeneralTarget.isSameNode(entry.target)) {
+            if (entry.intersectionRect.bottom < entry.boundingClientRect.bottom) {
+              setActiveSection('epoch');
+              return;
+            }
+
+            setActiveSection('personal');
+            return;
+          }
+
           return;
         }
 
@@ -100,7 +119,7 @@ const MetricsNavigation = (): ReactElement => {
     };
 
     const observer = new IntersectionObserver(callback, {
-      threshold: isDesktop ? 0.7 : 0.5,
+      threshold: isDesktop ? 0.8 : 0.5,
     });
 
     observer.observe(metricsEpochTarget);

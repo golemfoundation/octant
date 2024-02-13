@@ -15,8 +15,10 @@ type EpochAllocations = EpochAllocation[];
 export default function useEpochAllocations(
   epoch: number,
   options?: UseQueryOptions<Response, unknown, EpochAllocations, any>,
-): UseQueryResult<EpochAllocations> {
-  return useQuery(QUERY_KEYS.epochAllocations(epoch), () => apiGetEpochAllocations(epoch), {
+): UseQueryResult<EpochAllocations, unknown> {
+  return useQuery({
+    queryFn: () => apiGetEpochAllocations(epoch),
+    queryKey: QUERY_KEYS.epochAllocations(epoch),
     select: response => {
       return response.allocations.reduce((acc, curr) => {
         const donorIdx = acc.findIndex(({ user }) => user === curr.donor);

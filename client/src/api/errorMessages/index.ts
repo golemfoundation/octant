@@ -3,14 +3,13 @@ import { Query } from '@tanstack/react-query';
 
 import { ROOTS, QUERY_KEYS } from 'api/queryKeys';
 import i18n from 'i18n';
-import triggerToast from 'utils/triggerToast';
+import toastService from 'services/toastService';
 
 import { QueryMutationError, QueryMutationErrorConfig, IgnoredQueries } from './types';
 
 const IGNORED_QUERIES: IgnoredQueries = [
   ROOTS.cryptoValues,
   ROOTS.proposalsIpfsResults,
-  ROOTS.individualReward,
   QUERY_KEYS.glmClaimCheck[0],
 ];
 
@@ -66,7 +65,7 @@ export function handleError(reason: string, query?: Query | unknown): string | u
 
   const { message, title, type } = getError(reason);
   if (type === 'toast') {
-    triggerToast({ message, title, type: 'error' });
+    toastService.showToast({ message, name: 'backendError', title, type: 'error' });
     return;
   }
   return message;

@@ -15,7 +15,7 @@ import styles from './EarnWithdrawEth.module.scss';
 import EarnWithdrawEthProps from './types';
 
 const EarnWithdrawEth: FC<EarnWithdrawEthProps> = ({ onCloseModal }) => {
-  const { t } = useTranslation('translation', {
+  const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.withdrawEth',
   });
   const { data: feeData, isFetching: isFetchingFeeData } = useFeeData();
@@ -81,8 +81,12 @@ const EarnWithdrawEth: FC<EarnWithdrawEthProps> = ({ onCloseModal }) => {
             withdrawals?.sums.available.isZero()
           }
           isHigh
-          isLoading={withdrawEthMutation.isLoading}
-          label={withdrawEthMutation.isLoading ? t('waitingForConfirmation') : t('withdrawAll')}
+          isLoading={withdrawEthMutation.isPending}
+          label={
+            withdrawEthMutation.isPending
+              ? i18n.t('common.waitingForConfirmation')
+              : t('withdrawAll')
+          }
           onClick={withdrawEth}
           variant="cta"
         />

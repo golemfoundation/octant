@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { apiGetProposal } from 'api/calls/proposals';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useProposalsCid from 'hooks/subgraph/useProposalsCid';
+import toastService from 'services/toastService';
 import { ExtendedProposal } from 'types/extended-proposal';
 import { BackendProposal } from 'types/gen/backendproposal';
-import triggerToast from 'utils/triggerToast';
 
 import useCurrentEpoch from './useCurrentEpoch';
 import useProposalsContract from './useProposalsContract';
@@ -41,8 +41,9 @@ export default function useProposalsIpfs(
     if (!isAnyError) {
       return;
     }
-    triggerToast({
+    toastService.showToast({
       message: t('ipfs.message'),
+      name: 'ipfsError',
       type: 'error',
     });
   }, [isAnyError, t]);

@@ -9,8 +9,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     before(() => {
       cy.clearLocalStorage();
       cy.setupMetamask();
-      cy.activateShowTestnetNetworksInMetamask();
-      cy.changeMetamaskNetwork('sepolia');
     });
 
     beforeEach(() => {

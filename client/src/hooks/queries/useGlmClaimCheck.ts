@@ -14,9 +14,11 @@ export type Response = {
 export default function useGlmClaimCheck(isOnboardingDone: boolean): UseQueryResult<Response> {
   const { address } = useAccount();
 
-  return useQuery(QUERY_KEYS.glmClaimCheck, () => apiGetGlmClaimCheck(address! as string), {
+  return useQuery({
     // When onboarding is done this query should not fire at all.
     enabled: !!address && !isOnboardingDone,
+    queryFn: () => apiGetGlmClaimCheck(address! as string),
+    queryKey: QUERY_KEYS.glmClaimCheck,
     /**
      * When an error is returned, it's an indication user is not eligible to claim.
      * No point in retrying.

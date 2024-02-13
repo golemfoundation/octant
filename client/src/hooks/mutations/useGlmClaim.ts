@@ -1,7 +1,7 @@
 import { UseMutationResult, useMutation, UseMutationOptions } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
-import { useSignTypedData } from 'wagmi';
+import { useAccount, useSignTypedData } from 'wagmi';
 
 import { apiPostGlmClaim } from 'api/calls/glmClaim';
 import networkConfig from 'constants/networkConfig';
@@ -17,7 +17,9 @@ export default function useGlmClaim(
   glmClaimCheckValue: BigNumber | undefined,
   options?: UseMutationOptions<any, unknown, string>,
 ): UseMutationResult<any, unknown, string> {
+  const { address } = useAccount();
   const { signTypedDataAsync } = useSignTypedData({
+    account: address,
     domain,
     message: {
       msg: i18n.t('views.onboarding.steps.claimGlm.signMessage', {

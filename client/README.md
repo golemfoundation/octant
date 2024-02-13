@@ -1,6 +1,10 @@
+## Node version
+
+Use only node:16 because of [problem](https://github.com/Synthetixio/synpress/issues/1071) with e2e tests in synpress.
+
 ## Configuration
 
-Ensure that the `.env`  file is present. See `.env.template`.
+Ensure that the `.env` file is present. See `.env.template`.
 
 ### Envs
 
@@ -13,6 +17,7 @@ Ensure that the `.env`  file is present. See `.env.template`.
 ### Contracts
 
 Client uses 5 contracts. Following are their names and envs which should have their addresses:
+
 1. Deposits (`VITE_DEPOSITS_ADDRESS`).
 2. Epochs (`VITE_EPOCHS_ADDRESS`).
 3. ERC20 (`VITE_GLM_ADDRESS`).
@@ -80,17 +85,16 @@ export interface BackendProposal {
 
 ## Packages
 
-1. `@synthetixio/synpress` requests `eth-sig-util@^1.4.2`, which requests `ethereumjs-abi` as a dependency directly from git, breaking container builds. To solve it we could either alter our node image to include git, or add following resolution, which we did:
-```bash
-"resolutions": {
-  "@synthetixio/synpress/**/eth-sig-util": "yarn:@metamask/eth-sig-util@^5.1.0"
-}
-```
-`eth-sig-util` is deprecated in favor of `@metamask/eth-sig-util`. The latter does not require `ethereumjs-abi` at all.
-2. `cypress` is resolved to `12.14.0` because of [this issue](https://github.com/cypress-io/code-coverage/issues/667). Issue is resolved, but Cypress Team is on track of some edge cases, as explained [here](https://github.com/cypress-io/code-coverage/issues/667#issuecomment-1609563639). Issue causes our Synpress runs to fail when executing actions in MetaMask.
-3.
+1. `cypress` is resolved to `12.17.3` because of [this issue](https://github.com/cypress-io/code-coverage/issues/667). Issue is resolved, but Cypress Team is on track of some edge cases, as explained [here](https://github.com/cypress-io/code-coverage/issues/667#issuecomment-1609563639). Issue causes our Synpress runs to fail when executing actions in MetaMask.
+2.
+
 ```json
     "@web3modal/ethereum": "^2.2.2",
     "@web3modal/react": "^2.2.2",
 ```
+
 Because of [this](https://github.com/cypress-io/cypress/discussions/26853).
+
+## E2E tests
+
+Some e2e tests can't be run in CI because of a problem with the high price of gas on the local chain (for the first transaction). We can't deal with this through synpress (lack of functionality), so until the gas price is fixed (flat-gas) [OCT-1340] (https://linear.app/golemfoundation/issue/OCT-1340/cypress-enable-tests-blocked-by-non-flat-gas-price), we split the tests into enabled (yarn synpress:run) and disabled (yarn synpress:run-disabled-on-ci) on CI .

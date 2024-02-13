@@ -19,17 +19,15 @@ const GET_LARGEST_LOCKED_AMOUNT = graphql(`
 export default function useLargestLockedAmount(): UseQueryResult<BigNumber> {
   const { subgraphAddress } = env;
 
-  return useQuery<GetLargestLockedAmountQuery, any, BigNumber, any>(
-    QUERY_KEYS.largestLockedAmount,
-    async () => request(subgraphAddress, GET_LARGEST_LOCKED_AMOUNT),
-    {
-      refetchOnMount: false,
-      select: data => {
-        if (!data?.lockeds?.length) {
-          return BigNumber.from(0);
-        }
-        return parseUnits(data.lockeds[0].amount, 'wei');
-      },
+  return useQuery<GetLargestLockedAmountQuery, any, BigNumber, any>({
+    queryFn: async () => request(subgraphAddress, GET_LARGEST_LOCKED_AMOUNT),
+    queryKey: QUERY_KEYS.largestLockedAmount,
+    refetchOnMount: false,
+    select: data => {
+      if (!data?.lockeds?.length) {
+        return BigNumber.from(0);
+      }
+      return parseUnits(data.lockeds[0].amount, 'wei');
     },
-  );
+  });
 }

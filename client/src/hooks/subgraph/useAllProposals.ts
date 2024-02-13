@@ -23,15 +23,13 @@ export default function useAllProposals(): UseQueryResult<string[] | null | unde
     any,
     string[] | null | undefined,
     QueryKeys['projectsMetadataAccumulateds']
-  >(
-    QUERY_KEYS.projectsMetadataAccumulateds,
-    async () => request(subgraphAddress, GET_PROJECTS_METADATA_ACCUMULATEDS),
-    {
-      select: data =>
-        data?.projectsMetadataAccumulateds.reduce<string[]>(
-          (acc, curr) => [...new Set(acc.concat(curr.projectsAddresses))],
-          [],
-        ),
-    },
-  );
+  >({
+    queryFn: async () => request(subgraphAddress, GET_PROJECTS_METADATA_ACCUMULATEDS),
+    queryKey: QUERY_KEYS.projectsMetadataAccumulateds,
+    select: data =>
+      data?.projectsMetadataAccumulateds.reduce<string[]>(
+        (acc, curr) => [...new Set(acc.concat(curr.projectsAddresses))],
+        [],
+      ),
+  });
 }

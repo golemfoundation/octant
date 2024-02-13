@@ -12,8 +12,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
        * setupMetamask is required in each test suite.
        */
       cy.setupMetamask();
-      cy.activateShowTestnetNetworksInMetamask();
-      cy.changeMetamaskNetwork('sepolia');
     });
 
     beforeEach(() => {

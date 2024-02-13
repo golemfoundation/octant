@@ -36,9 +36,8 @@ type UseLockedsDataResponse =
 export default function useLockedsData(): UseQueryResult<UseLockedsDataResponse> {
   const { subgraphAddress } = env;
 
-  return useQuery<GetLockedsDataQuery, any, UseLockedsDataResponse, any>(
-    QUERY_KEYS.totalAddresses,
-    async () => {
+  return useQuery<GetLockedsDataQuery, any, UseLockedsDataResponse, any>({
+    queryFn: async () => {
       const pageSize = 1000;
       const lockeds: GetLockedsDataQuery['lockeds'] = [];
 
@@ -59,26 +58,24 @@ export default function useLockedsData(): UseQueryResult<UseLockedsDataResponse>
 
       return { lockeds };
     },
-    {
-      refetchOnMount: false,
-      select: data => {
-        if (!data?.lockeds?.length) {
-          return undefined;
-        }
+    queryKey: QUERY_KEYS.totalAddresses,
+    refetchOnMount: false,
+    select: data => {
+      if (!data?.lockeds?.length) {
+        return undefined;
+      }
 
-        const groupedByDate = getMetricsChartDataGroupedByDate(
-          data.lockeds,
-          'lockeds',
-        ) as GroupedUsersByDateItem[];
+      const groupedByDate = getMetricsChartDataGroupedByDate(
+        data.lockeds,
+        'lockeds',
+      ) as GroupedUsersByDateItem[];
 
-        const totalAddressesWithoutDuplicates =
-          groupedByDate[groupedByDate.length - 1].users.length;
+      const totalAddressesWithoutDuplicates = groupedByDate[groupedByDate.length - 1].users.length;
 
-        return {
-          groupedByDate,
-          totalAddresses: totalAddressesWithoutDuplicates,
-        };
-      },
+      return {
+        groupedByDate,
+        totalAddresses: totalAddressesWithoutDuplicates,
+      };
     },
-  );
+  });
 }

@@ -25,10 +25,6 @@ const EarnHistory: FC<EarnHistoryProps> = ({ className }) => {
   const { fetchNextPage, history, hasNextPage, isFetching: isFetchingHistory } = useHistory();
   const isProjectAdminMode = useIsProjectAdminMode();
 
-  const onLoadNextHistoryPart = () => {
-    fetchNextPage();
-  };
-
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const showLoader = isFetchingHistory && !isPreLaunch && !history?.length;
 
@@ -62,7 +58,7 @@ const EarnHistory: FC<EarnHistoryProps> = ({ className }) => {
           hasMore={hasNextPage}
           initialLoad
           loader={<EarnHistorySkeleton key="history-loader" />}
-          loadMore={onLoadNextHistoryPart}
+          loadMore={fetchNextPage}
           pageStart={0}
         >
           <EarnHistoryList history={[...(transactionsPendingSorted || []), ...history]} />

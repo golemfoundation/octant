@@ -20,8 +20,10 @@ type EpochInfo = {
 export default function useEpochInfo(
   epoch: number,
   options?: UseQueryOptions<Response, unknown, EpochInfo, any>,
-): UseQueryResult<EpochInfo> {
-  return useQuery(QUERY_KEYS.epochInfo(epoch), () => apiGetEpochInfo(epoch), {
+): UseQueryResult<EpochInfo, unknown> {
+  return useQuery({
+    queryFn: () => apiGetEpochInfo(epoch),
+    queryKey: QUERY_KEYS.epochInfo(epoch),
     select: response => ({
       individualRewards: parseUnits(response.individualRewards, 'wei'),
       leftover: response.leftover ? parseUnits(response.leftover, 'wei') : BigNumber.from(0),

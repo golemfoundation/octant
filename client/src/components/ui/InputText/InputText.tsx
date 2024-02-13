@@ -70,7 +70,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
         <label>
           {label && <div className={styles.label}>{label}</div>}
           <div className={cx(styles.inputWrapper, isDisabled && styles.isDisabled)}>
-            <input {...inputProps} />
+            <input {...inputProps} data-test={dataTest} />
             {variant === 'simple' && value && isButtonClearVisible && (
               <Button
                 className={cx(styles.buttonClear, !!suffix && styles.isSuffix)}

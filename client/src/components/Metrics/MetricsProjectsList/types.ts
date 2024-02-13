@@ -1,8 +1,7 @@
-import { BigNumber } from 'ethers';
+import { ResponseItem } from 'hooks/helpers/useUserAllocationsAllEpochs';
 
 export default interface MetricsProjectsListProps {
-  epoch: number;
   isLoading: boolean;
   numberOfSkeletons: number;
-  projects: { address: string; value: BigNumber }[];
+  projects: ResponseItem['elements'];
 }

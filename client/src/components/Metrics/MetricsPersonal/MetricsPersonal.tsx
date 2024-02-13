@@ -7,10 +7,8 @@ import MetricsHeader from 'components/Metrics/MetricsHeader';
 import TipTile from 'components/shared/TipTile';
 import { METRICS_PERSONAL_ID } from 'constants/metrics';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
+import useMetricsPersonalDataRewardsUsage from 'hooks/helpers/useMetricsPersonalDataRewardsUsage';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
-import useIndividualReward from 'hooks/queries/useIndividualReward';
-import useUserAllocations from 'hooks/queries/useUserAllocations';
-import useWithdrawals from 'hooks/queries/useWithdrawals';
 import useSettingsStore from 'store/settings/store';
 
 import styles from './MetricsPersonal.module.scss';
@@ -32,15 +30,10 @@ const MetricsPersonal = (): ReactElement => {
     },
   }));
   const { isFetching: isFetchingCryptoValues } = useCryptoValues(displayCurrency);
-  const { isFetching: isFetchingIndividualReward } = useIndividualReward();
-  const { isFetching: isFetchingWithdrawals } = useWithdrawals();
-  const { isFetching: isFetchingUserAllocations } = useUserAllocations();
+  const { isFetching: isFetchingMetricsPersonalDataRewardsUsage } =
+    useMetricsPersonalDataRewardsUsage();
 
-  const isLoading =
-    isFetchingCryptoValues ||
-    isFetchingIndividualReward ||
-    isFetchingWithdrawals ||
-    isFetchingUserAllocations;
+  const isLoading = isFetchingCryptoValues || isFetchingMetricsPersonalDataRewardsUsage;
 
   return (
     <div className={styles.root} id={METRICS_PERSONAL_ID}>

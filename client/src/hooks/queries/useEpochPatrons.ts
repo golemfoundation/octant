@@ -8,8 +8,10 @@ type UseEpochPatrons = string[];
 export default function useEpochPatrons(
   epoch: number,
   options?: UseQueryOptions<Response, unknown, UseEpochPatrons, any>,
-): UseQueryResult<UseEpochPatrons> {
-  return useQuery(QUERY_KEYS.epochPatrons(epoch), () => apiGetEpochPatrons(epoch), {
+): UseQueryResult<UseEpochPatrons, unknown> {
+  return useQuery({
+    queryFn: () => apiGetEpochPatrons(epoch),
+    queryKey: QUERY_KEYS.epochPatrons(epoch),
     select: response => response.patrons,
     ...options,
   });

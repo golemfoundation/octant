@@ -5,8 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import MetricsDonationsProgressBar from 'components/Metrics/MetricsDonationsProgressBar';
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
-import useIndividualReward from 'hooks/queries/useIndividualReward';
-import useUserAllocations from 'hooks/queries/useUserAllocations';
+import useMetricsPersonalDataRewardsUsage from 'hooks/helpers/useMetricsPersonalDataRewardsUsage';
 
 import MetricsPersonalGridDonationsProgressBarProps from './types';
 
@@ -14,25 +13,31 @@ const MetricsPersonalGridDonationsProgressBar: FC<MetricsPersonalGridDonationsPr
   isLoading,
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
-  const { data: userAllocations } = useUserAllocations();
-  const { data: individualReward } = useIndividualReward();
+  const { data: metricsPersonalDataRewardsUsage } = useMetricsPersonalDataRewardsUsage();
 
-  const userAllocationsSum =
-    userAllocations?.elements.reduce((acc, curr) => acc.add(curr.value), BigNumber.from(0)) ||
-    BigNumber.from(0);
-
-  const userAllocationsSumNumber = parseFloat(formatUnits(userAllocationsSum));
-  const individualRewardNumber = parseFloat(formatUnits(individualReward || BigNumber.from(0)));
+  const totalDonationsNumber = parseFloat(
+    formatUnits(metricsPersonalDataRewardsUsage?.totalDonations || BigNumber.from(0)),
+  );
+  const totalRewardsUsedNumber = parseFloat(
+    formatUnits(metricsPersonalDataRewardsUsage?.totalRewardsUsed || BigNumber.from(0)),
+  );
 
   const donationsValue =
-    individualRewardNumber > 0 ? (userAllocationsSumNumber / individualRewardNumber) * 100 : 0;
+    totalRewardsUsedNumber > 0 ? (totalDonationsNumber / totalRewardsUsedNumber) * 100 : 0;
 
   return (
     <MetricsGridTile
       groups={[
         {
           children: (
-            <MetricsDonationsProgressBar donationsValue={donationsValue} isLoading={isLoading} />
+            <MetricsDonationsProgressBar
+              donationsValue={donationsValue}
+              isDisabled={
+                !!metricsPersonalDataRewardsUsage?.totalDonations.isZero() &&
+                !!metricsPersonalDataRewardsUsage?.totalWithdrawals.isZero()
+              }
+              isLoading={isLoading}
+            />
           ),
           title: t('donationsVsPersonalAllocationValue'),
         },

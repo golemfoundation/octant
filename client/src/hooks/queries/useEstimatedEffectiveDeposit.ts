@@ -10,17 +10,15 @@ import useCurrentEpoch from './useCurrentEpoch';
 
 export default function useEstimatedEffectiveDeposit(
   options?: UseQueryOptions<Response, unknown, BigNumber, any>,
-): UseQueryResult<BigNumber> {
+): UseQueryResult<BigNumber, unknown> {
   const { address } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
 
-  return useQuery(
-    QUERY_KEYS.estimatedEffectiveDeposit(address!),
-    () => apiGetEstimatedEffectiveDeposit(address!),
-    {
-      enabled: !!currentEpoch && !!address && currentEpoch > 0,
-      select: response => parseUnits(response.effectiveDeposit, 'wei'),
-      ...options,
-    },
-  );
+  return useQuery({
+    enabled: !!currentEpoch && !!address && currentEpoch > 0,
+    queryFn: () => apiGetEstimatedEffectiveDeposit(address!),
+    queryKey: QUERY_KEYS.estimatedEffectiveDeposit(address!),
+    select: response => parseUnits(response.effectiveDeposit, 'wei'),
+    ...options,
+  });
 }

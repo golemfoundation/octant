@@ -14,7 +14,7 @@ export default function useProposalDonors(
   proposalAddress: string,
   epoch?: number,
   options?: UseQueryOptions<Response, unknown, ProposalDonor[], any>,
-): UseQueryResult<ProposalDonor[]> {
+): UseQueryResult<ProposalDonor[], unknown> {
   const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
@@ -38,21 +38,19 @@ export default function useProposalDonors(
     event: WebsocketListenEvent.proposalDonors,
   });
 
-  return useQuery(
-    QUERY_KEYS.proposalDonors(
-      proposalAddress,
-      epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
-    ),
-    () =>
+  return useQuery({
+    enabled: !!proposalAddress && (epoch !== undefined || !!(currentEpoch && currentEpoch > 1)),
+    queryFn: () =>
       apiGetProposalDonors(
         proposalAddress,
         epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
       ),
-    {
-      enabled: !!proposalAddress && (epoch !== undefined || !!(currentEpoch && currentEpoch > 1)),
-      select: response => mapDataToProposalDonors(response),
-      staleTime: Infinity,
-      ...options,
-    },
-  );
+    queryKey: QUERY_KEYS.proposalDonors(
+      proposalAddress,
+      epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
+    ),
+    select: response => mapDataToProposalDonors(response),
+    staleTime: Infinity,
+    ...options,
+  });
 }

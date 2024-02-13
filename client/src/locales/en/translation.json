@@ -48,7 +48,8 @@
     "donors": "Donors",
     "projects": "Projects",
     "available": "Available",
-    "totalDonated": "Total donated"
+    "totalDonated": "Total donated",
+    "waitingForConfirmation": "Waiting for confirmation"
   },
   "components": {
     "settings": {
@@ -165,7 +166,6 @@
           "approve": "Approve"
         },
         "glmLockTabs": {
-          "waitingForConformation": "Waiting for confirmation",
           "useMax": "Use max",
           "amountToLock": "Amount to lock",
           "amountToUnlock": "Amount to unlock",
@@ -266,8 +266,7 @@
         "rewardsBudget": "Rewards Budget",
         "amount": "Amount",
         "estimatedGasPrice": "Est. gas price",
-        "withdrawAll": "Withdraw all",
-        "waitingForConfirmation": "Waiting for confirmation"
+        "withdrawAll": "Withdraw all"
       }
     }
   },
@@ -287,9 +286,8 @@
     "fundrasingOnOctant": "{{projectName}} is fundrasing on Octant"
   },
   "toasts": {
-    "cantRemoveProjectWithDonations": {
-      "title": "You can't remove projects with donations",
-      "message": "Set your donation to zero in Allocate view to enable project removal"
+    "confirmChanges": {
+      "title": "Please confirm your allocation to keep your changes"
     },
     "wrongNetwork": {
       "title": "Wrong network",

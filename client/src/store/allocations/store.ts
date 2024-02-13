@@ -21,6 +21,16 @@ export default getStoreWithMeta<AllocationsData, AllocationsMethods>({
         return { data: { ...state.data, allocations: newAllocations } };
       });
     },
+    removeAllocations: payload => {
+      set(state => {
+        if (state.data.allocations.length === 0) {
+          return { data: { ...state.data } };
+        }
+        const newAllocations = state.data.allocations.filter(element => !payload.includes(element));
+        localStorage.setItem(ALLOCATION_ITEMS_KEY, JSON.stringify(newAllocations));
+        return { data: { ...state.data, allocations: newAllocations } };
+      });
+    },
     setAllocations: payload => {
       localStorage.setItem(ALLOCATION_ITEMS_KEY, JSON.stringify(payload));
       set(state => ({

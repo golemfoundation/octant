@@ -1,4 +1,4 @@
-import { format } from 'date-fns-tz';
+import { format } from 'date-fns';
 import React, { FC, Fragment, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
@@ -46,6 +46,7 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
             dataTest: 'BoxPersonalAllocation__Section',
             doubleValueProps: {
               cryptoCurrency: 'ethereum',
+              dataTest: 'BoxPersonalAllocation__Section--pending__DoubleValue',
               isFetching: isFetchingWithdrawals,
               valueCrypto: withdrawals?.sums.pending,
             },
@@ -84,6 +85,7 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
       doubleValueProps: {
         coinPricesServerDowntimeText: !isProjectAdminMode ? '...' : undefined,
         cryptoCurrency: 'ethereum',
+        dataTest: 'BoxPersonalAllocation__Section--availableNow__DoubleValue',
         isFetching: isFetchingWithdrawals || isAppWaitingForTransactionToBeIndexed,
         valueCrypto: withdrawals?.sums.available,
       },

@@ -21,6 +21,11 @@ export type Scalars = {
   BigDecimal: { input: any; output: any };
   BigInt: { input: any; output: any };
   Bytes: { input: any; output: any };
+  /**
+   * 8 bytes signed integer
+   *
+   */
+  Int8: { input: any; output: any };
 };
 
 export type BlockChangedFilter = {
@@ -1224,6 +1229,15 @@ export type GetProjectsMetadataPerEpochesQuery = {
   }>;
 };
 
+export type GetUserWithdrawalsQueryVariables = Exact<{
+  address?: InputMaybe<Scalars['Bytes']['input']>;
+}>;
+
+export type GetUserWithdrawalsQuery = {
+  __typename?: 'Query';
+  withdrawals: Array<{ __typename?: 'Withdrawal'; amount: any }>;
+};
+
 export const GetProjectsMetadataAccumulatedsDocument = {
   kind: 'Document',
   definitions: [
@@ -1606,3 +1620,49 @@ export const GetProjectsMetadataPerEpochesDocument = {
   GetProjectsMetadataPerEpochesQuery,
   GetProjectsMetadataPerEpochesQueryVariables
 >;
+export const GetUserWithdrawalsDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetUserWithdrawals' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'address' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Bytes' } },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'withdrawals' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'where' },
+                value: {
+                  kind: 'ObjectValue',
+                  fields: [
+                    {
+                      kind: 'ObjectField',
+                      name: { kind: 'Name', value: 'user' },
+                      value: { kind: 'Variable', name: { kind: 'Name', value: 'address' } },
+                    },
+                  ],
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'amount' } }],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetUserWithdrawalsQuery, GetUserWithdrawalsQueryVariables>;

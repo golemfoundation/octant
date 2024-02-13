@@ -68,6 +68,7 @@ export type QueryKeys = {
   ) => [Root['proposalsIpfsResults'], string, string];
   syncStatus: ['syncStatus'];
   totalAddresses: ['totalAddresses'];
+  totalWithdrawals: ['totalWithdrawals'];
   unlocks: ['unlocks'];
   userAllocationNonce: (userAddress: string) => [Root['userAllocationNonce'], string];
   userAllocations: (epochNumber: number) => [Root['userAllocations'], string];

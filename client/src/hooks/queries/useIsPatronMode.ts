@@ -6,11 +6,13 @@ import { QUERY_KEYS } from 'api/queryKeys';
 
 export default function useIsPatronMode(
   options?: UseQueryOptions<ApiPatronModeResponse, unknown, boolean, any>,
-): UseQueryResult<boolean> {
+): UseQueryResult<boolean, unknown> {
   const { address } = useAccount();
 
-  return useQuery(QUERY_KEYS.patronMode(address!), () => apiGetPatronMode(address!), {
+  return useQuery({
     enabled: !!address,
+    queryFn: () => apiGetPatronMode(address!),
+    queryKey: QUERY_KEYS.patronMode(address!),
     select: data => data.status,
     ...options,
   });

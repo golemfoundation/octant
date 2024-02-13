@@ -30,6 +30,7 @@ const MetricsEpochGridTopProjects: FC<MetricsEpochGridTopProjectsProps> = ({
     proposalsIpfsWithRewards
       .slice(0, numberOfProjects)
       .map(({ totalValueOfAllocations, ...rest }) => ({
+        epoch,
         value: totalValueOfAllocations!,
         ...rest,
       })) || [];
@@ -42,7 +43,6 @@ const MetricsEpochGridTopProjects: FC<MetricsEpochGridTopProjectsProps> = ({
         {
           children: (
             <MetricsProjectsList
-              epoch={epoch}
               isLoading={isLoading}
               numberOfSkeletons={numberOfProjects}
               projects={projects}
