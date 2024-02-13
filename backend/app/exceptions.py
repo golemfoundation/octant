@@ -23,6 +23,14 @@ class InvalidEpoch(OctantException):
         super().__init__(self.description, self.code)
 
 
+class NotImplementedForGivenEpochState(OctantException):
+    code = 400
+    description = "Functionality is not implemented for given epoch state"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
 class EpochNotStartedYet(OctantException):
     code = 400
     description = "Given epoch has not yet started."
@@ -79,6 +87,14 @@ class RewardsBudgetExceeded(OctantException):
         super().__init__(self.description, self.code)
 
 
+class BudgetNotFound(OctantException):
+    code = 404
+    description = "User {} does not have a budget for epoch {}"
+
+    def __init__(self, user_address, epoch_num):
+        super().__init__(self.description.format(user_address, epoch_num), self.code)
+
+
 class DuplicatedProposals(OctantException):
     code = 400
     description = "The following proposals are duplicated in the payload: {}"
@@ -90,6 +106,14 @@ class DuplicatedProposals(OctantException):
 class MissingSnapshot(OctantException):
     code = 500
     description = "No snapshot has been taken. Try calling /snapshot/pending or /snapshot/finalized endpoint"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
+class SnapshotAlreadyExists(OctantException):
+    code = 400
+    description = "Snapshot for given epoch already exists"
 
     def __init__(self):
         super().__init__(self.description, self.code)

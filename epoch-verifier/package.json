@@ -1,0 +1,33 @@
+{
+  "name": "epoch-verifier",
+  "version": "1.0.0",
+  "license": "GPL-3.0",
+  "scripts": {
+    "verify": "npx vite-node src/verifier.ts",
+    "verify:custom": "npx vite-node src/verifier.ts --url",
+    "verify:help": "npx vite-node src/verifier.ts --help",
+    "verify:mainnet": "npx vite-node src/verifier.ts --deployment mainnet",
+    "verify:master": "npx vite-node src/verifier.ts --deployment master",
+    "verify:rc": "npx vite-node src/verifier.ts --deployment rc",
+    "verify:testnet": "npx vite-node src/verifier.ts --deployment testnet",
+    "verify:uat": "npx vite-node src/verifier.ts --deployment uat",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "yarn run compile",
+    "pretest": "yarn run compile",
+    "posttest": "yarn run lint"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.6",
+    "gts": "^5.2.0",
+    "typescript": "~5.2.0",
+    "vite-node": "^1.2.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.5",
+    "commander": "^11.1.0",
+    "spinnies": "^0.5.1"
+  }
+}

@@ -8,9 +8,4 @@ EIP1271_MAGIC_VALUE_BYTES = "20c13b0b"
 
 
 GLM_TOTAL_SUPPLY_WEI = 1_000000000_000000000_000000000
-
-# TODO call an API to get a real value instead of hardcoding: https://linear.app/golemfoundation/issue/OCT-902/api-call-to-get-validators-api
-ESTIMATED_STAKING_APR = 0.0345
-
-# TODO consider calling API to get this value: https://linear.app/golemfoundation/issue/OCT-901/cache-a-call-to-beaconchain-on-external-api-level
-ESTIMATED_STAKED_AMOUNT = 100000_000000000_000000000
+ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"

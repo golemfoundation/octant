@@ -4,9 +4,10 @@ from flask_restx import reqparse
 
 from eth_utils import to_checksum_address
 
-import app.controllers.user as user_controller
+import app.legacy.controllers.user as user_controller
 from app.extensions import api
 from app.infrastructure import OctantResource
+from app.modules.user.patron_mode.controller import get_patrons_addresses
 from app.settings import config
 
 
@@ -41,6 +42,16 @@ user_patron_mode_status_model = api.model(
         "status": fields.Boolean(
             required=True,
             description="Flag indicating whether user has enabled patron mode",
+        ),
+    },
+)
+
+
+patrons_model = api.model(
+    "Patrons",
+    {
+        "patrons": fields.List(
+            fields.String, required=True, description="Patrons address"
         ),
     },
 )
@@ -145,3 +156,21 @@ class PatronMode(OctantResource):
         )
 
         return {"status": patron_mode_status}, 200
+
+
+@ns.route("/patrons/<int:epoch>")
+class Patrons(OctantResource):
+    @ns.doc(
+        description="Returns a list of users who toggled patron mode and has a positive budget in given epoch",
+        params={
+            "epoch": "Epoch number",
+        },
+    )
+    @ns.marshal_with(patrons_model)
+    @ns.response(200, "Patrons addresses retrieved")
+    def get(self, epoch: int):
+        app.logger.debug(f"Getting patrons addresses for epoch {epoch}")
+        patrons = get_patrons_addresses(epoch)
+        app.logger.debug(f"Patrons addresses: {patrons}")
+
+        return {"patrons": patrons}

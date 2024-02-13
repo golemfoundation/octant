@@ -1,4 +1,4 @@
-"""add column of isManuallyEdited to allocations_requests table 
+"""add column of isManuallyEdited to allocations_requests table
 
 Revision ID: 449308032075
 Revises: f81d796a7ab8

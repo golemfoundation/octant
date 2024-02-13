@@ -46,6 +46,7 @@
     "valueCantBeEmpty": "Value can't be empty",
     "lessThan1m": "less than 1m",
     "donors": "Donors",
+    "projects": "Projects",
     "available": "Available",
     "totalDonated": "Total donated",
     "waitingForConfirmation": "Waiting for confirmation"
@@ -345,12 +346,23 @@
       }
     },
     "metrics": {
+      "open": "Open",
+      "overview": "Overview",
+      "epoch": "Epoch",
+      "epochAllocationWindow": "Epoch {{epoch}} Allocation Window",
+      "epochAllocation": "E{{epoch}} Allocation",
+      "yourMetrics": "Your metrics",
+      "totalRewards": "Total rewards",
+      "allocationsInEth": "Allocations in ETH",
+      "generalMetrics": "General metrics",
+      "totalWithdrawals": "Total withdrawals",
+      "donationsVsPersonalAllocationValue": "Donations vs personal allocation value",
+      "noAllocationsYet": "No allocations yet",
       "totalProjects": "Total projects",
       "totalEthStaked": "Total ETH Staked",
       "totalGlmLocked": "Total GLM Locked",
       "of1BTotalSupply": "of 1B total supply",
       "totalAddresses": "Total addresses",
-      "largestGlmLock": "largest GLM lock",
       "cumulativeGlmLocked": "Cumulative GLM Locked",
       "walletsWithGlmLocked": "Wallets with GLM locked",
       "epochAllocationStartsIn": "Epoch {{epoch}} allocation starts in",
@@ -359,7 +371,29 @@
       "tip": {
         "title": "Check the stats",
         "text": "View the data about all the decisions taken in the previous epoch here in <0>Metrics</0>"
-      }
+      },
+      "connectWalletTip": {
+        "title": "Connect your wallet",
+        "text": "To see your own personal stats here, <0/>you will need to connect your wallet"
+      },
+      "belowThreshold": "Below threshold",
+      "ethBelowThreshold": "ETH Below threshold",
+      "totalPersonal": "Total personal",
+      "totalDonations": "Total donations",
+      "averageLeverage": "Average leverage",
+      "currentDonors": "Current donors",
+      "patrons": "Patrons",
+      "rewardsUnused": "Rewards unused",
+      "unallocatedValue": "Unallocated value",
+      "users": "Users",
+      "topProjectsByEthRaised": "Top {{numberOfProjects}} projects by ETH raised",
+      "totalUsers": "Total users",
+      "fundsUsage": "Epoch {{epoch}} funds usage ",
+      "epochTotal": "Epoch {{epoch}} Total",
+      "leftover": "Leftover",
+      "projectCosts": "Project costs",
+      "matchRewards": "Match rewards",
+      "userRewards": "User rewards"
     },
     "onboarding": {
       "stepsCommon": {

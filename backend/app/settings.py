@@ -61,10 +61,6 @@ class Config(object):
         os.getenv("EPOCH_2_STAKING_PROCEEDS_SURPLUS", 0)
     )
 
-    SHOULD_HARDCODE_EPOCHS_1_AND_2 = _parse_bool(
-        os.getenv("SHOULD_HARDCODE_EPOCHS_1_AND_2", "false")
-    )
-
 
 class ProdConfig(Config):
     """Production configuration."""
@@ -94,7 +90,7 @@ class DevConfig(Config):
     DEBUG = True
     LOG_LVL = os.getenv("OCTANT_LOG_LEVEL", "DEBUG")
     DB_NAME = "dev.db"
-    CHAIN_ID = 1337
+    CHAIN_ID = int(os.getenv("CHAIN_ID", 1337))
     # Put the db file in project root
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{DB_PATH}"

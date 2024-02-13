@@ -31,6 +31,8 @@ const documents = {
     types.GetLockedsDataDocument,
   '\n  query GetProjectsMetadataPerEpoches {\n    projectsMetadataPerEpoches(orderBy: epoch, orderDirection: asc) {\n      epoch\n      proposalsCid\n    }\n  }\n':
     types.GetProjectsMetadataPerEpochesDocument,
+  '\n  query GetUserWithdrawals($address: Bytes) {\n    withdrawals(where: { user: $address }) {\n      amount\n    }\n  }\n':
+    types.GetUserWithdrawalsDocument,
 };
 
 /**
@@ -101,6 +103,12 @@ export function graphql(
 export function graphql(
   source: '\n  query GetProjectsMetadataPerEpoches {\n    projectsMetadataPerEpoches(orderBy: epoch, orderDirection: asc) {\n      epoch\n      proposalsCid\n    }\n  }\n',
 ): (typeof documents)['\n  query GetProjectsMetadataPerEpoches {\n    projectsMetadataPerEpoches(orderBy: epoch, orderDirection: asc) {\n      epoch\n      proposalsCid\n    }\n  }\n'];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: '\n  query GetUserWithdrawals($address: Bytes) {\n    withdrawals(where: { user: $address }) {\n      amount\n    }\n  }\n',
+): (typeof documents)['\n  query GetUserWithdrawals($address: Bytes) {\n    withdrawals(where: { user: $address }) {\n      amount\n    }\n  }\n'];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

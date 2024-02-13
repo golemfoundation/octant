@@ -16,7 +16,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   let proposalAddresses = PROPOSALS_ADDRESSES.split(',');
   for (const item of proposalAddresses) {
     /* eslint-disable no-console */
-    console.log("proposal address: ", item);
+    console.log('proposal address: ', item);
   }
 
   /// for localhost and testnet same set of proposals is used

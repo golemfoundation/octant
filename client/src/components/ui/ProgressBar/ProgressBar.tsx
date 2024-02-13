@@ -10,6 +10,7 @@ const ProgressBar: FC<ProgressBarProps> = ({
   labelLeft,
   labelRight,
   color = 'green',
+  trackColor = 'grey',
   variant = 'normal',
 }) => (
   <div className={cx(styles.root, className)}>
@@ -19,7 +20,9 @@ const ProgressBar: FC<ProgressBarProps> = ({
         <div className={styles.label}>{labelRight}</div>
       </div>
     )}
-    <div className={cx(styles.bar, styles[`variant--${variant}`])}>
+    <div
+      className={cx(styles.bar, styles[`variant--${variant}`], styles[`trackColor--${trackColor}`])}
+    >
       <div
         className={cx(
           styles.filled,

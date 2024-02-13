@@ -14,7 +14,7 @@ export const autoCloseDefault = 5000;
 export default function triggerToast({ options, autoClose, ...rest }: TriggerToast): Id {
   return toast(<Toast {...rest} />, {
     autoClose: autoClose ?? autoCloseDefault,
-    hideProgressBar: false, // it's hidden in toast.css styles, look for comment there.
+    hideProgressBar: true,
     ...options,
   });
 }

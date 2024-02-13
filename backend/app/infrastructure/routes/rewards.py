@@ -1,10 +1,17 @@
-from flask import current_app as app, request
+from eth_utils import to_checksum_address
+from flask import current_app as app
 from flask_restx import Namespace, fields
 
-from app.controllers import rewards
-from app.controllers.user import estimate_budget, get_budget
 from app.extensions import api
 from app.infrastructure import OctantResource
+from app.infrastructure.routes.validations.user_validations import (
+    validate_estimate_budget_inputs,
+)
+from app.legacy.controllers import rewards
+from app.legacy.utils.time import days_to_sec
+from app.modules.octant_rewards.controller import get_leverage
+from app.modules.user.budgets.controller import estimate_budget, get_budgets, get_budget
+from app.modules.user.rewards.controller import get_unused_rewards
 
 ns = Namespace("rewards", description="Octant rewards")
 api.add_namespace(ns)
@@ -18,13 +25,23 @@ user_budget_model = api.model(
     },
 )
 
-
-epoch_budget_model = api.model(
+epoch_budget_item = api.model(
     "EpochBudgetItem",
     {
-        "user": fields.String(required=True, description="User address"),
-        "budget": fields.String(
+        "address": fields.String(required=True, description="User address"),
+        "amount": fields.String(
             required=True, description="User budget for given epoch, BigNumber (wei)"
+        ),
+    },
+)
+
+epoch_budget_model = api.model(
+    "EpochBudgets",
+    {
+        "budgets": fields.List(
+            fields.Nested(epoch_budget_item),
+            required=True,
+            description="Users budgets for given epoch, BigNumber (wei)",
         ),
     },
 )
@@ -58,6 +75,30 @@ budget_model = api.model(
     },
 )
 
+unused_rewards_model = api.model(
+    "UnusedRewards",
+    {
+        "addresses": fields.List(
+            fields.String,
+            required=True,
+            description="Users that neither allocated rewards nor toggled patron mode",
+        ),
+        "value": fields.String(
+            required=True,
+            description="Total unused rewards sum in an epoch (WEI)",
+        ),
+    },
+)
+
+leverage_model = api.model(
+    "Leverage",
+    {
+        "leverage": fields.Float(
+            required=True, description="Leverage of the allocated funds"
+        )
+    },
+)
+
 estimated_budget_request = ns.model(
     "EstimatedBudget",
     {
@@ -71,7 +112,6 @@ estimated_budget_request = ns.model(
         ),
     },
 )
-
 
 epoch_rewards_merkle_tree_leaf_model = api.model(
     "EpochRewardsMerkleTreeLeaf",
@@ -148,9 +188,10 @@ class UserBudget(OctantResource):
     @ns.marshal_with(user_budget_model)
     @ns.response(200, "Budget successfully retrieved")
     def get(self, user_address, epoch):
-        app.logger.debug(f"Getting user {user_address} budget in epoch {epoch}")
-        budget = get_budget(user_address, epoch)
-        app.logger.debug(f"User {user_address} budget in epoch {epoch}: {budget}")
+        checksum_address = to_checksum_address(user_address)
+        app.logger.debug(f"Getting user {checksum_address} budget in epoch {epoch}")
+        budget = get_budget(checksum_address, epoch)
+        app.logger.debug(f"User {checksum_address} budget in epoch {epoch}: {budget}")
 
         return {"budget": budget}
 
@@ -163,30 +204,13 @@ class UserBudget(OctantResource):
     },
 )
 class EpochBudgets(OctantResource):
-    representations = {
-        "application/json": OctantResource.encode_json_response,
-        "text/csv": OctantResource.encode_csv_response,
-    }
-
-    @ns.produces(["application/json", "text/csv"])
     @ns.marshal_with(epoch_budget_model)
     @ns.response(200, "Epoch individual budgets successfully retrieved")
-    def get(self, epoch):
-        headers = {}
-        data = []
-
-        if EpochBudgets.response_mimetype(request) == "text/csv":
-            headers[
-                "Content-Disposition"
-            ] = f"attachment;filename=budgets_epoch_{epoch}.csv"
-
-            # for csv header resoultion - in case of empty list,
-            # endpoint marshalling will automatically create expected object with nulled fields
-            data.append({})
-
+    def get(self, epoch: int):
         app.logger.debug(f"Get budgets for all users in epoch {epoch}")
-        data += rewards.get_all_budgets(epoch)
-        return data, 200, headers
+        budgets = get_budgets(epoch)
+        app.logger.debug(f"Budgets for all users in epoch {epoch}: {budgets}")
+        return {"budgets": budgets}
 
 
 @ns.route("/estimated_budget")
@@ -202,7 +226,9 @@ class EstimatedUserBudget(OctantResource):
         app.logger.debug(
             f"Getting user estimated budget for {days} days and {glm_amount} GLM"
         )
-        budget = estimate_budget(days, glm_amount)
+        validate_estimate_budget_inputs(days, glm_amount)
+        lock_duration_sec = days_to_sec(days)
+        budget = estimate_budget(lock_duration_sec, glm_amount)
         app.logger.debug(f"Estimated user budget: {budget}")
 
         return {"budget": budget}
@@ -268,6 +294,46 @@ class EstimatedProposalsRewards(OctantResource):
         app.logger.debug(f"Proposal rewards in pending epoch: {proposal_rewards}")
 
         return {"rewards": proposal_rewards}
+
+
+@ns.route("/unused/<int:epoch>")
+class UnusedRewards(OctantResource):
+    @ns.doc(
+        description="Returns unallocated value and the number of users who didn't use their rewards in an epoch",
+        params={
+            "epoch": "Epoch number",
+        },
+    )
+    @ns.marshal_with(unused_rewards_model)
+    @ns.response(200, "Unused rewards found")
+    def get(self, epoch: int):
+        app.logger.debug(f"Getting unused rewards for epoch: {epoch}")
+        addresses, value = get_unused_rewards(epoch)
+        app.logger.debug(f"Unused rewards addresses: {addresses}")
+        app.logger.debug(f"Unused rewards value: {value}")
+
+        return {
+            "addresses": addresses,
+            "value": value,
+        }
+
+
+@ns.route("/leverage/<int:epoch>")
+class Leverage(OctantResource):
+    @ns.doc(
+        description="Returns leverage in given epoch",
+        params={
+            "epoch": "Epoch number",
+        },
+    )
+    @ns.marshal_with(leverage_model)
+    @ns.response(200, "Leverage in given epoch")
+    def get(self, epoch: int):
+        app.logger.debug(f"Getting leverage for epoch: {epoch}")
+        leverage = get_leverage(epoch)
+        app.logger.debug(f"Leverage: {leverage}")
+
+        return {"leverage": leverage}
 
 
 @ns.doc(

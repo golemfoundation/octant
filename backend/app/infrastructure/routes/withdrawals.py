@@ -3,7 +3,7 @@ import dataclasses
 from flask import current_app as app
 from flask_restx import Namespace, fields
 
-from app.controllers import withdrawals
+from app.legacy.controllers import withdrawals
 from app.extensions import api
 from app.infrastructure import OctantResource
 
