@@ -5,6 +5,15 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(`metrics: ${device}`, { viewportHeight, viewportWidth }, () => {
+    before(() => {
+      /**
+       * Global Metamask setup done by Synpress is not always done.
+       * Since Synpress needs to have valid provider to fetch the data from contracts,
+       * setupMetamask is required in each test suite.
+       */
+      cy.setupMetamask();
+    });
+
     beforeEach(() => {
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');

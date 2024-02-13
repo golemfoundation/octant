@@ -62,7 +62,11 @@ const Button = <T extends ButtonProps>(
     'iconVertical',
   ].includes(variant);
   const IconToRender = isLoading ? (
-    <Loader color={variant === 'cta' ? 'white' : 'grey'} variant="small" />
+    <Loader
+      color={variant === 'cta' ? 'white' : 'grey'}
+      dataTest={`${dataTest}__Loader`}
+      variant="small"
+    />
   ) : (
     Icon
   );

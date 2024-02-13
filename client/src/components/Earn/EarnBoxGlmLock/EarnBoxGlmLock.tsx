@@ -39,8 +39,10 @@ const EarnBoxGlmLock: FC<EarnBoxGlmLockProps> = ({ classNameBox }) => {
 
   const sections: SectionProps[] = [
     {
+      dataTest: 'BoxGlmLock__Section--current',
       doubleValueProps: {
         cryptoCurrency: 'golem',
+        dataTest: 'BoxGlmLock__Section--current__DoubleValue',
         isFetching: isFetchingDepositValue || isAppWaitingForTransactionToBeIndexed,
         valueCrypto: depositsValue,
       },
@@ -109,6 +111,7 @@ const EarnBoxGlmLock: FC<EarnBoxGlmLockProps> = ({ classNameBox }) => {
       </BoxRounded>
       <ModalEarnGlmLock
         modalProps={{
+          dataTest: 'ModalGlmLock',
           isOpen: isModalGlmLockOpen,
           onClosePanel: () => setIsModalGlmLockOpen(false),
         }}

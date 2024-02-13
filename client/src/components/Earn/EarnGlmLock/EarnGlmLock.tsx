@@ -104,9 +104,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
     setStep(1);
   };
 
-  const onError = () => {
-    onReset(currentMode);
-  };
+  const onError = () => onReset(currentMode);
 
   const lockMutation = useLock({ onError, onMutate, onSuccess });
   const unlockMutation = useUnlock({ onError, onMutate, onSuccess });
