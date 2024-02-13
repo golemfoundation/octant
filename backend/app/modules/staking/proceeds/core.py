@@ -1,6 +1,7 @@
 import pandas as pd
 from gmpy2 import mpz
 
+from app.constants import VALIDATOR_DEPOSIT_GWEI
 from app.extensions import w3
 
 # TODO consider calling API to get this value: https://linear.app/golemfoundation/issue/OCT-901/cache-a-call-to-beaconchain-on-external-api-level
@@ -48,10 +49,16 @@ def sum_mev(
 def sum_withdrawals(withdrawals_txs: list[dict]) -> int:
     df = pd.DataFrame(withdrawals_txs)
     df = df[~df["withdrawalIndex"].duplicated()]
-    total_gwei = df["amount"].apply(lambda x: mpz(x)).sum()
+    total_gwei = df["amount"].apply(mpz).apply(_filter_deposit_withdrawals).sum()
 
     return w3.to_wei(int(total_gwei), "gwei")
 
 
 def aggregate_proceeds(mev: int, withdrawals: int) -> int:
     return mev + withdrawals
+
+
+def _filter_deposit_withdrawals(amount: mpz) -> mpz:
+    if amount >= VALIDATOR_DEPOSIT_GWEI:
+        return amount - VALIDATOR_DEPOSIT_GWEI
+    return amount

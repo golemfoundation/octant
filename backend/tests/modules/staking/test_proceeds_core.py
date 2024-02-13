@@ -217,9 +217,18 @@ def test_sum_withdrawals_filter_duplicates():
 
 def test_sum_withdrawals_overflow_int64():
     withdrawals_txs = [
-        {"amount": "100000000000", "withdrawalIndex": "11446030"},
-        {"amount": "200000000000", "withdrawalIndex": "11446032"},
+        {"amount": "1000000000", "withdrawalIndex": i} for i in range(1000)
     ]
     result = sum_withdrawals(withdrawals_txs)
 
-    assert result == 300000000000000000000
+    assert result == 1000_000000000_000000000
+
+
+def test_sum_withdrawals_filter_deposit_withdrawals():
+    withdrawals_txs = [
+        {"amount": "32000000123", "withdrawalIndex": "1"},
+        {"amount": "20000", "withdrawalIndex": "2"},
+    ]
+    result = sum_withdrawals(withdrawals_txs)
+
+    assert result == 20123_000000000
