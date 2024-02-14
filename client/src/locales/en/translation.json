@@ -387,6 +387,7 @@
       "fundsUsage": "Epoch {{epoch}} funds usage ",
       "epochTotal": "Epoch {{epoch}} Total",
       "leftover": "Leftover",
+      "staking": "Staking",
       "projectCosts": "Project costs",
       "matchRewards": "Match rewards",
       "userRewards": "User rewards"
