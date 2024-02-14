@@ -368,10 +368,6 @@
       "epochAllocationStartsIn": "Epoch {{epoch}} allocation starts in",
       "epochAllocationEndsIn": "Epoch {{epoch}} allocation ends in",
       "totalProjectsSinceEpoch0": "{{projectsAmount}} total since E0",
-      "tip": {
-        "title": "Check the stats",
-        "text": "View the data about all the decisions taken in the previous epoch here in <0>Metrics</0>"
-      },
       "connectWalletTip": {
         "title": "Connect your wallet",
         "text": "To see your own personal stats here, <0/>you will need to connect your wallet"
