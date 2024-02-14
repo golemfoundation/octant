@@ -4,7 +4,6 @@ import MetricsEpoch from 'components/Metrics/MetricsEpoch';
 import MetricsGeneral from 'components/Metrics/MetricsGeneral/MetricsGeneral';
 import MetricsNavigation from 'components/Metrics/MetricsNavigation';
 import MetricsPersonal from 'components/Metrics/MetricsPersonal';
-import MetricsTipTile from 'components/Metrics/MetricsTipTile';
 import Layout from 'components/shared/Layout';
 import { MetricsEpochProvider } from 'hooks/helpers/useMetrcisEpoch';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -26,7 +25,6 @@ const MetricsView = (): ReactElement => {
         "It's epoch 0."
       ) : (
         <>
-          <MetricsTipTile />
           <MetricsNavigation />
           <MetricsEpochProvider>
             <MetricsEpoch />

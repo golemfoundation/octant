@@ -8,7 +8,6 @@ import {
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
   WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP,
-  WAS_CHECK_STATUS_ALREADY_CLOSED_TIP,
   WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP,
   WAS_LOCK_GLM_ALREADY_CLOSED_TIP,
   WAS_REWARDS_ALREADY_CLOSED_TIP,
@@ -80,12 +79,6 @@ describe('LocalStorageService', () => {
       localStorage.setItem(WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP, 'not-a-boolean');
       localStorageService.init();
       expect(localStorage.getItem(WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP)).toBe('false');
-    });
-
-    it('should validate wasCheckStatusAlreadyClosed', () => {
-      localStorage.setItem(WAS_CHECK_STATUS_ALREADY_CLOSED_TIP, 'not-a-boolean');
-      localStorageService.init();
-      expect(localStorage.getItem(WAS_CHECK_STATUS_ALREADY_CLOSED_TIP)).toBe('false');
     });
 
     it('should validate wasConnectWalletAlreadyClosed', () => {
