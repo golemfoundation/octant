@@ -28,10 +28,16 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   const projectCosts = epochInfo ? epochInfo.operationalCost : BigNumber.from(0);
   const matchRewards = epochInfo ? epochInfo.matchedRewards : BigNumber.from(0);
   const userRewards = epochInfo ? epochInfo.individualRewards : BigNumber.from(0);
+  const staking = epochInfo ? epochInfo.staking : BigNumber.from(0);
 
-  const total = leftover.add(projectCosts).add(matchRewards).add(userRewards);
+  const total = leftover.add(projectCosts).add(matchRewards).add(userRewards).add(staking);
 
   const data = [
+    {
+      label: t('staking'),
+      value: getNumberValue(staking),
+      valueLabel: getFormattedEthValue(staking, true, false, false, 2).fullString,
+    },
     {
       label: t('leftover'),
       value: getNumberValue(leftover),

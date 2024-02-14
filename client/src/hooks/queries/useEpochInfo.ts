@@ -4,6 +4,7 @@ import { parseUnits } from 'ethers/lib/utils';
 
 import { apiGetEpochInfo, Response } from 'api/calls/epochInfo';
 import { QUERY_KEYS } from 'api/queryKeys';
+import env from 'env';
 
 type EpochInfo = {
   individualRewards: BigNumber;
@@ -11,10 +12,29 @@ type EpochInfo = {
   matchedRewards: BigNumber;
   operationalCost: BigNumber;
   patronsRewards: BigNumber;
+  staking: BigNumber;
   stakingProceeds: BigNumber;
   totalEffectiveDeposit: BigNumber;
   totalRewards: BigNumber;
   totalWithdrawals: BigNumber;
+};
+
+// TODO OCT-1364 Remove this util, adjust backend response
+const getLeftoverAndStaking = (
+  epoch: number,
+  leftover: string | null,
+): {
+  leftover: BigNumber;
+  staking: BigNumber;
+} => {
+  const isMainnetAndEpoch2 = env.network === 'Mainnet' && epoch === 2;
+  const leftoverBigNumber = leftover ? parseUnits(leftover, 'wei') : BigNumber.from(0);
+  const stakingBigNumber = isMainnetAndEpoch2 ? parseUnits('352') : BigNumber.from(0);
+
+  return {
+    leftover: leftoverBigNumber.sub(stakingBigNumber),
+    staking: stakingBigNumber,
+  };
 };
 
 export default function useEpochInfo(
@@ -26,7 +46,6 @@ export default function useEpochInfo(
     queryKey: QUERY_KEYS.epochInfo(epoch),
     select: response => ({
       individualRewards: parseUnits(response.individualRewards, 'wei'),
-      leftover: response.leftover ? parseUnits(response.leftover, 'wei') : BigNumber.from(0),
       matchedRewards: response.matchedRewards
         ? parseUnits(response.matchedRewards, 'wei')
         : BigNumber.from(0),
@@ -42,6 +61,7 @@ export default function useEpochInfo(
       totalWithdrawals: response.totalWithdrawals
         ? parseUnits(response.totalWithdrawals, 'wei')
         : BigNumber.from(0),
+      ...getLeftoverAndStaking(epoch, response.leftover),
     }),
     ...options,
   });
