@@ -1,4 +1,6 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
+import { BigNumber } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
 import { useCallback, useRef } from 'react';
 import { useAccount } from 'wagmi';
 
@@ -6,9 +8,13 @@ import { apiPostAllocateLeverage, ApiPostAllocateLeverageResponse } from 'api/ca
 import { getAllocationsMapped } from 'hooks/utils/utils';
 import { AllocationValues } from 'views/AllocationView/types';
 
+export type AllocateSimulate = Omit<ApiPostAllocateLeverageResponse, 'threshold'> & {
+  threshold: BigNumber;
+};
+
 export default function useAllocateSimulate(
   options?: UseMutationOptions<any, unknown, AllocationValues>,
-): UseMutationResult<ApiPostAllocateLeverageResponse, unknown, AllocationValues> {
+): UseMutationResult<AllocateSimulate, unknown, AllocationValues> {
   const { address: userAddress } = useAccount();
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -31,5 +37,12 @@ export default function useAllocateSimulate(
     mutation.reset();
   }, [abortControllerRef, mutation]);
 
-  return { ...mutation, reset };
+  return {
+    ...mutation,
+    data: mutation.data && {
+      ...mutation.data,
+      threshold: parseUnits(mutation.data.threshold, 'wei'),
+    },
+    reset,
+  };
 }

@@ -45,7 +45,7 @@ class SimulatedFinalizedSnapshots(Model):
         matched_rewards = self.octant_rewards.get_matched_rewards(context)
         allocations = database.allocations.get_all(context.epoch_details.epoch_num)
 
-        projects_rewards, projects_rewards_sum, _ = get_projects_rewards(
+        projects_rewards = get_projects_rewards(
             projects_settings,
             allocations,
             projects,
@@ -53,16 +53,16 @@ class SimulatedFinalizedSnapshots(Model):
         )
         user_rewards, user_rewards_sum = self.user_rewards.get_claimed_rewards(context)
         rewards_merkle_tree = merkle_tree.build_merkle_tree(
-            user_rewards + projects_rewards
+            user_rewards + projects_rewards.rewards
         )
         merkle_root = rewards_merkle_tree.root
-        total_withdrawals = projects_rewards_sum + user_rewards_sum
+        total_withdrawals = projects_rewards.rewards_sum + user_rewards_sum
         leftover = calculate_leftover(octant_rewards, total_withdrawals)
 
         return FinalizedSnapshotDTO(
             patrons_rewards=patrons_rewards,
             matched_rewards=matched_rewards,
-            projects_rewards=projects_rewards,
+            projects_rewards=projects_rewards.rewards,
             user_rewards=user_rewards,
             total_withdrawals=total_withdrawals,
             leftover=leftover,

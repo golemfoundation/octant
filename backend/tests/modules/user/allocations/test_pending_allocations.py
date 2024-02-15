@@ -76,12 +76,13 @@ def test_simulate_allocation(mock_users_db, mock_octant_rewards):
 
     service = PendingUserAllocations(octant_rewards=mock_octant_rewards)
 
-    leverage, rewards = service.simulate_allocation(
+    leverage, threshold, rewards = service.simulate_allocation(
         context, next_allocations, user1.address
     )
 
     sorted_projects = sorted(projects)
     assert leverage == 1100571991.5775063
+    assert threshold == 10_000000000
     assert rewards == [
         ProjectRewardDTO(sorted_projects[0], 0, 0),
         ProjectRewardDTO(sorted_projects[1], 0, 0),

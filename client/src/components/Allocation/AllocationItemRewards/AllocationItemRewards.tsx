@@ -8,6 +8,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
@@ -25,6 +26,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   simulatedMatched,
   isError,
   isLoadingAllocateSimulate,
+  simulatedThreshold,
   value,
 }) => {
   const { t, i18n } = useTranslation('translation', {
@@ -32,11 +34,14 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   });
   const { isDesktop } = useMediaQuery();
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: individualReward } = useIndividualReward();
   const { data: userAllocations } = useUserAllocations();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: matchedProposalRewards } = useMatchedProposalRewards();
   const { data: proposalRewardsThreshold } = useProposalRewardsThreshold();
   const [isSimulateVisible, setIsSimulateVisible] = useState<boolean>(false);
+
+  const thresholdToUse = individualReward?.isZero() ? proposalRewardsThreshold : simulatedThreshold;
 
   // value can an empty string, which crashes parseUnits. Hence the alternative.
   const valueToUse = value || '0';
@@ -78,8 +83,8 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   // Before the first allocation, threshold is 0, which should be mapped to not defined.
   const isRewardsDataDefined =
     proposalMatchedProposalRewards !== undefined &&
-    proposalRewardsThreshold !== undefined &&
-    !proposalRewardsThreshold?.isZero();
+    thresholdToUse !== undefined &&
+    !thresholdToUse?.isZero();
 
   const isThresholdUnknown = isEpoch1 || !isRewardsDataDefined;
 
@@ -109,16 +114,14 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
     rewardsSumWithValueAndSimulation,
   );
-  const proposalRewardsThresholdFormatted = proposalRewardsThreshold
-    ? getFormattedEthValue(proposalRewardsThreshold)
-    : undefined;
+  const thresholdToUseFormatted = thresholdToUse ? getFormattedEthValue(thresholdToUse) : undefined;
 
   const areValueAndSimulatedSuffixesTheSame =
     valueFormatted.suffix === simulatedMatchedFormatted?.suffix;
   const areTotalSuffixesTheSame =
-    rewardsSumWithValueAndSimulationFormatted?.suffix === proposalRewardsThresholdFormatted?.suffix;
+    rewardsSumWithValueAndSimulationFormatted?.suffix === thresholdToUseFormatted?.suffix;
 
-  const filled = getFilled(proposalRewardsThreshold, rewardsSumWithValueAndSimulation);
+  const filled = getFilled(thresholdToUse, rewardsSumWithValueAndSimulation);
   const isDonationAboveThreshold = useIsDonationAboveThreshold({
     proposalAddress: address,
     rewardsSumWithValueAndSimulation,
@@ -145,12 +148,17 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
       onMouseOver={() => setIsSimulateVisible(true)}
     >
       {isEpoch1 && t('epoch1')}
-      {!isEpoch1 &&
-        !isLoadingAllocateSimulate &&
-        !isRewardsDataDefined &&
-        !simulatedMatched &&
-        !isDecisionWindowOpen &&
-        i18n.t(isDesktop ? 'common.thresholdDataUnavailable' : 'common.noThresholdData')}
+      {(!isDecisionWindowOpen ||
+        (!isEpoch1 &&
+          !isLoadingAllocateSimulate &&
+          !isRewardsDataDefined &&
+          !simulatedMatched &&
+          !isDecisionWindowOpen)) &&
+        i18n.t(
+          isDesktop
+            ? 'common.thresholdDataUnavailable.desktop'
+            : 'common.thresholdDataUnavailable.mobile',
+        )}
       {!isEpoch1 && isLoadingAllocateSimulate && i18n.t('common.calculating')}
       {!isEpoch1 &&
         isDecisionWindowOpen &&
@@ -177,7 +185,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
               sum: areTotalSuffixesTheSame
                 ? rewardsSumWithValueAndSimulationFormatted?.value
                 : rewardsSumWithValueAndSimulationFormatted?.fullString,
-              threshold: proposalRewardsThresholdFormatted?.fullString,
+              threshold: thresholdToUseFormatted?.fullString,
             }}
           />
         ))}
