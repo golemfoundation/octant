@@ -39,7 +39,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
       valueLabel: getFormattedEthValue(staking, true, false, false, 2).fullString,
     },
     {
-      label: t('leftover'),
+      label: t('leftover', { epochNumber: epoch + 1 }),
       value: getNumberValue(leftover),
       valueLabel: getFormattedEthValue(leftover, true, false, false, 2).fullString,
     },
