@@ -731,6 +731,8 @@ E2E Epoch 2:
     # Wait for the E2E app to become ready
     - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
     - export OCTANT_BASE_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_web_client_url.sh)
+    - export RPC_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
+    - export VITE_JSON_RPC_ENDPOINT=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
     - set +e
     - yarn synpress:run || CY_EXIT_CODE=$?
     - if [[ "$CY_EXIT_CODE" == "0" ]]; then rm -r $CI_PROJECT_DIR/client/cypress/videos $CI_PROJECT_DIR/client/cypress/screenshots; fi
@@ -748,6 +750,11 @@ E2E Epoch 2:
     CYPRESS_DOCKER_RUN: "true"
     CI: "true"
     METAMASK_VERSION: "10.25.0"
+    CHAIN_ID: 1337
+    NETWORK_NAME: "Local"
+    SYMBOL: "ETH"
+    IS_TESTNET: "true"
+    VITE_NETWORK: "Local"
 
 Deploy Release Candidate app:
   stage: deploy
