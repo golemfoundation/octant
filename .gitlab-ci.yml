@@ -6,6 +6,7 @@ variables:
   MASTER_BRANCH: "master"
   IMAGE_TAG: $CI_COMMIT_SHA
   SECRET_WORDS: test test test test test test test test test test test junk
+  IPFS_GATEWAY: https://octant.infura-ipfs.io/ipfs/
 
 stages:
   - build
@@ -493,6 +494,7 @@ MR app deploy:
     SCHEDULER_ENABLED: "true"
     GLM_CLAIM_ENABLED: "true"
     VAULT_CONFIRM_WITHDRAWALS_ENABLED: "true"
+    IPFS_GATEWAY: https://turquoise-accused-gayal-88.mypinata.cloud/ipfs/
 
 Run UAT App:
   stage: deploy
@@ -510,6 +512,7 @@ Run UAT App:
     SCHEDULER_ENABLED: "true"
     GLM_CLAIM_ENABLED: "true"
     VAULT_CONFIRM_WITHDRAWALS_ENABLED: "true"
+    IPFS_GATEWAY: https://turquoise-accused-gayal-88.mypinata.cloud/ipfs/
 
 Run Master App:
   stage: deploy
