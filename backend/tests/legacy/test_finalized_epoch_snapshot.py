@@ -1,6 +1,4 @@
 import pytest
-from freezegun import freeze_time
-
 from app import exceptions
 from app.extensions import db
 from app.infrastructure import database
@@ -10,11 +8,12 @@ from app.legacy.controllers.snapshots import (
 )
 from app.legacy.core.user.patron_mode import toggle_patron_mode
 from app.legacy.core.user.rewards import get_all_claimed_rewards
+from freezegun import freeze_time
 from tests.conftest import (
-    mock_graphql,
-    allocate_user_rewards,
-    TOTAL_REWARDS,
     ALL_INDIVIDUAL_REWARDS,
+    TOTAL_REWARDS,
+    allocate_user_rewards,
+    mock_graphql,
 )
 from tests.helpers import create_epoch_event
 from tests.helpers.constants import USER3_BUDGET
@@ -39,7 +38,10 @@ def before(
 
 @freeze_time("2023-11-01 01:48:47")
 def test_finalized_epoch_snapshot_with_rewards(
-    user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
+    user_accounts,
+    proposal_accounts,
+    mock_pending_epoch_snapshot_db,
+    patch_etherscan_get_block_api,
 ):
     user1_allocation = 1000_000000000
     user2_allocation = 2000_000000000
@@ -87,7 +89,10 @@ def test_finalized_epoch_snapshot_with_rewards(
 
 @freeze_time("2023-11-01 01:48:47")
 def test_finalized_epoch_snapshot_with_patrons_enabled(
-    user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
+    user_accounts,
+    proposal_accounts,
+    mock_pending_epoch_snapshot_db,
+    patch_etherscan_get_block_api,
 ):
     user1_allocation = 1000_000000000
     user2_allocation = 2000_000000000
@@ -140,7 +145,10 @@ def test_finalized_epoch_snapshot_with_patrons_enabled(
 
 @freeze_time("2023-11-01 01:48:47")
 def test_finalized_epoch_snapshot_without_rewards(
-    user_accounts, proposal_accounts, mock_pending_epoch_snapshot_db
+    user_accounts,
+    proposal_accounts,
+    mock_pending_epoch_snapshot_db,
+    patch_etherscan_get_block_api,
 ):
     result = snapshot_finalized_epoch()
     assert result == 1

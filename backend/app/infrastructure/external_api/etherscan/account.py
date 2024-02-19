@@ -1,23 +1,16 @@
-from enum import StrEnum
-
 import requests
-from flask import current_app as app
-
-from app import ExceptionHandler
+import app as app_module
 from app.constants import ETHERSCAN_API
 from app.exceptions import ExternalApiException
+from app.infrastructure.external_api.etherscan.helpers import raise_for_status
+from app.infrastructure.external_api.etherscan.req_params import AccountAction
+from flask import current_app as app
 
 MAX_RESPONSE_SIZE = 10000
 
 
-class TxType(StrEnum):
-    NORMAL = "txlist"
-    INTERNAL = "txlistinternal"
-    BEACON_WITHDRAWAL = "txsBeaconWithdrawal"
-
-
 def get_transactions(
-    address: str, start_block: int, end_block: int, tx_type=TxType.NORMAL
+    address: str, start_block: int, end_block: int, tx_type=AccountAction.NORMAL
 ) -> list[dict]:
     txs = []
     api_url = _get_api_url(address, tx_type)
@@ -26,7 +19,7 @@ def get_transactions(
         response = requests.get(
             f"{api_url}&startblock={start_block}&endblock={end_block}"
         )
-        response.raise_for_status()
+        raise_for_status(response)
         json_response = response.json()
         result = json_response.get("result", [])
         txs.extend(result)
@@ -38,11 +31,11 @@ def get_transactions(
 
         return txs
     except requests.exceptions.RequestException as e:
-        ExceptionHandler.print_stacktrace(e)
+        app_module.ExceptionHandler.print_stacktrace(e)
         raise ExternalApiException(api_url, e, 500)
 
 
-def _get_api_url(address: str, tx_type: TxType) -> str:
+def _get_api_url(address: str, tx_type: AccountAction) -> str:
     api_key = app.config["ETHERSCAN_API_KEY"]
     return (
         f"{ETHERSCAN_API}?module=account"

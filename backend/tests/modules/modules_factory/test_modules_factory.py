@@ -1,19 +1,14 @@
 from app.context.epoch_state import EpochState
-from app.modules.octant_rewards.service.calculated import (
-    CalculatedOctantRewards,
-)
+from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
 from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
-from app.modules.registry import register_services, get_services
-from app.modules.snapshots.pending.service.pre_pending import (
-    PrePendingSnapshots,
-)
+from app.modules.registry import get_services, register_services
+from app.modules.snapshots.pending.service.pre_pending import PrePendingSnapshots
+from app.modules.staking.proceeds.service.aggregated import AggregatedStakingProceeds
 from app.modules.staking.proceeds.service.contract_balance import (
     ContractBalanceStakingProceeds,
 )
-from app.modules.staking.proceeds.service.estimated import (
-    EstimatedStakingProceeds,
-)
+from app.modules.staking.proceeds.service.estimated import EstimatedStakingProceeds
 from app.modules.user.allocations.service.pending import PendingUserAllocations
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 from app.modules.user.budgets.service.saved import SavedUserBudgets
@@ -25,9 +20,7 @@ from app.modules.user.deposits.service.saved import SavedUserDeposits
 from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
 )
-from app.modules.user.patron_mode.service.events_based import (
-    EventsBasedUserPatronMode,
-)
+from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.user.rewards.service.saved import SavedUserRewards
 
@@ -54,7 +47,27 @@ def test_current_services_factory():
     )
 
 
-def test_pre_pending_services_factory():
+def test_pre_pending_services_factory_when_mainnet(
+    patch_compare_blockchain_types_for_mainnet,
+):
+    register_services()
+    result = get_services(EpochState.PRE_PENDING)
+
+    user_deposits = CalculatedUserDeposits(events_generator=DbAndGraphEventsGenerator())
+    octant_rewards = CalculatedOctantRewards(
+        staking_proceeds=AggregatedStakingProceeds(),
+        effective_deposits=user_deposits,
+    )
+    assert result.user_deposits_service == user_deposits
+    assert result.octant_rewards_service == octant_rewards
+    assert result.pending_snapshots_service == PrePendingSnapshots(
+        effective_deposits=user_deposits, octant_rewards=octant_rewards
+    )
+
+
+def test_pre_pending_services_factory_when_not_mainnet(
+    patch_compare_blockchain_types_for_not_mainnet,
+):
     register_services()
     result = get_services(EpochState.PRE_PENDING)
 
