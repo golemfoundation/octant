@@ -1,21 +1,20 @@
 import pytest
-from eth_account import Account
-
 from app.extensions import db
 from app.infrastructure import database
 from app.legacy.controllers.allocations import get_allocation_nonce
 from app.legacy.core.proposals import get_finalized_rewards
+from eth_account import Account
 from tests.conftest import (
-    allocate_user_rewards,
-    MOCKED_PENDING_EPOCH_NO,
     MOCK_PROPOSALS,
+    MOCKED_PENDING_EPOCH_NO,
+    allocate_user_rewards,
     mock_graphql,
 )
 from tests.helpers.constants import (
     ETH_PROCEEDS,
-    TOTAL_ED,
     LOCKED_RATIO,
     OPERATIONAL_COST,
+    TOTAL_ED,
 )
 from tests.helpers.mocked_epoch_details import create_epoch_event
 
@@ -117,6 +116,7 @@ def test_proposals_rewards_above_threshold(
     proposal_accounts,
     user_allocations: dict,
     expected_rewards: dict,
+    patch_etherscan_get_block_api,
 ):
     for user_index, allocations in user_allocations.items():
         user_account = tos_users[user_index]

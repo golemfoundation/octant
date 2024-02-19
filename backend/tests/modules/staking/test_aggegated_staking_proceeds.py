@@ -1,5 +1,4 @@
 import pytest
-
 from app.modules.staking.proceeds.service.aggregated import AggregatedStakingProceeds
 from tests.helpers.context import get_context
 
@@ -9,7 +8,7 @@ def before(app):
     pass
 
 
-def test_aggregated_staking_proceeds(patch_etherscan_api):
+def test_aggregated_staking_proceeds(patch_etherscan_transactions_api):
     context = get_context(1)
 
     service = AggregatedStakingProceeds()

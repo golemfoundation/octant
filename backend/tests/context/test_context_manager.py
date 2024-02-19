@@ -1,22 +1,21 @@
 import pytest
-
 from app import db
 from app.context.epoch_state import EpochState
 from app.context.manager import epoch_context, state_context
 from app.exceptions import InvalidEpoch
 from app.infrastructure import database
 from tests.conftest import (
-    MOCK_EPOCHS,
-    LOCKED_RATIO,
-    TOTAL_ED,
-    ETH_PROCEEDS,
     ALL_INDIVIDUAL_REWARDS,
-    TOTAL_REWARDS,
-    MOCKED_PENDING_EPOCH_NO,
+    ETH_PROCEEDS,
+    LOCKED_RATIO,
     MATCHED_REWARDS,
+    MOCK_EPOCHS,
     MOCKED_FINALIZED_EPOCH_NO,
+    MOCKED_PENDING_EPOCH_NO,
+    TOTAL_ED,
+    TOTAL_REWARDS,
 )
-from tests.helpers.constants import OPERATIONAL_COST, LEFTOVER
+from tests.helpers.constants import LEFTOVER, OPERATIONAL_COST
 
 
 @pytest.fixture(autouse=True)
@@ -50,6 +49,7 @@ def test_context_from_epoch(
     pending_snapshot,
     finalized_snapshot,
     expected,
+    patch_etherscan_get_block_api,
 ):
     _setup(current, pending, finalized, pending_snapshot, finalized_snapshot)
 
@@ -75,7 +75,14 @@ def test_context_from_epoch(
     ],
 )
 def test_context_from_state(
-    current, pending, finalized, state, pending_snapshot, finalized_snapshot, expected
+    current,
+    pending,
+    finalized,
+    state,
+    pending_snapshot,
+    finalized_snapshot,
+    expected,
+    patch_etherscan_get_block_api,
 ):
     _setup(current, pending, finalized, pending_snapshot, finalized_snapshot)
 

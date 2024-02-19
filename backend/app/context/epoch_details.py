@@ -2,14 +2,23 @@ from datetime import datetime
 from typing import List
 
 from app.context.epoch_state import EpochState
+from app.context.helpers import check_if_future
 from app.extensions import epochs
 from app.infrastructure import graphql
-from app.legacy.utils.time import sec_to_days, from_timestamp_s
+from app.infrastructure.external_api.etherscan.blocks import get_block_num_from_ts
+from app.legacy.utils.time import from_timestamp_s, sec_to_days
 
 
 class EpochDetails:
     def __init__(
-        self, epoch_num: int, start, duration, decision_window, remaining_sec=None
+        self,
+        epoch_num: int,
+        start,
+        duration,
+        decision_window,
+        start_block: int | None = None,
+        end_block: int | None = None,
+        remaining_sec=None,
     ):
         self.epoch_num = int(epoch_num)
         self.duration_sec = int(duration)
@@ -17,10 +26,9 @@ class EpochDetails:
         self.decision_window_sec = int(decision_window)
         self.decision_window_days = sec_to_days(self.decision_window_sec)
         self.start_sec = int(start)
-        # TODO impl start block and end block (https://linear.app/golemfoundation/issue/OCT-1329/aggregate-values-from-a-db-to-get-staking-proceeds)
-        self.start_block = 0
         self.end_sec = self.start_sec + self.duration_sec
-        self.end_block = 99999999999999999
+        self.start_block = start_block
+        self.end_block = end_block
         self.finalized_sec = self.end_sec + self.decision_window_sec
         self.finalized_timestamp = from_timestamp_s(self.finalized_sec)
 
@@ -41,8 +49,7 @@ class EpochDetails:
 def get_epoch_details(epoch_num: int, epoch_state: EpochState) -> EpochDetails:
     if epoch_state == EpochState.FUTURE:
         return get_future_epoch_details(epoch_num)
-    else:
-        return get_epoch_details_by_number(epoch_num)
+    return get_epoch_details_by_number(epoch_num)
 
 
 def get_epoch_details_by_number(epoch_num: int) -> EpochDetails:
@@ -61,10 +68,8 @@ def get_epochs_details(from_epoch: int, to_epoch: int) -> List[EpochDetails]:
 
 def get_future_epoch_details(epoch_num: int) -> EpochDetails:
     epoch_details = epochs.get_future_epoch_props()
-
     return EpochDetails(
         epoch_num=epoch_num,
-        # TODO contract returns start value for the next epoch. If we need this value for any other epoch in the future we have to calculate it
         start=epoch_details[2],
         duration=epoch_details[3],
         decision_window=epoch_details[4],
@@ -72,10 +77,18 @@ def get_future_epoch_details(epoch_num: int) -> EpochDetails:
     )
 
 
-def _epoch_details_from_graphql_result(result) -> EpochDetails:
+def _epoch_details_from_graphql_result(epoch_details: dict) -> EpochDetails:
+    from_ts = int(epoch_details["fromTs"])
+    end_ts = from_ts + int(epoch_details["duration"])
+
+    is_end_future = check_if_future(end_ts)
+    is_from_future = check_if_future(from_ts)
+
     return EpochDetails(
-        epoch_num=result["epoch"],
-        start=result["fromTs"],
-        duration=result["duration"],
-        decision_window=result["decisionWindow"],
+        epoch_num=epoch_details["epoch"],
+        start=epoch_details["fromTs"],
+        start_block=get_block_num_from_ts(from_ts) if not is_from_future else None,
+        end_block=get_block_num_from_ts(end_ts) if not is_end_future else None,
+        duration=epoch_details["duration"],
+        decision_window=epoch_details["decisionWindow"],
     )

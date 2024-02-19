@@ -2,65 +2,63 @@ from __future__ import annotations
 
 import json
 import os
-from random import randint
 import time
-from typing import Dict, List, Optional
-from unittest.mock import MagicMock, Mock
 import urllib.request
+from random import randint
+from unittest.mock import MagicMock, Mock
 
 import gql
 import pytest
-from eth_account import Account
-from flask import g as request_context
-from flask.testing import FlaskClient
-from web3 import Web3
-
 from app import create_app
+from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
+from app.extensions import db, deposits, glm, gql_factory, w3
 from app.infrastructure import database
 from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.proposals import Proposals
 from app.infrastructure.contracts.vault import Vault
 from app.legacy.controllers.allocations import allocate, deserialize_payload
-from app.legacy.core.allocations import AllocationRequest, Allocation
+from app.legacy.core.allocations import Allocation, AllocationRequest
 from app.legacy.crypto.account import Account as CryptoAccount
-from app.legacy.crypto.eip712 import sign, build_allocations_eip712_data
-from app.extensions import db, w3, deposits, glm, gql_factory
+from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
 from app.modules.dto import AccountFundsDTO
-from app.settings import TestConfig, DevConfig
-from app.engine.user.effective_deposit import UserDeposit, DepositEvent, EventType
+from app.settings import DevConfig, TestConfig
+from eth_account import Account
+from flask import g as request_context
+from flask.testing import FlaskClient
 from tests.helpers.constants import (
-    MNEMONIC,
-    MOCKED_PENDING_EPOCH_NO,
-    MOCKED_CURRENT_EPOCH_NO,
-    ETH_PROCEEDS,
-    TOTAL_ED,
-    LOCKED_RATIO,
-    TOTAL_REWARDS,
-    ALL_INDIVIDUAL_REWARDS,
-    USER1_ED,
-    USER2_ED,
-    USER3_ED,
-    USER_MOCKED_BUDGET,
-    DEPLOYER_PRIV,
     ALICE,
+    ALL_INDIVIDUAL_REWARDS,
     BOB,
     CAROL,
-    USER1_BUDGET,
-    USER2_BUDGET,
-    USER3_BUDGET,
-    MOCKED_FINALIZED_EPOCH_NO,
-    MATCHED_REWARDS,
-    USER1_ADDRESS,
-    USER2_ADDRESS,
-    OPERATIONAL_COST,
+    DEPLOYER_PRIV,
+    ETH_PROCEEDS,
     LEFTOVER,
+    LOCKED_RATIO,
+    MATCHED_REWARDS,
+    MNEMONIC,
+    MOCKED_CURRENT_EPOCH_NO,
+    MOCKED_FINALIZED_EPOCH_NO,
+    MOCKED_PENDING_EPOCH_NO,
+    OPERATIONAL_COST,
+    TOTAL_ED,
+    TOTAL_REWARDS,
     TOTAL_WITHDRAWALS,
+    USER1_ADDRESS,
+    USER1_BUDGET,
+    USER1_ED,
+    USER2_ADDRESS,
+    USER2_BUDGET,
+    USER2_ED,
+    USER3_BUDGET,
+    USER3_ED,
+    USER_MOCKED_BUDGET,
 )
 from tests.helpers.gql_client import MockGQLClient
 from tests.helpers.mocked_epoch_details import EPOCH_EVENTS
 from tests.helpers.octant_rewards import octant_rewards
 from tests.helpers.subgraph.events import create_deposit_event
+from web3 import Web3
 
 # Contracts mocks
 MOCK_EPOCHS = MagicMock(spec=Epochs)
@@ -77,7 +75,7 @@ MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
 MOCK_IS_CONTRACT = Mock()
 
 
-def mock_etherscan_api(*args, **kwargs):
+def mock_etherscan_api_get_transactions(*args, **kwargs):
     if kwargs["tx_type"] == "txlist":
         return [
             {
@@ -101,6 +99,11 @@ def mock_etherscan_api(*args, **kwargs):
         return [
             {"amount": "1498810", "withdrawalIndex": "11446030"},
         ]
+
+
+def mock_etherscan_api_get_block_num_from_ts(*args, **kwargs):
+    example_resp_json = {"status": "1", "message": "OK", "result": "12712551"}
+    return int(example_resp_json["result"])
 
 
 def pytest_addoption(parser):
@@ -137,7 +140,7 @@ def pytest_collection_modifyitems(config, items):
                 item.add_marker(skip_api)
 
 
-def setup_deployment() -> Dict[str, str]:
+def setup_deployment() -> dict[str, str]:
     deployer = os.getenv("CONTRACTS_DEPLOYER_URL")
     testname = f"octant_test_{random_string()}"
     f = urllib.request.urlopen(f"{deployer}/?name={testname}")
@@ -207,7 +210,7 @@ class UserAccount:
         )
         w3.eth.send_raw_transaction(signed_txn.rawTransaction)
 
-    def transfer(self, account: "UserAccount", value: int):
+    def transfer(self, account: UserAccount, value: int):
         glm.transfer(self._account, account.address, w3.to_wei(value, "ether"))
 
     def lock(self, value: int):
@@ -494,10 +497,18 @@ def patch_user_budget(monkeypatch):
 
 
 @pytest.fixture(scope="function")
-def patch_etherscan_api(monkeypatch):
+def patch_etherscan_transactions_api(monkeypatch):
     monkeypatch.setattr(
         "app.modules.staking.proceeds.service.aggregated.get_transactions",
-        mock_etherscan_api,
+        mock_etherscan_api_get_transactions,
+    )
+
+
+@pytest.fixture(scope="function")
+def patch_etherscan_get_block_api(monkeypatch):
+    monkeypatch.setattr(
+        "app.context.epoch_details.get_block_num_from_ts",
+        mock_etherscan_api_get_block_num_from_ts,
     )
 
 
@@ -690,6 +701,22 @@ def mock_user_rewards(alice, bob):
     return user_rewards_service_mock
 
 
+@pytest.fixture(scope="function")
+def patch_compare_blockchain_types_for_mainnet(monkeypatch):
+    monkeypatch.setattr(
+        "app.modules.modules_factory.pre_pending.compare_blockchain_types",
+        lambda *args: True,
+    )
+
+
+@pytest.fixture(scope="function")
+def patch_compare_blockchain_types_for_not_mainnet(monkeypatch):
+    monkeypatch.setattr(
+        "app.modules.modules_factory.pre_pending.compare_blockchain_types",
+        lambda *args: False,
+    )
+
+
 def allocate_user_rewards(
     user_account: Account, proposal_account, allocation_amount, nonce: int = 0
 ):
@@ -700,7 +727,7 @@ def allocate_user_rewards(
     allocate(request)
 
 
-def create_payload(proposals, amounts: Optional[List[int]], nonce: int = 0):
+def create_payload(proposals, amounts: list[int] | None, nonce: int = 0):
     if amounts is None:
         amounts = [randint(1 * 10**18, 1000 * 10**18) for _ in proposals]
 
@@ -715,7 +742,7 @@ def create_payload(proposals, amounts: Optional[List[int]], nonce: int = 0):
     return {"allocations": allocations, "nonce": nonce}
 
 
-def deserialize_allocations(payload) -> List[Allocation]:
+def deserialize_allocations(payload) -> list[Allocation]:
     return deserialize_payload(payload)[1]
 
 
