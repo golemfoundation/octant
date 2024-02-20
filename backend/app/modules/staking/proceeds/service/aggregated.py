@@ -5,6 +5,7 @@ from app.infrastructure.external_api.etherscan.account import (
     get_transactions,
     AccountAction,
 )
+from app.infrastructure.external_api.etherscan.blocks_reward import get_blocks_reward
 from app.modules.staking.proceeds.core import (
     sum_mev,
     sum_withdrawals,
@@ -26,6 +27,8 @@ class AggregatedStakingProceeds(Model):
         - int: Aggregated value for MEV and withdrawals.
         """
         withdrawals_target = app.config["WITHDRAWALS_TARGET_CONTRACT_ADDRESS"].lower()
+        blocks_reward = 0
+
         start_block, end_block = (
             context.epoch_details.start_block,
             context.epoch_details.end_block,
@@ -33,6 +36,9 @@ class AggregatedStakingProceeds(Model):
 
         if end_block is not None:
             end_block -= 1
+            blocks_reward = get_blocks_reward(
+                withdrawals_target, start_block, end_block
+            )
 
         normal = get_transactions(
             withdrawals_target, start_block, end_block, tx_type=AccountAction.NORMAL
@@ -50,4 +56,4 @@ class AggregatedStakingProceeds(Model):
         mev_value = sum_mev(withdrawals_target, normal, internal)
         withdrawals_value = sum_withdrawals(withdrawals)
 
-        return aggregate_proceeds(mev_value, withdrawals_value)
+        return aggregate_proceeds(mev_value, withdrawals_value, blocks_reward)
