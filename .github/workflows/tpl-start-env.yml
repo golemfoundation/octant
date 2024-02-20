@@ -1,0 +1,74 @@
+---
+name: 🔒 Start Environment
+on:
+  workflow_call:
+    inputs:
+      git-ref:
+        required: true
+        type: string
+      env-type:
+        required: true
+        type: string
+      pull-request-id:
+        required: false
+        type: string
+      workflow-id:
+        required: true
+        type: string
+    outputs:
+      env-id:
+        value: ${{ jobs.start.outputs.env }}
+      deployment-id:
+        value: ${{ jobs.start.outputs.deployment }}
+env:
+  ENV_TYPE: ${{ inputs.env-type }}
+  CI_MERGE_REQUEST_IID: "${{ inputs.pull-request-id }}"
+  CI_PIPELINE_ID: "${{ inputs.workflow-id }}"
+  # ----------------------------------------------------------------------------
+  # CI/CD
+  HOUSEKEEPER_NAME: "${{ vars.HOUSEKEEPER_NAME }}"
+  HOUSEKEEPER_EMAIL: "${{ secrets.HOUSEKEEPER_EMAIL }}"
+  HOUSEKEEPER_CI_TOKEN: "${{ secrets.HOUSEKEEPER_CI_TOKEN }}"
+  HOUSEKEEPER_GPG_KEY: "${{ secrets.HOUSEKEEPER_GPG_KEY }}"
+  HOUSEKEEPER_GPG_KEY_ID: "${{ secrets.HOUSEKEEPER_GPG_KEY_ID }}"
+  ARGOCD_URL: "${{ secrets.ARGOCD_URL }}"
+  ARGOCD_ACCESS_TOKEN: "${{ secrets.ARGOCD_ACCESS_TOKEN }}"
+
+jobs:
+  start:
+    name: Start GitHub Environment
+    runs-on:
+    - metal
+    outputs:
+      env: ${{ steps.start-deployment.outputs.env }}
+      deployment: ${{ steps.start-deployment.outputs.deployment_id }}
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        path: __local
+        ref: ${{ inputs.git-ref }}
+
+    - name: Get environment name
+      id: env-name
+      run: |
+        set -ex
+
+        export CI_PROJECT_DIR="${GITHUB_WORKSPACE}/__local"
+
+        source ${CI_PROJECT_DIR}/ci/argocd/resolve_env.sh $ENV_TYPE
+        echo "DEPLOYMENT_ID=$DEPLOYMENT_ID" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: (debug)
+      run: |
+        echo ${{ steps.env-name.outputs.DEPLOYMENT_ID }}
+
+    - name: start deployment
+      uses: bobheadxi/deployments@v1
+      id: start-deployment
+      with:
+        step: start
+        token: ${{ secrets.GH_BOT_TOKEN }}
+        env: ${{ steps.env-name.outputs.DEPLOYMENT_ID }}
+        ref: ${{ inputs.git-ref }}
+        override: true
