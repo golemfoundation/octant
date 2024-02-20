@@ -303,7 +303,7 @@ Build images:
     GOOGLE_APPLICATION_CREDENTIALS: /kaniko/config.json
   script:
     - echo $KANIKO_CACHE_CONFIG > /kaniko/.docker/config.json
-    - echo "$GCP_REGISTRY_PUSHER_SERVICE_ACCOUNT" | base64 -d > /kaniko/config.json
+    - echo "$GCP_DOCKER_IMAGES_REGISTRY_SERVICE_ACCOUNT" | base64 -d > /kaniko/config.json
     - chmod 400 /kaniko/config.json
     - /kaniko/executor
       --context "$CI_PROJECT_DIR/$SERVICE"
