@@ -11,7 +11,7 @@ from app.infrastructure.external_api.bitquery.req_producer import (
 )
 
 
-def accumulate_blocks_reward(blocks: list) -> int:
+def accumulate_blocks_reward_wei(blocks: list) -> int:
     blocks_reward_gwei = 0.0
     for block in blocks:
         blocks_reward_gwei += float(block["reward"])
@@ -39,5 +39,5 @@ def get_blocks_reward(address: str, start_time: str, end_time: str) -> int:
         raise ExternalApiException(api_url, e, 500)
 
     blocks = json_response.json()["data"]["ethereum"]["blocks"]
-    blocks_reward = accumulate_blocks_reward(blocks)
+    blocks_reward = accumulate_blocks_reward_wei(blocks)
     return blocks_reward

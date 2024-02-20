@@ -23,7 +23,7 @@ from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.proposals import Proposals
 from app.infrastructure.contracts.vault import Vault
 from app.infrastructure.external_api.bitquery.blocks_reward import (
-    accumulate_blocks_reward,
+    accumulate_blocks_reward_wei,
 )
 from app.legacy.controllers.allocations import allocate, deserialize_payload
 from app.legacy.core.allocations import Allocation, AllocationRequest
@@ -135,7 +135,7 @@ def mock_bitquery_api_get_blocks_reward(*args, **kwargs):
     }
 
     blocks = example_resp_json["data"]["ethereum"]["blocks"]
-    return accumulate_blocks_reward(blocks)
+    return accumulate_blocks_reward_wei(blocks)
 
 
 def pytest_addoption(parser):
