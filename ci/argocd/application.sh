@@ -25,7 +25,7 @@ git clone -b $ARGO_REPOSITORY_BRANCH $ARGO_REPOSITORY $GIT_DIR
 
 # sourcing hardcoded contracts (master, uat, etc)
 if [[ "$ENV_FILE" ]]; then
-	while read -r line; do export "$line"; done < $CI_PROJECT_DIR/ci/argocd/contracts/$ENV_FILE
+	export $(grep -v '^#' $CI_PROJECT_DIR/ci/argocd/contracts/$ENV_FILE | xargs)
 fi
 
 pushd $GIT_DIR
