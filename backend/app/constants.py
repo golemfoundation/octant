@@ -12,3 +12,4 @@ ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 BEACONCHAIN_API = "https://beaconcha.in/api"
 ETHERSCAN_API = "https://api.etherscan.io/api"
+BITQUERY_API = "https://graphql.bitquery.io"

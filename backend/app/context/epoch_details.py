@@ -44,6 +44,11 @@ class EpochDetails:
             self.remaining_sec = remaining_sec
 
         self.remaining_days = sec_to_days(self.remaining_sec)
+        self.block_rewards = None
+
+    @property
+    def duration_range(self) -> tuple[int, int]:
+        return self.start_sec, self.end_sec
 
 
 def get_epoch_details(epoch_num: int, epoch_state: EpochState) -> EpochDetails:
