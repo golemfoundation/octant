@@ -54,8 +54,8 @@ def sum_withdrawals(withdrawals_txs: list[dict]) -> int:
     return w3.to_wei(int(total_gwei), "gwei")
 
 
-def aggregate_proceeds(mev: int, withdrawals: int) -> int:
-    return mev + withdrawals
+def aggregate_proceeds(mev: int, withdrawals: int, blocks_reward: int) -> int:
+    return mev + withdrawals + blocks_reward
 
 
 def _filter_deposit_withdrawals(amount: mpz) -> mpz:
