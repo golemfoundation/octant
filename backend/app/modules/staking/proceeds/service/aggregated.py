@@ -16,6 +16,24 @@ from app.pydantic import Model
 
 
 class AggregatedStakingProceeds(Model):
+    def _compute_blocks_reward(
+        self, start_sec: int, end_sec: int, withdrawals_target: str
+    ) -> int:
+        blocks_reward = 0
+
+        if end_sec is None:
+            return blocks_reward
+
+        start_datetime, end_datetime = (
+            timestamp_to_isoformat(start_sec),
+            timestamp_to_isoformat(end_sec),
+        )
+
+        blocks_reward = get_blocks_reward(
+            withdrawals_target, start_datetime, end_datetime
+        )
+        return blocks_reward
+
     def get_staking_proceeds(self, context: Context) -> int:
         """
         Retrieves a list of transactions, calculates MEV value and aggregates it with withdrawals.
@@ -52,15 +70,9 @@ class AggregatedStakingProceeds(Model):
         withdrawals_value = sum_withdrawals(withdrawals)
 
         start_sec, end_sec = context.epoch_details.duration_range
-        blocks_reward = 0
-        if end_sec is not None:
-            start_datetime, end_datetime = (
-                timestamp_to_isoformat(start_sec),
-                timestamp_to_isoformat(end_sec),
-            )
 
-            blocks_reward = get_blocks_reward(
-                withdrawals_target, start_datetime, end_datetime
-            )
+        blocks_reward = self._compute_blocks_reward(
+            start_sec, end_sec, withdrawals_target
+        )
 
         return aggregate_proceeds(mev_value, withdrawals_value, blocks_reward)

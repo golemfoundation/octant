@@ -12,7 +12,7 @@ from flask import current_app as app
 
 def get_block_num_from_ts(timestamp: int) -> int:
     app.logger.debug(f"Getting block number from timestamp: {timestamp}")
-    api_url = _get_api_url(timestamp, BlockAction.BLOCK_TS)
+    api_url = _get_api_url(timestamp, BlockAction.BLOCK_NO_BY_TS)
     try:
         response = requests.get(api_url)
         raise_for_status(response)

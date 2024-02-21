@@ -12,7 +12,7 @@ def get_bitquery_header():
     headers = {
         "Content-Type": "application/json",
         "X-API-KEY": app.config["BITQUERY_API_KEY"],
-        "Authorization": "Bearer ory_at_yeIAwzWgtkssnWzCCpDKnrDv74AEkhaRbO1VHsrCSz0.nVnX2zUQiYr2AKSu823GYOuyIsiyVyp5WLDBFcawQT8",
+        "Authorization": app.config["BITQUERY_BEARER"],
     }
 
     return headers

@@ -8,7 +8,7 @@ class AccountAction(StrEnum):
 
 
 class BlockAction(StrEnum):
-    BLOCK_TS = "getblocknobytime"
+    BLOCK_NO_BY_TS = "getblocknobytime"
     BLOCK_REWARD = "getblockreward"
 
 
