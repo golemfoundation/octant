@@ -161,6 +161,7 @@ jobs:
     with:
       # ---
       env-type: e2e
+      branch-head-ref: ${{ github.ref }}
       image-tag: ${{ github.sha }}
       pull-request-id: ${{ github.event.pull_request.number }}
       workflow-id: ${{ github.run_id }}
@@ -187,6 +188,7 @@ jobs:
     with:
       # ---
       env-type: apitest
+      branch-head-ref: ${{ github.ref }}
       image-tag: ${{ github.sha }}
       pull-request-id: ${{ github.event.pull_request.number }}
       workflow-id: ${{ github.run_id }}
