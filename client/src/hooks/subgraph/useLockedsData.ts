@@ -61,7 +61,7 @@ export default function useLockedsData(): UseQueryResult<UseLockedsDataResponse>
     queryKey: QUERY_KEYS.totalAddresses,
     refetchOnMount: false,
     select: data => {
-      if (!data?.lockeds) {
+      if (!data?.lockeds?.length) {
         return undefined;
       }
 

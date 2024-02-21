@@ -19,7 +19,15 @@ export default function useIndividualReward(
 
   return useQuery({
     enabled: ((!!currentEpoch && currentEpoch > 1) || !!epoch) && !!address,
-    queryFn: () => apiGetIndividualRewards(epochToUse, address!),
+    queryFn: async () => {
+      try {
+        return await apiGetIndividualRewards(epochToUse, address!);
+      } catch (error) {
+        return new Promise<Response>(resolve => {
+          resolve({ budget: '0' });
+        });
+      }
+    },
     queryKey: QUERY_KEYS.individualReward(epochToUse),
     select: response => parseUnits(response.budget, 'wei'),
     ...options,

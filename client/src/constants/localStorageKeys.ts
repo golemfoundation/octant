@@ -35,11 +35,6 @@ export const WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP = getLocalStorageKey(
   'wasAddFavouritesAlreadyClosed',
 );
 
-export const WAS_CHECK_STATUS_ALREADY_CLOSED_TIP = getLocalStorageKey(
-  tipTilesPrefix,
-  'wasCheckStatusAlreadyClosed',
-);
-
 export const WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP = getLocalStorageKey(
   tipTilesPrefix,
   'wasConnectWalletAlreadyClosed',

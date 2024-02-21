@@ -1,13 +1,24 @@
 import '@nomicfoundation/hardhat-toolbox';
 
 import '@nomiclabs/hardhat-etherscan';
-import { HardhatUserConfig } from 'hardhat/config';
+import {HardhatUserConfig} from 'hardhat/config';
 
-import { ETHERSCAN_API_KEY, TESTNET_PRIVATE_KEY, TESTNET_RPC_URL } from './env';
+import {ETHERSCAN_API_KEY, TESTNET_PRIVATE_KEY, GOERLI_RPC_URL, HOLESKY_RPC_URL} from './env';
 
 const config: HardhatUserConfig = {
   etherscan: {
     apiKey: ETHERSCAN_API_KEY,
+    customChains: [
+      {
+        network: "holesky",
+        chainId: 17000,
+        urls: {
+          apiURL: "https://api-holesky.etherscan.io/api",
+          browserURL: "https://holesky.etherscan.io"
+        }
+      }
+    ],
+
   },
   gasReporter: {
     enabled: true,
@@ -15,7 +26,13 @@ const config: HardhatUserConfig = {
   networks: {
     goerli: {
       accounts: [TESTNET_PRIVATE_KEY],
-      url: TESTNET_RPC_URL,
+      chainId: 5,
+      url: GOERLI_RPC_URL,
+    },
+    holesky: {
+      accounts: [TESTNET_PRIVATE_KEY],
+      chainId: 17000,
+      url: "https://ethereum-holesky.publicnode.com",
     },
     hardhat: {
       accounts: {

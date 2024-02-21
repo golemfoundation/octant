@@ -1,6 +1,10 @@
 import { ethers, network } from 'hardhat';
 
-import { GOERLI_DEPOSIT_CONTRACT_ADDRESS, MAINNET_DEPOSIT_CONTRACT_ADDRESS } from '../env';
+import {
+  GOERLI_DEPOSIT_CONTRACT_ADDRESS,
+  HOLESKY_DEPOSIT_CONTRACT_ADDRESS,
+  MAINNET_DEPOSIT_CONTRACT_ADDRESS
+} from '../env';
 
 /* eslint-disable no-console */
 
@@ -9,6 +13,9 @@ async function main() {
 
   const fee = 0;
   let depositContractAddress = GOERLI_DEPOSIT_CONTRACT_ADDRESS;
+  if (network.name === 'holesky') {
+    depositContractAddress = HOLESKY_DEPOSIT_CONTRACT_ADDRESS;
+  }
   if (network.name === 'mainnet') {
     depositContractAddress = MAINNET_DEPOSIT_CONTRACT_ADDRESS;
   }

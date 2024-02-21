@@ -8,7 +8,6 @@ import {
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
   WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP,
-  WAS_CHECK_STATUS_ALREADY_CLOSED_TIP,
   WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP,
   WAS_LOCK_GLM_ALREADY_CLOSED_TIP,
   WAS_REWARDS_ALREADY_CLOSED_TIP,
@@ -108,12 +107,6 @@ const LocalStorageService = () => {
       tipsStoreInitialState.wasAddFavouritesAlreadyClosed,
     );
 
-  const validateWasCheckStatusAlreadyClosed = (): void =>
-    validateBoolean(
-      WAS_CHECK_STATUS_ALREADY_CLOSED_TIP,
-      tipsStoreInitialState.wasCheckStatusAlreadyClosed,
-    );
-
   const validateWasConnectWalletAlreadyClosed = (): void =>
     validateBoolean(
       WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP,
@@ -143,7 +136,6 @@ const LocalStorageService = () => {
     validateDisplayCurrency();
     validateIsCryptoMainValueDisplay();
     validateWasAddFavouritesAlreadyClosed();
-    validateWasCheckStatusAlreadyClosed();
     validateWasConnectWalletAlreadyClosed();
     validateWasLockGLMAlreadyClosed();
     validateWasRewardsAlreadyClosed();

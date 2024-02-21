@@ -1,22 +1,13 @@
-from typing import List, Dict, Optional, Tuple
-from operator import attrgetter
 from collections import defaultdict
+from operator import attrgetter
+from typing import List, Dict, Tuple
 
-from app.core.deposits.events import EventGenerator, DepositEvent
-
-from tests.helpers import create_deposit_events
-from tests.conftest import UserAccount
+from app.engine.user.effective_deposit import DepositEvent
+from tests.helpers.subgraph.events import create_deposit_events
 
 
-class MockEventGenerator(EventGenerator):
-    def __init__(
-        self,
-        epoch_start: int,
-        epoch_end: int,
-        user_events: Dict[str, List[DepositEvent]],
-    ):
-        super().__init__(epoch_start, epoch_end)
-
+class MockEventGenerator:
+    def __init__(self, user_events: Dict[str, List[DepositEvent]]):
         self.events = {
             user: sorted(
                 map(DepositEvent.from_dict, events), key=attrgetter("timestamp")
@@ -24,29 +15,20 @@ class MockEventGenerator(EventGenerator):
             for user, events in user_events.items()
         }
 
-    def get_user_events(self, user_address: Optional[str]) -> List[DepositEvent]:
-        return self.events[user_address] if user_address in self.events else []
+    def get_user_events(self, user_address: str) -> List[DepositEvent]:
+        return self.events.get(user_address, [])
 
-    def get_all_users_events(self) -> Dict[str, List[Dict]]:
+    def get_all_users_events(self) -> Dict[str, List[DepositEvent]]:
         return self.events
 
 
 class MockEventGeneratorFactory:
-    def __init__(self, epoch_start: int, epoch_end: int):
-        self.epoch_start = epoch_start
-        self.epoch_end = epoch_end
-
     def build(
         self,
-        events: Dict[UserAccount, List[Tuple[int, int]]],
-        epoch_start: Optional[int] = None,
-        epoch_end: Optional[int] = None,
+        events: Dict[str, List[Tuple[int, int]]],
     ) -> MockEventGenerator:
-        epoch_start = epoch_start if epoch_start is not None else self.epoch_start
-        epoch_end = epoch_end if epoch_end is not None else self.epoch_end
-
         events_by_user = defaultdict(list)
         for event in create_deposit_events(events):
             events_by_user[event["user"]].append(event)
 
-        return MockEventGenerator(epoch_start, epoch_end, events_by_user)
+        return MockEventGenerator(events_by_user)

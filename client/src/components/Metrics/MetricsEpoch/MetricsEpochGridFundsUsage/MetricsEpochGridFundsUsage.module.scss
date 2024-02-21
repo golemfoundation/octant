@@ -1,0 +1,35 @@
+.root {
+  height: 30.4rem;
+}
+
+.pieChartWrapper {
+  margin: 0 auto 0;
+}
+
+.epochTotal {
+  height: 4rem;
+  border-radius: $border-radius-08;
+  background-color: $color-octant-grey6;
+  color: $color-octant-grey5;
+  font-size: $font-size-12;
+  font-weight: $font-weight-bold;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.6rem;
+  margin: auto 2.4rem;
+
+  .label,
+  .value {
+    min-width: 10rem;
+    min-height: 1.6rem;
+  }
+
+  .value {
+    text-align: right;
+  }
+}
+
+.isLoading {
+  @include skeleton();
+}

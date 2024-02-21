@@ -8,7 +8,9 @@ makeTestsEnv(DEPOSITS, testEnv => {
   describe('Deposits', async () => {
     it('No deposits in freshly deployed contract', async () => {
       const { glmDeposits, signers } = testEnv;
-      expect(await glmDeposits.connect(signers.Charlie).deposits(signers.Charlie.address)).to.equal(0);
+      expect(await glmDeposits.connect(signers.Charlie).deposits(signers.Charlie.address)).to.equal(
+        0,
+      );
     });
 
     it('Can withdraw', async () => {

@@ -15,7 +15,7 @@ spec:
     namespace: $DEPLOYMENT_ID
   sources:
     - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-      targetRevision: 0.2.29
+      targetRevision: 0.2.35
       chart: octant
       helm:
         parameters:
@@ -100,12 +100,14 @@ spec:
           - name: ingress.cloudflareProxied.graph-ipfs
             value: 'true'
     - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-      targetRevision: 0.0.6
+      targetRevision: 0.0.9
       chart: octant-anvil
       helm:
         parameters:
           - name: 'anvil.block_time'
             value: '${ANVIL_BLOCK_TIME:-5}'
+          - name: 'anvil.hardfork'
+            value: 'latest'
   syncPolicy:
     automated:
       prune: true

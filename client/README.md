@@ -94,7 +94,3 @@ export interface BackendProposal {
 ```
 
 Because of [this](https://github.com/cypress-io/cypress/discussions/26853).
-
-## E2E tests
-
-Some e2e tests can't be run in CI because of a problem with the high price of gas on the local chain (for the first transaction). We can't deal with this through synpress (lack of functionality), so until the gas price is fixed (flat-gas) [OCT-1340] (https://linear.app/golemfoundation/issue/OCT-1340/cypress-enable-tests-blocked-by-non-flat-gas-price), we split the tests into enabled (yarn synpress:run) and disabled (yarn synpress:run-disabled-on-ci) on CI .

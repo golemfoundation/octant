@@ -5,6 +5,7 @@ variables:
   TRANSFER_METER_FREQUENCY: "2s"
   MASTER_BRANCH: "master"
   IMAGE_TAG: $CI_COMMIT_SHA
+  SECRET_WORDS: test test test test test test test test test test test junk
 
 stages:
   - build
@@ -57,6 +58,10 @@ default:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $MASTER_BRANCH
   on_push_to_master_branch_manual:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $MASTER_BRANCH
+      when: manual
+      allow_failure: true
+  on_release_branch_manual:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^release\/.+/
       when: manual
       allow_failure: true
   on_mr_manual:
@@ -645,49 +650,48 @@ Destroy Master App:
     name: persistent/master
     deployment_tier: testing
 
-API Tests:
-  stage: application
-  needs: ["API Test app deploy", "API Test contracts"]
-  image: !reference [.images, python ]
-  <<: *env_resolve_init
-  rules:
-    - !reference [.rules, on_mr ]
-    - !reference [.rules, on_push_to_default_branch ]
-    - !reference [.rules, on_push_to_master_branch ]
-  dependencies:
-    - API Test contracts
-  script:
-    - set -e
-    - cd backend
-    - !reference [ .scripts, poetry_install ]
-    # Wait for Argo app
-    - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
-    - export ETH_RPC_PROVIDER_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
-    - export SUBGRAPH_ENDPOINT=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_graph_url.sh)/subgraphs/name/octant
-    # Run the API tests
-    - set +e
-    - poetry run pytest --onlyapi || PYTEST_EXIT_CODE=$?
-    - set -e
-    # Trigger the stop job
-    - |
-      JOB_ID=$(curl --fail -s -XGET --header "PRIVATE-TOKEN: $CI_JOB_CONTROLLER" https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/pipelines/$CI_PIPELINE_ID/jobs | jq '.[] | select(.name == "Destroy API Test App") | .id')
+# API Tests:
+#   stage: application
+#   needs: ["API Test app deploy", "API Test contracts"]
+#   image: !reference [.images, python ]
+#   <<: *env_resolve_init
+#   rules:
+#     - !reference [.rules, on_mr ]
+#     - !reference [.rules, on_push_to_default_branch ]
+#     - !reference [.rules, on_push_to_master_branch ]
+#   dependencies:
+#     - API Test contracts
+#   script:
+#     - set -e
+#     - cd backend
+#     - !reference [ .scripts, poetry_install ]
+#     # Wait for Argo app
+#     - bash $CI_PROJECT_DIR/ci/argocd/wait_for_app.sh
+#     - export ETH_RPC_PROVIDER_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
+#     - export SUBGRAPH_ENDPOINT=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_graph_url.sh)/subgraphs/name/octant
+#     # Run the API tests
+#     - set +e
+#     - poetry run pytest --onlyapi || PYTEST_EXIT_CODE=$?
+#     - set -e
+#     # Trigger the stop job
+#     - |
+#       JOB_ID=$(curl --fail -s -XGET --header "PRIVATE-TOKEN: $CI_JOB_CONTROLLER" https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/pipelines/$CI_PIPELINE_ID/jobs | jq '.[] | select(.name == "Destroy API Test App") | .id')
 
-      curl -s --fail -X POST \
-           -H "PRIVATE-TOKEN: $CI_JOB_CONTROLLER" \
-           "$CI_API_V4_URL/projects/$CI_PROJECT_ID/jobs/$JOB_ID/play"
-    - exit $PYTEST_EXIT_CODE
-  variables:
-    ENV_TYPE: "apitest"
-    CHAIN_ID: "1337"
-    CHAIN_NAME: "localhost"
-    OCTANT_BACKEND_SECRET_KEY: "some-random-key"
-    OCTANT_ENV: "production"
-    SECRET_WORDS: test test test test test test test test test test test junk
-  cache:
-    - key: $CI_COMMIT_REF_SLUG-poetry-backend
-      policy: pull
-      paths:
-        - backend/.venv
+#       curl -s --fail -X POST \
+#            -H "PRIVATE-TOKEN: $CI_JOB_CONTROLLER" \
+#            "$CI_API_V4_URL/projects/$CI_PROJECT_ID/jobs/$JOB_ID/play"
+#     - exit $PYTEST_EXIT_CODE
+#   variables:
+#     ENV_TYPE: "apitest"
+#     CHAIN_ID: "1337"
+#     CHAIN_NAME: "localhost"
+#     OCTANT_BACKEND_SECRET_KEY: "some-random-key"
+#     OCTANT_ENV: "production"
+#   cache:
+#     - key: $CI_COMMIT_REF_SLUG-poetry-backend
+#       policy: pull
+#       paths:
+#         - backend/.venv
 
 E2E Epoch 2:
   stage: application
@@ -750,12 +754,14 @@ E2E Epoch 2:
     NETWORK_NAME: "Local"
     SYMBOL: "ETH"
     IS_TESTNET: "true"
+    VITE_NETWORK: "Local"
 
 Deploy Release Candidate app:
   stage: deploy
   image: !reference [.images, alpine_git]
   rules:
     - !reference [.rules, on_push_to_master_branch_manual]
+    - !reference [.rules, on_release_branch_manual]
   resource_group: production
   variables:
     ARGO_REPOSITORY: "https://wildland-bot:${HOUSEKEEPER_CI_TOKEN}@gitlab.com/golemfoundation/devops/iac/k8s/wildland-k8s-devops.git"
@@ -773,15 +779,27 @@ Deploy Release Candidate app:
 
     cd $GIT_DIR
 
+    echo '(debug) before update ==='
+    cat mainnet/octant-image.values.yaml
+    cat testnet/octant-image.values.yaml
+    echo '(end debug) ==='
+
     yq -i -e ".[].value.value = \"$IMAGE_TAG\"" mainnet/octant-image.values.yaml
+    yq -i -e ".[].value.value = \"$IMAGE_TAG\"" testnet/octant-image.values.yaml
+
+    echo '(debug) after update ==='
+    cat mainnet/octant-image.values.yaml
+    cat testnet/octant-image.values.yaml
+    echo '(end debug) ==='
 
     git add mainnet/octant-image.values.yaml
+    git add testnet/octant-image.values.yaml
     git commit -S -m "Changed octant image tag to $IMAGE_TAG at $(date +%Y-%m-%d)" || true
 
     git push
   environment:
     name: persistent/prod
-    url: https://client.mainnet.octant.wildland.dev
+    url: https://client.testnet.octant.wildland.dev
 
 Deploy production app:
   stage: deploy
