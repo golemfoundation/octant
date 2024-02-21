@@ -212,7 +212,9 @@ jobs:
 
         export LOCAL_RPC_URL; LOCAL_RPC_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_rpc_url.sh)
 
-        yarn install
+        # BUG: For some reason this cache is a problem for this job to pass
+        # https://linear.app/golemfoundation/issue/OCT-1382/error-during-ci-contracts-deployment
+        rm -r $HOME/.cache/hardhat-nodejs/
 
         /app/entrypoint.sh $NETWORK ${CI_PROJECT_DIR}/contracts.env
       shell: bash
