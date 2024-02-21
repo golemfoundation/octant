@@ -170,6 +170,7 @@ jobs:
         set -ex
 
         env
+        ls -l
 
         echo ${{ inputs.env-type }}
         echo ${{ inputs.image-tag }}
