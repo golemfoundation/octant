@@ -79,8 +79,6 @@ jobs:
       run: |
         set -ex
 
-        exit 0
-
         export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
         source ${CI_PROJECT_DIR}/ci/argocd/resolve_env.sh $ENV_TYPE
 
