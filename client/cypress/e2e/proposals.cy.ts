@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import chaiColors from 'chai-colors';
 
-import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import { connectWallet, mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
 import { getNamesOfProposals } from 'cypress/utils/proposals';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
@@ -11,7 +11,7 @@ import Chainable = Cypress.Chainable;
 
 chai.use(chaiColors);
 
-function checkProposalItemElements(index, name): Chainable<any> {
+function checkProposalItemElements(index, name, isPatronMode = false): Chainable<any> {
   cy.get('[data-test^=ProposalsView__ProposalsListItem')
     .eq(index)
     .find('[data-test=ProposalsListItem__imageProfile]')
@@ -30,6 +30,13 @@ function checkProposalItemElements(index, name): Chainable<any> {
     .eq(index)
     .find('[data-test=ProposalsListItem__ButtonAddToAllocate]')
     .should('be.visible');
+
+  if (isPatronMode) {
+    cy.get('[data-test^=ProposalsView__ProposalsListItem')
+      .eq(index)
+      .find('[data-test=ProposalsListItem__ButtonAddToAllocate]')
+      .should('be.disabled');
+  }
 
   return cy
     .get('[data-test^=ProposalsView__ProposalsListItem')
@@ -131,6 +138,41 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       addProposalToAllocate(proposalNames.length - 1, 1);
       removeProposalFromAllocate(proposalNames.length, 2, 0);
       removeProposalFromAllocate(proposalNames.length, 1, proposalNames.length - 1);
+    });
+  });
+
+  describe(`proposals (patron mode): ${device}`, { viewportHeight, viewportWidth }, () => {
+    let proposalNames: string[] = [];
+
+    before(() => {
+      /**
+       * Global Metamask setup done by Synpress is not always done.
+       * Since Synpress needs to have valid provider to fetch the data from contracts,
+       * setupMetamask is required in each test suite.
+       */
+      cy.setupMetamask();
+    });
+
+    beforeEach(() => {
+      mockCoinPricesServer();
+      localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      visitWithLoader(ROOT_ROUTES.proposals.absolute);
+      connectWallet(true, true);
+      cy.get('[data-test^=ProposalItemSkeleton').should('not.exist');
+      /**
+       * This could be done in before hook, but CY wipes the state after each test
+       * (could be disabled, but creates other problems)
+       */
+      if (proposalNames.length === 0) {
+        proposalNames = getNamesOfProposals();
+      }
+    });
+
+    it('button "add to allocate" is disabled', () => {
+      for (let i = 0; i < proposalNames.length; i++) {
+        cy.get('[data-test^=ProposalsView__ProposalsListItem]').eq(i).scrollIntoView();
+        checkProposalItemElements(i, proposalNames[i], true);
+      }
     });
   });
 });

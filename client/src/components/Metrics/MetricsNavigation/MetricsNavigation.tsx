@@ -66,7 +66,9 @@ const MetricsNavigation = (): ReactElement => {
 
     const callback = entries => {
       entries.forEach(entry => {
-        if (!entry.intersectionRatio) {return;}
+        if (!entry.intersectionRatio) {
+          return;
+        }
 
         if (!entry.isIntersecting) {
           if (metricsPersonalTarget.isSameNode(entry.target)) {

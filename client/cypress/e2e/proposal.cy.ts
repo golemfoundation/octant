@@ -1,4 +1,4 @@
-import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import { connectWallet, mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
 import { getNamesOfProposals } from 'cypress/utils/proposals';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
@@ -119,6 +119,43 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           cy.get('[data-test=ProposalBackToTopButton__Button]').click();
           cy.get('[data-test=ProposalListItem]').eq(0).should('be.visible');
         }
+      }
+    });
+  });
+
+  describe(`proposal (patron mode): ${device}`, { viewportHeight, viewportWidth }, () => {
+    let proposalNames: string[] = [];
+
+    before(() => {
+      /**
+       * Global Metamask setup done by Synpress is not always done.
+       * Since Synpress needs to have valid provider to fetch the data from contracts,
+       * setupMetamask is required in each test suite.
+       */
+      cy.setupMetamask();
+    });
+
+    beforeEach(() => {
+      mockCoinPricesServer();
+      localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      visitWithLoader(ROOT_ROUTES.proposals.absolute);
+      connectWallet(true, true);
+      cy.get('[data-test^=ProposalItemSkeleton').should('not.exist');
+
+      /**
+       * This could be done in before hook, but CY wipes the state after each test
+       * (could be disabled, but creates other problems)
+       */
+      if (proposalNames.length === 0) {
+        proposalNames = getNamesOfProposals();
+      }
+    });
+
+    it('button "add to allocate" is disabled', () => {
+      for (let i = 0; i < proposalNames.length; i++) {
+        cy.get('[data-test^=ProposalsView__ProposalsListItem]').eq(i).click();
+        getButtonAddToAllocate().should('be.visible').should('be.disabled');
+        cy.go('back');
       }
     });
   });
