@@ -98,6 +98,8 @@ jobs:
 
         bash ${CI_PROJECT_DIR}/ci/argocd/wait_for_app.sh
         export OCTANT_BASE_URL; OCTANT_BASE_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_web_client_url.sh)
+        export RPC_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
+        export VITE_JSON_RPC_ENDPOINT=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
 
         yarn synpress:run
       shell: bash
