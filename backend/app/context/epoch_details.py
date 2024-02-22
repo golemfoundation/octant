@@ -3,6 +3,7 @@ from typing import List
 
 from app.context.epoch_state import EpochState
 from app.context.helpers import check_if_future
+from app.exceptions import WrongBlocksRange
 from app.extensions import epochs
 from app.infrastructure import graphql
 from app.infrastructure.external_api.etherscan.blocks import get_block_num_from_ts
@@ -49,6 +50,15 @@ class EpochDetails:
     @property
     def duration_range(self) -> tuple[int, int]:
         return self.start_sec, self.end_sec
+
+    @property
+    def no_blocks(self):
+        """
+        Returns the number of blocks within [start_block, end_block) in the epoch.
+        """
+        if not self.end_block or not self.start_block:
+            raise WrongBlocksRange
+        return self.end_block - self.start_block
 
 
 def get_epoch_details(epoch_num: int, epoch_state: EpochState) -> EpochDetails:

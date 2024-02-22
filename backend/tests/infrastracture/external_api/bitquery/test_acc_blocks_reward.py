@@ -1,13 +1,18 @@
 import pytest
-from app.infrastructure.external_api.bitquery.blocks_reward import (
-    accumulate_blocks_reward_wei,
+from app.modules.staking.proceeds.core import (
+    sum_blocks_rewards,
 )
 
 
 @pytest.mark.parametrize(
     "blocks, result",
-    [([{"reward": 0.024473700594149782}, {"reward": 0.05342909432569912}], 77902794)],
+    [
+        (
+            [{"reward": 0.024473700594149782}, {"reward": 0.05342909432569912}],
+            77902794919848899,
+        )
+    ],
 )
-def test_accumulate_blocks_reward_wei(blocks, result):
-    actual_result = accumulate_blocks_reward_wei(blocks)
+def test_sum_blocks_rewards(blocks, result):
+    actual_result = sum_blocks_rewards(blocks)
     assert actual_result == result

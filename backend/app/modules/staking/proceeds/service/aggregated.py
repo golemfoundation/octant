@@ -5,8 +5,8 @@ from app.infrastructure.external_api.etherscan.account import (
     get_transactions,
     AccountAction,
 )
-from app.infrastructure.external_api.bitquery.blocks_reward import get_blocks_reward
-from app.modules.common.timestamp_converter import timestamp_to_isoformat
+from app.infrastructure.external_api.bitquery.blocks_reward import get_blocks_rewards
+from app.legacy.utils.time import timestamp_to_isoformat
 from app.modules.staking.proceeds.core import (
     sum_mev,
     sum_withdrawals,
@@ -16,23 +16,23 @@ from app.pydantic import Model
 
 
 class AggregatedStakingProceeds(Model):
-    def _compute_blocks_reward(
-        self, start_sec: int, end_sec: int, withdrawals_target: str
-    ) -> int:
-        blocks_reward = 0
+    def _retrieve_blocks_rewards(
+        self, start_sec: int, end_sec: int, withdrawals_target: str, limit: int
+    ) -> list:
+        blocks_rewards = []
 
         if end_sec is None:
-            return blocks_reward
+            return blocks_rewards
 
         start_datetime, end_datetime = (
             timestamp_to_isoformat(start_sec),
             timestamp_to_isoformat(end_sec),
         )
 
-        blocks_reward = get_blocks_reward(
-            withdrawals_target, start_datetime, end_datetime
+        blocks_rewards = get_blocks_rewards(
+            withdrawals_target, start_datetime, end_datetime, limit=limit
         )
-        return blocks_reward
+        return blocks_rewards
 
     def get_staking_proceeds(self, context: Context) -> int:
         """
@@ -51,28 +51,33 @@ class AggregatedStakingProceeds(Model):
             context.epoch_details.end_block,
         )
 
-        if end_block is not None:
-            end_block -= 1
+        start_sec, end_sec = context.epoch_details.duration_range
+        no_blocks_to_get = context.epoch_details.no_blocks
 
+        blocks_rewards = self._retrieve_blocks_rewards(
+            start_sec, end_sec, withdrawals_target, limit=no_blocks_to_get
+        )
+
+        end_block_for_transactions = end_block - 1
         normal = get_transactions(
-            withdrawals_target, start_block, end_block, tx_type=AccountAction.NORMAL
+            withdrawals_target,
+            start_block,
+            end_block_for_transactions,
+            tx_type=AccountAction.NORMAL,
         )
         internal = get_transactions(
-            withdrawals_target, start_block, end_block, tx_type=AccountAction.INTERNAL
+            withdrawals_target,
+            start_block,
+            end_block_for_transactions,
+            tx_type=AccountAction.INTERNAL,
         )
         withdrawals = get_transactions(
             withdrawals_target,
             start_block,
-            end_block,
+            end_block_for_transactions,
             tx_type=AccountAction.BEACON_WITHDRAWAL,
         )
         mev_value = sum_mev(withdrawals_target, normal, internal)
         withdrawals_value = sum_withdrawals(withdrawals)
 
-        start_sec, end_sec = context.epoch_details.duration_range
-
-        blocks_reward = self._compute_blocks_reward(
-            start_sec, end_sec, withdrawals_target
-        )
-
-        return aggregate_proceeds(mev_value, withdrawals_value, blocks_reward)
+        return aggregate_proceeds(mev_value, withdrawals_value, blocks_rewards)

@@ -22,9 +22,6 @@ from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.proposals import Proposals
 from app.infrastructure.contracts.vault import Vault
-from app.infrastructure.external_api.bitquery.blocks_reward import (
-    accumulate_blocks_reward_wei,
-)
 from app.legacy.controllers.allocations import allocate, deserialize_payload
 from app.legacy.core.allocations import Allocation, AllocationRequest
 from app.legacy.crypto.account import Account as CryptoAccount
@@ -110,7 +107,7 @@ def mock_etherscan_api_get_block_num_from_ts(*args, **kwargs):
     return int(example_resp_json["result"])
 
 
-def mock_bitquery_api_get_blocks_reward(*args, **kwargs):
+def mock_bitquery_api_get_blocks_rewards(*args, **kwargs):
     example_resp_json = {
         "data": {
             "ethereum": {
@@ -135,7 +132,7 @@ def mock_bitquery_api_get_blocks_reward(*args, **kwargs):
     }
 
     blocks = example_resp_json["data"]["ethereum"]["blocks"]
-    return accumulate_blocks_reward_wei(blocks)
+    return blocks
 
 
 def pytest_addoption(parser):
@@ -545,10 +542,10 @@ def patch_etherscan_get_block_api(monkeypatch):
 
 
 @pytest.fixture(scope="function")
-def patch_bitquery_get_blocks_reward(monkeypatch):
+def patch_bitquery_get_blocks_rewards(monkeypatch):
     monkeypatch.setattr(
-        "app.modules.staking.proceeds.service.aggregated.get_blocks_reward",
-        mock_bitquery_api_get_blocks_reward,
+        "app.modules.staking.proceeds.service.aggregated.get_blocks_rewards",
+        mock_bitquery_api_get_blocks_rewards,
     )
 
 

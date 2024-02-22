@@ -238,3 +238,11 @@ class EmptyAllocations(OctantException):
 
     def __init__(self):
         super().__init__(self.description, self.code)
+
+
+class WrongBlocksRange(OctantException):
+    code = 400
+    description = "Attempt to use wrong range of start and end block in epoch"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)

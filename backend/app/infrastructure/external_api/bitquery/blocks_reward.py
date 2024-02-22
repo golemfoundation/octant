@@ -1,9 +1,9 @@
 import requests
 
+
 import app as app_module
 from app.constants import BITQUERY_API
 from app.exceptions import ExternalApiException
-from app.extensions import w3
 from app.infrastructure.external_api.bitquery.req_producer import (
     produce_payload,
     BitQueryActions,
@@ -11,20 +11,25 @@ from app.infrastructure.external_api.bitquery.req_producer import (
 )
 
 
-def accumulate_blocks_reward_wei(blocks: list) -> int:
-    blocks_reward_gwei = 0.0
-    for block in blocks:
-        blocks_reward_gwei += float(block["reward"])
+def get_blocks_rewards(
+    address: str, start_time: str, end_time: str, limit: int
+) -> list:
+    """
+    Fetch Ethereum blocks within a specified time range in ascending order by timestamp.
 
-    return int(w3.to_wei(blocks_reward_gwei, "gwei"))
-
-
-def get_blocks_reward(address: str, start_time: str, end_time: str) -> int:
+    Args:
+    - start_time (str): The start time in ISO 8601 format.
+    - end_time (str): The end time in ISO 8601 format.
+    - address (str): The miner (fee recipient) address.
+    - limit (int): The number of blocks to retrieve starting from start_time.
+                   Useful whilst getting end_blocks exclusively from epochs.
+    """
     payload = produce_payload(
         action_type=BitQueryActions.GET_BLOCK_REWARDS,
         address=address,
         start_time=start_time,
         end_time=end_time,
+        limit=limit,
     )
     headers = get_bitquery_header()
 
@@ -39,5 +44,4 @@ def get_blocks_reward(address: str, start_time: str, end_time: str) -> int:
         raise ExternalApiException(api_url, e, 500)
 
     blocks = json_response.json()["data"]["ethereum"]["blocks"]
-    blocks_reward = accumulate_blocks_reward_wei(blocks)
-    return blocks_reward
+    return blocks

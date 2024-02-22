@@ -25,13 +25,13 @@ def produce_payload(action_type: BitQueryActions, **query_values) -> str:
 
 
 def _block_rewards_payload(
-    start_time: str, end_time: str, address: str, **kwargs
+    start_time: str, end_time: str, address: str, limit: int, **kwargs
 ) -> str:
     payload = json.dumps(
         {
             "query": f"""query ($network: EthereumNetwork!, $from: ISO8601DateTime, $till: ISO8601DateTime) {{
           ethereum(network: $network) {{
-            blocks(time: {{since: $from, till: $till}}) {{
+            blocks(time: {{since: $from, till: $till}}, options: {{asc: "timestamp.unixtime", limit: {limit}}}) {{
               timestamp {{
                 unixtime
               }}
@@ -47,6 +47,7 @@ def _block_rewards_payload(
                     "network": "ethereum",
                     "from": start_time,
                     "till": end_time,
+                    "limit": limit,
                     "dateFormat": "%Y-%m-%d",
                 }
             ),
