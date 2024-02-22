@@ -105,18 +105,6 @@ jobs:
 
         source /usr/bin/entrypoint.sh
 
-        echo "------------                     -------------"
-        echo "------------ START DISPLAY DEBUG -------------"
-        echo "------------                     -------------"
-        pacman -Sy --noconfirm xorg-xhost
-        node --version
-        yarn run synpress -- --version
-        env
-        xhost +si:localuser:$( whoami ) >&/dev/null && { echo "xorg is running"; } || { echo "no xorg!!!"; }
-        echo "------------                     -------------"
-        echo "------------  END DISPLAY DEBUG  -------------"
-        echo "------------                     -------------"
-
         yarn synpress:run
       shell: bash
 
