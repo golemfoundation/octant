@@ -60,6 +60,11 @@ jobs:
       CYPRESS_DOCKER_RUN: true
       CI: true
       METAMASK_VERSION: 10.25.0
+      CHAIN_ID: 1337
+      NETWORK_NAME: "Local"
+      SYMBOL: "ETH"
+      IS_TESTNET: "true"
+      VITE_NETWORK: "Local"
       SECRET_WORDS: test test test test test test test test test test test junk
     steps:
     - uses: actions/checkout@v4.1.0
@@ -94,9 +99,7 @@ jobs:
         bash ${CI_PROJECT_DIR}/ci/argocd/wait_for_app.sh
         export OCTANT_BASE_URL; OCTANT_BASE_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_web_client_url.sh)
 
-        # E2E tests are disabled until we figure out why they take hours to complete
-        # https://linear.app/golemfoundation/issue/CAQD-331/figure-out-why-synpress-jobs-are-taking-so-long
-        # yarn synpress:run
+        yarn synpress:run
       shell: bash
     - uses: actions/upload-artifact@v4.0.0
       if: failure()
