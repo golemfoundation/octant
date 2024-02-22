@@ -8,7 +8,7 @@ from app.extensions import epochs
 from app.infrastructure import graphql
 from app.infrastructure.external_api.etherscan.blocks import get_block_num_from_ts
 from app.legacy.utils.time import from_timestamp_s, sec_to_days
-from app.modules.common.blockchain_types import compare_blockchain_types, ChainTypes
+from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 
 
 class EpochDetails:
