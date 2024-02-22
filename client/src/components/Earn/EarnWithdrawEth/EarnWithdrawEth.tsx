@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFeeData } from 'wagmi';
@@ -63,7 +62,7 @@ const EarnWithdrawEth: FC<EarnWithdrawEthProps> = ({ onCloseModal }) => {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
         isFetching: isFetchingFeeData,
-        valueCrypto: BigNumber.from(feeData === undefined ? 0 : feeData.gasPrice),
+        valueCrypto: BigInt(feeData?.gasPrice ?? 0),
       },
       label: t('estimatedGasPrice'),
     },
@@ -78,7 +77,7 @@ const EarnWithdrawEth: FC<EarnWithdrawEthProps> = ({ onCloseModal }) => {
           isDisabled={
             isWithdrawableRewardsFetching ||
             isAppWaitingForTransactionToBeIndexed ||
-            withdrawals?.sums.available.isZero()
+            !!(withdrawals?.sums.available === 0n)
           }
           isHigh
           isLoading={withdrawEthMutation.isPending}

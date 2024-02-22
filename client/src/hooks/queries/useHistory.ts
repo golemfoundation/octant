@@ -4,23 +4,22 @@ import {
   UseInfiniteQueryResult,
   useInfiniteQuery,
 } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 import { useAccount } from 'wagmi';
 
 import { apiGetHistory, Response, ResponseHistoryItem } from 'api/calls/history';
 import { QUERY_KEYS } from 'api/queryKeys';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 export type ResponseHistoryItemWithProjectsNumber = ResponseHistoryItem & {
   projects?: {
     address: string;
-    amount: BigNumber;
+    amount: bigint;
   }[];
   projectsNumber?: number;
 };
 
 export interface HistoryElement extends Omit<ResponseHistoryItemWithProjectsNumber, 'amount'> {
-  amount: BigNumber;
+  amount: bigint;
 }
 
 export default function useHistory(
@@ -43,7 +42,7 @@ export default function useHistory(
 
   const history = historyFromPages
     .map<HistoryElement>(({ amount, ...rest }) => ({
-      amount: parseUnits(amount, 'wei'),
+      amount: parseUnitsBigInt(amount, 'wei'),
       ...rest,
     }))
     .reduce<HistoryElement[]>((acc1, curr) => {
@@ -53,7 +52,8 @@ export default function useHistory(
         );
 
         if (elIdx > -1) {
-          acc1[elIdx].amount = acc1[elIdx].amount.add(curr.amount);
+          // eslint-disable-next-line operator-assignment
+          acc1[elIdx].amount = acc1[elIdx].amount + curr.amount;
           acc1[elIdx].projectsNumber = (acc1[elIdx].projectsNumber as number) + 1;
           // @ts-expect-error This property will be defined already, as per logic after the if.
           acc1[elIdx].projects.push({

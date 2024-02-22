@@ -1,12 +1,11 @@
 import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 
 import { apiGetEpochAllocations, Response } from 'api/calls/epochAllocations';
 import { QUERY_KEYS } from 'api/queryKeys';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 type EpochAllocation = {
-  amount: BigNumber;
+  amount: bigint;
   user: string;
 };
 
@@ -24,10 +23,11 @@ export default function useEpochAllocations(
         const donorIdx = acc.findIndex(({ user }) => user === curr.donor);
 
         if (donorIdx > -1) {
-          acc[donorIdx].amount = acc[donorIdx].amount.add(parseUnits(curr.amount, 'wei'));
+          // eslint-disable-next-line operator-assignment
+          acc[donorIdx].amount = acc[donorIdx].amount + parseUnitsBigInt(curr.amount, 'wei');
         } else {
           acc.push({
-            amount: parseUnits(curr.amount, 'wei'),
+            amount: parseUnitsBigInt(curr.amount, 'wei'),
             user: curr.donor,
           });
         }

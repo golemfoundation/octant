@@ -78,7 +78,7 @@ const EarnBoxGlmLock: FC<EarnBoxGlmLockProps> = ({ classNameBox }) => {
           isDisabled: !isConnected || isPreLaunch,
           isHigh: true,
           label:
-            !depositsValue || (!!depositsValue && depositsValue.isZero())
+            !depositsValue || (!!depositsValue && depositsValue === 0n)
               ? i18n.t('common.lockGlm')
               : t('editLockedGLM'),
           onClick: () => setIsModalGlmLockOpen(true),

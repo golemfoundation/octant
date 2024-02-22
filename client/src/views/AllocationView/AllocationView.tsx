@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { AnimatePresence } from 'framer-motion';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
@@ -31,6 +29,8 @@ import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useWithdrawals from 'hooks/queries/useWithdrawals';
 import toastService from 'services/toastService';
 import useAllocationsStore from 'store/allocations/store';
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import styles from './AllocationView.module.scss';
 import { AllocationValue, AllocationValues, CurrentView, PercentageProportions } from './types';
@@ -70,7 +70,7 @@ const AllocationView = (): ReactElement => {
     ...userAllocationsOriginal,
     elements: userAllocationsOriginal.elements.map(element => ({
       ...element,
-      value: formatUnits(element.value),
+      value: formatUnitsBigInt(element.value),
     })),
   };
 
@@ -142,7 +142,7 @@ const AllocationView = (): ReactElement => {
 
   const setPercentageProportionsWrapper = (
     allocationValuesNew: AllocationValues,
-    rewardsForProposalsNew: BigNumber,
+    rewardsForProposalsNew: bigint,
   ) => {
     if (!individualReward) {
       return;
@@ -152,7 +152,7 @@ const AllocationView = (): ReactElement => {
         ? '0'
         : (
             (parseFloat(curr.value.toString()) * 100) /
-            parseFloat(formatUnits(rewardsForProposalsNew))
+            parseFloat(formatUnitsBigInt(rewardsForProposalsNew))
           ).toFixed();
       return {
         ...acc,
@@ -171,8 +171,7 @@ const AllocationView = (): ReactElement => {
       isFetchingUserAllocation ||
       !isRewardsForProposalsSet ||
       currentEpoch === undefined ||
-      (isConnected && !userAllocations && isDecisionWindowOpen && currentEpoch > 1) ||
-      !rewardsForProposalsNew
+      (isConnected && !userAllocations && isDecisionWindowOpen && currentEpoch > 1)
     ) {
       return;
     }
@@ -189,10 +188,10 @@ const AllocationView = (): ReactElement => {
     }
 
     const allocationValuesNewSum = allocationValuesNew.reduce(
-      (acc, curr) => acc.add(parseUnits(curr.value)),
-      BigNumber.from(0),
+      (acc, curr) => acc + parseUnitsBigInt(curr.value),
+      BigInt(0),
     );
-    const shouldIsManulModeBeChangedToFalse = allocationValuesNewSum.isZero();
+    const shouldIsManulModeBeChangedToFalse = allocationValuesNewSum === 0n;
 
     /**
      * Manual needs to be changed to false when values are 0.
@@ -218,14 +217,14 @@ const AllocationView = (): ReactElement => {
 
     if (shouldReset) {
       const allocationValuesResetSum = allocationValuesReset.reduce(
-        (acc, curr) => acc.add(parseUnits(curr.value)),
-        BigNumber.from(0),
+        (acc, curr) => acc + parseUnitsBigInt(curr.value),
+        BigInt(0),
       );
 
       setRewardsForProposals(allocationValuesResetSum);
       setPercentageProportionsWrapper(allocationValuesReset, allocationValuesResetSum);
 
-      const shouldIsManualModeBeChangedToFalseNew = allocationValuesResetSum.isZero();
+      const shouldIsManualModeBeChangedToFalseNew = allocationValuesResetSum === 0n;
       if (!shouldIsManualModeBeChangedToFalseNew) {
         setIsManualMode(userAllocations!.isManuallyEdited);
       } else {
@@ -372,13 +371,13 @@ const AllocationView = (): ReactElement => {
   const areAllocationsAvailableOrAlreadyDone =
     (allocationValues !== undefined && !isEmpty(allocations)) ||
     (!!userAllocations?.hasUserAlreadyDoneAllocation && userAllocations.elements.length > 0);
-  const hasUserIndividualReward = !!individualReward && !individualReward.isZero();
+  const hasUserIndividualReward = !!individualReward && individualReward !== 0n;
   const areButtonsDisabled =
     isLoading ||
     !isConnected ||
     !isDecisionWindowOpen ||
-    (!areAllocationsAvailableOrAlreadyDone && !rewardsForProposals.isZero()) ||
-    !!individualReward?.isZero();
+    (!areAllocationsAvailableOrAlreadyDone && rewardsForProposals !== 0n) ||
+    !!(individualReward === 0n);
 
   const allocationsWithRewards = getAllocationsWithRewards({
     allocationValues,
@@ -391,7 +390,7 @@ const AllocationView = (): ReactElement => {
 
   const showAllocationBottomNavigation =
     !isEpoch1 &&
-    (areAllocationsAvailableOrAlreadyDone || rewardsForProposals.isZero()) &&
+    (areAllocationsAvailableOrAlreadyDone || rewardsForProposals === 0n) &&
     hasUserIndividualReward &&
     isDecisionWindowOpen;
 

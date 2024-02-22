@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 import { DISPLAY_CURRENCIES } from 'constants/currencies';
 import {
   ALLOCATION_ITEMS_KEY,
@@ -41,16 +39,16 @@ const LocalStorageService = () => {
     }
   };
 
-  const validateBigNumber = (localStorageKey: string): void => {
+  const validateBigInt = (localStorageKey: string): void => {
     let value;
     try {
-      value = BigNumber.from(JSON.parse(localStorage.getItem(localStorageKey) || 'null'));
+      value = BigInt(JSON.parse(localStorage.getItem(localStorageKey) || ''));
     } catch (e) {
       value = '';
     }
 
-    if (!BigNumber.isBigNumber(value)) {
-      localStorage.setItem(localStorageKey, JSON.stringify(BigNumber.from(0)));
+    if (typeof value !== 'bigint') {
+      localStorage.setItem(localStorageKey, JSON.stringify(BigInt(0).toString()));
     }
   };
 
@@ -125,8 +123,7 @@ const LocalStorageService = () => {
       tipsStoreInitialState.wasWithdrawAlreadyClosed,
     );
 
-  const validateRewardsForProposals = (): void =>
-    validateBigNumber(ALLOCATION_REWARDS_FOR_PROPOSALS);
+  const validateRewardsForProposals = (): void => validateBigInt(ALLOCATION_REWARDS_FOR_PROPOSALS);
 
   const init = (): void => {
     validateLocalStorageJsons();

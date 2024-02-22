@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import React, { ReactElement } from 'react';
 
 import MetricsEpochGridAverageLeverage from 'components/Metrics/MetricsEpoch/MetricsEpochGridAverageLeverage';
@@ -66,15 +65,14 @@ const MetricsEpoch = (): ReactElement => {
   const { data: epochUnusedRewards, isFetching: isFetchingEpochUnusedRewards } =
     useEpochUnusedRewards(epoch);
 
-  const patronsRewards = epochInfo?.patronsRewards || BigNumber.from(0);
+  const patronsRewards = epochInfo?.patronsRewards || BigInt(0);
   const sumOfDonations =
-    epochAllocations?.reduce((acc, curr) => acc.add(curr.amount), BigNumber.from(0)) ||
-    BigNumber.from(0);
-  const totalDonations = sumOfDonations.add(patronsRewards);
-  const unusedRewards = epochUnusedRewards?.value || BigNumber.from(0);
-  const epochBudget = epochBudgets?.budgetsSum || BigNumber.from(0);
+    epochAllocations?.reduce((acc, curr) => acc + curr.amount, BigInt(0)) || BigInt(0);
+  const totalDonations = sumOfDonations + patronsRewards;
+  const unusedRewards = epochUnusedRewards?.value || BigInt(0);
+  const epochBudget = epochBudgets?.budgetsSum || BigInt(0);
 
-  const totalPersonal = epochBudget.sub(totalDonations).sub(unusedRewards);
+  const totalPersonal = epochBudget - totalDonations - unusedRewards;
 
   // All metrics should be visible in the same moment (design). Skeletons are visible to the end of fetching all needed data.
   const isLoading =

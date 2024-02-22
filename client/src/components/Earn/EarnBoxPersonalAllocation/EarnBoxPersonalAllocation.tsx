@@ -117,7 +117,7 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
                   !isConnected ||
                   isFetchingWithdrawals ||
                   isAppWaitingForTransactionToBeIndexed ||
-                  withdrawals?.sums.available?.isZero(),
+                  !!(withdrawals?.sums.available && withdrawals.sums.available === 0n),
                 isHigh: true,
                 label: t('withdrawToWallet'),
                 onClick: () => setIsModalOpen(true),

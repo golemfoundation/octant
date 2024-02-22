@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 import { ExtendedProposal } from 'types/extended-proposal';
 import getSortedElementsByTotalValueOfAllocationsAndAlphabetical from 'utils/getSortedElementsByTotalValueOfAllocationsAndAlphabetical';
 
@@ -12,7 +10,7 @@ export interface ProposalIpfsWithRewards extends ExtendedProposal {
   address: string;
   numberOfDonors: number;
   percentage: number | undefined;
-  totalValueOfAllocations: BigNumber | undefined;
+  totalValueOfAllocations: bigint | undefined;
 }
 
 export default function useProposalsIpfsWithRewards(epoch?: number): {
@@ -58,10 +56,7 @@ export default function useProposalsIpfsWithRewards(epoch?: number): {
      */
     const totalValueOfAllocations =
       proposalMatchedProposalRewards?.sum ||
-      proposalsDonors[proposal.address].reduce(
-        (acc, curr) => acc.add(curr.amount),
-        BigNumber.from(0),
-      );
+      proposalsDonors[proposal.address].reduce((acc, curr) => acc + curr.amount, BigInt(0));
     return {
       numberOfDonors: proposalsDonors[proposal.address].length,
       percentage: proposalMatchedProposalRewards?.percentage,

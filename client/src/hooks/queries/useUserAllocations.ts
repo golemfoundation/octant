@@ -1,14 +1,13 @@
 import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 import { useAccount } from 'wagmi';
 
 import { apiGetUserAllocations, Response as ApiResponse } from 'api/calls/userAllocations';
 import { QUERY_KEYS } from 'api/queryKeys';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import useCurrentEpoch from './useCurrentEpoch';
 
-export type UserAllocationElement = { address: string; value: BigNumber };
+export type UserAllocationElement = { address: string; value: bigint };
 
 export type Response = {
   elements: UserAllocationElement[];
@@ -31,7 +30,7 @@ export default function useUserAllocations(
     select: response => {
       const userAllocationsFromBackend = response!.allocations.map(element => ({
         address: element.address,
-        value: parseUnits(element.amount, 'wei'),
+        value: parseUnitsBigInt(element.amount, 'wei'),
       }));
 
       return {
@@ -39,7 +38,7 @@ export default function useUserAllocations(
          * Allocations with value 0 are filtered out.
          * They are not shown anywhere in the UI and should be treated as not done at all.
          */
-        elements: userAllocationsFromBackend.filter(({ value }) => !value.isZero()),
+        elements: userAllocationsFromBackend.filter(({ value }) => value !== 0n),
         hasUserAlreadyDoneAllocation: !!userAllocationsFromBackend?.length,
         isManuallyEdited: !!response.isManuallyEdited,
       };

@@ -15,7 +15,7 @@ import BoxRounded from 'components/ui/BoxRounded';
 import Img from 'components/ui/Img';
 import InputText from 'components/ui/InputText';
 import Svg from 'components/ui/Svg';
-import { GWEI_5 } from 'constants/bigNumber';
+import { GWEI_5 } from 'constants/bigInt';
 import env from 'env';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -47,7 +47,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   rewardsProps,
 }) => {
   const { data: individualReward } = useIndividualReward();
-  const isGweiRange = individualReward?.lt(GWEI_5) ?? false;
+  const isGweiRange = (individualReward && individualReward < GWEI_5) ?? false;
 
   const [isInputFocused, setIsInputFocused] = useState(false);
   const { ipfsGateway } = env;
@@ -243,7 +243,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
               error={isError}
               isDisabled={
                 !isConnected ||
-                individualReward?.isZero() ||
+                !!(individualReward && individualReward === 0n) ||
                 !isDecisionWindowOpen ||
                 isThereAnyError
               }

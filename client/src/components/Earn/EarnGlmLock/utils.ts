@@ -1,8 +1,7 @@
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 import { string, object, ObjectSchema } from 'yup';
 
 import i18n from 'i18n';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import { CurrentMode, FormFields } from './types';
 
@@ -12,8 +11,8 @@ export const formInitialValues: FormFields = {
 
 export const validationSchema = (
   currentMode: CurrentMode,
-  dataAvailableFunds: BigNumber | undefined,
-  depositsValue: BigNumber | undefined,
+  dataAvailableFunds: bigint | undefined,
+  depositsValue: bigint | undefined,
 ): ObjectSchema<FormFields> =>
   object().shape({
     valueToDeposeOrWithdraw: string()
@@ -22,13 +21,13 @@ export const validationSchema = (
         name: 'value-in-range',
         skipAbsent: true,
         test(value, ctx) {
-          const newValueBigNumber = parseUnits(value || '0');
-          if (currentMode === 'unlock' && newValueBigNumber.gt(depositsValue!)) {
+          const newValueBigInt = parseUnitsBigInt(value || '0');
+          if (currentMode === 'unlock' && newValueBigInt > depositsValue!) {
             return ctx.createError({
               message: 'cantUnlock',
             });
           }
-          if (currentMode === 'lock' && newValueBigNumber.gt(dataAvailableFunds!)) {
+          if (currentMode === 'lock' && newValueBigInt > dataAvailableFunds!) {
             return ctx.createError({
               message: 'dontHaveEnough',
             });

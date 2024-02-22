@@ -1,6 +1,4 @@
 import cx from 'classnames';
-import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -8,6 +6,7 @@ import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import PieChart from 'components/ui/PieChart';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
 import useEpochInfo from 'hooks/queries/useEpochInfo';
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './MetricsEpochGridFundsUsage.module.scss';
@@ -21,16 +20,17 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   const { epoch } = useMetricsEpoch();
   const { data: epochInfo } = useEpochInfo(epoch);
 
-  const getNumberValue = (value: BigNumber) => Number(Number(formatUnits(value, 'wei')).toFixed(3));
+  const getNumberValue = (value: bigint) =>
+    Number(Number(formatUnitsBigInt(value, 'wei')).toFixed(3));
 
-  const leftover = epochInfo ? epochInfo.leftover : BigNumber.from(0);
+  const leftover = epochInfo ? epochInfo.leftover : BigInt(0);
 
-  const projectCosts = epochInfo ? epochInfo.operationalCost : BigNumber.from(0);
-  const matchRewards = epochInfo ? epochInfo.matchedRewards : BigNumber.from(0);
-  const userRewards = epochInfo ? epochInfo.individualRewards : BigNumber.from(0);
-  const staking = epochInfo ? epochInfo.staking : BigNumber.from(0);
+  const projectCosts = epochInfo ? epochInfo.operationalCost : BigInt(0);
+  const matchRewards = epochInfo ? epochInfo.matchedRewards : BigInt(0);
+  const userRewards = epochInfo ? epochInfo.individualRewards : BigInt(0);
+  const staking = epochInfo ? epochInfo.staking : BigInt(0);
 
-  const total = leftover.add(projectCosts).add(matchRewards).add(userRewards).add(staking);
+  const total = leftover + projectCosts + matchRewards + userRewards + staking;
 
   const data = [
     {

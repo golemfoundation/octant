@@ -1,13 +1,12 @@
 import { useQueries } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 import { useAccount } from 'wagmi';
 
 import { apiGetIndividualRewards, Response } from 'api/calls/individualRewards';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
-export default function useIndividualRewardAllEpochs(): { data: BigNumber[]; isFetching: boolean } {
+export default function useIndividualRewardAllEpochs(): { data: bigint[]; isFetching: boolean } {
   const { address } = useAccount();
   const { data: currentEpoch, isFetching: isFetchingCurrentEpoch } = useCurrentEpoch();
 
@@ -42,7 +41,7 @@ export default function useIndividualRewardAllEpochs(): { data: BigNumber[]; isF
   }
 
   return {
-    data: individualRewardAllEpochs.map(({ data }) => parseUnits(data!.budget, 'wei')),
+    data: individualRewardAllEpochs.map(({ data }) => parseUnitsBigInt(data!.budget, 'wei')),
     isFetching: false,
   };
 }

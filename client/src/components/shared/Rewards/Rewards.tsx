@@ -80,7 +80,7 @@ const Rewards: FC<RewardsProps> = ({
     isProposalView,
     epoch,
     numberOfDonors,
-    proposalRewardsThreshold?.toHexString(),
+    proposalRewardsThreshold,
   ];
 
   const rightSectionValue = useMemo(() => {

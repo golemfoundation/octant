@@ -1,18 +1,18 @@
-import { BigNumber } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { object, ObjectSchema, string } from 'yup';
 
 import i18n from 'i18n';
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import { FormFields } from './types';
 
-export const formInitialValues = (valueCryptoSelected: BigNumber): FormFields => ({
-  valueCryptoSelected: formatUnits(valueCryptoSelected),
+export const formInitialValues = (valueCryptoSelected: bigint): FormFields => ({
+  valueCryptoSelected: formatUnitsBigInt(valueCryptoSelected),
 });
 
 export const validationSchema = (
-  valueCryptoTotal: BigNumber,
-  restToDistribute: BigNumber,
+  valueCryptoTotal: bigint,
+  restToDistribute: bigint,
 ): ObjectSchema<FormFields> =>
   object().shape({
     valueCryptoSelected: string()
@@ -21,8 +21,8 @@ export const validationSchema = (
         name: 'value-in-range',
         skipAbsent: true,
         test(value, ctx) {
-          const newValueBigNumber = parseUnits(value || '0');
-          if (newValueBigNumber.gt(valueCryptoTotal) || newValueBigNumber.gt(restToDistribute)) {
+          const newValueBigInt = parseUnitsBigInt(value || '0');
+          if (newValueBigInt > valueCryptoTotal || newValueBigInt > restToDistribute) {
             return ctx.createError();
           }
 

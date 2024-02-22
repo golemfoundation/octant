@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 import {
   ALLOCATION_ITEMS_KEY,
   ALLOCATION_REWARDS_FOR_PROPOSALS,
@@ -109,13 +107,13 @@ describe('LocalStorageService', () => {
       localStorage.setItem(ALLOCATION_REWARDS_FOR_PROPOSALS, 'not-a-bignumber');
       localStorageService.init();
       expect(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROPOSALS)).toBe(
-        JSON.stringify(BigNumber.from(0)),
+        JSON.stringify(BigInt(0).toString()),
       );
 
-      const bigNumber100Stringified = JSON.stringify(BigNumber.from(100));
-      localStorage.setItem(ALLOCATION_REWARDS_FOR_PROPOSALS, bigNumber100Stringified);
+      const bigInt100Stringified = JSON.stringify(BigInt(100).toString());
+      localStorage.setItem(ALLOCATION_REWARDS_FOR_PROPOSALS, bigInt100Stringified);
       localStorageService.init();
-      expect(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROPOSALS)).toBe(bigNumber100Stringified);
+      expect(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROPOSALS)).toBe(bigInt100Stringified);
     });
   });
 });
