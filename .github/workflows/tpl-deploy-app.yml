@@ -5,6 +5,10 @@ on:
     outputs:
       contracts-env-artifact-id:
         value: ${{ inputs.env-type }}-contracts-env
+      octant-web-url:
+        value: ${{ jobs.wait-for-app.outputs.octant_web_url }}
+      anvil-rpc-url:
+        value: ${{ jobs.deploy-contracts.outputs.anvil_rpc_url }}
     inputs:
       branch-head-ref:
         required: true
@@ -200,6 +204,8 @@ jobs:
     if: ${{ inputs.deploy-contracts }}
     runs-on:
     - metal
+    outputs:
+      anvil_rpc_url: ${{ steps.deploy.outputs.LOCAL_RPC_URL }}
     container:
       image: ${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}/contracts-v1:${{ inputs.image-tag }}
       credentials:
@@ -211,11 +217,14 @@ jobs:
         ref: ${{ inputs.branch-head-ref }}
 
     - name: Deploy contracts
+      id: deploy
       run: |
         set -ex
 
         export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
         export EPOCHS_START=$(date +%s)
+
+        echo "(debug) FORWARD_FIRST_EPOCH=${FORWARD_FIRST_EPOCH}"
 
         source ${CI_PROJECT_DIR}/ci/argocd/resolve_env.sh $ENV_TYPE
         bash ${CI_PROJECT_DIR}/ci/argocd/wait_for_app.sh
@@ -227,6 +236,8 @@ jobs:
         rm -r $HOME/.cache/hardhat-nodejs/
 
         /app/entrypoint.sh $NETWORK ${CI_PROJECT_DIR}/contracts.env
+
+        echo "LOCAL_RPC_URL=$LOCAL_RPC_URL" >> $GITHUB_OUTPUT
       shell: bash
     - uses: actions/upload-artifact@v4
       if: success()
@@ -285,6 +296,8 @@ jobs:
     runs-on:
     - metal
     if: always() && (needs.start-application-stack.result == 'success')
+    outputs:
+      octant_web_url: ${{ steps.app.outputs.OCTANT_WEB_URL }}
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:2ea6d57c
       credentials:
