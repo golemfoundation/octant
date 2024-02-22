@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import React, { FC, useState, Fragment, useMemo, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useLocation, useMatch } from 'react-router-dom';
+import { useLocation, useMatch, useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
 import LayoutNavbar from 'components/shared/Layout/LayoutNavbar';
@@ -57,6 +57,7 @@ const Layout: FC<LayoutProps> = ({
   const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { data: isUserTOSAccepted } = useUserTOS();
   const isProjectAdminMode = useIsProjectAdminMode();
 
@@ -107,6 +108,14 @@ const Layout: FC<LayoutProps> = ({
     return false;
   }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
+  const onLogoClick = () => {
+    if (pathname !== ROOT_ROUTES.proposals.absolute) {
+      navigate(ROOT_ROUTES.proposals.absolute);
+      return;
+    }
+
+    window.scrollTo({ behavior: 'smooth', top: 0 });
+  };
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentPeriod(getCurrentPeriod());
@@ -142,10 +151,8 @@ const Layout: FC<LayoutProps> = ({
               )}
             >
               <div className={styles.header} data-test="MainLayout__Header">
-                <div className={styles.logoWrapper}>
-                  <Link data-test="MainLayout__Logo" to={ROOT_ROUTES.proposals.absolute}>
-                    <Svg img={octant} size={4} />
-                  </Link>
+                <div className={styles.logo} data-test="MainLayout__Logo" onClick={onLogoClick}>
+                  <Svg img={octant} size={4} />
                   {networkConfig.isTestnet && (
                     <div className={styles.testnetIndicatorWrapper}>
                       <div className={styles.testnetIndicator}>{networkConfig.name}</div>

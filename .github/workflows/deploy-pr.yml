@@ -23,6 +23,7 @@ jobs:
     with:
       # ---
       env-type: pr
+      branch-head-ref: ${{ needs.run.outputs.ref }}
       image-tag: ${{ needs.run.outputs.sha }}
       pull-request-id: ${{ needs.run.outputs.pr_id }}
       workflow-id: ${{ github.run_id }}

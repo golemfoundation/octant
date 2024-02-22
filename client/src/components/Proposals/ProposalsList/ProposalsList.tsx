@@ -93,7 +93,7 @@ const ProposalsList: FC<ProposalsListProps> = ({
               proposalIpfsWithRewards={proposalIpfsWithRewards}
             />
           ))
-        : (proposalsAddresses || []).map((_, index) => (
+        : proposalsAddresses?.map((_, index) => (
             // eslint-disable-next-line react/no-array-index-key
             <ProposalsListSkeletonItem key={index} className={styles.element} />
           ))}
