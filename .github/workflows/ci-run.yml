@@ -1,0 +1,471 @@
+---
+name: ♻ CI Run
+on:
+  pull_request:
+env:
+  # ----------------------------------------------------------------------------
+  # CI/CD
+  HOUSEKEEPER_NAME: "${{ vars.HOUSEKEEPER_NAME }}"
+  HOUSEKEEPER_EMAIL: "${{ secrets.HOUSEKEEPER_EMAIL }}"
+  HOUSEKEEPER_CI_TOKEN: "${{ secrets.HOUSEKEEPER_CI_TOKEN }}"
+  HOUSEKEEPER_GPG_KEY: "${{ secrets.HOUSEKEEPER_GPG_KEY }}"
+  HOUSEKEEPER_GPG_KEY_ID: "${{ secrets.HOUSEKEEPER_GPG_KEY_ID }}"
+  ARGOCD_URL: "${{ secrets.ARGOCD_URL }}"
+  ARGOCD_ACCESS_TOKEN: "${{ secrets.ARGOCD_ACCESS_TOKEN }}"
+
+jobs:
+  stop-e2e-env:
+    name: Stop E2E Env
+    needs:
+    - start-e2e-env
+    - run-e2e-tests
+    if: always() && (needs.start-e2e-env.result == 'success')
+    uses: ./.github/workflows/tpl-destroy-env.yml
+    secrets: inherit
+    with:
+      env-type: e2e
+      delete-env: true
+      pull-request-id: ${{ github.event.pull_request.number }}
+      workflow-id: ${{ github.run_id }}
+
+  stop-api-env:
+    name: Stop APITest Env
+    needs:
+    - start-apitest-env
+    - run-api-tests
+    if: always() && (needs.start-apitest-env.result == 'success')
+    uses: ./.github/workflows/tpl-destroy-env.yml
+    secrets: inherit
+    with:
+      env-type: apitest
+      delete-env: true
+      pull-request-id: ${{ github.event.pull_request.number }}
+      workflow-id: ${{ github.run_id }}
+
+  run-e2e-tests:
+    name: Run E2E Tests
+    needs:
+    - deploy-e2e-env
+    runs-on:
+    - metal
+    container:
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/synpress-arch:5dc8b447
+      credentials:
+        username: "doesnt-matter"
+        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+    env:
+      ENV_TYPE: e2e
+      CI_MERGE_REQUEST_IID: ${{ github.event.pull_request.number }}
+      CI_PIPELINE_ID: ${{ github.run_id }}
+      CYPRESS_DOCKER_RUN: true
+      CI: true
+      METAMASK_VERSION: 10.25.0
+      SECRET_WORDS: test test test test test test test test test test test junk
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: actions/cache/restore@v4
+      with:
+        path: |-
+          ${{ matrix.SERVICE }}/.yarn
+          ${{ matrix.SERVICE }}/node-modules
+        key: "${{ github.sha }}-yarn-client"
+    - uses: actions/cache/restore@v4
+      with:
+        path: |-
+          ${{ matrix.SERVICE }}/.yarn
+          ${{ matrix.SERVICE }}/node-modules
+        key: "${{ github.sha }}-yarn-root"
+    - name: Run E2E tests
+      run: |
+        set -ex
+
+        export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
+        source ${CI_PROJECT_DIR}/ci/argocd/resolve_env.sh $ENV_TYPE
+
+        # Setup NVM to use Node version 16
+        source /usr/share/nvm/init-nvm.sh
+        nvm install 16
+        nvm use 16
+        npm i -g yarn
+
+        pushd client
+        yarn install --cache-folder .yarn --frozen-lockfile --prefer-offline --no-audit
+
+        bash ${CI_PROJECT_DIR}/ci/argocd/wait_for_app.sh
+        export OCTANT_BASE_URL; OCTANT_BASE_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_web_client_url.sh)
+
+        # E2E tests are disabled until we figure out why they take hours to complete
+        # https://linear.app/golemfoundation/issue/CAQD-331/figure-out-why-synpress-jobs-are-taking-so-long
+        # yarn synpress:run
+      shell: bash
+    - uses: actions/upload-artifact@v4.0.0
+      if: failure()
+      with:
+        name: "${{ github.job }}"
+        retention-days: 3
+        path: |-
+          client/cypress/videos
+          client/cypress/screenshots
+
+  run-api-tests:
+    name: Run API Tests
+    needs:
+    - deploy-apitest-env
+    runs-on:
+    - metal
+    container:
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/python-poetry-ext:ad1d9179
+      credentials:
+        username: "doesnt-matter"
+        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+    env:
+      ENV_TYPE: apitest
+      CI_MERGE_REQUEST_IID: ${{ github.event.pull_request.number }}
+      CI_PIPELINE_ID: ${{ github.run_id }}
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: actions/cache/restore@v4
+      with:
+        path: backend/.venv
+        key: "${{ github.sha }}-poetry-backend"
+    - uses: actions/download-artifact@v4
+      with:
+        name: ${{ needs.deploy-apitest-env.outputs.contracts-env-artifact-id }}
+    - name: Run API tests
+      run: |
+        set -ex
+
+        export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
+        export $(grep -v '^#' ${CI_PROJECT_DIR}/contracts.env | xargs)
+
+        source ${CI_PROJECT_DIR}/ci/argocd/resolve_env.sh $ENV_TYPE
+
+        pushd backend
+
+        poetry config virtualenvs.in-project true
+        poetry install
+
+        bash ${CI_PROJECT_DIR}/ci/argocd/wait_for_app.sh
+        export ETH_RPC_PROVIDER_URL; ETH_RPC_PROVIDER_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_rpc_url.sh)
+        export SUBGRAPH_ENDPOINT; SUBGRAPH_ENDPOINT=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_graph_url.sh)/subgraphs/name/octant
+
+        # Tests are disabled???
+        # https://gitlab.com/golemfoundation/governance/octant/-/commit/14e996ebed1fb73788e8ace045ea3b9a69bd5ca8
+        # poetry run pytest --onlyapi
+      shell: bash
+
+  deploy-e2e-env:
+    name: Deploy E2E Env
+    needs:
+    - docker
+    - start-e2e-env
+    uses: ./.github/workflows/tpl-deploy-app.yml
+    with:
+      # ---
+      env-type: e2e
+      branch-head-ref: ${{ github.ref }}
+      image-tag: ${{ github.sha }}
+      pull-request-id: ${{ github.event.pull_request.number }}
+      workflow-id: ${{ github.run_id }}
+      env-id: ${{ needs.start-e2e-env.outputs.env-id }}
+      deployment-id: ${{ needs.start-e2e-env.outputs.deployment-id }}
+      # ---
+      deploy-contracts: true
+      forward-first-epoch: true
+      chain-id: 1337
+      network-name: local
+      chain-name: localhost
+      snapshotter-enabled: true
+      scheduler-enabled: true
+      glm-claim-enabled: true
+      vault-confirm-withdrawals-enabled: true
+    secrets: inherit
+
+  deploy-apitest-env:
+    name: Deploy APITest Env
+    needs:
+    - docker
+    - start-apitest-env
+    uses: ./.github/workflows/tpl-deploy-app.yml
+    with:
+      # ---
+      env-type: apitest
+      branch-head-ref: ${{ github.ref }}
+      image-tag: ${{ github.sha }}
+      pull-request-id: ${{ github.event.pull_request.number }}
+      workflow-id: ${{ github.run_id }}
+      env-id: ${{ needs.start-apitest-env.outputs.env-id }}
+      deployment-id: ${{ needs.start-apitest-env.outputs.deployment-id }}
+      # ---
+      deploy-contracts: true
+      chain-id: 1337
+      network-name: local
+      chain-name: localhost
+      web-client-replicas: 0
+      coin-prices-server-replicas: 0
+      backend-server-replicas: 0
+    secrets: inherit
+
+  start-e2e-env:
+    name: Start E2E Env
+    uses: ./.github/workflows/tpl-start-env.yml
+    secrets: inherit
+    with:
+      env-type: e2e
+      git-ref: ${{ github.ref }}
+      pull-request-id: ${{ github.event.pull_request.number }}
+      workflow-id: ${{ github.run_id }}
+
+  start-apitest-env:
+    name: Start APITest Env
+    uses: ./.github/workflows/tpl-start-env.yml
+    secrets: inherit
+    with:
+      env-type: apitest
+      git-ref: ${{ github.ref }}
+      pull-request-id: ${{ github.event.pull_request.number }}
+      workflow-id: ${{ github.run_id }}
+
+  docker:
+    name: Docker
+    uses: ./.github/workflows/tpl-images.yml
+    secrets: inherit
+    with:
+      image-tag: ${{ github.sha }}
+  # +-------------------------
+  # | Tests: NodeJS
+  # +-------------------------
+  nodejs-tests:
+    name: NodeJS Tests
+    needs:
+    - lint-and-typecheck-yarn
+    runs-on:
+      - metal
+    container:
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:bdda411c
+      credentials:
+        username: "doesnt-matter"
+        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+    strategy:
+      matrix:
+        SERVICE:
+        - contracts-v1
+        - client
+        - coin-prices-server
+        - subgraph
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: actions/cache/restore@v4
+      with:
+        path: |-
+          node_modules
+          .yarn
+        key: "${{ github.sha }}-yarn-root"
+    - uses: actions/cache/restore@v4
+      with:
+        path: |-
+          ${{ matrix.SERVICE }}/.yarn
+          ${{ matrix.SERVICE }}/node-modules
+        key: "${{ github.sha }}-yarn-${{ matrix.SERVICE }}"
+    - uses: actions/cache/restore@v4
+      with:
+        path: |-
+          contracts-v1/artifacts
+          contracts-v1/typechain
+        key: "${{ github.sha }}-yarn-contracts-v1-extras"
+    - run: |
+        cd ${{ matrix.SERVICE }}
+        yarn install --cache-folder .yarn --non-interactive --frozen-lockfile
+        yarn test
+      shell: bash
+  # +-------------------------
+  # | Tests: Backend
+  # +-------------------------
+  backend-tests:
+    name: Backend Tests
+    needs:
+    - lint-and-typecheck-poetry
+    runs-on:
+      - metal
+    container:
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/python-poetry-ext:ad1d9179
+      credentials:
+        username: "doesnt-matter"
+        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: actions/cache/restore@v4
+      with:
+        path: backend/.venv
+        key: "${{ github.sha }}-poetry-backend"
+    - run: |
+        pushd backend
+        poetry config virtualenvs.in-project true
+        poetry install
+        poetry run pytest
+      shell: bash
+  # +-------------------------
+  # | Lint: poetry
+  # +-------------------------
+  lint-and-typecheck-poetry:
+    name: Lint and Typecheck Poetry
+    needs:
+    - build-backend
+    runs-on:
+      - metal
+    container:
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/python-poetry-ext:ad1d9179
+      credentials:
+        username: "doesnt-matter"
+        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: actions/cache/restore@v4
+      with:
+        path: backend/.venv
+        key: "${{ github.sha }}-poetry-backend"
+    - run: |
+        pushd backend
+        poetry config virtualenvs.in-project true
+        poetry install
+        poetry run black --check --extend-exclude .venv .
+        poetry run flake8
+      shell: bash
+  # +-------------------------
+  # | Lint: yarn
+  # +-------------------------
+  lint-and-typecheck-yarn:
+    name: Lint and Typecheck Yarn
+    needs:
+    - build-contracts
+    - build-services
+    runs-on:
+      - metal
+    container:
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:bdda411c
+      credentials:
+        username: "doesnt-matter"
+        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+    strategy:
+      matrix:
+        SERVICE:
+        - contracts-v1
+        - client
+        - coin-prices-server
+        - subgraph
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: actions/cache/restore@v4
+      with:
+        path: |-
+          node_modules
+          .yarn
+        key: "${{ github.sha }}-yarn-root"
+    - uses: actions/cache/restore@v4
+      with:
+        path: |-
+          ${{ matrix.SERVICE }}/.yarn
+          ${{ matrix.SERVICE }}/node-modules
+        key: "${{ github.sha }}-yarn-${{ matrix.SERVICE }}"
+    - uses: actions/cache/restore@v4
+      with:
+        path: |-
+          contracts-v1/artifacts
+          contracts-v1/typechain
+        key: "${{ github.sha }}-yarn-contracts-v1-extras"
+    - run: |
+        pushd ${{ matrix.SERVICE }}
+        yarn install --cache-folder .yarn --non-interactive --frozen-lockfile
+        yarn eslint
+        yarn type-check
+      shell: bash
+  # +-------------------------
+  # | Build
+  # |   client
+  # |   cps
+  # |   subgraph
+  # +-------------------------
+  build-services:
+    name: Build Services
+    needs:
+    - build-contracts
+    runs-on:
+      - metal
+    container:
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:bdda411c
+      credentials:
+        username: "doesnt-matter"
+        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+    strategy:
+      matrix:
+        SERVICE:
+        - client
+        - coin-prices-server
+        - subgraph
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: actions/cache/restore@v4
+      with:
+        path: |-
+          node_modules
+          .yarn
+        key: "${{ github.sha }}-yarn-root"
+    - run: ci/build_${{ matrix.SERVICE }}.sh
+    - uses: actions/cache/save@v4
+      with:
+        path: |-
+          ${{ matrix.SERVICE }}/.yarn
+          ${{ matrix.SERVICE }}/node-modules
+        key: "${{ github.sha }}-yarn-${{ matrix.SERVICE }}"
+  # +-------------------------
+  # | Build backend
+  # +-------------------------
+  build-backend:
+    name: Build Services
+    runs-on:
+      - metal
+    container:
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/python-poetry-ext:ad1d9179
+      credentials:
+        username: "doesnt-matter"
+        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - run: ci/build_backend.sh
+    - uses: actions/cache/save@v4
+      with:
+        path: backend/.venv
+        key: "${{ github.sha }}-poetry-backend"
+  # +-------------------------
+  # | Build contracts
+  # +-------------------------
+  build-contracts:
+    name: Build Contracts
+    runs-on:
+      - metal
+    container:
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:bdda411c
+      credentials:
+        username: "doesnt-matter"
+        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - run: ci/build_contracts_v1.sh
+    - uses: actions/cache/save@v4
+      with:
+        path: |-
+          node_modules
+          .yarn
+        key: "${{ github.sha }}-yarn-root"
+    - uses: actions/cache/save@v4
+      with:
+        path: |-
+          contracts-v1/.yarn
+          contracts-v1/node_modules
+        key: "${{ github.sha }}-yarn-contracts-v1"
+    - uses: actions/cache/save@v4
+      with:
+        path: |-
+          contracts-v1/artifacts
+          contracts-v1/typechain
+        key: "${{ github.sha }}-yarn-contracts-v1-extras"
