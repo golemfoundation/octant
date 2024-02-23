@@ -109,12 +109,12 @@ const Layout: FC<LayoutProps> = ({
   }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
   const onLogoClick = () => {
-    if (pathname !== ROOT_ROUTES.proposals.absolute) {
-      navigate(ROOT_ROUTES.proposals.absolute);
+    if (pathname === ROOT_ROUTES.proposals.absolute) {
+      window.scrollTo({ behavior: 'smooth', top: 0 });
       return;
     }
 
-    window.scrollTo({ behavior: 'smooth', top: 0 });
+    navigate(ROOT_ROUTES.proposals.absolute);
   };
   useEffect(() => {
     const intervalId = setInterval(() => {
