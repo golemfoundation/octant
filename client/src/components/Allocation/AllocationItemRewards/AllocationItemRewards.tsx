@@ -78,9 +78,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
 
   // Before the first allocation, threshold is 0, which should be mapped to not defined.
   const isRewardsDataDefined =
-    proposalMatchedProposalRewards !== undefined &&
-    proposalRewardsThreshold !== undefined &&
-    proposalRewardsThreshold !== 0n;
+    proposalMatchedProposalRewards !== undefined && !proposalRewardsThreshold;
 
   const isThresholdUnknown = isEpoch1 || !isRewardsDataDefined;
 
@@ -107,9 +105,10 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
     rewardsSumWithValueAndSimulation,
   );
-  const proposalRewardsThresholdFormatted = proposalRewardsThreshold
-    ? getFormattedEthValue(proposalRewardsThreshold)
-    : undefined;
+  const proposalRewardsThresholdFormatted =
+    proposalRewardsThreshold !== undefined
+      ? getFormattedEthValue(proposalRewardsThreshold)
+      : undefined;
 
   const areValueAndSimulatedSuffixesTheSame =
     valueFormatted.suffix === simulatedMatchedFormatted?.suffix;

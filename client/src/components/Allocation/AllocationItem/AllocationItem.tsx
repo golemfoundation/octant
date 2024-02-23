@@ -242,10 +242,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
               className={cx(styles.input, isEpoch1 && styles.isEpoch1, isError && styles.isError)}
               error={isError}
               isDisabled={
-                !isConnected ||
-                !!(individualReward && individualReward === 0n) ||
-                !isDecisionWindowOpen ||
-                isThereAnyError
+                !isConnected || !individualReward || !isDecisionWindowOpen || isThereAnyError
               }
               onBlur={() => setIsInputFocused(false)}
               onChange={event => _onChange(event.target.value)}

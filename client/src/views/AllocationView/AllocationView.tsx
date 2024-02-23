@@ -377,7 +377,7 @@ const AllocationView = (): ReactElement => {
     !isConnected ||
     !isDecisionWindowOpen ||
     (!areAllocationsAvailableOrAlreadyDone && rewardsForProposals !== 0n) ||
-    !!(individualReward === 0n);
+    !individualReward;
 
   const allocationsWithRewards = getAllocationsWithRewards({
     allocationValues,
