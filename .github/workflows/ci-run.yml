@@ -49,7 +49,7 @@ jobs:
     runs-on:
     - metal
     container:
-      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/synpress-arch:5dc8b447
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/synpress-arch:71c6cbc5
       credentials:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
@@ -61,43 +61,55 @@ jobs:
       CI: true
       METAMASK_VERSION: 10.25.0
       SECRET_WORDS: test test test test test test test test test test test junk
+      CHAIN_ID: 1337
+      NETWORK_NAME: Local
+      SYMBOL: ETH
+      IS_TESTNET: true
+      VITE_NETWORK: Local
     steps:
     - uses: actions/checkout@v4.1.0
+
     - uses: actions/cache/restore@v4
       with:
         path: |-
           ${{ matrix.SERVICE }}/.yarn
           ${{ matrix.SERVICE }}/node-modules
         key: "${{ github.sha }}-yarn-client"
+
     - uses: actions/cache/restore@v4
       with:
         path: |-
           ${{ matrix.SERVICE }}/.yarn
           ${{ matrix.SERVICE }}/node-modules
         key: "${{ github.sha }}-yarn-root"
+
     - name: Run E2E tests
       run: |
         set -ex
 
         export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
-        source ${CI_PROJECT_DIR}/ci/argocd/resolve_env.sh $ENV_TYPE
+
+        export OCTANT_BASE_URL=${{ needs.deploy-e2e-env.outputs.octant-web-url }}
+        export RPC_URL=${{ needs.deploy-e2e-env.outputs.anvil-rpc-url }}
+        export VITE_JSON_RPC_ENDPOINT=${{ needs.deploy-e2e-env.outputs.anvil-rpc-url }}
 
         # Setup NVM to use Node version 16
+        set +x
         source /usr/share/nvm/init-nvm.sh
-        nvm install 16
         nvm use 16
+        set -x
         npm i -g yarn
 
         pushd client
         yarn install --cache-folder .yarn --frozen-lockfile --prefer-offline --no-audit
 
-        bash ${CI_PROJECT_DIR}/ci/argocd/wait_for_app.sh
-        export OCTANT_BASE_URL; OCTANT_BASE_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_web_client_url.sh)
+        source /usr/bin/entrypoint.sh
 
         # E2E tests are disabled until we figure out why they take hours to complete
         # https://linear.app/golemfoundation/issue/CAQD-331/figure-out-why-synpress-jobs-are-taking-so-long
         # yarn synpress:run
       shell: bash
+
     - uses: actions/upload-artifact@v4.0.0
       if: failure()
       with:
@@ -179,6 +191,7 @@ jobs:
       scheduler-enabled: true
       glm-claim-enabled: true
       vault-confirm-withdrawals-enabled: true
+      anvil-block-time: 5
     secrets: inherit
 
   deploy-apitest-env:
