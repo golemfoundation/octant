@@ -10,6 +10,7 @@ import Svg from 'components/ui/Svg';
 import Tooltip from 'components/ui/Tooltip';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
@@ -29,6 +30,7 @@ const ProposalListItemHeader: FC<ProposalListItemHeaderProps> = ({
   const { i18n } = useTranslation('translation', { keyPrefix: 'views.proposal' });
   const { epoch: epochUrl } = useParams();
   const { data: userAllocations } = useUserAllocations(epoch);
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { allocations, addAllocations, removeAllocations } = useAllocationsStore(state => ({
     addAllocations: state.addAllocations,
     allocations: state.data.allocations,
@@ -37,6 +39,7 @@ const ProposalListItemHeader: FC<ProposalListItemHeaderProps> = ({
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
     addAllocations,
     allocations: allocations!,
+    isDecisionWindowOpen,
     removeAllocations,
     userAllocationsElements: userAllocations?.elements,
   });
