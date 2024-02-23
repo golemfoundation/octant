@@ -105,9 +105,7 @@ jobs:
 
         source /usr/bin/entrypoint.sh
 
-        # E2E tests are disabled until we figure out why they take hours to complete
-        # https://linear.app/golemfoundation/issue/CAQD-331/figure-out-why-synpress-jobs-are-taking-so-long
-        # yarn synpress:run
+        yarn synpress:run
       shell: bash
 
     - uses: actions/upload-artifact@v4.0.0
