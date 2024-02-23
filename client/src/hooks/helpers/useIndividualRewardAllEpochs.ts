@@ -1,4 +1,4 @@
-import { useQueries } from '@tanstack/react-query';
+import { UseQueryOptions, useQueries } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { useAccount } from 'wagmi';
@@ -7,7 +7,9 @@ import { apiGetIndividualRewards, Response } from 'api/calls/individualRewards';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 
-export default function useIndividualRewardAllEpochs(): { data: BigNumber[]; isFetching: boolean } {
+export default function useIndividualRewardAllEpochs(
+  options?: Omit<UseQueryOptions<Response, Error, Response, any>, 'queryKey'>,
+): { data: BigNumber[]; isFetching: boolean } {
   const { address } = useAccount();
   const { data: currentEpoch, isFetching: isFetchingCurrentEpoch } = useCurrentEpoch();
 
@@ -25,6 +27,7 @@ export default function useIndividualRewardAllEpochs(): { data: BigNumber[]; isF
       },
       queryKey: QUERY_KEYS.individualReward(epoch),
       retry: false,
+      ...options,
     })),
   });
 
