@@ -98,10 +98,10 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
     : BigInt(0);
   const simulatedMatchedFormatted = simulatedMatched
     ? getFormattedEthValue(
-        simulatedMatchedBigInt -
-          bigintAbs(
-            proposalMatchedProposalRewards ? proposalMatchedProposalRewards.matched : BigInt(0),
-          ),
+        bigintAbs(
+          simulatedMatchedBigInt -
+            (proposalMatchedProposalRewards ? proposalMatchedProposalRewards.matched : BigInt(0)),
+        ),
       )
     : getFormattedEthValue(parseUnitsBigInt('0', 'wei'));
   const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
