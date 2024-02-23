@@ -196,13 +196,14 @@ class UserBudget(OctantResource):
         return {"budget": budget}
 
 
-@ns.route("/budgets/epoch/<int:epoch>")
 @ns.doc(
     description="Returns all users rewards budgets for the epoch.",
     params={
         "epoch": "Epoch number",
     },
 )
+@ns.response(404, "User userAddress does not have a budget for epoch epochNumber")
+@ns.route("/budgets/epoch/<int:epoch>")
 class EpochBudgets(OctantResource):
     @ns.marshal_with(epoch_budget_model)
     @ns.response(200, "Epoch individual budgets successfully retrieved")
