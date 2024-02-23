@@ -42,6 +42,7 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
     addAllocations,
     allocations,
+    isDecisionWindowOpen,
     removeAllocations,
     userAllocationsElements: userAllocations?.elements,
   });
