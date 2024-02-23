@@ -78,7 +78,9 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
 
   // Before the first allocation, threshold is 0, which should be mapped to not defined.
   const isRewardsDataDefined =
-    proposalMatchedProposalRewards !== undefined && !proposalRewardsThreshold;
+    proposalMatchedProposalRewards !== undefined &&
+    proposalRewardsThreshold !== undefined &&
+    proposalRewardsThreshold !== 0n;
 
   const isThresholdUnknown = isEpoch1 || !isRewardsDataDefined;
 
