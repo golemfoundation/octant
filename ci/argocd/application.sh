@@ -135,7 +135,11 @@ elif [[ "$ACTION" == "update" ]]; then
 	# 	"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/sync"
 
 else # assuming $ACTION =~ (delete|destroy)
-	git rm -f $OCTANT_APP_DIR/$DEPLOYMENT_ID-app.yaml
-	git commit -S -m "Removed Octant deployment file for $DEPLOYMENT_ID branch at $(date +%Y-%m-%d)"
-	git push
+	FILE="${OCTANT_APP_DIR}/${DEPLOYMENT_ID}-app.yaml"
+
+	if [ -f "${FILE}" ]; then
+		git rm -f "${FILE}"
+		git commit -S -m "Removed Octant deployment file for ${DEPLOYMENT_ID} branch at $(date +%Y-%m-%d)"
+		git push
+	fi
 fi
