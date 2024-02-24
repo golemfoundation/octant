@@ -1,10 +1,12 @@
-import { useQueries, UseQueryResult } from '@tanstack/react-query';
+import { useQueries, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 
 import { apiGetEpochPatrons, Response } from 'api/calls/epochPatrons';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 
-export default function useEpochPatronsAllEpochs(): { data: string[][]; isFetching: boolean } {
+export default function useEpochPatronsAllEpochs(
+  options?: Omit<UseQueryOptions<Response, Error, Response, any>, 'queryKey'>,
+): { data: string[][]; isFetching: boolean } {
   const { data: currentEpoch, isFetching: isFetchingCurrentEpoch } = useCurrentEpoch();
 
   const epochPatronsAllEpochs: UseQueryResult<Response>[] = useQueries({
@@ -15,13 +17,14 @@ export default function useEpochPatronsAllEpochs(): { data: string[][]; isFetchi
           return await apiGetEpochPatrons(epoch);
         } catch (error) {
           // For epoch 0 BE returns an error.
-          return new Promise(resolve => {
+          return new Promise<Response>(resolve => {
             resolve({ patrons: [] });
           });
         }
       },
       queryKey: QUERY_KEYS.epochPatrons(epoch),
       retry: false,
+      ...options,
     })),
   });
 

@@ -21,13 +21,15 @@ export function getShouldProjectBeAddedOrRemovedFromAllocation({
   allocations,
   address,
   userAllocationsElements,
+  isDecisionWindowOpen,
 }: GetShouldProjectBeAddedOrRemovedFromAllocation): 'add' | 'remove' {
   const userAllocationsAddresses = userAllocationsElements?.map(element => element.address);
   const isItemAlreadyAdded = allocations.includes(address);
   const newIds = allocations ? [...allocations] : [];
 
   if (isItemAlreadyAdded) {
-    if (isProposalAlreadyAllocatedOn(userAllocationsElements, address)) {
+    // Outside AW past allocations do not count.
+    if (isDecisionWindowOpen && isProposalAlreadyAllocatedOn(userAllocationsElements, address)) {
       toastService.showToast({
         message: i18n.t('toasts.confirmChanges.title'),
         name: 'confirmChanges',
@@ -43,6 +45,8 @@ export function getShouldProjectBeAddedOrRemovedFromAllocation({
 
   // When newIds include all elements of userAllocationsAddresses, hideToast.
   if (
+    // Outside AW past allocations do not count.
+    isDecisionWindowOpen &&
     userAllocationsAddresses &&
     userAllocationsAddresses.every(element => newIds.includes(element))
   ) {

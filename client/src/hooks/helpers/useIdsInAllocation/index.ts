@@ -8,9 +8,11 @@ export default function useIdsInAllocation({
   userAllocationsElements,
   addAllocations,
   removeAllocations,
+  isDecisionWindowOpen,
 }: {
   addAllocations: AllocationsMethods['addAllocations'];
   allocations: AllocationsData['allocations'];
+  isDecisionWindowOpen: boolean | undefined;
   removeAllocations: AllocationsMethods['removeAllocations'];
   userAllocationsElements: UserAllocationElement[] | undefined;
 }): { onAddRemoveFromAllocate: (address: string, newAllocations?: string[]) => void } {
@@ -18,6 +20,7 @@ export default function useIdsInAllocation({
     const decision = getShouldProjectBeAddedOrRemovedFromAllocation({
       address,
       allocations: newAllocations,
+      isDecisionWindowOpen,
       userAllocationsElements,
     });
 

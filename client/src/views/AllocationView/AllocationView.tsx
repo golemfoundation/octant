@@ -101,6 +101,7 @@ const AllocationView = (): ReactElement => {
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
     addAllocations,
     allocations,
+    isDecisionWindowOpen,
     removeAllocations,
     userAllocationsElements: userAllocationsOriginal?.elements,
   });
