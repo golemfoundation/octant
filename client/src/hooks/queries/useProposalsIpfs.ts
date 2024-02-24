@@ -27,14 +27,15 @@ export default function useProposalsIpfs(
   );
   const { refetch } = useProposalsContract(epoch);
 
-  const proposalsIpfsResults: UseQueryResult<BackendProposal>[] = useQueries({
-    queries: (proposalsAddresses || []).map(address => ({
-      enabled: !!address && !!proposalsCid && (currentEpoch !== undefined || epoch !== undefined),
-      queryFn: () => apiGetProposal(`${proposalsCid}/${address}`),
-      queryKey: QUERY_KEYS.proposalsIpfsResults(address, epoch ?? currentEpoch!),
-      retry: false,
-    })),
-  });
+  const proposalsIpfsResults: UseQueryResult<BackendProposal & { ipfsGatewayUsed: string }>[] =
+    useQueries({
+      queries: (proposalsAddresses || []).map(address => ({
+        enabled: !!address && !!proposalsCid && (currentEpoch !== undefined || epoch !== undefined),
+        queryFn: () => apiGetProposal(`${proposalsCid}/${address}`),
+        queryKey: QUERY_KEYS.proposalsIpfsResults(address, epoch ?? currentEpoch!),
+        retry: false,
+      })),
+    });
 
   const isAnyError = proposalsIpfsResults.some(element => element.isError);
   useEffect(() => {

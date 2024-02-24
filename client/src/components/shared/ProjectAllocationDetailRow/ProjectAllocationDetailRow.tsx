@@ -16,7 +16,7 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({
   amount,
   epoch,
 }) => {
-  const { ipfsGateway } = env;
+  const { ipfsGateways } = env;
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
   } = useSettingsStore(({ data }) => ({
@@ -39,7 +39,9 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({
           <div className={styles.imageAndName}>
             <Img
               className={styles.image}
-              src={`${ipfsGateway}${proposalIpfs[0].profileImageSmall!}`}
+              sources={ipfsGateways
+                .split(',')
+                .map(element => `${element}${proposalIpfs[0].profileImageSmall!}`)}
             />
             <div className={styles.name}>{proposalIpfs[0].name}</div>
           </div>

@@ -26,7 +26,7 @@ const ProposalListItemHeader: FC<ProposalListItemHeaderProps> = ({
   website,
   epoch,
 }) => {
-  const { ipfsGateway } = env;
+  const { ipfsGateways } = env;
   const { i18n } = useTranslation('translation', { keyPrefix: 'views.proposal' });
   const { epoch: epochUrl } = useParams();
   const { data: userAllocations } = useUserAllocations(epoch);
@@ -82,7 +82,7 @@ const ProposalListItemHeader: FC<ProposalListItemHeaderProps> = ({
         <Img
           className={styles.imageProfile}
           dataTest="ProposalListItemHeader__Img"
-          src={`${ipfsGateway}${profileImageSmall}`}
+          sources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
         />
         <div className={styles.actionsWrapper}>
           <Tooltip

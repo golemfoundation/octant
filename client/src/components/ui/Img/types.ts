@@ -3,5 +3,6 @@ export default interface ImgProps {
   className?: string;
   dataTest?: string;
   onLoad?: () => void;
-  src: string;
+  sources?: string[];
+  src?: string;
 }

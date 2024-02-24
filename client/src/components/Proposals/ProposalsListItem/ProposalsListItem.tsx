@@ -24,7 +24,7 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
   epoch,
   proposalIpfsWithRewards,
 }) => {
-  const { ipfsGateway } = env;
+  const { ipfsGateways } = env;
   const { address, isLoadingError, profileImageSmall, name, introDescription } =
     proposalIpfsWithRewards;
   const navigate = useNavigate();
@@ -94,7 +94,7 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
                   ? 'ProposalsListItem__imageProfile--archive'
                   : 'ProposalsListItem__imageProfile'
               }
-              src={`${ipfsGateway}${profileImageSmall}`}
+              sources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
             />
             {((isAllocatedTo && isArchivedProposal) || !isArchivedProposal) && (
               <ButtonAddToAllocate
