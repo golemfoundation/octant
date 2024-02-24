@@ -25,7 +25,7 @@ git clone -b $ARGO_REPOSITORY_BRANCH $ARGO_REPOSITORY $GIT_DIR
 
 # sourcing hardcoded contracts (master, uat, etc)
 if [[ "$ENV_FILE" ]]; then
-	while read -r line; do export "$line"; done < $CI_PROJECT_DIR/ci/argocd/contracts/$ENV_FILE
+	export $(grep -v '^#' $CI_PROJECT_DIR/ci/argocd/contracts/$ENV_FILE | xargs)
 fi
 
 pushd $GIT_DIR
@@ -135,7 +135,11 @@ elif [[ "$ACTION" == "update" ]]; then
 	# 	"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/sync"
 
 else # assuming $ACTION =~ (delete|destroy)
-	git rm -f $OCTANT_APP_DIR/$DEPLOYMENT_ID-app.yaml
-	git commit -S -m "Removed Octant deployment file for $DEPLOYMENT_ID branch at $(date +%Y-%m-%d)"
-	git push
+	FILE="${OCTANT_APP_DIR}/${DEPLOYMENT_ID}-app.yaml"
+
+	if [ -f "${FILE}" ]; then
+		git rm -f "${FILE}"
+		git commit -S -m "Removed Octant deployment file for ${DEPLOYMENT_ID} branch at $(date +%Y-%m-%d)"
+		git push
+	fi
 fi
