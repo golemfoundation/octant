@@ -23,7 +23,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=MainLayout__Header]').should('be.visible');
     });
 
-    it('Clicking on Octant logo scrolls view to the top on logo click (proposals view)', () => {
+    it('Clicking on Octant logo scrolls view to the top on logo click (projects view)', () => {
       cy.scrollTo(0, 500);
       cy.get('[data-test=MainLayout__Logo]').click();
       // waiting for scrolling to finish
@@ -33,14 +33,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       });
     });
 
-    it('Clicking on Octant logo redirects to projects view (not proposals view)', () => {
+    it('Clicking on Octant logo redirects to projects view (outside projects view)', () => {
       cy.get('[data-test=Navbar__Button--Settings]').click();
       cy.get('[data-test=SettingsView]').should('be.visible');
       cy.get('[data-test=MainLayout__Logo]').click();
       cy.get('[data-test=ProposalsView]').should('be.visible');
     });
 
-    it('Clicking on Octant logo redirects to projects view (not proposals view) with memorized scrollY', () => {
+    it('Clicking on Octant logo redirects to projects view (outside projects view) with memorized scrollY', () => {
       cy.scrollTo(0, 500);
       cy.get('[data-test=Navbar__Button--Settings]').click();
       cy.get('[data-test=SettingsView]').should('be.visible');
