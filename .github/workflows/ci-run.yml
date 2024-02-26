@@ -24,7 +24,6 @@ jobs:
     secrets: inherit
     with:
       env-type: e2e
-      delete-env: true
       pull-request-id: ${{ github.event.pull_request.number }}
       workflow-id: ${{ github.run_id }}
 
@@ -38,7 +37,6 @@ jobs:
     secrets: inherit
     with:
       env-type: apitest
-      delete-env: true
       pull-request-id: ${{ github.event.pull_request.number }}
       workflow-id: ${{ github.run_id }}
 
