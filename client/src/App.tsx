@@ -17,6 +17,7 @@ import 'i18n';
 const App = (): ReactElement => {
   useManageTransactionsPending();
   useAppPopulateState();
+
   const [isFlushRequired, setIsFlushRequired] = useState(false);
   const { isSyncingInProgress } = useAppConnectManager(isFlushRequired, setIsFlushRequired);
   const isLoading = useAppIsLoading(isFlushRequired);
