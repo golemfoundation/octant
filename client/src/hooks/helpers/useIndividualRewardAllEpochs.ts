@@ -44,7 +44,10 @@ export default function useIndividualRewardAllEpochs(
   }
 
   return {
-    data: individualRewardAllEpochs.map(({ data }) => parseUnitsBigInt(data!.budget, 'wei')),
+    data: individualRewardAllEpochs.map(({ data }) =>
+      // Data is not available when options.enabled === false.
+      parseUnitsBigInt(data ? data.budget : '', 'wei'),
+    ),
     isFetching: false,
   };
 }
