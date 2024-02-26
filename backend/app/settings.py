@@ -23,6 +23,8 @@ class Config(object):
     SUBGRAPH_ENDPOINT = os.getenv("SUBGRAPH_ENDPOINT")
     WEB3_PROVIDER = Web3.HTTPProvider(os.getenv("ETH_RPC_PROVIDER_URL"))
     ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY")
+    BITQUERY_API_KEY = os.getenv("BITQUERY_API_KEY")
+    BITQUERY_BEARER = os.getenv("BITQUERY_BEARER")
     SCHEDULER_ENABLED = _parse_bool(os.getenv("SCHEDULER_ENABLED"))
     CACHE_TYPE = "SimpleCache"
 

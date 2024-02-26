@@ -1,8 +1,9 @@
 from datetime import datetime
-from typing import List
+from typing import List, Tuple
 
 from app.context.epoch_state import EpochState
 from app.context.helpers import check_if_future
+from app.exceptions import InvalidBlocksRange
 from app.extensions import epochs
 from app.infrastructure import graphql
 from app.infrastructure.external_api.etherscan.blocks import get_block_num_from_ts
@@ -44,6 +45,20 @@ class EpochDetails:
             self.remaining_sec = remaining_sec
 
         self.remaining_days = sec_to_days(self.remaining_sec)
+        self.block_rewards = None
+
+    @property
+    def duration_range(self) -> Tuple[int, int]:
+        return self.start_sec, self.end_sec
+
+    @property
+    def no_blocks(self):
+        """
+        Returns the number of blocks within [start_block, end_block) in the epoch.
+        """
+        if not self.end_block or not self.start_block:
+            raise InvalidBlocksRange
+        return self.end_block - self.start_block
 
 
 def get_epoch_details(epoch_num: int, epoch_state: EpochState) -> EpochDetails:

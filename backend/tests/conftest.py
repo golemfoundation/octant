@@ -9,6 +9,11 @@ from unittest.mock import MagicMock, Mock
 
 import gql
 import pytest
+from eth_account import Account
+from flask import g as request_context
+from flask.testing import FlaskClient
+from web3 import Web3
+
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
 from app.extensions import db, deposits, glm, gql_factory, w3
@@ -23,9 +28,6 @@ from app.legacy.crypto.account import Account as CryptoAccount
 from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
 from app.modules.dto import AccountFundsDTO
 from app.settings import DevConfig, TestConfig
-from eth_account import Account
-from flask import g as request_context
-from flask.testing import FlaskClient
 from tests.helpers.constants import (
     ALICE,
     ALL_INDIVIDUAL_REWARDS,
@@ -58,7 +60,6 @@ from tests.helpers.gql_client import MockGQLClient
 from tests.helpers.mocked_epoch_details import EPOCH_EVENTS
 from tests.helpers.octant_rewards import octant_rewards
 from tests.helpers.subgraph.events import create_deposit_event
-from web3 import Web3
 
 # Contracts mocks
 MOCK_EPOCHS = MagicMock(spec=Epochs)
@@ -104,6 +105,34 @@ def mock_etherscan_api_get_transactions(*args, **kwargs):
 def mock_etherscan_api_get_block_num_from_ts(*args, **kwargs):
     example_resp_json = {"status": "1", "message": "OK", "result": "12712551"}
     return int(example_resp_json["result"])
+
+
+def mock_bitquery_api_get_blocks_rewards(*args, **kwargs):
+    example_resp_json = {
+        "data": {
+            "ethereum": {
+                "blocks": [
+                    {
+                        "timestamp": {"unixtime": 1708448963},
+                        "reward": 0.024473700594149782,
+                        "address": {
+                            "address": "0x1f9090aae28b8a3dceadf281b0f12828e676c326"
+                        },
+                    },
+                    {
+                        "timestamp": {"unixtime": 1708449035},
+                        "reward": 0.05342909432569912,
+                        "address": {
+                            "address": "0x1f9090aae28b8a3dceadf281b0f12828e676c326"
+                        },
+                    },
+                ]
+            }
+        }
+    }
+
+    blocks = example_resp_json["data"]["ethereum"]["blocks"]
+    return blocks
 
 
 def pytest_addoption(parser):
@@ -509,6 +538,14 @@ def patch_etherscan_get_block_api(monkeypatch):
     monkeypatch.setattr(
         "app.context.epoch_details.get_block_num_from_ts",
         mock_etherscan_api_get_block_num_from_ts,
+    )
+
+
+@pytest.fixture(scope="function")
+def patch_bitquery_get_blocks_rewards(monkeypatch):
+    monkeypatch.setattr(
+        "app.modules.staking.proceeds.service.aggregated.get_blocks_rewards",
+        mock_bitquery_api_get_blocks_rewards,
     )
 
 

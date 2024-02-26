@@ -8,7 +8,8 @@ class AccountAction(StrEnum):
 
 
 class BlockAction(StrEnum):
-    BLOCK = "getblocknobytime"
+    BLOCK_NO_BY_TS = "getblocknobytime"
+    BLOCK_REWARD = "getblockreward"
 
 
 class ClosestValue(StrEnum):
