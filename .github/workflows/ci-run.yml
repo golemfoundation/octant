@@ -94,6 +94,7 @@ jobs:
         # Setup NVM to use Node version 16
         set +x
         source /usr/share/nvm/init-nvm.sh
+        nvm install 16
         nvm use 16
         set -x
         npm i -g yarn
