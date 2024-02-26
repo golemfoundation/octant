@@ -66,7 +66,7 @@ const EarnTipTiles = (): ReactElement => {
   const isAllocateRewardsTipVisible =
     (!wasAllocateRewardsAlreadyClosed &&
       isDecisionWindowOpen &&
-      !individualReward &&
+      !!(individualReward && individualReward !== 0n) &&
       !userAllocations?.hasUserAlreadyDoneAllocation &&
       differenceInCalendarDays(new Date(), timeCurrentAllocationEnd!) <= 2) ??
     false;
