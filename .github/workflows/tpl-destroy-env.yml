@@ -13,7 +13,8 @@ on:
         required: false
         type: string
       delete-env:
-        required: true
+        required: false
+        default: true
         type: boolean
   pull_request:
     types: [ closed ]
@@ -87,7 +88,7 @@ jobs:
 
     - name: Delete Environment
       uses: bobheadxi/deployments@v1
-      if: always() && '${{ steps.does-env-exist.outputs.result }}' == 'true' && ${{ inputs.delete-env }}
+      if: always() && ('${{ steps.does-env-exist.outputs.result }}' == 'true') && ${{ inputs.delete-env }}
       with:
         step: delete-env
         token: ${{ secrets.GH_BOT_TOKEN }}
@@ -95,7 +96,7 @@ jobs:
 
     - name: Deactivate Environment
       uses: bobheadxi/deployments@v1
-      if: always() && '${{ steps.does-env-exist.outputs.result }}' == 'true' && ${{ !inputs.delete-env }}
+      if: always() && ('${{ steps.does-env-exist.outputs.result }}' == 'true') && ${{ !inputs.delete-env }}
       with:
         step: deactivate-env
         token: ${{ secrets.GH_BOT_TOKEN }}
