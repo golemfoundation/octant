@@ -121,7 +121,7 @@ const AllocationView = (): ReactElement => {
       setAllocations([
         ...allocations.filter(allocation => {
           const allocationValue = allocationValues.find(({ address }) => address === allocation);
-          return allocationValue && allocationValue.value !== '0.0';
+          return allocationValue && allocationValue.value !== '0';
         }),
       ]);
       setCurrentView('summary');
