@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 import { UserAllocationElement } from 'hooks/queries/useUserAllocations';
 
 export type UserAllocationElementString = Omit<UserAllocationElement, 'value'> & {
@@ -19,7 +17,7 @@ export type AllocationValue = {
 
 export type AllocationValues = AllocationValue[];
 
-export type AllocationWithPositiveValueBigNumber = {
+export type AllocationWithPositiveValueBigInt = {
   proposalAddress: string;
-  value: BigNumber;
+  value: bigint;
 };

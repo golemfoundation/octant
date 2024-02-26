@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import { BigNumber } from 'ethers';
 import React, { FC, Fragment, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount, useDisconnect } from 'wagmi';
@@ -37,11 +36,11 @@ const LayoutWallet: FC<LayoutWalletProps> = ({ onDisconnect }) => {
    * when account is disconnected and balances returned are undefined.
    */
   const availableFundsEthLocal = useMemo(() => {
-    return !availableFundsEth?.value ? BigNumber.from(0) : BigNumber.from(availableFundsEth?.value);
+    return !availableFundsEth?.value ? BigInt(0) : BigInt(availableFundsEth?.value);
   }, [availableFundsEth]);
 
   const availableFundsGlmLocal = useMemo(() => {
-    return !availableFundsGlm?.value ? BigNumber.from(0) : BigNumber.from(availableFundsGlm?.value);
+    return !availableFundsGlm?.value ? BigInt(0) : BigInt(availableFundsGlm?.value);
   }, [availableFundsGlm]);
 
   const _disconnect = () => {

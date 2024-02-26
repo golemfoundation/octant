@@ -1,19 +1,17 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-// eslint-disable-next-line import/no-unresolved
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 import request from 'graphql-request';
 
 import { QUERY_KEYS } from 'api/queryKeys';
 import env from 'env';
 import { graphql } from 'gql/gql';
 import { GetLockedSummaryLatestQuery } from 'gql/graphql';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 type LockedSummaryLatest = {
   id: string;
   lockedRatio: string;
-  // Comes from Subraph in WEI, we are parsing it to BigNumber.
-  lockedTotal: BigNumber;
+  // Comes from Subraph in WEI, we are parsing it to bigint.
+  lockedTotal: bigint;
 };
 
 const GET_LOCKED_SUMMARY_LATEST = graphql(`
@@ -42,7 +40,7 @@ export default function useLockedSummaryLatest(): UseQueryResult<
       return {
         id: data!.lockedSummaryLatest.id,
         lockedRatio: data!.lockedSummaryLatest.lockedRatio,
-        lockedTotal: parseUnits(data.lockedSummaryLatest.lockedTotal, 'wei'),
+        lockedTotal: parseUnitsBigInt(data.lockedSummaryLatest.lockedTotal, 'wei'),
       };
     },
   });

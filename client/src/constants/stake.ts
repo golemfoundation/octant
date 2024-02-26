@@ -1,5 +1,5 @@
-import { parseUnits } from 'ethers/lib/utils';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import networkConfig from './networkConfig';
 
-export const ETH_STAKED = parseUnits((32 * (networkConfig.isTestnet ? 2 : 3125)).toString());
+export const ETH_STAKED = parseUnitsBigInt((32 * (networkConfig.isTestnet ? 2 : 3125)).toString());

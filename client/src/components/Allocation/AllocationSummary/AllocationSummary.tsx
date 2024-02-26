@@ -1,9 +1,4 @@
 import cx from 'classnames';
-// import { BigNumber } from 'ethers';
-import {
-  formatUnits,
-  // parseUnits
-} from 'ethers/lib/utils';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -14,6 +9,7 @@ import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useAllocationsStore from 'store/allocations/store';
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './AllocationSummary.module.scss';
@@ -33,28 +29,29 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
   }));
 
   // const allocationSimulatedMatchingFundSum = allocationSimulated?.matched.reduce((acc, curr) => {
-  //   return acc.add(parseUnits(curr.value, 'wei'));
-  // }, BigNumber.from(0));
+  //   return acc+(parseUnitsBigInt(curr.value, 'wei'));
+  // }, BigInt(0));
 
   const userAllocationsPositive =
-    userAllocations?.elements.filter(({ value }) => !value.isZero()) || [];
+    userAllocations?.elements.filter(({ value }) => value !== 0n) || [];
   const areUserAllocationsPositive = userAllocationsPositive?.length > 0;
 
-  const personalAllocation = individualReward?.sub(rewardsForProposals);
+  const personalAllocation = individualReward ? individualReward - rewardsForProposals : 0n;
 
   const rewardsForProposalsToDisplay = getFormattedEthValue(rewardsForProposals, true, true);
   const matchingFundSumToDisplay =
     rewardsForProposals && allocationSimulated?.leverage
-      ? getFormattedEthValue(rewardsForProposals.mul(parseInt(allocationSimulated.leverage, 10)))
-          .value
+      ? getFormattedEthValue(
+          rewardsForProposals * BigInt(parseInt(allocationSimulated.leverage, 10)),
+        ).value
       : undefined;
   const totalImpactToDisplay = getFormattedEthValue(
     rewardsForProposals && allocationSimulated
-      ? rewardsForProposals.mul(parseInt(allocationSimulated.leverage, 10) + 1)
+      ? rewardsForProposals * BigInt(parseInt(allocationSimulated.leverage, 10) + 1)
       : rewardsForProposals,
   );
   const personalToDisplay = individualReward
-    ? getFormattedEthValue(individualReward?.sub(rewardsForProposals)).fullString
+    ? getFormattedEthValue(individualReward - rewardsForProposals).fullString
     : undefined;
 
   const sections: SectionProps[] = [
@@ -107,14 +104,14 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
                 simulatedMatched={
                   allocationSimulated?.matched.find(element => element.address === address)?.value
                 }
-                value={formatUnits(value)}
+                value={formatUnitsBigInt(value)}
               />
             ))}
           </div>
           <Sections sections={sections} variant="small" />
         </BoxRounded>
       )}
-      {personalAllocation?.isZero() !== true && (
+      {(personalAllocation === 0n) !== true && (
         <BoxRounded
           className={cx(
             styles.personalRewardBox,

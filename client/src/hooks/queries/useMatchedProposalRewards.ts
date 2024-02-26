@@ -4,8 +4,6 @@ import {
   useQuery,
   //  useQueryClient
 } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 
 import {
   apiGetMatchedProposalRewards,
@@ -13,6 +11,7 @@ import {
   Response as ApiResponse,
 } from 'api/calls/rewards';
 import { QUERY_KEYS } from 'api/queryKeys';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 // import useSubscription from 'hooks/helpers/useSubscription';
 // import { WebsocketListenEvent } from 'types/websocketEvents';
 
@@ -23,25 +22,25 @@ type Response = ApiResponse;
 
 export type ProposalRewards = {
   address: string;
-  allocated: BigNumber;
-  matched: BigNumber;
+  allocated: bigint;
+  matched: bigint;
   percentage: number;
-  sum: BigNumber;
+  sum: bigint;
 };
 
 function parseResponse(response: Response): ProposalRewards[] {
   const totalDonations = response?.rewards.reduce(
     (acc, { allocated, matched }) =>
-      acc.add(parseUnits(allocated, 'wei')).add(parseUnits(matched, 'wei')),
-    BigNumber.from(0),
+      acc + parseUnitsBigInt(allocated, 'wei') + parseUnitsBigInt(matched, 'wei'),
+    BigInt(0),
   );
   return response?.rewards.map(({ address, allocated, matched }) => {
-    const allocatedBigNum = parseUnits(allocated, 'wei');
-    const matchedBigNum = parseUnits(matched, 'wei');
+    const allocatedBigNum = parseUnitsBigInt(allocated, 'wei');
+    const matchedBigNum = parseUnitsBigInt(matched, 'wei');
 
-    const sum = allocatedBigNum.add(matchedBigNum);
+    const sum = allocatedBigNum + matchedBigNum;
     const percentage =
-      !totalDonations!.isZero() && !sum.isZero() ? sum.mul(100).div(totalDonations!).toNumber() : 0;
+      totalDonations !== 0n && sum !== 0n ? Number((sum * 100n) / totalDonations!) : 0;
     return {
       address,
       allocated: allocatedBigNum,

@@ -1,4 +1,4 @@
-import { parseUnits } from 'ethers/lib/utils';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import { getReducedUserAllocationsAllEpochs } from './utils';
 
@@ -11,22 +11,22 @@ describe('getReducedUserAllocationsAllEpochs', () => {
             {
               address: '0x1',
               epoch: 1,
-              value: parseUnits('0.1'),
+              value: parseUnitsBigInt('0.1'),
             },
             {
               address: '0x2',
               epoch: 1,
-              value: parseUnits('0.2'),
+              value: parseUnitsBigInt('0.2'),
             },
             {
               address: '0x3',
               epoch: 1,
-              value: parseUnits('0.3'),
+              value: parseUnitsBigInt('0.3'),
             },
             {
               address: '0x4',
               epoch: 1,
-              value: parseUnits('0.4'),
+              value: parseUnitsBigInt('0.4'),
             },
           ],
           hasUserAlreadyDoneAllocation: true,
@@ -37,22 +37,22 @@ describe('getReducedUserAllocationsAllEpochs', () => {
             {
               address: '0x1',
               epoch: 2,
-              value: parseUnits('0.3'),
+              value: parseUnitsBigInt('0.3'),
             },
             {
               address: '0x2',
               epoch: 2,
-              value: parseUnits('0.2'),
+              value: parseUnitsBigInt('0.2'),
             },
             {
               address: '0x3',
               epoch: 2,
-              value: parseUnits('0.1'),
+              value: parseUnitsBigInt('0.1'),
             },
             {
               address: '0x5',
               epoch: 2,
-              value: parseUnits('0.5'),
+              value: parseUnitsBigInt('0.5'),
             },
           ],
           hasUserAlreadyDoneAllocation: true,
@@ -63,27 +63,27 @@ describe('getReducedUserAllocationsAllEpochs', () => {
       {
         address: '0x1',
         epoch: 2,
-        value: parseUnits('0.4'),
+        value: parseUnitsBigInt('0.4'),
       },
       {
         address: '0x2',
         epoch: 2,
-        value: parseUnits('0.4'),
+        value: parseUnitsBigInt('0.4'),
       },
       {
         address: '0x3',
         epoch: 2,
-        value: parseUnits('0.4'),
+        value: parseUnitsBigInt('0.4'),
       },
       {
         address: '0x4',
         epoch: 1,
-        value: parseUnits('0.4'),
+        value: parseUnitsBigInt('0.4'),
       },
       {
         address: '0x5',
         epoch: 2,
-        value: parseUnits('0.5'),
+        value: parseUnitsBigInt('0.5'),
       },
     ]);
   });

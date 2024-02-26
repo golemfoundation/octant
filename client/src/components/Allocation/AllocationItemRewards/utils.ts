@@ -1,17 +1,15 @@
-import { BigNumber } from 'ethers';
-
 export function getFilled(
-  proposalRewardsThreshold?: BigNumber,
-  rewardsSumWithValueAndSimulation?: BigNumber,
+  proposalRewardsThreshold?: bigint,
+  rewardsSumWithValueAndSimulation?: bigint,
 ): number {
   if (
     !proposalRewardsThreshold ||
     !rewardsSumWithValueAndSimulation ||
-    rewardsSumWithValueAndSimulation.isZero()
+    rewardsSumWithValueAndSimulation === 0n
   ) {
     return 0;
   }
-  return rewardsSumWithValueAndSimulation.gt(proposalRewardsThreshold)
+  return rewardsSumWithValueAndSimulation > proposalRewardsThreshold
     ? 100
     : (parseFloat(rewardsSumWithValueAndSimulation.toString()) * 100) /
         parseFloat(proposalRewardsThreshold.toString());

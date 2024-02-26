@@ -1,14 +1,13 @@
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 import { useAccount } from 'wagmi';
 
 import { apiGetGlmClaimCheck } from 'api/calls/glmClaim';
 import { QUERY_KEYS } from 'api/queryKeys';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 export type Response = {
   address: string;
-  value: BigNumber;
+  value: bigint;
 };
 
 export default function useGlmClaimCheck(isOnboardingDone: boolean): UseQueryResult<Response> {
@@ -26,7 +25,7 @@ export default function useGlmClaimCheck(isOnboardingDone: boolean): UseQueryRes
     retry: false,
     select: response => ({
       address: address as string,
-      value: parseUnits(response.claimable, 'wei'),
+      value: parseUnitsBigInt(response.claimable, 'wei'),
     }),
   });
 }
