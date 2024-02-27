@@ -82,7 +82,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         req.destroy();
       });
 
-      cy.get('[data-test^=ipfsMessage').should('be.visible');
+      cy.get('[data-test=Toast--ipfsMessage').should('be.visible');
     });
 
     it('entering proposal view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar', () => {
