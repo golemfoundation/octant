@@ -397,15 +397,6 @@
         "usingTheApp": {
           "header": "Using the app",
           "text": "Before we can go any further, please read the terms of service and click the checkbox below to agree with them."
-        },
-        "claimGlm": {
-          "header": "Claim your GLM",
-          "text": "As you hold an Epoch Zero Token and you participated in the Snapshot vote, you are eligible to claim {{value}} GLM. Click the button below to withdraw to your wallet.",
-          "buttonLabel": {
-            "withdraw": "Withdraw GLM",
-            "withdrawn": "GLM claimed"
-          },
-          "signMessage": "Claim {{value}} GLMs"
         }
       },
       "stepsDecisionWindowOpen": {

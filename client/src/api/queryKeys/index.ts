@@ -42,7 +42,6 @@ export const QUERY_KEYS: QueryKeys = {
   epochUnusedRewards: epoch => [ROOTS.epochUnusedRewards, epoch.toString()],
   epochesEndTime: epochNumber => [ROOTS.epochesEndTime, epochNumber.toString()],
   estimatedEffectiveDeposit: userAddress => [ROOTS.estimatedEffectiveDeposit, userAddress],
-  glmClaimCheck: ['glmClaimCheck'],
   history: ['history'],
   individualProposalRewards: ['individualProposalRewards'],
   individualReward: epochNumber => [ROOTS.individualReward, epochNumber.toString()],
