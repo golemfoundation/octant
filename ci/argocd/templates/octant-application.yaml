@@ -15,7 +15,7 @@ spec:
     namespace: $DEPLOYMENT_ID
   sources:
     - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-      targetRevision: 0.2.37
+      targetRevision: 0.2.38
       chart: octant
       helm:
         parameters:
@@ -33,8 +33,6 @@ spec:
             value: '$NETWORK_NAME'
           - name: 'webClient.hideCurrentProjectsOutsideAW'
             value: 'false'
-          - name: 'webClient.ipfsGateway'
-            value: '$IPFS_GATEWAY'
           ## Graph Node
           - name: graphNode.graph.env.NETWORK
             value: '$NETWORK_NAME'
