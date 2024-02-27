@@ -43,6 +43,7 @@ export default function useProposalsIpfs(
       return;
     }
     toastService.showToast({
+      dataTest: 'Toast--ipfsMessage',
       message: t('ipfs.message'),
       name: 'ipfsError',
       type: 'error',
