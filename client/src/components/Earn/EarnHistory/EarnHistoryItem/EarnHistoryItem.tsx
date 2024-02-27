@@ -30,7 +30,10 @@ const EarnHistoryItem: FC<EarnHistoryItemProps> = ({ isLast, ...rest }) => {
   const title = useMemo(() => {
     switch (type) {
       case 'patron_mode_donation':
-        return t('epochDonation', { epoch: epochTimestampHappenedIn });
+        // Donation happened in epoch N, but affects epoch N - 1.
+        return t('epochDonation', {
+          epoch: epochTimestampHappenedIn ? epochTimestampHappenedIn - 1 : '',
+        });
       case 'allocation':
         return isPersonalOnlyAllocation
           ? i18n.t('common.personalAllocation')
