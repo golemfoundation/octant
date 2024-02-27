@@ -370,10 +370,6 @@
       "epochAllocationStartsIn": "Epoch {{epoch}} allocation starts in",
       "epochAllocationEndsIn": "Epoch {{epoch}} allocation ends in",
       "totalProjectsSinceEpoch0": "{{projectsAmount}} total since E0",
-      "tip": {
-        "title": "Check the stats",
-        "text": "View the data about all the decisions taken in the previous epoch here in <0>Metrics</0>"
-      },
       "connectWalletTip": {
         "title": "Connect your wallet",
         "text": "To see your own personal stats here, <0/>you will need to connect your wallet"
@@ -392,7 +388,8 @@
       "totalUsers": "Total users",
       "fundsUsage": "Epoch {{epoch}} funds usage ",
       "epochTotal": "Epoch {{epoch}} Total",
-      "leftover": "Leftover",
+      "leftover": "Moved to E{{epochNumber}}",
+      "staking": "Staking",
       "projectCosts": "Project costs",
       "matchRewards": "Match rewards",
       "userRewards": "User rewards"
@@ -402,15 +399,6 @@
         "usingTheApp": {
           "header": "Using the app",
           "text": "Before we can go any further, please read the terms of service and click the checkbox below to agree with them."
-        },
-        "claimGlm": {
-          "header": "Claim your GLM",
-          "text": "As you hold an Epoch Zero Token and you participated in the Snapshot vote, you are eligible to claim {{value}} GLM. Click the button below to withdraw to your wallet.",
-          "buttonLabel": {
-            "withdraw": "Withdraw GLM",
-            "withdrawn": "GLM claimed"
-          },
-          "signMessage": "Claim {{value}} GLMs"
         }
       },
       "stepsDecisionWindowOpen": {

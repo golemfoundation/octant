@@ -1,13 +1,12 @@
 import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 
 import { apiGetEpochUnusedRewards, Response } from 'api/calls/epochUnusedRewards';
 import { QUERY_KEYS } from 'api/queryKeys';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 export type UseEpochUnusedRewards = {
   addresses: string[];
-  value: BigNumber;
+  value: bigint;
 };
 
 export default function useEpochUnusedRewards(
@@ -19,7 +18,7 @@ export default function useEpochUnusedRewards(
     queryKey: QUERY_KEYS.epochUnusedRewards(epoch),
     select: response => ({
       addresses: response.addresses,
-      value: parseUnits(response.value, 'wei'),
+      value: parseUnitsBigInt(response.value, 'wei'),
     }),
     ...options,
   });

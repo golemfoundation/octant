@@ -203,6 +203,7 @@ class UserBudget(OctantResource):
         "epoch": "Epoch number",
     },
 )
+@ns.response(404, "User userAddress does not have a budget for epoch epochNumber")
 class EpochBudgets(OctantResource):
     @ns.marshal_with(epoch_budget_model)
     @ns.response(200, "Epoch individual budgets successfully retrieved")

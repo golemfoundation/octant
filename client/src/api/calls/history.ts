@@ -2,7 +2,7 @@ import env from 'env';
 import apiService from 'services/apiService';
 
 export type ResponseHistoryItem = {
-  // BigNumber (wei) string
+  // (wei) string
   amount: string;
   projectAddress?: string;
   timestamp: string;

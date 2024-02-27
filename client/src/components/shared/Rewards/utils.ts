@@ -1,10 +1,8 @@
-import { BigNumber } from 'ethers';
-
 export function getProgressPercentage(
-  totalValueOfAllocations: BigNumber,
-  cutOffValue: BigNumber,
+  totalValueOfAllocations: bigint,
+  cutOffValue: bigint,
 ): number {
-  return totalValueOfAllocations.gt(0) && cutOffValue.gt(0)
-    ? totalValueOfAllocations.mul(100).div(cutOffValue).toNumber()
+  return totalValueOfAllocations > 0 && cutOffValue > 0
+    ? Number((totalValueOfAllocations * 100n) / cutOffValue)
     : 0;
 }

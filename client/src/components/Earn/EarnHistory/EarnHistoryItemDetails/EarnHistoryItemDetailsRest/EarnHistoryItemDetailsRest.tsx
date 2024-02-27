@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTransaction } from 'wagmi';
@@ -48,7 +47,7 @@ const EarnHistoryItemDetailsRest: FC<EarnHistoryItemDetailsRestProps> = ({
               // Gas price is not known for pending transactions.
               isFetching: isFetchingTransaction || isWaitingForTransactionInitialized,
               shouldIgnoreGwei: true,
-              valueCrypto: BigNumber.from(transaction ? transaction.gasPrice : 0),
+              valueCrypto: BigInt(transaction?.gasPrice ?? 0),
             },
             label: t('sections.gasPrice'),
           },

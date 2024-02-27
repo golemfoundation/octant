@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 import { visitWithLoader, navigateWithCheck, mockCoinPricesServer } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { FIAT_CURRENCIES_SYMBOLS, DISPLAY_CURRENCIES } from 'src/constants/currencies';
@@ -74,7 +72,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
 
       const cryptoValue = getValueCryptoToDisplay({
         cryptoCurrency: 'golem',
-        valueCrypto: BigNumber.from(0),
+        valueCrypto: BigInt(0),
       });
 
       cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__primary]')
@@ -91,7 +89,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
 
       const cryptoValue = getValueCryptoToDisplay({
         cryptoCurrency: 'golem',
-        valueCrypto: BigNumber.from(0),
+        valueCrypto: BigInt(0),
       });
 
       cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__primary]')

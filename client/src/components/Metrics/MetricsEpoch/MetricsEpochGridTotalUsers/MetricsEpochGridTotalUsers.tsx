@@ -16,7 +16,7 @@ const MetricsEpochGridTotalUsers: FC<MetricsEpochGridTotalUsersProps> = ({
   const { epoch } = useMetricsEpoch();
   const { data: epochBudgets } = useEpochBudgets(epoch);
 
-  const totalUsers = epochBudgets?.budgets.filter(({ budget }) => !budget.isZero()).length || 0;
+  const totalUsers = epochBudgets?.budgets.filter(({ budget }) => budget !== 0n).length || 0;
 
   return (
     <MetricsGridTile

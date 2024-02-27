@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -45,22 +44,22 @@ const MetricsEpochGridBelowThreshold: FC<MetricsEpochGridBelowThresholdProps> = 
 
   const projectsBelowThreshold =
     Object.keys(proposalsDonors).length -
-    (matchedProposalRewards?.filter(({ matched }) => !matched.isZero()).length || 0);
+    (matchedProposalRewards?.filter(({ matched }) => matched !== 0n).length || 0);
 
   const ethBelowThreshold =
     proposalRewardsThreshold === undefined
-      ? BigNumber.from(0)
+      ? BigInt(0)
       : Object.values(proposalsDonors).reduce((acc, curr) => {
           const projectSumOfDonations = curr.reduce((acc2, curr2) => {
-            return acc2.add(curr2.amount);
-          }, BigNumber.from(0));
+            return acc2 + curr2.amount;
+          }, BigInt(0));
 
-          if (projectSumOfDonations.lt(proposalRewardsThreshold)) {
-            return acc.add(projectSumOfDonations);
+          if (projectSumOfDonations < proposalRewardsThreshold) {
+            return acc + projectSumOfDonations;
           }
 
           return acc;
-        }, BigNumber.from(0));
+        }, BigInt(0));
 
   const ethBelowThresholdToDisplay = getValuesToDisplay({
     cryptoCurrency: 'ethereum',

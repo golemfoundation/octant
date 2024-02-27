@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import { BigNumber } from 'ethers';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -24,12 +23,12 @@ const EarnGlmLockBudgetBox: FC<EarnGlmLockBudgetBoxProps> = ({
   });
 
   const depositsValueString = useMemo(
-    () => getFormattedGlmValue(depositsValue || BigNumber.from(0)).fullString,
+    () => getFormattedGlmValue(depositsValue || BigInt(0)).fullString,
     [depositsValue],
   );
 
   const availableFundsGlmString = getFormattedGlmValue(
-    BigNumber.from(availableFundsGlm ? availableFundsGlm!.value : 0),
+    BigInt(availableFundsGlm ? availableFundsGlm!.value : 0),
   ).fullString;
 
   return (

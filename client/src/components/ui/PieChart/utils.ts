@@ -2,11 +2,11 @@ import { PieChartData, PieChartInputData } from './types';
 
 export const getPieChartData = (data: PieChartInputData, radius: number): PieChartData => {
   // imported colors from styles module are undefined during test
-  const pieChartColors = ['#177967', '#17B239', '#FF9601', '#2D9B87'];
+  const pieChartColors = ['#177967', '#17B239', '#FF9601', '#2D9B87', '#FF6157'];
 
   const totalValue = data.reduce((acc, curr) => acc + curr.value, 0);
 
-  const pieChartData = data.reduce((acc, curr, idx) => {
+  return data.reduce((acc, curr, idx) => {
     const fractionValue = curr.value / totalValue;
     const angle0 = acc.length ? acc[acc.length - 1].angle : 0;
 
@@ -26,6 +26,4 @@ export const getPieChartData = (data: PieChartInputData, radius: number): PieCha
     acc.push(el);
     return acc;
   }, [] as PieChartData);
-
-  return pieChartData;
 };

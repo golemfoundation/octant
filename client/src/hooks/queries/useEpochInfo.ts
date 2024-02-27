@@ -1,20 +1,39 @@
 import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 
 import { apiGetEpochInfo, Response } from 'api/calls/epochInfo';
 import { QUERY_KEYS } from 'api/queryKeys';
+import env from 'env';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 type EpochInfo = {
-  individualRewards: BigNumber;
-  leftover: BigNumber;
-  matchedRewards: BigNumber;
-  operationalCost: BigNumber;
-  patronsRewards: BigNumber;
-  stakingProceeds: BigNumber;
-  totalEffectiveDeposit: BigNumber;
-  totalRewards: BigNumber;
-  totalWithdrawals: BigNumber;
+  individualRewards: bigint;
+  leftover: bigint;
+  matchedRewards: bigint;
+  operationalCost: bigint;
+  patronsRewards: bigint;
+  staking: bigint;
+  stakingProceeds: bigint;
+  totalEffectiveDeposit: bigint;
+  totalRewards: bigint;
+  totalWithdrawals: bigint;
+};
+
+// TODO OCT-1364 Remove this util, adjust backend response
+const getLeftoverAndStaking = (
+  epoch: number,
+  leftover: string | null,
+): {
+  leftover: bigint;
+  staking: bigint;
+} => {
+  const isMainnetAndEpoch2 = env.network === 'Mainnet' && epoch === 2;
+  const leftoverBigInt = leftover ? parseUnitsBigInt(leftover, 'wei') : BigInt(0);
+  const stakingBigInt = isMainnetAndEpoch2 ? parseUnitsBigInt('352') : BigInt(0);
+
+  return {
+    leftover: leftoverBigInt - stakingBigInt,
+    staking: stakingBigInt,
+  };
 };
 
 export default function useEpochInfo(
@@ -25,23 +44,23 @@ export default function useEpochInfo(
     queryFn: () => apiGetEpochInfo(epoch),
     queryKey: QUERY_KEYS.epochInfo(epoch),
     select: response => ({
-      individualRewards: parseUnits(response.individualRewards, 'wei'),
-      leftover: response.leftover ? parseUnits(response.leftover, 'wei') : BigNumber.from(0),
+      individualRewards: parseUnitsBigInt(response.individualRewards, 'wei'),
       matchedRewards: response.matchedRewards
-        ? parseUnits(response.matchedRewards, 'wei')
-        : BigNumber.from(0),
+        ? parseUnitsBigInt(response.matchedRewards, 'wei')
+        : BigInt(0),
       operationalCost: response.operationalCost
-        ? parseUnits(response.operationalCost, 'wei')
-        : BigNumber.from(0),
+        ? parseUnitsBigInt(response.operationalCost, 'wei')
+        : BigInt(0),
       patronsRewards: response.patronsRewards
-        ? parseUnits(response.patronsRewards, 'wei')
-        : BigNumber.from(0),
-      stakingProceeds: parseUnits(response.stakingProceeds, 'wei'),
-      totalEffectiveDeposit: parseUnits(response.totalEffectiveDeposit, 'wei'),
-      totalRewards: parseUnits(response.totalRewards, 'wei'),
+        ? parseUnitsBigInt(response.patronsRewards, 'wei')
+        : BigInt(0),
+      stakingProceeds: parseUnitsBigInt(response.stakingProceeds, 'wei'),
+      totalEffectiveDeposit: parseUnitsBigInt(response.totalEffectiveDeposit, 'wei'),
+      totalRewards: parseUnitsBigInt(response.totalRewards, 'wei'),
       totalWithdrawals: response.totalWithdrawals
-        ? parseUnits(response.totalWithdrawals, 'wei')
-        : BigNumber.from(0),
+        ? parseUnitsBigInt(response.totalWithdrawals, 'wei')
+        : BigInt(0),
+      ...getLeftoverAndStaking(epoch, response.leftover),
     }),
     ...options,
   });

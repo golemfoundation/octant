@@ -52,7 +52,7 @@ const EarnTipTiles = (): ReactElement => {
 
   const isLockGlmTipVisible =
     !isFetchingDepositsValue &&
-    (!depositsValue || (!!depositsValue && depositsValue.isZero())) &&
+    (!depositsValue || (!!depositsValue && depositsValue === 0n)) &&
     isConnected &&
     !wasLockGLMAlreadyClosed;
   const isConnectWalletTipVisible = !isPreLaunch && !isConnected && !wasConnectWalletAlreadyClosed;
@@ -60,13 +60,13 @@ const EarnTipTiles = (): ReactElement => {
     !!currentEpoch &&
     currentEpoch > 1 &&
     !!withdrawals &&
-    !withdrawals.sums.available.isZero() &&
+    withdrawals.sums.available !== 0n &&
     !wasWithdrawAlreadyClosed;
 
   const isAllocateRewardsTipVisible =
     (!wasAllocateRewardsAlreadyClosed &&
       isDecisionWindowOpen &&
-      !individualReward?.isZero() &&
+      !!(individualReward && individualReward !== 0n) &&
       !userAllocations?.hasUserAlreadyDoneAllocation &&
       differenceInCalendarDays(new Date(), timeCurrentAllocationEnd!) <= 2) ??
     false;

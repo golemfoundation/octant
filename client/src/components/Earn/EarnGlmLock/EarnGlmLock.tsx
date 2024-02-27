@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 import { Formik } from 'formik';
 import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +18,7 @@ import useDepositValue from 'hooks/queries/useDepositValue';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
 import toastService from 'services/toastService';
 import useTransactionLocalStore from 'store/transactionLocal/store';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import styles from './EarnGlmLock.module.scss';
 import EarnGlmLockProps, { CurrentMode, Step } from './types';
@@ -48,7 +47,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
    * Value to depose so that we don't ask for allowance when user
    * requests less than already approved.
    */
-  const [valueToDepose, setValueToDepose] = useState<BigNumber>(BigNumber.from(0));
+  const [valueToDepose, setValueToDepose] = useState<bigint>(BigInt(0));
   const [step, setStep] = useState<Step>(1);
   const [isCryptoOrFiatInputFocused, setIsCryptoOrFiatInputFocused] = useState(false);
 
@@ -121,11 +120,11 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
       return;
     }
 
-    const valueToDeposeOrWithdrawBigNumber = parseUnits(valueToDeposeOrWithdraw, 18);
+    const valueToDeposeOrWithdrawBigInt = parseUnitsBigInt(valueToDeposeOrWithdraw);
     if (currentMode === 'lock') {
-      await lockMutation.mutateAsync(valueToDeposeOrWithdrawBigNumber);
+      await lockMutation.mutateAsync(valueToDeposeOrWithdrawBigInt);
     } else {
-      await unlockMutation.mutateAsync(valueToDeposeOrWithdrawBigNumber);
+      await unlockMutation.mutateAsync(valueToDeposeOrWithdrawBigInt);
     }
   };
 
@@ -140,7 +139,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
       validateOnChange
       validationSchema={validationSchema(
         currentMode,
-        BigNumber.from(availableFundsGlm ? availableFundsGlm?.value : 0),
+        BigInt(availableFundsGlm ? availableFundsGlm?.value : 0),
         depositsValue,
       )}
     >

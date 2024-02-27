@@ -1,6 +1,8 @@
 import { getTime, startOfDay } from 'date-fns';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { sortBy, uniq } from 'lodash';
+
+import { formatUnitsBigInt } from './formatUnitsBigInt';
+import { parseUnitsBigInt } from './parseUnitsBigInt';
 
 export type GroupedGlmAmountByDateItem = {
   cumulativeGlmAmount: number;
@@ -32,7 +34,9 @@ const getMetricsChartDataGroupedByDate = (
             }
           : {
               // formatting from WEI to GLM (int)
-              cumulativeGlmAmount: parseFloat(formatUnits(parseUnits(curr.lockedTotal, 'wei'))),
+              cumulativeGlmAmount: parseFloat(
+                formatUnitsBigInt(parseUnitsBigInt(curr.lockedTotal, 'wei')),
+              ),
             }),
       });
       return acc;
@@ -44,7 +48,9 @@ const getMetricsChartDataGroupedByDate = (
     } else {
       // formatting from WEI to GLM (int)
       // eslint-disable-next-line operator-assignment
-      acc[idx].cumulativeGlmAmount = parseFloat(formatUnits(parseUnits(curr.lockedTotal, 'wei')));
+      acc[idx].cumulativeGlmAmount = parseFloat(
+        formatUnitsBigInt(parseUnitsBigInt(curr.lockedTotal, 'wei')),
+      );
     }
 
     return acc;

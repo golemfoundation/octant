@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 import {
   ALLOCATION_ITEMS_KEY,
   ALLOCATION_REWARDS_FOR_PROPOSALS,
@@ -8,7 +6,6 @@ import {
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
   WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP,
-  WAS_CHECK_STATUS_ALREADY_CLOSED_TIP,
   WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP,
   WAS_LOCK_GLM_ALREADY_CLOSED_TIP,
   WAS_REWARDS_ALREADY_CLOSED_TIP,
@@ -82,12 +79,6 @@ describe('LocalStorageService', () => {
       expect(localStorage.getItem(WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP)).toBe('false');
     });
 
-    it('should validate wasCheckStatusAlreadyClosed', () => {
-      localStorage.setItem(WAS_CHECK_STATUS_ALREADY_CLOSED_TIP, 'not-a-boolean');
-      localStorageService.init();
-      expect(localStorage.getItem(WAS_CHECK_STATUS_ALREADY_CLOSED_TIP)).toBe('false');
-    });
-
     it('should validate wasConnectWalletAlreadyClosed', () => {
       localStorage.setItem(WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP, 'not-a-boolean');
       localStorageService.init();
@@ -116,13 +107,13 @@ describe('LocalStorageService', () => {
       localStorage.setItem(ALLOCATION_REWARDS_FOR_PROPOSALS, 'not-a-bignumber');
       localStorageService.init();
       expect(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROPOSALS)).toBe(
-        JSON.stringify(BigNumber.from(0)),
+        JSON.stringify(BigInt(0).toString()),
       );
 
-      const bigNumber100Stringified = JSON.stringify(BigNumber.from(100));
-      localStorage.setItem(ALLOCATION_REWARDS_FOR_PROPOSALS, bigNumber100Stringified);
+      const bigInt100Stringified = JSON.stringify(BigInt(100).toString());
+      localStorage.setItem(ALLOCATION_REWARDS_FOR_PROPOSALS, bigInt100Stringified);
       localStorageService.init();
-      expect(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROPOSALS)).toBe(bigNumber100Stringified);
+      expect(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROPOSALS)).toBe(bigInt100Stringified);
     });
   });
 });

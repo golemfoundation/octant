@@ -1,17 +1,16 @@
 import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 import { useAccount } from 'wagmi';
 
 import { apiGetWithdrawals, Response } from 'api/calls/withdrawableRewards';
 import { QUERY_KEYS } from 'api/queryKeys';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import useCurrentEpoch from './useCurrentEpoch';
 
 interface Withdrawals {
   sums: {
-    available: BigNumber;
-    pending: BigNumber;
+    available: bigint;
+    pending: bigint;
   };
   withdrawalsAvailable: Response;
 }
@@ -29,18 +28,18 @@ export default function useWithdrawals(
     select: data => {
       const sums = data.reduce(
         (acc, curr) => {
-          const amountBigNumber = parseUnits(curr.amount, 'wei');
+          const amountBigInt = parseUnitsBigInt(curr.amount, 'wei');
           return curr.status === 'available'
             ? {
                 ...acc,
-                available: acc.available.add(amountBigNumber),
+                available: acc.available + amountBigInt,
               }
             : {
                 ...acc,
-                pending: acc.pending.add(amountBigNumber),
+                pending: acc.pending + amountBigInt,
               };
         },
-        { available: BigNumber.from(0), pending: BigNumber.from(0) },
+        { available: BigInt(0), pending: BigInt(0) },
       );
       const withdrawalsAvailable = data.filter(element => element.status === 'available');
       return {

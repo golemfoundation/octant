@@ -1,6 +1,4 @@
 import cx from 'classnames';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 import { motion } from 'framer-motion';
 import React, { FC, useEffect, useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
@@ -15,10 +13,13 @@ import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThresho
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 import getRewardsSumWithValueAndSimulation from 'utils/getRewardsSumWithValueAndSimulation';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import styles from './AllocationItemRewards.module.scss';
 import AllocationItemRewardsProps from './types';
 import { getFilled } from './utils';
+
+const bigintAbs = (n: bigint): bigint => (n < 0n ? -n : n);
 
 const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   className,
@@ -41,7 +42,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const { data: proposalRewardsThreshold } = useProposalRewardsThreshold();
   const [isSimulateVisible, setIsSimulateVisible] = useState<boolean>(false);
 
-  const thresholdToUse = individualReward?.isZero() ? proposalRewardsThreshold : simulatedThreshold;
+  const thresholdToUse = individualReward === 0n ? proposalRewardsThreshold : simulatedThreshold;
 
   // value can an empty string, which crashes parseUnits. Hence the alternative.
   const valueToUse = value || '0';
@@ -77,14 +78,14 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   )?.value;
 
   const isNewSimulatedPositive = userAllocationToThisProject
-    ? parseUnits(valueToUse).gte(userAllocationToThisProject)
+    ? parseUnitsBigInt(valueToUse) >= userAllocationToThisProject
     : true;
 
   // Before the first allocation, threshold is 0, which should be mapped to not defined.
   const isRewardsDataDefined =
     proposalMatchedProposalRewards !== undefined &&
     thresholdToUse !== undefined &&
-    !thresholdToUse?.isZero();
+    thresholdToUse !== 0n;
 
   const isThresholdUnknown = isEpoch1 || !isRewardsDataDefined;
 
@@ -96,25 +97,23 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
       : proposalMatchedProposalRewards?.allocated,
     userAllocationToThisProject,
   );
-  const valueFormatted = getFormattedEthValue(parseUnits(valueToUse));
-  const simulatedMatchedBigNumber = simulatedMatched
-    ? parseUnits(simulatedMatched, 'wei')
-    : BigNumber.from(0);
+  const valueFormatted = getFormattedEthValue(parseUnitsBigInt(valueToUse));
+  const simulatedMatchedBigInt = simulatedMatched
+    ? parseUnitsBigInt(simulatedMatched, 'wei')
+    : BigInt(0);
   const simulatedMatchedFormatted = simulatedMatched
     ? getFormattedEthValue(
-        simulatedMatchedBigNumber
-          .sub(
-            proposalMatchedProposalRewards
-              ? proposalMatchedProposalRewards.matched
-              : BigNumber.from(0),
-          )
-          .abs(),
+        bigintAbs(
+          simulatedMatchedBigInt -
+            (proposalMatchedProposalRewards ? proposalMatchedProposalRewards.matched : BigInt(0)),
+        ),
       )
-    : getFormattedEthValue(parseUnits('0', 'wei'));
+    : getFormattedEthValue(parseUnitsBigInt('0', 'wei'));
   const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
     rewardsSumWithValueAndSimulation,
   );
-  const thresholdToUseFormatted = thresholdToUse ? getFormattedEthValue(thresholdToUse) : undefined;
+  const thresholdToUseFormatted =
+    thresholdToUse !== undefined ? getFormattedEthValue(thresholdToUse) : undefined;
 
   const areValueAndSimulatedSuffixesTheSame =
     valueFormatted.suffix === simulatedMatchedFormatted?.suffix;
@@ -199,7 +198,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
               className={cx(styles.filled, isError && styles.isError)}
               style={{ width: `${isDecisionWindowOpen ? filled : 0}%` }}
             >
-              {isDecisionWindowOpen && !parseUnits(valueToUse).isZero() && (
+              {isDecisionWindowOpen && parseUnitsBigInt(valueToUse) !== 0n && (
                 <svg
                   className={styles.linearGradientSvg}
                   height="2"

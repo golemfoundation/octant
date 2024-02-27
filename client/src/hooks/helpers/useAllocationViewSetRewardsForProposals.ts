@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 
@@ -41,13 +40,13 @@ export default function useAllocationViewSetRewardsForProposals(): {
       return;
     }
 
-    const localStorageRewardsForProposals = BigNumber.from(
-      JSON.parse(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROPOSALS) || 'null'),
+    const localStorageRewardsForProposals = BigInt(
+      JSON.parse(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROPOSALS) || '0'),
     );
     if (userAllocations && userAllocations.elements.length > 0) {
       const userAllocationsSum = userAllocations.elements.reduce(
-        (acc, curr) => acc.add(curr.value),
-        BigNumber.from(0),
+        (acc, curr) => acc + curr.value,
+        BigInt(0),
       );
       setRewardsForProposals(userAllocationsSum);
     } else if (
@@ -55,13 +54,13 @@ export default function useAllocationViewSetRewardsForProposals(): {
       userAllocations.elements.length === 0 &&
       userAllocations.hasUserAlreadyDoneAllocation
     ) {
-      setRewardsForProposals(BigNumber.from(0));
+      setRewardsForProposals(BigInt(0));
     } else {
       setRewardsForProposals(
         !individualReward ||
-          localStorageRewardsForProposals.lt(BigNumber.from(0)) ||
-          localStorageRewardsForProposals.gt(individualReward)
-          ? BigNumber.from(0)
+          localStorageRewardsForProposals < BigInt(0) ||
+          localStorageRewardsForProposals > individualReward
+          ? BigInt(0)
           : localStorageRewardsForProposals,
       );
     }
@@ -73,9 +72,8 @@ export default function useAllocationViewSetRewardsForProposals(): {
     isFetchingCurrentEpoch,
     isFetchingUserAllocations,
     isConnected,
-    // .toHexString(), because React can't compare objects as deps in hooks, causing infinite loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    individualReward?.toHexString(),
+    individualReward,
     userAllocations?.elements.length,
   ]);
 

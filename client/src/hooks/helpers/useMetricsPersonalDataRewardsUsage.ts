@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
 
 import useTotalWithdrawals from 'hooks/subgraph/useTotalWithdrawals';
@@ -10,9 +9,9 @@ import useUserAllocationsAllEpochs from './useUserAllocationsAllEpochs';
 export default function useMetricsPersonalDataRewardsUsage(): {
   data:
     | {
-        totalDonations: BigNumber;
-        totalRewardsUsed: BigNumber;
-        totalWithdrawals: BigNumber;
+        totalDonations: bigint;
+        totalRewardsUsed: bigint;
+        totalWithdrawals: bigint;
       }
     | undefined;
   isFetching: boolean;
@@ -46,29 +45,29 @@ export default function useMetricsPersonalDataRewardsUsage(): {
     const wasPatronInGivenEpoch = epochPatronsAllEpochs[currentIndex].includes(address as string);
     const wasBudgetEffective = hasUserAlreadyDoneAllocationInGivenEpoch || wasPatronInGivenEpoch;
 
-    return wasBudgetEffective ? acc.add(curr) : acc;
-  }, BigNumber.from(0));
+    return wasBudgetEffective ? acc + curr : acc;
+  }, BigInt(0));
   const totalDonations = userAllocationsAllEpochs.reduce((acc, curr, currentIndex) => {
     const givenEpochIndividualReward = individualRewardAllEpochs[currentIndex];
     const wasPatronInGivenEpoch = epochPatronsAllEpochs[currentIndex].includes(address as string);
     if (curr.hasUserAlreadyDoneAllocation) {
       const userAllocationsSum = curr.elements.reduce(
-        (acc2, curr2) => acc2.add(curr2.value),
-        BigNumber.from(0),
+        (acc2, curr2) => acc2 + curr2.value,
+        BigInt(0),
       );
-      return acc.add(userAllocationsSum);
+      return acc + userAllocationsSum;
     }
     if (wasPatronInGivenEpoch) {
-      return acc.add(givenEpochIndividualReward);
+      return acc + givenEpochIndividualReward;
     }
     return acc;
-  }, BigNumber.from(0));
+  }, BigInt(0));
 
   return {
     data: {
       totalDonations,
       totalRewardsUsed,
-      totalWithdrawals: totalWithdrawals || BigNumber.from(0),
+      totalWithdrawals: totalWithdrawals || BigInt(0),
     },
     isFetching: false,
   };

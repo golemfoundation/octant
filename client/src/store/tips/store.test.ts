@@ -1,7 +1,6 @@
 import {
   WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP,
   WAS_ALLOCATE_REWARDS_ALREADY_CLOSED_TIP,
-  WAS_CHECK_STATUS_ALREADY_CLOSED_TIP,
   WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP,
   WAS_LOCK_GLM_ALREADY_CLOSED_TIP,
   WAS_REWARDS_ALREADY_CLOSED_TIP,
@@ -20,7 +19,6 @@ describe('useTipsStore', () => {
   it('should reset the state', () => {
     const {
       setWasAddFavouritesAlreadyClosed,
-      setWasCheckStatusAlreadyClosed,
       setWasConnectWalletAlreadyClosed,
       setWasLockGLMAlreadyClosed,
       setWasRewardsAlreadyClosed,
@@ -30,7 +28,6 @@ describe('useTipsStore', () => {
     } = useTipsStore.getState();
 
     setWasAddFavouritesAlreadyClosed(true);
-    setWasCheckStatusAlreadyClosed(true);
     setWasConnectWalletAlreadyClosed(true);
     setWasLockGLMAlreadyClosed(true);
     setWasRewardsAlreadyClosed(true);
@@ -38,7 +35,6 @@ describe('useTipsStore', () => {
     setWasAllocateRewardsAlreadyClosed(true);
 
     expect(useTipsStore.getState().data.wasAddFavouritesAlreadyClosed).toEqual(true);
-    expect(useTipsStore.getState().data.wasCheckStatusAlreadyClosed).toEqual(true);
     expect(useTipsStore.getState().data.wasConnectWalletAlreadyClosed).toEqual(true);
     expect(useTipsStore.getState().data.wasLockGLMAlreadyClosed).toEqual(true);
     expect(useTipsStore.getState().data.wasRewardsAlreadyClosed).toEqual(true);
@@ -48,7 +44,6 @@ describe('useTipsStore', () => {
     reset();
 
     expect(useTipsStore.getState().data.wasAddFavouritesAlreadyClosed).toEqual(false);
-    expect(useTipsStore.getState().data.wasCheckStatusAlreadyClosed).toEqual(false);
     expect(useTipsStore.getState().data.wasConnectWalletAlreadyClosed).toEqual(false);
     expect(useTipsStore.getState().data.wasLockGLMAlreadyClosed).toEqual(false);
     expect(useTipsStore.getState().data.wasRewardsAlreadyClosed).toEqual(false);
@@ -79,32 +74,6 @@ describe('useTipsStore', () => {
     );
     expect(useTipsStore.getState().data.wasAddFavouritesAlreadyClosed).toEqual(
       wasAddFavouritesAlreadyClosed,
-    );
-  });
-
-  it(`should set wasCheckStatusAlreadyClosed state and localStorage item '${WAS_CHECK_STATUS_ALREADY_CLOSED_TIP}' to 'true'`, () => {
-    const { setWasCheckStatusAlreadyClosed } = useTipsStore.getState();
-    const wasCheckStatusAlreadyClosed = true;
-
-    setWasCheckStatusAlreadyClosed(wasCheckStatusAlreadyClosed);
-    expect(localStorage.getItem(WAS_CHECK_STATUS_ALREADY_CLOSED_TIP)).toEqual(
-      JSON.stringify(wasCheckStatusAlreadyClosed),
-    );
-    expect(useTipsStore.getState().data.wasCheckStatusAlreadyClosed).toEqual(
-      wasCheckStatusAlreadyClosed,
-    );
-  });
-
-  it(`should set wasCheckStatusAlreadyClosed state and localStorage item '${WAS_CHECK_STATUS_ALREADY_CLOSED_TIP}' to 'false'`, () => {
-    const { setWasCheckStatusAlreadyClosed } = useTipsStore.getState();
-    const wasCheckStatusAlreadyClosed = false;
-
-    setWasCheckStatusAlreadyClosed(wasCheckStatusAlreadyClosed);
-    expect(localStorage.getItem(WAS_CHECK_STATUS_ALREADY_CLOSED_TIP)).toEqual(
-      JSON.stringify(wasCheckStatusAlreadyClosed),
-    );
-    expect(useTipsStore.getState().data.wasCheckStatusAlreadyClosed).toEqual(
-      wasCheckStatusAlreadyClosed,
     );
   });
 
@@ -234,7 +203,6 @@ describe('useTipsStore', () => {
     expect(useTipsStore.getState().meta.isInitialized).toEqual(true);
 
     expect(useTipsStore.getState().data.wasAddFavouritesAlreadyClosed).toEqual(false);
-    expect(useTipsStore.getState().data.wasCheckStatusAlreadyClosed).toEqual(false);
     expect(useTipsStore.getState().data.wasConnectWalletAlreadyClosed).toEqual(false);
     expect(useTipsStore.getState().data.wasLockGLMAlreadyClosed).toEqual(false);
     expect(useTipsStore.getState().data.wasRewardsAlreadyClosed).toEqual(false);
@@ -242,7 +210,6 @@ describe('useTipsStore', () => {
     expect(useTipsStore.getState().data.wasAllocateRewardsAlreadyClosed).toEqual(false);
 
     const wasAddFavouritesAlreadyClosed = true;
-    const wasCheckStatusAlreadyClosed = true;
     const wasConnectWalletAlreadyClosed = true;
     const wasLockGLMAlreadyClosed = true;
     const wasRewardsAlreadyClosed = true;
@@ -252,10 +219,6 @@ describe('useTipsStore', () => {
     localStorage.setItem(
       WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP,
       JSON.stringify(wasAddFavouritesAlreadyClosed),
-    );
-    localStorage.setItem(
-      WAS_CHECK_STATUS_ALREADY_CLOSED_TIP,
-      JSON.stringify(wasCheckStatusAlreadyClosed),
     );
     localStorage.setItem(
       WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP,
@@ -273,9 +236,6 @@ describe('useTipsStore', () => {
 
     expect(useTipsStore.getState().data.wasAddFavouritesAlreadyClosed).toEqual(
       wasAddFavouritesAlreadyClosed,
-    );
-    expect(useTipsStore.getState().data.wasCheckStatusAlreadyClosed).toEqual(
-      wasCheckStatusAlreadyClosed,
     );
     expect(useTipsStore.getState().data.wasConnectWalletAlreadyClosed).toEqual(
       wasConnectWalletAlreadyClosed,

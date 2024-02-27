@@ -27,12 +27,19 @@ def get_budget(user_address: str, epoch_num: int) -> int:
 
 
 def estimate_budget(lock_duration_sec: int, glm_amount: int) -> int:
-    current = state_context(EpochState.CURRENT)
-    current_rewards = get_services(EpochState.CURRENT).octant_rewards_service
+    current_context = state_context(EpochState.CURRENT)
+    current_rewards_service = get_services(EpochState.CURRENT).octant_rewards_service
+    current_rewards = current_rewards_service.get_octant_rewards(current_context)
 
-    future = state_context(EpochState.FUTURE)
-    future_rewards = get_services(EpochState.FUTURE).octant_rewards_service
+    future_context = state_context(EpochState.FUTURE)
+    future_rewards_service = get_services(EpochState.FUTURE).octant_rewards_service
+    future_rewards = future_rewards_service.get_octant_rewards(future_context)
 
     return core.estimate_budget(
-        current, future, current_rewards, future_rewards, lock_duration_sec, glm_amount
+        current_context,
+        future_context,
+        current_rewards,
+        future_rewards,
+        lock_duration_sec,
+        glm_amount,
     )

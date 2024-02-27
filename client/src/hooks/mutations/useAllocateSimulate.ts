@@ -1,15 +1,14 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 import { useCallback, useRef } from 'react';
 import { useAccount } from 'wagmi';
 
 import { apiPostAllocateLeverage, ApiPostAllocateLeverageResponse } from 'api/calls/allocate';
 import { getAllocationsMapped } from 'hooks/utils/utils';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import { AllocationValues } from 'views/AllocationView/types';
 
 export type AllocateSimulate = Omit<ApiPostAllocateLeverageResponse, 'threshold'> & {
-  threshold: BigNumber;
+  threshold: bigint;
 };
 
 export default function useAllocateSimulate(
@@ -41,7 +40,7 @@ export default function useAllocateSimulate(
     ...mutation,
     data: mutation.data && {
       ...mutation.data,
-      threshold: parseUnits(mutation.data.threshold, 'wei'),
+      threshold: parseUnitsBigInt(mutation.data.threshold, 'wei'),
     },
     reset,
   };

@@ -42,9 +42,10 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   const proposalMatchedProposalRewardsFormatted = proposalMatchedProposalRewards
     ? getFormattedEthValue(proposalMatchedProposalRewards?.sum)
     : undefined;
-  const proposalRewardsThresholdFormatted = proposalRewardsThreshold
-    ? getFormattedEthValue(proposalRewardsThreshold)
-    : undefined;
+  const proposalRewardsThresholdFormatted =
+    proposalRewardsThreshold !== undefined
+      ? getFormattedEthValue(proposalRewardsThreshold)
+      : undefined;
   const areSuffixesTheSame =
     proposalMatchedProposalRewardsFormatted?.suffix === proposalRewardsThresholdFormatted?.suffix;
 

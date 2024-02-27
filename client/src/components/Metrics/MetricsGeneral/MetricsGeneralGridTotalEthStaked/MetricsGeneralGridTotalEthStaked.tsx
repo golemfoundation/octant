@@ -1,4 +1,3 @@
-import { formatUnits } from 'ethers/lib/utils';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -7,6 +6,7 @@ import MetricsGridTileValue from 'components/Metrics/MetricsGrid/MetricsGridTile
 import { ETH_STAKED } from 'constants/stake';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useSettingsStore from 'store/settings/store';
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 
 import styles from './MetricsGeneralGridTotalEthStaked.module.scss';
@@ -27,7 +27,7 @@ const MetricsGeneralGridTotalEthStaked: FC<MetricsGeneralGridTotalEthStakedProps
   }));
   const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
 
-  const ethStakedInt = parseInt(formatUnits(ETH_STAKED), 10);
+  const ethStakedInt = parseInt(formatUnitsBigInt(ETH_STAKED), 10);
   const ethStakedValue = ethStakedInt / 1000 >= 1 ? `${ethStakedInt / 1000}K` : `${ethStakedInt}`;
 
   const ethStakedFiatValue = getValueFiatToDisplay({

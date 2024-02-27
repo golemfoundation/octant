@@ -1,15 +1,13 @@
-import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
-
 import { FormattedCryptoValue } from 'types/formattedCryptoValue';
 
+import { formatUnitsBigInt } from './formatUnitsBigInt';
 import getNumberWithSpaces from './getNumberWithSpaces';
 
 export default function getFormattedGlmValue(
-  value: BigNumber,
+  value: bigint,
   isUsingHairSpace = true,
 ): FormattedCryptoValue {
-  const valueString = parseFloat(formatUnits(value)).toFixed(0);
+  const valueString = parseFloat(formatUnitsBigInt(value)).toFixed(0);
   const formattedValue = getNumberWithSpaces(valueString, isUsingHairSpace);
   const suffix = 'GLM';
 

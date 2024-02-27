@@ -44,7 +44,6 @@ export type QueryKeys = {
   epochUnusedRewards: (epoch: number) => [Root['epochUnusedRewards'], string];
   epochesEndTime: (epochNumber: number) => [Root['epochesEndTime'], string];
   estimatedEffectiveDeposit: (userAddress: string) => [Root['estimatedEffectiveDeposit'], string];
-  glmClaimCheck: ['glmClaimCheck'];
   history: ['history'];
   individualProposalRewards: ['individualProposalRewards'];
   individualReward: (epochNumber: number) => [Root['individualReward'], string];
