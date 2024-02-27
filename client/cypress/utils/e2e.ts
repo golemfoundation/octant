@@ -98,3 +98,17 @@ export const moveToNextEpoch = () =>
     // isEpochChanged
     resolve(Number(currentEpoch) + 1 === Number(currentEpochAfter));
   });
+
+export const connectWallet = (
+  isTOSAccepted: boolean,
+  isPatronModeEnabled: boolean,
+): Chainable<any> => {
+  cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
+  cy.intercept('GET', '/user/*/patron-mode', { body: { status: isPatronModeEnabled } });
+  cy.intercept('PATCH', '/user/*/patron-mode', { body: { status: !isPatronModeEnabled } });
+  cy.disconnectMetamaskWalletFromAllDapps();
+  cy.get('[data-test=MainLayout__Button--connect]').click();
+  cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
+  cy.switchToMetamaskNotification();
+  return cy.acceptMetamaskAccess();
+};
