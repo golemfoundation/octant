@@ -1,4 +1,3 @@
-import { formatUnits } from 'ethers/lib/utils';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -8,6 +7,7 @@ import ProgressBar from 'components/ui/ProgressBar';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 import useSettingsStore from 'store/settings/store';
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import getFormattedValueWithSymbolSuffix from 'utils/getFormattedValueWithSymbolSuffix';
 import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 
@@ -37,7 +37,7 @@ const MetricsGeneralGridTotalGlmLockedAndTotalSupply: FC<
       return '';
     }
 
-    const lockedGlmTotalFloat = parseFloat(formatUnits(lockedSummaryLatest?.lockedTotal));
+    const lockedGlmTotalFloat = parseFloat(formatUnitsBigInt(lockedSummaryLatest?.lockedTotal));
 
     return getFormattedValueWithSymbolSuffix({
       format: 'millions',

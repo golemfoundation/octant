@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
 
@@ -10,7 +8,7 @@ export default function useIsDonationAboveThreshold({
 }: {
   epoch?: number;
   proposalAddress: string;
-  rewardsSumWithValueAndSimulation?: BigNumber;
+  rewardsSumWithValueAndSimulation?: bigint;
 }): boolean {
   const { data: matchedProposalRewards } = useMatchedProposalRewards(epoch);
   const { data: proposalRewardsThreshold } = useProposalRewardsThreshold(epoch);
@@ -25,5 +23,5 @@ export default function useIsDonationAboveThreshold({
     return false;
   }
 
-  return rewardsToUse.gte(proposalRewardsThreshold);
+  return rewardsToUse >= proposalRewardsThreshold;
 }

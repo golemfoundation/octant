@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 export default interface ProposalListItemProps {
   address: string;
   description?: string;
@@ -8,7 +6,7 @@ export default interface ProposalListItemProps {
   name?: string;
   numberOfDonors: number;
   profileImageSmall?: string;
-  totalValueOfAllocations?: BigNumber;
+  totalValueOfAllocations?: bigint;
   website?: {
     label?: string;
     url: string;

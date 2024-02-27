@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import React, { FC, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -31,14 +30,14 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
   const { data: individualReward, isFetching: isFetchingIndividualReward } =
     useIndividualReward(allocationEpoch);
 
-  const isPersonalOnlyAllocation = amount.isZero();
+  const isPersonalOnlyAllocation = amount === 0n;
 
   const sections: SectionProps[] = [
     {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
         isFetching: isFetchingEpochTimestampHappenedIn || isFetchingIndividualReward,
-        valueCrypto: individualReward ? individualReward.sub(amount) : BigNumber.from(0),
+        valueCrypto: individualReward ? individualReward - amount : BigInt(0),
       },
       label: t('sections.allocationPersonal'),
     },

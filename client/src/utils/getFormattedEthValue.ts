@@ -1,14 +1,12 @@
-import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
-
-import { GWEI_5, WEI_5 } from 'constants/bigNumber';
+import { GWEI_5, WEI_5 } from 'constants/bigInt';
 import { FormattedCryptoValue } from 'types/formattedCryptoValue';
 
+import { formatUnitsBigInt } from './formatUnitsBigInt';
 import getNumberWithSpaces from './getNumberWithSpaces';
 import { dotAndZeroes } from './regExp';
 
 export default function getFormattedEthValue(
-  value: BigNumber,
+  value: bigint,
   // eslint-disable-next-line default-param-last
   isUsingHairSpace = true,
   shouldIgnoreGwei?: boolean,
@@ -17,22 +15,22 @@ export default function getFormattedEthValue(
 ): FormattedCryptoValue {
   let returnObject: Omit<FormattedCryptoValue, 'fullString'>;
 
-  const isInGweiRange = value.lt(GWEI_5);
+  const isInGweiRange = value < GWEI_5;
 
-  if (value.isZero()) {
-    returnObject = { suffix: 'ETH', value: formatUnits(value) };
-  } else if (value.lt(WEI_5)) {
+  if (value === 0n) {
+    returnObject = { suffix: 'ETH', value: formatUnitsBigInt(value) };
+  } else if (value < WEI_5) {
     if (shouldIgnoreWei) {
       return { fullString: '< 0.0001 ETH', suffix: 'ETH', value: '< 0.0001' };
     }
-    returnObject = { suffix: 'WEI', value: formatUnits(value, 'wei') };
+    returnObject = { suffix: 'WEI', value: formatUnitsBigInt(value, 'wei') };
   } else if (isInGweiRange) {
     if (shouldIgnoreGwei) {
       return { fullString: '< 0.0001 ETH', suffix: 'ETH', value: '< 0.0001' };
     }
-    returnObject = { suffix: 'GWEI', value: formatUnits(value, 'gwei') };
+    returnObject = { suffix: 'GWEI', value: formatUnitsBigInt(value, 'gwei') };
   } else {
-    returnObject = { suffix: 'ETH', value: formatUnits(value) };
+    returnObject = { suffix: 'ETH', value: formatUnitsBigInt(value) };
   }
 
   let formattedValue = parseFloat(returnObject.value).toFixed(isInGweiRange ? 0 : ethPrecission);

@@ -24,7 +24,6 @@ jobs:
     secrets: inherit
     with:
       env-type: e2e
-      delete-env: true
       pull-request-id: ${{ github.event.pull_request.number }}
       workflow-id: ${{ github.run_id }}
 
@@ -38,7 +37,6 @@ jobs:
     secrets: inherit
     with:
       env-type: apitest
-      delete-env: true
       pull-request-id: ${{ github.event.pull_request.number }}
       workflow-id: ${{ github.run_id }}
 
@@ -96,6 +94,7 @@ jobs:
         # Setup NVM to use Node version 16
         set +x
         source /usr/share/nvm/init-nvm.sh
+        nvm install 16
         nvm use 16
         set -x
         npm i -g yarn

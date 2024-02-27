@@ -1,4 +1,3 @@
-import { formatUnits } from 'ethers/lib/utils';
 import React, { Fragment } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -9,6 +8,7 @@ import ModalOnboardingTOS from 'components/shared/ModalOnboardingTOS';
 import useGlmClaim from 'hooks/mutations/useGlmClaim';
 import useGlmClaimCheck from 'hooks/queries/useGlmClaimCheck';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 
 import { stepsDecisionWindowOpen, stepsDecisionWindowClosed } from './steps';
 
@@ -26,7 +26,7 @@ const useOnboardingSteps = (
   const isUserToClaimAvailable = isFetched && !isError && !!glmClaimCheck;
   const isUserEligibleToClaimFetched = isUserToClaimAvailable || (isFetched && isError);
   // Status code 200 & value 0 is an indication that user already claimed.
-  const isUserEligibleToClaimGlm = isUserToClaimAvailable && !glmClaimCheck.value.isZero();
+  const isUserEligibleToClaimGlm = isUserToClaimAvailable && glmClaimCheck.value !== 0n;
 
   if (!isUserEligibleToClaimFetched) {
     // We need to fetch data about claiming first.
@@ -59,7 +59,7 @@ const useOnboardingSteps = (
                 <Trans
                   i18nKey="views.onboarding.stepsCommon.claimGlm.text"
                   values={{
-                    value: parseInt(formatUnits(glmClaimCheck.value), 10).toString(),
+                    value: parseInt(formatUnitsBigInt(glmClaimCheck.value), 10).toString(),
                   }}
                 />
                 <ModalOnboardingButtonClaimGlm

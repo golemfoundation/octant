@@ -1,11 +1,11 @@
 import { useQueries, UseQueryResult } from '@tanstack/react-query';
-import { parseUnits } from 'ethers/lib/utils';
 import { useAccount } from 'wagmi';
 
 import { apiGetUserAllocations, Response as ApiResponse } from 'api/calls/userAllocations';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import { UserAllocationElement } from 'hooks/queries/useUserAllocations';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 export type ResponseItem = {
   elements: (UserAllocationElement & { epoch: number })[];
@@ -46,11 +46,11 @@ export default function useUserAllocationsAllEpochs(): { data: Response; isFetch
       const userAllocationsFromBackend = data!.allocations.map(element => ({
         address: element.address,
         epoch: index,
-        value: parseUnits(element.amount, 'wei'),
+        value: parseUnitsBigInt(element.amount, 'wei'),
       }));
 
       return {
-        elements: userAllocationsFromBackend.filter(({ value }) => !value.isZero()),
+        elements: userAllocationsFromBackend.filter(({ value }) => value !== 0n),
         hasUserAlreadyDoneAllocation: !!userAllocationsFromBackend?.length,
         isManuallyEdited: !!data!.isManuallyEdited,
       };

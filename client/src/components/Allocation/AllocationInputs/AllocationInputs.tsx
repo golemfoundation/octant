@@ -1,12 +1,12 @@
 import cx from 'classnames';
-import { BigNumber } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { useFormik } from 'formik';
 import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Button from 'components/ui/Button';
 import InputText from 'components/ui/InputText';
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import { comma, floatNumberWithUpTo18DecimalPlaces, percentageOnly } from 'utils/regExp';
 
 import styles from './AllocationInputs.module.scss';
@@ -27,7 +27,7 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
   const [percentage, setPercentage] = useState<string>('');
   // Whenever editing already edited entry, restToDistribute should be increased by whatever is set here.
   const restToDistributeAdjusted = isManuallyEdited
-    ? restToDistribute.add(valueCryptoSelected)
+    ? restToDistribute + valueCryptoSelected
     : restToDistribute;
 
   const formik = useFormik<FormFields>({
@@ -37,23 +37,13 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
     validationSchema: validationSchema(valueCryptoTotal, restToDistributeAdjusted),
   });
 
-  const valueCryptoSelectedHexString = valueCryptoSelected.toHexString();
-  const valueCryptoTotalHexString = valueCryptoTotal.toHexString();
-
   useEffect(() => {
     setPercentage(
-      valueCryptoTotal.isZero()
-        ? '0'
-        : valueCryptoSelected.mul(100).div(valueCryptoTotal).toString(),
+      valueCryptoTotal === 0n ? '0' : ((valueCryptoSelected * 100n) / valueCryptoTotal).toString(),
     );
-    formik.setFieldValue('valueCryptoSelected', formatUnits(valueCryptoSelected));
+    formik.setFieldValue('valueCryptoSelected', formatUnitsBigInt(valueCryptoSelected));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    valueCryptoSelectedHexString,
-    valueCryptoTotalHexString,
-    valueCryptoSelected,
-    valueCryptoTotal,
-  ]);
+  }, [valueCryptoSelected, valueCryptoTotal]);
 
   const formikUpdateValues = (newValueString: string, newValuePercentage: string) => {
     setPercentage(newValuePercentage);
@@ -66,10 +56,10 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
     if (newValuePercentage && !percentageOnly.test(newValuePercentage)) {
       return;
     }
-    const newValueBigNumber = newValuePercentage
-      ? valueCryptoTotal.mul(BigNumber.from(newValuePercentage)).div(100)
-      : BigNumber.from(0);
-    formikUpdateValues(formatUnits(newValueBigNumber), newValuePercentage);
+    const newValueBigInt = newValuePercentage
+      ? (valueCryptoTotal * BigInt(newValuePercentage)) / 100n
+      : BigInt(0);
+    formikUpdateValues(formatUnitsBigInt(newValueBigInt), newValuePercentage);
   };
 
   const onValueStringChange = (newValueString: string): void => {
@@ -78,15 +68,15 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
       return;
     }
 
-    const newValueBigNumber = parseUnits(newValueString || '0');
+    const newValueBigInt = parseUnitsBigInt(newValueString || '0');
     let newPercentage = newValueString
-      ? newValueBigNumber.mul(100).div(valueCryptoTotal).toString()
+      ? ((newValueBigInt * 100n) / valueCryptoTotal).toString()
       : '0';
     newPercentage = parseInt(newPercentage, 10) > 100 ? '100' : newPercentage;
     formikUpdateValues(newValueString, newPercentage);
   };
 
-  const isThereSomethingToDistribute = !restToDistributeAdjusted.isZero();
+  const isThereSomethingToDistribute = restToDistributeAdjusted !== 0n;
 
   return (
     <div className={cx(styles.root, className)}>
@@ -121,7 +111,7 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
           isHigh
           isLoading={formik.isSubmitting}
           label={isThereSomethingToDistribute ? t('done') : t('close')}
-          onClick={() => onClose(parseUnits(formik.values.valueCryptoSelected))}
+          onClick={() => onClose(parseUnitsBigInt(formik.values.valueCryptoSelected))}
           type="submit"
           variant="cta"
         />

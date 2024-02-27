@@ -14,7 +14,7 @@ export function isProposalAlreadyAllocatedOn(
   const userAllocationsElement = userAllocationsElements.find(
     ({ address: userAllocationAddress }) => userAllocationAddress === address,
   );
-  return !!userAllocationsElement && userAllocationsElement.value.gt(0);
+  return !!userAllocationsElement && userAllocationsElement.value > 0n;
 }
 
 export function getShouldProjectBeAddedOrRemovedFromAllocation({

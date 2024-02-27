@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import React, { FC, Fragment, memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -25,10 +24,8 @@ const EarnHistoryItem: FC<EarnHistoryItemProps> = ({ isLast, ...rest }) => {
   const { data: individualReward, isFetching: isFetchingIndividualReward } =
     useIndividualReward(allocationEpoch);
 
-  const personalAllocationValue = individualReward
-    ? individualReward.sub(amount)
-    : BigNumber.from(0);
-  const isPersonalOnlyAllocation = amount.isZero();
+  const personalAllocationValue = individualReward ? individualReward - amount : BigInt(0);
+  const isPersonalOnlyAllocation = amount === 0n;
 
   const title = useMemo(() => {
     switch (type) {

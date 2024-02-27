@@ -1,7 +1,5 @@
-import { BigNumber } from 'ethers';
-
 export default interface ProjectAllocationDetailRowProps {
   address: string;
-  amount: BigNumber;
+  amount: bigint;
   epoch?: number;
 }

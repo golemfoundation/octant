@@ -1,12 +1,11 @@
 import { UseQueryOptions } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
 import { useAccount } from 'wagmi';
 
 import useEpochPatronsAllEpochs from './useEpochPatronsAllEpochs';
 import useIndividualRewardAllEpochs from './useIndividualRewardAllEpochs';
 
 export default function useTotalPatronDonations(options?: Omit<UseQueryOptions<any>, 'queryKey'>): {
-  data: BigNumber | undefined;
+  data: bigint | undefined;
   isFetching: boolean;
 } {
   const { address } = useAccount();
@@ -28,8 +27,8 @@ export default function useTotalPatronDonations(options?: Omit<UseQueryOptions<a
   return {
     data: epochPatronsAllEpochs.reduce(
       (acc, curr, currentIndex) =>
-        curr.includes(address!) ? acc.add(individualRewardAllEpochs[currentIndex]) : acc,
-      BigNumber.from(0),
+        curr.includes(address!) ? acc + individualRewardAllEpochs[currentIndex] : acc,
+      BigInt(0),
     ),
     isFetching: false,
   };

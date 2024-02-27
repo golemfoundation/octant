@@ -1,9 +1,9 @@
-import { formatUnits } from 'ethers/lib/utils';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import MetricsDonationsProgressBar from 'components/Metrics/MetricsDonationsProgressBar';
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 
 import MetricsEpochGridDonationsVsPersonalAllocationsProps from './types';
 
@@ -12,8 +12,8 @@ const MetricsEpochGridDonationsVsPersonalAllocations: FC<
 > = ({ totalDonations, isLoading, totalPersonal, className }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
-  const totalDonationsNumber = parseFloat(formatUnits(totalDonations));
-  const totalPersonalNumber = parseFloat(formatUnits(totalPersonal));
+  const totalDonationsNumber = parseFloat(formatUnitsBigInt(totalDonations));
+  const totalPersonalNumber = parseFloat(formatUnitsBigInt(totalPersonal));
 
   const donationsValue =
     totalDonationsNumber > 0

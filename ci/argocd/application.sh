@@ -124,7 +124,6 @@ elif [[ "$ACTION" == "update" ]]; then
 		-H "Authorization: Bearer ${ARGOCD_ACCESS_TOKEN}" \
 		-H "Content-type: application/json" \
 		"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/sync"
-	sleep 30
 
 	# I'm leaving the previous hack for the time being in case it has to be used again
 	#

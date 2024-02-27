@@ -1,13 +1,11 @@
-import { BigNumber } from 'ethers';
-
 export interface AllocationsData {
   allocations: string[];
-  rewardsForProposals: BigNumber;
+  rewardsForProposals: bigint;
 }
 
 export interface AllocationsMethods {
   addAllocations: (proposalAddresses: string[]) => void;
   removeAllocations: (proposalAddresses: string[]) => void;
   setAllocations: (proposalAddresses: string[]) => void;
-  setRewardsForProposals: (rewardsForProposals: BigNumber) => void;
+  setRewardsForProposals: (rewardsForProposals: bigint) => void;
 }

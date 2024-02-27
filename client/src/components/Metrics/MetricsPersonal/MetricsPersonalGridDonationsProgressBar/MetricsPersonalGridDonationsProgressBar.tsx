@@ -1,11 +1,10 @@
-import { BigNumber } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import MetricsDonationsProgressBar from 'components/Metrics/MetricsDonationsProgressBar';
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import useMetricsPersonalDataRewardsUsage from 'hooks/helpers/useMetricsPersonalDataRewardsUsage';
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 
 import MetricsPersonalGridDonationsProgressBarProps from './types';
 
@@ -16,10 +15,10 @@ const MetricsPersonalGridDonationsProgressBar: FC<MetricsPersonalGridDonationsPr
   const { data: metricsPersonalDataRewardsUsage } = useMetricsPersonalDataRewardsUsage();
 
   const totalDonationsNumber = parseFloat(
-    formatUnits(metricsPersonalDataRewardsUsage?.totalDonations || BigNumber.from(0)),
+    formatUnitsBigInt(metricsPersonalDataRewardsUsage?.totalDonations || BigInt(0)),
   );
   const totalRewardsUsedNumber = parseFloat(
-    formatUnits(metricsPersonalDataRewardsUsage?.totalRewardsUsed || BigNumber.from(0)),
+    formatUnitsBigInt(metricsPersonalDataRewardsUsage?.totalRewardsUsed || BigInt(0)),
   );
 
   const donationsValue =
@@ -33,8 +32,8 @@ const MetricsPersonalGridDonationsProgressBar: FC<MetricsPersonalGridDonationsPr
             <MetricsDonationsProgressBar
               donationsValue={donationsValue}
               isDisabled={
-                !!metricsPersonalDataRewardsUsage?.totalDonations.isZero() &&
-                !!metricsPersonalDataRewardsUsage?.totalWithdrawals.isZero()
+                !!(metricsPersonalDataRewardsUsage?.totalDonations === 0n) &&
+                !!(metricsPersonalDataRewardsUsage?.totalWithdrawals === 0n)
               }
               isLoading={isLoading}
             />

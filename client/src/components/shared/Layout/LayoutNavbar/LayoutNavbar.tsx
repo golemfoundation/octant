@@ -1,11 +1,13 @@
 import cx from 'classnames';
 import { useAnimate } from 'framer-motion';
 import React, { FC, Fragment, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
 import Button from 'components/ui/Button';
 import Svg from 'components/ui/Svg';
 import { ELEMENT_POSITION_FIXED_CLASSNAME } from 'constants/css';
+import { WINDOW_PROPOSALS_SCROLL_Y } from 'constants/window';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useUserTOS from 'hooks/queries/useUserTOS';
@@ -24,6 +26,7 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix, tabs }) =
   const allocationsPrevRef = useRef(allocations);
 
   const { isDesktop } = useMediaQuery();
+  const location = useLocation();
   const [scope, animate] = useAnimate();
   const isProjectAdminMode = useIsProjectAdminMode();
 
@@ -65,6 +68,12 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix, tabs }) =
                 isActive={isActive}
                 isDisabled={isDisabled || areTabsDisabled}
                 label={label}
+                onClick={() => {
+                  if (location.pathname !== ROOT_ROUTES.proposals.absolute) {
+                    return;
+                  }
+                  window[WINDOW_PROPOSALS_SCROLL_Y] = window.scrollY;
+                }}
                 to={to}
                 variant="iconVertical"
               >

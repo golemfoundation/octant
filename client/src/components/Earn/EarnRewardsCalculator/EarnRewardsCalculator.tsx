@@ -1,6 +1,4 @@
 import cx from 'classnames';
-import { BigNumber } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { useFormik } from 'formik';
 import debounce from 'lodash/debounce';
 import React, { FC, useCallback, useEffect, useState } from 'react';
@@ -16,7 +14,9 @@ import useCryptoValues from 'hooks/queries/useCryptoValues';
 import i18n from 'i18n';
 import useSettingsStore from 'store/settings/store';
 import { FormattedCryptoValue } from 'types/formattedCryptoValue';
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import { comma, floatNumberWithUpTo18DecimalPlaces, numbersOnly } from 'utils/regExp';
 
 import styles from './EarnRewardsCalculator.module.scss';
@@ -27,7 +27,7 @@ const EarnRewardsCalculator: FC = () => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.rewardsCalculator',
   });
-  const [estimatedRewards, setEstimatedRewards] = useState<BigNumber | undefined>();
+  const [estimatedRewards, setEstimatedRewards] = useState<bigint | undefined>();
   const [isFetching, setIsFetching] = useState(false);
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
@@ -44,7 +44,7 @@ const EarnRewardsCalculator: FC = () => {
     debounce((amountGlm, d) => {
       const isFetchingRewards = clientReactQuery.isFetching({ queryKey: [ROOTS.calculateRewards] });
 
-      if (!amountGlm || !d || parseUnits(amountGlm).gt(GLM_TOTAL_SUPPLY)) {
+      if (!amountGlm || !d || parseUnitsBigInt(amountGlm) > GLM_TOTAL_SUPPLY) {
         if (isFetchingRewards) {
           clientReactQuery.cancelQueries({ queryKey: [ROOTS.calculateRewards] });
         }
@@ -57,7 +57,7 @@ const EarnRewardsCalculator: FC = () => {
         clientReactQuery.cancelQueries({ queryKey: [ROOTS.calculateRewards] });
       }
 
-      const amountGlmWEI = formatUnits(parseUnits(amountGlm, 'ether'), 'wei');
+      const amountGlmWEI = formatUnitsBigInt(parseUnitsBigInt(amountGlm, 'ether'), 'wei');
       setIsFetching(true);
 
       clientReactQuery
@@ -67,7 +67,7 @@ const EarnRewardsCalculator: FC = () => {
         })
         .then(res => {
           setIsFetching(false);
-          setEstimatedRewards(parseUnits(res.budget, 'wei'));
+          setEstimatedRewards(parseUnitsBigInt(res.budget, 'wei'));
         });
     }, 300),
     [],

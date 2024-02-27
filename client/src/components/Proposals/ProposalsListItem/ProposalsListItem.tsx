@@ -7,6 +7,7 @@ import ButtonAddToAllocate from 'components/shared/ButtonAddToAllocate';
 import Rewards from 'components/shared/Rewards';
 import Description from 'components/ui/Description';
 import Img from 'components/ui/Img';
+import { WINDOW_PROPOSALS_SCROLL_Y } from 'constants/window';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -74,12 +75,14 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
       onClick={
         isLoadingError
           ? () => {}
-          : () =>
+          : () => {
+              window[WINDOW_PROPOSALS_SCROLL_Y] = window.scrollY;
               navigate(
                 `${ROOT_ROUTES.proposal.absolute}/${
                   epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch)
                 }/${address}`,
-              )
+              );
+            }
       }
     >
       {isLoadingError ? (

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { BigNumber } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
+
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import {
   getAllocationValuesInitialState,
@@ -17,7 +18,7 @@ describe('getAllocationValuesWithRewardsSplitted', () => {
           { address: '0xB', value: '0.3' },
           { address: '0xC', value: '0.5' },
         ],
-        restToDistribute: parseUnits('2'),
+        restToDistribute: parseUnitsBigInt('2'),
       }),
     ).toEqual([
       { address: '0xA', value: '0.2' },
@@ -34,7 +35,7 @@ describe('getAllocationValuesWithRewardsSplitted', () => {
           { address: '0xB', value: '0.3' },
           { address: '0xC', value: '0' },
         ],
-        restToDistribute: parseUnits('2'),
+        restToDistribute: parseUnitsBigInt('2'),
       }),
     ).toEqual([
       { address: '0xA', value: '1.7' },
@@ -51,12 +52,12 @@ describe('getAllocationValuesWithRewardsSplitted', () => {
           { address: '0xB', value: '2.0' },
           { address: '0xC', value: '4.5' },
         ],
-        restToDistribute: parseUnits('5'),
+        restToDistribute: parseUnitsBigInt('5'),
       }),
     ).toEqual([
       { address: '0xA', value: '1.0' },
       { address: '0xB', value: '2.0' },
-      { address: '0xC', value: '2.0' },
+      { address: '0xC', value: '2' },
     ]);
   });
 
@@ -68,7 +69,7 @@ describe('getAllocationValuesWithRewardsSplitted', () => {
           { address: '0xB', value: '4.5' },
           { address: '0xC', value: '0.5' },
         ],
-        restToDistribute: parseUnits('5'),
+        restToDistribute: parseUnitsBigInt('5'),
       }),
     ).toEqual([
       { address: '0xA', value: '1.0' },
@@ -81,7 +82,7 @@ describe('getAllocationValuesWithRewardsSplitted', () => {
     expect(
       getAllocationValuesWithRewardsSplitted({
         allocationValues: [],
-        restToDistribute: BigNumber.from(500),
+        restToDistribute: BigInt(500),
       }),
     ).toEqual([]);
   });
@@ -90,16 +91,16 @@ describe('getAllocationValuesWithRewardsSplitted', () => {
     expect(
       getAllocationValuesWithRewardsSplitted({
         allocationValues: [
-          { address: '0xA', value: formatUnits(BigNumber.from(100)) },
-          { address: '0xB', value: formatUnits(BigNumber.from(200)) },
-          { address: '0xC', value: formatUnits(BigNumber.from(450)) },
+          { address: '0xA', value: formatUnitsBigInt(BigInt(100)) },
+          { address: '0xB', value: formatUnitsBigInt(BigInt(200)) },
+          { address: '0xC', value: formatUnitsBigInt(BigInt(450)) },
         ],
-        restToDistribute: BigNumber.from(0),
+        restToDistribute: BigInt(0),
       }),
     ).toEqual([
-      { address: '0xA', value: formatUnits(BigNumber.from(100)) },
-      { address: '0xB', value: formatUnits(BigNumber.from(200)) },
-      { address: '0xC', value: formatUnits(BigNumber.from(450)) },
+      { address: '0xA', value: formatUnitsBigInt(BigInt(100)) },
+      { address: '0xB', value: formatUnitsBigInt(BigInt(200)) },
+      { address: '0xC', value: formatUnitsBigInt(BigInt(450)) },
     ]);
   });
 });
@@ -114,7 +115,7 @@ describe('getAllocationValuesInitialState', () => {
     allocations: ['0xA', '0xB', '0xC'],
     isManualMode: false,
     percentageProportions: {},
-    rewardsForProposals: parseUnits('1'),
+    rewardsForProposals: parseUnitsBigInt('1'),
     shouldReset: false,
     userAllocationsElements: [],
   };
@@ -126,7 +127,7 @@ describe('getAllocationValuesInitialState', () => {
           ...propsCommon,
           allocations: ['0xA', '0xB', '0xC'],
           isManualMode: true,
-          rewardsForProposals: parseUnits('0.6'),
+          rewardsForProposals: parseUnitsBigInt('0.6'),
           shouldReset: true,
           userAllocationsElements: [
             { address: '0xA', value: '0.3' },
@@ -147,7 +148,7 @@ describe('getAllocationValuesInitialState', () => {
           ...propsCommon,
           allocations: ['0xA', '0xB', '0xC', '0xD'],
           isManualMode: true,
-          rewardsForProposals: parseUnits('0.6'),
+          rewardsForProposals: parseUnitsBigInt('0.6'),
           shouldReset: true,
           userAllocationsElements: [
             { address: '0xA', value: '0.3' },
@@ -175,7 +176,7 @@ describe('getAllocationValuesInitialState', () => {
             { address: '0xC', value: '0.1' },
           ],
           isManualMode: false,
-          rewardsForProposals: parseUnits('1'),
+          rewardsForProposals: parseUnitsBigInt('1'),
           userAllocationsElements: [],
         }),
       ).toEqual([
@@ -283,13 +284,13 @@ describe('getAllocationValuesAfterManualChange', () => {
       { address: '0xC', value: '0.333333333333333334' },
     ],
     allocations: ['0xA', '0xB', '0xC'],
-    individualReward: parseUnits('2'),
+    individualReward: parseUnitsBigInt('2'),
     isManualMode: false,
     newAllocationValue: {
       address: '0xA',
       value: '0.05',
     },
-    rewardsForProposals: parseUnits('1'),
+    rewardsForProposals: parseUnitsBigInt('1'),
     setAddressesWithError: () => {},
   };
 
@@ -302,11 +303,11 @@ describe('getAllocationValuesAfterManualChange', () => {
         { address: '0xB', value: '0.333333333333333333' },
         { address: '0xC', value: '0.333333333333333334' },
       ],
-      rewardsForProposalsNew: parseUnits('1'),
+      rewardsForProposalsNew: parseUnitsBigInt('1'),
     });
   });
 
-  it('allocationValuesArrayNewSum.gt(individualReward)', () => {
+  it('allocationValuesArrayNewSum>(individualReward)', () => {
     expect(
       getAllocationValuesAfterManualChange({
         ...propsCommon,
@@ -321,7 +322,7 @@ describe('getAllocationValuesAfterManualChange', () => {
         { address: '0xB', value: '0.333333333333333333' },
         { address: '0xC', value: '0.333333333333333334' },
       ],
-      rewardsForProposalsNew: parseUnits('1'),
+      rewardsForProposalsNew: parseUnitsBigInt('1'),
     });
   });
 
@@ -337,7 +338,7 @@ describe('getAllocationValuesAfterManualChange', () => {
         { address: '0xB', value: '0.333333333333333333' },
         { address: '0xC', value: '0.333333333333333334' },
       ],
-      rewardsForProposalsNew: parseUnits('0.716666666666666667'),
+      rewardsForProposalsNew: parseUnitsBigInt('0.716666666666666667'),
     });
   });
 
@@ -348,7 +349,7 @@ describe('getAllocationValuesAfterManualChange', () => {
         { address: '0xB', value: '0.333333333333333333' },
         { address: '0xC', value: '0.616666666666666667' },
       ],
-      rewardsForProposalsNew: parseUnits('1'),
+      rewardsForProposalsNew: parseUnitsBigInt('1'),
     });
   });
 
@@ -372,7 +373,7 @@ describe('getAllocationValuesAfterManualChange', () => {
         { address: '0xB', value: '0' },
         { address: '0xC', value: '0' },
       ],
-      rewardsForProposalsNew: parseUnits('0'),
+      rewardsForProposalsNew: parseUnitsBigInt('0'),
     });
   });
 });

@@ -1,19 +1,18 @@
 import { UseQueryOptions, UseQueryResult, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 
 import { apiGetProjectThreshold, Response } from 'api/calls/projectThreshold';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useSubscription from 'hooks/helpers/useSubscription';
 import { WebsocketListenEvent } from 'types/websocketEvents';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import useCurrentEpoch from './useCurrentEpoch';
 import useIsDecisionWindowOpen from './useIsDecisionWindowOpen';
 
 export default function useProposalRewardsThreshold(
   epoch?: number,
-  options?: UseQueryOptions<Response, unknown, BigNumber, any>,
-): UseQueryResult<BigNumber, unknown> {
+  options?: UseQueryOptions<Response, unknown, bigint, any>,
+): UseQueryResult<bigint, unknown> {
   const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
@@ -44,7 +43,7 @@ export default function useProposalRewardsThreshold(
     queryKey: QUERY_KEYS.proposalRewardsThreshold(
       epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
     ),
-    select: response => parseUnits(response.threshold, 'wei'),
+    select: response => parseUnitsBigInt(response.threshold, 'wei'),
     staleTime: Infinity,
     ...options,
   });

@@ -68,9 +68,10 @@ $bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerHeight);
   }
 }
 
-.logoWrapper {
+.logo {
   position: relative;
   height: 4rem;
+  cursor: pointer;
 }
 
 .testnetIndicatorWrapper {

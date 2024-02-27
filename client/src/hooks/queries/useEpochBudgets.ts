@@ -1,16 +1,15 @@
 import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 
 import { apiGetEpochBudgets, Response } from 'api/calls/epochBudgets';
 import { QUERY_KEYS } from 'api/queryKeys';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 type EpochBudgets = {
   budgets: {
-    budget: BigNumber;
+    budget: bigint;
     user: string;
   }[];
-  budgetsSum: BigNumber;
+  budgetsSum: bigint;
 };
 
 export default function useEpochBudgets(
@@ -21,13 +20,13 @@ export default function useEpochBudgets(
     queryFn: () => apiGetEpochBudgets(epoch),
     queryKey: QUERY_KEYS.epochBudgets(epoch),
     select: response => {
-      let budgetsSum = BigNumber.from(0);
+      let budgetsSum = BigInt(0);
 
       const budgets = response.budgets.map(({ address, amount }) => {
-        const budgetBigNumber = parseUnits(amount, 'wei');
-        budgetsSum = budgetsSum.add(budgetBigNumber);
+        const budgetBigInt = parseUnitsBigInt(amount, 'wei');
+        budgetsSum += budgetBigInt;
         return {
-          budget: budgetBigNumber,
+          budget: budgetBigInt,
           user: address,
         };
       });

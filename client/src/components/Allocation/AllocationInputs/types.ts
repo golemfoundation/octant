@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 export type FormFields = {
   valueCryptoSelected: string;
 };
@@ -7,8 +5,8 @@ export type FormFields = {
 export default interface AllocationInputsProps {
   className?: string;
   isManuallyEdited?: boolean;
-  onClose: (newValue: BigNumber) => void;
-  restToDistribute?: BigNumber;
-  valueCryptoSelected: BigNumber;
-  valueCryptoTotal: BigNumber;
+  onClose: (newValue: bigint) => void;
+  restToDistribute?: bigint;
+  valueCryptoSelected: bigint;
+  valueCryptoTotal: bigint;
 }

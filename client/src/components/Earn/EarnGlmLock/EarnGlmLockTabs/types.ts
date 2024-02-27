@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 import { CurrentMode } from 'components/Earn/EarnGlmLock/types';
 
 export default interface EarnGlmLockTabsProps {
@@ -9,7 +7,7 @@ export default interface EarnGlmLockTabsProps {
   onClose: () => void;
   onInputsFocusChange: (value: boolean) => void;
   onReset: (mode: CurrentMode) => void;
-  setValueToDepose: (value: BigNumber) => void;
+  setValueToDepose: (value: bigint) => void;
   showBalances: boolean;
   step: 1 | 2 | 3;
 }
