@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List, Tuple
 
+from app.settings import config
 from app.context.epoch_state import EpochState
 from app.context.helpers import check_if_future
 from app.exceptions import InvalidBlocksRange
@@ -8,6 +9,7 @@ from app.extensions import epochs
 from app.infrastructure import graphql
 from app.infrastructure.external_api.etherscan.blocks import get_block_num_from_ts
 from app.legacy.utils.time import from_timestamp_s, sec_to_days
+from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 
 
 class EpochDetails:
@@ -17,8 +19,6 @@ class EpochDetails:
         start,
         duration,
         decision_window,
-        start_block: int | None = None,
-        end_block: int | None = None,
         remaining_sec=None,
     ):
         self.epoch_num = int(epoch_num)
@@ -28,8 +28,7 @@ class EpochDetails:
         self.decision_window_days = sec_to_days(self.decision_window_sec)
         self.start_sec = int(start)
         self.end_sec = self.start_sec + self.duration_sec
-        self.start_block = start_block
-        self.end_block = end_block
+        self.start_block, self.end_block = self._calc_blocks_range()
         self.finalized_sec = self.end_sec + self.decision_window_sec
         self.finalized_timestamp = from_timestamp_s(self.finalized_sec)
 
@@ -59,6 +58,26 @@ class EpochDetails:
         if not self.end_block or not self.start_block:
             raise InvalidBlocksRange
         return self.end_block - self.start_block
+
+    def _calc_blocks_range(self) -> tuple:
+        can_blocks_be_calced = (
+            compare_blockchain_types(config.CHAIN_ID, ChainTypes.MAINNET)
+            and self.start_sec
+            and self.end_sec
+        )
+        start_block, end_block = None, None
+        if can_blocks_be_calced:
+            is_start_future = check_if_future(self.start_sec)
+            is_end_future = check_if_future(self.end_sec)
+
+            start_block = (
+                get_block_num_from_ts(self.start_sec) if not is_start_future else None
+            )
+            end_block = (
+                get_block_num_from_ts(self.end_sec) if not is_end_future else None
+            )
+
+        return start_block, end_block
 
 
 def get_epoch_details(epoch_num: int, epoch_state: EpochState) -> EpochDetails:
@@ -93,17 +112,9 @@ def get_future_epoch_details(epoch_num: int) -> EpochDetails:
 
 
 def _epoch_details_from_graphql_result(epoch_details: dict) -> EpochDetails:
-    from_ts = int(epoch_details["fromTs"])
-    end_ts = from_ts + int(epoch_details["duration"])
-
-    is_end_future = check_if_future(end_ts)
-    is_from_future = check_if_future(from_ts)
-
     return EpochDetails(
         epoch_num=epoch_details["epoch"],
         start=epoch_details["fromTs"],
-        start_block=get_block_num_from_ts(from_ts) if not is_from_future else None,
-        end_block=get_block_num_from_ts(end_ts) if not is_end_future else None,
         duration=epoch_details["duration"],
         decision_window=epoch_details["decisionWindow"],
     )

@@ -744,6 +744,10 @@ def patch_compare_blockchain_types_for_mainnet(monkeypatch):
         "app.modules.modules_factory.pre_pending.compare_blockchain_types",
         lambda *args: True,
     )
+    monkeypatch.setattr(
+        "app.context.epoch_details.compare_blockchain_types",
+        lambda *args: True,
+    )
 
 
 @pytest.fixture(scope="function")

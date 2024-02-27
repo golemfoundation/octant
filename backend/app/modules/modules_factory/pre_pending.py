@@ -2,7 +2,7 @@ from typing import Protocol
 
 import app.modules.staking.proceeds.service.aggregated as aggregated
 import app.modules.staking.proceeds.service.contract_balance as contract_balance
-from app.modules.common.blockchain_types import ChainTypes, compare_blockchain_types
+from app.shared.blockchain_types import ChainTypes, compare_blockchain_types
 from app.modules.modules_factory.protocols import (
     AllUserEffectiveDeposits,
     OctantRewards,
