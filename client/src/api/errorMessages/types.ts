@@ -1,4 +1,4 @@
-import { QueryKeys, Root } from 'api/queryKeys/types';
+import { Root } from 'api/queryKeys/types';
 
 export type QueryMutationError = {
   message: string;
@@ -10,8 +10,4 @@ export type QueryMutationErrorConfig = {
   [key: string]: QueryMutationError;
 };
 
-export type IgnoredQueries = [
-  Root['cryptoValues'],
-  Root['proposalsIpfsResults'],
-  QueryKeys['glmClaimCheck'][0],
-];
+export type IgnoredQueries = [Root['cryptoValues'], Root['proposalsIpfsResults']];
