@@ -1,20 +1,7 @@
-import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import { connectWallet, mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
-
-import Chainable = Cypress.Chainable;
-
-const connectWallet = (isTOSAccepted: boolean, isPatronModeEnabled: boolean): Chainable<any> => {
-  cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
-  cy.intercept('GET', '/user/*/patron-mode', { body: { status: isPatronModeEnabled } });
-  cy.intercept('PATCH', '/user/*/patron-mode', { body: { status: !isPatronModeEnabled } });
-  cy.disconnectMetamaskWalletFromAllDapps();
-  cy.get('[data-test=MainLayout__Button--connect]').click();
-  cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
-  cy.switchToMetamaskNotification();
-  return cy.acceptMetamaskAccess();
-};
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(`patron mode (disabled): ${device}`, { viewportHeight, viewportWidth }, () => {

@@ -1,4 +1,4 @@
-import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import { connectWallet, mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
 import { getNamesOfProposals } from 'cypress/utils/proposals';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
@@ -10,6 +10,30 @@ const getButtonAddToAllocate = (): Chainable<any> => {
   const proposalView = cy.get('[data-test=ProposalListItem').first();
 
   return proposalView.find('[data-test=ProposalListItemHeader__ButtonAddToAllocate]');
+};
+
+const checkProposalItemElements = (): Chainable<any> => {
+  cy.get('[data-test^=ProposalsView__ProposalsListItem').first().click();
+  const proposalView = cy.get('[data-test=ProposalListItem').first();
+  proposalView.get('[data-test=ProposalListItemHeader__Img]').should('be.visible');
+  proposalView.get('[data-test=ProposalListItemHeader__name]').should('be.visible');
+  getButtonAddToAllocate().should('be.visible');
+  proposalView.get('[data-test=ProposalListItemHeader__Button]').should('be.visible');
+  proposalView.get('[data-test=ProposalListItem__Description]').should('be.visible');
+
+  cy.get('[data-test=ProposalListItem__Donors]')
+    .first()
+    .scrollIntoView({ offset: { left: 0, top: 100 } });
+
+  cy.get('[data-test=ProposalListItem__Donors]').first().should('be.visible');
+  cy.get('[data-test=ProposalListItem__Donors__DonorsHeader__count]')
+    .first()
+    .should('be.visible')
+    .should('have.text', '0');
+  return cy
+    .get('[data-test=ProposalListItem__Donors__noDonationsYet]')
+    .first()
+    .should('be.visible');
 };
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
@@ -40,27 +64,25 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('entering proposal view renders all its elements', () => {
-      cy.get('[data-test^=ProposalsView__ProposalsListItem').first().click();
-      const proposalView = cy.get('[data-test=ProposalListItem').first();
-      proposalView.get('[data-test=ProposalListItemHeader__Img]').should('be.visible');
-      proposalView.get('[data-test=ProposalListItemHeader__name]').should('be.visible');
-      getButtonAddToAllocate().should('be.visible');
-      proposalView.get('[data-test=ProposalListItemHeader__Button]').should('be.visible');
-      proposalView.get('[data-test=ProposalListItem__Description]').should('be.visible');
+      checkProposalItemElements();
+    });
 
-      cy.get('[data-test=ProposalListItem__Donors]')
-        .first()
-        .scrollIntoView({ offset: { left: 0, top: 100 } });
+    it('entering proposal view renders all its elements with fallback IPFS provider', () => {
+      cy.intercept('GET', '**/ipfs/**', req => {
+        if (req.url.includes('infura')) {
+          req.destroy();
+        }
+      });
 
-      cy.get('[data-test=ProposalListItem__Donors]').first().should('be.visible');
-      cy.get('[data-test=ProposalListItem__Donors__DonorsHeader__count]')
-        .first()
-        .should('be.visible')
-        .should('have.text', '0');
-      return cy
-        .get('[data-test=ProposalListItem__Donors__noDonationsYet]')
-        .first()
-        .should('be.visible');
+      checkProposalItemElements();
+    });
+
+    it('entering proposal view renders all its elements with fallback IPFS provider', () => {
+      cy.intercept('GET', '**/ipfs/**', req => {
+        req.destroy();
+      });
+
+      cy.get('[data-test=Toast--ipfsMessage').should('be.visible');
     });
 
     it('entering proposal view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar', () => {
@@ -119,6 +141,43 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           cy.get('[data-test=ProposalBackToTopButton__Button]').click();
           cy.get('[data-test=ProposalListItem]').eq(0).should('be.visible');
         }
+      }
+    });
+  });
+
+  describe(`proposal (patron mode): ${device}`, { viewportHeight, viewportWidth }, () => {
+    let proposalNames: string[] = [];
+
+    before(() => {
+      /**
+       * Global Metamask setup done by Synpress is not always done.
+       * Since Synpress needs to have valid provider to fetch the data from contracts,
+       * setupMetamask is required in each test suite.
+       */
+      cy.setupMetamask();
+    });
+
+    beforeEach(() => {
+      mockCoinPricesServer();
+      localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      visitWithLoader(ROOT_ROUTES.proposals.absolute);
+      connectWallet(true, true);
+      cy.get('[data-test^=ProposalItemSkeleton').should('not.exist');
+
+      /**
+       * This could be done in before hook, but CY wipes the state after each test
+       * (could be disabled, but creates other problems)
+       */
+      if (proposalNames.length === 0) {
+        proposalNames = getNamesOfProposals();
+      }
+    });
+
+    it('button "add to allocate" is disabled', () => {
+      for (let i = 0; i < proposalNames.length; i++) {
+        cy.get('[data-test^=ProposalsView__ProposalsListItem]').eq(i).click();
+        getButtonAddToAllocate().should('be.visible').should('be.disabled');
+        cy.go('back');
       }
     });
   });

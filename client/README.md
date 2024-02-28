@@ -10,7 +10,8 @@ Ensure that the `.env` file is present. See `.env.template`.
 
 1. `VITE_NETWORK` sets network used by the application. Supported values are 'Local', 'Mainnet', 'Sepolia'. Whenever different value is set, app uses 'Sepolia' network config.
 2. `VITE_JSON_RPC_ENDPOINT`: when provided, app uses first JSON RPC provided with this endpint. When it's not provided, app uses alchemy provider first.
-3. `areCurrentEpochsProjectsHiddenOutsideAllocationWindow` when set to 'true' makes current epoch's projects hidden when allocation window is closed.
+3. `VITE_ARE_CURRENT_EPOCHS_PROJECTS_HIDDEN_OUTSIDE_ALLOCATION_WINDOW` when set to 'true' makes current epoch's projects hidden when allocation window is closed.
+4. `VITE_IPFS_GATEWAYS` is an array of URLs separated by strings sorted by priority with providers the app should try to fetch the data about projects from. When fetching from the last fails client shows error toast message. Each URL should end with a forward slash (`/`).
 
 `yanr generate-abi-typings` is used to generate typings for proposals ABIs that we have in codebase. In these typings custom adjustments are added, e.g. in some places `string` is wrongly instead of `BigInt`. Linter is also disabled there. Since ABIs do not change, this command doesn't need to rerun.
 

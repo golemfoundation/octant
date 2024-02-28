@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Button from 'components/ui/Button';
 import Svg from 'components/ui/Svg';
 import Tooltip from 'components/ui/Tooltip';
+import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import { checkMark, heart } from 'svg/misc';
 
 import styles from './ButtonAddToAllocate.module.scss';
@@ -23,9 +24,9 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
     keyPrefix: 'components.dedicated.buttonAddToAllocate',
   });
   const [scope, animate] = useAnimate();
+  const { data: isPatronMode } = useIsPatronMode();
   const [isTooltipClicked, setIsTooltipClicked] = useState(false);
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
-
   const tooltipText = useMemo(() => {
     if (isAddedToAllocate && isTooltipClicked) {
       return t('saved');
@@ -60,7 +61,7 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
       Icon={
         <Tooltip
           hideAfterClick
-          isDisabled={isArchivedProposal}
+          isDisabled={isArchivedProposal || isPatronMode}
           onClickCallback={() => {
             if (isTooltipVisible) {
               setIsTooltipClicked(true);
@@ -78,7 +79,7 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
           </div>
         </Tooltip>
       }
-      isDisabled={isArchivedProposal}
+      isDisabled={isArchivedProposal || isPatronMode}
       onClick={onClick}
       variant="iconOnly"
     />

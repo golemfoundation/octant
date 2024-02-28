@@ -50,7 +50,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   const isGweiRange = (individualReward && individualReward < GWEI_5) ?? false;
 
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const { ipfsGateway } = env;
+  const { ipfsGateways } = env;
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
   const { isFetching: isFetchingRewardsThreshold } = useProposalRewardsThreshold();
@@ -225,7 +225,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
               <Img
                 className={styles.image}
                 dataTest="ProposalItem__imageProfile"
-                src={`${ipfsGateway}${profileImageSmall}`}
+                sources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
               />
               <div className={styles.nameAndRewards}>
                 <div className={styles.name}>{name}</div>
