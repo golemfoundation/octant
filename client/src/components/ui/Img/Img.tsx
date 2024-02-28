@@ -1,19 +1,19 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 
 import ImgProps from './types';
 
 const Img: FC<ImgProps> = ({ alt = '', dataTest, src, sources, ...props }) => {
-  const getSrcLocal = () => {
+  const [srcLocal, setSrcLocal] = useState<string>('');
+
+  useEffect(() => {
     if (src) {
-      return src;
+      return setSrcLocal(src);
     }
     if (sources) {
-      return sources[0];
+      return setSrcLocal(sources[0]);
     }
-    return '';
-  };
-
-  const [srcLocal, setSrcLocal] = useState<string>(getSrcLocal());
+    return setSrcLocal('');
+  }, [src, sources]);
 
   return (
     <img
