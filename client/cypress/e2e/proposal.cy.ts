@@ -77,7 +77,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       checkProposalItemElements();
     });
 
-    it('entering proposal view renders all its elements with fallback IPFS provider', () => {
+    it('entering proposal view shows Toast with info about IPFS failure when all providers fail', () => {
       cy.intercept('GET', '**/ipfs/**', req => {
         req.destroy();
       });
