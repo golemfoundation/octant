@@ -20,7 +20,7 @@
     "localenv:reload": "yarn localenv:down && yarn localenv:build-images && yarn localenv:up",
     "apitest:up": "docker compose -p octant -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml up anvil ipfs graph-postgres graph-node multideployer",
     "apitest:down": "docker compose -p octant -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml down",
-    "apitest:run": "docker compose -p octant -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml up backend-apitest",
+    "apitest:run": "docker compose -p octant -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml run backend-apitest",
     "preapitest:run": "yarn localenv:build-images"
   },
   "repository": {
