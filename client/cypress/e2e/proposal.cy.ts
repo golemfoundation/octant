@@ -12,6 +12,30 @@ const getButtonAddToAllocate = (): Chainable<any> => {
   return proposalView.find('[data-test=ProposalListItemHeader__ButtonAddToAllocate]');
 };
 
+const checkProposalItemElements = (): Chainable<any> => {
+  cy.get('[data-test^=ProposalsView__ProposalsListItem').first().click();
+  const proposalView = cy.get('[data-test=ProposalListItem').first();
+  proposalView.get('[data-test=ProposalListItemHeader__Img]').should('be.visible');
+  proposalView.get('[data-test=ProposalListItemHeader__name]').should('be.visible');
+  getButtonAddToAllocate().should('be.visible');
+  proposalView.get('[data-test=ProposalListItemHeader__Button]').should('be.visible');
+  proposalView.get('[data-test=ProposalListItem__Description]').should('be.visible');
+
+  cy.get('[data-test=ProposalListItem__Donors]')
+    .first()
+    .scrollIntoView({ offset: { left: 0, top: 100 } });
+
+  cy.get('[data-test=ProposalListItem__Donors]').first().should('be.visible');
+  cy.get('[data-test=ProposalListItem__Donors__DonorsHeader__count]')
+    .first()
+    .should('be.visible')
+    .should('have.text', '0');
+  return cy
+    .get('[data-test=ProposalListItem__Donors__noDonationsYet]')
+    .first()
+    .should('be.visible');
+};
+
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
   describe(`proposal: ${device}`, { viewportHeight, viewportWidth }, () => {
     let proposalNames: string[] = [];
@@ -40,27 +64,25 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('entering proposal view renders all its elements', () => {
-      cy.get('[data-test^=ProposalsView__ProposalsListItem').first().click();
-      const proposalView = cy.get('[data-test=ProposalListItem').first();
-      proposalView.get('[data-test=ProposalListItemHeader__Img]').should('be.visible');
-      proposalView.get('[data-test=ProposalListItemHeader__name]').should('be.visible');
-      getButtonAddToAllocate().should('be.visible');
-      proposalView.get('[data-test=ProposalListItemHeader__Button]').should('be.visible');
-      proposalView.get('[data-test=ProposalListItem__Description]').should('be.visible');
+      checkProposalItemElements();
+    });
 
-      cy.get('[data-test=ProposalListItem__Donors]')
-        .first()
-        .scrollIntoView({ offset: { left: 0, top: 100 } });
+    it('entering proposal view renders all its elements with fallback IPFS provider', () => {
+      cy.intercept('GET', '**/ipfs/**', req => {
+        if (req.url.includes('infura')) {
+          req.destroy();
+        }
+      });
 
-      cy.get('[data-test=ProposalListItem__Donors]').first().should('be.visible');
-      cy.get('[data-test=ProposalListItem__Donors__DonorsHeader__count]')
-        .first()
-        .should('be.visible')
-        .should('have.text', '0');
-      return cy
-        .get('[data-test=ProposalListItem__Donors__noDonationsYet]')
-        .first()
-        .should('be.visible');
+      checkProposalItemElements();
+    });
+
+    it('entering proposal view renders all its elements with fallback IPFS provider', () => {
+      cy.intercept('GET', '**/ipfs/**', req => {
+        req.destroy();
+      });
+
+      cy.get('[data-test=Toast--ipfsMessage').should('be.visible');
     });
 
     it('entering proposal view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar', () => {
