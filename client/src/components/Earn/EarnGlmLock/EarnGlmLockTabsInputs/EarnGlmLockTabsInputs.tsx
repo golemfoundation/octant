@@ -82,6 +82,13 @@ const EarnGlmLockTabsInputs: FC<EarnGlmLockTabsInputsProps> = ({
   }, [inputCryptoProps.value, fiat]);
 
   useEffect(() => {
+    if (inputCryptoProps.value) {
+      onCryptoValueChange(inputCryptoProps.value);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputCryptoProps.value]);
+
+  useEffect(() => {
     onInputsFocusChange(isAnyInputFocused);
   }, [onInputsFocusChange, isAnyInputFocused]);
 
