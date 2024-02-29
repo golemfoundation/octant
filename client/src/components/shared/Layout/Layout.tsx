@@ -27,6 +27,7 @@ import useUserTOS from 'hooks/queries/useUserTOS';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import { octant } from 'svg/logo';
 import { chevronBottom } from 'svg/misc';
+import { chevronLeft } from 'svg/navigation';
 import getDifferenceInWeeks from 'utils/getDifferenceInWeeks';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 import getTimeDistance from 'utils/getTimeDistance';
@@ -44,7 +45,6 @@ const Layout: FC<LayoutProps> = ({
   isLoading,
   isNavigationVisible = true,
   classNameBody,
-  navigationTabs = navigationTabsDefault,
   isAbsoluteHeaderPosition = false,
 }) => {
   const { data: isPatronMode } = useIsPatronMode();
@@ -82,7 +82,7 @@ const Layout: FC<LayoutProps> = ({
   const [currentPeriod, setCurrentPeriod] = useState(() => getCurrentPeriod());
 
   const tabsWithIsActive = useMemo(() => {
-    let tabs = navigationTabs;
+    let tabs = navigationTabsDefault;
 
     if (isPatronMode) {
       tabs = patronNavigationTabs;
@@ -93,10 +93,15 @@ const Layout: FC<LayoutProps> = ({
 
     return tabs.map(tab => ({
       ...tab,
+      icon:
+        pathname.includes(ROOT_ROUTES.proposal.absolute) &&
+        tab.to === ROOT_ROUTES.proposals.absolute
+          ? chevronLeft
+          : tab.icon,
       isActive: tab.isActive || pathname === tab.to,
       isDisabled: isPreLaunch && tab.to !== ROOT_ROUTES.earn.absolute,
     }));
-  }, [isPatronMode, isProjectAdminMode, isPreLaunch, pathname, navigationTabs]);
+  }, [isPatronMode, isProjectAdminMode, isPreLaunch, pathname]);
 
   const isAllocationPeriodIsHighlighted = useMemo(() => {
     if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
