@@ -52,7 +52,9 @@ const EarnHistory: FC<EarnHistoryProps> = ({ className }) => {
       titleClassName={styles.title}
     >
       {showLoader ? (
-        <EarnHistorySkeleton />
+        <div className={styles.skeleton}>
+          <EarnHistorySkeleton />
+        </div>
       ) : (
         <InfiniteScroll
           hasMore={hasNextPage}
