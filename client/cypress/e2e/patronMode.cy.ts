@@ -712,13 +712,11 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     it('when entering project view, button icon changes to chevronLeft', () => {
       visitWithLoader(ROOT_ROUTES.proposals.absolute);
       cy.get('[data-test^=ProposalsView__ProposalsListItem').first().click();
-      cy.get('[data-test=Navbar__Button--Projects]').should($elemnet => {
-        expect($elemnet)
-          .has('path')
-          .to.eq(
-            '<path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.515 24.485 10.029 16l8.486-8.485"/>',
-          );
-      });
+      cy
+        .get('[data-test=Navbar__Button--Projects]')
+        .get('svg')
+        .find('path')
+        .should('eq','<path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.515 24.485 10.029 16l8.486-8.485"/>');
     });
   });
 });
