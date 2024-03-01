@@ -10,7 +10,10 @@ import styles from './MetricsPersonalGridAllocations.module.scss';
 import MetricsPersonalGridAllocationsProps from './types';
 import { getReducedUserAllocationsAllEpochs } from './utils';
 
-const MetricsPersonalGridAllocations: FC<MetricsPersonalGridAllocationsProps> = ({ isLoading }) => {
+const MetricsPersonalGridAllocations: FC<MetricsPersonalGridAllocationsProps> = ({
+  isLoading,
+  size,
+}) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { data: userAllocationsAllEpochs } = useUserAllocationsAllEpochs();
   const reducedUserAllocationsAllEpochs =
@@ -51,7 +54,7 @@ const MetricsPersonalGridAllocations: FC<MetricsPersonalGridAllocationsProps> = 
           ),
         },
       ]}
-      size="L"
+      size={size}
     />
   );
 };

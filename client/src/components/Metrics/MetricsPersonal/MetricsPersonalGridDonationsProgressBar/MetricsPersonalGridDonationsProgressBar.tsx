@@ -32,8 +32,8 @@ const MetricsPersonalGridDonationsProgressBar: FC<MetricsPersonalGridDonationsPr
             <MetricsDonationsProgressBar
               donationsValue={donationsValue}
               isDisabled={
-                !!(metricsPersonalDataRewardsUsage?.totalDonations === 0n) &&
-                !!(metricsPersonalDataRewardsUsage?.totalWithdrawals === 0n)
+                metricsPersonalDataRewardsUsage?.totalDonations === 0n &&
+                metricsPersonalDataRewardsUsage?.totalWithdrawals === 0n
               }
               isLoading={isLoading}
             />

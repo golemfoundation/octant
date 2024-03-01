@@ -8,12 +8,14 @@ import TipTile from 'components/shared/TipTile';
 import { METRICS_PERSONAL_ID } from 'constants/metrics';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useMetricsPersonalDataRewardsUsage from 'hooks/helpers/useMetricsPersonalDataRewardsUsage';
+import useTotalPatronDonations from 'hooks/helpers/useTotalPatronDonations';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useSettingsStore from 'store/settings/store';
 
 import styles from './MetricsPersonal.module.scss';
 import MetricsPersonalGridAllocations from './MetricsPersonalGridAllocations';
 import MetricsPersonalGridDonationsProgressBar from './MetricsPersonalGridDonationsProgressBar';
+import MetricsPersonalGridPatronDonations from './MetricsPersonalGridPatronDonations';
 import MetricsPersonalGridTotalRewardsWithdrawals from './MetricsPersonalGridTotalRewardsWithdrawals';
 
 const MetricsPersonal = (): ReactElement => {
@@ -32,8 +34,15 @@ const MetricsPersonal = (): ReactElement => {
   const { isFetching: isFetchingCryptoValues } = useCryptoValues(displayCurrency);
   const { isFetching: isFetchingMetricsPersonalDataRewardsUsage } =
     useMetricsPersonalDataRewardsUsage();
+  const { data: totalPatronDonations, isFetching: isFetchingTotalPatronDonations } =
+    useTotalPatronDonations();
 
-  const isLoading = isFetchingCryptoValues || isFetchingMetricsPersonalDataRewardsUsage;
+  const isLoading =
+    isFetchingCryptoValues ||
+    isFetchingMetricsPersonalDataRewardsUsage ||
+    isFetchingTotalPatronDonations;
+
+  const wasUserEverAPatron = totalPatronDonations && totalPatronDonations.numberOfEpochs > 0;
 
   return (
     <div className={styles.root} id={METRICS_PERSONAL_ID}>
@@ -41,9 +50,13 @@ const MetricsPersonal = (): ReactElement => {
       <MetricsHeader title={t('yourMetrics')} />
       {isConnected ? (
         <MetricsGrid className={styles.grid} dataTest="MetricsPersonal__MetricsGrid">
-          <MetricsPersonalGridAllocations isLoading={isLoading} />
+          <MetricsPersonalGridAllocations
+            isLoading={isLoading}
+            size={wasUserEverAPatron ? 'XL' : 'L'}
+          />
           <MetricsPersonalGridTotalRewardsWithdrawals isLoading={isLoading} />
           <MetricsPersonalGridDonationsProgressBar isLoading={isLoading} />
+          {wasUserEverAPatron && <MetricsPersonalGridPatronDonations isLoading={isLoading} />}
         </MetricsGrid>
       ) : (
         <TipTile

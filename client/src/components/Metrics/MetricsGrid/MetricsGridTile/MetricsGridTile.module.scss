@@ -23,6 +23,13 @@
       grid-row: span 2;
       max-height: 50.4rem;
     }
+
+    &--XL {
+      min-height: 46.4rem;
+      grid-column: span 2;
+      grid-row: span 3;
+      max-height: 50.4rem;
+    }
   }
 }
 

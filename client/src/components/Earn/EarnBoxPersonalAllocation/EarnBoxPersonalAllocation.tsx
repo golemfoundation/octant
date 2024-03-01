@@ -94,7 +94,7 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
         isFetching: isPatronMode
           ? isFetchingTotalPatronDonations
           : isFetchingWithdrawals || isAppWaitingForTransactionToBeIndexed,
-        valueCrypto: isPatronMode ? totalPatronDonations : withdrawals?.sums.available,
+        valueCrypto: isPatronMode ? totalPatronDonations?.value : withdrawals?.sums.available,
       },
       label: isPatronMode && !isProjectAdminMode ? t('allTime') : i18n.t('common.availableNow'),
     },
