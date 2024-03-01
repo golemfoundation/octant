@@ -91,16 +91,17 @@ const Layout: FC<LayoutProps> = ({
       tabs = adminNavigationTabs;
     }
 
-    return tabs.map(tab => ({
-      ...tab,
-      icon:
-        pathname.includes(ROOT_ROUTES.proposal.absolute) &&
-        tab.to === ROOT_ROUTES.proposals.absolute
-          ? chevronLeft
-          : tab.icon,
-      isActive: tab.isActive || pathname === tab.to,
-      isDisabled: isPreLaunch && tab.to !== ROOT_ROUTES.earn.absolute,
-    }));
+    return tabs.map(tab => {
+      const isProjectView =
+        pathname.includes(`${ROOT_ROUTES.proposal.absolute}/`) &&
+        tab.to === ROOT_ROUTES.proposals.absolute;
+      return {
+        ...tab,
+        icon: isProjectView ? chevronLeft : tab.icon,
+        isActive: tab.isActive || pathname === tab.to || isProjectView,
+        isDisabled: isPreLaunch && tab.to !== ROOT_ROUTES.earn.absolute,
+      };
+    });
   }, [isPatronMode, isProjectAdminMode, isPreLaunch, pathname]);
 
   const isAllocationPeriodIsHighlighted = useMemo(() => {
