@@ -11,25 +11,20 @@ from app.infrastructure.external_api.bitquery.req_producer import (
 )
 
 
-def get_blocks_rewards(
-    address: str, start_time: str, end_time: str, limit: int
-) -> list:
+def get_blocks_rewards(address: str, start_block: int, end_block: int) -> float:
     """
-    Fetch Ethereum blocks within a specified time range in ascending order by timestamp.
+    Fetch Ethereum blocks rewards for given address and start and end block.
 
     Args:
-    - start_time (str): The start time in ISO 8601 format.
-    - end_time (str): The end time in ISO 8601 format.
+    - start_block (str): The start block number.
+    - end_block (str): The end block number.
     - address (str): The miner (fee recipient) address.
-    - limit (int): The number of blocks to retrieve starting from start_time.
-                   Useful whilst getting end_blocks exclusively from epochs.
     """
     payload = produce_payload(
         action_type=BitQueryActions.GET_BLOCK_REWARDS,
         address=address,
-        start_time=start_time,
-        end_time=end_time,
-        limit=limit,
+        start_block=start_block,
+        end_block=end_block,
     )
     headers = get_bitquery_header()
 
@@ -43,5 +38,4 @@ def get_blocks_rewards(
         app_module.ExceptionHandler.print_stacktrace(e)
         raise ExternalApiException(api_url, e, 500)
 
-    blocks = json_response.json()["data"]["ethereum"]["blocks"]
-    return blocks
+    return json_response["data"]["ethereum"]["blocks"][0]["reward"]
