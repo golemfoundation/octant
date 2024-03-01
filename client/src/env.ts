@@ -1,6 +1,6 @@
 import { Env, EnvViteKeys } from 'types/env';
 
-export const envsAllowedToBeEmpty = ['VITE_JSON_RPC_ENDPOINT'];
+export const envsAllowedToBeEmpty = ['VITE_JSON_RPC_ENDPOINT', 'VITE_SENTRY_AUTH_TOKEN'];
 
 export const envViteKeys: EnvViteKeys = {
   alchemyId: 'VITE_ALCHEMY_ID',
@@ -15,6 +15,7 @@ export const envViteKeys: EnvViteKeys = {
   ipfsGateways: 'VITE_IPFS_GATEWAYS',
   jsonRpcEndpoint: 'VITE_JSON_RPC_ENDPOINT',
   network: 'VITE_NETWORK',
+  sentryAuthToken: 'VITE_SENTRY_AUTH_TOKEN',
   serverEndpoint: 'VITE_SERVER_ENDPOINT',
   subgraphAddress: 'VITE_SUBGRAPH_ADDRESS',
   walletConnectProjectId: 'VITE_WALLET_CONNECT_PROJECT_ID',
@@ -46,14 +47,21 @@ const env: Env = {
   jsonRpcEndpoint: import.meta.env[envViteKeys.jsonRpcEndpoint],
   // @ts-expect-error TS does not understand the way vite imports envs.
   network: import.meta.env[envViteKeys.network],
+  
   // @ts-expect-error TS does not understand the way vite imports envs.
-  serverEndpoint: import.meta.env[envViteKeys.serverEndpoint],
+sentryAuthToken: import.meta.env[envViteKeys.sentryAuthToken],
+  
+// @ts-expect-error TS does not understand the way vite imports envs.
+serverEndpoint: import.meta.env[envViteKeys.serverEndpoint],
+  
+// @ts-expect-error TS does not understand the way vite imports envs.
+subgraphAddress: import.meta.env[envViteKeys.subgraphAddress],
+  
+// @ts-expect-error TS does not understand the way vite imports envs.
+walletConnectProjectId: import.meta.env[envViteKeys.walletConnectProjectId],
+  
   // @ts-expect-error TS does not understand the way vite imports envs.
-  subgraphAddress: import.meta.env[envViteKeys.subgraphAddress],
-  // @ts-expect-error TS does not understand the way vite imports envs.
-  walletConnectProjectId: import.meta.env[envViteKeys.walletConnectProjectId],
-  // @ts-expect-error TS does not understand the way vite imports envs.
-  websocketEndpoint: import.meta.env[envViteKeys.websocketEndpoint],
+websocketEndpoint: import.meta.env[envViteKeys.websocketEndpoint],
 };
 
 export default env;

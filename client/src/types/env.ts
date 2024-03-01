@@ -10,6 +10,7 @@ export type EnvViteKeys = {
   ipfsGateways: 'VITE_IPFS_GATEWAYS';
   jsonRpcEndpoint: 'VITE_JSON_RPC_ENDPOINT';
   network: 'VITE_NETWORK';
+  sentryAuthToken: 'VITE_SENTRY_AUTH_TOKEN';
   serverEndpoint: 'VITE_SERVER_ENDPOINT';
   subgraphAddress: 'VITE_SUBGRAPH_ADDRESS';
   walletConnectProjectId: 'VITE_WALLET_CONNECT_PROJECT_ID';

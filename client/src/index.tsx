@@ -17,6 +17,8 @@ import { wagmiConfig } from './api/clients/client-wagmi';
 import App from './App';
 import { PROJECT_ID } from './constants/walletConnect';
 
+import './sentry';
+
 const root = document.getElementById('root')!;
 
 if (window.location.hash) {
