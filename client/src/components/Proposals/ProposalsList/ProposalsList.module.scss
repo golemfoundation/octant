@@ -48,4 +48,8 @@ $elementMargin: 1.6rem;
   height: 0.1rem;
   background-color: $color-octant-grey1;
   margin: 1.6rem 0;
+
+  &.isFirstArchive {
+    margin-top: 0;
+  }
 }
