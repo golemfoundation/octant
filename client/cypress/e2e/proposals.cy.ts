@@ -168,6 +168,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       }
     });
 
+    after(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
+    });
+
     it('button "add to allocate" is disabled', () => {
       for (let i = 0; i < proposalNames.length; i++) {
         cy.get('[data-test^=ProposalsView__ProposalsListItem]').eq(i).scrollIntoView();
