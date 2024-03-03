@@ -716,7 +716,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         .get('[data-test=Navbar__Button--Projects]')
         .get('svg')
         .find('path')
-        .should('eq','<path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.515 24.485 10.029 16l8.486-8.485"/>');
+        .should('have.html','<path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.515 24.485 10.029 16l8.486-8.485"/>');
     });
   });
 });
