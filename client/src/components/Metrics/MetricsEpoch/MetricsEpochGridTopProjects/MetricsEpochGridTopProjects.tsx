@@ -49,7 +49,6 @@ const MetricsEpochGridTopProjects: FC<MetricsEpochGridTopProjectsProps> = ({
             />
           ),
           title: t('topProjectsByEthRaised', { numberOfProjects }),
-          titleSuffix: <div className={styles.numberOfAllocationsSuffix}>{projects.length}</div>,
         },
       ]}
       size="custom"
