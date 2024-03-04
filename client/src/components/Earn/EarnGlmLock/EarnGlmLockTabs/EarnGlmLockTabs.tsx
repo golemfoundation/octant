@@ -44,7 +44,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
   };
 
   const onMax = () => {
-    if (isMaxDisabled || !depositsValue || !availableFundsGlm) {
+    if (isMaxDisabled || depositsValue === undefined || !availableFundsGlm) {
       return;
     }
     const value =

@@ -41,6 +41,7 @@
     font-size: $font-size-24;
     font-weight: $font-weight-bold;
     color: $color-octant-dark;
+    text-align: left;
   }
 
   .subvalue {
@@ -49,7 +50,7 @@
     font-weight: $font-weight-bold;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     height: 1.6rem;
     line-height: 1.6rem;
     margin-top: 1.2rem;

@@ -10,20 +10,6 @@
   }
 }
 
-.numberOfAllocationsSuffix {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 2.4rem;
-  width: 3.2rem;
-  font-size: $font-size-10;
-  font-weight: $font-weight-bold;
-  color: $color-octant-dark;
-  border-radius: $border-radius-08;
-  background-color: $color-octant-grey3;
-  margin-left: auto;
-}
-
 .noAllocationsYet {
   height: 100%;
   width: 100%;
