@@ -36,7 +36,7 @@ def create_app(config=None):
     register_extensions(app)
     register_errorhandlers(app)
     register_epoch_settings()
-    register_services()
+    register_services(app)
 
     return app
 

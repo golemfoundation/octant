@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 import pandas as pd
 from gmpy2 import mpz
 
@@ -56,15 +54,8 @@ def sum_withdrawals(withdrawals_txs: list[dict]) -> int:
     return w3.to_wei(int(total_gwei), "gwei")
 
 
-def sum_blocks_rewards(blocks_rewards: list) -> int:
-    df = pd.DataFrame(blocks_rewards)
-    blocks_reward_eth = df["reward"].apply(Decimal).sum()
-
-    return int(w3.to_wei(blocks_reward_eth, "ether"))
-
-
-def aggregate_proceeds(mev: int, withdrawals: int, blocks_rewards: list) -> int:
-    return mev + withdrawals + sum_blocks_rewards(blocks_rewards)
+def aggregate_proceeds(mev: int, withdrawals: int, blocks_rewards_eth: float) -> int:
+    return mev + withdrawals + int(w3.to_wei(blocks_rewards_eth, "ether"))
 
 
 def _filter_deposit_withdrawals(amount: mpz) -> mpz:

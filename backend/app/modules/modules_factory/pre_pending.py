@@ -2,7 +2,6 @@ from typing import Protocol
 
 import app.modules.staking.proceeds.service.aggregated as aggregated
 import app.modules.staking.proceeds.service.contract_balance as contract_balance
-from app.shared.blockchain_types import ChainTypes, compare_blockchain_types
 from app.modules.modules_factory.protocols import (
     AllUserEffectiveDeposits,
     OctantRewards,
@@ -16,7 +15,7 @@ from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
 )
 from app.pydantic import Model
-from app.settings import config
+from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 
 
 class PrePendingUserDeposits(UserEffectiveDeposits, AllUserEffectiveDeposits, Protocol):
@@ -29,13 +28,12 @@ class PrePendingServices(Model):
     pending_snapshots_service: PendingSnapshots
 
     @staticmethod
-    def create() -> "PrePendingServices":
+    def create(chain_id: int) -> "PrePendingServices":
+        is_mainnet = compare_blockchain_types(chain_id, ChainTypes.MAINNET)
+
         user_deposits = CalculatedUserDeposits(
             events_generator=DbAndGraphEventsGenerator()
         )
-        current_chain_id = config.CHAIN_ID
-        is_mainnet = compare_blockchain_types(current_chain_id, ChainTypes.MAINNET)
-
         octant_rewards = CalculatedOctantRewards(
             staking_proceeds=aggregated.AggregatedStakingProceeds()
             if is_mainnet

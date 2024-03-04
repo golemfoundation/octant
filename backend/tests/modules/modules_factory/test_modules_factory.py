@@ -1,8 +1,12 @@
-from app.context.epoch_state import EpochState
+from app.modules.modules_factory.current import CurrentServices
+from app.modules.modules_factory.finalized import FinalizedServices
+from app.modules.modules_factory.finalizing import FinalizingServices
+from app.modules.modules_factory.future import FutureServices
+from app.modules.modules_factory.pending import PendingServices
+from app.modules.modules_factory.pre_pending import PrePendingServices
 from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
 from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
-from app.modules.registry import get_services, register_services
 from app.modules.snapshots.pending.service.pre_pending import PrePendingSnapshots
 from app.modules.staking.proceeds.service.aggregated import AggregatedStakingProceeds
 from app.modules.staking.proceeds.service.contract_balance import (
@@ -26,8 +30,7 @@ from app.modules.user.rewards.service.saved import SavedUserRewards
 
 
 def test_future_services_factory():
-    register_services()
-    result = get_services(EpochState.FUTURE)
+    result = FutureServices.create()
 
     assert result.octant_rewards_service == CalculatedOctantRewards(
         staking_proceeds=EstimatedStakingProceeds(),
@@ -36,8 +39,7 @@ def test_future_services_factory():
 
 
 def test_current_services_factory():
-    register_services()
-    result = get_services(EpochState.CURRENT)
+    result = CurrentServices.create()
 
     user_deposits = CalculatedUserDeposits(events_generator=DbAndGraphEventsGenerator())
     assert result.user_deposits_service == user_deposits
@@ -47,11 +49,8 @@ def test_current_services_factory():
     )
 
 
-def test_pre_pending_services_factory_when_mainnet(
-    patch_compare_blockchain_types_for_mainnet,
-):
-    register_services()
-    result = get_services(EpochState.PRE_PENDING)
+def test_pre_pending_services_factory_when_mainnet():
+    result = PrePendingServices.create(1)
 
     user_deposits = CalculatedUserDeposits(events_generator=DbAndGraphEventsGenerator())
     octant_rewards = CalculatedOctantRewards(
@@ -65,11 +64,8 @@ def test_pre_pending_services_factory_when_mainnet(
     )
 
 
-def test_pre_pending_services_factory_when_not_mainnet(
-    patch_compare_blockchain_types_for_not_mainnet,
-):
-    register_services()
-    result = get_services(EpochState.PRE_PENDING)
+def test_pre_pending_services_factory_when_not_mainnet():
+    result = PrePendingServices.create(1337)
 
     user_deposits = CalculatedUserDeposits(events_generator=DbAndGraphEventsGenerator())
     octant_rewards = CalculatedOctantRewards(
@@ -84,8 +80,7 @@ def test_pre_pending_services_factory_when_not_mainnet(
 
 
 def test_pending_services_factory():
-    register_services()
-    result = get_services(EpochState.PENDING)
+    result = PendingServices.create()
 
     events_based_patron_mode = EventsBasedUserPatronMode()
     octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
@@ -105,8 +100,7 @@ def test_pending_services_factory():
 
 
 def test_finalizing_services_factory():
-    register_services()
-    result = get_services(EpochState.FINALIZING)
+    result = FinalizingServices.create()
 
     events_based_patron_mode = EventsBasedUserPatronMode()
     saved_user_allocations = SavedUserAllocations()
@@ -126,8 +120,7 @@ def test_finalizing_services_factory():
 
 
 def test_finalized_services_factory():
-    register_services()
-    result = get_services(EpochState.FINALIZED)
+    result = FinalizedServices.create()
 
     events_based_patron_mode = EventsBasedUserPatronMode()
     saved_user_allocations = SavedUserAllocations()

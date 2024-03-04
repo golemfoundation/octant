@@ -63,8 +63,3 @@ def sec_to_days(sec: int) -> int:
 
 def days_to_sec(days: int) -> int:
     return int(days * 86400)
-
-
-def timestamp_to_isoformat(timestamp_sec: int) -> str:
-    timestamp = from_timestamp_s(timestamp_sec)
-    return timestamp.to_isoformat()

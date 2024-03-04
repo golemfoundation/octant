@@ -113,26 +113,14 @@ def mock_bitquery_api_get_blocks_rewards(*args, **kwargs):
             "ethereum": {
                 "blocks": [
                     {
-                        "timestamp": {"unixtime": 1708448963},
-                        "reward": 0.024473700594149782,
-                        "address": {
-                            "address": "0x1f9090aae28b8a3dceadf281b0f12828e676c326"
-                        },
-                    },
-                    {
-                        "timestamp": {"unixtime": 1708449035},
-                        "reward": 0.05342909432569912,
-                        "address": {
-                            "address": "0x1f9090aae28b8a3dceadf281b0f12828e676c326"
-                        },
+                        "reward": 0.077902794919848902,
                     },
                 ]
             }
         }
     }
 
-    blocks = example_resp_json["data"]["ethereum"]["blocks"]
-    return blocks
+    return example_resp_json["data"]["ethereum"]["blocks"][0]["reward"]
 
 
 def pytest_addoption(parser):
@@ -736,26 +724,6 @@ def mock_user_rewards(alice, bob):
     )
 
     return user_rewards_service_mock
-
-
-@pytest.fixture(scope="function")
-def patch_compare_blockchain_types_for_mainnet(monkeypatch):
-    monkeypatch.setattr(
-        "app.modules.modules_factory.pre_pending.compare_blockchain_types",
-        lambda *args: True,
-    )
-    monkeypatch.setattr(
-        "app.context.epoch_details.compare_blockchain_types",
-        lambda *args: True,
-    )
-
-
-@pytest.fixture(scope="function")
-def patch_compare_blockchain_types_for_not_mainnet(monkeypatch):
-    monkeypatch.setattr(
-        "app.modules.modules_factory.pre_pending.compare_blockchain_types",
-        lambda *args: False,
-    )
 
 
 def allocate_user_rewards(
