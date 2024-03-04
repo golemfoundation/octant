@@ -1,6 +1,6 @@
 import { AnimatePresence } from 'framer-motion';
 import throttle from 'lodash/throttle';
-import React, { ReactElement, useState, useEffect, useMemo } from 'react';
+import React, { ReactElement, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
@@ -9,7 +9,6 @@ import ProposalBackToTopButton from 'components/Proposal/ProposalBackToTopButton
 import ProposalList from 'components/Proposal/ProposalList';
 import Layout from 'components/shared/Layout';
 import Loader from 'components/ui/Loader';
-import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -19,7 +18,6 @@ import useProposalsIpfsWithRewards, {
 } from 'hooks/queries/useProposalsIpfsWithRewards';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import toastService from 'services/toastService';
-import { chevronLeft } from 'svg/navigation';
 
 import styles from './ProposalView.module.scss';
 
@@ -38,16 +36,6 @@ const ProposalView = (): ReactElement => {
 
   const { data: matchedProposalRewards } = useMatchedProposalRewards(epoch);
   const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards(epoch);
-
-  const navigationTabs = useMemo(() => {
-    const navTabs = [...navigationTabsDefault];
-    navTabs[0] = {
-      ...navTabs[0],
-      icon: chevronLeft,
-      isActive: true,
-    };
-    return navTabs;
-  }, []);
 
   const isEpoch1 = currentEpoch === 1;
   const areMatchedProposalsReady =
@@ -130,7 +118,7 @@ const ProposalView = (): ReactElement => {
   }, [loadedProposals.length, proposalsIpfsWithRewards.length]);
 
   if (!initialElement || !areMatchedProposalsReady || proposalsIpfsWithRewards.length === 0) {
-    return <Layout isLoading navigationTabs={navigationTabs} />;
+    return <Layout isLoading />;
   }
 
   if (
@@ -151,11 +139,7 @@ const ProposalView = (): ReactElement => {
   }
 
   return (
-    <Layout
-      classNameBody={styles.mainLayoutBody}
-      dataTest="ProposalView"
-      navigationTabs={navigationTabs}
-    >
+    <Layout classNameBody={styles.mainLayoutBody} dataTest="ProposalView">
       <InfiniteScroll
         hasMore={loadedProposals?.length !== proposalsIpfsWithRewards?.length}
         initialLoad
