@@ -22,7 +22,7 @@ export const validationSchema = (
         name: 'value-in-range',
         skipAbsent: true,
         test(value, ctx) {
-          const { currentMode } = this.parent;
+          const { currentMode } = ctx.parent;
           const newValueBigInt = parseUnitsBigInt(value || '0');
           if (currentMode === 'unlock' && newValueBigInt > depositsValue!) {
             return ctx.createError({
