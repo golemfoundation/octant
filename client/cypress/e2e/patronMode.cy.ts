@@ -715,7 +715,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       cy
         .get('[data-test=Navbar__Button--Projects]')
         .find('svg')
-        .should('have.html','<path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.515 24.485 10.029 16l8.486-8.485"/>');
+        // HTML tag can't be self-closing in CY.
+        .should('have.html','<path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.515 24.485 10.029 16l8.486-8.485"></path>');
     });
   });
 });
