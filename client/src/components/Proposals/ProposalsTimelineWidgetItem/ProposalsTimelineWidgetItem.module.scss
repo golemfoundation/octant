@@ -14,10 +14,44 @@
     margin-right: 1.6rem;
   }
 
+  &.hasHref {
+    cursor: pointer;
+
+    .arrowTopRight {
+      margin-left: 0.4rem;
+
+      path {
+        stroke: $color-octant-grey5;
+      }
+    }
+
+    &.isActive {
+      .arrowTopRight path {
+        stroke: $color-octant-green;
+      }
+    }
+
+    &:hover {
+      background: $color-octant-grey8;
+      &.isActive {
+        background: $color-octant-green6;
+      }
+    }
+
+    &:active {
+      background: $color-octant-grey1;
+      &.isActive {
+        background: $color-octant-green7;
+      }
+    }
+  }
+
   &.isActive {
     background-color: $color-octant-green5;
 
     .label {
+      display: flex;
+      align-items: center;
       color: $color-octant-dark;
     }
 

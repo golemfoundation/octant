@@ -2,6 +2,7 @@ import i18n from 'i18n';
 
 export type Milestone = {
   from: Date;
+  href?: string;
   id: string;
   label: string;
   to?: Date;
@@ -42,6 +43,7 @@ export default function getMilestones(): Milestone[] {
     },
     {
       from: new Date('2024-02-12T00:00:00+0100'),
+      href: 'https://octant.fillout.com/t/u4uT8WFzDvus',
       id: 'e3-applications-open',
       label: i18n.t('views.proposals.proposalsTimelineWidget.applicationsOpen'),
       to: new Date('2024-03-14T00:00:00+0100'),
