@@ -104,6 +104,12 @@ const EarnRewardsCalculator: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values.valueCrypto, formik.values.days]);
 
+  useEffect(() => {
+    return () => {
+      clientReactQuery.cancelQueries({ queryKey: [ROOTS.calculateRewards] });
+    };
+  }, []);
+
   const estimatedFormattedRewardsValue: FormattedCryptoValue =
     formik.values.valueCrypto && formik.values.days && estimatedRewards
       ? getFormattedEthValue(estimatedRewards)
