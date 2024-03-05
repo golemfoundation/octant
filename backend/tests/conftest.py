@@ -571,7 +571,7 @@ def mock_pending_epoch_snapshot_db(app, mock_users_db):
 
 @pytest.fixture(scope="function")
 def mock_finalized_epoch_snapshot_db(app, user_accounts):
-    database.finalized_epoch_snapshot.add_snapshot(
+    database.finalized_epoch_snapshot.save_snapshot(
         MOCKED_FINALIZED_EPOCH_NO,
         MATCHED_REWARDS,
         0,

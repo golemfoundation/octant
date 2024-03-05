@@ -123,7 +123,7 @@ def snapshot_finalized_epoch() -> Optional[int]:
             - int(pending_snapshot.operational_cost)
             - total_withdrawals
         )
-        finalized_epoch_snapshot.add_snapshot(
+        finalized_epoch_snapshot.save_snapshot(
             finalized_epoch,
             matched_rewards,
             patrons_rewards,
@@ -132,7 +132,7 @@ def snapshot_finalized_epoch() -> Optional[int]:
             total_withdrawals,
         )
     else:
-        finalized_epoch_snapshot.add_snapshot(
+        finalized_epoch_snapshot.save_snapshot(
             finalized_epoch,
             matched_rewards,
             patrons_rewards,

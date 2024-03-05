@@ -4,7 +4,7 @@ from multiproof import StandardMerkleTree
 
 from app.exceptions import MissingAddress
 from app.infrastructure import database
-from app.modules.dto import AccountFundsDTO
+from app.modules.dto import AccountFundsDTO, ProjectAccountFundsDTO
 
 LEAF_ENCODING: List[str] = ["address", "uint256"]
 
@@ -22,7 +22,9 @@ def get_merkle_tree_for_epoch(epoch: int) -> StandardMerkleTree:
     return build_merkle_tree(leaves)
 
 
-def build_merkle_tree(leaves: List[AccountFundsDTO]) -> StandardMerkleTree:
+def build_merkle_tree(
+    leaves: List[AccountFundsDTO | ProjectAccountFundsDTO],
+) -> StandardMerkleTree:
     return StandardMerkleTree.of(
         [[leaf.address, leaf.amount] for leaf in leaves], LEAF_ENCODING
     )
