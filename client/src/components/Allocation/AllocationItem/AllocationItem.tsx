@@ -76,10 +76,12 @@ const AllocationItem: FC<AllocationItemProps> = ({
         operation === 'multiply'
           ? parseFloat(newValue) * 1000000000
           : parseFloat(newValue) / 1000000000
-      ).toLocaleString('fullwide', {
-        maximumSignificantDigits: 18,
-        useGrouping: false,
-      });
+      )
+        .toLocaleString('fullwide', {
+          maximumSignificantDigits: 18,
+          useGrouping: false,
+        })
+        .replace(comma, '.');
     }
 
     return newValue;
@@ -102,7 +104,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
       onChange(
         {
           address,
-          value: getAdjustedValue(newValue, 'divide'),
+          value: getAdjustedValue(valueComma, 'divide'),
         },
         true,
       );
