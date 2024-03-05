@@ -11,9 +11,10 @@ from app.context.epoch_state import EpochState
 from app.extensions import epochs
 from app.infrastructure import database
 from app.infrastructure.database.models import PendingEpochSnapshot
-from app.legacy.core import proposals, merkle_tree
+from app.legacy.core import proposals
 from app.legacy.core.epochs import epoch_snapshots as core_epoch_snapshots
 from app.legacy.core.proposals import get_proposals_with_allocations
+from app.modules.common import merkle_tree
 
 
 @dataclass()
