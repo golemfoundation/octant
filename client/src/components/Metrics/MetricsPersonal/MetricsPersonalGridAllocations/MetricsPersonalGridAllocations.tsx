@@ -43,6 +43,7 @@ const MetricsPersonalGridAllocations: FC<MetricsPersonalGridAllocationsProps> = 
 
   return (
     <MetricsGridTile
+      className={size === 'custom' ? styles.customSize : undefined}
       groups={[
         {
           children,
