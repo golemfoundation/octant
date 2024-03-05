@@ -11,7 +11,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
        * Since Synpress needs to have valid provider to fetch the data from contracts,
        * setupMetamask is required in each test suite.
        */
-      cy.setupMetamask();
+      // cy.setupMetamask();
     });
 
     beforeEach(() => {
@@ -200,6 +200,31 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       cy.get('[data-test=RewardsCalculator__InputText--estimatedRewards--fiat]')
         .invoke('val')
         .should('eq', '');
+    });
+
+    it('Closing the modal successfully cancels the request /estimated_budget', () => {
+      cy.intercept('POST', '/rewards/estimated_budget', {
+        body: { budget: '850684931506849269541' },
+        // Long enough to never complete.
+        delay: 5000000,
+      }).as('postEstimatedRewards');
+
+      cy.window().then(win => {
+        cy.spy(win.console, 'error').as('consoleErrSpy');
+      });
+
+      cy.get('[data-test=Tooltip__rewardsCalculator__body]').click();
+
+      cy.get('[data-test=RewardsCalculator__InputText--estimatedRewards--crypto__Loader]').should(
+        'be.visible',
+      );
+
+      cy.get('[data-test=ModalRewardsCalculator__Button]').click();
+      cy.get('[data-test=ModalRewardsCalculator').should('not.be.visible');
+
+      cy.on('uncaught:exception', error => {
+        expect(error.code).to.equal('ERR_CANCELED');
+      });
     });
   });
 });
