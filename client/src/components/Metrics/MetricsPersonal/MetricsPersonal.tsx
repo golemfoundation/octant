@@ -42,8 +42,7 @@ const MetricsPersonal = (): ReactElement => {
     isFetchingMetricsPersonalDataRewardsUsage ||
     isFetchingTotalPatronDonations;
 
-  const wasUserEverAPatron =
-    (totalPatronDonations && totalPatronDonations.numberOfEpochs > 0) || false;
+  const wasUserEverAPatron = totalPatronDonations && totalPatronDonations.numberOfEpochs > 0;
 
   return (
     <div className={styles.root} id={METRICS_PERSONAL_ID}>
@@ -53,7 +52,7 @@ const MetricsPersonal = (): ReactElement => {
         <MetricsGrid className={styles.grid} dataTest="MetricsPersonal__MetricsGrid">
           <MetricsPersonalGridAllocations
             isLoading={isLoading}
-            size={wasUserEverAPatron ? 'custom' : 'L'}
+            size={isDesktop && wasUserEverAPatron ? 'custom' : 'L'}
           />
           <MetricsPersonalGridTotalRewardsWithdrawals isLoading={isLoading} />
           <MetricsPersonalGridDonationsProgressBar isLoading={isLoading} />
