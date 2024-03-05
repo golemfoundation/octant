@@ -5,13 +5,15 @@ from app.engine.octant_rewards import OctantRewardsSettings
 from app.engine.octant_rewards.locked_ratio import LockedRatioPayload
 from app.engine.octant_rewards.operational_cost import OperationalCostPayload
 from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividualPayload
+from app.engine.octant_rewards.ppf import PPFPayload
+from typing import Optional
 
 
 def calculate_rewards(
     octant_rewards_settings: OctantRewardsSettings,
     eth_proceeds: int,
     total_effective_deposit: int,
-) -> Tuple[Decimal, int, int, int]:
+) -> Tuple[Decimal, int, int, int, Optional[int], Optional[int]]:
     locked_ratio_calculator = octant_rewards_settings.locked_ratio
     op_cost_calculator = octant_rewards_settings.operational_cost
     rewards_calculator = octant_rewards_settings.total_and_all_individual_rewards
@@ -30,4 +32,17 @@ def calculate_rewards(
         rewards_payload
     )
 
-    return locked_ratio, total_rewards, all_individual_rewards, operational_cost
+    ppf_calculator = octant_rewards_settings.ppf
+    ppf_payload = PPFPayload(eth_proceeds)
+    ppf_value = ppf_calculator.calculate_ppf(ppf_payload)
+
+    community_fund = 0
+
+    return (
+        locked_ratio,
+        total_rewards,
+        all_individual_rewards,
+        operational_cost,
+        ppf_value,
+        community_fund,
+    )

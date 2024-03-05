@@ -27,6 +27,8 @@ class FinalizedOctantRewards(Model):
             matched_rewards=int(finalized_snapshot.matched_rewards),
             leftover=int(finalized_snapshot.leftover),
             total_withdrawals=int(finalized_snapshot.total_withdrawals),
+            ppf=int(finalized_snapshot.ppf),
+            community_fund=int(finalized_snapshot.community_fund),
         )
 
     def get_leverage(self, context: Context) -> float:

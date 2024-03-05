@@ -98,6 +98,10 @@ class PendingEpochSnapshot(BaseModel):
     total_rewards = Column(db.String, nullable=False)
     all_individual_rewards = Column(db.String, nullable=False)
     operational_cost = Column(db.String, nullable=False)
+    ppf = Column(db.String, nullable=True)  # TBC null for being backwards compatible
+    community_fund = Column(
+        db.String, nullable=True
+    )  # TBC: null for being backwards compatible
 
 
 class FinalizedEpochSnapshot(BaseModel):

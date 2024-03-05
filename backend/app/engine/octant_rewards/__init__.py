@@ -8,18 +8,43 @@ from app.engine.octant_rewards.matched.default import DefaultMatchedRewards
 from app.engine.octant_rewards.operational_cost import OperationalCost
 from app.engine.octant_rewards.operational_cost.op_cost_percent import OpCostPercent
 from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividualRewards
+from app.engine.octant_rewards.total_and_individual.total_from_staking import (
+    PercentTotalAndAllIndividualRewards,
+)
 from app.engine.octant_rewards.total_and_individual.default import (
     DefaultTotalAndAllIndividualRewards,
 )
+from app.engine.octant_rewards.ppf.calculator import PPFCalculatorPercent, PPFCalculator
+from app.engine.octant_rewards.community_fund.calculator import (
+    CommunityFundCalculator,
+    CommunityFundPercent,
+)
+
+
+class OctantRewardsDefaultValues:
+    OPERATIONAL_COST = Decimal("0.25")
+    PPF = Decimal("0.35")
+    COMMUNITY_FUND = Decimal("0.05")
 
 
 @dataclass
 class OctantRewardsSettings:
     locked_ratio: LockedRatio = field(default_factory=DefaultLockedRatio)
     operational_cost: OperationalCost = field(
-        default_factory=lambda: OpCostPercent(Decimal("0.25"))
+        default_factory=lambda: OpCostPercent(
+            OctantRewardsDefaultValues.OPERATIONAL_COST
+        )
     )
     total_and_all_individual_rewards: TotalAndAllIndividualRewards = field(
         default_factory=DefaultTotalAndAllIndividualRewards
     )
     matched_rewards: MatchedRewards = field(default_factory=DefaultMatchedRewards)
+
+    ppf: PPFCalculator = field(
+        default_factory=lambda: PPFCalculatorPercent(OctantRewardsDefaultValues.PPF)
+    )
+    community_fund: CommunityFundCalculator = field(
+        default_factory=lambda: CommunityFundPercent(
+            OctantRewardsDefaultValues.COMMUNITY_FUND
+        )
+    )

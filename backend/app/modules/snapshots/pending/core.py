@@ -17,6 +17,7 @@ def calculate_user_budgets(
                 user_effective_deposit=effective_deposit,
                 total_effective_deposit=rewards.total_effective_deposit,
                 all_individual_rewards=rewards.individual_rewards,
+                ppf=rewards.ppf,
             )
         )
         if user_budget:

@@ -33,6 +33,8 @@ class CalculatedOctantRewards(Model):
             total_rewards,
             all_individual_rewards,
             op_cost,
+            ppf,
+            community_fund,
         ) = calculate_rewards(rewards_settings, eth_proceeds, total_effective_deposit)
 
         return OctantRewardsDTO(
@@ -42,4 +44,6 @@ class CalculatedOctantRewards(Model):
             total_rewards=total_rewards,
             individual_rewards=all_individual_rewards,
             operational_cost=op_cost,
+            ppf=ppf,
+            community_fund=community_fund,
         )

@@ -42,6 +42,9 @@ class OctantRewardsDTO(JSONWizard):
     matched_rewards: Optional[int] = None
     total_withdrawals: Optional[int] = None
     leftover: Optional[int] = None
+    # Data available after Epoch3
+    ppf: Optional[int] = None
+    community_fund: Optional[int] = None
 
 
 @dataclass(frozen=True)
