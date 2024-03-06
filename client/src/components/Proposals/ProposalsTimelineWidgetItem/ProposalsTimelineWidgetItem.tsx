@@ -30,15 +30,21 @@ const ProposalsTimelineWidgetItem: FC<ProposalsTimelineWidgetItemProps> = ({
         isInView && styles.isInView,
         href && styles.hasHref,
       )}
+      data-test="ProposalsTimelineWidgetItem"
       id={id}
       onMouseDown={e => {
-        if (!href) {return;}
+        if (!href) {
+          return;
+        }
         setInitialClientX(e.clientX);
       }}
       onMouseUp={e => {
-        if (!href) {return;}
+        if (!href) {
+          return;
+        }
         if (initialClientX === e.clientX) {
-          window.open(href, '_blank');
+          // workaround for cypress test
+          window.open(href, window.Cypress ? '_self' : '_blank');
         }
 
         setInitialClientX(null);
@@ -46,7 +52,14 @@ const ProposalsTimelineWidgetItem: FC<ProposalsTimelineWidgetItemProps> = ({
     >
       <div className={styles.label}>
         {label}
-        {href && <Svg classNameSvg={styles.arrowTopRight} img={arrowTopRight} size={0.8} />}
+        {href && (
+          <Svg
+            classNameSvg={styles.arrowTopRight}
+            dataTest="ProposalsTimelineWidgetItem__Svg--arrowTopRight"
+            img={arrowTopRight}
+            size={0.8}
+          />
+        )}
       </div>
       <div className={styles.date}>
         <div>{format(from, 'dd MMM yyyy')}</div>
