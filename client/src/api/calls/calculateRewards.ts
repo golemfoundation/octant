@@ -1,3 +1,5 @@
+import { GenericAbortSignal } from 'axios';
+
 import env from 'env';
 import apiService from 'services/apiService';
 
@@ -9,7 +11,7 @@ export function apiPostCalculateRewards(
   // WEI
   amount: string,
   days: number,
-  signal?: AbortSignal,
+  signal: GenericAbortSignal,
 ): Promise<PostCalculateRewardsResponse> {
   return apiService
     .post(
