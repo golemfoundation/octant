@@ -1,19 +1,22 @@
-import { UseQueryOptions } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 
 import useEpochPatronsAllEpochs from './useEpochPatronsAllEpochs';
 import useIndividualRewardAllEpochs from './useIndividualRewardAllEpochs';
 
-export default function useTotalPatronDonations(options?: Omit<UseQueryOptions<any>, 'queryKey'>): {
+export default function useTotalPatronDonations({
+  isEnabledAdditional,
+}: {
+  isEnabledAdditional: boolean;
+}): {
   data: bigint | undefined;
   isFetching: boolean;
 } {
   const { address } = useAccount();
 
   const { data: individualRewardAllEpochs, isFetching: isFetchingIndividualReward } =
-    useIndividualRewardAllEpochs(options);
+    useIndividualRewardAllEpochs({ isEnabledAdditional });
   const { data: epochPatronsAllEpochs, isFetching: isFetchingEpochPatronsAllEpochs } =
-    useEpochPatronsAllEpochs(options);
+    useEpochPatronsAllEpochs({ isEnabledAdditional });
 
   const isFetching = isFetchingIndividualReward || isFetchingEpochPatronsAllEpochs;
 
