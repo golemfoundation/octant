@@ -14,6 +14,11 @@ const providers: ChainProviderFn<typeof mainnet | typeof sepolia | typeof localh
   publicProvider(),
 ];
 
+// @ts-expect-error
+window.jsonRpcEndpoint = env.jsonRpcEndpoint;
+// @ts-expect-error
+window.cyEnv = env;
+
 if (env.jsonRpcEndpoint) {
   providers.unshift(
     jsonRpcProvider({
