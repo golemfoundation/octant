@@ -6,9 +6,9 @@ import useIndividualRewardAllEpochs from './useIndividualRewardAllEpochs';
 export default function useTotalPatronDonations({
   isEnabledAdditional,
 }: {
-  isEnabledAdditional: boolean;
-}): {
-  data: bigint | undefined;
+  isEnabledAdditional?: boolean;
+} = {}): {
+  data: { numberOfEpochs: number; value: bigint } | undefined;
   isFetching: boolean;
 } {
   const { address } = useAccount();
@@ -29,9 +29,15 @@ export default function useTotalPatronDonations({
 
   return {
     data: epochPatronsAllEpochs.reduce(
-      (acc, curr, currentIndex) =>
-        curr.includes(address!) ? acc + individualRewardAllEpochs[currentIndex] : acc,
-      BigInt(0),
+      (acc, curr, currentIndex) => {
+        return curr.includes(address!)
+          ? {
+              numberOfEpochs: acc.numberOfEpochs + 1,
+              value: acc.value + individualRewardAllEpochs[currentIndex],
+            }
+          : acc;
+      },
+      { numberOfEpochs: 0, value: BigInt(0) },
     ),
     isFetching: false,
   };
