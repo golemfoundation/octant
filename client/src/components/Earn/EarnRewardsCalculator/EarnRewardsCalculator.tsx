@@ -41,7 +41,7 @@ const EarnRewardsCalculator: FC = () => {
   } = useCalculateRewards();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const fetchEstimatedRewardsDebounced2 = useCallback(
+  const fetchEstimatedRewardsDebounced = useCallback(
     debounce(({ amountGlm, numberOfDays }) => {
       const amountGlmWEI = formatUnitsBigInt(parseUnitsBigInt(amountGlm, 'ether'), 'wei');
       const numberOfDaysNumber = parseInt(numberOfDays, 10);
@@ -55,7 +55,7 @@ const EarnRewardsCalculator: FC = () => {
   const formik = useFormik<FormFields>({
     initialValues: formInitialValues,
     onSubmit: values =>
-      fetchEstimatedRewardsDebounced2({ amountGlm: values.valueCrypto, numberOfDays: values.days }),
+      fetchEstimatedRewardsDebounced({ amountGlm: values.valueCrypto, numberOfDays: values.days }),
     validateOnChange: true,
     validationSchema: validationSchema(t),
   });
@@ -79,7 +79,7 @@ const EarnRewardsCalculator: FC = () => {
 
   useEffect(() => {
     formik.validateForm().then(() => {
-      fetchEstimatedRewardsDebounced2({
+      fetchEstimatedRewardsDebounced({
         amountGlm: formik.values.valueCrypto,
         numberOfDays: formik.values.days,
       });
@@ -98,10 +98,10 @@ const EarnRewardsCalculator: FC = () => {
     formik.values.valueCrypto && formik.values.days && calculateRewards
       ? getFormattedEthValue(parseUnitsBigInt(calculateRewards.budget, 'wei'))
       : {
-          fullString: '',
-          suffix: 'ETH',
-          value: '',
-        };
+        fullString: '',
+        suffix: 'ETH',
+        value: '',
+      };
 
   const cryptoFiatRatio = cryptoValues?.ethereum[displayCurrency || 'usd'] || 1;
   const fiat = estimatedFormattedRewardsValue.value
