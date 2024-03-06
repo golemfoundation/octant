@@ -32,6 +32,8 @@ def save_snapshot(epoch: int, rewards: OctantRewardsDTO):
         locked_ratio=rewards.locked_ratio,
         total_ed=rewards.total_effective_deposit,
         operational_cost=rewards.operational_cost,
+        community_fund=rewards.community_fund,
+        ppf=rewards.ppf,
     )
 
 

@@ -5,9 +5,19 @@ from app.infrastructure import database
 from app.modules.common.leverage import calculate_leverage
 from app.modules.dto import OctantRewardsDTO
 from app.pydantic import Model
+from app.infrastructure.database.models import FinalizedEpochSnapshot
 
 
 class FinalizedOctantRewards(Model):
+    def _validate_nullable(
+        self, finalized_snapshot: FinalizedEpochSnapshot
+    ) -> tuple[int | None, int | None]:
+        ppf, community_fund = finalized_snapshot.ppf, finalized_snapshot.community_fund
+        return (
+            int(ppf) if ppf else None,
+            int(community_fund) if community_fund else None,
+        )
+
     def get_octant_rewards(self, context: Context) -> OctantRewardsDTO:
         pending_snapshot = database.pending_epoch_snapshot.get_by_epoch(
             context.epoch_details.epoch_num
@@ -15,6 +25,8 @@ class FinalizedOctantRewards(Model):
         finalized_snapshot = database.finalized_epoch_snapshot.get_by_epoch(
             context.epoch_details.epoch_num
         )
+
+        ppf, community_fund = self._validate_nullable(finalized_snapshot)
 
         return OctantRewardsDTO(
             staking_proceeds=int(pending_snapshot.eth_proceeds),
@@ -27,8 +39,8 @@ class FinalizedOctantRewards(Model):
             matched_rewards=int(finalized_snapshot.matched_rewards),
             leftover=int(finalized_snapshot.leftover),
             total_withdrawals=int(finalized_snapshot.total_withdrawals),
-            ppf=int(finalized_snapshot.ppf),
-            community_fund=int(finalized_snapshot.community_fund),
+            ppf=ppf,
+            community_fund=community_fund,
         )
 
     def get_leverage(self, context: Context) -> float:

@@ -1,19 +1,30 @@
+from dataclasses import dataclass
 from decimal import Decimal
+from typing import Optional
 from typing import Tuple
 
 from app.engine.octant_rewards import OctantRewardsSettings
 from app.engine.octant_rewards.locked_ratio import LockedRatioPayload
 from app.engine.octant_rewards.operational_cost import OperationalCostPayload
-from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividualPayload
 from app.engine.octant_rewards.ppf import PPFPayload
-from typing import Optional
+from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividualPayload
+
+
+@dataclass
+class OctantRewardsWrapper:
+    locked_ratio: Decimal
+    total_rewards: int
+    all_individual_rewards: int
+    operational_cost: int
+    ppf_value: int | None
+    community_fund: int | None
 
 
 def calculate_rewards(
     octant_rewards_settings: OctantRewardsSettings,
     eth_proceeds: int,
     total_effective_deposit: int,
-) -> Tuple[Decimal, int, int, int, Optional[int], Optional[int]]:
+) -> OctantRewardsWrapper:
     locked_ratio_calculator = octant_rewards_settings.locked_ratio
     op_cost_calculator = octant_rewards_settings.operational_cost
     rewards_calculator = octant_rewards_settings.total_and_all_individual_rewards
@@ -38,11 +49,11 @@ def calculate_rewards(
 
     community_fund = 0
 
-    return (
-        locked_ratio,
-        total_rewards,
-        all_individual_rewards,
-        operational_cost,
-        ppf_value,
-        community_fund,
+    return OctantRewardsWrapper(
+        locked_ratio=locked_ratio,
+        total_rewards=total_rewards,
+        all_individual_rewards=all_individual_rewards,
+        operational_cost=operational_cost,
+        ppf_value=ppf_value,
+        community_fund=community_fund,
     )

@@ -98,10 +98,8 @@ class PendingEpochSnapshot(BaseModel):
     total_rewards = Column(db.String, nullable=False)
     all_individual_rewards = Column(db.String, nullable=False)
     operational_cost = Column(db.String, nullable=False)
-    ppf = Column(db.String, nullable=True)  # TBC null for being backwards compatible
-    community_fund = Column(
-        db.String, nullable=True
-    )  # TBC: null for being backwards compatible
+    ppf = Column(db.String, nullable=True)
+    community_fund = Column(db.String, nullable=True)
 
 
 class FinalizedEpochSnapshot(BaseModel):
@@ -114,6 +112,8 @@ class FinalizedEpochSnapshot(BaseModel):
     leftover = Column(db.String, nullable=False)
     withdrawals_merkle_root = Column(db.String)
     total_withdrawals = Column(db.String)
+    ppf = Column(db.String, nullable=True)  # TBC is it needed?
+    community_fund = Column(db.String, nullable=True)  # TBC is it needed?
 
 
 class Deposit(BaseModel):

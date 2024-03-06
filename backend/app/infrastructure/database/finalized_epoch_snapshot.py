@@ -38,6 +38,8 @@ def add_snapshot(
     matched_rewards: int,
     patrons_rewards: int,
     leftover: int,
+    ppf: int | None,  # TODO VALIDATE IT HERE
+    community_fund: int | None,
     withdrawals_merkle_root: str = None,
     total_withdrawals: int = 0,
 ):
@@ -48,5 +50,7 @@ def add_snapshot(
         patrons_rewards=str(patrons_rewards),
         leftover=str(leftover),
         total_withdrawals=str(total_withdrawals),
+        ppf=str(ppf) if ppf else None,
+        community_fund=str(community_fund) if community_fund else None,
     )
     db.session.add(snapshot)
