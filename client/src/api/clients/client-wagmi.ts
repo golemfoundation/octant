@@ -48,3 +48,8 @@ export const wagmiConfig = createConfig({
   ],
   publicClient,
 });
+
+// Expose clientReactQuery for Cypress to get the data and verify it.
+if (window.Cypress) {
+  window.wagmiConfig = wagmiConfig;
+}
