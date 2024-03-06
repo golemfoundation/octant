@@ -21,7 +21,7 @@ import useTransactionLocalStore from 'store/transactionLocal/store';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import styles from './EarnGlmLock.module.scss';
-import EarnGlmLockProps, { CurrentMode, Step } from './types';
+import EarnGlmLockProps, { Step, OnReset } from './types';
 import { formInitialValues, validationSchema } from './utils';
 
 const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseModal }) => {
@@ -97,13 +97,17 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
     setTransactionHashForEtherscan(hash);
   };
 
-  const onReset = (newMode: CurrentMode = 'lock'): void => {
+  const onReset: OnReset = ({ setFieldValue, newMode = 'lock' }) => {
     onCurrentModeChange(newMode);
     setTransactionHashForEtherscan(undefined);
     setStep(1);
+
+    if (setFieldValue) {
+      setFieldValue('currentMode', newMode);
+    }
   };
 
-  const onError = () => onReset(currentMode);
+  const onError = () => onReset({ newMode: currentMode });
 
   const lockMutation = useLock({ onError, onMutate, onSuccess });
   const unlockMutation = useUnlock({ onError, onMutate, onSuccess });
@@ -138,7 +142,6 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
       onSubmit={onApproveOrDeposit}
       validateOnChange
       validationSchema={validationSchema(
-        currentMode,
         BigInt(availableFundsGlm ? availableFundsGlm?.value : 0),
         depositsValue,
       )}
@@ -167,6 +170,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
             onClose={onCloseModal}
             onInputsFocusChange={setIsCryptoOrFiatInputFocused}
             onReset={onReset}
+            setFieldValue={props.setFieldValue}
             setValueToDepose={setValueToDepose}
             showBalances={!showBudgetBox}
             step={step}

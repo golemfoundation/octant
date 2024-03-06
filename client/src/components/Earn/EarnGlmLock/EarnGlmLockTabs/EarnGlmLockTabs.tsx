@@ -27,6 +27,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
   setValueToDepose,
   onReset,
   showBalances,
+  setFieldValue,
 }) => {
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.glmLock',
@@ -44,7 +45,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
   };
 
   const onMax = () => {
-    if (isMaxDisabled || !depositsValue || !availableFundsGlm) {
+    if (isMaxDisabled || depositsValue === undefined || !availableFundsGlm) {
       return;
     }
     const value =
@@ -89,13 +90,13 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
         {
           isActive: currentMode === 'lock',
           isDisabled: isLoading,
-          onClick: () => onReset('lock'),
+          onClick: () => onReset({ newMode: 'lock', setFieldValue }),
           title: t('lock'),
         },
         {
           isActive: currentMode === 'unlock',
           isDisabled: isLoading,
-          onClick: () => onReset('unlock'),
+          onClick: () => onReset({ newMode: 'unlock', setFieldValue }),
           title: t('unlock'),
         },
       ]}
