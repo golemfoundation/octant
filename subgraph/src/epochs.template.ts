@@ -1,11 +1,11 @@
-import { Address, ethereum, Bytes, BigInt } from '@graphprotocol/graph-ts';
+import { Address, Bytes, BigInt } from '@graphprotocol/graph-ts';
 
 import { Epochs } from '../generated/Epochs/Epochs';
 import { Epoch } from '../generated/schema';
 // eslint-disable-next-line import/no-useless-path-segments
 import { requestCurrentEpoch } from '../src/contracts-utils';
 
-export function handleBlock(block: ethereum.Block): void {
+export function handleBlock(): void {
   // eslint-disable-next-line no-template-curly-in-string
   const epochsContractAddress = '${EPOCHS_CONTRACT_ADDRESS}';
   const currentEpoch: BigInt | null = requestCurrentEpoch(epochsContractAddress);
