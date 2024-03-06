@@ -10,6 +10,11 @@ describe(`proposals archive:`, () => {
     localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
     localStorage.setItem(IS_ONBOARDING_DONE, 'true');
     visitWithLoader(ROOT_ROUTES.proposals.absolute);
+
+    cy.window().then(win => {
+      cy.log(win.jsonRpcEndpoint);
+      cy.log(win.cyEnv);
+    });
   });
 
   it('moves to the next epoch', () => {
