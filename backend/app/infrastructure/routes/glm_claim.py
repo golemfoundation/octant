@@ -1,7 +1,7 @@
 from flask import current_app as app
 from flask_restx import Namespace, fields
 
-from app.controllers import glm_claim
+from app.legacy.controllers import glm_claim
 from app.exceptions import GlmClaimed
 from app.extensions import api
 from app.infrastructure import OctantResource

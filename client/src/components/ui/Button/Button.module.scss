@@ -33,6 +33,14 @@ $paddingVertical: 1rem;
     cursor: default;
   }
 
+  &.isLoading {
+    .isIconVariant {
+      svg circle {
+        fill: transparent;
+      }
+    }
+  }
+
   &.hasHoverState:hover {
     transform: scale(1.03);
     transition: all $transition-time-4 ease-out;

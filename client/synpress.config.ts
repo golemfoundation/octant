@@ -10,6 +10,8 @@ export default defineConfig({
     baseUrl: process.env.OCTANT_BASE_URL || 'http://localhost:5173',
     defaultCommandTimeout: 120 * 1000,
     setupNodeEvents(on, config) {
+      // eslint-disable-next-line no-param-reassign
+      config.env = { ...config.env, CI: process.env.CI };
       on(
         'file:preprocessor',
         vitePreprocessor({

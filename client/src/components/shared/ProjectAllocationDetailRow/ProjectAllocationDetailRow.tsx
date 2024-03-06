@@ -11,8 +11,12 @@ import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 import styles from './ProjectAllocationDetailRow.module.scss';
 import ProjectAllocationDetailRowProps from './types';
 
-const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({ address, amount }) => {
-  const { ipfsGateway } = env;
+const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({
+  address,
+  amount,
+  epoch,
+}) => {
+  const { ipfsGateways } = env;
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
   } = useSettingsStore(({ data }) => ({
@@ -22,8 +26,10 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({ addre
     },
   }));
   const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
-  const { data: proposalIpfs, isFetching: isFetchingProposalIpfs } = useProposalsIpfs([address]);
-
+  const { data: proposalIpfs, isFetching: isFetchingProposalIpfs } = useProposalsIpfs(
+    [address],
+    epoch,
+  );
   return (
     <div className={styles.root}>
       {isFetchingProposalIpfs ? (
@@ -33,7 +39,9 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({ addre
           <div className={styles.imageAndName}>
             <Img
               className={styles.image}
-              src={`${ipfsGateway}${proposalIpfs[0].profileImageSmall!}`}
+              sources={ipfsGateways
+                .split(',')
+                .map(element => `${element}${proposalIpfs[0].profileImageSmall!}`)}
             />
             <div className={styles.name}>{proposalIpfs[0].name}</div>
           </div>

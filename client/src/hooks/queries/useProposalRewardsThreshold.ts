@@ -1,19 +1,18 @@
 import { UseQueryOptions, UseQueryResult, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 
 import { apiGetProjectThreshold, Response } from 'api/calls/projectThreshold';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useSubscription from 'hooks/helpers/useSubscription';
 import { WebsocketListenEvent } from 'types/websocketEvents';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import useCurrentEpoch from './useCurrentEpoch';
 import useIsDecisionWindowOpen from './useIsDecisionWindowOpen';
 
 export default function useProposalRewardsThreshold(
   epoch?: number,
-  options?: UseQueryOptions<Response, unknown, BigNumber, any>,
-): UseQueryResult<BigNumber> {
+  options?: UseQueryOptions<Response, unknown, bigint, any>,
+): UseQueryResult<bigint, unknown> {
   const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
@@ -24,22 +23,28 @@ export default function useProposalRewardsThreshold(
    */
   useSubscription<{ threshold: string }>({
     callback: data => {
-      queryClient.setQueryData(QUERY_KEYS.proposalRewardsThreshold(currentEpoch! - 1), data);
+      queryClient.setQueryData(
+        QUERY_KEYS.proposalRewardsThreshold(
+          isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
+        ),
+        data,
+      );
     },
-    enabled: epoch === undefined,
+    enabled: epoch === undefined && isDecisionWindowOpen !== undefined,
     event: WebsocketListenEvent.threshold,
   });
 
-  return useQuery(
-    QUERY_KEYS.proposalRewardsThreshold(epoch || currentEpoch! - 1),
-    () => apiGetProjectThreshold(epoch || currentEpoch! - 1),
-    {
-      enabled:
-        (epoch !== undefined && epoch > 0) ||
-        (!!currentEpoch && currentEpoch > 1 && isDecisionWindowOpen),
-      select: response => parseUnits(response.threshold, 'wei'),
-      staleTime: Infinity,
-      ...options,
-    },
-  );
+  return useQuery({
+    enabled:
+      isDecisionWindowOpen !== undefined &&
+      ((epoch !== undefined && epoch > 0) || (!!currentEpoch && currentEpoch > 1)),
+    queryFn: () =>
+      apiGetProjectThreshold(epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!)),
+    queryKey: QUERY_KEYS.proposalRewardsThreshold(
+      epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
+    ),
+    select: response => parseUnitsBigInt(response.threshold, 'wei'),
+    staleTime: Infinity,
+    ...options,
+  });
 }

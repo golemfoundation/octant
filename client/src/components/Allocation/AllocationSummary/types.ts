@@ -1,5 +1,6 @@
-import { AllocationValues } from 'views/AllocationView/types';
+import { AllocateSimulate } from 'hooks/mutations/useAllocateSimulate';
 
 export default interface AllocationSummaryProps {
-  allocationValues: AllocationValues;
+  allocationSimulated?: AllocateSimulate;
+  isLoadingAllocateSimulate: boolean;
 }

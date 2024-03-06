@@ -1,7 +1,5 @@
-import { BigNumber } from 'ethers';
-
 export default interface ProposalDonorsListItemProps {
-  amount: BigNumber;
+  amount: bigint;
   className?: string;
   donorAddress: string;
 }

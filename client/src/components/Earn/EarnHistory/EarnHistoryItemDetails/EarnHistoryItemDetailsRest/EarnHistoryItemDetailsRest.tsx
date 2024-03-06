@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTransaction } from 'wagmi';
@@ -29,6 +28,8 @@ const EarnHistoryItemDetailsRest: FC<EarnHistoryItemDetailsRestProps> = ({
     hash: isWaitingForTransactionInitialized ? undefined : (transactionHash as `0x{string}`),
   });
 
+  const isPatronDonation = type === 'patron_mode_donation';
+
   const sections: SectionProps[] = [
     {
       doubleValueProps: {
@@ -36,29 +37,33 @@ const EarnHistoryItemDetailsRest: FC<EarnHistoryItemDetailsRestProps> = ({
         shouldIgnoreGwei: true,
         valueCrypto: amount,
       },
-      label: t('sections.amount'),
+      label: isPatronDonation ? t('sections.matchingFundDonation') : t('sections.amount'),
     },
-    {
-      doubleValueProps: {
-        cryptoCurrency: 'ethereum',
-        // Gas price is not known for pending transactions.
-        isFetching: isFetchingTransaction || isWaitingForTransactionInitialized,
-        shouldIgnoreGwei: true,
-        valueCrypto: BigNumber.from(transaction ? transaction.gasPrice : 0),
-      },
-      label: t('sections.gasPrice'),
-    },
-    {
-      childrenLeft: <EarnHistoryTransactionLabel isFinalized={isFinalized} />,
-      childrenRight: (
-        <Button
-          className={styles.viewOnEtherscan}
-          href={`${networkConfig.etherscanAddress}/tx/${transactionHash}`}
-          label={t('sections.viewOnEtherscan')}
-          variant="link"
-        />
-      ),
-    },
+    ...((!isPatronDonation
+      ? [
+          {
+            doubleValueProps: {
+              cryptoCurrency: 'ethereum',
+              // Gas price is not known for pending transactions.
+              isFetching: isFetchingTransaction || isWaitingForTransactionInitialized,
+              shouldIgnoreGwei: true,
+              valueCrypto: BigInt(transaction?.gasPrice ?? 0),
+            },
+            label: t('sections.gasPrice'),
+          },
+          {
+            childrenLeft: <EarnHistoryTransactionLabel isFinalized={isFinalized} />,
+            childrenRight: (
+              <Button
+                className={styles.viewOnEtherscan}
+                href={`${networkConfig.etherscanAddress}/tx/${transactionHash}`}
+                label={t('sections.viewOnEtherscan')}
+                variant="link"
+              />
+            ),
+          },
+        ]
+      : []) as SectionProps[]),
     {
       childrenRight: <EarnHistoryItemDateAndTime timestamp={timestamp} />,
       label: t('sections.when'),

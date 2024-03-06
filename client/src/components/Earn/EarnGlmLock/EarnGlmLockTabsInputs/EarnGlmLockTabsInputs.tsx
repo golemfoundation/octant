@@ -19,6 +19,7 @@ const EarnGlmLockTabsInputs: FC<EarnGlmLockTabsInputsProps> = ({
   inputCryptoProps,
   cryptoCurrency,
   areInputsDisabled,
+  dataTest = 'InputsCryptoFiat',
   onInputsFocusChange = () => {},
 }) => {
   const {
@@ -81,6 +82,13 @@ const EarnGlmLockTabsInputs: FC<EarnGlmLockTabsInputsProps> = ({
   }, [inputCryptoProps.value, fiat]);
 
   useEffect(() => {
+    if (inputCryptoProps.value) {
+      onCryptoValueChange(inputCryptoProps.value);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputCryptoProps.value]);
+
+  useEffect(() => {
     onInputsFocusChange(isAnyInputFocused);
   }, [onInputsFocusChange, isAnyInputFocused]);
 
@@ -97,6 +105,7 @@ const EarnGlmLockTabsInputs: FC<EarnGlmLockTabsInputsProps> = ({
     <div className={cx(styles.root, isCryptoMainValueDisplay && styles.isCryptoMainValueDisplay)}>
       <InputText
         className={cx(styles.input, isCryptoMainValueDisplay && styles.isCryptoMainValueDisplay)}
+        dataTest={`${dataTest}__InputText--crypto`}
         inputMode="decimal"
         placeholder="0.00"
         variant="simple"
@@ -113,6 +122,7 @@ const EarnGlmLockTabsInputs: FC<EarnGlmLockTabsInputsProps> = ({
       <InputText
         autocomplete="off"
         className={cx(styles.input, !isCryptoMainValueDisplay && styles.isFiatMainValueDisplay)}
+        dataTest={`${dataTest}__InputText--fiat`}
         inputMode="decimal"
         isDisabled={areInputsDisabled}
         isErrorInlineVisible={false}

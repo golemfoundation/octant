@@ -57,7 +57,7 @@ const DoubleValue: FC<DoubleValueProps> = ({
       data-test={dataTest}
     >
       {isFetching ? (
-        <DoubleValueSkeleton />
+        <DoubleValueSkeleton dataTest={`${dataTest}__DoubleValueSkeleton`} />
       ) : (
         <Fragment>
           <div

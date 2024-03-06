@@ -18,9 +18,10 @@
     }
 
     &--L {
-      height: 30.4rem;
+      min-height: 30.4rem;
       grid-column: span 2;
       grid-row: span 2;
+      max-height: 50.4rem;
     }
   }
 }
@@ -28,6 +29,9 @@
 .group {
   position: relative;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
 
   &:nth-child(2) {
     &::before {

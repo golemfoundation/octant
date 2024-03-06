@@ -1,13 +1,10 @@
-import { BigNumber } from 'ethers';
-
 import ModalProps from 'components/ui/Modal/types';
 
 export default interface ModalAllocationValuesEditProps {
-  isLimitVisible?: boolean;
   isManuallyEdited?: boolean;
   modalProps: Omit<ModalProps, 'children'>;
-  onUpdateValue: (newValue: BigNumber) => void;
-  restToDistribute?: BigNumber;
-  valueCryptoSelected: BigNumber;
-  valueCryptoTotal: BigNumber;
+  onUpdateValue: (newValue: bigint) => void;
+  restToDistribute?: bigint;
+  valueCryptoSelected: bigint;
+  valueCryptoTotal: bigint;
 }

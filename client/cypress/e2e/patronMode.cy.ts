@@ -1,20 +1,7 @@
-import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import { connectWallet, mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
-
-import Chainable = Cypress.Chainable;
-
-const connectWallet = (isTOSAccepted: boolean, isPatronModeEnabled: boolean): Chainable<any> => {
-  cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
-  cy.intercept('GET', '/user/*/patron-mode', { body: { status: isPatronModeEnabled } });
-  cy.intercept('PATCH', '/user/*/patron-mode', { body: { status: !isPatronModeEnabled } });
-  cy.disconnectMetamaskWalletFromAllDapps();
-  cy.get('[data-test=MainLayout__Button--connect]').click();
-  cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
-  cy.switchToMetamaskNotification();
-  return cy.acceptMetamaskAccess();
-};
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(`patron mode (disabled): ${device}`, { viewportHeight, viewportWidth }, () => {
@@ -25,8 +12,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
        * setupMetamask is required in each test suite.
        */
       cy.setupMetamask();
-      cy.activateShowTestnetNetworksInMetamask();
-      cy.changeMetamaskNetwork('sepolia');
     });
 
     beforeEach(() => {
@@ -357,8 +342,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
        * setupMetamask is required in each test suite.
        */
       cy.setupMetamask();
-      cy.activateShowTestnetNetworksInMetamask();
-      cy.changeMetamaskNetwork('sepolia');
     });
 
     beforeEach(() => {
@@ -724,6 +707,18 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           cy.get('[data-test=ModalPatronMode]').should('not.exist');
         });
       });
+    });
+
+    it('when entering project view, button icon changes to chevronLeft', () => {
+      visitWithLoader(ROOT_ROUTES.proposals.absolute);
+      cy.get('[data-test^=ProposalsView__ProposalsListItem').first().click();
+      cy.get('[data-test=Navbar__Button--Projects]')
+        .find('svg')
+        // HTML tag can't be self-closing in CY.
+        .should(
+          'have.html',
+          '<path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.515 24.485 10.029 16l8.486-8.485"></path>',
+        );
     });
   });
 });

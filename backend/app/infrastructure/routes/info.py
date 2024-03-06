@@ -2,8 +2,8 @@ from flask import current_app as app
 from flask import render_template, make_response, send_from_directory
 from flask_restx import Resource, Namespace, fields
 
-from app.controllers import info, epochs, snapshots
-from app.extensions import api, w3
+from app.legacy.controllers import info, snapshots
+from app.extensions import api, w3, epochs
 from app.infrastructure import OctantResource, graphql
 
 ns = Namespace("info", description="Information about Octant's backend API")

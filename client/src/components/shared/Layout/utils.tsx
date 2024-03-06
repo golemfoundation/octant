@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 import i18n from 'i18n';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
@@ -9,10 +7,10 @@ export function getIndividualRewardText({
   isDecisionWindowOpen,
 }: {
   currentEpoch?: number;
-  individualReward?: BigNumber;
+  individualReward?: bigint;
   isDecisionWindowOpen?: boolean;
 }): string {
-  if (currentEpoch === 1 || individualReward?.isZero() || !isDecisionWindowOpen) {
+  if (currentEpoch === 1 || individualReward === 0n || !isDecisionWindowOpen) {
     return i18n.t('layouts.main.noRewardsYet');
   }
   if (currentEpoch === undefined || individualReward === undefined) {

@@ -1,0 +1,67 @@
+.root {
+  width: 100%;
+}
+
+.grid {
+  grid-template-rows: 16rem 16rem minmax(14.4rem, auto);
+
+  @media #{$desktop-up} {
+    grid-template-rows: 14.4rem 14.4rem minmax(14.4rem, auto);
+  }
+}
+
+.topProjects {
+  @media #{$tablet-down} {
+    order: 1;
+  }
+}
+.totalDonationsAndPersonal {
+  @media #{$tablet-down} {
+    order: 2;
+  }
+}
+.donationsVsPersonal {
+  @media #{$tablet-down} {
+    order: 3;
+  }
+}
+.currentDonors {
+  @media #{$tablet-down} {
+    order: 4;
+  }
+}
+
+.averageLeverage {
+  @media #{$tablet-down} {
+    order: 5;
+  }
+}
+
+.totalUsers {
+  @media #{$tablet-down} {
+    order: 6;
+  }
+}
+.patrons {
+  @media #{$tablet-down} {
+    order: 7;
+  }
+}
+
+.fundsUsage {
+  @media #{$tablet-down} {
+    order: 8;
+  }
+}
+
+.unusedAndUnallocatedValue {
+  @media #{$tablet-down} {
+    order: 9;
+  }
+}
+
+.belowThreshold {
+  @media #{$tablet-down} {
+    order: 10;
+  }
+}

@@ -1,0 +1,14 @@
+.env
+.env.template
+
+# FROM GITIGNORE
+coverage
+coverage.json
+
+.docs
+artifacts
+artifacts-zk
+cache
+cache-zk
+deployments
+typechain-types

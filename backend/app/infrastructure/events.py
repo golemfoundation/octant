@@ -4,27 +4,30 @@ from typing import List
 from flask import current_app as app
 from flask_socketio import emit
 
-from app.controllers import allocations
-from app.controllers.allocations import allocate
-from app.controllers.rewards import (
+from app.legacy.controllers import allocations
+from app.legacy.controllers.allocations import allocate
+from app.legacy.controllers.rewards import (
     get_allocation_threshold,
     get_estimated_proposals_rewards,
     ProposalReward,
 )
-from app.core.allocations import AllocationRequest
-from app.core.common import AccountFunds
+from app.legacy.core.allocations import AllocationRequest
+from app.legacy.core.common import AccountFunds
 from app.exceptions import OctantException
-from app.extensions import socketio
+from app.extensions import socketio, epochs
 from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler
 
 
 @socketio.on("connect")
 def handle_connect():
     app.logger.debug("Client connected")
-    threshold = get_allocation_threshold()
-    emit("threshold", {"threshold": str(threshold)})
-    proposal_rewards = get_estimated_proposals_rewards()
-    emit("proposal_rewards", _serialize_proposal_rewards(proposal_rewards))
+
+    if epochs.get_pending_epoch() is not None:
+        threshold = get_allocation_threshold()
+        emit("threshold", {"threshold": str(threshold)})
+
+        proposal_rewards = get_estimated_proposals_rewards()
+        emit("proposal_rewards", _serialize_proposal_rewards(proposal_rewards))
 
 
 @socketio.on("disconnect")
@@ -36,9 +39,11 @@ def handle_disconnect():
 def handle_allocate(msg):
     msg = json.loads(msg)
     payload, signature = msg["payload"], msg["signature"]
+    is_manually_edited = msg["isManuallyEdited"] if "isManuallyEdited" in msg else None
     app.logger.info(f"User allocation payload: {payload}, signature: {signature}")
     user_address = allocate(
-        AllocationRequest(payload, signature, override_existing_allocations=True)
+        AllocationRequest(payload, signature, override_existing_allocations=True),
+        is_manually_edited,
     )
     app.logger.info(f"User: {user_address} allocated successfully")
 
@@ -55,13 +60,20 @@ def handle_allocate(msg):
     )
     for proposal in proposal_rewards:
         donors = allocations.get_all_by_proposal_and_epoch(proposal.address)
-        emit("proposal_donors", _serialize_donors(donors), broadcast=True)
+        emit(
+            "proposal_donors",
+            {"proposal": proposal.address, "donors": _serialize_donors(donors)},
+            broadcast=True,
+        )
 
 
 @socketio.on("proposal_donors")
 def handle_proposal_donors(proposal_address: str):
     donors = allocations.get_all_by_proposal_and_epoch(proposal_address)
-    emit("proposal_donors", _serialize_donors(donors))
+    emit(
+        "proposal_donors",
+        {"proposal": proposal_address, "donors": _serialize_donors(donors)},
+    )
 
 
 @socketio.on_error_default

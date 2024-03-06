@@ -1,0 +1,37 @@
+# services used by apitest; use with docker-compose.yaml
+
+version: "3.8"
+services:
+
+
+  anvil:
+    image: octant/anvil:latest
+    platform: linux/amd64
+    ports:
+      - "8545:8545"
+    networks:
+      - octant
+
+
+  backend-apitest:
+    image: octant/backend-apitest:latest
+    environment:
+      CONTRACTS_DEPLOYER_URL: 'http://multideployer:8022'
+
+      OCTANT_ENV: dev
+      SUBGRAPH_URL: "http://graph-node:8000"
+
+      ETH_RPC_PROVIDER_URL: "http://anvil:8545"
+      CHAIN_ID: "1337"
+      CHAIN_NAME: "localhost"
+
+    depends_on:
+      - anvil
+      - graph-node
+      - multideployer
+    networks:
+      - octant
+
+
+networks:
+  octant:

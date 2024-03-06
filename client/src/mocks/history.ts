@@ -1,9 +1,7 @@
-import { BigNumber } from 'ethers';
-
 import { TransactionPending } from 'store/transactionLocal/types';
 
 export const transactionPending1: TransactionPending = {
-  amount: BigNumber.from(10),
+  amount: BigInt(10),
   isFinalized: false,
   isWaitingForTransactionInitialized: false,
   timestamp: '100',
@@ -12,7 +10,7 @@ export const transactionPending1: TransactionPending = {
 };
 
 export const transactionPending2: TransactionPending = {
-  amount: BigNumber.from(20),
+  amount: BigInt(20),
   isFinalized: false,
   isWaitingForTransactionInitialized: false,
   timestamp: '200',
@@ -21,7 +19,7 @@ export const transactionPending2: TransactionPending = {
 };
 
 export const transactionPending3: TransactionPending = {
-  amount: BigNumber.from(30),
+  amount: BigInt(30),
   isFinalized: false,
   isWaitingForTransactionInitialized: false,
   timestamp: '300',

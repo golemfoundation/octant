@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { useState, useCallback } from 'react';
 import { usePublicClient } from 'wagmi';
 
@@ -14,11 +13,10 @@ export enum ApprovalState {
 export default function useApprovalState(
   signerAddress: string | undefined,
   spender: string,
-  minAmountToBeApproved: BigNumber,
+  minAmountToBeApproved: bigint,
 ): [ApprovalState, () => Promise<ApprovalState>] {
   const publicClient = usePublicClient();
   const [approvalState, setApprovalState] = useState(ApprovalState.UNKNOWN);
-  const minAmountToBeApprovedHexString = minAmountToBeApproved.toHexString();
 
   const approveCallback = useCallback(async (): Promise<ApprovalState> => {
     return readContractERC20({
@@ -26,15 +24,16 @@ export default function useApprovalState(
       functionName: 'allowance',
       publicClient,
     }).then(allowance => {
-      const allowanceBigNumber = BigNumber.from(allowance);
-      const state = allowanceBigNumber.gte(minAmountToBeApproved)
-        ? ApprovalState.APPROVED
-        : ApprovalState.NOT_APPROVED;
+      const allowanceBigInt = BigInt(allowance);
+      const state =
+        allowanceBigInt >= minAmountToBeApproved
+          ? ApprovalState.APPROVED
+          : ApprovalState.NOT_APPROVED;
       setApprovalState(state);
       return state;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [signerAddress, spender, minAmountToBeApprovedHexString]);
+  }, [signerAddress, spender, minAmountToBeApproved]);
 
   return [approvalState, approveCallback];
 }

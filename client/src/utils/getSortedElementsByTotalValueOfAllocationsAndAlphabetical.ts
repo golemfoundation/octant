@@ -35,13 +35,13 @@ export default function getSortedElementsByTotalValueOfAllocationsAndAlphabetica
       if (!totalValueOfAllocationsA || !totalValueOfAllocationsB) {
         return compareNames(nameA, nameB);
       }
-      if (totalValueOfAllocationsA.eq(totalValueOfAllocationsB)) {
+      if (totalValueOfAllocationsA === totalValueOfAllocationsB) {
         return compareNames(nameA, nameB);
       }
-      if (totalValueOfAllocationsA.lt(totalValueOfAllocationsB!)) {
+      if (totalValueOfAllocationsA < totalValueOfAllocationsB!) {
         return 1;
       }
-      if (totalValueOfAllocationsA.gt(totalValueOfAllocationsB!)) {
+      if (totalValueOfAllocationsA > totalValueOfAllocationsB!) {
         return -1;
       }
       return 0;

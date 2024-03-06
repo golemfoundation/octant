@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import React, { FC } from 'react';
 
 import AllocationInputs from 'components/Allocation/AllocationInputs';
@@ -12,7 +11,7 @@ const ModalAllocationValuesEdit: FC<ModalAllocationValuesEditProps> = ({
   onUpdateValue,
   ...rest
 }) => {
-  const handleOnModalClosed = (newValue: BigNumber) => {
+  const handleOnModalClosed = (newValue: bigint) => {
     modalProps.onClosePanel();
     onUpdateValue(newValue);
   };

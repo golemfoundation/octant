@@ -28,8 +28,6 @@ const beforeSetup = () => {
   mockCoinPricesServer();
   cy.clearLocalStorage();
   cy.setupMetamask();
-  cy.activateShowTestnetNetworksInMetamask();
-  cy.changeMetamaskNetwork('sepolia');
   window.innerWidth = Cypress.config().viewportWidth;
   window.innerHeight = Cypress.config().viewportHeight;
 };

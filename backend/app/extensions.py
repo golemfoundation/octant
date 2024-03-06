@@ -8,14 +8,13 @@ from flask_caching import Cache
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
-from app.contracts import abi
-from app.contracts.epochs import Epochs
-from app.contracts.deposits import Deposits
-from app.contracts.erc20 import ERC20
-from app.contracts.proposals import Proposals
-from app.contracts.vault import Vault
-
-from app.logging import init_logger
+from app.infrastructure.contracts import abi
+from app.infrastructure.contracts.epochs import Epochs
+from app.infrastructure.contracts.deposits import Deposits
+from app.infrastructure.contracts.erc20 import ERC20
+from app.infrastructure.contracts.proposals import Proposals
+from app.infrastructure.contracts.vault import Vault
+from app.infrastructure import GQLConnectionFactory
 
 # Flask extensions
 api = Api(
@@ -39,6 +38,9 @@ deposits = Deposits(abi=abi.DEPOSITS)
 proposals = Proposals(abi=abi.PROPOSALS)
 vault = Vault(abi=abi.VAULT)
 
+# GQL extensions
+gql_factory = GQLConnectionFactory()
+
 
 def init_web3(app):
     w3.provider = app.config["WEB3_PROVIDER"]
@@ -50,6 +52,10 @@ def init_web3(app):
     proposals.init_web3(w3, app.config["PROPOSALS_CONTRACT_ADDRESS"])
     vault.init_web3(w3, app.config["VAULT_CONTRACT_ADDRESS"])
     deposits.init_web3(w3, app.config["DEPOSITS_CONTRACT_ADDRESS"])
+
+
+def init_subgraph(app):
+    gql_factory.set_url(app.config)
 
 
 def init_scheduler(app):

@@ -1,9 +1,10 @@
-import React, { ReactElement } from 'react';
+import React, { FC } from 'react';
 
 import styles from './DoubleValueSkeleton.module.scss';
+import DoubleValueSkeletonProps from './types';
 
-const DoubleValueSkeleton = (): ReactElement => (
-  <div className={styles.root}>
+const DoubleValueSkeleton: FC<DoubleValueSkeletonProps> = ({ dataTest }) => (
+  <div className={styles.root} data-test={dataTest}>
     <div className={styles.row} />
     <div className={styles.row} />
   </div>

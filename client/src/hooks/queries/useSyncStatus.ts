@@ -9,9 +9,11 @@ export type Response = {
 };
 
 export default function useSyncStatus(
-  options?: UseQueryOptions<Response, unknown, Response, any>,
-): UseQueryResult<Response> {
-  return useQuery(QUERY_KEYS.syncStatus, () => apiGetSyncStatus(), {
+  options?: Omit<UseQueryOptions<Response, unknown, Response, any>, 'queryKey'>,
+): UseQueryResult<Response, unknown> {
+  return useQuery({
+    queryFn: () => apiGetSyncStatus(),
+    queryKey: QUERY_KEYS.syncStatus,
     /**
      * We compare only finalizedSnapshot & pendingSnapshot values.
      * Watching for the rest of them, indexed blocks, causes flickering in the App.tsx

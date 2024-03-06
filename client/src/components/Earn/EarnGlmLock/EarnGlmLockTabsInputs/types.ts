@@ -4,6 +4,7 @@ import { CryptoCurrency } from 'types/cryptoCurrency';
 export default interface EarnGlmLockTabsInputsProps {
   areInputsDisabled?: boolean;
   cryptoCurrency: CryptoCurrency;
+  dataTest?: string;
   error: string | undefined;
   inputCryptoProps: {
     name: InputTextProps['name'];

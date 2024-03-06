@@ -26,6 +26,7 @@
   "common": {
     "availableNow": "Available now",
     "calculateRewards": "Calculate rewards",
+    "calculating": "Calculating...",
     "close": "Close",
     "copied": "Copied",
     "copy": "Copy link",
@@ -40,11 +41,17 @@
     "personalAllocation": "Personal allocation",
     "proposalForbiddenOperation": "As a proposal you are not able to proceed with this operation",
     "rewards": "Rewards {{rewards}}",
-    "thresholdDataUnavailable": "Threshold data unavailable",
-    "noThresholdData": "No threshold data",
+    "thresholdDataUnavailable": {
+      "desktop": "Threshold data unavailable",
+      "mobile": "No threshold data"
+    },
     "valueCantBeEmpty": "Value can't be empty",
     "lessThan1m": "less than 1m",
-    "donors": "Donors"
+    "donors": "Donors",
+    "projects": "Projects",
+    "available": "Available",
+    "totalDonated": "Total donated",
+    "waitingForConfirmation": "Waiting for confirmation"
   },
   "components": {
     "settings": {
@@ -83,19 +90,24 @@
         "connectWallet": "In order to manipulate allocation values and vote, please connect your wallet first."
       },
       "allocationNavigation": {
-        "back": "Back",
         "confirm": "Confirm",
-        "next": "Next",
-        "reset": "Reset allocations"
+        "edit": "Edit",
+        "reset": "Reset"
       },
       "allocationRewardsBox": {
         "title": "Allocate rewards",
         "subtitle": "{{individualReward}} available",
-        "subtitleNoRewards": "No rewards available yet",
-        "donate": "Donate {{percentRewardsForProposals}}%",
-        "withdraw": "Withdraw {{percentWithdraw}}%"
+        "subtitleNoRewards": "No rewards yet",
+        "donate": "Donate",
+        "donated": "Donated",
+        "donateWithPercentage": "Donate {{percentage}}%",
+        "personalWithPercentage": "Personal {{percentage}}%",
+        "allocated": "Allocated",
+        "manual": "Manual"
       },
       "allocationSummary": {
+        "matchFunding": "Match funding",
+        "totalImpact": "Total impact",
         "estimatedLeverage": "Est. leverage",
         "confirmYourAllocations": "Confirm your allocations",
         "confirmAllocations": "Confirm allocations",
@@ -112,7 +124,7 @@
         "editLockedGLM": "Edit Locked GLM",
         "effective": "Effective",
         "lockedBalance": "Locked balance",
-        "tooltipText": "Effective balance is the part of your locked GLM that is currently earning rewards. For example, GLM locked during allocation only earn rewards in the next epoch, so they are not immediately effective."
+        "tooltipText": "Effective lock (EL) is the part of your locked GLM that is currently earning rewards. Equal to your current balance, if that is unchanged during the ongoing epoch. Increase lock & EL increases proportionally to epoch time remaining. Decrease lock & this amount is removed from EL for the epoch."
       },
       "boxPersonalAllocation": {
         "patronEarnings": "Patron earnings",
@@ -147,8 +159,7 @@
       "donors": {
         "donationsNotEnabled": "Donations are not enabled in this epoch",
         "noDonationsYet": "No donations yet",
-        "viewAll": "View all",
-        "totalDonated": "Total donated"
+        "viewAll": "View all"
       },
       "glmLock": {
         "lock": "Lock",
@@ -157,12 +168,10 @@
           "approve": "Approve"
         },
         "glmLockTabs": {
-          "waitingForConformation": "Waiting for confirmation",
           "useMax": "Use max",
           "amountToLock": "Amount to lock",
           "amountToUnlock": "Amount to unlock",
-          "locked": "Locked",
-          "available": "Available"
+          "locked": "Locked"
         },
         "glmLockNotification": {
           "success": {
@@ -188,7 +197,8 @@
         "lockedGLM": "Locked GLM",
         "unlockedGLM": "Unlocked GLM",
         "projects": "Projects",
-        "withdrawnFunds": "Withdrawn funds"
+        "withdrawnFunds": "Withdrawn funds",
+        "epochDonation": "Epoch {{epoch}} donation"
       },
       "historyItemModal": {
         "header": {
@@ -204,7 +214,8 @@
           "gasPrice": "Gas price",
           "viewOnEtherscan": "View on Etherscan",
           "when": "When",
-          "withdrawal": "Withdrew ETH"
+          "withdrawal": "Withdrew ETH",
+          "matchingFundDonation": "Matching fund donation"
         }
       },
       "historyTransactionLabel": {
@@ -231,7 +242,6 @@
         "epoch": "Epoch {{epoch}}",
         "currentTotal": "Current total",
         "totalRaised": "Total raised",
-        "totalDonated": "Total donated",
         "fundedIn": "Funded in",
         "fundedAt": "Funded at",
         "didNotReach": "Did not reach",
@@ -258,8 +268,7 @@
         "rewardsBudget": "Rewards Budget",
         "amount": "Amount",
         "estimatedGasPrice": "Est. gas price",
-        "withdrawAll": "Withdraw all",
-        "waitingForConfirmation": "Waiting for confirmation"
+        "withdrawAll": "Withdraw all"
       }
     }
   },
@@ -268,8 +277,8 @@
       "buttonConnect": "Connect",
       "noRewardsYet": "No rewards yet",
       "loadingRewardBudget": "Loading reward budget...",
-      "allocationStartsIn": "Allocation starts in <0>{{allocationPeriod}}</0>",
-      "allocationEndsIn": "Allocation ends in <0>{{allocationPeriod}}</0>",
+      "allocationStartsIn": "Allocation starts in <0>{{currentPeriod}}</0>",
+      "allocationEndsIn": "Allocation ends in <0>{{currentPeriod}}</0>",
       "admin": "Admin",
       "patron": "Patron"
     }
@@ -279,9 +288,8 @@
     "fundrasingOnOctant": "{{projectName}} is fundrasing on Octant"
   },
   "toasts": {
-    "cantRemoveProjectWithDonations": {
-      "title": "You can't remove projects with donations",
-      "message": "Set your donation to zero in Allocate view to enable project removal"
+    "confirmChanges": {
+      "title": "Please confirm your allocation to keep your changes"
     },
     "wrongNetwork": {
       "title": "Wrong network",
@@ -292,25 +300,20 @@
     "allocation": {
       "allocationItem": {
         "epoch1": "No funding threshold in Epoch 1",
-        "standard": "<0>{{sum}}</0> -> {{threshold}} needed",
-        "thresholdReached": "{{sum}} -> Threshold reached"
+        "standard": "{{sum}} / {{threshold}}",
+        "simulate": {
+          "mobile": "{{value}} {{character}} {{matched}}",
+          "desktop": "{{value}} {{character}} {{matched}} matching"
+        }
       },
       "allocationSuccessful": "Allocation successful",
       "tip": {
-        "lockGlm": {
-          "title": "Lock GLM to earn",
-          "text": "Lock GLM tokens for as long as possible to earn ETH rewards you can donate or withdraw"
-        },
         "rewards": {
           "title": "Time to allocate",
           "text": {
             "desktop": "Add projects and use the slider to divide rewards between yourself and your chosen projects",
             "mobile": "Add projects and use the slider to divide rewards between yourself & your chosen projects"
           }
-        },
-        "changedYourMind": {
-          "title": "Changed your mind?",
-          "text": "To change your allocations, click the slider handle to unlock and make your changes"
         }
       },
       "modalAllocationValuesEdit": {
@@ -329,6 +332,15 @@
             "mobile": "Connect wallet"
           },
           "text": "Please connect your wallet to Octant in order to participate in this and future epochs"
+        },
+        "lockGlm": {
+          "title": "Lock GLM to earn",
+          "text": "Lock GLM tokens for as long as possible to earn ETH rewards you can donate or withdraw"
+        },
+        "allocateYourRewards": {
+          "title": "Allocate your rewards",
+          "textDesktop": "Unallocated rewards will be swept back for restaking at the end of this allocation window, so don't forget to allocate!",
+          "textMobile": "Unallocated rewards will be swept back for restaking at the end of this allocation window"
         }
       },
       "preLaunch": {
@@ -336,42 +348,66 @@
       }
     },
     "metrics": {
+      "open": "Open",
+      "overview": "Overview",
+      "epoch": "Epoch",
+      "epochAllocationWindow": "Epoch {{epoch}} Allocation Window",
+      "epochAllocation": "E{{epoch}} Allocation",
+      "yourMetrics": "Your metrics",
+      "totalRewards": "Total rewards",
+      "allocationsInEth": "Allocations in ETH",
+      "generalMetrics": "General metrics",
+      "totalWithdrawals": "Total withdrawals",
+      "donationsVsPersonalAllocationValue": "Donations vs personal allocation value",
+      "patronModeActive": "Patron mode active",
+      "patronModeActiveLabel": "{{numberOfEpochs}} epochs",
+      "donatedAsPatron": "Donated as patron",
+      "noAllocationsYet": "No allocations yet",
       "totalProjects": "Total projects",
       "totalEthStaked": "Total ETH Staked",
       "totalGlmLocked": "Total GLM Locked",
       "of1BTotalSupply": "of 1B total supply",
       "totalAddresses": "Total addresses",
-      "largestGlmLock": "largest GLM lock",
       "cumulativeGlmLocked": "Cumulative GLM Locked",
       "walletsWithGlmLocked": "Wallets with GLM locked",
       "epochAllocationStartsIn": "Epoch {{epoch}} allocation starts in",
       "epochAllocationEndsIn": "Epoch {{epoch}} allocation ends in",
       "totalProjectsSinceEpoch0": "{{projectsAmount}} total since E0",
-      "tip": {
-        "title": "Check the stats",
-        "text": "View the data about all the decisions taken in the previous epoch here in <0>Metrics</0>"
-      }
+      "connectWalletTip": {
+        "title": "Connect your wallet",
+        "text": "To see your own personal stats here, <0/>you will need to connect your wallet"
+      },
+      "belowThreshold": "Below threshold",
+      "ethBelowThreshold": "ETH Below threshold",
+      "totalPersonal": "Total personal",
+      "totalDonations": "Total donations",
+      "averageLeverage": "Average leverage",
+      "currentDonors": "Current donors",
+      "patrons": "Patrons",
+      "rewardsUnused": "Rewards unused",
+      "unallocatedValue": "Unallocated value",
+      "users": "Users",
+      "topProjectsByEthRaised": "Top {{numberOfProjects}} projects by ETH raised",
+      "totalUsers": "Total users",
+      "fundsUsage": "Epoch {{epoch}} funds usage ",
+      "epochTotal": "Epoch {{epoch}} Total",
+      "leftover": "Moved to E{{epochNumber}}",
+      "staking": "Staking",
+      "projectCosts": "Project costs",
+      "matchRewards": "Match rewards",
+      "userRewards": "User rewards"
     },
     "onboarding": {
       "stepsCommon": {
         "usingTheApp": {
           "header": "Using the app",
           "text": "Before we can go any further, please read the terms of service and click the checkbox below to agree with them."
-        },
-        "claimGlm": {
-          "header": "Claim your GLM",
-          "text": "As you hold an Epoch Zero Token and you participated in the Snapshot vote, you are eligible to claim {{value}} GLM. Click the button below to withdraw to your wallet.",
-          "buttonLabel": {
-            "withdraw": "Withdraw GLM",
-            "withdrawn": "GLM claimed"
-          },
-          "signMessage": "Claim {{value}} GLMs"
         }
       },
       "stepsDecisionWindowOpen": {
         "welcomeToOctant": {
           "header": "Welcome to Octant",
-          "text": "To get started, lock some GLM in the <0>Earn</0> view, and take a look at the projects you can donate to in the <0>Projects</0> view.<br/><br/>If you already have GLM locked, you’ll have some rewards to use during E1 Allocation window, which runs from 19 Oct to 2 Nov."
+          "text": "To get started, lock some GLM in the <0>Earn</0> view, and take a look at the projects you can donate to in the <0>Projects</0> view.<br/><br/>If you already have GLM locked, you’ll have some rewards to use during E2 Allocation window, which runs from 17 to 31 Jan."
         },
         "earnRewards": {
           "header": "Earn ETH rewards",
@@ -383,7 +419,7 @@
         },
         "slideIt": {
           "header": "Just slide it",
-          "text": "Once you have rewards, use the slider in the <0>Allocate</0> view to divide your rewards into donations to projects or personal allocation.<br/><br/>Change your choices at any time during the Allocation window, just unlock the slider, make some edits and reconfirm in your wallet."
+          "text": "Once you have rewards, use the slider in the <0>Allocate</0> view to easily divide rewards between projects or yourself.<br/><br/>To change your choices at any time during allocation, just click Edit, make some changes and reconfirm in your wallet."
         }
       },
       "stepsDecisionWindowClosed": {
@@ -406,6 +442,13 @@
       "backToTop": "Back to Top"
     },
     "proposals": {
+      "proposalsTimelineWidget": {
+        "applicationsOpen": "Applications open",
+        "projectUpdatesClose": "Project updates close",
+        "snapshotVote": "Snapshot vote",
+        "allocationWindow": "Allocation window",
+        "epochStarts": "Epoch {{epoch}} starts"
+      },
       "tip": {
         "title": "Add your favourites",
         "text": "Save projects to the Allocate view with the heart icon so you can donate rewards to them"

@@ -1,0 +1,35 @@
+---
+name: ▶️ Deploy Production
+on:
+  push:
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+
+
+env:
+  IMAGE_TAG: "${{ github.sha }}"
+  GIT_TAG: "${{ github.ref }}"
+
+jobs:
+  build:
+    name: Build
+    uses: ./.github/workflows/tpl-images.yml
+    secrets: inherit
+    with:
+      image-tag: ${{ github.sha }}
+  output:
+    name: Output Variables
+    needs:
+    - build
+    runs-on:
+    - metal
+    steps:
+      - name: Show variables for the CI pipeline
+        run : |
+          echo '================================'
+          echo '  Use the following variables'
+          echo ''
+          echo "CI_PIPELINE_SOURCE: pipeline"
+          echo "DEV_IMAGE_TAG: ${{ github.sha }}"
+          echo "PROD_IMAGE_TAG: ${GIT_TAG##*/}"
+        shell: bash
+

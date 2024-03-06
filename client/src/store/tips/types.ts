@@ -1,7 +1,6 @@
 export interface TipsData {
   wasAddFavouritesAlreadyClosed: boolean;
-  wasChangedYourMindAlreadyClosed: boolean;
-  wasCheckStatusAlreadyClosed: boolean;
+  wasAllocateRewardsAlreadyClosed: boolean;
   wasConnectWalletAlreadyClosed: boolean;
   wasLockGLMAlreadyClosed: boolean;
   wasRewardsAlreadyClosed: boolean;
@@ -12,10 +11,9 @@ export interface TipsMethods {
   setInitialState: () => void;
   setValuesFromLocalStorage: () => void;
   setWasAddFavouritesAlreadyClosed: (payload: TipsData['wasAddFavouritesAlreadyClosed']) => void;
-  setWasChangedYourMindAlreadyClosed: (
-    payload: TipsData['wasChangedYourMindAlreadyClosed'],
+  setWasAllocateRewardsAlreadyClosed: (
+    payload: TipsData['wasAllocateRewardsAlreadyClosed'],
   ) => void;
-  setWasCheckStatusAlreadyClosed: (payload: TipsData['wasCheckStatusAlreadyClosed']) => void;
   setWasConnectWalletAlreadyClosed: (payload: TipsData['wasConnectWalletAlreadyClosed']) => void;
   setWasLockGLMAlreadyClosed: (payload: TipsData['wasLockGLMAlreadyClosed']) => void;
   setWasRewardsAlreadyClosed: (payload: TipsData['wasRewardsAlreadyClosed']) => void;

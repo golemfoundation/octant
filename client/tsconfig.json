@@ -14,6 +14,7 @@
     "lib": ["dom", "dom.iterable", "esnext", "es2017"],
     "module": "esnext",
     "moduleResolution": "node",
+    "allowImportingTsExtensions": true,
     "noEmit": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
@@ -21,7 +22,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "es2022"
+    "target": "es2022",
   },
   "include": ["codegen.ts", "global.d.ts", "src/**/*"],
   "exclude": [
@@ -30,6 +31,6 @@
       synpress.config.ts needs to be excluded:
       https://stackoverflow.com/questions/58999086/cypress-causing-type-errors-in-jest-assertions/72663546#7266354
     */
-    "/client/synpress.config.ts"
-  ]
+    "/client/synpress.config.ts",
+  ],
 }

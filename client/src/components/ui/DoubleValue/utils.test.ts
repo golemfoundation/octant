@@ -1,4 +1,4 @@
-import { parseUnits } from 'ethers/lib/utils';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import { getValuesToDisplay } from './utils';
 
@@ -16,7 +16,7 @@ describe('getValuesToDisplay', () => {
     displayCurrency: 'usd',
     error: null,
     isCryptoMainValueDisplay: true,
-    valueCrypto: parseUnits('0.5'),
+    valueCrypto: parseUnitsBigInt('0.5'),
     valueString: '1.0',
   };
 

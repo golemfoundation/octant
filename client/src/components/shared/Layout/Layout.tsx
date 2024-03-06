@@ -1,7 +1,7 @@
 import cx from 'classnames';
-import React, { FC, useState, Fragment, useMemo } from 'react';
+import React, { FC, useState, Fragment, useMemo, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { Link, useLocation, useMatch } from 'react-router-dom';
+import { useLocation, useMatch, useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
 import LayoutNavbar from 'components/shared/Layout/LayoutNavbar';
@@ -27,6 +27,7 @@ import useUserTOS from 'hooks/queries/useUserTOS';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import { octant } from 'svg/logo';
 import { chevronBottom } from 'svg/misc';
+import { chevronLeft } from 'svg/navigation';
 import getDifferenceInWeeks from 'utils/getDifferenceInWeeks';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
 import getTimeDistance from 'utils/getTimeDistance';
@@ -44,7 +45,7 @@ const Layout: FC<LayoutProps> = ({
   isLoading,
   isNavigationVisible = true,
   classNameBody,
-  navigationTabs = navigationTabsDefault,
+  isAbsoluteHeaderPosition = false,
 }) => {
   const { data: isPatronMode } = useIsPatronMode();
   const { t } = useTranslation('translation', { keyPrefix: 'layouts.main' });
@@ -56,6 +57,7 @@ const Layout: FC<LayoutProps> = ({
   const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { data: isUserTOSAccepted } = useUserTOS();
   const isProjectAdminMode = useIsProjectAdminMode();
 
@@ -68,8 +70,19 @@ const Layout: FC<LayoutProps> = ({
 
   const showAllocationPeriod = isAllocationRoot || isProposalRoot || isProposalsRoot;
 
+  const getCurrentPeriod = () => {
+    if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
+      return getTimeDistance(Date.now(), new Date(timeCurrentAllocationEnd).getTime());
+    }
+    if (!isDecisionWindowOpen && timeCurrentEpochEnd) {
+      return getTimeDistance(Date.now(), new Date(timeCurrentEpochEnd).getTime());
+    }
+    return '';
+  };
+  const [currentPeriod, setCurrentPeriod] = useState(() => getCurrentPeriod());
+
   const tabsWithIsActive = useMemo(() => {
-    let tabs = navigationTabs;
+    let tabs = navigationTabsDefault;
 
     if (isPatronMode) {
       tabs = patronNavigationTabs;
@@ -78,23 +91,18 @@ const Layout: FC<LayoutProps> = ({
       tabs = adminNavigationTabs;
     }
 
-    return tabs.map(tab => ({
-      ...tab,
-      isActive: tab.isActive || pathname === tab.to,
-      isDisabled: isPreLaunch && tab.to !== ROOT_ROUTES.earn.absolute,
-    }));
-  }, [isPatronMode, isProjectAdminMode, isPreLaunch, pathname, navigationTabs]);
-
-  const allocationPeriod = useMemo(() => {
-    if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
-      return getTimeDistance(Date.now(), new Date(timeCurrentAllocationEnd).getTime());
-    }
-    if (!isDecisionWindowOpen && timeCurrentEpochEnd) {
-      return getTimeDistance(Date.now(), new Date(timeCurrentEpochEnd).getTime());
-    }
-
-    return '';
-  }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
+    return tabs.map(tab => {
+      const isProjectView =
+        pathname.includes(`${ROOT_ROUTES.proposal.absolute}/`) &&
+        tab.to === ROOT_ROUTES.proposals.absolute;
+      return {
+        ...tab,
+        icon: isProjectView ? chevronLeft : tab.icon,
+        isActive: tab.isActive || pathname === tab.to || isProjectView,
+        isDisabled: isPreLaunch && tab.to !== ROOT_ROUTES.earn.absolute,
+      };
+    });
+  }, [isPatronMode, isProjectAdminMode, isPreLaunch, pathname]);
 
   const isAllocationPeriodIsHighlighted = useMemo(() => {
     if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
@@ -104,6 +112,23 @@ const Layout: FC<LayoutProps> = ({
       return getDifferenceInWeeks(Date.now(), new Date(timeCurrentEpochEnd).getTime()) < 1;
     }
     return false;
+  }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
+
+  const onLogoClick = () => {
+    if (pathname === ROOT_ROUTES.proposals.absolute) {
+      window.scrollTo({ behavior: 'smooth', top: 0 });
+      return;
+    }
+
+    navigate(ROOT_ROUTES.proposals.absolute);
+  };
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentPeriod(getCurrentPeriod());
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+    // eslint-disable-next-line  react-hooks/exhaustive-deps
   }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
   return (
@@ -124,12 +149,16 @@ const Layout: FC<LayoutProps> = ({
         {isHeaderVisible && (
           <Fragment>
             <div className={styles.headerBlur} />
-            <div className={cx(styles.headerWrapper, ELEMENT_POSITION_FIXED_CLASSNAME)}>
+            <div
+              className={cx(
+                styles.headerWrapper,
+                ELEMENT_POSITION_FIXED_CLASSNAME,
+                isAbsoluteHeaderPosition && styles.isAbsoluteHeaderPosition,
+              )}
+            >
               <div className={styles.header} data-test="MainLayout__Header">
-                <div className={styles.logoWrapper}>
-                  <Link data-test="MainLayout__Logo" to={ROOT_ROUTES.proposals.absolute}>
-                    <Svg img={octant} size={4} />
-                  </Link>
+                <div className={styles.logo} data-test="MainLayout__Logo" onClick={onLogoClick}>
+                  <Svg img={octant} size={4} />
                   {networkConfig.isTestnet && (
                     <div className={styles.testnetIndicatorWrapper}>
                       <div className={styles.testnetIndicator}>{networkConfig.name}</div>
@@ -184,7 +213,7 @@ const Layout: FC<LayoutProps> = ({
                                     ? 'layouts.main.allocationEndsIn'
                                     : 'layouts.main.allocationStartsIn'
                                 }
-                                values={{ allocationPeriod }}
+                                values={{ currentPeriod }}
                               />
                             </div>
                           ) : (
@@ -232,11 +261,7 @@ const Layout: FC<LayoutProps> = ({
           )}
           data-test="MainLayout__body"
         >
-          {isLoading ? (
-            <Loader className={styles.loader} dataTest="MainLayout__Loader" />
-          ) : (
-            children
-          )}
+          {isLoading ? <Loader dataTest="MainLayout__Loader" /> : children}
         </div>
         {isNavigationVisible && (
           <LayoutNavbar navigationBottomSuffix={navigationBottomSuffix} tabs={tabsWithIsActive} />

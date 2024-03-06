@@ -5,7 +5,7 @@ from app.extensions import cache
 from app.extensions import api
 from app.infrastructure import OctantResource
 from app.constants import MAINNET_VALIDATORS_ETHEREUM_ADDRESS
-from app.controllers.validators import (
+from app.legacy.controllers.validators import (
     ValidatorsInfo,
     ActiveValidatorsData,
     get_validators_info_by_address,

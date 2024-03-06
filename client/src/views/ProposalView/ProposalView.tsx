@@ -1,6 +1,6 @@
 import { AnimatePresence } from 'framer-motion';
 import throttle from 'lodash/throttle';
-import React, { ReactElement, useState, useEffect, useMemo } from 'react';
+import React, { ReactElement, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
@@ -9,7 +9,6 @@ import ProposalBackToTopButton from 'components/Proposal/ProposalBackToTopButton
 import ProposalList from 'components/Proposal/ProposalList';
 import Layout from 'components/shared/Layout';
 import Loader from 'components/ui/Loader';
-import { navigationTabs as navigationTabsDefault } from 'constants/navigationTabs/navigationTabs';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -18,8 +17,7 @@ import useProposalsIpfsWithRewards, {
   ProposalIpfsWithRewards,
 } from 'hooks/queries/useProposalsIpfsWithRewards';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
-import { chevronLeft } from 'svg/navigation';
-import triggerToast from 'utils/triggerToast';
+import toastService from 'services/toastService';
 
 import styles from './ProposalView.module.scss';
 
@@ -34,20 +32,10 @@ const ProposalView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
   const epochUrlInt = parseInt(epochUrl!, 10);
 
-  const epoch = currentEpoch && epochUrlInt < currentEpoch ? epochUrlInt : undefined;
+  const epoch = isDecisionWindowOpen && epochUrlInt === currentEpoch! - 1 ? undefined : epochUrlInt;
 
   const { data: matchedProposalRewards } = useMatchedProposalRewards(epoch);
   const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards(epoch);
-
-  const navigationTabs = useMemo(() => {
-    const navTabs = [...navigationTabsDefault];
-    navTabs[0] = {
-      ...navTabs[0],
-      icon: chevronLeft,
-      isActive: true,
-    };
-    return navTabs;
-  }, []);
 
   const isEpoch1 = currentEpoch === 1;
   const areMatchedProposalsReady =
@@ -75,9 +63,17 @@ const ProposalView = (): ReactElement => {
      *
      * During "normal" usage problem could not be reproduced,
      * yet might be possible, so better avoid that.
+     *
+     * Issue is not resolved in the library:
+     * https://github.com/danbovey/react-infinite-scroller/issues/143
      */
     if (loadedProposals.findIndex(p => p.address === nextItem.address) < 0) {
-      setLoadedProposals(prev => [...prev, nextItem]);
+      setLoadedProposals(prev =>
+        [...prev, nextItem].filter(
+          (element, index, self) =>
+            index === self.findIndex(element2 => element2.address === element.address),
+        ),
+      );
     }
   };
 
@@ -122,7 +118,7 @@ const ProposalView = (): ReactElement => {
   }, [loadedProposals.length, proposalsIpfsWithRewards.length]);
 
   if (!initialElement || !areMatchedProposalsReady || proposalsIpfsWithRewards.length === 0) {
-    return <Layout isLoading navigationTabs={navigationTabs} />;
+    return <Layout isLoading />;
   }
 
   if (
@@ -130,7 +126,8 @@ const ProposalView = (): ReactElement => {
     (initialElement && initialElement.isLoadingError) ||
     (areCurrentEpochsProjectsHiddenOutsideAllocationWindow && epochUrl === currentEpoch.toString())
   ) {
-    triggerToast({
+    toastService.showToast({
+      name: 'proposalLoadingProblem',
       title: t('loadingProblem'),
       type: 'warning',
     });
@@ -142,11 +139,7 @@ const ProposalView = (): ReactElement => {
   }
 
   return (
-    <Layout
-      classNameBody={styles.mainLayoutBody}
-      dataTest="ProposalView"
-      navigationTabs={navigationTabs}
-    >
+    <Layout classNameBody={styles.mainLayoutBody} dataTest="ProposalView">
       <InfiniteScroll
         hasMore={loadedProposals?.length !== proposalsIpfsWithRewards?.length}
         initialLoad

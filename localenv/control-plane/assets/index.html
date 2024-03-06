@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en-US">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Octant development</title>
+      <script>
+         fetch('http://localhost:8080/contracts').then(data => {
+          data.text().then(text => {
+            document.getElementById('contracts-div').innerText = text;
+          });
+         });
+      </script>
+   </head>
+   <body>
+</html>
+<h2>OCTANT LOCALENV SERVICES</h2>
+<table style="height: 142px; width: 662px; margin-left: auto; margin-right: auto;" border="2" cellspacing="0" cellpadding="10">
+   <tbody>
+      <tr style="height: 46px;">
+         <td style="width: 109.359375px; height: 46px; text-align: left;">
+            <h4><strong>Service</strong></h4>
+         </td>
+         <td style="width: 253.796875px; height: 46px; text-align: left;">
+            <h4><strong>URL</strong></h4>
+         </td>
+      </tr>
+<!--      <tr style="height: 78px;"> -->
+<!--         <td style="width: 109.359375px; text-align: center; height: 78px;">CLIENT</td> -->
+<!--         <td style="width: 253.796875px; text-align: center; height: 78px;"><a href="http://client.octant.localhost:8080">client.octant.localhost:8080</a></td> -->
+<!--         <td style="width: 276.875px; text-align: left; height: 78px;"> -->
+<!--            <ul></ul> -->
+<!--         </td> -->
+<!--      </tr> -->
+      <tr style="height: 18px;">
+         <td style="width: 109.359375px; text-align: center; height: 18px;">BACKEND</td>
+         <td style="width: 253.796875px; text-align: center; height: 18px;"><a href="http://backend.octant.localhost:8080">backend.octant.localhost:8080</a></td>
+      </tr>
+      <tr>
+         <td style="width: 109.359375px; text-align: center;">SUBGRAPH</td>
+         <td style="width: 253.796875px; text-align: center;"><a href="http://graph.octant.localhost:8080">graph.octant.localhost:8080</a></td>
+      </tr>
+      <tr>
+         <td style="width: 109.359375px; text-align: center;">ANVIL</td>
+         <td style="width: 253.796875px; text-align: center;"><a href="http://rpc.octant.localhost:8080">rpc.octant.localhost:8080</a></td>
+      </tr>
+   </tbody>
+</table>
+<h2>LOCAL CONTRACTS:</h2>
+<p>
+<ul>
+   <div id="contracts-div"></div>
+</ul>
+</p>
+</body>

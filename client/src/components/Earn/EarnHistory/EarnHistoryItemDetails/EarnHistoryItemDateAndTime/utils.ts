@@ -1,4 +1,4 @@
-import format from 'date-fns/format';
+import { format } from 'date-fns';
 
 export function getHistoryItemDateAndTime(timestamp: string): string {
   // Timestamp from subgraph is in microseconds, needs to be changed to milliseconds.

@@ -12,9 +12,11 @@ export default function useCryptoValues(
     Response,
     ['cryptoValues', NonNullable<SettingsData['displayCurrency']>]
   >,
-): UseQueryResult<Response | undefined> {
-  return useQuery(QUERY_KEYS.cryptoValues(fiatCurrency!), () => apiGetCryptoValues(fiatCurrency!), {
+): UseQueryResult<Response | undefined, unknown> {
+  return useQuery({
     enabled: !!fiatCurrency,
+    queryFn: () => apiGetCryptoValues(fiatCurrency!),
+    queryKey: QUERY_KEYS.cryptoValues(fiatCurrency!),
     retry: false,
     retryOnMount: false,
     ...options,

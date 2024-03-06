@@ -4,7 +4,16 @@
   &.size {
     &--S {
       .value {
-        font-size: $font-size-24;
+        margin-top: 0.8rem;
+        height: 2rem;
+        line-height: 2rem;
+        font-size: $font-size-16;
+        text-align: left;
+      }
+
+      .subvalue {
+        margin-top: 0.2rem;
+        justify-content: start;
       }
     }
   }
@@ -29,9 +38,10 @@
   .value {
     height: 3.2rem;
     line-height: 3.2rem;
-    font-size: $font-size-32;
+    font-size: $font-size-24;
     font-weight: $font-weight-bold;
     color: $color-octant-dark;
+    text-align: left;
   }
 
   .subvalue {
@@ -40,7 +50,7 @@
     font-weight: $font-weight-bold;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     height: 1.6rem;
     line-height: 1.6rem;
     margin-top: 1.2rem;

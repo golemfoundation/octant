@@ -1,0 +1,92 @@
+[
+  {
+    "inputs": [
+      { "internalType": "string", "name": "_initCID", "type": "string" },
+      { "internalType": "address[]", "name": "proposals", "type": "address[]" },
+      { "internalType": "address", "name": "_auth", "type": "address" }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "epochs",
+        "type": "address"
+      }
+    ],
+    "name": "EpochsSet",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "auth",
+    "outputs": [
+      { "internalType": "contract Auth", "name": "", "type": "address" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "cid",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "epochs",
+    "outputs": [
+      { "internalType": "contract IEpochs", "name": "", "type": "address" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_epoch", "type": "uint256" }
+    ],
+    "name": "getProposalAddresses",
+    "outputs": [
+      { "internalType": "address[]", "name": "", "type": "address[]" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "string", "name": "_newCID", "type": "string" }
+    ],
+    "name": "setCID",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_epochs", "type": "address" }
+    ],
+    "name": "setEpochs",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_epoch", "type": "uint256" },
+      {
+        "internalType": "address[]",
+        "name": "_proposalAddresses",
+        "type": "address[]"
+      }
+    ],
+    "name": "setProposalAddresses",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

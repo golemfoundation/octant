@@ -1,4 +1,4 @@
-import { format } from 'date-fns-tz';
+import { format } from 'date-fns';
 import React, { FC, Fragment, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
@@ -9,8 +9,10 @@ import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
 import useEpochAndAllocationTimestamps from 'hooks/helpers/useEpochAndAllocationTimestamps';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
+import useTotalPatronDonations from 'hooks/helpers/useTotalPatronDonations';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useCurrentEpochProps from 'hooks/queries/useCurrentEpochProps';
+import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useWithdrawals from 'hooks/queries/useWithdrawals';
@@ -31,7 +33,10 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
   const { timeCurrentEpochStart, timeCurrentAllocationEnd } = useEpochAndAllocationTimestamps();
   const { data: currentEpochProps } = useCurrentEpochProps();
   const { data: withdrawals, isFetching: isFetchingWithdrawals } = useWithdrawals();
+  const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const { data: isPatronMode } = useIsPatronMode();
+  const { data: totalPatronDonations, isFetching: isFetchingTotalPatronDonations } =
+    useTotalPatronDonations({ isEnabledAdditional: !!isPatronMode });
   const { isAppWaitingForTransactionToBeIndexed } = useTransactionLocalStore(state => ({
     isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
   }));
@@ -46,8 +51,9 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
             dataTest: 'BoxPersonalAllocation__Section',
             doubleValueProps: {
               cryptoCurrency: 'ethereum',
-              isFetching: isFetchingWithdrawals,
-              valueCrypto: withdrawals?.sums.pending,
+              dataTest: 'BoxPersonalAllocation__Section--pending__DoubleValue',
+              isFetching: isPatronMode ? isFetchingIndividualReward : isFetchingWithdrawals,
+              valueCrypto: isPatronMode ? individualReward : withdrawals?.sums.pending,
             },
             label: isPatronMode ? t('currentEpoch') : t('pending'),
             tooltipProps: isPatronMode
@@ -84,8 +90,11 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
       doubleValueProps: {
         coinPricesServerDowntimeText: !isProjectAdminMode ? '...' : undefined,
         cryptoCurrency: 'ethereum',
-        isFetching: isFetchingWithdrawals || isAppWaitingForTransactionToBeIndexed,
-        valueCrypto: withdrawals?.sums.available,
+        dataTest: 'BoxPersonalAllocation__Section--availableNow__DoubleValue',
+        isFetching: isPatronMode
+          ? isFetchingTotalPatronDonations
+          : isFetchingWithdrawals || isAppWaitingForTransactionToBeIndexed,
+        valueCrypto: isPatronMode ? totalPatronDonations?.value : withdrawals?.sums.available,
       },
       label: isPatronMode && !isProjectAdminMode ? t('allTime') : i18n.t('common.availableNow'),
     },
@@ -115,7 +124,7 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
                   !isConnected ||
                   isFetchingWithdrawals ||
                   isAppWaitingForTransactionToBeIndexed ||
-                  withdrawals?.sums.available?.isZero(),
+                  !!(withdrawals?.sums.available && withdrawals.sums.available === 0n),
                 isHigh: true,
                 label: t('withdrawToWallet'),
                 onClick: () => setIsModalOpen(true),

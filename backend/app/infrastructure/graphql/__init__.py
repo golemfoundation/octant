@@ -1,4 +1,4 @@
-from . import locks, unlocks, epochs, info
+from . import locks, unlocks, epochs, info  # noqa
 
 
 def get_last_deposit_event(

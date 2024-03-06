@@ -1,6 +1,6 @@
-import { BigNumber } from 'ethers';
+import { FormikHelpers } from 'formik';
 
-import { CurrentMode } from 'components/Earn/EarnGlmLock/types';
+import { FormFields, CurrentMode, OnReset } from 'components/Earn/EarnGlmLock/types';
 
 export default interface EarnGlmLockTabsProps {
   className?: string;
@@ -8,8 +8,9 @@ export default interface EarnGlmLockTabsProps {
   isLoading: boolean;
   onClose: () => void;
   onInputsFocusChange: (value: boolean) => void;
-  onReset: (mode: CurrentMode) => void;
-  setValueToDepose: (value: BigNumber) => void;
+  onReset: OnReset;
+  setFieldValue: FormikHelpers<FormFields>['setFieldValue'];
+  setValueToDepose: (value: bigint) => void;
   showBalances: boolean;
   step: 1 | 2 | 3;
 }

@@ -10,6 +10,7 @@ import Svg from 'components/ui/Svg';
 import Tooltip from 'components/ui/Tooltip';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
@@ -25,23 +26,30 @@ const ProposalListItemHeader: FC<ProposalListItemHeaderProps> = ({
   website,
   epoch,
 }) => {
-  const { ipfsGateway } = env;
+  const { ipfsGateways } = env;
   const { i18n } = useTranslation('translation', { keyPrefix: 'views.proposal' });
   const { epoch: epochUrl } = useParams();
   const { data: userAllocations } = useUserAllocations(epoch);
-  const { allocations, setAllocations } = useAllocationsStore(state => ({
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const { allocations, addAllocations, removeAllocations } = useAllocationsStore(state => ({
+    addAllocations: state.addAllocations,
     allocations: state.data.allocations,
-    setAllocations: state.setAllocations,
+    removeAllocations: state.removeAllocations,
   }));
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
+    addAllocations,
     allocations: allocations!,
-    setAllocations,
+    isDecisionWindowOpen,
+    removeAllocations,
     userAllocationsElements: userAllocations?.elements,
   });
 
   const [isLinkCopied, setIsLinkCopied] = useState(false);
 
   const isArchivedProposal = epoch !== undefined;
+  const isAllocatedTo = !!userAllocations?.elements.find(
+    ({ address: userAllocationAddress }) => userAllocationAddress === address,
+  );
 
   const onShareClick = (): boolean | Promise<boolean> => {
     const { origin } = window.location;
@@ -74,7 +82,7 @@ const ProposalListItemHeader: FC<ProposalListItemHeaderProps> = ({
         <Img
           className={styles.imageProfile}
           dataTest="ProposalListItemHeader__Img"
-          src={`${ipfsGateway}${profileImageSmall}`}
+          sources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
         />
         <div className={styles.actionsWrapper}>
           <Tooltip
@@ -90,18 +98,16 @@ const ProposalListItemHeader: FC<ProposalListItemHeaderProps> = ({
               size={3.2}
             />
           </Tooltip>
-          <ButtonAddToAllocate
-            className={styles.buttonAddToAllocate}
-            dataTest="ProposalListItemHeader__ButtonAddToAllocate"
-            isAddedToAllocate={allocations.includes(address)}
-            isAllocatedTo={
-              !!userAllocations?.elements.find(
-                ({ address: userAllocationAddress }) => userAllocationAddress === address,
-              )
-            }
-            isArchivedProposal={isArchivedProposal}
-            onClick={() => onAddRemoveFromAllocate(address)}
-          />
+          {((isAllocatedTo && isArchivedProposal) || !isArchivedProposal) && (
+            <ButtonAddToAllocate
+              className={styles.buttonAddToAllocate}
+              dataTest="ProposalListItemHeader__ButtonAddToAllocate"
+              isAddedToAllocate={allocations.includes(address)}
+              isAllocatedTo={isAllocatedTo}
+              isArchivedProposal={isArchivedProposal}
+              onClick={() => onAddRemoveFromAllocate(address)}
+            />
+          )}
         </div>
       </div>
       <span className={styles.name} data-test="ProposalListItemHeader__name">

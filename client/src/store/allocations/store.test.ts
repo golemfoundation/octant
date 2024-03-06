@@ -41,6 +41,21 @@ describe('useAllocationsStore', () => {
     ]);
   });
 
+  it('should remove allocations in localStorage and state', () => {
+    const { removeAllocations, setAllocations } = useAllocationsStore.getState();
+    const allocations = ['address1', 'address2', 'address3'];
+
+    expect(useAllocationsStore.getState().data.allocations).toEqual([]);
+    setAllocations(allocations);
+    expect(localStorage.getItem(ALLOCATION_ITEMS_KEY)).toEqual(JSON.stringify(allocations));
+    expect(useAllocationsStore.getState().data.allocations).toEqual(allocations);
+
+    const newAllocations = ['address3', 'address2'];
+    removeAllocations(newAllocations);
+    expect(localStorage.getItem(ALLOCATION_ITEMS_KEY)).toEqual(JSON.stringify(['address1']));
+    expect(useAllocationsStore.getState().data.allocations).toEqual(['address1']);
+  });
+
   it('should set allocations in localStorage and state', () => {
     const { setAllocations } = useAllocationsStore.getState();
     const allocations = ['address1', 'address2', 'address3'];

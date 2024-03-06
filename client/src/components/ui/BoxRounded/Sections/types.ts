@@ -31,6 +31,7 @@ export interface SectionProps {
     dataTest?: TooltipProps['dataTest'];
     position: TooltipProps['position'];
     text: TooltipProps['text'];
+    tooltipClassName?: TooltipProps['tooltipClassName'];
   };
   variant?: 'small' | 'standard';
 }

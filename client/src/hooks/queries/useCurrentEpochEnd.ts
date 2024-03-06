@@ -7,15 +7,13 @@ import { readContractEpochs } from 'hooks/contracts/readContracts';
 export default function useCurrentEpochEnd(): UseQueryResult<number | undefined> {
   const publicClient = usePublicClient();
 
-  return useQuery(
-    QUERY_KEYS.currentEpochEnd,
-    () =>
+  return useQuery({
+    queryFn: () =>
       readContractEpochs({
         functionName: 'getCurrentEpochEnd',
         publicClient,
       }),
-    {
-      select: response => Number(response) * 1000,
-    },
-  );
+    queryKey: QUERY_KEYS.currentEpochEnd,
+    select: response => Number(response) * 1000,
+  });
 }

@@ -6,11 +6,13 @@ import { QUERY_KEYS } from 'api/queryKeys';
 
 export default function useUserTOS(
   options?: UseQueryOptions<Response, unknown, boolean, any>,
-): UseQueryResult<boolean> {
+): UseQueryResult<boolean, unknown> {
   const { address } = useAccount();
 
-  return useQuery(QUERY_KEYS.userTOS(address!), () => apiGetUserTOS(address!), {
+  return useQuery({
     enabled: !!address,
+    queryFn: () => apiGetUserTOS(address!),
+    queryKey: QUERY_KEYS.userTOS(address!),
     select: response => response.accepted,
     ...options,
   });

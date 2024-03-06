@@ -32,12 +32,10 @@ export default function useBlockNumber(
 ): UseQueryResult<number | null | undefined> {
   const { subgraphAddress } = env;
 
-  return useQuery<Meta, any, number | undefined, any>(
-    QUERY_KEYS.blockNumber,
-    async () => request(subgraphAddress, GET_BLOCK_NUMBER),
-    {
-      refetchInterval: isRefetchEnabled ? 1000 : false,
-      select: data => data._meta?.block.number,
-    },
-  );
+  return useQuery<Meta, any, number | undefined, any>({
+    queryFn: async () => request(subgraphAddress, GET_BLOCK_NUMBER),
+    queryKey: QUERY_KEYS.blockNumber,
+    refetchInterval: isRefetchEnabled ? 1000 : false,
+    select: data => data._meta?.block.number,
+  });
 }

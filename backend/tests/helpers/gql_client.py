@@ -23,6 +23,7 @@ class MockGQLClient:
         self.lockeds = lockeds if lockeds is not None else []
         self.unlockeds = unlockeds if unlockeds is not None else []
         self.vaultMerkleRoots = merkle_roots if merkle_roots is not None else []
+        self._bytes_to_lowercase()
 
     def execute(self, query: DocumentNode, variable_values=None):
         query = query.to_dict()["definitions"][0]
@@ -72,6 +73,10 @@ class MockGQLClient:
         )
         expected_value = variables[expected_value_spec]
 
+        # subgraph compares hex encoded data bytewise, so address checksums should be disregarded
+        if isinstance(expected_value, str) and expected_value.startswith("0x"):
+            expected_value = expected_value.lower()
+
         filter_name = filtered_field_spec[1] if len(filtered_field_spec) == 2 else ""
         filter_func = filters[filter_name]
         value_filter = filter_func(expected_value)
@@ -90,7 +95,7 @@ class MockGQLClient:
     def _limit_result(entities, query, variables):
         limit = MockGQLClient._extract_limit(query, variables)
 
-        return entities[:limit] if limit is not None else entities
+        return list(entities)[:limit] if limit is not None else entities
 
     @staticmethod
     def _extract_limit(query, variables):
@@ -160,3 +165,13 @@ class MockGQLClient:
         return [
             field_definition["name"]["value"] for field_definition in fields_definitions
         ]
+
+    @staticmethod
+    def _user_to_lower(event):
+        event["user"] = event["user"].lower()
+        return event
+
+    def _bytes_to_lowercase(self):
+        self.withdrawals = list(map(MockGQLClient._user_to_lower, self.withdrawals))
+        self.lockeds = list(map(MockGQLClient._user_to_lower, self.lockeds))
+        self.unlockeds = list(map(MockGQLClient._user_to_lower, self.unlockeds))

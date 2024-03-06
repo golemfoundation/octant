@@ -12,7 +12,7 @@ export const envViteKeys: EnvViteKeys = {
   contractProposalsAddress: 'VITE_PROPOSALS_ADDRESS',
   contractVaultAddress: 'VITE_VAULT_ADDRESS',
   cryptoValuesEndpoint: 'VITE_CRYPTO_VALUES_ENDPOINT',
-  ipfsGateway: 'VITE_IPFS_GATEWAY',
+  ipfsGateways: 'VITE_IPFS_GATEWAYS',
   jsonRpcEndpoint: 'VITE_JSON_RPC_ENDPOINT',
   network: 'VITE_NETWORK',
   serverEndpoint: 'VITE_SERVER_ENDPOINT',
@@ -41,7 +41,7 @@ const env: Env = {
   // @ts-expect-error TS does not understand the way vite imports envs.
   cryptoValuesEndpoint: import.meta.env[envViteKeys.cryptoValuesEndpoint],
   // @ts-expect-error TS does not understand the way vite imports envs.
-  ipfsGateway: import.meta.env[envViteKeys.ipfsGateway],
+  ipfsGateways: import.meta.env[envViteKeys.ipfsGateways],
   // @ts-expect-error TS does not understand the way vite imports envs.
   jsonRpcEndpoint: import.meta.env[envViteKeys.jsonRpcEndpoint],
   // @ts-expect-error TS does not understand the way vite imports envs.

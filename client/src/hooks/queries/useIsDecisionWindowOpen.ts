@@ -5,19 +5,17 @@ import { QUERY_KEYS } from 'api/queryKeys';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
 
 export default function useIsDecisionWindowOpen(
-  options?: UseQueryOptions<boolean, unknown, boolean, ['isDecisionWindowOpen']>,
-): UseQueryResult<boolean> {
+  options?: Omit<UseQueryOptions<boolean, unknown, boolean, ['isDecisionWindowOpen']>, 'queryKey'>,
+): UseQueryResult<boolean, unknown> {
   const publicClient = usePublicClient();
 
-  return useQuery(
-    QUERY_KEYS.isDecisionWindowOpen,
-    () =>
+  return useQuery({
+    queryFn: () =>
       readContractEpochs({
         functionName: 'isDecisionWindowOpen',
         publicClient,
       }),
-    {
-      ...options,
-    },
-  );
+    queryKey: QUERY_KEYS.isDecisionWindowOpen,
+    ...options,
+  });
 }

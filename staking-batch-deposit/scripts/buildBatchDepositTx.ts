@@ -1,15 +1,15 @@
 import fs from 'fs';
-import { ethers } from 'hardhat';
-import { BATCH_DEPOSIT_CONTRACT_ADDRESS, DEPOSIT_DATA_FILE } from '../env';
+import {ethers, network} from 'hardhat';
+import { getBatchDepositContractAddress, DEPOSIT_DATA_FILE } from '../env';
 import { BatchDeposit } from '../typechain/typechain-types';
 
 /* eslint-disable no-console */
 
 // Define the ABI
 const batchingABI = JSON.parse(fs.readFileSync('artifacts/contracts/BatchDeposit.sol/BatchDeposit.json', 'utf-8')).abi;
-
 const providerEthers = ethers.providers.getDefaultProvider();
-const batchDeposit = new ethers.Contract(BATCH_DEPOSIT_CONTRACT_ADDRESS, batchingABI, providerEthers) as BatchDeposit;
+const batchDepositContractAddress = getBatchDepositContractAddress(network.name);
+const batchDeposit = new ethers.Contract(batchDepositContractAddress, batchingABI, providerEthers) as BatchDeposit;
 
 // Read deposit depositData from a file
 const rawdata = fs.readFileSync(DEPOSIT_DATA_FILE, 'utf-8');
@@ -49,6 +49,6 @@ const txData = batchDeposit.interface.encodeFunctionData(
   ]
 );
 
-console.log('to: ', BATCH_DEPOSIT_CONTRACT_ADDRESS);
+console.log('to: ', batchDepositContractAddress);
 console.log('value: ', ethers.utils.formatEther(value));
 console.log('txData: ', txData);

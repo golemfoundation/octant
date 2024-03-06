@@ -1,18 +1,24 @@
+## Node version
+
+Use only node:16 because of [problem](https://github.com/Synthetixio/synpress/issues/1071) with e2e tests in synpress.
+
 ## Configuration
 
-Ensure that the `.env`  file is present. See `.env.template`.
+Ensure that the `.env` file is present. See `.env.template`.
 
 ### Envs
 
 1. `VITE_NETWORK` sets network used by the application. Supported values are 'Local', 'Mainnet', 'Sepolia'. Whenever different value is set, app uses 'Sepolia' network config.
 2. `VITE_JSON_RPC_ENDPOINT`: when provided, app uses first JSON RPC provided with this endpint. When it's not provided, app uses alchemy provider first.
-3. `areCurrentEpochsProjectsHiddenOutsideAllocationWindow` when set to 'true' makes current epoch's projects hidden when allocation window is closed.
+3. `VITE_ARE_CURRENT_EPOCHS_PROJECTS_HIDDEN_OUTSIDE_ALLOCATION_WINDOW` when set to 'true' makes current epoch's projects hidden when allocation window is closed.
+4. `VITE_IPFS_GATEWAYS` is an array of URLs separated by strings sorted by priority with providers the app should try to fetch the data about projects from. When fetching from the last fails client shows error toast message. Each URL should end with a forward slash (`/`).
 
 `yanr generate-abi-typings` is used to generate typings for proposals ABIs that we have in codebase. In these typings custom adjustments are added, e.g. in some places `string` is wrongly instead of `BigInt`. Linter is also disabled there. Since ABIs do not change, this command doesn't need to rerun.
 
 ### Contracts
 
 Client uses 5 contracts. Following are their names and envs which should have their addresses:
+
 1. Deposits (`VITE_DEPOSITS_ADDRESS`).
 2. Epochs (`VITE_EPOCHS_ADDRESS`).
 3. ERC20 (`VITE_GLM_ADDRESS`).
@@ -80,17 +86,12 @@ export interface BackendProposal {
 
 ## Packages
 
-1. `@synthetixio/synpress` requests `eth-sig-util@^1.4.2`, which requests `ethereumjs-abi` as a dependency directly from git, breaking container builds. To solve it we could either alter our node image to include git, or add following resolution, which we did:
-```bash
-"resolutions": {
-  "@synthetixio/synpress/**/eth-sig-util": "yarn:@metamask/eth-sig-util@^5.1.0"
-}
-```
-`eth-sig-util` is deprecated in favor of `@metamask/eth-sig-util`. The latter does not require `ethereumjs-abi` at all.
-2. `cypress` is resolved to `12.14.0` because of [this issue](https://github.com/cypress-io/code-coverage/issues/667). Issue is resolved, but Cypress Team is on track of some edge cases, as explained [here](https://github.com/cypress-io/code-coverage/issues/667#issuecomment-1609563639). Issue causes our Synpress runs to fail when executing actions in MetaMask.
-3.
+1. `cypress` is resolved to `12.17.3` because of [this issue](https://github.com/cypress-io/code-coverage/issues/667). Issue is resolved, but Cypress Team is on track of some edge cases, as explained [here](https://github.com/cypress-io/code-coverage/issues/667#issuecomment-1609563639). Issue causes our Synpress runs to fail when executing actions in MetaMask.
+2.
+
 ```json
     "@web3modal/ethereum": "^2.2.2",
     "@web3modal/react": "^2.2.2",
 ```
+
 Because of [this](https://github.com/cypress-io/cypress/discussions/26853).

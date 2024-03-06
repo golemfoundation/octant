@@ -69,6 +69,7 @@ VAULT_CONTRACT_ADDRESS=${vault.address}
       json.localhost.Epochs.address = epochs.address;
       json.localhost.Deposits.address = deposits.address;
       json.localhost.Vault.address = vault.address;
+      json.localhost.Proposals.address = proposals.address;
       fs.writeFileSync(networksFn, JSON.stringify(json, null, 2));
 
       // need to update subgraph/src/*.ts files too

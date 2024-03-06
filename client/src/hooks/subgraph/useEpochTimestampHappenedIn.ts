@@ -20,15 +20,13 @@ export default function useEpochTimestampHappenedIn(
   const { subgraphAddress } = env;
   const timestampSeconds = Math.round(parseInt(timestampMicroseconds, 10) / (1000 * 1000));
 
-  return useQuery<GetEpochTimestampHappenedInQuery, any, number, any>(
-    QUERY_KEYS.epochTimestampHappenedIn(timestampSeconds),
-    async () =>
+  return useQuery<GetEpochTimestampHappenedInQuery, any, number, any>({
+    enabled: !!timestampSeconds,
+    queryFn: async () =>
       request(subgraphAddress, GET_EPOCH_TIMESTAMP_HAPPENED_IN, {
         timestamp: timestampSeconds,
       }),
-    {
-      enabled: !!timestampSeconds,
-      select: data => data.epoches[0].epoch,
-    },
-  );
+    queryKey: QUERY_KEYS.epochTimestampHappenedIn(timestampSeconds),
+    select: data => data.epoches[0].epoch,
+  });
 }

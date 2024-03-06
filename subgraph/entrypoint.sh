@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # Docker entrypoint
-set -e
+set -ueo pipefail
 
 export NETWORK=${NETWORK:-"sepolia"}
 SUBGRAPH_URL=${SUBGRAPH_URL:-"http://127.0.0.1:8020"}

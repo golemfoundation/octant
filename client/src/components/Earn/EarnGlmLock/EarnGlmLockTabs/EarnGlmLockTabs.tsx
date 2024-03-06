@@ -1,6 +1,4 @@
 import cx from 'classnames';
-import { BigNumber } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { useFormikContext } from 'formik';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +10,9 @@ import Button from 'components/ui/Button';
 import ButtonProps from 'components/ui/Button/types';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
 import useDepositValue from 'hooks/queries/useDepositValue';
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import getFormattedGlmValue from 'utils/getFormattedGlmValue';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import styles from './EarnGlmLockTabs.module.scss';
 import EarnGlmLockTabsProps from './types';
@@ -27,6 +27,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
   setValueToDepose,
   onReset,
   showBalances,
+  setFieldValue,
 }) => {
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.glmLock',
@@ -40,17 +41,17 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
 
   const onSetValue = (value: string): void => {
     formik.setFieldValue('valueToDeposeOrWithdraw', value);
-    setValueToDepose(value ? parseUnits(value) : BigNumber.from(0));
+    setValueToDepose(value ? parseUnitsBigInt(value) : BigInt(0));
   };
 
   const onMax = () => {
-    if (isMaxDisabled || !depositsValue || !availableFundsGlm) {
+    if (isMaxDisabled || depositsValue === undefined || !availableFundsGlm) {
       return;
     }
     const value =
       currentMode === 'lock'
-        ? formatUnits(BigNumber.from(availableFundsGlm.value))
-        : formatUnits(depositsValue);
+        ? formatUnitsBigInt(BigInt(availableFundsGlm.value))
+        : formatUnitsBigInt(depositsValue);
 
     onSetValue(value);
   };
@@ -67,7 +68,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
 
   const buttonLabel = useMemo(() => {
     if (isLoading) {
-      return t('glmLockTabs.waitingForConformation');
+      return i18n.t('common.waitingForConfirmation');
     }
     if (step === 3) {
       return i18n.t('common.close');
@@ -79,7 +80,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
   }, [currentMode, step, t, isLoading, i18n]);
 
   const isButtonDisabled =
-    !formik.isValid || parseUnits(formik.values.valueToDeposeOrWithdraw || '0').isZero();
+    !formik.isValid || parseUnitsBigInt(formik.values.valueToDeposeOrWithdraw || '0') === 0n;
 
   return (
     <BoxRounded
@@ -89,13 +90,13 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
         {
           isActive: currentMode === 'lock',
           isDisabled: isLoading,
-          onClick: () => onReset('lock'),
+          onClick: () => onReset({ newMode: 'lock', setFieldValue }),
           title: t('lock'),
         },
         {
           isActive: currentMode === 'unlock',
           isDisabled: isLoading,
-          onClick: () => onReset('unlock'),
+          onClick: () => onReset({ newMode: 'unlock', setFieldValue }),
           title: t('unlock'),
         },
       ]}
@@ -125,7 +126,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
                     formik.errors.valueToDeposeOrWithdraw === 'cantUnlock' && styles.cantUnlock,
                   )}
                 >
-                  {getFormattedGlmValue(depositsValue || BigNumber.from(0)).value}
+                  {getFormattedGlmValue(depositsValue || BigInt(0)).value}
                 </div>
                 {t('glmLockTabs.locked')}
                 <div
@@ -136,12 +137,11 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
                   )}
                 >
                   {
-                    getFormattedGlmValue(
-                      BigNumber.from(availableFundsGlm ? availableFundsGlm?.value : 0),
-                    ).value
+                    getFormattedGlmValue(BigInt(availableFundsGlm ? availableFundsGlm?.value : 0))
+                      .value
                   }
                 </div>
-                {t('glmLockTabs.available')}
+                {i18n.t('common.available')}
               </div>
             )}
           </div>
@@ -150,6 +150,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
       />
       <Button
         className={styles.button}
+        dataTest="GlmLockTabs__Button"
         isDisabled={isButtonDisabled}
         isHigh
         isLoading={isLoading}

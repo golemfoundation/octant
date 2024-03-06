@@ -7,5 +7,6 @@ export default interface ProgressBarProps {
   labelLeft?: string;
   labelRight?: string;
   progressPercentage: number;
+  trackColor?: ProgressBarColor;
   variant?: 'ultraThin' | 'thin' | 'normal';
 }

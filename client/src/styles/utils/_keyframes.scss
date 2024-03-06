@@ -27,3 +27,27 @@
     background-position: 46.8rem 0;
   }
 }
+
+@keyframes horizontal-shaking {
+  0% { transform: translateX(0) }
+  25% { transform: translateX(0.5rem) }
+  50% { transform: translateX(-0.5rem) }
+  75% { transform: translateX(0.5rem) }
+  100% { transform: translateX(0) }
+}
+
+@keyframes pulsatingOpacity {
+   0% { opacity: 1 }
+   25% { opacity: 0.5 }
+   50% { opacity: 0 }
+   75% { opacity: 0.5 }
+   100% { opacity: 1 }
+ }
+
+@keyframes movingLeftAndRight {
+  0% { left: -100% }
+  25% { left: 0 }
+  50% { left: 100% }
+  75% { left: 75% }
+  100% { left: -100% }
+}

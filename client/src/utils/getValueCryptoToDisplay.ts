@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 import { CryptoCurrency } from 'types/cryptoCurrency';
 
 import getFormattedEthValue from './getFormattedEthValue';
@@ -9,13 +7,13 @@ export type ValueCryptoToDisplay = {
   cryptoCurrency?: CryptoCurrency;
   isUsingHairSpace?: boolean;
   shouldIgnoreGwei?: boolean;
-  valueCrypto?: BigNumber;
+  valueCrypto?: bigint;
 };
 
 export default function getValueCryptoToDisplay({
   cryptoCurrency,
   isUsingHairSpace = true,
-  valueCrypto = BigNumber.from(0),
+  valueCrypto = BigInt(0),
   shouldIgnoreGwei,
 }: ValueCryptoToDisplay): string {
   return cryptoCurrency === 'ethereum'

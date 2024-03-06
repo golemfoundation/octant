@@ -1,5 +1,5 @@
 import EarnHistoryItemProps from 'components/Earn/EarnHistory/EarnHistoryItem/types';
 
-type EarnHistoryItemDetailsProps = EarnHistoryItemProps;
+type EarnHistoryItemDetailsProps = Omit<EarnHistoryItemProps, 'isLast'>;
 
 export default EarnHistoryItemDetailsProps;

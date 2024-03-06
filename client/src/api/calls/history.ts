@@ -2,12 +2,12 @@ import env from 'env';
 import apiService from 'services/apiService';
 
 export type ResponseHistoryItem = {
-  // BigNumber (wei) string
+  // (wei) string
   amount: string;
   projectAddress?: string;
   timestamp: string;
   transactionHash?: string;
-  type: 'lock' | 'unlock' | 'allocation' | 'withdrawal';
+  type: 'lock' | 'unlock' | 'allocation' | 'withdrawal' | 'patron_mode_donation';
 };
 
 export type Response = { history: ResponseHistoryItem[]; next_cursor?: string };

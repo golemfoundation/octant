@@ -17,7 +17,7 @@ const EarnHistoryList: FC<EarnHistoryListProps> = ({ history }) => {
     <Fragment>
       {history.map((element, index) => (
         // eslint-disable-next-line react/no-array-index-key
-        <EarnHistoryItem key={index} {...element} />
+        <EarnHistoryItem key={index} {...element} isLast={index === history.length - 1} />
       ))}
     </Fragment>
   );

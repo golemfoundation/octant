@@ -1,6 +1,5 @@
-import { parseUnits } from 'ethers/lib/utils';
-
 import getValueFiatToDisplay from './getValueFiatToDisplay';
+import { parseUnitsBigInt } from './parseUnitsBigInt';
 
 describe('getValueFiatToDisplay', () => {
   const defaultProps = {
@@ -11,7 +10,7 @@ describe('getValueFiatToDisplay', () => {
     },
     displayCurrency: 'usd',
     error: null,
-    valueCrypto: parseUnits('1'),
+    valueCrypto: parseUnitsBigInt('1'),
   };
 
   const propsJPY = {
@@ -22,7 +21,7 @@ describe('getValueFiatToDisplay', () => {
     },
     displayCurrency: 'jpy',
     error: null,
-    valueCrypto: parseUnits('1'),
+    valueCrypto: parseUnitsBigInt('1'),
   };
 
   it('should return "Conversion offline" if error is truthy', () => {

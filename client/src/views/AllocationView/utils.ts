@@ -1,55 +1,83 @@
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
+import React from 'react';
 
 import { AllocationItemWithAllocations } from 'components/Allocation/AllocationItem/types';
 import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
-import { UserAllocationElement } from 'hooks/queries/useUserAllocations';
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import getSortedElementsByTotalValueOfAllocationsAndAlphabetical from 'utils/getSortedElementsByTotalValueOfAllocationsAndAlphabetical';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
-import { AllocationValues } from './types';
+import {
+  AllocationValue,
+  AllocationValues,
+  PercentageProportions,
+  UserAllocationElementString,
+} from './types';
 
 export function getAllocationValuesWithRewardsSplitted({
   allocationValues,
   restToDistribute,
 }: {
   allocationValues: AllocationValues;
-  restToDistribute: BigNumber;
+  restToDistribute: bigint;
 }): AllocationValues {
   if (allocationValues.length === 0) {
     return [];
   }
   const allocationValuesNew = [...allocationValues];
-  const allocationValuesSum = allocationValuesNew.reduce(
-    (acc, { value }) => acc.add(value),
-    BigNumber.from(0),
-  );
+  const allocationValuesSum = allocationValuesNew.reduce((acc, { value }) => {
+    return acc + parseUnitsBigInt(value);
+  }, BigInt(0));
 
-  if (restToDistribute.isZero()) {
+  if (restToDistribute === 0n) {
     return allocationValues;
   }
 
-  if (allocationValuesSum.lt(restToDistribute)) {
-    allocationValuesNew[allocationValuesNew.length - 1].value = allocationValuesNew[
-      allocationValuesNew.length - 1
-    ].value.add(restToDistribute.sub(allocationValuesSum));
+  /**
+   * Since percentage calculated in getAllocationValuesInitialState is not perfect,
+   * chances are allocationValuesSum is lower than restToDistribute.
+   */
+  if (allocationValuesSum < restToDistribute) {
+    const difference = restToDistribute - allocationValuesSum;
+    const lastElementValue = parseUnitsBigInt(
+      allocationValuesNew[allocationValuesNew.length - 1].value,
+    );
+
+    // We don't want to add value to element user chose to set as 0.
+    if (lastElementValue > 0n) {
+      allocationValuesNew[allocationValuesNew.length - 1].value = formatUnitsBigInt(
+        lastElementValue + difference,
+      );
+    } else {
+      // Find first non-zero element.
+      const elementIndexToChange = allocationValuesNew.findIndex(
+        element => parseUnitsBigInt(element.value) > 0n,
+      );
+      allocationValuesNew[elementIndexToChange].value = formatUnitsBigInt(
+        parseUnitsBigInt(allocationValuesNew[elementIndexToChange].value) + difference,
+      );
+    }
   }
   /**
-   * Since percentage calcualted in getAllocationValuesInitialState is not perfect,
+   * Since percentage calculated in getAllocationValuesInitialState is not perfect,
    * chances are allocationValuesSum is bigger than restToDistribute.
    */
-  if (allocationValuesSum.gt(restToDistribute)) {
-    const difference = allocationValuesSum.sub(restToDistribute);
-    const lastElement = allocationValuesNew[allocationValuesNew.length - 1];
+  if (allocationValuesSum > restToDistribute) {
+    const difference = allocationValuesSum - restToDistribute;
+    const lastElementValue = parseUnitsBigInt(
+      allocationValuesNew[allocationValuesNew.length - 1].value,
+    );
 
-    if (lastElement.value.gte(difference)) {
-      allocationValuesNew[allocationValuesNew.length - 1].value =
-        allocationValuesNew[allocationValuesNew.length - 1].value.sub(difference);
-    } else {
-      const elementIndexToChange = allocationValuesNew.findIndex(element =>
-        element.value.gt(difference),
+    if (lastElementValue >= difference) {
+      allocationValuesNew[allocationValuesNew.length - 1].value = formatUnitsBigInt(
+        lastElementValue - difference,
       );
-      allocationValuesNew[elementIndexToChange].value =
-        allocationValuesNew[elementIndexToChange].value.sub(difference);
+    } else {
+      const elementIndexToChange = allocationValuesNew.findIndex(
+        element => parseUnitsBigInt(element.value) > difference,
+      );
+      allocationValuesNew[elementIndexToChange].value = formatUnitsBigInt(
+        parseUnitsBigInt(allocationValuesNew[elementIndexToChange].value) - difference,
+      );
     }
   }
 
@@ -59,28 +87,58 @@ export function getAllocationValuesWithRewardsSplitted({
 export function getAllocationValuesInitialState({
   allocationValues,
   allocations,
+  isManualMode,
+  percentageProportions,
   rewardsForProposals,
-  hasZeroRewardsForProposalsBeenReached,
-  allocationsEdited,
-  shouldSetEqualValues,
+  shouldReset,
   userAllocationsElements,
 }: {
   allocationValues: AllocationValues;
   allocations: string[];
-  allocationsEdited: string[];
-  hasZeroRewardsForProposalsBeenReached: boolean;
-  rewardsForProposals: BigNumber;
-  shouldSetEqualValues: boolean;
-  userAllocationsElements: UserAllocationElement[] | undefined;
+  isManualMode: boolean;
+  percentageProportions: PercentageProportions;
+  rewardsForProposals: bigint;
+  shouldReset: boolean;
+  userAllocationsElements: UserAllocationElementString[];
 }): AllocationValues {
-  if (
-    shouldSetEqualValues ||
-    userAllocationsElements === undefined ||
-    (hasZeroRewardsForProposalsBeenReached && allocationsEdited.length === 0)
-  ) {
+  if (shouldReset) {
+    const allocationValuesNew = allocations.map(allocation => {
+      // Case A (see utils.test.ts).
+      if (userAllocationsElements.length > 0) {
+        const userAllocationValue = userAllocationsElements.find(
+          element => element.address === allocation,
+        )?.value;
+        const userAllocationValueFinal = userAllocationValue || '0';
+        return {
+          address: allocation,
+          // @ts-expect-error TS method collision.
+          value: userAllocationValueFinal.toLocaleString('fullWide', { useGrouping: false }),
+        };
+      }
+      // Case B (see utils.test.ts).
+      return {
+        address: allocation,
+        // @ts-expect-error TS method collision.
+        value: '0'.toLocaleString('fullWide', { useGrouping: false }),
+      };
+    });
+
+    return getAllocationValuesWithRewardsSplitted({
+      allocationValues: allocationValuesNew,
+      restToDistribute: BigInt(0),
+    });
+  }
+  if (!isManualMode) {
+    // Case C (see utils.test.ts).
     const allocationValuesNew = allocations.map(allocation => ({
       address: allocation,
-      value: rewardsForProposals.div(allocations.length),
+      value: formatUnitsBigInt(rewardsForProposals / BigInt(allocations.length)).toLocaleString(
+        // @ts-expect-error TS method collision.
+        'fullWide',
+        {
+          useGrouping: false,
+        },
+      ),
     }));
 
     return getAllocationValuesWithRewardsSplitted({
@@ -88,36 +146,26 @@ export function getAllocationValuesInitialState({
       restToDistribute: rewardsForProposals,
     });
   }
-
-  const userSum = (allocationValues.length > 0 ? allocationValues : userAllocationsElements).reduce(
-    (acc, curr) => acc.add(curr.value),
-    BigNumber.from(0),
-  );
+  // Case D (see utils.test.ts).
 
   const allocationValuesNew = allocations.map(allocation => {
-    const userAllocationsElement = userAllocationsElements?.find(
-      ({ address }) => address === allocation,
-    );
-    const allocationValue = allocationValues.find(({ address }) => address === allocation);
-    /**
-     * Current allocationValue is more important that what user set in userAllocations.
-     * allocationValues is the current state, so after manual edits.
-     */
-    const valueUser =
-      (!rewardsForProposals.isZero() && allocationValue?.value) ||
-      userAllocationsElement?.value ||
-      BigNumber.from(0);
-    const percentage = !userSum.isZero()
-      ? (parseFloat(rewardsForProposals.toString()) * 100) / parseFloat(userSum?.toString())
-      : undefined;
+    const percentageProportion = percentageProportions[allocation];
+    const allocationValue = allocationValues.find(element => element.address === allocation)?.value;
+    const userAllocationValue = userAllocationsElements.find(
+      element => element.address === allocation,
+    )?.value;
+    const userValue = allocationValue || userAllocationValue || '0';
     // Value for the project set as valueUser multiplied by percentage.
-    const value =
-      percentage === undefined
-        ? parseFloat(valueUser.toString())
-        : (parseFloat(valueUser.toString()) * percentage) / 100;
+    const value = (
+      percentageProportion === undefined
+        ? userValue
+        : formatUnitsBigInt((rewardsForProposals * BigInt(percentageProportion)) / 100n)
+    )
+      // @ts-expect-error TS method collision.
+      .toLocaleString('fullWide', { useGrouping: false });
     return {
       address: allocation,
-      value: parseUnits(Math.floor(value).toString(), 'wei'),
+      value,
     };
   });
 
@@ -136,7 +184,7 @@ export function getAllocationsWithRewards({
   allocationValues: AllocationValues | undefined;
   areAllocationsAvailableOrAlreadyDone: boolean;
   proposalsIpfsWithRewards: ProposalIpfsWithRewards[];
-  userAllocationsElements: UserAllocationElement[] | undefined;
+  userAllocationsElements: UserAllocationElementString[] | undefined;
 }): AllocationItemWithAllocations[] {
   const isDataDefined =
     proposalsIpfsWithRewards &&
@@ -160,10 +208,12 @@ export function getAllocationsWithRewards({
     : [];
 
   allocationsWithRewards.sort(({ value: valueA }, { value: valueB }) => {
-    if (valueA.lt(valueB)) {
+    const valueABigInt = parseUnitsBigInt(valueA || '0');
+    const valueBBigInt = parseUnitsBigInt(valueB || '0');
+    if (valueABigInt < valueBBigInt) {
       return 1;
     }
-    if (valueA.gt(valueB)) {
+    if (valueABigInt > valueBBigInt) {
       return -1;
     }
     return 0;
@@ -176,81 +226,68 @@ export function getAllocationsWithRewards({
   return allocationsWithRewards;
 }
 
-export function getRestToDistribute({
-  individualReward,
-  rewardsForProposals,
+export function getAllocationValuesAfterManualChange({
+  newAllocationValue,
   allocationValues,
-  allocationsEdited,
-}: {
-  allocationValues: AllocationValues;
-  allocationsEdited: string[];
-  individualReward: BigNumber | undefined;
-  rewardsForProposals: BigNumber;
-}): BigNumber {
-  if (!individualReward || !rewardsForProposals) {
-    return BigNumber.from(0);
-  }
-
-  const allocationValuesArrayEditedNew = allocationValues.filter(({ address }) =>
-    allocationsEdited.includes(address),
-  );
-
-  const allocationValuesArrayEditedValueSum = allocationValuesArrayEditedNew.reduce(
-    (acc, { value }) => acc.add(value),
-    BigNumber.from(0),
-  );
-
-  return rewardsForProposals.sub(allocationValuesArrayEditedValueSum);
-}
-
-export function getNewAllocationValues({
-  allocationValues,
-  allocationsEdited,
-  proposalAddressToModify,
-  newValue,
   rewardsForProposals,
   individualReward,
+  isManualMode,
+  setAddressesWithError,
 }: {
   allocationValues: AllocationValues;
-  allocationsEdited: string[];
-  individualReward: BigNumber | undefined;
-  newValue: BigNumber;
-  proposalAddressToModify: string;
-  rewardsForProposals: BigNumber;
-}): AllocationValues {
+  individualReward: bigint | undefined;
+  isManualMode: boolean;
+  newAllocationValue: AllocationValue;
+  rewardsForProposals: bigint;
+  setAddressesWithError: React.Dispatch<React.SetStateAction<string[]>>;
+}): { allocationValuesArrayNew: AllocationValues; rewardsForProposalsNew: bigint } {
   if (!individualReward) {
-    return allocationValues;
+    return {
+      allocationValuesArrayNew: allocationValues,
+      rewardsForProposalsNew: rewardsForProposals,
+    };
   }
 
   const allocationValuesArrayNew = allocationValues.map(element => ({
     ...element,
-    value: element.address === proposalAddressToModify ? newValue : element.value,
+    value:
+      element.address === newAllocationValue.address ? newAllocationValue.value : element.value,
   }));
 
-  const allocationValuesArrayNotEdited = allocationValuesArrayNew.filter(
-    ({ address }) => !allocationsEdited.includes(address),
-  );
-  const allocationValuesArrayEditedNew = allocationValuesArrayNew.filter(({ address }) =>
-    allocationsEdited.includes(address),
+  const allocationValuesArrayNewSum = allocationValuesArrayNew.reduce(
+    (acc, { value }) => acc + parseUnitsBigInt(value || '0'),
+    BigInt(0),
   );
 
-  const restToDistribute = getRestToDistribute({
-    allocationValues: allocationValuesArrayNew,
-    allocationsEdited,
-    individualReward,
-    rewardsForProposals,
-  });
+  if (allocationValuesArrayNewSum > individualReward) {
+    setAddressesWithError(prev => [...prev, newAllocationValue.address]);
+    return {
+      allocationValuesArrayNew: allocationValues.map(element => ({
+        ...element,
+        value: element.address === newAllocationValue.address ? '0' : element.value,
+      })),
+      rewardsForProposalsNew: rewardsForProposals,
+    };
+  }
 
-  const allocationValuesArrayNotEditedNew = allocationValuesArrayNotEdited.map(element => ({
-    ...element,
-    value: restToDistribute.div(allocationValuesArrayNotEdited.length),
-  }));
+  if (isManualMode) {
+    return {
+      allocationValuesArrayNew,
+      rewardsForProposalsNew: allocationValuesArrayNewSum,
+    };
+  }
 
-  return [
-    ...getAllocationValuesWithRewardsSplitted({
-      allocationValues: allocationValuesArrayNotEditedNew,
-      restToDistribute,
-    }),
-    ...allocationValuesArrayEditedNew,
-  ];
+  const rewardsForProposalsNew =
+    allocationValuesArrayNewSum === 0n ? BigInt(0) : rewardsForProposals;
+
+  return {
+    allocationValuesArrayNew:
+      allocationValuesArrayNew.length === 1
+        ? allocationValuesArrayNew
+        : getAllocationValuesWithRewardsSplitted({
+            allocationValues: allocationValuesArrayNew,
+            restToDistribute: rewardsForProposalsNew,
+          }),
+    rewardsForProposalsNew,
+  };
 }

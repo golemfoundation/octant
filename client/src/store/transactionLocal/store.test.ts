@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 import { transactionPending1, transactionPending2, transactionPending3 } from 'mocks/history';
 
 import useTransactionLocalStore, { initialState } from './store';
@@ -240,7 +238,7 @@ describe('useTransactionLocalStore', () => {
     const transaction = useTransactionLocalStore
       .getState()
       .data.transactionsPending!.find(({ transactionHash }) => transactionHash === '0x999')!;
-    expect(transaction.amount).toEqual(BigNumber.from(10));
+    expect(transaction.amount).toEqual(BigInt(10));
     expect(transaction.timestamp).toBe('100');
     expect(transaction.type).toBe('lock');
   });

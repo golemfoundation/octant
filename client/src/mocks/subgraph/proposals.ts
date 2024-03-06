@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
 
 export const mockedProposalATotalValueOfAllocations1: ProposalIpfsWithRewards = {
@@ -8,7 +6,7 @@ export const mockedProposalATotalValueOfAllocations1: ProposalIpfsWithRewards = 
   name: 'A',
   numberOfDonors: 10,
   percentage: 1,
-  totalValueOfAllocations: BigNumber.from(1),
+  totalValueOfAllocations: BigInt(1),
 };
 
 export const mockedProposalATotalValueOfAllocationsUndefined = {
@@ -18,13 +16,13 @@ export const mockedProposalATotalValueOfAllocationsUndefined = {
 
 export const mockedProposalATotalValueOfAllocations2: ProposalIpfsWithRewards = {
   ...mockedProposalATotalValueOfAllocations1,
-  totalValueOfAllocations: BigNumber.from(2),
+  totalValueOfAllocations: BigInt(2),
 };
 
 export const mockedProposalBTotalValueOfAllocations2: ProposalIpfsWithRewards = {
   ...mockedProposalATotalValueOfAllocations1,
   name: 'B',
-  totalValueOfAllocations: BigNumber.from(2),
+  totalValueOfAllocations: BigInt(2),
 };
 
 export const mockedProposalBTotalValueOfAllocationsUndefined = {
@@ -35,7 +33,7 @@ export const mockedProposalBTotalValueOfAllocationsUndefined = {
 export const mockedProposalCTotalValueOfAllocations3: ProposalIpfsWithRewards = {
   ...mockedProposalATotalValueOfAllocations1,
   name: 'C',
-  totalValueOfAllocations: BigNumber.from(3),
+  totalValueOfAllocations: BigInt(3),
 };
 
 export const mockedProposalCTotalValueOfAllocationsUndefined = {
@@ -46,7 +44,7 @@ export const mockedProposalCTotalValueOfAllocationsUndefined = {
 export const mockedProposalDTotalValueOfAllocations4: ProposalIpfsWithRewards = {
   ...mockedProposalATotalValueOfAllocations1,
   name: 'D',
-  totalValueOfAllocations: BigNumber.from(4),
+  totalValueOfAllocations: BigInt(4),
 };
 
 export const mockedProposalDTotalValueOfAllocationsUndefined = {

@@ -5,7 +5,7 @@ set -exa
 ACTION=$1
 
 ARGO_REPOSITORY="https://wildland-bot:${HOUSEKEEPER_CI_TOKEN}@gitlab.com/golemfoundation/devops/iac/k8s/wildland-k8s-devops.git"
-ARGO_REPOSITORY_BRANCH="octant"
+ARGO_REPOSITORY_BRANCH="github/octant-ci-cd"
 
 set +a
 
@@ -25,7 +25,7 @@ git clone -b $ARGO_REPOSITORY_BRANCH $ARGO_REPOSITORY $GIT_DIR
 
 # sourcing hardcoded contracts (master, uat, etc)
 if [[ "$ENV_FILE" ]]; then
-	while read -r line; do export "$line"; done < $CI_PROJECT_DIR/ci/argocd/contracts/$ENV_FILE
+	export $(grep -v '^#' $CI_PROJECT_DIR/ci/argocd/contracts/$ENV_FILE | xargs)
 fi
 
 pushd $GIT_DIR
@@ -64,7 +64,7 @@ if [[ "$ACTION" == "create" ]]; then
 elif [[ "$ACTION" == "update" ]]; then
 
 	if [[ "$NETWORK_NAME" == "local" || "$NETWORK_NAME" == "localhost" ]]; then
-		export FRONTEND_RPC_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
+		export FRONTEND_RPC_URL; FRONTEND_RPC_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
 		export BACKEND_RPC_URL=http://anvil:8545
 	else
 		# This will make webclient use default (wagmi) endpoint
@@ -124,7 +124,6 @@ elif [[ "$ACTION" == "update" ]]; then
 		-H "Authorization: Bearer ${ARGOCD_ACCESS_TOKEN}" \
 		-H "Content-type: application/json" \
 		"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/sync"
-	sleep 30
 
 	# I'm leaving the previous hack for the time being in case it has to be used again
 	#
@@ -135,7 +134,11 @@ elif [[ "$ACTION" == "update" ]]; then
 	# 	"${ARGOCD_URL}/api/v1/applications/${DEPLOYMENT_ID}/sync"
 
 else # assuming $ACTION =~ (delete|destroy)
-	git rm -f $OCTANT_APP_DIR/$DEPLOYMENT_ID-app.yaml
-	git commit -S -m "Removed Octant deployment file for $DEPLOYMENT_ID branch at $(date +%Y-%m-%d)"
-	git push
+	FILE="${OCTANT_APP_DIR}/${DEPLOYMENT_ID}-app.yaml"
+
+	if [ -f "${FILE}" ]; then
+		git rm -f "${FILE}"
+		git commit -S -m "Removed Octant deployment file for ${DEPLOYMENT_ID} branch at $(date +%Y-%m-%d)"
+		git push
+	fi
 fi

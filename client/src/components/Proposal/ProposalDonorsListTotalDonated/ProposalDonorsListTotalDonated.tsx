@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import { BigNumber } from 'ethers';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -12,10 +11,10 @@ const ProposalDonorsListTotalDonated: FC<ProposalDonorsListTotalDonatedProps> = 
   proposalDonors,
   className,
 }) => {
-  const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.donors' });
+  const { i18n } = useTranslation();
   const totalDonatedSum = proposalDonors?.reduce((acc, curr) => {
-    return acc.add(curr.amount);
-  }, BigNumber.from(0));
+    return acc + curr.amount;
+  }, BigInt(0));
 
   const totalDonatedSumToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
@@ -25,7 +24,7 @@ const ProposalDonorsListTotalDonated: FC<ProposalDonorsListTotalDonatedProps> = 
 
   return (
     <div className={cx(styles.root, className)}>
-      <div>{t('totalDonated')}</div>
+      <div>{i18n.t('common.totalDonated')}</div>
       <div>{totalDonatedSumToDisplay}</div>
     </div>
   );

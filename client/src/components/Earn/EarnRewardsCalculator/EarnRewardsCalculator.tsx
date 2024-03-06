@@ -1,22 +1,19 @@
 import cx from 'classnames';
-import { BigNumber } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { useFormik } from 'formik';
 import debounce from 'lodash/debounce';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { apiPostCalculateRewards } from 'api/calls/calculateRewards';
-import clientReactQuery from 'api/clients/client-react-query';
-import { QUERY_KEYS, ROOTS } from 'api/queryKeys';
 import BoxRounded from 'components/ui/BoxRounded';
 import InputText from 'components/ui/InputText';
-import { GLM_TOTAL_SUPPLY } from 'constants/currencies';
+import useCalculateRewards from 'hooks/mutations/useCalculateRewards';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import i18n from 'i18n';
 import useSettingsStore from 'store/settings/store';
 import { FormattedCryptoValue } from 'types/formattedCryptoValue';
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import { comma, floatNumberWithUpTo18DecimalPlaces, numbersOnly } from 'utils/regExp';
 
 import styles from './EarnRewardsCalculator.module.scss';
@@ -27,8 +24,6 @@ const EarnRewardsCalculator: FC = () => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.rewardsCalculator',
   });
-  const [estimatedRewards, setEstimatedRewards] = useState<BigNumber | undefined>();
-  const [isFetching, setIsFetching] = useState(false);
   const {
     data: { displayCurrency, isCryptoMainValueDisplay },
   } = useSettingsStore(({ data }) => ({
@@ -38,44 +33,29 @@ const EarnRewardsCalculator: FC = () => {
     },
   }));
   const { data: cryptoValues } = useCryptoValues(displayCurrency);
+  const {
+    data: calculateRewards,
+    mutateAsync: mutateAsyncRewardsCalculator,
+    reset: resetCalculateRewards,
+    isPending: isPendingCalculateRewards,
+  } = useCalculateRewards();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchEstimatedRewardsDebounced = useCallback(
-    debounce((amountGlm, d) => {
-      const isFetchingRewards = clientReactQuery.isFetching({ queryKey: [ROOTS.calculateRewards] });
+    debounce(({ amountGlm, numberOfDays }) => {
+      const amountGlmWEI = formatUnitsBigInt(parseUnitsBigInt(amountGlm, 'ether'), 'wei');
+      const numberOfDaysNumber = parseInt(numberOfDays, 10);
 
-      if (!amountGlm || !d || parseUnits(amountGlm).gt(GLM_TOTAL_SUPPLY)) {
-        if (isFetchingRewards) {
-          clientReactQuery.cancelQueries({ queryKey: [ROOTS.calculateRewards] });
-        }
-        setEstimatedRewards(undefined);
-        setIsFetching(false);
-        return;
-      }
-
-      if (isFetchingRewards) {
-        clientReactQuery.cancelQueries({ queryKey: [ROOTS.calculateRewards] });
-      }
-
-      const amountGlmWEI = formatUnits(parseUnits(amountGlm, 'ether'), 'wei');
-      setIsFetching(true);
-
-      clientReactQuery
-        .fetchQuery({
-          queryFn: ({ signal }) => apiPostCalculateRewards(amountGlmWEI, parseInt(d, 10), signal),
-          queryKey: QUERY_KEYS.calculateRewards(amountGlmWEI, parseInt(d, 10)),
-        })
-        .then(res => {
-          setIsFetching(false);
-          setEstimatedRewards(parseUnits(res.budget, 'wei'));
-        });
+      resetCalculateRewards();
+      mutateAsyncRewardsCalculator({ amountGlm: amountGlmWEI, numberOfDays: numberOfDaysNumber });
     }, 300),
     [],
   );
 
   const formik = useFormik<FormFields>({
     initialValues: formInitialValues,
-    onSubmit: values => fetchEstimatedRewardsDebounced(values.valueCrypto, values.days),
+    onSubmit: values =>
+      fetchEstimatedRewardsDebounced({ amountGlm: values.valueCrypto, numberOfDays: values.days }),
     validateOnChange: true,
     validationSchema: validationSchema(t),
   });
@@ -99,19 +79,29 @@ const EarnRewardsCalculator: FC = () => {
 
   useEffect(() => {
     formik.validateForm().then(() => {
-      fetchEstimatedRewardsDebounced(formik.values.valueCrypto, formik.values.days);
+      fetchEstimatedRewardsDebounced({
+        amountGlm: formik.values.valueCrypto,
+        numberOfDays: formik.values.days,
+      });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values.valueCrypto, formik.values.days]);
 
+  useEffect(() => {
+    return () => {
+      resetCalculateRewards();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const estimatedFormattedRewardsValue: FormattedCryptoValue =
-    formik.values.valueCrypto && formik.values.days && estimatedRewards
-      ? getFormattedEthValue(estimatedRewards)
+    formik.values.valueCrypto && formik.values.days && calculateRewards
+      ? getFormattedEthValue(parseUnitsBigInt(calculateRewards.budget, 'wei'))
       : {
-          fullString: '',
-          suffix: 'ETH',
-          value: '',
-        };
+        fullString: '',
+        suffix: 'ETH',
+        value: '',
+      };
 
   const cryptoFiatRatio = cryptoValues?.ethereum[displayCurrency || 'usd'] || 1;
   const fiat = estimatedFormattedRewardsValue.value
@@ -155,7 +145,7 @@ const EarnRewardsCalculator: FC = () => {
           isButtonClearVisible={false}
           isDisabled
           shouldAutoFocusAndSelect={false}
-          showLoader={isFetching}
+          showLoader={isPendingCalculateRewards}
           suffix={estimatedFormattedRewardsValue.suffix}
           suffixClassName={styles.estimatedRewardsSuffix}
           value={estimatedFormattedRewardsValue.value}
@@ -169,7 +159,7 @@ const EarnRewardsCalculator: FC = () => {
           isButtonClearVisible={false}
           isDisabled
           shouldAutoFocusAndSelect={false}
-          showLoader={isFetching}
+          showLoader={isPendingCalculateRewards}
           suffix={displayCurrency.toUpperCase()}
           suffixClassName={styles.estimatedRewardsSuffix}
           value={fiat}

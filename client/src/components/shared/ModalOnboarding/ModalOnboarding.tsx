@@ -33,9 +33,7 @@ const ModalOnboarding: FC = () => {
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const [isUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
 
-  const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial, isOnboardingDone, () =>
-    setCurrentStepIndex(prev => prev + 1),
-  );
+  const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial);
 
   useEffect(() => {
     if (isUserTOSAccepted !== undefined && !isUserTOSAccepted) {

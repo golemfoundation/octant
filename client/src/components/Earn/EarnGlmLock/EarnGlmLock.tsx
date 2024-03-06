@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
 import { Formik } from 'formik';
 import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,11 +16,12 @@ import useLock from 'hooks/mutations/useLock';
 import useUnlock from 'hooks/mutations/useUnlock';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useProposalsContract from 'hooks/queries/useProposalsContract';
+import toastService from 'services/toastService';
 import useTransactionLocalStore from 'store/transactionLocal/store';
-import triggerToast from 'utils/triggerToast';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import styles from './EarnGlmLock.module.scss';
-import EarnGlmLockProps, { CurrentMode, Step } from './types';
+import EarnGlmLockProps, { Step, OnReset } from './types';
 import { formInitialValues, validationSchema } from './utils';
 
 const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, onCloseModal }) => {
@@ -48,7 +47,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
    * Value to depose so that we don't ask for allowance when user
    * requests less than already approved.
    */
-  const [valueToDepose, setValueToDepose] = useState<BigNumber>(BigNumber.from(0));
+  const [valueToDepose, setValueToDepose] = useState<bigint>(BigInt(0));
   const [step, setStep] = useState<Step>(1);
   const [isCryptoOrFiatInputFocused, setIsCryptoOrFiatInputFocused] = useState(false);
 
@@ -98,15 +97,17 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
     setTransactionHashForEtherscan(hash);
   };
 
-  const onReset = (newMode: CurrentMode = 'lock'): void => {
+  const onReset: OnReset = ({ setFieldValue, newMode = 'lock' }) => {
     onCurrentModeChange(newMode);
     setTransactionHashForEtherscan(undefined);
     setStep(1);
+
+    if (setFieldValue) {
+      setFieldValue('currentMode', newMode);
+    }
   };
 
-  const onError = () => {
-    onReset(currentMode);
-  };
+  const onError = () => onReset({ newMode: currentMode });
 
   const lockMutation = useLock({ onError, onMutate, onSuccess });
   const unlockMutation = useUnlock({ onError, onMutate, onSuccess });
@@ -115,17 +116,19 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
     const isSignedInAsAProposal = proposalsAddresses!.includes(address!);
 
     if (isSignedInAsAProposal) {
-      return triggerToast({
+      toastService.showToast({
+        name: 'proposalForbiddenOperation',
         title: i18n.t('common.proposalForbiddenOperation'),
         type: 'error',
       });
+      return;
     }
 
-    const valueToDeposeOrWithdrawBigNumber = parseUnits(valueToDeposeOrWithdraw, 18);
+    const valueToDeposeOrWithdrawBigInt = parseUnitsBigInt(valueToDeposeOrWithdraw);
     if (currentMode === 'lock') {
-      await lockMutation.mutateAsync(valueToDeposeOrWithdrawBigNumber);
+      await lockMutation.mutateAsync(valueToDeposeOrWithdrawBigInt);
     } else {
-      await unlockMutation.mutateAsync(valueToDeposeOrWithdrawBigNumber);
+      await unlockMutation.mutateAsync(valueToDeposeOrWithdrawBigInt);
     }
   };
 
@@ -139,8 +142,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
       onSubmit={onApproveOrDeposit}
       validateOnChange
       validationSchema={validationSchema(
-        currentMode,
-        BigNumber.from(availableFundsGlm ? availableFundsGlm?.value : 0),
+        BigInt(availableFundsGlm ? availableFundsGlm?.value : 0),
         depositsValue,
       )}
     >
@@ -168,6 +170,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
             onClose={onCloseModal}
             onInputsFocusChange={setIsCryptoOrFiatInputFocused}
             onReset={onReset}
+            setFieldValue={props.setFieldValue}
             setValueToDepose={setValueToDepose}
             showBalances={!showBudgetBox}
             step={step}

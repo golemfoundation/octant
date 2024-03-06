@@ -2,9 +2,11 @@ from flask import Response
 from flask import current_app as app
 from flask_restx import Namespace, fields
 
-from app.controllers import snapshots
 from app.extensions import api
 from app.infrastructure import OctantResource
+from app.legacy.controllers import snapshots
+from app.modules.snapshots.finalized.controller import simulate_finalized_epoch_snapshot
+from app.modules.snapshots.pending.controller import create_pending_epoch_snapshot
 
 ns = Namespace("snapshots", description="Database snapshots")
 api.add_namespace(ns)
@@ -27,6 +29,36 @@ epoch_status_model = api.model(
     },
 )
 
+project_reward_model = api.model(
+    "ProjectRewardModel",
+    {
+        "address": fields.String(),
+        "allocated": fields.String(),
+        "matched": fields.String(),
+    },
+)
+
+account_funds_model = api.model(
+    "UserRewardModel",
+    {
+        "address": fields.String(),
+        "amount": fields.String(),
+    },
+)
+
+finalized_snapshot_model = api.model(
+    "FinalizedSnapshotModel",
+    {
+        "patronsRewards": fields.String(),
+        "matchedRewards": fields.String(),
+        "projectsRewards": fields.List(fields.Nested(project_reward_model)),
+        "userRewards": fields.List(fields.Nested(account_funds_model)),
+        "totalWithdrawals": fields.String(),
+        "leftover": fields.String(),
+        "merkleRoot": fields.String(),
+    },
+)
+
 
 @ns.route("/pending")
 @ns.doc(
@@ -42,7 +74,7 @@ epoch_status_model = api.model(
 class PendingEpochSnapshot(OctantResource):
     def post(self):
         app.logger.info("Initiating pending epoch snapshot")
-        epoch = snapshots.snapshot_pending_epoch()
+        epoch = create_pending_epoch_snapshot()
         app.logger.info(f"Saved pending epoch snapshot for epoch: {epoch}")
 
         return ({"epoch": epoch}, 201) if epoch is not None else Response()
@@ -87,3 +119,14 @@ class EpochStatus(OctantResource):
         app.logger.debug(f"Epoch {epoch} status: {status}")
 
         return status.to_dict()
+
+
+@ns.route("/finalized/simulate")
+@ns.doc(description="Simulates the finalized snapshot")
+@ns.response(200, "Snapshot simulated successfully")
+class SimulateFinalizedSnapshot(OctantResource):
+    @ns.marshal_with(finalized_snapshot_model)
+    def get(self):
+        app.logger.debug("Simulating finalized snapshot")
+        response = simulate_finalized_epoch_snapshot()
+        return response.to_dict()

@@ -31,7 +31,10 @@
   "scripts": {
     "compile": "npx hardhat compile",
     "deploy:goerli": "npx hardhat --network goerli run scripts/deploy.ts",
+    "deploy:holesky": "npx hardhat --network holesky run scripts/deploy.ts",
     "build-batch-tx": "npx hardhat run scripts/buildBatchDepositTx.ts",
+    "build-batch-tx:goerli": "npx hardhat --network goerli run scripts/buildBatchDepositTx.ts",
+    "build-batch-tx:holesky": "npx hardhat --network holesky run scripts/buildBatchDepositTx.ts",
     "test": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat test"
   }
 }

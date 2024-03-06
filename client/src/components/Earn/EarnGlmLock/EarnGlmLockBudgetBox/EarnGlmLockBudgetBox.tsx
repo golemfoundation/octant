@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import { BigNumber } from 'ethers';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -24,22 +23,32 @@ const EarnGlmLockBudgetBox: FC<EarnGlmLockBudgetBoxProps> = ({
   });
 
   const depositsValueString = useMemo(
-    () => getFormattedGlmValue(depositsValue || BigNumber.from(0)).fullString,
+    () => getFormattedGlmValue(depositsValue || BigInt(0)).fullString,
     [depositsValue],
   );
 
   const availableFundsGlmString = getFormattedGlmValue(
-    BigNumber.from(availableFundsGlm ? availableFundsGlm!.value : 0),
+    BigInt(availableFundsGlm ? availableFundsGlm!.value : 0),
   ).fullString;
 
   return (
-    <BoxRounded alignment="left" className={className} hasPadding={false} isGrey isVertical>
+    <BoxRounded
+      alignment="left"
+      className={className}
+      dataTest="BudgetBox"
+      hasPadding={false}
+      isGrey
+      isVertical
+    >
       <div className={styles.budgetRow}>
         <div className={styles.budgetLabel}>{t('currentlyLocked')}</div>
         {isFetchingDepositValue ? (
           <div className={styles.skeleton} />
         ) : (
-          <div className={cx(styles.budgetValue, isCurrentlyLockedError && styles.isError)}>
+          <div
+            className={cx(styles.budgetValue, isCurrentlyLockedError && styles.isError)}
+            data-test="BudgetBox__currentlyLocked__value"
+          >
             {depositsValueString}
           </div>
         )}
@@ -49,7 +58,10 @@ const EarnGlmLockBudgetBox: FC<EarnGlmLockBudgetBoxProps> = ({
         {!isFetchedAvailableFundsGlm ? (
           <div className={styles.skeleton} />
         ) : (
-          <div className={cx(styles.budgetValue, isWalletBalanceError && styles.isError)}>
+          <div
+            className={cx(styles.budgetValue, isWalletBalanceError && styles.isError)}
+            data-test="BudgetBox__walletBalance__value"
+          >
             {availableFundsGlmString}
           </div>
         )}

@@ -1,11 +1,16 @@
-import React, { ReactElement, useState, useMemo } from 'react';
+import React, { ReactElement, useState, useMemo, useLayoutEffect, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import ProposalsList from 'components/Proposals/ProposalsList';
+import ProposalsTimelineWidget from 'components/Proposals/ProposalsTimelineWidget';
 import Layout from 'components/shared/Layout';
 import TipTile from 'components/shared/TipTile';
 import Loader from 'components/ui/Loader';
+import {
+  WINDOW_PROPOSALS_SCROLL_Y,
+  WINDOW_PROPOSALS_LOADED_ARCHIVED_EPOCHS_NUMBER,
+} from 'constants/window';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -31,7 +36,12 @@ const ProposalsView = (): ReactElement => {
     }),
   );
 
-  const [loadedArchivedEpochsNumber, setLoadedArchivedEpochsNumber] = useState(0);
+  const [loadedArchivedEpochsNumber, setLoadedArchivedEpochsNumber] = useState(() => {
+    const proposalsLoadedArchivedEpochsNumber =
+      window[WINDOW_PROPOSALS_LOADED_ARCHIVED_EPOCHS_NUMBER];
+
+    return proposalsLoadedArchivedEpochsNumber ?? 0;
+  });
 
   const isEpoch1 = currentEpoch === 1;
 
@@ -50,6 +60,21 @@ const ProposalsView = (): ReactElement => {
 
   const onLoadNextEpochArchive = () => setLoadedArchivedEpochsNumber(prev => prev + 1);
 
+  useLayoutEffect(() => {
+    const proposalsScrollY = window[WINDOW_PROPOSALS_SCROLL_Y];
+    if (!proposalsScrollY) {
+      return;
+    }
+
+    window.scrollTo({ top: proposalsScrollY });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      window[WINDOW_PROPOSALS_LOADED_ARCHIVED_EPOCHS_NUMBER] = loadedArchivedEpochsNumber;
+    };
+  }, [loadedArchivedEpochsNumber]);
+
   return (
     <Layout dataTest="ProposalsView">
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
@@ -64,6 +89,7 @@ const ProposalsView = (): ReactElement => {
           title={t('tip.title')}
         />
       )}
+      <ProposalsTimelineWidget />
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <ProposalsList
           areCurrentEpochsProjectsHiddenOutsideAllocationWindow={

@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 import { CryptoCurrency } from 'types/cryptoCurrency';
 
 export const DOUBLE_VALUE_VARIANTS = ['big', 'standard', 'small', 'tiny'] as const;
@@ -15,7 +13,7 @@ export default interface DoubleValueProps {
   isFetching?: boolean;
   shouldIgnoreGwei?: boolean;
   textAlignment?: 'left' | 'right';
-  valueCrypto?: BigNumber;
+  valueCrypto?: bigint;
   valueString?: string;
   variant?: DoubleValueVariant;
 }

@@ -1,0 +1,57 @@
+.root {
+  height: 6.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 0.1rem solid $color-octant-grey8;
+
+  .leftSection {
+    text-align: left;
+
+    .name {
+      font-size: $font-size-14;
+      font-weight: $font-weight-bold;
+      color: $color-octant-dark;
+      margin-bottom: 0.2rem;
+    }
+
+    .value {
+      font-size: $font-size-10;
+      font-weight: $font-weight-semibold;
+      color: $color-octant-grey5;
+
+      &.isDonationAboveThreshold {
+        color: $color-octant-green;
+      }
+
+      &.isLoadingAllocateSimulate {
+        color: $color-octant-grey5;
+      }
+    }
+  }
+
+  .donation {
+    font-size: $font-size-12;
+    font-weight: $font-weight-bold;
+    color: $color-octant-grey5;
+    text-align: right;
+  }
+
+  @media #{$desktop-up} {
+    height: 8rem;
+
+    .leftSection {
+      .name {
+        font-size: $font-size-16;
+      }
+
+      .value {
+        font-size: $font-size-10;
+      }
+    }
+
+    .donation {
+      font-size: $font-size-14;
+    }
+  }
+}

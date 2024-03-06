@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFeeData } from 'wagmi';
@@ -15,7 +14,7 @@ import styles from './EarnWithdrawEth.module.scss';
 import EarnWithdrawEthProps from './types';
 
 const EarnWithdrawEth: FC<EarnWithdrawEthProps> = ({ onCloseModal }) => {
-  const { t } = useTranslation('translation', {
+  const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.withdrawEth',
   });
   const { data: feeData, isFetching: isFetchingFeeData } = useFeeData();
@@ -63,7 +62,7 @@ const EarnWithdrawEth: FC<EarnWithdrawEthProps> = ({ onCloseModal }) => {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
         isFetching: isFetchingFeeData,
-        valueCrypto: BigNumber.from(feeData === undefined ? 0 : feeData.gasPrice),
+        valueCrypto: BigInt(feeData?.gasPrice ?? 0),
       },
       label: t('estimatedGasPrice'),
     },
@@ -78,11 +77,15 @@ const EarnWithdrawEth: FC<EarnWithdrawEthProps> = ({ onCloseModal }) => {
           isDisabled={
             isWithdrawableRewardsFetching ||
             isAppWaitingForTransactionToBeIndexed ||
-            withdrawals?.sums.available.isZero()
+            !!(withdrawals?.sums.available === 0n)
           }
           isHigh
-          isLoading={withdrawEthMutation.isLoading}
-          label={withdrawEthMutation.isLoading ? t('waitingForConfirmation') : t('withdrawAll')}
+          isLoading={withdrawEthMutation.isPending}
+          label={
+            withdrawEthMutation.isPending
+              ? i18n.t('common.waitingForConfirmation')
+              : t('withdrawAll')
+          }
           onClick={withdrawEth}
           variant="cta"
         />

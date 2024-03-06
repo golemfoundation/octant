@@ -1,10 +1,9 @@
-import { formatUnits } from 'ethers/lib/utils';
-
 import { Response } from 'api/calls/cryptoValues';
 import DoubleValueProps from 'components/ui/DoubleValue/types';
 import { FIAT_CURRENCIES_SYMBOLS } from 'constants/currencies';
 import { SettingsData } from 'store/settings/types';
 
+import { formatUnitsBigInt } from './formatUnitsBigInt';
 import getNumberWithSpaces from './getNumberWithSpaces';
 
 export default function getValueFiatToDisplay({
@@ -53,7 +52,7 @@ export default function getValueFiatToDisplay({
 
   const exchangeRate = cryptoValues[cryptoCurrency][displayCurrency];
 
-  const valueFiat = (parseFloat(formatUnits(valueCrypto)) * exchangeRate).toFixed(
+  const valueFiat = (parseFloat(formatUnitsBigInt(valueCrypto)) * exchangeRate).toFixed(
     displayCurrency === 'jpy' ? 0 : 2,
   );
 

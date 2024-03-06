@@ -39,8 +39,10 @@ const EarnBoxGlmLock: FC<EarnBoxGlmLockProps> = ({ classNameBox }) => {
 
   const sections: SectionProps[] = [
     {
+      dataTest: 'BoxGlmLock__Section--current',
       doubleValueProps: {
         cryptoCurrency: 'golem',
+        dataTest: 'BoxGlmLock__Section--current__DoubleValue',
         isFetching: isFetchingDepositValue || isAppWaitingForTransactionToBeIndexed,
         valueCrypto: depositsValue,
       },
@@ -62,6 +64,7 @@ const EarnBoxGlmLock: FC<EarnBoxGlmLockProps> = ({ classNameBox }) => {
         dataTest: 'TooltipEffectiveLockedBalance',
         position: 'bottom-right',
         text: t('tooltipText'),
+        tooltipClassName: styles.effectiveTooltip,
       },
     },
   ];
@@ -75,7 +78,7 @@ const EarnBoxGlmLock: FC<EarnBoxGlmLockProps> = ({ classNameBox }) => {
           isDisabled: !isConnected || isPreLaunch,
           isHigh: true,
           label:
-            !depositsValue || (!!depositsValue && depositsValue.isZero())
+            !depositsValue || (!!depositsValue && depositsValue === 0n)
               ? i18n.t('common.lockGlm')
               : t('editLockedGLM'),
           onClick: () => setIsModalGlmLockOpen(true),
@@ -108,6 +111,7 @@ const EarnBoxGlmLock: FC<EarnBoxGlmLockProps> = ({ classNameBox }) => {
       </BoxRounded>
       <ModalEarnGlmLock
         modalProps={{
+          dataTest: 'ModalGlmLock',
           isOpen: isModalGlmLockOpen,
           onClosePanel: () => setIsModalGlmLockOpen(false),
         }}

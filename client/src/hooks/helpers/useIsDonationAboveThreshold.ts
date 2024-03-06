@@ -1,10 +1,15 @@
 import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
 import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
 
-export default function useIsDonationAboveThreshold(
-  proposalAddress: string,
-  epoch?: number,
-): boolean {
+export default function useIsDonationAboveThreshold({
+  proposalAddress,
+  epoch,
+  rewardsSumWithValueAndSimulation,
+}: {
+  epoch?: number;
+  proposalAddress: string;
+  rewardsSumWithValueAndSimulation?: bigint;
+}): boolean {
   const { data: matchedProposalRewards } = useMatchedProposalRewards(epoch);
   const { data: proposalRewardsThreshold } = useProposalRewardsThreshold(epoch);
 
@@ -12,9 +17,11 @@ export default function useIsDonationAboveThreshold(
     ({ address }) => address === proposalAddress,
   );
 
-  if (proposalRewardsThreshold === undefined || proposalMatchedProposalRewards === undefined) {
+  const rewardsToUse = rewardsSumWithValueAndSimulation || proposalMatchedProposalRewards?.sum;
+
+  if (proposalRewardsThreshold === undefined || rewardsToUse === undefined) {
     return false;
   }
 
-  return proposalMatchedProposalRewards.sum.gte(proposalRewardsThreshold);
+  return rewardsToUse >= proposalRewardsThreshold;
 }
