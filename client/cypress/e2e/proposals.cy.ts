@@ -150,7 +150,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           cy.get('[data-test=ProposalsTimelineWidgetItem]')
             .eq(i)
             .within(() => {
-              cy.get('[data-test=ProposalsTimelineWidgetItem__Svg--arrowTopRight]').should('exist');
+              cy.get('[data-test=ProposalsTimelineWidgetItem__Svg--arrowTopRight]').should(
+                'be.visible',
+              );
             });
 
           cy.get('[data-test=ProposalsTimelineWidgetItem]')
