@@ -1,5 +1,5 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
-import { useCallback, useRef } from 'react';
+import { useRef } from 'react';
 
 import { PostCalculateRewardsResponse, apiPostCalculateRewards } from 'api/calls/calculateRewards';
 
@@ -21,10 +21,10 @@ export default function useCalculateRewards(
     ...options,
   });
 
-  const reset = useCallback(() => {
+  const reset = () => {
     abortControllerRef.current?.abort();
     mutation.reset();
-  }, [abortControllerRef, mutation]);
+  };
 
   return { ...mutation, reset };
 }
