@@ -33,7 +33,7 @@ def get_last_snapshot() -> FinalizedEpochSnapshot:
     return snapshot
 
 
-def add_snapshot(
+def save_snapshot(
     epoch: int,
     matched_rewards: int,
     patrons_rewards: int,

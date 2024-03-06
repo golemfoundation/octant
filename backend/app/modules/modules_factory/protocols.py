@@ -83,7 +83,13 @@ class PendingSnapshots(Protocol):
 
 
 @runtime_checkable
-class FinalizedSnapshots(Protocol):
+class CreateFinalizedSnapshots(Protocol):
+    def create_finalized_epoch_snapshot(self, context: Context) -> int:
+        ...
+
+
+@runtime_checkable
+class SimulateFinalizedSnapshots(Protocol):
     def simulate_finalized_epoch_snapshot(
         self, context: Context
     ) -> FinalizedSnapshotDTO:

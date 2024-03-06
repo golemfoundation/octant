@@ -36,7 +36,7 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const { data: isPatronMode } = useIsPatronMode();
   const { data: totalPatronDonations, isFetching: isFetchingTotalPatronDonations } =
-    useTotalPatronDonations({ enabled: isPatronMode });
+    useTotalPatronDonations({ isEnabledAdditional: !!isPatronMode });
   const { isAppWaitingForTransactionToBeIndexed } = useTransactionLocalStore(state => ({
     isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
   }));
@@ -94,7 +94,7 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
         isFetching: isPatronMode
           ? isFetchingTotalPatronDonations
           : isFetchingWithdrawals || isAppWaitingForTransactionToBeIndexed,
-        valueCrypto: isPatronMode ? totalPatronDonations : withdrawals?.sums.available,
+        valueCrypto: isPatronMode ? totalPatronDonations?.value : withdrawals?.sums.available,
       },
       label: isPatronMode && !isProjectAdminMode ? t('allTime') : i18n.t('common.availableNow'),
     },

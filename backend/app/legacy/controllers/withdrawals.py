@@ -5,8 +5,8 @@ from typing import List
 from app.extensions import vault, epochs
 from app.infrastructure import database
 from app.infrastructure.graphql.merkle_roots import get_all_vault_merkle_roots
-from app.legacy.core.merkle_tree import get_proof_by_address_and_epoch
 from app.legacy.core.user.rewards import get_user_claimed_rewards
+from app.modules.common.merkle_tree import get_proof_by_address_and_epoch
 
 
 class WithdrawalStatus(StrEnum):

@@ -4,7 +4,7 @@ from typing import Optional, List
 
 from dataclass_wizard import JSONWizard
 
-from app.engine.projects.rewards import AllocationPayload, ProjectRewardDTO
+from app.engine.projects.rewards import AllocationPayload
 
 
 @dataclass(frozen=True)
@@ -18,10 +18,15 @@ class AccountFundsDTO(JSONWizard):
 
 
 @dataclass(frozen=True)
+class ProjectAccountFundsDTO(AccountFundsDTO, JSONWizard):
+    matched: int
+
+
+@dataclass(frozen=True)
 class FinalizedSnapshotDTO(JSONWizard):
     patrons_rewards: int
     matched_rewards: int
-    projects_rewards: List[ProjectRewardDTO]
+    projects_rewards: List[ProjectAccountFundsDTO]
     user_rewards: List[AccountFundsDTO]
     total_withdrawals: int
     leftover: int
