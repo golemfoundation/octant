@@ -56,6 +56,7 @@ from tests.helpers.constants import (
     USER3_ED,
     USER_MOCKED_BUDGET,
 )
+from tests.helpers.context import get_context
 from tests.helpers.gql_client import MockGQLClient
 from tests.helpers.mocked_epoch_details import EPOCH_EVENTS
 from tests.helpers.octant_rewards import octant_rewards
@@ -398,6 +399,16 @@ def carol(user_accounts):
 
 
 @pytest.fixture(scope="function")
+def context():
+    return get_context()
+
+
+@pytest.fixture(scope="function")
+def projects(context):
+    return context.projects_details.projects
+
+
+@pytest.fixture(scope="function")
 def mock_epoch_details(mocker, graphql_client):
     mock_graphql(mocker, epochs_events=list(EPOCH_EVENTS.values()))
 
@@ -571,7 +582,7 @@ def mock_pending_epoch_snapshot_db(app, mock_users_db):
 
 @pytest.fixture(scope="function")
 def mock_finalized_epoch_snapshot_db(app, user_accounts):
-    database.finalized_epoch_snapshot.add_snapshot(
+    database.finalized_epoch_snapshot.save_snapshot(
         MOCKED_FINALIZED_EPOCH_NO,
         MATCHED_REWARDS,
         0,

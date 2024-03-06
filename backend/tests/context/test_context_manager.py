@@ -155,7 +155,7 @@ def _setup(current, pending, finalized, pending_snapshot, finalized_snapshot):
             OPERATIONAL_COST,
         )
     if finalized_snapshot:
-        database.finalized_epoch_snapshot.add_snapshot(
+        database.finalized_epoch_snapshot.save_snapshot(
             MOCKED_FINALIZED_EPOCH_NO, MATCHED_REWARDS, 0, LEFTOVER
         )
     db.session.commit()

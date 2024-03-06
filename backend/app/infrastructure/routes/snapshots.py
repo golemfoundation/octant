@@ -5,7 +5,10 @@ from flask_restx import Namespace, fields
 from app.extensions import api
 from app.infrastructure import OctantResource
 from app.legacy.controllers import snapshots
-from app.modules.snapshots.finalized.controller import simulate_finalized_epoch_snapshot
+from app.modules.snapshots.finalized.controller import (
+    simulate_finalized_epoch_snapshot,
+    create_finalized_epoch_snapshot,
+)
 from app.modules.snapshots.pending.controller import create_pending_epoch_snapshot
 
 ns = Namespace("snapshots", description="Database snapshots")
@@ -93,7 +96,7 @@ class PendingEpochSnapshot(OctantResource):
 class FinalizedEpochSnapshot(OctantResource):
     def post(self):
         app.logger.info("Initiating finalized epoch snapshot")
-        epoch = snapshots.snapshot_finalized_epoch()
+        epoch = create_finalized_epoch_snapshot()
         app.logger.info(f"Saved finalized epoch snapshot for epoch: {epoch}")
 
         return ({"epoch": epoch}, 201) if epoch is not None else Response()

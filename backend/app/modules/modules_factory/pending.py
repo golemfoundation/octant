@@ -9,7 +9,7 @@ from app.modules.modules_factory.protocols import (
     TotalEffectiveDeposits,
     Leverage,
     SimulateAllocation,
-    FinalizedSnapshots,
+    SimulateFinalizedSnapshots,
     UserBudgets,
 )
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
@@ -43,7 +43,7 @@ class PendingServices(Model):
     user_patron_mode_service: UserPatronMode
     user_budgets_service: UserBudgets
     user_rewards_service: UserRewards
-    finalized_snapshots_service: FinalizedSnapshots
+    finalized_snapshots_service: SimulateFinalizedSnapshots
 
     @staticmethod
     def create() -> "PendingServices":
