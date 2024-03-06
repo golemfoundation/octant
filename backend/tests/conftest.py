@@ -56,6 +56,7 @@ from tests.helpers.constants import (
     USER3_ED,
     USER_MOCKED_BUDGET,
 )
+from tests.helpers.context import get_context
 from tests.helpers.gql_client import MockGQLClient
 from tests.helpers.mocked_epoch_details import EPOCH_EVENTS
 from tests.helpers.octant_rewards import octant_rewards
@@ -395,6 +396,16 @@ def bob(user_accounts):
 @pytest.fixture(scope="function")
 def carol(user_accounts):
     return user_accounts[2]
+
+
+@pytest.fixture(scope="function")
+def context():
+    return get_context()
+
+
+@pytest.fixture(scope="function")
+def projects(context):
+    return context.projects_details.projects
 
 
 @pytest.fixture(scope="function")

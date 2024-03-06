@@ -54,13 +54,13 @@ def add_user_reward(epoch: int, address: str, amount: int):
     )
 
 
-def add_all(epoch: int, rewards: List[AccountFundsDTO | ProjectAccountFundsDTO]):
+def add_all(epoch: int, rewards: List[AccountFundsDTO]):
     new_rewards = [
         RewardDB(
             epoch=epoch,
             address=to_checksum_address(r.address),
             amount=str(r.amount),
-            matched=str(r.matched) if hasattr(r, "matched") else None,
+            matched=str(r.matched) if isinstance(r, ProjectAccountFundsDTO) else None,
         )
         for r in rewards
     ]

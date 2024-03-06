@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 from app.engine.projects import ProjectSettings
 from app.modules.common import merkle_tree
 from app.modules.common.project_rewards import get_projects_rewards
@@ -6,6 +8,10 @@ from app.modules.dto import (
     ProjectAccountFundsDTO,
     AllocationDTO,
     AccountFundsDTO,
+)
+
+FinalizedProjectRewards = namedtuple(
+    "FinalizedProjectRewards", ["rewards", "rewards_sum"]
 )
 
 
@@ -22,18 +28,21 @@ def get_finalized_project_rewards(
     allocations: list[AllocationDTO],
     all_projects: list[str],
     matched_rewards: int,
-) -> tuple[list[ProjectAccountFundsDTO], int]:
+) -> FinalizedProjectRewards:
     project_rewards_result = get_projects_rewards(
         project_settings, allocations, all_projects, matched_rewards
     )
 
-    return [
-        ProjectAccountFundsDTO(
-            address=r.address, amount=r.allocated + r.matched, matched=r.matched
-        )
-        for r in project_rewards_result.rewards
-        if r.allocated > 0
-    ], project_rewards_result.rewards_sum
+    return FinalizedProjectRewards(
+        rewards=[
+            ProjectAccountFundsDTO(
+                address=r.address, amount=r.allocated + r.matched, matched=r.matched
+            )
+            for r in project_rewards_result.rewards
+            if r.allocated > 0
+        ],
+        rewards_sum=project_rewards_result.rewards_sum,
+    )
 
 
 def get_merkle_root(

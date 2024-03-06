@@ -49,23 +49,23 @@ class BaseFinalizedSnapshots(Model):
         allocations = database.allocations.get_all(context.epoch_details.epoch_num)
 
         user_rewards, user_rewards_sum = self.user_rewards.get_claimed_rewards(context)
-        projects_rewards, projects_rewards_sum = get_finalized_project_rewards(
+        project_rewards = get_finalized_project_rewards(
             projects_settings,
             allocations,
             projects,
             matched_rewards,
         )
 
-        merkle_root = get_merkle_root(user_rewards, projects_rewards)
+        merkle_root = get_merkle_root(user_rewards, project_rewards.rewards)
         total_withdrawals = get_total_withdrawals(
-            user_rewards_sum, projects_rewards_sum
+            user_rewards_sum, project_rewards.rewards_sum
         )
         leftover = calculate_leftover(octant_rewards, total_withdrawals)
 
         return FinalizedSnapshotDTO(
             patrons_rewards=patrons_rewards,
             matched_rewards=matched_rewards,
-            projects_rewards=projects_rewards,
+            projects_rewards=project_rewards.rewards,
             user_rewards=user_rewards,
             total_withdrawals=total_withdrawals,
             leftover=leftover,
