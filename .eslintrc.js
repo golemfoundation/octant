@@ -1,8 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-const typescriptEslintRecommended = require('@typescript-eslint/eslint-plugin/dist/configs/recommended');
-const prettier = require('eslint-config-prettier');
-/* eslint-enable import/no-extraneous-dependencies */
-
 // this is for allowing some rules to be disobeyed in local env, but not in pre-commit or CI
 const ruleDisabledForLocalEnvErrorOtherwise = process.env.WEBPACK_DEV_SERVER === 'true' ? 0 : 2;
 
@@ -83,7 +78,8 @@ module.exports = {
         project: ['./tsconfig.json'],
       },
       plugins: ['@typescript-eslint', 'prettier', 'no-only-tests'],
-      rules: Object.assign(typescriptEslintRecommended.rules, prettier.rules, {
+      extends: ['plugin:@typescript-eslint/eslint-recommended'],
+      rules: {
         '@typescript-eslint/ban-ts-comment': [
           'warn',
           {
@@ -165,7 +161,7 @@ module.exports = {
         'import/no-relative-packages': 'off',
         'typescript-sort-keys/interface': ruleDisabledForLocalEnvErrorOtherwise,
         'typescript-sort-keys/string-enum': ruleDisabledForLocalEnvErrorOtherwise,
-      }),
+      },
     },
   ],
 };
