@@ -25,14 +25,6 @@ const App = (): ReactElement => {
   const isProjectAdminMode = useIsProjectAdminMode();
   const config = useConfig();
 
-  useEffect(() => {
-    if (window.Cypress) {
-      // @ts-expect-error Left for debug purposes.
-      window.wagmiConfig = config;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   if (isLoading) {
     return <AppLoader />;
   }

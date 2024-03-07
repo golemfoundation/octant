@@ -28,9 +28,9 @@ i18n.init({
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const isProduction = mode === 'production';
+  // const isProduction = mode === 'production';
   const isStaging = mode === 'staging';
-  const localIdentName = isProduction ? '[hash:base64:5]' : '[name]__[local]--[hash:base64:5]';
+  // const localIdentName = isProduction ? '[hash:base64:5]' : '[name]__[local]--[hash:base64:5]';
   const base = '/';
 
   const plugins = [
@@ -56,9 +56,9 @@ export default defineConfig(({ mode }) => {
   return {
     base,
     css: {
-      modules: {
-        generateScopedName: localIdentName,
-      },
+      // modules: {
+      //   generateScopedName: localIdentName,
+      // },
       preprocessorOptions: {
         scss: {
           additionalData:
