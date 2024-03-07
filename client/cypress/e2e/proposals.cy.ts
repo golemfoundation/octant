@@ -111,15 +111,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
   describe(`proposals: ${device}`, { viewportHeight, viewportWidth }, () => {
     let proposalNames: string[] = [];
 
-    before(() => {
-      /**
-       * Global Metamask setup done by Synpress is not always done.
-       * Since Synpress needs to have valid provider to fetch the data from contracts,
-       * setupMetamask is required in each test suite.
-       */
-      cy.setupMetamask();
-    });
-
     beforeEach(() => {
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
