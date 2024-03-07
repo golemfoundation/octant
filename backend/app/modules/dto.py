@@ -31,6 +31,8 @@ class FinalizedSnapshotDTO(JSONWizard):
     total_withdrawals: int
     leftover: int
     merkle_root: str
+    ppf: Optional[int] = None
+    community_fund: Optional[int] = None
 
 
 @dataclass

@@ -11,7 +11,7 @@ from app.engine.octant_rewards import OpCostPercent
 from app.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (
     AllProceedsWithOperationalCost,
 )
-from app.engine.octant_rewards.total_and_individual.total_from_staking import (
+from app.engine.octant_rewards.total_and_individual.tr_from_staking import (
     PercentTotalAndAllIndividualRewards,
 )
 from app.engine.projects import DefaultProjectRewards

@@ -1,6 +1,6 @@
 from app.engine.user import DefaultUserBudget
 from app.engine.user.budget import UserBudgetPayload
-from tests.conftest import USER1_ED, TOTAL_ED, ALL_INDIVIDUAL_REWARDS
+from tests.helpers.constants import USER1_ED, TOTAL_ED, ALL_INDIVIDUAL_REWARDS
 
 
 def test_default_user_budget():

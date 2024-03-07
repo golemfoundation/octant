@@ -45,8 +45,8 @@ def save_snapshot(
     total_rewards: int,
     all_individual_rewards: int,
     operational_cost: int,
-    community_fund: int | None,
-    ppf: int | None,
+    community_fund: int | None = None,
+    ppf: int | None = None,
 ):
     snapshot = PendingEpochSnapshot(
         epoch=epoch,

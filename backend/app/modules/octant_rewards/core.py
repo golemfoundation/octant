@@ -8,6 +8,7 @@ from app.engine.octant_rewards.locked_ratio import LockedRatioPayload
 from app.engine.octant_rewards.operational_cost import OperationalCostPayload
 from app.engine.octant_rewards.ppf import PPFPayload
 from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividualPayload
+from app.engine.octant_rewards.community_fund import CommunityFundPayload
 
 
 @dataclass
@@ -47,7 +48,9 @@ def calculate_rewards(
     ppf_payload = PPFPayload(eth_proceeds)
     ppf_value = ppf_calculator.calculate_ppf(ppf_payload)
 
-    community_fund = 0
+    cf_calculator = octant_rewards_settings.community_fund
+    cf_payload = CommunityFundPayload(eth_proceeds)
+    cf_value = cf_calculator.calculate_cf(cf_payload)
 
     return OctantRewardsWrapper(
         locked_ratio=locked_ratio,
@@ -55,5 +58,5 @@ def calculate_rewards(
         all_individual_rewards=all_individual_rewards,
         operational_cost=operational_cost,
         ppf_value=ppf_value,
-        community_fund=community_fund,
+        community_fund=cf_value,
     )

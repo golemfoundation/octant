@@ -1,20 +1,20 @@
 from app.infrastructure import database
-from app.modules.dto import AllocationDTO, OctantRewardsDTO
+from app.modules.dto import AllocationDTO
 from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
-from tests.conftest import ETH_PROCEEDS, TOTAL_ED
+from app.engine.epochs_settings import register_epoch_settings, get_epoch_settings
 from tests.helpers.constants import (
-    TOTAL_REWARDS,
-    ALL_INDIVIDUAL_REWARDS,
-    OPERATIONAL_COST,
-    LOCKED_RATIO,
-    TOTAL_WITHDRAWALS,
-    MATCHED_REWARDS,
-    LEFTOVER,
     USER1_BUDGET,
     COMMUNITY_FUND,
     PPF,
+    MOCKED_EPOCH_NO_AFTER_OVERHAUL,
+    LEFTOVER,
+    TOTAL_WITHDRAWALS,
+    MATCHED_REWARDS,
+    NO_PATRONS_REWARDS,
 )
 from tests.helpers.context import get_context
+from tests.modules.octant_rewards.helpers.checker import check_octant_rewards
+from tests.modules.octant_rewards.helpers import overhaul_formulas
 
 
 def test_finalized_octant_rewards_before_overhaul(
@@ -25,18 +25,35 @@ def test_finalized_octant_rewards_before_overhaul(
 
     result = service.get_octant_rewards(context)
 
-    _check_octant_rewards(result)
+    check_octant_rewards(
+        result,
+        leftover=LEFTOVER,
+        matched_rewards=MATCHED_REWARDS,
+        total_withdrawals=TOTAL_WITHDRAWALS,
+        patrons_rewards=NO_PATRONS_REWARDS,
+    )
 
 
 def test_finalized_octant_rewards_after_overhaul(
-    mock_pending_epoch_snapshot_db_since_epoch3, mock_finalized_epoch_snapshot_db
+    mock_pending_epoch_snapshot_db_since_epoch3,
+    mock_finalized_epoch_snapshot_db_since_epoch3,
 ):
-    context = get_context(epoch_num=3)
+    context = get_context(epoch_num=MOCKED_EPOCH_NO_AFTER_OVERHAUL)
     service = FinalizedOctantRewards()
 
     result = service.get_octant_rewards(context)
 
-    _check_octant_rewards(result, ppf=PPF, community_fund=COMMUNITY_FUND)
+    check_octant_rewards(
+        result,
+        ppf=PPF,
+        community_fund=COMMUNITY_FUND,
+        leftover=LEFTOVER,
+        matched_rewards=overhaul_formulas.matched_rewards(
+            result.total_rewards, PPF, patrons_rewards=NO_PATRONS_REWARDS
+        ),
+        total_withdrawals=TOTAL_WITHDRAWALS,
+        patrons_rewards=NO_PATRONS_REWARDS,
+    )
 
 
 def test_finalized_get_leverage(
@@ -55,18 +72,3 @@ def test_finalized_get_leverage(
     result = service.get_leverage(context)
 
     assert result == 144160.63189897747
-
-
-def _check_octant_rewards(rewards: OctantRewardsDTO, ppf=None, community_fund=None):
-    assert rewards.staking_proceeds == ETH_PROCEEDS
-    assert rewards.locked_ratio == LOCKED_RATIO
-    assert rewards.total_effective_deposit == TOTAL_ED
-    assert rewards.total_rewards == TOTAL_REWARDS
-    assert rewards.individual_rewards == ALL_INDIVIDUAL_REWARDS
-    assert rewards.operational_cost == OPERATIONAL_COST
-    assert rewards.patrons_rewards == 0
-    assert rewards.total_withdrawals == TOTAL_WITHDRAWALS
-    assert rewards.matched_rewards == MATCHED_REWARDS
-    assert rewards.leftover == LEFTOVER
-    assert rewards.community_fund == community_fund
-    assert rewards.ppf == ppf

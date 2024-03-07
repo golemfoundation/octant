@@ -17,9 +17,11 @@ from tests.helpers.constants import (
 )
 
 
-def create_pending_snapshot(mock_users_db, optional_cf=None, optional_ppf=None):
+def create_pending_snapshot(
+    mock_users_db, epoch_nr: int, optional_cf=None, optional_ppf=None
+):
     database.pending_epoch_snapshot.save_snapshot(
-        MOCKED_PENDING_EPOCH_NO,
+        epoch_nr,
         ETH_PROCEEDS,
         TOTAL_ED,
         LOCKED_RATIO,

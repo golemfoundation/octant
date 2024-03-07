@@ -7,5 +7,5 @@ from dataclasses import dataclass
 
 @dataclass
 class NotSupportedCFCalculator(CommunityFundCalculator):
-    def calculate_ppf(self, payload: CommunityFundPayload) -> None:
+    def calculate_cf(self, payload: CommunityFundPayload) -> None:
         return None

@@ -5,16 +5,14 @@ from app.context.manager import epoch_context, state_context
 from app.exceptions import InvalidEpoch
 from app.infrastructure import database
 from tests.conftest import (
-    ALL_INDIVIDUAL_REWARDS,
     ETH_PROCEEDS,
-    LOCKED_RATIO,
     MATCHED_REWARDS,
     MOCK_EPOCHS,
     MOCKED_FINALIZED_EPOCH_NO,
     MOCKED_PENDING_EPOCH_NO,
     TOTAL_ED,
-    TOTAL_REWARDS,
 )
+from tests.helpers.constants import ALL_INDIVIDUAL_REWARDS, LOCKED_RATIO, TOTAL_REWARDS
 from tests.helpers.constants import LEFTOVER, OPERATIONAL_COST
 
 

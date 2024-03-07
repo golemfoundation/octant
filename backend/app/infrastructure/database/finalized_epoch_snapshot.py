@@ -38,10 +38,10 @@ def save_snapshot(
     matched_rewards: int,
     patrons_rewards: int,
     leftover: int,
-    ppf: int | None,  # TODO VALIDATE IT HERE
-    community_fund: int | None,
     withdrawals_merkle_root: str = None,
     total_withdrawals: int = 0,
+    ppf: int | None = None,
+    community_fund: int | None = None,
 ):
     snapshot = FinalizedEpochSnapshot(
         epoch=epoch,

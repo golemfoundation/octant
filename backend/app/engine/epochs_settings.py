@@ -4,7 +4,7 @@ from decimal import Decimal
 
 from app.engine.octant_rewards import OctantRewardsSettings
 from app.engine.octant_rewards.operational_cost.op_cost_percent import OpCostPercent
-from app.engine.octant_rewards.total_and_individual.total_from_staking import (
+from app.engine.octant_rewards.total_and_individual.tr_from_staking import (
     PercentTotalAndAllIndividualRewards,
 )
 from app.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (

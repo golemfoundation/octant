@@ -9,5 +9,5 @@ class CommunityFundPayload:
 
 class CommunityFundCalculator(ABC):
     @abstractmethod
-    def calculate_ppf(self, payload: CommunityFundPayload) -> int:
+    def calculate_cf(self, payload: CommunityFundPayload) -> int:
         pass

@@ -10,5 +10,5 @@ from dataclasses import dataclass
 class CommunityFundPercent(CommunityFundCalculator):
     CF_PERCENT: Decimal
 
-    def calculate_ppf(self, payload: CommunityFundPayload) -> int:
+    def calculate_cf(self, payload: CommunityFundPayload) -> int:
         return int(self.CF_PERCENT * payload.eth_proceeds)

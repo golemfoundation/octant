@@ -8,7 +8,7 @@ from app.engine.octant_rewards.matched.default import DefaultMatchedRewards
 from app.engine.octant_rewards.operational_cost import OperationalCost
 from app.engine.octant_rewards.operational_cost.op_cost_percent import OpCostPercent
 from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividualRewards
-from app.engine.octant_rewards.total_and_individual.total_from_staking import (
+from app.engine.octant_rewards.total_and_individual.tr_from_staking import (
     PercentTotalAndAllIndividualRewards,
 )
 from app.engine.octant_rewards.total_and_individual.default import (

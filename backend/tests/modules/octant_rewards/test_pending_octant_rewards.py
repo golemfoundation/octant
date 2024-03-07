@@ -10,26 +10,32 @@ from tests.helpers.constants import (
     OPERATIONAL_COST,
     LOCKED_RATIO,
     USER1_BUDGET,
+    MOCKED_EPOCH_NO_AFTER_OVERHAUL,
+    COMMUNITY_FUND,
+    PPF,
 )
 from tests.helpers.context import get_context
+from tests.modules.octant_rewards.helpers.checker import check_octant_rewards
 
 
-def test_pending_octant_rewards(mock_pending_epoch_snapshot_db):
+def test_pending_octant_rewards_before_overhaul(mock_pending_epoch_snapshot_db):
     context = get_context()
     service = PendingOctantRewards(patrons_mode=Mock())
 
     result = service.get_octant_rewards(context)
 
-    assert result.staking_proceeds == ETH_PROCEEDS
-    assert result.locked_ratio == LOCKED_RATIO
-    assert result.total_effective_deposit == TOTAL_ED
-    assert result.total_rewards == TOTAL_REWARDS
-    assert result.individual_rewards == ALL_INDIVIDUAL_REWARDS
-    assert result.operational_cost == OPERATIONAL_COST
-    assert result.patrons_rewards is None
-    assert result.total_withdrawals is None
-    assert result.matched_rewards is None
-    assert result.leftover is None
+    check_octant_rewards(result)
+
+
+def test_pending_octant_rewards_after_overhaul(
+    mock_pending_epoch_snapshot_db_since_epoch3,
+):
+    context = get_context(epoch_num=MOCKED_EPOCH_NO_AFTER_OVERHAUL)
+    service = PendingOctantRewards(patrons_mode=Mock())
+
+    result = service.get_octant_rewards(context)
+
+    check_octant_rewards(result, community_fund=COMMUNITY_FUND, ppf=PPF)
 
 
 def test_pending_get_matched_rewards_with_patrons(
