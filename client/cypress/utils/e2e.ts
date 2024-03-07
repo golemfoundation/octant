@@ -2,8 +2,8 @@
 // import { wagmiConfig } from 'src/api/clients/client-wagmi';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
-import { readContractEpochs } from 'src/hooks/contracts/readContracts';
 import env from 'src/env';
+import { readContractEpochs } from 'src/hooks/contracts/readContracts';
 
 import Chainable = Cypress.Chainable;
 
@@ -45,63 +45,59 @@ export const mockCoinPricesServer = (): Chainable<any> => {
 // });
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const moveToNextEpoch = () =>
+export const moveToNextEpoch = (win) =>
   new Cypress.Promise(async (resolve, reject) => {
-    cy.log(env);
-    cy.window().then(async win => {
-      cy.log(win.wagmiConfig);
-      const currentEpochPromise = win.clientReactQuery.fetchQuery({
-        queryFn: () =>
-          readContractEpochs({
-            functionName: 'getCurrentEpoch',
-            publicClient: win.wagmiConfig.publicClient,
-          }),
-        queryKey: QUERY_KEYS.currentEpoch,
-      });
-
-      const blockPromise = win.wagmiConfig.publicClient.getBlock();
-
-      const currentEpochEndPromise = win.clientReactQuery.fetchQuery({
-        queryFn: () =>
-          readContractEpochs({
-            functionName: 'getCurrentEpochEnd',
-            publicClient: win.wagmiConfig.publicClient,
-          }),
-        queryKey: QUERY_KEYS.currentEpochEnd,
-      });
-
-      const [currentEpochEnd, block, currentEpoch] = await Promise.all([
-        currentEpochEndPromise,
-        blockPromise,
-        currentEpochPromise,
-      ]);
-
-      if (currentEpoch === undefined || block === undefined || currentEpoch === undefined) {
-        reject('Undefined data');
-      }
-
-      const blockTimestamp = Number(block.timestamp);
-      const currentEpochEndTimestamp = Number(currentEpochEnd);
-
-      const timeToIncrease = currentEpochEndTimestamp - blockTimestamp + 10; // [s]
-      await win.wagmiConfig.publicClient.request({
-        method: 'evm_increaseTime' as any,
-        params: [timeToIncrease] as any,
-      });
-      await win.wagmiConfig.publicClient.request({ method: 'evm_mine' as any, params: [] as any });
-
-      const currentEpochAfter = await win.clientReactQuery.fetchQuery({
-        queryFn: () =>
-          readContractEpochs({
-            functionName: 'getCurrentEpoch',
-            publicClient: win.wagmiConfig.publicClient,
-          }),
-        queryKey: QUERY_KEYS.currentEpoch,
-      });
-
-      // isEpochChanged
-      resolve(Number(currentEpoch) + 1 === Number(currentEpochAfter));
+    const currentEpochPromise = win.clientReactQuery.fetchQuery({
+      queryFn: () =>
+        readContractEpochs({
+          functionName: 'getCurrentEpoch',
+          publicClient: win.wagmiConfig.publicClient,
+        }),
+      queryKey: QUERY_KEYS.currentEpoch,
     });
+
+    const blockPromise = win.wagmiConfig.publicClient.getBlock();
+
+    const currentEpochEndPromise = win.clientReactQuery.fetchQuery({
+      queryFn: () =>
+        readContractEpochs({
+          functionName: 'getCurrentEpochEnd',
+          publicClient: win.wagmiConfig.publicClient,
+        }),
+      queryKey: QUERY_KEYS.currentEpochEnd,
+    });
+
+    const [currentEpochEnd, block, currentEpoch] = await Promise.all([
+      currentEpochEndPromise,
+      blockPromise,
+      currentEpochPromise,
+    ]);
+
+    if (currentEpoch === undefined || block === undefined || currentEpoch === undefined) {
+      reject('Undefined data');
+    }
+
+    const blockTimestamp = Number(block.timestamp);
+    const currentEpochEndTimestamp = Number(currentEpochEnd);
+
+    const timeToIncrease = currentEpochEndTimestamp - blockTimestamp + 10; // [s]
+    await win.wagmiConfig.publicClient.request({
+      method: 'evm_increaseTime' as any,
+      params: [timeToIncrease] as any,
+    });
+    await win.wagmiConfig.publicClient.request({ method: 'evm_mine' as any, params: [] as any });
+
+    const currentEpochAfter = await win.clientReactQuery.fetchQuery({
+      queryFn: () =>
+        readContractEpochs({
+          functionName: 'getCurrentEpoch',
+          publicClient: win.wagmiConfig.publicClient,
+        }),
+      queryKey: QUERY_KEYS.currentEpoch,
+    });
+
+    // isEpochChanged
+    resolve(Number(currentEpoch) + 1 === Number(currentEpochAfter));
   });
 
 export const connectWallet = (

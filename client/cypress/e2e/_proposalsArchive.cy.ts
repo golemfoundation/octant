@@ -1,6 +1,7 @@
 import { checkLocationWithLoader, moveToNextEpoch, visitWithLoader } from 'cypress/utils/e2e';
 // import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
+import env from 'src/env';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 // Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
@@ -18,7 +19,11 @@ describe(`proposals archive:`, () => {
   });
 
   it('moves to the next epoch', () => {
-    cy.wrap(moveToNextEpoch(), { timeout: 60000 }).should('be.true');
+    cy.window().then(async win => {
+      cy.log(env);
+      cy.log(win.wagmiConfig);
+      cy.wrap(moveToNextEpoch(win), { timeout: 60000 }).should('be.true');
+    });
   });
 
   it.skip('renders archive elements + clicking on epoch archive ProposalsListItem opens ProposalView for particular epoch and project', () => {
