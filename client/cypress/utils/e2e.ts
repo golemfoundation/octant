@@ -3,6 +3,7 @@
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
 import { readContractEpochs } from 'src/hooks/contracts/readContracts';
+import env from 'src/env';
 
 import Chainable = Cypress.Chainable;
 
@@ -46,6 +47,7 @@ export const mockCoinPricesServer = (): Chainable<any> => {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const moveToNextEpoch = () =>
   new Cypress.Promise(async (resolve, reject) => {
+    cy.log(env);
     cy.window().then(async win => {
       const currentEpochPromise = win.clientReactQuery.fetchQuery({
         queryFn: () =>

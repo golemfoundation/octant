@@ -30,8 +30,6 @@ export function readContractEpochs({
   functionName,
   args,
 }: ReadContract): Promise<any> {
-  throw new Error(env.contractEpochsAddress);
-  // eslint-disable-next-line no-unreachable
   return publicClient.readContract({
     abi: Epochs.abi,
     address: env.contractEpochsAddress as `0x{string}`,

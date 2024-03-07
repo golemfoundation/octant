@@ -1,5 +1,4 @@
-import React, { ReactElement, useState, Fragment, useEffect } from 'react';
-import { useConfig } from 'wagmi'
+import React, { ReactElement, useState, Fragment } from 'react';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -23,7 +22,6 @@ const App = (): ReactElement => {
   const { isSyncingInProgress } = useAppConnectManager(isFlushRequired, setIsFlushRequired);
   const isLoading = useAppIsLoading(isFlushRequired);
   const isProjectAdminMode = useIsProjectAdminMode();
-  const config = useConfig();
 
   if (isLoading) {
     return <AppLoader />;
