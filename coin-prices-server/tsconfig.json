@@ -5,6 +5,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "module": "esnext",
     "moduleResolution": "node",
     "skipLibCheck": true
   },
