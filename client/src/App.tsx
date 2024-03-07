@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, Fragment } from 'react';
+import React, { ReactElement, useState, Fragment, useEffect } from 'react';
 // import { useConfig } from 'wagmi'
 // import { useQueryClient } from '@tanstack/react-query';
 
@@ -28,6 +28,13 @@ const App = (): ReactElement => {
   const isProjectAdminMode = useIsProjectAdminMode();
   // const config = useConfig();
   // const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (window.Cypress) {
+      // @ts-expect-error Left for debug purposes.
+      window.isAppReady = true;
+    }
+  }, []);
 
   // useEffect(() => {
   //   if (window.Cypress) {
