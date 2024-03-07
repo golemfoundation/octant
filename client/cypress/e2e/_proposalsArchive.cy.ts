@@ -20,8 +20,8 @@ describe(`proposals archive:`, () => {
 
   it('moves to the next epoch', () => {
     cy.window().then(async win => {
-      cy.task('log', env);
-      cy.log('log', win.wagmiConfig);
+      console.log(env);
+      console.log(win.wagmiConfig);
       cy.wrap(moveToNextEpoch(win.wagmiConfig, win.clientReactQuery), { timeout: 60000 }).should('be.true');
     });
   });
