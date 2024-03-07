@@ -49,6 +49,7 @@ export const moveToNextEpoch = () =>
   new Cypress.Promise(async (resolve, reject) => {
     cy.log(env);
     cy.window().then(async win => {
+      cy.log(win.wagmiConfig);
       const currentEpochPromise = win.clientReactQuery.fetchQuery({
         queryFn: () =>
           readContractEpochs({

@@ -1,4 +1,5 @@
-import React, { ReactElement, useState, Fragment } from 'react';
+import React, { ReactElement, useState, Fragment, useEffect } from 'react';
+import { useConfig } from 'wagmi'
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -22,6 +23,15 @@ const App = (): ReactElement => {
   const { isSyncingInProgress } = useAppConnectManager(isFlushRequired, setIsFlushRequired);
   const isLoading = useAppIsLoading(isFlushRequired);
   const isProjectAdminMode = useIsProjectAdminMode();
+  const config = useConfig();
+
+  useEffect(() => {
+    if (window.Cypress) {
+      // @ts-expect-error Left for debug purposes.
+      window.wagmiConfig = config;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (isLoading) {
     return <AppLoader />;
