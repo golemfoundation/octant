@@ -16,9 +16,6 @@ from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividual
 from app.engine.octant_rewards.total_and_individual.default import (
     DefaultTotalAndAllIndividualRewards,
 )
-from app.engine.octant_rewards.total_and_individual.tr_from_staking import (
-    PercentTotalAndAllIndividualRewards,
-)
 
 
 class OctantRewardsDefaultValues:
