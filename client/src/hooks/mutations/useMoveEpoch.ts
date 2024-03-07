@@ -5,8 +5,8 @@ import {
 } from '@tanstack/react-query';
 import { useConfig } from 'wagmi';
 
-import { readContractEpochs } from 'hooks/contracts/readContracts';
 import { QUERY_KEYS } from 'api/queryKeys';
+import { readContractEpochs } from 'hooks/contracts/readContracts';
 
 export default function useMoveEpoch(): UseMutationResult<boolean, unknown, bigint> {
   const queryClient = useQueryClient();
@@ -44,6 +44,7 @@ export default function useMoveEpoch(): UseMutationResult<boolean, unknown, bigi
         ]);
 
         if (currentEpoch === undefined || block === undefined) {
+          // eslint-disable-next-line prefer-promise-reject-errors
           reject('Undefined data');
         }
 

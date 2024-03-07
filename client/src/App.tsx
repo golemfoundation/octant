@@ -9,8 +9,8 @@ import useAppIsLoading from 'hooks/helpers/useAppIsLoading';
 import useAppPopulateState from 'hooks/helpers/useAppPopulateState';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
+import useMoveEpoch from 'hooks/mutations/useMoveEpoch';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
-import useMoveEpoch from 'hooks/mutations/useMoveEpoch.ts';
 
 import 'styles/index.scss';
 import 'i18n';
