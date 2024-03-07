@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, Fragment, useEffect } from 'react';
+import React, { ReactElement, useState, Fragment } from 'react';
 // import { useConfig } from 'wagmi'
 // import { useQueryClient } from '@tanstack/react-query';
 
