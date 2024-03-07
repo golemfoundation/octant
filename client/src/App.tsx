@@ -30,6 +30,7 @@ const App = (): ReactElement => {
       // @ts-expect-error Left for debug purposes.
       window.mutateAsyncMoveEpoch = mutateAsyncMoveEpoch;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isLoading) {
