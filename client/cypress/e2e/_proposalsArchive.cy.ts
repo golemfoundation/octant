@@ -3,6 +3,7 @@ import { checkLocationWithLoader, moveToNextEpoch, visitWithLoader } from 'cypre
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import env from 'src/env';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
+import { QUERY_KEYS } from '../../src/api/queryKeys';
 
 // Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
 describe(`proposals archive:`, () => {
@@ -14,9 +15,13 @@ describe(`proposals archive:`, () => {
   });
 
   it('moves to the next epoch', () => {
-    cy.window().then(async win => {
-      win.mutateAsyncMoveEpoch();
-    });
+    const currentEpochBefore = win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch);
+    cy.window()
+      .then(async win => {
+        await win.mutateAsyncMoveEpoch();
+        const currentEpochAfter = win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch);
+        expect(currentEpochBefore + 1).to.eq(currentEpochAfter);
+      });
   });
 
   it.skip('renders archive elements + clicking on epoch archive ProposalsListItem opens ProposalView for particular epoch and project', () => {

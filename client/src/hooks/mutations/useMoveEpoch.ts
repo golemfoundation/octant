@@ -1,6 +1,5 @@
 import {
   useMutation,
-  UseMutationOptions,
   UseMutationResult,
   useQueryClient,
 } from '@tanstack/react-query';
@@ -9,9 +8,7 @@ import { useConfig } from 'wagmi';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
 import { QUERY_KEYS } from 'api/queryKeys';
 
-export default function useMoveEpoch(
-  options?: UseMutationOptions<boolean, unknown, bigint>,
-): UseMutationResult<boolean, unknown, bigint> {
+export default function useMoveEpoch(): UseMutationResult<boolean, unknown, bigint> {
   const queryClient = useQueryClient();
   const wagmiConfig = useConfig();
 
@@ -73,6 +70,5 @@ export default function useMoveEpoch(
         resolve(Number(currentEpoch) + 1 === Number(currentEpochAfter));
       })
     },
-    ...options,
   });
 }
