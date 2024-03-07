@@ -3,12 +3,7 @@ from unittest.mock import Mock
 from app.infrastructure import database
 from app.modules.dto import AllocationDTO
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
-from tests.conftest import ETH_PROCEEDS, TOTAL_ED
 from tests.helpers.constants import (
-    TOTAL_REWARDS,
-    ALL_INDIVIDUAL_REWARDS,
-    OPERATIONAL_COST,
-    LOCKED_RATIO,
     USER1_BUDGET,
     MOCKED_EPOCH_NO_AFTER_OVERHAUL,
     COMMUNITY_FUND,

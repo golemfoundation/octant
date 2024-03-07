@@ -1,14 +1,12 @@
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Optional
-from typing import Tuple
 
 from app.engine.octant_rewards import OctantRewardsSettings
+from app.engine.octant_rewards.community_fund import CommunityFundPayload
 from app.engine.octant_rewards.locked_ratio import LockedRatioPayload
 from app.engine.octant_rewards.operational_cost import OperationalCostPayload
 from app.engine.octant_rewards.ppf import PPFPayload
 from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividualPayload
-from app.engine.octant_rewards.community_fund import CommunityFundPayload
 
 
 @dataclass

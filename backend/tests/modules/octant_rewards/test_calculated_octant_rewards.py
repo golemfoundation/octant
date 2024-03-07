@@ -1,14 +1,15 @@
 from decimal import Decimal
 
+import pytest
+
+from app.engine.epochs_settings import register_epoch_settings
 from app.modules.octant_rewards.service.calculated import (
     CalculatedOctantRewards,
 )
-from app.engine.epochs_settings import register_epoch_settings, get_epoch_settings
 from tests.conftest import ETH_PROCEEDS, TOTAL_ED
-from tests.helpers.context import get_context
 from tests.helpers.constants import MOCKED_EPOCH_NO_AFTER_OVERHAUL
+from tests.helpers.context import get_context
 from tests.modules.octant_rewards.helpers import overhaul_formulas
-import pytest
 
 
 @pytest.mark.parametrize(

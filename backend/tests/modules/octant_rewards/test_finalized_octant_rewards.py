@@ -1,7 +1,6 @@
 from app.infrastructure import database
 from app.modules.dto import AllocationDTO
 from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
-from app.engine.epochs_settings import register_epoch_settings, get_epoch_settings
 from tests.helpers.constants import (
     USER1_BUDGET,
     COMMUNITY_FUND,
@@ -13,8 +12,8 @@ from tests.helpers.constants import (
     NO_PATRONS_REWARDS,
 )
 from tests.helpers.context import get_context
-from tests.modules.octant_rewards.helpers.checker import check_octant_rewards
 from tests.modules.octant_rewards.helpers import overhaul_formulas
+from tests.modules.octant_rewards.helpers.checker import check_octant_rewards
 
 
 def test_finalized_octant_rewards_before_overhaul(

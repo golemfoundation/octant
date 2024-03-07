@@ -5,9 +5,6 @@ from tests.helpers.constants import (
     ALL_INDIVIDUAL_REWARDS,
     OPERATIONAL_COST,
     LOCKED_RATIO,
-    TOTAL_WITHDRAWALS,
-    MATCHED_REWARDS,
-    LEFTOVER,
 )
 
 
