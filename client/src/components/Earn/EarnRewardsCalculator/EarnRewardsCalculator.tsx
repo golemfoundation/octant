@@ -98,10 +98,10 @@ const EarnRewardsCalculator: FC = () => {
     formik.values.valueCrypto && formik.values.days && calculateRewards
       ? getFormattedEthValue(parseUnitsBigInt(calculateRewards.budget, 'wei'))
       : {
-        fullString: '',
-        suffix: 'ETH',
-        value: '',
-      };
+          fullString: '',
+          suffix: 'ETH',
+          value: '',
+        };
 
   const cryptoFiatRatio = cryptoValues?.ethereum[displayCurrency || 'usd'] || 1;
   const fiat = estimatedFormattedRewardsValue.value

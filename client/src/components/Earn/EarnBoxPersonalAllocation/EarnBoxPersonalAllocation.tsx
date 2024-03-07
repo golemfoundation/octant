@@ -91,9 +91,7 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
         coinPricesServerDowntimeText: !isProjectAdminMode ? '...' : undefined,
         cryptoCurrency: 'ethereum',
         dataTest: 'BoxPersonalAllocation__Section--availableNow__DoubleValue',
-        isFetching: isPatronMode
-          ? isFetchingTotalPatronDonations
-          : isFetchingWithdrawals || isAppWaitingForTransactionToBeIndexed,
+        isFetching: isPatronMode ? isFetchingTotalPatronDonations : isFetchingWithdrawals,
         valueCrypto: isPatronMode ? totalPatronDonations?.value : withdrawals?.sums.available,
       },
       label: isPatronMode && !isProjectAdminMode ? t('allTime') : i18n.t('common.availableNow'),
