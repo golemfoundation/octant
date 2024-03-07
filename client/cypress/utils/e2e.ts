@@ -1,8 +1,5 @@
-// import clientReactQuery from 'src/api/clients/client-react-query';
-// import { wagmiConfig } from 'src/api/clients/client-wagmi';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
-import env from 'src/env';
 import { readContractEpochs } from 'src/hooks/contracts/readContracts';
 
 import Chainable = Cypress.Chainable;
@@ -45,24 +42,24 @@ export const mockCoinPricesServer = (): Chainable<any> => {
 // });
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const moveToNextEpoch = (win) =>
+export const moveToNextEpoch = (wagmiConfig, clientReactQuery) =>
   new Cypress.Promise(async (resolve, reject) => {
-    const currentEpochPromise = win.clientReactQuery.fetchQuery({
+    const currentEpochPromise = clientReactQuery.fetchQuery({
       queryFn: () =>
         readContractEpochs({
           functionName: 'getCurrentEpoch',
-          publicClient: win.wagmiConfig.publicClient,
+          publicClient: wagmiConfig.publicClient,
         }),
       queryKey: QUERY_KEYS.currentEpoch,
     });
 
-    const blockPromise = win.wagmiConfig.publicClient.getBlock();
+    const blockPromise = wagmiConfig.publicClient.getBlock();
 
-    const currentEpochEndPromise = win.clientReactQuery.fetchQuery({
+    const currentEpochEndPromise = await clientReactQuery.fetchQuery({
       queryFn: () =>
         readContractEpochs({
           functionName: 'getCurrentEpochEnd',
-          publicClient: win.wagmiConfig.publicClient,
+          publicClient: wagmiConfig.publicClient,
         }),
       queryKey: QUERY_KEYS.currentEpochEnd,
     });
@@ -81,17 +78,17 @@ export const moveToNextEpoch = (win) =>
     const currentEpochEndTimestamp = Number(currentEpochEnd);
 
     const timeToIncrease = currentEpochEndTimestamp - blockTimestamp + 10; // [s]
-    await win.wagmiConfig.publicClient.request({
+    await wagmiConfig.publicClient.request({
       method: 'evm_increaseTime' as any,
       params: [timeToIncrease] as any,
     });
-    await win.wagmiConfig.publicClient.request({ method: 'evm_mine' as any, params: [] as any });
+    await wagmiConfig.publicClient.request({ method: 'evm_mine' as any, params: [] as any });
 
-    const currentEpochAfter = await win.clientReactQuery.fetchQuery({
+    const currentEpochAfter = await clientReactQuery.fetchQuery({
       queryFn: () =>
         readContractEpochs({
           functionName: 'getCurrentEpoch',
-          publicClient: win.wagmiConfig.publicClient,
+          publicClient: wagmiConfig.publicClient,
         }),
       queryKey: QUERY_KEYS.currentEpoch,
     });

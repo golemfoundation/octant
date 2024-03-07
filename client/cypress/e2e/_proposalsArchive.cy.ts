@@ -22,7 +22,7 @@ describe(`proposals archive:`, () => {
     cy.window().then(async win => {
       cy.log(env);
       cy.log(win.wagmiConfig);
-      cy.wrap(moveToNextEpoch(win), { timeout: 60000 }).should('be.true');
+      cy.wrap(moveToNextEpoch(win.wagmiConfig, win.clientReactQuery), { timeout: 60000 }).should('be.true');
     });
   });
 

@@ -48,3 +48,8 @@ export const wagmiConfig = createConfig({
   ],
   publicClient,
 });
+
+if (window.Cypress) {
+  // @ts-expect-error Left for debug purposes.
+  window.wagmiConfig = wagmiConfig;
+}
