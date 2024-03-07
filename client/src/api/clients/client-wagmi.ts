@@ -4,14 +4,14 @@ import { configureChains, createConfig, ChainProviderFn } from 'wagmi';
 import { localhost, mainnet, sepolia } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-// import { publicProvider } from 'wagmi/providers/public';
+import { publicProvider } from 'wagmi/providers/public';
 
 import { CHAINS, PROJECT_ID } from 'constants/walletConnect';
 import env from 'env';
 
 const providers: ChainProviderFn<typeof mainnet | typeof sepolia | typeof localhost>[] = [
   alchemyProvider({ apiKey: env.alchemyId }),
-  // publicProvider(),
+  publicProvider(),
 ];
 
 if (env.jsonRpcEndpoint) {

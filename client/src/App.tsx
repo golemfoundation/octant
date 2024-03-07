@@ -26,6 +26,10 @@ const App = (): ReactElement => {
   const { mutateAsync: mutateAsyncMoveEpoch } = useMoveEpoch();
 
   useEffect(() => {
+    /**
+     * Expose method for moving time for Cypress.
+     * TODO OCT-1119: add explanation why it's here.
+     */
     if (window.Cypress) {
       // @ts-expect-error Left for debug purposes.
       window.mutateAsyncMoveEpoch = mutateAsyncMoveEpoch;
