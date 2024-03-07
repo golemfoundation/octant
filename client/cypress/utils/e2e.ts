@@ -46,7 +46,7 @@ export const mockCoinPricesServer = (): Chainable<any> => {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const moveToNextEpoch = () =>
   new Cypress.Promise(async (resolve, reject) => {
-    cy.window().then(win => {
+    cy.window().then(async win => {
       const currentEpochPromise = win.clientReactQuery.fetchQuery({
         queryFn: () =>
           readContractEpochs({
