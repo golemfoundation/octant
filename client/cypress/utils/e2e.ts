@@ -58,7 +58,7 @@ export const moveToNextEpoch = () =>
 
       const blockPromise = win.wagmiConfig.publicClient.getBlock();
 
-      const currentEpochEndPromise = await win.clientReactQuery.fetchQuery({
+      const currentEpochEndPromise = win.clientReactQuery.fetchQuery({
         queryFn: () =>
           readContractEpochs({
             functionName: 'getCurrentEpochEnd',
