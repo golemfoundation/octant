@@ -1,6 +1,4 @@
 import React, { ReactElement, useState, Fragment, useEffect } from 'react';
-// import { useConfig } from 'wagmi'
-// import { useQueryClient } from '@tanstack/react-query';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -12,11 +10,10 @@ import useAppPopulateState from 'hooks/helpers/useAppPopulateState';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
+import useMoveEpoch from 'hooks/mutations/useMoveEpoch.ts';
 
 import 'styles/index.scss';
 import 'i18n';
-// import { readContractEpochs } from './hooks/contracts/readContracts.ts';
-// import { QUERY_KEYS } from './api/queryKeys';
 
 const App = (): ReactElement => {
   useManageTransactionsPending();
@@ -26,45 +23,14 @@ const App = (): ReactElement => {
   const { isSyncingInProgress } = useAppConnectManager(isFlushRequired, setIsFlushRequired);
   const isLoading = useAppIsLoading(isFlushRequired);
   const isProjectAdminMode = useIsProjectAdminMode();
-  // const config = useConfig();
-  // const queryClient = useQueryClient();
+  const { mutateAsync: mutateAsyncMoveEpoch } = useMoveEpoch();
 
   useEffect(() => {
     if (window.Cypress) {
       // @ts-expect-error Left for debug purposes.
-      window.isAppReady = true;
+      window.mutateAsyncMoveEpoch = mutateAsyncMoveEpoch;
     }
   }, []);
-
-  // useEffect(() => {
-  //   if (window.Cypress) {
-  //     // @ts-expect-error Left for debug purposes.
-  //     window.wagmiConfig = config;
-  //
-  //     // @ts-expect-error Left for debug purposes.
-  //     window.getCurrentEpoch = queryClient.fetchQuery({
-  //       queryFn: () =>
-  //         readContractEpochs({
-  //           functionName: 'getCurrentEpoch',
-  //           publicClient: config.publicClient,
-  //         }),
-  //       queryKey: QUERY_KEYS.currentEpoch,
-  //     });
-  //
-  //     window.getBlock = config.publicClient.getBlock();
-  //
-  //     // @ts-expect-error Left for debug purposes.
-  //     window.getCurrentEpochEnd = queryClient.fetchQuery({
-  //       queryFn: () =>
-  //         readContractEpochs({
-  //           functionName: 'getCurrentEpochEnd',
-  //           publicClient: config.publicClient,
-  //         }),
-  //       queryKey: QUERY_KEYS.currentEpochEnd,
-  //     });
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
 
   if (isLoading) {
     return <AppLoader />;

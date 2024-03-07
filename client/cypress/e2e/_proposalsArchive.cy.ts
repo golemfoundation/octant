@@ -14,15 +14,8 @@ describe(`proposals archive:`, () => {
   });
 
   it('moves to the next epoch', () => {
-    cy.window().should('have.property', 'isAppReady', true)
-
-    let wagmiConfig;
-    let clientReactQuery
     cy.window().then(async win => {
-      wagmiConfig = win.wagmiConfig;
-      clientReactQuery = win.clientReactQuery;
-    }).then(() => {
-      cy.wrap(moveToNextEpoch(wagmiConfig, clientReactQuery), { timeout: 60000 }).should('be.true');
+      win.mutateAsyncMoveEpoch();
     });
   });
 
