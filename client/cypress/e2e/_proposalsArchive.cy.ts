@@ -15,9 +15,9 @@ describe(`proposals archive:`, () => {
   });
 
   it('moves to the next epoch', () => {
-    const currentEpochBefore = win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch);
     cy.window()
       .then(async win => {
+        const currentEpochBefore = win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch);
         await win.mutateAsyncMoveEpoch();
         const currentEpochAfter = win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch);
         expect(currentEpochBefore + 1).to.eq(currentEpochAfter);
