@@ -19,7 +19,8 @@ describe('useMediaQuery', () => {
     (window as any).matchMedia = createMatchMedia(width, height);
 
     const { result } = renderHook(() => useMediaQuery());
-    const { isDesktop, isTablet, isMobile } = result.current;
+    const { isLargeDesktop, isDesktop, isTablet, isMobile } = result.current;
+    expect(isLargeDesktop).toBe(true);
     expect(isDesktop).toBe(true);
     expect(isTablet).toBe(false);
     expect(isMobile).toBe(false);
@@ -32,7 +33,8 @@ describe('useMediaQuery', () => {
     (window as any).matchMedia = createMatchMedia(width, height);
 
     const { result } = renderHook(() => useMediaQuery());
-    const { isDesktop, isTablet, isMobile } = result.current;
+    const { isLargeDesktop, isDesktop, isTablet, isMobile } = result.current;
+    expect(isLargeDesktop).toBe(false);
     expect(isDesktop).toBe(true);
     expect(isTablet).toBe(false);
     expect(isMobile).toBe(false);
@@ -45,7 +47,8 @@ describe('useMediaQuery', () => {
     (window as any).matchMedia = createMatchMedia(width, height);
 
     const { result } = renderHook(() => useMediaQuery());
-    const { isDesktop, isTablet, isMobile } = result.current;
+    const { isLargeDesktop, isDesktop, isTablet, isMobile } = result.current;
+    expect(isLargeDesktop).toBe(false);
     expect(isDesktop).toBe(false);
     expect(isTablet).toBe(true);
     expect(isMobile).toBe(false);
@@ -58,7 +61,8 @@ describe('useMediaQuery', () => {
     (window as any).matchMedia = createMatchMedia(width, height);
 
     const { result } = renderHook(() => useMediaQuery());
-    const { isDesktop, isTablet, isMobile } = result.current;
+    const { isLargeDesktop, isDesktop, isTablet, isMobile } = result.current;
+    expect(isLargeDesktop).toBe(false);
     expect(isDesktop).toBe(false);
     expect(isTablet).toBe(true);
     expect(isMobile).toBe(false);
@@ -71,7 +75,8 @@ describe('useMediaQuery', () => {
     (window as any).matchMedia = createMatchMedia(width, height);
 
     const { result } = renderHook(() => useMediaQuery());
-    const { isDesktop, isTablet, isMobile } = result.current;
+    const { isLargeDesktop, isDesktop, isTablet, isMobile } = result.current;
+    expect(isLargeDesktop).toBe(false);
     expect(isDesktop).toBe(false);
     expect(isTablet).toBe(false);
     expect(isMobile).toBe(true);
@@ -84,7 +89,8 @@ describe('useMediaQuery', () => {
     (window as any).matchMedia = createMatchMedia(width, height);
 
     const { result } = renderHook(() => useMediaQuery());
-    const { isDesktop, isTablet, isMobile } = result.current;
+    const { isLargeDesktop, isDesktop, isTablet, isMobile } = result.current;
+    expect(isLargeDesktop).toBe(false);
     expect(isDesktop).toBe(false);
     expect(isTablet).toBe(false);
     expect(isMobile).toBe(true);
