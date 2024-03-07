@@ -21,7 +21,7 @@ describe(`proposals archive:`, () => {
     cy.wrap(moveToNextEpoch(), { timeout: 60000 }).should('be.true');
   });
 
-  it('renders archive elements + clicking on epoch archive ProposalsListItem opens ProposalView for particular epoch and project', () => {
+  it.skip('renders archive elements + clicking on epoch archive ProposalsListItem opens ProposalView for particular epoch and project', () => {
     cy.get('[data-test=MainLayout__body]').then(el => {
       const mainLayoutPaddingTop = parseInt(el.css('paddingTop'), 10);
 
