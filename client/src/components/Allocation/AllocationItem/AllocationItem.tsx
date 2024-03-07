@@ -170,6 +170,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
 
   return (
     <motion.div
+      data-test="AllocationItem"
       className={cx(styles.root, className)}
       exit={{ opacity: 0, scale: 0.8 }}
       layout

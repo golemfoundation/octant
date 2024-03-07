@@ -82,7 +82,10 @@ function addProposalToAllocate(index, numberOfAddedProposals): Chainable<any> {
     .find('path')
     .then($el => $el.css('stroke'))
     .should('be.colored', '#FF6157');
-  return cy.get('[data-test=Navbar__numberOfAllocations]').contains(numberOfAddedProposals + 1);
+  cy.get('[data-test=Navbar__numberOfAllocations]').contains(numberOfAddedProposals + 1);
+  cy.get('[data-test=Navbar__Button--Allocate]').click();
+  cy.get('[data-test=AllocationItem]').should('have.length', numberOfAddedProposals + 1);
+  return cy.go('back');
 }
 
 function removeProposalFromAllocate(
@@ -107,6 +110,15 @@ function removeProposalFromAllocate(
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
   describe(`proposals: ${device}`, { viewportHeight, viewportWidth }, () => {
     let proposalNames: string[] = [];
+
+    before(() => {
+      /**
+       * Global Metamask setup done by Synpress is not always done.
+       * Since Synpress needs to have valid provider to fetch the data from contracts,
+       * setupMetamask is required in each test suite.
+       */
+      cy.setupMetamask();
+    });
 
     beforeEach(() => {
       mockCoinPricesServer();
