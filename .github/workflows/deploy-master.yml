@@ -32,6 +32,7 @@ jobs:
       image-tag: ${{ github.sha }}
       workflow-id: ${{ github.run_id }}
       # ---
+      deploy-contracts: ${{ inputs.redeploy_contracts }}
       chain-id: 11155111
       network-name: sepolia
       chain-name: sepolia
