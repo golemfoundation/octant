@@ -2,6 +2,11 @@
 name: ▶️ Deploy Master
 on:
   workflow_dispatch:
+    inputs:
+      redeploy_contracts:
+        description: 'redeploy contracts'
+        required: true
+        type: boolean
 
 jobs:
   build:
