@@ -16,6 +16,9 @@ export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknow
     mutationFn: () => {
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve, reject) => {
+        if (!window.Cypress) {
+          reject(new Error('useCypressMoveEpoch was called outside Cypress.'))
+        }
 
         const currentEpochPromise = queryClient.fetchQuery({
           queryFn: () =>
@@ -37,15 +40,15 @@ export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknow
           queryKey: QUERY_KEYS.currentEpochEnd,
         });
 
-        const [currentEpochEnd, block, currentEpoch] = await Promise.all([
-          currentEpochEndPromise,
+        const [block, currentEpoch, currentEpochEnd] = await Promise.all([
           blockPromise,
+          currentEpochEndPromise,
           currentEpochPromise,
         ]);
 
-        if (currentEpoch === undefined || block === undefined) {
+        if (block === undefined || currentEpoch === undefined || currentEpochEnd === undefined) {
           // eslint-disable-next-line prefer-promise-reject-errors
-          reject('Undefined data');
+          reject(new Error('useCypressMoveEpoch fetched undefined block or currentEpoch or currentEpochEnd.'));
         }
 
         const blockTimestamp = Number(block.timestamp);

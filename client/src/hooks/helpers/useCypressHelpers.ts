@@ -1,5 +1,6 @@
-import useCypressMoveEpoch from 'hooks/mutations/useCypressMoveEpoch.ts';
 import { useEffect } from 'react';
+
+import useCypressMoveEpoch from 'hooks/mutations/useCypressMoveEpoch';
 
 export default function useCypressHelpers(): void {
   const { mutateAsync: mutateAsyncMoveEpoch } = useCypressMoveEpoch();
