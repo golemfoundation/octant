@@ -14,9 +14,6 @@ from app.engine.octant_rewards.operational_cost import OperationalCost
 from app.engine.octant_rewards.operational_cost.op_cost_percent import OpCostPercent
 from app.engine.octant_rewards.ppf.calculator import PPFCalculatorPercent, PPFCalculator
 from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividualRewards
-from app.engine.octant_rewards.total_and_individual.preliminary import (
-    PreliminaryTotalAndAllIndividualRewards,
-)
 from app.engine.octant_rewards.total_and_individual.tr_from_staking import (
     PercentTotalAndAllIndividualRewards,
 )
