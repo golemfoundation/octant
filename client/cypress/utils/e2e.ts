@@ -1,6 +1,4 @@
-import { QUERY_KEYS } from 'src/api/queryKeys';
 import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
-import { readContractEpochs } from 'src/hooks/contracts/readContracts';
 
 import Chainable = Cypress.Chainable;
 

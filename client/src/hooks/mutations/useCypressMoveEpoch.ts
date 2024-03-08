@@ -40,7 +40,7 @@ export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknow
           queryKey: QUERY_KEYS.currentEpochEnd,
         });
 
-        const [block, currentEpoch, currentEpochEnd] = await Promise.all([
+        const [block, currentEpochEnd, currentEpoch] = await Promise.all([
           blockPromise,
           currentEpochEndPromise,
           currentEpochPromise,

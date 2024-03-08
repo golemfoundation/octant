@@ -1,6 +1,5 @@
 import React, { ReactElement, useState, Fragment } from 'react';
 
-
 import AppLoader from 'components/shared/AppLoader';
 import ModalOnboarding from 'components/shared/ModalOnboarding/ModalOnboarding';
 import useAppConnectManager from 'hooks/helpers/useAppConnectManager';
