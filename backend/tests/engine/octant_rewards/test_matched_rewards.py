@@ -1,4 +1,4 @@
-from app.engine.octant_rewards import PreliminaryMatchedRewards
+from app.engine.octant_rewards.matched.preliminary import PreliminaryMatchedRewards
 from app.engine.octant_rewards.matched import MatchedRewardsPayload
 from tests.helpers.constants import TOTAL_REWARDS, ALL_INDIVIDUAL_REWARDS
 

@@ -1,4 +1,4 @@
-from app.engine.user import PreliminaryUserBudget
+from app.engine.user.budget.preliminary import PreliminaryUserBudget
 from app.engine.user.effective_deposit import UserDeposit
 from app.modules.snapshots.pending.core import calculate_user_budgets
 from tests.helpers.constants import USER1_ADDRESS, USER1_ED, USER2_ED, USER2_ADDRESS

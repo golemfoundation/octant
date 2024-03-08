@@ -2,7 +2,9 @@ from decimal import Decimal
 
 import pytest
 
-from app.engine.octant_rewards import PreliminaryTotalAndAllIndividualRewards
+from app.engine.octant_rewards.total_and_individual.preliminary import (
+    PreliminaryTotalAndAllIndividualRewards,
+)
 from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividualPayload
 from app.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (
     AllProceedsWithOperationalCost,

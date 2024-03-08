@@ -1,4 +1,4 @@
-from app.engine.user import PreliminaryUserBudget
+from app.engine.user.budget.preliminary import PreliminaryUserBudget
 from app.engine.user.budget import UserBudgetPayload
 from tests.helpers.constants import USER1_ED, TOTAL_ED, ALL_INDIVIDUAL_REWARDS
 
