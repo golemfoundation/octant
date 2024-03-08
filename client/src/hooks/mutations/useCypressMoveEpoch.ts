@@ -8,7 +8,7 @@ import { useConfig } from 'wagmi';
 import { QUERY_KEYS } from 'api/queryKeys';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
 
-export default function useMoveEpoch(): UseMutationResult<boolean, unknown, bigint> {
+export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknown, bigint> {
   const queryClient = useQueryClient();
   const wagmiConfig = useConfig();
 

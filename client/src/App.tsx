@@ -9,8 +9,8 @@ import useAppIsLoading from 'hooks/helpers/useAppIsLoading';
 import useAppPopulateState from 'hooks/helpers/useAppPopulateState';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
-import useMoveEpoch from 'hooks/mutations/useMoveEpoch';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
+import useCypressHelpers from 'hooks/helpers/useCypressHelpers';
 
 import 'styles/index.scss';
 import 'i18n';
@@ -23,19 +23,8 @@ const App = (): ReactElement => {
   const { isSyncingInProgress } = useAppConnectManager(isFlushRequired, setIsFlushRequired);
   const isLoading = useAppIsLoading(isFlushRequired);
   const isProjectAdminMode = useIsProjectAdminMode();
-  const { mutateAsync: mutateAsyncMoveEpoch } = useMoveEpoch();
-
-  useEffect(() => {
-    /**
-     * Expose method for moving time for Cypress.
-     * TODO OCT-1119: add explanation why it's here.
-     */
-    if (window.Cypress) {
-      // @ts-expect-error Left for debug purposes.
-      window.mutateAsyncMoveEpoch = mutateAsyncMoveEpoch;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  
+  useCypressHelpers();
 
   if (isLoading) {
     return <AppLoader />;
