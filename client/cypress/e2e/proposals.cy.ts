@@ -142,6 +142,24 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       removeProposalFromAllocate(proposalNames.length, 2, 0);
       removeProposalFromAllocate(proposalNames.length, 1, proposalNames.length - 1);
     });
+
+    it('user is able to add project to allocation in ProjectsView and remove it from allocation in AllocationView', () => {
+      cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
+      addProposalToAllocate(0, 0);
+      cy.get('[data-test=Navbar__Button--Allocate]').click();
+      cy.get('[data-test=AllocationItem]').then(el => {
+        const { x } = el[0].getBoundingClientRect();
+        cy.get('[data-test=AllocationItem]')
+          .trigger('pointerdown')
+          .trigger('pointermove', { pageX: x - 10 })
+          .trigger('pointerup');
+        cy.get('[data-test=AllocationItem__bin]').should('be.visible');
+        cy.get('[data-test=AllocationItem__bin]').click();
+        cy.get('[data-test=AllocationItem__bin]').should('not.exist');
+        cy.get('[data-test=AllocationItem]').should('not.exist');
+        cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
+      });
+    });
   });
 
   describe(`proposals (patron mode): ${device}`, { viewportHeight, viewportWidth }, () => {
