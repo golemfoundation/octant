@@ -8,7 +8,6 @@ from app.engine.octant_rewards.community_fund.calculator import (
 from app.engine.octant_rewards.locked_ratio import LockedRatio
 from app.engine.octant_rewards.locked_ratio.default import DefaultLockedRatio
 from app.engine.octant_rewards.matched import MatchedRewards
-from app.engine.octant_rewards.matched.preliminary import PreliminaryMatchedRewards
 from app.engine.octant_rewards.matched.with_ppf import MatchedRewardsWithPPF
 from app.engine.octant_rewards.operational_cost import OperationalCost
 from app.engine.octant_rewards.operational_cost.op_cost_percent import OpCostPercent
