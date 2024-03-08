@@ -4,6 +4,8 @@ import { QUERY_KEYS } from 'src/api/queryKeys';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
+let wasEpochMoved = false;
+
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
   describe(`proposals archive: ${device}`, { viewportHeight, viewportWidth }, () => {
     beforeEach(() => {
@@ -14,14 +16,17 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
 
     it('moves to the next epoch', () => {
       // Move time only once, for the first device.
-      if (device === 'desktop') {
+      if (!wasEpochMoved) {
         cy.window()
           .then(async win => {
             const currentEpochBefore = Number(win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch));
             await win.mutateAsyncMoveEpoch();
             const currentEpochAfter = Number(win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch));
+            wasEpochMoved = true;
             expect(currentEpochBefore + 1).to.eq(currentEpochAfter);
           });
+      } else {
+        expect(true).to.be.true;
       }
     });
 
