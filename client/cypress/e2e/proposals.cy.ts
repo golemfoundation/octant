@@ -101,10 +101,14 @@ function removeProposalFromAllocate(
     .eq(index)
     .find('[data-test=ProposalsListItem__ButtonAddToAllocate]')
     .click();
+  cy.get('[data-test=Navbar__Button--Allocate]').click();
+  cy.get('[data-test=AllocationItem]').should('have.length', numberOfAddedProposals - 1);
   if (index < numberOfProposals - 1) {
-    return cy.get('[data-test=Navbar__numberOfAllocations]').contains(numberOfAddedProposals - 1);
+    cy.get('[data-test=Navbar__numberOfAllocations]').contains(numberOfAddedProposals - 1);
+  } else {
+    cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
   }
-  return cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
+  return cy.go('back');
 }
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
