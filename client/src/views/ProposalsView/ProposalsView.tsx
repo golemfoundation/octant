@@ -103,7 +103,7 @@ const ProposalsView = (): ReactElement => {
           initialLoad
           loader={
             <div key={-1} className={styles.loaderWrapper}>
-              <Loader dataTest="ProposalsViem__Loader--archive" />
+              <Loader />
             </div>
           }
           loadMore={onLoadNextEpochArchive}
