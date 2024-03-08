@@ -5,6 +5,7 @@ import { connectWallet, mockCoinPricesServer, visitWithLoader } from 'cypress/ut
 import { getNamesOfProposals } from 'cypress/utils/proposals';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
+import getMilestones from 'src/constants/milestones';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 import Chainable = Cypress.Chainable;
@@ -163,6 +164,39 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         cy.get('[data-test=AllocationItem]').should('not.exist');
         cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
       });
+
+    it('ProposalsTimelineWidgetItem with href opens link when clicked without mouse movement', () => {
+      const milestones = getMilestones();
+      cy.get('[data-test=ProposalsTimelineWidget]').should('be.visible');
+      cy.get('[data-test=ProposalsTimelineWidgetItem]').should('have.length', milestones.length);
+      for (let i = 0; i < milestones.length; i++) {
+        if (milestones[i].href) {
+          cy.get('[data-test=ProposalsTimelineWidgetItem]')
+            .eq(i)
+            .within(() => {
+              cy.get('[data-test=ProposalsTimelineWidgetItem__Svg--arrowTopRight]').should(
+                'be.visible',
+              );
+            });
+
+          cy.get('[data-test=ProposalsTimelineWidgetItem]')
+            .eq(i)
+            .then(el => {
+              const { x } = el[0].getBoundingClientRect();
+              cy.get('[data-test=ProposalsTimelineWidgetItem]')
+                .eq(i)
+                .trigger('mousedown')
+                .trigger('mouseup', { clientX: x + 10 });
+              cy.location('pathname').should('eq', ROOT_ROUTES.proposals.absolute);
+
+              cy.get('[data-test=ProposalsTimelineWidgetItem]')
+                .eq(i)
+                .trigger('mousedown')
+                .trigger('mouseup');
+              cy.location('pathname').should('not.eq', ROOT_ROUTES.proposals.absolute);
+            });
+        }
+      }
     });
   });
 
