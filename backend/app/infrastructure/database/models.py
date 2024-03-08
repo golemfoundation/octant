@@ -120,16 +120,6 @@ class FinalizedEpochSnapshot(BaseModel):
     leftover = Column(db.String, nullable=False)
     withdrawals_merkle_root = Column(db.String)
     total_withdrawals = Column(db.String)
-    ppf = Column(db.String, nullable=True)  # TBC is it needed?
-    community_fund = Column(db.String, nullable=True)  # TBC is it needed?
-
-    @property
-    def validated_ppf(self):
-        return int(self.ppf) if self.ppf else None
-
-    @property
-    def validated_community_fund(self):
-        return int(self.community_fund) if self.community_fund else None
 
 
 class Deposit(BaseModel):

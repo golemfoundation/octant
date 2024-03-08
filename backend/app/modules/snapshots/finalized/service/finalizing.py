@@ -1,8 +1,8 @@
 from app.context.manager import Context
+from app.extensions import db
 from app.infrastructure import database
 from app.modules.dto import FinalizedSnapshotDTO
 from app.modules.snapshots.finalized.service.base import BaseFinalizedSnapshots
-from app.extensions import db
 
 
 class FinalizingSnapshots(BaseFinalizedSnapshots):
@@ -23,6 +23,4 @@ class FinalizingSnapshots(BaseFinalizedSnapshots):
             leftover=dto.leftover,
             withdrawals_merkle_root=dto.merkle_root,
             total_withdrawals=dto.total_withdrawals,
-            community_fund=dto.community_fund,
-            ppf=dto.ppf,
         )

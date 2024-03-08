@@ -2,8 +2,8 @@ from sqlalchemy import desc
 from typing_extensions import deprecated
 
 from app import exceptions
-from app.infrastructure.database.models import FinalizedEpochSnapshot
 from app.extensions import db
+from app.infrastructure.database.models import FinalizedEpochSnapshot
 
 
 @deprecated("Exceptions should be raised in services, use `get_by_epoch` instead")
@@ -40,8 +40,6 @@ def save_snapshot(
     leftover: int,
     withdrawals_merkle_root: str = None,
     total_withdrawals: int = 0,
-    ppf: int | None = None,
-    community_fund: int | None = None,
 ):
     snapshot = FinalizedEpochSnapshot(
         epoch=epoch,
@@ -50,7 +48,5 @@ def save_snapshot(
         patrons_rewards=str(patrons_rewards),
         leftover=str(leftover),
         total_withdrawals=str(total_withdrawals),
-        ppf=str(ppf) if ppf else None,
-        community_fund=str(community_fund) if community_fund else None,
     )
     db.session.add(snapshot)

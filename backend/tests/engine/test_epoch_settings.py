@@ -1,13 +1,19 @@
 from decimal import Decimal
 
 from app.engine.epochs_settings import get_epoch_settings, register_epoch_settings
+from app.engine.octant_rewards import CommunityFundPercent, OctantRewardsDefaultValues
 from app.engine.octant_rewards import (
     DefaultLockedRatio,
-    DefaultMatchedRewards,
-    DefaultTotalAndAllIndividualRewards,
+    PreliminaryMatchedRewards,
+    PreliminaryTotalAndAllIndividualRewards,
+)
+from app.engine.octant_rewards import OpCostPercent
+from app.engine.octant_rewards.community_fund.not_supported import (
+    NotSupportedCFCalculator,
 )
 from app.engine.octant_rewards.matched.with_ppf import MatchedRewardsWithPPF
-from app.engine.octant_rewards import OpCostPercent
+from app.engine.octant_rewards.ppf.calculator import PPFCalculatorPercent
+from app.engine.octant_rewards.ppf.not_supported import NotSupportedPPFCalculator
 from app.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (
     AllProceedsWithOperationalCost,
 )
@@ -17,21 +23,18 @@ from app.engine.octant_rewards.total_and_individual.tr_from_staking import (
 from app.engine.projects import DefaultProjectRewards
 from app.engine.projects.rewards.allocations.default import DefaultProjectAllocations
 from app.engine.projects.rewards.threshold.default import DefaultProjectThreshold
-from app.engine.user import DefaultUserBudget, DefaultWeightedAverageEffectiveDeposit
+from app.engine.user import (
+    PreliminaryUserBudget,
+    DefaultWeightedAverageEffectiveDeposit,
+)
+from app.engine.user.budget.with_ppf import UserBudgetWithPPF
 from app.engine.user.effective_deposit.cut_off.cutoff_10glm import CutOff10GLM
 from app.engine.user.effective_deposit.weighted_average.weights.timebased.default import (
     DefaultTimebasedWeights,
 )
-from app.engine.octant_rewards.ppf.calculator import PPFCalculatorPercent
 from app.engine.user.effective_deposit.weighted_average.weights.timebased.without_unlocks import (
     TimebasedWithoutUnlocksWeights,
 )
-from app.engine.octant_rewards import CommunityFundPercent, OctantRewardsDefaultValues
-from app.engine.octant_rewards.community_fund.not_supported import (
-    NotSupportedCFCalculator,
-)
-from app.engine.octant_rewards.ppf.not_supported import NotSupportedPPFCalculator
-from app.engine.user.budget.with_ppf import UserBudgetWithPPF
 
 
 def test_default_epoch_settings():
@@ -39,13 +42,15 @@ def test_default_epoch_settings():
     settings = get_epoch_settings(-1)
     check_settings(
         settings=settings,
-        total_and_all_individual_rewards=DefaultTotalAndAllIndividualRewards(),
+        total_and_all_individual_rewards=PercentTotalAndAllIndividualRewards(
+            OctantRewardsDefaultValues.TR_PERCENT
+        ),
         timebased_weights=TimebasedWithoutUnlocksWeights(),
         operational_cost=OpCostPercent(Decimal("0.25")),
         ppf=PPFCalculatorPercent(OctantRewardsDefaultValues.PPF),
         community_fund=CommunityFundPercent(OctantRewardsDefaultValues.COMMUNITY_FUND),
-        user_budget=DefaultUserBudget(),
-        matched_rewards=DefaultMatchedRewards(),
+        user_budget=UserBudgetWithPPF(),
+        matched_rewards=MatchedRewardsWithPPF(),
     )
 
 
@@ -57,10 +62,10 @@ def test_epoch_1_settings():
         total_and_all_individual_rewards=AllProceedsWithOperationalCost(),
         timebased_weights=DefaultTimebasedWeights(),
         operational_cost=OpCostPercent(Decimal("0.20")),
-        matched_rewards=DefaultMatchedRewards(),
+        matched_rewards=PreliminaryMatchedRewards(),
         ppf=NotSupportedPPFCalculator(),
         community_fund=NotSupportedCFCalculator(),
-        user_budget=DefaultUserBudget(),
+        user_budget=PreliminaryUserBudget(),
     )
 
 
@@ -69,13 +74,13 @@ def test_epoch_2_settings():
     settings = get_epoch_settings(2)
     check_settings(
         settings=settings,
-        total_and_all_individual_rewards=DefaultTotalAndAllIndividualRewards(),
+        total_and_all_individual_rewards=PreliminaryTotalAndAllIndividualRewards(),
         timebased_weights=TimebasedWithoutUnlocksWeights(),
         operational_cost=OpCostPercent(Decimal("0.25")),
-        matched_rewards=DefaultMatchedRewards(),
+        matched_rewards=PreliminaryMatchedRewards(),
         ppf=NotSupportedPPFCalculator(),
         community_fund=NotSupportedCFCalculator(),
-        user_budget=DefaultUserBudget(),
+        user_budget=PreliminaryUserBudget(),
     )
 
 

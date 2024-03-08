@@ -584,8 +584,6 @@ def mock_finalized_epoch_snapshot_db_since_epoch3(app, user_accounts):
         NO_PATRONS_REWARDS,
         LEFTOVER,
         total_withdrawals=TOTAL_WITHDRAWALS,
-        ppf=PPF,
-        community_fund=COMMUNITY_FUND,
     )
 
     db.session.commit()
@@ -599,8 +597,6 @@ def mock_finalized_epoch_snapshot_db(app, user_accounts):
         NO_PATRONS_REWARDS,
         LEFTOVER,
         total_withdrawals=TOTAL_WITHDRAWALS,
-        ppf=None,
-        community_fund=None,
     )
 
     db.session.commit()
