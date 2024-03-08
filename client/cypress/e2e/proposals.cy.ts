@@ -165,38 +165,39 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
       });
 
-    it('ProposalsTimelineWidgetItem with href opens link when clicked without mouse movement', () => {
-      const milestones = getMilestones();
-      cy.get('[data-test=ProposalsTimelineWidget]').should('be.visible');
-      cy.get('[data-test=ProposalsTimelineWidgetItem]').should('have.length', milestones.length);
-      for (let i = 0; i < milestones.length; i++) {
-        if (milestones[i].href) {
-          cy.get('[data-test=ProposalsTimelineWidgetItem]')
-            .eq(i)
-            .within(() => {
-              cy.get('[data-test=ProposalsTimelineWidgetItem__Svg--arrowTopRight]').should(
-                'be.visible',
-              );
-            });
+      it('ProposalsTimelineWidgetItem with href opens link when clicked without mouse movement', () => {
+        const milestones = getMilestones();
+        cy.get('[data-test=ProposalsTimelineWidget]').should('be.visible');
+        cy.get('[data-test=ProposalsTimelineWidgetItem]').should('have.length', milestones.length);
+        for (let i = 0; i < milestones.length; i++) {
+          if (milestones[i].href) {
+            cy.get('[data-test=ProposalsTimelineWidgetItem]')
+              .eq(i)
+              .within(() => {
+                cy.get('[data-test=ProposalsTimelineWidgetItem__Svg--arrowTopRight]').should(
+                  'be.visible',
+                );
+              });
 
-          cy.get('[data-test=ProposalsTimelineWidgetItem]')
-            .eq(i)
-            .then(el => {
-              const { x } = el[0].getBoundingClientRect();
-              cy.get('[data-test=ProposalsTimelineWidgetItem]')
-                .eq(i)
-                .trigger('mousedown')
-                .trigger('mouseup', { clientX: x + 10 });
-              cy.location('pathname').should('eq', ROOT_ROUTES.proposals.absolute);
+            cy.get('[data-test=ProposalsTimelineWidgetItem]')
+              .eq(i)
+              .then(el => {
+                const { x } = el[0].getBoundingClientRect();
+                cy.get('[data-test=ProposalsTimelineWidgetItem]')
+                  .eq(i)
+                  .trigger('mousedown')
+                  .trigger('mouseup', { clientX: x + 10 });
+                cy.location('pathname').should('eq', ROOT_ROUTES.proposals.absolute);
 
-              cy.get('[data-test=ProposalsTimelineWidgetItem]')
-                .eq(i)
-                .trigger('mousedown')
-                .trigger('mouseup');
-              cy.location('pathname').should('not.eq', ROOT_ROUTES.proposals.absolute);
-            });
+                cy.get('[data-test=ProposalsTimelineWidgetItem]')
+                  .eq(i)
+                  .trigger('mousedown')
+                  .trigger('mouseup');
+                cy.location('pathname').should('not.eq', ROOT_ROUTES.proposals.absolute);
+              });
+          }
         }
-      }
+      });
     });
   });
 
