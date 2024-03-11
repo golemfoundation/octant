@@ -26,7 +26,7 @@ const App = (): ReactElement => {
   // useCypressHelpers needs to be called after all the initial sets done above.
   useCypressHelpers();
 
-  if (isLoading) {
+  if (isLoading && !isSyncingInProgress) {
     return <AppLoader />;
   }
 
