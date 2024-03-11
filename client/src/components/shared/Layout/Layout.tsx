@@ -259,6 +259,7 @@ const Layout: FC<LayoutProps> = ({
             !!navigationBottomSuffix && styles.isNavigationBottomSuffix,
             classNameBody,
           )}
+          data-test="MainLayout__body"
         >
           {isLoading ? <Loader dataTest="MainLayout__Loader" /> : children}
         </div>

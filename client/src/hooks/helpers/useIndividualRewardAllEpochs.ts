@@ -1,4 +1,4 @@
-import { UseQueryOptions, useQueries } from '@tanstack/react-query';
+import { useQueries } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 
 import { apiGetIndividualRewards, Response } from 'api/calls/individualRewards';
@@ -6,15 +6,17 @@ import { QUERY_KEYS } from 'api/queryKeys';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
-export default function useIndividualRewardAllEpochs(
-  options?: Omit<UseQueryOptions<Response, Error, Response, any>, 'queryKey'>,
-): { data: bigint[]; isFetching: boolean } {
+export default function useIndividualRewardAllEpochs({
+  isEnabledAdditional,
+}: {
+  isEnabledAdditional?: boolean;
+} = {}): { data: bigint[]; isFetching: boolean } {
   const { address } = useAccount();
   const { data: currentEpoch, isFetching: isFetchingCurrentEpoch } = useCurrentEpoch();
 
   const individualRewardAllEpochs = useQueries({
     queries: [...Array(currentEpoch).keys()].map(epoch => ({
-      enabled: !!address && currentEpoch !== undefined && currentEpoch > 1,
+      enabled: !!address && currentEpoch !== undefined && currentEpoch > 1 && isEnabledAdditional,
       queryFn: async () => {
         try {
           return await apiGetIndividualRewards(epoch, address!);
@@ -26,7 +28,6 @@ export default function useIndividualRewardAllEpochs(
       },
       queryKey: QUERY_KEYS.individualReward(epoch),
       retry: false,
-      ...options,
     })),
   });
 

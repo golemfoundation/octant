@@ -36,10 +36,18 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
   const { data: individualReward, isFetching: isFetchingIndividualReward } = useIndividualReward();
   const { data: isPatronMode } = useIsPatronMode();
   const { data: totalPatronDonations, isFetching: isFetchingTotalPatronDonations } =
-    useTotalPatronDonations({ enabled: isPatronMode });
-  const { isAppWaitingForTransactionToBeIndexed } = useTransactionLocalStore(state => ({
-    isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
-  }));
+    useTotalPatronDonations({ isEnabledAdditional: !!isPatronMode });
+  const { isAppWaitingForTransactionToBeIndexed, transactionsPending } = useTransactionLocalStore(
+    state => ({
+      isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
+      transactionsPending: state.data.transactionsPending,
+    }),
+  );
+
+  const isPendingWithdrawalTransaction =
+    isAppWaitingForTransactionToBeIndexed &&
+    !!transactionsPending?.filter(({ type, isFinalized }) => type === 'withdrawal' && !isFinalized)
+      .length;
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isProjectAdminMode = useIsProjectAdminMode();
@@ -93,8 +101,8 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
         dataTest: 'BoxPersonalAllocation__Section--availableNow__DoubleValue',
         isFetching: isPatronMode
           ? isFetchingTotalPatronDonations
-          : isFetchingWithdrawals || isAppWaitingForTransactionToBeIndexed,
-        valueCrypto: isPatronMode ? totalPatronDonations : withdrawals?.sums.available,
+          : isFetchingWithdrawals || isPendingWithdrawalTransaction,
+        valueCrypto: isPatronMode ? totalPatronDonations?.value : withdrawals?.sums.available,
       },
       label: isPatronMode && !isProjectAdminMode ? t('allTime') : i18n.t('common.availableNow'),
     },
