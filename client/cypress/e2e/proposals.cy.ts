@@ -84,7 +84,7 @@ function addProposalToAllocate(index, numberOfAddedProposals): Chainable<any> {
     .then($el => $el.css('stroke'))
     .should('be.colored', '#FF6157');
   cy.get('[data-test=Navbar__numberOfAllocations]').contains(numberOfAddedProposals + 1);
-  cy.get('[data-test=Navbar__Button--Allocate]').click();
+  visitWithLoader(ROOT_ROUTES.allocation.absolute);
   cy.get('[data-test=AllocationItem]').should('have.length', numberOfAddedProposals + 1);
   return cy.go('back');
 }
@@ -102,7 +102,7 @@ function removeProposalFromAllocate(
     .eq(index)
     .find('[data-test=ProposalsListItem__ButtonAddToAllocate]')
     .click();
-  cy.get('[data-test=Navbar__Button--Allocate]').click();
+  visitWithLoader(ROOT_ROUTES.allocation.absolute);
   cy.get('[data-test=AllocationItem]').should('have.length', numberOfAddedProposals - 1);
   if (index < numberOfProposals - 1) {
     cy.get('[data-test=Navbar__numberOfAllocations]').contains(numberOfAddedProposals - 1);
@@ -151,16 +151,17 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     it('user is able to add project to allocation in ProjectsView and remove it from allocation in AllocationView', () => {
       cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
       addProposalToAllocate(0, 0);
-      cy.get('[data-test=Navbar__Button--Allocate]').click();
+      visitWithLoader(ROOT_ROUTES.allocation.absolute);
+      cy.get('[data-test=AllocationItemSkeleton]').should('not.exist');
       cy.get('[data-test=AllocationItem]').then(el => {
         const { x } = el[0].getBoundingClientRect();
         cy.get('[data-test=AllocationItem]')
           .trigger('pointerdown')
-          .trigger('pointermove', { pageX: x - 10 })
+          .trigger('pointermove', { pageX: x - 20 })
           .trigger('pointerup');
-        cy.get('[data-test=AllocationItem__bin]').should('be.visible');
-        cy.get('[data-test=AllocationItem__bin]').click();
-        cy.get('[data-test=AllocationItem__bin]').should('not.exist');
+        cy.get('[data-test=AllocationItem__removeButton]').should('be.visible');
+        cy.get('[data-test=AllocationItem__removeButton]').click();
+        cy.get('[data-test=AllocationItem__removeButton]').should('not.exist');
         cy.get('[data-test=AllocationItem]').should('not.exist');
         cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
       });

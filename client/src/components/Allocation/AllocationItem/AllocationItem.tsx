@@ -180,7 +180,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
         <motion.div
           ref={removeButtonRef}
           className={styles.removeButton}
-          data-test="AllocationItem__bin"
+          data-test="AllocationItem__removeButton"
           onClick={onRemoveAllocationElement}
           style={{ scale: removeButtonScaleTransform }}
         >
