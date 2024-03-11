@@ -66,7 +66,10 @@ const ProposalsList: FC<ProposalsListProps> = ({
           {areCurrentEpochsProjectsHiddenOutsideAllocationWindow && isFirstArchive ? null : (
             <div className={styles.divider} />
           )}
-          <div className={styles.epochArchive}>
+          <div
+            className={styles.epochArchive}
+            data-test="ProposalsView__ProposalsList__header--archive"
+          >
             {t('epochArchive', { epoch })}
             <span
               className={cx(
