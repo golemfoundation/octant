@@ -1,14 +1,14 @@
-from app.engine.octant_rewards import DefaultMatchedRewards
+from app.engine.octant_rewards.matched.preliminary import PreliminaryMatchedRewards
 from app.engine.octant_rewards.matched import MatchedRewardsPayload
-from tests.conftest import TOTAL_REWARDS, ALL_INDIVIDUAL_REWARDS
+from tests.helpers.constants import TOTAL_REWARDS, ALL_INDIVIDUAL_REWARDS
 
 
-def test_default_matched_rewards():
+def test_preliminary_matched_rewards():
     patrons_budget = 1526868_989237987
     payload = MatchedRewardsPayload(
         TOTAL_REWARDS, ALL_INDIVIDUAL_REWARDS, patrons_budget
     )
-    uut = DefaultMatchedRewards()
+    uut = PreliminaryMatchedRewards()
 
     result = uut.calculate_matched_rewards(payload)
 

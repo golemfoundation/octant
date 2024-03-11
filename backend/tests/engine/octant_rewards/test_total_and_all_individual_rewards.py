@@ -2,7 +2,9 @@ from decimal import Decimal
 
 import pytest
 
-from app.engine.octant_rewards import DefaultTotalAndAllIndividualRewards
+from app.engine.octant_rewards.total_and_individual.preliminary import (
+    PreliminaryTotalAndAllIndividualRewards,
+)
 from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividualPayload
 from app.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (
     AllProceedsWithOperationalCost,
@@ -33,11 +35,11 @@ from app.engine.octant_rewards.total_and_individual.double import (
         ),
     ],
 )
-def test_default_total_and_all_individual_rewards(
+def test_preliminary_total_and_all_individual_rewards(
     eth_proceeds, locked_ratio, exp_total, exp_all_individual
 ):
     payload = TotalAndAllIndividualPayload(eth_proceeds, Decimal(locked_ratio))
-    uut = DefaultTotalAndAllIndividualRewards()
+    uut = PreliminaryTotalAndAllIndividualRewards()
 
     total_rewards = uut.calculate_total_rewards(payload)
     all_individual_rewards = uut.calculate_all_individual_rewards(payload)

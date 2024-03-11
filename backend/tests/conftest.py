@@ -30,36 +30,35 @@ from app.modules.dto import AccountFundsDTO
 from app.settings import DevConfig, TestConfig
 from tests.helpers.constants import (
     ALICE,
-    ALL_INDIVIDUAL_REWARDS,
     BOB,
     CAROL,
     DEPLOYER_PRIV,
     ETH_PROCEEDS,
     LEFTOVER,
-    LOCKED_RATIO,
     MATCHED_REWARDS,
     MNEMONIC,
     MOCKED_CURRENT_EPOCH_NO,
     MOCKED_FINALIZED_EPOCH_NO,
     MOCKED_PENDING_EPOCH_NO,
-    OPERATIONAL_COST,
     TOTAL_ED,
-    TOTAL_REWARDS,
     TOTAL_WITHDRAWALS,
     USER1_ADDRESS,
     USER1_BUDGET,
-    USER1_ED,
     USER2_ADDRESS,
     USER2_BUDGET,
-    USER2_ED,
     USER3_BUDGET,
-    USER3_ED,
     USER_MOCKED_BUDGET,
+    COMMUNITY_FUND,
+    PPF,
+    MOCKED_EPOCH_NO_AFTER_OVERHAUL,
+    MATCHED_REWARDS_AFTER_OVERHAUL,
+    NO_PATRONS_REWARDS,
 )
 from tests.helpers.context import get_context
 from tests.helpers.gql_client import MockGQLClient
 from tests.helpers.mocked_epoch_details import EPOCH_EVENTS
 from tests.helpers.octant_rewards import octant_rewards
+from tests.helpers.pending_snapshot import create_pending_snapshot
 from tests.helpers.subgraph.events import create_deposit_event
 
 # Contracts mocks
@@ -559,23 +558,33 @@ def mock_users_db(app, user_accounts):
 
 
 @pytest.fixture(scope="function")
-def mock_pending_epoch_snapshot_db(app, mock_users_db):
-    database.pending_epoch_snapshot.save_snapshot(
-        MOCKED_PENDING_EPOCH_NO,
-        ETH_PROCEEDS,
-        TOTAL_ED,
-        LOCKED_RATIO,
-        TOTAL_REWARDS,
-        ALL_INDIVIDUAL_REWARDS,
-        OPERATIONAL_COST,
+def mock_pending_epoch_snapshot_db_since_epoch3(
+    app, mock_users_db, ppf=PPF, cf=COMMUNITY_FUND
+):
+    create_pending_snapshot(
+        epoch_nr=MOCKED_EPOCH_NO_AFTER_OVERHAUL,
+        mock_users_db=mock_users_db,
+        optional_ppf=ppf,
+        optional_cf=cf,
     )
-    user1, user2, user3 = mock_users_db
-    database.deposits.add(MOCKED_PENDING_EPOCH_NO, user1, USER1_ED, USER1_ED)
-    database.deposits.add(MOCKED_PENDING_EPOCH_NO, user2, USER2_ED, USER2_ED)
-    database.deposits.add(MOCKED_PENDING_EPOCH_NO, user3, USER3_ED, USER3_ED)
-    database.budgets.add(MOCKED_PENDING_EPOCH_NO, user1, USER1_BUDGET)
-    database.budgets.add(MOCKED_PENDING_EPOCH_NO, user2, USER2_BUDGET)
-    database.budgets.add(MOCKED_PENDING_EPOCH_NO, user3, USER3_BUDGET)
+
+
+@pytest.fixture(scope="function")
+def mock_pending_epoch_snapshot_db(app, mock_users_db):
+    create_pending_snapshot(
+        epoch_nr=MOCKED_PENDING_EPOCH_NO, mock_users_db=mock_users_db
+    )
+
+
+@pytest.fixture(scope="function")
+def mock_finalized_epoch_snapshot_db_since_epoch3(app, user_accounts):
+    database.finalized_epoch_snapshot.save_snapshot(
+        MOCKED_EPOCH_NO_AFTER_OVERHAUL,
+        MATCHED_REWARDS_AFTER_OVERHAUL,
+        NO_PATRONS_REWARDS,
+        LEFTOVER,
+        total_withdrawals=TOTAL_WITHDRAWALS,
+    )
 
     db.session.commit()
 
@@ -585,7 +594,7 @@ def mock_finalized_epoch_snapshot_db(app, user_accounts):
     database.finalized_epoch_snapshot.save_snapshot(
         MOCKED_FINALIZED_EPOCH_NO,
         MATCHED_REWARDS,
-        0,
+        NO_PATRONS_REWARDS,
         LEFTOVER,
         total_withdrawals=TOTAL_WITHDRAWALS,
     )

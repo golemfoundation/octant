@@ -1,4 +1,4 @@
-from app.engine.user import DefaultUserBudget
+from app.engine.user.budget.preliminary import PreliminaryUserBudget
 from app.engine.user.effective_deposit import UserDeposit
 from app.modules.snapshots.pending.core import calculate_user_budgets
 from tests.helpers.constants import USER1_ADDRESS, USER1_ED, USER2_ED, USER2_ADDRESS
@@ -11,7 +11,7 @@ def test_calculate_user_budgets():
         UserDeposit(USER1_ADDRESS, USER1_ED, USER1_ED),
         UserDeposit(USER2_ADDRESS, USER2_ED, USER2_ED),
     ]
-    result = calculate_user_budgets(DefaultUserBudget(), rewards, deposits)
+    result = calculate_user_budgets(PreliminaryUserBudget(), rewards, deposits)
 
     assert result == [
         (USER1_ADDRESS, 1526868_989237987),
@@ -25,6 +25,6 @@ def test_returns_only_positive_budgets():
         UserDeposit(USER1_ADDRESS, USER1_ED, USER1_ED),
         UserDeposit(USER2_ADDRESS, USER2_ED, USER2_ED),
     ]
-    result = calculate_user_budgets(DefaultUserBudget(), rewards, deposits)
+    result = calculate_user_budgets(PreliminaryUserBudget(), rewards, deposits)
 
     assert result == []

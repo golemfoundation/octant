@@ -3,7 +3,7 @@ from decimal import Decimal
 from app.engine.user.budget import UserBudgetPayload, UserBudget
 
 
-class DefaultUserBudget(UserBudget):
+class PreliminaryUserBudget(UserBudget):
     def calculate_budget(self, payload: UserBudgetPayload) -> int:
         if not payload.total_effective_deposit:
             return 0

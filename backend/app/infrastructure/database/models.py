@@ -98,6 +98,16 @@ class PendingEpochSnapshot(BaseModel):
     total_rewards = Column(db.String, nullable=False)
     all_individual_rewards = Column(db.String, nullable=False)
     operational_cost = Column(db.String, nullable=False)
+    ppf = Column(db.String, nullable=True)
+    community_fund = Column(db.String, nullable=True)
+
+    @property
+    def validated_ppf(self):
+        return int(self.ppf) if self.ppf else None
+
+    @property
+    def validated_community_fund(self):
+        return int(self.community_fund) if self.community_fund else None
 
 
 class FinalizedEpochSnapshot(BaseModel):
