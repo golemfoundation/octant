@@ -8,8 +8,9 @@ export const loadersShouldNotExist = (): Chainable<any> => {
 };
 
 export const checkLocationWithLoader = (url: string): Chainable<any> => {
-  cy.location('pathname').should('eq', url);
-  return loadersShouldNotExist();
+  // First loaders, since user can be moved between the routes before they disappear.
+  loadersShouldNotExist();
+  return cy.location('pathname').should('eq', url);
 };
 
 export const visitWithLoader = (urlEnter: string, urlEnd?: string): Chainable<any> => {
