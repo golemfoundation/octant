@@ -1,7 +1,5 @@
 import { ReactNode } from 'react';
 
-import { NavigationTab } from 'constants/navigationTabs/types';
-
 export default interface LayoutProps {
   children?: ReactNode;
   classNameBody?: string;
@@ -11,5 +9,4 @@ export default interface LayoutProps {
   isLoading?: boolean;
   isNavigationVisible?: boolean;
   navigationBottomSuffix?: ReactNode;
-  navigationTabs?: NavigationTab[];
 }

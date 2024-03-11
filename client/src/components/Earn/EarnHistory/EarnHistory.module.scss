@@ -11,8 +11,12 @@
   }
 }
 
+.skeleton {
+  padding: 0 $historyHorizontalPadding;
+}
+
 .title {
-  padding: 0 1.6rem;
+  padding: 0 $historyHorizontalPadding;
 }
 
 .childrenWrapper {

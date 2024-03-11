@@ -1,7 +1,6 @@
 $headerNavigationBorderRadius: $border-radius-32;
 $headerMarginTop: 1.6rem;
-$bodyPaddingTopMobile: calc(1.6rem + $headerMarginTop + $headerHeight);
-$bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerHeight);
+$bodyPaddingTop: calc(1.6rem + $headerMarginTop + $headerHeight);
 
 .root {
   display: flex;
@@ -42,7 +41,7 @@ $bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerHeight);
 
 .headerBlur {
   @include layoutOverflowBlurCommonProperties();
-  height: $bodyPaddingTopMobile;
+  height: $bodyPaddingTop;
   top: 0;
   -webkit-mask-image: linear-gradient(
     to bottom,
@@ -58,10 +57,6 @@ $bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerHeight);
     rgba(0, 0, 0, 0.8),
     rgba(0, 0, 0, 0.05)
   );
-
-  @media #{$desktop-up} {
-    height: $bodyPaddingTopDesktop;
-  }
 
   &.isAbsoluteHeaderPosition {
     position: absolute;
@@ -187,10 +182,9 @@ $bodyPaddingTopDesktop: calc(2.4rem + $headerMarginTop + $headerHeight);
   align-items: center;
   justify-content: flex-start;
   flex: 1;
-  padding: $bodyPaddingTopMobile $layoutMarginHorizontal 12rem;
+  padding: $bodyPaddingTop $layoutMarginHorizontal 12rem;
 
   @media #{$desktop-up} {
-    padding-top: $bodyPaddingTopDesktop;
     padding-bottom: 15.2rem;
   }
 

@@ -6,7 +6,7 @@
 }
 
 .child {
-  padding: 1.3rem 1.6rem;
+  padding: 1.3rem $historyHorizontalPadding;
   border-radius: $border-radius-06;
 
   &:hover {
@@ -26,10 +26,9 @@
 }
 
 .separator {
-  $marginLeft: 1.6rem;
-  width: calc(100% - $marginLeft * 2);
+  width: calc(100% - $historyHorizontalPadding * 2);
   height: 0.1rem;
-  margin-left: $marginLeft;
+  margin-left: $historyHorizontalPadding;
   background: $color-octant-grey8;
 }
 
