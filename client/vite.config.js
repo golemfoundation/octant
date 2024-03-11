@@ -65,9 +65,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     base,
-    build: {
-      sourcemap: true,
-    },
+    // build: {
+    //   sourcemap: true,
+    // },
     css: {
       modules: {
         generateScopedName: localIdentName,
