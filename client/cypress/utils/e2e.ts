@@ -2,6 +2,8 @@ import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
 
 import Chainable = Cypress.Chainable;
 
+export const ETH_USD = 2041.91;
+
 export const loadersShouldNotExist = (): Chainable<any> => {
   cy.get('[data-test*=AppLoader]').should('not.exist');
   return cy.get('[data-test=MainLayout__Loader]').should('not.exist');
@@ -25,7 +27,7 @@ export const navigateWithCheck = (urlEnter: string): Chainable<any> => {
 
 export const mockCoinPricesServer = (): Chainable<any> => {
   return cy.intercept('GET', '/simple/price?*', {
-    body: { ethereum: { usd: 2041.91 }, golem: { usd: 0.260878 } },
+    body: { ethereum: { usd: ETH_USD }, golem: { usd: 0.260878 } },
     statusCode: 200,
   });
 };
