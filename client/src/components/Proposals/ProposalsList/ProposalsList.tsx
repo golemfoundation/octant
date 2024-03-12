@@ -19,7 +19,7 @@ const ProposalsList: FC<ProposalsListProps> = ({
   isFirstArchive,
 }) => {
   const { t } = useTranslation('translation', {
-    keyPrefix: 'components.dedicated.proposalsList',
+    keyPrefix: 'components.dedicated.projectsList',
   });
 
   const { isDesktop } = useMediaQuery();

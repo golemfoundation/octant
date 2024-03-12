@@ -22,7 +22,7 @@ import toastService from 'services/toastService';
 import styles from './ProjectView.module.scss';
 
 const ProjectView = (): ReactElement => {
-  const { t } = useTranslation('translation', { keyPrefix: 'views.proposal' });
+  const { t } = useTranslation('translation', { keyPrefix: 'views.project' });
   const [isBackToTopButtonVisible, setIsBackToTopButtonVisible] = useState(false);
   const { projectAddress: projectAddressUrl, epoch: epochUrl } = useParams();
   const [loadedProposals, setLoadedProposals] = useState<ProposalIpfsWithRewards[]>([]);

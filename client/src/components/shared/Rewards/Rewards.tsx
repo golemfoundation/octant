@@ -21,7 +21,7 @@ const Rewards: FC<RewardsProps> = ({
   totalValueOfAllocations,
 }) => {
   const { t, i18n } = useTranslation('translation', {
-    keyPrefix: 'components.dedicated.proposalRewards',
+    keyPrefix: 'components.dedicated.projectRewards',
   });
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 

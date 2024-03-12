@@ -117,8 +117,8 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
 
     if (isSignedInAsAProposal) {
       toastService.showToast({
-        name: 'proposalForbiddenOperation',
-        title: i18n.t('common.proposalForbiddenOperation'),
+        name: 'projectForbiddenOperation',
+        title: i18n.t('common.projectForbiddenOperation'),
         type: 'error',
       });
       return;

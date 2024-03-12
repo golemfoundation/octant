@@ -20,7 +20,7 @@ import styles from './ProjectsView.module.scss';
 
 const ProjectsView = (): ReactElement => {
   const { t, i18n } = useTranslation('translation', {
-    keyPrefix: 'views.proposals',
+    keyPrefix: 'views.projects',
   });
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen({
