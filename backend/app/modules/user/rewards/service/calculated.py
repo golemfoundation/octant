@@ -1,6 +1,7 @@
 from typing import List, Protocol, Dict, runtime_checkable
 
 from app.context.manager import Context
+from app.legacy.core.allocations import has_user_allocated_rewards
 from app.modules.dto import AccountFundsDTO
 from app.modules.user.rewards.core import get_unused_rewards
 from app.pydantic import Model
@@ -16,10 +17,16 @@ class UserAllocations(Protocol):
     ) -> List[AccountFundsDTO]:
         ...
 
+    def get_user_allocation_sum(self, context: Context, user_address: str) -> int:
+        ...
+
 
 @runtime_checkable
 class UserBudgets(Protocol):
     def get_all_budgets(self, context: Context) -> Dict[str, int]:
+        ...
+
+    def get_budget(self, context: Context, user_address: str) -> int:
         ...
 
 
@@ -56,3 +63,14 @@ class CalculatedUserRewards(Model):
                 rewards_sum += claimed_rewards
 
         return rewards, rewards_sum
+
+    def get_user_claimed_rewards(self, context: Context, user_address: str) -> int:
+        if not has_user_allocated_rewards(
+            user_address, context.epoch_details.epoch_num
+        ):
+            return 0
+
+        budget = self.user_budgets.get_budget(context, user_address)
+        allocation = self.allocations.get_user_allocation_sum(context, user_address)
+
+        return budget - allocation

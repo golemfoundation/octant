@@ -9,12 +9,7 @@ from app.modules.dto import AccountFundsDTO
 LEAF_ENCODING: List[str] = ["address", "uint256"]
 
 
-def get_proof_by_address_and_epoch(address: str, epoch: int) -> List[str]:
-    merkle_tree = get_merkle_tree_for_epoch(epoch)
-    return get_proof(merkle_tree, address)
-
-
-def get_merkle_tree_for_epoch(epoch: int) -> StandardMerkleTree:
+def get_rewards_merkle_tree_for_epoch(epoch: int) -> StandardMerkleTree:
     leaves = [
         AccountFundsDTO(r.address, int(r.amount))
         for r in database.rewards.get_by_epoch(epoch)

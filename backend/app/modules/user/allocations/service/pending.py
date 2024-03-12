@@ -25,8 +25,13 @@ class PendingUserAllocations(Model):
     def get_all_users_with_allocations_sum(
         self, context: Context
     ) -> List[AccountFundsDTO]:
-        return database.allocations.get_alloc_sum_by_epoch_and_user_address(
+        return database.allocations.get_users_alloc_sum_by_epoch(
             context.epoch_details.epoch_num
+        )
+
+    def get_user_allocation_sum(self, context: Context, user_address: str) -> int:
+        return database.allocations.get_user_alloc_sum_by_epoch(
+            context.epoch_details.epoch_num, user_address
         )
 
     def simulate_allocation(

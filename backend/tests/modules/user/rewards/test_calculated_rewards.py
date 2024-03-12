@@ -71,3 +71,19 @@ def test_get_claimed_rewards_when_all_budget_is_allocated(
 
     assert claimed_rewards == []
     assert claimed_rewards_sum == 0
+
+
+def test_get_user_claimed_rewards(
+    context, alice, bob, mock_user_budgets, mock_user_allocations, mock_patron_mode
+):
+    mock_user_allocations.get_user_alloc_sum_by_epoch.return_value = 100_000000000
+
+    service = CalculatedUserRewards(
+        user_budgets=mock_user_budgets,
+        allocations=mock_user_allocations,
+        patrons_mode=mock_patron_mode,
+    )
+
+    result = service.get_user_claimed_rewards(context, alice.address)
+
+    assert result == USER1_BUDGET - 100_000000000

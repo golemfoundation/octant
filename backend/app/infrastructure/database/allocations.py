@@ -123,7 +123,7 @@ def get_users_with_allocations(epoch_num: int) -> List[str]:
     return [u.address for u in users]
 
 
-def get_alloc_sum_by_epoch_and_user_address(epoch: int) -> List[AccountFundsDTO]:
+def get_users_alloc_sum_by_epoch(epoch: int) -> List[AccountFundsDTO]:
     allocations = (
         db.session.query(User, Allocation)
         .join(User, User.id == Allocation.user_id)
@@ -151,6 +151,17 @@ def get_alloc_sum_by_epoch_and_user_address(epoch: int) -> List[AccountFundsDTO]
 def get_alloc_sum_by_epoch(epoch: int) -> int:
     allocations = (
         Allocation.query.filter(Allocation.epoch == epoch)
+        .filter(Allocation.deleted_at.is_(None))
+        .all()
+    )
+    return sum([int(a.amount) for a in allocations])
+
+
+def get_user_alloc_sum_by_epoch(epoch: int, user_address: str) -> int:
+    allocations = (
+        Allocation.query.filter(
+            Allocation.epoch == epoch, Allocation.user.address == user_address
+        )
         .filter(Allocation.deleted_at.is_(None))
         .all()
     )

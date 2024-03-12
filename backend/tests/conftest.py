@@ -418,7 +418,6 @@ def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.legacy.controllers.allocations.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.controllers.snapshots.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.controllers.rewards.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.legacy.controllers.withdrawals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.core.proposals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.context.epoch_state.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.context.epoch_details.epochs", MOCK_EPOCHS)
@@ -455,12 +454,6 @@ def patch_glm(monkeypatch):
     )
 
     MOCK_GLM.balance_of.return_value = TOTAL_ED
-
-
-@pytest.fixture(scope="function")
-def patch_vault(monkeypatch):
-    monkeypatch.setattr("app.legacy.controllers.withdrawals.vault", MOCK_VAULT)
-    MOCK_VAULT.get_last_claimed_epoch.return_value = 0
 
 
 @pytest.fixture(scope="function")
@@ -516,7 +509,6 @@ def patch_last_finalized_snapshot(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_user_budget(monkeypatch):
     monkeypatch.setattr("app.legacy.core.allocations.get_budget", MOCK_GET_USER_BUDGET)
-    monkeypatch.setattr("app.legacy.core.user.rewards.get_budget", MOCK_GET_USER_BUDGET)
     monkeypatch.setattr(
         "app.legacy.core.history.budget.get_budget", MOCK_GET_USER_BUDGET
     )

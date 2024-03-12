@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from decimal import Decimal
+from enum import StrEnum
 from typing import Optional, List
 
 from dataclass_wizard import JSONWizard
@@ -52,3 +53,16 @@ class OctantRewardsDTO(JSONWizard):
 @dataclass(frozen=True)
 class AllocationDTO(AllocationPayload, JSONWizard):
     user_address: Optional[str] = None
+
+
+class WithdrawalStatus(StrEnum):
+    PENDING = "pending"
+    AVAILABLE = "available"
+
+
+@dataclass(frozen=True)
+class WithdrawableEth:
+    epoch: int
+    amount: int
+    proof: list[str]
+    status: WithdrawalStatus
