@@ -8,11 +8,11 @@ import styles from './ProposalDonorsListTotalDonated.module.scss';
 import ProposalDonorsListTotalDonatedProps from './types';
 
 const ProposalDonorsListTotalDonated: FC<ProposalDonorsListTotalDonatedProps> = ({
-  proposalDonors,
+  projectDonors,
   className,
 }) => {
   const { i18n } = useTranslation();
-  const totalDonatedSum = proposalDonors?.reduce((acc, curr) => {
+  const totalDonatedSum = projectDonors?.reduce((acc, curr) => {
     return acc + curr.amount;
   }, BigInt(0));
 

@@ -3,7 +3,7 @@ import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import { ProposalDonor } from './types';
 
-export function mapDataToProposalDonors(data: Response): ProposalDonor[] {
+export function mapDataToProjectDonors(data: Response): ProposalDonor[] {
   return data
     .map(({ address, amount }) => ({
       address,

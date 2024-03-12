@@ -21,8 +21,8 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
-import useProposalsContract from 'hooks/queries/useProposalsContract';
+import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
+import useProjectsContract from 'hooks/queries/useProjectsContract';
 import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
 import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -48,7 +48,7 @@ const AllocationView = (): ReactElement => {
   const [isManualMode, setIsManualMode] = useState<boolean>(false);
   const [addressesWithError, setAddressesWithError] = useState<string[]>([]);
   const [percentageProportions, setPercentageProportions] = useState<PercentageProportions>({});
-  const { data: proposalsContract } = useProposalsContract();
+  const { data: projectsContract } = useProjectsContract();
   const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards();
   const { isRewardsForProposalsSet } = useAllocationViewSetRewardsForProposals();
   const {
@@ -82,7 +82,7 @@ const AllocationView = (): ReactElement => {
     isFetching: isFetchingUserNonce,
     refetch: refetchUserAllocationNonce,
   } = useUserAllocationNonce();
-  const { refetch: refetchMatchedProposalRewards } = useMatchedProposalRewards();
+  const { refetch: refetchMatchedProjectRewards } = useMatchedProjectRewards();
   const {
     allocations,
     rewardsForProposals,
@@ -113,7 +113,7 @@ const AllocationView = (): ReactElement => {
         name: 'allocationSuccessful',
         title: t('allocationSuccessful'),
       });
-      refetchMatchedProposalRewards();
+      refetchMatchedProjectRewards();
       refetchUserAllocations();
       refetchUserAllocationNonce();
       refetchHistory();
@@ -237,7 +237,7 @@ const AllocationView = (): ReactElement => {
   };
 
   const onAllocate = () => {
-    if (userNonce === undefined || proposalsContract === undefined) {
+    if (userNonce === undefined || projectsContract === undefined) {
       return;
     }
     /**
@@ -248,7 +248,7 @@ const AllocationView = (): ReactElement => {
     const allocationValuesNew = [...allocationValues];
     if (allocationValuesNew.length === 0) {
       allocationValuesNew.push({
-        address: proposalsContract[0],
+        address: projectsContract[0],
         value: '0',
       });
     }

@@ -21,7 +21,7 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
+import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
 import { bin } from 'svg/misc';
 import {
   comma,
@@ -53,7 +53,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   const { ipfsGateways } = env;
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { isFetching: isFetchingRewardsThreshold } = useProposalRewardsThreshold();
+  const { isFetching: isFetchingRewardsThreshold } = useProjectRewardsThreshold();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { isDesktop } = useMediaQuery();
   const [ref, animate] = useAnimate();

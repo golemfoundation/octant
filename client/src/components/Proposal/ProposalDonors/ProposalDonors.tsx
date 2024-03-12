@@ -8,7 +8,7 @@ import ProposalDonorsHeader from 'components/Proposal/ProposalDonorsHeader';
 import ProposalDonorsList from 'components/Proposal/ProposalDonorsList';
 import Button from 'components/ui/Button';
 import { DONORS_SHORT_LIST_LENGTH } from 'constants/donors';
-import useProposalDonors from 'hooks/queries/donors/useProposalDonors';
+import useProjectDonors from 'hooks/queries/donors/useProjectDonors';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 
 import styles from './ProposalDonors.module.scss';
@@ -21,7 +21,7 @@ const ProposalDonors: FC<ProposalDonorsProps> = ({
 }) => {
   const { epoch } = useParams();
   const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.donors' });
-  const { data: proposalDonors, isFetching } = useProposalDonors(
+  const { data: projectDonors, isFetching } = useProjectDonors(
     proposalAddress,
     parseInt(epoch!, 10),
   );
@@ -31,7 +31,7 @@ const ProposalDonors: FC<ProposalDonorsProps> = ({
 
   const isEpoch1 = currentEpoch === 1;
 
-  const isListExpandable = proposalDonors && proposalDonors.length > DONORS_SHORT_LIST_LENGTH;
+  const isListExpandable = projectDonors && projectDonors.length > DONORS_SHORT_LIST_LENGTH;
 
   return (
     <div className={cx(styles.root, className)} data-test={dataTest}>
@@ -48,7 +48,7 @@ const ProposalDonors: FC<ProposalDonorsProps> = ({
             proposalAddress={proposalAddress}
           />
           <div className={styles.body}>
-            {proposalDonors && proposalDonors.length > 0 ? (
+            {projectDonors && projectDonors.length > 0 ? (
               <ProposalDonorsList
                 dataTest={`${dataTest}__DonorsList`}
                 proposalAddress={proposalAddress}
@@ -70,7 +70,7 @@ const ProposalDonors: FC<ProposalDonorsProps> = ({
             onClick={() => setIsFullDonorsListModalOpen(true)}
             variant="secondary2"
           />
-          {(isFetching || (proposalDonors && proposalDonors?.length > 0)) && (
+          {(isFetching || (projectDonors && projectDonors?.length > 0)) && (
             <div className={styles.divider} />
           )}
           <ModalProposalDonorsListFull

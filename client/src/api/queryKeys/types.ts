@@ -14,11 +14,11 @@ export type Root = {
   epochesEndTime: 'epochesEndTime';
   estimatedEffectiveDeposit: 'estimatedEffectiveDeposit';
   individualReward: 'individualReward';
-  matchedProposalRewards: 'matchedProposalRewards';
+  matchedProjectRewards: 'matchedProjectRewards';
   patronMode: 'patronMode';
-  proposalDonors: 'proposalDonors';
-  proposalRewardsThreshold: 'proposalRewardsThreshold';
-  proposalsContract: 'proposalsContract';
+  projectDonors: 'projectDonors';
+  projectRewardsThreshold: 'projectRewardsThreshold';
+  projectsContract: 'projectsContract';
   proposalsIpfsResults: 'proposalsIpfsResults';
   userAllocationNonce: 'userAllocationNonce';
   userAllocations: 'userAllocations';
@@ -51,16 +51,16 @@ export type QueryKeys = {
   largestLockedAmount: ['largestLockedAmount'];
   lockedSummaryLatest: ['lockedSummaryLatest'];
   lockedSummarySnapshots: ['lockedSummarySnapshots'];
-  matchedProposalRewards: (epochNumber: number) => [Root['matchedProposalRewards'], string];
+  matchedProjectRewards: (epochNumber: number) => [Root['matchedProjectRewards'], string];
   patronMode: (userAddress: string) => [Root['patronMode'], string];
-  projectsMetadataAccumulateds: ['projectsMetadataAccumulateds'];
-  projectsMetadataPerEpoches: ['projectsMetadataPerEpoches'];
-  proposalDonors: (
+  projectDonors: (
     proposalAddress: string,
     epochNumber: number,
-  ) => [Root['proposalDonors'], string, string];
-  proposalRewardsThreshold: (epochNumber: number) => [Root['proposalRewardsThreshold'], string];
-  proposalsContract: (epochNumber: number) => [Root['proposalsContract'], string];
+  ) => [Root['projectDonors'], string, string];
+  projectRewardsThreshold: (epochNumber: number) => [Root['projectRewardsThreshold'], string];
+  projectsContract: (epochNumber: number) => [Root['projectsContract'], string];
+  projectsMetadataAccumulateds: ['projectsMetadataAccumulateds'];
+  projectsMetadataPerEpoches: ['projectsMetadataPerEpoches'];
   proposalsIpfsResults: (
     proposalAddress: string,
     epoch: number,

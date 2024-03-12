@@ -4,43 +4,43 @@ import { apiGetProposalDonors } from 'api/calls/poroposalDonors';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useProposalsContract from 'hooks/queries/useProposalsContract';
+import useProjectsContract from 'hooks/queries/useProjectsContract';
 
 import { ProposalDonor } from './types';
-import { mapDataToProposalDonors } from './utils';
+import { mapDataToProjectDonors } from './utils';
 
-export default function useProposalsDonors(epoch?: number): {
+export default function useProjectsDonors(epoch?: number): {
   data: { [key: string]: ProposalDonor[] };
   isFetching: boolean;
 } {
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: proposalsAddresses } = useProposalsContract(epoch);
+  const { data: projectsAddresses } = useProjectsContract(epoch);
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   // TODO OCT-1139 implement socket here.
 
-  const proposalsDonorsResults: UseQueryResult<ProposalDonor[]>[] = useQueries({
-    queries: (proposalsAddresses || []).map(proposalAddress => ({
-      enabled: !!proposalsAddresses && isDecisionWindowOpen !== undefined,
+  const projectsDonorsResults: UseQueryResult<ProposalDonor[]>[] = useQueries({
+    queries: (projectsAddresses || []).map(projectAddress => ({
+      enabled: !!projectsAddresses && isDecisionWindowOpen !== undefined,
       queryFn: () =>
         apiGetProposalDonors(
-          proposalAddress,
+          projectAddress,
           epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
         ),
-      queryKey: QUERY_KEYS.proposalDonors(
-        proposalAddress,
+      queryKey: QUERY_KEYS.projectDonors(
+        projectAddress,
         epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
       ),
-      select: response => mapDataToProposalDonors(response),
+      select: response => mapDataToProjectDonors(response),
     })),
   });
 
   const isFetching =
     isDecisionWindowOpen === undefined ||
-    proposalsAddresses === undefined ||
-    proposalsDonorsResults.length === 0 ||
-    proposalsDonorsResults.some(
-      ({ isFetching: isFetchingProposalsDonorsResult }) => isFetchingProposalsDonorsResult,
+    projectsAddresses === undefined ||
+    projectsDonorsResults.length === 0 ||
+    projectsDonorsResults.some(
+      ({ isFetching: isFetchingProjectsDonorsResult }) => isFetchingProjectsDonorsResult,
     );
   if (isFetching) {
     return {
@@ -50,10 +50,10 @@ export default function useProposalsDonors(epoch?: number): {
   }
 
   return {
-    data: (proposalsDonorsResults || []).reduce((acc, curr, currentIndex) => {
+    data: (projectsDonorsResults || []).reduce((acc, curr, currentIndex) => {
       return {
         ...acc,
-        [proposalsAddresses[currentIndex]]: curr.data,
+        [projectsAddresses[currentIndex]]: curr.data,
       };
     }, {}),
     isFetching: false,

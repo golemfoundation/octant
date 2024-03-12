@@ -19,7 +19,7 @@ const GET_PROJECTS_METADATA_PER_EPOCHES = graphql(`
   }
 `);
 
-export default function useProposalsCid(
+export default function useProjectsCid(
   epoch: number,
   options?: Omit<
     UseQueryOptions<
@@ -43,11 +43,11 @@ export default function useProposalsCid(
     queryKey: QUERY_KEYS.projectsMetadataPerEpoches,
     select: data => {
       // Returns proposalsCid for the current or previous (lower, nearest) epoch
-      const epochProposalsCid = _last(
+      const epochProjectsCid = _last(
         data.projectsMetadataPerEpoches.filter(p => p.epoch <= epoch),
       )?.proposalsCid;
 
-      return epochProposalsCid;
+      return epochProjectsCid;
     },
     ...options,
   });

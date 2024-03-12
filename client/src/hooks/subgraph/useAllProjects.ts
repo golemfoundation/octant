@@ -15,7 +15,7 @@ const GET_PROJECTS_METADATA_ACCUMULATEDS = graphql(`
   }
 `);
 
-export default function useAllProposals(): UseQueryResult<string[] | null | undefined> {
+export default function useAllProjects(): UseQueryResult<string[] | null | undefined> {
   const { subgraphAddress } = env;
 
   return useQuery<

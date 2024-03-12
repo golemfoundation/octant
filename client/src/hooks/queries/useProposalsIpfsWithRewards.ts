@@ -1,9 +1,9 @@
 import { ExtendedProposal } from 'types/extended-proposal';
 import getSortedElementsByTotalValueOfAllocationsAndAlphabetical from 'utils/getSortedElementsByTotalValueOfAllocationsAndAlphabetical';
 
-import useProposalsDonors from './donors/useProposalsDonors';
-import useMatchedProposalRewards from './useMatchedProposalRewards';
-import useProposalsContract from './useProposalsContract';
+import useProjectsDonors from './donors/useProjectsDonors';
+import useMatchedProjectRewards from './useMatchedProjectRewards';
+import useProjectsContract from './useProjectsContract';
 import useProposalsIpfs from './useProposalsIpfs';
 
 export interface ProposalIpfsWithRewards extends ExtendedProposal {
@@ -20,24 +20,23 @@ export default function useProposalsIpfsWithRewards(epoch?: number): {
   // TODO OCT-1270 TODO OCT-1312 Remove this override.
   const epochOverrideForDataFetch = epoch === 2 ? 3 : epoch;
 
-  const { data: proposalsAddresses, isFetching: isFetchingProposalsContract } =
-    useProposalsContract(epochOverrideForDataFetch);
+  const { data: projectsAddresses, isFetching: isFetchingProjectsContract } =
+    useProjectsContract(epochOverrideForDataFetch);
   const { data: proposalsIpfs, isFetching: isFetchingProposalsIpfs } = useProposalsIpfs(
-    proposalsAddresses,
+    projectsAddresses,
     epochOverrideForDataFetch,
   );
   const {
-    data: matchedProposalRewards,
-    isFetching: isFetchingMatchedProposalRewards,
+    data: matchedProjectRewards,
+    isFetching: isFetchingMatchedProjectRewards,
     isRefetching: isRefetchingMatchedProposalRewards,
-  } = useMatchedProposalRewards(epoch);
-  const { data: proposalsDonors, isFetching: isFetchingProposalsDonors } =
-    useProposalsDonors(epoch);
+  } = useMatchedProjectRewards(epoch);
+  const { data: projectsDonors, isFetching: isFetchingProposalsDonors } = useProjectsDonors(epoch);
 
   const isFetching =
-    isFetchingProposalsContract ||
+    isFetchingProjectsContract ||
     isFetchingProposalsIpfs ||
-    (isFetchingMatchedProposalRewards && !isRefetchingMatchedProposalRewards) ||
+    (isFetchingMatchedProjectRewards && !isRefetchingMatchedProposalRewards) ||
     isFetchingProposalsDonors;
   if (isFetching) {
     return {
@@ -47,7 +46,7 @@ export default function useProposalsIpfsWithRewards(epoch?: number): {
   }
 
   const proposalsWithRewards = (proposalsIpfs || []).map(proposal => {
-    const proposalMatchedProposalRewards = matchedProposalRewards?.find(
+    const proposalMatchedProposalRewards = matchedProjectRewards?.find(
       ({ address }) => address === proposal.address,
     );
     /**
@@ -56,9 +55,9 @@ export default function useProposalsIpfsWithRewards(epoch?: number): {
      */
     const totalValueOfAllocations =
       proposalMatchedProposalRewards?.sum ||
-      proposalsDonors[proposal.address].reduce((acc, curr) => acc + curr.amount, BigInt(0));
+      projectsDonors[proposal.address].reduce((acc, curr) => acc + curr.amount, BigInt(0));
     return {
-      numberOfDonors: proposalsDonors[proposal.address].length,
+      numberOfDonors: projectsDonors[proposal.address].length,
       percentage: proposalMatchedProposalRewards?.percentage,
       totalValueOfAllocations,
       ...proposal,

@@ -8,7 +8,7 @@ import { readContractProposals } from 'hooks/contracts/readContracts';
 import useCurrentEpoch from './useCurrentEpoch';
 import useIsDecisionWindowOpen from './useIsDecisionWindowOpen';
 
-export default function useProposalsContract(epoch?: number): UseQueryResult<string[], unknown> {
+export default function useProjectsContract(epoch?: number): UseQueryResult<string[], unknown> {
   // TODO OCT-1270 TODO OCT-1312 Remove this override.
   const epochOverrideForDataFetch = epoch === 2 ? 3 : epoch;
 
@@ -32,7 +32,7 @@ export default function useProposalsContract(epoch?: number): UseQueryResult<str
       }),
     queryKey:
       epochOverrideForDataFetch || currentEpoch
-        ? QUERY_KEYS.proposalsContract(
+        ? QUERY_KEYS.projectsContract(
             epochOverrideForDataFetch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
           )
         : [''],

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import ProposalsListItem from 'components/Proposals/ProposalsListItem';
 import ProposalsListSkeletonItem from 'components/Proposals/ProposalsListSkeletonItem';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
-import useProposalsContract from 'hooks/queries/useProposalsContract';
+import useProjectsContract from 'hooks/queries/useProjectsContract';
 import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
 import useEpochsStartEndTime from 'hooks/subgraph/useEpochsStartEndTime';
 
@@ -24,7 +24,7 @@ const ProposalsList: FC<ProposalsListProps> = ({
 
   const { isDesktop } = useMediaQuery();
 
-  const { data: proposalsAddresses } = useProposalsContract(epoch);
+  const { data: projectsAddresses } = useProjectsContract(epoch);
   const { data: proposalsIpfsWithRewards, isFetching: isFetchingProposalsWithRewards } =
     useProposalsIpfsWithRewards(epoch);
   const { data: epochsStartEndTime } = useEpochsStartEndTime();
@@ -96,7 +96,7 @@ const ProposalsList: FC<ProposalsListProps> = ({
               proposalIpfsWithRewards={proposalIpfsWithRewards}
             />
           ))
-        : proposalsAddresses?.map((_, index) => (
+        : projectsAddresses?.map((_, index) => (
             // eslint-disable-next-line react/no-array-index-key
             <ProposalsListSkeletonItem key={index} className={styles.element} />
           ))}

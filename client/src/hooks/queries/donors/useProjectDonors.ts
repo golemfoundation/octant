@@ -8,10 +8,10 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import { WebsocketListenEvent } from 'types/websocketEvents';
 
 import { ProposalDonor } from './types';
-import { mapDataToProposalDonors } from './utils';
+import { mapDataToProjectDonors } from './utils';
 
-export default function useProposalDonors(
-  proposalAddress: string,
+export default function useProjectDonors(
+  projectAddress: string,
   epoch?: number,
   options?: UseQueryOptions<Response, unknown, ProposalDonor[], any>,
 ): UseQueryResult<ProposalDonor[], unknown> {
@@ -20,36 +20,36 @@ export default function useProposalDonors(
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   /**
-   * Socket returns proposal donors for current epoch only.
+   * Socket returns project donors for current epoch only.
    * When hook is called for other epoch, subscribe should not be used.
    */
   // TODO OCT-1139 check if socket works correctly, update if needed.
   useSubscription<Response>({
     callback: data => {
       queryClient.setQueryData(
-        QUERY_KEYS.proposalDonors(
-          proposalAddress,
+        QUERY_KEYS.projectDonors(
+          projectAddress,
           epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
         ),
         data,
       );
     },
     enabled: epoch === undefined && isDecisionWindowOpen !== undefined,
-    event: WebsocketListenEvent.proposalDonors,
+    event: WebsocketListenEvent.projectDonors,
   });
 
   return useQuery({
-    enabled: !!proposalAddress && (epoch !== undefined || !!(currentEpoch && currentEpoch > 1)),
+    enabled: !!projectAddress && (epoch !== undefined || !!(currentEpoch && currentEpoch > 1)),
     queryFn: () =>
       apiGetProposalDonors(
-        proposalAddress,
+        projectAddress,
         epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
       ),
-    queryKey: QUERY_KEYS.proposalDonors(
-      proposalAddress,
+    queryKey: QUERY_KEYS.projectDonors(
+      projectAddress,
       epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
     ),
-    select: response => mapDataToProposalDonors(response),
+    select: response => mapDataToProjectDonors(response),
     staleTime: Infinity,
     ...options,
   });

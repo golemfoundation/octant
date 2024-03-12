@@ -51,7 +51,7 @@ function parseResponse(response: Response): ProposalRewards[] {
   });
 }
 
-export default function useMatchedProposalRewards(
+export default function useMatchedProjectRewards(
   epoch?: number,
   options?: UseQueryOptions<Response, unknown, ProposalRewards[], any>,
 ): UseQueryResult<ProposalRewards[], unknown> {
@@ -63,7 +63,7 @@ export default function useMatchedProposalRewards(
   // useSubscription<Response['rewards']>({
   //   callback: data => {
   //     queryClient.setQueryData(
-  //       QUERY_KEYS.matchedProposalRewards(
+  //       QUERY_KEYS.matchedProjectRewards(
   //         epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
   //       ),
   //       {
@@ -87,13 +87,13 @@ export default function useMatchedProposalRewards(
         return apiGetEstimatedMatchedProposalRewards();
       }
       /**
-       * During currentEpoch and outside allocation window projects do not have matchedProposalRewards.
+       * During currentEpoch and outside allocation window projects do not have matchedProjectRewards.
        * Because hook is called anyway, hence the empty promise.
        */
       // eslint-disable-next-line no-promise-executor-return
       return new Promise<ApiResponse>(resolve => resolve({ rewards: [] }));
     },
-    queryKey: QUERY_KEYS.matchedProposalRewards(
+    queryKey: QUERY_KEYS.matchedProjectRewards(
       epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
     ),
     select: response => parseResponse(response),

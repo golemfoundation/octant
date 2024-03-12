@@ -1,5 +1,5 @@
-import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
-import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
+import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
+import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
 
 export default function useIsDonationAboveThreshold({
   proposalAddress,
@@ -10,18 +10,18 @@ export default function useIsDonationAboveThreshold({
   proposalAddress: string;
   rewardsSumWithValueAndSimulation?: bigint;
 }): boolean {
-  const { data: matchedProposalRewards } = useMatchedProposalRewards(epoch);
-  const { data: proposalRewardsThreshold } = useProposalRewardsThreshold(epoch);
+  const { data: matchedProjectRewards } = useMatchedProjectRewards(epoch);
+  const { data: projectRewardsThreshold } = useProjectRewardsThreshold(epoch);
 
-  const proposalMatchedProposalRewards = matchedProposalRewards?.find(
+  const proposalMatchedProposalRewards = matchedProjectRewards?.find(
     ({ address }) => address === proposalAddress,
   );
 
   const rewardsToUse = rewardsSumWithValueAndSimulation || proposalMatchedProposalRewards?.sum;
 
-  if (proposalRewardsThreshold === undefined || rewardsToUse === undefined) {
+  if (projectRewardsThreshold === undefined || rewardsToUse === undefined) {
     return false;
   }
 
-  return rewardsToUse >= proposalRewardsThreshold;
+  return rewardsToUse >= projectRewardsThreshold;
 }

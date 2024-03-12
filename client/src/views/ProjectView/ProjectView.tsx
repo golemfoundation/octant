@@ -12,7 +12,7 @@ import Loader from 'components/ui/Loader';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
+import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import useProposalsIpfsWithRewards, {
   ProposalIpfsWithRewards,
 } from 'hooks/queries/useProposalsIpfsWithRewards';
@@ -34,13 +34,13 @@ const ProjectView = (): ReactElement => {
 
   const epoch = isDecisionWindowOpen && epochUrlInt === currentEpoch! - 1 ? undefined : epochUrlInt;
 
-  const { data: matchedProposalRewards } = useMatchedProposalRewards(epoch);
+  const { data: matchedProjectRewards } = useMatchedProjectRewards(epoch);
   const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards(epoch);
 
   const isEpoch1 = currentEpoch === 1;
   const areMatchedProposalsReady =
     !!currentEpoch &&
-    ((currentEpoch > 1 && matchedProposalRewards) || isEpoch1 || !isDecisionWindowOpen);
+    ((currentEpoch > 1 && matchedProjectRewards) || isEpoch1 || !isDecisionWindowOpen);
   const initialElement = loadedProposals[0] || {};
 
   const onLoadNextProposal = () => {

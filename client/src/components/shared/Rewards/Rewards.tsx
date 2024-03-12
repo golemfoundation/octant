@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import ProgressBar from 'components/ui/ProgressBar';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
+import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
 import styles from './Rewards.module.scss';
@@ -27,7 +27,7 @@ const Rewards: FC<RewardsProps> = ({
 
   const isArchivedProposal = epoch !== undefined;
 
-  const { data: proposalRewardsThreshold, isFetching } = useProposalRewardsThreshold(epoch);
+  const { data: projectRewardsThreshold, isFetching } = useProjectRewardsThreshold(epoch);
   const isDonationAboveThreshold = useIsDonationAboveThreshold({ epoch, proposalAddress: address });
 
   const totalValueOfAllocationsToDisplay = getValueCryptoToDisplay({
@@ -43,7 +43,7 @@ const Rewards: FC<RewardsProps> = ({
 
   const showProgressBar =
     !isDonationAboveThreshold &&
-    proposalRewardsThreshold !== undefined &&
+    projectRewardsThreshold !== undefined &&
     totalValueOfAllocations !== undefined;
 
   const leftSectionLabel = useMemo(() => {
@@ -80,7 +80,7 @@ const Rewards: FC<RewardsProps> = ({
     isProposalView,
     epoch,
     numberOfDonors,
-    proposalRewardsThreshold,
+    projectRewardsThreshold,
   ];
 
   const rightSectionValue = useMemo(() => {
@@ -92,7 +92,7 @@ const Rewards: FC<RewardsProps> = ({
     }
     return getValueCryptoToDisplay({
       cryptoCurrency: 'ethereum',
-      valueCrypto: proposalRewardsThreshold,
+      valueCrypto: projectRewardsThreshold,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, rightSectionValueUseMemoDeps);
@@ -105,7 +105,7 @@ const Rewards: FC<RewardsProps> = ({
           color={isArchivedProposal ? 'grey' : 'orange'}
           progressPercentage={getProgressPercentage(
             totalValueOfAllocations,
-            proposalRewardsThreshold,
+            projectRewardsThreshold,
           )}
           variant="ultraThin"
         />

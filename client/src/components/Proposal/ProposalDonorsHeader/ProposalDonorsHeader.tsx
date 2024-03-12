@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
-import useProposalDonors from 'hooks/queries/donors/useProposalDonors';
+import useProjectDonors from 'hooks/queries/donors/useProjectDonors';
 
 import styles from './ProposalDonorsHeader.module.scss';
 import ProposalDonorsHeaderProps from './types';
@@ -16,7 +16,7 @@ const ProposalDonorsHeader: FC<ProposalDonorsHeaderProps> = ({
   const { epoch } = useParams();
   const { i18n } = useTranslation('translation');
 
-  const { data: proposalDonors, isFetching } = useProposalDonors(
+  const { data: projectDonors, isFetching } = useProjectDonors(
     proposalAddress,
     parseInt(epoch!, 10),
   );
@@ -24,7 +24,7 @@ const ProposalDonorsHeader: FC<ProposalDonorsHeaderProps> = ({
     <div className={cx(styles.header, className)} data-test={dataTest}>
       <span className={styles.headerLabel}>{i18n.t('common.donors')}</span>{' '}
       <div className={styles.count} data-test={`${dataTest}__count`}>
-        {isFetching ? '--' : proposalDonors?.length}
+        {isFetching ? '--' : projectDonors?.length}
       </div>
     </div>
   );

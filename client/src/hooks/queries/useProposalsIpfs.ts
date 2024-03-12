@@ -4,34 +4,34 @@ import { useTranslation } from 'react-i18next';
 
 import { apiGetProposal } from 'api/calls/proposals';
 import { QUERY_KEYS } from 'api/queryKeys';
-import useProposalsCid from 'hooks/subgraph/useProposalsCid';
+import useProjectsCid from 'hooks/subgraph/useProjectsCid';
 import toastService from 'services/toastService';
 import { ExtendedProposal } from 'types/extended-proposal';
 import { BackendProposal } from 'types/gen/backendproposal';
 
 import useCurrentEpoch from './useCurrentEpoch';
-import useProposalsContract from './useProposalsContract';
+import useProjectsContract from './useProjectsContract';
 
 export default function useProposalsIpfs(
-  proposalsAddresses?: string[],
+  projectsAddresses?: string[],
   epoch?: number,
 ): { data: ExtendedProposal[]; isFetching: boolean; refetch: () => void } {
   const { t } = useTranslation('translation', { keyPrefix: 'api.errorMessage' });
   const { data: currentEpoch } = useCurrentEpoch();
 
-  const { data: proposalsCid, isFetching: isFetchingProposalsCid } = useProposalsCid(
+  const { data: projectsCid, isFetching: isFetchingProjectsCid } = useProjectsCid(
     epoch ?? currentEpoch!,
     {
       enabled: epoch !== undefined || currentEpoch !== undefined,
     },
   );
-  const { refetch } = useProposalsContract(epoch);
+  const { refetch } = useProjectsContract(epoch);
 
   const proposalsIpfsResults: UseQueryResult<BackendProposal & { ipfsGatewayUsed: string }>[] =
     useQueries({
-      queries: (proposalsAddresses || []).map(address => ({
-        enabled: !!address && !!proposalsCid && (currentEpoch !== undefined || epoch !== undefined),
-        queryFn: () => apiGetProposal(`${proposalsCid}/${address}`),
+      queries: (projectsAddresses || []).map(address => ({
+        enabled: !!address && !!projectsCid && (currentEpoch !== undefined || epoch !== undefined),
+        queryFn: () => apiGetProposal(`${projectsCid}/${address}`),
         queryKey: QUERY_KEYS.proposalsIpfsResults(address, epoch ?? currentEpoch!),
         retry: false,
       })),
@@ -51,7 +51,7 @@ export default function useProposalsIpfs(
   }, [isAnyError, t]);
 
   const isProposalsIpfsResultsFetching =
-    isFetchingProposalsCid ||
+    isFetchingProjectsCid ||
     proposalsIpfsResults.length === 0 ||
     proposalsIpfsResults.some(({ isFetching }) => isFetching);
 
@@ -65,7 +65,7 @@ export default function useProposalsIpfs(
 
   const proposalsIpfsResultsWithAddresses = proposalsIpfsResults.map<ExtendedProposal>(
     (proposal, index) => ({
-      address: proposalsAddresses![index],
+      address: projectsAddresses![index],
       isLoadingError: proposal.isError,
       ...(proposal.data || {}),
     }),

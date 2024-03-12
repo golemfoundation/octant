@@ -3,8 +3,8 @@ import React, { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
-import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
-import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
+import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
+import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
 import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
@@ -24,14 +24,14 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   const isDonationAboveThreshold = useIsDonationAboveThreshold({ proposalAddress: address });
   const { data: proposalIpfs, isFetching: isFetchingProposalIpfs } = useProposalsIpfs([address]);
 
-  const { data: matchedProposalRewards } = useMatchedProposalRewards();
-  const { data: proposalRewardsThreshold } = useProposalRewardsThreshold();
+  const { data: matchedProjectRewards } = useMatchedProjectRewards();
+  const { data: projectRewardsThreshold } = useProjectRewardsThreshold();
   const { data: userAllocations } = useUserAllocations();
 
   // value can an empty string, which crashes parseUnits. Hence the alternative.
   const valueToUse = value || '0';
 
-  const proposalMatchedProposalRewards = matchedProposalRewards?.find(
+  const proposalMatchedProposalRewards = matchedProjectRewards?.find(
     ({ address: matchedProposalRewardsAddress }) => address === matchedProposalRewardsAddress,
   );
   const userAllocationToThisProject = userAllocations?.elements.find(
@@ -42,8 +42,8 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
     ? getFormattedEthValue(proposalMatchedProposalRewards?.sum)
     : undefined;
   const proposalRewardsThresholdFormatted =
-    proposalRewardsThreshold !== undefined
-      ? getFormattedEthValue(proposalRewardsThreshold)
+    projectRewardsThreshold !== undefined
+      ? getFormattedEthValue(projectRewardsThreshold)
       : undefined;
   const areSuffixesTheSame =
     proposalMatchedProposalRewardsFormatted?.suffix === proposalRewardsThresholdFormatted?.suffix;

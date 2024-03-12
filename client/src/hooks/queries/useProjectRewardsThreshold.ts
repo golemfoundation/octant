@@ -9,7 +9,7 @@ import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import useCurrentEpoch from './useCurrentEpoch';
 import useIsDecisionWindowOpen from './useIsDecisionWindowOpen';
 
-export default function useProposalRewardsThreshold(
+export default function useProjectRewardsThreshold(
   epoch?: number,
   options?: UseQueryOptions<Response, unknown, bigint, any>,
 ): UseQueryResult<bigint, unknown> {
@@ -24,7 +24,7 @@ export default function useProposalRewardsThreshold(
   useSubscription<{ threshold: string }>({
     callback: data => {
       queryClient.setQueryData(
-        QUERY_KEYS.proposalRewardsThreshold(
+        QUERY_KEYS.projectRewardsThreshold(
           isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!,
         ),
         data,
@@ -40,7 +40,7 @@ export default function useProposalRewardsThreshold(
       ((epoch !== undefined && epoch > 0) || (!!currentEpoch && currentEpoch > 1)),
     queryFn: () =>
       apiGetProjectThreshold(epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!)),
-    queryKey: QUERY_KEYS.proposalRewardsThreshold(
+    queryKey: QUERY_KEYS.projectRewardsThreshold(
       epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
     ),
     select: response => parseUnitsBigInt(response.threshold, 'wei'),
