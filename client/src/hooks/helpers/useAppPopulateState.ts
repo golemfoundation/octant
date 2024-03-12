@@ -9,7 +9,7 @@ import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useAllocationsStore from 'store/allocations/store';
 import useSettingsStore from 'store/settings/store';
 import useTipsStore from 'store/tips/store';
-import getValidatedProposalsFromLocalStorage from 'utils/getValidatedProposalsFromLocalStorage';
+import getValidatedProjectsFromLocalStorage from 'utils/getValidatedProjectsFromLocalStorage';
 
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from './useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 
@@ -75,7 +75,7 @@ export default function useAppPopulateState(): void {
       return;
     }
 
-    const validatedProposalsInLocalStorage = getValidatedProposalsFromLocalStorage(
+    const validatedProposalsInLocalStorage = getValidatedProjectsFromLocalStorage(
       localStorageAllocationItems,
       proposals,
     );

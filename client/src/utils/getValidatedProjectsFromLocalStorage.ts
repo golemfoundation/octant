@@ -1,4 +1,4 @@
-export default function getValidatedProposalsFromLocalStorage(
+export default function getValidatedProjectsFromLocalStorage(
   localStorageAllocationItems: string[],
   proposals: string[],
 ): string[] {
