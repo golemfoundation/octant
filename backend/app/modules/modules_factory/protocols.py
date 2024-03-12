@@ -1,10 +1,11 @@
-from typing import Protocol, List, Dict, Tuple, runtime_checkable
+from typing import Protocol, List, Dict, Tuple, Optional, runtime_checkable
 
 from app.context.manager import Context
 from app.engine.projects.rewards import ProjectRewardDTO, ProjectRewardsResult
 from app.engine.user.effective_deposit import UserDeposit
 from app.modules.dto import (
     OctantRewardsDTO,
+    AccountFundsDTO,
     AllocationDTO,
     FinalizedSnapshotDTO,
     PendingSnapshotDTO,
@@ -54,6 +55,11 @@ class DonorsAddresses(Protocol):
 @runtime_checkable
 class GetUserAllocationsProtocol(Protocol):
     def get_all_allocations(self, context: Context) -> List[AllocationDTO]:
+        ...
+
+    def get_last_user_allocation(
+        self, context: Context, user_address: str
+    ) -> Tuple[List[AccountFundsDTO], Optional[bool]]:
         ...
 
 

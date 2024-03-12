@@ -1,10 +1,11 @@
-from typing import List
+from typing import List, Tuple, Optional
 
 from app.context.manager import Context
 from app.infrastructure import database
 from app.modules.common.time import Timestamp, from_datetime
-from app.modules.dto import AccountFundsDTO, AllocationItem
+from app.modules.dto import AllocationItem, AccountFundsDTO, ProposalDonationDTO
 from app.pydantic import Model
+
 
 class SavedUserAllocations(Model):
     def get_all_donors_addresses(self, context: Context) -> List[str]:
@@ -59,5 +60,17 @@ class SavedUserAllocations(Model):
 
     def get_last_user_allocation(
         self, context: Context, user_address: str
-    ) -> Tuple[List[AllocationDTO], bool]:
-        pass
+    ) -> Tuple[List[AllocationItem], Optional[bool]]:
+        epoch_num = context.epoch_details.epoch_num
+        last_request = database.allocations.get_allocation_request_by_user_and_epoch(
+            user_address, epoch_num
+        )
+
+        if not last_request:
+            return [], None
+
+        allocations = database.allocations.get_all_by_user_addr_and_epoch(
+            user_address, epoch_num
+        )
+
+        return allocations, last_request.is_manually_edited

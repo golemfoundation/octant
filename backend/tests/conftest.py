@@ -495,13 +495,13 @@ def patch_has_pending_epoch_snapshot(monkeypatch):
     (
         monkeypatch.setattr(
             "app.legacy.core.allocations.has_pending_epoch_snapshot",
-            MOCK_HAS_PENDING_SNAPSHOT
+            MOCK_HAS_PENDING_SNAPSHOT,
         )
     )
     (
         monkeypatch.setattr(
             "app.context.epoch_state._has_pending_epoch_snapshot",
-            MOCK_HAS_PENDING_SNAPSHOT
+            MOCK_HAS_PENDING_SNAPSHOT,
         )
     )
     MOCK_HAS_PENDING_SNAPSHOT.return_value = True

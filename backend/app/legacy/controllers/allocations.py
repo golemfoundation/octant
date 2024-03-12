@@ -51,29 +51,12 @@ def allocate(
     return user_address
 
 
+@deprecated("ALLOCATIONS REWORK")
 def get_all_by_user_and_epoch(
     user_address: str, epoch: int | None = None
 ) -> List[AccountFunds]:
     allocations = _get_user_allocations_for_epoch(user_address, epoch)
     return [AccountFunds(a.proposal_address, a.amount) for a in allocations]
-
-
-def get_last_request_by_user_and_epoch(
-    user_address: str, epoch: int | None = None
-) -> (List[AccountFunds], Optional[bool]):
-    allocations = _get_user_allocations_for_epoch(user_address, epoch)
-
-    is_manually_edited = None
-    if len(allocations) != 0:
-        allocation_nonce = allocations[0].nonce
-        alloc_request = database.allocations.get_allocation_request_by_user_nonce(
-            user_address, allocation_nonce
-        )
-        is_manually_edited = alloc_request.is_manually_edited
-
-    return [
-        AccountFunds(a.proposal_address, a.amount) for a in allocations
-    ], is_manually_edited
 
 
 def get_all_by_proposal_and_epoch(

@@ -271,7 +271,7 @@ class UserAllocations(OctantResource):
         (
             allocs,
             is_manually_edited,
-        ) = allocations.get_last_request_by_user_and_epoch(user_address, epoch)
+        ) = controller.get_last_user_allocation(user_address, epoch)
 
         user_allocations = [dataclasses.asdict(w) for w in allocs]
         app.logger.debug(

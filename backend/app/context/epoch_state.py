@@ -84,8 +84,10 @@ def validate_epoch_state(epoch_num: int, epoch_state: EpochState):
         if not (has_pending_snapshot and has_finalized_snapshot):
             raise InvalidEpoch()
 
+
 def _has_pending_epoch_snapshot(epoch_num: int):
     return database.pending_epoch_snapshot.get_by_epoch(epoch_num) is not None
+
 
 def _has_finalized_epoch_snapshot(epoch_num: int):
     return database.finalized_epoch_snapshot.get_by_epoch(epoch_num) is not None

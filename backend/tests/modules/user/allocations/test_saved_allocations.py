@@ -4,7 +4,12 @@ from freezegun import freeze_time
 from app.extensions import db
 from app.infrastructure import database
 from app.modules.common.time import from_timestamp_s
-from app.modules.dto import AllocationDTO, AllocationItem, ProposalDonationDTO
+from app.modules.dto import (
+    AllocationItem,
+    ProposalDonationDTO,
+    UserAllocationRequestPayload,
+    UserAllocationPayload,
+)
 from app.modules.user.allocations.controller import revoke_previous_allocation
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 
@@ -21,20 +26,47 @@ def service():
     return SavedUserAllocations()
 
 
-def test_get_all_donors_addresses(service, mock_users_db, proposal_accounts):
+@pytest.fixture()
+def make_user_allocation(proposal_accounts):
+    def _make_user_allocation(context, user, allocations=1, nonce=0, **kwargs):
+        database.allocations.soft_delete_all_by_epoch_and_user_id(
+            context.epoch_details.epoch_num, user.id
+        )
+
+        allocation_items = [
+            AllocationItem(proposal_accounts[i].address, (i + 1) * 100)
+            for i in range(allocations)
+        ]
+
+        if kwargs.get("allocation_items"):
+            allocation_items = kwargs.get("allocation_items")
+
+        request = UserAllocationRequestPayload(
+            payload=UserAllocationPayload(allocations=allocation_items, nonce=nonce),
+            signature="0xdeadbeef",
+        )
+
+        database.allocations.store_allocation_request(
+            user.address, context.epoch_details.epoch_num, request, **kwargs
+        )
+
+        return allocation_items
+
+    return _make_user_allocation
+
+
+def _alloc_item_to_donation(item, user):
+    return ProposalDonationDTO(user.address, item.amount, item.proposal_address)
+
+
+def test_get_all_donors_addresses(service, mock_users_db, make_user_allocation):
     user1, user2, user3 = mock_users_db
-
-    allocation = [
-        AllocationDTO(proposal_accounts[0].address, 100),
-    ]
-
-    database.allocations.add_all(1, user1.id, 0, allocation)
-    database.allocations.add_all(1, user2.id, 0, allocation)
-    database.allocations.add_all(2, user3.id, 0, allocation)
-    db.session.commit()
-
     context_epoch_1 = get_context(1)
     context_epoch_2 = get_context(2)
+
+    make_user_allocation(context_epoch_1, user1)
+    make_user_allocation(context_epoch_1, user2)
+    make_user_allocation(context_epoch_2, user3)
 
     result_epoch_1 = service.get_all_donors_addresses(context_epoch_1)
     result_epoch_2 = service.get_all_donors_addresses(context_epoch_2)
@@ -43,45 +75,36 @@ def test_get_all_donors_addresses(service, mock_users_db, proposal_accounts):
     assert result_epoch_2 == [user3.address]
 
 
-def test_return_only_not_removed_allocations(service, mock_users_db, proposal_accounts):
+def test_return_only_not_removed_allocations(
+    service, mock_users_db, make_user_allocation
+):
     user1, user2, _ = mock_users_db
 
-    allocation = [
-        AllocationDTO(proposal_accounts[0].address, 100),
-    ]
-
-    database.allocations.add_all(1, user1.id, 0, allocation)
-    database.allocations.add_all(1, user2.id, 0, allocation)
-    database.allocations.soft_delete_all_by_epoch_and_user_id(1, user2.id)
-    db.session.commit()
-
     context = get_context(1)
+    make_user_allocation(context, user1)
+    make_user_allocation(context, user2)
+    database.allocations.soft_delete_all_by_epoch_and_user_id(1, user2.id)
 
     result = service.get_all_donors_addresses(context)
 
     assert result == [user1.address]
 
 
-def test_get_user_allocation_sum(service, context, mock_users_db, proposal_accounts):
+def test_get_user_allocation_sum(service, context, mock_users_db, make_user_allocation):
     user1, user2, _ = mock_users_db
-    allocation = [
-        AllocationDTO(proposal_accounts[0].address, 100),
-        AllocationDTO(proposal_accounts[1].address, 200),
-    ]
-    database.allocations.add_all(1, user1.id, 0, allocation)
-    database.allocations.add_all(1, user2.id, 0, allocation)
-    db.session.commit()
+    make_user_allocation(context, user1, allocations=2)
+    make_user_allocation(context, user2, allocations=2)
 
     result = service.get_user_allocation_sum(context, user1.address)
 
     assert result == 300
 
 
-def test_has_user_allocated_rewards(service, context, mock_users_db, proposal_accounts):
+def test_has_user_allocated_rewards(
+    service, context, mock_users_db, make_user_allocation
+):
     user1, _, _ = mock_users_db
-    database.allocations.add_allocation_request(user1.address, 1, 0, "0x00", False)
-
-    db.session.commit()
+    make_user_allocation(context, user1)
 
     result = service.has_user_allocated_rewards(context, user1.address)
 
@@ -89,11 +112,13 @@ def test_has_user_allocated_rewards(service, context, mock_users_db, proposal_ac
 
 
 def test_has_user_allocated_rewards_returns_false(
-    service, context, mock_users_db, proposal_accounts
+    service, context, mock_users_db, make_user_allocation
 ):
-    user1, _, _ = mock_users_db
+    user1, user2, _ = mock_users_db
 
-    result = service.has_user_allocated_rewards(context, user1.address)
+    make_user_allocation(context, user1)  # other user makes an allocation
+
+    result = service.has_user_allocated_rewards(context, user2.address)
 
     assert result is False
 
@@ -155,28 +180,15 @@ def test_get_all_allocations_returns_empty_list_when_no_allocations(
 
 
 def test_get_all_allocations_returns_list_of_allocations(
-    service, context, mock_users_db, proposal_accounts
+    service, context, mock_users_db, make_user_allocation
 ):
     user1, user2, _ = mock_users_db
-    allocation = [
-        AllocationDTO(proposal_accounts[0].address, 100),
-        AllocationDTO(proposal_accounts[1].address, 200),
-    ]
-    database.allocations.add_all(
-        context.epoch_details.epoch_num, user1.id, 0, allocation
-    )
-    database.allocations.add_all(
-        context.epoch_details.epoch_num, user2.id, 0, allocation
-    )
 
-    expected_results = []
-    for a in allocation:
-        expected_results.append(
-            ProposalDonationDTO(user1.address, a.amount, a.proposal_address)
-        )
-        expected_results.append(
-            ProposalDonationDTO(user2.address, a.amount, a.proposal_address)
-        )
+    user1_allocations = make_user_allocation(context, user1, allocations=2)
+    user2_allocations = make_user_allocation(context, user2, allocations=2)
+    user1_donations = [_alloc_item_to_donation(a, user1) for a in user1_allocations]
+    user2_donations = [_alloc_item_to_donation(a, user2) for a in user2_allocations]
+    expected_results = user1_donations + user2_donations
 
     result = service.get_all_allocations(context)
 
@@ -186,32 +198,17 @@ def test_get_all_allocations_returns_list_of_allocations(
 
 
 def test_get_all_allocations_does_not_include_revoked_allocations_in_returned_list(
-    service,
-    context,
-    mock_users_db,
-    proposal_accounts,
+    service, context, mock_users_db, make_user_allocation
 ):
     user1, user2, _ = mock_users_db
-    allocation = [
-        AllocationDTO(proposal_accounts[0].address, 100),
-        AllocationDTO(proposal_accounts[1].address, 200),
-    ]
-    database.allocations.add_all(
-        context.epoch_details.epoch_num, user1.id, 0, allocation
-    )
-    database.allocations.add_all(
-        context.epoch_details.epoch_num, user2.id, 0, allocation
-    )
 
-    expected_results = []
-    for a in allocation:
-        expected_results.append(
-            ProposalDonationDTO(user2.address, a.amount, a.proposal_address)
-        )
-
+    make_user_allocation(context, user1, allocations=2)
     database.allocations.soft_delete_all_by_epoch_and_user_id(
         context.epoch_details.epoch_num, user1.id
     )
+
+    user2_allocations = make_user_allocation(context, user2, allocations=2)
+    expected_results = [_alloc_item_to_donation(a, user2) for a in user2_allocations]
 
     result = service.get_all_allocations(context)
 
@@ -221,41 +218,76 @@ def test_get_all_allocations_does_not_include_revoked_allocations_in_returned_li
 
 
 def test_get_all_allocations_does_not_return_allocations_from_previous_and_future_epochs(
-    service,
-    context,
-    mock_users_db,
-    proposal_accounts,
+    service, context, mock_users_db, make_user_allocation
 ):
     user1, _, _ = mock_users_db
-    allocation = [
-        AllocationDTO(proposal_accounts[0].address, 100),
-        AllocationDTO(proposal_accounts[1].address, 200),
-    ]
-    database.allocations.add_all(
-        context.epoch_details.epoch_num - 1, user1.id, 0, allocation
-    )
-    database.allocations.add_all(
-        context.epoch_details.epoch_num + 1, user1.id, 1, allocation
-    )
+    context_epoch_1 = get_context(1)
+    context_epoch_2 = get_context(2)
+    context_epoch_3 = get_context(3)
 
-    assert service.get_all_allocations(context) == []
+    make_user_allocation(context_epoch_1, user1)
+    make_user_allocation(context_epoch_3, user1, nonce=1)
+
+    assert service.get_all_allocations(context_epoch_2) == []
 
 
 def test_get_all_with_allocation_amount_equal_0(
-    service,
-    context,
-    mock_users_db,
-    proposal_accounts,
+    service, context, mock_users_db, proposal_accounts, make_user_allocation
 ):
     user1, _, _ = mock_users_db
-    allocation = [
-        AllocationDTO(proposal_accounts[0].address, 0),
-    ]
-    database.allocations.add_all(
-        context.epoch_details.epoch_num, user1.id, 0, allocation
+    allocation_items = [AllocationItem(proposal_accounts[0].address, 0)]
+    make_user_allocation(context, user1, allocation_items=allocation_items)
+    expected_result = [_alloc_item_to_donation(a, user1) for a in allocation_items]
+
+    assert service.get_all_allocations(context) == expected_result
+
+
+def test_get_last_user_allocation_when_no_allocation(
+    service, context, alice, make_user_allocation
+):
+    assert service.get_last_user_allocation(context, alice.address) == ([], None)
+
+
+def test_get_last_user_allocation_returns_the_only_allocation(
+    service, context, mock_users_db, make_user_allocation
+):
+    user1, _, _ = mock_users_db
+    expected_result = make_user_allocation(context, user1)
+
+    assert service.get_last_user_allocation(context, user1.address) == (
+        expected_result,
+        None,
     )
 
-    expected_result = [
-        ProposalDonationDTO(user1.address, 0, proposal_accounts[0].address)
-    ]
-    assert service.get_all_allocations(context) == expected_result
+
+def test_get_last_user_allocation_returns_the_only_the_last_allocation(
+    service, context, mock_users_db, make_user_allocation
+):
+    user1, _, _ = mock_users_db
+    _ = make_user_allocation(context, user1)
+    expected_result = make_user_allocation(context, user1, allocations=10, nonce=1)
+
+    assert service.get_last_user_allocation(context, user1.address) == (
+        expected_result,
+        None,
+    )
+
+
+def test_get_last_user_allocation_returns_stored_metadata(
+    service, context, mock_users_db, make_user_allocation
+):
+    user1, _, _ = mock_users_db
+
+    expected_result = make_user_allocation(context, user1, is_manually_edited=False)
+    assert service.get_last_user_allocation(context, user1.address) == (
+        expected_result,
+        False,
+    )
+
+    expected_result = make_user_allocation(
+        context, user1, nonce=1, is_manually_edited=True
+    )
+    assert service.get_last_user_allocation(context, user1.address) == (
+        expected_result,
+        True,
+    )

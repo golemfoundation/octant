@@ -10,7 +10,12 @@ from app.exceptions import UserNotFound
 from app.extensions import db
 from app.infrastructure.database.models import Allocation, User, AllocationRequest
 from app.infrastructure.database.user import get_by_address
-from app.modules.dto import AllocationDTO, AccountFundsDTO
+from app.modules.dto import (
+    AllocationItem,
+    AllocationDTO,
+    AccountFundsDTO,
+    UserAllocationRequestPayload,
+)
 
 
 @deprecated("Use `get_all` function")
@@ -23,13 +28,12 @@ def get_all_by_epoch(epoch: int, with_deleted=False) -> List[Allocation]:
     return query.all()
 
 
-def get_all(epoch: int, with_deleted=False) -> List[AllocationDTO]:
-    query: Query = Allocation.query.filter_by(epoch=epoch)
-
-    if not with_deleted:
-        query = query.filter(Allocation.deleted_at.is_(None))
-
-    allocations = query.all()
+def get_all(epoch: int) -> List[AllocationDTO]:
+    allocations = (
+        Allocation.query.filter_by(epoch=epoch)
+        .filter(Allocation.deleted_at.is_(None))
+        .all()
+    )
 
     return [
         AllocationDTO(
@@ -60,19 +64,23 @@ def get_user_allocations_history(
 
 
 def get_all_by_user_addr_and_epoch(
-    user_address: str, epoch: int, with_deleted=False
-) -> List[Allocation]:
-    user: User = get_by_address(user_address)
+    user_address: str, epoch: int
+) -> List[AllocationItem]:
+    allocations: List[Allocation] = (
+        Allocation.query.join(User, User.id == Allocation.user_id)
+        .filter(User.address == user_address)
+        .filter(Allocation.epoch == epoch)
+        .filter(Allocation.deleted_at.is_(None))
+        .all()
+    )
 
-    if user is None:
-        return []
-
-    query: Query = Allocation.query.filter_by(user_id=user.id, epoch=epoch)
-
-    if not with_deleted:
-        query = query.filter(Allocation.deleted_at.is_(None))
-
-    return query.all()
+    return [
+        AllocationItem(
+            proposal_address=alloc.proposal_address,
+            amount=int(alloc.amount),
+        )
+        for alloc in allocations
+    ]
 
 
 def get_all_by_proposal_addr_and_epoch(
@@ -208,11 +216,13 @@ def soft_delete_all_by_epoch_and_user_id(epoch: int, user_id: int):
 def get_allocation_request_by_user_and_epoch(
     user_address: str, epoch: int
 ) -> AllocationRequest | None:
-    user: User = get_by_address(user_address)
-    if user is None:
-        raise UserNotFound(user_address)
-
-    return AllocationRequest.query.filter_by(user_id=user.id, epoch=epoch).first()
+    return (
+        AllocationRequest.query.join(User, User.id == AllocationRequest.user_id)
+        .filter(User.address == user_address)
+        .filter(AllocationRequest.epoch == epoch)
+        .order_by(AllocationRequest.nonce.desc())
+        .first()
+    )
 
 
 def get_user_last_allocation_request(user_address: str) -> AllocationRequest | None:
