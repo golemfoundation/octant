@@ -11,7 +11,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     beforeEach(() => {
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
-      visitWithLoader(ROOT_ROUTES.proposals.absolute);
+      visitWithLoader(ROOT_ROUTES.projects.absolute);
     });
 
     it('moves to the next epoch', () => {
@@ -92,10 +92,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
                             .first()
                             .click();
                           checkLocationWithLoader(
-                            `${ROOT_ROUTES.proposal.absolute}/${epoch}/${address}`,
+                            `${ROOT_ROUTES.project.absolute}/${epoch}/${address}`,
                           );
                           cy.go('back');
-                          checkLocationWithLoader(ROOT_ROUTES.proposals.absolute);
+                          checkLocationWithLoader(ROOT_ROUTES.projects.absolute);
                         });
                     });
                 }

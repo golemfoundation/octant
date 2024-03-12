@@ -53,7 +53,7 @@ const ProposalListItemHeader: FC<ProposalListItemHeaderProps> = ({
 
   const onShareClick = (): boolean | Promise<boolean> => {
     const { origin } = window.location;
-    const url = `${origin}${ROOT_ROUTES.proposal.absolute}/${epochUrl}/${address}`;
+    const url = `${origin}${ROOT_ROUTES.project.absolute}/${epochUrl}/${address}`;
 
     if ((window.navigator.share as any) && !window.navigator.userAgent.includes('Macintosh')) {
       window.navigator.share({

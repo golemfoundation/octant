@@ -69,7 +69,7 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix, tabs }) =
                 isDisabled={isDisabled || areTabsDisabled}
                 label={label}
                 onClick={() => {
-                  if (location.pathname !== ROOT_ROUTES.proposals.absolute) {
+                  if (location.pathname !== ROOT_ROUTES.projects.absolute) {
                     return;
                   }
                   window[WINDOW_PROPOSALS_SCROLL_Y] = window.scrollY;

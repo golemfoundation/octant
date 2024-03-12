@@ -7,7 +7,7 @@ export const navigationTabs: NavigationTab[] = [
   {
     icon: proposals,
     label: 'Projects',
-    to: ROOT_ROUTES.proposals.absolute,
+    to: ROOT_ROUTES.projects.absolute,
   },
   {
     icon: allocate,
@@ -48,7 +48,7 @@ export const patronNavigationTabs: NavigationTab[] = [
   {
     icon: proposals,
     label: 'Projects',
-    to: ROOT_ROUTES.proposals.absolute,
+    to: ROOT_ROUTES.projects.absolute,
   },
   {
     icon: earn,

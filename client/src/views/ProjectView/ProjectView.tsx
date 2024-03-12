@@ -24,7 +24,7 @@ import styles from './ProjectView.module.scss';
 const ProjectView = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.proposal' });
   const [isBackToTopButtonVisible, setIsBackToTopButtonVisible] = useState(false);
-  const { proposalAddress: proposalAddressUrl, epoch: epochUrl } = useParams();
+  const { projectAddress: projectAddressUrl, epoch: epochUrl } = useParams();
   const [loadedProposals, setLoadedProposals] = useState<ProposalIpfsWithRewards[]>([]);
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow } =
@@ -81,7 +81,7 @@ const ProjectView = (): ReactElement => {
     if (!proposalsIpfsWithRewards.length) {
       return;
     }
-    const firstProposal = proposalsIpfsWithRewards.find(p => p.address === proposalAddressUrl);
+    const firstProposal = proposalsIpfsWithRewards.find(p => p.address === projectAddressUrl);
     setLoadedProposals([firstProposal!]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [proposalsIpfsWithRewards.length]);
@@ -133,7 +133,7 @@ const ProjectView = (): ReactElement => {
     });
     return (
       <Routes>
-        <Route element={<Navigate to={ROOT_ROUTES.proposals.absolute} />} path="*" />
+        <Route element={<Navigate to={ROOT_ROUTES.projects.absolute} />} path="*" />
       </Routes>
     );
   }

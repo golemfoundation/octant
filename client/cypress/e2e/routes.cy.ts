@@ -10,7 +10,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('empty route redirects to proposals view', () => {
-      visitWithLoader(ROOT.absolute, ROOT_ROUTES.proposals.absolute);
+      visitWithLoader(ROOT.absolute, ROOT_ROUTES.projects.absolute);
       cy.get('[data-test=ProposalsView]').should('be.visible');
     });
 
@@ -30,7 +30,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('proposals route redirects to proposals view', () => {
-      visitWithLoader(ROOT_ROUTES.proposals.absolute);
+      visitWithLoader(ROOT_ROUTES.projects.absolute);
       cy.get('[data-test=ProposalsView]').should('be.visible');
     });
 

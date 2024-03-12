@@ -119,7 +119,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     beforeEach(() => {
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
-      visitWithLoader(ROOT_ROUTES.proposals.absolute);
+      visitWithLoader(ROOT_ROUTES.projects.absolute);
       cy.get('[data-test^=ProposalItemSkeleton').should('not.exist');
 
       /**
@@ -188,13 +188,13 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
                   .eq(i)
                   .trigger('mousedown')
                   .trigger('mouseup', { clientX: x + 10 });
-                cy.location('pathname').should('eq', ROOT_ROUTES.proposals.absolute);
+                cy.location('pathname').should('eq', ROOT_ROUTES.projects.absolute);
 
                 cy.get('[data-test=ProposalsTimelineWidgetItem]')
                   .eq(i)
                   .trigger('mousedown')
                   .trigger('mouseup');
-                cy.location('pathname').should('not.eq', ROOT_ROUTES.proposals.absolute);
+                cy.location('pathname').should('not.eq', ROOT_ROUTES.projects.absolute);
               });
           }
         }
@@ -217,7 +217,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     beforeEach(() => {
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
-      visitWithLoader(ROOT_ROUTES.proposals.absolute);
+      visitWithLoader(ROOT_ROUTES.projects.absolute);
       connectWallet(true, true);
       cy.get('[data-test^=ProposalItemSkeleton').should('not.exist');
       /**

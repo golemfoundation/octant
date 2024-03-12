@@ -80,7 +80,7 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
           : () => {
               window[WINDOW_PROPOSALS_SCROLL_Y] = window.scrollY;
               navigate(
-                `${ROOT_ROUTES.proposal.absolute}/${
+                `${ROOT_ROUTES.project.absolute}/${
                   epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch)
                 }/${address}`,
               );

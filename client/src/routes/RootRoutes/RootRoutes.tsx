@@ -55,7 +55,7 @@ const RootRoutes: FC<RootRoutesProps> = props => {
                     <ProjectsView />
                   </Protected>
                 }
-                path={`${ROOT_ROUTES.proposals.relative}/*`}
+                path={`${ROOT_ROUTES.projects.relative}/*`}
               />
               <Route
                 element={
@@ -63,7 +63,7 @@ const RootRoutes: FC<RootRoutesProps> = props => {
                     <ProjectView />
                   </Protected>
                 }
-                path={`${ROOT_ROUTES.proposalWithAddress.relative}/*`}
+                path={`${ROOT_ROUTES.projectWithAddress.relative}/*`}
               />
             </>
           )}
@@ -91,7 +91,7 @@ const RootRoutes: FC<RootRoutesProps> = props => {
             to={
               isPreLaunch || isProjectAdminMode
                 ? ROOT_ROUTES.earn.absolute
-                : ROOT_ROUTES.proposals.absolute
+                : ROOT_ROUTES.projects.absolute
             }
           />
         }
