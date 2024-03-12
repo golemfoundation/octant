@@ -50,7 +50,6 @@ def add(epoch: int, user: User, budget: int):
 
 def save_budgets(epoch: int, budgets: List[UserBudgetInfo]):
     for budget_info in budgets:
-        print("[DEBUG] Budgets", budgets, flush=True)
         address = budget_info.user_address
         budget = budget_info.budget
 
