@@ -1,5 +1,6 @@
 from app.engine.user.budget.preliminary import PreliminaryUserBudget
 from app.engine.user.effective_deposit import UserDeposit
+from app.modules.snapshots.pending import UserBudgetInfo
 from app.modules.snapshots.pending.core import calculate_user_budgets
 from tests.helpers.constants import USER1_ADDRESS, USER1_ED, USER2_ED, USER2_ADDRESS
 from tests.helpers.octant_rewards import octant_rewards
@@ -14,8 +15,8 @@ def test_calculate_user_budgets():
     result = calculate_user_budgets(PreliminaryUserBudget(), rewards, deposits)
 
     assert result == [
-        (USER1_ADDRESS, 1526868_989237987),
-        (USER2_ADDRESS, 5598519_420519815),
+        UserBudgetInfo(USER1_ADDRESS, 1526868_989237987),
+        UserBudgetInfo(USER2_ADDRESS, 5598519_420519815),
     ]
 
 

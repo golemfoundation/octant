@@ -18,7 +18,8 @@ class Epochs(SmartContract):
     def get_current_epoch(self) -> int:
         try:
             app.logger.debug("[Epochs contract] Getting current epoch")
-            return self.contract.functions.getCurrentEpoch().call()
+            return 1
+            # return self.contract.functions.getCurrentEpoch().call()
         except exceptions.ContractLogicError:
             app.logger.warning("[Epochs contract] Current epoch not started yet")
             # HN:Epochs/not-started-yet
@@ -27,7 +28,8 @@ class Epochs(SmartContract):
     def get_pending_epoch(self) -> Optional[int]:
         try:
             app.logger.debug("[Epochs contract] Getting pending epoch")
-            return self.contract.functions.getPendingEpoch().call()
+            return 1
+            # return self.contract.functions.getPendingEpoch().call()
         except exceptions.ContractLogicError:
             app.logger.warning("[Epochs contract] No pending epoch")
             # HN:Epochs/not-pending

@@ -10,6 +10,7 @@ from app.modules.modules_factory.protocols import (
 )
 from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
 from app.modules.snapshots.pending.service.pre_pending import PrePendingSnapshots
+from app.modules.snapshots.pending.service.simulated import SimulatedPendingSnapshots
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
 from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
@@ -26,6 +27,7 @@ class PrePendingServices(Model):
     user_deposits_service: PrePendingUserDeposits
     octant_rewards_service: OctantRewards
     pending_snapshots_service: PendingSnapshots
+    simulated_pending_snapshot_service: SimulatedPendingSnapshots
 
     @staticmethod
     def create(chain_id: int) -> "PrePendingServices":
@@ -41,10 +43,16 @@ class PrePendingServices(Model):
             effective_deposits=user_deposits,
         )
 
+        pending_snapshots_service = PrePendingSnapshots(
+            effective_deposits=user_deposits, octant_rewards=octant_rewards
+        )
+        simulated_pending_snapshot_service = SimulatedPendingSnapshots(
+            effective_deposits=user_deposits, octant_rewards=octant_rewards
+        )
+
         return PrePendingServices(
             user_deposits_service=user_deposits,
             octant_rewards_service=octant_rewards,
-            pending_snapshots_service=PrePendingSnapshots(
-                effective_deposits=user_deposits, octant_rewards=octant_rewards
-            ),
+            pending_snapshots_service=pending_snapshots_service,
+            simulated_pending_snapshot_service=simulated_pending_snapshot_service,
         )

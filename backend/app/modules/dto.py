@@ -6,6 +6,9 @@ from dataclass_wizard import JSONWizard
 
 from app.engine.projects.rewards import AllocationPayload
 
+from app.engine.user.effective_deposit import UserDeposit
+from app.modules.snapshots.pending import UserBudgetInfo
+
 
 @dataclass(frozen=True)
 class AccountFundsDTO(JSONWizard):
@@ -50,6 +53,13 @@ class OctantRewardsDTO(JSONWizard):
     # Data available starting from Epoch 3
     ppf: Optional[int] = None
     community_fund: Optional[int] = None
+
+
+@dataclass(frozen=True)
+class PendingSnapshotDTO(JSONWizard):
+    rewards: OctantRewardsDTO
+    user_deposits: List[UserDeposit]
+    user_budgets: List[UserBudgetInfo]
 
 
 @dataclass(frozen=True)
