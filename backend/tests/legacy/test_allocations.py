@@ -8,7 +8,6 @@ from app.infrastructure import database
 from app.legacy.controllers.allocations import (
     get_all_by_user_and_epoch,
     get_all_by_proposal_and_epoch,
-    get_sum_by_epoch,
     allocate,
 )
 from app.legacy.core.allocations import (
@@ -380,11 +379,6 @@ def test_get_by_proposal_and_epoch_with_allocation_amount_equal_0(
     assert result[0].amount == str(5 * 10**18)
     assert result[1].address == user_accounts[1].address
     assert result[1].amount == str(1050 * 10**18)
-
-
-def test_get_sum_by_epoch(mock_allocations_db, user_accounts, proposal_accounts):
-    result = get_sum_by_epoch(MOCKED_PENDING_EPOCH_NO)
-    assert result == 1865 * 10**18
 
 
 def test_user_exceeded_rewards_budget_in_allocations(app, proposal_accounts, tos_users):

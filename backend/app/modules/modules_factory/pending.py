@@ -13,6 +13,7 @@ from app.modules.modules_factory.protocols import (
     EstimatedProjectRewardsService,
     OctantRewards,
     DonorsAddresses,
+    AllocationManipulationProtocol,
     GetUserAllocationsProtocol,
 )
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
@@ -38,7 +39,11 @@ class PendingUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protoco
 
 
 class PendingUserAllocationsProtocol(
-    DonorsAddresses, GetUserAllocationsProtocol, SimulateAllocation, Protocol
+    DonorsAddresses,
+    AllocationManipulationProtocol,
+    GetUserAllocationsProtocol,
+    SimulateAllocation,
+    Protocol,
 ):
     pass
 

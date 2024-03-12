@@ -49,8 +49,6 @@ def handle_allocate(msg):
 
     threshold = get_allocation_threshold()
     emit("threshold", {"threshold": str(threshold)}, broadcast=True)
-    allocations_sum = allocations.get_sum_by_epoch()
-    emit("allocations_sum", {"amount": str(allocations_sum)}, broadcast=True)
 
     project_rewards = get_estimated_project_rewards().rewards
     emit(

@@ -75,27 +75,6 @@ def get_all_by_proposal_and_epoch(
 
 
 @deprecated("ALLOCATIONS REWORK")
-def get_all_by_epoch(
-    epoch: int, include_zeroes: bool = False
-) -> List[EpochAllocationRecord]:
-    if epoch > epoch_snapshots.get_last_pending_snapshot():
-        raise exceptions.EpochAllocationPeriodNotStartedYet(epoch)
-
-    allocations = database.allocations.get_all_by_epoch(epoch)
-
-    return [
-        EpochAllocationRecord(a.user.address, a.amount, a.proposal_address)
-        for a in allocations
-        if int(a.amount) != 0 or include_zeroes
-    ]
-
-
-def get_sum_by_epoch(epoch: int | None = None) -> int:
-    epoch = epochs.get_pending_epoch() if epoch is None else epoch
-    return database.allocations.get_alloc_sum_by_epoch(epoch)
-
-
-@deprecated("ALLOCATIONS REWORK")
 def revoke_previous_user_allocation(user_address: str):
     pending_epoch = epochs.get_pending_epoch()
 

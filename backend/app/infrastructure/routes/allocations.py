@@ -284,21 +284,6 @@ class UserAllocations(OctantResource):
         }
 
 
-@ns.route("/users/sum")
-@ns.doc(
-    description="Returns user's allocations sum",
-)
-class UserAllocationsSum(OctantResource):
-    @ns.marshal_with(user_allocations_sum_model)
-    @ns.response(200, "User allocations sum successfully retrieved")
-    def get(self):
-        app.logger.debug("Getting users allocations sum")
-        allocations_sum = allocations.get_sum_by_epoch()
-        app.logger.debug(f"Users allocations sum: {allocations_sum}")
-
-        return {"amount": str(allocations_sum)}
-
-
 @ns.route("/proposal/<string:proposal_address>/epoch/<int:epoch>")
 @ns.doc(
     description="Returns list of donors for given proposal in particular epoch",
