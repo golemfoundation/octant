@@ -1,6 +1,8 @@
 from typing import List, Tuple, Protocol, runtime_checkable
 
+from app import exceptions
 from app.context.manager import Context
+from app.context.epoch_state import EpochState
 from app.engine.projects.rewards import ProjectRewardDTO
 from app.infrastructure import database
 from app.modules.dto import AllocationDTO
@@ -37,4 +39,16 @@ class PendingUserAllocations(SavedUserAllocations):
             user_address,
             projects,
             matched_rewards,
+        )
+
+    def revoke_previous_allocation(self, context: Context, user_address: str):
+        if context.epoch_state is not EpochState.PENDING:
+            raise exceptions.NotInDecisionWindow
+
+        user = database.user.get_by_address(user_address)
+        if user is None:
+            raise exceptions.UserNotFound
+
+        database.allocations.soft_delete_all_by_epoch_and_user_id(
+            context.epoch_details.epoch_num, user.id
         )

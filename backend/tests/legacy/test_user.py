@@ -97,7 +97,9 @@ def test_patron_mode_toggle_fails_when_use_sig_to_disable_for_enable(user_accoun
         toggle_patron_mode(user_accounts[0].address, toggle_true_sig)
 
 
-def test_patron_mode_revokes_allocations_for_the_epoch(alice, make_allocations):
+def test_patron_mode_revokes_allocations_for_the_epoch(
+    alice, make_allocations, mock_pending_epoch_snapshot_db
+):
     toggle_true_sig = "52d249ca8ac8f40c01613635dac8a9b01eb50230ad1467451a058170726650b92223e80032a4bff4d25c3554e9d1347043c53b4c2dc9f1ba3f071bd3a1c8b9121b"
     make_allocations(alice, MOCKED_PENDING_EPOCH_NO)
     assert len(allocations_controller.get_all_by_user_and_epoch(alice.address)) == 3
@@ -111,7 +113,7 @@ def test_patron_mode_revokes_allocations_for_the_epoch(alice, make_allocations):
 
 
 def test_when_patron_mode_changes_revoked_allocations_are_not_restored(
-    alice, make_allocations
+    alice, make_allocations, mock_pending_epoch_snapshot_db
 ):
     toggle_true_sig = "52d249ca8ac8f40c01613635dac8a9b01eb50230ad1467451a058170726650b92223e80032a4bff4d25c3554e9d1347043c53b4c2dc9f1ba3f071bd3a1c8b9121b"
     toggle_false_sig = "979b997cb2b990f104ed4d342a364207a019649eda00497780033d154ee07c44141a6be33cecdde879b1b4238c1622660e70baddb745def53d6733e4aacaeb181b"
@@ -127,7 +129,7 @@ def test_when_patron_mode_changes_revoked_allocations_are_not_restored(
 
 
 def test_patron_mode_does_not_revoke_allocations_from_previous_epochs(
-    alice, make_allocations
+    alice, make_allocations, mock_pending_epoch_snapshot_db
 ):
     toggle_true_sig = "52d249ca8ac8f40c01613635dac8a9b01eb50230ad1467451a058170726650b92223e80032a4bff4d25c3554e9d1347043c53b4c2dc9f1ba3f071bd3a1c8b9121b"
     make_allocations(alice, MOCKED_PENDING_EPOCH_NO - 1)

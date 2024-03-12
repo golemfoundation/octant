@@ -15,7 +15,6 @@ from app.legacy.core.allocations import (
     deserialize_payload,
     verify_allocations,
     add_allocations_to_db,
-    revoke_previous_allocation,
     store_allocation_request,
 )
 from app.legacy.core.common import AccountFunds
@@ -72,16 +71,6 @@ def get_all_by_proposal_and_epoch(
         for a in allocations
         if int(a.amount) != 0
     ]
-
-
-@deprecated("ALLOCATIONS REWORK")
-def revoke_previous_user_allocation(user_address: str):
-    pending_epoch = epochs.get_pending_epoch()
-
-    if pending_epoch is None:
-        raise exceptions.NotInDecisionWindow
-
-    revoke_previous_allocation(user_address, pending_epoch)
 
 
 def _make_allocation(

@@ -64,6 +64,12 @@ class GetUserAllocationsProtocol(Protocol):
 
 
 @runtime_checkable
+class AllocationManipulationProtocol(Protocol):
+    def revoke_previous_allocation(self, context: Context, user_address: str):
+        ...
+
+
+@runtime_checkable
 class SimulateAllocation(Protocol):
     def simulate_allocation(
         self,

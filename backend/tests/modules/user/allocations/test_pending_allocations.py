@@ -1,8 +1,11 @@
 import pytest
 
+from app import exceptions
 from app.engine.projects.rewards import ProjectRewardDTO
 from app.infrastructure import database
+from app.context.epoch_state import EpochState
 from app.modules.dto import AllocationDTO
+from app.modules.user.allocations.service.history import UserAllocationsHistory
 from app.modules.user.allocations.service.pending import PendingUserAllocations
 from tests.helpers.constants import MATCHED_REWARDS
 from tests.helpers.context import get_context
@@ -13,7 +16,16 @@ def before(app):
     pass
 
 
-def test_simulate_allocation(mock_users_db, mock_octant_rewards):
+@pytest.fixture()
+def service(mock_octant_rewards, mock_patron_mode, mock_user_budgets):
+    return PendingUserAllocations(
+        octant_rewards=mock_octant_rewards,
+        user_budgets=mock_user_budgets,
+        patrons_mode=mock_patron_mode,
+        user_nonce=UserAllocationsHistory(),
+    )
+
+def test_simulate_allocation(service, mock_users_db):
     user1, _, _ = mock_users_db
     context = get_context()
     projects = context.projects_details.projects
@@ -25,8 +37,6 @@ def test_simulate_allocation(mock_users_db, mock_octant_rewards):
     next_allocations = [
         AllocationDTO(projects[1], 200_000000000),
     ]
-
-    service = PendingUserAllocations(octant_rewards=mock_octant_rewards)
 
     leverage, threshold, rewards = service.simulate_allocation(
         context, next_allocations, user1.address
@@ -47,3 +57,26 @@ def test_simulate_allocation(mock_users_db, mock_octant_rewards):
         ProjectRewardDTO(sorted_projects[8], 0, 0),
         ProjectRewardDTO(sorted_projects[9], 0, 0),
     ]
+
+
+def test_revoke_previous_allocation(service, mock_users_db):
+    user1, _, _ = mock_users_db
+    context = get_context(epoch_state=EpochState.PENDING)
+
+    projects = context.projects_details.projects
+    prev_allocation = [
+        AllocationDTO(projects[0], 100_000000000),
+    ]
+    database.allocations.add_all(1, user1.id, 0, prev_allocation)
+    
+    assert service.get_user_allocation_sum(context, user1.address) == 100_000000000
+    service.revoke_previous_allocation(context, user1.address)
+    assert service.get_user_allocation_sum(context, user1.address) == 0
+
+def test_revoke_previous_allocation_fails_outside_decision_window(service, mock_users_db):
+    user1, _, _ = mock_users_db
+
+    for state in [EpochState.FUTURE, EpochState.CURRENT, EpochState.PRE_PENDING, EpochState.FINALIZING, EpochState.FINALIZED]:
+        context = get_context(epoch_state=state)
+        with pytest.raises(exceptions.NotInDecisionWindow):
+            service.revoke_previous_allocation(context, user1.address)

@@ -2,7 +2,11 @@ from typing import List, Tuple, Dict, Optional
 
 from app.context.epoch_state import EpochState
 from app.context.manager import epoch_context, state_context
-from app.exceptions import NotImplementedForGivenEpochState
+from app.exceptions import (
+    NotImplementedForGivenEpochState,
+    InvalidEpoch,
+    NotInDecisionWindow,
+)
 from app.modules.dto import AccountFundsDTO, AllocationDTO, ProposalDonationDTO
 from app.modules.registry import get_services
 from app.modules.user.allocations.service.pending import PendingUserAllocations
@@ -57,6 +61,20 @@ def simulate_allocation(
     matched = [{"address": p.address, "value": p.matched} for p in projects_rewards]
 
     return leverage, threshold, matched
+
+
+def revoke_previous_allocation(user_address: str):
+    context = None
+
+    try:
+        context = state_context(EpochState.PENDING)
+    except InvalidEpoch:
+        raise NotInDecisionWindow
+
+    service: PendingUserAllocations = get_services(
+        context.epoch_state
+    ).user_allocations_service
+    service.revoke_previous_allocation(context, user_address)
 
 
 def _deserialize_payload(payload: Dict) -> List[AllocationDTO]:

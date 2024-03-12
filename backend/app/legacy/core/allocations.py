@@ -1,3 +1,4 @@
+from typing_extensions import deprecated
 from dataclasses import dataclass
 from typing import List, Dict, Tuple, Optional
 
@@ -115,6 +116,7 @@ def verify_allocations(
         raise exceptions.RewardsBudgetExceeded
 
 
+@deprecated("ALLOCATIONS REWORK")
 def revoke_previous_allocation(user_address: str, epoch: int):
     user = database.user.get_by_address(user_address)
     if user is None:

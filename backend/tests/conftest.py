@@ -666,6 +666,14 @@ def mock_staking_proceeds():
 
 
 @pytest.fixture(scope="function")
+def mock_user_nonce():
+    user_nonce_service_mock = Mock()
+    user_nonce_service_mock.get_next_user_nonce.return_value = 0
+
+    return user_nonce_service_mock
+
+
+@pytest.fixture(scope="function")
 def mock_events_generator():
     events = [
         DepositEvent(
