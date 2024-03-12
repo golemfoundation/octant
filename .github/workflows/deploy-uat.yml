@@ -39,4 +39,6 @@ jobs:
       scheduler-enabled: true
       vault-confirm-withdrawals-enabled: true
       glm-claim-enabled: true
+      decision-window: 1800
+      epoch-duration: 3600
     secrets: inherit
