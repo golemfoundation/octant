@@ -171,6 +171,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   return (
     <motion.div
       className={cx(styles.root, className)}
+      data-test="AllocationItem"
       exit={{ opacity: 0, scale: 0.8 }}
       layout
       transition={{ duration: 0.1, ease: 'easeOut' }}
@@ -179,6 +180,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
         <motion.div
           ref={removeButtonRef}
           className={styles.removeButton}
+          data-test="AllocationItem__removeButton"
           onClick={onRemoveAllocationElement}
           style={{ scale: removeButtonScaleTransform }}
         >
