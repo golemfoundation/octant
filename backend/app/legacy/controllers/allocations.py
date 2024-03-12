@@ -91,6 +91,7 @@ def get_all_by_proposal_and_epoch(
     ]
 
 
+@deprecated("ALLOCATIONS REWORK")
 def get_all_by_epoch(
     epoch: int, include_zeroes: bool = False
 ) -> List[EpochAllocationRecord]:

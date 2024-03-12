@@ -7,11 +7,7 @@ from app.legacy.controllers import allocations
 from app.legacy.core.allocations import AllocationRequest
 from app.extensions import api
 from app.infrastructure import OctantResource
-from app.modules.user.allocations.controller import (
-    get_donors,
-    simulate_allocation,
-    get_user_next_nonce,
-)
+from app.modules.user.allocations import controller
 
 ns = Namespace("allocations", description="Octant allocations")
 api.add_namespace(ns)
@@ -230,7 +226,9 @@ class AllocationLeverage(OctantResource):
     @ns.response(200, "User leverage successfully estimated")
     def post(self, user_address: str):
         app.logger.debug("Estimating user leverage")
-        leverage, threshold, matched = simulate_allocation(ns.payload, user_address)
+        leverage, threshold, matched = controller.simulate_allocation(
+            ns.payload, user_address
+        )
 
         app.logger.debug(f"Estimated leverage: {leverage}")
         app.logger.debug(f"Estimated threshold: {threshold}")
@@ -251,7 +249,7 @@ class EpochAllocations(OctantResource):
     @ns.response(200, "Epoch allocations successfully retrieved")
     def get(self, epoch: int):
         app.logger.debug(f"Getting latest allocations in epoch {epoch}")
-        allocs = allocations.get_all_by_epoch(epoch, include_zeroes=True)
+        allocs = controller.get_all_allocations(epoch)
         app.logger.debug(f"Allocations for epoch {epoch}: {allocs}")
 
         return {"allocations": allocs}
@@ -333,7 +331,7 @@ class AllocationNonce(OctantResource):
     @ns.marshal_with(allocation_nonce_model)
     @ns.response(200, "User allocations nonce successfully retrieved")
     def get(self, user_address: str):
-        return {"allocationNonce": get_user_next_nonce(user_address)}
+        return {"allocationNonce": controller.get_user_next_nonce(user_address)}
 
 
 @ns.route("/donors/<int:epoch>")
@@ -348,7 +346,7 @@ class Donors(OctantResource):
     @ns.response(200, "Donors addresses retrieved")
     def get(self, epoch: int):
         app.logger.debug(f"Getting donors addresses for epoch {epoch}")
-        donors = get_donors(epoch)
+        donors = controller.get_donors(epoch)
         app.logger.debug(f"Donors addresses: {donors}")
 
         return {"donors": donors}

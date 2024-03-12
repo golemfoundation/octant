@@ -46,3 +46,18 @@ class SavedUserAllocations(Model):
                 user_address, from_timestamp.datetime(), limit
             )
         ]
+    def get_all_allocations(self, context: Context) -> List[ProposalDonationDTO]:
+        allocations = database.allocations.get_all(context.epoch_details.epoch_num)
+        return [
+            ProposalDonationDTO(
+                donor=alloc.user_address,
+                amount=alloc.amount,
+                proposal=alloc.proposal_address,
+            )
+            for alloc in allocations
+        ]
+
+    def get_last_user_allocation(
+        self, context: Context, user_address: str
+    ) -> Tuple[List[AllocationDTO], bool]:
+        pass

@@ -8,7 +8,6 @@ from app.infrastructure import database
 from app.legacy.controllers.allocations import (
     get_all_by_user_and_epoch,
     get_all_by_proposal_and_epoch,
-    get_all_by_epoch,
     get_sum_by_epoch,
     allocate,
 )
@@ -31,9 +30,15 @@ from tests.helpers import create_epoch_event
 
 
 from app.modules.user.allocations import controller as new_controller
+
+
 def get_allocation_nonce(user_address):
     return new_controller.get_user_next_nonce(user_address)
-    
+
+
+def get_all_by_epoch(epoch, include_zeroes=False):
+    return new_controller.get_all_allocations(epoch)
+
 
 @pytest.fixture(scope="function")
 def get_all_by_epoch_expected_result(user_accounts, proposal_accounts):
@@ -340,46 +345,6 @@ def test_get_by_user_and_epoch(mock_allocations_db, user_accounts, proposal_acco
     assert result[1].amount == str(5 * 10**18)
     assert result[2].address == proposal_accounts[2].address
     assert result[2].amount == str(300 * 10**18)
-
-
-def test_get_all_by_epoch(
-    mock_pending_epoch_snapshot_db,
-    mock_allocations_db,
-    get_all_by_epoch_expected_result,
-):
-    result = get_all_by_epoch(MOCKED_PENDING_EPOCH_NO)
-
-    assert len(result) == len(get_all_by_epoch_expected_result)
-    for i in result:
-        assert dataclasses.asdict(i) in get_all_by_epoch_expected_result
-
-
-def test_get_by_epoch_fails_for_current_or_future_epoch(
-    mock_allocations_db, user_accounts, proposal_accounts
-):
-    with pytest.raises(exceptions.EpochAllocationPeriodNotStartedYet):
-        get_all_by_epoch(MOCKED_PENDING_EPOCH_NO + 1)
-
-
-def test_get_all_by_epoch_with_allocation_amount_equal_0(
-    mock_pending_epoch_snapshot_db,
-    mock_allocations_db,
-    user_accounts,
-    proposal_accounts,
-    get_all_by_epoch_expected_result,
-):
-    user = database.user.get_or_add_user(user_accounts[2].address)
-    db.session.commit()
-    user_allocations = [
-        Allocation(proposal_accounts[1].address, 0),
-    ]
-    database.allocations.add_all(MOCKED_PENDING_EPOCH_NO, user.id, 0, user_allocations)
-
-    result = get_all_by_epoch(MOCKED_PENDING_EPOCH_NO)
-
-    assert len(result) == len(get_all_by_epoch_expected_result)
-    for i in result:
-        assert dataclasses.asdict(i) in get_all_by_epoch_expected_result
 
 
 def test_get_by_proposal_and_epoch(

@@ -68,6 +68,11 @@ class PendingSnapshotDTO(JSONWizard):
 class AllocationDTO(AllocationItem, JSONWizard):
     user_address: Optional[str] = None
 
+@dataclass(frozen=True)
+class ProposalDonationDTO(JSONWizard):
+    donor: str
+    amount: int
+    proposal: str
 
 @dataclass(frozen=True)
 class ProposalDonationDTO(JSONWizard):

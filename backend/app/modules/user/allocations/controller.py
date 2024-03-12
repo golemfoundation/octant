@@ -3,7 +3,7 @@ from typing import List, Tuple, Dict
 from app.context.epoch_state import EpochState
 from app.context.manager import epoch_context, state_context
 from app.exceptions import NotImplementedForGivenEpochState
-from app.modules.dto import AllocationDTO
+from app.modules.dto import AllocationDTO, ProposalDonationDTO
 from app.modules.registry import get_services
 from app.modules.user.allocations.service.pending import PendingUserAllocations
 from app.modules.user.allocations.service.history import UserAllocationsHistory
@@ -14,6 +14,14 @@ def get_user_next_nonce(user_address: str) -> int:
         EpochState.CURRENT
     ).user_allocations_history_service
     return service.get_next_user_nonce(user_address)
+
+
+def get_all_allocations(epoch_num: int) -> List[ProposalDonationDTO]:
+    context = epoch_context(epoch_num)
+    if context.epoch_state > EpochState.PENDING:
+        raise NotImplementedForGivenEpochState()
+    service = get_services(context.epoch_state).user_allocations_service
+    return service.get_all_allocations(context)
 
 
 def get_donors(epoch_num: int) -> List[str]:

@@ -53,7 +53,7 @@ class DonorsAddresses(Protocol):
 
 @runtime_checkable
 class GetUserAllocationsProtocol(Protocol):
-    def get_all_allocations(self, context: Context) -> int:
+    def get_all_allocations(self, context: Context) -> List[AllocationDTO]:
         ...
 
 
