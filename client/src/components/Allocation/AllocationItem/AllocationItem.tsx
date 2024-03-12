@@ -245,6 +245,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
               ref={inputRef}
               className={cx(styles.input, isEpoch1 && styles.isEpoch1, isError && styles.isError)}
               error={isError}
+              inputMode="decimal"
               isDisabled={
                 !isConnected || !individualReward || !isDecisionWindowOpen || isThereAnyError
               }
