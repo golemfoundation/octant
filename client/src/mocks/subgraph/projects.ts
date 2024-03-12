@@ -1,0 +1,53 @@
+import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
+
+export const mockedProjectATotalValueOfAllocations1: ProposalIpfsWithRewards = {
+  address: 'address',
+  isLoadingError: false,
+  name: 'A',
+  numberOfDonors: 10,
+  percentage: 1,
+  totalValueOfAllocations: BigInt(1),
+};
+
+export const mockedProjectATotalValueOfAllocationsUndefined = {
+  ...mockedProjectATotalValueOfAllocations1,
+  totalValueOfAllocations: undefined,
+};
+
+export const mockedProjectATotalValueOfAllocations2: ProposalIpfsWithRewards = {
+  ...mockedProjectATotalValueOfAllocations1,
+  totalValueOfAllocations: BigInt(2),
+};
+
+export const mockedProjectBTotalValueOfAllocations2: ProposalIpfsWithRewards = {
+  ...mockedProjectATotalValueOfAllocations1,
+  name: 'B',
+  totalValueOfAllocations: BigInt(2),
+};
+
+export const mockedProjectBTotalValueOfAllocationsUndefined = {
+  ...mockedProjectBTotalValueOfAllocations2,
+  totalValueOfAllocations: undefined,
+};
+
+export const mockedProjectCTotalValueOfAllocations3: ProposalIpfsWithRewards = {
+  ...mockedProjectATotalValueOfAllocations1,
+  name: 'C',
+  totalValueOfAllocations: BigInt(3),
+};
+
+export const mockedProjectCTotalValueOfAllocationsUndefined = {
+  ...mockedProjectCTotalValueOfAllocations3,
+  totalValueOfAllocations: undefined,
+};
+
+export const mockedProjectDTotalValueOfAllocations4: ProposalIpfsWithRewards = {
+  ...mockedProjectATotalValueOfAllocations1,
+  name: 'D',
+  totalValueOfAllocations: BigInt(4),
+};
+
+export const mockedProjectDTotalValueOfAllocationsUndefined = {
+  ...mockedProjectDTotalValueOfAllocations4,
+  totalValueOfAllocations: undefined,
+};
