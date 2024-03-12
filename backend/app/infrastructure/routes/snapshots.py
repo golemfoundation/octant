@@ -69,7 +69,7 @@ octant_rewards_model = api.model(
 user_deposits_model = api.model(
     "UserDepositsModel",
     {
-        "address": fields.String(),
+        "userAddress": fields.String(),
         "effectiveDeposit": fields.String(),
         "deposit": fields.String(),
     },
@@ -78,7 +78,7 @@ user_deposits_model = api.model(
 user_budgets_model = api.model(
     "UserBudgetsInfoModel",
     {
-        "address": fields.String(),
+        "userAddress": fields.String(),
         "budget": fields.String(),
     },
 )

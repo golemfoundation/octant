@@ -4,5 +4,5 @@ from dataclass_wizard import JSONWizard
 
 @dataclass(frozen=True)
 class UserBudgetInfo(JSONWizard):
-    address: str
+    user_address: str
     budget: int
