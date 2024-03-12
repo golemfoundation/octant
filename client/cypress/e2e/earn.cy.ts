@@ -183,14 +183,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         });
     });
 
-    it('Wallet connected: Lock 1 GLM + move epoch', () => {
+    it('Wallet connected: Lock 1000 GLM + move epoch', () => {
       connectWallet();
 
       cy.get('[data-test=BoxGlmLock__Button]').click();
       cy.get('[data-test=BudgetBox__currentlyLocked__value]')
         .invoke('text')
         .then(text => {
-          const amountToLock = 1;
+          const amountToLock = 1000;
           const lockedGlms = parseInt(text, 10);
 
           cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').clear().type(`${amountToLock}`);
@@ -200,15 +200,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           cy.confirmMetamaskPermissionToSpend({
             spendLimit: '99999999999999999999',
           });
-          // Workaround for two notifications during first transaction.
-          // 1. Allow the third party to spend TKN from your current balance.
-          // 2. Confirm permission to spend
-          // if (Cypress.env('CI') === 'true' && idx === 0) {
-          //   cy.wait(1000);
-          //   cy.confirmMetamaskPermissionToSpend({
-          //     spendLimit: '99999999999999999999',
-          //   });
-          // }
           cy.get('[data-test=GlmLockTabs__Button]', { timeout: 180000 }).should(
             'have.text',
             'Close',
@@ -229,7 +220,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
                 const lockedGlmsAfterLock = parseInt(nextText, 10);
                 expect(lockedGlms + amountToLock).to.be.eq(lockedGlmsAfterLock);
               });
-            cy.get('[BoxGlmLock__Section--effective__DoubleValue__primary]', {
+            cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__primary]', {
               timeout: 60000,
             })
               .invoke('text')
@@ -240,7 +231,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             cy.get('[data-test=HistoryItem__title]').first().should('have.text', 'Locked GLM');
             cy.get('[data-test=HistoryItem__DoubleValue__primary]')
               .first()
-              .should('have.text', '1 GLM');
+              .should('have.text', `${amountToLock} GLM`);
           });
         });
     });
