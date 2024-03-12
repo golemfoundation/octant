@@ -52,6 +52,12 @@ class DonorsAddresses(Protocol):
 
 
 @runtime_checkable
+class GetUserAllocationsProtocol(Protocol):
+    def get_all_allocations(self, context: Context) -> int:
+        ...
+
+
+@runtime_checkable
 class SimulateAllocation(Protocol):
     def simulate_allocation(
         self,

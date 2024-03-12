@@ -6,7 +6,6 @@ from app.modules.common.time import Timestamp, from_datetime
 from app.modules.dto import AccountFundsDTO, AllocationItem
 from app.pydantic import Model
 
-
 class SavedUserAllocations(Model):
     def get_all_donors_addresses(self, context: Context) -> List[str]:
         return database.allocations.get_users_with_allocations(
