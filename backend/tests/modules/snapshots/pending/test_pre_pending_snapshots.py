@@ -33,8 +33,8 @@ def test_save_pending_epoch_snapshot(mock_user_deposits, mock_octant_rewards):
     assert snapshot.all_individual_rewards == "101814368807786782825"
     assert snapshot.total_rewards == "321928767123288031232"
     assert snapshot.operational_cost == "80482191780822000000"
-    assert snapshot.ppf == PPF
-    assert snapshot.community_fund == COMMUNITY_FUND
+    assert snapshot.ppf == str(PPF)
+    assert snapshot.community_fund == str(COMMUNITY_FUND)
 
     deposits = database.deposits.get_all_by_epoch(1)
     assert len(deposits) == 2
