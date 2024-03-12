@@ -6,6 +6,14 @@ from app.exceptions import NotImplementedForGivenEpochState
 from app.modules.dto import AllocationDTO
 from app.modules.registry import get_services
 from app.modules.user.allocations.service.pending import PendingUserAllocations
+from app.modules.user.allocations.service.history import UserAllocationsHistory
+
+
+def get_user_next_nonce(user_address: str) -> int:
+    service: UserAllocationsHistory = get_services(
+        EpochState.CURRENT
+    ).user_allocations_history_service
+    return service.get_next_user_nonce(user_address)
 
 
 def get_donors(epoch_num: int) -> List[str]:

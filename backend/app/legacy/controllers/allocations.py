@@ -1,3 +1,4 @@
+from typing_extensions import deprecated
 from dataclasses import dataclass
 from typing import List, Dict
 from typing import Optional
@@ -7,6 +8,7 @@ from dataclass_wizard import JSONWizard
 from app import exceptions
 from app.extensions import db, epochs
 from app.infrastructure import database
+from app.modules.user.allocations import controller as new_controller
 from app.legacy.core.allocations import (
     AllocationRequest,
     recover_user_address,
@@ -15,7 +17,6 @@ from app.legacy.core.allocations import (
     add_allocations_to_db,
     revoke_previous_allocation,
     store_allocation_request,
-    next_allocation_nonce,
 )
 from app.legacy.core.common import AccountFunds
 from app.legacy.core.epochs import epoch_snapshots
@@ -33,7 +34,7 @@ def allocate(
 ) -> str:
     user_address = recover_user_address(request)
     user = database.user.get_by_address(user_address)
-    next_nonce = next_allocation_nonce(user)
+    next_nonce = new_controller.get_user_next_nonce(user_address)
 
     _make_allocation(
         request.payload, user_address, request.override_existing_allocations, next_nonce
@@ -110,11 +111,7 @@ def get_sum_by_epoch(epoch: int | None = None) -> int:
     return database.allocations.get_alloc_sum_by_epoch(epoch)
 
 
-def get_allocation_nonce(user_address: str) -> int:
-    user = database.user.get_by_address(user_address)
-    return next_allocation_nonce(user)
-
-
+@deprecated("ALLOCATIONS REWORK")
 def revoke_previous_user_allocation(user_address: str):
     pending_epoch = epochs.get_pending_epoch()
 

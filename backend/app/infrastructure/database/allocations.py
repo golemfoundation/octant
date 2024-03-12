@@ -213,3 +213,12 @@ def get_allocation_request_by_user_and_epoch(
         raise UserNotFound(user_address)
 
     return AllocationRequest.query.filter_by(user_id=user.id, epoch=epoch).first()
+
+
+def get_user_last_allocation_request(user_address: str) -> AllocationRequest | None:
+    return (
+        AllocationRequest.query.join(User, User.id == AllocationRequest.user_id)
+        .filter(User.address == user_address)
+        .order_by(AllocationRequest.nonce.desc())
+        .first()
+    )

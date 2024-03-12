@@ -1,9 +1,14 @@
-from typing import List
+from typing import List, Optional
 
 from app.engine.projects import ProjectSettings
+from app.infrastructure.database.models import AllocationRequest
 from app.modules.common.leverage import calculate_leverage
 from app.modules.common.project_rewards import get_projects_rewards
 from app.modules.dto import AllocationDTO
+
+
+def next_allocation_nonce(prev_allocation_request: Optional[AllocationRequest]) -> int:
+    return 0 if prev_allocation_request is None else prev_allocation_request.nonce + 1
 
 
 def simulate_allocation(

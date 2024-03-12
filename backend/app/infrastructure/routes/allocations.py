@@ -7,7 +7,11 @@ from app.legacy.controllers import allocations
 from app.legacy.core.allocations import AllocationRequest
 from app.extensions import api
 from app.infrastructure import OctantResource
-from app.modules.user.allocations.controller import get_donors, simulate_allocation
+from app.modules.user.allocations.controller import (
+    get_donors,
+    simulate_allocation,
+    get_user_next_nonce,
+)
 
 ns = Namespace("allocations", description="Octant allocations")
 api.add_namespace(ns)
@@ -329,7 +333,7 @@ class AllocationNonce(OctantResource):
     @ns.marshal_with(allocation_nonce_model)
     @ns.response(200, "User allocations nonce successfully retrieved")
     def get(self, user_address: str):
-        return {"allocationNonce": allocations.get_allocation_nonce(user_address)}
+        return {"allocationNonce": get_user_next_nonce(user_address)}
 
 
 @ns.route("/donors/<int:epoch>")

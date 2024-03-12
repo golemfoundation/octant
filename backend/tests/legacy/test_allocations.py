@@ -8,7 +8,6 @@ from app.infrastructure import database
 from app.legacy.controllers.allocations import (
     get_all_by_user_and_epoch,
     get_all_by_proposal_and_epoch,
-    get_allocation_nonce,
     get_all_by_epoch,
     get_sum_by_epoch,
     allocate,
@@ -30,6 +29,11 @@ from tests.conftest import (
 )
 from tests.helpers import create_epoch_event
 
+
+from app.modules.user.allocations import controller as new_controller
+def get_allocation_nonce(user_address):
+    return new_controller.get_user_next_nonce(user_address)
+    
 
 @pytest.fixture(scope="function")
 def get_all_by_epoch_expected_result(user_accounts, proposal_accounts):

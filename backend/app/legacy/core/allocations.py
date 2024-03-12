@@ -7,7 +7,6 @@ from eth_utils import to_checksum_address
 from app import exceptions
 from app.extensions import proposals
 from app.infrastructure import database
-from app.infrastructure.database.models import User
 from app.legacy.core.epochs.epoch_snapshots import has_pending_epoch_snapshot
 from app.legacy.core.user.budget import get_budget
 from app.legacy.core.user.patron_mode import get_patron_mode_status
@@ -124,9 +123,10 @@ def revoke_previous_allocation(user_address: str, epoch: int):
     database.allocations.soft_delete_all_by_epoch_and_user_id(epoch, user.id)
 
 
-def next_allocation_nonce(user: User | None) -> int:
-    if user is None:
-        return 0
-    if user.allocation_nonce is None:
-        return 0
-    return user.allocation_nonce + 1
+def has_user_allocated_rewards(user_address: str, epoch: int) -> List[str]:
+    allocation_signature = (
+        database.allocations.get_allocation_request_by_user_and_epoch(
+            user_address, epoch
+        )
+    )
+    return allocation_signature is not None

@@ -18,6 +18,11 @@ from tests.legacy.test_allocations import (
 )
 
 
+from app.modules.user.allocations import controller as new_controller
+def get_allocation_nonce(user_address):
+    return new_controller.get_user_next_nonce(user_address)
+    
+
 @pytest.fixture(autouse=True)
 def before(
     proposal_accounts,

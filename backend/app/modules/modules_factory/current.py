@@ -14,6 +14,7 @@ from app.modules.octant_rewards.service.calculated import CalculatedOctantReward
 from app.modules.snapshots.pending.service.simulated import SimulatedPendingSnapshots
 from app.modules.staking.proceeds.service.estimated import EstimatedStakingProceeds
 from app.modules.user.allocations.service.saved import SavedUserAllocations
+from app.modules.user.allocations.service.history import UserAllocationsHistory
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
 from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
@@ -29,6 +30,7 @@ class CurrentUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protoco
 
 
 class CurrentServices(Model):
+    user_allocations_history_service: UserAllocationsHistory
     user_deposits_service: CurrentUserDeposits
     octant_rewards_service: OctantRewards
     history_service: HistoryService
@@ -70,6 +72,7 @@ class CurrentServices(Model):
             patron_donations=patron_donations,
         )
         return CurrentServices(
+            user_allocations_history_service=UserAllocationsHistory(),
             user_deposits_service=user_deposits,
             octant_rewards_service=CalculatedOctantRewards(
                 staking_proceeds=EstimatedStakingProceeds(),
