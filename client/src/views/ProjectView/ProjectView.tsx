@@ -19,9 +19,9 @@ import useProposalsIpfsWithRewards, {
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import toastService from 'services/toastService';
 
-import styles from './ProposalView.module.scss';
+import styles from './ProjectView.module.scss';
 
-const ProposalView = (): ReactElement => {
+const ProjectView = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.proposal' });
   const [isBackToTopButtonVisible, setIsBackToTopButtonVisible] = useState(false);
   const { proposalAddress: proposalAddressUrl, epoch: epochUrl } = useParams();
@@ -159,4 +159,4 @@ const ProposalView = (): ReactElement => {
   );
 };
 
-export default ProposalView;
+export default ProjectView;

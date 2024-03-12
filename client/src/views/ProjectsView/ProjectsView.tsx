@@ -16,9 +16,9 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useTipsStore from 'store/tips/store';
 
-import styles from './ProposalsView.module.scss';
+import styles from './ProjectsView.module.scss';
 
-const ProposalsView = (): ReactElement => {
+const ProjectsView = (): ReactElement => {
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'views.proposals',
   });
@@ -126,4 +126,4 @@ const ProposalsView = (): ReactElement => {
   );
 };
 
-export default ProposalsView;
+export default ProjectsView;
