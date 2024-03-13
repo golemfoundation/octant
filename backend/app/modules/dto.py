@@ -5,8 +5,8 @@ from typing import Optional, List
 
 from dataclass_wizard import JSONWizard
 
-from app.engine.projects.rewards import AllocationPayload
 from app.modules.common.time import Timestamp
+from app.engine.projects.rewards import AllocationItem
 
 from app.engine.user.effective_deposit import UserDeposit
 from app.modules.snapshots.pending import UserBudgetInfo
@@ -65,8 +65,15 @@ class PendingSnapshotDTO(JSONWizard):
 
 
 @dataclass(frozen=True)
-class AllocationDTO(AllocationPayload, JSONWizard):
+class AllocationDTO(AllocationItem, JSONWizard):
     user_address: Optional[str] = None
+
+
+@dataclass(frozen=True)
+class ProposalDonationDTO(JSONWizard):
+    donor: str
+    amount: int
+    proposal: str
 
 
 class WithdrawalStatus(StrEnum):
