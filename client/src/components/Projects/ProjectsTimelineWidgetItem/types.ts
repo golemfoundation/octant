@@ -1,4 +1,4 @@
-export default interface ProposalsTimelineWidgetItemProps {
+export default interface ProjectsTimelineWidgetItemProps {
   from: Date;
   href?: string;
   id: string;

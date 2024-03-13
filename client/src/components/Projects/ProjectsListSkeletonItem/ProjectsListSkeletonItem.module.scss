@@ -9,7 +9,7 @@
   width: 100%;
   bottom: 0;
   transition: bottom $transition-time-4 linear;
-  // $proposalItemPadding - 0.2rem to offset separator appearance in ProposalsListItem.
+  // $proposalItemPadding - 0.2rem to offset separator appearance in ProjectsListItem.
   padding: $proposalItemPadding $proposalItemPadding ($proposalItemPadding - 0.2rem);
 
   .image {

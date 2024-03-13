@@ -2,12 +2,12 @@ import { isAfter, isSameDay, isWithinInterval } from 'date-fns';
 import { motion, useMotionValue } from 'framer-motion';
 import React, { ReactElement, useLayoutEffect, useRef } from 'react';
 
-import ProposalsTimelineWidgetItem from 'components/Proposals/ProposalsTimelineWidgetItem';
+import ProjectsTimelineWidgetItem from 'components/Projects/ProjectsTimelineWidgetItem';
 import getMilestones, { Milestone } from 'constants/milestones';
 
-import styles from './ProposalsTimelineWidget.module.scss';
+import styles from './ProjectsTimelineWidget.module.scss';
 
-const ProposalsTimelineWidget = (): ReactElement => {
+const ProjectsTimelineWidget = (): ReactElement => {
   const constraintsRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
 
@@ -59,7 +59,7 @@ const ProposalsTimelineWidget = (): ReactElement => {
           style={{ x }}
         >
           {milestonesWithIsActive.map(({ id, ...milestone }) => (
-            <ProposalsTimelineWidgetItem key={id} id={id} {...milestone} />
+            <ProjectsTimelineWidgetItem key={id} id={id} {...milestone} />
           ))}
         </motion.div>
       </div>
@@ -67,4 +67,4 @@ const ProposalsTimelineWidget = (): ReactElement => {
   );
 };
 
-export default ProposalsTimelineWidget;
+export default ProjectsTimelineWidget;

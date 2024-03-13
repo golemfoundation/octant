@@ -33,7 +33,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       }
     });
 
-    it('renders archive elements + clicking on epoch archive ProposalsListItem opens ProjectView for particular epoch and project', () => {
+    it('renders archive elements + clicking on epoch archive ProjectsListItem opens ProjectView for particular epoch and project', () => {
       cy.get('[data-test=MainLayout__body]').then(el => {
         const mainLayoutPaddingTop = parseInt(el.css('paddingTop'), 10);
 

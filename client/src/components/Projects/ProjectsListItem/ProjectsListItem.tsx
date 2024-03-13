@@ -2,7 +2,7 @@ import cx from 'classnames';
 import React, { FC, Fragment, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import ProposalItemSkeleton from 'components/Proposals/ProposalsListSkeletonItem/ProposalsListSkeletonItem';
+import ProposalItemSkeleton from 'components/Projects/ProjectsListSkeletonItem/ProjectsListSkeletonItem';
 import ButtonAddToAllocate from 'components/shared/ButtonAddToAllocate';
 import Rewards from 'components/shared/Rewards';
 import Description from 'components/ui/Description';
@@ -16,10 +16,10 @@ import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useAllocationsStore from 'store/allocations/store';
 
-import styles from './ProposalsListItem.module.scss';
-import ProposalsListItemProps from './types';
+import styles from './ProjectsListItem.module.scss';
+import ProjectsListItemProps from './types';
 
-const ProposalsListItem: FC<ProposalsListItemProps> = ({
+const ProjectsListItem: FC<ProjectsListItemProps> = ({
   className,
   dataTest,
   epoch,
@@ -148,4 +148,4 @@ const ProposalsListItem: FC<ProposalsListItemProps> = ({
   );
 };
 
-export default ProposalsListItem;
+export default ProjectsListItem;

@@ -1,6 +1,6 @@
 import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
 
-export default interface ProposalsListItemProps {
+export default interface ProjectsListItemProps {
   className?: string;
   dataTest?: string;
   epoch?: number;

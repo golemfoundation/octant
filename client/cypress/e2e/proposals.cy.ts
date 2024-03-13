@@ -166,7 +166,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
       });
 
-      it('ProposalsTimelineWidgetItem with href opens link when clicked without mouse movement', () => {
+      it('ProjectsTimelineWidgetItem with href opens link when clicked without mouse movement', () => {
         const milestones = getMilestones();
         cy.get('[data-test=ProposalsTimelineWidget]').should('be.visible');
         cy.get('[data-test=ProposalsTimelineWidgetItem]').should('have.length', milestones.length);

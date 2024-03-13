@@ -1,10 +1,10 @@
 import cx from 'classnames';
 import React, { FC } from 'react';
 
-import styles from './ProposalsListSkeletonItem.module.scss';
-import ProposalsListSkeletonItemProps from './types';
+import styles from './ProjectsListSkeletonItem.module.scss';
+import ProjectsListSkeletonItemProps from './types';
 
-const ProposalsListSkeletonItem: FC<ProposalsListSkeletonItemProps> = ({ className }) => (
+const ProjectsListSkeletonItem: FC<ProjectsListSkeletonItemProps> = ({ className }) => (
   <div className={cx(styles.root, className)} data-test="ProposalsListItemSkeleton">
     <div className={styles.image} />
     <div className={styles.title} />
@@ -24,4 +24,4 @@ const ProposalsListSkeletonItem: FC<ProposalsListSkeletonItemProps> = ({ classNa
   </div>
 );
 
-export default ProposalsListSkeletonItem;
+export default ProjectsListSkeletonItem;

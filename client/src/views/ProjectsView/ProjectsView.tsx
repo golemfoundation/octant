@@ -2,8 +2,8 @@ import React, { ReactElement, useState, useMemo, useLayoutEffect, useEffect } fr
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 
-import ProposalsList from 'components/Proposals/ProposalsList';
-import ProposalsTimelineWidget from 'components/Proposals/ProposalsTimelineWidget';
+import ProposalsList from 'components/Projects/ProjectsList';
+import ProjectsTimelineWidget from 'components/Projects/ProjectsTimelineWidget';
 import Layout from 'components/shared/Layout';
 import TipTile from 'components/shared/TipTile';
 import Loader from 'components/ui/Loader';
@@ -89,7 +89,7 @@ const ProjectsView = (): ReactElement => {
           title={t('tip.title')}
         />
       )}
-      <ProposalsTimelineWidget />
+      <ProjectsTimelineWidget />
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <ProposalsList
           areCurrentEpochsProjectsHiddenOutsideAllocationWindow={

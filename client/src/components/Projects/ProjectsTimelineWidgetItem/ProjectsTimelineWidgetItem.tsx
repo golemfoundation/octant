@@ -6,10 +6,10 @@ import React, { FC, useRef, useState } from 'react';
 import Svg from 'components/ui/Svg';
 import { arrowRight, arrowTopRight } from 'svg/misc';
 
-import styles from './ProposalsTimelineWidgetItem.module.scss';
-import ProposalsTimelineWidgetItemProps from './types';
+import styles from './ProjectsTimelineWidgetItem.module.scss';
+import ProjectsTimelineWidgetItemProps from './types';
 
-const ProposalsTimelineWidgetItem: FC<ProposalsTimelineWidgetItemProps> = ({
+const ProjectsTimelineWidgetItem: FC<ProjectsTimelineWidgetItemProps> = ({
   id,
   label,
   from,
@@ -74,4 +74,4 @@ const ProposalsTimelineWidgetItem: FC<ProposalsTimelineWidgetItemProps> = ({
   );
 };
 
-export default ProposalsTimelineWidgetItem;
+export default ProjectsTimelineWidgetItem;
