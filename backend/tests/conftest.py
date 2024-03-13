@@ -458,6 +458,7 @@ def patch_glm(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_vault(monkeypatch):
+    monkeypatch.setattr("app.modules.withdrawals.service.pending.vault", MOCK_VAULT)
     monkeypatch.setattr("app.modules.withdrawals.service.finalized.vault", MOCK_VAULT)
     MOCK_VAULT.get_last_claimed_epoch.return_value = 0
 
