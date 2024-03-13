@@ -70,10 +70,15 @@ class AllocationDTO(AllocationItem, JSONWizard):
 
 
 @dataclass(frozen=True)
-class ProposalDonationDTO(JSONWizard):
-    donor: str
-    amount: int
-    proposal: str
+class UserAllocationPayload(JSONWizard):
+    allocations: List[AllocationItem]
+    nonce: int
+
+
+@dataclass(frozen=True)
+class UserAllocationRequestPayload(JSONWizard):
+    payload: UserAllocationPayload
+    signature: str
 
 
 @dataclass(frozen=True)

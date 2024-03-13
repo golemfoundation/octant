@@ -7,7 +7,13 @@ from app.exceptions import (
     InvalidEpoch,
     NotInDecisionWindow,
 )
-from app.modules.dto import AccountFundsDTO, AllocationDTO, ProposalDonationDTO
+from app.modules.dto import (
+    AccountFundsDTO,
+    ProposalDonationDTO,
+    UserAllocationRequestPayload,
+    UserAllocationPayload,
+    AllocationItem,
+)
 from app.modules.registry import get_services
 from app.modules.user.allocations.service.pending import PendingUserAllocations
 from app.modules.user.allocations.service.history import UserAllocationsHistory
@@ -46,6 +52,16 @@ def get_donors(epoch_num: int) -> List[str]:
     return service.get_all_donors_addresses(context)
 
 
+def allocate(payload: Dict, **kwargs):
+    context = state_context(EpochState.PENDING)
+    service: PendingUserAllocations = get_services(
+        context.epoch_state
+    ).user_allocations_service
+
+    allocation_request = _deserialize_payload(payload)
+    service.allocate(context, allocation_request, **kwargs)
+
+
 def simulate_allocation(
     payload: Dict, user_address: str
 ) -> Tuple[float, int, List[Dict[str, int]]]:
@@ -53,7 +69,7 @@ def simulate_allocation(
     service: PendingUserAllocations = get_services(
         context.epoch_state
     ).user_allocations_service
-    user_allocations = _deserialize_payload(payload)
+    user_allocations = _deserialize_items(payload)
     leverage, threshold, projects_rewards = service.simulate_allocation(
         context, user_allocations, user_address
     )
@@ -77,8 +93,22 @@ def revoke_previous_allocation(user_address: str):
     service.revoke_previous_allocation(context, user_address)
 
 
-def _deserialize_payload(payload: Dict) -> List[AllocationDTO]:
+def _deserialize_payload(payload: Dict) -> UserAllocationRequestPayload:
+    allocation_items = _deserialize_items(payload.payload)
+    nonce = int(payload.payload["nonce"])
+    signature = payload.signature
+
+    return UserAllocationRequestPayload(
+        payload=UserAllocationPayload(allocation_items, nonce), signature=signature
+    )
+
+
+def _deserialize_items(payload: Dict) -> List[AllocationItem]:
+    print(payload["allocations"])
     return [
-        AllocationDTO.from_dict(allocation_data)
+        AllocationItem(
+            proposal_address=allocation_data["proposalAddress"],
+            amount=int(allocation_data["amount"]),
+        )
         for allocation_data in payload["allocations"]
     ]

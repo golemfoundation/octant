@@ -8,10 +8,10 @@ from eth_utils import to_checksum_address
 from app import exceptions
 from app.extensions import proposals
 from app.infrastructure import database
+from app.infrastructure.database.models import User
 from app.legacy.core.epochs.epoch_snapshots import has_pending_epoch_snapshot
 from app.legacy.core.user.budget import get_budget
 from app.legacy.core.user.patron_mode import get_patron_mode_status
-from app.legacy.crypto.eip712 import recover_address, build_allocations_eip712_data
 
 
 @dataclass(frozen=True)
@@ -21,7 +21,7 @@ class Allocation(JSONWizard):
 
 
 @dataclass(frozen=True)
-class AllocationRequest:
+class AllocationRequest(JSONWizard):
     payload: Dict
     signature: str
     override_existing_allocations: bool
@@ -44,23 +44,6 @@ def add_allocations_to_db(
     database.allocations.add_all(epoch, user.id, nonce, allocations)
 
 
-def store_allocation_request(
-    epoch: int,
-    user_address: str,
-    nonce: int,
-    signature: str,
-    is_manually_edited: Optional[bool] = None,
-):
-    database.allocations.add_allocation_request(
-        user_address, epoch, nonce, signature, is_manually_edited
-    )
-
-
-def recover_user_address(request: AllocationRequest) -> str:
-    eip712_data = build_allocations_eip712_data(request.payload)
-    return recover_address(eip712_data, request.signature)
-
-
 def deserialize_payload(payload) -> Tuple[int, List[Allocation]]:
     allocations = [
         Allocation.from_dict(allocation_data)
@@ -69,6 +52,7 @@ def deserialize_payload(payload) -> Tuple[int, List[Allocation]]:
     return payload["nonce"], allocations
 
 
+@deprecated("ALLOCATIONS REWORK")
 def verify_allocations(
     epoch: Optional[int], user_address: str, allocations: List[Allocation]
 ):

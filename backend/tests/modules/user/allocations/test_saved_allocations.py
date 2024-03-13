@@ -1,7 +1,6 @@
 import pytest
 from freezegun import freeze_time
 
-from app.extensions import db
 from app.infrastructure import database
 from app.modules.common.time import from_timestamp_s
 from app.modules.dto import (
@@ -10,7 +9,6 @@ from app.modules.dto import (
     UserAllocationRequestPayload,
     UserAllocationPayload,
 )
-from app.modules.user.allocations.controller import revoke_previous_allocation
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 
 from tests.helpers.context import get_context
@@ -291,3 +289,42 @@ def test_get_last_user_allocation_returns_stored_metadata(
         expected_result,
         True,
     )
+
+
+def test_get_all_allocations_by_proposal_returns_empty_list_when_no_allocations(
+    service, context
+):
+    for project in context.projects_details.projects:
+        assert service.get_all_allocations_by_proposal(context, project) == []
+
+
+def test_get_all_allocations_by_proposal_returns_list_of_donations_per_project(
+    service, context, mock_users_db, make_user_allocation
+):
+    user1, user2, _ = mock_users_db
+    project1, project2 = (
+        context.projects_details.projects[0],
+        context.projects_details.projects[1],
+    )
+
+    user1_allocations = make_user_allocation(context, user1, allocations=2)
+    user2_allocations = make_user_allocation(context, user2, allocations=2)
+    user1_donations = [_alloc_item_to_donation(a, user1) for a in user1_allocations]
+    user2_donations = [_alloc_item_to_donation(a, user2) for a in user2_allocations]
+    expected_results = user1_donations + user2_donations
+
+    result = service.get_all_allocations_by_proposal(context, project1)
+    assert len(result) == 2
+    for d in result:
+        assert d in list(filter(lambda d: d.proposal == project1, expected_results))
+
+    result = service.get_all_allocations_by_proposal(context, project2)
+    assert len(result) == 2
+    for d in result:
+        assert d in list(filter(lambda d: d.proposal == project2, expected_results))
+
+    assert result
+
+    # other projects have no donations
+    for project in context.projects_details.projects[2:]:
+        assert service.get_all_allocations_by_proposal(context, project) == []

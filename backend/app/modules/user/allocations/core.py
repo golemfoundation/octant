@@ -1,10 +1,16 @@
 from typing import List, Optional
 
+from app import exceptions
+
+from app.context.manager import Context
+from app.context.epoch_state import EpochState
 from app.engine.projects import ProjectSettings
 from app.infrastructure.database.models import AllocationRequest
 from app.modules.common.leverage import calculate_leverage
 from app.modules.common.project_rewards import get_projects_rewards
-from app.modules.dto import AllocationDTO
+from app.modules.dto import AllocationDTO, UserAllocationRequestPayload, AllocationItem
+
+from app.legacy.crypto.eip712 import build_allocations_eip712_data, recover_address
 
 
 def next_allocation_nonce(prev_allocation_request: Optional[AllocationRequest]) -> int:
@@ -37,6 +43,86 @@ def simulate_allocation(
         simulated_rewards.threshold,
         sorted(simulated_rewards.rewards, key=lambda r: r.address),
     )
+
+
+def recover_user_address(request: UserAllocationRequestPayload) -> str:
+    eip712_data = build_allocations_eip712_data(request.payload)
+    return recover_address(eip712_data, request.signature)
+
+
+def verify_user_allocation_request(
+    context: Context,
+    request: UserAllocationRequestPayload,
+    user_address: str,
+    expected_nonce: int,
+    user_budget: int,
+    patrons: List[str],
+):
+    _verify_epoch_state(context.epoch_state)
+    _verify_nonce(request.payload.nonce, expected_nonce)
+    _verify_user_not_a_patron(user_address, patrons)
+    _verify_allocations_not_empty(request.payload.allocations)
+    _verify_no_invalid_proposals(
+        request.payload.allocations, valid_proposals=context.projects_details.projects
+    )
+    _verify_no_duplicates(request.payload.allocations)
+    _verify_no_self_allocation(request.payload.allocations, user_address)
+    _verify_allocations_within_budget(request.payload.allocations, user_budget)
+
+
+def _verify_epoch_state(epoch_state: EpochState):
+    if epoch_state is EpochState.PRE_PENDING:
+        raise exceptions.MissingSnapshot
+
+    if epoch_state is not EpochState.PENDING:
+        raise exceptions.NotInDecisionWindow
+
+
+def _verify_nonce(nonce, expected_nonce):
+    # if expected_nonce is not None and request.payload.nonce != expected_nonce:
+    if nonce != expected_nonce:
+        raise exceptions.WrongAllocationsNonce(nonce, expected_nonce)
+
+
+def _verify_user_not_a_patron(user_address: str, patrons: List[str]):
+    if user_address in patrons:
+        raise exceptions.NotAllowedInPatronMode(user_address)
+
+
+def _verify_allocations_not_empty(allocations: List[AllocationItem]):
+    if len(allocations) == 0:
+        raise exceptions.EmptyAllocations()
+
+
+def _verify_no_invalid_proposals(
+    allocations: List[AllocationItem], valid_proposals: List[str]
+):
+    proposal_addresses = [a.proposal_address for a in allocations]
+    invalid_proposals = list(set(proposal_addresses) - set(valid_proposals))
+
+    if invalid_proposals:
+        raise exceptions.InvalidProposals(invalid_proposals)
+
+
+def _verify_no_duplicates(allocations: List[AllocationItem]):
+    proposal_addresses = [allocation.proposal_address for allocation in allocations]
+    [proposal_addresses.remove(p) for p in set(proposal_addresses)]
+
+    if proposal_addresses:
+        raise exceptions.DuplicatedProposals(proposal_addresses)
+
+
+def _verify_no_self_allocation(allocations: List[AllocationItem], user_address: str):
+    for allocation in allocations:
+        if allocation.proposal_address == user_address:
+            raise exceptions.ProposalAllocateToItself
+
+
+def _verify_allocations_within_budget(allocations: List[AllocationItem], budget: int):
+    proposals_sum = sum([a.amount for a in allocations])
+
+    if proposals_sum > budget:
+        raise exceptions.RewardsBudgetExceeded
 
 
 def _replace_user_allocation(

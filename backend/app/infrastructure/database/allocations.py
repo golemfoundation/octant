@@ -153,6 +153,40 @@ def get_user_alloc_sum_by_epoch(epoch: int, user_address: str) -> int:
     return sum([int(a.amount) for a in allocations])
 
 
+def store_allocation_request(
+    user_address: int, epoch_num: int, request: UserAllocationRequestPayload, **kwargs
+):
+    now = datetime.utcnow()
+
+    user: User = get_by_address(user_address)
+
+    options = {"is_manually_edited": None, **kwargs}
+
+    new_allocations = [
+        Allocation(
+            epoch=epoch_num,
+            user_id=user.id,
+            nonce=request.payload.nonce,
+            proposal_address=to_checksum_address(a.proposal_address),
+            amount=str(a.amount),
+            created_at=now,
+        )
+        for a in request.payload.allocations
+    ]
+
+    allocation_request = AllocationRequest(
+        user_id=user.id,
+        epoch=epoch_num,
+        nonce=request.payload.nonce,
+        signature=request.signature,
+        is_manually_edited=options["is_manually_edited"],
+    )
+
+    db.session.add(allocation_request)
+    db.session.add_all(new_allocations)
+
+
+@deprecated("Alloc rework")
 def add_all(epoch: int, user_id: int, nonce: int, allocations):
     now = datetime.utcnow()
 
@@ -170,6 +204,7 @@ def add_all(epoch: int, user_id: int, nonce: int, allocations):
     db.session.add_all(new_allocations)
 
 
+@deprecated("Alloc rework")
 def add_allocation_request(
     user_address: str,
     epoch: int,

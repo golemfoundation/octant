@@ -10,6 +10,7 @@ from app.modules.dto import (
     FinalizedSnapshotDTO,
     PendingSnapshotDTO,
     WithdrawableEth,
+    UserAllocationRequestPayload,
 )
 from app.modules.history.dto import UserHistoryDTO
 
@@ -65,6 +66,11 @@ class GetUserAllocationsProtocol(Protocol):
 
 @runtime_checkable
 class AllocationManipulationProtocol(Protocol):
+    def allocate(
+        self, context: Context, payload: UserAllocationRequestPayload, **kwargs
+    ):
+        ...
+
     def revoke_previous_allocation(self, context: Context, user_address: str):
         ...
 

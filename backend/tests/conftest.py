@@ -4,6 +4,7 @@ import json
 import os
 import time
 import urllib.request
+from typing import List
 from random import randint
 from unittest.mock import MagicMock, Mock
 
@@ -22,11 +23,11 @@ from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.proposals import Proposals
 from app.infrastructure.contracts.vault import Vault
-from app.legacy.controllers.allocations import allocate, deserialize_payload
+from app.legacy.controllers.allocations import allocate
 from app.legacy.core.allocations import Allocation, AllocationRequest
 from app.legacy.crypto.account import Account as CryptoAccount
 from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
-from app.modules.dto import AccountFundsDTO
+from app.modules.dto import AccountFundsDTO, AllocationItem
 from app.settings import DevConfig, TestConfig
 from tests.helpers.constants import (
     ALICE,
@@ -786,8 +787,14 @@ def create_payload(proposals, amounts: list[int] | None, nonce: int = 0):
     return {"allocations": allocations, "nonce": nonce}
 
 
-def deserialize_allocations(payload) -> list[Allocation]:
-    return deserialize_payload(payload)[1]
+def deserialize_allocations(payload) -> List[Allocation]:
+    return [
+        AllocationItem(
+            proposal_address=allocation_data["proposal_data"],
+            amount=int(allocation_data["amount"]),
+        )
+        for allocation_data in payload["allocations"]
+    ]
 
 
 def _split_deposit_events(deposit_events):

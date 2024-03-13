@@ -20,6 +20,7 @@ from app.modules.octant_rewards.service.pending import PendingOctantRewards
 from app.modules.snapshots.finalized.service.simulated import (
     SimulatedFinalizedSnapshots,
 )
+from app.modules.user.allocations.service.history import UserAllocationsHistory
 from app.modules.user.allocations.service.pending import PendingUserAllocations
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.saved import SavedUserDeposits
@@ -63,8 +64,13 @@ class PendingServices(Model):
     def create() -> "PendingServices":
         events_based_patron_mode = EventsBasedUserPatronMode()
         octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
-        saved_user_allocations = PendingUserAllocations(octant_rewards=octant_rewards)
         saved_user_budgets = SavedUserBudgets()
+        saved_user_allocations = PendingUserAllocations(
+            user_nonce=UserAllocationsHistory(),
+            user_budgets=saved_user_budgets,
+            patrons_mode=events_based_patron_mode,
+            octant_rewards=octant_rewards,
+        )
         user_rewards = CalculatedUserRewards(
             user_budgets=saved_user_budgets,
             patrons_mode=events_based_patron_mode,
