@@ -171,6 +171,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   return (
     <motion.div
       className={cx(styles.root, className)}
+      data-test="AllocationItem"
       exit={{ opacity: 0, scale: 0.8 }}
       layout
       transition={{ duration: 0.1, ease: 'easeOut' }}
@@ -179,6 +180,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
         <motion.div
           ref={removeButtonRef}
           className={styles.removeButton}
+          data-test="AllocationItem__removeButton"
           onClick={onRemoveAllocationElement}
           style={{ scale: removeButtonScaleTransform }}
         >
@@ -243,6 +245,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
               ref={inputRef}
               className={cx(styles.input, isEpoch1 && styles.isEpoch1, isError && styles.isError)}
               error={isError}
+              inputMode="decimal"
               isDisabled={
                 !isConnected || !individualReward || !isDecisionWindowOpen || isThereAnyError
               }

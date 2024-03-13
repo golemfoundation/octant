@@ -37,7 +37,9 @@ export default function useAppConnectManager(
   const [currentAddressLocal, setCurrentAddressLocal] = useState<string | null>(null);
   const [syncStatusLocal, setSyncStatusLocal] = useState<Response | null>(null);
 
-  const isSyncingInProgress = syncStatusLocal?.pendingSnapshot === 'in_progress';
+  const [isTimeDifferenceBelowZero, setIsTimeDifferenceBelowZero] = useState(false);
+  const isSyncingInProgress =
+    syncStatusLocal?.pendingSnapshot === 'in_progress' || isTimeDifferenceBelowZero;
 
   const { refetch: refetchAvailableFundsEth } = useAvailableFundsEth();
   const { refetch: refetchAvailableFundsGlm } = useAvailableFundsGlm();
@@ -164,12 +166,7 @@ export default function useAppConnectManager(
   }, [isFlushRequired, setIsFlushRequired, queryClient]);
 
   useEffect(() => {
-    if (
-      isDecisionWindowOpen === undefined ||
-      !timeCurrentAllocationEnd ||
-      !timeCurrentEpochEnd ||
-      isFlushRequired
-    ) {
+    if (isDecisionWindowOpen === undefined || !timeCurrentAllocationEnd || !timeCurrentEpochEnd) {
       return;
     }
     const timestamp = isDecisionWindowOpen ? timeCurrentAllocationEnd : timeCurrentEpochEnd;
@@ -177,8 +174,10 @@ export default function useAppConnectManager(
     const timeToChangeAllocationWindowStatusIntervalId = setInterval(() => {
       const timeDifference = Math.ceil(timestamp - Date.now());
       if (timeDifference <= 0) {
-        clearInterval(timeToChangeAllocationWindowStatusIntervalId);
+        setIsTimeDifferenceBelowZero(true);
         setIsFlushRequired(true);
+      } else {
+        setIsTimeDifferenceBelowZero(false);
       }
     }, 1000);
 

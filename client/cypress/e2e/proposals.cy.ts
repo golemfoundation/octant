@@ -83,7 +83,10 @@ function addProposalToAllocate(index, numberOfAddedProposals): Chainable<any> {
     .find('path')
     .then($el => $el.css('stroke'))
     .should('be.colored', '#FF6157');
-  return cy.get('[data-test=Navbar__numberOfAllocations]').contains(numberOfAddedProposals + 1);
+  cy.get('[data-test=Navbar__numberOfAllocations]').contains(numberOfAddedProposals + 1);
+  visitWithLoader(ROOT_ROUTES.allocation.absolute);
+  cy.get('[data-test=AllocationItem]').should('have.length', numberOfAddedProposals + 1);
+  return cy.go('back');
 }
 
 function removeProposalFromAllocate(
@@ -99,10 +102,14 @@ function removeProposalFromAllocate(
     .eq(index)
     .find('[data-test=ProposalsListItem__ButtonAddToAllocate]')
     .click();
+  visitWithLoader(ROOT_ROUTES.allocation.absolute);
+  cy.get('[data-test=AllocationItem]').should('have.length', numberOfAddedProposals - 1);
   if (index < numberOfProposals - 1) {
-    return cy.get('[data-test=Navbar__numberOfAllocations]').contains(numberOfAddedProposals - 1);
+    cy.get('[data-test=Navbar__numberOfAllocations]').contains(numberOfAddedProposals - 1);
+  } else {
+    cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
   }
-  return cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
+  return cy.go('back');
 }
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
@@ -141,38 +148,57 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       removeProposalFromAllocate(proposalNames.length, 1, proposalNames.length - 1);
     });
 
-    it('ProposalsTimelineWidgetItem with href opens link when clicked without mouse movement', () => {
-      const milestones = getMilestones();
-      cy.get('[data-test=ProposalsTimelineWidget]').should('be.visible');
-      cy.get('[data-test=ProposalsTimelineWidgetItem]').should('have.length', milestones.length);
-      for (let i = 0; i < milestones.length; i++) {
-        if (milestones[i].href) {
-          cy.get('[data-test=ProposalsTimelineWidgetItem]')
-            .eq(i)
-            .within(() => {
-              cy.get('[data-test=ProposalsTimelineWidgetItem__Svg--arrowTopRight]').should(
-                'be.visible',
-              );
-            });
+    it('user is able to add project to allocation in ProjectsView and remove it from allocation in AllocationView', () => {
+      cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
+      addProposalToAllocate(0, 0);
+      visitWithLoader(ROOT_ROUTES.allocation.absolute);
+      cy.get('[data-test=AllocationItemSkeleton]').should('not.exist');
+      cy.get('[data-test=AllocationItem]').then(el => {
+        const { x } = el[0].getBoundingClientRect();
+        cy.get('[data-test=AllocationItem]')
+          .trigger('pointerdown')
+          .trigger('pointermove', { pageX: x - 20 })
+          .trigger('pointerup');
+        cy.get('[data-test=AllocationItem__removeButton]').should('be.visible');
+        cy.get('[data-test=AllocationItem__removeButton]').click();
+        cy.get('[data-test=AllocationItem__removeButton]').should('not.exist');
+        cy.get('[data-test=AllocationItem]').should('not.exist');
+        cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
+      });
 
-          cy.get('[data-test=ProposalsTimelineWidgetItem]')
-            .eq(i)
-            .then(el => {
-              const { x } = el[0].getBoundingClientRect();
-              cy.get('[data-test=ProposalsTimelineWidgetItem]')
-                .eq(i)
-                .trigger('mousedown')
-                .trigger('mouseup', { clientX: x + 10 });
-              cy.location('pathname').should('eq', ROOT_ROUTES.proposals.absolute);
+      it('ProposalsTimelineWidgetItem with href opens link when clicked without mouse movement', () => {
+        const milestones = getMilestones();
+        cy.get('[data-test=ProposalsTimelineWidget]').should('be.visible');
+        cy.get('[data-test=ProposalsTimelineWidgetItem]').should('have.length', milestones.length);
+        for (let i = 0; i < milestones.length; i++) {
+          if (milestones[i].href) {
+            cy.get('[data-test=ProposalsTimelineWidgetItem]')
+              .eq(i)
+              .within(() => {
+                cy.get('[data-test=ProposalsTimelineWidgetItem__Svg--arrowTopRight]').should(
+                  'be.visible',
+                );
+              });
 
-              cy.get('[data-test=ProposalsTimelineWidgetItem]')
-                .eq(i)
-                .trigger('mousedown')
-                .trigger('mouseup');
-              cy.location('pathname').should('not.eq', ROOT_ROUTES.proposals.absolute);
-            });
+            cy.get('[data-test=ProposalsTimelineWidgetItem]')
+              .eq(i)
+              .then(el => {
+                const { x } = el[0].getBoundingClientRect();
+                cy.get('[data-test=ProposalsTimelineWidgetItem]')
+                  .eq(i)
+                  .trigger('mousedown')
+                  .trigger('mouseup', { clientX: x + 10 });
+                cy.location('pathname').should('eq', ROOT_ROUTES.proposals.absolute);
+
+                cy.get('[data-test=ProposalsTimelineWidgetItem]')
+                  .eq(i)
+                  .trigger('mousedown')
+                  .trigger('mouseup');
+                cy.location('pathname').should('not.eq', ROOT_ROUTES.proposals.absolute);
+              });
+          }
         }
-      }
+      });
     });
   });
 

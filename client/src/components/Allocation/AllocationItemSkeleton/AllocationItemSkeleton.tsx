@@ -5,7 +5,7 @@ import styles from './AllocationItemSkeleton.module.scss';
 import AllocationItemSkeletonProps from './types';
 
 const AllocationItemSkeleton: FC<AllocationItemSkeletonProps> = ({ className }) => (
-  <div className={cx(styles.root, className)}>
+  <div className={cx(styles.root, className)} data-test="AllocationItemSkeleton">
     <div className={styles.column1}>
       <div className={styles.row}>
         <div className={styles.circle} />
