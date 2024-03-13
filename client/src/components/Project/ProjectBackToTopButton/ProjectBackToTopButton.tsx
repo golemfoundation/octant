@@ -21,7 +21,7 @@ const ProjectBackToTopButton = (): ReactElement => {
     >
       <Button
         className={styles.backToTop}
-        dataTest="ProposalBackToTopButton__Button"
+        dataTest="ProjectBackToTopButton__Button"
         onClick={() => {
           window.scrollTo({ behavior: 'smooth', top: 0 });
         }}

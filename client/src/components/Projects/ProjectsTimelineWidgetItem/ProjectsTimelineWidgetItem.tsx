@@ -55,7 +55,7 @@ const ProjectsTimelineWidgetItem: FC<ProjectsTimelineWidgetItemProps> = ({
         {href && (
           <Svg
             classNameSvg={styles.arrowTopRight}
-            dataTest="ProposalsTimelineWidgetItem__Svg--arrowTopRight"
+            dataTest="ProjectsTimelineWidgetItem__Svg--arrowTopRight"
             img={arrowTopRight}
             size={0.8}
           />

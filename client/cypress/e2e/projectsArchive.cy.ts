@@ -7,7 +7,7 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 let wasEpochMoved = false;
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
-  describe(`proposals archive: ${device}`, { viewportHeight, viewportWidth }, () => {
+  describe(`projects archive: ${device}`, { viewportHeight, viewportWidth }, () => {
     beforeEach(() => {
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
@@ -37,7 +37,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=MainLayout__body]').then(el => {
         const mainLayoutPaddingTop = parseInt(el.css('paddingTop'), 10);
 
-        cy.get('[data-test=ProposalsView__ProposalsList]')
+        cy.get('[data-test=ProjectsView__ProjectsList]')
           .should('be.visible')
           .children()
           .then(children => {
@@ -45,50 +45,46 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
             cy.window().then(window => window.scrollTo(0, window.scrollY - mainLayoutPaddingTop));
             cy.wait(1000);
             // header test
-            cy.get('[data-test=ProposalsView__ProposalsList__header--archive]').should(
-              'be.visible',
-            );
+            cy.get('[data-test=ProjectsView__ProjectsList__header--archive]').should('be.visible');
 
             // list test
-            cy.get('[data-test=ProposalsView__ProposalsList--archive]')
-              .first()
-              .should('be.visible');
-            cy.get('[data-test=ProposalsView__ProposalsList--archive]')
+            cy.get('[data-test=ProjectsView__ProjectsList--archive]').first().should('be.visible');
+            cy.get('[data-test=ProjectsView__ProjectsList--archive]')
               .first()
               .children()
               .then(childrenArchive => {
-                const numberOfArchivedProposals = childrenArchive.length - 2; // archived proposals tiles - (header + divider)[2]
-                for (let i = 0; i < numberOfArchivedProposals; i++) {
-                  cy.get(`[data-test=ProposalsView__ProposalsListItem--archive--${i}]`)
+                const numberOfArchivedProjects = childrenArchive.length - 2; // archived projects tiles - (header + divider)[2]
+                for (let i = 0; i < numberOfArchivedProjects; i++) {
+                  cy.get(`[data-test=ProjectsView__ProjectsListItem--archive--${i}]`)
                     .first()
                     .scrollIntoView();
                   cy.window().then(window =>
                     window.scrollTo(0, window.scrollY - mainLayoutPaddingTop),
                   );
                   // list item test
-                  cy.get(`[data-test=ProposalsView__ProposalsListItem--archive--${i}]`)
+                  cy.get(`[data-test=ProjectsView__ProjectsListItem--archive--${i}]`)
                     .first()
                     .should('be.visible')
                     .within(() => {
                       // rewards test
-                      cy.get('[data-test=ProposalRewards]').should('be.visible');
+                      cy.get('[data-test=ProjectRewards]').should('be.visible');
                     });
 
-                  if (numberOfArchivedProposals - 1) {
-                    cy.get('[data-test=ProposalsView__ProposalsList--archive]')
+                  if (numberOfArchivedProjects - 1) {
+                    cy.get('[data-test=ProjectsView__ProjectsList--archive]')
                       .first()
                       .should('have.length', 1);
                   }
 
-                  cy.get(`[data-test=ProposalsView__ProposalsListItem--archive--${i}]`)
+                  cy.get(`[data-test=ProjectsView__ProjectsListItem--archive--${i}]`)
                     .first()
                     .invoke('data', 'address')
                     .then(address => {
-                      cy.get(`[data-test=ProposalsView__ProposalsListItem--archive--${i}]`)
+                      cy.get(`[data-test=ProjectsView__ProjectsListItem--archive--${i}]`)
                         .first()
                         .invoke('data', 'epoch')
                         .then(epoch => {
-                          cy.get(`[data-test=ProposalsView__ProposalsListItem--archive--${i}]`)
+                          cy.get(`[data-test=ProjectsView__ProjectsListItem--archive--${i}]`)
                             .first()
                             .click();
                           checkLocationWithLoader(

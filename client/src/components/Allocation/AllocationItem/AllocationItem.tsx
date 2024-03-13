@@ -228,7 +228,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
             <div className={styles.projectData}>
               <Img
                 className={styles.image}
-                dataTest="ProposalItem__imageProfile"
+                dataTest="ProjectItem__imageProfile"
                 sources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
               />
               <div className={styles.nameAndRewards}>

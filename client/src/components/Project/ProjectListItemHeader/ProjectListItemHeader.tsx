@@ -81,7 +81,7 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
       <div className={styles.imageProfileWrapper}>
         <Img
           className={styles.imageProfile}
-          dataTest="ProposalListItemHeader__Img"
+          dataTest="ProjectListItemHeader__Img"
           sources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
         />
         <div className={styles.actionsWrapper}>
@@ -101,7 +101,7 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
           {((isAllocatedTo && isArchivedProposal) || !isArchivedProposal) && (
             <ButtonAddToAllocate
               className={styles.buttonAddToAllocate}
-              dataTest="ProposalListItemHeader__ButtonAddToAllocate"
+              dataTest="ProjectListItemHeader__ButtonAddToAllocate"
               isAddedToAllocate={allocations.includes(address)}
               isAllocatedTo={isAllocatedTo}
               isArchivedProposal={isArchivedProposal}
@@ -115,7 +115,7 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
       </span>
       <Button
         className={styles.buttonWebsite}
-        dataTest="ProposalListItemHeader__Button"
+        dataTest="ProjectListItemHeader__Button"
         href={website!.url}
         variant="link5"
       >

@@ -1,5 +1,5 @@
 import { connectWallet, mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
-import { getNamesOfProposals } from 'cypress/utils/proposals';
+import { getNamesOfProjects } from 'cypress/utils/projects';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
@@ -7,64 +7,61 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import Chainable = Cypress.Chainable;
 
 const getButtonAddToAllocate = (): Chainable<any> => {
-  const proposalView = cy.get('[data-test=ProposalListItem').first();
+  const proposalView = cy.get('[data-test=ProjectListItem').first();
 
-  return proposalView.find('[data-test=ProposalListItemHeader__ButtonAddToAllocate]');
+  return proposalView.find('[data-test=ProjectListItemHeader__ButtonAddToAllocate]');
 };
 
-const checkProposalItemElements = (): Chainable<any> => {
-  cy.get('[data-test^=ProposalsView__ProposalsListItem').first().click();
-  const proposalView = cy.get('[data-test=ProposalListItem').first();
-  proposalView.get('[data-test=ProposalListItemHeader__Img]').should('be.visible');
-  proposalView.get('[data-test=ProposalListItemHeader__name]').should('be.visible');
+const checkProjectItemElements = (): Chainable<any> => {
+  cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
+  const proposalView = cy.get('[data-test=ProjectListItem').first();
+  proposalView.get('[data-test=ProjectListItemHeader__Img]').should('be.visible');
+  proposalView.get('[data-test=ProjectListItemHeader__name]').should('be.visible');
   getButtonAddToAllocate().should('be.visible');
-  proposalView.get('[data-test=ProposalListItemHeader__Button]').should('be.visible');
-  proposalView.get('[data-test=ProposalListItem__Description]').should('be.visible');
+  proposalView.get('[data-test=ProjectListItemHeader__Button]').should('be.visible');
+  proposalView.get('[data-test=ProjectListItem__Description]').should('be.visible');
 
-  cy.get('[data-test=ProposalListItem__ProjectDonors]')
+  cy.get('[data-test=ProjectListItem__ProjectDonors]')
     .first()
     .scrollIntoView({ offset: { left: 0, top: 100 } });
 
-  cy.get('[data-test=ProposalListItem__ProjectDonors]').first().should('be.visible');
-  cy.get('[data-test=ProposalListItem__Donors__DonorsHeader__count]')
+  cy.get('[data-test=ProjectListItem__ProjectDonors]').first().should('be.visible');
+  cy.get('[data-test=ProjectListItem__Donors__DonorsHeader__count]')
     .first()
     .should('be.visible')
     .should('have.text', '0');
-  return cy
-    .get('[data-test=ProposalListItem__Donors__noDonationsYet]')
-    .first()
-    .should('be.visible');
+  return cy.get('[data-test=ProjectListItem__Donors__noDonationsYet]').first().should('be.visible');
 };
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
-  describe(`proposal: ${device}`, { viewportHeight, viewportWidth }, () => {
-    let proposalNames: string[] = [];
+  describe(`project: ${device}`, { viewportHeight, viewportWidth }, () => {
+    let projectNames: string[] = [];
 
     beforeEach(() => {
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
-      cy.get('[data-test^=ProposalItemSkeleton').should('not.exist');
+      cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
 
       /**
        * This could be done in before hook, but CY wipes the state after each test
        * (could be disabled, but creates other problems)
        */
-      if (proposalNames.length === 0) {
-        proposalNames = getNamesOfProposals();
+      if (projectNames.length === 0) {
+        projectNames = getNamesOfProjects();
       }
     });
 
     it('entering proposal view directly renders content', () => {
-      cy.get('[data-test^=ProposalsView__ProposalsListItem').first().click();
+      cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
       cy.reload();
-      const proposalView = cy.get('[data-test=ProposalListItem').first();
-      proposalView.get('[data-test=ProposalListItemHeader__Img]').should('be.visible');
-      proposalView.get('[data-test=ProposalListItemHeader__name]').should('be.visible');
+      const proposalView = cy.get('[data-test=ProjectListItem').first();
+      proposalView.get('[data-test=ProjectListItemHeader__Img]').should('be.visible');
+      proposalView.get('[data-test=ProjectListItemHeader__name]').should('be.visible');
     });
 
     it('entering proposal view renders all its elements', () => {
-      checkProposalItemElements();
+      checkProjectItemElements();
     });
 
     it('entering proposal view renders all its elements with fallback IPFS provider', () => {
@@ -74,7 +71,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         }
       });
 
-      checkProposalItemElements();
+      checkProjectItemElements();
     });
 
     it('entering proposal view shows Toast with info about IPFS failure when all providers fail', () => {
@@ -86,7 +83,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('entering proposal view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar', () => {
-      cy.get('[data-test^=ProposalsView__ProposalsListItem').first().click();
+      cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
 
       getButtonAddToAllocate().click();
 
@@ -97,18 +94,18 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('Entering proposal view allows scroll only to the last project', () => {
-      cy.get('[data-test^=ProposalsView__ProposalsListItem]').first().click();
+      cy.get('[data-test^=ProjectsView__ProjectsListItem]').first().click();
 
-      for (let i = 0; i < proposalNames.length; i++) {
-        cy.get('[data-test=ProposalListItem]').should(
+      for (let i = 0; i < projectNames.length; i++) {
+        cy.get('[data-test=ProjectListItem]').should(
           'have.length.greaterThan',
-          i === proposalNames.length - 1 ? proposalNames.length - 1 : i,
+          i === projectNames.length - 1 ? projectNames.length - 1 : i,
         );
-        cy.get('[data-test=ProposalListItemHeader__name]')
+        cy.get('[data-test=ProjectListItemHeader__name]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: -150 } })
-          .contains(proposalNames[i]);
-        cy.get('[data-test=ProposalListItem__ProjectDonors]')
+          .contains(projectNames[i]);
+        cy.get('[data-test=ProjectListItem__ProjectDonors]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: -150 } })
           .should('be.visible');
@@ -116,37 +113,37 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('"Back to top" button is displayed if the user has scrolled past the start of the final project description', () => {
-      cy.get('[data-test^=ProposalsView__ProposalsListItem]').first().click();
+      cy.get('[data-test^=ProjectsView__ProjectsListItem]').first().click();
 
-      for (let i = 0; i < proposalNames.length - 1; i++) {
-        cy.get('[data-test=ProposalListItem__ProjectDonors]')
+      for (let i = 0; i < projectNames.length - 1; i++) {
+        cy.get('[data-test=ProjectListItem__ProjectDonors]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: 100 } });
 
-        if (i === proposalNames.length - 1) {
-          cy.get('[data-test=ProposalBackToTopButton__Button]').should('be.visible');
+        if (i === projectNames.length - 1) {
+          cy.get('[data-test=ProjectBackToTopButton__Button]').should('be.visible');
         }
       }
     });
 
     it('Clicking on "Back to top" button scrolls to the top of view (first project is visible)', () => {
-      cy.get('[data-test^=ProposalsView__ProposalsListItem]').first().click();
+      cy.get('[data-test^=ProjectsView__ProjectsListItem]').first().click();
 
-      for (let i = 0; i < proposalNames.length - 1; i++) {
-        cy.get('[data-test=ProposalListItem__ProjectDonors]')
+      for (let i = 0; i < projectNames.length - 1; i++) {
+        cy.get('[data-test=ProjectListItem__ProjectDonors]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: 100 } });
 
-        if (i === proposalNames.length - 1) {
-          cy.get('[data-test=ProposalBackToTopButton__Button]').click();
-          cy.get('[data-test=ProposalListItem]').eq(0).should('be.visible');
+        if (i === projectNames.length - 1) {
+          cy.get('[data-test=ProjectBackToTopButton__Button]').click();
+          cy.get('[data-test=ProjectListItem]').eq(0).should('be.visible');
         }
       }
     });
   });
 
   describe(`proposal (patron mode): ${device}`, { viewportHeight, viewportWidth }, () => {
-    let proposalNames: string[] = [];
+    let projectNames: string[] = [];
 
     before(() => {
       /**
@@ -162,20 +159,20 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
       connectWallet(true, true);
-      cy.get('[data-test^=ProposalItemSkeleton').should('not.exist');
+      cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
 
       /**
        * This could be done in before hook, but CY wipes the state after each test
        * (could be disabled, but creates other problems)
        */
-      if (proposalNames.length === 0) {
-        proposalNames = getNamesOfProposals();
+      if (projectNames.length === 0) {
+        projectNames = getNamesOfProjects();
       }
     });
 
     it('button "add to allocate" is disabled', () => {
-      for (let i = 0; i < proposalNames.length; i++) {
-        cy.get('[data-test^=ProposalsView__ProposalsListItem]').eq(i).click();
+      for (let i = 0; i < projectNames.length; i++) {
+        cy.get('[data-test^=ProjectsView__ProjectsListItem]').eq(i).click();
         getButtonAddToAllocate().should('be.visible').should('be.disabled');
         cy.go('back');
       }

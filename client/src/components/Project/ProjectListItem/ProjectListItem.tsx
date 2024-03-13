@@ -41,12 +41,12 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
           totalValueOfAllocations={totalValueOfAllocations}
         />
         <Description
-          dataTest="ProposalListItem__Description"
+          dataTest="ProjectListItem__Description"
           innerHtml={decodedDescription}
           variant="big"
         />
       </div>
-      <ProjectDonors dataTest="ProposalListItem__ProjectDonors" proposalAddress={address} />
+      <ProjectDonors dataTest="ProjectListItem__ProjectDonors" proposalAddress={address} />
     </Fragment>
   );
 };

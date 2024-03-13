@@ -28,7 +28,7 @@ const ProjectsList: FC<ProposalsListProps> = ({
   return (
     <div
       className={styles.list}
-      data-test={epoch ? 'ProposalsView__ProposalsList--archive' : 'ProposalsView__ProposalsList'}
+      data-test={epoch ? 'ProposalsView__ProjectsList--archive' : 'ProposalsView__ProjectsList'}
     >
       {epoch && (
         <>
@@ -37,7 +37,7 @@ const ProjectsList: FC<ProposalsListProps> = ({
           )}
           <div
             className={styles.epochArchive}
-            data-test="ProposalsView__ProposalsList__header--archive"
+            data-test="ProposalsView__ProjectsList__header--archive"
           >
             {t('epochArchive', { epoch })}
             <span
@@ -58,8 +58,8 @@ const ProjectsList: FC<ProposalsListProps> = ({
               className={styles.element}
               dataTest={
                 epoch
-                  ? `ProposalsView__ProposalsListItem--archive--${index}`
-                  : `ProposalsView__ProposalsListItem--${index}`
+                  ? `ProposalsView__ProjectsListItem--archive--${index}`
+                  : `ProposalsView__ProjectsListItem--${index}`
               }
               epoch={epoch}
               proposalIpfsWithRewards={proposalIpfsWithRewards}

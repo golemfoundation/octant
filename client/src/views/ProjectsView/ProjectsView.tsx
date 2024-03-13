@@ -76,11 +76,11 @@ const ProjectsView = (): ReactElement => {
   }, [loadedArchivedEpochsNumber]);
 
   return (
-    <Layout dataTest="ProposalsView">
+    <Layout dataTest="ProjectsView">
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
         <TipTile
           className={styles.tip}
-          dataTest="ProposalsView__TipTile"
+          dataTest="ProjectsView__TipTile"
           image="images/favourites.webp"
           infoLabel={i18n.t('common.gettingStarted')}
           isOpen={isAddToFavouritesTipVisible}

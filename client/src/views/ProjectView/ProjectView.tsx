@@ -139,13 +139,13 @@ const ProjectView = (): ReactElement => {
   }
 
   return (
-    <Layout classNameBody={styles.mainLayoutBody} dataTest="ProposalView">
+    <Layout classNameBody={styles.mainLayoutBody} dataTest="ProjectView">
       <InfiniteScroll
         hasMore={loadedProposals?.length !== proposalsIpfsWithRewards?.length}
         initialLoad
         loader={
           <div key={-1} className={styles.loaderWrapper}>
-            <Loader dataTest="ProposalView__Loader" />
+            <Loader dataTest="ProjectView__Loader" />
           </div>
         }
         loadMore={onLoadNextProposal}
