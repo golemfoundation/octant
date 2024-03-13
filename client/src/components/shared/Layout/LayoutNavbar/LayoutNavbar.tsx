@@ -7,7 +7,7 @@ import { useAccount } from 'wagmi';
 import Button from 'components/ui/Button';
 import Svg from 'components/ui/Svg';
 import { ELEMENT_POSITION_FIXED_CLASSNAME } from 'constants/css';
-import { WINDOW_PROPOSALS_SCROLL_Y } from 'constants/window';
+import { WINDOW_PROJECTS_SCROLL_Y } from 'constants/window';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useUserTOS from 'hooks/queries/useUserTOS';
@@ -72,7 +72,7 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix, tabs }) =
                   if (location.pathname !== ROOT_ROUTES.projects.absolute) {
                     return;
                   }
-                  window[WINDOW_PROPOSALS_SCROLL_Y] = window.scrollY;
+                  window[WINDOW_PROJECTS_SCROLL_Y] = window.scrollY;
                 }}
                 to={to}
                 variant="iconVertical"

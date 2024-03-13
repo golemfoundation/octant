@@ -1,7 +1,7 @@
 import getValidatedProjectsFromLocalStorage from './getValidatedProjectsFromLocalStorage';
 
 describe('getValidatedProjectsFromLocalStorage', () => {
-  it('properly validates proposals in local storage against those provided from backend', () => {
+  it('properly validates projects in local storage against those provided from backend', () => {
     expect(
       getValidatedProjectsFromLocalStorage(['1', '2', '3', '4'], ['1', '2', '3', '4', '5']),
     ).toEqual(['1', '2', '3', '4']);

@@ -2,12 +2,12 @@ import cx from 'classnames';
 import React, { FC, Fragment, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import ProposalItemSkeleton from 'components/Projects/ProjectsListSkeletonItem/ProjectsListSkeletonItem';
+import ProjectsListSkeletonItem from 'components/Projects/ProjectsListSkeletonItem/ProjectsListSkeletonItem';
 import ButtonAddToAllocate from 'components/shared/ButtonAddToAllocate';
 import Rewards from 'components/shared/Rewards';
 import Description from 'components/ui/Description';
 import Img from 'components/ui/Img';
-import { WINDOW_PROPOSALS_SCROLL_Y } from 'constants/window';
+import { WINDOW_PROJECTS_SCROLL_Y } from 'constants/window';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -78,7 +78,7 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
         isLoadingError
           ? () => {}
           : () => {
-              window[WINDOW_PROPOSALS_SCROLL_Y] = window.scrollY;
+              window[WINDOW_PROJECTS_SCROLL_Y] = window.scrollY;
               navigate(
                 `${ROOT_ROUTES.project.absolute}/${
                   epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch)
@@ -88,16 +88,14 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
       }
     >
       {isLoadingError ? (
-        <ProposalItemSkeleton />
+        <ProjectsListSkeletonItem />
       ) : (
         <Fragment>
           <div className={styles.header}>
             <Img
               className={styles.imageProfile}
               dataTest={
-                epoch
-                  ? 'ProposalsListItem__imageProfile--archive'
-                  : 'ProposalsListItem__imageProfile'
+                epoch ? 'ProjectsListItem__imageProfile--archive' : 'ProjectsListItem__imageProfile'
               }
               sources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
             />
@@ -106,8 +104,8 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
                 className={styles.button}
                 dataTest={
                   epoch
-                    ? 'ProposalsListItem__ButtonAddToAllocate--archive'
-                    : 'ProposalsListItem__ButtonAddToAllocate'
+                    ? 'ProjectsListItem__ButtonAddToAllocate--archive'
+                    : 'ProjectsListItem__ButtonAddToAllocate'
                 }
                 isAddedToAllocate={isAddedToAllocate}
                 isAllocatedTo={isAllocatedTo}
@@ -119,7 +117,7 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
           <div className={styles.body}>
             <div
               className={styles.name}
-              data-test={epoch ? 'ProposalsListItem__name--archive' : 'ProposalsListItem__name'}
+              data-test={epoch ? 'ProjectsListItem__name--archive' : 'ProjectsListItem__name'}
             >
               {name}
             </div>
@@ -127,8 +125,8 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
               className={styles.introDescription}
               dataTest={
                 epoch
-                  ? 'ProposalsListItem__IntroDescription--archive'
-                  : 'ProposalsListItem__IntroDescription'
+                  ? 'ProjectsListItem__IntroDescription--archive'
+                  : 'ProjectsListItem__IntroDescription'
               }
               text={introDescription!}
             />

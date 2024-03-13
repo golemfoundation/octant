@@ -46,7 +46,7 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
           variant="big"
         />
       </div>
-      <ProjectDonors dataTest="ProjectListItem__ProjectDonors" projectAddress={address} />
+      <ProjectDonors dataTest="ProjectListItem__Donors" projectAddress={address} />
     </Fragment>
   );
 };

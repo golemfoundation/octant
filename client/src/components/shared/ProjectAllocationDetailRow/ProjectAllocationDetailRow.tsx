@@ -26,13 +26,13 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({
     },
   }));
   const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
-  const { data: projectIpfs, isFetching: isFetchingProposalIpfs } = useProjectsIpfs(
+  const { data: projectIpfs, isFetching: isFetchingProjectIpfs } = useProjectsIpfs(
     [address],
     epoch,
   );
   return (
     <div className={styles.root}>
-      {isFetchingProposalIpfs ? (
+      {isFetchingProjectIpfs ? (
         <div className={styles.skeleton} />
       ) : (
         <Fragment>

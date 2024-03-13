@@ -149,7 +149,7 @@ const AllocationView = (): ReactElement => {
       return;
     }
     const percentageProportionsNew = allocationValuesNew.reduce((acc, curr) => {
-      const valueAsPercentageOfRewardsForProposals = ['0', ''].includes(curr.value) // 0 from the user, empty when removed entirely.
+      const valueAsPercentageOfRewardsForProjects = ['0', ''].includes(curr.value) // 0 from the user, empty when removed entirely.
         ? '0'
         : (
             (parseFloat(curr.value.toString()) * 100) /
@@ -157,7 +157,7 @@ const AllocationView = (): ReactElement => {
           ).toFixed();
       return {
         ...acc,
-        [curr.address]: valueAsPercentageOfRewardsForProposals,
+        [curr.address]: valueAsPercentageOfRewardsForProjects,
       };
     }, {});
     setPercentageProportions(percentageProportionsNew);

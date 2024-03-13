@@ -23,7 +23,7 @@ export default function getSortedElementsByTotalValueOfAllocationsAndAlphabetica
       { totalValueOfAllocations: totalValueOfAllocationsB, name: nameB },
     ) => {
       /**
-       * When added during current epoch proposals do not have totalValueOfAllocations defined.
+       * When added during current epoch projects do not have totalValueOfAllocations defined.
        * In such case, do not sort them, leaving them at the end of the list.
        */
       if (!totalValueOfAllocationsA && totalValueOfAllocationsB) {

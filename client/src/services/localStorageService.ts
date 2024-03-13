@@ -123,7 +123,7 @@ const LocalStorageService = () => {
       tipsStoreInitialState.wasWithdrawAlreadyClosed,
     );
 
-  const validateRewardsForProposals = (): void => validateBigInt(ALLOCATION_REWARDS_FOR_PROJECTS);
+  const validateRewardsForProjects = (): void => validateBigInt(ALLOCATION_REWARDS_FOR_PROJECTS);
 
   const init = (): void => {
     validateLocalStorageJsons();
@@ -137,7 +137,7 @@ const LocalStorageService = () => {
     validateWasLockGLMAlreadyClosed();
     validateWasRewardsAlreadyClosed();
     validateWasWithdrawAlreadyClosed();
-    validateRewardsForProposals();
+    validateRewardsForProjects();
   };
 
   return {

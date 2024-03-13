@@ -6,8 +6,8 @@ import {
 } from '@tanstack/react-query';
 
 import {
-  apiGetMatchedProposalRewards,
-  apiGetEstimatedMatchedProposalRewards,
+  apiGetMatchedProjectRewards,
+  apiGetEstimatedMatchedProjectRewards,
   Response as ApiResponse,
 } from 'api/calls/rewards';
 import { QUERY_KEYS } from 'api/queryKeys';
@@ -20,7 +20,7 @@ import useIsDecisionWindowOpen from './useIsDecisionWindowOpen';
 
 type Response = ApiResponse;
 
-export type ProposalRewards = {
+export type ProjectRewards = {
   address: string;
   allocated: bigint;
   matched: bigint;
@@ -28,7 +28,7 @@ export type ProposalRewards = {
   sum: bigint;
 };
 
-function parseResponse(response: Response): ProposalRewards[] {
+function parseResponse(response: Response): ProjectRewards[] {
   const totalDonations = response?.rewards.reduce(
     (acc, { allocated, matched }) =>
       acc + parseUnitsBigInt(allocated, 'wei') + parseUnitsBigInt(matched, 'wei'),
@@ -53,8 +53,8 @@ function parseResponse(response: Response): ProposalRewards[] {
 
 export default function useMatchedProjectRewards(
   epoch?: number,
-  options?: UseQueryOptions<Response, unknown, ProposalRewards[], any>,
-): UseQueryResult<ProposalRewards[], unknown> {
+  options?: UseQueryOptions<Response, unknown, ProjectRewards[], any>,
+): UseQueryResult<ProjectRewards[], unknown> {
   // const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
@@ -81,10 +81,10 @@ export default function useMatchedProjectRewards(
       ((epoch !== undefined && epoch > 0) || (!!currentEpoch && currentEpoch > 1)),
     queryFn: () => {
       if (epoch) {
-        return apiGetMatchedProposalRewards(epoch);
+        return apiGetMatchedProjectRewards(epoch);
       }
       if (isDecisionWindowOpen) {
-        return apiGetEstimatedMatchedProposalRewards();
+        return apiGetEstimatedMatchedProjectRewards();
       }
       /**
        * During currentEpoch and outside allocation window projects do not have matchedProjectRewards.

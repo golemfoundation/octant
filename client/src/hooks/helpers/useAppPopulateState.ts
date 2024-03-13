@@ -75,12 +75,12 @@ export default function useAppPopulateState(): void {
       return;
     }
 
-    const validatedProposalsInLocalStorage = getValidatedProjectsFromLocalStorage(
+    const validatedProjectsInLocalStorage = getValidatedProjectsFromLocalStorage(
       localStorageAllocationItems,
       projects,
     );
-    if (validatedProposalsInLocalStorage) {
-      setAllocations(validatedProposalsInLocalStorage);
+    if (validatedProjectsInLocalStorage) {
+      setAllocations(validatedProjectsInLocalStorage);
     }
   }, [
     allocations,

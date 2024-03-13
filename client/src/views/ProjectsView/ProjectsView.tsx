@@ -8,8 +8,8 @@ import Layout from 'components/shared/Layout';
 import TipTile from 'components/shared/TipTile';
 import Loader from 'components/ui/Loader';
 import {
-  WINDOW_PROPOSALS_SCROLL_Y,
-  WINDOW_PROPOSALS_LOADED_ARCHIVED_EPOCHS_NUMBER,
+  WINDOW_PROJECTS_SCROLL_Y,
+  WINDOW_PROJECTS_LOADED_ARCHIVED_EPOCHS_NUMBER,
 } from 'constants/window';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -38,7 +38,7 @@ const ProjectsView = (): ReactElement => {
 
   const [loadedArchivedEpochsNumber, setLoadedArchivedEpochsNumber] = useState(() => {
     const projectsLoadedArchivedEpochsNumber =
-      window[WINDOW_PROPOSALS_LOADED_ARCHIVED_EPOCHS_NUMBER];
+      window[WINDOW_PROJECTS_LOADED_ARCHIVED_EPOCHS_NUMBER];
 
     return projectsLoadedArchivedEpochsNumber ?? 0;
   });
@@ -61,7 +61,7 @@ const ProjectsView = (): ReactElement => {
   const onLoadNextEpochArchive = () => setLoadedArchivedEpochsNumber(prev => prev + 1);
 
   useLayoutEffect(() => {
-    const projectsScrollY = window[WINDOW_PROPOSALS_SCROLL_Y];
+    const projectsScrollY = window[WINDOW_PROJECTS_SCROLL_Y];
     if (!projectsScrollY) {
       return;
     }
@@ -71,7 +71,7 @@ const ProjectsView = (): ReactElement => {
 
   useEffect(() => {
     return () => {
-      window[WINDOW_PROPOSALS_LOADED_ARCHIVED_EPOCHS_NUMBER] = loadedArchivedEpochsNumber;
+      window[WINDOW_PROJECTS_LOADED_ARCHIVED_EPOCHS_NUMBER] = loadedArchivedEpochsNumber;
     };
   }, [loadedArchivedEpochsNumber]);
 

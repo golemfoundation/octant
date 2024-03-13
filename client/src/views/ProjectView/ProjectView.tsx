@@ -25,7 +25,7 @@ const ProjectView = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.project' });
   const [isBackToTopButtonVisible, setIsBackToTopButtonVisible] = useState(false);
   const { projectAddress: projectAddressUrl, epoch: epochUrl } = useParams();
-  const [loadedProjects, setLoadedProposals] = useState<ProjectIpfsWithRewards[]>([]);
+  const [loadedProjects, setLoadedProjects] = useState<ProjectIpfsWithRewards[]>([]);
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow } =
     useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow();
@@ -38,12 +38,12 @@ const ProjectView = (): ReactElement => {
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards(epoch);
 
   const isEpoch1 = currentEpoch === 1;
-  const areMatchedProposalsReady =
+  const areMatchedProjectsReady =
     !!currentEpoch &&
     ((currentEpoch > 1 && matchedProjectRewards) || isEpoch1 || !isDecisionWindowOpen);
   const initialElement = loadedProjects[0] || {};
 
-  const onLoadNextProposal = () => {
+  const onLoadNextProject = () => {
     if (!loadedProjects.length || !projectsIpfsWithRewards.length) {
       return;
     }
@@ -56,7 +56,7 @@ const ProjectView = (): ReactElement => {
     const nextItem = projectsIpfsWithRewards[nextItemIndex];
 
     /**
-     * While in CY, onLoadNextProposal is sometimes called twice in a row for the same project.
+     * While in CY, onLoadNextProject is sometimes called twice in a row for the same project.
      *
      * The reason for it is unknown, but without below check the same project can be loaded twice.
      * This results in random failure of the CY tests for project view.
@@ -68,7 +68,7 @@ const ProjectView = (): ReactElement => {
      * https://github.com/danbovey/react-infinite-scroller/issues/143
      */
     if (loadedProjects.findIndex(p => p.address === nextItem.address) < 0) {
-      setLoadedProposals(prev =>
+      setLoadedProjects(prev =>
         [...prev, nextItem].filter(
           (element, index, self) =>
             index === self.findIndex(element2 => element2.address === element.address),
@@ -81,8 +81,8 @@ const ProjectView = (): ReactElement => {
     if (!projectsIpfsWithRewards.length) {
       return;
     }
-    const firstProposal = projectsIpfsWithRewards.find(p => p.address === projectAddressUrl);
-    setLoadedProposals([firstProposal!]);
+    const firstProject = projectsIpfsWithRewards.find(p => p.address === projectAddressUrl);
+    setLoadedProjects([firstProject!]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectsIpfsWithRewards.length]);
 
@@ -117,7 +117,7 @@ const ProjectView = (): ReactElement => {
     };
   }, [loadedProjects.length, projectsIpfsWithRewards.length]);
 
-  if (!initialElement || !areMatchedProposalsReady || projectsIpfsWithRewards.length === 0) {
+  if (!initialElement || !areMatchedProjectsReady || projectsIpfsWithRewards.length === 0) {
     return <Layout isLoading />;
   }
 
@@ -148,7 +148,7 @@ const ProjectView = (): ReactElement => {
             <Loader dataTest="ProjectView__Loader" />
           </div>
         }
-        loadMore={onLoadNextProposal}
+        loadMore={onLoadNextProject}
         pageStart={0}
         useWindow
       >
