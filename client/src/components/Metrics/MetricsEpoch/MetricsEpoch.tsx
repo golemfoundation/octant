@@ -47,10 +47,10 @@ const MetricsEpoch = (): ReactElement => {
   const { isFetching: isFetchingMatchedProjectRewards } = useMatchedProjectRewards(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
-  const { isFetching: isFetchingProposalsIpfsWithRewards } = useProjectsIpfsWithRewards(
+  const { isFetching: isFetchingProjectsIpfsWithRewards } = useProjectsIpfsWithRewards(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
-  const { isFetching: isFetchingProposalsDonors } = useProjectsDonors(
+  const { isFetching: isFetchingProjectsDonors } = useProjectsDonors(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
   const { isFetching: isFetchingProjectRewardsThreshold } = useProjectRewardsThreshold(
@@ -83,14 +83,14 @@ const MetricsEpoch = (): ReactElement => {
     isFetchingLockedsData ||
     isFetchingCurrentEpochEnd ||
     isFetchingEpochsStartEndTime ||
-    isFetchingProposalsIpfsWithRewards ||
+    isFetchingProjectsIpfsWithRewards ||
     isFetchingEpochAllocations ||
     isFetchingEpochInfo ||
     isFetchingEpochLeverage ||
     isFetchingEpochUnusedRewards ||
     isFetchingEpochBudgets ||
     isFetchingMatchedProjectRewards ||
-    isFetchingProposalsDonors ||
+    isFetchingProjectsDonors ||
     isFetchingProjectRewardsThreshold ||
     isFetchingEpochPatrons;
 

@@ -16,7 +16,7 @@ const Rewards: FC<RewardsProps> = ({
   address,
   className,
   epoch,
-  isProposalView,
+  isProjectView,
   numberOfDonors,
   totalValueOfAllocations,
 }) => {
@@ -25,7 +25,7 @@ const Rewards: FC<RewardsProps> = ({
   });
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
-  const isArchivedProposal = epoch !== undefined;
+  const isArchivedProject = epoch !== undefined;
 
   const { data: projectRewardsThreshold, isFetching } = useProjectRewardsThreshold(epoch);
   const isDonationAboveThreshold = useIsDonationAboveThreshold({ epoch, projectAddress: address });
@@ -47,47 +47,47 @@ const Rewards: FC<RewardsProps> = ({
     totalValueOfAllocations !== undefined;
 
   const leftSectionLabel = useMemo(() => {
-    if (isDonationAboveThreshold && !isArchivedProposal) {
+    if (isDonationAboveThreshold && !isArchivedProject) {
       return t('currentTotal');
     }
-    if (isDonationAboveThreshold && isArchivedProposal) {
+    if (isDonationAboveThreshold && isArchivedProject) {
       return t('totalRaised');
     }
     return i18n.t('common.totalDonated');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isArchivedProposal, isDonationAboveThreshold]);
+  }, [isArchivedProject, isDonationAboveThreshold]);
 
   const rightSectionLabel = useMemo(() => {
-    if (isDonationAboveThreshold && isArchivedProposal && isProposalView) {
+    if (isDonationAboveThreshold && isArchivedProject && isProjectView) {
       return t('fundedIn');
     }
-    if (isDonationAboveThreshold && isArchivedProposal) {
+    if (isDonationAboveThreshold && isArchivedProject) {
       return i18n.t('common.donors');
     }
-    if (isArchivedProposal && isProposalView) {
+    if (isArchivedProject && isProjectView) {
       return t('didNotReachThreshold');
     }
-    if (isArchivedProposal) {
+    if (isArchivedProject) {
       return t('didNotReach');
     }
     return t('fundedAt');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isArchivedProposal, isDonationAboveThreshold, isProposalView]);
+  }, [isArchivedProject, isDonationAboveThreshold, isProjectView]);
 
   const rightSectionValueUseMemoDeps = [
-    isArchivedProposal,
+    isArchivedProject,
     isDonationAboveThreshold,
-    isProposalView,
+    isProjectView,
     epoch,
     numberOfDonors,
     projectRewardsThreshold,
   ];
 
   const rightSectionValue = useMemo(() => {
-    if (isDonationAboveThreshold && isArchivedProposal && isProposalView) {
+    if (isDonationAboveThreshold && isArchivedProject && isProjectView) {
       return t('epoch', { epoch });
     }
-    if (isDonationAboveThreshold && isArchivedProposal) {
+    if (isDonationAboveThreshold && isArchivedProject) {
       return numberOfDonors;
     }
     return getValueCryptoToDisplay({
@@ -102,7 +102,7 @@ const Rewards: FC<RewardsProps> = ({
       {showProgressBar ? (
         <ProgressBar
           className={styles.progressBar}
-          color={isArchivedProposal ? 'grey' : 'orange'}
+          color={isArchivedProject ? 'grey' : 'orange'}
           progressPercentage={getProgressPercentage(
             totalValueOfAllocations,
             projectRewardsThreshold,
@@ -123,10 +123,10 @@ const Rewards: FC<RewardsProps> = ({
           <div
             className={cx(
               styles.value,
-              isDonationAboveThreshold && isArchivedProposal && styles.greenValue,
+              isDonationAboveThreshold && isArchivedProject && styles.greenValue,
               isDecisionWindowOpen &&
                 !isDonationAboveThreshold &&
-                !isArchivedProposal &&
+                !isArchivedProject &&
                 styles.redValue,
               isFetching && styles.isFetching,
             )}
@@ -137,9 +137,9 @@ const Rewards: FC<RewardsProps> = ({
               : projectDonorsRewardsSumToDisplay}
           </div>
         </div>
-        {((!isArchivedProposal && isDecisionWindowOpen && !isDonationAboveThreshold) ||
+        {((!isArchivedProject && isDecisionWindowOpen && !isDonationAboveThreshold) ||
           !isDonationAboveThreshold ||
-          isArchivedProposal) && (
+          isArchivedProject) && (
           <div className={cx(styles.section, styles.rightSection)}>
             <div className={cx(styles.label, isFetching && styles.isFetching)}>
               {rightSectionLabel}

@@ -14,7 +14,7 @@ import AllocationSummary from 'components/Allocation/AllocationSummary';
 import AllocationTipTiles from 'components/Allocation/AllocationTipTiles';
 import Layout from 'components/shared/Layout';
 import useAllocate from 'hooks/events/useAllocate';
-import useAllocationViewSetRewardsForProposals from 'hooks/helpers/useAllocationViewSetRewardsForProposals';
+import useAllocationViewSetRewardsForProjects from 'hooks/helpers/useAllocationViewSetRewardsForProjects';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useAllocateSimulate from 'hooks/mutations/useAllocateSimulate';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -50,7 +50,7 @@ const AllocationView = (): ReactElement => {
   const [percentageProportions, setPercentageProportions] = useState<PercentageProportions>({});
   const { data: projectsContract } = useProjectsContract();
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards();
-  const { isRewardsForProposalsSet } = useAllocationViewSetRewardsForProposals();
+  const { isRewardsForProjectsSet } = useAllocationViewSetRewardsForProjects();
   const {
     data: allocationSimulated,
     mutateAsync: mutateAsyncAllocateSimulate,
@@ -85,18 +85,18 @@ const AllocationView = (): ReactElement => {
   const { refetch: refetchMatchedProjectRewards } = useMatchedProjectRewards();
   const {
     allocations,
-    rewardsForProposals,
+    rewardsForProjects,
     setAllocations,
     addAllocations,
     removeAllocations,
-    setRewardsForProposals,
+    setRewardsForProjects,
   } = useAllocationsStore(state => ({
     addAllocations: state.addAllocations,
     allocations: state.data.allocations,
     removeAllocations: state.removeAllocations,
-    rewardsForProposals: state.data.rewardsForProposals,
+    rewardsForProjects: state.data.rewardsForProjects,
     setAllocations: state.setAllocations,
-    setRewardsForProposals: state.setRewardsForProposals,
+    setRewardsForProjects: state.setRewardsForProjects,
   }));
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
     addAllocations,
@@ -143,7 +143,7 @@ const AllocationView = (): ReactElement => {
 
   const setPercentageProportionsWrapper = (
     allocationValuesNew: AllocationValues,
-    rewardsForProposalsNew: bigint,
+    rewardsForProjectsNew: bigint,
   ) => {
     if (!individualReward) {
       return;
@@ -153,7 +153,7 @@ const AllocationView = (): ReactElement => {
         ? '0'
         : (
             (parseFloat(curr.value.toString()) * 100) /
-            parseFloat(formatUnitsBigInt(rewardsForProposalsNew))
+            parseFloat(formatUnitsBigInt(rewardsForProjectsNew))
           ).toFixed();
       return {
         ...acc,
@@ -165,12 +165,12 @@ const AllocationView = (): ReactElement => {
 
   const onResetAllocationValues = ({
     allocationValuesNew = allocationValues,
-    rewardsForProposalsNew = rewardsForProposals,
+    rewardsForProjectsNew = rewardsForProjects,
     shouldReset = false,
   } = {}) => {
     if (
       isFetchingUserAllocation ||
-      !isRewardsForProposalsSet ||
+      !isRewardsForProjectsSet ||
       currentEpoch === undefined ||
       (isConnected && !userAllocations && isDecisionWindowOpen && currentEpoch > 1)
     ) {
@@ -211,7 +211,7 @@ const AllocationView = (): ReactElement => {
           : allocations,
       isManualMode: shouldIsManulModeBeChangedToFalse ? false : isManualMode,
       percentageProportions,
-      rewardsForProposals: rewardsForProposalsNew,
+      rewardsForProjects: rewardsForProjectsNew,
       shouldReset,
       userAllocationsElements: isDecisionWindowOpen ? userAllocations?.elements || [] : [],
     });
@@ -222,7 +222,7 @@ const AllocationView = (): ReactElement => {
         BigInt(0),
       );
 
-      setRewardsForProposals(allocationValuesResetSum);
+      setRewardsForProjects(allocationValuesResetSum);
       setPercentageProportionsWrapper(allocationValuesReset, allocationValuesResetSum);
 
       const shouldIsManualModeBeChangedToFalseNew = allocationValuesResetSum === 0n;
@@ -268,13 +268,13 @@ const AllocationView = (): ReactElement => {
   }, [userAllocations?.isManuallyEdited]);
 
   useEffect(() => {
-    if (!isRewardsForProposalsSet || isFetchingUserAllocation) {
+    if (!isRewardsForProjectsSet || isFetchingUserAllocation) {
       return;
     }
 
     if (userAllocations && userAllocations.elements.length > 0) {
       setAllocationValues(userAllocations.elements);
-      setPercentageProportionsWrapper(userAllocations.elements, rewardsForProposals);
+      setPercentageProportionsWrapper(userAllocations.elements, rewardsForProjects);
       onResetAllocationValues({ allocationValuesNew: userAllocations.elements });
       return;
     }
@@ -283,11 +283,11 @@ const AllocationView = (): ReactElement => {
   }, [
     currentEpoch,
     allocations,
-    isRewardsForProposalsSet,
+    isRewardsForProjectsSet,
     isFetchingUserAllocation,
     userAllocations?.elements.length,
     userNonce,
-    isRewardsForProposalsSet,
+    isRewardsForProjectsSet,
   ]);
 
   useEffect(() => {
@@ -337,22 +337,22 @@ const AllocationView = (): ReactElement => {
     newAllocationValue: AllocationValue,
     isManualModeEnforced = false,
   ) => {
-    const { allocationValuesArrayNew, rewardsForProposalsNew } =
+    const { allocationValuesArrayNew, rewardsForProjectsNew } =
       getAllocationValuesAfterManualChange({
         allocationValues,
         individualReward,
         // When deleting by button isManualMode does not trigger manual mode. When typing, it does.
         isManualMode: isManualModeEnforced ? true : isManualMode,
         newAllocationValue: newAllocationValue || '0',
-        rewardsForProposals,
+        rewardsForProjects,
         setAddressesWithError,
       });
 
     setAllocationValues(allocationValuesArrayNew);
-    setRewardsForProposals(rewardsForProposalsNew);
+    setRewardsForProjects(rewardsForProjectsNew);
 
     if (isManualModeEnforced) {
-      setPercentageProportionsWrapper(allocationValuesArrayNew, rewardsForProposalsNew);
+      setPercentageProportionsWrapper(allocationValuesArrayNew, rewardsForProjectsNew);
     }
 
     if (isManualModeEnforced) {
@@ -377,7 +377,7 @@ const AllocationView = (): ReactElement => {
     isLoading ||
     !isConnected ||
     !isDecisionWindowOpen ||
-    (!areAllocationsAvailableOrAlreadyDone && rewardsForProposals !== 0n) ||
+    (!areAllocationsAvailableOrAlreadyDone && rewardsForProjects !== 0n) ||
     !individualReward;
 
   const allocationsWithRewards = getAllocationsWithRewards({
@@ -391,7 +391,7 @@ const AllocationView = (): ReactElement => {
 
   const showAllocationBottomNavigation =
     !isEpoch1 &&
-    (areAllocationsAvailableOrAlreadyDone || rewardsForProposals === 0n) &&
+    (areAllocationsAvailableOrAlreadyDone || rewardsForProjects === 0n) &&
     hasUserIndividualReward &&
     isDecisionWindowOpen;
 
@@ -421,7 +421,7 @@ const AllocationView = (): ReactElement => {
           isError={addressesWithError.length > 0}
           isLocked={currentView === 'summary'}
           isManuallyEdited={isManualMode}
-          setRewardsForProposalsCallback={onResetAllocationValues}
+          setRewardsForProjectsCallback={onResetAllocationValues}
         />
       )}
       {currentView === 'edit' ? (

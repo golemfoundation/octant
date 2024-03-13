@@ -46,7 +46,7 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
 
   const [isLinkCopied, setIsLinkCopied] = useState(false);
 
-  const isArchivedProposal = epoch !== undefined;
+  const isArchivedProject = epoch !== undefined;
   const isAllocatedTo = !!userAllocations?.elements.find(
     ({ address: userAllocationAddress }) => userAllocationAddress === address,
   );
@@ -98,13 +98,13 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
               size={3.2}
             />
           </Tooltip>
-          {((isAllocatedTo && isArchivedProposal) || !isArchivedProposal) && (
+          {((isAllocatedTo && isArchivedProject) || !isArchivedProject) && (
             <ButtonAddToAllocate
               className={styles.buttonAddToAllocate}
               dataTest="ProjectListItemHeader__ButtonAddToAllocate"
               isAddedToAllocate={allocations.includes(address)}
               isAllocatedTo={isAllocatedTo}
-              isArchivedProposal={isArchivedProposal}
+              isArchivedProject={isArchivedProject}
               onClick={() => onAddRemoveFromAllocate(address)}
             />
           )}

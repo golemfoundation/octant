@@ -3,6 +3,6 @@ export default interface ButtonAddToAllocateProps {
   dataTest?: string;
   isAddedToAllocate: boolean;
   isAllocatedTo: boolean;
-  isArchivedProposal?: boolean;
+  isArchivedProject?: boolean;
   onClick: () => void;
 }

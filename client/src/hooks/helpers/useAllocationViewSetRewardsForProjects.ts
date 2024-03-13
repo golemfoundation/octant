@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 
-import { ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
+import { ALLOCATION_REWARDS_FOR_PROJECTS } from 'constants/localStorageKeys';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useAllocationsStore from 'store/allocations/store';
 
-export default function useAllocationViewSetRewardsForProposals(): {
-  isRewardsForProposalsSet: boolean;
+export default function useAllocationViewSetRewardsForProjects(): {
+  isRewardsForProjectsSet: boolean;
 } {
-  const [isRewardsForProposalsSet, setIsRewardsForProposalsSet] = useState<boolean>(false);
-  const { setRewardsForProposals } = useAllocationsStore(state => ({
-    setRewardsForProposals: state.setRewardsForProposals,
+  const [isRewardsForProjectsSet, setIsRewardsForProjectsSet] = useState<boolean>(false);
+  const { setRewardsForProjects } = useAllocationsStore(state => ({
+    setRewardsForProjects: state.setRewardsForProjects,
   }));
 
   const { data: currentEpoch, isFetching: isFetchingCurrentEpoch } = useCurrentEpoch();
@@ -25,13 +25,13 @@ export default function useAllocationViewSetRewardsForProposals(): {
 
   useEffect(() => {
     /**
-     * This hook adds rewardsForProposals to the store.
+     * This hook adds rewardsForProjects to the store.
      * It needs to be used in AllocationView,
-     * since user can change rewardsForProposals and leave the view.
+     * since user can change rewardsForProjects and leave the view.
      * When they reenter it, they need to see their latest allocation locked in the slider.
      */
     if (!isConnected) {
-      setIsRewardsForProposalsSet(true);
+      setIsRewardsForProjectsSet(true);
     }
     if (isFetchingIndividualReward || isFetchingCurrentEpoch || isFetchingUserAllocations) {
       return;
@@ -40,31 +40,31 @@ export default function useAllocationViewSetRewardsForProposals(): {
       return;
     }
 
-    const localStorageRewardsForProposals = BigInt(
-      JSON.parse(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROPOSALS) || '0'),
+    const localStorageRewardsForProjects = BigInt(
+      JSON.parse(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROJECTS) || '0'),
     );
     if (userAllocations && userAllocations.elements.length > 0) {
       const userAllocationsSum = userAllocations.elements.reduce(
         (acc, curr) => acc + curr.value,
         BigInt(0),
       );
-      setRewardsForProposals(userAllocationsSum);
+      setRewardsForProjects(userAllocationsSum);
     } else if (
       userAllocations &&
       userAllocations.elements.length === 0 &&
       userAllocations.hasUserAlreadyDoneAllocation
     ) {
-      setRewardsForProposals(BigInt(0));
+      setRewardsForProjects(BigInt(0));
     } else {
-      setRewardsForProposals(
+      setRewardsForProjects(
         !individualReward ||
-          localStorageRewardsForProposals < BigInt(0) ||
-          localStorageRewardsForProposals > individualReward
+          localStorageRewardsForProjects < BigInt(0) ||
+          localStorageRewardsForProjects > individualReward
           ? BigInt(0)
-          : localStorageRewardsForProposals,
+          : localStorageRewardsForProjects,
       );
     }
-    setIsRewardsForProposalsSet(true);
+    setIsRewardsForProjectsSet(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     currentEpoch,
@@ -77,5 +77,5 @@ export default function useAllocationViewSetRewardsForProposals(): {
     userAllocations?.elements.length,
   ]);
 
-  return { isRewardsForProposalsSet };
+  return { isRewardsForProjectsSet };
 }

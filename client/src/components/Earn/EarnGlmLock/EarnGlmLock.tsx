@@ -113,9 +113,9 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
   const unlockMutation = useUnlock({ onError, onMutate, onSuccess });
 
   const onApproveOrDeposit = async ({ valueToDeposeOrWithdraw }): Promise<void> => {
-    const isSignedInAsAProposal = projectsAddresses!.includes(address!);
+    const isSignedInAsAProject = projectsAddresses!.includes(address!);
 
-    if (isSignedInAsAProposal) {
+    if (isSignedInAsAProject) {
       toastService.showToast({
         name: 'projectForbiddenOperation',
         title: i18n.t('common.projectForbiddenOperation'),

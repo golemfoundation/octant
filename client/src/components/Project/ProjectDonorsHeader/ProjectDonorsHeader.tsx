@@ -6,9 +6,9 @@ import { useParams } from 'react-router-dom';
 import useProjectDonors from 'hooks/queries/donors/useProjectDonors';
 
 import styles from './ProjectDonorsHeader.module.scss';
-import ProposalDonorsHeaderProps from './types';
+import ProjectDonorsListProps from './types';
 
-const ProjectDonorsHeader: FC<ProposalDonorsHeaderProps> = ({
+const ProjectDonorsHeader: FC<ProjectDonorsListProps> = ({
   projectAddress,
   dataTest = 'DonorsHeader',
   className,

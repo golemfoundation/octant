@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 
-import ProposalListItem from 'components/Project/ProjectListItem';
+import ProjectListItem from 'components/Project/ProjectListItem';
 
 import ProjectListProps from './types';
 
@@ -19,7 +19,7 @@ const ProjectList: FC<ProjectListProps> = ({ projects, epoch }) => (
         },
         index,
       ) => (
-        <ProposalListItem
+        <ProjectListItem
           key={address}
           address={address}
           description={description}

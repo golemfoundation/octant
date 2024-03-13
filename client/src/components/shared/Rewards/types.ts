@@ -4,7 +4,7 @@ export default interface RewardsProps {
   address: string;
   className?: string;
   epoch?: number;
-  isProposalView?: boolean;
+  isProjectView?: boolean;
   numberOfDonors: ProjectIpfsWithRewards['numberOfDonors'];
   totalValueOfAllocations: ProjectIpfsWithRewards['totalValueOfAllocations'];
 }

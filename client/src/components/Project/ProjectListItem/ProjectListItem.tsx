@@ -36,7 +36,7 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
           address={address}
           className={styles.projectRewards}
           epoch={epoch}
-          isProposalView
+          isProjectView
           numberOfDonors={numberOfDonors}
           totalValueOfAllocations={totalValueOfAllocations}
         />

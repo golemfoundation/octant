@@ -63,12 +63,12 @@ const Layout: FC<LayoutProps> = ({
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isAllocationRoot = !!useMatch(ROOT_ROUTES.allocation.absolute);
-  const isUseMatchProposal = !!useMatch(ROOT_ROUTES.projectWithAddress.absolute);
-  const isUseMatchProposalWithAddress = !!useMatch(ROOT_ROUTES.projectWithAddress.absolute);
-  const isProposalRoot = isUseMatchProposal || isUseMatchProposalWithAddress;
-  const isProposalsRoot = !!useMatch(ROOT_ROUTES.projects.absolute);
+  const isUseMatchProject = !!useMatch(ROOT_ROUTES.projectWithAddress.absolute);
+  const isUseMatchProjectWithAddress = !!useMatch(ROOT_ROUTES.projectWithAddress.absolute);
+  const isProjectRoot = isUseMatchProject || isUseMatchProjectWithAddress;
+  const isProjectsRoot = !!useMatch(ROOT_ROUTES.projects.absolute);
 
-  const showAllocationPeriod = isAllocationRoot || isProposalRoot || isProposalsRoot;
+  const showAllocationPeriod = isAllocationRoot || isProjectRoot || isProjectsRoot;
 
   const getCurrentPeriod = () => {
     if (isDecisionWindowOpen && timeCurrentAllocationEnd) {

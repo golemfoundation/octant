@@ -61,7 +61,7 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
     return false;
   }, [address, allocations, userAllocations, epoch, isDecisionWindowOpen]);
   const isEpoch1 = currentEpoch === 1;
-  const isArchivedProposal = epoch !== undefined;
+  const isArchivedProject = epoch !== undefined;
 
   return (
     <div
@@ -101,7 +101,7 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
               }
               sources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
             />
-            {((isAllocatedTo && isArchivedProposal) || !isArchivedProposal) && (
+            {((isAllocatedTo && isArchivedProject) || !isArchivedProject) && (
               <ButtonAddToAllocate
                 className={styles.button}
                 dataTest={
@@ -111,7 +111,7 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
                 }
                 isAddedToAllocate={isAddedToAllocate}
                 isAllocatedTo={isAllocatedTo}
-                isArchivedProposal={isArchivedProposal}
+                isArchivedProject={isArchivedProject}
                 onClick={() => onAddRemoveFromAllocate(address)}
               />
             )}

@@ -2,7 +2,7 @@ import cx from 'classnames';
 import React, { FC } from 'react';
 import { useParams } from 'react-router-dom';
 
-import ProposalDonorsListItem from 'components/Project/ProjectDonorsListItem';
+import ProjectDonorsListItem from 'components/Project/ProjectDonorsListItem';
 import ProjectDonorsListSkeletonItem from 'components/Project/ProjectDonorsListSkeletonItem';
 import ProjectDonorsListTotalDonated from 'components/Project/ProjectDonorsListTotalDonated';
 import { DONORS_SHORT_LIST_LENGTH } from 'constants/donors';
@@ -39,7 +39,7 @@ const ProjectDonorsList: FC<ProjectDonorsListProps> = ({
             {projectDonors
               ?.slice(0, showFullList ? projectDonors.length : DONORS_SHORT_LIST_LENGTH)
               ?.map(({ amount, address }) => (
-                <ProposalDonorsListItem key={address} amount={amount} donorAddress={address} />
+                <ProjectDonorsListItem key={address} amount={amount} donorAddress={address} />
               ))}
           </div>
           <ProjectDonorsListTotalDonated

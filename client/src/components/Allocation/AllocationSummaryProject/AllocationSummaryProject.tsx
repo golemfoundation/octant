@@ -22,7 +22,7 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
 }) => {
   const { i18n } = useTranslation('translation');
   const isDonationAboveThreshold = useIsDonationAboveThreshold({ projectAddress: address });
-  const { data: projectIpfs, isFetching: isFetchingProposalIpfs } = useProjectsIpfs([address]);
+  const { data: projectIpfs, isFetching: isFetchingProjectIpfs } = useProjectsIpfs([address]);
 
   const { data: matchedProjectRewards } = useMatchedProjectRewards();
   const { data: projectRewardsThreshold } = useProjectRewardsThreshold();
@@ -32,7 +32,7 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   const valueToUse = value || '0';
 
   const projectMatchedProjectRewards = matchedProjectRewards?.find(
-    ({ address: matchedProposalRewardsAddress }) => address === matchedProposalRewardsAddress,
+    ({ address: matchedProjectRewardsAddress }) => address === matchedProjectRewardsAddress,
   );
   const userAllocationToThisProject = userAllocations?.elements.find(
     element => element.address === address,
@@ -64,7 +64,7 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
 
   return (
     <div className={styles.root}>
-      {isFetchingProposalIpfs ? null : (
+      {isFetchingProjectIpfs ? null : (
         <>
           <div className={styles.leftSection}>
             <div className={styles.name}>{projectIpfs[0].name}</div>

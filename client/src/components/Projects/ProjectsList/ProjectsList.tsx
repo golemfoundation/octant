@@ -9,9 +9,9 @@ import useProjectsContract from 'hooks/queries/useProjectsContract';
 import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
 
 import styles from './ProjectsList.module.scss';
-import ProposalsListProps from './types';
+import ProjectsListProps from './types';
 
-const ProjectsList: FC<ProposalsListProps> = ({
+const ProjectsList: FC<ProjectsListProps> = ({
   areCurrentEpochsProjectsHiddenOutsideAllocationWindow,
   epoch,
   isFirstArchive,
@@ -21,14 +21,14 @@ const ProjectsList: FC<ProposalsListProps> = ({
   });
 
   const { data: projectsAddresses } = useProjectsContract(epoch);
-  const { data: projectsIpfsWithRewards, isFetching: isFetchingProposalsWithRewards } =
+  const { data: projectsIpfsWithRewards, isFetching: isFetchingProjectsWithRewards } =
     useProjectsIpfsWithRewards(epoch);
   const epochDurationLabel = useEpochDurationLabel(epoch);
 
   return (
     <div
       className={styles.list}
-      data-test={epoch ? 'ProposalsView__ProjectsList--archive' : 'ProposalsView__ProjectsList'}
+      data-test={epoch ? 'ProjectsView__ProjectsList--archive' : 'ProjectsView__ProjectsList'}
     >
       {epoch && (
         <>
@@ -51,15 +51,15 @@ const ProjectsList: FC<ProposalsListProps> = ({
           </div>
         </>
       )}
-      {projectsIpfsWithRewards.length > 0 && !isFetchingProposalsWithRewards
+      {projectsIpfsWithRewards.length > 0 && !isFetchingProjectsWithRewards
         ? projectsIpfsWithRewards.map((projectIpfsWithRewards, index) => (
             <ProjectsListItem
               key={projectIpfsWithRewards.address}
               className={styles.element}
               dataTest={
                 epoch
-                  ? `ProposalsView__ProjectsListItem--archive--${index}`
-                  : `ProposalsView__ProjectsListItem--${index}`
+                  ? `ProjectsView__ProjectsListItem--archive--${index}`
+                  : `ProjectsView__ProjectsListItem--${index}`
               }
               epoch={epoch}
               projectIpfsWithRewards={projectIpfsWithRewards}

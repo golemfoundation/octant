@@ -66,7 +66,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const isEpoch1 = currentEpoch === 1;
 
   const projectMatchedProjectRewards = matchedProjectRewards?.find(
-    ({ address: matchedProposalRewardsAddress }) => address === matchedProposalRewardsAddress,
+    ({ address: matchedProjectRewardsAddress }) => address === matchedProjectRewardsAddress,
   );
   const userAllocationToThisProject = userAllocations?.elements.find(
     element => element.address === address,

@@ -2,7 +2,7 @@ import React, { ReactElement, useState, useMemo, useLayoutEffect, useEffect } fr
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 
-import ProposalsList from 'components/Projects/ProjectsList';
+import ProjectsList from 'components/Projects/ProjectsList';
 import ProjectsTimelineWidget from 'components/Projects/ProjectsTimelineWidget';
 import Layout from 'components/shared/Layout';
 import TipTile from 'components/shared/TipTile';
@@ -91,7 +91,7 @@ const ProjectsView = (): ReactElement => {
       )}
       <ProjectsTimelineWidget />
       {!areCurrentEpochsProjectsHiddenOutsideAllocationWindow && (
-        <ProposalsList
+        <ProjectsList
           areCurrentEpochsProjectsHiddenOutsideAllocationWindow={
             areCurrentEpochsProjectsHiddenOutsideAllocationWindow
           }
@@ -111,7 +111,7 @@ const ProjectsView = (): ReactElement => {
           useWindow
         >
           {archivedEpochs.slice(0, loadedArchivedEpochsNumber).map((epoch, index) => (
-            <ProposalsList
+            <ProjectsList
               key={epoch}
               areCurrentEpochsProjectsHiddenOutsideAllocationWindow={
                 areCurrentEpochsProjectsHiddenOutsideAllocationWindow
