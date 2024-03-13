@@ -158,13 +158,7 @@ def get_alloc_sum_by_epoch(epoch: int) -> int:
 
 
 def get_user_alloc_sum_by_epoch(epoch: int, user_address: str) -> int:
-    allocations = (
-        Allocation.query.filter(
-            Allocation.epoch == epoch, Allocation.user.address == user_address
-        )
-        .filter(Allocation.deleted_at.is_(None))
-        .all()
-    )
+    allocations = get_all_by_user_addr_and_epoch(user_address, epoch)
     return sum([int(a.amount) for a in allocations])
 
 

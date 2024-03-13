@@ -3,7 +3,6 @@ from app.context.manager import state_context
 from app.exceptions import InvalidEpoch
 from app.modules.dto import FinalizedSnapshotDTO
 from app.modules.modules_factory.finalizing import FinalizingServices
-from app.modules.modules_factory.pending import PendingServices
 from app.modules.registry import get_services
 
 
@@ -18,7 +17,7 @@ def create_finalized_epoch_snapshot() -> int | None:
 
 def simulate_finalized_epoch_snapshot() -> FinalizedSnapshotDTO | None:
     context = state_context(EpochState.PENDING)
-    services: PendingServices = get_services(EpochState.PENDING)
+    services = get_services(EpochState.PENDING)
     return services.finalized_snapshots_service.simulate_finalized_epoch_snapshot(
         context
     )

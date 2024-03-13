@@ -23,3 +23,11 @@ class SavedUserAllocations(Model):
         return database.allocations.get_user_alloc_sum_by_epoch(
             context.epoch_details.epoch_num, user_address
         )
+
+    def has_user_allocated_rewards(self, context: Context, user_address: str) -> bool:
+        allocation_signature = (
+            database.allocations.get_allocation_request_by_user_and_epoch(
+                user_address, context.epoch_details.epoch_num
+            )
+        )
+        return allocation_signature is not None

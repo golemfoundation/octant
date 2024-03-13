@@ -74,9 +74,16 @@ def test_get_claimed_rewards_when_all_budget_is_allocated(
 
 
 def test_get_user_claimed_rewards(
-    context, alice, bob, mock_user_budgets, mock_user_allocations, mock_patron_mode
+    context,
+    alice,
+    mock_users_db,
+    mock_user_budgets,
+    mock_user_allocations,
+    mock_patron_mode,
 ):
-    mock_user_allocations.get_user_alloc_sum_by_epoch.return_value = 100_000000000
+    mock_user_budgets.get_budget.return_value = USER1_BUDGET
+    mock_user_allocations.get_user_allocation_sum.return_value = 100_000000000
+    mock_user_allocations.has_user_allocated_rewards.return_value = True
 
     service = CalculatedUserRewards(
         user_budgets=mock_user_budgets,
@@ -87,3 +94,26 @@ def test_get_user_claimed_rewards(
     result = service.get_user_claimed_rewards(context, alice.address)
 
     assert result == USER1_BUDGET - 100_000000000
+
+
+def test_get_user_claimed_rewards_returns_0_when_user_does_not_allocate(
+    context,
+    alice,
+    mock_users_db,
+    mock_user_budgets,
+    mock_user_allocations,
+    mock_patron_mode,
+):
+    mock_user_budgets.get_budget.return_value = USER1_BUDGET
+    mock_user_allocations.get_user_allocation_sum.return_value = 100_000000000
+    mock_user_allocations.has_user_allocated_rewards.return_value = False
+
+    service = CalculatedUserRewards(
+        user_budgets=mock_user_budgets,
+        allocations=mock_user_allocations,
+        patrons_mode=mock_patron_mode,
+    )
+
+    result = service.get_user_claimed_rewards(context, alice.address)
+
+    assert result == 0

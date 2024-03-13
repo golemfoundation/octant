@@ -3,9 +3,9 @@ from typing import List, Tuple, Protocol, runtime_checkable
 from app.context.manager import Context
 from app.engine.projects.rewards import ProjectRewardDTO
 from app.infrastructure import database
-from app.modules.dto import AllocationDTO, AccountFundsDTO
+from app.modules.dto import AllocationDTO
 from app.modules.user.allocations import core
-from app.pydantic import Model
+from app.modules.user.allocations.service.saved import SavedUserAllocations
 
 
 @runtime_checkable
@@ -14,25 +14,8 @@ class OctantRewards(Protocol):
         ...
 
 
-class PendingUserAllocations(Model):
+class PendingUserAllocations(SavedUserAllocations):
     octant_rewards: OctantRewards
-
-    def get_all_donors_addresses(self, context: Context) -> List[str]:
-        return database.allocations.get_users_with_allocations(
-            context.epoch_details.epoch_num
-        )
-
-    def get_all_users_with_allocations_sum(
-        self, context: Context
-    ) -> List[AccountFundsDTO]:
-        return database.allocations.get_users_alloc_sum_by_epoch(
-            context.epoch_details.epoch_num
-        )
-
-    def get_user_allocation_sum(self, context: Context, user_address: str) -> int:
-        return database.allocations.get_user_alloc_sum_by_epoch(
-            context.epoch_details.epoch_num, user_address
-        )
 
     def simulate_allocation(
         self,
