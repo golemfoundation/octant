@@ -49,7 +49,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
    */
   const [valueToDepose, setValueToDepose] = useState<bigint>(BigInt(0));
   const [step, setStep] = useState<Step>(1);
-  const [isCryptoOrFiatInputFocused, setIsCryptoOrFiatInputFocused] = useState(false);
+  const [isCryptoOrFiatInputFocused, setIsCryptoOrFiatInputFocused] = useState(true);
 
   const { data: availableFundsGlm } = useAvailableFundsGlm();
   const { data: proposalsAddresses } = useProposalsContract();

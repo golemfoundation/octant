@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { useFormikContext } from 'formik';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import EarnGlmLockTabsInputs from 'components/Earn/EarnGlmLock/EarnGlmLockTabsInputs';
@@ -33,6 +33,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
     keyPrefix: 'components.dedicated.glmLock',
   });
   const formik = useFormikContext<FormFields>();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: availableFundsGlm } = useAvailableFundsGlm();
   const { data: depositsValue } = useDepositValue();
@@ -54,6 +55,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
         : formatUnitsBigInt(depositsValue);
 
     onSetValue(value);
+    inputRef.current?.focus();
   };
 
   const buttonCtaProps: ButtonProps =
@@ -105,6 +107,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
         {t('glmLockTabs.useMax')}
       </div>
       <EarnGlmLockTabsInputs
+        ref={inputRef}
         areInputsDisabled={isLoading}
         cryptoCurrency="golem"
         error={formik.values.valueToDeposeOrWithdraw && formik.errors.valueToDeposeOrWithdraw}
