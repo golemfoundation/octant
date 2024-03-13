@@ -4,9 +4,9 @@ import ProposalListItem from 'components/Project/ProjectListItem';
 
 import ProjectListProps from './types';
 
-const ProjectList: FC<ProjectListProps> = ({ proposals, epoch }) => (
+const ProjectList: FC<ProjectListProps> = ({ projects, epoch }) => (
   <>
-    {proposals.map(
+    {projects.map(
       (
         {
           address,

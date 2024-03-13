@@ -50,7 +50,7 @@ const ProjectsTimelineWidget = (): ReactElement => {
   }, []);
 
   return (
-    <motion.div className={styles.root} data-test="ProposalsTimelineWidget">
+    <motion.div className={styles.root} data-test="ProjectsTimelineWidget">
       <div ref={constraintsRef} className={styles.constraintsWrapper}>
         <motion.div
           className={styles.milestonesWrapper}

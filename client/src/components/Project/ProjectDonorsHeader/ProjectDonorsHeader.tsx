@@ -9,7 +9,7 @@ import styles from './ProjectDonorsHeader.module.scss';
 import ProposalDonorsHeaderProps from './types';
 
 const ProjectDonorsHeader: FC<ProposalDonorsHeaderProps> = ({
-  proposalAddress,
+  projectAddress,
   dataTest = 'DonorsHeader',
   className,
 }) => {
@@ -17,7 +17,7 @@ const ProjectDonorsHeader: FC<ProposalDonorsHeaderProps> = ({
   const { i18n } = useTranslation('translation');
 
   const { data: projectDonors, isFetching } = useProjectDonors(
-    proposalAddress,
+    projectAddress,
     parseInt(epoch!, 10),
   );
   return (

@@ -2,22 +2,22 @@ import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
 
 export default function useIsDonationAboveThreshold({
-  proposalAddress,
+  projectAddress,
   epoch,
   rewardsSumWithValueAndSimulation,
 }: {
   epoch?: number;
-  proposalAddress: string;
+  projectAddress: string;
   rewardsSumWithValueAndSimulation?: bigint;
 }): boolean {
   const { data: matchedProjectRewards } = useMatchedProjectRewards(epoch);
   const { data: projectRewardsThreshold } = useProjectRewardsThreshold(epoch);
 
-  const proposalMatchedProposalRewards = matchedProjectRewards?.find(
-    ({ address }) => address === proposalAddress,
+  const projectMatchedProjectRewards = matchedProjectRewards?.find(
+    ({ address }) => address === projectAddress,
   );
 
-  const rewardsToUse = rewardsSumWithValueAndSimulation || proposalMatchedProposalRewards?.sum;
+  const rewardsToUse = rewardsSumWithValueAndSimulation || projectMatchedProjectRewards?.sum;
 
   if (projectRewardsThreshold === undefined || rewardsToUse === undefined) {
     return false;

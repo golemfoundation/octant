@@ -7,6 +7,6 @@ export enum WebsocketEmitEvent {
 export enum WebsocketListenEvent {
   allocationsSum = 'allocations_sum',
   projectDonors = 'proposal_donors',
-  proposalRewards = 'proposal_rewards',
+  projectRewards = 'proposal_rewards',
   threshold = 'threshold',
 }

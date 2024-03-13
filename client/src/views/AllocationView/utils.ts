@@ -176,23 +176,23 @@ export function getAllocationValuesInitialState({
 }
 
 export function getAllocationsWithRewards({
-  proposalsIpfsWithRewards,
+  projectsIpfsWithRewards,
   allocationValues,
   areAllocationsAvailableOrAlreadyDone,
   userAllocationsElements,
 }: {
   allocationValues: AllocationValues | undefined;
   areAllocationsAvailableOrAlreadyDone: boolean;
-  proposalsIpfsWithRewards: ProjectIpfsWithRewards[];
+  projectsIpfsWithRewards: ProjectIpfsWithRewards[];
   userAllocationsElements: UserAllocationElementString[] | undefined;
 }): AllocationItemWithAllocations[] {
   const isDataDefined =
-    proposalsIpfsWithRewards &&
-    proposalsIpfsWithRewards.length > 0 &&
+    projectsIpfsWithRewards &&
+    projectsIpfsWithRewards.length > 0 &&
     areAllocationsAvailableOrAlreadyDone;
   let allocationsWithRewards = isDataDefined
     ? allocationValues!.map(allocationValue => {
-        const proposal = proposalsIpfsWithRewards.find(
+        const project = projectsIpfsWithRewards.find(
           ({ address }) => address === allocationValue.address,
         )!;
         const isAllocatedTo = !!userAllocationsElements?.find(
@@ -202,7 +202,7 @@ export function getAllocationsWithRewards({
         return {
           isAllocatedTo,
           ...allocationValue,
-          ...proposal,
+          ...project,
         };
       })
     : [];

@@ -14,12 +14,12 @@ import ProjectDonorsListProps from './types';
 const ProjectDonorsList: FC<ProjectDonorsListProps> = ({
   className,
   dataTest = 'DonorsList',
-  proposalAddress,
+  projectAddress,
   showFullList = false,
 }) => {
   const { epoch } = useParams();
   const { data: projectDonors, isFetching } = useProjectDonors(
-    proposalAddress,
+    projectAddress,
     parseInt(epoch!, 10),
   );
 

@@ -23,11 +23,11 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
   className,
   dataTest,
   epoch,
-  proposalIpfsWithRewards,
+  projectIpfsWithRewards,
 }) => {
   const { ipfsGateways } = env;
   const { address, isLoadingError, profileImageSmall, name, introDescription } =
-    proposalIpfsWithRewards;
+    projectIpfsWithRewards;
   const navigate = useNavigate();
   const { data: userAllocations } = useUserAllocations(epoch);
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
@@ -37,7 +37,7 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
     removeAllocations: state.removeAllocations,
   }));
   const { data: currentEpoch } = useCurrentEpoch();
-  const isAddedToAllocate = allocations!.includes(proposalIpfsWithRewards.address);
+  const isAddedToAllocate = allocations!.includes(projectIpfsWithRewards.address);
 
   const { onAddRemoveFromAllocate } = useIdsInAllocation({
     addAllocations,
@@ -136,10 +136,10 @@ const ProjectsListItem: FC<ProjectsListItemProps> = ({
           {!isEpoch1 && (
             <Rewards
               address={address}
-              className={styles.proposalRewards}
+              className={styles.projectRewards}
               epoch={epoch}
-              numberOfDonors={proposalIpfsWithRewards.numberOfDonors}
-              totalValueOfAllocations={proposalIpfsWithRewards.totalValueOfAllocations}
+              numberOfDonors={projectIpfsWithRewards.numberOfDonors}
+              totalValueOfAllocations={projectIpfsWithRewards.totalValueOfAllocations}
             />
           )}
         </Fragment>

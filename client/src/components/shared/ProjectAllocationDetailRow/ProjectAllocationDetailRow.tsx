@@ -26,7 +26,7 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({
     },
   }));
   const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
-  const { data: proposalIpfs, isFetching: isFetchingProposalIpfs } = useProjectsIpfs(
+  const { data: projectIpfs, isFetching: isFetchingProposalIpfs } = useProjectsIpfs(
     [address],
     epoch,
   );
@@ -41,9 +41,9 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({
               className={styles.image}
               sources={ipfsGateways
                 .split(',')
-                .map(element => `${element}${proposalIpfs[0].profileImageSmall!}`)}
+                .map(element => `${element}${projectIpfs[0].profileImageSmall!}`)}
             />
-            <div className={styles.name}>{proposalIpfs[0].name}</div>
+            <div className={styles.name}>{projectIpfs[0].name}</div>
           </div>
           <div className={styles.amount}>
             {isCryptoMainValueDisplay

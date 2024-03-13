@@ -25,7 +25,7 @@ const ProjectView = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.project' });
   const [isBackToTopButtonVisible, setIsBackToTopButtonVisible] = useState(false);
   const { projectAddress: projectAddressUrl, epoch: epochUrl } = useParams();
-  const [loadedProposals, setLoadedProposals] = useState<ProjectIpfsWithRewards[]>([]);
+  const [loadedProjects, setLoadedProposals] = useState<ProjectIpfsWithRewards[]>([]);
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow } =
     useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow();
@@ -35,30 +35,30 @@ const ProjectView = (): ReactElement => {
   const epoch = isDecisionWindowOpen && epochUrlInt === currentEpoch! - 1 ? undefined : epochUrlInt;
 
   const { data: matchedProjectRewards } = useMatchedProjectRewards(epoch);
-  const { data: proposalsIpfsWithRewards } = useProjectsIpfsWithRewards(epoch);
+  const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards(epoch);
 
   const isEpoch1 = currentEpoch === 1;
   const areMatchedProposalsReady =
     !!currentEpoch &&
     ((currentEpoch > 1 && matchedProjectRewards) || isEpoch1 || !isDecisionWindowOpen);
-  const initialElement = loadedProposals[0] || {};
+  const initialElement = loadedProjects[0] || {};
 
   const onLoadNextProposal = () => {
-    if (!loadedProposals.length || !proposalsIpfsWithRewards.length) {
+    if (!loadedProjects.length || !projectsIpfsWithRewards.length) {
       return;
     }
 
-    const lastItemIndex = proposalsIpfsWithRewards.findIndex(
-      el => el.address === loadedProposals[loadedProposals.length - 1].address,
+    const lastItemIndex = projectsIpfsWithRewards.findIndex(
+      el => el.address === loadedProjects[loadedProjects.length - 1].address,
     );
     const nextItemIndex =
-      lastItemIndex === proposalsIpfsWithRewards.length - 1 ? 0 : lastItemIndex + 1;
-    const nextItem = proposalsIpfsWithRewards[nextItemIndex];
+      lastItemIndex === projectsIpfsWithRewards.length - 1 ? 0 : lastItemIndex + 1;
+    const nextItem = projectsIpfsWithRewards[nextItemIndex];
 
     /**
-     * While in CY, onLoadNextProposal is sometimes called twice in a row for the same proposal.
+     * While in CY, onLoadNextProposal is sometimes called twice in a row for the same project.
      *
-     * The reason for it is unknown, but without below check the same proposal can be loaded twice.
+     * The reason for it is unknown, but without below check the same project can be loaded twice.
      * This results in random failure of the CY tests for project view.
      *
      * During "normal" usage problem could not be reproduced,
@@ -67,7 +67,7 @@ const ProjectView = (): ReactElement => {
      * Issue is not resolved in the library:
      * https://github.com/danbovey/react-infinite-scroller/issues/143
      */
-    if (loadedProposals.findIndex(p => p.address === nextItem.address) < 0) {
+    if (loadedProjects.findIndex(p => p.address === nextItem.address) < 0) {
       setLoadedProposals(prev =>
         [...prev, nextItem].filter(
           (element, index, self) =>
@@ -78,25 +78,25 @@ const ProjectView = (): ReactElement => {
   };
 
   useEffect(() => {
-    if (!proposalsIpfsWithRewards.length) {
+    if (!projectsIpfsWithRewards.length) {
       return;
     }
-    const firstProposal = proposalsIpfsWithRewards.find(p => p.address === projectAddressUrl);
+    const firstProposal = projectsIpfsWithRewards.find(p => p.address === projectAddressUrl);
     setLoadedProposals([firstProposal!]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [proposalsIpfsWithRewards.length]);
+  }, [projectsIpfsWithRewards.length]);
 
   useEffect(() => {
     if (
-      !loadedProposals.length ||
-      !proposalsIpfsWithRewards.length ||
-      loadedProposals.length !== proposalsIpfsWithRewards.length
+      !loadedProjects.length ||
+      !projectsIpfsWithRewards.length ||
+      loadedProjects.length !== projectsIpfsWithRewards.length
     ) {
       return;
     }
 
     const target = document.querySelector(
-      `[data-index="${proposalsIpfsWithRewards.length - 1}"]`,
+      `[data-index="${projectsIpfsWithRewards.length - 1}"]`,
     ) as HTMLDivElement | undefined;
 
     if (!target) {
@@ -115,9 +115,9 @@ const ProjectView = (): ReactElement => {
     return () => {
       document.removeEventListener('scroll', listener);
     };
-  }, [loadedProposals.length, proposalsIpfsWithRewards.length]);
+  }, [loadedProjects.length, projectsIpfsWithRewards.length]);
 
-  if (!initialElement || !areMatchedProposalsReady || proposalsIpfsWithRewards.length === 0) {
+  if (!initialElement || !areMatchedProposalsReady || projectsIpfsWithRewards.length === 0) {
     return <Layout isLoading />;
   }
 
@@ -127,7 +127,7 @@ const ProjectView = (): ReactElement => {
     (areCurrentEpochsProjectsHiddenOutsideAllocationWindow && epochUrl === currentEpoch.toString())
   ) {
     toastService.showToast({
-      name: 'proposalLoadingProblem',
+      name: 'projectLoadingProblem',
       title: t('loadingProblem'),
       type: 'warning',
     });
@@ -141,7 +141,7 @@ const ProjectView = (): ReactElement => {
   return (
     <Layout classNameBody={styles.mainLayoutBody} dataTest="ProjectView">
       <InfiniteScroll
-        hasMore={loadedProposals?.length !== proposalsIpfsWithRewards?.length}
+        hasMore={loadedProjects?.length !== projectsIpfsWithRewards?.length}
         initialLoad
         loader={
           <div key={-1} className={styles.loaderWrapper}>
@@ -152,7 +152,7 @@ const ProjectView = (): ReactElement => {
         pageStart={0}
         useWindow
       >
-        <ProjectList epoch={epoch} proposals={loadedProposals} />
+        <ProjectList epoch={epoch} projects={loadedProjects} />
       </InfiniteScroll>
       <AnimatePresence>{isBackToTopButtonVisible && <ProjectBackToTopButton />}</AnimatePresence>
     </Layout>

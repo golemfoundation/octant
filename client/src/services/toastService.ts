@@ -10,7 +10,7 @@ export const TOAST_NAMES = [
   'confirmChanges',
   'ipfsError',
   'projectForbiddenOperation',
-  'proposalLoadingProblem',
+  'projectLoadingProblem',
 ] as const;
 export type ToastName = (typeof TOAST_NAMES)[number];
 

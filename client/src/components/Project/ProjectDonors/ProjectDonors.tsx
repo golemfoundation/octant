@@ -17,12 +17,12 @@ import ProjectDonorsProps from './types';
 const ProjectDonors: FC<ProjectDonorsProps> = ({
   className,
   dataTest = 'Donors',
-  proposalAddress,
+  projectAddress,
 }) => {
   const { epoch } = useParams();
   const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.donors' });
   const { data: projectDonors, isFetching } = useProjectDonors(
-    proposalAddress,
+    projectAddress,
     parseInt(epoch!, 10),
   );
   const { data: currentEpoch } = useCurrentEpoch();
@@ -45,13 +45,13 @@ const ProjectDonors: FC<ProjectDonorsProps> = ({
           <ProjectDonorsHeader
             className={styles.donorsHeader}
             dataTest={`${dataTest}__DonorsHeader`}
-            proposalAddress={proposalAddress}
+            projectAddress={projectAddress}
           />
           <div className={styles.body}>
             {projectDonors && projectDonors.length > 0 ? (
               <ProjectDonorsList
                 dataTest={`${dataTest}__DonorsList`}
-                proposalAddress={proposalAddress}
+                projectAddress={projectAddress}
               />
             ) : (
               <div
@@ -78,7 +78,7 @@ const ProjectDonors: FC<ProjectDonorsProps> = ({
               isOpen: isFullDonorsListModalOpen,
               onClosePanel: () => setIsFullDonorsListModalOpen(false),
             }}
-            proposalAddress={proposalAddress}
+            projectAddress={projectAddress}
           />
         </Fragment>
       )}

@@ -1,6 +1,6 @@
 export default interface ProjectDonorsListProps {
   className?: string;
   dataTest?: string;
-  proposalAddress: string;
+  projectAddress: string;
   showFullList?: boolean;
 }

@@ -59,7 +59,7 @@ const LocalStorageService = () => {
       return;
     }
 
-    if (allocationItems.find(proposalAddress => typeof proposalAddress !== 'string')) {
+    if (allocationItems.find(projectAddress => typeof projectAddress !== 'string')) {
       localStorage.removeItem(ALLOCATION_ITEMS_KEY);
     }
   };

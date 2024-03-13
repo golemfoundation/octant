@@ -24,7 +24,7 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
 
   return (
     <Fragment>
-      <div className={styles.proposal} data-index={index} data-test="ProposalListItem">
+      <div className={styles.root} data-index={index} data-test="ProjectListItem">
         <ProjectListItemHeader
           address={address}
           epoch={epoch}
@@ -34,7 +34,7 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
         />
         <Rewards
           address={address}
-          className={styles.proposalRewards}
+          className={styles.projectRewards}
           epoch={epoch}
           isProposalView
           numberOfDonors={numberOfDonors}
@@ -46,7 +46,7 @@ const ProjectListItem: FC<ProjectListItemProps> = ({
           variant="big"
         />
       </div>
-      <ProjectDonors dataTest="ProjectListItem__ProjectDonors" proposalAddress={address} />
+      <ProjectDonors dataTest="ProjectListItem__ProjectDonors" projectAddress={address} />
     </Fragment>
   );
 };

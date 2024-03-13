@@ -1,11 +1,11 @@
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
-import { allocate, earn, metrics, proposals, settings } from 'svg/navigation';
+import { allocate, earn, metrics, project, settings } from 'svg/navigation';
 
 import { NavigationTab } from './types';
 
 export const navigationTabs: NavigationTab[] = [
   {
-    icon: proposals,
+    icon: project,
     label: 'Projects',
     to: ROOT_ROUTES.projects.absolute,
   },
@@ -46,7 +46,7 @@ export const adminNavigationTabs: NavigationTab[] = [
 
 export const patronNavigationTabs: NavigationTab[] = [
   {
-    icon: proposals,
+    icon: project,
     label: 'Projects',
     to: ROOT_ROUTES.projects.absolute,
   },

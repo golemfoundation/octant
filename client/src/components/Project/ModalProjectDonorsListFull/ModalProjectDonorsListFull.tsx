@@ -9,14 +9,14 @@ import ModalProjectDonorsListFullProps from './types';
 
 const ModalProjectDonorsListFull: FC<ModalProjectDonorsListFullProps> = ({
   modalProps,
-  proposalAddress,
+  projectAddress,
 }) => {
   return (
     <Modal
       bodyClassName={styles.modalBody}
       dataTest="ModalFullDonorsList"
       header={
-        <ProjectDonorsHeader className={styles.donorsHeader} proposalAddress={proposalAddress} />
+        <ProjectDonorsHeader className={styles.donorsHeader} projectAddress={projectAddress} />
       }
       isOpen={modalProps.isOpen}
       onClosePanel={modalProps.onClosePanel}
@@ -24,7 +24,7 @@ const ModalProjectDonorsListFull: FC<ModalProjectDonorsListFullProps> = ({
     >
       <ProjectDonorsList
         className={styles.donorsList}
-        proposalAddress={proposalAddress}
+        projectAddress={projectAddress}
         showFullList
       />
     </Modal>

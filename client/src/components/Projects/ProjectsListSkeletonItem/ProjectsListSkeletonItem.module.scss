@@ -9,8 +9,8 @@
   width: 100%;
   bottom: 0;
   transition: bottom $transition-time-4 linear;
-  // $proposalItemPadding - 0.2rem to offset separator appearance in ProjectsListItem.
-  padding: $proposalItemPadding $proposalItemPadding ($proposalItemPadding - 0.2rem);
+  // $projectItemPadding - 0.2rem to offset separator appearance in ProjectsListItem.
+  padding: $projectItemPadding $projectItemPadding ($projectItemPadding - 0.2rem);
 
   .image {
     @include skeleton();
@@ -38,7 +38,7 @@
     }
   }
 
-  .proposalRewards {
+  .projectRewards {
     margin-top: auto;
     display: flex;
     justify-content: space-between;

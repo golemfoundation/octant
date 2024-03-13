@@ -21,7 +21,7 @@ export default function useProjectsContract(epoch?: number): UseQueryResult<stri
       epochOverrideForDataFetch !== undefined ||
       (!!currentEpoch && ((isDecisionWindowOpen && currentEpoch > 0) || !isDecisionWindowOpen)),
 
-    // When decision window is open, fetch proposals from the previous epoch, because that's what users should be allocating to.
+    // When decision window is open, fetch projects from the previous epoch, because that's what users should be allocating to.
     queryFn: () =>
       readContractProposals({
         args: epochOverrideForDataFetch

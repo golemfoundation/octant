@@ -4,7 +4,7 @@ import apiService from 'services/apiService';
 export type Response = {
   allocations: {
     address: string;
-    // Funds allocated by user for the proposal in WEI
+    // Funds allocated by user for the project in WEI
     amount: string;
   }[];
   isManuallyEdited: boolean | null;

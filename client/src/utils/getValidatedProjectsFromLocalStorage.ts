@@ -1,11 +1,11 @@
 export default function getValidatedProjectsFromLocalStorage(
   localStorageAllocationItems: string[],
-  proposals: string[],
+  projects: string[],
 ): string[] {
   // Remove duplicates, if any
   return [
     ...new Set(
-      localStorageAllocationItems.filter(item => proposals.find(address => address === item)),
+      localStorageAllocationItems.filter(item => projects.find(address => address === item)),
     ),
   ];
 }

@@ -25,7 +25,7 @@
   .header {
     display: flex;
     justify-content: space-between;
-    padding: $proposalItemPadding $proposalItemPadding 1rem;
+    padding: $projectItemPadding $projectItemPadding 1rem;
   }
 
   .button {
@@ -41,7 +41,7 @@
   }
 
   .body {
-    padding: 0 $proposalItemPadding;
+    padding: 0 $projectItemPadding;
     text-align: left;
     min-height: 12.4rem;
   }
@@ -61,7 +61,7 @@
     overflow: hidden;
   }
 
-  .proposalRewards {
-    padding: 0 $proposalItemPadding $proposalItemPadding;
+  .projectRewards {
+    padding: 0 $projectItemPadding $projectItemPadding;
   }
 }

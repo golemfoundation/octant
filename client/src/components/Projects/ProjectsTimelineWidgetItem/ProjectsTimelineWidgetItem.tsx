@@ -30,7 +30,7 @@ const ProjectsTimelineWidgetItem: FC<ProjectsTimelineWidgetItemProps> = ({
         isInView && styles.isInView,
         href && styles.hasHref,
       )}
-      data-test="ProposalsTimelineWidgetItem"
+      data-test="ProjectsTimelineWidgetItem"
       id={id}
       onMouseDown={e => {
         if (!href) {

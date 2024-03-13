@@ -65,7 +65,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
 
   const isEpoch1 = currentEpoch === 1;
 
-  const proposalMatchedProposalRewards = matchedProjectRewards?.find(
+  const projectMatchedProjectRewards = matchedProjectRewards?.find(
     ({ address: matchedProposalRewardsAddress }) => address === matchedProposalRewardsAddress,
   );
   const userAllocationToThisProject = userAllocations?.elements.find(
@@ -78,7 +78,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
 
   // Before the first allocation, threshold is 0, which should be mapped to not defined.
   const isRewardsDataDefined =
-    proposalMatchedProposalRewards !== undefined &&
+    projectMatchedProjectRewards !== undefined &&
     projectRewardsThreshold !== undefined &&
     projectRewardsThreshold !== 0n;
 
@@ -88,8 +88,8 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
     valueToUse,
     simulatedMatched,
     simulatedMatched === undefined
-      ? proposalMatchedProposalRewards?.sum
-      : proposalMatchedProposalRewards?.allocated,
+      ? projectMatchedProjectRewards?.sum
+      : projectMatchedProjectRewards?.allocated,
     userAllocationToThisProject,
   );
   const valueFormatted = getFormattedEthValue(parseUnitsBigInt(valueToUse));
@@ -100,14 +100,14 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
     ? getFormattedEthValue(
         bigintAbs(
           simulatedMatchedBigInt -
-            (proposalMatchedProposalRewards ? proposalMatchedProposalRewards.matched : BigInt(0)),
+            (projectMatchedProjectRewards ? projectMatchedProjectRewards.matched : BigInt(0)),
         ),
       )
     : getFormattedEthValue(parseUnitsBigInt('0', 'wei'));
   const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
     rewardsSumWithValueAndSimulation,
   );
-  const proposalRewardsThresholdFormatted =
+  const projectRewardsThresholdFormatted =
     projectRewardsThreshold !== undefined
       ? getFormattedEthValue(projectRewardsThreshold)
       : undefined;
@@ -115,11 +115,11 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const areValueAndSimulatedSuffixesTheSame =
     valueFormatted.suffix === simulatedMatchedFormatted?.suffix;
   const areTotalSuffixesTheSame =
-    rewardsSumWithValueAndSimulationFormatted?.suffix === proposalRewardsThresholdFormatted?.suffix;
+    rewardsSumWithValueAndSimulationFormatted?.suffix === projectRewardsThresholdFormatted?.suffix;
 
   const filled = getFilled(projectRewardsThreshold, rewardsSumWithValueAndSimulation);
   const isDonationAboveThreshold = useIsDonationAboveThreshold({
-    proposalAddress: address,
+    projectAddress: address,
     rewardsSumWithValueAndSimulation,
   });
 
@@ -176,7 +176,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
               sum: areTotalSuffixesTheSame
                 ? rewardsSumWithValueAndSimulationFormatted?.value
                 : rewardsSumWithValueAndSimulationFormatted?.fullString,
-              threshold: proposalRewardsThresholdFormatted?.fullString,
+              threshold: projectRewardsThresholdFormatted?.fullString,
             }}
           />
         ))}

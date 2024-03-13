@@ -1,4 +1,4 @@
-.proposal {
+.root {
   display: flex;
   flex-direction: column;
   padding-bottom: 4rem;
@@ -21,7 +21,7 @@
   }
 }
 
-.proposalRewards {
+.projectRewards {
   margin: 6.4rem 0 5rem;
   border-bottom: 0.2rem solid $color-octant-grey3;
   padding-bottom: 1.2rem;

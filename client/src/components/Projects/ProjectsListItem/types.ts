@@ -4,5 +4,5 @@ export default interface ProjectsListItemProps {
   className?: string;
   dataTest?: string;
   epoch?: number;
-  proposalIpfsWithRewards: ProjectIpfsWithRewards;
+  projectIpfsWithRewards: ProjectIpfsWithRewards;
 }

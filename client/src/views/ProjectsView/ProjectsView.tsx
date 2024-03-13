@@ -37,10 +37,10 @@ const ProjectsView = (): ReactElement => {
   );
 
   const [loadedArchivedEpochsNumber, setLoadedArchivedEpochsNumber] = useState(() => {
-    const proposalsLoadedArchivedEpochsNumber =
+    const projectsLoadedArchivedEpochsNumber =
       window[WINDOW_PROPOSALS_LOADED_ARCHIVED_EPOCHS_NUMBER];
 
-    return proposalsLoadedArchivedEpochsNumber ?? 0;
+    return projectsLoadedArchivedEpochsNumber ?? 0;
   });
 
   const isEpoch1 = currentEpoch === 1;
@@ -61,12 +61,12 @@ const ProjectsView = (): ReactElement => {
   const onLoadNextEpochArchive = () => setLoadedArchivedEpochsNumber(prev => prev + 1);
 
   useLayoutEffect(() => {
-    const proposalsScrollY = window[WINDOW_PROPOSALS_SCROLL_Y];
-    if (!proposalsScrollY) {
+    const projectsScrollY = window[WINDOW_PROPOSALS_SCROLL_Y];
+    if (!projectsScrollY) {
       return;
     }
 
-    window.scrollTo({ top: proposalsScrollY });
+    window.scrollTo({ top: projectsScrollY });
   }, []);
 
   useEffect(() => {

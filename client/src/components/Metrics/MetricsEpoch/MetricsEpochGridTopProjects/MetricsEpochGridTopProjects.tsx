@@ -20,14 +20,14 @@ const MetricsEpochGridTopProjects: FC<MetricsEpochGridTopProjectsProps> = ({
   const { epoch, lastEpoch } = useMetricsEpoch();
   const { isDesktop } = useMediaQuery();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { data: proposalsIpfsWithRewards } = useProjectsIpfsWithRewards(
+  const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
 
   const numberOfProjects = isDesktop ? 10 : 5;
 
   const projects =
-    proposalsIpfsWithRewards
+    projectsIpfsWithRewards
       .slice(0, numberOfProjects)
       .map(({ totalValueOfAllocations, ...rest }) => ({
         epoch,

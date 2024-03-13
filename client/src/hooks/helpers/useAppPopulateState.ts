@@ -16,7 +16,7 @@ import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from './useAreCu
 export default function useAppPopulateState(): void {
   const { isConnected } = useAccount();
 
-  const { data: proposals } = useProjectsContract();
+  const { data: projects } = useProjectsContract();
   const { data: userAllocations } = useUserAllocations();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const {
@@ -48,8 +48,8 @@ export default function useAppPopulateState(): void {
      * and populates store with them or sets empty array.
      */
     if (
-      !proposals ||
-      proposals.length === 0 ||
+      !projects ||
+      projects.length === 0 ||
       isAllocationsInitialized ||
       isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow
     ) {
@@ -77,7 +77,7 @@ export default function useAppPopulateState(): void {
 
     const validatedProposalsInLocalStorage = getValidatedProjectsFromLocalStorage(
       localStorageAllocationItems,
-      proposals,
+      projects,
     );
     if (validatedProposalsInLocalStorage) {
       setAllocations(validatedProposalsInLocalStorage);
@@ -88,7 +88,7 @@ export default function useAppPopulateState(): void {
     isAllocationsInitialized,
     isConnected,
     isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow,
-    proposals,
+    projects,
     setAllocations,
   ]);
 

@@ -49,7 +49,7 @@ const AllocationView = (): ReactElement => {
   const [addressesWithError, setAddressesWithError] = useState<string[]>([]);
   const [percentageProportions, setPercentageProportions] = useState<PercentageProportions>({});
   const { data: projectsContract } = useProjectsContract();
-  const { data: proposalsIpfsWithRewards } = useProjectsIpfsWithRewards();
+  const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards();
   const { isRewardsForProposalsSet } = useAllocationViewSetRewardsForProposals();
   const {
     data: allocationSimulated,
@@ -383,7 +383,7 @@ const AllocationView = (): ReactElement => {
   const allocationsWithRewards = getAllocationsWithRewards({
     allocationValues,
     areAllocationsAvailableOrAlreadyDone,
-    proposalsIpfsWithRewards,
+    projectsIpfsWithRewards,
     userAllocationsElements: userAllocations?.elements,
   });
 

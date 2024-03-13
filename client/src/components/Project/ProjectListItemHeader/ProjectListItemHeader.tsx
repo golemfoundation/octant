@@ -27,7 +27,7 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
   epoch,
 }) => {
   const { ipfsGateways } = env;
-  const { i18n } = useTranslation('translation', { keyPrefix: 'views.proposal' });
+  const { i18n } = useTranslation('translation', { keyPrefix: 'views.project' });
   const { epoch: epochUrl } = useParams();
   const { data: userAllocations } = useUserAllocations(epoch);
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
@@ -110,7 +110,7 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
           )}
         </div>
       </div>
-      <span className={styles.name} data-test="ProposalListItemHeader__name">
+      <span className={styles.name} data-test="ProjectListItemHeader__name">
         {name}
       </span>
       <Button

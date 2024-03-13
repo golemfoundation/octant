@@ -28,7 +28,7 @@ const Rewards: FC<RewardsProps> = ({
   const isArchivedProposal = epoch !== undefined;
 
   const { data: projectRewardsThreshold, isFetching } = useProjectRewardsThreshold(epoch);
-  const isDonationAboveThreshold = useIsDonationAboveThreshold({ epoch, proposalAddress: address });
+  const isDonationAboveThreshold = useIsDonationAboveThreshold({ epoch, projectAddress: address });
 
   const totalValueOfAllocationsToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
@@ -36,7 +36,7 @@ const Rewards: FC<RewardsProps> = ({
     valueCrypto: totalValueOfAllocations,
   });
 
-  const proposalDonorsRewardsSumToDisplay = getValueCryptoToDisplay({
+  const projectDonorsRewardsSumToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
     valueCrypto: totalValueOfAllocations,
   });
@@ -98,7 +98,7 @@ const Rewards: FC<RewardsProps> = ({
   }, rightSectionValueUseMemoDeps);
 
   return (
-    <div className={cx(styles.root, className)} data-test="ProposalRewards">
+    <div className={cx(styles.root, className)} data-test="ProjectRewards">
       {showProgressBar ? (
         <ProgressBar
           className={styles.progressBar}
@@ -116,7 +116,7 @@ const Rewards: FC<RewardsProps> = ({
         <div className={cx(styles.section, styles.leftSection)}>
           <div
             className={cx(styles.label, isFetching && styles.isFetching)}
-            data-test="ProposalRewards__currentTotal__label"
+            data-test="ProjectRewards__currentTotal__label"
           >
             {leftSectionLabel}
           </div>
@@ -130,11 +130,11 @@ const Rewards: FC<RewardsProps> = ({
                 styles.redValue,
               isFetching && styles.isFetching,
             )}
-            data-test="ProposalRewards__currentTotal__number"
+            data-test="ProjectRewards__currentTotal__number"
           >
             {isDonationAboveThreshold
               ? totalValueOfAllocationsToDisplay
-              : proposalDonorsRewardsSumToDisplay}
+              : projectDonorsRewardsSumToDisplay}
           </div>
         </div>
         {((!isArchivedProposal && isDecisionWindowOpen && !isDonationAboveThreshold) ||

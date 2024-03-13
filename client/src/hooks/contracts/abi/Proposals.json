@@ -130,7 +130,7 @@
         },
         {
           "internalType": "address[]",
-          "name": "_proposalAddresses",
+          "name": "_projectAddresses",
           "type": "address[]"
         }
       ],

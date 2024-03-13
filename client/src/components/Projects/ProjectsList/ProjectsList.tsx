@@ -21,7 +21,7 @@ const ProjectsList: FC<ProposalsListProps> = ({
   });
 
   const { data: projectsAddresses } = useProjectsContract(epoch);
-  const { data: proposalsIpfsWithRewards, isFetching: isFetchingProposalsWithRewards } =
+  const { data: projectsIpfsWithRewards, isFetching: isFetchingProposalsWithRewards } =
     useProjectsIpfsWithRewards(epoch);
   const epochDurationLabel = useEpochDurationLabel(epoch);
 
@@ -37,7 +37,7 @@ const ProjectsList: FC<ProposalsListProps> = ({
           )}
           <div
             className={styles.epochArchive}
-            data-test="ProposalsView__ProjectsList__header--archive"
+            data-test="ProjectsView__ProjectsList__header--archive"
           >
             {t('epochArchive', { epoch })}
             <span
@@ -51,10 +51,10 @@ const ProjectsList: FC<ProposalsListProps> = ({
           </div>
         </>
       )}
-      {proposalsIpfsWithRewards.length > 0 && !isFetchingProposalsWithRewards
-        ? proposalsIpfsWithRewards.map((proposalIpfsWithRewards, index) => (
+      {projectsIpfsWithRewards.length > 0 && !isFetchingProposalsWithRewards
+        ? projectsIpfsWithRewards.map((projectIpfsWithRewards, index) => (
             <ProjectsListItem
-              key={proposalIpfsWithRewards.address}
+              key={projectIpfsWithRewards.address}
               className={styles.element}
               dataTest={
                 epoch
@@ -62,7 +62,7 @@ const ProjectsList: FC<ProposalsListProps> = ({
                   : `ProposalsView__ProjectsListItem--${index}`
               }
               epoch={epoch}
-              proposalIpfsWithRewards={proposalIpfsWithRewards}
+              projectIpfsWithRewards={projectIpfsWithRewards}
             />
           ))
         : projectsAddresses?.map((_, index) => (

@@ -9,7 +9,7 @@ import { arrowRight } from 'svg/misc';
 import styles from './ProjectBackToTopButton.module.scss';
 
 const ProjectBackToTopButton = (): ReactElement => {
-  const { t } = useTranslation('translation', { keyPrefix: 'views.proposal' });
+  const { t } = useTranslation('translation', { keyPrefix: 'views.project' });
 
   return (
     <motion.div

@@ -9,10 +9,10 @@ import MetricsProjectsListItemProps from './types';
 
 const MetricsProjectsListItem: FC<MetricsProjectsListItemProps> = ({ address, epoch, value }) => {
   const { ipfsGateways } = env;
-  const { data: proposalsIpfs } = useProjectsIpfs([address], epoch);
+  const { data: projectsIpfs } = useProjectsIpfs([address], epoch);
 
-  const image = proposalsIpfs.at(0)?.profileImageSmall;
-  const name = proposalsIpfs.at(0)?.name;
+  const image = projectsIpfs.at(0)?.profileImageSmall;
+  const name = projectsIpfs.at(0)?.name;
 
   return (
     <div className={styles.root}>
