@@ -8,7 +8,10 @@ export type Response = {
   amount: string;
 }[];
 
-export function apiGetProposalDonors(proposalAddress: string, epoch: number): Promise<Response> {
+export async function apiGetProjectDonors(
+  proposalAddress: string,
+  epoch: number,
+): Promise<Response> {
   return apiService
     .get(`${env.serverEndpoint}allocations/proposal/${proposalAddress}/epoch/${epoch}`)
     .then(({ data }) => data);

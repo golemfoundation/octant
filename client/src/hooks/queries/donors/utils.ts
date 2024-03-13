@@ -1,4 +1,4 @@
-import { Response } from 'api/calls/poroposalDonors';
+import { Response } from 'api/calls/projectDonors';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import { ProjectDonor } from './types';

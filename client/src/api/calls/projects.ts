@@ -16,7 +16,7 @@ async function getFirstValid(arrayUrls: string[], baseUri: string, index: number
     });
 }
 
-export function apiGetProposal(baseUri: string): Promise<any> {
+export async function apiGetProject(baseUri: string): Promise<any> {
   const { ipfsGateways } = env;
 
   return getFirstValid(ipfsGateways.split(','), baseUri, 0).then(({ data }) => data);

@@ -10,7 +10,7 @@ export type Response = {
   isManuallyEdited: boolean | null;
 };
 
-export function apiGetUserAllocations(address: string, epoch: number): Promise<Response> {
+export async function apiGetUserAllocations(address: string, epoch: number): Promise<Response> {
   return apiService
     .get(`${env.serverEndpoint}allocations/user/${address}/epoch/${epoch}`)
     .then(({ data }) => data);

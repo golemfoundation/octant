@@ -1,6 +1,6 @@
 import { UseQueryResult, useQueries } from '@tanstack/react-query';
 
-import { apiGetProposalDonors } from 'api/calls/poroposalDonors';
+import { apiGetProjectDonors } from 'api/calls/projectDonors';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -23,7 +23,7 @@ export default function useProjectsDonors(epoch?: number): {
     queries: (projectsAddresses || []).map(projectAddress => ({
       enabled: !!projectsAddresses && isDecisionWindowOpen !== undefined,
       queryFn: () =>
-        apiGetProposalDonors(
+        apiGetProjectDonors(
           projectAddress,
           epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
         ),

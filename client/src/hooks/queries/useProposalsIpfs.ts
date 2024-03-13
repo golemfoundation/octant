@@ -2,7 +2,7 @@ import { useQueries, UseQueryResult } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { apiGetProposal } from 'api/calls/proposals';
+import { apiGetProject } from 'api/calls/projects';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useProjectsCid from 'hooks/subgraph/useProjectsCid';
 import toastService from 'services/toastService';
@@ -27,17 +27,17 @@ export default function useProposalsIpfs(
   );
   const { refetch } = useProjectsContract(epoch);
 
-  const proposalsIpfsResults: UseQueryResult<BackendProposal & { ipfsGatewayUsed: string }>[] =
+  const projectsIpfsResults: UseQueryResult<BackendProposal & { ipfsGatewayUsed: string }>[] =
     useQueries({
       queries: (projectsAddresses || []).map(address => ({
         enabled: !!address && !!projectsCid && (currentEpoch !== undefined || epoch !== undefined),
-        queryFn: () => apiGetProposal(`${projectsCid}/${address}`),
-        queryKey: QUERY_KEYS.proposalsIpfsResults(address, epoch ?? currentEpoch!),
+        queryFn: () => apiGetProject(`${projectsCid}/${address}`),
+        queryKey: QUERY_KEYS.projectsIpfsResults(address, epoch ?? currentEpoch!),
         retry: false,
       })),
     });
 
-  const isAnyError = proposalsIpfsResults.some(element => element.isError);
+  const isAnyError = projectsIpfsResults.some(element => element.isError);
   useEffect(() => {
     if (!isAnyError) {
       return;
@@ -52,8 +52,8 @@ export default function useProposalsIpfs(
 
   const isProposalsIpfsResultsFetching =
     isFetchingProjectsCid ||
-    proposalsIpfsResults.length === 0 ||
-    proposalsIpfsResults.some(({ isFetching }) => isFetching);
+    projectsIpfsResults.length === 0 ||
+    projectsIpfsResults.some(({ isFetching }) => isFetching);
 
   if (isProposalsIpfsResultsFetching) {
     return {
@@ -63,7 +63,7 @@ export default function useProposalsIpfs(
     };
   }
 
-  const proposalsIpfsResultsWithAddresses = proposalsIpfsResults.map<ExtendedProposal>(
+  const proposalsIpfsResultsWithAddresses = projectsIpfsResults.map<ExtendedProposal>(
     (proposal, index) => ({
       address: projectsAddresses![index],
       isLoadingError: proposal.isError,

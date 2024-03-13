@@ -9,13 +9,13 @@ export type Response = {
   }[];
 };
 
-export function apiGetEstimatedMatchedProposalRewards(): Promise<Response> {
+export async function apiGetEstimatedMatchedProposalRewards(): Promise<Response> {
   return apiService
     .get(`${env.serverEndpoint}rewards/proposals/estimated`)
     .then(({ data }) => data);
 }
 
-export function apiGetMatchedProposalRewards(epoch: number): Promise<Response> {
+export async function apiGetMatchedProposalRewards(epoch: number): Promise<Response> {
   return apiService
     .get(`${env.serverEndpoint}rewards/proposals/epoch/${epoch}`)
     .then(({ data }) => data);

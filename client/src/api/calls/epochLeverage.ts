@@ -5,6 +5,6 @@ export type Response = {
   leverage: number;
 };
 
-export function apiGetEpochLeverage(epoch: number): Promise<Response> {
+export async function apiGetEpochLeverage(epoch: number): Promise<Response> {
   return apiService.get(`${env.serverEndpoint}rewards/leverage/${epoch}`).then(({ data }) => data);
 }

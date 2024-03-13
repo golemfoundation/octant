@@ -1,6 +1,6 @@
 import { UseQueryOptions, UseQueryResult, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { apiGetProposalDonors, Response } from 'api/calls/poroposalDonors';
+import { apiGetProjectDonors, Response } from 'api/calls/projectDonors';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useSubscription from 'hooks/helpers/useSubscription';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -41,7 +41,7 @@ export default function useProjectDonors(
   return useQuery({
     enabled: !!projectAddress && (epoch !== undefined || !!(currentEpoch && currentEpoch > 1)),
     queryFn: () =>
-      apiGetProposalDonors(
+      apiGetProjectDonors(
         projectAddress,
         epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
       ),

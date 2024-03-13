@@ -19,7 +19,7 @@ export type Root = {
   projectDonors: 'projectDonors';
   projectRewardsThreshold: 'projectRewardsThreshold';
   projectsContract: 'projectsContract';
-  proposalsIpfsResults: 'proposalsIpfsResults';
+  projectsIpfsResults: 'projectsIpfsResults';
   userAllocationNonce: 'userAllocationNonce';
   userAllocations: 'userAllocations';
   userTOS: 'userTOS';
@@ -45,7 +45,7 @@ export type QueryKeys = {
   epochesEndTime: (epochNumber: number) => [Root['epochesEndTime'], string];
   estimatedEffectiveDeposit: (userAddress: string) => [Root['estimatedEffectiveDeposit'], string];
   history: ['history'];
-  individualProposalRewards: ['individualProposalRewards'];
+  individualProjectRewards: ['individualProjectRewards'];
   individualReward: (epochNumber: number) => [Root['individualReward'], string];
   isDecisionWindowOpen: ['isDecisionWindowOpen'];
   largestLockedAmount: ['largestLockedAmount'];
@@ -54,17 +54,17 @@ export type QueryKeys = {
   matchedProjectRewards: (epochNumber: number) => [Root['matchedProjectRewards'], string];
   patronMode: (userAddress: string) => [Root['patronMode'], string];
   projectDonors: (
-    proposalAddress: string,
+    projectAddress: string,
     epochNumber: number,
   ) => [Root['projectDonors'], string, string];
   projectRewardsThreshold: (epochNumber: number) => [Root['projectRewardsThreshold'], string];
   projectsContract: (epochNumber: number) => [Root['projectsContract'], string];
+  projectsIpfsResults: (
+    projectAddress: string,
+    epoch: number,
+  ) => [Root['projectsIpfsResults'], string, string];
   projectsMetadataAccumulateds: ['projectsMetadataAccumulateds'];
   projectsMetadataPerEpoches: ['projectsMetadataPerEpoches'];
-  proposalsIpfsResults: (
-    proposalAddress: string,
-    epoch: number,
-  ) => [Root['proposalsIpfsResults'], string, string];
   syncStatus: ['syncStatus'];
   totalAddresses: ['totalAddresses'];
   totalWithdrawals: ['totalWithdrawals'];
