@@ -6,11 +6,11 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProjectsContract from 'hooks/queries/useProjectsContract';
 
-import { ProposalDonor } from './types';
+import { ProjectDonor } from './types';
 import { mapDataToProjectDonors } from './utils';
 
 export default function useProjectsDonors(epoch?: number): {
-  data: { [key: string]: ProposalDonor[] };
+  data: { [key: string]: ProjectDonor[] };
   isFetching: boolean;
 } {
   const { data: currentEpoch } = useCurrentEpoch();
@@ -19,7 +19,7 @@ export default function useProjectsDonors(epoch?: number): {
 
   // TODO OCT-1139 implement socket here.
 
-  const projectsDonorsResults: UseQueryResult<ProposalDonor[]>[] = useQueries({
+  const projectsDonorsResults: UseQueryResult<ProjectDonor[]>[] = useQueries({
     queries: (projectsAddresses || []).map(projectAddress => ({
       enabled: !!projectsAddresses && isDecisionWindowOpen !== undefined,
       queryFn: () =>

@@ -1,9 +1,9 @@
 import { Response } from 'api/calls/poroposalDonors';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
-import { ProposalDonor } from './types';
+import { ProjectDonor } from './types';
 
-export function mapDataToProjectDonors(data: Response): ProposalDonor[] {
+export function mapDataToProjectDonors(data: Response): ProjectDonor[] {
   return data
     .map(({ address, amount }) => ({
       address,

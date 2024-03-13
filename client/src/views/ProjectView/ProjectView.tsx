@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 
-import ProposalBackToTopButton from 'components/Proposal/ProposalBackToTopButton';
-import ProposalList from 'components/Proposal/ProposalList';
+import ProjectBackToTopButton from 'components/Project/ProjectBackToTopButton';
+import ProjectList from 'components/Project/ProjectList';
 import Layout from 'components/shared/Layout';
 import Loader from 'components/ui/Loader';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
@@ -152,9 +152,9 @@ const ProjectView = (): ReactElement => {
         pageStart={0}
         useWindow
       >
-        <ProposalList epoch={epoch} proposals={loadedProposals} />
+        <ProjectList epoch={epoch} proposals={loadedProposals} />
       </InfiniteScroll>
-      <AnimatePresence>{isBackToTopButtonVisible && <ProposalBackToTopButton />}</AnimatePresence>
+      <AnimatePresence>{isBackToTopButtonVisible && <ProjectBackToTopButton />}</AnimatePresence>
     </Layout>
   );
 };

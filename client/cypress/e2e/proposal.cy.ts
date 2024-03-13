@@ -21,11 +21,11 @@ const checkProposalItemElements = (): Chainable<any> => {
   proposalView.get('[data-test=ProposalListItemHeader__Button]').should('be.visible');
   proposalView.get('[data-test=ProposalListItem__Description]').should('be.visible');
 
-  cy.get('[data-test=ProposalListItem__Donors]')
+  cy.get('[data-test=ProposalListItem__ProjectDonors]')
     .first()
     .scrollIntoView({ offset: { left: 0, top: 100 } });
 
-  cy.get('[data-test=ProposalListItem__Donors]').first().should('be.visible');
+  cy.get('[data-test=ProposalListItem__ProjectDonors]').first().should('be.visible');
   cy.get('[data-test=ProposalListItem__Donors__DonorsHeader__count]')
     .first()
     .should('be.visible')
@@ -108,7 +108,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: -150 } })
           .contains(proposalNames[i]);
-        cy.get('[data-test=ProposalListItem__Donors]')
+        cy.get('[data-test=ProposalListItem__ProjectDonors]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: -150 } })
           .should('be.visible');
@@ -119,7 +119,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test^=ProposalsView__ProposalsListItem]').first().click();
 
       for (let i = 0; i < proposalNames.length - 1; i++) {
-        cy.get('[data-test=ProposalListItem__Donors]')
+        cy.get('[data-test=ProposalListItem__ProjectDonors]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: 100 } });
 
@@ -133,7 +133,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test^=ProposalsView__ProposalsListItem]').first().click();
 
       for (let i = 0; i < proposalNames.length - 1; i++) {
-        cy.get('[data-test=ProposalListItem__Donors]')
+        cy.get('[data-test=ProposalListItem__ProjectDonors]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: 100 } });
 

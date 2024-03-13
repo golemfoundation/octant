@@ -7,14 +7,14 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import { WebsocketListenEvent } from 'types/websocketEvents';
 
-import { ProposalDonor } from './types';
+import { ProjectDonor } from './types';
 import { mapDataToProjectDonors } from './utils';
 
 export default function useProjectDonors(
   projectAddress: string,
   epoch?: number,
-  options?: UseQueryOptions<Response, unknown, ProposalDonor[], any>,
-): UseQueryResult<ProposalDonor[], unknown> {
+  options?: UseQueryOptions<Response, unknown, ProjectDonor[], any>,
+): UseQueryResult<ProjectDonor[], unknown> {
   const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();

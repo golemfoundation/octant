@@ -143,7 +143,7 @@ channels:
       summary: Proposal donors event
       operationId: handle_proposal_donors
       message:
-        name: ProposalDonors
+        name: ProjectDonors
         payload:
           type: array
           items:
@@ -163,7 +163,7 @@ channels:
       summary: Proposal donors event
       operationId: handle_proposal_donors
       message:
-        name: ProposalDonors
+        name: ProjectDonors
         contentType: application/json
         payload:
           type: object
