@@ -27,7 +27,7 @@ import useEpochUnusedRewards from 'hooks/queries/useEpochUnusedRewards';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
-import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
+import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
 import useEpochsStartEndTime from 'hooks/subgraph/useEpochsStartEndTime';
 import useLargestLockedAmount from 'hooks/subgraph/useLargestLockedAmount';
 import useLockedsData from 'hooks/subgraph/useLockedsData';
@@ -47,7 +47,7 @@ const MetricsEpoch = (): ReactElement => {
   const { isFetching: isFetchingMatchedProjectRewards } = useMatchedProjectRewards(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
-  const { isFetching: isFetchingProposalsIpfsWithRewards } = useProposalsIpfsWithRewards(
+  const { isFetching: isFetchingProposalsIpfsWithRewards } = useProjectsIpfsWithRewards(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
   const { isFetching: isFetchingProposalsDonors } = useProjectsDonors(

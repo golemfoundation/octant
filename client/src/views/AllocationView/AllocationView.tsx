@@ -23,7 +23,7 @@ import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import useProjectsContract from 'hooks/queries/useProjectsContract';
-import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
+import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
 import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useWithdrawals from 'hooks/queries/useWithdrawals';
@@ -49,7 +49,7 @@ const AllocationView = (): ReactElement => {
   const [addressesWithError, setAddressesWithError] = useState<string[]>([]);
   const [percentageProportions, setPercentageProportions] = useState<PercentageProportions>({});
   const { data: projectsContract } = useProjectsContract();
-  const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards();
+  const { data: proposalsIpfsWithRewards } = useProjectsIpfsWithRewards();
   const { isRewardsForProposalsSet } = useAllocationViewSetRewardsForProposals();
   const {
     data: allocationSimulated,

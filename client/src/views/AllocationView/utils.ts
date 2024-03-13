@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { AllocationItemWithAllocations } from 'components/Allocation/AllocationItem/types';
-import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
+import { ProjectIpfsWithRewards } from 'hooks/queries/useProjectsIpfsWithRewards';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import getSortedElementsByTotalValueOfAllocationsAndAlphabetical from 'utils/getSortedElementsByTotalValueOfAllocationsAndAlphabetical';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
@@ -183,7 +183,7 @@ export function getAllocationsWithRewards({
 }: {
   allocationValues: AllocationValues | undefined;
   areAllocationsAvailableOrAlreadyDone: boolean;
-  proposalsIpfsWithRewards: ProposalIpfsWithRewards[];
+  proposalsIpfsWithRewards: ProjectIpfsWithRewards[];
   userAllocationsElements: UserAllocationElementString[] | undefined;
 }): AllocationItemWithAllocations[] {
   const isDataDefined =

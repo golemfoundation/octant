@@ -13,9 +13,9 @@ import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/help
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
-import useProposalsIpfsWithRewards, {
-  ProposalIpfsWithRewards,
-} from 'hooks/queries/useProposalsIpfsWithRewards';
+import useProjectsIpfsWithRewards, {
+  ProjectIpfsWithRewards,
+} from 'hooks/queries/useProjectsIpfsWithRewards';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import toastService from 'services/toastService';
 
@@ -25,7 +25,7 @@ const ProjectView = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.project' });
   const [isBackToTopButtonVisible, setIsBackToTopButtonVisible] = useState(false);
   const { projectAddress: projectAddressUrl, epoch: epochUrl } = useParams();
-  const [loadedProposals, setLoadedProposals] = useState<ProposalIpfsWithRewards[]>([]);
+  const [loadedProposals, setLoadedProposals] = useState<ProjectIpfsWithRewards[]>([]);
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: areCurrentEpochsProjectsHiddenOutsideAllocationWindow } =
     useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow();
@@ -35,7 +35,7 @@ const ProjectView = (): ReactElement => {
   const epoch = isDecisionWindowOpen && epochUrlInt === currentEpoch! - 1 ? undefined : epochUrlInt;
 
   const { data: matchedProjectRewards } = useMatchedProjectRewards(epoch);
-  const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards(epoch);
+  const { data: proposalsIpfsWithRewards } = useProjectsIpfsWithRewards(epoch);
 
   const isEpoch1 = currentEpoch === 1;
   const areMatchedProposalsReady =

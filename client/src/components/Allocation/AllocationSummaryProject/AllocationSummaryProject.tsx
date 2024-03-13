@@ -5,7 +5,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
-import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
+import useProjectsIpfs from 'hooks/queries/useProjectsIpfs';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 import getRewardsSumWithValueAndSimulation from 'utils/getRewardsSumWithValueAndSimulation';
@@ -22,7 +22,7 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
 }) => {
   const { i18n } = useTranslation('translation');
   const isDonationAboveThreshold = useIsDonationAboveThreshold({ proposalAddress: address });
-  const { data: proposalIpfs, isFetching: isFetchingProposalIpfs } = useProposalsIpfs([address]);
+  const { data: proposalIpfs, isFetching: isFetchingProposalIpfs } = useProjectsIpfs([address]);
 
   const { data: matchedProjectRewards } = useMatchedProjectRewards();
   const { data: projectRewardsThreshold } = useProjectRewardsThreshold();

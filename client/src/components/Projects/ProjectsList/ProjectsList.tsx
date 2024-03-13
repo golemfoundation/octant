@@ -6,7 +6,7 @@ import ProjectsListItem from 'components/Projects/ProjectsListItem';
 import ProjectsListSkeletonItem from 'components/Projects/ProjectsListSkeletonItem';
 import useEpochDurationLabel from 'hooks/helpers/useEpochDurationLabel';
 import useProjectsContract from 'hooks/queries/useProjectsContract';
-import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
+import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
 
 import styles from './ProjectsList.module.scss';
 import ProposalsListProps from './types';
@@ -22,7 +22,7 @@ const ProjectsList: FC<ProposalsListProps> = ({
 
   const { data: projectsAddresses } = useProjectsContract(epoch);
   const { data: proposalsIpfsWithRewards, isFetching: isFetchingProposalsWithRewards } =
-    useProposalsIpfsWithRewards(epoch);
+    useProjectsIpfsWithRewards(epoch);
   const epochDurationLabel = useEpochDurationLabel(epoch);
 
   return (

@@ -3,7 +3,7 @@ import React, { FC, Fragment } from 'react';
 import Img from 'components/ui/Img';
 import env from 'env';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
-import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
+import useProjectsIpfs from 'hooks/queries/useProjectsIpfs';
 import useSettingsStore from 'store/settings/store';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
@@ -26,7 +26,7 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({
     },
   }));
   const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
-  const { data: proposalIpfs, isFetching: isFetchingProposalIpfs } = useProposalsIpfs(
+  const { data: proposalIpfs, isFetching: isFetchingProposalIpfs } = useProjectsIpfs(
     [address],
     epoch,
   );

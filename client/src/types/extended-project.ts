@@ -1,6 +1,6 @@
 import { BackendProposal } from './gen/backendproposal';
 
-export interface ExtendedProposal extends Partial<BackendProposal> {
+export interface ExtendedProject extends Partial<BackendProposal> {
   address: string;
   isLoadingError: boolean;
 }

@@ -7,7 +7,7 @@ import MetricsProjectsList from 'components/Metrics/MetricsProjectsList';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
+import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
 
 import styles from './MetricsEpochGridTopProjects.module.scss';
 import MetricsEpochGridTopProjectsProps from './types';
@@ -20,7 +20,7 @@ const MetricsEpochGridTopProjects: FC<MetricsEpochGridTopProjectsProps> = ({
   const { epoch, lastEpoch } = useMetricsEpoch();
   const { isDesktop } = useMediaQuery();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards(
+  const { data: proposalsIpfsWithRewards } = useProjectsIpfsWithRewards(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
 

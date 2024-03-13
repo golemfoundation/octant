@@ -6,16 +6,16 @@ import { apiGetProject } from 'api/calls/projects';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useProjectsCid from 'hooks/subgraph/useProjectsCid';
 import toastService from 'services/toastService';
-import { ExtendedProposal } from 'types/extended-proposal';
+import { ExtendedProject } from 'types/extended-project';
 import { BackendProposal } from 'types/gen/backendproposal';
 
 import useCurrentEpoch from './useCurrentEpoch';
 import useProjectsContract from './useProjectsContract';
 
-export default function useProposalsIpfs(
+export default function useProjectsIpfs(
   projectsAddresses?: string[],
   epoch?: number,
-): { data: ExtendedProposal[]; isFetching: boolean; refetch: () => void } {
+): { data: ExtendedProject[]; isFetching: boolean; refetch: () => void } {
   const { t } = useTranslation('translation', { keyPrefix: 'api.errorMessage' });
   const { data: currentEpoch } = useCurrentEpoch();
 
@@ -50,29 +50,29 @@ export default function useProposalsIpfs(
     });
   }, [isAnyError, t]);
 
-  const isProposalsIpfsResultsFetching =
+  const isProjectsIpfsResultsFetching =
     isFetchingProjectsCid ||
     projectsIpfsResults.length === 0 ||
     projectsIpfsResults.some(({ isFetching }) => isFetching);
 
-  if (isProposalsIpfsResultsFetching) {
+  if (isProjectsIpfsResultsFetching) {
     return {
       data: [],
-      isFetching: isProposalsIpfsResultsFetching,
+      isFetching: isProjectsIpfsResultsFetching,
       refetch,
     };
   }
 
-  const proposalsIpfsResultsWithAddresses = projectsIpfsResults.map<ExtendedProposal>(
-    (proposal, index) => ({
+  const projectsIpfsResultsWithAddresses = projectsIpfsResults.map<ExtendedProject>(
+    (project, index) => ({
       address: projectsAddresses![index],
-      isLoadingError: proposal.isError,
-      ...(proposal.data || {}),
+      isLoadingError: project.isError,
+      ...(project.data || {}),
     }),
   );
 
   return {
-    data: proposalsIpfsResultsWithAddresses,
+    data: projectsIpfsResultsWithAddresses,
     isFetching: false,
     refetch,
   };
