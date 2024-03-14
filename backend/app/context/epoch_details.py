@@ -35,7 +35,7 @@ class EpochDetails:
         self.finalized_sec = self.end_sec + self.decision_window_sec
         self.finalized_timestamp = from_timestamp_s(self.finalized_sec)
         self.start_block, self.end_block = self._calc_blocks_range(
-            with_block_range, current_epoch_simulated
+            now_sec, with_block_range, current_epoch_simulated
         )
         if current_epoch_simulated:
             self.remaining_sec = 0
@@ -68,7 +68,10 @@ class EpochDetails:
         return self.duration_sec
 
     def _calc_blocks_range(
-        self, with_block_range: bool = False, current_epoch_simulated: bool = False
+        self,
+        now_sec: int,
+        with_block_range: bool = False,
+        current_epoch_simulated: bool = False,
     ) -> tuple:
         start_block, end_block = None, None
 
@@ -84,9 +87,8 @@ class EpochDetails:
             )
 
         if with_block_range and current_epoch_simulated:
-            now_ts = int(datetime.utcnow().timestamp())
             start_block = get_block_num_from_ts(self.start_sec)
-            end_block = get_block_num_from_ts(now_ts)
+            end_block = get_block_num_from_ts(now_sec)
 
         return start_block, end_block
 
