@@ -92,7 +92,7 @@ epoch_stats_model = api.model(
         "matchedRewards": fields.String(
             required=False,
             description="""Total matched rewards for the given epoch.
-            Includes matchedRewards from Golem Foundation and funds from patrons."""
+            Includes matchedRewards from Golem Foundation and patronRewards.""",
         ),
         "leftover": fields.String(
             required=False,
