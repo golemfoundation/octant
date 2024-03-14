@@ -24,19 +24,19 @@ describe('getAllocationsMapped', () => {
     ).toEqual([
       {
         amount: '0',
-        projectAddress: '0x123',
+        proposalAddress: '0x123',
       },
       {
         amount: '1000000000000000000',
-        projectAddress: '0x456',
+        proposalAddress: '0x456',
       },
       {
         amount: '500000000000000000',
-        projectAddress: '0x789',
+        proposalAddress: '0x789',
       },
       {
         amount: '30000000',
-        projectAddress: '0x101112',
+        proposalAddress: '0x101112',
       },
     ]);
   });
@@ -64,19 +64,19 @@ describe('getAllocationsMapped', () => {
     ).toEqual([
       {
         amount: '0',
-        projectAddress: '0x123',
+        proposalAddress: '0x123',
       },
       {
         amount: '0',
-        projectAddress: '0x456',
+        proposalAddress: '0x456',
       },
       {
         amount: '500000000000000000',
-        projectAddress: '0x789',
+        proposalAddress: '0x789',
       },
       {
         amount: '30000000',
-        projectAddress: '0x101112',
+        proposalAddress: '0x101112',
       },
     ]);
   });
