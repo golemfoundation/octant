@@ -21,11 +21,11 @@ const checkProjectItemElements = (): Chainable<any> => {
   proposalView.get('[data-test=ProjectListItemHeader__Button]').should('be.visible');
   proposalView.get('[data-test=ProjectListItem__Description]').should('be.visible');
 
-  cy.get('[data-test=ProjectListItem__ProjectDonors]')
+  cy.get('[data-test=ProjectListItem__Donors]')
     .first()
     .scrollIntoView({ offset: { left: 0, top: 100 } });
 
-  cy.get('[data-test=ProjectListItem__ProjectDonors]').first().should('be.visible');
+  cy.get('[data-test=ProjectListItem__Donors]').first().should('be.visible');
   cy.get('[data-test=ProjectListItem__Donors__DonorsHeader__count]')
     .first()
     .should('be.visible')
@@ -105,7 +105,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: -150 } })
           .contains(projectNames[i]);
-        cy.get('[data-test=ProjectListItem__ProjectDonors]')
+        cy.get('[data-test=ProjectListItem__Donors]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: -150 } })
           .should('be.visible');
@@ -116,7 +116,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test^=ProjectsView__ProjectsListItem]').first().click();
 
       for (let i = 0; i < projectNames.length - 1; i++) {
-        cy.get('[data-test=ProjectListItem__ProjectDonors]')
+        cy.get('[data-test=ProjectListItem__Donors]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: 100 } });
 
@@ -130,7 +130,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test^=ProjectsView__ProjectsListItem]').first().click();
 
       for (let i = 0; i < projectNames.length - 1; i++) {
-        cy.get('[data-test=ProjectListItem__ProjectDonors]')
+        cy.get('[data-test=ProjectListItem__Donors]')
           .eq(i)
           .scrollIntoView({ offset: { left: 0, top: 100 } });
 
