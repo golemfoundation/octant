@@ -115,7 +115,7 @@ describe('getAllocationValuesInitialState', () => {
     allocations: ['0xA', '0xB', '0xC'],
     isManualMode: false,
     percentageProportions: {},
-    rewardsForProposals: parseUnitsBigInt('1'),
+    rewardsForProjects: parseUnitsBigInt('1'),
     shouldReset: false,
     userAllocationsElements: [],
   };
@@ -127,7 +127,7 @@ describe('getAllocationValuesInitialState', () => {
           ...propsCommon,
           allocations: ['0xA', '0xB', '0xC'],
           isManualMode: true,
-          rewardsForProposals: parseUnitsBigInt('0.6'),
+          rewardsForProjects: parseUnitsBigInt('0.6'),
           shouldReset: true,
           userAllocationsElements: [
             { address: '0xA', value: '0.3' },
@@ -148,7 +148,7 @@ describe('getAllocationValuesInitialState', () => {
           ...propsCommon,
           allocations: ['0xA', '0xB', '0xC', '0xD'],
           isManualMode: true,
-          rewardsForProposals: parseUnitsBigInt('0.6'),
+          rewardsForProjects: parseUnitsBigInt('0.6'),
           shouldReset: true,
           userAllocationsElements: [
             { address: '0xA', value: '0.3' },
@@ -176,7 +176,7 @@ describe('getAllocationValuesInitialState', () => {
             { address: '0xC', value: '0.1' },
           ],
           isManualMode: false,
-          rewardsForProposals: parseUnitsBigInt('1'),
+          rewardsForProjects: parseUnitsBigInt('1'),
           userAllocationsElements: [],
         }),
       ).toEqual([
@@ -290,7 +290,7 @@ describe('getAllocationValuesAfterManualChange', () => {
       address: '0xA',
       value: '0.05',
     },
-    rewardsForProposals: parseUnitsBigInt('1'),
+    rewardsForProjects: parseUnitsBigInt('1'),
     setAddressesWithError: () => {},
   };
 
@@ -303,7 +303,7 @@ describe('getAllocationValuesAfterManualChange', () => {
         { address: '0xB', value: '0.333333333333333333' },
         { address: '0xC', value: '0.333333333333333334' },
       ],
-      rewardsForProposalsNew: parseUnitsBigInt('1'),
+      rewardsForProjectsNew: parseUnitsBigInt('1'),
     });
   });
 
@@ -322,7 +322,7 @@ describe('getAllocationValuesAfterManualChange', () => {
         { address: '0xB', value: '0.333333333333333333' },
         { address: '0xC', value: '0.333333333333333334' },
       ],
-      rewardsForProposalsNew: parseUnitsBigInt('1'),
+      rewardsForProjectsNew: parseUnitsBigInt('1'),
     });
   });
 
@@ -338,7 +338,7 @@ describe('getAllocationValuesAfterManualChange', () => {
         { address: '0xB', value: '0.333333333333333333' },
         { address: '0xC', value: '0.333333333333333334' },
       ],
-      rewardsForProposalsNew: parseUnitsBigInt('0.716666666666666667'),
+      rewardsForProjectsNew: parseUnitsBigInt('0.716666666666666667'),
     });
   });
 
@@ -349,11 +349,11 @@ describe('getAllocationValuesAfterManualChange', () => {
         { address: '0xB', value: '0.333333333333333333' },
         { address: '0xC', value: '0.616666666666666667' },
       ],
-      rewardsForProposalsNew: parseUnitsBigInt('1'),
+      rewardsForProjectsNew: parseUnitsBigInt('1'),
     });
   });
 
-  it('correctly updates allocationValues when !isManualMode, rewardsForProposalsNew is zero when all values are 0', () => {
+  it('correctly updates allocationValues when !isManualMode, rewardsForProjectsNew is zero when all values are 0', () => {
     expect(
       getAllocationValuesAfterManualChange({
         ...propsCommon,
@@ -373,7 +373,7 @@ describe('getAllocationValuesAfterManualChange', () => {
         { address: '0xB', value: '0' },
         { address: '0xC', value: '0' },
       ],
-      rewardsForProposalsNew: parseUnitsBigInt('0'),
+      rewardsForProjectsNew: parseUnitsBigInt('0'),
     });
   });
 });

@@ -14,12 +14,12 @@ export type Root = {
   epochesEndTime: 'epochesEndTime';
   estimatedEffectiveDeposit: 'estimatedEffectiveDeposit';
   individualReward: 'individualReward';
-  matchedProposalRewards: 'matchedProposalRewards';
+  matchedProjectRewards: 'matchedProjectRewards';
   patronMode: 'patronMode';
-  proposalDonors: 'proposalDonors';
-  proposalRewardsThreshold: 'proposalRewardsThreshold';
-  proposalsContract: 'proposalsContract';
-  proposalsIpfsResults: 'proposalsIpfsResults';
+  projectDonors: 'projectDonors';
+  projectRewardsThreshold: 'projectRewardsThreshold';
+  projectsContract: 'projectsContract';
+  projectsIpfsResults: 'projectsIpfsResults';
   userAllocationNonce: 'userAllocationNonce';
   userAllocations: 'userAllocations';
   userTOS: 'userTOS';
@@ -45,26 +45,26 @@ export type QueryKeys = {
   epochesEndTime: (epochNumber: number) => [Root['epochesEndTime'], string];
   estimatedEffectiveDeposit: (userAddress: string) => [Root['estimatedEffectiveDeposit'], string];
   history: ['history'];
-  individualProposalRewards: ['individualProposalRewards'];
+  individualProjectRewards: ['individualProjectRewards'];
   individualReward: (epochNumber: number) => [Root['individualReward'], string];
   isDecisionWindowOpen: ['isDecisionWindowOpen'];
   largestLockedAmount: ['largestLockedAmount'];
   lockedSummaryLatest: ['lockedSummaryLatest'];
   lockedSummarySnapshots: ['lockedSummarySnapshots'];
-  matchedProposalRewards: (epochNumber: number) => [Root['matchedProposalRewards'], string];
+  matchedProjectRewards: (epochNumber: number) => [Root['matchedProjectRewards'], string];
   patronMode: (userAddress: string) => [Root['patronMode'], string];
+  projectDonors: (
+    projectAddress: string,
+    epochNumber: number,
+  ) => [Root['projectDonors'], string, string];
+  projectRewardsThreshold: (epochNumber: number) => [Root['projectRewardsThreshold'], string];
+  projectsContract: (epochNumber: number) => [Root['projectsContract'], string];
+  projectsIpfsResults: (
+    projectAddress: string,
+    epoch: number,
+  ) => [Root['projectsIpfsResults'], string, string];
   projectsMetadataAccumulateds: ['projectsMetadataAccumulateds'];
   projectsMetadataPerEpoches: ['projectsMetadataPerEpoches'];
-  proposalDonors: (
-    proposalAddress: string,
-    epochNumber: number,
-  ) => [Root['proposalDonors'], string, string];
-  proposalRewardsThreshold: (epochNumber: number) => [Root['proposalRewardsThreshold'], string];
-  proposalsContract: (epochNumber: number) => [Root['proposalsContract'], string];
-  proposalsIpfsResults: (
-    proposalAddress: string,
-    epoch: number,
-  ) => [Root['proposalsIpfsResults'], string, string];
   syncStatus: ['syncStatus'];
   totalAddresses: ['totalAddresses'];
   totalWithdrawals: ['totalWithdrawals'];

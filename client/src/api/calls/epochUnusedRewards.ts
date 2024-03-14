@@ -6,6 +6,6 @@ export type Response = {
   value: string; // WEI
 };
 
-export function apiGetEpochUnusedRewards(epoch: number): Promise<Response> {
+export async function apiGetEpochUnusedRewards(epoch: number): Promise<Response> {
   return apiService.get(`${env.serverEndpoint}rewards/unused/${epoch}`).then(({ data }) => data);
 }

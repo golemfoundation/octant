@@ -5,6 +5,6 @@ export type Response = {
   patrons: string[];
 };
 
-export function apiGetEpochPatrons(epoch: number): Promise<Response> {
+export async function apiGetEpochPatrons(epoch: number): Promise<Response> {
   return apiService.get(`${env.serverEndpoint}user/patrons/${epoch}`).then(({ data }) => data);
 }

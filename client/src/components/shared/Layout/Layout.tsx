@@ -64,12 +64,12 @@ const Layout: FC<LayoutProps> = ({
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isAllocationRoot = !!useMatch(ROOT_ROUTES.allocation.absolute);
-  const isUseMatchProposal = !!useMatch(ROOT_ROUTES.proposalWithAddress.absolute);
-  const isUseMatchProposalWithAddress = !!useMatch(ROOT_ROUTES.proposalWithAddress.absolute);
-  const isProposalRoot = isUseMatchProposal || isUseMatchProposalWithAddress;
-  const isProposalsRoot = !!useMatch(ROOT_ROUTES.proposals.absolute);
+  const isUseMatchProject = !!useMatch(ROOT_ROUTES.projectWithAddress.absolute);
+  const isUseMatchProjectWithAddress = !!useMatch(ROOT_ROUTES.projectWithAddress.absolute);
+  const isProjectRoot = isUseMatchProject || isUseMatchProjectWithAddress;
+  const isProjectsRoot = !!useMatch(ROOT_ROUTES.projects.absolute);
 
-  const showAllocationPeriod = isAllocationRoot || isProposalRoot || isProposalsRoot;
+  const showAllocationPeriod = isAllocationRoot || isProjectRoot || isProjectsRoot;
 
   const getCurrentPeriod = () => {
     if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
@@ -94,8 +94,8 @@ const Layout: FC<LayoutProps> = ({
 
     return tabs.map(tab => {
       const isProjectView =
-        pathname.includes(`${ROOT_ROUTES.proposal.absolute}/`) &&
-        tab.to === ROOT_ROUTES.proposals.absolute;
+        pathname.includes(`${ROOT_ROUTES.project.absolute}/`) &&
+        tab.to === ROOT_ROUTES.projects.absolute;
       return {
         ...tab,
         icon: isProjectView ? chevronLeft : tab.icon,
@@ -116,12 +116,12 @@ const Layout: FC<LayoutProps> = ({
   }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
   const onLogoClick = () => {
-    if (pathname === ROOT_ROUTES.proposals.absolute) {
+    if (pathname === ROOT_ROUTES.projects.absolute) {
       window.scrollTo({ behavior: 'smooth', top: 0 });
       return;
     }
 
-    navigate(ROOT_ROUTES.proposals.absolute);
+    navigate(ROOT_ROUTES.projects.absolute);
   };
   useEffect(() => {
     const intervalId = setInterval(() => {
