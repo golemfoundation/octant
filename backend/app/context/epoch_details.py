@@ -21,30 +21,30 @@ class EpochDetails:
         with_block_range=False,
         current_epoch_simulated=False,
     ):
+        now_sec = int(datetime.utcnow().timestamp())
         self.epoch_num = int(epoch_num)
         self.duration_sec = int(duration)
         self.duration_days = sec_to_days(self.duration_sec)
         self.decision_window_sec = int(decision_window)
         self.decision_window_days = sec_to_days(self.decision_window_sec)
         self.start_sec = int(start)
-        self.end_sec = self.start_sec + self.duration_sec
+        if current_epoch_simulated:
+            self.end_sec = now_sec
+        else:
+            self.end_sec = self.start_sec + self.duration_sec
         self.finalized_sec = self.end_sec + self.decision_window_sec
         self.finalized_timestamp = from_timestamp_s(self.finalized_sec)
         self.start_block, self.end_block = self._calc_blocks_range(
             with_block_range, current_epoch_simulated
         )
-
-        if remaining_sec is None:
-            now_sec = int(datetime.utcnow().timestamp())
-            if now_sec > self.end_sec:
-                self.remaining_sec = 0
-            elif self.start_sec <= now_sec < self.end_sec:
-                self.remaining_sec = self.end_sec - now_sec
-            else:
-                self.remaining_sec = self.duration_sec
+        if current_epoch_simulated:
+            self.remaining_sec = 0
         else:
-            self.remaining_sec = remaining_sec
-
+            self.remaining_sec = (
+                self._calc_remaining_sec(now_sec)
+                if remaining_sec is None
+                else remaining_sec
+            )
         self.remaining_days = sec_to_days(self.remaining_sec)
 
     @property
@@ -59,6 +59,13 @@ class EpochDetails:
         if not self.end_block or not self.start_block:
             raise InvalidBlocksRange
         return self.end_block - self.start_block
+
+    def _calc_remaining_sec(self, now_sec: int) -> int:
+        if now_sec > self.end_sec:
+            return 0
+        elif self.start_sec <= now_sec < self.end_sec:
+            return self.end_sec - now_sec
+        return self.duration_sec
 
     def _calc_blocks_range(
         self, with_block_range: bool = False, current_epoch_simulated: bool = False

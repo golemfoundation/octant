@@ -1,3 +1,5 @@
+from freezegun import freeze_time
+
 from app.context.epoch_details import EpochDetails
 
 
@@ -40,3 +42,26 @@ def test_check_if_epoch_details_gets_blocks_when_current_simulated(
 
     assert epoch_details.start_block == mocked_etherscan_block
     assert epoch_details.end_block == mocked_etherscan_block
+
+
+@freeze_time("2024-03-14 02:12:00")
+def test_check_if_attributes_are_correctly_set_when_current_simulated():
+    mocked_now_ts = 1710382320
+    mocked_decision_window = 10
+    epoch_details = EpochDetails(
+        epoch_num=1,
+        start=1,
+        duration=100,
+        decision_window=mocked_decision_window,
+        with_block_range=False,
+        current_epoch_simulated=True,
+    )
+
+    assert epoch_details.epoch_num == 1
+    assert epoch_details.start_sec == 1
+    assert epoch_details.end_sec == mocked_now_ts
+    assert epoch_details.duration_sec == 100
+    assert epoch_details.remaining_sec == 0
+    assert epoch_details.finalized_sec == mocked_now_ts + mocked_decision_window
+    assert epoch_details.start_block is None
+    assert epoch_details.end_block is None
