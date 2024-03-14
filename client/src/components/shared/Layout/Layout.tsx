@@ -46,6 +46,7 @@ const Layout: FC<LayoutProps> = ({
   isNavigationVisible = true,
   classNameBody,
   isAbsoluteHeaderPosition = false,
+  showHeaderBlur = true,
 }) => {
   const { data: isPatronMode } = useIsPatronMode();
   const { t } = useTranslation('translation', { keyPrefix: 'layouts.main' });
@@ -148,7 +149,7 @@ const Layout: FC<LayoutProps> = ({
       <div className={styles.root} data-test={dataTest}>
         {isHeaderVisible && (
           <Fragment>
-            <div className={styles.headerBlur} />
+            {showHeaderBlur && <div className={styles.headerBlur} />}
             <div
               className={cx(
                 styles.headerWrapper,

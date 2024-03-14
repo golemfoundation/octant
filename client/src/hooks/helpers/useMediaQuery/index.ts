@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { tabletOnly, desktopOnly } from 'styles/utils/mediaQueries';
+import { tabletOnly, desktopOnly, largeDesktopOnly } from 'styles/utils/mediaQueries';
 
 import { UseMediaQuery } from './types';
 
@@ -13,8 +13,13 @@ function useMediaQuery(): UseMediaQuery {
   };
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
+  const [isLargeDesktop, setIsLargeDesktop] = useState<boolean>(getMatches(largeDesktopOnly));
   const [isDesktop, setIsDesktop] = useState<boolean>(getMatches(desktopOnly));
   const [isTablet, setIsTablet] = useState<boolean>(getMatches(tabletOnly));
+
+  function handleChangeLargeDesktop() {
+    setIsLargeDesktop(getMatches(largeDesktopOnly));
+  }
 
   function handleChangeDesktop() {
     setIsDesktop(getMatches(desktopOnly));
@@ -25,10 +30,17 @@ function useMediaQuery(): UseMediaQuery {
   }
 
   useEffect(() => {
+    const matchMediaLargeDesktop = window.matchMedia(largeDesktopOnly);
     const matchMediaDesktop = window.matchMedia(desktopOnly);
     const matchMediaTablet = window.matchMedia(tabletOnly);
 
     // Listen matchMedia
+    if (matchMediaLargeDesktop.addListener) {
+      matchMediaLargeDesktop.addListener(handleChangeLargeDesktop);
+    } else {
+      matchMediaLargeDesktop.addEventListener('change', handleChangeLargeDesktop);
+    }
+
     if (matchMediaDesktop.addListener) {
       matchMediaDesktop.addListener(handleChangeDesktop);
     } else {
@@ -42,6 +54,12 @@ function useMediaQuery(): UseMediaQuery {
     }
 
     return () => {
+      if (matchMediaLargeDesktop.removeListener) {
+        matchMediaLargeDesktop.removeListener(handleChangeLargeDesktop);
+      } else {
+        matchMediaLargeDesktop.removeEventListener('change', handleChangeLargeDesktop);
+      }
+
       if (matchMediaDesktop.removeListener) {
         matchMediaDesktop.removeListener(handleChangeDesktop);
       } else {
@@ -58,7 +76,12 @@ function useMediaQuery(): UseMediaQuery {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { isDesktop, isMobile: !isDesktop && !isTablet, isTablet };
+  return {
+    isDesktop,
+    isLargeDesktop,
+    isMobile: !isDesktop && !isTablet && !isLargeDesktop,
+    isTablet,
+  };
 }
 
 export default useMediaQuery;
