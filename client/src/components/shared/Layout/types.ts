@@ -9,4 +9,5 @@ export default interface LayoutProps {
   isLoading?: boolean;
   isNavigationVisible?: boolean;
   navigationBottomSuffix?: ReactNode;
+  showHeaderBlur?: boolean;
 }

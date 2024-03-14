@@ -13,6 +13,6 @@ export type Response = {
   totalWithdrawals: string | null;
 };
 
-export function apiGetEpochInfo(epoch: number): Promise<Response> {
+export async function apiGetEpochInfo(epoch: number): Promise<Response> {
   return apiService.get(`${env.serverEndpoint}epochs/info/${epoch}`).then(({ data }) => data);
 }

@@ -381,8 +381,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('route /allocate redirects to /projects', () => {
-      visitWithLoader(ROOT_ROUTES.allocation.absolute, ROOT_ROUTES.proposals.absolute);
-      cy.get('[data-test=ProposalsView]').should('be.visible');
+      visitWithLoader(ROOT_ROUTES.allocation.absolute, ROOT_ROUTES.projects.absolute);
+      cy.get('[data-test=ProjectsView]').should('be.visible');
     });
 
     it('BoxPersonalAllocation has correct title and sections labels', () => {
@@ -710,8 +710,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('when entering project view, button icon changes to chevronLeft', () => {
-      visitWithLoader(ROOT_ROUTES.proposals.absolute);
-      cy.get('[data-test^=ProposalsView__ProposalsListItem').first().click();
+      visitWithLoader(ROOT_ROUTES.projects.absolute);
+      cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
       cy.get('[data-test=Navbar__Button--Projects]')
         .find('svg')
         // HTML tag can't be self-closing in CY.

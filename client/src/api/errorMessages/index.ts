@@ -7,7 +7,7 @@ import toastService from 'services/toastService';
 
 import { QueryMutationError, QueryMutationErrorConfig, IgnoredQueries } from './types';
 
-const IGNORED_QUERIES: IgnoredQueries = [ROOTS.cryptoValues, ROOTS.proposalsIpfsResults];
+const IGNORED_QUERIES: IgnoredQueries = [ROOTS.cryptoValues, ROOTS.projectsIpfsResults];
 
 const errors: QueryMutationErrorConfig = {
   4001: {

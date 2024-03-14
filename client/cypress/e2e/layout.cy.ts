@@ -37,7 +37,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       navigateWithCheck(ROOT_ROUTES.settings.absolute);
       cy.get('[data-test=SettingsView]').should('be.visible');
       cy.get('[data-test=MainLayout__Logo]').click();
-      cy.get('[data-test=ProposalsView]').should('be.visible');
+      cy.get('[data-test=ProjectsView]').should('be.visible');
     });
 
     it('Clicking on Octant logo redirects to projects view (outside projects view) with memorized scrollY', () => {
@@ -45,7 +45,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       navigateWithCheck(ROOT_ROUTES.settings.absolute);
       cy.get('[data-test=SettingsView]').should('be.visible');
       cy.get('[data-test=MainLayout__Logo]').click();
-      cy.get('[data-test=ProposalsView]').should('be.visible');
+      cy.get('[data-test=ProjectsView]').should('be.visible');
       cy.window().then(cyWindow => {
         expect(cyWindow.scrollY).to.be.eq(500);
       });

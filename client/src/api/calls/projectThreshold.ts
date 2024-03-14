@@ -6,6 +6,6 @@ export type Response = {
   threshold: string;
 };
 
-export function apiGetProjectThreshold(epoch: number): Promise<Response> {
+export async function apiGetProjectThreshold(epoch: number): Promise<Response> {
   return apiService.get(`${env.serverEndpoint}rewards/threshold/${epoch}`).then(({ data }) => data);
 }

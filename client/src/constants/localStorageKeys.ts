@@ -4,9 +4,9 @@ const getLocalStorageKey = (prefix: string, suffix: string): string =>
 
 const allocationPrefix = 'allocation';
 export const ALLOCATION_ITEMS_KEY = getLocalStorageKey(allocationPrefix, 'items');
-export const ALLOCATION_REWARDS_FOR_PROPOSALS = getLocalStorageKey(
+export const ALLOCATION_REWARDS_FOR_PROJECTS = getLocalStorageKey(
   allocationPrefix,
-  'rewardsForProposals',
+  'rewardsForProjects',
 );
 
 const onboardingPrefix = 'onboarding';

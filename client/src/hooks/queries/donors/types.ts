@@ -1,4 +1,4 @@
-export type ProposalDonor = {
+export type ProjectDonor = {
   address: string;
   amount: bigint;
 };

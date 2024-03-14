@@ -15,7 +15,7 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useLock from 'hooks/mutations/useLock';
 import useUnlock from 'hooks/mutations/useUnlock';
 import useDepositValue from 'hooks/queries/useDepositValue';
-import useProposalsContract from 'hooks/queries/useProposalsContract';
+import useProjectsContract from 'hooks/queries/useProjectsContract';
 import toastService from 'services/toastService';
 import useTransactionLocalStore from 'store/transactionLocal/store';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
@@ -52,7 +52,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
   const [isCryptoOrFiatInputFocused, setIsCryptoOrFiatInputFocused] = useState(true);
 
   const { data: availableFundsGlm } = useAvailableFundsGlm();
-  const { data: proposalsAddresses } = useProposalsContract();
+  const { data: projectsAddresses } = useProjectsContract();
   const { data: depositsValue } = useDepositValue();
 
   useEffect(() => {
@@ -113,12 +113,12 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
   const unlockMutation = useUnlock({ onError, onMutate, onSuccess });
 
   const onApproveOrDeposit = async ({ valueToDeposeOrWithdraw }): Promise<void> => {
-    const isSignedInAsAProposal = proposalsAddresses!.includes(address!);
+    const isSignedInAsAProject = projectsAddresses!.includes(address!);
 
-    if (isSignedInAsAProposal) {
+    if (isSignedInAsAProject) {
       toastService.showToast({
-        name: 'proposalForbiddenOperation',
-        title: i18n.t('common.proposalForbiddenOperation'),
+        name: 'projectForbiddenOperation',
+        title: i18n.t('common.projectForbiddenOperation'),
         type: 'error',
       });
       return;

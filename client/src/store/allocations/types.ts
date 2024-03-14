@@ -1,11 +1,11 @@
 export interface AllocationsData {
   allocations: string[];
-  rewardsForProposals: bigint;
+  rewardsForProjects: bigint;
 }
 
 export interface AllocationsMethods {
-  addAllocations: (proposalAddresses: string[]) => void;
-  removeAllocations: (proposalAddresses: string[]) => void;
-  setAllocations: (proposalAddresses: string[]) => void;
-  setRewardsForProposals: (rewardsForProposals: bigint) => void;
+  addAllocations: (projectAddresses: string[]) => void;
+  removeAllocations: (projectAddresses: string[]) => void;
+  setAllocations: (projectAddresses: string[]) => void;
+  setRewardsForProjects: (rewardsForProjects: bigint) => void;
 }
