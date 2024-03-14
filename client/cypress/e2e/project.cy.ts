@@ -7,19 +7,19 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import Chainable = Cypress.Chainable;
 
 const getButtonAddToAllocate = (): Chainable<any> => {
-  const proposalView = cy.get('[data-test=ProjectListItem').first();
+  const projectListItemFirst = cy.get('[data-test=ProjectListItem').first();
 
-  return proposalView.find('[data-test=ProjectListItemHeader__ButtonAddToAllocate]');
+  return projectListItemFirst.find('[data-test=ProjectListItemHeader__ButtonAddToAllocate]');
 };
 
 const checkProjectItemElements = (): Chainable<any> => {
   cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
-  const proposalView = cy.get('[data-test=ProjectListItem').first();
-  proposalView.get('[data-test=ProjectListItemHeader__Img]').should('be.visible');
-  proposalView.get('[data-test=ProjectListItemHeader__name]').should('be.visible');
+  const projectListItemFirst = cy.get('[data-test=ProjectListItem').first();
+  projectListItemFirst.get('[data-test=ProjectListItemHeader__Img]').should('be.visible');
+  projectListItemFirst.get('[data-test=ProjectListItemHeader__name]').should('be.visible');
   getButtonAddToAllocate().should('be.visible');
-  proposalView.get('[data-test=ProjectListItemHeader__Button]').should('be.visible');
-  proposalView.get('[data-test=ProjectListItem__Description]').should('be.visible');
+  projectListItemFirst.get('[data-test=ProjectListItemHeader__Button]').should('be.visible');
+  projectListItemFirst.get('[data-test=ProjectListItem__Description]').should('be.visible');
 
   cy.get('[data-test=ProjectListItem__Donors]')
     .first()
@@ -52,19 +52,19 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       }
     });
 
-    it('entering proposal view directly renders content', () => {
+    it('entering project view directly renders content', () => {
       cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
       cy.reload();
-      const proposalView = cy.get('[data-test=ProjectListItem').first();
-      proposalView.get('[data-test=ProjectListItemHeader__Img]').should('be.visible');
-      proposalView.get('[data-test=ProjectListItemHeader__name]').should('be.visible');
+      const projectListItemFirst = cy.get('[data-test=ProjectListItem').first();
+      projectListItemFirst.get('[data-test=ProjectListItemHeader__Img]').should('be.visible');
+      projectListItemFirst.get('[data-test=ProjectListItemHeader__name]').should('be.visible');
     });
 
-    it('entering proposal view renders all its elements', () => {
+    it('entering project view renders all its elements', () => {
       checkProjectItemElements();
     });
 
-    it('entering proposal view renders all its elements with fallback IPFS provider', () => {
+    it('entering project view renders all its elements with fallback IPFS provider', () => {
       cy.intercept('GET', '**/ipfs/**', req => {
         if (req.url.includes('infura')) {
           req.destroy();
@@ -74,7 +74,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       checkProjectItemElements();
     });
 
-    it('entering proposal view shows Toast with info about IPFS failure when all providers fail', () => {
+    it('entering project view shows Toast with info about IPFS failure when all providers fail', () => {
       cy.intercept('GET', '**/ipfs/**', req => {
         req.destroy();
       });
@@ -82,7 +82,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=Toast--ipfsMessage').should('be.visible');
     });
 
-    it('entering proposal view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar', () => {
+    it('entering project view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar', () => {
       cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
 
       getButtonAddToAllocate().click();
@@ -93,7 +93,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
     });
 
-    it('Entering proposal view allows scroll only to the last project', () => {
+    it('Entering project view allows scroll only to the last project', () => {
       cy.get('[data-test^=ProjectsView__ProjectsListItem]').first().click();
 
       for (let i = 0; i < projectNames.length; i++) {
@@ -142,7 +142,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
   });
 
-  describe(`proposal (patron mode): ${device}`, { viewportHeight, viewportWidth }, () => {
+  describe(`project (patron mode): ${device}`, { viewportHeight, viewportWidth }, () => {
     let projectNames: string[] = [];
 
     before(() => {

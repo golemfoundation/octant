@@ -9,7 +9,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.clearLocalStorage();
     });
 
-    it('empty route redirects to proposals view', () => {
+    it('empty route redirects to projects view', () => {
       visitWithLoader(ROOT.absolute, ROOT_ROUTES.projects.absolute);
       cy.get('[data-test=ProjectsView]').should('be.visible');
     });
@@ -29,7 +29,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=MetricsView]').should('be.visible');
     });
 
-    it('proposals route redirects to proposals view', () => {
+    it('projects route redirects to projects view', () => {
       visitWithLoader(ROOT_ROUTES.projects.absolute);
       cy.get('[data-test=ProjectsView]').should('be.visible');
     });
