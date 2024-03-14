@@ -8,6 +8,7 @@ from app.modules.dto import (
     AllocationDTO,
     FinalizedSnapshotDTO,
     PendingSnapshotDTO,
+    WithdrawableEth,
 )
 
 
@@ -104,4 +105,12 @@ class SimulateFinalizedSnapshots(Protocol):
 @runtime_checkable
 class SimulatePendingSnapshots(Protocol):
     def simulate_pending_epoch_snapshot(self, context: Context) -> PendingSnapshotDTO:
+        ...
+
+
+@runtime_checkable
+class WithdrawalsService(Protocol):
+    def get_withdrawable_eth(
+        self, context: Context, address: str
+    ) -> list[WithdrawableEth]:
         ...

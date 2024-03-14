@@ -150,6 +150,8 @@ env:
   HOUSEKEEPER_CI_TOKEN: "${{ secrets.HOUSEKEEPER_CI_TOKEN }}"
   HOUSEKEEPER_GPG_KEY: "${{ secrets.HOUSEKEEPER_GPG_KEY }}"
   HOUSEKEEPER_GPG_KEY_ID: "${{ secrets.HOUSEKEEPER_GPG_KEY_ID }}"
+  HOUSEKEEPER_GITHUB_SIGNING_KEY: "${{ secrets.HOUSEKEEPER_GITHUB_SIGNING_KEY }}"
+  HOUSEKEEPER_GITHUB_SIGNING_KEY_ID: "${{ secrets.HOUSEKEEPER_GITHUB_SIGNING_KEY_ID }}"
   ARGOCD_URL: "${{ secrets.ARGOCD_URL }}"
   ARGOCD_ACCESS_TOKEN: "${{ secrets.ARGOCD_ACCESS_TOKEN }}"
 
@@ -338,6 +340,7 @@ jobs:
       with:
         ref: ${{ inputs.branch-head-ref }}
         fetch-depth: 0
+        token: ${{ secrets.HOUSEKEEPER_PAT_OCTANT_REPO }}
     - uses: actions/download-artifact@v4
       with:
         name: ${{ env.ENV_TYPE }}-contracts-env
@@ -348,16 +351,21 @@ jobs:
 
         mv ${CI_PROJECT_DIR}/contracts.env ${CI_PROJECT_DIR}/ci/argocd/contracts/${ENV_TYPE}.env
 
+        gpg --import <(echo ${HOUSEKEEPER_GITHUB_SIGNING_KEY} | base64 -d)
+
         git config --global --add safe.directory ${CI_PROJECT_DIR}
-        git config --local user.email "github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
+        git config --local user.email "birnam@wildland.io"
+        git config --local user.name "Housekeeper Bot"
+        git config --local user.signingkey "${HOUSEKEEPER_GITHUB_SIGNING_KEY_ID}"
 
         git add ${CI_PROJECT_DIR}/ci/argocd/contracts/${ENV_TYPE}.env
         git commit -m "[CI/CD] Update ${ENV_TYPE}.env contracts"
+      shell: bash
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
         branch: ${{ inputs.branch-head-ref }}
+        github_token: ${{ secrets.HOUSEKEEPER_PAT_OCTANT_REPO }}
 
   update-deployment:
     name: Set deployment status
