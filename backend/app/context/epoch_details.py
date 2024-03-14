@@ -19,6 +19,7 @@ class EpochDetails:
         decision_window,
         remaining_sec=None,
         with_block_range=False,
+        current_epoch_simulated=False,
     ):
         self.epoch_num = int(epoch_num)
         self.duration_sec = int(duration)
@@ -29,7 +30,9 @@ class EpochDetails:
         self.end_sec = self.start_sec + self.duration_sec
         self.finalized_sec = self.end_sec + self.decision_window_sec
         self.finalized_timestamp = from_timestamp_s(self.finalized_sec)
-        self.start_block, self.end_block = self._calc_blocks_range(with_block_range)
+        self.start_block, self.end_block = self._calc_blocks_range(
+            with_block_range, current_epoch_simulated
+        )
 
         if remaining_sec is None:
             now_sec = int(datetime.utcnow().timestamp())
@@ -57,10 +60,12 @@ class EpochDetails:
             raise InvalidBlocksRange
         return self.end_block - self.start_block
 
-    def _calc_blocks_range(self, with_block_range=False) -> tuple:
+    def _calc_blocks_range(
+        self, with_block_range: bool = False, current_epoch_simulated: bool = False
+    ) -> tuple:
         start_block, end_block = None, None
 
-        if with_block_range:
+        if with_block_range and not current_epoch_simulated:
             is_start_future = check_if_future(self.start_sec)
             is_end_future = check_if_future(self.end_sec)
 
@@ -71,29 +76,49 @@ class EpochDetails:
                 get_block_num_from_ts(self.end_sec) if not is_end_future else None
             )
 
+        if with_block_range and current_epoch_simulated:
+            start_block = get_block_num_from_ts(self.start_sec)
+            end_block = get_block_num_from_ts(int(datetime.utcnow().timestamp()))
+
         return start_block, end_block
 
 
 def get_epoch_details(
-    epoch_num: int, epoch_state: EpochState, with_block_range=False
+    epoch_num: int,
+    epoch_state: EpochState,
+    with_block_range: bool = False,
+    current_epoch_simulated: bool = False,
 ) -> EpochDetails:
     if epoch_state == EpochState.FUTURE:
         return get_future_epoch_details(epoch_num)
-    return get_epoch_details_by_number(epoch_num, with_block_range)
+    return get_epoch_details_by_number(
+        epoch_num, with_block_range, current_epoch_simulated
+    )
 
 
-def get_epoch_details_by_number(epoch_num: int, with_block_range=False) -> EpochDetails:
+def get_epoch_details_by_number(
+    epoch_num: int,
+    with_block_range: bool = False,
+    current_epoch_simulated: bool = False,
+) -> EpochDetails:
     epoch_details = graphql.epochs.get_epoch_by_number(epoch_num)
-    return _epoch_details_from_graphql_result(epoch_details, with_block_range)
+    return _epoch_details_from_graphql_result(
+        epoch_details, with_block_range, current_epoch_simulated
+    )
 
 
 def get_epochs_details(
-    from_epoch: int, to_epoch: int, with_block_range=False
+    from_epoch: int,
+    to_epoch: int,
+    with_block_range=False,
+    current_epoch_simulated: bool = False,
 ) -> List[EpochDetails]:
     epochs_details = graphql.epochs.get_epochs_by_range(from_epoch, to_epoch)
 
     return [
-        _epoch_details_from_graphql_result(epoch_details, with_block_range)
+        _epoch_details_from_graphql_result(
+            epoch_details, with_block_range, current_epoch_simulated
+        )
         for epoch_details in epochs_details
     ]
 
@@ -110,7 +135,9 @@ def get_future_epoch_details(epoch_num: int) -> EpochDetails:
 
 
 def _epoch_details_from_graphql_result(
-    epoch_details: dict, with_block_range=False
+    epoch_details: dict,
+    with_block_range: bool = False,
+    current_epoch_simulated: bool = False,
 ) -> EpochDetails:
     return EpochDetails(
         epoch_num=epoch_details["epoch"],
@@ -118,4 +145,5 @@ def _epoch_details_from_graphql_result(
         duration=epoch_details["duration"],
         decision_window=epoch_details["decisionWindow"],
         with_block_range=with_block_range,
+        current_epoch_simulated=current_epoch_simulated,
     )
