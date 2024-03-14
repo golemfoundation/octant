@@ -40,7 +40,7 @@ const EarnGlmLockBudget: FC<EarnGlmLockBudgetProps> = ({ isVisible }) => {
           className={styles.wrapper}
           exit="hide"
           initial="show"
-          transition={{ duration: 0.1, ease: 'linear' }}
+          transition={{ duration: 0, ease: 'linear' }}
           variants={variants}
         >
           <EarnGlmLockBudgetBox
