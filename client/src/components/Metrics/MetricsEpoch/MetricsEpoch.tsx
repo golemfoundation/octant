@@ -111,7 +111,12 @@ const MetricsEpoch = (): ReactElement => {
           totalDonations={totalDonations}
           totalPersonal={totalPersonal}
         />
-        <MetricsEpochGridFundsUsage className={styles.fundsUsage} isLoading={isLoading} />
+        <MetricsEpochGridFundsUsage
+          className={styles.fundsUsage}
+          isLoading={isLoading}
+          totalDonations={totalDonations}
+          totalPersonal={totalPersonal}
+        />
         <MetricsEpochGridTotalUsers className={styles.totalUsers} isLoading={isLoading} />
         <MetricsEpochGridPatrons className={styles.patrons} isLoading={isLoading} />
         <MetricsEpochGridCurrentDonors className={styles.currentDonors} isLoading={isLoading} />
