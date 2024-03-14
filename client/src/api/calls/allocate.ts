@@ -6,7 +6,7 @@ import apiService from 'services/apiService';
 export type ApiPostAllocateLeverageData = {
   allocations: {
     amount: string; // WEI
-    projectAddress: string;
+    proposalAddress: string;
   }[];
 };
 
