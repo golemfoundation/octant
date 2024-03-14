@@ -27,7 +27,7 @@ const domain = {
 
 const types = {
   Allocation: [
-    { name: 'projectAddress', type: 'address' },
+    { name: 'proposalAddress', type: 'address' },
     { name: 'amount', type: 'uint256' },
   ],
   AllocationPayload: [
