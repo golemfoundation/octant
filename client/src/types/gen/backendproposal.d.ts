@@ -6,7 +6,7 @@
  */
 
 /**
- * Metadata describing a project for Octant
+ * Metadata describing a project proposal for Octant
  */
 export interface BackendProposal {
   /**

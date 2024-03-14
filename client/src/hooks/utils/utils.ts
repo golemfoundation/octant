@@ -4,9 +4,10 @@ import { AllocationValues } from 'views/AllocationView/types';
 
 export function getAllocationsMapped(
   allocationValues: AllocationValues,
-): { amount: string; projectAddress: string }[] {
+): { amount: string; proposalAddress: string }[] {
   return allocationValues.map(({ address, value }) => ({
     amount: formatUnitsBigInt(parseUnitsBigInt(value || '0'), 'wei'),
-    projectAddress: address,
+    // proposalAddress is a field required by BE. Do not rename to project.
+    proposalAddress: address,
   }));
 }
