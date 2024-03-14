@@ -23,15 +23,15 @@ class EpochDetails:
     ):
         now_sec = int(datetime.utcnow().timestamp())
         self.epoch_num = int(epoch_num)
-        self.duration_sec = int(duration)
+        self.start_sec = int(start)
+        if current_epoch_simulated:
+            self.duration_sec = now_sec - self.start_sec
+        else:
+            self.duration_sec = int(duration)
         self.duration_days = sec_to_days(self.duration_sec)
         self.decision_window_sec = int(decision_window)
         self.decision_window_days = sec_to_days(self.decision_window_sec)
-        self.start_sec = int(start)
-        if current_epoch_simulated:
-            self.end_sec = now_sec
-        else:
-            self.end_sec = self.start_sec + self.duration_sec
+        self.end_sec = self.start_sec + self.duration_sec
         self.finalized_sec = self.end_sec + self.decision_window_sec
         self.finalized_timestamp = from_timestamp_s(self.finalized_sec)
         self.start_block, self.end_block = self._calc_blocks_range(
