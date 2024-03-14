@@ -77,8 +77,9 @@ class EpochDetails:
             )
 
         if with_block_range and current_epoch_simulated:
+            now_ts = int(datetime.utcnow().timestamp())
             start_block = get_block_num_from_ts(self.start_sec)
-            end_block = get_block_num_from_ts(int(datetime.utcnow().timestamp()))
+            end_block = get_block_num_from_ts(now_ts)
 
         return start_block, end_block
 
