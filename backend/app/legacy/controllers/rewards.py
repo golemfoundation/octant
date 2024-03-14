@@ -118,7 +118,7 @@ def get_rewards_merkle_tree(epoch: int) -> RewardsMerkleTree:
     if not core_epoch_snapshots.has_finalized_epoch_snapshot(epoch):
         raise exceptions.InvalidEpoch
 
-    mt = merkle_tree.get_merkle_tree_for_epoch(epoch)
+    mt = merkle_tree.get_rewards_merkle_tree_for_epoch(epoch)
     leaves = [
         RewardsMerkleTreeLeaf(address=leaf.value[0], amount=leaf.value[1])
         for leaf in mt.values
