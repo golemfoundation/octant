@@ -33,6 +33,7 @@ from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.user.rewards.service.saved import SavedUserRewards
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.modules.withdrawals.service.pending import PendingWithdrawals
+from app.shared.blockchain_types import ChainTypes
 
 
 def test_future_services_factory():
@@ -45,7 +46,7 @@ def test_future_services_factory():
 
 
 def test_current_services_factory():
-    result = CurrentServices.create()
+    result = CurrentServices.create(ChainTypes.MAINNET)
 
     user_deposits = CalculatedUserDeposits(events_generator=DbAndGraphEventsGenerator())
     assert result.user_deposits_service == user_deposits
@@ -56,7 +57,7 @@ def test_current_services_factory():
 
 
 def test_pre_pending_services_factory_when_mainnet():
-    result = PrePendingServices.create(1)
+    result = PrePendingServices.create(ChainTypes.MAINNET)
 
     user_deposits = CalculatedUserDeposits(events_generator=DbAndGraphEventsGenerator())
     octant_rewards = CalculatedOctantRewards(
@@ -71,7 +72,7 @@ def test_pre_pending_services_factory_when_mainnet():
 
 
 def test_pre_pending_services_factory_when_not_mainnet():
-    result = PrePendingServices.create(1337)
+    result = PrePendingServices.create(ChainTypes.LOCAL)
 
     user_deposits = CalculatedUserDeposits(events_generator=DbAndGraphEventsGenerator())
     octant_rewards = CalculatedOctantRewards(

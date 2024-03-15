@@ -41,10 +41,12 @@ class PrePendingServices(Model):
             effective_deposits=user_deposits,
         )
 
+        pending_snapshots_service = PrePendingSnapshots(
+            effective_deposits=user_deposits, octant_rewards=octant_rewards
+        )
+
         return PrePendingServices(
             user_deposits_service=user_deposits,
             octant_rewards_service=octant_rewards,
-            pending_snapshots_service=PrePendingSnapshots(
-                effective_deposits=user_deposits, octant_rewards=octant_rewards
-            ),
+            pending_snapshots_service=pending_snapshots_service,
         )

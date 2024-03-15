@@ -7,6 +7,7 @@ from app.modules.dto import (
     OctantRewardsDTO,
     AllocationDTO,
     FinalizedSnapshotDTO,
+    PendingSnapshotDTO,
     WithdrawableEth,
 )
 
@@ -98,6 +99,12 @@ class SimulateFinalizedSnapshots(Protocol):
     def simulate_finalized_epoch_snapshot(
         self, context: Context
     ) -> FinalizedSnapshotDTO:
+        ...
+
+
+@runtime_checkable
+class SimulatePendingSnapshots(Protocol):
+    def simulate_pending_epoch_snapshot(self, context: Context) -> PendingSnapshotDTO:
         ...
 
 
