@@ -7,7 +7,7 @@ import MetricsProjectsList from 'components/Metrics/MetricsProjectsList';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useProposalsIpfsWithRewards from 'hooks/queries/useProposalsIpfsWithRewards';
+import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
 
 import styles from './MetricsEpochGridTopProjects.module.scss';
 import MetricsEpochGridTopProjectsProps from './types';
@@ -20,14 +20,14 @@ const MetricsEpochGridTopProjects: FC<MetricsEpochGridTopProjectsProps> = ({
   const { epoch, lastEpoch } = useMetricsEpoch();
   const { isDesktop } = useMediaQuery();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { data: proposalsIpfsWithRewards } = useProposalsIpfsWithRewards(
+  const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
 
   const numberOfProjects = isDesktop ? 10 : 5;
 
   const projects =
-    proposalsIpfsWithRewards
+    projectsIpfsWithRewards
       .slice(0, numberOfProjects)
       .map(({ totalValueOfAllocations, ...rest }) => ({
         epoch,

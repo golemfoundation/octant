@@ -1,10 +1,10 @@
 import React from 'react';
 
 import { LeverageMatched } from 'api/calls/allocate';
-import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
+import { ProjectIpfsWithRewards } from 'hooks/queries/useProjectsIpfsWithRewards';
 import { AllocationValue } from 'views/AllocationView/types';
 
-export interface AllocationItemWithAllocations extends ProposalIpfsWithRewards {
+export interface AllocationItemWithAllocations extends ProjectIpfsWithRewards {
   isAllocatedTo: boolean;
   value: string;
 }

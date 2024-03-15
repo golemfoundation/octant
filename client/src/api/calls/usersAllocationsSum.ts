@@ -6,6 +6,6 @@ export type Response = {
   amount: string;
 };
 
-export function apiGetUsersAllocationsSum(): Promise<Response> {
+export async function apiGetUsersAllocationsSum(): Promise<Response> {
   return apiService.get(`${env.serverEndpoint}allocations/users/sum`).then(({ data }) => data);
 }

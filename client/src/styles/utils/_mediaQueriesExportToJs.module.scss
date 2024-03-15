@@ -1,5 +1,7 @@
+// for unit tests below values are exported from /client/src/mocks/jest/styleMock.js
 :export {
   phoneOnly: $phone-only;
   tabletOnly: $tablet-only;
   desktopOnly: $desktop-only;
+  largeDesktopOnly: $large-desktop-only;
 }

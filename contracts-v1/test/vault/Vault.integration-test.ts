@@ -3,7 +3,6 @@ import { BigNumber } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 import { ethers } from 'hardhat';
 
-
 import { merkleTreeData } from './vaultTestParameters';
 
 import { VAULT } from '../../helpers/constants';

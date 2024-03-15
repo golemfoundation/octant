@@ -1,11 +1,11 @@
-import { ALLOCATION_ITEMS_KEY, ALLOCATION_REWARDS_FOR_PROPOSALS } from 'constants/localStorageKeys';
+import { ALLOCATION_ITEMS_KEY, ALLOCATION_REWARDS_FOR_PROJECTS } from 'constants/localStorageKeys';
 import { getStoreWithMeta } from 'store/utils/getStoreWithMeta';
 
 import { AllocationsMethods, AllocationsData } from './types';
 
 export const initialState: AllocationsData = {
   allocations: [],
-  rewardsForProposals: BigInt(0),
+  rewardsForProjects: BigInt(0),
 };
 
 export default getStoreWithMeta<AllocationsData, AllocationsMethods>({
@@ -36,12 +36,12 @@ export default getStoreWithMeta<AllocationsData, AllocationsMethods>({
         meta: { isInitialized: true },
       }));
     },
-    setRewardsForProposals: payload => {
-      localStorage.setItem(ALLOCATION_REWARDS_FOR_PROPOSALS, JSON.stringify(payload.toString()));
+    setRewardsForProjects: payload => {
+      localStorage.setItem(ALLOCATION_REWARDS_FOR_PROJECTS, JSON.stringify(payload.toString()));
       set(state => ({
         data: {
           ...state.data,
-          rewardsForProposals: payload,
+          rewardsForProjects: payload,
         },
       }));
     },

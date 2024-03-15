@@ -10,6 +10,99 @@
   margin-bottom: 1.6rem;
   z-index: $z-index-5;
 
+  .box {
+    width: 100%;
+    display: flex;
+  }
+
+  .circleSvg {
+    position: absolute;
+  }
+
+  .circle {
+    transition: all $transition-time-1;
+    stroke-width: 0.4rem;
+    fill: transparent;
+    stroke: $color-octant-grey2;
+    stroke-linejoin: 'round';
+  }
+
+  .smallDotsWrapper {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 7.6rem;
+    top: 2.6rem;
+  }
+
+  .smallDot {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 100%;
+    background-color: $color-octant-grey1;
+  }
+
+  @media #{$large-desktop-up} {
+    padding: 0;
+    margin: 0;
+    position: fixed;
+    height: 23.2rem;
+    width: 8.8rem;
+    right: calc(50% + 48rem);
+    top: 13.4rem;
+    background-color: transparent;
+
+    .box {
+      flex-direction: column;
+      height: 100%;
+      width: 2.4rem;
+      background-color: $color-white;
+      border-radius: $border-radius-16;
+
+      .sectionStep {
+        margin: 0;
+
+        &:first-child {
+          .label,
+          .circleSvg {
+            top: 0.4rem;
+          }
+        }
+
+        &:last-child {
+          .label,
+          .circleSvg {
+            bottom: 0.4rem;
+          }
+
+          .smallDotsWrapper {
+            top: auto;
+            bottom: 2.6rem;
+          }
+        }
+
+        .label {
+          transition: all $transition-time-1;
+          position: absolute;
+          left: calc(100% + 0.8rem);
+          &:hover {
+            color: $color-octant-grey11;
+          }
+        }
+
+        &.isActive {
+          .label {
+            color: $color-octant-green;
+          }
+          .circle {
+            stroke: $color-octant-green;
+          }
+        }
+      }
+    }
+  }
+
   .sectionStep {
     position: relative;
     background-color: transparent;
