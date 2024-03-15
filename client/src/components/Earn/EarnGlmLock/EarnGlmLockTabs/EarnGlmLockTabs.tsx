@@ -18,16 +18,17 @@ import styles from './EarnGlmLockTabs.module.scss';
 import EarnGlmLockTabsProps from './types';
 
 const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
+  buttonUseMaxRef,
   className,
   currentMode,
   isLoading,
-  step,
   onClose,
   onInputsFocusChange,
-  setValueToDepose,
   onReset,
-  showBalances,
   setFieldValue,
+  setValueToDepose,
+  showBalances,
+  step,
 }) => {
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.glmLock',
@@ -103,9 +104,14 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
         },
       ]}
     >
-      <div className={cx(styles.max, isMaxDisabled && styles.isDisabled)} onClick={onMax}>
+      <Button
+        ref={buttonUseMaxRef}
+        className={cx(styles.max, isMaxDisabled && styles.isDisabled)}
+        onClick={onMax}
+        variant="iconOnlyTransparent2"
+      >
         {t('glmLockTabs.useMax')}
-      </div>
+      </Button>
       <EarnGlmLockTabsInputs
         ref={inputRef}
         areInputsDisabled={isLoading}

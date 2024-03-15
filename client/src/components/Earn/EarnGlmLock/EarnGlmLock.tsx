@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount, useWalletClient, usePublicClient, useWaitForTransaction } from 'wagmi';
 
@@ -49,11 +49,14 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
    */
   const [valueToDepose, setValueToDepose] = useState<bigint>(BigInt(0));
   const [step, setStep] = useState<Step>(1);
-  const [isCryptoOrFiatInputFocused, setIsCryptoOrFiatInputFocused] = useState(true);
+  const [isCryptoOrFiatInputFocused, setIsCryptoOrFiatInputFocused] = useState<boolean>(true);
+  const buttonUseMaxRef = useRef<HTMLButtonElement>(null);
 
   const { data: availableFundsGlm } = useAvailableFundsGlm();
   const { data: projectsAddresses } = useProjectsContract();
   const { data: depositsValue } = useDepositValue();
+
+  // const isCryptoOrFiatInputFocused = document.activeElement === inputRef.current;
 
   useEffect(() => {
     if (transactionReceipt && !isLoadingTransactionReceipt) {
@@ -66,7 +69,22 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
     env.contractDepositsAddress,
     valueToDepose,
   );
-  const showBudgetBox = isDesktop || (!isDesktop && !isCryptoOrFiatInputFocused);
+
+  const isButtonUseMaxFocused = document.activeElement === buttonUseMaxRef.current;
+  /**
+   * When input is focused isCryptoOrFiatInputFocused is true.
+   * Clicking "use max" blurs inputs, setting isCryptoOrFiatInputFocused to false.
+   * EarnGlmLockTabs onMax sets the focus back on inputs, triggering isCryptoOrFiatInputFocused to true.
+   *
+   * Between second and third update flickering can occur, when focus is already set to input,
+   * but state didn't update yet.
+   *
+   * To check it out set isAnyInputFocused to permanent "false" and click "use max" fast.
+   */
+  const isAnyInputFocused = document.activeElement?.tagName === 'INPUT';
+  const showBudgetBox =
+    isDesktop ||
+    (!isDesktop && !isCryptoOrFiatInputFocused && !isButtonUseMaxFocused && !isAnyInputFocused);
 
   const onMutate = async (): Promise<void> => {
     if (!walletClient || !availableFundsGlm) {
@@ -164,6 +182,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
             <EarnGlmLockBudget isVisible={showBudgetBox} />
           )}
           <EarnGlmLockTabs
+            buttonUseMaxRef={buttonUseMaxRef}
             className={styles.element}
             currentMode={currentMode}
             isLoading={isLoadingTransactionReceipt || props.isSubmitting}
