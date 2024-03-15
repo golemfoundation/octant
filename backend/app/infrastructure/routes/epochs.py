@@ -90,7 +90,9 @@ epoch_stats_model = api.model(
             required=False, description="Matching fund budget coming from patrons."
         ),
         "matchedRewards": fields.String(
-            required=False, description="Total matched rewards for the given epoch."
+            required=False,
+            description="""Total matched rewards for the given epoch.
+            Includes matchedRewards from Golem Foundation and patronRewards.""",
         ),
         "leftover": fields.String(
             required=False,
