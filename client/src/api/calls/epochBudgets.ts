@@ -9,7 +9,7 @@ export type Response = {
   }[];
 };
 
-export function apiGetEpochBudgets(epoch: number): Promise<Response> {
+export async function apiGetEpochBudgets(epoch: number): Promise<Response> {
   return apiService
     .get(`${env.serverEndpoint}rewards/budgets/epoch/${epoch}`)
     .then(({ data }) => data);
