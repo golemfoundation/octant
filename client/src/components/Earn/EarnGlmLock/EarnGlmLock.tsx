@@ -56,8 +56,6 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
   const { data: projectsAddresses } = useProjectsContract();
   const { data: depositsValue } = useDepositValue();
 
-  // const isCryptoOrFiatInputFocused = document.activeElement === inputRef.current;
-
   useEffect(() => {
     if (transactionReceipt && !isLoadingTransactionReceipt) {
       setStep(3);
