@@ -24,8 +24,8 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
   });
   const { data: individualReward } = useIndividualReward();
   const { data: userAllocations } = useUserAllocations();
-  const { rewardsForProposals } = useAllocationsStore(state => ({
-    rewardsForProposals: state.data.rewardsForProposals,
+  const { rewardsForProjects } = useAllocationsStore(state => ({
+    rewardsForProjects: state.data.rewardsForProjects,
   }));
 
   // const allocationSimulatedMatchingFundSum = allocationSimulated?.matched.reduce((acc, curr) => {
@@ -36,22 +36,22 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
     userAllocations?.elements.filter(({ value }) => value !== 0n) || [];
   const areUserAllocationsPositive = userAllocationsPositive?.length > 0;
 
-  const personalAllocation = individualReward ? individualReward - rewardsForProposals : 0n;
+  const personalAllocation = individualReward ? individualReward - rewardsForProjects : 0n;
 
-  const rewardsForProposalsToDisplay = getFormattedEthValue(rewardsForProposals, true, true);
+  const rewardsForProjectsToDisplay = getFormattedEthValue(rewardsForProjects, true, true);
   const matchingFundSumToDisplay =
-    rewardsForProposals && allocationSimulated?.leverage
+    rewardsForProjects && allocationSimulated?.leverage
       ? getFormattedEthValue(
-          rewardsForProposals * BigInt(parseInt(allocationSimulated.leverage, 10)),
+          rewardsForProjects * BigInt(parseInt(allocationSimulated.leverage, 10)),
         ).value
       : undefined;
   const totalImpactToDisplay = getFormattedEthValue(
-    rewardsForProposals && allocationSimulated
-      ? rewardsForProposals * BigInt(parseInt(allocationSimulated.leverage, 10) + 1)
-      : rewardsForProposals,
+    rewardsForProjects && allocationSimulated
+      ? rewardsForProjects * BigInt(parseInt(allocationSimulated.leverage, 10) + 1)
+      : rewardsForProjects,
   );
   const personalToDisplay = individualReward
-    ? getFormattedEthValue(individualReward - rewardsForProposals).fullString
+    ? getFormattedEthValue(individualReward - rewardsForProjects).fullString
     : undefined;
 
   const sections: SectionProps[] = [
@@ -74,7 +74,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
       ),
       childrenRight: (
         <div className={styles.rightSection}>
-          <div className={styles.value}>{rewardsForProposalsToDisplay.value}</div>
+          <div className={styles.value}>{rewardsForProjectsToDisplay.value}</div>
           <div className={cx(styles.value, !matchingFundSumToDisplay && styles.isLoading)}>
             {matchingFundSumToDisplay}
           </div>

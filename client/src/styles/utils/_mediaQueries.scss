@@ -4,6 +4,7 @@
 $phone-range: (0px, 471px);
 $tablet-range: (472px, 755px);
 $desktop-range: (756px);
+$large-desktop-range: (1264px);
 
 // Range functions
 // We use these functions to define ranges for various things, like media queries.
@@ -42,3 +43,7 @@ $tablet-down: '#{$screen} and (max-width:#{upper-bound($tablet-range)})';
 $desktop-up: '#{$screen} and (min-width:#{lower-bound($desktop-range)})';
 $desktop-only: '#{$screen} and (min-width:#{lower-bound($desktop-range)}) and (max-width:#{upper-bound($desktop-range)})';
 $desktop-down: '#{$screen} and (max-width:#{upper-bound($desktop-range)})';
+
+$large-desktop-up: '#{$screen} and (min-width:#{lower-bound($large-desktop-range)})';
+$large-desktop-only: '#{$screen} and (min-width:#{lower-bound($large-desktop-range)}) and (max-width:#{upper-bound($large-desktop-range)})';
+$large-desktop-down: '#{$screen} and (max-width:#{upper-bound($large-desktop-range)})';

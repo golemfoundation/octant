@@ -3,9 +3,9 @@ import React, { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
-import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
-import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
-import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
+import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
+import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
+import useProjectsIpfs from 'hooks/queries/useProjectsIpfs';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 import getRewardsSumWithValueAndSimulation from 'utils/getRewardsSumWithValueAndSimulation';
@@ -21,40 +21,40 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   value,
 }) => {
   const { i18n } = useTranslation('translation');
-  const isDonationAboveThreshold = useIsDonationAboveThreshold({ proposalAddress: address });
-  const { data: proposalIpfs, isFetching: isFetchingProposalIpfs } = useProposalsIpfs([address]);
+  const isDonationAboveThreshold = useIsDonationAboveThreshold({ projectAddress: address });
+  const { data: projectIpfs, isFetching: isFetchingProjectIpfs } = useProjectsIpfs([address]);
 
-  const { data: matchedProposalRewards } = useMatchedProposalRewards();
+  const { data: matchedProjectRewards } = useMatchedProjectRewards();
   // Real, not simulated threshold is used, because user won't change his decision here.
-  const { data: proposalRewardsThreshold } = useProposalRewardsThreshold();
+  const { data: projectRewardsThreshold } = useProjectRewardsThreshold();
   const { data: userAllocations } = useUserAllocations();
 
   // value can an empty string, which crashes parseUnits. Hence the alternative.
   const valueToUse = value || '0';
 
-  const proposalMatchedProposalRewards = matchedProposalRewards?.find(
-    ({ address: matchedProposalRewardsAddress }) => address === matchedProposalRewardsAddress,
+  const projectMatchedProjectRewards = matchedProjectRewards?.find(
+    ({ address: matchedProjectRewardsAddress }) => address === matchedProjectRewardsAddress,
   );
   const userAllocationToThisProject = userAllocations?.elements.find(
     element => element.address === address,
   )?.value;
 
-  const proposalMatchedProposalRewardsFormatted = proposalMatchedProposalRewards
-    ? getFormattedEthValue(proposalMatchedProposalRewards?.sum)
+  const projectMatchedProjectRewardsFormatted = projectMatchedProjectRewards
+    ? getFormattedEthValue(projectMatchedProjectRewards?.sum)
     : undefined;
-  const proposalRewardsThresholdFormatted =
-    proposalRewardsThreshold !== undefined
-      ? getFormattedEthValue(proposalRewardsThreshold)
+  const projectRewardsThresholdFormatted =
+    projectRewardsThreshold !== undefined
+      ? getFormattedEthValue(projectRewardsThreshold)
       : undefined;
   const areSuffixesTheSame =
-    proposalMatchedProposalRewardsFormatted?.suffix === proposalRewardsThresholdFormatted?.suffix;
+    projectMatchedProjectRewardsFormatted?.suffix === projectRewardsThresholdFormatted?.suffix;
 
   const rewardsSumWithValueAndSimulation = getRewardsSumWithValueAndSimulation(
     valueToUse,
     simulatedMatched,
     simulatedMatched === undefined
-      ? proposalMatchedProposalRewards?.sum
-      : proposalMatchedProposalRewards?.allocated,
+      ? projectMatchedProjectRewards?.sum
+      : projectMatchedProjectRewards?.allocated,
     userAllocationToThisProject,
   );
   const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
@@ -65,10 +65,10 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
 
   return (
     <div className={styles.root}>
-      {isFetchingProposalIpfs ? null : (
+      {isFetchingProjectIpfs ? null : (
         <>
           <div className={styles.leftSection}>
-            <div className={styles.name}>{proposalIpfs[0].name}</div>
+            <div className={styles.name}>{projectIpfs[0].name}</div>
             <div
               className={cx(
                 styles.value,
@@ -85,7 +85,7 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
                     sum: areSuffixesTheSame
                       ? rewardsSumWithValueAndSimulationFormatted?.value
                       : rewardsSumWithValueAndSimulationFormatted?.fullString,
-                    threshold: proposalRewardsThresholdFormatted?.fullString,
+                    threshold: projectRewardsThresholdFormatted?.fullString,
                   }}
                 />
               )}

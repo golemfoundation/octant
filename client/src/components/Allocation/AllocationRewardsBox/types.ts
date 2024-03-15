@@ -4,5 +4,5 @@ export default interface AllocationRewardsBoxProps {
   isError: boolean;
   isLocked?: boolean;
   isManuallyEdited?: boolean;
-  setRewardsForProposalsCallback: ({ rewardsForProposalsNew }) => void;
+  setRewardsForProjectsCallback: ({ rewardsForProjectsNew }) => void;
 }

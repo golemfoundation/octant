@@ -26,7 +26,7 @@ export type ApiGetUserAllocationNonceResponse = {
   allocationNonce: number;
 };
 
-export function apiPostAllocateLeverage(
+export async function apiPostAllocateLeverage(
   allocateData: ApiPostAllocateLeverageData,
   userAddress: string,
   signal: GenericAbortSignal,
@@ -36,7 +36,7 @@ export function apiPostAllocateLeverage(
     .then(({ data }) => data);
 }
 
-export function apiGetUserAllocationNonce(
+export async function apiGetUserAllocationNonce(
   userAddress: string,
 ): Promise<ApiGetUserAllocationNonceResponse> {
   return apiService

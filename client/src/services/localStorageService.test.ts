@@ -1,6 +1,6 @@
 import {
   ALLOCATION_ITEMS_KEY,
-  ALLOCATION_REWARDS_FOR_PROPOSALS,
+  ALLOCATION_REWARDS_FOR_PROJECTS,
   DISPLAY_CURRENCY,
   IS_CRYPTO_MAIN_VALUE_DISPLAY,
   IS_ONBOARDING_ALWAYS_VISIBLE,
@@ -103,17 +103,17 @@ describe('LocalStorageService', () => {
       expect(localStorage.getItem(WAS_WITHDRAW_ALREADY_CLOSED_TIP)).toBe('false');
     });
 
-    it('should validate rewardsForProposals', () => {
-      localStorage.setItem(ALLOCATION_REWARDS_FOR_PROPOSALS, 'not-a-bignumber');
+    it('should validate rewardsForProjects', () => {
+      localStorage.setItem(ALLOCATION_REWARDS_FOR_PROJECTS, 'not-a-bignumber');
       localStorageService.init();
-      expect(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROPOSALS)).toBe(
+      expect(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROJECTS)).toBe(
         JSON.stringify(BigInt(0).toString()),
       );
 
       const bigInt100Stringified = JSON.stringify(BigInt(100).toString());
-      localStorage.setItem(ALLOCATION_REWARDS_FOR_PROPOSALS, bigInt100Stringified);
+      localStorage.setItem(ALLOCATION_REWARDS_FOR_PROJECTS, bigInt100Stringified);
       localStorageService.init();
-      expect(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROPOSALS)).toBe(bigInt100Stringified);
+      expect(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROJECTS)).toBe(bigInt100Stringified);
     });
   });
 });
