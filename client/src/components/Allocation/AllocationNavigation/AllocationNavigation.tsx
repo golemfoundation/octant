@@ -6,6 +6,8 @@ import Button from 'components/ui/Button';
 import styles from './AllocationNavigation.module.scss';
 import AllocationNavigationProps from './types';
 
+const isWaitingForWalletConfirmationMultisig = false;
+
 const AllocationNavigation: FC<AllocationNavigationProps> = ({
   isLeftButtonDisabled,
   areButtonsDisabled,
@@ -30,7 +32,7 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
   const buttonNextProps =
     currentView === 'edit'
       ? {
-          label: t('confirm'),
+          label: isWaitingForWalletConfirmationMultisig ? t('waiting') : t('confirm'),
           onClick: onAllocate,
         }
       : {
