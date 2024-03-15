@@ -11,6 +11,7 @@ import {
   WINDOW_PROJECTS_SCROLL_Y,
   WINDOW_PROJECTS_LOADED_ARCHIVED_EPOCHS_NUMBER,
 } from 'constants/window';
+import env from 'env';
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from 'hooks/helpers/useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -54,9 +55,11 @@ const ProjectsView = (): ReactElement => {
     return isDecisionWindowOpen ? currentEpoch! - 2 : currentEpoch! - 1;
   }, [currentEpoch, isDecisionWindowOpen]);
 
-  const archivedEpochs = lastArchivedEpochNumber
-    ? Array.from(Array(lastArchivedEpochNumber)).map((_, idx, array) => array.length - idx)
-    : [];
+  const archivedEpochs = useMemo(() => {
+    if (!lastArchivedEpochNumber) {return [];}
+    if (env.showOnlyLastEpochArchive === 'true') {return [lastArchivedEpochNumber];}
+    return Array.from(Array(lastArchivedEpochNumber)).map((_, idx, array) => array.length - idx);
+  }, [lastArchivedEpochNumber]);
 
   const onLoadNextEpochArchive = () => setLoadedArchivedEpochsNumber(prev => prev + 1);
 

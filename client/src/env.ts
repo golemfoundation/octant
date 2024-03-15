@@ -1,6 +1,6 @@
 import { Env, EnvViteKeys } from 'types/env';
 
-export const envsAllowedToBeEmpty = ['VITE_JSON_RPC_ENDPOINT'];
+export const envsAllowedToBeEmpty = ['VITE_JSON_RPC_ENDPOINT', 'VITE_SHOW_ONLY_LAST_EPOCH_ARCHIVE'];
 
 export const envViteKeys: EnvViteKeys = {
   alchemyId: 'VITE_ALCHEMY_ID',
@@ -16,6 +16,7 @@ export const envViteKeys: EnvViteKeys = {
   jsonRpcEndpoint: 'VITE_JSON_RPC_ENDPOINT',
   network: 'VITE_NETWORK',
   serverEndpoint: 'VITE_SERVER_ENDPOINT',
+  showOnlyLastEpochArchive: 'VITE_SHOW_ONLY_LAST_EPOCH_ARCHIVE',
   subgraphAddress: 'VITE_SUBGRAPH_ADDRESS',
   walletConnectProjectId: 'VITE_WALLET_CONNECT_PROJECT_ID',
   websocketEndpoint: 'VITE_WEBSOCKET_ENDPOINT',
@@ -48,12 +49,18 @@ const env: Env = {
   network: import.meta.env[envViteKeys.network],
   // @ts-expect-error TS does not understand the way vite imports envs.
   serverEndpoint: import.meta.env[envViteKeys.serverEndpoint],
+  
   // @ts-expect-error TS does not understand the way vite imports envs.
-  subgraphAddress: import.meta.env[envViteKeys.subgraphAddress],
+showOnlyLastEpochArchive: import.meta.env[envViteKeys.showOnlyLastEpochArchive],
+  
+// @ts-expect-error TS does not understand the way vite imports envs.
+subgraphAddress: import.meta.env[envViteKeys.subgraphAddress],
+  
+// @ts-expect-error TS does not understand the way vite imports envs.
+walletConnectProjectId: import.meta.env[envViteKeys.walletConnectProjectId],
+  
   // @ts-expect-error TS does not understand the way vite imports envs.
-  walletConnectProjectId: import.meta.env[envViteKeys.walletConnectProjectId],
-  // @ts-expect-error TS does not understand the way vite imports envs.
-  websocketEndpoint: import.meta.env[envViteKeys.websocketEndpoint],
+websocketEndpoint: import.meta.env[envViteKeys.websocketEndpoint],
 };
 
 export default env;
