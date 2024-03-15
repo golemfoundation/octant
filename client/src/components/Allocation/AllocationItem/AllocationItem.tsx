@@ -21,7 +21,7 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useProposalRewardsThreshold from 'hooks/queries/useProposalRewardsThreshold';
+import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
 import { bin } from 'svg/misc';
 import {
   comma,
@@ -53,7 +53,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   const { ipfsGateways } = env;
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { isFetching: isFetchingRewardsThreshold } = useProposalRewardsThreshold();
+  const { isFetching: isFetchingRewardsThreshold } = useProjectRewardsThreshold();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { isDesktop } = useMediaQuery();
   const [ref, animate] = useAnimate();
@@ -76,10 +76,12 @@ const AllocationItem: FC<AllocationItemProps> = ({
         operation === 'multiply'
           ? parseFloat(newValue) * 1000000000
           : parseFloat(newValue) / 1000000000
-      ).toLocaleString('fullwide', {
-        maximumSignificantDigits: 18,
-        useGrouping: false,
-      });
+      )
+        .toLocaleString('fullwide', {
+          maximumSignificantDigits: 18,
+          useGrouping: false,
+        })
+        .replace(comma, '.');
     }
 
     return newValue;
@@ -102,7 +104,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
       onChange(
         {
           address,
-          value: getAdjustedValue(newValue, 'divide'),
+          value: getAdjustedValue(valueComma, 'divide'),
         },
         true,
       );
@@ -169,6 +171,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   return (
     <motion.div
       className={cx(styles.root, className)}
+      data-test="AllocationItem"
       exit={{ opacity: 0, scale: 0.8 }}
       layout
       transition={{ duration: 0.1, ease: 'easeOut' }}
@@ -177,6 +180,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
         <motion.div
           ref={removeButtonRef}
           className={styles.removeButton}
+          data-test="AllocationItem__removeButton"
           onClick={onRemoveAllocationElement}
           style={{ scale: removeButtonScaleTransform }}
         >
@@ -224,7 +228,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
             <div className={styles.projectData}>
               <Img
                 className={styles.image}
-                dataTest="ProposalItem__imageProfile"
+                dataTest="ProjectItem__imageProfile"
                 sources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
               />
               <div className={styles.nameAndRewards}>
@@ -241,6 +245,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
               ref={inputRef}
               className={cx(styles.input, isEpoch1 && styles.isEpoch1, isError && styles.isError)}
               error={isError}
+              inputMode="decimal"
               isDisabled={
                 !isConnected || !individualReward || !isDecisionWindowOpen || isThereAnyError
               }

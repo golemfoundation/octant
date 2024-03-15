@@ -7,6 +7,7 @@ export function getAllocationsMapped(
 ): { amount: string; proposalAddress: string }[] {
   return allocationValues.map(({ address, value }) => ({
     amount: formatUnitsBigInt(parseUnitsBigInt(value || '0'), 'wei'),
+    // proposalAddress is a field required by BE. Do not rename to project.
     proposalAddress: address,
   }));
 }

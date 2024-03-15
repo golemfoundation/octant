@@ -8,8 +8,8 @@ import getIsPreLaunch from 'utils/getIsPreLaunch';
 import AllocationView from 'views/AllocationView/AllocationView';
 import EarnView from 'views/EarnView/EarnView';
 import MetricsView from 'views/MetricsView/MetricsView';
-import ProposalsView from 'views/ProposalsView/ProposalsView';
-import ProposalView from 'views/ProposalView/ProposalView';
+import ProjectsView from 'views/ProjectsView/ProjectsView';
+import ProjectView from 'views/ProjectView/ProjectView';
 import SettingsView from 'views/SettingsView/SettingsView';
 import SyncView from 'views/SyncView/SyncView';
 
@@ -52,18 +52,18 @@ const RootRoutes: FC<RootRoutesProps> = props => {
               <Route
                 element={
                   <Protected {...props}>
-                    <ProposalsView />
+                    <ProjectsView />
                   </Protected>
                 }
-                path={`${ROOT_ROUTES.proposals.relative}/*`}
+                path={`${ROOT_ROUTES.projects.relative}/*`}
               />
               <Route
                 element={
                   <Protected {...props}>
-                    <ProposalView />
+                    <ProjectView />
                   </Protected>
                 }
-                path={`${ROOT_ROUTES.proposalWithAddress.relative}/*`}
+                path={`${ROOT_ROUTES.projectWithAddress.relative}/*`}
               />
             </>
           )}
@@ -91,7 +91,7 @@ const RootRoutes: FC<RootRoutesProps> = props => {
             to={
               isPreLaunch || isProjectAdminMode
                 ? ROOT_ROUTES.earn.absolute
-                : ROOT_ROUTES.proposals.absolute
+                : ROOT_ROUTES.projects.absolute
             }
           />
         }

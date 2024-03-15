@@ -1,5 +1,5 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
-import { useCallback, useRef } from 'react';
+import { useRef } from 'react';
 import { useAccount } from 'wagmi';
 
 import { apiPostAllocateLeverage, ApiPostAllocateLeverageResponse } from 'api/calls/allocate';
@@ -26,10 +26,10 @@ export default function useAllocateSimulate(
     ...options,
   });
 
-  const reset = useCallback(() => {
+  const reset = () => {
     abortControllerRef.current?.abort();
     mutation.reset();
-  }, [abortControllerRef, mutation]);
+  };
 
   return { ...mutation, reset };
 }

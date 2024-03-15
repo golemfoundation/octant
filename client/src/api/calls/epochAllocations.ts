@@ -9,6 +9,6 @@ export type Response = {
   }[];
 };
 
-export function apiGetEpochAllocations(epoch: number): Promise<Response> {
+export async function apiGetEpochAllocations(epoch: number): Promise<Response> {
   return apiService.get(`${env.serverEndpoint}allocations/epoch/${epoch}`).then(({ data }) => data);
 }

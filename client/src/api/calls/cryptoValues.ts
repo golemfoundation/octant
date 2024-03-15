@@ -10,7 +10,7 @@ type Currencies = {
 
 export type Response = { [key in CryptoCurrency]: Currencies };
 
-export function apiGetCryptoValues(
+export async function apiGetCryptoValues(
   fiatCurrency: NonNullable<SettingsData['displayCurrency']>,
 ): Promise<Response> {
   return apiService

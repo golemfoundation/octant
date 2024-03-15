@@ -18,6 +18,6 @@ export type AllocationValue = {
 export type AllocationValues = AllocationValue[];
 
 export type AllocationWithPositiveValueBigInt = {
-  proposalAddress: string;
+  projectAddress: string;
   value: bigint;
 };

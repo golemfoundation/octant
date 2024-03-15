@@ -15,7 +15,7 @@ export const metrics: SvgImageConfig = {
   viewBox: '0 0 32 32',
 };
 
-export const proposals: SvgImageConfig = {
+export const project: SvgImageConfig = {
   markup:
     '<path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.53 27.25H25c1.281 0 2-.906 2-2.25V7c0-1-.5-2.25-2-2.25H6.53C5.122 4.75 4.5 5.757 4.5 7v18c0 1.243.751 2.25 2.03 2.25ZM16.219 16.5h-6M21.219 19.5h-11M17.219 22.5h-7"/><path stroke="#CDD1CD" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.219 11.5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z" clip-rule="evenodd"/>',
   viewBox: '0 0 32 32',

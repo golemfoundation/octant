@@ -5,7 +5,7 @@ export type ApiPatronModeResponse = {
   status: boolean;
 };
 
-export function apiPatchPatronMode(
+export async function apiPatchPatronMode(
   userAddress: string,
   signature: `0x${string}`,
 ): Promise<ApiPatronModeResponse> {
@@ -14,7 +14,7 @@ export function apiPatchPatronMode(
     .then(({ data }) => data);
 }
 
-export function apiGetPatronMode(userAddress: string): Promise<ApiPatronModeResponse> {
+export async function apiGetPatronMode(userAddress: string): Promise<ApiPatronModeResponse> {
   return apiService
     .get(`${env.serverEndpoint}user/${userAddress}/patron-mode`)
     .then(({ data }) => data);

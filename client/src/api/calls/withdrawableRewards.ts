@@ -8,6 +8,6 @@ export type Response = {
   status: 'available' | 'pending';
 }[];
 
-export function apiGetWithdrawals(address: string): Promise<Response> {
+export async function apiGetWithdrawals(address: string): Promise<Response> {
   return apiService.get(`${env.serverEndpoint}withdrawals/${address}`).then(({ data }) => data);
 }

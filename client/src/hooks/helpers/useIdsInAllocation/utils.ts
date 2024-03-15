@@ -4,7 +4,7 @@ import toastService from 'services/toastService';
 
 import { GetShouldProjectBeAddedOrRemovedFromAllocation } from './types';
 
-export function isProposalAlreadyAllocatedOn(
+export function isProjectAlreadyAllocatedOn(
   userAllocationsElements: undefined | UserAllocationElement[],
   address: string,
 ): boolean {
@@ -29,7 +29,7 @@ export function getShouldProjectBeAddedOrRemovedFromAllocation({
 
   if (isItemAlreadyAdded) {
     // Outside AW past allocations do not count.
-    if (isDecisionWindowOpen && isProposalAlreadyAllocatedOn(userAllocationsElements, address)) {
+    if (isDecisionWindowOpen && isProjectAlreadyAllocatedOn(userAllocationsElements, address)) {
       toastService.showToast({
         message: i18n.t('toasts.confirmChanges.title'),
         name: 'confirmChanges',

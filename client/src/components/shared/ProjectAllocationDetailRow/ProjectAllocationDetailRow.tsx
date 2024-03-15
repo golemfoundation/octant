@@ -3,7 +3,7 @@ import React, { FC, Fragment } from 'react';
 import Img from 'components/ui/Img';
 import env from 'env';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
-import useProposalsIpfs from 'hooks/queries/useProposalsIpfs';
+import useProjectsIpfs from 'hooks/queries/useProjectsIpfs';
 import useSettingsStore from 'store/settings/store';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
@@ -26,13 +26,13 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({
     },
   }));
   const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
-  const { data: proposalIpfs, isFetching: isFetchingProposalIpfs } = useProposalsIpfs(
+  const { data: projectIpfs, isFetching: isFetchingProjectIpfs } = useProjectsIpfs(
     [address],
     epoch,
   );
   return (
     <div className={styles.root}>
-      {isFetchingProposalIpfs ? (
+      {isFetchingProjectIpfs ? (
         <div className={styles.skeleton} />
       ) : (
         <Fragment>
@@ -41,9 +41,9 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({
               className={styles.image}
               sources={ipfsGateways
                 .split(',')
-                .map(element => `${element}${proposalIpfs[0].profileImageSmall!}`)}
+                .map(element => `${element}${projectIpfs[0].profileImageSmall!}`)}
             />
-            <div className={styles.name}>{proposalIpfs[0].name}</div>
+            <div className={styles.name}>{projectIpfs[0].name}</div>
           </div>
           <div className={styles.amount}>
             {isCryptoMainValueDisplay

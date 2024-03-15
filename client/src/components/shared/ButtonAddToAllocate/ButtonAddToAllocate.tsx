@@ -18,7 +18,7 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
   onClick,
   isAddedToAllocate,
   isAllocatedTo,
-  isArchivedProposal,
+  isArchivedProject,
 }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.buttonAddToAllocate',
@@ -54,14 +54,14 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
         styles.root,
         isAddedToAllocate && styles.isAddedToAllocate,
         isAllocatedTo && styles.isAllocatedTo,
-        isArchivedProposal && styles.isArchivedProposal,
+        isArchivedProject && styles.isArchivedProject,
         className,
       )}
       dataTest={dataTest}
       Icon={
         <Tooltip
           hideAfterClick
-          isDisabled={isArchivedProposal || isPatronMode}
+          isDisabled={isArchivedProject || isPatronMode}
           onClickCallback={() => {
             if (isTooltipVisible) {
               setIsTooltipClicked(true);
@@ -79,7 +79,7 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
           </div>
         </Tooltip>
       }
-      isDisabled={isArchivedProposal || isPatronMode}
+      isDisabled={isArchivedProject || isPatronMode}
       onClick={onClick}
       variant="iconOnly"
     />

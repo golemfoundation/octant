@@ -10,6 +10,6 @@ export type Response = {
   pendingSnapshot: 'not_applicable' | 'error' | 'in_progress' | 'done';
 };
 
-export function apiGetSyncStatus(): Promise<Response> {
+export async function apiGetSyncStatus(): Promise<Response> {
   return apiService.get(`${env.serverEndpoint}info/sync-status`).then(({ data }) => data);
 }

@@ -1,12 +1,12 @@
 import { useAccount } from 'wagmi';
 
-import useAllProposals from 'hooks/subgraph/useAllProposals';
+import useAllProjects from 'hooks/subgraph/useAllProjects';
 
 const useIsProjectAdminMode = (): boolean => {
   const { isConnected, address } = useAccount();
-  const { data: allProposals } = useAllProposals();
+  const { data: allProjects } = useAllProjects();
 
-  return isConnected && !!allProposals?.includes(address as `0x${string}`);
+  return isConnected && !!allProjects?.includes(address as `0x${string}`);
 };
 
 export default useIsProjectAdminMode;
