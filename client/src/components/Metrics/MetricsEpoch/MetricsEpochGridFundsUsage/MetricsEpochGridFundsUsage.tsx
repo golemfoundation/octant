@@ -34,7 +34,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   // userRewards = totalPersonal + patronsRewards + projectAllocations
   // totalDonations = patronsRewards + projectAllocations
 
-  // user rewards section of the pie chart shouldn't include donations to projects that didn't reach the threshold. These funds have been moved to leftover.
+  // user rewards section of the pie chart shouldn't include donations to projects that didn't reach the threshold. These funds are inluced in leftover.
   // userRewards = totalPersonal + totalDonations - ethBelowThreshold
   const userRewards = totalPersonal + totalDonations - ethBelowThreshold;
   const staking = epochInfo ? epochInfo.staking : BigInt(0);
