@@ -5,7 +5,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>Octant development</title>
       <script>
-         fetch('http://localhost:8080/contracts').then(data => {
+         fetch('http://localhost:8080/deployment?name=octant').then(data => {
           data.text().then(text => {
             document.getElementById('contracts-div').innerText = text;
           });
