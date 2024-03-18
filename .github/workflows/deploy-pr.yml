@@ -38,6 +38,9 @@ jobs:
       scheduler-enabled: true
       vault-confirm-withdrawals-enabled: true
       glm-claim-enabled: true
+      anvil-block-time: 5
+      decision-window: 1800
+      epoch-duration: 3600
     secrets: inherit
 
   run:
