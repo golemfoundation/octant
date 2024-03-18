@@ -17,6 +17,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   className,
   totalDonations,
   totalPersonal,
+  ethBelowThreshold,
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { epoch } = useMetricsEpoch();
@@ -32,8 +33,10 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   const matchRewards = epochInfo ? epochInfo.matchedRewards - epochInfo.patronsRewards : BigInt(0);
   // userRewards = totalPersonal + patronsRewards + projectAllocations
   // totalDonations = patronsRewards + projectAllocations
-  // userRewards = totalPersonal + totalDonations
-  const userRewards = totalPersonal + totalDonations;
+
+  // user rewards section of the pie chart shouldn't include donations to projects that didn't reach the threshold. These funds have been moved to leftover.
+  // userRewards = totalPersonal + totalDonations - ethBelowThreshold
+  const userRewards = totalPersonal + totalDonations - ethBelowThreshold;
   const staking = epochInfo ? epochInfo.staking : BigInt(0);
 
   const total = leftover + projectCosts + matchRewards + userRewards + staking;

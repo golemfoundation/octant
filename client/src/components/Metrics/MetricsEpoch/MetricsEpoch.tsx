@@ -50,12 +50,11 @@ const MetricsEpoch = (): ReactElement => {
   const { isFetching: isFetchingProposalsIpfsWithRewards } = useProposalsIpfsWithRewards(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
-  const { isFetching: isFetchingProposalsDonors } = useProposalsDonors(
+  const { data: proposalsDonors, isFetching: isFetchingProposalsDonors } = useProposalsDonors(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
-  const { isFetching: isFetchingProposalRewardsThreshold } = useProposalRewardsThreshold(
-    isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
-  );
+  const { data: proposalRewardsThreshold, isFetching: isFetchingProposalRewardsThreshold } =
+    useProposalRewardsThreshold(isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch);
   const { isFetching: isFetchingEpochLeverage } = useEpochLeverage(epoch);
   const { data: epochAllocations, isFetching: isFetchingEpochAllocations } =
     useEpochAllocations(epoch);
@@ -64,6 +63,21 @@ const MetricsEpoch = (): ReactElement => {
   const { data: epochBudgets, isFetching: isFetchingEpochBudgets } = useEpochBudgets(epoch);
   const { data: epochUnusedRewards, isFetching: isFetchingEpochUnusedRewards } =
     useEpochUnusedRewards(epoch);
+
+  const ethBelowThreshold =
+    proposalRewardsThreshold === undefined
+      ? BigInt(0)
+      : Object.values(proposalsDonors).reduce((acc, curr) => {
+          const projectSumOfDonations = curr.reduce((acc2, curr2) => {
+            return acc2 + curr2.amount;
+          }, BigInt(0));
+
+          if (projectSumOfDonations < proposalRewardsThreshold) {
+            return acc + projectSumOfDonations;
+          }
+
+          return acc;
+        }, BigInt(0));
 
   const patronsRewards = epochInfo?.patronsRewards || BigInt(0);
   const sumOfDonations =
@@ -113,6 +127,7 @@ const MetricsEpoch = (): ReactElement => {
         />
         <MetricsEpochGridFundsUsage
           className={styles.fundsUsage}
+          ethBelowThreshold={ethBelowThreshold}
           isLoading={isLoading}
           totalDonations={totalDonations}
           totalPersonal={totalPersonal}
@@ -125,7 +140,11 @@ const MetricsEpoch = (): ReactElement => {
           className={styles.unusedAndUnallocatedValue}
           isLoading={isLoading}
         />
-        <MetricsEpochGridBelowThreshold className={styles.belowThreshold} isLoading={isLoading} />
+        <MetricsEpochGridBelowThreshold
+          className={styles.belowThreshold}
+          ethBelowThreshold={ethBelowThreshold}
+          isLoading={isLoading}
+        />
       </MetricsGrid>
     </div>
   );
