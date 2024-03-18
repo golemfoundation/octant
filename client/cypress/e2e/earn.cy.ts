@@ -92,6 +92,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       connectWallet();
 
       cy.get('[data-test=BoxGlmLock__Button]').click();
+      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').blur();
       cy.get('[data-test=BudgetBox__currentlyLocked__value]')
         .invoke('text')
         .then(text => {
@@ -142,6 +143,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       connectWallet();
 
       cy.get('[data-test=BoxGlmLock__Button]').click();
+      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').blur();
       cy.get('[data-test=BudgetBox__currentlyLocked__value]')
         .invoke('text')
         .then(text => {

@@ -43,7 +43,7 @@ jobs:
       with:
         buildkitd-flags: --debug
         driver: docker
-        config-inline: |
+        buildkitd-config-inline: |
           debug = true
           insecure-entitlements = [ "network.host", "security.insecure" ]
 
