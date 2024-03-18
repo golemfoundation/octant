@@ -1,8 +1,6 @@
 from typing import Protocol
 
 from app.modules.modules_factory.protocols import (
-    OctantRewards,
-    DonorsAddresses,
     UserPatronMode,
     UserRewards,
     UserEffectiveDeposits,
@@ -12,6 +10,9 @@ from app.modules.modules_factory.protocols import (
     SimulateFinalizedSnapshots,
     UserBudgets,
     WithdrawalsService,
+    ProjectRewardsService,
+    OctantRewards,
+    DonorsAddresses,
 )
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
 from app.modules.snapshots.finalized.service.simulated import (
@@ -24,6 +25,7 @@ from app.modules.user.patron_mode.service.events_based import EventsBasedUserPat
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.withdrawals.service.pending import PendingWithdrawals
 from app.pydantic import Model
+from app.modules.project_rewards.service.rewards import ProjectRewards
 
 
 class PendingOctantRewardsService(OctantRewards, Leverage, Protocol):
@@ -47,6 +49,7 @@ class PendingServices(Model):
     user_rewards_service: UserRewards
     finalized_snapshots_service: SimulateFinalizedSnapshots
     withdrawals_service: WithdrawalsService
+    project_rewards_service: ProjectRewardsService
 
     @staticmethod
     def create() -> "PendingServices":
@@ -65,6 +68,7 @@ class PendingServices(Model):
             patrons_mode=events_based_patron_mode,
         )
         withdrawals_service = PendingWithdrawals(user_rewards=user_rewards)
+        project_rewards = ProjectRewards(octant_rewards=octant_rewards)
 
         return PendingServices(
             user_deposits_service=SavedUserDeposits(),
@@ -75,4 +79,5 @@ class PendingServices(Model):
             user_budgets_service=saved_user_budgets,
             user_rewards_service=user_rewards,
             withdrawals_service=withdrawals_service,
+            project_rewards_service=project_rewards,
         )

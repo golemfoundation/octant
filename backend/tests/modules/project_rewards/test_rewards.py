@@ -4,14 +4,13 @@ from freezegun import freeze_time
 
 from app import exceptions
 from app.extensions import db
-from app.infrastructure import database
 from app.legacy.controllers.allocations import allocate, get_allocation_nonce
 from app.legacy.controllers.rewards import (
     get_allocation_threshold,
-    get_estimated_proposals_rewards,
 )
 from app.legacy.core.allocations import AllocationRequest
 from app.legacy.core.user.patron_mode import toggle_patron_mode
+from app.modules.project_rewards.controller import get_estimated_project_rewards
 from tests.conftest import (
     MOCK_EPOCHS,
     MOCK_PROPOSALS,
@@ -21,14 +20,11 @@ from tests.conftest import (
 )
 from tests.helpers import create_epoch_event
 from tests.helpers.constants import (
-    ETH_PROCEEDS,
-    LOCKED_RATIO,
     MOCKED_PENDING_EPOCH_NO,
-    OPERATIONAL_COST,
-    TOTAL_ED,
     USER2_BUDGET,
     USER3_BUDGET,
 )
+from tests.helpers.pending_snapshot import create_pending_snapshot
 from tests.legacy.test_allocations import (
     build_allocations_eip712_data,
     create_payload,
@@ -51,6 +47,13 @@ def before(
     ]
     epoch = create_epoch_event(start=1698802327, end=1698803327, duration=1000, epoch=1)
     mock_graphql(mocker, epochs_events=[epoch])
+
+
+@pytest.fixture(scope="function")
+def mock_pending_epoch_snapshot_db(app, mock_users_db):
+    create_pending_snapshot(
+        epoch_nr=MOCKED_PENDING_EPOCH_NO, mock_users_db=mock_users_db
+    )
 
 
 def test_get_allocation_threshold(app, tos_users, proposal_accounts):
@@ -92,12 +95,11 @@ def test_get_allocation_threshold_raises_when_not_in_allocation_period(app):
                 1: [(1, 2_000000000_000000000), (3, 4_000000000_000000000)],
             },
             {
-                1: 5_000000000_000000000,
+                1: 110057199157750624203,
                 2: 0,
-                3: 5_000000000_000000000,
+                3: 110057199157750624203,
             },
         ),
-        # ------------------------------------
         (
             {
                 0: [
@@ -108,32 +110,22 @@ def test_get_allocation_threshold_raises_when_not_in_allocation_period(app):
                 1: [(1, 2_000000000_000000000), (3, 4_000000000_000000000)],
             },
             {
-                1: 4_166666666_666666666,
-                2: 1_666666666_666666666,
-                3: 4_166666666_666666666,
+                1: 91714332631458853502,
+                2: 36685733052583541401,
+                3: 91714332631458853502,
             },
         ),
     ],
 )
-def test_proposals_rewards_without_patrons(
+def test_project_rewards_without_patrons(
     app,
+    mock_pending_epoch_snapshot_db,
     tos_users,
     proposal_accounts,
     user_allocations: dict,
     expected_matches: dict,
     patch_etherscan_get_block_api,
 ):
-    database.pending_epoch_snapshot.save_snapshot(
-        MOCKED_PENDING_EPOCH_NO,
-        ETH_PROCEEDS,
-        TOTAL_ED,
-        LOCKED_RATIO,
-        20_000000000_000000000,
-        10_000000000_000000000,
-        OPERATIONAL_COST,
-    )
-    db.session.commit()
-
     for user_index, allocations in user_allocations.items():
         user_account = tos_users[user_index]
 
@@ -152,10 +144,11 @@ def test_proposals_rewards_without_patrons(
         proposal_address = proposal_accounts[proposal_index].address
         expected_rewards[proposal_address] = expected_reward
 
-    proposals = get_estimated_proposals_rewards()
-    assert len(proposals) == 5
-    for proposal in proposals:
-        assert expected_rewards.get(proposal.address, 0) == proposal.matched
+    project_rewards = get_estimated_project_rewards().rewards
+    assert len(project_rewards) == 5
+    for project_reward in project_rewards:
+        print("ADDRESS", project_reward.address, flush=True)
+        assert expected_rewards.get(project_reward.address, 0) == project_reward.matched
 
 
 def test_estimated_proposal_rewards_when_allocation_has_0_value(
@@ -169,7 +162,7 @@ def test_estimated_proposal_rewards_when_allocation_has_0_value(
     proposal = proposal_accounts[0]
     allocate_user_rewards(user, proposal, 0, 0)
 
-    result = get_estimated_proposals_rewards()
+    result = get_estimated_project_rewards().rewards
 
     assert len(result) == 5
     for proposal in result:
@@ -180,8 +173,8 @@ def test_estimated_proposal_rewards_when_allocation_has_0_value(
 def test_estimated_proposal_rewards_raises_when_not_in_allocation_period(app):
     MOCK_EPOCHS.get_pending_epoch.return_value = None
 
-    with pytest.raises(exceptions.NotInDecisionWindow):
-        get_estimated_proposals_rewards()
+    with pytest.raises(exceptions.InvalidEpoch):
+        get_estimated_project_rewards()
 
 
 @freeze_time("2023-11-01 01:48:47")
@@ -201,14 +194,14 @@ def test_proposals_rewards_with_patron(
     nonce = get_allocation_nonce(user.address)
     allocate_user_rewards(user, proposal, allocate_amount, nonce)
 
-    result_before_patron_mode_enabled = get_estimated_proposals_rewards()
+    result_before_patron_mode_enabled = get_estimated_project_rewards().rewards
     assert result_before_patron_mode_enabled[0].allocated == allocate_amount
     assert result_before_patron_mode_enabled[0].matched == matched_before_patron
 
     toggle_patron_mode(patron.address)
     db.session.commit()
 
-    result_after_patron_mode_enabled = get_estimated_proposals_rewards()
+    result_after_patron_mode_enabled = get_estimated_project_rewards().rewards
     assert result_after_patron_mode_enabled[0].allocated == allocate_amount
     assert (
         result_after_patron_mode_enabled[0].matched
@@ -239,7 +232,7 @@ def test_proposals_rewards_with_multiple_patrons(
     toggle_patron_mode(patron2.address)
     db.session.commit()
 
-    result_after_patron_mode_enabled = get_estimated_proposals_rewards()
+    result_after_patron_mode_enabled = get_estimated_project_rewards().rewards
     assert result_after_patron_mode_enabled[0].allocated == allocate_amount
     assert (
         result_after_patron_mode_enabled[0].matched

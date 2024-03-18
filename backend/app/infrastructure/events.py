@@ -4,18 +4,18 @@ from typing import List
 from flask import current_app as app
 from flask_socketio import emit
 
+from app.exceptions import OctantException
+from app.extensions import socketio, epochs
+from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler
 from app.legacy.controllers import allocations
 from app.legacy.controllers.allocations import allocate
 from app.legacy.controllers.rewards import (
     get_allocation_threshold,
-    get_estimated_proposals_rewards,
     ProposalReward,
 )
 from app.legacy.core.allocations import AllocationRequest
 from app.legacy.core.common import AccountFunds
-from app.exceptions import OctantException
-from app.extensions import socketio, epochs
-from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler
+from app.modules.project_rewards.controller import get_estimated_project_rewards
 
 
 @socketio.on("connect")
@@ -26,8 +26,8 @@ def handle_connect():
         threshold = get_allocation_threshold()
         emit("threshold", {"threshold": str(threshold)})
 
-        proposal_rewards = get_estimated_proposals_rewards()
-        emit("proposal_rewards", _serialize_proposal_rewards(proposal_rewards))
+        project_rewards = get_estimated_project_rewards().rewards
+        emit("proposal_rewards", _serialize_proposal_rewards(project_rewards))
 
 
 @socketio.on("disconnect")
@@ -52,13 +52,13 @@ def handle_allocate(msg):
     allocations_sum = allocations.get_sum_by_epoch()
     emit("allocations_sum", {"amount": str(allocations_sum)}, broadcast=True)
 
-    proposal_rewards = get_estimated_proposals_rewards()
+    project_rewards = get_estimated_project_rewards().rewards
     emit(
         "proposal_rewards",
-        _serialize_proposal_rewards(proposal_rewards),
+        _serialize_proposal_rewards(project_rewards),
         broadcast=True,
     )
-    for proposal in proposal_rewards:
+    for proposal in project_rewards:
         donors = allocations.get_all_by_proposal_and_epoch(proposal.address)
         emit(
             "proposal_donors",

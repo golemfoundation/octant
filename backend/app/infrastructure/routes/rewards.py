@@ -10,6 +10,7 @@ from app.infrastructure.routes.validations.user_validations import (
 from app.legacy.controllers import rewards
 from app.legacy.utils.time import days_to_sec
 from app.modules.octant_rewards.controller import get_leverage
+from app.modules.project_rewards.controller import get_estimated_project_rewards
 from app.modules.user.budgets.controller import estimate_budget, get_budgets, get_budget
 from app.modules.user.rewards.controller import get_unused_rewards
 
@@ -45,7 +46,6 @@ epoch_budget_model = api.model(
         ),
     },
 )
-
 
 threshold_model = api.model(
     "Threshold",
@@ -163,13 +163,13 @@ proposals_rewards_model_item = api.model(
     },
 )
 
-proposals_rewards_model = api.model(
-    "ProposalRewards",
+project_rewards_model = api.model(
+    "ProjectRewards",
     {
         "rewards": fields.List(
             fields.Nested(proposals_rewards_model_item),
             required=True,
-            description="Proposal rewards",
+            description="Project rewards",
         ),
     },
 )
@@ -270,7 +270,7 @@ class Threshold(OctantResource):
 )
 @ns.route("/proposals/epoch/<int:epoch>")
 class FinalizedProposalsRewards(OctantResource):
-    @ns.marshal_with(proposals_rewards_model)
+    @ns.marshal_with(project_rewards_model)
     def get(self, epoch):
         app.logger.debug(f"Getting proposal rewards for a finalized epoch {epoch}")
         proposal_rewards = rewards.get_finalized_epoch_proposals_rewards(epoch)
@@ -287,14 +287,14 @@ class FinalizedProposalsRewards(OctantResource):
     "",
 )
 @ns.route("/proposals/estimated")
-class EstimatedProposalsRewards(OctantResource):
-    @ns.marshal_with(proposals_rewards_model)
+class EstimatedProjectRewards(OctantResource):
+    @ns.marshal_with(project_rewards_model)
     def get(self):
-        app.logger.debug("Getting proposal rewards for the pending epoch")
-        proposal_rewards = rewards.get_estimated_proposals_rewards()
-        app.logger.debug(f"Proposal rewards in pending epoch: {proposal_rewards}")
+        app.logger.debug("Getting project rewards for the pending epoch")
+        project_rewards = get_estimated_project_rewards().rewards
+        app.logger.debug(f"Project rewards in the pending epoch: {project_rewards}")
 
-        return {"rewards": proposal_rewards}
+        return {"rewards": project_rewards}
 
 
 @ns.route("/unused/<int:epoch>")
