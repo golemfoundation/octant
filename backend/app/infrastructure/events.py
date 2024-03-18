@@ -27,7 +27,7 @@ def handle_connect():
         emit("threshold", {"threshold": str(threshold)})
 
         project_rewards = get_estimated_project_rewards().rewards
-        emit("proposal_rewards", _serialize_proposal_rewards(project_rewards))
+        emit("proposal_rewards", _serialize_project_rewards(project_rewards))
 
 
 @socketio.on("disconnect")

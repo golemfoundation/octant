@@ -147,7 +147,6 @@ def test_project_rewards_without_patrons(
     project_rewards = get_estimated_project_rewards().rewards
     assert len(project_rewards) == 5
     for project_reward in project_rewards:
-        print("ADDRESS", project_reward.address, flush=True)
         assert expected_rewards.get(project_reward.address, 0) == project_reward.matched
 
 
