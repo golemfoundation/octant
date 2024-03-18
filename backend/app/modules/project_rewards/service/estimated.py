@@ -13,10 +13,10 @@ class OctantRewards(Protocol):
         ...
 
 
-class ProjectRewards(Model):
+class EstimatedProjectRewards(Model):
     octant_rewards: OctantRewards
 
-    def get_estimated_project_rewards(self, context: Context) -> ProjectRewardsResult:
+    def get_project_rewards(self, context: Context) -> ProjectRewardsResult:
         project_settings = context.epoch_settings.project
         all_projects = context.projects_details.projects
         matched_rewards = self.octant_rewards.get_matched_rewards(context)

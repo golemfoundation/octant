@@ -84,11 +84,3 @@ def get_rewards_merkle_tree(epoch: int) -> RewardsMerkleTree:
         leaves=leaves,
         leaf_encoding=merkle_tree.LEAF_ENCODING,
     )
-
-
-def _get_patrons_rewards(pending_epoch: int) -> int:
-    epoch_details = get_epoch_details(pending_epoch, EpochState.CURRENT)
-    patrons = database.patrons.get_all_patrons_at_timestamp(
-        epoch_details.finalized_timestamp.datetime()
-    )
-    return database.budgets.get_sum_by_users_addresses_and_epoch(patrons, pending_epoch)

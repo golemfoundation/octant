@@ -4,6 +4,7 @@ from typing import List
 from flask import current_app as app
 from flask_socketio import emit
 
+from app.engine.projects.rewards import ProjectRewardDTO
 from app.exceptions import OctantException
 from app.extensions import socketio, epochs
 from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler
@@ -11,7 +12,6 @@ from app.legacy.controllers import allocations
 from app.legacy.controllers.allocations import allocate
 from app.legacy.controllers.rewards import (
     get_allocation_threshold,
-    ProposalReward,
 )
 from app.legacy.core.allocations import AllocationRequest
 from app.legacy.core.common import AccountFunds
@@ -85,7 +85,7 @@ def default_error_handler(e):
         emit("exception", {"message": UNEXPECTED_EXCEPTION})
 
 
-def _serialize_project_rewards(proposal_rewards: List[ProposalReward]) -> List[dict]:
+def _serialize_project_rewards(proposal_rewards: List[ProjectRewardDTO]) -> List[dict]:
     return [
         {
             "address": proposal.address,

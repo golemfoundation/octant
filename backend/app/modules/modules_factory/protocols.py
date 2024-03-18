@@ -117,6 +117,6 @@ class WithdrawalsService(Protocol):
 
 
 @runtime_checkable
-class ProjectRewardsService(Protocol):
-    def get_estimated_project_rewards(self, context: Context) -> ProjectRewardsResult:
+class EstimatedProjectRewardsService(Protocol):
+    def get_project_rewards(self, context: Context) -> ProjectRewardsResult:
         ...
