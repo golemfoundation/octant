@@ -55,7 +55,7 @@ def handle_allocate(msg):
     project_rewards = get_estimated_project_rewards().rewards
     emit(
         "proposal_rewards",
-        _serialize_proposal_rewards(project_rewards),
+        _serialize_project_rewards(project_rewards),
         broadcast=True,
     )
     for proposal in project_rewards:
@@ -85,7 +85,7 @@ def default_error_handler(e):
         emit("exception", {"message": UNEXPECTED_EXCEPTION})
 
 
-def _serialize_proposal_rewards(proposal_rewards: List[ProposalReward]) -> List[dict]:
+def _serialize_project_rewards(proposal_rewards: List[ProposalReward]) -> List[dict]:
     return [
         {
             "address": proposal.address,
