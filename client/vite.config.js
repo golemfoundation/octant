@@ -56,7 +56,7 @@ export default defineConfig(({ mode }) => {
   if (isProduction) {
     plugins.push(
       sentryVitePlugin({
-        authToken: process.env.SENTRY_AUTH_TOKEN,
+        authToken: process.env.VITE_SENTRY_AUTH_TOKEN,
         org: 'golem-foundation',
         project: 'octant-client-production',
       }),
