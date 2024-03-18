@@ -21,7 +21,7 @@ git config --global user.email "$HOUSEKEEPER_EMAIL"
 git config --global user.signingkey $HOUSEKEEPER_GPG_KEY_ID
 
 GIT_DIR=`mktemp -d`
-git clone -b $ARGO_REPOSITORY_BRANCH $ARGO_REPOSITORY $GIT_DIR
+git clone --depth=10 -b $ARGO_REPOSITORY_BRANCH $ARGO_REPOSITORY $GIT_DIR
 
 pushd $GIT_DIR
 OCTANT_APP_DIR=octant/applications

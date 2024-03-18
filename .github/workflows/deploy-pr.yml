@@ -2,7 +2,7 @@
 name: ♻ PR Deployment
 on:
   issue_comment:
-    types: [created]
+    types: [ created ]
 
 jobs:
   build:
