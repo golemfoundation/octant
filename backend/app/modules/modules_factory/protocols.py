@@ -120,7 +120,8 @@ class WithdrawalsService(Protocol):
 @runtime_checkable
 class EstimatedProjectRewardsService(Protocol):
     def get_project_rewards(self, context: Context) -> ProjectRewardsResult:
-      ...
+        ...
+
 
 @runtime_checkable
 class HistoryService(Protocol):
