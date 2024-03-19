@@ -16,7 +16,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   isLoading,
   className,
   totalDonations,
-  totalPersonal,
+  unusedRewards,
   ethBelowThreshold,
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
@@ -29,23 +29,23 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   const leftover = epochInfo ? epochInfo.leftover : BigInt(0);
 
   const projectCosts = epochInfo ? epochInfo.operationalCost : BigInt(0);
-  // matchRewards = matchedRewards - patronsRewards
-  const matchRewards = epochInfo ? epochInfo.matchedRewards - epochInfo.patronsRewards : BigInt(0);
-  // userRewards = totalPersonal + patronsRewards + projectAllocations
-  // totalDonations = patronsRewards + projectAllocations
-
-  // user rewards section of the pie chart shouldn't include donations to projects that didn't reach the threshold. These funds are inluced in leftover.
-  // userRewards = totalPersonal + totalDonations - ethBelowThreshold
-  const userRewards = totalPersonal + totalDonations - ethBelowThreshold;
   const staking = epochInfo ? epochInfo.staking : BigInt(0);
 
-  const total = leftover + projectCosts + matchRewards + userRewards + staking;
+  const donatedToProjects = epochInfo
+    ? epochInfo.matchedRewards + (totalDonations - epochInfo.patronsRewards)
+    : BigInt(0);
+
+  const claimedByUsers = epochInfo
+    ? epochInfo.individualRewards - totalDonations - ethBelowThreshold - unusedRewards
+    : BigInt(0);
+
+  const total = claimedByUsers + donatedToProjects + projectCosts + staking + leftover;
 
   const data = [
     {
-      label: t('staking'),
-      value: getNumberValue(staking),
-      valueLabel: getFormattedEthValue(staking, true, false, false, 2).fullString,
+      label: t('donatedToProjects'),
+      value: getNumberValue(donatedToProjects),
+      valueLabel: getFormattedEthValue(donatedToProjects, true, false, false, 2).fullString,
     },
     {
       label: t('leftover', { epochNumber: epoch + 1 }),
@@ -58,14 +58,14 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
       valueLabel: getFormattedEthValue(projectCosts, true, false, false, 2).fullString,
     },
     {
-      label: t('matchRewards'),
-      value: getNumberValue(matchRewards),
-      valueLabel: getFormattedEthValue(matchRewards, true, false, false, 2).fullString,
+      label: t('claimedByUsers'),
+      value: getNumberValue(claimedByUsers),
+      valueLabel: getFormattedEthValue(claimedByUsers, true, false, false, 2).fullString,
     },
     {
-      label: t('userRewards'),
-      value: getNumberValue(userRewards),
-      valueLabel: getFormattedEthValue(userRewards, true, false, false, 2).fullString,
+      label: t('staking'),
+      value: getNumberValue(staking),
+      valueLabel: getFormattedEthValue(staking, true, false, false, 2).fullString,
     },
   ];
 

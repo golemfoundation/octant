@@ -130,7 +130,7 @@ const MetricsEpoch = (): ReactElement => {
           ethBelowThreshold={ethBelowThreshold}
           isLoading={isLoading}
           totalDonations={totalDonations}
-          totalPersonal={totalPersonal}
+          unusedRewards={unusedRewards}
         />
         <MetricsEpochGridTotalUsers className={styles.totalUsers} isLoading={isLoading} />
         <MetricsEpochGridPatrons className={styles.patrons} isLoading={isLoading} />

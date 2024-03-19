@@ -346,6 +346,8 @@
       }
     },
     "metrics": {
+      "donatedToProjects": "Donated to projects",
+      "claimedByUsers": "Claimed by users",
       "open": "Open",
       "overview": "Overview",
       "epoch": "Epoch",
