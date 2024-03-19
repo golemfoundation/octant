@@ -119,7 +119,6 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
         error={formik.values.valueToDeposeOrWithdraw && formik.errors.valueToDeposeOrWithdraw}
         inputCryptoProps={{
           name: 'valueToDeposeOrWithdraw',
-          onChange: onSetValue,
           onClear: formik.resetForm,
           suffix: 'GLM',
           value: formik.values.valueToDeposeOrWithdraw,
@@ -155,6 +154,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
             )}
           </div>
         }
+        onChange={onSetValue}
         onInputsFocusChange={onInputsFocusChange}
       />
       <Button

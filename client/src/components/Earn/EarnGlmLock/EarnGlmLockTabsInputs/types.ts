@@ -8,11 +8,11 @@ export default interface EarnGlmLockTabsInputsProps {
   error: string | undefined;
   inputCryptoProps: {
     name: InputTextProps['name'];
-    onChange: (value: string) => void;
     onClear?: InputTextProps['onClear'];
     suffix: InputTextProps['suffix'];
     value: InputTextProps['value'];
   };
   label: InputTextProps['label'];
+  onChange: (value: string) => void;
   onInputsFocusChange?: (isAnyInputFocused: boolean) => void;
 }
