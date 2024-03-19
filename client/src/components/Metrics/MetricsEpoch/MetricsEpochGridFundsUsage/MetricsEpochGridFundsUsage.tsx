@@ -15,7 +15,7 @@ import MetricsEpochGridFundsUsageProps from './types';
 const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   isLoading,
   className,
-  totalDonations,
+  totalUserDonationsWithPatronRewards,
   unusedRewards,
   ethBelowThreshold,
 }) => {
@@ -32,11 +32,13 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   const staking = epochInfo ? epochInfo.staking : BigInt(0);
 
   const donatedToProjects = epochInfo
-    ? epochInfo.matchedRewards + (totalDonations - epochInfo.patronsRewards) - ethBelowThreshold
+    ? epochInfo.matchedRewards +
+      (totalUserDonationsWithPatronRewards - epochInfo.patronsRewards) -
+      ethBelowThreshold
     : BigInt(0);
 
   const claimedByUsers = epochInfo
-    ? epochInfo.individualRewards - totalDonations - unusedRewards
+    ? epochInfo.individualRewards - totalUserDonationsWithPatronRewards - unusedRewards
     : BigInt(0);
 
   const total = claimedByUsers + donatedToProjects + projectCosts + staking + leftover;

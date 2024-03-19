@@ -2,6 +2,6 @@ export default interface MetricsEpochGridFundsUsageProps {
   className?: string;
   ethBelowThreshold: bigint;
   isLoading: boolean;
-  totalDonations: bigint;
+  totalUserDonationsWithPatronRewards: bigint;
   unusedRewards: bigint;
 }

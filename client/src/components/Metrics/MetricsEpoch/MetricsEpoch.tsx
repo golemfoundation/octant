@@ -82,11 +82,11 @@ const MetricsEpoch = (): ReactElement => {
   const patronsRewards = epochInfo?.patronsRewards || BigInt(0);
   const sumOfDonations =
     epochAllocations?.reduce((acc, curr) => acc + curr.amount, BigInt(0)) || BigInt(0);
-  const totalDonations = sumOfDonations + patronsRewards;
+  const totalUserDonationsWithPatronRewards = sumOfDonations + patronsRewards;
   const unusedRewards = epochUnusedRewards?.value || BigInt(0);
   const epochBudget = epochBudgets?.budgetsSum || BigInt(0);
 
-  const totalPersonal = epochBudget - totalDonations - unusedRewards;
+  const totalPersonal = epochBudget - totalUserDonationsWithPatronRewards - unusedRewards;
 
   // All metrics should be visible in the same moment (design). Skeletons are visible to the end of fetching all needed data.
   const isLoading =
@@ -116,20 +116,20 @@ const MetricsEpoch = (): ReactElement => {
         <MetricsEpochGridTotalDonationsAndPersonal
           className={styles.totalDonationsAndPersonal}
           isLoading={isLoading}
-          totalDonations={totalDonations}
           totalPersonal={totalPersonal}
+          totalUserDonationsWithPatronRewards={totalUserDonationsWithPatronRewards}
         />
         <MetricsEpochGridDonationsVsPersonalAllocations
           className={styles.donationsVsPersonal}
           isLoading={isLoading}
-          totalDonations={totalDonations}
           totalPersonal={totalPersonal}
+          totalUserDonationsWithPatronRewards={totalUserDonationsWithPatronRewards}
         />
         <MetricsEpochGridFundsUsage
           className={styles.fundsUsage}
           ethBelowThreshold={ethBelowThreshold}
           isLoading={isLoading}
-          totalDonations={totalDonations}
+          totalUserDonationsWithPatronRewards={totalUserDonationsWithPatronRewards}
           unusedRewards={unusedRewards}
         />
         <MetricsEpochGridTotalUsers className={styles.totalUsers} isLoading={isLoading} />
