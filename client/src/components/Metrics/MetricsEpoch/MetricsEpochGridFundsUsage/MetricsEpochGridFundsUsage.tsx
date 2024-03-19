@@ -32,7 +32,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   const staking = epochInfo ? epochInfo.staking : BigInt(0);
 
   const donatedToProjects = epochInfo
-    ? epochInfo.matchedRewards + (totalDonations - epochInfo.patronsRewards)
+    ? epochInfo.matchedRewards + (totalDonations - epochInfo.patronsRewards) - ethBelowThreshold
     : BigInt(0);
 
   const claimedByUsers = epochInfo
