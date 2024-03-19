@@ -7,7 +7,7 @@ from app.legacy.core.user.patron_mode import (
     get_patron_mode_status,
     toggle_patron_mode,
 )
-from app.legacy.utils.time import now
+from app.modules.common.time import now
 
 
 @pytest.fixture(autouse=True)

@@ -1,6 +1,8 @@
+from dataclasses import dataclass
 from datetime import datetime as DateTime, timezone
 
 
+@dataclass
 class Timestamp:
     def __init__(self, timestamp_us):
         if timestamp_us is None:

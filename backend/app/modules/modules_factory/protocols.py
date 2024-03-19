@@ -10,6 +10,7 @@ from app.modules.dto import (
     PendingSnapshotDTO,
     WithdrawableEth,
 )
+from app.modules.history.dto import UserHistoryDTO
 
 
 @runtime_checkable
@@ -113,4 +114,12 @@ class WithdrawalsService(Protocol):
     def get_withdrawable_eth(
         self, context: Context, address: str
     ) -> list[WithdrawableEth]:
+        ...
+
+
+@runtime_checkable
+class HistoryService(Protocol):
+    def get_user_history(
+        self, context: Context, user_address: str, cursor: str = None, limit: int = 20
+    ) -> UserHistoryDTO:
         ...
