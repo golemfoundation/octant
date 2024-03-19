@@ -36,7 +36,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     : BigInt(0);
 
   const claimedByUsers = epochInfo
-    ? epochInfo.individualRewards - totalDonations - ethBelowThreshold - unusedRewards
+    ? epochInfo.individualRewards - totalDonations - unusedRewards
     : BigInt(0);
 
   const total = claimedByUsers + donatedToProjects + projectCosts + staking + leftover;
