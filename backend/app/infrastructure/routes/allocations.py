@@ -300,8 +300,8 @@ class ProposalDonors(OctantResource):
             f"Getting donors for proposal {proposal_address} in epoch {epoch}"
         )
         donors = [
-            dataclasses.asdict(w)
-            for w in allocations.get_all_by_proposal_and_epoch(proposal_address, epoch)
+            {"address": w.donor, "amount": str(w.amount)}
+            for w in controller.get_all_donations_by_project(proposal_address, epoch)
         ]
         app.logger.debug(f"Proposal donors {donors}")
 

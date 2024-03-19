@@ -47,6 +47,7 @@ class SavedUserAllocations(Model):
                 user_address, from_timestamp.datetime(), limit
             )
         ]
+
     def get_all_allocations(self, context: Context) -> List[ProposalDonationDTO]:
         allocations = database.allocations.get_all(context.epoch_details.epoch_num)
         return [
@@ -56,6 +57,21 @@ class SavedUserAllocations(Model):
                 proposal=alloc.proposal_address,
             )
             for alloc in allocations
+        ]
+
+    def get_allocations_by_project(
+        self, context: Context, project_address: str
+    ) -> List[ProposalDonationDTO]:
+        allocations = database.allocations.get_all_by_proposal_addr_and_epoch(
+            project_address, context.epoch_details.epoch_num
+        )
+
+        return [
+            ProposalDonationDTO(
+                donor=a.user.address, amount=int(a.amount), proposal=proposal_address
+            )
+            for a in allocations
+            if int(a.amount) != 0
         ]
 
     def get_last_user_allocation(

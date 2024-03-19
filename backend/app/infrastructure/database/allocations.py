@@ -83,11 +83,11 @@ def get_all_by_user_addr_and_epoch(
     ]
 
 
-def get_all_by_proposal_addr_and_epoch(
-    proposal_address: str, epoch: int, with_deleted=False
+def get_all_by_project_addr_and_epoch(
+    project_address: str, epoch: int, with_deleted=False
 ) -> List[Allocation]:
     query: Query = Allocation.query.filter_by(
-        proposal_address=to_checksum_address(proposal_address), epoch=epoch
+        proposal_address=to_checksum_address(project_address), epoch=epoch
     )
 
     if not with_deleted:

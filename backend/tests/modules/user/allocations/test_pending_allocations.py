@@ -25,6 +25,7 @@ def service(mock_octant_rewards, mock_patron_mode, mock_user_budgets):
         user_nonce=UserAllocationsHistory(),
     )
 
+
 def test_simulate_allocation(service, mock_users_db):
     user1, _, _ = mock_users_db
     context = get_context()
@@ -68,15 +69,24 @@ def test_revoke_previous_allocation(service, mock_users_db):
         AllocationDTO(projects[0], 100_000000000),
     ]
     database.allocations.add_all(1, user1.id, 0, prev_allocation)
-    
+
     assert service.get_user_allocation_sum(context, user1.address) == 100_000000000
     service.revoke_previous_allocation(context, user1.address)
     assert service.get_user_allocation_sum(context, user1.address) == 0
 
-def test_revoke_previous_allocation_fails_outside_decision_window(service, mock_users_db):
+
+def test_revoke_previous_allocation_fails_outside_decision_window(
+    service, mock_users_db
+):
     user1, _, _ = mock_users_db
 
-    for state in [EpochState.FUTURE, EpochState.CURRENT, EpochState.PRE_PENDING, EpochState.FINALIZING, EpochState.FINALIZED]:
+    for state in [
+        EpochState.FUTURE,
+        EpochState.CURRENT,
+        EpochState.PRE_PENDING,
+        EpochState.FINALIZING,
+        EpochState.FINALIZED,
+    ]:
         context = get_context(epoch_state=state)
         with pytest.raises(exceptions.NotInDecisionWindow):
             service.revoke_previous_allocation(context, user1.address)

@@ -7,6 +7,7 @@ from app.modules.dto import (
     OctantRewardsDTO,
     AccountFundsDTO,
     AllocationDTO,
+    ProposalDonationDTO,
     FinalizedSnapshotDTO,
     PendingSnapshotDTO,
     WithdrawableEth,
@@ -56,6 +57,11 @@ class DonorsAddresses(Protocol):
 @runtime_checkable
 class GetUserAllocationsProtocol(Protocol):
     def get_all_allocations(self, context: Context) -> List[AllocationDTO]:
+        ...
+
+    def get_allocations_by_project(
+        self, context: Context, project: str
+    ) -> List[ProposalDonationDTO]:
         ...
 
     def get_last_user_allocation(

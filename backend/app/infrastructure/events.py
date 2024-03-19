@@ -8,13 +8,14 @@ from app.engine.projects.rewards import ProjectRewardDTO
 from app.exceptions import OctantException
 from app.extensions import socketio, epochs
 from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler
-from app.legacy.controllers import allocations
+from app.modules.dto import ProposalDonationDTO
+from app.modules.user.allocations import controller
+
 from app.legacy.controllers.allocations import allocate
 from app.legacy.controllers.rewards import (
     get_allocation_threshold,
 )
 from app.legacy.core.allocations import AllocationRequest
-from app.legacy.core.common import AccountFunds
 from app.modules.project_rewards.controller import get_estimated_project_rewards
 
 
@@ -56,18 +57,18 @@ def handle_allocate(msg):
         _serialize_project_rewards(project_rewards),
         broadcast=True,
     )
-    for proposal in project_rewards:
-        donors = allocations.get_all_by_proposal_and_epoch(proposal.address)
+    for project in project_rewards:
+        donors = controller.get_all_donations_by_project(project.address)
         emit(
             "proposal_donors",
-            {"proposal": proposal.address, "donors": _serialize_donors(donors)},
+            {"proposal": project.address, "donors": _serialize_donors(donors)},
             broadcast=True,
         )
 
 
 @socketio.on("proposal_donors")
 def handle_proposal_donors(proposal_address: str):
-    donors = allocations.get_all_by_proposal_and_epoch(proposal_address)
+    donors = controller.get_all_donations_by_project(proposal_address)
     emit(
         "proposal_donors",
         {"proposal": proposal_address, "donors": _serialize_donors(donors)},
@@ -94,10 +95,10 @@ def _serialize_project_rewards(project_rewards: List[ProjectRewardDTO]) -> List[
     ]
 
 
-def _serialize_donors(donors: List[AccountFunds]) -> List[dict]:
+def _serialize_donors(donors: List[ProposalDonationDTO]) -> List[dict]:
     return [
         {
-            "address": donor.address,
+            "address": donor.donor,
             "amount": str(donor.amount),
         }
         for donor in donors

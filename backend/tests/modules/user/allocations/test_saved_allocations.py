@@ -169,6 +169,8 @@ def test_user_allocations_by_timestamp(context, mock_users_db, proposal_accounts
             timestamp=from_timestamp_s(1710720000),
         )
     ]
+
+
 def test_get_all_allocations_returns_empty_list_when_no_allocations(
     service, context, mock_users_db
 ):
@@ -291,14 +293,14 @@ def test_get_last_user_allocation_returns_stored_metadata(
     )
 
 
-def test_get_all_allocations_by_proposal_returns_empty_list_when_no_allocations(
+def test_get_all_allocations_by_project_returns_empty_list_when_no_allocations(
     service, context
 ):
     for project in context.projects_details.projects:
-        assert service.get_all_allocations_by_proposal(context, project) == []
+        assert service.get_all_allocations_by_project(context, project) == []
 
 
-def test_get_all_allocations_by_proposal_returns_list_of_donations_per_project(
+def test_get_all_allocations_by_project_returns_list_of_donations_per_project(
     service, context, mock_users_db, make_user_allocation
 ):
     user1, user2, _ = mock_users_db
@@ -313,12 +315,12 @@ def test_get_all_allocations_by_proposal_returns_list_of_donations_per_project(
     user2_donations = [_alloc_item_to_donation(a, user2) for a in user2_allocations]
     expected_results = user1_donations + user2_donations
 
-    result = service.get_all_allocations_by_proposal(context, project1)
+    result = service.get_all_allocations_by_project(context, project1)
     assert len(result) == 2
     for d in result:
         assert d in list(filter(lambda d: d.proposal == project1, expected_results))
 
-    result = service.get_all_allocations_by_proposal(context, project2)
+    result = service.get_all_allocations_by_project(context, project2)
     assert len(result) == 2
     for d in result:
         assert d in list(filter(lambda d: d.proposal == project2, expected_results))
@@ -327,4 +329,16 @@ def test_get_all_allocations_by_proposal_returns_list_of_donations_per_project(
 
     # other projects have no donations
     for project in context.projects_details.projects[2:]:
-        assert service.get_all_allocations_by_proposal(context, project) == []
+        assert service.get_all_allocations_by_project(context, project) == []
+
+
+def test_get_all_allocations_by_project_with_allocation_amount_equal_0(
+    service, context, mock_users_db, make_user_allocation
+):
+    user1, _, _ = mock_users_db
+    project1 = context.projects_details.projects[0]
+
+    allocation_items = [AllocationItem(project1, 0)]
+    make_user_allocation(context, user1, allocation_items=allocation_items)
+
+    assert service.get_all_allocations_by_project(context, project1) == []

@@ -7,7 +7,6 @@ from app.extensions import db
 from app.infrastructure import database
 from app.legacy.controllers.allocations import (
     get_all_by_user_and_epoch,
-    get_all_by_proposal_and_epoch,
     allocate,
 )
 from app.legacy.core.allocations import (
@@ -344,41 +343,6 @@ def test_get_by_user_and_epoch(mock_allocations_db, user_accounts, proposal_acco
     assert result[1].amount == str(5 * 10**18)
     assert result[2].address == proposal_accounts[2].address
     assert result[2].amount == str(300 * 10**18)
-
-
-def test_get_by_proposal_and_epoch(
-    mock_allocations_db, user_accounts, proposal_accounts
-):
-    result = get_all_by_proposal_and_epoch(
-        proposal_accounts[1].address, MOCKED_PENDING_EPOCH_NO
-    )
-
-    assert len(result) == 2
-    assert result[0].address == user_accounts[0].address
-    assert result[0].amount == str(5 * 10**18)
-    assert result[1].address == user_accounts[1].address
-    assert result[1].amount == str(1050 * 10**18)
-
-
-def test_get_by_proposal_and_epoch_with_allocation_amount_equal_0(
-    mock_allocations_db, user_accounts, proposal_accounts
-):
-    user = database.user.get_or_add_user(user_accounts[2].address)
-    db.session.commit()
-    user_allocations = [
-        Allocation(proposal_accounts[1].address, 0),
-    ]
-    database.allocations.add_all(MOCKED_PENDING_EPOCH_NO, user.id, 0, user_allocations)
-
-    result = get_all_by_proposal_and_epoch(
-        proposal_accounts[1].address, MOCKED_PENDING_EPOCH_NO
-    )
-
-    assert len(result) == 2
-    assert result[0].address == user_accounts[0].address
-    assert result[0].amount == str(5 * 10**18)
-    assert result[1].address == user_accounts[1].address
-    assert result[1].amount == str(1050 * 10**18)
 
 
 def test_user_exceeded_rewards_budget_in_allocations(app, proposal_accounts, tos_users):

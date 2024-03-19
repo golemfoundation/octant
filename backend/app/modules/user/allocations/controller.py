@@ -34,6 +34,20 @@ def get_all_allocations(epoch_num: int) -> List[ProposalDonationDTO]:
     return service.get_all_allocations(context)
 
 
+def get_all_donations_by_project(
+    project_address: str, epoch_num: Optional[int] = None
+) -> List[ProposalDonationDTO]:
+    context = (
+        state_context(EpochState.PENDING)
+        if epoch_num is None
+        else epoch_context(epoch_num)
+    )
+    if context.epoch_state > EpochState.PENDING:
+        raise NotImplementedForGivenEpochState()
+    service = get_services(context.epoch_state).user_allocations_service
+    return service.get_allocations_by_project(context, project_address)
+
+
 def get_last_user_allocation(
     user_address: str, epoch_num: int
 ) -> Tuple[List[AccountFundsDTO], Optional[bool]]:
