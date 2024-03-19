@@ -2,6 +2,13 @@ FROM local-docker-registry.wildland.dev:80/acidrain/python-poetry:3.11-slim-1.5.
 
 WORKDIR /app
 
+RUN apt-get update \
+    && apt-get install -y \
+      ca-certificates \
+      dnsutils \
+    && apt clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 # Make use of Docker layer for poetry deps
 COPY pyproject.toml poetry.lock ./
 RUN poetry config virtualenvs.create false
