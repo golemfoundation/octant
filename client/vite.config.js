@@ -53,7 +53,7 @@ export default defineConfig(({ mode }) => {
       }),
     );
   }
-  if (isProduction) {
+  if (isProduction && process.env.VITE_SENTRY_AUTH_TOKEN) {
     plugins.push(
       sentryVitePlugin({
         authToken: process.env.VITE_SENTRY_AUTH_TOKEN,
