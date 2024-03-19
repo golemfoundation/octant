@@ -169,9 +169,10 @@ jobs:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
     steps:
-    - uses: actions/checkout@v4.1.0
+    - uses: actions/checkout@v4
       with:
         ref: ${{ inputs.branch-head-ref }}
+        fetch-depth: 10
 
     - name: (debug)
       run: |
@@ -216,9 +217,10 @@ jobs:
         username: "_json_key_base64"
         password: "${{ secrets.GCP_DOCKER_IMAGES_REGISTRY_SERVICE_ACCOUNT }}"
     steps:
-    - uses: actions/checkout@v4.1.0
+    - uses: actions/checkout@v4
       with:
         ref: ${{ inputs.branch-head-ref }}
+        fetch-depth: 10
 
     - name: Deploy contracts
       id: deploy
@@ -265,10 +267,10 @@ jobs:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
     steps:
-    - uses: actions/checkout@v4.1.0
+    - uses: actions/checkout@v4
       with:
         ref: ${{ inputs.branch-head-ref }}
-
+        fetch-depth: 10
     - uses: actions/download-artifact@v4
       if: ${{ inputs.deploy-contracts }}
       with:
@@ -310,6 +312,10 @@ jobs:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
     steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.branch-head-ref }}
+        fetch-depth: 10
     - name: Wait for application ready
       id: app
       run: |
