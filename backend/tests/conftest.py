@@ -515,10 +515,6 @@ def patch_last_finalized_snapshot(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_user_budget(monkeypatch):
     monkeypatch.setattr("app.legacy.core.allocations.get_budget", MOCK_GET_USER_BUDGET)
-    monkeypatch.setattr(
-        "app.legacy.core.history.budget.get_budget", MOCK_GET_USER_BUDGET
-    )
-
     MOCK_GET_USER_BUDGET.return_value = USER_MOCKED_BUDGET
 
 
@@ -729,6 +725,12 @@ def mock_patron_mode(bob):
     patron_mode_service_mock.get_patrons_rewards.return_value = USER2_BUDGET
 
     return patron_mode_service_mock
+
+
+@pytest.fixture(scope="function")
+def mock_withdrawals():
+    withdrawals_service_mock = Mock()
+    return withdrawals_service_mock
 
 
 @pytest.fixture(scope="function")

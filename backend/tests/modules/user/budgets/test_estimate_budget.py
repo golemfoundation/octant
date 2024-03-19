@@ -1,6 +1,6 @@
 import pytest
 
-from app.legacy.utils.time import days_to_sec
+from app.modules.common.time import days_to_sec
 from app.modules.user.budgets.core import estimate_budget
 from tests.helpers.context import get_context
 from tests.helpers.octant_rewards import octant_rewards

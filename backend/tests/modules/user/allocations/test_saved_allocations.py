@@ -1,8 +1,10 @@
 import pytest
+from freezegun import freeze_time
 
 from app.extensions import db
 from app.infrastructure import database
-from app.modules.dto import AllocationDTO
+from app.modules.common.time import from_timestamp_s
+from app.modules.dto import AllocationDTO, AllocationItem
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 from tests.helpers.context import get_context
 
@@ -96,3 +98,53 @@ def test_has_user_allocated_rewards_returns_false(
     result = service.has_user_allocated_rewards(context, user1.address)
 
     assert result is False
+
+
+@freeze_time("2024-03-18 00:00:00")
+def test_user_allocations_by_timestamp(context, mock_users_db, proposal_accounts):
+    user1, _, _ = mock_users_db
+    timestamp_before = from_timestamp_s(1710719999)
+    timestamp_after = from_timestamp_s(1710720001)
+
+    allocation = [
+        AllocationDTO(proposal_accounts[0].address, 100),
+        AllocationDTO(proposal_accounts[1].address, 100),
+    ]
+    database.allocations.add_all(1, user1.id, 0, allocation)
+    db.session.commit()
+
+    service = SavedUserAllocations()
+
+    result_before = service.get_user_allocations_by_timestamp(
+        user1.address, from_timestamp=timestamp_before, limit=20
+    )
+    result_after = service.get_user_allocations_by_timestamp(
+        user1.address, from_timestamp=timestamp_after, limit=20
+    )
+    result_after_with_limit = service.get_user_allocations_by_timestamp(
+        user1.address, from_timestamp=timestamp_after, limit=1
+    )
+
+    assert result_before == []
+    assert result_after == [
+        AllocationItem(
+            project_address=proposal_accounts[0].address,
+            epoch=1,
+            amount=100,
+            timestamp=from_timestamp_s(1710720000),
+        ),
+        AllocationItem(
+            project_address=proposal_accounts[1].address,
+            epoch=1,
+            amount=100,
+            timestamp=from_timestamp_s(1710720000),
+        ),
+    ]
+    assert result_after_with_limit == [
+        AllocationItem(
+            project_address=proposal_accounts[0].address,
+            epoch=1,
+            amount=100,
+            timestamp=from_timestamp_s(1710720000),
+        )
+    ]

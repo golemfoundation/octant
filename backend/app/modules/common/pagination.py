@@ -1,7 +1,13 @@
 import base64
+from dataclasses import dataclass
 from typing import List, Tuple, Optional
 
-from app.legacy.utils.time import now, from_timestamp_us, Timestamp
+from app.modules.common.time import now, from_timestamp_us, Timestamp
+
+
+@dataclass(frozen=True)
+class PageRecord:
+    timestamp: int  # Should be in microseconds precision
 
 
 class Cursor:
@@ -28,13 +34,15 @@ class Paginator:
 
     @staticmethod
     def extract_page(
-        all: List, offset_at_timestamp: int, limit: int
+        page_records: list[PageRecord], offset_at_timestamp: int, limit: int
     ) -> Tuple[List, Optional[str]]:
         next_page_start_index = offset_at_timestamp + limit
-        current_page = all[offset_at_timestamp:next_page_start_index]
+        current_page = page_records[offset_at_timestamp:next_page_start_index]
 
         next_page_start_elem = (
-            all[next_page_start_index] if next_page_start_index < len(all) else None
+            page_records[next_page_start_index]
+            if next_page_start_index < len(page_records)
+            else None
         )
         next_page_cursor = None
         if next_page_start_elem is not None:
