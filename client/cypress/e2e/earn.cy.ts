@@ -161,7 +161,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           const amountToUnlock = 1;
           const lockedGlms = parseInt(text, 10);
 
-          cy.get('[data-test=BoxRounded__tab--1]').click();
+          cy.get('[data-test=EarnGlmLockTabs__tab--1]').click();
           cy.get('[data-test=InputsCryptoFiat__InputText--crypto]')
             .clear()
             .type(`${amountToUnlock}`);
