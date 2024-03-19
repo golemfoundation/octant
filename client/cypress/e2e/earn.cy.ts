@@ -215,7 +215,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           cy.window().then(async win => {
             await win.mutateAsyncMoveEpoch();
             cy.wait(5000);
-            await axios.post(`${env.serverEndpoint}snapshots/pending`);
+            await axios.post(`${env.serverEndpoint}/snapshots/pending`);
             cy.wait(5000);
             cy.reload();
             cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
