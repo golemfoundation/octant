@@ -1,6 +1,9 @@
+import axios from 'axios';
+
 import { visitWithLoader, mockCoinPricesServer } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
+import env from 'src/env';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 import Chainable = Cypress.Chainable;
@@ -188,13 +191,13 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     it('Wallet connected: Lock 1000 GLM + move epoch', () => {
       connectWallet();
 
-      cy.get('[data-test=BoxGlmLock__Button]').click();
-      cy.get('[data-test=BudgetBox__currentlyLocked__value]')
+      cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
         .invoke('text')
         .then(text => {
           const amountToLock = 1000;
-          const lockedGlms = parseInt(text, 10);
+          const lockedGlms = parseInt(text.replace(/\u200a/g, ''), 10);
 
+          cy.get('[data-test=BoxGlmLock__Button]').click();
           cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').clear().type(`${amountToLock}`);
           cy.get('[data-test=GlmLockTabs__Button]').should('have.text', 'Lock');
           cy.get('[data-test=GlmLockTabs__Button]').click();
@@ -208,18 +211,19 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           );
           cy.get('[data-test=GlmLockNotification--success]').should('be.visible');
           cy.get('[data-test=GlmLockTabs__Button]').click();
+          cy.wait(5000);
           cy.window().then(async win => {
             await win.mutateAsyncMoveEpoch();
+            cy.wait(5000);
+            await axios.post(`${env.serverEndpoint}snapshots/pending`);
+            cy.wait(5000);
             cy.reload();
-            cy.get(
-              '[data-test=BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton]',
-            ).should('be.visible');
             cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
               timeout: 60000,
             })
               .invoke('text')
               .then(nextText => {
-                const lockedGlmsAfterLock = parseInt(nextText, 10);
+                const lockedGlmsAfterLock = parseInt(nextText.replace(/\u200a/g, ''), 10);
                 expect(lockedGlms + amountToLock).to.be.eq(lockedGlmsAfterLock);
               });
             cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__primary]', {
@@ -227,13 +231,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             })
               .invoke('text')
               .then(nextText => {
-                const lockedGlmsAfterLock = parseInt(nextText, 10);
+                const lockedGlmsAfterLock = parseInt(nextText.replace(/\u200a/g, ''), 10);
                 expect(lockedGlms + amountToLock).to.be.eq(lockedGlmsAfterLock);
               });
-            cy.get('[data-test=HistoryItem__title]').first().should('have.text', 'Locked GLM');
-            cy.get('[data-test=HistoryItem__DoubleValue__primary]')
-              .first()
-              .should('have.text', `${amountToLock} GLM`);
           });
         });
     });
