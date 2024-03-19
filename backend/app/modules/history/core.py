@@ -24,7 +24,7 @@ def sort_history_records(
         AllocationHistoryEntry(
             type=OpType.ALLOCATION,
             amount=e.amount,
-            timestamp=e.timestamp.timestamp_us(),
+            timestamp_us=e.timestamp.timestamp_us(),
             project_address=e.project_address,
         )
         for e in allocations
@@ -33,7 +33,7 @@ def sort_history_records(
     events += [
         PatronModeDonationEntry(
             type=OpType.PATRON_MODE_DONATION,
-            timestamp=e.timestamp.timestamp_us(),
+            timestamp_us=e.timestamp.timestamp_us(),
             epoch=e.epoch,
             amount=e.amount,
         )
@@ -44,7 +44,7 @@ def sort_history_records(
         TransactionHistoryEntry(
             type=e.type,
             amount=e.amount,
-            timestamp=e.timestamp.timestamp_us(),
+            timestamp_us=e.timestamp.timestamp_us(),
             transaction_hash=e.transaction_hash,
         )
         for e in locks + unlocks + withdrawals
@@ -55,7 +55,7 @@ def sort_history_records(
 
 def _sort_keys(elem: AllocationHistoryEntry | TransactionHistoryEntry):
     return (
-        elem.timestamp,
+        elem.timestamp_us,
         elem.type,
         getattr(elem, "amount", None),
         getattr(elem, "project_address", None),

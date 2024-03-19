@@ -80,31 +80,34 @@ def test_history(
     assert result == UserHistoryDTO(
         history=[
             TransactionHistoryEntry(
-                timestamp=500000000,
+                timestamp_us=500000000,
                 type=OpType.WITHDRAWAL,
                 transaction_hash="tx3",
                 amount=50,
             ),
             PatronModeDonationEntry(
-                timestamp=400000000,
+                timestamp_us=400000000,
                 type=OpType.PATRON_MODE_DONATION,
                 epoch=1,
                 amount=10,
             ),
             AllocationHistoryEntry(
-                timestamp=300000000,
+                timestamp_us=300000000,
                 type=OpType.ALLOCATION,
                 project_address="proj1",
                 amount=10,
             ),
             TransactionHistoryEntry(
-                timestamp=200000000,
+                timestamp_us=200000000,
                 type=OpType.UNLOCK,
                 transaction_hash="tx2",
                 amount=10,
             ),
             TransactionHistoryEntry(
-                timestamp=100000000, type=OpType.LOCK, transaction_hash="tx1", amount=10
+                timestamp_us=100000000,
+                type=OpType.LOCK,
+                transaction_hash="tx1",
+                amount=10,
             ),
         ],
         next_cursor=None,

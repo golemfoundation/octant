@@ -7,7 +7,7 @@ from app.modules.common.time import now, from_timestamp_us, Timestamp
 
 @dataclass(frozen=True)
 class PageRecord:
-    timestamp: int  # Should be in microseconds precision
+    timestamp_us: int  # Should be in microseconds precision
 
 
 class Cursor:
@@ -47,10 +47,10 @@ class Paginator:
         next_page_cursor = None
         if next_page_start_elem is not None:
             next_offset = Paginator._get_offset(
-                current_page, next_page_start_elem.timestamp, offset_at_timestamp
+                current_page, next_page_start_elem.timestamp_us, offset_at_timestamp
             )
             next_page_cursor = Cursor.encode(
-                next_page_start_elem.timestamp, next_offset
+                next_page_start_elem.timestamp_us, next_offset
             )
 
         return current_page, next_page_cursor
@@ -59,7 +59,7 @@ class Paginator:
     def _get_offset(current_page_elems, next_elem_timestamp, prev_offset):
         offset = 0
         for elem in current_page_elems[::-1]:
-            if elem.timestamp == next_elem_timestamp:
+            if elem.timestamp_us == next_elem_timestamp:
                 offset += 1
             else:
                 return offset

@@ -1,3 +1,5 @@
+from flask import current_app as app
+
 from app import exceptions
 from app.infrastructure import database
 from app.pydantic import Model
@@ -20,6 +22,7 @@ def _get_last_pending_snapshot() -> int:
         last_snapshot = database.pending_epoch_snapshot.get_last_snapshot()
         return last_snapshot.epoch
     except exceptions.MissingSnapshot:
+        app.logger.warning("No pending snapshot found")
         return 0
 
 
@@ -28,4 +31,5 @@ def _get_last_finalized_snapshot() -> int:
         last_snapshot = database.finalized_epoch_snapshot.get_last_snapshot()
         return last_snapshot.epoch
     except exceptions.MissingSnapshot:
+        app.logger.warning("No finalized snapshot found")
         return 0
