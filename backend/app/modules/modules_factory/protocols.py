@@ -10,6 +10,7 @@ from app.modules.dto import (
     PendingSnapshotDTO,
     WithdrawableEth,
 )
+from app.modules.history.dto import UserHistoryDTO
 
 
 @runtime_checkable
@@ -119,4 +120,11 @@ class WithdrawalsService(Protocol):
 @runtime_checkable
 class EstimatedProjectRewardsService(Protocol):
     def get_project_rewards(self, context: Context) -> ProjectRewardsResult:
+      ...
+
+@runtime_checkable
+class HistoryService(Protocol):
+    def get_user_history(
+        self, context: Context, user_address: str, cursor: str = None, limit: int = 20
+    ) -> UserHistoryDTO:
         ...

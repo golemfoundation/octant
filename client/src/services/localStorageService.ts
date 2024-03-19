@@ -10,7 +10,7 @@ import {
   WAS_LOCK_GLM_ALREADY_CLOSED_TIP,
   WAS_REWARDS_ALREADY_CLOSED_TIP,
   WAS_WITHDRAW_ALREADY_CLOSED_TIP,
-  ALLOCATION_REWARDS_FOR_PROPOSALS,
+  ALLOCATION_REWARDS_FOR_PROJECTS,
 } from 'constants/localStorageKeys';
 import { initialState as settingsStoreInitialState } from 'store/settings/store';
 import { initialState as tipsStoreInitialState } from 'store/tips/store';
@@ -59,7 +59,7 @@ const LocalStorageService = () => {
       return;
     }
 
-    if (allocationItems.find(proposalAddress => typeof proposalAddress !== 'string')) {
+    if (allocationItems.find(projectAddress => typeof projectAddress !== 'string')) {
       localStorage.removeItem(ALLOCATION_ITEMS_KEY);
     }
   };
@@ -123,7 +123,7 @@ const LocalStorageService = () => {
       tipsStoreInitialState.wasWithdrawAlreadyClosed,
     );
 
-  const validateRewardsForProposals = (): void => validateBigInt(ALLOCATION_REWARDS_FOR_PROPOSALS);
+  const validateRewardsForProjects = (): void => validateBigInt(ALLOCATION_REWARDS_FOR_PROJECTS);
 
   const init = (): void => {
     validateLocalStorageJsons();
@@ -137,7 +137,7 @@ const LocalStorageService = () => {
     validateWasLockGLMAlreadyClosed();
     validateWasRewardsAlreadyClosed();
     validateWasWithdrawAlreadyClosed();
-    validateRewardsForProposals();
+    validateRewardsForProjects();
   };
 
   return {

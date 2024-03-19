@@ -13,7 +13,7 @@ const connectWallet = (
   cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
   cy.disconnectMetamaskWalletFromAllDapps();
   if (shouldVisit) {
-    visitWithLoader(ROOT.absolute, ROOT_ROUTES.proposals.absolute);
+    visitWithLoader(ROOT.absolute, ROOT_ROUTES.projects.absolute);
   }
   if (shouldReload) {
     cy.reload();
@@ -239,14 +239,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         .click();
       cy.get('[data-test=ModalOnboarding__Button]').click();
       cy.get('[data-test=ModalOnboarding]').should('not.exist');
-      cy.get('[data-test=ProposalsView__ProposalsList]').should('be.visible');
+      cy.get('[data-test=ProjectsView__ProjectsList]').should('be.visible');
     });
 
     it('user is able to close the modal by clicking button in the top-right', () => {
       cy.get('[data-test=ModalOnboarding]').should('be.visible');
       cy.get('[data-test=ModalOnboarding__Button]').click();
       cy.get('[data-test=ModalOnboarding]').should('not.exist');
-      cy.get('[data-test=ProposalsView__ProposalsList]').should('be.visible');
+      cy.get('[data-test=ProjectsView__ProjectsList]').should('be.visible');
     });
 
     it('renders every time page is refreshed when "Always show Allocate onboarding" option is checked', () => {

@@ -20,7 +20,7 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
   isManuallyEdited,
   isLocked,
   isError,
-  setRewardsForProposalsCallback,
+  setRewardsForProjectsCallback,
 }) => {
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationRewardsBox',
@@ -28,58 +28,58 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
   const { data: individualReward } = useIndividualReward();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const [modalMode, setModalMode] = useState<'closed' | 'donate' | 'withdraw'>('closed');
-  const { rewardsForProposals, setRewardsForProposals } = useAllocationsStore(state => ({
-    rewardsForProposals: state.data.rewardsForProposals,
-    setRewardsForProposals: state.setRewardsForProposals,
+  const { rewardsForProjects, setRewardsForProjects } = useAllocationsStore(state => ({
+    rewardsForProjects: state.data.rewardsForProjects,
+    setRewardsForProjects: state.setRewardsForProjects,
   }));
 
   const hasUserIndividualReward = !!individualReward && individualReward !== 0n;
   const isDecisionWindowOpenAndHasIndividualReward =
     hasUserIndividualReward && isDecisionWindowOpen;
 
-  const onSetRewardsForProposals = (rewardsForProposalsNew: bigint) => {
+  const onSetRewardsForProjects = (rewardsForProjectsNew: bigint) => {
     if (!individualReward || isDisabled) {
       return;
     }
-    setRewardsForProposals(rewardsForProposalsNew);
-    setRewardsForProposalsCallback({ rewardsForProposalsNew });
+    setRewardsForProjects(rewardsForProjectsNew);
+    setRewardsForProjectsCallback({ rewardsForProjectsNew });
   };
 
   const onUpdateValueModal = (newValue: bigint) => {
-    const rewardsForProposalsNew = modalMode === 'donate' ? newValue : individualReward! - newValue;
-    onSetRewardsForProposals(rewardsForProposalsNew);
+    const rewardsForProjectsNew = modalMode === 'donate' ? newValue : individualReward! - newValue;
+    onSetRewardsForProjects(rewardsForProjectsNew);
   };
 
   const onUpdateValueSlider = (index: number) => {
     if (!individualReward || isDisabled) {
       return;
     }
-    const rewardsForProposalsNew = (individualReward * BigInt(index)) / BigInt(100);
-    onSetRewardsForProposals(rewardsForProposalsNew);
+    const rewardsForProjectsNew = (individualReward * BigInt(index)) / BigInt(100);
+    onSetRewardsForProjects(rewardsForProjectsNew);
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onUpdateValueSliderThrottled = useCallback(
     throttle(onUpdateValueSlider, 250, { trailing: true }),
-    [isDisabled, individualReward, setRewardsForProposalsCallback],
+    [isDisabled, individualReward, setRewardsForProjectsCallback],
   );
 
-  const percentRewardsForProposals = isDecisionWindowOpenAndHasIndividualReward
-    ? Number((rewardsForProposals * BigInt(100)) / individualReward)
+  const percentRewardsForProjects = isDecisionWindowOpenAndHasIndividualReward
+    ? Number((rewardsForProjects * BigInt(100)) / individualReward)
     : 50;
-  const percentWithdraw = 100 - percentRewardsForProposals;
-  const rewardsForProposalsFinal = isDecisionWindowOpenAndHasIndividualReward
-    ? rewardsForProposals
+  const percentWithdraw = 100 - percentRewardsForProjects;
+  const rewardsForProjectsFinal = isDecisionWindowOpenAndHasIndividualReward
+    ? rewardsForProjects
     : BigInt(0);
   const rewardsForWithdraw = isDecisionWindowOpenAndHasIndividualReward
-    ? individualReward - rewardsForProposals
+    ? individualReward - rewardsForProjects
     : BigInt(0);
   const sections = [
     {
       header: isLocked ? t('donated') : t('donate'),
       value: getValueCryptoToDisplay({
         cryptoCurrency: 'ethereum',
-        valueCrypto: rewardsForProposalsFinal,
+        valueCrypto: rewardsForProjectsFinal,
       }),
     },
     {
@@ -129,7 +129,7 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
           max={100}
           min={0}
           onChange={onUpdateValueSliderThrottled}
-          value={percentRewardsForProposals}
+          value={percentRewardsForProjects}
         />
       </div>
       <div className={styles.sections}>
@@ -157,13 +157,13 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
         modalProps={{
           header:
             modalMode === 'donate'
-              ? t('donateWithPercentage', { percentage: percentRewardsForProposals })
+              ? t('donateWithPercentage', { percentage: percentRewardsForProjects })
               : t('personalWithPercentage', { percentage: percentWithdraw }),
           isOpen: modalMode !== 'closed',
           onClosePanel: () => setModalMode('closed'),
         }}
         onUpdateValue={newValue => onUpdateValueModal(newValue)}
-        valueCryptoSelected={modalMode === 'donate' ? rewardsForProposals : rewardsForWithdraw}
+        valueCryptoSelected={modalMode === 'donate' ? rewardsForProjects : rewardsForWithdraw}
         valueCryptoTotal={individualReward!}
       />
     </BoxRounded>

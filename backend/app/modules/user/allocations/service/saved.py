@@ -2,7 +2,8 @@ from typing import List
 
 from app.context.manager import Context
 from app.infrastructure import database
-from app.modules.dto import AccountFundsDTO
+from app.modules.common.time import Timestamp, from_datetime
+from app.modules.dto import AccountFundsDTO, AllocationItem
 from app.pydantic import Model
 
 
@@ -31,3 +32,18 @@ class SavedUserAllocations(Model):
             )
         )
         return allocation_signature is not None
+
+    def get_user_allocations_by_timestamp(
+        self, user_address: str, from_timestamp: Timestamp, limit: int
+    ) -> List[AllocationItem]:
+        return [
+            AllocationItem(
+                project_address=r.proposal_address,
+                epoch=r.epoch,
+                amount=int(r.amount),
+                timestamp=from_datetime(r.created_at),
+            )
+            for r in database.allocations.get_user_allocations_history(
+                user_address, from_timestamp.datetime(), limit
+            )
+        ]

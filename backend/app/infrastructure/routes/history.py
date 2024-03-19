@@ -1,10 +1,11 @@
+from eth_utils import to_checksum_address
 from flask import current_app as app
 from flask_restx import Namespace, fields
 from flask import request
 
-from app.legacy.controllers import history
 from app.extensions import api
 from app.infrastructure import OctantResource
+from app.modules.history.controller import get_user_history
 
 ns = Namespace("history", description="User operations overview")
 api.add_namespace(ns)
@@ -44,7 +45,7 @@ user_history_model = api.model(
         "history": fields.List(
             fields.Nested(history_item), description="History of user actions"
         ),
-        "next_cursor": fields.String(required=False, description="Next page cursor"),
+        "nextCursor": fields.String(required=False, description="Next page cursor"),
     },
 )
 
@@ -63,19 +64,12 @@ class History(OctantResource):
     def get(self, user_address):
         page_cursor = request.args.get("cursor", type=str)
         page_limit = request.args.get("limit", type=int)
+        user_address = to_checksum_address(user_address)
 
         app.logger.debug(
             f"Getting history for user: {user_address}. Page details:{(page_cursor, page_limit)} "
         )
-        user_history, next_cursor = history.user_history(
-            user_address, page_cursor, page_limit
-        )
+        response = get_user_history(user_address, page_cursor, page_limit)
+        app.logger.debug(f"User: {user_address} history: {response.history}")
 
-        app.logger.debug(f"User: {user_address} history: {user_history}")
-
-        response = {
-            "history": [r.to_dict() for r in user_history],
-            "next_cursor": next_cursor,
-        }
-
-        return response
+        return response.to_dict()

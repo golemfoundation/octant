@@ -2,7 +2,7 @@ import { navigateWithCheck, mockCoinPricesServer } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
-import { ROOT } from 'src/routes/RootRoutes/routes';
+import { ROOT, ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
   describe(`layout: ${device}`, { viewportHeight, viewportWidth }, () => {
@@ -34,18 +34,18 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('Clicking on Octant logo redirects to projects view (outside projects view)', () => {
-      cy.get('[data-test=Navbar__Button--Settings]').click();
+      navigateWithCheck(ROOT_ROUTES.settings.absolute);
       cy.get('[data-test=SettingsView]').should('be.visible');
       cy.get('[data-test=MainLayout__Logo]').click();
-      cy.get('[data-test=ProposalsView]').should('be.visible');
+      cy.get('[data-test=ProjectsView]').should('be.visible');
     });
 
     it('Clicking on Octant logo redirects to projects view (outside projects view) with memorized scrollY', () => {
       cy.scrollTo(0, 500);
-      cy.get('[data-test=Navbar__Button--Settings]').click();
+      navigateWithCheck(ROOT_ROUTES.settings.absolute);
       cy.get('[data-test=SettingsView]').should('be.visible');
       cy.get('[data-test=MainLayout__Logo]').click();
-      cy.get('[data-test=ProposalsView]').should('be.visible');
+      cy.get('[data-test=ProjectsView]').should('be.visible');
       cy.window().then(cyWindow => {
         expect(cyWindow.scrollY).to.be.eq(500);
       });

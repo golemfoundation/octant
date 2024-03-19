@@ -28,6 +28,7 @@ services:
 
   backend:
     image: octant/backend:latest
+    platform: linux/amd64
     ports:
       - '5000:5000'
     environment:
@@ -52,6 +53,7 @@ services:
 
   epochs-snapshotter:
     image: 'octant/snapshotter:latest'
+    platform: linux/amd64
     depends_on:
       - backend
     networks:
@@ -60,6 +62,7 @@ services:
 
   control-plane:
     image: octant/control-plane:latest
+    platform: linux/amd64
     ports:
       - "8080:80"
     networks:

@@ -1,0 +1,67 @@
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: $border-radius-16;
+  background: $color-white;
+  height: 28rem;
+  width: 100%;
+  bottom: 0;
+  transition: bottom $transition-time-4 linear;
+
+  &.isEpoch1 {
+    height: 20.8rem;
+  }
+
+  &:hover {
+    bottom: 0.5rem;
+  }
+
+  &.isClickable {
+    cursor: pointer;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding: $projectItemPadding $projectItemPadding 1rem;
+  }
+
+  .button {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+  }
+
+  .imageProfile {
+    border-radius: 50%;
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .body {
+    padding: 0 $projectItemPadding;
+    text-align: left;
+    min-height: 12.4rem;
+  }
+
+  .name {
+    font-weight: $font-weight-bold;
+    margin: 0 0 0.6rem 0;
+    height: 3.2rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .introDescription {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
+  .projectRewards {
+    padding: 0 $projectItemPadding $projectItemPadding;
+  }
+}

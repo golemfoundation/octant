@@ -8,7 +8,7 @@ from app.infrastructure.routes.validations.user_validations import (
     validate_estimate_budget_inputs,
 )
 from app.legacy.controllers import rewards
-from app.legacy.utils.time import days_to_sec
+from app.modules.common.time import days_to_sec
 from app.modules.octant_rewards.controller import get_leverage
 from app.modules.project_rewards.controller import get_estimated_project_rewards
 from app.modules.user.budgets.controller import estimate_budget, get_budgets, get_budget

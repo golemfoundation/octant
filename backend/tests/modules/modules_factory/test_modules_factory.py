@@ -1,3 +1,4 @@
+from app.modules.history.service.full import FullHistory
 from app.modules.modules_factory.current import CurrentServices
 from app.modules.modules_factory.finalized import FinalizedServices
 from app.modules.modules_factory.finalizing import FinalizingServices
@@ -49,11 +50,22 @@ def test_current_services_factory():
     result = CurrentServices.create(ChainTypes.MAINNET)
 
     user_deposits = CalculatedUserDeposits(events_generator=DbAndGraphEventsGenerator())
-    assert result.user_deposits_service == user_deposits
-    assert result.octant_rewards_service == CalculatedOctantRewards(
+    user_allocations = SavedUserAllocations()
+    user_withdrawals = FinalizedWithdrawals()
+    patron_donations = EventsBasedUserPatronMode()
+    octant_rewards = CalculatedOctantRewards(
         staking_proceeds=EstimatedStakingProceeds(),
         effective_deposits=user_deposits,
     )
+    history = FullHistory(
+        user_deposits=user_deposits,
+        user_allocations=user_allocations,
+        user_withdrawals=user_withdrawals,
+        patron_donations=patron_donations,
+    )
+    assert result.user_deposits_service == user_deposits
+    assert result.octant_rewards_service == octant_rewards
+    assert result.history_service == history
 
 
 def test_pre_pending_services_factory_when_mainnet():

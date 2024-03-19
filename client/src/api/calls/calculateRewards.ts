@@ -7,7 +7,7 @@ export type PostCalculateRewardsResponse = {
   budget: string;
 };
 
-export function apiPostCalculateRewards(
+export async function apiPostCalculateRewards(
   // WEI
   amount: string,
   days: number,

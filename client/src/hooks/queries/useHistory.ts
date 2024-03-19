@@ -29,7 +29,7 @@ export default function useHistory(
 
   const query = useInfiniteQuery({
     enabled: !!address,
-    getNextPageParam: lastPage => lastPage.next_cursor,
+    getNextPageParam: lastPage => lastPage.nextCursor,
     initialPageParam: '',
     queryFn: ({ pageParam }) => apiGetHistory(address as string, pageParam),
     queryKey: QUERY_KEYS.history,

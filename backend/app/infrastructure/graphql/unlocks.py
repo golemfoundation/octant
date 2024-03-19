@@ -11,6 +11,7 @@ class UnlockEvent(TypedDict):
     amount: int
     timestamp: int
     user: str
+    transactionHash: str
 
 
 def get_user_unlocks_history(

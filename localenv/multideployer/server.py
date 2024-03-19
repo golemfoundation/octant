@@ -144,7 +144,7 @@ if __name__ == "__main__":
     port = 8022
     print(f"Multideployer listening on http://{host}:{port}")
     print(
-        f"Run GET with appropriate timeout value against http://{host}:{port}/?name=NAMEOFYOURSUBGRAPH"
+        f"Run GET with appropriate timeout value against http://{host}:{port}/?name=NAME_OF_YOUR_SUBGRAPH"
     )
     server = HTTPServer((host, port), WebRequestHandler)
     server.serve_forever()

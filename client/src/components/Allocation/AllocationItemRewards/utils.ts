@@ -1,16 +1,16 @@
 export function getFilled(
-  proposalRewardsThreshold?: bigint,
+  projectRewardsThreshold?: bigint,
   rewardsSumWithValueAndSimulation?: bigint,
 ): number {
   if (
-    !proposalRewardsThreshold ||
+    !projectRewardsThreshold ||
     !rewardsSumWithValueAndSimulation ||
     rewardsSumWithValueAndSimulation === 0n
   ) {
     return 0;
   }
-  return rewardsSumWithValueAndSimulation > proposalRewardsThreshold
+  return rewardsSumWithValueAndSimulation > projectRewardsThreshold
     ? 100
     : (parseFloat(rewardsSumWithValueAndSimulation.toString()) * 100) /
-        parseFloat(proposalRewardsThreshold.toString());
+        parseFloat(projectRewardsThreshold.toString());
 }

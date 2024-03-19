@@ -1,1 +1,6 @@
-export type UseMediaQuery = { isDesktop: boolean; isMobile: boolean; isTablet: boolean };
+export type UseMediaQuery = {
+  isDesktop: boolean;
+  isLargeDesktop: boolean;
+  isMobile: boolean;
+  isTablet: boolean;
+};

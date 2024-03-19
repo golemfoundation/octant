@@ -4,19 +4,19 @@ import { useAccount } from 'wagmi';
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useProposalsContract from 'hooks/queries/useProposalsContract';
+import useProjectsContract from 'hooks/queries/useProjectsContract';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useAllocationsStore from 'store/allocations/store';
 import useSettingsStore from 'store/settings/store';
 import useTipsStore from 'store/tips/store';
-import getValidatedProposalsFromLocalStorage from 'utils/getValidatedProposalsFromLocalStorage';
+import getValidatedProjectsFromLocalStorage from 'utils/getValidatedProjectsFromLocalStorage';
 
 import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from './useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow';
 
 export default function useAppPopulateState(): void {
   const { isConnected } = useAccount();
 
-  const { data: proposals } = useProposalsContract();
+  const { data: projects } = useProjectsContract();
   const { data: userAllocations } = useUserAllocations();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const {
@@ -48,8 +48,8 @@ export default function useAppPopulateState(): void {
      * and populates store with them or sets empty array.
      */
     if (
-      !proposals ||
-      proposals.length === 0 ||
+      !projects ||
+      projects.length === 0 ||
       isAllocationsInitialized ||
       isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow
     ) {
@@ -75,12 +75,12 @@ export default function useAppPopulateState(): void {
       return;
     }
 
-    const validatedProposalsInLocalStorage = getValidatedProposalsFromLocalStorage(
+    const validatedProjectsInLocalStorage = getValidatedProjectsFromLocalStorage(
       localStorageAllocationItems,
-      proposals,
+      projects,
     );
-    if (validatedProposalsInLocalStorage) {
-      setAllocations(validatedProposalsInLocalStorage);
+    if (validatedProjectsInLocalStorage) {
+      setAllocations(validatedProjectsInLocalStorage);
     }
   }, [
     allocations,
@@ -88,7 +88,7 @@ export default function useAppPopulateState(): void {
     isAllocationsInitialized,
     isConnected,
     isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow,
-    proposals,
+    projects,
     setAllocations,
   ]);
 
