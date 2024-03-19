@@ -88,6 +88,17 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       cy.get('[data-test=ModalGlmLock__overflow]').should('exist');
     });
 
+    it('Wallet connected: "ModalGlmLock" - changing tabs keep focus on first input', () => {
+      connectWallet();
+      cy.get('[data-test=BoxGlmLock__Button]').click();
+      cy.get('[data-test=ModalGlmLock]').should('be.visible');
+      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').should('have.focus');
+      cy.get('[data-test=EarnGlmLockTabs__tab--1]').click();
+      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').should('have.focus');
+      cy.get('[data-test=EarnGlmLockTabs__tab--0]').click();
+      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').should('have.focus');
+    });
+
     it('Wallet connected: Lock 1 GLM', () => {
       connectWallet();
 

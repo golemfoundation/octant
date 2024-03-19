@@ -88,6 +88,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
   return (
     <BoxRounded
       className={cx(styles.box, className)}
+      dataTest="EarnGlmLockTabs"
       isGrey
       tabs={[
         {
