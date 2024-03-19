@@ -5,8 +5,6 @@ from typing import List
 from dataclass_wizard import JSONWizard
 
 from app import exceptions
-from app.context.epoch_details import get_epoch_details
-from app.context.epoch_state import EpochState
 from app.extensions import epochs
 from app.infrastructure import database
 from app.legacy.core import proposals

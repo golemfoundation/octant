@@ -85,14 +85,14 @@ def default_error_handler(e):
         emit("exception", {"message": UNEXPECTED_EXCEPTION})
 
 
-def _serialize_project_rewards(proposal_rewards: List[ProjectRewardDTO]) -> List[dict]:
+def _serialize_project_rewards(project_rewards: List[ProjectRewardDTO]) -> List[dict]:
     return [
         {
-            "address": proposal.address,
-            "allocated": str(proposal.allocated),
-            "matched": str(proposal.matched),
+            "address": project_reward.address,
+            "allocated": str(project_reward.allocated),
+            "matched": str(project_reward.matched),
         }
-        for proposal in proposal_rewards
+        for project_reward in project_rewards
     ]
 
 
