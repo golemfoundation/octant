@@ -5,10 +5,10 @@ import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsGridTileValue from 'components/Metrics/MetricsGrid/MetricsGridTileValue';
 import { getValuesToDisplay } from 'components/ui/DoubleValue/utils';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
-import useProposalsDonors from 'hooks/queries/donors/useProposalsDonors';
+import useProjectsDonors from 'hooks/queries/donors/useProjectsDonors';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useMatchedProposalRewards from 'hooks/queries/useMatchedProposalRewards';
+import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import i18n from 'i18n';
 import useSettingsStore from 'store/settings/store';
 
@@ -31,16 +31,16 @@ const MetricsEpochGridBelowThreshold: FC<MetricsEpochGridBelowThresholdProps> = 
   const { epoch, lastEpoch } = useMetricsEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
-  const { data: matchedProposalRewards } = useMatchedProposalRewards(
+  const { data: matchedProjectRewards } = useMatchedProjectRewards(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
-  const { data: proposalsDonors } = useProposalsDonors(
+  const { data: projectsDonors } = useProjectsDonors(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
 
   const projectsBelowThreshold =
-    Object.keys(proposalsDonors).length -
-    (matchedProposalRewards?.filter(({ matched }) => matched !== 0n).length || 0);
+    Object.keys(projectsDonors).length -
+    (matchedProjectRewards?.filter(({ matched }) => matched !== 0n).length || 0);
 
   const ethBelowThresholdToDisplay = getValuesToDisplay({
     cryptoCurrency: 'ethereum',

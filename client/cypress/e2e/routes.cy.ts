@@ -9,9 +9,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.clearLocalStorage();
     });
 
-    it('empty route redirects to proposals view', () => {
-      visitWithLoader(ROOT.absolute, ROOT_ROUTES.proposals.absolute);
-      cy.get('[data-test=ProposalsView]').should('be.visible');
+    it('empty route redirects to projects view', () => {
+      visitWithLoader(ROOT.absolute, ROOT_ROUTES.projects.absolute);
+      cy.get('[data-test=ProjectsView]').should('be.visible');
     });
 
     it('allocation route redirects to allocation view', () => {
@@ -29,9 +29,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=MetricsView]').should('be.visible');
     });
 
-    it('proposals route redirects to proposals view', () => {
-      visitWithLoader(ROOT_ROUTES.proposals.absolute);
-      cy.get('[data-test=ProposalsView]').should('be.visible');
+    it('projects route redirects to projects view', () => {
+      visitWithLoader(ROOT_ROUTES.projects.absolute);
+      cy.get('[data-test=ProjectsView]').should('be.visible');
     });
 
     it('settings route redirects to settings view', () => {

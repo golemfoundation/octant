@@ -20,7 +20,6 @@ elif [[ "$TYPE" =~ ^(uat|master)$ ]]; then
 	## MASTER/UAT/other-persistent-envs
 	## 	  contracts are never taken from a pre-defined, manually deployed set
 	export DEPLOYMENT_ID="${TYPE}"
-	export ENV_FILE="${TYPE}.env"
 else # (assume pr/app)
 	## Regular app deployment
 	## 	 the environment will be removed when PR is closed

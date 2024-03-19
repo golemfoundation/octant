@@ -10,8 +10,8 @@ import MetricsGrid from 'components/Metrics/MetricsGrid';
 import MetricsHeader from 'components/Metrics/MetricsHeader';
 import { METRICS_GENERAL_ID } from 'constants/metrics';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
-import useProposalsContract from 'hooks/queries/useProposalsContract';
-import useAllProposals from 'hooks/subgraph/useAllProposals';
+import useProjectsContract from 'hooks/queries/useProjectsContract';
+import useAllProjects from 'hooks/subgraph/useAllProjects';
 import useLockedsData from 'hooks/subgraph/useLockedsData';
 import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
 import useSettingsStore from 'store/settings/store';
@@ -30,8 +30,8 @@ const MetricsGeneral = (): ReactElement => {
   }));
   const { isFetching: isFetchingLockedSummaryLatest } = useLockedSummaryLatest();
   const { isFetching: isFetchingCryptoValues } = useCryptoValues(displayCurrency);
-  const { isFetching: isFetchingAllProposals } = useAllProposals();
-  const { isFetching: isFetchingProposalsContract } = useProposalsContract();
+  const { isFetching: isFetchingAllProjects } = useAllProjects();
+  const { isFetching: isFetchingProjectsContract } = useProjectsContract();
   const { isFetching: isFetchingLockedsData } = useLockedsData();
 
   // All metrics should be visible in the same moment (design). Skeletons are visible to the end of fetching all needed data.
@@ -39,8 +39,8 @@ const MetricsGeneral = (): ReactElement => {
     isFetchingLockedsData ||
     isFetchingLockedSummaryLatest ||
     isFetchingCryptoValues ||
-    isFetchingAllProposals ||
-    isFetchingProposalsContract;
+    isFetchingAllProjects ||
+    isFetchingProjectsContract;
 
   return (
     <div className={styles.root} id={METRICS_GENERAL_ID}>

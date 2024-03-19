@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsGridTileValue from 'components/Metrics/MetricsGrid/MetricsGridTileValue';
-import useProposalsContract from 'hooks/queries/useProposalsContract';
-import useAllProposals from 'hooks/subgraph/useAllProposals';
+import useProjectsContract from 'hooks/queries/useProjectsContract';
+import useAllProjects from 'hooks/subgraph/useAllProjects';
 
 import styles from './MetricsGeneralGridTotalProjects.module.scss';
 import MetricsGeneralGridTotalProjectsProps from './types';
@@ -14,8 +14,8 @@ const MetricsGeneralGridTotalProjects: FC<MetricsGeneralGridTotalProjectsProps> 
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
-  const { data: allProposals } = useAllProposals();
-  const { data: proposalsContract } = useProposalsContract();
+  const { data: allProjects } = useAllProjects();
+  const { data: projectsContract } = useProjectsContract();
 
   return (
     <MetricsGridTile
@@ -27,9 +27,9 @@ const MetricsGeneralGridTotalProjects: FC<MetricsGeneralGridTotalProjectsProps> 
             <MetricsGridTileValue
               isLoading={isLoading}
               subvalue={t('totalProjectsSinceEpoch0', {
-                projectsAmount: allProposals?.length,
+                projectsAmount: allProjects?.length,
               })}
-              value={proposalsContract?.length.toString() ?? ''}
+              value={projectsContract?.length.toString() ?? ''}
             />
           ),
           title: t('totalProjects'),

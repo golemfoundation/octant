@@ -21,12 +21,7 @@ git config --global user.email "$HOUSEKEEPER_EMAIL"
 git config --global user.signingkey $HOUSEKEEPER_GPG_KEY_ID
 
 GIT_DIR=`mktemp -d`
-git clone -b $ARGO_REPOSITORY_BRANCH $ARGO_REPOSITORY $GIT_DIR
-
-# sourcing hardcoded contracts (master, uat, etc)
-if [[ "$ENV_FILE" ]]; then
-	export $(grep -v '^#' $CI_PROJECT_DIR/ci/argocd/contracts/$ENV_FILE | xargs)
-fi
+git clone --depth=10 -b $ARGO_REPOSITORY_BRANCH $ARGO_REPOSITORY $GIT_DIR
 
 pushd $GIT_DIR
 OCTANT_APP_DIR=octant/applications

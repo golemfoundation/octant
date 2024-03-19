@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { AllocationItemWithAllocations } from 'components/Allocation/AllocationItem/types';
-import { ProposalIpfsWithRewards } from 'hooks/queries/useProposalsIpfsWithRewards';
+import { ProjectIpfsWithRewards } from 'hooks/queries/useProjectsIpfsWithRewards';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import getSortedElementsByTotalValueOfAllocationsAndAlphabetical from 'utils/getSortedElementsByTotalValueOfAllocationsAndAlphabetical';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
@@ -89,7 +89,7 @@ export function getAllocationValuesInitialState({
   allocations,
   isManualMode,
   percentageProportions,
-  rewardsForProposals,
+  rewardsForProjects,
   shouldReset,
   userAllocationsElements,
 }: {
@@ -97,7 +97,7 @@ export function getAllocationValuesInitialState({
   allocations: string[];
   isManualMode: boolean;
   percentageProportions: PercentageProportions;
-  rewardsForProposals: bigint;
+  rewardsForProjects: bigint;
   shouldReset: boolean;
   userAllocationsElements: UserAllocationElementString[];
 }): AllocationValues {
@@ -132,7 +132,7 @@ export function getAllocationValuesInitialState({
     // Case C (see utils.test.ts).
     const allocationValuesNew = allocations.map(allocation => ({
       address: allocation,
-      value: formatUnitsBigInt(rewardsForProposals / BigInt(allocations.length)).toLocaleString(
+      value: formatUnitsBigInt(rewardsForProjects / BigInt(allocations.length)).toLocaleString(
         // @ts-expect-error TS method collision.
         'fullWide',
         {
@@ -143,7 +143,7 @@ export function getAllocationValuesInitialState({
 
     return getAllocationValuesWithRewardsSplitted({
       allocationValues: allocationValuesNew,
-      restToDistribute: rewardsForProposals,
+      restToDistribute: rewardsForProjects,
     });
   }
   // Case D (see utils.test.ts).
@@ -159,7 +159,7 @@ export function getAllocationValuesInitialState({
     const value = (
       percentageProportion === undefined
         ? userValue
-        : formatUnitsBigInt((rewardsForProposals * BigInt(percentageProportion)) / 100n)
+        : formatUnitsBigInt((rewardsForProjects * BigInt(percentageProportion)) / 100n)
     )
       // @ts-expect-error TS method collision.
       .toLocaleString('fullWide', { useGrouping: false });
@@ -171,28 +171,28 @@ export function getAllocationValuesInitialState({
 
   return getAllocationValuesWithRewardsSplitted({
     allocationValues: allocationValuesNew,
-    restToDistribute: rewardsForProposals,
+    restToDistribute: rewardsForProjects,
   });
 }
 
 export function getAllocationsWithRewards({
-  proposalsIpfsWithRewards,
+  projectsIpfsWithRewards,
   allocationValues,
   areAllocationsAvailableOrAlreadyDone,
   userAllocationsElements,
 }: {
   allocationValues: AllocationValues | undefined;
   areAllocationsAvailableOrAlreadyDone: boolean;
-  proposalsIpfsWithRewards: ProposalIpfsWithRewards[];
+  projectsIpfsWithRewards: ProjectIpfsWithRewards[];
   userAllocationsElements: UserAllocationElementString[] | undefined;
 }): AllocationItemWithAllocations[] {
   const isDataDefined =
-    proposalsIpfsWithRewards &&
-    proposalsIpfsWithRewards.length > 0 &&
+    projectsIpfsWithRewards &&
+    projectsIpfsWithRewards.length > 0 &&
     areAllocationsAvailableOrAlreadyDone;
   let allocationsWithRewards = isDataDefined
     ? allocationValues!.map(allocationValue => {
-        const proposal = proposalsIpfsWithRewards.find(
+        const project = projectsIpfsWithRewards.find(
           ({ address }) => address === allocationValue.address,
         )!;
         const isAllocatedTo = !!userAllocationsElements?.find(
@@ -202,7 +202,7 @@ export function getAllocationsWithRewards({
         return {
           isAllocatedTo,
           ...allocationValue,
-          ...proposal,
+          ...project,
         };
       })
     : [];
@@ -229,7 +229,7 @@ export function getAllocationsWithRewards({
 export function getAllocationValuesAfterManualChange({
   newAllocationValue,
   allocationValues,
-  rewardsForProposals,
+  rewardsForProjects,
   individualReward,
   isManualMode,
   setAddressesWithError,
@@ -238,13 +238,13 @@ export function getAllocationValuesAfterManualChange({
   individualReward: bigint | undefined;
   isManualMode: boolean;
   newAllocationValue: AllocationValue;
-  rewardsForProposals: bigint;
+  rewardsForProjects: bigint;
   setAddressesWithError: React.Dispatch<React.SetStateAction<string[]>>;
-}): { allocationValuesArrayNew: AllocationValues; rewardsForProposalsNew: bigint } {
+}): { allocationValuesArrayNew: AllocationValues; rewardsForProjectsNew: bigint } {
   if (!individualReward) {
     return {
       allocationValuesArrayNew: allocationValues,
-      rewardsForProposalsNew: rewardsForProposals,
+      rewardsForProjectsNew: rewardsForProjects,
     };
   }
 
@@ -266,19 +266,18 @@ export function getAllocationValuesAfterManualChange({
         ...element,
         value: element.address === newAllocationValue.address ? '0' : element.value,
       })),
-      rewardsForProposalsNew: rewardsForProposals,
+      rewardsForProjectsNew: rewardsForProjects,
     };
   }
 
   if (isManualMode) {
     return {
       allocationValuesArrayNew,
-      rewardsForProposalsNew: allocationValuesArrayNewSum,
+      rewardsForProjectsNew: allocationValuesArrayNewSum,
     };
   }
 
-  const rewardsForProposalsNew =
-    allocationValuesArrayNewSum === 0n ? BigInt(0) : rewardsForProposals;
+  const rewardsForProjectsNew = allocationValuesArrayNewSum === 0n ? BigInt(0) : rewardsForProjects;
 
   return {
     allocationValuesArrayNew:
@@ -286,8 +285,8 @@ export function getAllocationValuesAfterManualChange({
         ? allocationValuesArrayNew
         : getAllocationValuesWithRewardsSplitted({
             allocationValues: allocationValuesArrayNew,
-            restToDistribute: rewardsForProposalsNew,
+            restToDistribute: rewardsForProjectsNew,
           }),
-    rewardsForProposalsNew,
+    rewardsForProjectsNew,
   };
 }
