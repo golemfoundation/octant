@@ -28,7 +28,9 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
   const [isTooltipClicked, setIsTooltipClicked] = useState(false);
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const tooltipText = useMemo(() => {
-    if (isArchivedProject) {return t('donated');}
+    if (isArchivedProject) {
+      return t('donated');
+    }
     if (isAddedToAllocate && isTooltipClicked) {
       return t('saved');
     }
