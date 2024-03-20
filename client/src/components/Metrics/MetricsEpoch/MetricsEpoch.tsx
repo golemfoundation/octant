@@ -50,12 +50,11 @@ const MetricsEpoch = (): ReactElement => {
   const { isFetching: isFetchingProjectsIpfsWithRewards } = useProjectsIpfsWithRewards(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
-  const { isFetching: isFetchingProjectsDonors } = useProjectsDonors(
+  const { data: projectsDonors, isFetching: isFetchingProjectsDonors } = useProjectsDonors(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
-  const { isFetching: isFetchingProjectRewardsThreshold } = useProjectRewardsThreshold(
-    isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
-  );
+  const { data: projectRewardsThreshold, isFetching: isFetchingProjectRewardsThreshold } =
+    useProjectRewardsThreshold(isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch);
   const { isFetching: isFetchingEpochLeverage } = useEpochLeverage(epoch);
   const { data: epochAllocations, isFetching: isFetchingEpochAllocations } =
     useEpochAllocations(epoch);
@@ -65,14 +64,29 @@ const MetricsEpoch = (): ReactElement => {
   const { data: epochUnusedRewards, isFetching: isFetchingEpochUnusedRewards } =
     useEpochUnusedRewards(epoch);
 
+  const ethBelowThreshold =
+    projectRewardsThreshold === undefined
+      ? BigInt(0)
+      : Object.values(projectsDonors).reduce((acc, curr) => {
+          const projectSumOfDonations = curr.reduce((acc2, curr2) => {
+            return acc2 + curr2.amount;
+          }, BigInt(0));
+
+          if (projectSumOfDonations < projectRewardsThreshold) {
+            return acc + projectSumOfDonations;
+          }
+
+          return acc;
+        }, BigInt(0));
+
   const patronsRewards = epochInfo?.patronsRewards || BigInt(0);
   const sumOfDonations =
     epochAllocations?.reduce((acc, curr) => acc + curr.amount, BigInt(0)) || BigInt(0);
-  const totalDonations = sumOfDonations + patronsRewards;
+  const totalUserDonationsWithPatronRewards = sumOfDonations + patronsRewards;
   const unusedRewards = epochUnusedRewards?.value || BigInt(0);
   const epochBudget = epochBudgets?.budgetsSum || BigInt(0);
 
-  const totalPersonal = epochBudget - totalDonations - unusedRewards;
+  const totalPersonal = epochBudget - totalUserDonationsWithPatronRewards - unusedRewards;
 
   // All metrics should be visible in the same moment (design). Skeletons are visible to the end of fetching all needed data.
   const isLoading =
@@ -102,16 +116,22 @@ const MetricsEpoch = (): ReactElement => {
         <MetricsEpochGridTotalDonationsAndPersonal
           className={styles.totalDonationsAndPersonal}
           isLoading={isLoading}
-          totalDonations={totalDonations}
           totalPersonal={totalPersonal}
+          totalUserDonationsWithPatronRewards={totalUserDonationsWithPatronRewards}
         />
         <MetricsEpochGridDonationsVsPersonalAllocations
           className={styles.donationsVsPersonal}
           isLoading={isLoading}
-          totalDonations={totalDonations}
           totalPersonal={totalPersonal}
+          totalUserDonationsWithPatronRewards={totalUserDonationsWithPatronRewards}
         />
-        <MetricsEpochGridFundsUsage className={styles.fundsUsage} isLoading={isLoading} />
+        <MetricsEpochGridFundsUsage
+          className={styles.fundsUsage}
+          ethBelowThreshold={ethBelowThreshold}
+          isLoading={isLoading}
+          totalUserDonationsWithPatronRewards={totalUserDonationsWithPatronRewards}
+          unusedRewards={unusedRewards}
+        />
         <MetricsEpochGridTotalUsers className={styles.totalUsers} isLoading={isLoading} />
         <MetricsEpochGridPatrons className={styles.patrons} isLoading={isLoading} />
         <MetricsEpochGridCurrentDonors className={styles.currentDonors} isLoading={isLoading} />
@@ -120,7 +140,11 @@ const MetricsEpoch = (): ReactElement => {
           className={styles.unusedAndUnallocatedValue}
           isLoading={isLoading}
         />
-        <MetricsEpochGridBelowThreshold className={styles.belowThreshold} isLoading={isLoading} />
+        <MetricsEpochGridBelowThreshold
+          className={styles.belowThreshold}
+          ethBelowThreshold={ethBelowThreshold}
+          isLoading={isLoading}
+        />
       </MetricsGrid>
     </div>
   );
