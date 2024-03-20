@@ -16,7 +16,7 @@ const Slider: FC<SliderProps> = ({
   ...rest
 }) => {
   const reactSliderRef = useRef(null);
-  const [localValue, setLocalValue] = useState(0);
+  const [localValue, setLocalValue] = useState(value);
 
   useEffect(() => {
     if (value !== undefined && value !== localValue) {
