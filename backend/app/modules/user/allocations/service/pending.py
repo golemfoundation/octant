@@ -25,33 +25,26 @@ class UserBudgetProtocol(Protocol):
         ...
 
 
-@runtime_checkable
-class UserNonceProtocol(Protocol):
-    def get_next_user_nonce(self, user_address: str) -> int:
-        ...
-
-
 class PendingUserAllocations(SavedUserAllocations, Model):
     octant_rewards: OctantRewards
     user_budgets: UserBudgetProtocol
     patrons_mode: UserPatronMode
-    user_nonce: UserNonceProtocol
 
     def allocate(
         self, context: Context, payload: UserAllocationRequestPayload, **kwargs
     ) -> str:
         user_address = core.recover_user_address(payload)
 
-        expected_nonce = self.user_nonce.get_user_next_nonce(user_address)
+        expected_nonce = self.get_user_next_nonce(user_address)
         user_budget = self.user_budgets.get_budget(context, user_address)
         patrons = self.patrons_mode.get_all_patrons_addresses(context)
 
         core.verify_user_allocation_request(
-            context, payload, expected_nonce, user_budget, patrons
+            context, payload, user_address, expected_nonce, user_budget, patrons
         )
 
         self.revoke_previous_allocation(context, user_address)
-        db.allocations.store_allocation_request(
+        database.allocations.store_allocation_request(
             user_address, context.epoch_details.epoch_num, payload, **kwargs
         )
 

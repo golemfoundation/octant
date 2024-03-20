@@ -6,7 +6,6 @@ from eth_utils import to_checksum_address
 from sqlalchemy.orm import Query
 from typing_extensions import deprecated
 
-from app.exceptions import UserNotFound
 from app.extensions import db
 from app.infrastructure.database.models import Allocation, User, AllocationRequest
 from app.infrastructure.database.user import get_by_address

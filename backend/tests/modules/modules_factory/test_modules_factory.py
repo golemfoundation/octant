@@ -103,7 +103,10 @@ def test_pending_services_factory():
 
     events_based_patron_mode = EventsBasedUserPatronMode()
     octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
-    user_allocations = PendingUserAllocations(octant_rewards=octant_rewards)
+    user_allocations = PendingUserAllocations(
+        octant_rewards=octant_rewards,
+        patrons_mode=events_based_patron_mode,
+    )
     user_rewards = CalculatedUserRewards(
         user_budgets=SavedUserBudgets(),
         patrons_mode=events_based_patron_mode,

@@ -1,19 +1,13 @@
-import dataclasses
-
 import pytest
 
 from app import exceptions
-from app.extensions import db
 from app.infrastructure import database
 from app.legacy.controllers.allocations import (
-    get_all_by_user_and_epoch,
     allocate,
 )
 from app.legacy.core.allocations import (
     AllocationRequest,
-    Allocation,
 )
-from app.legacy.core.user.patron_mode import toggle_patron_mode
 from app.legacy.crypto.eip712 import sign, build_allocations_eip712_data
 from tests.conftest import (
     create_payload,
@@ -21,7 +15,6 @@ from tests.conftest import (
     mock_graphql,
     MOCKED_PENDING_EPOCH_NO,
     MOCK_PROPOSALS,
-    MOCK_EPOCHS,
     MOCK_GET_USER_BUDGET,
 )
 from tests.helpers import create_epoch_event
@@ -216,20 +209,6 @@ def test_multiple_users_change_their_allocations(tos_users, proposal_accounts):
 
     # Check if threshold is properly calculated
     check_allocation_threshold(updated_payload1, updated_payload2)
-
-
-def test_get_by_user_and_epoch(mock_allocations_db, user_accounts, proposal_accounts):
-    result = get_all_by_user_and_epoch(
-        user_accounts[0].address, MOCKED_PENDING_EPOCH_NO
-    )
-
-    assert len(result) == 3
-    assert result[0].address == proposal_accounts[0].address
-    assert result[0].amount == str(10 * 10**18)
-    assert result[1].address == proposal_accounts[1].address
-    assert result[1].amount == str(5 * 10**18)
-    assert result[2].address == proposal_accounts[2].address
-    assert result[2].amount == str(300 * 10**18)
 
 
 def test_user_exceeded_rewards_budget_in_allocations(app, proposal_accounts, tos_users):

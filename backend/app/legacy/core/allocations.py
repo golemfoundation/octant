@@ -8,7 +8,6 @@ from eth_utils import to_checksum_address
 from app import exceptions
 from app.extensions import proposals
 from app.infrastructure import database
-from app.infrastructure.database.models import User
 from app.legacy.core.epochs.epoch_snapshots import has_pending_epoch_snapshot
 from app.legacy.core.user.budget import get_budget
 from app.legacy.core.user.patron_mode import get_patron_mode_status

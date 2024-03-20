@@ -415,7 +415,6 @@ def mock_epoch_details(mocker, graphql_client):
 
 @pytest.fixture(scope="function")
 def patch_epochs(monkeypatch):
-    monkeypatch.setattr("app.legacy.controllers.allocations.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.controllers.snapshots.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.controllers.rewards.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.core.proposals.epochs", MOCK_EPOCHS)
@@ -522,6 +521,10 @@ def patch_last_finalized_snapshot(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_user_budget(monkeypatch):
     monkeypatch.setattr("app.legacy.core.allocations.get_budget", MOCK_GET_USER_BUDGET)
+    monkeypatch.setattr(
+        "app.modules.user.budgets.service.saved.SavedUserBudgets.get_budget",
+        MOCK_GET_USER_BUDGET,
+    )
     MOCK_GET_USER_BUDGET.return_value = USER_MOCKED_BUDGET
 
 
@@ -790,7 +793,7 @@ def create_payload(proposals, amounts: list[int] | None, nonce: int = 0):
 def deserialize_allocations(payload) -> List[Allocation]:
     return [
         AllocationItem(
-            proposal_address=allocation_data["proposal_data"],
+            proposal_address=allocation_data["proposalAddress"],
             amount=int(allocation_data["amount"]),
         )
         for allocation_data in payload["allocations"]

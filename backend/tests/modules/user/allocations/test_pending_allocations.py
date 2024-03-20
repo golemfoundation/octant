@@ -5,7 +5,6 @@ from app.engine.projects.rewards import ProjectRewardDTO
 from app.infrastructure import database
 from app.context.epoch_state import EpochState
 from app.modules.dto import AllocationDTO
-from app.modules.user.allocations.service.history import UserAllocationsHistory
 from app.modules.user.allocations.service.pending import PendingUserAllocations
 from tests.helpers.constants import MATCHED_REWARDS
 from tests.helpers.context import get_context
@@ -22,7 +21,6 @@ def service(mock_octant_rewards, mock_patron_mode, mock_user_budgets):
         octant_rewards=mock_octant_rewards,
         user_budgets=mock_user_budgets,
         patrons_mode=mock_patron_mode,
-        user_nonce=UserAllocationsHistory(),
     )
 
 

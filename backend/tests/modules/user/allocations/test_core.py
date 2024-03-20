@@ -104,7 +104,7 @@ def test_allocation_fails_with_invalid_proposals(alice, bob, context, projects):
         )
 
 
-def test_allocation_fails_with_invalid_proposals(alice, bob, context):
+def test_allocation_fails_with_duplucated_proposals(alice, bob, context):
     projects = context.projects_details.projects
     allocations = build_allocations(
         [(p, 17 * 10**16) for p in projects] + [(projects[1], 1)]

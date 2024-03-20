@@ -16,14 +16,11 @@ from app.modules.dto import (
 )
 from app.modules.registry import get_services
 from app.modules.user.allocations.service.pending import PendingUserAllocations
-from app.modules.user.allocations.service.history import UserAllocationsHistory
 
 
 def get_user_next_nonce(user_address: str) -> int:
-    service: UserAllocationsHistory = get_services(
-        EpochState.CURRENT
-    ).user_allocations_history_service
-    return service.get_next_user_nonce(user_address)
+    service = get_services(EpochState.CURRENT).user_allocations_service
+    return service.get_user_next_nonce(user_address)
 
 
 def get_all_allocations(epoch_num: int) -> List[ProposalDonationDTO]:
@@ -118,7 +115,6 @@ def _deserialize_payload(payload: Dict) -> UserAllocationRequestPayload:
 
 
 def _deserialize_items(payload: Dict) -> List[AllocationItem]:
-    print(payload["allocations"])
     return [
         AllocationItem(
             proposal_address=allocation_data["proposalAddress"],
