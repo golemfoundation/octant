@@ -1,7 +1,7 @@
 from typing import Protocol, List, Dict, Tuple, runtime_checkable
 
 from app.context.manager import Context
-from app.engine.projects.rewards import ProjectRewardDTO
+from app.engine.projects.rewards import ProjectRewardDTO, ProjectRewardsResult
 from app.engine.user.effective_deposit import UserDeposit
 from app.modules.dto import (
     OctantRewardsDTO,
@@ -10,6 +10,7 @@ from app.modules.dto import (
     PendingSnapshotDTO,
     WithdrawableEth,
 )
+from app.modules.history.dto import UserHistoryDTO
 
 
 @runtime_checkable
@@ -113,4 +114,18 @@ class WithdrawalsService(Protocol):
     def get_withdrawable_eth(
         self, context: Context, address: str
     ) -> list[WithdrawableEth]:
+        ...
+
+
+@runtime_checkable
+class EstimatedProjectRewardsService(Protocol):
+    def get_project_rewards(self, context: Context) -> ProjectRewardsResult:
+        ...
+
+
+@runtime_checkable
+class HistoryService(Protocol):
+    def get_user_history(
+        self, context: Context, user_address: str, cursor: str = None, limit: int = 20
+    ) -> UserHistoryDTO:
         ...

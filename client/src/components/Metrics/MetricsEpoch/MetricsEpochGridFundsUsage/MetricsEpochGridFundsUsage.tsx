@@ -15,6 +15,9 @@ import MetricsEpochGridFundsUsageProps from './types';
 const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   isLoading,
   className,
+  totalUserDonationsWithPatronRewards,
+  unusedRewards,
+  ethBelowThreshold,
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { epoch } = useMetricsEpoch();
@@ -26,17 +29,25 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   const leftover = epochInfo ? epochInfo.leftover : BigInt(0);
 
   const projectCosts = epochInfo ? epochInfo.operationalCost : BigInt(0);
-  const matchRewards = epochInfo ? epochInfo.matchedRewards : BigInt(0);
-  const userRewards = epochInfo ? epochInfo.individualRewards : BigInt(0);
   const staking = epochInfo ? epochInfo.staking : BigInt(0);
 
-  const total = leftover + projectCosts + matchRewards + userRewards + staking;
+  const donatedToProjects = epochInfo
+    ? epochInfo.matchedRewards +
+      (totalUserDonationsWithPatronRewards - epochInfo.patronsRewards) -
+      ethBelowThreshold
+    : BigInt(0);
+
+  const claimedByUsers = epochInfo
+    ? epochInfo.individualRewards - totalUserDonationsWithPatronRewards - unusedRewards
+    : BigInt(0);
+
+  const total = claimedByUsers + donatedToProjects + projectCosts + staking + leftover;
 
   const data = [
     {
-      label: t('staking'),
-      value: getNumberValue(staking),
-      valueLabel: getFormattedEthValue(staking, true, false, false, 2).fullString,
+      label: t('donatedToProjects'),
+      value: getNumberValue(donatedToProjects),
+      valueLabel: getFormattedEthValue(donatedToProjects, true, false, false, 2).fullString,
     },
     {
       label: t('leftover', { epochNumber: epoch + 1 }),
@@ -49,14 +60,14 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
       valueLabel: getFormattedEthValue(projectCosts, true, false, false, 2).fullString,
     },
     {
-      label: t('matchRewards'),
-      value: getNumberValue(matchRewards),
-      valueLabel: getFormattedEthValue(matchRewards, true, false, false, 2).fullString,
+      label: t('claimedByUsers'),
+      value: getNumberValue(claimedByUsers),
+      valueLabel: getFormattedEthValue(claimedByUsers, true, false, false, 2).fullString,
     },
     {
-      label: t('userRewards'),
-      value: getNumberValue(userRewards),
-      valueLabel: getFormattedEthValue(userRewards, true, false, false, 2).fullString,
+      label: t('staking'),
+      value: getNumberValue(staking),
+      valueLabel: getFormattedEthValue(staking, true, false, false, 2).fullString,
     },
   ];
 

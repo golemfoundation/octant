@@ -1,5 +1,6 @@
 from flask import current_app as app
 
+from app.context.snapshots_state import SnapshotsState, get_snapshots_state
 from app.extensions import cache
 from app.context.epoch_details import get_epoch_details, EpochDetails
 from app.context.epoch_state import EpochState, get_epoch_state, get_epoch_number
@@ -14,6 +15,7 @@ class Context(Model):
     epoch_details: EpochDetails
     epoch_settings: EpochSettings
     projects_details: ProjectsDetails
+    snapshots_state: SnapshotsState
 
 
 def epoch_context(epoch_num: int) -> Context:
@@ -26,7 +28,7 @@ def state_context(epoch_state: EpochState, is_simulated: bool = False) -> Contex
     return build_context(epoch_num, epoch_state, is_simulated)
 
 
-@cache.memoize(timeout=600)
+@cache.memoize(timeout=60)
 def build_context(
     epoch_num: int, epoch_state: EpochState, is_simulated: bool = False
 ) -> Context:
@@ -41,11 +43,14 @@ def build_context(
     )
     epoch_settings = get_epoch_settings(epoch_num)
     projects_details = get_projects_details(epoch_num)
+    snapshots_state = get_snapshots_state()
+
     context = Context(
         epoch_state=epoch_state,
         epoch_details=epoch_details,
         epoch_settings=epoch_settings,
         projects_details=projects_details,
+        snapshots_state=snapshots_state,
     )
 
     app.logger.debug(

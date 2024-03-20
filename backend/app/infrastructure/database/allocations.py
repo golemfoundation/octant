@@ -3,7 +3,6 @@ from datetime import datetime
 from typing import List, Optional
 
 from eth_utils import to_checksum_address
-from sqlalchemy import func
 from sqlalchemy.orm import Query
 from typing_extensions import deprecated
 
@@ -46,34 +45,18 @@ def get_user_allocations_history(
     user_address: str, from_datetime: datetime, limit: int
 ) -> List[Allocation]:
     user: User = get_by_address(user_address)
-
     if user is None:
         return []
 
-    user_allocations: Query = (
-        Allocation.query.filter(
-            Allocation.user_id == user.id, Allocation.created_at <= from_datetime
-        )
+    allocations = (
+        Allocation.query.filter(Allocation.user_id == user.id)
+        .filter(Allocation.created_at <= from_datetime)
         .order_by(Allocation.created_at.desc())
         .limit(limit)
-        .subquery()
+        .all()
     )
 
-    timestamp_at_limit_query = (
-        db.session.query(
-            func.min(user_allocations.c.created_at).label("limit_timestamp")
-        )
-        .group_by(user_allocations.c.user_id)
-        .subquery()
-    )
-
-    allocations = Allocation.query.filter(
-        Allocation.user_id == user.id,
-        Allocation.created_at <= from_datetime,
-        Allocation.created_at >= timestamp_at_limit_query.c.limit_timestamp,
-    ).order_by(Allocation.created_at.desc())
-
-    return allocations.all()
+    return allocations
 
 
 def get_all_by_user_addr_and_epoch(
