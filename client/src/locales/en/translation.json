@@ -348,6 +348,8 @@
       }
     },
     "metrics": {
+      "donatedToProjects": "Donated to projects",
+      "claimedByUsers": "Claimed by users",
       "open": "Open",
       "overview": "Overview",
       "epoch": "Epoch",
@@ -393,9 +395,7 @@
       "epochTotal": "Epoch {{epoch}} Total",
       "leftover": "Moved to E{{epochNumber}}",
       "staking": "Staking",
-      "projectCosts": "Project costs",
-      "matchRewards": "Match rewards",
-      "userRewards": "User rewards"
+      "projectCosts": "Project costs"
     },
     "onboarding": {
       "stepsCommon": {

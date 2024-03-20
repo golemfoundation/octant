@@ -6,7 +6,8 @@ import {
   useMotionValueEvent,
   useTransform,
 } from 'framer-motion';
-import React, { FC, memo, useEffect, useRef, useState } from 'react';
+import debounce from 'lodash/debounce';
+import React, { FC, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useAccount } from 'wagmi';
 
 import AllocationItemRewards from 'components/Allocation/AllocationItemRewards';
@@ -31,6 +32,7 @@ import {
 
 import styles from './AllocationItem.module.scss';
 import AllocationItemProps from './types';
+import { getAdjustedValue } from './utils';
 
 const AllocationItem: FC<AllocationItemProps> = ({
   address,
@@ -47,7 +49,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
   rewardsProps,
 }) => {
   const { data: individualReward } = useIndividualReward();
-  const isGweiRange = (individualReward && individualReward < GWEI_5) ?? false;
+  const isGweiRange = individualReward! < GWEI_5;
 
   const [isInputFocused, setIsInputFocused] = useState(false);
   const { ipfsGateways } = env;
@@ -70,22 +72,17 @@ const AllocationItem: FC<AllocationItemProps> = ({
   const isEpoch1 = currentEpoch === 1;
   const isLoading = currentEpoch === undefined || isFetchingRewardsThreshold;
 
-  const getAdjustedValue = (newValue: string, operation: 'multiply' | 'divide') => {
-    if (isGweiRange && newValue) {
-      return (
-        operation === 'multiply'
-          ? parseFloat(newValue) * 1000000000
-          : parseFloat(newValue) / 1000000000
-      )
-        .toLocaleString('fullwide', {
-          maximumSignificantDigits: 18,
-          useGrouping: false,
-        })
-        .replace(comma, '.');
-    }
-
-    return newValue;
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const onChangeCallback = useCallback(
+    debounce(
+      (newAllocationValue, isManualModeEnforced) => {
+        onChange(newAllocationValue, isManualModeEnforced);
+      },
+      250,
+      { trailing: true },
+    ),
+    [],
+  );
 
   const _onChange = (newValue: string) => {
     const valueComma = newValue.replace(comma, '.');
@@ -101,10 +98,10 @@ const AllocationItem: FC<AllocationItemProps> = ({
     setLocalValue(valueComma);
 
     if (!isError) {
-      onChange(
+      onChangeCallback(
         {
           address,
-          value: getAdjustedValue(valueComma, 'divide'),
+          value: getAdjustedValue(valueComma, isGweiRange, 'divide'),
         },
         true,
       );
@@ -116,7 +113,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
       return;
     }
 
-    setLocalValue(getAdjustedValue(value, 'multiply'));
+    setLocalValue(getAdjustedValue(value, isGweiRange, 'multiply'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, isDecisionWindowOpen, isError, isGweiRange]);
 
