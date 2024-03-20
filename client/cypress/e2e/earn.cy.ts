@@ -208,8 +208,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           );
           cy.get('[data-test=GlmLockNotification--success]').should('be.visible');
           cy.get('[data-test=GlmLockTabs__Button]').click();
-          // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
-          cy.wait(2000);
           cy.window().then(async win => {
             await moveEpoch(win);
             cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
