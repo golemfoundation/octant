@@ -96,7 +96,7 @@ epoch_stats_model = api.model(
         ),
         "leftover": fields.String(
             required=False,
-            description="The amount that will be used to increase staking and for other Octant related operations.",
+            description="The amount that will be used to increase staking and for other Octant related operations. Includes donations to projects that didn't reach the threshold.",
         ),
     },
 )
