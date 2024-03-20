@@ -1,6 +1,7 @@
 from app.pydantic import Model
 
 from app.infrastructure import database
+from app.modules.user.allocations import core
 
 
 class UserAllocationsHistory(Model):
@@ -8,4 +9,4 @@ class UserAllocationsHistory(Model):
         allocation_request = database.allocations.get_user_last_allocation_request(
             user_address
         )
-        return 0 if allocation_request is None else allocation_request.nonce + 1
+        return core.next_allocation_nonce(allocation_request)

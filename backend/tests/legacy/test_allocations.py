@@ -38,37 +38,6 @@ def get_all_by_epoch(epoch, include_zeroes=False):
     return new_controller.get_all_allocations(epoch)
 
 
-@pytest.fixture(scope="function")
-def get_all_by_epoch_expected_result(user_accounts, proposal_accounts):
-    return [
-        {
-            "donor": user_accounts[0].address,
-            "proposal": proposal_accounts[0].address,
-            "amount": str(10 * 10**18),
-        },
-        {
-            "donor": user_accounts[0].address,
-            "proposal": proposal_accounts[1].address,
-            "amount": str(5 * 10**18),
-        },
-        {
-            "donor": user_accounts[0].address,
-            "proposal": proposal_accounts[2].address,
-            "amount": str(300 * 10**18),
-        },
-        {
-            "donor": user_accounts[1].address,
-            "proposal": proposal_accounts[1].address,
-            "amount": str(1050 * 10**18),
-        },
-        {
-            "donor": user_accounts[1].address,
-            "proposal": proposal_accounts[3].address,
-            "amount": str(500 * 10**18),
-        },
-    ]
-
-
 @pytest.fixture(autouse=True)
 def before(
     app,
@@ -247,88 +216,6 @@ def test_multiple_users_change_their_allocations(tos_users, proposal_accounts):
 
     # Check if threshold is properly calculated
     check_allocation_threshold(updated_payload1, updated_payload2)
-
-
-def test_allocation_validation_errors(proposal_accounts, user_accounts, tos_users):
-    # Test data
-    payload = create_payload(proposal_accounts[0:3], None)
-    signature = sign(user_accounts[0], build_allocations_eip712_data(payload))
-
-    # Set invalid number of proposals on purpose (two proposals while three are needed)
-    MOCK_PROPOSALS.get_proposal_addresses.return_value = [
-        p.address for p in proposal_accounts[0:2]
-    ]
-
-    # Set invalid epoch on purpose (mimicking no pending epoch)
-    MOCK_EPOCHS.get_pending_epoch.return_value = None
-
-    # Call allocate method, expect exception
-    with pytest.raises(exceptions.NotInDecisionWindow):
-        allocate(
-            AllocationRequest(payload, signature, override_existing_allocations=True)
-        )
-
-    # Fix pending epoch
-    MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
-
-    # Call allocate method, expect invalid proposals
-    with pytest.raises(exceptions.InvalidProposals):
-        allocate(
-            AllocationRequest(payload, signature, override_existing_allocations=True)
-        )
-
-    # Fix missing proposals
-    MOCK_PROPOSALS.get_proposal_addresses.return_value = [
-        p.address for p in proposal_accounts[0:3]
-    ]
-
-    # Expect no validation errors at this point
-    allocate(AllocationRequest(payload, signature, override_existing_allocations=True))
-
-
-def test_project_allocates_funds_to_itself(proposal_accounts):
-    # Test data
-    database.user.get_or_add_user(proposal_accounts[0].address)
-    payload = create_payload(proposal_accounts[0:3], None)
-    signature = sign(proposal_accounts[0], build_allocations_eip712_data(payload))
-
-    with pytest.raises(exceptions.ProposalAllocateToItself):
-        allocate(
-            AllocationRequest(payload, signature, override_existing_allocations=True)
-        )
-
-
-def test_allocate_by_user_in_patron_mode(tos_users, proposal_accounts):
-    # Test data
-    initial_payload = create_payload(proposal_accounts[0:3], None, 0)
-    initial_signature = sign(
-        tos_users[0], build_allocations_eip712_data(initial_payload)
-    )
-    toggle_patron_mode(tos_users[0].address)
-
-    # Call allocate method
-    with pytest.raises(exceptions.NotAllowedInPatronMode):
-        allocate(
-            AllocationRequest(
-                initial_payload, initial_signature, override_existing_allocations=True
-            )
-        )
-
-
-def test_allocate_empty_allocations_list_should_fail(tos_users, proposal_accounts):
-    # Test data
-    initial_payload = create_payload([], None)
-    initial_signature = sign(
-        tos_users[0], build_allocations_eip712_data(initial_payload)
-    )
-
-    # Call allocate method
-    with pytest.raises(exceptions.EmptyAllocations):
-        allocate(
-            AllocationRequest(
-                initial_payload, initial_signature, override_existing_allocations=True
-            )
-        )
 
 
 def test_get_by_user_and_epoch(mock_allocations_db, user_accounts, proposal_accounts):

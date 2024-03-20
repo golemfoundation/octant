@@ -63,13 +63,13 @@ class SavedUserAllocations(Model):
     def get_allocations_by_project(
         self, context: Context, project_address: str
     ) -> List[ProposalDonationDTO]:
-        allocations = database.allocations.get_all_by_proposal_addr_and_epoch(
+        allocations = database.allocations.get_all_by_project_addr_and_epoch(
             project_address, context.epoch_details.epoch_num
         )
 
         return [
             ProposalDonationDTO(
-                donor=a.user.address, amount=int(a.amount), proposal=proposal_address
+                donor=a.user.address, amount=int(a.amount), proposal=project_address
             )
             for a in allocations
             if int(a.amount) != 0

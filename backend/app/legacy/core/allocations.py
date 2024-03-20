@@ -79,7 +79,7 @@ def verify_allocations(
     invalid_proposals = list(set(proposal_addresses) - set(valid_proposals))
 
     if invalid_proposals:
-        raise exceptions.InvalidProposals(invalid_proposals)
+        raise exceptions.InvalidProjects(invalid_proposals)
 
     # Check if any allocation address has been duplicated in the payload
     [proposal_addresses.remove(p) for p in set(proposal_addresses)]

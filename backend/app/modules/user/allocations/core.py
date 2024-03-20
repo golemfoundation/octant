@@ -57,17 +57,19 @@ def verify_user_allocation_request(
     expected_nonce: int,
     user_budget: int,
     patrons: List[str],
-):
+) -> bool:
     _verify_epoch_state(context.epoch_state)
     _verify_nonce(request.payload.nonce, expected_nonce)
     _verify_user_not_a_patron(user_address, patrons)
     _verify_allocations_not_empty(request.payload.allocations)
-    _verify_no_invalid_proposals(
-        request.payload.allocations, valid_proposals=context.projects_details.projects
+    _verify_no_invalid_projects(
+        request.payload.allocations, valid_projects=context.projects_details.projects
     )
     _verify_no_duplicates(request.payload.allocations)
     _verify_no_self_allocation(request.payload.allocations, user_address)
     _verify_allocations_within_budget(request.payload.allocations, user_budget)
+
+    return True
 
 
 def _verify_epoch_state(epoch_state: EpochState):
@@ -94,14 +96,14 @@ def _verify_allocations_not_empty(allocations: List[AllocationItem]):
         raise exceptions.EmptyAllocations()
 
 
-def _verify_no_invalid_proposals(
-    allocations: List[AllocationItem], valid_proposals: List[str]
+def _verify_no_invalid_projects(
+    allocations: List[AllocationItem], valid_projects: List[str]
 ):
-    proposal_addresses = [a.proposal_address for a in allocations]
-    invalid_proposals = list(set(proposal_addresses) - set(valid_proposals))
+    projects_addresses = [a.proposal_address for a in allocations]
+    invalid_projects = list(set(projects_addresses) - set(valid_projects))
 
-    if invalid_proposals:
-        raise exceptions.InvalidProposals(invalid_proposals)
+    if invalid_projects:
+        raise exceptions.InvalidProjects(invalid_projects)
 
 
 def _verify_no_duplicates(allocations: List[AllocationItem]):
@@ -115,7 +117,7 @@ def _verify_no_duplicates(allocations: List[AllocationItem]):
 def _verify_no_self_allocation(allocations: List[AllocationItem], user_address: str):
     for allocation in allocations:
         if allocation.proposal_address == user_address:
-            raise exceptions.ProposalAllocateToItself
+            raise exceptions.ProjectAllocationToSelf
 
 
 def _verify_allocations_within_budget(allocations: List[AllocationItem], budget: int):

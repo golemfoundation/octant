@@ -13,13 +13,6 @@ from app.legacy.core.allocations import (
 )
 
 
-@dataclass(frozen=True)
-class EpochAllocationRecord(JSONWizard):
-    donor: str
-    amount: int  # in wei
-    proposal: str
-
-
 @deprecated("ALLOCATIONS REWORK")
 def allocate(
     request: AllocationRequest, is_manually_edited: Optional[bool] = None
