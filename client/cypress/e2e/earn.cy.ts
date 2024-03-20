@@ -149,7 +149,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         });
     });
 
-    it.only('Wallet connected: Unlock 1 GLM', () => {
+    it('Wallet connected: Unlock 1 GLM', () => {
       connectWallet();
 
       cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
