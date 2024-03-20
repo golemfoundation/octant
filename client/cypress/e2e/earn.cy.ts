@@ -1,9 +1,6 @@
-import axios from 'axios';
-
-import { visitWithLoader, mockCoinPricesServer } from 'cypress/utils/e2e';
+import { visitWithLoader, mockCoinPricesServer, moveEpoch } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
-import env from 'src/env';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 import Chainable = Cypress.Chainable;
@@ -188,7 +185,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         });
     });
 
-    it('Wallet connected: Lock 1000 GLM + move epoch', () => {
+    it('Wallet connected: Effective deposit after locking 1000 GLM and moving epoch is equal to current deposit', () => {
       connectWallet();
 
       cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
@@ -211,13 +208,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           );
           cy.get('[data-test=GlmLockNotification--success]').should('be.visible');
           cy.get('[data-test=GlmLockTabs__Button]').click();
-          cy.wait(5000);
+          // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
+          cy.wait(2000);
           cy.window().then(async win => {
-            await win.mutateAsyncMoveEpoch();
-            cy.wait(5000);
-            await axios.post(`${env.serverEndpoint}snapshots/pending`);
-            cy.wait(5000);
-            cy.reload();
+            await moveEpoch(win);
             cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
               timeout: 60000,
             })

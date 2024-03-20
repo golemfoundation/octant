@@ -1,4 +1,7 @@
+import axios from 'axios';
+
 import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
+import env from 'src/env';
 
 import Chainable = Cypress.Chainable;
 
@@ -45,4 +48,16 @@ export const connectWallet = (
   cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
   cy.switchToMetamaskNotification();
   return cy.acceptMetamaskAccess();
+};
+
+export const moveEpoch = async (cypressWindow: Cypress.AUTWindow): Promise<void> => {
+  await cypressWindow.mutateAsyncMoveEpoch();
+  // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
+  cy.wait(2000);
+  // Manually taking a pending snapshot after the epoch shift ensures that the snapshot is taken. Passing epoch multiple times without manually triggering pending snapshot in a short period of time may cause the e2e environment to fail.
+  await axios.post(`${env.serverEndpoint}snapshots/pending`);
+  // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
+  cy.wait(2000);
+  // reload is needed to get updated data in the app
+  cy.reload();
 };
