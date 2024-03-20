@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import { AnimatePresence } from 'framer-motion';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
@@ -39,6 +40,8 @@ import {
   getAllocationsWithRewards,
   getAllocationValuesAfterManualChange,
 } from './utils';
+
+const isWaitingForWalletConfirmationMultisig = false;
 
 const AllocationView = (): ReactElement => {
   const { isConnected } = useAccount();
@@ -397,6 +400,10 @@ const AllocationView = (): ReactElement => {
 
   return (
     <Layout
+      classNameBody={cx(
+        styles.body,
+        isWaitingForWalletConfirmationMultisig && styles.isWaitingForWalletConfirmationMultisig,
+      )}
       dataTest="AllocationView"
       isLoading={isLoading}
       navigationBottomSuffix={
