@@ -20,6 +20,7 @@ export default interface InputTextProps {
   onFocus?: FocusEventHandler<HTMLInputElement>;
   placeholder?: string;
   shouldAutoFocusAndSelect?: boolean;
+  shouldAutoFocusAndSelectOnLabelChange?: boolean;
   showLoader?: boolean;
   suffix?: string;
   suffixClassName?: string;

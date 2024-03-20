@@ -29,6 +29,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
       showLoader = false,
       dataTest = 'InputText',
       shouldAutoFocusAndSelect = true,
+      shouldAutoFocusAndSelectOnLabelChange,
       ...rest
     },
     ref,
@@ -63,7 +64,14 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
       }
       inputRef.current.focus();
       inputRef.current.select();
-    }, [inputProps.ref, shouldAutoFocusAndSelect]);
+    }, [
+      inputProps.ref,
+      shouldAutoFocusAndSelect,
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      ...(shouldAutoFocusAndSelectOnLabelChange
+        ? [shouldAutoFocusAndSelectOnLabelChange, label]
+        : []),
+    ]);
 
     return (
       <div className={cx(styles.root, styles[`variant--${variant}`], className)}>
