@@ -102,15 +102,16 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     it('Wallet connected: Lock 1 GLM', () => {
       connectWallet();
 
-      cy.get('[data-test=BoxGlmLock__Button]').click();
-      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').blur();
-      cy.get('[data-test=BudgetBox__currentlyLocked__value]')
+      cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
         .invoke('text')
         .then(text => {
           const amountToLock = 1;
           const lockedGlms = parseInt(text, 10);
 
+          cy.get('[data-test=BoxGlmLock__Button]').click();
           cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').clear().type(`${amountToLock}`);
+          cy.get('[data-test=GlmLockTabs__Button]').should('have.text', 'Lock');
+          cy.get('[data-test=GlmLockTabs__Button]').click();
           cy.get('[data-test=GlmLockTabs__Button]').should('have.text', 'Lock');
           cy.get('[data-test=GlmLockTabs__Button]').click();
           cy.get('[data-test=GlmLockTabs__Button]').should('have.text', 'Waiting for confirmation');
@@ -153,15 +154,13 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     it('Wallet connected: Unlock 1 GLM', () => {
       connectWallet();
 
-      cy.get('[data-test=BoxGlmLock__Button]').click();
-      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').blur();
-      cy.get('[data-test=BudgetBox__currentlyLocked__value]')
+      cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
         .invoke('text')
         .then(text => {
           const amountToUnlock = 1;
           const lockedGlms = parseInt(text, 10);
 
-          cy.get('[data-test=EarnGlmLockTabs__tab--1]').click();
+          cy.get('[data-test=BoxRounded__tab--1]').click();
           cy.get('[data-test=InputsCryptoFiat__InputText--crypto]')
             .clear()
             .type(`${amountToUnlock}`);
