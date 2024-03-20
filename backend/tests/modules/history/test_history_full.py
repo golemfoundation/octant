@@ -1,7 +1,7 @@
 import pytest
 
 from app.modules.common.time import from_timestamp_s
-from app.modules.dto import (
+from app.modules.history.dto import (
     LockItem,
     OpType,
     AllocationItem,

@@ -5,7 +5,6 @@ from typing import Optional, List
 
 from dataclass_wizard import JSONWizard
 
-from app.modules.common.time import Timestamp
 from app.engine.projects.rewards import AllocationItem
 
 from app.engine.user.effective_deposit import UserDeposit
@@ -99,43 +98,3 @@ class WithdrawableEth:
     amount: int
     proof: list[str]
     status: WithdrawalStatus
-
-
-class OpType(StrEnum):
-    LOCK = "lock"
-    UNLOCK = "unlock"
-    ALLOCATION = "allocation"
-    WITHDRAWAL = "withdrawal"
-    PATRON_MODE_DONATION = "patron_mode_donation"
-
-
-@dataclass(frozen=True)
-class LockItem:
-    type: OpType
-    amount: int
-    timestamp: Timestamp
-    transaction_hash: str
-
-
-@dataclass(frozen=True)
-class AllocationItem:
-    project_address: str
-    epoch: int
-    amount: int
-    timestamp: Timestamp
-
-
-@dataclass(frozen=True)
-class WithdrawalItem:
-    type: OpType
-    amount: int
-    address: str
-    timestamp: Timestamp
-    transaction_hash: str
-
-
-@dataclass(frozen=True)
-class PatronDonationItem:
-    timestamp: Timestamp
-    epoch: int
-    amount: int

@@ -4,6 +4,7 @@ from app.context.manager import Context
 from app.infrastructure import database
 from app.modules.common.time import Timestamp, from_datetime
 from app.modules.dto import AllocationItem, AccountFundsDTO, ProposalDonationDTO
+from app.modules.history.dto import AllocationItem as HistoryAllocationItem
 from app.pydantic import Model
 
 
@@ -37,7 +38,7 @@ class SavedUserAllocations(Model):
         self, user_address: str, from_timestamp: Timestamp, limit: int
     ) -> List[AllocationItem]:
         return [
-            AllocationItem(
+            HistoryAllocationItem(
                 project_address=r.proposal_address,
                 epoch=r.epoch,
                 amount=int(r.amount),

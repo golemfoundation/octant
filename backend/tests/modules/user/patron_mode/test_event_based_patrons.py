@@ -2,7 +2,7 @@ import pytest
 
 from app.infrastructure import database
 from app.modules.common.time import from_timestamp_s
-from app.modules.dto import PatronDonationItem
+from app.modules.history.dto import PatronDonationItem
 from app.modules.user.patron_mode.service.events_based import (
     EventsBasedUserPatronMode,
 )
