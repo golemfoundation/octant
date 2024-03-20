@@ -112,8 +112,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').clear().type(`${amountToLock}`);
           cy.get('[data-test=GlmLockTabs__Button]').should('have.text', 'Lock');
           cy.get('[data-test=GlmLockTabs__Button]').click();
-          cy.get('[data-test=GlmLockTabs__Button]').should('have.text', 'Lock');
-          cy.get('[data-test=GlmLockTabs__Button]').click();
           cy.get('[data-test=GlmLockTabs__Button]').should('have.text', 'Waiting for confirmation');
           cy.confirmMetamaskPermissionToSpend({
             spendLimit: '99999999999999999999',
