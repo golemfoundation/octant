@@ -55,6 +55,7 @@ services:
 
   multideployer:
     image: octant/multideployer:latest
+    platform: linux/amd64
     networks:
       - octant
     depends_on:

@@ -1,8 +1,6 @@
 import os
 
-from flask import Flask, g
-from gql import Client
-from gql.transport.requests import RequestsHTTPTransport
+from flask import Flask
 
 from app.extensions import (
     db,
@@ -13,6 +11,7 @@ from app.extensions import (
     init_web3,
     api,
     init_scheduler,
+    init_subgraph,
 )
 from app.logging import init_logger
 from app.infrastructure import events, routes, apscheduler  # noqa
@@ -36,9 +35,8 @@ def create_app(config=None):
 
     register_extensions(app)
     register_errorhandlers(app)
-    register_request_context(app)
     register_epoch_settings()
-    register_services()
+    register_services(app)
 
     return app
 
@@ -53,20 +51,9 @@ def register_extensions(app):
     init_scheduler(app)
     init_logger(app)
     init_web3(app)
+    init_subgraph(app)
 
 
 def register_errorhandlers(app):
     handler = ExceptionHandler()
     app.register_error_handler(Exception, handler)
-
-
-def register_request_context(app):
-    @app.before_request
-    def initialize_graphql_client():
-        client = Client()
-        transport = RequestsHTTPTransport(
-            url=app.config["SUBGRAPH_ENDPOINT"], timeout=2
-        )
-        client.transport = transport
-        client.fetch_schema_from_transport = True
-        g.graphql_client = client

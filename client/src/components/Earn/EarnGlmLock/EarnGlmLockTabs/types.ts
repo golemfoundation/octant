@@ -1,8 +1,10 @@
 import { FormikHelpers } from 'formik';
+import { RefObject } from 'react';
 
 import { FormFields, CurrentMode, OnReset } from 'components/Earn/EarnGlmLock/types';
 
 export default interface EarnGlmLockTabsProps {
+  buttonUseMaxRef: RefObject<HTMLButtonElement>;
   className?: string;
   currentMode: CurrentMode;
   isLoading: boolean;

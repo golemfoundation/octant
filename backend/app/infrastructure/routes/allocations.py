@@ -200,6 +200,10 @@ user_leverage_model = api.model(
             required=True,
             description="Leverage of the allocated funds",
         ),
+        "threshold": fields.String(
+            required=True,
+            description="Simulated threshold, above which projects get funded.",
+        ),
         "matched": fields.List(
             fields.Nested(matched_reward),
             required=True,
@@ -222,12 +226,13 @@ class AllocationLeverage(OctantResource):
     @ns.response(200, "User leverage successfully estimated")
     def post(self, user_address: str):
         app.logger.debug("Estimating user leverage")
-        leverage, matched = simulate_allocation(ns.payload, user_address)
+        leverage, threshold, matched = simulate_allocation(ns.payload, user_address)
 
         app.logger.debug(f"Estimated leverage: {leverage}")
+        app.logger.debug(f"Estimated threshold: {threshold}")
         app.logger.debug(f"Matched rewards:  {matched}")
 
-        return {"leverage": leverage, "matched": matched}
+        return {"leverage": leverage, "threshold": threshold, "matched": matched}
 
 
 @ns.route("/epoch/<int:epoch>")

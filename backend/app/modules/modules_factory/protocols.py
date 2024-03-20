@@ -3,7 +3,13 @@ from typing import Protocol, List, Dict, Tuple, runtime_checkable
 from app.context.manager import Context
 from app.engine.projects.rewards import ProjectRewardDTO
 from app.engine.user.effective_deposit import UserDeposit
-from app.modules.dto import OctantRewardsDTO, AllocationDTO, FinalizedSnapshotDTO
+from app.modules.dto import (
+    OctantRewardsDTO,
+    AllocationDTO,
+    FinalizedSnapshotDTO,
+    PendingSnapshotDTO,
+    WithdrawableEth,
+)
 
 
 @runtime_checkable
@@ -83,8 +89,28 @@ class PendingSnapshots(Protocol):
 
 
 @runtime_checkable
-class FinalizedSnapshots(Protocol):
+class CreateFinalizedSnapshots(Protocol):
+    def create_finalized_epoch_snapshot(self, context: Context) -> int:
+        ...
+
+
+@runtime_checkable
+class SimulateFinalizedSnapshots(Protocol):
     def simulate_finalized_epoch_snapshot(
         self, context: Context
     ) -> FinalizedSnapshotDTO:
+        ...
+
+
+@runtime_checkable
+class SimulatePendingSnapshots(Protocol):
+    def simulate_pending_epoch_snapshot(self, context: Context) -> PendingSnapshotDTO:
+        ...
+
+
+@runtime_checkable
+class WithdrawalsService(Protocol):
+    def get_withdrawable_eth(
+        self, context: Context, address: str
+    ) -> list[WithdrawableEth]:
         ...

@@ -60,13 +60,20 @@ def handle_allocate(msg):
     )
     for proposal in proposal_rewards:
         donors = allocations.get_all_by_proposal_and_epoch(proposal.address)
-        emit("proposal_donors", _serialize_donors(donors), broadcast=True)
+        emit(
+            "proposal_donors",
+            {"proposal": proposal.address, "donors": _serialize_donors(donors)},
+            broadcast=True,
+        )
 
 
 @socketio.on("proposal_donors")
 def handle_proposal_donors(proposal_address: str):
     donors = allocations.get_all_by_proposal_and_epoch(proposal_address)
-    emit("proposal_donors", _serialize_donors(donors))
+    emit(
+        "proposal_donors",
+        {"proposal": proposal_address, "donors": _serialize_donors(donors)},
+    )
 
 
 @socketio.on_error_default

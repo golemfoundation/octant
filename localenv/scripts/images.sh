@@ -12,7 +12,7 @@ create_tmp_dockerfile(){
   service="${1}"
   tmp_dockerfile=$(mktemp -t "octant-dockerfile-${service}.XXXXXXXX")
 
-  sed "s/local-docker-registry.wildland.dev\///g" "${OCTANT_ROOT}/ci/Dockerfile.${service}" >$tmp_dockerfile
+  sed "s/local-docker-registry.wildland.dev:80\///g" "${OCTANT_ROOT}/ci/Dockerfile.${service}" >$tmp_dockerfile
 
   echo $tmp_dockerfile
 }
@@ -22,8 +22,9 @@ build_image(){
   image=$1
   dockerfile=$2
   context_dir=$3
+  darwin_arm_args=$(if [[ $(uname -m) == 'arm64' ]]; then echo --platform linux/amd64 ; fi)
 
-  image_id=$(docker build -q --tag "${DOCKER_IMAGE_PREFIX}/${image}:${DOCKER_TAG}" -f ${dockerfile} "${context_dir}")
+  image_id=$(docker build ${darwin_arm_args} -q --tag "${DOCKER_IMAGE_PREFIX}/${image}:${DOCKER_TAG}" -f ${dockerfile} "${context_dir}")
 
   echo "Created ${image} image ${image_id}"
 }

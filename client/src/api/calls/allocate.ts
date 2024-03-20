@@ -12,13 +12,14 @@ export type ApiPostAllocateLeverageData = {
 
 export type LeverageMatched = {
   address: string;
-  value: string; // WEI;
+  value: string; // WEI
 };
 
 export type ApiPostAllocateLeverageResponse = {
   // Float as a string, at least 15 decimal places.
   leverage: string;
   matched: LeverageMatched[];
+  threshold: string; // WEI
 };
 
 export type ApiGetUserAllocationNonceResponse = {

@@ -3,33 +3,25 @@ import math
 from typing import List
 
 import pytest
-from freezegun import freeze_time
-from eth_account.signers.local import LocalAccount
-
 from app.legacy.controllers.allocations import allocate
 from app.legacy.controllers.history import user_history
 from app.legacy.core.allocations import AllocationRequest
 from app.legacy.core.history import (
-    get_locks,
-    get_unlocks,
-    get_allocations,
     AllocationItem,
-    get_withdrawals,
-    get_patron_donations,
     PatronDonationItem,
+    get_allocations,
+    get_locks,
+    get_patron_donations,
+    get_unlocks,
+    get_withdrawals,
 )
 from app.legacy.core.user.patron_mode import toggle_patron_mode
-from app.legacy.crypto.eip712 import sign, build_allocations_eip712_data
+from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
 from app.legacy.utils.time import from_timestamp_s, now
-
+from eth_account.signers.local import LocalAccount
+from freezegun import freeze_time
+from tests.conftest import MOCK_EPOCHS, MOCK_PROPOSALS, create_payload, mock_graphql
 from tests.helpers import create_epoch_event
-
-from tests.conftest import (
-    create_payload,
-    MOCK_PROPOSALS,
-    MOCK_EPOCHS,
-    mock_graphql,
-)
 from tests.helpers.constants import USER1_ADDRESS, USER_MOCKED_BUDGET
 
 epochs = [
@@ -319,7 +311,11 @@ def test_history_withdrawals(mocker, withdrawals, expected_history_sorted_by_ts)
 
 @freeze_time("2023-11-01 02:12:00")
 def test_history_patron_mode_donations_empty_for_non_patron(
-    mocker, tos_users, patch_last_finalized_snapshot, patch_user_budget
+    mocker,
+    tos_users,
+    patch_last_finalized_snapshot,
+    patch_user_budget,
+    patch_etherscan_get_block_api,
 ):
     mock_graphql(mocker, epochs_events=epochs)
     query_time = from_timestamp_s(1698805300)  # epoch 2 end time
@@ -330,7 +326,11 @@ def test_history_patron_mode_donations_empty_for_non_patron(
 
 @freeze_time("2023-11-01 02:12:00")
 def test_history_patron_mode_donations_returns_event_consecutive_epochs(
-    mocker, tos_users, patch_last_finalized_snapshot, patch_user_budget
+    mocker,
+    tos_users,
+    patch_last_finalized_snapshot,
+    patch_user_budget,
+    patch_etherscan_get_block_api,
 ):
     mock_graphql(mocker, epochs_events=epochs)
     alice: LocalAccount = tos_users[0]
@@ -358,7 +358,11 @@ def test_history_patron_mode_donations_returns_event_consecutive_epochs(
 
 @freeze_time()
 def test_history_patron_mode_donations_does_not_return_event_when_user_stopped_being_a_patron(
-    mocker, tos_users, patch_last_finalized_snapshot, patch_user_budget
+    mocker,
+    tos_users,
+    patch_last_finalized_snapshot,
+    patch_user_budget,
+    patch_etherscan_get_block_api,
 ):
     mock_graphql(mocker, epochs_events=epochs)
     alice: LocalAccount = tos_users[0]

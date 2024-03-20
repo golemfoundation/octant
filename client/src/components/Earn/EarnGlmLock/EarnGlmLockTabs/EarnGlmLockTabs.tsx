@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { useFormikContext } from 'formik';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import EarnGlmLockTabsInputs from 'components/Earn/EarnGlmLock/EarnGlmLockTabsInputs';
@@ -18,21 +18,23 @@ import styles from './EarnGlmLockTabs.module.scss';
 import EarnGlmLockTabsProps from './types';
 
 const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
+  buttonUseMaxRef,
   className,
   currentMode,
   isLoading,
-  step,
   onClose,
   onInputsFocusChange,
-  setValueToDepose,
   onReset,
-  showBalances,
   setFieldValue,
+  setValueToDepose,
+  showBalances,
+  step,
 }) => {
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.glmLock',
   });
   const formik = useFormikContext<FormFields>();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: availableFundsGlm } = useAvailableFundsGlm();
   const { data: depositsValue } = useDepositValue();
@@ -54,6 +56,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
         : formatUnitsBigInt(depositsValue);
 
     onSetValue(value);
+    inputRef.current?.focus();
   };
 
   const buttonCtaProps: ButtonProps =
@@ -101,10 +104,16 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
         },
       ]}
     >
-      <div className={cx(styles.max, isMaxDisabled && styles.isDisabled)} onClick={onMax}>
+      <Button
+        ref={buttonUseMaxRef}
+        className={cx(styles.max, isMaxDisabled && styles.isDisabled)}
+        onClick={onMax}
+        variant="iconOnlyTransparent2"
+      >
         {t('glmLockTabs.useMax')}
-      </div>
+      </Button>
       <EarnGlmLockTabsInputs
+        ref={inputRef}
         areInputsDisabled={isLoading}
         cryptoCurrency="golem"
         error={formik.values.valueToDeposeOrWithdraw && formik.errors.valueToDeposeOrWithdraw}

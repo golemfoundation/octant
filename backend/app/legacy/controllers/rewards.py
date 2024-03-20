@@ -11,9 +11,10 @@ from app.context.epoch_state import EpochState
 from app.extensions import epochs
 from app.infrastructure import database
 from app.infrastructure.database.models import PendingEpochSnapshot
-from app.legacy.core import proposals, merkle_tree
+from app.legacy.core import proposals
 from app.legacy.core.epochs import epoch_snapshots as core_epoch_snapshots
 from app.legacy.core.proposals import get_proposals_with_allocations
+from app.modules.common import merkle_tree
 
 
 @dataclass()
@@ -117,7 +118,7 @@ def get_rewards_merkle_tree(epoch: int) -> RewardsMerkleTree:
     if not core_epoch_snapshots.has_finalized_epoch_snapshot(epoch):
         raise exceptions.InvalidEpoch
 
-    mt = merkle_tree.get_merkle_tree_for_epoch(epoch)
+    mt = merkle_tree.get_rewards_merkle_tree_for_epoch(epoch)
     leaves = [
         RewardsMerkleTreeLeaf(address=leaf.value[0], amount=leaf.value[1])
         for leaf in mt.values

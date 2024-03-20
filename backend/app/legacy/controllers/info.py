@@ -1,12 +1,11 @@
 from dataclasses import dataclass
 from typing import List
 
+from app.extensions import w3
+from app.infrastructure import database, graphql
+from app.infrastructure.exception_handler import ExceptionHandler
 from dataclass_wizard import JSONWizard
 from flask import current_app as app
-
-from app.extensions import w3
-from app.infrastructure import graphql, database
-from app.infrastructure.exception_handler import ExceptionHandler
 
 
 @dataclass(frozen=True)
@@ -41,7 +40,6 @@ def get_blockchain_info() -> ChainInfo:
             "WithdrawalsTarget", app.config["WITHDRAWALS_TARGET_CONTRACT_ADDRESS"]
         ),
     ]
-
     return ChainInfo(
         chain_name=app.config["CHAIN_NAME"],
         chain_id=app.config["CHAIN_ID"],

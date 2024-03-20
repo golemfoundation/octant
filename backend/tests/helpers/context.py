@@ -6,7 +6,12 @@ from app.engine.epochs_settings import get_epoch_settings
 
 
 def get_epoch_details(
-    epoch_num: int, start=1000, duration=1000, decision_window=500, remaining_sec=1000
+    epoch_num: int,
+    start=1000,
+    duration=1000,
+    decision_window=500,
+    remaining_sec=1000,
+    with_block_range=False,
 ):
     return EpochDetails(
         epoch_num=epoch_num,
@@ -14,6 +19,7 @@ def get_epoch_details(
         start=start,
         decision_window=decision_window,
         remaining_sec=remaining_sec,
+        with_block_range=with_block_range,
     )
 
 

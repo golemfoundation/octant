@@ -1,10 +1,12 @@
 import requests
+
+from app.constants import BEACONCHAIN_API
 from app.exceptions import ExternalApiException
 from app.infrastructure.exception_handler import ExceptionHandler
 from web3 import Web3
 from eth_typing import ChecksumAddress
 
-VALIDATOR_API_URL_BASE = "https://beaconcha.in/api/v1/validator"
+VALIDATOR_API_URL_BASE = f"{BEACONCHAIN_API}/v1/validator"
 
 
 def get_validators_by_address(validator_address: str) -> list[dict]:
