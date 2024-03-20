@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useRef } from 'react';
 import ReactSlider from 'react-slider';
 
 import styles from './Slider.module.scss';
@@ -15,7 +15,8 @@ const Slider: FC<SliderProps> = ({
   hideThumb,
   ...rest
 }) => {
-  const [localValue, setLocalValue] = useState(value);
+  const reactSliderRef = useRef(null);
+  const [localValue, setLocalValue] = useState(0);
 
   useEffect(() => {
     if (value !== undefined && value !== localValue) {
@@ -40,9 +41,19 @@ const Slider: FC<SliderProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (isDisabled || hideThumb || !reactSliderRef?.current) {
+      return;
+    }
+    // Calling handleResize() method solves the problem with rendering thumb outside the box.
+    // @ts-expect-error method isn't typed
+    reactSliderRef.current.handleResize();
+  }, [isDisabled, hideThumb]);
+
   return (
     <div className={cx(styles.root, className)}>
       <ReactSlider
+        ref={reactSliderRef}
         className={styles.slider}
         disabled={isDisabled || hideThumb}
         onChange={localOnChange}
