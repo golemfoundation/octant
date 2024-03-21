@@ -47,6 +47,6 @@ class MultisigPendingSignature(OctantResource):
         )
         signature_data = api.payload
         save_pending_signature(user_address, op_type, signature_data)
-        app.logger.debug(f"Added new multisig signature.")
+        app.logger.debug("Added new multisig signature.")
 
         return {}, 201

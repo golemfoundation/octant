@@ -14,6 +14,7 @@ from app.modules.dto import (
     UserAllocationRequestPayload,
 )
 from app.modules.history.dto import UserHistoryDTO
+from app.modules.multisig_signatures.dto import SignatureOpType, Signature
 
 
 @runtime_checkable
@@ -158,4 +159,21 @@ class HistoryService(Protocol):
     def get_user_history(
         self, context: Context, user_address: str, cursor: str = None, limit: int = 20
     ) -> UserHistoryDTO:
+        ...
+
+
+@runtime_checkable
+class MultisigSignatures(Protocol):
+    def get_last_pending_signature(
+        self, context: Context, user_address: str, op_type: SignatureOpType
+    ) -> Signature:
+        ...
+
+    def save_pending_signature(
+        self,
+        context: Context,
+        user_address: str,
+        op_type: SignatureOpType,
+        signature_data: dict,
+    ):
         ...

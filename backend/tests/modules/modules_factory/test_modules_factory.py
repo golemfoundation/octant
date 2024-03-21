@@ -5,6 +5,7 @@ from app.modules.modules_factory.finalizing import FinalizingServices
 from app.modules.modules_factory.future import FutureServices
 from app.modules.modules_factory.pending import PendingServices
 from app.modules.modules_factory.pre_pending import PrePendingServices
+from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
 from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
@@ -63,9 +64,12 @@ def test_current_services_factory():
         user_withdrawals=user_withdrawals,
         patron_donations=patron_donations,
     )
+    multisig_signatures = OffchainMultisigSignatures()
+
     assert result.user_deposits_service == user_deposits
     assert result.octant_rewards_service == octant_rewards
     assert result.history_service == history
+    assert result.multisig_signatures_service == multisig_signatures
 
 
 def test_pre_pending_services_factory_when_mainnet():

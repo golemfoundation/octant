@@ -8,8 +8,10 @@ from app.modules.modules_factory.protocols import (
     UserEffectiveDeposits,
     TotalEffectiveDeposits,
     HistoryService,
+    MultisigSignatures,
 )
 from app.modules.modules_factory.protocols import SimulatePendingSnapshots
+from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
 from app.modules.snapshots.pending.service.simulated import SimulatedPendingSnapshots
 from app.modules.staking.proceeds.service.estimated import EstimatedStakingProceeds
@@ -34,6 +36,7 @@ class CurrentServices(Model):
     octant_rewards_service: OctantRewards
     history_service: HistoryService
     simulated_pending_snapshot_service: SimulatePendingSnapshots
+    multisig_signatures_service: MultisigSignatures
 
     @staticmethod
     def _prepare_simulation_data(
@@ -70,6 +73,7 @@ class CurrentServices(Model):
             user_withdrawals=user_withdrawals,
             patron_donations=patron_donations,
         )
+        multisig_signatures = OffchainMultisigSignatures()
         return CurrentServices(
             user_allocations_service=user_allocations,
             user_deposits_service=user_deposits,
@@ -79,4 +83,5 @@ class CurrentServices(Model):
             ),
             history_service=history,
             simulated_pending_snapshot_service=simulated_pending_snapshot_service,
+            multisig_signatures_service=multisig_signatures,
         )
