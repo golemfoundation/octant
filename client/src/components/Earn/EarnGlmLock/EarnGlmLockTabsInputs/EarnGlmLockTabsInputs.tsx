@@ -16,12 +16,14 @@ import EarnGlmLockTabsInputsProps from './types';
 const EarnGlmLockTabsInputs = forwardRef<HTMLInputElement, EarnGlmLockTabsInputsProps>(
   (
     {
-      error,
-      label,
-      inputCryptoProps,
-      cryptoCurrency,
       areInputsDisabled,
+      cryptoCurrency,
       dataTest = 'InputsCryptoFiat',
+      error,
+      inputCryptoProps,
+      label,
+      mode,
+      onChange,
       onInputsFocusChange = () => {},
     },
     ref,
@@ -41,9 +43,9 @@ const EarnGlmLockTabsInputs = forwardRef<HTMLInputElement, EarnGlmLockTabsInputs
     const isAnyInputFocused = useDeferredValue(isCryptoInputFocused || isFiatInputFocused);
 
     const inputCryptoPropsLabel = isCryptoMainValueDisplay
-      ? { ...inputCryptoProps, error, label }
+      ? { ...inputCryptoProps, error, label, mode }
       : { ...inputCryptoProps, error };
-    const inputFiatPropsLabel = isCryptoMainValueDisplay ? { error } : { error, label };
+    const inputFiatPropsLabel = isCryptoMainValueDisplay ? { error } : { error, label, mode };
 
     const cryptoFiatRatio = cryptoValues?.[cryptoCurrency][displayCurrency || 'usd'] || 1;
 
@@ -57,7 +59,7 @@ const EarnGlmLockTabsInputs = forwardRef<HTMLInputElement, EarnGlmLockTabsInputs
       const cryptoToFiat = valueComma ? (parseFloat(valueComma) * cryptoFiatRatio).toFixed(2) : '';
 
       setFiat(cryptoToFiat);
-      inputCryptoProps.onChange(valueComma);
+      onChange(valueComma);
     };
 
     const onFiatValueChange = (value: string) => {
@@ -69,7 +71,7 @@ const EarnGlmLockTabsInputs = forwardRef<HTMLInputElement, EarnGlmLockTabsInputs
 
       const fiatToCrypto = valueComma ? (parseFloat(valueComma) / cryptoFiatRatio).toFixed(18) : '';
       setFiat(valueComma);
-      inputCryptoProps.onChange(fiatToCrypto);
+      onChange(fiatToCrypto);
     };
 
     const handleClear = () => {
@@ -109,20 +111,23 @@ const EarnGlmLockTabsInputs = forwardRef<HTMLInputElement, EarnGlmLockTabsInputs
       <div className={cx(styles.root, isCryptoMainValueDisplay && styles.isCryptoMainValueDisplay)}>
         <InputText
           ref={isCryptoMainValueDisplay ? ref : undefined}
+          autocomplete="off"
           className={cx(styles.input, isCryptoMainValueDisplay && styles.isCryptoMainValueDisplay)}
           dataTest={`${dataTest}__InputText--crypto`}
           inputMode="decimal"
-          placeholder="0.00"
-          variant="simple"
-          {...inputCryptoPropsLabel}
-          autocomplete="off"
           isDisabled={areInputsDisabled}
           isErrorInlineVisible={false}
           onBlur={() => setIsCryptoInputFocused(false)}
-          onChange={e => onCryptoValueChange(e.target.value)}
+          onChange={e => {
+            onCryptoValueChange(e.target.value);
+          }}
           onClear={handleClear}
           onFocus={() => setIsCryptoInputFocused(true)}
+          placeholder="0.00"
           shouldAutoFocusAndSelect={isCryptoMainValueDisplay}
+          shouldAutoFocusAndSelectOnModeChange
+          variant="simple"
+          {...inputCryptoPropsLabel}
         />
         <InputText
           ref={isCryptoMainValueDisplay ? undefined : ref}
@@ -137,10 +142,11 @@ const EarnGlmLockTabsInputs = forwardRef<HTMLInputElement, EarnGlmLockTabsInputs
           onClear={handleClear}
           onFocus={() => setIsFiatInputFocused(true)}
           placeholder="0.00"
+          shouldAutoFocusAndSelect={!isCryptoMainValueDisplay}
+          shouldAutoFocusAndSelectOnModeChange
           suffix={displayCurrency.toUpperCase()}
           value={fiat}
           {...inputFiatPropsLabel}
-          shouldAutoFocusAndSelect={!isCryptoMainValueDisplay}
         />
       </div>
     );
