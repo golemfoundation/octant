@@ -16,13 +16,14 @@ import EarnGlmLockTabsInputsProps from './types';
 const EarnGlmLockTabsInputs = forwardRef<HTMLInputElement, EarnGlmLockTabsInputsProps>(
   (
     {
-      error,
-      label,
-      inputCryptoProps,
-      cryptoCurrency,
-      onChange,
       areInputsDisabled,
+      cryptoCurrency,
       dataTest = 'InputsCryptoFiat',
+      error,
+      inputCryptoProps,
+      label,
+      mode,
+      onChange,
       onInputsFocusChange = () => {},
     },
     ref,
@@ -42,9 +43,9 @@ const EarnGlmLockTabsInputs = forwardRef<HTMLInputElement, EarnGlmLockTabsInputs
     const isAnyInputFocused = useDeferredValue(isCryptoInputFocused || isFiatInputFocused);
 
     const inputCryptoPropsLabel = isCryptoMainValueDisplay
-      ? { ...inputCryptoProps, error, label }
+      ? { ...inputCryptoProps, error, label, mode }
       : { ...inputCryptoProps, error };
-    const inputFiatPropsLabel = isCryptoMainValueDisplay ? { error } : { error, label };
+    const inputFiatPropsLabel = isCryptoMainValueDisplay ? { error } : { error, label, mode };
 
     const cryptoFiatRatio = cryptoValues?.[cryptoCurrency][displayCurrency || 'usd'] || 1;
 
@@ -124,7 +125,7 @@ const EarnGlmLockTabsInputs = forwardRef<HTMLInputElement, EarnGlmLockTabsInputs
           onFocus={() => setIsCryptoInputFocused(true)}
           placeholder="0.00"
           shouldAutoFocusAndSelect={isCryptoMainValueDisplay}
-          shouldAutoFocusAndSelectOnLabelChange
+          shouldAutoFocusAndSelectOnModeChange
           variant="simple"
           {...inputCryptoPropsLabel}
         />
@@ -142,7 +143,7 @@ const EarnGlmLockTabsInputs = forwardRef<HTMLInputElement, EarnGlmLockTabsInputs
           onFocus={() => setIsFiatInputFocused(true)}
           placeholder="0.00"
           shouldAutoFocusAndSelect={!isCryptoMainValueDisplay}
-          shouldAutoFocusAndSelectOnLabelChange
+          shouldAutoFocusAndSelectOnModeChange
           suffix={displayCurrency.toUpperCase()}
           value={fiat}
           {...inputFiatPropsLabel}

@@ -19,6 +19,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
       isDisabled,
       isErrorInlineVisible = true,
       label,
+      mode,
       onChange,
       onClear,
       suffix,
@@ -29,7 +30,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
       showLoader = false,
       dataTest = 'InputText',
       shouldAutoFocusAndSelect = true,
-      shouldAutoFocusAndSelectOnLabelChange,
+      shouldAutoFocusAndSelectOnModeChange,
       ...rest
     },
     ref,
@@ -68,9 +69,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
       inputProps.ref,
       shouldAutoFocusAndSelect,
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      ...(shouldAutoFocusAndSelectOnLabelChange
-        ? [shouldAutoFocusAndSelectOnLabelChange, label]
-        : []),
+      ...(shouldAutoFocusAndSelectOnModeChange ? [shouldAutoFocusAndSelectOnModeChange, mode] : []),
     ]);
 
     return (
