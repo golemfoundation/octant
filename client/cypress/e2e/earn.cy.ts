@@ -88,17 +88,43 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       cy.get('[data-test=ModalGlmLock__overflow]').should('exist');
     });
 
+    it('Wallet connected: inputs allow to type multiple characters without focus problems', () => {
+      /**
+       * In EarnGlmLock there are multiple autofocus rules set.
+       * This test checks if user is still able to type without any autofocus disruption.
+       */
+      connectWallet();
+      cy.get('[data-test=BoxGlmLock__Button]').click();
+      cy.get('[data-test=ModalGlmLock]').should('be.visible');
+      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').should('have.focus');
+      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').clear().type('100');
+      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').should('have.value', '100');
+      cy.get('[data-test=EarnGlmLockTabs__tab--1]').click();
+      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').clear().type('100');
+      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').should('have.value', '100');
+    });
+
+    it('Wallet connected: "ModalGlmLock" - changing tabs keep focus on first input', () => {
+      connectWallet();
+      cy.get('[data-test=BoxGlmLock__Button]').click();
+      cy.get('[data-test=ModalGlmLock]').should('be.visible');
+      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').should('have.focus');
+      cy.get('[data-test=EarnGlmLockTabs__tab--1]').click();
+      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').should('have.focus');
+      cy.get('[data-test=EarnGlmLockTabs__tab--0]').click();
+      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').should('have.focus');
+    });
+
     it('Wallet connected: Lock 1 GLM', () => {
       connectWallet();
 
-      cy.get('[data-test=BoxGlmLock__Button]').click();
-      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').blur();
-      cy.get('[data-test=BudgetBox__currentlyLocked__value]')
+      cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
         .invoke('text')
         .then(text => {
           const amountToLock = 1;
           const lockedGlms = parseInt(text, 10);
 
+          cy.get('[data-test=BoxGlmLock__Button]').click();
           cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').clear().type(`${amountToLock}`);
           cy.get('[data-test=GlmLockTabs__Button]').should('have.text', 'Lock');
           cy.get('[data-test=GlmLockTabs__Button]').click();
@@ -142,15 +168,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     it('Wallet connected: Unlock 1 GLM', () => {
       connectWallet();
 
-      cy.get('[data-test=BoxGlmLock__Button]').click();
-      cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').blur();
-      cy.get('[data-test=BudgetBox__currentlyLocked__value]')
+      cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
         .invoke('text')
         .then(text => {
           const amountToUnlock = 1;
           const lockedGlms = parseInt(text, 10);
 
-          cy.get('[data-test=BoxRounded__tab--1]').click();
+          cy.get('[data-test=BoxGlmLock__Button]').click();
+          cy.get('[data-test=EarnGlmLockTabs__tab--1]').click();
           cy.get('[data-test=InputsCryptoFiat__InputText--crypto]')
             .clear()
             .type(`${amountToUnlock}`);
