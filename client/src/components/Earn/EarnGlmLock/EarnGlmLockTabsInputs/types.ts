@@ -1,3 +1,4 @@
+import { CurrentMode } from 'components/Earn/EarnGlmLock/types';
 import InputTextProps from 'components/ui/InputText/types';
 import { CryptoCurrency } from 'types/cryptoCurrency';
 
@@ -13,6 +14,7 @@ export default interface EarnGlmLockTabsInputsProps {
     value: InputTextProps['value'];
   };
   label: InputTextProps['label'];
+  mode: CurrentMode;
   onChange: (value: string) => void;
   onInputsFocusChange?: (isAnyInputFocused: boolean) => void;
 }

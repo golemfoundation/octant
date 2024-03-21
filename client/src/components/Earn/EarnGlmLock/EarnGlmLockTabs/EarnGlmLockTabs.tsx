@@ -155,6 +155,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
             )}
           </div>
         }
+        mode={currentMode}
         onChange={onSetValue}
         onInputsFocusChange={onInputsFocusChange}
       />
