@@ -7,7 +7,12 @@
       <script>
          fetch('http://localhost:8080/deployment?name=octant').then(data => {
           data.text().then(text => {
-            document.getElementById('contracts-div').innerText = text;
+            document.getElementById('contracts-div').innerText = text
+              .replace('GLM_CONTRACT_ADDRESS', 'VITE_GLM_ADDRESS')
+              .replace('DEPOSITS_CONTRACT_ADDRESS', 'VITE_DEPOSITS_ADDRESS')
+              .replace('EPOCHS_CONTRACT_ADDRESS', 'VITE_EPOCHS_ADDRESS')
+              .replace('PROPOSALS_CONTRACT_ADDRESS', 'VITE_PROPOSALS_ADDRESS')
+              .replace('VAULT_CONTRACT_ADDRESS', 'VITE_VAULT_ADDRESS');
           });
          });
       </script>
@@ -25,13 +30,6 @@
             <h4><strong>URL</strong></h4>
          </td>
       </tr>
-<!--      <tr style="height: 78px;"> -->
-<!--         <td style="width: 109.359375px; text-align: center; height: 78px;">CLIENT</td> -->
-<!--         <td style="width: 253.796875px; text-align: center; height: 78px;"><a href="http://client.octant.localhost:8080">client.octant.localhost:8080</a></td> -->
-<!--         <td style="width: 276.875px; text-align: left; height: 78px;"> -->
-<!--            <ul></ul> -->
-<!--         </td> -->
-<!--      </tr> -->
       <tr style="height: 18px;">
          <td style="width: 109.359375px; text-align: center; height: 18px;">BACKEND</td>
          <td style="width: 253.796875px; text-align: center; height: 18px;"><a href="http://backend.octant.localhost:8080">backend.octant.localhost:8080</a></td>

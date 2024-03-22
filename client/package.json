@@ -11,7 +11,7 @@
     "build": "vite build",
     "build:staging": "vite build --mode staging",
     "codegen": "graphql-codegen --config codegen.ts",
-    "types:json": "yarn run json2ts -i './src/resources/schema/' -o 'src/types/gen' --cwd './src/resources/schema'",
+    "types:json": "yarn run json2ts -i src/resources/schema -o src/types/gen --cwd src/resources/schema",
     "dev": "yarn install && vite",
     "eslint": "eslint './**/*.{js,jsx,ts,tsx}'",
     "eslint:fix": "yarn prettier && yarn eslint --fix",
