@@ -4,7 +4,7 @@ from typing import Optional
 
 from app.extensions import db
 from app.infrastructure.database.models import MultisigSignatures
-from app.modules.multisig_signatures.dto import SignatureOpType
+from app.modules.dto import SignatureOpType
 
 
 class SigStatus(StrEnum):

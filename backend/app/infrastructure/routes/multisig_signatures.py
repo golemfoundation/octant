@@ -3,11 +3,11 @@ from flask_restx import Namespace, fields
 
 from app.extensions import api
 from app.infrastructure import OctantResource
+from app.modules.dto import SignatureOpType
 from app.modules.multisig_signatures.controller import (
     get_last_pending_signature,
     save_pending_signature,
 )
-from app.modules.multisig_signatures.dto import SignatureOpType
 
 ns = Namespace(
     "multisig-signatures",

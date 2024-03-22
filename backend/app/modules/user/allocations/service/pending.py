@@ -1,4 +1,6 @@
 from typing import List, Tuple, Protocol, runtime_checkable
+
+from app.modules.common.verifier import Verifier
 from app.pydantic import Model
 
 from app import exceptions
@@ -29,10 +31,29 @@ class GetPatronsAddressesProtocol(Protocol):
         ...
 
 
-class PendingUserAllocations(SavedUserAllocations, Model):
+class PendingUserAllocationsVerifier(Verifier, Model):
     octant_rewards: OctantRewards
     user_budgets: UserBudgetProtocol
     patrons_mode: GetPatronsAddressesProtocol
+
+    def verify_logic(self, context: Context, **kwargs):
+        user_address, payload = kwargs["user_address"], kwargs["payload"]
+        expected_nonce = self.get_user_next_nonce(user_address)
+        user_budget = self.user_budgets.get_budget(context, user_address)
+        patrons = self.patrons_mode.get_all_patrons_addresses(context)
+
+        core.verify_user_allocation_request(
+            context, payload, user_address, expected_nonce, user_budget, patrons
+        )
+
+    def verify_signature(self, _: Context, **kwargs):
+        user_address, signature = kwargs["user_address"], kwargs["consent_signature"]
+        # TODO: implement verify_signature
+
+
+class PendingUserAllocations(SavedUserAllocations, Model):
+    octant_rewards: OctantRewards
+    verifier: Verifier
 
     def allocate(
         self, context: Context, payload: UserAllocationRequestPayload, **kwargs
@@ -40,11 +61,8 @@ class PendingUserAllocations(SavedUserAllocations, Model):
         user_address = core.recover_user_address(payload)
 
         expected_nonce = self.get_user_next_nonce(user_address)
-        user_budget = self.user_budgets.get_budget(context, user_address)
-        patrons = self.patrons_mode.get_all_patrons_addresses(context)
-
-        core.verify_user_allocation_request(
-            context, payload, user_address, expected_nonce, user_budget, patrons
+        self.verifier.verify(
+            context, user_address=user_address, payload=payload, **kwargs
         )
 
         self.revoke_previous_allocation(context, user_address)

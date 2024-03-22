@@ -9,6 +9,7 @@ from app.modules.modules_factory.pending import PendingServices
 from app.modules.modules_factory.pre_pending import PrePendingServices
 
 SERVICE_REGISTRY: Dict[EpochState, Any] = {}
+SERVICE_REGISTRY: Dict[EpochState, Any] = {}
 
 
 def get_services(epoch_state: EpochState):
@@ -24,3 +25,8 @@ def register_services(app):
     SERVICE_REGISTRY[EpochState.PENDING] = PendingServices.create()
     SERVICE_REGISTRY[EpochState.FINALIZING] = FinalizingServices.create()
     SERVICE_REGISTRY[EpochState.FINALIZED] = FinalizedServices.create()
+
+
+def register_verifiers(app):
+    verifier_factory = VerifierFactory(app)
+    verifier_factory.register_verifiers()

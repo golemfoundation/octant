@@ -12,9 +12,10 @@ from app.modules.dto import (
     PendingSnapshotDTO,
     WithdrawableEth,
     UserAllocationRequestPayload,
+    SignatureOpType,
 )
 from app.modules.history.dto import UserHistoryDTO
-from app.modules.multisig_signatures.dto import SignatureOpType, Signature
+from app.modules.multisig_signatures.dto import Signature
 
 
 @runtime_checkable

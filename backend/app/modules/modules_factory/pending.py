@@ -1,5 +1,6 @@
 from typing import Protocol
 
+from app.modules.dto import SignatureOpType
 from app.modules.modules_factory.protocols import (
     UserPatronMode,
     UserRewards,
@@ -15,12 +16,17 @@ from app.modules.modules_factory.protocols import (
     DonorsAddresses,
     AllocationManipulationProtocol,
     GetUserAllocationsProtocol,
+    MultisigSignatures,
 )
+from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
 from app.modules.snapshots.finalized.service.simulated import (
     SimulatedFinalizedSnapshots,
 )
-from app.modules.user.allocations.service.pending import PendingUserAllocations
+from app.modules.user.allocations.service.pending import (
+    PendingUserAllocations,
+    PendingUserAllocationsVerifier,
+)
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.saved import SavedUserDeposits
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
@@ -58,21 +64,23 @@ class PendingServices(Model):
     finalized_snapshots_service: SimulateFinalizedSnapshots
     withdrawals_service: WithdrawalsService
     project_rewards_service: EstimatedProjectRewardsService
+    multisig_signatures_service: MultisigSignatures
 
     @staticmethod
     def create() -> "PendingServices":
         events_based_patron_mode = EventsBasedUserPatronMode()
         octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
         saved_user_budgets = SavedUserBudgets()
-        saved_user_allocations = PendingUserAllocations(
+        allocations_verifier = PendingUserAllocationsVerifier(
             user_budgets=saved_user_budgets,
             patrons_mode=events_based_patron_mode,
             octant_rewards=octant_rewards,
         )
+        pending_user_allocations = PendingUserAllocations(verifier=allocations_verifier)
         user_rewards = CalculatedUserRewards(
             user_budgets=saved_user_budgets,
             patrons_mode=events_based_patron_mode,
-            allocations=saved_user_allocations,
+            allocations=pending_user_allocations,
         )
         finalized_snapshots_service = SimulatedFinalizedSnapshots(
             octant_rewards=octant_rewards,
@@ -81,15 +89,19 @@ class PendingServices(Model):
         )
         withdrawals_service = PendingWithdrawals(user_rewards=user_rewards)
         project_rewards = EstimatedProjectRewards(octant_rewards=octant_rewards)
+        multisig_signatures = OffchainMultisigSignatures(
+            verifiers={SignatureOpType.ALLOCATION: allocations_verifier}
+        )
 
         return PendingServices(
             user_deposits_service=SavedUserDeposits(),
             octant_rewards_service=octant_rewards,
-            user_allocations_service=saved_user_allocations,
+            user_allocations_service=pending_user_allocations,
             user_patron_mode_service=events_based_patron_mode,
             finalized_snapshots_service=finalized_snapshots_service,
             user_budgets_service=saved_user_budgets,
             user_rewards_service=user_rewards,
             withdrawals_service=withdrawals_service,
             project_rewards_service=project_rewards,
+            multisig_signatures_service=multisig_signatures,
         )

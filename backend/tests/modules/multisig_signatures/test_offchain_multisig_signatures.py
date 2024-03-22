@@ -3,7 +3,8 @@ import pytest
 from app.extensions import db
 from app.infrastructure import database
 from app.infrastructure.database.multisig_signature import SigStatus
-from app.modules.multisig_signatures.dto import Signature, SignatureOpType
+from app.modules.dto import SignatureOpType
+from app.modules.multisig_signatures.dto import Signature
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 
 

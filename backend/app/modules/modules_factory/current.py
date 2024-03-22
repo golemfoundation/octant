@@ -2,6 +2,7 @@ from typing import Protocol
 
 import app.modules.staking.proceeds.service.aggregated as aggregated
 import app.modules.staking.proceeds.service.contract_balance as contract_balance
+from app.modules.dto import SignatureOpType
 from app.modules.history.service.full import FullHistory
 from app.modules.modules_factory.protocols import (
     OctantRewards,
@@ -22,7 +23,7 @@ from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
 )
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
-from app.modules.user.tos.service.basic import BasicUserTos
+from app.modules.user.tos.service.basic import BasicUserTos, BasicUserTosVerifier
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
@@ -69,7 +70,8 @@ class CurrentServices(Model):
         )
         user_allocations = SavedUserAllocations()
         user_withdrawals = FinalizedWithdrawals()
-        user_tos = BasicUserTos()
+        tos_verifier = BasicUserTosVerifier()
+        user_tos = BasicUserTos(verifier=tos_verifier)
         patron_donations = EventsBasedUserPatronMode()
         history = FullHistory(
             user_deposits=user_deposits,
@@ -77,7 +79,10 @@ class CurrentServices(Model):
             user_withdrawals=user_withdrawals,
             patron_donations=patron_donations,
         )
-        multisig_signatures = OffchainMultisigSignatures()
+
+        multisig_signatures = OffchainMultisigSignatures(
+            verifiers={SignatureOpType.TOS: tos_verifier}
+        )
         return CurrentServices(
             user_allocations_service=user_allocations,
             user_deposits_service=user_deposits,
