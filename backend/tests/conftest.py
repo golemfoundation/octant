@@ -269,6 +269,9 @@ def deployment(pytestconfig):
         "WITHDRAWALS_TARGET_CONTRACT_ADDRESS"
     ]
     conf.VAULT_CONTRACT_ADDRESS = envs["VAULT_CONTRACT_ADDRESS"]
+    conf.SCHEDULER_ENABLED = True
+    conf.VAULT_CONFIRM_WITHDRAWALS_ENABLED = True
+    conf.TESTNET_MULTISIG_PRIVATE_KEY = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
     yield conf
 
 
@@ -296,6 +299,9 @@ class UserAccount:
     def lock(self, value: int):
         glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
         deposits.lock(self._account, w3.to_wei(value, "ether"))
+
+    def unlock(self, value: int):
+        deposits.unlock(self._account, w3.to_wei(value, "ether"))
 
     def allocate(self, amount: int, addresses: list[str]):
         nonce = self._client.get_allocation_nonce(self.address)
@@ -362,8 +368,22 @@ class Client:
         rv = self._flask_client.post("/snapshots/pending").text
         return json.loads(rv)
 
+    def finalized_snapshot(self):
+        rv = self._flask_client.post("/snapshots/finalized").text
+        return json.loads(rv)
+
     def get_rewards_budget(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").text
+        print("request :", self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").request)
+        print("rv text:", rv)
+        print("json rv text:", json.loads(rv))
+        return json.loads(rv)
+
+    def get_withdrawals_for_address(self, address: str):
+        rv = self._flask_client.get(f"/withdrawals/{address}").text
+        print("request :", self._flask_client.get(f"/withdrawals/{address}").request)
+        print("rv text:", rv)
+        print("json rv text:", json.loads(rv))
         return json.loads(rv)
 
     def get_epoch_allocations(self, epoch: int):
