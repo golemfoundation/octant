@@ -1,4 +1,4 @@
-from app.legacy.crypto.eth_sign.signature import verify_signed_message
+from app.modules.common.signature import verify_signed_message
 
 
 def build_consent_message(user_address: str) -> str:
@@ -15,7 +15,7 @@ def build_consent_message(user_address: str) -> str:
     )
 
 
-def verify(user_address: str, signature: str) -> bool:
+def verify_signature(user_address: str, signature: str) -> bool:
     msg_text = build_consent_message(user_address)
 
     return verify_signed_message(user_address, msg_text, signature)

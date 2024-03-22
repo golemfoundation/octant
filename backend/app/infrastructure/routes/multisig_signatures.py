@@ -7,6 +7,7 @@ from app.modules.multisig_signatures.controller import (
     get_last_pending_signature,
     save_pending_signature,
 )
+from app.modules.multisig_signatures.dto import SignatureOpType
 
 ns = Namespace(
     "multisig-signatures",
@@ -34,7 +35,7 @@ class MultisigPendingSignature(OctantResource):
         app.logger.debug(
             f"Retrieving last pending multisig signature for user {user_address} and type {op_type}."
         )
-        response = get_last_pending_signature(user_address, op_type)
+        response = get_last_pending_signature(user_address, SignatureOpType(op_type))
         app.logger.debug(f"Retrieved last pending multisig signature {response}.")
 
         return response
@@ -45,8 +46,8 @@ class MultisigPendingSignature(OctantResource):
         app.logger.debug(
             f"Adding new multisig signature for user {user_address} and type {op_type}."
         )
-        signature_data = api.payload
-        save_pending_signature(user_address, op_type, signature_data)
+        message = api.payload
+        save_pending_signature(user_address, SignatureOpType(op_type), message)
         app.logger.debug("Added new multisig signature.")
 
         return {}, 201

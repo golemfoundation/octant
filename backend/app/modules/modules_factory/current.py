@@ -9,6 +9,7 @@ from app.modules.modules_factory.protocols import (
     TotalEffectiveDeposits,
     HistoryService,
     MultisigSignatures,
+    UserTos,
 )
 from app.modules.modules_factory.protocols import SimulatePendingSnapshots
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
@@ -21,6 +22,7 @@ from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
 )
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
+from app.modules.user.tos.service.basic import BasicUserTos
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
@@ -33,6 +35,7 @@ class CurrentUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protoco
 class CurrentServices(Model):
     user_allocations_service: SavedUserAllocations
     user_deposits_service: CurrentUserDeposits
+    user_tos_service: UserTos
     octant_rewards_service: OctantRewards
     history_service: HistoryService
     simulated_pending_snapshot_service: SimulatePendingSnapshots
@@ -66,6 +69,7 @@ class CurrentServices(Model):
         )
         user_allocations = SavedUserAllocations()
         user_withdrawals = FinalizedWithdrawals()
+        user_tos = BasicUserTos()
         patron_donations = EventsBasedUserPatronMode()
         history = FullHistory(
             user_deposits=user_deposits,
@@ -84,4 +88,5 @@ class CurrentServices(Model):
             history_service=history,
             simulated_pending_snapshot_service=simulated_pending_snapshot_service,
             multisig_signatures_service=multisig_signatures,
+            user_tos_service=user_tos,
         )

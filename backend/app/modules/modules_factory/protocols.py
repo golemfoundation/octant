@@ -177,3 +177,20 @@ class MultisigSignatures(Protocol):
         signature_data: dict,
     ):
         ...
+
+
+@runtime_checkable
+class UserTos(Protocol):
+    def has_user_agreed_to_terms_of_service(
+        self, context: Context, user_address: str
+    ) -> bool:
+        ...
+
+    def add_user_terms_of_service_consent(
+        self,
+        context: Context,
+        user_address: str,
+        consent_signature: str,
+        ip_address: str,
+    ):
+        ...
