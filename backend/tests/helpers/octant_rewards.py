@@ -6,6 +6,8 @@ from tests.helpers.constants import (
     ALL_INDIVIDUAL_REWARDS,
     LOCKED_RATIO,
     OPERATIONAL_COST,
+    PPF,
+    COMMUNITY_FUND,
 )
 
 
@@ -16,6 +18,8 @@ def octant_rewards(
     individual_rewards=ALL_INDIVIDUAL_REWARDS,
     locked_ratio=LOCKED_RATIO,
     operational_cost=OPERATIONAL_COST,
+    ppf=PPF,
+    community_fund=COMMUNITY_FUND,
 ):
     return OctantRewardsDTO(
         staking_proceeds=staking_proceeds,
@@ -24,4 +28,6 @@ def octant_rewards(
         individual_rewards=individual_rewards,
         locked_ratio=locked_ratio,
         operational_cost=operational_cost,
+        ppf=ppf,
+        community_fund=community_fund,
     )

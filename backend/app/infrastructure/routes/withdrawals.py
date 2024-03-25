@@ -1,11 +1,9 @@
-import dataclasses
-
 from flask import current_app as app
 from flask_restx import Namespace, fields
 
-from app.legacy.controllers import withdrawals
 from app.extensions import api
 from app.infrastructure import OctantResource
+from app.modules.withdrawals.controller import get_withdrawable_eth
 
 ns = Namespace("withdrawals", description="Octant withdrawals")
 api.add_namespace(ns)
@@ -49,9 +47,7 @@ class Withdrawals(OctantResource):
     @ns.marshal_with(withdrawable_rewards_model)
     def get(self, address):
         app.logger.debug(f"Getting withdrawable eth for address: {address}")
-        result = [
-            dataclasses.asdict(w) for w in withdrawals.get_withdrawable_eth(address)
-        ]
+        result = get_withdrawable_eth(address)
         app.logger.debug(f"Withdrawable eth for address: {address}: {result}")
 
         return result

@@ -25,6 +25,7 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   const { data: projectIpfs, isFetching: isFetchingProjectIpfs } = useProjectsIpfs([address]);
 
   const { data: matchedProjectRewards } = useMatchedProjectRewards();
+  // Real, not simulated threshold is used, because user won't change his decision here.
   const { data: projectRewardsThreshold } = useProjectRewardsThreshold();
   const { data: userAllocations } = useUserAllocations();
 

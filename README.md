@@ -12,7 +12,7 @@ Documentation is available [here](https://docs.octant.app/).
 Below is development setup instructions. More documentation, configuration, deployment information is available in directories of this repository.
 
 For the first build of contracts it is highly recommended to run the following command first (this step will require having configured gcloud docker authentication):
-```bash 
+```bash
 yarn localenv:build-anvil
 ```
 
@@ -47,8 +47,8 @@ Local environemnt is available at [http://octant.localhost:8080](http://octant.l
 ## gcloud docker images repository authentication
 
 Please notice, that for the time being,  we are using our own fork of `foundry` (especially `anvil`), and we have a pre-built image stored at Google Cloud.
-In order to confiugre access to this image one should have `gcloud` configured and then run command:
-`$ gcloud auth configure-docker europe-docker.pkg.dev` 
+In order to configure access to this image one should have `gcloud` configured and then run command:
+`$ gcloud auth configure-docker europe-docker.pkg.dev`
 
 ---
 

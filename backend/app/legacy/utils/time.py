@@ -19,6 +19,9 @@ class Timestamp:
     def datetime(self) -> DateTime:
         return DateTime.fromtimestamp(self.timestamp_s())
 
+    def to_isoformat(self):
+        return self.datetime().isoformat()
+
     def __eq__(self, o):
         if isinstance(o, Timestamp):
             return self._timestamp_us == o._timestamp_us

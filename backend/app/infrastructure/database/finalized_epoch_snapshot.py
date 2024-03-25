@@ -2,8 +2,8 @@ from sqlalchemy import desc
 from typing_extensions import deprecated
 
 from app import exceptions
-from app.infrastructure.database.models import FinalizedEpochSnapshot
 from app.extensions import db
+from app.infrastructure.database.models import FinalizedEpochSnapshot
 
 
 @deprecated("Exceptions should be raised in services, use `get_by_epoch` instead")
@@ -33,7 +33,7 @@ def get_last_snapshot() -> FinalizedEpochSnapshot:
     return snapshot
 
 
-def add_snapshot(
+def save_snapshot(
     epoch: int,
     matched_rewards: int,
     patrons_rewards: int,

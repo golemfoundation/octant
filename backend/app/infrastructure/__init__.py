@@ -1,5 +1,9 @@
 from flask_restx import Resource
 
+from gql import Client
+from gql.transport.requests import RequestsHTTPTransport
+
+from app.settings import Config
 from app.infrastructure.exception_handler import ExceptionHandler
 
 default_decorators = {
@@ -23,3 +27,24 @@ class OctantResource(Resource):
             attr = decorator(attr)
 
         return attr
+
+
+class GQLConnectionFactory:
+    def __init__(self):
+        self._url = None
+
+    def set_url(self, config: Config):
+        self._url = config["SUBGRAPH_ENDPOINT"]
+
+    def build(self):
+        if not self._url:
+            raise RuntimeError(
+                "GQL Connection Factory hasn't been properly initialised."
+            )
+
+        client = Client()
+        transport = RequestsHTTPTransport(url=self._url, timeout=2)
+        client.transport = transport
+        client.fetch_schema_from_transport = True
+
+        return client

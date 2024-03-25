@@ -5,8 +5,14 @@ from flask_restx import Namespace, fields
 from app.extensions import api
 from app.infrastructure import OctantResource
 from app.legacy.controllers import snapshots
-from app.modules.snapshots.finalized.controller import simulate_finalized_epoch_snapshot
-from app.modules.snapshots.pending.controller import create_pending_epoch_snapshot
+from app.modules.snapshots.finalized.controller import (
+    simulate_finalized_epoch_snapshot,
+    create_finalized_epoch_snapshot,
+)
+from app.modules.snapshots.pending.controller import (
+    create_pending_epoch_snapshot,
+    simulate_pending_epoch_snapshot,
+)
 
 ns = Namespace("snapshots", description="Database snapshots")
 api.add_namespace(ns)
@@ -46,6 +52,37 @@ account_funds_model = api.model(
     },
 )
 
+octant_rewards_model = api.model(
+    "OctantRewardsModel",
+    {
+        "stakingProceeds": fields.String(),
+        "lockedRatio": fields.String(),
+        "totalEffectiveDeposit": fields.String(),
+        "totalRewards": fields.String(),
+        "individualRewards": fields.String(),
+        "operationalCost": fields.String(),
+        "communityFund": fields.String(),
+        "ppf": fields.String(),
+    },
+)
+
+user_deposits_model = api.model(
+    "UserDepositsModel",
+    {
+        "userAddress": fields.String(),
+        "effectiveDeposit": fields.String(),
+        "deposit": fields.String(),
+    },
+)
+
+user_budgets_model = api.model(
+    "UserBudgetsInfoModel",
+    {
+        "userAddress": fields.String(),
+        "budget": fields.String(),
+    },
+)
+
 finalized_snapshot_model = api.model(
     "FinalizedSnapshotModel",
     {
@@ -56,6 +93,15 @@ finalized_snapshot_model = api.model(
         "totalWithdrawals": fields.String(),
         "leftover": fields.String(),
         "merkleRoot": fields.String(),
+    },
+)
+
+pending_snapshot_model = api.model(
+    "PendingSnapshotModel",
+    {
+        "rewards": fields.Nested(octant_rewards_model),
+        "userDeposits": fields.List(fields.Nested(user_deposits_model)),
+        "userBudgets": fields.List(fields.Nested(user_budgets_model)),
     },
 )
 
@@ -93,7 +139,7 @@ class PendingEpochSnapshot(OctantResource):
 class FinalizedEpochSnapshot(OctantResource):
     def post(self):
         app.logger.info("Initiating finalized epoch snapshot")
-        epoch = snapshots.snapshot_finalized_epoch()
+        epoch = create_finalized_epoch_snapshot()
         app.logger.info(f"Saved finalized epoch snapshot for epoch: {epoch}")
 
         return ({"epoch": epoch}, 201) if epoch is not None else Response()
@@ -123,10 +169,21 @@ class EpochStatus(OctantResource):
 
 @ns.route("/finalized/simulate")
 @ns.doc(description="Simulates the finalized snapshot")
-@ns.response(200, "Snapshot simulated successfully")
+@ns.response(200, "Finalized snapshot simulated successfully")
 class SimulateFinalizedSnapshot(OctantResource):
     @ns.marshal_with(finalized_snapshot_model)
     def get(self):
         app.logger.debug("Simulating finalized snapshot")
         response = simulate_finalized_epoch_snapshot()
+        return response.to_dict()
+
+
+@ns.route("/pending/simulate")
+@ns.doc(description="Simulates the pending snapshot")
+@ns.response(200, "Pending snapshot simulated successfully")
+class SimulatePendingSnapshot(OctantResource):
+    @ns.marshal_with(pending_snapshot_model)
+    def get(self):
+        app.logger.debug("Simulating pending snapshot")
+        response = simulate_pending_epoch_snapshot()
         return response.to_dict()

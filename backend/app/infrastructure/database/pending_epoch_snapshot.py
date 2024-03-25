@@ -45,6 +45,8 @@ def save_snapshot(
     total_rewards: int,
     all_individual_rewards: int,
     operational_cost: int,
+    community_fund: int | None = None,
+    ppf: int | None = None,
 ):
     snapshot = PendingEpochSnapshot(
         epoch=epoch,
@@ -54,5 +56,7 @@ def save_snapshot(
         total_rewards=str(total_rewards),
         all_individual_rewards=str(all_individual_rewards),
         operational_cost=str(operational_cost),
+        community_fund=str(community_fund) if community_fund else None,
+        ppf=str(ppf) if ppf else None,
     )
     db.session.add(snapshot)

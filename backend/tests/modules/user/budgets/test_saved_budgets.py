@@ -5,6 +5,7 @@ from app.infrastructure import database
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from tests.helpers.constants import USER1_BUDGET, USER2_BUDGET, USER3_BUDGET
 from tests.helpers.context import get_context
+from app.modules.snapshots.pending import UserBudgetInfo
 
 
 @pytest.fixture(autouse=True)
@@ -14,11 +15,11 @@ def before(app):
 
 def test_get_all_budgets(alice, bob, carol):
     budgets_epoch_1 = [
-        (alice.address, USER1_BUDGET),
-        (bob.address, USER2_BUDGET),
+        UserBudgetInfo(alice.address, USER1_BUDGET),
+        UserBudgetInfo(bob.address, USER2_BUDGET),
     ]
     budgets_epoch_2 = [
-        (carol.address, USER3_BUDGET),
+        UserBudgetInfo(carol.address, USER3_BUDGET),
     ]
     database.budgets.save_budgets(1, budgets_epoch_1)
     database.budgets.save_budgets(2, budgets_epoch_2)
@@ -41,7 +42,7 @@ def test_get_all_budgets(alice, bob, carol):
 
 def test_get_budget(alice):
     budgets = [
-        (alice.address, USER1_BUDGET),
+        UserBudgetInfo(alice.address, USER1_BUDGET),
     ]
     database.budgets.save_budgets(1, budgets)
     db.session.commit()

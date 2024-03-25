@@ -6,8 +6,8 @@ from hexbytes import HexBytes
 from multiproof import StandardMerkleTree
 from multiproof.standart import LeafValue
 
-from app.legacy.core.common import AccountFunds
-from app.legacy.core.merkle_tree import build_merkle_tree, get_proof
+from app.modules.common.merkle_tree import build_merkle_tree, get_proof
+from app.modules.dto import AccountFundsDTO
 
 
 @pytest.fixture(autouse=True)
@@ -16,15 +16,18 @@ def before(app):
 
 
 def test_merkle_tree():
-    with open(f"{app.config['TEST_DIR']}/legacy/merkle_tree/testInputs.json", "r") as f:
+    with open(
+        f"{app.config['TEST_DIR']}/modules/common/merkle_tree/testInputs.json", "r"
+    ) as f:
         test_inputs = json.load(f)
 
-    leaves = [AccountFunds(addr, amount) for addr, amount in test_inputs]
+    leaves = [AccountFundsDTO(addr, amount) for addr, amount in test_inputs]
     merkle_tree = build_merkle_tree(leaves)
 
     # validate whole dumped tree
     with open(
-        f"{app.config['TEST_DIR']}/legacy/merkle_tree/expectedMerkleTree.json", "r"
+        f"{app.config['TEST_DIR']}/modules/common/merkle_tree/expectedMerkleTree.json",
+        "r",
     ) as f:
         expected_merkle_tree_json = json.load(f)
 
@@ -47,7 +50,7 @@ def test_merkle_tree():
 
     # validate proofs
     with open(
-        f"{app.config['TEST_DIR']}/legacy/merkle_tree/expectedProofs.json", "r"
+        f"{app.config['TEST_DIR']}/modules/common/merkle_tree/expectedProofs.json", "r"
     ) as f:
         expected_proofs = json.load(f)
     for i, test_input in enumerate(test_inputs):

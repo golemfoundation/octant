@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
@@ -7,6 +8,7 @@ class UserBudgetPayload:
     user_effective_deposit: int = None
     total_effective_deposit: int = None
     all_individual_rewards: int = None
+    ppf: Optional[int] = None
 
 
 @dataclass

@@ -6,10 +6,10 @@ from app.engine.octant_rewards.operational_cost import (
     OperationalCost,
 )
 
-FOUNDATION_OPERATIONAL_COST_PERCENT = Decimal("0.2")
-
 
 @dataclass
-class OpCost20Percent(OperationalCost):
+class OpCostPercent(OperationalCost):
+    OPERATIONAL_COST: Decimal
+
     def calculate_operational_cost(self, payload: OperationalCostPayload) -> int:
-        return int(payload.eth_proceeds * FOUNDATION_OPERATIONAL_COST_PERCENT)
+        return int(payload.eth_proceeds * self.OPERATIONAL_COST)

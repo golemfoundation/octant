@@ -5,10 +5,8 @@ from dataclass_wizard import JSONWizard
 from flask import current_app as app
 
 from app import exceptions
-from app.extensions import db, epochs
+from app.extensions import epochs
 from app.infrastructure import database
-from app.infrastructure.database import finalized_epoch_snapshot
-from app.legacy.core import merkle_tree
 from app.legacy.core.epochs.epoch_snapshots import (
     has_pending_epoch_snapshot,
     has_finalized_epoch_snapshot,
@@ -19,8 +17,6 @@ from app.legacy.core.epochs.epoch_snapshots import (
     PendingSnapshotStatus,
     FinalizedSnapshotStatus,
 )
-from app.legacy.core.proposals import get_finalized_rewards
-from app.legacy.core.user import rewards as user_core_rewards
 
 
 @dataclass(frozen=True)
@@ -78,69 +74,6 @@ def get_finalized_snapshot_status() -> FinalizedSnapshotStatus:
             f"Database inconsistent? Current epoch {current_epoch}, last finalized snapshot for epoch {last_snapshot_epoch}"
         )
         return FinalizedSnapshotStatus.ERROR
-
-
-def snapshot_finalized_epoch() -> Optional[int]:
-    current_epoch = epochs.get_current_epoch()
-    finalized_epoch = epochs.get_finalized_epoch()
-    app.logger.info(
-        f"[*] Blockchain [current epoch: {current_epoch}] [finalized epoch: {finalized_epoch}] "
-    )
-
-    last_snapshot_epoch = get_last_finalized_snapshot()
-
-    app.logger.info(f"[*] Most recent finalized snapshot: {last_snapshot_epoch}")
-
-    if finalized_epoch <= last_snapshot_epoch:
-        app.logger.info("[+] Finalized snapshots are up to date")
-        return None
-
-    pending_snapshot = database.pending_epoch_snapshot.get_by_epoch_num(finalized_epoch)
-
-    if not pending_snapshot:
-        raise exceptions.MissingSnapshot
-
-    (
-        proposal_rewards,
-        proposal_rewards_sum,
-        matched_rewards,
-        patrons_rewards,
-    ) = get_finalized_rewards(finalized_epoch, pending_snapshot)
-    user_rewards, user_rewards_sum = user_core_rewards.get_all_claimed_rewards(
-        finalized_epoch
-    )
-    all_rewards = user_rewards + proposal_rewards
-
-    if len(all_rewards) > 0:
-        database.rewards.add_all(finalized_epoch, all_rewards)
-        rewards_merkle_tree = merkle_tree.build_merkle_tree(
-            user_rewards + proposal_rewards
-        )
-        merkle_root = rewards_merkle_tree.root
-        total_withdrawals = proposal_rewards_sum + user_rewards_sum
-        leftover = (
-            int(pending_snapshot.eth_proceeds)
-            - int(pending_snapshot.operational_cost)
-            - total_withdrawals
-        )
-        finalized_epoch_snapshot.add_snapshot(
-            finalized_epoch,
-            matched_rewards,
-            patrons_rewards,
-            leftover,
-            merkle_root,
-            total_withdrawals,
-        )
-    else:
-        finalized_epoch_snapshot.add_snapshot(
-            finalized_epoch,
-            matched_rewards,
-            patrons_rewards,
-            pending_snapshot.total_rewards,
-        )
-    db.session.commit()
-
-    return finalized_epoch
 
 
 def get_epoch_status(epoch: int) -> EpochStatus:
