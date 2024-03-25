@@ -17,7 +17,7 @@ const ModalAllocationValuesEdit: FC<ModalAllocationValuesEditProps> = ({
   };
 
   return (
-    <Modal {...modalProps} bodyClassName={styles.root}>
+    <Modal {...modalProps} bodyClassName={styles.root} dataTest="ModalAllocationValuesEdit">
       <div className={styles.body}>
         <AllocationInputs className={styles.inputs} onClose={handleOnModalClosed} {...rest} />
       </div>
