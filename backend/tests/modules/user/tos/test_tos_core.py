@@ -1,7 +1,6 @@
 import pytest
-from eth_account.messages import encode_defunct
 
-from app.modules.user.tos.core import build_consent_message, verify_signature
+from app.modules.user.tos.core import verify_signature
 from tests.conftest import MOCK_IS_CONTRACT
 from tests.helpers.signature import build_user_signature
 

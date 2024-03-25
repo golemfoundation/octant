@@ -8,13 +8,13 @@ from app.pydantic import Model
 
 
 class BasicUserTosVerifier(Verifier):
-    def verify_logic(self, _: Context, **kwargs):
+    def _verify_logic(self, _: Context, **kwargs):
         user_address = kwargs["user_address"]
         consent = database.user_consents.get_last_by_address(user_address)
         if consent is not None:
             raise DuplicateConsent(user_address)
 
-    def verify_signature(self, _: Context, **kwargs):
+    def _verify_signature(self, _: Context, **kwargs):
         user_address, signature = kwargs["user_address"], kwargs["consent_signature"]
 
         if not verify_signature(user_address, signature):

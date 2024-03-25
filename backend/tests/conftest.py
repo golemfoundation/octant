@@ -22,6 +22,7 @@ from app.infrastructure.contracts.proposals import Proposals
 from app.infrastructure.contracts.vault import Vault
 from app.legacy.crypto.account import Account as CryptoAccount
 from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
+from app.modules.common.verifier import Verifier
 from app.modules.dto import AccountFundsDTO, AllocationItem
 from app.settings import DevConfig, TestConfig
 from tests.helpers.constants import (
@@ -659,6 +660,15 @@ def mock_staking_proceeds():
     staking_proceeds_service_mock.get_staking_proceeds.return_value = ETH_PROCEEDS
 
     return staking_proceeds_service_mock
+
+
+@pytest.fixture(scope="function")
+def mock_verifier():
+    verifier_mock = Mock(Verifier)
+    verifier_mock.verify_logic.return_value = True
+    verifier_mock.verify_signature.return_value = True
+
+    return verifier_mock
 
 
 @pytest.fixture(scope="function")

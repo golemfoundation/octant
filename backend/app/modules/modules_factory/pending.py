@@ -74,9 +74,10 @@ class PendingServices(Model):
         allocations_verifier = PendingUserAllocationsVerifier(
             user_budgets=saved_user_budgets,
             patrons_mode=events_based_patron_mode,
-            octant_rewards=octant_rewards,
         )
-        pending_user_allocations = PendingUserAllocations(verifier=allocations_verifier)
+        pending_user_allocations = PendingUserAllocations(
+            octant_rewards=octant_rewards, verifier=allocations_verifier
+        )
         user_rewards = CalculatedUserRewards(
             user_budgets=saved_user_budgets,
             patrons_mode=events_based_patron_mode,

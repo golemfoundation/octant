@@ -1,5 +1,5 @@
 from eth_account import Account
-from eth_account.messages import encode_defunct
+from eth_account.messages import encode_defunct, defunct_hash_message
 from eth_keys.exceptions import BadSignature
 from web3.exceptions import ContractLogicError
 
@@ -12,6 +12,10 @@ def verify_signed_message(user_address: str, msg_text: str, signature: str) -> b
         return _verify_multisig(user_address, msg_text, signature)
     else:
         return _verify_eoa(user_address, msg_text, signature)
+
+
+def hash_message(msg_text: str) -> str:
+    return defunct_hash_message(text=msg_text).hex()
 
 
 def _verify_multisig(user_address: str, msg_text: str, signature: str) -> bool:

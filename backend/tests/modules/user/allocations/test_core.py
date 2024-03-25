@@ -161,8 +161,11 @@ def test_allocation_does_not_fail_with_allocation_equal_to_budget(alice, bob, co
     )
     request = build_request(alice, allocations)
 
-    assert core.verify_user_allocation_request(
-        context, request, alice.address, 0, 10**18, [bob.address]
+    assert (
+        core.verify_user_allocation_request(
+            context, request, alice.address, 0, 10**18, [bob.address]
+        )
+        is None
     )
 
 
@@ -177,6 +180,9 @@ def test_allocation_does_not_fail_with_allocation_below_budget(alice, bob, conte
     )
     request = build_request(alice, allocations)
 
-    assert core.verify_user_allocation_request(
-        context, request, alice.address, 0, 10**18, [bob.address]
+    assert (
+        core.verify_user_allocation_request(
+            context, request, alice.address, 0, 10**18, [bob.address]
+        )
+        is None
     )

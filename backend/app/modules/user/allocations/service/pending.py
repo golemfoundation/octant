@@ -1,16 +1,15 @@
 from typing import List, Tuple, Protocol, runtime_checkable
 
-from app.modules.common.verifier import Verifier
-from app.pydantic import Model
-
 from app import exceptions
-from app.extensions import db
 from app.context.manager import Context
 from app.engine.projects.rewards import ProjectRewardDTO
+from app.extensions import db
 from app.infrastructure import database
+from app.modules.common.verifier import Verifier
 from app.modules.dto import AllocationDTO, UserAllocationRequestPayload
 from app.modules.user.allocations import core
 from app.modules.user.allocations.service.saved import SavedUserAllocations
+from app.pydantic import Model
 
 
 @runtime_checkable
@@ -36,9 +35,12 @@ class PendingUserAllocationsVerifier(Verifier, Model):
     user_budgets: UserBudgetProtocol
     patrons_mode: GetPatronsAddressesProtocol
 
-    def verify_logic(self, context: Context, **kwargs):
-        user_address, payload = kwargs["user_address"], kwargs["payload"]
-        expected_nonce = self.get_user_next_nonce(user_address)
+    def _verify_logic(self, context: Context, **kwargs):
+        user_address, payload, expected_nonce = (
+            kwargs["user_address"],
+            kwargs["payload"],
+            kwargs["expected_nonce"],
+        )
         user_budget = self.user_budgets.get_budget(context, user_address)
         patrons = self.patrons_mode.get_all_patrons_addresses(context)
 
@@ -46,9 +48,9 @@ class PendingUserAllocationsVerifier(Verifier, Model):
             context, payload, user_address, expected_nonce, user_budget, patrons
         )
 
-    def verify_signature(self, _: Context, **kwargs):
-        user_address, signature = kwargs["user_address"], kwargs["consent_signature"]
+    def _verify_signature(self, _: Context, **kwargs):
         # TODO: implement verify_signature
+        ...
 
 
 class PendingUserAllocations(SavedUserAllocations, Model):
@@ -62,7 +64,11 @@ class PendingUserAllocations(SavedUserAllocations, Model):
 
         expected_nonce = self.get_user_next_nonce(user_address)
         self.verifier.verify(
-            context, user_address=user_address, payload=payload, **kwargs
+            context,
+            user_address=user_address,
+            payload=payload,
+            expected_nonce=expected_nonce,
+            **kwargs
         )
 
         self.revoke_previous_allocation(context, user_address)

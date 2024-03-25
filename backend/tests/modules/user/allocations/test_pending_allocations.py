@@ -22,6 +22,10 @@ from tests.helpers.allocations import (
     deserialize_allocations,
     make_user_allocation,
 )
+from app.modules.user.allocations.service.pending import (
+    PendingUserAllocations,
+    PendingUserAllocationsVerifier,
+)
 from tests.helpers.constants import MATCHED_REWARDS
 from tests.helpers.context import get_context
 from tests.helpers import make_user_allocation
@@ -57,10 +61,13 @@ def before(
 
 @pytest.fixture()
 def service(mock_octant_rewards, mock_patron_mode, mock_user_budgets):
-    return PendingUserAllocations(
-        octant_rewards=mock_octant_rewards,
+    verifier = PendingUserAllocationsVerifier(
         user_budgets=mock_user_budgets,
         patrons_mode=mock_patron_mode,
+    )
+    return PendingUserAllocations(
+        octant_rewards=mock_octant_rewards,
+        verifier=verifier,
     )
 
 
