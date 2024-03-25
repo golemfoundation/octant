@@ -15,7 +15,7 @@ ns = Namespace(
 )
 api.add_namespace(ns)
 
-pending_signature = api.model(
+pending_signature_response = api.model(
     "PendingSignature",
     {
         "message": fields.String(description="The message to be signed."),
@@ -24,9 +24,17 @@ pending_signature = api.model(
 )
 
 
-@ns.route("/pending/<str:user_address>/type/<str:op_type>")
+pending_signature_request = api.model(
+    "PendingSignature",
+    {
+        "message": fields.String(description="The message to be signed."),
+    },
+)
+
+
+@ns.route("/pending/<string:user_address>/type/<string:op_type>")
 class MultisigPendingSignature(OctantResource):
-    @ns.marshal_with(pending_signature)
+    @ns.marshal_with(pending_signature_response)
     @ns.response(200, "Success")
     @ns.doc(
         description="Retrieve last pending multisig signature for a specific user and type."
@@ -40,7 +48,7 @@ class MultisigPendingSignature(OctantResource):
 
         return response
 
-    @ns.expect(pending_signature)
+    @ns.expect(pending_signature_request)
     @ns.response(201, "Success")
     def post(self, user_address: str, op_type: str):
         app.logger.debug(
