@@ -1,3 +1,6 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import chaiColors from 'chai-colors';
+
 import { visitWithLoader, mockCoinPricesServer, navigateWithCheck } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
@@ -7,10 +10,15 @@ import {
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
+import { formatUnitsBigInt } from 'src/utils/formatUnitsBigInt';
+
+chai.use(chaiColors);
 
 let wasEpochMoved = false;
+const budget = 10000000000;
+const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
+Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
   describe(
     `allocation (allocation window open): ${device}`,
     { viewportHeight, viewportWidth },
@@ -31,6 +39,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         localStorage.setItem(IS_ONBOARDING_DONE, 'true');
         localStorage.setItem(ALLOCATION_ITEMS_KEY, '[]');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
+        cy.intercept('GET', '/rewards/budget/*/epoch/*', { body: { budget } });
 
         cy.get('[data-test^=ProjectsView__ProjectsListItem]')
           .eq(0)
@@ -53,7 +62,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             QUERY_KEYS.isDecisionWindowOpen,
           );
 
-          if (!isDecisionWindowOpen) {
+          if (isDecisionWindowOpen) {
             return;
           }
 
@@ -75,7 +84,33 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       });
 
       it('AllocationItem shows all the elements', () => {
-        expect(true).to.be.true;
+        const allocationItemFirst = cy.get('[data-test=AllocationItem]').eq(0);
+        allocationItemFirst.find('[data-test=AllocationItem__name]').then($allocationItemName => {
+          cy.get('@projectName').then(projectName => {
+            expect(projectName).to.eq($allocationItemName.text());
+          });
+        });
+        allocationItemFirst.find('[data-test=AllocationItem__imageProfile]').should('be.visible');
+        allocationItemFirst.find('[data-test=AllocationItem__InputText]').should('be.enabled');
+      });
+
+      it('AllocationItem__InputText correctly changes background color on focus', () => {
+        const allocationItemFirst = cy.get('[data-test=AllocationItem]').eq(0);
+        allocationItemFirst.find('[data-test=AllocationItem__InputText]').focus();
+        allocationItemFirst
+          .find('[data-test=AllocationItem__InputText]')
+          .should('have.css', 'background-color')
+          .and('be.colored', '#f1faf8');
+      });
+
+      it('AllocationItem__InputText correctly changes background color and shakes on error', () => {
+        const allocationItemFirst = cy.get('[data-test=AllocationItem]').eq(0);
+        allocationItemFirst.find('[data-test=AllocationItem__InputText__suffix]').contains('GWEI');
+        allocationItemFirst.find('[data-test=AllocationItem__InputText]').type(budgetToBig);
+        allocationItemFirst
+          .find('[data-test=AllocationItem__InputText]')
+          .should('have.css', 'background-color')
+          .and('be.colored', '#ff6157');
       });
     },
   );

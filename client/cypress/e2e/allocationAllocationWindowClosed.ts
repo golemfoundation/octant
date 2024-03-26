@@ -61,7 +61,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             expect(projectName).to.eq($allocationItemName.text());
           });
         });
-        allocationItemFirst.find('[data-test=AllocationItem__imageProfile]').should('be.visile');
+        allocationItemFirst.find('[data-test=AllocationItem__imageProfile]').should('be.visible');
         allocationItemFirst
           .find('[data-test=AllocationItemRewards')
           .contains(isDesktop ? 'Threshold data unavailable' : 'No threshold data');

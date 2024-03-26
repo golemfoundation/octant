@@ -98,6 +98,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
                   !!error && styles.isError,
                   suffixClassName,
                 )}
+                data-test={`${dataTest}__suffix`}
               >
                 {suffix}
               </div>
