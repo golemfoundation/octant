@@ -48,6 +48,9 @@ class PendingUserAllocations(SavedUserAllocations, Model):
         )
 
         self.revoke_previous_allocation(context, user_address)
+
+        user = database.user.get_by_address(user_address)
+        user.allocation_nonce = expected_nonce
         database.allocations.store_allocation_request(
             user_address, context.epoch_details.epoch_num, payload, **kwargs
         )

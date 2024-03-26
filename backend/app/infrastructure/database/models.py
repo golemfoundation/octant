@@ -20,6 +20,11 @@ class User(BaseModel):
 
     id = Column(db.Integer, primary_key=True)
     address = Column(db.String(42), unique=True, nullable=False)
+    allocation_nonce = Column(
+        db.Integer,
+        nullable=True,
+        comment="Allocations signing nonce, last used value. Range [0..inf)",
+    )
 
     def get_effective_deposit(self, epoch: int) -> Optional[int]:
         effective_deposit = None
