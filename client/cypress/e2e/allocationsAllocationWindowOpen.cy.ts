@@ -54,6 +54,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           .find('[data-test=ProjectsListItem__ButtonAddToAllocate]')
           .click();
         navigateWithCheck(ROOT_ROUTES.allocation.absolute);
+        cy.get('[data-test=AllocationItemSkeleton]').should('not.exist');
       });
 
       it('allocation window is open, when it is not, move time', () => {
@@ -96,7 +97,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
 
       it('AllocationItem__InputText correctly changes background color on focus', () => {
         const allocationItemFirst = cy.get('[data-test=AllocationItem]').eq(0);
-        allocationItemFirst.find('[data-test=AllocationItem__InputText]').focus();
+        allocationItemFirst.find('[data-test=AllocationItem__InputText]').focused();
         allocationItemFirst
           .find('[data-test=AllocationItem__InputText]')
           .should('have.css', 'background-color')
