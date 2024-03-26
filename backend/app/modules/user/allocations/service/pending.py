@@ -4,11 +4,9 @@ from app.pydantic import Model
 from app import exceptions
 from app.extensions import db
 from app.context.manager import Context
-from app.context.epoch_state import EpochState
 from app.engine.projects.rewards import ProjectRewardDTO
 from app.infrastructure import database
 from app.modules.dto import AllocationDTO, UserAllocationRequestPayload
-from app.modules.modules_factory.protocols import UserPatronMode
 from app.modules.user.allocations import core
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 
@@ -25,10 +23,16 @@ class UserBudgetProtocol(Protocol):
         ...
 
 
+@runtime_checkable
+class GetPatronsAddressesProtocol(Protocol):
+    def get_all_patrons_addresses(self, context: Context) -> List[str]:
+        ...
+
+
 class PendingUserAllocations(SavedUserAllocations, Model):
     octant_rewards: OctantRewards
     user_budgets: UserBudgetProtocol
-    patrons_mode: UserPatronMode
+    patrons_mode: GetPatronsAddressesProtocol
 
     def allocate(
         self, context: Context, payload: UserAllocationRequestPayload, **kwargs
@@ -75,9 +79,6 @@ class PendingUserAllocations(SavedUserAllocations, Model):
         )
 
     def revoke_previous_allocation(self, context: Context, user_address: str):
-        if context.epoch_state is not EpochState.PENDING:
-            raise exceptions.NotInDecisionWindow
-
         user = database.user.get_by_address(user_address)
         if user is None:
             raise exceptions.UserNotFound

@@ -79,7 +79,7 @@ def _verify_epoch_state(epoch_state: EpochState):
         raise exceptions.NotInDecisionWindow
 
 
-def _verify_nonce(nonce, expected_nonce):
+def _verify_nonce(nonce: int, expected_nonce: int):
     # if expected_nonce is not None and request.payload.nonce != expected_nonce:
     if nonce != expected_nonce:
         raise exceptions.WrongAllocationsNonce(nonce, expected_nonce)

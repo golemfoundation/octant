@@ -91,8 +91,6 @@ def simulate_allocation(
 
 
 def revoke_previous_allocation(user_address: str):
-    context = None
-
     try:
         context = state_context(EpochState.PENDING)
     except InvalidEpoch:

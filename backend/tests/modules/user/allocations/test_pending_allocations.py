@@ -1,6 +1,5 @@
 import pytest
 
-from app import exceptions
 from app.engine.projects.rewards import ProjectRewardDTO
 from app.infrastructure import database
 from app.context.epoch_state import EpochState
@@ -71,20 +70,3 @@ def test_revoke_previous_allocation(service, mock_users_db):
     assert service.get_user_allocation_sum(context, user1.address) == 100_000000000
     service.revoke_previous_allocation(context, user1.address)
     assert service.get_user_allocation_sum(context, user1.address) == 0
-
-
-def test_revoke_previous_allocation_fails_outside_decision_window(
-    service, mock_users_db
-):
-    user1, _, _ = mock_users_db
-
-    for state in [
-        EpochState.FUTURE,
-        EpochState.CURRENT,
-        EpochState.PRE_PENDING,
-        EpochState.FINALIZING,
-        EpochState.FINALIZED,
-    ]:
-        context = get_context(epoch_state=state)
-        with pytest.raises(exceptions.NotInDecisionWindow):
-            service.revoke_previous_allocation(context, user1.address)

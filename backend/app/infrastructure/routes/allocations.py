@@ -300,7 +300,7 @@ class ProposalDonors(OctantResource):
             f"Getting donors for proposal {proposal_address} in epoch {epoch}"
         )
         donors = [
-            {"address": w.donor, "amount": str(w.amount)}
+            {"address": w.donor, "amount": w.amount}
             for w in controller.get_all_donations_by_project(proposal_address, epoch)
         ]
         app.logger.debug(f"Proposal donors {donors}")

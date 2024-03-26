@@ -153,7 +153,7 @@ def get_user_alloc_sum_by_epoch(epoch: int, user_address: str) -> int:
 
 
 def store_allocation_request(
-    user_address: int, epoch_num: int, request: UserAllocationRequestPayload, **kwargs
+    user_address: str, epoch_num: int, request: UserAllocationRequestPayload, **kwargs
 ):
     now = datetime.utcnow()
 
