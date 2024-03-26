@@ -252,7 +252,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     it('renders every time page is refreshed when "Always show Allocate onboarding" option is checked', () => {
       cy.get('[data-test=ModalOnboarding__Button]').click();
       navigateWithCheck(ROOT_ROUTES.settings.absolute);
-      cy.get('[data-test=InputToggle__AlwaysShowOnboarding]').check().should('be.checked');
+      cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').check().should('be.checked');
       cy.reload();
       cy.get('[data-test=ModalOnboarding]').should('be.visible');
     });
@@ -260,7 +260,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     it('renders only once when "Always show Allocate onboarding" option is not checked', () => {
       cy.get('[data-test=ModalOnboarding__Button]').click();
       navigateWithCheck(ROOT_ROUTES.settings.absolute);
-      cy.get('[data-test=InputToggle__AlwaysShowOnboarding]').should('not.be.checked');
+      cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').should('not.be.checked');
       cy.reload();
       cy.get('[data-test=ModalOnboarding]').should('not.exist');
     });

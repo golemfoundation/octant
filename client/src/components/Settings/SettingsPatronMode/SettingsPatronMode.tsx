@@ -43,7 +43,7 @@ const SettingsPatronMode: FC<SettingsPatronModeProps> = ({ onPatronModeStatusCha
               i18nKey={`${keyPrefix}.thirdParagraph`}
             />
           </span>
-          <span className={styles.paragraph} data-test="PatronMode__fourthParagraph">
+          <span className={styles.paragraph} data-test="SettingsPatronMode__fourthParagraph">
             <Trans
               i18nKey={
                 isPatronModeEnabled
