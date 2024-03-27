@@ -1,16 +1,16 @@
 """add multisig signatures table
 
-Revision ID: 8d20fabc0926
-Revises: 1f89a0fae4ae
-Create Date: 2024-03-25 14:46:00.087064
+Revision ID: f923075e5877
+Revises: 7bb6835486a5
+Create Date: 2024-03-27 14:30:56.869637
 
 """
 from alembic import op
 import sqlalchemy as sa
 
 
-revision = "8d20fabc0926"
-down_revision = "1f89a0fae4ae"
+revision = "f923075e5877"
+down_revision = "7bb6835486a5"
 branch_labels = None
 depends_on = None
 
