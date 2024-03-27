@@ -1,5 +1,6 @@
 from app.context.epoch_state import EpochState
 from app.context.manager import state_context, Context
+from app.infrastructure.database.models import MultisigSignatures
 from app.modules.dto import SignatureOpType
 from app.modules.multisig_signatures.dto import Signature
 from app.modules.registry import get_services
@@ -23,6 +24,20 @@ def save_pending_signature(
     return service.save_pending_signature(
         context, user_address, op_type, signature_data
     )
+
+
+def approve_pending_signatures() -> list[Signature]:
+    allocation_approvals = _approve(SignatureOpType.ALLOCATION)
+    tos_approvals = _approve(SignatureOpType.TOS)
+
+    return allocation_approvals + tos_approvals
+
+
+def _approve(op_type: SignatureOpType) -> list[Signature]:
+    context = _get_context(op_type)
+    service = get_services(context.epoch_state).multisig_signatures_service
+
+    return service.approve_pending_signatures(context)
 
 
 def _get_context(op_type: SignatureOpType) -> Context:

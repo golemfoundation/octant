@@ -1,20 +1,17 @@
 import pytest
 
 from app import exceptions
-from app.modules.user.allocations.controller import allocate
-from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
-
 from app.legacy.controllers.rewards import (
     get_allocation_threshold,
 )
+from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
+from app.modules.user.allocations import controller as new_controller
+from app.modules.user.allocations.controller import allocate
 from tests.conftest import (
     MOCK_EPOCHS,
     MOCK_PROPOSALS,
 )
 from tests.helpers.allocations import create_payload, deserialize_allocations
-
-
-from app.modules.user.allocations import controller as new_controller
 
 
 def get_allocation_nonce(user_address):
