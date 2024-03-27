@@ -11,11 +11,9 @@ from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, Exception
 from app.modules.dto import ProposalDonationDTO
 from app.modules.user.allocations import controller
 
-from app.legacy.controllers.allocations import allocate
 from app.legacy.controllers.rewards import (
     get_allocation_threshold,
 )
-from app.legacy.core.allocations import AllocationRequest
 from app.modules.project_rewards.controller import get_estimated_project_rewards
 
 
@@ -39,12 +37,11 @@ def handle_disconnect():
 @socketio.on("allocate")
 def handle_allocate(msg):
     msg = json.loads(msg)
-    payload, signature = msg["payload"], msg["signature"]
     is_manually_edited = msg["isManuallyEdited"] if "isManuallyEdited" in msg else None
-    app.logger.info(f"User allocation payload: {payload}, signature: {signature}")
-    user_address = allocate(
-        AllocationRequest(payload, signature, override_existing_allocations=True),
-        is_manually_edited,
+    app.logger.info(f"User allocation payload: {msg}")
+    user_address = controller.allocate(
+        msg,
+        is_manually_edited=is_manually_edited,
     )
     app.logger.info(f"User: {user_address} allocated successfully")
 
