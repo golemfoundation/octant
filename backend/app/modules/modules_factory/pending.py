@@ -13,6 +13,8 @@ from app.modules.modules_factory.protocols import (
     EstimatedProjectRewardsService,
     OctantRewards,
     DonorsAddresses,
+    AllocationManipulationProtocol,
+    GetUserAllocationsProtocol,
 )
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
 from app.modules.snapshots.finalized.service.simulated import (
@@ -36,7 +38,13 @@ class PendingUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protoco
     pass
 
 
-class PendingUserAllocationsProtocol(DonorsAddresses, SimulateAllocation, Protocol):
+class PendingUserAllocationsProtocol(
+    DonorsAddresses,
+    AllocationManipulationProtocol,
+    GetUserAllocationsProtocol,
+    SimulateAllocation,
+    Protocol,
+):
     pass
 
 
@@ -55,8 +63,12 @@ class PendingServices(Model):
     def create() -> "PendingServices":
         events_based_patron_mode = EventsBasedUserPatronMode()
         octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
-        saved_user_allocations = PendingUserAllocations(octant_rewards=octant_rewards)
         saved_user_budgets = SavedUserBudgets()
+        saved_user_allocations = PendingUserAllocations(
+            user_budgets=saved_user_budgets,
+            patrons_mode=events_based_patron_mode,
+            octant_rewards=octant_rewards,
+        )
         user_rewards = CalculatedUserRewards(
             user_budgets=saved_user_budgets,
             patrons_mode=events_based_patron_mode,

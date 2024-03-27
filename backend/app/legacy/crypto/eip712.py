@@ -6,6 +6,7 @@ from eth_account.signers.local import LocalAccount
 from flask import current_app as app
 
 from app.extensions import w3
+from app.modules.dto import UserAllocationPayload
 
 
 def build_domain():
@@ -14,6 +15,16 @@ def build_domain():
         "version": "1.0.0",
         "chainId": app.config["CHAIN_ID"],
     }
+
+
+def build_allocations_eip712_structure(payload: UserAllocationPayload):
+    message = {}
+    message["allocations"] = [
+        {"proposalAddress": a.proposal_address, "amount": a.amount}
+        for a in payload.allocations
+    ]
+    message["nonce"] = payload.nonce
+    return build_allocations_eip712_data(message)
 
 
 def build_allocations_eip712_data(message: dict) -> dict:

@@ -1,4 +1,4 @@
-from app.modules.dto import (
+from app.modules.history.dto import (
     OpType,
     LockItem,
     AllocationItem,

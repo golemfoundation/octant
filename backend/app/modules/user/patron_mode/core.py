@@ -1,6 +1,6 @@
 from app.context.epoch_details import EpochDetails
 from app.modules.common.time import Timestamp
-from app.modules.dto import PatronDonationItem
+from app.modules.history.dto import PatronDonationItem
 
 
 def filter_and_reverse_epochs(

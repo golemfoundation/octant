@@ -4,12 +4,10 @@ import json
 import os
 import time
 import urllib.request
-from random import randint
 from unittest.mock import MagicMock, Mock
 
 import gql
 import pytest
-from eth_account import Account
 from flask import g as request_context
 from flask.testing import FlaskClient
 from web3 import Web3
@@ -22,11 +20,9 @@ from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.proposals import Proposals
 from app.infrastructure.contracts.vault import Vault
-from app.legacy.controllers.allocations import allocate, deserialize_payload
-from app.legacy.core.allocations import Allocation, AllocationRequest
 from app.legacy.crypto.account import Account as CryptoAccount
 from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
-from app.modules.dto import AccountFundsDTO
+from app.modules.dto import AccountFundsDTO, AllocationItem
 from app.settings import DevConfig, TestConfig
 from tests.helpers.constants import (
     ALICE,
@@ -54,6 +50,7 @@ from tests.helpers.constants import (
     MATCHED_REWARDS_AFTER_OVERHAUL,
     NO_PATRONS_REWARDS,
 )
+from tests.helpers import make_user_allocation
 from tests.helpers.context import get_context
 from tests.helpers.gql_client import MockGQLClient
 from tests.helpers.mocked_epoch_details import EPOCH_EVENTS
@@ -414,7 +411,6 @@ def mock_epoch_details(mocker, graphql_client):
 
 @pytest.fixture(scope="function")
 def patch_epochs(monkeypatch):
-    monkeypatch.setattr("app.legacy.controllers.allocations.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.controllers.snapshots.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.controllers.rewards.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.core.proposals.epochs", MOCK_EPOCHS)
@@ -437,7 +433,6 @@ def patch_epochs(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_proposals(monkeypatch, proposal_accounts):
-    monkeypatch.setattr("app.legacy.core.allocations.proposals", MOCK_PROPOSALS)
     monkeypatch.setattr("app.legacy.core.proposals.proposals", MOCK_PROPOSALS)
     monkeypatch.setattr("app.context.projects.proposals", MOCK_PROPOSALS)
 
@@ -494,7 +489,7 @@ def patch_eth_get_balance(monkeypatch):
 def patch_has_pending_epoch_snapshot(monkeypatch):
     (
         monkeypatch.setattr(
-            "app.legacy.core.allocations.has_pending_epoch_snapshot",
+            "app.context.epoch_state._has_pending_epoch_snapshot",
             MOCK_HAS_PENDING_SNAPSHOT,
         )
     )
@@ -514,7 +509,10 @@ def patch_last_finalized_snapshot(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_user_budget(monkeypatch):
-    monkeypatch.setattr("app.legacy.core.allocations.get_budget", MOCK_GET_USER_BUDGET)
+    monkeypatch.setattr(
+        "app.modules.user.budgets.service.saved.SavedUserBudgets.get_budget",
+        MOCK_GET_USER_BUDGET,
+    )
     MOCK_GET_USER_BUDGET.return_value = USER_MOCKED_BUDGET
 
 
@@ -598,45 +596,51 @@ def mock_finalized_epoch_snapshot_db(app, user_accounts):
 
 
 @pytest.fixture(scope="function")
-def mock_allocations_db(app, user_accounts, proposal_accounts):
-    user1 = database.user.get_or_add_user(user_accounts[0].address)
-    user2 = database.user.get_or_add_user(user_accounts[1].address)
-    db.session.commit()
+def mock_allocations_db(app, mock_users_db, proposal_accounts):
+    prev_epoch_context = get_context(MOCKED_PENDING_EPOCH_NO - 1)
+    pending_epoch_context = get_context(MOCKED_PENDING_EPOCH_NO)
+    user1, user2, _ = mock_users_db
 
     user1_allocations = [
-        Allocation(proposal_accounts[0].address, 10 * 10**18),
-        Allocation(proposal_accounts[1].address, 5 * 10**18),
-        Allocation(proposal_accounts[2].address, 300 * 10**18),
+        AllocationItem(proposal_accounts[0].address, 10 * 10**18),
+        AllocationItem(proposal_accounts[1].address, 5 * 10**18),
+        AllocationItem(proposal_accounts[2].address, 300 * 10**18),
     ]
 
     user1_allocations_prev_epoch = [
-        Allocation(proposal_accounts[0].address, 101 * 10**18),
-        Allocation(proposal_accounts[1].address, 51 * 10**18),
-        Allocation(proposal_accounts[2].address, 3001 * 10**18),
+        AllocationItem(proposal_accounts[0].address, 101 * 10**18),
+        AllocationItem(proposal_accounts[1].address, 51 * 10**18),
+        AllocationItem(proposal_accounts[2].address, 3001 * 10**18),
     ]
 
     user2_allocations = [
-        Allocation(proposal_accounts[1].address, 1050 * 10**18),
-        Allocation(proposal_accounts[3].address, 500 * 10**18),
+        AllocationItem(proposal_accounts[1].address, 1050 * 10**18),
+        AllocationItem(proposal_accounts[3].address, 500 * 10**18),
     ]
 
     user2_allocations_prev_epoch = [
-        Allocation(proposal_accounts[1].address, 10501 * 10**18),
-        Allocation(proposal_accounts[3].address, 5001 * 10**18),
+        AllocationItem(proposal_accounts[1].address, 10501 * 10**18),
+        AllocationItem(proposal_accounts[3].address, 5001 * 10**18),
     ]
 
-    database.allocations.add_all(
-        MOCKED_PENDING_EPOCH_NO - 1, user1.id, 0, user1_allocations_prev_epoch
+    make_user_allocation(
+        prev_epoch_context,
+        user1,
+        nonce=0,
+        allocation_items=user1_allocations_prev_epoch,
     )
-    database.allocations.add_all(
-        MOCKED_PENDING_EPOCH_NO - 1, user2.id, 0, user2_allocations_prev_epoch
+    make_user_allocation(
+        prev_epoch_context,
+        user2,
+        nonce=0,
+        allocation_items=user2_allocations_prev_epoch,
     )
 
-    database.allocations.add_all(
-        MOCKED_PENDING_EPOCH_NO, user1.id, 1, user1_allocations
+    make_user_allocation(
+        pending_epoch_context, user1, nonce=1, allocation_items=user1_allocations
     )
-    database.allocations.add_all(
-        MOCKED_PENDING_EPOCH_NO, user2.id, 1, user2_allocations
+    make_user_allocation(
+        pending_epoch_context, user2, nonce=1, allocation_items=user2_allocations
     )
 
     db.session.commit()
@@ -657,6 +661,14 @@ def mock_staking_proceeds():
     staking_proceeds_service_mock.get_staking_proceeds.return_value = ETH_PROCEEDS
 
     return staking_proceeds_service_mock
+
+
+@pytest.fixture(scope="function")
+def mock_user_nonce():
+    user_nonce_service_mock = Mock()
+    user_nonce_service_mock.get_next_user_nonce.return_value = 0
+
+    return user_nonce_service_mock
 
 
 @pytest.fixture(scope="function")
@@ -745,35 +757,6 @@ def mock_user_rewards(alice, bob):
     )
 
     return user_rewards_service_mock
-
-
-def allocate_user_rewards(
-    user_account: Account, proposal_account, allocation_amount, nonce: int = 0
-):
-    payload = create_payload([proposal_account], [allocation_amount], nonce)
-    signature = sign(user_account, build_allocations_eip712_data(payload))
-    request = AllocationRequest(payload, signature, override_existing_allocations=False)
-
-    allocate(request)
-
-
-def create_payload(proposals, amounts: list[int] | None, nonce: int = 0):
-    if amounts is None:
-        amounts = [randint(1 * 10**18, 1000 * 10**18) for _ in proposals]
-
-    allocations = [
-        {
-            "proposalAddress": proposal.address,
-            "amount": str(amount),
-        }
-        for proposal, amount in zip(proposals, amounts)
-    ]
-
-    return {"allocations": allocations, "nonce": nonce}
-
-
-def deserialize_allocations(payload) -> list[Allocation]:
-    return deserialize_payload(payload)[1]
 
 
 def _split_deposit_events(deposit_events):

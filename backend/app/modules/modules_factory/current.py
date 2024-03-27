@@ -29,6 +29,7 @@ class CurrentUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protoco
 
 
 class CurrentServices(Model):
+    user_allocations_service: SavedUserAllocations
     user_deposits_service: CurrentUserDeposits
     octant_rewards_service: OctantRewards
     history_service: HistoryService
@@ -70,6 +71,7 @@ class CurrentServices(Model):
             patron_donations=patron_donations,
         )
         return CurrentServices(
+            user_allocations_service=user_allocations,
             user_deposits_service=user_deposits,
             octant_rewards_service=CalculatedOctantRewards(
                 staking_proceeds=EstimatedStakingProceeds(),
