@@ -1,7 +1,13 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import chaiColors from 'chai-colors';
 
-import { visitWithLoader, mockCoinPricesServer, navigateWithCheck, connectWallet } from 'cypress/utils/e2e';
+import {
+  visitWithLoader,
+  mockCoinPricesServer,
+  navigateWithCheck,
+  connectWallet,
+  moveEpoch
+} from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
@@ -73,7 +79,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
             const currentEpochBefore = Number(
               win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
             );
-            await win.mutateAsyncMoveEpoch('decisionWindowOpen');
+
+            await moveEpoch(win, 'decisionWindowClosed');
+
             const currentEpochAfter = Number(
               win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
             );

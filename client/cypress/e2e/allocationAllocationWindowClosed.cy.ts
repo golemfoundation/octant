@@ -1,4 +1,4 @@
-import { visitWithLoader, mockCoinPricesServer, navigateWithCheck } from 'cypress/utils/e2e';
+import { visitWithLoader, mockCoinPricesServer, navigateWithCheck, moveEpoch } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
@@ -59,7 +59,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
 
           // Move time only once, for the first device.
           if (!wasTimeMoved) {
-            await win.mutateAsyncMoveEpoch('decisionWindowClosed');
+            await moveEpoch(win, 'decisionWindowClosed');
             const isDecisionWindowOpenAfter = Number(
               win.clientReactQuery.getQueryData(QUERY_KEYS.isDecisionWindowOpen),
             );

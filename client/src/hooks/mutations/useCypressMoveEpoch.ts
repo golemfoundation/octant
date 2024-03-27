@@ -5,7 +5,9 @@ import { QUERY_KEYS } from 'api/queryKeys';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
 import getCurrentEpochAndAllocationTimestamps from 'utils/getCurrentEpochAndAllocationTimestamps';
 
-export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknown, 'decisionWindowOpen' | 'decisionWindowClosed'> {
+export type MoveTo = 'decisionWindowOpen' | 'decisionWindowClosed';
+
+export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknown, MoveTo> {
   const queryClient = useQueryClient();
   const wagmiConfig = useConfig();
 
