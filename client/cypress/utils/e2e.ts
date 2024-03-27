@@ -53,12 +53,12 @@ export const connectWallet = (
 
 export const moveEpoch = async (cypressWindow: Cypress.AUTWindow, moveTo: MoveTo): Promise<void> => {
   await cypressWindow.mutateAsyncMoveEpoch(moveTo);
-  // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
-  cy.wait(2000);
+  // Waiting 5s is a way to prevent the effects of slowing down the e2e environment (data update).
+  cy.wait(5000);
   // Manually taking a pending snapshot after the epoch shift ensures that the snapshot is taken. Passing epoch multiple times without manually triggering pending snapshot in a short period of time may cause the e2e environment to fail.
   await axios.post(`${env.serverEndpoint}snapshots/pending`);
-  // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
-  cy.wait(2000);
+  // Waiting 5s is a way to prevent the effects of slowing down the e2e environment (data update).
+  cy.wait(5000);
   // reload is needed to get updated data in the app
   cy.reload();
 };
