@@ -25,6 +25,7 @@ from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
 from app.modules.common.verifier import Verifier
 from app.modules.dto import AccountFundsDTO, AllocationItem
 from app.settings import DevConfig, TestConfig
+from tests.helpers import make_user_allocation
 from tests.helpers.constants import (
     ALICE,
     BOB,
@@ -51,7 +52,6 @@ from tests.helpers.constants import (
     MATCHED_REWARDS_AFTER_OVERHAUL,
     NO_PATRONS_REWARDS,
 )
-from tests.helpers import make_user_allocation
 from tests.helpers.context import get_context
 from tests.helpers.gql_client import MockGQLClient
 from tests.helpers.mocked_epoch_details import EPOCH_EVENTS
@@ -460,6 +460,9 @@ def patch_vault(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_is_contract(monkeypatch):
+    monkeypatch.setattr(
+        "app.legacy.crypto.eth_sign.signature.is_contract", MOCK_IS_CONTRACT
+    )
     monkeypatch.setattr("app.modules.common.signature.is_contract", MOCK_IS_CONTRACT)
     MOCK_IS_CONTRACT.return_value = False
 
