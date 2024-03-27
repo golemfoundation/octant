@@ -3,8 +3,15 @@ from typing import List, Tuple, Protocol, runtime_checkable
 from app import exceptions
 from app.context.manager import Context
 from app.engine.projects.rewards import ProjectRewardDTO
+from app.exceptions import InvalidSignature
 from app.extensions import db
 from app.infrastructure import database
+from app.modules.common.signature import (
+    verify_signed_message,
+    encode_for_signing,
+    EncodingStandardFor,
+)
+from app.legacy.crypto.eip712 import build_allocations_eip712_structure
 from app.modules.common.verifier import Verifier
 from app.modules.dto import AllocationDTO, UserAllocationRequestPayload
 from app.modules.user.allocations import core
@@ -48,8 +55,11 @@ class PendingUserAllocationsVerifier(Verifier, Model):
         )
 
     def _verify_signature(self, _: Context, **kwargs):
-        # TODO: implement verify_signature
-        ...
+        user_address, signature = kwargs["user_address"], kwargs["payload"].signature
+        eip712_encoded = build_allocations_eip712_structure(kwargs["payload"].payload)
+        encoded_msg = encode_for_signing(EncodingStandardFor.DATA, eip712_encoded)
+        if not verify_signed_message(user_address, encoded_msg, signature):
+            raise InvalidSignature()
 
 
 class PendingUserAllocations(SavedUserAllocations, Model):
