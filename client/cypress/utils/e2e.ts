@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
 import env from 'src/env';
-import { MoveTo } from 'src/hooks/mutations/useCypressMoveEpoch.ts';
+import { MoveTo } from 'src/hooks/mutations/useCypressMoveEpoch';
 
 import Chainable = Cypress.Chainable;
 
