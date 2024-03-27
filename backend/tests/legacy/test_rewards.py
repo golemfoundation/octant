@@ -1,26 +1,30 @@
 import pytest
 
 from app import exceptions
-from app.legacy.controllers.allocations import allocate
+from app.modules.user.allocations.controller import allocate
+from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
+
 from app.legacy.controllers.rewards import (
     get_allocation_threshold,
 )
-from app.legacy.core.allocations import AllocationRequest
 from tests.conftest import (
     MOCK_EPOCHS,
-    deserialize_allocations,
     MOCK_PROPOSALS,
 )
-from tests.legacy.test_allocations import (
-    build_allocations_eip712_data,
-    create_payload,
-    sign,
-)
+from tests.helpers.allocations import create_payload, deserialize_allocations
+
+
+from app.modules.user.allocations import controller as new_controller
+
+
+def get_allocation_nonce(user_address):
+    return new_controller.get_user_next_nonce(user_address)
 
 
 @pytest.fixture(autouse=True)
 def before(
     proposal_accounts,
+    mock_epoch_details,
     patch_epochs,
     patch_proposals,
     patch_has_pending_epoch_snapshot,
@@ -57,12 +61,8 @@ def _allocate_random_individual_rewards(user_accounts, proposal_accounts) -> int
     signature2 = sign(user_accounts[1], build_allocations_eip712_data(payload2))
 
     # Call allocate method for both users
-    allocate(
-        AllocationRequest(payload1, signature1, override_existing_allocations=True)
-    )
-    allocate(
-        AllocationRequest(payload2, signature2, override_existing_allocations=True)
-    )
+    allocate({"payload": payload1, "signature": signature1})
+    allocate({"payload": payload2, "signature": signature2})
 
     allocations1 = sum([int(a.amount) for a in deserialize_allocations(payload1)])
     allocations2 = sum([int(a.amount) for a in deserialize_allocations(payload2)])

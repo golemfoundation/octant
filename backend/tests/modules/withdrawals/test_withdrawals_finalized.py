@@ -3,7 +3,8 @@ import pytest
 from app import db
 from app.infrastructure import database
 from app.modules.common.time import from_timestamp_s
-from app.modules.dto import WithdrawableEth, WithdrawalStatus, WithdrawalItem, OpType
+from app.modules.dto import WithdrawableEth, WithdrawalStatus
+from app.modules.history.dto import WithdrawalItem, OpType
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from tests.conftest import mock_graphql
 
