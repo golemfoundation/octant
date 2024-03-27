@@ -6,6 +6,8 @@ import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
   ALLOCATION_ITEMS_KEY,
+  IS_ONBOARDING_ALWAYS_VISIBLE,
+  IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import { formatUnitsBigInt } from 'src/utils/formatUnitsBigInt';
@@ -35,6 +37,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         mockCoinPricesServer();
         localStorage.setItem(ALLOCATION_ITEMS_KEY, '[]');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
+        localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
+        localStorage.setItem(IS_ONBOARDING_DONE, 'true');
         connectWallet(true, false);
         cy.intercept('GET', '/rewards/budget/*/epoch/*', { body: { budget } });
 
@@ -109,6 +113,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           .find('[data-test=AllocationItem__InputText]')
           .should('have.css', 'background-color')
           .and('be.colored', '#ff6157');
+        allocationItemFirst
+          .find('[data-test=AllocationItem__InputText]')
+          .invoke('dat', 'iserror').should('be.true');
       });
     },
   );
