@@ -3,13 +3,14 @@ import { useConfig } from 'wagmi';
 
 import { QUERY_KEYS } from 'api/queryKeys';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
+import getCurrentEpochAndAllocationTimestamps from 'utils/getCurrentEpochAndAllocationTimestamps';
 
-export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknown, bigint> {
+export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknown, 'decisionWindowOpen' | 'decisionWindowClosed'> {
   const queryClient = useQueryClient();
   const wagmiConfig = useConfig();
 
   return useMutation({
-    mutationFn: () => {
+    mutationFn: moveTo => {
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve, reject) => {
         if (!window.Cypress) {
@@ -36,42 +37,74 @@ export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknow
           queryKey: QUERY_KEYS.currentEpochEnd,
         });
 
-        const [block, currentEpochEnd, currentEpoch] = await Promise.all([
+        const currentEpochPropsPromise = queryClient.fetchQuery({
+          queryFn: () =>
+            readContractEpochs({
+              functionName: 'getCurrentEpochProps',
+              publicClient: wagmiConfig.publicClient,
+            }),
+          queryKey: QUERY_KEYS.currentEpochProps,
+        });
+
+        const [block, currentEpochEnd, currentEpoch, currentEpochProps] = await Promise.all([
           blockPromise,
           currentEpochEndPromise,
           currentEpochPromise,
+          currentEpochPropsPromise,
         ]);
 
-        if (block === undefined || currentEpoch === undefined || currentEpochEnd === undefined) {
+        if ([block, currentEpoch, currentEpochEnd, currentEpochProps].some(element => element === undefined)) {
           // eslint-disable-next-line prefer-promise-reject-errors
           reject(
             new Error(
-              'useCypressMoveEpoch fetched undefined block or currentEpoch or currentEpochEnd.',
+              'useCypressMoveEpoch fetched undefined block or currentEpoch or currentEpochEnd or currentEpochProps.',
             ),
           );
         }
 
         const blockTimestamp = Number(block.timestamp);
         const currentEpochEndTimestamp = Number(currentEpochEnd);
+        const currentEpochPropsTimestamps = {
+          decisionWindow: Number(currentEpochProps.decisionWindow) * 1000,
+          duration: Number(currentEpochProps.duration) * 1000,
+        }
 
-        const timeToIncrease = currentEpochEndTimestamp - blockTimestamp + 10; // [s]
+        const currentEpochAndAllocationTimestamps = getCurrentEpochAndAllocationTimestamps({ currentEpochEnd: currentEpochEndTimestamp, currentEpochProps: currentEpochPropsTimestamps });
+
+        const timeToIncrease = moveTo === 'decisionWindowOpen'
+          ? currentEpochAndAllocationTimestamps.timeCurrentEpochEnd! - blockTimestamp + 10 // [s]
+          : currentEpochAndAllocationTimestamps.timeCurrentEpochEnd! + currentEpochProps.decisionWindow + 10 // [s]
+
         await wagmiConfig.publicClient.request({
           method: 'evm_increaseTime' as any,
           params: [timeToIncrease] as any,
         });
         await wagmiConfig.publicClient.request({ method: 'evm_mine' as any, params: [] as any });
 
-        const currentEpochAfter = await queryClient.fetchQuery({
-          queryFn: () =>
-            readContractEpochs({
-              functionName: 'getCurrentEpoch',
-              publicClient: wagmiConfig.publicClient,
-            }),
-          queryKey: QUERY_KEYS.currentEpoch,
-        });
+        if (moveTo === 'decisionWindowOpen') {
+          const currentEpochAfter = await queryClient.fetchQuery({
+            queryFn: () =>
+              readContractEpochs({
+                functionName: 'getCurrentEpoch',
+                publicClient: wagmiConfig.publicClient,
+              }),
+            queryKey: QUERY_KEYS.currentEpoch,
+          });
 
-        // isEpochChanged
-        resolve(Number(currentEpoch) + 1 === Number(currentEpochAfter));
+          // isEpochChanged
+          resolve(Number(currentEpoch) + 1 === Number(currentEpochAfter));
+        } else {
+          const isDecisionWindowOpenAfter = await queryClient.fetchQuery({
+            queryFn: () =>
+              readContractEpochs({
+                functionName: 'isDecisionWindowOpen',
+                publicClient: wagmiConfig.publicClient,
+              }),
+            queryKey: QUERY_KEYS.isDecisionWindowOpen,
+          });
+
+          resolve(isDecisionWindowOpenAfter === false);
+        }
       });
     },
   });

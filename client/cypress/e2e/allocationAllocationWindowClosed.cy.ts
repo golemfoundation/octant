@@ -8,6 +8,8 @@ import {
 } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
+let wasTimeMoved = false;
+
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(
     `allocation (allocation window closed): ${device}`,
@@ -45,28 +47,42 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         navigateWithCheck(ROOT_ROUTES.allocation.absolute);
       });
 
-      it('allocation window is closed', () => {
+      it('allocation window is closed, when it is not, move time', () => {
         cy.window().then(async win => {
           const isDecisionWindowOpen = win.clientReactQuery.getQueryData(
             QUERY_KEYS.isDecisionWindowOpen,
           );
-          expect(isDecisionWindowOpen).to.be.false;
+
+          if (!isDecisionWindowOpen) {
+            expect(true).to.be.true;
+          }
+
+          // Move time only once, for the first device.
+          if (!wasTimeMoved) {
+            await win.mutateAsyncMoveEpoch('decisionWindowClosed');
+            const isDecisionWindowOpenAfter = Number(
+              win.clientReactQuery.getQueryData(QUERY_KEYS.isDecisionWindowOpen),
+            );
+            wasTimeMoved = true;
+            expect(isDecisionWindowOpenAfter).to.be.false;
+          } else {
+            expect(true).to.be.true;
+          }
         });
       });
 
       it('AllocationItem shows all the elements', () => {
-        const allocationItemFirst = cy.get('[data-test=AllocationItem]').eq(0);
-        allocationItemFirst.find('[data-test=AllocationItem__name]').then($allocationItemName => {
+        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__name]').then($allocationItemName => {
           cy.get('@projectName').then(projectName => {
             expect(projectName).to.eq($allocationItemName.text());
           });
         });
-        allocationItemFirst.find('[data-test=AllocationItem__imageProfile]').should('be.visible');
-        allocationItemFirst
+        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__imageProfile]').should('be.visible');
+        cy.get('[data-test=AllocationItem]').eq(0)
           .find('[data-test=AllocationItemRewards')
           .contains(isDesktop ? 'Threshold data unavailable' : 'No threshold data');
-        allocationItemFirst.find('[data-test=AllocationItem__InputText]').should('be.disabled');
-        allocationItemFirst.find('[data-test=AllocationItem__InputText__suffix]').contains('ETH');
+        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__InputText]').should('be.disabled');
+        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__InputText__suffix]').contains('ETH');
       });
     },
   );

@@ -14,7 +14,7 @@ import { formatUnitsBigInt } from 'src/utils/formatUnitsBigInt';
 
 chai.use(chaiColors);
 
-let wasEpochMoved = false;
+let wasTimeMoved = false;
 const budget = 10000000000;
 const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
 
@@ -65,19 +65,19 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           );
 
           if (isDecisionWindowOpen) {
-            return;
+            expect(true).to.be.true;
           }
 
           // Move time only once, for the first device.
-          if (!wasEpochMoved) {
+          if (!wasTimeMoved) {
             const currentEpochBefore = Number(
               win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
             );
-            await win.mutateAsyncMoveEpoch();
+            await win.mutateAsyncMoveEpoch('decisionWindowOpen');
             const currentEpochAfter = Number(
               win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
             );
-            wasEpochMoved = true;
+            wasTimeMoved = true;
             expect(currentEpochBefore + 1).to.eq(currentEpochAfter);
           } else {
             expect(true).to.be.true;
@@ -86,34 +86,31 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       });
 
       it('AllocationItem shows all the elements', () => {
-        const allocationItemFirst = cy.get('[data-test=AllocationItem]').eq(0);
-        allocationItemFirst.find('[data-test=AllocationItem__name]').then($allocationItemName => {
+        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__name]').then($allocationItemName => {
           cy.get('@projectName').then(projectName => {
             expect(projectName).to.eq($allocationItemName.text());
           });
         });
-        allocationItemFirst.find('[data-test=AllocationItem__imageProfile]').should('be.visible');
-        allocationItemFirst.find('[data-test=AllocationItem__InputText]').should('be.enabled');
+        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__imageProfile]').should('be.visible');
+        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__InputText]').should('be.enabled');
       });
 
       it('AllocationItem__InputText correctly changes background color on focus', () => {
-        const allocationItemFirst = cy.get('[data-test=AllocationItem]').eq(0);
-        allocationItemFirst.find('[data-test=AllocationItem__InputText]').should('have.focus');
-        allocationItemFirst
+        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__InputText]').should('have.focus');
+        cy.get('[data-test=AllocationItem]').eq(0)
           .find('[data-test=AllocationItem__InputText]')
           .should('have.css', 'background-color')
           .and('be.colored', '#f1faf8');
       });
 
       it('AllocationItem__InputText correctly changes background color and shakes on error', () => {
-        const allocationItemFirst = cy.get('[data-test=AllocationItem]').eq(0);
-        allocationItemFirst.find('[data-test=AllocationItem__InputText__suffix]').contains('GWEI');
-        allocationItemFirst.find('[data-test=AllocationItem__InputText]').type(budgetToBig);
-        allocationItemFirst
+        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__InputText__suffix]').contains('GWEI');
+        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__InputText]').type(budgetToBig);
+        cy.get('[data-test=AllocationItem]').eq(0)
           .find('[data-test=AllocationItem__InputText]')
           .should('have.css', 'background-color')
           .and('be.colored', '#ff6157');
-        allocationItemFirst
+        cy.get('[data-test=AllocationItem]').eq(0)
           .find('[data-test=AllocationItem__InputText]')
           .invoke('dat', 'iserror').should('be.true');
       });
