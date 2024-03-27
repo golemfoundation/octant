@@ -2,7 +2,6 @@ import axios from 'axios';
 
 import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
 import env from 'src/env';
-import { MoveTo } from 'src/hooks/mutations/useCypressMoveEpoch';
 
 import Chainable = Cypress.Chainable;
 
@@ -51,18 +50,32 @@ export const connectWallet = (
   return cy.acceptMetamaskAccess();
 };
 
-export const moveEpoch = async (cypressWindow: Cypress.AUTWindow, moveTo: MoveTo): Promise<void> => {
-  await cypressWindow.mutateAsyncMoveEpoch(moveTo);
+export const moveEpoch = async (
+  cypressWindow: Cypress.AUTWindow,
+  moveTo: 'decisionWindowClosed' | 'decisionWindowOpen',
+): Promise<void> => {
+  await cypressWindow.mutateAsyncMoveToDecisionWindowOpen();
   // Waiting 5s is a way to prevent the effects of slowing down the e2e environment (data update).
   cy.wait(5000);
   // reload is needed to get updated data in the app
   cy.reload();
-  cy.get('[data-test=SyncView]').should('be.visible');
   // Manually taking a pending snapshot after the epoch shift ensures that the snapshot is taken. Passing epoch multiple times without manually triggering pending snapshot in a short period of time may cause the e2e environment to fail.
   await axios.post(`${env.serverEndpoint}snapshots/pending`);
   // Waiting 5s is a way to prevent the effects of slowing down the e2e environment (data update).
   cy.wait(5000);
   // reload is needed to get updated data in the app
   cy.reload();
-  cy.get('[data-test=SyncView]').should('not.be.visible');
+
+  if (moveTo === 'decisionWindowClosed') {
+    await cypressWindow.mutateAsyncMoveToDecisionWindowClosed();
+    // Waiting 5s is a way to prevent the effects of slowing down the e2e environment (data update).
+    cy.wait(5000);
+    // reload is needed to get updated data in the app
+    cy.reload();
+    await axios.post(`${env.serverEndpoint}snapshots/finalized`);
+    // Waiting 5s is a way to prevent the effects of slowing down the e2e environment (data update).
+    cy.wait(5000);
+    // reload is needed to get updated data in the app
+    cy.reload();
+  }
 };
