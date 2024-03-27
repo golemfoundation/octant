@@ -24,6 +24,7 @@ from tests.helpers.allocations import (
 )
 from tests.helpers.constants import MATCHED_REWARDS
 from tests.helpers.context import get_context
+from tests.helpers import make_user_allocation
 
 
 def get_allocation_nonce(user_address):
