@@ -60,9 +60,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           // Move time only once, for the first device.
           if (!wasTimeMoved) {
             await moveEpoch(win, 'decisionWindowClosed');
-            const isDecisionWindowOpenAfter = Number(
-              win.clientReactQuery.getQueryData(QUERY_KEYS.isDecisionWindowOpen),
-            );
+            const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(QUERY_KEYS.isDecisionWindowOpen);
             wasTimeMoved = true;
             expect(isDecisionWindowOpenAfter).to.be.false;
           } else {
