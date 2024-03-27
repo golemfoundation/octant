@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from app.context.manager import Context
 from app.pydantic import Model
@@ -6,11 +7,11 @@ from app.pydantic import Model
 
 class Verifier(ABC, Model):
     @abstractmethod
-    def _verify_logic(self, context: Context, **kwargs) -> bool:
+    def _verify_logic(self, context: Context, **kwargs) -> Optional[bool]:
         ...
 
     @abstractmethod
-    def _verify_signature(self, context: Context, **kwargs) -> bool:
+    def _verify_signature(self, context: Context, **kwargs) -> Optional[bool]:
         ...
 
     def verify_logic(self, context: Context, **kwargs) -> bool:

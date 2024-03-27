@@ -37,7 +37,7 @@ from app.modules.user.events_generator.service.db_and_graph import (
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.user.rewards.service.saved import SavedUserRewards
-from app.modules.user.tos.service.basic import BasicUserTos, BasicUserTosVerifier
+from app.modules.user.tos.service.initial import InitialUserTos, InitialUserTosVerifier
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.modules.withdrawals.service.pending import PendingWithdrawals
 from app.shared.blockchain_types import ChainTypes
@@ -58,8 +58,8 @@ def test_current_services_factory():
     user_deposits = CalculatedUserDeposits(events_generator=DbAndGraphEventsGenerator())
     user_allocations = SavedUserAllocations()
     user_withdrawals = FinalizedWithdrawals()
-    tos_verifier = BasicUserTosVerifier()
-    user_tos = BasicUserTos(verifier=tos_verifier)
+    tos_verifier = InitialUserTosVerifier()
+    user_tos = InitialUserTos(verifier=tos_verifier)
     patron_donations = EventsBasedUserPatronMode()
     octant_rewards = CalculatedOctantRewards(
         staking_proceeds=EstimatedStakingProceeds(),

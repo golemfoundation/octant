@@ -3,11 +3,11 @@ from app.context.manager import Context
 from app.exceptions import DuplicateConsent, InvalidSignature
 from app.infrastructure import database
 from app.modules.common.verifier import Verifier
-from app.modules.user.tos.core import verify_signature
+from app.modules.user.tos import core
 from app.pydantic import Model
 
 
-class BasicUserTosVerifier(Verifier):
+class InitialUserTosVerifier(Verifier):
     def _verify_logic(self, _: Context, **kwargs):
         user_address = kwargs["user_address"]
         consent = database.user_consents.get_last_by_address(user_address)
@@ -17,11 +17,11 @@ class BasicUserTosVerifier(Verifier):
     def _verify_signature(self, _: Context, **kwargs):
         user_address, signature = kwargs["user_address"], kwargs["consent_signature"]
 
-        if not verify_signature(user_address, signature):
+        if not core.verify_signature(user_address, signature):
             raise InvalidSignature(user_address, signature)
 
 
-class BasicUserTos(Model):
+class InitialUserTos(Model):
     verifier: Verifier
 
     def has_user_agreed_to_terms_of_service(

@@ -2,7 +2,7 @@ import pytest
 
 from app.exceptions import DuplicateConsent, InvalidSignature
 from app.infrastructure import database
-from app.modules.user.tos.service.basic import BasicUserTos, BasicUserTosVerifier
+from app.modules.user.tos.service.initial import InitialUserTos, InitialUserTosVerifier
 from tests.helpers.signature import build_user_signature
 
 
@@ -25,7 +25,7 @@ def unwilling_bob(bob):
 def test_get_user_terms_of_service_consent(
     context, consenting_alice, unwilling_bob, mock_verifier
 ):
-    service = BasicUserTos(verifier=mock_verifier)
+    service = InitialUserTos(verifier=mock_verifier)
 
     assert (
         service.has_user_agreed_to_terms_of_service(context, consenting_alice.address)
@@ -40,7 +40,7 @@ def test_get_user_terms_of_service_consent(
 def test_getting_consent_status_does_not_create_new_user_if_one_does_not_yet_exist(
     context, consenting_alice, unwilling_bob, mock_verifier
 ):
-    service = BasicUserTos(verifier=mock_verifier)
+    service = InitialUserTos(verifier=mock_verifier)
 
     assert (
         service.has_user_agreed_to_terms_of_service(context, consenting_alice.address)
@@ -57,7 +57,7 @@ def test_getting_consent_status_does_not_create_new_user_if_one_does_not_yet_exi
 
 def test_can_add_users_consent(context, alice, mock_verifier):
     signature = build_user_signature(alice)
-    service = BasicUserTos(verifier=mock_verifier)
+    service = InitialUserTos(verifier=mock_verifier)
     assert service.has_user_agreed_to_terms_of_service(context, alice.address) is False
 
     service.add_user_terms_of_service_consent(
@@ -67,7 +67,7 @@ def test_can_add_users_consent(context, alice, mock_verifier):
 
 
 def test_cannot_add_users_consent_twice(context, consenting_alice):
-    service = BasicUserTos(verifier=BasicUserTosVerifier())
+    service = InitialUserTos(verifier=InitialUserTosVerifier())
     signature = build_user_signature(consenting_alice)
     assert (
         service.has_user_agreed_to_terms_of_service(context, consenting_alice.address)
@@ -85,7 +85,7 @@ def test_cannot_add_users_consent_twice(context, consenting_alice):
 
 
 def test_rejects_to_add_consent_with_invalid_signature(context, alice, bob):
-    service = BasicUserTos(verifier=BasicUserTosVerifier())
+    service = InitialUserTos(verifier=InitialUserTosVerifier())
     signature = build_user_signature(bob, alice.address)
 
     # when

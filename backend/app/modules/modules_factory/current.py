@@ -23,7 +23,7 @@ from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
 )
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
-from app.modules.user.tos.service.basic import BasicUserTos, BasicUserTosVerifier
+from app.modules.user.tos.service.initial import InitialUserTos, InitialUserTosVerifier
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
@@ -70,8 +70,8 @@ class CurrentServices(Model):
         )
         user_allocations = SavedUserAllocations()
         user_withdrawals = FinalizedWithdrawals()
-        tos_verifier = BasicUserTosVerifier()
-        user_tos = BasicUserTos(verifier=tos_verifier)
+        tos_verifier = InitialUserTosVerifier()
+        user_tos = InitialUserTos(verifier=tos_verifier)
         patron_donations = EventsBasedUserPatronMode()
         history = FullHistory(
             user_deposits=user_deposits,

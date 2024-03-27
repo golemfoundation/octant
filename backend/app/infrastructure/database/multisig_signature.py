@@ -1,4 +1,3 @@
-from datetime import datetime
 from enum import StrEnum
 from typing import Optional
 
@@ -13,14 +12,11 @@ class SigStatus(StrEnum):
 
 
 def get_last_pending_signature(
-    user_address: str, op_type: SignatureOpType, dt: Optional[datetime] = None
-) -> MultisigSignatures | None:
+    user_address: str, op_type: SignatureOpType
+) -> Optional[MultisigSignatures]:
     last_signature = MultisigSignatures.query.filter_by(
         address=user_address, type=op_type, status=SigStatus.PENDING
     ).order_by(MultisigSignatures.created_at.desc())
-
-    if dt is not None:
-        last_signature.filter(MultisigSignatures.created_at <= dt)
 
     return last_signature.first()
 

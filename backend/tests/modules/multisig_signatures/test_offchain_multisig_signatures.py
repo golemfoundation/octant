@@ -77,6 +77,7 @@ def test_save_signature_when_verified_successfully(context, alice, mock_verifier
         context, alice.address, SignatureOpType.TOS, {"message": "test_message"}
     )
 
+    # Then
     result = database.multisig_signature.get_last_pending_signature(
         alice.address, SignatureOpType.TOS
     )
