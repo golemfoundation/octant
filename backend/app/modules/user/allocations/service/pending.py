@@ -31,7 +31,6 @@ class GetPatronsAddressesProtocol(Protocol):
 
 
 class PendingUserAllocationsVerifier(Verifier, Model):
-    octant_rewards: OctantRewards
     user_budgets: UserBudgetProtocol
     patrons_mode: GetPatronsAddressesProtocol
 
