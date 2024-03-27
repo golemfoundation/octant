@@ -3,8 +3,6 @@ import dataclasses
 from flask import current_app as app
 from flask_restx import Namespace, fields
 
-from app.legacy.controllers import allocations
-from app.legacy.core.allocations import AllocationRequest
 from app.extensions import api
 from app.infrastructure import OctantResource
 from app.modules.user.allocations import controller
@@ -165,14 +163,12 @@ class Allocation(OctantResource):
     @ns.expect(user_allocation_request)
     @ns.response(201, "User allocated successfully")
     def post(self):
-        payload, signature = ns.payload["payload"], ns.payload["signature"]
+        app.logger.info(f"User allocation: {ns.payload}")
         is_manually_edited = (
             ns.payload["isManuallyEdited"] if "isManuallyEdited" in ns.payload else None
         )
-        app.logger.info(f"User allocation payload: {payload}, signature: {signature}")
-        user_address = allocations.allocate(
-            AllocationRequest(payload, signature, override_existing_allocations=True),
-            is_manually_edited,
+        user_address = controller.allocate(
+            ns.payload, is_manually_edited=is_manually_edited
         )
         app.logger.info(f"User: {user_address} allocated successfully")
 

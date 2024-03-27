@@ -103,9 +103,10 @@ def revoke_previous_allocation(user_address: str):
 
 
 def _deserialize_payload(payload: Dict) -> UserAllocationRequestPayload:
-    allocation_items = _deserialize_items(payload.payload)
-    nonce = int(payload.payload["nonce"])
-    signature = payload.signature
+    allocation_payload = payload["payload"]
+    allocation_items = _deserialize_items(allocation_payload)
+    nonce = int(allocation_payload["nonce"])
+    signature = payload["signature"]
 
     return UserAllocationRequestPayload(
         payload=UserAllocationPayload(allocation_items, nonce), signature=signature

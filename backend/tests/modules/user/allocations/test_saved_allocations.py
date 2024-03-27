@@ -13,6 +13,7 @@ from app.modules.user.allocations.service.saved import SavedUserAllocations
 from app.modules.history.dto import AllocationItem as HistoryAllocationItem
 
 from tests.helpers.context import get_context
+from tests.helpers import make_user_allocation
 
 
 @pytest.fixture(autouse=True)
@@ -23,35 +24,6 @@ def before(app):
 @pytest.fixture()
 def service():
     return SavedUserAllocations()
-
-
-@pytest.fixture()
-def make_user_allocation(proposal_accounts):
-    def _make_user_allocation(context, user, allocations=1, nonce=0, **kwargs):
-        database.allocations.soft_delete_all_by_epoch_and_user_id(
-            context.epoch_details.epoch_num, user.id
-        )
-
-        allocation_items = [
-            AllocationItem(proposal_accounts[i].address, (i + 1) * 100)
-            for i in range(allocations)
-        ]
-
-        if kwargs.get("allocation_items"):
-            allocation_items = kwargs.get("allocation_items")
-
-        request = UserAllocationRequestPayload(
-            payload=UserAllocationPayload(allocations=allocation_items, nonce=nonce),
-            signature="0xdeadbeef",
-        )
-
-        database.allocations.store_allocation_request(
-            user.address, context.epoch_details.epoch_num, request, **kwargs
-        )
-
-        return allocation_items
-
-    return _make_user_allocation
 
 
 def _alloc_item_to_donation(item, user):
@@ -152,7 +124,7 @@ def test_user_nonce_is_continuous_despite_epoch_changes(service, mock_users_db):
     assert new_nonce == 3
 
 
-def test_get_all_donors_addresses(service, mock_users_db, make_user_allocation):
+def test_get_all_donors_addresses(service, mock_users_db):
     user1, user2, user3 = mock_users_db
     context_epoch_1 = get_context(1)
     context_epoch_2 = get_context(2)
@@ -168,9 +140,7 @@ def test_get_all_donors_addresses(service, mock_users_db, make_user_allocation):
     assert result_epoch_2 == [user3.address]
 
 
-def test_return_only_not_removed_allocations(
-    service, mock_users_db, make_user_allocation
-):
+def test_return_only_not_removed_allocations(service, mock_users_db):
     user1, user2, _ = mock_users_db
 
     context = get_context(1)
@@ -183,7 +153,7 @@ def test_return_only_not_removed_allocations(
     assert result == [user1.address]
 
 
-def test_get_user_allocation_sum(service, context, mock_users_db, make_user_allocation):
+def test_get_user_allocation_sum(service, context, mock_users_db):
     user1, user2, _ = mock_users_db
     make_user_allocation(context, user1, allocations=2)
     make_user_allocation(context, user2, allocations=2)
@@ -193,9 +163,7 @@ def test_get_user_allocation_sum(service, context, mock_users_db, make_user_allo
     assert result == 300
 
 
-def test_has_user_allocated_rewards(
-    service, context, mock_users_db, make_user_allocation
-):
+def test_has_user_allocated_rewards(service, context, mock_users_db):
     user1, _, _ = mock_users_db
     make_user_allocation(context, user1)
 
@@ -204,9 +172,7 @@ def test_has_user_allocated_rewards(
     assert result is True
 
 
-def test_has_user_allocated_rewards_returns_false(
-    service, context, mock_users_db, make_user_allocation
-):
+def test_has_user_allocated_rewards_returns_false(service, context, mock_users_db):
     user1, user2, _ = mock_users_db
 
     make_user_allocation(context, user1)  # other user makes an allocation
@@ -218,7 +184,7 @@ def test_has_user_allocated_rewards_returns_false(
 
 @freeze_time("2024-03-18 00:00:00")
 def test_user_allocations_by_timestamp(
-    service, context, mock_users_db, proposal_accounts, make_user_allocation
+    service, context, mock_users_db, proposal_accounts
 ):
     user1, _, _ = mock_users_db
     timestamp_before = from_timestamp_s(1710719999)
@@ -274,7 +240,7 @@ def test_get_all_allocations_returns_empty_list_when_no_allocations(
 
 
 def test_get_all_allocations_returns_list_of_allocations(
-    service, context, mock_users_db, make_user_allocation
+    service, context, mock_users_db
 ):
     user1, user2, _ = mock_users_db
 
@@ -292,7 +258,7 @@ def test_get_all_allocations_returns_list_of_allocations(
 
 
 def test_get_all_allocations_does_not_include_revoked_allocations_in_returned_list(
-    service, context, mock_users_db, make_user_allocation
+    service, context, mock_users_db
 ):
     user1, user2, _ = mock_users_db
 
@@ -312,7 +278,7 @@ def test_get_all_allocations_does_not_include_revoked_allocations_in_returned_li
 
 
 def test_get_all_allocations_does_not_return_allocations_from_previous_and_future_epochs(
-    service, context, mock_users_db, make_user_allocation
+    service, context, mock_users_db
 ):
     user1, _, _ = mock_users_db
     context_epoch_1 = get_context(1)
@@ -326,7 +292,7 @@ def test_get_all_allocations_does_not_return_allocations_from_previous_and_futur
 
 
 def test_get_all_with_allocation_amount_equal_0(
-    service, context, mock_users_db, proposal_accounts, make_user_allocation
+    service, context, mock_users_db, proposal_accounts
 ):
     user1, _, _ = mock_users_db
     allocation_items = [AllocationItem(proposal_accounts[0].address, 0)]
@@ -336,14 +302,12 @@ def test_get_all_with_allocation_amount_equal_0(
     assert service.get_all_allocations(context) == expected_result
 
 
-def test_get_last_user_allocation_when_no_allocation(
-    service, context, alice, make_user_allocation
-):
+def test_get_last_user_allocation_when_no_allocation(service, context, alice):
     assert service.get_last_user_allocation(context, alice.address) == ([], None)
 
 
 def test_get_last_user_allocation_returns_the_only_allocation(
-    service, context, mock_users_db, make_user_allocation
+    service, context, mock_users_db
 ):
     user1, _, _ = mock_users_db
     expected_result = make_user_allocation(context, user1)
@@ -355,7 +319,7 @@ def test_get_last_user_allocation_returns_the_only_allocation(
 
 
 def test_get_last_user_allocation_returns_the_only_the_last_allocation(
-    service, context, mock_users_db, make_user_allocation
+    service, context, mock_users_db
 ):
     user1, _, _ = mock_users_db
     _ = make_user_allocation(context, user1)
@@ -368,7 +332,7 @@ def test_get_last_user_allocation_returns_the_only_the_last_allocation(
 
 
 def test_get_last_user_allocation_returns_stored_metadata(
-    service, context, mock_users_db, make_user_allocation
+    service, context, mock_users_db
 ):
     user1, _, _ = mock_users_db
 
@@ -395,7 +359,7 @@ def test_get_allocations_by_project_returns_empty_list_when_no_allocations(
 
 
 def test_get_allocations_by_project_returns_list_of_donations_per_project(
-    service, context, mock_users_db, make_user_allocation
+    service, context, mock_users_db
 ):
     user1, user2, _ = mock_users_db
     project1, project2 = (
@@ -427,7 +391,7 @@ def test_get_allocations_by_project_returns_list_of_donations_per_project(
 
 
 def test_get_allocations_by_project_with_allocation_amount_equal_0(
-    service, context, mock_users_db, make_user_allocation
+    service, context, mock_users_db
 ):
     user1, _, _ = mock_users_db
     project1 = context.projects_details.projects[0]

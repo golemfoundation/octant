@@ -22,7 +22,7 @@ from tests.conftest import (
 
 
 @pytest.fixture(autouse=True)
-def before(app, patch_epochs, patch_proposals, patch_is_contract):
+def before(app, patch_epochs, patch_proposals, patch_is_contract, mock_epoch_details):
     pass
 
 

@@ -1,6 +1,6 @@
 from collections import defaultdict
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 from eth_utils import to_checksum_address
 from sqlalchemy.orm import Query
@@ -180,42 +180,6 @@ def store_allocation_request(
 
     db.session.add(allocation_request)
     db.session.add_all(new_allocations)
-
-
-@deprecated("Alloc rework")
-def add_all(epoch: int, user_id: int, nonce: int, allocations):
-    new_allocations = [
-        Allocation(
-            epoch=epoch,
-            user_id=user_id,
-            nonce=nonce,
-            proposal_address=to_checksum_address(a.proposal_address),
-            amount=str(a.amount),
-        )
-        for a in allocations
-    ]
-    db.session.add_all(new_allocations)
-
-
-@deprecated("Alloc rework")
-def add_allocation_request(
-    user_address: str,
-    epoch: int,
-    nonce: int,
-    signature: str,
-    is_manually_edited: Optional[bool] = None,
-):
-    user: User = get_by_address(user_address)
-
-    allocation_request = AllocationRequest(
-        user=user,
-        epoch=epoch,
-        nonce=nonce,
-        signature=signature,
-        is_manually_edited=is_manually_edited,
-    )
-
-    db.session.add(allocation_request)
 
 
 def get_allocation_request_by_user_nonce(
