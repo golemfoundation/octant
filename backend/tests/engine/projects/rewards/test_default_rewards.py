@@ -122,7 +122,7 @@ def test_compute_rewards_when_one_project_is_below_threshold():
         MATCHED_REWARDS + 500_000000000 + 200_000000000, 0.00000000000000000001
     )
 
-    assert result.threshold == 76_900000000
+    assert result.threshold == 153_800000000
 
 
 def test_compute_rewards_when_one_project_is_at_threshold():
@@ -151,7 +151,7 @@ def test_compute_rewards_when_one_project_is_at_threshold():
     assert result.rewards_sum == pytest.approx(
         MATCHED_REWARDS + 500_000000000 + 400_000000000, 0.00000000000000000001
     )
-    assert result.threshold == 100_000000000
+    assert result.threshold == 200_000000000
 
 
 def test_compute_rewards_when_multiple_projects_are_below_threshold():
@@ -178,7 +178,7 @@ def test_compute_rewards_when_multiple_projects_are_below_threshold():
         MATCHED_REWARDS + 500_000000000, 0.00000000000000000001
     )
 
-    assert result.threshold == 56_000000000
+    assert result.threshold == 112_000000000
 
 
 def test_total_allocated_is_computed():
@@ -196,4 +196,4 @@ def test_total_allocated_is_computed():
     result = uut.calculate_project_rewards(payload)
 
     assert result.total_allocated == 1300_000000000
-    assert result.threshold == 130_000000000
+    assert result.threshold == 260_000000000

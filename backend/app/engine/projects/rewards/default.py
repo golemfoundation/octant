@@ -25,7 +25,7 @@ class DefaultProjectRewards(ProjectRewards):
         default_factory=DefaultProjectAllocations
     )
     projects_threshold: ProjectThreshold = field(
-        default_factory=DefaultProjectThreshold
+        default_factory=lambda: DefaultProjectThreshold(1)
     )
 
     def calculate_project_rewards(
