@@ -10,12 +10,12 @@ from app.extensions import socketio, epochs
 from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler
 from app.legacy.controllers import allocations
 from app.legacy.controllers.allocations import allocate
-from app.legacy.controllers.rewards import (
-    get_allocation_threshold,
-)
 from app.legacy.core.allocations import AllocationRequest
 from app.legacy.core.common import AccountFunds
-from app.modules.project_rewards.controller import get_estimated_project_rewards
+from app.modules.project_rewards.controller import (
+    get_estimated_project_rewards,
+    get_allocation_threshold,
+)
 
 
 @socketio.on("connect")
