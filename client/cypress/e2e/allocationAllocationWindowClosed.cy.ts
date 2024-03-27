@@ -31,8 +31,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         localStorage.setItem(IS_ONBOARDING_DONE, 'true');
         localStorage.setItem(ALLOCATION_ITEMS_KEY, '[]');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
-        cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
 
+        cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
         cy.get('[data-test^=ProjectsView__ProjectsListItem]')
           .eq(0)
           .should('be.visible')
