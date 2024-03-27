@@ -25,14 +25,12 @@ const SettingsMainInfoBox = (): ReactNode => {
       isVertical
       textAlign="left"
     >
-      <div>
-        <Svg
-          classNameSvg={styles.infoTitle}
-          img={octantWordmark}
-          size={isDesktop ? [11.2, 2.7] : [8.4, 2]}
-        />
-        <div className={styles.infoEpoch}>{t('epoch', { epoch: currentEpoch })}</div>
-      </div>
+      <Svg
+        classNameSvg={styles.infoTitle}
+        img={octantWordmark}
+        size={isDesktop ? [11.2, 2.7] : [8.4, 2]}
+      />
+      <div className={styles.infoEpoch}>{t('epoch', { epoch: currentEpoch })}</div>
       <div className={styles.infoContainer}>
         <div className={cx(styles.info, styles.golemFoundationProject)}>
           {t('golemFoundationProject')}
