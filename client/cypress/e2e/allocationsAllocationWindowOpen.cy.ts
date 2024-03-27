@@ -1,13 +1,11 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import chaiColors from 'chai-colors';
 
-import { visitWithLoader, mockCoinPricesServer, navigateWithCheck } from 'cypress/utils/e2e';
+import { visitWithLoader, mockCoinPricesServer, navigateWithCheck, connectWallet } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
   ALLOCATION_ITEMS_KEY,
-  IS_ONBOARDING_ALWAYS_VISIBLE,
-  IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import { formatUnitsBigInt } from 'src/utils/formatUnitsBigInt';
@@ -35,10 +33,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       beforeEach(() => {
         cy.disconnectMetamaskWalletFromAllDapps();
         mockCoinPricesServer();
-        localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
-        localStorage.setItem(IS_ONBOARDING_DONE, 'true');
         localStorage.setItem(ALLOCATION_ITEMS_KEY, '[]');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
+        connectWallet(true, false);
         cy.intercept('GET', '/rewards/budget/*/epoch/*', { body: { budget } });
 
         cy.get('[data-test^=ProjectsView__ProjectsListItem]')
@@ -97,7 +94,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
 
       it('AllocationItem__InputText correctly changes background color on focus', () => {
         const allocationItemFirst = cy.get('[data-test=AllocationItem]').eq(0);
-        allocationItemFirst.find('[data-test=AllocationItem__InputText]').focused();
+        allocationItemFirst.find('[data-test=AllocationItem__InputText]').should('have.focus');
         allocationItemFirst
           .find('[data-test=AllocationItem__InputText]')
           .should('have.css', 'background-color')

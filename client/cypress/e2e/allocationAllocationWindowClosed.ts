@@ -66,6 +66,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           .find('[data-test=AllocationItemRewards')
           .contains(isDesktop ? 'Threshold data unavailable' : 'No threshold data');
         allocationItemFirst.find('[data-test=AllocationItem__InputText]').should('be.disabled');
+        allocationItemFirst.find('[data-test=AllocationItem__InputText__suffix]').contains('ETH');
       });
     },
   );
