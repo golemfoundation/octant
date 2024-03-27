@@ -10,7 +10,7 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 let wasTimeMoved = false;
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
+Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop, isMobile }) => {
   describe(
     `allocation (allocation window closed): ${device}`,
     { viewportHeight, viewportWidth },
@@ -77,9 +77,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             expect(projectName).to.eq($allocationItemName.text());
           });
         });
-        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__imageProfile]').should('be.visible');
+
+        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__imageProfile]').should(isMobile ? 'not.be.visible' : 'be.visible');
         cy.get('[data-test=AllocationItem]').eq(0)
-          .find('[data-test=AllocationItemRewards')
+          .find('[data-test=AllocationItemRewards]')
           .contains(isDesktop ? 'Threshold data unavailable' : 'No threshold data');
         cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__InputText]').should('be.disabled');
         cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__InputText__suffix]').contains('ETH');
