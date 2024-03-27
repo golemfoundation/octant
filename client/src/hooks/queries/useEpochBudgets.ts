@@ -17,7 +17,7 @@ export default function useEpochBudgets(
   options?: UseQueryOptions<Response, unknown, EpochBudgets, any>,
 ): UseQueryResult<EpochBudgets, unknown> {
   return useQuery({
-    queryFn: () => apiGetEpochBudgets(epoch),
+    queryFn: ({ signal }) => apiGetEpochBudgets(epoch, signal),
     queryKey: QUERY_KEYS.epochBudgets(epoch),
     select: response => {
       let budgetsSum = BigInt(0);

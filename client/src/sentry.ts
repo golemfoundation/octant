@@ -8,10 +8,7 @@ Sentry.init({
   integrations: [Sentry.browserTracingIntegration()],
   //  Capture 100% of the transactions
   // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
-  tracePropagationTargets: [
-    env.serverEndpoint,
-    ...env.ipfsGateways.split(','),
-  ],
+  tracePropagationTargets: [env.serverEndpoint, ...env.ipfsGateways.split(',')],
   // Performance Monitoring
   tracesSampleRate: 1.0,
   // Session Replay

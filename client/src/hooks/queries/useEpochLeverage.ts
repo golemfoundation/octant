@@ -8,7 +8,7 @@ export default function useEpochLeverage(
   options?: UseQueryOptions<Response, unknown, number, any>,
 ): UseQueryResult<number, unknown> {
   return useQuery({
-    queryFn: () => apiGetEpochLeverage(epoch),
+    queryFn: ({ signal }) => apiGetEpochLeverage(epoch, signal),
     queryKey: QUERY_KEYS.epochLeverage(epoch),
     select: response => response.leverage,
     ...options,
