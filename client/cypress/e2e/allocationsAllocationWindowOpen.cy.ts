@@ -6,7 +6,7 @@ import {
   mockCoinPricesServer,
   navigateWithCheck,
   connectWallet,
-  moveEpoch
+  moveEpoch,
 } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
@@ -80,7 +80,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
               win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
             );
 
-            await moveEpoch(win, 'decisionWindowClosed');
+            await moveEpoch(win, 'decisionWindowOpen');
 
             const currentEpochAfter = Number(
               win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
