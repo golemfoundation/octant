@@ -98,3 +98,8 @@ class WithdrawableEth:
     amount: int
     proof: list[str]
     status: WithdrawalStatus
+
+
+class SignatureOpType(StrEnum):
+    TOS = "tos"
+    ALLOCATION = "allocation"

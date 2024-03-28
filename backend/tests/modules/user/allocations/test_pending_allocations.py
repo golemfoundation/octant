@@ -1,15 +1,16 @@
 import pytest
 
 from app import exceptions
-from app.engine.projects.rewards import ProjectRewardDTO
 from app.context.epoch_state import EpochState
+from app.engine.projects.rewards import ProjectRewardDTO
 from app.infrastructure import database
+from app.legacy.crypto.eip712 import sign, build_allocations_eip712_data
 from app.modules.dto import AllocationDTO
 from app.modules.user.allocations import controller
-from app.modules.user.allocations.service.pending import PendingUserAllocations
-
-from app.legacy.crypto.eip712 import sign, build_allocations_eip712_data
-
+from app.modules.user.allocations.service.pending import (
+    PendingUserAllocations,
+    PendingUserAllocationsVerifier,
+)
 from tests.conftest import (
     mock_graphql,
     MOCKED_PENDING_EPOCH_NO,
@@ -17,10 +18,10 @@ from tests.conftest import (
     MOCK_GET_USER_BUDGET,
 )
 from tests.helpers import create_epoch_event
+from tests.helpers import make_user_allocation
 from tests.helpers.allocations import (
     create_payload,
     deserialize_allocations,
-    make_user_allocation,
 )
 from tests.helpers.constants import MATCHED_REWARDS
 from tests.helpers.context import get_context
@@ -30,7 +31,7 @@ def get_allocation_nonce(user_address):
     return controller.get_user_next_nonce(user_address)
 
 
-def get_all_by_epoch(epoch, include_zeroes=False):
+def get_all_by_epoch(epoch):
     return controller.get_all_allocations(epoch)
 
 
@@ -44,6 +45,7 @@ def before(
     patch_proposals,
     patch_has_pending_epoch_snapshot,
     patch_user_budget,
+    patch_is_contract,
 ):
     MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts[0:5]
@@ -56,10 +58,13 @@ def before(
 
 @pytest.fixture()
 def service(mock_octant_rewards, mock_patron_mode, mock_user_budgets):
-    return PendingUserAllocations(
-        octant_rewards=mock_octant_rewards,
+    verifier = PendingUserAllocationsVerifier(
         user_budgets=mock_user_budgets,
         patrons_mode=mock_patron_mode,
+    )
+    return PendingUserAllocations(
+        octant_rewards=mock_octant_rewards,
+        verifier=verifier,
     )
 
 
