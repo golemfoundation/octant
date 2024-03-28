@@ -14,7 +14,7 @@ const connectWallet = (): Chainable => {
 };
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }, idx) => {
-  describe(`earn: ${device}`, { viewportHeight, viewportWidth }, () => {
+  describe(`earn: ${device}`, { retries: { runMode: 0, openMode: 0 }, viewportHeight, viewportWidth }, () => {
     before(() => {
       /**
        * Global Metamask setup done by Synpress is not always done.
