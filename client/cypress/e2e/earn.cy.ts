@@ -247,7 +247,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton]', {
               timeout: 60000,
             }).should('not.exist');
-            moveEpoch(win);
+            await moveEpoch(win);
             cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
               timeout: 60000,
             })
