@@ -246,3 +246,11 @@ class InvalidBlocksRange(OctantException):
 
     def __init__(self):
         super().__init__(self.description, self.code)
+
+
+class InvalidMultisigSignatureRequest(OctantException):
+    code = 400
+    description = "Given multisig signature request failed validation"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)

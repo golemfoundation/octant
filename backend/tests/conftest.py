@@ -22,8 +22,10 @@ from app.infrastructure.contracts.proposals import Proposals
 from app.infrastructure.contracts.vault import Vault
 from app.legacy.crypto.account import Account as CryptoAccount
 from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
+from app.modules.common.verifier import Verifier
 from app.modules.dto import AccountFundsDTO, AllocationItem
 from app.settings import DevConfig, TestConfig
+from tests.helpers import make_user_allocation
 from tests.helpers.constants import (
     ALICE,
     BOB,
@@ -50,7 +52,6 @@ from tests.helpers.constants import (
     MATCHED_REWARDS_AFTER_OVERHAUL,
     NO_PATRONS_REWARDS,
 )
-from tests.helpers import make_user_allocation
 from tests.helpers.context import get_context
 from tests.helpers.gql_client import MockGQLClient
 from tests.helpers.mocked_epoch_details import EPOCH_EVENTS
@@ -461,13 +462,14 @@ def patch_is_contract(monkeypatch):
     monkeypatch.setattr(
         "app.legacy.crypto.eth_sign.signature.is_contract", MOCK_IS_CONTRACT
     )
+    monkeypatch.setattr("app.modules.common.signature.is_contract", MOCK_IS_CONTRACT)
     MOCK_IS_CONTRACT.return_value = False
 
 
 @pytest.fixture(scope="function")
 def patch_eip1271_is_valid_signature(monkeypatch):
     monkeypatch.setattr(
-        "app.legacy.crypto.eth_sign.signature.is_valid_signature",
+        "app.modules.common.signature.is_valid_signature",
         MOCK_EIP1271_IS_VALID_SIGNATURE,
     )
     MOCK_EIP1271_IS_VALID_SIGNATURE.return_value = True
@@ -660,6 +662,15 @@ def mock_staking_proceeds():
     staking_proceeds_service_mock.get_staking_proceeds.return_value = ETH_PROCEEDS
 
     return staking_proceeds_service_mock
+
+
+@pytest.fixture(scope="function")
+def mock_verifier():
+    verifier_mock = Mock(Verifier)
+    verifier_mock.verify_logic.return_value = True
+    verifier_mock.verify_signature.return_value = True
+
+    return verifier_mock
 
 
 @pytest.fixture(scope="function")
