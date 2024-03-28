@@ -8,7 +8,9 @@ from app.modules.multisig_signatures.controller import (
     get_last_pending_signature,
     save_pending_signature,
     approve_pending_signatures,
+    appy_pending_allocation_signature,
 )
+from app.modules.user.allocations.controller import allocate
 
 ns = Namespace(
     "multisig-signatures",
@@ -66,8 +68,25 @@ class MultisigApprovePending(OctantResource):
     @ns.response(204, "Success")
     @ns.doc(description="Approve pending multisig messages.")
     def patch(self):
-        app.logger.debug("Approving pending multisig signatures.")
+        app.logger.debug("Retrieving approved multisig signatures.")
         approvals = approve_pending_signatures()
-        app.logger.debug(f"Approved {len(approvals)} pending multisig messages.")
+
+        for tos_signature in approvals.tos_signatures:
+            app.logger.debug(f"Applying TOS approved signatures {tos_signature}.")
+            # call controller for tos_approval
+            ...
+
+        for allocation_signature in approvals.allocation_signatures:
+            app.logger.debug(
+                f"Applying allocation approved signatures {allocation_signature}."
+            )
+            # call controller for allocate
+            allocate(...)
+            # apply message to allocation with given id
+            appy_pending_allocation_signature(allocation_signature.id)
+
+        app.logger.debug(
+            f"Approved and applied {len(approvals)} pending multisig messages."
+        )
 
         return {}, 204
