@@ -149,6 +149,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           cy.get('[data-test=GlmLockTabs__Button]').click();
           cy.get(
             '[data-test=BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton]',
+            // Small timeout ensures skeleton shows up quickly after the transaction.
             { timeout: 1000 },
           ).should('be.visible');
           cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
@@ -195,6 +196,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           cy.get('[data-test=GlmLockTabs__Button]').click();
           cy.get(
             '[data-test=BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton]',
+            // Small timeout ensures skeleton shows up quickly after the transaction.
             { timeout: 1000 },
           ).should('be.visible');
           cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
@@ -237,6 +239,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           cy.get('[data-test=GlmLockTabs__Button]').click();
           cy.get(
             '[data-test=BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton]',
+            // Small timeout ensures skeleton shows up quickly after the transaction.
             { timeout: 1000 },
           ).should('be.visible');
           cy.window().then(async win => {
