@@ -21,6 +21,10 @@ def get_last_pending_signature(
     return last_signature.first()
 
 
+def get_all_pending_signatures() -> list[MultisigSignatures]:
+    return MultisigSignatures.query.filter_by(status=SigStatus.PENDING).all()
+
+
 def save_signature(
     user_address: str,
     op_type: SignatureOpType,

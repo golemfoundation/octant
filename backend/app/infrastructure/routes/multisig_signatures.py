@@ -7,6 +7,7 @@ from app.modules.dto import SignatureOpType
 from app.modules.multisig_signatures.controller import (
     get_last_pending_signature,
     save_pending_signature,
+    approve_pending_signatures,
 )
 
 ns = Namespace(
@@ -22,7 +23,6 @@ pending_signature_response = api.model(
         "hash": fields.String(description="The hash of the message."),
     },
 )
-
 
 pending_signature_request = api.model(
     "PendingSignature",
@@ -59,3 +59,15 @@ class MultisigPendingSignature(OctantResource):
         app.logger.debug("Added new multisig signature.")
 
         return {}, 201
+
+
+@ns.route("/pending/approve")
+class MultisigApprovePending(OctantResource):
+    @ns.response(204, "Success")
+    @ns.doc(description="Approve pending multisig messages.")
+    def patch(self):
+        app.logger.debug("Approving pending multisig signatures.")
+        approvals = approve_pending_signatures()
+        app.logger.debug(f"Approved {len(approvals)} pending multisig messages.")
+
+        return {}, 204

@@ -1,15 +1,14 @@
 from typing import List, Optional
 
 from app import exceptions
-from app.context.manager import Context
 from app.context.epoch_state import EpochState
+from app.context.manager import Context
 from app.engine.projects import ProjectSettings
 from app.infrastructure.database.models import AllocationRequest
+from app.legacy.crypto.eip712 import build_allocations_eip712_structure, recover_address
 from app.modules.common.leverage import calculate_leverage
 from app.modules.common.project_rewards import get_projects_rewards
 from app.modules.dto import AllocationDTO, UserAllocationRequestPayload, AllocationItem
-
-from app.legacy.crypto.eip712 import build_allocations_eip712_structure, recover_address
 
 
 def next_allocation_nonce(prev_allocation_request: Optional[AllocationRequest]) -> int:

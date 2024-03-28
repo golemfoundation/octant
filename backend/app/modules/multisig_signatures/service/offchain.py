@@ -4,6 +4,9 @@ from app.context.manager import Context
 from app.exceptions import InvalidMultisigSignatureRequest
 from app.extensions import db
 from app.infrastructure import database
+from app.infrastructure.database.multisig_signature import SigStatus
+from app.infrastructure.external_api.safe.message_details import get_message_details
+from app.infrastructure.external_api.safe.user_details import get_user_details
 from app.modules.common.signature import hash_message
 from app.modules.common.verifier import Verifier
 from app.modules.dto import SignatureOpType
@@ -12,6 +15,7 @@ from app.pydantic import Model
 
 
 class OffchainMultisigSignatures(Model):
+    is_mainnet: bool = False
     verifiers: dict[SignatureOpType, Verifier]
 
     def get_last_pending_signature(
@@ -28,6 +32,30 @@ class OffchainMultisigSignatures(Model):
             message=signature_db.message,
             hash=signature_db.hash,
         )
+
+    def approve_pending_signatures(self, _: Context) -> list[Signature]:
+        pending_signatures = database.multisig_signature.get_all_pending_signatures()
+        approved_signatures = []
+
+        for pending_signature in pending_signatures:
+            confirmations = get_message_details(
+                pending_signature.hash, is_mainnet=self.is_mainnet
+            )["confirmations"]
+            threshold = int(
+                get_user_details(pending_signature.address, is_mainnet=self.is_mainnet)[
+                    "threshold"
+                ]
+            )
+
+            if len(confirmations) >= threshold:
+                pending_signature.status = SigStatus.APPROVED
+                db.session.commit()
+
+                approved_signatures.append(
+                    Signature(pending_signature.message, pending_signature.hash)
+                )
+
+        return approved_signatures
 
     def save_pending_signature(
         self,

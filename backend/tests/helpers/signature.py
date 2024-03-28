@@ -1,5 +1,8 @@
 from eth_account.messages import encode_defunct
 
+from app.infrastructure import database
+from app.infrastructure.database.multisig_signature import SigStatus
+from app.modules.dto import SignatureOpType
 from app.modules.user.tos.core import build_consent_message
 
 
@@ -12,3 +15,13 @@ def build_user_signature(user, user_address=None):
     signature_bytes = user.sign_message(message).signature
 
     return signature_bytes
+
+
+def create_multisig_signature(
+    address: str,
+    msg: str,
+    msg_hash: str,
+    op_type: SignatureOpType,
+    status: SigStatus = SigStatus.PENDING,
+):
+    database.multisig_signature.save_signature(address, op_type, msg, msg_hash, status)

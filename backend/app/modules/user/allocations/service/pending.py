@@ -60,7 +60,6 @@ class PendingUserAllocations(SavedUserAllocations, Model):
         self, context: Context, payload: UserAllocationRequestPayload, **kwargs
     ) -> str:
         user_address = core.recover_user_address(payload)
-
         expected_nonce = self.get_user_next_nonce(user_address)
         self.verifier.verify(
             context,
