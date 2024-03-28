@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react';
 import i18n from 'i18next';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -52,9 +53,21 @@ export default defineConfig(({ mode }) => {
       }),
     );
   }
+  if (isProduction && process.env.VITE_SENTRY_AUTH_TOKEN) {
+    plugins.push(
+      sentryVitePlugin({
+        authToken: process.env.VITE_SENTRY_AUTH_TOKEN,
+        org: 'golem-foundation',
+        project: 'octant-client-production',
+      }),
+    );
+  }
 
   return {
     base,
+    build: {
+      sourcemap: true,
+    },
     css: {
       modules: {
         generateScopedName: localIdentName,
