@@ -24,18 +24,9 @@ const EarnBoxGlmLock: FC<EarnBoxGlmLockProps> = ({ classNameBox }) => {
     keyPrefix: 'components.dedicated.boxGlmLock',
   });
   const { isConnected } = useAccount();
-  const { isAppWaitingForTransactionToBeIndexed, transactionsPending } = useTransactionLocalStore(
-    state => ({
-      isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
-      transactionsPending: state.data.transactionsPending,
-    }),
-  );
-
-  const isPendingLockingOrUnlockingTransaction =
-    isAppWaitingForTransactionToBeIndexed &&
-    !!transactionsPending?.filter(
-      ({ type, isFinalized }) => (type === 'lock' || 'unlock') && !isFinalized,
-    ).length;
+  const { isAppWaitingForTransactionToBeIndexed } = useTransactionLocalStore(state => ({
+    isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
+  }));
 
   const [isModalGlmLockOpen, setIsModalGlmLockOpen] = useState<boolean>(false);
   const { data: estimatedEffectiveDeposit, isFetching: isFetchingEstimatedEffectiveDeposit } =
@@ -52,7 +43,7 @@ const EarnBoxGlmLock: FC<EarnBoxGlmLockProps> = ({ classNameBox }) => {
       doubleValueProps: {
         cryptoCurrency: 'golem',
         dataTest: 'BoxGlmLock__Section--current__DoubleValue',
-        isFetching: isFetchingDepositValue || isPendingLockingOrUnlockingTransaction,
+        isFetching: isFetchingDepositValue || isAppWaitingForTransactionToBeIndexed,
         valueCrypto: depositsValue,
       },
       isDisabled: isPreLaunch && !isConnected,
@@ -64,7 +55,7 @@ const EarnBoxGlmLock: FC<EarnBoxGlmLockProps> = ({ classNameBox }) => {
         coinPricesServerDowntimeText: '...',
         cryptoCurrency: 'golem',
         dataTest: 'BoxGlmLock__Section--effective__DoubleValue',
-        isFetching: isFetchingEstimatedEffectiveDeposit || isPendingLockingOrUnlockingTransaction,
+        isFetching: isFetchingEstimatedEffectiveDeposit || isAppWaitingForTransactionToBeIndexed,
         valueCrypto: estimatedEffectiveDeposit,
       },
       isDisabled: isPreLaunch && !isConnected,
