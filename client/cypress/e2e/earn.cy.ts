@@ -149,6 +149,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           cy.get('[data-test=GlmLockTabs__Button]').click();
           cy.get(
             '[data-test=BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton]',
+            // Small timeout ensures skeleton shows up quickly after the transaction.
+            { timeout: 1000 },
           ).should('be.visible');
           cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
             timeout: 60000,
@@ -194,6 +196,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           cy.get('[data-test=GlmLockTabs__Button]').click();
           cy.get(
             '[data-test=BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton]',
+            // Small timeout ensures skeleton shows up quickly after the transaction.
+            { timeout: 1000 },
           ).should('be.visible');
           cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
             timeout: 60000,
@@ -210,9 +214,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         });
     });
 
-    // TODO OCT-1506 enable this scenario.
-    // eslint-disable-next-line jest/no-disabled-tests
-    it.skip('Wallet connected: Effective deposit after locking 1000 GLM and moving epoch is equal to current deposit', () => {
+    it('Wallet connected: Effective deposit after locking 1000 GLM and moving epoch is equal to current deposit', () => {
       connectWallet();
 
       cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
@@ -235,8 +237,17 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           );
           cy.get('[data-test=GlmLockNotification--success]').should('be.visible');
           cy.get('[data-test=GlmLockTabs__Button]').click();
+          cy.get(
+            '[data-test=BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton]',
+            // Small timeout ensures skeleton shows up quickly after the transaction.
+            { timeout: 1000 },
+          ).should('be.visible');
           cy.window().then(async win => {
-            await moveEpoch(win);
+            // Waiting for skeletons to disappear ensures Graph indexed lock/unlock.
+            cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton]', {
+              timeout: 60000,
+            }).should('not.exist');
+            moveEpoch(win);
             cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
               timeout: 60000,
             })
