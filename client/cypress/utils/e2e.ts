@@ -51,11 +51,12 @@ export const connectWallet = (
 };
 
 export const moveEpoch = (cypressWindow: Cypress.AUTWindow): Chainable<any> => {
-  cy.wrap(cypressWindow.mutateAsyncMoveEpoch());
+  // https://docs.cypress.io/api/utilities/promise#Waiting-for-Promises
+  cy.wrap(null).then(() => cypressWindow.mutateAsyncMoveEpoch());
   // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
   cy.wait(2000);
   // Manually taking a pending snapshot after the epoch shift ensures that the snapshot is taken. Passing epoch multiple times without manually triggering pending snapshot in a short period of time may cause the e2e environment to fail.
-  cy.wrap(axios.post(`${env.serverEndpoint}snapshots/pending`));
+  cy.wrap(null).then(() => axios.post(`${env.serverEndpoint}snapshots/pending`));
   // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
   cy.wait(2000);
   // reload is needed to get updated data in the app
