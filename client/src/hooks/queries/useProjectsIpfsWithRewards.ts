@@ -2,8 +2,7 @@ import env from 'env';
 import { ExtendedProject } from 'types/extended-project';
 import getSortedElementsByTotalValueOfAllocationsAndAlphabetical from 'utils/getSortedElementsByTotalValueOfAllocationsAndAlphabetical';
 
-import useProjectsDonors, { isEnabled } from './donors/useProjectsDonors';
-import useIsDecisionWindowOpen from './useIsDecisionWindowOpen';
+import useProjectsDonors from './donors/useProjectsDonors';
 import useMatchedProjectRewards from './useMatchedProjectRewards';
 import useProjectsContract from './useProjectsContract';
 import useProjectsIpfs from './useProjectsIpfs';
@@ -22,7 +21,6 @@ export default function useProjectsIpfsWithRewards(epoch?: number): {
   // TODO OCT-1270 TODO OCT-1312 Remove this override.
   const epochOverrideForDataFetch = env.network === 'Mainnet' && epoch === 2 ? 3 : epoch;
 
-  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: projectsAddresses, isFetching: isFetchingProjectsContract } =
     useProjectsContract(epochOverrideForDataFetch);
   const { data: projectsIpfs, isFetching: isFetchingProjectsIpfs } = useProjectsIpfs(
@@ -35,14 +33,13 @@ export default function useProjectsIpfsWithRewards(epoch?: number): {
     isRefetching: isRefetchingMatchedProjectRewards,
   } = useMatchedProjectRewards(epoch);
 
-  const shouldFetchProjectDonors = isEnabled(isDecisionWindowOpen, epoch);
   const { data: projectsDonors, isFetching: isFetchingProjectsDonors } = useProjectsDonors(epoch);
 
   const isFetching =
     isFetchingProjectsContract ||
     isFetchingProjectsIpfs ||
     (isFetchingMatchedProjectRewards && !isRefetchingMatchedProjectRewards) ||
-    (shouldFetchProjectDonors && isFetchingProjectsDonors);
+    isFetchingProjectsDonors;
   if (isFetching) {
     return {
       data: [],
