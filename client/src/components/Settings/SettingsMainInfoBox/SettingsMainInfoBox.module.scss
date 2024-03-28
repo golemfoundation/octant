@@ -1,0 +1,64 @@
+.root {
+  padding: 4.4rem 2.2rem 0.5rem;
+
+  @media #{$desktop-up} {
+    padding: 4.5rem 2.2rem 2.5rem;
+  }
+
+  .infoTitle {
+    margin-bottom: 0.8rem;
+  }
+
+  .infoEpoch {
+    padding: 0.4rem 0.8rem;
+    background: $color-octant-grey1;
+    border-radius: $border-radius-04;
+    font-size: $font-size-12;
+    font-weight: $font-weight-bold;
+    line-height: 1.6rem;
+
+    @media #{$desktop-up} {
+      font-size: $font-size-14;
+    }
+  }
+
+  .infoContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 9.9rem;
+
+    .info {
+      line-height: 1.8rem;
+      color: $color-octant-grey5;
+    }
+
+    @media #{$desktop-up} {
+      justify-content: flex-end;
+      min-height: 8rem;
+      margin-top: 1.6rem;
+
+      .info {
+        line-height: 2rem;
+        font-size: $font-size-14;
+        font-weight: $font-weight-semibold;
+      }
+
+      .golemFoundationProject {
+        color: $color-octant-green;
+      }
+    }
+
+    .buttonLink {
+      display: block;
+      font-size: $font-size-12;
+      line-height: 2rem;
+      font-weight: $font-weight-semibold;
+      min-height: 2rem;
+
+      @media #{$desktop-up} {
+        font-size: $font-size-14;
+      }
+    }
+  }
+}

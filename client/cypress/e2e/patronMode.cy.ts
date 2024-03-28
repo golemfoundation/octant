@@ -27,14 +27,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Patron mode toggle is not checked', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').should('not.be.checked');
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').should('not.be.checked');
     });
 
     if (isDesktop) {
       it('Patron mode tooltip is visible on hover and has correct text', () => {
-        cy.get('[data-test=Tooltip__patronMode]').trigger('mouseover');
-        cy.get('[data-test=Tooltip__patronMode__content]').should('be.visible');
-        cy.get('[data-test=Tooltip__patronMode__content]')
+        cy.get('[data-test=SettingsPatronModeBox__Tooltip]').trigger('mouseover');
+        cy.get('[data-test=SettingsPatronModeBox__Tooltip__content]').should('be.visible');
+        cy.get('[data-test=SettingsPatronModeBox__Tooltip__content]')
           .invoke('text')
           .should(
             'eq',
@@ -44,43 +44,43 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     }
 
     it('Checking patron mode opens patron mode modal', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').check();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').check();
       cy.get('[data-test=ModalPatronMode]').should('be.visible');
     });
 
     it('Patron mode modal last paragraph has correct text', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').check();
-      cy.get('[data-test=PatronMode__fourthParagraph]')
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').check();
+      cy.get('[data-test=SettingsPatronMode__fourthParagraph]')
         .invoke('text')
         .should('eq', 'Slide the switch below all the way to  the right to enable patron mode.');
     });
 
     it('Slider is visible', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').check();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').check();
       cy.get('[data-test=PatronModeSlider]').should('be.visible');
     });
 
     it('Slider has correct label', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').check();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').check();
       cy.get('[data-test=PatronModeSlider__label]')
         .invoke('text')
         .should('eq', 'Slide right to confirm');
     });
 
     it('Slider button is visible ', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').check();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').check();
       cy.get('[data-test=PatronModeSlider__button]').should('be.visible');
     });
 
     it('Slider button has right arrow inside', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').check();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').check();
       cy.get('[data-test=PatronModeSlider__button__arrow]')
         .should('be.visible')
         .should('have.css', 'transform', 'none');
     });
 
     it('Slider button is on the left side', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').check();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').check();
       cy.get('[data-test=PatronModeSlider]').then(sliderEl => {
         const sliderLeftDistance = sliderEl[0].getBoundingClientRect().left;
         const sliderLeftPadding = parseInt(sliderEl.css('paddingLeft'), 10);
@@ -94,7 +94,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Slider button returns to the starting point if user drops it below or equal 50% of slider width', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').check();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').check();
 
       cy.get('[data-test=PatronModeSlider]').then(sliderEl => {
         const sliderDimensions = sliderEl[0].getBoundingClientRect();
@@ -138,7 +138,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Slider elements change color while moving slider button', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').check();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').check();
 
       cy.get('[data-test=PatronModeSlider]').then(sliderEl => {
         const sliderDimensions = sliderEl[0].getBoundingClientRect();
@@ -279,7 +279,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Slider button goes to the end of track if user drops it above 50% of slider width + animation after signature', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').check();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').check();
 
       cy.get('[data-test=PatronModeSlider]').then(sliderEl => {
         const sliderDimensions = sliderEl[0].getBoundingClientRect();
@@ -401,14 +401,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Patron mode toggle is checked', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').should('be.checked');
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').should('be.checked');
     });
 
     if (isDesktop) {
       it('Patron mode tooltip is visible on hover and has correct text', () => {
-        cy.get('[data-test=Tooltip__patronMode]').trigger('mouseover');
-        cy.get('[data-test=Tooltip__patronMode__content]').should('be.visible');
-        cy.get('[data-test=Tooltip__patronMode__content]')
+        cy.get('[data-test=SettingsPatronModeBox__Tooltip]').trigger('mouseover');
+        cy.get('[data-test=SettingsPatronModeBox__Tooltip__content]').should('be.visible');
+        cy.get('[data-test=SettingsPatronModeBox__Tooltip__content]')
           .invoke('text')
           .should(
             'eq',
@@ -418,43 +418,43 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     }
 
     it('Unchecking patron mode opens patron mode modal', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').uncheck();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').uncheck();
       cy.get('[data-test=ModalPatronMode]').should('be.visible');
     });
 
     it('Patron mode modal last paragraph has correct text', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').uncheck();
-      cy.get('[data-test=PatronMode__fourthParagraph]')
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').uncheck();
+      cy.get('[data-test=SettingsPatronMode__fourthParagraph]')
         .invoke('text')
         .should('eq', 'Slide the switch below all the way to  the left to disable patron mode.');
     });
 
     it('Slider is visible', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').uncheck();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').uncheck();
       cy.get('[data-test=PatronModeSlider]').should('be.visible');
     });
 
     it('Slider has correct label', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').uncheck();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').uncheck();
       cy.get('[data-test=PatronModeSlider__label]')
         .invoke('text')
         .should('eq', 'Slide left to confirm');
     });
 
     it('Slider button is visible', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').uncheck();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').uncheck();
       cy.get('[data-test=PatronModeSlider__button]').should('be.visible');
     });
 
     it('Slider button has left arrow inside', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').uncheck();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').uncheck();
       cy.get('[data-test=PatronModeSlider__button__arrow]')
         .should('be.visible')
         .should('have.css', 'transform', 'matrix(-1, 0, 0, -1, 0, 0)');
     });
 
     it('Slider button is on the right side', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').uncheck();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').uncheck();
       cy.get('[data-test=PatronModeSlider]').then(sliderEl => {
         const sliderRightDistance = sliderEl[0].getBoundingClientRect().right;
         const sliderRightPadding = parseInt(sliderEl.css('paddingRight'), 10);
@@ -468,7 +468,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Slider button returns to the starting point if user drops it below or equal 50% of slider width', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').uncheck();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').uncheck();
 
       cy.get('[data-test=PatronModeSlider]').then(sliderEl => {
         const sliderDimensions = sliderEl[0].getBoundingClientRect();
@@ -512,7 +512,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Slider elements change color while moving slider button', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').uncheck();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').uncheck();
 
       cy.get('[data-test=PatronModeSlider]').then(sliderEl => {
         const sliderDimensions = sliderEl[0].getBoundingClientRect();
@@ -655,7 +655,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Slider button goes to the end of track if user drops it above 50% of slider width + animation after signature', () => {
-      cy.get('[data-test=InputToggle__PatronMode]').uncheck();
+      cy.get('[data-test=SettingsPatronModeBox__InputToggle]').uncheck();
 
       cy.get('[data-test=PatronModeSlider]').then(sliderEl => {
         const sliderDimensions = sliderEl[0].getBoundingClientRect();
