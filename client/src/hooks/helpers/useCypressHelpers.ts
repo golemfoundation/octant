@@ -1,9 +1,12 @@
 import { useEffect } from 'react';
 
-import useCypressMoveEpoch from 'hooks/mutations/useCypressMoveEpoch';
+import useCypressMoveToDecisionWindowClosed from 'hooks/mutations/useCypressMoveToDecisionWindowClosed';
+import useCypressMoveToDecisionWindowOpen from 'hooks/mutations/useCypressMoveToDecisionWindowOpen';
 
 export default function useCypressHelpers(): void {
-  const { mutateAsync: mutateAsyncMoveEpoch } = useCypressMoveEpoch();
+  const { mutateAsync: mutateAsyncMoveToDecisionWindowOpen } = useCypressMoveToDecisionWindowOpen();
+  const { mutateAsync: mutateAsyncMoveToDecisionWindowClosed } =
+    useCypressMoveToDecisionWindowClosed();
 
   useEffect(() => {
     /**
@@ -20,7 +23,9 @@ export default function useCypressHelpers(): void {
      */
     if (window.Cypress) {
       // @ts-expect-error Left for debug purposes.
-      window.mutateAsyncMoveEpoch = mutateAsyncMoveEpoch;
+      window.mutateAsyncMoveToDecisionWindowOpen = mutateAsyncMoveToDecisionWindowOpen;
+      // @ts-expect-error Left for debug purposes.
+      window.mutateAsyncMoveToDecisionWindowClosed = mutateAsyncMoveToDecisionWindowClosed;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
