@@ -3,12 +3,12 @@ import { string, object, ObjectSchema } from 'yup';
 import i18n from 'i18n';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
-import { FormFields } from './types';
+import { CurrentMode, FormFields } from './types';
 
-export const formInitialValues: FormFields = {
-  currentMode: 'lock',
+export const formInitialValues = (currentMode: CurrentMode): FormFields => ({
+  currentMode,
   valueToDeposeOrWithdraw: '',
-};
+});
 
 export const validationSchema = (
   dataAvailableFunds: bigint | undefined,
