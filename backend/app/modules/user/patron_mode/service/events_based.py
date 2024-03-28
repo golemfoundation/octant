@@ -5,7 +5,7 @@ from app.context.epoch_details import EpochDetails
 from app.context.manager import Context
 from app.infrastructure import database
 from app.modules.common.time import Timestamp
-from app.modules.dto import PatronDonationItem
+from app.modules.history.dto import PatronDonationItem
 from app.modules.user.patron_mode.core import (
     filter_and_reverse_epochs,
     create_patron_donation_item,

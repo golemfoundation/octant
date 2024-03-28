@@ -1,6 +1,6 @@
 from app.engine.user.effective_deposit import UserDeposit
 from app.modules.common.time import from_timestamp_s
-from app.modules.dto import LockItem, OpType
+from app.modules.history.dto import LockItem, OpType
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
 from tests.conftest import USER1_ADDRESS, mock_graphql
 from tests.helpers.context import get_context

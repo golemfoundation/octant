@@ -1,14 +1,17 @@
-from typing import Protocol, List, Dict, Tuple, runtime_checkable
+from typing import Protocol, List, Dict, Tuple, Optional, runtime_checkable
 
 from app.context.manager import Context
 from app.engine.projects.rewards import ProjectRewardDTO, ProjectRewardsResult
 from app.engine.user.effective_deposit import UserDeposit
 from app.modules.dto import (
     OctantRewardsDTO,
+    AccountFundsDTO,
     AllocationDTO,
+    ProposalDonationDTO,
     FinalizedSnapshotDTO,
     PendingSnapshotDTO,
     WithdrawableEth,
+    UserAllocationRequestPayload,
 )
 from app.modules.history.dto import UserHistoryDTO
 
@@ -48,6 +51,33 @@ class AllUserEffectiveDeposits(Protocol):
 @runtime_checkable
 class DonorsAddresses(Protocol):
     def get_all_donors_addresses(self, context: Context) -> List[str]:
+        ...
+
+
+@runtime_checkable
+class GetUserAllocationsProtocol(Protocol):
+    def get_all_allocations(self, context: Context) -> List[AllocationDTO]:
+        ...
+
+    def get_allocations_by_project(
+        self, context: Context, project: str
+    ) -> List[ProposalDonationDTO]:
+        ...
+
+    def get_last_user_allocation(
+        self, context: Context, user_address: str
+    ) -> Tuple[List[AccountFundsDTO], Optional[bool]]:
+        ...
+
+
+@runtime_checkable
+class AllocationManipulationProtocol(Protocol):
+    def allocate(
+        self, context: Context, payload: UserAllocationRequestPayload, **kwargs
+    ):
+        ...
+
+    def revoke_previous_allocation(self, context: Context, user_address: str):
         ...
 
 

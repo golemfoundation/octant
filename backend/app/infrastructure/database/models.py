@@ -1,7 +1,7 @@
-from datetime import datetime as dt
 from typing import Optional
 
 from app.extensions import db
+from app.modules.common import time
 
 # Alias common SQLAlchemy names
 Column = db.Column
@@ -12,7 +12,7 @@ UniqueConstraint = db.UniqueConstraint
 
 class BaseModel(Model):
     __abstract__ = True
-    created_at = Column(db.TIMESTAMP, default=dt.utcnow)
+    created_at = Column(db.TIMESTAMP, default=lambda: time.now().datetime())
 
 
 class User(BaseModel):

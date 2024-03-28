@@ -1,7 +1,6 @@
 from unittest.mock import Mock
 
-from app.infrastructure import database
-from app.modules.dto import AllocationDTO
+from app.modules.dto import AllocationItem
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
 from tests.helpers.constants import (
     USER1_BUDGET,
@@ -9,6 +8,7 @@ from tests.helpers.constants import (
     COMMUNITY_FUND,
     PPF,
 )
+from tests.helpers import make_user_allocation
 from tests.helpers.context import get_context
 from tests.helpers.pending_snapshot import create_pending_snapshot
 from tests.modules.octant_rewards.helpers.checker import check_octant_rewards
@@ -75,14 +75,13 @@ def test_pending_get_leverage(
     proposal_accounts, mock_users_db, mock_pending_epoch_snapshot_db, mock_patron_mode
 ):
     user, _, _ = mock_users_db
-    database.allocations.add_all(
-        1,
-        user.id,
-        0,
-        [AllocationDTO(proposal_accounts[0].address, USER1_BUDGET)],
-    )
     context = get_context()
     service = PendingOctantRewards(patrons_mode=mock_patron_mode)
+    make_user_allocation(
+        context,
+        user,
+        allocation_items=[AllocationItem(proposal_accounts[0].address, USER1_BUDGET)],
+    )
 
     result = service.get_leverage(context)
 

@@ -63,7 +63,7 @@ class NotInDecisionWindow(OctantException):
         super().__init__(self.description, self.code)
 
 
-class InvalidProposals(OctantException):
+class InvalidProjects(OctantException):
     code = 400
     description = "The following proposals are not valid: {}"
 
@@ -71,7 +71,7 @@ class InvalidProposals(OctantException):
         super().__init__(self.description.format(proposals), self.code)
 
 
-class ProposalAllocateToItself(OctantException):
+class ProjectAllocationToSelf(OctantException):
     code = 400
     description = "You cannot allocate funds to your own project."
 
