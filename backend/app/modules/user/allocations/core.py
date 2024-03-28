@@ -56,7 +56,7 @@ def verify_user_allocation_request(
     expected_nonce: int,
     user_budget: int,
     patrons: List[str],
-) -> bool:
+):
     _verify_epoch_state(context.epoch_state)
     _verify_nonce(request.payload.nonce, expected_nonce)
     _verify_user_not_a_patron(user_address, patrons)
@@ -67,8 +67,6 @@ def verify_user_allocation_request(
     _verify_no_duplicates(request.payload.allocations)
     _verify_no_self_allocation(request.payload.allocations, user_address)
     _verify_allocations_within_budget(request.payload.allocations, user_budget)
-
-    return True
 
 
 def _verify_epoch_state(epoch_state: EpochState):

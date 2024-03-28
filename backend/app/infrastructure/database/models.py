@@ -159,3 +159,14 @@ class EpochZeroClaim(BaseModel):
     address = Column(db.String(42), primary_key=True, nullable=False)
     claimed = Column(db.Boolean, default=False)
     claim_nonce = db.Column(db.Integer(), unique=True, nullable=True)
+
+
+class MultisigSignatures(BaseModel):
+    __tablename__ = "multisig_signatures"
+
+    id = Column(db.Integer, primary_key=True)
+    address = Column(db.String(42), nullable=False)
+    type = Column(db.String, nullable=False)
+    message = Column(db.String, nullable=False)
+    hash = Column(db.String, nullable=False)
+    status = Column(db.String, nullable=False)

@@ -4,21 +4,7 @@ from app.exceptions import InvalidSignature, UserNotFound, NotInDecisionWindow
 from app.extensions import db
 from app.modules.user.allocations import controller as allocations_controller
 from app.legacy.core.user import patron_mode as patron_mode_core
-from app.legacy.core.user.tos import (
-    has_user_agreed_to_terms_of_service,
-    add_user_terms_of_service_consent,
-)
 from app.legacy.crypto.eth_sign import patron_mode as patron_mode_crypto
-
-
-def get_user_terms_of_service_consent_status(user_address: str) -> bool:
-    return has_user_agreed_to_terms_of_service(user_address)
-
-
-def post_user_terms_of_service_consent(user_address: str, signature: str, user_ip: str):
-    add_user_terms_of_service_consent(user_address, signature, user_ip)
-
-    db.session.commit()
 
 
 def get_patron_mode_status(user_address: str) -> bool:
