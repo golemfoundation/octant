@@ -1,3 +1,4 @@
+import env from 'env';
 import { ExtendedProject } from 'types/extended-project';
 import getSortedElementsByTotalValueOfAllocationsAndAlphabetical from 'utils/getSortedElementsByTotalValueOfAllocationsAndAlphabetical';
 
@@ -18,7 +19,7 @@ export default function useProjectsIpfsWithRewards(epoch?: number): {
   isFetching: boolean;
 } {
   // TODO OCT-1270 TODO OCT-1312 Remove this override.
-  const epochOverrideForDataFetch = epoch === 2 ? 3 : epoch;
+  const epochOverrideForDataFetch = env.network === 'Mainnet' && epoch === 2 ? 3 : epoch;
 
   const { data: projectsAddresses, isFetching: isFetchingProjectsContract } =
     useProjectsContract(epochOverrideForDataFetch);
@@ -31,6 +32,7 @@ export default function useProjectsIpfsWithRewards(epoch?: number): {
     isFetching: isFetchingMatchedProjectRewards,
     isRefetching: isRefetchingMatchedProjectRewards,
   } = useMatchedProjectRewards(epoch);
+
   const { data: projectsDonors, isFetching: isFetchingProjectsDonors } = useProjectsDonors(epoch);
 
   const isFetching =
