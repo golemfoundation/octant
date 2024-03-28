@@ -64,18 +64,14 @@ export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknow
             ),
           );
         }
-
-        const blockTimestamp = Number(block.timestamp);
-        const currentEpochEndTimestamp = Number(currentEpochEnd);
+        
         const currentEpochPropsTimestamps = {
           decisionWindow: Number(currentEpochProps.decisionWindow) * 1000,
           duration: Number(currentEpochProps.duration) * 1000,
         };
 
         const timeToIncrease =
-          currentEpochEndTimestamp +
           currentEpochPropsTimestamps.decisionWindow -
-          blockTimestamp +
           10; // [s]
         await wagmiConfig.publicClient.request({
           method: 'evm_increaseTime' as any,
