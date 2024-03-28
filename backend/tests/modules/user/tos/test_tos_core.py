@@ -6,7 +6,7 @@ from tests.helpers.signature import build_user_signature
 
 
 @pytest.fixture(autouse=True)
-def before(patch_is_contract):
+def before(app, patch_is_contract):
     pass
 
 

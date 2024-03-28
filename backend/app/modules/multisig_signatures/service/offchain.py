@@ -4,7 +4,11 @@ from app.context.manager import Context
 from app.exceptions import InvalidMultisigSignatureRequest
 from app.extensions import db
 from app.infrastructure import database
-from app.modules.common.signature import hash_message
+from app.modules.common.signature import (
+    encode_for_signing,
+    EncodingStandardFor,
+    hash_signable_message,
+)
 from app.modules.common.verifier import Verifier
 from app.modules.dto import SignatureOpType
 from app.modules.multisig_signatures.dto import Signature
@@ -43,6 +47,8 @@ class OffchainMultisigSignatures(Model):
             raise InvalidMultisigSignatureRequest()
 
         msg = json.dumps(signature_data)
-        msg_hash = hash_message(msg)
+        msg_hash = hash_signable_message(
+            encode_for_signing(EncodingStandardFor.TEXT, msg)
+        )
         database.multisig_signature.save_signature(user_address, op_type, msg, msg_hash)
         db.session.commit()
