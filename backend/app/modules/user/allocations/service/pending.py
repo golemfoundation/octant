@@ -1,14 +1,22 @@
 from typing import List, Tuple, Protocol, runtime_checkable
-from app.pydantic import Model
 
 from app import exceptions
-from app.extensions import db
 from app.context.manager import Context
 from app.engine.projects.rewards import ProjectRewardDTO
+from app.exceptions import InvalidSignature
+from app.extensions import db
 from app.infrastructure import database
+from app.modules.common.signature import (
+    verify_signed_message,
+    encode_for_signing,
+    EncodingStandardFor,
+)
+from app.legacy.crypto.eip712 import build_allocations_eip712_structure
+from app.modules.common.verifier import Verifier
 from app.modules.dto import AllocationDTO, UserAllocationRequestPayload
 from app.modules.user.allocations import core
 from app.modules.user.allocations.service.saved import SavedUserAllocations
+from app.pydantic import Model
 
 
 @runtime_checkable
@@ -29,10 +37,34 @@ class GetPatronsAddressesProtocol(Protocol):
         ...
 
 
-class PendingUserAllocations(SavedUserAllocations, Model):
-    octant_rewards: OctantRewards
+class PendingUserAllocationsVerifier(Verifier, Model):
     user_budgets: UserBudgetProtocol
     patrons_mode: GetPatronsAddressesProtocol
+
+    def _verify_logic(self, context: Context, **kwargs):
+        user_address, payload, expected_nonce = (
+            kwargs["user_address"],
+            kwargs["payload"],
+            kwargs["expected_nonce"],
+        )
+        user_budget = self.user_budgets.get_budget(context, user_address)
+        patrons = self.patrons_mode.get_all_patrons_addresses(context)
+
+        core.verify_user_allocation_request(
+            context, payload, user_address, expected_nonce, user_budget, patrons
+        )
+
+    def _verify_signature(self, _: Context, **kwargs):
+        user_address, signature = kwargs["user_address"], kwargs["payload"].signature
+        eip712_encoded = build_allocations_eip712_structure(kwargs["payload"].payload)
+        encoded_msg = encode_for_signing(EncodingStandardFor.DATA, eip712_encoded)
+        if not verify_signed_message(user_address, encoded_msg, signature):
+            raise InvalidSignature()
+
+
+class PendingUserAllocations(SavedUserAllocations, Model):
+    octant_rewards: OctantRewards
+    verifier: Verifier
 
     def allocate(
         self, context: Context, payload: UserAllocationRequestPayload, **kwargs
@@ -40,11 +72,12 @@ class PendingUserAllocations(SavedUserAllocations, Model):
         user_address = core.recover_user_address(payload)
 
         expected_nonce = self.get_user_next_nonce(user_address)
-        user_budget = self.user_budgets.get_budget(context, user_address)
-        patrons = self.patrons_mode.get_all_patrons_addresses(context)
-
-        core.verify_user_allocation_request(
-            context, payload, user_address, expected_nonce, user_budget, patrons
+        self.verifier.verify(
+            context,
+            user_address=user_address,
+            payload=payload,
+            expected_nonce=expected_nonce,
+            **kwargs
         )
 
         self.revoke_previous_allocation(context, user_address)

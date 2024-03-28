@@ -29,6 +29,7 @@ def before(
     patch_proposals,
     patch_has_pending_epoch_snapshot,
     patch_user_budget,
+    patch_is_contract,
 ):
     MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts[0:5]
