@@ -111,7 +111,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
           <Sections sections={sections} variant="small" />
         </BoxRounded>
       )}
-      {(personalAllocation === 0n) !== true && (
+      {personalAllocation !== 0n && (
         <BoxRounded
           className={cx(
             styles.personalRewardBox,
