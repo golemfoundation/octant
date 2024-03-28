@@ -13,6 +13,15 @@
 
   .link {
     font-weight: $font-weight-semibold;
+    text-decoration: underline;
+
+    @media #{$desktop-up} {
+      &:hover {
+        text-decoration: underline;
+      }
+
+      text-decoration: none;
+    }
 
     &:hover {
       transform: none;
