@@ -17,7 +17,8 @@ from app.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost im
 from app.engine.octant_rewards.total_and_individual.preliminary import (
     PreliminaryTotalAndAllIndividualRewards,
 )
-from app.engine.projects import ProjectSettings
+from app.engine.projects import ProjectSettings, DefaultProjectRewards
+from app.engine.projects.rewards.threshold.default import DefaultProjectThreshold
 from app.engine.user.budget.preliminary import PreliminaryUserBudget
 from app.engine.user import UserSettings, DefaultWeightedAverageEffectiveDeposit
 from app.engine.user.effective_deposit.weighted_average.weights.timebased.default import (
@@ -54,6 +55,11 @@ def register_epoch_settings():
                 timebased_weights=DefaultTimebasedWeights(),
             ),
         ),
+        project=ProjectSettings(
+            rewards=DefaultProjectRewards(
+                projects_threshold=DefaultProjectThreshold(2),
+            ),
+        ),
     )
 
     SETTINGS[2] = EpochSettings(
@@ -64,6 +70,11 @@ def register_epoch_settings():
             community_fund=NotSupportedCFCalculator(),
         ),
         user=UserSettings(budget=PreliminaryUserBudget()),
+        project=ProjectSettings(
+            rewards=DefaultProjectRewards(
+                projects_threshold=DefaultProjectThreshold(2),
+            ),
+        ),
     )
 
     SETTINGS[3] = EpochSettings()

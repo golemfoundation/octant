@@ -45,3 +45,7 @@ class ProjectRewards(ABC):
         self, payload: ProjectRewardsPayload
     ) -> ProjectRewardsResult:
         pass
+
+    @abstractmethod
+    def calculate_threshold(self, total_allocated: int, projects: list[str]) -> int:
+        pass

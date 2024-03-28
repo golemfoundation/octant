@@ -10,7 +10,10 @@ from app.infrastructure.routes.validations.user_validations import (
 from app.legacy.controllers import rewards
 from app.modules.common.time import days_to_sec
 from app.modules.octant_rewards.controller import get_leverage
-from app.modules.project_rewards.controller import get_estimated_project_rewards
+from app.modules.project_rewards.controller import (
+    get_estimated_project_rewards,
+    get_allocation_threshold,
+)
 from app.modules.user.budgets.controller import estimate_budget, get_budgets, get_budget
 from app.modules.user.rewards.controller import get_unused_rewards
 
@@ -243,12 +246,13 @@ class EstimatedUserBudget(OctantResource):
     },
 )
 @ns.response(200, "Returns allocation threshold value as uint256")
+@ns.response(400, "Returns when called for an epoch that is not finalized or pending")
 class Threshold(OctantResource):
     @ns.marshal_with(threshold_model)
     @ns.response(200, "Threshold successfully retrieved")
     def get(self, epoch):
         app.logger.debug(f"Getting threshold for epoch {epoch}")
-        threshold = rewards.get_allocation_threshold(epoch)
+        threshold = get_allocation_threshold(epoch)
         app.logger.debug(f"Threshold in epoch: {epoch}: {threshold}")
 
         return {"threshold": threshold}

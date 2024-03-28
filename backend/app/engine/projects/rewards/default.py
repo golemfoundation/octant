@@ -25,8 +25,15 @@ class DefaultProjectRewards(ProjectRewards):
         default_factory=DefaultProjectAllocations
     )
     projects_threshold: ProjectThreshold = field(
-        default_factory=DefaultProjectThreshold
+        default_factory=lambda: DefaultProjectThreshold(1)
     )
+
+    def calculate_threshold(self, total_allocated: int, projects: list[str]) -> int:
+        return self.projects_threshold.calculate_threshold(
+            ProjectThresholdPayload(
+                total_allocated=total_allocated, projects_count=len(projects)
+            )
+        )
 
     def calculate_project_rewards(
         self, payload: ProjectRewardsPayload
@@ -37,11 +44,7 @@ class DefaultProjectRewards(ProjectRewards):
         ) = self.projects_allocations.group_allocations_by_projects(
             ProjectAllocationsPayload(allocations=payload.allocations)
         )
-        threshold = self.projects_threshold.calculate_threshold(
-            ProjectThresholdPayload(
-                total_allocated=total_allocated, projects_count=len(payload.projects)
-            )
-        )
+        threshold = self.calculate_threshold(total_allocated, payload.projects)
 
         total_allocated_above_threshold = sum(
             [allocated for _, allocated in allocated_by_addr if allocated > threshold]

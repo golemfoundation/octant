@@ -156,6 +156,12 @@ class EstimatedProjectRewardsService(Protocol):
 
 
 @runtime_checkable
+class SavedProjectRewardsService(Protocol):
+    def get_allocation_threshold(self, context: Context) -> int:
+        ...
+
+
+@runtime_checkable
 class HistoryService(Protocol):
     def get_user_history(
         self, context: Context, user_address: str, cursor: str = None, limit: int = 20

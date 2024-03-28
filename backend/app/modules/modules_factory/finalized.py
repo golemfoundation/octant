@@ -11,8 +11,10 @@ from app.modules.modules_factory.protocols import (
     Leverage,
     UserBudgets,
     WithdrawalsService,
+    SavedProjectRewardsService,
 )
 from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
+from app.modules.project_rewards.service.saved import SavedProjectRewards
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.saved import SavedUserDeposits
@@ -44,6 +46,7 @@ class FinalizedServices(Model):
     user_budgets_service: UserBudgets
     user_rewards_service: UserRewards
     withdrawals_service: WithdrawalsService
+    project_rewards_service: SavedProjectRewardsService
 
     @staticmethod
     def create() -> "FinalizedServices":
@@ -65,4 +68,5 @@ class FinalizedServices(Model):
             user_budgets_service=saved_user_budgets,
             user_rewards_service=user_rewards,
             withdrawals_service=withdrawals_service,
+            project_rewards_service=SavedProjectRewards(),
         )

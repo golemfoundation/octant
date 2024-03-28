@@ -5,7 +5,6 @@ from typing import List
 from dataclass_wizard import JSONWizard
 
 from app import exceptions
-from app.extensions import epochs
 from app.infrastructure import database
 from app.legacy.core import proposals
 from app.legacy.core.epochs import epoch_snapshots as core_epoch_snapshots
@@ -32,15 +31,6 @@ class RewardsMerkleTree(JSONWizard):
     root: str
     leaves: List[RewardsMerkleTreeLeaf]
     leaf_encoding: List[str]
-
-
-def get_allocation_threshold(epoch: int = None) -> int:
-    epoch = epochs.get_pending_epoch() if epoch is None else epoch
-
-    if epoch is None:
-        raise exceptions.NotInDecisionWindow
-
-    return proposals.get_proposal_allocation_threshold(epoch)
 
 
 def get_finalized_epoch_proposals_rewards(epoch: int = None) -> List[ProposalReward]:
