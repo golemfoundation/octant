@@ -246,6 +246,7 @@ class EstimatedUserBudget(OctantResource):
     },
 )
 @ns.response(200, "Returns allocation threshold value as uint256")
+@ns.response(400, "Returns when called for an epoch that is not finalized or pending")
 class Threshold(OctantResource):
     @ns.marshal_with(threshold_model)
     @ns.response(200, "Threshold successfully retrieved")
