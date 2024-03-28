@@ -21,7 +21,7 @@ export default function useProjectsDonors(epoch?: number): {
 
   const projectsDonorsResults: UseQueryResult<ProjectDonor[]>[] = useQueries({
     queries: (projectsAddresses || []).map(projectAddress => ({
-      enabled: !!projectsAddresses && (isDecisionWindowOpen === true || epoch !== undefined),
+      enabled: !!projectsAddresses && (!!currentEpoch && currentEpoch > 1) && (isDecisionWindowOpen === true || epoch !== undefined),
       queryFn: () => apiGetProjectDonors(projectAddress, epoch || currentEpoch! - 1),
       queryKey: QUERY_KEYS.projectDonors(projectAddress, epoch || currentEpoch! - 1),
       select: response => mapDataToProjectDonors(response),
