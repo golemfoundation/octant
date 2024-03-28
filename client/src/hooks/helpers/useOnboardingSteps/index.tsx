@@ -1,16 +1,34 @@
-import React, { Fragment } from 'react';
+import { format } from 'date-fns';
+import React, { Fragment, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Step } from 'components/shared/ModalOnboarding/types';
 import ModalOnboardingTOS from 'components/shared/ModalOnboardingTOS';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 
-import { stepsDecisionWindowOpen, stepsDecisionWindowClosed } from './steps';
+import { getStepsDecisionWindowOpen, getStepsDecisionWindowClosed } from './steps';
+
+import useEpochAndAllocationTimestamps from '../useEpochAndAllocationTimestamps';
 
 const useOnboardingSteps = (isUserTOSAcceptedInitial: boolean | undefined): Step[] => {
   const { i18n } = useTranslation();
-
+  const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+
+  const epoch = isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch;
+
+  const { timeCurrentAllocationEnd, timeCurrentEpochEnd } = useEpochAndAllocationTimestamps();
+
+  const changeAWDate = useMemo(() => {
+    if (isDecisionWindowOpen && timeCurrentAllocationEnd) {
+      return format(new Date(timeCurrentAllocationEnd).getTime(), 'dd MMM');
+    }
+    if (!isDecisionWindowOpen && timeCurrentEpochEnd) {
+      return format(new Date(timeCurrentEpochEnd).getTime(), 'dd MMM');
+    }
+    return '';
+  }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
   return [
     ...(isUserTOSAcceptedInitial === false
@@ -27,7 +45,9 @@ const useOnboardingSteps = (isUserTOSAcceptedInitial: boolean | undefined): Step
           },
         ]
       : []),
-    ...(isDecisionWindowOpen ? stepsDecisionWindowOpen : stepsDecisionWindowClosed),
+    ...(isDecisionWindowOpen
+      ? getStepsDecisionWindowOpen(epoch?.toString() ?? '', changeAWDate)
+      : getStepsDecisionWindowClosed(epoch?.toString() ?? '', changeAWDate)),
   ];
 };
 
