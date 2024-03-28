@@ -234,6 +234,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           cy.get('[data-test=GlmLockNotification--success]').should('be.visible');
           cy.get('[data-test=GlmLockTabs__Button]').click();
           cy.window().then(async win => {
+            // Waiting for skeletons to disappear ensures Graph indexed lock/unlock.
+            cy.get('[data-test^=DoubleValueSkeleton').should('not.be.visible');
             await moveEpoch(win);
             cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
               timeout: 60000,
