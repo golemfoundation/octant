@@ -1,7 +1,12 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import chaiColors from 'chai-colors';
+
 import { visitWithLoader, mockCoinPricesServer, connectWallet } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
+
+chai.use(chaiColors);
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
   describe(
@@ -62,22 +67,18 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
             'width',
             `${width / 2}px`,
           );
-          cy.get('[data-test=AllocationRewardsBox__Slider__track--0]').should(
-            'have.css',
-            'background-color',
-            'rgb(158, 163, 158)',
-          );
+          cy.get('[data-test=AllocationRewardsBox__Slider__track--0]')
+            .then($el => $el.css('background-color'))
+            .should('be.colored', '#9ea39e');
 
           cy.get('[data-test=AllocationRewardsBox__Slider__track--1]').should(
             'have.css',
             'width',
             `${width / 2}px`,
           );
-          cy.get('[data-test=AllocationRewardsBox__Slider__track--1]').should(
-            'have.css',
-            'background-color',
-            'rgb(205, 209, 205)',
-          );
+          cy.get('[data-test=AllocationRewardsBox__Slider__track--1]')
+            .then($el => $el.css('background-color'))
+            .should('be.colored', '#cdd1cd');
         });
       });
 
@@ -190,21 +191,18 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
             'width',
             `${(sliderButtonDimensions.width + sliderElWidth) / 2}px`,
           );
-          cy.get('[data-test=AllocationRewardsBox__Slider__track--0]').should(
-            'have.css',
-            'background-color',
-            'rgb(45, 155, 135)',
-          );
+          cy.get('[data-test=AllocationRewardsBox__Slider__track--0]')
+            .then($el => $el.css('background-color'))
+            .should('be.colored', '#2d9b87');
+
           cy.get('[data-test=AllocationRewardsBox__Slider__track--1]').should(
             'have.css',
             'width',
             `${(sliderButtonDimensions.width + sliderElWidth) / 2}px`,
           );
-          cy.get('[data-test=AllocationRewardsBox__Slider__track--1]').should(
-            'have.css',
-            'background-color',
-            'rgb(255, 150, 1)',
-          );
+          cy.get('[data-test=AllocationRewardsBox__Slider__track--1]')
+            .then($el => $el.css('background-color'))
+            .should('be.colored', '#ff9601');
 
           cy.get('[data-test=AllocationRewardsBox__section__value--0]')
             .invoke('text')
@@ -229,22 +227,19 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
             'width',
             `${sliderElWidth}px`,
           );
-          cy.get('[data-test=AllocationRewardsBox__Slider__track--0]').should(
-            'have.css',
-            'background-color',
-            'rgb(45, 155, 135)',
-          );
+          cy.get('[data-test=AllocationRewardsBox__Slider__track--0]')
+            .then($el => $el.css('background-color'))
+            .should('be.colored', '#2d9b87');
+
           // track 1 is hidden under the thumb
           cy.get('[data-test=AllocationRewardsBox__Slider__track--1]').should(
             'have.css',
             'width',
             `${sliderButtonDimensions.width}px`,
           );
-          cy.get('[data-test=AllocationRewardsBox__Slider__track--1]').should(
-            'have.css',
-            'background-color',
-            'rgb(255, 150, 1)',
-          );
+          cy.get('[data-test=AllocationRewardsBox__Slider__track--1]')
+            .then($el => $el.css('background-color'))
+            .should('be.colored', '#ff9601');
 
           cy.get('[data-test=AllocationRewardsBox__section__value--0]')
             .invoke('text')
@@ -263,21 +258,19 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         .should('eq', 'Donate 0%');
       cy.get('[data-test=AllocationInputs__InputText--crypto]').should('have.value', '0');
       cy.get('[data-test=AllocationInputs__InputText--crypto]').should('be.focused');
-      cy.get('[data-test=AllocationInputs__InputText--crypto]').should(
-        'have.css',
-        'border-color',
-        'rgb(45, 155, 135)',
-      );
+      cy.get('[data-test=AllocationInputs__InputText--crypto]')
+        .then($el => $el.css('border-color'))
+        .should('be.colored', '#2d9b87');
+
       cy.get('[data-test=AllocationInputs__InputText--percentage]').should('have.value', '0');
       cy.get('[data-test=AllocationInputs__InputText--percentage]').should('not.be.focused');
 
       // 10 GWEI
       cy.get('[data-test=AllocationInputs__InputText--crypto]').type('0.00000001');
-      cy.get('[data-test=AllocationInputs__InputText--crypto]').should(
-        'have.css',
-        'border-color',
-        'rgb(45, 155, 135)',
-      );
+      cy.get('[data-test=AllocationInputs__InputText--crypto]')
+        .then($el => $el.css('border-color'))
+        .should('be.colored', '#2d9b87');
+
       cy.get('[data-test=AllocationInputs__InputText--percentage]').should('have.value', '100');
 
       cy.get('[data-test=AllocationInputs__Button]').should('not.be.disabled');
@@ -299,11 +292,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       // 100 GWEI
       cy.get('[data-test=AllocationInputs__InputText--percentage]').clear();
       cy.get('[data-test=AllocationInputs__InputText--crypto]').type('0.0000001');
-      cy.get('[data-test=AllocationInputs__InputText--crypto]').should(
-        'have.css',
-        'border-color',
-        'rgb(255, 97, 87)',
-      );
+      cy.get('[data-test=AllocationInputs__InputText--crypto]')
+        .then($el => $el.css('border-color'))
+        .should('be.colored', '#FF6157');
+
       cy.get('[data-test=AllocationInputs__InputText--percentage]').should('have.value', '100');
 
       cy.get('[data-test=AllocationInputs__Button]').should('be.disabled');
@@ -378,22 +370,20 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         .should('eq', 'Personal 100%');
       cy.get('[data-test=AllocationInputs__InputText--crypto]').should('have.value', '0.00000001');
       cy.get('[data-test=AllocationInputs__InputText--crypto]').should('be.focused');
-      cy.get('[data-test=AllocationInputs__InputText--crypto]').should(
-        'have.css',
-        'border-color',
-        'rgb(45, 155, 135)',
-      );
+      cy.get('[data-test=AllocationInputs__InputText--crypto]')
+        .then($el => $el.css('border-color'))
+        .should('be.colored', '#2d9b87');
+
       cy.get('[data-test=AllocationInputs__InputText--percentage]').should('have.value', '100');
       cy.get('[data-test=AllocationInputs__InputText--percentage]').should('not.be.focused');
 
       // 10 GWEI
       cy.get('[data-test=AllocationInputs__InputText--percentage]').clear();
       cy.get('[data-test=AllocationInputs__InputText--crypto]').type('0.00000001');
-      cy.get('[data-test=AllocationInputs__InputText--crypto]').should(
-        'have.css',
-        'border-color',
-        'rgb(45, 155, 135)',
-      );
+      cy.get('[data-test=AllocationInputs__InputText--crypto]')
+        .then($el => $el.css('border-color'))
+        .should('be.colored', '#2d9b87');
+
       cy.get('[data-test=AllocationInputs__InputText--percentage]').should('have.value', '100');
 
       cy.get('[data-test=AllocationInputs__Button]').should('not.be.disabled');
@@ -415,11 +405,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       // 100 GWEI
       cy.get('[data-test=AllocationInputs__InputText--percentage]').clear();
       cy.get('[data-test=AllocationInputs__InputText--crypto]').type('0.0000001');
-      cy.get('[data-test=AllocationInputs__InputText--crypto]').should(
-        'have.css',
-        'border-color',
-        'rgb(255, 97, 87)',
-      );
+      cy.get('[data-test=AllocationInputs__InputText--crypto]')
+        .then($el => $el.css('border-color'))
+        .should('be.colored', '#FF6157');
       cy.get('[data-test=AllocationInputs__InputText--percentage]').should('have.value', '100');
 
       cy.get('[data-test=AllocationInputs__Button]').should('be.disabled');
