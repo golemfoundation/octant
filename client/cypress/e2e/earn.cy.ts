@@ -14,7 +14,7 @@ const connectWallet = (): Chainable => {
 };
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }, idx) => {
-  describe(`earn: ${device}`, { retries: { runMode: 0, openMode: 0 }, viewportHeight, viewportWidth }, () => {
+  describe(`earn: ${device}`, { retries: { openMode: 0, runMode: 0 }, viewportHeight, viewportWidth }, () => {
     before(() => {
       /**
        * Global Metamask setup done by Synpress is not always done.
@@ -236,7 +236,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           cy.window().then(async win => {
             // Waiting for skeletons to disappear ensures Graph indexed lock/unlock.
             cy.get('[data-test^=DoubleValueSkeleton]', { timeout: 60000 }).should('not.exist');
-            await moveEpoch(win);
+            moveEpoch(win);
             cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
               timeout: 60000,
             })
