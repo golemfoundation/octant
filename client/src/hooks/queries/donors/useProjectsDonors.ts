@@ -9,6 +9,9 @@ import useProjectsContract from 'hooks/queries/useProjectsContract';
 import { ProjectDonor } from './types';
 import { mapDataToProjectDonors } from './utils';
 
+export const isEnabled = (isDecisionWindowOpen?: boolean, epoch?: number): boolean =>
+  isDecisionWindowOpen === true || epoch !== undefined;
+
 export default function useProjectsDonors(epoch?: number): {
   data: { [key: string]: ProjectDonor[] };
   isFetching: boolean;
@@ -21,16 +24,9 @@ export default function useProjectsDonors(epoch?: number): {
 
   const projectsDonorsResults: UseQueryResult<ProjectDonor[]>[] = useQueries({
     queries: (projectsAddresses || []).map(projectAddress => ({
-      enabled: !!projectsAddresses && isDecisionWindowOpen !== undefined,
-      queryFn: () =>
-        apiGetProjectDonors(
-          projectAddress,
-          epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
-        ),
-      queryKey: QUERY_KEYS.projectDonors(
-        projectAddress,
-        epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
-      ),
+      enabled: !!projectsAddresses && isEnabled(isDecisionWindowOpen, epoch),
+      queryFn: () => apiGetProjectDonors(projectAddress, epoch || currentEpoch! - 1),
+      queryKey: QUERY_KEYS.projectDonors(projectAddress, epoch || currentEpoch! - 1),
       select: response => mapDataToProjectDonors(response),
     })),
   });

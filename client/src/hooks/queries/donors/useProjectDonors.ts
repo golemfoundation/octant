@@ -10,6 +10,9 @@ import { WebsocketListenEvent } from 'types/websocketEvents';
 import { ProjectDonor } from './types';
 import { mapDataToProjectDonors } from './utils';
 
+export const isEnabled = (isDecisionWindowOpen?: boolean, epoch?: number): boolean =>
+  isDecisionWindowOpen === true || epoch !== undefined;
+
 export default function useProjectDonors(
   projectAddress: string,
   epoch?: number,
@@ -39,16 +42,9 @@ export default function useProjectDonors(
   });
 
   return useQuery({
-    enabled: !!projectAddress && (epoch !== undefined || !!(currentEpoch && currentEpoch > 1)),
-    queryFn: () =>
-      apiGetProjectDonors(
-        projectAddress,
-        epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
-      ),
-    queryKey: QUERY_KEYS.projectDonors(
-      projectAddress,
-      epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
-    ),
+    enabled: !!projectAddress && isEnabled(isDecisionWindowOpen, epoch),
+    queryFn: () => apiGetProjectDonors(projectAddress, epoch || currentEpoch! - 1),
+    queryKey: QUERY_KEYS.projectDonors(projectAddress, epoch || currentEpoch! - 1),
     select: response => mapDataToProjectDonors(response),
     staleTime: Infinity,
     ...options,
