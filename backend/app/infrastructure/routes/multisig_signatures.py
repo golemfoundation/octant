@@ -8,9 +8,12 @@ from app.modules.multisig_signatures.controller import (
     get_last_pending_signature,
     save_pending_signature,
     approve_pending_signatures,
-    appy_pending_allocation_signature,
+    apply_pending_allocation_signature,
+    apply_pending_tos_signature,
 )
 from app.modules.user.allocations.controller import allocate
+from app.modules.user.tos.controller import post_user_terms_of_service_consent
+
 
 ns = Namespace(
     "multisig-signatures",
@@ -73,20 +76,17 @@ class MultisigApprovePending(OctantResource):
 
         for tos_signature in approvals.tos_signatures:
             app.logger.debug(f"Applying TOS approved signatures {tos_signature}.")
-            # call controller for tos_approval
-            ...
+            user_address = tos_signature.message.splitlines()[-1]
+            post_user_terms_of_service_consent(
+                user_address, tos_signature.hash, tos_signature.ip_address
+            )
+            apply_pending_tos_signature(tos_signature.id)
 
         for allocation_signature in approvals.allocation_signatures:
             app.logger.debug(
                 f"Applying allocation approved signatures {allocation_signature}."
             )
-            # call controller for allocate
-            allocate(...)
-            # apply message to allocation with given id
-            appy_pending_allocation_signature(allocation_signature.id)
-
-        app.logger.debug(
-            f"Approved and applied {len(approvals)} pending multisig messages."
-        )
+            allocate(dict(allocation_signature.message))
+            apply_pending_allocation_signature(allocation_signature.id)
 
         return {}, 204

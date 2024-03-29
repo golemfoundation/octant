@@ -4,6 +4,7 @@ from app.infrastructure import database
 from app.infrastructure.database.multisig_signature import SigStatus
 from app.modules.dto import SignatureOpType
 from app.modules.user.tos.core import build_consent_message
+from app.infrastructure.database.models import MultisigSignatures
 
 
 def build_user_signature(user, user_address=None):
@@ -25,3 +26,7 @@ def create_multisig_signature(
     status: SigStatus = SigStatus.PENDING,
 ):
     database.multisig_signature.save_signature(address, op_type, msg, msg_hash, status)
+
+
+def get_signature_by_id(id: int) -> MultisigSignatures:
+    return MultisigSignatures.query.get(id=id)

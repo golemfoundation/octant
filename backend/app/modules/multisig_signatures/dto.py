@@ -8,6 +8,7 @@ class Signature(JSONWizard):
     id: int
     message: str
     hash: str
+    ip_address: str
 
 
 @dataclass(frozen=True)

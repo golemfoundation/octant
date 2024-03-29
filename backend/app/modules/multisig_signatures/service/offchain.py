@@ -32,6 +32,7 @@ class OffchainMultisigSignatures(Model):
             return None
 
         return Signature(
+            id=signature_db.id,
             message=signature_db.message,
             hash=signature_db.hash,
         )
@@ -71,11 +72,9 @@ class OffchainMultisigSignatures(Model):
                     )
                 )
 
-        # db.session.commit()
-
         return approved_signatures
 
-    def apply_staged_signatures(self, signature_id: int):
+    def apply_staged_signatures(self, _: Context, signature_id: int):
         for idx, pending_signature in enumerate(self.staged_signatures):
             if pending_signature.id == signature_id:
                 pending_signature.status = SigStatus.APPROVED

@@ -767,6 +767,28 @@ def mock_approved_multisig_signatures(alice):
 
 
 @pytest.fixture(scope="function")
+def mock_pending_allocation_signature():
+    create_multisig_signature(
+        alice.address,
+        MULTISIG_MOCKED_MESSAGE,
+        MULTISIG_MOCKED_HASH,
+        SignatureOpType.ALLOCATION,
+        SigStatus.PENDING,
+    )
+
+
+@pytest.fixture(scope="function")
+def mock_pending_tos_signature():
+    create_multisig_signature(
+        alice.address,
+        MULTISIG_MOCKED_MESSAGE,
+        MULTISIG_MOCKED_HASH,
+        SignatureOpType.TOS,
+        SigStatus.PENDING,
+    )
+
+
+@pytest.fixture(scope="function")
 def mock_octant_rewards():
     octant_rewards_service_mock = Mock()
     octant_rewards_service_mock.get_octant_rewards.return_value = octant_rewards()
