@@ -60,9 +60,10 @@ export default function useProjectsIpfsWithRewards(epoch?: number): {
      * passed threshold. For those that did not, we reduce on their donors and get the value.
      */
     const totalValueOfAllocations =
-      projectMatchedProjectRewards?.sum || isSuccessProjectsDonors
+      projectMatchedProjectRewards?.sum ||
+      (isSuccessProjectsDonors
         ? projectsDonors[project.address].reduce((acc, curr) => acc + curr.amount, BigInt(0))
-        : BigInt(0);
+        : BigInt(0));
     return {
       numberOfDonors: isSuccessProjectsDonors ? projectsDonors[project.address].length : 0,
       percentage: projectMatchedProjectRewards?.percentage,
