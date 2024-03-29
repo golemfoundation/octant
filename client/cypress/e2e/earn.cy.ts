@@ -242,11 +242,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             // Small timeout ensures skeleton shows up quickly after the transaction.
             { timeout: 1000 },
           ).should('be.visible');
+          // Waiting for skeletons to disappear ensures Graph indexed lock/unlock.
+          cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton]').as(
+            'BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton',
+          );
+          cy.wait('@BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton', {
+            timeout: 60000,
+          }).should('not.exist');
           cy.window().then(async win => {
-            // Waiting for skeletons to disappear ensures Graph indexed lock/unlock.
-            cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton]', {
-              timeout: 60000,
-            }).should('not.exist');
             await moveEpoch(win);
             cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
               timeout: 60000,
