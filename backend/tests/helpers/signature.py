@@ -1,10 +1,11 @@
 from eth_account.messages import encode_defunct
 
+from app.extensions import db
 from app.infrastructure import database
+from app.infrastructure.database.models import MultisigSignatures
 from app.infrastructure.database.multisig_signature import SigStatus
 from app.modules.dto import SignatureOpType
 from app.modules.user.tos.core import build_consent_message
-from app.infrastructure.database.models import MultisigSignatures
 
 
 def build_user_signature(user, user_address=None):
@@ -23,10 +24,14 @@ def create_multisig_signature(
     msg: str,
     msg_hash: str,
     op_type: SignatureOpType,
+    user_ip: str,
     status: SigStatus = SigStatus.PENDING,
 ):
-    database.multisig_signature.save_signature(address, op_type, msg, msg_hash, status)
+    database.multisig_signature.save_signature(
+        address, op_type, msg, msg_hash, user_ip, status
+    )
+    db.session.commit()
 
 
 def get_signature_by_id(id: int) -> MultisigSignatures:
-    return MultisigSignatures.query.get(id=id)
+    return MultisigSignatures.query.get(id)

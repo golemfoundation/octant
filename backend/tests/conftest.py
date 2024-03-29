@@ -742,6 +742,7 @@ def mock_pending_multisig_signatures(alice):
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
         SignatureOpType.TOS,
+        "0.0.0.0",
         SigStatus.PENDING,
     )
     create_multisig_signature(
@@ -749,6 +750,7 @@ def mock_pending_multisig_signatures(alice):
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
         SignatureOpType.ALLOCATION,
+        "0.0.0.0",
         SigStatus.PENDING,
     )
 
@@ -760,6 +762,7 @@ def mock_approved_multisig_signatures(alice):
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
         SignatureOpType.ALLOCATION,
+        "0.0.0.0",
         SigStatus.APPROVED,
     )
     create_multisig_signature(
@@ -767,28 +770,31 @@ def mock_approved_multisig_signatures(alice):
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
         SignatureOpType.TOS,
+        "0.0.0.0",
         SigStatus.APPROVED,
     )
 
 
 @pytest.fixture(scope="function")
-def mock_pending_allocation_signature():
+def mock_pending_allocation_signature(alice):
     create_multisig_signature(
         alice.address,
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
         SignatureOpType.ALLOCATION,
+        "0.0.0.0",
         SigStatus.PENDING,
     )
 
 
 @pytest.fixture(scope="function")
-def mock_pending_tos_signature():
+def mock_pending_tos_signature(alice):
     create_multisig_signature(
         alice.address,
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
         SignatureOpType.TOS,
+        "0.0.0.0",
         SigStatus.PENDING,
     )
 

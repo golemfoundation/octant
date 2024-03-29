@@ -8,6 +8,7 @@ class Signature(JSONWizard):
     id: int
     message: str
     hash: str
+    user_address: str
     ip_address: str
 
 

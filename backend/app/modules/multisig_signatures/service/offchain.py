@@ -39,6 +39,8 @@ class OffchainMultisigSignatures(Model):
             id=signature_db.id,
             message=signature_db.message,
             hash=signature_db.hash,
+            user_address=signature_db.address,
+            ip_address=signature_db.user_ip,
         )
 
     def approve_pending_signatures(self, _: Context) -> list[Signature]:
@@ -53,6 +55,8 @@ class OffchainMultisigSignatures(Model):
                         pending_signature.id,
                         pending_signature.message,
                         pending_signature.hash,
+                        pending_signature.address,
+                        pending_signature.user_ip,
                     )
                 )
                 continue
@@ -73,6 +77,8 @@ class OffchainMultisigSignatures(Model):
                         pending_signature.id,
                         pending_signature.message,
                         pending_signature.hash,
+                        pending_signature.address,
+                        pending_signature.user_ip,
                     )
                 )
 

@@ -1,3 +1,5 @@
+import json
+
 from flask import current_app as app, request
 from flask_restx import Namespace, fields, reqparse
 
@@ -89,9 +91,8 @@ class MultisigApprovePending(OctantResource):
 
         for tos_signature in approvals.tos_signatures:
             app.logger.debug(f"Applying TOS approved signatures {tos_signature}.")
-            user_address = tos_signature.message.splitlines()[-1]
             post_user_terms_of_service_consent(
-                user_address, tos_signature.hash, tos_signature.ip_address
+                tos_signature.user_address, tos_signature.hash, tos_signature.ip_address
             )
             apply_pending_tos_signature(tos_signature.id)
 
@@ -99,7 +100,12 @@ class MultisigApprovePending(OctantResource):
             app.logger.debug(
                 f"Applying allocation approved signatures {allocation_signature}."
             )
-            allocate(dict(allocation_signature.message))
+            message = json.loads(allocation_signature.message)
+            allocate(
+                allocation_signature.user_address,
+                allocation_signature["payload"],
+                is_manually_edited=message["is_manually_edited"],
+            )
             apply_pending_allocation_signature(allocation_signature.id)
 
         return {}, 204
