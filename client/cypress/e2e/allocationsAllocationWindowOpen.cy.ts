@@ -95,33 +95,55 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       });
 
       it('AllocationItem shows all the elements', () => {
-        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__name]').then($allocationItemName => {
-          cy.get('@projectName').then(projectName => {
-            expect(projectName).to.eq($allocationItemName.text());
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
+          .find('[data-test=AllocationItem__name]')
+          .then($allocationItemName => {
+            cy.get('@projectName').then(projectName => {
+              expect(projectName).to.eq($allocationItemName.text());
+            });
           });
-        });
-        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__imageProfile]').should('be.visible');
-        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__InputText]').should('be.enabled');
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
+          .find('[data-test=AllocationItem__imageProfile]')
+          .should('be.visible');
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
+          .find('[data-test=AllocationItem__InputText]')
+          .should('be.enabled');
       });
 
       it('AllocationItem__InputText correctly changes background color on focus', () => {
-        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__InputText]').should('have.focus');
-        cy.get('[data-test=AllocationItem]').eq(0)
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
+          .find('[data-test=AllocationItem__InputText]')
+          .should('have.focus');
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
           .find('[data-test=AllocationItem__InputText]')
           .should('have.css', 'background-color')
           .and('be.colored', '#f1faf8');
       });
 
       it('AllocationItem__InputText correctly changes background color and shakes on error', () => {
-        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__InputText__suffix]').contains('GWEI');
-        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__InputText]').type(budgetToBig);
-        cy.get('[data-test=AllocationItem]').eq(0)
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
+          .find('[data-test=AllocationItem__InputText__suffix]')
+          .contains('GWEI');
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
+          .find('[data-test=AllocationItem__InputText]')
+          .type(budgetToBig);
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
           .find('[data-test=AllocationItem__InputText]')
           .should('have.css', 'background-color')
           .and('be.colored', '#ff6157');
-        cy.get('[data-test=AllocationItem]').eq(0)
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
           .find('[data-test=AllocationItem__InputText]')
-          .invoke('dat', 'iserror').should('be.true');
+          .invoke('dat', 'iserror')
+          .should('be.true');
       });
     },
   );

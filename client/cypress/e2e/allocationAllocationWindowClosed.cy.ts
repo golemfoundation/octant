@@ -1,4 +1,9 @@
-import { visitWithLoader, mockCoinPricesServer, navigateWithCheck, moveEpoch } from 'cypress/utils/e2e';
+import {
+  visitWithLoader,
+  mockCoinPricesServer,
+  navigateWithCheck,
+  moveEpoch,
+} from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
@@ -10,7 +15,7 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 let wasTimeMoved = false;
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop, isMobile }) => {
+Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(
     `allocation (allocation window closed): ${device}`,
     { viewportHeight, viewportWidth },
@@ -61,7 +66,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           // Move time only once, for the first device.
           if (!wasTimeMoved) {
             await moveEpoch(win, 'decisionWindowClosed');
-            const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(QUERY_KEYS.isDecisionWindowOpen);
+            const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
+              QUERY_KEYS.isDecisionWindowOpen,
+            );
             wasTimeMoved = true;
             expect(isDecisionWindowOpenAfter).to.be.false;
           } else {
@@ -71,18 +78,31 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       });
 
       it('AllocationItem shows all the elements', () => {
-        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__name]').then($allocationItemName => {
-          cy.get('@projectName').then(projectName => {
-            expect(projectName).to.eq($allocationItemName.text());
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
+          .find('[data-test=AllocationItem__name]')
+          .then($allocationItemName => {
+            cy.get('@projectName').then(projectName => {
+              expect(projectName).to.eq($allocationItemName.text());
+            });
           });
-        });
 
-        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__imageProfile]').should(isMobile ? 'not.be.visible' : 'be.visible');
-        cy.get('[data-test=AllocationItem]').eq(0)
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
+          .find('[data-test=AllocationItem__imageProfile]')
+          .should(isDesktop ? 'be.visible' : 'not.be.visible');
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
           .find('[data-test=AllocationItemRewards]')
           .contains(isDesktop ? 'Threshold data unavailable' : 'No threshold data');
-        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__InputText]').should('be.disabled');
-        cy.get('[data-test=AllocationItem]').eq(0).find('[data-test=AllocationItem__InputText__suffix]').contains('ETH');
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
+          .find('[data-test=AllocationItem__InputText]')
+          .should('be.disabled');
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
+          .find('[data-test=AllocationItem__InputText__suffix]')
+          .contains('ETH');
       });
     },
   );
