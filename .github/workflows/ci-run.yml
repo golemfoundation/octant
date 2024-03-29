@@ -184,7 +184,7 @@ jobs:
       chain-id: 1337
       network-name: local
       chain-name: localhost
-      snapshotter-enabled: true
+      snapshotter-enabled: false
       scheduler-enabled: true
       glm-claim-enabled: true
       vault-confirm-withdrawals-enabled: true
