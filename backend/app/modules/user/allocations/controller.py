@@ -63,14 +63,14 @@ def get_donors(epoch_num: int) -> List[str]:
     return service.get_all_donors_addresses(context)
 
 
-def allocate(payload: Dict, **kwargs):
+def allocate(user_address: str, payload: Dict, **kwargs):
     context = state_context(EpochState.PENDING)
     service: PendingUserAllocations = get_services(
         context.epoch_state
     ).user_allocations_service
 
     allocation_request = _deserialize_payload(payload)
-    service.allocate(context, allocation_request, **kwargs)
+    service.allocate(context, user_address, allocation_request, **kwargs)
 
 
 def simulate_allocation(

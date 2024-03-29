@@ -1,4 +1,8 @@
-from app.modules.common.signature import verify_signed_message
+from app.modules.common.signature import (
+    verify_signed_message,
+    encode_for_signing,
+    EncodingStandardFor,
+)
 
 
 def build_consent_message(user_address: str) -> str:
@@ -17,5 +21,6 @@ def build_consent_message(user_address: str) -> str:
 
 def verify_signature(user_address: str, signature: str) -> bool:
     msg_text = build_consent_message(user_address)
+    encoded_msg = encode_for_signing(EncodingStandardFor.TEXT, msg_text)
 
-    return verify_signed_message(user_address, msg_text, signature)
+    return verify_signed_message(user_address, encoded_msg, signature)

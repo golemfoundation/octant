@@ -465,7 +465,14 @@
       "alwaysShowOnboarding": "Always show onboarding",
       "alwaysShowOctantTips": "Always show tips",
       "enablePatronMode": "Enable patron mode",
-      "patronModeTooltip": "Patron mode is for token holders who want to support Octant. It disables allocation to yourself or projects. All rewards go directly to the matching fund with no action required by the patron."
+      "patronModeTooltip": "Patron mode is for token holders who want to support Octant. It disables allocation to yourself or projects. All rewards go directly to the matching fund with no action required by the patron.",
+      "octantBuild": "Octant.build",
+      "userDocs": "User Docs",
+      "discordCommunity": "Discord Community",
+      "website": "Website",
+      "discord": "Discord",
+      "docs": "Docs",
+      "octantInfo": "Octant is a platform for experiments in decentralized governance that reward participation. Learn more below."
     },
     "syncStatus": {
       "information": "We're synchronizing things to prepare the<br/>next epoch, so the app will be unavailable<br/>for a little while. Please check back soon."

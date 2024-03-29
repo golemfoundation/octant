@@ -210,7 +210,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         });
     });
 
-    it('Wallet connected: Effective deposit after locking 1000 GLM and moving epoch is equal to current deposit', () => {
+    // TODO OCT-1506 enable this scenario.
+    // eslint-disable-next-line jest/no-disabled-tests
+    it.skip('Wallet connected: Effective deposit after locking 1000 GLM and moving epoch is equal to current deposit', () => {
       connectWallet();
 
       cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')

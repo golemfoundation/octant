@@ -12,6 +12,7 @@ import { mapDataToProjectDonors } from './utils';
 export default function useProjectsDonors(epoch?: number): {
   data: { [key: string]: ProjectDonor[] };
   isFetching: boolean;
+  isSuccess: boolean;
 } {
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: projectsAddresses } = useProjectsContract(epoch);
@@ -21,16 +22,13 @@ export default function useProjectsDonors(epoch?: number): {
 
   const projectsDonorsResults: UseQueryResult<ProjectDonor[]>[] = useQueries({
     queries: (projectsAddresses || []).map(projectAddress => ({
-      enabled: !!projectsAddresses && isDecisionWindowOpen !== undefined,
-      queryFn: () =>
-        apiGetProjectDonors(
-          projectAddress,
-          epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
-        ),
-      queryKey: QUERY_KEYS.projectDonors(
-        projectAddress,
-        epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
-      ),
+      enabled:
+        !!projectsAddresses &&
+        !!currentEpoch &&
+        currentEpoch > 1 &&
+        (isDecisionWindowOpen === true || epoch !== undefined),
+      queryFn: () => apiGetProjectDonors(projectAddress, epoch || currentEpoch! - 1),
+      queryKey: QUERY_KEYS.projectDonors(projectAddress, epoch || currentEpoch! - 1),
       select: response => mapDataToProjectDonors(response),
     })),
   });
@@ -46,6 +44,7 @@ export default function useProjectsDonors(epoch?: number): {
     return {
       data: {},
       isFetching,
+      isSuccess: false,
     };
   }
 
@@ -57,5 +56,7 @@ export default function useProjectsDonors(epoch?: number): {
       };
     }, {}),
     isFetching: false,
+    // Ensures projectsDonorsResults is actually fetched with data, and not just an object with undefined values.
+    isSuccess: !projectsDonorsResults.some(element => !element.isSuccess),
   };
 }

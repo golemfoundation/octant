@@ -26,6 +26,7 @@ def before(
     patch_proposals,
     patch_has_pending_epoch_snapshot,
     patch_user_budget,
+    patch_is_contract,
 ):
     MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts[0:5]
@@ -58,8 +59,8 @@ def _allocate_random_individual_rewards(user_accounts, proposal_accounts) -> int
     signature2 = sign(user_accounts[1], build_allocations_eip712_data(payload2))
 
     # Call allocate method for both users
-    allocate({"payload": payload1, "signature": signature1})
-    allocate({"payload": payload2, "signature": signature2})
+    allocate(user_accounts[0].address, {"payload": payload1, "signature": signature1})
+    allocate(user_accounts[1].address, {"payload": payload2, "signature": signature2})
 
     allocations1 = sum([int(a.amount) for a in deserialize_allocations(payload1)])
     allocations2 = sum([int(a.amount) for a in deserialize_allocations(payload2)])
