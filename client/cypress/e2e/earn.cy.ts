@@ -247,23 +247,26 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             timeout: 60000,
           }).should('not.exist');
           cy.window().then(async win => {
-            await moveEpoch(win);
-            cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
-              timeout: 60000,
-            })
-              .invoke('text')
-              .then(nextText => {
-                const lockedGlmsAfterLock = parseInt(nextText.replace(/\u200a/g, ''), 10);
-                expect(lockedGlms + amountToLock).to.be.eq(lockedGlmsAfterLock);
+            cy.wrap(null).then(() => {
+              return moveEpoch(win).then(() => {
+                cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
+                  timeout: 60000,
+                })
+                  .invoke('text')
+                  .then(nextText => {
+                    const lockedGlmsAfterLock = parseInt(nextText.replace(/\u200a/g, ''), 10);
+                    expect(lockedGlms + amountToLock).to.be.eq(lockedGlmsAfterLock);
+                  });
+                cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__primary]', {
+                  timeout: 60000,
+                })
+                  .invoke('text')
+                  .then(nextText => {
+                    const lockedGlmsAfterLock = parseInt(nextText.replace(/\u200a/g, ''), 10);
+                    expect(lockedGlms + amountToLock).to.be.eq(lockedGlmsAfterLock);
+                  });
               });
-            cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__primary]', {
-              timeout: 60000,
-            })
-              .invoke('text')
-              .then(nextText => {
-                const lockedGlmsAfterLock = parseInt(nextText.replace(/\u200a/g, ''), 10);
-                expect(lockedGlms + amountToLock).to.be.eq(lockedGlmsAfterLock);
-              });
+            });
           });
         });
     });
