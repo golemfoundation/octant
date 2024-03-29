@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSignTypedData } from 'wagmi';
+import { useAccount, useSignTypedData } from 'wagmi';
 
 import { handleError } from 'api/errorMessages';
 import networkConfig from 'constants/networkConfig';
@@ -37,6 +37,8 @@ const types = {
 };
 
 export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): UseAllocate {
+  const { address } = useAccount();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { signTypedData } = useSignTypedData({
     domain,
@@ -60,6 +62,7 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
             isManuallyEdited,
             payload: restVariables,
             signature: data,
+            userAddress: address,
           }),
           () => {
             if (onSuccess) {
