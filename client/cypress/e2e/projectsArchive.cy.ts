@@ -1,4 +1,4 @@
-import { checkLocationWithLoader, visitWithLoader } from 'cypress/utils/e2e';
+import { checkLocationWithLoader, moveEpoch, visitWithLoader } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
@@ -21,7 +21,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           const currentEpochBefore = Number(
             win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
           );
-          await win.mutateAsyncMoveEpoch();
+          await moveEpoch(win);
           const currentEpochAfter = Number(
             win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
           );
