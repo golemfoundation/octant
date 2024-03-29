@@ -64,6 +64,7 @@ jobs:
       id: is-organization-member
       with:
         result-encoding: string
+        github-token: ${{ secrets.GH_BOT_TOKEN }}
         script: |
           return (
             await github.rest.orgs.listMembers({

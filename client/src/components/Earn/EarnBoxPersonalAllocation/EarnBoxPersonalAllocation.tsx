@@ -37,17 +37,9 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
   const { data: isPatronMode } = useIsPatronMode();
   const { data: totalPatronDonations, isFetching: isFetchingTotalPatronDonations } =
     useTotalPatronDonations({ isEnabledAdditional: !!isPatronMode });
-  const { isAppWaitingForTransactionToBeIndexed, transactionsPending } = useTransactionLocalStore(
-    state => ({
-      isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
-      transactionsPending: state.data.transactionsPending,
-    }),
-  );
-
-  const isPendingWithdrawalTransaction =
-    isAppWaitingForTransactionToBeIndexed &&
-    !!transactionsPending?.filter(({ type, isFinalized }) => type === 'withdrawal' && !isFinalized)
-      .length;
+  const { isAppWaitingForTransactionToBeIndexed } = useTransactionLocalStore(state => ({
+    isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
+  }));
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isProjectAdminMode = useIsProjectAdminMode();
@@ -99,9 +91,7 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
         coinPricesServerDowntimeText: !isProjectAdminMode ? '...' : undefined,
         cryptoCurrency: 'ethereum',
         dataTest: 'BoxPersonalAllocation__Section--availableNow__DoubleValue',
-        isFetching: isPatronMode
-          ? isFetchingTotalPatronDonations
-          : isFetchingWithdrawals || isPendingWithdrawalTransaction,
+        isFetching: isPatronMode ? isFetchingTotalPatronDonations : isFetchingWithdrawals,
         valueCrypto: isPatronMode ? totalPatronDonations?.value : withdrawals?.sums.available,
       },
       label: isPatronMode && !isProjectAdminMode ? t('allTime') : i18n.t('common.availableNow'),
