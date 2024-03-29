@@ -271,7 +271,7 @@ def deployment(pytestconfig):
     conf.VAULT_CONTRACT_ADDRESS = envs["VAULT_CONTRACT_ADDRESS"]
     conf.SCHEDULER_ENABLED = True
     conf.VAULT_CONFIRM_WITHDRAWALS_ENABLED = True
-    conf.TESTNET_MULTISIG_PRIVATE_KEY = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+    conf.TESTNET_MULTISIG_PRIVATE_KEY = "0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e"
     yield conf
 
 
