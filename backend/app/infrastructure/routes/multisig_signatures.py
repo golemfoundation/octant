@@ -1,5 +1,5 @@
-from flask import current_app as app
-from flask_restx import Namespace, fields
+from flask import current_app as app, request
+from flask_restx import Namespace, fields, reqparse
 
 from app.extensions import api
 from app.infrastructure import OctantResource
@@ -8,6 +8,7 @@ from app.modules.multisig_signatures.controller import (
     get_last_pending_signature,
     save_pending_signature,
 )
+from app.settings import config
 
 ns = Namespace(
     "multisig-signatures",
@@ -23,12 +24,15 @@ pending_signature_response = api.model(
     },
 )
 
-
-pending_signature_request = api.model(
-    "PendingSignature",
-    {
-        "message": fields.String(description="The message to be signed."),
-    },
+pending_signature_request_parser = reqparse.RequestParser()
+pending_signature_request_parser.add_argument(
+    "message", required=True, type=str, location="json"
+)
+pending_signature_request_parser.add_argument(
+    "x-real-ip",
+    required=config.X_REAL_IP_REQUIRED,
+    location="headers",
+    case_sensitive=False,
 )
 
 
@@ -48,14 +52,23 @@ class MultisigPendingSignature(OctantResource):
 
         return response
 
-    @ns.expect(pending_signature_request)
+    @ns.expect(pending_signature_request_parser)
     @ns.response(201, "Success")
     def post(self, user_address: str, op_type: str):
         app.logger.debug(
             f"Adding new multisig signature for user {user_address} and type {op_type}."
         )
-        message = api.payload
-        save_pending_signature(user_address, SignatureOpType(op_type), message)
+        args = pending_signature_request_parser.parse_args()
+        signature_data = ns.payload
+
+        if app.config["X_REAL_IP_REQUIRED"]:
+            user_ip = args.get("x-real-ip")
+        else:
+            user_ip = request.remote_addr
+
+        save_pending_signature(
+            user_address, SignatureOpType(op_type), signature_data, user_ip
+        )
         app.logger.debug("Added new multisig signature.")
 
         return {}, 201

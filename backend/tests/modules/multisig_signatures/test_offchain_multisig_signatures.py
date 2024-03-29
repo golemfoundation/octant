@@ -24,19 +24,21 @@ def test_get_last_pending_signature_returns_expected_signature_when_signature_ex
         SignatureOpType.ALLOCATION,
         "last pending msg",
         "last pending hash",
+        "0.0.0.0",
     )
     database.multisig_signature.save_signature(
         alice.address,
         SignatureOpType.ALLOCATION,
         "test_message",
         "test_hash",
+        "0.0.0.0",
         status=SigStatus.APPROVED,
     )
     database.multisig_signature.save_signature(
-        alice.address, SignatureOpType.TOS, "test_message", "test_hash"
+        alice.address, SignatureOpType.TOS, "test_message", "test_hash", "0.0.0.0"
     )
     database.multisig_signature.save_signature(
-        bob.address, SignatureOpType.ALLOCATION, "test_message", "test_hash"
+        bob.address, SignatureOpType.ALLOCATION, "test_message", "test_hash", "0.0.0.0"
     )
     db.session.commit()
 
@@ -74,7 +76,11 @@ def test_save_signature_when_verified_successfully(context, alice, mock_verifier
 
     # When
     service.save_pending_signature(
-        context, alice.address, SignatureOpType.TOS, {"message": "test_message"}
+        context,
+        alice.address,
+        SignatureOpType.TOS,
+        {"message": "test_message"},
+        "0.0.0.0",
     )
 
     # Then
@@ -86,6 +92,7 @@ def test_save_signature_when_verified_successfully(context, alice, mock_verifier
     assert result.type == SignatureOpType.TOS
     assert result.status == SigStatus.PENDING
     assert result.message == '{"message": "test_message"}'
+    assert result.user_ip == "0.0.0.0"
     assert (
         result.hash
         == "0x15259cb98ed495a577ec69a3a75f3b16168507d0099b70483fdab3d0d1b3e71a"
@@ -100,7 +107,11 @@ def test_does_not_save_signature_when_verification_returns_false(
 
     with pytest.raises(InvalidMultisigSignatureRequest):
         service.save_pending_signature(
-            context, alice.address, SignatureOpType.TOS, {"message": "test_message"}
+            context,
+            alice.address,
+            SignatureOpType.TOS,
+            {"message": "test_message"},
+            "0.0.0.0",
         )
     result = database.multisig_signature.get_last_pending_signature(
         alice.address, SignatureOpType.TOS
@@ -122,7 +133,11 @@ def test_does_not_save_signature_when_verification_throws_exception(context, ali
 
     with pytest.raises(ValueError):
         service.save_pending_signature(
-            context, alice.address, SignatureOpType.TOS, {"message": "test_message"}
+            context,
+            alice.address,
+            SignatureOpType.TOS,
+            {"message": "test_message"},
+            "0.0.0.0",
         )
     result = database.multisig_signature.get_last_pending_signature(
         alice.address, SignatureOpType.TOS
