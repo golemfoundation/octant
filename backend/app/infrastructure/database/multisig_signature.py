@@ -30,6 +30,7 @@ def save_signature(
     op_type: SignatureOpType,
     message: str,
     msg_hash: str,
+    user_ip: str,
     status: SigStatus = SigStatus.PENDING,
 ):
     signature = MultisigSignatures(
@@ -37,6 +38,7 @@ def save_signature(
         type=op_type,
         message=message,
         hash=msg_hash,
+        user_ip=user_ip,
         status=status,
     )
     db.session.add(signature)

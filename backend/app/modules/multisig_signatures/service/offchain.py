@@ -92,6 +92,7 @@ class OffchainMultisigSignatures(Model):
         user_address: str,
         op_type: SignatureOpType,
         signature_data: dict,
+        user_ip: str,
     ):
         verifier = self.verifiers[op_type]
         if not verifier.verify_logic(
@@ -103,5 +104,7 @@ class OffchainMultisigSignatures(Model):
         msg_hash = hash_signable_message(
             encode_for_signing(EncodingStandardFor.TEXT, msg)
         )
-        database.multisig_signature.save_signature(user_address, op_type, msg, msg_hash)
+        database.multisig_signature.save_signature(
+            user_address, op_type, msg, msg_hash, user_ip
+        )
         db.session.commit()
