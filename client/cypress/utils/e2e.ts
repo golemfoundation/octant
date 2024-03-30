@@ -61,7 +61,9 @@ export const moveEpoch = (cypressWindow: Cypress.AUTWindow): Promise<boolean> =>
         cy.wait(2000);
         // reload is needed to get updated data in the app
         cy.reload();
-        resolve(true);
+        axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
+          resolve(true);
+        });
       });
     });
   });
