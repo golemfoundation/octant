@@ -416,7 +416,7 @@
         },
         "donateToProjects": {
           "header": "Donate to projects",
-          "text": "Check out the lineup for Epoch 1 in the <0>Projects</0> view. Tap a project tile to read its details. Help your favourite projects out by donating to them.<br/><br/>Your donation will be fund-matched by Golem Foundation. Just tap the heart to add a project to the <0>Allocate</0> view where you can donate."
+          "text": "Check out the lineup for Epoch 3 in the <0>Projects</0> view. Tap a project tile to read its details. Help your favourite projects out by donating to them.<br/><br/>Your donation will be fund-matched by Golem Foundation. Just tap the heart to add a project to the <0>Allocate</0> view where you can donate."
         },
         "slideIt": {
           "header": "Just slide it",
@@ -425,16 +425,16 @@
       },
       "stepsDecisionWindowClosed": {
         "welcomeToOctant": {
-          "header": "Welcome to Octant Epoch 2",
-          "text": "To get started, lock some GLM in the <0>Earn</0> view, and see how the Epoch 1 projects performed in the Epoch 1 archive.<br /><br />If you made personal allocations in the previous epoch, your ETH will be available to withdraw in the <0>Earn</0> view."
+          "header": "Welcome to Octant Epoch 3",
+          "text": "To get started, lock some GLM in the <0>Earn</0> view, and see how the previous Epochs projects performed in the archive.<br /><br />If you made personal allocations in the previous epoch, your ETH will be available to withdraw in the <0>Earn</0> view."
         },
         "earnRewards": {
           "header": "Earn ETH rewards",
-          "text": "Use the <0>Earn</0> view calculator to work out your return per epoch for any amount of GLM. You can unlock your tokens at any time.<br /><br/>If you already have GLM locked, you will have some rewards to use during Epoch 2 allocation which will begin in late January 2024."
+          "text": "Use the <0>Earn</0> view calculator to work out your return per epoch for any amount of GLM. You can unlock your tokens at any time.<br /><br/>If you already have GLM locked, you will have some rewards to use during Epoch 3 allocation which will begin in mid April 2024."
         },
         "getInvolved": {
           "header": "Get involved",
-          "text": "Epoch 2 projects will start appearing in the app after a 2-3 week cooling off period. Get involved and suggest a project in our Discord.<br /><br />Once projects are shortlisted, a community vote on Snapshot decides which projects enter this epoch. All participating voters get a POAP."
+          "text": "Epoch 3 projects will start appearing in the app after a 2-3 week cooling off period. Get involved and suggest a project in our Discord.<br /><br />Once projects are shortlisted, a community vote on Snapshot decides which projects enter this epoch. All participating voters get a POAP."
         }
       }
     },
