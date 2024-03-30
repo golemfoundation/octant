@@ -1,20 +1,14 @@
-import json
-
 from flask import current_app as app, request
 from flask_restx import Namespace, fields, reqparse
 
 from app.extensions import api
 from app.infrastructure import OctantResource
 from app.modules.dto import SignatureOpType
+from app.modules.facades.confirm_multisig import confirm_multisig
 from app.modules.multisig_signatures.controller import (
     get_last_pending_signature,
     save_pending_signature,
-    approve_pending_signatures,
-    apply_pending_allocation_signature,
-    apply_pending_tos_signature,
 )
-from app.modules.user.allocations.controller import allocate
-from app.modules.user.tos.controller import post_user_terms_of_service_consent
 from app.settings import config
 
 ns = Namespace(
@@ -86,26 +80,7 @@ class MultisigApprovePending(OctantResource):
     @ns.response(204, "Success")
     @ns.doc(description="Approve pending multisig messages.")
     def patch(self):
-        app.logger.debug("Retrieving approved multisig signatures.")
-        approvals = approve_pending_signatures()
-
-        for tos_signature in approvals.tos_signatures:
-            app.logger.debug(f"Applying TOS approved signatures {tos_signature}.")
-            post_user_terms_of_service_consent(
-                tos_signature.user_address, tos_signature.hash, tos_signature.ip_address
-            )
-            apply_pending_tos_signature(tos_signature.id)
-
-        for allocation_signature in approvals.allocation_signatures:
-            app.logger.debug(
-                f"Applying allocation approved signatures {allocation_signature}."
-            )
-            message = json.loads(allocation_signature.message)
-            allocate(
-                allocation_signature.user_address,
-                allocation_signature["payload"],
-                is_manually_edited=message["is_manually_edited"],
-            )
-            apply_pending_allocation_signature(allocation_signature.id)
+        app.logger.debug("Approving and applying TOS & allocation signatures.")
+        confirm_multisig()
 
         return {}, 204
