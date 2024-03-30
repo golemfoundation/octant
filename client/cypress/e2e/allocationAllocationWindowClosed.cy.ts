@@ -65,12 +65,15 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
 
           // Move time only once, for the first device.
           if (!wasTimeMoved) {
-            await moveEpoch(win, 'decisionWindowClosed');
-            const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
-              QUERY_KEYS.isDecisionWindowOpen,
-            );
-            wasTimeMoved = true;
-            expect(isDecisionWindowOpenAfter).to.be.false;
+            cy.wrap(null).then(() => {
+              return moveEpoch(win, 'decisionWindowClosed').then(() => {
+                const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
+                  QUERY_KEYS.isDecisionWindowOpen,
+                );
+                wasTimeMoved = true;
+                expect(isDecisionWindowOpenAfter).to.be.false;
+              });
+            });
           } else {
             expect(true).to.be.true;
           }
