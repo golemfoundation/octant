@@ -59,9 +59,11 @@ export const moveEpoch = (cypressWindow: Cypress.AUTWindow): Promise<boolean> =>
       axios.post(`${env.serverEndpoint}snapshots/pending`).then(() => {
         // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
         cy.wait(2000);
+        cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
         // reload is needed to get updated data in the app
         cy.reload();
         axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
+          cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
           resolve(true);
         });
       });
