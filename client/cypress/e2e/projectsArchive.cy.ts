@@ -21,12 +21,16 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           const currentEpochBefore = Number(
             win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
           );
-          await moveEpoch(win);
-          const currentEpochAfter = Number(
-            win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
-          );
-          wasEpochMoved = true;
-          expect(currentEpochBefore + 1).to.eq(currentEpochAfter);
+
+          cy.wrap(null).then(() => {
+            return moveEpoch(win).then(() => {
+              const currentEpochAfter = Number(
+                win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
+              );
+              wasEpochMoved = true;
+              expect(currentEpochBefore + 1).to.eq(currentEpochAfter);
+            });
+          });
         });
       } else {
         expect(true).to.be.true;
