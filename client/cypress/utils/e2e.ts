@@ -131,7 +131,7 @@ const test = (cypressWindow, moveTo): Promise<boolean> => {
       });
     }
   });
-};
+}
 
 export const moveEpoch = (
   cypressWindow: Cypress.AUTWindow,
@@ -155,15 +155,17 @@ export const moveEpoch = (
           // reload is needed to get updated data in the app
           cy.reload();
 
-          test(cypressWindow, moveTo).then(() => {
-            resolve(true);
-          });
+          test(cypressWindow, moveTo)
+            .then(() => {
+              resolve(true);
+            });
         });
       });
     }
 
-    test(cypressWindow, moveTo).then(() => {
-      resolve(true);
-    });
+    test(cypressWindow, moveTo)
+      .then(() => {
+        resolve(true);
+      });
   });
 };
