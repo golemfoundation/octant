@@ -1,4 +1,5 @@
 import {
+  connectWallet,
   visitWithLoader,
   mockCoinPricesServer,
   navigateWithCheck,
@@ -54,6 +55,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       });
 
       it('allocation window is closed, when it is not, move time', () => {
+        connectWallet(true, false);
         cy.window().then(async win => {
           const isDecisionWindowOpen = win.clientReactQuery.getQueryData(
             QUERY_KEYS.isDecisionWindowOpen,
@@ -81,6 +83,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       });
 
       it('AllocationItem shows all the elements', () => {
+        connectWallet(true, false);
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__name]')
