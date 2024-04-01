@@ -142,6 +142,7 @@ export const moveEpoch = (
       QUERY_KEYS.isDecisionWindowOpen,
     );
 
+    cy.log(isDecisionWindowOpen);
     if (isDecisionWindowOpen) {
       cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(() => {
         // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
@@ -157,6 +158,7 @@ export const moveEpoch = (
 
           test(cypressWindow, moveTo)
             .then(() => {
+              cy.log('1 then');
               resolve(true);
             });
         });
@@ -165,6 +167,7 @@ export const moveEpoch = (
 
     test(cypressWindow, moveTo)
       .then(() => {
+        cy.log('2 then');
         resolve(true);
       });
   });
