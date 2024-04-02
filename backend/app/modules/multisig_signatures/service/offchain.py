@@ -23,7 +23,9 @@ class OffchainMultisigSignatures(Model):
     is_mainnet: bool = False
     verifiers: dict[SignatureOpType, Verifier]
 
-    staged_signatures: list[MultisigSignatures] = []
+    staged_signatures: list[
+        MultisigSignatures
+    ] = []  # TODO make it invulnerable for data race & race conditions
 
     def get_last_pending_signature(
         self, _: Context, user_address: str, op_type: SignatureOpType
