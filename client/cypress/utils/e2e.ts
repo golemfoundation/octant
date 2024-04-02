@@ -131,7 +131,7 @@ const test = (cypressWindow, moveTo): Promise<boolean> => {
       });
     }
   });
-}
+};
 
 export const moveEpoch = (
   cypressWindow: Cypress.AUTWindow,
@@ -145,9 +145,11 @@ export const moveEpoch = (
     cy.log(isDecisionWindowOpen);
     if (isDecisionWindowOpen) {
       cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(() => {
+        cy.log('1');
         // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
         cy.wait(2000);
         axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
+          cy.log('2');
           // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
           cy.wait(2000);
           // reload is needed to get updated data in the app
@@ -156,19 +158,17 @@ export const moveEpoch = (
           // reload is needed to get updated data in the app
           cy.reload();
 
-          test(cypressWindow, moveTo)
-            .then(() => {
-              cy.log('1 then');
-              resolve(true);
-            });
+          test(cypressWindow, moveTo).then(() => {
+            cy.log('1 then');
+            resolve(true);
+          });
         });
       });
     }
 
-    test(cypressWindow, moveTo)
-      .then(() => {
-        cy.log('2 then');
-        resolve(true);
-      });
+    test(cypressWindow, moveTo).then(() => {
+      cy.log('2 then');
+      resolve(true);
+    });
   });
 };

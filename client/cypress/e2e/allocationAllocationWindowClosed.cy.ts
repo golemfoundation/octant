@@ -17,6 +17,53 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 let wasTimeMoved = false;
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
+  describe('move time', () => {
+    before(() => {
+      /**
+       * Global Metamask setup done by Synpress is not always done.
+       * Since Synpress needs to have valid provider to fetch the data from contracts,
+       * setupMetamask is required in each test suite.
+       */
+      cy.setupMetamask();
+    });
+
+    beforeEach(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
+      mockCoinPricesServer();
+      localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
+      localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      localStorage.setItem(ALLOCATION_ITEMS_KEY, '[]');
+      visitWithLoader(ROOT_ROUTES.playground.absolute);
+    });
+
+    it('allocation window is closed, when it is not, move time', () => {
+      cy.window().then(async win => {
+        const isDecisionWindowOpen = win.clientReactQuery.getQueryData(
+          QUERY_KEYS.isDecisionWindowOpen,
+        );
+
+        if (!isDecisionWindowOpen) {
+          expect(true).to.be.true;
+          return;
+        }
+
+        // Move time only once, for the first device.
+        if (!wasTimeMoved) {
+          cy.wrap(null).then(() => {
+            return moveEpoch(win, 'decisionWindowClosed').then(() => {
+              const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
+                QUERY_KEYS.isDecisionWindowOpen,
+              );
+              wasTimeMoved = true;
+              expect(isDecisionWindowOpenAfter).to.be.false;
+            });
+          });
+        } else {
+          expect(true).to.be.true;
+        }
+      });
+    });
+  });
   describe(
     `allocation (allocation window closed): ${device}`,
     { viewportHeight, viewportWidth },
@@ -52,34 +99,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           .find('[data-test=ProjectsListItem__ButtonAddToAllocate]')
           .click();
         navigateWithCheck(ROOT_ROUTES.allocation.absolute);
-      });
-
-      it('allocation window is closed, when it is not, move time', () => {
-        connectWallet(true, false);
-        cy.window().then(async win => {
-          const isDecisionWindowOpen = win.clientReactQuery.getQueryData(
-            QUERY_KEYS.isDecisionWindowOpen,
-          );
-
-          if (!isDecisionWindowOpen) {
-            expect(true).to.be.true;
-          }
-
-          // Move time only once, for the first device.
-          if (!wasTimeMoved) {
-            cy.wrap(null).then(() => {
-              return moveEpoch(win, 'decisionWindowClosed').then(() => {
-                const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
-                  QUERY_KEYS.isDecisionWindowOpen,
-                );
-                wasTimeMoved = true;
-                expect(isDecisionWindowOpenAfter).to.be.false;
-              });
-            });
-          } else {
-            expect(true).to.be.true;
-          }
-        });
       });
 
       it('AllocationItem shows all the elements', () => {

@@ -1,6 +1,7 @@
 import React, { Fragment, FC } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
+import env from 'env';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
@@ -8,6 +9,7 @@ import getIsPreLaunch from 'utils/getIsPreLaunch';
 import AllocationView from 'views/AllocationView/AllocationView';
 import EarnView from 'views/EarnView/EarnView';
 import MetricsView from 'views/MetricsView/MetricsView';
+import PlaygroundView from 'views/PlaygroundView/PlaygroundView';
 import ProjectsView from 'views/ProjectsView/ProjectsView';
 import ProjectView from 'views/ProjectView/ProjectView';
 import SettingsView from 'views/SettingsView/SettingsView';
@@ -85,6 +87,16 @@ const RootRoutes: FC<RootRoutesProps> = props => {
         }
         path={`${ROOT_ROUTES.earn.relative}/*`}
       />
+      {(window.Cypress || env.network === 'Local') && (
+        <Route
+          element={
+            <Protected {...props}>
+              <PlaygroundView />
+            </Protected>
+          }
+          path={`${ROOT_ROUTES.playground.relative}/*`}
+        />
+      )}
       <Route
         element={
           <Navigate

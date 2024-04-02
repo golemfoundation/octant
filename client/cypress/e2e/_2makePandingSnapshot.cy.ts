@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import { QUERY_KEYS } from 'src/api/queryKeys';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import env from 'src/env';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
@@ -21,11 +22,20 @@ describe('Make pending snapshot', () => {
     mockCoinPricesServer();
     localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
     localStorage.setItem(IS_ONBOARDING_DONE, 'true');
-    visitWithLoader(ROOT_ROUTES.earn.absolute);
+    visitWithLoader(ROOT_ROUTES.playground.absolute);
   });
 
   it('make pending snapshot', () => {
-    cy.window().then(async () => {
+    cy.window().then(async win => {
+      const isDecisionWindowOpen = win.clientReactQuery.getQueryData(
+        QUERY_KEYS.isDecisionWindowOpen,
+      );
+
+      if (!isDecisionWindowOpen) {
+        expect(true).to.be.true;
+        return;
+      }
+
       await axios.post(`${env.serverEndpoint}snapshots/pending`);
       cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
     });
