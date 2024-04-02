@@ -84,7 +84,7 @@ class SavedUserAllocations(Model):
 
     def get_last_user_allocation(
         self, context: Context, user_address: str
-    ) -> Tuple[List[AllocationItem], Optional[bool]]:
+    ) -> Tuple[List[AccountFundsDTO], Optional[bool]]:
         epoch_num = context.epoch_details.epoch_num
         last_request = database.allocations.get_allocation_request_by_user_and_epoch(
             user_address, epoch_num

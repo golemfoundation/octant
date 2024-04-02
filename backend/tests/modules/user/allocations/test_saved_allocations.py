@@ -8,6 +8,7 @@ from app.modules.dto import (
     ProposalDonationDTO,
     UserAllocationRequestPayload,
     UserAllocationPayload,
+    AccountFundsDTO,
 )
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 from app.modules.history.dto import AllocationItem as HistoryAllocationItem
@@ -310,7 +311,11 @@ def test_get_last_user_allocation_returns_the_only_allocation(
     service, context, mock_users_db
 ):
     user1, _, _ = mock_users_db
-    expected_result = make_user_allocation(context, user1)
+    allocations = make_user_allocation(context, user1)
+    expected_result = [
+        AccountFundsDTO(address=a.proposal_address, amount=a.amount)
+        for a in allocations
+    ]
 
     assert service.get_last_user_allocation(context, user1.address) == (
         expected_result,
@@ -323,7 +328,11 @@ def test_get_last_user_allocation_returns_the_only_the_last_allocation(
 ):
     user1, _, _ = mock_users_db
     _ = make_user_allocation(context, user1)
-    expected_result = make_user_allocation(context, user1, allocations=10, nonce=1)
+    allocations = make_user_allocation(context, user1, allocations=10, nonce=1)
+    expected_result = [
+        AccountFundsDTO(address=a.proposal_address, amount=a.amount)
+        for a in allocations
+    ]
 
     assert service.get_last_user_allocation(context, user1.address) == (
         expected_result,
@@ -336,15 +345,23 @@ def test_get_last_user_allocation_returns_stored_metadata(
 ):
     user1, _, _ = mock_users_db
 
-    expected_result = make_user_allocation(context, user1, is_manually_edited=False)
+    allocations = make_user_allocation(context, user1, is_manually_edited=False)
+    expected_result = [
+        AccountFundsDTO(address=a.proposal_address, amount=a.amount)
+        for a in allocations
+    ]
+
     assert service.get_last_user_allocation(context, user1.address) == (
         expected_result,
         False,
     )
 
-    expected_result = make_user_allocation(
-        context, user1, nonce=1, is_manually_edited=True
-    )
+    allocations = make_user_allocation(context, user1, nonce=1, is_manually_edited=True)
+    expected_result = [
+        AccountFundsDTO(address=a.proposal_address, amount=a.amount)
+        for a in allocations
+    ]
+
     assert service.get_last_user_allocation(context, user1.address) == (
         expected_result,
         True,
