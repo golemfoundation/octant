@@ -170,3 +170,4 @@ class MultisigSignatures(BaseModel):
     message = Column(db.String, nullable=False)
     hash = Column(db.String, nullable=False)
     status = Column(db.String, nullable=False)
+    user_ip = Column(db.String, nullable=False)
