@@ -42,6 +42,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           QUERY_KEYS.isDecisionWindowOpen,
         );
 
+        cy.log(`test 1_1 ${isDecisionWindowOpen}`);
         if (!isDecisionWindowOpen) {
           expect(true).to.be.true;
           return;
@@ -49,12 +50,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
 
         // Move time only once, for the first device.
         if (!wasTimeMoved) {
+          cy.log(`test 1_2 ${isDecisionWindowOpen}`);
           cy.wrap(null).then(() => {
             return moveEpoch(win, 'decisionWindowClosed').then(() => {
               const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
                 QUERY_KEYS.isDecisionWindowOpen,
               );
               wasTimeMoved = true;
+              cy.log(`test 1_2 ${isDecisionWindowOpenAfter}`);
               expect(isDecisionWindowOpenAfter).to.be.false;
             });
           });
