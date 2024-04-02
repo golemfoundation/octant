@@ -53,6 +53,9 @@ def test_default_epoch_settings():
         community_fund=CommunityFundPercent(OctantRewardsDefaultValues.COMMUNITY_FUND),
         user_budget=UserBudgetWithPPF(),
         matched_rewards=MatchedRewardsWithPPF(),
+        projects_rewards=DefaultProjectRewards(
+            projects_threshold=DefaultProjectThreshold(1),
+        ),
     )
 
 
@@ -68,6 +71,9 @@ def test_epoch_1_settings():
         ppf=NotSupportedPPFCalculator(),
         community_fund=NotSupportedCFCalculator(),
         user_budget=PreliminaryUserBudget(),
+        projects_rewards=DefaultProjectRewards(
+            projects_threshold=DefaultProjectThreshold(2),
+        ),
     )
 
 
@@ -83,6 +89,9 @@ def test_epoch_2_settings():
         ppf=NotSupportedPPFCalculator(),
         community_fund=NotSupportedCFCalculator(),
         user_budget=PreliminaryUserBudget(),
+        projects_rewards=DefaultProjectRewards(
+            projects_threshold=DefaultProjectThreshold(2),
+        ),
     )
 
 
@@ -101,6 +110,9 @@ def test_epoch_3_settings():
         community_fund=CommunityFundPercent(OctantRewardsDefaultValues.COMMUNITY_FUND),
         ppf=PPFCalculatorPercent(OctantRewardsDefaultValues.PPF),
         user_budget=UserBudgetWithPPF(),
+        projects_rewards=DefaultProjectRewards(
+            projects_threshold=DefaultProjectThreshold(1),
+        ),
     )
 
 
@@ -114,6 +126,7 @@ def check_settings(
     ppf,
     community_fund,
     user_budget,
+    projects_rewards,
 ):
     assert settings.octant_rewards.locked_ratio == DefaultLockedRatio()
     assert (
@@ -131,6 +144,5 @@ def check_settings(
         timebased_weights=timebased_weights
     )
 
-    assert settings.project.rewards == DefaultProjectRewards()
-    assert settings.project.rewards.projects_threshold == DefaultProjectThreshold()
+    assert settings.project.rewards == projects_rewards
     assert settings.project.rewards.projects_allocations == DefaultProjectAllocations()

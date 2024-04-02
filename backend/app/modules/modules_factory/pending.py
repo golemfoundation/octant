@@ -16,6 +16,7 @@ from app.modules.modules_factory.protocols import (
     DonorsAddresses,
     AllocationManipulationProtocol,
     GetUserAllocationsProtocol,
+    SavedProjectRewardsService,
     MultisigSignatures,
 )
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
@@ -55,6 +56,12 @@ class PendingUserAllocationsProtocol(
     pass
 
 
+class PendingProjectRewardsProtocol(
+    EstimatedProjectRewardsService, SavedProjectRewardsService, Protocol
+):
+    pass
+
+
 class PendingServices(Model):
     user_deposits_service: PendingUserDeposits
     octant_rewards_service: PendingOctantRewardsService
@@ -64,7 +71,7 @@ class PendingServices(Model):
     user_rewards_service: UserRewards
     finalized_snapshots_service: SimulateFinalizedSnapshots
     withdrawals_service: WithdrawalsService
-    project_rewards_service: EstimatedProjectRewardsService
+    project_rewards_service: PendingProjectRewardsProtocol
     multisig_signatures_service: MultisigSignatures
 
     @staticmethod

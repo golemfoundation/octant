@@ -10,6 +10,8 @@ from app.modules.multisig_signatures.service.offchain import OffchainMultisigSig
 from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
 from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
+from app.modules.project_rewards.service.estimated import EstimatedProjectRewards
+from app.modules.project_rewards.service.saved import SavedProjectRewards
 from app.modules.snapshots.finalized.service.finalizing import FinalizingSnapshots
 from app.modules.snapshots.finalized.service.simulated import (
     SimulatedFinalizedSnapshots,
@@ -90,11 +92,13 @@ def test_pre_pending_services_factory_when_mainnet():
         staking_proceeds=AggregatedStakingProceeds(),
         effective_deposits=user_deposits,
     )
+    project_rewards_service = SavedProjectRewards()
     assert result.user_deposits_service == user_deposits
     assert result.octant_rewards_service == octant_rewards
     assert result.pending_snapshots_service == PrePendingSnapshots(
         effective_deposits=user_deposits, octant_rewards=octant_rewards
     )
+    assert result.project_rewards_service == project_rewards_service
 
 
 def test_pre_pending_services_factory_when_not_mainnet():
@@ -105,11 +109,14 @@ def test_pre_pending_services_factory_when_not_mainnet():
         staking_proceeds=ContractBalanceStakingProceeds(),
         effective_deposits=user_deposits,
     )
+    project_rewards_service = SavedProjectRewards()
+
     assert result.user_deposits_service == user_deposits
     assert result.octant_rewards_service == octant_rewards
     assert result.pending_snapshots_service == PrePendingSnapshots(
         effective_deposits=user_deposits, octant_rewards=octant_rewards
     )
+    assert result.project_rewards_service == project_rewards_service
 
 
 def test_pending_services_factory():
@@ -136,6 +143,7 @@ def test_pending_services_factory():
         patrons_mode=events_based_patron_mode,
     )
     withdrawals_service = PendingWithdrawals(user_rewards=user_rewards)
+    project_rewards = EstimatedProjectRewards(octant_rewards=octant_rewards)
     multisig_signatures = OffchainMultisigSignatures(
         verifiers={SignatureOpType.ALLOCATION: allocations_verifier}, is_mainnet=True
     )
@@ -147,6 +155,7 @@ def test_pending_services_factory():
     assert result.user_rewards_service == user_rewards
     assert result.finalized_snapshots_service == finalized_snapshots_service
     assert result.withdrawals_service == withdrawals_service
+    assert result.project_rewards_service == project_rewards
     assert result.multisig_signatures_service == multisig_signatures
 
 
@@ -167,6 +176,7 @@ def test_finalizing_services_factory():
         patrons_mode=events_based_patron_mode,
     )
     withdrawals_service = PendingWithdrawals(user_rewards=user_rewards)
+    project_rewards_service = SavedProjectRewards()
 
     assert result.user_deposits_service == SavedUserDeposits()
     assert result.octant_rewards_service == octant_rewards
@@ -175,6 +185,7 @@ def test_finalizing_services_factory():
     assert result.user_rewards_service == user_rewards
     assert result.finalized_snapshots_service == finalized_snapshots_service
     assert result.withdrawals_service == withdrawals_service
+    assert result.project_rewards_service == project_rewards_service
 
 
 def test_finalized_services_factory():
@@ -188,6 +199,7 @@ def test_finalized_services_factory():
         allocations=saved_user_allocations,
     )
     withdrawals_service = FinalizedWithdrawals(user_rewards=user_rewards)
+    project_rewards_service = SavedProjectRewards()
 
     assert result.user_deposits_service == SavedUserDeposits()
     assert result.octant_rewards_service == FinalizedOctantRewards()
@@ -195,3 +207,4 @@ def test_finalized_services_factory():
     assert result.user_patron_mode_service == events_based_patron_mode
     assert result.user_rewards_service == user_rewards
     assert result.withdrawals_service == withdrawals_service
+    assert result.project_rewards_service == project_rewards_service
