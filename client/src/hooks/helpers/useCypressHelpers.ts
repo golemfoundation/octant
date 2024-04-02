@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import env from 'env';
 import useCypressMoveToDecisionWindowClosed from 'hooks/mutations/useCypressMoveToDecisionWindowClosed';
 import useCypressMoveToDecisionWindowOpen from 'hooks/mutations/useCypressMoveToDecisionWindowOpen';
 
@@ -21,7 +22,7 @@ export default function useCypressHelpers(): void {
      *
      * (1) History of commits here: https://github.com/golemfoundation/octant/pull/13.
      */
-    if (window.Cypress) {
+    if (window.Cypress || env.network === 'Local') {
       // @ts-expect-error Left for debug purposes.
       window.mutateAsyncMoveToDecisionWindowOpen = mutateAsyncMoveToDecisionWindowOpen;
       // @ts-expect-error Left for debug purposes.
