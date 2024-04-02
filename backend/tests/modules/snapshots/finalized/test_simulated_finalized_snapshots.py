@@ -1,12 +1,12 @@
 import pytest
 
-from app.infrastructure import database
-from app.modules.dto import AccountFundsDTO, AllocationDTO, ProjectAccountFundsDTO
+from app.modules.dto import AccountFundsDTO, ProjectAccountFundsDTO
 from app.modules.snapshots.finalized.service.simulated import (
     SimulatedFinalizedSnapshots,
 )
 from tests.helpers.constants import MATCHED_REWARDS
 from tests.helpers.context import get_context
+from tests.helpers import make_user_allocation
 
 
 @pytest.fixture(autouse=True)
@@ -19,9 +19,7 @@ def test_simulate_finalized_snapshots(
 ):
     context = get_context(1)
     projects = context.projects_details.projects
-    database.allocations.add_all(
-        1, mock_users_db[2].id, 0, [AllocationDTO(projects[0], 100)]
-    )
+    make_user_allocation(context, mock_users_db[2])
 
     service = SimulatedFinalizedSnapshots(
         patrons_mode=mock_patron_mode,

@@ -7,7 +7,8 @@ from app.infrastructure.graphql import withdrawals
 from app.infrastructure.graphql.merkle_roots import get_all_vault_merkle_roots
 from app.modules.common.merkle_tree import get_rewards_merkle_tree_for_epoch
 from app.modules.common.time import Timestamp, from_timestamp_s
-from app.modules.dto import WithdrawableEth, WithdrawalItem, OpType
+from app.modules.dto import WithdrawableEth
+from app.modules.history.dto import WithdrawalItem, OpType
 from app.modules.withdrawals.core import create_finalized_epoch_withdrawals
 from app.pydantic import Model
 

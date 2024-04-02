@@ -1,8 +1,8 @@
 import pytest
 
-from app.infrastructure import database
-from app.modules.dto import AllocationDTO
+from app.modules.dto import AllocationItem
 from app.modules.project_rewards.service.estimated import EstimatedProjectRewards
+from tests.helpers import make_user_allocation
 from tests.helpers.constants import USER1_BUDGET
 from tests.helpers.context import get_context
 
@@ -35,11 +35,10 @@ def test_estimated_project_rewards_with_allocations(
     context = get_context(3)
 
     user, _, _ = mock_users_db
-    database.allocations.add_all(
-        3,
-        user.id,
-        0,
-        [AllocationDTO(proposal_accounts[0].address, USER1_BUDGET)],
+    make_user_allocation(
+        context,
+        user,
+        allocation_items=[AllocationItem(proposal_accounts[0].address, USER1_BUDGET)],
     )
 
     service = EstimatedProjectRewards(octant_rewards=mock_octant_rewards)
@@ -54,4 +53,4 @@ def test_estimated_project_rewards_with_allocations(
 
     assert result.total_allocated == 1526868989237987
     assert result.rewards_sum == 220115925184490486394
-    assert result.threshold == 76343449461899
+    assert result.threshold == 152686898923798

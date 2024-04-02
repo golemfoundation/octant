@@ -2,6 +2,7 @@ import cx from 'classnames';
 import { motion } from 'framer-motion';
 import React, { FC, useEffect, useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
+import { useAccount } from 'wagmi';
 
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
@@ -34,6 +35,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
     keyPrefix: 'views.allocation.allocationItem',
   });
   const { isDesktop } = useMediaQuery();
+  const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: individualReward } = useIndividualReward();
   const { data: userAllocations } = useUserAllocations();
@@ -112,8 +114,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
     rewardsSumWithValueAndSimulation,
   );
-  const thresholdToUseFormatted =
-    thresholdToUse !== undefined ? getFormattedEthValue(thresholdToUse) : undefined;
+  const thresholdToUseFormatted = getFormattedEthValue(thresholdToUse || BigInt(0));
 
   const areValueAndSimulatedSuffixesTheSame =
     valueFormatted.suffix === simulatedMatchedFormatted?.suffix;
@@ -152,7 +153,8 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
           !isLoadingAllocateSimulate &&
           !isRewardsDataDefined &&
           !simulatedMatched &&
-          !isDecisionWindowOpen)) &&
+          !isDecisionWindowOpen &&
+          !isConnected)) &&
         i18n.t(
           isDesktop
             ? 'common.thresholdDataUnavailable.desktop'

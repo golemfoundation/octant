@@ -13,6 +13,7 @@ export default interface InputTextProps {
   isDisabled?: boolean;
   isErrorInlineVisible?: boolean;
   label?: string | ReactNode;
+  mode?: string;
   name?: string;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -20,6 +21,7 @@ export default interface InputTextProps {
   onFocus?: FocusEventHandler<HTMLInputElement>;
   placeholder?: string;
   shouldAutoFocusAndSelect?: boolean;
+  shouldAutoFocusAndSelectOnModeChange?: boolean;
   showLoader?: boolean;
   suffix?: string;
   suffixClassName?: string;

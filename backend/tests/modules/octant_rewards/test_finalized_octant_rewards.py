@@ -1,6 +1,7 @@
-from app.infrastructure import database
-from app.modules.dto import AllocationDTO
+from app.modules.dto import AllocationItem
 from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
+
+from tests.helpers import make_user_allocation
 from tests.helpers.constants import (
     USER1_BUDGET,
     COMMUNITY_FUND,
@@ -59,13 +60,13 @@ def test_finalized_get_leverage(
     proposal_accounts, mock_users_db, mock_finalized_epoch_snapshot_db
 ):
     user, _, _ = mock_users_db
-    database.allocations.add_all(
-        1,
-        user.id,
-        0,
-        [AllocationDTO(proposal_accounts[0].address, USER1_BUDGET)],
-    )
     context = get_context()
+    make_user_allocation(
+        context,
+        user,
+        allocation_items=[AllocationItem(proposal_accounts[0].address, USER1_BUDGET)],
+    )
+
     service = FinalizedOctantRewards()
 
     result = service.get_leverage(context)

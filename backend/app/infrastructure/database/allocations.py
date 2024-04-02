@@ -1,16 +1,19 @@
 from collections import defaultdict
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 from eth_utils import to_checksum_address
 from sqlalchemy.orm import Query
 from typing_extensions import deprecated
 
-from app.exceptions import UserNotFound
 from app.extensions import db
 from app.infrastructure.database.models import Allocation, User, AllocationRequest
 from app.infrastructure.database.user import get_by_address
-from app.modules.dto import AllocationDTO, AccountFundsDTO
+from app.modules.dto import (
+    AllocationDTO,
+    AccountFundsDTO,
+    UserAllocationRequestPayload,
+)
 
 
 @deprecated("Use `get_all` function")
@@ -23,13 +26,12 @@ def get_all_by_epoch(epoch: int, with_deleted=False) -> List[Allocation]:
     return query.all()
 
 
-def get_all(epoch: int, with_deleted=False) -> List[AllocationDTO]:
-    query: Query = Allocation.query.filter_by(epoch=epoch)
-
-    if not with_deleted:
-        query = query.filter(Allocation.deleted_at.is_(None))
-
-    allocations = query.all()
+def get_all(epoch: int) -> List[AllocationDTO]:
+    allocations = (
+        Allocation.query.filter_by(epoch=epoch)
+        .filter(Allocation.deleted_at.is_(None))
+        .all()
+    )
 
     return [
         AllocationDTO(
@@ -60,26 +62,30 @@ def get_user_allocations_history(
 
 
 def get_all_by_user_addr_and_epoch(
-    user_address: str, epoch: int, with_deleted=False
-) -> List[Allocation]:
-    user: User = get_by_address(user_address)
+    user_address: str, epoch: int
+) -> List[AccountFundsDTO]:
+    allocations: List[Allocation] = (
+        Allocation.query.join(User, User.id == Allocation.user_id)
+        .filter(User.address == user_address)
+        .filter(Allocation.epoch == epoch)
+        .filter(Allocation.deleted_at.is_(None))
+        .all()
+    )
 
-    if user is None:
-        return []
-
-    query: Query = Allocation.query.filter_by(user_id=user.id, epoch=epoch)
-
-    if not with_deleted:
-        query = query.filter(Allocation.deleted_at.is_(None))
-
-    return query.all()
+    return [
+        AccountFundsDTO(
+            address=alloc.proposal_address,
+            amount=int(alloc.amount),
+        )
+        for alloc in allocations
+    ]
 
 
-def get_all_by_proposal_addr_and_epoch(
-    proposal_address: str, epoch: int, with_deleted=False
+def get_all_by_project_addr_and_epoch(
+    project_address: str, epoch: int, with_deleted=False
 ) -> List[Allocation]:
     query: Query = Allocation.query.filter_by(
-        proposal_address=to_checksum_address(proposal_address), epoch=epoch
+        proposal_address=to_checksum_address(project_address), epoch=epoch
     )
 
     if not with_deleted:
@@ -145,41 +151,34 @@ def get_user_alloc_sum_by_epoch(epoch: int, user_address: str) -> int:
     return sum([int(a.amount) for a in allocations])
 
 
-def add_all(epoch: int, user_id: int, nonce: int, allocations):
-    now = datetime.utcnow()
-
-    new_allocations = [
-        Allocation(
-            epoch=epoch,
-            user_id=user_id,
-            nonce=nonce,
-            proposal_address=to_checksum_address(a.proposal_address),
-            amount=str(a.amount),
-            created_at=now,
-        )
-        for a in allocations
-    ]
-    db.session.add_all(new_allocations)
-
-
-def add_allocation_request(
-    user_address: str,
-    epoch: int,
-    nonce: int,
-    signature: str,
-    is_manually_edited: Optional[bool] = None,
+def store_allocation_request(
+    user_address: str, epoch_num: int, request: UserAllocationRequestPayload, **kwargs
 ):
     user: User = get_by_address(user_address)
 
+    options = {"is_manually_edited": None, **kwargs}
+
+    new_allocations = [
+        Allocation(
+            epoch=epoch_num,
+            user_id=user.id,
+            nonce=request.payload.nonce,
+            proposal_address=to_checksum_address(a.proposal_address),
+            amount=str(a.amount),
+        )
+        for a in request.payload.allocations
+    ]
+
     allocation_request = AllocationRequest(
-        user=user,
-        epoch=epoch,
-        nonce=nonce,
-        signature=signature,
-        is_manually_edited=is_manually_edited,
+        user_id=user.id,
+        epoch=epoch_num,
+        nonce=request.payload.nonce,
+        signature=request.signature,
+        is_manually_edited=options["is_manually_edited"],
     )
 
     db.session.add(allocation_request)
+    db.session.add_all(new_allocations)
 
 
 def get_allocation_request_by_user_nonce(
@@ -208,8 +207,19 @@ def soft_delete_all_by_epoch_and_user_id(epoch: int, user_id: int):
 def get_allocation_request_by_user_and_epoch(
     user_address: str, epoch: int
 ) -> AllocationRequest | None:
-    user: User = get_by_address(user_address)
-    if user is None:
-        raise UserNotFound(user_address)
+    return (
+        AllocationRequest.query.join(User, User.id == AllocationRequest.user_id)
+        .filter(User.address == user_address)
+        .filter(AllocationRequest.epoch == epoch)
+        .order_by(AllocationRequest.nonce.desc())
+        .first()
+    )
 
-    return AllocationRequest.query.filter_by(user_id=user.id, epoch=epoch).first()
+
+def get_user_last_allocation_request(user_address: str) -> AllocationRequest | None:
+    return (
+        AllocationRequest.query.join(User, User.id == AllocationRequest.user_id)
+        .filter(User.address == user_address)
+        .order_by(AllocationRequest.nonce.desc())
+        .first()
+    )

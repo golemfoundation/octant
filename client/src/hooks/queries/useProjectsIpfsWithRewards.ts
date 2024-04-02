@@ -1,3 +1,4 @@
+import env from 'env';
 import { ExtendedProject } from 'types/extended-project';
 import getSortedElementsByTotalValueOfAllocationsAndAlphabetical from 'utils/getSortedElementsByTotalValueOfAllocationsAndAlphabetical';
 
@@ -18,7 +19,7 @@ export default function useProjectsIpfsWithRewards(epoch?: number): {
   isFetching: boolean;
 } {
   // TODO OCT-1270 TODO OCT-1312 Remove this override.
-  const epochOverrideForDataFetch = epoch === 2 ? 3 : epoch;
+  const epochOverrideForDataFetch = env.network === 'Mainnet' && epoch === 2 ? 3 : epoch;
 
   const { data: projectsAddresses, isFetching: isFetchingProjectsContract } =
     useProjectsContract(epochOverrideForDataFetch);
@@ -31,7 +32,12 @@ export default function useProjectsIpfsWithRewards(epoch?: number): {
     isFetching: isFetchingMatchedProjectRewards,
     isRefetching: isRefetchingMatchedProjectRewards,
   } = useMatchedProjectRewards(epoch);
-  const { data: projectsDonors, isFetching: isFetchingProjectsDonors } = useProjectsDonors(epoch);
+
+  const {
+    data: projectsDonors,
+    isFetching: isFetchingProjectsDonors,
+    isSuccess: isSuccessProjectsDonors,
+  } = useProjectsDonors(epoch);
 
   const isFetching =
     isFetchingProjectsContract ||
@@ -55,9 +61,11 @@ export default function useProjectsIpfsWithRewards(epoch?: number): {
      */
     const totalValueOfAllocations =
       projectMatchedProjectRewards?.sum ||
-      projectsDonors[project.address].reduce((acc, curr) => acc + curr.amount, BigInt(0));
+      (isSuccessProjectsDonors
+        ? projectsDonors[project.address].reduce((acc, curr) => acc + curr.amount, BigInt(0))
+        : BigInt(0));
     return {
-      numberOfDonors: projectsDonors[project.address].length,
+      numberOfDonors: isSuccessProjectsDonors ? projectsDonors[project.address].length : 0,
       percentage: projectMatchedProjectRewards?.percentage,
       totalValueOfAllocations,
       ...project,

@@ -1,0 +1,17 @@
+.box {
+  height: 6.4rem;
+  font-size: $font-size-12;
+
+  &:not(:first-child) {
+    margin: 1.6rem auto 0;
+  }
+
+  @media #{$desktop-up} {
+    font-size: $font-size-14;
+  }
+}
+
+.inputToggle {
+  // Prevents inputs from shrinking when label text is long.
+  flex-shrink: 0;
+}

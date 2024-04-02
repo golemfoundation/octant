@@ -28,6 +28,9 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
   const [isTooltipClicked, setIsTooltipClicked] = useState(false);
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const tooltipText = useMemo(() => {
+    if (isArchivedProject && isAllocatedTo) {
+      return t('donated');
+    }
     if (isAddedToAllocate && isTooltipClicked) {
       return t('saved');
     }
@@ -39,7 +42,7 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
     }
     return t('saveToAllocate');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAddedToAllocate, isTooltipClicked]);
+  }, [isAddedToAllocate, isTooltipClicked, isArchivedProject, isAllocatedTo]);
 
   const handleTooltipVisibilityChange = (isVisible: boolean) => {
     setIsTooltipVisible(isVisible);
@@ -61,7 +64,7 @@ const ButtonAddToAllocate: FC<ButtonAddToAllocateProps> = ({
       Icon={
         <Tooltip
           hideAfterClick
-          isDisabled={isArchivedProject || isPatronMode}
+          isDisabled={isPatronMode || (isArchivedProject && !isAddedToAllocate)}
           onClickCallback={() => {
             if (isTooltipVisible) {
               setIsTooltipClicked(true);

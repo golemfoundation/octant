@@ -21,47 +21,47 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('"Always show Allocate onboarding" option toggle works', () => {
-      cy.get('[data-test=InputToggle__AlwaysShowOnboarding]').check();
-      cy.get('[data-test=InputToggle__AlwaysShowOnboarding]').should('be.checked');
+      cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').check();
+      cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').should('be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('true');
       });
 
-      cy.get('[data-test=InputToggle__AlwaysShowOnboarding]').click();
-      cy.get('[data-test=InputToggle__AlwaysShowOnboarding]').should('not.be.checked');
+      cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').click();
+      cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').should('not.be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('false');
       });
 
-      cy.get('[data-test=InputToggle__AlwaysShowOnboarding]').click();
-      cy.get('[data-test=InputToggle__AlwaysShowOnboarding]').should('be.checked');
+      cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').click();
+      cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').should('be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE)).eq('true');
       });
     });
 
     it('"Use crypto as main value display" option is checked by default', () => {
-      cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').should('be.checked');
+      cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').should('be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).eq('true');
       });
     });
 
     it('"Use crypto as main value display" option toggle works', () => {
-      cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').check();
-      cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').should('be.checked');
+      cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').check();
+      cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').should('be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).eq('true');
       });
 
-      cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').click();
-      cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').should('not.be.checked');
+      cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').click();
+      cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').should('not.be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).eq('false');
       });
 
-      cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').click();
-      cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').should('be.checked');
+      cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').click();
+      cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').should('be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).eq('true');
       });
@@ -84,7 +84,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('"Use crypto as main value display" option changes DoubleValue sections order', () => {
-      cy.get('[data-test=InputToggle__UseCryptoAsMainValueDisplay]').uncheck();
+      cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
       navigateWithCheck(ROOT_ROUTES.earn.absolute);
 
       const cryptoValue = getValueCryptoToDisplay({
@@ -111,7 +111,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         const nextDisplayCurrencyToUppercase =
           i < DISPLAY_CURRENCIES.length - 1 ? DISPLAY_CURRENCIES[i + 1].toUpperCase() : undefined;
 
-        cy.get('[data-test=SettingsView__InputSelect--currency__SingleValue]').contains(
+        cy.get('[data-test=SettingsCurrencyBox__InputSelect--currency__SingleValue]').contains(
           displayCurrencyToUppercase,
         );
         navigateWithCheck(ROOT_ROUTES.earn.absolute);
@@ -127,35 +127,35 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         }
 
         navigateWithCheck(ROOT_ROUTES.settings.absolute);
-        cy.get('[data-test=SettingsView__InputSelect--currency]').click();
+        cy.get('[data-test=SettingsCurrencyBox__InputSelect--currency]').click();
         cy.get(
-          `[data-test=SettingsView__InputSelect--currency__Option--${nextDisplayCurrencyToUppercase}]`,
+          `[data-test=SettingsCurrencyBox__InputSelect--currency__Option--${nextDisplayCurrencyToUppercase}]`,
         ).click();
       }
     });
 
     it('"Always show Octant tips" option toggle works', () => {
-      cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').check();
-      cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').should('be.checked');
+      cy.get('[data-test=SettingsShowTipsBox__InputToggle]').check();
+      cy.get('[data-test=SettingsShowTipsBox__InputToggle]').should('be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(ARE_OCTANT_TIPS_ALWAYS_VISIBLE)).eq('true');
       });
 
-      cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').click();
-      cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').should('not.be.checked');
+      cy.get('[data-test=SettingsShowTipsBox__InputToggle]').click();
+      cy.get('[data-test=SettingsShowTipsBox__InputToggle]').should('not.be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(ARE_OCTANT_TIPS_ALWAYS_VISIBLE)).eq('false');
       });
 
-      cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').click();
-      cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').should('be.checked');
+      cy.get('[data-test=SettingsShowTipsBox__InputToggle]').click();
+      cy.get('[data-test=SettingsShowTipsBox__InputToggle]').should('be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(ARE_OCTANT_TIPS_ALWAYS_VISIBLE)).eq('true');
       });
     });
 
     it('"Always show Octant tips" works (checked)', () => {
-      cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').check();
+      cy.get('[data-test=SettingsShowTipsBox__InputToggle]').check();
 
       navigateWithCheck(ROOT_ROUTES.earn.absolute);
       cy.get('[data-test=EarnView__TipTile--connectWallet]').should('exist');
@@ -171,7 +171,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('"Always show Octant tips" works (unchecked)', () => {
-      cy.get('[data-test=AlwaysShowOctantTips__InputCheckbox]').uncheck();
+      cy.get('[data-test=SettingsShowTipsBox__InputToggle]').uncheck();
 
       navigateWithCheck(ROOT_ROUTES.earn.absolute);
       cy.get('[data-test=EarnView__TipTile--connectWallet]').should('exist');

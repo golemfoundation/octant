@@ -5,7 +5,7 @@ from app.engine.user.effective_deposit import UserDeposit, DepositEvent
 from app.infrastructure.graphql import locks, unlocks
 from app.modules.common.effective_deposits import calculate_effective_deposits
 from app.modules.common.time import Timestamp, from_timestamp_s
-from app.modules.dto import LockItem, OpType
+from app.modules.history.dto import LockItem, OpType
 from app.pydantic import Model
 
 
