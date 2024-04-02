@@ -74,7 +74,7 @@ def test_current_services_factory():
         patron_donations=patron_donations,
     )
     multisig_signatures = OffchainMultisigSignatures(
-        verifiers={SignatureOpType.TOS: tos_verifier}
+        verifiers={SignatureOpType.TOS: tos_verifier}, is_mainnet=True
     )
 
     assert result.user_deposits_service == user_deposits
@@ -120,7 +120,7 @@ def test_pre_pending_services_factory_when_not_mainnet():
 
 
 def test_pending_services_factory():
-    result = PendingServices.create()
+    result = PendingServices.create(ChainTypes.MAINNET)
 
     events_based_patron_mode = EventsBasedUserPatronMode()
     octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
@@ -145,7 +145,7 @@ def test_pending_services_factory():
     withdrawals_service = PendingWithdrawals(user_rewards=user_rewards)
     project_rewards = EstimatedProjectRewards(octant_rewards=octant_rewards)
     multisig_signatures = OffchainMultisigSignatures(
-        verifiers={SignatureOpType.ALLOCATION: allocations_verifier}
+        verifiers={SignatureOpType.ALLOCATION: allocations_verifier}, is_mainnet=True
     )
 
     assert result.user_deposits_service == SavedUserDeposits()

@@ -4,6 +4,7 @@ from flask_restx import Namespace, fields, reqparse
 from app.extensions import api
 from app.infrastructure import OctantResource
 from app.modules.dto import SignatureOpType
+from app.modules.facades.confirm_multisig import confirm_multisig
 from app.modules.multisig_signatures.controller import (
     get_last_pending_signature,
     save_pending_signature,
@@ -72,3 +73,14 @@ class MultisigPendingSignature(OctantResource):
         app.logger.debug("Added new multisig signature.")
 
         return {}, 201
+
+
+@ns.route("/pending/approve")
+class MultisigApprovePending(OctantResource):
+    @ns.response(204, "Success")
+    @ns.doc(description="Approve pending multisig messages.")
+    def patch(self):
+        app.logger.debug("Approving and applying TOS & allocation signatures.")
+        confirm_multisig()
+
+        return {}, 204

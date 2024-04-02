@@ -20,10 +20,11 @@ from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.proposals import Proposals
 from app.infrastructure.contracts.vault import Vault
+from app.infrastructure.database.multisig_signature import SigStatus
 from app.legacy.crypto.account import Account as CryptoAccount
 from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
 from app.modules.common.verifier import Verifier
-from app.modules.dto import AccountFundsDTO, AllocationItem
+from app.modules.dto import AccountFundsDTO, AllocationItem, SignatureOpType
 from app.settings import DevConfig, TestConfig
 from tests.helpers import make_user_allocation
 from tests.helpers.constants import (
@@ -51,12 +52,16 @@ from tests.helpers.constants import (
     MOCKED_EPOCH_NO_AFTER_OVERHAUL,
     MATCHED_REWARDS_AFTER_OVERHAUL,
     NO_PATRONS_REWARDS,
+    MULTISIG_APPROVALS_THRESHOLD,
+    MULTISIG_MOCKED_MESSAGE,
+    MULTISIG_MOCKED_HASH,
 )
 from tests.helpers.context import get_context
 from tests.helpers.gql_client import MockGQLClient
 from tests.helpers.mocked_epoch_details import EPOCH_EVENTS
 from tests.helpers.octant_rewards import octant_rewards
 from tests.helpers.pending_snapshot import create_pending_snapshot
+from tests.helpers.signature import create_multisig_signature
 from tests.helpers.subgraph.events import create_deposit_event
 
 # Contracts mocks
@@ -119,6 +124,61 @@ def mock_bitquery_api_get_blocks_rewards(*args, **kwargs):
     }
 
     return example_resp_json["data"]["ethereum"]["blocks"][0]["reward"]
+
+
+def mock_safe_api_message_details(*args, **kwargs):
+    example_resp_json = {
+        "created": "2023-10-27T07:34:09.184140Z",
+        "modified": "2023-10-28T20:54:46.207427Z",
+        "safe": "0xa40FcB633d0A6c0d27aA9367047635Ff656229B0",
+        "messageHash": "0x7f6dfab0a617fcb1c8f351b321a8844d98d9ee160e7532efc39ee06c02308ec6",
+        "message": "Welcome to Octant.\nPlease click to sign in and accept the Octant Terms of Service.\n\nSigning this message will not trigger a transaction.\n\nYour address\n0xa40FcB633d0A6c0d27aA9367047635Ff656229B0",
+        "proposedBy": "0x5754aC842D6eaF6a4E29101D46ac25D7C567311E",
+        "safeAppId": 111,
+        "confirmations": [
+            {
+                "created": "2023-10-27T07:34:09.223358Z",
+                "modified": "2023-10-27T07:34:09.223358Z",
+                "owner": "0x5754aC842D6eaF6a4E29101D46ac25D7C567311E",
+                "signature": "0xa35a1d5689b5daf1003a06479952701bc3574d66fa89c4433c634a864910ddf337b63354a66b11bedb5b6e4f7c0bf1fe2d2797d05dd288fb56e8e5d636a5064c1c",
+                "signatureType": "EOA",
+            },
+            {
+                "created": "2023-10-28T08:37:40.741190Z",
+                "modified": "2023-10-28T08:37:40.741190Z",
+                "owner": "0xa35E7b6524d312B7FABefd00F9A8e4524581Dc85",
+                "signature": "0xa966dd0a074f4891a286b115adc191469bc19fe07105468ca582bd82c952165529a452e93ddbb062859bd2fd4c6efd68808a5e3444053ddd5e46244bb300c6fd1f",
+                "signatureType": "ETH_SIGN",
+            },
+            {
+                "created": "2023-10-28T20:54:46.207427Z",
+                "modified": "2023-10-28T20:54:46.207427Z",
+                "owner": "0x4280Ce44aFAb1e5E940574F135802E12ad2A5eF0",
+                "signature": "0x1d2ca05dbfda9d996aacf47b78f5ee6f477171c3895fe0bd496f68b33f68059463539264dffb513c4bf7857aaa646c170f3a47189a61ae9734d3724503c560f220",
+                "signatureType": "ETH_SIGN",
+            },
+        ],
+        "preparedSignature": "0x1c2ca05dbfda9d996aacf47b78f5ee6f477171c3895fe0bd496f68b33f68059463539264dffb513c4bf7857aaa646c170f3a47189a61ae9734d3724503c560f220a37a1d5689b5daf1003a06479952701bc3574d66fa89c4433c634a864910ddf337b63354a66b11bedb5b6e4f7c0bf1fe2d2797d05dd288fb56e8e5d636a5064c1ca966dd0a074f4891a286b115adc191469bc19fe07105468ca582bd82c952165529a452e93ddbb062859bd2fd4c6efd68808a5e3444053ddd5e46244bb300c6fd1f",
+    }
+    return example_resp_json
+
+
+def mock_safe_api_user_details(*args, **kwargs):
+    example_resp_json = {
+        "address": "0x89d2EcE5ca5cee0672d8BaD68cC7638D30Dc005e",
+        "nonce": 0,
+        "threshold": MULTISIG_APPROVALS_THRESHOLD,
+        "owners": [
+            "0x94F9B0F7B5d00e33f5DEaBBf780e2E6D870E9714",
+            "0x6c1865c85C1ebd545FD891Aa38dE993c485aE90a",
+        ],
+        "masterCopy": "0xfb1bffC9d739B8D520DaF37dF666da4C687191EA",
+        "modules": [],
+        "fallbackHandler": "0x017062a1dE2FE6b99BE3d9d37841FeD19F573804",
+        "guard": "0x0000000000000000000000000000000000000000",
+        "version": "1.3.0+L2",
+    }
+    return example_resp_json
 
 
 def pytest_addoption(parser):
@@ -499,6 +559,12 @@ def patch_has_pending_epoch_snapshot(monkeypatch):
             MOCK_HAS_PENDING_SNAPSHOT,
         )
     )
+    (
+        monkeypatch.setattr(
+            "app.context.epoch_state._has_pending_epoch_snapshot",
+            MOCK_HAS_PENDING_SNAPSHOT,
+        )
+    )
     MOCK_HAS_PENDING_SNAPSHOT.return_value = True
 
 
@@ -543,6 +609,22 @@ def patch_bitquery_get_blocks_rewards(monkeypatch):
     monkeypatch.setattr(
         "app.modules.staking.proceeds.service.aggregated.get_blocks_rewards",
         mock_bitquery_api_get_blocks_rewards,
+    )
+
+
+@pytest.fixture(scope="function")
+def patch_safe_api_message_details(monkeypatch):
+    monkeypatch.setattr(
+        "app.modules.multisig_signatures.service.offchain.get_message_details",
+        mock_safe_api_message_details,
+    )
+
+
+@pytest.fixture(scope="function")
+def patch_safe_api_user_details(monkeypatch):
+    monkeypatch.setattr(
+        "app.modules.multisig_signatures.service.offchain.get_user_details",
+        mock_safe_api_user_details,
     )
 
 
@@ -650,6 +732,70 @@ def mock_allocations_db(app, mock_users_db, proposal_accounts):
     )
 
     db.session.commit()
+
+
+@pytest.fixture(scope="function")
+def mock_pending_multisig_signatures(alice):
+    create_multisig_signature(
+        alice.address,
+        MULTISIG_MOCKED_MESSAGE,
+        MULTISIG_MOCKED_HASH,
+        SignatureOpType.TOS,
+        "0.0.0.0",
+        SigStatus.PENDING,
+    )
+    create_multisig_signature(
+        alice.address,
+        MULTISIG_MOCKED_MESSAGE,
+        MULTISIG_MOCKED_HASH,
+        SignatureOpType.ALLOCATION,
+        "0.0.0.0",
+        SigStatus.PENDING,
+    )
+
+
+@pytest.fixture(scope="function")
+def mock_approved_multisig_signatures(alice):
+    create_multisig_signature(
+        alice.address,
+        MULTISIG_MOCKED_MESSAGE,
+        MULTISIG_MOCKED_HASH,
+        SignatureOpType.ALLOCATION,
+        "0.0.0.0",
+        SigStatus.APPROVED,
+    )
+    create_multisig_signature(
+        alice.address,
+        MULTISIG_MOCKED_MESSAGE,
+        MULTISIG_MOCKED_HASH,
+        SignatureOpType.TOS,
+        "0.0.0.0",
+        SigStatus.APPROVED,
+    )
+
+
+@pytest.fixture(scope="function")
+def mock_pending_allocation_signature(alice):
+    create_multisig_signature(
+        alice.address,
+        MULTISIG_MOCKED_MESSAGE,
+        MULTISIG_MOCKED_HASH,
+        SignatureOpType.ALLOCATION,
+        "0.0.0.0",
+        SigStatus.PENDING,
+    )
+
+
+@pytest.fixture(scope="function")
+def mock_pending_tos_signature(alice):
+    create_multisig_signature(
+        alice.address,
+        MULTISIG_MOCKED_MESSAGE,
+        MULTISIG_MOCKED_HASH,
+        SignatureOpType.TOS,
+        "0.0.0.0",
+        SigStatus.PENDING,
+    )
 
 
 @pytest.fixture(scope="function")

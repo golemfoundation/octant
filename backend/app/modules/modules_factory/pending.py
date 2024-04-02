@@ -35,6 +35,7 @@ from app.modules.user.patron_mode.service.events_based import EventsBasedUserPat
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.withdrawals.service.pending import PendingWithdrawals
 from app.pydantic import Model
+from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 
 
 class PendingOctantRewardsService(OctantRewards, Leverage, Protocol):
@@ -74,7 +75,7 @@ class PendingServices(Model):
     multisig_signatures_service: MultisigSignatures
 
     @staticmethod
-    def create() -> "PendingServices":
+    def create(chain_id: int) -> "PendingServices":
         events_based_patron_mode = EventsBasedUserPatronMode()
         octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
         saved_user_budgets = SavedUserBudgets()
@@ -97,8 +98,13 @@ class PendingServices(Model):
         )
         withdrawals_service = PendingWithdrawals(user_rewards=user_rewards)
         project_rewards = EstimatedProjectRewards(octant_rewards=octant_rewards)
+
+        is_mainnet = compare_blockchain_types(
+            chain_id=chain_id, expected_chain=ChainTypes.MAINNET
+        )
         multisig_signatures = OffchainMultisigSignatures(
-            verifiers={SignatureOpType.ALLOCATION: allocations_verifier}
+            verifiers={SignatureOpType.ALLOCATION: allocations_verifier},
+            is_mainnet=is_mainnet,
         )
 
         return PendingServices(

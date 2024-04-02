@@ -4,6 +4,10 @@ from app.context.manager import Context
 from app.exceptions import InvalidMultisigSignatureRequest
 from app.extensions import db
 from app.infrastructure import database
+from app.infrastructure.database.models import MultisigSignatures
+from app.infrastructure.database.multisig_signature import SigStatus
+from app.infrastructure.external_api.safe.message_details import get_message_details
+from app.infrastructure.external_api.safe.user_details import get_user_details
 from app.modules.common.signature import (
     encode_for_signing,
     EncodingStandardFor,
@@ -16,7 +20,12 @@ from app.pydantic import Model
 
 
 class OffchainMultisigSignatures(Model):
+    is_mainnet: bool = False
     verifiers: dict[SignatureOpType, Verifier]
+
+    staged_signatures: list[
+        MultisigSignatures
+    ] = []  # TODO make it invulnerable for data race & race conditions
 
     def get_last_pending_signature(
         self, _: Context, user_address: str, op_type: SignatureOpType
@@ -29,9 +38,61 @@ class OffchainMultisigSignatures(Model):
             return None
 
         return Signature(
+            id=signature_db.id,
             message=signature_db.message,
             hash=signature_db.hash,
+            user_address=signature_db.address,
+            ip_address=signature_db.user_ip,
         )
+
+    def approve_pending_signatures(self, _: Context) -> list[Signature]:
+        pending_signatures = database.multisig_signature.get_all_pending_signatures()
+        approved_signatures = []
+
+        staged_signatures_ids = tuple(map(lambda x: x.id, self.staged_signatures))
+        for pending_signature in pending_signatures:
+            if pending_signature.id in staged_signatures_ids:
+                approved_signatures.append(
+                    Signature(
+                        pending_signature.id,
+                        pending_signature.message,
+                        pending_signature.hash,
+                        pending_signature.address,
+                        pending_signature.user_ip,
+                    )
+                )
+                continue
+
+            confirmations = get_message_details(
+                pending_signature.hash, is_mainnet=self.is_mainnet
+            )["confirmations"]
+            threshold = int(
+                get_user_details(pending_signature.address, is_mainnet=self.is_mainnet)[
+                    "threshold"
+                ]
+            )
+
+            if len(confirmations) >= threshold:
+                self.staged_signatures.append(pending_signature)
+                approved_signatures.append(
+                    Signature(
+                        pending_signature.id,
+                        pending_signature.message,
+                        pending_signature.hash,
+                        pending_signature.address,
+                        pending_signature.user_ip,
+                    )
+                )
+
+        return approved_signatures
+
+    def apply_staged_signatures(self, _: Context, signature_id: int):
+        for idx, pending_signature in enumerate(self.staged_signatures):
+            if pending_signature.id == signature_id:
+                pending_signature.status = SigStatus.APPROVED
+                db.session.commit()
+                self.staged_signatures.pop(idx)
+                return
 
     def save_pending_signature(
         self,

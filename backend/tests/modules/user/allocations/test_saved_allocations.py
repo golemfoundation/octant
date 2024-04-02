@@ -10,11 +10,10 @@ from app.modules.dto import (
     UserAllocationPayload,
     AccountFundsDTO,
 )
-from app.modules.user.allocations.service.saved import SavedUserAllocations
 from app.modules.history.dto import AllocationItem as HistoryAllocationItem
-
-from tests.helpers.context import get_context
+from app.modules.user.allocations.service.saved import SavedUserAllocations
 from tests.helpers import make_user_allocation
+from tests.helpers.context import get_context
 
 
 @pytest.fixture(autouse=True)

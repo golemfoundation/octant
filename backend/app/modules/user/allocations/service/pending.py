@@ -59,7 +59,7 @@ class PendingUserAllocationsVerifier(Verifier, Model):
         eip712_encoded = build_allocations_eip712_structure(kwargs["payload"].payload)
         encoded_msg = encode_for_signing(EncodingStandardFor.DATA, eip712_encoded)
         if not verify_signed_message(user_address, encoded_msg, signature):
-            raise InvalidSignature()
+            raise InvalidSignature(user_address, signature)
 
 
 class PendingUserAllocations(SavedUserAllocations, Model):
