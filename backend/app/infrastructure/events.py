@@ -38,8 +38,10 @@ def handle_disconnect():
 def handle_allocate(msg):
     msg = json.loads(msg)
     is_manually_edited = msg["isManuallyEdited"] if "isManuallyEdited" in msg else None
+    user_address = msg["userAddress"]
     app.logger.info(f"User allocation payload: {msg}")
-    user_address = controller.allocate(
+    controller.allocate(
+        user_address,
         msg,
         is_manually_edited=is_manually_edited,
     )
