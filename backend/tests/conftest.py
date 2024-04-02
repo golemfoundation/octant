@@ -247,7 +247,7 @@ class UserAccount:
         }
 
         signature = sign(self._account, build_allocations_eip712_data(payload))
-        self._client.allocate(payload, signature)
+        self._client.allocate(payload, self._account.address, signature)
 
     @property
     def address(self):
@@ -311,9 +311,14 @@ class Client:
         ).text
         return json.loads(rv)["allocationNonce"]
 
-    def allocate(self, payload: dict, signature: str) -> int:
+    def allocate(self, payload: dict, user_address: str, signature: str) -> int:
         rv = self._flask_client.post(
-            "/allocations/allocate", json={"payload": payload, "signature": signature}
+            "/allocations/allocate",
+            json={
+                "payload": payload,
+                "userAddress": user_address,
+                "signature": signature,
+            },
         )
         assert rv.status_code == 201, rv.text
 

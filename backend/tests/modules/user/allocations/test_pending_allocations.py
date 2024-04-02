@@ -118,7 +118,9 @@ def test_user_allocates_for_the_first_time(tos_users, proposal_accounts):
     signature = sign(tos_users[0], build_allocations_eip712_data(payload))
 
     # Call allocate method
-    controller.allocate({"payload": payload, "signature": signature})
+    controller.allocate(
+        tos_users[0].address, {"payload": payload, "signature": signature}
+    )
 
     # Check if allocations were created
     check_allocations(tos_users[0].address, payload, 2)
@@ -136,8 +138,12 @@ def test_multiple_users_allocate_for_the_first_time(tos_users, proposal_accounts
     signature2 = sign(tos_users[1], build_allocations_eip712_data(payload2))
 
     # Call allocate method for both users
-    controller.allocate({"payload": payload1, "signature": signature1})
-    controller.allocate({"payload": payload2, "signature": signature2})
+    controller.allocate(
+        tos_users[0].address, {"payload": payload1, "signature": signature1}
+    )
+    controller.allocate(
+        tos_users[1].address, {"payload": payload2, "signature": signature2}
+    )
 
     # Check if allocations were created for both users
     check_allocations(tos_users[0].address, payload1, 2)
@@ -155,7 +161,10 @@ def test_allocate_updates_with_more_proposals(tos_users, proposal_accounts):
     )
 
     # Call allocate method
-    controller.allocate({"payload": initial_payload, "signature": initial_signature})
+    controller.allocate(
+        tos_users[0].address,
+        {"payload": initial_payload, "signature": initial_signature},
+    )
 
     # Create a new payload with more proposals
     updated_payload = create_payload(proposal_accounts[0:3], None, 1)
@@ -164,7 +173,10 @@ def test_allocate_updates_with_more_proposals(tos_users, proposal_accounts):
     )
 
     # Call allocate method with updated_payload
-    controller.allocate({"payload": updated_payload, "signature": updated_signature})
+    controller.allocate(
+        tos_users[0].address,
+        {"payload": updated_payload, "signature": updated_signature},
+    )
 
     # Check if allocations were updated
     check_allocations(tos_users[0].address, updated_payload, 3)
@@ -181,7 +193,10 @@ def test_allocate_updates_with_less_proposals(tos_users, proposal_accounts):
     )
 
     # Call allocate method
-    controller.allocate({"payload": initial_payload, "signature": initial_signature})
+    controller.allocate(
+        tos_users[0].address,
+        {"payload": initial_payload, "signature": initial_signature},
+    )
 
     # Create a new payload with fewer proposals
     updated_payload = create_payload(proposal_accounts[0:2], None, 1)
@@ -190,7 +205,10 @@ def test_allocate_updates_with_less_proposals(tos_users, proposal_accounts):
     )
 
     # Call allocate method with updated_payload
-    controller.allocate({"payload": updated_payload, "signature": updated_signature})
+    controller.allocate(
+        tos_users[0].address,
+        {"payload": updated_payload, "signature": updated_signature},
+    )
 
     # Check if allocations were updated
     check_allocations(tos_users[0].address, updated_payload, 2)
@@ -211,8 +229,14 @@ def test_multiple_users_change_their_allocations(tos_users, proposal_accounts):
     )
 
     # Call allocate method with initial payloads for both users
-    controller.allocate({"payload": initial_payload1, "signature": initial_signature1})
-    controller.allocate({"payload": initial_payload2, "signature": initial_signature2})
+    controller.allocate(
+        tos_users[0].address,
+        {"payload": initial_payload1, "signature": initial_signature1},
+    )
+    controller.allocate(
+        tos_users[1].address,
+        {"payload": initial_payload2, "signature": initial_signature2},
+    )
 
     # Create updated payloads for both users
     updated_payload1 = create_payload(proposal_accounts[0:4], None, 1)
@@ -225,8 +249,14 @@ def test_multiple_users_change_their_allocations(tos_users, proposal_accounts):
     )
 
     # Call allocate method with updated payloads for both users
-    controller.allocate({"payload": updated_payload1, "signature": updated_signature1})
-    controller.allocate({"payload": updated_payload2, "signature": updated_signature2})
+    controller.allocate(
+        tos_users[0].address,
+        {"payload": updated_payload1, "signature": updated_signature1},
+    )
+    controller.allocate(
+        tos_users[1].address,
+        {"payload": updated_payload2, "signature": updated_signature2},
+    )
 
     # Check if allocations were updated for both users
     check_allocations(tos_users[0].address, updated_payload1, 4)
@@ -247,14 +277,18 @@ def test_user_exceeded_rewards_budget_in_allocations(app, proposal_accounts, tos
     signature = sign(tos_users[0], build_allocations_eip712_data(payload))
 
     with pytest.raises(exceptions.RewardsBudgetExceeded):
-        controller.allocate({"payload": payload, "signature": signature})
+        controller.allocate(
+            tos_users[0].address, {"payload": payload, "signature": signature}
+        )
 
     # Lower it to 100 total (should pass)
     payload = create_payload(
         proposal_accounts[0:3], [10 * 10**18, 40 * 10**18, 50 * 10**18]
     )
     signature = sign(tos_users[0], build_allocations_eip712_data(payload))
-    controller.allocate({"payload": payload, "signature": signature})
+    controller.allocate(
+        tos_users[0].address, {"payload": payload, "signature": signature}
+    )
 
 
 def test_nonces(tos_users, proposal_accounts):
@@ -263,14 +297,18 @@ def test_nonces(tos_users, proposal_accounts):
         proposal_accounts[0:2], [10 * 10**18, 20 * 10**18], nonce0
     )
     signature = sign(tos_users[0], build_allocations_eip712_data(payload))
-    controller.allocate({"payload": payload, "signature": signature})
+    controller.allocate(
+        tos_users[0].address, {"payload": payload, "signature": signature}
+    )
     nonce1 = get_allocation_nonce(tos_users[0].address)
     assert nonce0 != nonce1
     payload = create_payload(
         proposal_accounts[0:2], [10 * 10**18, 30 * 10**18], nonce1
     )
     signature = sign(tos_users[0], build_allocations_eip712_data(payload))
-    controller.allocate({"payload": payload, "signature": signature})
+    controller.allocate(
+        tos_users[0].address, {"payload": payload, "signature": signature}
+    )
 
     nonce2 = get_allocation_nonce(tos_users[0].address)
     assert nonce1 != nonce2
@@ -280,7 +318,9 @@ def test_nonces(tos_users, proposal_accounts):
     )
     signature = sign(tos_users[0], build_allocations_eip712_data(payload))
     with pytest.raises(exceptions.WrongAllocationsNonce):
-        controller.allocate({"payload": payload, "signature": signature})
+        controller.allocate(
+            tos_users[0].address, {"payload": payload, "signature": signature}
+        )
 
 
 def test_stores_allocation_request_signature(tos_users, proposal_accounts):
@@ -290,7 +330,9 @@ def test_stores_allocation_request_signature(tos_users, proposal_accounts):
     )
     signature = sign(tos_users[0], build_allocations_eip712_data(payload))
 
-    controller.allocate({"payload": payload, "signature": signature})
+    controller.allocate(
+        tos_users[0].address, {"payload": payload, "signature": signature}
+    )
 
     alloc_signature = database.allocations.get_allocation_request_by_user_nonce(
         tos_users[0].address, nonce0
