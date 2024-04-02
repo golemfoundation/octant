@@ -137,7 +137,7 @@ export const moveEpoch = (
   cypressWindow: Cypress.AUTWindow,
   moveTo: 'decisionWindowClosed' | 'decisionWindowOpen',
 ): Promise<boolean> => {
-  return new Promise(resolve => {
+  return new Cypress.Promise(resolve => {
     const isDecisionWindowOpen = cypressWindow.clientReactQuery.getQueryData(
       QUERY_KEYS.isDecisionWindowOpen,
     );
