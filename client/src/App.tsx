@@ -24,7 +24,7 @@ const App = (): ReactElement => {
   const isProjectAdminMode = useIsProjectAdminMode();
 
   // useCypressHelpers needs to be called after all the initial sets done above.
-  useCypressHelpers();
+  const { isFetching: isFetchingCypressHelpers } = useCypressHelpers();
 
   if (isLoading && !isSyncingInProgress) {
     return <AppLoader />;
@@ -32,7 +32,7 @@ const App = (): ReactElement => {
 
   return (
     <Fragment>
-      <RootRoutes isSyncingInProgress={isSyncingInProgress} />
+      <RootRoutes isSyncingInProgress={isSyncingInProgress || isFetchingCypressHelpers} />
       {!isSyncingInProgress && !isProjectAdminMode && <ModalOnboarding />}
     </Fragment>
   );

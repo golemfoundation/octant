@@ -37,8 +37,11 @@ describe('Make pending snapshot', () => {
         return;
       }
 
-      await axios.post(`${env.serverEndpoint}snapshots/pending`);
-      cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+      cy.wrap(null).then(() => {
+        axios.post(`${env.serverEndpoint}snapshots/pending`).then(() => {
+          cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+        });
+      });
     });
   });
 });

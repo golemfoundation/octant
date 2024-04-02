@@ -3,11 +3,23 @@ import { useEffect } from 'react';
 import env from 'env';
 import useCypressMoveToDecisionWindowClosed from 'hooks/mutations/useCypressMoveToDecisionWindowClosed';
 import useCypressMoveToDecisionWindowOpen from 'hooks/mutations/useCypressMoveToDecisionWindowOpen';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useEpochs from 'hooks/subgraph/useEpochs';
 
-export default function useCypressHelpers(): void {
+export default function useCypressHelpers(): { isFetching: boolean } {
+  const isHookEnabled = window.Cypress || env.network === 'Local';
+
   const { mutateAsync: mutateAsyncMoveToDecisionWindowOpen } = useCypressMoveToDecisionWindowOpen();
   const { mutateAsync: mutateAsyncMoveToDecisionWindowClosed } =
     useCypressMoveToDecisionWindowClosed();
+  const { data: currentEpoch } = useCurrentEpoch();
+  const { data: epochs } = useEpochs();
+
+  const isEpochAlreadyIndexedBySubgraph =
+    isHookEnabled &&
+    epochs !== undefined &&
+    currentEpoch !== undefined &&
+    epochs.includes(currentEpoch);
 
   useEffect(() => {
     /**
@@ -22,7 +34,7 @@ export default function useCypressHelpers(): void {
      *
      * (1) History of commits here: https://github.com/golemfoundation/octant/pull/13.
      */
-    if (window.Cypress || env.network === 'Local') {
+    if (isHookEnabled) {
       // @ts-expect-error Left for debug purposes.
       window.mutateAsyncMoveToDecisionWindowOpen = mutateAsyncMoveToDecisionWindowOpen;
       // @ts-expect-error Left for debug purposes.
@@ -30,4 +42,6 @@ export default function useCypressHelpers(): void {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  return { isFetching: isEpochAlreadyIndexedBySubgraph };
 }
