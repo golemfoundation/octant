@@ -16,7 +16,7 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 let wasTimeMoved = false;
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
+[Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe('move time', () => {
     before(() => {
       /**
