@@ -4,6 +4,7 @@ from app.context.manager import Context
 from app.engine.projects.rewards import ProjectRewardsResult
 from app.infrastructure import database
 from app.modules.common.project_rewards import get_projects_rewards
+from app.modules.project_rewards.service.saved import SavedProjectRewards
 from app.pydantic import Model
 
 
@@ -13,7 +14,7 @@ class OctantRewards(Protocol):
         ...
 
 
-class EstimatedProjectRewards(Model):
+class EstimatedProjectRewards(SavedProjectRewards, Model):
     octant_rewards: OctantRewards
 
     def get_project_rewards(self, context: Context) -> ProjectRewardsResult:

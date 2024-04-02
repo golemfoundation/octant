@@ -3,19 +3,11 @@ from typing import Optional, List
 
 from app.extensions import epochs, proposals
 from app.infrastructure import database
-from app.infrastructure.database import allocations as allocation_db
 
 
 def get_proposals_addresses(epoch: Optional[int]) -> List[str]:
     epoch = epochs.get_current_epoch() if epoch is None else epoch
     return proposals.get_proposal_addresses(epoch)
-
-
-def get_proposal_allocation_threshold(epoch: int) -> int:
-    proposals_addresses = get_proposals_addresses(epoch)
-    total_allocated = allocation_db.get_alloc_sum_by_epoch(epoch)
-
-    return int(total_allocated / (len(proposals_addresses) * 2))
 
 
 def get_proposals_with_allocations(epoch: int) -> (str, int):

@@ -413,7 +413,6 @@ def mock_epoch_details(mocker, graphql_client):
 @pytest.fixture(scope="function")
 def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.legacy.controllers.snapshots.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.legacy.controllers.rewards.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.core.proposals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.context.epoch_state.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.context.epoch_details.epochs", MOCK_EPOCHS)

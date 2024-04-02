@@ -53,4 +53,4 @@ def test_estimated_project_rewards_with_allocations(
 
     assert result.total_allocated == 1526868989237987
     assert result.rewards_sum == 220115925184490486394
-    assert result.threshold == 76343449461899
+    assert result.threshold == 152686898923798
