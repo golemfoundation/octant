@@ -376,7 +376,7 @@ class Client:
             "/allocations/allocate",
             json={
                 "payload": payload,
-                "user_address": user_address,
+                "userAddress": user_address,
                 "signature": signature,
             },
         )
