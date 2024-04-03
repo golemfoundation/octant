@@ -13,7 +13,7 @@ export default function useCypressHelpers(): { isFetching: boolean } {
   const { mutateAsync: mutateAsyncMoveToDecisionWindowClosed } =
     useCypressMoveToDecisionWindowClosed();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: epochs } = useEpochs();
+  const { data: epochs } = useEpochs(isHookEnabled);
 
   const isEpochAlreadyIndexedBySubgraph =
     isHookEnabled &&
@@ -43,5 +43,5 @@ export default function useCypressHelpers(): { isFetching: boolean } {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { isFetching: isEpochAlreadyIndexedBySubgraph };
+  return { isFetching: !isEpochAlreadyIndexedBySubgraph };
 }

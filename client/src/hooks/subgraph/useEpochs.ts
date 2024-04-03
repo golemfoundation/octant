@@ -14,12 +14,14 @@ const GET_EPOCHS = graphql(`
   }
 `);
 
-export default function useEpochs(): UseQueryResult<number[]> {
+export default function useEpochs(isEnabled: boolean): UseQueryResult<number[]> {
   const { subgraphAddress } = env;
 
   return useQuery<GetEpochesQuery, any, number[], any>({
+    enabled: isEnabled,
     queryFn: async () => request(subgraphAddress, GET_EPOCHS),
     queryKey: QUERY_KEYS.epochs,
-    select: data => data.epoches.map(element => element.epoch),
+    refetchInterval: isEnabled ? 2000 : false,
+    select: data => data.epoches.map(({ epoch }) => epoch),
   });
 }
