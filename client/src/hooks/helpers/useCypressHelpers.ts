@@ -16,10 +16,7 @@ export default function useCypressHelpers(): { isFetching: boolean } {
   const { data: epochs } = useEpochs(isHookEnabled);
 
   const isEpochAlreadyIndexedBySubgraph =
-    isHookEnabled &&
-    epochs !== undefined &&
-    currentEpoch !== undefined &&
-    epochs.includes(currentEpoch);
+    epochs !== undefined && currentEpoch !== undefined && epochs.includes(currentEpoch);
 
   useEffect(() => {
     /**
@@ -43,5 +40,5 @@ export default function useCypressHelpers(): { isFetching: boolean } {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { isFetching: !isEpochAlreadyIndexedBySubgraph };
+  return { isFetching: isHookEnabled && isEpochAlreadyIndexedBySubgraph };
 }
