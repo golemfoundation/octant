@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import env from 'env';
 import useCypressMoveToDecisionWindowClosed from 'hooks/mutations/useCypressMoveToDecisionWindowClosed';
@@ -7,16 +7,24 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useEpochs from 'hooks/subgraph/useEpochs';
 
 export default function useCypressHelpers(): { isFetching: boolean } {
+  const [isRefetchingEpochs, setIsRefetchingEpochs] = useState<boolean>(false);
+
   const isHookEnabled = !!window.Cypress || env.network === 'Local';
 
   const { mutateAsync: mutateAsyncMoveToDecisionWindowOpen } = useCypressMoveToDecisionWindowOpen();
   const { mutateAsync: mutateAsyncMoveToDecisionWindowClosed } =
     useCypressMoveToDecisionWindowClosed();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: epochs } = useEpochs(isHookEnabled);
+  const { data: epochs } = useEpochs(isHookEnabled && isRefetchingEpochs);
 
   const isEpochAlreadyIndexedBySubgraph =
     epochs !== undefined && currentEpoch !== undefined && epochs.includes(currentEpoch);
+
+  useEffect(() => {
+    setIsRefetchingEpochs(
+      epochs !== undefined && currentEpoch !== undefined && !epochs.includes(currentEpoch),
+    );
+  }, [epochs, currentEpoch]);
 
   useEffect(() => {
     /**
