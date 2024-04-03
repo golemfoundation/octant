@@ -40,5 +40,5 @@ export default function useCypressHelpers(): { isFetching: boolean } {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { isFetching: isHookEnabled && isEpochAlreadyIndexedBySubgraph };
+  return { isFetching: isHookEnabled && !isEpochAlreadyIndexedBySubgraph };
 }
