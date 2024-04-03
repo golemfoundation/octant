@@ -1,6 +1,5 @@
 import requests
 
-
 import app as app_module
 from app.constants import BITQUERY_API
 from app.exceptions import ExternalApiException

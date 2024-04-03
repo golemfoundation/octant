@@ -193,7 +193,7 @@ class WrongAllocationsNonce(OctantException):
 
 
 class ExternalApiException(OctantException):
-    description = "API call to {} failed. Error: {}"
+    description = "API call to {} failed."
     code = 500
 
     def __init__(self, api_url: str, e: RequestException, status_code: int = None):
@@ -203,7 +203,7 @@ class ExternalApiException(OctantException):
             if hasattr(e, "response") and e.response is not None:
                 self.code = e.response.status_code
         super().__init__(
-            self.description.format(api_url, str(e)),
+            self.description.format(api_url),
             self.code,
         )
 
