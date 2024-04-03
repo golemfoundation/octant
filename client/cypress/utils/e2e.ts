@@ -154,6 +154,7 @@ export const moveEpoch = (
           cy.wait(2000);
           // reload is needed to get updated data in the app
           cy.reload();
+          cy.get('[data-test*=AppLoader]').should('not.exist');
           cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
           // reload is needed to get updated data in the app
           cy.reload();
@@ -162,10 +163,12 @@ export const moveEpoch = (
             // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
             cy.wait(2000);
             axios.post(`${env.serverEndpoint}snapshots/pending`).then(() => {
+              cy.log('3');
               // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
               cy.wait(2000);
               // reload is needed to get updated data in the app
               cy.reload();
+              cy.get('[data-test*=AppLoader]').should('not.exist');
               cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
               // reload is needed to get updated data in the app
               cy.reload();
@@ -177,6 +180,7 @@ export const moveEpoch = (
 
               // if (isDecisionWindowOpenAfter) {
               cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(() => {
+                cy.log('4');
                 // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
                 cy.wait(2000);
                 axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
@@ -184,6 +188,7 @@ export const moveEpoch = (
                   cy.wait(2000);
                   // reload is needed to get updated data in the app
                   cy.reload();
+                  cy.get('[data-test*=AppLoader]').should('not.exist');
                   cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
                   // reload is needed to get updated data in the app
                   cy.reload();
