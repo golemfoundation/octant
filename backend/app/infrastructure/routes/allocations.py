@@ -62,6 +62,10 @@ user_allocation_request = api.model(
     "UserAllocationRequest",
     {
         "payload": fields.Nested(allocation_payload),
+        "userAddress": fields.String(
+            required=True,
+            description="Wallet address of the user. EOA or EIP-1271",
+        ),
         "signature": fields.String(
             required=True,
             description="EIP-712 signature of the allocation payload as a hexadecimal string",
@@ -167,10 +171,10 @@ class Allocation(OctantResource):
         is_manually_edited = (
             ns.payload["isManuallyEdited"] if "isManuallyEdited" in ns.payload else None
         )
-        user_address = controller.allocate(
-            ns.payload, is_manually_edited=is_manually_edited
+        controller.allocate(
+            ns.userAddress, ns.payload, is_manually_edited=is_manually_edited
         )
-        app.logger.info(f"User: {user_address} allocated successfully")
+        app.logger.info(f"User: {ns.userAddress} allocated successfully")
 
         return {}, 201
 

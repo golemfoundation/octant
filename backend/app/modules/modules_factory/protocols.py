@@ -156,6 +156,12 @@ class EstimatedProjectRewardsService(Protocol):
 
 
 @runtime_checkable
+class SavedProjectRewardsService(Protocol):
+    def get_allocation_threshold(self, context: Context) -> int:
+        ...
+
+
+@runtime_checkable
 class HistoryService(Protocol):
     def get_user_history(
         self, context: Context, user_address: str, cursor: str = None, limit: int = 20
@@ -168,6 +174,12 @@ class MultisigSignatures(Protocol):
     def get_last_pending_signature(
         self, context: Context, user_address: str, op_type: SignatureOpType
     ) -> Signature:
+        ...
+
+    def approve_pending_signatures(self, context: Context) -> list[Signature]:
+        ...
+
+    def apply_staged_signatures(self, context: Context, signature_id: int):
         ...
 
     def save_pending_signature(

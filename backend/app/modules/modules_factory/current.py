@@ -44,10 +44,8 @@ class CurrentServices(Model):
 
     @staticmethod
     def _prepare_simulation_data(
-        chain_id: int, user_deposits: CalculatedUserDeposits
+        is_mainnet: bool, user_deposits: CalculatedUserDeposits
     ) -> CalculatedOctantRewards:
-        is_mainnet = compare_blockchain_types(chain_id, ChainTypes.MAINNET)
-
         octant_rewards = CalculatedOctantRewards(
             staking_proceeds=aggregated.AggregatedStakingProceeds()
             if is_mainnet
@@ -62,8 +60,11 @@ class CurrentServices(Model):
         user_deposits = CalculatedUserDeposits(
             events_generator=DbAndGraphEventsGenerator()
         )
+
+        is_mainnet = compare_blockchain_types(chain_id, ChainTypes.MAINNET)
+
         octant_rewards = CurrentServices._prepare_simulation_data(
-            chain_id, user_deposits
+            is_mainnet, user_deposits
         )
         simulated_pending_snapshot_service = SimulatedPendingSnapshots(
             effective_deposits=user_deposits, octant_rewards=octant_rewards
@@ -81,7 +82,7 @@ class CurrentServices(Model):
         )
 
         multisig_signatures = OffchainMultisigSignatures(
-            verifiers={SignatureOpType.TOS: tos_verifier}
+            verifiers={SignatureOpType.TOS: tos_verifier}, is_mainnet=is_mainnet
         )
         return CurrentServices(
             user_allocations_service=user_allocations,

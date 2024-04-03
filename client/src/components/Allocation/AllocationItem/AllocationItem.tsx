@@ -81,7 +81,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
       250,
       { trailing: true },
     ),
-    [],
+    [onChange],
   );
 
   const _onChange = (newValue: string) => {

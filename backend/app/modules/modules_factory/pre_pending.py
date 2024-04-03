@@ -7,8 +7,10 @@ from app.modules.modules_factory.protocols import (
     OctantRewards,
     PendingSnapshots,
     UserEffectiveDeposits,
+    SavedProjectRewardsService,
 )
 from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
+from app.modules.project_rewards.service.saved import SavedProjectRewards
 from app.modules.snapshots.pending.service.pre_pending import PrePendingSnapshots
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
 from app.modules.user.events_generator.service.db_and_graph import (
@@ -26,6 +28,7 @@ class PrePendingServices(Model):
     user_deposits_service: PrePendingUserDeposits
     octant_rewards_service: OctantRewards
     pending_snapshots_service: PendingSnapshots
+    project_rewards_service: SavedProjectRewardsService
 
     @staticmethod
     def create(chain_id: int) -> "PrePendingServices":
@@ -49,4 +52,5 @@ class PrePendingServices(Model):
             user_deposits_service=user_deposits,
             octant_rewards_service=octant_rewards,
             pending_snapshots_service=pending_snapshots_service,
+            project_rewards_service=SavedProjectRewards(),
         )
