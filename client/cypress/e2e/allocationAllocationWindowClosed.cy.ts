@@ -130,7 +130,7 @@ let wasTimeMoved = false;
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText__suffix]')
-          .contains('ETH');
+          .contains('GWEI');
       });
     },
   );
