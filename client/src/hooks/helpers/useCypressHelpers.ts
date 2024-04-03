@@ -7,7 +7,7 @@ import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useEpochs from 'hooks/subgraph/useEpochs';
 
 export default function useCypressHelpers(): { isFetching: boolean } {
-  const isHookEnabled = window.Cypress || env.network === 'Local';
+  const isHookEnabled = !!window.Cypress || env.network === 'Local';
 
   const { mutateAsync: mutateAsyncMoveToDecisionWindowOpen } = useCypressMoveToDecisionWindowOpen();
   const { mutateAsync: mutateAsyncMoveToDecisionWindowClosed } =
