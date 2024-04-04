@@ -60,6 +60,8 @@ const test = (cypressWindow, moveTo): Promise<boolean> => {
         if (cypressWindow.timeToIncrease) {
           cy.log(`timeToIncrease ${cypressWindow.timeToIncrease}`);
           cy.tick(cypressWindow.timeToIncrease);
+          // reload is needed to get updated data in the app
+          cy.reload();
           // eslint-disable-next-line no-param-reassign
           cypressWindow.timeToIncrease = undefined;
         }
@@ -84,6 +86,8 @@ const test = (cypressWindow, moveTo): Promise<boolean> => {
         if (cypressWindow.timeToIncrease) {
           cy.log(`timeToIncrease ${cypressWindow.timeToIncrease}`);
           cy.tick(cypressWindow.timeToIncrease);
+          // reload is needed to get updated data in the app
+          cy.reload();
           // eslint-disable-next-line no-param-reassign
           cypressWindow.timeToIncrease = undefined;
         }
@@ -104,6 +108,8 @@ const test = (cypressWindow, moveTo): Promise<boolean> => {
             if (cypressWindow.timeToIncrease) {
               cy.log(`timeToIncrease ${cypressWindow.timeToIncrease}`);
               cy.tick(cypressWindow.timeToIncrease);
+              // reload is needed to get updated data in the app
+              cy.reload();
               // eslint-disable-next-line no-param-reassign
               cypressWindow.timeToIncrease = undefined;
             }
@@ -144,6 +150,8 @@ export const moveEpoch = (
         if (cypressWindow.timeToIncrease) {
           cy.log(`timeToIncrease ${cypressWindow.timeToIncrease}`);
           cy.tick(cypressWindow.timeToIncrease);
+          // reload is needed to get updated data in the app
+          cy.reload();
           // eslint-disable-next-line no-param-reassign
           cypressWindow.timeToIncrease = undefined;
         }
