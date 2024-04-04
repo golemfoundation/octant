@@ -71,6 +71,7 @@ export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknow
         // };
 
         const timeToIncrease = Number(currentEpochProps.decisionWindow) + 10; // [s]
+        window.timeToIncrease = timeToIncrease;
         await wagmiConfig.publicClient.request({
           method: 'evm_increaseTime' as any,
           params: [timeToIncrease] as any,

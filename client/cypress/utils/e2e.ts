@@ -55,8 +55,15 @@ const test = (cypressWindow, moveTo): Promise<boolean> => {
   return new Promise(resolve => {
     if (moveTo === 'decisionWindowOpen') {
       cypressWindow.mutateAsyncMoveToDecisionWindowOpen().then(() => {
-        // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
-        cy.wait(2000);
+        // Waiting 5s is a way to prevent the effects of slowing down the e2e environment (data update).
+        cy.wait(5000);
+        if (cypressWindow.timeToIncrease) {
+          cy.log(`timeToIncrease ${cypressWindow.timeToIncrease}`);
+          cy.tick(cypressWindow.timeToIncrease);
+          // eslint-disable-next-line no-param-reassign
+          cypressWindow.timeToIncrease = undefined;
+        }
+
         axios.post(`${env.serverEndpoint}snapshots/pending`).then(() => {
           cy.log('3');
           // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
@@ -72,8 +79,14 @@ const test = (cypressWindow, moveTo): Promise<boolean> => {
       });
     } else {
       cypressWindow.mutateAsyncMoveToDecisionWindowOpen().then(() => {
-        // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
-        cy.wait(2000);
+        // Waiting 5s is a way to prevent the effects of slowing down the e2e environment (data update).
+        cy.wait(5000);
+        if (cypressWindow.timeToIncrease) {
+          cy.log(`timeToIncrease ${cypressWindow.timeToIncrease}`);
+          cy.tick(cypressWindow.timeToIncrease);
+          // eslint-disable-next-line no-param-reassign
+          cypressWindow.timeToIncrease = undefined;
+        }
         axios.post(`${env.serverEndpoint}snapshots/pending`).then(() => {
           cy.log('3');
           // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
@@ -86,8 +99,14 @@ const test = (cypressWindow, moveTo): Promise<boolean> => {
           cy.reload();
           cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(() => {
             cy.log('4');
-            // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
-            cy.wait(2000);
+            // Waiting 5s is a way to prevent the effects of slowing down the e2e environment (data update).
+            cy.wait(5000);
+            if (cypressWindow.timeToIncrease) {
+              cy.log(`timeToIncrease ${cypressWindow.timeToIncrease}`);
+              cy.tick(cypressWindow.timeToIncrease);
+              // eslint-disable-next-line no-param-reassign
+              cypressWindow.timeToIncrease = undefined;
+            }
             axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
               // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
               cy.wait(2000);
@@ -111,6 +130,8 @@ export const moveEpoch = (
   moveTo: 'decisionWindowClosed' | 'decisionWindowOpen',
 ): Promise<boolean> => {
   return new Cypress.Promise(resolve => {
+    cy.clock();
+
     const isDecisionWindowOpen = cypressWindow.clientReactQuery.getQueryData(
       QUERY_KEYS.isDecisionWindowOpen,
     );
@@ -118,8 +139,14 @@ export const moveEpoch = (
     if (isDecisionWindowOpen) {
       cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(() => {
         cy.log('1');
-        // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
-        cy.wait(2000);
+        // Waiting 5s is a way to prevent the effects of slowing down the e2e environment (data update).
+        cy.wait(5000);
+        if (cypressWindow.timeToIncrease) {
+          cy.log(`timeToIncrease ${cypressWindow.timeToIncrease}`);
+          cy.tick(cypressWindow.timeToIncrease);
+          // eslint-disable-next-line no-param-reassign
+          cypressWindow.timeToIncrease = undefined;
+        }
         axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
           cy.log('2');
           // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).

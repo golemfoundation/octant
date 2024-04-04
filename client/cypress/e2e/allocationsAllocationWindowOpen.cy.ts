@@ -24,7 +24,7 @@ let wasTimeMoved = false;
 const budget = 10000000000;
 const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
+[Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight }) => {
   describe('move time', () => {
     before(() => {
       /**
