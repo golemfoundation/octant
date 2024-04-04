@@ -18,6 +18,7 @@ from app.modules.modules_factory.protocols import (
     GetUserAllocationsProtocol,
     SavedProjectRewardsService,
     MultisigSignatures,
+    ProjectsMetadataService
 )
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
@@ -34,6 +35,7 @@ from app.modules.user.deposits.service.saved import SavedUserDeposits
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.withdrawals.service.pending import PendingWithdrawals
+from app.modules.projects.service.projects_metadata import StaticProjectsMetadataService
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 
@@ -98,6 +100,7 @@ class PendingServices(Model):
         )
         withdrawals_service = PendingWithdrawals(user_rewards=user_rewards)
         project_rewards = EstimatedProjectRewards(octant_rewards=octant_rewards)
+        projects_metadata_service: ProjectsMetadataService
 
         is_mainnet = compare_blockchain_types(
             chain_id=chain_id, expected_chain=ChainTypes.MAINNET
@@ -118,4 +121,5 @@ class PendingServices(Model):
             withdrawals_service=withdrawals_service,
             project_rewards_service=project_rewards,
             multisig_signatures_service=multisig_signatures,
+            projects_metadata_service=StaticProjectsMetadataService()
         )

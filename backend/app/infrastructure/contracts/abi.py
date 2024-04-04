@@ -128,7 +128,15 @@ PROPOSALS = [
         "outputs": [{"internalType": "address[]", "name": "", "type": "address[]"}],
         "stateMutability": "view",
         "type": "function",
-    }
+    },
+    {
+        "inputs": [],
+        "name": "cid",
+        "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+        "stateMutability": "view",
+        "type": "function",
+    },
+
 ]
 
 VAULT = [
