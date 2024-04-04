@@ -16,6 +16,7 @@ from tests.conftest import (
     MOCKED_PENDING_EPOCH_NO,
     MOCK_PROPOSALS,
     MOCK_GET_USER_BUDGET,
+    MOCK_IS_CONTRACT,
 )
 from tests.helpers import create_epoch_event
 from tests.helpers import make_user_allocation
@@ -116,6 +117,26 @@ def test_user_allocates_for_the_first_time(tos_users, proposal_accounts):
     # Test data
     payload = create_payload(proposal_accounts[0:2], None)
     signature = sign(tos_users[0], build_allocations_eip712_data(payload))
+
+    # Call allocate method
+    controller.allocate(
+        tos_users[0].address, {"payload": payload, "signature": signature}
+    )
+
+    # Check if allocations were created
+    check_allocations(tos_users[0].address, payload, 2)
+
+    # Check if threshold is properly calculated
+    check_allocation_threshold(payload)
+
+
+def test_multisig_allocates_for_the_first_time(
+    tos_users, proposal_accounts, patch_eip1271_is_valid_signature
+):
+    # Test data
+    MOCK_IS_CONTRACT.return_value = True
+    payload = create_payload(proposal_accounts[0:2], None)
+    signature = "0x89b0da9bcf620cd6005e88f58c69edff5251b80f116e25e88c65188bf116d35f5cdf6d3782885c8df66878a8b5ec8739fe1174c72b06fb277534e7d7088f9a6e1b2810662a03962f315a8ad0f448a468ab5ce0c73c31b71e499b4b735f5c04b76542cb89802f68c19918f306e29563b9f736b02559fbaccc55ad8bd2134a0e69811c"
 
     # Call allocate method
     controller.allocate(
