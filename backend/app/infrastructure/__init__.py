@@ -22,7 +22,7 @@ class OctantResource(Resource):
         Resource.__init__(self, *args, *kwargs)
 
     @classmethod
-    def canonize_address(cls, field_name: str = "user_address", force=True):
+    def canonize_address(cls, field_name: str, force=True):
         def _add_address_canonization(handler):
             def _decorated(*args, **kwargs):
                 field_value = kwargs.get(field_name)
@@ -36,14 +36,22 @@ class OctantResource(Resource):
 
         return _add_address_canonization
 
-    def __getattribute__(self, name):
-        user_address_canonizer = OctantResource.canonize_address(force=False)
+    @classmethod
+    def _default_address_canonizer(cls, attr):
+        user_address_canonizer = OctantResource.canonize_address(
+            field_name="user_address", force=False
+        )
+        proposal_address_canonizer = OctantResource.canonize_address(
+            field_name="proposal_address", force=False
+        )
+        return user_address_canonizer(proposal_address_canonizer(attr))
 
+    def __getattribute__(self, name):
         attr = object.__getattribute__(self, name)
 
         decorator = default_decorators.get(name)
         if decorator is not None:
-            attr = user_address_canonizer(decorator(attr))
+            attr = OctantResource._default_address_canonizer(decorator(attr))
 
         return attr
 
