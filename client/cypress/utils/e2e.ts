@@ -98,12 +98,12 @@ const test = (cypressWindow, moveTo): Promise<boolean> => {
               cy.reload();
 
               cy.wrap(null).then(() => {
-                return cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(timeToIncrease => {
+                return cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(timeToIncrease2 => {
                   cy.log('4');
                   // Waiting 5s is a way to prevent the effects of slowing down the e2e envirownment (data update).
                   cy.wait(5000);
-                  cy.log(`timeToIncrease ${timeToIncrease}`);
-                  cy.tick(timeToIncrease);
+                  cy.log(`timeToIncrease ${timeToIncrease2}`);
+                  cy.tick(timeToIncrease2);
 
                   cy.wrap(null).then(() => {
                     return axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
