@@ -136,7 +136,6 @@ PROPOSALS = [
         "stateMutability": "view",
         "type": "function",
     },
-
 ]
 
 VAULT = [

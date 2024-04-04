@@ -8,7 +8,7 @@ from app.modules.modules_factory.protocols import (
     PendingSnapshots,
     UserEffectiveDeposits,
     SavedProjectRewardsService,
-    ProjectsMetadataService
+    ProjectsMetadataService,
 )
 from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
 from app.modules.project_rewards.service.saved import SavedProjectRewards
@@ -56,5 +56,5 @@ class PrePendingServices(Model):
             octant_rewards_service=octant_rewards,
             pending_snapshots_service=pending_snapshots_service,
             project_rewards_service=SavedProjectRewards(),
-            projects_metadata_service=StaticProjectsMetadataService()
+            projects_metadata_service=StaticProjectsMetadataService(),
         )

@@ -11,7 +11,7 @@ from app.modules.modules_factory.protocols import (
     HistoryService,
     MultisigSignatures,
     UserTos,
-    ProjectsMetadataService
+    ProjectsMetadataService,
 )
 from app.modules.modules_factory.protocols import SimulatePendingSnapshots
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
@@ -87,7 +87,7 @@ class CurrentServices(Model):
         multisig_signatures = OffchainMultisigSignatures(
             verifiers={SignatureOpType.TOS: tos_verifier}, is_mainnet=is_mainnet
         )
-        
+
         return CurrentServices(
             user_allocations_service=user_allocations,
             user_deposits_service=user_deposits,
@@ -99,5 +99,5 @@ class CurrentServices(Model):
             simulated_pending_snapshot_service=simulated_pending_snapshot_service,
             multisig_signatures_service=multisig_signatures,
             user_tos_service=user_tos,
-            projects_metadata_service=StaticProjectsMetadataService()
+            projects_metadata_service=StaticProjectsMetadataService(),
         )

@@ -16,7 +16,7 @@ from . import (  # noqa
     user,
     validators_stats,
     multisig_signatures,
-    projects
+    projects,
 )
 
 

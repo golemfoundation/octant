@@ -9,8 +9,10 @@ def get_proposals_addresses(epoch: Optional[int]) -> List[str]:
     epoch = epochs.get_current_epoch() if epoch is None else epoch
     return proposals.get_proposal_addresses(epoch)
 
+
 def get_proposals_cid() -> str:
     return proposals.get_proposals_cid()
+
 
 def get_proposals_with_allocations(epoch: int) -> (str, int):
     # Get *all* project allocations in the given epoch

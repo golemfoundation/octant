@@ -12,7 +12,7 @@ from app.modules.modules_factory.protocols import (
     UserBudgets,
     WithdrawalsService,
     SavedProjectRewardsService,
-    ProjectsMetadataService
+    ProjectsMetadataService,
 )
 from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
 from app.modules.project_rewards.service.saved import SavedProjectRewards
@@ -72,5 +72,5 @@ class FinalizedServices(Model):
             user_rewards_service=user_rewards,
             withdrawals_service=withdrawals_service,
             project_rewards_service=SavedProjectRewards(),
-            projects_metadata_service=StaticProjectsMetadataService()
+            projects_metadata_service=StaticProjectsMetadataService(),
         )

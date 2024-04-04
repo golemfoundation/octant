@@ -12,17 +12,20 @@ MAINNET_PROPOSAL_CIDS: dict[int, str] = {
     # 3: "QmWSqxAqGm7SPzdRv5wHLwZ9JeYb5XkHwfaHHMNWNBE8Wh",
 }
 
+
 class StaticProjectsMetadataService(Model):
     def get_projects_metadata(self, context: Context) -> int:
         if context.epoch_details.epoch_num == 0:
             return ProjectsMetadata("", [])
-        
+
         proposals_cid: str = (
             get_proposals_cid()
             if context.epoch_details.epoch_num not in MAINNET_PROPOSAL_CIDS
             else MAINNET_PROPOSAL_CIDS[context.epoch_details.epoch_num]
         )
         app.logger.debug(f"proposals_cid {proposals_cid}")
-        proposals_address_list: List[str] = get_proposals_addresses(context.epoch_details.epoch_num)
+        proposals_address_list: List[str] = get_proposals_addresses(
+            context.epoch_details.epoch_num
+        )
         app.logger.debug(f"proposals_address_list {proposals_address_list}")
         return ProjectsMetadata(proposals_cid, proposals_address_list)

@@ -13,7 +13,7 @@ from app.modules.dto import (
     WithdrawableEth,
     UserAllocationRequestPayload,
     SignatureOpType,
-    ProjectsMetadata
+    ProjectsMetadata,
 )
 from app.modules.history.dto import UserHistoryDTO
 from app.modules.multisig_signatures.dto import Signature
@@ -209,9 +209,8 @@ class UserTos(Protocol):
     ):
         ...
 
+
 @runtime_checkable
 class ProjectsMetadataService(Protocol):
-    def get_projects_metadata(
-        self, context: Context
-    ) -> ProjectsMetadata:
+    def get_projects_metadata(self, context: Context) -> ProjectsMetadata:
         ...

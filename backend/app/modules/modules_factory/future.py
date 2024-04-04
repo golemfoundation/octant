@@ -1,7 +1,4 @@
-from app.modules.modules_factory.protocols import (
-    OctantRewards,
-    ProjectsMetadataService
-)
+from app.modules.modules_factory.protocols import OctantRewards, ProjectsMetadataService
 from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
 from app.modules.staking.proceeds.service.estimated import EstimatedStakingProceeds
 from app.modules.user.deposits.service.contract_balance import (
@@ -22,5 +19,5 @@ class FutureServices(Model):
                 staking_proceeds=EstimatedStakingProceeds(),
                 effective_deposits=ContractBalanceUserDeposits(),
             ),
-            projects_metadata_service=StaticProjectsMetadataService()
+            projects_metadata_service=StaticProjectsMetadataService(),
         )

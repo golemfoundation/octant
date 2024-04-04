@@ -11,7 +11,7 @@ class Proposals(SmartContract):
             f"[Proposals contract] Getting proposal addresses for epoch: {epoch}"
         )
         return self.contract.functions.getProposalAddresses(epoch).call()
-    
+
     def get_proposals_cid(self):
         app.logger.debug("[Proposals contract] Getting proposals CID")
         return self.contract.functions.cid().call()

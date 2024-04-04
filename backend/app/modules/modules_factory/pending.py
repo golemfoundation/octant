@@ -18,7 +18,7 @@ from app.modules.modules_factory.protocols import (
     GetUserAllocationsProtocol,
     SavedProjectRewardsService,
     MultisigSignatures,
-    ProjectsMetadataService
+    ProjectsMetadataService,
 )
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
@@ -75,6 +75,7 @@ class PendingServices(Model):
     withdrawals_service: WithdrawalsService
     project_rewards_service: PendingProjectRewardsProtocol
     multisig_signatures_service: MultisigSignatures
+    projects_metadata_service: ProjectsMetadataService
 
     @staticmethod
     def create(chain_id: int) -> "PendingServices":
@@ -100,7 +101,6 @@ class PendingServices(Model):
         )
         withdrawals_service = PendingWithdrawals(user_rewards=user_rewards)
         project_rewards = EstimatedProjectRewards(octant_rewards=octant_rewards)
-        projects_metadata_service: ProjectsMetadataService
 
         is_mainnet = compare_blockchain_types(
             chain_id=chain_id, expected_chain=ChainTypes.MAINNET
@@ -121,5 +121,5 @@ class PendingServices(Model):
             withdrawals_service=withdrawals_service,
             project_rewards_service=project_rewards,
             multisig_signatures_service=multisig_signatures,
-            projects_metadata_service=StaticProjectsMetadataService()
+            projects_metadata_service=StaticProjectsMetadataService(),
         )
