@@ -5,7 +5,11 @@ from app.infrastructure import database
 from app.infrastructure.database.multisig_signature import SigStatus
 from app.modules.dto import SignatureOpType
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
-from tests.helpers.constants import MULTISIG_MOCKED_HASH, MULTISIG_MOCKED_MESSAGE
+from tests.helpers.constants import (
+    MULTISIG_MOCKED_HASH,
+    MULTISIG_MOCKED_MESSAGE,
+    MULTISIG_MOCKED_CONFIRMED_SIGNATURE,
+)
 from tests.helpers.signature import get_signature_by_id
 
 
@@ -58,6 +62,7 @@ def test_approve_all_pending_signatures_when_approved_and_pending_exist(
     for approved_signature in approved_signatures:
         assert approved_signature.message == MULTISIG_MOCKED_MESSAGE
         assert approved_signature.msg_hash == MULTISIG_MOCKED_HASH
+        assert approved_signature.signature == MULTISIG_MOCKED_CONFIRMED_SIGNATURE
 
 
 def test_approve_pending_allocation_signature_when_already_staged(
@@ -72,6 +77,7 @@ def test_approve_pending_allocation_signature_when_already_staged(
     pending_signature = database.multisig_signature.get_last_pending_signature(
         alice.address, SignatureOpType.ALLOCATION
     )
+    pending_signature.confirmed_signature = MULTISIG_MOCKED_CONFIRMED_SIGNATURE
 
     service.staged_signatures.append(pending_signature)
     approved_signatures = service.approve_pending_signatures(context)
@@ -82,6 +88,7 @@ def test_approve_pending_allocation_signature_when_already_staged(
     for approved_signature in approved_signatures:
         assert approved_signature.message == MULTISIG_MOCKED_MESSAGE
         assert approved_signature.msg_hash == MULTISIG_MOCKED_HASH
+        assert approved_signature.signature == MULTISIG_MOCKED_CONFIRMED_SIGNATURE
 
 
 def test_apply_pending_tos_signature(

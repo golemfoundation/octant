@@ -172,3 +172,4 @@ class MultisigSignatures(BaseModel):
     safe_msg_hash = Column(db.String, nullable=False)
     status = Column(db.String, nullable=False)
     user_ip = Column(db.String, nullable=False)
+    confirmed_signature = Column(db.String, nullable=True)

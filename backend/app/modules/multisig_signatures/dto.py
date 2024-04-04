@@ -11,6 +11,7 @@ class Signature(JSONWizard):
     safe_msg_hash: str
     user_address: str
     ip_address: str
+    signature: str | None
 
 
 @dataclass(frozen=True)
