@@ -98,16 +98,12 @@ const test = (cypressWindow, moveTo): Promise<boolean> => {
               cy.reload();
 
               cy.wrap(null).then(() => {
-                return cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(() => {
+                return cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(timeToIncrease => {
                   cy.log('4');
-                  // Waiting 5s is a way to prevent the effects of slowing down the e2e environment (data update).
+                  // Waiting 5s is a way to prevent the effects of slowing down the e2e envirownment (data update).
                   cy.wait(5000);
-                  if (cypressWindow.timeToIncrease) {
-                    cy.log(`timeToIncrease ${cypressWindow.timeToIncrease}`);
-                    cy.tick(cypressWindow.timeToIncrease);
-                    // eslint-disable-next-line no-param-reassign
-                    cypressWindow.timeToIncrease = undefined;
-                  }
+                  cy.log(`timeToIncrease ${timeToIncrease}`);
+                  cy.tick(timeToIncrease);
 
                   cy.wrap(null).then(() => {
                     return axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
