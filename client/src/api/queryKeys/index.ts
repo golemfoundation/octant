@@ -1,6 +1,7 @@
 import { Root, QueryKeys } from './types';
 
 export const ROOTS: Root = {
+  bytecode: 'bytecode',
   calculateRewards: 'calculateRewards',
   cryptoValues: 'cryptoValues',
   depositAt: 'depositAt',
@@ -16,6 +17,7 @@ export const ROOTS: Root = {
   individualReward: 'individualReward',
   matchedProjectRewards: 'matchedProjectRewards',
   patronMode: 'patronMode',
+  pendingMultisigSignatures: 'pendingMultisigSignatures',
   projectDonors: 'projectDonors',
   projectRewardsThreshold: 'projectRewardsThreshold',
   projectsContract: 'projectsContract',
@@ -27,6 +29,7 @@ export const ROOTS: Root = {
 
 export const QUERY_KEYS: QueryKeys = {
   blockNumber: ['blockNumber'],
+  bytecode: userAddress => [ROOTS.bytecode, userAddress],
   calculateRewards: (amount, days) => [ROOTS.calculateRewards, amount, days.toString()],
   cryptoValues: fiatCurrency => [ROOTS.cryptoValues, fiatCurrency],
   currentEpoch: ['currentEpoch'],
@@ -51,6 +54,11 @@ export const QUERY_KEYS: QueryKeys = {
   lockedSummarySnapshots: ['lockedSummarySnapshots'],
   matchedProjectRewards: epochNumber => [ROOTS.matchedProjectRewards, epochNumber.toString()],
   patronMode: userAddress => [ROOTS.patronMode, userAddress],
+  pendingMultisigSignatures: (userAddress, signatureOpType) => [
+    ROOTS.pendingMultisigSignatures,
+    userAddress,
+    signatureOpType,
+  ],
   projectDonors: (projectAddress, epochNumber) => [
     ROOTS.projectDonors,
     projectAddress,

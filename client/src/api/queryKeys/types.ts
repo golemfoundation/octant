@@ -1,6 +1,7 @@
 import { SettingsData } from 'store/settings/types';
 
 export type Root = {
+  bytecode: 'bytecode';
   calculateRewards: 'calculateRewards';
   cryptoValues: 'cryptoValues';
   depositAt: 'depositAt';
@@ -16,6 +17,7 @@ export type Root = {
   individualReward: 'individualReward';
   matchedProjectRewards: 'matchedProjectRewards';
   patronMode: 'patronMode';
+  pendingMultisigSignatures: 'pendingMultisigSignatures';
   projectDonors: 'projectDonors';
   projectRewardsThreshold: 'projectRewardsThreshold';
   projectsContract: 'projectsContract';
@@ -27,6 +29,7 @@ export type Root = {
 
 export type QueryKeys = {
   blockNumber: ['blockNumber'];
+  bytecode: (userAddress: string) => [Root['bytecode'], string];
   calculateRewards: (amount: string, days: number) => [Root['calculateRewards'], string, string];
   cryptoValues: (
     fiatCurrency: NonNullable<SettingsData['displayCurrency']>,
@@ -53,6 +56,10 @@ export type QueryKeys = {
   lockedSummarySnapshots: ['lockedSummarySnapshots'];
   matchedProjectRewards: (epochNumber: number) => [Root['matchedProjectRewards'], string];
   patronMode: (userAddress: string) => [Root['patronMode'], string];
+  pendingMultisigSignatures: (
+    userAddress: string,
+    signatureOpType: string,
+  ) => [Root['pendingMultisigSignatures'], string, string];
   projectDonors: (
     projectAddress: string,
     epochNumber: number,
