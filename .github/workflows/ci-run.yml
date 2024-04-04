@@ -249,6 +249,7 @@ jobs:
     secrets: inherit
     with:
       image-tag: ${{ github.sha }}
+      git-ref: ${{ github.ref }}
 
   # +-------------------------
   # | Tests: NodeJS
