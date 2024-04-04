@@ -2,6 +2,7 @@ from flask import current_app as app
 from flask_restx import Namespace, fields
 
 from app.extensions import api
+
 # from app.extensions import cache
 from app.infrastructure import OctantResource
 from app.modules.projects.controller import (
