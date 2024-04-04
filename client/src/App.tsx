@@ -1,5 +1,5 @@
-import React, {ReactElement, useState, Fragment, useEffect} from 'react';
-import {useConfig} from 'wagmi';
+import React, {ReactElement, useState, Fragment} from 'react';
+// import {useConfig} from 'wagmi';
 
 import AppLoader from 'components/shared/AppLoader';
 import ModalOnboarding from 'components/shared/ModalOnboarding/ModalOnboarding';
@@ -23,18 +23,18 @@ const App = (): ReactElement => {
   const { isSyncingInProgress } = useAppConnectManager(isFlushRequired, setIsFlushRequired);
   const isLoading = useAppIsLoading(isFlushRequired);
   const isProjectAdminMode = useIsProjectAdminMode();
-  const wagmiConfig = useConfig();
+  // const wagmiConfig = useConfig();
 
   // useCypressHelpers needs to be called after all the initial sets done above.
   const { isFetching: isFetchingCypressHelpers } = useCypressHelpers();
 
-  useEffect(() => {
-    const test = async () => {
-      const block = await wagmiConfig.publicClient.getBlock();
-      console.log(block.timestamp);
-    }
-    test();
-  }, [wagmiConfig.publicClient]);
+  // useEffect(() => {
+  //   const test = async () => {
+  //     const block = await wagmiConfig.publicClient.getBlock();
+  //     console.log(block.timestamp);
+  //   }
+  //   test();
+  // }, [wagmiConfig.publicClient]);
 
   if (isLoading && !isSyncingInProgress) {
     return <AppLoader />;
