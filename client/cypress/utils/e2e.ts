@@ -160,8 +160,10 @@ export const moveEpoch = (
               // reload is needed to get updated data in the app
               cy.reload();
 
-              test(cypressWindow, moveTo).then(() => {
-                resolve(true);
+              cy.wrap(null).then(() => {
+                return test(cypressWindow, moveTo).then(() => {
+                  resolve(true);
+                });
               });
             });
           });
