@@ -59,9 +59,7 @@ const test = (cypressWindow, moveTo): Promise<boolean> => {
         cy.wait(5000);
         if (cypressWindow.timeToIncrease) {
           cy.log(`timeToIncrease ${cypressWindow.timeToIncrease}`);
-          cy.tick(cypressWindow.timeToIncrease, { log: true });
-          // reload is needed to get updated data in the app
-          cy.reload();
+          cy.tick(cypressWindow.timeToIncrease);
           // eslint-disable-next-line no-param-reassign
           cypressWindow.timeToIncrease = undefined;
         }
@@ -85,9 +83,7 @@ const test = (cypressWindow, moveTo): Promise<boolean> => {
         cy.wait(5000);
         if (cypressWindow.timeToIncrease) {
           cy.log(`timeToIncrease ${cypressWindow.timeToIncrease}`);
-          cy.tick(cypressWindow.timeToIncrease, { log: true });
-          // reload is needed to get updated data in the app
-          cy.reload();
+          cy.tick(cypressWindow.timeToIncrease);
           // eslint-disable-next-line no-param-reassign
           cypressWindow.timeToIncrease = undefined;
         }
@@ -107,9 +103,7 @@ const test = (cypressWindow, moveTo): Promise<boolean> => {
             cy.wait(5000);
             if (cypressWindow.timeToIncrease) {
               cy.log(`timeToIncrease ${cypressWindow.timeToIncrease}`);
-              cy.tick(cypressWindow.timeToIncrease, { log: true });
-              // reload is needed to get updated data in the app
-              cy.reload();
+              cy.tick(cypressWindow.timeToIncrease);
               // eslint-disable-next-line no-param-reassign
               cypressWindow.timeToIncrease = undefined;
             }
@@ -145,13 +139,12 @@ export const moveEpoch = (
     if (isDecisionWindowOpen) {
       cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(() => {
         cy.log('1');
-        // Waiting 5s is a way to prevent the effects of slowing down the e2e environment (data update).
+        // Waiting 5s is a way to prevent the effects of slowing down the e2e envirownment (data update).
         cy.wait(5000);
         if (cypressWindow.timeToIncrease) {
+          // HERE HERE HERE
           cy.log(`timeToIncrease ${cypressWindow.timeToIncrease}`);
-          cy.tick(cypressWindow.timeToIncrease, { log: true });
-          // reload is needed to get updated data in the app
-          cy.reload();
+          cy.tick(cypressWindow.timeToIncrease);
           // eslint-disable-next-line no-param-reassign
           cypressWindow.timeToIncrease = undefined;
         }
