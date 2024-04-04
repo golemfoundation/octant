@@ -3,8 +3,9 @@ from unittest.mock import Mock
 import pytest
 
 from app.infrastructure import database
-from app.modules.dto import AllocationDTO
+from app.modules.dto import AllocationItem
 from app.modules.snapshots.finalized.service.finalizing import FinalizingSnapshots
+from tests.helpers import make_user_allocation
 from tests.helpers.constants import MATCHED_REWARDS, USER2_BUDGET
 from tests.helpers.context import get_context
 
@@ -19,8 +20,8 @@ def test_create_finalized_snapshots_with_rewards(
 ):
     context = get_context(1)
     projects = context.projects_details.projects
-    database.allocations.add_all(
-        1, mock_users_db[2].id, 0, [AllocationDTO(projects[0], 100)]
+    make_user_allocation(
+        context, mock_users_db[2], allocation_items=[AllocationItem(projects[0], 100)]
     )
 
     service = FinalizingSnapshots(

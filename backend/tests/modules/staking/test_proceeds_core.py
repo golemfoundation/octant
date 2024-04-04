@@ -1,6 +1,6 @@
 import pytest
 
-from app.legacy.utils.time import days_to_sec
+from app.modules.common.time import days_to_sec
 from app.modules.staking.proceeds.core import (
     estimate_staking_proceeds,
     sum_withdrawals,

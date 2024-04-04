@@ -4,7 +4,7 @@ from typing import List
 
 from dataclass_wizard import JSONWizard
 
-from app.engine.projects.rewards.allocations import AllocationPayload
+from app.engine.projects.rewards.allocations import AllocationItem
 
 
 @dataclass
@@ -26,7 +26,7 @@ class ProjectRewardDTO(JSONWizard):
 @dataclass
 class ProjectRewardsPayload:
     matched_rewards: int = None
-    allocations: List[AllocationPayload] = None
+    allocations: List[AllocationItem] = None
     projects: List[str] = None
 
 
@@ -44,4 +44,8 @@ class ProjectRewards(ABC):
     def calculate_project_rewards(
         self, payload: ProjectRewardsPayload
     ) -> ProjectRewardsResult:
+        pass
+
+    @abstractmethod
+    def calculate_threshold(self, total_allocated: int, projects: list[str]) -> int:
         pass

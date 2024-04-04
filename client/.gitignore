@@ -5,3 +5,5 @@ typechain-types
 /cypress/downloads/**
 /cypress/videos/**
 /cypress/screenshots/**
+# Sentry Config File
+.env.sentry-build-plugin

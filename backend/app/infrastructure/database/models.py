@@ -1,7 +1,7 @@
-from datetime import datetime as dt
 from typing import Optional
 
 from app.extensions import db
+from app.modules.common import time
 
 # Alias common SQLAlchemy names
 Column = db.Column
@@ -12,7 +12,7 @@ UniqueConstraint = db.UniqueConstraint
 
 class BaseModel(Model):
     __abstract__ = True
-    created_at = Column(db.TIMESTAMP, default=dt.utcnow)
+    created_at = Column(db.TIMESTAMP, default=lambda: time.now().datetime())
 
 
 class User(BaseModel):
@@ -79,7 +79,7 @@ class AllocationRequest(BaseModel):
     user = relationship("User", backref=db.backref("allocations_requests", lazy=True))
     nonce = Column(db.Integer, nullable=False)
     epoch = Column(db.Integer, nullable=False)
-    signature = Column(db.String(132), nullable=False)
+    signature = Column(db.String, nullable=False)
     is_manually_edited = Column(db.Boolean, nullable=True)
 
     __table_args__ = (
@@ -159,3 +159,15 @@ class EpochZeroClaim(BaseModel):
     address = Column(db.String(42), primary_key=True, nullable=False)
     claimed = Column(db.Boolean, default=False)
     claim_nonce = db.Column(db.Integer(), unique=True, nullable=True)
+
+
+class MultisigSignatures(BaseModel):
+    __tablename__ = "multisig_signatures"
+
+    id = Column(db.Integer, primary_key=True)
+    address = Column(db.String(42), nullable=False)
+    type = Column(db.String, nullable=False)
+    message = Column(db.String, nullable=False)
+    hash = Column(db.String, nullable=False)
+    status = Column(db.String, nullable=False)
+    user_ip = Column(db.String, nullable=False)

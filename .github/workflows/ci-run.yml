@@ -90,6 +90,7 @@ jobs:
         export OCTANT_BASE_URL=${{ needs.deploy-e2e-env.outputs.octant-web-url }}
         export RPC_URL=${{ needs.deploy-e2e-env.outputs.anvil-rpc-url }}
         export VITE_JSON_RPC_ENDPOINT=${{ needs.deploy-e2e-env.outputs.anvil-rpc-url }}
+        export VITE_SERVER_ENDPOINT=${{ needs.deploy-e2e-env.outputs.octant-backend-url }}/
 
         # Setup NVM to use Node version 16
         set +x
@@ -184,7 +185,7 @@ jobs:
       chain-id: 1337
       network-name: local
       chain-name: localhost
-      snapshotter-enabled: true
+      snapshotter-enabled: false
       scheduler-enabled: true
       glm-claim-enabled: true
       vault-confirm-withdrawals-enabled: true
@@ -218,6 +219,8 @@ jobs:
 
   start-e2e-env:
     name: Start E2E Env
+    needs:
+    - permissions-check
     uses: ./.github/workflows/tpl-start-env.yml
     secrets: inherit
     with:
@@ -228,6 +231,8 @@ jobs:
 
   start-apitest-env:
     name: Start APITest Env
+    needs:
+    - permissions-check
     uses: ./.github/workflows/tpl-start-env.yml
     secrets: inherit
     with:
@@ -238,10 +243,14 @@ jobs:
 
   docker:
     name: Docker
+    needs:
+    - permissions-check
     uses: ./.github/workflows/tpl-images.yml
     secrets: inherit
     with:
       image-tag: ${{ github.sha }}
+      git-ref: ${{ github.ref }}
+
   # +-------------------------
   # | Tests: NodeJS
   # +-------------------------
@@ -389,6 +398,7 @@ jobs:
         yarn eslint
         yarn type-check
       shell: bash
+
   # +-------------------------
   # | Build
   # |   client
@@ -427,6 +437,7 @@ jobs:
           ${{ matrix.SERVICE }}/.yarn
           ${{ matrix.SERVICE }}/node-modules
         key: "${{ github.sha }}-yarn-${{ matrix.SERVICE }}"
+
   # +-------------------------
   # | Build backend
   # +-------------------------
@@ -434,6 +445,8 @@ jobs:
     name: Build Services
     runs-on:
       - metal
+    needs:
+    - permissions-check
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/python-poetry-ext:ad1d9179
       credentials:
@@ -446,6 +459,7 @@ jobs:
       with:
         path: backend/.venv
         key: "${{ github.sha }}-poetry-backend"
+
   # +-------------------------
   # | Build contracts
   # +-------------------------
@@ -453,6 +467,8 @@ jobs:
     name: Build Contracts
     runs-on:
       - metal
+    needs:
+    - permissions-check
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:bdda411c
       credentials:
@@ -479,3 +495,47 @@ jobs:
           contracts-v1/artifacts
           contracts-v1/typechain
         key: "${{ github.sha }}-yarn-contracts-v1-extras"
+
+
+  permissions-check:
+    name: Permissions check
+    runs-on:
+      - metal
+    steps:
+    - name: Check if user is an org member
+      uses: actions/github-script@v7
+      id: is-organization-member-pr
+      with:
+        result-encoding: string
+        github-token: ${{ secrets.GH_BOT_TOKEN }}
+        script: |
+          return (
+            await github.rest.orgs.listMembers({
+              org: 'golemfoundation'
+            })
+          ).data.map(({login}) => login).includes('${{ github.event.pull_request.user.login }}').toString()
+
+    # - name: Check if user is an org member
+    #   uses: actions/github-script@v7
+    #   id: is-organization-member-review
+    #   with:
+    #     result-encoding: string
+    #     script: |
+    #       return (
+    #         await github.rest.orgs.listMembers({
+    #           org: 'golemfoundation'
+    #         })
+    #       ).data.map(({login}) => login).includes('${{ github.event.pull_request_review.sender.login }}').toString()
+
+    - name: Validate CI run checks
+      run: |
+        if [[ "${{ github.event_name }}" == "pull_request" && "${{ steps.is-organization-member-pr.outputs.result }}" == "false" ]]; then
+          echo 'Not an org member'
+          exit 1
+        fi
+
+        # if [[ "${{ github.event_name }}" == "pull_request_review" && "${{ steps.is-organization-member-review.outputs.result }}" == "false" && "${{ github.event.review.state }}" == "approved" ]]; then
+        #   echo 'Not an org member'
+        #   exit 2
+        # fi
+      shell: bash

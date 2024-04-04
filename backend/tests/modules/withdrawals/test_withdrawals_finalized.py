@@ -2,7 +2,9 @@ import pytest
 
 from app import db
 from app.infrastructure import database
+from app.modules.common.time import from_timestamp_s
 from app.modules.dto import WithdrawableEth, WithdrawalStatus
+from app.modules.history.dto import WithdrawalItem, OpType
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from tests.conftest import mock_graphql
 
@@ -40,5 +42,66 @@ def test_get_withdrawable_eth(context, alice, bob):
                 "0x339903fb80300f9cbf79e8bf8b9bb692c2896cf5607351cbdc3190c769b7f2bc"
             ],
             status=WithdrawalStatus.AVAILABLE,
+        ),
+    ]
+
+
+def test_get_withdrawals_by_timestamp(mocker, alice):
+    mock_graphql(
+        mocker,
+        withdrawals_events=[
+            {
+                "amount": "50",
+                "timestamp": 1710720000,
+                "user": alice.address,
+                "transactionHash": "tx1",
+            },
+            {
+                "amount": "50",
+                "timestamp": 1710720001,
+                "user": alice.address,
+                "transactionHash": "tx2",
+            },
+        ],
+    )
+    timestamp_before = from_timestamp_s(1710719999)
+    timestamp_after = from_timestamp_s(1710720001)
+
+    service = FinalizedWithdrawals()
+
+    result_before = service.get_withdrawals(
+        alice.address, from_timestamp=timestamp_before, limit=20
+    )
+    result_after = service.get_withdrawals(
+        alice.address, from_timestamp=timestamp_after, limit=20
+    )
+    result_after_with_limit = service.get_withdrawals(
+        alice.address, from_timestamp=timestamp_after, limit=1
+    )
+
+    assert result_before == []
+    assert result_after == [
+        WithdrawalItem(
+            type=OpType.WITHDRAWAL,
+            amount=50,
+            address=alice.address,
+            transaction_hash="tx2",
+            timestamp=from_timestamp_s(1710720001),
+        ),
+        WithdrawalItem(
+            type=OpType.WITHDRAWAL,
+            amount=50,
+            address=alice.address,
+            transaction_hash="tx1",
+            timestamp=from_timestamp_s(1710720000),
+        ),
+    ]
+    assert result_after_with_limit == [
+        WithdrawalItem(
+            type=OpType.WITHDRAWAL,
+            amount=50,
+            address=alice.address,
+            transaction_hash="tx2",
+            timestamp=from_timestamp_s(1710720001),
         ),
     ]

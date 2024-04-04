@@ -315,7 +315,8 @@ const AllocationView = (): ReactElement => {
       allocationValues.length === 0 ||
       areAllValuesZero ||
       addressesWithError.length > 0 ||
-      !isDecisionWindowOpen
+      !isDecisionWindowOpen ||
+      !isConnected
     ) {
       return;
     }

@@ -1,0 +1,21 @@
+.root {
+  height: 6.4rem;
+  font-size: $font-size-12;
+  margin: 1.6rem auto 0;
+
+  @media #{$desktop-up} {
+    font-size: $font-size-14;
+  }
+
+  .spacer {
+    height: 2.4rem;
+    width: 0.1rem;
+    background: $color-octant-grey1;
+    margin-right: 4rem;
+  }
+
+  .currencySelectorWrapper {
+    display: flex;
+    font-size: $font-size-12;
+  }
+}

@@ -4,14 +4,14 @@ from typing import List, Tuple
 
 
 @dataclass(frozen=True)
-class AllocationPayload:
+class AllocationItem:
     proposal_address: str
     amount: int
 
 
 @dataclass
 class ProjectAllocationsPayload:
-    allocations: List[AllocationPayload] = None
+    allocations: List[AllocationItem] = None
 
 
 @dataclass

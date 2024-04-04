@@ -5,7 +5,7 @@ from typing import Optional, List
 
 from dataclass_wizard import JSONWizard
 
-from app.engine.projects.rewards import AllocationPayload
+from app.engine.projects.rewards import AllocationItem
 
 from app.engine.user.effective_deposit import UserDeposit
 from app.modules.snapshots.pending import UserBudgetInfo
@@ -64,8 +64,27 @@ class PendingSnapshotDTO(JSONWizard):
 
 
 @dataclass(frozen=True)
-class AllocationDTO(AllocationPayload, JSONWizard):
+class AllocationDTO(AllocationItem, JSONWizard):
     user_address: Optional[str] = None
+
+
+@dataclass(frozen=True)
+class UserAllocationPayload(JSONWizard):
+    allocations: List[AllocationItem]
+    nonce: int
+
+
+@dataclass(frozen=True)
+class UserAllocationRequestPayload(JSONWizard):
+    payload: UserAllocationPayload
+    signature: str
+
+
+@dataclass(frozen=True)
+class ProposalDonationDTO(JSONWizard):
+    donor: str
+    amount: int
+    proposal: str
 
 
 class WithdrawalStatus(StrEnum):
@@ -79,3 +98,8 @@ class WithdrawableEth:
     amount: int
     proof: list[str]
     status: WithdrawalStatus
+
+
+class SignatureOpType(StrEnum):
+    TOS = "tos"
+    ALLOCATION = "allocation"

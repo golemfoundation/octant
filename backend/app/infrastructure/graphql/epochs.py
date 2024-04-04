@@ -41,7 +41,7 @@ def get_epochs_by_range(from_epoch, to_epoch):
     query = gql(
         """
 query GetEpochs($fromEpoch: Int!, $toEpoch: Int!) {
-  epoches(where: {epoch_gte: $fromEpoch, epoch_lte: $toEpoch}) {
+  epoches(where: {epoch_gt: $fromEpoch, epoch_lte: $toEpoch}) {
     toTs
     fromTs
     epoch

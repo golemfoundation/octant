@@ -42,7 +42,7 @@ class PendingOctantRewards(Model):
         matched_rewards_settings = context.epoch_settings.octant_rewards.matched_rewards
         ppf_rewards_settings = context.epoch_settings.octant_rewards.ppf
         ppf_value = ppf_rewards_settings.calculate_ppf(
-            PPFPayload(pending_snapshot.eth_proceeds)
+            PPFPayload(int(pending_snapshot.eth_proceeds))
         )
 
         return matched_rewards_settings.calculate_matched_rewards(
