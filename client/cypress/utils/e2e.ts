@@ -54,15 +54,11 @@ export const connectWallet = (
 const test = (cypressWindow, moveTo): Promise<boolean> => {
   return new Promise(resolve => {
     if (moveTo === 'decisionWindowOpen') {
-      cypressWindow.mutateAsyncMoveToDecisionWindowOpen().then(() => {
-        // Waiting 5s is a way to prevent the effects of slowing down the e2e environment (data update).
+      cypressWindow.mutateAsyncMoveToDecisionWindowOpen().then(timeToIncrease => {
+        // Waiting 5s is a way to prevent the effects of slowing down the e2e envirownment (data update).
         cy.wait(5000);
-        if (cypressWindow.timeToIncrease) {
-          cy.log(`timeToIncrease ${cypressWindow.timeToIncrease}`);
-          cy.tick(cypressWindow.timeToIncrease);
-          // eslint-disable-next-line no-param-reassign
-          cypressWindow.timeToIncrease = undefined;
-        }
+        cy.log(`timeToIncrease ${timeToIncrease}`);
+        cy.tick(timeToIncrease);
 
         axios.post(`${env.serverEndpoint}snapshots/pending`).then(() => {
           cy.log('3');
@@ -78,15 +74,12 @@ const test = (cypressWindow, moveTo): Promise<boolean> => {
         });
       });
     } else {
-      cypressWindow.mutateAsyncMoveToDecisionWindowOpen().then(() => {
-        // Waiting 5s is a way to prevent the effects of slowing down the e2e environment (data update).
+      cypressWindow.mutateAsyncMoveToDecisionWindowOpen().then(timeToIncrease => {
+        // Waiting 5s is a way to prevent the effects of slowing down the e2e envirownment (data update).
         cy.wait(5000);
-        if (cypressWindow.timeToIncrease) {
-          cy.log(`timeToIncrease ${cypressWindow.timeToIncrease}`);
-          cy.tick(cypressWindow.timeToIncrease);
-          // eslint-disable-next-line no-param-reassign
-          cypressWindow.timeToIncrease = undefined;
-        }
+        cy.log(`timeToIncrease ${timeToIncrease}`);
+        cy.tick(timeToIncrease);
+        
         axios.post(`${env.serverEndpoint}snapshots/pending`).then(() => {
           cy.log('3');
           // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
@@ -137,17 +130,13 @@ export const moveEpoch = (
     );
 
     if (isDecisionWindowOpen) {
-      cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(() => {
+      cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(timeToIncrease => {
         cy.log('1');
         // Waiting 5s is a way to prevent the effects of slowing down the e2e envirownment (data update).
         cy.wait(5000);
-        if (cypressWindow.timeToIncrease) {
-          // HERE HERE HERE
-          cy.log(`timeToIncrease ${cypressWindow.timeToIncrease}`);
-          cy.tick(cypressWindow.timeToIncrease);
-          // eslint-disable-next-line no-param-reassign
-          cypressWindow.timeToIncrease = undefined;
-        }
+        cy.log(`timeToIncrease ${timeToIncrease}`);
+        cy.tick(timeToIncrease);
+
         axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
           cy.log('2');
           // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).

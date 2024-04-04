@@ -4,7 +4,7 @@ import { useConfig } from 'wagmi';
 import { QUERY_KEYS } from 'api/queryKeys';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
 
-export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<boolean, unknown> {
+export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<number, unknown> {
   const queryClient = useQueryClient();
   const wagmiConfig = useConfig();
 
@@ -55,24 +55,13 @@ export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<
         const currentEpochEndTimestamp = Number(currentEpochEnd);
 
         const timeToIncrease = currentEpochEndTimestamp - blockTimestamp + 10; // [s]
-        window.timeToIncrease = timeToIncrease * 1000;
         await wagmiConfig.publicClient.request({
           method: 'evm_increaseTime' as any,
           params: [timeToIncrease] as any,
         });
         await wagmiConfig.publicClient.request({ method: 'evm_mine' as any, params: [] as any });
 
-        const currentEpochAfter = await queryClient.fetchQuery({
-          queryFn: () =>
-            readContractEpochs({
-              functionName: 'getCurrentEpoch',
-              publicClient: wagmiConfig.publicClient,
-            }),
-          queryKey: QUERY_KEYS.currentEpoch,
-        });
-
-        // isEpochChanged
-        resolve(Number(currentEpoch) + 1 === Number(currentEpochAfter));
+        resolve(timeToIncrease);
       });
     },
   });
