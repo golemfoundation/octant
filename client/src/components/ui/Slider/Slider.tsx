@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC, useState, useEffect, useRef } from 'react';
+import React, { FC, useState, useEffect, useRef, useLayoutEffect } from 'react';
 import ReactSlider from 'react-slider';
 
 import styles from './Slider.module.scss';
@@ -13,6 +13,7 @@ const Slider: FC<SliderProps> = ({
   value,
   onUnlock,
   hideThumb,
+  dataTest = 'Slider',
   ...rest
 }) => {
   const reactSliderRef = useRef(null);
@@ -50,18 +51,30 @@ const Slider: FC<SliderProps> = ({
     reactSliderRef.current.handleResize();
   }, [isDisabled, hideThumb]);
 
+  useLayoutEffect(() => {
+    if (!reactSliderRef?.current) {
+      return;
+    }
+    // @ts-expect-error method isn't typed
+    reactSliderRef.current.slider.setAttribute('data-test', dataTest);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className={cx(styles.root, className)}>
       <ReactSlider
         ref={reactSliderRef}
-        className={styles.slider}
+        className={cx(styles.slider, `${dataTest}__slider`)}
         disabled={isDisabled || hideThumb}
         onChange={localOnChange}
         renderThumb={props => (
           // Hiding the thumb by returning null here prevent ReactSlider from setting value on initial render.
-          <div onClick={handleClick} {...props}>
+          <div onClick={handleClick} {...props} data-test={`${dataTest}__thumb`}>
             <div className={styles.thumbInnerCircle} />
           </div>
+        )}
+        renderTrack={(props, { index }) => (
+          <div {...props} data-test={`${dataTest}__track--${index}`} />
         )}
         thumbClassName={cx(styles.thumb, (isDisabled || hideThumb) && styles.isHidden)}
         trackClassName={cx(
