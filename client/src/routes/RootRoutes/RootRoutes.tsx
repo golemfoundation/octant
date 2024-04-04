@@ -87,7 +87,7 @@ const RootRoutes: FC<RootRoutesProps> = props => {
         }
         path={`${ROOT_ROUTES.earn.relative}/*`}
       />
-      {(window.Cypress || env.network === 'Local') && (
+      {(window.Cypress || env.network === 'Local' || true) && (
         <Route
           element={
             <Protected {...props}>

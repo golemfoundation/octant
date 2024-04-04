@@ -71,6 +71,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         }
       });
     });
+
+    it('playground', () => {
+      cy.wait(30000);
+    });
   });
   describe(
     `allocation (allocation window open): ${device}`,
