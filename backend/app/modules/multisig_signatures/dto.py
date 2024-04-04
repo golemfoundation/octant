@@ -7,7 +7,8 @@ from dataclass_wizard import JSONWizard
 class Signature(JSONWizard):
     id: int
     message: str
-    hash: str
+    msg_hash: str
+    safe_msg_hash: str
     user_address: str
     ip_address: str
 

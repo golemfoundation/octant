@@ -28,7 +28,7 @@ def test_approve_all_pending_signatures_when_exist(
     assert len(approved_messages) == 2
     for approved_message in approved_messages:
         assert approved_message.message == MULTISIG_MOCKED_MESSAGE
-        assert approved_message.hash == MULTISIG_MOCKED_HASH
+        assert approved_message.msg_hash == MULTISIG_MOCKED_HASH
 
     db.session.commit()
 
@@ -57,7 +57,7 @@ def test_approve_all_pending_signatures_when_approved_and_pending_exist(
     assert len(approved_signatures) == 2
     for approved_signature in approved_signatures:
         assert approved_signature.message == MULTISIG_MOCKED_MESSAGE
-        assert approved_signature.hash == MULTISIG_MOCKED_HASH
+        assert approved_signature.msg_hash == MULTISIG_MOCKED_HASH
 
 
 def test_approve_pending_allocation_signature_when_already_staged(
@@ -81,7 +81,7 @@ def test_approve_pending_allocation_signature_when_already_staged(
 
     for approved_signature in approved_signatures:
         assert approved_signature.message == MULTISIG_MOCKED_MESSAGE
-        assert approved_signature.hash == MULTISIG_MOCKED_HASH
+        assert approved_signature.msg_hash == MULTISIG_MOCKED_HASH
 
 
 def test_apply_pending_tos_signature(

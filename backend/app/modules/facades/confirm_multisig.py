@@ -18,7 +18,7 @@ def confirm_multisig():
 
     for tos_signature in approvals.tos_signatures:
         post_user_terms_of_service_consent(
-            tos_signature.user_address, tos_signature.hash, tos_signature.ip_address
+            tos_signature.user_address, tos_signature.msg_hash, tos_signature.ip_address
         )
         apply_pending_tos_signature(tos_signature.id)
 

@@ -58,8 +58,11 @@ def before(
 
 
 @pytest.fixture()
-def service(mock_octant_rewards, mock_patron_mode, mock_user_budgets):
+def service(
+    mock_octant_rewards, mock_patron_mode, mock_user_budgets, mock_user_allocation_nonce
+):
     verifier = PendingUserAllocationsVerifier(
+        user_nonce=mock_user_allocation_nonce,
         user_budgets=mock_user_budgets,
         patrons_mode=mock_patron_mode,
     )

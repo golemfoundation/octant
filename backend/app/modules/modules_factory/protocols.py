@@ -207,3 +207,9 @@ class UserTos(Protocol):
         ip_address: str,
     ):
         ...
+
+
+@runtime_checkable
+class UserAllocationNonceProtocol(Protocol):
+    def get_user_next_nonce(self, user_address: str) -> int:
+        ...

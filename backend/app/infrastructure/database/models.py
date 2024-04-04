@@ -168,6 +168,7 @@ class MultisigSignatures(BaseModel):
     address = Column(db.String(42), nullable=False)
     type = Column(db.String, nullable=False)
     message = Column(db.String, nullable=False)
-    hash = Column(db.String, nullable=False)
+    msg_hash = Column(db.String, nullable=False)
+    safe_msg_hash = Column(db.String, nullable=False)
     status = Column(db.String, nullable=False)
     user_ip = Column(db.String, nullable=False)

@@ -30,6 +30,7 @@ def save_signature(
     op_type: SignatureOpType,
     message: str,
     msg_hash: str,
+    safe_msg_hash: str,
     user_ip: str,
     status: SigStatus = SigStatus.PENDING,
 ):
@@ -37,7 +38,8 @@ def save_signature(
         address=user_address,
         type=op_type,
         message=message,
-        hash=msg_hash,
+        msg_hash=msg_hash,
+        safe_msg_hash=safe_msg_hash,
         user_ip=user_ip,
         status=status,
     )

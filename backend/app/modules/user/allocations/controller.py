@@ -19,7 +19,7 @@ from app.modules.user.allocations.service.pending import PendingUserAllocations
 
 
 def get_user_next_nonce(user_address: str) -> int:
-    service = get_services(EpochState.CURRENT).user_allocations_service
+    service = get_services(EpochState.CURRENT).user_allocations_nonce_service
     return service.get_user_next_nonce(user_address)
 
 

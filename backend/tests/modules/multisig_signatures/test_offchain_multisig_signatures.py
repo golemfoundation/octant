@@ -24,6 +24,7 @@ def test_get_last_pending_signature_returns_expected_signature_when_signature_ex
         SignatureOpType.ALLOCATION,
         "last pending msg",
         "last pending hash",
+        "last safe pending hash",
         "0.0.0.0",
     )
     database.multisig_signature.save_signature(
@@ -31,14 +32,25 @@ def test_get_last_pending_signature_returns_expected_signature_when_signature_ex
         SignatureOpType.ALLOCATION,
         "test_message",
         "test_hash",
+        "safe_test_hash",
         "0.0.0.0",
         status=SigStatus.APPROVED,
     )
     database.multisig_signature.save_signature(
-        alice.address, SignatureOpType.TOS, "test_message", "test_hash", "0.0.0.0"
+        alice.address,
+        SignatureOpType.TOS,
+        "test_message",
+        "test_hash",
+        "safe_test_hash",
+        "0.0.0.0",
     )
     database.multisig_signature.save_signature(
-        bob.address, SignatureOpType.ALLOCATION, "test_message", "test_hash", "0.0.0.0"
+        bob.address,
+        SignatureOpType.ALLOCATION,
+        "test_message",
+        "test_hash",
+        "safe_test_hash",
+        "0.0.0.0",
     )
     db.session.commit()
 
@@ -52,7 +64,8 @@ def test_get_last_pending_signature_returns_expected_signature_when_signature_ex
     # Then
     assert isinstance(result, Signature)
     assert result.message == "last pending msg"
-    assert result.hash == "last pending hash"
+    assert result.msg_hash == "last pending hash"
+    assert result.safe_msg_hash == "last safe pending hash"
 
 
 def test_get_last_pending_signature_returns_none_when_no_signature_exists(
@@ -70,32 +83,94 @@ def test_get_last_pending_signature_returns_none_when_no_signature_exists(
     assert result is None
 
 
-def test_save_signature_when_verified_successfully(context, alice, mock_verifier):
+def test_save_str_msg_signature_when_verified_successfully(
+    context, mock_verifier, patch_get_message_hash
+):
     # Given
+    multisig_address = "0x250f72267551dd4B299Fd1C2407acbbacD96d204"
+    message = "Welcome to Octant.\nPlease click to sign in and accept the Octant Terms of Service.\n\nSigning this message will not trigger a transaction.\n\nYour address\n0x250f72267551dd4B299Fd1C2407acbbacD96d204"
     service = OffchainMultisigSignatures(verifiers={SignatureOpType.TOS: mock_verifier})
 
     # When
     service.save_pending_signature(
         context,
-        alice.address,
+        multisig_address,
         SignatureOpType.TOS,
-        {"message": "test_message"},
+        {"message": message},
         "0.0.0.0",
     )
 
     # Then
     result = database.multisig_signature.get_last_pending_signature(
-        alice.address, SignatureOpType.TOS
+        multisig_address, SignatureOpType.TOS
     )
 
-    assert result.address == alice.address
+    assert result.address == multisig_address
     assert result.type == SignatureOpType.TOS
     assert result.status == SigStatus.PENDING
-    assert result.message == '{"message": "test_message"}'
+    assert result.message == message
     assert result.user_ip == "0.0.0.0"
     assert (
-        result.hash
-        == "0x15259cb98ed495a577ec69a3a75f3b16168507d0099b70483fdab3d0d1b3e71a"
+        result.msg_hash
+        == "0xc995b1c20cdd79e48a0696bb36f645925c45ef5f8c75ea49974b1ebb556351ca"
+    )
+    assert (
+        result.safe_msg_hash
+        == "0xa9539013c03ea436e37924c90e3f9d7773feb867982eda2f2eedad0db066547f"
+    )
+
+
+def test_save_dict_msg_signature_when_verified_successfully(
+    context, mock_verifier, patch_get_message_hash
+):
+    # Given
+    multisig_address = "0x89d2EcE5ca5cee0672d8BaD68cC7638D30Dc005e"
+    service = OffchainMultisigSignatures(
+        verifiers={SignatureOpType.ALLOCATION: mock_verifier}
+    )
+
+    # When
+    service.save_pending_signature(
+        context,
+        multisig_address,
+        SignatureOpType.ALLOCATION,
+        {
+            "message": {
+                "isManuallyEdited": False,
+                "payload": {
+                    "allocations": [
+                        {
+                            "amount": "26615969581749",
+                            "proposalAddress": "0x78e084445C3F1006617e1f36794dd2261ecE4AE3",
+                        }
+                    ],
+                    "nonce": 1,
+                },
+            }
+        },
+        "0.0.0.0",
+    )
+
+    # Then
+    result = database.multisig_signature.get_last_pending_signature(
+        multisig_address, SignatureOpType.ALLOCATION
+    )
+
+    assert result.address == multisig_address
+    assert result.type == SignatureOpType.ALLOCATION
+    assert result.status == SigStatus.PENDING
+    assert (
+        result.message
+        == '{"isManuallyEdited": false, "payload": {"allocations": [{"amount": 26615969581749, "proposalAddress": "0x78e084445C3F1006617e1f36794dd2261ecE4AE3"}], "nonce": 1}}'
+    )
+    assert result.user_ip == "0.0.0.0"
+    assert (
+        result.safe_msg_hash
+        == "0x58c5c0841f72c744777a2ab04a86dba3afa55286e668dffb98224ff78e151d8f"
+    )
+    assert (
+        result.msg_hash
+        == "0xc995b1c20cdd79e48a0696bb36f645925c45ef5f8c75ea49974b1ebb556351ca"
     )
 
 
