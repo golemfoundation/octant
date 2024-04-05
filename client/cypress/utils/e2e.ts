@@ -128,8 +128,6 @@ export const moveEpoch = (
   cypressWindow: Cypress.AUTWindow,
   moveTo: 'decisionWindowClosed' | 'decisionWindowOpen',
 ): Chainable<any> => {
-  cy.clock();
-
   const isDecisionWindowOpen = cypressWindow.clientReactQuery.getQueryData(
     QUERY_KEYS.isDecisionWindowOpen,
   );
