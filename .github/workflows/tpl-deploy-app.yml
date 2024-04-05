@@ -123,6 +123,7 @@ env:
   BACKEND_SERVER_REPLICAS: ${{ inputs.backend-server-replicas }}
   OCTANT_ENV: ${{ inputs.octant-env }}
   GLM_SENDER_NONCE: ${{ vars.GLM_SENDER_NONCE }}
+  MAINNET_PROPOSAL_CIDS: "QmSQEFD35gKxdPEmngNt1CWe3kSwiiGqBn1Z3FZvWb8mvK,Qmds9N5y2vkMuPTD6M4EBxNXnf3bjTDmzWBGnCkQGsMMGe"
   # ----------------------------------------------------------------------------
   # CONTRACTS / ANVIL / SUBGRAPH / SYNPRESS
   NETWORK: ${{ inputs.chain-name }}

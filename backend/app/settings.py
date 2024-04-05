@@ -63,6 +63,8 @@ class Config(object):
     EPOCH_2_STAKING_PROCEEDS_SURPLUS = int(
         os.getenv("EPOCH_2_STAKING_PROCEEDS_SURPLUS", 0)
     )
+    
+    MAINNET_PROPOSAL_CIDS = os.getenv("MAINNET_PROPOSAL_CIDS", "")
 
 
 class ProdConfig(Config):
@@ -127,6 +129,7 @@ class TestConfig(Config):
     # 6_050000000_000000000 - extra operations cost during the epoch
     EPOCH_2_STAKING_PROCEEDS_SURPLUS = 3_487357664_505573437
     WITHDRAWALS_TARGET_CONTRACT_ADDRESS = "0x1234123456123456123456123456123456123456"
+    MAINNET_PROPOSAL_CIDS = "QmSQEFD35gKxdPEmngNt1CWe3kSwiiGqBn1Z3FZvWb8mvK,Qmds9N5y2vkMuPTD6M4EBxNXnf3bjTDmzWBGnCkQGsMMGe"
 
 
 def get_config():
