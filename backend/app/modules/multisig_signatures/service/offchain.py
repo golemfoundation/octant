@@ -130,7 +130,7 @@ class OffchainMultisigSignatures(Model):
     ) -> EncodingStandardFor:
         verifier = self.verifiers[op_type]
 
-        if isinstance(signature_msg, dict):
+        if op_type == SignatureOpType.ALLOCATION:
             if not verifier.verify_logic(
                 context, user_address=user_address, **signature_msg
             ):
