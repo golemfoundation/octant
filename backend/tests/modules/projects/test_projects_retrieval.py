@@ -3,10 +3,15 @@ import pytest
 from app.modules.dto import ProjectsMetadata
 from app.modules.projects.service.projects_metadata import StaticProjectsMetadataService
 from tests.helpers.context import get_context
+from tests.conftest import MOCK_PROPOSALS
 
 
 @pytest.fixture(autouse=True)
 def before(app):
+    MOCK_PROPOSALS.get_proposal_addresses.return_value = ["0x0", "0x1"]
+    MOCK_PROPOSALS.get_proposals_cid.return_value = (
+        "Qmds9N5y2vkMuPTD6M4EBxNXnf3bjTDmzWBGnCkQGsMMGe"
+    )
     pass
 
 
