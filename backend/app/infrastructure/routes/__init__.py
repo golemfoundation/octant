@@ -15,6 +15,7 @@ from . import (  # noqa
     epochs,
     user,
     validators_stats,
+    multisig_signatures,
 )
 
 

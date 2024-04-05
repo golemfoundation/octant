@@ -1,10 +1,14 @@
 from dataclasses import dataclass
 from decimal import Decimal
+from enum import StrEnum
 from typing import Optional, List
 
 from dataclass_wizard import JSONWizard
 
-from app.engine.projects.rewards import AllocationPayload, ProjectRewardDTO
+from app.engine.projects.rewards import AllocationItem
+
+from app.engine.user.effective_deposit import UserDeposit
+from app.modules.snapshots.pending import UserBudgetInfo
 
 
 @dataclass(frozen=True)
@@ -18,10 +22,15 @@ class AccountFundsDTO(JSONWizard):
 
 
 @dataclass(frozen=True)
+class ProjectAccountFundsDTO(AccountFundsDTO, JSONWizard):
+    matched: int
+
+
+@dataclass(frozen=True)
 class FinalizedSnapshotDTO(JSONWizard):
     patrons_rewards: int
     matched_rewards: int
-    projects_rewards: List[ProjectRewardDTO]
+    projects_rewards: List[ProjectAccountFundsDTO]
     user_rewards: List[AccountFundsDTO]
     total_withdrawals: int
     leftover: int
@@ -42,8 +51,55 @@ class OctantRewardsDTO(JSONWizard):
     matched_rewards: Optional[int] = None
     total_withdrawals: Optional[int] = None
     leftover: Optional[int] = None
+    # Data available starting from Epoch 3
+    ppf: Optional[int] = None
+    community_fund: Optional[int] = None
 
 
 @dataclass(frozen=True)
-class AllocationDTO(AllocationPayload, JSONWizard):
+class PendingSnapshotDTO(JSONWizard):
+    rewards: OctantRewardsDTO
+    user_deposits: List[UserDeposit]
+    user_budgets: List[UserBudgetInfo]
+
+
+@dataclass(frozen=True)
+class AllocationDTO(AllocationItem, JSONWizard):
     user_address: Optional[str] = None
+
+
+@dataclass(frozen=True)
+class UserAllocationPayload(JSONWizard):
+    allocations: List[AllocationItem]
+    nonce: int
+
+
+@dataclass(frozen=True)
+class UserAllocationRequestPayload(JSONWizard):
+    payload: UserAllocationPayload
+    signature: str
+
+
+@dataclass(frozen=True)
+class ProposalDonationDTO(JSONWizard):
+    donor: str
+    amount: int
+    proposal: str
+
+
+class WithdrawalStatus(StrEnum):
+    PENDING = "pending"
+    AVAILABLE = "available"
+
+
+@dataclass(frozen=True)
+class WithdrawableEth:
+    epoch: int
+    amount: int
+    proof: list[str]
+    status: WithdrawalStatus
+
+
+class SignatureOpType(StrEnum):
+    TOS = "tos"
+    ALLOCATION = "allocation"

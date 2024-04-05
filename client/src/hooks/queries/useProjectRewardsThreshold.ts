@@ -36,8 +36,9 @@ export default function useProjectRewardsThreshold(
 
   return useQuery({
     enabled:
-      isDecisionWindowOpen !== undefined &&
-      ((epoch !== undefined && epoch > 0) || (!!currentEpoch && currentEpoch > 1)),
+      !!currentEpoch &&
+      currentEpoch > 1 &&
+      (isDecisionWindowOpen === true || (epoch !== undefined && epoch > 0)),
     queryFn: ({ signal }) =>
       apiGetProjectThreshold(
         epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),

@@ -7,6 +7,8 @@ on:
         value: ${{ inputs.env-type }}-contracts-env
       octant-web-url:
         value: ${{ jobs.wait-for-app.outputs.octant_web_url }}
+      octant-backend-url:
+        value: ${{ jobs.wait-for-app.outputs.octant_backend_url }}
       anvil-rpc-url:
         value: ${{ jobs.deploy-contracts.outputs.anvil_rpc_url }}
     inputs:
@@ -303,6 +305,7 @@ jobs:
     if: always() && (needs.start-application-stack.result == 'success')
     outputs:
       octant_web_url: ${{ steps.app.outputs.OCTANT_WEB_URL }}
+      octant_backend_url: ${{ steps.app.outputs.OCTANT_BACKEND_URL }}
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:2ea6d57c
       credentials:
@@ -324,8 +327,10 @@ jobs:
         bash ${CI_PROJECT_DIR}/ci/argocd/wait_for_app.sh
 
         export OCTANT_WEB_URL; OCTANT_WEB_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_web_client_url.sh)
+        export OCTANT_BACKEND_URL; OCTANT_BACKEND_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_backend_url.sh)
 
         echo "OCTANT_WEB_URL=$OCTANT_WEB_URL" >> $GITHUB_OUTPUT
+        echo "OCTANT_BACKEND_URL=$OCTANT_BACKEND_URL" >> $GITHUB_OUTPUT
       shell: bash
 
   update-contracts-env:

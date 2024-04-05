@@ -3,8 +3,8 @@ from typing import List
 from eth_utils import to_checksum_address
 
 from app import db
-from app.legacy.core.common import AccountFunds
 from app.infrastructure.database.models import Reward as RewardDB
+from app.modules.dto import AccountFundsDTO, ProjectAccountFundsDTO
 
 
 def get_by_epoch(epoch: int) -> List[RewardDB]:
@@ -54,13 +54,13 @@ def add_user_reward(epoch: int, address: str, amount: int):
     )
 
 
-def add_all(epoch: int, rewards: List[AccountFunds]):
+def add_all(epoch: int, rewards: List[AccountFundsDTO]):
     new_rewards = [
         RewardDB(
             epoch=epoch,
             address=to_checksum_address(r.address),
             amount=str(r.amount),
-            matched=str(r.matched) if r.matched is not None else None,
+            matched=str(r.matched) if isinstance(r, ProjectAccountFundsDTO) else None,
         )
         for r in rewards
     ]

@@ -153,7 +153,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
 
   return (
     <Formik
-      initialValues={formInitialValues}
+      initialValues={formInitialValues(currentMode)}
       isInitialValid={false}
       onSubmit={onApproveOrDeposit}
       validateOnChange

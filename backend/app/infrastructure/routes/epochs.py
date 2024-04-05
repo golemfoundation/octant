@@ -98,6 +98,14 @@ epoch_stats_model = api.model(
             required=False,
             description="The amount that will be used to increase staking and for other Octant related operations. Includes donations to projects that didn't reach the threshold.",
         ),
+        "ppf": fields.String(
+            required=False,
+            description="PPF for the given epoch. It's calculated from staking proceeds directly.",
+        ),
+        "communityFund": fields.String(
+            required=False,
+            description="Community fund for the given epoch. It's calculated from staking proceeds directly.",
+        ),
     },
 )
 

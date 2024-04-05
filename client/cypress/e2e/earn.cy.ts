@@ -1,4 +1,4 @@
-import { visitWithLoader, mockCoinPricesServer } from 'cypress/utils/e2e';
+import { visitWithLoader, mockCoinPricesServer, moveEpoch } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
@@ -149,6 +149,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           cy.get('[data-test=GlmLockTabs__Button]').click();
           cy.get(
             '[data-test=BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton]',
+            // Small timeout ensures skeleton shows up quickly after the transaction.
+            { timeout: 1000 },
           ).should('be.visible');
           cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
             timeout: 60000,
@@ -194,6 +196,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           cy.get('[data-test=GlmLockTabs__Button]').click();
           cy.get(
             '[data-test=BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton]',
+            // Small timeout ensures skeleton shows up quickly after the transaction.
+            { timeout: 1000 },
           ).should('be.visible');
           cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
             timeout: 60000,
@@ -207,6 +211,63 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           cy.get('[data-test=HistoryItem__DoubleValue__primary]')
             .first()
             .should('have.text', '1 GLM');
+        });
+    });
+
+    it('Wallet connected: Effective deposit after locking 1000 GLM and moving epoch is equal to current deposit', () => {
+      connectWallet();
+
+      cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
+        .invoke('text')
+        .then(text => {
+          const amountToLock = 1000;
+          const lockedGlms = parseInt(text.replace(/\u200a/g, ''), 10);
+
+          cy.get('[data-test=BoxGlmLock__Button]').click();
+          cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').clear().type(`${amountToLock}`);
+          cy.get('[data-test=GlmLockTabs__Button]').should('have.text', 'Lock');
+          cy.get('[data-test=GlmLockTabs__Button]').click();
+          cy.get('[data-test=GlmLockTabs__Button]').should('have.text', 'Waiting for confirmation');
+          cy.confirmMetamaskPermissionToSpend({
+            spendLimit: '99999999999999999999',
+          });
+          cy.get('[data-test=GlmLockTabs__Button]', { timeout: 180000 }).should(
+            'have.text',
+            'Close',
+          );
+          cy.get('[data-test=GlmLockNotification--success]').should('be.visible');
+          cy.get('[data-test=GlmLockTabs__Button]').click();
+          cy.get(
+            '[data-test=BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton]',
+            // Small timeout ensures skeleton shows up quickly after the transaction.
+            { timeout: 1000 },
+          ).should('be.visible');
+          // Waiting for skeletons to disappear ensures Graph indexed lock/unlock.
+          cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__DoubleValueSkeleton]', {
+            timeout: 60000,
+          }).should('not.exist');
+          cy.window().then(async win => {
+            cy.wrap(null).then(() => {
+              return moveEpoch(win).then(() => {
+                cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
+                  timeout: 60000,
+                })
+                  .invoke('text')
+                  .then(nextText => {
+                    const lockedGlmsAfterLock = parseInt(nextText.replace(/\u200a/g, ''), 10);
+                    expect(lockedGlms + amountToLock).to.be.eq(lockedGlmsAfterLock);
+                  });
+                cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__primary]', {
+                  timeout: 60000,
+                })
+                  .invoke('text')
+                  .then(nextText => {
+                    const lockedGlmsAfterLock = parseInt(nextText.replace(/\u200a/g, ''), 10);
+                    expect(lockedGlms + amountToLock).to.be.eq(lockedGlmsAfterLock);
+                  });
+              });
+            });
+          });
         });
     });
   });

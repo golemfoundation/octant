@@ -15,10 +15,12 @@ def get_services(epoch_state: EpochState):
     return SERVICE_REGISTRY[epoch_state]
 
 
-def register_services():
+def register_services(app):
+    chain_id = app.config["CHAIN_ID"]
+
     SERVICE_REGISTRY[EpochState.FUTURE] = FutureServices.create()
-    SERVICE_REGISTRY[EpochState.CURRENT] = CurrentServices.create()
-    SERVICE_REGISTRY[EpochState.PRE_PENDING] = PrePendingServices.create()
-    SERVICE_REGISTRY[EpochState.PENDING] = PendingServices.create()
+    SERVICE_REGISTRY[EpochState.CURRENT] = CurrentServices.create(chain_id)
+    SERVICE_REGISTRY[EpochState.PRE_PENDING] = PrePendingServices.create(chain_id)
+    SERVICE_REGISTRY[EpochState.PENDING] = PendingServices.create(chain_id)
     SERVICE_REGISTRY[EpochState.FINALIZING] = FinalizingServices.create()
     SERVICE_REGISTRY[EpochState.FINALIZED] = FinalizedServices.create()

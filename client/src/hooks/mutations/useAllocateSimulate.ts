@@ -4,11 +4,16 @@ import { useAccount } from 'wagmi';
 
 import { apiPostAllocateLeverage, ApiPostAllocateLeverageResponse } from 'api/calls/allocate';
 import { getAllocationsMapped } from 'hooks/utils/utils';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import { AllocationValues } from 'views/AllocationView/types';
+
+export type AllocateSimulate = Omit<ApiPostAllocateLeverageResponse, 'threshold'> & {
+  threshold: bigint;
+};
 
 export default function useAllocateSimulate(
   options?: UseMutationOptions<any, unknown, AllocationValues>,
-): UseMutationResult<ApiPostAllocateLeverageResponse, unknown, AllocationValues> {
+): UseMutationResult<AllocateSimulate, unknown, AllocationValues> {
   const { address: userAddress } = useAccount();
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -31,5 +36,12 @@ export default function useAllocateSimulate(
     mutation.reset();
   };
 
-  return { ...mutation, reset };
+  return {
+    ...mutation,
+    data: mutation.data && {
+      ...mutation.data,
+      threshold: parseUnitsBigInt(mutation.data.threshold, 'wei'),
+    },
+    reset,
+  };
 }

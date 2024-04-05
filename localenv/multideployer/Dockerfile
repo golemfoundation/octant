@@ -10,7 +10,6 @@ COPY --from=hardhat /app/ /hardhat/
 
 COPY --chmod=+x entrypoint.sh .
 COPY --chmod=+x wait_for_subgraph.sh .
-COPY --chmod=+x wait_for_graph_rpc.sh .
 COPY server.py /app/server.py
 
 ENTRYPOINT ["./entrypoint.sh"]

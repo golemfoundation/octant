@@ -315,7 +315,8 @@ const AllocationView = (): ReactElement => {
       allocationValues.length === 0 ||
       areAllValuesZero ||
       addressesWithError.length > 0 ||
-      !isDecisionWindowOpen
+      !isDecisionWindowOpen ||
+      !isConnected
     ) {
       return;
     }
@@ -447,6 +448,7 @@ const AllocationView = (): ReactElement => {
                         simulatedMatched: allocationSimulated?.matched.find(
                           element => element.address === address,
                         )?.value,
+                        simulatedThreshold: allocationSimulated?.threshold,
                       }}
                       setAddressesWithError={setAddressesWithError}
                       value={value}

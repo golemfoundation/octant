@@ -1,4 +1,3 @@
-from eth_utils import to_checksum_address
 from flask import current_app as app
 from flask_restx import Namespace, fields
 
@@ -8,8 +7,12 @@ from app.infrastructure.routes.validations.user_validations import (
     validate_estimate_budget_inputs,
 )
 from app.legacy.controllers import rewards
-from app.legacy.utils.time import days_to_sec
+from app.modules.common.time import days_to_sec
 from app.modules.octant_rewards.controller import get_leverage
+from app.modules.project_rewards.controller import (
+    get_estimated_project_rewards,
+    get_allocation_threshold,
+)
 from app.modules.user.budgets.controller import estimate_budget, get_budgets, get_budget
 from app.modules.user.rewards.controller import get_unused_rewards
 
@@ -45,7 +48,6 @@ epoch_budget_model = api.model(
         ),
     },
 )
-
 
 threshold_model = api.model(
     "Threshold",
@@ -145,7 +147,7 @@ epoch_rewards_merkle_tree_model = api.model(
     },
 )
 
-proposals_rewards_model_item = api.model(
+project_rewards_model_item = api.model(
     "Proposal",
     {
         "address": fields.String(
@@ -163,13 +165,13 @@ proposals_rewards_model_item = api.model(
     },
 )
 
-proposals_rewards_model = api.model(
-    "ProposalRewards",
+projects_rewards_model = api.model(
+    "ProjectRewards",
     {
         "rewards": fields.List(
-            fields.Nested(proposals_rewards_model_item),
+            fields.Nested(project_rewards_model_item),
             required=True,
-            description="Proposal rewards",
+            description="Project rewards",
         ),
     },
 )
@@ -188,10 +190,9 @@ class UserBudget(OctantResource):
     @ns.marshal_with(user_budget_model)
     @ns.response(200, "Budget successfully retrieved")
     def get(self, user_address, epoch):
-        checksum_address = to_checksum_address(user_address)
-        app.logger.debug(f"Getting user {checksum_address} budget in epoch {epoch}")
-        budget = get_budget(checksum_address, epoch)
-        app.logger.debug(f"User {checksum_address} budget in epoch {epoch}: {budget}")
+        app.logger.debug(f"Getting user {user_address} budget in epoch {epoch}")
+        budget = get_budget(user_address, epoch)
+        app.logger.debug(f"User {user_address} budget in epoch {epoch}: {budget}")
 
         return {"budget": budget}
 
@@ -243,12 +244,13 @@ class EstimatedUserBudget(OctantResource):
     },
 )
 @ns.response(200, "Returns allocation threshold value as uint256")
+@ns.response(400, "Returns when called for an epoch that is not finalized or pending")
 class Threshold(OctantResource):
     @ns.marshal_with(threshold_model)
     @ns.response(200, "Threshold successfully retrieved")
     def get(self, epoch):
         app.logger.debug(f"Getting threshold for epoch {epoch}")
-        threshold = rewards.get_allocation_threshold(epoch)
+        threshold = get_allocation_threshold(epoch)
         app.logger.debug(f"Threshold in epoch: {epoch}: {threshold}")
 
         return {"threshold": threshold}
@@ -269,8 +271,8 @@ class Threshold(OctantResource):
     "Invalid epoch number given. The epoch must be finalized",
 )
 @ns.route("/proposals/epoch/<int:epoch>")
-class FinalizedProposalsRewards(OctantResource):
-    @ns.marshal_with(proposals_rewards_model)
+class FinalizedProjectsRewards(OctantResource):
+    @ns.marshal_with(projects_rewards_model)
     def get(self, epoch):
         app.logger.debug(f"Getting proposal rewards for a finalized epoch {epoch}")
         proposal_rewards = rewards.get_finalized_epoch_proposals_rewards(epoch)
@@ -280,21 +282,21 @@ class FinalizedProposalsRewards(OctantResource):
 
 
 @ns.doc(
-    description="Returns proposals with estimated matched rewards for the pending epoch"
+    description="Returns project rewards with estimated matched rewards for the pending epoch"
 )
 @ns.response(
     200,
     "",
 )
 @ns.route("/proposals/estimated")
-class EstimatedProposalsRewards(OctantResource):
-    @ns.marshal_with(proposals_rewards_model)
+class EstimatedProjectRewards(OctantResource):
+    @ns.marshal_with(projects_rewards_model)
     def get(self):
-        app.logger.debug("Getting proposal rewards for the pending epoch")
-        proposal_rewards = rewards.get_estimated_proposals_rewards()
-        app.logger.debug(f"Proposal rewards in pending epoch: {proposal_rewards}")
+        app.logger.debug("Getting project rewards for the pending epoch")
+        project_rewards = get_estimated_project_rewards().rewards
+        app.logger.debug(f"Project rewards in the pending epoch: {project_rewards}")
 
-        return {"rewards": proposal_rewards}
+        return {"rewards": project_rewards}
 
 
 @ns.route("/unused/<int:epoch>")

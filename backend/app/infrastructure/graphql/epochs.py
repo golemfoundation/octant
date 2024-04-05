@@ -1,5 +1,7 @@
-from flask import current_app as app, g as request_context
+from flask import current_app as app
 from gql import gql
+
+from app.extensions import gql_factory
 
 from app import exceptions
 
@@ -23,9 +25,7 @@ query GetEpoch($epochNo: Int!) {
     app.logger.debug(
         f"[Subgraph] Getting epoch properties for epoch number: {epoch_number}"
     )
-    data = request_context.graphql_client.execute(query, variable_values=variables)[
-        "epoches"
-    ]
+    data = gql_factory.build().execute(query, variable_values=variables)["epoches"]
 
     if data:
         app.logger.debug(f"[Subgraph] Received epoch properties: {data[0]}")
@@ -41,7 +41,7 @@ def get_epochs_by_range(from_epoch, to_epoch):
     query = gql(
         """
 query GetEpochs($fromEpoch: Int!, $toEpoch: Int!) {
-  epoches(where: {epoch_gte: $fromEpoch, epoch_lte: $toEpoch}) {
+  epoches(where: {epoch_gt: $fromEpoch, epoch_lte: $toEpoch}) {
     toTs
     fromTs
     epoch
@@ -57,7 +57,7 @@ query GetEpochs($fromEpoch: Int!, $toEpoch: Int!) {
     app.logger.debug(
         f"[Subgraph] Getting list of epochs within range <{from_epoch, to_epoch}>"
     )
-    data = request_context.graphql_client.execute(query, variable_values=variables)
+    data = gql_factory.build().execute(query, variable_values=variables)
     return data["epoches"]
 
 
@@ -80,5 +80,5 @@ query {
     )
 
     app.logger.debug("[Subgraph] Getting list of all epochs")
-    data = request_context.graphql_client.execute(query)
+    data = gql_factory.build().execute(query)
     return data

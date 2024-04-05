@@ -3,8 +3,9 @@ import pytest
 from app.engine.projects import DefaultProjectRewards
 from app.engine.projects.rewards import (
     ProjectRewardsPayload,
+    ProjectRewardsResult,
     ProjectRewardDTO,
-    AllocationPayload,
+    AllocationItem,
 )
 from tests.helpers.context import get_project_details
 
@@ -18,18 +19,18 @@ def test_compute_rewards_for_none_allocations():
 
     result = uut.calculate_project_rewards(payload)
 
-    assert result == ([], 0, 0)
+    assert result == ProjectRewardsResult([], 0, 0, 0)
 
 
 def test_compute_rewards_for_allocations_to_one_project():
     projects = get_project_details().projects
-    allocations = [AllocationPayload(projects[0], 100_000000000)]
+    allocations = [AllocationItem(projects[0], 100_000000000)]
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects)
     uut = DefaultProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
 
-    project_rewards = result[0]
+    project_rewards = result.rewards
     assert len(project_rewards) == 10
     assert project_rewards[0] == ProjectRewardDTO(
         projects[0], 100000000000, 100000000000000000000
@@ -38,7 +39,7 @@ def test_compute_rewards_for_allocations_to_one_project():
         assert project.allocated == 0
         assert project.matched == 0
 
-    assert result[1] == pytest.approx(
+    assert result.rewards_sum == pytest.approx(
         MATCHED_REWARDS + 100_000000000, 0.00000000000000000001
     )
 
@@ -46,17 +47,17 @@ def test_compute_rewards_for_allocations_to_one_project():
 def test_compute_rewards_for_allocations_to_multiple_project():
     projects = get_project_details().projects
     allocations = [
-        AllocationPayload(projects[0], 100_000000000),
-        AllocationPayload(projects[0], 100_000000000),
-        AllocationPayload(projects[1], 200_000000000),
-        AllocationPayload(projects[2], 500_000000000),
+        AllocationItem(projects[0], 100_000000000),
+        AllocationItem(projects[0], 100_000000000),
+        AllocationItem(projects[1], 200_000000000),
+        AllocationItem(projects[2], 500_000000000),
     ]
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects)
     uut = DefaultProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
 
-    project_rewards = result[0]
+    project_rewards = result.rewards
     assert len(project_rewards) == 10
     assert project_rewards[0] == ProjectRewardDTO(
         projects[2], 500_000000000, 55555555555555555555
@@ -72,7 +73,7 @@ def test_compute_rewards_for_allocations_to_multiple_project():
         assert project.allocated == 0
         assert project.matched == 0
 
-    assert result[1] == pytest.approx(
+    assert result.rewards_sum == pytest.approx(
         MATCHED_REWARDS + 500_000000000 + 200_000000000 + 200_000000000,
         0.00000000000000000001,
     )
@@ -81,16 +82,16 @@ def test_compute_rewards_for_allocations_to_multiple_project():
 def test_total_matched_rewards_are_distributed():
     projects = get_project_details().projects
     allocations = [
-        AllocationPayload(projects[0], 200_000000000),
-        AllocationPayload(projects[1], 200_000000000),
-        AllocationPayload(projects[2], 500_000000000),
+        AllocationItem(projects[0], 200_000000000),
+        AllocationItem(projects[1], 200_000000000),
+        AllocationItem(projects[2], 500_000000000),
     ]
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects)
     uut = DefaultProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
 
-    assert sum([r.matched for r in result[0]]) == pytest.approx(
+    assert sum([r.matched for r in result.rewards]) == pytest.approx(
         MATCHED_REWARDS, 0.00000000000000000001
     )
 
@@ -99,16 +100,16 @@ def test_compute_rewards_when_one_project_is_below_threshold():
     projects = get_project_details().projects
 
     allocations = [
-        AllocationPayload(projects[0], 69_000000000),
-        AllocationPayload(projects[1], 200_000000000),
-        AllocationPayload(projects[2], 500_000000000),
+        AllocationItem(projects[0], 69_000000000),
+        AllocationItem(projects[1], 200_000000000),
+        AllocationItem(projects[2], 500_000000000),
     ]
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects[:5])
     uut = DefaultProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
 
-    project_rewards = result[0]
+    project_rewards = result.rewards
     assert len(project_rewards) == 5
     assert project_rewards[0] == ProjectRewardDTO(
         projects[2], 500_000000000, 71428571428571428571
@@ -117,48 +118,82 @@ def test_compute_rewards_when_one_project_is_below_threshold():
         projects[1], 200_000000000, 28571428571428571428
     )
     assert project_rewards[2] == ProjectRewardDTO(projects[0], 69_000000000, 0)
-    assert result[1] == pytest.approx(
+    assert result.rewards_sum == pytest.approx(
         MATCHED_REWARDS + 500_000000000 + 200_000000000, 0.00000000000000000001
     )
+
+    assert result.threshold == 153_800000000
+
+
+def test_compute_rewards_when_one_project_is_at_threshold():
+    projects = get_project_details().projects
+
+    allocations = [
+        AllocationItem(projects[0], 100_000000000),
+        AllocationItem(projects[1], 400_000000000),
+        AllocationItem(projects[2], 500_000000000),
+    ]
+    payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects[:5])
+    uut = DefaultProjectRewards()
+
+    result = uut.calculate_project_rewards(payload)
+
+    project_rewards = result.rewards
+    assert len(project_rewards) == 5
+    assert project_rewards[0] == ProjectRewardDTO(
+        projects[2], 500_000000000, 55555555555555555555
+    )
+    assert project_rewards[1] == ProjectRewardDTO(
+        projects[1], 400_000000000, 44444444444444444444
+    )
+
+    assert project_rewards[2] == ProjectRewardDTO(projects[0], 100_000000000, 0)
+    assert result.rewards_sum == pytest.approx(
+        MATCHED_REWARDS + 500_000000000 + 400_000000000, 0.00000000000000000001
+    )
+    assert result.threshold == 200_000000000
 
 
 def test_compute_rewards_when_multiple_projects_are_below_threshold():
     projects = get_project_details().projects
 
     allocations = [
-        AllocationPayload(projects[0], 30_000000000),
-        AllocationPayload(projects[1], 30_000000000),
-        AllocationPayload(projects[2], 500_000000000),
+        AllocationItem(projects[0], 30_000000000),
+        AllocationItem(projects[1], 30_000000000),
+        AllocationItem(projects[2], 500_000000000),
     ]
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects[:5])
     uut = DefaultProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
 
-    project_rewards = result[0]
-    assert len(result[0]) == 5
+    project_rewards = result.rewards
+    assert len(result.rewards) == 5
     assert project_rewards[0] == ProjectRewardDTO(
         projects[2], 500_000000000, 100000000000000000000
     )
     assert project_rewards[1] == ProjectRewardDTO(projects[0], 30_000000000, 0)
     assert project_rewards[2] == ProjectRewardDTO(projects[1], 30_000000000, 0)
-    assert result[1] == pytest.approx(
+    assert result.rewards_sum == pytest.approx(
         MATCHED_REWARDS + 500_000000000, 0.00000000000000000001
     )
+
+    assert result.threshold == 112_000000000
 
 
 def test_total_allocated_is_computed():
     projects = get_project_details().projects
 
     allocations = [
-        AllocationPayload(projects[0], 300_000000000),
-        AllocationPayload(projects[0], 300_000000000),
-        AllocationPayload(projects[1], 200_000000000),
-        AllocationPayload(projects[2], 500_000000000),
+        AllocationItem(projects[0], 300_000000000),
+        AllocationItem(projects[0], 300_000000000),
+        AllocationItem(projects[1], 200_000000000),
+        AllocationItem(projects[2], 500_000000000),
     ]
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects[:5])
     uut = DefaultProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
 
-    assert result[2] == 1300_000000000
+    assert result.total_allocated == 1300_000000000
+    assert result.threshold == 260_000000000

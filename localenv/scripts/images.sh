@@ -12,7 +12,7 @@ create_tmp_dockerfile(){
   service="${1}"
   tmp_dockerfile=$(mktemp -t "octant-dockerfile-${service}.XXXXXXXX")
 
-  sed "s/local-docker-registry.wildland.dev\///g" "${OCTANT_ROOT}/ci/Dockerfile.${service}" >$tmp_dockerfile
+  sed "s/local-docker-registry.wildland.dev:80\///g" "${OCTANT_ROOT}/ci/Dockerfile.${service}" >$tmp_dockerfile
 
   echo $tmp_dockerfile
 }
@@ -22,8 +22,9 @@ build_image(){
   image=$1
   dockerfile=$2
   context_dir=$3
+  additional_params=${4:-""}
 
-  image_id=$(docker build -q --tag "${DOCKER_IMAGE_PREFIX}/${image}:${DOCKER_TAG}" -f ${dockerfile} "${context_dir}")
+  image_id=$(docker build ${additional_params} -q --tag "${DOCKER_IMAGE_PREFIX}/${image}:${DOCKER_TAG}" -f ${dockerfile} "${context_dir}")
 
   echo "Created ${image} image ${image_id}"
 }
@@ -58,15 +59,15 @@ build_subgraph_base(){
 build_backend(){
   echo Building backend-base image ...
   dockerfile=$(create_tmp_dockerfile backend)
-  build_image backend-base ${dockerfile} "${OCTANT_ROOT}/backend"
+  build_image backend-base ${dockerfile} "${OCTANT_ROOT}/backend" "--platform linux/amd64"
   echo Finished building backend-base image!
 
   echo Building backend image ...
-  build_image backend "${OCTANT_ROOT}/localenv/backend/Dockerfile" "${OCTANT_ROOT}/localenv/backend"
+  build_image backend "${OCTANT_ROOT}/localenv/backend/Dockerfile" "${OCTANT_ROOT}/localenv/backend" "--platform linux/amd64"
   echo Finished building backend image!
 
   echo Building backend-apitest image ...
-  build_image backend-apitest "${OCTANT_ROOT}/localenv/backend-apitest/Dockerfile" "${OCTANT_ROOT}/localenv/backend-apitest"
+  build_image backend-apitest "${OCTANT_ROOT}/localenv/backend-apitest/Dockerfile" "${OCTANT_ROOT}/localenv/backend-apitest" "--platform linux/amd64"
   echo Finished building backend-apitest image!
 }
 
@@ -116,15 +117,15 @@ build_subgraph(){
 
 
 ### Localenv tooling
-build_control_plane &
-build_snapshotter &
-build_anvil &
-build_multideployer &
+build_control_plane
+build_snapshotter
+build_anvil
+build_multideployer
 
 ### PROD-like images
-build_contracts &
-build_subgraph &
-build_backend &
-build_client &
+build_contracts
+build_subgraph
+build_backend
+build_client
 
 wait

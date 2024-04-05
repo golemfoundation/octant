@@ -1,9 +1,4 @@
-import {
-  UseQueryOptions,
-  UseQueryResult,
-  useQuery,
-  //  useQueryClient
-} from '@tanstack/react-query';
+import { UseQueryOptions, UseQueryResult, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
   apiGetMatchedProjectRewards,
@@ -11,9 +6,9 @@ import {
   Response as ApiResponse,
 } from 'api/calls/rewards';
 import { QUERY_KEYS } from 'api/queryKeys';
+import useSubscription from 'hooks/helpers/useSubscription';
+import { WebsocketListenEvent } from 'types/websocketEvents';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
-// import useSubscription from 'hooks/helpers/useSubscription';
-// import { WebsocketListenEvent } from 'types/websocketEvents';
 
 import useCurrentEpoch from './useCurrentEpoch';
 import useIsDecisionWindowOpen from './useIsDecisionWindowOpen';
@@ -55,25 +50,24 @@ export default function useMatchedProjectRewards(
   epoch?: number,
   options?: UseQueryOptions<Response, unknown, ProjectRewards[], any>,
 ): UseQueryResult<ProjectRewards[], unknown> {
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
-  // Disabled due to backend problem with socket.io (replaced by pooling)
-  // useSubscription<Response['rewards']>({
-  //   callback: data => {
-  //     queryClient.setQueryData(
-  //       QUERY_KEYS.matchedProjectRewards(
-  //         epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
-  //       ),
-  //       {
-  //         rewards: data,
-  //       },
-  //     );
-  //   },
-  //   enabled: epoch === undefined,
-  //   event: WebsocketListenEvent.proposalRewards,
-  // });
+  useSubscription<Response['rewards']>({
+    callback: data => {
+      queryClient.setQueryData(
+        QUERY_KEYS.matchedProjectRewards(
+          epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
+        ),
+        {
+          rewards: data,
+        },
+      );
+    },
+    enabled: epoch === undefined,
+    event: WebsocketListenEvent.projectRewards,
+  });
 
   return useQuery({
     enabled:
@@ -98,15 +92,5 @@ export default function useMatchedProjectRewards(
     ),
     select: response => parseResponse(response),
     ...options,
-    /**
-     * Refetching is required during AW.
-     * As we don't want to wait for a socket fix in OCT-1321 to release to production,
-     * we disable refetching for now.
-     * It impacts testing environments where AW open, but not production.
-     *
-     * TODO OCT-1320 remove this comment and commented refetchInterval. Enable socket.
-     */
-    //
-    // refetchInterval: 5000,
   });
 }

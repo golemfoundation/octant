@@ -1,4 +1,4 @@
-import { checkLocationWithLoader, visitWithLoader } from 'cypress/utils/e2e';
+import { checkLocationWithLoader, moveEpoch, visitWithLoader } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
@@ -21,12 +21,16 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           const currentEpochBefore = Number(
             win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
           );
-          await win.mutateAsyncMoveEpoch();
-          const currentEpochAfter = Number(
-            win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
-          );
-          wasEpochMoved = true;
-          expect(currentEpochBefore + 1).to.eq(currentEpochAfter);
+
+          cy.wrap(null).then(() => {
+            return moveEpoch(win).then(() => {
+              const currentEpochAfter = Number(
+                win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
+              );
+              wasEpochMoved = true;
+              expect(currentEpochBefore + 1).to.eq(currentEpochAfter);
+            });
+          });
         });
       } else {
         expect(true).to.be.true;
@@ -37,6 +41,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=MainLayout__body]').then(el => {
         const mainLayoutPaddingTop = parseInt(el.css('paddingTop'), 10);
 
+        cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
         cy.get('[data-test=ProjectsView__ProjectsList]')
           .should('be.visible')
           .children()
@@ -49,6 +54,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
 
             // list test
             cy.get('[data-test=ProjectsView__ProjectsList--archive]').first().should('be.visible');
+            cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
             cy.get('[data-test=ProjectsView__ProjectsList--archive]')
               .first()
               .children()
@@ -76,6 +82,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
                       .should('have.length', 1);
                   }
 
+                  cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
                   cy.get(`[data-test=ProjectsView__ProjectsListItem--archive--${i}]`)
                     .first()
                     .invoke('data', 'address')

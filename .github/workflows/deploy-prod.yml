@@ -5,31 +5,29 @@ on:
     tags:
       - v[0-9]+.[0-9]+.[0-9]+
 
-env:
-  IMAGE_TAG: "${{ github.sha }}"
-  GIT_TAG: "${{ github.ref }}"
-
 jobs:
-  build:
-    name: Build
-    uses: ./.github/workflows/tpl-images.yml
-    secrets: inherit
-    with:
-      image-tag: ${{ github.sha }}
-  output:
-    name: Output Variables
-    needs:
-    - build
+  run-deployment:
+    name: Run Deployment
     runs-on:
     - metal
     steps:
-      - name: Show variables for the CI pipeline
-        run : |
-          echo '================================'
-          echo '  Use the following variables'
-          echo ''
-          echo "CI_PIPELINE_SOURCE: pipeline"
-          echo "DEV_IMAGE_TAG: ${{ github.sha }}"
-          echo "PROD_IMAGE_TAG: ${GIT_TAG##*/}"
+      - name: Sanitise variables
+        id: sanitise-vars
+        env:
+          IMAGE_TAG: "${{ github.ref }}"
+          GIT_REF: "${{ github.sha }}"
+        run: |
+          set -ex
+
+          echo "IMAGE_TAG=${IMAGE_TAG##*/}" >> $GITHUB_OUTPUT
+          echo "GIT_REF=${GIT_REF}" >> $GITHUB_OUTPUT
         shell: bash
 
+      - name: Invoke octant-pipelines workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: deploy-prod.yml
+          repo: golemfoundation/octant-pipelines
+          ref: master
+          inputs: '{"image_tag":"${{ steps.sanitise-vars.outputs.IMAGE_TAG }}","git_ref":"${{ steps.sanitise-vars.outputs.GIT_REF }}"}'
+          token: "${{ secrets.GH_BOT_TOKEN }}"

@@ -1,11 +1,12 @@
 from typing import Union
 
 from eth_account import Account
-from eth_account.messages import encode_structured_data
 from eth_account.signers.local import LocalAccount
 from flask import current_app as app
 
 from app.extensions import w3
+from app.modules.dto import UserAllocationPayload
+from app.modules.common.signature import encode_for_signing, EncodingStandardFor
 
 
 def build_domain():
@@ -14,6 +15,16 @@ def build_domain():
         "version": "1.0.0",
         "chainId": app.config["CHAIN_ID"],
     }
+
+
+def build_allocations_eip712_structure(payload: UserAllocationPayload):
+    message = {}
+    message["allocations"] = [
+        {"proposalAddress": a.proposal_address, "amount": a.amount}
+        for a in payload.allocations
+    ]
+    message["nonce"] = payload.nonce
+    return build_allocations_eip712_data(message)
 
 
 def build_allocations_eip712_data(message: dict) -> dict:
@@ -78,7 +89,9 @@ def sign(account: Union[Account, LocalAccount], data: dict) -> str:
     Signs the provided message with w3.eth.account following EIP-712 structure
     :returns signature as a hexadecimal string.
     """
-    return account.sign_message(encode_structured_data(data)).signature.hex()
+    return account.sign_message(
+        encode_for_signing(EncodingStandardFor.DATA, data)
+    ).signature.hex()
 
 
 def recover_address(data: dict, signature: str) -> str:
@@ -87,5 +100,5 @@ def recover_address(data: dict, signature: str) -> str:
     :returns address as a hexadecimal string.
     """
     return w3.eth.account.recover_message(
-        encode_structured_data(data), signature=signature
+        encode_for_signing(EncodingStandardFor.DATA, data), signature=signature
     )

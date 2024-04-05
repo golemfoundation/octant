@@ -1,13 +1,13 @@
 import dataclasses
 
 from flask import current_app as app
+from flask import request
 from flask_restx import Namespace, fields
 
-from app.legacy.controllers import allocations
-from app.legacy.core.allocations import AllocationRequest
 from app.extensions import api
 from app.infrastructure import OctantResource
-from app.modules.user.allocations.controller import get_donors, simulate_allocation
+from app.modules.common import parse_bool
+from app.modules.user.allocations import controller
 
 ns = Namespace("allocations", description="Octant allocations")
 api.add_namespace(ns)
@@ -64,6 +64,10 @@ user_allocation_request = api.model(
     "UserAllocationRequest",
     {
         "payload": fields.Nested(allocation_payload),
+        "userAddress": fields.String(
+            required=True,
+            description="Wallet address of the user. EOA or EIP-1271",
+        ),
         "signature": fields.String(
             required=True,
             description="EIP-712 signature of the allocation payload as a hexadecimal string",
@@ -165,16 +169,14 @@ class Allocation(OctantResource):
     @ns.expect(user_allocation_request)
     @ns.response(201, "User allocated successfully")
     def post(self):
-        payload, signature = ns.payload["payload"], ns.payload["signature"]
+        app.logger.info(f"User allocation: {ns.payload}")
         is_manually_edited = (
             ns.payload["isManuallyEdited"] if "isManuallyEdited" in ns.payload else None
         )
-        app.logger.info(f"User allocation payload: {payload}, signature: {signature}")
-        user_address = allocations.allocate(
-            AllocationRequest(payload, signature, override_existing_allocations=True),
-            is_manually_edited,
+        controller.allocate(
+            ns.userAddress, ns.payload, is_manually_edited=is_manually_edited
         )
-        app.logger.info(f"User: {user_address} allocated successfully")
+        app.logger.info(f"User: {ns.userAddress} allocated successfully")
 
         return {}, 201
 
@@ -200,6 +202,10 @@ user_leverage_model = api.model(
             required=True,
             description="Leverage of the allocated funds",
         ),
+        "threshold": fields.String(
+            required=True,
+            description="Simulated threshold, above which projects get funded.",
+        ),
         "matched": fields.List(
             fields.Nested(matched_reward),
             required=True,
@@ -222,12 +228,15 @@ class AllocationLeverage(OctantResource):
     @ns.response(200, "User leverage successfully estimated")
     def post(self, user_address: str):
         app.logger.debug("Estimating user leverage")
-        leverage, matched = simulate_allocation(ns.payload, user_address)
+        leverage, threshold, matched = controller.simulate_allocation(
+            ns.payload, user_address
+        )
 
         app.logger.debug(f"Estimated leverage: {leverage}")
+        app.logger.debug(f"Estimated threshold: {threshold}")
         app.logger.debug(f"Matched rewards:  {matched}")
 
-        return {"leverage": leverage, "matched": matched}
+        return {"leverage": leverage, "threshold": threshold, "matched": matched}
 
 
 @ns.route("/epoch/<int:epoch>")
@@ -238,12 +247,22 @@ class AllocationLeverage(OctantResource):
     },
 )
 class EpochAllocations(OctantResource):
+    @ns.param(
+        "includeZeroAllocations",
+        description="Include zero allocations to projects. Defaults to false.",
+        _in="query",
+    )
     @ns.marshal_with(epoch_allocations_model)
     @ns.response(200, "Epoch allocations successfully retrieved")
     def get(self, epoch: int):
+        include_zero_allocations = request.args.get(
+            "includeZeroAllocations", default=False, type=parse_bool
+        )
         app.logger.debug(f"Getting latest allocations in epoch {epoch}")
-        allocs = allocations.get_all_by_epoch(epoch, include_zeroes=True)
-        app.logger.debug(f"Allocations for epoch {epoch}: {allocs}")
+        allocs = controller.get_all_allocations(epoch, include_zero_allocations)
+        app.logger.debug(
+            f"Allocations for epoch {epoch} (with zero allocations: {include_zero_allocations}): {allocs}"
+        )
 
         return {"allocations": allocs}
 
@@ -264,7 +283,7 @@ class UserAllocations(OctantResource):
         (
             allocs,
             is_manually_edited,
-        ) = allocations.get_last_request_by_user_and_epoch(user_address, epoch)
+        ) = controller.get_last_user_allocation(user_address, epoch)
 
         user_allocations = [dataclasses.asdict(w) for w in allocs]
         app.logger.debug(
@@ -275,21 +294,6 @@ class UserAllocations(OctantResource):
             "allocations": user_allocations,
             "isManuallyEdited": is_manually_edited,
         }
-
-
-@ns.route("/users/sum")
-@ns.doc(
-    description="Returns user's allocations sum",
-)
-class UserAllocationsSum(OctantResource):
-    @ns.marshal_with(user_allocations_sum_model)
-    @ns.response(200, "User allocations sum successfully retrieved")
-    def get(self):
-        app.logger.debug("Getting users allocations sum")
-        allocations_sum = allocations.get_sum_by_epoch()
-        app.logger.debug(f"Users allocations sum: {allocations_sum}")
-
-        return {"amount": str(allocations_sum)}
 
 
 @ns.route("/proposal/<string:proposal_address>/epoch/<int:epoch>")
@@ -308,8 +312,8 @@ class ProposalDonors(OctantResource):
             f"Getting donors for proposal {proposal_address} in epoch {epoch}"
         )
         donors = [
-            dataclasses.asdict(w)
-            for w in allocations.get_all_by_proposal_and_epoch(proposal_address, epoch)
+            {"address": w.donor, "amount": w.amount}
+            for w in controller.get_all_donations_by_project(proposal_address, epoch)
         ]
         app.logger.debug(f"Proposal donors {donors}")
 
@@ -324,7 +328,7 @@ class AllocationNonce(OctantResource):
     @ns.marshal_with(allocation_nonce_model)
     @ns.response(200, "User allocations nonce successfully retrieved")
     def get(self, user_address: str):
-        return {"allocationNonce": allocations.get_allocation_nonce(user_address)}
+        return {"allocationNonce": controller.get_user_next_nonce(user_address)}
 
 
 @ns.route("/donors/<int:epoch>")
@@ -339,7 +343,7 @@ class Donors(OctantResource):
     @ns.response(200, "Donors addresses retrieved")
     def get(self, epoch: int):
         app.logger.debug(f"Getting donors addresses for epoch {epoch}")
-        donors = get_donors(epoch)
+        donors = controller.get_donors(epoch)
         app.logger.debug(f"Donors addresses: {donors}")
 
         return {"donors": donors}

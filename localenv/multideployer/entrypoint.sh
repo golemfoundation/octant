@@ -3,7 +3,7 @@
 set -ueo pipefail
 
 export LOCAL_RPC_URL=${RPC_URL}
-export PORT=${PORT:-8546}
+export PORT=${PORT:-8022}
 
 wait_for_rpc(){
     curl  --retry-connrefused --retry 10 --retry-delay 1 \

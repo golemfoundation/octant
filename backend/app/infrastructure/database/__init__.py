@@ -10,4 +10,5 @@ from . import (  # noqa
     patrons,
     claims,
     user_consents,
+    multisig_signature,
 )

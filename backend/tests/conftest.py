@@ -2,64 +2,66 @@ from __future__ import annotations
 
 import json
 import os
-from random import randint
 import time
-from typing import Dict, List, Optional
-from unittest.mock import MagicMock, Mock
 import urllib.request
+from unittest.mock import MagicMock, Mock
 
 import gql
 import pytest
-from eth_account import Account
 from flask import g as request_context
 from flask.testing import FlaskClient
 from web3 import Web3
 
 from app import create_app
+from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
+from app.extensions import db, deposits, glm, gql_factory, w3
 from app.infrastructure import database
 from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.proposals import Proposals
 from app.infrastructure.contracts.vault import Vault
-from app.legacy.controllers.allocations import allocate, deserialize_payload
-from app.legacy.core.allocations import AllocationRequest, Allocation
+from app.infrastructure.database.multisig_signature import SigStatus
 from app.legacy.crypto.account import Account as CryptoAccount
-from app.legacy.crypto.eip712 import sign, build_allocations_eip712_data
-from app.extensions import db, w3, deposits, glm
-from app.modules.dto import AccountFundsDTO
-from app.settings import TestConfig, DevConfig
-from app.engine.user.effective_deposit import UserDeposit, DepositEvent, EventType
+from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
+from app.modules.common.verifier import Verifier
+from app.modules.dto import AccountFundsDTO, AllocationItem, SignatureOpType
+from app.settings import DevConfig, TestConfig
+from tests.helpers import make_user_allocation
 from tests.helpers.constants import (
-    MNEMONIC,
-    MOCKED_PENDING_EPOCH_NO,
-    MOCKED_CURRENT_EPOCH_NO,
-    ETH_PROCEEDS,
-    TOTAL_ED,
-    LOCKED_RATIO,
-    TOTAL_REWARDS,
-    ALL_INDIVIDUAL_REWARDS,
-    USER1_ED,
-    USER2_ED,
-    USER3_ED,
-    USER_MOCKED_BUDGET,
-    DEPLOYER_PRIV,
     ALICE,
     BOB,
     CAROL,
+    DEPLOYER_PRIV,
+    ETH_PROCEEDS,
+    LEFTOVER,
+    MATCHED_REWARDS,
+    MNEMONIC,
+    MOCKED_CURRENT_EPOCH_NO,
+    MOCKED_FINALIZED_EPOCH_NO,
+    MOCKED_PENDING_EPOCH_NO,
+    TOTAL_ED,
+    TOTAL_WITHDRAWALS,
+    USER1_ADDRESS,
     USER1_BUDGET,
+    USER2_ADDRESS,
     USER2_BUDGET,
     USER3_BUDGET,
-    MOCKED_FINALIZED_EPOCH_NO,
-    MATCHED_REWARDS,
-    USER1_ADDRESS,
-    USER2_ADDRESS,
-    OPERATIONAL_COST,
-    LEFTOVER,
-    TOTAL_WITHDRAWALS,
+    USER_MOCKED_BUDGET,
+    COMMUNITY_FUND,
+    PPF,
+    MOCKED_EPOCH_NO_AFTER_OVERHAUL,
+    MATCHED_REWARDS_AFTER_OVERHAUL,
+    NO_PATRONS_REWARDS,
+    MULTISIG_APPROVALS_THRESHOLD,
+    MULTISIG_MOCKED_MESSAGE,
+    MULTISIG_MOCKED_HASH,
 )
+from tests.helpers.context import get_context
 from tests.helpers.gql_client import MockGQLClient
 from tests.helpers.mocked_epoch_details import EPOCH_EVENTS
 from tests.helpers.octant_rewards import octant_rewards
+from tests.helpers.pending_snapshot import create_pending_snapshot
+from tests.helpers.signature import create_multisig_signature
 from tests.helpers.subgraph.events import create_deposit_event
 
 # Contracts mocks
@@ -75,6 +77,108 @@ MOCK_HAS_PENDING_SNAPSHOT = Mock()
 MOCK_LAST_FINALIZED_SNAPSHOT = Mock()
 MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
 MOCK_IS_CONTRACT = Mock()
+
+
+def mock_etherscan_api_get_transactions(*args, **kwargs):
+    if kwargs["tx_type"] == "txlist":
+        return [
+            {
+                "hash": "0x48da2e43af550ff80da0d31340e48a3e32d4e2612ae851b653cc17f859e235dd",
+                "to": "0x1234123456123456123456123456123456123456",
+                "value": "63731797601781525",
+                "isError": "0",
+                "functionName": "",
+            }
+        ]
+    elif kwargs["tx_type"] == "txlistinternal":
+        return [
+            {
+                "hash": "0x6281a4a2007cdcce0485b0e7866e69eddcacdf2b6266601046bfc99c2fc288b8",
+                "to": "0x1234123456123456123456123456123456123456",
+                "value": "3081369209350255",
+                "isError": "0",
+            }
+        ]
+    else:
+        return [
+            {"amount": "1498810", "withdrawalIndex": "11446030"},
+        ]
+
+
+def mock_etherscan_api_get_block_num_from_ts(*args, **kwargs):
+    example_resp_json = {"status": "1", "message": "OK", "result": "12712551"}
+    return int(example_resp_json["result"])
+
+
+def mock_bitquery_api_get_blocks_rewards(*args, **kwargs):
+    example_resp_json = {
+        "data": {
+            "ethereum": {
+                "blocks": [
+                    {
+                        "reward": 0.077902794919848902,
+                    },
+                ]
+            }
+        }
+    }
+
+    return example_resp_json["data"]["ethereum"]["blocks"][0]["reward"]
+
+
+def mock_safe_api_message_details(*args, **kwargs):
+    example_resp_json = {
+        "created": "2023-10-27T07:34:09.184140Z",
+        "modified": "2023-10-28T20:54:46.207427Z",
+        "safe": "0xa40FcB633d0A6c0d27aA9367047635Ff656229B0",
+        "messageHash": "0x7f6dfab0a617fcb1c8f351b321a8844d98d9ee160e7532efc39ee06c02308ec6",
+        "message": "Welcome to Octant.\nPlease click to sign in and accept the Octant Terms of Service.\n\nSigning this message will not trigger a transaction.\n\nYour address\n0xa40FcB633d0A6c0d27aA9367047635Ff656229B0",
+        "proposedBy": "0x5754aC842D6eaF6a4E29101D46ac25D7C567311E",
+        "safeAppId": 111,
+        "confirmations": [
+            {
+                "created": "2023-10-27T07:34:09.223358Z",
+                "modified": "2023-10-27T07:34:09.223358Z",
+                "owner": "0x5754aC842D6eaF6a4E29101D46ac25D7C567311E",
+                "signature": "0xa35a1d5689b5daf1003a06479952701bc3574d66fa89c4433c634a864910ddf337b63354a66b11bedb5b6e4f7c0bf1fe2d2797d05dd288fb56e8e5d636a5064c1c",
+                "signatureType": "EOA",
+            },
+            {
+                "created": "2023-10-28T08:37:40.741190Z",
+                "modified": "2023-10-28T08:37:40.741190Z",
+                "owner": "0xa35E7b6524d312B7FABefd00F9A8e4524581Dc85",
+                "signature": "0xa966dd0a074f4891a286b115adc191469bc19fe07105468ca582bd82c952165529a452e93ddbb062859bd2fd4c6efd68808a5e3444053ddd5e46244bb300c6fd1f",
+                "signatureType": "ETH_SIGN",
+            },
+            {
+                "created": "2023-10-28T20:54:46.207427Z",
+                "modified": "2023-10-28T20:54:46.207427Z",
+                "owner": "0x4280Ce44aFAb1e5E940574F135802E12ad2A5eF0",
+                "signature": "0x1d2ca05dbfda9d996aacf47b78f5ee6f477171c3895fe0bd496f68b33f68059463539264dffb513c4bf7857aaa646c170f3a47189a61ae9734d3724503c560f220",
+                "signatureType": "ETH_SIGN",
+            },
+        ],
+        "preparedSignature": "0x1c2ca05dbfda9d996aacf47b78f5ee6f477171c3895fe0bd496f68b33f68059463539264dffb513c4bf7857aaa646c170f3a47189a61ae9734d3724503c560f220a37a1d5689b5daf1003a06479952701bc3574d66fa89c4433c634a864910ddf337b63354a66b11bedb5b6e4f7c0bf1fe2d2797d05dd288fb56e8e5d636a5064c1ca966dd0a074f4891a286b115adc191469bc19fe07105468ca582bd82c952165529a452e93ddbb062859bd2fd4c6efd68808a5e3444053ddd5e46244bb300c6fd1f",
+    }
+    return example_resp_json
+
+
+def mock_safe_api_user_details(*args, **kwargs):
+    example_resp_json = {
+        "address": "0x89d2EcE5ca5cee0672d8BaD68cC7638D30Dc005e",
+        "nonce": 0,
+        "threshold": MULTISIG_APPROVALS_THRESHOLD,
+        "owners": [
+            "0x94F9B0F7B5d00e33f5DEaBBf780e2E6D870E9714",
+            "0x6c1865c85C1ebd545FD891Aa38dE993c485aE90a",
+        ],
+        "masterCopy": "0xfb1bffC9d739B8D520DaF37dF666da4C687191EA",
+        "modules": [],
+        "fallbackHandler": "0x017062a1dE2FE6b99BE3d9d37841FeD19F573804",
+        "guard": "0x0000000000000000000000000000000000000000",
+        "version": "1.3.0+L2",
+    }
+    return example_resp_json
 
 
 def pytest_addoption(parser):
@@ -111,7 +215,7 @@ def pytest_collection_modifyitems(config, items):
                 item.add_marker(skip_api)
 
 
-def setup_deployment() -> Dict[str, str]:
+def setup_deployment() -> dict[str, str]:
     deployer = os.getenv("CONTRACTS_DEPLOYER_URL")
     testname = f"octant_test_{random_string()}"
     f = urllib.request.urlopen(f"{deployer}/?name={testname}")
@@ -181,7 +285,7 @@ class UserAccount:
         )
         w3.eth.send_raw_transaction(signed_txn.rawTransaction)
 
-    def transfer(self, account: "UserAccount", value: int):
+    def transfer(self, account: UserAccount, value: int):
         glm.transfer(self._account, account.address, w3.to_wei(value, "ether"))
 
     def lock(self, value: int):
@@ -203,7 +307,7 @@ class UserAccount:
         }
 
         signature = sign(self._account, build_allocations_eip712_data(payload))
-        self._client.allocate(payload, signature)
+        self._client.allocate(payload, self._account.address, signature)
 
     @property
     def address(self):
@@ -267,9 +371,14 @@ class Client:
         ).text
         return json.loads(rv)["allocationNonce"]
 
-    def allocate(self, payload: dict, signature: str) -> int:
+    def allocate(self, payload: dict, user_address: str, signature: str) -> int:
         rv = self._flask_client.post(
-            "/allocations/allocate", json={"payload": payload, "signature": signature}
+            "/allocations/allocate",
+            json={
+                "payload": payload,
+                "userAddress": user_address,
+                "signature": signature,
+            },
         )
         assert rv.status_code == 201, rv.text
 
@@ -352,16 +461,23 @@ def carol(user_accounts):
 
 
 @pytest.fixture(scope="function")
+def context():
+    return get_context()
+
+
+@pytest.fixture(scope="function")
+def projects(context):
+    return context.projects_details.projects
+
+
+@pytest.fixture(scope="function")
 def mock_epoch_details(mocker, graphql_client):
     mock_graphql(mocker, epochs_events=list(EPOCH_EVENTS.values()))
 
 
 @pytest.fixture(scope="function")
 def patch_epochs(monkeypatch):
-    monkeypatch.setattr("app.legacy.controllers.allocations.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.controllers.snapshots.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.legacy.controllers.rewards.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.legacy.controllers.withdrawals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.core.proposals.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.context.epoch_state.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.context.epoch_details.epochs", MOCK_EPOCHS)
@@ -382,7 +498,6 @@ def patch_epochs(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_proposals(monkeypatch, proposal_accounts):
-    monkeypatch.setattr("app.legacy.core.allocations.proposals", MOCK_PROPOSALS)
     monkeypatch.setattr("app.legacy.core.proposals.proposals", MOCK_PROPOSALS)
     monkeypatch.setattr("app.context.projects.proposals", MOCK_PROPOSALS)
 
@@ -402,7 +517,8 @@ def patch_glm(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_vault(monkeypatch):
-    monkeypatch.setattr("app.legacy.controllers.withdrawals.vault", MOCK_VAULT)
+    monkeypatch.setattr("app.modules.withdrawals.service.pending.vault", MOCK_VAULT)
+    monkeypatch.setattr("app.modules.withdrawals.service.finalized.vault", MOCK_VAULT)
     MOCK_VAULT.get_last_claimed_epoch.return_value = 0
 
 
@@ -411,13 +527,14 @@ def patch_is_contract(monkeypatch):
     monkeypatch.setattr(
         "app.legacy.crypto.eth_sign.signature.is_contract", MOCK_IS_CONTRACT
     )
+    monkeypatch.setattr("app.modules.common.signature.is_contract", MOCK_IS_CONTRACT)
     MOCK_IS_CONTRACT.return_value = False
 
 
 @pytest.fixture(scope="function")
 def patch_eip1271_is_valid_signature(monkeypatch):
     monkeypatch.setattr(
-        "app.legacy.crypto.eth_sign.signature.is_valid_signature",
+        "app.modules.common.signature.is_valid_signature",
         MOCK_EIP1271_IS_VALID_SIGNATURE,
     )
     MOCK_EIP1271_IS_VALID_SIGNATURE.return_value = True
@@ -438,7 +555,13 @@ def patch_eth_get_balance(monkeypatch):
 def patch_has_pending_epoch_snapshot(monkeypatch):
     (
         monkeypatch.setattr(
-            "app.legacy.core.allocations.has_pending_epoch_snapshot",
+            "app.context.epoch_state._has_pending_epoch_snapshot",
+            MOCK_HAS_PENDING_SNAPSHOT,
+        )
+    )
+    (
+        monkeypatch.setattr(
+            "app.context.epoch_state._has_pending_epoch_snapshot",
             MOCK_HAS_PENDING_SNAPSHOT,
         )
     )
@@ -458,13 +581,51 @@ def patch_last_finalized_snapshot(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_user_budget(monkeypatch):
-    monkeypatch.setattr("app.legacy.core.allocations.get_budget", MOCK_GET_USER_BUDGET)
-    monkeypatch.setattr("app.legacy.core.user.rewards.get_budget", MOCK_GET_USER_BUDGET)
     monkeypatch.setattr(
-        "app.legacy.core.history.budget.get_budget", MOCK_GET_USER_BUDGET
+        "app.modules.user.budgets.service.saved.SavedUserBudgets.get_budget",
+        MOCK_GET_USER_BUDGET,
+    )
+    MOCK_GET_USER_BUDGET.return_value = USER_MOCKED_BUDGET
+
+
+@pytest.fixture(scope="function")
+def patch_etherscan_transactions_api(monkeypatch):
+    monkeypatch.setattr(
+        "app.modules.staking.proceeds.service.aggregated.get_transactions",
+        mock_etherscan_api_get_transactions,
     )
 
-    MOCK_GET_USER_BUDGET.return_value = USER_MOCKED_BUDGET
+
+@pytest.fixture(scope="function")
+def patch_etherscan_get_block_api(monkeypatch):
+    monkeypatch.setattr(
+        "app.context.epoch_details.get_block_num_from_ts",
+        mock_etherscan_api_get_block_num_from_ts,
+    )
+
+
+@pytest.fixture(scope="function")
+def patch_bitquery_get_blocks_rewards(monkeypatch):
+    monkeypatch.setattr(
+        "app.modules.staking.proceeds.service.aggregated.get_blocks_rewards",
+        mock_bitquery_api_get_blocks_rewards,
+    )
+
+
+@pytest.fixture(scope="function")
+def patch_safe_api_message_details(monkeypatch):
+    monkeypatch.setattr(
+        "app.modules.multisig_signatures.service.offchain.get_message_details",
+        mock_safe_api_message_details,
+    )
+
+
+@pytest.fixture(scope="function")
+def patch_safe_api_user_details(monkeypatch):
+    monkeypatch.setattr(
+        "app.modules.multisig_signatures.service.offchain.get_user_details",
+        mock_safe_api_user_details,
+    )
 
 
 @pytest.fixture(scope="function")
@@ -478,33 +639,30 @@ def mock_users_db(app, user_accounts):
 
 
 @pytest.fixture(scope="function")
-def mock_pending_epoch_snapshot_db(app, mock_users_db):
-    database.pending_epoch_snapshot.save_snapshot(
-        MOCKED_PENDING_EPOCH_NO,
-        ETH_PROCEEDS,
-        TOTAL_ED,
-        LOCKED_RATIO,
-        TOTAL_REWARDS,
-        ALL_INDIVIDUAL_REWARDS,
-        OPERATIONAL_COST,
+def mock_pending_epoch_snapshot_db_since_epoch3(
+    app, mock_users_db, ppf=PPF, cf=COMMUNITY_FUND
+):
+    create_pending_snapshot(
+        epoch_nr=MOCKED_EPOCH_NO_AFTER_OVERHAUL,
+        mock_users_db=mock_users_db,
+        optional_ppf=ppf,
+        optional_cf=cf,
     )
-    user1, user2, user3 = mock_users_db
-    database.deposits.add(MOCKED_PENDING_EPOCH_NO, user1, USER1_ED, USER1_ED)
-    database.deposits.add(MOCKED_PENDING_EPOCH_NO, user2, USER2_ED, USER2_ED)
-    database.deposits.add(MOCKED_PENDING_EPOCH_NO, user3, USER3_ED, USER3_ED)
-    database.budgets.add(MOCKED_PENDING_EPOCH_NO, user1, USER1_BUDGET)
-    database.budgets.add(MOCKED_PENDING_EPOCH_NO, user2, USER2_BUDGET)
-    database.budgets.add(MOCKED_PENDING_EPOCH_NO, user3, USER3_BUDGET)
-
-    db.session.commit()
 
 
 @pytest.fixture(scope="function")
-def mock_finalized_epoch_snapshot_db(app, user_accounts):
-    database.finalized_epoch_snapshot.add_snapshot(
-        MOCKED_FINALIZED_EPOCH_NO,
-        MATCHED_REWARDS,
-        0,
+def mock_pending_epoch_snapshot_db(app, mock_users_db):
+    create_pending_snapshot(
+        epoch_nr=MOCKED_PENDING_EPOCH_NO, mock_users_db=mock_users_db
+    )
+
+
+@pytest.fixture(scope="function")
+def mock_finalized_epoch_snapshot_db_since_epoch3(app, user_accounts):
+    database.finalized_epoch_snapshot.save_snapshot(
+        MOCKED_EPOCH_NO_AFTER_OVERHAUL,
+        MATCHED_REWARDS_AFTER_OVERHAUL,
+        NO_PATRONS_REWARDS,
         LEFTOVER,
         total_withdrawals=TOTAL_WITHDRAWALS,
     )
@@ -513,48 +671,131 @@ def mock_finalized_epoch_snapshot_db(app, user_accounts):
 
 
 @pytest.fixture(scope="function")
-def mock_allocations_db(app, user_accounts, proposal_accounts):
-    user1 = database.user.get_or_add_user(user_accounts[0].address)
-    user2 = database.user.get_or_add_user(user_accounts[1].address)
+def mock_finalized_epoch_snapshot_db(app, user_accounts):
+    database.finalized_epoch_snapshot.save_snapshot(
+        MOCKED_FINALIZED_EPOCH_NO,
+        MATCHED_REWARDS,
+        NO_PATRONS_REWARDS,
+        LEFTOVER,
+        total_withdrawals=TOTAL_WITHDRAWALS,
+    )
+
     db.session.commit()
 
+
+@pytest.fixture(scope="function")
+def mock_allocations_db(app, mock_users_db, proposal_accounts):
+    prev_epoch_context = get_context(MOCKED_PENDING_EPOCH_NO - 1)
+    pending_epoch_context = get_context(MOCKED_PENDING_EPOCH_NO)
+    user1, user2, _ = mock_users_db
+
     user1_allocations = [
-        Allocation(proposal_accounts[0].address, 10 * 10**18),
-        Allocation(proposal_accounts[1].address, 5 * 10**18),
-        Allocation(proposal_accounts[2].address, 300 * 10**18),
+        AllocationItem(proposal_accounts[0].address, 10 * 10**18),
+        AllocationItem(proposal_accounts[1].address, 5 * 10**18),
+        AllocationItem(proposal_accounts[2].address, 300 * 10**18),
     ]
 
     user1_allocations_prev_epoch = [
-        Allocation(proposal_accounts[0].address, 101 * 10**18),
-        Allocation(proposal_accounts[1].address, 51 * 10**18),
-        Allocation(proposal_accounts[2].address, 3001 * 10**18),
+        AllocationItem(proposal_accounts[0].address, 101 * 10**18),
+        AllocationItem(proposal_accounts[1].address, 51 * 10**18),
+        AllocationItem(proposal_accounts[2].address, 3001 * 10**18),
     ]
 
     user2_allocations = [
-        Allocation(proposal_accounts[1].address, 1050 * 10**18),
-        Allocation(proposal_accounts[3].address, 500 * 10**18),
+        AllocationItem(proposal_accounts[1].address, 1050 * 10**18),
+        AllocationItem(proposal_accounts[3].address, 500 * 10**18),
     ]
 
     user2_allocations_prev_epoch = [
-        Allocation(proposal_accounts[1].address, 10501 * 10**18),
-        Allocation(proposal_accounts[3].address, 5001 * 10**18),
+        AllocationItem(proposal_accounts[1].address, 10501 * 10**18),
+        AllocationItem(proposal_accounts[3].address, 5001 * 10**18),
     ]
 
-    database.allocations.add_all(
-        MOCKED_PENDING_EPOCH_NO - 1, user1.id, 0, user1_allocations_prev_epoch
+    make_user_allocation(
+        prev_epoch_context,
+        user1,
+        nonce=0,
+        allocation_items=user1_allocations_prev_epoch,
     )
-    database.allocations.add_all(
-        MOCKED_PENDING_EPOCH_NO - 1, user2.id, 0, user2_allocations_prev_epoch
+    make_user_allocation(
+        prev_epoch_context,
+        user2,
+        nonce=0,
+        allocation_items=user2_allocations_prev_epoch,
     )
 
-    database.allocations.add_all(
-        MOCKED_PENDING_EPOCH_NO, user1.id, 1, user1_allocations
+    make_user_allocation(
+        pending_epoch_context, user1, nonce=1, allocation_items=user1_allocations
     )
-    database.allocations.add_all(
-        MOCKED_PENDING_EPOCH_NO, user2.id, 1, user2_allocations
+    make_user_allocation(
+        pending_epoch_context, user2, nonce=1, allocation_items=user2_allocations
     )
 
     db.session.commit()
+
+
+@pytest.fixture(scope="function")
+def mock_pending_multisig_signatures(alice):
+    create_multisig_signature(
+        alice.address,
+        MULTISIG_MOCKED_MESSAGE,
+        MULTISIG_MOCKED_HASH,
+        SignatureOpType.TOS,
+        "0.0.0.0",
+        SigStatus.PENDING,
+    )
+    create_multisig_signature(
+        alice.address,
+        MULTISIG_MOCKED_MESSAGE,
+        MULTISIG_MOCKED_HASH,
+        SignatureOpType.ALLOCATION,
+        "0.0.0.0",
+        SigStatus.PENDING,
+    )
+
+
+@pytest.fixture(scope="function")
+def mock_approved_multisig_signatures(alice):
+    create_multisig_signature(
+        alice.address,
+        MULTISIG_MOCKED_MESSAGE,
+        MULTISIG_MOCKED_HASH,
+        SignatureOpType.ALLOCATION,
+        "0.0.0.0",
+        SigStatus.APPROVED,
+    )
+    create_multisig_signature(
+        alice.address,
+        MULTISIG_MOCKED_MESSAGE,
+        MULTISIG_MOCKED_HASH,
+        SignatureOpType.TOS,
+        "0.0.0.0",
+        SigStatus.APPROVED,
+    )
+
+
+@pytest.fixture(scope="function")
+def mock_pending_allocation_signature(alice):
+    create_multisig_signature(
+        alice.address,
+        MULTISIG_MOCKED_MESSAGE,
+        MULTISIG_MOCKED_HASH,
+        SignatureOpType.ALLOCATION,
+        "0.0.0.0",
+        SigStatus.PENDING,
+    )
+
+
+@pytest.fixture(scope="function")
+def mock_pending_tos_signature(alice):
+    create_multisig_signature(
+        alice.address,
+        MULTISIG_MOCKED_MESSAGE,
+        MULTISIG_MOCKED_HASH,
+        SignatureOpType.TOS,
+        "0.0.0.0",
+        SigStatus.PENDING,
+    )
 
 
 @pytest.fixture(scope="function")
@@ -572,6 +813,23 @@ def mock_staking_proceeds():
     staking_proceeds_service_mock.get_staking_proceeds.return_value = ETH_PROCEEDS
 
     return staking_proceeds_service_mock
+
+
+@pytest.fixture(scope="function")
+def mock_verifier():
+    verifier_mock = Mock(Verifier)
+    verifier_mock.verify_logic.return_value = True
+    verifier_mock.verify_signature.return_value = True
+
+    return verifier_mock
+
+
+@pytest.fixture(scope="function")
+def mock_user_nonce():
+    user_nonce_service_mock = Mock()
+    user_nonce_service_mock.get_next_user_nonce.return_value = 0
+
+    return user_nonce_service_mock
 
 
 @pytest.fixture(scope="function")
@@ -643,6 +901,12 @@ def mock_patron_mode(bob):
 
 
 @pytest.fixture(scope="function")
+def mock_withdrawals():
+    withdrawals_service_mock = Mock()
+    return withdrawals_service_mock
+
+
+@pytest.fixture(scope="function")
 def mock_user_rewards(alice, bob):
     user_rewards_service_mock = Mock()
     user_rewards_service_mock.get_claimed_rewards.return_value = (
@@ -654,35 +918,6 @@ def mock_user_rewards(alice, bob):
     )
 
     return user_rewards_service_mock
-
-
-def allocate_user_rewards(
-    user_account: Account, proposal_account, allocation_amount, nonce: int = 0
-):
-    payload = create_payload([proposal_account], [allocation_amount], nonce)
-    signature = sign(user_account, build_allocations_eip712_data(payload))
-    request = AllocationRequest(payload, signature, override_existing_allocations=False)
-
-    allocate(request)
-
-
-def create_payload(proposals, amounts: Optional[List[int]], nonce: int = 0):
-    if amounts is None:
-        amounts = [randint(1 * 10**18, 1000 * 10**18) for _ in proposals]
-
-    allocations = [
-        {
-            "proposalAddress": proposal.address,
-            "amount": str(amount),
-        }
-        for proposal, amount in zip(proposals, amounts)
-    ]
-
-    return {"allocations": allocations, "nonce": nonce}
-
-
-def deserialize_allocations(payload) -> List[Allocation]:
-    return deserialize_payload(payload)[1]
 
 
 def _split_deposit_events(deposit_events):
@@ -717,5 +952,5 @@ def mock_graphql(
         withdrawals=withdrawals_events,
         merkle_roots=merkle_roots_events,
     )
-    mocker.patch.object(request_context.graphql_client, "execute")
-    request_context.graphql_client.execute.side_effect = mock_client.execute
+    mocker.patch.object(gql_factory, "build")
+    gql_factory.build.return_value = mock_client

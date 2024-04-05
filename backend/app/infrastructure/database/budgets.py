@@ -1,10 +1,11 @@
-from typing import Optional, Dict, List, Tuple
+from typing import Optional, Dict, List
 
 from eth_utils import to_checksum_address
 
 from app import db
 from app.infrastructure import database
 from app.infrastructure.database.models import User, Budget
+from app.modules.snapshots.pending import UserBudgetInfo
 
 
 def get_all_by_epoch(epoch: int) -> Dict[str, int]:
@@ -47,8 +48,11 @@ def add(epoch: int, user: User, budget: int):
     db.session.add(budget)
 
 
-def save_budgets(epoch: int, budgets: List[Tuple[str, int]]):
-    for address, budget in budgets:
+def save_budgets(epoch: int, budgets: List[UserBudgetInfo]):
+    for budget_info in budgets:
+        address = budget_info.user_address
+        budget = budget_info.budget
+
         user = database.user.get_or_add_user(address)
         user.budgets.append(
             Budget(

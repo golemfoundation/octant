@@ -63,7 +63,7 @@ class NotInDecisionWindow(OctantException):
         super().__init__(self.description, self.code)
 
 
-class InvalidProposals(OctantException):
+class InvalidProjects(OctantException):
     code = 400
     description = "The following proposals are not valid: {}"
 
@@ -71,7 +71,7 @@ class InvalidProposals(OctantException):
         super().__init__(self.description.format(proposals), self.code)
 
 
-class ProposalAllocateToItself(OctantException):
+class ProjectAllocationToSelf(OctantException):
     code = 400
     description = "You cannot allocate funds to your own project."
 
@@ -235,6 +235,22 @@ class EffectiveDepositNotFoundException(OctantException):
 class EmptyAllocations(OctantException):
     code = 400
     description = "Passed empty or zeroed allocations"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
+class InvalidBlocksRange(OctantException):
+    code = 400
+    description = "Attempt to use wrong range of start and end block in epoch"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
+class InvalidMultisigSignatureRequest(OctantException):
+    code = 400
+    description = "Given multisig signature request failed validation"
 
     def __init__(self):
         super().__init__(self.description, self.code)

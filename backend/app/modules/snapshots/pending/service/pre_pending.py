@@ -1,26 +1,8 @@
-from typing import Protocol, Tuple, List, runtime_checkable
-
 from app.context.manager import Context
-from app.engine.user.effective_deposit import UserDeposit
 from app.extensions import db
 from app.infrastructure import database
-from app.modules.dto import OctantRewardsDTO
-from app.modules.snapshots.pending.core import calculate_user_budgets
-from app.pydantic import Model
-
-
-@runtime_checkable
-class EffectiveDeposits(Protocol):
-    def get_all_effective_deposits(
-        self, context: Context
-    ) -> Tuple[List[UserDeposit], int]:
-        ...
-
-
-@runtime_checkable
-class OctantRewards(Protocol):
-    def get_octant_rewards(self, context: Context) -> OctantRewardsDTO:
-        ...
+from app.modules.dto import OctantRewardsDTO, PendingSnapshotDTO
+from app.modules.snapshots.pending.service.base import BasePrePendingSnapshots
 
 
 def save_snapshot(epoch: int, rewards: OctantRewardsDTO):
@@ -32,27 +14,27 @@ def save_snapshot(epoch: int, rewards: OctantRewardsDTO):
         locked_ratio=rewards.locked_ratio,
         total_ed=rewards.total_effective_deposit,
         operational_cost=rewards.operational_cost,
+        community_fund=rewards.community_fund,
+        ppf=rewards.ppf,
     )
 
 
-class PrePendingSnapshots(Model):
-    effective_deposits: EffectiveDeposits
-    octant_rewards: OctantRewards
-
+class PrePendingSnapshots(BasePrePendingSnapshots):
     def create_pending_epoch_snapshot(self, context: Context) -> int:
         pending_epoch = context.epoch_details.epoch_num
-        rewards = self.octant_rewards.get_octant_rewards(context)
-        (
-            user_deposits,
-            _,
-        ) = self.effective_deposits.get_all_effective_deposits(context)
-        user_budgets = calculate_user_budgets(
-            context.epoch_settings.user.budget, rewards, user_deposits
-        )
 
-        database.deposits.save_deposits(pending_epoch, user_deposits)
-        database.budgets.save_budgets(pending_epoch, user_budgets)
-        save_snapshot(pending_epoch, rewards)
-        db.session.commit()
+        pending_snapshot_dto = self._calculate_pending_epoch_snapshot(context)
+
+        self._save_snapshot(pending_epoch, pending_snapshot_dto)
 
         return pending_epoch
+
+    def _save_snapshot(self, epoch: int, pending_snapshot_dto: PendingSnapshotDTO):
+        user_deposits = pending_snapshot_dto.user_deposits
+        user_budgets = pending_snapshot_dto.user_budgets
+        rewards = pending_snapshot_dto.rewards
+
+        database.deposits.save_deposits(epoch, user_deposits)
+        database.budgets.save_budgets(epoch, user_budgets)
+        save_snapshot(epoch, rewards)
+        db.session.commit()
