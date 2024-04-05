@@ -17,15 +17,17 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 let wasTimeMoved = false;
 
 [Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
+  before(() => {
+    /**
+     * Global Metamask setup done by Synpress is not always done.
+     * Since Synpress needs to have valid provider to fetch the data from contracts,
+     * setupMetamask is required in each test suite.
+     */
+    cy.setupMetamask();
+    cy.clock();
+  });
+
   describe('move time', () => {
-    before(() => {
-      /**
-       * Global Metamask setup done by Synpress is not always done.
-       * Since Synpress needs to have valid provider to fetch the data from contracts,
-       * setupMetamask is required in each test suite.
-       */
-      cy.setupMetamask();
-    });
 
     beforeEach(() => {
       cy.disconnectMetamaskWalletFromAllDapps();
@@ -72,16 +74,6 @@ let wasTimeMoved = false;
     `allocation (allocation window closed): ${device}`,
     { viewportHeight, viewportWidth },
     () => {
-      before(() => {
-        /**
-         * Global Metamask setup done by Synpress is not always done.
-         * Since Synpress needs to have valid provider to fetch the data from contracts,
-         * setupMetamask is required in each test suite.
-         */
-        cy.setupMetamask();
-        cy.clock();
-      });
-
       beforeEach(() => {
         cy.disconnectMetamaskWalletFromAllDapps();
         mockCoinPricesServer();

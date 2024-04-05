@@ -25,17 +25,16 @@ const budget = 10000000000;
 const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
 
 [Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight }) => {
+  before(() => {
+    /**
+     * Global Metamask setup done by Synpress is not always done.
+     * Since Synpress needs to have valid provider to fetch the data from contracts,
+     * setupMetamask is required in each test suite.
+     */
+    cy.setupMetamask();
+    cy.clock();
+  });
   describe('move time', () => {
-    before(() => {
-      /**
-       * Global Metamask setup done by Synpress is not always done.
-       * Since Synpress needs to have valid provider to fetch the data from contracts,
-       * setupMetamask is required in each test suite.
-       */
-      cy.setupMetamask();
-      cy.clock();
-    });
-
     beforeEach(() => {
       cy.disconnectMetamaskWalletFromAllDapps();
       mockCoinPricesServer();
@@ -82,16 +81,6 @@ const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
     `allocation (allocation window open): ${device}`,
     { viewportHeight, viewportWidth },
     () => {
-      before(() => {
-        /**
-         * Global Metamask setup done by Synpress is not always done.
-         * Since Synpress needs to have valid provider to fetch the data from contracts,
-         * setupMetamask is required in each test suite.
-         */
-        cy.setupMetamask();
-        cy.clock();
-      });
-
       beforeEach(() => {
         cy.disconnectMetamaskWalletFromAllDapps();
         mockCoinPricesServer();
