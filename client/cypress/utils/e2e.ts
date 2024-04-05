@@ -5,7 +5,6 @@ import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
 import env from 'src/env';
 
 import Chainable = Cypress.Chainable;
-import {Chain} from 'viem';
 
 export const ETH_USD = 2041.91;
 
