@@ -5,6 +5,7 @@ import { localhost, mainnet, sepolia } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
+import networkConfig from 'constants/networkConfig';
 
 import { CHAINS, PROJECT_ID } from 'constants/walletConnect';
 import env from 'env';
@@ -33,13 +34,13 @@ export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: [
     ...w3mConnectors({ chains: CHAINS, projectId: PROJECT_ID }),
-    new LedgerConnector({
+    !networkConfig.isTestnet ? new LedgerConnector({
       chains: CHAINS,
       options: {
         projectId: PROJECT_ID,
       },
       // unknown typing conflict.
-    }) as any,
+    }) as any : undefined,
   ],
   publicClient,
 });
