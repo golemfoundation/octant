@@ -5,7 +5,7 @@ from app.exceptions import InvalidMultisigSignatureRequest
 from app.extensions import db
 from app.infrastructure import database
 from app.infrastructure.database.models import MultisigSignatures
-from app.infrastructure.database.multisig_signature import SigStatus
+from app.infrastructure.database.multisig_signature import SigStatus, MultisigFilters
 from app.modules.common.crypto.eip1271 import get_message_hash
 from app.modules.common.crypto.signature import (
     EncodingStandardFor,
@@ -50,8 +50,13 @@ class OffchainMultisigSignatures(Model):
             signature=signature_db.confirmed_signature,
         )
 
-    def approve_pending_signatures(self, _: Context) -> List[Signature]:
-        pending_signatures = database.multisig_signature.get_all_pending_signatures()
+    def approve_pending_signatures(
+        self, _: Context, op_type: SignatureOpType
+    ) -> List[Signature]:
+        filters = MultisigFilters(type=op_type, status=SigStatus.PENDING)
+        pending_signatures = (
+            database.multisig_signature.get_multisig_signatures_by_filters(filters)
+        )
         new_staged_signatures, approved_signatures = approve_pending_signatures(
             self.staged_signatures, pending_signatures, self.is_mainnet
         )

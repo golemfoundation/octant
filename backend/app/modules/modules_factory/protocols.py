@@ -176,7 +176,9 @@ class MultisigSignatures(Protocol):
     ) -> Signature:
         ...
 
-    def approve_pending_signatures(self, context: Context) -> list[Signature]:
+    def approve_pending_signatures(
+        self, context: Context, op_type: SignatureOpType
+    ) -> list[Signature]:
         ...
 
     def apply_staged_signatures(self, context: Context, signature_id: int):

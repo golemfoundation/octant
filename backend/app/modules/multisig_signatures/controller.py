@@ -62,7 +62,7 @@ def _approve(op_type: SignatureOpType) -> list[Signature]:
 
     service = get_services(context.epoch_state).multisig_signatures_service
 
-    return service.approve_pending_signatures(context)
+    return service.approve_pending_signatures(context, op_type)
 
 
 def _get_context(op_type: SignatureOpType) -> Context:
