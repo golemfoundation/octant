@@ -89,6 +89,7 @@ const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
          * setupMetamask is required in each test suite.
          */
         cy.setupMetamask();
+        cy.clock();
       });
 
       beforeEach(() => {
