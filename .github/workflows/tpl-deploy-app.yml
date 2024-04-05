@@ -50,6 +50,10 @@ on:
         required: false
         default: false
         type: boolean
+      multisigger-enabled:
+        required: false
+        default: true
+        type: boolean
       scheduler-enabled:
         required: false
         default: false
@@ -114,6 +118,7 @@ env:
   CHAIN_NAME: ${{ inputs.chain-name }}
   OCTANT_BACKEND_SECRET_KEY: some-random-key
   SNAPSHOTTER_ENABLED: ${{ inputs.snapshotter-enabled }}
+  MULTISIGGER_ENABLED: ${{ inputs.multisigger-enabled }}
   SCHEDULER_ENABLED: ${{ inputs.scheduler-enabled }}
   GLM_CLAIM_ENABLED: ${{ inputs.glm-claim-enabled }}
   VAULT_CONFIRM_WITHDRAWALS_ENABLED: ${{ inputs.vault-confirm-withdrawals-enabled }}

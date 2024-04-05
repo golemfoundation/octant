@@ -186,6 +186,7 @@ jobs:
       network-name: local
       chain-name: localhost
       snapshotter-enabled: false
+      multisigger-enabled: false
       scheduler-enabled: true
       glm-claim-enabled: true
       vault-confirm-withdrawals-enabled: true
@@ -212,6 +213,8 @@ jobs:
       chain-id: 1337
       network-name: local
       chain-name: localhost
+      snapshotter-enabled: false
+      multisigger-enabled: false
       web-client-replicas: 0
       coin-prices-server-replicas: 0
       backend-server-replicas: 0
