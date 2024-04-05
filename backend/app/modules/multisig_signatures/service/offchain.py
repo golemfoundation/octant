@@ -1,3 +1,5 @@
+from typing import List
+
 from app.context.manager import Context
 from app.exceptions import InvalidMultisigSignatureRequest
 from app.extensions import db
@@ -48,7 +50,7 @@ class OffchainMultisigSignatures(Model):
             signature=signature_db.confirmed_signature,
         )
 
-    def approve_pending_signatures(self, _: Context) -> list[Signature]:
+    def approve_pending_signatures(self, _: Context) -> List[Signature]:
         pending_signatures = database.multisig_signature.get_all_pending_signatures()
         new_staged_signatures, approved_signatures = approve_pending_signatures(
             self.staged_signatures, pending_signatures, self.is_mainnet

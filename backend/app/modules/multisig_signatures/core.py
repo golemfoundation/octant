@@ -1,4 +1,5 @@
 import json
+from typing import List, Tuple, Dict
 
 from eth_account.messages import SignableMessage
 
@@ -41,15 +42,15 @@ def _create_signature_object(signature: MultisigSignatures) -> Signature:
     )
 
 
-def _process_staged_signatures(staged_signatures: list[MultisigSignatures]) -> dict:
+def _process_staged_signatures(staged_signatures: List[MultisigSignatures]) -> Dict:
     return {sig.id: sig for sig in staged_signatures}
 
 
 def approve_pending_signatures(
-    staged_signatures: list[MultisigSignatures],
-    pending_signatures: list[MultisigSignatures],
+    staged_signatures: List[MultisigSignatures],
+    pending_signatures: List[MultisigSignatures],
     is_mainnet: bool,
-) -> tuple[list[Signature], list[Signature]]:
+) -> Tuple[List[MultisigSignatures], List[Signature]]:
     approved_signatures = []
     new_staged_signatures = []
 
@@ -61,12 +62,14 @@ def approve_pending_signatures(
             approved_signatures.append(_create_signature_object(pending_signature))
             continue
 
-        message_details = get_message_details(
+        message_details = get_message_details(  # TODO extract API call to service
             pending_signature.msg_hash, is_mainnet=is_mainnet
         )
         confirmations = message_details["confirmations"]
         threshold = int(
-            get_user_details(pending_signature.address, is_mainnet=is_mainnet)[
+            get_user_details(
+                pending_signature.address, is_mainnet=is_mainnet
+            )[  # TODO extract API call to service
                 "threshold"
             ]
         )

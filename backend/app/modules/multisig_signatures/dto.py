@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 
 from dataclass_wizard import JSONWizard
 
@@ -16,5 +17,5 @@ class Signature(JSONWizard):
 
 @dataclass(frozen=True)
 class ApprovedSignatureTypes:
-    tos_signatures: list[Signature]
-    allocation_signatures: list[Signature]
+    tos_signatures: List[Signature]
+    allocation_signatures: List[Signature]
