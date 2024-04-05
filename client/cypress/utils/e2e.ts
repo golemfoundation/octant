@@ -108,20 +108,20 @@ const test = (cypressWindow, moveTo): Promise<boolean> => {
           cy.wait(5000);
           cy.log(`timeToIncrease ${timeToIncrease2}`);
           cy.tick(timeToIncrease2);
+        });
+      });
 
-          cy.wrap(null).then(() => {
-            return axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
-              // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
-              cy.wait(2000);
-              // reload is needed to get updated data in the app
-              cy.reload();
-              cy.get('[data-test*=AppLoader]').should('not.exist');
-              cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
-              // reload is needed to get updated data in the app
-              cy.reload();
-              resolve(true);
-            });
-          });
+      cy.wrap(null).then(() => {
+        return axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
+          // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
+          cy.wait(2000);
+          // reload is needed to get updated data in the app
+          cy.reload();
+          cy.get('[data-test*=AppLoader]').should('not.exist');
+          cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+          // reload is needed to get updated data in the app
+          cy.reload();
+          resolve(true);
         });
       });
     }
@@ -160,12 +160,11 @@ export const moveEpoch = (
           cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
           // reload is needed to get updated data in the app
           cy.reload();
-
-          cy.wrap(null).then(() => {
-            return test(cypressWindow, moveTo).then(() => {
-              resolve(true);
-            });
-          });
+        });
+      });
+      cy.wrap(null).then(() => {
+        return test(cypressWindow, moveTo).then(() => {
+          resolve(true);
         });
       });
     } else {
