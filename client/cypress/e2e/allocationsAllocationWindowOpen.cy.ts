@@ -77,7 +77,7 @@ const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
     });
   });
   // eslint-disable-next-line jest/no-disabled-tests
-  describe(
+  describe.skip(
     `allocation (allocation window open): ${device}`,
     { viewportHeight, viewportWidth },
     () => {

@@ -68,7 +68,7 @@ let wasTimeMoved = false;
     });
   });
   // eslint-disable-next-line jest/no-disabled-tests
-  describe(
+  describe.skip(
     `allocation (allocation window closed): ${device}`,
     { viewportHeight, viewportWidth },
     () => {

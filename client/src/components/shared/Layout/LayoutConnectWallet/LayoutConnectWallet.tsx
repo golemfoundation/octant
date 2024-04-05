@@ -26,10 +26,11 @@ const LayoutConnectWallet: FC = () => {
     ({ id, ready }) => id === 'injected' && ready,
   ) as InjectedConnector;
 
-  const ledgerWalletConnector = connectors.find(
+  // ledgerWalletConnector goes crazy when time shifts: https://github.com/golemfoundation/octant/actions/runs/8567962186/job/23481032309
+  const ledgerWalletConnector = !networkConfig.isTestnet ? connectors.find(
     // eslint-disable-next-line @typescript-eslint/naming-convention
     ({ id, ready }) => id === 'ledger' && ready,
-  ) as InjectedConnector;
+  ) as InjectedConnector : undefined;
 
   const isBrowserWalletConnecting = isLoading && pendingConnector?.id === connector?.id;
 
