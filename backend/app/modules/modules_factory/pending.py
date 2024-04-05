@@ -16,10 +16,12 @@ from app.modules.modules_factory.protocols import (
     DonorsAddresses,
     AllocationManipulationProtocol,
     GetUserAllocationsProtocol,
+    SavedProjectRewardsService,
     MultisigSignatures,
 )
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
+from app.modules.project_rewards.service.estimated import EstimatedProjectRewards
 from app.modules.snapshots.finalized.service.simulated import (
     SimulatedFinalizedSnapshots,
 )
@@ -33,7 +35,7 @@ from app.modules.user.patron_mode.service.events_based import EventsBasedUserPat
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.withdrawals.service.pending import PendingWithdrawals
 from app.pydantic import Model
-from app.modules.project_rewards.service.estimated import EstimatedProjectRewards
+from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 
 
 class PendingOctantRewardsService(OctantRewards, Leverage, Protocol):
@@ -54,6 +56,12 @@ class PendingUserAllocationsProtocol(
     pass
 
 
+class PendingProjectRewardsProtocol(
+    EstimatedProjectRewardsService, SavedProjectRewardsService, Protocol
+):
+    pass
+
+
 class PendingServices(Model):
     user_deposits_service: PendingUserDeposits
     octant_rewards_service: PendingOctantRewardsService
@@ -63,11 +71,11 @@ class PendingServices(Model):
     user_rewards_service: UserRewards
     finalized_snapshots_service: SimulateFinalizedSnapshots
     withdrawals_service: WithdrawalsService
-    project_rewards_service: EstimatedProjectRewardsService
+    project_rewards_service: PendingProjectRewardsProtocol
     multisig_signatures_service: MultisigSignatures
 
     @staticmethod
-    def create() -> "PendingServices":
+    def create(chain_id: int) -> "PendingServices":
         events_based_patron_mode = EventsBasedUserPatronMode()
         octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
         saved_user_budgets = SavedUserBudgets()
@@ -90,8 +98,13 @@ class PendingServices(Model):
         )
         withdrawals_service = PendingWithdrawals(user_rewards=user_rewards)
         project_rewards = EstimatedProjectRewards(octant_rewards=octant_rewards)
+
+        is_mainnet = compare_blockchain_types(
+            chain_id=chain_id, expected_chain=ChainTypes.MAINNET
+        )
         multisig_signatures = OffchainMultisigSignatures(
-            verifiers={SignatureOpType.ALLOCATION: allocations_verifier}
+            verifiers={SignatureOpType.ALLOCATION: allocations_verifier},
+            is_mainnet=is_mainnet,
         )
 
         return PendingServices(

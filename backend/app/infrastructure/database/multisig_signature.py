@@ -21,11 +21,16 @@ def get_last_pending_signature(
     return last_signature.first()
 
 
+def get_all_pending_signatures() -> list[MultisigSignatures]:
+    return MultisigSignatures.query.filter_by(status=SigStatus.PENDING).all()
+
+
 def save_signature(
     user_address: str,
     op_type: SignatureOpType,
     message: str,
     msg_hash: str,
+    user_ip: str,
     status: SigStatus = SigStatus.PENDING,
 ):
     signature = MultisigSignatures(
@@ -33,6 +38,7 @@ def save_signature(
         type=op_type,
         message=message,
         hash=msg_hash,
+        user_ip=user_ip,
         status=status,
     )
     db.session.add(signature)

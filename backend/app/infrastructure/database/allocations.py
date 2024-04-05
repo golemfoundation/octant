@@ -10,7 +10,6 @@ from app.extensions import db
 from app.infrastructure.database.models import Allocation, User, AllocationRequest
 from app.infrastructure.database.user import get_by_address
 from app.modules.dto import (
-    AllocationItem,
     AllocationDTO,
     AccountFundsDTO,
     UserAllocationRequestPayload,
@@ -64,7 +63,7 @@ def get_user_allocations_history(
 
 def get_all_by_user_addr_and_epoch(
     user_address: str, epoch: int
-) -> List[AllocationItem]:
+) -> List[AccountFundsDTO]:
     allocations: List[Allocation] = (
         Allocation.query.join(User, User.id == Allocation.user_id)
         .filter(User.address == user_address)
@@ -74,8 +73,8 @@ def get_all_by_user_addr_and_epoch(
     )
 
     return [
-        AllocationItem(
-            proposal_address=alloc.proposal_address,
+        AccountFundsDTO(
+            address=alloc.proposal_address,
             amount=int(alloc.amount),
         )
         for alloc in allocations

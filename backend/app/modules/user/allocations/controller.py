@@ -23,12 +23,14 @@ def get_user_next_nonce(user_address: str) -> int:
     return service.get_user_next_nonce(user_address)
 
 
-def get_all_allocations(epoch_num: int) -> List[ProposalDonationDTO]:
+def get_all_allocations(
+    epoch_num: int, include_zero_allocations=True
+) -> List[ProposalDonationDTO]:
     context = epoch_context(epoch_num)
     if context.epoch_state > EpochState.PENDING:
         raise NotImplementedForGivenEpochState()
     service = get_services(context.epoch_state).user_allocations_service
-    return service.get_all_allocations(context)
+    return service.get_all_allocations(context, include_zero_allocations)
 
 
 def get_all_donations_by_project(
@@ -63,14 +65,14 @@ def get_donors(epoch_num: int) -> List[str]:
     return service.get_all_donors_addresses(context)
 
 
-def allocate(payload: Dict, **kwargs):
+def allocate(user_address: str, payload: Dict, **kwargs):
     context = state_context(EpochState.PENDING)
     service: PendingUserAllocations = get_services(
         context.epoch_state
     ).user_allocations_service
 
     allocation_request = _deserialize_payload(payload)
-    service.allocate(context, allocation_request, **kwargs)
+    service.allocate(context, user_address, allocation_request, **kwargs)
 
 
 def simulate_allocation(

@@ -79,7 +79,7 @@ class AllocationRequest(BaseModel):
     user = relationship("User", backref=db.backref("allocations_requests", lazy=True))
     nonce = Column(db.Integer, nullable=False)
     epoch = Column(db.Integer, nullable=False)
-    signature = Column(db.String(132), nullable=False)
+    signature = Column(db.String, nullable=False)
     is_manually_edited = Column(db.Boolean, nullable=True)
 
     __table_args__ = (
@@ -170,3 +170,4 @@ class MultisigSignatures(BaseModel):
     message = Column(db.String, nullable=False)
     hash = Column(db.String, nullable=False)
     status = Column(db.String, nullable=False)
+    user_ip = Column(db.String, nullable=False)

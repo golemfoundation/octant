@@ -8,13 +8,12 @@ from app.engine.projects.rewards import ProjectRewardDTO
 from app.exceptions import OctantException
 from app.extensions import socketio, epochs
 from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler
-from app.modules.dto import ProposalDonationDTO
-from app.modules.user.allocations import controller
-
-from app.legacy.controllers.rewards import (
+from app.modules.project_rewards.controller import (
     get_allocation_threshold,
 )
+from app.modules.dto import ProposalDonationDTO
 from app.modules.project_rewards.controller import get_estimated_project_rewards
+from app.modules.user.allocations import controller
 
 
 @socketio.on("connect")
@@ -38,8 +37,10 @@ def handle_disconnect():
 def handle_allocate(msg):
     msg = json.loads(msg)
     is_manually_edited = msg["isManuallyEdited"] if "isManuallyEdited" in msg else None
+    user_address = msg["userAddress"]
     app.logger.info(f"User allocation payload: {msg}")
-    user_address = controller.allocate(
+    controller.allocate(
+        user_address,
         msg,
         is_manually_edited=is_manually_edited,
     )
