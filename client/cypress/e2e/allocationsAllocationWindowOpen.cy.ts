@@ -25,7 +25,7 @@ const budget = 10000000000;
 const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
 
 [Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight }) => {
-  describe('', () => {
+  describe('', { testIsolation: false }, () => {
     before(() => {
       /**
        * Global Metamask setup done by Synpress is not always done.
