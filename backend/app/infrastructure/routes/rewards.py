@@ -1,4 +1,3 @@
-from eth_utils import to_checksum_address
 from flask import current_app as app
 from flask_restx import Namespace, fields
 
@@ -191,10 +190,9 @@ class UserBudget(OctantResource):
     @ns.marshal_with(user_budget_model)
     @ns.response(200, "Budget successfully retrieved")
     def get(self, user_address, epoch):
-        checksum_address = to_checksum_address(user_address)
-        app.logger.debug(f"Getting user {checksum_address} budget in epoch {epoch}")
-        budget = get_budget(checksum_address, epoch)
-        app.logger.debug(f"User {checksum_address} budget in epoch {epoch}: {budget}")
+        app.logger.debug(f"Getting user {user_address} budget in epoch {epoch}")
+        budget = get_budget(user_address, epoch)
+        app.logger.debug(f"User {user_address} budget in epoch {epoch}: {budget}")
 
         return {"budget": budget}
 
