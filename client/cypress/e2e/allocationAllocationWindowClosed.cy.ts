@@ -79,6 +79,7 @@ let wasTimeMoved = false;
          * setupMetamask is required in each test suite.
          */
         cy.setupMetamask();
+        cy.clock();
       });
 
       beforeEach(() => {
