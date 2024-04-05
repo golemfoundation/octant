@@ -9,11 +9,13 @@ from app.pydantic import Model
 
 
 class StaticProjectsMetadataService(Model):
-    def get_projects_metadata(self, context: Context) -> int:
+    def get_projects_metadata(self, context: Context) -> ProjectsMetadata:
         if context.epoch_details.epoch_num == 0:
             return ProjectsMetadata("", [])
 
-        epoch_to_cid_dict: dict[int, str] = parse_cids_to_epochs_dict(app.config["MAINNET_PROPOSAL_CIDS"])
+        epoch_to_cid_dict: dict[int, str] = parse_cids_to_epochs_dict(
+            app.config["MAINNET_PROPOSAL_CIDS"]
+        )
         proposals_cid: str = (
             get_proposals_cid()
             if context.epoch_details.epoch_num not in epoch_to_cid_dict

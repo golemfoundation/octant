@@ -1,0 +1,34 @@
+import pytest
+
+from app.modules.dto import ProjectsMetadata
+from app.modules.projects.service.projects_metadata import StaticProjectsMetadataService
+from tests.helpers.context import get_context
+
+
+@pytest.fixture(autouse=True)
+def before(app):
+    pass
+
+
+def test_get_projects_metadata_epoch_1():
+    context = get_context(1)
+
+    service = StaticProjectsMetadataService()
+    projects_metadata: ProjectsMetadata = service.get_projects_metadata(context)
+
+    assert (
+        projects_metadata.proposals_cid
+        == "QmSQEFD35gKxdPEmngNt1CWe3kSwiiGqBn1Z3FZvWb8mvK"
+    )
+
+
+def test_get_projects_metadata_epoch_2():
+    context = get_context(2)
+
+    service = StaticProjectsMetadataService()
+    projects_metadata: ProjectsMetadata = service.get_projects_metadata(context)
+
+    assert (
+        projects_metadata.proposals_cid
+        == "Qmds9N5y2vkMuPTD6M4EBxNXnf3bjTDmzWBGnCkQGsMMGe"
+    )

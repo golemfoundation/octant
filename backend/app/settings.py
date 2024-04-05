@@ -63,7 +63,7 @@ class Config(object):
     EPOCH_2_STAKING_PROCEEDS_SURPLUS = int(
         os.getenv("EPOCH_2_STAKING_PROCEEDS_SURPLUS", 0)
     )
-    
+
     MAINNET_PROPOSAL_CIDS = os.getenv("MAINNET_PROPOSAL_CIDS", "")
 
 
