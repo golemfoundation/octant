@@ -18,7 +18,7 @@ let wasTimeMoved = false;
 
 [Object.values(viewports)[0]].forEach(({ isDesktop }) => {
 
-  describe('move time', () => {
+  describe('move time', { testIsolation: false }, () => {
     before(() => {
       /**
        * Global Metamask setup done by Synpress is not always done.

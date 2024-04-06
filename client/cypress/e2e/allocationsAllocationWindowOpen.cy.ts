@@ -34,7 +34,7 @@ const budget = 10000000000;
     cy.setupMetamask();
     cy.clock();
   });
-  describe('move time', () => {
+  describe('move time', { testIsolation: false }, () => {
     beforeEach(() => {
       cy.disconnectMetamaskWalletFromAllDapps();
       mockCoinPricesServer();
