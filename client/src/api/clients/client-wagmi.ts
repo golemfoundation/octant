@@ -1,4 +1,4 @@
-// import { LedgerConnector } from '@wagmi/connectors/ledger';
+import { LedgerConnector } from '@wagmi/connectors/ledger';
 import { w3mConnectors } from '@web3modal/ethereum';
 import { configureChains, createConfig, ChainProviderFn } from 'wagmi';
 import { localhost, mainnet, sepolia } from 'wagmi/chains';
@@ -33,7 +33,13 @@ export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: [
     ...w3mConnectors({ chains: CHAINS, projectId: PROJECT_ID }),
-    // TODO Readd LedgerConnector.
+    new LedgerConnector({
+      chains: CHAINS,
+      options: {
+        projectId: PROJECT_ID,
+      },
+      // unknown typing conflict.
+    }) as any,
   ],
   publicClient,
 });

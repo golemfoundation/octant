@@ -125,7 +125,6 @@ const Modal: FC<ModalProps> = ({
                 <motion.div
                   animate={{ height: 'auto', opacity: 1 }}
                   className={cx(styles.header, headerClassName)}
-                  data-test={`${dataTest}__header`}
                   exit={{ height: 0, opacity: 0 }}
                   initial={{ height: 0, opacity: 0 }}
                   transition={{ ease: 'linear' }}

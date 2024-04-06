@@ -1,12 +1,10 @@
 import dataclasses
 
 from flask import current_app as app
-from flask import request
 from flask_restx import Namespace, fields
 
 from app.extensions import api
 from app.infrastructure import OctantResource
-from app.modules.common import parse_bool
 from app.modules.user.allocations import controller
 
 ns = Namespace("allocations", description="Octant allocations")
@@ -247,22 +245,12 @@ class AllocationLeverage(OctantResource):
     },
 )
 class EpochAllocations(OctantResource):
-    @ns.param(
-        "includeZeroAllocations",
-        description="Include zero allocations to projects. Defaults to false.",
-        _in="query",
-    )
     @ns.marshal_with(epoch_allocations_model)
     @ns.response(200, "Epoch allocations successfully retrieved")
     def get(self, epoch: int):
-        include_zero_allocations = request.args.get(
-            "includeZeroAllocations", default=False, type=parse_bool
-        )
         app.logger.debug(f"Getting latest allocations in epoch {epoch}")
-        allocs = controller.get_all_allocations(epoch, include_zero_allocations)
-        app.logger.debug(
-            f"Allocations for epoch {epoch} (with zero allocations: {include_zero_allocations}): {allocs}"
-        )
+        allocs = controller.get_all_allocations(epoch)
+        app.logger.debug(f"Allocations for epoch {epoch}: {allocs}")
 
         return {"allocations": allocs}
 

@@ -257,55 +257,6 @@ def test_get_all_allocations_returns_list_of_allocations(
         assert i in expected_results
 
 
-def test_get_all_allocations_returns_list_of_allocations_with_zero_allocations(
-    service, context, mock_users_db
-):
-    user1, user2, user3 = mock_users_db
-
-    user1_allocations = make_user_allocation(context, user1, allocations=2)
-    user2_allocations = make_user_allocation(context, user2, allocations=2)
-    user3_allocations = make_user_allocation(
-        context,
-        user3,
-        allocation_items=[AllocationItem(context.projects_details.projects[0], 0)],
-    )
-
-    user1_donations = [_alloc_item_to_donation(a, user1) for a in user1_allocations]
-    user2_donations = [_alloc_item_to_donation(a, user2) for a in user2_allocations]
-    user3_donations = [_alloc_item_to_donation(a, user3) for a in user3_allocations]
-    expected_results = user1_donations + user2_donations + user3_donations
-
-    result = service.get_all_allocations(context)
-
-    assert len(result) == 5
-    for i in result:
-        assert i in expected_results
-
-
-def test_get_all_allocations_returns_list_of_allocations_without_zero_allocations(
-    service, context, mock_users_db
-):
-    user1, user2, user3 = mock_users_db
-
-    user1_allocations = make_user_allocation(context, user1, allocations=2)
-    user2_allocations = make_user_allocation(context, user2, allocations=2)
-    make_user_allocation(
-        context,
-        user3,
-        allocation_items=[AllocationItem(context.projects_details.projects[0], 0)],
-    )
-
-    user1_donations = [_alloc_item_to_donation(a, user1) for a in user1_allocations]
-    user2_donations = [_alloc_item_to_donation(a, user2) for a in user2_allocations]
-    expected_results = user1_donations + user2_donations
-
-    result = service.get_all_allocations(context, include_zero_allocations=False)
-
-    assert len(result) == 4
-    for i in result:
-        assert i in expected_results
-
-
 def test_get_all_allocations_does_not_include_revoked_allocations_in_returned_list(
     service, context, mock_users_db
 ):

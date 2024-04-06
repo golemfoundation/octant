@@ -19,7 +19,6 @@ jobs:
     secrets: inherit
     with:
       image-tag: ${{ github.sha }}
-      git-ref: ${{ github.ref }}
   deploy:
     name: Deploy
     needs:

@@ -104,7 +104,6 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
   return (
     <BoxRounded
       className={cx(styles.root, className)}
-      dataTest="AllocationRewardsBox"
       hasPadding={false}
       isVertical
       subtitle={subtitle}
@@ -124,7 +123,6 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
       >
         <Slider
           className={styles.slider}
-          dataTest="AllocationRewardsBox__Slider"
           hideThumb={isLocked}
           isDisabled={isDisabled}
           isError={isError}
@@ -144,21 +142,12 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
               isDisabled && styles.isDisabled,
               isLocked && styles.isLocked,
             )}
-            data-test={`AllocationRewardsBox__section--${index}`}
             onClick={() =>
               isLocked || isDisabled ? {} : setModalMode(index === 0 ? 'donate' : 'withdraw')
             }
           >
-            <div
-              className={styles.header}
-              data-test={`AllocationRewardsBox__section__header--${index}`}
-            >
-              {header}
-            </div>
-            <div
-              className={cx(styles.value, (isLocked || isDisabled || isError) && styles.isGrey)}
-              data-test={`AllocationRewardsBox__section__value--${index}`}
-            >
+            <div className={styles.header}>{header}</div>
+            <div className={cx(styles.value, (isLocked || isDisabled || isError) && styles.isGrey)}>
               {value}
             </div>
           </div>

@@ -15,7 +15,6 @@ jobs:
     secrets: inherit
     with:
       image-tag: ${{ github.sha }}
-      git-ref: ${{ github.ref }}
   run:
     name: Run
     uses: ./.github/workflows/tpl-start-env.yml

@@ -83,7 +83,6 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
       <div className={styles.inputsContainer}>
         <InputText
           className={styles.input}
-          dataTest="AllocationInputs__InputText--crypto"
           error={formik.errors.valueCryptoSelected}
           inputMode="decimal"
           isButtonClearVisible={false}
@@ -96,7 +95,6 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
         />
         <InputText
           className={cx(styles.input, styles.percentageInput)}
-          dataTest="AllocationInputs__InputText--percentage"
           inputMode="decimal"
           isButtonClearVisible={false}
           isDisabled={!isThereSomethingToDistribute}
@@ -109,7 +107,6 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
           value={percentage}
         />
         <Button
-          dataTest="AllocationInputs__Button"
           isDisabled={!formik.isValid}
           isHigh
           isLoading={formik.isSubmitting}

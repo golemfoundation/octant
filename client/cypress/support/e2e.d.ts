@@ -4,8 +4,7 @@ declare namespace Cypress {
   interface ApplicationWindow {
     // Importing QueryClient breaks <reference types="cypress" /> making these types not visible.
     clientReactQuery: any;
-    mutateAsyncMoveToDecisionWindowClosed: () => Promise<number>;
-    mutateAsyncMoveToDecisionWindowOpen: () => Promise<number>;
-    timeToIncrease?: number;
+    mutateAsyncMoveToDecisionWindowClosed: () => Promise<void>;
+    mutateAsyncMoveToDecisionWindowOpen: () => Promise<void>;
   }
 }

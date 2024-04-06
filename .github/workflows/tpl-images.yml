@@ -6,9 +6,6 @@ on:
       image-tag:
         required: true
         type: string
-      git-ref:
-        required: true
-        type: string
 concurrency:
   group: "${{ github.ref }}-images"
   cancel-in-progress: true
@@ -34,8 +31,6 @@ jobs:
         # account
         # see: https://github.com/actions/checkout/issues/211
         path: __local
-        ref: ${{ inputs.git-ref }}
-
     - name: Login to Docker registry
       uses: docker/login-action@v3
       with:
