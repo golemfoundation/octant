@@ -16,7 +16,6 @@ import {
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
-import { formatUnitsBigInt } from 'src/utils/formatUnitsBigInt';
 
 chai.use(chaiColors);
 
@@ -25,16 +24,16 @@ const budget = 10000000000;
 // const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
 
 [Object.values(viewports)[0]].forEach(() => {
-  before(() => {
-    /**
-     * Global Metamask setup done by Synpress is not always done.
-     * Since Synpress needs to have valid provider to fetch the data from contracts,
-     * setupMetamask is required in each test suite.
-     */
-    cy.setupMetamask();
-    cy.clock();
-  });
   describe('move time', { testIsolation: false }, () => {
+    before(() => {
+      /**
+       * Global Metamask setup done by Synpress is not always done.
+       * Since Synpress needs to have valid provider to fetch the data from contracts,
+       * setupMetamask is required in each test suite.
+       */
+      cy.setupMetamask();
+      cy.clock();
+    });
     beforeEach(() => {
       cy.disconnectMetamaskWalletFromAllDapps();
       mockCoinPricesServer();
