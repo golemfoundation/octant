@@ -52,7 +52,7 @@ export const connectWallet = (
 };
 
 const test = (cypressWindow, moveTo): Promise<boolean> => {
-  return new Cypress.Promise(resolve => {
+  return new Promise(resolve => {
     if (moveTo === 'decisionWindowOpen') {
       cypressWindow.mutateAsyncMoveToDecisionWindowOpen().then(() => {
         // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
@@ -111,7 +111,7 @@ export const moveEpoch = (
   moveTo: 'decisionWindowClosed' | 'decisionWindowOpen',
 ): Chainable<any> => {
   const test1 = () => {
-    return new Cypress.Promise(resolve => {
+    return new Promise(resolve => {
       const isDecisionWindowOpen = cypressWindow.clientReactQuery.getQueryData(
         QUERY_KEYS.isDecisionWindowOpen,
       );
