@@ -203,7 +203,9 @@ def test_user_allocations_by_timestamp(
     ]
 
     make_user_allocation(context, user1, nonce=0, allocation_items=allocation1)
-    make_user_allocation(context, user1, nonce=1, allocation_items=allocation2)
+    make_user_allocation(
+        context, user1, nonce=1, allocation_items=allocation2, leverage="2015.1555"
+    )
 
     result_before = service.get_user_allocations_by_timestamp(
         user1.address, from_timestamp=timestamp_before, limit=20
@@ -221,6 +223,7 @@ def test_user_allocations_by_timestamp(
             epoch=1,
             timestamp=from_timestamp_s(1710720000),
             is_manually_edited=None,
+            leverage="2015.1555",
             allocations=[
                 ProjectAllocationItem(
                     project_address=proposal_accounts[0].address,
@@ -236,6 +239,7 @@ def test_user_allocations_by_timestamp(
             epoch=1,
             timestamp=from_timestamp_s(1710720000),
             is_manually_edited=None,
+            leverage=None,
             allocations=[
                 ProjectAllocationItem(
                     project_address=proposal_accounts[0].address,
@@ -254,6 +258,7 @@ def test_user_allocations_by_timestamp(
             epoch=1,
             timestamp=from_timestamp_s(1710720000),
             is_manually_edited=None,
+            leverage="2015.1555",
             allocations=[
                 ProjectAllocationItem(
                     project_address=proposal_accounts[0].address,

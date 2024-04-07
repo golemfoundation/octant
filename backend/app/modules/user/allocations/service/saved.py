@@ -57,6 +57,7 @@ class SavedUserAllocations(Model):
                 epoch=alloc_request.epoch,
                 timestamp=from_datetime(alloc_request.created_at),
                 is_manually_edited=alloc_request.is_manually_edited,
+                leverage=alloc_request.leverage,
                 allocations=[
                     ProjectAllocationItem(
                         project_address=a.proposal_address, amount=int(a.amount)

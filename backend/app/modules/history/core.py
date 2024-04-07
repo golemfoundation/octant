@@ -27,7 +27,9 @@ def sort_history_records(
             type=OpType.ALLOCATION,
             timestamp=int(e.timestamp.timestamp_s()),
             event_data=AllocationHistoryEntry(
-                is_manually_edited=e.is_manually_edited, allocations=e.allocations
+                is_manually_edited=e.is_manually_edited,
+                leverage=e.leverage,
+                allocations=e.allocations,
             ),
         )
         for e in allocations

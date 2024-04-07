@@ -40,6 +40,10 @@ history_item_data = api.model(
             required=False,
             description="Whether has the allocation been manually edited by the user. Field available only for allocation items.",
         ),
+        "leverage": fields.String(
+            required=False,
+            description="Leverage of the allocated funds. Field available only for allocation items.",
+        ),
         "allocations": fields.List(
             fields.Nested(project_allocation_item),
             required=False,

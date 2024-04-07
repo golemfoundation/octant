@@ -48,6 +48,7 @@ def before(
             timestamp=from_timestamp_s(300),
             epoch=1,
             is_manually_edited=False,
+            leverage="1015.15",
             allocations=[ProjectAllocationItem(project_address="proj1", amount=10)],
         )
     ]
@@ -105,6 +106,7 @@ def test_history(
                 timestamp=300,
                 event_data=AllocationHistoryEntry(
                     is_manually_edited=False,
+                    leverage="1015.15",
                     allocations=[
                         ProjectAllocationItem(
                             project_address="proj1",

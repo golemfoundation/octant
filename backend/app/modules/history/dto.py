@@ -35,6 +35,7 @@ class AllocationItem:
     epoch: int
     timestamp: Timestamp
     is_manually_edited: bool
+    leverage: str
     allocations: List[ProjectAllocationItem]
 
 
@@ -68,6 +69,7 @@ class TransactionHistoryEntry(HistoryEntryData):
 @dataclass(frozen=True)
 class AllocationHistoryEntry(HistoryEntryData):
     is_manually_edited: bool
+    leverage: str
     allocations: List[ProjectAllocationItem]
 
 

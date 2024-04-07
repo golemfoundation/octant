@@ -50,6 +50,7 @@ from app.modules.history.dto import (
                     epoch=1,
                     timestamp=from_timestamp_s(10000),
                     is_manually_edited=False,
+                    leverage="1000.12",
                     allocations=[
                         ProjectAllocationItem(
                             project_address="proj1",
@@ -74,6 +75,7 @@ from app.modules.history.dto import (
                     timestamp=10000,
                     event_data=AllocationHistoryEntry(
                         is_manually_edited=False,
+                        leverage="1000.12",
                         allocations=[
                             ProjectAllocationItem(
                                 project_address="proj1",
@@ -133,6 +135,7 @@ from app.modules.history.dto import (
                     epoch=1,
                     timestamp=from_timestamp_s(500),
                     is_manually_edited=False,
+                    leverage="1000.12",
                     allocations=[
                         ProjectAllocationItem(
                             project_address="proj1",
@@ -164,6 +167,7 @@ from app.modules.history.dto import (
                     type=OpType.ALLOCATION,
                     timestamp=500,
                     event_data=AllocationHistoryEntry(
+                        leverage="1000.12",
                         is_manually_edited=False,
                         allocations=[
                             ProjectAllocationItem(
@@ -184,6 +188,7 @@ from app.modules.history.dto import (
                     epoch=1,
                     timestamp=from_timestamp_s(100),
                     is_manually_edited=True,
+                    leverage="1000.12",
                     allocations=[
                         ProjectAllocationItem(
                             project_address="projB",
@@ -204,6 +209,7 @@ from app.modules.history.dto import (
                     timestamp=100,
                     event_data=AllocationHistoryEntry(
                         is_manually_edited=True,
+                        leverage="1000.12",
                         allocations=[
                             ProjectAllocationItem(
                                 project_address="projB",
