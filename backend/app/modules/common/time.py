@@ -24,6 +24,12 @@ class Timestamp:
     def to_isoformat(self):
         return self.datetime().isoformat()
 
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return f"Timestamp({str(self.timestamp_us())})"
+
     def __eq__(self, o):
         if isinstance(o, Timestamp):
             return self._timestamp_us == o._timestamp_us
