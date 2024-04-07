@@ -170,7 +170,7 @@ def store_allocation_request(
 ):
     user: User = get_by_address(user_address)
 
-    options = {"is_manually_edited": None, **kwargs}
+    options = {"is_manually_edited": None, "leverage": None, **kwargs}
 
     new_allocations = [
         Allocation(
@@ -189,6 +189,7 @@ def store_allocation_request(
         nonce=request.payload.nonce,
         signature=request.signature,
         is_manually_edited=options["is_manually_edited"],
+        leverage=options["leverage"],
     )
 
     db.session.add(allocation_request)

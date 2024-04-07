@@ -81,6 +81,7 @@ class AllocationRequest(BaseModel):
     epoch = Column(db.Integer, nullable=False)
     signature = Column(db.String, nullable=False)
     is_manually_edited = Column(db.Boolean, nullable=True)
+    leverage = Column(db.String, nullable=True)
 
     __table_args__ = (
         UniqueConstraint("user_id", "nonce", name="user_nonce_unique_constraint"),
