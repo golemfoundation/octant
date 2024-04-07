@@ -10,6 +10,7 @@ from app.modules.history.dto import (
 )
 from app.modules.history.dto import (
     UserHistoryDTO,
+    HistoryEntry,
     TransactionHistoryEntry,
     PatronModeDonationEntry,
     AllocationHistoryEntry,
@@ -79,35 +80,45 @@ def test_history(
 
     assert result == UserHistoryDTO(
         history=[
-            TransactionHistoryEntry(
-                timestamp=500,
+            HistoryEntry(
                 type=OpType.WITHDRAWAL,
-                transaction_hash="tx3",
-                amount=50,
+                timestamp=500,
+                event_data=TransactionHistoryEntry(
+                    transaction_hash="tx3",
+                    amount=50,
+                ),
             ),
-            PatronModeDonationEntry(
-                timestamp=400,
+            HistoryEntry(
                 type=OpType.PATRON_MODE_DONATION,
-                epoch=1,
-                amount=10,
+                timestamp=400,
+                event_data=PatronModeDonationEntry(
+                    epoch=1,
+                    amount=10,
+                ),
             ),
-            AllocationHistoryEntry(
-                timestamp=300,
+            HistoryEntry(
                 type=OpType.ALLOCATION,
-                project_address="proj1",
-                amount=10,
+                timestamp=300,
+                event_data=AllocationHistoryEntry(
+                    project_address="proj1",
+                    amount=10,
+                ),
             ),
-            TransactionHistoryEntry(
-                timestamp=200,
+            HistoryEntry(
                 type=OpType.UNLOCK,
-                transaction_hash="tx2",
-                amount=10,
+                timestamp=200,
+                event_data=TransactionHistoryEntry(
+                    transaction_hash="tx2",
+                    amount=10,
+                ),
             ),
-            TransactionHistoryEntry(
-                timestamp=100,
+            HistoryEntry(
                 type=OpType.LOCK,
-                transaction_hash="tx1",
-                amount=10,
+                timestamp=100,
+                event_data=TransactionHistoryEntry(
+                    transaction_hash="tx1",
+                    amount=10,
+                ),
             ),
         ],
         next_cursor=None,

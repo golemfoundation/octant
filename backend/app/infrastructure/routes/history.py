@@ -9,19 +9,12 @@ from app.modules.history.controller import get_user_history
 ns = Namespace("history", description="User operations overview")
 api.add_namespace(ns)
 
-history_item = api.model(
-    "HistoryItem",
+
+history_item_data = api.model(
+    "HistoryItemData",
     {
-        "type": fields.String(
-            required=True,
-            description="Type of action (lock, unlock, allocation, withdrawal, patron_mode_donation)",
-        ),
         "amount": fields.String(
             required=True, description="Amount involved in the action, BigNumber (wei)"
-        ),
-        "timestamp": fields.String(
-            required=True,
-            description="Timestamp in microseconds when the action occurred (since Unix epoch)",
         ),
         "transactionHash": fields.String(
             required=False,
@@ -34,6 +27,23 @@ history_item = api.model(
         "epoch": fields.Integer(
             required=False,
             description="Epoch in which action occured. Field available only for patron_mode_donation items. ",
+        ),
+    },
+)
+
+history_item = api.model(
+    "HistoryItem",
+    {
+        "type": fields.String(
+            required=True,
+            description="Type of action (lock, unlock, allocation, withdrawal, patron_mode_donation)",
+        ),
+        "timestamp": fields.String(
+            required=True,
+            description="Timestamp in seconds when the action occurred (since Unix epoch)",
+        ),
+        "eventData": fields.Nested(
+            history_item_data, required=True, description="History event data"
         ),
     },
 )

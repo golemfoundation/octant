@@ -23,31 +23,32 @@ def sort_history_records(
     patron_donations: List[PatronDonationItem],
 ) -> List[HistoryEntry]:
     events = [
-        AllocationHistoryEntry(
+        HistoryEntry(
             type=OpType.ALLOCATION,
-            amount=e.amount,
             timestamp=int(e.timestamp.timestamp_s()),
-            project_address=e.project_address,
+            event_data=AllocationHistoryEntry(
+                amount=e.amount, project_address=e.project_address
+            ),
         )
         for e in allocations
     ]
 
     events += [
-        PatronModeDonationEntry(
+        HistoryEntry(
             type=OpType.PATRON_MODE_DONATION,
             timestamp=int(e.timestamp.timestamp_s()),
-            epoch=e.epoch,
-            amount=e.amount,
+            event_data=PatronModeDonationEntry(epoch=e.epoch, amount=e.amount),
         )
         for e in patron_donations
     ]
 
     events += [
-        TransactionHistoryEntry(
+        HistoryEntry(
             type=e.type,
-            amount=e.amount,
             timestamp=int(e.timestamp.timestamp_s()),
-            transaction_hash=e.transaction_hash,
+            event_data=TransactionHistoryEntry(
+                transaction_hash=e.transaction_hash, amount=e.amount
+            ),
         )
         for e in locks + unlocks + withdrawals
     ]
@@ -55,13 +56,11 @@ def sort_history_records(
     return sorted(events, key=_sort_keys, reverse=True)
 
 
-def _sort_keys(
-    elem: AllocationHistoryEntry | TransactionHistoryEntry | PatronModeDonationEntry,
-):
+def _sort_keys(elem: HistoryEntry):
     return (
         elem.timestamp,
         elem.type,
-        getattr(elem, "amount", None),
-        getattr(elem, "project_address", None),
-        getattr(elem, "transaction_hash", None),
+        getattr(elem.event_data, "amount", None),
+        getattr(elem.event_data, "project_address", None),
+        getattr(elem.event_data, "transaction_hash", None),
     )
