@@ -9,6 +9,18 @@ from app.modules.history.controller import get_user_history
 ns = Namespace("history", description="User operations overview")
 api.add_namespace(ns)
 
+project_allocation_item = api.model(
+    "ProjectAllocationItem",
+    {
+        "projectAddress": fields.String(
+            required=True,
+            description="Allocation project address.",
+        ),
+        "amount": fields.String(
+            required=True, description="Amount donated to a project, BigNumber (wei)"
+        ),
+    },
+)
 
 history_item_data = api.model(
     "HistoryItemData",
@@ -20,13 +32,18 @@ history_item_data = api.model(
             required=False,
             description="Hash of the transaction corresponding to the history item. Field available for locks, unlocks and withdrawals.",
         ),
-        "projectAddress": fields.String(
-            required=False,
-            description="Allocation project address. Field available only for allocation items.",
-        ),
         "epoch": fields.Integer(
             required=False,
             description="Epoch in which action occured. Field available only for patron_mode_donation items. ",
+        ),
+        "isManuallyEdited": fields.Boolean(
+            required=False,
+            description="Whether has the allocation been manually edited by the user. Field available only for allocation items.",
+        ),
+        "allocations": fields.List(
+            fields.Nested(project_allocation_item),
+            required=False,
+            description="Project allocation items. Field available only for allocation items.",
         ),
     },
 )

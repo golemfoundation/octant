@@ -25,11 +25,17 @@ class LockItem:
 
 
 @dataclass(frozen=True)
-class AllocationItem:
+class ProjectAllocationItem:
     project_address: str
-    epoch: int
     amount: int
+
+
+@dataclass(frozen=True)
+class AllocationItem:
+    epoch: int
     timestamp: Timestamp
+    is_manually_edited: bool
+    allocations: List[ProjectAllocationItem]
 
 
 @dataclass(frozen=True)
@@ -61,8 +67,8 @@ class TransactionHistoryEntry(HistoryEntryData):
 
 @dataclass(frozen=True)
 class AllocationHistoryEntry(HistoryEntryData):
-    project_address: str
-    amount: int
+    is_manually_edited: bool
+    allocations: List[ProjectAllocationItem]
 
 
 @dataclass(frozen=True)

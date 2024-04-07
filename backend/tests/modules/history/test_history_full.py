@@ -4,6 +4,7 @@ from app.modules.common.time import from_timestamp_s
 from app.modules.history.dto import (
     LockItem,
     OpType,
+    ProjectAllocationItem,
     AllocationItem,
     PatronDonationItem,
     WithdrawalItem,
@@ -44,7 +45,10 @@ def before(
     ]
     mock_user_allocations.get_user_allocations_by_timestamp.return_value = [
         AllocationItem(
-            amount=10, timestamp=from_timestamp_s(300), project_address="proj1", epoch=1
+            timestamp=from_timestamp_s(300),
+            epoch=1,
+            is_manually_edited=False,
+            allocations=[ProjectAllocationItem(project_address="proj1", amount=10)],
         )
     ]
     mock_patron_mode.get_patron_donations.return_value = [
@@ -100,8 +104,13 @@ def test_history(
                 type=OpType.ALLOCATION,
                 timestamp=300,
                 event_data=AllocationHistoryEntry(
-                    project_address="proj1",
-                    amount=10,
+                    is_manually_edited=False,
+                    allocations=[
+                        ProjectAllocationItem(
+                            project_address="proj1",
+                            amount=10,
+                        )
+                    ],
                 ),
             ),
             HistoryEntry(

@@ -5,6 +5,7 @@ from app.modules.history.dto import (
     LockItem,
     OpType,
     PatronDonationItem,
+    ProjectAllocationItem,
     AllocationItem,
     WithdrawalItem,
 )
@@ -46,10 +47,15 @@ from app.modules.history.dto import (
             ],
             [
                 AllocationItem(
-                    project_address="proj1",
                     epoch=1,
-                    amount=100,
                     timestamp=from_timestamp_s(10000),
+                    is_manually_edited=False,
+                    allocations=[
+                        ProjectAllocationItem(
+                            project_address="proj1",
+                            amount=100,
+                        )
+                    ],
                 )
             ],
             [
@@ -67,8 +73,13 @@ from app.modules.history.dto import (
                     type=OpType.ALLOCATION,
                     timestamp=10000,
                     event_data=AllocationHistoryEntry(
-                        project_address="proj1",
-                        amount=100,
+                        is_manually_edited=False,
+                        allocations=[
+                            ProjectAllocationItem(
+                                project_address="proj1",
+                                amount=100,
+                            )
+                        ],
                     ),
                 ),
                 HistoryEntry(
@@ -119,10 +130,15 @@ from app.modules.history.dto import (
             [],
             [
                 AllocationItem(
-                    project_address="proj1",
                     epoch=1,
-                    amount=100,
                     timestamp=from_timestamp_s(500),
+                    is_manually_edited=False,
+                    allocations=[
+                        ProjectAllocationItem(
+                            project_address="proj1",
+                            amount=100,
+                        )
+                    ],
                 )
             ],
             [
@@ -148,8 +164,13 @@ from app.modules.history.dto import (
                     type=OpType.ALLOCATION,
                     timestamp=500,
                     event_data=AllocationHistoryEntry(
-                        amount=100,
-                        project_address="proj1",
+                        is_manually_edited=False,
+                        allocations=[
+                            ProjectAllocationItem(
+                                project_address="proj1",
+                                amount=100,
+                            )
+                        ],
                     ),
                 ),
             ],
@@ -160,17 +181,20 @@ from app.modules.history.dto import (
             [],
             [
                 AllocationItem(
-                    project_address="projB",
                     epoch=1,
-                    amount=10,
                     timestamp=from_timestamp_s(100),
-                ),
-                AllocationItem(
-                    project_address="projA",
-                    epoch=1,
-                    amount=10,
-                    timestamp=from_timestamp_s(100),
-                ),
+                    is_manually_edited=True,
+                    allocations=[
+                        ProjectAllocationItem(
+                            project_address="projB",
+                            amount=10,
+                        ),
+                        ProjectAllocationItem(
+                            project_address="projA",
+                            amount=10,
+                        ),
+                    ],
+                )
             ],
             [],
             [],
@@ -179,14 +203,17 @@ from app.modules.history.dto import (
                     type=OpType.ALLOCATION,
                     timestamp=100,
                     event_data=AllocationHistoryEntry(
-                        amount=10, project_address="projB"
-                    ),
-                ),
-                HistoryEntry(
-                    type=OpType.ALLOCATION,
-                    timestamp=100,
-                    event_data=AllocationHistoryEntry(
-                        amount=10, project_address="projA"
+                        is_manually_edited=True,
+                        allocations=[
+                            ProjectAllocationItem(
+                                project_address="projB",
+                                amount=10,
+                            ),
+                            ProjectAllocationItem(
+                                project_address="projA",
+                                amount=10,
+                            ),
+                        ],
                     ),
                 ),
             ],

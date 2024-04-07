@@ -3,8 +3,11 @@ from typing import List, Tuple, Optional
 from app.context.manager import Context
 from app.infrastructure import database
 from app.modules.common.time import Timestamp, from_datetime
-from app.modules.dto import AllocationItem, AccountFundsDTO, ProposalDonationDTO
-from app.modules.history.dto import AllocationItem as HistoryAllocationItem
+from app.modules.dto import AccountFundsDTO, ProposalDonationDTO
+from app.modules.history.dto import (
+    AllocationItem as HistoryAllocationItem,
+    ProjectAllocationItem,
+)
 from app.modules.user.allocations import core
 from app.pydantic import Model
 
@@ -43,18 +46,27 @@ class SavedUserAllocations(Model):
 
     def get_user_allocations_by_timestamp(
         self, user_address: str, from_timestamp: Timestamp, limit: int
-    ) -> List[AllocationItem]:
-        return [
-            HistoryAllocationItem(
-                project_address=r.proposal_address,
-                epoch=r.epoch,
-                amount=int(r.amount),
-                timestamp=from_datetime(r.created_at),
+    ) -> List[HistoryAllocationItem]:
+        allocation_requests = database.allocations.get_user_allocations_history(
+            user_address, from_timestamp.datetime(), limit
+        )
+
+        history_items = []
+        for alloc_request, allocations in allocation_requests:
+            item = HistoryAllocationItem(
+                epoch=alloc_request.epoch,
+                timestamp=from_datetime(alloc_request.created_at),
+                is_manually_edited=alloc_request.is_manually_edited,
+                allocations=[
+                    ProjectAllocationItem(
+                        project_address=a.proposal_address, amount=int(a.amount)
+                    )
+                    for a in allocations
+                ],
             )
-            for r in database.allocations.get_user_allocations_history(
-                user_address, from_timestamp.datetime(), limit
-            )
-        ]
+            history_items.append(item)
+
+        return history_items
 
     def get_all_allocations(
         self, context: Context, include_zero_allocations=True

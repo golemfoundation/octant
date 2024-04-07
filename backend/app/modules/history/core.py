@@ -27,7 +27,7 @@ def sort_history_records(
             type=OpType.ALLOCATION,
             timestamp=int(e.timestamp.timestamp_s()),
             event_data=AllocationHistoryEntry(
-                amount=e.amount, project_address=e.project_address
+                is_manually_edited=e.is_manually_edited, allocations=e.allocations
             ),
         )
         for e in allocations
@@ -61,6 +61,5 @@ def _sort_keys(elem: HistoryEntry):
         elem.timestamp,
         elem.type,
         getattr(elem.event_data, "amount", None),
-        getattr(elem.event_data, "project_address", None),
         getattr(elem.event_data, "transaction_hash", None),
     )
