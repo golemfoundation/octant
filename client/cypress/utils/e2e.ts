@@ -110,7 +110,7 @@ export const moveEpoch = (
   cypressWindow: Cypress.AUTWindow,
   moveTo: 'decisionWindowClosed' | 'decisionWindowOpen',
 ): Promise<boolean> => {
-  return new Cypress.Promise(resolve => {
+  const promise = new Cypress.Promise(resolve => {
     const isDecisionWindowOpen = cypressWindow.clientReactQuery.getQueryData(
       QUERY_KEYS.isDecisionWindowOpen,
     );
@@ -127,19 +127,18 @@ export const moveEpoch = (
           // reload is needed to get updated data in the app
           cy.reload();
           cy.get('[data-test*=AppLoader]').should('not.exist');
-          cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+          cy.get('[data-test=SyncView]', {timeout: 60000}).should('not.exist');
           // reload is needed to get updated data in the app
           cy.reload();
-
-          test(cypressWindow, moveTo).then(() => {
-            resolve(true);
-          });
+          resolve(true);
         });
       });
-    } else {
-      test(cypressWindow, moveTo).then(() => {
-        resolve(true);
-      });
+      resolve(true);
     }
+  });
+  return new Cypress.Promise(resolve => {
+    test(cypressWindow, moveTo).then(() => {
+      resolve(true);
+    });
   });
 };

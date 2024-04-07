@@ -66,6 +66,10 @@ let wasTimeMoved = false;
         }
       });
     });
+
+    it('playground', () => {
+      cy.wait(30000);
+    });
   });
   describe(
     `allocation (allocation window closed): ${device}`,
