@@ -56,13 +56,69 @@ jobs:
           http = true
           insecure = true
 
+    - name: set variables
+      env:
+        NORMALIZED_NAME: ${{ matrix.SERVICE }}
+      run: |
+        NORMALIZED_NAME=${{ env.NORMALIZED_NAME }}
+        NORMALIZED_NAME=${NORMALIZED_NAME//\//-} # replace / with -
+        echo NORMALIZED_NAME=${NORMALIZED_NAME} >> $GITHUB_ENV # update GitHub ENV vars
+      shell: bash
+
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
         allow: network.host,security.insecure
         context: __local/${{ matrix.SERVICE }}
-        file: __local/ci/Dockerfile.${{ matrix.SERVICE }}
+        file: __local/ci/Dockerfile.${{ env.NORMALIZED_NAME }}
         push: true
-        tags: ${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}/${{ matrix.SERVICE }}:${{ inputs.image-tag }}
+        tags: ${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}/${{ env.NORMALIZED_NAME }}:${{ inputs.image-tag }}
         # cache-from: type=local,src=/mnt/storage/kaniko-cache
         # cache-to: type=local,dest=/mnt/storage/kaniko-cache
+
+  build-multideployer:
+    name: Build Multideployer (special case)
+    needs:
+      - build-images
+    runs-on:
+      - metal
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        path: __local
+        ref: ${{ inputs.git-ref }}
+
+    - name: Login to Docker registry
+      uses: docker/login-action@v3
+      with:
+        registry: europe-docker.pkg.dev
+        username: _json_key_base64
+        password: ${{ secrets.GCP_DOCKER_IMAGES_REGISTRY_SERVICE_ACCOUNT }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      with:
+        buildkitd-flags: --debug
+        driver: docker
+        buildkitd-config-inline: |
+          debug = true
+          insecure-entitlements = [ "network.host", "security.insecure" ]
+
+          [registry."local-docker-registry.wildland.dev:80"]
+          http = true
+          insecure = true
+
+    - name: replace placeholders
+      run: |
+        sed -i 's|_CONTRACTS_IMAGE_PLACEHOLDER_|${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}/contracts-v1:${{ inputs.image-tag }}|g' __local/ci/Dockerfile.multideployer
+        sed -i 's|_SUBGRAPH_IMAGE_PLACEHOLDER_|${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}/subgraph:${{ inputs.image-tag }}|g' __local/ci/Dockerfile.multideployer
+      shell: bash
+
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        allow: network.host,security.insecure
+        context: __local/${{ matrix.SERVICE }}
+        file: __local/ci/Dockerfile.${{ env.NORMALIZED_NAME }}
+        push: true
+        tags: ${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}/multideployer:${{ inputs.image-tag }}
