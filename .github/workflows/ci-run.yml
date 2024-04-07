@@ -27,18 +27,18 @@ jobs:
   #     pull-request-id: ${{ github.event.pull_request.number }}
   #     workflow-id: ${{ github.run_id }}
 
-  stop-api-env:
-    name: Stop APITest Env
-    needs:
-    - start-apitest-env
-    - run-api-tests
-    if: always() && (needs.start-apitest-env.result == 'success')
-    uses: ./.github/workflows/tpl-destroy-env.yml
-    secrets: inherit
-    with:
-      env-type: apitest
-      pull-request-id: ${{ github.event.pull_request.number }}
-      workflow-id: ${{ github.run_id }}
+  # stop-api-env:
+  #   name: Stop APITest Env
+  #   needs:
+  #   - start-apitest-env
+  #   - run-api-tests
+  #   if: always() && (needs.start-apitest-env.result == 'success')
+  #   uses: ./.github/workflows/tpl-destroy-env.yml
+  #   secrets: inherit
+  #   with:
+  #     env-type: apitest
+  #     pull-request-id: ${{ github.event.pull_request.number }}
+  #     workflow-id: ${{ github.run_id }}
 
   # run-e2e-tests:
   #   name: Run E2E Tests
