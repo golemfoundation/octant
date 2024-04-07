@@ -59,7 +59,9 @@ if [[ "$ACTION" == "create" ]]; then
 elif [[ "$ACTION" == "update" ]]; then
 
 	if [[ "$NETWORK_NAME" == "local" || "$NETWORK_NAME" == "localhost" ]]; then
-		export FRONTEND_RPC_URL; FRONTEND_RPC_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
+		if [[ "$WEB_CLIENT_REPLICAS" != "0" ]]; then
+			export FRONTEND_RPC_URL; FRONTEND_RPC_URL=https://$(bash $CI_PROJECT_DIR/ci/argocd/get_rpc_url.sh)
+		fi
 		export BACKEND_RPC_URL=http://anvil:8545
 	else
 		# This will make webclient use default (wagmi) endpoint

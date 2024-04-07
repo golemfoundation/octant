@@ -135,36 +135,33 @@ jobs:
       ENV_TYPE: apitest
       CI_MERGE_REQUEST_IID: ${{ github.event.pull_request.number }}
       CI_PIPELINE_ID: ${{ github.run_id }}
+      OCTANT_ENV: dev
+      CHAIN_ID: 1337
+      CHAIN_NAME: localhost
     steps:
     - uses: actions/checkout@v4.1.0
     - uses: actions/cache/restore@v4
       with:
         path: backend/.venv
         key: "${{ github.sha }}-poetry-backend"
-    - uses: actions/download-artifact@v4
-      with:
-        name: ${{ needs.deploy-apitest-env.outputs.contracts-env-artifact-id }}
     - name: Run API tests
       run: |
         set -ex
-
         export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
-        export $(grep -v '^#' ${CI_PROJECT_DIR}/contracts.env | xargs)
 
         source ${CI_PROJECT_DIR}/ci/argocd/resolve_env.sh $ENV_TYPE
 
         pushd backend
 
         poetry config virtualenvs.in-project true
-        poetry install
+        poetry install --no-interaction --no-ansi -v --with prod --with dev
 
         bash ${CI_PROJECT_DIR}/ci/argocd/wait_for_app.sh
+        export CONTRACTS_DEPLOYER_URL; CONTRACTS_DEPLOYER_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_multideployer_url.sh)
         export ETH_RPC_PROVIDER_URL; ETH_RPC_PROVIDER_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_rpc_url.sh)
-        export SUBGRAPH_ENDPOINT; SUBGRAPH_ENDPOINT=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_graph_url.sh)/subgraphs/name/octant
+        export SUBGRAPH_URL; SUBGRAPH_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_graph_url.sh)
 
-        # Tests are disabled???
-        # https://gitlab.com/golemfoundation/governance/octant/-/commit/14e996ebed1fb73788e8ace045ea3b9a69bd5ca8
-        # poetry run pytest --onlyapi
+        poetry run pytest -s --onlyapi
       shell: bash
 
   # deploy-e2e-env:
@@ -212,7 +209,7 @@ jobs:
       env-id: ${{ needs.start-apitest-env.outputs.env-id }}
       deployment-id: ${{ needs.start-apitest-env.outputs.deployment-id }}
       # ---
-      deploy-contracts: true
+      deploy-contracts: false
       chain-id: 1337
       network-name: local
       chain-name: localhost
@@ -221,6 +218,9 @@ jobs:
       web-client-replicas: 0
       coin-prices-server-replicas: 0
       backend-server-replicas: 0
+      multideployer-enabled: true
+      subgraph-deploy: false
+      graph-healtchecker-enabled: false
     secrets: inherit
 
   # start-e2e-env:

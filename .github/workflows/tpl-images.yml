@@ -118,7 +118,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         allow: network.host,security.insecure
-        context: __local/${{ matrix.SERVICE }}
-        file: __local/ci/Dockerfile.${{ env.NORMALIZED_NAME }}
+        context: __local/localenv/multideployer
+        file: __local/ci/Dockerfile.multideployer
         push: true
         tags: ${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}/multideployer:${{ inputs.image-tag }}

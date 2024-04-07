@@ -15,7 +15,7 @@ spec:
     namespace: $DEPLOYMENT_ID
   sources:
     - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-      targetRevision: 0.2.44
+      targetRevision: 0.2.46
       chart: octant
       helm:
         parameters:
@@ -42,6 +42,10 @@ spec:
             value: '100000'
           - name: graphHealtchecker.replicas
             value: '${GRAPH_HEALTHCHECKER_REPLICAS:-1}'
+          - name: subgraph.deploy
+            value: '$SUBGRAPH_DEPLOY'
+          - name: graphHealtchecker.enabled
+            value: '$GRAPH_HEALTCHECKER_ENABLED'
           ## Coin Prices Server
           - name: coinPricesServer.replicas
             value: '${COIN_PRICES_SERVER_REPLICAS:-2}'
@@ -101,6 +105,9 @@ spec:
             value: 'true'
           - name: ingress.cloudflareProxied.graph-ipfs
             value: 'true'
+          # APITests / Multideployer
+          - name: multideployer.enabled
+            value: '$MULTIDEPLOYER_ENABLED'
     - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
       targetRevision: 0.0.10
       chart: octant-anvil
