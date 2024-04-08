@@ -21,7 +21,7 @@ export default function useUserAcceptsTOS(): UseMutationResult<any> {
           message,
         });
         await apiPostPendingMultisigSignatures(address!, message, SignatureOpType.TOS);
-        return { accepted: false };
+        return;
       }
 
       const signedMessages = await signMessageAsync({
@@ -33,6 +33,9 @@ export default function useUserAcceptsTOS(): UseMutationResult<any> {
     },
 
     onSuccess: data => {
+      if (isContract) {
+        return;
+      }
       queryClient.setQueryData(QUERY_KEYS.userTOS(address!), data);
     },
   });

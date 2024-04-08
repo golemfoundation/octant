@@ -43,7 +43,7 @@ const ModalOnboardingTOS: FC = () => {
 
     const getPendingMultisigSignatures = () => {
       apiGetPendingMultisigSignatures(address!, SignatureOpType.TOS).then(data => {
-        setIsWaitingForWalletConfirmationMultisig(!!data.hash);
+        setIsWaitingForWalletConfirmationMultisig(!!data.message);
         refetchUserTOS();
       });
     };
