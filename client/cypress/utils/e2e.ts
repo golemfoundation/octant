@@ -134,11 +134,12 @@ export const moveEpoch = (
             resolve(true);
           });
         });
-        resolve(true);
       }
+
+      resolve(true);
     })
   };
 
   cy.wrap(test1).its('value').should('eq', true);
-  return cy.wrap(test).its('value').should('eq', true);
+  return cy.wrap(test(cypressWindow, moveTo)).its('value').should('eq', true);
 };
