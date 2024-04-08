@@ -7,7 +7,6 @@ from app.exceptions import ExternalApiException
 from app.infrastructure.external_api.etherscan.helpers import raise_for_status
 from app.infrastructure.external_api.etherscan.req_params import (
     AccountAction,
-    obfuscate_url,
 )
 
 MAX_RESPONSE_SIZE = 10000
@@ -36,7 +35,7 @@ def get_transactions(
         return txs
     except requests.exceptions.RequestException as e:
         app_module.ExceptionHandler.print_stacktrace(e)
-        raise ExternalApiException(obfuscate_url(api_url), e, 500)
+        raise ExternalApiException(e, 500)
 
 
 def _get_api_url(address: str, tx_type: AccountAction) -> str:
