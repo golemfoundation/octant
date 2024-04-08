@@ -134,8 +134,8 @@ env:
   NETWORK_NAME: ${{ inputs.network-name }}
   NETWORK_ID: ${{ inputs.chain-id }}
   FORWARD_FIRST_EPOCH: ${{ inputs.forward-first-epoch }}
-  DECISION_WINDOW: ${{ inputs.decision-window }}
-  EPOCH_DURATION: ${{ inputs.epoch-duration }}
+  DECISION_WINDOW: 600
+  EPOCH_DURATION: 600
   SKIP_LOCAL_SUBGRAPH_UPDATE: ${{ inputs.skip-local-subgraph-update }}
   ANVIL_BLOCK_TIME: ${{ inputs.anvil-block-time }}
   SECRET_WORDS: test test test test test test test test test test test junk
