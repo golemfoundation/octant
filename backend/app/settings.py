@@ -3,8 +3,8 @@ import os
 from dotenv import load_dotenv
 from web3 import Web3
 
-from constants import DEFAULT_MAINNET_PROPOSAL_CIDS
 from app.modules.common import parse_bool
+from app.constants import DEFAULT_MAINNET_PROPOSAL_CIDS
 
 # Load environment variables from the .env file
 load_dotenv()

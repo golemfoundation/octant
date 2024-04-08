@@ -217,6 +217,7 @@ class ProjectsMetadataService(Protocol):
     def get_projects_metadata(self, context: Context) -> ProjectsMetadata:
         ...
 
+
 @runtime_checkable
 class UserAllocationNonceProtocol(Protocol):
     def get_user_next_nonce(self, user_address: str) -> int:
