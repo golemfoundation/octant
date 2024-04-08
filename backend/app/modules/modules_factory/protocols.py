@@ -177,7 +177,9 @@ class MultisigSignatures(Protocol):
     ) -> Signature:
         ...
 
-    def approve_pending_signatures(self, context: Context) -> list[Signature]:
+    def approve_pending_signatures(
+        self, context: Context, op_type: SignatureOpType
+    ) -> list[Signature]:
         ...
 
     def apply_staged_signatures(self, context: Context, signature_id: int):
@@ -213,4 +215,9 @@ class UserTos(Protocol):
 @runtime_checkable
 class ProjectsMetadataService(Protocol):
     def get_projects_metadata(self, context: Context) -> ProjectsMetadata:
+        ...
+
+@runtime_checkable
+class UserAllocationNonceProtocol(Protocol):
+    def get_user_next_nonce(self, user_address: str) -> int:
         ...

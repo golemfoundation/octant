@@ -176,6 +176,13 @@ GNOSIS_SAFE = [
         "stateMutability": "view",
         "type": "function",
     },
+    {
+        "inputs": [{"internalType": "bytes", "name": "message", "type": "bytes"}],
+        "name": "getMessageHash",
+        "outputs": [{"internalType": "bytes32", "name": "", "type": "bytes32"}],
+        "stateMutability": "view",
+        "type": "function",
+    },
 ]
 
 DEPOSITS = [

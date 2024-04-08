@@ -12,12 +12,14 @@ from app.modules.modules_factory.protocols import (
     MultisigSignatures,
     UserTos,
     ProjectsMetadataService,
+    UserAllocationNonceProtocol,
 )
 from app.modules.modules_factory.protocols import SimulatePendingSnapshots
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
 from app.modules.snapshots.pending.service.simulated import SimulatedPendingSnapshots
 from app.modules.staking.proceeds.service.estimated import EstimatedStakingProceeds
+from app.modules.user.allocations.nonce.service.saved import SavedUserAllocationsNonce
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
 from app.modules.user.events_generator.service.db_and_graph import (
@@ -36,7 +38,8 @@ class CurrentUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protoco
 
 
 class CurrentServices(Model):
-    user_allocations_service: SavedUserAllocations
+    user_allocations_nonce_service: 
+      
     user_deposits_service: CurrentUserDeposits
     user_tos_service: UserTos
     octant_rewards_service: OctantRewards
@@ -73,6 +76,7 @@ class CurrentServices(Model):
             effective_deposits=user_deposits, octant_rewards=octant_rewards
         )
         user_allocations = SavedUserAllocations()
+        user_allocations_nonce = SavedUserAllocationsNonce()
         user_withdrawals = FinalizedWithdrawals()
         tos_verifier = InitialUserTosVerifier()
         user_tos = InitialUserTos(verifier=tos_verifier)
@@ -89,7 +93,7 @@ class CurrentServices(Model):
         )
 
         return CurrentServices(
-            user_allocations_service=user_allocations,
+            user_allocations_nonce_service=user_allocations_nonce,
             user_deposits_service=user_deposits,
             octant_rewards_service=CalculatedOctantRewards(
                 staking_proceeds=EstimatedStakingProceeds(),

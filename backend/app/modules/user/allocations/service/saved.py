@@ -5,17 +5,10 @@ from app.infrastructure import database
 from app.modules.common.time import Timestamp, from_datetime
 from app.modules.dto import AllocationItem, AccountFundsDTO, ProposalDonationDTO
 from app.modules.history.dto import AllocationItem as HistoryAllocationItem
-from app.modules.user.allocations import core
 from app.pydantic import Model
 
 
 class SavedUserAllocations(Model):
-    def get_user_next_nonce(self, user_address: str) -> int:
-        allocation_request = database.allocations.get_user_last_allocation_request(
-            user_address
-        )
-        return core.next_allocation_nonce(allocation_request)
-
     def get_all_donors_addresses(self, context: Context) -> List[str]:
         return database.allocations.get_users_with_allocations(
             context.epoch_details.epoch_num
