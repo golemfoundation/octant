@@ -23,7 +23,15 @@ export async function apiGetPendingMultisigSignatures(
 
 export async function apiPostPendingMultisigSignatures(
   userAddress: string,
-  message: string,
+  message:
+    | string
+    | {
+        isManuallyEdited: boolean;
+        payload: {
+          allocations: { amount: string; proposalAddress: string }[];
+          nonce: number;
+        };
+      },
   signatureOpType: SignatureOpType,
 ): Promise<any> {
   return apiService

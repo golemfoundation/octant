@@ -222,7 +222,8 @@
       },
       "historyTransactionLabel": {
         "confirmed": "Confirmed",
-        "pending": "Pending"
+        "pending": "Pending",
+        "pendingMultisig": "Pending multisig"
       },
       "metricsTimeSection": {
         "epochEndsIn": "Epoch {{currentEpoch}} ends in",

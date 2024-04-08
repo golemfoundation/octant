@@ -6,8 +6,6 @@ import Button from 'components/ui/Button';
 import styles from './AllocationNavigation.module.scss';
 import AllocationNavigationProps from './types';
 
-const isWaitingForWalletConfirmationMultisig = false;
-
 const AllocationNavigation: FC<AllocationNavigationProps> = ({
   isLeftButtonDisabled,
   areButtonsDisabled,
@@ -16,6 +14,7 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
   onAllocate,
   onResetValues,
   setCurrentView,
+  isWaitingForWalletConfirmationMultisig,
 }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationNavigation',
