@@ -18,7 +18,7 @@ export const ROOTS: Root = {
   patronMode: 'patronMode',
   projectDonors: 'projectDonors',
   projectRewardsThreshold: 'projectRewardsThreshold',
-  projectsContract: 'projectsContract',
+  projectsEpoch: 'projectsEpoch',
   projectsIpfsResults: 'projectsIpfsResults',
   userAllocationNonce: 'userAllocationNonce',
   userAllocations: 'userAllocations',
@@ -57,7 +57,7 @@ export const QUERY_KEYS: QueryKeys = {
     epochNumber.toString(),
   ],
   projectRewardsThreshold: epochNumber => [ROOTS.projectRewardsThreshold, epochNumber.toString()],
-  projectsContract: epochNumber => [ROOTS.projectsContract, epochNumber.toString()],
+  projectsEpoch: epochNumber => [ROOTS.projectsEpoch, epochNumber.toString()],
   projectsIpfsResults: (projectAddress, epochNumber) => [
     ROOTS.projectsIpfsResults,
     projectAddress,

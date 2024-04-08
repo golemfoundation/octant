@@ -22,7 +22,7 @@ import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
-import useProjectsContract from 'hooks/queries/useProjectsContract';
+import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
 import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
@@ -48,7 +48,7 @@ const AllocationView = (): ReactElement => {
   const [isManualMode, setIsManualMode] = useState<boolean>(false);
   const [addressesWithError, setAddressesWithError] = useState<string[]>([]);
   const [percentageProportions, setPercentageProportions] = useState<PercentageProportions>({});
-  const { data: projectsContract } = useProjectsContract();
+  const { data: projectsEpoch } = useProjectsEpoch();
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards();
   const { isRewardsForProjectsSet } = useAllocationViewSetRewardsForProjects();
   const {
@@ -237,7 +237,7 @@ const AllocationView = (): ReactElement => {
   };
 
   const onAllocate = () => {
-    if (userNonce === undefined || projectsContract === undefined) {
+    if (userNonce === undefined || projectsEpoch === undefined) {
       return;
     }
     /**
@@ -248,7 +248,7 @@ const AllocationView = (): ReactElement => {
     const allocationValuesNew = [...allocationValues];
     if (allocationValuesNew.length === 0) {
       allocationValuesNew.push({
-        address: projectsContract[0],
+        address: projectsEpoch.projectsAddresses[0],
         value: '0',
       });
     }

@@ -4,7 +4,7 @@ import { apiGetProjectDonors } from 'api/calls/projectDonors';
 import { QUERY_KEYS } from 'api/queryKeys';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useProjectsContract from 'hooks/queries/useProjectsContract';
+import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 
 import { ProjectDonor } from './types';
 import { mapDataToProjectDonors } from './utils';
@@ -15,15 +15,15 @@ export default function useProjectsDonors(epoch?: number): {
   isSuccess: boolean;
 } {
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: projectsAddresses } = useProjectsContract(epoch);
+  const { data: projectsEpoch } = useProjectsEpoch(epoch);
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   // TODO OCT-1139 implement socket here.
 
   const projectsDonorsResults: UseQueryResult<ProjectDonor[]>[] = useQueries({
-    queries: (projectsAddresses || []).map(projectAddress => ({
+    queries: (projectsEpoch?.projectsAddresses || []).map(projectAddress => ({
       enabled:
-        !!projectsAddresses &&
+        !!projectsEpoch &&
         !!currentEpoch &&
         currentEpoch > 1 &&
         (isDecisionWindowOpen === true || epoch !== undefined),
@@ -35,7 +35,7 @@ export default function useProjectsDonors(epoch?: number): {
 
   const isFetching =
     isDecisionWindowOpen === undefined ||
-    projectsAddresses === undefined ||
+    projectsEpoch === undefined ||
     projectsDonorsResults.length === 0 ||
     projectsDonorsResults.some(
       ({ isFetching: isFetchingProjectsDonorsResult }) => isFetchingProjectsDonorsResult,
@@ -52,7 +52,7 @@ export default function useProjectsDonors(epoch?: number): {
     data: (projectsDonorsResults || []).reduce((acc, curr, currentIndex) => {
       return {
         ...acc,
-        [projectsAddresses[currentIndex]]: curr.data,
+        [projectsEpoch?.projectsAddresses[currentIndex]]: curr.data,
       };
     }, {}),
     isFetching: false,

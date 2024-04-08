@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsGridTileValue from 'components/Metrics/MetricsGrid/MetricsGridTileValue';
-import useProjectsContract from 'hooks/queries/useProjectsContract';
+import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import useAllProjects from 'hooks/subgraph/useAllProjects';
 
 import styles from './MetricsGeneralGridTotalProjects.module.scss';
@@ -15,7 +15,7 @@ const MetricsGeneralGridTotalProjects: FC<MetricsGeneralGridTotalProjectsProps> 
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
 
   const { data: allProjects } = useAllProjects();
-  const { data: projectsContract } = useProjectsContract();
+  const { data: projectsEpoch } = useProjectsEpoch();
 
   return (
     <MetricsGridTile
@@ -29,7 +29,7 @@ const MetricsGeneralGridTotalProjects: FC<MetricsGeneralGridTotalProjectsProps> 
               subvalue={t('totalProjectsSinceEpoch0', {
                 projectsAmount: allProjects?.length,
               })}
-              value={projectsContract?.length.toString() ?? ''}
+              value={projectsEpoch?.projectsAddresses.length.toString() ?? ''}
             />
           ),
           title: t('totalProjects'),

@@ -1,10 +1,9 @@
-import env from 'env';
 import { ExtendedProject } from 'types/extended-project';
 import getSortedElementsByTotalValueOfAllocationsAndAlphabetical from 'utils/getSortedElementsByTotalValueOfAllocationsAndAlphabetical';
 
 import useProjectsDonors from './donors/useProjectsDonors';
 import useMatchedProjectRewards from './useMatchedProjectRewards';
-import useProjectsContract from './useProjectsContract';
+import useProjectsEpoch from './useProjectsEpoch';
 import useProjectsIpfs from './useProjectsIpfs';
 
 export interface ProjectIpfsWithRewards extends ExtendedProject {
@@ -18,14 +17,11 @@ export default function useProjectsIpfsWithRewards(epoch?: number): {
   data: ProjectIpfsWithRewards[];
   isFetching: boolean;
 } {
-  // TODO OCT-1270 TODO OCT-1312 Remove this override.
-  const epochOverrideForDataFetch = env.network === 'Mainnet' && epoch === 2 ? 3 : epoch;
-
   const { data: projectsAddresses, isFetching: isFetchingProjectsContract } =
-    useProjectsContract(epochOverrideForDataFetch);
+    useProjectsEpoch(epoch);
   const { data: projectsIpfs, isFetching: isFetchingProjectsIpfs } = useProjectsIpfs(
-    projectsAddresses,
-    epochOverrideForDataFetch,
+    projectsAddresses?.projectsAddresses,
+    epoch,
   );
   const {
     data: matchedProjectRewards,
