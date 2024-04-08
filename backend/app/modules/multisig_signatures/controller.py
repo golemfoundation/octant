@@ -11,7 +11,11 @@ def get_last_pending_signature(user_address: str, op_type: SignatureOpType) -> d
     service = get_services(context.epoch_state).multisig_signatures_service
     signature = service.get_last_pending_signature(context, user_address, op_type)
 
-    return {"message": signature.message, "hash": signature.safe_msg_hash}
+    return (
+        {"message": signature.message, "hash": signature.safe_msg_hash}
+        if signature
+        else {}
+    )
 
 
 def save_pending_signature(
