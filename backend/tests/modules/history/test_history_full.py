@@ -4,12 +4,14 @@ from app.modules.common.time import from_timestamp_s
 from app.modules.history.dto import (
     LockItem,
     OpType,
+    ProjectAllocationItem,
     AllocationItem,
     PatronDonationItem,
     WithdrawalItem,
 )
 from app.modules.history.dto import (
     UserHistoryDTO,
+    HistoryEntry,
     TransactionHistoryEntry,
     PatronModeDonationEntry,
     AllocationHistoryEntry,
@@ -43,7 +45,11 @@ def before(
     ]
     mock_user_allocations.get_user_allocations_by_timestamp.return_value = [
         AllocationItem(
-            amount=10, timestamp=from_timestamp_s(300), project_address="proj1", epoch=1
+            timestamp=from_timestamp_s(300),
+            epoch=1,
+            is_manually_edited=False,
+            leverage="1015.15",
+            allocations=[ProjectAllocationItem(project_address="proj1", amount=10)],
         )
     ]
     mock_patron_mode.get_patron_donations.return_value = [
@@ -79,35 +85,51 @@ def test_history(
 
     assert result == UserHistoryDTO(
         history=[
-            TransactionHistoryEntry(
-                timestamp=500,
+            HistoryEntry(
                 type=OpType.WITHDRAWAL,
-                transaction_hash="tx3",
-                amount=50,
+                timestamp=500,
+                event_data=TransactionHistoryEntry(
+                    transaction_hash="tx3",
+                    amount=50,
+                ),
             ),
-            PatronModeDonationEntry(
-                timestamp=400,
+            HistoryEntry(
                 type=OpType.PATRON_MODE_DONATION,
-                epoch=1,
-                amount=10,
+                timestamp=400,
+                event_data=PatronModeDonationEntry(
+                    epoch=1,
+                    amount=10,
+                ),
             ),
-            AllocationHistoryEntry(
-                timestamp=300,
+            HistoryEntry(
                 type=OpType.ALLOCATION,
-                project_address="proj1",
-                amount=10,
+                timestamp=300,
+                event_data=AllocationHistoryEntry(
+                    is_manually_edited=False,
+                    leverage="1015.15",
+                    allocations=[
+                        ProjectAllocationItem(
+                            project_address="proj1",
+                            amount=10,
+                        )
+                    ],
+                ),
             ),
-            TransactionHistoryEntry(
-                timestamp=200,
+            HistoryEntry(
                 type=OpType.UNLOCK,
-                transaction_hash="tx2",
-                amount=10,
+                timestamp=200,
+                event_data=TransactionHistoryEntry(
+                    transaction_hash="tx2",
+                    amount=10,
+                ),
             ),
-            TransactionHistoryEntry(
-                timestamp=100,
+            HistoryEntry(
                 type=OpType.LOCK,
-                transaction_hash="tx1",
-                amount=10,
+                timestamp=100,
+                event_data=TransactionHistoryEntry(
+                    transaction_hash="tx1",
+                    amount=10,
+                ),
             ),
         ],
         next_cursor=None,

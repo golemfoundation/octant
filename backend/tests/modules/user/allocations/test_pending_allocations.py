@@ -45,6 +45,7 @@ def before(
     patch_epochs,
     patch_proposals,
     patch_has_pending_epoch_snapshot,
+    mock_pending_epoch_snapshot_db,
     patch_user_budget,
     patch_is_contract,
 ):
@@ -363,6 +364,28 @@ def test_stores_allocation_request_signature(tos_users, proposal_accounts):
 
     assert alloc_signature.epoch == MOCKED_PENDING_EPOCH_NO
     assert alloc_signature.signature == signature
+
+
+def test_stores_allocation_leverage(tos_users, proposal_accounts):
+    nonce0 = get_allocation_nonce(tos_users[0].address)
+    payload = create_payload(
+        proposal_accounts[0:2], [10 * 10**18, 20 * 10**18], nonce0
+    )
+    signature = sign(tos_users[0], build_allocations_eip712_data(payload))
+    expected_leverage, _, _ = controller.simulate_allocation(
+        payload, tos_users[0].address
+    )
+
+    controller.allocate(
+        tos_users[0].address, {"payload": payload, "signature": signature}
+    )
+
+    alloc_request = database.allocations.get_allocation_request_by_user_nonce(
+        tos_users[0].address, nonce0
+    )
+
+    assert alloc_request.epoch == MOCKED_PENDING_EPOCH_NO
+    assert alloc_request.leverage == expected_leverage
 
 
 def check_allocations(user_address, expected_payload, expected_count):

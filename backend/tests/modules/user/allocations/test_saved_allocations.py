@@ -10,7 +10,10 @@ from app.modules.dto import (
     UserAllocationPayload,
     AccountFundsDTO,
 )
-from app.modules.history.dto import AllocationItem as HistoryAllocationItem
+from app.modules.history.dto import (
+    AllocationItem as HistoryAllocationItem,
+    ProjectAllocationItem,
+)
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 from tests.helpers import make_user_allocation
 from tests.helpers.context import get_context
@@ -188,13 +191,21 @@ def test_user_allocations_by_timestamp(
 ):
     user1, _, _ = mock_users_db
     timestamp_before = from_timestamp_s(1710719999)
-    timestamp_after = from_timestamp_s(1710720001)
+    timestamp_after = from_timestamp_s(1710720002)
 
-    allocation = [
+    allocation1 = [
         AllocationItem(proposal_accounts[0].address, 100),
         AllocationItem(proposal_accounts[1].address, 100),
     ]
-    make_user_allocation(context, user1, allocation_items=allocation)
+    allocation2 = [
+        AllocationItem(proposal_accounts[0].address, 200),
+        AllocationItem(proposal_accounts[1].address, 200),
+    ]
+
+    make_user_allocation(context, user1, nonce=0, allocation_items=allocation1)
+    make_user_allocation(
+        context, user1, nonce=1, allocation_items=allocation2, leverage=2015.1555
+    )
 
     result_before = service.get_user_allocations_by_timestamp(
         user1.address, from_timestamp=timestamp_before, limit=20
@@ -209,25 +220,56 @@ def test_user_allocations_by_timestamp(
     assert result_before == []
     assert result_after == [
         HistoryAllocationItem(
-            project_address=proposal_accounts[0].address,
             epoch=1,
-            amount=100,
             timestamp=from_timestamp_s(1710720000),
+            is_manually_edited=None,
+            leverage=2015.1555,
+            allocations=[
+                ProjectAllocationItem(
+                    project_address=proposal_accounts[0].address,
+                    amount=200,
+                ),
+                ProjectAllocationItem(
+                    project_address=proposal_accounts[1].address,
+                    amount=200,
+                ),
+            ],
         ),
         HistoryAllocationItem(
-            project_address=proposal_accounts[1].address,
             epoch=1,
-            amount=100,
             timestamp=from_timestamp_s(1710720000),
+            is_manually_edited=None,
+            leverage=None,
+            allocations=[
+                ProjectAllocationItem(
+                    project_address=proposal_accounts[0].address,
+                    amount=100,
+                ),
+                ProjectAllocationItem(
+                    project_address=proposal_accounts[1].address,
+                    amount=100,
+                ),
+            ],
         ),
     ]
+
     assert result_after_with_limit == [
         HistoryAllocationItem(
-            project_address=proposal_accounts[0].address,
             epoch=1,
-            amount=100,
             timestamp=from_timestamp_s(1710720000),
-        )
+            is_manually_edited=None,
+            leverage=2015.1555,
+            allocations=[
+                ProjectAllocationItem(
+                    project_address=proposal_accounts[0].address,
+                    amount=200,
+                ),
+                ProjectAllocationItem(
+                    project_address=proposal_accounts[1].address,
+                    amount=200,
+                ),
+            ],
+        ),
     ]
 
 

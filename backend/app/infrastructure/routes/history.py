@@ -9,6 +9,49 @@ from app.modules.history.controller import get_user_history
 ns = Namespace("history", description="User operations overview")
 api.add_namespace(ns)
 
+project_allocation_item = api.model(
+    "ProjectAllocationItem",
+    {
+        "projectAddress": fields.String(
+            required=True,
+            description="Allocation project address.",
+        ),
+        "amount": fields.String(
+            required=True, description="Amount donated to a project, BigNumber (wei)"
+        ),
+    },
+)
+
+history_item_data = api.model(
+    "HistoryItemData",
+    {
+        "amount": fields.String(
+            required=True, description="Amount involved in the action, BigNumber (wei)"
+        ),
+        "transactionHash": fields.String(
+            required=False,
+            description="Hash of the transaction corresponding to the history item. Field available for locks, unlocks and withdrawals.",
+        ),
+        "epoch": fields.Integer(
+            required=False,
+            description="Epoch in which action occured. Field available only for patron_mode_donation items. ",
+        ),
+        "isManuallyEdited": fields.Boolean(
+            required=False,
+            description="Whether has the allocation been manually edited by the user. Field available only for allocation items.",
+        ),
+        "leverage": fields.String(
+            required=False,
+            description="Leverage of the allocated funds. Field available only for allocation items.",
+        ),
+        "allocations": fields.List(
+            fields.Nested(project_allocation_item),
+            required=False,
+            description="Project allocation items. Field available only for allocation items.",
+        ),
+    },
+)
+
 history_item = api.model(
     "HistoryItem",
     {
@@ -16,24 +59,12 @@ history_item = api.model(
             required=True,
             description="Type of action (lock, unlock, allocation, withdrawal, patron_mode_donation)",
         ),
-        "amount": fields.String(
-            required=True, description="Amount involved in the action, BigNumber (wei)"
-        ),
         "timestamp": fields.String(
             required=True,
-            description="Timestamp in microseconds when the action occurred (since Unix epoch)",
+            description="Timestamp in seconds when the action occurred (since Unix epoch)",
         ),
-        "transactionHash": fields.String(
-            required=False,
-            description="Hash of the transaction corresponding to the history item. Field available for locks, unlocks and withdrawals.",
-        ),
-        "projectAddress": fields.String(
-            required=False,
-            description="Allocation project address. Field available only for allocation items.",
-        ),
-        "epoch": fields.Integer(
-            required=False,
-            description="Epoch in which action occured. Field available only for patron_mode_donation items. ",
+        "eventData": fields.Nested(
+            history_item_data, required=True, description="History event data"
         ),
     },
 )
