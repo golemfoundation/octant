@@ -51,13 +51,15 @@ let wasTimeMoved = false;
         // Move time only once, for the first device.
         if (!wasTimeMoved) {
           cy.log(`test 1_2 ${isDecisionWindowOpen}`);
-          moveEpoch(win, 'decisionWindowClosed');
-          const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
-            QUERY_KEYS.isDecisionWindowOpen,
-          );
-          wasTimeMoved = true;
-          cy.log(`test 1_2 ${isDecisionWindowOpenAfter}`);
-          expect(isDecisionWindowOpenAfter).to.be.false;
+          moveEpoch(win, 'decisionWindowClosed')
+            .then(() => {
+              const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
+                QUERY_KEYS.isDecisionWindowOpen,
+              );
+              wasTimeMoved = true;
+              cy.log(`test 1_2 ${isDecisionWindowOpenAfter}`);
+              expect(isDecisionWindowOpenAfter).to.be.false;
+            });
         } else {
           expect(true).to.be.true;
         }
