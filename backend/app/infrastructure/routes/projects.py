@@ -43,6 +43,6 @@ class ProposalsProjectsMetadata(OctantResource):
         app.logger.debug(f"Projects metadata for epoch: {epoch}: {projects_metadata}")
 
         return {
-            "projects_addresses": projects_metadata.projects_addresses,
-            "projects_cid": projects_metadata.proposals_cid,
+            "projectsAddresses": projects_metadata.projects_addresses,
+            "projectsCid": projects_metadata.proposals_cid,
         }
