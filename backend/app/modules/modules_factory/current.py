@@ -38,7 +38,7 @@ class CurrentUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protoco
 
 
 class CurrentServices(Model):
-    user_allocations_nonce_service: 
+    user_allocations_nonce_service: UserAllocationNonceProtocol
       
     user_deposits_service: CurrentUserDeposits
     user_tos_service: UserTos
