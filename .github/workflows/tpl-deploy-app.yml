@@ -168,7 +168,7 @@ jobs:
     name: Start Anvil
     if: ${{ inputs.deploy-contracts }}
     runs-on:
-    - metal
+    - general
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:2ea6d57c
       credentials:
@@ -214,7 +214,7 @@ jobs:
     - start-anvil
     if: ${{ inputs.deploy-contracts }}
     runs-on:
-    - metal
+    - general
     outputs:
       anvil_rpc_url: ${{ steps.deploy.outputs.LOCAL_RPC_URL }}
     container:
@@ -243,7 +243,7 @@ jobs:
 
         # BUG: For some reason this cache is a problem for this job to pass
         # https://linear.app/golemfoundation/issue/OCT-1382/error-during-ci-contracts-deployment
-        rm -r $HOME/.cache/hardhat-nodejs/
+        rm -r $HOME/.cache/hardhat-nodejs/ || true
 
         /app/entrypoint.sh $NETWORK ${CI_PROJECT_DIR}/contracts.env
 
@@ -265,7 +265,7 @@ jobs:
     needs:
     - deploy-contracts
     runs-on:
-    - metal
+    - general
     if: always()
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:2ea6d57c
@@ -307,7 +307,7 @@ jobs:
     needs:
     - start-application-stack
     runs-on:
-    - metal
+    - general
     if: always() && (needs.start-application-stack.result == 'success')
     outputs:
       octant_web_url: ${{ steps.app.outputs.OCTANT_WEB_URL }}
@@ -346,7 +346,7 @@ jobs:
     - wait-for-app
     if: ${{ success() && inputs.deploy-contracts && (inputs.env-type == 'uat' || inputs.env-type == 'master') }}
     runs-on:
-    - metal
+    - general
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:2ea6d57c
       credentials:
@@ -393,7 +393,7 @@ jobs:
     - start-application-stack
     - wait-for-app
     runs-on:
-    - metal
+    - general
     if: always()
     steps:
     - name: Compute workflow status

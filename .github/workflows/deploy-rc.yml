@@ -25,7 +25,7 @@ jobs:
     needs:
     - build
     runs-on:
-    - metal
+    - general
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:2ea6d57c
       credentials:
