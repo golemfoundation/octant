@@ -117,34 +117,54 @@ export const moveEpoch = (
 
   const f1 = new Promise(resolve => {
     cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(() => {
-      resolve(true);
+      resolve({
+        type: 'success',
+      });
     });
   });
 
   const f2 = new Promise(resolve => {
     axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
-      resolve(true);
+      resolve({
+        type: 'success',
+      });
     });
   });
 
   const f3 = new Promise(resolve => {
     cypressWindow.mutateAsyncMoveToDecisionWindowOpen().then(() => {
-      resolve(true);
+      resolve({
+        type: 'success',
+      });
     });
   });
 
   const f4 = new Promise(resolve => {
     axios.post(`${env.serverEndpoint}snapshots/pending`).then(() => {
-      resolve(true);
+      resolve({
+        type: 'success',
+      });
     });
   });
 
+  const f0 = new Promise(resolve => {
+    // we use setTimeout(...) to simulate async code.
+    setTimeout(() => {
+      resolve({
+        message: 'It worked!',
+        type: 'success',
+      })
+    }, 2500)
+  });
+
+  cy.wrap(f0).its('message').should('eq', 'It worked!')
+
   if (isDecisionWindowOpen) {
-    cy.wrap(f1).its('value').should('eq', true);
+    cy.wrap(f1).its('type').should('eq', 'success');
     cy.log('1');
     // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
     cy.wait(2000);
-    cy.wrap(f2).its('value').should('eq', true);
+    cy.wrap(f2).its('type').should('eq', 'success');
     cy.log('2');
     // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
     cy.wait(2000);
@@ -157,10 +177,10 @@ export const moveEpoch = (
   }
 
   if (moveTo === 'decisionWindowOpen') {
-    cy.wrap(f3).its('value').should('eq', true);
+    cy.wrap(f3).its('type').should('eq', 'success');
     // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
     cy.wait(2000);
-    cy.wrap(f4).its('value').should('eq', true);
+    cy.wrap(f4).its('type').should('eq', 'success');
     cy.log('3');
     // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
     cy.wait(2000);
@@ -169,10 +189,10 @@ export const moveEpoch = (
     cy.get('[data-test*=AppLoader]').should('not.exist');
     cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
   } else {
-    cy.wrap(f3).its('value').should('eq', true);
+    cy.wrap(f3).its('type').should('eq', 'success');
     // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
     cy.wait(2000);
-    cy.wrap(f4).its('value').should('eq', true);
+    cy.wrap(f4).its('type').should('eq', 'success');
     cy.log('3');
     // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
     cy.wait(2000);
@@ -182,11 +202,11 @@ export const moveEpoch = (
     cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
     // reload is needed to get updated data in the app
     cy.reload();
-    cy.wrap(f1).its('value').should('eq', true);
+    cy.wrap(f1).its('type').should('eq', 'success');
     cy.log('4');
     // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
     cy.wait(2000);
-    cy.wrap(f2).its('value').should('eq', true);
+    cy.wrap(f2).its('type').should('eq', 'success');
     // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
     cy.wait(2000);
     // reload is needed to get updated data in the app

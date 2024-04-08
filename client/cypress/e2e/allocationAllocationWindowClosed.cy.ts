@@ -43,16 +43,17 @@ let wasTimeMoved = false;
         );
 
         cy.log(`test 1_1 ${isDecisionWindowOpen}`);
-        if (!isDecisionWindowOpen) {
-          expect(true).to.be.true;
-          return;
-        }
+        // if (!isDecisionWindowOpen) {
+        //   expect(true).to.be.true;
+        //   return;
+        // }
 
         // Move time only once, for the first device.
         if (!wasTimeMoved) {
           cy.log(`test 1_2 ${isDecisionWindowOpen}`);
           moveEpoch(win, 'decisionWindowClosed')
             .then(() => {
+              cy.get('[data-test=PlaygroundView]').should('be.visible');
               const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
                 QUERY_KEYS.isDecisionWindowOpen,
               );
