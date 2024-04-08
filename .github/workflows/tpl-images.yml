@@ -14,7 +14,7 @@ jobs:
   build-images:
     name: Build Docker Image
     runs-on:
-      - metal
+      - general
     strategy:
       matrix:
         SERVICE:
