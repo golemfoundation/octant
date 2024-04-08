@@ -30,6 +30,6 @@ def confirm_multisig():
         allocate(
             allocation_signature.user_address,
             message,
-            is_manually_edited=message["is_manually_edited"],
+            is_manually_edited=message.get("isManuallyEdited"),
         )
         apply_pending_allocation_signature(allocation_signature.id)
