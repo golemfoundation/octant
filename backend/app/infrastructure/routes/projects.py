@@ -15,7 +15,7 @@ api.add_namespace(ns)
 projects_metadata_model = api.model(
     "ProjectsMetadata",
     {
-        "projects_addresses": fields.List(
+        "projectsAddresses": fields.List(
             fields.String,
             required=True,
             description="Projects addresses",
