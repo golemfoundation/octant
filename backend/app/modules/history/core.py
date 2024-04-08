@@ -1,3 +1,5 @@
+from typing import List
+
 from app.modules.history.dto import (
     OpType,
     LockItem,
@@ -14,17 +16,17 @@ from app.modules.history.dto import (
 
 
 def sort_history_records(
-    locks: list[LockItem],
-    unlocks: list[LockItem],
-    allocations: list[AllocationItem],
-    withdrawals: list[WithdrawalItem],
-    patron_donations: list[PatronDonationItem],
-) -> list[HistoryEntry]:
+    locks: List[LockItem],
+    unlocks: List[LockItem],
+    allocations: List[AllocationItem],
+    withdrawals: List[WithdrawalItem],
+    patron_donations: List[PatronDonationItem],
+) -> List[HistoryEntry]:
     events = [
         AllocationHistoryEntry(
             type=OpType.ALLOCATION,
             amount=e.amount,
-            timestamp_us=e.timestamp.timestamp_us(),
+            timestamp=int(e.timestamp.timestamp_s()),
             project_address=e.project_address,
         )
         for e in allocations
@@ -33,7 +35,7 @@ def sort_history_records(
     events += [
         PatronModeDonationEntry(
             type=OpType.PATRON_MODE_DONATION,
-            timestamp_us=e.timestamp.timestamp_us(),
+            timestamp=int(e.timestamp.timestamp_s()),
             epoch=e.epoch,
             amount=e.amount,
         )
@@ -44,7 +46,7 @@ def sort_history_records(
         TransactionHistoryEntry(
             type=e.type,
             amount=e.amount,
-            timestamp_us=e.timestamp.timestamp_us(),
+            timestamp=int(e.timestamp.timestamp_s()),
             transaction_hash=e.transaction_hash,
         )
         for e in locks + unlocks + withdrawals
@@ -53,9 +55,11 @@ def sort_history_records(
     return sorted(events, key=_sort_keys, reverse=True)
 
 
-def _sort_keys(elem: AllocationHistoryEntry | TransactionHistoryEntry):
+def _sort_keys(
+    elem: AllocationHistoryEntry | TransactionHistoryEntry | PatronModeDonationEntry,
+):
     return (
-        elem.timestamp_us,
+        elem.timestamp,
         elem.type,
         getattr(elem, "amount", None),
         getattr(elem, "project_address", None),

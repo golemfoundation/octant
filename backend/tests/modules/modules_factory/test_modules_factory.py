@@ -22,6 +22,7 @@ from app.modules.staking.proceeds.service.contract_balance import (
     ContractBalanceStakingProceeds,
 )
 from app.modules.staking.proceeds.service.estimated import EstimatedStakingProceeds
+from app.modules.user.allocations.nonce.service.saved import SavedUserAllocationsNonce
 from app.modules.user.allocations.service.pending import (
     PendingUserAllocations,
     PendingUserAllocationsVerifier,
@@ -125,7 +126,9 @@ def test_pending_services_factory():
     events_based_patron_mode = EventsBasedUserPatronMode()
     octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
     saved_user_budgets = SavedUserBudgets()
+    user_nonce = SavedUserAllocationsNonce()
     allocations_verifier = PendingUserAllocationsVerifier(
+        user_nonce=user_nonce,
         user_budgets=saved_user_budgets,
         patrons_mode=events_based_patron_mode,
     )
