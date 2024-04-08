@@ -1,11 +1,11 @@
+from typing import List
+
 from app.context.manager import Context
 from app.exceptions import InvalidMultisigSignatureRequest
 from app.extensions import db
 from app.infrastructure import database
 from app.infrastructure.database.models import MultisigSignatures
-from app.infrastructure.database.multisig_signature import SigStatus
-from app.infrastructure.external_api.safe.message_details import get_message_details
-from app.infrastructure.external_api.safe.user_details import get_user_details
+from app.infrastructure.database.multisig_signature import SigStatus, MultisigFilters
 from app.modules.common.crypto.eip1271 import get_message_hash
 from app.modules.common.crypto.signature import (
     EncodingStandardFor,
@@ -16,6 +16,7 @@ from app.modules.dto import SignatureOpType
 from app.modules.multisig_signatures.core import (
     prepare_encoded_message,
     prepare_msg_to_save,
+    approve_pending_signatures,
 )
 from app.modules.multisig_signatures.dto import Signature
 from app.pydantic import Model
@@ -46,48 +47,21 @@ class OffchainMultisigSignatures(Model):
             safe_msg_hash=signature_db.safe_msg_hash,
             user_address=signature_db.address,
             ip_address=signature_db.user_ip,
+            signature=signature_db.confirmed_signature,
         )
 
-    def approve_pending_signatures(self, _: Context) -> list[Signature]:
-        pending_signatures = database.multisig_signature.get_all_pending_signatures()
-        approved_signatures = []
+    def approve_pending_signatures(
+        self, _: Context, op_type: SignatureOpType
+    ) -> List[Signature]:
+        filters = MultisigFilters(type=op_type, status=SigStatus.PENDING)
+        pending_signatures = (
+            database.multisig_signature.get_multisig_signatures_by_filters(filters)
+        )
+        new_staged_signatures, approved_signatures = approve_pending_signatures(
+            self.staged_signatures, pending_signatures, self.is_mainnet
+        )
 
-        staged_signatures_ids = tuple(map(lambda x: x.id, self.staged_signatures))
-        for pending_signature in pending_signatures:
-            if pending_signature.id in staged_signatures_ids:
-                approved_signatures.append(
-                    Signature(
-                        pending_signature.id,
-                        pending_signature.message,
-                        pending_signature.msg_hash,
-                        pending_signature.safe_msg_hash,
-                        pending_signature.address,
-                        pending_signature.user_ip,
-                    )
-                )
-                continue
-
-            confirmations = get_message_details(
-                pending_signature.msg_hash, is_mainnet=self.is_mainnet
-            )["confirmations"]
-            threshold = int(
-                get_user_details(pending_signature.address, is_mainnet=self.is_mainnet)[
-                    "threshold"
-                ]
-            )
-
-            if len(confirmations) >= threshold:
-                self.staged_signatures.append(pending_signature)
-                approved_signatures.append(
-                    Signature(
-                        pending_signature.id,
-                        pending_signature.message,
-                        pending_signature.msg_hash,
-                        pending_signature.safe_msg_hash,
-                        pending_signature.address,
-                        pending_signature.user_ip,
-                    )
-                )
+        self.staged_signatures.extend(new_staged_signatures)
 
         return approved_signatures
 

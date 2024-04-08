@@ -630,7 +630,7 @@ def patch_bitquery_get_blocks_rewards(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_safe_api_message_details(monkeypatch):
     monkeypatch.setattr(
-        "app.modules.multisig_signatures.service.offchain.get_message_details",
+        "app.modules.multisig_signatures.core.get_message_details",
         mock_safe_api_message_details,
     )
 
@@ -638,7 +638,7 @@ def patch_safe_api_message_details(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_safe_api_user_details(monkeypatch):
     monkeypatch.setattr(
-        "app.modules.multisig_signatures.service.offchain.get_user_details",
+        "app.modules.multisig_signatures.core.get_user_details",
         mock_safe_api_user_details,
     )
 
