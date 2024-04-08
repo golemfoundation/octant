@@ -1,4 +1,3 @@
-from eth_utils import to_checksum_address
 from flask import current_app as app
 from flask_restx import Namespace, fields
 from flask import request
@@ -64,7 +63,6 @@ class History(OctantResource):
     def get(self, user_address):
         page_cursor = request.args.get("cursor", type=str)
         page_limit = request.args.get("limit", type=int)
-        user_address = to_checksum_address(user_address)
 
         app.logger.debug(
             f"Getting history for user: {user_address}. Page details:{(page_cursor, page_limit)} "
