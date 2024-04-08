@@ -502,6 +502,10 @@ def patch_epochs(monkeypatch):
 def patch_proposals(monkeypatch, proposal_accounts):
     monkeypatch.setattr("app.legacy.core.proposals.proposals", MOCK_PROPOSALS)
     monkeypatch.setattr("app.context.projects.proposals", MOCK_PROPOSALS)
+    monkeypatch.setattr(
+        "app.modules.projects.metadata.service.projects_metadata.proposals",
+        MOCK_PROPOSALS,
+    )
 
     MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts

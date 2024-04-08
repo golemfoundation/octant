@@ -1,7 +1,9 @@
 import pytest
 
 from app.modules.dto import ProjectsMetadata
-from app.modules.projects.service.projects_metadata import StaticProjectsMetadataService
+from app.modules.projects.metadata.service.projects_metadata import (
+    StaticProjectsMetadataService,
+)
 from tests.helpers.context import get_context
 from tests.conftest import MOCK_PROPOSALS
 

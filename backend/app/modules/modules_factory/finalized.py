@@ -15,14 +15,16 @@ from app.modules.modules_factory.protocols import (
     ProjectsMetadataService,
 )
 from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
-from app.modules.project_rewards.service.saved import SavedProjectRewards
+from app.modules.projects.rewards.service.saved import SavedProjectRewards
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.saved import SavedUserDeposits
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
 from app.modules.user.rewards.service.saved import SavedUserRewards
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
-from app.modules.projects.service.projects_metadata import StaticProjectsMetadataService
+from app.modules.projects.metadata.service.projects_metadata import (
+    StaticProjectsMetadataService,
+)
 from app.pydantic import Model
 
 

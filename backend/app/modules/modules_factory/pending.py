@@ -22,7 +22,7 @@ from app.modules.modules_factory.protocols import (
 )
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
-from app.modules.project_rewards.service.estimated import EstimatedProjectRewards
+from app.modules.projects.rewards.service.estimated import EstimatedProjectRewards
 from app.modules.snapshots.finalized.service.simulated import (
     SimulatedFinalizedSnapshots,
 )
@@ -36,7 +36,9 @@ from app.modules.user.deposits.service.saved import SavedUserDeposits
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.withdrawals.service.pending import PendingWithdrawals
-from app.modules.projects.service.projects_metadata import StaticProjectsMetadataService
+from app.modules.projects.metadata.service.projects_metadata import (
+    StaticProjectsMetadataService,
+)
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 

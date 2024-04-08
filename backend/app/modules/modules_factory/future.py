@@ -4,7 +4,9 @@ from app.modules.staking.proceeds.service.estimated import EstimatedStakingProce
 from app.modules.user.deposits.service.contract_balance import (
     ContractBalanceUserDeposits,
 )
-from app.modules.projects.service.projects_metadata import StaticProjectsMetadataService
+from app.modules.projects.metadata.service.projects_metadata import (
+    StaticProjectsMetadataService,
+)
 from app.pydantic import Model
 
 

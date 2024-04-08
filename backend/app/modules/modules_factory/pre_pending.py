@@ -11,13 +11,15 @@ from app.modules.modules_factory.protocols import (
     ProjectsMetadataService,
 )
 from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
-from app.modules.project_rewards.service.saved import SavedProjectRewards
+from app.modules.projects.rewards.service.saved import SavedProjectRewards
 from app.modules.snapshots.pending.service.pre_pending import PrePendingSnapshots
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
 from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
 )
-from app.modules.projects.service.projects_metadata import StaticProjectsMetadataService
+from app.modules.projects.metadata.service.projects_metadata import (
+    StaticProjectsMetadataService,
+)
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 
@@ -41,9 +43,11 @@ class PrePendingServices(Model):
             events_generator=DbAndGraphEventsGenerator()
         )
         octant_rewards = CalculatedOctantRewards(
-            staking_proceeds=aggregated.AggregatedStakingProceeds()
-            if is_mainnet
-            else contract_balance.ContractBalanceStakingProceeds(),
+            staking_proceeds=(
+                aggregated.AggregatedStakingProceeds()
+                if is_mainnet
+                else contract_balance.ContractBalanceStakingProceeds()
+            ),
             effective_deposits=user_deposits,
         )
 

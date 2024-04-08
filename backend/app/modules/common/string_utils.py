@@ -1,6 +1,5 @@
-def parse_cids_to_epochs_dict(cidsStr: str) -> dict[int, str]:
-    result: dict[int, str] = {}
-    elements = cidsStr.split(",")
-    for index, element in enumerate(elements, start=1):
-        result[index] = element.strip()
-    return result
+def parse_cids_to_epochs_dict(cids_str: str) -> dict[int, str]:
+    return {
+        index: element.strip()
+        for index, element in enumerate(cids_str.split(","), start=1)
+    }

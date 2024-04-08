@@ -28,7 +28,9 @@ from app.modules.user.events_generator.service.db_and_graph import (
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
 from app.modules.user.tos.service.initial import InitialUserTos, InitialUserTosVerifier
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
-from app.modules.projects.service.projects_metadata import StaticProjectsMetadataService
+from app.modules.projects.metadata.service.projects_metadata import (
+    StaticProjectsMetadataService,
+)
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 
@@ -53,9 +55,11 @@ class CurrentServices(Model):
         is_mainnet: bool, user_deposits: CalculatedUserDeposits
     ) -> CalculatedOctantRewards:
         octant_rewards = CalculatedOctantRewards(
-            staking_proceeds=aggregated.AggregatedStakingProceeds()
-            if is_mainnet
-            else contract_balance.ContractBalanceStakingProceeds(),
+            staking_proceeds=(
+                aggregated.AggregatedStakingProceeds()
+                if is_mainnet
+                else contract_balance.ContractBalanceStakingProceeds()
+            ),
             effective_deposits=user_deposits,
         )
 

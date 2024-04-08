@@ -3,9 +3,8 @@ from flask_restx import Namespace, fields
 
 from app.extensions import api
 
-# from app.extensions import cache
 from app.infrastructure import OctantResource
-from app.modules.projects.controller import (
+from app.modules.projects.metadata.controller import (
     get_projects_metadata,
 )
 
@@ -35,8 +34,6 @@ projects_metadata_model = api.model(
 class ProjectsMetadata(OctantResource):
     @ns.marshal_with(projects_metadata_model)
     @ns.response(200, "Projects metadata is successfully retrieved")
-    # The calls to the contracts might be time-consuming. Update once in a minute.
-    # @cache.cached(timeout=60)
     def get(self, epoch):
         app.logger.debug(f"Getting projects metadata for epoch {epoch}")
         projects_metadata = get_projects_metadata(epoch)

@@ -10,10 +10,6 @@ def get_proposals_addresses(epoch: Optional[int]) -> List[str]:
     return proposals.get_proposal_addresses(epoch)
 
 
-def get_proposals_cid() -> str:
-    return proposals.get_proposals_cid()
-
-
 def get_proposals_with_allocations(epoch: int) -> (str, int):
     # Get *all* project allocations in the given epoch
     allocations = database.allocations.get_all_by_epoch(epoch)
