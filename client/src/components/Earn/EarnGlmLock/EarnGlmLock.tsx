@@ -113,7 +113,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
       transactionHash: hash,
       type: currentMode,
     });
-    setTransactionHashForEtherscan(hash);
+    if (!isContract) {setTransactionHashForEtherscan(hash);}
   };
 
   const onReset: OnReset = ({ setFieldValue, newMode = 'lock' }) => {
