@@ -9,15 +9,6 @@ from app.modules.dto import UserAllocationPayload
 from app.modules.common.crypto.signature import encode_for_signing, EncodingStandardFor
 
 
-# TODO remove crypto package from legacy: https://linear.app/golemfoundation/issue/OCT-1523/clean-up-crypto-legacy-package
-def build_domain():
-    return {
-        "name": "Octant",
-        "version": "1.0.0",
-        "chainId": app.config["CHAIN_ID"],
-    }
-
-
 def build_allocations_eip712_structure(payload: UserAllocationPayload):
     message = {}
     message["allocations"] = [
@@ -29,7 +20,7 @@ def build_allocations_eip712_structure(payload: UserAllocationPayload):
 
 
 def build_allocations_eip712_data(message: dict) -> dict:
-    domain = build_domain()
+    domain = _build_domain()
 
     # Convert amount value to int
     message["allocations"] = [
@@ -61,30 +52,6 @@ def build_allocations_eip712_data(message: dict) -> dict:
     }
 
 
-def build_claim_glm_eip712_data() -> dict:
-    domain = build_domain()
-
-    claim_glm_types = {
-        "EIP712Domain": [
-            {"name": "name", "type": "string"},
-            {"name": "version", "type": "string"},
-            {"name": "chainId", "type": "uint256"},
-        ],
-        "ClaimGLMPayload": [
-            {"name": "msg", "type": "string"},
-        ],
-    }
-
-    return {
-        "types": claim_glm_types,
-        "domain": domain,
-        "primaryType": "ClaimGLMPayload",
-        "message": {
-            "msg": f"Claim {int(app.config['GLM_WITHDRAWAL_AMOUNT'] / 1e18)} GLMs"
-        },
-    }
-
-
 def sign(account: Union[Account, LocalAccount], data: dict) -> str:
     """
     Signs the provided message with w3.eth.account following EIP-712 structure
@@ -103,3 +70,11 @@ def recover_address(data: dict, signature: str) -> str:
     return w3.eth.account.recover_message(
         encode_for_signing(EncodingStandardFor.DATA, data), signature=signature
     )
+
+
+def _build_domain():
+    return {
+        "name": "Octant",
+        "version": "1.0.0",
+        "chainId": app.config["CHAIN_ID"],
+    }
