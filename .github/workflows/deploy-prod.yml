@@ -21,7 +21,7 @@ jobs:
     needs:
     - build
     runs-on:
-    - metal
+    - general
     steps:
       - name: Show variables for the CI pipeline
         run : |

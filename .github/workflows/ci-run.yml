@@ -45,7 +45,7 @@ jobs:
     needs:
     - deploy-e2e-env
     runs-on:
-    - metal
+    - e2e
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/synpress-arch:71c6cbc5
       credentials:
@@ -105,6 +105,9 @@ jobs:
 
         source /usr/bin/entrypoint.sh
 
+        curl --retry-connrefused --retry 100 --retry-delay 3 \
+          -s -X GET $OCTANT_BASE_URL
+
         yarn synpress:run
       shell: bash
 
@@ -122,7 +125,7 @@ jobs:
     needs:
     - deploy-apitest-env
     runs-on:
-    - metal
+    - general
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/python-poetry-ext:ad1d9179
       credentials:
@@ -186,6 +189,7 @@ jobs:
       network-name: local
       chain-name: localhost
       snapshotter-enabled: false
+      multisigger-enabled: false
       scheduler-enabled: true
       glm-claim-enabled: true
       vault-confirm-withdrawals-enabled: true
@@ -212,6 +216,8 @@ jobs:
       chain-id: 1337
       network-name: local
       chain-name: localhost
+      snapshotter-enabled: false
+      multisigger-enabled: false
       web-client-replicas: 0
       coin-prices-server-replicas: 0
       backend-server-replicas: 0
@@ -258,7 +264,7 @@ jobs:
     needs:
     - lint-and-typecheck-yarn
     runs-on:
-      - metal
+      - general
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:bdda411c
       credentials:
@@ -304,7 +310,7 @@ jobs:
     needs:
     - lint-and-typecheck-poetry
     runs-on:
-      - metal
+      - general
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/python-poetry-ext:ad1d9179
       credentials:
@@ -330,7 +336,7 @@ jobs:
     needs:
     - build-backend
     runs-on:
-      - metal
+      - general
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/python-poetry-ext:ad1d9179
       credentials:
@@ -358,7 +364,7 @@ jobs:
     - build-contracts
     - build-services
     runs-on:
-      - metal
+      - general
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:bdda411c
       credentials:
@@ -409,7 +415,7 @@ jobs:
     needs:
     - build-contracts
     runs-on:
-      - metal
+      - general
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:bdda411c
       credentials:
@@ -443,7 +449,7 @@ jobs:
   build-backend:
     name: Build Services
     runs-on:
-      - metal
+      - general
     needs:
     - permissions-check
     container:
@@ -465,7 +471,7 @@ jobs:
   build-contracts:
     name: Build Contracts
     runs-on:
-      - metal
+      - general
     needs:
     - permissions-check
     container:
@@ -499,7 +505,7 @@ jobs:
   permissions-check:
     name: Permissions check
     runs-on:
-      - metal
+      - general
     steps:
     - name: Check if user is an org member
       uses: actions/github-script@v7

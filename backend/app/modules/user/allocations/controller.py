@@ -7,19 +7,20 @@ from app.exceptions import (
     InvalidEpoch,
     NotInDecisionWindow,
 )
+from app.modules.common.allocation_deserializer import (
+    deserialize_payload,
+    deserialize_items,
+)
 from app.modules.dto import (
     AccountFundsDTO,
     ProposalDonationDTO,
-    UserAllocationRequestPayload,
-    UserAllocationPayload,
-    AllocationItem,
 )
 from app.modules.registry import get_services
 from app.modules.user.allocations.service.pending import PendingUserAllocations
 
 
 def get_user_next_nonce(user_address: str) -> int:
-    service = get_services(EpochState.CURRENT).user_allocations_service
+    service = get_services(EpochState.CURRENT).user_allocations_nonce_service
     return service.get_user_next_nonce(user_address)
 
 
@@ -69,7 +70,7 @@ def allocate(user_address: str, payload: Dict, **kwargs):
         context.epoch_state
     ).user_allocations_service
 
-    allocation_request = _deserialize_payload(payload)
+    allocation_request = deserialize_payload(payload)
     service.allocate(context, user_address, allocation_request, **kwargs)
 
 
@@ -80,7 +81,7 @@ def simulate_allocation(
     service: PendingUserAllocations = get_services(
         context.epoch_state
     ).user_allocations_service
-    user_allocations = _deserialize_items(payload)
+    user_allocations = deserialize_items(payload)
     leverage, threshold, projects_rewards = service.simulate_allocation(
         context, user_allocations, user_address
     )
@@ -100,24 +101,3 @@ def revoke_previous_allocation(user_address: str):
         context.epoch_state
     ).user_allocations_service
     service.revoke_previous_allocation(context, user_address)
-
-
-def _deserialize_payload(payload: Dict) -> UserAllocationRequestPayload:
-    allocation_payload = payload["payload"]
-    allocation_items = _deserialize_items(allocation_payload)
-    nonce = int(allocation_payload["nonce"])
-    signature = payload["signature"]
-
-    return UserAllocationRequestPayload(
-        payload=UserAllocationPayload(allocation_items, nonce), signature=signature
-    )
-
-
-def _deserialize_items(payload: Dict) -> List[AllocationItem]:
-    return [
-        AllocationItem(
-            proposal_address=allocation_data["proposalAddress"],
-            amount=int(allocation_data["amount"]),
-        )
-        for allocation_data in payload["allocations"]
-    ]
