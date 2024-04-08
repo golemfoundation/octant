@@ -20,7 +20,7 @@ projects_metadata_model = api.model(
             required=True,
             description="Projects addresses",
         ),
-        "projects_cid": fields.String(required=True, description="Projects CID"),
+        "projectsCid": fields.String(required=True, description="Projects CID"),
     },
 )
 
