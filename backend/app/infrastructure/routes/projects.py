@@ -32,7 +32,7 @@ projects_metadata_model = api.model(
         "epoch": "Epoch number",
     },
 )
-class ProposalsProjectsMetadata(OctantResource):
+class ProjectsMetadata(OctantResource):
     @ns.marshal_with(projects_metadata_model)
     @ns.response(200, "Projects metadata is successfully retrieved")
     # The calls to the contracts might be time-consuming. Update once in a minute.
