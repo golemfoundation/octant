@@ -2,12 +2,12 @@ import base64
 from dataclasses import dataclass
 from typing import List, Tuple, Optional
 
-from app.modules.common.time import now, from_timestamp_us, Timestamp
+from app.modules.common.time import now, from_timestamp_s, Timestamp
 
 
 @dataclass(frozen=True)
 class PageRecord:
-    timestamp_us: int  # Should be in microseconds precision
+    timestamp: int  # Should be in seconds precision
 
 
 class Cursor:
@@ -22,7 +22,7 @@ class Cursor:
         if cursor is None:
             return now(), 0
         timestamp, offset = base64.urlsafe_b64decode(cursor).decode("ascii").split(".")
-        return from_timestamp_us(int(timestamp)), int(offset)
+        return from_timestamp_s(int(timestamp)), int(offset)
 
 
 class Paginator:
@@ -34,7 +34,7 @@ class Paginator:
 
     @staticmethod
     def extract_page(
-        page_records: list[PageRecord], offset_at_timestamp: int, limit: int
+        page_records: List[PageRecord], offset_at_timestamp: int, limit: int
     ) -> Tuple[List, Optional[str]]:
         next_page_start_index = offset_at_timestamp + limit
         current_page = page_records[offset_at_timestamp:next_page_start_index]
@@ -47,10 +47,10 @@ class Paginator:
         next_page_cursor = None
         if next_page_start_elem is not None:
             next_offset = Paginator._get_offset(
-                current_page, next_page_start_elem.timestamp_us, offset_at_timestamp
+                current_page, next_page_start_elem.timestamp, offset_at_timestamp
             )
             next_page_cursor = Cursor.encode(
-                next_page_start_elem.timestamp_us, next_offset
+                next_page_start_elem.timestamp, next_offset
             )
 
         return current_page, next_page_cursor
@@ -59,7 +59,7 @@ class Paginator:
     def _get_offset(current_page_elems, next_elem_timestamp, prev_offset):
         offset = 0
         for elem in current_page_elems[::-1]:
-            if elem.timestamp_us == next_elem_timestamp:
+            if elem.timestamp == next_elem_timestamp:
                 offset += 1
             else:
                 return offset

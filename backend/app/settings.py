@@ -4,13 +4,10 @@ from dotenv import load_dotenv
 from web3 import Web3
 
 from constants import DEFAULT_MAINNET_PROPOSAL_CIDS
+from app.modules.common import parse_bool
 
 # Load environment variables from the .env file
 load_dotenv()
-
-
-def _parse_bool(value: str) -> bool:
-    return value.lower() in ["true", "1"] if value is not None else False
 
 
 class Config(object):
@@ -27,7 +24,7 @@ class Config(object):
     ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY")
     BITQUERY_API_KEY = os.getenv("BITQUERY_API_KEY")
     BITQUERY_BEARER = os.getenv("BITQUERY_BEARER")
-    SCHEDULER_ENABLED = _parse_bool(os.getenv("SCHEDULER_ENABLED"))
+    SCHEDULER_ENABLED = parse_bool(os.getenv("SCHEDULER_ENABLED"))
     CACHE_TYPE = "SimpleCache"
 
     # Smart contract addresses
@@ -48,12 +45,12 @@ class Config(object):
     TESTNET_MULTISIG_PRIVATE_KEY = os.getenv("TESTNET_MULTISIG_PRIVATE_KEY")
 
     # Confirming withdrawals in Vault
-    VAULT_CONFIRM_WITHDRAWALS_ENABLED = _parse_bool(
+    VAULT_CONFIRM_WITHDRAWALS_ENABLED = parse_bool(
         os.getenv("VAULT_CONFIRM_WITHDRAWALS_ENABLED")
     )
 
     # GLM claiming
-    GLM_CLAIM_ENABLED = _parse_bool(os.getenv("GLM_CLAIM_ENABLED"))
+    GLM_CLAIM_ENABLED = parse_bool(os.getenv("GLM_CLAIM_ENABLED"))
     GLM_WITHDRAWAL_AMOUNT = int(
         os.getenv("GLM_WITHDRAWAL_AMOUNT", 1000_000000000_000000000)
     )
@@ -89,7 +86,7 @@ class ProdConfig(Config):
         "pool_size": SQLALCHEMY_CONNECTION_POOL_SIZE,
         "max_overflow": SQLALCHEMY_CONNECTION_POOL_MAX_OVERFLOW,
     }
-    X_REAL_IP_REQUIRED = _parse_bool(os.getenv("X_REAL_IP_REQUIRED", "true"))
+    X_REAL_IP_REQUIRED = parse_bool(os.getenv("X_REAL_IP_REQUIRED", "true"))
 
 
 class DevConfig(Config):
@@ -103,7 +100,7 @@ class DevConfig(Config):
     # Put the db file in project root
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{DB_PATH}"
-    X_REAL_IP_REQUIRED = _parse_bool(os.getenv("X_REAL_IP_REQUIRED", "false"))
+    X_REAL_IP_REQUIRED = parse_bool(os.getenv("X_REAL_IP_REQUIRED", "false"))
 
 
 class ComposeConfig(Config):
@@ -112,7 +109,7 @@ class ComposeConfig(Config):
     ENV = "dev"
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv("DB_URI")
-    X_REAL_IP_REQUIRED = _parse_bool(os.getenv("X_REAL_IP_REQUIRED", "false"))
+    X_REAL_IP_REQUIRED = parse_bool(os.getenv("X_REAL_IP_REQUIRED", "false"))
 
 
 class TestConfig(Config):
