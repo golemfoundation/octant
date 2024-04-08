@@ -11,7 +11,11 @@ export default function useIsContract(
 
   return useQuery({
     enabled: !!address,
-    queryFn: () => getBytecode({ address: address! }).then(data => data),
+    queryFn: () =>
+      getBytecode({ address: address! }).then(data => {
+        if (!data) {return '';}
+        return data;
+      }),
     queryKey: QUERY_KEYS.bytecode(address!),
     select: response => !!response,
     ...options,
