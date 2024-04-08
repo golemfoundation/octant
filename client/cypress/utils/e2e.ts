@@ -115,37 +115,29 @@ export const moveEpoch = (
     QUERY_KEYS.isDecisionWindowOpen,
   );
 
-  const f1 = () => {
-    return new Promise(resolve => {
-      cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(() => {
-        resolve(true);
-      });
+  const f1 = () => new Promise(resolve => {
+    cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(() => {
+      resolve(true);
     });
-  };
+  });
 
-  const f2 = () => {
-    return new Promise(resolve => {
-      axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
-        resolve(true);
-      });
+  const f2 = () => new Promise(resolve => {
+    axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
+      resolve(true);
     });
-  };
+  });
 
-  const f3 = () => {
-    return new Promise(resolve => {
-      cypressWindow.mutateAsyncMoveToDecisionWindowOpen().then(() => {
-        resolve(true);
-      });
+  const f3 = () => new Promise(resolve => {
+    cypressWindow.mutateAsyncMoveToDecisionWindowOpen().then(() => {
+      resolve(true);
     });
-  };
+  });
 
-  const f4 = () => {
-    return new Promise(resolve => {
-      axios.post(`${env.serverEndpoint}snapshots/pending`).then(() => {
-        resolve(true);
-      });
+  const f4 = () => new Promise(resolve => {
+    axios.post(`${env.serverEndpoint}snapshots/pending`).then(() => {
+      resolve(true);
     });
-  };
+  });
 
   if (isDecisionWindowOpen) {
     cy.wrap(f1).its('value').should('eq', true);
