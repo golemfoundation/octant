@@ -115,25 +115,25 @@ export const moveEpoch = (
     QUERY_KEYS.isDecisionWindowOpen,
   );
 
-  const f1 = () => new Promise(resolve => {
+  const f1 = new Promise(resolve => {
     cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(() => {
       resolve(true);
     });
   });
 
-  const f2 = () => new Promise(resolve => {
+  const f2 = new Promise(resolve => {
     axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
       resolve(true);
     });
   });
 
-  const f3 = () => new Promise(resolve => {
+  const f3 = new Promise(resolve => {
     cypressWindow.mutateAsyncMoveToDecisionWindowOpen().then(() => {
       resolve(true);
     });
   });
 
-  const f4 = () => new Promise(resolve => {
+  const f4 = new Promise(resolve => {
     axios.post(`${env.serverEndpoint}snapshots/pending`).then(() => {
       resolve(true);
     });
