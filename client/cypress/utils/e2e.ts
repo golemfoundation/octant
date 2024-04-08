@@ -144,6 +144,6 @@ export const moveEpoch = (
   })
 
   return cy.wrap(null).then(() => {
-    test(cypressWindow, moveTo).then();
+    return test(cypressWindow, moveTo).then();
   })
 };
