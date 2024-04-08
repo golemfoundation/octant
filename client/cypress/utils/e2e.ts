@@ -110,36 +110,100 @@ export const moveEpoch = (
   cypressWindow: Cypress.AUTWindow,
   moveTo: 'decisionWindowClosed' | 'decisionWindowOpen',
 ): Chainable<any> => {
-  const test1 = () => {
+
+  const isDecisionWindowOpen = cypressWindow.clientReactQuery.getQueryData(
+    QUERY_KEYS.isDecisionWindowOpen,
+  );
+
+  const f1 = () => {
     return new Promise(resolve => {
-      const isDecisionWindowOpen = cypressWindow.clientReactQuery.getQueryData(
-        QUERY_KEYS.isDecisionWindowOpen,
-      );
-
-      if (isDecisionWindowOpen) {
-        cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(() => {
-          cy.log('1');
-          // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
-          cy.wait(2000);
-          axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
-            cy.log('2');
-            // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
-            cy.wait(2000);
-            // reload is needed to get updated data in the app
-            cy.reload();
-            cy.get('[data-test*=AppLoader]').should('not.exist');
-            cy.get('[data-test=SyncView]', {timeout: 60000}).should('not.exist');
-            // reload is needed to get updated data in the app
-            cy.reload();
-            resolve(true);
-          });
-        });
-      }
-
-      resolve(true);
-    })
+      cypressWindow.mutateAsyncMoveToDecisionWindowClosed().then(() => {
+        resolve(true);
+      });
+    });
   };
 
-  cy.wrap(test1).its('value').should('eq', true);
-  return cy.wrap(test(cypressWindow, moveTo)).its('value').should('eq', true);
+  const f2 = () => {
+    return new Promise(resolve => {
+      axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
+        resolve(true);
+      });
+    });
+  };
+
+  const f3 = () => {
+    return new Promise(resolve => {
+      cypressWindow.mutateAsyncMoveToDecisionWindowOpen().then(() => {
+        resolve(true);
+      });
+    });
+  };
+
+  const f4 = () => {
+    return new Promise(resolve => {
+      axios.post(`${env.serverEndpoint}snapshots/pending`).then(() => {
+        resolve(true);
+      });
+    });
+  };
+
+  if (isDecisionWindowOpen) {
+    cy.wrap(f1).its('value').should('eq', true);
+    cy.log('1');
+    // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
+    cy.wait(2000);
+    cy.wrap(f2).its('value').should('eq', true);
+    cy.log('2');
+    // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
+    cy.wait(2000);
+    // reload is needed to get updated data in the app
+    cy.reload();
+    cy.get('[data-test*=AppLoader]').should('not.exist');
+    cy.get('[data-test=SyncView]', {timeout: 60000}).should('not.exist');
+    // reload is needed to get updated data in the app
+    cy.reload();
+  }
+
+  if (moveTo === 'decisionWindowOpen') {
+    cy.wrap(f3).its('value').should('eq', true);
+    // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
+    cy.wait(2000);
+    cy.wrap(f4).its('value').should('eq', true);
+    cy.log('3');
+    // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
+    cy.wait(2000);
+    // reload is needed to get updated data in the app
+    cy.reload();
+    cy.get('[data-test*=AppLoader]').should('not.exist');
+    cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+  } else {
+    cy.wrap(f3).its('value').should('eq', true);
+    // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
+    cy.wait(2000);
+    cy.wrap(f4).its('value').should('eq', true);
+    cy.log('3');
+    // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
+    cy.wait(2000);
+    // reload is needed to get updated data in the app
+    cy.reload();
+    cy.get('[data-test*=AppLoader]').should('not.exist');
+    cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+    // reload is needed to get updated data in the app
+    cy.reload();
+    cy.wrap(f1).its('value').should('eq', true);
+    cy.log('4');
+    // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
+    cy.wait(2000);
+    cy.wrap(f2).its('value').should('eq', true);
+    // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
+    cy.wait(2000);
+    // reload is needed to get updated data in the app
+    cy.reload();
+    cy.get('[data-test*=AppLoader]').should('not.exist');
+    cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+    // reload is needed to get updated data in the app
+    cy.reload();
+  }
+
+  return cy.reload();
 };
