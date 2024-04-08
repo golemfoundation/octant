@@ -14,7 +14,7 @@ export const getPieChartData = (data: PieChartInputData, radius: number): PieCha
     const el = {
       angle,
       angle0,
-      color: pieChartColors[idx],
+      color: pieChartColors[pieChartColors.length % (pieChartColors.length - idx)],
       id: idx,
       label: curr.label,
       percentageValue: Math.round(fractionValue * 100),
