@@ -2,7 +2,7 @@ import pytest
 
 from app.extensions import db
 from app.infrastructure import database
-from app.infrastructure.database.multisig_signature import SigStatus, MultisigFilters
+from app.infrastructure.database.multisig_signature import SigStatus
 from app.modules.dto import SignatureOpType
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from tests.helpers.constants import (

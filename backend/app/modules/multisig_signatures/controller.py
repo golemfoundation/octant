@@ -6,13 +6,12 @@ from app.modules.registry import get_services
 from app.exceptions import InvalidEpoch
 
 
-def get_last_pending_signature(
-    user_address: str, op_type: SignatureOpType
-) -> Signature:
+def get_last_pending_signature(user_address: str, op_type: SignatureOpType) -> dict:
     context = _get_context(op_type)
     service = get_services(context.epoch_state).multisig_signatures_service
+    signature = service.get_last_pending_signature(context, user_address, op_type)
 
-    return service.get_last_pending_signature(context, user_address, op_type)
+    return {"message": signature.message, "hash": signature.safe_msg_hash}
 
 
 def save_pending_signature(

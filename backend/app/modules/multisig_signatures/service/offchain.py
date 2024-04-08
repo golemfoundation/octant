@@ -6,6 +6,7 @@ from app.extensions import db
 from app.infrastructure import database
 from app.infrastructure.database.models import MultisigSignatures
 from app.infrastructure.database.multisig_signature import SigStatus, MultisigFilters
+from app.modules.common.allocation_deserializer import deserialize_payload
 from app.modules.common.crypto.eip1271 import get_message_hash
 from app.modules.common.crypto.signature import (
     EncodingStandardFor,
@@ -85,9 +86,9 @@ class OffchainMultisigSignatures(Model):
         encoding_standard = self._verify_signature(
             context, user_address, message, op_type
         )
-        message_hash = get_message_hash(user_address, message)
         encoded_message = prepare_encoded_message(message, op_type, encoding_standard)
         safe_message_hash = hash_signable_message(encoded_message)
+        message_hash = get_message_hash(user_address, safe_message_hash)
         msg_to_save = prepare_msg_to_save(message, op_type)
 
         database.multisig_signature.save_signature(
@@ -106,7 +107,9 @@ class OffchainMultisigSignatures(Model):
 
         if op_type == SignatureOpType.ALLOCATION:
             if not verifier.verify_logic(
-                context, user_address=user_address, **signature_msg
+                context,
+                user_address=user_address,
+                payload=deserialize_payload(signature_msg),
             ):
                 raise InvalidMultisigSignatureRequest()
             return EncodingStandardFor.DATA
