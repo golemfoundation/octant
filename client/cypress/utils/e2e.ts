@@ -139,11 +139,6 @@ export const moveEpoch = (
     })
   };
 
-  cy.wrap(null).then(() => {
-    return test1();
-  })
-
-  return cy.wrap(null).then(() => {
-    return test(cypressWindow, moveTo).then();
-  })
+  cy.wrap(test1).its('value').should('eq', true);
+  return cy.wrap(test).its('value').should('eq', true);
 };
