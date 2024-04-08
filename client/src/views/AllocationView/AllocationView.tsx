@@ -414,15 +414,15 @@ const AllocationView = (): ReactElement => {
     }
     const getPendingMultisigSignatures = () => {
       apiGetPendingMultisigSignatures(walletAddress!, SignatureOpType.ALLOCATION).then(data => {
-        setIsWaitingForWalletConfirmationMultisig(!!data.hash);
-        if (!data.hash) {
+        if (isWaitingForWalletConfirmationMultisig && !data.hash) {
           onAllocateSuccess();
         }
+        setIsWaitingForWalletConfirmationMultisig(!!data.hash);
       });
     };
 
-    getPendingMultisigSignatures();
     if (!isWaitingForWalletConfirmationMultisig) {
+      getPendingMultisigSignatures();
       return;
     }
 
