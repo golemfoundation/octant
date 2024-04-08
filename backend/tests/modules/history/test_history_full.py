@@ -80,31 +80,31 @@ def test_history(
     assert result == UserHistoryDTO(
         history=[
             TransactionHistoryEntry(
-                timestamp_us=500000000,
+                timestamp=500,
                 type=OpType.WITHDRAWAL,
                 transaction_hash="tx3",
                 amount=50,
             ),
             PatronModeDonationEntry(
-                timestamp_us=400000000,
+                timestamp=400,
                 type=OpType.PATRON_MODE_DONATION,
                 epoch=1,
                 amount=10,
             ),
             AllocationHistoryEntry(
-                timestamp_us=300000000,
+                timestamp=300,
                 type=OpType.ALLOCATION,
                 project_address="proj1",
                 amount=10,
             ),
             TransactionHistoryEntry(
-                timestamp_us=200000000,
+                timestamp=200,
                 type=OpType.UNLOCK,
                 transaction_hash="tx2",
                 amount=10,
             ),
             TransactionHistoryEntry(
-                timestamp_us=100000000,
+                timestamp=100,
                 type=OpType.LOCK,
                 transaction_hash="tx1",
                 amount=10,
@@ -132,4 +132,4 @@ def test_history_limit(
     result = history_service.get_user_history(context, alice.address, limit=3)
 
     assert len(result.history) == 3
-    assert result.next_cursor == "MjAwMDAwMDAwLjA="
+    assert result.next_cursor == "MjAwLjA="

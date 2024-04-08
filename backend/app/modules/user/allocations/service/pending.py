@@ -6,7 +6,7 @@ from app.engine.projects.rewards import ProjectRewardDTO
 from app.exceptions import InvalidSignature
 from app.extensions import db
 from app.infrastructure import database
-from app.modules.common.signature import (
+from app.modules.common.crypto.signature import (
     verify_signed_message,
     encode_for_signing,
     EncodingStandardFor,
@@ -37,16 +37,23 @@ class GetPatronsAddressesProtocol(Protocol):
         ...
 
 
+@runtime_checkable
+class GetUserAllocationNonceProtocol(Protocol):
+    def get_user_next_nonce(self, user_address: str) -> int:
+        ...
+
+
 class PendingUserAllocationsVerifier(Verifier, Model):
     user_budgets: UserBudgetProtocol
+    user_nonce: GetUserAllocationNonceProtocol
     patrons_mode: GetPatronsAddressesProtocol
 
     def _verify_logic(self, context: Context, **kwargs):
-        user_address, payload, expected_nonce = (
+        user_address, payload = (
             kwargs["user_address"],
             kwargs["payload"],
-            kwargs["expected_nonce"],
         )
+        expected_nonce = self.user_nonce.get_user_next_nonce(user_address)
         user_budget = self.user_budgets.get_budget(context, user_address)
         patrons = self.patrons_mode.get_all_patrons_addresses(context)
 
@@ -73,19 +80,14 @@ class PendingUserAllocations(SavedUserAllocations, Model):
         payload: UserAllocationRequestPayload,
         **kwargs
     ) -> str:
-        expected_nonce = self.get_user_next_nonce(user_address)
         self.verifier.verify(
-            context,
-            user_address=user_address,
-            payload=payload,
-            expected_nonce=expected_nonce,
-            **kwargs
+            context, user_address=user_address, payload=payload, **kwargs
         )
 
         self.revoke_previous_allocation(context, user_address)
 
         user = database.user.get_by_address(user_address)
-        user.allocation_nonce = expected_nonce
+        user.allocation_nonce = payload.payload.nonce
         database.allocations.store_allocation_request(
             user_address, context.epoch_details.epoch_num, payload, **kwargs
         )
