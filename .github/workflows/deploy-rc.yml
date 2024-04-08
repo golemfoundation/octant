@@ -19,12 +19,13 @@ jobs:
     secrets: inherit
     with:
       image-tag: ${{ github.sha }}
+      git-ref: ${{ github.ref }}
   deploy:
     name: Deploy
     needs:
     - build
     runs-on:
-    - metal
+    - general
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:2ea6d57c
       credentials:

@@ -20,12 +20,15 @@ const ProjectDonors: FC<ProjectDonorsProps> = ({
   projectAddress,
 }) => {
   const { epoch } = useParams();
+  const { data: currentEpoch } = useCurrentEpoch();
+
+  const epochNumber = parseInt(epoch!, 10);
+
   const { t } = useTranslation('translation', { keyPrefix: 'components.dedicated.donors' });
   const { data: projectDonors, isFetching } = useProjectDonors(
     projectAddress,
-    parseInt(epoch!, 10),
+    epochNumber === currentEpoch ? undefined : epochNumber,
   );
-  const { data: currentEpoch } = useCurrentEpoch();
 
   const [isFullDonorsListModalOpen, setIsFullDonorsListModalOpen] = useState(false);
 

@@ -25,6 +25,7 @@ from app.modules.project_rewards.service.estimated import EstimatedProjectReward
 from app.modules.snapshots.finalized.service.simulated import (
     SimulatedFinalizedSnapshots,
 )
+from app.modules.user.allocations.nonce.service.saved import SavedUserAllocationsNonce
 from app.modules.user.allocations.service.pending import (
     PendingUserAllocations,
     PendingUserAllocationsVerifier,
@@ -79,7 +80,9 @@ class PendingServices(Model):
         events_based_patron_mode = EventsBasedUserPatronMode()
         octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
         saved_user_budgets = SavedUserBudgets()
+        user_nonce = SavedUserAllocationsNonce()
         allocations_verifier = PendingUserAllocationsVerifier(
+            user_nonce=user_nonce,
             user_budgets=saved_user_budgets,
             patrons_mode=events_based_patron_mode,
         )

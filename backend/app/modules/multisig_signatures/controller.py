@@ -3,15 +3,19 @@ from app.context.manager import state_context, Context
 from app.modules.dto import SignatureOpType
 from app.modules.multisig_signatures.dto import Signature, ApprovedSignatureTypes
 from app.modules.registry import get_services
+from app.exceptions import InvalidEpoch
 
 
-def get_last_pending_signature(
-    user_address: str, op_type: SignatureOpType
-) -> Signature:
+def get_last_pending_signature(user_address: str, op_type: SignatureOpType) -> dict:
     context = _get_context(op_type)
     service = get_services(context.epoch_state).multisig_signatures_service
+    signature = service.get_last_pending_signature(context, user_address, op_type)
 
-    return service.get_last_pending_signature(context, user_address, op_type)
+    return (
+        {"message": signature.message, "hash": signature.safe_msg_hash}
+        if signature
+        else {}
+    )
 
 
 def save_pending_signature(
@@ -43,17 +47,25 @@ def apply_pending_allocation_signature(signature_id: int):
 
 
 def _apply(op_type: SignatureOpType, signature_id):
-    context = _get_context(op_type)
+    try:
+        context = _get_context(op_type)
+    except InvalidEpoch:
+        return None
+
     service = get_services(context.epoch_state).multisig_signatures_service
 
     service.apply_staged_signatures(context, signature_id)
 
 
 def _approve(op_type: SignatureOpType) -> list[Signature]:
-    context = _get_context(op_type)
+    try:
+        context = _get_context(op_type)
+    except InvalidEpoch:
+        return []
+
     service = get_services(context.epoch_state).multisig_signatures_service
 
-    return service.approve_pending_signatures(context)
+    return service.approve_pending_signatures(context, op_type)
 
 
 def _get_context(op_type: SignatureOpType) -> Context:
