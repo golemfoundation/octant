@@ -385,7 +385,7 @@ def test_stores_allocation_leverage(tos_users, proposal_accounts):
     )
 
     assert alloc_request.epoch == MOCKED_PENDING_EPOCH_NO
-    assert alloc_request.leverage == str(expected_leverage)
+    assert alloc_request.leverage == expected_leverage
 
 
 def check_allocations(user_address, expected_payload, expected_count):

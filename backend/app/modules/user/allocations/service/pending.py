@@ -94,7 +94,8 @@ class PendingUserAllocations(SavedUserAllocations, Model):
             user_address,
             context.epoch_details.epoch_num,
             payload,
-            **{"leverage": str(leverage), **kwargs}
+            leverage=leverage,
+            **kwargs
         )
 
         db.session.commit()

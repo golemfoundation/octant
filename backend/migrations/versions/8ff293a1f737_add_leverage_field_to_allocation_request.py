@@ -18,7 +18,7 @@ depends_on = None
 
 def upgrade():
     with op.batch_alter_table("allocations_requests", schema=None) as batch_op:
-        batch_op.add_column(sa.Column("leverage", sa.String(), nullable=True))
+        batch_op.add_column(sa.Column("leverage", sa.Float(), nullable=True))
 
 
 def downgrade():
