@@ -1,4 +1,7 @@
 import { QUERY_KEYS } from 'src/api/queryKeys';
+import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
+
+import { visitWithLoader } from './e2e';
 
 import Chainable = Cypress.Chainable;
 
@@ -76,6 +79,8 @@ export const moveEpoch = (
   cypressWindow: Cypress.AUTWindow,
   moveTo: 'decisionWindowClosed' | 'decisionWindowOpen',
 ): Chainable<any> => {
+  visitWithLoader(ROOT_ROUTES.playground.absolute);
+
   const isDecisionWindowOpen = cypressWindow.clientReactQuery.getQueryData(
     QUERY_KEYS.isDecisionWindowOpen,
   );
@@ -97,7 +102,7 @@ export const moveEpoch = (
   }
 
   // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
-  cy.wait(5000);
+  cy.wait(2000);
   cy.reload();
   return loaderCheck();
 };
