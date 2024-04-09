@@ -17,7 +17,7 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 let wasTimeMoved = false;
 
 [Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
-  describe('move time', () => {
+  describe('move time', { retries: 0 }, () => {
     before(() => {
       /**
        * Global Metamask setup done by Synpress is not always done.
@@ -53,6 +53,8 @@ let wasTimeMoved = false;
           cy.log(`test 1_2 ${isDecisionWindowOpen}`);
           moveEpoch(win, 'decisionWindowClosed')
             .then(() => {
+              cy.get('[data-test*=AppLoader]').should('not.exist');
+              cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
               cy.get('[data-test=PlaygroundView]').should('be.visible');
               const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
                 QUERY_KEYS.isDecisionWindowOpen,
