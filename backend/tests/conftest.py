@@ -55,6 +55,7 @@ from tests.helpers.constants import (
     MULTISIG_APPROVALS_THRESHOLD,
     MULTISIG_MOCKED_MESSAGE,
     MULTISIG_MOCKED_HASH,
+    MULTISIG_MOCKED_SAFE_HASH,
 )
 from tests.helpers.context import get_context
 from tests.helpers.gql_client import MockGQLClient
@@ -76,6 +77,7 @@ MOCK_GET_USER_BUDGET = Mock()
 MOCK_HAS_PENDING_SNAPSHOT = Mock()
 MOCK_LAST_FINALIZED_SNAPSHOT = Mock()
 MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
+MOCK_GET_MESSAGE_HASH = Mock()
 MOCK_IS_CONTRACT = Mock()
 
 
@@ -527,17 +529,30 @@ def patch_is_contract(monkeypatch):
     monkeypatch.setattr(
         "app.legacy.crypto.eth_sign.signature.is_contract", MOCK_IS_CONTRACT
     )
-    monkeypatch.setattr("app.modules.common.signature.is_contract", MOCK_IS_CONTRACT)
+    monkeypatch.setattr(
+        "app.modules.common.crypto.signature.is_contract", MOCK_IS_CONTRACT
+    )
     MOCK_IS_CONTRACT.return_value = False
 
 
 @pytest.fixture(scope="function")
 def patch_eip1271_is_valid_signature(monkeypatch):
     monkeypatch.setattr(
-        "app.modules.common.signature.is_valid_signature",
+        "app.modules.common.crypto.signature.is_valid_signature",
         MOCK_EIP1271_IS_VALID_SIGNATURE,
     )
     MOCK_EIP1271_IS_VALID_SIGNATURE.return_value = True
+
+
+@pytest.fixture(scope="function")
+def patch_get_message_hash(monkeypatch):
+    monkeypatch.setattr(
+        "app.modules.multisig_signatures.service.offchain.get_message_hash",
+        MOCK_GET_MESSAGE_HASH,
+    )
+    MOCK_GET_MESSAGE_HASH.return_value = (
+        "0xc995b1c20cdd79e48a0696bb36f645925c45ef5f8c75ea49974b1ebb556351ca"
+    )
 
 
 @pytest.fixture(scope="function")
@@ -615,7 +630,7 @@ def patch_bitquery_get_blocks_rewards(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_safe_api_message_details(monkeypatch):
     monkeypatch.setattr(
-        "app.modules.multisig_signatures.service.offchain.get_message_details",
+        "app.modules.multisig_signatures.core.get_message_details",
         mock_safe_api_message_details,
     )
 
@@ -623,7 +638,7 @@ def patch_safe_api_message_details(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_safe_api_user_details(monkeypatch):
     monkeypatch.setattr(
-        "app.modules.multisig_signatures.service.offchain.get_user_details",
+        "app.modules.multisig_signatures.core.get_user_details",
         mock_safe_api_user_details,
     )
 
@@ -740,6 +755,7 @@ def mock_pending_multisig_signatures(alice):
         alice.address,
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
+        MULTISIG_MOCKED_SAFE_HASH,
         SignatureOpType.TOS,
         "0.0.0.0",
         SigStatus.PENDING,
@@ -748,6 +764,7 @@ def mock_pending_multisig_signatures(alice):
         alice.address,
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
+        MULTISIG_MOCKED_SAFE_HASH,
         SignatureOpType.ALLOCATION,
         "0.0.0.0",
         SigStatus.PENDING,
@@ -760,6 +777,7 @@ def mock_approved_multisig_signatures(alice):
         alice.address,
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
+        MULTISIG_MOCKED_SAFE_HASH,
         SignatureOpType.ALLOCATION,
         "0.0.0.0",
         SigStatus.APPROVED,
@@ -768,6 +786,7 @@ def mock_approved_multisig_signatures(alice):
         alice.address,
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
+        MULTISIG_MOCKED_SAFE_HASH,
         SignatureOpType.TOS,
         "0.0.0.0",
         SigStatus.APPROVED,
@@ -780,6 +799,7 @@ def mock_pending_allocation_signature(alice):
         alice.address,
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
+        MULTISIG_MOCKED_SAFE_HASH,
         SignatureOpType.ALLOCATION,
         "0.0.0.0",
         SigStatus.PENDING,
@@ -792,6 +812,7 @@ def mock_pending_tos_signature(alice):
         alice.address,
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
+        MULTISIG_MOCKED_SAFE_HASH,
         SignatureOpType.TOS,
         "0.0.0.0",
         SigStatus.PENDING,
@@ -889,6 +910,14 @@ def mock_user_allocations(alice):
     ]
 
     return user_allocations_service_mock
+
+
+@pytest.fixture(scope="function")
+def mock_user_allocation_nonce():
+    user_allocation_nonce_mock = Mock()
+    user_allocation_nonce_mock.get_user_next_nonce.return_value = 0
+
+    return user_allocation_nonce_mock
 
 
 @pytest.fixture(scope="function")

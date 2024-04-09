@@ -33,7 +33,7 @@ def get_validators_by_address(validator_address: str) -> list[dict]:
         return all_validators
     except requests.exceptions.RequestException as e:
         ExceptionHandler.print_stacktrace(e)
-        raise ExternalApiException(api_url, e, 500)
+        raise ExternalApiException(e, 500)
 
 
 def get_detailed_validators_by_indices(indices: str) -> list:
@@ -46,4 +46,4 @@ def get_detailed_validators_by_indices(indices: str) -> list:
         return list(json_response["data"])
     except requests.exceptions.RequestException as e:
         ExceptionHandler.print_stacktrace(e)
-        raise ExternalApiException(VALIDATOR_API_URL_BASE, e, 500)
+        raise ExternalApiException(e, 500)

@@ -7,6 +7,7 @@ import ProjectDonorsListSkeletonItem from 'components/Project/ProjectDonorsListS
 import ProjectDonorsListTotalDonated from 'components/Project/ProjectDonorsListTotalDonated';
 import { DONORS_SHORT_LIST_LENGTH } from 'constants/donors';
 import useProjectDonors from 'hooks/queries/donors/useProjectDonors';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 
 import styles from './ProjectDonorsList.module.scss';
 import ProjectDonorsListProps from './types';
@@ -18,9 +19,13 @@ const ProjectDonorsList: FC<ProjectDonorsListProps> = ({
   showFullList = false,
 }) => {
   const { epoch } = useParams();
+  const { data: currentEpoch } = useCurrentEpoch();
+
+  const epochNumber = parseInt(epoch!, 10);
+
   const { data: projectDonors, isFetching } = useProjectDonors(
     projectAddress,
-    parseInt(epoch!, 10),
+    epochNumber === currentEpoch ? undefined : epochNumber,
   );
 
   return (
