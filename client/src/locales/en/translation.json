@@ -396,6 +396,8 @@
       "epochTotal": "Epoch {{epoch}} Total",
       "leftover": "Moved to E{{epochNumber}}",
       "staking": "Staking",
+      "communityFund": "Community Fund",
+      "ppf": "PPF",
       "projectCosts": "Project costs"
     },
     "onboarding": {
