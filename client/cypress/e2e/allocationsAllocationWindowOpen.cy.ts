@@ -60,15 +60,14 @@ const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
             win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
           );
 
-          cy.wrap(null).then(() => {
-            return moveEpoch(win, 'decisionWindowOpen').then(() => {
+          moveEpoch(win, 'decisionWindowOpen')
+            .then(() => {
               const currentEpochAfter = Number(
                 win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
               );
               wasTimeMoved = true;
               expect(currentEpochBefore + 1).to.eq(currentEpochAfter);
             });
-          });
         } else {
           expect(true).to.be.true;
         }
