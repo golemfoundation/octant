@@ -426,7 +426,7 @@
       "stepsDecisionWindowClosed": {
         "welcomeToOctant": {
           "header": "Welcome to Octant Epoch {{epoch}}",
-          "text": "ctant is a Golem Foundation experiment in decentralised governance and funding public good projects.<br/><br/>To get started, lock some GLM in the Earn view, and explore the projects for this epoch to get an idea of what Octant is all"
+          "text": "Octant is a Golem Foundation experiment in decentralised governance and funding public good projects.<br/><br/>To get started, lock some GLM in the Earn view, and explore the projects for this epoch to get an idea of what Octant is all"
         },
         "earnRewards": {
           "header": "Earn ETH rewards",
