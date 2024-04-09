@@ -229,6 +229,8 @@ export const moveEpoch = (
     cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
     // reload is needed to get updated data in the app
     cy.reload();
+    cy.get('[data-test*=AppLoader]').should('not.exist');
+    cy.get('[data-test=SyncView]', {timeout: 60000}).should('not.exist');
     cy.wrap(null).then(() => {
       return f1().then(str => {
         expect(str).to.eq(true);
