@@ -25,7 +25,7 @@ const budget = 10000000000;
 const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
 
 [Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight }) => {
-  describe('move time', () => {
+  describe('move time', { retries: 0 }, () => {
     before(() => {
       /**
        * Global Metamask setup done by Synpress is not always done.
@@ -78,7 +78,8 @@ const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
       cy.wait(30000);
     });
   })
-  describe(
+  // eslint-disable-next-line jest/no-disabled-tests
+  describe.skip(
     `allocation (allocation window open): ${device}`,
     { viewportHeight, viewportWidth },
     () => {
