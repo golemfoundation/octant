@@ -56,17 +56,13 @@ const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
 
         // Move time only once, for the first device.
         if (!wasTimeMoved) {
-          const currentEpochBefore = Number(
-            win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
-          );
-
           moveEpoch(win, 'decisionWindowOpen')
             .then(() => {
-              const currentEpochAfter = Number(
-                win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
+              const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
+                QUERY_KEYS.isDecisionWindowOpen,
               );
               wasTimeMoved = true;
-              expect(currentEpochBefore + 1).to.eq(currentEpochAfter);
+              expect(isDecisionWindowOpenAfter).to.be.true;
             });
         } else {
           expect(true).to.be.true;
