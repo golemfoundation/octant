@@ -257,5 +257,7 @@ export const moveEpoch = (
 
   // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
   cy.wait(5000);
-  return cy.reload();
+  cy.reload();
+  cy.get('[data-test*=AppLoader]').should('not.exist');
+  return cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
 };
