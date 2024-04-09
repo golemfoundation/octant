@@ -21,7 +21,9 @@ def test_get_projects_metadata_epoch_1():
     context = get_context(1)
 
     service = StaticProjectsMetadataService()
-    projects_metadata: ProjectsMetadata = service.get_projects_metadata(context)
+    projects_metadata: ProjectsMetadata = service.get_projects_metadata(
+        context, is_mainnet=True
+    )
 
     assert (
         projects_metadata.proposals_cid
@@ -34,7 +36,9 @@ def test_get_projects_metadata_epoch_2():
     context = get_context(2)
 
     service = StaticProjectsMetadataService()
-    projects_metadata: ProjectsMetadata = service.get_projects_metadata(context)
+    projects_metadata: ProjectsMetadata = service.get_projects_metadata(
+        context, is_mainnet=True
+    )
 
     assert (
         projects_metadata.proposals_cid
@@ -47,7 +51,9 @@ def test_get_projects_metadata_epoch_3():
     context = get_context(3)
 
     service = StaticProjectsMetadataService()
-    projects_metadata: ProjectsMetadata = service.get_projects_metadata(context)
+    projects_metadata: ProjectsMetadata = service.get_projects_metadata(
+        context, is_mainnet=True
+    )
 
     assert (
         projects_metadata.proposals_cid
@@ -60,9 +66,12 @@ def test_get_projects_metadata_epoch_100():
     context = get_context(100)
 
     service = StaticProjectsMetadataService()
-    projects_metadata: ProjectsMetadata = service.get_projects_metadata(context)
+    projects_metadata: ProjectsMetadata = service.get_projects_metadata(
+        context, is_mainnet=True
+    )
 
     assert (
         projects_metadata.proposals_cid
         == "QmXbFKrMGJUbXupmTQsQhoy9zkzXDBHZkPAzKC4yiaLt5n"
     )
+    assert projects_metadata.projects_addresses == ["0x0", "0x1"]
