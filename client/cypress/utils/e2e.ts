@@ -180,6 +180,8 @@ export const moveEpoch = (
   }
 
   if (moveTo === 'decisionWindowOpen') {
+    cy.get('[data-test*=AppLoader]').should('not.exist');
+    cy.get('[data-test=SyncView]', {timeout: 60000}).should('not.exist');
     cy.wrap(null).then(() => {
       return f3().then(str => {
         expect(str).to.eq(true);
@@ -202,6 +204,8 @@ export const moveEpoch = (
     cy.get('[data-test*=AppLoader]').should('not.exist');
     cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
   } else {
+    cy.get('[data-test*=AppLoader]').should('not.exist');
+    cy.get('[data-test=SyncView]', {timeout: 60000}).should('not.exist');
     cy.wrap(null).then(() => {
       return f3().then(str => {
         expect(str).to.eq(true);
