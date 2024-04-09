@@ -17,7 +17,6 @@ export type Root = {
   individualReward: 'individualReward';
   matchedProjectRewards: 'matchedProjectRewards';
   patronMode: 'patronMode';
-  pendingMultisigSignatures: 'pendingMultisigSignatures';
   projectDonors: 'projectDonors';
   projectRewardsThreshold: 'projectRewardsThreshold';
   projectsContract: 'projectsContract';
@@ -56,10 +55,6 @@ export type QueryKeys = {
   lockedSummarySnapshots: ['lockedSummarySnapshots'];
   matchedProjectRewards: (epochNumber: number) => [Root['matchedProjectRewards'], string];
   patronMode: (userAddress: string) => [Root['patronMode'], string];
-  pendingMultisigSignatures: (
-    userAddress: string,
-    signatureOpType: string,
-  ) => [Root['pendingMultisigSignatures'], string, string];
   projectDonors: (
     projectAddress: string,
     epochNumber: number,

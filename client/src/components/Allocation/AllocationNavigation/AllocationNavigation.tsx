@@ -29,7 +29,7 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
     onClick: onResetValues,
   };
   const buttonNextProps =
-    currentView === 'edit'
+    isWaitingForWalletConfirmationMultisig || currentView === 'edit'
       ? {
           label: isWaitingForWalletConfirmationMultisig ? t('waiting') : t('confirm'),
           onClick: onAllocate,

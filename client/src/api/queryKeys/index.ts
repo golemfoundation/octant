@@ -17,7 +17,6 @@ export const ROOTS: Root = {
   individualReward: 'individualReward',
   matchedProjectRewards: 'matchedProjectRewards',
   patronMode: 'patronMode',
-  pendingMultisigSignatures: 'pendingMultisigSignatures',
   projectDonors: 'projectDonors',
   projectRewardsThreshold: 'projectRewardsThreshold',
   projectsContract: 'projectsContract',
@@ -54,11 +53,6 @@ export const QUERY_KEYS: QueryKeys = {
   lockedSummarySnapshots: ['lockedSummarySnapshots'],
   matchedProjectRewards: epochNumber => [ROOTS.matchedProjectRewards, epochNumber.toString()],
   patronMode: userAddress => [ROOTS.patronMode, userAddress],
-  pendingMultisigSignatures: (userAddress, signatureOpType) => [
-    ROOTS.pendingMultisigSignatures,
-    userAddress,
-    signatureOpType,
-  ],
   projectDonors: (projectAddress, epochNumber) => [
     ROOTS.projectDonors,
     projectAddress,
