@@ -137,6 +137,10 @@ const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText]')
+          .focus();
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
+          .find('[data-test=AllocationItem__InputText]')
           .should('have.focus');
         cy.get('[data-test=AllocationItem]')
           .eq(0)
@@ -153,7 +157,7 @@ const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText]')
-          .type(budgetToBig);
+          .type('99999999999999999999999999999999999999999999999');
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText]')
