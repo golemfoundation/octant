@@ -148,7 +148,7 @@ export const moveEpoch = (
 
   cy.wrap(null).then(() => {
     return f0().then(str => {
-      expect(str).to.eq('It worked!');
+      expect(str).to.eq(true);
     });
   });
 
