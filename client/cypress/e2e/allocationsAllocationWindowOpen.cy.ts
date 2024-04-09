@@ -21,7 +21,7 @@ import { formatUnitsBigInt } from 'src/utils/formatUnitsBigInt';
 chai.use(chaiColors);
 
 let wasTimeMoved = false;
-const budget = 10000000000;
+const budget = '10000000000';
 const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
 
 [Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight }) => {
