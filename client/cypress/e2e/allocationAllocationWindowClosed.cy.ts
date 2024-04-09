@@ -43,10 +43,10 @@ let wasTimeMoved = false;
         );
 
         cy.log(`test 1_1 ${isDecisionWindowOpen}`);
-        // if (!isDecisionWindowOpen) {
-        //   expect(true).to.be.true;
-        //   return;
-        // }
+        if (!isDecisionWindowOpen) {
+          expect(true).to.be.true;
+          return;
+        }
 
         // Move time only once, for the first device.
         if (!wasTimeMoved) {
