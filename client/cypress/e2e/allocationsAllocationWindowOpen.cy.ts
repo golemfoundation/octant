@@ -6,8 +6,8 @@ import {
   mockCoinPricesServer,
   navigateWithCheck,
   connectWallet,
-  moveEpoch,
 } from 'cypress/utils/e2e';
+import { moveEpoch } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
@@ -157,7 +157,7 @@ const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText]')
-          .type('99999999999999999999999999999999999999999999999');
+          .type('99999999999999999999');
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText]')
