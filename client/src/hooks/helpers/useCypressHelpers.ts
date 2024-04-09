@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import env from 'env';
 import useCypressMoveToDecisionWindowClosed from 'hooks/mutations/useCypressMoveToDecisionWindowClosed';
 import useCypressMoveToDecisionWindowOpen from 'hooks/mutations/useCypressMoveToDecisionWindowOpen';
+import useCypressMakeSnapshot from 'hooks/mutations/useCypressMakeSnapshot';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useEpochs from 'hooks/subgraph/useEpochs';
 
@@ -11,9 +12,10 @@ export default function useCypressHelpers(): { isFetching: boolean } {
 
   const isHookEnabled = !!window.Cypress || env.network === 'Local';
 
-  const { mutateAsync: mutateAsyncMoveToDecisionWindowOpen } = useCypressMoveToDecisionWindowOpen();
-  const { mutateAsync: mutateAsyncMoveToDecisionWindowClosed } =
+  const { mutateAsync: mutateAsyncMoveToDecisionWindowOpen, isPending: isPendingMoveToDecisionWindowOpen } = useCypressMoveToDecisionWindowOpen();
+  const { mutateAsync: mutateAsyncMoveToDecisionWindowClosed, isPending: isPendingMoveToDecisionWindowClosed } =
     useCypressMoveToDecisionWindowClosed();
+  const { mutateAsync: mutateAsyncMakeSnapshot, isPending: isPendingMakeSnapshot} = useCypressMakeSnapshot();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: epochs } = useEpochs(isHookEnabled && isRefetchingEpochs);
 
@@ -44,9 +46,11 @@ export default function useCypressHelpers(): { isFetching: boolean } {
       window.mutateAsyncMoveToDecisionWindowOpen = mutateAsyncMoveToDecisionWindowOpen;
       // @ts-expect-error Left for debug purposes.
       window.mutateAsyncMoveToDecisionWindowClosed = mutateAsyncMoveToDecisionWindowClosed;
+      // @ts-expect-error Left for debug purposes.
+      window.mutateAsyncMakeSnapshot = mutateAsyncMakeSnapshot;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { isFetching: isHookEnabled && !isEpochAlreadyIndexedBySubgraph };
+  return { isFetching: isHookEnabled && (!isEpochAlreadyIndexedBySubgraph || isPendingMoveToDecisionWindowOpen || isPendingMoveToDecisionWindowClosed || isPendingMakeSnapshot) };
 }

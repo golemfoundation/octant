@@ -122,7 +122,7 @@ export const moveEpoch = (
   });
 
   const f2 = () => new Cypress.Promise(resolve => {
-    axios.post(`${env.serverEndpoint}snapshots/finalized`).then(() => {
+    cypressWindow.mutateAsyncMakeSnapshot('finalized').then(() => {
       resolve(true);
     });
   });
@@ -134,7 +134,7 @@ export const moveEpoch = (
   });
 
   const f4 = () => new Cypress.Promise(resolve => {
-    axios.post(`${env.serverEndpoint}snapshots/pending`).then(() => {
+    cypressWindow.mutateAsyncMakeSnapshot('pending').then(() => {
       resolve(true);
     });
   });
@@ -158,6 +158,8 @@ export const moveEpoch = (
         expect(str).to.eq(true);
       });
     });
+    cy.get('[data-test*=AppLoader]').should('not.exist');
+    cy.get('[data-test=SyncView]', {timeout: 60000}).should('not.exist');
     cy.log('1');
     // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
     cy.wait(2000);
@@ -183,6 +185,8 @@ export const moveEpoch = (
         expect(str).to.eq(true);
       });
     });
+    cy.get('[data-test*=AppLoader]').should('not.exist');
+    cy.get('[data-test=SyncView]', {timeout: 60000}).should('not.exist');
     // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
     cy.wait(2000);
     cy.wrap(null).then(() => {
@@ -203,6 +207,8 @@ export const moveEpoch = (
         expect(str).to.eq(true);
       });
     });
+    cy.get('[data-test*=AppLoader]').should('not.exist');
+    cy.get('[data-test=SyncView]', {timeout: 60000}).should('not.exist');
     // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
     cy.wait(2000);
     cy.wrap(null).then(() => {
@@ -224,6 +230,8 @@ export const moveEpoch = (
         expect(str).to.eq(true);
       });
     });
+    cy.get('[data-test*=AppLoader]').should('not.exist');
+    cy.get('[data-test=SyncView]', {timeout: 60000}).should('not.exist');
     cy.log('4');
     // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
     cy.wait(2000);

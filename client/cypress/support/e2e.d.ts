@@ -6,5 +6,6 @@ declare namespace Cypress {
     clientReactQuery: any;
     mutateAsyncMoveToDecisionWindowClosed: () => Promise<void>;
     mutateAsyncMoveToDecisionWindowOpen: () => Promise<void>;
+    mutateAsyncMakeSnapshot: (type: 'pending' | 'finalized') => Promise<void>;
   }
 }
