@@ -88,6 +88,7 @@ const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
       });
 
       beforeEach(() => {
+        cy.intercept('GET', '/rewards/budget/*/epoch/*', { body: { budget } });
         cy.disconnectMetamaskWalletFromAllDapps();
         mockCoinPricesServer();
         localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
@@ -95,7 +96,6 @@ const budgetToBig = formatUnitsBigInt(BigInt(budget + 1));
         localStorage.setItem(ALLOCATION_ITEMS_KEY, '[]');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
         connectWallet(true, false);
-        cy.intercept('GET', '/rewards/budget/*/epoch/*', { body: { budget } });
 
         cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
         cy.get('[data-test^=ProjectsView__ProjectsListItem]')
