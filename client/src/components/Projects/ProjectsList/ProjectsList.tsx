@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import ProjectsListItem from 'components/Projects/ProjectsListItem';
 import ProjectsListSkeletonItem from 'components/Projects/ProjectsListSkeletonItem';
 import useEpochDurationLabel from 'hooks/helpers/useEpochDurationLabel';
-import useProjectsContract from 'hooks/queries/useProjectsContract';
+import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
 
 import styles from './ProjectsList.module.scss';
@@ -20,7 +20,7 @@ const ProjectsList: FC<ProjectsListProps> = ({
     keyPrefix: 'components.dedicated.projectsList',
   });
 
-  const { data: projectsAddresses } = useProjectsContract(epoch);
+  const { data: projectsEpoch } = useProjectsEpoch(epoch);
   const { data: projectsIpfsWithRewards, isFetching: isFetchingProjectsWithRewards } =
     useProjectsIpfsWithRewards(epoch);
   const epochDurationLabel = useEpochDurationLabel(epoch);
@@ -65,7 +65,7 @@ const ProjectsList: FC<ProjectsListProps> = ({
               projectIpfsWithRewards={projectIpfsWithRewards}
             />
           ))
-        : projectsAddresses?.map((_, index) => (
+        : projectsEpoch?.projectsAddresses?.map((_, index) => (
             // eslint-disable-next-line react/no-array-index-key
             <ProjectsListSkeletonItem key={index} className={styles.element} />
           ))}

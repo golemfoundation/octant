@@ -2,15 +2,14 @@ import { useQueries, UseQueryResult } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { apiGetProject } from 'api/calls/projects';
+import { apiGetProjectIpfsData } from 'api/calls/projects';
 import { QUERY_KEYS } from 'api/queryKeys';
-import useProjectsCid from 'hooks/subgraph/useProjectsCid';
 import toastService from 'services/toastService';
 import { ExtendedProject } from 'types/extended-project';
 import { BackendProposal } from 'types/gen/backendproposal';
 
 import useCurrentEpoch from './useCurrentEpoch';
-import useProjectsContract from './useProjectsContract';
+import useProjectsEpoch from './useProjectsEpoch';
 
 export default function useProjectsIpfs(
   projectsAddresses?: string[],
@@ -18,20 +17,18 @@ export default function useProjectsIpfs(
 ): { data: ExtendedProject[]; isFetching: boolean; refetch: () => void } {
   const { t } = useTranslation('translation', { keyPrefix: 'api.errorMessage' });
   const { data: currentEpoch } = useCurrentEpoch();
-
-  const { data: projectsCid, isFetching: isFetchingProjectsCid } = useProjectsCid(
-    epoch ?? currentEpoch!,
-    {
-      enabled: epoch !== undefined || currentEpoch !== undefined,
-    },
-  );
-  const { refetch } = useProjectsContract(epoch);
+  const {
+    data: projectsEpoch,
+    refetch,
+    isFetching: isFetchingProjectsEpoch,
+  } = useProjectsEpoch(epoch);
 
   const projectsIpfsResults: UseQueryResult<BackendProposal & { ipfsGatewayUsed: string }>[] =
     useQueries({
       queries: (projectsAddresses || []).map(address => ({
-        enabled: !!address && !!projectsCid && (currentEpoch !== undefined || epoch !== undefined),
-        queryFn: () => apiGetProject(`${projectsCid}/${address}`),
+        enabled:
+          !!address && !!projectsEpoch && (currentEpoch !== undefined || epoch !== undefined),
+        queryFn: () => apiGetProjectIpfsData(`${projectsEpoch?.projectsCid}/${address}`),
         queryKey: QUERY_KEYS.projectsIpfsResults(address, epoch ?? currentEpoch!),
         retry: false,
       })),
@@ -51,7 +48,7 @@ export default function useProjectsIpfs(
   }, [isAnyError, t]);
 
   const isProjectsIpfsResultsFetching =
-    isFetchingProjectsCid ||
+    isFetchingProjectsEpoch ||
     projectsIpfsResults.length === 0 ||
     projectsIpfsResults.some(({ isFetching }) => isFetching);
 

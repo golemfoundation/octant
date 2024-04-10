@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi';
 import { ALLOCATION_ITEMS_KEY } from 'constants/localStorageKeys';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
-import useProjectsContract from 'hooks/queries/useProjectsContract';
+import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useAllocationsStore from 'store/allocations/store';
 import useSettingsStore from 'store/settings/store';
@@ -16,7 +16,7 @@ import useAreCurrentEpochsProjectsHiddenOutsideAllocationWindow from './useAreCu
 export default function useAppPopulateState(): void {
   const { isConnected } = useAccount();
 
-  const { data: projects } = useProjectsContract();
+  const { data: projectsEpoch } = useProjectsEpoch();
   const { data: userAllocations } = useUserAllocations();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const {
@@ -48,8 +48,8 @@ export default function useAppPopulateState(): void {
      * and populates store with them or sets empty array.
      */
     if (
-      !projects ||
-      projects.length === 0 ||
+      !projectsEpoch ||
+      projectsEpoch.projectsAddresses.length === 0 ||
       isAllocationsInitialized ||
       isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow
     ) {
@@ -77,7 +77,7 @@ export default function useAppPopulateState(): void {
 
     const validatedProjectsInLocalStorage = getValidatedProjectsFromLocalStorage(
       localStorageAllocationItems,
-      projects,
+      projectsEpoch.projectsAddresses,
     );
     if (validatedProjectsInLocalStorage) {
       setAllocations(validatedProjectsInLocalStorage);
@@ -88,7 +88,7 @@ export default function useAppPopulateState(): void {
     isAllocationsInitialized,
     isConnected,
     isLoadingAreCurrentEpochsProjectsHiddenOutsideAllocationWindow,
-    projects,
+    projectsEpoch,
     setAllocations,
   ]);
 

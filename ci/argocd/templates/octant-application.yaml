@@ -64,6 +64,8 @@ spec:
             value: '$MULTISIGGER_ENABLED'
           - name: 'backendServer.rpcUrl'
             value: '$BACKEND_RPC_URL'
+          - name: 'backendServer.mainnetProposalCids'
+            value: '$MAINNET_PROPOSAL_CIDS'
           # Hardcoded in this file
           - name: 'ingress.tlsToReplicate.enable'
             value: 'true'

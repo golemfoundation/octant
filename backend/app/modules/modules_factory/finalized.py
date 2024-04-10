@@ -12,15 +12,19 @@ from app.modules.modules_factory.protocols import (
     UserBudgets,
     WithdrawalsService,
     SavedProjectRewardsService,
+    ProjectsMetadataService,
 )
 from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
-from app.modules.project_rewards.service.saved import SavedProjectRewards
+from app.modules.projects.rewards.service.saved import SavedProjectRewards
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.saved import SavedUserDeposits
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
 from app.modules.user.rewards.service.saved import SavedUserRewards
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
+from app.modules.projects.metadata.service.projects_metadata import (
+    StaticProjectsMetadataService,
+)
 from app.pydantic import Model
 
 
@@ -47,6 +51,7 @@ class FinalizedServices(Model):
     user_rewards_service: UserRewards
     withdrawals_service: WithdrawalsService
     project_rewards_service: SavedProjectRewardsService
+    projects_metadata_service: ProjectsMetadataService
 
     @staticmethod
     def create() -> "FinalizedServices":
@@ -69,4 +74,5 @@ class FinalizedServices(Model):
             user_rewards_service=user_rewards,
             withdrawals_service=withdrawals_service,
             project_rewards_service=SavedProjectRewards(),
+            projects_metadata_service=StaticProjectsMetadataService(),
         )

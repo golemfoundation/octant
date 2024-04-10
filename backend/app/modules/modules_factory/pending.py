@@ -18,10 +18,11 @@ from app.modules.modules_factory.protocols import (
     GetUserAllocationsProtocol,
     SavedProjectRewardsService,
     MultisigSignatures,
+    ProjectsMetadataService,
 )
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
-from app.modules.project_rewards.service.estimated import EstimatedProjectRewards
+from app.modules.projects.rewards.service.estimated import EstimatedProjectRewards
 from app.modules.snapshots.finalized.service.simulated import (
     SimulatedFinalizedSnapshots,
 )
@@ -35,6 +36,9 @@ from app.modules.user.deposits.service.saved import SavedUserDeposits
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.withdrawals.service.pending import PendingWithdrawals
+from app.modules.projects.metadata.service.projects_metadata import (
+    StaticProjectsMetadataService,
+)
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 
@@ -74,6 +78,7 @@ class PendingServices(Model):
     withdrawals_service: WithdrawalsService
     project_rewards_service: PendingProjectRewardsProtocol
     multisig_signatures_service: MultisigSignatures
+    projects_metadata_service: ProjectsMetadataService
 
     @staticmethod
     def create(chain_id: int) -> "PendingServices":
@@ -121,4 +126,5 @@ class PendingServices(Model):
             withdrawals_service=withdrawals_service,
             project_rewards_service=project_rewards,
             multisig_signatures_service=multisig_signatures,
+            projects_metadata_service=StaticProjectsMetadataService(),
         )
