@@ -1,6 +1,6 @@
 import { AnimatePresence } from 'framer-motion';
 import throttle from 'lodash/throttle';
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, { ReactElement, useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
@@ -32,7 +32,12 @@ const ProjectView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
   const epochUrlInt = parseInt(epochUrl!, 10);
 
-  const epoch = isDecisionWindowOpen && epochUrlInt === currentEpoch! - 1 ? undefined : epochUrlInt;
+  const epoch = useMemo(() => {
+    if (isDecisionWindowOpen) {
+      return epochUrlInt === currentEpoch! - 1 ? undefined : epochUrlInt;
+    }
+    return epochUrlInt === currentEpoch ? undefined : epochUrlInt;
+  }, [isDecisionWindowOpen, epochUrlInt, currentEpoch]);
 
   const { data: matchedProjectRewards } = useMatchedProjectRewards(epoch);
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards(epoch);
