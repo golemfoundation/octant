@@ -93,7 +93,8 @@
       "allocationNavigation": {
         "confirm": "Confirm",
         "edit": "Edit",
-        "reset": "Reset"
+        "reset": "Reset",
+        "waiting": "Waiting"
       },
       "allocationRewardsBox": {
         "title": "Allocate rewards",
@@ -221,7 +222,8 @@
       },
       "historyTransactionLabel": {
         "confirmed": "Confirmed",
-        "pending": "Pending"
+        "pending": "Pending",
+        "pendingMultisig": "Pending multisig"
       },
       "metricsTimeSection": {
         "epochEndsIn": "Epoch {{currentEpoch}} ends in",
@@ -402,7 +404,8 @@
       "stepsCommon": {
         "usingTheApp": {
           "header": "Using the app",
-          "text": "Before we can go any further, please read the terms of service and click the checkbox below to agree with them."
+          "text": "Before we can go any further, please read the terms of service and click the checkbox below to agree with them.",
+          "waitingForWalletConfirmation": "Waiting for wallet confirmation"
         }
       },
       "stepsDecisionWindowOpen": {
