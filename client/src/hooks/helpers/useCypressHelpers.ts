@@ -17,6 +17,7 @@ export default function useCypressHelpers(): { isFetching: boolean } {
   const { mutateAsync: mutateAsyncMoveToDecisionWindowClosed, isPending: isPendingMoveToDecisionWindowClosed } =
     useCypressMoveToDecisionWindowClosed();
   const { mutateAsync: mutateAsyncMakeSnapshot, isPending: isPendingMakeSnapshot} = useCypressMakeSnapshot();
+  useIsDecisionWindowOpen({ refetchInterval: isHookEnabled ? 1000 : false })
   const { data: currentEpoch } = useCurrentEpoch({ refetchInterval: isHookEnabled ? 1000 : false });
   const { data: epochs } = useEpochs(isHookEnabled && isRefetchingEpochs);
 
