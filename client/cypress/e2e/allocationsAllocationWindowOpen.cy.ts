@@ -141,7 +141,7 @@ describe('allocation (allocation window open)', () => {
           .and('be.colored', '#f1faf8');
       });
 
-      it('AllocationItem__InputText correctly changes background color and shakes on error', () => {
+      it('AllocationItem__InputText correctly changes background color on error', () => {
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText__suffix]')
