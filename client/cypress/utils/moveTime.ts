@@ -32,16 +32,12 @@ const waitForLoadersToDisappear = (): Chainable<any> => {
 };
 
 const moveToDecisionWindowOpen = (cypressWindow: Cypress.AUTWindow): Chainable<any> => {
-  // reload is needed to get updated data in the app
-  cy.reload();
   waitForLoadersToDisappear();
   cy.wrap(null).then(() => {
     return mutateAsyncMoveToDecisionWindowOpen(cypressWindow).then(str => {
       expect(str).to.eq(true);
     });
   });
-  // reload is needed to get updated data in the app
-  cy.reload();
   waitForLoadersToDisappear();
   // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
   cy.wait(2000);
@@ -58,15 +54,11 @@ const moveToDecisionWindowOpen = (cypressWindow: Cypress.AUTWindow): Chainable<a
 };
 
 const moveToDecisionWindowClosed = (cypressWindow: Cypress.AUTWindow): Chainable<any> => {
-  // reload is needed to get updated data in the app
-  cy.reload();
   cy.wrap(null).then(() => {
     return mutateAsyncMoveToDecisionWindowClosed(cypressWindow).then(str => {
       expect(str).to.eq(true);
     });
   });
-  // reload is needed to get updated data in the app
-  cy.reload();
   waitForLoadersToDisappear();
   // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
   cy.wait(2000);
@@ -92,8 +84,6 @@ export const moveTime = (
 
   if (isDecisionWindowOpen) {
     moveToDecisionWindowClosed(cypressWindow);
-    // reload is needed to get updated data in the app
-    cy.reload();
     waitForLoadersToDisappear();
     // reload is needed to get updated data in the app
     cy.reload();
@@ -102,8 +92,6 @@ export const moveTime = (
   if (moveTo === 'decisionWindowOpen') {
     moveToDecisionWindowOpen(cypressWindow);
   } else {
-    // reload is needed to get updated data in the app
-    cy.reload();
     moveToDecisionWindowOpen(cypressWindow);
     // reload is needed to get updated data in the app
     cy.reload();
