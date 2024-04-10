@@ -93,7 +93,8 @@
       "allocationNavigation": {
         "confirm": "Confirm",
         "edit": "Edit",
-        "reset": "Reset"
+        "reset": "Reset",
+        "waiting": "Waiting"
       },
       "allocationRewardsBox": {
         "title": "Allocate rewards",
@@ -221,7 +222,8 @@
       },
       "historyTransactionLabel": {
         "confirmed": "Confirmed",
-        "pending": "Pending"
+        "pending": "Pending",
+        "pendingMultisig": "Pending multisig"
       },
       "metricsTimeSection": {
         "epochEndsIn": "Epoch {{currentEpoch}} ends in",
@@ -404,39 +406,40 @@
       "stepsCommon": {
         "usingTheApp": {
           "header": "Using the app",
-          "text": "Before we can go any further, please read the terms of service and click the checkbox below to agree with them."
+          "text": "Before we can go any further, please read the terms of service and click the checkbox below to agree with them.",
+          "waitingForWalletConfirmation": "Waiting for wallet confirmation"
         }
       },
       "stepsDecisionWindowOpen": {
         "welcomeToOctant": {
-          "header": "Welcome to Octant",
-          "text": "To get started, lock some GLM in the <0>Earn</0> view, and take a look at the projects you can donate to in the <0>Projects</0> view.<br/><br/>If you already have GLM locked, you’ll have some rewards to use during E2 Allocation window, which runs from 17 to 31 Jan."
+          "header": "Welcome to Epoch {{epoch}} Allocation",
+          "text": "If you locked GLM last epoch, you'll have rewards available during this allocation window, which runs until {{date}}.<br/><br/>If not, lock some GLM in the Earn view, and explore the projects for this epoch to get an idea of what Octant is all about."
         },
         "earnRewards": {
           "header": "Earn ETH rewards",
-          "text": "ETH rewards are earned based on a weighted average, so the more GLM you lock and the longer you lock it for, the more you earn.<br/><br/>You can unlock at any time. Use the calculator in the <0>Earn</0> view to work out the return per epoch on a given amount of GLM."
+          "text": "ETH rewards are earned based on a weighted average, so the more GLM you lock and the longer you lock it for, the more you earn.<br/><br/>You can unlock at any time but doing so will reduce your rewards. Use the calculator in the Earn view to estimate potential rewards."
         },
         "donateToProjects": {
           "header": "Donate to projects",
-          "text": "Check out the lineup for Epoch 3 in the <0>Projects</0> view. Tap a project tile to read its details. Help your favourite projects out by donating to them.<br/><br/>Your donation will be fund-matched by Golem Foundation. Just tap the heart to add a project to the <0>Allocate</0> view where you can donate."
+          "text": "Check out the lineup for Epoch {{epoch}} in the Projects view. Tap a project tile to read its details and donate to your favourites.<br/><br/>Your donation will be fund matched by Golem Foundation. Just tap the heart to add a project to the Allocate view where you can donate."
         },
         "slideIt": {
           "header": "Just slide it",
-          "text": "Once you have rewards, use the slider in the <0>Allocate</0> view to easily divide rewards between projects or yourself.<br/><br/>To change your choices at any time during allocation, just click Edit, make some changes and reconfirm in your wallet."
+          "text": "If you have rewards, use the slider in the Allocate view to easily divide them between projects or yourself.<br/><br/>To change your choices at any time during allocation, just click Edit, make some changes and reconfirm in your wallet."
         }
       },
       "stepsDecisionWindowClosed": {
         "welcomeToOctant": {
-          "header": "Welcome to Octant Epoch 3",
-          "text": "To get started, lock some GLM in the <0>Earn</0> view, and see how the previous Epochs projects performed in the archive.<br /><br />If you made personal allocations in the previous epoch, your ETH will be available to withdraw in the <0>Earn</0> view."
+          "header": "Welcome to Octant Epoch {{epoch}}",
+          "text": "Octant is a Golem Foundation experiment in decentralised governance and funding public good projects.<br/><br/>To get started, lock some GLM in the Earn view, and explore the projects for this epoch to get an idea of what Octant is all"
         },
         "earnRewards": {
           "header": "Earn ETH rewards",
-          "text": "Use the <0>Earn</0> view calculator to work out your return per epoch for any amount of GLM. You can unlock your tokens at any time.<br /><br/>If you already have GLM locked, you will have some rewards to use during Epoch 3 allocation which will begin in mid April 2024."
+          "text": "ETH rewards are earned based on a weighted average, so the more GLM you lock and the longer you lock it for, the more you earn.<br/><br/>You can unlock at any time but doing so will reduce your rewards. Use the calculator in the Earn view to estimate potential rewards."
         },
-        "getInvolved": {
-          "header": "Get involved",
-          "text": "Epoch 3 projects will start appearing in the app after a 2-3 week cooling off period. Get involved and suggest a project in our Discord.<br /><br />Once projects are shortlisted, a community vote on Snapshot decides which projects enter this epoch. All participating voters get a POAP."
+        "getReady": {
+          "header": "Get ready for allocation",
+          "text": "Lock your GLM, check out the projects to support and get ready for the next allocation window which opens on {{date}}.<br/><br/>Visit <0>Octant.build</0>, join the <1>Discord</1> or get project updates on <2>Twitter</2>."
         }
       }
     },
