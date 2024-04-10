@@ -81,7 +81,7 @@ jobs:
     needs:
       - build-images
     runs-on:
-      - metal
+      - general
     steps:
     - uses: actions/checkout@v4
       with:
