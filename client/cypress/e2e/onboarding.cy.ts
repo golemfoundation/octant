@@ -1,6 +1,6 @@
 import { visitWithLoader, navigateWithCheck, mockCoinPricesServer } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
-import { stepsDecisionWindowClosed } from 'src/hooks/helpers/useOnboardingSteps/steps';
+import { getStepsDecisionWindowClosed } from 'src/hooks/helpers/useOnboardingSteps/steps';
 import { ROOT, ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 import Chainable = Cypress.Chainable;
@@ -230,12 +230,12 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('user is able to click through entire onboarding flow', () => {
-      for (let i = 1; i < stepsDecisionWindowClosed.length - 1; i++) {
+      for (let i = 1; i < getStepsDecisionWindowClosed('2', '16 Jan').length - 1; i++) {
         checkProgressStepperSlimIsCurrentAndClickNext(i);
       }
 
       cy.get('[data-test=ModalOnboarding__ProgressStepperSlim__element]')
-        .eq(stepsDecisionWindowClosed.length - 1)
+        .eq(getStepsDecisionWindowClosed('2', '16 Jan').length - 1)
         .click();
       cy.get('[data-test=ModalOnboarding__Button]').click();
       cy.get('[data-test=ModalOnboarding]').should('not.exist');
@@ -322,7 +322,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('user is not able to click through entire onboarding flow', () => {
-      for (let i = 1; i < stepsDecisionWindowClosed.length; i++) {
+      for (let i = 1; i < getStepsDecisionWindowClosed('2', '16 Jan').length; i++) {
         checkProgressStepperSlimIsCurrentAndClickNext(i, i === 1);
       }
     });

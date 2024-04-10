@@ -15,6 +15,7 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useLock from 'hooks/mutations/useLock';
 import useUnlock from 'hooks/mutations/useUnlock';
 import useDepositValue from 'hooks/queries/useDepositValue';
+import useIsContract from 'hooks/queries/useIsContract';
 import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import toastService from 'services/toastService';
 import useTransactionLocalStore from 'store/transactionLocal/store';
@@ -30,6 +31,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { isDesktop } = useMediaQuery();
+  const { data: isContract } = useIsContract();
   const [transactionHashForEtherscan, setTransactionHashForEtherscan] = useState<
     string | undefined
   >(undefined);
@@ -105,12 +107,15 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
   const onSuccess = async ({ hash, value }): Promise<void> => {
     addTransactionPending({
       amount: value,
+      isMultisig: isContract,
       // GET /history uses microseconds. Normalization here.
       timestamp: (Date.now() * 1000).toString(),
       transactionHash: hash,
       type: currentMode,
     });
-    setTransactionHashForEtherscan(hash);
+    if (!isContract) {
+      setTransactionHashForEtherscan(hash);
+    }
   };
 
   const onReset: OnReset = ({ setFieldValue, newMode = 'lock' }) => {

@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTransaction } from 'wagmi';
@@ -20,6 +21,7 @@ const EarnHistoryItemDetailsRest: FC<EarnHistoryItemDetailsRestProps> = ({
   transactionHash,
   isFinalized = true,
   isWaitingForTransactionInitialized,
+  isMultisig = false,
 }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.historyItemModal',
@@ -52,10 +54,12 @@ const EarnHistoryItemDetailsRest: FC<EarnHistoryItemDetailsRestProps> = ({
             label: t('sections.gasPrice'),
           },
           {
-            childrenLeft: <EarnHistoryTransactionLabel isFinalized={isFinalized} />,
+            childrenLeft: (
+              <EarnHistoryTransactionLabel isFinalized={isFinalized} isMultisig={isMultisig} />
+            ),
             childrenRight: (
               <Button
-                className={styles.viewOnEtherscan}
+                className={cx(styles.viewOnEtherscan, isMultisig && styles.isMultisig)}
                 href={`${networkConfig.etherscanAddress}/tx/${transactionHash}`}
                 label={t('sections.viewOnEtherscan')}
                 variant="link"
