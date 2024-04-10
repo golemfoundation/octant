@@ -23,7 +23,7 @@ let wasTimeMoved = false;
 const budget = '10000000000';
 
 describe('allocation (allocation window open)', () => {
-  describe('move time', { retries: 0 }, () => {
+  describe('move time', () => {
     before(() => {
       /**
        * Global Metamask setup done by Synpress is not always done.

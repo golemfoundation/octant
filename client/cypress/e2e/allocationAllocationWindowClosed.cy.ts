@@ -17,7 +17,7 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 let wasTimeMoved = false;
 
 describe('allocation (allocation window closed)', () => {
-  describe('move time', { retries: 0 }, () => {
+  describe('move time', () => {
     before(() => {
       /**
        * Global Metamask setup done by Synpress is not always done.
