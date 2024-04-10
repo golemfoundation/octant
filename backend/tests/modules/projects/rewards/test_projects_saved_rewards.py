@@ -7,7 +7,7 @@ from app.modules.dto import (
     UserAllocationRequestPayload,
     UserAllocationPayload,
 )
-from app.modules.project_rewards.service.saved import SavedProjectRewards
+from app.modules.projects.rewards.service.saved import SavedProjectRewards
 from tests.helpers.context import get_context
 
 

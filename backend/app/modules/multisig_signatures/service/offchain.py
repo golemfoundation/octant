@@ -1,7 +1,7 @@
 from typing import List
 
 from app.context.manager import Context
-from app.exceptions import InvalidMultisigSignatureRequest
+from app.exceptions import InvalidMultisigSignatureRequest, InvalidMultisigAddress
 from app.extensions import db
 from app.infrastructure import database
 from app.infrastructure.database.models import MultisigSignatures
@@ -21,6 +21,10 @@ from app.modules.multisig_signatures.core import (
 )
 from app.modules.multisig_signatures.dto import Signature
 from app.pydantic import Model
+from app.infrastructure.external_api.safe.message_details import (
+    get_message_details,
+    retry_request,
+)
 
 
 class OffchainMultisigSignatures(Model):
@@ -91,10 +95,23 @@ class OffchainMultisigSignatures(Model):
         message_hash = get_message_hash(user_address, safe_message_hash)
         msg_to_save = prepare_msg_to_save(message, op_type)
 
+        self._verify_owner(user_address, message_hash)
+
         database.multisig_signature.save_signature(
             user_address, op_type, msg_to_save, message_hash, safe_message_hash, user_ip
         )
         db.session.commit()
+
+    def _verify_owner(self, user_address: str, message_hash: str):
+        message_details = retry_request(
+            req_func=get_message_details,
+            status_code=404,
+            message_hash=message_hash,
+            is_mainnet=self.is_mainnet,
+        )
+
+        if message_details is None or user_address != message_details["safe"]:
+            raise InvalidMultisigAddress()
 
     def _verify_signature(
         self,
