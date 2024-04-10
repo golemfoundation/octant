@@ -160,7 +160,7 @@ const budget = '10000000000';
           .eq(0)
           .find('[data-test=AllocationItem__InputText]')
           .should('have.css', 'background-color')
-          .and('be.colored', '#ff6157');
+          .and('be.colored', '#f1faf8');
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText]')
