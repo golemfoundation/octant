@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
-import { mutateAsyncMakeSnapshot, loaderCheck } from 'cypress/utils/moveTime';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import env from 'src/env';
@@ -39,8 +38,8 @@ describe('Make pending snapshot', () => {
       }
 
       cy.wrap(null).then(() => {
-        return mutateAsyncMakeSnapshot(win, 'pending').then(() => {
-          loaderCheck();
+        axios.post(`${env.serverEndpoint}snapshots/pending`).then(() => {
+          cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
         });
       });
     });

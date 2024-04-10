@@ -14,7 +14,7 @@ def get_user_details(user_address: str, is_mainnet: bool) -> dict:
         json_response = response.json()
     except requests.exceptions.RequestException as e:
         app_module.ExceptionHandler.print_stacktrace(e)
-        raise ExternalApiException(e, 500)
+        raise ExternalApiException(api_url, e, 500)
 
     return json_response
 

@@ -3,8 +3,8 @@ import {
   visitWithLoader,
   mockCoinPricesServer,
   navigateWithCheck,
+  moveEpoch,
 } from 'cypress/utils/e2e';
-import { moveEpoch } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
@@ -16,8 +16,8 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 let wasTimeMoved = false;
 
-describe('allocation (allocation window closed)', () => {
-  describe('move time to allocation window closed', () => {
+[Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
+  describe('move time', { retries: 0 }, () => {
     before(() => {
       /**
        * Global Metamask setup done by Synpress is not always done.
@@ -51,23 +51,30 @@ describe('allocation (allocation window closed)', () => {
         // Move time only once, for the first device.
         if (!wasTimeMoved) {
           cy.log(`test 1_2 ${isDecisionWindowOpen}`);
-          moveEpoch(win, 'decisionWindowClosed').then(() => {
-            cy.get('[data-test=PlaygroundView]').should('be.visible');
-            const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
-              QUERY_KEYS.isDecisionWindowOpen,
-            );
-            wasTimeMoved = true;
-            cy.log(`test 1_2 ${isDecisionWindowOpenAfter}`);
-            expect(isDecisionWindowOpenAfter).to.be.false;
-          });
+          moveEpoch(win, 'decisionWindowClosed')
+            .then(() => {
+              cy.get('[data-test=PlaygroundView]').should('be.visible');
+              const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
+                QUERY_KEYS.isDecisionWindowOpen,
+              );
+              wasTimeMoved = true;
+              cy.log(`test 1_2 ${isDecisionWindowOpenAfter}`);
+              expect(isDecisionWindowOpenAfter).to.be.false;
+            });
         } else {
           expect(true).to.be.true;
         }
       });
     });
+
+    it('playground', () => {
+      cy.wait(30000);
+    });
   });
-  [Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
-    describe(`test cases: ${device}`, { viewportHeight, viewportWidth }, () => {
+  describe(
+    `allocation (allocation window closed): ${device}`,
+    { viewportHeight, viewportWidth },
+    () => {
       before(() => {
         /**
          * Global Metamask setup done by Synpress is not always done.
@@ -129,6 +136,6 @@ describe('allocation (allocation window closed)', () => {
           .find('[data-test=AllocationItem__InputText__suffix]')
           .contains('GWEI');
       });
-    });
-  });
+    },
+  );
 });

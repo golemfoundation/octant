@@ -1,13 +1,10 @@
 import requests
-from flask import current_app as app
-
 import app as app_module
 from app.constants import ETHERSCAN_API
 from app.exceptions import ExternalApiException
 from app.infrastructure.external_api.etherscan.helpers import raise_for_status
-from app.infrastructure.external_api.etherscan.req_params import (
-    AccountAction,
-)
+from app.infrastructure.external_api.etherscan.req_params import AccountAction
+from flask import current_app as app
 
 MAX_RESPONSE_SIZE = 10000
 
@@ -35,7 +32,7 @@ def get_transactions(
         return txs
     except requests.exceptions.RequestException as e:
         app_module.ExceptionHandler.print_stacktrace(e)
-        raise ExternalApiException(e, 500)
+        raise ExternalApiException(api_url, e, 500)
 
 
 def _get_api_url(address: str, tx_type: AccountAction) -> str:

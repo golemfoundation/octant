@@ -1,5 +1,6 @@
 import requests
 
+
 import app as app_module
 from app.constants import BITQUERY_API
 from app.exceptions import ExternalApiException
@@ -35,6 +36,6 @@ def get_blocks_rewards(address: str, start_block: int, end_block: int) -> float:
         json_response = response.json()
     except requests.exceptions.RequestException as e:
         app_module.ExceptionHandler.print_stacktrace(e)
-        raise ExternalApiException(e, 500)
+        raise ExternalApiException(api_url, e, 500)
 
     return json_response["data"]["ethereum"]["blocks"][0]["reward"]
