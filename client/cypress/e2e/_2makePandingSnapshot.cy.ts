@@ -31,7 +31,6 @@ describe('Make pending snapshot', () => {
         QUERY_KEYS.isDecisionWindowOpen,
       );
 
-      cy.log(`test 0 ${isDecisionWindowOpen}`);
       if (!isDecisionWindowOpen) {
         expect(true).to.be.true;
         return;

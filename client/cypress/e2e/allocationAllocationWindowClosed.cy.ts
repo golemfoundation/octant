@@ -42,7 +42,6 @@ describe('allocation (allocation window closed)', () => {
           QUERY_KEYS.isDecisionWindowOpen,
         );
 
-        cy.log(`test 1_1 ${isDecisionWindowOpen}`);
         if (!isDecisionWindowOpen) {
           expect(true).to.be.true;
           return;
@@ -50,14 +49,12 @@ describe('allocation (allocation window closed)', () => {
 
         // Move time only once, for the first device.
         if (!wasTimeMoved) {
-          cy.log(`test 1_2 ${isDecisionWindowOpen}`);
           moveEpoch(win, 'decisionWindowClosed').then(() => {
             cy.get('[data-test=PlaygroundView]').should('be.visible');
             const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
               QUERY_KEYS.isDecisionWindowOpen,
             );
             wasTimeMoved = true;
-            cy.log(`test 1_2 ${isDecisionWindowOpenAfter}`);
             expect(isDecisionWindowOpenAfter).to.be.false;
           });
         } else {
