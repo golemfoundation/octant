@@ -1,6 +1,7 @@
 .box {
   height: 8rem;
   margin-top: 1.6rem;
+  position: relative;
 
   .text {
     margin-left: 1.8rem;
@@ -9,6 +10,10 @@
     line-height: 2.4rem;
     color: $color-octant-grey5;
     cursor: pointer;
+
+    &.isWaitingForWalletConfirmationMultisig {
+      opacity: 0.5;
+    }
   }
 
   .link {
@@ -26,5 +31,16 @@
     &:hover {
       transform: none;
     }
+  }
+
+  .waitingForWalletConfirmation {
+    position: absolute;
+    right: 0;
+    bottom: -2.4rem;
+    height: 2.4rem;
+    color: $color-octant-grey5;
+    font-weight: $font-weight-bold;
+    font-size: $font-size-10;
+    text-align: right;
   }
 }

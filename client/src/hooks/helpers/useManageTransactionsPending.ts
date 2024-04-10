@@ -48,7 +48,10 @@ export default function useManageTransactionsPending(): void {
     }
 
     transactionsPending
-      .filter(({ isWaitingForTransactionInitialized }) => !isWaitingForTransactionInitialized)
+      .filter(
+        ({ isWaitingForTransactionInitialized, isMultisig }) =>
+          !isWaitingForTransactionInitialized && !isMultisig,
+      )
       .forEach(transaction => {
         setTransactionIsWaitingForTransactionInitialized(transaction.transactionHash);
         publicClient
