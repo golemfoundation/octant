@@ -1,5 +1,7 @@
-import app as app_module
 import requests
+from flask import current_app as app
+
+import app as app_module
 from app.constants import ETHERSCAN_API
 from app.exceptions import ExternalApiException
 from app.infrastructure.external_api.etherscan.helpers import raise_for_status
@@ -7,7 +9,6 @@ from app.infrastructure.external_api.etherscan.req_params import (
     ClosestValue,
     BlockAction,
 )
-from flask import current_app as app
 
 
 def get_block_num_from_ts(timestamp: int) -> int:
@@ -20,7 +21,7 @@ def get_block_num_from_ts(timestamp: int) -> int:
         result = int(json_response["result"])
     except requests.exceptions.RequestException as e:
         app_module.ExceptionHandler.print_stacktrace(e)
-        raise ExternalApiException(api_url, e, 500)
+        raise ExternalApiException(e, 500)
 
     return result
 
