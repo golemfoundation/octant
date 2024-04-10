@@ -38,11 +38,9 @@ const moveToDecisionWindowOpen = (cypressWindow: Cypress.AUTWindow): Chainable<a
       expect(str).to.eq(true);
     });
   });
+  waitForLoadersToDisappear();
   // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
   cy.wait(2000);
-  // reload is needed to get updated data in the app
-  cy.reload();
-  waitForLoadersToDisappear();
   cy.wrap(null).then(() => {
     return mutateAsyncMakeSnapshot(cypressWindow, 'pending').then(str => {
       expect(str).to.eq(true);
@@ -61,11 +59,9 @@ const moveToDecisionWindowClosed = (cypressWindow: Cypress.AUTWindow): Chainable
       expect(str).to.eq(true);
     });
   });
+  waitForLoadersToDisappear();
   // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
   cy.wait(2000);
-  // reload is needed to get updated data in the app
-  cy.reload();
-  waitForLoadersToDisappear();
   cy.wrap(null).then(() => {
     return mutateAsyncMakeSnapshot(cypressWindow, 'finalized').then(str => {
       expect(str).to.eq(true);
@@ -88,6 +84,7 @@ export const moveTime = (
 
   if (isDecisionWindowOpen) {
     moveToDecisionWindowClosed(cypressWindow);
+    waitForLoadersToDisappear();
     // reload is needed to get updated data in the app
     cy.reload();
   }
