@@ -225,13 +225,11 @@ const AllocationItem: FC<AllocationItemProps> = ({
             <div className={styles.projectData}>
               <Img
                 className={styles.image}
-                dataTest="AllocationItem__imageProfile"
+                dataTest="ProjectItem__imageProfile"
                 sources={ipfsGateways.split(',').map(element => `${element}${profileImageSmall}`)}
               />
               <div className={styles.nameAndRewards}>
-                <div className={styles.name} data-test="AllocationItem__name">
-                  {name}
-                </div>
+                <div className={styles.name}>{name}</div>
                 <AllocationItemRewards
                   address={address}
                   isError={isError}
@@ -243,7 +241,6 @@ const AllocationItem: FC<AllocationItemProps> = ({
             <InputText
               ref={inputRef}
               className={cx(styles.input, isEpoch1 && styles.isEpoch1, isError && styles.isError)}
-              dataTest="AllocationItem__InputText"
               error={isError}
               inputMode="decimal"
               isDisabled={

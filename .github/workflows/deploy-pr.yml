@@ -13,7 +13,7 @@ jobs:
     secrets: inherit
     with:
       image-tag: ${{ needs.run.outputs.sha }}
-
+      git-ref: ${{ needs.run.outputs.ref }}
   deploy:
     name: Deploy
     needs:

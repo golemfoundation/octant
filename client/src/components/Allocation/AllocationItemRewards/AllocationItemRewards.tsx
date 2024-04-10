@@ -142,7 +142,6 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
           isDonationAboveThreshold &&
           styles.isDonationAboveThreshold,
       )}
-      data-test="AllocationItemRewards"
       onClick={onClick}
       onMouseLeave={() => setIsSimulateVisible(false)}
       // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events

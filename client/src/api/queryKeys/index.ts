@@ -41,7 +41,6 @@ export const QUERY_KEYS: QueryKeys = {
   epochTimestampHappenedIn: timestamp => [ROOTS.epochTimestampHappenedIn, timestamp.toString()],
   epochUnusedRewards: epoch => [ROOTS.epochUnusedRewards, epoch.toString()],
   epochesEndTime: epochNumber => [ROOTS.epochesEndTime, epochNumber.toString()],
-  epochs: ['epochs'],
   estimatedEffectiveDeposit: userAddress => [ROOTS.estimatedEffectiveDeposit, userAddress],
   history: ['history'],
   individualProjectRewards: ['individualProjectRewards'],

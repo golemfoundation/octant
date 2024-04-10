@@ -49,7 +49,9 @@ class SavedUserAllocations(Model):
             )
         ]
 
-    def get_all_allocations(self, context: Context) -> List[ProposalDonationDTO]:
+    def get_all_allocations(
+        self, context: Context, include_zero_allocations=True
+    ) -> List[ProposalDonationDTO]:
         allocations = database.allocations.get_all(context.epoch_details.epoch_num)
         return [
             ProposalDonationDTO(
@@ -58,6 +60,7 @@ class SavedUserAllocations(Model):
                 proposal=alloc.proposal_address,
             )
             for alloc in allocations
+            if include_zero_allocations or alloc.amount > 0
         ]
 
     def get_allocations_by_project(
