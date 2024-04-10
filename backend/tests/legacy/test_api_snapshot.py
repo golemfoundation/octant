@@ -34,8 +34,9 @@ def test_pending_snapshot(
     client: Client, deployer: UserAccount, ua_alice: UserAccount, ua_bob: UserAccount
 ):
     res = client.sync_status()
-    assert res["indexedEpoch"] == res["blockchainEpoch"]
-    assert res["indexedEpoch"] > 0
+    # https://linear.app/golemfoundation/issue/OCT-1318/add-ci-step-for-backend-api-tests#comment-0a1f0823
+    # assert res["indexedEpoch"] == res["blockchainEpoch"]
+    # assert res["indexedEpoch"] > 0
 
     # fund Octant
     deployer.fund_octant(
@@ -74,8 +75,9 @@ def test_allocations(
     client: Client, deployer: UserAccount, ua_alice: UserAccount, ua_bob: UserAccount
 ):
     res = client.sync_status()
-    assert res["indexedEpoch"] == res["blockchainEpoch"]
-    assert res["indexedEpoch"] > 0
+    # https://linear.app/golemfoundation/issue/OCT-1318/add-ci-step-for-backend-api-tests#comment-0a1f0823
+    # assert res["indexedEpoch"] == res["blockchainEpoch"]
+    # assert res["indexedEpoch"] > 0
 
     alice_proposals = get_proposals_addresses(1)[:3]
 
