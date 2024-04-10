@@ -1,4 +1,3 @@
-import cx from 'classnames';
 import { useFormik } from 'formik';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
@@ -9,16 +8,17 @@ import BoxRounded from 'components/ui/BoxRounded';
 import InputText from 'components/ui/InputText';
 import useCalculateRewards from 'hooks/mutations/useCalculateRewards';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
-import i18n from 'i18n';
 import useSettingsStore from 'store/settings/store';
 import { FormattedCryptoValue } from 'types/formattedCryptoValue';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
-import { comma, floatNumberWithUpTo18DecimalPlaces, numbersOnly } from 'utils/regExp';
+import { comma, floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 
 import styles from './EarnRewardsCalculator.module.scss';
+import EarnRewardsCalculatorDaysSelector from './EarnRewardsCalculatorDaysSelector';
+import EarnRewardsCalculatorEstimates from './EarnRewardsCalculatorEstimates';
 import { FormFields } from './types';
 import { formInitialValues, validationSchema } from './utils';
 
@@ -27,11 +27,10 @@ const EarnRewardsCalculator: FC = () => {
     keyPrefix: 'components.dedicated.rewardsCalculator',
   });
   const {
-    data: { displayCurrency, isCryptoMainValueDisplay },
+    data: { displayCurrency },
   } = useSettingsStore(({ data }) => ({
     data: {
       displayCurrency: data.displayCurrency,
-      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
     },
   }));
   const { data: cryptoValues } = useCryptoValues(displayCurrency);
@@ -72,12 +71,19 @@ const EarnRewardsCalculator: FC = () => {
     formik.setFieldValue('valueCrypto', valueComma || '');
   };
 
-  const onDaysInputChange = (value: string) => {
-    if (!numbersOnly.test(value)) {
-      return;
-    }
-    formik.setFieldValue('days', value);
-  };
+  const estimatedFormattedRewardsValue: FormattedCryptoValue =
+    isEmpty(formik.errors) && formik.values.valueCrypto && formik.values.days && calculateRewards
+      ? getFormattedEthValue(parseUnitsBigInt(calculateRewards.budget, 'wei'))
+      : {
+          fullString: '',
+          suffix: 'ETH',
+          value: '',
+        };
+
+  const cryptoFiatRatio = cryptoValues?.ethereum[displayCurrency || 'usd'] || 1;
+  const estimatedRewardsFiat = estimatedFormattedRewardsValue.value
+    ? `$${(parseFloat(estimatedFormattedRewardsValue.value) * cryptoFiatRatio).toFixed(2)}`
+    : '';
 
   useEffect(() => {
     if (!formik.values.valueCrypto || !formik.values.days) {
@@ -102,27 +108,11 @@ const EarnRewardsCalculator: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const estimatedFormattedRewardsValue: FormattedCryptoValue =
-    isEmpty(formik.errors) && formik.values.valueCrypto && formik.values.days && calculateRewards
-      ? getFormattedEthValue(parseUnitsBigInt(calculateRewards.budget, 'wei'))
-      : {
-          fullString: '',
-          suffix: 'ETH',
-          value: '',
-        };
-
-  const fiat = getValueFiatToDisplay({
-    cryptoCurrency: 'ethereum',
-    cryptoValues,
-    displayCurrency,
-    valueCrypto: calculateRewards && parseUnitsBigInt(calculateRewards.budget, 'wei'),
-  });
-
   return (
     <BoxRounded dataTest="RewardsCalculator" isGrey isVertical>
       <InputText
         autocomplete="off"
-        className={styles.input}
+        className={styles.glmInput}
         dataTest="RewardsCalculator__InputText--crypto"
         error={formik.errors.valueCrypto}
         inputMode="decimal"
@@ -132,52 +122,18 @@ const EarnRewardsCalculator: FC = () => {
         suffix="GLM"
         value={formik.values.valueCrypto}
       />
-      <InputText
-        className={styles.input}
-        dataTest="RewardsCalculator__InputText--days"
-        inputMode="numeric"
-        isButtonClearVisible={false}
-        label={t('lockFor')}
-        onChange={e => onDaysInputChange(e.target.value)}
-        shouldAutoFocusAndSelect={false}
-        suffix={i18n.t('common.days').toUpperCase()}
-        value={formik.values.days}
+      <EarnRewardsCalculatorDaysSelector
+        days={formik.values.days}
+        onChange={days => {
+          formik.setFieldValue('days', days);
+        }}
       />
-      <div
-        className={cx(
-          styles.cryptoFiatInputs,
-          isCryptoMainValueDisplay && styles.isCryptoMainValueDisplay,
-        )}
-      >
-        <InputText
-          className={cx(styles.input, isCryptoMainValueDisplay && styles.isCryptoMainValueDisplay)}
-          dataTest="RewardsCalculator__InputText--estimatedRewards--crypto"
-          isButtonClearVisible={false}
-          isDisabled
-          shouldAutoFocusAndSelect={false}
-          showLoader={isPendingCalculateRewards}
-          suffix={estimatedFormattedRewardsValue.suffix}
-          suffixClassName={styles.estimatedRewardsSuffix}
-          value={estimatedFormattedRewardsValue.value}
-          {...(isCryptoMainValueDisplay && {
-            label: t('estimatedRewards'),
-          })}
-        />
-        <InputText
-          className={cx(styles.input, !isCryptoMainValueDisplay && styles.isFiatMainValueDisplay)}
-          dataTest="RewardsCalculator__InputText--estimatedRewards--fiat"
-          isButtonClearVisible={false}
-          isDisabled
-          shouldAutoFocusAndSelect={false}
-          showLoader={isPendingCalculateRewards}
-          suffix={displayCurrency.toUpperCase()}
-          suffixClassName={styles.estimatedRewardsSuffix}
-          value={isPendingCalculateRewards || !estimatedFormattedRewardsValue?.value ? '' : fiat}
-          {...(!isCryptoMainValueDisplay && {
-            label: t('estimatedRewards'),
-          })}
-        />
-      </div>
+      <EarnRewardsCalculatorEstimates
+        isLoading={isPendingCalculateRewards}
+        // TODO: Fetch and pass correct matchFunding value in fiat
+        matchFundingFiat={estimatedRewardsFiat}
+        rewardsFiat={estimatedRewardsFiat}
+      />
     </BoxRounded>
   );
 };

@@ -1,0 +1,56 @@
+.root {
+  width: 100%;
+
+  .estimates {
+    border-radius: $border-radius-04;
+    border: 1px solid $color-octant-grey1;
+    background: $color-octant-grey8;
+  }
+
+  .estimatesLabel {
+    color: $color-octant-grey5;
+    font-size: $font-size-10;
+    font-weight: $font-weight-bold;
+    line-height: normal;
+    margin-bottom: 0.6rem;
+    text-align: left;
+    width: 100%;
+  }
+
+  .row {
+    display: flex;
+    padding: 1.2rem 1.6rem;
+    justify-content: space-between;
+    position: relative;
+
+    &:first-child {
+      &::after {
+        position: absolute;
+        bottom: 0;
+        left: 1.6rem;
+        content: '';
+        width: calc(100% - 3.2rem);
+        height: 0.1rem;
+        background: $color-octant-grey1;
+      }
+    }
+
+    .label,
+    .value {
+      display: flex;
+      align-items: center;
+      height: 2.4rem;
+      color: $color-octant-dark;
+      font-size: $font-size-14;
+      font-weight: $font-weight-bold;
+    }
+
+    .value {
+      &.showSkeleton {
+        @include skeleton();
+        width: 10.4rem;
+        height: 2.4rem;
+      }
+    }
+  }
+}
