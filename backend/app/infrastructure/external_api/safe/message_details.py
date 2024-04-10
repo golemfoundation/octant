@@ -11,7 +11,7 @@ from app.exceptions import ExternalApiException
 def retry_request(
     req_func: Callable,
     status_code: int,
-    no_retries: int = 1,
+    no_retries: int = 3,
     sleep_time: int = 1,
     **kwargs,
 ) -> Dict | None:
@@ -24,7 +24,7 @@ def retry_request(
     no_retries: max number of retries to be done
     sleep_time: time to sleep between retries
     """
-    if no_retries > 3:
+    if no_retries <= 0:
         return None
 
     try:
@@ -32,7 +32,7 @@ def retry_request(
     except ExternalApiException as e:
         if e.status_code == status_code:
             time.sleep(sleep_time)
-            return retry_request(req_func, status_code, no_retries + 1, **kwargs)
+            return retry_request(req_func, status_code, no_retries - 1, **kwargs)
 
         raise e
 

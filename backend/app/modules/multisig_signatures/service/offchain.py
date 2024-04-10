@@ -110,11 +110,7 @@ class OffchainMultisigSignatures(Model):
             is_mainnet=self.is_mainnet,
         )
 
-        if message_details is None:
-            raise InvalidMultisigAddress()
-
-        address = message_details["safe"]
-        if address != user_address:
+        if message_details is None or user_address != message_details["safe"]:
             raise InvalidMultisigAddress()
 
     def _verify_signature(
