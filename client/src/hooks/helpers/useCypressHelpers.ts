@@ -6,17 +6,26 @@ import useCypressMoveToDecisionWindowClosed from 'hooks/mutations/useCypressMove
 import useCypressMoveToDecisionWindowOpen from 'hooks/mutations/useCypressMoveToDecisionWindowOpen';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useEpochs from 'hooks/subgraph/useEpochs';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 
 export default function useCypressHelpers(): { isFetching: boolean } {
   const [isRefetchingEpochs, setIsRefetchingEpochs] = useState<boolean>(false);
+  const [isRefetchingCurrentEpoch, setIsRefetchingCurrentEpoch] = useState<boolean>(false);
+  const [isRefetchingIsDecisionWindowOpen, setIsRefetchingIsDecisionWindowOpen] = useState<boolean>(false);
 
   const isHookEnabled = !!window.Cypress || env.network === 'Local';
 
-  const { mutateAsync: mutateAsyncMoveToDecisionWindowOpen, isPending: isPendingMoveToDecisionWindowOpen } = useCypressMoveToDecisionWindowOpen();
+  const { mutateAsync: mutateAsyncMoveToDecisionWindowOpen, isPending: isPendingMoveToDecisionWindowOpen } = useCypressMoveToDecisionWindowOpen({
+    onSuccess: () => {
+      setIsRefetchingCurrentEpoch(true);
+      setIsRefetchingIsDecisionWindowOpen(true);
+    },
+  });
   const { mutateAsync: mutateAsyncMoveToDecisionWindowClosed, isPending: isPendingMoveToDecisionWindowClosed } =
     useCypressMoveToDecisionWindowClosed();
   const { mutateAsync: mutateAsyncMakeSnapshot, isPending: isPendingMakeSnapshot} = useCypressMakeSnapshot();
-  const { data: currentEpoch } = useCurrentEpoch();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen({ refetchInterval: isRefetchingIsDecisionWindowOpen ? 2000 : false });
+  const { data: currentEpoch } = useCurrentEpoch({ refetchInterval: isRefetchingCurrentEpoch ? 2000 : false });
   const { data: epochs } = useEpochs(isHookEnabled && isRefetchingEpochs);
 
   const isEpochAlreadyIndexedBySubgraph =
@@ -27,6 +36,14 @@ export default function useCypressHelpers(): { isFetching: boolean } {
       epochs !== undefined && currentEpoch !== undefined && !epochs.includes(currentEpoch),
     );
   }, [epochs, currentEpoch]);
+
+  useEffect(() => {
+    setIsRefetchingCurrentEpoch(false);
+  }, [currentEpoch]);
+
+  useEffect(() => {
+    setIsRefetchingCurrentEpoch(false);
+  }, [isDecisionWindowOpen]);
 
   useEffect(() => {
     /**

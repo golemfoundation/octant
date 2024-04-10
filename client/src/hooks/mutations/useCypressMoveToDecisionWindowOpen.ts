@@ -1,10 +1,15 @@
-import { useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  UseMutationOptions,
+  UseMutationResult,
+  useQueryClient
+} from '@tanstack/react-query';
 import { useConfig } from 'wagmi';
 
 import { QUERY_KEYS } from 'api/queryKeys';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
 
-export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<boolean, unknown> {
+export default function useCypressMoveToDecisionWindowOpen(options?: UseMutationOptions<boolean, unknown, unknown>): UseMutationResult<boolean, unknown> {
   const queryClient = useQueryClient();
   const wagmiConfig = useConfig();
 
@@ -74,5 +79,6 @@ export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<
         resolve(Number(currentEpoch) + 1 === Number(currentEpochAfter));
       });
     },
+    ...options,
   });
 }
