@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import useProjectDonors from 'hooks/queries/donors/useProjectDonors';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 
 import styles from './ProjectDonorsHeader.module.scss';
 import ProjectDonorsListProps from './types';
@@ -15,10 +16,13 @@ const ProjectDonorsHeader: FC<ProjectDonorsListProps> = ({
 }) => {
   const { epoch } = useParams();
   const { i18n } = useTranslation('translation');
+  const { data: currentEpoch } = useCurrentEpoch();
+
+  const epochNumber = parseInt(epoch!, 10);
 
   const { data: projectDonors, isFetching } = useProjectDonors(
     projectAddress,
-    parseInt(epoch!, 10),
+    epochNumber === currentEpoch ? undefined : epochNumber,
   );
   return (
     <div className={cx(styles.header, className)} data-test={dataTest}>
