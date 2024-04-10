@@ -74,7 +74,7 @@ export default function useMatchedProjectRewards(
       isDecisionWindowOpen !== undefined &&
       ((epoch !== undefined && epoch > 0) || (!!currentEpoch && currentEpoch > 1)),
     queryFn: () => {
-      if (epoch) {
+      if (!isDecisionWindowOpen && epoch) {
         return apiGetMatchedProjectRewards(epoch);
       }
       if (isDecisionWindowOpen) {
