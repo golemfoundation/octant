@@ -13,7 +13,7 @@ export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve, reject) => {
         if (!window.Cypress) {
-          reject(new Error('useCypressMoveEpoch was called outside Cypress.'));
+          reject(new Error('useCypressMoveToDecisionWindowOpen was called outside Cypress.'));
         }
 
         const currentEpochPromise = queryClient.fetchQuery({

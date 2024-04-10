@@ -4,7 +4,7 @@ import { useConfig } from 'wagmi';
 import { QUERY_KEYS } from 'api/queryKeys';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
 
-export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknown> {
+export default function useCypressMoveToDecisionWindowClosed(): UseMutationResult<boolean, unknown> {
   const queryClient = useQueryClient();
   const wagmiConfig = useConfig();
 
@@ -13,7 +13,7 @@ export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknow
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve, reject) => {
         if (!window.Cypress) {
-          reject(new Error('useCypressMoveEpoch was called outside Cypress.'));
+          reject(new Error('useCypressMoveToDecisionWindowOpen was called outside Cypress.'));
         }
 
         const currentEpochPromise = queryClient.fetchQuery({
@@ -64,11 +64,6 @@ export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknow
             ),
           );
         }
-
-        // const currentEpochPropsTimestamps = {
-        //   decisionWindow: Number(currentEpochProps.decisionWindow) * 1000,
-        //   duration: Number(currentEpochProps.duration) * 1000,
-        // };
 
         const timeToIncrease = Number(currentEpochProps.decisionWindow) + 10; // [s]
         await wagmiConfig.publicClient.request({
