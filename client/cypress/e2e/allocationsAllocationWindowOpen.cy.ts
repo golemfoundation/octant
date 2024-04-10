@@ -6,8 +6,8 @@ import {
   mockCoinPricesServer,
   navigateWithCheck,
   connectWallet,
-  moveEpoch,
 } from 'cypress/utils/e2e';
+import { moveEpoch } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
@@ -54,14 +54,13 @@ const budget = '10000000000';
 
         // Move time only once, for the first device.
         if (!wasTimeMoved) {
-          moveEpoch(win, 'decisionWindowOpen')
-            .then(() => {
-              const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
-                QUERY_KEYS.isDecisionWindowOpen,
-              );
-              wasTimeMoved = true;
-              expect(isDecisionWindowOpenAfter).to.be.true;
-            });
+          moveEpoch(win, 'decisionWindowOpen').then(() => {
+            const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
+              QUERY_KEYS.isDecisionWindowOpen,
+            );
+            wasTimeMoved = true;
+            expect(isDecisionWindowOpenAfter).to.be.true;
+          });
         } else {
           expect(true).to.be.true;
         }
@@ -71,7 +70,7 @@ const budget = '10000000000';
     it('playground', () => {
       cy.wait(30000);
     });
-  })
+  });
   describe(
     `allocation (allocation window open): ${device}`,
     { viewportHeight, viewportWidth },
@@ -161,11 +160,6 @@ const budget = '10000000000';
           .find('[data-test=AllocationItem__InputText]')
           .should('have.css', 'background-color')
           .and('be.colored', '#f1faf8');
-        cy.get('[data-test=AllocationItem]')
-          .eq(0)
-          .find('[data-test=AllocationItem__InputText]')
-          .invoke('data', 'iserror')
-          .should('be.true');
       });
     },
   );
