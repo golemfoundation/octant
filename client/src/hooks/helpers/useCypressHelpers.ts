@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import env from 'env';
+import useCypressMakeSnapshot from 'hooks/mutations/useCypressMakeSnapshot';
 import useCypressMoveToDecisionWindowClosed from 'hooks/mutations/useCypressMoveToDecisionWindowClosed';
 import useCypressMoveToDecisionWindowOpen from 'hooks/mutations/useCypressMoveToDecisionWindowOpen';
-import useCypressMakeSnapshot from 'hooks/mutations/useCypressMakeSnapshot';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useEpochs from 'hooks/subgraph/useEpochs';
 

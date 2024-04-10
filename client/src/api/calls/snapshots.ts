@@ -1,5 +1,5 @@
-import apiService from 'services/apiService';
 import env from 'env';
+import apiService from 'services/apiService';
 
 export async function apiPostSnapshotsPending(): Promise<any> {
   return apiService.post(`${env.serverEndpoint}snapshots/pending`)

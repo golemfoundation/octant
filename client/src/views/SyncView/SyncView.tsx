@@ -4,9 +4,9 @@ import { Trans } from 'react-i18next';
 import Img from 'components/ui/Img';
 import Svg from 'components/ui/Svg';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useEpochs from 'hooks/subgraph/useEpochs';
 import { octantSemiTransparent } from 'svg/logo';
-import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 
 import styles from './SyncView.module.scss';
 
