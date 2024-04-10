@@ -5,8 +5,8 @@ import useCypressMakeSnapshot from 'hooks/mutations/useCypressMakeSnapshot';
 import useCypressMoveToDecisionWindowClosed from 'hooks/mutations/useCypressMoveToDecisionWindowClosed';
 import useCypressMoveToDecisionWindowOpen from 'hooks/mutations/useCypressMoveToDecisionWindowOpen';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useEpochs from 'hooks/subgraph/useEpochs';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useEpochs from 'hooks/subgraph/useEpochs';
 
 export default function useCypressHelpers(): { isFetching: boolean } {
   const [isRefetchingEpochs, setIsRefetchingEpochs] = useState<boolean>(false);
