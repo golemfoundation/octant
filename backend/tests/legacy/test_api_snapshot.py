@@ -97,7 +97,7 @@ def test_allocations(
 
     # wait for indexer to catch up
     epoch_no = wait_for_sync(client, 2)
-    print(f"indexed epoch: {epoch_no}")
+    print(f"indexed epoch: {epoch_no}, expected 2")
 
     # make a snapshot
     res = client.pending_snapshot()
@@ -108,9 +108,8 @@ def test_allocations(
 
     allocations = client.get_epoch_allocations(1)
 
-    assert len(allocations) == 2
-    for allocation in allocations:
+    assert len(allocations["allocations"]) == 4
+    for allocation in allocations["allocations"]:
         for key, val in allocation.items():
-            if key == "donor":
-                continue
-            assert int(val) > 0
+            if key == "amount":
+                assert int(val) == 1000
