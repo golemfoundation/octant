@@ -45,6 +45,7 @@ export type QueryKeys = {
   epochesEndTime: (epochNumber: number) => [Root['epochesEndTime'], string];
   estimatedEffectiveDeposit: (userAddress: string) => [Root['estimatedEffectiveDeposit'], string];
   history: ['history'];
+  epochs: ['epochs'];
   individualProjectRewards: ['individualProjectRewards'];
   individualReward: (epochNumber: number) => [Root['individualReward'], string];
   isDecisionWindowOpen: ['isDecisionWindowOpen'];

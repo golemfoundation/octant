@@ -47,6 +47,7 @@ export const QUERY_KEYS: QueryKeys = {
   individualReward: epochNumber => [ROOTS.individualReward, epochNumber.toString()],
   isDecisionWindowOpen: ['isDecisionWindowOpen'],
   largestLockedAmount: ['largestLockedAmount'],
+  epochs: ['epochs'],
   lockedSummaryLatest: ['lockedSummaryLatest'],
   lockedSummarySnapshots: ['lockedSummarySnapshots'],
   matchedProjectRewards: epochNumber => [ROOTS.matchedProjectRewards, epochNumber.toString()],
