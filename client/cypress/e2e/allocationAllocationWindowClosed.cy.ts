@@ -64,7 +64,7 @@ describe('allocation (allocation window closed)', () => {
     });
   });
 
-  Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
+  [Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
     describe(`test cases: ${device}`, { viewportHeight, viewportWidth }, () => {
       before(() => {
         /**

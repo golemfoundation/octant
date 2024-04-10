@@ -43,7 +43,7 @@ export type QueryKeys = {
   epochTimestampHappenedIn: (timestamp: number) => [Root['epochTimestampHappenedIn'], string];
   epochUnusedRewards: (epoch: number) => [Root['epochUnusedRewards'], string];
   epochesEndTime: (epochNumber: number) => [Root['epochesEndTime'], string];
-  epochsIndexedBySubgraph: ['epochsIndexedBySubgraph'];
+  epochs: ['epochs'];
   estimatedEffectiveDeposit: (userAddress: string) => [Root['estimatedEffectiveDeposit'], string];
   history: ['history'];
   individualProjectRewards: ['individualProjectRewards'];

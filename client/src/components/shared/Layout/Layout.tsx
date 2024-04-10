@@ -197,6 +197,11 @@ const Layout: FC<LayoutProps> = ({
                             {truncateEthAddress(address)}
                           </div>
                         </div>
+                        <div>
+                          Current epoch {currentEpoch}
+                          <br />
+                          isDecisionWindowOpen {isDecisionWindowOpen ? 'true' : 'false'}
+                        </div>
                         {!!currentEpoch &&
                           currentEpoch > 1 &&
                           (showAllocationPeriod ? (

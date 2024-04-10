@@ -78,9 +78,6 @@ const EarnRewardsCalculator: FC = () => {
   };
 
   useEffect(() => {
-    if (!formik.values.valueCrypto || !formik.values.days) {
-      return;
-    }
     formik.validateForm().then(() => {
       fetchEstimatedRewardsDebounced({
         amountGlm: formik.values.valueCrypto,

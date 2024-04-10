@@ -32,7 +32,7 @@ const ProjectView = (): ReactElement => {
   const { data: currentEpoch } = useCurrentEpoch();
   const epochUrlInt = parseInt(epochUrl!, 10);
 
-  const epoch = epochUrlInt === currentEpoch ? undefined : epochUrlInt;
+  const epoch = isDecisionWindowOpen && epochUrlInt === currentEpoch! - 1 ? undefined : epochUrlInt;
 
   const { data: matchedProjectRewards } = useMatchedProjectRewards(epoch);
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards(epoch);

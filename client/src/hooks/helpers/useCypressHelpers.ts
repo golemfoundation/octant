@@ -5,7 +5,7 @@ import useCypressMakeSnapshot from 'hooks/mutations/useCypressMakeSnapshot';
 import useCypressMoveToDecisionWindowClosed from 'hooks/mutations/useCypressMoveToDecisionWindowClosed';
 import useCypressMoveToDecisionWindowOpen from 'hooks/mutations/useCypressMoveToDecisionWindowOpen';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
-import useEpochsIndexedBySubgraph from 'hooks/subgraph/useEpochsIndexedBySubgraph';
+import useEpochs from 'hooks/subgraph/useEpochs';
 
 export default function useCypressHelpers(): { isFetching: boolean } {
   const [isRefetchingEpochs, setIsRefetchingEpochs] = useState<boolean>(false);
@@ -17,16 +17,16 @@ export default function useCypressHelpers(): { isFetching: boolean } {
     useCypressMoveToDecisionWindowClosed();
   const { mutateAsync: mutateAsyncMakeSnapshot, isPending: isPendingMakeSnapshot} = useCypressMakeSnapshot();
   const { data: currentEpoch } = useCurrentEpoch();
-  const { data: epochsIndexedBySubgraph } = useEpochsIndexedBySubgraph(isHookEnabled && isRefetchingEpochs);
+  const { data: epochs } = useEpochs(isHookEnabled && isRefetchingEpochs);
 
   const isEpochAlreadyIndexedBySubgraph =
-    epochsIndexedBySubgraph !== undefined && currentEpoch !== undefined && epochsIndexedBySubgraph.includes(currentEpoch);
+    epochs !== undefined && currentEpoch !== undefined && epochs.includes(currentEpoch);
 
   useEffect(() => {
     setIsRefetchingEpochs(
-      epochsIndexedBySubgraph !== undefined && currentEpoch !== undefined && !epochsIndexedBySubgraph.includes(currentEpoch),
+      epochs !== undefined && currentEpoch !== undefined && !epochs.includes(currentEpoch),
     );
-  }, [epochsIndexedBySubgraph, currentEpoch]);
+  }, [epochs, currentEpoch]);
 
   useEffect(() => {
     /**
