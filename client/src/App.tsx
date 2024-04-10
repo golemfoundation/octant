@@ -11,9 +11,9 @@ import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPen
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import 'react-toastify/dist/ReactToastify.css';
 
-import useEpochs from './hooks/subgraph/useEpochs';
 import useCurrentEpoch from './hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from './hooks/queries/useIsDecisionWindowOpen';
+import useEpochs from './hooks/subgraph/useEpochs';
 
 import 'styles/index.scss';
 import 'i18n';
@@ -29,7 +29,7 @@ const App = (): ReactElement => {
 
   // useCypressHelpers needs to be called after all the initial sets done above.
   const { isFetching: isFetchingCypressHelpers } = useCypressHelpers();
-  
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data: epochs } = useEpochs();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
