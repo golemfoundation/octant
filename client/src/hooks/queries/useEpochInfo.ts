@@ -6,11 +6,13 @@ import env from 'env';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 type EpochInfo = {
+  communityFund: bigint;
   individualRewards: bigint;
   leftover: bigint;
   matchedRewards: bigint;
   operationalCost: bigint;
   patronsRewards: bigint;
+  ppf: bigint;
   staking: bigint;
   stakingProceeds: bigint;
   totalEffectiveDeposit: bigint;
@@ -44,6 +46,9 @@ export default function useEpochInfo(
     queryFn: () => apiGetEpochInfo(epoch),
     queryKey: QUERY_KEYS.epochInfo(epoch),
     select: response => ({
+      communityFund: response.communityFund
+        ? parseUnitsBigInt(response.communityFund, 'wei')
+        : BigInt(0),
       individualRewards: parseUnitsBigInt(response.individualRewards, 'wei'),
       matchedRewards: response.matchedRewards
         ? parseUnitsBigInt(response.matchedRewards, 'wei')
@@ -54,6 +59,7 @@ export default function useEpochInfo(
       patronsRewards: response.patronsRewards
         ? parseUnitsBigInt(response.patronsRewards, 'wei')
         : BigInt(0),
+      ppf: response.ppf ? parseUnitsBigInt(response.ppf, 'wei') : BigInt(0),
       stakingProceeds: parseUnitsBigInt(response.stakingProceeds, 'wei'),
       totalEffectiveDeposit: parseUnitsBigInt(response.totalEffectiveDeposit, 'wei'),
       totalRewards: parseUnitsBigInt(response.totalRewards, 'wei'),
