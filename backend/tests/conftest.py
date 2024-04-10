@@ -10,6 +10,7 @@ import gql
 import pytest
 from flask import g as request_context
 from flask.testing import FlaskClient
+from requests import RequestException
 from web3 import Web3
 
 from app import create_app
@@ -26,6 +27,7 @@ from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
 from app.modules.common.verifier import Verifier
 from app.modules.dto import AccountFundsDTO, AllocationItem, SignatureOpType
 from app.settings import DevConfig, TestConfig
+from app.exceptions import ExternalApiException
 from tests.helpers import make_user_allocation
 from tests.helpers.constants import (
     ALICE,
@@ -56,6 +58,7 @@ from tests.helpers.constants import (
     MULTISIG_MOCKED_MESSAGE,
     MULTISIG_MOCKED_HASH,
     MULTISIG_MOCKED_SAFE_HASH,
+    MULTISIG_ADDRESS,
 )
 from tests.helpers.context import get_context
 from tests.helpers.gql_client import MockGQLClient
@@ -132,7 +135,7 @@ def mock_safe_api_message_details(*args, **kwargs):
     example_resp_json = {
         "created": "2023-10-27T07:34:09.184140Z",
         "modified": "2023-10-28T20:54:46.207427Z",
-        "safe": "0xa40FcB633d0A6c0d27aA9367047635Ff656229B0",
+        "safe": MULTISIG_ADDRESS,
         "messageHash": "0x7f6dfab0a617fcb1c8f351b321a8844d98d9ee160e7532efc39ee06c02308ec6",
         "message": "Welcome to Octant.\nPlease click to sign in and accept the Octant Terms of Service.\n\nSigning this message will not trigger a transaction.\n\nYour address\n0xa40FcB633d0A6c0d27aA9367047635Ff656229B0",
         "proposedBy": "0x5754aC842D6eaF6a4E29101D46ac25D7C567311E",
@@ -630,8 +633,27 @@ def patch_bitquery_get_blocks_rewards(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_safe_api_message_details(monkeypatch):
     monkeypatch.setattr(
+        "app.modules.multisig_signatures.service.offchain.get_message_details",
+        mock_safe_api_message_details,
+    )
+    monkeypatch.setattr(
         "app.modules.multisig_signatures.core.get_message_details",
         mock_safe_api_message_details,
+    )
+
+
+@pytest.fixture(scope="function")
+def patch_safe_api_message_details_for_404_error(monkeypatch):
+    def mock_404_error(*args, **kwargs):
+        raise ExternalApiException(RequestException(), 404)
+
+    monkeypatch.setattr(
+        "app.modules.multisig_signatures.service.offchain.get_message_details",
+        mock_404_error,
+    )
+    monkeypatch.setattr(
+        "app.infrastructure.external_api.safe.message_details.time.sleep",
+        lambda x: None,
     )
 
 

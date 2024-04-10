@@ -1,6 +1,6 @@
 import pytest
 
-from app.exceptions import InvalidMultisigSignatureRequest
+from app.exceptions import InvalidMultisigSignatureRequest, InvalidMultisigAddress
 from app.extensions import db
 from app.infrastructure import database
 from app.infrastructure.database.multisig_signature import SigStatus
@@ -8,6 +8,7 @@ from app.modules.common.verifier import Verifier
 from app.modules.dto import SignatureOpType
 from app.modules.multisig_signatures.dto import Signature
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
+from tests.helpers.constants import MULTISIG_ADDRESS
 
 
 @pytest.fixture(autouse=True)
@@ -84,17 +85,16 @@ def test_get_last_pending_signature_returns_none_when_no_signature_exists(
 
 
 def test_save_str_msg_signature_when_verified_successfully(
-    context, mock_verifier, patch_get_message_hash
+    context, mock_verifier, patch_get_message_hash, patch_safe_api_message_details
 ):
     # Given
-    multisig_address = "0x250f72267551dd4B299Fd1C2407acbbacD96d204"
     message = "Welcome to Octant.\nPlease click to sign in and accept the Octant Terms of Service.\n\nSigning this message will not trigger a transaction.\n\nYour address\n0x250f72267551dd4B299Fd1C2407acbbacD96d204"
     service = OffchainMultisigSignatures(verifiers={SignatureOpType.TOS: mock_verifier})
 
     # When
     service.save_pending_signature(
         context,
-        multisig_address,
+        MULTISIG_ADDRESS,
         SignatureOpType.TOS,
         {"message": message},
         "0.0.0.0",
@@ -102,10 +102,10 @@ def test_save_str_msg_signature_when_verified_successfully(
 
     # Then
     result = database.multisig_signature.get_last_pending_signature(
-        multisig_address, SignatureOpType.TOS
+        MULTISIG_ADDRESS, SignatureOpType.TOS
     )
 
-    assert result.address == multisig_address
+    assert result.address == MULTISIG_ADDRESS
     assert result.type == SignatureOpType.TOS
     assert result.status == SigStatus.PENDING
     assert result.message == message
@@ -121,10 +121,9 @@ def test_save_str_msg_signature_when_verified_successfully(
 
 
 def test_save_dict_msg_signature_when_verified_successfully(
-    context, mock_verifier, patch_get_message_hash
+    context, mock_verifier, patch_get_message_hash, patch_safe_api_message_details
 ):
     # Given
-    multisig_address = "0x89d2EcE5ca5cee0672d8BaD68cC7638D30Dc005e"
     service = OffchainMultisigSignatures(
         verifiers={SignatureOpType.ALLOCATION: mock_verifier}
     )
@@ -132,7 +131,7 @@ def test_save_dict_msg_signature_when_verified_successfully(
     # When
     service.save_pending_signature(
         context,
-        multisig_address,
+        MULTISIG_ADDRESS,
         SignatureOpType.ALLOCATION,
         {
             "message": {
@@ -153,10 +152,10 @@ def test_save_dict_msg_signature_when_verified_successfully(
 
     # Then
     result = database.multisig_signature.get_last_pending_signature(
-        multisig_address, SignatureOpType.ALLOCATION
+        MULTISIG_ADDRESS, SignatureOpType.ALLOCATION
     )
 
-    assert result.address == multisig_address
+    assert result.address == MULTISIG_ADDRESS
     assert result.type == SignatureOpType.ALLOCATION
     assert result.status == SigStatus.PENDING
     assert (
@@ -214,6 +213,58 @@ def test_does_not_save_signature_when_verification_throws_exception(context, ali
             {"message": "test_message"},
             "0.0.0.0",
         )
+    result = database.multisig_signature.get_last_pending_signature(
+        alice.address, SignatureOpType.TOS
+    )
+    assert result is None
+
+
+def test_does_not_save_signature_when_wrong_user_address(
+    context,
+    alice,
+    patch_safe_api_message_details,
+    mock_verifier,
+    patch_get_message_hash,
+):
+    service = OffchainMultisigSignatures(verifiers={SignatureOpType.TOS: mock_verifier})
+
+    with pytest.raises(InvalidMultisigAddress) as exc:
+        service.save_pending_signature(
+            context,
+            alice.address,
+            SignatureOpType.TOS,
+            {"message": "test_message"},
+            "0.0.0.0",
+        )
+
+    assert exc.value.description == "Given multisig address is invalid"
+
+    result = database.multisig_signature.get_last_pending_signature(
+        alice.address, SignatureOpType.TOS
+    )
+    assert result is None
+
+
+def test_does_not_save_signature_when_service_returns_404(
+    context,
+    alice,
+    patch_safe_api_message_details_for_404_error,
+    mock_verifier,
+    patch_get_message_hash,
+):
+    service = OffchainMultisigSignatures(verifiers={SignatureOpType.TOS: mock_verifier})
+
+    with pytest.raises(InvalidMultisigAddress) as exc:
+        service.save_pending_signature(
+            context,
+            alice.address,
+            SignatureOpType.TOS,
+            {"message": "test_message"},
+            "0.0.0.0",
+        )
+
+    assert exc.value.description == "Given multisig address is invalid"
+
     result = database.multisig_signature.get_last_pending_signature(
         alice.address, SignatureOpType.TOS
     )
