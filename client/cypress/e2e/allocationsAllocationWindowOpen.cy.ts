@@ -22,7 +22,7 @@ chai.use(chaiColors);
 let wasTimeMoved = false;
 const budget = '10000000000';
 
-[Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight }) => {
+describe('allocation (allocation window open)', () => {
   describe('move time', { retries: 0 }, () => {
     before(() => {
       /**
@@ -66,15 +66,10 @@ const budget = '10000000000';
         }
       });
     });
-
-    it('playground', () => {
-      cy.wait(30000);
-    });
   });
-  describe(
-    `allocation (allocation window open): ${device}`,
-    { viewportHeight, viewportWidth },
-    () => {
+
+  [Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight }) => {
+    describe(`test cases: ${device}`, { viewportHeight, viewportWidth }, () => {
       before(() => {
         /**
          * Global Metamask setup done by Synpress is not always done.
@@ -161,6 +156,6 @@ const budget = '10000000000';
           .should('have.css', 'background-color')
           .and('be.colored', '#f1faf8');
       });
-    },
-  );
+    });
+  });
 });

@@ -16,7 +16,7 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 let wasTimeMoved = false;
 
-[Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
+describe('allocation (allocation window closed)', () => {
   describe('move time', { retries: 0 }, () => {
     before(() => {
       /**
@@ -65,15 +65,10 @@ let wasTimeMoved = false;
         }
       });
     });
-
-    it('playground', () => {
-      cy.wait(30000);
-    });
   });
-  describe(
-    `allocation (allocation window closed): ${device}`,
-    { viewportHeight, viewportWidth },
-    () => {
+
+  [Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
+    describe(`test cases: ${device}`, { viewportHeight, viewportWidth }, () => {
       before(() => {
         /**
          * Global Metamask setup done by Synpress is not always done.
@@ -135,6 +130,6 @@ let wasTimeMoved = false;
           .find('[data-test=AllocationItem__InputText__suffix]')
           .contains('GWEI');
       });
-    },
-  );
+    });
+  });
 });
