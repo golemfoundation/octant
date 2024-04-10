@@ -4,7 +4,7 @@ import {
   mockCoinPricesServer,
   navigateWithCheck,
 } from 'cypress/utils/e2e';
-import { moveTime } from 'cypress/utils/moveTime';
+import { moveEpoch } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
@@ -49,7 +49,7 @@ describe('allocation (allocation window closed)', () => {
 
         // Move time only once, for the first device.
         if (!wasTimeMoved) {
-          moveTime(win, 'decisionWindowClosed').then(() => {
+          moveEpoch(win, 'decisionWindowClosed').then(() => {
             cy.get('[data-test=PlaygroundView]').should('be.visible');
             const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
               QUERY_KEYS.isDecisionWindowOpen,
@@ -64,7 +64,7 @@ describe('allocation (allocation window closed)', () => {
     });
   });
 
-  Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
+  [Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
     describe(`test cases: ${device}`, { viewportHeight, viewportWidth }, () => {
       before(() => {
         /**

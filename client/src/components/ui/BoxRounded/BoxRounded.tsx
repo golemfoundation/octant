@@ -112,12 +112,7 @@ const BoxRounded = forwardRef<HTMLDivElement, BoxRoundedProps>(
               <div className={cx(styles.title, titleClassName)} data-test={`${dataTest}__title`}>
                 {title}
               </div>
-              <div
-                className={cx(styles.subtitle, subtitleClassName)}
-                data-test={`${dataTest}__subtitle`}
-              >
-                {subtitle}
-              </div>
+              <div className={cx(styles.subtitle, subtitleClassName)}>{subtitle}</div>
             </div>
             {titleSuffix}
             {isExpandable && (

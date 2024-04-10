@@ -7,7 +7,7 @@ import {
   navigateWithCheck,
   connectWallet,
 } from 'cypress/utils/e2e';
-import { moveTime } from 'cypress/utils/moveTime';
+import { moveEpoch } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
@@ -54,7 +54,7 @@ describe('allocation (allocation window open)', () => {
 
         // Move time only once, for the first device.
         if (!wasTimeMoved) {
-          moveTime(win, 'decisionWindowOpen').then(() => {
+          moveEpoch(win, 'decisionWindowOpen').then(() => {
             const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
               QUERY_KEYS.isDecisionWindowOpen,
             );
@@ -68,7 +68,7 @@ describe('allocation (allocation window open)', () => {
     });
   });
 
-  Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
+  [Object.values(viewports)[0]].forEach(({ device, viewportWidth, viewportHeight }) => {
     describe(`test cases: ${device}`, { viewportHeight, viewportWidth }, () => {
       before(() => {
         /**

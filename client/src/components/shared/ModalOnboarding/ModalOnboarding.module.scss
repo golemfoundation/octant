@@ -116,11 +116,3 @@
   align-items: center;
   justify-content: center;
 }
-
-.link {
-  text-decoration: underline;
-
-  @media #{$desktop-up} {
-    text-decoration: none;
-  }
-}
