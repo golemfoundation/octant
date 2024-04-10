@@ -174,9 +174,9 @@ class Allocation(OctantResource):
             ns.payload["isManuallyEdited"] if "isManuallyEdited" in ns.payload else None
         )
         controller.allocate(
-            ns.userAddress, ns.payload, is_manually_edited=is_manually_edited
+            ns.payload["userAddress"], ns.payload, is_manually_edited=is_manually_edited
         )
-        app.logger.info(f"User: {ns.userAddress} allocated successfully")
+        app.logger.info(f'User: {ns.payload["userAddress"]} allocated successfully')
 
         return {}, 201
 
