@@ -3,17 +3,20 @@ import { Trans } from 'react-i18next';
 
 import styles from 'components/shared/ModalOnboarding/ModalOnboarding.module.scss';
 import { Step } from 'components/shared/ModalOnboarding/types';
+import Button from 'components/ui/Button';
+import { DISCORD_LINK, OCTANT_BUILD_LINK, TWITTER_LINK } from 'constants/urls';
 import i18n from 'i18n';
 
-export const stepsDecisionWindowOpen: Step[] = [
+export const getStepsDecisionWindowOpen = (epoch: string, changeAWDate: string): Step[] => [
   {
-    header: i18n.t('views.onboarding.stepsDecisionWindowOpen.welcomeToOctant.header'),
+    header: i18n.t('views.onboarding.stepsDecisionWindowOpen.welcomeToOctant.header', { epoch }),
     image: 'images/onboarding/1.webp',
     imageClassName: styles.welcomeToOctant,
     text: (
       <Trans
         components={[<span className={styles.bold} />]}
         i18nKey="views.onboarding.stepsDecisionWindowOpen.welcomeToOctant.text"
+        values={{ date: changeAWDate }}
       />
     ),
   },
@@ -36,6 +39,7 @@ export const stepsDecisionWindowOpen: Step[] = [
       <Trans
         components={[<span className={styles.bold} />]}
         i18nKey="views.onboarding.stepsDecisionWindowOpen.donateToProjects.text"
+        values={{ epoch }}
       />
     ),
   },
@@ -52,9 +56,11 @@ export const stepsDecisionWindowOpen: Step[] = [
   },
 ];
 
-export const stepsDecisionWindowClosed: Step[] = [
+export const getStepsDecisionWindowClosed = (epoch: string, changeAWDate: string): Step[] => [
   {
-    header: i18n.t('views.onboarding.stepsDecisionWindowClosed.welcomeToOctant.header'),
+    header: i18n.t('views.onboarding.stepsDecisionWindowClosed.welcomeToOctant.header', {
+      epoch,
+    }),
     image: 'images/onboarding/1.webp',
     imageClassName: styles.welcomeToOctant,
     text: (
@@ -66,7 +72,7 @@ export const stepsDecisionWindowClosed: Step[] = [
   },
   {
     header: i18n.t('views.onboarding.stepsDecisionWindowClosed.earnRewards.header'),
-    image: 'images/onboarding/earn-rewards.webp',
+    image: 'images/cycle.webp',
     imageClassName: styles.earnRewards,
     text: (
       <Trans
@@ -76,9 +82,19 @@ export const stepsDecisionWindowClosed: Step[] = [
     ),
   },
   {
-    header: i18n.t('views.onboarding.stepsDecisionWindowClosed.getInvolved.header'),
-    image: 'images/onboarding/get-involved.webp',
+    header: i18n.t('views.onboarding.stepsDecisionWindowClosed.getReady.header'),
+    image: 'images/rewards.webp',
     imageClassName: styles.slideIt,
-    text: <Trans i18nKey="views.onboarding.stepsDecisionWindowClosed.getInvolved.text" />,
+    text: (
+      <Trans
+        components={[
+          <Button className={styles.link} href={OCTANT_BUILD_LINK} variant="link3" />,
+          <Button className={styles.link} href={DISCORD_LINK} variant="link3" />,
+          <Button className={styles.link} href={TWITTER_LINK} variant="link3" />,
+        ]}
+        i18nKey="views.onboarding.stepsDecisionWindowClosed.getReady.text"
+        values={{ date: changeAWDate }}
+      />
+    ),
   },
 ];
