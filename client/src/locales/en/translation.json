@@ -26,6 +26,7 @@
   "common": {
     "availableNow": "Available now",
     "calculateRewards": "Calculate rewards",
+    "estimateRewards": "Estimate rewards",
     "calculating": "Calculating...",
     "close": "Close",
     "copied": "Copied",
@@ -45,6 +46,7 @@
       "desktop": "Threshold data unavailable",
       "mobile": "No threshold data"
     },
+    "matchFunding": "Match funding",
     "valueCantBeEmpty": "Value can't be empty",
     "lessThan1m": "less than 1m",
     "donors": "Donors",
@@ -79,8 +81,11 @@
         "donated": "Donated"
       },
       "rewardsCalculator": {
+        "modalHeaderTooltip": "Calculator assumes GLM is locked before allocation window and remains locked until the next window. Estimated match funding is based on 100% of rewards being allocated to projects.",
+        "estimates": "Estimates",
         "enterGLMAmount": "Enter a GLM amount",
-        "lockFor": "Lock for",
+        "lockForEpoch_one": "Lock for {{count}} epoch",
+        "lockForEpoch_other": "Lock for {{count}} epochs",
         "estimatedRewards": "Estimated rewards",
         "errors": {
           "valueCryptoTooBig": "That isn’t a valid amount"
@@ -107,7 +112,6 @@
         "manual": "Manual"
       },
       "allocationSummary": {
-        "matchFunding": "Match funding",
         "totalImpact": "Total impact",
         "estimatedLeverage": "Est. leverage",
         "confirmYourAllocations": "Confirm your allocations",

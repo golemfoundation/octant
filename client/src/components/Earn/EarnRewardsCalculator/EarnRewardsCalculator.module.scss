@@ -1,23 +1,3 @@
-.estimatedRewardsSuffix {
-  color: $color-octant-dark !important;
-}
-
-.cryptoFiatInputs {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-self: stretch;
-
-  &:not(.isCryptoMainValueDisplay) {
-    flex-direction: column-reverse;
-  }
-}
-
-.input {
-  &:not(:last-child) {
-    margin-bottom: 1.4rem;
-  }
-  &.isCryptoMainValueDisplay, &.isFiatMainValueDisplay {
-    margin-bottom: 1.6rem;
-  }
+.glmInput {
+  margin-bottom: 1.4rem;
 }

@@ -60,7 +60,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
         <div className={styles.leftSection}>
           <div className={styles.label}>{i18n.t('common.totalDonated')}</div>
           <div className={styles.label}>
-            {t('matchFunding')}
+            {i18n.t('common.matchFunding')}
             <span
               className={cx(
                 styles.matchFundingLeverage,
