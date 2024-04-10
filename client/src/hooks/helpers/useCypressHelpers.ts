@@ -16,7 +16,7 @@ export default function useCypressHelpers(): { isFetching: boolean } {
   const { mutateAsync: mutateAsyncMoveToDecisionWindowClosed, isPending: isPendingMoveToDecisionWindowClosed } =
     useCypressMoveToDecisionWindowClosed();
   const { mutateAsync: mutateAsyncMakeSnapshot, isPending: isPendingMakeSnapshot} = useCypressMakeSnapshot();
-  const { data: currentEpoch } = useCurrentEpoch();
+  const { data: currentEpoch } = useCurrentEpoch({ refetchInterval: isHookEnabled ? 2000 : false });
   const { data: epochs } = useEpochs(isHookEnabled && isRefetchingEpochs);
 
   const isEpochAlreadyIndexedBySubgraph =
