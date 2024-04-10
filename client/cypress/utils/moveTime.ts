@@ -26,16 +26,19 @@ const mutateAsyncMoveToDecisionWindowOpen = (cypressWindow: Cypress.AUTWindow): 
     });
   });
 
-const moveToDecisionWindowOpen = (cypressWindow: Cypress.AUTWindow): Chainable<any> => {
+const waitForLoadersToDisappear = (): Chainable<any> => {
   cy.get('[data-test*=AppLoader]').should('not.exist');
-  cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+  return cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+};
+
+const moveToDecisionWindowOpen = (cypressWindow: Cypress.AUTWindow): Chainable<any> => {
+  waitForLoadersToDisappear();
   cy.wrap(null).then(() => {
     return mutateAsyncMoveToDecisionWindowOpen(cypressWindow).then(str => {
       expect(str).to.eq(true);
     });
   });
-  cy.get('[data-test*=AppLoader]').should('not.exist');
-  cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+  waitForLoadersToDisappear();
   // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
   cy.wait(2000);
   cy.wrap(null).then(() => {
@@ -47,8 +50,7 @@ const moveToDecisionWindowOpen = (cypressWindow: Cypress.AUTWindow): Chainable<a
   cy.wait(2000);
   // reload is needed to get updated data in the app
   cy.reload();
-  cy.get('[data-test*=AppLoader]').should('not.exist');
-  return cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+  return waitForLoadersToDisappear();
 };
 
 const moveToDecisionWindowClosed = (cypressWindow: Cypress.AUTWindow): Chainable<any> => {
@@ -57,8 +59,7 @@ const moveToDecisionWindowClosed = (cypressWindow: Cypress.AUTWindow): Chainable
       expect(str).to.eq(true);
     });
   });
-  cy.get('[data-test*=AppLoader]').should('not.exist');
-  cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+  waitForLoadersToDisappear();
   // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
   cy.wait(2000);
   cy.wrap(null).then(() => {
@@ -70,8 +71,7 @@ const moveToDecisionWindowClosed = (cypressWindow: Cypress.AUTWindow): Chainable
   cy.wait(2000);
   // reload is needed to get updated data in the app
   cy.reload();
-  cy.get('[data-test*=AppLoader]').should('not.exist');
-  return cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+  return waitForLoadersToDisappear();
 };
 
 export const moveEpoch = (
@@ -84,7 +84,7 @@ export const moveEpoch = (
 
   if (isDecisionWindowOpen) {
     moveToDecisionWindowClosed(cypressWindow);
-    cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+    waitForLoadersToDisappear();
     // reload is needed to get updated data in the app
     cy.reload();
   }
@@ -95,8 +95,7 @@ export const moveEpoch = (
     moveToDecisionWindowOpen(cypressWindow);
     // reload is needed to get updated data in the app
     cy.reload();
-    cy.get('[data-test*=AppLoader]').should('not.exist');
-    cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+    waitForLoadersToDisappear();
     moveToDecisionWindowClosed(cypressWindow);
     // reload is needed to get updated data in the app
   }
@@ -104,6 +103,5 @@ export const moveEpoch = (
   // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
   cy.wait(5000);
   cy.reload();
-  cy.get('[data-test*=AppLoader]').should('not.exist');
-  return cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+  return waitForLoadersToDisappear();
 };
