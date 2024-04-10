@@ -6,7 +6,7 @@ import useCypressMoveToDecisionWindowClosed from 'hooks/mutations/useCypressMove
 import useCypressMoveToDecisionWindowOpen from 'hooks/mutations/useCypressMoveToDecisionWindowOpen';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useEpochs from 'hooks/subgraph/useEpochs';
-import useIsDecisionWindowOpen from '../queries/useIsDecisionWindowOpen.ts';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 
 export default function useCypressHelpers(): { isFetching: boolean } {
   const [isRefetchingEpochs, setIsRefetchingEpochs] = useState<boolean>(false);
