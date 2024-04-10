@@ -7,7 +7,7 @@ import {
   navigateWithCheck,
   connectWallet,
 } from 'cypress/utils/e2e';
-import { moveEpoch } from 'cypress/utils/moveTime';
+import { moveTime } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
@@ -54,7 +54,7 @@ describe('allocation (allocation window open)', () => {
 
         // Move time only once, for the first device.
         if (!wasTimeMoved) {
-          moveEpoch(win, 'decisionWindowOpen').then(() => {
+          moveTime(win, 'decisionWindowOpen').then(() => {
             const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
               QUERY_KEYS.isDecisionWindowOpen,
             );

@@ -74,7 +74,7 @@ const moveToDecisionWindowClosed = (cypressWindow: Cypress.AUTWindow): Chainable
   return waitForLoadersToDisappear();
 };
 
-export const moveEpoch = (
+export const moveTime = (
   cypressWindow: Cypress.AUTWindow,
   moveTo: 'decisionWindowClosed' | 'decisionWindowOpen',
 ): Chainable<any> => {
