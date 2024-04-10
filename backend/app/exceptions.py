@@ -254,3 +254,11 @@ class InvalidMultisigSignatureRequest(OctantException):
 
     def __init__(self):
         super().__init__(self.description, self.code)
+
+
+class InvalidMultisigAddress(OctantException):
+    code = 403
+    description = "Given multisig address is invalid"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
