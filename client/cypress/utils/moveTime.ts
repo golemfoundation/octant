@@ -12,7 +12,7 @@ const mutateAsyncMoveToDecisionWindowClosed = (cypressWindow: Cypress.AUTWindow)
     });
   });
 
-const mutateAsyncMakeSnapshot = (cypressWindow: Cypress.AUTWindow, type: 'pending' | 'finalized') =>
+export const mutateAsyncMakeSnapshot = (cypressWindow: Cypress.AUTWindow, type: 'pending' | 'finalized') =>
   new Cypress.Promise(resolve => {
     cypressWindow.mutateAsyncMakeSnapshot(type).then(() => {
       resolve(true);
@@ -26,7 +26,7 @@ const mutateAsyncMoveToDecisionWindowOpen = (cypressWindow: Cypress.AUTWindow) =
     });
   });
 
-const loaderCheck = (): Chainable<any> => {
+export const loaderCheck = (): Chainable<any> => {
   cy.get('[data-test*=AppLoader]').should('not.exist');
   return cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
 };
