@@ -155,7 +155,7 @@ const budget = '10000000000';
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText]')
-          .type('999999999999999999999999');
+          .type('99999999');
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText]')
