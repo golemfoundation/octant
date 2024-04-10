@@ -164,7 +164,7 @@ const budget = '10000000000';
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText]')
-          .invoke('dat', 'iserror')
+          .invoke('data', 'iserror')
           .should('be.true');
       });
     },
