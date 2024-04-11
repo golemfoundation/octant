@@ -29,7 +29,6 @@ describe('allocation (allocation window closed)', () => {
       setupAndMoveToPlayground();
 
       cy.window().then(async win => {
-        // Move time only once, for the first device.
         moveTime(win, 'decisionWindowClosed').then(() => {
           cy.get('[data-test=PlaygroundView]').should('be.visible');
           const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
