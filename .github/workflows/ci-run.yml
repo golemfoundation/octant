@@ -47,7 +47,7 @@ jobs:
     runs-on:
     - e2e
     container:
-      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/synpress-arch:71c6cbc5
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/synpress-arch:4d64bd94
       credentials:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
