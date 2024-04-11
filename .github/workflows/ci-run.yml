@@ -46,6 +46,9 @@ jobs:
         export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
 
         export OCTANT_BASE_URL="https://ipecho.net"
+        export RPC_URL="https://ipecho.net"
+        export VITE_JSON_RPC_ENDPOINT="https://ipecho.net"
+        export VITE_SERVER_ENDPOINT="https://ipecho.net"
 
         # Setup NVM to use Node version 16
         set +x
@@ -105,6 +108,9 @@ jobs:
         export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
 
         export OCTANT_BASE_URL="https://ipecho.net"
+        export RPC_URL="https://ipecho.net"
+        export VITE_JSON_RPC_ENDPOINT="https://ipecho.net"
+        export VITE_SERVER_ENDPOINT="https://ipecho.net"
 
         # Setup NVM to use Node version 16
         set +x
@@ -164,6 +170,9 @@ jobs:
         export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
 
         export OCTANT_BASE_URL="https://ipecho.net"
+        export RPC_URL="https://ipecho.net"
+        export VITE_JSON_RPC_ENDPOINT="https://ipecho.net"
+        export VITE_SERVER_ENDPOINT="https://ipecho.net"
 
         # Setup NVM to use Node version 16
         set +x
@@ -223,6 +232,9 @@ jobs:
         export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
 
         export OCTANT_BASE_URL="https://ipecho.net"
+        export RPC_URL="https://ipecho.net"
+        export VITE_JSON_RPC_ENDPOINT="https://ipecho.net"
+        export VITE_SERVER_ENDPOINT="https://ipecho.net"
 
         # Setup NVM to use Node version 16
         set +x
