@@ -113,7 +113,7 @@
     "vite-plugin-html-config": "^1.0.11"
   },
   "resolutions": {
-    "**/cypress": "12.17.3"
+    "**/cypress": "13.3.2"
   },
   "engines": {
     "node": ">= 16.13.0 <17.0.0"
