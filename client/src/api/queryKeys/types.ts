@@ -19,7 +19,7 @@ export type Root = {
   patronMode: 'patronMode';
   projectDonors: 'projectDonors';
   projectRewardsThreshold: 'projectRewardsThreshold';
-  projectsContract: 'projectsContract';
+  projectsEpoch: 'projectsEpoch';
   projectsIpfsResults: 'projectsIpfsResults';
   userAllocationNonce: 'userAllocationNonce';
   userAllocations: 'userAllocations';
@@ -61,7 +61,7 @@ export type QueryKeys = {
     epochNumber: number,
   ) => [Root['projectDonors'], string, string];
   projectRewardsThreshold: (epochNumber: number) => [Root['projectRewardsThreshold'], string];
-  projectsContract: (epochNumber: number) => [Root['projectsContract'], string];
+  projectsEpoch: (epochNumber: number) => [Root['projectsEpoch'], string];
   projectsIpfsResults: (
     projectAddress: string,
     epoch: number,

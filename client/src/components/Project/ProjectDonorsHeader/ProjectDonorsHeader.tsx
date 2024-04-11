@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
@@ -24,11 +24,19 @@ const ProjectDonorsHeader: FC<ProjectDonorsListProps> = ({
     projectAddress,
     epochNumber === currentEpoch ? undefined : epochNumber,
   );
+
+  const numberOfDonors = useMemo(() => {
+    if (epochNumber === currentEpoch) {
+      return 0;
+    }
+    return isFetching ? '--' : projectDonors?.length;
+  }, [isFetching, projectDonors, epochNumber, currentEpoch]);
+
   return (
     <div className={cx(styles.header, className)} data-test={dataTest}>
       <span className={styles.headerLabel}>{i18n.t('common.donors')}</span>{' '}
       <div className={styles.count} data-test={`${dataTest}__count`}>
-        {isFetching ? '--' : projectDonors?.length}
+        {numberOfDonors}
       </div>
     </div>
   );

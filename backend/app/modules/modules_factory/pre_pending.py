@@ -8,13 +8,17 @@ from app.modules.modules_factory.protocols import (
     PendingSnapshots,
     UserEffectiveDeposits,
     SavedProjectRewardsService,
+    ProjectsMetadataService,
 )
 from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
-from app.modules.project_rewards.service.saved import SavedProjectRewards
+from app.modules.projects.rewards.service.saved import SavedProjectRewards
 from app.modules.snapshots.pending.service.pre_pending import PrePendingSnapshots
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
 from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
+)
+from app.modules.projects.metadata.service.projects_metadata import (
+    StaticProjectsMetadataService,
 )
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
@@ -29,6 +33,7 @@ class PrePendingServices(Model):
     octant_rewards_service: OctantRewards
     pending_snapshots_service: PendingSnapshots
     project_rewards_service: SavedProjectRewardsService
+    projects_metadata_service: ProjectsMetadataService
 
     @staticmethod
     def create(chain_id: int) -> "PrePendingServices":
@@ -38,9 +43,11 @@ class PrePendingServices(Model):
             events_generator=DbAndGraphEventsGenerator()
         )
         octant_rewards = CalculatedOctantRewards(
-            staking_proceeds=aggregated.AggregatedStakingProceeds()
-            if is_mainnet
-            else contract_balance.ContractBalanceStakingProceeds(),
+            staking_proceeds=(
+                aggregated.AggregatedStakingProceeds()
+                if is_mainnet
+                else contract_balance.ContractBalanceStakingProceeds()
+            ),
             effective_deposits=user_deposits,
         )
 
@@ -53,4 +60,5 @@ class PrePendingServices(Model):
             octant_rewards_service=octant_rewards,
             pending_snapshots_service=pending_snapshots_service,
             project_rewards_service=SavedProjectRewards(),
+            projects_metadata_service=StaticProjectsMetadataService(),
         )

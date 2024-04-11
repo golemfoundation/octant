@@ -10,7 +10,7 @@ import MetricsGrid from 'components/Metrics/MetricsGrid';
 import MetricsHeader from 'components/Metrics/MetricsHeader';
 import { METRICS_GENERAL_ID } from 'constants/metrics';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
-import useProjectsContract from 'hooks/queries/useProjectsContract';
+import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import useAllProjects from 'hooks/subgraph/useAllProjects';
 import useLockedsData from 'hooks/subgraph/useLockedsData';
 import useLockedSummaryLatest from 'hooks/subgraph/useLockedSummaryLatest';
@@ -31,7 +31,7 @@ const MetricsGeneral = (): ReactElement => {
   const { isFetching: isFetchingLockedSummaryLatest } = useLockedSummaryLatest();
   const { isFetching: isFetchingCryptoValues } = useCryptoValues(displayCurrency);
   const { isFetching: isFetchingAllProjects } = useAllProjects();
-  const { isFetching: isFetchingProjectsContract } = useProjectsContract();
+  const { isFetching: isFetchingProjectsEpoch } = useProjectsEpoch();
   const { isFetching: isFetchingLockedsData } = useLockedsData();
 
   // All metrics should be visible in the same moment (design). Skeletons are visible to the end of fetching all needed data.
@@ -40,7 +40,7 @@ const MetricsGeneral = (): ReactElement => {
     isFetchingLockedSummaryLatest ||
     isFetchingCryptoValues ||
     isFetchingAllProjects ||
-    isFetchingProjectsContract;
+    isFetchingProjectsEpoch;
 
   return (
     <div className={styles.root} id={METRICS_GENERAL_ID}>
