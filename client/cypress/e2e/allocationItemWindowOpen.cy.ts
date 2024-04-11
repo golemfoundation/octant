@@ -7,7 +7,7 @@ import {
   navigateWithCheck,
   connectWallet,
 } from 'cypress/utils/e2e';
-import { moveTime } from 'cypress/utils/moveTime';
+import { moveTime, setupAndMoveToPlayground } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
@@ -19,7 +19,6 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 chai.use(chaiColors);
 
-let wasTimeMoved = false;
 const budget = '10000000000'; // 10 GWEI.
 
 describe('allocation (allocation window open)', () => {
@@ -33,29 +32,16 @@ describe('allocation (allocation window open)', () => {
       cy.setupMetamask();
     });
 
-    beforeEach(() => {
-      cy.disconnectMetamaskWalletFromAllDapps();
-      mockCoinPricesServer();
-      localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
-      localStorage.setItem(IS_ONBOARDING_DONE, 'true');
-      localStorage.setItem(ALLOCATION_ITEMS_KEY, '[]');
-      visitWithLoader(ROOT_ROUTES.playground.absolute);
-    });
-
     it('allocation window is open, when it is not, move time', () => {
+      setupAndMoveToPlayground();
+
       cy.window().then(async win => {
-        // Move time only once, for the first device.
-        if (!wasTimeMoved) {
-          moveTime(win, 'decisionWindowOpen').then(() => {
-            const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
-              QUERY_KEYS.isDecisionWindowOpen,
-            );
-            wasTimeMoved = true;
-            expect(isDecisionWindowOpenAfter).to.be.true;
-          });
-        } else {
-          expect(true).to.be.true;
-        }
+        moveTime(win, 'decisionWindowOpen').then(() => {
+          const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
+            QUERY_KEYS.isDecisionWindowOpen,
+          );
+          expect(isDecisionWindowOpenAfter).to.be.true;
+        });
       });
     });
   });

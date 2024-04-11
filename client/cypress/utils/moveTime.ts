@@ -1,6 +1,23 @@
 import { QUERY_KEYS } from 'src/api/queryKeys';
+import {
+  ALLOCATION_ITEMS_KEY,
+  IS_ONBOARDING_ALWAYS_VISIBLE,
+  IS_ONBOARDING_DONE,
+} from 'src/constants/localStorageKeys';
+import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
+
+import { mockCoinPricesServer, visitWithLoader } from './e2e';
 
 import Chainable = Cypress.Chainable;
+
+export const setupAndMoveToPlayground = (): Chainable<any> => {
+  cy.disconnectMetamaskWalletFromAllDapps();
+  mockCoinPricesServer();
+  localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
+  localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+  localStorage.setItem(ALLOCATION_ITEMS_KEY, '[]');
+  return visitWithLoader(ROOT_ROUTES.playground.absolute);
+};
 
 const mutateAsyncMoveToDecisionWindowClosed = (cypressWindow: Cypress.AUTWindow): Promise<any> =>
   new Promise(resolve => {
@@ -77,7 +94,17 @@ const moveToDecisionWindowClosed = (cypressWindow: Cypress.AUTWindow): Chainable
 export const moveTime = (
   cypressWindow: Cypress.AUTWindow,
   moveTo: 'decisionWindowClosed' | 'decisionWindowOpen',
+  shouldMoveToPlayground = false,
 ): Chainable<any> => {
+  if (shouldMoveToPlayground) {
+    cy.disconnectMetamaskWalletFromAllDapps();
+    mockCoinPricesServer();
+    localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
+    localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+    localStorage.setItem(ALLOCATION_ITEMS_KEY, '[]');
+    visitWithLoader(ROOT_ROUTES.playground.absolute);
+  }
+
   const isDecisionWindowOpen = cypressWindow.clientReactQuery.getQueryData(
     QUERY_KEYS.isDecisionWindowOpen,
   );
