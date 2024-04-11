@@ -13,11 +13,17 @@ export default function useCypressHelpers(): { isFetching: boolean } {
 
   const isHookEnabled = !!window.Cypress || env.network === 'Local';
 
-  const { mutateAsync: mutateAsyncMoveToDecisionWindowOpen, isPending: isPendingMoveToDecisionWindowOpen } = useCypressMoveToDecisionWindowOpen();
-  const { mutateAsync: mutateAsyncMoveToDecisionWindowClosed, isPending: isPendingMoveToDecisionWindowClosed } =
-    useCypressMoveToDecisionWindowClosed();
-  const { mutateAsync: mutateAsyncMakeSnapshot, isPending: isPendingMakeSnapshot} = useCypressMakeSnapshot();
-  useIsDecisionWindowOpen({ refetchInterval: isHookEnabled ? 1000 : false })
+  const {
+    mutateAsync: mutateAsyncMoveToDecisionWindowOpen,
+    isPending: isPendingMoveToDecisionWindowOpen,
+  } = useCypressMoveToDecisionWindowOpen();
+  const {
+    mutateAsync: mutateAsyncMoveToDecisionWindowClosed,
+    isPending: isPendingMoveToDecisionWindowClosed,
+  } = useCypressMoveToDecisionWindowClosed();
+  const { mutateAsync: mutateAsyncMakeSnapshot, isPending: isPendingMakeSnapshot } =
+    useCypressMakeSnapshot();
+  useIsDecisionWindowOpen({ refetchInterval: isHookEnabled ? 1000 : false });
   const { data: currentEpoch } = useCurrentEpoch({ refetchInterval: isHookEnabled ? 1000 : false });
   const { data: epochs } = useEpochsIndexedBySubgraph(isHookEnabled && isRefetchingEpochs);
 
@@ -42,15 +48,19 @@ export default function useCypressHelpers(): { isFetching: boolean } {
      * (1) History of commits here: https://github.com/golemfoundation/octant/pull/13.
      */
     if (isHookEnabled) {
-      // @ts-expect-error Left for debug purposes.
       window.mutateAsyncMoveToDecisionWindowOpen = mutateAsyncMoveToDecisionWindowOpen;
-      // @ts-expect-error Left for debug purposes.
       window.mutateAsyncMoveToDecisionWindowClosed = mutateAsyncMoveToDecisionWindowClosed;
-      // @ts-expect-error Left for debug purposes.
       window.mutateAsyncMakeSnapshot = mutateAsyncMakeSnapshot;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { isFetching: isHookEnabled && (!isEpochAlreadyIndexedBySubgraph || isPendingMoveToDecisionWindowOpen || isPendingMoveToDecisionWindowClosed || isPendingMakeSnapshot) };
+  return {
+    isFetching:
+      isHookEnabled &&
+      (!isEpochAlreadyIndexedBySubgraph ||
+        isPendingMoveToDecisionWindowOpen ||
+        isPendingMoveToDecisionWindowClosed ||
+        isPendingMakeSnapshot),
+  };
 }
