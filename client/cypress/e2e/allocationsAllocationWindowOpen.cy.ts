@@ -20,7 +20,7 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 chai.use(chaiColors);
 
 let wasTimeMoved = false;
-const budget = '10000000000';
+const budget = '10000000000'; // 10 GWEI.
 
 describe('allocation (allocation window open)', () => {
   describe('move time', () => {
@@ -68,7 +68,7 @@ describe('allocation (allocation window open)', () => {
     });
   });
 
-  Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
+  Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
     describe(`test cases: ${device}`, { viewportHeight, viewportWidth }, () => {
       before(() => {
         /**
@@ -118,7 +118,7 @@ describe('allocation (allocation window open)', () => {
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__imageProfile]')
-          .should('be.visible');
+          .should(isDesktop ? 'be.visible' : 'not.be.visible');
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText]')
@@ -149,7 +149,7 @@ describe('allocation (allocation window open)', () => {
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText]')
-          .type('99999999');
+          .type('99');
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText]')
