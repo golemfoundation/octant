@@ -108,6 +108,8 @@ jobs:
         curl --retry-connrefused --retry 100 --retry-delay 3 \
           -s -X GET $OCTANT_BASE_URL
 
+        rm -rf $HOME/.config/Cypress
+        rm -rf $HOME/.config/google-chrome
         yarn synpress:run
       shell: bash
 
