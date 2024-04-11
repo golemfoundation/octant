@@ -38,15 +38,6 @@ describe('allocation (allocation window closed)', () => {
 
     it('allocation window is closed, when it is not, move time', () => {
       cy.window().then(async win => {
-        const isDecisionWindowOpen = win.clientReactQuery.getQueryData(
-          QUERY_KEYS.isDecisionWindowOpen,
-        );
-
-        if (!isDecisionWindowOpen) {
-          expect(true).to.be.true;
-          return;
-        }
-
         // Move time only once, for the first device.
         if (!wasTimeMoved) {
           moveTime(win, 'decisionWindowClosed').then(() => {
