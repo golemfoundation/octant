@@ -246,7 +246,7 @@ def test_does_not_save_signature_when_wrong_user_address(
     assert result is None
 
 
-@pytest.mark.skip("Cannot create epoch context for epoch 0")
+@pytest.mark.skip
 def test_does_not_save_signature_when_service_returns_404(
     context,
     alice,
