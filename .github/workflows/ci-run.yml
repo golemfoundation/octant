@@ -14,7 +14,7 @@ env:
   ARGOCD_ACCESS_TOKEN: "${{ secrets.ARGOCD_ACCESS_TOKEN }}"
 
 jobs:
-  run-e2e-tests:
+  run-e2e-tests1:
     name: Run E2E Tests
     runs-on:
     - e2e
@@ -60,7 +60,185 @@ jobs:
 
         source /usr/bin/entrypoint.sh
 
-        DEBUG=cypress:* cypress run yarn synpress:run
+        export DEBUG=cypress:*
+        yarn synpress:run
+      shell: bash
+
+    - uses: actions/upload-artifact@v4.0.0
+      if: failure()
+      with:
+        name: "${{ github.job }}"
+        retention-days: 3
+        path: |-
+          client/cypress/videos
+          client/cypress/screenshots
+
+  run-e2e-tests2:
+    name: Run E2E Tests
+    runs-on:
+    - e2e
+    container:
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/synpress-arch:71c6cbc5
+      credentials:
+        username: "doesnt-matter"
+        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+    env:
+      ENV_TYPE: e2e
+      CI_MERGE_REQUEST_IID: ${{ github.event.pull_request.number }}
+      CI_PIPELINE_ID: ${{ github.run_id }}
+      CYPRESS_DOCKER_RUN: true
+      CI: true
+      METAMASK_VERSION: 10.25.0
+      SECRET_WORDS: test test test test test test test test test test test junk
+      CHAIN_ID: 1337
+      NETWORK_NAME: Local
+      SYMBOL: ETH
+      IS_TESTNET: true
+      VITE_NETWORK: Local
+    steps:
+    - uses: actions/checkout@v4.1.0
+
+    - name: Run E2E tests
+      run: |
+        set -ex
+
+        export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
+
+        export OCTANT_BASE_URL="https://ipecho.net"
+
+        # Setup NVM to use Node version 16
+        set +x
+        source /usr/share/nvm/init-nvm.sh
+        nvm install 16
+        nvm use 16
+        set -x
+        npm i -g yarn
+
+        pushd client
+        yarn install --cache-folder .yarn --frozen-lockfile --prefer-offline --no-audit
+
+        source /usr/bin/entrypoint.sh
+
+        export DEBUG=cypress:*
+        yarn synpress:run
+      shell: bash
+
+    - uses: actions/upload-artifact@v4.0.0
+      if: failure()
+      with:
+        name: "${{ github.job }}"
+        retention-days: 3
+        path: |-
+          client/cypress/videos
+          client/cypress/screenshots
+
+  run-e2e-tests3:
+    name: Run E2E Tests
+    runs-on:
+    - e2e
+    container:
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/synpress-arch:71c6cbc5
+      credentials:
+        username: "doesnt-matter"
+        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+    env:
+      ENV_TYPE: e2e
+      CI_MERGE_REQUEST_IID: ${{ github.event.pull_request.number }}
+      CI_PIPELINE_ID: ${{ github.run_id }}
+      CYPRESS_DOCKER_RUN: true
+      CI: true
+      METAMASK_VERSION: 10.25.0
+      SECRET_WORDS: test test test test test test test test test test test junk
+      CHAIN_ID: 1337
+      NETWORK_NAME: Local
+      SYMBOL: ETH
+      IS_TESTNET: true
+      VITE_NETWORK: Local
+    steps:
+    - uses: actions/checkout@v4.1.0
+
+    - name: Run E2E tests
+      run: |
+        set -ex
+
+        export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
+
+        export OCTANT_BASE_URL="https://ipecho.net"
+
+        # Setup NVM to use Node version 16
+        set +x
+        source /usr/share/nvm/init-nvm.sh
+        nvm install 16
+        nvm use 16
+        set -x
+        npm i -g yarn
+
+        pushd client
+        yarn install --cache-folder .yarn --frozen-lockfile --prefer-offline --no-audit
+
+        source /usr/bin/entrypoint.sh
+
+        export DEBUG=cypress:*
+        yarn synpress:run
+      shell: bash
+
+    - uses: actions/upload-artifact@v4.0.0
+      if: failure()
+      with:
+        name: "${{ github.job }}"
+        retention-days: 3
+        path: |-
+          client/cypress/videos
+          client/cypress/screenshots
+
+  run-e2e-tests4:
+    name: Run E2E Tests
+    runs-on:
+    - e2e
+    container:
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/synpress-arch:71c6cbc5
+      credentials:
+        username: "doesnt-matter"
+        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+    env:
+      ENV_TYPE: e2e
+      CI_MERGE_REQUEST_IID: ${{ github.event.pull_request.number }}
+      CI_PIPELINE_ID: ${{ github.run_id }}
+      CYPRESS_DOCKER_RUN: true
+      CI: true
+      METAMASK_VERSION: 10.25.0
+      SECRET_WORDS: test test test test test test test test test test test junk
+      CHAIN_ID: 1337
+      NETWORK_NAME: Local
+      SYMBOL: ETH
+      IS_TESTNET: true
+      VITE_NETWORK: Local
+    steps:
+    - uses: actions/checkout@v4.1.0
+
+    - name: Run E2E tests
+      run: |
+        set -ex
+
+        export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
+
+        export OCTANT_BASE_URL="https://ipecho.net"
+
+        # Setup NVM to use Node version 16
+        set +x
+        source /usr/share/nvm/init-nvm.sh
+        nvm install 16
+        nvm use 16
+        set -x
+        npm i -g yarn
+
+        pushd client
+        yarn install --cache-folder .yarn --frozen-lockfile --prefer-offline --no-audit
+
+        source /usr/bin/entrypoint.sh
+
+        export DEBUG=cypress:*
+        yarn synpress:run
       shell: bash
 
     - uses: actions/upload-artifact@v4.0.0
