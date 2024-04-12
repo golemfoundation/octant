@@ -39,8 +39,13 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
       ethBelowThreshold
     : BigInt(0);
 
+  /**
+   * PPF includes epochInfo.individualRewards.
+   * Half of PPF goes to the users to manage.
+   * Half of PPR goes to "PPF" section.
+   */
   const claimedByUsers = epochInfo
-    ? epochInfo.individualRewards - totalUserDonationsWithPatronRewards - unusedRewards
+    ? epochInfo.ppf / 2n - totalUserDonationsWithPatronRewards - unusedRewards
     : BigInt(0);
 
   const total =
@@ -79,7 +84,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     },
     {
       label: t('ppf'),
-      value: getNumberValue(ppf),
+      value: getNumberValue(ppf / 2n),
       valueLabel: getFormattedEthValue(ppf, true, false, false, 2).fullString,
     },
   ];
