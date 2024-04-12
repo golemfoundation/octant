@@ -20,4 +20,4 @@
 
 (1) Developer(s) in coordination with QA decide whether it's required. For small tickets introducing small changes QA assistance is most probably not required.
 
-(2) [Octant Areas & Test Cases](https://docs.google.com/spreadsheets/d/1cRe6dxuKJV3a4ZskAwWEPvrFkQm6rEfyUCYwLTYw_Cc/edit#gid=256741218).
+(2) [Octant Areas & Test Cases](https://docs.google.com/spreadsheets/d/1cRe6dxuKJV3a4ZskAwWEPvrFkQm6rEfyUCYwLTYw_Cc).
