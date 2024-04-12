@@ -11,7 +11,7 @@ from app.modules.modules_factory.current import CurrentServices
 
 def create_pending_epoch_snapshot() -> Optional[int]:
     try:
-        context = state_context(EpochState.PRE_PENDING)
+        context = state_context(EpochState.PRE_PENDING, with_block_range=True)
     except InvalidEpoch:
         return None
     services: PrePendingServices = get_services(EpochState.PRE_PENDING)
