@@ -249,7 +249,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           }).should('not.exist');
           cy.window().then(async win => {
             cy.wrap(null).then(() => {
-              return moveTime(win, 'decisionWindowClosed').then(() => {
+              return moveTime(win, 'nextEpochDecisionWindowClosed').then(() => {
                 cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
                   timeout: 60000,
                 })

@@ -24,7 +24,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           );
 
           cy.wrap(null).then(() => {
-            return moveTime(win, 'decisionWindowClosed').then(() => {
+            return moveTime(win, 'nextEpochDecisionWindowClosed').then(() => {
               const currentEpochAfter = Number(
                 win.clientReactQuery.getQueryData(QUERY_KEYS.currentEpoch),
               );

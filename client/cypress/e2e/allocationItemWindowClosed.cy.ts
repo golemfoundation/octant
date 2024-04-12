@@ -29,7 +29,7 @@ describe('allocation (allocation window closed)', () => {
       setupAndMoveToPlayground();
 
       cy.window().then(async win => {
-        moveTime(win, 'decisionWindowClosed').then(() => {
+        moveTime(win, 'nextEpochDecisionWindowClosed').then(() => {
           cy.get('[data-test=PlaygroundView]').should('be.visible');
           const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
             QUERY_KEYS.isDecisionWindowOpen,

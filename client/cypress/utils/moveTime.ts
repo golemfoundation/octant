@@ -91,9 +91,13 @@ const moveToDecisionWindowClosed = (cypressWindow: Cypress.AUTWindow): Chainable
   return waitForLoadersToDisappear();
 };
 
+/**
+ * General note: this util moves the time to the next epoch, window open or closed.
+ * In the future we will add ability to move to window closed without changing the epoch.
+ */
 export const moveTime = (
   cypressWindow: Cypress.AUTWindow,
-  moveTo: 'decisionWindowClosed' | 'decisionWindowOpen',
+  moveTo: 'nextEpochDecisionWindowClosed' | 'nextEpochDecisionWindowOpen',
   shouldMoveToPlayground = false,
 ): Chainable<any> => {
   if (shouldMoveToPlayground) {
@@ -116,7 +120,7 @@ export const moveTime = (
     cy.reload();
   }
 
-  if (moveTo === 'decisionWindowOpen') {
+  if (moveTo === 'nextEpochDecisionWindowOpen') {
     moveToDecisionWindowOpen(cypressWindow);
   } else {
     moveToDecisionWindowOpen(cypressWindow);

@@ -36,7 +36,7 @@ describe('allocation (allocation window open)', () => {
       setupAndMoveToPlayground();
 
       cy.window().then(async win => {
-        moveTime(win, 'decisionWindowOpen').then(() => {
+        moveTime(win, 'nextEpochDecisionWindowOpen').then(() => {
           const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
             QUERY_KEYS.isDecisionWindowOpen,
           );
