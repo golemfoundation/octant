@@ -1,9 +1,38 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-import useCypressMoveEpoch from 'hooks/mutations/useCypressMoveEpoch';
+import env from 'env';
+import useCypressMakeSnapshot from 'hooks/mutations/useCypressMakeSnapshot';
+import useCypressMoveToDecisionWindowClosed from 'hooks/mutations/useCypressMoveToDecisionWindowClosed';
+import useCypressMoveToDecisionWindowOpen from 'hooks/mutations/useCypressMoveToDecisionWindowOpen';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useEpochsIndexedBySubgraph from 'hooks/subgraph/useEpochsIndexedBySubgraph';
 
-export default function useCypressHelpers(): void {
-  const { mutateAsync: mutateAsyncMoveEpoch } = useCypressMoveEpoch();
+export default function useCypressHelpers(): { isFetching: boolean } {
+  const [isRefetchingEpochs, setIsRefetchingEpochs] = useState<boolean>(false);
+
+  const isHookEnabled = !!window.Cypress || env.network === 'Local';
+
+  const {
+    mutateAsync: mutateAsyncMoveToDecisionWindowOpen,
+    isPending: isPendingMoveToDecisionWindowOpen,
+  } = useCypressMoveToDecisionWindowOpen();
+  const {
+    mutateAsync: mutateAsyncMoveToDecisionWindowClosed,
+    isPending: isPendingMoveToDecisionWindowClosed,
+  } = useCypressMoveToDecisionWindowClosed();
+  const { mutateAsync: mutateAsyncMakeSnapshot, isPending: isPendingMakeSnapshot } =
+    useCypressMakeSnapshot();
+  useIsDecisionWindowOpen({ refetchInterval: isHookEnabled ? 1000 : false });
+  const { data: currentEpoch } = useCurrentEpoch({ refetchInterval: isHookEnabled ? 1000 : false });
+  const { data: epochs } = useEpochsIndexedBySubgraph(isHookEnabled && isRefetchingEpochs);
+
+  const isEpochAlreadyIndexedBySubgraph =
+    epochs !== undefined && currentEpoch !== undefined && epochs.includes(currentEpoch);
+
+  useEffect(() => {
+    setIsRefetchingEpochs(!isEpochAlreadyIndexedBySubgraph);
+  }, [isEpochAlreadyIndexedBySubgraph]);
 
   useEffect(() => {
     /**
@@ -18,10 +47,20 @@ export default function useCypressHelpers(): void {
      *
      * (1) History of commits here: https://github.com/golemfoundation/octant/pull/13.
      */
-    if (window.Cypress) {
-      // @ts-expect-error Left for debug purposes.
-      window.mutateAsyncMoveEpoch = mutateAsyncMoveEpoch;
+    if (isHookEnabled) {
+      window.mutateAsyncMoveToDecisionWindowOpen = mutateAsyncMoveToDecisionWindowOpen;
+      window.mutateAsyncMoveToDecisionWindowClosed = mutateAsyncMoveToDecisionWindowClosed;
+      window.mutateAsyncMakeSnapshot = mutateAsyncMakeSnapshot;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  return {
+    isFetching:
+      isHookEnabled &&
+      (!isEpochAlreadyIndexedBySubgraph ||
+        isPendingMoveToDecisionWindowOpen ||
+        isPendingMoveToDecisionWindowClosed ||
+        isPendingMakeSnapshot),
+  };
 }
