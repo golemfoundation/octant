@@ -2,7 +2,6 @@ import cx from 'classnames';
 import { AnimatePresence } from 'framer-motion';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
-import isEqual from 'lodash/isEqual';
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
@@ -313,11 +312,17 @@ const AllocationView = (): ReactElement => {
       return;
     }
     const userAllocationsAddresses = userAllocations.elements.map(({ address }) => address);
-    if (isEqual(userAllocationsAddresses.sort(), allocations.sort())) {
-      setCurrentView('summary');
+    /**
+     * Whenever user did an allocation and removed/unhearted project they previously allocated to,
+     * land on edit.
+     *
+     * Otherwise, land on summary.
+     */
+    if (allocations.length < userAllocationsAddresses.length) {
+      setCurrentView('edit');
       return;
     }
-    setCurrentView('edit');
+    setCurrentView('summary');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentEpoch, isDecisionWindowOpen, userAllocations?.elements.length]);
 
