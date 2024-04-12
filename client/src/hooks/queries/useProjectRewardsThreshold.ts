@@ -39,8 +39,11 @@ export default function useProjectRewardsThreshold(
       !!currentEpoch &&
       currentEpoch > 1 &&
       (isDecisionWindowOpen === true || (epoch !== undefined && epoch > 0)),
-    queryFn: () =>
-      apiGetProjectThreshold(epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!)),
+    queryFn: ({ signal }) =>
+      apiGetProjectThreshold(
+        epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
+        signal,
+      ),
     queryKey: QUERY_KEYS.projectRewardsThreshold(
       epoch ?? (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
     ),
