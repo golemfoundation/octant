@@ -1,9 +1,7 @@
-import axios from 'axios';
-
 import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import { mutateAsyncMakeSnapshot } from 'cypress/utils/moveTime';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
-import env from 'src/env';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 // In E2E snapshotter is disabled. Before the first test can be run, pending snapshot needs to be done.
@@ -37,10 +35,11 @@ describe('Make pending snapshot', () => {
       }
 
       cy.wrap(null).then(() => {
-        axios.post(`${env.serverEndpoint}snapshots/pending`).then(() => {
-          cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+        return mutateAsyncMakeSnapshot(win, 'pending').then(str => {
+          expect(str).to.eq(true);
         });
       });
+      cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
     });
   });
 });
