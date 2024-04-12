@@ -1,3 +1,5 @@
+import { GenericAbortSignal } from 'axios';
+
 import env from 'env';
 import apiService from 'services/apiService';
 
@@ -6,6 +8,11 @@ export type Response = {
   threshold: string;
 };
 
-export async function apiGetProjectThreshold(epoch: number): Promise<Response> {
-  return apiService.get(`${env.serverEndpoint}rewards/threshold/${epoch}`).then(({ data }) => data);
+export async function apiGetProjectThreshold(
+  epoch: number,
+  signal?: GenericAbortSignal,
+): Promise<Response> {
+  return apiService
+    .get(`${env.serverEndpoint}rewards/threshold/${epoch}`, { signal })
+    .then(({ data }) => data);
 }

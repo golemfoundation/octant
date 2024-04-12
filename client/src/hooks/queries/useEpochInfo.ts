@@ -43,7 +43,7 @@ export default function useEpochInfo(
   options?: UseQueryOptions<Response, unknown, EpochInfo, any>,
 ): UseQueryResult<EpochInfo, unknown> {
   return useQuery({
-    queryFn: () => apiGetEpochInfo(epoch),
+    queryFn: ({ signal }) => apiGetEpochInfo(epoch, signal),
     queryKey: QUERY_KEYS.epochInfo(epoch),
     select: response => ({
       communityFund: response.communityFund
