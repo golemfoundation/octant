@@ -19,7 +19,9 @@ def create_pending_epoch_snapshot() -> Optional[int]:
 
 
 def simulate_pending_epoch_snapshot() -> PendingSnapshotDTO | None:
-    context = state_context(EpochState.CURRENT, is_simulated=True)
+    context = state_context(
+        EpochState.CURRENT, is_simulated=True, with_block_range=True
+    )
     services: CurrentServices = get_services(EpochState.CURRENT)
 
     return services.simulated_pending_snapshot_service.simulate_pending_epoch_snapshot(
