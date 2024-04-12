@@ -100,7 +100,7 @@ epoch_stats_model = api.model(
         ),
         "ppf": fields.String(
             required=False,
-            description="PPF for the given epoch. It's calculated from staking proceeds directly.",
+            description="PPF for the given epoch. It's calculated from staking proceeds directly. Includes individualRewards.",
         ),
         "communityFund": fields.String(
             required=False,
