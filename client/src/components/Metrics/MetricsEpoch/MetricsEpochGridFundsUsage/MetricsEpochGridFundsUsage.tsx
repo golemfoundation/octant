@@ -40,7 +40,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     : BigInt(0);
 
   /**
-   * PPF includes epochInfo.individualRewards.
+   * epochInfo.ppf includes epochInfo.individualRewards.
    * Half of PPF goes to the users to manage.
    * Half of PPR goes to "PPF" section.
    */
