@@ -14,7 +14,7 @@ export default function useEpochUnusedRewards(
   options?: UseQueryOptions<Response, unknown, UseEpochUnusedRewards, any>,
 ): UseQueryResult<UseEpochUnusedRewards, unknown> {
   return useQuery({
-    queryFn: () => apiGetEpochUnusedRewards(epoch),
+    queryFn: ({ signal }) => apiGetEpochUnusedRewards(epoch, signal),
     queryKey: QUERY_KEYS.epochUnusedRewards(epoch),
     select: response => ({
       addresses: response.addresses,

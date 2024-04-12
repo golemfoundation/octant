@@ -1,4 +1,5 @@
-import { visitWithLoader, mockCoinPricesServer, moveEpoch } from 'cypress/utils/e2e';
+import { visitWithLoader, mockCoinPricesServer } from 'cypress/utils/e2e';
+import { moveTime } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
@@ -248,7 +249,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           }).should('not.exist');
           cy.window().then(async win => {
             cy.wrap(null).then(() => {
-              return moveEpoch(win).then(() => {
+              return moveTime(win, 'nextEpochDecisionWindowClosed').then(() => {
                 cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
                   timeout: 60000,
                 })

@@ -4,7 +4,7 @@ import { useConfig } from 'wagmi';
 import { QUERY_KEYS } from 'api/queryKeys';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
 
-export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknown, bigint> {
+export default function useCypressMoveToDecisionWindowClosed(): UseMutationResult<boolean, unknown> {
   const queryClient = useQueryClient();
   const wagmiConfig = useConfig();
 
@@ -13,7 +13,7 @@ export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknow
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve, reject) => {
         if (!window.Cypress) {
-          reject(new Error('useCypressMoveEpoch was called outside Cypress.'));
+          reject(new Error('useCypressMoveToDecisionWindowOpen was called outside Cypress.'));
         }
 
         const currentEpochPromise = queryClient.fetchQuery({
@@ -36,42 +36,53 @@ export default function useCypressMoveEpoch(): UseMutationResult<boolean, unknow
           queryKey: QUERY_KEYS.currentEpochEnd,
         });
 
-        const [block, currentEpochEnd, currentEpoch] = await Promise.all([
+        const currentEpochPropsPromise = queryClient.fetchQuery({
+          queryFn: () =>
+            readContractEpochs({
+              functionName: 'getCurrentEpochProps',
+              publicClient: wagmiConfig.publicClient,
+            }),
+          queryKey: QUERY_KEYS.currentEpochProps,
+        });
+
+        const [block, currentEpochEnd, currentEpoch, currentEpochProps] = await Promise.all([
           blockPromise,
           currentEpochEndPromise,
           currentEpochPromise,
+          currentEpochPropsPromise,
         ]);
 
-        if (block === undefined || currentEpoch === undefined || currentEpochEnd === undefined) {
+        if (
+          [block, currentEpoch, currentEpochEnd, currentEpochProps].some(
+            element => element === undefined,
+          )
+        ) {
           // eslint-disable-next-line prefer-promise-reject-errors
           reject(
             new Error(
-              'useCypressMoveEpoch fetched undefined block or currentEpoch or currentEpochEnd.',
+              'useCypressMoveEpoch fetched undefined block or currentEpoch or currentEpochEnd or currentEpochProps.',
             ),
           );
         }
 
-        const blockTimestamp = Number(block.timestamp);
-        const currentEpochEndTimestamp = Number(currentEpochEnd);
-
-        const timeToIncrease = currentEpochEndTimestamp - blockTimestamp + 10; // [s]
+        const timeToIncrease = Number(currentEpochProps.decisionWindow) + 10; // [s]
         await wagmiConfig.publicClient.request({
           method: 'evm_increaseTime' as any,
           params: [timeToIncrease] as any,
         });
         await wagmiConfig.publicClient.request({ method: 'evm_mine' as any, params: [] as any });
 
-        const currentEpochAfter = await queryClient.fetchQuery({
+        const isDecisionWindowOpenAfter = await queryClient.fetchQuery({
           queryFn: () =>
             readContractEpochs({
-              functionName: 'getCurrentEpoch',
+              functionName: 'isDecisionWindowOpen',
               publicClient: wagmiConfig.publicClient,
             }),
-          queryKey: QUERY_KEYS.currentEpoch,
+          queryKey: QUERY_KEYS.isDecisionWindowOpen,
         });
 
         // isEpochChanged
-        resolve(Number(currentEpoch) + 1 === Number(currentEpochAfter));
+        resolve(isDecisionWindowOpenAfter === false);
       });
     },
   });

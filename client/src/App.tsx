@@ -9,8 +9,8 @@ import useCypressHelpers from 'hooks/helpers/useCypressHelpers';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useManageTransactionsPending from 'hooks/helpers/useManageTransactionsPending';
 import RootRoutes from 'routes/RootRoutes/RootRoutes';
-import 'react-toastify/dist/ReactToastify.css';
 
+import 'react-toastify/dist/ReactToastify.css';
 import 'styles/index.scss';
 import 'i18n';
 
@@ -24,7 +24,7 @@ const App = (): ReactElement => {
   const isProjectAdminMode = useIsProjectAdminMode();
 
   // useCypressHelpers needs to be called after all the initial sets done above.
-  useCypressHelpers();
+  const { isFetching: isFetchingCypressHelpers } = useCypressHelpers();
 
   if (isLoading && !isSyncingInProgress) {
     return <AppLoader />;
@@ -32,7 +32,7 @@ const App = (): ReactElement => {
 
   return (
     <Fragment>
-      <RootRoutes isSyncingInProgress={isSyncingInProgress} />
+      <RootRoutes isSyncingInProgress={isSyncingInProgress || isFetchingCypressHelpers} />
       {!isSyncingInProgress && !isProjectAdminMode && <ModalOnboarding />}
     </Fragment>
   );
