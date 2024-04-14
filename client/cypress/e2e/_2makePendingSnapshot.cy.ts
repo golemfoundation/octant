@@ -1,6 +1,5 @@
 import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
 import { mutateAsyncMakeSnapshot } from 'cypress/utils/moveTime';
-import { QUERY_KEYS } from 'src/api/queryKeys';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
