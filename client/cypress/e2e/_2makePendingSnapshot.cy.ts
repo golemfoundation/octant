@@ -25,15 +25,6 @@ describe('Make pending snapshot', () => {
 
   it('make pending snapshot', () => {
     cy.window().then(async win => {
-      const isDecisionWindowOpen = win.clientReactQuery.getQueryData(
-        QUERY_KEYS.isDecisionWindowOpen,
-      );
-
-      if (!isDecisionWindowOpen) {
-        expect(true).to.be.true;
-        return;
-      }
-
       cy.wrap(null).then(() => {
         return mutateAsyncMakeSnapshot(win, 'pending').then(str => {
           expect(str).to.eq(true);
