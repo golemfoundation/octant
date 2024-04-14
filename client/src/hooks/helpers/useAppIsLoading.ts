@@ -1,6 +1,5 @@
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsContract from 'hooks/queries/useIsContract';
-import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import useAllProjects from 'hooks/subgraph/useAllProjects';
@@ -12,7 +11,6 @@ import getIsPreLaunch from 'utils/getIsPreLaunch';
 
 export default function useAppIsLoading(isFlushRequired: boolean): boolean {
   const { isFetching: isFetchingAllProjects } = useAllProjects();
-  const { isLoading: isLoadingIsDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { isFetching: isFetchingPatronModeStatus } = useIsPatronMode();
   const { isFetching: isFetchingUserTOS, isRefetching: isRefetchingUserTOS } = useUserTOS();
   const { data: currentEpoch, isLoading: isLoadingCurrentEpoch } = useCurrentEpoch();
@@ -33,7 +31,6 @@ export default function useAppIsLoading(isFlushRequired: boolean): boolean {
   const { isFetching: isFetchingIsContract } = useIsContract();
 
   return (
-    isLoadingIsDecisionWindowOpen ||
     isLoadingCurrentEpoch ||
     (!isPreLaunch && !isAllocationsInitialized) ||
     !isOnboardingInitialized ||
