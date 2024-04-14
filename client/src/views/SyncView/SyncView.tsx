@@ -11,14 +11,14 @@ import { octantSemiTransparent } from 'svg/logo';
 import styles from './SyncView.module.scss';
 
 const SyncView = (): ReactElement => {
-  const { data: isDecisionWindowOpn } = useIsDecisionWindowOpen();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: epochs } = useEpochsIndexedBySubgraph();
 
   return (
     <div className={styles.root} data-test="SyncView">
       <div style={{ color: 'black', fontSize: '120px' }}>
-        {isDecisionWindowOpn ? 'true' : 'false'}
+        {isDecisionWindowOpen ? 'true' : 'false'}
       </div>
       <div style={{ color: 'black', fontSize: '120px' }}>{currentEpoch}</div>
       <div style={{ color: 'black', fontSize: '120px' }}>{epochs}</div>
