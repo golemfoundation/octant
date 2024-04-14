@@ -22,6 +22,9 @@ class UserAllocations(Protocol):
     def has_user_allocated_rewards(self, context: Context, user_address: str) -> bool:
         ...
 
+    def get_all_allocations_sum(self, context: Context) -> int:
+        ...
+
 
 @runtime_checkable
 class UserBudgets(Protocol):

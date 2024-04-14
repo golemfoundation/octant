@@ -13,8 +13,10 @@ from app.modules.project_rewards.controller import (
     get_estimated_project_rewards,
     get_allocation_threshold,
 )
-from app.modules.user.budgets.controller import estimate_budget, get_budgets, get_budget
+from app.modules.user.budgets.controller import get_budgets, get_budget
 from app.modules.user.rewards.controller import get_unused_rewards
+from app.constants import NO_DAYS_IN_EPOCH
+from app.modules.facades.rewards_estimation import estimate_rewards
 
 ns = Namespace("rewards", description="Octant rewards")
 api.add_namespace(ns)
@@ -24,6 +26,10 @@ user_budget_model = api.model(
     {
         "budget": fields.String(
             required=True, description="User budget for given epoch, BigNumber (wei)"
+        ),
+        "matchedFunding": fields.String(
+            required=True,
+            description="User matched funding for given epoch, BigNumber (wei)",
         ),
     },
 )
@@ -104,11 +110,11 @@ leverage_model = api.model(
 estimated_budget_request = ns.model(
     "EstimatedBudget",
     {
-        "days": fields.Integer(
+        "numberOfEpochs": fields.Integer(
             required=True,
-            description="Number of days when GLM are locked",
+            description="Number of epochs when GLM are locked",
         ),
-        "glm_amount": fields.String(
+        "glmAmount": fields.String(
             required=True,
             description="Amount of estimated GLM locked in WEI",
         ),
@@ -224,16 +230,26 @@ class EstimatedUserBudget(OctantResource):
     @ns.marshal_with(user_budget_model)
     @ns.response(200, "Budget successfully retrieved")
     def post(self):
-        days, glm_amount = ns.payload["days"], int(ns.payload["glm_amount"])
+        no_epochs, glm_amount = ns.payload["numberOfEpochs"], int(
+            ns.payload["glmAmount"]
+        )
+        days = no_epochs * NO_DAYS_IN_EPOCH
+
         app.logger.debug(
-            f"Getting user estimated budget for {days} days and {glm_amount} GLM"
+            f"Getting user estimated budget for {days} days and {glm_amount} GLM. Getting matched_funding based on previous epoch."
         )
         validate_estimate_budget_inputs(days, glm_amount)
         lock_duration_sec = days_to_sec(days)
-        budget = estimate_budget(lock_duration_sec, glm_amount)
-        app.logger.debug(f"Estimated user budget: {budget}")
 
-        return {"budget": budget}
+        rewards = estimate_rewards(lock_duration_sec, glm_amount)
+        budget = rewards.estimated_budget
+        matched_funding = rewards.matching_fund
+
+        app.logger.debug(
+            f"Estimated user budget: {budget}, estimated matched_funding: {matched_funding}"
+        )
+
+        return {"budget": budget, "matchedFunding": matched_funding}
 
 
 @ns.route("/threshold/<int:epoch>")

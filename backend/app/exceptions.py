@@ -254,3 +254,19 @@ class InvalidMultisigSignatureRequest(OctantException):
 
     def __init__(self):
         super().__init__(self.description, self.code)
+
+
+class InvalidMultisigAddress(OctantException):
+    code = 403
+    description = "Given multisig address is invalid"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
+class EstimateRewardsNotSupported(OctantException):
+    code = 500
+    description = "Estimating rewards is not supported for epoch 1"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)

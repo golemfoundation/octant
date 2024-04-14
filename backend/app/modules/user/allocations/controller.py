@@ -34,6 +34,15 @@ def get_all_allocations(
     return service.get_all_allocations(context, include_zero_allocations)
 
 
+def get_all_allocations_sum(epoch_num: int) -> int:
+    context = epoch_context(epoch_num)
+    if context.epoch_state > EpochState.PENDING:
+        print("DEBUG", epoch_num, context.epoch_state, flush=True)
+        raise NotImplementedForGivenEpochState()
+    service = get_services(context.epoch_state).user_allocations_service
+    return service.get_all_allocations_sum(epoch_num)
+
+
 def get_all_donations_by_project(
     project_address: str, epoch_num: Optional[int] = None
 ) -> List[ProposalDonationDTO]:
