@@ -35,8 +35,8 @@ describe('Make pending snapshot', () => {
       }
 
       cy.wrap(null).then(() => {
-        return mutateAsyncMakeSnapshot(win, 'pending').then(() => {
-          cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
+        return mutateAsyncMakeSnapshot(win, 'pending').then(str => {
+          expect(str).to.eq(true);
         });
       });
       cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
