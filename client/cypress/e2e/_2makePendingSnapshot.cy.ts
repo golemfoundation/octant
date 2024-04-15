@@ -32,8 +32,4 @@ describe('Make pending snapshot', () => {
       cy.get('[data-test=SyncView]', { timeout: 60000 }).should('not.exist');
     });
   });
-
-  it('playground', () => {
-    cy.wait(30000);
-  })
 });
