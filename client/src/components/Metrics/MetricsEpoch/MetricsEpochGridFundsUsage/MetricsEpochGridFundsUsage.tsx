@@ -110,7 +110,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     {
       label: t('ppf'),
       value: getNumberValue(ppf / 2n),
-      valueLabel: getFormattedEthValue(ppf, true, false, false, numberOfDecimalPlacesToUse)
+      valueLabel: getFormattedEthValue(ppf / 2n, true, false, false, numberOfDecimalPlacesToUse)
         .fullString,
     },
   ];
