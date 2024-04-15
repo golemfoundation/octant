@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import PieChart from 'components/ui/PieChart';
+import networkConfig from 'constants/networkConfig';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
 import useEpochInfo from 'hooks/queries/useEpochInfo';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
@@ -51,41 +52,46 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   const total =
     claimedByUsers + donatedToProjects + projectCosts + staking + ppf + communityFund + leftover;
 
+  const precisionToUse = networkConfig.isTestnet ? 10 : 2;
+
   const data = [
     {
       label: t('donatedToProjects'),
       value: getNumberValue(donatedToProjects),
-      valueLabel: getFormattedEthValue(donatedToProjects, true, false, false, 2).fullString,
+      valueLabel: getFormattedEthValue(donatedToProjects, true, false, false, precisionToUse)
+        .fullString,
     },
     {
       label: t('leftover', { epochNumber: epoch + 1 }),
       value: getNumberValue(leftover),
-      valueLabel: getFormattedEthValue(leftover, true, false, false, 2).fullString,
+      valueLabel: getFormattedEthValue(leftover, true, false, false, precisionToUse).fullString,
     },
     {
       label: t('projectCosts'),
       value: getNumberValue(projectCosts),
-      valueLabel: getFormattedEthValue(projectCosts, true, false, false, 2).fullString,
+      valueLabel: getFormattedEthValue(projectCosts, true, false, false, precisionToUse).fullString,
     },
     {
       label: t('claimedByUsers'),
       value: getNumberValue(claimedByUsers),
-      valueLabel: getFormattedEthValue(claimedByUsers, true, false, false, 2).fullString,
+      valueLabel: getFormattedEthValue(claimedByUsers, true, false, false, precisionToUse)
+        .fullString,
     },
     {
       label: t('staking'),
       value: getNumberValue(staking),
-      valueLabel: getFormattedEthValue(staking, true, false, false, 2).fullString,
+      valueLabel: getFormattedEthValue(staking, true, false, false, precisionToUse).fullString,
     },
     {
       label: t('communityFund'),
       value: getNumberValue(communityFund),
-      valueLabel: getFormattedEthValue(communityFund, true, false, false, 2).fullString,
+      valueLabel: getFormattedEthValue(communityFund, true, false, false, precisionToUse)
+        .fullString,
     },
     {
       label: t('ppf'),
       value: getNumberValue(ppf / 2n),
-      valueLabel: getFormattedEthValue(ppf, true, false, false, 2).fullString,
+      valueLabel: getFormattedEthValue(ppf, true, false, false, precisionToUse).fullString,
     },
   ];
 
