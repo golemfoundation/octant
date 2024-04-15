@@ -1,4 +1,5 @@
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useIsContract from 'hooks/queries/useIsContract';
 import useIsPatronMode from 'hooks/queries/useIsPatronMode';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import useAllProjects from 'hooks/subgraph/useAllProjects';
@@ -11,7 +12,7 @@ import getIsPreLaunch from 'utils/getIsPreLaunch';
 export default function useAppIsLoading(isFlushRequired: boolean): boolean {
   const { isFetching: isFetchingAllProjects } = useAllProjects();
   const { isFetching: isFetchingPatronModeStatus } = useIsPatronMode();
-  const { isFetching: isFetchingUserTOS } = useUserTOS();
+  const { isFetching: isFetchingUserTOS, isRefetching: isRefetchingUserTOS } = useUserTOS();
   const { data: currentEpoch, isLoading: isLoadingCurrentEpoch } = useCurrentEpoch();
   const isPreLaunch = getIsPreLaunch(currentEpoch);
 
@@ -27,6 +28,7 @@ export default function useAppIsLoading(isFlushRequired: boolean): boolean {
   const { isInitialized: isAllocationsInitialized } = useAllocationsStore(state => ({
     isInitialized: state.meta.isInitialized,
   }));
+  const { isFetching: isFetchingIsContract } = useIsContract();
 
   return (
     isLoadingCurrentEpoch ||
@@ -35,8 +37,9 @@ export default function useAppIsLoading(isFlushRequired: boolean): boolean {
     !isSettingsInitialized ||
     isFlushRequired ||
     !isTipsStoreInitialized ||
-    isFetchingUserTOS ||
+    (isFetchingUserTOS && !isRefetchingUserTOS) ||
     isFetchingAllProjects ||
-    isFetchingPatronModeStatus
+    isFetchingPatronModeStatus ||
+    isFetchingIsContract
   );
 }

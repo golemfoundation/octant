@@ -13,7 +13,7 @@ jobs:
     secrets: inherit
     with:
       image-tag: ${{ needs.run.outputs.sha }}
-
+      git-ref: ${{ needs.run.outputs.ref }}
   deploy:
     name: Deploy
     needs:
@@ -58,6 +58,25 @@ jobs:
     - name: Get PR branch
       uses: xt0rted/pull-request-comment-branch@v2
       id: comment-branch
+
+    - name: Check if user is an org member
+      uses: actions/github-script@v7
+      id: is-organization-member
+      with:
+        result-encoding: string
+        github-token: ${{ secrets.GH_BOT_TOKEN }}
+        script: |
+          return (
+            await github.rest.orgs.listMembers({
+              org: 'golemfoundation'
+            })
+          ).data.map(({login}) => login).includes('${{ github.event.comment.user.login }}').toString()
+
+    - name: Cancel workflow
+      if: ${{ steps.is-organization-member.outputs.result == 'false' }}
+      run: |
+        echo '${{ github.event.comment.user.login }} is not a member of the golemfoundation org'
+        exit 1
 
     - uses: actions/github-script@v7
       id: get-pr-number

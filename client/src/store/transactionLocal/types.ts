@@ -4,6 +4,7 @@ import { HistoryElement } from 'hooks/queries/useHistory';
 
 export type TransactionPending = HistoryElement & {
   isFinalized: boolean;
+  isMultisig?: boolean;
   isWaitingForTransactionInitialized: boolean;
   transactionHash: Hash;
 };

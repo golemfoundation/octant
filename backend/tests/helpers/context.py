@@ -2,11 +2,18 @@ from app.context.epoch_details import EpochDetails
 from app.context.epoch_state import EpochState
 from app.context.manager import Context
 from app.context.projects import ProjectsDetails
+from app.context.snapshots_state import SnapshotsState
 from app.engine.epochs_settings import get_epoch_settings
 
 
 def get_epoch_details(
-    epoch_num: int, start=1000, duration=1000, decision_window=500, remaining_sec=1000
+    epoch_num: int,
+    start=1000,
+    duration=1000,
+    decision_window=500,
+    remaining_sec=1000,
+    with_block_range=False,
+    **kwargs
 ):
     return EpochDetails(
         epoch_num=epoch_num,
@@ -14,6 +21,7 @@ def get_epoch_details(
         start=start,
         decision_window=decision_window,
         remaining_sec=remaining_sec,
+        with_block_range=with_block_range,
     )
 
 
@@ -34,15 +42,27 @@ def get_project_details(projects=None, **kwargs) -> ProjectsDetails:
     return ProjectsDetails(projects=projects)
 
 
+def get_snapshot_state(
+    last_pending_snapshot_num=0, last_finalized_snapshot_num=0, **kwargs
+) -> SnapshotsState:
+    return SnapshotsState(
+        last_pending_snapshot_num=last_pending_snapshot_num,
+        last_finalized_snapshot_num=last_finalized_snapshot_num,
+    )
+
+
 def get_context(
     epoch_num: int = 1, epoch_state: EpochState = EpochState.CURRENT, **kwargs
 ) -> Context:
     epoch_details = get_epoch_details(epoch_num, **kwargs)
     epoch_settings = get_epoch_settings(epoch_num)
     projects_details = get_project_details(**kwargs)
+    snapshot_state = get_snapshot_state(**kwargs)
+
     return Context(
         epoch_state=epoch_state,
         epoch_details=epoch_details,
         epoch_settings=epoch_settings,
         projects_details=projects_details,
+        snapshots_state=snapshot_state,
     )

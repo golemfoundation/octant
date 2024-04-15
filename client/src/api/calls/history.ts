@@ -10,7 +10,7 @@ export type ResponseHistoryItem = {
   type: 'lock' | 'unlock' | 'allocation' | 'withdrawal' | 'patron_mode_donation';
 };
 
-export type Response = { history: ResponseHistoryItem[]; next_cursor?: string };
+export type Response = { history: ResponseHistoryItem[]; nextCursor?: string };
 
 export async function apiGetHistory(address: string, cursor?: string): Promise<Response> {
   return apiService

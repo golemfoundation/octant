@@ -30,6 +30,8 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
 
   const projectCosts = epochInfo ? epochInfo.operationalCost : BigInt(0);
   const staking = epochInfo ? epochInfo.staking : BigInt(0);
+  const ppf = epochInfo ? epochInfo.ppf : BigInt(0);
+  const communityFund = epochInfo ? epochInfo.communityFund : BigInt(0);
 
   const donatedToProjects = epochInfo
     ? epochInfo.matchedRewards +
@@ -37,11 +39,17 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
       ethBelowThreshold
     : BigInt(0);
 
+  /**
+   * epochInfo.ppf includes epochInfo.individualRewards.
+   * Half of PPF goes to the users to manage.
+   * Half of PPR goes to "PPF" section.
+   */
   const claimedByUsers = epochInfo
-    ? epochInfo.individualRewards - totalUserDonationsWithPatronRewards - unusedRewards
+    ? epochInfo.ppf / 2n - totalUserDonationsWithPatronRewards - unusedRewards
     : BigInt(0);
 
-  const total = claimedByUsers + donatedToProjects + projectCosts + staking + leftover;
+  const total =
+    claimedByUsers + donatedToProjects + projectCosts + staking + ppf + communityFund + leftover;
 
   const data = [
     {
@@ -68,6 +76,16 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
       label: t('staking'),
       value: getNumberValue(staking),
       valueLabel: getFormattedEthValue(staking, true, false, false, 2).fullString,
+    },
+    {
+      label: t('communityFund'),
+      value: getNumberValue(communityFund),
+      valueLabel: getFormattedEthValue(communityFund, true, false, false, 2).fullString,
+    },
+    {
+      label: t('ppf'),
+      value: getNumberValue(ppf / 2n),
+      valueLabel: getFormattedEthValue(ppf, true, false, false, 2).fullString,
     },
   ];
 

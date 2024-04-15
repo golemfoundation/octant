@@ -54,6 +54,10 @@ channels:
                         description: Amount of rewards donated for given proposal, BigNumber (WEI)
                         type: string
             signature:
+              description: EIP-712 signature of the allocation payload as a hexadecimal string
+              type: string
+            userAddress:
+              description: Wallet address of the user. EOA or EIP-1271
               type: string
             isManuallyEdited:
               descritpion: Whether allocation has been manually edited by user
@@ -68,6 +72,7 @@ channels:
                   - proposalAddress: "0xBcd4042DE499D14e55001CcbB24a551F3b954096"
                     amount: "5000"
               signature: "8d704f19cde0f1f9d310e57621229b919a8e17187be332c4bd08bf797d0fb50232b4aa30639b741723e647667d87da1af38fd4601600f4d4e2c6f724abea03d61b"
+              userAddress: "0x17F6AD8Ef982297579C203069C1DbfFE4348c372"
 
   exception:
     subscribe:
@@ -149,16 +154,23 @@ channels:
           items:
             type: object
             properties:
-              address:
+              proposal:
                 type: string
-              amount:
-                type: string
+              donors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    amount:
+                      type: string
         examples:
           - payload:
-              - address: "0x9eB7B2006DC686Ae7330234d9913B8F7283659D1"
-                amount: "100000000000"
-              - address: "0x17F6AD8Ef982297579C203069C1DbfFE4348c372"
-                amount: "200000000"
+              - proposal: "0x9eB7B2006DC686Ae7330234d9913B8F7283659D1"
+              - donors:
+                  - address: "0x17F6AD8Ef982297579C203069C1DbfFE4348c372"
+                    amount: "200000000"
     publish:
       summary: Proposal donors event
       operationId: handle_proposal_donors

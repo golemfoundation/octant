@@ -13,7 +13,7 @@ import styles from './EarnHistoryItem.module.scss';
 import EarnHistoryItemProps from './types';
 
 const EarnHistoryItem: FC<EarnHistoryItemProps> = ({ isLast, ...rest }) => {
-  const { type, amount, isFinalized = true, timestamp } = rest;
+  const { type, amount, isFinalized = true, timestamp, isMultisig = false } = rest;
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.historyItem',
   });
@@ -65,7 +65,9 @@ const EarnHistoryItem: FC<EarnHistoryItemProps> = ({ isLast, ...rest }) => {
               {getHistoryItemDateAndTime(timestamp)}
             </div>
           ) : (
-            type !== 'allocation' && <EarnHistoryTransactionLabel isFinalized={isFinalized} />
+            type !== 'allocation' && (
+              <EarnHistoryTransactionLabel isFinalized={isFinalized} isMultisig={isMultisig} />
+            )
           )}
         </div>
         <DoubleValue

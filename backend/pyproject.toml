@@ -25,6 +25,8 @@ flask-caching = "^2.0.2"
 eventlet = "^0.33.3"
 requests-toolbelt = "^1.0.0"
 pydantic = "^2.6.0"
+pandas = "^2.2.0"
+gmpy2 = "^2.1.5"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.1"

@@ -1,4 +1,3 @@
-from eth_utils import to_checksum_address
 from flask import current_app as app
 from flask_restx import Namespace, fields
 
@@ -92,44 +91,48 @@ class LockedRatio(OctantResource):
         return {"lockedRatio": locked_ratio}
 
 
-@ns.route("/users/<string:address>/<int:epoch>")
+@ns.route("/users/<string:user_address>/<int:epoch>")
 @ns.doc(
     description="Returns user's effective deposit for a finialized or pending epoch.",
     params={
         "epoch": "Epoch number",
-        "address": "User ethereum address in hexadecimal form (case-insensitive, prefixed with 0x)",
+        "user_address": "User ethereum address in hexadecimal form (case-insensitive, prefixed with 0x)",
     },
 )
 class UserEffectiveDeposit(OctantResource):
     @ns.marshal_with(user_effective_deposit_model)
     @ns.response(200, "User effective deposit successfully retrieved")
-    def get(self, address: str, epoch: int):
-        app.logger.debug(f"Getting user {address} effective deposit in epoch {epoch}")
-        result = get_user_effective_deposit(to_checksum_address(address), epoch)
-        app.logger.debug(f"User {address} effective deposit in epoch {epoch}: {result}")
+    def get(self, user_address: str, epoch: int):
+        app.logger.debug(
+            f"Getting user {user_address} effective deposit in epoch {epoch}"
+        )
+        result = get_user_effective_deposit(user_address, epoch)
+        app.logger.debug(
+            f"User {user_address} effective deposit in epoch {epoch}: {result}"
+        )
 
         return {
             "effectiveDeposit": result,
         }
 
 
-@ns.route("/users/<string:address>/estimated_effective_deposit")
+@ns.route("/users/<string:user_address>/estimated_effective_deposit")
 @ns.doc(
     description="Returns user's estimated effective deposit for the current epoch.",
     params={
-        "address": "User ethereum address in hexadecimal form (case-insensitive, prefixed with 0x)",
+        "user_address": "User ethereum address in hexadecimal form (case-insensitive, prefixed with 0x)",
     },
 )
 class UserEstimatedEffectiveDeposit(OctantResource):
     @ns.marshal_with(user_effective_deposit_model)
     @ns.response(200, "User estimated effective deposit successfully retrieved")
-    def get(self, address: str):
+    def get(self, user_address: str):
         app.logger.debug(
-            f"Getting user {address} estimated effective deposit in the current epoch"
+            f"Getting user {user_address} estimated effective deposit in the current epoch"
         )
-        result = estimate_user_effective_deposit(to_checksum_address(address))
+        result = estimate_user_effective_deposit(user_address)
         app.logger.debug(
-            f"User {address} estimated effective deposit in the current epoch: {result}"
+            f"User {user_address} estimated effective deposit in the current epoch: {result}"
         )
 
         return {

@@ -65,21 +65,29 @@ def validate_epoch_num(epoch_num: int):
 
 
 def validate_epoch_state(epoch_num: int, epoch_state: EpochState):
-    pending_snapshot = database.pending_epoch_snapshot.get_by_epoch(epoch_num)
-    finalized_snapshot = database.finalized_epoch_snapshot.get_by_epoch(epoch_num)
+    has_pending_snapshot = _has_pending_epoch_snapshot(epoch_num)
+    has_finalized_snapshot = _has_finalized_epoch_snapshot(epoch_num)
 
     if epoch_state == EpochState.PRE_PENDING:
-        if pending_snapshot is not None:
+        if has_pending_snapshot:
             raise InvalidEpoch()
 
     if epoch_state == EpochState.PENDING:
-        if pending_snapshot is None:
+        if not has_pending_snapshot:
             raise InvalidEpoch()
 
     if epoch_state == EpochState.FINALIZING:
-        if pending_snapshot is None or finalized_snapshot is not None:
+        if has_finalized_snapshot or not has_pending_snapshot:
             raise InvalidEpoch()
 
     if epoch_state == EpochState.FINALIZED:
-        if pending_snapshot is None or finalized_snapshot is None:
+        if not (has_pending_snapshot and has_finalized_snapshot):
             raise InvalidEpoch()
+
+
+def _has_pending_epoch_snapshot(epoch_num: int):
+    return database.pending_epoch_snapshot.get_by_epoch(epoch_num) is not None
+
+
+def _has_finalized_epoch_snapshot(epoch_num: int):
+    return database.finalized_epoch_snapshot.get_by_epoch(epoch_num) is not None

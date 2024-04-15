@@ -15,7 +15,8 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useLock from 'hooks/mutations/useLock';
 import useUnlock from 'hooks/mutations/useUnlock';
 import useDepositValue from 'hooks/queries/useDepositValue';
-import useProjectsContract from 'hooks/queries/useProjectsContract';
+import useIsContract from 'hooks/queries/useIsContract';
+import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import toastService from 'services/toastService';
 import useTransactionLocalStore from 'store/transactionLocal/store';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
@@ -30,6 +31,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { isDesktop } = useMediaQuery();
+  const { data: isContract } = useIsContract();
   const [transactionHashForEtherscan, setTransactionHashForEtherscan] = useState<
     string | undefined
   >(undefined);
@@ -53,7 +55,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
   const buttonUseMaxRef = useRef<HTMLButtonElement>(null);
 
   const { data: availableFundsGlm } = useAvailableFundsGlm();
-  const { data: projectsAddresses } = useProjectsContract();
+  const { data: projectsEpoch } = useProjectsEpoch();
   const { data: depositsValue } = useDepositValue();
 
   useEffect(() => {
@@ -105,12 +107,15 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
   const onSuccess = async ({ hash, value }): Promise<void> => {
     addTransactionPending({
       amount: value,
+      isMultisig: isContract,
       // GET /history uses microseconds. Normalization here.
       timestamp: (Date.now() * 1000).toString(),
       transactionHash: hash,
       type: currentMode,
     });
-    setTransactionHashForEtherscan(hash);
+    if (!isContract) {
+      setTransactionHashForEtherscan(hash);
+    }
   };
 
   const onReset: OnReset = ({ setFieldValue, newMode = 'lock' }) => {
@@ -129,7 +134,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
   const unlockMutation = useUnlock({ onError, onMutate, onSuccess });
 
   const onApproveOrDeposit = async ({ valueToDeposeOrWithdraw }): Promise<void> => {
-    const isSignedInAsAProject = projectsAddresses!.includes(address!);
+    const isSignedInAsAProject = projectsEpoch!.projectsAddresses.includes(address!);
 
     if (isSignedInAsAProject) {
       toastService.showToast({

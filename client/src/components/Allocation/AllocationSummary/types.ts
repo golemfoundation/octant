@@ -1,6 +1,6 @@
-import { ApiPostAllocateLeverageResponse } from 'api/calls/allocate';
+import { AllocateSimulate } from 'hooks/mutations/useAllocateSimulate';
 
 export default interface AllocationSummaryProps {
-  allocationSimulated?: ApiPostAllocateLeverageResponse;
+  allocationSimulated?: AllocateSimulate;
   isLoadingAllocateSimulate: boolean;
 }

@@ -28,12 +28,24 @@ class CalculatedOctantRewards(Model):
             context
         )
         rewards_settings = context.epoch_settings.octant_rewards
+        octant_rewards = calculate_rewards(
+            rewards_settings, eth_proceeds, total_effective_deposit
+        )
         (
             locked_ratio,
             total_rewards,
             all_individual_rewards,
             op_cost,
-        ) = calculate_rewards(rewards_settings, eth_proceeds, total_effective_deposit)
+            ppf,
+            community_fund,
+        ) = (
+            octant_rewards.locked_ratio,
+            octant_rewards.total_rewards,
+            octant_rewards.all_individual_rewards,
+            octant_rewards.operational_cost,
+            octant_rewards.ppf_value,
+            octant_rewards.community_fund,
+        )
 
         return OctantRewardsDTO(
             staking_proceeds=eth_proceeds,
@@ -42,4 +54,6 @@ class CalculatedOctantRewards(Model):
             total_rewards=total_rewards,
             individual_rewards=all_individual_rewards,
             operational_cost=op_cost,
+            ppf=ppf,
+            community_fund=community_fund,
         )

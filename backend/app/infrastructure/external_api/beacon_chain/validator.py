@@ -1,10 +1,12 @@
 import requests
+
+from app.constants import BEACONCHAIN_API
 from app.exceptions import ExternalApiException
 from app.infrastructure.exception_handler import ExceptionHandler
 from web3 import Web3
 from eth_typing import ChecksumAddress
 
-VALIDATOR_API_URL_BASE = "https://beaconcha.in/api/v1/validator"
+VALIDATOR_API_URL_BASE = f"{BEACONCHAIN_API}/v1/validator"
 
 
 def get_validators_by_address(validator_address: str) -> list[dict]:
@@ -31,7 +33,7 @@ def get_validators_by_address(validator_address: str) -> list[dict]:
         return all_validators
     except requests.exceptions.RequestException as e:
         ExceptionHandler.print_stacktrace(e)
-        raise ExternalApiException(api_url, e, 500)
+        raise ExternalApiException(e, 500)
 
 
 def get_detailed_validators_by_indices(indices: str) -> list:
@@ -44,4 +46,4 @@ def get_detailed_validators_by_indices(indices: str) -> list:
         return list(json_response["data"])
     except requests.exceptions.RequestException as e:
         ExceptionHandler.print_stacktrace(e)
-        raise ExternalApiException(VALIDATOR_API_URL_BASE, e, 500)
+        raise ExternalApiException(e, 500)

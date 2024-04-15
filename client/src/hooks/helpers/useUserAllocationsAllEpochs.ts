@@ -22,7 +22,19 @@ export default function useUserAllocationsAllEpochs(): { data: Response; isFetch
   const userAllocationsAllEpochs: UseQueryResult<ApiResponse>[] = useQueries({
     queries: [...Array(currentEpoch).keys()].map(epoch => ({
       enabled: !!address && currentEpoch !== undefined && currentEpoch > 1,
-      queryFn: () => apiGetUserAllocations(address as string, epoch),
+      queryFn: async () => {
+        // For Epoch 0 error 400 is returned.
+        try {
+          return await apiGetUserAllocations(address as string, epoch);
+        } catch (error) {
+          return new Promise<ApiResponse>(resolve => {
+            resolve({
+              allocations: [],
+              isManuallyEdited: false,
+            });
+          });
+        }
+      },
       queryKey: QUERY_KEYS.userAllocations(epoch),
       retry: false,
     })),
@@ -43,16 +55,16 @@ export default function useUserAllocationsAllEpochs(): { data: Response; isFetch
 
   return {
     data: userAllocationsAllEpochs.map(({ data }, index) => {
-      const userAllocationsFromBackend = data!.allocations.map(element => ({
+      const userAllocationsFromBackend = data?.allocations.map(element => ({
         address: element.address,
         epoch: index,
         value: parseUnitsBigInt(element.amount, 'wei'),
       }));
 
       return {
-        elements: userAllocationsFromBackend.filter(({ value }) => value !== 0n),
+        elements: userAllocationsFromBackend?.filter(({ value }) => value !== 0n) || [],
         hasUserAlreadyDoneAllocation: !!userAllocationsFromBackend?.length,
-        isManuallyEdited: !!data!.isManuallyEdited,
+        isManuallyEdited: !!data?.isManuallyEdited,
       };
     }),
     isFetching: false,

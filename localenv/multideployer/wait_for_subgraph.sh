@@ -9,6 +9,7 @@ function retry {
     while : ; do
         set -x
         curl  \
+            -s \
             -X POST "$SUBGRAPH_ENDPOINT" \
             -H "Content-Type: application/json" \
             --data-raw '{"query":"{\n  epoches {\n    id\n  }\n}","variables":null,"extensions":{"headers":null}}' \

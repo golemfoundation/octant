@@ -39,16 +39,13 @@ export default function useProjectDonors(
   });
 
   return useQuery({
-    enabled: !!projectAddress && (epoch !== undefined || !!(currentEpoch && currentEpoch > 1)),
-    queryFn: () =>
-      apiGetProjectDonors(
-        projectAddress,
-        epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
-      ),
-    queryKey: QUERY_KEYS.projectDonors(
-      projectAddress,
-      epoch || (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!),
-    ),
+    enabled:
+      !!projectAddress &&
+      !!currentEpoch &&
+      currentEpoch > 1 &&
+      (isDecisionWindowOpen === true || epoch !== undefined),
+    queryFn: () => apiGetProjectDonors(projectAddress, epoch || currentEpoch! - 1),
+    queryKey: QUERY_KEYS.projectDonors(projectAddress, epoch || currentEpoch! - 1),
     select: response => mapDataToProjectDonors(response),
     staleTime: Infinity,
     ...options,

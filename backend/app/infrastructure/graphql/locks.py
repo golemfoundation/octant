@@ -1,6 +1,8 @@
 from typing import Literal, TypedDict
-from flask import current_app as app, g as request_context
+from flask import current_app as app
 from gql import gql
+
+from app.extensions import gql_factory
 
 
 class LockEvent(TypedDict):
@@ -9,6 +11,7 @@ class LockEvent(TypedDict):
     amount: int
     timestamp: int
     user: str
+    transactionHash: str
 
 
 def get_user_locks_history(
@@ -40,9 +43,9 @@ def get_user_locks_history(
     }
     app.logger.debug(f"[Subgraph] Getting user {user_address} locks")
 
-    partial_result = request_context.graphql_client.execute(
-        query, variable_values=variables
-    )["lockeds"]
+    partial_result = gql_factory.build().execute(query, variable_values=variables)[
+        "lockeds"
+    ]
 
     result = []
 
@@ -87,9 +90,7 @@ def get_locks_by_timestamp_range(from_ts: int, to_ts: int) -> list[LockEvent]:
         "toTimestamp": to_ts,
     }
     app.logger.debug(f"[Subgraph] Getting locks in timestamp range {from_ts} - {to_ts}")
-    result = request_context.graphql_client.execute(query, variable_values=variables)[
-        "lockeds"
-    ]
+    result = gql_factory.build().execute(query, variable_values=variables)["lockeds"]
     app.logger.debug(f"[Subgraph] Received locks: {result}")
 
     return result
@@ -123,9 +124,7 @@ def get_last_lock_before(user_address: str, before: int) -> LockEvent | None:
     app.logger.debug(
         f"[Subgraph] Getting user {user_address} last lock before {before}"
     )
-    locks = request_context.graphql_client.execute(query, variable_values=variables)[
-        "lockeds"
-    ]
+    locks = gql_factory.build().execute(query, variable_values=variables)["lockeds"]
     app.logger.debug(f"[Subgraph] Received locks: {locks}")
 
     return locks[0] if locks else None
@@ -161,9 +160,7 @@ def get_locks_by_address_and_timestamp_range(
     app.logger.debug(
         f"[Subgraph] Getting user {user_address} locks in timestamp range {from_ts} - {to_ts}"
     )
-    result = request_context.graphql_client.execute(query, variable_values=variables)[
-        "lockeds"
-    ]
+    result = gql_factory.build().execute(query, variable_values=variables)["lockeds"]
     app.logger.debug(f"[Subgraph] Received locks: {result}")
 
     return result

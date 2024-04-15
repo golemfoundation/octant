@@ -1,5 +1,7 @@
-from flask import current_app as app, g as request_context
+from flask import current_app as app
 from gql import gql
+
+from app.extensions import gql_factory
 
 
 def get_user_withdrawals_history(user_address: str, from_timestamp: int, limit: int):
@@ -30,9 +32,9 @@ def get_user_withdrawals_history(user_address: str, from_timestamp: int, limit: 
     app.logger.debug(
         f"[Subgraph] Getting user {user_address} withdrawals before ts {from_timestamp}"
     )
-    partial_result = request_context.graphql_client.execute(
-        query, variable_values=variables
-    )["withdrawals"]
+    partial_result = gql_factory.build().execute(query, variable_values=variables)[
+        "withdrawals"
+    ]
 
     result = []
 
@@ -79,7 +81,7 @@ def get_withdrawals_by_address_and_timestamp_range(
         f"[Subgraph] Getting user {user_address} withdrawals in timestamp range {from_timestamp} - {to_timestamp}"
     )
 
-    result = request_context.graphql_client.execute(query, variable_values=variables)[
+    result = gql_factory.build().execute(query, variable_values=variables)[
         "withdrawals"
     ]
 

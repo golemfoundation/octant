@@ -33,7 +33,7 @@ trigger_snapshot(){
 }
 
 log Waiting for backend
-curl  --retry-connrefused --retry 20 --retry-delay 5 -s \
+curl  --retry-connrefused --retry 120 --retry-delay 5 -s \
   -X 'GET' "${BACKEND_URL}/info/healthcheck" \
   -H 'Accept: application/json' 
 

@@ -1,6 +1,7 @@
 import { Root, QueryKeys } from './types';
 
 export const ROOTS: Root = {
+  bytecode: 'bytecode',
   calculateRewards: 'calculateRewards',
   cryptoValues: 'cryptoValues',
   depositAt: 'depositAt',
@@ -18,7 +19,7 @@ export const ROOTS: Root = {
   patronMode: 'patronMode',
   projectDonors: 'projectDonors',
   projectRewardsThreshold: 'projectRewardsThreshold',
-  projectsContract: 'projectsContract',
+  projectsEpoch: 'projectsEpoch',
   projectsIpfsResults: 'projectsIpfsResults',
   userAllocationNonce: 'userAllocationNonce',
   userAllocations: 'userAllocations',
@@ -27,6 +28,7 @@ export const ROOTS: Root = {
 
 export const QUERY_KEYS: QueryKeys = {
   blockNumber: ['blockNumber'],
+  bytecode: userAddress => [ROOTS.bytecode, userAddress],
   calculateRewards: (amount, days) => [ROOTS.calculateRewards, amount, days.toString()],
   cryptoValues: fiatCurrency => [ROOTS.cryptoValues, fiatCurrency],
   currentEpoch: ['currentEpoch'],
@@ -41,6 +43,7 @@ export const QUERY_KEYS: QueryKeys = {
   epochTimestampHappenedIn: timestamp => [ROOTS.epochTimestampHappenedIn, timestamp.toString()],
   epochUnusedRewards: epoch => [ROOTS.epochUnusedRewards, epoch.toString()],
   epochesEndTime: epochNumber => [ROOTS.epochesEndTime, epochNumber.toString()],
+  epochsIndexedBySubgraph: ['epochsIndexedBySubgraph'],
   estimatedEffectiveDeposit: userAddress => [ROOTS.estimatedEffectiveDeposit, userAddress],
   history: ['history'],
   individualProjectRewards: ['individualProjectRewards'],
@@ -57,7 +60,7 @@ export const QUERY_KEYS: QueryKeys = {
     epochNumber.toString(),
   ],
   projectRewardsThreshold: epochNumber => [ROOTS.projectRewardsThreshold, epochNumber.toString()],
-  projectsContract: epochNumber => [ROOTS.projectsContract, epochNumber.toString()],
+  projectsEpoch: epochNumber => [ROOTS.projectsEpoch, epochNumber.toString()],
   projectsIpfsResults: (projectAddress, epochNumber) => [
     ROOTS.projectsIpfsResults,
     projectAddress,

@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { useSignTypedData } from 'wagmi';
+import { useAccount, useSignTypedData } from 'wagmi';
 
+import { SignatureOpType, apiPostPendingMultisigSignatures } from 'api/calls/multisigSignatures';
 import { handleError } from 'api/errorMessages';
 import networkConfig from 'constants/networkConfig';
+import useIsContract from 'hooks/queries/useIsContract';
 import { getAllocationsMapped } from 'hooks/utils/utils';
 import { WebsocketEmitEvent } from 'types/websocketEvents';
 import { AllocationValues } from 'views/AllocationView/types';
@@ -37,6 +39,9 @@ const types = {
 };
 
 export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): UseAllocate {
+  const { address } = useAccount();
+  const { data: isContract } = useIsContract();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { signTypedData } = useSignTypedData({
     domain,
@@ -53,6 +58,9 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
     },
     onSuccess: async (data, variables) => {
       const { isManuallyEdited, ...restVariables } = variables.message;
+      if (isContract) {
+        return;
+      }
       websocketService().then(socket => {
         socket.default.emit(
           WebsocketEmitEvent.allocate,
@@ -60,6 +68,7 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
             isManuallyEdited,
             payload: restVariables,
             signature: data,
+            userAddress: address,
           }),
           () => {
             if (onSuccess) {
@@ -75,7 +84,9 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
   });
 
   const allocate = (allocations: AllocationValues, isManuallyEdited: boolean) => {
-    setIsLoading(true);
+    if (!isContract) {
+      setIsLoading(true);
+    }
     const allocationsMapped = getAllocationsMapped(allocations);
     const message = {
       allocations: allocationsMapped,
@@ -88,6 +99,20 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
       primaryType: 'AllocationPayload',
       types,
     });
+
+    if (isContract) {
+      apiPostPendingMultisigSignatures(
+        address!,
+        {
+          isManuallyEdited,
+          payload: {
+            allocations: allocationsMapped,
+            nonce,
+          },
+        },
+        SignatureOpType.ALLOCATION,
+      );
+    }
   };
 
   return { emit: allocate, isLoading };

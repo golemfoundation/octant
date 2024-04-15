@@ -14,6 +14,7 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
   onAllocate,
   onResetValues,
   setCurrentView,
+  isWaitingForWalletConfirmationMultisig,
 }) => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.allocationNavigation',
@@ -28,9 +29,9 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
     onClick: onResetValues,
   };
   const buttonNextProps =
-    currentView === 'edit'
+    isWaitingForWalletConfirmationMultisig || currentView === 'edit'
       ? {
-          label: t('confirm'),
+          label: isWaitingForWalletConfirmationMultisig ? t('waiting') : t('confirm'),
           onClick: onAllocate,
         }
       : {

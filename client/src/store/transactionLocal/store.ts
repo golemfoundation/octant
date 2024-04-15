@@ -65,8 +65,8 @@ export default getStoreWithMeta<TransactionLocalData, TransactionLocalMethods>({
        * We identify that there are some transactions being processed by an alterative of these two.
        */
       const areAnyTransactionsWaiting = !!get().data.transactionsPending?.some(
-        ({ isWaitingForTransactionInitialized, isFinalized }) =>
-          isWaitingForTransactionInitialized && !isFinalized,
+        ({ isWaitingForTransactionInitialized, isFinalized, isMultisig }) =>
+          isWaitingForTransactionInitialized && !isFinalized && !isMultisig,
       );
       set(state => ({
         data: {

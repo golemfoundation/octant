@@ -20,7 +20,7 @@ function checkProjectItemElements(index, name, isPatronMode = false): Chainable<
   cy.get('[data-test^=ProjectsView__ProjectsListItem]')
     .eq(index)
     .should('be.visible')
-    .get('[data-test=ProjectsListItem__name]')
+    .find('[data-test=ProjectsListItem__name]')
     .should('be.visible')
     .contains(name);
   cy.get('[data-test^=ProjectsView__ProjectsListItem')

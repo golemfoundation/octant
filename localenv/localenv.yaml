@@ -15,7 +15,7 @@ services:
 
 
   backend-postgres:
-    image: 'postgres:13'
+    image: postgres
     ports:
       - '5432:5432'
     environment:
@@ -28,8 +28,9 @@ services:
 
   backend:
     image: octant/backend:latest
+    platform: linux/amd64
     ports:
-      - '5000:5000'
+      - '5010:5000'
     environment:
       CONTRACTS_DEPLOYER_URL: 'http://multideployer:8022/?name=octant'
 

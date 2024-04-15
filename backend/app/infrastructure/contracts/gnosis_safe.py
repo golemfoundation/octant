@@ -12,3 +12,6 @@ class GnosisSafe(SmartContract):
 
         result = self.contract.functions.isValidSignature(msg_hash, signature).call()
         return result == bytes.fromhex(EIP1271_MAGIC_VALUE_BYTES)
+
+    def get_message_hash(self, message: bytes) -> str:
+        return self.contract.functions.getMessageHash(message).call()
