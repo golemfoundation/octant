@@ -7,9 +7,8 @@ import { VerificationResult } from "../runner";
 const PROPOSALS_NO = 24
 
 function getThreshold(individualAllocations: Map<Address, bigint>): bigint {
-  const allocationsSum = Array.from(individualAllocations.entries()).reduce((acc, [_, val]) => acc + val, BigInt(0)) 
-  const threshold = allocationsSum / (BigInt(PROPOSALS_NO) * BigInt(2))
-  return threshold
+  const allocationsSum = Array.from(individualAllocations.entries()).reduce((acc, [_, val]) => acc + val, BigInt(0))
+  return allocationsSum / (BigInt(PROPOSALS_NO) * BigInt(2))
 }
 
 function getUserAllocationsForProjectsAboveThreshold(context: Context): Map<Address, bigint> {
@@ -27,22 +26,22 @@ export function verifyProjectsBelowThreshold(context: Context): VerificationResu
   const projectsBelowThreshold = Array.from(individualDonations.entries()).filter(([_, v]) => v <= threshold).map(([p,_]) => p)
   const rewards = rewardsByProject(context)
 
-  return assertAll(projectsBelowThreshold, (project) => !rewards.has(project))  
+  return assertAll(projectsBelowThreshold, (project) => !rewards.has(project))
 }
 
 export function verifyUserDonationsVsRewards(context: Context): VerificationResult {
   const projectsAboveThreshold = Array.from(getUserAllocationsForProjectsAboveThreshold(context).entries())
   const rewards = rewardsByProject(context)
-  
+
   return assertAll(projectsAboveThreshold, ([proposal, allocated]) =>  assertEq(allocated, rewards.get(proposal)!.allocated, BigInt(100), true))
 }
 
 export function verifyRewardsVsUserDonations(context: Context): VerificationResult {
   const projectsAboveThreshold = getUserAllocationsForProjectsAboveThreshold(context)
   const rewards = Array.from(rewardsByProject(context).entries())
-  
+
   return assertAll(rewards, ([proposal, reward]: [Address, Reward]) =>  assertEq(reward.allocated, projectsAboveThreshold.get(proposal)!, BigInt(100), true))
-  
+
 }
 
 export function verifyMatchedFunds(context: Context): VerificationResult {
@@ -56,13 +55,19 @@ export function verifyMatchedFunds(context: Context): VerificationResult {
     const matched = matchingFund * allocated / totalAllocations
     return assertEq(matched, rewards.get(proposal)!.matched, BigInt(100), true)
   })
-  
+
 }
 
 export function verifyMatchingFundFromEpochInfo(context: Context): VerificationResult {
-  const verifyMatchedRewards = [context.epochInfo.totalRewards - context.epochInfo.individualRewards + context.epochInfo.patronsRewards, context.epochInfo.matchedRewards]
+  const verifyMatchedRewards = [context.epochInfo.totalRewards - context.epochInfo.ppf + context.epochInfo.patronsRewards, context.epochInfo.matchedRewards]
 
   return assertAll([verifyMatchedRewards], ([value, expected]) => assertEq(value, expected))
+}
+
+export function verifyAllEpochRewards(context: Context): VerificationResult {
+  const verifyEpochRewards = [context.epochInfo.ppf + context.epochInfo.matchedRewards + context.epochInfo.communityFund + context.epochInfo.operationalCost, context.epochInfo.stakingProceeds]
+
+  return assertAll([verifyEpochRewards], ([value, expected]) => assertEq(value, expected))
 }
 
 export function verifyTotalWithdrawals(context: Context): VerificationResult {
@@ -73,6 +78,6 @@ export function verifyTotalWithdrawals(context: Context): VerificationResult {
     .map(([user, donationsSum]) => context.budgets.get(user)! - donationsSum)
     .reduce((acc, user_claimed) => acc + user_claimed, BigInt(0))
 
-  const rewards = context.rewards.reduce((acc, reward) => acc + reward.allocated + reward.matched, BigInt(0)) 
+  const rewards = context.rewards.reduce((acc, reward) => acc + reward.allocated + reward.matched, BigInt(0))
   return assertEq(claimed + rewards, context.epochInfo.totalWithdrawals)
 }

@@ -1,7 +1,18 @@
 /* eslint-disable no-console */
 import { Axios } from "axios"
 
-import { AllocationImpl, Allocation, Deserializable, EpochInfo, EpochInfoImpl, RewardImpl, Reward, UserBudgetImpl, UserBudget } from "./models";
+import {
+  AllocationImpl,
+  Allocation,
+  Deserializable,
+  EpochInfo,
+  EpochInfoImpl,
+  RewardImpl,
+  Reward,
+  UserBudgetImpl,
+  UserBudget,
+  AllocationRecord
+} from "./models";
 
 const REQUEST_TIMEOUT = 150_000;
 
@@ -19,7 +30,7 @@ export class HttpFetcher {
 
   async _get_array <T>(url: string, resource: string, Factory: {new(): Deserializable<T>}, unwrapper?: (data: any) => any): Promise<Array<T> | null>{
 
-    const dataUnwrapper = unwrapper ?? ((data: any) => data) 
+    const dataUnwrapper = unwrapper ?? ((data: any) => data)
 
     const mapper = (data: any): Array<T> => dataUnwrapper(JSON.parse(data)).map((elem: any): T => new Factory().from(elem))
     return this._do_get(url, resource, mapper)
@@ -42,11 +53,11 @@ export class HttpFetcher {
 
 
   async userBudgets(epoch: number): Promise<UserBudget[] | null>{
-    return this._get_array(`/rewards/budgets/epoch/${epoch}`, "users' budgets", UserBudgetImpl)
+    return this._get_array(`/rewards/budgets/epoch/${epoch}`, "users' budgets", UserBudgetImpl, (data: any) => data.budgets)
   }
 
-  async allocations(epoch: number): Promise<Allocation[] | null> {
-    return this._get_array(`/allocations/epoch/${epoch}`, "users' allocations", AllocationImpl)
+  async allocations(epoch: number): Promise<AllocationRecord[] | null> {
+    return this._get_array(`/allocations/epoch/${epoch}`, "users' allocations", AllocationImpl, (data: any) => data.allocations)
   }
 
   async rewards(epoch: number): Promise<Reward[] | null>{
