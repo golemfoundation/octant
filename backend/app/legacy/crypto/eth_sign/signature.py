@@ -5,7 +5,10 @@ from web3.exceptions import ContractLogicError
 
 from app.legacy.crypto.account import is_contract
 from app.legacy.crypto.eip1271 import is_valid_signature
-from app.modules.common.signature import hash_signable_message, EncodingStandardFor
+from app.modules.common.crypto.signature import (
+    hash_signable_message,
+    EncodingStandardFor,
+)
 
 
 def verify_signed_message(user_address: str, msg_text: str, signature: str) -> bool:

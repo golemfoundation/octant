@@ -16,7 +16,7 @@ export default function useEpochAllocations(
   options?: UseQueryOptions<Response, unknown, EpochAllocations, any>,
 ): UseQueryResult<EpochAllocations, unknown> {
   return useQuery({
-    queryFn: () => apiGetEpochAllocations(epoch),
+    queryFn: ({ signal }) => apiGetEpochAllocations(epoch, signal),
     queryKey: QUERY_KEYS.epochAllocations(epoch),
     select: response => {
       return response.allocations.reduce((acc, curr) => {

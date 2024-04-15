@@ -1,4 +1,4 @@
-from app.modules.common.signature import (
+from app.modules.common.crypto.signature import (
     verify_signed_message,
     encode_for_signing,
     EncodingStandardFor,

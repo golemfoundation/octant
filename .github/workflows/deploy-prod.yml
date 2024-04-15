@@ -9,7 +9,7 @@ jobs:
   run-deployment:
     name: Run Deployment
     runs-on:
-    - metal
+    - general
     steps:
       - name: Sanitise variables
         id: sanitise-vars

@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from web3 import Web3
 
 from app.modules.common import parse_bool
+from app.constants import DEFAULT_MAINNET_PROPOSAL_CIDS
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -60,6 +61,10 @@ class Config(object):
     # TODO Remove this setting after the new architecture is merged
     EPOCH_2_STAKING_PROCEEDS_SURPLUS = int(
         os.getenv("EPOCH_2_STAKING_PROCEEDS_SURPLUS", 0)
+    )
+
+    MAINNET_PROPOSAL_CIDS = os.getenv(
+        "MAINNET_PROPOSAL_CIDS", DEFAULT_MAINNET_PROPOSAL_CIDS
     )
 
 
@@ -125,6 +130,7 @@ class TestConfig(Config):
     # 6_050000000_000000000 - extra operations cost during the epoch
     EPOCH_2_STAKING_PROCEEDS_SURPLUS = 3_487357664_505573437
     WITHDRAWALS_TARGET_CONTRACT_ADDRESS = "0x1234123456123456123456123456123456123456"
+    MAINNET_PROPOSAL_CIDS = DEFAULT_MAINNET_PROPOSAL_CIDS
 
 
 def get_config():

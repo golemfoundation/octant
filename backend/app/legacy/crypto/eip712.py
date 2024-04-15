@@ -6,9 +6,10 @@ from flask import current_app as app
 
 from app.extensions import w3
 from app.modules.dto import UserAllocationPayload
-from app.modules.common.signature import encode_for_signing, EncodingStandardFor
+from app.modules.common.crypto.signature import encode_for_signing, EncodingStandardFor
 
 
+# TODO remove crypto package from legacy: https://linear.app/golemfoundation/issue/OCT-1523/clean-up-crypto-legacy-package
 def build_domain():
     return {
         "name": "Octant",

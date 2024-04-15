@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import PieChart from 'components/ui/PieChart';
+import networkConfig from 'constants/networkConfig';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
 import useEpochInfo from 'hooks/queries/useEpochInfo';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
@@ -30,6 +31,8 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
 
   const projectCosts = epochInfo ? epochInfo.operationalCost : BigInt(0);
   const staking = epochInfo ? epochInfo.staking : BigInt(0);
+  const ppf = epochInfo ? epochInfo.ppf : BigInt(0);
+  const communityFund = epochInfo ? epochInfo.communityFund : BigInt(0);
 
   const donatedToProjects = epochInfo
     ? epochInfo.matchedRewards +
@@ -37,37 +40,78 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
       ethBelowThreshold
     : BigInt(0);
 
+  /**
+   * epochInfo.ppf includes epochInfo.individualRewards.
+   * Half of PPF goes to the users to manage.
+   * Half of PPR goes to "PPF" section.
+   */
   const claimedByUsers = epochInfo
-    ? epochInfo.individualRewards - totalUserDonationsWithPatronRewards - unusedRewards
+    ? epochInfo.ppf / 2n - totalUserDonationsWithPatronRewards - unusedRewards
     : BigInt(0);
 
-  const total = claimedByUsers + donatedToProjects + projectCosts + staking + leftover;
+  const total =
+    claimedByUsers + donatedToProjects + projectCosts + staking + ppf + communityFund + leftover;
+
+  // Testnet has much lower staking proceeds. Number of places needs to be bigger to see more than 0.
+  const numberOfDecimalPlacesToUse = networkConfig.isTestnet ? 10 : 2;
 
   const data = [
     {
       label: t('donatedToProjects'),
       value: getNumberValue(donatedToProjects),
-      valueLabel: getFormattedEthValue(donatedToProjects, true, false, false, 2).fullString,
+      valueLabel: getFormattedEthValue(
+        donatedToProjects,
+        true,
+        false,
+        false,
+        numberOfDecimalPlacesToUse,
+      ).fullString,
     },
     {
       label: t('leftover', { epochNumber: epoch + 1 }),
       value: getNumberValue(leftover),
-      valueLabel: getFormattedEthValue(leftover, true, false, false, 2).fullString,
+      valueLabel: getFormattedEthValue(leftover, true, false, false, numberOfDecimalPlacesToUse)
+        .fullString,
     },
     {
       label: t('projectCosts'),
       value: getNumberValue(projectCosts),
-      valueLabel: getFormattedEthValue(projectCosts, true, false, false, 2).fullString,
+      valueLabel: getFormattedEthValue(projectCosts, true, false, false, numberOfDecimalPlacesToUse)
+        .fullString,
     },
     {
       label: t('claimedByUsers'),
       value: getNumberValue(claimedByUsers),
-      valueLabel: getFormattedEthValue(claimedByUsers, true, false, false, 2).fullString,
+      valueLabel: getFormattedEthValue(
+        claimedByUsers,
+        true,
+        false,
+        false,
+        numberOfDecimalPlacesToUse,
+      ).fullString,
     },
     {
       label: t('staking'),
       value: getNumberValue(staking),
-      valueLabel: getFormattedEthValue(staking, true, false, false, 2).fullString,
+      valueLabel: getFormattedEthValue(staking, true, false, false, numberOfDecimalPlacesToUse)
+        .fullString,
+    },
+    {
+      label: t('communityFund'),
+      value: getNumberValue(communityFund),
+      valueLabel: getFormattedEthValue(
+        communityFund,
+        true,
+        false,
+        false,
+        numberOfDecimalPlacesToUse,
+      ).fullString,
+    },
+    {
+      label: t('ppf'),
+      value: getNumberValue(ppf / 2n),
+      valueLabel: getFormattedEthValue(ppf / 2n, true, false, false, numberOfDecimalPlacesToUse)
+        .fullString,
     },
   ];
 

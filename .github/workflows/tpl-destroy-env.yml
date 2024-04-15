@@ -35,7 +35,7 @@ jobs:
   destroy:
     name: Destroy Environment
     runs-on:
-    - metal
+    - general
     if: (github.event_name == 'issue_comment' && contains(github.event.comment.body, '/destroy')) || github.event_name != 'issue_comment'
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:2ea6d57c

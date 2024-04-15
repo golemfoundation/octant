@@ -103,3 +103,9 @@ class WithdrawableEth:
 class SignatureOpType(StrEnum):
     TOS = "tos"
     ALLOCATION = "allocation"
+
+
+@dataclass()
+class ProjectsMetadata(JSONWizard):
+    proposals_cid: str
+    projects_addresses: List[str]

@@ -23,12 +23,13 @@ def create_multisig_signature(
     address: str,
     msg: str,
     msg_hash: str,
+    safe_msg_hash: str,
     op_type: SignatureOpType,
     user_ip: str,
     status: SigStatus = SigStatus.PENDING,
 ):
     database.multisig_signature.save_signature(
-        address, op_type, msg, msg_hash, user_ip, status
+        address, op_type, msg, msg_hash, safe_msg_hash, user_ip, status
     )
     db.session.commit()
 

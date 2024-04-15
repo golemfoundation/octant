@@ -10,6 +10,7 @@ import Svg from 'components/ui/Svg';
 import Tooltip from 'components/ui/Tooltip';
 import env from 'env';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
@@ -28,7 +29,9 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
 }) => {
   const { ipfsGateways } = env;
   const { i18n } = useTranslation('translation', { keyPrefix: 'views.project' });
+  const [isLinkCopied, setIsLinkCopied] = useState(false);
   const { epoch: epochUrl } = useParams();
+  const { data: currentEpoch } = useCurrentEpoch();
   const { data: userAllocations } = useUserAllocations(epoch);
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { allocations, addAllocations, removeAllocations } = useAllocationsStore(state => ({
@@ -44,9 +47,9 @@ const ProjectListItemHeader: FC<ProjectListItemHeaderProps> = ({
     userAllocationsElements: userAllocations?.elements,
   });
 
-  const [isLinkCopied, setIsLinkCopied] = useState(false);
-
-  const isArchivedProject = epoch !== undefined;
+  const epochUrlInt = parseInt(epochUrl!, 10);
+  const isArchivedProject =
+    epochUrlInt < (isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch!);
   const isAllocatedTo = !!userAllocations?.elements.find(
     ({ address: userAllocationAddress }) => userAllocationAddress === address,
   );

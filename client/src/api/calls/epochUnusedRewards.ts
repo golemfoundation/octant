@@ -1,3 +1,5 @@
+import { GenericAbortSignal } from 'axios';
+
 import env from 'env';
 import apiService from 'services/apiService';
 
@@ -6,6 +8,11 @@ export type Response = {
   value: string; // WEI
 };
 
-export async function apiGetEpochUnusedRewards(epoch: number): Promise<Response> {
-  return apiService.get(`${env.serverEndpoint}rewards/unused/${epoch}`).then(({ data }) => data);
+export async function apiGetEpochUnusedRewards(
+  epoch: number,
+  signal?: GenericAbortSignal,
+): Promise<Response> {
+  return apiService
+    .get(`${env.serverEndpoint}rewards/unused/${epoch}`, { signal })
+    .then(({ data }) => data);
 }

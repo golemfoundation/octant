@@ -10,6 +10,7 @@ import gql
 import pytest
 from flask import g as request_context
 from flask.testing import FlaskClient
+from requests import RequestException
 from web3 import Web3
 
 from app import create_app
@@ -26,6 +27,7 @@ from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
 from app.modules.common.verifier import Verifier
 from app.modules.dto import AccountFundsDTO, AllocationItem, SignatureOpType
 from app.settings import DevConfig, TestConfig
+from app.exceptions import ExternalApiException
 from tests.helpers import make_user_allocation
 from tests.helpers.constants import (
     ALICE,
@@ -55,6 +57,8 @@ from tests.helpers.constants import (
     MULTISIG_APPROVALS_THRESHOLD,
     MULTISIG_MOCKED_MESSAGE,
     MULTISIG_MOCKED_HASH,
+    MULTISIG_MOCKED_SAFE_HASH,
+    MULTISIG_ADDRESS,
 )
 from tests.helpers.context import get_context
 from tests.helpers.gql_client import MockGQLClient
@@ -76,6 +80,7 @@ MOCK_GET_USER_BUDGET = Mock()
 MOCK_HAS_PENDING_SNAPSHOT = Mock()
 MOCK_LAST_FINALIZED_SNAPSHOT = Mock()
 MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
+MOCK_GET_MESSAGE_HASH = Mock()
 MOCK_IS_CONTRACT = Mock()
 
 
@@ -130,7 +135,7 @@ def mock_safe_api_message_details(*args, **kwargs):
     example_resp_json = {
         "created": "2023-10-27T07:34:09.184140Z",
         "modified": "2023-10-28T20:54:46.207427Z",
-        "safe": "0xa40FcB633d0A6c0d27aA9367047635Ff656229B0",
+        "safe": MULTISIG_ADDRESS,
         "messageHash": "0x7f6dfab0a617fcb1c8f351b321a8844d98d9ee160e7532efc39ee06c02308ec6",
         "message": "Welcome to Octant.\nPlease click to sign in and accept the Octant Terms of Service.\n\nSigning this message will not trigger a transaction.\n\nYour address\n0xa40FcB633d0A6c0d27aA9367047635Ff656229B0",
         "proposedBy": "0x5754aC842D6eaF6a4E29101D46ac25D7C567311E",
@@ -500,6 +505,10 @@ def patch_epochs(monkeypatch):
 def patch_proposals(monkeypatch, proposal_accounts):
     monkeypatch.setattr("app.legacy.core.proposals.proposals", MOCK_PROPOSALS)
     monkeypatch.setattr("app.context.projects.proposals", MOCK_PROPOSALS)
+    monkeypatch.setattr(
+        "app.modules.projects.metadata.service.projects_metadata.proposals",
+        MOCK_PROPOSALS,
+    )
 
     MOCK_PROPOSALS.get_proposal_addresses.return_value = [
         p.address for p in proposal_accounts
@@ -527,17 +536,30 @@ def patch_is_contract(monkeypatch):
     monkeypatch.setattr(
         "app.legacy.crypto.eth_sign.signature.is_contract", MOCK_IS_CONTRACT
     )
-    monkeypatch.setattr("app.modules.common.signature.is_contract", MOCK_IS_CONTRACT)
+    monkeypatch.setattr(
+        "app.modules.common.crypto.signature.is_contract", MOCK_IS_CONTRACT
+    )
     MOCK_IS_CONTRACT.return_value = False
 
 
 @pytest.fixture(scope="function")
 def patch_eip1271_is_valid_signature(monkeypatch):
     monkeypatch.setattr(
-        "app.modules.common.signature.is_valid_signature",
+        "app.modules.common.crypto.signature.is_valid_signature",
         MOCK_EIP1271_IS_VALID_SIGNATURE,
     )
     MOCK_EIP1271_IS_VALID_SIGNATURE.return_value = True
+
+
+@pytest.fixture(scope="function")
+def patch_get_message_hash(monkeypatch):
+    monkeypatch.setattr(
+        "app.modules.multisig_signatures.service.offchain.get_message_hash",
+        MOCK_GET_MESSAGE_HASH,
+    )
+    MOCK_GET_MESSAGE_HASH.return_value = (
+        "0xc995b1c20cdd79e48a0696bb36f645925c45ef5f8c75ea49974b1ebb556351ca"
+    )
 
 
 @pytest.fixture(scope="function")
@@ -618,12 +640,31 @@ def patch_safe_api_message_details(monkeypatch):
         "app.modules.multisig_signatures.service.offchain.get_message_details",
         mock_safe_api_message_details,
     )
+    monkeypatch.setattr(
+        "app.modules.multisig_signatures.core.get_message_details",
+        mock_safe_api_message_details,
+    )
+
+
+@pytest.fixture(scope="function")
+def patch_safe_api_message_details_for_404_error(monkeypatch):
+    def mock_404_error(*args, **kwargs):
+        raise ExternalApiException(RequestException(), 404)
+
+    monkeypatch.setattr(
+        "app.modules.multisig_signatures.service.offchain.get_message_details",
+        mock_404_error,
+    )
+    monkeypatch.setattr(
+        "app.infrastructure.external_api.safe.message_details.time.sleep",
+        lambda x: None,
+    )
 
 
 @pytest.fixture(scope="function")
 def patch_safe_api_user_details(monkeypatch):
     monkeypatch.setattr(
-        "app.modules.multisig_signatures.service.offchain.get_user_details",
+        "app.modules.multisig_signatures.core.get_user_details",
         mock_safe_api_user_details,
     )
 
@@ -740,6 +781,7 @@ def mock_pending_multisig_signatures(alice):
         alice.address,
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
+        MULTISIG_MOCKED_SAFE_HASH,
         SignatureOpType.TOS,
         "0.0.0.0",
         SigStatus.PENDING,
@@ -748,6 +790,7 @@ def mock_pending_multisig_signatures(alice):
         alice.address,
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
+        MULTISIG_MOCKED_SAFE_HASH,
         SignatureOpType.ALLOCATION,
         "0.0.0.0",
         SigStatus.PENDING,
@@ -760,6 +803,7 @@ def mock_approved_multisig_signatures(alice):
         alice.address,
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
+        MULTISIG_MOCKED_SAFE_HASH,
         SignatureOpType.ALLOCATION,
         "0.0.0.0",
         SigStatus.APPROVED,
@@ -768,6 +812,7 @@ def mock_approved_multisig_signatures(alice):
         alice.address,
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
+        MULTISIG_MOCKED_SAFE_HASH,
         SignatureOpType.TOS,
         "0.0.0.0",
         SigStatus.APPROVED,
@@ -780,6 +825,7 @@ def mock_pending_allocation_signature(alice):
         alice.address,
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
+        MULTISIG_MOCKED_SAFE_HASH,
         SignatureOpType.ALLOCATION,
         "0.0.0.0",
         SigStatus.PENDING,
@@ -792,6 +838,7 @@ def mock_pending_tos_signature(alice):
         alice.address,
         MULTISIG_MOCKED_MESSAGE,
         MULTISIG_MOCKED_HASH,
+        MULTISIG_MOCKED_SAFE_HASH,
         SignatureOpType.TOS,
         "0.0.0.0",
         SigStatus.PENDING,
@@ -889,6 +936,14 @@ def mock_user_allocations(alice):
     ]
 
     return user_allocations_service_mock
+
+
+@pytest.fixture(scope="function")
+def mock_user_allocation_nonce():
+    user_allocation_nonce_mock = Mock()
+    user_allocation_nonce_mock.get_user_next_nonce.return_value = 0
+
+    return user_allocation_nonce_mock
 
 
 @pytest.fixture(scope="function")

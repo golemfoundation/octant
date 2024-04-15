@@ -128,7 +128,14 @@ PROPOSALS = [
         "outputs": [{"internalType": "address[]", "name": "", "type": "address[]"}],
         "stateMutability": "view",
         "type": "function",
-    }
+    },
+    {
+        "inputs": [],
+        "name": "cid",
+        "outputs": [{"internalType": "string", "name": "", "type": "string"}],
+        "stateMutability": "view",
+        "type": "function",
+    },
 ]
 
 VAULT = [
@@ -166,6 +173,13 @@ GNOSIS_SAFE = [
         ],
         "name": "isValidSignature",
         "outputs": [{"internalType": "bytes4", "name": "", "type": "bytes4"}],
+        "stateMutability": "view",
+        "type": "function",
+    },
+    {
+        "inputs": [{"internalType": "bytes", "name": "message", "type": "bytes"}],
+        "name": "getMessageHash",
+        "outputs": [{"internalType": "bytes32", "name": "", "type": "bytes32"}],
         "stateMutability": "view",
         "type": "function",
     },

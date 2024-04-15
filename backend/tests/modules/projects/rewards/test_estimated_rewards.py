@@ -1,7 +1,7 @@
 import pytest
 
 from app.modules.dto import AllocationItem
-from app.modules.project_rewards.service.estimated import EstimatedProjectRewards
+from app.modules.projects.rewards.service.estimated import EstimatedProjectRewards
 from tests.helpers import make_user_allocation
 from tests.helpers.constants import USER1_BUDGET
 from tests.helpers.context import get_context

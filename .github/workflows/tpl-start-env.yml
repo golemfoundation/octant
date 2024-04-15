@@ -38,7 +38,7 @@ jobs:
   start:
     name: Start GitHub Environment
     runs-on:
-    - metal
+    - general
     outputs:
       env: ${{ steps.start-deployment.outputs.env }}
       deployment: ${{ steps.start-deployment.outputs.deployment_id }}
