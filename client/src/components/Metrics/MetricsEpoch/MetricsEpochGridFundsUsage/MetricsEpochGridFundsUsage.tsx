@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
@@ -40,14 +40,28 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
       ethBelowThreshold
     : BigInt(0);
 
-  /**
-   * epochInfo.ppf includes epochInfo.individualRewards.
-   * Half of PPF goes to the users to manage.
-   * Half of PPR goes to "PPF" section.
-   */
-  const claimedByUsers = epochInfo
-    ? epochInfo.ppf / 2n - totalUserDonationsWithPatronRewards - unusedRewards
-    : BigInt(0);
+  const claimedByUsers = useMemo(() => {
+    if (!epochInfo) {
+      return BigInt(0);
+    }
+    /**
+     * epochInfo.ppf includes epochInfo.individualRewards.
+     * Half of PPF goes to the users to manage.
+     * Half of PPR goes to "PPF" section.
+     */
+    if (epoch === 3) {
+      return epochInfo.ppf / 2n - totalUserDonationsWithPatronRewards - unusedRewards;
+    }
+
+    return epochInfo.individualRewards - totalUserDonationsWithPatronRewards - unusedRewards;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    epoch,
+    epochInfo?.ppf,
+    epochInfo?.individualRewards,
+    totalUserDonationsWithPatronRewards,
+    unusedRewards,
+  ]);
 
   const total =
     claimedByUsers + donatedToProjects + projectCosts + staking + ppf + communityFund + leftover;
