@@ -101,6 +101,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
                 "--tags",
                 "local",
             ],
+            check=True,
             capture_output=True,
             text=True,
             cwd="../hardhat/",
