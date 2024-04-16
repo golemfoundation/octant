@@ -13,6 +13,7 @@ import useSettingsStore from 'store/settings/store';
 import { FormattedCryptoValue } from 'types/formattedCryptoValue';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
+import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import { comma, floatNumberWithUpTo18DecimalPlaces, numbersOnly } from 'utils/regExp';
 
@@ -106,10 +107,12 @@ const EarnRewardsCalculator: FC = () => {
           value: '',
         };
 
-  const cryptoFiatRatio = cryptoValues?.ethereum[displayCurrency || 'usd'] || 1;
-  const fiat = estimatedFormattedRewardsValue.value
-    ? (parseFloat(estimatedFormattedRewardsValue.value) * cryptoFiatRatio).toFixed(2)
-    : '';
+  const fiat = getValueFiatToDisplay({
+    cryptoCurrency: 'ethereum',
+    cryptoValues,
+    displayCurrency,
+    valueCrypto: calculateRewards && parseUnitsBigInt(calculateRewards.budget, 'wei'),
+  });
 
   return (
     <BoxRounded dataTest="RewardsCalculator" isGrey isVertical>
@@ -165,7 +168,7 @@ const EarnRewardsCalculator: FC = () => {
           showLoader={isPendingCalculateRewards}
           suffix={displayCurrency.toUpperCase()}
           suffixClassName={styles.estimatedRewardsSuffix}
-          value={fiat}
+          value={isPendingCalculateRewards ? '' : fiat}
           {...(!isCryptoMainValueDisplay && {
             label: t('estimatedRewards'),
           })}
