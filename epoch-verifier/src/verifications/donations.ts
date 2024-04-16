@@ -65,9 +65,8 @@ export function verifyMatchingFundFromEpochInfo(context: Context): VerificationR
 }
 
 export function verifyAllEpochRewards(context: Context): VerificationResult {
-  const verifyEpochRewards = [context.epochInfo.ppf + context.epochInfo.matchedRewards + context.epochInfo.communityFund + context.epochInfo.operationalCost, context.epochInfo.stakingProceeds]
-
-  return assertAll([verifyEpochRewards], ([value, expected]) => assertEq(value, expected))
+  const allBudgets = context.epochInfo.ppf + context.epochInfo.matchedRewards  context.epochInfo.communityFund + context.epochInfo.operationalCost 
+  return assertEq(allBudgets, context.epochInfo.stakingProceeds)
 }
 
 export function verifyTotalWithdrawals(context: Context): VerificationResult {
