@@ -72,10 +72,10 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
     : BigInt(0);
 
   const percentRewardsForProjects = isDecisionWindowOpenAndHasIndividualReward
-    ? Number((rewardsForProjects * BigInt(100)) / BigInt(individualReward))
+    ? Number((rewardsForProjects * BigInt(100)) / individualReward)
     : 50;
   const percentWithdraw = isDecisionWindowOpenAndHasIndividualReward
-    ? Number((rewardsForWithdraw * BigInt(100)) / BigInt(individualReward))
+    ? Number((rewardsForWithdraw * BigInt(100)) / individualReward)
     : 50;
   const sections = [
     {
