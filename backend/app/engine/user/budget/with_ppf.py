@@ -11,10 +11,9 @@ class UserBudgetWithPPF(UserBudget):
         individual_share = Decimal(payload.user_effective_deposit) / Decimal(
             payload.total_effective_deposit
         )
+        ppf_to_increase_budget = Decimal("0.5") * payload.ppf
 
-        calced_budget = int(
-            payload.all_individual_rewards * individual_share
-            + individual_share
-            * (Decimal("0.5") * payload.ppf - payload.all_individual_rewards)
-        )
-        return calced_budget
+        if payload.all_individual_rewards > ppf_to_increase_budget:
+            return int(payload.all_individual_rewards * individual_share)
+
+        return int(ppf_to_increase_budget * individual_share)
