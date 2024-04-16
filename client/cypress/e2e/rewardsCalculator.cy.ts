@@ -248,5 +248,34 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         expect(error.code).to.equal('ERR_CANCELED');
       });
     });
+
+    it('shows correct fiat value for estimated rewards in GWEI', () => {
+      cy.intercept('POST', '/rewards/estimated_budget', {
+        body: { budget: '18829579190901' },
+        delay: 500,
+      }).as('postEstimatedRewards');
+
+      cy.get('[data-test=Tooltip__rewardsCalculator__body]').click();
+      cy.wait('@postEstimatedRewards');
+
+      cy.get('@postEstimatedRewards').then(
+        ({
+          response: {
+            body: { budget },
+          },
+        }) => {
+          const rewardsEth = getFormattedEthValue(parseUnitsBigInt(budget, 'wei')).value;
+          cy.get('[data-test=RewardsCalculator__InputText--estimatedRewards--crypto__suffix]')
+            .invoke('text')
+            .should('eq', 'GWEI');
+          cy.get('[data-test=RewardsCalculator__InputText--estimatedRewards--crypto]')
+            .invoke('val')
+            .should('eq', rewardsEth);
+          cy.get('[data-test=RewardsCalculator__InputText--estimatedRewards--fiat]')
+            .invoke('val')
+            .should('eq', '$0.04');
+        },
+      );
+    });
   });
 });
