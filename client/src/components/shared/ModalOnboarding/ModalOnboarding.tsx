@@ -25,15 +25,39 @@ const motionAnimationProps: AnimationProps = {
 const ModalOnboarding: FC = () => {
   const { isConnected } = useAccount();
   const { data: isUserTOSAccepted } = useUserTOS();
-  const { setIsOnboardingDone, isOnboardingDone } = useOnboardingStore(state => ({
+  const {
+    setIsOnboardingDone,
+    isOnboardingDone,
+    isOnboardingCompleted,
+    lastSeenStep,
+    setLastSeenStep,
+    isOnboardingModalOpen,
+    setIsOnboardingModalOpen,
+  } = useOnboardingStore(state => ({
     isOnboardingDone: state.data.isOnboardingDone,
+    isOnboardingCompleted: state.data.isOnboardingCompleted,
+    lastSeenStep: state.data.lastSeenStep,
     setIsOnboardingDone: state.setIsOnboardingDone,
+    setIsOnboardingCompleted: state.setIsOnboardingCompleted,
+    setLastSeenStep: state.setLastSeenStep,
+    setIsOnboardingModalOpen: state.setIsOnboardingModalOpen,
+    isOnboardingModalOpen: state.data.isOnboardingModalOpen,
   }));
   const { isDesktop } = useMediaQuery();
-  const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
+  const [currentStepIndex, setCurrentStepIndex] = useState<number>(lastSeenStep - 1);
   const [isUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
 
   const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial);
+
+  useEffect(() => {
+    if (isOnboardingCompleted) return;
+    setLastSeenStep(currentStepIndex + 1);
+  }, [currentStepIndex, isOnboardingCompleted]);
+
+  useEffect(() => {
+    if (isOnboardingDone) return;
+    setCurrentStepIndex(lastSeenStep - 1);
+  }, [isOnboardingDone]);
 
   useEffect(() => {
     if (isUserTOSAccepted !== undefined && !isUserTOSAccepted) {
@@ -51,7 +75,8 @@ const ModalOnboarding: FC = () => {
     if (!isUserTOSAccepted) {
       return;
     }
-    setIsOnboardingDone(true);
+    setIsOnboardingModalOpen(false);
+    // setIsOnboardingDone(true);
   }, [setIsOnboardingDone, isUserTOSAccepted]);
 
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -147,6 +172,11 @@ const ModalOnboarding: FC = () => {
     (isConnected && !isUserTOSAccepted) ||
     (isConnected && !!isUserTOSAccepted && !isOnboardingDone);
 
+  useEffect(() => {
+    if (!isConnected) return;
+    // setIsOnboardingModalOpen(true);
+  }, [isConnected, isUserTOSAccepted]);
+
   return (
     <Modal
       bodyClassName={styles.onboardingModalBody}
@@ -169,7 +199,7 @@ const ModalOnboarding: FC = () => {
         </div>
       }
       isCloseButtonDisabled={!isUserTOSAccepted}
-      isOpen={isModalOpen}
+      isOpen={isOnboardingModalOpen}
       isOverflowOnClickDisabled={!isUserTOSAccepted}
       onClick={handleModalEdgeClick}
       onClosePanel={onOnboardingExit}

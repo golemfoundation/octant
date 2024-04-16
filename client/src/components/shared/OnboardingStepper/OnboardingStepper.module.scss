@@ -1,0 +1,77 @@
+.root,
+.wrapper {
+  height: 5.6rem;
+  width: 5.6rem;
+  position: fixed;
+  right: 4.8rem;
+  bottom: 4.8rem;
+  z-index: 5;
+  border-radius: 100%;
+  cursor: pointer;
+}
+
+.wrapper {
+  overflow: hidden;
+  &:hover {
+    transform: scale(1.2);
+    transition: all 0.4s;
+  }
+}
+
+.slideImg {
+  position: absolute;
+  z-index: 1;
+  height: 5rem;
+  top: 1.65rem;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+.backgroundCircleSvg,
+.progressLinesSvg {
+  top: 0;
+  left: 0;
+  position: absolute;
+}
+
+.progressLinesSvg {
+  z-index: 2;
+}
+
+.stepNumber {
+  z-index: 5;
+  left: 50%;
+  transform: translate(-50%, 0);
+  top: 2.4rem;
+  position: absolute;
+
+  path {
+    stroke: transparent !important;
+  }
+}
+
+.backgroundCircle {
+  fill: $color-octant-grey2;
+}
+
+.progressLine {
+  stroke-width: 0.2rem;
+  stroke: $color-white;
+  stroke-linejoin: round;
+  fill: transparent;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  z-index: 4;
+
+  &.isHighlighted {
+    stroke: $color-octant-green;
+  }
+}
+
+.tooltipWrapper {
+  position: absolute;
+  width: 5.6rem;
+  height: 5.6rem;
+  bottom: 4.8rem !important;
+  right: 4.8rem !important;
+}

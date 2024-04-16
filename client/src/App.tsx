@@ -13,6 +13,7 @@ import RootRoutes from 'routes/RootRoutes/RootRoutes';
 import 'react-toastify/dist/ReactToastify.css';
 import 'styles/index.scss';
 import 'i18n';
+import OnboardingStepper from 'components/shared/OnboardingStepper';
 
 const App = (): ReactElement => {
   useManageTransactionsPending();
@@ -34,6 +35,7 @@ const App = (): ReactElement => {
     <Fragment>
       <RootRoutes isSyncingInProgress={isSyncingInProgress || isFetchingCypressHelpers} />
       {!isSyncingInProgress && !isProjectAdminMode && <ModalOnboarding />}
+      <OnboardingStepper />
     </Fragment>
   );
 };

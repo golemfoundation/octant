@@ -11,6 +11,11 @@ export const ALLOCATION_REWARDS_FOR_PROJECTS = getLocalStorageKey(
 
 const onboardingPrefix = 'onboarding';
 export const IS_ONBOARDING_DONE = getLocalStorageKey(onboardingPrefix, 'isOnboardingDone');
+export const IS_ONBOARDING_COMPLETED = getLocalStorageKey(
+  onboardingPrefix,
+  'isOnboardingCompleted',
+);
+export const LAST_SEEN_STEP = getLocalStorageKey(onboardingPrefix, 'lastSeenStep');
 
 const settingsPrefix = 'settings';
 export const IS_ONBOARDING_ALWAYS_VISIBLE = getLocalStorageKey(
