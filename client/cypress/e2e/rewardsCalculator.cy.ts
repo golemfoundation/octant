@@ -1,8 +1,9 @@
-import { ETH_USD, mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import { ETH_USD, GLM_USD, mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import getFormattedEthValue from 'src/utils/getFormattedEthValue';
+import getValueFiatToDisplay from 'src/utils/getValueFiatToDisplay';
 import { parseUnitsBigInt } from 'src/utils/parseUnitsBigInt';
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
@@ -57,7 +58,12 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           },
         }) => {
           const rewardsEth = getFormattedEthValue(parseUnitsBigInt(budget, 'wei')).value;
-          const rewardsUsd = (parseFloat(rewardsEth) * ETH_USD).toFixed(2);
+          const rewardsUsd = getValueFiatToDisplay({
+            cryptoCurrency: 'ethereum',
+            cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
+            displayCurrency: 'usd',
+            valueCrypto: parseUnitsBigInt(budget, 'wei'),
+          });
 
           cy.get(
             '[data-test=RewardsCalculator__InputText--estimatedRewards--crypto__Loader]',
@@ -91,8 +97,12 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           },
         }) => {
           const rewardsEth = getFormattedEthValue(parseUnitsBigInt(budget, 'wei')).value;
-          const rewardsUsd = (parseFloat(rewardsEth) * ETH_USD).toFixed(2);
-
+          const rewardsUsd = getValueFiatToDisplay({
+            cryptoCurrency: 'ethereum',
+            cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
+            displayCurrency: 'usd',
+            valueCrypto: parseUnitsBigInt(budget, 'wei'),
+          });
           cy.get(
             '[data-test=RewardsCalculator__InputText--estimatedRewards--crypto__Loader]',
           ).should('not.exist');
@@ -125,7 +135,12 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           },
         }) => {
           const rewardsEth = getFormattedEthValue(parseUnitsBigInt(budget, 'wei')).value;
-          const rewardsUsd = (parseFloat(rewardsEth) * ETH_USD).toFixed(2);
+          const rewardsUsd = getValueFiatToDisplay({
+            cryptoCurrency: 'ethereum',
+            cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
+            displayCurrency: 'usd',
+            valueCrypto: parseUnitsBigInt(budget, 'wei'),
+          });
 
           cy.get(
             '[data-test=RewardsCalculator__InputText--estimatedRewards--crypto__Loader]',
@@ -203,8 +218,12 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           },
         }) => {
           const rewardsEth = getFormattedEthValue(parseUnitsBigInt(budget, 'wei')).value;
-          const rewardsUsd = (parseFloat(rewardsEth) * ETH_USD).toFixed(2);
-
+          const rewardsUsd = getValueFiatToDisplay({
+            cryptoCurrency: 'ethereum',
+            cryptoValues: { ethereum: { usd: ETH_USD }, golem: { usd: GLM_USD } },
+            displayCurrency: 'usd',
+            valueCrypto: parseUnitsBigInt(budget, 'wei'),
+          });
           cy.get('[data-test=RewardsCalculator__InputText--estimatedRewards--crypto]')
             .invoke('val')
             .should('eq', rewardsEth);

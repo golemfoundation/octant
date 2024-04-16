@@ -168,7 +168,7 @@ const EarnRewardsCalculator: FC = () => {
           showLoader={isPendingCalculateRewards}
           suffix={displayCurrency.toUpperCase()}
           suffixClassName={styles.estimatedRewardsSuffix}
-          value={isPendingCalculateRewards ? '' : fiat}
+          value={isPendingCalculateRewards || !estimatedFormattedRewardsValue?.value ? '' : fiat}
           {...(!isCryptoMainValueDisplay && {
             label: t('estimatedRewards'),
           })}
