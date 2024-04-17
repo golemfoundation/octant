@@ -86,10 +86,10 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
       return BigInt(0);
     }
     if (epoch === currentEpoch - 1 && isDecisionWindowOpen) {
-      return unusedRewards;
+      return unusedRewards + ethBelowThreshold;
     }
     return leftover;
-  }, [epoch, currentEpoch, isDecisionWindowOpen, leftover, unusedRewards]);
+  }, [ethBelowThreshold, epoch, currentEpoch, isDecisionWindowOpen, leftover, unusedRewards]);
 
   const total =
     claimedByUsers +
