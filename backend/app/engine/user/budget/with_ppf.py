@@ -15,6 +15,6 @@ class UserBudgetWithPPF(UserBudget):
         calced_budget = int(
             payload.all_individual_rewards * individual_share
             + individual_share
-            * (Decimal("0.5") * payload.ppf - payload.all_individual_rewards)
+            * (Decimal("0.5") * (payload.ppf - payload.all_individual_rewards))
         )
         return calced_budget

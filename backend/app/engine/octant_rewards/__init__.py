@@ -20,7 +20,7 @@ from app.engine.octant_rewards.total_and_individual.tr_from_staking import (
 
 class OctantRewardsDefaultValues:
     OPERATIONAL_COST = Decimal("0.25")
-    PPF = Decimal("0.35")
+    PPF = Decimal("0.19")
     COMMUNITY_FUND = Decimal("0.05")
     TR_PERCENT = Decimal("0.7")
 
