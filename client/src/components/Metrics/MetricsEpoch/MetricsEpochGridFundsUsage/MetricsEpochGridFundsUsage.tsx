@@ -37,7 +37,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   /**
    * WORKAROUND
    * Temporary ppf forced by backend changes. Correct formula above!
-   * TODO: https://linear.app/golemfoundation/issue/OCT-1567/restore-correct-ppf-formula-in-client
+   * TODO OCT-1567: https://linear.app/golemfoundation/issue/OCT-1567/restore-correct-ppf-formula-in-client
    */
   const ppf = epochInfo ? epochInfo.ppf - epochInfo.individualRewards : BigInt(0);
   const communityFund = epochInfo ? epochInfo.communityFund : BigInt(0);
