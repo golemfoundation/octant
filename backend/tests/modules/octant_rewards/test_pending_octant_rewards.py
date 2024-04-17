@@ -36,13 +36,12 @@ def test_pending_octant_rewards_after_overhaul(
     service = PendingOctantRewards(patrons_mode=mock_patron_mode)
 
     result = service.get_octant_rewards(context)
-
     check_octant_rewards(
         result,
         community_fund=COMMUNITY_FUND,
         ppf=PPF,
         patrons_rewards=USER2_BUDGET,
-        matched_rewards=181090530026270051047,
+        matched_rewards=245476283450927651047,
     )
 
 
@@ -80,7 +79,7 @@ def test_pending_get_matched_rewards_after_overhaul(mock_patron_mode, mock_users
 
     result = service.get_matched_rewards(context)
 
-    assert result == 181_084931506_849531232
+    assert result == 245_470_684_931_507_131_232
 
 
 def test_pending_get_leverage(

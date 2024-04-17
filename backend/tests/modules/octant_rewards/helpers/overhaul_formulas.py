@@ -2,7 +2,7 @@ from decimal import Decimal
 
 
 def ppf(staking_proceeds: int) -> int:
-    return int(Decimal("0.35") * staking_proceeds)
+    return int(Decimal("0.19") * staking_proceeds)
 
 
 def community_fund(staking_proceeds: int) -> int:
