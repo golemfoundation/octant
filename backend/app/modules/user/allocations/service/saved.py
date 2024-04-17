@@ -21,10 +21,6 @@ class SavedUserAllocations(Model):
             context.epoch_details.epoch_num
         )
 
-    def get_all_allocations_sum(self, context: Context) -> int:
-        allocations = database.allocations.get_all(context.epoch_details.epoch_num)
-        return sum(int(a.amount) for a in allocations)
-
     def get_user_allocation_sum(self, context: Context, user_address: str) -> int:
         return database.allocations.get_user_alloc_sum_by_epoch(
             context.epoch_details.epoch_num, user_address

@@ -43,3 +43,15 @@ def estimate_budget(lock_duration_sec: int, glm_amount: int) -> int:
         lock_duration_sec,
         glm_amount,
     )
+
+
+def estimate_epochs_budget(no_epochs: int, glm_amount: int) -> int:
+    future_context = state_context(EpochState.FUTURE)
+    future_rewards_service = get_services(EpochState.FUTURE).octant_rewards_service
+    future_rewards = future_rewards_service.get_octant_rewards(future_context)
+
+    epoch_duration = future_context.epoch_details.duration_sec
+
+    return no_epochs * core.estimate_epoch_budget(
+        future_context, future_rewards, epoch_duration, glm_amount
+    )

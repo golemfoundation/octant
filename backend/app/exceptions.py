@@ -266,7 +266,7 @@ class InvalidMultisigAddress(OctantException):
 
 class EstimateRewardsNotSupported(OctantException):
     code = 500
-    description = "Estimating rewards is not supported for epoch 1"
+    description = "Estimating rewards is not supported for given epoch"
 
     def __init__(self):
         super().__init__(self.description, self.code)

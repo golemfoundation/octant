@@ -7,3 +7,4 @@ from dataclass_wizard import JSONWizard
 class EstimatedRewardsDTO(JSONWizard):
     estimated_budget: int
     matching_fund: int
+    leverage: float
