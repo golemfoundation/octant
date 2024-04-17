@@ -15,10 +15,9 @@ import styles from './EarnHistoryItemDetailsRest.module.scss';
 import EarnHistoryItemDetailsRestProps from './types';
 
 const EarnHistoryItemDetailsRest: FC<EarnHistoryItemDetailsRestProps> = ({
-  amount,
+  eventData,
   type,
   timestamp,
-  transactionHash,
   isFinalized = true,
   isWaitingForTransactionInitialized,
   isMultisig = false,
@@ -27,7 +26,9 @@ const EarnHistoryItemDetailsRest: FC<EarnHistoryItemDetailsRestProps> = ({
     keyPrefix: 'components.dedicated.historyItemModal',
   });
   const { data: transaction, isFetching: isFetchingTransaction } = useTransaction({
-    hash: isWaitingForTransactionInitialized ? undefined : (transactionHash as `0x{string}`),
+    hash: isWaitingForTransactionInitialized
+      ? undefined
+      : (eventData.transactionHash as `0x{string}`),
   });
 
   const isPatronDonation = type === 'patron_mode_donation';
@@ -39,7 +40,7 @@ const EarnHistoryItemDetailsRest: FC<EarnHistoryItemDetailsRestProps> = ({
           ? 'ethereum'
           : 'golem',
         shouldIgnoreGwei: true,
-        valueCrypto: amount,
+        valueCrypto: eventData.amount,
       },
       label: isPatronDonation ? t('sections.matchingFundDonation') : t('sections.amount'),
     },
@@ -62,7 +63,7 @@ const EarnHistoryItemDetailsRest: FC<EarnHistoryItemDetailsRestProps> = ({
             childrenRight: (
               <Button
                 className={cx(styles.viewOnEtherscan, isMultisig && styles.isMultisig)}
-                href={`${networkConfig.etherscanAddress}/tx/${transactionHash}`}
+                href={`${networkConfig.etherscanAddress}/tx/${eventData.transactionHash}`}
                 label={t('sections.viewOnEtherscan')}
                 variant="link"
               />

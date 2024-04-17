@@ -14,9 +14,7 @@ import styles from './EarnHistoryItemDetailsAllocation.module.scss';
 import EarnHistoryItemDetailsAllocationProps from './types';
 
 const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps> = ({
-  amount,
-  projectsNumber,
-  projects,
+  eventData: { amount, allocations, leverage },
   timestamp,
 }) => {
   const { t } = useTranslation('translation', {
@@ -49,7 +47,11 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
               cryptoCurrency: 'ethereum' as CryptoCurrency,
               valueCrypto: amount,
             },
-            label: t('sections.allocationProjects', { projectsNumber }),
+            label: t('sections.allocationProjects', { projectsNumber: allocations.length }),
+          },
+          {
+            childrenRight: leverage,
+            label: t('sections.estimatedLeverage'),
           },
         ]),
     {
@@ -65,10 +67,10 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
       </BoxRounded>
       {!isPersonalOnlyAllocation && (
         <BoxRounded alignment="left" className={styles.projects} isGrey isVertical>
-          {projects?.map(project => (
+          {allocations?.map(allocation => (
             <ProjectAllocationDetailRow
-              key={project.address}
-              {...project}
+              key={allocation.address}
+              {...allocation}
               epoch={epochTimestampHappenedIn}
             />
           ))}

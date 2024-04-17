@@ -215,6 +215,7 @@
           "amount": "Amount",
           "gasPrice": "Gas price",
           "viewOnEtherscan": "View on Etherscan",
+          "estimatedLeverage": "Est. leverage",
           "when": "When",
           "withdrawal": "Withdrew ETH",
           "matchingFundDonation": "Matching fund donation"
