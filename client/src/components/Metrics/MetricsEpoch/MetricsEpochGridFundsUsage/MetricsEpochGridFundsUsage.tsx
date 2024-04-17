@@ -33,7 +33,9 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
 
   const projectCosts = epochInfo ? epochInfo.operationalCost : BigInt(0);
   const staking = epochInfo ? epochInfo.staking : BigInt(0);
-  const ppf = epochInfo ? epochInfo.ppf : BigInt(0);
+  // const ppf = epochInfo ? epochInfo.ppf : BigInt(0);
+  // Temporary ppf forced by backend changes. Correct formula above!
+  const ppf = epochInfo ? epochInfo.ppf - epochInfo.individualRewards : BigInt(0);
   const communityFund = epochInfo ? epochInfo.communityFund : BigInt(0);
 
   const donatedToProjects = epochInfo
