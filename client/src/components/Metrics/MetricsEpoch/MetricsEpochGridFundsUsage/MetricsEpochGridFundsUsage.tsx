@@ -6,6 +6,7 @@ import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import PieChart from 'components/ui/PieChart';
 import networkConfig from 'constants/networkConfig';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useEpochInfo from 'hooks/queries/useEpochInfo';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
@@ -23,6 +24,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { epoch } = useMetricsEpoch();
+  const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: epochInfo } = useEpochInfo(epoch);
 
@@ -39,7 +41,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
    * Temporary ppf forced by backend changes. Correct formula above!
    * TODO OCT-1567: https://linear.app/golemfoundation/issue/OCT-1567/restore-correct-ppf-formula-in-client
    */
-  const ppf = epochInfo ? epochInfo.ppf - epochInfo.individualRewards : BigInt(0);
+  const ppf = epoch === 3 && epochInfo ? epochInfo.ppf - epochInfo.individualRewards : BigInt(0);
   const communityFund = epochInfo ? epochInfo.communityFund : BigInt(0);
 
   const donatedToProjects = epochInfo
@@ -58,7 +60,14 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
      * Half of PPR goes to "PPF" section.
      */
     if (epoch === 3) {
-      return epochInfo.ppf / 2n - totalUserDonationsWithPatronRewards - unusedRewards;
+      /**
+       * WORKAROUND
+       * Temporary ppf forced by backend changes. Correct formula above!
+       * TODO OCT-1567: https://linear.app/golemfoundation/issue/OCT-1567/restore-correct-ppf-formula-in-client
+       */
+      return (
+        ppf / 2n + epochInfo.individualRewards - totalUserDonationsWithPatronRewards - unusedRewards
+      );
     }
 
     return epochInfo.individualRewards - totalUserDonationsWithPatronRewards - unusedRewards;
@@ -69,14 +78,18 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     epochInfo?.individualRewards,
     totalUserDonationsWithPatronRewards,
     unusedRewards,
+    ppf,
   ]);
 
   const leftoverToUse = useMemo(() => {
-    if (isDecisionWindowOpen) {
+    if (!currentEpoch) {
+      return BigInt(0);
+    }
+    if (epoch === currentEpoch - 1 && isDecisionWindowOpen) {
       return unusedRewards;
     }
     return leftover;
-  }, [isDecisionWindowOpen, leftover, unusedRewards]);
+  }, [epoch, currentEpoch, isDecisionWindowOpen, leftover, unusedRewards]);
 
   const total =
     claimedByUsers +
