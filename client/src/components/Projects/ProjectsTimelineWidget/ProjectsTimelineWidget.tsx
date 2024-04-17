@@ -47,7 +47,7 @@ const ProjectsTimelineWidget = (): ReactElement => {
     const { left: containerLeft, width: containerWidth } =
       constraintsRef.current!.getBoundingClientRect();
     const { width: milestonesWrapperWidth } = milestonesWrapperRef.current!.getBoundingClientRect();
-    const xMotionValue = elLeft > containerLeft ? -elLeft + containerLeft : 0;
+    const xMotionValue = x.get() + (elLeft > containerLeft ? -elLeft + containerLeft : 0);
     const maxXValue = milestonesWrapperWidth - containerWidth;
 
     x.set(xMotionValue < -maxXValue ? -maxXValue : xMotionValue);
@@ -58,6 +58,8 @@ const ProjectsTimelineWidget = (): ReactElement => {
     if (!milestonesWrapperRef.current) {
       return;
     }
+    setXValue();
+
     const resizeObserver = new ResizeObserver(() => {
       if (!isInitialResizeDone) {
         isInitialResizeDone = true;

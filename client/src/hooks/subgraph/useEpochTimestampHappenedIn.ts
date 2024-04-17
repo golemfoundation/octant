@@ -15,18 +15,18 @@ const GET_EPOCH_TIMESTAMP_HAPPENED_IN = graphql(`
 `);
 
 export default function useEpochTimestampHappenedIn(
-  timestampMicroseconds: string,
+  timestampSeconds: string,
 ): UseQueryResult<number> {
   const { subgraphAddress } = env;
-  const timestampSeconds = Math.round(parseInt(timestampMicroseconds, 10) / (1000 * 1000));
+  const timestampSecondsNumber = parseInt(timestampSeconds, 10);
 
   return useQuery<GetEpochTimestampHappenedInQuery, any, number, any>({
-    enabled: !!timestampSeconds,
+    enabled: !!timestampSecondsNumber,
     queryFn: async () =>
       request(subgraphAddress, GET_EPOCH_TIMESTAMP_HAPPENED_IN, {
-        timestamp: timestampSeconds,
+        timestamp: timestampSecondsNumber,
       }),
-    queryKey: QUERY_KEYS.epochTimestampHappenedIn(timestampSeconds),
+    queryKey: QUERY_KEYS.epochTimestampHappenedIn(timestampSecondsNumber),
     select: data => data.epoches[0].epoch,
   });
 }
