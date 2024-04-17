@@ -7,6 +7,7 @@ import PieChart from 'components/ui/PieChart';
 import networkConfig from 'constants/networkConfig';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
 import useEpochInfo from 'hooks/queries/useEpochInfo';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
@@ -22,6 +23,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { epoch } = useMetricsEpoch();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: epochInfo } = useEpochInfo(epoch);
 
   const getNumberValue = (value: bigint) =>
@@ -63,8 +65,21 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     unusedRewards,
   ]);
 
+  const leftoverToUse = useMemo(() => {
+    if (isDecisionWindowOpen) {
+      return unusedRewards;
+    }
+    return leftover;
+  }, [isDecisionWindowOpen, leftover, unusedRewards]);
+
   const total =
-    claimedByUsers + donatedToProjects + projectCosts + staking + ppf + communityFund + leftover;
+    claimedByUsers +
+    donatedToProjects +
+    projectCosts +
+    staking +
+    ppf / 2n +
+    communityFund +
+    leftoverToUse;
 
   // Testnet has much lower staking proceeds. Number of places needs to be bigger to see more than 0.
   const numberOfDecimalPlacesToUse = networkConfig.isTestnet ? 10 : 2;
@@ -83,9 +98,14 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     },
     {
       label: t('leftover', { epochNumber: epoch + 1 }),
-      value: getNumberValue(leftover),
-      valueLabel: getFormattedEthValue(leftover, true, false, false, numberOfDecimalPlacesToUse)
-        .fullString,
+      value: getNumberValue(leftoverToUse),
+      valueLabel: getFormattedEthValue(
+        leftoverToUse,
+        true,
+        false,
+        false,
+        numberOfDecimalPlacesToUse,
+      ).fullString,
     },
     {
       label: t('projectCosts'),
