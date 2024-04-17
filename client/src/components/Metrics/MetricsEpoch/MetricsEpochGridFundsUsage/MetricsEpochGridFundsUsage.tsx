@@ -34,7 +34,11 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
   const projectCosts = epochInfo ? epochInfo.operationalCost : BigInt(0);
   const staking = epochInfo ? epochInfo.staking : BigInt(0);
   // const ppf = epochInfo ? epochInfo.ppf : BigInt(0);
-  // Temporary ppf forced by backend changes. Correct formula above!
+  /**
+   * WORKAROUND
+   * Temporary ppf forced by backend changes. Correct formula above!
+   * TODO: https://linear.app/golemfoundation/issue/OCT-1567/restore-correct-ppf-formula-in-client
+   */
   const ppf = epochInfo ? epochInfo.ppf - epochInfo.individualRewards : BigInt(0);
   const communityFund = epochInfo ? epochInfo.communityFund : BigInt(0);
 
