@@ -46,11 +46,11 @@ const OnboardingStepper = (): ReactNode => {
   return (
     <motion.div
       key="OnboardingStepper"
-      animate={{ bottom: isDesktop ? 48 : 108, opacity: 1, right: isDesktop ? 48 : 24 }}
+      animate={{ bottom: isDesktop ? 48 : 116, opacity: 1, right: isDesktop ? 48 : 24 }}
       className={styles.root}
       data-test="OnboardingStepper"
-      exit={{ bottom: isDesktop ? 24 : 84, opacity: 0, right: isDesktop ? 48 : 24 }}
-      initial={{ bottom: isDesktop ? 24 : 84, opacity: 0, right: isDesktop ? 48 : 24 }}
+      exit={{ bottom: isDesktop ? 24 : 92, opacity: 0, right: isDesktop ? 48 : 24 }}
+      initial={{ bottom: isDesktop ? 24 : 92, opacity: 0, right: isDesktop ? 48 : 24 }}
       onClick={() => setIsOnboardingModalOpen(true)}
       whileHover={{ scale: 1.1 }}
     >
