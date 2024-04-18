@@ -16,7 +16,7 @@ import {
 import { QUERY_KEYS } from 'api/queryKeys';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
-type AllocationEventTypeParsed = Omit<AllocationEventType, 'allocations'> & {
+export type AllocationEventTypeParsed = Omit<AllocationEventType, 'allocations'> & {
   allocations: {
     address: string;
     amount: bigint;
