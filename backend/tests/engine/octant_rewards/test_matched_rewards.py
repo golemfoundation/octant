@@ -52,5 +52,5 @@ def test_matched_rewards_when_locked_ratio_greater_than_tr_percent():
         assert exc.value.status_code == 500
         assert (
             exc.value.description
-            == "Can't calculate matched rewards when locked ratio is greater than 0.7"
+            == "Can't calculate matched rewards when locked ratio is greater than TR percent"
         )
