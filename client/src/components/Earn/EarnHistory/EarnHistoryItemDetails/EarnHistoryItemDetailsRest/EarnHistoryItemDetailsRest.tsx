@@ -35,7 +35,9 @@ const EarnHistoryItemDetailsRest: FC<EarnHistoryItemDetailsRestProps> = ({
   const sections: SectionProps[] = [
     {
       doubleValueProps: {
-        cryptoCurrency: type === 'withdrawal' ? 'ethereum' : 'golem',
+        cryptoCurrency: ['withdrawal', 'patron_mode_donation'].includes(type)
+          ? 'ethereum'
+          : 'golem',
         shouldIgnoreGwei: true,
         valueCrypto: amount,
       },

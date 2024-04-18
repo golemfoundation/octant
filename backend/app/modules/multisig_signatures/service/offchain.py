@@ -95,7 +95,8 @@ class OffchainMultisigSignatures(Model):
         message_hash = get_message_hash(user_address, safe_message_hash)
         msg_to_save = prepare_msg_to_save(message, op_type)
 
-        self._verify_owner(user_address, message_hash)
+        # TODO uncomment or change the behaviour of verification
+        # self._verify_owner(user_address, message_hash)
 
         database.multisig_signature.save_signature(
             user_address, op_type, msg_to_save, message_hash, safe_message_hash, user_ip

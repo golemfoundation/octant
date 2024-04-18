@@ -32,6 +32,8 @@ class PendingOctantRewards(Model):
             operational_cost=int(pending_snapshot.operational_cost),
             community_fund=pending_snapshot.validated_community_fund,
             ppf=pending_snapshot.validated_ppf,
+            matched_rewards=self.get_matched_rewards(context),
+            patrons_rewards=self.patrons_mode.get_patrons_rewards(context),
         )
 
     def get_matched_rewards(self, context: Context) -> int:
