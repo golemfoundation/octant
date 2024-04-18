@@ -1,9 +1,18 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import chaiColors from 'chai-colors';
+
 import { visitWithLoader, navigateWithCheck, mockCoinPricesServer } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
-import { getStepsDecisionWindowClosed } from 'src/hooks/helpers/useOnboardingSteps/steps';
+import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
+import {
+  getStepsDecisionWindowClosed,
+  getStepsDecisionWindowOpen,
+} from 'src/hooks/helpers/useOnboardingSteps/steps';
 import { ROOT, ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 import Chainable = Cypress.Chainable;
+
+chai.use(chaiColors);
 
 const connectWallet = (
   isTOSAccepted: boolean,
@@ -26,7 +35,6 @@ const connectWallet = (
 
 const beforeSetup = () => {
   mockCoinPricesServer();
-  cy.clearLocalStorage();
   cy.setupMetamask();
   window.innerWidth = Cypress.config().viewportWidth;
   window.innerHeight = Cypress.config().viewportHeight;
@@ -219,13 +227,14 @@ const checkChangeStepsBySwipingOnScreenDifferenceLessThanl5px = (isTOSAccepted: 
   });
 };
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
+Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(`onboarding (TOS accepted): ${device}`, { viewportHeight, viewportWidth }, () => {
     before(() => {
       beforeSetup();
     });
 
     beforeEach(() => {
+      cy.clearLocalStorage();
       connectWallet(true);
     });
 
@@ -254,7 +263,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       navigateWithCheck(ROOT_ROUTES.settings.absolute);
       cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').check().should('be.checked');
       cy.reload();
-      cy.get('[data-test=ModalOnboarding]').should('be.visible');
+      cy.get('[data-test=ModalOnboarding]').should('not.be.visible');
     });
 
     it('renders only once when "Always show Allocate onboarding" option is not checked', () => {
@@ -295,6 +304,72 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=ModalOnboarding]').should('not.exist');
       connectWallet(true, false, true);
       cy.get('[data-test=ModalOnboarding]').should('not.exist');
+    });
+
+    it('Onboarding stepper is visible after closing onboarding modal without going to the last step', () => {
+      cy.get('[data-test=ModalOnboarding__Button]').click();
+      cy.get('[data-test=OnboardingStepper]').should('be.visible');
+    });
+
+    it('Onboarding stepper opens onboarding modal', () => {
+      cy.get('[data-test=ModalOnboarding__Button]').click();
+      cy.get('[data-test=ModalOnboarding]').should('not.be.visible');
+      cy.get('[data-test=OnboardingStepper]').click();
+      cy.get('[data-test=ModalOnboarding]').should('be.visible');
+    });
+
+    it(`Onboarding stepper is not visible if "${IS_ONBOARDING_DONE}" is set to "true"`, () => {
+      localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      cy.reload();
+      cy.get('[data-test=ModalOnboarding]').should('not.be.visible');
+      cy.get('[data-test=OnboardingStepper]').should('not.exist');
+    });
+
+    if (isDesktop) {
+      it(`Onboarding stepper has tooltip`, () => {
+        cy.get('[data-test=ModalOnboarding__Button]').click();
+        cy.get('[data-test=OnboardingStepper]').trigger('mouseover');
+        cy.get('[data-test=OnboardingStepper__Tooltip__content]').should('be.visible');
+        cy.get('[data-test=OnboardingStepper__Tooltip__content]')
+          .invoke('text')
+          .should('eq', 'Reopen onboarding');
+      });
+    }
+
+    it('Onboarding stepper has right amount of steps and highlights correct amount of passed steps', () => {
+      cy.get('[data-test=ModalOnboarding__Button]').click();
+
+      cy.get(`[data-test*=OnboardingStepper__circle]`).should(
+        'have.length',
+        getStepsDecisionWindowOpen('2', '16 Jan').length,
+      );
+
+      for (let i = 0; i < getStepsDecisionWindowOpen('2', '16 Jan').length - 1; i++) {
+        cy.get(`[data-test=OnboardingStepper__circle--${i}]`)
+          .then($el => $el.css('stroke'))
+          .should('be.colored', i > 0 ? '#ffffff' : '#2d9b87');
+      }
+      cy.get('[data-test=OnboardingStepper]').click();
+      checkProgressStepperSlimIsCurrentAndClickNext(1);
+      cy.get('[data-test=ModalOnboarding__Button]').click();
+      for (let i = 0; i < getStepsDecisionWindowOpen('2', '16 Jan').length - 1; i++) {
+        cy.get(`[data-test=OnboardingStepper__circle--${i}]`)
+          .then($el => $el.css('stroke'))
+          .should('be.colored', i > 1 ? '#ffffff' : '#2d9b87');
+      }
+      cy.get('[data-test=OnboardingStepper]').click();
+      checkProgressStepperSlimIsCurrentAndClickNext(2);
+      cy.get('[data-test=ModalOnboarding__Button]').click();
+      for (let i = 0; i < getStepsDecisionWindowOpen('2', '16 Jan').length - 1; i++) {
+        cy.get(`[data-test=OnboardingStepper__circle--${i}]`)
+          .then($el => $el.css('stroke'))
+          .should('be.colored', i > 2 ? '#ffffff' : '#2d9b87');
+      }
+      cy.get('[data-test=OnboardingStepper]').click();
+      checkProgressStepperSlimIsCurrentAndClickNext(3);
+      cy.get('[data-test=ModalOnboarding__Button]').click();
+
+      cy.get('[data-test=OnboardingStepper]').should('not.exist');
     });
   });
 });

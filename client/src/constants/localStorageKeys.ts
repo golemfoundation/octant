@@ -11,9 +11,9 @@ export const ALLOCATION_REWARDS_FOR_PROJECTS = getLocalStorageKey(
 
 const onboardingPrefix = 'onboarding';
 export const IS_ONBOARDING_DONE = getLocalStorageKey(onboardingPrefix, 'isOnboardingDone');
-export const IS_ONBOARDING_COMPLETED = getLocalStorageKey(
+export const HAS_ONBOARDING_BEEN_CLOSED = getLocalStorageKey(
   onboardingPrefix,
-  'isOnboardingCompleted',
+  'hasOnboardingBeenClosed',
 );
 export const LAST_SEEN_STEP = getLocalStorageKey(onboardingPrefix, 'lastSeenStep');
 

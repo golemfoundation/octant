@@ -1,26 +1,25 @@
-.root,
-.wrapper {
-  height: 5.6rem;
-  width: 5.6rem;
+$circleDiameter: 5.6rem;
+
+.root {
+  height: $circleDiameter;
+  width: $circleDiameter;
   position: fixed;
-  right: 4.8rem;
-  bottom: 4.8rem;
-  z-index: 5;
+  z-index: $z-index-5;
   border-radius: 100%;
   cursor: pointer;
 }
 
 .wrapper {
+  position: relative;
+  width: $circleDiameter;
+  height: $circleDiameter;
+  border-radius: 100%;
   overflow: hidden;
-  &:hover {
-    transform: scale(1.2);
-    transition: all 0.4s;
-  }
 }
 
 .slideImg {
   position: absolute;
-  z-index: 1;
+  z-index: $z-index-2;
   height: 5rem;
   top: 1.65rem;
   left: 50%;
@@ -35,11 +34,11 @@
 }
 
 .progressLinesSvg {
-  z-index: 2;
+  z-index: $z-index-2;
 }
 
 .stepNumber {
-  z-index: 5;
+  z-index: $z-index-5;
   left: 50%;
   transform: translate(-50%, 0);
   top: 2.4rem;
@@ -61,7 +60,7 @@
   fill: transparent;
   stroke-linecap: round;
   stroke-linejoin: round;
-  z-index: 4;
+  z-index: $z-index-4;
 
   &.isHighlighted {
     stroke: $color-octant-green;
@@ -70,8 +69,8 @@
 
 .tooltipWrapper {
   position: absolute;
-  width: 5.6rem;
-  height: 5.6rem;
+  width: $circleDiameter;
+  height: $circleDiameter;
   bottom: 4.8rem !important;
   right: 4.8rem !important;
 }

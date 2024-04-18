@@ -54,6 +54,11 @@
     "waitingForConfirmation": "Waiting for confirmation"
   },
   "components": {
+    "shared": {
+      "onboardingStepper": {
+        "reopenOnboarding": "Reopen onboarding"
+      }
+    },
     "settings": {
       "patronMode": {
         "enablePatronMode": "Enable patron mode",

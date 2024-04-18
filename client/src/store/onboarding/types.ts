@@ -1,15 +1,15 @@
 export interface OnboardingData {
+  hasOnboardingBeenClosed: boolean;
   isOnboardingDone: boolean;
-  isOnboardingCompleted: boolean;
-  lastSeenStep: number;
   isOnboardingModalOpen: boolean;
+  lastSeenStep: number;
 }
 
 export interface OnboardingMethods {
   reset: () => void;
+  setHasOnboardingBeenClosed: (payload: OnboardingData['hasOnboardingBeenClosed']) => void;
   setIsOnboardingDone: (payload: OnboardingData['isOnboardingDone']) => void;
-  setIsOnboardingCompleted: (payload: OnboardingData['isOnboardingCompleted']) => void;
-  setLastSeenStep: (payload: OnboardingData['lastSeenStep']) => void;
   setIsOnboardingModalOpen: (payload: OnboardingData['isOnboardingModalOpen']) => void;
+  setLastSeenStep: (payload: OnboardingData['lastSeenStep']) => void;
   setValuesFromLocalStorage: () => void;
 }

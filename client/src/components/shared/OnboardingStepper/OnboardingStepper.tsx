@@ -1,20 +1,24 @@
 import cx from 'classnames';
-import React, { FC, useMemo, useState } from 'react';
-import useOnboardingStore from 'store/onboarding/store';
-
 import { motion } from 'framer-motion';
-import styles from './OnboardingStepper.module.scss';
+import React, { ReactNode, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import Img from 'components/ui/Img';
+import Svg from 'components/ui/Svg';
+import Tooltip from 'components/ui/Tooltip';
 import useOnboardingSteps from 'hooks/helpers/useOnboardingSteps';
 import useUserTOS from 'hooks/queries/useUserTOS';
-import Svg from 'components/ui/Svg';
+import useOnboardingStore from 'store/onboarding/store';
 import { four, one, three, two } from 'svg/onboardingStepper';
-import Tooltip from 'components/ui/Tooltip';
 
-const OnboardingStepper: FC<{ className?: string }> = ({ className }) => {
+import styles from './OnboardingStepper.module.scss';
+
+const OnboardingStepper = (): ReactNode => {
+  const { t } = useTranslation('translation', { keyPrefix: 'components.shared.onboardingStepper' });
   const { setIsOnboardingModalOpen, lastSeenStep } = useOnboardingStore(state => ({
     isOnboardingModalOpen: state.data.isOnboardingModalOpen,
-    setIsOnboardingModalOpen: state.setIsOnboardingModalOpen,
     lastSeenStep: state.data.lastSeenStep,
+    setIsOnboardingModalOpen: state.setIsOnboardingModalOpen,
   }));
 
   const { data: isUserTOSAccepted } = useUserTOS();
@@ -25,44 +29,71 @@ const OnboardingStepper: FC<{ className?: string }> = ({ className }) => {
   const numberOfSteps = stepsToUse.length;
 
   const svgNumber = useMemo(() => {
-    if (lastSeenStep === 1) return one;
-    if (lastSeenStep === 2) return two;
-    if (lastSeenStep === 3) return three;
+    if (lastSeenStep === 1) {
+      return one;
+    }
+    if (lastSeenStep === 2) {
+      return two;
+    }
+    if (lastSeenStep === 3) {
+      return three;
+    }
     return four;
   }, [lastSeenStep]);
 
   return (
-    <div className={styles.root}>
-      <Tooltip variant="small" position="top" text="Reopen onboarding">
+    <motion.div
+      key="OnboardingStepper"
+      animate={{ bottom: 48, opacity: 1, right: 48 }}
+      className={styles.root}
+      data-test="OnboardingStepper"
+      exit={{ bottom: 24, opacity: 0, right: 48 }}
+      initial={{ bottom: 24, opacity: 0, right: 48 }}
+      onClick={() => setIsOnboardingModalOpen(true)}
+      whileHover={{ scale: 1.1 }}
+    >
+      <Tooltip
+        childrenClassName={styles.tooltipChildrenClassname}
+        className={styles.tooltip}
+        dataTest="OnboardingStepper__Tooltip"
+        position="top"
+        text={t('reopenOnboarding')}
+        variant="small"
+      >
         <div className={styles.wrapper}>
-          <img src="images/slide.png" className={styles.slideImg} />
-          <Svg img={svgNumber} size={1.2} classNameSvg={styles.stepNumber} />
+          <Img className={styles.slideImg} src="/images/slide.png" />
+          <Svg classNameSvg={styles.stepNumber} img={svgNumber} size={1.2} />
           <svg className={styles.backgroundCircleSvg} viewBox={viewBox}>
-            <circle className={styles.backgroundCircle} cx={cxcy} cy={cxcy} r={28}></circle>
+            <circle className={styles.backgroundCircle} cx={cxcy} cy={cxcy} r={28} />
           </svg>
           <motion.svg
+            key={`stepper--${numberOfSteps}`}
             className={styles.progressLinesSvg}
             viewBox={viewBox}
-            key={`stepper--${numberOfSteps}`}
-            onClick={() => setIsOnboardingModalOpen(true)}
           >
             {[...Array(numberOfSteps).keys()].map(i => (
               <motion.circle
                 key={`progressLine--${i}`}
-                className={cx(styles.progressLine, i < lastSeenStep && styles.isHighlighted)}
-                cx={cxcy}
-                cy={cxcy}
-                r={27}
-                initial={{
+                animate={{
                   pathLength: 1 / numberOfSteps - 0.02,
                   rotate: -86 + (360 / numberOfSteps) * i,
                 }}
+                className={cx(styles.progressLine, i < lastSeenStep && styles.isHighlighted)}
+                cx={cxcy}
+                cy={cxcy}
+                data-test={`OnboardingStepper__circle--${i}`}
+                initial={{
+                  pathLength: 1 / numberOfSteps - 0.02,
+                  rotate: 0,
+                }}
+                r={27}
+                transition={{ duration: 0.01 }}
               />
             ))}
           </motion.svg>
         </div>
       </Tooltip>
-    </div>
+    </motion.div>
   );
 };
 

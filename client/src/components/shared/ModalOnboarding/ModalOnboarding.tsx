@@ -12,6 +12,7 @@ import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useOnboardingSteps from 'hooks/helpers/useOnboardingSteps';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import useOnboardingStore from 'store/onboarding/store';
+import useSettingsStore from 'store/settings/store';
 
 import styles from './ModalOnboarding.module.scss';
 
@@ -25,23 +26,28 @@ const motionAnimationProps: AnimationProps = {
 const ModalOnboarding: FC = () => {
   const { isConnected } = useAccount();
   const { data: isUserTOSAccepted } = useUserTOS();
+
   const {
     setIsOnboardingDone,
     isOnboardingDone,
-    isOnboardingCompleted,
+    hasOnboardingBeenClosed,
     lastSeenStep,
     setLastSeenStep,
     isOnboardingModalOpen,
     setIsOnboardingModalOpen,
+    setHasOnboardingBeenClosed,
   } = useOnboardingStore(state => ({
+    hasOnboardingBeenClosed: state.data.hasOnboardingBeenClosed,
     isOnboardingDone: state.data.isOnboardingDone,
-    isOnboardingCompleted: state.data.isOnboardingCompleted,
-    lastSeenStep: state.data.lastSeenStep,
-    setIsOnboardingDone: state.setIsOnboardingDone,
-    setIsOnboardingCompleted: state.setIsOnboardingCompleted,
-    setLastSeenStep: state.setLastSeenStep,
-    setIsOnboardingModalOpen: state.setIsOnboardingModalOpen,
     isOnboardingModalOpen: state.data.isOnboardingModalOpen,
+    lastSeenStep: state.data.lastSeenStep,
+    setHasOnboardingBeenClosed: state.setHasOnboardingBeenClosed,
+    setIsOnboardingDone: state.setIsOnboardingDone,
+    setIsOnboardingModalOpen: state.setIsOnboardingModalOpen,
+    setLastSeenStep: state.setLastSeenStep,
+  }));
+  const { isAllocateOnboardingAlwaysVisible } = useSettingsStore(state => ({
+    isAllocateOnboardingAlwaysVisible: state.data.isAllocateOnboardingAlwaysVisible,
   }));
   const { isDesktop } = useMediaQuery();
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(lastSeenStep - 1);
@@ -49,34 +55,16 @@ const ModalOnboarding: FC = () => {
 
   const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial);
 
-  useEffect(() => {
-    if (isOnboardingCompleted) return;
-    setLastSeenStep(currentStepIndex + 1);
-  }, [currentStepIndex, isOnboardingCompleted]);
-
-  useEffect(() => {
-    if (isOnboardingDone) return;
-    setCurrentStepIndex(lastSeenStep - 1);
-  }, [isOnboardingDone]);
-
-  useEffect(() => {
-    if (isUserTOSAccepted !== undefined && !isUserTOSAccepted) {
-      setIsOnboardingDone(false);
-    }
-
-    if (!isUserTOSAcceptedInitial && isUserTOSAccepted) {
-      setCurrentStepIndex(prev => prev + 1);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setIsOnboardingDone, isUserTOSAccepted]);
-
   const currentStep = stepsToUse.length > 0 ? stepsToUse[currentStepIndex] : null;
   const onOnboardingExit = useCallback(() => {
     if (!isUserTOSAccepted) {
       return;
     }
     setIsOnboardingModalOpen(false);
-    // setIsOnboardingDone(true);
+    if (!hasOnboardingBeenClosed) {
+      setHasOnboardingBeenClosed(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setIsOnboardingDone, isUserTOSAccepted]);
 
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -145,7 +133,7 @@ const ModalOnboarding: FC = () => {
   };
 
   useEffect(() => {
-    if (isOnboardingDone) {
+    if (!isConnected && !isUserTOSAccepted) {
       return;
     }
 
@@ -159,23 +147,50 @@ const ModalOnboarding: FC = () => {
       }
     };
 
-    if (isUserTOSAccepted) {
-      window.addEventListener('keydown', listener);
-    }
+    window.addEventListener('keydown', listener);
 
     return () => {
       window.removeEventListener('keydown', listener);
     };
-  }, [currentStepIndex, stepsToUse, isOnboardingDone, isUserTOSAccepted]);
-
-  const isModalOpen =
-    (isConnected && !isUserTOSAccepted) ||
-    (isConnected && !!isUserTOSAccepted && !isOnboardingDone);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected, currentStepIndex, stepsToUse, isOnboardingDone, isUserTOSAccepted]);
 
   useEffect(() => {
-    if (!isConnected) return;
-    // setIsOnboardingModalOpen(true);
-  }, [isConnected, isUserTOSAccepted]);
+    if (
+      isConnected &&
+      (isAllocateOnboardingAlwaysVisible || !isUserTOSAccepted || !hasOnboardingBeenClosed)
+    ) {
+      setIsOnboardingModalOpen(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected]);
+
+  useEffect(() => {
+    if (isOnboardingDone) {
+      return;
+    }
+    const stepNumber = currentStepIndex + 1;
+    setLastSeenStep(stepNumber);
+    if (stepNumber === stepsToUse.length) {
+      setIsOnboardingDone(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStepIndex, isOnboardingDone]);
+
+  useEffect(() => {
+    if (isOnboardingDone) {
+      return;
+    }
+    setCurrentStepIndex(lastSeenStep - 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!isUserTOSAcceptedInitial && isUserTOSAccepted) {
+      setCurrentStepIndex(prev => prev + 1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isUserTOSAccepted]);
 
   return (
     <Modal
