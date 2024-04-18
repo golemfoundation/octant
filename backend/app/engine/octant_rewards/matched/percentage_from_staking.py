@@ -10,7 +10,7 @@ class PercentageMatchedRewards(MatchedRewards):
     MATCHED_REWARDS_PERCENT: Decimal
 
     def calculate_matched_rewards(self, payload: MatchedRewardsPayload) -> int:
-        if payload.locked_ratio > 0.7:
+        if payload.locked_ratio > payload.tr_percent:
             raise InvalidMatchedRewardsStrategy()
 
         if payload.locked_ratio < payload.ire_percent:

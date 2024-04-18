@@ -37,7 +37,7 @@ def test_matched_rewards_when_locked_ratio_greater_than_70_percent():
     payload = MatchedRewardsPayload(
         staking_proceeds=ETH_PROCEEDS,
         patrons_rewards=USER2_BUDGET,
-        locked_ratio=Decimal("0.8"),
+        locked_ratio=TR_PERCENT + Decimal("0.01"),
         ire_percent=IRE_PERCENT,
         tr_percent=TR_PERCENT,
     )
