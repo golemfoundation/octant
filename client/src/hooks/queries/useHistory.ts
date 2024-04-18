@@ -30,9 +30,22 @@ interface EventData
   amount: bigint;
 }
 
-export type HistoryElement = Omit<ResponseHistoryItem, 'eventData'> & {
-  eventData: EventData;
+type HistoryElementPatronModeEvent = Omit<ResponseHistoryItem, 'eventData'> & {
+  eventData: Omit<PatronModeEventType, 'amount'> & { amount: bigint };
 };
+
+export type HistoryElementBlockchainEventEvent = Omit<ResponseHistoryItem, 'eventData'> & {
+  eventData: Omit<BlockchainEventType, 'amount'> & { amount: bigint };
+};
+
+type HistoryElementAllocationEventEvent = Omit<ResponseHistoryItem, 'eventData'> & {
+  eventData: Omit<AllocationEventTypeParsed, 'amount'> & { amount: bigint };
+};
+
+export type HistoryElement =
+  | HistoryElementPatronModeEvent
+  | HistoryElementBlockchainEventEvent
+  | HistoryElementAllocationEventEvent;
 
 export default function useHistory(
   options?: UseInfiniteQueryOptions<Response, unknown, Response, any>,

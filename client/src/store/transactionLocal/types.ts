@@ -1,14 +1,8 @@
 import { Hash } from 'viem';
 
-import { BlockchainEventType } from 'api/calls/history';
+import { HistoryElementBlockchainEventEvent } from 'hooks/queries/useHistory';
 
-type BlockchainEventTypeParsed = {
-  eventData: Omit<BlockchainEventType, 'amount'> & { amount: bigint };
-  timestamp: string;
-  type: 'lock' | 'unlock' | 'allocation' | 'withdrawal' | 'patron_mode_donation';
-};
-
-export type TransactionPending = BlockchainEventTypeParsed & {
+export type TransactionPending = HistoryElementBlockchainEventEvent & {
   isFinalized: boolean;
   isMultisig?: boolean;
   isWaitingForTransactionInitialized: boolean;
