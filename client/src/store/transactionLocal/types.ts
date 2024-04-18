@@ -1,12 +1,17 @@
 import { Hash } from 'viem';
 
-import { HistoryElement } from 'hooks/queries/useHistory';
+import { BlockchainEventType } from 'api/calls/history';
 
-export type TransactionPending = HistoryElement & {
+type BlockchainEventTypeParsed = {
+  eventData: Omit<BlockchainEventType, 'amount'> & { amount: bigint };
+  timestamp: string;
+  type: 'lock' | 'unlock' | 'allocation' | 'withdrawal' | 'patron_mode_donation';
+};
+
+export type TransactionPending = BlockchainEventTypeParsed & {
   isFinalized: boolean;
   isMultisig?: boolean;
   isWaitingForTransactionInitialized: boolean;
-  transactionHash: Hash;
 };
 
 export interface TransactionLocalData {
@@ -23,9 +28,9 @@ export interface TransactionLocalMethods {
   reset: () => void;
   setBlockNumberWithLatestTx: (payload: TransactionLocalData['blockNumberWithLatestTx']) => void;
   setIsAppWaitingForTransactionToBeIndexed: () => void;
-  setTransactionIsFinalized: (payload: TransactionPending['transactionHash']) => void;
+  setTransactionIsFinalized: (payload: TransactionPending['eventData']['transactionHash']) => void;
   setTransactionIsWaitingForTransactionInitialized: (
-    payload: TransactionPending['transactionHash'],
+    payload: TransactionPending['eventData']['transactionHash'],
   ) => void;
   updateTransactionHash: (payload: { newHash: Hash; oldHash: Hash }) => void;
 }

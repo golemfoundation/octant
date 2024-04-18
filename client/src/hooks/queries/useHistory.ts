@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import {
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
@@ -65,7 +64,7 @@ export default function useHistory(
       eventData: {
         ...(rest.type === 'allocation'
           ? {
-              ...eventData,
+              ...(eventData as AllocationEventType),
               allocations: (eventData as AllocationEventType).allocations.map(element => ({
                 address: element.project,
                 amount: parseUnitsBigInt(element.amount, 'wei'),
@@ -73,7 +72,7 @@ export default function useHistory(
             }
           : (eventData as PatronModeEventType | BlockchainEventType)),
         amount,
-      },
+      } as EventData,
       ...rest,
     };
   });

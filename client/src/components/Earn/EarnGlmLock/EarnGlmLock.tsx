@@ -106,11 +106,13 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
 
   const onSuccess = async ({ hash, value }): Promise<void> => {
     addTransactionPending({
-      amount: value,
+      eventData: {
+        amount: value,
+        transactionHash: hash,
+      },
       isMultisig: isContract,
       // GET /history uses microseconds. Normalization here.
       timestamp: (Date.now() * 1000).toString(),
-      transactionHash: hash,
       type: currentMode,
     });
     if (!isContract) {

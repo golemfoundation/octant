@@ -1,3 +1,5 @@
+import { Hash } from 'viem';
+
 import env from 'env';
 import apiService from 'services/apiService';
 
@@ -8,7 +10,7 @@ export type PatronModeEventType = {
 
 export type BlockchainEventType = {
   amount: string; // (wei) string
-  transactionHash: string;
+  transactionHash: Hash;
 };
 
 export type AllocationEventType = {

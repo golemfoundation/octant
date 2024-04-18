@@ -1,28 +1,34 @@
 import { TransactionPending } from 'store/transactionLocal/types';
 
 export const transactionPending1: TransactionPending = {
-  amount: BigInt(10),
+  eventData: {
+    amount: BigInt(10),
+    transactionHash: '0x123',
+  },
   isFinalized: false,
   isWaitingForTransactionInitialized: false,
   timestamp: '100',
-  transactionHash: '0x123',
   type: 'lock',
 };
 
 export const transactionPending2: TransactionPending = {
-  amount: BigInt(20),
+  eventData: {
+    amount: BigInt(20),
+    transactionHash: '0x456',
+  },
   isFinalized: false,
   isWaitingForTransactionInitialized: false,
   timestamp: '200',
-  transactionHash: '0x456',
   type: 'lock',
 };
 
 export const transactionPending3: TransactionPending = {
-  amount: BigInt(30),
+  eventData: {
+    amount: BigInt(30),
+    transactionHash: '0x789',
+  },
   isFinalized: false,
   isWaitingForTransactionInitialized: false,
   timestamp: '300',
-  transactionHash: '0x789',
   type: 'lock',
 };

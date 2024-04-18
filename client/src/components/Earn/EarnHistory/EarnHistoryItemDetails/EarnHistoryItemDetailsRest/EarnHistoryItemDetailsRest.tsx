@@ -26,9 +26,7 @@ const EarnHistoryItemDetailsRest: FC<EarnHistoryItemDetailsRestProps> = ({
     keyPrefix: 'components.dedicated.historyItemModal',
   });
   const { data: transaction, isFetching: isFetchingTransaction } = useTransaction({
-    hash: isWaitingForTransactionInitialized
-      ? undefined
-      : (eventData.transactionHash as `0x{string}`),
+    hash: isWaitingForTransactionInitialized ? undefined : eventData.transactionHash,
   });
 
   const isPatronDonation = type === 'patron_mode_donation';
