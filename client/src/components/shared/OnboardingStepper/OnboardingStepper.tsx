@@ -61,7 +61,7 @@ const OnboardingStepper = (): ReactNode => {
         variant="small"
       >
         <div className={styles.wrapper}>
-          <Img className={styles.slideImg} src="/images/slide.png" />
+          <Img className={styles.slideImg} src="/images/slide.webp" />
           <Svg classNameSvg={styles.stepNumber} img={svgNumber} size={1.2} />
           <svg className={styles.backgroundCircleSvg} viewBox={viewBox}>
             <circle className={styles.backgroundCircle} cx={cxcy} cy={cxcy} r={28} />
