@@ -23,7 +23,7 @@ type AllocationEventTypeParsed = Omit<AllocationEventType, 'allocations'> & {
   }[];
 };
 
-interface EventData
+export interface EventData
   extends Omit<PatronModeEventType, 'amount'>,
     Omit<BlockchainEventType, 'amount'>,
     AllocationEventTypeParsed {
