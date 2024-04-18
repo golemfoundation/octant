@@ -44,8 +44,8 @@ const EarnWithdrawEth: FC<EarnWithdrawEthProps> = ({ onCloseModal }) => {
         amount: withdrawals.sums.available,
         transactionHash: hash,
       },
-      // GET /history uses microseconds. Normalization here.
-      timestamp: (Date.now() * 1000).toString(),
+      // GET /history uses seconds. Normalization here.
+      timestamp: Math.floor(Date.now() / 1000).toString(),
       type: 'withdrawal',
     });
     onCloseModal();
