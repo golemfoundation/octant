@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Img from 'components/ui/Img';
 import Svg from 'components/ui/Svg';
 import Tooltip from 'components/ui/Tooltip';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useOnboardingSteps from 'hooks/helpers/useOnboardingSteps';
 import useUserTOS from 'hooks/queries/useUserTOS';
 import useOnboardingStore from 'store/onboarding/store';
@@ -21,6 +22,7 @@ const OnboardingStepper = (): ReactNode => {
     setIsOnboardingModalOpen: state.setIsOnboardingModalOpen,
   }));
 
+  const { isDesktop } = useMediaQuery();
   const { data: isUserTOSAccepted } = useUserTOS();
   const [isUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
   const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial);
@@ -44,11 +46,11 @@ const OnboardingStepper = (): ReactNode => {
   return (
     <motion.div
       key="OnboardingStepper"
-      animate={{ bottom: 48, opacity: 1, right: 48 }}
+      animate={{ bottom: isDesktop ? 48 : 108, opacity: 1, right: isDesktop ? 48 : 24 }}
       className={styles.root}
       data-test="OnboardingStepper"
-      exit={{ bottom: 24, opacity: 0, right: 48 }}
-      initial={{ bottom: 24, opacity: 0, right: 48 }}
+      exit={{ bottom: isDesktop ? 24 : 84, opacity: 0, right: isDesktop ? 48 : 24 }}
+      initial={{ bottom: isDesktop ? 24 : 84, opacity: 0, right: isDesktop ? 48 : 24 }}
       onClick={() => setIsOnboardingModalOpen(true)}
       whileHover={{ scale: 1.1 }}
     >
