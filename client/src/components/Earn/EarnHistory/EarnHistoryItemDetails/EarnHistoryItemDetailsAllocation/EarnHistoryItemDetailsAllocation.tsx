@@ -8,10 +8,10 @@ import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useEpochTimestampHappenedIn from 'hooks/subgraph/useEpochTimestampHappenedIn';
 import { CryptoCurrency } from 'types/cryptoCurrency';
-import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
-import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
+import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
 import styles from './EarnHistoryItemDetailsAllocation.module.scss';
 import EarnHistoryItemDetailsAllocationProps from './types';
@@ -24,6 +24,7 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
     keyPrefix: 'components.dedicated.historyItemModal',
   });
   const { data: currentEpoch } = useCurrentEpoch();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: epochTimestampHappenedIn, isFetching: isFetchingEpochTimestampHappenedIn } =
     useEpochTimestampHappenedIn(timestamp);
 
@@ -34,7 +35,12 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
 
   const isPersonalOnlyAllocation = amount === 0n;
 
-  const isAllocationFromCurrentAW = currentEpoch ? allocationEpoch === currentEpoch - 1 : false;
+  const isAllocationFromCurrentAW = currentEpoch
+    ? isDecisionWindowOpen && allocationEpoch === currentEpoch - 1
+    : false;
+
+  const leverageInt = parseInt(leverage, 10);
+  const leverageBigInt = BigInt(leverageInt);
 
   const sections: SectionProps[] = [
     {
@@ -57,7 +63,7 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
           },
           isAllocationFromCurrentAW
             ? {
-                childrenRight: <div className={styles.leverage}>{parseInt(leverage, 10)}x</div>,
+                childrenRight: <div className={styles.leverage}>{leverageInt}x</div>,
                 label: t('sections.estimatedLeverage'),
                 tooltipProps: {
                   position: 'bottom-right',
@@ -68,7 +74,10 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
             : {
                 childrenRight: (
                   <div className={styles.leverage}>
-                    {formatUnitsBigInt(amount ** parseUnitsBigInt(leverage))}x
+                    {getValueCryptoToDisplay({
+                      cryptoCurrency: 'ethereum',
+                      valueCrypto: amount * leverageBigInt,
+                    })}
                   </div>
                 ),
                 label: t('sections.finalMatchFunding'),
