@@ -47,8 +47,8 @@ def test_default_epoch_settings():
     check_settings(
         settings=settings,
         total_and_all_individual_rewards=PercentTotalAndAllIndividualRewards(
-            OctantRewardsDefaultValues.TR_PERCENT,
-            OctantRewardsDefaultValues.IRE_PERCENT,
+            IRE_PERCENT=OctantRewardsDefaultValues.IRE_PERCENT,
+            TR_PERCENT=OctantRewardsDefaultValues.TR_PERCENT,
         ),
         timebased_weights=TimebasedWithoutUnlocksWeights(),
         operational_cost=OpCostPercent(Decimal("0.25")),
@@ -108,8 +108,8 @@ def test_epoch_3_settings():
         settings=settings,
         operational_cost=OpCostPercent(Decimal("0.25")),
         total_and_all_individual_rewards=PercentTotalAndAllIndividualRewards(
-            OctantRewardsDefaultValues.TR_PERCENT,
-            OctantRewardsDefaultValues.IRE_PERCENT,
+            IRE_PERCENT=OctantRewardsDefaultValues.IRE_PERCENT,
+            TR_PERCENT=OctantRewardsDefaultValues.TR_PERCENT,
         ),
         matched_rewards=PercentageMatchedRewards(
             OctantRewardsDefaultValues.MATCHED_REWARDS_PERCENT

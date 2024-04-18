@@ -7,7 +7,7 @@ from app.modules.octant_rewards.service.calculated import (
     CalculatedOctantRewards,
 )
 from tests.conftest import ETH_PROCEEDS, TOTAL_ED
-from tests.helpers.constants import MOCKED_EPOCH_NO_AFTER_OVERHAUL
+from tests.helpers.constants import MOCKED_EPOCH_NO_AFTER_OVERHAUL, LOCKED_RATIO
 from tests.helpers.context import get_context
 from tests.modules.octant_rewards.helpers import overhaul_formulas
 
@@ -67,5 +67,5 @@ def test_calculate_octant_rewards_after_overhaul(
         result.staking_proceeds
     )
     assert result.ppf == overhaul_formulas.ppf(
-        result.staking_proceeds, result.individual_rewards
+        result.staking_proceeds, result.individual_rewards, LOCKED_RATIO
     )

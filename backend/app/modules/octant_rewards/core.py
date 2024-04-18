@@ -46,7 +46,12 @@ def calculate_rewards(
     )
 
     ppf_calculator = octant_rewards_settings.ppf
-    ppf_payload = PPFPayload(individual_rewards_equilibrium, all_individual_rewards)
+    ppf_payload = PPFPayload(
+        individual_rewards_equilibrium,
+        all_individual_rewards,
+        locked_ratio,
+        rewards_calculator.IRE_PERCENT,
+    )
     ppf_value = ppf_calculator.calculate_ppf(ppf_payload)
 
     cf_calculator = octant_rewards_settings.community_fund

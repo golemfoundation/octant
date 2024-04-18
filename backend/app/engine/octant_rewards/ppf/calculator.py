@@ -5,6 +5,8 @@ from dataclasses import dataclass
 @dataclass
 class PPFCalculatorFromRewards(PPFCalculator):
     def calculate_ppf(self, payload: PPFPayload) -> int:
-        return int(
-            payload.individual_rewards_equilibrium - payload.all_individual_rewards
-        )
+        if payload.locked_ratio < payload.ire_percent:
+            return int(
+                payload.individual_rewards_equilibrium - payload.all_individual_rewards
+            )
+        return 0

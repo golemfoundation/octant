@@ -41,8 +41,8 @@ class OctantRewardsSettings:
     )
     total_and_all_individual_rewards: TotalAndAllIndividualRewards = field(
         default_factory=lambda: PercentTotalAndAllIndividualRewards(
-            OctantRewardsDefaultValues.TR_PERCENT,
-            OctantRewardsDefaultValues.IRE_PERCENT,
+            IRE_PERCENT=OctantRewardsDefaultValues.IRE_PERCENT,
+            TR_PERCENT=OctantRewardsDefaultValues.TR_PERCENT,
         )
     )
     matched_rewards: MatchedRewards = field(

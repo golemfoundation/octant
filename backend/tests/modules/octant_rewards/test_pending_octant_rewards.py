@@ -75,7 +75,7 @@ def test_pending_get_matched_rewards_after_overhaul(mock_patron_mode, mock_users
         epoch_nr=MOCKED_EPOCH_NO_AFTER_OVERHAUL, mock_users_db=mock_users_db
     )
 
-    mock_patron_mode.get_patrons_rewards.return_value = 0
+    mock_patron_mode.get_patrons_rewards.return_value = USER2_BUDGET
     context = get_context(3)
     service = PendingOctantRewards(patrons_mode=mock_patron_mode)
 
