@@ -11,6 +11,7 @@ from tests.helpers.constants import (
     TOTAL_WITHDRAWALS,
     MATCHED_REWARDS,
     NO_PATRONS_REWARDS,
+    MATCHED_REWARDS_AFTER_OVERHAUL,
 )
 from tests.helpers.context import get_context
 from tests.modules.octant_rewards.helpers import overhaul_formulas
@@ -48,9 +49,7 @@ def test_finalized_octant_rewards_after_overhaul(
         ppf=PPF,
         community_fund=COMMUNITY_FUND,
         leftover=LEFTOVER,
-        matched_rewards=overhaul_formulas.matched_rewards(
-            result.total_rewards, PPF, patrons_rewards=NO_PATRONS_REWARDS
-        ),
+        matched_rewards=MATCHED_REWARDS_AFTER_OVERHAUL,
         total_withdrawals=TOTAL_WITHDRAWALS,
         patrons_rewards=NO_PATRONS_REWARDS,
     )

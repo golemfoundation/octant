@@ -66,4 +66,6 @@ def test_calculate_octant_rewards_after_overhaul(
     assert result.community_fund == overhaul_formulas.community_fund(
         result.staking_proceeds
     )
-    assert result.ppf == overhaul_formulas.ppf(result.staking_proceeds)
+    assert result.ppf == overhaul_formulas.ppf(
+        result.staking_proceeds, result.individual_rewards
+    )

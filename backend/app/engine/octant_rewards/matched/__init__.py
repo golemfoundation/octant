@@ -7,7 +7,7 @@ class MatchedRewardsPayload:
     total_rewards: int = None
     all_individual_rewards: int = None
     patrons_rewards: int = None
-    ppf: int = None
+    staking_proceeds: int = None
 
 
 @dataclass

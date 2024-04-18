@@ -2,8 +2,10 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 from app.engine.octant_rewards import OctantRewardsSettings
+from app.engine.octant_rewards import PercentTotalAndAllIndividualRewards
 from app.engine.octant_rewards.community_fund import CommunityFundPayload
 from app.engine.octant_rewards.locked_ratio import LockedRatioPayload
+from app.engine.octant_rewards.matched import MatchedRewardsPayload
 from app.engine.octant_rewards.operational_cost import OperationalCostPayload
 from app.engine.octant_rewards.ppf import PPFPayload
 from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividualPayload
@@ -41,9 +43,12 @@ def calculate_rewards(
     all_individual_rewards = rewards_calculator.calculate_all_individual_rewards(
         rewards_payload
     )
+    individual_rewards_equilibrium = (
+        rewards_calculator.calculate_individual_rewards_equilibrium(rewards_payload)
+    )
 
     ppf_calculator = octant_rewards_settings.ppf
-    ppf_payload = PPFPayload(eth_proceeds)
+    ppf_payload = PPFPayload(individual_rewards_equilibrium, all_individual_rewards)
     ppf_value = ppf_calculator.calculate_ppf(ppf_payload)
 
     cf_calculator = octant_rewards_settings.community_fund

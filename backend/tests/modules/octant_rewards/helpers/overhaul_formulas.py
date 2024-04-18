@@ -1,8 +1,15 @@
 from decimal import Decimal
 
 
-def ppf(staking_proceeds: int) -> int:
+def ire(staking_proceeds: int) -> int:
+    """
+    Individual Rewards Equilibrium
+    """
     return int(Decimal("0.35") * staking_proceeds)
+
+
+def ppf(staking_proceeds: int, individual_rewards: int) -> int:
+    return ire(staking_proceeds) - individual_rewards
 
 
 def community_fund(staking_proceeds: int) -> int:
@@ -11,7 +18,3 @@ def community_fund(staking_proceeds: int) -> int:
 
 def total_rewards(staking_proceeds: int) -> int:
     return int(Decimal("0.7") * staking_proceeds)
-
-
-def matched_rewards(total_rewards: int, ppf: int, patrons_rewards: int) -> int:
-    return total_rewards - ppf + patrons_rewards

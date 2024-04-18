@@ -4,7 +4,8 @@ from abc import abstractmethod, ABC
 
 @dataclass
 class PPFPayload:
-    eth_proceeds: int = None
+    individual_rewards_equilibrium: int
+    all_individual_rewards: int
 
 
 class PPFCalculator(ABC):

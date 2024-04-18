@@ -21,3 +21,8 @@ class TotalAndAllIndividualRewards(ABC):
         self, payload: TotalAndAllIndividualPayload
     ) -> int:
         pass
+
+    def calculate_individual_rewards_equilibrium(
+        self, payload: TotalAndAllIndividualPayload
+    ):
+        return None

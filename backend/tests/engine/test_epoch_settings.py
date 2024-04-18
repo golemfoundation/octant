@@ -10,8 +10,10 @@ from app.engine.octant_rewards.community_fund.not_supported import (
     NotSupportedCFCalculator,
 )
 from app.engine.octant_rewards.matched.preliminary import PreliminaryMatchedRewards
-from app.engine.octant_rewards.matched.with_ppf import MatchedRewardsWithPPF
-from app.engine.octant_rewards.ppf.calculator import PPFCalculatorPercent
+from app.engine.octant_rewards.matched.percentage_from_staking import (
+    PercentageMatchedRewards,
+)
+from app.engine.octant_rewards.ppf.calculator import PPFCalculatorFromRewards
 from app.engine.octant_rewards.ppf.not_supported import NotSupportedPPFCalculator
 from app.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (
     AllProceedsWithOperationalCost,
@@ -19,7 +21,7 @@ from app.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost im
 from app.engine.octant_rewards.total_and_individual.preliminary import (
     PreliminaryTotalAndAllIndividualRewards,
 )
-from app.engine.octant_rewards.total_and_individual.tr_from_staking import (
+from app.engine.octant_rewards.total_and_individual.tr_percent_calc import (
     PercentTotalAndAllIndividualRewards,
 )
 from app.engine.projects import DefaultProjectRewards
@@ -45,14 +47,17 @@ def test_default_epoch_settings():
     check_settings(
         settings=settings,
         total_and_all_individual_rewards=PercentTotalAndAllIndividualRewards(
-            OctantRewardsDefaultValues.TR_PERCENT
+            OctantRewardsDefaultValues.TR_PERCENT,
+            OctantRewardsDefaultValues.IRE_PERCENT,
         ),
         timebased_weights=TimebasedWithoutUnlocksWeights(),
         operational_cost=OpCostPercent(Decimal("0.25")),
-        ppf=PPFCalculatorPercent(OctantRewardsDefaultValues.PPF),
+        ppf=PPFCalculatorFromRewards(),
         community_fund=CommunityFundPercent(OctantRewardsDefaultValues.COMMUNITY_FUND),
         user_budget=UserBudgetWithPPF(),
-        matched_rewards=MatchedRewardsWithPPF(),
+        matched_rewards=PercentageMatchedRewards(
+            OctantRewardsDefaultValues.MATCHED_REWARDS_PERCENT
+        ),
         projects_rewards=DefaultProjectRewards(
             projects_threshold=DefaultProjectThreshold(1),
         ),
@@ -103,12 +108,15 @@ def test_epoch_3_settings():
         settings=settings,
         operational_cost=OpCostPercent(Decimal("0.25")),
         total_and_all_individual_rewards=PercentTotalAndAllIndividualRewards(
-            Decimal("0.7")
+            OctantRewardsDefaultValues.TR_PERCENT,
+            OctantRewardsDefaultValues.IRE_PERCENT,
         ),
-        matched_rewards=MatchedRewardsWithPPF(),
+        matched_rewards=PercentageMatchedRewards(
+            OctantRewardsDefaultValues.MATCHED_REWARDS_PERCENT
+        ),
         timebased_weights=TimebasedWithoutUnlocksWeights(),
         community_fund=CommunityFundPercent(OctantRewardsDefaultValues.COMMUNITY_FUND),
-        ppf=PPFCalculatorPercent(OctantRewardsDefaultValues.PPF),
+        ppf=PPFCalculatorFromRewards(),
         user_budget=UserBudgetWithPPF(),
         projects_rewards=DefaultProjectRewards(
             projects_threshold=DefaultProjectThreshold(1),
