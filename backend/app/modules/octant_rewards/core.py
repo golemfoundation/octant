@@ -2,10 +2,8 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 from app.engine.octant_rewards import OctantRewardsSettings
-from app.engine.octant_rewards import PercentTotalAndAllIndividualRewards
 from app.engine.octant_rewards.community_fund import CommunityFundPayload
 from app.engine.octant_rewards.locked_ratio import LockedRatioPayload
-from app.engine.octant_rewards.matched import MatchedRewardsPayload
 from app.engine.octant_rewards.operational_cost import OperationalCostPayload
 from app.engine.octant_rewards.ppf import PPFPayload
 from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividualPayload

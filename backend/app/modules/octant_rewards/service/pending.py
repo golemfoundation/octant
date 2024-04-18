@@ -7,7 +7,6 @@ from app.infrastructure import database
 from app.modules.common.leverage import calculate_leverage
 from app.modules.dto import OctantRewardsDTO
 from app.pydantic import Model
-from app.engine.octant_rewards.ppf import PPFPayload
 
 
 @runtime_checkable

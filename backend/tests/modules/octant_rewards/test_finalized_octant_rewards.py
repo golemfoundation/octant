@@ -14,7 +14,6 @@ from tests.helpers.constants import (
     MATCHED_REWARDS_AFTER_OVERHAUL,
 )
 from tests.helpers.context import get_context
-from tests.modules.octant_rewards.helpers import overhaul_formulas
 from tests.modules.octant_rewards.helpers.checker import check_octant_rewards
 
 
