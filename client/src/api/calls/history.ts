@@ -16,7 +16,7 @@ export type BlockchainEventType = {
 export type AllocationEventType = {
   allocations: {
     amount: string; // (wei) string
-    project: string;
+    projectAddress: string;
   }[];
   isManuallyEdited: boolean | null;
   leverage: string;

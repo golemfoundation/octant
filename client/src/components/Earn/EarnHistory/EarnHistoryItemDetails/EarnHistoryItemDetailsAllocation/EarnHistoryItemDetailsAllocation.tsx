@@ -6,9 +6,12 @@ import ProjectAllocationDetailRow from 'components/shared/ProjectAllocationDetai
 import BoxRounded from 'components/ui/BoxRounded';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useEpochTimestampHappenedIn from 'hooks/subgraph/useEpochTimestampHappenedIn';
 import { CryptoCurrency } from 'types/cryptoCurrency';
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import styles from './EarnHistoryItemDetailsAllocation.module.scss';
 import EarnHistoryItemDetailsAllocationProps from './types';
@@ -20,6 +23,7 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.historyItemModal',
   });
+  const { data: currentEpoch } = useCurrentEpoch();
   const { data: epochTimestampHappenedIn, isFetching: isFetchingEpochTimestampHappenedIn } =
     useEpochTimestampHappenedIn(timestamp);
 
@@ -29,6 +33,8 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
     useIndividualReward(allocationEpoch);
 
   const isPersonalOnlyAllocation = amount === 0n;
+
+  const isAllocationFromCurrentAW = currentEpoch ? allocationEpoch === currentEpoch - 1 : false;
 
   const sections: SectionProps[] = [
     {
@@ -41,7 +47,7 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
     },
     ...(isPersonalOnlyAllocation
       ? []
-      : [
+      : ([
           {
             doubleValueProps: {
               cryptoCurrency: 'ethereum' as CryptoCurrency,
@@ -49,11 +55,30 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
             },
             label: t('sections.allocationProjects', { projectsNumber: allocations.length }),
           },
-          {
-            childrenRight: leverage,
-            label: t('sections.estimatedLeverage'),
-          },
-        ]),
+          isAllocationFromCurrentAW
+            ? {
+                childrenRight: <div className={styles.leverage}>{parseInt(leverage, 10)}x</div>,
+                label: t('sections.estimatedLeverage'),
+                tooltipProps: {
+                  position: 'bottom-right',
+                  text: t('sections.allocationTooltips.leverage'),
+                  tooltipClassName: styles.tooltip,
+                },
+              }
+            : {
+                childrenRight: (
+                  <div className={styles.leverage}>
+                    {formatUnitsBigInt(amount ** parseUnitsBigInt(leverage))}x
+                  </div>
+                ),
+                label: t('sections.finalMatchFunding'),
+                tooltipProps: {
+                  position: 'bottom-right',
+                  text: t('sections.allocationTooltips.finalMatchFunding'),
+                  tooltipClassName: styles.tooltip,
+                },
+              },
+        ] as SectionProps[])),
     {
       childrenRight: <EarnHistoryItemDateAndTime timestamp={timestamp} />,
       label: t('sections.when'),

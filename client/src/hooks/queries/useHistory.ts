@@ -79,7 +79,7 @@ export default function useHistory(
           ? {
               ...(eventData as AllocationEventType),
               allocations: (eventData as AllocationEventType).allocations.map(element => ({
-                address: element.project,
+                address: element.projectAddress,
                 amount: parseUnitsBigInt(element.amount, 'wei'),
               })),
             }
