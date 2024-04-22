@@ -1,23 +1,21 @@
 from flask import current_app as app
 from flask_restx import Namespace, fields
 
-from app.extensions import api, epochs
+from app.extensions import api
 from app.infrastructure import OctantResource
-from app.infrastructure.routes.validations.user_validations import (
-    validate_estimate_budget_inputs,
-    validate_estimate_budget_by_epochs_inputs,
-    validate_if_given_epoch_has_previous_one,
-)
 from app.legacy.controllers import rewards
-from app.modules.common.time import days_to_sec
+from app.modules.facades.rewards_estimation import estimate_rewards
 from app.modules.octant_rewards.controller import get_leverage
 from app.modules.project_rewards.controller import (
     get_estimated_project_rewards,
     get_allocation_threshold,
 )
-from app.modules.user.budgets.controller import get_budgets, get_budget, estimate_budget
+from app.modules.user.budgets.controller import (
+    get_budgets,
+    get_budget,
+    estimate_budget_by_days,
+)
 from app.modules.user.rewards.controller import get_unused_rewards
-from app.modules.facades.rewards_estimation import estimate_rewards
 
 ns = Namespace("rewards", description="Octant rewards")
 api.add_namespace(ns)
@@ -261,20 +259,16 @@ class EstimatedUserBudget(OctantResource):
             f"Getting user estimated budget for {no_epochs} epochs and {glm_amount} GLM. Getting matched_funding based on previous epoch."
         )
 
-        current_epoch_num = epochs.get_current_epoch()
-        validate_estimate_budget_by_epochs_inputs(no_epochs, glm_amount)
-        validate_if_given_epoch_has_previous_one(current_epoch_num)
-
-        rewards = estimate_rewards(current_epoch_num - 1, no_epochs, glm_amount)
+        rewards = estimate_rewards(no_epochs, glm_amount)
         budget = rewards.estimated_budget
         leverage = rewards.leverage
-        matched_funding = rewards.matching_fund * leverage
+        matching_fund = rewards.matching_fund
 
         app.logger.debug(
-            f"Estimated user budget: {budget}, estimated matched_funding: {matched_funding} with leverage: {leverage}"
+            f"Estimated user budget: {budget}, estimated matching_fund: {matching_fund} with leverage: {leverage}"
         )
 
-        return {"budget": budget, "matchedFunding": matched_funding}
+        return {"budget": budget, "matchedFunding": matching_fund}
 
 
 @ns.route("/estimated_budget/by_days")
@@ -290,9 +284,7 @@ class EstimatedUserBudgetByDays(OctantResource):
         app.logger.debug(
             f"Getting user estimated budget for {days} days and {glm_amount} GLM"
         )
-        validate_estimate_budget_inputs(days, glm_amount)
-        lock_duration_sec = days_to_sec(days)
-        budget = estimate_budget(lock_duration_sec, glm_amount)
+        budget = estimate_budget_by_days(days, glm_amount)
         app.logger.debug(f"Estimated user budget: {budget}")
 
         return {"budget": budget}

@@ -1,7 +1,7 @@
 import pytest
 
 from app.exceptions import RewardsException, EstimateRewardsNotSupported
-from app.infrastructure.routes.validations.user_validations import (
+from app.modules.common.validations.user_validations import (
     validate_estimate_budget_by_epochs_inputs,
     validate_if_given_epoch_has_previous_one,
 )
