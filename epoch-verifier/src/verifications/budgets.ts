@@ -18,8 +18,8 @@ export function compareUserBudgetsVsTheirAllocations(context: Context): Verifica
 
 }
 
-export function budgetsAreEqualToHalfPpf(context: Context): VerificationResult {
+export function budgetsAreEqualToIndividualRewardsPlusHalfPpf(context: Context): VerificationResult {
   const budgets = Array.from(context.budgets.entries()).reduce((acc, [_user, budget]) => acc + budget, BigInt(0))
-
-  return assertEq(budgets, context.epochInfo.ppf / BigInt(2), BigInt(500), true)
+  const expectedBudgets = context.epochInfo.individualRewards + context.epochInfo.ppf / BigInt(2)
+  return assertEq(budgets, expectedBudgets, BigInt(500), true)
 }

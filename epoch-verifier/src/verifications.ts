@@ -1,5 +1,5 @@
 import { Runner, Verification } from "./runner";
-import { budgetsAreEqualToHalfPpf, compareUserBudgetsVsTheirAllocations } from "./verifications/budgets";
+import { budgetsAreEqualToIndividualRewardsPlusHalfPpf, compareUserBudgetsVsTheirAllocations } from "./verifications/budgets";
 import {
   verifyMatchedFunds,
   verifyProjectsBelowThreshold,
@@ -14,7 +14,7 @@ export function registerVerifications(runner: Runner): void {
 
   const verifications: Verification[] = [
     {name: "User budgets vs allocations sums", verify: compareUserBudgetsVsTheirAllocations},
-    {name: "User budgets vs half PPF", verify: budgetsAreEqualToHalfPpf},
+    {name: "User budgets vs half PPF", verify: budgetsAreEqualToIndividualRewardsPlusHalfPpf},
     {name: "Projects below threshold", verify: verifyProjectsBelowThreshold},
     {name: "Users allocated vs rewards allocated", verify: verifyUserDonationsVsRewards},
     {name: "Users rewards allocated vs allocated", verify: verifyRewardsVsUserDonations},
