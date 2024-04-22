@@ -7,6 +7,7 @@ import BoxRounded from 'components/ui/BoxRounded';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useEpochLeverage from 'hooks/queries/useEpochLeverage';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useEpochTimestampHappenedIn from 'hooks/subgraph/useEpochTimestampHappenedIn';
@@ -27,6 +28,7 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: epochTimestampHappenedIn, isFetching: isFetchingEpochTimestampHappenedIn } =
     useEpochTimestampHappenedIn(timestamp);
+  const { data: epochLeverage } = useEpochLeverage(epochTimestampHappenedIn);
 
   const allocationEpoch = epochTimestampHappenedIn ? epochTimestampHappenedIn - 1 : undefined;
 
@@ -41,6 +43,10 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
 
   const leverageInt = parseInt(leverage, 10);
   const leverageBigInt = BigInt(leverageInt);
+  const epochLeverageNumber = epochLeverage ? Math.round(epochLeverage) : 0;
+  const epochLeverageBigInt = BigInt(epochLeverageNumber);
+
+  const leverageToUse = isAllocationFromCurrentAW ? leverageBigInt : epochLeverageBigInt;
 
   const sections: SectionProps[] = [
     {
@@ -76,7 +82,7 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
                   <div className={styles.leverage}>
                     {getValueCryptoToDisplay({
                       cryptoCurrency: 'ethereum',
-                      valueCrypto: amount * leverageBigInt,
+                      valueCrypto: amount * leverageToUse,
                     })}
                   </div>
                 ),
