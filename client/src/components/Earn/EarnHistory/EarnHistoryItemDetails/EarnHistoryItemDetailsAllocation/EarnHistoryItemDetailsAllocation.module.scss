@@ -11,6 +11,10 @@
 
 .leverage {
   color: $color-octant-dark;
+
+  &.isFetchingEpochLeverage {
+    @include skeleton();
+  }
 }
 
 .tooltip {

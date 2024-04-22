@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import React, { FC, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -28,7 +29,7 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: epochTimestampHappenedIn, isFetching: isFetchingEpochTimestampHappenedIn } =
     useEpochTimestampHappenedIn(timestamp);
-  const { data: epochLeverage } = useEpochLeverage(
+  const { data: epochLeverage, isFetching: isFetchingEpochLeverage } = useEpochLeverage(
     epochTimestampHappenedIn ? epochTimestampHappenedIn - 1 : undefined,
   );
 
@@ -43,6 +44,10 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
     ? isDecisionWindowOpen && allocationEpoch === currentEpoch - 1
     : false;
 
+  /**
+   * leverage in the event is a value from the moment event happened.
+   * When event happened in the already closed AW we show epochLeverage, as it's the final one.
+   */
   const leverageInt = parseInt(leverage, 10);
   const leverageBigInt = BigInt(leverageInt);
   const epochLeverageNumber = epochLeverage ? Math.round(epochLeverage) : 0;
@@ -81,7 +86,14 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
               }
             : {
                 childrenRight: (
-                  <div className={styles.leverage}>
+                  <div
+                    className={cx(
+                      styles.leverage,
+                      !isAllocationFromCurrentAW &&
+                        isFetchingEpochLeverage &&
+                        styles.isFetchingEpochLeverage,
+                    )}
+                  >
                     {getValueCryptoToDisplay({
                       cryptoCurrency: 'ethereum',
                       valueCrypto: amount * leverageToUse,
