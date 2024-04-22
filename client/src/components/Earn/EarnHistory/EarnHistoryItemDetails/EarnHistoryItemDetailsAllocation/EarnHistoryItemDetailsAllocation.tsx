@@ -28,7 +28,9 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: epochTimestampHappenedIn, isFetching: isFetchingEpochTimestampHappenedIn } =
     useEpochTimestampHappenedIn(timestamp);
-  const { data: epochLeverage } = useEpochLeverage(epochTimestampHappenedIn);
+  const { data: epochLeverage } = useEpochLeverage(
+    epochTimestampHappenedIn ? epochTimestampHappenedIn - 1 : undefined,
+  );
 
   const allocationEpoch = epochTimestampHappenedIn ? epochTimestampHappenedIn - 1 : undefined;
 
