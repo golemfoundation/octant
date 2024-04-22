@@ -262,3 +262,13 @@ class InvalidMultisigAddress(OctantException):
 
     def __init__(self):
         super().__init__(self.description, self.code)
+
+
+class InvalidMatchedRewardsStrategy(OctantException):
+    code = 500
+    description = (
+        "Can't calculate matched rewards when locked ratio is greater than TR percent"
+    )
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
