@@ -24,6 +24,7 @@
     }
   },
   "common": {
+    "dontCloseTab": "Don't close the tab.",
     "availableNow": "Available now",
     "calculateRewards": "Calculate rewards",
     "calculating": "Calculating...",
@@ -301,6 +302,7 @@
   },
   "views": {
     "allocation": {
+      "multisigSignature": "Make at least one signature to start allocation process.",
       "allocationItem": {
         "epoch1": "No funding threshold in Epoch 1",
         "standard": "{{sum}} / {{threshold}}",
@@ -407,7 +409,8 @@
         "usingTheApp": {
           "header": "Using the app",
           "text": "Before we can go any further, please read the terms of service and click the checkbox below to agree with them.",
-          "waitingForWalletConfirmation": "Waiting for wallet confirmation"
+          "waitingForWalletConfirmation": "Waiting for wallet confirmation",
+          "multisigSignature": "Make at least one signature to start TOS acceptance process."
         }
       },
       "stepsDecisionWindowOpen": {

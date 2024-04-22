@@ -44,7 +44,7 @@ import {
 
 const AllocationView = (): ReactElement => {
   const { isConnected } = useAccount();
-  const { t } = useTranslation('translation', { keyPrefix: 'views.allocation' });
+  const { t, i18n } = useTranslation('translation', { keyPrefix: 'views.allocation' });
   const [currentView, setCurrentView] = useState<CurrentView>('edit');
   const [allocationValues, setAllocationValues] = useState<AllocationValues>([]);
   const [isManualMode, setIsManualMode] = useState<boolean>(false);
@@ -53,6 +53,7 @@ const AllocationView = (): ReactElement => {
   const { data: projectsEpoch } = useProjectsEpoch();
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards();
   const { isRewardsForProjectsSet } = useAllocationViewSetRewardsForProjects();
+  const [showInitialSignatureRequest, setShowInitialSignatureRequest] = useState(false);
   const {
     data: allocationSimulated,
     mutateAsync: mutateAsyncAllocateSimulate,
@@ -133,6 +134,10 @@ const AllocationView = (): ReactElement => {
 
   const allocateEvent = useAllocate({
     nonce: userNonce!,
+    onMultisigMessageSign: () => {
+      setShowInitialSignatureRequest(false);
+      setIsWaitingForWalletConfirmationMultisig(true);
+    },
     onSuccess: onAllocateSuccess,
   });
 
@@ -261,7 +266,7 @@ const AllocationView = (): ReactElement => {
       });
     }
     if (isContract) {
-      setIsWaitingForWalletConfirmationMultisig(true);
+      setShowInitialSignatureRequest(true);
     }
     allocateEvent.emit(allocationValuesNew, isManualMode);
   };
@@ -396,7 +401,8 @@ const AllocationView = (): ReactElement => {
     !isConnected ||
     !isDecisionWindowOpen ||
     (!areAllocationsAvailableOrAlreadyDone && rewardsForProjects !== 0n) ||
-    !individualReward;
+    !individualReward ||
+    showInitialSignatureRequest;
 
   const allocationsWithRewards = getAllocationsWithRewards({
     allocationValues,
@@ -443,22 +449,39 @@ const AllocationView = (): ReactElement => {
     <Layout
       classNameBody={cx(
         styles.body,
-        isWaitingForWalletConfirmationMultisig && styles.isWaitingForWalletConfirmationMultisig,
+        (isWaitingForWalletConfirmationMultisig || showInitialSignatureRequest) &&
+          styles.isWaitingForWalletConfirmationMultisig,
       )}
       dataTest="AllocationView"
       isLoading={isLoading}
       navigationBottomSuffix={
-        showAllocationBottomNavigation && (
-          <AllocationNavigation
-            areButtonsDisabled={areButtonsDisabled}
-            currentView={currentView}
-            isLeftButtonDisabled={currentView === 'summary'}
-            isLoading={allocateEvent.isLoading || isWaitingForWalletConfirmationMultisig}
-            isWaitingForWalletConfirmationMultisig={isWaitingForWalletConfirmationMultisig}
-            onAllocate={onAllocate}
-            onResetValues={() => onResetAllocationValues({ shouldReset: true })}
-            setCurrentView={setCurrentView}
-          />
+        (showAllocationBottomNavigation || showInitialSignatureRequest) && (
+          <>
+            {showAllocationBottomNavigation && (
+              <AllocationNavigation
+                areButtonsDisabled={areButtonsDisabled}
+                currentView={currentView}
+                isLeftButtonDisabled={currentView === 'summary' || showInitialSignatureRequest}
+                isLoading={
+                  allocateEvent.isLoading ||
+                  isWaitingForWalletConfirmationMultisig ||
+                  showInitialSignatureRequest
+                }
+                isWaitingForWalletConfirmationMultisig={
+                  isWaitingForWalletConfirmationMultisig || showInitialSignatureRequest
+                }
+                onAllocate={onAllocate}
+                onResetValues={() => onResetAllocationValues({ shouldReset: true })}
+                setCurrentView={setCurrentView}
+              />
+            )}
+            {showInitialSignatureRequest && (
+              <div className={styles.initialSignatureMessage}>
+                <div className={styles.text}>{t('multisigSignature')}</div>
+                <div className={styles.text}>{i18n.t('common.dontCloseTab')}</div>
+              </div>
+            )}
+          </>
         )
       }
     >
