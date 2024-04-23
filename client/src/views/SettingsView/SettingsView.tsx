@@ -19,7 +19,7 @@ const SettingsView = (): ReactElement => {
   const { isDesktop } = useMediaQuery();
   const { isConnected } = useAccount();
 
-  const isProjectAdminMode = useIsProjectAdminMode();
+  const { data: isProjectAdminMode } = useIsProjectAdminMode();
 
   return (
     <Layout dataTest="SettingsView">

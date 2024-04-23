@@ -42,7 +42,7 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
   }));
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
-  const isProjectAdminMode = useIsProjectAdminMode();
+  const { data: isProjectAdminMode } = useIsProjectAdminMode();
 
   const sections: SectionProps[] = [
     ...(!isProjectAdminMode

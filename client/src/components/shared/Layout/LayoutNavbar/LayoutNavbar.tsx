@@ -28,7 +28,7 @@ const LayoutNavbar: FC<LayoutNavbarProps> = ({ navigationBottomSuffix, tabs }) =
   const { isDesktop } = useMediaQuery();
   const location = useLocation();
   const [scope, animate] = useAnimate();
-  const isProjectAdminMode = useIsProjectAdminMode();
+  const { data: isProjectAdminMode } = useIsProjectAdminMode();
 
   const areTabsDisabled = isConnected && !isUserTOSAccepted;
 

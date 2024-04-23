@@ -21,12 +21,13 @@ const App = (): ReactElement => {
   const [isFlushRequired, setIsFlushRequired] = useState(false);
   const { isSyncingInProgress } = useAppConnectManager(isFlushRequired, setIsFlushRequired);
   const isLoading = useAppIsLoading(isFlushRequired);
-  const isProjectAdminMode = useIsProjectAdminMode();
+  const { data: isProjectAdminMode, isFetching: isFetchingProjectAdminMode } =
+    useIsProjectAdminMode();
 
   // useCypressHelpers needs to be called after all the initial sets done above.
   const { isFetching: isFetchingCypressHelpers } = useCypressHelpers();
 
-  if (isLoading && !isSyncingInProgress) {
+  if ((isLoading || isFetchingProjectAdminMode) && !isSyncingInProgress) {
     return <AppLoader />;
   }
 
