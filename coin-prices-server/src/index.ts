@@ -59,7 +59,16 @@ const middleware = async (req: Request, res: Response) => {
 const app = express();
 const port = 3000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      'https://octant.app',
+      /\.wildland\.dev/,
+      'https://octant.build/',
+      'https://octant-landing.netlify.app',
+    ],
+  }),
+);
 app.use('*', middleware);
 
 app.listen(port, () => {
