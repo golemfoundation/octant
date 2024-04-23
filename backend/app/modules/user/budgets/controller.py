@@ -7,6 +7,11 @@ from app.modules.dto import AccountFundsDTO
 from app.modules.modules_factory.protocols import UserBudgets
 from app.modules.registry import get_services
 from app.modules.user.budgets import core
+from app.modules.common.validations.user_validations import (
+    validate_estimate_budget_by_epochs_inputs,
+    validate_estimate_budget_inputs,
+)
+from app.modules.common.time import days_to_sec
 
 
 def get_budgets(epoch_num: int) -> List[AccountFundsDTO]:
@@ -43,3 +48,28 @@ def estimate_budget(lock_duration_sec: int, glm_amount: int) -> int:
         lock_duration_sec,
         glm_amount,
     )
+
+
+def estimate_budget_by_days(days: int, glm_amount: int) -> int:
+    validate_estimate_budget_inputs(days, glm_amount)
+
+    lock_duration_sec = days_to_sec(days)
+    return estimate_budget(lock_duration_sec, glm_amount)
+
+
+def estimate_epochs_budget(no_epochs: int, glm_amount: int) -> int:
+    validate_estimate_budget_by_epochs_inputs(no_epochs, glm_amount)
+
+    future_context = state_context(EpochState.FUTURE)
+    future_rewards_service = get_services(EpochState.FUTURE).octant_rewards_service
+    future_rewards = future_rewards_service.get_octant_rewards(future_context)
+
+    epoch_duration = future_context.epoch_details.duration_sec
+
+    return no_epochs * core.estimate_epoch_budget(
+        future_context, future_rewards, epoch_duration, glm_amount
+    )
+
+
+def get_matching_fund(budget: int, leverage: float) -> int:
+    return core.calculate_matching_fund(budget, leverage)
