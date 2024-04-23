@@ -19,7 +19,7 @@ export type AllocationEventType = {
     projectAddress: string;
   }[];
   isManuallyEdited: boolean | null;
-  leverage: string;
+  leverage: string | null; // elements from before the migration have leverage null
 };
 
 type EventType = {
