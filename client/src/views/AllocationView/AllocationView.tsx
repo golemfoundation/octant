@@ -44,7 +44,7 @@ import {
 
 const AllocationView = (): ReactElement => {
   const { isConnected } = useAccount();
-  const { t, i18n } = useTranslation('translation', { keyPrefix: 'views.allocation' });
+  const { t } = useTranslation('translation', { keyPrefix: 'views.allocation' });
   const [currentView, setCurrentView] = useState<CurrentView>('edit');
   const [allocationValues, setAllocationValues] = useState<AllocationValues>([]);
   const [isManualMode, setIsManualMode] = useState<boolean>(false);
@@ -53,7 +53,7 @@ const AllocationView = (): ReactElement => {
   const { data: projectsEpoch } = useProjectsEpoch();
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards();
   const { isRewardsForProjectsSet } = useAllocationViewSetRewardsForProjects();
-  const [showInitialSignatureRequest, setShowInitialSignatureRequest] = useState(false);
+  const [isMultisigSignatureNeeded, setIsMultisigSignatureNeeded] = useState(false);
   const {
     data: allocationSimulated,
     mutateAsync: mutateAsyncAllocateSimulate,
@@ -135,7 +135,8 @@ const AllocationView = (): ReactElement => {
   const allocateEvent = useAllocate({
     nonce: userNonce!,
     onMultisigMessageSign: () => {
-      setShowInitialSignatureRequest(false);
+      toastService.hideToast('allocationMultisigInitialSignature');
+      setIsMultisigSignatureNeeded(false);
       setIsWaitingForWalletConfirmationMultisig(true);
     },
     onSuccess: onAllocateSuccess,
@@ -266,7 +267,13 @@ const AllocationView = (): ReactElement => {
       });
     }
     if (isContract) {
-      setShowInitialSignatureRequest(true);
+      setIsMultisigSignatureNeeded(true);
+      toastService.showToast({
+        message: t('multisigSignatureToast.message'),
+        name: 'allocationMultisigInitialSignature',
+        title: t('multisigSignatureToast.title'),
+        type: 'warning',
+      });
     }
     allocateEvent.emit(allocationValuesNew, isManualMode);
   };
@@ -402,7 +409,7 @@ const AllocationView = (): ReactElement => {
     !isDecisionWindowOpen ||
     (!areAllocationsAvailableOrAlreadyDone && rewardsForProjects !== 0n) ||
     !individualReward ||
-    showInitialSignatureRequest;
+    isMultisigSignatureNeeded;
 
   const allocationsWithRewards = getAllocationsWithRewards({
     allocationValues,
@@ -449,39 +456,29 @@ const AllocationView = (): ReactElement => {
     <Layout
       classNameBody={cx(
         styles.body,
-        (isWaitingForWalletConfirmationMultisig || showInitialSignatureRequest) &&
+        (isWaitingForWalletConfirmationMultisig || isMultisigSignatureNeeded) &&
           styles.isWaitingForWalletConfirmationMultisig,
       )}
       dataTest="AllocationView"
       isLoading={isLoading}
       navigationBottomSuffix={
-        (showAllocationBottomNavigation || showInitialSignatureRequest) && (
-          <>
-            {showAllocationBottomNavigation && (
-              <AllocationNavigation
-                areButtonsDisabled={areButtonsDisabled}
-                currentView={currentView}
-                isLeftButtonDisabled={currentView === 'summary' || showInitialSignatureRequest}
-                isLoading={
-                  allocateEvent.isLoading ||
-                  isWaitingForWalletConfirmationMultisig ||
-                  showInitialSignatureRequest
-                }
-                isWaitingForWalletConfirmationMultisig={
-                  isWaitingForWalletConfirmationMultisig || showInitialSignatureRequest
-                }
-                onAllocate={onAllocate}
-                onResetValues={() => onResetAllocationValues({ shouldReset: true })}
-                setCurrentView={setCurrentView}
-              />
-            )}
-            {showInitialSignatureRequest && (
-              <div className={styles.initialSignatureMessage}>
-                <div className={styles.text}>{t('multisigSignature')}</div>
-                <div className={styles.text}>{i18n.t('common.dontCloseTab')}</div>
-              </div>
-            )}
-          </>
+        showAllocationBottomNavigation && (
+          <AllocationNavigation
+            areButtonsDisabled={areButtonsDisabled}
+            currentView={currentView}
+            isLeftButtonDisabled={currentView === 'summary' || isMultisigSignatureNeeded}
+            isLoading={
+              allocateEvent.isLoading ||
+              isWaitingForWalletConfirmationMultisig ||
+              isMultisigSignatureNeeded
+            }
+            isWaitingForWalletConfirmationMultisig={
+              isWaitingForWalletConfirmationMultisig || isMultisigSignatureNeeded
+            }
+            onAllocate={onAllocate}
+            onResetValues={() => onResetAllocationValues({ shouldReset: true })}
+            setCurrentView={setCurrentView}
+          />
         )
       }
     >

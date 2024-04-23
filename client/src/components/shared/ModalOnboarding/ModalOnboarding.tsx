@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import { AnimatePresence, AnimationProps, motion } from 'framer-motion';
-import React, { useState, useEffect, useCallback, FC } from 'react';
+import React, { useState, useEffect, useCallback, FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import Img from 'components/ui/Img';
@@ -23,6 +24,7 @@ const motionAnimationProps: AnimationProps = {
 };
 
 const ModalOnboarding: FC = () => {
+  const { t } = useTranslation('translation', { keyPrefix: 'views.onboarding.stepsCommon' });
   const { isConnected } = useAccount();
   const { data: isUserTOSAccepted } = useUserTOS();
   const { setIsOnboardingDone, isOnboardingDone } = useOnboardingStore(state => ({
@@ -33,7 +35,8 @@ const ModalOnboarding: FC = () => {
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const [isUserTOSAcceptedInitial] = useState(isUserTOSAccepted);
 
-  const stepsToUse = useOnboardingSteps(isUserTOSAcceptedInitial);
+  const { steps: stepsToUse, isMultisigSignatureNeeded } =
+    useOnboardingSteps(isUserTOSAcceptedInitial);
 
   useEffect(() => {
     if (isUserTOSAccepted !== undefined && !isUserTOSAccepted) {
@@ -55,6 +58,23 @@ const ModalOnboarding: FC = () => {
   }, [setIsOnboardingDone, isUserTOSAccepted]);
 
   const [touchStart, setTouchStart] = useState<number | null>(null);
+
+  const stepText = useMemo(() => {
+    if (!currentStep) {
+      return (
+        <div className={styles.loaderWrapper}>
+          <Loader className={styles.loader} />
+        </div>
+      );
+    }
+
+    if (isMultisigSignatureNeeded) {
+      return t('signingTheTerms.text');
+    }
+
+    return currentStep.text;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMultisigSignatureNeeded, currentStep?.text]);
 
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     if (!isUserTOSAccepted) {
@@ -151,7 +171,7 @@ const ModalOnboarding: FC = () => {
     <Modal
       bodyClassName={styles.onboardingModalBody}
       dataTest="ModalOnboarding"
-      header={currentStep?.header}
+      header={isMultisigSignatureNeeded ? t('signingTheTerms.header') : currentStep?.header}
       headerClassName={styles.onboardingModalHeader}
       Image={
         <div className={styles.onboardingModalImageWrapper}>
@@ -176,15 +196,7 @@ const ModalOnboarding: FC = () => {
       onTouchMove={handleTouchMove}
       onTouchStart={handleTouchStart}
     >
-      <Text className={styles.onboardingModalText}>
-        {currentStep ? (
-          currentStep.text
-        ) : (
-          <div className={styles.loaderWrapper}>
-            <Loader className={styles.loader} />
-          </div>
-        )}
-      </Text>
+      <Text className={styles.onboardingModalText}>{stepText}</Text>
       <ProgressStepperSlim
         className={styles.progressBar}
         currentStepIndex={currentStepIndex}

@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import React, { Fragment, useMemo } from 'react';
+import React, { Fragment, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Step } from 'components/shared/ModalOnboarding/types';
@@ -11,10 +11,13 @@ import { getStepsDecisionWindowOpen, getStepsDecisionWindowClosed } from './step
 
 import useEpochAndAllocationTimestamps from '../useEpochAndAllocationTimestamps';
 
-const useOnboardingSteps = (isUserTOSAcceptedInitial: boolean | undefined): Step[] => {
+const useOnboardingSteps = (
+  isUserTOSAcceptedInitial: boolean | undefined,
+): { isMultisigSignatureNeeded: boolean; steps: Step[] } => {
   const { i18n } = useTranslation();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const [isMultisigSignatureNeeded, setIsMultisigSignatureNeeded] = useState(false);
 
   const epoch = isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch;
 
@@ -30,25 +33,31 @@ const useOnboardingSteps = (isUserTOSAcceptedInitial: boolean | undefined): Step
     return '';
   }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
-  return [
-    ...(isUserTOSAcceptedInitial === false
-      ? [
-          {
-            header: i18n.t('views.onboarding.stepsCommon.usingTheApp.header'),
-            image: '/images/onboarding/octant.webp',
-            text: (
-              <Fragment>
-                <div>{i18n.t('views.onboarding.stepsCommon.usingTheApp.text')}</div>
-                <ModalOnboardingTOS />
-              </Fragment>
-            ),
-          },
-        ]
-      : []),
-    ...(isDecisionWindowOpen
-      ? getStepsDecisionWindowOpen(epoch?.toString() ?? '', changeAWDate)
-      : getStepsDecisionWindowClosed(epoch?.toString() ?? '', changeAWDate)),
-  ];
+  return {
+    isMultisigSignatureNeeded,
+    steps: [
+      ...(isUserTOSAcceptedInitial === false
+        ? [
+            {
+              header: i18n.t('views.onboarding.stepsCommon.usingTheApp.header'),
+              image: '/images/onboarding/octant.webp',
+              text: (
+                <Fragment>
+                  <div>{i18n.t('views.onboarding.stepsCommon.usingTheApp.text')}</div>
+                  <ModalOnboardingTOS
+                    isMultisigSignatureNeeded={isMultisigSignatureNeeded}
+                    setIsMultisigSignatureNeeded={setIsMultisigSignatureNeeded}
+                  />
+                </Fragment>
+              ),
+            },
+          ]
+        : []),
+      ...(isDecisionWindowOpen
+        ? getStepsDecisionWindowOpen(epoch?.toString() ?? '', changeAWDate)
+        : getStepsDecisionWindowClosed(epoch?.toString() ?? '', changeAWDate)),
+    ],
+  };
 };
 
 export default useOnboardingSteps;
