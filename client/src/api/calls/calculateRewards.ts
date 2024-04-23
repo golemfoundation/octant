@@ -4,21 +4,22 @@ import env from 'env';
 import apiService from 'services/apiService';
 
 export type PostCalculateRewardsResponse = {
-  budget: string;
+  budget: string; // WEI
+  matchedFunding: string; // WEI
 };
 
 export async function apiPostCalculateRewards(
   // WEI
   amount: string,
-  days: number,
+  numberOfEpochs: number,
   signal: GenericAbortSignal,
 ): Promise<PostCalculateRewardsResponse> {
   return apiService
     .post(
       `${env.serverEndpoint}rewards/estimated_budget`,
       {
-        days,
-        glm_amount: amount,
+        glmAmount: amount,
+        numberOfEpochs,
       },
       {
         signal,

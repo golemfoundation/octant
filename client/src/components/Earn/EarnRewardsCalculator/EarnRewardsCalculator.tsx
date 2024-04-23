@@ -8,15 +8,13 @@ import InputText from 'components/ui/InputText';
 import useCalculateRewards from 'hooks/mutations/useCalculateRewards';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useSettingsStore from 'store/settings/store';
-import { FormattedCryptoValue } from 'types/formattedCryptoValue';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
 import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import { comma, floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 
 import styles from './EarnRewardsCalculator.module.scss';
-import EarnRewardsCalculatorDaysSelector from './EarnRewardsCalculatorDaysSelector';
+import EarnRewardsCalculatorEpochDaysSelector from './EarnRewardsCalculatorEpochDaysSelector';
 import EarnRewardsCalculatorEstimates from './EarnRewardsCalculatorEstimates';
 import { FormFields } from './types';
 import { formInitialValues, validationSchema } from './utils';
@@ -42,12 +40,12 @@ const EarnRewardsCalculator: FC = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchEstimatedRewardsDebounced = useCallback(
-    debounce(({ amountGlm, numberOfDays }) => {
+    debounce(({ amountGlm, numberOfEpochs }) => {
       const amountGlmWEI = formatUnitsBigInt(parseUnitsBigInt(amountGlm, 'ether'), 'wei');
-      const numberOfDaysNumber = parseInt(numberOfDays, 10);
+      // const numberOfDaysNumber = parseInt(numberOfDays, 10);
 
       resetCalculateRewards();
-      mutateAsyncRewardsCalculator({ amountGlm: amountGlmWEI, numberOfDays: numberOfDaysNumber });
+      mutateAsyncRewardsCalculator({ amountGlm: amountGlmWEI, numberOfEpochs });
     }, 300),
     [],
   );
@@ -55,7 +53,10 @@ const EarnRewardsCalculator: FC = () => {
   const formik = useFormik<FormFields>({
     initialValues: formInitialValues,
     onSubmit: values =>
-      fetchEstimatedRewardsDebounced({ amountGlm: values.valueCrypto, numberOfDays: values.days }),
+      fetchEstimatedRewardsDebounced({
+        amountGlm: values.valueCrypto,
+        numberOfEpochs: values.numberOfEpochs,
+      }),
     validateOnChange: true,
     validationSchema: validationSchema(t),
   });
@@ -70,32 +71,36 @@ const EarnRewardsCalculator: FC = () => {
     formik.setFieldValue('valueCrypto', valueComma || '');
   };
 
-  const estimatedFormattedRewardsValue: FormattedCryptoValue =
-    formik.values.valueCrypto && formik.values.days && calculateRewards
-      ? getFormattedEthValue(parseUnitsBigInt(calculateRewards.budget, 'wei'))
-      : {
-          fullString: '',
-          suffix: 'ETH',
-          value: '',
-        };
+  const estimatedRewardsFiat = calculateRewards
+    ? getValueFiatToDisplay({
+        cryptoCurrency: 'ethereum',
+        cryptoValues,
+        displayCurrency: 'usd',
+        valueCrypto: parseUnitsBigInt(calculateRewards.budget, 'wei'),
+      })
+    : '';
 
-  const cryptoFiatRatio = cryptoValues?.ethereum[displayCurrency || 'usd'] || 1;
-  const estimatedRewardsFiat = estimatedFormattedRewardsValue.value
-    ? `$${(parseFloat(estimatedFormattedRewardsValue.value) * cryptoFiatRatio).toFixed(2)}`
+  const matchFundingFiat = calculateRewards
+    ? getValueFiatToDisplay({
+        cryptoCurrency: 'ethereum',
+        cryptoValues,
+        displayCurrency: 'usd',
+        valueCrypto: parseUnitsBigInt(calculateRewards.matchedFunding, 'wei'),
+      })
     : '';
 
   useEffect(() => {
-    if (!formik.values.valueCrypto || !formik.values.days) {
+    if (!formik.values.valueCrypto || !formik.values.numberOfEpochs) {
       return;
     }
     formik.validateForm().then(() => {
       fetchEstimatedRewardsDebounced({
         amountGlm: formik.values.valueCrypto,
-        numberOfDays: formik.values.days,
+        numberOfEpochs: formik.values.numberOfEpochs,
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formik.values.valueCrypto, formik.values.days]);
+  }, [formik.values.valueCrypto, formik.values.numberOfEpochs]);
 
   useEffect(() => {
     return () => {
@@ -118,16 +123,15 @@ const EarnRewardsCalculator: FC = () => {
         suffix="GLM"
         value={formik.values.valueCrypto}
       />
-      <EarnRewardsCalculatorDaysSelector
-        days={formik.values.days}
-        onChange={days => {
-          formik.setFieldValue('days', days);
+      <EarnRewardsCalculatorEpochDaysSelector
+        numberOfEpochs={formik.values.numberOfEpochs}
+        onChange={epoch => {
+          formik.setFieldValue('numberOfEpochs', epoch);
         }}
       />
       <EarnRewardsCalculatorEstimates
         isLoading={isPendingCalculateRewards}
-        // TODO: Fetch and pass correct matchFunding value in fiat
-        matchFundingFiat={estimatedRewardsFiat}
+        matchFundingFiat={matchFundingFiat}
         rewardsFiat={estimatedRewardsFiat}
       />
     </BoxRounded>

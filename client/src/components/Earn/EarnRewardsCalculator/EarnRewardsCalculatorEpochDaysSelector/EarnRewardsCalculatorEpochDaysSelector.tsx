@@ -3,11 +3,11 @@ import { motion } from 'framer-motion';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import styles from './EarnRewardsCalculatorDaysSelector.module.scss';
-import EarnRewardsCalculatorDaysSelectorProps from './types';
+import styles from './EarnRewardsCalculatorEpochDaysSelector.module.scss';
+import EarnRewardsCalculatorEpochDaysSelectorProps from './types';
 
-const EarnRewardsCalculatorDaysSelector: FC<EarnRewardsCalculatorDaysSelectorProps> = ({
-  days,
+const EarnRewardsCalculatorEpochDaysSelector: FC<EarnRewardsCalculatorEpochDaysSelectorProps> = ({
+  numberOfEpochs,
   onChange,
 }) => {
   const { i18n, t } = useTranslation('translation', {
@@ -15,23 +15,21 @@ const EarnRewardsCalculatorDaysSelector: FC<EarnRewardsCalculatorDaysSelectorPro
   });
 
   const epochDurationInDays = 90;
-  const selectorOptions = [90, 180, 270];
+  const selectorOptions = [1, 2, 3]; // Epochs
 
   return (
     <div className={styles.root}>
-      <div className={styles.daysSelectorLabel}>
-        {t('lockForEpoch', { count: days / epochDurationInDays })}
-      </div>
+      <div className={styles.daysSelectorLabel}>{t('lockForEpoch', { count: numberOfEpochs })}</div>
       <div className={styles.daysSelector}>
         <div className={styles.daysWrapper}>
-          {selectorOptions.map(duration => (
+          {selectorOptions.map(epoch => (
             <div
-              key={duration}
-              className={cx(styles.day, days === duration && styles.isSelected)}
-              onClick={() => onChange(duration)}
+              key={epoch}
+              className={cx(styles.day, numberOfEpochs === epoch && styles.isSelected)}
+              onClick={() => onChange(epoch)}
             >
-              <span className={styles.dayLabel}>{duration}</span>
-              {days === duration ? (
+              <span className={styles.dayLabel}>{epoch * epochDurationInDays}</span>
+              {numberOfEpochs === epoch ? (
                 <motion.div
                   className={styles.selectedItemBackground}
                   layoutId="background"
@@ -47,4 +45,4 @@ const EarnRewardsCalculatorDaysSelector: FC<EarnRewardsCalculatorDaysSelectorPro
   );
 };
 
-export default EarnRewardsCalculatorDaysSelector;
+export default EarnRewardsCalculatorEpochDaysSelector;
