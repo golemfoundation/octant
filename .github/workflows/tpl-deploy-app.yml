@@ -121,9 +121,9 @@ on:
 
 env:
   ENV_TYPE: ${{ inputs.env-type }}
-  IMAGE_TAG: "${{ inputs.image-tag }}"
-  CI_MERGE_REQUEST_IID: "${{ inputs.pull-request-id }}"
-  CI_PIPELINE_ID: "${{ inputs.workflow-id }}"
+  IMAGE_TAG: '${{ inputs.image-tag }}'
+  CI_MERGE_REQUEST_IID: '${{ inputs.pull-request-id }}'
+  CI_PIPELINE_ID: '${{ inputs.workflow-id }}'
   # ----------------------------------------------------------------------------
   # BACKEND
   CHAIN_ID: ${{ inputs.chain-id }}
@@ -140,7 +140,7 @@ env:
   BACKEND_SERVER_REPLICAS: ${{ inputs.backend-server-replicas }}
   OCTANT_ENV: ${{ inputs.octant-env }}
   GLM_SENDER_NONCE: ${{ vars.GLM_SENDER_NONCE }}
-  MAINNET_PROPOSAL_CIDS: "QmSQEFD35gKxdPEmngNt1CWe3kSwiiGqBn1Z3FZvWb8mvK,Qmds9N5y2vkMuPTD6M4EBxNXnf3bjTDmzWBGnCkQGsMMGe"
+  MAINNET_PROPOSAL_CIDS: 'QmSQEFD35gKxdPEmngNt1CWe3kSwiiGqBn1Z3FZvWb8mvK,Qmds9N5y2vkMuPTD6M4EBxNXnf3bjTDmzWBGnCkQGsMMGe'
   # ----------------------------------------------------------------------------
   # CONTRACTS / ANVIL / SUBGRAPH / SYNPRESS
   NETWORK: ${{ inputs.chain-name }}
@@ -154,175 +154,175 @@ env:
   SECRET_WORDS: test test test test test test test test test test test junk
   PROPOSALS_ADDRESSES: 0x0B7246eF74Ca7b37Fdc3D15be4f0b49876622F95,0x0cbF31Ef6545EE30f47651D1A991Bf0aeB03DF29,0x1c01595f9534E33d411035AE99a4317faeC4f6Fe,0x02Cb3C150BEdca124d0aE8CcCb72fefbe705c953,0x2DCDF80f439843D7E0aD1fEF9E7a439B7917eAc9,0x4C6fd545fc18C6538eC304Ae549717CA58f0D6eb,0x6e8873085530406995170Da467010565968C7C62,0x8c89a6bf53cCF63e7B4465Cc1b1330723B4BdcB7,0x9be7267002CAD0b8501f7322d50612CB13788Bcf,0x9cce47E9cF12C6147c9844adBB81fE85880c4df4,0x15c941a44a343B8c46a28F2BB9aFc7a54E255A4f,0x52C45Bab6d0827F44a973899666D9Cd18Fd90bCF,0x87fEEd6162CB7dFe6B62F64366742349bF4D1B05,0x576edCed7475D8F64a5e2D5227c93Ca57d7f5d20,0x809C9f8dd8CA93A41c3adca4972Fa234C28F7714,0x3455FbB4D34C6b47999B66c83aA7BD8FDDade638,0x5597cD8d55D2Db56b10FF4F8fe69C8922BF6C537,0x7340F1a1e4e38F43d2FCC85cdb2b764de36B40c0,0x9438b8B447179740cD97869997a2FCc9b4AA63a2,0x9531C059098e3d194fF87FebB587aB07B30B1306,0x0194325BF525Be0D4fBB0856894cEd74Da3B8356,0xB476Ee7D610DAe7B23B671EBC7Bd6112E9772969,0xBCA48834b3653ec795411EB0FCBE4038F8527d62,0xcC7d34C76A9d08aa0109F7Bae35f29C1CE35355A,0xd1B8dB70Ded72dB850713b2ce7e1A4FfAfAD95d1,0xde21F729137C5Af1b01d73aF1dC21eFfa2B8a0d6,0xe126b3E5d052f1F575828f61fEBA4f4f2603652a,0xEB40A065854bd90126A4E697aeA0976BA51b2eE7,0xF01CEe26213d1A6eaF16422241AE81f7C17B9f98,0xF6CBDd6Ea6EC3C4359e33de0Ac823701Cc56C6c4
   PROPOSALS_CID: QmSXcT18anMXKACTueom8GXw8zrxTBbHGB71atitf6gZ9V
-  MULTISIG_ADDRESS: "${{ vars.MULTISIG_ADDRESS }}"
-  TESTNET_DEPLOYER_PRIVATE_KEY: "${{ secrets.TESTNET_DEPLOYER_PRIVATE_KEY }}"
-  TESTNET_MULTISIG_PRIVATE_KEY: "${{ secrets.TESTNET_MULTISIG_PRIVATE_KEY }}"
-  TESTNET_RPC_URL: "${{ secrets.TESTNET_RPC_URL }}"
-  ETHERSCAN_API_KEY: "${{ secrets.ETHERSCAN_API_KEY }}"
-  VITE_ALCHEMY_ID: "${{ secrets.VITE_ALCHEMY_ID }}"
+  MULTISIG_ADDRESS: '${{ vars.MULTISIG_ADDRESS }}'
+  TESTNET_DEPLOYER_PRIVATE_KEY: '${{ secrets.TESTNET_DEPLOYER_PRIVATE_KEY }}'
+  TESTNET_MULTISIG_PRIVATE_KEY: '${{ secrets.TESTNET_MULTISIG_PRIVATE_KEY }}'
+  TESTNET_RPC_URL: '${{ secrets.TESTNET_RPC_URL }}'
+  ETHERSCAN_API_KEY: '${{ secrets.ETHERSCAN_API_KEY }}'
+  VITE_ALCHEMY_ID: '${{ secrets.VITE_ALCHEMY_ID }}'
   MULTIDEPLOYER_ENABLED: ${{ inputs.multideployer-enabled }}
   SUBGRAPH_DEPLOY: ${{ inputs.subgraph-deploy }}
   GRAPH_HEALTCHECKER_ENABLED: ${{ inputs.graph-healtchecker-enabled }}
   # ----------------------------------------------------------------------------
   # CI/CD
-  GCP_DOCKER_IMAGES_REGISTRY_SERVICE_ACCOUNT: "${{ secrets.GCP_DOCKER_IMAGES_REGISTRY_SERVICE_ACCOUNT }}"
-  KANIKO_CACHE_CONFIG: "${{ secrets.KANIKO_CACHE_CONFIG }}"
-  KANIKO_CACHE_REPO: "${{ secrets.KANIKO_CACHE_REPO }}"
-  HOUSEKEEPER_NAME: "${{ vars.HOUSEKEEPER_NAME }}"
-  HOUSEKEEPER_EMAIL: "${{ secrets.HOUSEKEEPER_EMAIL }}"
-  HOUSEKEEPER_CI_TOKEN: "${{ secrets.HOUSEKEEPER_CI_TOKEN }}"
-  HOUSEKEEPER_GPG_KEY: "${{ secrets.HOUSEKEEPER_GPG_KEY }}"
-  HOUSEKEEPER_GPG_KEY_ID: "${{ secrets.HOUSEKEEPER_GPG_KEY_ID }}"
-  HOUSEKEEPER_GITHUB_SIGNING_KEY: "${{ secrets.HOUSEKEEPER_GITHUB_SIGNING_KEY }}"
-  HOUSEKEEPER_GITHUB_SIGNING_KEY_ID: "${{ secrets.HOUSEKEEPER_GITHUB_SIGNING_KEY_ID }}"
-  ARGOCD_URL: "${{ secrets.ARGOCD_URL }}"
-  ARGOCD_ACCESS_TOKEN: "${{ secrets.ARGOCD_ACCESS_TOKEN }}"
+  GCP_DOCKER_IMAGES_REGISTRY_SERVICE_ACCOUNT: '${{ secrets.GCP_DOCKER_IMAGES_REGISTRY_SERVICE_ACCOUNT }}'
+  KANIKO_CACHE_CONFIG: '${{ secrets.KANIKO_CACHE_CONFIG }}'
+  KANIKO_CACHE_REPO: '${{ secrets.KANIKO_CACHE_REPO }}'
+  HOUSEKEEPER_NAME: '${{ vars.HOUSEKEEPER_NAME }}'
+  HOUSEKEEPER_EMAIL: '${{ secrets.HOUSEKEEPER_EMAIL }}'
+  HOUSEKEEPER_CI_TOKEN: '${{ secrets.HOUSEKEEPER_CI_TOKEN }}'
+  HOUSEKEEPER_GPG_KEY: '${{ secrets.HOUSEKEEPER_GPG_KEY }}'
+  HOUSEKEEPER_GPG_KEY_ID: '${{ secrets.HOUSEKEEPER_GPG_KEY_ID }}'
+  HOUSEKEEPER_GITHUB_SIGNING_KEY: '${{ secrets.HOUSEKEEPER_GITHUB_SIGNING_KEY }}'
+  HOUSEKEEPER_GITHUB_SIGNING_KEY_ID: '${{ secrets.HOUSEKEEPER_GITHUB_SIGNING_KEY_ID }}'
+  ARGOCD_URL: '${{ secrets.ARGOCD_URL }}'
+  ARGOCD_ACCESS_TOKEN: '${{ secrets.ARGOCD_ACCESS_TOKEN }}'
 
 jobs:
   start-anvil:
     name: Start Anvil
     if: ${{ inputs.deploy-contracts }}
     runs-on:
-    - general
+      - general
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:2ea6d57c
       credentials:
-        username: "doesnt-matter"
-        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+        username: 'doesnt-matter'
+        password: '${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}'
     steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.branch-head-ref }}
-        fetch-depth: 10
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch-head-ref }}
+          fetch-depth: 10
 
-    - name: (debug)
-      run: |
-        set -ex
+      - name: (debug)
+        run: |
+          set -ex
 
-        env
-        ls -l
+          env
+          ls -l
 
-        echo ${{ inputs.env-type }}
-        echo ${{ inputs.image-tag }}
-        echo ${{ inputs.pull-request-id }}
-        echo ${{ inputs.workflow-id }}
-      shell: bash
+          echo ${{ inputs.env-type }}
+          echo ${{ inputs.image-tag }}
+          echo ${{ inputs.pull-request-id }}
+          echo ${{ inputs.workflow-id }}
+        shell: bash
 
-    - name: Set up Gitops mutex
-      uses: ben-z/gh-action-mutex@v1.0.0-alpha.9
-      with:
-        branch: gitops-mutex
+      - name: Set up Gitops mutex
+        uses: ben-z/gh-action-mutex@v1.0.0-alpha.9
+        with:
+          branch: gitops-mutex
 
-    - name: Deploy Anvil Argo application
-      run: |
-        set -ex
+      - name: Deploy Anvil Argo application
+        run: |
+          set -ex
 
-        export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
+          export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
 
-        source ${CI_PROJECT_DIR}/ci/argocd/resolve_env.sh $ENV_TYPE
-        bash ${CI_PROJECT_DIR}/ci/argocd/application.sh create
-      shell: bash
+          source ${CI_PROJECT_DIR}/ci/argocd/resolve_env.sh $ENV_TYPE
+          bash ${CI_PROJECT_DIR}/ci/argocd/application.sh create
+        shell: bash
 
   deploy-contracts:
     name: Deploy Contracts
     needs:
-    - start-anvil
+      - start-anvil
     if: ${{ inputs.deploy-contracts }}
     runs-on:
-    - general
+      - general
     outputs:
       anvil_rpc_url: ${{ steps.deploy.outputs.LOCAL_RPC_URL }}
     container:
       image: ${{ vars.GCP_DOCKER_IMAGE_REGISTRY }}/contracts-v1:${{ inputs.image-tag }}
       credentials:
-        username: "_json_key_base64"
-        password: "${{ secrets.GCP_DOCKER_IMAGES_REGISTRY_SERVICE_ACCOUNT }}"
+        username: '_json_key_base64'
+        password: '${{ secrets.GCP_DOCKER_IMAGES_REGISTRY_SERVICE_ACCOUNT }}'
     steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.branch-head-ref }}
-        fetch-depth: 10
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch-head-ref }}
+          fetch-depth: 10
 
-    - name: Deploy contracts
-      id: deploy
-      run: |
-        set -ex
+      - name: Deploy contracts
+        id: deploy
+        run: |
+          set -ex
 
-        export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
-        export EPOCHS_START=$(date +%s)
+          export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
+          export EPOCHS_START=$(date +%s)
 
-        source ${CI_PROJECT_DIR}/ci/argocd/resolve_env.sh $ENV_TYPE
-        bash ${CI_PROJECT_DIR}/ci/argocd/wait_for_app.sh
+          source ${CI_PROJECT_DIR}/ci/argocd/resolve_env.sh $ENV_TYPE
+          bash ${CI_PROJECT_DIR}/ci/argocd/wait_for_app.sh
 
-        export LOCAL_RPC_URL; LOCAL_RPC_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_rpc_url.sh)
+          export LOCAL_RPC_URL; LOCAL_RPC_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_rpc_url.sh)
 
-        # BUG: For some reason this cache is a problem for this job to pass
-        # https://linear.app/golemfoundation/issue/OCT-1382/error-during-ci-contracts-deployment
-        rm -r $HOME/.cache/hardhat-nodejs/ || true
+          # BUG: For some reason this cache is a problem for this job to pass
+          # https://linear.app/golemfoundation/issue/OCT-1382/error-during-ci-contracts-deployment
+          rm -r $HOME/.cache/hardhat-nodejs/ || true
 
-        /app/entrypoint.sh $NETWORK ${CI_PROJECT_DIR}/contracts.env
+          /app/entrypoint.sh $NETWORK ${CI_PROJECT_DIR}/contracts.env
 
-        echo "LOCAL_RPC_URL=$LOCAL_RPC_URL" >> $GITHUB_OUTPUT
-      shell: bash
-    - uses: actions/upload-artifact@v4
-      if: success()
-      with:
-        name: ${{ env.ENV_TYPE }}-contracts-env
-        retention-days: 1
-        if-no-files-found: error
-        compression-level: 0
-        overwrite: true
-        path: |-
-          contracts.env
+          echo "LOCAL_RPC_URL=$LOCAL_RPC_URL" >> $GITHUB_OUTPUT
+        shell: bash
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: ${{ env.ENV_TYPE }}-contracts-env
+          retention-days: 1
+          if-no-files-found: error
+          compression-level: 0
+          overwrite: true
+          path: |-
+            contracts.env
 
   start-application-stack:
     name: Start Application Stack
     needs:
-    - deploy-contracts
+      - deploy-contracts
     runs-on:
-    - general
+      - general
     if: always()
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:2ea6d57c
       credentials:
-        username: "doesnt-matter"
-        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+        username: 'doesnt-matter'
+        password: '${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}'
     steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.branch-head-ref }}
-        fetch-depth: 10
-    - uses: actions/download-artifact@v4
-      if: ${{ inputs.deploy-contracts }}
-      with:
-        name: ${{ env.ENV_TYPE }}-contracts-env
-    - name: Set up Gitops mutex
-      uses: ben-z/gh-action-mutex@v1.0.0-alpha.9
-      with:
-        branch: gitops-mutex
-    - name: Deploy Complete Argo application
-      run: |
-        set -ex
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch-head-ref }}
+          fetch-depth: 10
+      - uses: actions/download-artifact@v4
+        if: ${{ inputs.deploy-contracts }}
+        with:
+          name: ${{ env.ENV_TYPE }}-contracts-env
+      - name: Set up Gitops mutex
+        uses: ben-z/gh-action-mutex@v1.0.0-alpha.9
+        with:
+          branch: gitops-mutex
+      - name: Deploy Complete Argo application
+        run: |
+          set -ex
 
-        export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
+          export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
 
-        if [[ "${{ inputs.deploy-contracts }}" == "true" ]]; then
-          export $(grep -v '^#' ${CI_PROJECT_DIR}/contracts.env | xargs)
-        else
-          # sourcing hardcoded contracts (master, uat, etc)
-          export $(grep -v '^#' ${CI_PROJECT_DIR}/ci/argocd/contracts/$ENV_TYPE.env | xargs)
-        fi
+          if [[ "${{ inputs.deploy-contracts }}" == "true" ]]; then
+            export $(grep -v '^#' ${CI_PROJECT_DIR}/contracts.env | xargs)
+          else
+            # sourcing hardcoded contracts (master, uat, etc)
+            export $(grep -v '^#' ${CI_PROJECT_DIR}/ci/argocd/contracts/$ENV_TYPE.env | xargs)
+          fi
 
-        source ${CI_PROJECT_DIR}/ci/argocd/resolve_env.sh $ENV_TYPE
-        bash ${CI_PROJECT_DIR}/ci/argocd/application.sh update
-      shell: bash
+          source ${CI_PROJECT_DIR}/ci/argocd/resolve_env.sh $ENV_TYPE
+          bash ${CI_PROJECT_DIR}/ci/argocd/application.sh update
+        shell: bash
 
   wait-for-app:
     name: Wait for Application Readiness
     needs:
-    - start-application-stack
+      - start-application-stack
     runs-on:
-    - general
+      - general
     if: always() && (needs.start-application-stack.result == 'success')
     outputs:
       octant_web_url: ${{ steps.app.outputs.OCTANT_WEB_URL }}
@@ -330,104 +330,104 @@ jobs:
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:2ea6d57c
       credentials:
-        username: "doesnt-matter"
-        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+        username: 'doesnt-matter'
+        password: '${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}'
     steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.branch-head-ref }}
-        fetch-depth: 10
-    - name: Wait for application ready
-      id: app
-      run: |
-        set -ex
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch-head-ref }}
+          fetch-depth: 10
+      - name: Wait for application ready
+        id: app
+        run: |
+          set -ex
 
-        export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
+          export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
 
-        source ${CI_PROJECT_DIR}/ci/argocd/resolve_env.sh $ENV_TYPE
-        bash ${CI_PROJECT_DIR}/ci/argocd/wait_for_app.sh
+          source ${CI_PROJECT_DIR}/ci/argocd/resolve_env.sh $ENV_TYPE
+          bash ${CI_PROJECT_DIR}/ci/argocd/wait_for_app.sh
 
-        export OCTANT_WEB_URL; OCTANT_WEB_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_web_client_url.sh)
-        export OCTANT_BACKEND_URL; OCTANT_BACKEND_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_backend_url.sh)
+          export OCTANT_WEB_URL; OCTANT_WEB_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_web_client_url.sh)
+          export OCTANT_BACKEND_URL; OCTANT_BACKEND_URL=https://$(bash ${CI_PROJECT_DIR}/ci/argocd/get_backend_url.sh)
 
-        echo "OCTANT_WEB_URL=$OCTANT_WEB_URL" >> $GITHUB_OUTPUT
-        echo "OCTANT_BACKEND_URL=$OCTANT_BACKEND_URL" >> $GITHUB_OUTPUT
-      shell: bash
+          echo "OCTANT_WEB_URL=$OCTANT_WEB_URL" >> $GITHUB_OUTPUT
+          echo "OCTANT_BACKEND_URL=$OCTANT_BACKEND_URL" >> $GITHUB_OUTPUT
+        shell: bash
 
   update-contracts-env:
     name: Update persistent contracts
     needs:
-    # We need to explicitly set all jobs for `needs.*` array to have all workflow jobs
-    - wait-for-app
+      # We need to explicitly set all jobs for `needs.*` array to have all workflow jobs
+      - wait-for-app
     if: ${{ success() && inputs.deploy-contracts && (inputs.env-type == 'uat' || inputs.env-type == 'master') }}
     runs-on:
-    - general
+      - general
     container:
       image: registry.gitlab.com/golemfoundation/devops/container-builder/gitops-builder:2ea6d57c
       credentials:
-        username: "doesnt-matter"
-        password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
+        username: 'doesnt-matter'
+        password: '${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}'
     steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.branch-head-ref }}
-        fetch-depth: 0
-        token: ${{ secrets.HOUSEKEEPER_PAT_OCTANT_REPO }}
-    - uses: actions/download-artifact@v4
-      with:
-        name: ${{ env.ENV_TYPE }}-contracts-env
-    - name: Commit newly deployed contracts
-      run: |
-        set -ex
-        export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch-head-ref }}
+          fetch-depth: 0
+          token: ${{ secrets.HOUSEKEEPER_PAT_OCTANT_REPO }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.ENV_TYPE }}-contracts-env
+      - name: Commit newly deployed contracts
+        run: |
+          set -ex
+          export CI_PROJECT_DIR="${GITHUB_WORKSPACE}"
 
-        mv ${CI_PROJECT_DIR}/contracts.env ${CI_PROJECT_DIR}/ci/argocd/contracts/${ENV_TYPE}.env
+          mv ${CI_PROJECT_DIR}/contracts.env ${CI_PROJECT_DIR}/ci/argocd/contracts/${ENV_TYPE}.env
 
-        gpg --import <(echo ${HOUSEKEEPER_GITHUB_SIGNING_KEY} | base64 -d)
+          gpg --import <(echo ${HOUSEKEEPER_GITHUB_SIGNING_KEY} | base64 -d)
 
-        git config --global --add safe.directory ${CI_PROJECT_DIR}
-        git config --local user.email "birnam@wildland.io"
-        git config --local user.name "Housekeeper Bot"
-        git config --local user.signingkey "${HOUSEKEEPER_GITHUB_SIGNING_KEY_ID}"
+          git config --global --add safe.directory ${CI_PROJECT_DIR}
+          git config --local user.email "birnam@wildland.io"
+          git config --local user.name "Housekeeper Bot"
+          git config --local user.signingkey "${HOUSEKEEPER_GITHUB_SIGNING_KEY_ID}"
 
-        git add ${CI_PROJECT_DIR}/ci/argocd/contracts/${ENV_TYPE}.env
-        git commit -S -m "[CI/CD] Update ${ENV_TYPE}.env contracts"
-      shell: bash
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        branch: ${{ inputs.branch-head-ref }}
-        github_token: ${{ secrets.HOUSEKEEPER_PAT_OCTANT_REPO }}
+          git add ${CI_PROJECT_DIR}/ci/argocd/contracts/${ENV_TYPE}.env
+          git commit -S -m "[CI/CD] Update ${ENV_TYPE}.env contracts"
+        shell: bash
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: ${{ inputs.branch-head-ref }}
+          github_token: ${{ secrets.HOUSEKEEPER_PAT_OCTANT_REPO }}
 
   update-deployment:
     name: Set deployment status
     needs:
-    # We need to explicitly set all jobs for `needs.*` array to have all workflow jobs
-    - start-anvil
-    - deploy-contracts
-    - start-application-stack
-    - wait-for-app
+      # We need to explicitly set all jobs for `needs.*` array to have all workflow jobs
+      - start-anvil
+      - deploy-contracts
+      - start-application-stack
+      - wait-for-app
     runs-on:
-    - general
+      - general
     if: always()
     steps:
-    - name: Compute workflow status
-      id: workflow-status
-      run: |
-        if [[ "${{ contains(join(needs.*.result, ' '), 'failure') }}" == "true" ]]; then
-          STATUS='failure'
-        else
-          STATUS='success'
-        fi
+      - name: Compute workflow status
+        id: workflow-status
+        run: |
+          if [[ "${{ contains(join(needs.*.result, ' '), 'failure') }}" == "true" ]]; then
+            STATUS='failure'
+          else
+            STATUS='success'
+          fi
 
-        echo "STATUS=$STATUS" >> $GITHUB_OUTPUT
+          echo "STATUS=$STATUS" >> $GITHUB_OUTPUT
 
-    - name: Update deployment status
-      uses: bobheadxi/deployments@v1
-      with:
-        step: finish
-        auto_inactive: true
-        status: ${{ steps.workflow-status.outputs.STATUS }}
-        token: ${{ secrets.GH_BOT_TOKEN }}
-        env: ${{ inputs.env-id }}
-        deployment_id: ${{ inputs.deployment-id }}
+      - name: Update deployment status
+        uses: bobheadxi/deployments@v1
+        with:
+          step: finish
+          auto_inactive: true
+          status: ${{ steps.workflow-status.outputs.STATUS }}
+          token: ${{ secrets.GH_BOT_TOKEN }}
+          env: ${{ inputs.env-id }}
+          deployment_id: ${{ inputs.deployment-id }}
