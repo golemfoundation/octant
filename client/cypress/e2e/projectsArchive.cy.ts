@@ -2,7 +2,11 @@ import { checkLocationWithLoader, visitWithLoader } from 'cypress/utils/e2e';
 import { moveTime } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
-import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
+import {
+  HAS_ONBOARDING_BEEN_CLOSED,
+  IS_ONBOARDING_ALWAYS_VISIBLE,
+  IS_ONBOARDING_DONE,
+} from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 let wasEpochMoved = false;
@@ -12,6 +16,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     beforeEach(() => {
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
     });
 
