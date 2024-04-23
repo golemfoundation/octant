@@ -10,8 +10,14 @@ import {
 } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import getValueCryptoToDisplay from 'src/utils/getValueCryptoToDisplay';
+import {
+  DISCORD_LINK,
+  OCTANT_BUILD_LINK,
+  OCTANT_DOCS,
+  TERMS_OF_USE,
+} from '../../src/constants/urls.ts';
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
+Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(`settings: ${device}`, { viewportHeight, viewportWidth }, () => {
     beforeEach(() => {
       mockCoinPricesServer();
@@ -183,6 +189,38 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.reload();
 
       cy.get('[data-test=EarnView__TipTile--connectWallet]').should('not.exist');
+    });
+
+    it('Should show correct setting links', () => {
+      const expectedOrderAndContentLinksDesktop = [
+        { href: OCTANT_BUILD_LINK, text: 'Octant.build' },
+        { href: OCTANT_DOCS, text: 'User Docs' },
+        { href: DISCORD_LINK, text: 'Discord Community' },
+        { href: TERMS_OF_USE, text: 'Terms & Conditions' },
+      ];
+
+      const expectedOrderAndContentLinksMobile = [
+        { href: TERMS_OF_USE, text: 'Terms & Conditions' },
+        { href: OCTANT_BUILD_LINK, text: 'Website' },
+        { href: OCTANT_DOCS, text: 'Docs' },
+        { href: DISCORD_LINK, text: 'Discord' },
+      ];
+
+      cy.get('[data-test=Button]').each(($button, index) => {
+        const expectedText = isDesktop
+          ? expectedOrderAndContentLinksDesktop[index].text
+          : expectedOrderAndContentLinksMobile[index].text;
+
+        const expectedHref = isDesktop
+          ? expectedOrderAndContentLinksDesktop[index].href
+          : expectedOrderAndContentLinksMobile[index].href;
+
+        cy.wrap($button)
+          .should('have.text', expectedText);
+
+        cy.wrap($button)
+          .should('have.attr', 'href', expectedHref);
+      });
     });
   });
 });
