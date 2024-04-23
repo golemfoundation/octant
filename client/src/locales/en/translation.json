@@ -219,9 +219,17 @@
           "amount": "Amount",
           "gasPrice": "Gas price",
           "viewOnEtherscan": "View on Etherscan",
+          "estimatedLeverage": "Est. leverage",
+          "finalMatchFunding": "Final match funding",
           "when": "When",
           "withdrawal": "Withdrew ETH",
-          "matchingFundDonation": "Matching fund donation"
+          "matchingFundDonation": "Matching fund donation",
+          "leverageUnknown": "Unknown",
+          "allocationTooltips": {
+            "leverageUnknown": "We do not know the leverage for this past allocation.",
+            "finalMatchFunding": "Once allocation period has finished we know the exact amount of your matched funding your donation attracted, so we show that rather than just your estimated leverage amount.",
+            "leverage": "Leverage shows the multiple of your donation the projects you chose will receive in matched funding. Note that it may change wildly during an epoch, and be very different to your final matched funding."
+          }
         }
       },
       "historyTransactionLabel": {

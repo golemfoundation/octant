@@ -16,8 +16,17 @@ async function getFirstValid(arrayUrls: string[], baseUri: string, index: number
     });
 }
 
-export async function apiGetProject(baseUri: string): Promise<any> {
+export async function apiGetProjectIpfsData(baseUri: string): Promise<any> {
   const { ipfsGateways } = env;
 
   return getFirstValid(ipfsGateways.split(','), baseUri, 0).then(({ data }) => data);
+}
+
+export type Projects = {
+  projectsAddresses: string[];
+  projectsCid: string;
+};
+
+export async function apiGetProjects(epoch: number): Promise<Projects> {
+  return apiService.get(`${env.serverEndpoint}projects/epoch/${epoch}`).then(({ data }) => data);
 }

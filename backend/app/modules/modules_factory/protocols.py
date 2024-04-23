@@ -13,6 +13,7 @@ from app.modules.dto import (
     WithdrawableEth,
     UserAllocationRequestPayload,
     SignatureOpType,
+    ProjectsMetadata,
 )
 from app.modules.history.dto import UserHistoryDTO
 from app.modules.multisig_signatures.dto import Signature
@@ -208,6 +209,12 @@ class UserTos(Protocol):
         consent_signature: str,
         ip_address: str,
     ):
+        ...
+
+
+@runtime_checkable
+class ProjectsMetadataService(Protocol):
+    def get_projects_metadata(self, context: Context) -> ProjectsMetadata:
         ...
 
 

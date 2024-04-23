@@ -6,7 +6,7 @@ from app.infrastructure import OctantResource
 from app.legacy.controllers import rewards
 from app.modules.facades.rewards_estimation import estimate_rewards
 from app.modules.octant_rewards.controller import get_leverage
-from app.modules.project_rewards.controller import (
+from app.modules.projects.rewards.controller import (
     get_estimated_project_rewards,
     get_allocation_threshold,
 )

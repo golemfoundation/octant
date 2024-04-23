@@ -16,7 +16,7 @@ import useLock from 'hooks/mutations/useLock';
 import useUnlock from 'hooks/mutations/useUnlock';
 import useDepositValue from 'hooks/queries/useDepositValue';
 import useIsContract from 'hooks/queries/useIsContract';
-import useProjectsContract from 'hooks/queries/useProjectsContract';
+import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import toastService from 'services/toastService';
 import useTransactionLocalStore from 'store/transactionLocal/store';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
@@ -55,7 +55,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
   const buttonUseMaxRef = useRef<HTMLButtonElement>(null);
 
   const { data: availableFundsGlm } = useAvailableFundsGlm();
-  const { data: projectsAddresses } = useProjectsContract();
+  const { data: projectsEpoch } = useProjectsEpoch();
   const { data: depositsValue } = useDepositValue();
 
   useEffect(() => {
@@ -106,11 +106,13 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
 
   const onSuccess = async ({ hash, value }): Promise<void> => {
     addTransactionPending({
-      amount: value,
+      eventData: {
+        amount: value,
+        transactionHash: hash,
+      },
       isMultisig: isContract,
-      // GET /history uses microseconds. Normalization here.
-      timestamp: (Date.now() * 1000).toString(),
-      transactionHash: hash,
+      // GET /history uses seconds. Normalization here.
+      timestamp: Math.floor(Date.now() / 1000).toString(),
       type: currentMode,
     });
     if (!isContract) {
@@ -134,7 +136,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
   const unlockMutation = useUnlock({ onError, onMutate, onSuccess });
 
   const onApproveOrDeposit = async ({ valueToDeposeOrWithdraw }): Promise<void> => {
-    const isSignedInAsAProject = projectsAddresses!.includes(address!);
+    const isSignedInAsAProject = projectsEpoch!.projectsAddresses.includes(address!);
 
     if (isSignedInAsAProject) {
       toastService.showToast({

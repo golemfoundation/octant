@@ -28,7 +28,7 @@ export default getStoreWithMeta<TransactionLocalData, TransactionLocalMethods>({
       set(state => {
         const transactionsPendingFiltered =
           state.data.transactionsPending?.filter(
-            transaction => transaction.transactionHash !== payload,
+            transaction => transaction.eventData.transactionHash !== payload,
           ) || [];
         const newTransactionsPending =
           transactionsPendingFiltered.length === 0
@@ -87,7 +87,7 @@ export default getStoreWithMeta<TransactionLocalData, TransactionLocalMethods>({
         const newData = [...state.data.transactionsPending];
 
         const transactionToUpdateIndex = state.data.transactionsPending!.findIndex(
-          ({ transactionHash }) => transactionHash === payload,
+          ({ eventData: { transactionHash } }) => transactionHash === payload,
         );
 
         if (transactionToUpdateIndex > -1) {
@@ -113,7 +113,7 @@ export default getStoreWithMeta<TransactionLocalData, TransactionLocalMethods>({
         const newData = [...state.data.transactionsPending];
 
         const transactionToUpdateIndex = state.data.transactionsPending!.findIndex(
-          ({ transactionHash }) => transactionHash === payload,
+          ({ eventData: { transactionHash } }) => transactionHash === payload,
         );
 
         if (transactionToUpdateIndex > -1) {
@@ -135,8 +135,8 @@ export default getStoreWithMeta<TransactionLocalData, TransactionLocalMethods>({
           : initialState.transactionsPending;
         if (newTransactionsPending) {
           newTransactionsPending.find(
-            ({ transactionHash }) => transactionHash === oldHash,
-          )!.transactionHash = newHash;
+            ({ eventData: { transactionHash } }) => transactionHash === oldHash,
+          )!.eventData.transactionHash = newHash;
         }
         return {
           data: { ...state.data, transactionsPending: newTransactionsPending },

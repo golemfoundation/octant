@@ -10,8 +10,8 @@ from app.modules.multisig_signatures.service.offchain import OffchainMultisigSig
 from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
 from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
-from app.modules.project_rewards.service.estimated import EstimatedProjectRewards
-from app.modules.project_rewards.service.saved import SavedProjectRewards
+from app.modules.projects.rewards.service.estimated import EstimatedProjectRewards
+from app.modules.projects.rewards.service.saved import SavedProjectRewards
 from app.modules.snapshots.finalized.service.finalizing import FinalizingSnapshots
 from app.modules.snapshots.finalized.service.simulated import (
     SimulatedFinalizedSnapshots,

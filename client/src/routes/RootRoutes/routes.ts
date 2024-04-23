@@ -7,6 +7,7 @@ export const ROOT_ROUTES = {
   allocation: getPathObject(ROOT, 'allocation'),
   earn: getPathObject(ROOT, 'earn'),
   metrics: getPathObject(ROOT, 'metrics'),
+  playground: getPathObject(ROOT, 'playground'),
   project: getPathObject(ROOT, PROJECT_PREFIX),
   projectWithAddress: getPathObject(ROOT, `${PROJECT_PREFIX}/:epoch/:projectAddress`),
   projects: getPathObject(ROOT, 'projects'),

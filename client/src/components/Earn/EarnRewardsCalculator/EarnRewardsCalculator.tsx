@@ -11,6 +11,7 @@ import useSettingsStore from 'store/settings/store';
 import { FormattedCryptoValue } from 'types/formattedCryptoValue';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
+import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import { comma, floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 

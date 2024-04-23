@@ -8,11 +8,11 @@ from app.engine.projects.rewards import ProjectRewardDTO
 from app.exceptions import OctantException
 from app.extensions import socketio, epochs
 from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, ExceptionHandler
-from app.modules.project_rewards.controller import (
+from app.modules.projects.rewards.controller import (
     get_allocation_threshold,
 )
 from app.modules.dto import ProposalDonationDTO
-from app.modules.project_rewards.controller import get_estimated_project_rewards
+from app.modules.projects.rewards.controller import get_estimated_project_rewards
 from app.modules.user.allocations import controller
 
 

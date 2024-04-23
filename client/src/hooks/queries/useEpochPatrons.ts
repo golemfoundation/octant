@@ -10,7 +10,7 @@ export default function useEpochPatrons(
   options?: UseQueryOptions<Response, unknown, UseEpochPatrons, any>,
 ): UseQueryResult<UseEpochPatrons, unknown> {
   return useQuery({
-    queryFn: () => apiGetEpochPatrons(epoch),
+    queryFn: ({ signal }) => apiGetEpochPatrons(epoch, signal),
     queryKey: QUERY_KEYS.epochPatrons(epoch),
     select: response => response.patrons,
     ...options,

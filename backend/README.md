@@ -116,3 +116,4 @@ http://localhost:5000/docs/chain-info
 - `GLM_SENDER_ADDRESS` - Address, from which GLMs will be sent.
 - `GLM_SENDER_PRIVATE_KEY` - Private key corresponding to `GLM_SENDER_ADDRESS`
 - `GLM_SENDER_NONCE` - Current nonce of the `GLM_SENDER_ADDRESS`
+- `MAINNET_PROPOSAL_CIDS` - List of CIDs per each epoch, must be updated after new epoch data is added to the `octant-funding-projects` repo

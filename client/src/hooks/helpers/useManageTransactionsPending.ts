@@ -53,14 +53,14 @@ export default function useManageTransactionsPending(): void {
           !isWaitingForTransactionInitialized && !isMultisig,
       )
       .forEach(transaction => {
-        setTransactionIsWaitingForTransactionInitialized(transaction.transactionHash);
+        setTransactionIsWaitingForTransactionInitialized(transaction.eventData.transactionHash);
         publicClient
           .waitForTransactionReceipt({
-            hash: transaction.transactionHash,
+            hash: transaction.eventData.transactionHash,
             onReplaced: response => {
               updateTransactionHash({
                 newHash: response.transactionReceipt.transactionHash,
-                oldHash: transaction.transactionHash,
+                oldHash: transaction.eventData.transactionHash,
               });
             },
           })

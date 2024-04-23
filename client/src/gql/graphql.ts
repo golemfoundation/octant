@@ -1160,6 +1160,13 @@ export type GetEpochTimestampHappenedInQuery = {
   epoches: Array<{ __typename?: 'Epoch'; epoch: number }>;
 };
 
+export type GetEpochesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetEpochesQuery = {
+  __typename?: 'Query';
+  epoches: Array<{ __typename?: 'Epoch'; epoch: number }>;
+};
+
 export type GetEpochsStartEndTimeQueryVariables = Exact<{
   lastEpoch?: InputMaybe<Scalars['Int']['input']>;
 }>;
@@ -1350,6 +1357,29 @@ export const GetEpochTimestampHappenedInDocument = {
   GetEpochTimestampHappenedInQuery,
   GetEpochTimestampHappenedInQueryVariables
 >;
+export const GetEpochesDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetEpoches' },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'epoches' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'epoch' } }],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetEpochesQuery, GetEpochesQueryVariables>;
 export const GetEpochsStartEndTimeDocument = {
   kind: 'Document',
   definitions: [
