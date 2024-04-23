@@ -13,7 +13,8 @@ import styles from './EarnHistoryItem.module.scss';
 import EarnHistoryItemProps from './types';
 
 const EarnHistoryItem: FC<EarnHistoryItemProps> = ({ isLast, ...rest }) => {
-  const { type, amount, isFinalized = true, timestamp, isMultisig = false } = rest;
+  const { type, eventData, isFinalized = true, timestamp, isMultisig = false } = rest;
+  const { amount } = eventData;
   const { i18n, t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.historyItem',
   });

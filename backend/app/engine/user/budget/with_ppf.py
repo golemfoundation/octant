@@ -12,9 +12,13 @@ class UserBudgetWithPPF(UserBudget):
             payload.total_effective_deposit
         )
 
-        calced_budget = int(
-            payload.all_individual_rewards * individual_share
-            + individual_share
-            * (Decimal("0.5") * payload.ppf - payload.all_individual_rewards)
+        extra_individual_rewards = Decimal("0.5") * payload.ppf
+        full_individual_rewards = (
+            payload.all_individual_rewards + extra_individual_rewards
         )
+
+        calced_budget = int(individual_share * full_individual_rewards)
+
+        # TODO all_individual_rewards should be named vanilla_individual_rewards
+
         return calced_budget

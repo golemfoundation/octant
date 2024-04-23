@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Optional
+from typing import Optional, List
 
 from dataclass_wizard import JSONWizard
 
@@ -25,11 +25,18 @@ class LockItem:
 
 
 @dataclass(frozen=True)
-class AllocationItem:
+class ProjectAllocationItem:
     project_address: str
-    epoch: int
     amount: int
+
+
+@dataclass(frozen=True)
+class AllocationItem:
+    epoch: int
     timestamp: Timestamp
+    is_manually_edited: bool
+    leverage: float
+    allocations: List[ProjectAllocationItem]
 
 
 @dataclass(frozen=True)
@@ -49,29 +56,36 @@ class PatronDonationItem:
 
 
 @dataclass(frozen=True)
-class HistoryEntry(PageRecord, JSONWizard):
-    type: OpType
+class HistoryEntryData(JSONWizard):
+    pass
 
 
 @dataclass(frozen=True)
-class TransactionHistoryEntry(HistoryEntry):
+class TransactionHistoryEntry(HistoryEntryData):
     transaction_hash: str
     amount: int
 
 
 @dataclass(frozen=True)
-class AllocationHistoryEntry(HistoryEntry):
-    project_address: str
-    amount: int
+class AllocationHistoryEntry(HistoryEntryData):
+    is_manually_edited: bool
+    leverage: float
+    allocations: List[ProjectAllocationItem]
 
 
 @dataclass(frozen=True)
-class PatronModeDonationEntry(HistoryEntry):
+class PatronModeDonationEntry(HistoryEntryData):
     epoch: int
     amount: int
 
 
 @dataclass(frozen=True)
+class HistoryEntry(PageRecord, JSONWizard):
+    type: OpType
+    event_data: HistoryEntryData
+
+
+@dataclass(frozen=True)
 class UserHistoryDTO(JSONWizard):
-    history: list[HistoryEntry]
+    history: List[HistoryEntry]
     next_cursor: Optional[str]

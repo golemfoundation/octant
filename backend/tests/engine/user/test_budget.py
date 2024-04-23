@@ -1,6 +1,7 @@
 from app.engine.user.budget.preliminary import PreliminaryUserBudget
+from app.engine.user.budget.with_ppf import UserBudgetWithPPF
 from app.engine.user.budget import UserBudgetPayload
-from tests.helpers.constants import USER1_ED, TOTAL_ED, ALL_INDIVIDUAL_REWARDS
+from tests.helpers.constants import USER1_ED, TOTAL_ED, ALL_INDIVIDUAL_REWARDS, PPF
 
 
 def test_preliminary_user_budget():
@@ -30,3 +31,31 @@ def test_preliminary_user_budget_total_effective_is_none():
     result = uut.calculate_budget(payload)
 
     assert result == 0
+
+
+def test_user_budget_with_ppf():
+    payload = UserBudgetPayload(
+        user_effective_deposit=USER1_ED,
+        all_individual_rewards=ALL_INDIVIDUAL_REWARDS,
+        ppf=PPF,
+        total_effective_deposit=TOTAL_ED,
+    )
+    uut = UserBudgetWithPPF()
+
+    result = uut.calculate_budget(payload)
+
+    assert result == 1819523568520052
+
+
+def test_user_budget_with_ppf_as_null():
+    payload = UserBudgetPayload(
+        user_effective_deposit=USER1_ED,
+        all_individual_rewards=ALL_INDIVIDUAL_REWARDS,
+        ppf=0,
+        total_effective_deposit=TOTAL_ED,
+    )
+    uut = UserBudgetWithPPF()
+
+    result = uut.calculate_budget(payload)
+
+    assert result == 1526868989237987

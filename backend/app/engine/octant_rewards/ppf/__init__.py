@@ -1,10 +1,14 @@
 from dataclasses import dataclass
 from abc import abstractmethod, ABC
+from decimal import Decimal
 
 
 @dataclass
 class PPFPayload:
-    eth_proceeds: int = None
+    individual_rewards_equilibrium: int
+    all_individual_rewards: int
+    locked_ratio: Decimal
+    ire_percent: Decimal
 
 
 class PPFCalculator(ABC):

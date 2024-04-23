@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import env from 'env';
 import useCypressMakeSnapshot from 'hooks/mutations/useCypressMakeSnapshot';
 import useCypressMoveToDecisionWindowClosed from 'hooks/mutations/useCypressMoveToDecisionWindowClosed';
 import useCypressMoveToDecisionWindowOpen from 'hooks/mutations/useCypressMoveToDecisionWindowOpen';
@@ -11,7 +10,7 @@ import useEpochsIndexedBySubgraph from 'hooks/subgraph/useEpochsIndexedBySubgrap
 export default function useCypressHelpers(): { isFetching: boolean } {
   const [isRefetchingEpochs, setIsRefetchingEpochs] = useState<boolean>(false);
 
-  const isHookEnabled = !!window.Cypress || env.network === 'Local';
+  const isHookEnabled = !!window.Cypress;
 
   const {
     mutateAsync: mutateAsyncMoveToDecisionWindowOpen,

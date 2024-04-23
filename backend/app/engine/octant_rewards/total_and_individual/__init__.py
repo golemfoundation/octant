@@ -12,6 +12,9 @@ class TotalAndAllIndividualPayload:
 
 @dataclass
 class TotalAndAllIndividualRewards(ABC):
+    IRE_PERCENT: Decimal = None
+    TR_PERCENT: Decimal = None
+
     @abstractmethod
     def calculate_total_rewards(self, payload: TotalAndAllIndividualPayload) -> int:
         pass
@@ -21,3 +24,8 @@ class TotalAndAllIndividualRewards(ABC):
         self, payload: TotalAndAllIndividualPayload
     ) -> int:
         pass
+
+    def calculate_individual_rewards_equilibrium(
+        self, payload: TotalAndAllIndividualPayload
+    ):
+        return None
