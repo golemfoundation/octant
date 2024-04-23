@@ -427,7 +427,7 @@ const AllocationView = (): ReactElement => {
     isDecisionWindowOpen;
 
   useEffect(() => {
-    if (!walletAddress || !isContract) {
+    if (!walletAddress || !isContract || isMultisigSignatureNeeded) {
       return;
     }
     const getPendingMultisigSignatures = () => {
@@ -450,7 +450,12 @@ const AllocationView = (): ReactElement => {
       clearInterval(intervalId);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletAddress, isWaitingForWalletConfirmationMultisig, isContract]);
+  }, [
+    walletAddress,
+    isWaitingForWalletConfirmationMultisig,
+    isContract,
+    isMultisigSignatureNeeded,
+  ]);
 
   return (
     <Layout
@@ -466,7 +471,11 @@ const AllocationView = (): ReactElement => {
           <AllocationNavigation
             areButtonsDisabled={areButtonsDisabled}
             currentView={currentView}
-            isLeftButtonDisabled={currentView === 'summary' || isMultisigSignatureNeeded}
+            isLeftButtonDisabled={
+              currentView === 'summary' ||
+              isWaitingForWalletConfirmationMultisig ||
+              isMultisigSignatureNeeded
+            }
             isLoading={
               allocateEvent.isLoading ||
               isWaitingForWalletConfirmationMultisig ||
