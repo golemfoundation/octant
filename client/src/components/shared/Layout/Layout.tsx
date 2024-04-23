@@ -60,7 +60,7 @@ const Layout: FC<LayoutProps> = ({
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { data: isUserTOSAccepted } = useUserTOS();
-  const { data: isProjectAdminMode } = useIsProjectAdminMode();
+  const isProjectAdminMode = useIsProjectAdminMode();
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isAllocationRoot = !!useMatch(ROOT_ROUTES.allocation.absolute);

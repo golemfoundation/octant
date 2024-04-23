@@ -24,7 +24,7 @@ const EarnView = (): ReactElement => {
     refetchInterval: isPollingForCurrentEpoch ? 5000 : false,
   });
 
-  const { data: isProjectAdminMode } = useIsProjectAdminMode();
+  const isProjectAdminMode = useIsProjectAdminMode();
 
   useEffect(() => {
     // When Epoch 0 ends, we poll for Epoch 1 from the backend.

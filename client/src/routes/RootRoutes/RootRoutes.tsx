@@ -24,7 +24,7 @@ const Protected: FC<ProtectedProps> = ({ children, isSyncingInProgress }) =>
 const RootRoutes: FC<RootRoutesProps> = props => {
   const { data: currentEpoch } = useCurrentEpoch();
   const isPreLaunch = getIsPreLaunch(currentEpoch);
-  const { data: isProjectAdminMode } = useIsProjectAdminMode();
+  const isProjectAdminMode = useIsProjectAdminMode();
   const { data: isPatronMode } = useIsPatronMode();
 
   return (

@@ -23,7 +23,7 @@ const TipTile: React.FC<TipTileProps> = ({
   title,
 }) => {
   const { isDesktop } = useMediaQuery();
-  const { data: isProjectAdminMode } = useIsProjectAdminMode();
+  const isProjectAdminMode = useIsProjectAdminMode();
   const shouldSkipEntranceAnimation = useRef(isOpen);
 
   return (

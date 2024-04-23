@@ -23,7 +23,7 @@ const EarnHistory: FC<EarnHistoryProps> = ({ className }) => {
 
   const { data: currentEpoch } = useCurrentEpoch();
   const { fetchNextPage, history, hasNextPage, isFetching: isFetchingHistory } = useHistory();
-  const { data: isProjectAdminMode } = useIsProjectAdminMode();
+  const isProjectAdminMode = useIsProjectAdminMode();
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const showLoader = isFetchingHistory && !isPreLaunch && !history?.length;

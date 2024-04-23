@@ -29,7 +29,7 @@ const LayoutWallet: FC<LayoutWalletProps> = ({ onDisconnect }) => {
 
   const { disconnect } = useDisconnect();
 
-  const { data: isProjectAdminMode } = useIsProjectAdminMode();
+  const isProjectAdminMode = useIsProjectAdminMode();
 
   /**
    * Setting values in local state prevents flickering
