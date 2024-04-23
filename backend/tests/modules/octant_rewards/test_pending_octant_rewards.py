@@ -7,6 +7,7 @@ from tests.helpers.constants import (
     PPF,
     USER2_BUDGET,
     MATCHED_REWARDS,
+    MATCHED_REWARDS_AFTER_OVERHAUL,
 )
 from tests.helpers import make_user_allocation
 from tests.helpers.context import get_context
@@ -42,7 +43,7 @@ def test_pending_octant_rewards_after_overhaul(
         community_fund=COMMUNITY_FUND,
         ppf=PPF,
         patrons_rewards=USER2_BUDGET,
-        matched_rewards=181090530026270051047,
+        matched_rewards=MATCHED_REWARDS_AFTER_OVERHAUL,
     )
 
 
@@ -74,13 +75,13 @@ def test_pending_get_matched_rewards_after_overhaul(mock_patron_mode, mock_users
         epoch_nr=MOCKED_EPOCH_NO_AFTER_OVERHAUL, mock_users_db=mock_users_db
     )
 
-    mock_patron_mode.get_patrons_rewards.return_value = 0
+    mock_patron_mode.get_patrons_rewards.return_value = USER2_BUDGET
     context = get_context(3)
     service = PendingOctantRewards(patrons_mode=mock_patron_mode)
 
     result = service.get_matched_rewards(context)
 
-    assert result == 181_084931506_849531232
+    assert result == MATCHED_REWARDS_AFTER_OVERHAUL
 
 
 def test_pending_get_leverage(

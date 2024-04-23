@@ -6,6 +6,7 @@ import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import PieChart from 'components/ui/PieChart';
 import networkConfig from 'constants/networkConfig';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useEpochInfo from 'hooks/queries/useEpochInfo';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
@@ -23,6 +24,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { epoch } = useMetricsEpoch();
+  const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: epochInfo } = useEpochInfo(epoch);
 
@@ -52,7 +54,9 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
      * Half of PPR goes to "PPF" section.
      */
     if (epoch === 3) {
-      return epochInfo.ppf / 2n - totalUserDonationsWithPatronRewards - unusedRewards;
+      return (
+        ppf / 2n + epochInfo.individualRewards - totalUserDonationsWithPatronRewards - unusedRewards
+      );
     }
 
     return epochInfo.individualRewards - totalUserDonationsWithPatronRewards - unusedRewards;
@@ -63,14 +67,18 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     epochInfo?.individualRewards,
     totalUserDonationsWithPatronRewards,
     unusedRewards,
+    ppf,
   ]);
 
   const leftoverToUse = useMemo(() => {
-    if (isDecisionWindowOpen) {
-      return unusedRewards;
+    if (!currentEpoch) {
+      return BigInt(0);
+    }
+    if (epoch === currentEpoch - 1 && isDecisionWindowOpen) {
+      return unusedRewards + ethBelowThreshold;
     }
     return leftover;
-  }, [isDecisionWindowOpen, leftover, unusedRewards]);
+  }, [ethBelowThreshold, epoch, currentEpoch, isDecisionWindowOpen, leftover, unusedRewards]);
 
   const total =
     claimedByUsers +

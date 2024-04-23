@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from decimal import Decimal
 
 
 @dataclass
@@ -7,7 +8,10 @@ class MatchedRewardsPayload:
     total_rewards: int = None
     all_individual_rewards: int = None
     patrons_rewards: int = None
-    ppf: int = None
+    staking_proceeds: int = None
+    ire_percent: Decimal = None
+    tr_percent: Decimal = None
+    locked_ratio: Decimal = None
 
 
 @dataclass

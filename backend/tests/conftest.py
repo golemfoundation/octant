@@ -50,7 +50,6 @@ from tests.helpers.constants import (
     USER3_BUDGET,
     USER_MOCKED_BUDGET,
     COMMUNITY_FUND,
-    PPF,
     MOCKED_EPOCH_NO_AFTER_OVERHAUL,
     MATCHED_REWARDS_AFTER_OVERHAUL,
     NO_PATRONS_REWARDS,
@@ -59,6 +58,7 @@ from tests.helpers.constants import (
     MULTISIG_MOCKED_HASH,
     MULTISIG_MOCKED_SAFE_HASH,
     MULTISIG_ADDRESS,
+    PPF,
 )
 from tests.helpers.context import get_context
 from tests.helpers.gql_client import MockGQLClient

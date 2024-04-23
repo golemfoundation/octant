@@ -1,8 +1,10 @@
 import json
+from http import HTTPStatus
 from typing import List, Tuple, Dict
 
 from eth_account.messages import SignableMessage
 
+from app.exceptions import ExternalApiException
 from app.infrastructure.database.models import MultisigSignatures
 from app.infrastructure.external_api.safe.message_details import get_message_details
 from app.infrastructure.external_api.safe.user_details import get_user_details
@@ -62,17 +64,20 @@ def approve_pending_signatures(
             approved_signatures.append(_create_signature_object(pending_signature))
             continue
 
-        message_details = get_message_details(  # TODO extract API call to service
-            pending_signature.msg_hash, is_mainnet=is_mainnet
-        )
-        confirmations = message_details["confirmations"]
-        threshold = int(
-            get_user_details(
+        try:
+            message_details = get_message_details(  # TODO extract API call to service
+                pending_signature.msg_hash, is_mainnet=is_mainnet
+            )
+            user_details = get_user_details(
                 pending_signature.address, is_mainnet=is_mainnet
-            )[  # TODO extract API call to service
-                "threshold"
-            ]
-        )
+            )  # TODO extract API call to service
+        except ExternalApiException as e:
+            if e.status_code == HTTPStatus.NOT_FOUND:
+                continue
+            raise e
+
+        confirmations = message_details["confirmations"]
+        threshold = int(user_details["threshold"])
 
         if len(confirmations) >= threshold:
             pending_signature.confirmed_signature = message_details["preparedSignature"]
