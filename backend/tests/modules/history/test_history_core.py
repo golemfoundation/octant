@@ -5,11 +5,13 @@ from app.modules.history.dto import (
     LockItem,
     OpType,
     PatronDonationItem,
+    ProjectAllocationItem,
     AllocationItem,
     WithdrawalItem,
 )
 from app.modules.history.core import sort_history_records
 from app.modules.history.dto import (
+    HistoryEntry,
     PatronModeDonationEntry,
     TransactionHistoryEntry,
     AllocationHistoryEntry,
@@ -45,10 +47,16 @@ from app.modules.history.dto import (
             ],
             [
                 AllocationItem(
-                    project_address="proj1",
                     epoch=1,
-                    amount=100,
                     timestamp=from_timestamp_s(10000),
+                    is_manually_edited=False,
+                    leverage="1000.12",
+                    allocations=[
+                        ProjectAllocationItem(
+                            project_address="proj1",
+                            amount=100,
+                        )
+                    ],
                 )
             ],
             [
@@ -62,41 +70,59 @@ from app.modules.history.dto import (
             ],
             [PatronDonationItem(timestamp=from_timestamp_s(2000), epoch=1, amount=20)],
             [
-                AllocationHistoryEntry(
+                HistoryEntry(
                     type=OpType.ALLOCATION,
                     timestamp=10000,
-                    project_address="proj1",
-                    amount=100,
+                    event_data=AllocationHistoryEntry(
+                        is_manually_edited=False,
+                        leverage="1000.12",
+                        allocations=[
+                            ProjectAllocationItem(
+                                project_address="proj1",
+                                amount=100,
+                            )
+                        ],
+                    ),
                 ),
-                TransactionHistoryEntry(
+                HistoryEntry(
                     type=OpType.WITHDRAWAL,
                     timestamp=7000,
-                    transaction_hash="tx3",
-                    amount=50,
+                    event_data=TransactionHistoryEntry(
+                        transaction_hash="tx3",
+                        amount=50,
+                    ),
                 ),
-                TransactionHistoryEntry(
+                HistoryEntry(
                     type=OpType.UNLOCK,
-                    amount=10,
                     timestamp=6000,
-                    transaction_hash="tx4",
+                    event_data=TransactionHistoryEntry(
+                        amount=10,
+                        transaction_hash="tx4",
+                    ),
                 ),
-                TransactionHistoryEntry(
+                HistoryEntry(
                     type=OpType.LOCK,
-                    amount=10,
                     timestamp=3000,
-                    transaction_hash="tx2",
+                    event_data=TransactionHistoryEntry(
+                        amount=10,
+                        transaction_hash="tx2",
+                    ),
                 ),
-                PatronModeDonationEntry(
+                HistoryEntry(
                     type=OpType.PATRON_MODE_DONATION,
                     timestamp=2000,
-                    epoch=1,
-                    amount=20,
+                    event_data=PatronModeDonationEntry(
+                        epoch=1,
+                        amount=20,
+                    ),
                 ),
-                TransactionHistoryEntry(
+                HistoryEntry(
                     type=OpType.LOCK,
-                    amount=10,
                     timestamp=1000,
-                    transaction_hash="tx1",
+                    event_data=TransactionHistoryEntry(
+                        amount=10,
+                        transaction_hash="tx1",
+                    ),
                 ),
             ],
         ),
@@ -106,10 +132,16 @@ from app.modules.history.dto import (
             [],
             [
                 AllocationItem(
-                    project_address="proj1",
                     epoch=1,
-                    amount=100,
                     timestamp=from_timestamp_s(500),
+                    is_manually_edited=False,
+                    leverage="1000.12",
+                    allocations=[
+                        ProjectAllocationItem(
+                            project_address="proj1",
+                            amount=100,
+                        )
+                    ],
                 )
             ],
             [
@@ -123,17 +155,27 @@ from app.modules.history.dto import (
             ],
             [],
             [
-                TransactionHistoryEntry(
+                HistoryEntry(
                     type=OpType.WITHDRAWAL,
-                    amount=50,
                     timestamp=500,
-                    transaction_hash="tx2",
+                    event_data=TransactionHistoryEntry(
+                        amount=50,
+                        transaction_hash="tx2",
+                    ),
                 ),
-                AllocationHistoryEntry(
+                HistoryEntry(
                     type=OpType.ALLOCATION,
-                    amount=100,
                     timestamp=500,
-                    project_address="proj1",
+                    event_data=AllocationHistoryEntry(
+                        leverage="1000.12",
+                        is_manually_edited=False,
+                        allocations=[
+                            ProjectAllocationItem(
+                                project_address="proj1",
+                                amount=100,
+                            )
+                        ],
+                    ),
                 ),
             ],
         ),
@@ -143,32 +185,42 @@ from app.modules.history.dto import (
             [],
             [
                 AllocationItem(
-                    project_address="projB",
                     epoch=1,
-                    amount=10,
                     timestamp=from_timestamp_s(100),
-                ),
-                AllocationItem(
-                    project_address="projA",
-                    epoch=1,
-                    amount=10,
-                    timestamp=from_timestamp_s(100),
-                ),
+                    is_manually_edited=True,
+                    leverage="1000.12",
+                    allocations=[
+                        ProjectAllocationItem(
+                            project_address="projB",
+                            amount=10,
+                        ),
+                        ProjectAllocationItem(
+                            project_address="projA",
+                            amount=10,
+                        ),
+                    ],
+                )
             ],
             [],
             [],
             [
-                AllocationHistoryEntry(
+                HistoryEntry(
                     type=OpType.ALLOCATION,
-                    amount=10,
                     timestamp=100,
-                    project_address="projB",
-                ),
-                AllocationHistoryEntry(
-                    type=OpType.ALLOCATION,
-                    amount=10,
-                    timestamp=100,
-                    project_address="projA",
+                    event_data=AllocationHistoryEntry(
+                        is_manually_edited=True,
+                        leverage="1000.12",
+                        allocations=[
+                            ProjectAllocationItem(
+                                project_address="projB",
+                                amount=10,
+                            ),
+                            ProjectAllocationItem(
+                                project_address="projA",
+                                amount=10,
+                            ),
+                        ],
+                    ),
                 ),
             ],
         ),

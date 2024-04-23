@@ -46,16 +46,16 @@ describe('useTransactionLocalStore', () => {
       transactionPending2,
       transactionPending3,
     ]);
-    removeTransactionPending(transactionPending2.transactionHash);
+    removeTransactionPending(transactionPending2.eventData.transactionHash);
     expect(useTransactionLocalStore.getState().data.transactionsPending).toEqual([
       transactionPending1,
       transactionPending3,
     ]);
-    removeTransactionPending(transactionPending3.transactionHash);
+    removeTransactionPending(transactionPending3.eventData.transactionHash);
     expect(useTransactionLocalStore.getState().data.transactionsPending).toEqual([
       transactionPending1,
     ]);
-    removeTransactionPending(transactionPending1.transactionHash);
+    removeTransactionPending(transactionPending1.eventData.transactionHash);
     expect(useTransactionLocalStore.getState().data.transactionsPending).toEqual(null);
   });
 
@@ -117,7 +117,7 @@ describe('useTransactionLocalStore', () => {
      1. FALSE: blockNumberWithLatestTx.
      2. TRUE: If any transaction isWaitingForTransactionInitialized && !iFinalized.
      */
-    setTransactionIsWaitingForTransactionInitialized(transactionPending1.transactionHash);
+    setTransactionIsWaitingForTransactionInitialized(transactionPending1.eventData.transactionHash);
     expect(useTransactionLocalStore.getState().data.isAppWaitingForTransactionToBeIndexed).toEqual(
       true,
     );
@@ -135,7 +135,7 @@ describe('useTransactionLocalStore', () => {
      1. FALSE: blockNumberWithLatestTx.
      2. TRUE: If any transaction isWaitingForTransactionInitialized && !iFinalized.
      */
-    setTransactionIsFinalized(transactionPending1.transactionHash);
+    setTransactionIsFinalized(transactionPending1.eventData.transactionHash);
     expect(useTransactionLocalStore.getState().data.isAppWaitingForTransactionToBeIndexed).toEqual(
       false,
     );
@@ -154,7 +154,7 @@ describe('useTransactionLocalStore', () => {
      2. TRUE: If any transaction isWaitingForTransactionInitialized && !iFinalized.
      */
     setBlockNumberWithLatestTx(1000);
-    setTransactionIsWaitingForTransactionInitialized(transactionPending1.transactionHash);
+    setTransactionIsWaitingForTransactionInitialized(transactionPending1.eventData.transactionHash);
     expect(useTransactionLocalStore.getState().data.isAppWaitingForTransactionToBeIndexed).toEqual(
       true,
     );
@@ -194,12 +194,13 @@ describe('useTransactionLocalStore', () => {
         ),
     ).toBe(false);
 
-    setTransactionIsWaitingForTransactionInitialized(transactionPending1.transactionHash);
+    setTransactionIsWaitingForTransactionInitialized(transactionPending1.eventData.transactionHash);
     expect(
       useTransactionLocalStore
         .getState()
         .data.transactionsPending!.find(
-          ({ transactionHash }) => transactionHash === transactionPending1.transactionHash,
+          ({ eventData: { transactionHash } }) =>
+            transactionHash === transactionPending1.eventData.transactionHash,
         )!.isWaitingForTransactionInitialized,
     ).toBe(true);
   });
@@ -217,12 +218,13 @@ describe('useTransactionLocalStore', () => {
         .data.transactionsPending!.some(({ isFinalized }) => isFinalized),
     ).toBe(false);
 
-    setTransactionIsFinalized(transactionPending1.transactionHash);
+    setTransactionIsFinalized(transactionPending1.eventData.transactionHash);
     expect(
       useTransactionLocalStore
         .getState()
         .data.transactionsPending!.find(
-          ({ transactionHash }) => transactionHash === transactionPending1.transactionHash,
+          ({ eventData: { transactionHash } }) =>
+            transactionHash === transactionPending1.eventData.transactionHash,
         )!.isFinalized,
     ).toBe(true);
   });
@@ -233,12 +235,17 @@ describe('useTransactionLocalStore', () => {
     expect(useTransactionLocalStore.getState().data.transactionsPending).toEqual(null);
     addTransactionPending(transactionPending1);
     addTransactionPending(transactionPending2);
-    updateTransactionHash({ newHash: '0x999', oldHash: transactionPending1.transactionHash });
+    updateTransactionHash({
+      newHash: '0x999',
+      oldHash: transactionPending1.eventData.transactionHash,
+    });
 
     const transaction = useTransactionLocalStore
       .getState()
-      .data.transactionsPending!.find(({ transactionHash }) => transactionHash === '0x999')!;
-    expect(transaction.amount).toEqual(BigInt(10));
+      .data.transactionsPending!.find(
+        ({ eventData: { transactionHash } }) => transactionHash === '0x999',
+      )!;
+    expect(transaction.eventData.amount).toEqual(BigInt(10));
     expect(transaction.timestamp).toBe('100');
     expect(transaction.type).toBe('lock');
   });
