@@ -1,5 +1,5 @@
 from app.constants import GLM_TOTAL_SUPPLY_WEI
-from app.exceptions import RewardsException, EstimateRewardsNotSupported
+from app.exceptions import RewardsException
 
 MAX_DAYS_TO_ESTIMATE_BUDGET = 365250
 
@@ -26,8 +26,3 @@ def validate_estimate_budget_by_epochs_inputs(no_epochs: int, glm_amount: int):
         raise RewardsException(
             f"Glm amount must be between 0 and {GLM_TOTAL_SUPPLY_WEI}", 400
         )
-
-
-def validate_if_given_epoch_has_previous_one(epoch_num: int):
-    if epoch_num <= 1:
-        raise EstimateRewardsNotSupported()
