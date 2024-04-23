@@ -48,22 +48,16 @@ const env: Env = {
   jsonRpcEndpoint: import.meta.env[envViteKeys.jsonRpcEndpoint],
   // @ts-expect-error TS does not understand the way vite imports envs.
   network: import.meta.env[envViteKeys.network],
-
   // @ts-expect-error TS does not understand the way vite imports envs.
   safeEndpoint: import.meta.env[envViteKeys.safeEndpoint],
-
   // @ts-expect-error TS does not understand the way vite imports envs.
   sentryAuthToken: import.meta.env[envViteKeys.sentryAuthToken],
-
   // @ts-expect-error TS does not understand the way vite imports envs.
   serverEndpoint: import.meta.env[envViteKeys.serverEndpoint],
-
   // @ts-expect-error TS does not understand the way vite imports envs.
   subgraphAddress: import.meta.env[envViteKeys.subgraphAddress],
-
   // @ts-expect-error TS does not understand the way vite imports envs.
   walletConnectProjectId: import.meta.env[envViteKeys.walletConnectProjectId],
-
   // @ts-expect-error TS does not understand the way vite imports envs.
   websocketEndpoint: import.meta.env[envViteKeys.websocketEndpoint],
 };
