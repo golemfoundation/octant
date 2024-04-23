@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import React, { ReactElement, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
 
 import EarnBoxGlmLock from 'components/Earn/EarnBoxGlmLock';
 import EarnBoxPersonalAllocation from 'components/Earn/EarnBoxPersonalAllocation';
@@ -9,6 +10,7 @@ import EarnTipTiles from 'components/Earn/EarnTipTiles';
 import Layout from 'components/shared/Layout';
 import TimeCounter from 'components/shared/TimeCounter';
 import BoxRounded from 'components/ui/BoxRounded';
+import { PROJECT_ADMINS_ALLOWED_TO_LOCK_UNLOCK_GLMS } from 'constants/projectAdmins';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import getIsPreLaunch from 'utils/getIsPreLaunch';
@@ -19,6 +21,7 @@ const EarnView = (): ReactElement => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'views.earn',
   });
+  const { address } = useAccount();
   const [isPollingForCurrentEpoch, setIsPollingForCurrentEpoch] = useState<boolean>(false);
   const { data: currentEpoch } = useCurrentEpoch({
     refetchInterval: isPollingForCurrentEpoch ? 5000 : false,
@@ -39,6 +42,9 @@ const EarnView = (): ReactElement => {
   const preLaunchEndTimestamp = Date.UTC(2023, 7, 8, 16, 0, 0, 0); // 08.08.2023 18:00 CEST
   const duration = preLaunchEndTimestamp - preLaunchStartTimestamp;
 
+  const isProjectAdminAllowedToLockUnlock =
+    address && PROJECT_ADMINS_ALLOWED_TO_LOCK_UNLOCK_GLMS.includes(address);
+
   return (
     <Layout dataTest="EarnView">
       <EarnTipTiles />
@@ -54,7 +60,9 @@ const EarnView = (): ReactElement => {
               />
             </BoxRounded>
           )}
-          {!isProjectAdminMode && <EarnBoxGlmLock classNameBox={styles.box} />}
+          {(!isProjectAdminMode || isProjectAdminAllowedToLockUnlock) && (
+            <EarnBoxGlmLock classNameBox={styles.box} />
+          )}
           <EarnBoxPersonalAllocation className={styles.box} />
         </div>
         <EarnHistory className={styles.column} />
