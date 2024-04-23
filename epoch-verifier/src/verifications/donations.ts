@@ -4,11 +4,11 @@ import { Context, allocationsByUser, individualDonationsByProposals, rewardsByPr
 import { Address, Reward } from "../data/models";
 import { VerificationResult } from "../runner";
 
-const PROPOSALS_NO = 24
+const PROPOSALS_NO = 30
 
 function getThreshold(individualAllocations: Map<Address, bigint>): bigint {
   const allocationsSum = Array.from(individualAllocations.entries()).reduce((acc, [_, val]) => acc + val, BigInt(0))
-  return allocationsSum / (BigInt(PROPOSALS_NO) * BigInt(2))
+  return allocationsSum / BigInt(PROPOSALS_NO)
 }
 
 function getUserAllocationsForProjectsAboveThreshold(context: Context): Map<Address, bigint> {
