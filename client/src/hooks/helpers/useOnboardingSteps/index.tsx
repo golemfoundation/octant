@@ -11,9 +11,7 @@ import { getStepsDecisionWindowOpen, getStepsDecisionWindowClosed } from './step
 
 import useEpochAndAllocationTimestamps from '../useEpochAndAllocationTimestamps';
 
-const useOnboardingSteps = (
-  isUserTOSAcceptedInitial: boolean | undefined,
-): { isMultisigSignatureNeeded: boolean; steps: Step[] } => {
+const useOnboardingSteps = (isUserTOSAcceptedInitial: boolean | undefined): Step[] => {
   const { i18n } = useTranslation();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
@@ -33,31 +31,34 @@ const useOnboardingSteps = (
     return '';
   }, [isDecisionWindowOpen, timeCurrentAllocationEnd, timeCurrentEpochEnd]);
 
-  return {
-    isMultisigSignatureNeeded,
-    steps: [
-      ...(isUserTOSAcceptedInitial === false
-        ? [
-            {
-              header: i18n.t('views.onboarding.stepsCommon.usingTheApp.header'),
-              image: '/images/onboarding/octant.webp',
-              text: (
-                <Fragment>
-                  <div>{i18n.t('views.onboarding.stepsCommon.usingTheApp.text')}</div>
-                  <ModalOnboardingTOS
-                    isMultisigSignatureNeeded={isMultisigSignatureNeeded}
-                    setIsMultisigSignatureNeeded={setIsMultisigSignatureNeeded}
-                  />
-                </Fragment>
-              ),
-            },
-          ]
-        : []),
-      ...(isDecisionWindowOpen
-        ? getStepsDecisionWindowOpen(epoch?.toString() ?? '', changeAWDate)
-        : getStepsDecisionWindowClosed(epoch?.toString() ?? '', changeAWDate)),
-    ],
-  };
+  return [
+    ...(isUserTOSAcceptedInitial === false
+      ? [
+          {
+            header: isMultisigSignatureNeeded
+              ? i18n.t('views.onboarding.stepsCommon.signingTheTerms.header')
+              : i18n.t('views.onboarding.stepsCommon.usingTheApp.header'),
+            image: '/images/onboarding/octant.webp',
+            text: (
+              <Fragment>
+                <div>
+                  {isMultisigSignatureNeeded
+                    ? i18n.t('views.onboarding.stepsCommon.signingTheTerms.text')
+                    : i18n.t('views.onboarding.stepsCommon.usingTheApp.text')}
+                </div>
+                <ModalOnboardingTOS
+                  isMultisigSignatureNeeded={isMultisigSignatureNeeded}
+                  setIsMultisigSignatureNeeded={setIsMultisigSignatureNeeded}
+                />
+              </Fragment>
+            ),
+          },
+        ]
+      : []),
+    ...(isDecisionWindowOpen
+      ? getStepsDecisionWindowOpen(epoch?.toString() ?? '', changeAWDate)
+      : getStepsDecisionWindowClosed(epoch?.toString() ?? '', changeAWDate)),
+  ];
 };
 
 export default useOnboardingSteps;
