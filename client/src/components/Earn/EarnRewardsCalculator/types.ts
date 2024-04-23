@@ -1,4 +1,4 @@
 export type FormFields = {
-  days: number;
+  numberOfEpochs: number;
   valueCrypto?: string;
 };

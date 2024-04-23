@@ -7,16 +7,16 @@ import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import { FormFields } from './types';
 
 const DEFAULT_AMOUNT = '5000';
-const DEFAULT_DAYS = 90;
+const DEFAULT_EPOCH = 1;
 
 export const formInitialValues: FormFields = {
-  days: DEFAULT_DAYS,
+  numberOfEpochs: DEFAULT_EPOCH,
   valueCrypto: DEFAULT_AMOUNT,
 };
 
 export const validationSchema = (t: TFunction): ObjectSchema<FormFields> =>
   object().shape({
-    days: number().required(),
+    numberOfEpochs: number().required(),
     valueCrypto: string().test({
       name: 'value-in-range',
       skipAbsent: true,
