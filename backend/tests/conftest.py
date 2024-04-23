@@ -15,7 +15,7 @@ from web3 import Web3
 
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
-from app.extensions import db, deposits, glm, gql_factory, w3
+from app.extensions import db, deposits, glm, gql_factory, w3, vault
 from app.infrastructure import database
 from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
@@ -83,6 +83,14 @@ MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
 MOCK_GET_MESSAGE_HASH = Mock()
 MOCK_IS_CONTRACT = Mock()
 
+# struct WithdrawPayload {
+#         // @notice The epoch number
+#         uint256 epoch;
+#         // @notice The amount to withdraw
+#         uint256 amount;
+#         // @notice The Merkle proof for the rewards
+#         bytes32[] proof;
+#     }
 
 def mock_etherscan_api_get_transactions(*args, **kwargs):
     if kwargs["tx_type"] == "txlist":
@@ -301,7 +309,11 @@ class UserAccount:
         deposits.lock(self._account, w3.to_wei(value, "ether"))
 
     def unlock(self, value: int):
+        glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
         deposits.unlock(self._account, w3.to_wei(value, "ether"))
+
+    def withdraw(self, epoch: int, amount: int, merkle_proof: dict):
+        vault.batch_withdraw(epoch, amount, merkle_proof)
 
     def allocate(self, amount: int, addresses: list[str]):
         nonce = self._client.get_allocation_nonce(self.address)
@@ -366,24 +378,25 @@ class Client:
 
     def pending_snapshot(self):
         rv = self._flask_client.post("/snapshots/pending").text
+        print("XXXXXXXXXX pending_snapshot text:", rv)
         return json.loads(rv)
 
     def finalized_snapshot(self):
         rv = self._flask_client.post("/snapshots/finalized").text
+        print("XXXXXXXXXX finalized_snapshot text:", rv)
         return json.loads(rv)
 
     def get_rewards_budget(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").text
-        print("request :", self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").request)
-        print("rv text:", rv)
-        print("json rv text:", json.loads(rv))
+        print("get_rewards_budget :", self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").request)
+        print("get_rewards_budget text:", rv)
+        print("json get_rewards_budget text:", json.loads(rv))
         return json.loads(rv)
 
     def get_withdrawals_for_address(self, address: str):
         rv = self._flask_client.get(f"/withdrawals/{address}").text
-        print("request :", self._flask_client.get(f"/withdrawals/{address}").request)
-        print("rv text:", rv)
-        print("json rv text:", json.loads(rv))
+        print("get_withdrawals_for_address text:", rv)
+        print("get_withdrawals_for_address json rv text:", json.loads(rv))
         return json.loads(rv)
 
     def get_epoch_allocations(self, epoch: int):

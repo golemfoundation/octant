@@ -26,3 +26,8 @@ class Vault(SmartContract):
             f"[Vault contract] Transaction sent with hash: {tx_hash.hex()}"
         )
         return tx_hash
+
+    def batch_withdraw(self, epoch: int, amount: int, merkle_proof: dict):
+        print("Number of arguments received:", len([self, epoch, amount, merkle_proof]))
+        app.logger.debug(f"[Vault contract] Withdrawing rewards for epoch: {epoch} and amount: {amount} and merkle proof: {merkle_proof}")
+        return self.contract.functions.batchWithdraw([[epoch, amount, merkle_proof]]).call()
