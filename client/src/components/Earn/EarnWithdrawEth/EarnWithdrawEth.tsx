@@ -40,10 +40,12 @@ const EarnWithdrawEth: FC<EarnWithdrawEthProps> = ({ onCloseModal }) => {
     );
     const { hash } = await withdrawEthMutation.mutateAsync(value);
     addTransactionPending({
-      amount: withdrawals.sums.available,
-      // GET /history uses microseconds. Normalization here.
-      timestamp: (Date.now() * 1000).toString(),
-      transactionHash: hash,
+      eventData: {
+        amount: withdrawals.sums.available,
+        transactionHash: hash,
+      },
+      // GET /history uses seconds. Normalization here.
+      timestamp: Math.floor(Date.now() / 1000).toString(),
       type: 'withdrawal',
     });
     onCloseModal();

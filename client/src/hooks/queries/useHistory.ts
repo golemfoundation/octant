@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import {
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
@@ -6,21 +5,47 @@ import {
 } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 
-import { apiGetHistory, Response, ResponseHistoryItem } from 'api/calls/history';
+import {
+  apiGetHistory,
+  Response,
+  ResponseHistoryItem,
+  PatronModeEventType,
+  BlockchainEventType,
+  AllocationEventType,
+} from 'api/calls/history';
 import { QUERY_KEYS } from 'api/queryKeys';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
-export type ResponseHistoryItemWithProjectsNumber = ResponseHistoryItem & {
-  projects?: {
+export type AllocationEventTypeParsed = Omit<AllocationEventType, 'allocations'> & {
+  allocations: {
     address: string;
     amount: bigint;
   }[];
-  projectsNumber?: number;
 };
 
-export interface HistoryElement extends Omit<ResponseHistoryItemWithProjectsNumber, 'amount'> {
+export interface EventData
+  extends Omit<PatronModeEventType, 'amount'>,
+    Omit<BlockchainEventType, 'amount'>,
+    AllocationEventTypeParsed {
   amount: bigint;
 }
+
+type HistoryElementPatronModeEvent = Omit<ResponseHistoryItem, 'eventData'> & {
+  eventData: Omit<PatronModeEventType, 'amount'> & { amount: bigint };
+};
+
+export type HistoryElementBlockchainEventEvent = Omit<ResponseHistoryItem, 'eventData'> & {
+  eventData: Omit<BlockchainEventType, 'amount'> & { amount: bigint };
+};
+
+type HistoryElementAllocationEventEvent = Omit<ResponseHistoryItem, 'eventData'> & {
+  eventData: Omit<AllocationEventTypeParsed, 'amount'> & { amount: bigint };
+};
+
+export type HistoryElement =
+  | HistoryElementPatronModeEvent
+  | HistoryElementBlockchainEventEvent
+  | HistoryElementAllocationEventEvent;
 
 export default function useHistory(
   options?: UseInfiniteQueryOptions<Response, unknown, Response, any>,
@@ -40,41 +65,30 @@ export default function useHistory(
   const historyFromPages: ResponseHistoryItem[] =
     (query.data as any)?.pages.reduce((acc, curr) => [...acc, ...curr.history], []) || [];
 
-  const history = historyFromPages
-    .map<HistoryElement>(({ amount, ...rest }) => ({
-      amount: parseUnitsBigInt(amount, 'wei'),
-      ...rest,
-    }))
-    .reduce<HistoryElement[]>((acc1, curr) => {
-      if (curr.type === 'allocation') {
-        const elIdx = acc1.findIndex(
-          val => val.type === 'allocation' && val.timestamp === curr.timestamp,
-        );
+  const history = historyFromPages.map<HistoryElement>(({ eventData, ...rest }) => {
+    const amount =
+      rest.type === 'allocation'
+        ? (eventData as AllocationEventType).allocations.reduce((acc, curr) => {
+            return acc + parseUnitsBigInt(curr.amount, 'wei');
+          }, BigInt(0))
+        : parseUnitsBigInt((eventData as PatronModeEventType | BlockchainEventType).amount, 'wei');
 
-        if (elIdx > -1) {
-          // eslint-disable-next-line operator-assignment
-          acc1[elIdx].amount = acc1[elIdx].amount + curr.amount;
-          acc1[elIdx].projectsNumber = (acc1[elIdx].projectsNumber as number) + 1;
-          // @ts-expect-error This property will be defined already, as per logic after the if.
-          acc1[elIdx].projects.push({
-            address: curr.projectAddress!,
-            amount: curr.amount,
-          });
-          return acc1;
-        }
-        // eslint-disable-next-line dot-notation
-        curr['projectsNumber'] = 1;
-        // eslint-disable-next-line dot-notation
-        curr['projects'] = [
-          {
-            address: curr.projectAddress!,
-            amount: curr.amount,
-          },
-        ];
-      }
-      acc1.push(curr);
-      return acc1;
-    }, []);
+    return {
+      eventData: {
+        ...(rest.type === 'allocation'
+          ? {
+              ...(eventData as AllocationEventType),
+              allocations: (eventData as AllocationEventType).allocations.map(element => ({
+                address: element.projectAddress,
+                amount: parseUnitsBigInt(element.amount, 'wei'),
+              })),
+            }
+          : (eventData as PatronModeEventType | BlockchainEventType)),
+        amount,
+      } as EventData,
+      ...rest,
+    };
+  });
 
   return {
     ...query,

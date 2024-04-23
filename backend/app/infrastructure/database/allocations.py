@@ -1,6 +1,6 @@
 from collections import defaultdict
 from datetime import datetime
-from typing import List
+from typing import List, Tuple
 
 from eth_utils import to_checksum_address
 from sqlalchemy.orm import Query
@@ -45,20 +45,34 @@ def get_all(epoch: int) -> List[AllocationDTO]:
 
 def get_user_allocations_history(
     user_address: str, from_datetime: datetime, limit: int
-) -> List[Allocation]:
+) -> List[Tuple[AllocationRequest, List[Allocation]]]:
     user: User = get_by_address(user_address)
     if user is None:
         return []
 
-    allocations = (
-        Allocation.query.filter(Allocation.user_id == user.id)
-        .filter(Allocation.created_at <= from_datetime)
-        .order_by(Allocation.created_at.desc())
+    allocation_requests = (
+        AllocationRequest.query.filter(AllocationRequest.user_id == user.id)
+        .filter(AllocationRequest.created_at <= from_datetime)
+        .order_by(AllocationRequest.created_at.desc(), AllocationRequest.nonce.desc())
         .limit(limit)
         .all()
     )
 
-    return allocations
+    nonces = [alloc_request.nonce for alloc_request in allocation_requests]
+
+    allocations = (
+        Allocation.query.filter(Allocation.user_id == user.id)
+        .filter(Allocation.nonce.in_(nonces))
+        .all()
+    )
+
+    return [
+        (
+            alloc_request,
+            list(filter(lambda alloc: alloc.nonce == alloc_request.nonce, allocations)),
+        )
+        for alloc_request in allocation_requests
+    ]
 
 
 def get_all_by_user_addr_and_epoch(
@@ -156,7 +170,7 @@ def store_allocation_request(
 ):
     user: User = get_by_address(user_address)
 
-    options = {"is_manually_edited": None, **kwargs}
+    options = {"is_manually_edited": None, "leverage": None, **kwargs}
 
     new_allocations = [
         Allocation(
@@ -175,6 +189,7 @@ def store_allocation_request(
         nonce=request.payload.nonce,
         signature=request.signature,
         is_manually_edited=options["is_manually_edited"],
+        leverage=options["leverage"],
     )
 
     db.session.add(allocation_request)

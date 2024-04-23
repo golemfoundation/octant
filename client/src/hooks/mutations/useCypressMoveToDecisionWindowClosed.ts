@@ -4,7 +4,10 @@ import { useConfig } from 'wagmi';
 import { QUERY_KEYS } from 'api/queryKeys';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
 
-export default function useCypressMoveToDecisionWindowClosed(): UseMutationResult<boolean, unknown> {
+export default function useCypressMoveToDecisionWindowClosed(): UseMutationResult<
+  boolean,
+  unknown
+> {
   const queryClient = useQueryClient();
   const wagmiConfig = useConfig();
 
