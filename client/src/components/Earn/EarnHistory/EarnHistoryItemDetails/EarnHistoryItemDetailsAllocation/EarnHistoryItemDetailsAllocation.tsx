@@ -48,7 +48,7 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
    * leverage in the event is a value from the moment event happened.
    * When event happened in the already closed AW we show epochLeverage, as it's the final one.
    */
-  const leverageInt = parseInt(leverage, 10);
+  const leverageInt = leverage ? parseInt(leverage, 10) : 0;
   const leverageBigInt = BigInt(leverageInt);
   const epochLeverageNumber = epochLeverage ? Math.round(epochLeverage) : 0;
   const epochLeverageBigInt = BigInt(epochLeverageNumber);
@@ -76,11 +76,18 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
           },
           isAllocationFromCurrentAW
             ? {
-                childrenRight: <div className={styles.leverage}>{leverageInt}x</div>,
+                childrenRight: (
+                  <div className={styles.leverage}>
+                    {leverage === null ? t('sections.leverageUnknown') : `${leverageInt}x`}
+                  </div>
+                ),
                 label: t('sections.estimatedLeverage'),
                 tooltipProps: {
                   position: 'bottom-right',
-                  text: t('sections.allocationTooltips.leverage'),
+                  text:
+                    leverage === null
+                      ? t('sections.allocationTooltips.leverageUnknown')
+                      : t('sections.allocationTooltips.leverage'),
                   tooltipClassName: styles.tooltip,
                 },
               }
