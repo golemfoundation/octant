@@ -4,7 +4,8 @@ from flask_restx import Namespace, fields
 from app.extensions import api
 from app.infrastructure import OctantResource
 from app.legacy.controllers import rewards
-from app.modules.facades.rewards_estimation import estimate_rewards
+from app.modules.facades import current_user_budget as current_user_budget_facade
+from app.modules.facades import rewards_estimation as rewards_estimation_facade
 from app.modules.octant_rewards.controller import get_leverage
 from app.modules.projects.rewards.controller import (
     get_estimated_project_rewards,
@@ -14,7 +15,6 @@ from app.modules.user.budgets.controller import (
     get_budgets,
     get_budget,
     estimate_budget_by_days,
-    get_current_budget,
 )
 from app.modules.user.rewards.controller import get_unused_rewards
 
@@ -274,7 +274,7 @@ class EstimatedUserBudget(OctantResource):
             f"Getting user estimated budget for {no_epochs} epochs and {glm_amount} GLM. Getting matched_funding based on previous epoch."
         )
 
-        rewards = estimate_rewards(no_epochs, glm_amount)
+        rewards = rewards_estimation_facade.estimate_rewards(no_epochs, glm_amount)
         budget = rewards.estimated_budget
         leverage = rewards.leverage
         matching_fund = rewards.matching_fund
@@ -432,7 +432,7 @@ class RewardsMerkleTree(OctantResource):
 
 @ns.route("/current_user_budget")
 @ns.doc(description="Returns current user budget based on if allocation happened now.")
-class EstimatedUserBudget(OctantResource):
+class CurrentUserBudget(OctantResource):
     @ns.expect(current_user_budget_model_request)
     @ns.marshal_with(current_user_budget_response)
     @ns.response(200, "Current user budget successfully retrieved")
@@ -443,12 +443,6 @@ class EstimatedUserBudget(OctantResource):
             f"Getting current user budget amount. User address: {user_address}"
         )
 
-        budget = get_current_budget(user_address)
+        budget = current_user_budget_facade.get_current_user_budget(user_address)
 
         return {"currentBudget": budget}
-
-    # 1. Get all user deposits for given context
-    # 2. Calculate budget for that
-    # simulate_pending_epoch_snapshot --> (_calculate_pending_epoch_snapshot)
-    # 3. Multiply budget by APR
-    # 4. Return budget

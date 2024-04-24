@@ -138,7 +138,9 @@ class SimulateFinalizedSnapshots(Protocol):
 
 @runtime_checkable
 class SimulatePendingSnapshots(Protocol):
-    def simulate_pending_epoch_snapshot(self, context: Context) -> PendingSnapshotDTO:
+    def simulate_pending_epoch_snapshot(
+        self, context: Context, estimated_eth_proceeds: int = None
+    ) -> PendingSnapshotDTO:
         ...
 
 

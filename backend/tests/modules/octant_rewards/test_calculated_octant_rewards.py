@@ -69,3 +69,34 @@ def test_calculate_octant_rewards_after_overhaul(
     assert result.ppf == overhaul_formulas.ppf(
         result.staking_proceeds, result.individual_rewards, LOCKED_RATIO
     )
+
+
+def test_calculate_octant_rewards_when_estimated_eth_given(
+    mock_staking_proceeds, mock_user_deposits
+):
+    register_epoch_settings()
+    context = get_context(epoch_num=MOCKED_EPOCH_NO_AFTER_OVERHAUL)
+    service = CalculatedOctantRewards(
+        staking_proceeds=mock_staking_proceeds, effective_deposits=mock_user_deposits
+    )
+
+    ESTIMATED_ETH_PROCEEDS = ETH_PROCEEDS - 1000000000000000000
+    result = service.get_octant_rewards(
+        context, estimated_eth_proceeds=ESTIMATED_ETH_PROCEEDS
+    )
+
+    assert result.staking_proceeds == ESTIMATED_ETH_PROCEEDS
+    assert result.locked_ratio == Decimal("0.100022700000000000099999994")
+    assert result.total_effective_deposit == TOTAL_ED
+    assert result.total_rewards == overhaul_formulas.total_rewards(
+        result.staking_proceeds
+    )
+
+    assert result.individual_rewards == 40_150_207_919_178_123_337
+    assert result.operational_cost == 100_352_739_726_027_500_000
+    assert result.community_fund == overhaul_formulas.community_fund(
+        result.staking_proceeds
+    )
+    assert result.ppf == overhaul_formulas.ppf(
+        result.staking_proceeds, result.individual_rewards, LOCKED_RATIO
+    )

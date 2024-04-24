@@ -11,6 +11,12 @@ def get_octant_rewards(epoch_num: int) -> OctantRewardsDTO:
     return service.get_octant_rewards(context)
 
 
+def get_current_octant_rewards() -> OctantRewardsDTO:
+    context = state_context(EpochState.CURRENT)
+    service = get_services(context.epoch_state).octant_rewards_service
+    return service.get_octant_rewards(context)
+
+
 def get_leverage(epoch_num: int) -> float:
     context = epoch_context(epoch_num)
     if context.epoch_state > EpochState.PENDING:

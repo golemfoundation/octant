@@ -27,6 +27,8 @@ class CalculatedOctantRewards(Model):
     ) -> OctantRewardsDTO:
         if estimated_eth_proceeds is None:
             eth_proceeds = self.staking_proceeds.get_staking_proceeds(context)
+        else:
+            eth_proceeds = estimated_eth_proceeds
 
         total_effective_deposit = self.effective_deposits.get_total_effective_deposit(
             context
