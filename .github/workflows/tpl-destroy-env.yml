@@ -90,7 +90,7 @@ jobs:
       if: github.event_name != 'issue_comment'
 
     - name: Set up Gitops mutex
-      uses: ben-z/gh-action-mutex@v1.0-alpha-9
+      uses: ben-z/gh-action-mutex@v1.0.0-alpha.9
       with:
         branch: gitops-mutex
 
