@@ -47,7 +47,7 @@
 
     .value {
       &.showSkeleton {
-        @include skeleton();
+        @include skeleton($color-octant-grey1, $color-octant-grey12);
         width: 10.4rem;
         height: 2.4rem;
       }

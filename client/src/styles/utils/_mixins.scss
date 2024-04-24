@@ -53,21 +53,21 @@
   pointer-events: none;
 }
 
-@mixin skeleton() {
+@mixin skeleton($color1: $color-octant-grey8, $color2: $color-octant-grey7) {
   border-radius: 0.4rem;
   background: -webkit-gradient(
     linear,
     left top,
     right top,
-    color-stop(8%, $color-octant-grey8),
-    color-stop(18%, $color-octant-grey7),
-    color-stop(35%, $color-octant-grey8)
+    color-stop(8%, $color1),
+    color-stop(18%, $color2),
+    color-stop(35%, $color1)
   );
   background: linear-gradient(
     to right,
-    color-stop(8%, $color-octant-grey8),
-    color-stop(18%, $color-octant-grey7),
-    color-stop(35%, $color-octant-grey8)
+    color-stop(8%, $color1),
+    color-stop(18%, $color2),
+    color-stop(35%, $color1)
   );
   background-size: 80rem 10rem;
   animation: wave 2s infinite ease-out;

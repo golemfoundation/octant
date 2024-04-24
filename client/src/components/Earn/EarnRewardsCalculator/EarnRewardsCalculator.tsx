@@ -116,11 +116,11 @@ const EarnRewardsCalculator: FC = () => {
   }, []);
 
   return (
-    <BoxRounded dataTest="RewardsCalculator" isGrey isVertical>
+    <BoxRounded dataTest="EarnRewardsCalculator" isGrey isVertical>
       <InputText
         autocomplete="off"
         className={styles.glmInput}
-        dataTest="RewardsCalculator__InputText--crypto"
+        dataTest="EarnRewardsCalculator__InputText--glm"
         error={formik.errors.valueCrypto}
         inputMode="decimal"
         isButtonClearVisible={false}
