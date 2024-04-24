@@ -30,6 +30,9 @@ class Vault(SmartContract):
     def batch_withdraw(self, epoch: int, amount: int, merkle_proof: list[str]):
         print("Number of arguments received:", len([self, epoch, amount, merkle_proof]))
         app.logger.debug(f"[Vault contract] Withdrawing rewards for epoch: {epoch} and amount: {amount} and merkle proof: {merkle_proof}")
-        args = encode(['[[(uint256,uint256,bytes32[])]]'], [[(epoch,amount,merkle_proof)]])
+        # args = encode(['[[(uint256,uint256,bytes32[])]]'], [[(epoch,amount,merkle_proof)]])
+
+        args = encode(['(uint,uint,bytes32[])[]'], [(epoch, amount, merkle_proof)])
+
         return self.contract.functions.batchWithdraw(args).transact()
         # return self.contract.functions.batchWithdraw([[epoch, amount, merkle_proof]]).transact()
