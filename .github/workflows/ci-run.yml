@@ -64,7 +64,6 @@ jobs:
       SYMBOL: ETH
       IS_TESTNET: true
       VITE_NETWORK: Local
-      DEBUG: cypress-verbose:server:browsers:cri-client:send:*,cypress-verbose:server:browsers:cri-client:recv:*,cypress:server:browsers*
     steps:
     - uses: actions/checkout@v4.1.0
 
