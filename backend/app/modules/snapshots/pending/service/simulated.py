@@ -4,5 +4,7 @@ from app.modules.snapshots.pending.service.base import BasePrePendingSnapshots
 
 
 class SimulatedPendingSnapshots(BasePrePendingSnapshots):
-    def simulate_pending_epoch_snapshot(self, context: Context) -> PendingSnapshotDTO:
-        return self._calculate_pending_epoch_snapshot(context)
+    def simulate_pending_epoch_snapshot(
+        self, context: Context, estimated_eth_proceeds: int = None
+    ) -> PendingSnapshotDTO:
+        return self._calculate_pending_epoch_snapshot(context, estimated_eth_proceeds)
