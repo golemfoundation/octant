@@ -194,7 +194,7 @@ jobs:
       shell: bash
 
     - name: Set up Gitops mutex
-      uses: ben-z/gh-action-mutex@v1.0-alpha-9
+      uses: ben-z/gh-action-mutex@v1.0.0-alpha.9
       with:
         branch: gitops-mutex
 
@@ -282,7 +282,7 @@ jobs:
       with:
         name: ${{ env.ENV_TYPE }}-contracts-env
     - name: Set up Gitops mutex
-      uses: ben-z/gh-action-mutex@v1.0-alpha-9
+      uses: ben-z/gh-action-mutex@v1.0.0-alpha.9
       with:
         branch: gitops-mutex
     - name: Deploy Complete Argo application
