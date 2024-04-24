@@ -7,6 +7,7 @@ from app.engine.user.budget import UserBudgetPayload
 from app.engine.user.effective_deposit import DepositEvent, EventType
 from app.modules.common.effective_deposits import calculate_effective_deposits
 from app.modules.dto import OctantRewardsDTO
+from app.modules.snapshots.pending import UserBudgetInfo
 
 
 def simulate_user_events(
@@ -103,3 +104,22 @@ def estimate_budget(
         )
 
     return budget
+
+
+def get_current_budget(
+    user_address: str, current_user_budgets: List[UserBudgetInfo]
+) -> int:
+    user_budget = next(
+        filter(
+            lambda budget_info: budget_info.user_address == user_address,
+            current_user_budgets,
+        ),
+        None,
+    )
+    if not user_budget:
+        return 0
+    return user_budget.budget
+
+
+def calculate_matching_fund(budget: int, leverage: float) -> int:
+    return int(budget * leverage)

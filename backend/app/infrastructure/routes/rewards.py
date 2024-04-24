@@ -13,7 +13,12 @@ from app.modules.projects.rewards.controller import (
     get_estimated_project_rewards,
     get_allocation_threshold,
 )
-from app.modules.user.budgets.controller import estimate_budget, get_budgets, get_budget
+from app.modules.user.budgets.controller import (
+    get_budgets,
+    get_budget,
+    estimate_budget_by_days,
+    get_current_budget,
+)
 from app.modules.user.rewards.controller import get_unused_rewards
 
 ns = Namespace("rewards", description="Octant rewards")
@@ -112,6 +117,20 @@ estimated_budget_request = ns.model(
             required=True,
             description="Amount of estimated GLM locked in WEI",
         ),
+    },
+)
+
+current_user_budget_model_request = ns.model(
+    "CurrentUserBudget",
+    {"address": fields.String(required=True, description="User account adderss")},
+)
+
+current_user_budget_response = api.model(
+    "CurrentUserBudgetResponse",
+    {
+        "currentBudget": fields.String(
+            required=True, description="Current user budget calculated for now"
+        )
     },
 )
 
@@ -359,3 +378,27 @@ class RewardsMerkleTree(OctantResource):
         app.logger.debug(f"Merkle tree leaves for epoch {epoch}: {merkle_tree_leaves}")
 
         return merkle_tree_leaves.to_dict()
+
+
+@ns.route("/current_user_budget")
+@ns.doc(description="Returns current user budget based on if allocation happened now.")
+class EstimatedUserBudget(OctantResource):
+    @ns.expect(current_user_budget_model_request)
+    @ns.marshal_with(current_user_budget_response)
+    @ns.response(200, "Current user budget successfully retrieved")
+    def post(self):
+        user_address = ns.payload["address"]
+
+        app.logger.debug(
+            f"Getting current user budget amount. User address: {user_address}"
+        )
+
+        budget = get_current_budget(user_address)
+
+        return {"currentBudget": budget}
+
+    # 1. Get all user deposits for given context
+    # 2. Calculate budget for that
+    # simulate_pending_epoch_snapshot --> (_calculate_pending_epoch_snapshot)
+    # 3. Multiply budget by APR
+    # 4. Return budget
