@@ -30,9 +30,15 @@ class Vault(SmartContract):
     def batch_withdraw(self, epoch: int, amount: int, merkle_proof: list[str]):
         print("Number of arguments received:", len([self, epoch, amount, merkle_proof]))
         app.logger.debug(f"[Vault contract] Withdrawing rewards for epoch: {epoch} and amount: {amount} and merkle proof: {merkle_proof}")
+
+        # NOTE! encoding is done automatically by web3py, there is no need to do it manually
         # args = encode(['[[(uint256,uint256,bytes32[])]]'], [[(epoch,amount,merkle_proof)]])
+        # merkle_proof = [bytes.fromhex(x[2:]) for x in merkle_proof]
+        # args = encode(['(uint,uint,bytes32[])[]'], [[(epoch, amount, merkle_proof)]])
+        # return self.contract.functions.batchWithdraw(args).transact()
 
-        args = encode(['(uint,uint,bytes32[])[]'], [(epoch, amount, merkle_proof)])
+        # this prevents automatic encoder from recognizing arguments as correct
+        # merkle_proof = [x[2:] for x in merkle_proof]
 
-        return self.contract.functions.batchWithdraw(args).transact()
-        # return self.contract.functions.batchWithdraw([[epoch, amount, merkle_proof]]).transact()
+        # this fails with "wrong merkle proof" <- at least we pass encoding step
+        return self.contract.functions.batchWithdraw([(epoch, amount, merkle_proof)]).transact()
