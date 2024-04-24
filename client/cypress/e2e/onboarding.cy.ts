@@ -4,13 +4,12 @@ import chaiColors from 'chai-colors';
 import { visitWithLoader, navigateWithCheck, mockCoinPricesServer } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
-import {
-  getStepsDecisionWindowClosed,
-  getStepsDecisionWindowOpen,
-} from 'src/hooks/helpers/useOnboardingSteps/steps';
+import { getStepsDecisionWindowOpen } from 'src/hooks/helpers/useOnboardingSteps/steps';
 import { ROOT, ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 import Chainable = Cypress.Chainable;
+import { moveTime, setupAndMoveToPlayground } from 'cypress/utils/moveTime';
+import { QUERY_KEYS } from 'src/api/queryKeys';
 
 chai.use(chaiColors);
 
@@ -227,6 +226,30 @@ const checkChangeStepsBySwipingOnScreenDifferenceLessThanl5px = (isTOSAccepted: 
   });
 };
 
+describe('move time', () => {
+  before(() => {
+    /**
+     * Global Metamask setup done by Synpress is not always done.
+     * Since Synpress needs to have valid provider to fetch the data from contracts,
+     * setupMetamask is required in each test suite.
+     */
+    cy.setupMetamask();
+  });
+
+  it('allocation window is open, when it is not, move time', () => {
+    setupAndMoveToPlayground();
+
+    cy.window().then(async win => {
+      moveTime(win, 'nextEpochDecisionWindowOpen').then(() => {
+        const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
+          QUERY_KEYS.isDecisionWindowOpen,
+        );
+        expect(isDecisionWindowOpenAfter).to.be.true;
+      });
+    });
+  });
+});
+
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(`onboarding (TOS accepted): ${device}`, { viewportHeight, viewportWidth }, () => {
     before(() => {
@@ -239,12 +262,12 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('user is able to click through entire onboarding flow', () => {
-      for (let i = 1; i < getStepsDecisionWindowClosed('2', '16 Jan').length - 1; i++) {
+      for (let i = 1; i < getStepsDecisionWindowOpen('2', '16 Jan').length - 1; i++) {
         checkProgressStepperSlimIsCurrentAndClickNext(i);
       }
 
       cy.get('[data-test=ModalOnboarding__ProgressStepperSlim__element]')
-        .eq(getStepsDecisionWindowClosed('2', '16 Jan').length - 1)
+        .eq(getStepsDecisionWindowOpen('2', '16 Jan').length - 1)
         .click();
       cy.get('[data-test=ModalOnboarding__Button]').click();
       cy.get('[data-test=ModalOnboarding]').should('not.exist');
@@ -397,7 +420,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('user is not able to click through entire onboarding flow', () => {
-      for (let i = 1; i < getStepsDecisionWindowClosed('2', '16 Jan').length; i++) {
+      for (let i = 1; i < getStepsDecisionWindowOpen('2', '16 Jan').length; i++) {
         checkProgressStepperSlimIsCurrentAndClickNext(i, i === 1);
       }
     });
