@@ -5,7 +5,7 @@ import { PostCalculateRewardsResponse, apiPostCalculateRewards } from 'api/calls
 
 type CalculateRewardsArguments = {
   amountGlm: string;
-  numberOfDays: number;
+  numberOfEpochs: number;
 };
 
 export default function useCalculateRewards(
@@ -14,9 +14,9 @@ export default function useCalculateRewards(
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const mutation = useMutation({
-    mutationFn: async ({ amountGlm, numberOfDays }) => {
+    mutationFn: async ({ amountGlm, numberOfEpochs }) => {
       abortControllerRef.current = new AbortController();
-      return apiPostCalculateRewards(amountGlm, numberOfDays, abortControllerRef.current.signal);
+      return apiPostCalculateRewards(amountGlm, numberOfEpochs, abortControllerRef.current.signal);
     },
     ...options,
   });

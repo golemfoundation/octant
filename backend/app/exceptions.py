@@ -264,11 +264,9 @@ class InvalidMultisigAddress(OctantException):
         super().__init__(self.description, self.code)
 
 
-class InvalidMatchedRewardsStrategy(OctantException):
+class EstimateRewardsNotSupported(OctantException):
     code = 500
-    description = (
-        "Can't calculate matched rewards when locked ratio is greater than TR percent"
-    )
+    description = "Estimating rewards is not supported for given epoch"
 
     def __init__(self):
         super().__init__(self.description, self.code)

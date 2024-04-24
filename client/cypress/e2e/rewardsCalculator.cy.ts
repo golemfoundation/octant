@@ -6,6 +6,7 @@ import getFormattedEthValue from 'src/utils/getFormattedEthValue';
 import getValueFiatToDisplay from 'src/utils/getValueFiatToDisplay';
 import { parseUnitsBigInt } from 'src/utils/parseUnitsBigInt';
 
+// TODO: Fix test scenarios after rewards calculator update
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(`rewards calculator: ${device}`, { viewportHeight, viewportWidth }, () => {
     beforeEach(() => {

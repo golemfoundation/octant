@@ -1,4 +1,3 @@
-import cx from 'classnames';
 import { useFormik } from 'formik';
 import debounce from 'lodash/debounce';
 import React, { FC, useCallback, useEffect } from 'react';
@@ -8,16 +7,15 @@ import BoxRounded from 'components/ui/BoxRounded';
 import InputText from 'components/ui/InputText';
 import useCalculateRewards from 'hooks/mutations/useCalculateRewards';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
-import i18n from 'i18n';
 import useSettingsStore from 'store/settings/store';
-import { FormattedCryptoValue } from 'types/formattedCryptoValue';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
 import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
-import { comma, floatNumberWithUpTo18DecimalPlaces, numbersOnly } from 'utils/regExp';
+import { comma, floatNumberWithUpTo18DecimalPlaces } from 'utils/regExp';
 
 import styles from './EarnRewardsCalculator.module.scss';
+import EarnRewardsCalculatorEpochDaysSelector from './EarnRewardsCalculatorEpochDaysSelector';
+import EarnRewardsCalculatorEstimates from './EarnRewardsCalculatorEstimates';
 import { FormFields } from './types';
 import { formInitialValues, validationSchema } from './utils';
 
@@ -26,11 +24,10 @@ const EarnRewardsCalculator: FC = () => {
     keyPrefix: 'components.dedicated.rewardsCalculator',
   });
   const {
-    data: { displayCurrency, isCryptoMainValueDisplay },
+    data: { displayCurrency },
   } = useSettingsStore(({ data }) => ({
     data: {
       displayCurrency: data.displayCurrency,
-      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
     },
   }));
   const { data: cryptoValues } = useCryptoValues(displayCurrency);
@@ -43,12 +40,12 @@ const EarnRewardsCalculator: FC = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchEstimatedRewardsDebounced = useCallback(
-    debounce(({ amountGlm, numberOfDays }) => {
+    debounce(({ amountGlm, numberOfEpochs }) => {
       const amountGlmWEI = formatUnitsBigInt(parseUnitsBigInt(amountGlm, 'ether'), 'wei');
-      const numberOfDaysNumber = parseInt(numberOfDays, 10);
+      // const numberOfDaysNumber = parseInt(numberOfDays, 10);
 
       resetCalculateRewards();
-      mutateAsyncRewardsCalculator({ amountGlm: amountGlmWEI, numberOfDays: numberOfDaysNumber });
+      mutateAsyncRewardsCalculator({ amountGlm: amountGlmWEI, numberOfEpochs });
     }, 300),
     [],
   );
@@ -56,7 +53,10 @@ const EarnRewardsCalculator: FC = () => {
   const formik = useFormik<FormFields>({
     initialValues: formInitialValues,
     onSubmit: values =>
-      fetchEstimatedRewardsDebounced({ amountGlm: values.valueCrypto, numberOfDays: values.days }),
+      fetchEstimatedRewardsDebounced({
+        amountGlm: values.valueCrypto,
+        numberOfEpochs: values.numberOfEpochs,
+      }),
     validateOnChange: true,
     validationSchema: validationSchema(t),
   });
@@ -71,25 +71,36 @@ const EarnRewardsCalculator: FC = () => {
     formik.setFieldValue('valueCrypto', valueComma || '');
   };
 
-  const onDaysInputChange = (value: string) => {
-    if (!numbersOnly.test(value)) {
-      return;
-    }
-    formik.setFieldValue('days', value);
-  };
+  const estimatedRewardsFiat = calculateRewards
+    ? getValueFiatToDisplay({
+        cryptoCurrency: 'ethereum',
+        cryptoValues,
+        displayCurrency: 'usd',
+        valueCrypto: parseUnitsBigInt(calculateRewards.budget, 'wei'),
+      })
+    : '';
+
+  const matchFundingFiat = calculateRewards
+    ? getValueFiatToDisplay({
+        cryptoCurrency: 'ethereum',
+        cryptoValues,
+        displayCurrency: 'usd',
+        valueCrypto: parseUnitsBigInt(calculateRewards.matchedFunding, 'wei'),
+      })
+    : '';
 
   useEffect(() => {
-    if (!formik.values.valueCrypto || !formik.values.days) {
+    if (!formik.values.valueCrypto || !formik.values.numberOfEpochs) {
       return;
     }
     formik.validateForm().then(() => {
       fetchEstimatedRewardsDebounced({
         amountGlm: formik.values.valueCrypto,
-        numberOfDays: formik.values.days,
+        numberOfEpochs: formik.values.numberOfEpochs,
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formik.values.valueCrypto, formik.values.days]);
+  }, [formik.values.valueCrypto, formik.values.numberOfEpochs]);
 
   useEffect(() => {
     return () => {
@@ -98,27 +109,11 @@ const EarnRewardsCalculator: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const estimatedFormattedRewardsValue: FormattedCryptoValue =
-    formik.values.valueCrypto && formik.values.days && calculateRewards
-      ? getFormattedEthValue(parseUnitsBigInt(calculateRewards.budget, 'wei'))
-      : {
-          fullString: '',
-          suffix: 'ETH',
-          value: '',
-        };
-
-  const fiat = getValueFiatToDisplay({
-    cryptoCurrency: 'ethereum',
-    cryptoValues,
-    displayCurrency,
-    valueCrypto: calculateRewards && parseUnitsBigInt(calculateRewards.budget, 'wei'),
-  });
-
   return (
     <BoxRounded dataTest="RewardsCalculator" isGrey isVertical>
       <InputText
         autocomplete="off"
-        className={styles.input}
+        className={styles.glmInput}
         dataTest="RewardsCalculator__InputText--crypto"
         error={formik.errors.valueCrypto}
         inputMode="decimal"
@@ -128,52 +123,17 @@ const EarnRewardsCalculator: FC = () => {
         suffix="GLM"
         value={formik.values.valueCrypto}
       />
-      <InputText
-        className={styles.input}
-        dataTest="RewardsCalculator__InputText--days"
-        inputMode="numeric"
-        isButtonClearVisible={false}
-        label={t('lockFor')}
-        onChange={e => onDaysInputChange(e.target.value)}
-        shouldAutoFocusAndSelect={false}
-        suffix={i18n.t('common.days').toUpperCase()}
-        value={formik.values.days}
+      <EarnRewardsCalculatorEpochDaysSelector
+        numberOfEpochs={formik.values.numberOfEpochs}
+        onChange={epoch => {
+          formik.setFieldValue('numberOfEpochs', epoch);
+        }}
       />
-      <div
-        className={cx(
-          styles.cryptoFiatInputs,
-          isCryptoMainValueDisplay && styles.isCryptoMainValueDisplay,
-        )}
-      >
-        <InputText
-          className={cx(styles.input, isCryptoMainValueDisplay && styles.isCryptoMainValueDisplay)}
-          dataTest="RewardsCalculator__InputText--estimatedRewards--crypto"
-          isButtonClearVisible={false}
-          isDisabled
-          shouldAutoFocusAndSelect={false}
-          showLoader={isPendingCalculateRewards}
-          suffix={estimatedFormattedRewardsValue.suffix}
-          suffixClassName={styles.estimatedRewardsSuffix}
-          value={estimatedFormattedRewardsValue.value}
-          {...(isCryptoMainValueDisplay && {
-            label: t('estimatedRewards'),
-          })}
-        />
-        <InputText
-          className={cx(styles.input, !isCryptoMainValueDisplay && styles.isFiatMainValueDisplay)}
-          dataTest="RewardsCalculator__InputText--estimatedRewards--fiat"
-          isButtonClearVisible={false}
-          isDisabled
-          shouldAutoFocusAndSelect={false}
-          showLoader={isPendingCalculateRewards}
-          suffix={displayCurrency.toUpperCase()}
-          suffixClassName={styles.estimatedRewardsSuffix}
-          value={isPendingCalculateRewards || !estimatedFormattedRewardsValue?.value ? '' : fiat}
-          {...(!isCryptoMainValueDisplay && {
-            label: t('estimatedRewards'),
-          })}
-        />
-      </div>
+      <EarnRewardsCalculatorEstimates
+        isLoading={isPendingCalculateRewards}
+        matchFundingFiat={matchFundingFiat}
+        rewardsFiat={estimatedRewardsFiat}
+      />
     </BoxRounded>
   );
 };
