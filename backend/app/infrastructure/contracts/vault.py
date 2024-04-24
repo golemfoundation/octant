@@ -1,6 +1,6 @@
 from flask import current_app as app
 from hexbytes import HexBytes
-
+from eth_abi import encode
 from app.infrastructure.contracts.smart_contract import SmartContract
 
 
@@ -27,7 +27,9 @@ class Vault(SmartContract):
         )
         return tx_hash
 
-    def batch_withdraw(self, epoch: int, amount: int, merkle_proof: dict):
+    def batch_withdraw(self, epoch: int, amount: int, merkle_proof: list[str]):
         print("Number of arguments received:", len([self, epoch, amount, merkle_proof]))
         app.logger.debug(f"[Vault contract] Withdrawing rewards for epoch: {epoch} and amount: {amount} and merkle proof: {merkle_proof}")
-        return self.contract.functions.batchWithdraw([[epoch, amount, merkle_proof]]).call()
+        args = encode(['[[(uint256,uint256,bytes32[])]]'], [[(epoch,amount,merkle_proof)]])
+        return self.contract.functions.batchWithdraw(args).transact()
+        # return self.contract.functions.batchWithdraw([[epoch, amount, merkle_proof]]).transact()
