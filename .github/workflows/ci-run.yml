@@ -213,7 +213,7 @@ jobs:
       # ---
       deploy-contracts: false
       chain-id: 1337
-      network-name: local
+      network-name: localhost
       chain-name: localhost
       snapshotter-enabled: false
       multisigger-enabled: false
