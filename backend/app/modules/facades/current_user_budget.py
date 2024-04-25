@@ -13,8 +13,6 @@ def get_current_user_budget(user_address: str) -> int:
         )
     )
 
-    print("DEBUG", simulated_snapshot.user_budgets, flush=True)
-
     current_budget = budgets_controller.get_current_budget(
         user_address, simulated_snapshot.user_budgets
     )

@@ -146,14 +146,14 @@ estimated_budget_by_days_request = ns.model(
 
 current_user_budget_model_request = ns.model(
     "CurrentUserBudget",
-    {"address": fields.String(required=True, description="User account adderss")},
+    {"address": fields.String(required=True, description="User account address")},
 )
 
 current_user_budget_response = api.model(
     "CurrentUserBudgetResponse",
     {
         "currentBudget": fields.String(
-            required=True, description="Current user budget calculated for now"
+            required=True, description="Calculated current user budget."
         )
     },
 )
