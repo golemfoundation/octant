@@ -133,7 +133,7 @@ const ModalOnboarding: FC = () => {
   };
 
   useEffect(() => {
-    if (!isConnected && !isUserTOSAccepted) {
+    if (!isConnected || !isUserTOSAccepted) {
       return;
     }
 
