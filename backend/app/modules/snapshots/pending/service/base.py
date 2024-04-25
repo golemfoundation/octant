@@ -16,9 +16,7 @@ class EffectiveDeposits(Protocol):
 
 @runtime_checkable
 class OctantRewards(Protocol):
-    def get_octant_rewards(
-        self, context: Context, estimated_eth_proceeds: int = None
-    ) -> OctantRewardsDTO:
+    def get_octant_rewards(self, context: Context) -> OctantRewardsDTO:
         ...
 
 
@@ -26,12 +24,8 @@ class BasePrePendingSnapshots(Model):
     effective_deposits: EffectiveDeposits
     octant_rewards: OctantRewards
 
-    def _calculate_pending_epoch_snapshot(
-        self, context: Context, estimated_eth_proceeds: int = None
-    ) -> PendingSnapshotDTO:
-        rewards = self.octant_rewards.get_octant_rewards(
-            context, estimated_eth_proceeds
-        )
+    def _calculate_pending_epoch_snapshot(self, context: Context) -> PendingSnapshotDTO:
+        rewards = self.octant_rewards.get_octant_rewards(context)
 
         (
             user_deposits,

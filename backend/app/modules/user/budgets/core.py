@@ -106,13 +106,13 @@ def estimate_budget(
     return budget
 
 
-def get_current_budget(
-    user_address: str, current_user_budgets: List[UserBudgetInfo]
+def get_upcoming_budget(
+    user_address: str, upcoming_user_budgets: List[UserBudgetInfo]
 ) -> int:
     user_budget = next(
         filter(
             lambda budget_info: budget_info.user_address == user_address,
-            current_user_budgets,
+            upcoming_user_budgets,
         ),
         None,
     )

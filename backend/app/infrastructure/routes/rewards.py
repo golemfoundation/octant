@@ -4,7 +4,6 @@ from flask_restx import Namespace, fields
 from app.extensions import api
 from app.infrastructure import OctantResource
 from app.legacy.controllers import rewards
-from app.modules.facades import current_user_budget as current_user_budget_facade
 from app.modules.facades import rewards_estimation as rewards_estimation_facade
 from app.modules.octant_rewards.controller import get_leverage
 from app.modules.projects.rewards.controller import (
@@ -15,6 +14,7 @@ from app.modules.user.budgets.controller import (
     get_budgets,
     get_budget,
     estimate_budget_by_days,
+    get_upcoming_user_budget,
 )
 from app.modules.user.rewards.controller import get_unused_rewards
 
@@ -144,16 +144,16 @@ estimated_budget_by_days_request = ns.model(
     },
 )
 
-current_user_budget_model_request = ns.model(
-    "CurrentUserBudget",
+upcoming_user_budget_model_request = ns.model(
+    "UpcomingUserBudget",
     {"address": fields.String(required=True, description="User account address")},
 )
 
-current_user_budget_response = api.model(
-    "CurrentUserBudgetResponse",
+upcoming_user_budget_response = api.model(
+    "UpcomingBudgetResponse",
     {
-        "currentBudget": fields.String(
-            required=True, description="Calculated current user budget."
+        "upcomingBudget": fields.String(
+            required=True, description="Calculated upcoming user budget."
         )
     },
 )
@@ -430,19 +430,19 @@ class RewardsMerkleTree(OctantResource):
         return merkle_tree_leaves.to_dict()
 
 
-@ns.route("/current_user_budget")
-@ns.doc(description="Returns current user budget based on if allocation happened now.")
-class CurrentUserBudget(OctantResource):
-    @ns.expect(current_user_budget_model_request)
-    @ns.marshal_with(current_user_budget_response)
-    @ns.response(200, "Current user budget successfully retrieved")
+@ns.route("/budget/upcoming")
+@ns.doc(description="Returns upcoming user budget based on if allocation happened now.")
+class UpcomingUserBudget(OctantResource):
+    @ns.expect(upcoming_user_budget_model_request)
+    @ns.marshal_with(upcoming_user_budget_response)
+    @ns.response(200, "Upcoming user budget successfully retrieved")
     def post(self):
         user_address = ns.payload["address"]
 
         app.logger.debug(
-            f"Getting current user budget amount. User address: {user_address}"
+            f"Getting upcoming user budget amount. User address: {user_address}"
         )
 
-        budget = current_user_budget_facade.get_current_user_budget(user_address)
+        budget = get_upcoming_user_budget(user_address)
 
-        return {"currentBudget": budget}
+        return {"upcomingBudget": budget}

@@ -18,9 +18,9 @@ class Context(Model):
     snapshots_state: SnapshotsState
 
 
-def epoch_context(epoch_num: int, is_simulated: bool = False) -> Context:
+def epoch_context(epoch_num: int) -> Context:
     epoch_state = get_epoch_state(epoch_num)
-    return build_context(epoch_num, epoch_state, is_simulated)
+    return build_context(epoch_num, epoch_state)
 
 
 def state_context(

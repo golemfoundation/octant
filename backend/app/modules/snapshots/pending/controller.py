@@ -27,16 +27,3 @@ def simulate_pending_epoch_snapshot() -> PendingSnapshotDTO | None:
     return services.simulated_pending_snapshot_service.simulate_pending_epoch_snapshot(
         context
     )
-
-
-def simulate_pending_epoch_snapshot_with_estimated_eth(
-    estimated_eth_proceeds: int,
-) -> PendingSnapshotDTO | None:
-    context = state_context(
-        EpochState.CURRENT, is_simulated=True, with_block_range=False
-    )
-    services: CurrentServices = get_services(EpochState.CURRENT)
-
-    return services.simulated_pending_snapshot_service.simulate_pending_epoch_snapshot(
-        context, estimated_eth_proceeds
-    )
