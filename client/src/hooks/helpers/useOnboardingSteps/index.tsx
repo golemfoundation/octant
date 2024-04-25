@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import React, { Fragment, useMemo } from 'react';
+import React, { Fragment, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Step } from 'components/shared/ModalOnboarding/types';
@@ -15,6 +15,7 @@ const useOnboardingSteps = (isUserTOSAcceptedInitial: boolean | undefined): Step
   const { i18n } = useTranslation();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+  const [isMultisigSignatureNeeded, setIsMultisigSignatureNeeded] = useState(false);
 
   const epoch = isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch;
 
@@ -34,12 +35,21 @@ const useOnboardingSteps = (isUserTOSAcceptedInitial: boolean | undefined): Step
     ...(isUserTOSAcceptedInitial === false
       ? [
           {
-            header: i18n.t('views.onboarding.stepsCommon.usingTheApp.header'),
+            header: isMultisigSignatureNeeded
+              ? i18n.t('views.onboarding.stepsCommon.signingTheTerms.header')
+              : i18n.t('views.onboarding.stepsCommon.usingTheApp.header'),
             image: '/images/onboarding/octant.webp',
             text: (
               <Fragment>
-                <div>{i18n.t('views.onboarding.stepsCommon.usingTheApp.text')}</div>
-                <ModalOnboardingTOS />
+                <div>
+                  {isMultisigSignatureNeeded
+                    ? i18n.t('views.onboarding.stepsCommon.signingTheTerms.text')
+                    : i18n.t('views.onboarding.stepsCommon.usingTheApp.text')}
+                </div>
+                <ModalOnboardingTOS
+                  isMultisigSignatureNeeded={isMultisigSignatureNeeded}
+                  setIsMultisigSignatureNeeded={setIsMultisigSignatureNeeded}
+                />
               </Fragment>
             ),
           },

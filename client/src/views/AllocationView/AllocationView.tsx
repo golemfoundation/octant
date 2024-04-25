@@ -53,6 +53,7 @@ const AllocationView = (): ReactElement => {
   const { data: projectsEpoch } = useProjectsEpoch();
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards();
   const { isRewardsForProjectsSet } = useAllocationViewSetRewardsForProjects();
+  const [isMultisigSignatureNeeded, setIsMultisigSignatureNeeded] = useState(false);
   const {
     data: allocationSimulated,
     mutateAsync: mutateAsyncAllocateSimulate,
@@ -133,6 +134,11 @@ const AllocationView = (): ReactElement => {
 
   const allocateEvent = useAllocate({
     nonce: userNonce!,
+    onMultisigMessageSign: () => {
+      toastService.hideToast('allocationMultisigInitialSignature');
+      setIsMultisigSignatureNeeded(false);
+      setIsWaitingForWalletConfirmationMultisig(true);
+    },
     onSuccess: onAllocateSuccess,
   });
 
@@ -261,7 +267,13 @@ const AllocationView = (): ReactElement => {
       });
     }
     if (isContract) {
-      setIsWaitingForWalletConfirmationMultisig(true);
+      setIsMultisigSignatureNeeded(true);
+      toastService.showToast({
+        message: t('multisigSignatureToast.message'),
+        name: 'allocationMultisigInitialSignature',
+        title: t('multisigSignatureToast.title'),
+        type: 'warning',
+      });
     }
     allocateEvent.emit(allocationValuesNew, isManualMode);
   };
@@ -396,7 +408,8 @@ const AllocationView = (): ReactElement => {
     !isConnected ||
     !isDecisionWindowOpen ||
     (!areAllocationsAvailableOrAlreadyDone && rewardsForProjects !== 0n) ||
-    !individualReward;
+    !individualReward ||
+    isMultisigSignatureNeeded;
 
   const allocationsWithRewards = getAllocationsWithRewards({
     allocationValues,
@@ -414,7 +427,7 @@ const AllocationView = (): ReactElement => {
     isDecisionWindowOpen;
 
   useEffect(() => {
-    if (!walletAddress || !isContract) {
+    if (!walletAddress || !isContract || isMultisigSignatureNeeded) {
       return;
     }
     const getPendingMultisigSignatures = () => {
@@ -437,13 +450,19 @@ const AllocationView = (): ReactElement => {
       clearInterval(intervalId);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletAddress, isWaitingForWalletConfirmationMultisig, isContract]);
+  }, [
+    walletAddress,
+    isWaitingForWalletConfirmationMultisig,
+    isContract,
+    isMultisigSignatureNeeded,
+  ]);
 
   return (
     <Layout
       classNameBody={cx(
         styles.body,
-        isWaitingForWalletConfirmationMultisig && styles.isWaitingForWalletConfirmationMultisig,
+        (isWaitingForWalletConfirmationMultisig || isMultisigSignatureNeeded) &&
+          styles.isWaitingForWalletConfirmationMultisig,
       )}
       dataTest="AllocationView"
       isLoading={isLoading}
@@ -452,9 +471,19 @@ const AllocationView = (): ReactElement => {
           <AllocationNavigation
             areButtonsDisabled={areButtonsDisabled}
             currentView={currentView}
-            isLeftButtonDisabled={currentView === 'summary'}
-            isLoading={allocateEvent.isLoading || isWaitingForWalletConfirmationMultisig}
-            isWaitingForWalletConfirmationMultisig={isWaitingForWalletConfirmationMultisig}
+            isLeftButtonDisabled={
+              currentView === 'summary' ||
+              isWaitingForWalletConfirmationMultisig ||
+              isMultisigSignatureNeeded
+            }
+            isLoading={
+              allocateEvent.isLoading ||
+              isWaitingForWalletConfirmationMultisig ||
+              isMultisigSignatureNeeded
+            }
+            isWaitingForWalletConfirmationMultisig={
+              isWaitingForWalletConfirmationMultisig || isMultisigSignatureNeeded
+            }
             onAllocate={onAllocate}
             onResetValues={() => onResetAllocationValues({ shouldReset: true })}
             setCurrentView={setCurrentView}
