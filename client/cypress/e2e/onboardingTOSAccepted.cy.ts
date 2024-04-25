@@ -2,6 +2,7 @@
 import chaiColors from 'chai-colors';
 
 import { navigateWithCheck } from 'cypress/utils/e2e';
+import { moveTime, setupAndMoveToPlayground } from 'cypress/utils/moveTime';
 import {
   beforeSetup,
   checkChangeStepsByClickingEdgeOfTheScreenMoreThan25px,
@@ -24,6 +25,30 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 chai.use(chaiColors);
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
+  describe('move time', () => {
+    before(() => {
+      /**
+       * Global Metamask setup done by Synpress is not always done.
+       * Since Synpress needs to have valid provider to fetch the data from contracts,
+       * setupMetamask is required in each test suite.
+       */
+      cy.setupMetamask();
+    });
+
+    it('allocation window is open, when it is not, move time', () => {
+      setupAndMoveToPlayground();
+
+      cy.window().then(async win => {
+        moveTime(win, 'nextEpochDecisionWindowOpen').then(() => {
+          const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
+            QUERY_KEYS.isDecisionWindowOpen,
+          );
+          expect(isDecisionWindowOpenAfter).to.be.true;
+        });
+      });
+    });
+  });
+
   describe(`onboarding (TOS accepted): ${device}`, { viewportHeight, viewportWidth }, () => {
     before(() => {
       beforeSetup();
