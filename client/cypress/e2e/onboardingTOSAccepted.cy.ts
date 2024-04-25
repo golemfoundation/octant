@@ -114,7 +114,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       cy.reload();
-      cy.get('[data-test=ModalOnboarding]').should('not.be.visible');
+      cy.get('[data-test=ModalOnboarding]').should('not.exist');
       cy.get('[data-test=OnboardingStepper]').should('not.exist');
     });
 
