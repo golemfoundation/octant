@@ -4,6 +4,10 @@ from app.modules.user.budgets import controller as budgets_controller
 
 
 def get_current_user_budget(user_address: str) -> int:
+    """
+    This is a facade function that is used to get the current user budget.
+    Uses octant_rewards, pending_snapshot & budgets modules to get the current user budget.
+    """
     estimated_eth_proceeds = (
         octant_rewards_controller.get_current_octant_rewards().staking_proceeds
     )
