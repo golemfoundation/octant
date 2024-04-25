@@ -13,7 +13,11 @@ import {
   connectWallet,
 } from 'cypress/utils/onboarding';
 import viewports from 'cypress/utils/viewports';
-import { getStepsDecisionWindowOpen } from 'src/hooks/helpers/useOnboardingSteps/steps';
+import { QUERY_KEYS } from 'src/api/queryKeys';
+import {
+  getStepsDecisionWindowClosed,
+  getStepsDecisionWindowOpen,
+} from 'src/hooks/helpers/useOnboardingSteps/steps';
 
 chai.use(chaiColors);
 
@@ -40,9 +44,19 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('user is not able to click through entire onboarding flow', () => {
-      for (let i = 1; i < getStepsDecisionWindowOpen('2', '16 Jan').length; i++) {
-        checkProgressStepperSlimIsCurrentAndClickNext(i, i === 1);
-      }
+      cy.window().then(win => {
+        const isDecisionWindowOpen = win.clientReactQuery.getQueryData(
+          QUERY_KEYS.isDecisionWindowOpen,
+        );
+
+        const onboardingSteps = isDecisionWindowOpen
+          ? getStepsDecisionWindowOpen('2', '16 Jan')
+          : getStepsDecisionWindowClosed('2', '16 Jan');
+
+        for (let i = 1; i < onboardingSteps.length; i++) {
+          checkProgressStepperSlimIsCurrentAndClickNext(i, i === 1);
+        }
+      });
     });
 
     it('user is not able to close the modal by clicking button in the top-right', () => {
