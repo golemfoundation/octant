@@ -28,7 +28,8 @@ i18n.init({
 });
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, ...rest }) => {
+  console.log({ rest });
   const isProduction = mode === 'production';
   const isStaging = mode === 'staging';
   const localIdentName = isProduction ? '[hash:base64:5]' : '[name]__[local]--[hash:base64:5]';
@@ -42,7 +43,7 @@ export default defineConfig(({ mode }) => {
       metas: [
         { content: i18n.t('meta.description'), name: 'og:description' },
         { content: i18n.t('meta.description'), name: 'description' },
-        { content: `${base}images/og-image.png`, name: 'og:image' },
+        { content: new URL('/images/og-image.png', import.meta.url).href, name: 'og:image' },
       ],
     }),
   ];
