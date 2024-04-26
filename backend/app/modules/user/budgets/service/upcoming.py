@@ -1,7 +1,15 @@
+from typing import runtime_checkable, Protocol
+
 from app.context.manager import Context
 from app.pydantic import Model
-from app.modules.modules_factory.protocols import SimulatePendingSnapshots
 from app.modules.user.budgets import core
+from app.modules.dto import PendingSnapshotDTO
+
+
+@runtime_checkable
+class SimulatePendingSnapshots(Protocol):
+    def simulate_pending_epoch_snapshot(self, context: Context) -> PendingSnapshotDTO:
+        ...
 
 
 class UpcomingUserBudgets(Model):

@@ -144,11 +144,6 @@ estimated_budget_by_days_request = ns.model(
     },
 )
 
-upcoming_user_budget_model_request = ns.model(
-    "UpcomingUserBudget",
-    {"address": fields.String(required=True, description="User account address")},
-)
-
 upcoming_user_budget_response = api.model(
     "UpcomingBudgetResponse",
     {
@@ -430,15 +425,18 @@ class RewardsMerkleTree(OctantResource):
         return merkle_tree_leaves.to_dict()
 
 
-@ns.route("/budget/upcoming")
-@ns.doc(description="Returns upcoming user budget based on if allocation happened now.")
+@ns.route("/budget/<string:user_address>/upcoming")
+@ns.doc(
+    description="Returns upcoming user budget based on if allocation happened now.",
+    params={
+        "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed "
+        "with 0x)"
+    },
+)
 class UpcomingUserBudget(OctantResource):
-    @ns.expect(upcoming_user_budget_model_request)
     @ns.marshal_with(upcoming_user_budget_response)
     @ns.response(200, "Upcoming user budget successfully retrieved")
-    def post(self):
-        user_address = ns.payload["address"]
-
+    def get(self, user_address):
         app.logger.debug(
             f"Getting upcoming user budget amount. User address: {user_address}"
         )
