@@ -29,8 +29,7 @@ export default defineConfig({
     },
     supportFile: 'cypress/support/index.ts',
   },
-  experimentalMemoryManagement: true,
-  numTestsKeptInMemory: 10,
+  numTestsKeptInMemory: 5,
   viewportHeight: 1080,
   viewportWidth: 1920,
 });
