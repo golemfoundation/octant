@@ -28,8 +28,7 @@ i18n.init({
 });
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode, ...rest }) => {
-  console.log({ rest });
+export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production';
   const isStaging = mode === 'staging';
   const localIdentName = isProduction ? '[hash:base64:5]' : '[name]__[local]--[hash:base64:5]';
