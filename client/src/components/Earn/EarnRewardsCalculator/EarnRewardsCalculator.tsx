@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import { useFormik } from 'formik';
 import debounce from 'lodash/debounce';
+import isEmpty from 'lodash/isEmpty';
 import React, { FC, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -82,7 +83,10 @@ const EarnRewardsCalculator: FC = () => {
     if (!formik.values.valueCrypto || !formik.values.days) {
       return;
     }
-    formik.validateForm().then(() => {
+    formik.validateForm().then(errors => {
+      if (!isEmpty(errors)) {
+        return;
+      }
       fetchEstimatedRewardsDebounced({
         amountGlm: formik.values.valueCrypto,
         numberOfDays: formik.values.days,
@@ -99,7 +103,7 @@ const EarnRewardsCalculator: FC = () => {
   }, []);
 
   const estimatedFormattedRewardsValue: FormattedCryptoValue =
-    formik.values.valueCrypto && formik.values.days && calculateRewards
+    isEmpty(formik.errors) && formik.values.valueCrypto && formik.values.days && calculateRewards
       ? getFormattedEthValue(parseUnitsBigInt(calculateRewards.budget, 'wei'))
       : {
           fullString: '',
