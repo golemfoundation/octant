@@ -92,6 +92,7 @@ MOCK_IS_CONTRACT = Mock()
 #         bytes32[] proof;
 #     }
 
+
 def mock_etherscan_api_get_transactions(*args, **kwargs):
     if kwargs["tx_type"] == "txlist":
         return [
@@ -279,7 +280,9 @@ def deployment(pytestconfig):
     conf.VAULT_CONTRACT_ADDRESS = envs["VAULT_CONTRACT_ADDRESS"]
     conf.SCHEDULER_ENABLED = True
     conf.VAULT_CONFIRM_WITHDRAWALS_ENABLED = True
-    conf.TESTNET_MULTISIG_PRIVATE_KEY = "0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e"
+    conf.TESTNET_MULTISIG_PRIVATE_KEY = (
+        "0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e"
+    )
     yield conf
 
 
@@ -388,7 +391,10 @@ class Client:
 
     def get_rewards_budget(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").text
-        print("get_rewards_budget :", self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").request)
+        print(
+            "get_rewards_budget :",
+            self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").request,
+        )
         print("get_rewards_budget text:", rv)
         print("json get_rewards_budget text:", json.loads(rv))
         return json.loads(rv)

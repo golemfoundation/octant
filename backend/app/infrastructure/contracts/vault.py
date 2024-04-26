@@ -14,9 +14,9 @@ class Vault(SmartContract):
 
     def fund(self, account, amount: int):
         transaction = {
-            'from': account.address,
-            'to': self.contract.address,
-            'value': amount
+            "from": account.address,
+            "to": self.contract.address,
+            "value": amount,
         }
         self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(account))
         tx_hash = self.w3.eth.send_transaction(transaction)
@@ -29,7 +29,7 @@ class Vault(SmartContract):
         return self.contract.functions.merkleRoots(epoch).call()
 
     def is_merkle_root_set(self, epoch: int) -> bool:
-        unset = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+        unset = b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
         return self.get_merkle_root(epoch) != unset
 
     def set_merkle_root(self, account, epoch: int, root: str) -> HexBytes:
@@ -46,7 +46,9 @@ class Vault(SmartContract):
 
     def batch_withdraw(self, epoch: int, amount: int, merkle_proof: list[str]):
         print("Number of arguments received:", len([self, epoch, amount, merkle_proof]))
-        app.logger.debug(f"[Vault contract] Withdrawing rewards for epoch: {epoch} and amount: {amount} and merkle proof: {merkle_proof}")
+        app.logger.debug(
+            f"[Vault contract] Withdrawing rewards for epoch: {epoch} and amount: {amount} and merkle proof: {merkle_proof}"
+        )
 
         # NOTE! encoding is done automatically by web3py, there is no need to do it manually
         # args = encode(['[[(uint256,uint256,bytes32[])]]'], [[(epoch,amount,merkle_proof)]])
@@ -57,18 +59,22 @@ class Vault(SmartContract):
         # this prevents automatic encoder from recognizing arguments as correct
         # merkle_proof = [x[2:] for x in merkle_proof]
         # this fails with "wrong merkle proof" <- at least we pass encoding step
-        return self.contract.functions.batchWithdraw([(epoch, amount, merkle_proof)]).transact()
+        return self.contract.functions.batchWithdraw(
+            [(epoch, amount, merkle_proof)]
+        ).transact()
 
-
-    def batch_withdraw2(self, account, epoch: int, amount: int, merkle_proof: list[str]):
+    def batch_withdraw2(
+        self, account, epoch: int, amount: int, merkle_proof: list[str]
+    ):
         print("Number of arguments received:", len([self, epoch, amount, merkle_proof]))
         app.logger.debug(
-        f"[Vault contract] Withdrawing rewards for epoch: {epoch} and amount: {amount} and merkle proof: {merkle_proof}")
+            f"[Vault contract] Withdrawing rewards for epoch: {epoch} and amount: {amount} and merkle proof: {merkle_proof}"
+        )
 
         nonce = self.w3.eth.get_transaction_count(account.address)
 
-        transaction = self.contract.functions.batchWithdraw([(epoch, amount, merkle_proof)]).build_transaction(
-            {"from": account.address, "nonce": nonce}
-        )
+        transaction = self.contract.functions.batchWithdraw(
+            [(epoch, amount, merkle_proof)]
+        ).build_transaction({"from": account.address, "nonce": nonce})
         signed_tx = self.w3.eth.account.sign_transaction(transaction, account.key)
         return self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)

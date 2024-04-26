@@ -164,35 +164,23 @@ VAULT = [
         "type": "function",
     },
     {
-      "inputs": [
-        {
-          "components": [
+        "inputs": [
             {
-              "internalType": "uint256",
-              "name": "epoch",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes32[]",
-              "name": "proof",
-              "type": "bytes32[]"
+                "components": [
+                    {"internalType": "uint256", "name": "epoch", "type": "uint256"},
+                    {"internalType": "uint256", "name": "amount", "type": "uint256"},
+                    {"internalType": "bytes32[]", "name": "proof", "type": "bytes32[]"},
+                ],
+                "internalType": "struct Vault.WithdrawPayload[]",
+                "name": "payloads",
+                "type": "tuple[]",
             }
-          ],
-          "internalType": "struct Vault.WithdrawPayload[]",
-          "name": "payloads",
-          "type": "tuple[]"
-        }
-      ],
-      "name": "batchWithdraw",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    }
+        ],
+        "name": "batchWithdraw",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function",
+    },
 ]
 
 GNOSIS_SAFE = [
