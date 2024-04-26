@@ -14,6 +14,7 @@ import useProjectsEpoch from './useProjectsEpoch';
 export default function useProjectsIpfs(
   projectsAddresses?: string[],
   epoch?: number,
+  isEnabled?: boolean,
 ): { data: ExtendedProject[]; isFetching: boolean; refetch: () => void } {
   const { t } = useTranslation('translation', { keyPrefix: 'api.errorMessage' });
   const { data: currentEpoch } = useCurrentEpoch();
@@ -21,7 +22,7 @@ export default function useProjectsIpfs(
     data: projectsEpoch,
     refetch,
     isFetching: isFetchingProjectsEpoch,
-  } = useProjectsEpoch(epoch);
+  } = useProjectsEpoch(epoch, { enabled: isEnabled });
 
   const projectsIpfsResults: UseQueryResult<BackendProposal & { ipfsGatewayUsed: string }>[] =
     useQueries({
