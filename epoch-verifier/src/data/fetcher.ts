@@ -3,7 +3,6 @@ import { Axios } from "axios"
 
 import {
   AllocationImpl,
-  Allocation,
   Deserializable,
   EpochInfo,
   EpochInfoImpl,
@@ -11,7 +10,8 @@ import {
   Reward,
   UserBudgetImpl,
   UserBudget,
-  AllocationRecord
+  AllocationRecord,
+  ApiRewardsBudgets, ApiAllocations, ApiRewards,
 } from "./models";
 
 const REQUEST_TIMEOUT = 150_000;
@@ -38,7 +38,7 @@ export class HttpFetcher {
 
   async _do_get<T>(url: string, resource: string, mapper: (data: any) => T): Promise<T | null>{
 
-    return this.axios.get(url).then( response => {
+    return this.axios.get(url).then(response => {
       if (response.status !== 200){
         throw new Error(response.data)
       }
@@ -52,21 +52,19 @@ export class HttpFetcher {
   }
 
 
-  async userBudgets(epoch: number): Promise<UserBudget[] | null>{
-    return this._get_array(`/rewards/budgets/epoch/${epoch}`, "users' budgets", UserBudgetImpl, (data: any) => data.budgets)
+  async apiGetUserBudgets(epoch: number): Promise<UserBudget[] | null>{
+    return this._get_array(`/rewards/budgets/epoch/${epoch}`, "users' budgets", UserBudgetImpl, (data: ApiRewardsBudgets) => data.budgets)
   }
 
-  async allocations(epoch: number): Promise<AllocationRecord[] | null> {
-    return this._get_array(`/allocations/epoch/${epoch}`, "users' allocations", AllocationImpl, (data: any) => data.allocations)
+  async apiGetAllocations(epoch: number): Promise<AllocationRecord[] | null> {
+    return this._get_array(`/allocations/epoch/${epoch}`, "users' allocations", AllocationImpl, (data: ApiAllocations) => data.allocations)
   }
 
-  async rewards(epoch: number): Promise<Reward[] | null>{
-      return this._get_array(`/rewards/proposals/epoch/${epoch}`, "proposals rewards", RewardImpl, (data: any) => data.rewards)
+  async apiGetRewards(epoch: number): Promise<Reward[] | null>{
+      return this._get_array(`/rewards/proposals/epoch/${epoch}`, "proposals rewards", RewardImpl, (data: ApiRewards) => data.rewards)
   }
 
-  async epochInfo(epoch: number): Promise<EpochInfo | null> {
+  async apiGetEpochInfo(epoch: number): Promise<EpochInfo | null> {
     return this._get(`/epochs/info/${epoch}`, "epoch info", EpochInfoImpl)
   }
-
-
  }

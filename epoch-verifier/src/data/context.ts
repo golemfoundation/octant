@@ -15,18 +15,28 @@ export interface Context {
   rewards: Reward[]
 }
 
-export function buildContext(budgets: UserBudget[], allocations: AllocationRecord[], rewards: Reward[], epochInfo: EpochInfo): Context {
+function transformToAllocations(allocationRecords: AllocationRecord[]): Allocation[] {
+  const allocations: Map<Address, Allocation> = new Map()
 
-  const filteredBudgets = budgets.filter((ub) => ub.amount !== BigInt(0))
+  for (const record of allocationRecords) {
+    const prev = allocations.get(record.user) ?? { donations: [], user: record.user }
+    prev.donations.push({ amount: record.amount, proposal: record.proposal })
+    allocations.set(record.user, prev)
+  }
 
-  const context = {
+  return Array.from(allocations.values())
+}
+
+export function buildContext(userBudgets: UserBudget[], allocations: AllocationRecord[], rewards: Reward[], epochInfo: EpochInfo): Context {
+
+  const positiveUserBudgets = userBudgets.filter(positiveUserBudget => positiveUserBudget.amount !== BigInt(0));
+
+  return {
     allocations: transformToAllocations(allocations),
-    budgets: new Map(filteredBudgets.map((value) => [value.user, value.amount] as const)),
+    budgets: new Map(positiveUserBudgets.map(value => [value.user, value.amount] as const)),
     epochInfo,
     rewards
-  } as Context
-
-  return context
+  }
 }
 
 export function allocationsByUser(context: Context): Map<Address, UserDonation[]> {
@@ -47,16 +57,4 @@ export function individualDonationsByProposals(context: Context): Map<Address, b
 
 export function rewardsByProject(context: Context): Map<Address, Reward> {
   return new Map(context.rewards.map((r) => [r.proposal, r] as const))
-}
-
-function transformToAllocations(allocationRecords: AllocationRecord[]): Allocation[] {
-  const allocations: Map<Address, Allocation> = new Map()
-
-  for (const record of allocationRecords) {
-    const prev = allocations.get(record.user) ?? { user: record.user, donations: [] }
-    prev.donations.push({ amount: record.amount, proposal: record.proposal })
-    allocations.set(record.user, prev)
-  }
-
-  return Array.from(allocations.values())
 }

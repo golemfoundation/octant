@@ -6,6 +6,28 @@ export interface Deserializable<T> {
   from(input: any): T;
 }
 
+export interface ApiRewardsBudgets {
+  budgets: {
+    address: string;
+    amount: string; // wei;
+  }[];
+}
+
+export interface ApiAllocations {
+  allocations: {
+    amount: string; // wei
+    donor: string;
+    proposal: string;
+  }[];
+}
+
+export interface ApiRewards {
+  rewards: {
+    address: string;
+    value: string; // wei;
+  }[];
+}
+
 
 export interface UserBudget {
   amount: bigint;
