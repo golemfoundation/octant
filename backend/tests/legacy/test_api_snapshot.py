@@ -160,6 +160,10 @@ def test_withdrawals(
     # forward time to the beginning of the epoch 2
     move_to_next_epoch(2)
 
+    # fund the vault (amount here is arbitrary)
+
+    vault.fund(deployer._account, 1000 * 10**18)
+
     # wait for indexer to catch up
     epoch_no = wait_for_sync(client, 2)
     print(f"indexed epoch: {epoch_no}")
