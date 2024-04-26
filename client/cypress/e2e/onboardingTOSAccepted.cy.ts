@@ -94,7 +94,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       navigateWithCheck(ROOT_ROUTES.settings.absolute);
       cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').check().should('be.checked');
       cy.reload();
-      cy.get('[data-test=ModalOnboarding]').should('not.be.visible');
+      cy.get('[data-test=ModalOnboarding]').should('not.exist');
     });
 
     it('renders only once when "Always show Allocate onboarding" option is not checked', () => {
@@ -144,7 +144,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
 
     it('Onboarding stepper opens onboarding modal', () => {
       cy.get('[data-test=ModalOnboarding__Button]').click();
-      cy.get('[data-test=ModalOnboarding]').should('not.be.visible');
+      cy.get('[data-test=ModalOnboarding]').should('not.exist');
       cy.get('[data-test=OnboardingStepper]').click();
       cy.get('[data-test=ModalOnboarding]').should('be.visible');
     });
