@@ -8,7 +8,7 @@ from app.modules.registry import get_services
 
 def create_finalized_epoch_snapshot() -> int | None:
     try:
-        context = state_context(EpochState.FINALIZING)
+        context = state_context(EpochState.PENDING)
     except InvalidEpoch:
         return None
     services: FinalizingServices = get_services(EpochState.FINALIZING)
