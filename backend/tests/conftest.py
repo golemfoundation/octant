@@ -313,7 +313,7 @@ class UserAccount:
         deposits.unlock(self._account, w3.to_wei(value, "ether"))
 
     def withdraw(self, epoch: int, amount: int, merkle_proof: dict):
-        vault.batch_withdraw(epoch, amount, merkle_proof)
+        vault.batch_withdraw2(self._account, epoch, amount, merkle_proof)
 
     def allocate(self, amount: int, addresses: list[str]):
         nonce = self._client.get_allocation_nonce(self.address)
