@@ -1,4 +1,4 @@
-import { UseQueryResult, useQuery } from '@tanstack/react-query';
+import { UseQueryResult, useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import { apiGetProjects, Projects } from 'api/calls/projects';
 import { QUERY_KEYS } from 'api/queryKeys';
@@ -6,7 +6,10 @@ import { QUERY_KEYS } from 'api/queryKeys';
 import useCurrentEpoch from './useCurrentEpoch';
 import useIsDecisionWindowOpen from './useIsDecisionWindowOpen';
 
-export default function useProjectsEpoch(epoch?: number): UseQueryResult<Projects, unknown> {
+export default function useProjectsEpoch(
+  epoch?: number,
+  options?: Omit<UseQueryOptions<Projects, unknown, Projects, any>, 'queryKey'>,
+): UseQueryResult<Projects, unknown> {
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: currentEpoch } = useCurrentEpoch();
 
@@ -19,5 +22,6 @@ export default function useProjectsEpoch(epoch?: number): UseQueryResult<Project
 
     queryFn: () => apiGetProjects(epochToUse),
     queryKey: epoch || currentEpoch ? QUERY_KEYS.projectsEpoch(epochToUse) : [''],
+    ...options,
   });
 }
