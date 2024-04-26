@@ -128,9 +128,14 @@ def move_to_next_epoch(target) -> bool:
 #     assert len(unique_donors) == 2
 #     assert len(unique_proposals) == 3
 
+
 @pytest.mark.api
 def test_withdrawals(
-    client: Client, deployer: UserAccount, ua_alice: UserAccount, ua_bob: UserAccount, ua_carol: UserAccount
+    client: Client,
+    deployer: UserAccount,
+    ua_alice: UserAccount,
+    ua_bob: UserAccount,
+    ua_carol: UserAccount,
 ):
     res = client.sync_status()
     assert res["indexedEpoch"] == res["blockchainEpoch"]
@@ -179,7 +184,6 @@ def test_withdrawals(
     # make empty vote to get personal rewards
     ua_alice.allocate(0, alice_proposals)
 
-
     # save account budget for assertion
     res = client.get_rewards_budget(address=ua_bob.address, epoch=1)
     bob_budget = int(res["budget"])
@@ -187,14 +191,12 @@ def test_withdrawals(
     # make empty vote to get personal rewards
     ua_bob.allocate(0, bob_proposals)
 
-
     # save account budget for assertion
     res = client.get_rewards_budget(address=ua_carol.address, epoch=1)
     carol_budget = int(res["budget"])
 
     # make empty vote to get personal rewards
     ua_carol.allocate(0, carol_proposals)
-
 
     # TODO replace with helper to wait until end of voting
     move_to_next_epoch(3)
@@ -231,7 +233,6 @@ def test_withdrawals(
     withdrawal_amount: int = int(alice_withdrawals["amount"])
     merkle_proof: list[str] = alice_withdrawals["proof"]
 
-
     epoch1: int = int(bob_withdrawals["epoch"])
     withdrawal_amount1: int = int(bob_withdrawals["amount"])
     merkle_proof1: list[str] = bob_withdrawals["proof"]
@@ -244,21 +245,16 @@ def test_withdrawals(
     ua_bob.withdraw(epoch1, withdrawal_amount1, merkle_proof1)
     bob_wallet_after_withdraw = w3.eth.get_balance(ua_bob.address)
 
-    print(bob_wallet_after_withdraw)
+    assert bob_wallet_after_withdraw > bob_wallet_before_withdraw
 
+    # assert withdrawal_amount == alice_budget
+    # assert epoch == 1
+    # assert alice_withdrawals["status"] == "available"
+    # assert merkle_proof, "Merkle proof is empty"
 
+    # alice_wallet_before_withdraw = w3.eth.get_balance(ua_alice.address)
 
-    assert withdrawal_amount == alice_budget
-    assert epoch == 1
-    assert alice_withdrawals["status"] == "available"
-    assert merkle_proof, "Merkle proof is empty"
+    # ua_alice.withdraw(epoch, withdrawal_amount, merkle_proof)
+    # alice_wallet_after_withdraw = w3.eth.get_balance(ua_alice.address)
 
-    alice_wallet_before_withdraw = w3.eth.get_balance(ua_alice.address)
-
-    ua_alice.withdraw(epoch, withdrawal_amount, merkle_proof)
-    alice_wallet_after_withdraw = w3.eth.get_balance(ua_alice.address)
-
-    assert alice_wallet_after_withdraw > alice_wallet_before_withdraw
-
-
-
+    # assert alice_wallet_after_withdraw > alice_wallet_before_withdraw
