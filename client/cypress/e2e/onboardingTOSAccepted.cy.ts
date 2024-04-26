@@ -24,31 +24,31 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 chai.use(chaiColors);
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
-  describe('move time', () => {
-    before(() => {
-      /**
-       * Global Metamask setup done by Synpress is not always done.
-       * Since Synpress needs to have valid provider to fetch the data from contracts,
-       * setupMetamask is required in each test suite.
-       */
-      cy.setupMetamask();
-    });
+describe('move time', () => {
+  before(() => {
+    /**
+     * Global Metamask setup done by Synpress is not always done.
+     * Since Synpress needs to have valid provider to fetch the data from contracts,
+     * setupMetamask is required in each test suite.
+     */
+    cy.setupMetamask();
+  });
 
-    it('allocation window is open, when it is not, move time', () => {
-      setupAndMoveToPlayground();
+  it('allocation window is open, when it is not, move time', () => {
+    setupAndMoveToPlayground();
 
-      cy.window().then(async win => {
-        moveTime(win, 'nextEpochDecisionWindowOpen').then(() => {
-          const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
-            QUERY_KEYS.isDecisionWindowOpen,
-          );
-          expect(isDecisionWindowOpenAfter).to.be.true;
-        });
+    cy.window().then(async win => {
+      moveTime(win, 'nextEpochDecisionWindowOpen').then(() => {
+        const isDecisionWindowOpenAfter = win.clientReactQuery.getQueryData(
+          QUERY_KEYS.isDecisionWindowOpen,
+        );
+        expect(isDecisionWindowOpenAfter).to.be.true;
       });
     });
   });
+});
 
+Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(`onboarding (TOS accepted): ${device}`, { viewportHeight, viewportWidth }, () => {
     before(() => {
       beforeSetup();
