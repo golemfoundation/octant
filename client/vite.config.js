@@ -5,6 +5,7 @@ import i18n from 'i18next';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import viteCompression from 'vite-plugin-compression';
+import htmlPlugin from 'vite-plugin-html-config';
 
 import translationEN from './src/locales/en/translation.json';
 
@@ -33,7 +34,18 @@ export default defineConfig(({ mode }) => {
   const localIdentName = isProduction ? '[hash:base64:5]' : '[name]__[local]--[hash:base64:5]';
   const base = '/';
 
-  const plugins = [react(), splitVendorChunkPlugin(), viteCompression()];
+  const plugins = [
+    react(),
+    splitVendorChunkPlugin(),
+    viteCompression(),
+    htmlPlugin({
+      metas: [
+        { content: i18n.t('meta.description'), name: 'og:description' },
+        { content: i18n.t('meta.description'), name: 'description' },
+        { content: `${base}images/og-image.png`, name: 'og:image' },
+      ],
+    }),
+  ];
   if (isStaging) {
     plugins.push(
       visualizer({

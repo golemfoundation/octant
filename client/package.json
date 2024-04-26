@@ -54,7 +54,6 @@
     "minidenticons": "^4.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-helmet": "^6.1.0",
     "react-i18next": "^14.0.1",
     "react-infinite-scroller": "^1.2.6",
     "react-router-dom": "^6.21.3",
@@ -110,7 +109,8 @@
     "ts-jest": "^29.1.2",
     "typescript": "^5.3.3",
     "vite": "^4.5.2",
-    "vite-plugin-compression": "^0.5.1"
+    "vite-plugin-compression": "^0.5.1",
+    "vite-plugin-html-config": "^1.0.11"
   },
   "resolutions": {
     "**/cypress": "12.17.3"
