@@ -40,9 +40,9 @@ export interface UserDonation {
 }
 
 export interface AllocationRecord {
-  user: Address;
   amount: bigint;
   proposal: Address;
+  user: Address;
 }
 
 export interface Allocation {
@@ -51,23 +51,23 @@ export interface Allocation {
 }
 
 export interface Reward {
-  allocated: bigint,
-  matched: bigint,
-  proposal: Address
+  allocated: bigint;
+  matched: bigint;
+  proposal: Address;
 }
 
 export interface EpochInfo {
-  individualRewards: bigint
-  matchedRewards: bigint
-  patronsRewards: bigint
-  stakingProceeds: bigint
-  totalEffectiveDeposit: bigint
-  totalRewards: bigint
-  totalWithdrawals: bigint
-  operationalCost: bigint
-  leftover: bigint
-  ppf: bigint
-  communityFund: bigint
+  communityFund: bigint;
+  individualRewards: bigint;
+  leftover: bigint;
+  matchedRewards: bigint;
+  operationalCost: bigint;
+  patronsRewards: bigint;
+  ppf: bigint;
+  stakingProceeds: bigint;
+  totalEffectiveDeposit: bigint;
+  totalRewards: bigint;
+  totalWithdrawals: bigint;
 }
 
 export class UserBudgetImpl implements Deserializable<UserBudget> {
@@ -85,7 +85,9 @@ export class UserBudgetImpl implements Deserializable<UserBudget> {
 
 export class AllocationImpl implements Deserializable<AllocationRecord> {
   user: Address;
+
   proposal: Address;
+
   amount: bigint;
 
   from(input: any) {
@@ -114,17 +116,27 @@ export class RewardImpl implements Deserializable<Reward> {
 }
 
 export class EpochInfoImpl implements Deserializable<EpochInfo> {
-  individualRewards: bigint
-  matchedRewards: bigint
-  patronsRewards: bigint
-  stakingProceeds: bigint
-  totalEffectiveDeposit: bigint
-  totalRewards: bigint
-  totalWithdrawals: bigint
-  operationalCost: bigint
-  leftover: bigint
-  ppf: bigint
-  communityFund: bigint
+  individualRewards: bigint;
+
+  matchedRewards: bigint;
+
+  patronsRewards: bigint;
+
+  stakingProceeds: bigint;
+
+  totalEffectiveDeposit: bigint;
+
+  totalRewards: bigint;
+
+  totalWithdrawals: bigint;
+
+  operationalCost: bigint;
+
+  leftover: bigint;
+
+  ppf: bigint;
+
+  communityFund: bigint;
 
 
   from(input: any) {
