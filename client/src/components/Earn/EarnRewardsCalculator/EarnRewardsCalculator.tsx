@@ -43,8 +43,6 @@ const EarnRewardsCalculator: FC = () => {
   const fetchEstimatedRewardsDebounced = useCallback(
     debounce(({ amountGlm, numberOfEpochs }) => {
       const amountGlmWEI = formatUnitsBigInt(parseUnitsBigInt(amountGlm, 'ether'), 'wei');
-      // const numberOfDaysNumber = parseInt(numberOfDays, 10);
-
       resetCalculateRewards();
       mutateAsyncRewardsCalculator({ amountGlm: amountGlmWEI, numberOfEpochs });
     }, 300),
