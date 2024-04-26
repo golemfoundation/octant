@@ -75,7 +75,7 @@ const EarnRewardsCalculator: FC = () => {
       ? getValueFiatToDisplay({
           cryptoCurrency: 'ethereum',
           cryptoValues,
-          displayCurrency: 'usd',
+          displayCurrency,
           valueCrypto: parseUnitsBigInt(calculateRewards.budget, 'wei'),
         })
       : '';
@@ -85,7 +85,7 @@ const EarnRewardsCalculator: FC = () => {
       ? getValueFiatToDisplay({
           cryptoCurrency: 'ethereum',
           cryptoValues,
-          displayCurrency: 'usd',
+          displayCurrency,
           valueCrypto: parseUnitsBigInt(calculateRewards.matchedFunding, 'wei'),
         })
       : '';
