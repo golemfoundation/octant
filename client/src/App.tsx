@@ -1,5 +1,6 @@
 import React, { ReactElement, useState, Fragment } from 'react';
 
+import Head from 'components/Head';
 import AppLoader from 'components/shared/AppLoader';
 import ModalOnboarding from 'components/shared/ModalOnboarding/ModalOnboarding';
 import useAppConnectManager from 'hooks/helpers/useAppConnectManager';
@@ -32,6 +33,7 @@ const App = (): ReactElement => {
 
   return (
     <Fragment>
+      <Head />
       <RootRoutes isSyncingInProgress={isSyncingInProgress || isFetchingCypressHelpers} />
       {!isSyncingInProgress && !isProjectAdminMode && <ModalOnboarding />}
     </Fragment>
