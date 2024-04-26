@@ -15,6 +15,10 @@ class Vault(SmartContract):
         app.logger.debug(f"[Vault contract] Getting merkle root for epoch: {epoch}")
         return self.contract.functions.merkleRoots(epoch).call()
 
+    def is_merkle_root_set(self, epoch: int) -> bool:
+        unset = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+        return self.get_merkle_root(epoch) != unset
+
     def set_merkle_root(self, account, epoch: int, root: str) -> HexBytes:
         app.logger.debug(f"[Vault contract] Setting merkle root for epoch: {epoch}")
         transaction = self.contract.functions.setMerkleRoot(

@@ -2,7 +2,7 @@ import pytest
 import time
 import json
 
-from app.extensions import w3, epochs
+from app.extensions import w3, epochs, vault
 from app.legacy.core.proposals import get_proposals_addresses
 from tests.conftest import Client, UserAccount
 
@@ -207,7 +207,11 @@ def test_withdrawals(
     # https://viniciuschiele.github.io/flask-apscheduler/rst/api.html
     # /scheduler/jobs [GET] > returns json with details of all jobs
     # /scheduler/jobs/<job_id>/run [POST
-    time.sleep(60)
+    while not vault.is_merkle_root_set(1):
+        time.sleep(1)
+
+    root = vault.get_merkle_root(1).hex()
+    print(f"root is 0x{root}")
 
     res = client.get_withdrawals_for_address(address=ua_alice.address)
     res1 = client.get_withdrawals_for_address(address=ua_bob.address)
