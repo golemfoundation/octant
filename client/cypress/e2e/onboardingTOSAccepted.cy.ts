@@ -129,13 +129,13 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       checkChangeStepsBySwipingOnScreenDifferenceLessThanl5px(true);
     });
 
-    // it('user is able to close the onboarding, and after disconnecting & connecting, onboarding does not show up again', () => {
-    //   cy.get('[data-test=ModalOnboarding]').should('be.visible');
-    //   cy.get('[data-test=ModalOnboarding__Button]').click();
-    //   cy.get('[data-test=ModalOnboarding]').should('not.exist');
-    //   connectWallet(true, false, true);
-    //   cy.get('[data-test=ModalOnboarding]').should('not.exist');
-    // });
+    it('user is able to close the onboarding, and after page reload, onboarding does not show up again', () => {
+      cy.get('[data-test=ModalOnboarding]').should('be.visible');
+      cy.get('[data-test=ModalOnboarding__Button]').click();
+      cy.get('[data-test=ModalOnboarding]').should('not.exist');
+      cy.reload();
+      cy.get('[data-test=ModalOnboarding]').should('not.exist');
+    });
 
     it('Onboarding stepper is visible after closing onboarding modal without going to the last step', () => {
       cy.get('[data-test=ModalOnboarding__Button]').click();
