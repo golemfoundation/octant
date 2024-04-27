@@ -56,5 +56,8 @@ export function individualDonationsByProposals(context: Context): Map<Address, b
 }
 
 export function rewardsByProject(context: Context): Map<Address, Reward> {
-  return new Map(context.rewards.map((r) => [r.proposal, r] as const))
+  return new Map(context.rewards
+    .filter(r => r.matched !== BigInt(0))
+    .map((r) => [r.proposal, r] as const)
+  );
 }

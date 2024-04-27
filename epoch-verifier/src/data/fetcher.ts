@@ -57,7 +57,7 @@ export class HttpFetcher {
   }
 
   async apiGetAllocations(epoch: number): Promise<AllocationRecord[] | null> {
-    return this._get_array(`/allocations/epoch/${epoch}`, "users' allocations", AllocationImpl, (data: ApiAllocations) => data.allocations)
+    return this._get_array(`/allocations/epoch/${epoch}?includeZeroAllocations=true`, "users' allocations", AllocationImpl, (data: ApiAllocations) => data.allocations)
   }
 
   async apiGetRewards(epoch: number): Promise<Reward[] | null>{
