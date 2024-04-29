@@ -41,7 +41,7 @@ export default function useLockedSummarySnapshots(): UseQueryResult<UseLockedSum
 
       const fetchPage = async (first: number) => {
         const data = await request(subgraphAddress, GET_LOCKED_SUMMARY_SNAPSHOTS, {
-          first,
+          first: pageSize,
           skip: first - pageSize,
         });
 
