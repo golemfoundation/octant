@@ -47,3 +47,10 @@ export const connectWallet = (
   cy.switchToMetamaskNotification();
   return cy.acceptMetamaskAccess();
 };
+
+export const checkProjectsViewLoaded = (): Chainable<any> => {
+  cy.get('[data-test=ProjectsView__ProjectsList]')
+    .invoke('attr', 'data-isloading')
+    .should('eq', 'false');
+  return cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
+};

@@ -1,4 +1,9 @@
-import { connectWallet, mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import {
+  checkProjectsViewLoaded,
+  connectWallet,
+  mockCoinPricesServer,
+  visitWithLoader,
+} from 'cypress/utils/e2e';
 import { getNamesOfProjects } from 'cypress/utils/projects';
 import viewports from 'cypress/utils/viewports';
 import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
@@ -41,7 +46,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
-      cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
+      checkProjectsViewLoaded();
 
       /**
        * This could be done in before hook, but CY wipes the state after each test
@@ -159,7 +164,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
       connectWallet(true, true);
-      cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
+      checkProjectsViewLoaded();
 
       /**
        * This could be done in before hook, but CY wipes the state after each test
