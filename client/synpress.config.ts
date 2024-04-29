@@ -29,7 +29,7 @@ export default defineConfig({
     },
     supportFile: 'cypress/support/index.ts',
   },
-  numTestsKeptInMemory: 5,
+  numTestsKeptInMemory: 4,
   viewportHeight: 1080,
   viewportWidth: 1920,
 });
