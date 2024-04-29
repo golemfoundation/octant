@@ -42,7 +42,9 @@ export const connectWallet = (
   cy.intercept('GET', '/user/*/patron-mode', { body: { status: isPatronModeEnabled } });
   cy.intercept('PATCH', '/user/*/patron-mode', { body: { status: !isPatronModeEnabled } });
   cy.disconnectMetamaskWalletFromAllDapps();
+  cy.wait(500);
   cy.get('[data-test=MainLayout__Button--connect]').click();
+  cy.wait(500);
   cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
   cy.switchToMetamaskNotification();
   return cy.acceptMetamaskAccess();

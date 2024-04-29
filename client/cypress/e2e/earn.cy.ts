@@ -1,4 +1,4 @@
-import { visitWithLoader, mockCoinPricesServer } from 'cypress/utils/e2e';
+import { visitWithLoader, mockCoinPricesServer, connectWallet } from 'cypress/utils/e2e';
 import { moveTime } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
 import {
@@ -7,16 +7,6 @@ import {
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
-
-import Chainable = Cypress.Chainable;
-
-const connectWallet = (): Chainable => {
-  cy.intercept('GET', '/user/*/tos', { body: { accepted: true } });
-  cy.get('[data-test=MainLayout__Button--connect]').click();
-  cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
-  cy.acceptMetamaskAccess();
-  return cy.switchToCypressWindow();
-};
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }, idx) => {
   describe(`earn: ${device}`, { viewportHeight, viewportWidth }, () => {
@@ -78,18 +68,18 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     }
 
     it('Wallet connected: "Lock GLM" / "Edit Locked GLM" button is active', () => {
-      connectWallet();
+      connectWallet(true, false);
       cy.get('[data-test=BoxGlmLock__Button]').should('not.be.disabled');
     });
 
     it('Wallet connected: "Lock GLM" / "Edit Locked GLM" button opens "ModalGlmLock"', () => {
-      connectWallet();
+      connectWallet(true, false);
       cy.get('[data-test=BoxGlmLock__Button]').click();
       cy.get('[data-test=ModalGlmLock]').should('be.visible');
     });
 
     it('Wallet connected: "ModalGlmLock" has overflow', () => {
-      connectWallet();
+      connectWallet(true, false);
       cy.get('[data-test=BoxGlmLock__Button]').click();
       cy.get('[data-test=ModalGlmLock__overflow]').should('exist');
     });
@@ -99,7 +89,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
        * In EarnGlmLock there are multiple autofocus rules set.
        * This test checks if user is still able to type without any autofocus disruption.
        */
-      connectWallet();
+      connectWallet(true, false);
       cy.get('[data-test=BoxGlmLock__Button]').click();
       cy.get('[data-test=ModalGlmLock]').should('be.visible');
       cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').should('have.focus');
@@ -111,7 +101,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Wallet connected: "ModalGlmLock" - changing tabs keep focus on first input', () => {
-      connectWallet();
+      connectWallet(true, false);
       cy.get('[data-test=BoxGlmLock__Button]').click();
       cy.get('[data-test=ModalGlmLock]').should('be.visible');
       cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').should('have.focus');
@@ -122,7 +112,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Wallet connected: Lock 1 GLM', () => {
-      connectWallet();
+      connectWallet(true, false);
 
       cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
         .invoke('text')
@@ -174,7 +164,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Wallet connected: Unlock 1 GLM', () => {
-      connectWallet();
+      connectWallet(true, false);
 
       cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
         .invoke('text')
@@ -221,7 +211,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Wallet connected: Effective deposit after locking 1000 GLM and moving epoch is equal to current deposit', () => {
-      connectWallet();
+      connectWallet(true, false);
 
       cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
         .invoke('text')
