@@ -79,14 +79,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       checkProjectItemElements();
     });
 
-    it('entering project view shows Toast with info about IPFS failure when all providers fail', () => {
-      cy.intercept('GET', '**/ipfs/**', req => {
-        req.destroy();
-      });
-
-      cy.get('[data-test=Toast--ipfsMessage').should('be.visible');
-    });
-
     it('entering project view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar', () => {
       cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
 
@@ -144,6 +136,32 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           cy.get('[data-test=ProjectListItem]').eq(0).should('be.visible');
         }
       }
+    });
+  });
+
+  describe(`projects (IPFS failure): ${device}`, { viewportHeight, viewportWidth }, () => {
+    before(() => {
+      /**
+       * Global Metamask setup done by Synpress is not always done.
+       * Since Synpress needs to have valid provider to fetch the data from contracts,
+       * setupMetamask is required in each test suite.
+       */
+      cy.setupMetamask();
+    });
+
+    beforeEach(() => {
+      mockCoinPricesServer();
+      localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      visitWithLoader(ROOT_ROUTES.projects.absolute);
+      connectWallet(true, true);
+    });
+
+    it('entering project view shows Toast with info about IPFS failure when all providers fail', () => {
+      cy.intercept('GET', '**/ipfs/**', req => {
+        req.destroy();
+      });
+
+      cy.get('[data-test=Toast--ipfsMessage').should('be.visible');
     });
   });
 
