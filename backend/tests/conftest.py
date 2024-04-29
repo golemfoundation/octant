@@ -381,12 +381,10 @@ class Client:
 
     def pending_snapshot(self):
         rv = self._flask_client.post("/snapshots/pending").text
-        print("XXXXXXXXXX pending_snapshot text:", rv)
         return json.loads(rv)
 
     def finalized_snapshot(self):
         rv = self._flask_client.post("/snapshots/finalized").text
-        print("XXXXXXXXXX finalized_snapshot text:", rv)
         return json.loads(rv)
 
     def get_rewards_budget(self, address: str, epoch: int):
@@ -395,14 +393,10 @@ class Client:
             "get_rewards_budget :",
             self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").request,
         )
-        print("get_rewards_budget text:", rv)
-        print("json get_rewards_budget text:", json.loads(rv))
         return json.loads(rv)
 
     def get_withdrawals_for_address(self, address: str):
         rv = self._flask_client.get(f"/withdrawals/{address}").text
-        print("get_withdrawals_for_address text:", rv)
-        print("get_withdrawals_for_address json rv text:", json.loads(rv))
         return json.loads(rv)
 
     def get_epoch_allocations(self, epoch: int):

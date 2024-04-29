@@ -1,6 +1,5 @@
 from flask import current_app as app
 from hexbytes import HexBytes
-from eth_abi import encode
 from web3.middleware import construct_sign_and_send_raw_middleware
 from app.infrastructure.contracts.smart_contract import SmartContract
 
@@ -21,7 +20,6 @@ class Vault(SmartContract):
         self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(account))
         tx_hash = self.w3.eth.send_transaction(transaction)
         self.w3.eth.wait_for_transaction_receipt(tx_hash)
-        # self.w3.middleware_onion.remove(construct_sign_and_send_raw_middleware)
         return tx_hash
 
     def get_merkle_root(self, epoch: int) -> str:

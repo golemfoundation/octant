@@ -1,6 +1,5 @@
 import pytest
 import time
-import json
 
 from app.extensions import w3, epochs, vault
 from app.legacy.core.proposals import get_proposals_addresses
