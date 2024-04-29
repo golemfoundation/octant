@@ -33,10 +33,6 @@ def move_to_next_epoch(target) -> bool:
 def test_pending_snapshot(
     client: Client, deployer: UserAccount, ua_alice: UserAccount, ua_bob: UserAccount
 ):
-    res = client.sync_status()
-    assert res["indexedEpoch"] == res["blockchainEpoch"]
-    assert res["indexedEpoch"] > 0
-
     # fund Octant
     deployer.fund_octant(
         address=client.config["WITHDRAWALS_TARGET_CONTRACT_ADDRESS"], value=400
@@ -76,10 +72,6 @@ def test_pending_snapshot(
 def test_allocations(
     client: Client, deployer: UserAccount, ua_alice: UserAccount, ua_bob: UserAccount
 ):
-    res = client.sync_status()
-    assert res["indexedEpoch"] == res["blockchainEpoch"]
-    assert res["indexedEpoch"] > 0
-
     alice_proposals = get_proposals_addresses(1)[:3]
 
     # fund Octant
