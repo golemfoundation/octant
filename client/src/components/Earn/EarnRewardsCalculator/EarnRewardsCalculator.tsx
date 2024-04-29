@@ -1,5 +1,6 @@
 import { useFormik } from 'formik';
 import debounce from 'lodash/debounce';
+import isEmpty from 'lodash/isEmpty';
 import React, { FC, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -42,8 +43,6 @@ const EarnRewardsCalculator: FC = () => {
   const fetchEstimatedRewardsDebounced = useCallback(
     debounce(({ amountGlm, numberOfEpochs }) => {
       const amountGlmWEI = formatUnitsBigInt(parseUnitsBigInt(amountGlm, 'ether'), 'wei');
-      // const numberOfDaysNumber = parseInt(numberOfDays, 10);
-
       resetCalculateRewards();
       mutateAsyncRewardsCalculator({ amountGlm: amountGlmWEI, numberOfEpochs });
     }, 300),
@@ -71,29 +70,34 @@ const EarnRewardsCalculator: FC = () => {
     formik.setFieldValue('valueCrypto', valueComma || '');
   };
 
-  const estimatedRewardsFiat = calculateRewards
-    ? getValueFiatToDisplay({
-        cryptoCurrency: 'ethereum',
-        cryptoValues,
-        displayCurrency: 'usd',
-        valueCrypto: parseUnitsBigInt(calculateRewards.budget, 'wei'),
-      })
-    : '';
+  const estimatedRewardsFiat =
+    calculateRewards && isEmpty(formik.errors)
+      ? getValueFiatToDisplay({
+          cryptoCurrency: 'ethereum',
+          cryptoValues,
+          displayCurrency,
+          valueCrypto: parseUnitsBigInt(calculateRewards.budget, 'wei'),
+        })
+      : '';
 
-  const matchFundingFiat = calculateRewards
-    ? getValueFiatToDisplay({
-        cryptoCurrency: 'ethereum',
-        cryptoValues,
-        displayCurrency: 'usd',
-        valueCrypto: parseUnitsBigInt(calculateRewards.matchedFunding, 'wei'),
-      })
-    : '';
+  const matchFundingFiat =
+    calculateRewards && isEmpty(formik.errors)
+      ? getValueFiatToDisplay({
+          cryptoCurrency: 'ethereum',
+          cryptoValues,
+          displayCurrency,
+          valueCrypto: parseUnitsBigInt(calculateRewards.matchedFunding, 'wei'),
+        })
+      : '';
 
   useEffect(() => {
     if (!formik.values.valueCrypto || !formik.values.numberOfEpochs) {
       return;
     }
-    formik.validateForm().then(() => {
+    formik.validateForm().then(errors => {
+      if (!isEmpty(errors)) {
+        return;
+      }
       fetchEstimatedRewardsDebounced({
         amountGlm: formik.values.valueCrypto,
         numberOfEpochs: formik.values.numberOfEpochs,
@@ -110,11 +114,11 @@ const EarnRewardsCalculator: FC = () => {
   }, []);
 
   return (
-    <BoxRounded dataTest="RewardsCalculator" isGrey isVertical>
+    <BoxRounded dataTest="EarnRewardsCalculator" isGrey isVertical>
       <InputText
         autocomplete="off"
         className={styles.glmInput}
-        dataTest="RewardsCalculator__InputText--crypto"
+        dataTest="EarnRewardsCalculator__InputText--glm"
         error={formik.errors.valueCrypto}
         inputMode="decimal"
         isButtonClearVisible={false}

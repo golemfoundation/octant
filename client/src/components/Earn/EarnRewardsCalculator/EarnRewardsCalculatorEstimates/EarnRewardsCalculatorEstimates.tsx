@@ -14,17 +14,33 @@ const EarnRewardsCalculatorEstimates: FC<EarnRewardsCalculatorEstimatesProps> = 
     keyPrefix: 'components.dedicated.rewardsCalculator',
   });
 
+  const dataTest = 'EarnRewardsCalculatorEstimates';
+
   return (
-    <div className={styles.root}>
-      <div className={styles.estimatesLabel}>{t('estimates')}</div>
+    <div className={styles.root} data-test={dataTest}>
+      <div className={styles.estimatesLabel} data-test={`${dataTest}__label`}>
+        {t('estimates')}
+      </div>
       <div className={styles.estimates}>
-        <div className={styles.row}>
-          <div className={styles.label}>{i18n.t('common.rewards', { rewards: '' })}</div>
-          <div className={cx(styles.value, isLoading && styles.showSkeleton)}>{rewardsFiat}</div>
+        <div className={styles.row} data-test={`${dataTest}__rewards`}>
+          <div className={styles.label} data-test={`${dataTest}__rewardsLabel`}>
+            {i18n.t('common.rewards', { rewards: '' })}
+          </div>
+          <div
+            className={cx(styles.value, isLoading && styles.showSkeleton)}
+            data-test={`${dataTest}__rewardsFiat${isLoading ? '--skeleton' : ''}`}
+          >
+            {rewardsFiat}
+          </div>
         </div>
-        <div className={styles.row}>
-          <div className={styles.label}> {i18n.t('common.matchFunding')}</div>
-          <div className={cx(styles.value, isLoading && styles.showSkeleton)}>
+        <div className={styles.row} data-test={`${dataTest}__matchFunding`}>
+          <div className={styles.label} data-test={`${dataTest}__matchFundingLabel`}>
+            {i18n.t('common.matchFunding')}
+          </div>
+          <div
+            className={cx(styles.value, isLoading && styles.showSkeleton)}
+            data-test={`${dataTest}__matchFundingFiat${isLoading ? '--skeleton' : ''}`}
+          >
             {matchFundingFiat}
           </div>
         </div>
