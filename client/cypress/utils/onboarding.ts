@@ -17,7 +17,9 @@ export const connectWallet = (
   if (shouldReload) {
     cy.reload();
   }
+  cy.wait(500);
   cy.get('[data-test=MainLayout__Button--connect]').click();
+  cy.wait(500);
   cy.get('[data-test=ConnectWallet__BoxRounded--browserWallet]').click();
   cy.switchToMetamaskNotification();
   return cy.acceptMetamaskAccess();
