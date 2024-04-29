@@ -29,11 +29,11 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: epochTimestampHappenedIn, isFetching: isFetchingEpochTimestampHappenedIn } =
     useEpochTimestampHappenedIn(timestamp);
-  const { data: epochLeverage, isFetching: isFetchingEpochLeverage } = useEpochLeverage(
-    epochTimestampHappenedIn ? epochTimestampHappenedIn - 1 : undefined,
-  );
 
   const allocationEpoch = epochTimestampHappenedIn ? epochTimestampHappenedIn - 1 : undefined;
+
+  const { data: epochLeverage, isFetching: isFetchingEpochLeverage } =
+    useEpochLeverage(allocationEpoch);
 
   const { data: individualReward, isFetching: isFetchingIndividualReward } =
     useIndividualReward(allocationEpoch);
@@ -132,7 +132,8 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
             <ProjectAllocationDetailRow
               key={allocation.address}
               {...allocation}
-              epoch={epochTimestampHappenedIn}
+              epoch={allocationEpoch}
+              isLoading={isFetchingEpochTimestampHappenedIn}
             />
           ))}
         </BoxRounded>
