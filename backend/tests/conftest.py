@@ -394,7 +394,12 @@ class Client:
 
 @pytest.fixture
 def client(flask_client: FlaskClient) -> Client:
-    return Client(flask_client)
+    client = Client(flask_client)
+    while True:
+        res = client.sync_status()
+        if res["indexedEpoch"] == res["blockchainEpoch"] and res["indexedEpoch"] > 0:
+            break
+    return client
 
 
 @pytest.fixture(scope="function")
