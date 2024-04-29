@@ -7,6 +7,8 @@ import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import viteCompression from 'vite-plugin-compression';
 import htmlPlugin from 'vite-plugin-html-config';
 
+import env from 'env';
+
 import translationEN from './src/locales/en/translation.json';
 
 const path = require('path');
@@ -42,7 +44,7 @@ export default defineConfig(({ mode }) => {
       metas: [
         { content: i18n.t('meta.description'), name: 'og:description' },
         { content: i18n.t('meta.description'), name: 'description' },
-        { content: `${base}images/og-image.png`, name: 'og:image' },
+        { content: `${env.clientEndpoint}images/og-image.png`, name: 'og:image' },
       ],
     }),
   ];
