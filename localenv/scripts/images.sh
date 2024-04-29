@@ -115,6 +115,11 @@ build_subgraph(){
     build_subgraph_base
 }
 
+SUBSYSTEM=${1:-}
+if [ ! -z $SUBSYSTEM ]; then
+    build_$SUBSYSTEM
+    exit $?
+fi
 
 ### Localenv tooling
 build_control_plane
