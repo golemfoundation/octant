@@ -44,11 +44,17 @@ class Vault(SmartContract):
         )
         return tx_hash
 
-    def batch_withdraw(self, epoch: int, amount: int, merkle_proof: list[str]):
-        print("Number of arguments received:", len([self, epoch, amount, merkle_proof]))
+    def batch_withdraw(self, account, epoch: int, amount: int, merkle_proof: list[str]):
         app.logger.debug(
-            f"[Vault contract] Withdrawing rewards for epoch: {epoch} and amount: {amount} and merkle proof: {merkle_proof}"
+            f"[Vault contract] Withdrawing rewards for account: {account.address}, epoch: {epoch} and amount: {amount} and merkle proof: {merkle_proof}"
         )
+
+        nonce = self.w3.eth.get_transaction_count(account.address)
+
+        transaction = self.contract.functions.batchWithdraw(
+            [(epoch, amount, merkle_proof)]
+        ).build_transaction({"from": account.address, "nonce": nonce})
+        signed_tx = self.w3.eth.account.sign_transaction(transaction, account.key)
 
         # NOTE! encoding is done automatically by web3py, there is no need to do it manually
         # args = encode(['[[(uint256,uint256,bytes32[])]]'], [[(epoch,amount,merkle_proof)]])
@@ -59,22 +65,4 @@ class Vault(SmartContract):
         # this prevents automatic encoder from recognizing arguments as correct
         # merkle_proof = [x[2:] for x in merkle_proof]
         # this fails with "wrong merkle proof" <- at least we pass encoding step
-        return self.contract.functions.batchWithdraw(
-            [(epoch, amount, merkle_proof)]
-        ).transact()
-
-    def batch_withdraw2(
-        self, account, epoch: int, amount: int, merkle_proof: list[str]
-    ):
-        print("Number of arguments received:", len([self, epoch, amount, merkle_proof]))
-        app.logger.debug(
-            f"[Vault contract] Withdrawing rewards for epoch: {epoch} and amount: {amount} and merkle proof: {merkle_proof}"
-        )
-
-        nonce = self.w3.eth.get_transaction_count(account.address)
-
-        transaction = self.contract.functions.batchWithdraw(
-            [(epoch, amount, merkle_proof)]
-        ).build_transaction({"from": account.address, "nonce": nonce})
-        signed_tx = self.w3.eth.account.sign_transaction(transaction, account.key)
         return self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
