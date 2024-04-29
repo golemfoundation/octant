@@ -39,7 +39,7 @@ project_reward_model = api.model(
     "ProjectRewardModel",
     {
         "address": fields.String(),
-        "allocated": fields.String(),
+        "amount": fields.String(),
         "matched": fields.String(),
     },
 )
