@@ -33,8 +33,6 @@ spec:
             value: '$NETWORK_NAME'
           - name: 'webClient.hideCurrentProjectsOutsideAW'
             value: 'false'
-          - name: 'webClient.safeEndpoint'
-            value: 'https://safe-transaction-sepolia.safe.global/'
           ## Graph Node
           - name: graphNode.graph.env.NETWORK
             value: '$NETWORK_NAME'
