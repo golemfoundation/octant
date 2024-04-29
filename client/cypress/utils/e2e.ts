@@ -49,7 +49,14 @@ export const connectWallet = (
 };
 
 export const checkProjectsViewLoaded = (): Chainable<any> => {
+  /**
+   * Skeletons appear only after app fetches the addresses.
+   * Before that, there are no children there. An additional check for data-isloading hence.
+   */
   cy.get('[data-test=ProjectsView__ProjectsList]')
+    .invoke('attr', 'data-isloading')
+    .should('eq', 'false');
+  cy.get('[data-test=ProjectsView__ProjectsList--archive]')
     .invoke('attr', 'data-isloading')
     .should('eq', 'false');
   return cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
