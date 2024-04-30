@@ -15,8 +15,8 @@ export default function useEpochPatronsAllEpochs({
     queries: [...Array(currentEpoch).keys()].map(epoch => ({
       enabled: currentEpoch !== undefined && currentEpoch > 1 && isEnabledAdditional,
       queryFn: () => {
+        // For Epoch 0 error 400 is returned.
         if (epoch === 0) {
-          // For epoch 0 BE returns an error.
           return new Promise<Response>(resolve => {
             resolve({ patrons: [] });
           });
