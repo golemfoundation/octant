@@ -22,11 +22,9 @@ export default function useUserAllocationsAllEpochs(): { data: Response; isFetch
   const userAllocationsAllEpochs: UseQueryResult<ApiResponse>[] = useQueries({
     queries: [...Array(currentEpoch).keys()].map(epoch => ({
       enabled: !!address && currentEpoch !== undefined && currentEpoch > 1,
-      queryFn: async () => {
+      queryFn: () => {
         // For Epoch 0 error 400 is returned.
-        try {
-          return await apiGetUserAllocations(address as string, epoch);
-        } catch (error) {
+        if (epoch === 0) {
           return new Promise<ApiResponse>(resolve => {
             resolve({
               allocations: [],
@@ -34,6 +32,7 @@ export default function useUserAllocationsAllEpochs(): { data: Response; isFetch
             });
           });
         }
+        return apiGetUserAllocations(address as string, epoch);
       },
       queryKey: QUERY_KEYS.userAllocations(epoch),
       retry: false,

@@ -17,14 +17,14 @@ export default function useIndividualRewardAllEpochs({
   const individualRewardAllEpochs = useQueries({
     queries: [...Array(currentEpoch).keys()].map(epoch => ({
       enabled: !!address && currentEpoch !== undefined && currentEpoch > 1 && isEnabledAdditional,
-      queryFn: async () => {
-        try {
-          return await apiGetIndividualRewards(epoch, address!);
-        } catch (error) {
+      queryFn: () => {
+        // For Epoch 0 and Epoch 1 error 400 is returned.
+        if ([0, 1].includes(epoch)) {
           return new Promise<Response>(resolve => {
             resolve({ budget: '0' });
           });
         }
+        return apiGetIndividualRewards(epoch, address!);
       },
       queryKey: QUERY_KEYS.individualReward(epoch),
       retry: false,
