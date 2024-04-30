@@ -14,15 +14,14 @@ export default function useEpochPatronsAllEpochs({
   const epochPatronsAllEpochs: UseQueryResult<Response>[] = useQueries({
     queries: [...Array(currentEpoch).keys()].map(epoch => ({
       enabled: currentEpoch !== undefined && currentEpoch > 1 && isEnabledAdditional,
-      queryFn: async () => {
-        try {
-          return await apiGetEpochPatrons(epoch);
-        } catch (error) {
+      queryFn: () => {
+        if (epoch === 0) {
           // For epoch 0 BE returns an error.
           return new Promise<Response>(resolve => {
             resolve({ patrons: [] });
           });
         }
+        return apiGetEpochPatrons(epoch);
       },
       queryKey: QUERY_KEYS.epochPatrons(epoch),
       retry: false,
