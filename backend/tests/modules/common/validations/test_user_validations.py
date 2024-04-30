@@ -2,7 +2,7 @@ import pytest
 
 from app import exceptions
 from app.constants import GLM_TOTAL_SUPPLY_WEI
-from app.infrastructure.routes.validations.user_validations import (
+from app.modules.common.validations.user_validations import (
     validate_estimate_budget_inputs,
     MAX_DAYS_TO_ESTIMATE_BUDGET,
 )
