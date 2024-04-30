@@ -8,6 +8,7 @@ import BoxRounded from 'components/ui/BoxRounded';
 import Slider from 'components/ui/Slider';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
+import useUpcomingBudget from 'hooks/queries/useUpcomingBudget';
 import useAllocationsStore from 'store/allocations/store';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
@@ -26,6 +27,7 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
     keyPrefix: 'components.dedicated.allocationRewardsBox',
   });
   const { data: individualReward } = useIndividualReward();
+  const { data: upcomingBudget } = useUpcomingBudget();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const [modalMode, setModalMode] = useState<'closed' | 'donate' | 'withdraw'>('closed');
   const { rewardsForProjects, setRewardsForProjects } = useAllocationsStore(state => ({
@@ -95,6 +97,9 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
   ];
 
   const subtitle = useMemo(() => {
+    if (isDecisionWindowOpen === false && upcomingBudget) {
+      return t('availableDuringAllocation');
+    }
     if (isLocked) {
       return t('allocated');
     }
@@ -102,7 +107,24 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
       return i18n.t('common.availableNow');
     }
     return t('subtitleNoRewards');
-  }, [isLocked, isDecisionWindowOpenAndHasIndividualReward, t, i18n]);
+  }, [
+    isLocked,
+    isDecisionWindowOpenAndHasIndividualReward,
+    upcomingBudget,
+    isDecisionWindowOpen,
+    t,
+    i18n,
+  ]);
+
+  const budget = useMemo(() => {
+    if (isDecisionWindowOpen) {
+      return individualReward;
+    }
+    if (isDecisionWindowOpen === false && upcomingBudget) {
+      return upcomingBudget;
+    }
+    return BigInt(0);
+  }, [isDecisionWindowOpen, individualReward, upcomingBudget]);
 
   return (
     <BoxRounded
@@ -114,7 +136,7 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
       subtitleClassName={styles.subtitle}
       title={getValueCryptoToDisplay({
         cryptoCurrency: 'ethereum',
-        valueCrypto: isDecisionWindowOpen ? individualReward : BigInt(0),
+        valueCrypto: budget,
       })}
       titleClassName={cx(styles.title, (isDisabled || isLocked) && styles.greyTitle)}
     >
