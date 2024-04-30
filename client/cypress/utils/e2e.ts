@@ -57,11 +57,16 @@ export const checkProjectsViewLoaded = (): Chainable<any> => {
     .invoke('attr', 'data-isloading')
     .should('eq', 'false');
 
-  cy.get('[data-test=ProjectsView__ProjectsList--archive]').then($elements => {
-    if ($elements.length > 0) {
+  cy.get('body').then($body => {
+    if ($body.find('[data-test=ProjectsView__ProjectsList--archive]').length > 0) {
       cy.get('[data-test=ProjectsView__ProjectsList--archive]')
         .invoke('attr', 'data-isloading')
         .should('eq', 'false');
+    }
+  });
+
+  cy.get('[data-test=ProjectsView__ProjectsList--archive]').then($elements => {
+    if ($elements.length > 0) {
     }
   })
 
