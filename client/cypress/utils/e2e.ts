@@ -65,10 +65,5 @@ export const checkProjectsViewLoaded = (): Chainable<any> => {
     }
   });
 
-  cy.get('[data-test=ProjectsView__ProjectsList--archive]').then($elements => {
-    if ($elements.length > 0) {
-    }
-  })
-
   return cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
 };
