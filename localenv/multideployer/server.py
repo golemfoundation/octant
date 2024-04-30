@@ -101,6 +101,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
                 "--tags",
                 "local",
             ],
+            check=True,
             capture_output=True,
             text=True,
             cwd="../hardhat/",
@@ -119,6 +120,12 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         return dict(parse_qsl(self.url().query))
 
     def do_GET(self):
+        if self.path == "/ping":
+            self.send_response(200)
+            self.send_header('Content-type', "text/plain")
+            self.end_headers()
+            return
+
         query = self.query_data()
         if "name" not in query:
             self.send_response(400)
