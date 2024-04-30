@@ -103,3 +103,7 @@ def estimate_budget(
         )
 
     return budget
+
+
+def calculate_matching_fund(budget: int, leverage: float) -> int:
+    return int(budget * leverage)

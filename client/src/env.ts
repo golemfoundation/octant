@@ -6,6 +6,7 @@ export const envViteKeys: EnvViteKeys = {
   alchemyId: 'VITE_ALCHEMY_ID',
   areCurrentEpochsProjectsHiddenOutsideAllocationWindow:
     'VITE_ARE_CURRENT_EPOCHS_PROJECTS_HIDDEN_OUTSIDE_ALLOCATION_WINDOW',
+  clientEndpoint: 'VITE_CLIENT_ENDPOINT',
   contractDepositsAddress: 'VITE_DEPOSITS_ADDRESS',
   contractEpochsAddress: 'VITE_EPOCHS_ADDRESS',
   contractGlmAddress: 'VITE_GLM_ADDRESS',
@@ -29,6 +30,8 @@ const env: Env = {
   areCurrentEpochsProjectsHiddenOutsideAllocationWindow: import.meta.env[
     envViteKeys.areCurrentEpochsProjectsHiddenOutsideAllocationWindow
   ],
+  // @ts-expect-error TS does not understand the way vite imports envs.
+  clientEndpoint: import.meta.env[envViteKeys.clientEndpoint],
   // @ts-expect-error TS does not understand the way vite imports envs.
   contractDepositsAddress: import.meta.env[envViteKeys.contractDepositsAddress],
   // @ts-expect-error TS does not understand the way vite imports envs.
