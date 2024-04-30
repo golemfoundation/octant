@@ -1,0 +1,21 @@
+.root {
+  .header {
+    display: flex;
+    align-items: center;
+    overflow: visible;
+  }
+}
+
+.tooltip {
+  margin-left: 0.8rem;
+  position: relative;
+
+  .tooltipContainer {
+    top: 3.6rem;
+    left: -16.7rem;
+  }
+}
+
+.tooltipWrapper {
+  position: relative;
+}

@@ -26,6 +26,7 @@
   "common": {
     "availableNow": "Available now",
     "calculateRewards": "Calculate rewards",
+    "estimateRewards": "Estimate rewards",
     "calculating": "Calculating...",
     "close": "Close",
     "copied": "Copied",
@@ -45,6 +46,7 @@
       "desktop": "Threshold data unavailable",
       "mobile": "No threshold data"
     },
+    "matchFunding": "Match funding",
     "valueCantBeEmpty": "Value can't be empty",
     "lessThan1m": "less than 1m",
     "donors": "Donors",
@@ -79,8 +81,11 @@
         "donated": "Donated"
       },
       "rewardsCalculator": {
+        "modalHeaderTooltip": "Calculator assumes GLM is locked before allocation window and remains locked until the next window. Estimated match funding is based on 100% of rewards being allocated to projects.",
+        "estimates": "Estimates",
         "enterGLMAmount": "Enter a GLM amount",
-        "lockFor": "Lock for",
+        "lockForEpoch_one": "Lock for {{count}} epoch",
+        "lockForEpoch_other": "Lock for {{count}} epochs",
         "estimatedRewards": "Estimated rewards",
         "errors": {
           "valueCryptoTooBig": "That isn’t a valid amount"
@@ -108,7 +113,6 @@
         "manual": "Manual"
       },
       "allocationSummary": {
-        "matchFunding": "Match funding",
         "totalImpact": "Total impact",
         "estimatedLeverage": "Est. leverage",
         "confirmYourAllocations": "Confirm your allocations",
@@ -215,9 +219,17 @@
           "amount": "Amount",
           "gasPrice": "Gas price",
           "viewOnEtherscan": "View on Etherscan",
+          "estimatedLeverage": "Est. leverage",
+          "finalMatchFunding": "Final match funding",
           "when": "When",
           "withdrawal": "Withdrew ETH",
-          "matchingFundDonation": "Matching fund donation"
+          "matchingFundDonation": "Matching fund donation",
+          "leverageUnknown": "Unknown",
+          "allocationTooltips": {
+            "leverageUnknown": "We do not know the leverage for this past allocation.",
+            "finalMatchFunding": "Once allocation period has finished we know the exact amount of your matched funding your donation attracted, so we show that rather than just your estimated leverage amount.",
+            "leverage": "Leverage shows the multiple of your donation the projects you chose will receive in matched funding. Note that it may change wildly during an epoch, and be very different to your final matched funding."
+          }
         }
       },
       "historyTransactionLabel": {

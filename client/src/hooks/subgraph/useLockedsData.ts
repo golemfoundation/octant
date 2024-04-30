@@ -43,7 +43,7 @@ export default function useLockedsData(): UseQueryResult<UseLockedsDataResponse>
 
       const fetchPage = async (first: number) => {
         const data = await request(subgraphAddress, GET_LOCKEDS_DATA, {
-          first,
+          first: pageSize,
           skip: first - pageSize,
         });
 

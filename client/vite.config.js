@@ -3,7 +3,7 @@ import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react';
 import i18n from 'i18next';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import { defineConfig, splitVendorChunkPlugin, loadEnv } from 'vite';
 import viteCompression from 'vite-plugin-compression';
 import htmlPlugin from 'vite-plugin-html-config';
 
@@ -29,6 +29,8 @@ i18n.init({
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
+  process.env = {...process.env, ...loadEnv(mode, process.cwd())};
+
   const isProduction = mode === 'production';
   const isStaging = mode === 'staging';
   const localIdentName = isProduction ? '[hash:base64:5]' : '[name]__[local]--[hash:base64:5]';
@@ -42,7 +44,8 @@ export default defineConfig(({ mode }) => {
       metas: [
         { content: i18n.t('meta.description'), name: 'og:description' },
         { content: i18n.t('meta.description'), name: 'description' },
-        { content: `${base}images/og-image.png`, name: 'og:image' },
+        // importing env.ts is not possible here.
+        { content: `${process.env.VITE_CLIENT_ENDPOINT}images/og-image.png`, name: 'og:image' },
       ],
     }),
   ];
