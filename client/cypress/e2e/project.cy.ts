@@ -153,7 +153,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
-      connectWallet(true, true);
     });
 
     it('entering project view shows Toast with info about IPFS failure when all providers fail', () => {
