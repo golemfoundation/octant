@@ -99,6 +99,7 @@ const ProjectsView = (): ReactElement => {
       )}
       {archivedEpochs.length > 0 && (
         <InfiniteScroll
+          className={styles.archives}
           hasMore={loadedArchivedEpochsNumber !== lastArchivedEpochNumber}
           initialLoad
           loader={
