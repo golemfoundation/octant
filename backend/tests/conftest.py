@@ -83,16 +83,6 @@ MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
 MOCK_GET_MESSAGE_HASH = Mock()
 MOCK_IS_CONTRACT = Mock()
 
-# struct WithdrawPayload {
-#         // @notice The epoch number
-#         uint256 epoch;
-#         // @notice The amount to withdraw
-#         uint256 amount;
-#         // @notice The Merkle proof for the rewards
-#         bytes32[] proof;
-#     }
-
-
 def mock_etherscan_api_get_transactions(*args, **kwargs):
     if kwargs["tx_type"] == "txlist":
         return [

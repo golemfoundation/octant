@@ -197,11 +197,6 @@ def test_withdrawals(
     res = client.finalized_snapshot()
     assert res["epoch"] == 1
 
-    # first implementation of waiting for scheduler
-    # TODO below
-    # https://viniciuschiele.github.io/flask-apscheduler/rst/api.html
-    # /scheduler/jobs [GET] > returns json with details of all jobs
-    # /scheduler/jobs/<job_id>/run [POST
     while not vault.is_merkle_root_set(1):
         time.sleep(1)
 

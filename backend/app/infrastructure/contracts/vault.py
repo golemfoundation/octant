@@ -53,14 +53,4 @@ class Vault(SmartContract):
             [(epoch, amount, merkle_proof)]
         ).build_transaction({"from": account.address, "nonce": nonce})
         signed_tx = self.w3.eth.account.sign_transaction(transaction, account.key)
-
-        # NOTE! encoding is done automatically by web3py, there is no need to do it manually
-        # args = encode(['[[(uint256,uint256,bytes32[])]]'], [[(epoch,amount,merkle_proof)]])
-        # merkle_proof = [bytes.fromhex(x[2:]) for x in merkle_proof]
-        # args = encode(['(uint,uint,bytes32[])[]'], [[(epoch, amount, merkle_proof)]])
-        # return self.contract.functions.batchWithdraw(args).transact()
-
-        # this prevents automatic encoder from recognizing arguments as correct
-        # merkle_proof = [x[2:] for x in merkle_proof]
-        # this fails with "wrong merkle proof" <- at least we pass encoding step
         return self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
