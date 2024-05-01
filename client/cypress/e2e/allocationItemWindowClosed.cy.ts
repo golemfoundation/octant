@@ -3,6 +3,7 @@ import {
   visitWithLoader,
   mockCoinPricesServer,
   navigateWithCheck,
+  checkProjectsViewLoaded,
 } from 'cypress/utils/e2e';
 import { moveTime, setupAndMoveToPlayground } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
@@ -59,7 +60,7 @@ describe('allocation (allocation window closed)', () => {
         localStorage.setItem(ALLOCATION_ITEMS_KEY, '[]');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
 
-        cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
+        checkProjectsViewLoaded();
         cy.get('[data-test^=ProjectsView__ProjectsListItem]')
           .eq(0)
           .should('be.visible')

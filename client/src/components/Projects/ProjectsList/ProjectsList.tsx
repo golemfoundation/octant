@@ -20,14 +20,17 @@ const ProjectsList: FC<ProjectsListProps> = ({
     keyPrefix: 'components.dedicated.projectsList',
   });
 
-  const { data: projectsEpoch } = useProjectsEpoch(epoch);
+  const { data: projectsEpoch, isFetching: isFetchingProjectsEpoch } = useProjectsEpoch(epoch);
   const { data: projectsIpfsWithRewards, isFetching: isFetchingProjectsWithRewards } =
     useProjectsIpfsWithRewards(epoch);
   const epochDurationLabel = useEpochDurationLabel(epoch);
 
+  const isLoading = isFetchingProjectsEpoch || isFetchingProjectsWithRewards;
+
   return (
     <div
       className={styles.list}
+      data-isloading={isLoading ? 'true' : 'false'}
       data-test={epoch ? 'ProjectsView__ProjectsList--archive' : 'ProjectsView__ProjectsList'}
     >
       {epoch && (
