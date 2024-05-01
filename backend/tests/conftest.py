@@ -83,6 +83,7 @@ MOCK_EIP1271_IS_VALID_SIGNATURE = Mock()
 MOCK_GET_MESSAGE_HASH = Mock()
 MOCK_IS_CONTRACT = Mock()
 
+
 def mock_etherscan_api_get_transactions(*args, **kwargs):
     if kwargs["tx_type"] == "txlist":
         return [

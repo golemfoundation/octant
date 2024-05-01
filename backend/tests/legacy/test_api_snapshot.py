@@ -68,6 +68,7 @@ def test_pending_snapshot(
     assert bob_budget > alice_budget
     print(f"bob_budget: {bob_budget} while alice_budget: {alice_budget} ")
 
+
 @pytest.mark.api
 def test_allocations(
     client: Client, deployer: UserAccount, ua_alice: UserAccount, ua_bob: UserAccount
