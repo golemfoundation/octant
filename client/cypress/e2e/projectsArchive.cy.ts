@@ -1,4 +1,8 @@
-import { checkLocationWithLoader, visitWithLoader } from 'cypress/utils/e2e';
+import {
+  checkLocationWithLoader,
+  visitWithLoader,
+  checkProjectsViewLoaded,
+} from 'cypress/utils/e2e';
 import { moveTime } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
@@ -42,7 +46,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=MainLayout__body]').then(el => {
         const mainLayoutPaddingTop = parseInt(el.css('paddingTop'), 10);
 
-        cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
+        checkProjectsViewLoaded();
         cy.get('[data-test=ProjectsView__ProjectsList]')
           .should('be.visible')
           .children()
@@ -55,7 +59,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
 
             // list test
             cy.get('[data-test=ProjectsView__ProjectsList--archive]').first().should('be.visible');
-            cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
+            checkProjectsViewLoaded();
             cy.get('[data-test=ProjectsView__ProjectsList--archive]')
               .first()
               .children()
@@ -83,7 +87,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
                       .should('have.length', 1);
                   }
 
-                  cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
+                  checkProjectsViewLoaded();
                   cy.get(`[data-test=ProjectsView__ProjectsListItem--archive--${i}]`)
                     .first()
                     .invoke('data', 'address')
