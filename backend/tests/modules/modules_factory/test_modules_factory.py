@@ -44,6 +44,8 @@ from app.modules.user.tos.service.initial import InitialUserTos, InitialUserTosV
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.modules.withdrawals.service.pending import PendingWithdrawals
 from app.shared.blockchain_types import ChainTypes
+from app.modules.user.budgets.service.upcoming import UpcomingUserBudgets
+from app.modules.snapshots.pending.service.simulated import SimulatedPendingSnapshots
 
 
 def test_future_services_factory():
@@ -77,12 +79,17 @@ def test_current_services_factory():
     multisig_signatures = OffchainMultisigSignatures(
         verifiers={SignatureOpType.TOS: tos_verifier}, is_mainnet=True
     )
-
+    user_budgets = UpcomingUserBudgets(
+        simulated_pending_snapshot_service=SimulatedPendingSnapshots(
+            effective_deposits=user_deposits, octant_rewards=octant_rewards
+        )
+    )
     assert result.user_deposits_service == user_deposits
     assert result.octant_rewards_service == octant_rewards
     assert result.history_service == history
     assert result.user_tos_service == user_tos
     assert result.multisig_signatures_service == multisig_signatures
+    assert result.user_budgets_service == user_budgets
 
 
 def test_pre_pending_services_factory_when_mainnet():

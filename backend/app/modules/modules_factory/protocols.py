@@ -111,6 +111,12 @@ class UserBudgets(Protocol):
 
 
 @runtime_checkable
+class UpcomingUserBudgets(Protocol):
+    def get_budget(self, context: Context, user_address: str) -> int:
+        ...
+
+
+@runtime_checkable
 class UserRewards(Protocol):
     def get_unused_rewards(self, context: Context) -> Dict[str, int]:
         ...
