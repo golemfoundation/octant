@@ -245,4 +245,4 @@ def test_withdrawals(
     ua_carol.withdraw(epoch, carol_withdrawal_amount, carol_merkle_proof)
     carol_wallet_after_withdraw = w3.eth.get_balance(ua_carol.address)
     print("Carol Wallet balance after withdrawal: ", bob_wallet_after_withdraw)
-    assert carol_wallet_after_withdraw > carol_wallet_before_withdraw 
+    assert carol_wallet_after_withdraw > carol_wallet_before_withdraw
