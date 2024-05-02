@@ -70,6 +70,7 @@ export default defineConfig(({ mode }) => {
     base,
     build: {
       sourcemap: true,
+      minify: false,
     },
     css: {
       modules: {
