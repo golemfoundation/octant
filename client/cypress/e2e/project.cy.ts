@@ -150,15 +150,16 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     beforeEach(() => {
+      cy.intercept('GET', '**/ipfs/**', req => {
+        req.destroy();
+      });
+
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
     });
 
     it('entering project view shows Toast with info about IPFS failure when all providers fail', () => {
-      cy.intercept('GET', '**/ipfs/**', req => {
-        req.destroy();
-      });
 
       cy.get('[data-test=Toast--ipfsMessage').should('be.visible');
     });
