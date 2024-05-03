@@ -28,7 +28,7 @@ const mutateAsyncMoveToDecisionWindowClosed = (cypressWindow: Cypress.AUTWindow)
     });
   });
 
-const mutateAsyncMakeSnapshot = (
+export const mutateAsyncMakeSnapshot = (
   cypressWindow: Cypress.AUTWindow,
   type: 'finalized' | 'pending',
 ): Promise<any> =>
