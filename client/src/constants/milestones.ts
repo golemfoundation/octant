@@ -137,7 +137,7 @@ export default function getMilestones(): Milestone[] {
     },
     {
       from: new Date('2024-05-13T00:00:00+0200'),
-      href: 'https://octant.fillout.com/t/u4uT8WFzDvus',
+      href: 'https://octant.fillout.com/t/g9KoWncoD5us',
       id: 'e4-applications-open',
       label: i18n.t('views.projects.projectsTimelineWidget.applicationsOpen'),
       to: new Date('2024-06-03T00:00:00+0200'),
