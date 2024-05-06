@@ -29,6 +29,7 @@ export default defineConfig({
     },
     supportFile: 'cypress/support/index.ts',
   },
+  video: true,
   viewportHeight: 1080,
   viewportWidth: 1920,
 });
