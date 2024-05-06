@@ -35,7 +35,7 @@ withdrawable_rewards_model = api.model(
 @ns.doc(
     description="Returns a list containing amount and merkle proofs for all not claimed epochs",
     params={
-        "address": "User or proposal address",
+        "address": "User or project address",
     },
 )
 @ns.response(

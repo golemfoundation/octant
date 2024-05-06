@@ -41,7 +41,7 @@ def upgrade():
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("epoch", sa.Integer(), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=True),
-        sa.Column("proposal_address", sa.String(length=42), nullable=False),
+        sa.Column("project_address", sa.String(length=42), nullable=False),
         sa.Column("amount", sa.String(), nullable=False),
         sa.ForeignKeyConstraint(
             ["user_id"],

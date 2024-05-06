@@ -19,7 +19,7 @@ from app.extensions import db, deposits, glm, gql_factory, w3
 from app.infrastructure import database
 from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
-from app.infrastructure.contracts.proposals import Proposals
+from app.infrastructure.contracts.projects import Projects
 from app.infrastructure.contracts.vault import Vault
 from app.infrastructure.database.multisig_signature import SigStatus
 from app.legacy.crypto.account import Account as CryptoAccount
@@ -70,7 +70,7 @@ from tests.helpers.subgraph.events import create_deposit_event
 
 # Contracts mocks
 MOCK_EPOCHS = MagicMock(spec=Epochs)
-MOCK_PROPOSALS = MagicMock(spec=Proposals)
+MOCK_PROJECTS = MagicMock(spec=Projects)
 MOCK_VAULT = MagicMock(spec=Vault)
 MOCK_GLM = MagicMock(spec=ERC20)
 
@@ -264,7 +264,7 @@ def deployment(pytestconfig):
     conf.GLM_CONTRACT_ADDRESS = envs["GLM_CONTRACT_ADDRESS"]
     conf.DEPOSITS_CONTRACT_ADDRESS = envs["DEPOSITS_CONTRACT_ADDRESS"]
     conf.EPOCHS_CONTRACT_ADDRESS = envs["EPOCHS_CONTRACT_ADDRESS"]
-    conf.PROPOSALS_CONTRACT_ADDRESS = envs["PROPOSALS_CONTRACT_ADDRESS"]
+    conf.PROJECTS_CONTRACT_ADDRESS = envs["PROJECTS_CONTRACT_ADDRESS"]
     conf.WITHDRAWALS_TARGET_CONTRACT_ADDRESS = envs[
         "WITHDRAWALS_TARGET_CONTRACT_ADDRESS"
     ]
@@ -442,7 +442,7 @@ def tos_users(user_accounts):
 
 
 @pytest.fixture(scope="function")
-def proposal_accounts():
+def project_accounts():
     w3.eth.account.enable_unaudited_hdwallet_features()
     return [
         w3.eth.account.from_mnemonic(MNEMONIC, account_path=f"m/44'/60'/0'/0/{i}")
@@ -451,8 +451,8 @@ def proposal_accounts():
 
 
 @pytest.fixture(scope="function")
-def proposal_addresses(proposal_accounts):
-    return [p.address for p in proposal_accounts]
+def proposal_addresses(project_accounts):
+    return [p.address for p in project_accounts]
 
 
 @pytest.fixture(scope="function")
@@ -488,7 +488,7 @@ def mock_epoch_details(mocker, graphql_client):
 @pytest.fixture(scope="function")
 def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.legacy.controllers.snapshots.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.legacy.core.proposals.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.legacy.core.projects.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.context.epoch_state.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.context.epoch_details.epochs", MOCK_EPOCHS)
 
@@ -507,16 +507,16 @@ def patch_epochs(monkeypatch):
 
 
 @pytest.fixture(scope="function")
-def patch_proposals(monkeypatch, proposal_accounts):
-    monkeypatch.setattr("app.legacy.core.proposals.proposals", MOCK_PROPOSALS)
-    monkeypatch.setattr("app.context.projects.proposals", MOCK_PROPOSALS)
+def patch_projects(monkeypatch, project_accounts):
+    monkeypatch.setattr("app.legacy.core.projects.projects", MOCK_PROJECTS)
+    monkeypatch.setattr("app.context.projects.projects_extension", MOCK_PROJECTS)
     monkeypatch.setattr(
-        "app.modules.projects.metadata.service.projects_metadata.proposals",
-        MOCK_PROPOSALS,
+        "app.modules.projects.metadata.service.projects_metadata.projects",
+        MOCK_PROJECTS,
     )
 
-    MOCK_PROPOSALS.get_proposal_addresses.return_value = [
-        p.address for p in proposal_accounts
+    MOCK_PROJECTS.get_project_addresses.return_value = [
+        p.address for p in project_accounts
     ]
 
 
@@ -730,31 +730,31 @@ def mock_finalized_epoch_snapshot_db(app, user_accounts):
 
 
 @pytest.fixture(scope="function")
-def mock_allocations_db(app, mock_users_db, proposal_accounts):
+def mock_allocations_db(app, mock_users_db, project_accounts):
     prev_epoch_context = get_context(MOCKED_PENDING_EPOCH_NO - 1)
     pending_epoch_context = get_context(MOCKED_PENDING_EPOCH_NO)
     user1, user2, _ = mock_users_db
 
     user1_allocations = [
-        AllocationItem(proposal_accounts[0].address, 10 * 10**18),
-        AllocationItem(proposal_accounts[1].address, 5 * 10**18),
-        AllocationItem(proposal_accounts[2].address, 300 * 10**18),
+        AllocationItem(project_accounts[0].address, 10 * 10**18),
+        AllocationItem(project_accounts[1].address, 5 * 10**18),
+        AllocationItem(project_accounts[2].address, 300 * 10**18),
     ]
 
     user1_allocations_prev_epoch = [
-        AllocationItem(proposal_accounts[0].address, 101 * 10**18),
-        AllocationItem(proposal_accounts[1].address, 51 * 10**18),
-        AllocationItem(proposal_accounts[2].address, 3001 * 10**18),
+        AllocationItem(project_accounts[0].address, 101 * 10**18),
+        AllocationItem(project_accounts[1].address, 51 * 10**18),
+        AllocationItem(project_accounts[2].address, 3001 * 10**18),
     ]
 
     user2_allocations = [
-        AllocationItem(proposal_accounts[1].address, 1050 * 10**18),
-        AllocationItem(proposal_accounts[3].address, 500 * 10**18),
+        AllocationItem(project_accounts[1].address, 1050 * 10**18),
+        AllocationItem(project_accounts[3].address, 500 * 10**18),
     ]
 
     user2_allocations_prev_epoch = [
-        AllocationItem(proposal_accounts[1].address, 10501 * 10**18),
-        AllocationItem(proposal_accounts[3].address, 5001 * 10**18),
+        AllocationItem(project_accounts[1].address, 10501 * 10**18),
+        AllocationItem(project_accounts[3].address, 5001 * 10**18),
     ]
 
     make_user_allocation(

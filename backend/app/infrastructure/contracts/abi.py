@@ -121,7 +121,7 @@ ERC20 = [
     },
 ]
 
-PROPOSALS = [
+PROJECTS = [
     {
         "inputs": [{"internalType": "uint256", "name": "_epoch", "type": "uint256"}],
         "name": "getProposalAddresses",

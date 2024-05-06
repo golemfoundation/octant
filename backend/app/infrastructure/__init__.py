@@ -41,10 +41,10 @@ class OctantResource(Resource):
         user_address_canonizer = OctantResource.canonize_address(
             field_name="user_address", force=False
         )
-        proposal_address_canonizer = OctantResource.canonize_address(
-            field_name="proposal_address", force=False
+        project_address_canonizer = OctantResource.canonize_address(
+            field_name="project_address", force=False
         )
-        return user_address_canonizer(proposal_address_canonizer(attr))
+        return user_address_canonizer(project_address_canonizer(attr))
 
     def __getattribute__(self, name):
         attr = object.__getattribute__(self, name)

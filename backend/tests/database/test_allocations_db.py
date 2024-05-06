@@ -3,7 +3,7 @@ from tests.conftest import MOCKED_PENDING_EPOCH_NO
 
 
 def test_get_all_by_epoch_group_by_user_address(
-    mock_allocations_db, user_accounts, proposal_accounts
+    mock_allocations_db, user_accounts, project_accounts
 ):
     result = database.allocations.get_users_alloc_sum_by_epoch(MOCKED_PENDING_EPOCH_NO)
 
