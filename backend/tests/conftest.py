@@ -451,7 +451,7 @@ def project_accounts():
 
 
 @pytest.fixture(scope="function")
-def proposal_addresses(project_accounts):
+def project_addresses(project_accounts):
     return [p.address for p in project_accounts]
 
 
