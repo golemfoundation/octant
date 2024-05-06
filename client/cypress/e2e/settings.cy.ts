@@ -10,12 +10,10 @@ import {
 } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import getValueCryptoToDisplay from 'src/utils/getValueCryptoToDisplay';
-import {
-  DISCORD_LINK,
-  OCTANT_BUILD_LINK,
-  OCTANT_DOCS,
-  TERMS_OF_USE,
-} from '../../src/constants/urls.ts';
+import { OCTANT_BUILD_LINK } from '../../src/constants/urls.ts';
+import { OCTANT_DOCS } from '../../src/constants/urls.ts';
+import { DISCORD_LINK } from '../../src/constants/urls.ts';
+import { TERMS_OF_USE } from '../../src/constants/urls.ts';
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(`settings: ${device}`, { viewportHeight, viewportWidth }, () => {
@@ -206,7 +204,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         { href: DISCORD_LINK, text: 'Discord' },
       ];
 
-      cy.get('[data-test=Button]').each(($button, index) => {
+      cy.get('[data-test=SettingsLinkBoxes__Button]').each(($button, index) => {
         const expectedText = isDesktop
           ? expectedOrderAndContentLinksDesktop[index].text
           : expectedOrderAndContentLinksMobile[index].text;
