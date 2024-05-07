@@ -2,6 +2,7 @@ import pytest
 import time
 
 from app.extensions import w3, epochs, vault
+from app.legacy.core import vault as vault_core
 from app.legacy.core.proposals import get_proposals_addresses
 from tests.conftest import Client, UserAccount
 
@@ -197,6 +198,9 @@ def test_withdrawals(
     # res = client.pending_snapshot()
     res = client.finalized_snapshot()
     assert res["epoch"] == 1
+
+    # write merkle root for withdrawals
+    vault_core.confirm_withdrawals()
 
     while not vault.is_merkle_root_set(1):
         time.sleep(1)
