@@ -15,7 +15,7 @@ spec:
     namespace: $DEPLOYMENT_ID
   sources:
     - repoURL: 'https://gitlab.com/api/v4/projects/48137258/packages/helm/devel'
-      targetRevision: 0.2.50
+      targetRevision: 0.2.51
       chart: octant
       helm:
         parameters:
@@ -33,8 +33,6 @@ spec:
             value: '$NETWORK_NAME'
           - name: 'webClient.hideCurrentProjectsOutsideAW'
             value: 'false'
-          - name: 'webClient.safeEndpoint'
-            value: 'https://safe-transaction-sepolia.safe.global/'
           ## Graph Node
           - name: graphNode.graph.env.NETWORK
             value: '$NETWORK_NAME'

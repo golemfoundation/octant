@@ -77,6 +77,10 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     if (epoch === currentEpoch - 1 && isDecisionWindowOpen) {
       return unusedRewards + ethBelowThreshold;
     }
+    // TODO OCT-1612 OCT-1614 remove this bypass.
+    if (epoch === 3) {
+      return 3854465046588467390n;
+    }
     return leftover;
   }, [ethBelowThreshold, epoch, currentEpoch, isDecisionWindowOpen, leftover, unusedRewards]);
 

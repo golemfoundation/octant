@@ -3,21 +3,36 @@ from flask_restx import Namespace, fields
 
 from app.extensions import api
 from app.infrastructure import OctantResource
-from app.infrastructure.routes.validations.user_validations import (
-    validate_estimate_budget_inputs,
-)
 from app.legacy.controllers import rewards
-from app.modules.common.time import days_to_sec
+from app.modules.facades import rewards_estimation as rewards_estimation_facade
 from app.modules.octant_rewards.controller import get_leverage
 from app.modules.projects.rewards.controller import (
     get_estimated_project_rewards,
     get_allocation_threshold,
 )
-from app.modules.user.budgets.controller import estimate_budget, get_budgets, get_budget
+from app.modules.user.budgets.controller import (
+    get_budgets,
+    get_budget,
+    estimate_budget_by_days,
+    get_upcoming_user_budget,
+)
 from app.modules.user.rewards.controller import get_unused_rewards
 
 ns = Namespace("rewards", description="Octant rewards")
 api.add_namespace(ns)
+
+user_budget_with_matched_funding_model = api.model(
+    "UserBudget",
+    {
+        "budget": fields.String(
+            required=True, description="User budget for given epoch, BigNumber (wei)"
+        ),
+        "matchedFunding": fields.String(
+            required=True,
+            description="User matched funding for given epoch, BigNumber (wei)",
+        ),
+    },
+)
 
 user_budget_model = api.model(
     "UserBudget",
@@ -104,14 +119,37 @@ leverage_model = api.model(
 estimated_budget_request = ns.model(
     "EstimatedBudget",
     {
+        "numberOfEpochs": fields.Integer(
+            required=True,
+            description="Number of epochs when GLM are locked",
+        ),
+        "glmAmount": fields.String(
+            required=True,
+            description="Amount of estimated GLM locked in WEI",
+        ),
+    },
+)
+
+estimated_budget_by_days_request = ns.model(
+    "EstimatedBudgetByDays",
+    {
         "days": fields.Integer(
             required=True,
             description="Number of days when GLM are locked",
         ),
-        "glm_amount": fields.String(
+        "glmAmount": fields.String(
             required=True,
             description="Amount of estimated GLM locked in WEI",
         ),
+    },
+)
+
+upcoming_user_budget_response = api.model(
+    "UpcomingBudgetResponse",
+    {
+        "upcomingBudget": fields.String(
+            required=True, description="Calculated upcoming user budget."
+        )
     },
 )
 
@@ -217,10 +255,38 @@ class EpochBudgets(OctantResource):
 
 @ns.route("/estimated_budget")
 @ns.doc(
-    description="Returns estimated rewards budget available when GLM locked by given period of time"
+    description="Returns estimated rewards budget available when GLM locked by given number of full epochs"
 )
 class EstimatedUserBudget(OctantResource):
     @ns.expect(estimated_budget_request)
+    @ns.marshal_with(user_budget_with_matched_funding_model)
+    @ns.response(200, "Budget successfully retrieved")
+    def post(self):
+        no_epochs, glm_amount = ns.payload["numberOfEpochs"], int(
+            ns.payload["glmAmount"]
+        )
+        app.logger.debug(
+            f"Getting user estimated budget for {no_epochs} epochs and {glm_amount} GLM. Getting matched_funding based on previous epoch."
+        )
+
+        rewards = rewards_estimation_facade.estimate_rewards(no_epochs, glm_amount)
+        budget = rewards.estimated_budget
+        leverage = rewards.leverage
+        matching_fund = rewards.matching_fund
+
+        app.logger.debug(
+            f"Estimated user budget: {budget}, estimated matching_fund: {matching_fund} with leverage: {leverage}"
+        )
+
+        return {"budget": budget, "matchedFunding": matching_fund}
+
+
+@ns.route("/estimated_budget/by_days")
+@ns.doc(
+    description="Returns estimated rewards budget available when GLM locked by given period of time"
+)
+class EstimatedUserBudgetByDays(OctantResource):
+    @ns.expect(estimated_budget_by_days_request)
     @ns.marshal_with(user_budget_model)
     @ns.response(200, "Budget successfully retrieved")
     def post(self):
@@ -228,9 +294,7 @@ class EstimatedUserBudget(OctantResource):
         app.logger.debug(
             f"Getting user estimated budget for {days} days and {glm_amount} GLM"
         )
-        validate_estimate_budget_inputs(days, glm_amount)
-        lock_duration_sec = days_to_sec(days)
-        budget = estimate_budget(lock_duration_sec, glm_amount)
+        budget = estimate_budget_by_days(days, glm_amount)
         app.logger.debug(f"Estimated user budget: {budget}")
 
         return {"budget": budget}
@@ -359,3 +423,24 @@ class RewardsMerkleTree(OctantResource):
         app.logger.debug(f"Merkle tree leaves for epoch {epoch}: {merkle_tree_leaves}")
 
         return merkle_tree_leaves.to_dict()
+
+
+@ns.route("/budget/<string:user_address>/upcoming")
+@ns.doc(
+    description="Returns upcoming user budget based on if allocation happened now.",
+    params={
+        "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed "
+        "with 0x)"
+    },
+)
+class UpcomingUserBudget(OctantResource):
+    @ns.marshal_with(upcoming_user_budget_response)
+    @ns.response(200, "Upcoming user budget successfully retrieved")
+    def get(self, user_address):
+        app.logger.debug(
+            f"Getting upcoming user budget amount. User address: {user_address}"
+        )
+
+        budget = get_upcoming_user_budget(user_address)
+
+        return {"upcomingBudget": budget}
