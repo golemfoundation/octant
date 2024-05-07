@@ -11,7 +11,7 @@
     color: $color-octant-grey5;
     cursor: pointer;
 
-    &.isWaitingForWalletConfirmationMultisig {
+    &.isWaitingForAllMultisigSignatures {
       opacity: 0.5;
     }
   }

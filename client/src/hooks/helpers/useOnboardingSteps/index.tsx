@@ -15,7 +15,8 @@ const useOnboardingSteps = (isUserTOSAcceptedInitial: boolean | undefined): Step
   const { i18n } = useTranslation();
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const [isMultisigSignatureNeeded, setIsMultisigSignatureNeeded] = useState(false);
+  const [isWaitingForFirstMultisigSignature, setIsWaitingForFirstMultisigSignature] =
+    useState(false);
 
   const epoch = isDecisionWindowOpen ? currentEpoch! - 1 : currentEpoch;
 
@@ -35,20 +36,20 @@ const useOnboardingSteps = (isUserTOSAcceptedInitial: boolean | undefined): Step
     ...(isUserTOSAcceptedInitial === false
       ? [
           {
-            header: isMultisigSignatureNeeded
+            header: isWaitingForFirstMultisigSignature
               ? i18n.t('views.onboarding.stepsCommon.signingTheTerms.header')
               : i18n.t('views.onboarding.stepsCommon.usingTheApp.header'),
             image: '/images/onboarding/octant.webp',
             text: (
               <Fragment>
                 <div>
-                  {isMultisigSignatureNeeded
+                  {isWaitingForFirstMultisigSignature
                     ? i18n.t('views.onboarding.stepsCommon.signingTheTerms.text')
                     : i18n.t('views.onboarding.stepsCommon.usingTheApp.text')}
                 </div>
                 <ModalOnboardingTOS
-                  isMultisigSignatureNeeded={isMultisigSignatureNeeded}
-                  setIsMultisigSignatureNeeded={setIsMultisigSignatureNeeded}
+                  isWaitingForFirstMultisigSignature={isWaitingForFirstMultisigSignature}
+                  setIsWaitingForFirstMultisigSignature={setIsWaitingForFirstMultisigSignature}
                 />
               </Fragment>
             ),
