@@ -16,7 +16,9 @@ const MetricsNavigation = (): ReactElement => {
   const { isLargeDesktop } = useMediaQuery();
   const forcedSectionRef = useRef<ActiveSection | null>(null);
   const [activeSection, setActiveSection] = useState<ActiveSection>('epoch');
+  const [activeDot, setActiveDot] = useState(1);
   const throttleCallback = useCallback(throttle, []);
+  const numberOfDots = 8;
 
   const steps = [
     {
@@ -74,16 +76,49 @@ const MetricsNavigation = (): ReactElement => {
     const metricsEpochTarget = document.getElementById(METRICS_EPOCH_ID)!;
     const metricsGeneralTarget = document.getElementById(METRICS_GENERAL_ID)!;
     const metricsPersonalTarget = document.getElementById(METRICS_PERSONAL_ID)!;
+    const navbarTarget = document.querySelector('[data-test=Navbar]');
 
-    const getSectionVisibility = (section: HTMLElement) => {
+    const navbarDimensions = navbarTarget?.getBoundingClientRect();
+
+    const navbarTopDistanceFromBottomEdge = window.innerHeight - (navbarDimensions?.top || 0);
+
+    const getSectionActiveDot = (section: HTMLElement) => {
       const sectionRect = section.getBoundingClientRect();
 
-      const visibility = Math.min(
-        Math.max((window.innerHeight - Math.abs(sectionRect.top)) / sectionRect.height, 0),
-        1,
-      );
+      const distanceBetweenSectionBottomAndNavbarTop =
+        sectionRect.bottom - window.innerHeight + navbarTopDistanceFromBottomEdge;
 
-      return visibility;
+      if (section === metricsPersonalTarget && distanceBetweenSectionBottomAndNavbarTop < 0) {
+        return 1;
+      }
+
+      if (
+        distanceBetweenSectionBottomAndNavbarTop < 0 ||
+        distanceBetweenSectionBottomAndNavbarTop > sectionRect.height
+      ) {
+        return 0;
+      }
+
+      if (sectionRect.height > window.innerHeight) {
+        if (sectionRect.top > 0) {
+          return 1;
+        }
+
+        return Math.ceil(
+          numberOfDots -
+            distanceBetweenSectionBottomAndNavbarTop /
+              ((sectionRect.height - window.innerHeight + navbarTopDistanceFromBottomEdge) /
+                numberOfDots),
+        );
+      }
+
+      if (section === metricsPersonalTarget) {
+        return 1;
+      }
+      return Math.ceil(
+        numberOfDots -
+          distanceBetweenSectionBottomAndNavbarTop / (sectionRect.height / numberOfDots),
+      );
     };
 
     const scrollEndListener = () => {
@@ -98,18 +133,19 @@ const MetricsNavigation = (): ReactElement => {
         return;
       }
 
-      const metricsEpochVisibility = getSectionVisibility(metricsEpochTarget);
-      const metricsGeneralVisibility = getSectionVisibility(metricsGeneralTarget);
-      const metricsPersonalVisibility = getSectionVisibility(metricsPersonalTarget);
+      const metricsEpochActiveDot = getSectionActiveDot(metricsEpochTarget);
+      const metricsGeneralActiveDot = getSectionActiveDot(metricsGeneralTarget);
+      const metricsPersonalActiveDot = getSectionActiveDot(metricsPersonalTarget);
 
-      const nextActiveSection = (
+      const sortedSections: { section: ActiveSection; value: number }[] = (
         [
-          { section: 'epoch', value: metricsEpochVisibility },
-          { section: 'general', value: metricsGeneralVisibility },
-          { section: 'personal', value: metricsPersonalVisibility },
+          { section: 'epoch', value: metricsEpochActiveDot },
+          { section: 'general', value: metricsGeneralActiveDot },
+          { section: 'personal', value: metricsPersonalActiveDot },
         ] as { section: ActiveSection; value: number }[]
-      ).sort((a, b) => b.value - a.value)[0].section;
-      setActiveSection(nextActiveSection);
+      ).sort((a, b) => b.value - a.value);
+      setActiveSection(sortedSections[0].section);
+      setActiveDot(sortedSections[0].value);
     };
 
     const throttledScrollListener = throttleCallback(scrollListener, 100);
@@ -129,7 +165,10 @@ const MetricsNavigation = (): ReactElement => {
         {steps.map(({ section, sectionId, label }) => (
           <div
             key={section}
-            className={cx(styles.sectionStep, activeSection === section && styles.isActive)}
+            className={cx(
+              styles.sectionStep,
+              activeSection === section && activeDot === 1 && styles.isActive,
+            )}
             onClick={() => scrollToSection(sectionId, section as ActiveSection)}
           >
             {isLargeDesktop && (
@@ -137,10 +176,21 @@ const MetricsNavigation = (): ReactElement => {
                 <svg className={styles.circleSvg} height={16} viewBox="0 0 16 16" width={16}>
                   <circle className={styles.circle} cx={8} cy={8} r={6} />
                 </svg>
-                {sectionId !== METRICS_GENERAL_ID && (
-                  <div className={styles.smallDotsWrapper}>
-                    {[...Array(7).keys()].map(d => (
-                      <div key={d} className={styles.smallDot} />
+                {sectionId !== METRICS_PERSONAL_ID && (
+                  <div
+                    className={cx(
+                      styles.smallDotsWrapper,
+                      sectionId === METRICS_GENERAL_ID && styles.xyz,
+                    )}
+                  >
+                    {[...Array(numberOfDots - 1).keys()].map(i => (
+                      <div
+                        key={i}
+                        className={cx(
+                          styles.smallDot,
+                          activeSection === section && activeDot - 2 === i && styles.isActive,
+                        )}
+                      />
                     ))}
                   </div>
                 )}
