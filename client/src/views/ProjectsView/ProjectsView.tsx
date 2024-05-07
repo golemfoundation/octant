@@ -58,7 +58,23 @@ const ProjectsView = (): ReactElement => {
     ? Array.from(Array(lastArchivedEpochNumber)).map((_, idx, array) => array.length - idx)
     : [];
 
-  const onLoadNextEpochArchive = () => setLoadedArchivedEpochsNumber(prev => prev + 1);
+  const onLoadNextEpochArchive = () => {
+    setLoadedArchivedEpochsNumber(prev => {
+      /**
+       * While in CY, onLoadNextEpochArchive is sometimes called twice in a row for the same project.
+       *
+       * The reason for it is unknown, but without below check the same number can be loaded twice.
+       * This results in random failure of the CY tests for projects view.
+       *
+       * During "normal" usage problem could not be reproduced,
+       * yet might be possible, so better avoid that.
+       *
+       * Issue is not resolved in the library:
+       * https://github.com/danbovey/react-infinite-scroller/issues/143
+       */
+      return loadedArchivedEpochsNumber !== prev ? prev : prev + 1;
+    });
+  };
 
   useLayoutEffect(() => {
     const projectsScrollY = window[WINDOW_PROJECTS_SCROLL_Y];
