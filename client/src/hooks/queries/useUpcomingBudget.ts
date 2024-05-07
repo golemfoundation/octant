@@ -17,8 +17,8 @@ export default function useUpcomingBudget(
     enabled: !!address && isDecisionWindowOpen === false,
     queryFn: () => apiGetUpcomingBudget(address!),
     queryKey: QUERY_KEYS.upcomingBudget(address!),
-    refetchInterval: 60000,
-    select: response => parseUnitsBigInt(response.upcomingBudget, 'wei'), // 60s
+    refetchInterval: 60000, // 60s
+    select: response => parseUnitsBigInt(response.upcomingBudget, 'wei'),
     ...options,
   });
 }
