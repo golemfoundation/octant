@@ -10,10 +10,12 @@ import {
 } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import getValueCryptoToDisplay from 'src/utils/getValueCryptoToDisplay';
-import { OCTANT_BUILD_LINK } from '../../src/constants/urls.ts';
-import { OCTANT_DOCS } from '../../src/constants/urls.ts';
-import { DISCORD_LINK } from '../../src/constants/urls.ts';
-import { TERMS_OF_USE } from '../../src/constants/urls.ts';
+import {
+  OCTANT_BUILD_LINK,
+  OCTANT_DOCS,
+  DISCORD_LINK,
+  TERMS_OF_USE
+} from 'src/constants/urls';
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(`settings: ${device}`, { viewportHeight, viewportWidth }, () => {
@@ -189,7 +191,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       cy.get('[data-test=EarnView__TipTile--connectWallet]').should('not.exist');
     });
 
-    it('Should show correct setting links', () => {
+    it('should show correct setting links', () => {
       const expectedOrderAndContentLinksDesktop = [
         { href: OCTANT_BUILD_LINK, text: 'Octant.build' },
         { href: OCTANT_DOCS, text: 'User Docs' },
