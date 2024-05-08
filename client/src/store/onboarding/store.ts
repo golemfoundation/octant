@@ -31,7 +31,6 @@ export default getStoreWithMeta<OnboardingData, OnboardingMethods>({
     setIsOnboardingModalOpen: payload => {
       set(state => ({ data: { ...state.data, isOnboardingModalOpen: payload } }));
     },
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     setLastSeenStep: payload => {
       localStorage.setItem(LAST_SEEN_STEP, JSON.stringify(payload));
       set(state => ({ data: { ...state.data, lastSeenStep: payload } }));

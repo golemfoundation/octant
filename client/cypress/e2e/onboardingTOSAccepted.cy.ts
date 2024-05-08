@@ -16,10 +16,7 @@ import {
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import { HAS_ONBOARDING_BEEN_CLOSED, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
-import {
-  getStepsDecisionWindowClosed,
-  getStepsDecisionWindowOpen,
-} from 'src/hooks/helpers/useOnboardingSteps/steps';
+import { getStepsDecisionWindowOpen } from 'src/hooks/helpers/useOnboardingSteps/steps';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 chai.use(chaiColors);
@@ -60,26 +57,18 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('user is able to click through entire onboarding flow', () => {
-      cy.window().then(win => {
-        const isDecisionWindowOpen = win.clientReactQuery.getQueryData(
-          QUERY_KEYS.isDecisionWindowOpen,
-        );
+      const onboardingSteps = getStepsDecisionWindowOpen('2', '16 Jan');
 
-        const onboardingSteps = isDecisionWindowOpen
-          ? getStepsDecisionWindowOpen('2', '16 Jan')
-          : getStepsDecisionWindowClosed('2', '16 Jan');
+      for (let i = 1; i < onboardingSteps.length - 1; i++) {
+        checkProgressStepperSlimIsCurrentAndClickNext(i);
+      }
 
-        for (let i = 1; i < onboardingSteps.length - 1; i++) {
-          checkProgressStepperSlimIsCurrentAndClickNext(i);
-        }
-
-        cy.get('[data-test=ModalOnboarding__ProgressStepperSlim__element]')
-          .eq(onboardingSteps.length - 1)
-          .click();
-        cy.get('[data-test=ModalOnboarding__Button]').click();
-        cy.get('[data-test=ModalOnboarding]').should('not.exist');
-        cy.get('[data-test=ProjectsView__ProjectsList]').should('be.visible');
-      });
+      cy.get('[data-test=ModalOnboarding__ProgressStepperSlim__element]')
+        .eq(onboardingSteps.length - 1)
+        .click();
+      cy.get('[data-test=ModalOnboarding__Button]').click();
+      cy.get('[data-test=ModalOnboarding]').should('not.exist');
+      cy.get('[data-test=ProjectsView__ProjectsList]').should('be.visible');
     });
 
     it('user is able to close the modal by clicking button in the top-right', () => {
@@ -169,49 +158,41 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     }
 
     it('Onboarding stepper has right amount of steps and highlights correct amount of passed steps', () => {
-      cy.window().then(win => {
-        const isDecisionWindowOpen = win.clientReactQuery.getQueryData(
-          QUERY_KEYS.isDecisionWindowOpen,
-        );
+      const onboardingSteps = getStepsDecisionWindowOpen('2', '16 Jan');
 
-        const onboardingSteps = isDecisionWindowOpen
-          ? getStepsDecisionWindowOpen('2', '16 Jan')
-          : getStepsDecisionWindowClosed('2', '16 Jan');
+      cy.get('[data-test=ModalOnboarding__Button]').click();
 
-        cy.get('[data-test=ModalOnboarding__Button]').click();
+      cy.get(`[data-test*=OnboardingStepper__circle]`).should(
+        'have.length',
+        onboardingSteps.length,
+      );
 
-        cy.get(`[data-test*=OnboardingStepper__circle]`).should(
-          'have.length',
-          onboardingSteps.length,
-        );
+      for (let i = 0; i < onboardingSteps.length - 1; i++) {
+        cy.get(`[data-test=OnboardingStepper__circle--${i}]`)
+          .then($el => $el.css('stroke'))
+          .should('be.colored', i > 0 ? '#ffffff' : '#2d9b87');
+      }
+      cy.get('[data-test=OnboardingStepper]').click();
+      checkProgressStepperSlimIsCurrentAndClickNext(1);
+      cy.get('[data-test=ModalOnboarding__Button]').click();
+      for (let i = 0; i < onboardingSteps.length - 1; i++) {
+        cy.get(`[data-test=OnboardingStepper__circle--${i}]`)
+          .then($el => $el.css('stroke'))
+          .should('be.colored', i > 1 ? '#ffffff' : '#2d9b87');
+      }
+      cy.get('[data-test=OnboardingStepper]').click();
+      checkProgressStepperSlimIsCurrentAndClickNext(2);
+      cy.get('[data-test=ModalOnboarding__Button]').click();
+      for (let i = 0; i < onboardingSteps.length - 1; i++) {
+        cy.get(`[data-test=OnboardingStepper__circle--${i}]`)
+          .then($el => $el.css('stroke'))
+          .should('be.colored', i > 2 ? '#ffffff' : '#2d9b87');
+      }
+      cy.get('[data-test=OnboardingStepper]').click();
+      checkProgressStepperSlimIsCurrentAndClickNext(3);
+      cy.get('[data-test=ModalOnboarding__Button]').click();
 
-        for (let i = 0; i < onboardingSteps.length - 1; i++) {
-          cy.get(`[data-test=OnboardingStepper__circle--${i}]`)
-            .then($el => $el.css('stroke'))
-            .should('be.colored', i > 0 ? '#ffffff' : '#2d9b87');
-        }
-        cy.get('[data-test=OnboardingStepper]').click();
-        checkProgressStepperSlimIsCurrentAndClickNext(1);
-        cy.get('[data-test=ModalOnboarding__Button]').click();
-        for (let i = 0; i < onboardingSteps.length - 1; i++) {
-          cy.get(`[data-test=OnboardingStepper__circle--${i}]`)
-            .then($el => $el.css('stroke'))
-            .should('be.colored', i > 1 ? '#ffffff' : '#2d9b87');
-        }
-        cy.get('[data-test=OnboardingStepper]').click();
-        checkProgressStepperSlimIsCurrentAndClickNext(2);
-        cy.get('[data-test=ModalOnboarding__Button]').click();
-        for (let i = 0; i < onboardingSteps.length - 1; i++) {
-          cy.get(`[data-test=OnboardingStepper__circle--${i}]`)
-            .then($el => $el.css('stroke'))
-            .should('be.colored', i > 2 ? '#ffffff' : '#2d9b87');
-        }
-        cy.get('[data-test=OnboardingStepper]').click();
-        checkProgressStepperSlimIsCurrentAndClickNext(3);
-        cy.get('[data-test=ModalOnboarding__Button]').click();
-
-        cy.get('[data-test=OnboardingStepper]').should('not.exist');
-      });
+      cy.get('[data-test=OnboardingStepper]').should('not.exist');
     });
   });
 });

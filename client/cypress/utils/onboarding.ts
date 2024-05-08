@@ -57,9 +57,6 @@ export const checkChangeStepsWithArrowKeys = (isTOSAccepted: boolean): void => {
   [
     { el: 1, key: 'ArrowRight' },
     { el: 2, key: 'ArrowRight' },
-    // { el: 3, key: 'ArrowRight' },
-    // { el: 3, key: 'ArrowRight' },
-    // { el: 2, key: 'ArrowLeft' },
     { el: 1, key: 'ArrowLeft' },
     { el: 0, key: 'ArrowLeft' },
     { el: 0, key: 'ArrowLeft' },
@@ -83,10 +80,6 @@ export const checkChangeStepsByClickingEdgeOfTheScreenUpTo25px = (isTOSAccepted:
     [
       { clientX: rightEdgeX - 25, el: 1 },
       { clientX: rightEdgeX - 10, el: 2 },
-      // { clientX: rightEdgeX - 5, el: 3 },
-      // rightEdgeX === browser right frame
-      // { clientX: rightEdgeX - 1, el: 3 },
-      // { clientX: leftEdgeX + 25, el: 2 },
       { clientX: leftEdgeX + 10, el: 1 },
       { clientX: leftEdgeX + 5, el: 0 },
       { clientX: leftEdgeX, el: 0 },
@@ -147,11 +140,6 @@ export const checkChangeStepsBySwipingOnScreenDifferenceMoreThanOrEqual5px = (
       touchMoveClientX: window.innerWidth / 2 - 5,
       touchStartClientX: window.innerWidth / 2,
     },
-    // {
-    //   el: 3,
-    //   touchMoveClientX: window.innerWidth / 2 - 5,
-    //   touchStartClientX: window.innerWidth / 2,
-    // },
     {
       el: 2,
       touchMoveClientX: window.innerWidth / 2 + 5,

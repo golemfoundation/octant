@@ -30,6 +30,18 @@ const OnboardingStepper = (): ReactNode => {
   const viewBox = '0 0 56 56';
   const numberOfSteps = stepsToUse.length;
 
+  const animationProps = isDesktop
+    ? {
+        animate: { bottom: 48, opacity: 1, right: 48 },
+        exit: { bottom: 24, opacity: 0, right: 48 },
+        initial: { bottom: 24, opacity: 0, right: 48 },
+      }
+    : {
+        animate: { bottom: 116, opacity: 1, right: 24 },
+        exit: { bottom: 92, opacity: 0, right: 24 },
+        initial: { bottom: 92, opacity: 0, right: 24 },
+      };
+
   const svgNumber = useMemo(() => {
     if (lastSeenStep === 1) {
       return one;
@@ -46,13 +58,11 @@ const OnboardingStepper = (): ReactNode => {
   return (
     <motion.div
       key="OnboardingStepper"
-      animate={{ bottom: isDesktop ? 48 : 116, opacity: 1, right: isDesktop ? 48 : 24 }}
       className={styles.root}
       data-test="OnboardingStepper"
-      exit={{ bottom: isDesktop ? 24 : 92, opacity: 0, right: isDesktop ? 48 : 24 }}
-      initial={{ bottom: isDesktop ? 24 : 92, opacity: 0, right: isDesktop ? 48 : 24 }}
       onClick={() => setIsOnboardingModalOpen(true)}
       whileHover={{ scale: 1.1 }}
+      {...animationProps}
     >
       <Tooltip
         childrenClassName={styles.tooltipChildrenClassname}
