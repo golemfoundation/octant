@@ -6,7 +6,7 @@ import {
 } from 'cypress/utils/e2e';
 import { getNamesOfProjects } from 'cypress/utils/projects';
 import viewports from 'cypress/utils/viewports';
-import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
+import { HAS_ONBOARDING_BEEN_CLOSED, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 import Chainable = Cypress.Chainable;
@@ -45,6 +45,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     beforeEach(() => {
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
       checkProjectsViewLoaded();
 
@@ -160,7 +161,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('entering project view shows Toast with info about IPFS failure when all providers fail', () => {
-
       cy.get('[data-test=Toast--ipfsMessage').should('be.visible');
     });
   });
@@ -180,6 +180,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     beforeEach(() => {
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
       connectWallet(true, true);
       checkProjectsViewLoaded();
