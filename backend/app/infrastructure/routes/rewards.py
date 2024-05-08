@@ -83,10 +83,10 @@ budget_model = api.model(
         ),
         "allocated": fields.String(
             required=True,
-            description="Total user allocated funds for the proposals",
+            description="Total user allocated funds for the projects",
         ),
         "matched": fields.String(
-            description="Total matched rewards for the proposals. Returns null if "
+            description="Total matched rewards for the projects. Returns null if "
             "epoch is not in the allocation window",
         ),
     },
@@ -157,7 +157,7 @@ epoch_rewards_merkle_tree_leaf_model = api.model(
     "EpochRewardsMerkleTreeLeaf",
     {
         "address": fields.String(
-            required=True, description="User account or proposal address"
+            required=True, description="User account or project address"
         ),
         "amount": fields.String(required=True, description="Assigned reward"),
     },
@@ -186,19 +186,19 @@ epoch_rewards_merkle_tree_model = api.model(
 )
 
 project_rewards_model_item = api.model(
-    "Proposal",
+    "Project",
     {
         "address": fields.String(
             required=True,
-            description="Proposal address",
+            description="Project address",
         ),
         "allocated": fields.String(
             required=True,
-            description="User allocated funds for the proposal, wei",
+            description="User allocated funds for the project, wei",
         ),
         "matched": fields.String(
             required=True,
-            description="Matched rewards funds for the proposal, wei",
+            description="Matched rewards funds for the project, wei",
         ),
     },
 )
@@ -321,7 +321,7 @@ class Threshold(OctantResource):
 
 
 @ns.doc(
-    description="Returns proposals with matched rewards for a given epoch",
+    description="Returns projects with matched rewards for a given epoch",
     params={
         "epoch": "Epoch number",
     },
@@ -334,15 +334,15 @@ class Threshold(OctantResource):
     400,
     "Invalid epoch number given. The epoch must be finalized",
 )
-@ns.route("/proposals/epoch/<int:epoch>")
+@ns.route("/projects/epoch/<int:epoch>")
 class FinalizedProjectsRewards(OctantResource):
     @ns.marshal_with(projects_rewards_model)
     def get(self, epoch):
-        app.logger.debug(f"Getting proposal rewards for a finalized epoch {epoch}")
-        proposal_rewards = rewards.get_finalized_epoch_proposals_rewards(epoch)
-        app.logger.debug(f"Proposal rewards in epoch: {epoch}: {proposal_rewards}")
+        app.logger.debug(f"Getting project rewards for a finalized epoch {epoch}")
+        project_rewards = rewards.get_finalized_epoch_project_rewards(epoch)
+        app.logger.debug(f"Project rewards in epoch: {epoch}: {project_rewards}")
 
-        return {"rewards": proposal_rewards}
+        return {"rewards": project_rewards}
 
 
 @ns.doc(
@@ -352,7 +352,7 @@ class FinalizedProjectsRewards(OctantResource):
     200,
     "",
 )
-@ns.route("/proposals/estimated")
+@ns.route("/projects/estimated")
 class EstimatedProjectRewards(OctantResource):
     @ns.marshal_with(projects_rewards_model)
     def get(self):

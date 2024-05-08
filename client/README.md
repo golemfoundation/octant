@@ -24,16 +24,16 @@ Client uses 5 contracts. Following are their names and envs which should have th
 - Deposits (`VITE_DEPOSITS_ADDRESS`)
 - Epochs (`VITE_EPOCHS_ADDRESS`)
 - ERC20 (`VITE_GLM_ADDRESS`)
-- Proposals (`VITE_PROPOSALS_ADDRESS)`
+- Projects (`VITE_PROPOSALS_ADDRESS)`
 - Vault (`VITE_VAULT_ADDRESS`)
 
 Values for all but `VITE_JSON_RPC_ENDPOINT` envs are required.
 
 In order to deploy client without Epochs & Vault contracts please use any placeholder value for their envs (e.g. `placeholder`), i.e. `VITE_EPOCHS_ADDRESS=placeholder`.
 
-## Proposals
+## Projects
 
-The app fetches proposals addresses from the contract and their data (name, description, etc.) from IPFS. Current expected schema of proposal coming from IPFS is as follows:
+The app fetches projects addresses from the contract and their data (name, description, etc.) from IPFS. Current expected schema of proposal coming from IPFS is as follows:
 
 ```ts
 /**
