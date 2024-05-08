@@ -15,7 +15,7 @@ from web3 import Web3
 
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
-from app.extensions import db, deposits, glm, gql_factory, w3
+from app.extensions import db, deposits, glm, gql_factory, w3, vault
 from app.infrastructure import database
 from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
@@ -269,6 +269,11 @@ def deployment(pytestconfig):
         "WITHDRAWALS_TARGET_CONTRACT_ADDRESS"
     ]
     conf.VAULT_CONTRACT_ADDRESS = envs["VAULT_CONTRACT_ADDRESS"]
+    conf.SCHEDULER_ENABLED = False
+    conf.VAULT_CONFIRM_WITHDRAWALS_ENABLED = False
+    conf.TESTNET_MULTISIG_PRIVATE_KEY = (
+        "0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e"
+    )
     yield conf
 
 
@@ -296,6 +301,13 @@ class UserAccount:
     def lock(self, value: int):
         glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
         deposits.lock(self._account, w3.to_wei(value, "ether"))
+
+    def unlock(self, value: int):
+        glm.approve(self._account, deposits.contract.address, w3.to_wei(value, "ether"))
+        deposits.unlock(self._account, w3.to_wei(value, "ether"))
+
+    def withdraw(self, epoch: int, amount: int, merkle_proof: dict):
+        vault.batch_withdraw(self._account, epoch, amount, merkle_proof)
 
     def allocate(self, amount: int, addresses: list[str]):
         nonce = self._client.get_allocation_nonce(self.address)
@@ -362,8 +374,20 @@ class Client:
         rv = self._flask_client.post("/snapshots/pending").text
         return json.loads(rv)
 
+    def finalized_snapshot(self):
+        rv = self._flask_client.post("/snapshots/finalized").text
+        return json.loads(rv)
+
     def get_rewards_budget(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").text
+        print(
+            "get_rewards_budget :",
+            self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").request,
+        )
+        return json.loads(rv)
+
+    def get_withdrawals_for_address(self, address: str):
+        rv = self._flask_client.get(f"/withdrawals/{address}").text
         return json.loads(rv)
 
     def get_epoch_allocations(self, epoch: int):

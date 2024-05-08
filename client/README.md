@@ -14,6 +14,7 @@ Ensure that the `.env` file is present. See `.env.template`.
 - `VITE_ARE_CURRENT_EPOCHS_PROJECTS_HIDDEN_OUTSIDE_ALLOCATION_WINDOW` when set to 'true' makes current epoch's projects hidden when allocation window is closed.
 - `VITE_IPFS_GATEWAYS` is an array of URLs separated by strings sorted by priority with providers the app should try to fetch the data about projects from. When fetching from the last fails client shows error toast message. Each URL should end with a forward slash (`/`).
 - `VITE_SERVER_ENDPOINT`: URL of backend server. URL should end with a forward slash (`/`).
+- `VITE_SAFE_ENDPOINT`: URL of Safe API. For Sepolia testnet use `https://safe-transaction-sepolia.safe.global/`, for Mainnet `https://safe-transaction-mainnet.safe.global/`, for local it can be anything because multisig doesn't work on local.
 
 `yarn generate-abi-typings` is used to generate typings for proposals ABIs that we have in codebase. In these typings custom adjustments are added, e.g. in some places `string` is wrongly instead of `BigInt`. Linter is also disabled there. Since ABIs do not change, this command doesn't need to rerun.
 
