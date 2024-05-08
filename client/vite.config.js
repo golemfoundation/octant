@@ -29,7 +29,7 @@ i18n.init({
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  process.env = {...process.env, ...loadEnv(mode, process.cwd())};
+  process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
   const isProduction = mode === 'production';
   const isStaging = mode === 'staging';

@@ -140,9 +140,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       }
     });
 
-    // TODO OCT-1611 enable this test.
-    // eslint-disable-next-line jest/no-disabled-tests
-    it.skip('user is able to add & remove the first and the last project to/from allocation, triggering change of the icon, change of the number in navbar', () => {
+    it('user is able to add & remove the first and the last project to/from allocation, triggering change of the icon, change of the number in navbar', () => {
       // This test checks the first and the last elements only to save time.
       cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
 
