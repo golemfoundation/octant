@@ -180,7 +180,7 @@ const MetricsNavigation = (): ReactElement => {
                   <div
                     className={cx(
                       styles.smallDotsWrapper,
-                      sectionId === METRICS_GENERAL_ID && styles.xyz,
+                      sectionId === METRICS_GENERAL_ID && styles.transformDots,
                     )}
                   >
                     {[...Array(numberOfDots - 1).keys()].map(i => (

@@ -37,7 +37,7 @@
     height: 7.6rem;
     top: $smallDotsWrapperTop;
 
-    &.xyz {
+    &.transformDots {
       top: calc(50% + $smallDotsWrapperTop);
       transform: translate(0, calc(-50% + $smallDotsWrapperTop));
     }
