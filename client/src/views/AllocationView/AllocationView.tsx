@@ -26,6 +26,7 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import useProjectsIpfsWithRewards from 'hooks/queries/useProjectsIpfsWithRewards';
+import useUpcomingBudget from 'hooks/queries/useUpcomingBudget';
 import useUserAllocationNonce from 'hooks/queries/useUserAllocationNonce';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useWithdrawals from 'hooks/queries/useWithdrawals';
@@ -59,6 +60,8 @@ const AllocationView = (): ReactElement => {
     isPending: isLoadingAllocateSimulate,
     reset: resetAllocateSimulate,
   } = useAllocateSimulate();
+  const { isFetching: isFetchingUpcomingBudget, isRefetching: isRefetchingUpcomingBudget } =
+    useUpcomingBudget();
   const [isWaitingForWalletConfirmationMultisig, setIsWaitingForWalletConfirmationMultisig] =
     useState(false);
   const { data: isContract } = useIsContract();
@@ -386,7 +389,9 @@ const AllocationView = (): ReactElement => {
   const isLoading =
     allocationValues === undefined ||
     (isConnected && isFetchingUserNonce) ||
-    (isConnected && isFetchingUserAllocation);
+    (isConnected && isFetchingUserAllocation) ||
+    (isFetchingUpcomingBudget && !isRefetchingUpcomingBudget);
+
   const areAllocationsAvailableOrAlreadyDone =
     (allocationValues !== undefined && !isEmpty(allocations)) ||
     (!!userAllocations?.hasUserAlreadyDoneAllocation && userAllocations.elements.length > 0);
