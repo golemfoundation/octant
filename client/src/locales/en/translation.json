@@ -304,7 +304,7 @@
     }
   },
   "meta": {
-    "description": "Octant is a platform for experiments in decentralized governance that reward participation.",
+    "description": "Octant is a platform that enables users to lock GLM, earn ETH rewards, and fund projects they care about",
     "fundrasingOnOctant": "{{projectName}} is fundrasing on Octant"
   },
   "toasts": {
