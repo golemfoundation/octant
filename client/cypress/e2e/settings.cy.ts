@@ -192,35 +192,35 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('should show correct setting links', () => {
-      const expectedOrderAndContentLinksDesktop = [
-        { href: OCTANT_BUILD_LINK, text: 'Octant.build' },
-        { href: OCTANT_DOCS, text: 'User Docs' },
-        { href: DISCORD_LINK, text: 'Discord Community' },
-        { href: TERMS_OF_USE, text: 'Terms & Conditions' },
-      ];
+      if (isDesktop) {
+        cy.get('[data-test=SettingsLinksInfoBox__Button]').each(($button, index) => {
+          const expectedOrderAndContentLinksDesktop = [
+            { href: OCTANT_BUILD_LINK, text: 'Octant.build' },
+            { href: OCTANT_DOCS, text: 'User Docs' },
+            { href: DISCORD_LINK, text: 'Discord Community' },
+            { href: TERMS_OF_USE, text: 'Terms & Conditions' },
+          ];
 
-      const expectedOrderAndContentLinksMobile = [
-        { href: TERMS_OF_USE, text: 'Terms & Conditions' },
-        { href: OCTANT_BUILD_LINK, text: 'Website' },
-        { href: OCTANT_DOCS, text: 'Docs' },
-        { href: DISCORD_LINK, text: 'Discord' },
-      ];
+          cy.wrap($button)
+            .should('have.text', expectedOrderAndContentLinksDesktop[index].text)
+            .should('have.attr', 'href', expectedOrderAndContentLinksDesktop[index].href);
+        });
+      }
 
-      cy.get('[data-test=SettingsLinkBoxes__Button]').each(($button, index) => {
-        const expectedText = isDesktop
-          ? expectedOrderAndContentLinksDesktop[index].text
-          : expectedOrderAndContentLinksMobile[index].text;
+      if (!isDesktop) {
+        cy.get('[data-test=SettingsLinkBoxes__Button]').each(($button, index) => {
+          const expectedOrderAndContentLinksMobile = [
+            { href: TERMS_OF_USE, text: 'Terms & Conditions' },
+            { href: OCTANT_BUILD_LINK, text: 'Website' },
+            { href: OCTANT_DOCS, text: 'Docs' },
+            { href: DISCORD_LINK, text: 'Discord' },
+          ];
 
-        const expectedHref = isDesktop
-          ? expectedOrderAndContentLinksDesktop[index].href
-          : expectedOrderAndContentLinksMobile[index].href;
-
-        cy.wrap($button)
-          .should('have.text', expectedText);
-
-        cy.wrap($button)
-          .should('have.attr', 'href', expectedHref);
-      });
+          cy.wrap($button)
+            .should('have.text', expectedOrderAndContentLinksMobile[index].text)
+            .should('have.attr', 'href', expectedOrderAndContentLinksMobile[index].href)
+        });
+      }
     });
   });
 });
