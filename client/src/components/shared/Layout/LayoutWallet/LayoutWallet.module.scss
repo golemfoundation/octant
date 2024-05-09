@@ -7,25 +7,26 @@
 .box {
   padding-top: 0;
   padding-bottom: 0;
-}
 
-.address {
-  @include ethereumAddress();
-  font-size: $font-size-12;
-  color: $color-octant-green;
-  align-items: center;
-  display: flex;
+  .address {
+    @include ethereumAddress();
+    font-size: $font-size-12;
+    color: $color-octant-green;
+    align-items: center;
+    display: flex;
+    padding-right: 0;
 
-  .svgArrowTopRight {
-    margin-left: 0.6rem;
-  }
+    > svg {
+      margin: 0 0 0 0.6rem !important;
+    }
 
-  &:hover {
-    color: $color-octant-dark;
-    text-decoration: none;
+    &:hover {
+      color: $color-octant-dark;
+      text-decoration: none;
 
-    & .svgArrowTopRight path {
-      stroke: $color-octant-dark;
+      > svg path {
+        stroke: $color-octant-dark;
+      }
     }
   }
 }
