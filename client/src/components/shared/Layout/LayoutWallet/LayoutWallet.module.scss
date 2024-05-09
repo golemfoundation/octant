@@ -9,10 +9,25 @@
   padding-bottom: 0;
 }
 
-.titleSuffix {
+.address {
   @include ethereumAddress();
   font-size: $font-size-12;
-  color: $color-octant-grey5;
+  color: $color-octant-green;
+  align-items: center;
+  display: flex;
+
+  .svgArrowTopRight {
+    margin-left: 0.6rem;
+  }
+
+  &:hover {
+    color: $color-octant-dark;
+    text-decoration: none;
+
+    & .svgArrowTopRight path {
+      stroke: $color-octant-dark;
+    }
+  }
 }
 
 .walletCurrency {
