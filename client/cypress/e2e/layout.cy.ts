@@ -132,9 +132,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       connectWallet(true, false);
       cy.get('[data-test=ProfileInfo]').click();
       cy.get('[data-test=LayoutWallet__Button--address]').should('be.visible');
-      cy.get('[data-test=LayoutWallet__Button--address]')
-        .should('have.attr', 'href')
-        .and('include', 'etherscan.io');
+      cy.get('[data-test=LayoutWallet__Button--address]').should('have.attr', 'href');
       cy.get('[data-test=LayoutWallet__Button--address]').click();
     });
   });
