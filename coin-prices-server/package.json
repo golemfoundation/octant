@@ -41,7 +41,7 @@
     "typescript": "^5.0.2"
   },
   "engines": {
-    "node": ">= 16.13.0 <17.0.0"
+    "node": ">=18"
   },
   "lint-staged": {
     "./**/*.js": [
