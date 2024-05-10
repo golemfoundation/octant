@@ -1,3 +1,5 @@
+from typing import List
+
 from flask import jsonify
 from requests.exceptions import RequestException
 
@@ -85,6 +87,14 @@ class RewardsBudgetExceeded(OctantException):
 
     def __init__(self):
         super().__init__(self.description, self.code)
+
+
+class InvalidBudgetEstimationDetails(OctantException):
+    code = 400
+    description = "You must specify all required input details: {} for estimating the user budget."
+
+    def __init__(self, details: List[str]):
+        super().__init__(self.description.format(", ".join(details)), self.code)
 
 
 class BudgetNotFound(OctantException):
