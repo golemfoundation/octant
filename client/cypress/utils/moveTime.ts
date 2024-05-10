@@ -1,6 +1,7 @@
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
   ALLOCATION_ITEMS_KEY,
+  HAS_ONBOARDING_BEEN_CLOSED,
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
@@ -15,6 +16,7 @@ export const setupAndMoveToPlayground = (): Chainable<any> => {
   mockCoinPricesServer();
   localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
   localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+  localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
   localStorage.setItem(ALLOCATION_ITEMS_KEY, '[]');
   return visitWithLoader(ROOT_ROUTES.playground.absolute);
 };
@@ -26,7 +28,7 @@ const mutateAsyncMoveToDecisionWindowClosed = (cypressWindow: Cypress.AUTWindow)
     });
   });
 
-const mutateAsyncMakeSnapshot = (
+export const mutateAsyncMakeSnapshot = (
   cypressWindow: Cypress.AUTWindow,
   type: 'finalized' | 'pending',
 ): Promise<any> =>
@@ -105,6 +107,7 @@ export const moveTime = (
     mockCoinPricesServer();
     localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
     localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+    localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
     localStorage.setItem(ALLOCATION_ITEMS_KEY, '[]');
     visitWithLoader(ROOT_ROUTES.playground.absolute);
   }

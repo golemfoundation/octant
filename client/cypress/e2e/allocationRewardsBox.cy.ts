@@ -3,7 +3,11 @@ import chaiColors from 'chai-colors';
 
 import { visitWithLoader, mockCoinPricesServer, connectWallet } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
-import { IS_ONBOARDING_ALWAYS_VISIBLE, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
+import {
+  HAS_ONBOARDING_BEEN_CLOSED,
+  IS_ONBOARDING_ALWAYS_VISIBLE,
+  IS_ONBOARDING_DONE,
+} from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 chai.use(chaiColors);
@@ -16,6 +20,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       beforeEach(() => {
         localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
         localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+        localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
         visitWithLoader(ROOT_ROUTES.allocation.absolute);
       });
 
@@ -108,6 +113,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.allocation.absolute);
       cy.intercept('GET', '/rewards/budget/*/epoch/*', { body: { budget: '10000000000' } });
       connectWallet(true, false);

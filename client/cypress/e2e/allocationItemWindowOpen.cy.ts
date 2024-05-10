@@ -6,12 +6,14 @@ import {
   mockCoinPricesServer,
   navigateWithCheck,
   connectWallet,
+  checkProjectsViewLoaded,
 } from 'cypress/utils/e2e';
 import { moveTime, setupAndMoveToPlayground } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
 import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
   ALLOCATION_ITEMS_KEY,
+  HAS_ONBOARDING_BEEN_CLOSED,
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
@@ -63,11 +65,12 @@ describe('allocation (allocation window open)', () => {
         mockCoinPricesServer();
         localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
         localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+        localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
         localStorage.setItem(ALLOCATION_ITEMS_KEY, '[]');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
         connectWallet(true, false);
 
-        cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
+        checkProjectsViewLoaded();
         cy.get('[data-test^=ProjectsView__ProjectsListItem]')
           .eq(0)
           .should('be.visible')

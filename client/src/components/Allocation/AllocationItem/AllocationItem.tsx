@@ -204,12 +204,12 @@ const AllocationItem: FC<AllocationItemProps> = ({
           animate(
             ref.current,
             // @ts-expect-error e is wrongly typed, doesn't see x property.
-            { x: e.x < startX ? constraints[0] : constraints[1] },
+            { x: e.pageX < startX ? constraints[0] : constraints[1] },
             { duration: 0.2 },
           );
         }}
         // @ts-expect-error e is wrongly typed, doesn't see x property.
-        onDragStart={e => setStartX(e.x)}
+        onDragStart={e => setStartX(e.pageX)}
         style={{ x }}
       >
         {(isLoading || isLoadingError) && <AllocationItemSkeleton />}

@@ -1,7 +1,12 @@
-import { connectWallet, mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import {
+  checkProjectsViewLoaded,
+  connectWallet,
+  mockCoinPricesServer,
+  visitWithLoader,
+} from 'cypress/utils/e2e';
 import { getNamesOfProjects } from 'cypress/utils/projects';
 import viewports from 'cypress/utils/viewports';
-import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
+import { HAS_ONBOARDING_BEEN_CLOSED, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 import Chainable = Cypress.Chainable;
@@ -40,8 +45,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     beforeEach(() => {
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
-      cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
+      checkProjectsViewLoaded();
 
       /**
        * This could be done in before hook, but CY wipes the state after each test
@@ -72,14 +78,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       });
 
       checkProjectItemElements();
-    });
-
-    it('entering project view shows Toast with info about IPFS failure when all providers fail', () => {
-      cy.intercept('GET', '**/ipfs/**', req => {
-        req.destroy();
-      });
-
-      cy.get('[data-test=Toast--ipfsMessage').should('be.visible');
     });
 
     it('entering project view allows to add it to allocation and remove, triggering change of the icon, change of the number in navbar', () => {
@@ -142,6 +140,31 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
   });
 
+  describe(`projects (IPFS failure): ${device}`, { viewportHeight, viewportWidth }, () => {
+    before(() => {
+      /**
+       * Global Metamask setup done by Synpress is not always done.
+       * Since Synpress needs to have valid provider to fetch the data from contracts,
+       * setupMetamask is required in each test suite.
+       */
+      cy.setupMetamask();
+    });
+
+    beforeEach(() => {
+      cy.intercept('GET', '**/ipfs/**', req => {
+        req.destroy();
+      });
+
+      mockCoinPricesServer();
+      localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      visitWithLoader(ROOT_ROUTES.projects.absolute);
+    });
+
+    it('entering project view shows Toast with info about IPFS failure when all providers fail', () => {
+      cy.get('[data-test=Toast--ipfsMessage').should('be.visible');
+    });
+  });
+
   describe(`project (patron mode): ${device}`, { viewportHeight, viewportWidth }, () => {
     let projectNames: string[] = [];
 
@@ -157,9 +180,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     beforeEach(() => {
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
       connectWallet(true, true);
-      cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
+      checkProjectsViewLoaded();
 
       /**
        * This could be done in before hook, but CY wipes the state after each test

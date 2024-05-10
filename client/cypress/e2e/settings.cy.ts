@@ -4,6 +4,7 @@ import { FIAT_CURRENCIES_SYMBOLS, DISPLAY_CURRENCIES } from 'src/constants/curre
 import {
   ARE_OCTANT_TIPS_ALWAYS_VISIBLE,
   DISPLAY_CURRENCY,
+  HAS_ONBOARDING_BEEN_CLOSED,
   IS_CRYPTO_MAIN_VALUE_DISPLAY,
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
@@ -17,6 +18,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.settings.absolute);
     });
 

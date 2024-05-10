@@ -11,6 +11,8 @@ import {
   WAS_REWARDS_ALREADY_CLOSED_TIP,
   WAS_WITHDRAW_ALREADY_CLOSED_TIP,
   ALLOCATION_REWARDS_FOR_PROJECTS,
+  HAS_ONBOARDING_BEEN_CLOSED,
+  LAST_SEEN_STEP,
 } from 'constants/localStorageKeys';
 import { initialState as settingsStoreInitialState } from 'store/settings/store';
 import { initialState as tipsStoreInitialState } from 'store/tips/store';
@@ -52,6 +54,19 @@ const LocalStorageService = () => {
     }
   };
 
+  const validateNumber = (localStorageKey: string): void => {
+    let value;
+    try {
+      value = parseFloat(JSON.parse(localStorage.getItem(localStorageKey) || ''));
+    } catch (e) {
+      value = '';
+    }
+
+    if (typeof value !== 'number') {
+      localStorage.setItem(localStorageKey, '0');
+    }
+  };
+
   const validateAllocationItems = (): void => {
     const allocationItems = JSON.parse(localStorage.getItem(ALLOCATION_ITEMS_KEY) || 'null');
     if (!Array.isArray(allocationItems)) {
@@ -69,16 +84,15 @@ const LocalStorageService = () => {
   };
 
   const validateIsOnboardingDone = (): void => {
-    const isOnboardingAlwaysVisible = localStorage.getItem(IS_ONBOARDING_ALWAYS_VISIBLE);
-
-    if (isOnboardingAlwaysVisible === 'true') {
-      localStorage.setItem(
-        IS_ONBOARDING_DONE,
-        JSON.stringify(settingsStoreInitialState.isAllocateOnboardingAlwaysVisible),
-      );
-    }
-
     validateBoolean(IS_ONBOARDING_DONE);
+  };
+
+  const validateHasOnboardingBeenClosed = (): void => {
+    validateBoolean(HAS_ONBOARDING_BEEN_CLOSED);
+  };
+
+  const validateLastSeenStep = (): void => {
+    validateNumber(LAST_SEEN_STEP);
   };
 
   const validateDisplayCurrency = (): void => {
@@ -138,6 +152,8 @@ const LocalStorageService = () => {
     validateWasRewardsAlreadyClosed();
     validateWasWithdrawAlreadyClosed();
     validateRewardsForProjects();
+    validateHasOnboardingBeenClosed();
+    validateLastSeenStep();
   };
 
   return {
