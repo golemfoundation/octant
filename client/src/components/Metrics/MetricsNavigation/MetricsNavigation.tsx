@@ -4,6 +4,7 @@ import { throttle } from 'lodash';
 import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { LAYOUT_BODY_ID } from 'constants/layout';
 import { METRICS_EPOCH_ID, METRICS_GENERAL_ID, METRICS_PERSONAL_ID } from 'constants/metrics';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 
@@ -57,6 +58,7 @@ const MetricsNavigation = (): ReactElement => {
 
     const scrollToTop = element!.offsetTop + valueToAddToOffstetTop;
     setActiveSection(section);
+    setActiveDot(1);
     const maxScroll = element!.parentElement!.scrollHeight - window.innerHeight;
     if (
       scrollToTop === window.scrollY ||
@@ -75,57 +77,43 @@ const MetricsNavigation = (): ReactElement => {
   useEffect(() => {
     const metricsEpochTarget = document.getElementById(METRICS_EPOCH_ID)!;
     const metricsGeneralTarget = document.getElementById(METRICS_GENERAL_ID)!;
-    const metricsPersonalTarget = document.getElementById(METRICS_PERSONAL_ID)!;
-    const navbarTarget = document.querySelector('[data-test=Navbar]');
+    const layoutBodyTarget = document.getElementById(LAYOUT_BODY_ID)!;
 
-    const navbarDimensions = navbarTarget?.getBoundingClientRect();
+    const layoutComputedStyle = getComputedStyle(layoutBodyTarget);
 
-    const navbarTopDistanceFromBottomEdge = window.innerHeight - (navbarDimensions?.top || 0);
+    const layoutBodyHeight = parseInt(layoutComputedStyle.height);
+    const layoutBodyPaddingTop = parseInt(layoutComputedStyle.paddingTop);
+    const layoutBodyPaddingBottom = parseInt(layoutComputedStyle.paddingBottom);
 
-    const getSectionActiveDot = (section: HTMLElement) => {
-      const sectionRect = section.getBoundingClientRect();
+    const layoutBodyWithoutVerticalPadding =
+      layoutBodyHeight - layoutBodyPaddingTop - layoutBodyPaddingBottom;
 
-      const distanceBetweenSectionBottomAndNavbarTop =
-        sectionRect.bottom - window.innerHeight + navbarTopDistanceFromBottomEdge;
+    const scrollHeightWithoutPaddingTop =
+      layoutBodyHeight - window.innerHeight - layoutBodyPaddingTop;
 
-      if (section === metricsPersonalTarget && distanceBetweenSectionBottomAndNavbarTop < 0) {
-        return 1;
-      }
+    const percentageScrollShareEpochSection =
+      metricsEpochTarget.clientHeight / layoutBodyWithoutVerticalPadding;
+    const percentageScrollShareGeneralSection =
+      metricsGeneralTarget.clientHeight / layoutBodyWithoutVerticalPadding;
 
-      if (
-        distanceBetweenSectionBottomAndNavbarTop < 0 ||
-        distanceBetweenSectionBottomAndNavbarTop > sectionRect.height
-      ) {
-        return 0;
-      }
+    const scrollShareEpochSection =
+      percentageScrollShareEpochSection * scrollHeightWithoutPaddingTop;
+    const scrollShareGeneralSection =
+      percentageScrollShareGeneralSection * scrollHeightWithoutPaddingTop;
 
-      if (sectionRect.height > window.innerHeight) {
-        if (sectionRect.top > 0) {
-          return 1;
-        }
-
-        return Math.ceil(
-          numberOfDots -
-            distanceBetweenSectionBottomAndNavbarTop /
-              ((sectionRect.height - window.innerHeight + navbarTopDistanceFromBottomEdge) /
-                numberOfDots),
-        );
-      }
-
-      if (section === metricsPersonalTarget) {
-        return 1;
-      }
-      return Math.ceil(
-        numberOfDots -
-          distanceBetweenSectionBottomAndNavbarTop / (sectionRect.height / numberOfDots),
-      );
-    };
+    const stepEpochSection =
+      (percentageScrollShareEpochSection * scrollHeightWithoutPaddingTop) / 8;
+    const stepGeneralSection =
+      (percentageScrollShareGeneralSection * scrollHeightWithoutPaddingTop) / 8;
 
     const scrollEndListener = () => {
       if (!forcedSectionRef.current) {
         return;
       }
-      forcedSectionRef.current = null;
+
+      setTimeout(() => {
+        forcedSectionRef.current = null;
+      }, 100);
     };
 
     const scrollListener = () => {
@@ -133,19 +121,29 @@ const MetricsNavigation = (): ReactElement => {
         return;
       }
 
-      const metricsEpochActiveDot = getSectionActiveDot(metricsEpochTarget);
-      const metricsGeneralActiveDot = getSectionActiveDot(metricsGeneralTarget);
-      const metricsPersonalActiveDot = getSectionActiveDot(metricsPersonalTarget);
+      const scrollYWithoutPaddingTop = window.scrollY - layoutBodyPaddingTop;
 
-      const sortedSections: { section: ActiveSection; value: number }[] = (
-        [
-          { section: 'epoch', value: metricsEpochActiveDot },
-          { section: 'general', value: metricsGeneralActiveDot },
-          { section: 'personal', value: metricsPersonalActiveDot },
-        ] as { section: ActiveSection; value: number }[]
-      ).sort((a, b) => b.value - a.value);
-      setActiveSection(sortedSections[0].section);
-      setActiveDot(sortedSections[0].value);
+      if (scrollYWithoutPaddingTop <= scrollShareEpochSection) {
+        setActiveSection('epoch');
+        setActiveDot(
+          scrollYWithoutPaddingTop < 0 ? 1 : Math.ceil(scrollYWithoutPaddingTop / stepEpochSection),
+        );
+        return;
+      }
+
+      if (
+        scrollYWithoutPaddingTop > scrollShareEpochSection &&
+        scrollYWithoutPaddingTop <= scrollShareEpochSection + scrollShareGeneralSection
+      ) {
+        setActiveSection('general');
+        setActiveDot(
+          Math.ceil((scrollYWithoutPaddingTop - scrollShareEpochSection) / stepGeneralSection),
+        );
+        return;
+      }
+
+      setActiveSection('personal');
+      setActiveDot(1);
     };
 
     const throttledScrollListener = throttleCallback(scrollListener, 100);
