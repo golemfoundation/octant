@@ -116,7 +116,7 @@
     "**/cypress": "12.17.3"
   },
   "engines": {
-    "node": "18.12.1"
+    "node": ">=18"
   },
   "lint-staged": {
     "./**/*.js": [
