@@ -81,9 +81,9 @@ const MetricsNavigation = (): ReactElement => {
 
     const layoutComputedStyle = getComputedStyle(layoutBodyTarget);
 
-    const layoutBodyHeight = parseInt(layoutComputedStyle.height);
-    const layoutBodyPaddingTop = parseInt(layoutComputedStyle.paddingTop);
-    const layoutBodyPaddingBottom = parseInt(layoutComputedStyle.paddingBottom);
+    const layoutBodyHeight = parseInt(layoutComputedStyle.height, 10);
+    const layoutBodyPaddingTop = parseInt(layoutComputedStyle.paddingTop, 10);
+    const layoutBodyPaddingBottom = parseInt(layoutComputedStyle.paddingBottom, 10);
 
     const layoutBodyWithoutVerticalPadding =
       layoutBodyHeight - layoutBodyPaddingTop - layoutBodyPaddingBottom;
