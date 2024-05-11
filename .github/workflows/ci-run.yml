@@ -92,11 +92,11 @@ jobs:
         export VITE_JSON_RPC_ENDPOINT=${{ needs.deploy-e2e-env.outputs.anvil-rpc-url }}
         export VITE_SERVER_ENDPOINT=${{ needs.deploy-e2e-env.outputs.octant-backend-url }}/
 
-        # Setup NVM to use Node version 18
+        # Setup NVM to use Node version 20
         set +x
         source /usr/share/nvm/init-nvm.sh
-        nvm install 18
-        nvm use 18
+        nvm install 20
+        nvm use 20
         set -x
         npm i -g yarn
 
@@ -269,7 +269,7 @@ jobs:
     runs-on:
       - general
     container:
-      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:3e291b83
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:d984811a
       credentials:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
@@ -369,7 +369,7 @@ jobs:
     runs-on:
       - general
     container:
-      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:3e291b83
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:d984811a
       credentials:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
@@ -420,7 +420,7 @@ jobs:
     runs-on:
       - general
     container:
-      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:3e291b83
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:d984811a
       credentials:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
@@ -478,7 +478,7 @@ jobs:
     needs:
     - permissions-check
     container:
-      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:3e291b83
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:d984811a
       credentials:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
