@@ -24,7 +24,7 @@ def build_allocations(allocs):
     ]
 
 
-def build_request(user, allocations=None, nonce=0):
+def build_request(allocations=None, nonce=0):
     allocations = allocations if allocations else []
 
     return UserAllocationRequestPayload(
@@ -63,13 +63,13 @@ def test_allocation_fails_for_invalid_nonce(alice, context):
         )
 
     with pytest.raises(exceptions.WrongAllocationsNonce):
-        request = build_request(alice, nonce=2)
+        request = build_request(nonce=2)
         core.verify_user_allocation_request(
             context, request, alice.address, 1, 10**18, []
         )
 
     with pytest.raises(exceptions.WrongAllocationsNonce):
-        request = build_request(alice, nonce=None)
+        request = build_request(nonce=None)
         core.verify_user_allocation_request(
             context, request, alice.address, 1, 10**18, []
         )
@@ -83,8 +83,16 @@ def test_allocation_fails_for_a_patron(alice, bob, context):
         )
 
 
+def test_allocation_fails_for_a_project(context):
+    request = build_request()
+    with pytest.raises(exceptions.ProjectAllocationToSelf):
+        core.verify_user_allocation_request(
+            context, request, context.projects_details.projects[1], 0, 10**18, []
+        )
+
+
 def test_allocation_fails_with_empty_payload(alice, bob, context):
-    request = build_request(alice, allocations=[])
+    request = build_request(allocations=[])
     with pytest.raises(exceptions.EmptyAllocations):
         core.verify_user_allocation_request(
             context, request, alice.address, 0, 10**18, [bob.address]
@@ -96,7 +104,7 @@ def test_allocation_fails_with_invalid_proposals(alice, bob, context, projects):
     valid_allocations = [(p, 17 * 10**16) for p in valid_projects]
 
     allocations = build_allocations(valid_allocations + [(projects[4], 17 * 10**16)])
-    request = build_request(alice, allocations)
+    request = build_request(allocations)
 
     with pytest.raises(exceptions.InvalidProjects):
         core.verify_user_allocation_request(
@@ -109,7 +117,7 @@ def test_allocation_fails_with_duplucated_proposals(alice, bob, context):
     allocations = build_allocations(
         [(p, 17 * 10**16) for p in projects] + [(projects[1], 1)]
     )
-    request = build_request(alice, allocations)
+    request = build_request(allocations)
 
     with pytest.raises(exceptions.DuplicatedProposals):
         core.verify_user_allocation_request(
@@ -121,7 +129,7 @@ def test_allocation_fails_with_self_allocation(alice, bob, context):
     projects = context.projects_details.projects
 
     allocations = build_allocations([(p, 17 * 10**16) for p in projects])
-    request = build_request(alice, allocations)
+    request = build_request(allocations)
 
     with pytest.raises(exceptions.ProjectAllocationToSelf):
         core.verify_user_allocation_request(
@@ -140,7 +148,7 @@ def test_allocation_fails_with_allocation_exceeding_budget(alice, bob, context):
             (projects[3], 25 * 10**16),
         ]
     )
-    request = build_request(alice, allocations)
+    request = build_request(allocations)
 
     with pytest.raises(exceptions.RewardsBudgetExceeded):
         core.verify_user_allocation_request(
@@ -159,7 +167,7 @@ def test_allocation_does_not_fail_with_allocation_equal_to_budget(alice, bob, co
             (projects[3], 25 * 10**16),
         ]
     )
-    request = build_request(alice, allocations)
+    request = build_request(allocations)
 
     assert (
         core.verify_user_allocation_request(
@@ -178,7 +186,7 @@ def test_allocation_does_not_fail_with_allocation_below_budget(alice, bob, conte
             (projects[3], 25 * 10**16),
         ]
     )
-    request = build_request(alice, allocations)
+    request = build_request(allocations)
 
     assert (
         core.verify_user_allocation_request(
