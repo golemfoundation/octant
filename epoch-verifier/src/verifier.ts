@@ -47,17 +47,22 @@ async function run(epoch: string, opts: any) {
 
   const fetcher = new HttpFetcher(baseUrl)
   const results = await Promise.all([
-    fetcher.userBudgets(options.epoch),
-    fetcher.allocations(options.epoch),
-    fetcher.rewards(options.epoch),
-    fetcher.epochInfo(options.epoch)
+    fetcher.apiGetUserBudgets(options.epoch),
+    fetcher.apiGetAllocations(options.epoch),
+    fetcher.apiGetRewards(options.epoch),
+    fetcher.apiGetEpochInfo(options.epoch)
   ])
 
   if (results.some(isNull)) {
     process.exit(1)
   }
 
-  const [userBudgets, allocations, rewards, epochInfo] = results;
+  const [
+    userBudgets,
+    allocations,
+    rewards,
+    epochInfo,
+  ] = results;
   const context = buildContext(userBudgets!, allocations!, rewards!, epochInfo!)
 
   const runner = new Runner()
