@@ -24,8 +24,10 @@ from app.engine.octant_rewards.total_and_individual.preliminary import (
 from app.engine.octant_rewards.total_and_individual.tr_percent_calc import (
     PercentTotalAndAllIndividualRewards,
 )
-from app.engine.projects import DefaultProjectRewards
-from app.engine.projects.rewards.allocations.default import DefaultProjectAllocations
+from app.engine.projects import PreliminaryProjectRewards
+from app.engine.projects.rewards.allocations.preliminary import (
+    DefaultProjectAllocations,
+)
 from app.engine.projects.rewards.threshold.default import DefaultProjectThreshold
 from app.engine.user import (
     DefaultWeightedAverageEffectiveDeposit,
@@ -58,7 +60,7 @@ def test_default_epoch_settings():
         matched_rewards=PercentageMatchedRewards(
             OctantRewardsDefaultValues.MATCHED_REWARDS_PERCENT
         ),
-        projects_rewards=DefaultProjectRewards(
+        projects_rewards=PreliminaryProjectRewards(
             projects_threshold=DefaultProjectThreshold(1),
         ),
     )
@@ -76,7 +78,7 @@ def test_epoch_1_settings():
         ppf=NotSupportedPPFCalculator(),
         community_fund=NotSupportedCFCalculator(),
         user_budget=PreliminaryUserBudget(),
-        projects_rewards=DefaultProjectRewards(
+        projects_rewards=PreliminaryProjectRewards(
             projects_threshold=DefaultProjectThreshold(2),
         ),
     )
@@ -94,7 +96,7 @@ def test_epoch_2_settings():
         ppf=NotSupportedPPFCalculator(),
         community_fund=NotSupportedCFCalculator(),
         user_budget=PreliminaryUserBudget(),
-        projects_rewards=DefaultProjectRewards(
+        projects_rewards=PreliminaryProjectRewards(
             projects_threshold=DefaultProjectThreshold(2),
         ),
     )
@@ -118,7 +120,7 @@ def test_epoch_3_settings():
         community_fund=CommunityFundPercent(OctantRewardsDefaultValues.COMMUNITY_FUND),
         ppf=PPFCalculatorFromRewards(),
         user_budget=UserBudgetWithPPF(),
-        projects_rewards=DefaultProjectRewards(
+        projects_rewards=PreliminaryProjectRewards(
             projects_threshold=DefaultProjectThreshold(1),
         ),
     )

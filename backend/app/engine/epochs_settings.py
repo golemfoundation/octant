@@ -17,7 +17,7 @@ from app.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost im
 from app.engine.octant_rewards.total_and_individual.preliminary import (
     PreliminaryTotalAndAllIndividualRewards,
 )
-from app.engine.projects import ProjectSettings, DefaultProjectRewards
+from app.engine.projects import ProjectSettings, PreliminaryProjectRewards
 from app.engine.projects.rewards.threshold.default import DefaultProjectThreshold
 from app.engine.user.budget.preliminary import PreliminaryUserBudget
 from app.engine.user import UserSettings, DefaultWeightedAverageEffectiveDeposit
@@ -56,7 +56,7 @@ def register_epoch_settings():
             ),
         ),
         project=ProjectSettings(
-            rewards=DefaultProjectRewards(
+            rewards=PreliminaryProjectRewards(
                 projects_threshold=DefaultProjectThreshold(2),
             ),
         ),
@@ -71,10 +71,13 @@ def register_epoch_settings():
         ),
         user=UserSettings(budget=PreliminaryUserBudget()),
         project=ProjectSettings(
-            rewards=DefaultProjectRewards(
+            rewards=PreliminaryProjectRewards(
                 projects_threshold=DefaultProjectThreshold(2),
             ),
         ),
     )
 
-    SETTINGS[3] = EpochSettings()
+    SETTINGS[3] = EpochSettings(
+        project=ProjectSettings(rewards=PreliminaryProjectRewards())
+    )
+    SETTINGS[4] = EpochSettings()

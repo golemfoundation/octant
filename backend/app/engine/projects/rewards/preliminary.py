@@ -11,7 +11,9 @@ from app.engine.projects.rewards.allocations import (
     ProjectAllocations,
     ProjectAllocationsPayload,
 )
-from app.engine.projects.rewards.allocations.default import DefaultProjectAllocations
+from app.engine.projects.rewards.allocations.preliminary import (
+    DefaultProjectAllocations,
+)
 from app.engine.projects.rewards.threshold import (
     ProjectThreshold,
     ProjectThresholdPayload,
@@ -20,14 +22,7 @@ from app.engine.projects.rewards.threshold.default import DefaultProjectThreshol
 
 
 @dataclass
-class DefaultProjectRewards(ProjectRewards):
-    projects_allocations: ProjectAllocations = field(
-        default_factory=DefaultProjectAllocations
-    )
-    projects_threshold: ProjectThreshold = field(
-        default_factory=lambda: DefaultProjectThreshold(1)
-    )
-
+class PreliminaryProjectRewards(ProjectRewards):
     def calculate_threshold(self, total_allocated: int, projects: list[str]) -> int:
         return self.projects_threshold.calculate_threshold(
             ProjectThresholdPayload(
