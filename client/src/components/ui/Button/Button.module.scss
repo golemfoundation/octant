@@ -184,6 +184,14 @@ $paddingVertical: 1rem;
     border-radius: 0;
     min-height: initial;
     color: $color-octant-green;
+
+    &:hover {
+      color: $color-octant-dark;
+
+      .icon path {
+        stroke: $color-octant-dark;
+      }
+    }
   }
 
   &link3 {
@@ -238,7 +246,7 @@ $paddingVertical: 1rem;
     }
 
     &.isOnRight {
-      margin: 0 0 0 1.2rem;
+      margin: 0 0 0 0.6rem;
     }
   }
 }
