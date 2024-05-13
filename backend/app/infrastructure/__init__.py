@@ -72,6 +72,6 @@ class GQLConnectionFactory:
         client = Client()
         transport = RequestsHTTPTransport(url=self._url, timeout=2)
         client.transport = transport
-        client.fetch_schema_from_transport = True
+        client.fetch_schema_from_transport = False
 
         return client

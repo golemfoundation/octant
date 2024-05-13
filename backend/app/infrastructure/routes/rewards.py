@@ -3,6 +3,9 @@ from flask_restx import Namespace, fields
 
 from app.extensions import api
 from app.infrastructure import OctantResource
+from app.infrastructure.routes.validations.budget_estimation_input import (
+    validate_budget_estimation_input,
+)
 from app.legacy.controllers import rewards
 from app.modules.facades import rewards_estimation as rewards_estimation_facade
 from app.modules.octant_rewards.controller import get_leverage
@@ -262,9 +265,14 @@ class EstimatedUserBudget(OctantResource):
     @ns.marshal_with(user_budget_with_matched_funding_model)
     @ns.response(200, "Budget successfully retrieved")
     def post(self):
-        no_epochs, glm_amount = ns.payload["numberOfEpochs"], int(
-            ns.payload["glmAmount"]
+        no_epochs, glm_amount = ns.payload.get("numberOfEpochs"), ns.payload.get(
+            "glmAmount"
         )
+
+        validate_budget_estimation_input(no_epochs=no_epochs, glmAmount=glm_amount)
+
+        glm_amount = int(glm_amount)
+
         app.logger.debug(
             f"Getting user estimated budget for {no_epochs} epochs and {glm_amount} GLM. Getting matched_funding based on previous epoch."
         )
@@ -290,7 +298,12 @@ class EstimatedUserBudgetByDays(OctantResource):
     @ns.marshal_with(user_budget_model)
     @ns.response(200, "Budget successfully retrieved")
     def post(self):
-        days, glm_amount = ns.payload["days"], int(ns.payload["glm_amount"])
+        days, glm_amount = ns.payload.get("days"), ns.payload.get("glmAmount")
+
+        validate_budget_estimation_input(days=days, glmAmount=glm_amount)
+
+        glm_amount = int(glm_amount)
+
         app.logger.debug(
             f"Getting user estimated budget for {days} days and {glm_amount} GLM"
         )

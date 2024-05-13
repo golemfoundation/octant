@@ -9,7 +9,7 @@ import {
 } from 'cypress/utils/e2e';
 import { getNamesOfProjects } from 'cypress/utils/projects';
 import viewports from 'cypress/utils/viewports';
-import { IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
+import { HAS_ONBOARDING_BEEN_CLOSED, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
 import getMilestones from 'src/constants/milestones';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
@@ -120,6 +120,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     beforeEach(() => {
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
       checkProjectsViewLoaded();
 
@@ -159,47 +160,48 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         cy.get('[data-test=AllocationItem]')
           .trigger('pointerdown')
           .trigger('pointermove', { pageX: x - 20 })
-          .trigger('pointerup');
+          .trigger('pointerup', { pageX: x - 40 });
+        cy.wait(500);
         cy.get('[data-test=AllocationItem__removeButton]').should('be.visible');
         cy.get('[data-test=AllocationItem__removeButton]').click();
         cy.get('[data-test=AllocationItem__removeButton]').should('not.exist');
         cy.get('[data-test=AllocationItem]').should('not.exist');
         cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
       });
+    });
 
-      it('ProjectsTimelineWidgetItem with href opens link when clicked without mouse movement', () => {
-        const milestones = getMilestones();
-        cy.get('[data-test=ProjectsTimelineWidget]').should('be.visible');
-        cy.get('[data-test=ProjectsTimelineWidgetItem]').should('have.length', milestones.length);
-        for (let i = 0; i < milestones.length; i++) {
-          if (milestones[i].href) {
-            cy.get('[data-test=ProjectsTimelineWidgetItem]')
-              .eq(i)
-              .within(() => {
-                cy.get('[data-test=ProjectsTimelineWidgetItem__Svg--arrowTopRight]').should(
-                  'be.visible',
-                );
-              });
+    it('ProjectsTimelineWidgetItem with href opens link when clicked without mouse movement', () => {
+      const milestones = getMilestones();
+      cy.get('[data-test=ProjectsTimelineWidget]').should('be.visible');
+      cy.get('[data-test=ProjectsTimelineWidgetItem]').should('have.length', milestones.length);
+      for (let i = 0; i < milestones.length; i++) {
+        if (milestones[i].href) {
+          cy.get('[data-test=ProjectsTimelineWidgetItem]')
+            .eq(i)
+            .within(() => {
+              cy.get('[data-test=ProjectsTimelineWidgetItem__Svg--arrowTopRight]').should(
+                'be.visible',
+              );
+            });
 
-            cy.get('[data-test=ProjectsTimelineWidgetItem]')
-              .eq(i)
-              .then(el => {
-                const { x } = el[0].getBoundingClientRect();
-                cy.get('[data-test=ProjectsTimelineWidgetItem]')
-                  .eq(i)
-                  .trigger('mousedown')
-                  .trigger('mouseup', { clientX: x + 10 });
-                cy.location('pathname').should('eq', ROOT_ROUTES.projects.absolute);
+          cy.get('[data-test=ProjectsTimelineWidgetItem]')
+            .eq(i)
+            .then(el => {
+              const { x } = el[0].getBoundingClientRect();
+              cy.get('[data-test=ProjectsTimelineWidgetItem]')
+                .eq(i)
+                .trigger('mousedown')
+                .trigger('mouseup', { clientX: x + 10 });
+              cy.location('pathname').should('eq', ROOT_ROUTES.projects.absolute);
 
-                cy.get('[data-test=ProjectsTimelineWidgetItem]')
-                  .eq(i)
-                  .trigger('mousedown')
-                  .trigger('mouseup');
-                cy.location('pathname').should('not.eq', ROOT_ROUTES.projects.absolute);
-              });
-          }
+              cy.get('[data-test=ProjectsTimelineWidgetItem]')
+                .eq(i)
+                .trigger('mousedown')
+                .trigger('mouseup');
+              cy.location('pathname').should('not.eq', ROOT_ROUTES.projects.absolute);
+            });
         }
-      });
+      }
     });
   });
 
@@ -218,6 +220,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     beforeEach(() => {
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+      localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
       connectWallet(true, true);
       checkProjectsViewLoaded();

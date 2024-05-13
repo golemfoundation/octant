@@ -44,11 +44,10 @@ export default function getMilestones(): Milestone[] {
         label: i18n.t('views.projects.projectsTimelineWidget.epochStarts', { epoch: 'Three' }),
       },
       {
-        from: new Date('2024-02-12T00:00:00+0100'),
+        from: new Date(),
         href: 'https://octant.fillout.com/t/u4uT8WFzDvus',
         id: 'e3-applications-open',
         label: i18n.t('views.projects.projectsTimelineWidget.applicationsOpen'),
-        to: new Date('2024-03-14T00:00:00+0100'),
       },
       {
         from: new Date('2024-03-17T00:00:00+0100'),

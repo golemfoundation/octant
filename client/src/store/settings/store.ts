@@ -24,6 +24,7 @@ export default getStoreWithMeta<SettingsData, SettingsMethods>({
       set(state => ({ data: { ...state.data, areOctantTipsAlwaysVisible: payload } }));
     },
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     setDisplayCurrency: payload => {
       localStorage.setItem(DISPLAY_CURRENCY, JSON.stringify(payload));
       set(state => ({ data: { ...state.data, displayCurrency: payload } }));

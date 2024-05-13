@@ -2,9 +2,11 @@ import {
   ALLOCATION_ITEMS_KEY,
   ALLOCATION_REWARDS_FOR_PROJECTS,
   DISPLAY_CURRENCY,
+  HAS_ONBOARDING_BEEN_CLOSED,
   IS_CRYPTO_MAIN_VALUE_DISPLAY,
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
+  LAST_SEEN_STEP,
   WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP,
   WAS_CONNECT_WALLET_ALREADY_CLOSED_TIP,
   WAS_LOCK_GLM_ALREADY_CLOSED_TIP,
@@ -41,24 +43,21 @@ describe('LocalStorageService', () => {
     });
 
     it('should validate isOnboardingDone', () => {
-      localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'true');
       localStorage.setItem(IS_ONBOARDING_DONE, 'not-a-boolean');
       localStorageService.init();
       expect(localStorage.getItem(IS_ONBOARDING_DONE)).toBe('false');
     });
 
-    it('should validate isOnboardingDone', () => {
-      localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
-      localStorage.setItem(IS_ONBOARDING_DONE, 'true');
+    it('should validate hasOnboardingBeenClosed', () => {
+      localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'not-a-boolean');
       localStorageService.init();
-      expect(localStorage.getItem(IS_ONBOARDING_DONE)).toBe('true');
+      expect(localStorage.getItem(HAS_ONBOARDING_BEEN_CLOSED)).toBe('false');
     });
 
-    it('should validate isOnboardingDone', () => {
-      localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
-      localStorage.setItem(IS_ONBOARDING_DONE, 'false');
+    it('should validate lastSeenStep', () => {
+      localStorage.setItem(LAST_SEEN_STEP, 'not-a-number');
       localStorageService.init();
-      expect(localStorage.getItem(IS_ONBOARDING_DONE)).toBe('false');
+      expect(localStorage.getItem(LAST_SEEN_STEP)).toBe('0');
     });
 
     it('should validate displayCurrency', () => {
