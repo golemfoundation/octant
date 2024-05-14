@@ -7,7 +7,7 @@ from app.engine.projects.rewards.threshold import (
 
 
 @dataclass
-class DefaultProjectThreshold(ProjectThreshold):
+class PreliminaryProjectThreshold(ProjectThreshold):
     PROJECTS_COUNT_MULTIPLIER: int
 
     def calculate_threshold(self, payload: ProjectThresholdPayload) -> int:

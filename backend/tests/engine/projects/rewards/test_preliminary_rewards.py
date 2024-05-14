@@ -1,6 +1,6 @@
 import pytest
 
-from app.engine.projects import PreliminaryProjectRewards
+from app.engine.projects.rewards.preliminary import PreliminaryProjectRewards
 from app.engine.projects.rewards import (
     ProjectRewardsPayload,
     ProjectRewardsResult,
