@@ -59,12 +59,12 @@ def verify_user_allocation_request(
     _verify_epoch_state(context.epoch_state)
     _verify_nonce(request.payload.nonce, expected_nonce)
     _verify_user_not_a_patron(user_address, patrons)
+    _verify_user_not_a_project(user_address, context.projects_details.projects)
     _verify_allocations_not_empty(request.payload.allocations)
     _verify_no_invalid_projects(
-        request.payload.allocations, valid_projects=context.projects_details.projects
+        request.payload.allocations, context.projects_details.projects
     )
     _verify_no_duplicates(request.payload.allocations)
-    _verify_no_self_allocation(request.payload.allocations, user_address)
     _verify_allocations_within_budget(request.payload.allocations, user_budget)
 
 
@@ -110,10 +110,9 @@ def _verify_no_duplicates(allocations: List[AllocationItem]):
         raise exceptions.DuplicatedProposals(proposal_addresses)
 
 
-def _verify_no_self_allocation(allocations: List[AllocationItem], user_address: str):
-    for allocation in allocations:
-        if allocation.proposal_address == user_address:
-            raise exceptions.ProjectAllocationToSelf
+def _verify_user_not_a_project(user_address: str, projects: List[str]):
+    if user_address in projects:
+        raise exceptions.ProjectAllocationToSelf
 
 
 def _verify_allocations_within_budget(allocations: List[AllocationItem], budget: int):
