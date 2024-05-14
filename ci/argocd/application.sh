@@ -4,7 +4,7 @@ set -exa
 
 ACTION=$1
 
-ARGO_REPOSITORY="https://doesnt-matter:${{ secrets.GITLAB_PAT_OCTANT_K8S_DEVOPS_REPOSITORY_WRITE }}@gitlab.com/golemfoundation/devops/iac/k8s/wildland-k8s-devops.git"
+ARGO_REPOSITORY="https://doesnt-matter:${GITLAB_PAT_OCTANT_K8S_DEVOPS_REPOSITORY_WRITE}@gitlab.com/golemfoundation/devops/iac/k8s/wildland-k8s-devops.git"
 ARGO_REPOSITORY_BRANCH="github/octant-ci-cd"
 
 set +a
