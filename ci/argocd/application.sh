@@ -4,7 +4,7 @@ set -exa
 
 ACTION=$1
 
-ARGO_REPOSITORY="https://wildland-bot:${HOUSEKEEPER_CI_TOKEN}@gitlab.com/golemfoundation/devops/iac/k8s/wildland-k8s-devops.git"
+ARGO_REPOSITORY="https://doesnt-matter:${{ secrets.GITLAB_PAT_OCTANT_K8S_DEVOPS_REPOSITORY_WRITE }}@gitlab.com/golemfoundation/devops/iac/k8s/wildland-k8s-devops.git"
 ARGO_REPOSITORY_BRANCH="github/octant-ci-cd"
 
 set +a
@@ -15,10 +15,8 @@ export BLOCK_NUMBER=$(echo $BLOCK_NUMBER | python3 -c "print(max(0, int(input())
 
 ## ArgoCD repository commit
 
-gpg --import <(echo $HOUSEKEEPER_GPG_KEY | base64 -d)
-git config --global user.name "Wildland Housekeeper"
-git config --global user.email "$HOUSEKEEPER_EMAIL"
-git config --global user.signingkey $HOUSEKEEPER_GPG_KEY_ID
+git config --global user.name "Wildland Automation"
+git config --global user.email "automated-script@wildland.io"
 
 GIT_DIR=`mktemp -d`
 git clone --depth=10 -b $ARGO_REPOSITORY_BRANCH $ARGO_REPOSITORY $GIT_DIR
