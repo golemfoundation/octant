@@ -35,7 +35,9 @@ def _get_simulated_epoch_details(epoch_num: int, **kwargs) -> EpochDetails:
     now_sec = int(datetime.utcnow().timestamp())
     start = epoch_details["fromTs"]
     duration = now_sec - start
-    start_block, end_block = get_blocks_range(start, start + duration, **kwargs)
+    start_block, end_block = get_blocks_range(
+        start, start + duration, now_sec, **kwargs
+    )
 
     return EpochDetails(
         epoch_num=epoch_details["epoch"],
@@ -67,7 +69,9 @@ def _get_current_epoch_details(epoch_num: int, **kwargs) -> EpochDetails:
     start = epoch_details["fromTs"]
     duration = epoch_details["duration"]
     end_sec = start + duration
-    start_block, end_block = get_blocks_range(start, start + duration, **kwargs)
+    start_block, end_block = get_blocks_range(
+        start, start + duration, now_sec, **kwargs
+    )
     remaining_sec = end_sec - now_sec
 
     return EpochDetails(
@@ -84,9 +88,12 @@ def _get_current_epoch_details(epoch_num: int, **kwargs) -> EpochDetails:
 def _get_default_epoch_details(epoch_num: int, **kwargs) -> EpochDetails:
     epoch_details = graphql.epochs.get_epoch_by_number(epoch_num)
 
+    now_sec = int(datetime.utcnow().timestamp())
     start = epoch_details["fromTs"]
     duration = epoch_details["duration"]
-    start_block, end_block = get_blocks_range(start, start + duration, **kwargs)
+    start_block, end_block = get_blocks_range(
+        start, start + duration, now_sec, **kwargs
+    )
 
     return EpochDetails(
         epoch_num=epoch_details["epoch"],

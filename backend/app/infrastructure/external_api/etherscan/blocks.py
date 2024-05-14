@@ -1,3 +1,5 @@
+from typing import Optional
+
 import requests
 from flask import current_app as app
 
@@ -9,10 +11,19 @@ from app.infrastructure.external_api.etherscan.req_params import (
     ClosestValue,
     BlockAction,
 )
+from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 
 
-def get_block_num_from_ts(timestamp: int) -> int:
+def get_block_num_from_ts(timestamp: int) -> Optional[int]:
     app.logger.debug(f"Getting block number from timestamp: {timestamp}")
+    is_mainnet = compare_blockchain_types(
+        chain_id=app.config["CHAIN_ID"], expected_chain=ChainTypes.MAINNET
+    )
+
+    if not is_mainnet:
+        app.logger.warning("Block number retrieval is only supported for mainnet")
+        return None
+
     api_url = _get_api_url(timestamp, BlockAction.BLOCK_NO_BY_TS)
     try:
         response = requests.get(api_url)
