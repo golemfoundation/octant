@@ -23,6 +23,7 @@ def get_epoch_details(
 
 
 def get_epochs_details(from_epoch: int, to_epoch: int, **kwargs) -> List[EpochDetails]:
+    from_epoch = from_epoch if from_epoch > 0 else 1
     return [
         _get_default_epoch_details(epoch_num, **kwargs)
         for epoch_num in range(from_epoch, to_epoch)
