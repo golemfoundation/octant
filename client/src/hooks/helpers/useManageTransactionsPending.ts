@@ -94,14 +94,20 @@ export default function useManageTransactionsPending(): void {
      * refetches are triggered and blockNumberWithLatestTx to null.
      */
     if (blockNumber && blockNumberWithLatestTx && blockNumber > blockNumberWithLatestTx) {
-      refetchAvailableFundsGlm();
-      refetchDeposit();
-      refetchEstimatedEffectiveDeposit();
-      refetchLockedSummaryLatest();
-      refetchWithdrawals();
+      const lastTransaction = transactionsPending?.at(0);
+
+      if (lastTransaction?.type === 'withdrawal') {
+        refetchWithdrawals();
+        refetchAvailableFundsGlm();
+      } else {
+        refetchDeposit();
+        refetchEstimatedEffectiveDeposit();
+        refetchLockedSummaryLatest();
+      }
 
       setBlockNumberWithLatestTx(metaInitialState.blockNumberWithLatestTx);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     blockNumber,
     blockNumberWithLatestTx,
