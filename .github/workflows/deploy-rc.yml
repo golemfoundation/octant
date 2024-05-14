@@ -44,7 +44,7 @@ jobs:
           yq -y -i -e ".[].value.value = \"$IMAGE_TAG\"" mainnet/octant-image.values.yaml
 
           git add mainnet/octant-image.values.yaml
-          git commit -S -m "Changed octant image tag to $IMAGE_TAG at $(date +%Y-%m-%d)" || true
+          git commit -m "Changed octant image tag to $IMAGE_TAG at $(date +%Y-%m-%d)" || true
 
           git push
         shell: bash
