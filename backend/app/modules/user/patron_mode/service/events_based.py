@@ -35,7 +35,7 @@ class EventsBasedUserPatronMode(Model):
         last_finalized_snapshot = context.snapshots_state.last_finalized_snapshot_num
 
         epochs = get_epochs_details(
-            last_finalized_snapshot - limit, last_finalized_snapshot
+            last_finalized_snapshot - limit + 1, last_finalized_snapshot + 1
         )
         epochs = filter_and_reverse_epochs(epochs, from_timestamp)
         patron_donations = []
