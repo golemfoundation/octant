@@ -114,7 +114,7 @@ def test_allocations(
                 unique_donors.add(val)
             if key == "amount":
                 assert int(val) > 0
-            if key == "proposal":
+            if key == "project":
                 unique_proposals.add(val)
             print("allocation items: ", allocation.items)
 
