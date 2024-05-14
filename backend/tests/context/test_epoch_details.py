@@ -1,6 +1,6 @@
 from freezegun import freeze_time
 
-from app.context.epoch_details import EpochDetails
+from app.context.epoch.details import EpochDetails
 
 
 def test_check_if_epoch_details_gets_blocks_when_mainnet(patch_etherscan_get_block_api):

@@ -1,6 +1,6 @@
 from typing import Tuple, List, Dict
 
-from app.context.epoch_details import EpochDetails
+from app.context.epoch.details import EpochDetails
 from app.engine.epochs_settings import EpochSettings
 from app.engine.user.effective_deposit import (
     UserDeposit,

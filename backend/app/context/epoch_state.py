@@ -11,6 +11,7 @@ class EpochState(Enum):
     PENDING = auto()
     PRE_PENDING = auto()
     CURRENT = auto()
+    SIMULATED = auto()
     FUTURE = auto()
 
     def __gt__(self, other):
