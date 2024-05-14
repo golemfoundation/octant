@@ -168,15 +168,11 @@ env:
   GCP_DOCKER_IMAGES_REGISTRY_SERVICE_ACCOUNT: "${{ secrets.GCP_DOCKER_IMAGES_REGISTRY_SERVICE_ACCOUNT }}"
   KANIKO_CACHE_CONFIG: "${{ secrets.KANIKO_CACHE_CONFIG }}"
   KANIKO_CACHE_REPO: "${{ secrets.KANIKO_CACHE_REPO }}"
-  HOUSEKEEPER_NAME: "${{ vars.HOUSEKEEPER_NAME }}"
-  HOUSEKEEPER_EMAIL: "${{ secrets.HOUSEKEEPER_EMAIL }}"
-  HOUSEKEEPER_CI_TOKEN: "${{ secrets.HOUSEKEEPER_CI_TOKEN }}"
-  HOUSEKEEPER_GPG_KEY: "${{ secrets.HOUSEKEEPER_GPG_KEY }}"
-  HOUSEKEEPER_GPG_KEY_ID: "${{ secrets.HOUSEKEEPER_GPG_KEY_ID }}"
   HOUSEKEEPER_GITHUB_SIGNING_KEY: "${{ secrets.HOUSEKEEPER_GITHUB_SIGNING_KEY }}"
   HOUSEKEEPER_GITHUB_SIGNING_KEY_ID: "${{ secrets.HOUSEKEEPER_GITHUB_SIGNING_KEY_ID }}"
   ARGOCD_URL: "${{ secrets.ARGOCD_URL }}"
   ARGOCD_ACCESS_TOKEN: "${{ secrets.ARGOCD_ACCESS_TOKEN }}"
+  GITLAB_PAT_OCTANT_K8S_DEVOPS_REPOSITORY_WRITE: "${{ secrets.GITLAB_PAT_OCTANT_K8S_DEVOPS_REPOSITORY_WRITE }}"
 
 jobs:
   start-anvil:
@@ -391,7 +387,7 @@ jobs:
         git config --local user.signingkey "${HOUSEKEEPER_GITHUB_SIGNING_KEY_ID}"
 
         git add ${CI_PROJECT_DIR}/ci/argocd/contracts/${ENV_TYPE}.env
-        git commit -S -m "[CI/CD] Update ${ENV_TYPE}.env contracts"
+        git commit -m "[CI/CD] Update ${ENV_TYPE}.env contracts"
       shell: bash
     - name: Push changes
       uses: ad-m/github-push-action@master
