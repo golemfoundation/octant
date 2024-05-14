@@ -12,6 +12,8 @@ def get_epoch_details(
     duration=1000,
     decision_window=500,
     remaining_sec=1000,
+    start_block=1000,
+    end_block=2000,
     **kwargs
 ):
     return EpochDetails(
@@ -20,6 +22,8 @@ def get_epoch_details(
         start=start,
         decision_window=decision_window,
         remaining_sec=remaining_sec,
+        start_block=start_block,
+        end_block=end_block,
     )
 
 
