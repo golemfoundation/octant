@@ -5,13 +5,6 @@ from typing import List, Optional
 from dataclass_wizard import JSONWizard
 
 from app.engine.projects.rewards.allocations import AllocationItem, ProjectAllocations
-from app.engine.projects.rewards.threshold import ProjectThreshold
-from app.engine.projects.rewards.threshold.preliminary import (
-    PreliminaryProjectThreshold,
-)
-from app.engine.projects.rewards.allocations.preliminary import (
-    PreliminaryProjectAllocations,
-)
 
 
 @dataclass
