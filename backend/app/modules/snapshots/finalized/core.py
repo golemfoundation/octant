@@ -1,5 +1,7 @@
 from collections import namedtuple
 
+from app.engine.octant_rewards import OctantRewardsSettings
+from app.engine.octant_rewards.leftover import LeftoverPayload
 from app.engine.projects import ProjectSettings
 from app.modules.common import merkle_tree
 from app.modules.common.project_rewards import get_projects_rewards
@@ -15,11 +17,19 @@ FinalizedProjectRewards = namedtuple(
 )
 
 
-def calculate_leftover(octant_rewards: OctantRewardsDTO, total_withdrawals: int):
-    return (
-        octant_rewards.staking_proceeds
-        - octant_rewards.operational_cost
-        - total_withdrawals
+def calculate_leftover(
+    octant_rewards_settings: OctantRewardsSettings,
+    octant_rewards: OctantRewardsDTO,
+    total_withdrawals: int,
+):
+    return octant_rewards_settings.leftover.calculate_leftover(
+        LeftoverPayload(
+            staking_proceeds=octant_rewards.staking_proceeds,
+            operational_cost=octant_rewards.operational_cost,
+            community_fund=octant_rewards.community_fund,
+            ppf=octant_rewards.ppf,
+            total_withdrawals=total_withdrawals,
+        )
     )
 
 

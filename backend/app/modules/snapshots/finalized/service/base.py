@@ -42,6 +42,7 @@ class BaseFinalizedSnapshots(Model):
         self, context: Context
     ) -> FinalizedSnapshotDTO:
         projects_settings = context.epoch_settings.project
+        octant_rewards_settings = context.epoch_settings.octant_rewards
         projects = context.projects_details.projects
         octant_rewards = self.octant_rewards.get_octant_rewards(context)
         patrons_rewards = self.patrons_mode.get_patrons_rewards(context)
@@ -60,7 +61,9 @@ class BaseFinalizedSnapshots(Model):
         total_withdrawals = get_total_withdrawals(
             user_rewards_sum, project_rewards.rewards_sum
         )
-        leftover = calculate_leftover(octant_rewards, total_withdrawals)
+        leftover = calculate_leftover(
+            octant_rewards_settings, octant_rewards, total_withdrawals
+        )
 
         return FinalizedSnapshotDTO(
             patrons_rewards=patrons_rewards,
