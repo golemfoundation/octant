@@ -135,7 +135,7 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
                     formik.errors.valueToDeposeOrWithdraw === 'cantUnlock' && styles.cantUnlock,
                   )}
                 >
-                  {getFormattedGlmValue(depositsValue || BigInt(0)).value}
+                  {getFormattedGlmValue({ value: depositsValue || BigInt(0) }).value}
                 </div>
                 {t('glmLockTabs.locked')}
                 <div
@@ -146,8 +146,9 @@ const EarnGlmLockTabs: FC<EarnGlmLockTabsProps> = ({
                   )}
                 >
                   {
-                    getFormattedGlmValue(BigInt(availableFundsGlm ? availableFundsGlm?.value : 0))
-                      .value
+                    getFormattedGlmValue({
+                      value: BigInt(availableFundsGlm ? availableFundsGlm?.value : 0),
+                    }).value
                   }
                 </div>
                 {i18n.t('common.available')}

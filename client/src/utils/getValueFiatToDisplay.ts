@@ -1,10 +1,21 @@
 import { Response } from 'api/calls/cryptoValues';
-import DoubleValueProps from 'components/ui/DoubleValue/types';
 import { FIAT_CURRENCIES_SYMBOLS } from 'constants/currencies';
 import { SettingsData } from 'store/settings/types';
+import { CryptoCurrency } from 'types/cryptoCurrency';
 
 import { formatUnitsBigInt } from './formatUnitsBigInt';
 import getNumberWithSpaces from './getNumberWithSpaces';
+
+export type GetValueFiatToDisplayProps = {
+  coinPricesServerDowntimeText?: 'Conversion offline' | '...';
+  cryptoCurrency: CryptoCurrency;
+  cryptoValues?: Response;
+  displayCurrency: NonNullable<SettingsData['displayCurrency']>;
+  error?: any;
+  isUsingHairSpace?: boolean;
+  showLessThanZero?: boolean;
+  valueCrypto?: bigint;
+};
 
 export default function getValueFiatToDisplay({
   coinPricesServerDowntimeText = 'Conversion offline',
@@ -14,15 +25,8 @@ export default function getValueFiatToDisplay({
   error,
   isUsingHairSpace = true,
   valueCrypto,
-}: {
-  coinPricesServerDowntimeText?: DoubleValueProps['coinPricesServerDowntimeText'];
-  cryptoCurrency: DoubleValueProps['cryptoCurrency'];
-  cryptoValues?: Response;
-  displayCurrency: NonNullable<SettingsData['displayCurrency']>;
-  error?: any;
-  isUsingHairSpace?: boolean;
-  valueCrypto: DoubleValueProps['valueCrypto'];
-}): string {
+  showLessThanZero = false,
+}: GetValueFiatToDisplayProps): string {
   if (error) {
     return coinPricesServerDowntimeText;
   }
@@ -47,7 +51,7 @@ export default function getValueFiatToDisplay({
     !cryptoValues[cryptoCurrency][displayCurrency] ||
     !valueCrypto
   ) {
-    return `${prefix}0.00`;
+    return showLessThanZero ? `< ${prefix}0.00` : `${prefix}0.00`;
   }
 
   const exchangeRate = cryptoValues[cryptoCurrency][displayCurrency];
@@ -55,6 +59,10 @@ export default function getValueFiatToDisplay({
   const valueFiat = (parseFloat(formatUnitsBigInt(valueCrypto)) * exchangeRate).toFixed(
     displayCurrency === 'jpy' ? 0 : 2,
   );
+
+  if (valueFiat === '0.00' && showLessThanZero) {
+    return `< ${prefix}0.00`;
+  }
 
   return `${prefix}${getNumberWithSpaces(valueFiat, isUsingHairSpace)}`;
 }

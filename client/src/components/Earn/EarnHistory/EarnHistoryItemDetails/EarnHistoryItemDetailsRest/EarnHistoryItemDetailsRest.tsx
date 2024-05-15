@@ -34,11 +34,10 @@ const EarnHistoryItemDetailsRest: FC<EarnHistoryItemDetailsRestProps> = ({
   const sections: SectionProps[] = [
     {
       doubleValueProps: {
-        cryptoCurrency: ['withdrawal', 'patron_mode_donation'].includes(type)
-          ? 'ethereum'
-          : 'golem',
-        shouldIgnoreGwei: true,
         valueCrypto: eventData.amount,
+        ...(['withdrawal', 'patron_mode_donation'].includes(type)
+          ? { cryptoCurrency: 'ethereum', getFormattedEthValueProps: { shouldIgnoreGwei: true } }
+          : { cryptoCurrency: 'golem' }),
       },
       label: isPatronDonation ? t('sections.matchingFundDonation') : t('sections.amount'),
     },
@@ -47,9 +46,9 @@ const EarnHistoryItemDetailsRest: FC<EarnHistoryItemDetailsRestProps> = ({
           {
             doubleValueProps: {
               cryptoCurrency: 'ethereum',
+              getFormattedEthValueProps: { shouldIgnoreGwei: true },
               // Gas price is not known for pending transactions.
               isFetching: isFetchingTransaction || isWaitingForTransactionInitialized,
-              shouldIgnoreGwei: true,
               valueCrypto: BigInt(transaction?.gasPrice ?? 0),
             },
             label: t('sections.gasPrice'),

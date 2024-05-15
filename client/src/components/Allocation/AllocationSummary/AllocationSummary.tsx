@@ -38,20 +38,25 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
 
   const personalAllocation = individualReward ? individualReward - rewardsForProjects : 0n;
 
-  const rewardsForProjectsToDisplay = getFormattedEthValue(rewardsForProjects, true, true);
+  const rewardsForProjectsToDisplay = getFormattedEthValue({
+    isUsingHairSpace: true,
+    shouldIgnoreGwei: true,
+    value: rewardsForProjects,
+  });
   const matchingFundSumToDisplay =
     rewardsForProjects && allocationSimulated?.leverage
-      ? getFormattedEthValue(
-          rewardsForProjects * BigInt(parseInt(allocationSimulated.leverage, 10)),
-        ).value
+      ? getFormattedEthValue({
+          value: rewardsForProjects * BigInt(parseInt(allocationSimulated.leverage, 10)),
+        }).value
       : undefined;
-  const totalImpactToDisplay = getFormattedEthValue(
-    rewardsForProjects && allocationSimulated
-      ? rewardsForProjects * BigInt(parseInt(allocationSimulated.leverage, 10) + 1)
-      : rewardsForProjects,
-  );
+  const totalImpactToDisplay = getFormattedEthValue({
+    value:
+      rewardsForProjects && allocationSimulated
+        ? rewardsForProjects * BigInt(parseInt(allocationSimulated.leverage, 10) + 1)
+        : rewardsForProjects,
+  });
   const personalToDisplay = individualReward
-    ? getFormattedEthValue(individualReward - rewardsForProjects).fullString
+    ? getFormattedEthValue({ value: individualReward - rewardsForProjects }).fullString
     : undefined;
 
   const sections: SectionProps[] = [

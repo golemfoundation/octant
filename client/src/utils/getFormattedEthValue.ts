@@ -5,14 +5,21 @@ import { formatUnitsBigInt } from './formatUnitsBigInt';
 import getNumberWithSpaces from './getNumberWithSpaces';
 import { dotAndZeroes } from './regExp';
 
-export default function getFormattedEthValue(
-  value: bigint,
-  // eslint-disable-next-line default-param-last
+export type GetFormattedEthValueProps = {
+  isUsingHairSpace?: boolean;
+  numberOfDecimalPlaces?: number;
+  shouldIgnoreGwei?: boolean;
+  shouldIgnoreWei?: boolean;
+  value: bigint;
+};
+
+export default function getFormattedEthValue({
+  value,
   isUsingHairSpace = true,
-  shouldIgnoreGwei?: boolean,
-  shouldIgnoreWei?: boolean,
+  shouldIgnoreGwei = false,
+  shouldIgnoreWei = false,
   numberOfDecimalPlaces = 4,
-): FormattedCryptoValue {
+}: GetFormattedEthValueProps): FormattedCryptoValue {
   let returnObject: Omit<FormattedCryptoValue, 'fullString'>;
 
   const isInGweiRange = value < GWEI_5;

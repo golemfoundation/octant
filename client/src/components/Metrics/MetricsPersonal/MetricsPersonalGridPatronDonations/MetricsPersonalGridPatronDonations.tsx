@@ -3,10 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsGridTileValue from 'components/Metrics/MetricsGrid/MetricsGridTileValue';
-import { getValuesToDisplay } from 'components/ui/DoubleValue/utils';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useTotalPatronDonations from 'hooks/helpers/useTotalPatronDonations';
-import useCryptoValues from 'hooks/queries/useCryptoValues';
-import useSettingsStore from 'store/settings/store';
 
 import MetricsPersonalGridPatronDonationsProps from './types';
 
@@ -14,24 +12,12 @@ const MetricsPersonalGridPatronDonations: FC<MetricsPersonalGridPatronDonationsP
   isLoading,
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
-  const {
-    data: { displayCurrency },
-  } = useSettingsStore(({ data }) => ({
-    data: {
-      displayCurrency: data.displayCurrency,
-      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
-    },
-  }));
-  const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
+
   const { data: totalPatronDonations } = useTotalPatronDonations();
+  const getValuesToDisplay = useGetValuesToDisplay();
 
   const totalPatronDonationsValues = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
-    cryptoValues,
-    displayCurrency: displayCurrency!,
-    error,
-    isCryptoMainValueDisplay: true,
-    shouldIgnoreGwei: false,
     valueCrypto: totalPatronDonations?.value,
   });
 

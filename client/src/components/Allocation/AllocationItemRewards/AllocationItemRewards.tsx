@@ -99,22 +99,22 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
       : projectMatchedProjectRewards?.allocated,
     userAllocationToThisProject,
   );
-  const valueFormatted = getFormattedEthValue(parseUnitsBigInt(valueToUse));
+  const valueFormatted = getFormattedEthValue({ value: parseUnitsBigInt(valueToUse) });
   const simulatedMatchedBigInt = simulatedMatched
     ? parseUnitsBigInt(simulatedMatched, 'wei')
     : BigInt(0);
   const simulatedMatchedFormatted = simulatedMatched
-    ? getFormattedEthValue(
-        bigintAbs(
+    ? getFormattedEthValue({
+        value: bigintAbs(
           simulatedMatchedBigInt -
             (projectMatchedProjectRewards ? projectMatchedProjectRewards.matched : BigInt(0)),
         ),
-      )
-    : getFormattedEthValue(parseUnitsBigInt('0', 'wei'));
-  const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
-    rewardsSumWithValueAndSimulation,
-  );
-  const thresholdToUseFormatted = getFormattedEthValue(thresholdToUse || BigInt(0));
+      })
+    : getFormattedEthValue({ value: parseUnitsBigInt('0', 'wei') });
+  const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue({
+    value: rewardsSumWithValueAndSimulation,
+  });
+  const thresholdToUseFormatted = getFormattedEthValue({ value: thresholdToUse || BigInt(0) });
 
   const areValueAndSimulatedSuffixesTheSame =
     valueFormatted.suffix === simulatedMatchedFormatted?.suffix;

@@ -3,14 +3,12 @@ import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsGridTileValue from 'components/Metrics/MetricsGrid/MetricsGridTileValue';
-import { getValuesToDisplay } from 'components/ui/DoubleValue/utils';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
 import useProjectsDonors from 'hooks/queries/donors/useProjectsDonors';
-import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import i18n from 'i18n';
-import useSettingsStore from 'store/settings/store';
 
 import MetricsEpochGridBelowThresholdProps from './types';
 
@@ -20,17 +18,8 @@ const MetricsEpochGridBelowThreshold: FC<MetricsEpochGridBelowThresholdProps> = 
   ethBelowThreshold,
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
-  const {
-    data: { displayCurrency },
-  } = useSettingsStore(({ data }) => ({
-    data: {
-      displayCurrency: data.displayCurrency,
-      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
-    },
-  }));
   const { epoch, lastEpoch } = useMetricsEpoch();
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
-  const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
   const { data: matchedProjectRewards } = useMatchedProjectRewards(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
@@ -38,17 +27,14 @@ const MetricsEpochGridBelowThreshold: FC<MetricsEpochGridBelowThresholdProps> = 
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
 
+  const getValuesToDisplay = useGetValuesToDisplay();
+
   const projectsBelowThreshold =
     Object.keys(projectsDonors).length -
     (matchedProjectRewards?.filter(({ matched }) => matched !== 0n).length || 0);
 
   const ethBelowThresholdToDisplay = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
-    cryptoValues,
-    displayCurrency: displayCurrency!,
-    error,
-    isCryptoMainValueDisplay: true,
-    shouldIgnoreGwei: false,
     valueCrypto: ethBelowThreshold,
   });
 

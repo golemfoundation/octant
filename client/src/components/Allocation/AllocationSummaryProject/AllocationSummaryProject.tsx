@@ -40,11 +40,11 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   )?.value;
 
   const projectMatchedProjectRewardsFormatted = projectMatchedProjectRewards
-    ? getFormattedEthValue(projectMatchedProjectRewards?.sum)
+    ? getFormattedEthValue({ value: projectMatchedProjectRewards?.sum })
     : undefined;
   const projectRewardsThresholdFormatted =
     projectRewardsThreshold !== undefined
-      ? getFormattedEthValue(projectRewardsThreshold)
+      ? getFormattedEthValue({ value: projectRewardsThreshold })
       : undefined;
   const areSuffixesTheSame =
     projectMatchedProjectRewardsFormatted?.suffix === projectRewardsThresholdFormatted?.suffix;
@@ -57,11 +57,11 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
       : projectMatchedProjectRewards?.allocated,
     userAllocationToThisProject,
   );
-  const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
-    rewardsSumWithValueAndSimulation,
-  );
+  const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue({
+    value: rewardsSumWithValueAndSimulation,
+  });
 
-  const donationAmountToDisplay = getFormattedEthValue(amount, true, true);
+  const donationAmountToDisplay = getFormattedEthValue({ shouldIgnoreGwei: true, value: amount });
 
   return (
     <div className={styles.root}>

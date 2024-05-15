@@ -55,14 +55,16 @@ describe('getFormattedGlmValue', () => {
     it(`returns ${expectedValue} for an argument ${formatUnitsBigInt(
       argument,
     )} when isUsingHairSpace`, () => {
-      expect(getFormattedGlmValue(argument).fullString).toBe(expectedValue);
+      expect(getFormattedGlmValue({ value: argument }).fullString).toBe(expectedValue);
     });
 
     const expectedValueNormalSpace = expectedValue.replace(/\u200a/g, ' ');
     it(`returns ${expectedValueNormalSpace} for an argument ${formatUnitsBigInt(
       argument,
     )} when !isUsingHairSpace`, () => {
-      expect(getFormattedGlmValue(argument, false).fullString).toBe(expectedValueNormalSpace);
+      expect(getFormattedGlmValue({ isUsingHairSpace: false, value: argument }).fullString).toBe(
+        expectedValueNormalSpace,
+      );
     });
   }
 });

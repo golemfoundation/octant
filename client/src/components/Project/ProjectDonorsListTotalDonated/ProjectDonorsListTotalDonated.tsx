@@ -18,7 +18,9 @@ const ProjectDonorsListTotalDonated: FC<ProjectDonorsListTotalDonatedProps> = ({
 
   const totalDonatedSumToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
-    shouldIgnoreGwei: true,
+    getFormattedEthValueProps: {
+      shouldIgnoreGwei: true,
+    },
     valueCrypto: totalDonatedSum,
   });
 
