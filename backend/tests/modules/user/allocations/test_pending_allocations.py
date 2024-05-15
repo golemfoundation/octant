@@ -14,7 +14,7 @@ from app.modules.user.allocations.service.pending import (
 from tests.conftest import (
     mock_graphql,
     MOCKED_PENDING_EPOCH_NO,
-    MOCK_PROPOSALS,
+    MOCK_PROJECTS,
     MOCK_GET_USER_BUDGET,
     MOCK_IS_CONTRACT,
 )
@@ -41,16 +41,16 @@ def before(
     app,
     mocker,
     graphql_client,
-    proposal_accounts,
+    project_accounts,
     patch_epochs,
-    patch_proposals,
+    patch_projects,
     patch_has_pending_epoch_snapshot,
     mock_pending_epoch_snapshot_db,
     patch_user_budget,
     patch_is_contract,
 ):
-    MOCK_PROPOSALS.get_proposal_addresses.return_value = [
-        p.address for p in proposal_accounts[0:5]
+    MOCK_PROJECTS.get_project_addresses.return_value = [
+        p.address for p in project_accounts[0:5]
     ]
 
     mock_graphql(
@@ -117,9 +117,9 @@ def test_revoke_previous_allocation(service, mock_users_db):
     assert service.get_user_allocation_sum(context, user1.address) == 0
 
 
-def test_user_allocates_for_the_first_time(tos_users, proposal_accounts):
+def test_user_allocates_for_the_first_time(tos_users, project_accounts):
     # Test data
-    payload = create_payload(proposal_accounts[0:2], None)
+    payload = create_payload(project_accounts[0:2], None)
     signature = sign(tos_users[0], build_allocations_eip712_data(payload))
 
     # Call allocate method
@@ -135,11 +135,11 @@ def test_user_allocates_for_the_first_time(tos_users, proposal_accounts):
 
 
 def test_multisig_allocates_for_the_first_time(
-    tos_users, proposal_accounts, patch_eip1271_is_valid_signature
+    tos_users, project_accounts, patch_eip1271_is_valid_signature
 ):
     # Test data
     MOCK_IS_CONTRACT.return_value = True
-    payload = create_payload(proposal_accounts[0:2], None)
+    payload = create_payload(project_accounts[0:2], None)
     signature = "0x89b0da9bcf620cd6005e88f58c69edff5251b80f116e25e88c65188bf116d35f5cdf6d3782885c8df66878a8b5ec8739fe1174c72b06fb277534e7d7088f9a6e1b2810662a03962f315a8ad0f448a468ab5ce0c73c31b71e499b4b735f5c04b76542cb89802f68c19918f306e29563b9f736b02559fbaccc55ad8bd2134a0e69811c"
 
     # Call allocate method
@@ -154,12 +154,12 @@ def test_multisig_allocates_for_the_first_time(
     check_allocation_threshold(payload)
 
 
-def test_multiple_users_allocate_for_the_first_time(tos_users, proposal_accounts):
+def test_multiple_users_allocate_for_the_first_time(tos_users, project_accounts):
     # Test data
-    payload1 = create_payload(proposal_accounts[0:2], None)
+    payload1 = create_payload(project_accounts[0:2], None)
     signature1 = sign(tos_users[0], build_allocations_eip712_data(payload1))
 
-    payload2 = create_payload(proposal_accounts[0:3], None)
+    payload2 = create_payload(project_accounts[0:3], None)
     signature2 = sign(tos_users[1], build_allocations_eip712_data(payload2))
 
     # Call allocate method for both users
@@ -178,9 +178,9 @@ def test_multiple_users_allocate_for_the_first_time(tos_users, proposal_accounts
     check_allocation_threshold(payload1, payload2)
 
 
-def test_allocate_updates_with_more_proposals(tos_users, proposal_accounts):
+def test_allocate_updates_with_more_projects(tos_users, project_accounts):
     # Test data
-    initial_payload = create_payload(proposal_accounts[0:2], None, 0)
+    initial_payload = create_payload(project_accounts[0:2], None, 0)
     initial_signature = sign(
         tos_users[0], build_allocations_eip712_data(initial_payload)
     )
@@ -191,8 +191,8 @@ def test_allocate_updates_with_more_proposals(tos_users, proposal_accounts):
         {"payload": initial_payload, "signature": initial_signature},
     )
 
-    # Create a new payload with more proposals
-    updated_payload = create_payload(proposal_accounts[0:3], None, 1)
+    # Create a new payload with more projects
+    updated_payload = create_payload(project_accounts[0:3], None, 1)
     updated_signature = sign(
         tos_users[0], build_allocations_eip712_data(updated_payload)
     )
@@ -210,9 +210,9 @@ def test_allocate_updates_with_more_proposals(tos_users, proposal_accounts):
     check_allocation_threshold(updated_payload)
 
 
-def test_allocate_updates_with_less_proposals(tos_users, proposal_accounts):
+def test_allocate_updates_with_less_projects(tos_users, project_accounts):
     # Test data
-    initial_payload = create_payload(proposal_accounts[0:3], None, 0)
+    initial_payload = create_payload(project_accounts[0:3], None, 0)
     initial_signature = sign(
         tos_users[0], build_allocations_eip712_data(initial_payload)
     )
@@ -223,8 +223,8 @@ def test_allocate_updates_with_less_proposals(tos_users, proposal_accounts):
         {"payload": initial_payload, "signature": initial_signature},
     )
 
-    # Create a new payload with fewer proposals
-    updated_payload = create_payload(proposal_accounts[0:2], None, 1)
+    # Create a new payload with fewer projects
+    updated_payload = create_payload(project_accounts[0:2], None, 1)
     updated_signature = sign(
         tos_users[0], build_allocations_eip712_data(updated_payload)
     )
@@ -242,13 +242,13 @@ def test_allocate_updates_with_less_proposals(tos_users, proposal_accounts):
     check_allocation_threshold(updated_payload)
 
 
-def test_multiple_users_change_their_allocations(tos_users, proposal_accounts):
+def test_multiple_users_change_their_allocations(tos_users, project_accounts):
     # Create initial payloads and signatures for both users
-    initial_payload1 = create_payload(proposal_accounts[0:2], None, 0)
+    initial_payload1 = create_payload(project_accounts[0:2], None, 0)
     initial_signature1 = sign(
         tos_users[0], build_allocations_eip712_data(initial_payload1)
     )
-    initial_payload2 = create_payload(proposal_accounts[0:3], None, 0)
+    initial_payload2 = create_payload(project_accounts[0:3], None, 0)
     initial_signature2 = sign(
         tos_users[1], build_allocations_eip712_data(initial_payload2)
     )
@@ -264,11 +264,11 @@ def test_multiple_users_change_their_allocations(tos_users, proposal_accounts):
     )
 
     # Create updated payloads for both users
-    updated_payload1 = create_payload(proposal_accounts[0:4], None, 1)
+    updated_payload1 = create_payload(project_accounts[0:4], None, 1)
     updated_signature1 = sign(
         tos_users[0], build_allocations_eip712_data(updated_payload1)
     )
-    updated_payload2 = create_payload(proposal_accounts[2:5], None, 1)
+    updated_payload2 = create_payload(project_accounts[2:5], None, 1)
     updated_signature2 = sign(
         tos_users[1], build_allocations_eip712_data(updated_payload2)
     )
@@ -291,13 +291,13 @@ def test_multiple_users_change_their_allocations(tos_users, proposal_accounts):
     check_allocation_threshold(updated_payload1, updated_payload2)
 
 
-def test_user_exceeded_rewards_budget_in_allocations(app, proposal_accounts, tos_users):
+def test_user_exceeded_rewards_budget_in_allocations(app, project_accounts, tos_users):
     # Set some reasonable user rewards budget
     MOCK_GET_USER_BUDGET.return_value = 100 * 10**18
 
     # First payload sums up to 110 eth (budget is set to 100)
     payload = create_payload(
-        proposal_accounts[0:3], [10 * 10**18, 50 * 10**18, 50 * 10**18]
+        project_accounts[0:3], [10 * 10**18, 50 * 10**18, 50 * 10**18]
     )
     signature = sign(tos_users[0], build_allocations_eip712_data(payload))
 
@@ -308,7 +308,7 @@ def test_user_exceeded_rewards_budget_in_allocations(app, proposal_accounts, tos
 
     # Lower it to 100 total (should pass)
     payload = create_payload(
-        proposal_accounts[0:3], [10 * 10**18, 40 * 10**18, 50 * 10**18]
+        project_accounts[0:3], [10 * 10**18, 40 * 10**18, 50 * 10**18]
     )
     signature = sign(tos_users[0], build_allocations_eip712_data(payload))
     controller.allocate(
@@ -316,10 +316,10 @@ def test_user_exceeded_rewards_budget_in_allocations(app, proposal_accounts, tos
     )
 
 
-def test_nonces(tos_users, proposal_accounts):
+def test_nonces(tos_users, project_accounts):
     nonce0 = get_allocation_nonce(tos_users[0].address)
     payload = create_payload(
-        proposal_accounts[0:2], [10 * 10**18, 20 * 10**18], nonce0
+        project_accounts[0:2], [10 * 10**18, 20 * 10**18], nonce0
     )
     signature = sign(tos_users[0], build_allocations_eip712_data(payload))
     controller.allocate(
@@ -328,7 +328,7 @@ def test_nonces(tos_users, proposal_accounts):
     nonce1 = get_allocation_nonce(tos_users[0].address)
     assert nonce0 != nonce1
     payload = create_payload(
-        proposal_accounts[0:2], [10 * 10**18, 30 * 10**18], nonce1
+        project_accounts[0:2], [10 * 10**18, 30 * 10**18], nonce1
     )
     signature = sign(tos_users[0], build_allocations_eip712_data(payload))
     controller.allocate(
@@ -339,7 +339,7 @@ def test_nonces(tos_users, proposal_accounts):
     assert nonce1 != nonce2
 
     payload = create_payload(
-        proposal_accounts[0:2], [10 * 10**18, 10 * 10**18], nonce1
+        project_accounts[0:2], [10 * 10**18, 10 * 10**18], nonce1
     )
     signature = sign(tos_users[0], build_allocations_eip712_data(payload))
     with pytest.raises(exceptions.WrongAllocationsNonce):
@@ -348,10 +348,10 @@ def test_nonces(tos_users, proposal_accounts):
         )
 
 
-def test_stores_allocation_request_signature(tos_users, proposal_accounts):
+def test_stores_allocation_request_signature(tos_users, project_accounts):
     nonce0 = get_allocation_nonce(tos_users[0].address)
     payload = create_payload(
-        proposal_accounts[0:2], [10 * 10**18, 20 * 10**18], nonce0
+        project_accounts[0:2], [10 * 10**18, 20 * 10**18], nonce0
     )
     signature = sign(tos_users[0], build_allocations_eip712_data(payload))
 
@@ -369,10 +369,10 @@ def test_stores_allocation_request_signature(tos_users, proposal_accounts):
     assert alloc_signature.signature == signature
 
 
-def test_stores_allocation_leverage(tos_users, proposal_accounts):
+def test_stores_allocation_leverage(tos_users, project_accounts):
     nonce0 = get_allocation_nonce(tos_users[0].address)
     payload = create_payload(
-        proposal_accounts[0:2], [10 * 10**18, 20 * 10**18], nonce0
+        project_accounts[0:2], [10 * 10**18, 20 * 10**18], nonce0
     )
     signature = sign(tos_users[0], build_allocations_eip712_data(payload))
     expected_leverage, _, _ = controller.simulate_allocation(
@@ -404,7 +404,7 @@ def check_allocations(user_address, expected_payload, expected_count):
         assert db_allocation.epoch == epoch
         assert db_allocation.user_id == user.id
         assert db_allocation.user is not None
-        assert db_allocation.proposal_address == expected_allocation.proposal_address
+        assert db_allocation.project_address == expected_allocation.project_address
         assert int(db_allocation.amount) == expected_allocation.amount
 
 
