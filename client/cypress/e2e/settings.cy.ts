@@ -210,7 +210,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       if (!isDesktop) {
         cy.get('[data-test=SettingsLinkBoxes__Button]').each(($button, index) => {
           const expectedOrderAndContentLinksMobile = [
-            { href: TERMS_OF_USE, text: 'Terms & Conditions' },
             { href: OCTANT_BUILD_LINK, text: 'Website' },
             { href: OCTANT_DOCS, text: 'Docs' },
             { href: DISCORD_LINK, text: 'Discord' },
@@ -218,7 +217,11 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
 
           cy.wrap($button)
             .should('have.text', expectedOrderAndContentLinksMobile[index].text)
-            .should('have.attr', 'href', expectedOrderAndContentLinksMobile[index].href)
+            .should('have.attr', 'href', expectedOrderAndContentLinksMobile[index].href);
+
+          cy.get('[data-test=SettingsMainInfoBox__Button]')
+            .should('have.text', 'Terms & Conditions')
+            .and('have.attr', 'href', TERMS_OF_USE);
         });
       }
     });
