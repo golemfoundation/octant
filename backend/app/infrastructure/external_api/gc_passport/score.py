@@ -6,6 +6,7 @@ from app.infrastructure.exception_handler import ExceptionHandler
 
 from app.settings import config
 
+
 def signing_message() -> str:
     try:
         response = requests.get(
@@ -18,7 +19,7 @@ def signing_message() -> str:
     except requests.exceptions.RequestException as e:
         ExceptionHandler.print_stacktrace(e)
         raise ExternalApiException(e, 500)
-    
+
 
 def issue_address_for_scoring(address: str) -> dict:
     try:
@@ -61,16 +62,17 @@ def fetch_stamps(address: str) -> dict:
     except requests.exceptions.RequestException as e:
         ExceptionHandler.print_stacktrace(e)
         raise ExternalApiException(e, 500)
-    
 
 
 def _scorer_id() -> str:
     # return app.config["GC_PASSPORT_SCORER_ID"]
+    print(f"GC_PASSPORT_SCORER_ID: {config.GC_PASSPORT_SCORER_ID}")
     return config.GC_PASSPORT_SCORER_ID
 
 
 def _authentication_headers() -> dict:
     # api_key = app.config["GC_PASSPORT_SCORER_API_KEY"]
     api_key = config.GC_PASSPORT_SCORER_API_KEY
+    print(f"GC_PASSPORT_SCORER_API_KEY: {api_key}")
 
     return {"X-API-KEY": api_key}

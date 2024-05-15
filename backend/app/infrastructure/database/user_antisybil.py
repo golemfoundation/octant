@@ -1,0 +1,31 @@
+from typing import Optional
+from datetime import datetime
+import json
+
+from app.infrastructure.database.models import GPStamps
+from app.infrastructure.database.user import get_by_address, add_user
+from app.exceptions import UserNotFound
+from app.extensions import db
+
+
+def add_score(user_address: str, score: str, expires_at: datetime, stamps) -> GPStamps:
+    user = get_by_address(user_address)
+    if user is None:
+        add_user(user_address)
+        db.session.commit()
+        user = get_by_address(user_address)
+
+    verification = GPStamps(
+        user_id=user.id, score=score, expires_at=expires_at, stamps=json.dumps(stamps)
+    )
+    db.session.add(verification)
+
+    return verification
+
+
+def get_score_by_address(user_address: str) -> Optional[GPStamps]:
+    user = get_by_address(user_address)
+    if user is None:
+        raise UserNotFound(user_address)
+
+    return GPStamps.query.filter_by(user_id=user.id).first()

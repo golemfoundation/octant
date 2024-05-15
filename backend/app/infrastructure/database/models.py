@@ -41,6 +41,17 @@ class User(BaseModel):
         return int(budget) if budget is not None else None
 
 
+class GPStamps(BaseModel):
+    __tablename__ = "gitcoin_passport_stamps"
+    user_id = Column(
+        db.Integer, db.ForeignKey("users.id"), primary_key=True, nullable=False
+    )
+    score = Column(db.Float, nullable=False)
+    expires_at = Column(db.TIMESTAMP, nullable=False)
+    # storing for analysis
+    stamps = Column(db.String, nullable=False)
+
+
 class PatronModeEvent(BaseModel):
     __tablename__ = "patron_events"
 

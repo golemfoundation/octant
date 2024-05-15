@@ -476,6 +476,14 @@ class Client:
         )
         return json.loads(rv.text), rv.status_code
 
+    def get_antisybil_score(self, user_address: str) -> (any, int):
+        rv = self._flask_client.get(f"/user/{user_address}/antisybil-status")
+        return json.loads(rv.text), rv.status_code
+
+    def refresh_antisybil_score(self, user_address: str) -> (str | None, int):
+        rv = self._flask_client.put(f"/user/{user_address}/antisybil-status")
+        return rv.text, rv.status_code
+
     @property
     def config(self):
         return self._flask_client.application.config
