@@ -31,7 +31,7 @@ def create_app(config=None):
         template_folder=f"{config.PROJECT_ROOT}/templates",
         static_folder=f"{config.PROJECT_ROOT}/static",
     )
-    app.teardown_request(teardown_session)
+
     app.config.from_object(config)
 
     register_extensions(app)
@@ -58,7 +58,3 @@ def register_extensions(app):
 def register_errorhandlers(app):
     handler = ExceptionHandler()
     app.register_error_handler(Exception, handler)
-
-
-def teardown_session(*args, **kwargs):
-    db.session.remove()

@@ -11,6 +11,7 @@
 # we prevent this monkeypatching
 
 import os
+from app.extensions import db
 
 os.environ["EVENTLET_NO_GREENDNS"] = "yes"
 import eventlet  # noqa
@@ -19,6 +20,12 @@ eventlet.monkey_patch()
 from app import create_app  # noqa
 
 app = create_app()
+
+
+@app.teardown_request
+def teardown_session(*args, **kwargs):
+    db.session.remove()
+
 
 if __name__ == "__main__":
     eventlet.wsgi.server(eventlet.listen(("0.0.0.0", 5000)), app, log=app.logger)
