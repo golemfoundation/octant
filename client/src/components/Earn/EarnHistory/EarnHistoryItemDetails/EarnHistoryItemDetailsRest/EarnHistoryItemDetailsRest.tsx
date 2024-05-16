@@ -38,6 +38,7 @@ const EarnHistoryItemDetailsRest: FC<EarnHistoryItemDetailsRestProps> = ({
         ...(['withdrawal', 'patron_mode_donation'].includes(type)
           ? { cryptoCurrency: 'ethereum', getFormattedEthValueProps: { shouldIgnoreGwei: true } }
           : { cryptoCurrency: 'golem' }),
+        showCryptoSuffix: true,
       },
       label: isPatronDonation ? t('sections.matchingFundDonation') : t('sections.amount'),
     },
@@ -49,6 +50,7 @@ const EarnHistoryItemDetailsRest: FC<EarnHistoryItemDetailsRestProps> = ({
               getFormattedEthValueProps: { shouldIgnoreGwei: true },
               // Gas price is not known for pending transactions.
               isFetching: isFetchingTransaction || isWaitingForTransactionInitialized,
+              showCryptoSuffix: true,
               valueCrypto: BigInt(transaction?.gasPrice ?? 0),
             },
             label: t('sections.gasPrice'),

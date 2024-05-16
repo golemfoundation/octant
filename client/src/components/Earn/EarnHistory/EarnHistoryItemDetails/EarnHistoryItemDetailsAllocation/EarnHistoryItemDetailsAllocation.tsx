@@ -60,6 +60,7 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
         isFetching: isFetchingEpochTimestampHappenedIn || isFetchingIndividualReward,
+        showCryptoSuffix: true,
         valueCrypto: individualReward ? individualReward - amount : BigInt(0),
       },
       label: t('sections.allocationPersonal'),
@@ -70,6 +71,7 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
           {
             doubleValueProps: {
               cryptoCurrency: 'ethereum' as CryptoCurrency,
+              showCryptoSuffix: true,
               valueCrypto: amount,
             },
             label: t('sections.allocationProjects', { projectsNumber: allocations.length }),

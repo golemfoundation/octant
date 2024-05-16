@@ -24,6 +24,7 @@ const LayoutWalletPersonalAllocation: FC<LayoutWalletPersonalAllocationProps> = 
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
         isFetching: isFetchingWithdrawals,
+        showCryptoSuffix: true,
         valueCrypto: withdrawals?.sums.available,
       },
       label: i18n.t('common.availableNow'),

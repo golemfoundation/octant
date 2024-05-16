@@ -21,12 +21,14 @@ const DoubleValue: FC<DoubleValueProps> = ({
   isFetching = false,
   getFormattedEthValueProps,
   getFormattedGlmValueProps,
+  showCryptoSuffix,
 }) => {
   const getValuesToDisplay = useGetValuesToDisplay();
 
   const values = getValuesToDisplay({
     coinPricesServerDowntimeText,
     cryptoCurrency,
+    showCryptoSuffix,
     valueCrypto,
     valueString,
     ...(cryptoCurrency === 'ethereum' ? getFormattedEthValueProps : getFormattedGlmValueProps),

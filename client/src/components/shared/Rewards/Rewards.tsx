@@ -32,14 +32,13 @@ const Rewards: FC<RewardsProps> = ({
 
   const totalValueOfAllocationsToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
-    getFormattedEthValueProps: {
-      shouldIgnoreGwei: true,
-    },
+    showCryptoSuffix: true,
     valueCrypto: totalValueOfAllocations,
   });
 
   const projectDonorsRewardsSumToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
+    showCryptoSuffix: true,
     valueCrypto: totalValueOfAllocations,
   });
 
