@@ -484,12 +484,15 @@ class Client:
 @pytest.fixture
 def client(flask_client: FlaskClient) -> Client:
     client = Client(flask_client)
-    if STARTING_EPOCH != 1:
-        client.move_to_next_epoch(STARTING_EPOCH)
-    while True:
-        res = client.sync_status()
-        if res["indexedEpoch"] == res["blockchainEpoch"] and res["indexedEpoch"] > 0:
-            break
+    for i in range(1, STARTING_EPOCH + 1):
+        if i != 1:
+            client.move_to_next_epoch(i)
+        while True:
+            res = client.sync_status()
+            if res["indexedEpoch"] == res["blockchainEpoch"] and res["indexedEpoch"] > (
+                i - 1
+            ):
+                break
     return client
 
 
