@@ -339,6 +339,7 @@ def ua_bob(client: Client) -> UserAccount:
 def ua_carol(client: Client) -> UserAccount:
     return UserAccount(CryptoAccount.from_key(CAROL), client)
 
+
 @pytest.fixture(autouse=True)
 def setup_funds(
     client: Client,
@@ -358,6 +359,7 @@ def setup_funds(
     deployer.transfer(ua_alice, 10000)
     deployer.transfer(ua_bob, 15000)
     deployer.transfer(ua_carol, 20000)
+
 
 class Client:
     def __init__(self, flask_client: FlaskClient):
