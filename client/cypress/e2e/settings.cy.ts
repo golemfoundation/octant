@@ -8,14 +8,14 @@ import {
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
-import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
-import getValueCryptoToDisplay from 'src/utils/getValueCryptoToDisplay';
 import {
   OCTANT_BUILD_LINK,
   OCTANT_DOCS,
   DISCORD_LINK,
-  TERMS_OF_USE
+  TERMS_OF_USE,
 } from 'src/constants/urls';
+import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
+import getValueCryptoToDisplay from 'src/utils/getValueCryptoToDisplay';
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(`settings: ${device}`, { viewportHeight, viewportWidth }, () => {
