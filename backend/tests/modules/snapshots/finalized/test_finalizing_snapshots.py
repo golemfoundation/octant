@@ -4,6 +4,7 @@ import pytest
 
 from app.infrastructure import database
 from app.modules.dto import AllocationItem
+from app.modules.projects.rewards.service.finalizing import FinalizingProjectRewards
 from app.modules.snapshots.finalized.service.finalizing import FinalizingSnapshots
 from tests.helpers import make_user_allocation
 from tests.helpers.constants import MATCHED_REWARDS, USER2_BUDGET
@@ -28,6 +29,7 @@ def test_create_finalized_snapshots_with_rewards(
         patrons_mode=mock_patron_mode,
         octant_rewards=mock_octant_rewards,
         user_rewards=mock_user_rewards,
+        project_rewards=FinalizingProjectRewards(),
     )
 
     result = service.create_finalized_epoch_snapshot(context)
@@ -66,6 +68,7 @@ def test_create_finalized_snapshots_without_rewards(
         patrons_mode=mock_patron_mode,
         octant_rewards=mock_octant_rewards,
         user_rewards=mock_user_rewards,
+        project_rewards=FinalizingProjectRewards(),
     )
 
     result = service.create_finalized_epoch_snapshot(context)

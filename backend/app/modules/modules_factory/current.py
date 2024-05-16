@@ -16,7 +16,9 @@ from app.modules.modules_factory.protocols import (
 )
 from app.modules.modules_factory.protocols import SimulatePendingSnapshots
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
-from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
+from app.modules.octant_rewards.general.service.calculated import (
+    CalculatedOctantRewards,
+)
 from app.modules.snapshots.pending.service.simulated import SimulatedPendingSnapshots
 from app.modules.staking.proceeds.service.estimated import EstimatedStakingProceeds
 from app.modules.user.allocations.nonce.service.saved import SavedUserAllocationsNonce
