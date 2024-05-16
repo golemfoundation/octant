@@ -2,13 +2,10 @@ from collections import namedtuple
 
 from app.engine.octant_rewards import OctantRewardsSettings
 from app.engine.octant_rewards.leftover import LeftoverPayload
-from app.engine.projects import ProjectSettings
 from app.modules.common import merkle_tree
-from app.modules.common.project_rewards import get_projects_rewards
 from app.modules.dto import (
     OctantRewardsDTO,
     ProjectAccountFundsDTO,
-    AllocationDTO,
     AccountFundsDTO,
 )
 

@@ -1,6 +1,7 @@
 import pytest
 
 from app.modules.dto import AccountFundsDTO, ProjectAccountFundsDTO
+from app.modules.projects.rewards.service.finalizing import FinalizingProjectRewards
 from app.modules.snapshots.finalized.service.simulated import (
     SimulatedFinalizedSnapshots,
 )
@@ -25,6 +26,7 @@ def test_simulate_finalized_snapshots(
         patrons_mode=mock_patron_mode,
         octant_rewards=mock_octant_rewards,
         user_rewards=mock_user_rewards,
+        project_rewards=FinalizingProjectRewards(),
     )
 
     result = service.simulate_finalized_epoch_snapshot(context)
