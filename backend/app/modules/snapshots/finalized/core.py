@@ -33,28 +33,6 @@ def calculate_leftover(
     )
 
 
-def get_finalized_project_rewards(
-    project_settings: ProjectSettings,
-    allocations: list[AllocationDTO],
-    all_projects: list[str],
-    matched_rewards: int,
-) -> FinalizedProjectRewards:
-    project_rewards_result = get_projects_rewards(
-        project_settings, allocations, all_projects, matched_rewards
-    )
-
-    return FinalizedProjectRewards(
-        rewards=[
-            ProjectAccountFundsDTO(
-                address=r.address, amount=r.allocated + r.matched, matched=r.matched
-            )
-            for r in project_rewards_result.rewards
-            if r.allocated > 0
-        ],
-        rewards_sum=project_rewards_result.rewards_sum,
-    )
-
-
 def get_merkle_root(
     user_rewards: list[AccountFundsDTO], projects_rewards: list[ProjectAccountFundsDTO]
 ):
