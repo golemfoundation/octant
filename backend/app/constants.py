@@ -16,4 +16,4 @@ BITQUERY_API = "https://streaming.bitquery.io/graphql"
 SAFE_API_MAINNET = "https://safe-transaction-mainnet.safe.global/api/v1"
 SAFE_API_SEPOLIA = "https://safe-transaction-sepolia.safe.global/api/v1"
 
-DEFAULT_MAINNET_PROPOSAL_CIDS = "QmSQEFD35gKxdPEmngNt1CWe3kSwiiGqBn1Z3FZvWb8mvK,Qmds9N5y2vkMuPTD6M4EBxNXnf3bjTDmzWBGnCkQGsMMGe"
+DEFAULT_MAINNET_PROJECT_CIDS = "QmSQEFD35gKxdPEmngNt1CWe3kSwiiGqBn1Z3FZvWb8mvK,Qmds9N5y2vkMuPTD6M4EBxNXnf3bjTDmzWBGnCkQGsMMGe"

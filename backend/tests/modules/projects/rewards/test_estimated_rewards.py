@@ -30,7 +30,7 @@ def test_estimated_project_rewards_with_no_allocations(mock_octant_rewards):
 
 
 def test_estimated_project_rewards_with_allocations(
-    mock_octant_rewards, mock_users_db, proposal_accounts
+    mock_octant_rewards, mock_users_db, project_accounts
 ):
     context = get_context(3)
 
@@ -38,7 +38,7 @@ def test_estimated_project_rewards_with_allocations(
     make_user_allocation(
         context,
         user,
-        allocation_items=[AllocationItem(proposal_accounts[0].address, USER1_BUDGET)],
+        allocation_items=[AllocationItem(project_accounts[0].address, USER1_BUDGET)],
     )
 
     service = EstimatedProjectRewards(octant_rewards=mock_octant_rewards)

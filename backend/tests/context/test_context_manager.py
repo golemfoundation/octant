@@ -22,7 +22,7 @@ def before(
     patch_epochs,
     patch_glm,
     patch_eth_get_balance,
-    patch_proposals,
+    patch_projects,
     mock_epoch_details,
 ):
     pass

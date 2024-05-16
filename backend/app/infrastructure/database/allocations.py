@@ -36,7 +36,7 @@ def get_all(epoch: int) -> List[AllocationDTO]:
     return [
         AllocationDTO(
             amount=int(a.amount),
-            proposal_address=a.proposal_address,
+            project_address=a.project_address,
             user_address=a.user.address,
         )
         for a in allocations
@@ -88,7 +88,7 @@ def get_all_by_user_addr_and_epoch(
 
     return [
         AccountFundsDTO(
-            address=alloc.proposal_address,
+            address=alloc.project_address,
             amount=int(alloc.amount),
         )
         for alloc in allocations
@@ -99,7 +99,7 @@ def get_all_by_project_addr_and_epoch(
     project_address: str, epoch: int, with_deleted=False
 ) -> List[Allocation]:
     query: Query = Allocation.query.filter_by(
-        proposal_address=to_checksum_address(project_address), epoch=epoch
+        project_address=to_checksum_address(project_address), epoch=epoch
     )
 
     if not with_deleted:
@@ -177,7 +177,7 @@ def store_allocation_request(
             epoch=epoch_num,
             user_id=user.id,
             nonce=request.payload.nonce,
-            proposal_address=to_checksum_address(a.proposal_address),
+            project_address=to_checksum_address(a.project_address),
             amount=str(a.amount),
         )
         for a in request.payload.allocations

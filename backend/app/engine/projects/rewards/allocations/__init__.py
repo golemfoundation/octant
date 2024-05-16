@@ -7,7 +7,7 @@ from typing import List, Tuple
 
 @dataclass(frozen=True)
 class AllocationItem:
-    proposal_address: str
+    project_address: str
     amount: int
 
 
@@ -28,8 +28,8 @@ class ProjectAllocations(ABC):
         result_allocations = []
         total_allocated = 0
         grouped_allocations = groupby(
-            sorted(payload.allocations, key=lambda a: a.proposal_address),
-            key=lambda a: a.proposal_address,
+            sorted(payload.allocations, key=lambda a: a.project_address),
+            key=lambda a: a.project_address,
         )
         for project_address, project_allocations in grouped_allocations:
             project_allocations = self._calc_allocations(project_allocations)
