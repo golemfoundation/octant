@@ -6,9 +6,31 @@ export interface Deserializable<T> {
   from(input: any): T;
 }
 
+export interface ApiRewardsBudgets {
+  budgets: {
+    address: string;
+    amount: string; // wei;
+  }[];
+}
+
+export interface ApiAllocations {
+  allocations: {
+    amount: string; // wei
+    donor: string;
+    proposal: string;
+  }[];
+}
+
+export interface ApiRewards {
+  rewards: {
+    address: string;
+    value: string; // wei;
+  }[];
+}
+
 
 export interface UserBudget {
-  budget: bigint;
+  amount: bigint;
   user: Address;
 }
 
@@ -17,67 +39,61 @@ export interface UserDonation {
   proposal: Address;
 }
 
+export interface AllocationRecord {
+  amount: bigint;
+  proposal: Address;
+  user: Address;
+}
+
 export interface Allocation {
   donations: UserDonation[];
   user: Address;
 }
 
 export interface Reward {
-  allocated: bigint,
-  matched: bigint,
-  proposal: Address
+  allocated: bigint;
+  matched: bigint;
+  proposal: Address;
 }
 
 export interface EpochInfo {
-  // operationalCost: bigint
-  // leftover: bigint
-  individualRewards: bigint
-  matchedRewards: bigint
-  patronsRewards: bigint
-  stakingProceeds: bigint
-  totalEffectiveDeposit: bigint
-  totalRewards: bigint
-  totalWithdrawals: bigint
+  communityFund: bigint;
+  individualRewards: bigint;
+  leftover: bigint;
+  matchedRewards: bigint;
+  operationalCost: bigint;
+  patronsRewards: bigint;
+  ppf: bigint;
+  stakingProceeds: bigint;
+  totalEffectiveDeposit: bigint;
+  totalRewards: bigint;
+  totalWithdrawals: bigint;
 }
-  
+
 export class UserBudgetImpl implements Deserializable<UserBudget> {
   user: Address;
 
-  budget: bigint;
+  amount: bigint;
 
   from(input: any) {
-    this.user = input.user;
-    this.budget = BigInt(input.budget)
+    this.user = input.address;
+    this.amount = BigInt(input.amount)
 
     return this
   }
 }
 
+export class AllocationImpl implements Deserializable<AllocationRecord> {
+  user: Address;
 
-export class UserDonationImpl implements Deserializable<UserDonation> {
   proposal: Address;
 
   amount: bigint;
 
   from(input: any) {
+    this.user = input.donor
     this.proposal = input.proposal;
     this.amount = BigInt(input.amount ?? 0)
-
-    return this
-  }
-}
-
-export class AllocationImpl implements Deserializable<Allocation> {
-  user: Address;
-
-  donations: UserDonation[]; 
-
-  from(input: any) {
-    this.user = input.donor
-    this.donations = Object.entries(input)
-    .filter(([k, _v]) => k !== "donor")
-    .filter(([_k, v]) => v !== null)
-    .map(([proposal, amount]) => new UserDonationImpl().from({amount, proposal}))
 
     return this
   }
@@ -92,37 +108,49 @@ export class RewardImpl implements Deserializable<Reward> {
 
   from(input: any) {
     this.proposal = input.address
-    this.allocated = BigInt(input.allocated) 
-    this.matched = BigInt(input.matched) 
-    
+    this.allocated = BigInt(input.allocated)
+    this.matched = BigInt(input.matched)
+
     return this
   }
 }
 
 export class EpochInfoImpl implements Deserializable<EpochInfo> {
-  stakingProceeds: bigint
-  
-  totalEffectiveDeposit: bigint
-  
-  totalRewards: bigint
-  
-  individualRewards: bigint
-  
-  totalWithdrawals: bigint
-  
-  patronsRewards: bigint
-  
-  matchedRewards: bigint
-  
+  individualRewards: bigint;
+
+  matchedRewards: bigint;
+
+  patronsRewards: bigint;
+
+  stakingProceeds: bigint;
+
+  totalEffectiveDeposit: bigint;
+
+  totalRewards: bigint;
+
+  totalWithdrawals: bigint;
+
+  operationalCost: bigint;
+
+  leftover: bigint;
+
+  ppf: bigint;
+
+  communityFund: bigint;
+
 
   from(input: any) {
-    this.stakingProceeds = BigInt(input.staking_proceeds)   
-    this.totalEffectiveDeposit = BigInt(input.total_effective_deposit)   
-    this.totalRewards = BigInt(input.total_rewards)   
-    this.individualRewards = BigInt(input.individual_rewards)   
-    this.totalWithdrawals = BigInt(input.total_withdrawals)   
-    this.patronsRewards = BigInt(input.patrons_budget)   
-    this.matchedRewards = BigInt(input.matched_rewards)   
+    this.individualRewards = BigInt(input.individualRewards)
+    this.matchedRewards = BigInt(input.matchedRewards)
+    this.patronsRewards = BigInt(input.patronsRewards)
+    this.stakingProceeds = BigInt(input.stakingProceeds)
+    this.totalEffectiveDeposit = BigInt(input.totalEffectiveDeposit)
+    this.totalRewards = BigInt(input.totalRewards)
+    this.totalWithdrawals = BigInt(input.totalWithdrawals)
+    this.operationalCost = BigInt(input.operationalCost)
+    this.leftover = BigInt(input.leftover)
+    this.ppf = BigInt(input.ppf)
+    this.communityFund = BigInt(input.communityFund)
 
     return this
   }
