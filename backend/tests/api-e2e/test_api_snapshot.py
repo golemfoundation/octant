@@ -15,7 +15,7 @@ from tests.conftest import Client, UserAccount
 
 @pytest.mark.api
 def test_pending_snapshot(
-    client: Client, deployer: UserAccount, ua_alice: UserAccount, ua_bob: UserAccount
+    client: Client, deployer: UserAccount, ua_alice: UserAccount, ua_bob: UserAccount, setup_funds
 ):
     # lock GLM from two accounts
     ua_alice.lock(10000)
@@ -53,6 +53,7 @@ def test_withdrawals(
     ua_alice: UserAccount,
     ua_bob: UserAccount,
     ua_carol: UserAccount,
+    setup_funds
 ):
     res = client.sync_status()
     assert res["indexedEpoch"] == res["blockchainEpoch"]

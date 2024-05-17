@@ -340,7 +340,7 @@ def ua_carol(client: Client) -> UserAccount:
     return UserAccount(CryptoAccount.from_key(CAROL), client)
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def setup_funds(
     client: Client,
     deployer: UserAccount,

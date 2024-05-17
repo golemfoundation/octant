@@ -11,7 +11,7 @@ from tests.helpers.constants import STARTING_EPOCH
 
 @pytest.mark.api
 def test_allocations(
-    client: Client, deployer: UserAccount, ua_alice: UserAccount, ua_bob: UserAccount
+    client: Client, deployer: UserAccount, ua_alice: UserAccount, ua_bob: UserAccount, setup_funds
 ):
     alice_proposals = get_projects_addresses(1)[:3]
 
@@ -50,7 +50,7 @@ def test_allocations(
 
 @pytest.mark.api
 def test_allocations_basics(
-    client: Client, deployer: UserAccount, ua_alice: UserAccount, ua_bob: UserAccount
+    client: Client, deployer: UserAccount, ua_alice: UserAccount, ua_bob: UserAccount, setup_funds
 ):
     alice_proposals = get_projects_addresses(1)[:3]
 
