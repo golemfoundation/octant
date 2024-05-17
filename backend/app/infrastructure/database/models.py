@@ -66,7 +66,7 @@ class Allocation(BaseModel):
     user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     nonce = Column(db.Integer, nullable=False)
     user = relationship("User", backref=db.backref("allocations", lazy=True))
-    proposal_address = Column(db.String(42), nullable=False)
+    project_address = Column(db.String(42), nullable=False)
     amount = Column(db.String, nullable=False)
     deleted_at = Column(db.TIMESTAMP, nullable=True)
 

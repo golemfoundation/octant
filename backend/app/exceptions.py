@@ -67,10 +67,10 @@ class NotInDecisionWindow(OctantException):
 
 class InvalidProjects(OctantException):
     code = 400
-    description = "The following proposals are not valid: {}"
+    description = "The following projects are not valid: {}"
 
-    def __init__(self, proposals):
-        super().__init__(self.description.format(proposals), self.code)
+    def __init__(self, projects):
+        super().__init__(self.description.format(projects), self.code)
 
 
 class ProjectAllocationToSelf(OctantException):
@@ -105,12 +105,12 @@ class BudgetNotFound(OctantException):
         super().__init__(self.description.format(user_address, epoch_num), self.code)
 
 
-class DuplicatedProposals(OctantException):
+class DuplicatedProjects(OctantException):
     code = 400
-    description = "The following proposals are duplicated in the payload: {}"
+    description = "The following projects are duplicated in the payload: {}"
 
-    def __init__(self, proposals):
-        super().__init__(self.description.format(proposals), self.code)
+    def __init__(self, projects):
+        super().__init__(self.description.format(projects), self.code)
 
 
 class MissingSnapshot(OctantException):

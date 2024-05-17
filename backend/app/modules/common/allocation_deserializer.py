@@ -20,7 +20,7 @@ def deserialize_payload(payload: Dict) -> UserAllocationRequestPayload:
 def deserialize_items(payload: Dict) -> List[AllocationItem]:
     return [
         AllocationItem(
-            proposal_address=to_checksum_address(allocation_data["proposalAddress"]),
+            project_address=to_checksum_address(allocation_data["proposalAddress"]),
             amount=int(allocation_data["amount"]),
         )
         for allocation_data in payload["allocations"]

@@ -1,10 +1,12 @@
-import pytest
 import time
+
+import pytest
 
 from app.extensions import w3, epochs, vault
 from app.legacy.core import vault as vault_core
-from app.legacy.core.proposals import get_proposals_addresses
+from app.legacy.core.projects import get_projects_addresses
 from tests.conftest import Client, UserAccount
+
 
 # Please note that tests here assume that they talk to blockchain and indexer
 # whose state is not reset between tests.
@@ -74,7 +76,7 @@ def test_pending_snapshot(
 def test_allocations(
     client: Client, deployer: UserAccount, ua_alice: UserAccount, ua_bob: UserAccount
 ):
-    alice_proposals = get_proposals_addresses(1)[:3]
+    alice_projects = get_projects_addresses(1)[:3]
 
     # fund Octant
     deployer.fund_octant(
@@ -98,8 +100,8 @@ def test_allocations(
     res = client.pending_snapshot()
     assert res["epoch"] > 0
 
-    ua_alice.allocate(1000, alice_proposals)
-    ua_bob.allocate(1000, alice_proposals[:1])
+    ua_alice.allocate(1000, alice_projects)
+    ua_bob.allocate(1000, alice_projects[:1])
 
     allocations = client.get_epoch_allocations(1)
     unique_donors = set()
@@ -112,7 +114,7 @@ def test_allocations(
                 unique_donors.add(val)
             if key == "amount":
                 assert int(val) > 0
-            if key == "proposal":
+            if key == "project":
                 unique_proposals.add(val)
             print("allocation items: ", allocation.items)
 
@@ -132,9 +134,9 @@ def test_withdrawals(
     assert res["indexedEpoch"] == res["blockchainEpoch"]
     assert res["indexedEpoch"] > 0
 
-    alice_proposals = get_proposals_addresses(1)[:3]
-    bob_proposals = get_proposals_addresses(1)[:3]
-    carol_proposals = get_proposals_addresses(1)[:3]
+    alice_proposals = get_projects_addresses(1)[:3]
+    bob_proposals = get_projects_addresses(1)[:3]
+    carol_proposals = get_projects_addresses(1)[:3]
 
     # fund Octant
     deployer.fund_octant(

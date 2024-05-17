@@ -81,10 +81,10 @@ class UserAllocationRequestPayload(JSONWizard):
 
 
 @dataclass(frozen=True)
-class ProposalDonationDTO(JSONWizard):
+class ProjectDonationDTO(JSONWizard):
     donor: str
     amount: int
-    proposal: str
+    project: str
 
 
 class WithdrawalStatus(StrEnum):
@@ -107,5 +107,5 @@ class SignatureOpType(StrEnum):
 
 @dataclass()
 class ProjectsMetadata(JSONWizard):
-    proposals_cid: str
+    projects_cid: str
     projects_addresses: List[str]
