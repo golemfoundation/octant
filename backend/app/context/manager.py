@@ -19,27 +19,23 @@ class Context(Model):
 
 
 @cache.memoize(timeout=15)
-def epoch_context(epoch_num: int, **kwargs) -> Context:
+def epoch_context(epoch_num: int, with_block_range: bool = False) -> Context:
     epoch_state = get_epoch_state(epoch_num)
-    return build_context(epoch_num, epoch_state, **kwargs)
+    return build_context(epoch_num, epoch_state, with_block_range)
 
 
-def state_context(epoch_state: EpochState, **kwargs) -> Context:
+def state_context(epoch_state: EpochState, with_block_range: bool = False) -> Context:
     epoch_num = get_epoch_number(epoch_state)
-    return build_context(epoch_num, epoch_state, **kwargs)
+    return build_context(epoch_num, epoch_state, with_block_range)
 
 
 @cache.memoize(timeout=60)
 def build_context(
     epoch_num: int,
     epoch_state: EpochState,
-    **kwargs,
+    with_block_range: bool = False,
 ) -> Context:
-    epoch_details = get_epoch_details(
-        epoch_num,
-        epoch_state,
-        **kwargs,
-    )
+    epoch_details = get_epoch_details(epoch_num, epoch_state, with_block_range)
     epoch_settings = get_epoch_settings(epoch_num)
     projects_details = get_projects_details(epoch_num)
     snapshots_state = get_snapshots_state()

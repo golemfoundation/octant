@@ -9,35 +9,39 @@ from app.infrastructure import graphql
 
 
 def get_epoch_details(
-    epoch_num: int, epoch_state: EpochState = None, **kwargs
+    epoch_num: int, epoch_state: EpochState = None, with_block_range: bool = False
 ) -> EpochDetails:
     match epoch_state:
         case EpochState.SIMULATED:
-            return _get_simulated_epoch_details(epoch_num, **kwargs)
+            return _get_simulated_epoch_details(epoch_num, with_block_range)
         case EpochState.FUTURE:
-            return _get_future_epoch_details(epoch_num, **kwargs)
+            return _get_future_epoch_details(epoch_num)
         case EpochState.CURRENT:
-            return _get_current_epoch_details(epoch_num, **kwargs)
+            return _get_current_epoch_details(epoch_num, with_block_range)
         case _:
-            return _get_default_epoch_details(epoch_num, **kwargs)
+            return _get_default_epoch_details(epoch_num, with_block_range)
 
 
-def get_epochs_details(from_epoch: int, to_epoch: int, **kwargs) -> List[EpochDetails]:
+def get_epochs_details(
+    from_epoch: int, to_epoch: int, with_block_range: bool = False
+) -> List[EpochDetails]:
     from_epoch = from_epoch if from_epoch > 0 else 1
     return [
-        _get_default_epoch_details(epoch_num, **kwargs)
+        _get_default_epoch_details(epoch_num, with_block_range)
         for epoch_num in range(from_epoch, to_epoch)
     ]
 
 
-def _get_simulated_epoch_details(epoch_num: int, **kwargs) -> EpochDetails:
+def _get_simulated_epoch_details(
+    epoch_num: int, with_block_range: bool = False
+) -> EpochDetails:
     epoch_details = graphql.epochs.get_epoch_by_number(epoch_num)
 
     now_sec = int(datetime.utcnow().timestamp())
     start = epoch_details["fromTs"]
     duration = now_sec - start
     start_block, end_block = get_blocks_range(
-        start, start + duration, now_sec, **kwargs
+        start, start + duration, now_sec, with_block_range
     )
 
     return EpochDetails(
@@ -51,19 +55,23 @@ def _get_simulated_epoch_details(epoch_num: int, **kwargs) -> EpochDetails:
     )
 
 
-def _get_future_epoch_details(epoch_num: int, **kwargs) -> EpochDetails:
+def _get_future_epoch_details(epoch_num: int) -> EpochDetails:
     epoch_details = epochs.get_future_epoch_props()
+    start = epoch_details[2]
     duration = epoch_details[3]
+    decision_window = epoch_details[4]
     return EpochDetails(
         epoch_num=epoch_num,
-        start=epoch_details[2],
+        start=start,
         duration=duration,
-        decision_window=epoch_details[4],
+        decision_window=decision_window,
         remaining_sec=duration,
     )
 
 
-def _get_current_epoch_details(epoch_num: int, **kwargs) -> EpochDetails:
+def _get_current_epoch_details(
+    epoch_num: int, with_block_range: bool = False
+) -> EpochDetails:
     epoch_details = graphql.epochs.get_epoch_by_number(epoch_num)
 
     now_sec = int(datetime.utcnow().timestamp())
@@ -71,7 +79,7 @@ def _get_current_epoch_details(epoch_num: int, **kwargs) -> EpochDetails:
     duration = epoch_details["duration"]
     end_sec = start + duration
     start_block, end_block = get_blocks_range(
-        start, start + duration, now_sec, **kwargs
+        start, start + duration, now_sec, with_block_range
     )
     remaining_sec = end_sec - now_sec
 
@@ -86,14 +94,16 @@ def _get_current_epoch_details(epoch_num: int, **kwargs) -> EpochDetails:
     )
 
 
-def _get_default_epoch_details(epoch_num: int, **kwargs) -> EpochDetails:
+def _get_default_epoch_details(
+    epoch_num: int, with_block_range: bool = False
+) -> EpochDetails:
     epoch_details = graphql.epochs.get_epoch_by_number(epoch_num)
 
     now_sec = int(datetime.utcnow().timestamp())
     start = epoch_details["fromTs"]
     duration = epoch_details["duration"]
     start_block, end_block = get_blocks_range(
-        start, start + duration, now_sec, **kwargs
+        start, start + duration, now_sec, with_block_range
     )
 
     return EpochDetails(

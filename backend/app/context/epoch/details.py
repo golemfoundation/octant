@@ -8,14 +8,14 @@ class EpochDetails:
     def __init__(
         self,
         epoch_num: int,
-        start,
-        duration,
-        decision_window,
-        remaining_sec,
-        start_block=None,
-        end_block=None,
+        start: int | str,
+        duration: int | str,
+        decision_window: int | str,
+        remaining_sec: int | str,
+        start_block: int = None,
+        end_block: int = None,
     ):
-        self.epoch_num = int(epoch_num)
+        self.epoch_num = epoch_num
         self.start_sec = int(start)
         self.duration_sec = int(duration)
         self.duration_days = sec_to_days(self.duration_sec)
@@ -24,10 +24,10 @@ class EpochDetails:
         self.end_sec = self.start_sec + self.duration_sec
         self.finalized_sec = self.end_sec + self.decision_window_sec
         self.finalized_timestamp = from_timestamp_s(self.finalized_sec)
+        self.remaining_sec = int(remaining_sec)
+        self.remaining_days = sec_to_days(self.remaining_sec)
         self.start_block = start_block
         self.end_block = end_block
-        self.remaining_sec = remaining_sec
-        self.remaining_days = sec_to_days(self.remaining_sec)
 
     @property
     def duration_range(self) -> Tuple[int, int]:
