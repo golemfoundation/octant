@@ -2,7 +2,7 @@ from app.engine.octant_rewards.leftover import LeftoverPayload, Leftover
 
 
 class LeftoverWithPPF(Leftover):
-    def calculate_leftover(self, payload: LeftoverPayload):
+    def calculate_leftover(self, payload: LeftoverPayload) -> int:
         return (
             payload.staking_proceeds
             - payload.operational_cost

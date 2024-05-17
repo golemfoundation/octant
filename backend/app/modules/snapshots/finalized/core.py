@@ -18,7 +18,7 @@ def calculate_leftover(
     octant_rewards_settings: OctantRewardsSettings,
     octant_rewards: OctantRewardsDTO,
     total_withdrawals: int,
-):
+) -> int:
     return octant_rewards_settings.leftover.calculate_leftover(
         LeftoverPayload(
             staking_proceeds=octant_rewards.staking_proceeds,
