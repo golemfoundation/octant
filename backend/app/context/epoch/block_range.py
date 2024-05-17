@@ -7,9 +7,9 @@ def get_blocks_range(
     start_sec: int,
     end_sec: int,
     now_sec: int,
-    **kwargs,
+    with_block_range: bool = False,
 ) -> tuple[Optional[int], Optional[int]]:
-    if not kwargs.get("with_block_range"):
+    if not with_block_range:
         return None, None
 
     start_block = get_block_num_from_ts(start_sec) if start_sec <= now_sec else None
