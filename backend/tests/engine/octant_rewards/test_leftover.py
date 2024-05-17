@@ -1,6 +1,6 @@
 from app.engine.octant_rewards import LeftoverWithPPF
 from app.engine.octant_rewards.leftover import LeftoverPayload
-from app.engine.octant_rewards.leftover.default import DefaultLeftover
+from app.engine.octant_rewards.leftover.default import PreliminaryLeftover
 
 
 def test_default_leftover():
@@ -11,7 +11,7 @@ def test_default_leftover():
         ppf=None,
         total_withdrawals=430,
     )
-    uut = DefaultLeftover()
+    uut = PreliminaryLeftover()
 
     result = uut.calculate_leftover(payload)
 
