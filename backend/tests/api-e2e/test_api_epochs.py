@@ -58,6 +58,6 @@ def test_epochs_basics(
     assert int(current_epoch["currentEpoch"]) == STARTING_EPOCH + 1
 
     # Check indexed epoch in following epoch
-    indexed_epoch, response_code = client.get_indexed_epoch()
+    indexed_epoch, _ = client.get_indexed_epoch()
     assert int(indexed_epoch["currentEpoch"]) == STARTING_EPOCH + 1
     assert int(indexed_epoch["indexedEpoch"]) == STARTING_EPOCH + 1
