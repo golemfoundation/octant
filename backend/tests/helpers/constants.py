@@ -3,6 +3,7 @@ from decimal import Decimal
 from tests.modules.octant_rewards.helpers import overhaul_formulas
 
 MNEMONIC = "test test test test test test test test test test test junk"
+STARTING_EPOCH = 1
 MOCKED_PENDING_EPOCH_NO = 1
 MOCKED_FINALIZED_EPOCH_NO = 1
 MOCKED_EPOCH_NO_AFTER_OVERHAUL = 3

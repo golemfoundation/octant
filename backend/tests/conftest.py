@@ -10,12 +10,13 @@ import gql
 import pytest
 from flask import g as request_context
 from flask.testing import FlaskClient
+from flask import current_app
 from requests import RequestException
 from web3 import Web3
 
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
-from app.extensions import db, deposits, glm, gql_factory, w3, vault
+from app.extensions import db, deposits, glm, gql_factory, w3, vault, epochs
 from app.infrastructure import database
 from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
@@ -30,6 +31,7 @@ from app.settings import DevConfig, TestConfig
 from app.exceptions import ExternalApiException
 from tests.helpers import make_user_allocation
 from tests.helpers.constants import (
+    STARTING_EPOCH,
     ALICE,
     BOB,
     CAROL,
@@ -282,14 +284,14 @@ class UserAccount:
         self._account = account
         self._client = client
 
-    def fund_octant(self, address: str, value: int):
+    def fund_octant(self):
         signed_txn = w3.eth.account.sign_transaction(
             dict(
                 nonce=w3.eth.get_transaction_count(self.address),
                 gasPrice=w3.eth.gas_price,
                 gas=1000000,
-                to=address,
-                value=w3.to_wei(value, "ether"),
+                to=self._client.config["WITHDRAWALS_TARGET_CONTRACT_ADDRESS"],
+                value=w3.to_wei(400, "ether"),
             ),
             self._account.key,
         )
@@ -310,21 +312,8 @@ class UserAccount:
         vault.batch_withdraw(self._account, epoch, amount, merkle_proof)
 
     def allocate(self, amount: int, addresses: list[str]):
-        nonce = self._client.get_allocation_nonce(self.address)
-
-        payload = {
-            "allocations": [
-                {
-                    "proposalAddress": address,
-                    "amount": amount,
-                }
-                for address in addresses
-            ],
-            "nonce": nonce,
-        }
-
-        signature = sign(self._account, build_allocations_eip712_data(payload))
-        self._client.allocate(payload, self._account.address, signature)
+        nonce, _ = self._client.get_allocation_nonce(self.address)
+        return self._client.make_allocation(self._account, amount, addresses, nonce)
 
     @property
     def address(self):
@@ -351,6 +340,27 @@ def ua_carol(client: Client) -> UserAccount:
     return UserAccount(CryptoAccount.from_key(CAROL), client)
 
 
+@pytest.fixture
+def setup_funds(
+    client: Client,
+    deployer: UserAccount,
+    ua_alice: UserAccount,
+    ua_bob: UserAccount,
+    ua_carol: UserAccount,
+    request,
+):
+    test_name = request.node.name
+    current_app.logger.debug(f"RUNNING TEST: {test_name}")
+    current_app.logger.debug("Setup funds before test")
+
+    # fund Octant
+    deployer.fund_octant()
+    # fund Users
+    deployer.transfer(ua_alice, 10000)
+    deployer.transfer(ua_bob, 15000)
+    deployer.transfer(ua_carol, 20000)
+
+
 class Client:
     def __init__(self, flask_client: FlaskClient):
         self._flask_client = flask_client
@@ -369,6 +379,15 @@ class Client:
                 if res["indexedEpoch"] == target:
                     return
             time.sleep(0.5)
+
+    def move_to_next_epoch(self, target):
+        assert epochs.get_current_epoch() == target - 1
+        now = w3.eth.get_block("latest").timestamp
+        nextEpochAt = epochs.get_current_epoch_end()
+        forward = nextEpochAt - now + 30
+        w3.provider.make_request("evm_increaseTime", [forward])
+        w3.provider.make_request("evm_mine", [])
+        assert epochs.get_current_epoch() == target
 
     def pending_snapshot(self):
         rv = self._flask_client.post("/snapshots/pending").text
@@ -391,25 +410,71 @@ class Client:
         return json.loads(rv)
 
     def get_epoch_allocations(self, epoch: int):
-        rv = self._flask_client.get(f"/allocations/epoch/{epoch}").text
-        return json.loads(rv)
+        rv = self._flask_client.get(f"/allocations/epoch/{epoch}")
+        return json.loads(rv.text), rv.status_code
 
-    def get_allocation_nonce(self, address: str) -> int:
-        rv = self._flask_client.get(
-            f"/allocations/users/{address}/allocation_nonce"
-        ).text
-        return json.loads(rv)["allocationNonce"]
+    def get_allocation_nonce(self, address: str) -> tuple[int, int]:
+        rv = self._flask_client.get(f"/allocations/users/{address}/allocation_nonce")
+        return json.loads(rv.text)["allocationNonce"], rv.status_code
 
-    def allocate(self, payload: dict, user_address: str, signature: str) -> int:
+    def make_allocation(
+        self, account, amount: int, addresses: list[str], nonce: int
+    ) -> int:
+        signature = self.sign_operation(account, amount, addresses, nonce)
         rv = self._flask_client.post(
             "/allocations/allocate",
             json={
-                "payload": payload,
-                "userAddress": user_address,
+                "payload": {
+                    "allocations": [
+                        {"proposalAddress": address, "amount": amount}
+                        for address in addresses
+                    ],
+                    "nonce": nonce,
+                },
+                "userAddress": account.address,
                 "signature": signature,
             },
         )
-        assert rv.status_code == 201, rv.text
+        return rv.status_code
+
+    def sign_operation(self, account, amount, addresses, nonce) -> str:
+        payload = {
+            "allocations": [
+                {
+                    "proposalAddress": address,
+                    "amount": amount,
+                }
+                for address in addresses
+            ],
+            "nonce": nonce,
+        }
+        signature = sign(account, build_allocations_eip712_data(payload))
+        return signature
+
+    def get_donors(self, epoch) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"/allocations/donors/{epoch}")
+        return json.loads(rv.text), rv.status_code
+
+    def get_proposal_donors(self, epoch, proposal_address) -> tuple[dict, int]:
+        rv = self._flask_client.get(
+            f"/allocations/project/{proposal_address}/epoch/{epoch}"
+        )
+        return json.loads(rv.text), rv.status_code
+
+    def get_user_allocations(self, epoch, user_address) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"/allocations/user/{user_address}/epoch/{epoch}")
+        return json.loads(rv.text), rv.status_code
+
+    def check_leverage(
+        self, proposal_address, user_address, amount
+    ) -> tuple[dict, int]:
+        payload = {
+            "allocations": [{"proposalAddress": proposal_address, "amount": amount}]
+        }
+        rv = self._flask_client.post(
+            f"/allocations/leverage/{user_address}", json=payload
+        )
+        return json.loads(rv.text), rv.status_code
 
     @property
     def config(self):
@@ -419,10 +484,15 @@ class Client:
 @pytest.fixture
 def client(flask_client: FlaskClient) -> Client:
     client = Client(flask_client)
-    while True:
-        res = client.sync_status()
-        if res["indexedEpoch"] == res["blockchainEpoch"] and res["indexedEpoch"] > 0:
-            break
+    for i in range(1, STARTING_EPOCH + 1):
+        if i != 1:
+            client.move_to_next_epoch(i)
+        while True:
+            res = client.sync_status()
+            if res["indexedEpoch"] == res["blockchainEpoch"] and res["indexedEpoch"] > (
+                i - 1
+            ):
+                break
     return client
 
 
