@@ -23,14 +23,14 @@ ppf = int(staking_proceeds * Decimal("0.35") - individual_rewards)
 
 
 def upgrade():
-    query = f"UPDATE pending_epoch_snapshots SET ppf = '{ppf}' WHERE epoch = 3 AND vanilla_individual_rewards = '{individual_rewards}' AND eth_proceeds = '{staking_proceeds}';"
+    query = f"UPDATE pending_epoch_snapshots SET ppf = '{ppf}' WHERE epoch = 3 AND all_individual_rewards = '{individual_rewards}' AND eth_proceeds = '{staking_proceeds}';"
     op.execute(query)
 
 
 def downgrade():
     old_ppf = "335947018690642670236"
 
-    query = f"UPDATE pending_epoch_snapshots SET ppf = '{old_ppf}' WHERE epoch = 3 AND vanilla_individual_rewards = '{individual_rewards}' AND eth_proceeds = '{staking_proceeds}' AND ppf = '{ppf}';"
+    query = f"UPDATE pending_epoch_snapshots SET ppf = '{old_ppf}' WHERE epoch = 3 AND all_individual_rewards = '{individual_rewards}' AND eth_proceeds = '{staking_proceeds}' AND ppf = '{ppf}';"
 
     print(query, flush=True)
 

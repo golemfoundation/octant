@@ -36,7 +36,7 @@ def upgrade():
         sa.Column("total_effective_deposit", sa.String(), nullable=False),
         sa.Column("locked_ratio", sa.String(), nullable=False),
         sa.Column("total_rewards", sa.String(), nullable=False),
-        sa.Column("vanilla_individual_rewards", sa.String(), nullable=False),
+        sa.Column("all_individual_rewards", sa.String(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("epoch"),
     )
@@ -62,7 +62,7 @@ def downgrade():
         sa.Column("eth_proceeds", sa.VARCHAR(), nullable=False),
         sa.Column("total_effective_deposit", sa.VARCHAR(), nullable=False),
         sa.Column("total_rewards", sa.VARCHAR(), nullable=False),
-        sa.Column("vanilla_individual_rewards", sa.VARCHAR(), nullable=False),
+        sa.Column("all_individual_rewards", sa.VARCHAR(), nullable=False),
         sa.Column("locked_ratio", sa.VARCHAR(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("epoch"),
