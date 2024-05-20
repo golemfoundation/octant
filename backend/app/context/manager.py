@@ -18,6 +18,7 @@ class Context(Model):
     snapshots_state: SnapshotsState
 
 
+@cache.memoize(timeout=60)
 def epoch_context(epoch_num: int) -> Context:
     epoch_state = get_epoch_state(epoch_num)
     return build_context(epoch_num, epoch_state)
