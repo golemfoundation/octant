@@ -408,7 +408,7 @@ class Client:
         rv = self._flask_client.get(f"/projects/epoch/{epoch}")
 
     def get_total_effective_estimated(self):
-        rv = self._flask_client.get(f"/deposits/total_effective/estimated")
+        rv = self._flask_client.get("/deposits/total_effective/estimated")
         return json.loads(rv.text), rv.status_code
 
     def get_total_effective(self, epoch: int):
