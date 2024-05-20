@@ -406,6 +406,7 @@ class Client:
 
     def get_projects(self, epoch: int):
         rv = self._flask_client.get(f"/projects/epoch/{epoch}")
+        return json.loads(rv.text), rv.status_code
 
     def get_total_effective_estimated(self):
         rv = self._flask_client.get("/deposits/total_effective/estimated")
