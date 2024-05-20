@@ -4,9 +4,6 @@ from flask import current_app as app
 from tests.conftest import Client
 from tests.helpers.constants import STARTING_EPOCH
 
-# Please note that tests here assume that they talk to blockchain and indexer
-# whose state is not reset between tests.
-
 
 @pytest.mark.api
 def test_projects_basics(client: Client, setup_funds):

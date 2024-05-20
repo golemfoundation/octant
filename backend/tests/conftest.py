@@ -408,6 +408,18 @@ class Client:
         rv = self._flask_client.get(f"/projects/epoch/{epoch}")
         return json.loads(rv.text), rv.status_code
 
+    def get_current_epoch(self):
+        rv = self._flask_client.get("/epochs/current")
+        return json.loads(rv.text), rv.status_code
+
+    def get_indexed_epoch(self):
+        rv = self._flask_client.get("/epochs/indexed")
+        return json.loads(rv.text), rv.status_code
+
+    def get_epoch_info(self, epoch):
+        rv = self._flask_client.get(f"/epochs/info/{epoch}")
+        return json.loads(rv.text), rv.status_code
+
     def get_total_effective_estimated(self):
         rv = self._flask_client.get("/deposits/total_effective/estimated")
         return json.loads(rv.text), rv.status_code
