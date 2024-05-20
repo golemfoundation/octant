@@ -6,9 +6,6 @@ from tests.conftest import Client, UserAccount
 from tests.helpers.constants import STARTING_EPOCH
 from flask import current_app as app
 
-# Please note that tests here assume that they talk to blockchain and indexer
-# whose state is not reset between tests.
-
 
 @pytest.mark.api
 def test_deposit_basics(
@@ -52,26 +49,23 @@ def test_deposit_basics(
     user_deposit_after_lock1, _ = client.get_user_deposit(
         ua_alice.address, STARTING_EPOCH
     )
-    assert (
-        0
-        < int(user_deposit_after_lock1["effectiveDeposit"])
-        < w3.to_wei(alice_first_lock, "ether")
+    assert int(user_deposit_after_lock1["effectiveDeposit"]) > 0
+    assert int(user_deposit_after_lock1["effectiveDeposit"]) < w3.to_wei(
+        alice_first_lock, "ether"
     )
 
     user_estimated_deposit_after_lock1, _ = client.get_user_estimated_effective_deposit(
         ua_alice.address
     )
-    assert (
-        0
-        < int(user_estimated_deposit_after_lock1["effectiveDeposit"])
-        < w3.to_wei(alice_first_lock, "ether")
+    assert int(user_estimated_deposit_after_lock1["effectiveDeposit"]) > 0
+    assert int(user_estimated_deposit_after_lock1["effectiveDeposit"]) < w3.to_wei(
+        alice_first_lock, "ether"
     )
 
     total_effective_estimated_after_lock1, _ = client.get_total_effective_estimated()
-    assert (
-        0
-        < int(total_effective_estimated_after_lock1["totalEffective"])
-        < w3.to_wei(alice_first_lock, "ether")
+    assert int(total_effective_estimated_after_lock1["totalEffective"]) > 0
+    assert int(total_effective_estimated_after_lock1["totalEffective"]) < w3.to_wei(
+        alice_first_lock, "ether"
     )
 
     # Second GLM lock
@@ -121,10 +115,11 @@ def test_deposit_basics(
     app.logger.debug(
         f"User deposit in epoch 1: {user_deposit_epoch1['effectiveDeposit']}, User deposit in epoch 2: {user_deposit_epoch2['effectiveDeposit']}"
     )
-    assert (
-        int(user_deposit_after_lock2["effectiveDeposit"])
-        == int(user_deposit_epoch1["effectiveDeposit"])
-        < int(user_deposit_epoch2["effectiveDeposit"])
+    assert int(user_deposit_after_lock2["effectiveDeposit"]) == int(
+        user_deposit_epoch1["effectiveDeposit"]
+    )
+    assert int(user_deposit_epoch1["effectiveDeposit"]) < int(
+        user_deposit_epoch2["effectiveDeposit"]
     )
     assert int(user_deposit_epoch2["effectiveDeposit"]) == w3.to_wei(
         alice_GLM_budget, "ether"

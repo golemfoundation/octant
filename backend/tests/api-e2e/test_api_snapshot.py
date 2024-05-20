@@ -9,9 +9,6 @@ from app.legacy.core.projects import get_projects_addresses
 from tests.helpers.constants import STARTING_EPOCH
 from tests.conftest import Client, UserAccount
 
-# Please note that tests here assume that they talk to blockchain and indexer
-# whose state is not reset between tests.
-
 
 @pytest.mark.api
 def test_pending_snapshot(
