@@ -1,13 +1,8 @@
 import pytest
 
-from app.extensions import w3
-
 from tests.conftest import Client, UserAccount
 from tests.helpers.constants import STARTING_EPOCH
 from flask import current_app as app
-
-# Please note that tests here assume that they talk to blockchain and indexer
-# whose state is not reset between tests.
 
 
 @pytest.mark.api
@@ -18,7 +13,7 @@ def test_epochs_basics(
     ua_bob: UserAccount,
     setup_funds,
 ):
-    # check current epoch
+    # Check current epoch
     (
         current_epoch,
         response_code,
@@ -32,7 +27,7 @@ def test_epochs_basics(
     assert int(indexed_epoch["indexedEpoch"]) == STARTING_EPOCH
     assert response_code == 200
 
-    # check epoch info
+    # Check epoch info
     (
         epoch_info,
         response_code,
@@ -58,9 +53,11 @@ def test_epochs_basics(
     epoch_no = client.wait_for_sync(STARTING_EPOCH + 1)
     app.logger.debug(f"indexed epoch: {epoch_no}")
 
+    # Check current epoch in following epoch
     current_epoch, _ = client.get_current_epoch()
     assert int(current_epoch["currentEpoch"]) == STARTING_EPOCH + 1
 
+    # Check indexed epoch in following epoch
     indexed_epoch, response_code = client.get_indexed_epoch()
     assert int(indexed_epoch["currentEpoch"]) == STARTING_EPOCH + 1
     assert int(indexed_epoch["indexedEpoch"]) == STARTING_EPOCH + 1
