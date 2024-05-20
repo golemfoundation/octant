@@ -9,7 +9,7 @@ from tests.helpers.constants import STARTING_EPOCH
 
 
 @pytest.mark.api
-def test_projects_basics(client: Client):
+def test_projects_basics(client: Client, setup_funds):
     projects_epoch1, status_code = client.get_projects(STARTING_EPOCH)
     projects_number_epoch1 = len(projects_epoch1["projectsAddresses"])
     assert projects_number_epoch1 > (STARTING_EPOCH-1)
