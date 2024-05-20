@@ -380,6 +380,13 @@ class Client:
                     return
             time.sleep(0.5)
 
+    def wait_for_height_sync(self):
+        while True:
+            res = self.sync_status()
+            if res["indexedHeight"] == res["blockchainHeight"]:
+                return res["indexedEpoch"]
+            time.sleep(0.5)
+
     def move_to_next_epoch(self, target):
         assert epochs.get_current_epoch() == target - 1
         now = w3.eth.get_block("latest").timestamp
@@ -399,6 +406,28 @@ class Client:
 
     def get_projects(self, epoch: int):
         rv = self._flask_client.get(f"/projects/epoch/{epoch}")
+        return json.loads(rv.text), rv.status_code
+
+    def get_total_effective_estimated(self):
+        rv = self._flask_client.get("/deposits/total_effective/estimated")
+        return json.loads(rv.text), rv.status_code
+
+    def get_total_effective(self, epoch: int):
+        rv = self._flask_client.get(f"/deposits/{epoch}/total_effective")
+        return json.loads(rv.text), rv.status_code
+
+    def get_user_deposit(self, user_address: str, epoch: int):
+        rv = self._flask_client.get(f"/deposits/users/{user_address}/{epoch}")
+        return json.loads(rv.text), rv.status_code
+
+    def get_user_estimated_effective_deposit(self, user_address: str):
+        rv = self._flask_client.get(
+            f"/deposits/users/{user_address}/estimated_effective_deposit"
+        )
+        return json.loads(rv.text), rv.status_code
+
+    def get_locked_ratio_in_epoch(self, epoch: int):
+        rv = self._flask_client.get(f"/deposits/{epoch}/locked_ratio")
         return json.loads(rv.text), rv.status_code
 
     def get_rewards_budget(self, address: str, epoch: int):
