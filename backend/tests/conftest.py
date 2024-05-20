@@ -397,6 +397,10 @@ class Client:
         rv = self._flask_client.post("/snapshots/finalized").text
         return json.loads(rv)
 
+    def get_projects(self, epoch: int):
+        rv = self._flask_client.get(f"/projects/epoch/{epoch}")
+        return json.loads(rv.text), rv.status_code
+
     def get_rewards_budget(self, address: str, epoch: int):
         rv = self._flask_client.get(f"/rewards/budget/{address}/epoch/{epoch}").text
         print(
