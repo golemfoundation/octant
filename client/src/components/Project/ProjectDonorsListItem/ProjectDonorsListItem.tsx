@@ -36,7 +36,7 @@ const ProjectDonorsListItem: FC<ProjectDonorsListItemProps> = ({
               cryptoCurrency: 'ethereum',
               getFormattedEthValueProps: { shouldIgnoreGwei: true },
               valueCrypto: amount,
-            })
+            }).fullString
           : getValueFiatToDisplay({
               cryptoCurrency: 'ethereum',
               cryptoValues,

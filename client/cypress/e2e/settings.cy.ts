@@ -75,7 +75,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       const cryptoValue = getValueCryptoToDisplay({
         cryptoCurrency: 'golem',
         valueCrypto: BigInt(0),
-      });
+      }).fullString;
 
       cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__primary]')
         .invoke('text')
@@ -92,7 +92,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       const cryptoValue = getValueCryptoToDisplay({
         cryptoCurrency: 'golem',
         valueCrypto: BigInt(0),
-      });
+      }).fullString;
 
       cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__primary]')
         .invoke('text')

@@ -56,7 +56,7 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({
                     shouldIgnoreGwei: true,
                   },
                   valueCrypto: amount,
-                })
+                }).fullString
               : getValueFiatToDisplay({
                   cryptoCurrency: 'ethereum',
                   cryptoValues,

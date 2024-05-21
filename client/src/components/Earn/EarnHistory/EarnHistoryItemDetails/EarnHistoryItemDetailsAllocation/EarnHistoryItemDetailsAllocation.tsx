@@ -103,10 +103,12 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
                         styles.isFetchingEpochLeverage,
                     )}
                   >
-                    {getValueCryptoToDisplay({
-                      cryptoCurrency: 'ethereum',
-                      valueCrypto: amount * leverageToUse,
-                    })}
+                    {
+                      getValueCryptoToDisplay({
+                        cryptoCurrency: 'ethereum',
+                        valueCrypto: amount * leverageToUse,
+                      }).fullString
+                    }
                   </div>
                 ),
                 label: t('sections.finalMatchFunding'),

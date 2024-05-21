@@ -32,15 +32,13 @@ const Rewards: FC<RewardsProps> = ({
 
   const totalValueOfAllocationsToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
-    showCryptoSuffix: true,
     valueCrypto: totalValueOfAllocations,
-  });
+  }).fullString;
 
   const projectDonorsRewardsSumToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
-    showCryptoSuffix: true,
     valueCrypto: totalValueOfAllocations,
-  });
+  }).fullString;
 
   const showProgressBar =
     !isDonationAboveThreshold &&
@@ -94,7 +92,7 @@ const Rewards: FC<RewardsProps> = ({
     return getValueCryptoToDisplay({
       cryptoCurrency: 'ethereum',
       valueCrypto: projectRewardsThreshold,
-    });
+    }).fullString;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, rightSectionValueUseMemoDeps);
 

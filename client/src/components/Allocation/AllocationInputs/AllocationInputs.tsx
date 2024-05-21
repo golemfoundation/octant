@@ -5,9 +5,18 @@ import { useTranslation } from 'react-i18next';
 
 import Button from 'components/ui/Button';
 import InputText from 'components/ui/InputText';
+import useCryptoValues from 'hooks/queries/useCryptoValues';
+import useSettingsStore from 'store/settings/store';
+import convertFiatToCrypto from 'utils/convertFiatToCrypto';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
+import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
-import { comma, floatNumberWithUpTo18DecimalPlaces, percentageOnly } from 'utils/regExp';
+import {
+  comma,
+  floatNumberWithUpTo18DecimalPlaces,
+  floatNumberWithUpTo2DecimalPlaces,
+  percentageOnly,
+} from 'utils/regExp';
 
 import styles from './AllocationInputs.module.scss';
 import AllocationInputsProps, { FormFields } from './types';
@@ -24,6 +33,24 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
   const { t } = useTranslation('translation', {
     keyPrefix: 'common',
   });
+  const {
+    data: { displayCurrency, isCryptoMainValueDisplay },
+  } = useSettingsStore(({ data }) => ({
+    data: {
+      displayCurrency: data.displayCurrency,
+      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
+    },
+  }));
+  const { data: cryptoValues } = useCryptoValues(displayCurrency);
+  const [valueFiat, setValueFiat] = useState(
+    getValueFiatToDisplay({
+      cryptoCurrency: 'ethereum',
+      cryptoValues,
+      displayCurrency,
+      showFiatPrefix: false,
+      valueCrypto: valueCryptoSelected,
+    }),
+  );
   const [percentage, setPercentage] = useState<string>('');
   // Whenever editing already edited entry, restToDistribute should be increased by whatever is set here.
   const restToDistributeAdjusted = isManuallyEdited
@@ -64,16 +91,43 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
 
   const onValueStringChange = (newValueString: string): void => {
     const valueComma = newValueString.replace(comma, '.');
-    if (valueComma && !floatNumberWithUpTo18DecimalPlaces.test(valueComma)) {
+
+    if (
+      isCryptoMainValueDisplay &&
+      valueComma &&
+      !floatNumberWithUpTo18DecimalPlaces.test(valueComma)
+    ) {
       return;
     }
 
-    const newValueBigInt = parseUnitsBigInt(newValueString || '0');
+    if (
+      !isCryptoMainValueDisplay &&
+      valueComma &&
+      !floatNumberWithUpTo2DecimalPlaces.test(valueComma)
+    ) {
+      return;
+    }
+
+    if (!isCryptoMainValueDisplay) {
+      setValueFiat(newValueString);
+    }
+
+    const newValueBigInt = isCryptoMainValueDisplay
+      ? parseUnitsBigInt(newValueString || '0')
+      : convertFiatToCrypto({
+          cryptoCurrency: 'ethereum',
+          cryptoValues,
+          displayCurrency,
+          valueFiat: valueComma,
+        });
     let newPercentage = newValueString
       ? ((newValueBigInt * 100n) / valueCryptoTotal).toString()
       : '0';
     newPercentage = parseInt(newPercentage, 10) > 100 ? '100' : newPercentage;
-    formikUpdateValues(newValueString, newPercentage);
+    formikUpdateValues(
+      isCryptoMainValueDisplay ? newValueString : formatUnitsBigInt(newValueBigInt, 'ether'),
+      newPercentage,
+    );
   };
 
   const isThereSomethingToDistribute = restToDistributeAdjusted !== 0n;
@@ -90,9 +144,9 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
           isDisabled={!isThereSomethingToDistribute}
           isErrorInlineVisible={false}
           onChange={({ target: { value: newValueString } }) => onValueStringChange(newValueString)}
-          suffix="ETH"
+          suffix={isCryptoMainValueDisplay ? 'ETH' : displayCurrency.toUpperCase()}
           textAlign="left"
-          value={formik.values.valueCryptoSelected}
+          value={isCryptoMainValueDisplay ? formik.values.valueCryptoSelected : valueFiat}
         />
         <InputText
           className={cx(styles.input, styles.percentageInput)}

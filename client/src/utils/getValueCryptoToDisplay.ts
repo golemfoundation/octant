@@ -1,7 +1,12 @@
+import { FormattedCryptoValue } from 'types/formattedCryptoValue';
+
 import getFormattedEthValue, { GetFormattedEthValueProps } from './getFormattedEthValue';
 import getFormattedGlmValue, { GetFormattedGlmValueProps } from './getFormattedGlmValue';
 
-export type GetValueCryptoToDisplayProps = { showCryptoSuffix?: boolean; valueCrypto?: bigint } & (
+export type GetValueCryptoToDisplayProps = {
+  valueCrypto?: bigint;
+  valueFiat?: string;
+} & (
   | {
       cryptoCurrency: 'ethereum';
       getFormattedEthValueProps?: Omit<GetFormattedEthValueProps, 'value'>;
@@ -17,17 +22,13 @@ export type GetValueCryptoToDisplayProps = { showCryptoSuffix?: boolean; valueCr
 export default function getValueCryptoToDisplay({
   cryptoCurrency,
   valueCrypto = BigInt(0),
-  showCryptoSuffix = true,
   getFormattedEthValueProps,
   getFormattedGlmValueProps,
-}: GetValueCryptoToDisplayProps): string {
+}: GetValueCryptoToDisplayProps): FormattedCryptoValue {
   const formattedCryptoValue =
     cryptoCurrency === 'ethereum'
       ? getFormattedEthValue({ value: valueCrypto, ...getFormattedEthValueProps })
       : getFormattedGlmValue({ value: valueCrypto, ...getFormattedGlmValueProps });
 
-  if (showCryptoSuffix) {
-    return formattedCryptoValue.fullString;
-  }
-  return formattedCryptoValue.value;
+  return formattedCryptoValue;
 }

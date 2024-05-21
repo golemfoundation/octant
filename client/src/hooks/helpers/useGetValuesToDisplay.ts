@@ -6,14 +6,17 @@ import getValueCryptoToDisplay, {
 } from 'utils/getValueCryptoToDisplay';
 import getValueFiatToDisplay, { GetValueFiatToDisplayProps } from 'utils/getValueFiatToDisplay';
 
-type GetValuesToDisplayProps = {
+export type GetValuesToDisplayProps = {
   coinPricesServerDowntimeText?: GetValueFiatToDisplayProps['coinPricesServerDowntimeText'];
+  showCryptoSuffix?: boolean;
+  showFiatPrefix?: GetValueFiatToDisplayProps['showFiatPrefix'];
   showLessThanZeroFiat?: boolean;
   valueCrypto?: bigint;
   valueString?: string;
 } & GetValueCryptoToDisplayProps;
 
 type GetValuesToDisplay = (props: GetValuesToDisplayProps) => {
+  cryptoSuffix?: 'WEI' | 'GWEI' | 'ETH' | 'GLM';
   primary: string;
   secondary?: string;
 };
@@ -38,6 +41,7 @@ export default function useGetValuesToDisplay(): GetValuesToDisplay {
     getFormattedGlmValueProps,
     showCryptoSuffix = false,
     showLessThanZeroFiat = true,
+    showFiatPrefix = true,
   }) => {
     if (valueString) {
       return {
@@ -51,12 +55,12 @@ export default function useGetValuesToDisplay(): GetValuesToDisplay {
       cryptoValues,
       displayCurrency,
       error,
+      showFiatPrefix,
       showLessThanZero: showLessThanZeroFiat,
       valueCrypto,
     });
 
     const valueCryptoToDisplay = getValueCryptoToDisplay({
-      showCryptoSuffix,
       valueCrypto,
       ...(cryptoCurrency === 'ethereum'
         ? { cryptoCurrency: 'ethereum', getFormattedEthValueProps }
@@ -65,12 +69,16 @@ export default function useGetValuesToDisplay(): GetValuesToDisplay {
 
     return isCryptoMainValueDisplay
       ? {
-          primary: valueCryptoToDisplay,
+          cryptoSuffix: valueCryptoToDisplay.suffix,
+          primary: showCryptoSuffix ? valueCryptoToDisplay.fullString : valueCryptoToDisplay.value,
           secondary: valueFiatToDisplay,
         }
       : {
+          cryptoSuffix: valueCryptoToDisplay.suffix,
           primary: valueFiatToDisplay,
-          secondary: valueCryptoToDisplay,
+          secondary: showCryptoSuffix
+            ? valueCryptoToDisplay.fullString
+            : valueCryptoToDisplay.value,
         };
   };
 

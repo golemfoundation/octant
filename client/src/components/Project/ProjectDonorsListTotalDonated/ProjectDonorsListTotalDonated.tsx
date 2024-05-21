@@ -22,7 +22,7 @@ const ProjectDonorsListTotalDonated: FC<ProjectDonorsListTotalDonatedProps> = ({
       shouldIgnoreGwei: true,
     },
     valueCrypto: totalDonatedSum,
-  });
+  }).fullString;
 
   return (
     <div className={cx(styles.root, className)}>
