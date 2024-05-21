@@ -24,9 +24,13 @@ from app.engine.octant_rewards.total_and_individual.preliminary import (
 from app.engine.octant_rewards.total_and_individual.tr_percent_calc import (
     PercentTotalAndAllIndividualRewards,
 )
-from app.engine.projects import DefaultProjectRewards
-from app.engine.projects.rewards.allocations.default import DefaultProjectAllocations
-from app.engine.projects.rewards.threshold.default import DefaultProjectThreshold
+from app.engine.projects.rewards.preliminary import PreliminaryProjectRewards
+from app.engine.projects.rewards.allocations.preliminary import (
+    PreliminaryProjectAllocations,
+)
+from app.engine.projects.rewards.threshold.preliminary import (
+    PreliminaryProjectThreshold,
+)
 from app.engine.user import (
     DefaultWeightedAverageEffectiveDeposit,
 )
@@ -38,6 +42,10 @@ from app.engine.user.effective_deposit.weighted_average.weights.timebased.defaul
 )
 from app.engine.user.effective_deposit.weighted_average.weights.timebased.without_unlocks import (
     TimebasedWithoutUnlocksWeights,
+)
+from app.engine.projects import QuadraticFundingProjectRewards
+from app.engine.projects.rewards.allocations.quadratic_funding import (
+    QuadraticFundingAllocations,
 )
 
 
@@ -58,9 +66,8 @@ def test_default_epoch_settings():
         matched_rewards=PercentageMatchedRewards(
             OctantRewardsDefaultValues.MATCHED_REWARDS_PERCENT
         ),
-        projects_rewards=DefaultProjectRewards(
-            projects_threshold=DefaultProjectThreshold(1),
-        ),
+        projects_rewards=QuadraticFundingProjectRewards(),
+        projects_allocations=QuadraticFundingAllocations(),
     )
 
 
@@ -76,9 +83,10 @@ def test_epoch_1_settings():
         ppf=NotSupportedPPFCalculator(),
         community_fund=NotSupportedCFCalculator(),
         user_budget=PreliminaryUserBudget(),
-        projects_rewards=DefaultProjectRewards(
-            projects_threshold=DefaultProjectThreshold(2),
+        projects_rewards=PreliminaryProjectRewards(
+            projects_threshold=PreliminaryProjectThreshold(2),
         ),
+        projects_allocations=PreliminaryProjectAllocations(),
     )
 
 
@@ -94,9 +102,10 @@ def test_epoch_2_settings():
         ppf=NotSupportedPPFCalculator(),
         community_fund=NotSupportedCFCalculator(),
         user_budget=PreliminaryUserBudget(),
-        projects_rewards=DefaultProjectRewards(
-            projects_threshold=DefaultProjectThreshold(2),
+        projects_rewards=PreliminaryProjectRewards(
+            projects_threshold=PreliminaryProjectThreshold(2),
         ),
+        projects_allocations=PreliminaryProjectAllocations(),
     )
 
 
@@ -118,9 +127,35 @@ def test_epoch_3_settings():
         community_fund=CommunityFundPercent(OctantRewardsDefaultValues.COMMUNITY_FUND),
         ppf=PPFCalculatorFromRewards(),
         user_budget=UserBudgetWithPPF(),
-        projects_rewards=DefaultProjectRewards(
-            projects_threshold=DefaultProjectThreshold(1),
+        projects_rewards=PreliminaryProjectRewards(
+            projects_threshold=PreliminaryProjectThreshold(1),
         ),
+        projects_allocations=PreliminaryProjectAllocations(),
+    )
+
+
+def test_epoch_4_settings():
+    register_epoch_settings()
+    settings = get_epoch_settings(4)
+
+    check_settings(
+        settings=settings,
+        operational_cost=OpCostPercent(Decimal("0.25")),
+        total_and_all_individual_rewards=PercentTotalAndAllIndividualRewards(
+            IRE_PERCENT=OctantRewardsDefaultValues.IRE_PERCENT,
+            TR_PERCENT=OctantRewardsDefaultValues.TR_PERCENT,
+        ),
+        matched_rewards=PercentageMatchedRewards(
+            OctantRewardsDefaultValues.MATCHED_REWARDS_PERCENT
+        ),
+        timebased_weights=TimebasedWithoutUnlocksWeights(),
+        community_fund=CommunityFundPercent(OctantRewardsDefaultValues.COMMUNITY_FUND),
+        ppf=PPFCalculatorFromRewards(),
+        user_budget=UserBudgetWithPPF(),
+        projects_rewards=QuadraticFundingProjectRewards(
+            projects_allocations=QuadraticFundingAllocations(),
+        ),
+        projects_allocations=QuadraticFundingAllocations(),
     )
 
 
@@ -135,6 +170,7 @@ def check_settings(
     community_fund,
     user_budget,
     projects_rewards,
+    projects_allocations
 ):
     assert settings.octant_rewards.locked_ratio == DefaultLockedRatio()
     assert (
@@ -153,4 +189,4 @@ def check_settings(
     )
 
     assert settings.project.rewards == projects_rewards
-    assert settings.project.rewards.projects_allocations == DefaultProjectAllocations()
+    assert settings.project.rewards.projects_allocations == projects_allocations
