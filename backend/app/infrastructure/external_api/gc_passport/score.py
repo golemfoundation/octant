@@ -65,14 +65,10 @@ def fetch_stamps(address: str) -> dict:
 
 
 def _scorer_id() -> str:
-    # return app.config["GC_PASSPORT_SCORER_ID"]
-    print(f"GC_PASSPORT_SCORER_ID: {config.GC_PASSPORT_SCORER_ID}")
     return config.GC_PASSPORT_SCORER_ID
 
 
 def _authentication_headers() -> dict:
-    # api_key = app.config["GC_PASSPORT_SCORER_API_KEY"]
     api_key = config.GC_PASSPORT_SCORER_API_KEY
-    print(f"GC_PASSPORT_SCORER_API_KEY: {api_key}")
 
     return {"X-API-KEY": api_key}
