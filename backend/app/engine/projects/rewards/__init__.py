@@ -36,6 +36,7 @@ class ProjectRewardsResult:
     rewards_sum: int
     total_allocated: int
     threshold: Optional[int] = None
+    funding_cap: Optional[int] = None
 
 
 @dataclass

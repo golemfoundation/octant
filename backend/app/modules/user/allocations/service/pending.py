@@ -84,7 +84,7 @@ class PendingUserAllocations(SavedUserAllocations, Model):
             context, user_address=user_address, payload=payload, **kwargs
         )
 
-        leverage, _, _ = self.simulate_allocation(
+        leverage, _, _, _ = self.simulate_allocation(
             context, payload.payload.allocations, user_address
         )
 
@@ -109,7 +109,7 @@ class PendingUserAllocations(SavedUserAllocations, Model):
         context: Context,
         user_allocations: List[AllocationDTO],
         user_address: str,
-    ) -> Tuple[float, int, List[ProjectRewardDTO]]:
+    ) -> Tuple[float, int, List[ProjectRewardDTO], int]:
         projects_settings = context.epoch_settings.project
         projects = context.projects_details.projects
         matched_rewards = self.octant_rewards.get_matched_rewards(context)
