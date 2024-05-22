@@ -763,7 +763,7 @@ def patch_safe_api_message_details_for_404_error(monkeypatch):
         mock_404_error,
     )
     monkeypatch.setattr(
-        "app.infrastructure.external_api.safe.message_details.time.sleep",
+        "app.infrastructure.external_api.common.time.sleep",
         lambda x: None,
     )
 
