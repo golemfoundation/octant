@@ -1,8 +1,10 @@
+from flask import current_app as app
+
 from datetime import datetime
 from typing import List
 
 from app.extensions import db
-from app.exceptions import ExternalApiException
+from app.exceptions import ExternalApiException, UserNotFound
 from app.context.manager import Context
 from app.infrastructure import database
 from app.pydantic import Model
@@ -16,8 +18,14 @@ from app.infrastructure.external_api.gc_passport.score import (
 
 class InitialUserAntisybil(Model):
     def get_antisybil_status(self, _: Context, user_address: str) -> (int, datetime):
-        score = database.user_antisybil.get_score_by_address(user_address)
-        return score.score, score.expires_at
+        try:
+            score = database.user_antisybil.get_score_by_address(user_address)
+            return score.score, score.expires_at
+        except UserNotFound as ex:
+            app.logger.debug(
+                f"User {user_address} antisybil status: except UserNotFound"
+            )
+            raise ex
 
     def fetch_antisybil_status(
         self, _: Context, user_address: str
@@ -54,16 +62,16 @@ class InitialUserAntisybil(Model):
         db.session.commit()
 
 
-def _parse_expirationDate(timestamp_str):
-    # GP API returns expirationDate in both formats
-    formats = ["%Y-%m-%dT%H:%M:%S.%fZ", "%Y-%m-%dT%H:%M:%SZ"]
-    last_error = None
-    for format_str in formats:
+def _parse_expirationDate(timestamp_str: str) -> datetime:
+    gp_api_formats = ["%Y-%m-%dT%H:%M:%S.%fZ", "%Y-%m-%dT%H:%M:%SZ"]
+    for format_str in gp_api_formats:
         try:
             return datetime.strptime(timestamp_str, format_str)
-        except ValueError as exp:
-            last_error = exp
-    raise last_error
+        except ValueError:
+            pass
+    raise ValueError(
+        f"Gitcoin Passport returned expirationDate in unknown format: {timestamp_str}"
+    )
 
 
 def _filter_older(cutoff, stamps: List[{}]) -> List[{}]:
