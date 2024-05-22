@@ -30,5 +30,6 @@ class SimpleObfuscationDelegation(Model):
         )
 
         primary, secondary, both = hashed_addresses
+        # TODO: fetch the score and save it to db linked to primary address
         database.score_delegation.save_delegation(primary, secondary, both)
         db.session.commit()
