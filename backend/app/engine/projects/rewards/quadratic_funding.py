@@ -15,12 +15,18 @@ from app.engine.projects.rewards.allocations.quadratic_funding import (
     QuadraticFundingAllocations,
 )
 from app.constants import MR_FUNDING_CAP_PERCENT
+from engine.projects.rewards.funding_cap.percent import FundingCapPercentCalculator
 
 
 @dataclass
 class QuadraticFundingProjectRewards(ProjectRewards):
     projects_allocations: ProjectAllocations = field(
         default_factory=QuadraticFundingAllocations
+    )
+    funding_cap: FundingCapPercentCalculator = field(
+        default_factory=lambda: FundingCapPercentCalculator(
+            FUNDING_CAP_PERCENT=MR_FUNDING_CAP_PERCENT
+        )
     )
 
     def calculate_project_rewards(
@@ -38,24 +44,24 @@ class QuadraticFundingProjectRewards(ProjectRewards):
         }
 
         project_rewards_sum = 0
-        funding_cap = Decimal(MR_FUNDING_CAP_PERCENT * payload.matched_rewards)
-        for address, quadratic_allocated in allocated_by_addr:
-            mr_percent = quadratic_allocated / Decimal(total_allocated)
 
-            if mr_percent <= MR_FUNDING_CAP_PERCENT:
-                matched = Decimal(mr_percent * payload.matched_rewards)
-            else:
-                matched = funding_cap
+        capped_allocated_by_addr = self.funding_cap.apply_capped_distribution(
+            allocated_by_addr
+        )
 
-            project_rewards_sum += quadratic_allocated + matched
+        for address, capped_quadratic_allocated in capped_allocated_by_addr.items():
+            plain_quadratic_allocated = allocated_by_addr[address]
+
+            project_rewards_sum += capped_quadratic_allocated
             project_rewards = rewards[address]
-            project_rewards.allocated = int(quadratic_allocated)
-            project_rewards.matched = int(matched)
+            project_rewards.allocated = int(plain_quadratic_allocated)
+            project_rewards.matched = int(
+                capped_quadratic_allocated - plain_quadratic_allocated
+            )
 
         return ProjectRewardsResult(
             rewards=sorted(rewards.values(), key=lambda r: r.allocated, reverse=True),
             rewards_sum=int(project_rewards_sum),
             total_allocated=total_allocated,
             threshold=None,
-            funding_cap=int(funding_cap),
         )

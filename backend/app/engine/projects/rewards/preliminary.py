@@ -60,7 +60,7 @@ class PreliminaryProjectRewards(ProjectRewards):
             address: ProjectRewardDTO(address, 0, 0) for address in payload.projects
         }
 
-        for address, allocated in allocated_by_addr:
+        for address, allocated in allocated_by_addr.items():
             matched = 0
             if allocated > threshold:
                 matched = int(
