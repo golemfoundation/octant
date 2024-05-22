@@ -37,7 +37,7 @@ def test_epochs_basics(
     assert "stakingProceeds" in epoch_info
     assert "totalEffectiveDeposit" in epoch_info
     assert "totalRewards" in epoch_info
-    assert "individualRewards" in epoch_info
+    assert "vanillaIndividualRewards" in epoch_info
     assert "operationalCost" in epoch_info
     assert "totalWithdrawals" in epoch_info
     assert "patronsRewards" in epoch_info
