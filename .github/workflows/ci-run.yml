@@ -136,6 +136,8 @@ jobs:
       OCTANT_ENV: dev
       CHAIN_ID: 1337
       CHAIN_NAME: localhost
+      GITCOIN_SCORER_ID: "${{ secrets.GITCOIN_SCORER_ID }}"
+      GITCOIN_SCORER_API_KEY: "${{ secrets.GITCOIN_SCORER_API_KEY }}"
     steps:
     - uses: actions/checkout@v4.1.0
     - uses: actions/cache/restore@v4
