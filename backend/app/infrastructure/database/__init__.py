@@ -11,4 +11,5 @@ from . import (  # noqa
     claims,
     user_consents,
     multisig_signature,
+    score_delegation,
 )

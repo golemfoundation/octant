@@ -174,3 +174,8 @@ class MultisigSignatures(BaseModel):
     status = Column(db.String, nullable=False)
     user_ip = Column(db.String, nullable=False)
     confirmed_signature = Column(db.String, nullable=True)
+
+
+class ScoreDelegation(BaseModel):
+    id = Column(db.Integer, primary_key=True)
+    hashed_addr = Column(db.String, nullable=False)
