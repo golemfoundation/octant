@@ -1,7 +1,7 @@
 """add gitcoin passport stamps table
 
 Revision ID: a2701c6b232a
-Revises: 8ff293a1f737
+Revises: 1f5a0f69733a
 Create Date: 2024-05-15 15:08:50.650544
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "a2701c6b232a"
-down_revision = "8ff293a1f737"
+down_revision = "1f5a0f69733a"
 branch_labels = None
 depends_on = None
 
