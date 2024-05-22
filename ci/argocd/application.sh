@@ -31,7 +31,7 @@ if [[ "$DEPLOYMENT_TYPE" == "e2e" && "$ACTION" == "create" ]]; then
 		# Remove it first before moving on.
 
 		git rm -f $OCTANT_APP_DIR/$DEPLOYMENT_ID-app.yaml
-		git commit -S -m "Removed Stale E2E Octant deployment file for $DEPLOYMENT_ID at $(date +%Y-%m-%d)"
+		git commit -m "Removed Stale E2E Octant deployment file for $DEPLOYMENT_ID at $(date +%Y-%m-%d)"
 		git push
 
 		timeout --foreground -s TERM 120 bash -c \
@@ -50,7 +50,7 @@ if [[ "$ACTION" == "create" ]]; then
 	cat $CI_PROJECT_DIR/ci/argocd/templates/octant-application.yaml | envsubst | yq "del(.spec.sources[0])" > $OCTANT_APP_DIR/$DEPLOYMENT_ID-app.yaml
 
 	git add $OCTANT_APP_DIR/$DEPLOYMENT_ID-app.yaml
-	git commit -S -m "Added Octant Anvil deployment file for $DEPLOYMENT_ID branch at $(date +%Y-%m-%d)" || true
+	git commit -m "Added Octant Anvil deployment file for $DEPLOYMENT_ID branch at $(date +%Y-%m-%d)" || true
 	git push
 
 	sleep 10 # Wait for Argo to pickup the latest deployment
@@ -76,7 +76,7 @@ elif [[ "$ACTION" == "update" ]]; then
 	set -e
 
 	git add $OCTANT_APP_DIR/$DEPLOYMENT_ID-app.yaml
-	git commit -S -m "Added Octant App deployment file for $DEPLOYMENT_ID branch at $(date +%Y-%m-%d)" || true
+	git commit -m "Added Octant App deployment file for $DEPLOYMENT_ID branch at $(date +%Y-%m-%d)" || true
 	git push
 
 	sleep 10 # Wait for Argo to pickup the latest deployment
@@ -133,7 +133,7 @@ else # assuming $ACTION =~ (delete|destroy)
 
 	if [ -f "${FILE}" ]; then
 		git rm -f "${FILE}"
-		git commit -S -m "Removed Octant deployment file for ${DEPLOYMENT_ID} branch at $(date +%Y-%m-%d)"
+		git commit -m "Removed Octant deployment file for ${DEPLOYMENT_ID} branch at $(date +%Y-%m-%d)"
 		git push
 	fi
 fi

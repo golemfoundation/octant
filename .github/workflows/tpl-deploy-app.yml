@@ -387,7 +387,7 @@ jobs:
         git config --local user.signingkey "${HOUSEKEEPER_GITHUB_SIGNING_KEY_ID}"
 
         git add ${CI_PROJECT_DIR}/ci/argocd/contracts/${ENV_TYPE}.env
-        git commit -S -m "[CI/CD] Update ${ENV_TYPE}.env contracts"
+        git commit -m "[CI/CD] Update ${ENV_TYPE}.env contracts"
       shell: bash
     - name: Push changes
       uses: ad-m/github-push-action@master

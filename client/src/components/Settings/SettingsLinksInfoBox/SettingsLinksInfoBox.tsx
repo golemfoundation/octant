@@ -43,7 +43,13 @@ const SettingsLinksInfoBox = (): ReactNode => {
       <div className={styles.octantInfo}>{t('octantInfo')}</div>
       <div>
         {desktopLinks.map(({ label, href }) => (
-          <Button key={href} className={styles.buttonLink} href={href} variant="link3">
+          <Button
+            key={href}
+            className={styles.buttonLink}
+            dataTest="SettingsLinksInfoBox__Button"
+            href={href}
+            variant="link3"
+          >
             <Svg classNameSvg={styles.buttonLinkArrowSvg} img={arrowRight} size={1.2} />
             <span className={styles.buttonLinkText}>{label}</span>
           </Button>
