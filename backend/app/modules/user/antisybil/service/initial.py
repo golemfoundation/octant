@@ -1,11 +1,12 @@
 from datetime import datetime
-import time
 from typing import List
 
 from app.extensions import db
+from app.exceptions import ExternalApiException
 from app.context.manager import Context
 from app.infrastructure import database
 from app.pydantic import Model
+from app.infrastructure.external_api.common import retry_request
 from app.infrastructure.external_api.gc_passport.score import (
     issue_address_for_scoring,
     fetch_score,
@@ -23,10 +24,13 @@ class InitialUserAntisybil(Model):
     ) -> (str, datetime, any):
         score = issue_address_for_scoring(user_address)
 
-        while score["status"] != "DONE":
-            print("Waiting for score for user {user_address}")
-            time.sleep(3)
+        def _retry_fetch():
             score = fetch_score(user_address)
+            if score["status"] != "DONE":
+                raise ExternalApiException("GP: scoring is not completed yet", 503)
+
+        if score["status"] != "DONE":
+            score = retry_request(self._retry_fetch, 200)
 
         all_stamps = fetch_stamps(user_address)["items"]
         cutoff = datetime.now()
