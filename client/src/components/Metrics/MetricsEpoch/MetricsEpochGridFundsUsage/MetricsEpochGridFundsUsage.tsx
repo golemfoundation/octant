@@ -6,9 +6,7 @@ import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import PieChart from 'components/ui/PieChart';
 import networkConfig from 'constants/networkConfig';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
-import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useEpochInfo from 'hooks/queries/useEpochInfo';
-import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 
@@ -24,8 +22,6 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { epoch } = useMetricsEpoch();
-  const { data: currentEpoch } = useCurrentEpoch();
-  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: epochInfo } = useEpochInfo(epoch);
 
   const getNumberValue = (value: bigint) =>
@@ -70,20 +66,6 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     ppf,
   ]);
 
-  const leftoverToUse = useMemo(() => {
-    if (!currentEpoch) {
-      return BigInt(0);
-    }
-    if (epoch === currentEpoch - 1 && isDecisionWindowOpen) {
-      return unusedRewards + ethBelowThreshold;
-    }
-    // TODO OCT-1612 OCT-1614 remove this bypass.
-    if (epoch === 3) {
-      return 3854465046588467390n;
-    }
-    return leftover;
-  }, [ethBelowThreshold, epoch, currentEpoch, isDecisionWindowOpen, leftover, unusedRewards]);
-
   const total =
     claimedByUsers +
     donatedToProjects +
@@ -91,7 +73,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     staking +
     ppf / 2n +
     communityFund +
-    leftoverToUse;
+    leftover;
 
   // Testnet has much lower staking proceeds. Number of places needs to be bigger to see more than 0.
   const numberOfDecimalPlacesToUse = networkConfig.isTestnet ? 10 : 2;
@@ -110,14 +92,9 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     },
     {
       label: t('leftover', { epochNumber: epoch + 1 }),
-      value: getNumberValue(leftoverToUse),
-      valueLabel: getFormattedEthValue(
-        leftoverToUse,
-        true,
-        false,
-        false,
-        numberOfDecimalPlacesToUse,
-      ).fullString,
+      value: getNumberValue(leftover),
+      valueLabel: getFormattedEthValue(leftover, true, false, false, numberOfDecimalPlacesToUse)
+        .fullString,
     },
     {
       label: t('projectCosts'),
