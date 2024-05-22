@@ -11,7 +11,7 @@ import Button from 'components/ui/Button';
 import Loader from 'components/ui/Loader';
 import Svg from 'components/ui/Svg';
 import { ELEMENT_POSITION_FIXED_CLASSNAME } from 'constants/css';
-import { LAYOUT_BODY_ID } from 'constants/layout';
+import { LAYOUT_BODY_ID } from 'constants/domElementsIds';
 import {
   adminNavigationTabs,
   navigationTabs as navigationTabsDefault,

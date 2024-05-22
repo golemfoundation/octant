@@ -12,7 +12,7 @@ import MetricsEpochGridTotalDonationsAndPersonal from 'components/Metrics/Metric
 import MetricsEpochGridTotalUsers from 'components/Metrics/MetricsEpoch/MetricsEpochGridTotalUsers';
 import MetricsEpochHeader from 'components/Metrics/MetricsEpoch/MetricsEpochHeader';
 import MetricsGrid from 'components/Metrics/MetricsGrid';
-import { METRICS_EPOCH_ID } from 'constants/metrics';
+import { METRICS_EPOCH_ID } from 'constants/domElementsIds';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
 import useProjectsDonors from 'hooks/queries/donors/useProjectsDonors';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';

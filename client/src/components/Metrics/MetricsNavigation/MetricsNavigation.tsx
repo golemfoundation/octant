@@ -4,8 +4,11 @@ import { throttle } from 'lodash';
 import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { LAYOUT_BODY_ID } from 'constants/layout';
-import { METRICS_EPOCH_ID, METRICS_GENERAL_ID, METRICS_PERSONAL_ID } from 'constants/metrics';
+import { LAYOUT_BODY_ID ,
+  METRICS_EPOCH_ID,
+  METRICS_GENERAL_ID,
+  METRICS_PERSONAL_ID,
+} from 'constants/domElementsIds';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 
 import styles from './MetricsNavigation.module.scss';
