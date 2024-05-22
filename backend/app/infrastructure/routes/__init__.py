@@ -17,7 +17,7 @@ from . import (  # noqa
     validators_stats,
     multisig_signatures,
     projects,
-    delegation
+    delegation,
 )
 
 
