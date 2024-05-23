@@ -43,7 +43,7 @@ def get_epoch_settings(epoch_number: int) -> EpochSettings:
 def register_epoch_settings():
     SETTINGS[1] = EpochSettings(
         octant_rewards=OctantRewardsSettings(
-            total_and_all_individual_rewards=AllProceedsWithOperationalCost(),
+            total_and_vanilla_individual_rewards=AllProceedsWithOperationalCost(),
             matched_rewards=PreliminaryMatchedRewards(),
             operational_cost=OpCostPercent(Decimal("0.20")),
             ppf=NotSupportedPPFCalculator(),
@@ -64,7 +64,7 @@ def register_epoch_settings():
 
     SETTINGS[2] = EpochSettings(
         octant_rewards=OctantRewardsSettings(
-            total_and_all_individual_rewards=PreliminaryTotalAndAllIndividualRewards(),
+            total_and_vanilla_individual_rewards=PreliminaryTotalAndAllIndividualRewards(),
             matched_rewards=PreliminaryMatchedRewards(),
             ppf=NotSupportedPPFCalculator(),
             community_fund=NotSupportedCFCalculator(),
