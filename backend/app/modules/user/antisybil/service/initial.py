@@ -1,5 +1,7 @@
 from flask import current_app as app
 
+from typing import Optional, Tuple
+
 from datetime import datetime
 from typing import List
 
@@ -17,10 +19,15 @@ from app.infrastructure.external_api.gc_passport.score import (
 
 
 class InitialUserAntisybil(Model):
-    def get_antisybil_status(self, _: Context, user_address: str) -> (int, datetime):
+    def get_antisybil_status(
+        self, _: Context, user_address: str
+    ) -> Optional[Tuple[float, datetime]]:
         try:
             score = database.user_antisybil.get_score_by_address(user_address)
-            return score.score, score.expires_at
+            if score is not None:
+                return score.score, score.expires_at
+            else:
+                return None
         except UserNotFound as ex:
             app.logger.debug(
                 f"User {user_address} antisybil status: except UserNotFound"
@@ -29,7 +36,7 @@ class InitialUserAntisybil(Model):
 
     def fetch_antisybil_status(
         self, _: Context, user_address: str
-    ) -> (str, datetime, any):
+    ) -> (float, datetime, any):
         score = issue_address_for_scoring(user_address)
 
         def _retry_fetch():
@@ -48,13 +55,13 @@ class InitialUserAntisybil(Model):
             expires_at = _parse_expirationDate(
                 min([stamp["credential"]["expirationDate"] for stamp in valid_stamps])
             )
-        return score["score"], expires_at, all_stamps
+        return float(score["score"]), expires_at, all_stamps
 
     def update_antisybil_status(
         self,
         context: Context,
         user_address: str,
-        score: str,
+        score: float,
         expires_at: datetime,
         stamps,
     ):
