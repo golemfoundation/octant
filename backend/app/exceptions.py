@@ -285,7 +285,7 @@ class InvalidMatchedRewardsStrategy(OctantException):
 
 
 class DelegationAlreadyExists(OctantException):
-    code = 403
+    code = 400
     description = "Delegation already exists"
 
     def __init__(self):

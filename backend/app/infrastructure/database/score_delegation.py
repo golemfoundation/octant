@@ -1,12 +1,6 @@
 from app.infrastructure.database.models import ScoreDelegation
 
 
-def does_delegation_exist(hashed_addr: str) -> bool:
-    delegation = ScoreDelegation.query.filter_by(hashed_addr=hashed_addr).first()
-
-    return delegation is not None
-
-
 def save_delegation(
     primary_addr_hash: str, secondary_addr_hash: str, both_addr_hash: str
 ):
@@ -14,10 +8,10 @@ def save_delegation(
     delegation_secondary = ScoreDelegation(hashed_addr=secondary_addr_hash)
     delegation_both = ScoreDelegation(hashed_addr=both_addr_hash)
 
-    delegation_primary.save()
-    delegation_secondary.save()
-    delegation_both.save()
+    delegation_primary.add()
+    delegation_secondary.add()
+    delegation_both.add()
 
 
-def get_all_delegations():
+def get_all_delegations() -> list[ScoreDelegation]:
     return ScoreDelegation.query.all()
