@@ -1,5 +1,6 @@
 from dataclasses import field, dataclass
 from decimal import Decimal
+from typing import Dict
 
 from app.engine.projects import ProjectRewards
 from app.engine.projects.rewards import (
@@ -32,6 +33,9 @@ class QuadraticFundingProjectRewards(ProjectRewards):
     def calculate_project_rewards(
         self, payload: ProjectRewardsPayload
     ) -> ProjectRewardsResult:
+        """
+        Calculate rewards for projects using plain quadratic funding formula with capped funding.
+        """
         # TODO OCT-1625 Apply Gitcoin user's score for the formula: https://linear.app/golemfoundation/issue/OCT-1624/implement-quadratic-funding
         (
             allocated_by_addr,
@@ -45,8 +49,18 @@ class QuadraticFundingProjectRewards(ProjectRewards):
 
         project_rewards_sum = 0
 
+        calc_matched = lambda quadratic_allocated: Decimal(
+            quadratic_allocated / Decimal(total_allocated) * payload.matched_rewards
+        )
+        allocated_by_addr_with_matched: Dict[str, Decimal] = dict(
+            map(
+                lambda address, qf: (address[0], calc_matched(qf[1])),
+                allocated_by_addr.items(),
+            )
+        )
+
         capped_allocated_by_addr = self.funding_cap.apply_capped_distribution(
-            allocated_by_addr
+            allocated_by_addr_with_matched, payload.matched_rewards
         )
 
         for address, capped_quadratic_allocated in capped_allocated_by_addr.items():
