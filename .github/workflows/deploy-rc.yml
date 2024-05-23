@@ -4,13 +4,10 @@ on:
   workflow_dispatch:
 
 env:
-  ARGO_REPOSITORY: "https://wildland-bot:${{ secrets.HOUSEKEEPER_CI_TOKEN }}@gitlab.com/golemfoundation/devops/iac/k8s/wildland-k8s-devops.git"
+  ARGO_REPOSITORY: "https://doesnt-matter:${{ secrets.GITLAB_PAT_OCTANT_K8S_DEVOPS_REPOSITORY_WRITE }}@gitlab.com/golemfoundation/devops/iac/k8s/wildland-k8s-devops.git"
   ARGO_REPOSITORY_BRANCH: "github/octant-release-candidate"
   IMAGE_TAG: "${{ github.sha }}"
-  HOUSEKEEPER_GPG_KEY: "${{ secrets.HOUSEKEEPER_GPG_KEY }}"
-  HOUSEKEEPER_GPG_KEY_ID: "${{ secrets.HOUSEKEEPER_GPG_KEY_ID }}"
-  HOUSEKEEPER_NAME: "${{ vars.HOUSEKEEPER_NAME }}"
-  HOUSEKEEPER_EMAIL: "${{ secrets.HOUSEKEEPER_EMAIL }}"
+  GITLAB_PAT_OCTANT_K8S_DEVOPS_REPOSITORY_WRITE: "${{ secrets.GITLAB_PAT_OCTANT_K8S_DEVOPS_REPOSITORY_WRITE }}"
 
 jobs:
   build:
@@ -36,10 +33,8 @@ jobs:
       - run : |
           set -ex
 
-          gpg --import <(echo $HOUSEKEEPER_GPG_KEY | base64 -d)
-          git config --global user.name "$HOUSEKEEPER_NAME"
-          git config --global user.email "$HOUSEKEEPER_EMAIL"
-          git config --global user.signingkey $HOUSEKEEPER_GPG_KEY_ID
+          git config --global user.name "Wildland Automation"
+          git config --global user.email "automated-script@wildland.io"
 
           GIT_DIR=`mktemp -d`
           git clone -b $ARGO_REPOSITORY_BRANCH $ARGO_REPOSITORY $GIT_DIR
@@ -49,7 +44,7 @@ jobs:
           yq -y -i -e ".[].value.value = \"$IMAGE_TAG\"" mainnet/octant-image.values.yaml
 
           git add mainnet/octant-image.values.yaml
-          git commit -S -m "Changed octant image tag to $IMAGE_TAG at $(date +%Y-%m-%d)" || true
+          git commit -m "Changed octant image tag to $IMAGE_TAG at $(date +%Y-%m-%d)" || true
 
           git push
         shell: bash

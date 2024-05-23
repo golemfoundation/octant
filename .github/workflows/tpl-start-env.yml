@@ -26,13 +26,9 @@ env:
   CI_PIPELINE_ID: "${{ inputs.workflow-id }}"
   # ----------------------------------------------------------------------------
   # CI/CD
-  HOUSEKEEPER_NAME: "${{ vars.HOUSEKEEPER_NAME }}"
-  HOUSEKEEPER_EMAIL: "${{ secrets.HOUSEKEEPER_EMAIL }}"
-  HOUSEKEEPER_CI_TOKEN: "${{ secrets.HOUSEKEEPER_CI_TOKEN }}"
-  HOUSEKEEPER_GPG_KEY: "${{ secrets.HOUSEKEEPER_GPG_KEY }}"
-  HOUSEKEEPER_GPG_KEY_ID: "${{ secrets.HOUSEKEEPER_GPG_KEY_ID }}"
   ARGOCD_URL: "${{ secrets.ARGOCD_URL }}"
   ARGOCD_ACCESS_TOKEN: "${{ secrets.ARGOCD_ACCESS_TOKEN }}"
+  GITLAB_PAT_OCTANT_K8S_DEVOPS_REPOSITORY_WRITE: "${{ secrets.GITLAB_PAT_OCTANT_K8S_DEVOPS_REPOSITORY_WRITE }}"
 
 jobs:
   start:
