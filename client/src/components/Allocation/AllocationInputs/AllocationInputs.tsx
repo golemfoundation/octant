@@ -87,6 +87,17 @@ const AllocationInputs: FC<AllocationInputsProps> = ({
       ? (valueCryptoTotal * BigInt(newValuePercentage)) / 100n
       : BigInt(0);
     formikUpdateValues(formatUnitsBigInt(newValueBigInt), newValuePercentage);
+    if (!isCryptoMainValueDisplay) {
+      setValueFiat(
+        getValueFiatToDisplay({
+          cryptoCurrency: 'ethereum',
+          cryptoValues,
+          displayCurrency,
+          showFiatPrefix: false,
+          valueCrypto: newValueBigInt,
+        }),
+      );
+    }
   };
 
   const onValueStringChange = (newValueString: string): void => {
