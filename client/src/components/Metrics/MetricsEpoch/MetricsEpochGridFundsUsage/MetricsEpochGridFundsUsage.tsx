@@ -53,7 +53,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
      * Half of PPF goes to the users to manage.
      * Half of PPR goes to "PPF" section.
      */
-    if (epoch === 3) {
+    if (epoch >= 3) {
       return (
         ppf / 2n +
         epochInfo.vanillaIndividualRewards -
