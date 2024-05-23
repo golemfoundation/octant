@@ -11,8 +11,6 @@ import useTransactionLocalStore, {
   initialState as metaInitialState,
 } from 'store/transactionLocal/store';
 
-import useAvailableFundsGlm from './useAvailableFundsGlm';
-
 export default function useManageTransactionsPending(): void {
   const publicClient = usePublicClient();
   const {
@@ -36,7 +34,6 @@ export default function useManageTransactionsPending(): void {
   const { data: blockNumber } = useBlockNumber(
     blockNumberWithLatestTx !== metaInitialState.blockNumberWithLatestTx,
   );
-  const { refetch: refetchAvailableFundsGlm } = useAvailableFundsGlm();
   const { refetch: refetchEstimatedEffectiveDeposit } = useEstimatedEffectiveDeposit();
   const { refetch: refetchDeposit } = useDepositValue();
   const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
@@ -98,7 +95,6 @@ export default function useManageTransactionsPending(): void {
 
       if (lastTransaction?.type === 'withdrawal') {
         refetchWithdrawals();
-        refetchAvailableFundsGlm();
       } else {
         refetchDeposit();
         refetchEstimatedEffectiveDeposit();
@@ -112,7 +108,6 @@ export default function useManageTransactionsPending(): void {
     blockNumber,
     blockNumberWithLatestTx,
     currentEpoch,
-    refetchAvailableFundsGlm,
     refetchDeposit,
     refetchEstimatedEffectiveDeposit,
     refetchLockedSummaryLatest,
