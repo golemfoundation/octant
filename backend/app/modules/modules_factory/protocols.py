@@ -235,3 +235,6 @@ class UserAllocationNonceProtocol(Protocol):
 class ScoreDelegation(Protocol):
     def delegate(self, context: Context, payload: ScoreDelegationPayload):
         ...
+
+    def recalculate(self, context: Context, payload: ScoreDelegationPayload):
+        ...

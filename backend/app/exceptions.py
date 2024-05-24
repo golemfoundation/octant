@@ -290,3 +290,11 @@ class DelegationAlreadyExists(OctantException):
 
     def __init__(self):
         super().__init__(self.description, self.code)
+
+
+class DelegationDoesNotExist(OctantException):
+    code = 400
+    description = "Delegation does not exists"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)

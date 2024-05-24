@@ -10,13 +10,16 @@ from app.pydantic import Model
 
 class SimpleObfuscationDelegationVerifier(Verifier, Model):
     def _verify_logic(self, context: Context, **kwargs):
-        hashed_addresses = kwargs["hashed_addresses"]
+        hashed_addresses, action_type = (
+            kwargs["hashed_addresses"],
+            kwargs["action_type"],
+        )
         get_all_delegations = database.score_delegation.get_all_delegations()
-        core.verify_score_delegation(hashed_addresses, get_all_delegations)
+        core.verify_score_delegation(hashed_addresses, get_all_delegations, action_type)
 
     def _verify_signature(self, _: Context, **kwargs):
-        payload = kwargs["payload"]
-        core.verify_signatures(payload)
+        payload, action_type = kwargs["payload"], kwargs["action_type"]
+        core.verify_signatures(payload, action_type)
 
 
 class SimpleObfuscationDelegation(Model):
@@ -33,3 +36,11 @@ class SimpleObfuscationDelegation(Model):
         # TODO: fetch the score and save it to db linked to primary address
         database.score_delegation.save_delegation(primary, secondary, both)
         db.session.commit()
+
+    def recalculate(self, context: Context, payload: ScoreDelegationPayload):
+        hashed_addresses = get_hashed_addresses(context, payload)
+
+        self.verifier.verify(
+            context, hashed_addresses=hashed_addresses, payload=payload
+        )
+        # TODO: fetch the score and save it to db linked to primary address

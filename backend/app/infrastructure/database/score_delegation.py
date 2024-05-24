@@ -13,5 +13,5 @@ def save_delegation(
     delegation_both.add()
 
 
-def get_all_delegations() -> list[ScoreDelegation]:
-    return ScoreDelegation.query.all()
+def get_all_delegations() -> set[str]:
+    return {s.hashed_addr for s in ScoreDelegation.query.all()}
