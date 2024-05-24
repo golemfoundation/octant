@@ -9,7 +9,7 @@ from app.extensions import db
 
 
 def add_score(
-    user_address: str, score: str, expires_at: datetime, stamps: dict()
+    user_address: str, score: str, expires_at: datetime, stamps: dict
 ) -> GPStamps:
     user = get_by_address(user_address)
     verification = GPStamps(
