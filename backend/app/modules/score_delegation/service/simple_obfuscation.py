@@ -1,3 +1,6 @@
+from datetime import datetime
+from typing import Optional
+
 from app.extensions import db
 from app.context.manager import Context
 from app.infrastructure import database
@@ -6,6 +9,23 @@ from app.modules.dto import ScoreDelegationPayload
 from app.modules.score_delegation import core
 from app.modules.score_delegation.core import get_hashed_addresses
 from app.pydantic import Model
+
+
+class Antisybil(Model):
+    def fetch_antisybil_status(
+        self, _: Context, user_address: str
+    ) -> (float, datetime, any):
+        ...
+
+    def update_antisybil_status(
+        self,
+        _: Context,
+        user_address: str,
+        score: float,
+        expires_at: datetime,
+        stamps,
+    ):
+        ...
 
 
 class SimpleObfuscationDelegationVerifier(Verifier, Model):
@@ -24,23 +44,33 @@ class SimpleObfuscationDelegationVerifier(Verifier, Model):
 
 class SimpleObfuscationDelegation(Model):
     verifier: Verifier
+    antisybil: Antisybil
 
     def delegate(self, context: Context, payload: ScoreDelegationPayload):
         hashed_addresses = get_hashed_addresses(context, payload)
+        primary, secondary, both = hashed_addresses
 
         self.verifier.verify(
             context, hashed_addresses=hashed_addresses, payload=payload
         )
-
-        primary, secondary, both = hashed_addresses
-        # TODO: fetch the score and save it to db linked to primary address
+        self._update_uq_score(context, primary, secondary)
         database.score_delegation.save_delegation(primary, secondary, both)
         db.session.commit()
 
     def recalculate(self, context: Context, payload: ScoreDelegationPayload):
         hashed_addresses = get_hashed_addresses(context, payload)
+        primary, secondary, both = hashed_addresses
 
         self.verifier.verify(
             context, hashed_addresses=hashed_addresses, payload=payload
         )
-        # TODO: fetch the score and save it to db linked to primary address
+        self._update_uq_score(context, primary, secondary)
+        db.session.commit()
+
+    def _update_uq_score(self, context: Context, primary: str, secondary: str):
+        score, expires_at, stamps = self.antisybil.fetch_antisybil_status(
+            context, secondary
+        )
+        self.antisybil.update_antisybil_status(
+            context, primary, score, expires_at, stamps
+        )
