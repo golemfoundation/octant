@@ -18,7 +18,7 @@ from app.infrastructure.external_api.gc_passport.score import (
 )
 
 
-class InitialUserAntisybil(Model):
+class GitcoinPassportAntisybil(Model):
     def get_antisybil_status(
         self, _: Context, user_address: str
     ) -> Optional[Tuple[float, datetime]]:

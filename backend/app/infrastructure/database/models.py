@@ -43,9 +43,8 @@ class User(BaseModel):
 
 class GPStamps(BaseModel):
     __tablename__ = "gitcoin_passport_stamps"
-    user_id = Column(
-        db.Integer, db.ForeignKey("users.id"), primary_key=True, nullable=False
-    )
+    id = Column(db.Integer, primary_key=True)
+    user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     score = Column(db.Float, nullable=False)
     expires_at = Column(db.TIMESTAMP, nullable=False)
     # storing for analysis
