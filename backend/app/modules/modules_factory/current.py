@@ -36,6 +36,7 @@ from app.modules.user.events_generator.service.db_and_graph import (
 )
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
 from app.modules.user.tos.service.initial import InitialUserTos, InitialUserTosVerifier
+from app.modules.user.antisybil.service.initial import InitialUserAntisybil
 from app.modules.withdrawals.service.finalized import FinalizedWithdrawals
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
@@ -49,6 +50,7 @@ class CurrentServices(Model):
     user_allocations_nonce_service: UserAllocationNonceProtocol
     user_deposits_service: CurrentUserDeposits
     user_tos_service: UserTos
+    user_antisybil_service: InitialUserAntisybil
     octant_rewards_service: OctantRewards
     history_service: HistoryService
     simulated_pending_snapshot_service: SimulatePendingSnapshots
@@ -89,6 +91,7 @@ class CurrentServices(Model):
         user_allocations = SavedUserAllocations()
         user_allocations_nonce = SavedUserAllocationsNonce()
         user_withdrawals = FinalizedWithdrawals()
+        user_antisybil_service = InitialUserAntisybil()
         tos_verifier = InitialUserTosVerifier()
         user_tos = InitialUserTos(verifier=tos_verifier)
         patron_donations = EventsBasedUserPatronMode()
@@ -125,6 +128,7 @@ class CurrentServices(Model):
             simulated_pending_snapshot_service=simulated_pending_snapshot_service,
             multisig_signatures_service=multisig_signatures,
             user_tos_service=user_tos,
+            user_antisybil_service=user_antisybil_service,
             projects_metadata_service=StaticProjectsMetadataService(),
             user_budgets_service=user_budgets,
             score_delegation_service=score_delegation,

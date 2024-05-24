@@ -13,6 +13,7 @@ ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 BEACONCHAIN_API = "https://beaconcha.in/api"
 ETHERSCAN_API = "https://api.etherscan.io/api"
 BITQUERY_API = "https://streaming.bitquery.io/graphql"
+GC_PASSPORT_SCORER_API = "https://api.scorer.gitcoin.co"
 SAFE_API_MAINNET = "https://safe-transaction-mainnet.safe.global/api/v1"
 SAFE_API_SEPOLIA = "https://safe-transaction-sepolia.safe.global/api/v1"
 
