@@ -8,7 +8,7 @@ import MetricsGeneralGridTotalProjects from 'components/Metrics/MetricsGeneral/M
 import MetricsGeneralGridWalletsWithGlmLocked from 'components/Metrics/MetricsGeneral/MetricsGeneralGridWalletsWithGlmLocked';
 import MetricsGrid from 'components/Metrics/MetricsGrid';
 import MetricsHeader from 'components/Metrics/MetricsHeader';
-import { METRICS_GENERAL_ID } from 'constants/metrics';
+import { METRICS_GENERAL_ID } from 'constants/domElementsIds';
 import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useProjectsEpoch from 'hooks/queries/useProjectsEpoch';
 import useAllProjects from 'hooks/subgraph/useAllProjects';
