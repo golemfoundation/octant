@@ -43,7 +43,7 @@ export default function useManageTransactionsPending(): void {
   const { refetch: refetchWithdrawals } = useWithdrawals();
 
   useEffect(() => {
-    if (!transactionsPending) {
+    if (!transactionsPending || !publicClient) {
       return;
     }
 
