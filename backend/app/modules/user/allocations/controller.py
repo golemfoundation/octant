@@ -84,7 +84,7 @@ def simulate_allocation(
         context.epoch_state
     ).user_allocations_service
     user_allocations = deserialize_items(payload)
-    leverage, threshold, projects_rewards, _ = service.simulate_allocation(
+    leverage, threshold, projects_rewards = service.simulate_allocation(
         context, user_allocations, user_address
     )
 

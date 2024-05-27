@@ -84,7 +84,7 @@ class PendingUserAllocations(SavedUserAllocations, Model):
             context, user_address=user_address, payload=payload, **kwargs
         )
 
-        leverage, _, _, _ = self.simulate_allocation(
+        leverage, _, _ = self.simulate_allocation(
             context, payload.payload.allocations, user_address
         )
 

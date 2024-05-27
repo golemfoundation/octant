@@ -1,7 +1,8 @@
 from dataclasses import field, dataclass
 from decimal import Decimal
-from typing import Dict
+from typing import List
 
+from app.constants import MR_FUNDING_CAP_PERCENT
 from app.engine.projects import ProjectRewards
 from app.engine.projects.rewards import (
     ProjectRewardsPayload,
@@ -11,16 +12,16 @@ from app.engine.projects.rewards import (
 from app.engine.projects.rewards.allocations import (
     ProjectAllocations,
     ProjectAllocationsPayload,
+    ProjectSumAllocationsDTO,
 )
 from app.engine.projects.rewards.allocations.quadratic_funding import (
     QuadraticFundingAllocations,
 )
-from app.constants import MR_FUNDING_CAP_PERCENT
-from engine.projects.rewards.funding_cap.percent import FundingCapPercentCalculator
+from app.engine.projects.rewards.funding_cap.percent import FundingCapPercentCalculator
 
 
 @dataclass
-class QuadraticFundingProjectRewards(ProjectRewards):
+class CappedQuadraticFundingProjectRewards(ProjectRewards):
     projects_allocations: ProjectAllocations = field(
         default_factory=QuadraticFundingAllocations
     )
@@ -29,6 +30,24 @@ class QuadraticFundingProjectRewards(ProjectRewards):
             FUNDING_CAP_PERCENT=MR_FUNDING_CAP_PERCENT
         )
     )
+
+    def _calculate_matched_rewards(
+        self,
+        allocated_by_addr: List[ProjectSumAllocationsDTO],
+        total_allocated: Decimal,
+        payload,
+    ) -> List[ProjectSumAllocationsDTO]:
+        allocated_by_addr_with_matched = []
+        for allocation in allocated_by_addr:
+            calc_matched = Decimal(
+                allocation.amount / total_allocated * payload.matched_rewards
+            )
+
+            allocated_by_addr_with_matched.append(
+                ProjectSumAllocationsDTO(allocation.project_address, calc_matched)
+            )
+
+        return allocated_by_addr_with_matched
 
     def calculate_project_rewards(
         self, payload: ProjectRewardsPayload
@@ -47,31 +66,26 @@ class QuadraticFundingProjectRewards(ProjectRewards):
             address: ProjectRewardDTO(address, 0, 0) for address in payload.projects
         }
 
+        matched_allocated_by_addr = self._calculate_matched_rewards(
+            allocated_by_addr, total_allocated, payload
+        )
+        capped_matched_by_addr = self.funding_cap.apply_capped_distribution(
+            matched_allocated_by_addr, payload.matched_rewards
+        )
+
         project_rewards_sum = 0
+        for address, capped_matched in capped_matched_by_addr.items():
+            plain_quadratic_allocated = next(
+                filter(
+                    lambda allocation: allocation.project_address == address,
+                    allocated_by_addr,
+                )
+            ).amount
 
-        calc_matched = lambda quadratic_allocated: Decimal(
-            quadratic_allocated / Decimal(total_allocated) * payload.matched_rewards
-        )
-        allocated_by_addr_with_matched: Dict[str, Decimal] = dict(
-            map(
-                lambda address, qf: (address[0], calc_matched(qf[1])),
-                allocated_by_addr.items(),
-            )
-        )
-
-        capped_allocated_by_addr = self.funding_cap.apply_capped_distribution(
-            allocated_by_addr_with_matched, payload.matched_rewards
-        )
-
-        for address, capped_quadratic_allocated in capped_allocated_by_addr.items():
-            plain_quadratic_allocated = allocated_by_addr[address]
-
-            project_rewards_sum += capped_quadratic_allocated
+            project_rewards_sum += plain_quadratic_allocated + capped_matched
             project_rewards = rewards[address]
             project_rewards.allocated = int(plain_quadratic_allocated)
-            project_rewards.matched = int(
-                capped_quadratic_allocated - plain_quadratic_allocated
-            )
+            project_rewards.matched = int(capped_matched)
 
         return ProjectRewardsResult(
             rewards=sorted(rewards.values(), key=lambda r: r.allocated, reverse=True),

@@ -45,7 +45,6 @@ def simulate_allocation(
         leverage,
         simulated_rewards.threshold,
         sorted(simulated_rewards.rewards, key=lambda r: r.address),
-        simulated_rewards.funding_cap,
     )
 
 

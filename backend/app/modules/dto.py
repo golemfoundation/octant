@@ -6,7 +6,6 @@ from typing import Optional, List
 from dataclass_wizard import JSONWizard
 
 from app.engine.projects.rewards import AllocationItem
-
 from app.engine.user.effective_deposit import UserDeposit
 from app.modules.snapshots.pending import UserBudgetInfo
 
