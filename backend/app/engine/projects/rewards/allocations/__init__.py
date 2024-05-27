@@ -18,12 +18,6 @@ class AllocationItem:
 class ProjectSumAllocationsDTO(AllocationItem, JSONWizard):
     amount: Union[Decimal, int]
 
-    def __eq__(self, other):
-        return (
-            self.project_address == other.project_address
-            and self.amount == other.amount
-        )
-
 
 @dataclass
 class ProjectAllocationsPayload:
