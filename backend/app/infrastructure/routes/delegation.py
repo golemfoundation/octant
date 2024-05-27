@@ -7,7 +7,7 @@ from flask import current_app as app
 
 from app.modules.score_delegation import controller
 
-ns = Namespace("score-delegation", description="UQ score delegation")
+ns = Namespace("delegation", description="UQ score delegation")
 api.add_namespace(ns)
 
 
@@ -34,13 +34,13 @@ score_delegation_payload = api.model(
 )
 
 
-@ns.route("/score-delegation")
+@ns.route("/delegate")
 @ns.doc(
     description="Delegates UQ score from secondary address to primary address",
 )
 class UQScoreDelegation(OctantResource):
     @ns.expect(score_delegation_payload)
-    @ns.response(201, "User leverage successfully estimated")
+    @ns.response(201, "Score successfully delegated")
     def post(self):
         app.logger.debug(
             "Delegating UQ score from secondary address to primary address"
@@ -48,3 +48,19 @@ class UQScoreDelegation(OctantResource):
         controller.delegate_uq_score(ns.payload)
 
         return {}, 201
+
+
+@ns.route("/recalculate")
+@ns.doc(
+    description="Recalculates UQ score from secondary address to primary address",
+)
+class UQScoreDelegation(OctantResource):
+    @ns.expect(score_delegation_payload)
+    @ns.response(204, "Score successfully recalculated")
+    def put(self):
+        app.logger.debug(
+            "Recalculating UQ score from secondary address to primary address"
+        )
+        controller.recalculate_uq_score(ns.payload)
+
+        return {}, 204
