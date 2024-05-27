@@ -3,7 +3,7 @@ from decimal import Decimal
 import pytest
 from _pytest.python_api import ApproxBase
 
-from app.engine.projects import QuadraticFundingProjectRewards
+from app.engine.projects.rewards.quadratic_funding import QuadraticFundingProjectRewards
 from app.engine.projects.rewards import (
     ProjectRewardsPayload,
     ProjectRewardsResult,

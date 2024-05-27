@@ -9,10 +9,10 @@ from app.engine.octant_rewards import OpCostPercent
 from app.engine.octant_rewards.community_fund.not_supported import (
     NotSupportedCFCalculator,
 )
-from app.engine.octant_rewards.matched.preliminary import PreliminaryMatchedRewards
 from app.engine.octant_rewards.matched.percentage_from_staking import (
     PercentageMatchedRewards,
 )
+from app.engine.octant_rewards.matched.preliminary import PreliminaryMatchedRewards
 from app.engine.octant_rewards.ppf.calculator import PPFCalculatorFromRewards
 from app.engine.octant_rewards.ppf.not_supported import NotSupportedPPFCalculator
 from app.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost import (
@@ -24,10 +24,13 @@ from app.engine.octant_rewards.total_and_individual.preliminary import (
 from app.engine.octant_rewards.total_and_individual.tr_percent_calc import (
     PercentTotalAndAllIndividualRewards,
 )
-from app.engine.projects.rewards.preliminary import PreliminaryProjectRewards
 from app.engine.projects.rewards.allocations.preliminary import (
     PreliminaryProjectAllocations,
 )
+from app.engine.projects.rewards.allocations.quadratic_funding import (
+    QuadraticFundingAllocations,
+)
+from app.engine.projects.rewards.preliminary import PreliminaryProjectRewards
 from app.engine.projects.rewards.threshold.preliminary import (
     PreliminaryProjectThreshold,
 )
@@ -43,9 +46,8 @@ from app.engine.user.effective_deposit.weighted_average.weights.timebased.defaul
 from app.engine.user.effective_deposit.weighted_average.weights.timebased.without_unlocks import (
     TimebasedWithoutUnlocksWeights,
 )
-from app.engine.projects import QuadraticFundingProjectRewards
-from app.engine.projects.rewards.allocations.quadratic_funding import (
-    QuadraticFundingAllocations,
+from app.engine.projects.rewards.capped_quadratic_funding import (
+    CappedQuadraticFundingProjectRewards,
 )
 
 
@@ -66,7 +68,7 @@ def test_default_epoch_settings():
         matched_rewards=PercentageMatchedRewards(
             OctantRewardsDefaultValues.MATCHED_REWARDS_PERCENT
         ),
-        projects_rewards=QuadraticFundingProjectRewards(),
+        projects_rewards=CappedQuadraticFundingProjectRewards(),
         projects_allocations=QuadraticFundingAllocations(),
     )
 
@@ -152,7 +154,7 @@ def test_epoch_4_settings():
         community_fund=CommunityFundPercent(OctantRewardsDefaultValues.COMMUNITY_FUND),
         ppf=PPFCalculatorFromRewards(),
         user_budget=UserBudgetWithPPF(),
-        projects_rewards=QuadraticFundingProjectRewards(
+        projects_rewards=CappedQuadraticFundingProjectRewards(
             projects_allocations=QuadraticFundingAllocations(),
         ),
         projects_allocations=QuadraticFundingAllocations(),
