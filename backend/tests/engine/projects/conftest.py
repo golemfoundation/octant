@@ -86,7 +86,7 @@ def data_for_quadratic_funding(projects):
 @pytest.fixture
 def dataset_1_for_capped_quadratic_funding(projects):
     matched_rewards = 35000
-    capped_matched_rewards = Decimal(matched_rewards * MR_FUNDING_CAP_PERCENT)
+    capped_matched_rewards = matched_rewards * MR_FUNDING_CAP_PERCENT
     allocations = [
         ProjectSumAllocationsDTO(projects[0], 1000),
         ProjectSumAllocationsDTO(projects[1], 2000),

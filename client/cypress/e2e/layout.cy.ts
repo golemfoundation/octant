@@ -1,4 +1,4 @@
-import { navigateWithCheck, mockCoinPricesServer } from 'cypress/utils/e2e';
+import { navigateWithCheck, mockCoinPricesServer, connectWallet } from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
@@ -126,6 +126,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.acceptMetamaskAccess();
       cy.get('[data-test=MainLayout__Button--connect]').should('not.exist');
       cy.get('[data-test=ProfileInfo]').should('exist');
+    });
+
+    it('Wallet address is clickable and has href attribute', () => {
+      connectWallet(true, false);
+      cy.get('[data-test=ProfileInfo]').click();
+      cy.get('[data-test=LayoutWallet__Button--address]').should('be.visible');
+      cy.get('[data-test=LayoutWallet__Button--address]').should('have.attr', 'href');
+      cy.get('[data-test=LayoutWallet__Button--address]').click();
     });
   });
 });

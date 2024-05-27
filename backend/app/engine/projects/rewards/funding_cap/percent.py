@@ -43,7 +43,7 @@ class FundingCapPercentCalculator:
         capped_quadratic_distribution = grouped_allocated_by_addr.copy()
 
         surplus = Decimal(0)
-        cap_amount = Decimal(matched_rewards * self.FUNDING_CAP_PERCENT)
+        cap_amount = matched_rewards * self.FUNDING_CAP_PERCENT
 
         for project in capped_quadratic_distribution.index:
             if capped_quadratic_distribution[project] > cap_amount:

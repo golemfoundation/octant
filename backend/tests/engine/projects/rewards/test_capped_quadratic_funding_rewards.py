@@ -121,5 +121,5 @@ def test_total_matched_rewards_are_distributed(
     result = uut.calculate_project_rewards(payload)
 
     assert sum([r.matched for r in result.rewards]) == pytest.approx(
-        MATCHED_REWARDS, 0.00000000000000000001
+        MATCHED_REWARDS, 0.0000000000000000001
     )

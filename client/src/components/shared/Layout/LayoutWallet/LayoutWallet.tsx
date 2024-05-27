@@ -8,6 +8,7 @@ import BoxRounded from 'components/ui/BoxRounded';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
 import Button from 'components/ui/Button';
+import networkConfig from 'constants/networkConfig';
 import useAvailableFundsEth from 'hooks/helpers/useAvailableFundsEth';
 import useAvailableFundsGlm from 'hooks/helpers/useAvailableFundsGlm';
 import useIsProjectAdminMode from 'hooks/helpers/useIsProjectAdminMode';
@@ -84,7 +85,14 @@ const LayoutWallet: FC<LayoutWalletProps> = ({ onDisconnect }) => {
         title={t('wallet')}
         titleSuffix={
           address ? (
-            <div className={styles.titleSuffix}>{truncateEthAddress(address)}</div>
+            <Button
+              className={styles.address}
+              dataTest="LayoutWallet__Button--address"
+              href={`${networkConfig.etherscanAddress}/address/${address}`}
+              variant="link"
+            >
+              {truncateEthAddress(address)}
+            </Button>
           ) : undefined
         }
       >
