@@ -54,7 +54,7 @@ def test_default_epoch_settings():
     settings = get_epoch_settings(-1)
     check_settings(
         settings=settings,
-        total_and_all_individual_rewards=PercentTotalAndAllIndividualRewards(
+        total_and_vanilla_individual_rewards=PercentTotalAndAllIndividualRewards(
             IRE_PERCENT=OctantRewardsDefaultValues.IRE_PERCENT,
             TR_PERCENT=OctantRewardsDefaultValues.TR_PERCENT,
         ),
@@ -76,7 +76,7 @@ def test_epoch_1_settings():
     settings = get_epoch_settings(1)
     check_settings(
         settings=settings,
-        total_and_all_individual_rewards=AllProceedsWithOperationalCost(),
+        total_and_vanilla_individual_rewards=AllProceedsWithOperationalCost(),
         timebased_weights=DefaultTimebasedWeights(),
         operational_cost=OpCostPercent(Decimal("0.20")),
         matched_rewards=PreliminaryMatchedRewards(),
@@ -95,7 +95,7 @@ def test_epoch_2_settings():
     settings = get_epoch_settings(2)
     check_settings(
         settings=settings,
-        total_and_all_individual_rewards=PreliminaryTotalAndAllIndividualRewards(),
+        total_and_vanilla_individual_rewards=PreliminaryTotalAndAllIndividualRewards(),
         timebased_weights=TimebasedWithoutUnlocksWeights(),
         operational_cost=OpCostPercent(Decimal("0.25")),
         matched_rewards=PreliminaryMatchedRewards(),
@@ -116,7 +116,7 @@ def test_epoch_3_settings():
     check_settings(
         settings=settings,
         operational_cost=OpCostPercent(Decimal("0.25")),
-        total_and_all_individual_rewards=PercentTotalAndAllIndividualRewards(
+        total_and_vanilla_individual_rewards=PercentTotalAndAllIndividualRewards(
             IRE_PERCENT=OctantRewardsDefaultValues.IRE_PERCENT,
             TR_PERCENT=OctantRewardsDefaultValues.TR_PERCENT,
         ),
@@ -162,7 +162,7 @@ def test_epoch_4_settings():
 def check_settings(
     *,
     settings,
-    total_and_all_individual_rewards,
+    total_and_vanilla_individual_rewards,
     operational_cost,
     timebased_weights,
     matched_rewards,
@@ -174,8 +174,8 @@ def check_settings(
 ):
     assert settings.octant_rewards.locked_ratio == DefaultLockedRatio()
     assert (
-        settings.octant_rewards.total_and_all_individual_rewards
-        == total_and_all_individual_rewards
+        settings.octant_rewards.total_and_vanilla_individual_rewards
+        == total_and_vanilla_individual_rewards
     )
     assert settings.octant_rewards.operational_cost == operational_cost
     assert settings.octant_rewards.matched_rewards == matched_rewards

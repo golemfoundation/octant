@@ -24,6 +24,8 @@ class Config(object):
     ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY")
     BITQUERY_API_KEY = os.getenv("BITQUERY_API_KEY")
     BITQUERY_BEARER = os.getenv("BITQUERY_BEARER")
+    GC_PASSPORT_SCORER_ID = os.getenv("GC_PASSPORT_SCORER_ID")
+    GC_PASSPORT_SCORER_API_KEY = os.getenv("GC_PASSPORT_SCORER_API_KEY")
     SCHEDULER_ENABLED = parse_bool(os.getenv("SCHEDULER_ENABLED"))
     CACHE_TYPE = "SimpleCache"
 

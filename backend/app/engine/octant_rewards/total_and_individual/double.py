@@ -20,7 +20,7 @@ class DoubleTotalAndIndividualRewards(TotalAndAllIndividualRewards):
         else:
             return payload.eth_proceeds
 
-    def calculate_all_individual_rewards(
+    def calculate_vanilla_individual_rewards(
         self, payload: TotalAndAllIndividualPayload
     ) -> int:
         if payload.locked_ratio < self.DOUBLING_GLM_SUPPLY_LIMIT:

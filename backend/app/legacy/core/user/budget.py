@@ -17,4 +17,4 @@ def get_budget(user_address: str, epoch: int) -> int:
         snapshot.total_effective_deposit
     )
 
-    return int(Decimal(snapshot.all_individual_rewards) * individual_share)
+    return int(Decimal(snapshot.vanilla_individual_rewards) * individual_share)
