@@ -23,7 +23,7 @@ def test_score_delegation_passes():
     )
     hashed_addresses = core.get_hashed_addresses(context, payload)
     core.verify_score_delegation(
-        hashed_addresses, {hashed_carol}, core.ActionType.DELEGATION
+        hashed_addresses, {hashed_carol}, 15, core.ActionType.DELEGATION
     )
 
 
@@ -36,7 +36,7 @@ def test_score_delegation_passes_when_there_are_no_other_delegations():
         secondary_addr_signature=None,
     )
     hashed_addresses = core.get_hashed_addresses(context, payload)
-    core.verify_score_delegation(hashed_addresses, set(), core.ActionType.DELEGATION)
+    core.verify_score_delegation(hashed_addresses, set(), 15, core.ActionType.DELEGATION)
 
 
 def test_score_delegation_fails():
@@ -53,6 +53,7 @@ def test_score_delegation_fails():
         core.verify_score_delegation(
             hashed_addresses,
             {hashed_addresses.primary_addr_hash},
+            15,
             core.ActionType.DELEGATION,
         )
 
@@ -60,6 +61,7 @@ def test_score_delegation_fails():
         core.verify_score_delegation(
             hashed_addresses,
             {hashed_addresses.secondary_addr_hash},
+            15,
             core.ActionType.DELEGATION,
         )
 
@@ -74,7 +76,7 @@ def test_score_recalculation_passes():
     )
     hashed_addresses = core.get_hashed_addresses(context, payload)
     core.verify_score_delegation(
-        hashed_addresses, {hashed_addresses.both_hash}, core.ActionType.RECALCULATION
+        hashed_addresses, {hashed_addresses.both_hash}, 15, core.ActionType.RECALCULATION
     )
 
 
@@ -89,7 +91,7 @@ def test_score_recalculation_fails_when_there_are_no_other_delegations():
     hashed_addresses = core.get_hashed_addresses(context, payload)
     with pytest.raises(exceptions.DelegationDoesNotExist):
         core.verify_score_delegation(
-            hashed_addresses, set(), core.ActionType.RECALCULATION
+            hashed_addresses, set(), 15, core.ActionType.RECALCULATION
         )
 
 
@@ -110,5 +112,35 @@ def test_score_recalculation_fails():
 
     with pytest.raises(exceptions.DelegationDoesNotExist):
         core.verify_score_delegation(
-            hashed_addresses, {hashed_alice_and_carol}, core.ActionType.RECALCULATION
+            hashed_addresses, {hashed_alice_and_carol}, 15, core.ActionType.RECALCULATION
         )
+
+
+def test_score_is_too_low():
+    context = get_context()
+    payload = ScoreDelegationPayload(
+        primary_addr=USER1_ADDRESS,
+        secondary_addr=USER2_ADDRESS,
+        primary_addr_signature=None,
+        secondary_addr_signature=None,
+    )
+    hashed_addresses = core.get_hashed_addresses(context, payload)
+
+    with pytest.raises(exceptions.AntisybilScoreTooLow):
+        core.verify_score_delegation(
+            hashed_addresses, set(), 14.9, core.ActionType.DELEGATION
+        )
+
+
+def test_score_is_sufficient():
+    context = get_context()
+    payload = ScoreDelegationPayload(
+        primary_addr=USER1_ADDRESS,
+        secondary_addr=USER2_ADDRESS,
+        primary_addr_signature=None,
+        secondary_addr_signature=None,
+    )
+    hashed_addresses = core.get_hashed_addresses(context, payload)
+    core.verify_score_delegation(
+        hashed_addresses, set(), 15.0, core.ActionType.DELEGATION
+    )

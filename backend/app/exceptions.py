@@ -298,3 +298,11 @@ class DelegationDoesNotExist(OctantException):
 
     def __init__(self):
         super().__init__(self.description, self.code)
+
+
+class AntisybilScoreTooLow(OctantException):
+    code = 400
+    description = "Antisybil score is lower then {}"
+
+    def __init__(self, score: float):
+        super().__init__(self.description.format(score), self.code)

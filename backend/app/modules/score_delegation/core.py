@@ -6,7 +6,7 @@ from app.context.manager import Context
 from app.exceptions import (
     DelegationAlreadyExists,
     InvalidSignature,
-    DelegationDoesNotExist,
+    DelegationDoesNotExist, AntisybilScoreTooLow,
 )
 from app.modules.common.crypto.signature import (
     encode_for_signing,
@@ -14,6 +14,9 @@ from app.modules.common.crypto.signature import (
     verify_signed_message,
 )
 from app.modules.dto import ScoreDelegationPayload
+
+
+MIN_SCORE = 15
 
 HashedAddresses = namedtuple(
     "HashedAddresses", ["primary_addr_hash", "secondary_addr_hash", "both_hash"]
@@ -49,19 +52,10 @@ def get_hashed_addresses(
 
 
 def verify_score_delegation(
-    hashed_addresses: HashedAddresses, all_hashes: set[str], action: ActionType
+    hashed_addresses: HashedAddresses, all_hashes: set[str], score: float, action: ActionType
 ):
-    hashed_primary, hashed_secondary, hashed_both = hashed_addresses
-
-    match action:
-        case ActionType.DELEGATION:
-            if hashed_primary in all_hashes or hashed_secondary in all_hashes:
-                raise DelegationAlreadyExists
-        case ActionType.RECALCULATION:
-            if hashed_both not in all_hashes:
-                raise DelegationDoesNotExist
-        case _:
-            raise ValueError(f"Invalid action type: {action}")
+    _verify_hashed_addresses(action, hashed_addresses, all_hashes)
+    _verify_score(score)
 
 
 def verify_signatures(payload: ScoreDelegationPayload, action: ActionType):
@@ -91,3 +85,23 @@ def verify_signatures(payload: ScoreDelegationPayload, action: ActionType):
 
     if not verify_secondary:
         raise InvalidSignature(payload.secondary_addr, payload.secondary_addr_signature)
+
+
+def _verify_hashed_addresses(action: ActionType, hashed_addresses: HashedAddresses, all_hashes: set[str]):
+    hashed_primary, hashed_secondary, hashed_both = hashed_addresses
+
+    match action:
+        case ActionType.DELEGATION:
+            if hashed_primary in all_hashes or hashed_secondary in all_hashes:
+                raise DelegationAlreadyExists
+        case ActionType.RECALCULATION:
+            if hashed_both not in all_hashes:
+                raise DelegationDoesNotExist
+        case _:
+            raise ValueError(f"Invalid action type: {action}")
+
+
+def _verify_score(score: float):
+    if score < MIN_SCORE:
+        raise AntisybilScoreTooLow(score)
+
