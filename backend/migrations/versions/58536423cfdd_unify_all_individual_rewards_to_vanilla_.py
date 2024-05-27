@@ -1,7 +1,7 @@
 """Unify all_individual_rewards to vanilla_individual_rewards
 
 Revision ID: 58536423cfdd
-Revises: 1f5a0f69733a
+Revises: a2701c6b232a
 Create Date: 2024-05-21 00:43:35.531733
 
 """
