@@ -70,7 +70,8 @@ const LayoutConnectWallet: FC = () => {
             dataTest="ConnectWallet__BoxRounded--walletConnect"
             isGrey
             justifyContent="start"
-            onClick={!isReady || isOpen || isBrowserWalletConnecting ? undefined : onConnect}
+            // In Cypress isReady is sometimes always false. To bypass that, we open modal regardless.
+            onClick={window.Cypress === undefined || !isReady || isOpen || isBrowserWalletConnecting ? undefined : onConnect}
           >
             <Svg
               classNameSvg={cx(!isOpen && isBrowserWalletConnecting && styles.iconGrey)}
