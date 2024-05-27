@@ -9,12 +9,7 @@ import {
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
-import {
-  OCTANT_BUILD_LINK,
-  OCTANT_DOCS,
-  DISCORD_LINK,
-  TERMS_OF_USE,
-} from 'src/constants/urls';
+import { OCTANT_BUILD_LINK, OCTANT_DOCS, DISCORD_LINK, TERMS_OF_USE } from 'src/constants/urls';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import getValueCryptoToDisplay from 'src/utils/getValueCryptoToDisplay';
 
