@@ -38,6 +38,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       connectWallet(false);
     });
 
+    after(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
+    });
+
     it('onboarding TOS step should be first and active', () => {
       checkCurrentElement(0, true);
       cy.get('[data-test=ModalOnboardingTOS]').should('be.visible');

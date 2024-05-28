@@ -79,7 +79,7 @@ describe('allocation (allocation window closed)', () => {
       });
 
       it('AllocationItem shows all the elements', () => {
-        connectWallet(true, false);
+        connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__name]')
