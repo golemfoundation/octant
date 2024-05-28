@@ -24,11 +24,11 @@ score_delegation_payload = api.model(
         ),
         "primaryAddrSignature": fields.String(
             required=True,
-            description="EIP-712 primary address signature of the message: Delegation of UQ score from {secondary_addr} to {primary_addr}",
+            description="Primary address signature of the message: Delegation of UQ score from {secondary_addr} to {primary_addr}",
         ),
         "secondaryAddrSignature": fields.String(
             required=True,
-            description="EIP-712 secondary address signature of the message: Delegation of UQ score from {secondary_addr} to {primary_addr}",
+            description="Secondary address signature of the message: Delegation of UQ score from {secondary_addr} to {primary_addr}",
         ),
     },
 )
