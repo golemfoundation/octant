@@ -26,7 +26,7 @@ def payload():
     )
 
 
-def test_delegation(context, payload, tos_users):
+def test_delegation(context, payload, tos_users, patch_is_contract):
     verifier = SimpleObfuscationDelegationVerifier()
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
@@ -41,7 +41,7 @@ def test_delegation(context, payload, tos_users):
     assert len(delegations) == 3
 
 
-def test_recalculation(context, payload):
+def test_recalculation(context, payload, patch_is_contract):
     verifier = SimpleObfuscationDelegationVerifier()
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
@@ -57,6 +57,10 @@ def test_recalculation(context, payload):
         "4024-05-22T14:46:46.810800+00:00",
         ["stamp"],
     )
+    payload = ScoreDelegationPayload(
+        primary_addr=USER1_ADDRESS, secondary_addr=USER2_ADDRESS
+    )
+
     service.recalculate(context, payload)
 
     delegations = database.score_delegation.get_all_delegations()
