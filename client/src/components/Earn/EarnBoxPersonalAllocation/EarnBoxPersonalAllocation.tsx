@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import _first from 'lodash/first';
 import React, { FC, Fragment, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
@@ -37,9 +38,12 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
   const { data: isPatronMode } = useIsPatronMode();
   const { data: totalPatronDonations, isFetching: isFetchingTotalPatronDonations } =
     useTotalPatronDonations({ isEnabledAdditional: !!isPatronMode });
-  const { isAppWaitingForTransactionToBeIndexed } = useTransactionLocalStore(state => ({
-    isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
-  }));
+  const { isAppWaitingForTransactionToBeIndexed, transactionsPending } = useTransactionLocalStore(
+    state => ({
+      isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
+      transactionsPending: state.data.transactionsPending,
+    }),
+  );
 
   const isPreLaunch = getIsPreLaunch(currentEpoch);
   const isProjectAdminMode = useIsProjectAdminMode();
@@ -52,7 +56,10 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
             doubleValueProps: {
               cryptoCurrency: 'ethereum',
               dataTest: 'BoxPersonalAllocation__Section--pending__DoubleValue',
-              isFetching: isPatronMode ? isFetchingIndividualReward : isFetchingWithdrawals,
+              isFetching:
+                (isPatronMode ? isFetchingIndividualReward : isFetchingWithdrawals) ||
+                (isAppWaitingForTransactionToBeIndexed &&
+                  _first(transactionsPending)?.type === 'withdrawal'),
               showCryptoSuffix: true,
               valueCrypto: isPatronMode ? individualReward : withdrawals?.sums.pending,
             },
@@ -92,7 +99,10 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
         coinPricesServerDowntimeText: !isProjectAdminMode ? '...' : undefined,
         cryptoCurrency: 'ethereum',
         dataTest: 'BoxPersonalAllocation__Section--availableNow__DoubleValue',
-        isFetching: isPatronMode ? isFetchingTotalPatronDonations : isFetchingWithdrawals,
+        isFetching:
+          (isPatronMode ? isFetchingTotalPatronDonations : isFetchingWithdrawals) ||
+          (isAppWaitingForTransactionToBeIndexed &&
+            _first(transactionsPending)?.type === 'withdrawal'),
         showCryptoSuffix: true,
         valueCrypto: isPatronMode ? totalPatronDonations?.value : withdrawals?.sums.available,
       },

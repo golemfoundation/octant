@@ -1,5 +1,4 @@
 import { Hash } from 'viem';
-import { WalletClient } from 'wagmi';
 
 import env from 'env';
 
@@ -10,7 +9,8 @@ import Vault from './abi/Vault.json';
 type WriteContract = {
   args: unknown[];
   functionName: string;
-  walletClient: WalletClient;
+  // Should be typed as UseWalletClientReturnType, but methods are not visible.
+  walletClient: any; // UseWalletClientReturnType<any, any, any>;
 };
 
 export function writeContractERC20({

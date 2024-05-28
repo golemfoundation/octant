@@ -11,16 +11,19 @@ export default function usePatronMode(
   const { t } = useTranslation('translation', { keyPrefix: 'components.settings.patronMode' });
   const { data: isPatronModeEnabled } = useIsPatronMode();
   const { address } = useAccount();
-  const { signMessageAsync } = useSignMessage({
-    message: t('patronModeSignatureMessage', {
-      address,
-      state: isPatronModeEnabled ? 'disable' : 'enable',
-    }),
-  });
+  const { signMessageAsync } = useSignMessage();
 
   return useMutation({
     mutationFn: async () => {
-      return signMessageAsync().then(data => apiPatchPatronMode(address!, data));
+      const signedMessages = await signMessageAsync({
+        message: t('patronModeSignatureMessage', {
+          address,
+          state: isPatronModeEnabled ? 'disable' : 'enable',
+        }),
+      });
+
+      const data = await apiPatchPatronMode(address!, signedMessages);
+      return data;
     },
     ...options,
   });

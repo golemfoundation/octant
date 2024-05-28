@@ -265,7 +265,7 @@ jobs:
     runs-on:
       - general
     container:
-      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:d984811a
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:aa8eeade
       credentials:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
@@ -365,7 +365,7 @@ jobs:
     runs-on:
       - general
     container:
-      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:d984811a
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:aa8eeade
       credentials:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
@@ -416,7 +416,7 @@ jobs:
     runs-on:
       - general
     container:
-      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:d984811a
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:aa8eeade
       credentials:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
@@ -474,7 +474,7 @@ jobs:
     needs:
     - permissions-check
     container:
-      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:d984811a
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:aa8eeade
       credentials:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"

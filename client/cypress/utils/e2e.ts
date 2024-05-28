@@ -1,5 +1,7 @@
 import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
 
+import { ConnectWalletParameters } from './types';
+
 import Chainable = Cypress.Chainable;
 
 export const ETH_USD = 2042.0;
@@ -16,8 +18,12 @@ export const checkLocationWithLoader = (url: string): Chainable<any> => {
   return cy.location('pathname').should('eq', url);
 };
 
-export const visitWithLoader = (urlEnter: string, urlEnd?: string): Chainable<any> => {
-  cy.visit(urlEnter);
+export const visitWithLoader = (
+  urlEnter: string,
+  urlEnd?: string,
+  visitOptions?: Partial<Cypress.VisitOptions>,
+): Chainable<any> => {
+  cy.visit(urlEnter, visitOptions);
   return checkLocationWithLoader(urlEnd || urlEnter);
 };
 
@@ -34,10 +40,10 @@ export const mockCoinPricesServer = (): Chainable<any> => {
   });
 };
 
-export const connectWallet = (
-  isTOSAccepted: boolean,
-  isPatronModeEnabled: boolean,
-): Chainable<any> => {
+export const connectWallet = ({
+  isTOSAccepted = false,
+  isPatronModeEnabled = false,
+}: ConnectWalletParameters): Chainable<any> => {
   cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
   cy.intercept('GET', '/user/*/patron-mode', { body: { status: isPatronModeEnabled } });
   cy.intercept('PATCH', '/user/*/patron-mode', { body: { status: !isPatronModeEnabled } });

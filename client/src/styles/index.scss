@@ -20,6 +20,11 @@
   width: 100%;
   margin: 0 auto;
   text-align: center;
+
+  // RainbowKitProvider creates a div, it needs to be stretched. Lack of it creates a problem in SyncView.
+  > div {
+    height: 100%;
+  }
 }
 
 a {

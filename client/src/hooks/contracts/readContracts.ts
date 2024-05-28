@@ -1,4 +1,4 @@
-import { PublicClient } from 'wagmi';
+import { type UsePublicClientReturnType } from 'wagmi';
 
 import env from 'env';
 
@@ -10,14 +10,14 @@ import Proposals from './abi/Proposals.json';
 type ReadContract = {
   args?: unknown[];
   functionName: string;
-  publicClient: PublicClient;
+  publicClient: UsePublicClientReturnType;
 };
 export function readContractERC20({
   publicClient,
   functionName,
   args,
 }: ReadContract): Promise<any> {
-  return publicClient.readContract({
+  return publicClient!.readContract({
     abi: ERC20.abi,
     address: env.contractGlmAddress as `0x{string}`,
     args,
@@ -30,7 +30,7 @@ export function readContractEpochs({
   functionName,
   args,
 }: ReadContract): Promise<any> {
-  return publicClient.readContract({
+  return publicClient!.readContract({
     abi: Epochs.abi,
     address: env.contractEpochsAddress as `0x{string}`,
     args,
@@ -43,7 +43,7 @@ export function readContractDeposits({
   functionName,
   args,
 }: ReadContract): Promise<any> {
-  return publicClient.readContract({
+  return publicClient!.readContract({
     abi: Deposits.abi,
     address: env.contractDepositsAddress as `0x{string}`,
     args,
@@ -56,7 +56,7 @@ export function readContractProposals({
   functionName,
   args,
 }: ReadContract): Promise<any> {
-  return publicClient.readContract({
+  return publicClient!.readContract({
     abi: Proposals.abi,
     address: env.contractProposalsAddress as `0x{string}`,
     args,
