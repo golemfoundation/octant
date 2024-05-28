@@ -54,7 +54,7 @@ class UQScoreDelegation(OctantResource):
 @ns.doc(
     description="Recalculates UQ score from secondary address to primary address",
 )
-class UQScoreDelegation(OctantResource):
+class UQScoreRecalculation(OctantResource):
     @ns.expect(score_delegation_payload)
     @ns.response(204, "Score successfully recalculated")
     def put(self):

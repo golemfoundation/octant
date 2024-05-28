@@ -2,11 +2,11 @@ import hashlib
 from collections import namedtuple
 from enum import Enum
 
-from app.context.manager import Context
 from app.exceptions import (
     DelegationAlreadyExists,
     InvalidSignature,
-    DelegationDoesNotExist, AntisybilScoreTooLow,
+    DelegationDoesNotExist,
+    AntisybilScoreTooLow,
 )
 from app.modules.common.crypto.signature import (
     encode_for_signing,
@@ -32,15 +32,11 @@ def build_score_delegation_message(primary_addr: str, secondary_addr: str) -> st
     return f"Delegation of UQ score from {secondary_addr} to {primary_addr}"
 
 
-def build_score_recalculation_message(primary_addr: str, secondary_addr: str) -> str:
-    return f"Recalculation of UQ score from {secondary_addr} to {primary_addr}"
-
-
 def get_hashed_addresses(
-    context: Context, payload: ScoreDelegationPayload
+    payload: ScoreDelegationPayload, salt: str, salt_primary: str
 ) -> HashedAddresses:
-    primary_addr_data = str(context.epoch_details.epoch_num) + payload.primary_addr
-    secondary_addr_data = str(context.epoch_details.epoch_num) + payload.secondary_addr
+    primary_addr_data = salt_primary + payload.primary_addr
+    secondary_addr_data = salt + payload.secondary_addr
 
     hashed_primary = hashlib.sha256(primary_addr_data.encode()).hexdigest()
     hashed_secondary = hashlib.sha256(secondary_addr_data.encode()).hexdigest()
@@ -52,7 +48,10 @@ def get_hashed_addresses(
 
 
 def verify_score_delegation(
-    hashed_addresses: HashedAddresses, all_hashes: set[str], score: float, action: ActionType
+    hashed_addresses: HashedAddresses,
+    all_hashes: set[str],
+    score: float,
+    action: ActionType,
 ):
     _verify_hashed_addresses(action, hashed_addresses, all_hashes)
     _verify_score(score)
@@ -65,9 +64,8 @@ def verify_signatures(payload: ScoreDelegationPayload, action: ActionType):
                 payload.primary_addr, payload.secondary_addr
             )
         case ActionType.RECALCULATION:
-            msg_text = build_score_recalculation_message(
-                payload.primary_addr, payload.secondary_addr
-            )
+            # There is no need to verify recalculation, anyone knowing addresses can trigger it
+            return True
         case _:
             raise ValueError(f"Invalid action type: {action}")
 
@@ -87,7 +85,9 @@ def verify_signatures(payload: ScoreDelegationPayload, action: ActionType):
         raise InvalidSignature(payload.secondary_addr, payload.secondary_addr_signature)
 
 
-def _verify_hashed_addresses(action: ActionType, hashed_addresses: HashedAddresses, all_hashes: set[str]):
+def _verify_hashed_addresses(
+    action: ActionType, hashed_addresses: HashedAddresses, all_hashes: set[str]
+):
     hashed_primary, hashed_secondary, hashed_both = hashed_addresses
 
     match action:
@@ -104,4 +104,3 @@ def _verify_hashed_addresses(action: ActionType, hashed_addresses: HashedAddress
 def _verify_score(score: float):
     if score < MIN_SCORE:
         raise AntisybilScoreTooLow(score)
-

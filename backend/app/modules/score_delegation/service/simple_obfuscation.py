@@ -10,6 +10,8 @@ from app.modules.score_delegation import core
 from app.modules.score_delegation.core import get_hashed_addresses, ActionType
 from app.pydantic import Model
 
+from flask import current_app as app
+
 
 @runtime_checkable
 class Antisybil(Protocol):
@@ -37,7 +39,9 @@ class SimpleObfuscationDelegationVerifier(Verifier, Model):
             kwargs["score"],
         )
         get_all_delegations = database.score_delegation.get_all_delegations()
-        core.verify_score_delegation(hashed_addresses, get_all_delegations, score, action_type)
+        core.verify_score_delegation(
+            hashed_addresses, get_all_delegations, score, action_type
+        )
 
     def _verify_signature(self, _: Context, **kwargs):
         payload, action_type = kwargs["payload"], kwargs["action_type"]
@@ -49,32 +53,38 @@ class SimpleObfuscationDelegation(Model):
     antisybil: Antisybil
 
     def delegate(self, context: Context, payload: ScoreDelegationPayload):
-        hashed_addresses = get_hashed_addresses(context, payload)
-        primary, secondary, both = hashed_addresses
-        score, expires_at, stamps = self.antisybil.fetch_antisybil_status(
-            context, secondary
+        primary, secondary, both = get_hashed_addresses(
+            payload,
+            app.config["DELEGATION_SALT"],
+            app.config["DELEGATION_SALT_PRIMARY"],
         )
-
-        self.verifier.verify(
-            context, hashed_addresses=hashed_addresses, payload=payload, score=score, action_type=ActionType.DELEGATION
-        )
-        self.antisybil.update_antisybil_status(
-            context, primary, score, expires_at, stamps
-        )
+        self._delegation(context, payload, ActionType.DELEGATION)
         database.score_delegation.save_delegation(primary, secondary, both)
         db.session.commit()
 
     def recalculate(self, context: Context, payload: ScoreDelegationPayload):
-        hashed_addresses = get_hashed_addresses(context, payload)
+        self._delegation(context, payload, ActionType.RECALCULATION)
+        db.session.commit()
+
+    def _delegation(
+        self, context: Context, payload: ScoreDelegationPayload, action: ActionType
+    ):
+        hashed_addresses = get_hashed_addresses(
+            payload,
+            app.config["DELEGATION_SALT"],
+            app.config["DELEGATION_SALT_PRIMARY"],
+        )
         primary, secondary, both = hashed_addresses
         score, expires_at, stamps = self.antisybil.fetch_antisybil_status(
             context, secondary
         )
-
         self.verifier.verify(
-            context, hashed_addresses=hashed_addresses, payload=payload, score=score, action_type=ActionType.RECALCULATION
+            context,
+            hashed_addresses=hashed_addresses,
+            payload=payload,
+            score=score,
+            action_type=action,
         )
         self.antisybil.update_antisybil_status(
             context, primary, score, expires_at, stamps
         )
-        db.session.commit()

@@ -1,3 +1,4 @@
+from app.extensions import db
 from app.infrastructure.database.models import ScoreDelegation
 
 
@@ -8,9 +9,9 @@ def save_delegation(
     delegation_secondary = ScoreDelegation(hashed_addr=secondary_addr_hash)
     delegation_both = ScoreDelegation(hashed_addr=both_addr_hash)
 
-    delegation_primary.add()
-    delegation_secondary.add()
-    delegation_both.add()
+    db.session.add(delegation_primary)
+    db.session.add(delegation_secondary)
+    db.session.add(delegation_both)
 
 
 def get_all_delegations() -> set[str]:

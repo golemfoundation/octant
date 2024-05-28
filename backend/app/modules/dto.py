@@ -84,8 +84,8 @@ class UserAllocationRequestPayload(JSONWizard):
 class ScoreDelegationPayload(JSONWizard):
     primary_addr: str
     secondary_addr: str
-    primary_addr_signature: str
-    secondary_addr_signature: str
+    primary_addr_signature: Optional[str] = None
+    secondary_addr_signature: Optional[str] = None
 
 
 @dataclass(frozen=True)
