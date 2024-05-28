@@ -1,3 +1,4 @@
+import _first from 'lodash/first';
 import React, { FC, Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
@@ -24,9 +25,12 @@ const EarnBoxGlmLock: FC<EarnBoxGlmLockProps> = ({ classNameBox }) => {
     keyPrefix: 'components.dedicated.boxGlmLock',
   });
   const { isConnected } = useAccount();
-  const { isAppWaitingForTransactionToBeIndexed } = useTransactionLocalStore(state => ({
-    isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
-  }));
+  const { isAppWaitingForTransactionToBeIndexed, transactionsPending } = useTransactionLocalStore(
+    state => ({
+      isAppWaitingForTransactionToBeIndexed: state.data.isAppWaitingForTransactionToBeIndexed,
+      transactionsPending: state.data.transactionsPending,
+    }),
+  );
 
   const [isModalGlmLockOpen, setIsModalGlmLockOpen] = useState<boolean>(false);
   const { data: estimatedEffectiveDeposit, isFetching: isFetchingEstimatedEffectiveDeposit } =
@@ -43,7 +47,10 @@ const EarnBoxGlmLock: FC<EarnBoxGlmLockProps> = ({ classNameBox }) => {
       doubleValueProps: {
         cryptoCurrency: 'golem',
         dataTest: 'BoxGlmLock__Section--current__DoubleValue',
-        isFetching: isFetchingDepositValue || isAppWaitingForTransactionToBeIndexed,
+        isFetching:
+          isFetchingDepositValue ||
+          (isAppWaitingForTransactionToBeIndexed &&
+            _first(transactionsPending)?.type !== 'withdrawal'),
         showCryptoSuffix: true,
         valueCrypto: depositsValue,
       },
@@ -56,7 +63,10 @@ const EarnBoxGlmLock: FC<EarnBoxGlmLockProps> = ({ classNameBox }) => {
         coinPricesServerDowntimeText: '...',
         cryptoCurrency: 'golem',
         dataTest: 'BoxGlmLock__Section--effective__DoubleValue',
-        isFetching: isFetchingEstimatedEffectiveDeposit || isAppWaitingForTransactionToBeIndexed,
+        isFetching:
+          isFetchingEstimatedEffectiveDeposit ||
+          (isAppWaitingForTransactionToBeIndexed &&
+            _first(transactionsPending)?.type !== 'withdrawal'),
         showCryptoSuffix: true,
         valueCrypto: estimatedEffectiveDeposit,
       },

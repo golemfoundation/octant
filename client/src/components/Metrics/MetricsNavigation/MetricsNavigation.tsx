@@ -4,7 +4,12 @@ import { throttle } from 'lodash';
 import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { METRICS_EPOCH_ID, METRICS_GENERAL_ID, METRICS_PERSONAL_ID } from 'constants/metrics';
+import {
+  LAYOUT_BODY_ID,
+  METRICS_EPOCH_ID,
+  METRICS_GENERAL_ID,
+  METRICS_PERSONAL_ID,
+} from 'constants/domElementsIds';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 
 import styles from './MetricsNavigation.module.scss';
@@ -16,7 +21,9 @@ const MetricsNavigation = (): ReactElement => {
   const { isLargeDesktop } = useMediaQuery();
   const forcedSectionRef = useRef<ActiveSection | null>(null);
   const [activeSection, setActiveSection] = useState<ActiveSection>('epoch');
+  const [activeDot, setActiveDot] = useState(1);
   const throttleCallback = useCallback(throttle, []);
+  const numberOfDots = 8;
 
   const steps = [
     {
@@ -55,6 +62,7 @@ const MetricsNavigation = (): ReactElement => {
 
     const scrollToTop = element!.offsetTop + valueToAddToOffstetTop;
     setActiveSection(section);
+    setActiveDot(1);
     const maxScroll = element!.parentElement!.scrollHeight - window.innerHeight;
     if (
       scrollToTop === window.scrollY ||
@@ -73,24 +81,43 @@ const MetricsNavigation = (): ReactElement => {
   useEffect(() => {
     const metricsEpochTarget = document.getElementById(METRICS_EPOCH_ID)!;
     const metricsGeneralTarget = document.getElementById(METRICS_GENERAL_ID)!;
-    const metricsPersonalTarget = document.getElementById(METRICS_PERSONAL_ID)!;
+    const layoutBodyTarget = document.getElementById(LAYOUT_BODY_ID)!;
 
-    const getSectionVisibility = (section: HTMLElement) => {
-      const sectionRect = section.getBoundingClientRect();
+    const layoutComputedStyle = getComputedStyle(layoutBodyTarget);
 
-      const visibility = Math.min(
-        Math.max((window.innerHeight - Math.abs(sectionRect.top)) / sectionRect.height, 0),
-        1,
-      );
+    const layoutBodyHeight = parseInt(layoutComputedStyle.height, 10);
+    const layoutBodyPaddingTop = parseInt(layoutComputedStyle.paddingTop, 10);
+    const layoutBodyPaddingBottom = parseInt(layoutComputedStyle.paddingBottom, 10);
 
-      return visibility;
-    };
+    const layoutBodyWithoutVerticalPadding =
+      layoutBodyHeight - layoutBodyPaddingTop - layoutBodyPaddingBottom;
+
+    const scrollHeightWithoutPaddingTop =
+      layoutBodyHeight - window.innerHeight - layoutBodyPaddingTop;
+
+    const percentageScrollShareEpochSection =
+      metricsEpochTarget.clientHeight / layoutBodyWithoutVerticalPadding;
+    const percentageScrollShareGeneralSection =
+      metricsGeneralTarget.clientHeight / layoutBodyWithoutVerticalPadding;
+
+    const scrollShareEpochSection =
+      percentageScrollShareEpochSection * scrollHeightWithoutPaddingTop;
+    const scrollShareGeneralSection =
+      percentageScrollShareGeneralSection * scrollHeightWithoutPaddingTop;
+
+    const stepEpochSection =
+      (percentageScrollShareEpochSection * scrollHeightWithoutPaddingTop) / 8;
+    const stepGeneralSection =
+      (percentageScrollShareGeneralSection * scrollHeightWithoutPaddingTop) / 8;
 
     const scrollEndListener = () => {
       if (!forcedSectionRef.current) {
         return;
       }
-      forcedSectionRef.current = null;
+
+      setTimeout(() => {
+        forcedSectionRef.current = null;
+      }, 100);
     };
 
     const scrollListener = () => {
@@ -98,18 +125,29 @@ const MetricsNavigation = (): ReactElement => {
         return;
       }
 
-      const metricsEpochVisibility = getSectionVisibility(metricsEpochTarget);
-      const metricsGeneralVisibility = getSectionVisibility(metricsGeneralTarget);
-      const metricsPersonalVisibility = getSectionVisibility(metricsPersonalTarget);
+      const scrollYWithoutPaddingTop = window.scrollY - layoutBodyPaddingTop;
 
-      const nextActiveSection = (
-        [
-          { section: 'epoch', value: metricsEpochVisibility },
-          { section: 'general', value: metricsGeneralVisibility },
-          { section: 'personal', value: metricsPersonalVisibility },
-        ] as { section: ActiveSection; value: number }[]
-      ).sort((a, b) => b.value - a.value)[0].section;
-      setActiveSection(nextActiveSection);
+      if (scrollYWithoutPaddingTop <= scrollShareEpochSection) {
+        setActiveSection('epoch');
+        setActiveDot(
+          scrollYWithoutPaddingTop < 0 ? 1 : Math.ceil(scrollYWithoutPaddingTop / stepEpochSection),
+        );
+        return;
+      }
+
+      if (
+        scrollYWithoutPaddingTop > scrollShareEpochSection &&
+        scrollYWithoutPaddingTop <= scrollShareEpochSection + scrollShareGeneralSection
+      ) {
+        setActiveSection('general');
+        setActiveDot(
+          Math.ceil((scrollYWithoutPaddingTop - scrollShareEpochSection) / stepGeneralSection),
+        );
+        return;
+      }
+
+      setActiveSection('personal');
+      setActiveDot(1);
     };
 
     const throttledScrollListener = throttleCallback(scrollListener, 100);
@@ -129,7 +167,10 @@ const MetricsNavigation = (): ReactElement => {
         {steps.map(({ section, sectionId, label }) => (
           <div
             key={section}
-            className={cx(styles.sectionStep, activeSection === section && styles.isActive)}
+            className={cx(
+              styles.sectionStep,
+              activeSection === section && activeDot === 1 && styles.isActive,
+            )}
             onClick={() => scrollToSection(sectionId, section as ActiveSection)}
           >
             {isLargeDesktop && (
@@ -137,10 +178,21 @@ const MetricsNavigation = (): ReactElement => {
                 <svg className={styles.circleSvg} height={16} viewBox="0 0 16 16" width={16}>
                   <circle className={styles.circle} cx={8} cy={8} r={6} />
                 </svg>
-                {sectionId !== METRICS_GENERAL_ID && (
-                  <div className={styles.smallDotsWrapper}>
-                    {[...Array(7).keys()].map(d => (
-                      <div key={d} className={styles.smallDot} />
+                {sectionId !== METRICS_PERSONAL_ID && (
+                  <div
+                    className={cx(
+                      styles.smallDotsWrapper,
+                      sectionId === METRICS_GENERAL_ID && styles.transformDots,
+                    )}
+                  >
+                    {[...Array(numberOfDots - 1).keys()].map(i => (
+                      <div
+                        key={i}
+                        className={cx(
+                          styles.smallDot,
+                          activeSection === section && activeDot - 2 === i && styles.isActive,
+                        )}
+                      />
                     ))}
                   </div>
                 )}
