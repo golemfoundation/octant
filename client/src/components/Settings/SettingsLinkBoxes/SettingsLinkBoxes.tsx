@@ -36,7 +36,13 @@ const SettingsLinkBoxes = (): ReactNode => {
           className={styles.box}
           hasPadding={false}
         >
-          <Button key={href} className={styles.buttonLink} href={href} variant="link3">
+          <Button
+            key={href}
+            className={styles.buttonLink}
+            dataTest="SettingsLinkBoxes__Button"
+            href={href}
+            variant="link3"
+          >
             <span className={styles.buttonLinkText}>{label}</span>
             <Svg classNameSvg={styles.buttonLinkArrowSvg} img={arrowTopRight} size={1} />
           </Button>

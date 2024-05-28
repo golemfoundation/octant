@@ -5,7 +5,7 @@ import { useAccount } from 'wagmi';
 import MetricsGrid from 'components/Metrics/MetricsGrid';
 import MetricsHeader from 'components/Metrics/MetricsHeader';
 import TipTile from 'components/shared/TipTile';
-import { METRICS_PERSONAL_ID } from 'constants/metrics';
+import { METRICS_PERSONAL_ID } from 'constants/domElementsIds';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useMetricsPersonalDataRewardsUsage from 'hooks/helpers/useMetricsPersonalDataRewardsUsage';
 import useTotalPatronDonations from 'hooks/helpers/useTotalPatronDonations';

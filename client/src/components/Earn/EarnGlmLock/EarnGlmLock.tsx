@@ -1,7 +1,7 @@
 import { Formik } from 'formik';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount, useWalletClient, usePublicClient, useWaitForTransaction } from 'wagmi';
+import { useAccount, useWalletClient, usePublicClient, useWaitForTransactionReceipt } from 'wagmi';
 
 import EarnGlmLockBudget from 'components/Earn/EarnGlmLock/EarnGlmLockBudget';
 import EarnGlmLockNotification from 'components/Earn/EarnGlmLock/EarnGlmLockNotification';
@@ -39,7 +39,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
     addTransactionPending: state.addTransactionPending,
   }));
   const { data: transactionReceipt, isLoading: isLoadingTransactionReceipt } =
-    useWaitForTransaction({
+    useWaitForTransactionReceipt({
       hash: transactionHashForEtherscan as `0x${string}` | undefined,
       onReplaced: response =>
         setTransactionHashForEtherscan(response.transactionReceipt.transactionHash),
@@ -87,7 +87,7 @@ const EarnGlmLock: FC<EarnGlmLockProps> = ({ currentMode, onCurrentModeChange, o
     (!isDesktop && !isCryptoOrFiatInputFocused && !isButtonUseMaxFocused && !isAnyInputFocused);
 
   const onMutate = async (): Promise<void> => {
-    if (!walletClient || !availableFundsGlm) {
+    if (!publicClient || !walletClient || !availableFundsGlm) {
       return;
     }
 

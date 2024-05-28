@@ -1,5 +1,6 @@
 import { visitWithLoader, mockCoinPricesServer, connectWallet } from 'cypress/utils/e2e';
 import { moveTime } from 'cypress/utils/moveTime';
+import { ConnectWalletParameters } from 'cypress/utils/types';
 import viewports from 'cypress/utils/viewports';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
@@ -26,6 +27,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.earn.absolute);
+    });
+
+    after(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
     });
 
     it('renders "Locked balance" box', () => {
@@ -68,18 +73,18 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     }
 
     it('Wallet connected: "Lock GLM" / "Edit Locked GLM" button is active', () => {
-      connectWallet(true, false);
+      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
       cy.get('[data-test=BoxGlmLock__Button]').should('not.be.disabled');
     });
 
     it('Wallet connected: "Lock GLM" / "Edit Locked GLM" button opens "ModalGlmLock"', () => {
-      connectWallet(true, false);
+      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
       cy.get('[data-test=BoxGlmLock__Button]').click();
       cy.get('[data-test=ModalGlmLock]').should('be.visible');
     });
 
     it('Wallet connected: "ModalGlmLock" has overflow', () => {
-      connectWallet(true, false);
+      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
       cy.get('[data-test=BoxGlmLock__Button]').click();
       cy.get('[data-test=ModalGlmLock__overflow]').should('exist');
     });
@@ -89,7 +94,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
        * In EarnGlmLock there are multiple autofocus rules set.
        * This test checks if user is still able to type without any autofocus disruption.
        */
-      connectWallet(true, false);
+      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
       cy.get('[data-test=BoxGlmLock__Button]').click();
       cy.get('[data-test=ModalGlmLock]').should('be.visible');
       cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').should('have.focus');
@@ -101,7 +106,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Wallet connected: "ModalGlmLock" - changing tabs keep focus on first input', () => {
-      connectWallet(true, false);
+      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
       cy.get('[data-test=BoxGlmLock__Button]').click();
       cy.get('[data-test=ModalGlmLock]').should('be.visible');
       cy.get('[data-test=InputsCryptoFiat__InputText--crypto]').should('have.focus');
@@ -112,7 +117,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Wallet connected: Lock 1 GLM', () => {
-      connectWallet(true, false);
+      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
 
       cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
         .invoke('text')
@@ -164,7 +169,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Wallet connected: Unlock 1 GLM', () => {
-      connectWallet(true, false);
+      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
 
       cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
         .invoke('text')
@@ -211,7 +216,11 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('Wallet connected: Effective deposit after locking 1000 GLM and moving epoch is equal to current deposit', () => {
-      connectWallet(true, false);
+      const connectWalletParameters: ConnectWalletParameters = {
+        isPatronModeEnabled: false,
+        isTOSAccepted: true,
+      };
+      connectWallet(connectWalletParameters);
 
       cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
         .invoke('text')
@@ -244,24 +253,26 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           }).should('not.exist');
           cy.window().then(async win => {
             cy.wrap(null).then(() => {
-              return moveTime(win, 'nextEpochDecisionWindowClosed').then(() => {
-                cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
-                  timeout: 60000,
-                })
-                  .invoke('text')
-                  .then(nextText => {
-                    const lockedGlmsAfterLock = parseInt(nextText.replace(/\u200a/g, ''), 10);
-                    expect(lockedGlms + amountToLock).to.be.eq(lockedGlmsAfterLock);
-                  });
-                cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__primary]', {
-                  timeout: 60000,
-                })
-                  .invoke('text')
-                  .then(nextText => {
-                    const lockedGlmsAfterLock = parseInt(nextText.replace(/\u200a/g, ''), 10);
-                    expect(lockedGlms + amountToLock).to.be.eq(lockedGlmsAfterLock);
-                  });
-              });
+              return moveTime(win, 'nextEpochDecisionWindowClosed', connectWalletParameters).then(
+                () => {
+                  cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]', {
+                    timeout: 60000,
+                  })
+                    .invoke('text')
+                    .then(nextText => {
+                      const lockedGlmsAfterLock = parseInt(nextText.replace(/\u200a/g, ''), 10);
+                      expect(lockedGlms + amountToLock).to.be.eq(lockedGlmsAfterLock);
+                    });
+                  cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__primary]', {
+                    timeout: 60000,
+                  })
+                    .invoke('text')
+                    .then(nextText => {
+                      const lockedGlmsAfterLock = parseInt(nextText.replace(/\u200a/g, ''), 10);
+                      expect(lockedGlms + amountToLock).to.be.eq(lockedGlmsAfterLock);
+                    });
+                },
+              );
             });
           });
         });

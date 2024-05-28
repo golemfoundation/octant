@@ -43,9 +43,8 @@ class User(BaseModel):
 
 class GPStamps(BaseModel):
     __tablename__ = "gitcoin_passport_stamps"
-    user_id = Column(
-        db.Integer, db.ForeignKey("users.id"), primary_key=True, nullable=False
-    )
+    id = Column(db.Integer, primary_key=True)
+    user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     score = Column(db.Float, nullable=False)
     expires_at = Column(db.TIMESTAMP, nullable=False)
     # storing for analysis
@@ -108,7 +107,7 @@ class PendingEpochSnapshot(BaseModel):
     total_effective_deposit = Column(db.String, nullable=False)
     locked_ratio = Column(db.String, nullable=False)
     total_rewards = Column(db.String, nullable=False)
-    all_individual_rewards = Column(db.String, nullable=False)
+    vanilla_individual_rewards = Column(db.String, nullable=False)
     operational_cost = Column(db.String, nullable=False)
     ppf = Column(db.String, nullable=True)
     community_fund = Column(db.String, nullable=True)

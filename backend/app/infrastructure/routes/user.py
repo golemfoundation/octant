@@ -4,7 +4,6 @@ from flask_restx import reqparse
 
 import app.legacy.controllers.user as user_controller
 from app.extensions import api
-from app.exceptions import UserNotFound
 from app.infrastructure import OctantResource
 from app.modules.user.patron_mode.controller import get_patrons_addresses
 from app.modules.user.tos.controller import (
@@ -185,14 +184,7 @@ class AntisybilStatus(OctantResource):
     @ns.response(200, "User's cached antisybil status retrieved")
     def get(self, user_address: str):
         app.logger.debug(f"Getting user {user_address} cached antisybil status")
-        try:
-            antisybil_status = get_user_antisybil_status(user_address)
-        except UserNotFound:
-            app.logger.debug(
-                f"User {user_address} antisybil status: except UserNotFound"
-            )
-            return {"status": "Unknown"}, 404
-
+        antisybil_status = get_user_antisybil_status(user_address)
         app.logger.debug(f"User {user_address} antisybil status: {antisybil_status}")
         if antisybil_status is None:
             return {"status": "Unknown"}, 404
@@ -210,13 +202,13 @@ class AntisybilStatus(OctantResource):
     @ns.response(204, "Refresh succesful")
     @ns.response(504, "Could not refresh antisybil status. Upstream is unavailable.")
     def put(self, user_address: str):
-        app.logger.info(f"Updating user {user_address} patron mode status")
+        app.logger.info(f"Updating user {user_address} antisybil status")
         score, expires_at = update_user_antisybil_status(user_address)
         app.logger.info(
             f"User {user_address} antisybil status refreshed {[score, expires_at]}"
         )
 
-        return None, 204
+        return {}, 204
 
 
 @ns.route("/patrons/<int:epoch>")

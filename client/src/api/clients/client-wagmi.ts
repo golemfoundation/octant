@@ -1,45 +1,46 @@
-import { LedgerConnector } from '@wagmi/connectors/ledger';
-import { w3mConnectors } from '@web3modal/ethereum';
-import { configureChains, createConfig, ChainProviderFn } from 'wagmi';
+import { connectorsForWallets } from '@rainbow-me/rainbowkit';
+import { injectedWallet, walletConnectWallet, ledgerWallet } from '@rainbow-me/rainbowkit/wallets';
+import { HttpTransport } from 'viem';
+import { createConfig, http } from 'wagmi';
 import { localhost, mainnet, sepolia } from 'wagmi/chains';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-import { publicProvider } from 'wagmi/providers/public';
 
 import { CHAINS, PROJECT_ID } from 'constants/walletConnect';
 import env from 'env';
 
-const providers: ChainProviderFn<typeof mainnet | typeof sepolia | typeof localhost>[] = [
-  alchemyProvider({ apiKey: env.alchemyId }),
-  publicProvider(),
-];
+/* eslint-disable @typescript-eslint/naming-convention */
+type Transports = {
+  1: HttpTransport;
+  11155111: HttpTransport;
+};
+type TransportsWithLocalhost = Transports & {
+  1337: HttpTransport;
+};
+/* eslint-enable @typescript-eslint/naming-convention */
+
+let transports: Transports = {
+  [mainnet.id]: http(`https://eth-mainnet.g.alchemy.com/v2/${env.alchemyId}`),
+  [sepolia.id]: http(`https://eth-sepolia.g.alchemy.com/v2/${env.alchemyId}`),
+};
 
 if (env.jsonRpcEndpoint) {
-  providers.unshift(
-    jsonRpcProvider({
-      rpc: () => ({
-        http: env.jsonRpcEndpoint!,
-      }),
-    }),
-  );
+  transports = {
+    ...transports,
+    [localhost.id]: http(env.jsonRpcEndpoint!),
+  } as TransportsWithLocalhost;
 }
 
-const { publicClient } = configureChains<typeof mainnet | typeof sepolia | typeof localhost>(
-  CHAINS,
-  providers,
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: 'recommended',
+      wallets: [injectedWallet, walletConnectWallet, ledgerWallet],
+    },
+  ],
+  { appName: 'Octant App', projectId: PROJECT_ID },
 );
 
 export const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors: [
-    ...w3mConnectors({ chains: CHAINS, projectId: PROJECT_ID }),
-    new LedgerConnector({
-      chains: CHAINS,
-      options: {
-        projectId: PROJECT_ID,
-      },
-      // unknown typing conflict.
-    }) as any,
-  ],
-  publicClient,
+  chains: CHAINS,
+  connectors,
+  transports,
 });

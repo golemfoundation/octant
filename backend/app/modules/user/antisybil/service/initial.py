@@ -18,21 +18,21 @@ from app.infrastructure.external_api.gc_passport.score import (
 )
 
 
-class InitialUserAntisybil(Model):
+class GitcoinPassportAntisybil(Model):
     def get_antisybil_status(
         self, _: Context, user_address: str
     ) -> Optional[Tuple[float, datetime]]:
+        score = None
         try:
             score = database.user_antisybil.get_score_by_address(user_address)
-            if score is not None:
-                return score.score, score.expires_at
-            else:
-                return None
         except UserNotFound as ex:
             app.logger.debug(
                 f"User {user_address} antisybil status: except UserNotFound"
             )
             raise ex
+        if score is not None:
+            return score.score, score.expires_at
+        return None
 
     def fetch_antisybil_status(
         self, _: Context, user_address: str
@@ -63,7 +63,7 @@ class InitialUserAntisybil(Model):
         user_address: str,
         score: float,
         expires_at: datetime,
-        stamps,
+        stamps: dict,
     ):
         database.user_antisybil.add_score(user_address, score, expires_at, stamps)
         db.session.commit()
@@ -81,7 +81,7 @@ def _parse_expirationDate(timestamp_str: str) -> datetime:
     )
 
 
-def _filter_older(cutoff, stamps: List[{}]) -> List[{}]:
+def _filter_older(cutoff, stamps: List[dict]) -> List[dict]:
     not_expired = (
         lambda stamp: _parse_expirationDate(stamp["credential"]["expirationDate"])
         < cutoff
