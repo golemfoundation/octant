@@ -53,18 +53,21 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
      * Half of PPF goes to the users to manage.
      * Half of PPR goes to "PPF" section.
      */
-    if (epoch === 3) {
+    if (epoch >= 3) {
       return (
-        ppf / 2n + epochInfo.individualRewards - totalUserDonationsWithPatronRewards - unusedRewards
+        ppf / 2n +
+        epochInfo.vanillaIndividualRewards -
+        totalUserDonationsWithPatronRewards -
+        unusedRewards
       );
     }
 
-    return epochInfo.individualRewards - totalUserDonationsWithPatronRewards - unusedRewards;
+    return epochInfo.vanillaIndividualRewards - totalUserDonationsWithPatronRewards - unusedRewards;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     epoch,
     epochInfo?.ppf,
-    epochInfo?.individualRewards,
+    epochInfo?.vanillaIndividualRewards,
     totalUserDonationsWithPatronRewards,
     unusedRewards,
     ppf,

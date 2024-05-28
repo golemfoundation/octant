@@ -34,10 +34,11 @@ def test_epochs_basics(
     ) = client.get_epoch_info(STARTING_EPOCH)
 
     app.logger.debug(f"Epoch {STARTING_EPOCH} info:\n{epoch_info}")
+
     assert "stakingProceeds" in epoch_info
     assert "totalEffectiveDeposit" in epoch_info
     assert "totalRewards" in epoch_info
-    assert "individualRewards" in epoch_info
+    assert "vanillaIndividualRewards" in epoch_info
     assert "operationalCost" in epoch_info
     assert "totalWithdrawals" in epoch_info
     assert "patronsRewards" in epoch_info

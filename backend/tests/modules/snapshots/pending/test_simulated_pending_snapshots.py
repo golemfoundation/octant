@@ -36,7 +36,7 @@ def test_simulated_pending_snapshots(
     assert rewards.staking_proceeds == ETH_PROCEEDS
     assert rewards.locked_ratio == Decimal("0.100022700000000000099999994")
     assert rewards.total_rewards == 321928767123288031232
-    assert rewards.individual_rewards == 101814368807786782825
+    assert rewards.vanilla_individual_rewards == 101814368807786782825
     assert rewards.total_effective_deposit == 100022700000000000099999994
     assert rewards.operational_cost == 80482191780822000000
     assert rewards.ppf == PPF

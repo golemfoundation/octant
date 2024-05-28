@@ -107,7 +107,7 @@ class PendingEpochSnapshot(BaseModel):
     total_effective_deposit = Column(db.String, nullable=False)
     locked_ratio = Column(db.String, nullable=False)
     total_rewards = Column(db.String, nullable=False)
-    all_individual_rewards = Column(db.String, nullable=False)
+    vanilla_individual_rewards = Column(db.String, nullable=False)
     operational_cost = Column(db.String, nullable=False)
     ppf = Column(db.String, nullable=True)
     community_fund = Column(db.String, nullable=True)
