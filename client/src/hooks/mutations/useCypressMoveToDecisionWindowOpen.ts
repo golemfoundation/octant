@@ -1,12 +1,12 @@
 import { useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query';
-import { useConfig } from 'wagmi';
+import { usePublicClient } from 'wagmi';
 
 import { QUERY_KEYS } from 'api/queryKeys';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
 
 export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<boolean, unknown> {
   const queryClient = useQueryClient();
-  const wagmiConfig = useConfig();
+  const publicClient = usePublicClient();
 
   return useMutation({
     mutationFn: () => {
@@ -14,24 +14,29 @@ export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<
       return new Promise(async (resolve, reject) => {
         if (!window.Cypress) {
           reject(new Error('useCypressMoveToDecisionWindowOpen was called outside Cypress.'));
+          return;
+        }
+        if (!publicClient) {
+          reject(new Error('publicClient is not defined'));
+          return;
         }
 
         const currentEpochPromise = queryClient.fetchQuery({
           queryFn: () =>
             readContractEpochs({
               functionName: 'getCurrentEpoch',
-              publicClient: wagmiConfig.publicClient,
+              publicClient,
             }),
           queryKey: QUERY_KEYS.currentEpoch,
         });
 
-        const blockPromise = wagmiConfig.publicClient.getBlock();
+        const blockPromise = publicClient.getBlock();
 
         const currentEpochEndPromise = queryClient.fetchQuery({
           queryFn: () =>
             readContractEpochs({
               functionName: 'getCurrentEpochEnd',
-              publicClient: wagmiConfig.publicClient,
+              publicClient,
             }),
           queryKey: QUERY_KEYS.currentEpochEnd,
         });
@@ -55,17 +60,17 @@ export default function useCypressMoveToDecisionWindowOpen(): UseMutationResult<
         const currentEpochEndTimestamp = Number(currentEpochEnd);
 
         const timeToIncrease = currentEpochEndTimestamp - blockTimestamp + 10; // [s]
-        await wagmiConfig.publicClient.request({
+        await publicClient.request({
           method: 'evm_increaseTime' as any,
           params: [timeToIncrease] as any,
         });
-        await wagmiConfig.publicClient.request({ method: 'evm_mine' as any, params: [] as any });
+        await publicClient.request({ method: 'evm_mine' as any, params: [] as any });
 
         const currentEpochAfter = await queryClient.fetchQuery({
           queryFn: () =>
             readContractEpochs({
               functionName: 'getCurrentEpoch',
-              publicClient: wagmiConfig.publicClient,
+              publicClient,
             }),
           queryKey: QUERY_KEYS.currentEpoch,
         });

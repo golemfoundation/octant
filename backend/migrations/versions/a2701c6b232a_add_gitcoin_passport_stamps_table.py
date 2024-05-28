@@ -19,6 +19,7 @@ depends_on = None
 def upgrade():
     op.create_table(
         "gitcoin_passport_stamps",
+        sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("score", sa.Float(), nullable=False),
         sa.Column("expires_at", sa.TIMESTAMP(), nullable=False),
@@ -28,7 +29,7 @@ def upgrade():
             ["user_id"],
             ["users.id"],
         ),
-        sa.PrimaryKeyConstraint("user_id"),
+        sa.PrimaryKeyConstraint("id"),
     )
 
 

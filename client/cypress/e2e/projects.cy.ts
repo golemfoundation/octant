@@ -5,6 +5,7 @@ import {
   connectWallet,
   mockCoinPricesServer,
   visitWithLoader,
+  navigateWithCheck,
   checkProjectsViewLoaded,
 } from 'cypress/utils/e2e';
 import { getNamesOfProjects } from 'cypress/utils/projects';
@@ -89,7 +90,7 @@ function addProjectToAllocate(index, numberOfAddedProjects): Chainable<any> {
     .then($el => $el.css('stroke'))
     .should('be.colored', '#FF6157');
   cy.get('[data-test=Navbar__numberOfAllocations]').contains(numberOfAddedProjects + 1);
-  visitWithLoader(ROOT_ROUTES.allocation.absolute);
+  navigateWithCheck(ROOT_ROUTES.allocation.absolute);
   cy.get('[data-test=AllocationItem]').should('have.length', numberOfAddedProjects + 1);
   return cy.go('back');
 }
@@ -103,7 +104,7 @@ function removeProjectFromAllocate(numberOfProjects, numberOfAddedProjects, inde
     .eq(index)
     .find('[data-test=ProjectsListItem__ButtonAddToAllocate]')
     .click();
-  visitWithLoader(ROOT_ROUTES.allocation.absolute);
+  navigateWithCheck(ROOT_ROUTES.allocation.absolute);
   cy.get('[data-test=AllocationItem]').should('have.length', numberOfAddedProjects - 1);
   if (index < numberOfProjects - 1) {
     cy.get('[data-test=Navbar__numberOfAllocations]').contains(numberOfAddedProjects - 1);
@@ -153,7 +154,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     it('user is able to add project to allocation in ProjectsView and remove it from allocation in AllocationView', () => {
       cy.get('[data-test=Navbar__numberOfAllocations]').should('not.exist');
       addProjectToAllocate(0, 0);
-      visitWithLoader(ROOT_ROUTES.allocation.absolute);
+      navigateWithCheck(ROOT_ROUTES.allocation.absolute);
       cy.get('[data-test=AllocationItemSkeleton]').should('not.exist');
       cy.get('[data-test=AllocationItem]').then(el => {
         const { x } = el[0].getBoundingClientRect();
@@ -222,7 +223,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
-      connectWallet(true, true);
+      connectWallet({ isPatronModeEnabled: true, isTOSAccepted: true });
       checkProjectsViewLoaded();
       /**
        * This could be done in before hook, but CY wipes the state after each test

@@ -1,6 +1,6 @@
 import pytest
 from app.exceptions import UserNotFound
-from app.modules.user.antisybil.service.initial import InitialUserAntisybil
+from app.modules.user.antisybil.service.initial import GitcoinPassportAntisybil
 from tests.helpers.context import get_context
 
 
@@ -17,7 +17,7 @@ def test_antisybil_service(
 ):
     context = get_context(4)
 
-    service = InitialUserAntisybil()
+    service = GitcoinPassportAntisybil()
 
     unknown_address = "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720"
     try:

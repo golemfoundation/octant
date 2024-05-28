@@ -3,18 +3,15 @@ from datetime import datetime
 import json
 
 from app.infrastructure.database.models import GPStamps
-from app.infrastructure.database.user import get_by_address, add_user
+from app.infrastructure.database.user import get_by_address
 from app.exceptions import UserNotFound
 from app.extensions import db
 
 
-def add_score(user_address: str, score: str, expires_at: datetime, stamps) -> GPStamps:
+def add_score(
+    user_address: str, score: str, expires_at: datetime, stamps: dict
+) -> GPStamps:
     user = get_by_address(user_address)
-    if user is None:
-        add_user(user_address)
-        db.session.commit()
-        user = get_by_address(user_address)
-
     verification = GPStamps(
         user_id=user.id, score=score, expires_at=expires_at, stamps=json.dumps(stamps)
     )

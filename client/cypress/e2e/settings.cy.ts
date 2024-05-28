@@ -9,10 +9,11 @@ import {
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
+import { OCTANT_BUILD_LINK, OCTANT_DOCS, DISCORD_LINK, TERMS_OF_USE } from 'src/constants/urls';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import getValueCryptoToDisplay from 'src/utils/getValueCryptoToDisplay';
 
-Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => {
+Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(`settings: ${device}`, { viewportHeight, viewportWidth }, () => {
     beforeEach(() => {
       mockCoinPricesServer();
@@ -185,6 +186,41 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.reload();
 
       cy.get('[data-test=EarnView__TipTile--connectWallet]').should('not.exist');
+    });
+
+    it('should show correct setting links', () => {
+      if (isDesktop) {
+        cy.get('[data-test=SettingsLinksInfoBox__Button]').each(($button, index) => {
+          const expectedOrderAndContentLinksDesktop = [
+            { href: OCTANT_BUILD_LINK, text: 'Octant.build' },
+            { href: OCTANT_DOCS, text: 'User Docs' },
+            { href: DISCORD_LINK, text: 'Discord Community' },
+            { href: TERMS_OF_USE, text: 'Terms & Conditions' },
+          ];
+
+          cy.wrap($button)
+            .should('have.text', expectedOrderAndContentLinksDesktop[index].text)
+            .should('have.attr', 'href', expectedOrderAndContentLinksDesktop[index].href);
+        });
+      }
+
+      if (!isDesktop) {
+        cy.get('[data-test=SettingsLinkBoxes__Button]').each(($button, index) => {
+          const expectedOrderAndContentLinksMobile = [
+            { href: OCTANT_BUILD_LINK, text: 'Website' },
+            { href: OCTANT_DOCS, text: 'Docs' },
+            { href: DISCORD_LINK, text: 'Discord' },
+          ];
+
+          cy.wrap($button)
+            .should('have.text', expectedOrderAndContentLinksMobile[index].text)
+            .should('have.attr', 'href', expectedOrderAndContentLinksMobile[index].href);
+
+          cy.get('[data-test=SettingsMainInfoBox__Button]')
+            .should('have.text', 'Terms & Conditions')
+            .and('have.attr', 'href', TERMS_OF_USE);
+        });
+      }
     });
   });
 });

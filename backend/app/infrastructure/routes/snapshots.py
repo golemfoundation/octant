@@ -59,7 +59,7 @@ octant_rewards_model = api.model(
         "lockedRatio": fields.String(),
         "totalEffectiveDeposit": fields.String(),
         "totalRewards": fields.String(),
-        "individualRewards": fields.String(),
+        "vanillaIndividualRewards": fields.String(),
         "operationalCost": fields.String(),
         "communityFund": fields.String(),
         "ppf": fields.String(),
