@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { motion } from 'framer-motion';
-import React, { ReactNode, useMemo, useState } from 'react';
+import React, { ReactElement, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Img from 'components/ui/Img';
@@ -14,7 +14,7 @@ import { four, one, three, two } from 'svg/onboardingStepper';
 
 import styles from './OnboardingStepper.module.scss';
 
-const OnboardingStepper = (): ReactNode => {
+const OnboardingStepper = (): ReactElement => {
   const { t } = useTranslation('translation', { keyPrefix: 'components.shared.onboardingStepper' });
   const { setIsOnboardingModalOpen, lastSeenStep } = useOnboardingStore(state => ({
     isOnboardingModalOpen: state.data.isOnboardingModalOpen,

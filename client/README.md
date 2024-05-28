@@ -91,11 +91,3 @@ export interface BackendProposal {
 ## Packages
 
 1. `cypress` is resolved to `12.17.3` because of [this issue](https://github.com/cypress-io/code-coverage/issues/667). Issue is resolved, but Cypress Team is on track of some edge cases, as explained [here](https://github.com/cypress-io/code-coverage/issues/667#issuecomment-1609563639). Issue causes our Synpress runs to fail when executing actions in MetaMask.
-2.
-
-```json
-    "@web3modal/ethereum": "^2.2.2",
-    "@web3modal/react": "^2.2.2",
-```
-
-Because of [this](https://github.com/cypress-io/cypress/discussions/26853).

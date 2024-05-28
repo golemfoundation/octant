@@ -1,4 +1,9 @@
-import { connectWallet, mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import {
+  connectWallet,
+  mockCoinPricesServer,
+  navigateWithCheck,
+  visitWithLoader,
+} from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
@@ -19,12 +24,17 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     beforeEach(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.settings.absolute);
-      connectWallet(true, false);
+      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
+    });
+
+    after(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
     });
 
     it('patron badge should not exist ', () => {
@@ -350,11 +360,16 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     beforeEach(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.settings.absolute);
-      connectWallet(true, true);
+      connectWallet({ isPatronModeEnabled: true, isTOSAccepted: true });
+    });
+
+    after(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
     });
 
     it('patron badge is visible and has correct label, background and text-transform prop', () => {
@@ -392,7 +407,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('BoxPersonalAllocation has correct title and sections labels', () => {
-      visitWithLoader(ROOT_ROUTES.earn.absolute);
+      navigateWithCheck(ROOT_ROUTES.earn.absolute);
       cy.get('[data-test=BoxPersonalAllocation__title]')
         .invoke('text')
         .should('eq', 'Patron earnings');
@@ -716,7 +731,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('when entering project view, button icon changes to chevronLeft', () => {
-      visitWithLoader(ROOT_ROUTES.projects.absolute);
+      navigateWithCheck(ROOT_ROUTES.projects.absolute);
       cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
       cy.get('[data-test=Navbar__Button--Projects]')
         .find('svg')
