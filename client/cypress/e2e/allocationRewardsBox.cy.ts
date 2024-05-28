@@ -28,7 +28,7 @@ const splitTheValueUsingSlider = (isCryptoAsAMainValue: boolean) => {
     .should('eq', isCryptoAsAMainValue ? '0.01 ETH' : `$${(0.01 * ETH_USD).toFixed(2)}`);
   cy.get('[data-test=AllocationRewardsBox__section__value--0]')
     .invoke('text')
-    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '< $0.00');
+    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '$0.00');
   cy.get('[data-test=AllocationRewardsBox__section__value--1]')
     .invoke('text')
     .should('eq', isCryptoAsAMainValue ? '0.01 ETH' : `$${(0.01 * ETH_USD).toFixed(2)}`);
@@ -128,7 +128,7 @@ const splitTheValueUsingSlider = (isCryptoAsAMainValue: boolean) => {
         .should('eq', isCryptoAsAMainValue ? '0.01 ETH' : `$${(0.01 * ETH_USD).toFixed(2)}`);
       cy.get('[data-test=AllocationRewardsBox__section__value--1]')
         .invoke('text')
-        .should('eq', isCryptoAsAMainValue ? '0 ETH' : '< $0.00');
+        .should('eq', isCryptoAsAMainValue ? '0 ETH' : '$0.00');
     });
   });
 };
@@ -170,7 +170,7 @@ const changeDonateManually = (isCryptoAsAMainValue: boolean) => {
     .should('eq', isCryptoAsAMainValue ? '0.01 ETH' : `$${(0.01 * ETH_USD).toFixed(2)}`);
   cy.get('[data-test=AllocationRewardsBox__section__value--1]')
     .invoke('text')
-    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '< $0.00');
+    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '$0.00');
 
   cy.get('[data-test=AllocationRewardsBox__section--0]').click();
 
@@ -237,7 +237,7 @@ const changeDonateManually = (isCryptoAsAMainValue: boolean) => {
     .should('eq', isCryptoAsAMainValue ? '0.01 ETH' : `$${(0.01 * ETH_USD).toFixed(2)}`);
   cy.get('[data-test=AllocationRewardsBox__section__value--1]')
     .invoke('text')
-    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '< $0.00');
+    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '$0.00');
 
   cy.get('[data-test=AllocationRewardsBox__section--0]').click();
 
@@ -261,7 +261,7 @@ const changeDonateManually = (isCryptoAsAMainValue: boolean) => {
     .should('eq', isCryptoAsAMainValue ? '0.01 ETH' : `$${(0.01 * ETH_USD).toFixed(2)}`);
   cy.get('[data-test=AllocationRewardsBox__section__value--1]')
     .invoke('text')
-    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '< $0.00');
+    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '$0.00');
 };
 
 const changePersonalManually = (isCryptoAsAMainValue: boolean) => {
@@ -300,7 +300,7 @@ const changePersonalManually = (isCryptoAsAMainValue: boolean) => {
 
   cy.get('[data-test=AllocationRewardsBox__section__value--0]')
     .invoke('text')
-    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '< $0.00');
+    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '$0.00');
   cy.get('[data-test=AllocationRewardsBox__section__value--1]')
     .invoke('text')
     .should('eq', isCryptoAsAMainValue ? '0.01 ETH' : `$${(0.01 * ETH_USD).toFixed(2)}`);
@@ -368,7 +368,7 @@ const changePersonalManually = (isCryptoAsAMainValue: boolean) => {
 
   cy.get('[data-test=AllocationRewardsBox__section__value--0]')
     .invoke('text')
-    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '< $0.00');
+    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '$0.00');
   cy.get('[data-test=AllocationRewardsBox__section__value--1]')
     .invoke('text')
     .should('eq', isCryptoAsAMainValue ? '0.01 ETH' : `$${(0.01 * ETH_USD).toFixed(2)}`);
@@ -392,7 +392,7 @@ const changePersonalManually = (isCryptoAsAMainValue: boolean) => {
 
   cy.get('[data-test=AllocationRewardsBox__section__value--0]')
     .invoke('text')
-    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '< $0.00');
+    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '$0.00');
   cy.get('[data-test=AllocationRewardsBox__section__value--1]')
     .invoke('text')
     .should('eq', isCryptoAsAMainValue ? '0.01 ETH' : `$${(0.01 * ETH_USD).toFixed(2)}`);

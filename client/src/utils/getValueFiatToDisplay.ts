@@ -53,7 +53,7 @@ export default function getValueFiatToDisplay({
     !cryptoValues[cryptoCurrency][displayCurrency] ||
     !valueCrypto
   ) {
-    return `${showLessThanZero ? '< ' : ''}${showFiatPrefix ? prefix : ''}0.00`;
+    return `${showFiatPrefix ? prefix : ''}0.00`;
   }
 
   const exchangeRate = cryptoValues[cryptoCurrency][displayCurrency];
@@ -63,7 +63,7 @@ export default function getValueFiatToDisplay({
   );
 
   if (valueFiat === '0.00' && showLessThanZero) {
-    return `< ${prefix}0.00`;
+    return `< ${prefix}0.01`;
   }
 
   return `${showFiatPrefix ? prefix : ''}${getNumberWithSpaces(valueFiat, isUsingHairSpace)}`;
