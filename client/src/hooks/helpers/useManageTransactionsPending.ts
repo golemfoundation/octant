@@ -11,8 +11,6 @@ import useTransactionLocalStore, {
   initialState as metaInitialState,
 } from 'store/transactionLocal/store';
 
-import useAvailableFundsGlm from './useAvailableFundsGlm';
-
 export default function useManageTransactionsPending(): void {
   const publicClient = usePublicClient();
   const {
@@ -36,14 +34,13 @@ export default function useManageTransactionsPending(): void {
   const { data: blockNumber } = useBlockNumber(
     blockNumberWithLatestTx !== metaInitialState.blockNumberWithLatestTx,
   );
-  const { refetch: refetchAvailableFundsGlm } = useAvailableFundsGlm();
   const { refetch: refetchEstimatedEffectiveDeposit } = useEstimatedEffectiveDeposit();
   const { refetch: refetchDeposit } = useDepositValue();
   const { refetch: refetchLockedSummaryLatest } = useLockedSummaryLatest();
   const { refetch: refetchWithdrawals } = useWithdrawals();
 
   useEffect(() => {
-    if (!transactionsPending) {
+    if (!transactionsPending || !publicClient) {
       return;
     }
 
@@ -94,19 +91,23 @@ export default function useManageTransactionsPending(): void {
      * refetches are triggered and blockNumberWithLatestTx to null.
      */
     if (blockNumber && blockNumberWithLatestTx && blockNumber > blockNumberWithLatestTx) {
-      refetchAvailableFundsGlm();
-      refetchDeposit();
-      refetchEstimatedEffectiveDeposit();
-      refetchLockedSummaryLatest();
-      refetchWithdrawals();
+      const lastTransaction = transactionsPending?.at(0);
+
+      if (lastTransaction?.type === 'withdrawal') {
+        refetchWithdrawals();
+      } else {
+        refetchDeposit();
+        refetchEstimatedEffectiveDeposit();
+        refetchLockedSummaryLatest();
+      }
 
       setBlockNumberWithLatestTx(metaInitialState.blockNumberWithLatestTx);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     blockNumber,
     blockNumberWithLatestTx,
     currentEpoch,
-    refetchAvailableFundsGlm,
     refetchDeposit,
     refetchEstimatedEffectiveDeposit,
     refetchLockedSummaryLatest,

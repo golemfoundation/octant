@@ -56,6 +56,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       connectWallet(true);
     });
 
+    after(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
+    });
+
     it('user is able to click through entire onboarding flow', () => {
       const onboardingSteps = getStepsDecisionWindowOpen('2', '16 Jan');
 
@@ -83,6 +87,9 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       navigateWithCheck(ROOT_ROUTES.settings.absolute);
       cy.get('[data-test=SettingsShowOnboardingBox__InputToggle]').check().should('be.checked');
       cy.reload();
+      // For the unknown reason reloads sometimes cause app to disconnect in E2E env.
+      cy.disconnectMetamaskWalletFromAllDapps();
+      connectWallet(true);
       cy.get('[data-test=ModalOnboarding]').should('be.visible');
     });
 
