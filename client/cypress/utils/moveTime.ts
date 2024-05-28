@@ -7,7 +7,8 @@ import {
 } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
-import { mockCoinPricesServer, visitWithLoader } from './e2e';
+import { mockCoinPricesServer, visitWithLoader, connectWallet } from './e2e';
+import { ConnectWalletParameters } from './types';
 
 import Chainable = Cypress.Chainable;
 
@@ -100,18 +101,8 @@ const moveToDecisionWindowClosed = (cypressWindow: Cypress.AUTWindow): Chainable
 export const moveTime = (
   cypressWindow: Cypress.AUTWindow,
   moveTo: 'nextEpochDecisionWindowClosed' | 'nextEpochDecisionWindowOpen',
-  shouldMoveToPlayground = false,
+  connectWalletParams?: ConnectWalletParameters,
 ): Chainable<any> => {
-  if (shouldMoveToPlayground) {
-    cy.disconnectMetamaskWalletFromAllDapps();
-    mockCoinPricesServer();
-    localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
-    localStorage.setItem(IS_ONBOARDING_DONE, 'true');
-    localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
-    localStorage.setItem(ALLOCATION_ITEMS_KEY, '[]');
-    visitWithLoader(ROOT_ROUTES.playground.absolute);
-  }
-
   const isDecisionWindowOpen = cypressWindow.clientReactQuery.getQueryData(
     QUERY_KEYS.isDecisionWindowOpen,
   );
@@ -136,5 +127,19 @@ export const moveTime = (
   // Waiting 2s is a way to prevent the effects of slowing down the e2e environment (data update).
   cy.wait(2000);
   cy.reload();
+
+  if (!connectWalletParams) {
+    return waitForLoadersToDisappear();
+  }
+
+  /**
+   * moveTime requires multiple reloads of the app. Sometimes it causes wallet to disconnect.
+   * Following is the code that reassures that after the time move, account is connected once again.
+   */
+  waitForLoadersToDisappear();
+  cy.disconnectMetamaskWalletFromAllDapps();
+  cy.reload();
+  waitForLoadersToDisappear();
+  connectWallet(connectWalletParams);
   return waitForLoadersToDisappear();
 };

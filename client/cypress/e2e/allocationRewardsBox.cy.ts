@@ -18,9 +18,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     { viewportHeight, viewportWidth },
     () => {
       beforeEach(() => {
-        localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
-        localStorage.setItem(IS_ONBOARDING_DONE, 'true');
-        localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
         visitWithLoader(ROOT_ROUTES.allocation.absolute);
       });
 
@@ -110,13 +107,18 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     beforeEach(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
       mockCoinPricesServer();
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.allocation.absolute);
       cy.intercept('GET', '/rewards/budget/*/epoch/*', { body: { budget: '10000000000' } });
-      connectWallet(true, false);
+      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
+    });
+
+    after(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
     });
 
     it('is visible', () => {

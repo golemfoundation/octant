@@ -1,5 +1,5 @@
 import { useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query';
-import { useConfig } from 'wagmi';
+import { usePublicClient } from 'wagmi';
 
 import { QUERY_KEYS } from 'api/queryKeys';
 import { readContractEpochs } from 'hooks/contracts/readContracts';
@@ -9,7 +9,7 @@ export default function useCypressMoveToDecisionWindowClosed(): UseMutationResul
   unknown
 > {
   const queryClient = useQueryClient();
-  const wagmiConfig = useConfig();
+  const publicClient = usePublicClient();
 
   return useMutation({
     mutationFn: () => {
@@ -17,24 +17,29 @@ export default function useCypressMoveToDecisionWindowClosed(): UseMutationResul
       return new Promise(async (resolve, reject) => {
         if (!window.Cypress) {
           reject(new Error('useCypressMoveToDecisionWindowOpen was called outside Cypress.'));
+          return;
+        }
+        if (!publicClient) {
+          reject(new Error('publicClient is not defined'));
+          return;
         }
 
         const currentEpochPromise = queryClient.fetchQuery({
           queryFn: () =>
             readContractEpochs({
               functionName: 'getCurrentEpoch',
-              publicClient: wagmiConfig.publicClient,
+              publicClient,
             }),
           queryKey: QUERY_KEYS.currentEpoch,
         });
 
-        const blockPromise = wagmiConfig.publicClient.getBlock();
+        const blockPromise = publicClient.getBlock();
 
         const currentEpochEndPromise = queryClient.fetchQuery({
           queryFn: () =>
             readContractEpochs({
               functionName: 'getCurrentEpochEnd',
-              publicClient: wagmiConfig.publicClient,
+              publicClient,
             }),
           queryKey: QUERY_KEYS.currentEpochEnd,
         });
@@ -43,7 +48,7 @@ export default function useCypressMoveToDecisionWindowClosed(): UseMutationResul
           queryFn: () =>
             readContractEpochs({
               functionName: 'getCurrentEpochProps',
-              publicClient: wagmiConfig.publicClient,
+              publicClient,
             }),
           queryKey: QUERY_KEYS.currentEpochProps,
         });
@@ -69,17 +74,17 @@ export default function useCypressMoveToDecisionWindowClosed(): UseMutationResul
         }
 
         const timeToIncrease = Number(currentEpochProps.decisionWindow) + 10; // [s]
-        await wagmiConfig.publicClient.request({
+        await publicClient.request({
           method: 'evm_increaseTime' as any,
           params: [timeToIncrease] as any,
         });
-        await wagmiConfig.publicClient.request({ method: 'evm_mine' as any, params: [] as any });
+        await publicClient.request({ method: 'evm_mine' as any, params: [] as any });
 
         const isDecisionWindowOpenAfter = await queryClient.fetchQuery({
           queryFn: () =>
             readContractEpochs({
               functionName: 'isDecisionWindowOpen',
-              publicClient: wagmiConfig.publicClient,
+              publicClient,
             }),
           queryKey: QUERY_KEYS.isDecisionWindowOpen,
         });

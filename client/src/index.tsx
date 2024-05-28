@@ -1,21 +1,21 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'regenerator-runtime/runtime';
 import './wallect-connect-polyfill';
+import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { Web3Modal } from '@web3modal/react';
-import React, { Fragment } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { WagmiConfig } from 'wagmi';
+import { WagmiProvider } from 'wagmi';
 
 import env, { envViteKeys, envsAllowedToBeEmpty } from 'env';
 
-import { ethereumClient } from './api/clients/client-ethereum';
 import clientReactQuery from './api/clients/client-react-query';
 import { wagmiConfig } from './api/clients/client-wagmi';
 import App from './App';
-import { PROJECT_ID } from './constants/walletConnect';
+
+import '@rainbow-me/rainbowkit/styles.css';
 
 import './sentry';
 
@@ -56,9 +56,9 @@ if (window.location.hash) {
   }
 
   ReactDOM.createRoot(root).render(
-    <Fragment>
-      <WagmiConfig config={wagmiConfig}>
-        <QueryClientProvider client={clientReactQuery}>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={clientReactQuery}>
+        <RainbowKitProvider modalSize="compact">
           <BrowserRouter>
             <App />
           </BrowserRouter>
@@ -67,9 +67,8 @@ if (window.location.hash) {
             style={{ overflowWrap: 'break-word', width: '350px' }}
             theme="dark"
           />
-        </QueryClientProvider>
-      </WagmiConfig>
-      <Web3Modal ethereumClient={ethereumClient} projectId={PROJECT_ID} />
-    </Fragment>,
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>,
   );
 })();
