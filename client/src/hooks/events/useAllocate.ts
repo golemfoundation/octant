@@ -44,43 +44,39 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { signTypedData } = useSignTypedData({
-    domain,
-    message: {
-      value: 'Octant Allocation',
+    mutation: {
+      onError: error => {
+        // @ts-expect-error Error is of type 'unknown', but it is API or contract error.
+        const hasUserRejectedTransaction = error?.cause?.code === 4001;
+        // @ts-expect-error Error is of type 'unknown', but it is API or contract error.
+        const reason = hasUserRejectedTransaction ? 4001 : error.reason;
+        handleError(reason);
+        setIsLoading(false);
+      },
+      onSuccess: async (data, variables) => {
+        const { isManuallyEdited, ...restVariables } = variables.message;
+        if (isContract) {
+          return;
+        }
+        websocketService().then(socket => {
+          socket.default.emit(
+            WebsocketEmitEvent.allocate,
+            JSON.stringify({
+              isManuallyEdited,
+              payload: restVariables,
+              signature: data,
+              userAddress: address,
+            }),
+            () => {
+              if (onSuccess) {
+                onSuccess();
+              }
+              setIsLoading(false);
+            },
+          );
+        });
+      },
     },
-    onError: error => {
-      // @ts-expect-error Error is of type 'unknown', but it is API or contract error.
-      const hasUserRejectedTransaction = error?.cause?.code === 4001;
-      // @ts-expect-error Error is of type 'unknown', but it is API or contract error.
-      const reason = hasUserRejectedTransaction ? 4001 : error.reason;
-      handleError(reason);
-      setIsLoading(false);
-    },
-    onSuccess: async (data, variables) => {
-      const { isManuallyEdited, ...restVariables } = variables.message;
-      if (isContract) {
-        return;
-      }
-      websocketService().then(socket => {
-        socket.default.emit(
-          WebsocketEmitEvent.allocate,
-          JSON.stringify({
-            isManuallyEdited,
-            payload: restVariables,
-            signature: data,
-            userAddress: address,
-          }),
-          () => {
-            if (onSuccess) {
-              onSuccess();
-            }
-            setIsLoading(false);
-          },
-        );
-      });
-    },
-    primaryType: 'AllocationPayload',
-    types,
   });
 
   const allocate = (allocations: AllocationValues, isManuallyEdited: boolean) => {
@@ -95,6 +91,7 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
     };
 
     signTypedData({
+      domain,
       message,
       primaryType: 'AllocationPayload',
       types,

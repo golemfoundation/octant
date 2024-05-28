@@ -1,4 +1,9 @@
-import { navigateWithCheck, mockCoinPricesServer, connectWallet } from 'cypress/utils/e2e';
+import {
+  navigateWithCheck,
+  mockCoinPricesServer,
+  connectWallet,
+  visitWithLoader,
+} from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
@@ -21,7 +26,11 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       localStorage.setItem(IS_ONBOARDING_ALWAYS_VISIBLE, 'false');
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
-      cy.visit(ROOT.absolute);
+      visitWithLoader(ROOT.absolute, ROOT_ROUTES.projects.absolute);
+    });
+
+    after(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
     });
 
     it('renders top bar', () => {
@@ -113,10 +122,13 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=ModalConnectWallet]').should('not.exist');
     });
 
-    it('Clicking on "WalletConnect" option, opens Web3Modal', () => {
+    // eslint-disable-next-line no-only-tests/no-only-tests
+    it('Clicking on "WalletConnect" option, opens WalletConnect modal', () => {
       cy.get('[data-test=MainLayout__Button--connect]').click();
+      // Wait for RainbowKit to load WalletConnect.
+      cy.wait(2000);
       cy.get('[data-test=ConnectWallet__BoxRounded--walletConnect]').click();
-      cy.get('w3m-modal').find('#w3m-modal', { includeShadowDom: true }).should('be.visible');
+      cy.get('div:contains("Need the WalletConnect modal?")').should('be.visible');
     });
 
     it('Clicking on "Browser wallet" option connects with MetaMask wallet', () => {
@@ -129,7 +141,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it('Wallet address is clickable and has href attribute', () => {
-      connectWallet(true, false);
+      connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
       cy.get('[data-test=ProfileInfo]').click();
       cy.get('[data-test=LayoutWallet__Button--address]').should('be.visible');
       cy.get('[data-test=LayoutWallet__Button--address]').should('have.attr', 'href');
