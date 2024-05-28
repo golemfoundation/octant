@@ -182,7 +182,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       localStorage.setItem(IS_ONBOARDING_DONE, 'true');
       localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
       visitWithLoader(ROOT_ROUTES.projects.absolute);
-      connectWallet(true, true);
+      connectWallet({ isPatronModeEnabled: true, isTOSAccepted: true });
       checkProjectsViewLoaded();
 
       /**
@@ -192,6 +192,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       if (projectNames.length === 0) {
         projectNames = getNamesOfProjects();
       }
+    });
+
+    after(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
     });
 
     it('button "add to allocate" is disabled', () => {

@@ -1,7 +1,6 @@
 import { SettingsData } from 'store/settings/types';
 
 export type Root = {
-  bytecode: 'bytecode';
   calculateRewards: 'calculateRewards';
   cryptoValues: 'cryptoValues';
   depositAt: 'depositAt';
@@ -29,7 +28,6 @@ export type Root = {
 
 export type QueryKeys = {
   blockNumber: ['blockNumber'];
-  bytecode: (userAddress: string) => [Root['bytecode'], string];
   calculateRewards: (amount: string, days: number) => [Root['calculateRewards'], string, string];
   cryptoValues: (
     fiatCurrency: NonNullable<SettingsData['displayCurrency']>,

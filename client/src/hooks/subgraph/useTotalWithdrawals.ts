@@ -1,5 +1,8 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import request from 'graphql-request';
+/* eslint-disable import/no-unresolved */
+// @ts-expect-error wrong linter information that package does not exist.
+import { request } from 'graphql-request';
+/* eslint-enable import/no-unresolved */
 import { useAccount } from 'wagmi';
 
 import { QUERY_KEYS } from 'api/queryKeys';

@@ -71,7 +71,7 @@ const EarnRewardsCalculator: FC = () => {
   };
 
   const estimatedRewardsFiat =
-    calculateRewards && isEmpty(formik.errors)
+    calculateRewards && isEmpty(formik.errors) && !isEmpty(formik.values.valueCrypto)
       ? getValueFiatToDisplay({
           cryptoCurrency: 'ethereum',
           cryptoValues,
@@ -81,7 +81,7 @@ const EarnRewardsCalculator: FC = () => {
       : '';
 
   const matchFundingFiat =
-    calculateRewards && isEmpty(formik.errors)
+    calculateRewards && isEmpty(formik.errors) && !isEmpty(formik.values.valueCrypto)
       ? getValueFiatToDisplay({
           cryptoCurrency: 'ethereum',
           cryptoValues,
