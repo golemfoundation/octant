@@ -21,6 +21,12 @@ def recalculate_uq_score(payload: dict):
     services.score_delegation_service.recalculate(context, score_delegation_payload)
 
 
+def delegation_check(addresses: [str]):
+    context = state_context(EpochState.CURRENT)
+    services: CurrentServices = get_services(EpochState.CURRENT)
+    return services.score_delegation_service.check(context, addresses)
+
+
 def _deserialize_payload(payload: dict) -> ScoreDelegationPayload:
     return ScoreDelegationPayload(
         primary_addr=to_checksum_address(payload["primaryAddr"]),
