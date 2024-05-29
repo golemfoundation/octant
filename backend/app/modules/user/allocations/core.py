@@ -9,11 +9,6 @@ from app.legacy.crypto.eip712 import build_allocations_eip712_structure, recover
 from app.modules.common.leverage import calculate_leverage
 from app.modules.common.project_rewards import get_projects_rewards
 from app.modules.dto import AllocationDTO, UserAllocationRequestPayload, AllocationItem
-from collections import namedtuple
-
-SimulateAllocationData = namedtuple(
-    "SimulateAllocationData", "leverage threshold rewards funding_cap"
-)
 
 
 def next_allocation_nonce(prev_allocation_request: Optional[AllocationRequest]) -> int:
