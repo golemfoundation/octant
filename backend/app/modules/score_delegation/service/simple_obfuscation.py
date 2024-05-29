@@ -66,7 +66,7 @@ class SimpleObfuscationDelegation(Model):
         self._delegation(context, payload, ActionType.RECALCULATION)
         db.session.commit()
 
-    def check(self, _: Context, addresses: list[str]) -> Container[Tuple[str, str]]:
+    def check(self, _: Context, addresses: [str]) -> set[(str, str)]:
         all_hashes = database.score_delegation.get_all_delegations()
         return core.delegation_check(
             addresses,

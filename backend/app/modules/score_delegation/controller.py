@@ -24,20 +24,10 @@ def recalculate_uq_score(payload: dict):
     services.score_delegation_service.recalculate(context, score_delegation_payload)
 
 
-def delegation_check(addresses: str) -> Tuple[str, str]:
-    tokens = addresses.split(",")
-    if len(tokens) < 2:
-        raise DelegationCheckWrongParams()
-    if len(tokens) > 10:
-        raise DelegationCheckWrongParams()
+def delegation_check(addresses: [str]):
     context = state_context(EpochState.CURRENT)
     services: CurrentServices = get_services(EpochState.CURRENT)
-    pairs = list(services.score_delegation_service.check(context, tokens))
-    if not pairs:
-        raise DelegationDoesNotExist()
-    if len(pairs) > 1:
-        raise DelegationDoesNotExist()
-    return pairs[0]
+    return services.score_delegation_service.check(context, addresses)
 
 
 def _deserialize_payload(payload: dict) -> ScoreDelegationPayload:
