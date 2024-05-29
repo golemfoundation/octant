@@ -10,7 +10,7 @@ export type GetValuesToDisplayProps = {
   coinPricesServerDowntimeText?: GetValueFiatToDisplayProps['coinPricesServerDowntimeText'];
   showCryptoSuffix?: boolean;
   showFiatPrefix?: GetValueFiatToDisplayProps['showFiatPrefix'];
-  showLessThanZeroFiat?: boolean;
+  showLessThanOneCentFiat?: boolean;
   valueCrypto?: bigint;
   valueString?: string;
 } & GetValueCryptoToDisplayProps;
@@ -40,8 +40,8 @@ export default function useGetValuesToDisplay(): GetValuesToDisplay {
     getFormattedEthValueProps,
     getFormattedGlmValueProps,
     showCryptoSuffix = false,
-    showLessThanZeroFiat = true,
     showFiatPrefix = true,
+    showLessThanOneCentFiat = true,
   }) => {
     if (valueString) {
       return {
@@ -56,7 +56,7 @@ export default function useGetValuesToDisplay(): GetValuesToDisplay {
       displayCurrency,
       error,
       showFiatPrefix,
-      showLessThanZero: showLessThanZeroFiat,
+      showLessThanOneCent: showLessThanOneCentFiat,
       valueCrypto,
     });
 

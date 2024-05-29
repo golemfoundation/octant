@@ -14,7 +14,7 @@ export type GetValueFiatToDisplayProps = {
   error?: any;
   isUsingHairSpace?: boolean;
   showFiatPrefix?: boolean;
-  showLessThanZero?: boolean;
+  showLessThanOneCent?: boolean;
   valueCrypto?: bigint;
 };
 
@@ -26,7 +26,7 @@ export default function getValueFiatToDisplay({
   error,
   isUsingHairSpace = true,
   valueCrypto,
-  showLessThanZero = false,
+  showLessThanOneCent = false,
   showFiatPrefix = true,
 }: GetValueFiatToDisplayProps): string {
   if (error) {
@@ -53,7 +53,7 @@ export default function getValueFiatToDisplay({
     !cryptoValues[cryptoCurrency][displayCurrency] ||
     !valueCrypto
   ) {
-    return `${showFiatPrefix ? prefix : ''}0.00`;
+    return `${showFiatPrefix ? prefix : ''}${displayCurrency === 'jpy' ? '0' : '0.00'}`;
   }
 
   const exchangeRate = cryptoValues[cryptoCurrency][displayCurrency];
@@ -62,7 +62,11 @@ export default function getValueFiatToDisplay({
     displayCurrency === 'jpy' ? 0 : 2,
   );
 
-  if (valueFiat === '0.00' && showLessThanZero) {
+  if (displayCurrency === 'jpy' && valueFiat === '0' && showLessThanOneCent) {
+    return `< ${prefix}1`;
+  }
+
+  if (valueFiat === '0.00' && showLessThanOneCent) {
     return `< ${prefix}0.01`;
   }
 

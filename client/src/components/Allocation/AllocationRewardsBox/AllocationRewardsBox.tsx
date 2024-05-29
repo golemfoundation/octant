@@ -84,7 +84,7 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
       value: getValuesToDisplay({
         cryptoCurrency: 'ethereum',
         showCryptoSuffix: true,
-        showLessThanZeroFiat: !isDisabled,
+        showLessThanOneCentFiat: !isDisabled,
         valueCrypto: rewardsForProjectsFinal,
       }).primary,
     },
@@ -93,7 +93,7 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
       value: getValuesToDisplay({
         cryptoCurrency: 'ethereum',
         showCryptoSuffix: true,
-        showLessThanZeroFiat: !isDisabled,
+        showLessThanOneCentFiat: !isDisabled,
         valueCrypto: rewardsForWithdraw,
       }).primary,
     },
@@ -121,7 +121,7 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
         getValuesToDisplay({
           cryptoCurrency: 'ethereum',
           showCryptoSuffix: true,
-          showLessThanZeroFiat: !isDisabled,
+          showLessThanOneCentFiat: !isDisabled,
           valueCrypto: isDecisionWindowOpen ? individualReward : BigInt(0),
         }).primary
       }
