@@ -19,12 +19,6 @@ def build_consent_message(user_address: str) -> str:
     )
 
 
-def build_consent_message_patron(user_address: str) -> str:
-    return "\n".join(
-        (f"Signing this message will enable patron mode for address {user_address}")
-    )
-
-
 def verify_signature(user_address: str, signature: str) -> bool:
     msg_text = build_consent_message(user_address)
     encoded_msg = encode_for_signing(EncodingStandardFor.TEXT, msg_text)
