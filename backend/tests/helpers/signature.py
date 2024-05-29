@@ -7,8 +7,8 @@ from app.infrastructure.database.multisig_signature import SigStatus
 from app.modules.dto import SignatureOpType
 from app.modules.user.tos.core import (
     build_consent_message,
-    build_consent_message_patron,
 )
+from app.legacy.crypto.eth_sign.patron_mode import build_patron_mode_msg
 
 
 def build_user_signature(user, user_address=None):
@@ -22,12 +22,11 @@ def build_user_signature(user, user_address=None):
     return signature_bytes
 
 
-def build_user_signature_patron(user, user_address=None):
+def build_user_signature_patron(user, toggle, user_address=None):
     if user_address is None:
         user_address = user.address
 
-    msg = build_consent_message_patron(user_address)
-    print("MSG ", msg)
+    msg = build_patron_mode_msg(user_address, toggle)
     message = encode_defunct(text=msg)
     signature_bytes = user.sign_message(message).signature
 
