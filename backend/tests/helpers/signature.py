@@ -5,7 +5,10 @@ from app.infrastructure import database
 from app.infrastructure.database.models import MultisigSignatures
 from app.infrastructure.database.multisig_signature import SigStatus
 from app.modules.dto import SignatureOpType
-from app.modules.user.tos.core import build_consent_message
+from app.modules.user.tos.core import (
+    build_consent_message,
+    build_consent_message_patron,
+)
 
 
 def build_user_signature(user, user_address=None):
@@ -13,6 +16,18 @@ def build_user_signature(user, user_address=None):
         user_address = user.address
 
     msg = build_consent_message(user_address)
+    message = encode_defunct(text=msg)
+    signature_bytes = user.sign_message(message).signature
+
+    return signature_bytes
+
+
+def build_user_signature_patron(user, user_address=None):
+    if user_address is None:
+        user_address = user.address
+
+    msg = build_consent_message_patron(user_address)
+    print("MSG ", msg)
     message = encode_defunct(text=msg)
     signature_bytes = user.sign_message(message).signature
 
