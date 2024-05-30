@@ -74,9 +74,8 @@ class SimpleObfuscationDelegation(Model):
             app.config["DELEGATION_SALT"],
             app.config["DELEGATION_SALT_PRIMARY"],
         )
-        primary, secondary, both = hashed_addresses
         score, expires_at, stamps = self.antisybil.fetch_antisybil_status(
-            context, secondary
+            context, payload.secondary_addr
         )
         self.verifier.verify(
             context,
@@ -86,5 +85,5 @@ class SimpleObfuscationDelegation(Model):
             action_type=action,
         )
         self.antisybil.update_antisybil_status(
-            context, primary, score, expires_at, stamps
+            context, payload.primary_addr, score, expires_at, stamps
         )
