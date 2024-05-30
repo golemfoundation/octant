@@ -59,7 +59,7 @@ class GitcoinPassportAntisybil(Model):
 
     def update_antisybil_status(
         self,
-        context: Context,
+        _: Context,
         user_address: str,
         score: float,
         expires_at: datetime,
