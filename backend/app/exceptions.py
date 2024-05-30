@@ -282,3 +282,27 @@ class InvalidMatchedRewardsStrategy(OctantException):
 
     def __init__(self):
         super().__init__(self.description, self.code)
+
+
+class DelegationAlreadyExists(OctantException):
+    code = 400
+    description = "Delegation already exists"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
+class DelegationDoesNotExist(OctantException):
+    code = 400
+    description = "Delegation does not exists"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
+class AntisybilScoreTooLow(OctantException):
+    code = 400
+    description = "Antisybil score is lower then {}"
+
+    def __init__(self, score: float):
+        super().__init__(self.description.format(score), self.code)
