@@ -103,4 +103,4 @@ def _verify_hashed_addresses(
 
 def _verify_score(score: float):
     if score < MIN_SCORE:
-        raise AntisybilScoreTooLow(score)
+        raise AntisybilScoreTooLow(score, MIN_SCORE)
