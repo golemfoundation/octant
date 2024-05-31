@@ -11,8 +11,6 @@ def test_patron_mode_basics(
     client: Client,
     deployer: UserAccount,
     ua_alice: UserAccount,
-    ua_bob: UserAccount,
-    ua_carol: UserAccount,
     setup_funds,
 ):
     # lock GLM for one account

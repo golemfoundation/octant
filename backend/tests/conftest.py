@@ -747,9 +747,19 @@ class Client:
         return json.loads(rv.text), rv.status_code
 
     def patch_patron(self, user_address, signature):
-        print(f"Address: {user_address}; signature: {signature}")
         rv = self._flask_client.patch(
             f"/user/{user_address}/patron-mode",
+            json={"signature": signature},
+        )
+        return json.loads(rv.text), rv.status_code
+
+    def get_user_tos_status(self, user_address) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"/user/{user_address}/tos")
+        return json.loads(rv.text), rv.status_code
+
+    def accept_tos(self, user_address, signature):
+        rv = self._flask_client.post(
+            f"/user/{user_address}/tos",
             json={"signature": signature},
         )
         return json.loads(rv.text), rv.status_code
