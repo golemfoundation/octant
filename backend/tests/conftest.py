@@ -738,6 +738,22 @@ class Client:
         )
         return json.loads(rv.text), rv.status_code
 
+    def get_epoch_patrons(self, epoch) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"/user/patrons/{epoch}")
+        return json.loads(rv.text), rv.status_code
+
+    def get_patron_mode_status(self, user_address) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"/user/{user_address}/patron-mode")
+        return json.loads(rv.text), rv.status_code
+
+    def patch_patron(self, user_address, signature):
+        print(f"Address: {user_address}; signature: {signature}")
+        rv = self._flask_client.patch(
+            f"/user/{user_address}/patron-mode",
+            json={"signature": signature},
+        )
+        return json.loads(rv.text), rv.status_code
+
     def get_antisybil_score(self, user_address: str) -> (any, int):
         rv = self._flask_client.get(f"/user/{user_address}/antisybil-status")
         return json.loads(rv.text), rv.status_code
