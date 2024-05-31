@@ -62,7 +62,9 @@ export default function getValueFiatToDisplay({
     displayCurrency === 'jpy' ? 0 : 2,
   );
 
-  if (displayCurrency === 'jpy' && valueFiat === '0' && showLessThanOneCent) {return `< ${prefix}1`;}
+  if (displayCurrency === 'jpy' && valueFiat === '0' && showLessThanOneCent) {
+    return `< ${prefix}1`;
+  }
 
   if (valueFiat === '0.00' && showLessThanOneCent) {
     return `< ${prefix}0.01`;

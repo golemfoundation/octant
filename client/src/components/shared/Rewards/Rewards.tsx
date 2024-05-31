@@ -33,13 +33,11 @@ const Rewards: FC<RewardsProps> = ({
 
   const totalValueOfAllocationsToDisplay = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
-    showCryptoSuffix: true,
     valueCrypto: totalValueOfAllocations,
   }).primary;
 
   const projectDonorsRewardsSumToDisplay = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
-    showCryptoSuffix: true,
     valueCrypto: totalValueOfAllocations,
   }).primary;
 

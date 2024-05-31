@@ -4,7 +4,7 @@ import { ConnectWalletParameters } from './types';
 
 import Chainable = Cypress.Chainable;
 
-export const ETH_USD = 2041.91;
+export const ETH_USD = 2042.0;
 export const GLM_USD = 0.260878;
 
 export const loadersShouldNotExist = (): Chainable<any> => {

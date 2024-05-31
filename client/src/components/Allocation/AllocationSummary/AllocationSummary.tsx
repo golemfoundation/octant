@@ -6,11 +6,11 @@ import AllocationSummaryProject from 'components/Allocation/AllocationSummaryPro
 import BoxRounded from 'components/ui/BoxRounded';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useAllocationsStore from 'store/allocations/store';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './AllocationSummary.module.scss';
 import AllocationSummaryProps from './types';
@@ -28,6 +28,8 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
     rewardsForProjects: state.data.rewardsForProjects,
   }));
 
+  const getValuesToDisplay = useGetValuesToDisplay();
+
   // const allocationSimulatedMatchingFundSum = allocationSimulated?.matched.reduce((acc, curr) => {
   //   return acc+(parseUnitsBigInt(curr.value, 'wei'));
   // }, BigInt(0));
@@ -38,25 +40,35 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
 
   const personalAllocation = individualReward ? individualReward - rewardsForProjects : 0n;
 
-  const rewardsForProjectsToDisplay = getFormattedEthValue({
-    isUsingHairSpace: true,
-    shouldIgnoreGwei: true,
-    value: rewardsForProjects,
+  const rewardsForProjectsToDisplay = getValuesToDisplay({
+    cryptoCurrency: 'ethereum',
+    getFormattedEthValueProps: {
+      shouldIgnoreGwei: true,
+    },
+    valueCrypto: rewardsForProjects,
   });
+
   const matchingFundSumToDisplay =
     rewardsForProjects && allocationSimulated?.leverage
-      ? getFormattedEthValue({
-          value: rewardsForProjects * BigInt(parseInt(allocationSimulated.leverage, 10)),
-        }).value
+      ? getValuesToDisplay({
+          cryptoCurrency: 'ethereum',
+          valueCrypto: rewardsForProjects * BigInt(parseInt(allocationSimulated.leverage, 10)),
+        }).primary
       : undefined;
-  const totalImpactToDisplay = getFormattedEthValue({
-    value:
+  const totalImpactToDisplay = getValuesToDisplay({
+    cryptoCurrency: 'ethereum',
+    showCryptoSuffix: true,
+    valueCrypto:
       rewardsForProjects && allocationSimulated
         ? rewardsForProjects * BigInt(parseInt(allocationSimulated.leverage, 10) + 1)
         : rewardsForProjects,
-  });
+  }).primary;
   const personalToDisplay = individualReward
-    ? getFormattedEthValue({ value: individualReward - rewardsForProjects }).fullString
+    ? getValuesToDisplay({
+        cryptoCurrency: 'ethereum',
+        showCryptoSuffix: true,
+        valueCrypto: individualReward - rewardsForProjects,
+      }).primary
     : undefined;
 
   const sections: SectionProps[] = [
@@ -79,7 +91,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
       ),
       childrenRight: (
         <div className={styles.rightSection}>
-          <div className={styles.value}>{rewardsForProjectsToDisplay.value}</div>
+          <div className={styles.value}>{rewardsForProjectsToDisplay.primary}</div>
           <div className={cx(styles.value, !matchingFundSumToDisplay && styles.isLoading)}>
             {matchingFundSumToDisplay}
           </div>
@@ -89,7 +101,7 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
     },
     {
       childrenLeft: <div className={styles.label}>{t('totalImpact')}</div>,
-      childrenRight: <div className={styles.value}>{totalImpactToDisplay.fullString}</div>,
+      childrenRight: <div className={styles.value}>{totalImpactToDisplay}</div>,
 
       className: styles.section,
     },
