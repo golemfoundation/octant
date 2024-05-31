@@ -589,7 +589,7 @@ class Client:
         while True:
             res = self.sync_status()
             if res["indexedHeight"] == res["blockchainHeight"]:
-                return res["indexedEpoch"]
+                return res["indexedHeight"]
             time.sleep(0.5)
 
     def move_to_next_epoch(self, target):
@@ -601,13 +601,25 @@ class Client:
         w3.provider.make_request("evm_mine", [])
         assert epochs.get_current_epoch() == target
 
+    def snapshot_status(self, epoch):
+        rv = self._flask_client.get(f"/snapshots/status/{epoch}")
+        return json.loads(rv.text), rv.status_code
+
     def pending_snapshot(self):
         rv = self._flask_client.post("/snapshots/pending").text
         return json.loads(rv)
 
+    def pending_snapshot_simulate(self):
+        rv = self._flask_client.get("/snapshots/pending/simulate")
+        return json.loads(rv.text), rv.status_code
+
     def finalized_snapshot(self):
         rv = self._flask_client.post("/snapshots/finalized").text
         return json.loads(rv)
+
+    def finalized_snapshot_simulate(self):
+        rv = self._flask_client.get("/snapshots/finalized/simulate")
+        return json.loads(rv.text), rv.status_code
 
     def get_projects(self, epoch: int):
         rv = self._flask_client.get(f"/projects/epoch/{epoch}")
