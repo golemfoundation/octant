@@ -110,7 +110,12 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
   return (
     <>
       {areUserAllocationsPositive && (
-        <BoxRounded className={styles.root} hasPadding={false} isVertical>
+        <BoxRounded
+          className={styles.root}
+          dataTest="AllocationSummary"
+          hasPadding={false}
+          isVertical
+        >
           <div className={styles.projects}>
             {userAllocationsPositive?.map(({ address, value }) => (
               <AllocationSummaryProject
@@ -134,10 +139,14 @@ const AllocationSummary: FC<AllocationSummaryProps> = ({
             styles.personalRewardBox,
             areUserAllocationsPositive && styles.areAllocationValuesPositive,
           )}
+          dataTest="AllocationSummary__personalRewardBox"
         >
           <div className={styles.personalReward}>
             <div className={styles.label}>{i18n.t('common.personal')}</div>
-            <div className={cx(styles.value, !personalToDisplay && styles.isLoading)}>
+            <div
+              className={cx(styles.value, !personalToDisplay && styles.isLoading)}
+              data-test="AllocationSummary__personalReward"
+            >
               {personalToDisplay}
             </div>
           </div>
