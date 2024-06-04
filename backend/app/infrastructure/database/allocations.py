@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import List, Tuple
 
 from eth_utils import to_checksum_address
+from sqlalchemy import func
 from sqlalchemy.orm import Query
 from typing_extensions import deprecated
 
@@ -238,3 +239,14 @@ def get_user_last_allocation_request(user_address: str) -> AllocationRequest | N
         .order_by(AllocationRequest.nonce.desc())
         .first()
     )
+
+
+def get_user_allocation_epoch_count(user_address: str) -> int:
+    epoch_count = (
+        db.session.query(func.count(AllocationRequest.epoch.distinct()))
+        .join(User, User.id == AllocationRequest.user_id)
+        .filter(User.address == user_address)
+        .scalar()
+    )
+
+    return epoch_count
