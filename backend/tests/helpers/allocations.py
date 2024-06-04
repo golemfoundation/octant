@@ -57,3 +57,11 @@ def make_user_allocation(context, user, allocations=1, nonce=0, **kwargs):
     )
 
     return allocation_items
+
+
+def mock_request(nonce):
+    fake_signature = "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+    return UserAllocationRequestPayload(
+        payload=UserAllocationPayload([], nonce), signature=fake_signature
+    )
