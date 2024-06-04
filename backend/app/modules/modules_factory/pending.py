@@ -31,6 +31,7 @@ from app.modules.user.allocations.service.pending import (
     PendingUserAllocations,
     PendingUserAllocationsVerifier,
 )
+from app.modules.user.antisybil.service.initial import MockUniquenessQuotients
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.saved import SavedUserDeposits
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
@@ -86,13 +87,16 @@ class PendingServices(Model):
         octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
         saved_user_budgets = SavedUserBudgets()
         user_nonce = SavedUserAllocationsNonce()
+        uniqueness_quotients = MockUniquenessQuotients()
         allocations_verifier = PendingUserAllocationsVerifier(
             user_nonce=user_nonce,
             user_budgets=saved_user_budgets,
             patrons_mode=events_based_patron_mode,
         )
         pending_user_allocations = PendingUserAllocations(
-            octant_rewards=octant_rewards, verifier=allocations_verifier
+            octant_rewards=octant_rewards,
+            verifier=allocations_verifier,
+            uniqueness_quotients=uniqueness_quotients,
         )
         user_rewards = CalculatedUserRewards(
             user_budgets=saved_user_budgets,
