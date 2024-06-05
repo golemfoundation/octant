@@ -17,7 +17,6 @@ from app.modules.common.verifier import Verifier
 from app.modules.dto import AllocationDTO, UserAllocationRequestPayload
 from app.modules.user.allocations import core
 from app.modules.user.allocations.service.saved import SavedUserAllocations
-from app.modules.user.antisybil.service.initial import UniquenessQuotients
 from app.pydantic import Model
 
 
@@ -42,6 +41,12 @@ class GetPatronsAddressesProtocol(Protocol):
 @runtime_checkable
 class GetUserAllocationNonceProtocol(Protocol):
     def get_user_next_nonce(self, user_address: str) -> int:
+        ...
+
+
+@runtime_checkable
+class UniquenessQuotients(Protocol):
+    def calculate(self, context: Context, user_address: str) -> float:
         ...
 
 
@@ -96,7 +101,7 @@ class PendingUserAllocations(SavedUserAllocations, Model):
         user = database.user.get_by_address(user_address)
 
         if not get_uq_by_user(user, context.epoch_details.epoch_num):
-            score = self.uniqueness_quotients.calculate(user_address)
+            score = self.uniqueness_quotients.calculate(context, user_address)
             save_uq(user, context.epoch_details.epoch_num, score)
 
         user.allocation_nonce = payload.payload.nonce
