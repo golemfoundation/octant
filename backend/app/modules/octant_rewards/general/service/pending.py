@@ -97,7 +97,7 @@ class PendingOctantRewards(Model):
                 community_fund=int(pending_snapshot.community_fund)
                 if pending_snapshot.community_fund
                 else None,
-                ppf=int(pending_snapshot.ppf) if pending_snapshot.ppf else None,
+                ppf=pending_snapshot.validated_ppf,
                 total_withdrawals=user_rewards + project_rewards.rewards_sum,
             )
         )
