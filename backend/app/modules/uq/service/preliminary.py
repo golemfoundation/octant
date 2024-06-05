@@ -3,7 +3,7 @@ from typing import Protocol, Optional, Tuple, runtime_checkable
 
 from app.context.manager import Context
 from app.infrastructure import database
-from app.modules.uq.core import calculate_uq
+from app.modules.uq.core import calculate_uq, Scores
 from app.pydantic import Model
 
 
@@ -39,7 +39,7 @@ class PreliminaryUQ(Model):
         num_of_donations = database.allocations.get_user_allocation_epoch_count(address)
 
         return calculate_uq(
-            has_epoch_zero_poap, has_identity_poap, num_of_donations, gp_score
+            has_epoch_zero_poap, has_identity_poap, num_of_donations, gp_score, Scores()
         )
 
     def _get_gp_score(self, context: Context, address: str) -> float:

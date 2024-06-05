@@ -1,6 +1,6 @@
 import pytest
 
-from app.modules.uq.core import calculate_uq
+from app.modules.uq.core import calculate_uq, Scores
 
 THRESHOLD = 20
 
@@ -29,6 +29,8 @@ def test_calculate_uq(
     has_epoch_zero_poap, has_identity_poap, num_of_donations, gp_score, expected_output
 ):
     assert (
-        calculate_uq(has_epoch_zero_poap, has_identity_poap, num_of_donations, gp_score)
+        calculate_uq(
+            has_epoch_zero_poap, has_identity_poap, num_of_donations, gp_score, Scores()
+        )
         == expected_output
     )
