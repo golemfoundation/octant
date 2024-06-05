@@ -172,6 +172,11 @@ class EpochZeroClaim(BaseModel):
     claim_nonce = db.Column(db.Integer(), unique=True, nullable=True)
 
 
+class IdentityCallsVerifications(BaseModel):
+    __tablename__ = "identity_call_verifications"
+    address = Column(db.String(42), primary_key=True, nullable=False)
+
+
 class MultisigSignatures(BaseModel):
     __tablename__ = "multisig_signatures"
 
