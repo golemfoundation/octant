@@ -6,6 +6,7 @@ from app.engine.projects.rewards import ProjectRewardDTO
 from app.exceptions import InvalidSignature
 from app.extensions import db
 from app.infrastructure import database
+from app.infrastructure.database.uniqueness_quotient import get_uq_by_user, save_uq
 from app.modules.common.crypto.signature import (
     verify_signed_message,
     encode_for_signing,
@@ -16,6 +17,7 @@ from app.modules.common.verifier import Verifier
 from app.modules.dto import AllocationDTO, UserAllocationRequestPayload
 from app.modules.user.allocations import core
 from app.modules.user.allocations.service.saved import SavedUserAllocations
+from app.modules.user.antisybil.service.initial import UniquenessQuotients
 from app.pydantic import Model
 
 
@@ -72,6 +74,7 @@ class PendingUserAllocationsVerifier(Verifier, Model):
 class PendingUserAllocations(SavedUserAllocations, Model):
     octant_rewards: OctantRewards
     verifier: Verifier
+    uniqueness_quotients: UniquenessQuotients
 
     def allocate(
         self,
@@ -91,6 +94,11 @@ class PendingUserAllocations(SavedUserAllocations, Model):
         self.revoke_previous_allocation(context, user_address)
 
         user = database.user.get_by_address(user_address)
+
+        if not get_uq_by_user(user, context.epoch_details.epoch_num):
+            score = self.uniqueness_quotients.calculate(user_address)
+            save_uq(user, context.epoch_details.epoch_num, score)
+
         user.allocation_nonce = payload.payload.nonce
         database.allocations.store_allocation_request(
             user_address,
