@@ -3,12 +3,17 @@ from typing import List
 from eth_utils import to_checksum_address
 from sqlalchemy import func
 
+from app.constants import EPOCH0_SYBILS
 from app.infrastructure.database.models import EpochZeroClaim
 from app.extensions import db
 
 
-def get_all() -> List[EpochZeroClaim]:
-    return EpochZeroClaim.query.all()
+def get_all(exclude_sybils=False) -> List[EpochZeroClaim]:
+    query = EpochZeroClaim.query
+    if exclude_sybils:
+        checksum_sybils = [to_checksum_address(addr) for addr in EPOCH0_SYBILS]
+        query = query.filter(EpochZeroClaim.address.notin_(checksum_sybils))
+    return query.all()
 
 
 def get_by_address(user_address: str) -> EpochZeroClaim:
