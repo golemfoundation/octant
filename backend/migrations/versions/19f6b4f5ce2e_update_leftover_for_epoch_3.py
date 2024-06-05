@@ -19,7 +19,7 @@ def upgrade():
     op.execute(
         """
         UPDATE finalized_epoch_snapshots
-        SET leftover = "3854465046588467390"
+        SET leftover = '3854465046588467390'
         WHERE epoch = 3
     """
     )
@@ -29,7 +29,7 @@ def downgrade():
     op.execute(
         """
         UPDATE finalized_epoch_snapshots
-        SET leftover = "146492474466159601123"
+        SET leftover = '146492474466159601123'
         WHERE epoch = 3
     """
     )
