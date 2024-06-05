@@ -26,15 +26,20 @@ from app.modules.projects.rewards.service.estimated import EstimatedProjectRewar
 from app.modules.snapshots.finalized.service.simulated import (
     SimulatedFinalizedSnapshots,
 )
+from app.modules.uq.service.preliminary import PreliminaryUQ
 from app.modules.user.allocations.nonce.service.saved import SavedUserAllocationsNonce
 from app.modules.user.allocations.service.pending import (
     PendingUserAllocations,
     PendingUserAllocationsVerifier,
 )
-from app.modules.user.antisybil.service.initial import MockUniquenessQuotients
+from app.modules.user.antisybil.service.initial import (
+    GitcoinPassportAntisybil,
+)
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.saved import SavedUserDeposits
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
+from app.modules.user.poap.epoch_0.service.whitelist import WhitelistEpoch0
+from app.modules.user.poap.identity.service.whitelist import WhitelistIdentityCall
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.withdrawals.service.pending import PendingWithdrawals
 from app.modules.projects.metadata.service.projects_metadata import (
@@ -87,7 +92,12 @@ class PendingServices(Model):
         octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
         saved_user_budgets = SavedUserBudgets()
         user_nonce = SavedUserAllocationsNonce()
-        uniqueness_quotients = MockUniquenessQuotients()
+        uniqueness_quotients = PreliminaryUQ(
+            antisybil=GitcoinPassportAntisybil(),
+            epoch0_poap=WhitelistEpoch0(),
+            identity_poap=WhitelistIdentityCall(),
+        )
+
         allocations_verifier = PendingUserAllocationsVerifier(
             user_nonce=user_nonce,
             user_budgets=saved_user_budgets,
