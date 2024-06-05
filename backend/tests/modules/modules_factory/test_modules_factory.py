@@ -22,13 +22,14 @@ from app.modules.staking.proceeds.service.contract_balance import (
     ContractBalanceStakingProceeds,
 )
 from app.modules.staking.proceeds.service.estimated import EstimatedStakingProceeds
+from app.modules.uq.service.preliminary import PreliminaryUQ
 from app.modules.user.allocations.nonce.service.saved import SavedUserAllocationsNonce
 from app.modules.user.allocations.service.pending import (
     PendingUserAllocations,
     PendingUserAllocationsVerifier,
 )
 from app.modules.user.allocations.service.saved import SavedUserAllocations
-from app.modules.user.antisybil.service.initial import MockUniquenessQuotients
+from app.modules.user.antisybil.service.initial import GitcoinPassportAntisybil
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
 from app.modules.user.deposits.service.contract_balance import (
@@ -39,6 +40,8 @@ from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
 )
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
+from app.modules.user.poap.epoch_0.service.whitelist import WhitelistEpoch0
+from app.modules.user.poap.identity.service.whitelist import WhitelistIdentityCall
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.user.rewards.service.saved import SavedUserRewards
 from app.modules.user.tos.service.initial import InitialUserTos, InitialUserTosVerifier
@@ -135,7 +138,11 @@ def test_pending_services_factory():
     octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
     saved_user_budgets = SavedUserBudgets()
     user_nonce = SavedUserAllocationsNonce()
-    uniqueness_quotients = MockUniquenessQuotients()
+    uniqueness_quotients = PreliminaryUQ(
+        antisybil=GitcoinPassportAntisybil(),
+        epoch0_poap=WhitelistEpoch0(),
+        identity_poap=WhitelistIdentityCall(),
+    )
     allocations_verifier = PendingUserAllocationsVerifier(
         user_nonce=user_nonce,
         user_budgets=saved_user_budgets,
