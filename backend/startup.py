@@ -17,7 +17,7 @@ import eventlet  # noqa
 
 eventlet.monkey_patch()
 from app import create_app  # noqa
-from app.extensions import db
+from app.extensions import db  # noqa
 
 app = create_app()
 
