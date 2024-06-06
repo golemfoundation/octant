@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import isEqual from 'lodash/isEqual';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount, useConnect, useNetwork } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
 
 import networkConfig from 'constants/networkConfig';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -27,8 +27,7 @@ export default function useAppConnectManager(
 } {
   const { t } = useTranslation('translation', { keyPrefix: 'toasts.wrongNetwork' });
   const queryClient = useQueryClient();
-  const { address, isConnected } = useAccount();
-  const { chain } = useNetwork();
+  const { address, isConnected, chain } = useAccount();
   const { reset } = useConnect();
 
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();

@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 
+from app.engine.epochs_settings import register_epoch_settings
 from app.extensions import (
     db,
     migrate,
@@ -13,12 +14,11 @@ from app.extensions import (
     init_scheduler,
     init_subgraph,
 )
-from app.logging import init_logger
 from app.infrastructure import events, routes, apscheduler  # noqa
 from app.infrastructure.exception_handler import ExceptionHandler
-from app.settings import ProdConfig, DevConfig
-from app.engine.epochs_settings import register_epoch_settings
+from app.logging import init_logger
 from app.modules.registry import register_services
+from app.settings import ProdConfig, DevConfig
 
 
 def create_app(config=None):
@@ -31,6 +31,7 @@ def create_app(config=None):
         template_folder=f"{config.PROJECT_ROOT}/templates",
         static_folder=f"{config.PROJECT_ROOT}/static",
     )
+
     app.config.from_object(config)
 
     register_extensions(app)

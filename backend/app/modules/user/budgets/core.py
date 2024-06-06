@@ -59,7 +59,7 @@ def estimate_epoch_budget(
         UserBudgetPayload(
             user_effective_deposit=effective_deposit,
             total_effective_deposit=rewards.total_effective_deposit,
-            all_individual_rewards=rewards.individual_rewards,
+            vanilla_individual_rewards=rewards.vanilla_individual_rewards,
             ppf=rewards.ppf,
         )
     )

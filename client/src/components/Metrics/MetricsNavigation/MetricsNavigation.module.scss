@@ -28,12 +28,19 @@
   }
 
   .smallDotsWrapper {
+    $smallDotsWrapperTop: 2.6rem;
+
     position: absolute;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: 7.6rem;
-    top: 2.6rem;
+    top: $smallDotsWrapperTop;
+
+    &.transformDots {
+      top: calc(50% + $smallDotsWrapperTop);
+      transform: translate(0, calc(-50% + $smallDotsWrapperTop));
+    }
   }
 
   .smallDot {
@@ -41,6 +48,10 @@
     height: 0.4rem;
     border-radius: 100%;
     background-color: $color-octant-grey1;
+
+    &.isActive {
+      background-color: $color-octant-green;
+    }
   }
 
   @media #{$large-desktop-up} {

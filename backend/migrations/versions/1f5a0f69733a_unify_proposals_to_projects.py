@@ -16,15 +16,9 @@ depends_on = None
 
 def upgrade():
     with op.batch_alter_table("allocations", schema=None) as batch_op:
-        batch_op.add_column(
-            sa.Column("project_address", sa.String(length=42), nullable=False)
-        )
-        batch_op.drop_column("proposal_address")
+        batch_op.alter_column("proposal_address", new_column_name="project_address")
 
 
 def downgrade():
     with op.batch_alter_table("allocations", schema=None) as batch_op:
-        batch_op.add_column(
-            sa.Column("proposal_address", sa.VARCHAR(length=42), nullable=False)
-        )
-        batch_op.drop_column("project_address")
+        batch_op.alter_column("project_address", new_column_name="proposal_address")

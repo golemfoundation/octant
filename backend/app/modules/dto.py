@@ -43,7 +43,7 @@ class OctantRewardsDTO(JSONWizard):
     staking_proceeds: int
     locked_ratio: Decimal
     total_rewards: int
-    individual_rewards: int
+    vanilla_individual_rewards: int
     total_effective_deposit: int
     operational_cost: int
     # Data available to a finalized epoch
@@ -78,6 +78,14 @@ class UserAllocationPayload(JSONWizard):
 class UserAllocationRequestPayload(JSONWizard):
     payload: UserAllocationPayload
     signature: str
+
+
+@dataclass(frozen=True)
+class ScoreDelegationPayload(JSONWizard):
+    primary_addr: str
+    secondary_addr: str
+    primary_addr_signature: Optional[str] = None
+    secondary_addr_signature: Optional[str] = None
 
 
 @dataclass(frozen=True)

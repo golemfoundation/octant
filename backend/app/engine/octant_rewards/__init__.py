@@ -39,7 +39,7 @@ class OctantRewardsSettings:
             OctantRewardsDefaultValues.OPERATIONAL_COST
         )
     )
-    total_and_all_individual_rewards: TotalAndAllIndividualRewards = field(
+    total_and_vanilla_individual_rewards: TotalAndAllIndividualRewards = field(
         default_factory=lambda: PercentTotalAndAllIndividualRewards(
             IRE_PERCENT=OctantRewardsDefaultValues.IRE_PERCENT,
             TR_PERCENT=OctantRewardsDefaultValues.TR_PERCENT,

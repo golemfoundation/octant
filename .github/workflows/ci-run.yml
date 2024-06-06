@@ -136,6 +136,8 @@ jobs:
       OCTANT_ENV: dev
       CHAIN_ID: 1337
       CHAIN_NAME: localhost
+      GC_PASSPORT_SCORER_ID: "${{ secrets.GITCOIN_SCORER_ID }}"
+      GC_PASSPORT_SCORER_API_KEY: "${{ secrets.GITCOIN_SCORER_API_KEY }}"
     steps:
     - uses: actions/checkout@v4.1.0
     - uses: actions/cache/restore@v4
@@ -265,7 +267,7 @@ jobs:
     runs-on:
       - general
     container:
-      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:d984811a
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:aa8eeade
       credentials:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
@@ -365,7 +367,7 @@ jobs:
     runs-on:
       - general
     container:
-      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:d984811a
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:aa8eeade
       credentials:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
@@ -416,7 +418,7 @@ jobs:
     runs-on:
       - general
     container:
-      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:d984811a
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:aa8eeade
       credentials:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
@@ -474,7 +476,7 @@ jobs:
     needs:
     - permissions-check
     container:
-      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:d984811a
+      image: registry.gitlab.com/golemfoundation/devops/container-builder/octant/node-extended:aa8eeade
       credentials:
         username: "doesnt-matter"
         password: "${{ secrets.GITLAB_PAT_CONTAINER_BUILDER_DOCKER_IMAGES_READ }}"
