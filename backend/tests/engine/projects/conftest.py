@@ -2,7 +2,10 @@ from decimal import Decimal
 
 import pytest
 
-from app.engine.projects.rewards.allocations import ProjectSumAllocationsDTO
+from app.engine.projects.rewards.allocations import (
+    ProjectSumAllocationsDTO,
+    AllocationItem,
+)
 from app.modules.dto import AllocationDTO
 from app.engine.projects.rewards.funding_cap.percent import ProjectMatchedRewardsDTO
 
@@ -87,16 +90,16 @@ def data_for_quadratic_funding(projects):
 def dataset_1_for_capped_quadratic_funding(projects):
     matched_rewards = 35000
     allocations = [
-        ProjectSumAllocationsDTO(projects[0], 1000),
-        ProjectSumAllocationsDTO(projects[1], 2000),
-        ProjectSumAllocationsDTO(projects[2], 3000),
-        ProjectSumAllocationsDTO(projects[3], 4000),
-        ProjectSumAllocationsDTO(projects[4], 5000),
-        ProjectSumAllocationsDTO(projects[5], 6000),
-        ProjectSumAllocationsDTO(projects[6], 7000),
-        ProjectSumAllocationsDTO(projects[7], 8000),
-        ProjectSumAllocationsDTO(projects[8], 9000),
-        ProjectSumAllocationsDTO(projects[9], 10000),
+        AllocationItem(projects[0], 1000),
+        AllocationItem(projects[1], 2000),
+        AllocationItem(projects[2], 3000),
+        AllocationItem(projects[3], 4000),
+        AllocationItem(projects[4], 5000),
+        AllocationItem(projects[5], 6000),
+        AllocationItem(projects[6], 7000),
+        AllocationItem(projects[7], 8000),
+        AllocationItem(projects[8], 9000),
+        AllocationItem(projects[9], 10000),
     ]
 
     return matched_rewards, allocations
@@ -106,12 +109,12 @@ def dataset_1_for_capped_quadratic_funding(projects):
 def dataset_2_for_capped_quadratic_funding(projects):
     matched_rewards = 35000
     allocations = [
-        ProjectSumAllocationsDTO(projects[0], 1000),
-        ProjectSumAllocationsDTO(projects[1], 2000),
-        ProjectSumAllocationsDTO(projects[2], 3000),
-        ProjectSumAllocationsDTO(projects[3], 4000),
-        ProjectSumAllocationsDTO(projects[4], 5000),
-        ProjectSumAllocationsDTO(projects[5], 6000),
+        AllocationItem(projects[0], 1000),
+        AllocationItem(projects[1], 2000),
+        AllocationItem(projects[2], 3000),
+        AllocationItem(projects[3], 4000),
+        AllocationItem(projects[4], 5000),
+        AllocationItem(projects[5], 6000),
     ]
 
     return matched_rewards, allocations
@@ -121,18 +124,18 @@ def dataset_2_for_capped_quadratic_funding(projects):
 def many_allocations_per_project_for_capped_quadratic_funding(projects):
     matched_rewards = 100000
     allocations = [
-        ProjectSumAllocationsDTO(projects[0], 1000),
-        ProjectSumAllocationsDTO(projects[0], 1000),
-        ProjectSumAllocationsDTO(projects[1], 2000),
-        ProjectSumAllocationsDTO(projects[1], 2000),
-        ProjectSumAllocationsDTO(projects[2], 3000),
-        ProjectSumAllocationsDTO(projects[2], 3000),
-        ProjectSumAllocationsDTO(projects[3], 4000),
-        ProjectSumAllocationsDTO(projects[3], 4000),
-        ProjectSumAllocationsDTO(projects[4], 5000),
-        ProjectSumAllocationsDTO(projects[4], 5000),
-        ProjectSumAllocationsDTO(projects[5], 6000),
-        ProjectSumAllocationsDTO(projects[5], 6000),
+        AllocationItem(projects[0], 1000),
+        AllocationItem(projects[0], 1000),
+        AllocationItem(projects[1], 2000),
+        AllocationItem(projects[1], 2000),
+        AllocationItem(projects[2], 3000),
+        AllocationItem(projects[2], 3000),
+        AllocationItem(projects[3], 4000),
+        AllocationItem(projects[3], 4000),
+        AllocationItem(projects[4], 5000),
+        AllocationItem(projects[4], 5000),
+        AllocationItem(projects[5], 6000),
+        AllocationItem(projects[5], 6000),
     ]
 
     return matched_rewards, allocations
