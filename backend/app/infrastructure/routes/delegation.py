@@ -92,15 +92,6 @@ class UQScoreDelegationCheck(OctantResource):
     @ns.marshal_with(score_delegation_check_model)
     @ns.response(200, "User's delegations reconstructed")
     def get(self, addresses: str):
-        tokens = addresses.split(",")
-        if len(tokens) < 2:
-            return "Please specify at least 2 addresses", 400
-        if len(tokens) > 10:
-            return "Please specify at not more than 10 addresses", 400
-        pairs = controller.delegation_check(tokens)
-        if not pairs:
-            return "No delegation detected", 404
-        if len(pairs) > 1:
-            return "No delegation detected", 404
+        pairs = controller.delegation_check(addresses)
         secondary, primary = pairs[0]
         return {"primary": primary, "secondary": secondary}, 200
