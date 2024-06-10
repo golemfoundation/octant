@@ -126,7 +126,7 @@ class PendingUserAllocations(SavedUserAllocations, Model):
         projects_settings = context.epoch_settings.project
         projects = context.projects_details.projects
         matched_rewards = self.octant_rewards.get_matched_rewards(context)
-        all_allocations_before = database.allocations.get_all(
+        all_allocations_before = database.allocations.get_all_with_uqs(
             context.epoch_details.epoch_num
         )
 

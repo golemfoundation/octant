@@ -33,7 +33,6 @@ def simulate_allocation(
         simulated_allocations,
         all_projects,
         matched_rewards,
-        epoch_num,
     )
 
     leverage = calculate_leverage(matched_rewards, simulated_rewards.total_allocated)

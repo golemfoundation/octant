@@ -4,7 +4,7 @@ from typing import List, Tuple
 
 from eth_utils import to_checksum_address
 from sqlalchemy import func
-from sqlalchemy.orm import Query
+from sqlalchemy.orm import Query, joinedload
 from typing_extensions import deprecated
 
 from app.extensions import db
@@ -250,3 +250,24 @@ def get_user_allocation_epoch_count(user_address: str) -> int:
     )
 
     return epoch_count
+
+
+def get_all_with_uqs(epoch: int) -> List[AllocationDTO]:
+    allocations = (
+        Allocation.query.filter_by(epoch=epoch)
+        .filter(Allocation.deleted_at.is_(None))
+        .options(joinedload(Allocation.user).joinedload(User.uniqueness_quotient))
+        .all()
+    )
+
+    return [
+        AllocationDTO(
+            amount=int(a.amount),
+            project_address=a.project_address,
+            user_address=a.user.address,
+            uq_score=a.user.uniqueness_quotient[epoch].score
+            if epoch in a.user.uniqueness_quotient
+            else None,
+        )
+        for a in allocations
+    ]

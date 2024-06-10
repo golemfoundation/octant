@@ -12,6 +12,7 @@ class AllocationItem:
     project_address: str
     amount: int
     user_address: Optional[str] = None
+    uq_score: Optional[Decimal] = None
 
 
 @dataclass(frozen=True)
@@ -23,14 +24,13 @@ class ProjectSumAllocationsDTO(JSONWizard):
 @dataclass
 class ProjectAllocationsPayload:
     allocations: List[AllocationItem] = None
-    epoch_num: int = None
 
 
 @dataclass
 class ProjectAllocations(ABC):
     @abstractmethod
     def _calc_allocations(
-        self, allocations: List[AllocationItem], epoch_num: int
+        self, allocations: List[AllocationItem]
     ) -> Union[int, Decimal]:
         ...
 
@@ -44,9 +44,7 @@ class ProjectAllocations(ABC):
             key=lambda a: a.project_address,
         )
         for project_address, project_allocations in grouped_allocations:
-            project_allocations = self._calc_allocations(
-                project_allocations, payload.epoch_num
-            )
+            project_allocations = self._calc_allocations(project_allocations)
             result_allocations.append(
                 ProjectSumAllocationsDTO(project_address, project_allocations)
             )
