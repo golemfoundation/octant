@@ -57,6 +57,7 @@ const MetricsEpochGridBelowThreshold: FC<MetricsEpochGridBelowThresholdProps> = 
         {
           children: (
             <MetricsGridTileValue
+              dataTest="MetricsEpochGridBelowThreshold__ethBelowThreshold"
               isLoading={isLoading}
               size="S"
               subvalue={ethBelowThresholdToDisplay.secondary}
