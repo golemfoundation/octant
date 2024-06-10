@@ -41,15 +41,9 @@ const AllocationNavigation: FC<AllocationNavigationProps> = ({
 
   return (
     <div className={styles.root}>
+      <Button className={styles.button} {...commonProps} {...buttonPreviousProps} />
       <Button
         className={styles.button}
-        {...commonProps}
-        {...buttonPreviousProps}
-        dataTest="AllocationNavigation__previousButton"
-      />
-      <Button
-        className={styles.button}
-        dataTest="AllocationNavigation__nextButton"
         isLoading={isLoading}
         variant="cta"
         {...commonProps}

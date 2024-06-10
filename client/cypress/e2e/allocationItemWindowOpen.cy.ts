@@ -15,6 +15,7 @@ import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
   ALLOCATION_ITEMS_KEY,
   HAS_ONBOARDING_BEEN_CLOSED,
+  IS_CRYPTO_MAIN_VALUE_DISPLAY,
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
@@ -167,7 +168,7 @@ describe('allocation (allocation window open)', () => {
           .contains('USD');
       });
 
-      it('User can change allocation item value manually ("Use crypto as main value display": true)', () => {
+      it(`User can change allocation item value manually (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true)`, () => {
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText]')
@@ -186,7 +187,7 @@ describe('allocation (allocation window open)', () => {
           .should('eq', '0.003 ETH');
       });
 
-      it('User can change allocation item value manually ("Use crypto as main value display": false)', () => {
+      it(`User can change allocation item value manually (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
         changeMainValueToFiat();
 
         cy.get('[data-test=AllocationItem]')

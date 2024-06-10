@@ -5,6 +5,7 @@ import { visitWithLoader, mockCoinPricesServer, connectWallet, ETH_USD } from 'c
 import viewports from 'cypress/utils/viewports';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
+  IS_CRYPTO_MAIN_VALUE_DISPLAY,
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
@@ -411,7 +412,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         cy.get('[data-test=AllocationRewardsBox]').should('be.visible');
       });
 
-      it('has each field with value 0 ETH ("Use crypto as main value display": true)', () => {
+      it(`has each field with value 0 ETH (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true)`, () => {
         cy.get('[data-test=AllocationRewardsBox__title]').invoke('text').should('eq', '0 ETH');
         cy.get('[data-test=AllocationRewardsBox__section__value--0]')
           .invoke('text')
@@ -421,7 +422,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
           .should('eq', '0 ETH');
       });
 
-      it('has each field with value $0.00 ("Use crypto as main value display": false)', () => {
+      it(`has each field with value $0.00 (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
         changeMainValueToFiat();
 
         cy.get('[data-test=AllocationRewardsBox__title]').invoke('text').should('eq', '$0.00');
@@ -529,11 +530,11 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         .should('eq', 'Available now');
     });
 
-    it('user has 0.01 ETH rewards ("Use crypto as main value display": true)', () => {
+    it(`user has 0.01 ETH rewards (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true)`, () => {
       cy.get('[data-test=AllocationRewardsBox__title]').invoke('text').should('eq', '0.01 ETH');
     });
 
-    it('user has $20.42 (0.01 ETH) rewards ("Use crypto as main value display": false)', () => {
+    it(`user has $20.42 (0.01 ETH) rewards (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
       changeMainValueToFiat();
 
       cy.get('[data-test=AllocationRewardsBox__title]')
@@ -556,27 +557,27 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
       cy.get('[data-test=ModalAllocationValuesEdit]').should('exist').should('be.visible');
     });
 
-    it('user can split the value by using slider from 0/100 to 50/50 and then from 50/50 to 100/0 ("Use crypto as main value display": true)', () => {
+    it(`user can split the value by using slider from 0/100 to 50/50 and then from 50/50 to 100/0 (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true)`, () => {
       splitTheValueUsingSlider(true);
     });
 
-    it('user can split the value by using slider from 0/100 to 50/50 and then from 50/50 to 100/0 ("Use crypto as main value display": false)', () => {
+    it(`user can split the value by using slider from 0/100 to 50/50 and then from 50/50 to 100/0 (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
       splitTheValueUsingSlider(false);
     });
 
-    it('user can change `Donate` value manually in modal ("Use crypto as main value display": true)', () => {
+    it(`user can change 'Donate' value manually in modal (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true)`, () => {
       changeDonateManually(true);
     });
 
-    it('user can change `Donate` value manually in modal ("Use crypto as main value display": false)', () => {
+    it(`user can change 'Donate' value manually in modal (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
       changeDonateManually(false);
     });
 
-    it('user can change `Personal` value manually in modal "Use crypto as main value display": true)', () => {
+    it(`user can change 'Personal' value manually in modal ${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true)`, () => {
       changePersonalManually(true);
     });
 
-    it('user can change `Personal` value manually in modal "Use crypto as main value display": false)', () => {
+    it(`user can change 'Personal' value manually in modal ${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
       changePersonalManually(false);
     });
   });
