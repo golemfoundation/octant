@@ -122,7 +122,7 @@ class PendingUserAllocations(SavedUserAllocations, Model):
         context: Context,
         user_allocations: List[AllocationDTO],
         user_address: str,
-    ) -> Tuple[float, int, List[ProjectRewardDTO], int]:
+    ) -> Tuple[float, int, List[ProjectRewardDTO]]:
         projects_settings = context.epoch_settings.project
         projects = context.projects_details.projects
         matched_rewards = self.octant_rewards.get_matched_rewards(context)
