@@ -17,7 +17,10 @@ from app.engine.projects.rewards.allocations import (
 from app.engine.projects.rewards.allocations.quadratic_funding import (
     QuadraticFundingAllocations,
 )
-from app.engine.projects.rewards.funding_cap.percent import FundingCapPercentCalculator
+from app.engine.projects.rewards.funding_cap.percent import (
+    FundingCapPercentCalculator,
+    ProjectMatchedRewardsDTO,
+)
 
 
 @dataclass
@@ -36,7 +39,7 @@ class CappedQuadraticFundingProjectRewards(ProjectRewards):
         allocated_by_addr: List[ProjectSumAllocationsDTO],
         total_allocated: Decimal,
         payload,
-    ) -> List[ProjectSumAllocationsDTO]:
+    ) -> List[ProjectMatchedRewardsDTO]:
         allocated_by_addr_with_matched = []
         for allocation in allocated_by_addr:
             calc_matched = Decimal(
@@ -44,7 +47,7 @@ class CappedQuadraticFundingProjectRewards(ProjectRewards):
             )
 
             allocated_by_addr_with_matched.append(
-                ProjectSumAllocationsDTO(allocation.project_address, calc_matched)
+                ProjectMatchedRewardsDTO(allocation.project_address, calc_matched)
             )
 
         return allocated_by_addr_with_matched

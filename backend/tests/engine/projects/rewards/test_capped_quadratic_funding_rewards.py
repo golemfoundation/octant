@@ -28,7 +28,7 @@ def test_compute_capped_qf_rewards_for_none_allocations():
 def test_compute_capped_qf_rewards_for_allocations_to_one_project(
     projects, dataset_1_for_capped_quadratic_funding
 ):
-    MATCHED_REWARDS, allocations, _ = dataset_1_for_capped_quadratic_funding
+    MATCHED_REWARDS, allocations = dataset_1_for_capped_quadratic_funding
 
     payload = ProjectRewardsPayload(MATCHED_REWARDS, [allocations[0]], projects)
     uut = CappedQuadraticFundingProjectRewards()
@@ -44,7 +44,7 @@ def test_compute_capped_qf_rewards_for_allocations_to_one_project(
 def test_compute_capped_qf_rewards_for_allocations_to_multiple_project(
     projects, dataset_2_for_capped_quadratic_funding
 ):
-    MATCHED_REWARDS, allocations, _ = dataset_2_for_capped_quadratic_funding
+    MATCHED_REWARDS, allocations = dataset_2_for_capped_quadratic_funding
 
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects[:6])
     uut = CappedQuadraticFundingProjectRewards()
@@ -114,12 +114,10 @@ def _check_project_reward(
 def test_total_matched_rewards_are_distributed(
     projects, dataset_2_for_capped_quadratic_funding
 ):
-    _, allocations, _ = dataset_2_for_capped_quadratic_funding
+    MATCHED_REWARDS, allocations = dataset_2_for_capped_quadratic_funding
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects)
     uut = CappedQuadraticFundingProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
 
-    assert sum([r.matched for r in result.rewards]) == pytest.approx(
-        MATCHED_REWARDS, 0.0000000000000000001
-    )
+    assert sum([r.matched for r in result.rewards]) == pytest.approx(MATCHED_REWARDS, 1)

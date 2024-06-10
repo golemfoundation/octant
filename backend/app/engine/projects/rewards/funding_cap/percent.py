@@ -1,9 +1,15 @@
 from dataclasses import dataclass
 from decimal import Decimal
 from typing import Dict, List
-import pandas as pd
 
-from app.engine.projects.rewards.allocations import ProjectSumAllocationsDTO
+import pandas as pd
+from dataclass_wizard import JSONWizard
+
+
+@dataclass(frozen=True)
+class ProjectMatchedRewardsDTO(JSONWizard):
+    project_address: str
+    amount: Decimal
 
 
 @dataclass
@@ -33,7 +39,7 @@ class FundingCapPercentCalculator:
 
     def apply_capped_distribution(
         self,
-        matched_allocated_by_addr: List[ProjectSumAllocationsDTO],
+        matched_allocated_by_addr: List[ProjectMatchedRewardsDTO],
         matched_rewards: int,
     ) -> Dict[str, Decimal]:
         matched_allocated_by_addr = pd.DataFrame(matched_allocated_by_addr)

@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from decimal import Decimal
 from itertools import groupby
-from numbers import Number
 from typing import List, Union
 
 from dataclass_wizard import JSONWizard
@@ -16,7 +15,7 @@ class AllocationItem:
 
 @dataclass(frozen=True)
 class ProjectSumAllocationsDTO(AllocationItem, JSONWizard):
-    amount: Union[Decimal, int]
+    amount: Union[int, Decimal]
 
 
 @dataclass
@@ -27,7 +26,9 @@ class ProjectAllocationsPayload:
 @dataclass
 class ProjectAllocations(ABC):
     @abstractmethod
-    def _calc_allocations(self, allocations: List[AllocationItem]) -> Number:
+    def _calc_allocations(
+        self, allocations: List[AllocationItem]
+    ) -> Union[int, Decimal]:
         ...
 
     def group_allocations_by_projects(

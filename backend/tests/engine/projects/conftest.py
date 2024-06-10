@@ -4,7 +4,7 @@ import pytest
 
 from app.engine.projects.rewards.allocations import ProjectSumAllocationsDTO
 from app.modules.dto import AllocationDTO
-from tests.helpers.constants import MR_FUNDING_CAP_PERCENT
+from app.engine.projects.rewards.funding_cap.percent import ProjectMatchedRewardsDTO
 
 
 @pytest.fixture
@@ -86,7 +86,6 @@ def data_for_quadratic_funding(projects):
 @pytest.fixture
 def dataset_1_for_capped_quadratic_funding(projects):
     matched_rewards = 35000
-    capped_matched_rewards = matched_rewards * MR_FUNDING_CAP_PERCENT
     allocations = [
         ProjectSumAllocationsDTO(projects[0], 1000),
         ProjectSumAllocationsDTO(projects[1], 2000),
@@ -100,20 +99,7 @@ def dataset_1_for_capped_quadratic_funding(projects):
         ProjectSumAllocationsDTO(projects[9], 10000),
     ]
 
-    expected_distribution = {
-        projects[0]: Decimal("1333.333333333333333333333334"),
-        projects[1]: Decimal("2666.666666666666666666666666"),
-        projects[2]: Decimal("4000.000000000000000000000000"),
-        projects[3]: Decimal("5333.333333333333333333333333"),
-        projects[4]: Decimal("6666.666666666666666666666667"),
-        projects[5]: capped_matched_rewards,
-        projects[6]: capped_matched_rewards,
-        projects[7]: capped_matched_rewards,
-        projects[8]: capped_matched_rewards,
-        projects[9]: capped_matched_rewards,
-    }
-
-    return matched_rewards, allocations, expected_distribution
+    return matched_rewards, allocations
 
 
 @pytest.fixture
@@ -128,11 +114,7 @@ def dataset_2_for_capped_quadratic_funding(projects):
         ProjectSumAllocationsDTO(projects[5], 6000),
     ]
 
-    expected_distribution = dict(
-        map(lambda x: (x.project_address, x.amount), allocations)
-    )
-
-    return matched_rewards, allocations, expected_distribution
+    return matched_rewards, allocations
 
 
 @pytest.fixture
@@ -154,3 +136,43 @@ def many_allocations_per_project_for_capped_quadratic_funding(projects):
     ]
 
     return matched_rewards, allocations
+
+
+@pytest.fixture
+def matched_rewards_with_capped_distribution(projects):
+    matched_rewards = 10000
+    computed_matched_rewards = [
+        ProjectMatchedRewardsDTO(projects[0], Decimal("500.0")),
+        ProjectMatchedRewardsDTO(projects[1], Decimal("2000.0")),
+        ProjectMatchedRewardsDTO(projects[2], Decimal("2000.0")),
+        ProjectMatchedRewardsDTO(projects[3], Decimal("2500.0")),
+        ProjectMatchedRewardsDTO(projects[4], Decimal("2500.0")),
+        ProjectMatchedRewardsDTO(projects[5], Decimal("500.0")),
+    ]
+    expected_distribution = {
+        projects[0]: Decimal("1000.0"),
+        projects[1]: Decimal("2000.0"),
+        projects[2]: Decimal("2000.0"),
+        projects[3]: Decimal("2000.0"),
+        projects[4]: Decimal("2000.0"),
+        projects[5]: Decimal("1000.0"),
+    }
+
+    return matched_rewards, computed_matched_rewards, expected_distribution
+
+
+@pytest.fixture
+def matched_rewards_with_no_capped_distribution(projects):
+    matched_rewards = 10000
+    computed_matched_rewards = [
+        ProjectMatchedRewardsDTO(projects[0], Decimal(2000)),
+        ProjectMatchedRewardsDTO(projects[1], Decimal(2000)),
+        ProjectMatchedRewardsDTO(projects[2], Decimal(2000)),
+        ProjectMatchedRewardsDTO(projects[3], Decimal(2000)),
+        ProjectMatchedRewardsDTO(projects[4], Decimal(2000)),
+    ]
+    expected_distribution = dict(
+        map(lambda x: (x.project_address, x.amount), computed_matched_rewards)
+    )
+
+    return matched_rewards, computed_matched_rewards, expected_distribution

@@ -2,37 +2,37 @@ from app.engine.projects.rewards.funding_cap.percent import FundingCapPercentCal
 from tests.helpers.constants import MR_FUNDING_CAP_PERCENT
 
 
-def test_percent_funding_cap_when_none_exceeds_cap(
-    dataset_2_for_capped_quadratic_funding,
+def test_applying_percent_funding_cap_when_none_exceeds_cap(
+    matched_rewards_with_no_capped_distribution,
 ):
     (
-        matched_rewards,
+        MATCHED_REWARDS,
         allocations,
         expected_distribution,
-    ) = dataset_2_for_capped_quadratic_funding
+    ) = matched_rewards_with_no_capped_distribution
 
     calculator = FundingCapPercentCalculator(MR_FUNDING_CAP_PERCENT)
 
     capped_distribution = calculator.apply_capped_distribution(
-        allocations, matched_rewards
+        allocations, MATCHED_REWARDS
     )
 
     assert capped_distribution == expected_distribution
 
 
-def test_percent_funding_cap_calculations_when_exceeds_cap(
-    dataset_1_for_capped_quadratic_funding,
+def test_applying_percent_funding_cap_calculations_when_exceeds_cap(
+    matched_rewards_with_capped_distribution,
 ):
     (
-        matched_rewards,
-        allocations,
+        MATCHED_REWARDS,
+        computed_matched_rewards,
         expected_distribution,
-    ) = dataset_1_for_capped_quadratic_funding
+    ) = matched_rewards_with_capped_distribution
 
     calculator = FundingCapPercentCalculator(MR_FUNDING_CAP_PERCENT)
 
     capped_distribution = calculator.apply_capped_distribution(
-        allocations, matched_rewards
+        computed_matched_rewards, MATCHED_REWARDS
     )
 
     assert capped_distribution == expected_distribution
