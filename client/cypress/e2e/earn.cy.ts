@@ -1,13 +1,54 @@
-import { visitWithLoader, mockCoinPricesServer, connectWallet } from 'cypress/utils/e2e';
+import { visitWithLoader, mockCoinPricesServer, connectWallet, GLM_USD } from 'cypress/utils/e2e';
 import { moveTime } from 'cypress/utils/moveTime';
 import { ConnectWalletParameters } from 'cypress/utils/types';
 import viewports from 'cypress/utils/viewports';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
+  IS_CRYPTO_MAIN_VALUE_DISPLAY,
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
+
+const changeMainValueToFiat = () => {
+  cy.get('[data-test=Navbar__Button--Settings]').click();
+  cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
+  cy.get('[data-test=Navbar__Button--Allocate]').click();
+};
+
+const checkValues = (isCryptoAsAMainValue: boolean) => {
+  if (!isCryptoAsAMainValue) {
+    changeMainValueToFiat();
+  }
+
+  cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '0 GLM' : '$0.00');
+  cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__secondary]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '$0.00' : '0 GLM');
+
+  cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__primary]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '0 GLM' : '$0.00');
+  cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__secondary]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '$0.00' : '0 GLM');
+
+  cy.get('[data-test=BoxPersonalAllocation__Section--pending__DoubleValue__primary]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '$0.00');
+  cy.get('[data-test=BoxPersonalAllocation__Section--pending__DoubleValue__secondary]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '$0.00' : '0 ETH');
+
+  cy.get('[data-test=BoxPersonalAllocation__Section--availableNow__DoubleValue__primary]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '$0.00');
+  cy.get('[data-test=BoxPersonalAllocation__Section--availableNow__DoubleValue__secondary]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '$0.00' : '0 ETH');
+};
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }, idx) => {
   describe(`earn: ${device}`, { viewportHeight, viewportWidth }, () => {
@@ -212,6 +253,41 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           cy.get('[data-test=HistoryItem__DoubleValue__primary]')
             .first()
             .should('have.text', '1 GLM');
+          cy.get('[data-test=HistoryItem__DoubleValue__secondary]')
+            .first()
+            .should('have.text', `$${(1 * GLM_USD).toFixed(2)}`);
+
+          cy.get('[data-test=HistoryItem]').first().click();
+          cy.get('[data-test=EarnHistoryItemDetailsModal]').should('be.visible');
+
+          cy.get('[data-test=EarnHistoryItemDetailsRest__amount__DoubleValue__primary]')
+            .invoke('text')
+            .should('eq', '1 GLM');
+          cy.get('[data-test=EarnHistoryItemDetailsRest__amount__DoubleValue__secondary]')
+            .invoke('text')
+            .should('eq', `$${(1 * GLM_USD).toFixed(2)}`);
+
+          cy.get('[data-test=EarnHistoryItemDetailsModal__Button]').click();
+          cy.get('[data-test=EarnHistoryItemDetailsModal]').should('not.be.visible');
+
+          changeMainValueToFiat();
+
+          cy.get('[data-test=HistoryItem__DoubleValue__primary]')
+            .first()
+            .should('have.text', `$${(1 * GLM_USD).toFixed(2)}`);
+          cy.get('[data-test=HistoryItem__DoubleValue__secondary]')
+            .first()
+            .should('have.text', '1 GLM');
+
+          cy.get('[data-test=HistoryItem]').first().click();
+          cy.get('[data-test=EarnHistoryItemDetailsModal]').should('be.visible');
+
+          cy.get('[data-test=EarnHistoryItemDetailsRest__amount__DoubleValue__primary]')
+            .invoke('text')
+            .should('eq', `$${(1 * GLM_USD).toFixed(2)}`);
+          cy.get('[data-test=EarnHistoryItemDetailsRest__amount__DoubleValue__secondary]')
+            .invoke('text')
+            .should('eq', `1 GLM`);
         });
     });
 
@@ -276,6 +352,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             });
           });
         });
+    });
+
+    it(`check boxes values ${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true`, () => {
+      checkValues(true);
+    });
+
+    it(`check boxes values ${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false`, () => {
+      checkValues(true);
     });
   });
 });
