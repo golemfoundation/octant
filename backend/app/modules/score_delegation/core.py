@@ -1,8 +1,9 @@
 from itertools import permutations
-from collections import namedtuple
+from typing import NamedTuple
 from enum import Enum
-from eth_utils import to_checksum_address
+from eth_utils.address import to_checksum_address
 import hashlib
+from typing import Tuple
 
 from app.exceptions import (
     DelegationAlreadyExists,
@@ -20,9 +21,11 @@ from app.modules.dto import ScoreDelegationPayload
 
 MIN_SCORE = 15
 
-HashedAddresses = namedtuple(
-    "HashedAddresses", ["primary_addr_hash", "secondary_addr_hash", "both_hash"]
-)
+
+class HashedAddresses(NamedTuple):
+    primary_addr_hash: str
+    secondary_addr_hash: str
+    both_hash: str
 
 
 class ActionType(Enum):
@@ -35,7 +38,10 @@ def build_score_delegation_message(primary_addr: str, secondary_addr: str) -> st
 
 
 def get_hashed_addresses(
-    payload: ScoreDelegationPayload, salt: str, salt_primary: str, normalize: str = True
+    payload: ScoreDelegationPayload,
+    salt: str,
+    salt_primary: str,
+    normalize: bool = True,
 ) -> HashedAddresses:
     primary = payload.primary_addr
     secondary = payload.secondary_addr
@@ -55,8 +61,12 @@ def get_hashed_addresses(
 
 
 def delegation_check(
-    addresses: [str], all_hashes: set[str], salt: str, salt_primary: str, normalize=True
-) -> set[(str, str)]:
+    addresses: list[str],
+    all_hashes: set[str],
+    salt: str,
+    salt_primary: str,
+    normalize=True,
+) -> set[Tuple[str, str]]:
     result = []
     for secondary, primary in permutations(addresses, 2):
         payload = ScoreDelegationPayload(

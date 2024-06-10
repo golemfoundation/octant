@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Protocol, runtime_checkable
+from typing import Protocol, runtime_checkable, Tuple, Container
 
 from app.context.manager import Context
 from app.extensions import db
@@ -17,7 +17,7 @@ from flask import current_app as app
 class Antisybil(Protocol):
     def fetch_antisybil_status(
         self, _: Context, user_address: str
-    ) -> (float, datetime, any):
+    ) -> Tuple[float, datetime, any]:
         ...
 
     def update_antisybil_status(
@@ -66,7 +66,7 @@ class SimpleObfuscationDelegation(Model):
         self._delegation(context, payload, ActionType.RECALCULATION)
         db.session.commit()
 
-    def check(self, _: Context, addresses: [str]) -> set[(str, str)]:
+    def check(self, _: Context, addresses: list[str]) -> Container[Tuple[str, str]]:
         all_hashes = database.score_delegation.get_all_delegations()
         return core.delegation_check(
             addresses,
