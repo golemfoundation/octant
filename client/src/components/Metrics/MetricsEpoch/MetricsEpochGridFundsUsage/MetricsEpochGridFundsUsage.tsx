@@ -191,7 +191,10 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
                 <div className={cx(styles.label, isLoading && styles.isLoading)}>
                   {!isLoading && t('epochTotal', { epoch })}
                 </div>
-                <div className={cx(styles.value, isLoading && styles.isLoading)}>
+                <div
+                  className={cx(styles.value, isLoading && styles.isLoading)}
+                  data-test="MetricsEpochGridFundsUsage__total"
+                >
                   {!isLoading &&
                     getValuesToDisplay({
                       cryptoCurrency: 'ethereum',
