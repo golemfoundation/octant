@@ -22,6 +22,7 @@ def simulate_allocation(
     user_address: str,
     all_projects: List[str],
     matched_rewards: int,
+    epoch_num: int,
 ):
     simulated_allocations = _replace_user_allocation(
         all_allocations_before, user_allocations, user_address
@@ -32,6 +33,7 @@ def simulate_allocation(
         simulated_allocations,
         all_projects,
         matched_rewards,
+        epoch_num,
     )
 
     leverage = calculate_leverage(matched_rewards, simulated_rewards.total_allocated)

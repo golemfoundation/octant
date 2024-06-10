@@ -64,7 +64,7 @@ class PendingSnapshotDTO(JSONWizard):
 
 @dataclass(frozen=True)
 class AllocationDTO(AllocationItem, JSONWizard):
-    user_address: Optional[str] = None
+    pass
 
 
 @dataclass(frozen=True)

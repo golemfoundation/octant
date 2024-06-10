@@ -28,9 +28,10 @@ def get_finalized_project_rewards(
     allocations: list[AllocationDTO],
     all_projects: list[str],
     matched_rewards: int,
+    epoch_num: int,
 ) -> FinalizedProjectRewards:
     project_rewards_result = get_projects_rewards(
-        project_settings, allocations, all_projects, matched_rewards
+        project_settings, allocations, all_projects, matched_rewards, epoch_num
     )
 
     return FinalizedProjectRewards(

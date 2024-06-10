@@ -28,6 +28,7 @@ class ProjectRewardsPayload:
     matched_rewards: int = None
     allocations: List[AllocationItem] = None
     projects: List[str] = None
+    epoch_num: int = None
 
 
 @dataclass

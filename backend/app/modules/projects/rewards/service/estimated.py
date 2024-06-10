@@ -24,7 +24,11 @@ class EstimatedProjectRewards(SavedProjectRewards, Model):
         allocations = database.allocations.get_all(context.epoch_details.epoch_num)
 
         projects_rewards = get_projects_rewards(
-            project_settings, allocations, all_projects, matched_rewards
+            project_settings,
+            allocations,
+            all_projects,
+            matched_rewards,
+            context.epoch_details.epoch_num,
         )
 
         return projects_rewards

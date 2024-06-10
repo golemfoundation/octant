@@ -58,12 +58,13 @@ class CappedQuadraticFundingProjectRewards(ProjectRewards):
         """
         Calculate rewards for projects using plain quadratic funding formula with capped funding.
         """
-        # TODO OCT-1625 Apply Gitcoin user's score for the formula: https://linear.app/golemfoundation/issue/OCT-1624/implement-quadratic-funding
         (
             allocated_by_addr,
             total_allocated,
         ) = self.projects_allocations.group_allocations_by_projects(
-            ProjectAllocationsPayload(allocations=payload.allocations)
+            ProjectAllocationsPayload(
+                allocations=payload.allocations, epoch_num=payload.epoch_num
+            )
         )
         rewards = {
             address: ProjectRewardDTO(address, 0, 0) for address in payload.projects

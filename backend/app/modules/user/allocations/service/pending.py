@@ -137,6 +137,7 @@ class PendingUserAllocations(SavedUserAllocations, Model):
             user_address,
             projects,
             matched_rewards,
+            context.epoch_details.epoch_num,
         )
 
     def revoke_previous_allocation(self, context: Context, user_address: str):

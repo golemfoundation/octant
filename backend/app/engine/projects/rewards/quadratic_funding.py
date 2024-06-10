@@ -32,7 +32,9 @@ class QuadraticFundingProjectRewards(ProjectRewards):
             allocated_by_addr,
             total_allocated,
         ) = self.projects_allocations.group_allocations_by_projects(
-            ProjectAllocationsPayload(allocations=payload.allocations)
+            ProjectAllocationsPayload(
+                allocations=payload.allocations, epoch_num=payload.epoch_num
+            )
         )
         rewards = {
             address: ProjectRewardDTO(address, 0, 0) for address in payload.projects

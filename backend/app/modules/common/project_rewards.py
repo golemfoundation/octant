@@ -13,9 +13,11 @@ def get_projects_rewards(
     allocations: List[AllocationDTO],
     all_projects: List[str],
     matched_rewards: int,
+    epoch_num: int,
 ) -> ProjectRewardsResult:
     return project_settings.rewards.calculate_project_rewards(
         ProjectRewardsPayload(
+            epoch_num=epoch_num,
             allocations=allocations,
             matched_rewards=matched_rewards,
             projects=all_projects,
