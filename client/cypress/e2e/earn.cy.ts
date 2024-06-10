@@ -359,7 +359,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it(`check boxes values ${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false`, () => {
-      checkValues(true);
+      checkValues(false);
     });
   });
 });
