@@ -11,7 +11,7 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 const changeMainValueToFiat = () => {
   cy.get('[data-test=Navbar__Button--Settings]').click();
   cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
-  cy.get('[data-test=Navbar__Button--Allocate]').click();
+  cy.get('[data-test=Navbar__Button--Metrics]').click();
 };
 
 const rendersTilesWithCorrectValues = (isCryptoAsAMainValue: boolean) => {
