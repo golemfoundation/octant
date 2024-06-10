@@ -3,11 +3,10 @@ from decimal import Decimal
 import pytest
 
 from app.engine.projects.rewards.allocations import (
-    ProjectSumAllocationsDTO,
     AllocationItem,
 )
-from app.modules.dto import AllocationDTO
 from app.engine.projects.rewards.funding_cap.percent import ProjectMatchedRewardsDTO
+from app.modules.dto import AllocationDTO
 
 
 @pytest.fixture
