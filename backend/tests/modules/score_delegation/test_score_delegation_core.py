@@ -1,5 +1,6 @@
 import hashlib
 from datetime import datetime, timedelta
+from typing import Tuple
 
 import pytest
 
@@ -144,7 +145,7 @@ def test_score_is_sufficient():
     )
 
 
-def _mk_db(delegations: [[(str, str)]]) -> set[str]:
+def _mk_db(delegations: list[Tuple[str, str]]) -> set[str]:
     results = []
     for secondary, primary in delegations:
         payload = ScoreDelegationPayload(
@@ -155,7 +156,7 @@ def _mk_db(delegations: [[(str, str)]]) -> set[str]:
         )
         _, _, both = core.get_hashed_addresses(payload, "salt", "salt_primary")
         results = results + [both]
-    return results
+    return set(results)
 
 
 def test_delegation_check():
@@ -170,7 +171,7 @@ def test_delegation_check():
     MALLORY = "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f"
     NICK = "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720"
 
-    # no validity of delegation is done here
+    # no validity check of delegation is performed here
     db_hashes = _mk_db([(BOB, ALICE), (EVE, CAROL), (ALICE, FRANK)])
 
     def check(addresses):
@@ -191,5 +192,5 @@ def test_delegation_check():
     finish = datetime.now()
     assert finish - start < timedelta(seconds=2)
 
-    # check if normalization works as expected
+    # check if address checksumming works as expected
     assert set([(BOB, ALICE.lower())]) == check([ALICE.lower(), BOB])
