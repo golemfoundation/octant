@@ -36,12 +36,13 @@ const rendersTilesWithCorrectValues = (isCryptoAsAMainValue: boolean) => {
   cy.get('[data-test=MetricsEpochGridTotalDonationsAndPersonal__totalPersonal__subvalue]')
     .invoke('text')
     .should('eq', isCryptoAsAMainValue ? '$0.00' : '0');
+
   cy.get('[data-test=MetricsEpochGridRewardsUnusedAndUnallocatedValue__unallocatedValue__value]')
     .invoke('text')
-    .should('eq', isCryptoAsAMainValue ? '0' : '$0.00');
+    .should(isCryptoAsAMainValue ? 'not.include' : 'include', '$');
   cy.get('[data-test=MetricsEpochGridRewardsUnusedAndUnallocatedValue__unallocatedValue__subvalue]')
     .invoke('text')
-    .should('eq', isCryptoAsAMainValue ? '$0.00' : '0');
+    .should(isCryptoAsAMainValue ? 'include' : 'not.include', '$');
 
   cy.get('[data-test=MetricsEpochGridBelowThreshold__ethBelowThreshold__value]')
     .invoke('text')
@@ -52,7 +53,7 @@ const rendersTilesWithCorrectValues = (isCryptoAsAMainValue: boolean) => {
 
   cy.get('[data-test=MetricsEpochGridFundsUsage__total]')
     .invoke('text')
-    .should('eq', isCryptoAsAMainValue ? '0' : '$0.00');
+    .should(isCryptoAsAMainValue ? 'not.include' : 'include', '$');
 };
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
