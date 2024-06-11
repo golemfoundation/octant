@@ -3,12 +3,15 @@ import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsGridTileValue from 'components/Metrics/MetricsGrid/MetricsGridTileValue';
-import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
 import useProjectsDonors from 'hooks/queries/donors/useProjectsDonors';
+import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import i18n from 'i18n';
+import useSettingsStore from 'store/settings/store';
+import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
+import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 
 import MetricsEpochGridBelowThresholdProps from './types';
 
@@ -23,18 +26,32 @@ const MetricsEpochGridBelowThreshold: FC<MetricsEpochGridBelowThresholdProps> = 
   const { data: matchedProjectRewards } = useMatchedProjectRewards(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
+  const {
+    data: { displayCurrency },
+  } = useSettingsStore(({ data }) => ({
+    data: {
+      displayCurrency: data.displayCurrency,
+    },
+  }));
+  const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
   const { data: projectsDonors } = useProjectsDonors(
     isDecisionWindowOpen && epoch === lastEpoch ? undefined : epoch,
   );
-
-  const getValuesToDisplay = useGetValuesToDisplay();
 
   const projectsBelowThreshold =
     Object.keys(projectsDonors).length -
     (matchedProjectRewards?.filter(({ matched }) => matched !== 0n).length || 0);
 
-  const ethBelowThresholdToDisplay = getValuesToDisplay({
+  const ethBelowThresholdToDisplay = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
+    valueCrypto: ethBelowThreshold,
+  });
+
+  const ethBelowThresholdFiatToDisplay = getValueFiatToDisplay({
+    cryptoCurrency: 'ethereum',
+    cryptoValues,
+    displayCurrency,
+    error,
     valueCrypto: ethBelowThreshold,
   });
 
@@ -59,8 +76,8 @@ const MetricsEpochGridBelowThreshold: FC<MetricsEpochGridBelowThresholdProps> = 
             <MetricsGridTileValue
               isLoading={isLoading}
               size="S"
-              subvalue={ethBelowThresholdToDisplay.secondary}
-              value={ethBelowThresholdToDisplay.primary}
+              subvalue={ethBelowThresholdFiatToDisplay}
+              value={ethBelowThresholdToDisplay.value}
             />
           ),
           title: t('ethBelowThreshold'),

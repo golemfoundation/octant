@@ -17,11 +17,13 @@ const MetricsPersonalGridTotalRewardsWithdrawals: FC<
 
   const totalRewardsUsedValues = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
+    showCryptoSuffix: true,
     valueCrypto: metricsPersonalDataRewardsUsage?.totalRewardsUsed,
   });
 
   const totalWithdrawalsValues = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
+    showCryptoSuffix: true,
     valueCrypto: metricsPersonalDataRewardsUsage?.totalWithdrawals,
   });
 
