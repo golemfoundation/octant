@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Scores:
-    identity_poap: int = 10
+    identity_call: int = 10
     epoch0_poap: int = 10
     num_of_donations: int = 10
     threshold: int = 20
@@ -13,15 +13,15 @@ class Scores:
 
 def calculate_uq(
     has_epoch_zero_poap: bool,
-    has_identity_poap: bool,
+    passed_identity_call: bool,
     num_of_donations: int,
     gp_score: float,
     scores: Scores,
 ) -> float:
     uq_score = 0
 
-    if has_identity_poap:
-        uq_score += scores.identity_poap
+    if passed_identity_call:
+        uq_score += scores.identity_call
     if num_of_donations > 1:
         uq_score += scores.num_of_donations
     if has_epoch_zero_poap:

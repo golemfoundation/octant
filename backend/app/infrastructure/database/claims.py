@@ -42,3 +42,11 @@ def get_by_claimed_true_and_nonce_gte(nonce: int = 0) -> List[EpochZeroClaim]:
 
 def get_highest_claim_nonce() -> int:
     return db.session.query(func.max(EpochZeroClaim.claim_nonce)).scalar()
+
+
+def claim_exists(user_address: str, exclude_sybils: bool = False) -> bool:
+    query = EpochZeroClaim.query.filter_by(address=user_address)
+    if exclude_sybils:
+        checksum_sybils = [to_checksum_address(addr) for addr in EPOCH0_SYBILS]
+        query = query.filter(EpochZeroClaim.address.notin_(checksum_sybils))
+    return db.session.query(query.exists()).scalar()

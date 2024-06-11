@@ -22,25 +22,25 @@ def mock_antisybil():
 
 
 @pytest.fixture
-def mock_epoch0_poap():
+def mock_epoch0_whitelist():
     mock = Mock()
-    mock.has_poap.return_value = False
+    mock.exists.return_value = False
     return mock
 
 
 @pytest.fixture
-def mock_identity_poap():
+def mock_identity_call_whitelist():
     mock = Mock()
-    mock.has_poap.return_value = False
+    mock.exists.return_value = False
     return mock
 
 
 @pytest.fixture
-def service(mock_antisybil, mock_epoch0_poap, mock_identity_poap):
+def service(mock_antisybil, mock_epoch0_whitelist, mock_identity_call_whitelist):
     return PreliminaryUQ(
         antisybil=mock_antisybil,
-        epoch0_poap=mock_epoch0_poap,
-        identity_poap=mock_identity_poap,
+        epoch0_whitelist=mock_epoch0_whitelist,
+        identity_call_whitelist=mock_identity_call_whitelist,
     )
 
 

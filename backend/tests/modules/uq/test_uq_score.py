@@ -6,7 +6,7 @@ THRESHOLD = 20
 
 
 @pytest.mark.parametrize(
-    "has_epoch_zero_poap, has_identity_poap, num_of_donations, gp_score, expected_output",
+    "has_epoch_zero_poap, passed_identity_call, num_of_donations, gp_score, expected_output",
     [
         (True, True, 2, 20, 1.0),
         (False, False, 0, 20, 1.0),
@@ -26,11 +26,19 @@ THRESHOLD = 20
     ],
 )
 def test_calculate_uq(
-    has_epoch_zero_poap, has_identity_poap, num_of_donations, gp_score, expected_output
+    has_epoch_zero_poap,
+    passed_identity_call,
+    num_of_donations,
+    gp_score,
+    expected_output,
 ):
     assert (
         calculate_uq(
-            has_epoch_zero_poap, has_identity_poap, num_of_donations, gp_score, Scores()
+            has_epoch_zero_poap,
+            passed_identity_call,
+            num_of_donations,
+            gp_score,
+            Scores(),
         )
         == expected_output
     )
