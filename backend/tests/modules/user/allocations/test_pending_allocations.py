@@ -4,6 +4,9 @@ from app import exceptions
 from app.context.epoch_state import EpochState
 from app.engine.projects.rewards import ProjectRewardDTO
 from app.infrastructure import database
+from app.infrastructure.database.uniqueness_quotient import (
+    get_uq_by_address,
+)
 from app.legacy.crypto.eip712 import sign, build_allocations_eip712_data
 from app.modules.dto import AllocationDTO
 from app.modules.user.allocations import controller
@@ -60,7 +63,11 @@ def before(
 
 @pytest.fixture()
 def service(
-    mock_octant_rewards, mock_patron_mode, mock_user_budgets, mock_user_allocation_nonce
+    mock_octant_rewards,
+    mock_patron_mode,
+    mock_user_budgets,
+    mock_user_allocation_nonce,
+    mock_uniqueness_quotients,
 ):
     verifier = PendingUserAllocationsVerifier(
         user_nonce=mock_user_allocation_nonce,
@@ -70,6 +77,7 @@ def service(
     return PendingUserAllocations(
         octant_rewards=mock_octant_rewards,
         verifier=verifier,
+        uniqueness_quotients=mock_uniqueness_quotients,
     )
 
 
@@ -389,6 +397,37 @@ def test_stores_allocation_leverage(tos_users, project_accounts):
 
     assert alloc_request.epoch == MOCKED_PENDING_EPOCH_NO
     assert alloc_request.leverage == expected_leverage
+
+
+def test_uq_added_while_allocating(project_accounts, tos_users):
+    user_addr = tos_users[0].address
+    context = get_context(epoch_state=EpochState.PENDING)
+
+    # There must be no uq before first allocation
+    uq = get_uq_by_address(user_addr, context.epoch_details.epoch_num)
+    assert uq is None
+
+    # Allocate for the first time
+    payload = create_payload(project_accounts[0:2], None, 0)
+    signature = sign(tos_users[0], build_allocations_eip712_data(payload))
+    controller.allocate(
+        tos_users[0].address, {"payload": payload, "signature": signature}
+    )
+
+    uq_1 = get_uq_by_address(user_addr, context.epoch_details.epoch_num)
+    assert uq_1.score == "42"
+
+    # Allocate for the second time
+    payload = create_payload(project_accounts[0:4], None, 1)
+    signature = sign(tos_users[0], build_allocations_eip712_data(payload))
+    controller.allocate(
+        tos_users[0].address, {"payload": payload, "signature": signature}
+    )
+
+    # Make sure that the UQ score hasn't changed (ie. the value and identifier remained unchanged)
+    uq_2 = get_uq_by_address(user_addr, context.epoch_details.epoch_num)
+    assert uq_1.id == uq_2.id
+    assert uq_1.score == uq_2.score
 
 
 def check_allocations(user_address, expected_payload, expected_count):

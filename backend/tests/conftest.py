@@ -1428,3 +1428,11 @@ def mock_graphql(
     )
     mocker.patch.object(gql_factory, "build")
     gql_factory.build.return_value = mock_client
+
+
+@pytest.fixture(scope="function")
+def mock_uniqueness_quotients():
+    uniqueness_quotients = Mock()
+    uniqueness_quotients.calculate.return_value = "42"
+
+    return uniqueness_quotients
