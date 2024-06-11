@@ -4,5 +4,5 @@ from app.pydantic import Model
 
 
 class WhitelistIdentityCall(Model):
-    def has_poap(self, _: Context, address: str) -> bool:
-        return database.identity_calls.is_address_verified(address)
+    def exists(self, _: Context, address: str) -> bool:
+        return database.identity_calls.is_address_whitelisted(address)
