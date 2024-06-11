@@ -210,10 +210,16 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true)`, () => {
-      cy.get('[ProjectRewards__currentTotal__number]').first().invoke('text').should('eq', '0 ETH');
+      cy.get('[data-test=ProjectRewards__currentTotal__number]')
+        .first()
+        .invoke('text')
+        .should('eq', '0 ETH');
     });
     it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
-      cy.get('[ProjectRewards__currentTotal__number]').first().invoke('text').should('eq', '$0.00');
+      cy.get('[data-test=ProjectRewards__currentTotal__number]')
+        .first()
+        .invoke('text')
+        .should('eq', '$0.00');
     });
   });
 
