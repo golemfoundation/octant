@@ -2,8 +2,6 @@
 Tests are based on the capped QF & user scores.
 """
 
-from decimal import Decimal
-
 import pytest
 
 from app.engine.projects.rewards import ProjectRewardDTO

@@ -21,11 +21,6 @@ class ProjectSumAllocationsDTO(JSONWizard):
     amount: Union[int, Decimal]
 
 
-@dataclass(frozen=True)
-class ProjectSumAllocationsDTO(AllocationItem, JSONWizard):
-    amount: Union[int, Decimal]
-
-
 @dataclass
 class ProjectAllocationsPayload:
     allocations: List[AllocationItem] = None

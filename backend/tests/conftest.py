@@ -29,7 +29,6 @@ from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
 from app.modules.common.verifier import Verifier
 from app.modules.dto import AccountFundsDTO, AllocationItem, SignatureOpType
 from app.settings import DevConfig, TestConfig
-from app.infrastructure.database.models import User, UniquenessQuotient
 from tests.helpers import make_user_allocation
 from tests.helpers.constants import (
     STARTING_EPOCH,
@@ -993,12 +992,11 @@ def patch_has_pending_epoch_snapshot(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_last_finalized_snapshot(monkeypatch):
-    (
-        monkeypatch.setattr(
-            "app.legacy.controllers.snapshots.get_last_finalized_snapshot",
-            MOCK_LAST_FINALIZED_SNAPSHOT,
-        ),
+    monkeypatch.setattr(
+        "app.legacy.controllers.snapshots.get_last_finalized_snapshot",
+        MOCK_LAST_FINALIZED_SNAPSHOT,
     )
+
     MOCK_LAST_FINALIZED_SNAPSHOT.return_value = 3
 
 

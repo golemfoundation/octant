@@ -28,8 +28,7 @@ def test_compute_capped_qf_rewards_for_none_allocations():
     assert result == ProjectRewardsResult([], 0, 0, threshold=None)
 
 
-@pytest.mark.max_uq_score
-def test_compute_capped_qf_rewards_for_allocations_to_one_project(
+def test_compute_capped_qf_rewards_for_allocations_to_one_project_max_uq_score(
     projects, dataset_1_for_capped_qf_max_uq_score
 ):
     MATCHED_REWARDS, allocations = dataset_1_for_capped_qf_max_uq_score
@@ -45,8 +44,7 @@ def test_compute_capped_qf_rewards_for_allocations_to_one_project(
     assert project_rewards[0].matched == MATCHED_REWARDS * MR_FUNDING_CAP_PERCENT
 
 
-@pytest.mark.low_uq_score
-def test_compute_capped_qf_rewards_for_allocations_to_one_project(
+def test_compute_capped_qf_rewards_for_allocations_to_one_project_low_uq_score(
     projects, dataset_1_for_capped_qf_lower_uq_score
 ):
     MATCHED_REWARDS, allocations = dataset_1_for_capped_qf_lower_uq_score
@@ -62,8 +60,7 @@ def test_compute_capped_qf_rewards_for_allocations_to_one_project(
     assert project_rewards[0].matched == MATCHED_REWARDS * MR_FUNDING_CAP_PERCENT
 
 
-@pytest.mark.max_uq_score
-def test_compute_capped_qf_rewards_for_allocations_to_multiple_project(
+def test_compute_capped_qf_rewards_for_allocations_to_multiple_project_max_uq_score(
     projects, dataset_2_for_capped_qf_max_uq_score
 ):
     MATCHED_REWARDS, allocations = dataset_2_for_capped_qf_max_uq_score
@@ -89,8 +86,7 @@ def test_compute_capped_qf_rewards_for_allocations_to_multiple_project(
     _check_project_reward(project_rewards[5], projects[0], 1000, 2333)
 
 
-@pytest.mark.low_uq_score
-def test_compute_capped_qf_rewards_for_allocations_to_multiple_project(
+def test_compute_capped_qf_rewards_for_allocations_to_multiple_project_low_uq_score(
     projects, dataset_2_for_capped_qf_lower_uq_score
 ):
     MATCHED_REWARDS, allocations = dataset_2_for_capped_qf_lower_uq_score

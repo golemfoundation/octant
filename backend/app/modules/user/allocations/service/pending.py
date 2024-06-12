@@ -8,18 +8,17 @@ from app.exceptions import InvalidSignature
 from app.extensions import db
 from app.infrastructure import database
 from app.infrastructure.database.uniqueness_quotient import get_uq_by_user, save_uq
+from app.legacy.crypto.eip712 import build_allocations_eip712_structure
 from app.modules.common.crypto.signature import (
     verify_signed_message,
     encode_for_signing,
     EncodingStandardFor,
 )
-from app.legacy.crypto.eip712 import build_allocations_eip712_structure
 from app.modules.common.verifier import Verifier
 from app.modules.dto import AllocationDTO, UserAllocationRequestPayload
 from app.modules.user.allocations import core
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 from app.pydantic import Model
-from app.engine.projects.rewards import AllocationItem
 
 
 @runtime_checkable

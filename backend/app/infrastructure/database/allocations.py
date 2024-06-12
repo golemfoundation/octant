@@ -3,7 +3,6 @@ from datetime import datetime
 from typing import List, Tuple
 
 from eth_utils import to_checksum_address
-from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 from sqlalchemy.orm import Query, joinedload
 from typing_extensions import deprecated
