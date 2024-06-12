@@ -72,7 +72,7 @@ const LayoutConnectWallet: FC = () => {
             justifyContent="start"
             // In Cypress isReady is sometimes always false. To bypass that, we open modal regardless.
             onClick={
-              window.Cypress === undefined || !isReady || isOpen || isBrowserWalletConnecting
+              window.Cypress === undefined && (!isReady || isOpen || isBrowserWalletConnecting)
                 ? undefined
                 : onConnect
             }
