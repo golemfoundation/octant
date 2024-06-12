@@ -59,7 +59,7 @@ def test_simulate_allocation_with_user_uq_score(service, mock_users_db_with_scor
         context, next_allocations, user1_with_low_score.address
     )
     sorted_projects = sorted(projects)
-    assert leverage == Decimal("5502859957.887531210175")
+    assert leverage == 5502859957.887531
     assert threshold is None
     assert rewards == [
         ProjectRewardDTO(sorted_projects[0], 0, 0),

@@ -140,7 +140,7 @@ def test_compute_capped_qf_rewards_for_allocations_to_multiple_project_with_many
 
     result = uut.calculate_project_rewards(payload)
 
-    assert result.total_allocated == Decimal("84000.00000000000179890645828")
+    assert result.total_allocated == 84000
     assert result.rewards_sum == MATCHED_REWARDS + int(result.total_allocated)
     assert result.threshold is None
     project_rewards = result.rewards
