@@ -10,7 +10,7 @@ import useEpochsIndexedBySubgraph from 'hooks/subgraph/useEpochsIndexedBySubgrap
 export default function useCypressHelpers(): { isFetching: boolean } {
   const [isRefetchingEpochs, setIsRefetchingEpochs] = useState<boolean>(false);
 
-  const isHookEnabled = !!window.Cypress;
+  const isHookEnabled = false; //! !window.Cypress;
 
   const {
     mutateAsync: mutateAsyncMoveToDecisionWindowOpen,
