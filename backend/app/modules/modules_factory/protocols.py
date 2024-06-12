@@ -238,3 +238,6 @@ class ScoreDelegation(Protocol):
 
     def recalculate(self, context: Context, payload: ScoreDelegationPayload):
         ...
+
+    def check(self, context: Context, addresses: list[str]) -> set[Tuple[str, str]]:
+        ...

@@ -34,6 +34,21 @@ score_delegation_payload = api.model(
 )
 
 
+score_delegation_check_model = api.model(
+    "ScoreDelegationCheckResult",
+    {
+        "primary": fields.String(
+            required=False,
+            description="Address that receives delegated score",
+        ),
+        "secondary": fields.String(
+            required=False,
+            description="Address that donates delegated score",
+        ),
+    },
+)
+
+
 @ns.route("/delegate")
 @ns.doc(
     description="Delegates UQ score from secondary address to primary address",
@@ -64,3 +79,18 @@ class UQScoreRecalculation(OctantResource):
         controller.recalculate_uq_score(ns.payload)
 
         return {}, 204
+
+
+@ns.route("/check/<string:addresses>")
+@ns.doc(
+    description="Allows wallet to check if its accounts are delegating to each other. Implementation of this feature relies on a fact that Ethereum has > 250mil addresses, so blind enumeration is hard. We intend to replace it with proper zk-based delegation as soon as possible",
+    params={
+        "addresses": "Ethereum addresses in hexadecimal format (case-insensitive, prefixed with 0x), separated by comma. At most 10 addresses at the same time"
+    },
+)
+class UQScoreDelegationCheck(OctantResource):
+    @ns.marshal_with(score_delegation_check_model)
+    @ns.response(200, "User's delegations reconstructed")
+    def get(self, addresses: str):
+        secondary, primary = controller.delegation_check(addresses)
+        return {"primary": primary, "secondary": secondary}, 200
