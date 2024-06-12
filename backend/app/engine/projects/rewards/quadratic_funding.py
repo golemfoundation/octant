@@ -25,9 +25,9 @@ class QuadraticFundingProjectRewards(ProjectRewards):
     def calculate_project_rewards(
         self, payload: ProjectRewardsPayload
     ) -> ProjectRewardsResult:
-        # TODO OCT-1625 Apply Gitcoin user's score for the formula: https://linear.app/golemfoundation/issue/OCT-1624/implement-quadratic-funding
-        # TODO OCT-1625 Double-check whether it's ok to get rid of threshold for projects with allocated funds below it
-
+        """
+        Calculate rewards for projects using plain quadratic funding formula without capping.
+        """
         (
             allocated_by_addr,
             total_allocated,
@@ -39,7 +39,10 @@ class QuadraticFundingProjectRewards(ProjectRewards):
         }
 
         project_rewards_sum = 0
-        for address, quadratic_allocated in allocated_by_addr:
+        for allocation in allocated_by_addr:
+            quadratic_allocated = allocation.amount
+            address = allocation.project_address
+
             matched = Decimal(
                 quadratic_allocated / Decimal(total_allocated) * payload.matched_rewards
             )

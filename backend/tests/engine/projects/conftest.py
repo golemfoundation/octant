@@ -1,5 +1,11 @@
+from decimal import Decimal
+
 import pytest
 
+from app.engine.projects.rewards.allocations import (
+    AllocationItem,
+)
+from app.engine.projects.rewards.funding_cap.percent import ProjectMatchedRewardsDTO
 from app.modules.dto import AllocationDTO
 
 
@@ -77,3 +83,98 @@ def data_for_quadratic_funding(projects):
     matched_rewards = 35000
 
     return allocations, matched_rewards
+
+
+@pytest.fixture
+def dataset_1_for_capped_quadratic_funding(projects):
+    matched_rewards = 35000
+    allocations = [
+        AllocationItem(projects[0], 1000),
+        AllocationItem(projects[1], 2000),
+        AllocationItem(projects[2], 3000),
+        AllocationItem(projects[3], 4000),
+        AllocationItem(projects[4], 5000),
+        AllocationItem(projects[5], 6000),
+        AllocationItem(projects[6], 7000),
+        AllocationItem(projects[7], 8000),
+        AllocationItem(projects[8], 9000),
+        AllocationItem(projects[9], 10000),
+    ]
+
+    return matched_rewards, allocations
+
+
+@pytest.fixture
+def dataset_2_for_capped_quadratic_funding(projects):
+    matched_rewards = 35000
+    allocations = [
+        AllocationItem(projects[0], 1000),
+        AllocationItem(projects[1], 2000),
+        AllocationItem(projects[2], 3000),
+        AllocationItem(projects[3], 4000),
+        AllocationItem(projects[4], 5000),
+        AllocationItem(projects[5], 6000),
+    ]
+
+    return matched_rewards, allocations
+
+
+@pytest.fixture
+def many_allocations_per_project_for_capped_quadratic_funding(projects):
+    matched_rewards = 100000
+    allocations = [
+        AllocationItem(projects[0], 1000),
+        AllocationItem(projects[0], 1000),
+        AllocationItem(projects[1], 2000),
+        AllocationItem(projects[1], 2000),
+        AllocationItem(projects[2], 3000),
+        AllocationItem(projects[2], 3000),
+        AllocationItem(projects[3], 4000),
+        AllocationItem(projects[3], 4000),
+        AllocationItem(projects[4], 5000),
+        AllocationItem(projects[4], 5000),
+        AllocationItem(projects[5], 6000),
+        AllocationItem(projects[5], 6000),
+    ]
+
+    return matched_rewards, allocations
+
+
+@pytest.fixture
+def matched_rewards_with_capped_distribution(projects):
+    matched_rewards = 10000
+    computed_matched_rewards = [
+        ProjectMatchedRewardsDTO(projects[0], Decimal("500.0")),
+        ProjectMatchedRewardsDTO(projects[1], Decimal("2000.0")),
+        ProjectMatchedRewardsDTO(projects[2], Decimal("2000.0")),
+        ProjectMatchedRewardsDTO(projects[3], Decimal("2500.0")),
+        ProjectMatchedRewardsDTO(projects[4], Decimal("2500.0")),
+        ProjectMatchedRewardsDTO(projects[5], Decimal("500.0")),
+    ]
+    expected_distribution = {
+        projects[0]: Decimal("1000.0"),
+        projects[1]: Decimal("2000.0"),
+        projects[2]: Decimal("2000.0"),
+        projects[3]: Decimal("2000.0"),
+        projects[4]: Decimal("2000.0"),
+        projects[5]: Decimal("1000.0"),
+    }
+
+    return matched_rewards, computed_matched_rewards, expected_distribution
+
+
+@pytest.fixture
+def matched_rewards_with_no_capped_distribution(projects):
+    matched_rewards = 10000
+    computed_matched_rewards = [
+        ProjectMatchedRewardsDTO(projects[0], Decimal(2000)),
+        ProjectMatchedRewardsDTO(projects[1], Decimal(2000)),
+        ProjectMatchedRewardsDTO(projects[2], Decimal(2000)),
+        ProjectMatchedRewardsDTO(projects[3], Decimal(2000)),
+        ProjectMatchedRewardsDTO(projects[4], Decimal(2000)),
+    ]
+    expected_distribution = dict(
+        map(lambda x: (x.project_address, x.amount), computed_matched_rewards)
+    )
+
+    return matched_rewards, computed_matched_rewards, expected_distribution

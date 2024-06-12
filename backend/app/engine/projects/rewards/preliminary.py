@@ -51,7 +51,11 @@ class PreliminaryProjectRewards(ProjectRewards):
         threshold = self.calculate_threshold(total_allocated, payload.projects)
 
         total_allocated_above_threshold = sum(
-            [allocated for _, allocated in allocated_by_addr if allocated > threshold]
+            [
+                allocation.amount
+                for allocation in allocated_by_addr
+                if allocation.amount > threshold
+            ]
         )
 
         project_rewards_sum = 0
@@ -60,7 +64,10 @@ class PreliminaryProjectRewards(ProjectRewards):
             address: ProjectRewardDTO(address, 0, 0) for address in payload.projects
         }
 
-        for address, allocated in allocated_by_addr:
+        for allocation in allocated_by_addr:
+            address = allocation.project_address
+            allocated = allocation.amount
+
             matched = 0
             if allocated > threshold:
                 matched = int(
