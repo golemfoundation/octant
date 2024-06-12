@@ -1,6 +1,9 @@
-import hashlib
-from collections import namedtuple
+from itertools import permutations
+from typing import NamedTuple
 from enum import Enum
+from eth_utils.address import to_checksum_address
+import hashlib
+from typing import Tuple
 
 from app.exceptions import (
     DelegationAlreadyExists,
@@ -18,9 +21,11 @@ from app.modules.dto import ScoreDelegationPayload
 
 MIN_SCORE = 15
 
-HashedAddresses = namedtuple(
-    "HashedAddresses", ["primary_addr_hash", "secondary_addr_hash", "both_hash"]
-)
+
+class HashedAddresses(NamedTuple):
+    primary_addr_hash: str
+    secondary_addr_hash: str
+    both_hash: str
 
 
 class ActionType(Enum):
@@ -33,10 +38,18 @@ def build_score_delegation_message(primary_addr: str, secondary_addr: str) -> st
 
 
 def get_hashed_addresses(
-    payload: ScoreDelegationPayload, salt: str, salt_primary: str
+    payload: ScoreDelegationPayload,
+    salt: str,
+    salt_primary: str,
+    normalize: bool = True,
 ) -> HashedAddresses:
-    primary_addr_data = salt_primary + payload.primary_addr
-    secondary_addr_data = salt + payload.secondary_addr
+    primary = payload.primary_addr
+    secondary = payload.secondary_addr
+    if normalize:
+        primary = to_checksum_address(primary)
+        secondary = to_checksum_address(secondary)
+    primary_addr_data = salt_primary + primary
+    secondary_addr_data = salt + secondary
 
     hashed_primary = hashlib.sha256(primary_addr_data.encode()).hexdigest()
     hashed_secondary = hashlib.sha256(secondary_addr_data.encode()).hexdigest()
@@ -45,6 +58,29 @@ def get_hashed_addresses(
     ).hexdigest()
 
     return HashedAddresses(hashed_primary, hashed_secondary, hashed_both)
+
+
+def delegation_check(
+    addresses: list[str],
+    all_hashes: set[str],
+    salt: str,
+    salt_primary: str,
+    normalize=True,
+) -> set[Tuple[str, str]]:
+    result = []
+    for secondary, primary in permutations(addresses, 2):
+        payload = ScoreDelegationPayload(
+            primary_addr=primary,
+            secondary_addr=secondary,
+            primary_addr_signature=None,
+            secondary_addr_signature=None,
+        )
+        _, _, both = get_hashed_addresses(
+            payload, salt, salt_primary, normalize=normalize
+        )
+        if both in all_hashes:
+            result.append((secondary, primary))
+    return set(result)
 
 
 def verify_score_delegation(

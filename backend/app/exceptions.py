@@ -300,6 +300,14 @@ class DelegationDoesNotExist(OctantException):
         super().__init__(self.description, self.code)
 
 
+class DelegationCheckWrongParams(OctantException):
+    code = 400
+    description = "Please specify at least 2 and not more than 10 addresses"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
 class AntisybilScoreTooLow(OctantException):
     code = 400
     description = "Antisybil score {} is lower then {}"
