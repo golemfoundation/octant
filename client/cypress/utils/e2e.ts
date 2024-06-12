@@ -1,4 +1,5 @@
 import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
+import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 import { ConnectWalletParameters } from './types';
 
@@ -74,4 +75,10 @@ export const checkProjectsViewLoaded = (): Chainable<any> => {
   });
 
   return cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
+};
+
+export const changeMainValueToFiat = (endUrl: string): Chainable<any> => {
+  navigateWithCheck(ROOT_ROUTES.settings.absolute);
+  cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
+  return navigateWithCheck(endUrl);
 };
