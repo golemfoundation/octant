@@ -28,6 +28,8 @@ class Config(object):
     GC_PASSPORT_SCORER_API_KEY = os.getenv("GC_PASSPORT_SCORER_API_KEY")
     SCHEDULER_ENABLED = parse_bool(os.getenv("SCHEDULER_ENABLED"))
     CACHE_TYPE = "SimpleCache"
+    DELEGATION_SALT = os.getenv("DELEGATION_SALT")
+    DELEGATION_SALT_PRIMARY = os.getenv("DELEGATION_SALT_PRIMARY")
 
     # Smart contract addresses
     GLM_CONTRACT_ADDRESS = os.getenv("GLM_CONTRACT_ADDRESS")
@@ -78,7 +80,7 @@ class ProdConfig(Config):
     DEBUG = False
     LOG_LVL = os.getenv("OCTANT_LOG_LEVEL", "INFO")
     SQLALCHEMY_CONNECTION_POOL_SIZE = int(
-        os.getenv("SQLALCHEMY_CONNECTION_POOL_SIZE", 3)
+        os.getenv("SQLALCHEMY_CONNECTION_POOL_SIZE", 10)
     )
     SQLALCHEMY_CONNECTION_POOL_MAX_OVERFLOW = int(
         os.getenv("SQLALCHEMY_CONNECTION_POOL_MAX_OVERFLOW", 100)
@@ -87,6 +89,7 @@ class ProdConfig(Config):
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_size": SQLALCHEMY_CONNECTION_POOL_SIZE,
         "max_overflow": SQLALCHEMY_CONNECTION_POOL_MAX_OVERFLOW,
+        "pool_pre_ping": True,
     }
     X_REAL_IP_REQUIRED = parse_bool(os.getenv("X_REAL_IP_REQUIRED", "true"))
 
@@ -133,6 +136,8 @@ class TestConfig(Config):
     EPOCH_2_STAKING_PROCEEDS_SURPLUS = 3_487357664_505573437
     WITHDRAWALS_TARGET_CONTRACT_ADDRESS = "0x1234123456123456123456123456123456123456"
     MAINNET_PROJECT_CIDS = DEFAULT_MAINNET_PROJECT_CIDS
+    DELEGATION_SALT = "salt"
+    DELEGATION_SALT_PRIMARY = "salt_primary"
 
 
 def get_config():

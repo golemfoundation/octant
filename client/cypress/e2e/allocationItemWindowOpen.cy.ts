@@ -68,7 +68,7 @@ describe('allocation (allocation window open)', () => {
         localStorage.setItem(HAS_ONBOARDING_BEEN_CLOSED, 'true');
         localStorage.setItem(ALLOCATION_ITEMS_KEY, '[]');
         visitWithLoader(ROOT_ROUTES.projects.absolute);
-        connectWallet(true, false);
+        connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
 
         checkProjectsViewLoaded();
         cy.get('[data-test^=ProjectsView__ProjectsListItem]')
@@ -85,6 +85,10 @@ describe('allocation (allocation window open)', () => {
           .click();
         navigateWithCheck(ROOT_ROUTES.allocation.absolute);
         cy.get('[data-test=AllocationItemSkeleton]').should('not.exist');
+      });
+
+      after(() => {
+        cy.disconnectMetamaskWalletFromAllDapps();
       });
 
       it('AllocationItem shows all the elements', () => {

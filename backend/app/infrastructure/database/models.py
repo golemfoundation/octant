@@ -184,3 +184,17 @@ class MultisigSignatures(BaseModel):
     status = Column(db.String, nullable=False)
     user_ip = Column(db.String, nullable=False)
     confirmed_signature = Column(db.String, nullable=True)
+
+
+class ScoreDelegation(BaseModel):
+    id = Column(db.Integer, primary_key=True)
+    hashed_addr = Column(db.String, nullable=False)
+
+
+class UniquenessQuotient(BaseModel):
+    __tablename__ = "uniqueness_quotients"
+
+    id = Column(db.Integer, primary_key=True)
+    epoch = Column(db.Integer, nullable=False)
+    user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    score = Column(db.String, nullable=False)

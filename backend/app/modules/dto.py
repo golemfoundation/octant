@@ -80,6 +80,14 @@ class UserAllocationRequestPayload(JSONWizard):
 
 
 @dataclass(frozen=True)
+class ScoreDelegationPayload(JSONWizard):
+    primary_addr: str
+    secondary_addr: str
+    primary_addr_signature: Optional[str] = None
+    secondary_addr_signature: Optional[str] = None
+
+
+@dataclass(frozen=True)
 class ProjectDonationDTO(JSONWizard):
     donor: str
     amount: int

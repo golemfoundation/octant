@@ -1,6 +1,6 @@
 from flask import current_app as app
 
-from typing import Optional, Tuple
+from typing import Optional, Tuple, runtime_checkable, Protocol
 
 from datetime import datetime
 from typing import List
@@ -59,7 +59,7 @@ class GitcoinPassportAntisybil(Model):
 
     def update_antisybil_status(
         self,
-        context: Context,
+        _: Context,
         user_address: str,
         score: float,
         expires_at: datetime,
@@ -87,3 +87,14 @@ def _filter_older(cutoff, stamps: List[dict]) -> List[dict]:
         < cutoff
     )
     return list(filter(not_expired, stamps))
+
+
+@runtime_checkable
+class UniquenessQuotients(Protocol):
+    def calculate(self, user_address: str) -> str:
+        ...
+
+
+class MockUniquenessQuotients(Model):
+    def calculate(self, user_address: str) -> str:
+        return "42"

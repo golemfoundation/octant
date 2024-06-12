@@ -14,6 +14,7 @@ from app.modules.dto import (
     UserAllocationRequestPayload,
     SignatureOpType,
     ProjectsMetadata,
+    ScoreDelegationPayload,
 )
 from app.modules.history.dto import UserHistoryDTO
 from app.modules.multisig_signatures.dto import Signature
@@ -227,4 +228,13 @@ class ProjectsMetadataService(Protocol):
 @runtime_checkable
 class UserAllocationNonceProtocol(Protocol):
     def get_user_next_nonce(self, user_address: str) -> int:
+        ...
+
+
+@runtime_checkable
+class ScoreDelegation(Protocol):
+    def delegate(self, context: Context, payload: ScoreDelegationPayload):
+        ...
+
+    def recalculate(self, context: Context, payload: ScoreDelegationPayload):
         ...

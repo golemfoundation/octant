@@ -13,12 +13,17 @@ from app.modules.modules_factory.protocols import (
     UserTos,
     ProjectsMetadataService,
     UserAllocationNonceProtocol,
+    ScoreDelegation,
 )
 from app.modules.modules_factory.protocols import SimulatePendingSnapshots
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
 from app.modules.projects.metadata.service.projects_metadata import (
     StaticProjectsMetadataService,
+)
+from app.modules.score_delegation.service.simple_obfuscation import (
+    SimpleObfuscationDelegationVerifier,
+    SimpleObfuscationDelegation,
 )
 from app.modules.snapshots.pending.service.simulated import SimulatedPendingSnapshots
 from app.modules.staking.proceeds.service.estimated import EstimatedStakingProceeds
@@ -43,7 +48,6 @@ class CurrentUserDeposits(UserEffectiveDeposits, TotalEffectiveDeposits, Protoco
 
 class CurrentServices(Model):
     user_allocations_nonce_service: UserAllocationNonceProtocol
-
     user_deposits_service: CurrentUserDeposits
     user_tos_service: UserTos
     user_antisybil_service: GitcoinPassportAntisybil
@@ -53,6 +57,7 @@ class CurrentServices(Model):
     multisig_signatures_service: MultisigSignatures
     projects_metadata_service: ProjectsMetadataService
     user_budgets_service: UpcomingUserBudgets
+    score_delegation_service: ScoreDelegation
 
     @staticmethod
     def _prepare_simulation_data(
@@ -97,6 +102,12 @@ class CurrentServices(Model):
             patron_donations=patron_donations,
         )
 
+        score_delegation_verifier = SimpleObfuscationDelegationVerifier()
+        score_delegation = SimpleObfuscationDelegation(
+            verifier=score_delegation_verifier,
+            antisybil=user_antisybil_service,
+        )
+
         multisig_signatures = OffchainMultisigSignatures(
             verifiers={SignatureOpType.TOS: tos_verifier}, is_mainnet=is_mainnet
         )
@@ -121,4 +132,5 @@ class CurrentServices(Model):
             user_antisybil_service=user_antisybil_service,
             projects_metadata_service=StaticProjectsMetadataService(),
             user_budgets_service=user_budgets,
+            score_delegation_service=score_delegation,
         )

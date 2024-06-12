@@ -589,7 +589,7 @@ class Client:
         while True:
             res = self.sync_status()
             if res["indexedHeight"] == res["blockchainHeight"]:
-                return res["indexedEpoch"]
+                return res["indexedHeight"]
             time.sleep(0.5)
 
     def move_to_next_epoch(self, target):
@@ -601,13 +601,25 @@ class Client:
         w3.provider.make_request("evm_mine", [])
         assert epochs.get_current_epoch() == target
 
+    def snapshot_status(self, epoch):
+        rv = self._flask_client.get(f"/snapshots/status/{epoch}")
+        return json.loads(rv.text), rv.status_code
+
     def pending_snapshot(self):
         rv = self._flask_client.post("/snapshots/pending").text
         return json.loads(rv)
 
+    def pending_snapshot_simulate(self):
+        rv = self._flask_client.get("/snapshots/pending/simulate")
+        return json.loads(rv.text), rv.status_code
+
     def finalized_snapshot(self):
         rv = self._flask_client.post("/snapshots/finalized").text
         return json.loads(rv)
+
+    def finalized_snapshot_simulate(self):
+        rv = self._flask_client.get("/snapshots/finalized/simulate")
+        return json.loads(rv.text), rv.status_code
 
     def get_projects(self, epoch: int):
         rv = self._flask_client.get(f"/projects/epoch/{epoch}")
@@ -723,6 +735,32 @@ class Client:
         }
         rv = self._flask_client.post(
             f"/allocations/leverage/{user_address}", json=payload
+        )
+        return json.loads(rv.text), rv.status_code
+
+    def get_epoch_patrons(self, epoch) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"/user/patrons/{epoch}")
+        return json.loads(rv.text), rv.status_code
+
+    def get_patron_mode_status(self, user_address) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"/user/{user_address}/patron-mode")
+        return json.loads(rv.text), rv.status_code
+
+    def patch_patron(self, user_address, signature):
+        rv = self._flask_client.patch(
+            f"/user/{user_address}/patron-mode",
+            json={"signature": signature},
+        )
+        return json.loads(rv.text), rv.status_code
+
+    def get_user_tos_status(self, user_address) -> tuple[dict, int]:
+        rv = self._flask_client.get(f"/user/{user_address}/tos")
+        return json.loads(rv.text), rv.status_code
+
+    def accept_tos(self, user_address, signature):
+        rv = self._flask_client.post(
+            f"/user/{user_address}/tos",
+            json={"signature": signature},
         )
         return json.loads(rv.text), rv.status_code
 
@@ -1390,3 +1428,11 @@ def mock_graphql(
     )
     mocker.patch.object(gql_factory, "build")
     gql_factory.build.return_value = mock_client
+
+
+@pytest.fixture(scope="function")
+def mock_uniqueness_quotients():
+    uniqueness_quotients = Mock()
+    uniqueness_quotients.calculate.return_value = "42"
+
+    return uniqueness_quotients

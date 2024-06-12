@@ -290,9 +290,8 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat--skeleton]').should(
         'not.exist',
       );
-      cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat]')
-        .invoke('text')
-        .should('eq', '');
+      // Debouce prevents value from being immediately loaded. Let's give it a chance to load.
+      cy.wait(5000);
       cy.get('[data-test=EarnRewardsCalculatorEstimates__matchFundingFiat]')
         .invoke('text')
         .should('eq', '');

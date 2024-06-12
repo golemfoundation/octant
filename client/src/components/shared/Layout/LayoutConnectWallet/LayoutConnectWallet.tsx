@@ -1,9 +1,8 @@
-import { useWeb3Modal } from '@web3modal/react';
+import { useConnectModal, WalletButton } from '@rainbow-me/rainbowkit';
 import cx from 'classnames';
-import React, { FC } from 'react';
+import React, { FC, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount, useConnect } from 'wagmi';
-import { InjectedConnector } from 'wagmi/connectors/injected';
+import { useConnect } from 'wagmi';
 
 import BoxRounded from 'components/ui/BoxRounded';
 import Loader from 'components/ui/Loader';
@@ -17,35 +16,25 @@ const LayoutConnectWallet: FC = () => {
   const { t } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.connectWallet',
   });
-  const { isConnected, connector } = useAccount();
-  const { connectors, connect, pendingConnector, isLoading } = useConnect();
-  const { open, isOpen } = useWeb3Modal();
+  const { connectors, status, connect: onConnectAnyConnector } = useConnect();
+  const { connectModalOpen: isOpen } = useConnectModal();
 
   const browserWalletConnector = connectors.find(
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    ({ id, ready }) => id === 'injected' && ready,
-  ) as InjectedConnector;
+    ({ id }) => id === 'injected',
+  );
 
-  const ledgerWalletConnector = connectors.find(
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    ({ id, ready }) => id === 'ledger' && ready,
-  ) as InjectedConnector;
+  const isBrowserWalletConnecting = status === 'pending';
 
-  const isBrowserWalletConnecting = isLoading && pendingConnector?.id === connector?.id;
-
-  const connectBrowserWallet = (): void => connect({ connector: browserWalletConnector });
-
-  const openWalletConnectModal = async (): Promise<void> => {
-    if (isConnected) {
+  const connectBrowserWallet = (): void => {
+    if (!browserWalletConnector) {
       return;
     }
-    await open();
+    onConnectAnyConnector({ connector: browserWalletConnector });
   };
 
-  const openLedgerWallet = (): void => connect({ connector: ledgerWalletConnector });
-
   return (
-    <>
+    <Fragment>
       {browserWalletConnector && (
         <BoxRounded
           className={styles.walletTile}
@@ -74,47 +63,65 @@ const LayoutConnectWallet: FC = () => {
           )}
         </BoxRounded>
       )}
-      <BoxRounded
-        className={styles.walletTile}
-        dataTest="ConnectWallet__BoxRounded--walletConnect"
-        isGrey
-        justifyContent="start"
-        onClick={!isOpen && isBrowserWalletConnecting ? undefined : openWalletConnectModal}
-      >
-        <Svg
-          classNameSvg={cx(!isOpen && isBrowserWalletConnecting && styles.iconGrey)}
-          classNameWrapper={styles.icon}
-          displayMode="wrapperCustom"
-          img={walletConnect}
-          size={2.4}
-        />
-        <div className={cx(styles.label, !isOpen && isBrowserWalletConnecting && styles.labelGrey)}>
-          {t('walletConnect')}
-        </div>
-      </BoxRounded>
-      {!networkConfig.isTestnet && (
-        <BoxRounded
-          className={styles.walletTile}
-          dataTest="ConnectWallet__BoxRounded--ledgerConnect"
-          isGrey
-          justifyContent="start"
-          onClick={!isOpen && isBrowserWalletConnecting ? undefined : openLedgerWallet}
-        >
-          <Svg
-            classNameSvg={cx(!isOpen && isBrowserWalletConnecting && styles.iconGrey)}
-            classNameWrapper={styles.icon}
-            displayMode="wrapperCustom"
-            img={ledgerConnect}
-            size={2.4}
-          />
-          <div
-            className={cx(styles.label, !isOpen && isBrowserWalletConnecting && styles.labelGrey)}
+      <WalletButton.Custom wallet="walletConnect">
+        {({ ready: isReady, connect: onConnect }) => (
+          <BoxRounded
+            className={styles.walletTile}
+            dataTest="ConnectWallet__BoxRounded--walletConnect"
+            isGrey
+            justifyContent="start"
+            // In Cypress isReady is sometimes always false. To bypass that, we open modal regardless.
+            onClick={
+              window.Cypress === undefined && (!isReady || isOpen || isBrowserWalletConnecting)
+                ? undefined
+                : onConnect
+            }
           >
-            {t('ledgerConnect')}
-          </div>
-        </BoxRounded>
+            <Svg
+              classNameSvg={cx(!isOpen && isBrowserWalletConnecting && styles.iconGrey)}
+              classNameWrapper={styles.icon}
+              displayMode="wrapperCustom"
+              img={walletConnect}
+              size={2.4}
+            />
+            <div
+              className={cx(styles.label, !isOpen && isBrowserWalletConnecting && styles.labelGrey)}
+            >
+              {t('walletConnect')}
+            </div>
+          </BoxRounded>
+        )}
+      </WalletButton.Custom>
+      {!networkConfig.isTestnet && (
+        <WalletButton.Custom wallet="ledger">
+          {({ ready: isReady, connect: onConnect }) => (
+            <BoxRounded
+              className={styles.walletTile}
+              dataTest="ConnectWallet__BoxRounded--ledgerConnect"
+              isGrey
+              justifyContent="start"
+              onClick={!isReady || isOpen || isBrowserWalletConnecting ? undefined : onConnect}
+            >
+              <Svg
+                classNameSvg={cx(!isOpen && isBrowserWalletConnecting && styles.iconGrey)}
+                classNameWrapper={styles.icon}
+                displayMode="wrapperCustom"
+                img={ledgerConnect}
+                size={2.4}
+              />
+              <div
+                className={cx(
+                  styles.label,
+                  !isOpen && isBrowserWalletConnecting && styles.labelGrey,
+                )}
+              >
+                {t('ledgerConnect')}
+              </div>
+            </BoxRounded>
+          )}
+        </WalletButton.Custom>
       )}
-    </>
+    </Fragment>
   );
 };
 
