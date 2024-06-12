@@ -16,11 +16,13 @@ const MetricsEpochGridTotalDonationsAndPersonal: FC<
 
   const totalUserDonationWithPatronRewardsValues = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
+    showCryptoSuffix: true,
     valueCrypto: totalUserDonationsWithPatronRewards,
   });
 
   const totalPersonalValues = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
+    showCryptoSuffix: true,
     valueCrypto: totalPersonal,
   });
 

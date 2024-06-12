@@ -76,7 +76,7 @@ class ProdConfig(Config):
     DEBUG = False
     LOG_LVL = os.getenv("OCTANT_LOG_LEVEL", "INFO")
     SQLALCHEMY_CONNECTION_POOL_SIZE = int(
-        os.getenv("SQLALCHEMY_CONNECTION_POOL_SIZE", 3)
+        os.getenv("SQLALCHEMY_CONNECTION_POOL_SIZE", 10)
     )
     SQLALCHEMY_CONNECTION_POOL_MAX_OVERFLOW = int(
         os.getenv("SQLALCHEMY_CONNECTION_POOL_MAX_OVERFLOW", 100)
@@ -85,6 +85,7 @@ class ProdConfig(Config):
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_size": SQLALCHEMY_CONNECTION_POOL_SIZE,
         "max_overflow": SQLALCHEMY_CONNECTION_POOL_MAX_OVERFLOW,
+        "pool_pre_ping": True,
     }
     X_REAL_IP_REQUIRED = parse_bool(os.getenv("X_REAL_IP_REQUIRED", "true"))
 

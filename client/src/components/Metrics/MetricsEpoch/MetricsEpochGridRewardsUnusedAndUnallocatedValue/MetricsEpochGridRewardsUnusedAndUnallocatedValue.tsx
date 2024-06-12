@@ -21,6 +21,7 @@ const MetricsEpochGridRewardsUnusedAndUnallocatedValue: FC<
   const users = `${epochUnusedRewards?.addresses.length || 0}`;
   const unallocatedValue = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
+    showCryptoSuffix: true,
     valueCrypto: epochUnusedRewards?.value,
   });
 
