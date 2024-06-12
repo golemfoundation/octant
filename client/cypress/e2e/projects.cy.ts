@@ -7,6 +7,7 @@ import {
   visitWithLoader,
   navigateWithCheck,
   checkProjectsViewLoaded,
+  changeMainValueToFiat,
 } from 'cypress/utils/e2e';
 import { getNamesOfProjects } from 'cypress/utils/projects';
 import viewports from 'cypress/utils/viewports';
@@ -21,12 +22,6 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 import Chainable = Cypress.Chainable;
 
 chai.use(chaiColors);
-
-const changeMainValueToFiat = () => {
-  cy.get('[data-test=Navbar__Button--Settings]').click();
-  cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
-  cy.get('[data-test=Navbar__Button--Projects]').click();
-};
 
 function checkProjectItemElements(index, name, isPatronMode = false): Chainable<any> {
   cy.get('[data-test^=ProjectsView__ProjectsListItem')
@@ -222,7 +217,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
         .should('eq', '0 ETH');
     });
     it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
-      changeMainValueToFiat();
+      changeMainValueToFiat(ROOT_ROUTES.projects.absolute);
 
       cy.get('[data-test=ProjectRewards__currentTotal__number]')
         .first()
