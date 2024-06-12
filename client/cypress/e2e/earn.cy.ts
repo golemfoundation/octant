@@ -1,4 +1,10 @@
-import { visitWithLoader, mockCoinPricesServer, connectWallet, GLM_USD } from 'cypress/utils/e2e';
+import {
+  visitWithLoader,
+  mockCoinPricesServer,
+  connectWallet,
+  GLM_USD,
+  changeMainValueToFiat,
+} from 'cypress/utils/e2e';
 import { moveTime } from 'cypress/utils/moveTime';
 import { ConnectWalletParameters } from 'cypress/utils/types';
 import viewports from 'cypress/utils/viewports';
@@ -10,15 +16,9 @@ import {
 } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
-const changeMainValueToFiat = () => {
-  cy.get('[data-test=Navbar__Button--Settings]').click();
-  cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
-  cy.get('[data-test=Navbar__Button--Earn]').click();
-};
-
 const checkValues = (isCryptoAsAMainValue: boolean) => {
   if (!isCryptoAsAMainValue) {
-    changeMainValueToFiat();
+    changeMainValueToFiat(ROOT_ROUTES.earn.absolute);
   }
 
   cy.get('[data-test=BoxGlmLock__Section--current__DoubleValue__primary]')
@@ -270,7 +270,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
           cy.get('[data-test=EarnHistoryItemDetailsModal__Button]').click();
           cy.get('[data-test=EarnHistoryItemDetailsModal]').should('not.be.visible');
 
-          changeMainValueToFiat();
+          changeMainValueToFiat(ROOT_ROUTES.earn.absolute);
 
           cy.get('[data-test=HistoryItem__DoubleValue__primary]')
             .first()
