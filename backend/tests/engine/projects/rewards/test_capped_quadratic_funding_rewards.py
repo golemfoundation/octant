@@ -122,9 +122,7 @@ def test_compute_capped_qf_rewards_for_allocations_to_multiple_project_with_many
         allocations,
     ) = many_allocations_per_project_for_capped_quadratic_funding
 
-    payload = ProjectRewardsPayload(
-        MATCHED_REWARDS, allocations, projects[:6], epoch_num=4
-    )
+    payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects[:6])
     uut = CappedQuadraticFundingProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
