@@ -16,15 +16,15 @@ depends_on = None
 
 def upgrade():
     with op.batch_alter_table("pending_epoch_snapshots", schema=None) as batch_op:
-        batch_op.add_column(
-            sa.Column("vanilla_individual_rewards", sa.String(), nullable=False)
+        batch_op.alter_column(
+            column_name="all_individual_rewards",
+            new_column_name="vanilla_individual_rewards",
         )
-        batch_op.drop_column("all_individual_rewards")
 
 
 def downgrade():
     with op.batch_alter_table("pending_epoch_snapshots", schema=None) as batch_op:
-        batch_op.add_column(
-            sa.Column("all_individual_rewards", sa.VARCHAR(), nullable=False)
+        batch_op.alter_column(
+            column_name="vanilla_individual_rewards",
+            new_column_name="all_individual_rewards",
         )
-        batch_op.drop_column("vanilla_individual_rewards")

@@ -175,7 +175,8 @@ class EpochZeroClaim(BaseModel):
 
 class IdentityCallsVerifications(BaseModel):
     __tablename__ = "identity_call_verifications"
-    address = Column(db.String(42), primary_key=True, nullable=False)
+    id = Column(db.Integer, primary_key=True, nullable=False)
+    address = Column(db.String(42), nullable=False, unique=True)
 
 
 class MultisigSignatures(BaseModel):

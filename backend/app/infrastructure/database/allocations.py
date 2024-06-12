@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import List, Tuple
 
 from eth_utils import to_checksum_address
+from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 from sqlalchemy.orm import Query, joinedload
 from typing_extensions import deprecated
@@ -101,7 +102,7 @@ def get_all_by_project_addr_and_epoch(
 ) -> List[Allocation]:
     query: Query = Allocation.query.filter_by(
         project_address=to_checksum_address(project_address), epoch=epoch
-    )
+    ).options(joinedload(Allocation.user))
 
     if not with_deleted:
         query = query.filter(Allocation.deleted_at.is_(None))

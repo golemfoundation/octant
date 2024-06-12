@@ -1,9 +1,7 @@
 from decimal import Decimal
 
 import pytest
-from _pytest.python_api import ApproxBase
 
-from app.engine.projects.rewards.quadratic_funding import QuadraticFundingProjectRewards
 from app.engine.projects.rewards import (
     ProjectRewardsPayload,
     ProjectRewardsResult,
@@ -12,6 +10,7 @@ from app.engine.projects.rewards import (
 from app.engine.projects.rewards.capped_quadratic_funding import (
     CappedQuadraticFundingProjectRewards,
 )
+from app.engine.projects.rewards.quadratic_funding import QuadraticFundingProjectRewards
 from tests.helpers.constants import (
     MATCHED_REWARDS,
     MR_FUNDING_CAP_PERCENT,
@@ -82,18 +81,12 @@ def test_compute_capped_qf_rewards_for_allocations_to_multiple_project(
 
     assert project_rewards
 
-    _check_project_reward(
-        project_rewards[0], projects[5], pytest.approx(6000, abs=1), 7000
-    )
+    _check_project_reward(project_rewards[0], projects[5], 6000, 7000)
     _check_project_reward(project_rewards[1], projects[4], 5000, 7000)
-    _check_project_reward(
-        project_rewards[2], projects[3], pytest.approx(4000, abs=1), 7000
-    )
+    _check_project_reward(project_rewards[2], projects[3], 4000, 7000)
     _check_project_reward(project_rewards[3], projects[2], 3000, 7000)
     _check_project_reward(project_rewards[4], projects[1], 2000, 4666)
-    _check_project_reward(
-        project_rewards[5], projects[0], pytest.approx(1000, abs=1), 2333
-    )
+    _check_project_reward(project_rewards[5], projects[0], 1000, 2333)
 
 
 @pytest.mark.low_uq_score
