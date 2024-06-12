@@ -145,14 +145,15 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     });
 
     it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true)`, () => {
+      cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
       cy.get('[data-test=ProjectRewards__currentTotal__number]')
         .first()
         .invoke('text')
         .should('eq', '0 ETH');
     });
     it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
-      changeMainValueToFiat(ROOT_ROUTES.project.absolute);
-
+      changeMainValueToFiat(ROOT_ROUTES.projects.absolute);
+      cy.get('[data-test^=ProjectsView__ProjectsListItem').first().click();
       cy.get('[data-test=ProjectRewards__currentTotal__number]')
         .first()
         .invoke('text')
