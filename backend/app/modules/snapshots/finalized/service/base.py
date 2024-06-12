@@ -56,7 +56,6 @@ class BaseFinalizedSnapshots(Model):
             allocations,
             projects,
             matched_rewards,
-            context.epoch_details.epoch_num,
         )
 
         merkle_root = get_merkle_root(user_rewards, project_rewards.rewards)

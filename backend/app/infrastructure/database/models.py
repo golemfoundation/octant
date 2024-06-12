@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Optional
 
 from app.extensions import db
@@ -203,3 +204,8 @@ class UniquenessQuotient(BaseModel):
     epoch = Column(db.Integer, nullable=False)
     user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     score = Column(db.String, nullable=False)
+    user = relationship("User", backref=db.backref("uniqueness_quotients", lazy=True))
+
+    @property
+    def validated_score(self):
+        return Decimal(self.score)

@@ -22,7 +22,6 @@ def simulate_allocation(
     user_address: str,
     all_projects: List[str],
     matched_rewards: int,
-    epoch_num: int,
 ):
     simulated_allocations = _replace_user_allocation(
         all_allocations_before, user_allocations, user_address

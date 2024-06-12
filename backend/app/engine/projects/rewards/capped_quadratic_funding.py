@@ -92,6 +92,6 @@ class CappedQuadraticFundingProjectRewards(ProjectRewards):
         return ProjectRewardsResult(
             rewards=sorted(rewards.values(), key=lambda r: r.allocated, reverse=True),
             rewards_sum=int(project_rewards_sum),
-            total_allocated=total_allocated,
+            total_allocated=int(total_allocated),
             threshold=None,
         )

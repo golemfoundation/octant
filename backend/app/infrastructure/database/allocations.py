@@ -256,7 +256,7 @@ def get_all_with_uqs(epoch: int) -> List[AllocationDTO]:
     allocations = (
         Allocation.query.filter_by(epoch=epoch)
         .filter(Allocation.deleted_at.is_(None))
-        .options(joinedload(Allocation.user).joinedload(User.uniqueness_quotient))
+        .options(joinedload(Allocation.user).joinedload(User.uniqueness_quotients))
         .all()
     )
 
@@ -265,9 +265,14 @@ def get_all_with_uqs(epoch: int) -> List[AllocationDTO]:
             amount=int(a.amount),
             project_address=a.project_address,
             user_address=a.user.address,
-            uq_score=a.user.uniqueness_quotient[epoch].score
-            if epoch in a.user.uniqueness_quotient
-            else None,
+            uq_score=next(
+                (
+                    uq.validated_score
+                    for uq in a.user.uniqueness_quotients
+                    if uq.epoch == epoch
+                ),
+                None,
+            ),
         )
         for a in allocations
     ]

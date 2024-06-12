@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import List, Tuple, Protocol, runtime_checkable
 
 from app import exceptions
@@ -18,6 +19,7 @@ from app.modules.dto import AllocationDTO, UserAllocationRequestPayload
 from app.modules.user.allocations import core
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 from app.pydantic import Model
+from app.engine.projects.rewards import AllocationItem
 
 
 @runtime_checkable
@@ -81,6 +83,18 @@ class PendingUserAllocations(SavedUserAllocations, Model):
     verifier: Verifier
     uniqueness_quotients: UniquenessQuotients
 
+    def _expand_user_allocations_with_score(
+        self, user_allocations: List[AllocationDTO], user_score: Decimal
+    ) -> List[AllocationDTO]:
+        return [
+            AllocationDTO(
+                project_address=allocation.project_address,
+                amount=allocation.amount,
+                uq_score=user_score,
+            )
+            for allocation in user_allocations
+        ]
+
     def allocate(
         self,
         context: Context,
@@ -125,10 +139,17 @@ class PendingUserAllocations(SavedUserAllocations, Model):
     ) -> Tuple[float, int, List[ProjectRewardDTO]]:
         projects_settings = context.epoch_settings.project
         projects = context.projects_details.projects
+        epoch_num = context.epoch_details.epoch_num
+
         matched_rewards = self.octant_rewards.get_matched_rewards(context)
-        all_allocations_before = database.allocations.get_all_with_uqs(
-            context.epoch_details.epoch_num
+        all_allocations_before = database.allocations.get_all_with_uqs(epoch_num)
+        user_uq = database.uniqueness_quotient.get_uq_by_address(
+            user_address, epoch_num
         )
+        if user_uq is not None:
+            user_allocations = self._expand_user_allocations_with_score(
+                user_allocations, Decimal(user_uq.score)
+            )
 
         return core.simulate_allocation(
             projects_settings,
@@ -137,7 +158,6 @@ class PendingUserAllocations(SavedUserAllocations, Model):
             user_address,
             projects,
             matched_rewards,
-            context.epoch_details.epoch_num,
         )
 
     def revoke_previous_allocation(self, context: Context, user_address: str):
