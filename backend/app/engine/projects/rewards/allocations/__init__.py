@@ -11,7 +11,6 @@ from dataclass_wizard import JSONWizard
 class AllocationItem:
     project_address: str
     amount: int
-    user_address: Optional[str] = None
     uq_score: Optional[Decimal] = None
 
 

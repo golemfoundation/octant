@@ -44,6 +44,32 @@ def get_all(epoch: int) -> List[AllocationDTO]:
     ]
 
 
+def get_all_with_uqs(epoch: int) -> List[AllocationDTO]:
+    allocations = (
+        Allocation.query.filter_by(epoch=epoch)
+        .filter(Allocation.deleted_at.is_(None))
+        .options(joinedload(Allocation.user).joinedload(User.uniqueness_quotients))
+        .all()
+    )
+
+    return [
+        AllocationDTO(
+            amount=int(a.amount),
+            project_address=a.project_address,
+            user_address=a.user.address,
+            uq_score=next(
+                (
+                    uq.validated_score
+                    for uq in a.user.uniqueness_quotients
+                    if uq.epoch == epoch
+                ),
+                None,
+            ),
+        )
+        for a in allocations
+    ]
+
+
 def get_user_allocations_history(
     user_address: str, from_datetime: datetime, limit: int
 ) -> List[Tuple[AllocationRequest, List[Allocation]]]:
@@ -250,29 +276,3 @@ def get_user_allocation_epoch_count(user_address: str) -> int:
     )
 
     return epoch_count
-
-
-def get_all_with_uqs(epoch: int) -> List[AllocationDTO]:
-    allocations = (
-        Allocation.query.filter_by(epoch=epoch)
-        .filter(Allocation.deleted_at.is_(None))
-        .options(joinedload(Allocation.user).joinedload(User.uniqueness_quotients))
-        .all()
-    )
-
-    return [
-        AllocationDTO(
-            amount=int(a.amount),
-            project_address=a.project_address,
-            user_address=a.user.address,
-            uq_score=next(
-                (
-                    uq.validated_score
-                    for uq in a.user.uniqueness_quotients
-                    if uq.epoch == epoch
-                ),
-                None,
-            ),
-        )
-        for a in allocations
-    ]
