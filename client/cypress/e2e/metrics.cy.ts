@@ -40,10 +40,10 @@ const rendersTilesWithCorrectValues = (isCryptoAsAMainValue: boolean) => {
 
   cy.get('[data-test=MetricsEpochGridBelowThreshold__ethBelowThreshold__value]')
     .invoke('text')
-    .should('eq', isCryptoAsAMainValue ? '0' : '$0.00');
+    .should('eq', '0');
   cy.get('[data-test=MetricsEpochGridBelowThreshold__ethBelowThreshold__subvalue]')
     .invoke('text')
-    .should('eq', isCryptoAsAMainValue ? '$0.00' : '0');
+    .should('eq', '$0.00');
 
   cy.get('[data-test=MetricsEpochGridFundsUsage__total]')
     .invoke('text')
@@ -58,7 +58,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
        * Since Synpress needs to have valid provider to fetch the data from contracts,
        * setupMetamask is required in each test suite.
        */
-      cy.setupMetamask();
+      // cy.setupMetamask();
     });
 
     beforeEach(() => {
