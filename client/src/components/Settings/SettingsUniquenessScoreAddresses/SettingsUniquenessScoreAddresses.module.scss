@@ -8,30 +8,29 @@
     background-color: $color-octant-grey3;
     margin: 1.6rem 0 1.4rem;
 
-
     .avatarsGroup {
         position: relative;
         display: flex;
 
-    .addressAvatar { 
-        width: 2.4rem;
-        height: 2.4rem;
-        background-color: $color-white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: $border-radius-16;
+        .addressAvatar { 
+            width: 2.4rem;
+            height: 2.4rem;
+            background-color: $color-white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: $border-radius-16;
 
-        &:nth-child(n - 1) {
-            margin-left: -1rem;
-        }
+            &:nth-child(n - 1) {
+                margin-left: -1rem;
+            }
 
-        .avatar {
-            width: 1.4rem;
-            height: 1.4rem;
+            .avatar {
+                width: 1.4rem;
+                height: 1.4rem;
+            }
         }
     }
-}
 
     .addresses {
         margin-left: 0.8rem;
@@ -57,20 +56,10 @@
         
     }
 
-   
-
-    
-
- 
-
     .score {
         font-size: $font-size-24;
         font-weight: $font-weight-bold;
         color: $color-octant-dark;
         margin-left: auto;
     }
-
-  
-
-    
 }
