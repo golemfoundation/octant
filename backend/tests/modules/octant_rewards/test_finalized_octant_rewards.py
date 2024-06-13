@@ -1,5 +1,5 @@
 from app.modules.dto import AllocationItem
-from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
+from app.modules.octant_rewards.general.service.finalized import FinalizedOctantRewards
 
 from tests.helpers import make_user_allocation
 from tests.helpers.constants import (
