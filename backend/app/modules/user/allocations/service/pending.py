@@ -83,13 +83,13 @@ class PendingUserAllocations(SavedUserAllocations, Model):
     uniqueness_quotients: UniquenessQuotients
 
     def _expand_user_allocations_with_score(
-        self, user_allocations: List[AllocationDTO], user_score: Decimal
+        self, user_allocations: List[AllocationDTO], uq_score: Decimal
     ) -> List[AllocationDTO]:
         return [
             AllocationDTO(
                 project_address=allocation.project_address,
                 amount=allocation.amount,
-                uq_score=user_score,
+                uq_score=uq_score,
             )
             for allocation in user_allocations
         ]
