@@ -5,25 +5,27 @@ import BoxRounded from 'components/ui/BoxRounded';
 import Button from 'components/ui/Button';
 import Svg from 'components/ui/Svg';
 import { DISCORD_LINK, OCTANT_BUILD_LINK, OCTANT_DOCS } from 'constants/urls';
+import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import { arrowTopRight } from 'svg/misc';
 
 import styles from './SettingsLinkBoxes.module.scss';
 
 const SettingsLinkBoxes = (): ReactNode => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
+  const { isDesktop } = useMediaQuery();
 
   const mobileLinks = [
     {
       href: OCTANT_BUILD_LINK,
-      label: t('website'), // 'Website',
+      label: isDesktop ? t('visitWebsite') : t('website'), // 'Website',
     },
     {
       href: OCTANT_DOCS,
-      label: t('docs'), // 'Docs',
+      label: isDesktop ? t('checkOutDocs') : t('docs'), // 'Docs',
     },
     {
       href: DISCORD_LINK,
-      label: t('discord'),
+      label: isDesktop ? t('joinOurDiscord') : t('discord'),
     },
   ];
 
