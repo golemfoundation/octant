@@ -42,6 +42,9 @@ class FundingCapPercentCalculator:
         matched_allocated_by_addr: List[ProjectMatchedRewardsDTO],
         matched_rewards: int,
     ) -> Dict[str, Decimal]:
+        if not matched_allocated_by_addr:
+            return {}
+
         matched_allocated_by_addr = pd.DataFrame(matched_allocated_by_addr)
         grouped_allocated_by_addr = matched_allocated_by_addr.groupby(
             "project_address"
