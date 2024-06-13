@@ -43,14 +43,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       });
     });
 
-    it('"Use crypto as main value display" option is checked by default', () => {
+    it(`${IS_CRYPTO_MAIN_VALUE_DISPLAY} option is checked by default`, () => {
       cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').should('be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).eq('true');
       });
     });
 
-    it('"Use crypto as main value display" option toggle works', () => {
+    it(`${IS_CRYPTO_MAIN_VALUE_DISPLAY} option toggle works`, () => {
       cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').check();
       cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').should('be.checked');
       cy.getAllLocalStorage().then(() => {
@@ -70,7 +70,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       });
     });
 
-    it('"Use crypto as main value display" option by default displays crypto value as primary in DoubleValue component', () => {
+    it(`${IS_CRYPTO_MAIN_VALUE_DISPLAY} option by default displays crypto value as primary in DoubleValue component`, () => {
       navigateWithCheck(ROOT_ROUTES.earn.absolute);
 
       const cryptoValue = getValueCryptoToDisplay({
@@ -86,7 +86,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         .should('not.eq', cryptoValue);
     });
 
-    it('"Use crypto as main value display" option changes DoubleValue sections order', () => {
+    it(`${IS_CRYPTO_MAIN_VALUE_DISPLAY} option changes DoubleValue sections order`, () => {
       cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
       navigateWithCheck(ROOT_ROUTES.earn.absolute);
 

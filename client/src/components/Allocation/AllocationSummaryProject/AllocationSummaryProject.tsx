@@ -88,7 +88,7 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   }).primary;
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test="AllocationSummaryProject">
       {isFetchingProjectIpfs ? null : (
         <>
           <div className={styles.leftSection}>
@@ -115,7 +115,9 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
               )}
             </div>
           </div>
-          <div className={styles.donation}>{donationAmountToDisplay}</div>
+          <div className={styles.donation} data-test="AllocationSummaryProject__donation">
+            {donationAmountToDisplay}
+          </div>
         </>
       )}
     </div>
