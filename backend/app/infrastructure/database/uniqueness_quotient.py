@@ -20,11 +20,11 @@ def get_uq_by_address(user_address: str, epoch: int) -> Optional[UniquenessQuoti
     return get_uq_by_user(user, epoch)
 
 
-def save_uq(user: User, epoch: int, score: str):
+def save_uq(user: User, epoch: int, score: float):
     uq: UniquenessQuotient = UniquenessQuotient(
         epoch=epoch,
         user_id=user.id,
-        score=score,
+        score=str(score),
     )
 
     db.session.add(uq)
