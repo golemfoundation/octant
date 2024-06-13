@@ -16,6 +16,18 @@ os.environ["EVENTLET_NO_GREENDNS"] = "yes"
 import eventlet  # noqa
 
 eventlet.monkey_patch()
+
+if os.getenv("SENTRY_DSN"):
+    import sentry_sdk
+
+    print("[+] Starting sentry")
+
+    sentry_sdk.init(
+        traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
+        enable_tracing=True,
+    )
+
 from app import create_app  # noqa
 
 app = create_app()
