@@ -1,4 +1,9 @@
-import { changeMainValueToFiat, mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import {
+  changeMainValueToFiat,
+  connectWallet,
+  mockCoinPricesServer,
+  visitWithLoader,
+} from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
@@ -9,6 +14,7 @@ import {
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 const rendersTilesWithCorrectValues = (isCryptoAsAMainValue: boolean) => {
+  connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
   if (!isCryptoAsAMainValue) {
     changeMainValueToFiat(ROOT_ROUTES.metrics.absolute);
   }
@@ -48,6 +54,19 @@ const rendersTilesWithCorrectValues = (isCryptoAsAMainValue: boolean) => {
   cy.get('[data-test=MetricsEpochGridFundsUsage__total]')
     .invoke('text')
     .should(isCryptoAsAMainValue ? 'not.include' : 'include', '$');
+
+  cy.get('[data-test=MetricsPersonalGridTotalRewardsWithdrawals__totalRewards__value]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '$0.00');
+  cy.get('[data-test=MetricsPersonalGridTotalRewardsWithdrawals__totalRewards__subvalue]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '$0.00' : '0 ETH');
+  cy.get('[data-test=MetricsPersonalGridTotalRewardsWithdrawals__totalWithdrawals__value]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '$0.00');
+  cy.get('[data-test=MetricsPersonalGridTotalRewardsWithdrawals__totalWithdrawals__subvalue]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '$0.00' : '0 ETH');
 };
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
