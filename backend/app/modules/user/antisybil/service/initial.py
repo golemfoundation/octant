@@ -22,7 +22,6 @@ class GitcoinPassportAntisybil(Model):
     def get_antisybil_status(
         self, _: Context, user_address: str
     ) -> Optional[Tuple[float, datetime]]:
-        score = None
         try:
             score = database.user_antisybil.get_score_by_address(user_address)
         except UserNotFound as ex:

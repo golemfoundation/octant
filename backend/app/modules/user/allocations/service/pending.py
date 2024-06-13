@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import List, Tuple, Protocol, runtime_checkable
+from typing import List, Tuple, Protocol, runtime_checkable, Optional
 
 from app import exceptions
 from app.context.manager import Context
@@ -47,7 +47,7 @@ class GetUserAllocationNonceProtocol(Protocol):
 
 @runtime_checkable
 class UniquenessQuotients(Protocol):
-    def calculate(self, context: Context, user_address: str) -> float:
+    def calculate(self, context: Context, user_address: str) -> Decimal:
         ...
 
 
@@ -105,17 +105,18 @@ class PendingUserAllocations(SavedUserAllocations, Model):
             context, user_address=user_address, payload=payload, **kwargs
         )
 
+        user = database.user.get_by_address(user_address)
+
+        uq_score = get_uq_by_user(user, context.epoch_details.epoch_num)
+        if not uq_score:
+            uq_score = self.uniqueness_quotients.calculate(context, user_address)
+            save_uq(user, context.epoch_details.epoch_num, uq_score)
+
         leverage, _, _ = self.simulate_allocation(
-            context, payload.payload.allocations, user_address
+            context, payload.payload.allocations, user_address, uq_score
         )
 
         self.revoke_previous_allocation(context, user_address)
-
-        user = database.user.get_by_address(user_address)
-
-        if not get_uq_by_user(user, context.epoch_details.epoch_num):
-            score = self.uniqueness_quotients.calculate(context, user_address)
-            save_uq(user, context.epoch_details.epoch_num, score)
 
         user.allocation_nonce = payload.payload.nonce
         database.allocations.store_allocation_request(
@@ -135,6 +136,7 @@ class PendingUserAllocations(SavedUserAllocations, Model):
         context: Context,
         user_allocations: List[AllocationDTO],
         user_address: str,
+        uq_score: Optional[Decimal] = None,
     ) -> Tuple[float, int, List[ProjectRewardDTO]]:
         projects_settings = context.epoch_settings.project
         projects = context.projects_details.projects
@@ -142,12 +144,11 @@ class PendingUserAllocations(SavedUserAllocations, Model):
 
         matched_rewards = self.octant_rewards.get_matched_rewards(context)
         all_allocations_before = database.allocations.get_all_with_uqs(epoch_num)
-        user_uq = database.uniqueness_quotient.get_uq_by_address(
-            user_address, epoch_num
-        )
-        if user_uq is not None:
+
+        if uq_score is None:
+            uq_score = self.uniqueness_quotients.calculate(context, user_address)
             user_allocations = self._expand_user_allocations_with_score(
-                user_allocations, Decimal(user_uq.score)
+                user_allocations, uq_score
             )
 
         return core.simulate_allocation(

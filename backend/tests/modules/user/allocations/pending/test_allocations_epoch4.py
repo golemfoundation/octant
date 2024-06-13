@@ -10,7 +10,7 @@ from app.modules.user.allocations.service.pending import (
     PendingUserAllocations,
     PendingUserAllocationsVerifier,
 )
-from tests.helpers.allocations import make_user_allocation_with_uq_score
+from tests.helpers.allocations import make_user_allocation
 from tests.helpers.constants import MATCHED_REWARDS, LOW_UQ_SCORE
 from tests.helpers.context import get_context
 
@@ -40,21 +40,23 @@ def service(
     )
 
 
-def test_simulate_allocation_with_user_uq_score(service, mock_users_db_with_scores):
+def test_simulate_allocation_with_user_uq_score(service, mock_users_db):
     context = get_context(epoch_num=4)
     projects = context.projects_details.projects
 
-    user1_with_low_score, _, _ = mock_users_db_with_scores
-    make_user_allocation_with_uq_score(
-        context, user1_with_low_score, 4, uq_score=LOW_UQ_SCORE
-    )
+    (
+        user1,
+        _,
+        _,
+    ) = mock_users_db  # mock users with no scores since it'll be calculated in the service
+    make_user_allocation(context, user1)
 
     next_allocations = [
         AllocationDTO(projects[1], 200_000000000),
     ]
 
     leverage, threshold, rewards = service.simulate_allocation(
-        context, next_allocations, user1_with_low_score.address
+        context, next_allocations, user1.address
     )
     sorted_projects = sorted(projects)
     assert leverage == 5502859957.887531
@@ -74,4 +76,4 @@ def test_simulate_allocation_with_user_uq_score(service, mock_users_db_with_scor
         ProjectRewardDTO(sorted_projects[9], 0, 0),
     ]
 
-    assert service.get_user_allocation_sum(context, user1_with_low_score.address) == 100
+    assert service.get_user_allocation_sum(context, user1.address) == 100

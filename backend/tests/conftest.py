@@ -1452,6 +1452,6 @@ def mock_graphql(
 @pytest.fixture(scope="function")
 def mock_uniqueness_quotients():
     uniqueness_quotients = Mock()
-    uniqueness_quotients.calculate.return_value = "42"
+    uniqueness_quotients.calculate.return_value = LOW_UQ_SCORE
 
     return uniqueness_quotients

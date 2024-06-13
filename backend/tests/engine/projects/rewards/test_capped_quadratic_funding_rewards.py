@@ -97,7 +97,7 @@ def test_compute_capped_qf_rewards_for_allocations_to_multiple_project_low_uq_sc
     result = uut.calculate_project_rewards(payload)
 
     assert result.total_allocated == pytest.approx(
-        Decimal("21000.00000000000044972661456") * LOW_UQ_SCORE, abs=1
+        Decimal("21000.00000000000044972661456") * Decimal(LOW_UQ_SCORE), abs=1
     )
     assert result.rewards_sum == MATCHED_REWARDS + int(result.total_allocated)
     assert result.threshold is None

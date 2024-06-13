@@ -33,12 +33,14 @@ def test_calculate_uq(
     expected_output,
 ):
     assert (
-        calculate_uq(
-            has_epoch_zero_poap,
-            passed_identity_call,
-            num_of_donations,
-            gp_score,
-            Scores(),
+        float(
+            calculate_uq(
+                has_epoch_zero_poap,
+                passed_identity_call,
+                num_of_donations,
+                gp_score,
+                Scores(),
+            )
         )
         == expected_output
     )
