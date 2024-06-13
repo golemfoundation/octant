@@ -77,7 +77,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
        * Since Synpress needs to have valid provider to fetch the data from contracts,
        * setupMetamask is required in each test suite.
        */
-      // cy.setupMetamask();
+      cy.setupMetamask();
     });
 
     beforeEach(() => {
