@@ -7,9 +7,7 @@ import PieChart from 'components/ui/PieChart';
 import networkConfig from 'constants/networkConfig';
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
-import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useEpochInfo from 'hooks/queries/useEpochInfo';
-import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
 
 import styles from './MetricsEpochGridFundsUsage.module.scss';
@@ -24,8 +22,6 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { epoch } = useMetricsEpoch();
-  const { data: currentEpoch } = useCurrentEpoch();
-  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: epochInfo } = useEpochInfo(epoch);
   const getValuesToDisplay = useGetValuesToDisplay();
   const getNumberValue = (value: bigint) =>
@@ -53,7 +49,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
      * Half of PPF goes to the users to manage.
      * Half of PPR goes to "PPF" section.
      */
-    if (epoch === 3) {
+    if (epoch >= 3) {
       return (
         ppf / 2n + epochInfo.individualRewards - totalUserDonationsWithPatronRewards - unusedRewards
       );
@@ -70,20 +66,6 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     ppf,
   ]);
 
-  const leftoverToUse = useMemo(() => {
-    if (!currentEpoch) {
-      return BigInt(0);
-    }
-    if (epoch === currentEpoch - 1 && isDecisionWindowOpen) {
-      return unusedRewards + ethBelowThreshold;
-    }
-    // TODO OCT-1612 OCT-1614 remove this bypass.
-    if (epoch === 3) {
-      return 3854465046588467390n;
-    }
-    return leftover;
-  }, [ethBelowThreshold, epoch, currentEpoch, isDecisionWindowOpen, leftover, unusedRewards]);
-
   const total =
     claimedByUsers +
     donatedToProjects +
@@ -91,7 +73,7 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     staking +
     ppf / 2n +
     communityFund +
-    leftoverToUse;
+    leftover;
 
   // Testnet has much lower staking proceeds. Number of places needs to be bigger to see more than 0.
   const numberOfDecimalPlacesToUse = networkConfig.isTestnet ? 10 : 2;
@@ -116,12 +98,12 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     },
     {
       label: t('leftover', { epochNumber: epoch + 1 }),
-      value: getNumberValue(leftoverToUse),
+      value: getNumberValue(leftover),
       valueLabel: getValuesToDisplay({
         cryptoCurrency: 'ethereum',
         getFormattedEthValueProps,
         showCryptoSuffix: true,
-        valueCrypto: leftoverToUse,
+        valueCrypto: leftover,
       }).primary,
     },
     {
