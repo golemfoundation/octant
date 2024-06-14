@@ -33,6 +33,7 @@ const MetricsPersonalGridTotalRewardsWithdrawals: FC<
         {
           children: (
             <MetricsGridTileValue
+              dataTest="MetricsPersonalGridTotalRewardsWithdrawals__totalRewards"
               isLoading={isLoading}
               size="S"
               subvalue={totalRewardsUsedValues.secondary}
@@ -44,6 +45,7 @@ const MetricsPersonalGridTotalRewardsWithdrawals: FC<
         {
           children: (
             <MetricsGridTileValue
+              dataTest="MetricsPersonalGridTotalRewardsWithdrawals__totalWithdrawals"
               isLoading={isLoading}
               size="S"
               subvalue={totalWithdrawalsValues.secondary}

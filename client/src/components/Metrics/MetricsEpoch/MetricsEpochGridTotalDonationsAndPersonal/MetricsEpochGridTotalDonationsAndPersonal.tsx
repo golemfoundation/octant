@@ -34,6 +34,7 @@ const MetricsEpochGridTotalDonationsAndPersonal: FC<
         {
           children: (
             <MetricsGridTileValue
+              dataTest="MetricsEpochGridTotalDonationsAndPersonal__totalDonations"
               isLoading={isLoading}
               size="S"
               subvalue={totalUserDonationWithPatronRewardsValues.secondary}
@@ -45,6 +46,7 @@ const MetricsEpochGridTotalDonationsAndPersonal: FC<
         {
           children: (
             <MetricsGridTileValue
+              dataTest="MetricsEpochGridTotalDonationsAndPersonal__totalPersonal"
               isLoading={isLoading}
               size="S"
               subvalue={totalPersonalValues.secondary}

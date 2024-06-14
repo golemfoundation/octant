@@ -11,11 +11,12 @@ const MetricsProjectsList: FC<MetricsProjectsListProps> = ({
   projects,
   isLoading,
   numberOfSkeletons,
+  dataTest = 'MetricsProjectsList',
 }) => {
   const getValuesToDisplay = useGetValuesToDisplay();
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test={dataTest}>
       <div className={styles.projectsList}>
         {isLoading
           ? Array.from(Array(numberOfSkeletons)).map((_, idx) => (
@@ -26,6 +27,7 @@ const MetricsProjectsList: FC<MetricsProjectsListProps> = ({
               <MetricsProjectsListItem
                 key={project.address}
                 address={project.address}
+                dataTest={`${dataTest}__item`}
                 epoch={project.epoch}
                 value={
                   getValuesToDisplay({

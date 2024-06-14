@@ -44,6 +44,7 @@ const MetricsEpochGridRewardsUnusedAndUnallocatedValue: FC<
         {
           children: (
             <MetricsGridTileValue
+              dataTest="MetricsEpochGridRewardsUnusedAndUnallocatedValue__unallocatedValue"
               isLoading={isLoading}
               size="S"
               subvalue={unallocatedValue.secondary}
