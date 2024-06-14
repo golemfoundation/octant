@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 import pytest
 
 from app.engine.projects.rewards import (
