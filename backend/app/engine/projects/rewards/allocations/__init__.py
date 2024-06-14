@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from decimal import Decimal
 from itertools import groupby
-from typing import List, Union, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from dataclass_wizard import JSONWizard
 

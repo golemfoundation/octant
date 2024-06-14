@@ -1,13 +1,11 @@
-from decimal import Decimal
-
 import pytest
 
-from app.engine.projects.rewards.quadratic_funding import QuadraticFundingProjectRewards
 from app.engine.projects.rewards import (
     ProjectRewardsPayload,
     ProjectRewardsResult,
     ProjectRewardDTO,
 )
+from app.engine.projects.rewards.quadratic_funding import QuadraticFundingProjectRewards
 from tests.helpers.constants import MATCHED_REWARDS
 
 

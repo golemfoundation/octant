@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from app.engine.projects.rewards.allocations import (
     ProjectAllocationsPayload,
 )
