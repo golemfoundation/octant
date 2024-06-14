@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from decimal import Decimal
 from itertools import groupby
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Tuple
 
 from dataclass_wizard import JSONWizard
 
@@ -17,7 +17,7 @@ class AllocationItem:
 @dataclass(frozen=True)
 class ProjectSumAllocationsDTO(JSONWizard):
     project_address: str
-    amount: Union[int, Decimal]
+    amount: int
 
 
 @dataclass
@@ -28,14 +28,12 @@ class ProjectAllocationsPayload:
 @dataclass
 class ProjectAllocations(ABC):
     @abstractmethod
-    def _calc_allocations(
-        self, allocations: List[AllocationItem]
-    ) -> Union[int, Decimal]:
+    def _calc_allocations(self, allocations: List[AllocationItem]) -> int:
         ...
 
     def group_allocations_by_projects(
         self, payload: ProjectAllocationsPayload
-    ) -> (List[ProjectSumAllocationsDTO], Union[int, Decimal]):
+    ) -> Tuple[List[ProjectSumAllocationsDTO], int]:
         result_allocations = []
         total_allocated = 0
         grouped_allocations = groupby(

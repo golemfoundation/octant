@@ -37,7 +37,7 @@ class CappedQuadraticFundingProjectRewards(ProjectRewards):
     def _calculate_matched_rewards(
         self,
         allocated_by_addr: List[ProjectSumAllocationsDTO],
-        total_allocated: Decimal,
+        total_allocated: int,
         payload,
     ) -> List[ProjectMatchedRewardsDTO]:
         allocated_by_addr_with_matched = []
@@ -92,6 +92,6 @@ class CappedQuadraticFundingProjectRewards(ProjectRewards):
         return ProjectRewardsResult(
             rewards=sorted(rewards.values(), key=lambda r: r.allocated, reverse=True),
             rewards_sum=int(project_rewards_sum),
-            total_allocated=int(total_allocated),
+            total_allocated=total_allocated,
             threshold=None,
         )
