@@ -70,10 +70,8 @@ def test_compute_capped_qf_rewards_for_allocations_to_multiple_project_max_uq_sc
 
     result = uut.calculate_project_rewards(payload)
 
-    assert result.total_allocated == 20997
-    assert result.rewards_sum == pytest.approx(
-        MATCHED_REWARDS + result.total_allocated, abs=1
-    )
+    assert result.total_allocated == 21000
+    assert result.rewards_sum == MATCHED_REWARDS + int(result.total_allocated)
     assert result.threshold is None
     project_rewards = result.rewards
     assert len(project_rewards) == 6
@@ -98,10 +96,10 @@ def test_compute_capped_qf_rewards_for_allocations_to_multiple_project_low_uq_sc
 
     result = uut.calculate_project_rewards(payload)
 
-    assert result.total_allocated == pytest.approx(21000 * LOW_UQ_SCORE, abs=2)
-    assert result.rewards_sum == pytest.approx(
-        MATCHED_REWARDS + result.total_allocated, abs=1
+    assert result.total_allocated == pytest.approx(
+        Decimal("21000.00000000000044972661456") * Decimal(LOW_UQ_SCORE), abs=1
     )
+    assert result.rewards_sum == MATCHED_REWARDS + int(result.total_allocated)
     assert result.threshold is None
     project_rewards = result.rewards
     assert len(project_rewards) == 6
@@ -129,7 +127,7 @@ def test_compute_capped_qf_rewards_for_allocations_to_multiple_project_with_many
 
     result = uut.calculate_project_rewards(payload)
 
-    assert result.total_allocated == 83997
+    assert result.total_allocated == 84000
     assert result.rewards_sum == MATCHED_REWARDS + int(result.total_allocated)
     assert result.threshold is None
     project_rewards = result.rewards
@@ -153,7 +151,7 @@ def _check_project_reward(
 ):
     assert project_reward.address == expected_address
     assert project_reward.allocated == pytest.approx(expected_allocated, abs=1)
-    assert project_reward.matched == pytest.approx(expected_matched, abs=6)
+    assert project_reward.matched == pytest.approx(expected_matched, abs=1)
 
 
 def test_total_matched_rewards_are_distributed(

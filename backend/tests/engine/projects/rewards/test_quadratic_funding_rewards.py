@@ -47,10 +47,8 @@ def test_compute_qf_rewards_for_allocations_to_multiple_project(
     uut = QuadraticFundingProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
-    assert result.total_allocated == 24355
-    assert result.rewards_sum == pytest.approx(
-        MATCHED_REWARDS + result.total_allocated, abs=1
-    )
+    assert result.total_allocated == Decimal("24356.29135849481011578840500")
+    assert result.rewards_sum == int(MATCHED_REWARDS + result.total_allocated)
     assert result.threshold is None
 
     project_rewards = result.rewards
@@ -62,7 +60,7 @@ def test_compute_qf_rewards_for_allocations_to_multiple_project(
         address=projects[0], allocated=7026, matched=10096
     )
     assert project_rewards[2] == ProjectRewardDTO(
-        address=projects[2], allocated=974, matched=1399
+        address=projects[2], allocated=974, matched=1400
     )
 
     for project in project_rewards[3:]:

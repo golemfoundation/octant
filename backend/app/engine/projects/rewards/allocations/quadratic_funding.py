@@ -7,10 +7,10 @@ from app.engine.projects.rewards import ProjectAllocations
 
 
 class QuadraticFundingAllocations(ProjectAllocations):
-    def _calc_allocations(self, allocations: List[AllocationItem]) -> int:
+    def _calc_allocations(self, allocations: List[AllocationItem]) -> Decimal:
         sum_sqrts = sum(
             Decimal(sqrt(allocation.uq_score * allocation.amount))
             for allocation in allocations
         )
         quadratic_value = sum_sqrts**2
-        return int(quadratic_value)
+        return quadratic_value
