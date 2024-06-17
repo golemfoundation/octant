@@ -1,10 +1,11 @@
 import cx from 'classnames';
 import React, { FC, memo } from 'react';
 
-import styles from './SettingsAddressScore.module.scss';
 import Identicon from 'components/ui/Identicon';
-import SettingsAddressScoreProps from './types';
 import truncateEthAddress from 'utils/truncateEthAddress';
+
+import styles from './SettingsAddressScore.module.scss';
+import SettingsAddressScoreProps from './types';
 
 const SettingsAddressScore: FC<SettingsAddressScoreProps> = ({
   address,
@@ -12,9 +13,16 @@ const SettingsAddressScore: FC<SettingsAddressScoreProps> = ({
   score,
   className,
   isScoreHighlighted = false,
+  areBottomCornersRounded = true,
 }) => {
   return (
-    <div className={cx(styles.root, className)}>
+    <div
+      className={cx(
+        styles.root,
+        areBottomCornersRounded && styles.areBottomCornersRounded,
+        className,
+      )}
+    >
       <div className={styles.avatar}>
         <Identicon className={styles.identicon} username={address} />
       </div>

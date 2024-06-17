@@ -5,7 +5,11 @@
     height: 7.2rem;
     padding: 0 2.2rem 0 2.4rem;
     width: 100%;
-    border-radius: $border-radius-16;
+    border-radius: $border-radius-16 $border-radius-16 0 0;
+
+    &.areBottomCornersRounded {
+        border-radius: $border-radius-16;
+    }
 
     .avatar {
         margin-right: 1.6rem;

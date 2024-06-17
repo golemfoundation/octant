@@ -503,7 +503,12 @@
       "website": "Website",
       "discord": "Discord",
       "docs": "Docs",
-      "octantInfo": "Octant is a platform for experiments in decentralized governance that reward participation. Learn more below."
+      "octantInfo": "Octant is a platform for experiments in decentralized governance that reward participation. Learn more below.",
+      "recalculatingScore": "Recalculating score",
+      "checkingPassportScore":"Checking Passport score",
+      "POAPsAndNFTs": "POAPs & NFTs",
+      "octantHistory": "Octant history",
+      "finished": "Finished"
     },
     "syncStatus": {
       "information": "We're synchronizing things to prepare the<br/>next epoch, so the app will be unavailable<br/>for a little while. Please check back soon."

@@ -1,13 +1,12 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import Img from 'components/ui/Img';
+import SettingsAddressScore from 'components/Settings/SettingsAddressScore';
+import SettingsRecalculatingScoreProgressPath from 'components/Settings/SettingsRecalculatingScoreProgressPath';
 import Modal from 'components/ui/Modal';
-import ModalSettingsRecalculatingScoreProps from './types';
-import SettingsAddressScore from '../SettingsAddressScore';
 
 import styles from './ModalSettingsRecalculatingScore.module.scss';
-import SettingsProgressPath from '../SettingsProgressPath';
+import ModalSettingsRecalculatingScoreProps from './types';
 
 const ModalSettingsRecalculatingScore: FC<ModalSettingsRecalculatingScoreProps> = ({
   modalProps,
@@ -17,8 +16,8 @@ const ModalSettingsRecalculatingScore: FC<ModalSettingsRecalculatingScoreProps> 
   return (
     <Modal
       bodyClassName={styles.modalBody}
-      dataTest="ModalSettingsCalculatingYourUniqueness"
-      header="Recalculating score"
+      dataTest="ModalSettingsRecalculatingScore"
+      header={t('recalculatingScore')}
       isOpen={modalProps.isOpen}
       onClosePanel={() => {
         modalProps.onClosePanel();
@@ -26,10 +25,11 @@ const ModalSettingsRecalculatingScore: FC<ModalSettingsRecalculatingScoreProps> 
     >
       <SettingsAddressScore
         address="0xe5e11cc5fb894eF5A9D7Da768cFb17066b9d35D7"
-        score={0}
+        areBottomCornersRounded={false}
         badgeLabel="primary"
+        score={0}
       />
-      <SettingsProgressPath />
+      <SettingsRecalculatingScoreProgressPath />
     </Modal>
   );
 };
