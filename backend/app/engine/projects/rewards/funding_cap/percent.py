@@ -63,8 +63,13 @@ class FundingCapPercentCalculator:
             uncapped_projects = capped_quadratic_distribution[
                 capped_quadratic_distribution < cap_amount
             ]
+
+            left_uncapped_projects = uncapped_projects.sum()
+            if left_uncapped_projects == 0:
+                break
+
             uncapped_distribution = (
-                uncapped_projects / Decimal(uncapped_projects.sum()) * surplus
+                uncapped_projects / Decimal(left_uncapped_projects) * surplus
             ).apply(Decimal)
 
             new_surplus = self._calculate_surplus_to_project(

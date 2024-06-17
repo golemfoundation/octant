@@ -42,9 +42,12 @@ class CappedQuadraticFundingProjectRewards(ProjectRewards):
     ) -> List[ProjectMatchedRewardsDTO]:
         allocated_by_addr_with_matched = []
         for allocation in allocated_by_addr:
-            calc_matched = Decimal(
-                allocation.amount / total_allocated * payload.matched_rewards
-            )
+            if total_allocated == 0:
+                calc_matched = Decimal(0)
+            else:
+                calc_matched = Decimal(
+                    allocation.amount / total_allocated * payload.matched_rewards
+                )
 
             allocated_by_addr_with_matched.append(
                 ProjectMatchedRewardsDTO(allocation.project_address, calc_matched)
