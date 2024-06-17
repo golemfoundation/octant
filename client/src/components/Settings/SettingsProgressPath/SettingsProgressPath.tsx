@@ -1,18 +1,21 @@
 import cx from 'classnames';
 import { motion } from 'framer-motion';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 
 import styles from './SettingsProgressPath.module.scss';
 
 const SettingsProgressPath: FC = () => {
   const steps = ['1', '2', '3', '4'];
-  const [lastDoneStep, setLastDoneStep] = useState(0);
+  const [
+    lastDoneStep,
+    //  setLastDoneStep
+  ] = useState(0);
 
-  useEffect(() => {
-    setInterval(() => {
-      setLastDoneStep(prev => prev + 1);
-    }, 2500);
-  }, []);
+  //   useEffect(() => {
+  //     setInterval(() => {
+  //       setLastDoneStep(prev => prev + 1);
+  //     }, 2500);
+  //   }, []);
 
   return (
     <div className={styles.root}>
@@ -31,28 +34,28 @@ const SettingsProgressPath: FC = () => {
           >
             <motion.svg
               className={styles.stepSvg}
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
+              fill="none"
               height="16"
               viewBox="0 0 16 16"
-              fill="none"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
             >
               <motion.circle
                 key="outsideCircle"
+                className={styles.outsideCircle}
                 cx="8"
                 cy="8"
                 r="7"
-                className={styles.outsideCircle}
               />
               <motion.circle
                 key="insideCircle"
+                animate={isInProgress ? { opacity: [0.5, 1, 0.5] } : { opacity: 1 }}
+                className={styles.insideCircle}
                 cx="8"
                 cy="8"
                 r="4"
-                className={styles.insideCircle}
-                animate={isInProgress ? { opacity: [0.5, 1, 0.5] } : { opacity: 1 }}
                 transition={
-                  isInProgress ? { duration: 2, delay: 0.2, ease: 'easeOut', repeat: Infinity } : {}
+                  isInProgress ? { delay: 0.2, duration: 2, ease: 'easeOut', repeat: Infinity } : {}
                 }
               />
             </motion.svg>

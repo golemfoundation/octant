@@ -38,8 +38,8 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
           <Button
             className={styles.button}
             isHigh
-            variant="cta"
             onClick={() => setIsModalRecalculatingScoreOpen(true)}
+            variant="cta"
           >
             {t('recalculate')}
           </Button>

@@ -1,10 +1,11 @@
 import cx from 'classnames';
 import React, { FC, memo } from 'react';
 
-import styles from './SettingsAddressScore.module.scss';
 import Identicon from 'components/ui/Identicon';
-import SettingsAddressScoreProps from './types';
 import truncateEthAddress from 'utils/truncateEthAddress';
+
+import styles from './SettingsAddressScore.module.scss';
+import SettingsAddressScoreProps from './types';
 
 const SettingsAddressScore: FC<SettingsAddressScoreProps> = ({
   address,
