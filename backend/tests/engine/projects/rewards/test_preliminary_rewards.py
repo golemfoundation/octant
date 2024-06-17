@@ -1,6 +1,6 @@
 import pytest
 
-from app.engine.projects import DefaultProjectRewards
+from app.engine.projects.rewards.preliminary import PreliminaryProjectRewards
 from app.engine.projects.rewards import (
     ProjectRewardsPayload,
     ProjectRewardsResult,
@@ -15,7 +15,7 @@ MATCHED_REWARDS = 100_000000000_000000000
 def test_compute_rewards_for_none_allocations():
     allocations = []
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, [])
-    uut = DefaultProjectRewards()
+    uut = PreliminaryProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
 
@@ -26,7 +26,7 @@ def test_compute_rewards_for_allocations_to_one_project():
     projects = get_project_details().projects
     allocations = [AllocationItem(projects[0], 100_000000000)]
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects)
-    uut = DefaultProjectRewards()
+    uut = PreliminaryProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
 
@@ -53,7 +53,7 @@ def test_compute_rewards_for_allocations_to_multiple_project():
         AllocationItem(projects[2], 500_000000000),
     ]
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects)
-    uut = DefaultProjectRewards()
+    uut = PreliminaryProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
 
@@ -87,7 +87,7 @@ def test_total_matched_rewards_are_distributed():
         AllocationItem(projects[2], 500_000000000),
     ]
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects)
-    uut = DefaultProjectRewards()
+    uut = PreliminaryProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
 
@@ -105,7 +105,7 @@ def test_compute_rewards_when_one_project_is_below_threshold():
         AllocationItem(projects[2], 500_000000000),
     ]
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects[:5])
-    uut = DefaultProjectRewards()
+    uut = PreliminaryProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
 
@@ -134,7 +134,7 @@ def test_compute_rewards_when_one_project_is_at_threshold():
         AllocationItem(projects[2], 500_000000000),
     ]
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects[:5])
-    uut = DefaultProjectRewards()
+    uut = PreliminaryProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
 
@@ -163,7 +163,7 @@ def test_compute_rewards_when_multiple_projects_are_below_threshold():
         AllocationItem(projects[2], 500_000000000),
     ]
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects[:5])
-    uut = DefaultProjectRewards()
+    uut = PreliminaryProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
 
@@ -191,7 +191,7 @@ def test_total_allocated_is_computed():
         AllocationItem(projects[2], 500_000000000),
     ]
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects[:5])
-    uut = DefaultProjectRewards()
+    uut = PreliminaryProjectRewards()
 
     result = uut.calculate_project_rewards(payload)
 

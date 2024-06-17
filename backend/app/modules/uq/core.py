@@ -1,4 +1,7 @@
 from dataclasses import dataclass
+from decimal import Decimal
+
+from app.constants import LOW_UQ_SCORE, MAX_UQ_SCORE
 
 
 @dataclass
@@ -7,8 +10,8 @@ class Scores:
     epoch0_poap: int = 10
     num_of_donations: int = 10
     threshold: int = 20
-    min_return: float = 0.2
-    max_return: float = 1.0
+    min_return: Decimal = LOW_UQ_SCORE
+    max_return: Decimal = MAX_UQ_SCORE
 
 
 def calculate_uq(
@@ -17,7 +20,7 @@ def calculate_uq(
     num_of_donations: int,
     gp_score: float,
     scores: Scores,
-) -> float:
+) -> Decimal:
     uq_score = 0
 
     if passed_identity_call:
@@ -28,7 +31,6 @@ def calculate_uq(
         uq_score += scores.epoch0_poap
 
     total_uq_score = gp_score + uq_score
-
     if total_uq_score >= scores.threshold:
         return scores.max_return
     else:

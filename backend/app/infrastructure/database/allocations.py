@@ -3,9 +3,8 @@ from datetime import datetime
 from typing import List, Tuple
 
 from eth_utils import to_checksum_address
-from sqlalchemy.orm import joinedload
 from sqlalchemy import func
-from sqlalchemy.orm import Query
+from sqlalchemy.orm import Query, joinedload
 from typing_extensions import deprecated
 
 from app.extensions import db
@@ -40,6 +39,32 @@ def get_all(epoch: int) -> List[AllocationDTO]:
             amount=int(a.amount),
             project_address=a.project_address,
             user_address=a.user.address,
+        )
+        for a in allocations
+    ]
+
+
+def get_all_with_uqs(epoch: int) -> List[AllocationDTO]:
+    allocations = (
+        Allocation.query.filter_by(epoch=epoch)
+        .filter(Allocation.deleted_at.is_(None))
+        .options(joinedload(Allocation.user).joinedload(User.uniqueness_quotients))
+        .all()
+    )
+
+    return [
+        AllocationDTO(
+            amount=int(a.amount),
+            project_address=a.project_address,
+            user_address=a.user.address,
+            uq_score=next(
+                (
+                    uq.validated_score
+                    for uq in a.user.uniqueness_quotients
+                    if uq.epoch == epoch
+                ),
+                None,
+            ),
         )
         for a in allocations
     ]

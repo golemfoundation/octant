@@ -82,9 +82,10 @@ def service(
 
 
 def test_simulate_allocation(service, mock_users_db):
-    user1, _, _ = mock_users_db
     context = get_context()
     projects = context.projects_details.projects
+
+    user1, _, _ = mock_users_db
     make_user_allocation(context, user1)
 
     next_allocations = [

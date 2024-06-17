@@ -140,11 +140,13 @@ const MetricsEpoch = (): ReactElement => {
           className={styles.unusedAndUnallocatedValue}
           isLoading={isLoading}
         />
-        <MetricsEpochGridBelowThreshold
-          className={styles.belowThreshold}
-          ethBelowThreshold={ethBelowThreshold}
-          isLoading={isLoading}
-        />
+        {epoch < 4 && (
+          <MetricsEpochGridBelowThreshold
+            className={styles.belowThreshold}
+            ethBelowThreshold={ethBelowThreshold}
+            isLoading={isLoading}
+          />
+        )}
       </MetricsGrid>
     </div>
   );
