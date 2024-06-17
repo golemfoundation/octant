@@ -1,22 +1,34 @@
-import { CryptoCurrency } from 'types/cryptoCurrency';
+import { FormattedCryptoValue } from 'types/formattedCryptoValue';
 
-import getFormattedEthValue from './getFormattedEthValue';
-import getFormattedGlmValue from './getFormattedGlmValue';
+import getFormattedEthValue, { GetFormattedEthValueProps } from './getFormattedEthValue';
+import getFormattedGlmValue, { GetFormattedGlmValueProps } from './getFormattedGlmValue';
 
-export type ValueCryptoToDisplay = {
-  cryptoCurrency?: CryptoCurrency;
-  isUsingHairSpace?: boolean;
-  shouldIgnoreGwei?: boolean;
+export type GetValueCryptoToDisplayProps = {
   valueCrypto?: bigint;
-};
+  valueFiat?: string;
+} & (
+  | {
+      cryptoCurrency: 'ethereum';
+      getFormattedEthValueProps?: Omit<GetFormattedEthValueProps, 'value'>;
+      getFormattedGlmValueProps?: never;
+    }
+  | {
+      cryptoCurrency: 'golem';
+      getFormattedEthValueProps?: never;
+      getFormattedGlmValueProps?: Omit<GetFormattedGlmValueProps, 'value'>;
+    }
+);
 
 export default function getValueCryptoToDisplay({
   cryptoCurrency,
-  isUsingHairSpace = true,
   valueCrypto = BigInt(0),
-  shouldIgnoreGwei,
-}: ValueCryptoToDisplay): string {
-  return cryptoCurrency === 'ethereum'
-    ? getFormattedEthValue(valueCrypto, isUsingHairSpace, shouldIgnoreGwei).fullString
-    : getFormattedGlmValue(valueCrypto, isUsingHairSpace).fullString;
+  getFormattedEthValueProps,
+  getFormattedGlmValueProps,
+}: GetValueCryptoToDisplayProps): FormattedCryptoValue {
+  const formattedCryptoValue =
+    cryptoCurrency === 'ethereum'
+      ? getFormattedEthValue({ value: valueCrypto, ...getFormattedEthValueProps })
+      : getFormattedGlmValue({ value: valueCrypto, ...getFormattedGlmValueProps });
+
+  return formattedCryptoValue;
 }
