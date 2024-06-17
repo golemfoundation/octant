@@ -51,6 +51,7 @@ const EarnBoxGlmLock: FC<EarnBoxGlmLockProps> = ({ classNameBox }) => {
           isFetchingDepositValue ||
           (isAppWaitingForTransactionToBeIndexed &&
             _first(transactionsPending)?.type !== 'withdrawal'),
+        showCryptoSuffix: true,
         valueCrypto: depositsValue,
       },
       isDisabled: isPreLaunch && !isConnected,
@@ -66,6 +67,7 @@ const EarnBoxGlmLock: FC<EarnBoxGlmLockProps> = ({ classNameBox }) => {
           isFetchingEstimatedEffectiveDeposit ||
           (isAppWaitingForTransactionToBeIndexed &&
             _first(transactionsPending)?.type !== 'withdrawal'),
+        showCryptoSuffix: true,
         valueCrypto: estimatedEffectiveDeposit,
       },
       isDisabled: isPreLaunch && !isConnected,

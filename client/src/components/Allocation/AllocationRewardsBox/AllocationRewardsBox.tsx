@@ -6,10 +6,10 @@ import { useTranslation } from 'react-i18next';
 import ModalAllocationValuesEdit from 'components/Allocation/ModalAllocationValuesEdit';
 import BoxRounded from 'components/ui/BoxRounded';
 import Slider from 'components/ui/Slider';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useAllocationsStore from 'store/allocations/store';
-import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
 import styles from './AllocationRewardsBox.module.scss';
 import AllocationRewardsBoxProps from './types';
@@ -32,6 +32,7 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
     rewardsForProjects: state.data.rewardsForProjects,
     setRewardsForProjects: state.setRewardsForProjects,
   }));
+  const getValuesToDisplay = useGetValuesToDisplay();
 
   const hasUserIndividualReward = !!individualReward && individualReward !== 0n;
   const isDecisionWindowOpenAndHasIndividualReward =
@@ -80,17 +81,21 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
   const sections = [
     {
       header: isLocked ? t('donated') : t('donate'),
-      value: getValueCryptoToDisplay({
+      value: getValuesToDisplay({
         cryptoCurrency: 'ethereum',
+        showCryptoSuffix: true,
+        showLessThanOneCentFiat: !isDisabled,
         valueCrypto: rewardsForProjectsFinal,
-      }),
+      }).primary,
     },
     {
       header: i18n.t('common.personal'),
-      value: getValueCryptoToDisplay({
+      value: getValuesToDisplay({
         cryptoCurrency: 'ethereum',
+        showCryptoSuffix: true,
+        showLessThanOneCentFiat: !isDisabled,
         valueCrypto: rewardsForWithdraw,
-      }),
+      }).primary,
     },
   ];
 
@@ -112,10 +117,14 @@ const AllocationRewardsBox: FC<AllocationRewardsBoxProps> = ({
       isVertical
       subtitle={subtitle}
       subtitleClassName={styles.subtitle}
-      title={getValueCryptoToDisplay({
-        cryptoCurrency: 'ethereum',
-        valueCrypto: isDecisionWindowOpen ? individualReward : BigInt(0),
-      })}
+      title={
+        getValuesToDisplay({
+          cryptoCurrency: 'ethereum',
+          showCryptoSuffix: true,
+          showLessThanOneCentFiat: !isDisabled,
+          valueCrypto: isDecisionWindowOpen ? individualReward : BigInt(0),
+        }).primary
+      }
       titleClassName={cx(styles.title, (isDisabled || isLocked) && styles.greyTitle)}
     >
       {!isDisabled && isManuallyEdited && <div className={styles.isManualBadge}>{t('manual')}</div>}

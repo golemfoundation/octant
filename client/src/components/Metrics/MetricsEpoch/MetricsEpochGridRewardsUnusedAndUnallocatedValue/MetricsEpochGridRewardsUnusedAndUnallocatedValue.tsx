@@ -3,11 +3,9 @@ import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsGridTileValue from 'components/Metrics/MetricsGrid/MetricsGridTileValue';
-import { getValuesToDisplay } from 'components/ui/DoubleValue/utils';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
-import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useEpochUnusedRewards from 'hooks/queries/useEpochUnusedRewards';
-import useSettingsStore from 'store/settings/store';
 
 import MetricsEpochGridRewardsUnusedAndUnallocatedValueProps from './types';
 
@@ -15,26 +13,15 @@ const MetricsEpochGridRewardsUnusedAndUnallocatedValue: FC<
   MetricsEpochGridRewardsUnusedAndUnallocatedValueProps
 > = ({ isLoading, className }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
-  const {
-    data: { displayCurrency },
-  } = useSettingsStore(({ data }) => ({
-    data: {
-      displayCurrency: data.displayCurrency,
-      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
-    },
-  }));
+
   const { epoch } = useMetricsEpoch();
-  const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
   const { data: epochUnusedRewards } = useEpochUnusedRewards(epoch);
+  const getValuesToDisplay = useGetValuesToDisplay();
 
   const users = `${epochUnusedRewards?.addresses.length || 0}`;
   const unallocatedValue = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
-    cryptoValues,
-    displayCurrency: displayCurrency!,
-    error,
-    isCryptoMainValueDisplay: true,
-    shouldIgnoreGwei: false,
+    showCryptoSuffix: true,
     valueCrypto: epochUnusedRewards?.value,
   });
 
@@ -57,6 +44,7 @@ const MetricsEpochGridRewardsUnusedAndUnallocatedValue: FC<
         {
           children: (
             <MetricsGridTileValue
+              dataTest="MetricsEpochGridRewardsUnusedAndUnallocatedValue__unallocatedValue"
               isLoading={isLoading}
               size="S"
               subvalue={unallocatedValue.secondary}

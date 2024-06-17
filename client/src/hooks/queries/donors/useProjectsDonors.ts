@@ -1,4 +1,5 @@
 import { UseQueryResult, useQueries } from '@tanstack/react-query';
+import { useCallback } from 'react';
 
 import { apiGetProjectDonors } from 'api/calls/projectDonors';
 import { QUERY_KEYS } from 'api/queryKeys';
@@ -13,6 +14,7 @@ export default function useProjectsDonors(epoch?: number): {
   data: { [key: string]: ProjectDonor[] };
   isFetching: boolean;
   isSuccess: boolean;
+  refetch: () => void;
 } {
   const { data: currentEpoch } = useCurrentEpoch();
   const { data: projectsEpoch } = useProjectsEpoch(epoch);
@@ -36,6 +38,10 @@ export default function useProjectsDonors(epoch?: number): {
     })),
   });
 
+  const refetchAll = useCallback(() => {
+    projectsDonorsResults.forEach(result => result.refetch());
+  }, [projectsDonorsResults]);
+
   const isFetching =
     isDecisionWindowOpen === undefined ||
     projectsEpoch === undefined ||
@@ -48,6 +54,7 @@ export default function useProjectsDonors(epoch?: number): {
       data: {},
       isFetching,
       isSuccess: false,
+      refetch: refetchAll,
     };
   }
 
@@ -61,5 +68,6 @@ export default function useProjectsDonors(epoch?: number): {
     isFetching: false,
     // Ensures projectsDonorsResults is actually fetched with data, and not just an object with undefined values.
     isSuccess: !projectsDonorsResults.some(element => !element.isSuccess),
+    refetch: refetchAll,
   };
 }
