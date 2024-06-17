@@ -415,7 +415,7 @@ def test_uq_added_while_allocating(project_accounts, tos_users):
     )
 
     uq_1 = get_uq_by_address(user_addr, context.epoch_details.epoch_num)
-    assert uq_1.score == "42"
+    assert uq_1.score == "0.2"
 
     # Allocate for the second time
     payload = create_payload(project_accounts[0:4], None, 1)
