@@ -3,7 +3,9 @@ from datetime import datetime
 from typing import List, Tuple
 
 from eth_utils import to_checksum_address
-from sqlalchemy.orm import Query, joinedload
+from sqlalchemy.orm import joinedload
+from sqlalchemy import func
+from sqlalchemy.orm import Query
 from typing_extensions import deprecated
 
 from app.extensions import db
@@ -99,7 +101,7 @@ def get_all_by_project_addr_and_epoch(
     project_address: str, epoch: int, with_deleted=False
 ) -> List[Allocation]:
     query: Query = Allocation.query.filter_by(
-        proposal_address=to_checksum_address(project_address), epoch=epoch
+        project_address=to_checksum_address(project_address), epoch=epoch
     ).options(joinedload(Allocation.user))
 
     if not with_deleted:
@@ -238,3 +240,14 @@ def get_user_last_allocation_request(user_address: str) -> AllocationRequest | N
         .order_by(AllocationRequest.nonce.desc())
         .first()
     )
+
+
+def get_user_allocation_epoch_count(user_address: str) -> int:
+    epoch_count = (
+        db.session.query(func.count(AllocationRequest.epoch.distinct()))
+        .join(User, User.id == AllocationRequest.user_id)
+        .filter(User.address == user_address)
+        .scalar()
+    )
+
+    return epoch_count
