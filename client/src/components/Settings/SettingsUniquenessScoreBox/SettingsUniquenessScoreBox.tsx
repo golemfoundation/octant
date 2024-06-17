@@ -8,11 +8,13 @@ import Button from 'components/ui/Button';
 import styles from './SettingsUniquenessScoreBox.module.scss';
 
 import ModalSettingsCalculatingYourUniqueness from '../ModalSettingsCalculatingYourUniqueness';
+import ModalSettingsRecalculatingScore from '../ModalSettingsRecalculatingScore';
 
 const SettingsUniquenessScoreBox = (): ReactNode => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalRecalculatingScoreOpen, setIsModalRecalculatingScoreOpen] = useState(false);
 
   return (
     <BoxRounded
@@ -33,7 +35,12 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
       <>
         <SettingsUniquenessScoreAddresses />
         <div className={styles.buttonsWrapper}>
-          <Button className={styles.button} isHigh variant="cta">
+          <Button
+            className={styles.button}
+            isHigh
+            variant="cta"
+            onClick={() => setIsModalRecalculatingScoreOpen(true)}
+          >
             {t('recalculate')}
           </Button>
           <Button className={styles.button} isHigh>
@@ -42,6 +49,12 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
         </div>
         <ModalSettingsCalculatingYourUniqueness
           modalProps={{ isOpen: isModalOpen, onClosePanel: () => setIsModalOpen(false) }}
+        />
+        <ModalSettingsRecalculatingScore
+          modalProps={{
+            isOpen: isModalRecalculatingScoreOpen,
+            onClosePanel: () => setIsModalRecalculatingScoreOpen(false),
+          }}
         />
       </>
     </BoxRounded>
