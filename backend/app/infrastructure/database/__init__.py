@@ -14,4 +14,5 @@ from . import (  # noqa
     multisig_signature,
     score_delegation,
     identity_calls,
+    uniqueness_quotient,
 )

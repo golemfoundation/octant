@@ -22,9 +22,9 @@ def test_compute_qf_rewards_for_none_allocations():
 
 
 def test_compute_qf_rewards_for_allocations_to_one_project(
-    projects, data_for_quadratic_funding
+    projects, data_for_qf_max_uq_score
 ):
-    allocations, MATCHED_REWARDS = data_for_quadratic_funding
+    allocations, MATCHED_REWARDS = data_for_qf_max_uq_score
 
     payload = ProjectRewardsPayload(MATCHED_REWARDS, [allocations[0]], projects)
     uut = QuadraticFundingProjectRewards()
@@ -39,9 +39,9 @@ def test_compute_qf_rewards_for_allocations_to_one_project(
 
 
 def test_compute_qf_rewards_for_allocations_to_multiple_project(
-    projects, data_for_quadratic_funding
+    projects, data_for_qf_max_uq_score
 ):
-    allocations, MATCHED_REWARDS = data_for_quadratic_funding
+    allocations, MATCHED_REWARDS = data_for_qf_max_uq_score
 
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects)
     uut = QuadraticFundingProjectRewards()
@@ -68,8 +68,8 @@ def test_compute_qf_rewards_for_allocations_to_multiple_project(
         assert project.matched == 0
 
 
-def test_total_matched_rewards_are_distributed(projects, data_for_quadratic_funding):
-    allocations, _ = data_for_quadratic_funding
+def test_total_matched_rewards_are_distributed(projects, data_for_qf_max_uq_score):
+    allocations, _ = data_for_qf_max_uq_score
     payload = ProjectRewardsPayload(MATCHED_REWARDS, allocations, projects)
     uut = QuadraticFundingProjectRewards()
 

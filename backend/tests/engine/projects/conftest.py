@@ -7,10 +7,11 @@ from app.engine.projects.rewards.allocations import (
 )
 from app.engine.projects.rewards.funding_cap.percent import ProjectMatchedRewardsDTO
 from app.modules.dto import AllocationDTO
+from tests.helpers.constants import MAX_UQ_SCORE, LOW_UQ_SCORE
 
 
 @pytest.fixture
-def data_for_quadratic_funding(projects):
+def data_for_qf_max_uq_score(projects):
     """
     This fixture is used to create a list of allocations for the quadratic funding algorithm.
 
@@ -73,11 +74,17 @@ def data_for_quadratic_funding(projects):
     """
 
     allocations = [
-        *[AllocationDTO(projects[0], amount) for amount in range(100, 600, 100)],
-        *[AllocationDTO(projects[1], amount) for amount in range(5, 100, 5)],
-        AllocationDTO(projects[2], 50),
-        AllocationDTO(projects[2], 100),
-        AllocationDTO(projects[2], 200),
+        *[
+            AllocationDTO(projects[0], amount, uq_score=Decimal(1))
+            for amount in range(100, 600, 100)
+        ],
+        *[
+            AllocationDTO(projects[1], amount, uq_score=Decimal(1))
+            for amount in range(5, 100, 5)
+        ],
+        AllocationDTO(projects[2], 50, uq_score=Decimal(1)),
+        AllocationDTO(projects[2], 100, uq_score=Decimal(1)),
+        AllocationDTO(projects[2], 200, uq_score=Decimal(1)),
     ]
 
     matched_rewards = 35000
@@ -86,55 +93,41 @@ def data_for_quadratic_funding(projects):
 
 
 @pytest.fixture
-def dataset_1_for_capped_quadratic_funding(projects):
-    matched_rewards = 35000
-    allocations = [
-        AllocationItem(projects[0], 1000),
-        AllocationItem(projects[1], 2000),
-        AllocationItem(projects[2], 3000),
-        AllocationItem(projects[3], 4000),
-        AllocationItem(projects[4], 5000),
-        AllocationItem(projects[5], 6000),
-        AllocationItem(projects[6], 7000),
-        AllocationItem(projects[7], 8000),
-        AllocationItem(projects[8], 9000),
-        AllocationItem(projects[9], 10000),
-    ]
-
-    return matched_rewards, allocations
+def dataset_1_for_capped_qf_max_uq_score(projects):
+    return _prepare_dataset1_for_capped_qf(projects, Decimal(MAX_UQ_SCORE))
 
 
 @pytest.fixture
-def dataset_2_for_capped_quadratic_funding(projects):
-    matched_rewards = 35000
-    allocations = [
-        AllocationItem(projects[0], 1000),
-        AllocationItem(projects[1], 2000),
-        AllocationItem(projects[2], 3000),
-        AllocationItem(projects[3], 4000),
-        AllocationItem(projects[4], 5000),
-        AllocationItem(projects[5], 6000),
-    ]
+def dataset_1_for_capped_qf_lower_uq_score(projects):
+    return _prepare_dataset1_for_capped_qf(projects, Decimal(LOW_UQ_SCORE))
 
-    return matched_rewards, allocations
+
+@pytest.fixture
+def dataset_2_for_capped_qf_max_uq_score(projects):
+    return _prepare_dataset2_for_capped_qf(projects, Decimal(MAX_UQ_SCORE))
+
+
+@pytest.fixture
+def dataset_2_for_capped_qf_lower_uq_score(projects):
+    return _prepare_dataset2_for_capped_qf(projects, Decimal(LOW_UQ_SCORE))
 
 
 @pytest.fixture
 def many_allocations_per_project_for_capped_quadratic_funding(projects):
     matched_rewards = 100000
     allocations = [
-        AllocationItem(projects[0], 1000),
-        AllocationItem(projects[0], 1000),
-        AllocationItem(projects[1], 2000),
-        AllocationItem(projects[1], 2000),
-        AllocationItem(projects[2], 3000),
-        AllocationItem(projects[2], 3000),
-        AllocationItem(projects[3], 4000),
-        AllocationItem(projects[3], 4000),
-        AllocationItem(projects[4], 5000),
-        AllocationItem(projects[4], 5000),
-        AllocationItem(projects[5], 6000),
-        AllocationItem(projects[5], 6000),
+        AllocationItem(projects[0], 1000, uq_score=Decimal(1)),
+        AllocationItem(projects[0], 1000, uq_score=Decimal(1)),
+        AllocationItem(projects[1], 2000, uq_score=Decimal(1)),
+        AllocationItem(projects[1], 2000, uq_score=Decimal(1)),
+        AllocationItem(projects[2], 3000, uq_score=Decimal(1)),
+        AllocationItem(projects[2], 3000, uq_score=Decimal(1)),
+        AllocationItem(projects[3], 4000, uq_score=Decimal(1)),
+        AllocationItem(projects[3], 4000, uq_score=Decimal(1)),
+        AllocationItem(projects[4], 5000, uq_score=Decimal(1)),
+        AllocationItem(projects[4], 5000, uq_score=Decimal(1)),
+        AllocationItem(projects[5], 6000, uq_score=Decimal(1)),
+        AllocationItem(projects[5], 6000, uq_score=Decimal(1)),
     ]
 
     return matched_rewards, allocations
@@ -178,3 +171,35 @@ def matched_rewards_with_no_capped_distribution(projects):
     )
 
     return matched_rewards, computed_matched_rewards, expected_distribution
+
+
+def _prepare_dataset1_for_capped_qf(projects: list, uq_score: Decimal):
+    matched_rewards = 35000
+    allocations = [
+        AllocationItem(projects[0], 1000, uq_score=uq_score),
+        AllocationItem(projects[1], 2000, uq_score=uq_score),
+        AllocationItem(projects[2], 3000, uq_score=uq_score),
+        AllocationItem(projects[3], 4000, uq_score=uq_score),
+        AllocationItem(projects[4], 5000, uq_score=uq_score),
+        AllocationItem(projects[5], 6000, uq_score=uq_score),
+        AllocationItem(projects[6], 7000, uq_score=uq_score),
+        AllocationItem(projects[7], 8000, uq_score=uq_score),
+        AllocationItem(projects[8], 9000, uq_score=uq_score),
+        AllocationItem(projects[9], 10000, uq_score=uq_score),
+    ]
+
+    return matched_rewards, allocations
+
+
+def _prepare_dataset2_for_capped_qf(projects: list, uq_score: Decimal):
+    matched_rewards = 35000
+    allocations = [
+        AllocationItem(projects[0], 1000, uq_score=uq_score),
+        AllocationItem(projects[1], 2000, uq_score=uq_score),
+        AllocationItem(projects[2], 3000, uq_score=uq_score),
+        AllocationItem(projects[3], 4000, uq_score=uq_score),
+        AllocationItem(projects[4], 5000, uq_score=uq_score),
+        AllocationItem(projects[5], 6000, uq_score=uq_score),
+    ]
+
+    return matched_rewards, allocations

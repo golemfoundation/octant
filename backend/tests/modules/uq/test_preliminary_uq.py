@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 import pytest
 
 from app.extensions import db
@@ -29,4 +31,4 @@ def test_calculate_uq_below_threshold(context, service, mock_users_db):
     db.session.commit()
 
     result = service.calculate(context, USER1_ADDRESS)
-    assert result == 0.2
+    assert result == Decimal("0.2")

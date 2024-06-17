@@ -8,8 +8,8 @@ from app.engine.projects.rewards.allocations.quadratic_funding import (
 )
 
 
-def test_quadratic_funding_grouping(projects, data_for_quadratic_funding):
-    allocations, _ = data_for_quadratic_funding
+def test_quadratic_funding_grouping(projects, data_for_qf_max_uq_score):
+    allocations, _ = data_for_qf_max_uq_score
 
     payload = ProjectAllocationsPayload(allocations=allocations)
 

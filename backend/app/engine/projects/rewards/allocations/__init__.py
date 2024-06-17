@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from decimal import Decimal
 from itertools import groupby
-from typing import List, Union
+from typing import List, Union, Optional
 
 from dataclass_wizard import JSONWizard
 
@@ -11,10 +11,12 @@ from dataclass_wizard import JSONWizard
 class AllocationItem:
     project_address: str
     amount: int
+    uq_score: Optional[Decimal] = None
 
 
 @dataclass(frozen=True)
-class ProjectSumAllocationsDTO(AllocationItem, JSONWizard):
+class ProjectSumAllocationsDTO(JSONWizard):
+    project_address: str
     amount: Union[int, Decimal]
 
 
