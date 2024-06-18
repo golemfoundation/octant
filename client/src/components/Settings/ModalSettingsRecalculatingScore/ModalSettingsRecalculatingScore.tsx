@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import SettingsAddressScore from 'components/Settings/SettingsAddressScore';
-import SettingsRecalculatingScoreProgressPath from 'components/Settings/SettingsRecalculatingScoreProgressPath';
+import SettingsProgressPath from 'components/Settings/SettingsProgressPath';
 import Modal from 'components/ui/Modal';
 
 import styles from './ModalSettingsRecalculatingScore.module.scss';
@@ -29,7 +29,7 @@ const ModalSettingsRecalculatingScore: FC<ModalSettingsRecalculatingScoreProps> 
         badgeLabel="primary"
         score={0}
       />
-      <SettingsRecalculatingScoreProgressPath />
+      <SettingsProgressPath />
     </Modal>
   );
 };
