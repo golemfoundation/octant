@@ -18,6 +18,7 @@ import useAllocate from 'hooks/events/useAllocate';
 import useAllocationViewSetRewardsForProjects from 'hooks/helpers/useAllocationViewSetRewardsForProjects';
 import useIdsInAllocation from 'hooks/helpers/useIdsInAllocation';
 import useAllocateSimulate from 'hooks/mutations/useAllocateSimulate';
+import useProjectsDonors from 'hooks/queries/donors/useProjectsDonors';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useHistory from 'hooks/queries/useHistory';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
@@ -51,6 +52,7 @@ const AllocationView = (): ReactElement => {
   const [addressesWithError, setAddressesWithError] = useState<string[]>([]);
   const [percentageProportions, setPercentageProportions] = useState<PercentageProportions>({});
   const { data: projectsEpoch } = useProjectsEpoch();
+  const { refetch: refetchProjectsDonors } = useProjectsDonors();
   const { data: projectsIpfsWithRewards } = useProjectsIpfsWithRewards();
   const { isRewardsForProjectsSet } = useAllocationViewSetRewardsForProjects();
   const {
@@ -122,6 +124,7 @@ const AllocationView = (): ReactElement => {
     refetchUserAllocationNonce();
     refetchHistory();
     refetchWithdrawals();
+    refetchProjectsDonors();
     setAllocations([
       ...allocations.filter(allocation => {
         const allocationValue = allocationValues.find(({ address }) => address === allocation);

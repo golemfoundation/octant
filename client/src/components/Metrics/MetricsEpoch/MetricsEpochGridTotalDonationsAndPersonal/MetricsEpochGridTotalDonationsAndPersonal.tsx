@@ -3,9 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsGridTileValue from 'components/Metrics/MetricsGrid/MetricsGridTileValue';
-import { getValuesToDisplay } from 'components/ui/DoubleValue/utils';
-import useCryptoValues from 'hooks/queries/useCryptoValues';
-import useSettingsStore from 'store/settings/store';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 
 import MetricsEpochGridTotalDonationsAndPersonalProps from './types';
 
@@ -13,33 +11,18 @@ const MetricsEpochGridTotalDonationsAndPersonal: FC<
   MetricsEpochGridTotalDonationsAndPersonalProps
 > = ({ isLoading, totalUserDonationsWithPatronRewards, totalPersonal, className }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
-  const {
-    data: { displayCurrency },
-  } = useSettingsStore(({ data }) => ({
-    data: {
-      displayCurrency: data.displayCurrency,
-      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
-    },
-  }));
-  const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
+
+  const getValuesToDisplay = useGetValuesToDisplay();
 
   const totalUserDonationWithPatronRewardsValues = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
-    cryptoValues,
-    displayCurrency: displayCurrency!,
-    error,
-    isCryptoMainValueDisplay: true,
-    shouldIgnoreGwei: false,
+    showCryptoSuffix: true,
     valueCrypto: totalUserDonationsWithPatronRewards,
   });
 
   const totalPersonalValues = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
-    cryptoValues,
-    displayCurrency: displayCurrency!,
-    error,
-    isCryptoMainValueDisplay: true,
-    shouldIgnoreGwei: false,
+    showCryptoSuffix: true,
     valueCrypto: totalPersonal,
   });
 
@@ -51,6 +34,7 @@ const MetricsEpochGridTotalDonationsAndPersonal: FC<
         {
           children: (
             <MetricsGridTileValue
+              dataTest="MetricsEpochGridTotalDonationsAndPersonal__totalDonations"
               isLoading={isLoading}
               size="S"
               subvalue={totalUserDonationWithPatronRewardsValues.secondary}
@@ -62,6 +46,7 @@ const MetricsEpochGridTotalDonationsAndPersonal: FC<
         {
           children: (
             <MetricsGridTileValue
+              dataTest="MetricsEpochGridTotalDonationsAndPersonal__totalPersonal"
               isLoading={isLoading}
               size="S"
               subvalue={totalPersonalValues.secondary}

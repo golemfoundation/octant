@@ -54,6 +54,7 @@ const LayoutWallet: FC<LayoutWalletProps> = ({ onDisconnect }) => {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
         isFetching: !isFetchedAvailableFundsEth,
+        showCryptoSuffix: true,
         valueCrypto: availableFundsEthLocal,
       },
       icon: ethereum,
@@ -65,6 +66,7 @@ const LayoutWallet: FC<LayoutWalletProps> = ({ onDisconnect }) => {
               coinPricesServerDowntimeText: '...' as const,
               cryptoCurrency: 'golem' as CryptoCurrency,
               isFetching: !isFetchedAvailableFundsGlm,
+              showCryptoSuffix: true,
               valueCrypto: availableFundsGlmLocal,
             },
             icon: golem,

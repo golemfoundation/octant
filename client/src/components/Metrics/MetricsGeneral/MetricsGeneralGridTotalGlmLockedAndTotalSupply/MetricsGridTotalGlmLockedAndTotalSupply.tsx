@@ -63,6 +63,7 @@ const MetricsGeneralGridTotalGlmLockedAndTotalSupply: FC<
         {
           children: (
             <MetricsGridTileValue
+              dataTest="MetricsGeneralGridTotalGlmLockedAndTotalSupply__totalGlmLocked"
               isLoading={isLoading}
               subvalue={lockedGlmTotalFiatValue}
               value={lockedGlmTotalValue}
