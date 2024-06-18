@@ -13,5 +13,4 @@ from . import (  # noqa
     user_antisybil,
     multisig_signature,
     score_delegation,
-    identity_calls,
 )

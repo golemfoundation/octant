@@ -21,16 +21,7 @@ def mock_epoch0_whitelist():
 
 
 @pytest.fixture
-def mock_identity_call_whitelist():
-    mock = Mock()
-    mock.exists.return_value = False
-    return mock
-
-
-@pytest.fixture
-def service(mock_antisybil, mock_epoch0_whitelist, mock_identity_call_whitelist):
+def service(mock_antisybil, mock_epoch0_whitelist):
     return PreliminaryUQ(
-        antisybil=mock_antisybil,
-        epoch0_whitelist=mock_epoch0_whitelist,
-        identity_call_whitelist=mock_identity_call_whitelist,
+        antisybil=mock_antisybil, epoch0_whitelist=mock_epoch0_whitelist
     )
