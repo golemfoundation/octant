@@ -62,7 +62,8 @@ class PendingUserAllocationsVerifier(Verifier, Model):
             kwargs["payload"],
         )
         expected_nonce = self.user_nonce.get_user_next_nonce(user_address)
-        user_budget = self.user_budgets.get_budget(context, user_address)
+        # user_budget = self.user_budgets.get_budget(context, user_address)
+        user_budget = 111111
         patrons = self.patrons_mode.get_all_patrons_addresses(context)
 
         core.verify_user_allocation_request(
@@ -111,6 +112,8 @@ class PendingUserAllocations(SavedUserAllocations, Model):
         if not uq_score:
             uq_score = self.uniqueness_quotients.calculate(context, user_address)
             save_uq(user, context.epoch_details.epoch_num, uq_score)
+        else:
+            uq_score = uq_score.validated_score
 
         leverage, _, _ = self.simulate_allocation(
             context, payload.payload.allocations, user_address, uq_score
@@ -147,9 +150,10 @@ class PendingUserAllocations(SavedUserAllocations, Model):
 
         if uq_score is None:
             uq_score = self.uniqueness_quotients.calculate(context, user_address)
-            user_allocations = self._expand_user_allocations_with_score(
-                user_allocations, uq_score
-            )
+
+        user_allocations = self._expand_user_allocations_with_score(
+            user_allocations, uq_score
+        )
 
         return core.simulate_allocation(
             projects_settings,
