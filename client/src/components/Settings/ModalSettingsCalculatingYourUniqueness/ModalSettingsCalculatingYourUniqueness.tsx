@@ -30,19 +30,13 @@ const ModalSettingsCalculatingYourUniqueness: FC<ModalSettingsCalculatingYourUni
     />,
     <Trans
       className={styles.onboardingModalText}
-      components={[
-        // TODO: add "Passport" href
-        <Button className={styles.link} href="https://google.com" variant="link3" />,
-        // TODO: add "delegate" href
-        <Button className={styles.link} href="https://google.com" variant="link3" />,
-      ]}
       i18nKey="views.settings.calculatingYourUniquenessStep2"
     />,
     <Trans
       className={styles.onboardingModalText}
       components={[
         <Button className={styles.link} href={DISCORD_LINK} variant="link3" />,
-        // TODO: add "UQ docs" href
+        // TODO: "scoring 20 for humans"
         <Button className={styles.link} href="https://google.com" variant="link3" />,
       ]}
       i18nKey="views.settings.calculatingYourUniquenessStep3"
