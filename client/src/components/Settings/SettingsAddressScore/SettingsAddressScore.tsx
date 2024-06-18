@@ -9,7 +9,7 @@ import SettingsAddressScoreProps from './types';
 
 const SettingsAddressScore: FC<SettingsAddressScoreProps> = ({
   address,
-  badgeLabel,
+  badge,
   score,
   className,
   isScoreHighlighted = false,
@@ -28,7 +28,7 @@ const SettingsAddressScore: FC<SettingsAddressScoreProps> = ({
       </div>
       <div>
         <div className={styles.address}>{truncateEthAddress(address)}</div>
-        <span className={styles.badge}>{badgeLabel}</span>
+        <span className={cx(styles.badge, badge === 'secondary' && styles.secondary)}>{badge}</span>
       </div>
       <div className={cx(styles.score, isScoreHighlighted && styles.isScoreHighlighted)}>
         {score}

@@ -505,6 +505,7 @@
       "docs": "Docs",
       "octantInfo": "Octant is a platform for experiments in decentralized governance that reward participation. Learn more below.",
       "recalculatingScore": "Recalculating score",
+      "calculatingScore": "Calculating score",
       "checkingPassportScore":"Checking Passport score",
       "finished": "Finished"
     },
