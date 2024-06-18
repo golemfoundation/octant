@@ -62,8 +62,7 @@ class PendingUserAllocationsVerifier(Verifier, Model):
             kwargs["payload"],
         )
         expected_nonce = self.user_nonce.get_user_next_nonce(user_address)
-        # user_budget = self.user_budgets.get_budget(context, user_address)
-        user_budget = 111111
+        user_budget = self.user_budgets.get_budget(context, user_address)
         patrons = self.patrons_mode.get_all_patrons_addresses(context)
 
         core.verify_user_allocation_request(
