@@ -29,3 +29,9 @@ def save_uq(user: User, epoch: int, score: Decimal):
     )
 
     db.session.add(uq)
+
+
+def save_uq_from_address(user_address: str, epoch: int, score: Decimal):
+    user: User = get_user_by_address(user_address)
+
+    save_uq(user, epoch, score)

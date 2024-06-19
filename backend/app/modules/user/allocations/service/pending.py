@@ -7,7 +7,6 @@ from app.engine.projects.rewards import ProjectRewardDTO
 from app.exceptions import InvalidSignature
 from app.extensions import db
 from app.infrastructure import database
-from app.infrastructure.database.uniqueness_quotient import get_uq_by_user, save_uq
 from app.legacy.crypto.eip712 import build_allocations_eip712_structure
 from app.modules.common.crypto.signature import (
     verify_signed_message,
@@ -48,6 +47,9 @@ class GetUserAllocationNonceProtocol(Protocol):
 @runtime_checkable
 class UniquenessQuotients(Protocol):
     def calculate(self, context: Context, user_address: str) -> Decimal:
+        ...
+
+    def retrieve(self, context: Context, user_address: str) -> Decimal:
         ...
 
 
@@ -106,13 +108,7 @@ class PendingUserAllocations(SavedUserAllocations, Model):
         )
 
         user = database.user.get_by_address(user_address)
-
-        uq_score = get_uq_by_user(user, context.epoch_details.epoch_num)
-        if not uq_score:
-            uq_score = self.uniqueness_quotients.calculate(context, user_address)
-            save_uq(user, context.epoch_details.epoch_num, uq_score)
-        else:
-            uq_score = uq_score.validated_score
+        uq_score = self.uniqueness_quotients.retrieve(context, user_address)
 
         leverage, _, _ = self.simulate_allocation(
             context, payload.payload.allocations, user_address, uq_score
