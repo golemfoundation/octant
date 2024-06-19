@@ -13,14 +13,14 @@ import ModalProps from './types';
 
 const variantsCenter = {
   showHide: {
-    bottom: 'calc(50% + 20px)',
     opacity: 0,
-    y: `50%`,
+    top: 'calc(50% + 20px)',
+    y: `-50%`,
   },
   visible: {
-    bottom: '50%',
     opacity: 1,
-    y: '50%',
+    top: '50%',
+    y: '-50%',
   },
 };
 

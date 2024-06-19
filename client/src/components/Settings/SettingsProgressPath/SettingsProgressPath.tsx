@@ -18,7 +18,7 @@ const SettingsProgressPath: FC = () => {
   }, []);
 
   return (
-    <div className={styles.root}>
+    <motion.div className={styles.root} exit={{ opacity: 0 }} layout>
       {steps.map((step, idx) => {
         const isDone = lastDoneStep !== null && lastDoneStep >= idx;
         const isInProgress = (lastDoneStep === null && idx === 0) || lastDoneStep === idx - 1;
@@ -57,7 +57,7 @@ const SettingsProgressPath: FC = () => {
           </div>
         );
       })}
-    </div>
+    </motion.div>
   );
 };
 

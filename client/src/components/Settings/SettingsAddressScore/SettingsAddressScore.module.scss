@@ -62,4 +62,22 @@
 
         }
     }
+
+    .selector {
+        margin-left: auto;
+        cursor: pointer;
+
+        .circle {
+            stroke: $color-octant-grey2;
+            stroke-width: 0.2rem;
+            fill: $color-white;
+        }
+
+        &.isSelected {
+            .circle {
+                stroke: $color-octant-green;
+                stroke-width: 0.5rem;
+            }        
+        }
+    }
 }

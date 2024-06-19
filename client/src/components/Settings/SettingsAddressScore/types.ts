@@ -4,5 +4,7 @@ export default interface SettingsAddressScoreProps {
   badge: 'primary' | 'secondary';
   className?: string;
   isScoreHighlighted?: boolean;
+  isSelected?: boolean;
+  mode: 'score' | 'select';
   score: number;
 }
