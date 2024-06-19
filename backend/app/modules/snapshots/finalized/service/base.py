@@ -62,7 +62,9 @@ class BaseFinalizedSnapshots(Model):
         total_withdrawals = get_total_withdrawals(
             user_rewards_sum, project_rewards.rewards_sum
         )
-        leftover = calculate_leftover(octant_rewards, total_withdrawals)
+        leftover = calculate_leftover(
+            octant_rewards, total_withdrawals, project_rewards.rewards, matched_rewards
+        )
 
         return FinalizedSnapshotDTO(
             patrons_rewards=patrons_rewards,
