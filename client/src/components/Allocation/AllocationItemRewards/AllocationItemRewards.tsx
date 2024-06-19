@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Svg from 'components/ui/Svg';
@@ -20,19 +20,50 @@ import AllocationItemRewardsProps, { AllocationItemRewardsDonorsProps } from './
 const bigintAbs = (n: bigint): bigint => (n < 0n ? -n : n);
 
 const AllocationItemRewardsDonors: FC<AllocationItemRewardsDonorsProps> = ({
-  isSimulateVisible,
   isLoadingAllocateSimulate,
-  projectDonors,
+  isSimulateVisible,
   isSimulatedMatchedAvailable,
-  isNewSimulatedPositive,
+  projectDonors,
+  userAllocationToThisProject,
+  valueToUse,
 }) => {
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   const shouldBeVisible =
     !isSimulateVisible && !isLoadingAllocateSimulate && (projectDonors || !isDecisionWindowOpen);
 
+  const numberOfDonors = useMemo(() => {
+    if (!isDecisionWindowOpen || !projectDonors) {
+      return 0;
+    }
+    if (
+      isDecisionWindowOpen &&
+      !!projectDonors &&
+      isSimulatedMatchedAvailable &&
+      [undefined, 0n].includes(userAllocationToThisProject)
+    ) {
+      return projectDonors.length + 1;
+    } if (
+      isDecisionWindowOpen &&
+      !!projectDonors &&
+      userAllocationToThisProject &&
+      userAllocationToThisProject > 0n &&
+      ['0', ''].includes(valueToUse) &&
+      isSimulatedMatchedAvailable
+    ) {
+      return projectDonors.length - 1;
+    }
+    return projectDonors.length;
+  }, [
+    isDecisionWindowOpen,
+    projectDonors,
+    isSimulatedMatchedAvailable,
+    userAllocationToThisProject,
+    valueToUse,
+  ]);
+
   if (!shouldBeVisible) {
-    return null;
+    return <div />;
   }
 
   return (
@@ -51,21 +82,7 @@ const AllocationItemRewardsDonors: FC<AllocationItemRewardsDonorsProps> = ({
         img={person}
         size={1.2}
       />
-      {!isDecisionWindowOpen && '0'}
-      {isDecisionWindowOpen &&
-        projectDonors &&
-        isNewSimulatedPositive &&
-        isSimulatedMatchedAvailable &&
-        projectDonors.length + 1}
-      {isDecisionWindowOpen &&
-        projectDonors &&
-        !isNewSimulatedPositive &&
-        isSimulatedMatchedAvailable &&
-        projectDonors.length - 1}
-      {isDecisionWindowOpen &&
-        projectDonors &&
-        !isSimulatedMatchedAvailable &&
-        projectDonors.length}
+      {numberOfDonors}
     </div>
   );
 };
@@ -92,7 +109,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const valueToUse = value || '0';
 
   useEffect(() => {
-    if (simulatedMatched === undefined || simulatedMatched === '0') {
+    if (simulatedMatched === undefined) {
       return;
     }
     setIsSimulateVisible(true);
@@ -176,10 +193,11 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
       </div>
       <AllocationItemRewardsDonors
         isLoadingAllocateSimulate={isLoadingAllocateSimulate}
-        isNewSimulatedPositive={isNewSimulatedPositive}
         isSimulatedMatchedAvailable={isSimulatedMatchedAvailable}
         isSimulateVisible={isSimulateVisible}
         projectDonors={projectDonors}
+        userAllocationToThisProject={userAllocationToThisProject}
+        valueToUse={valueToUse}
       />
     </div>
   );
