@@ -49,7 +49,9 @@ class UniquenessQuotients(Protocol):
     def calculate(self, context: Context, user_address: str) -> Decimal:
         ...
 
-    def retrieve(self, context: Context, user_address: str) -> Decimal:
+    def retrieve(
+        self, context: Context, user_address: str, should_save: bool = False
+    ) -> Decimal:
         ...
 
 
@@ -108,7 +110,10 @@ class PendingUserAllocations(SavedUserAllocations, Model):
         )
 
         user = database.user.get_by_address(user_address)
-        uq_score = self.uniqueness_quotients.retrieve(context, user_address)
+
+        uq_score = self.uniqueness_quotients.retrieve(
+            context, user_address, should_save=True
+        )
 
         leverage, _, _ = self.simulate_allocation(
             context, payload.payload.allocations, user_address, uq_score
