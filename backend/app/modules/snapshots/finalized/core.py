@@ -1,4 +1,5 @@
 from collections import namedtuple
+from typing import List
 
 from app.engine.projects import ProjectSettings
 from app.modules.common import merkle_tree
@@ -9,13 +10,16 @@ from app.modules.dto import (
     AllocationDTO,
     AccountFundsDTO,
 )
+from app.engine.projects.rewards import ProjectRewardDTO
 
 FinalizedProjectRewards = namedtuple(
     "FinalizedProjectRewards", ["rewards", "rewards_sum"]
 )
 
 
-def calculate_leftover(octant_rewards: OctantRewardsDTO, total_withdrawals: int):
+def _calculate_octant_rewards_leftover(
+    octant_rewards: OctantRewardsDTO, total_withdrawals: int
+) -> int:
     return (
         octant_rewards.staking_proceeds
         - octant_rewards.operational_cost
@@ -23,10 +27,29 @@ def calculate_leftover(octant_rewards: OctantRewardsDTO, total_withdrawals: int)
     )
 
 
+def _calculate_matched_rewards_leftover(
+    project_rewards: List[ProjectRewardDTO], total_matched_rewards: int
+) -> int:
+    used_matched_rewards = sum(r.matched for r in project_rewards)
+    return total_matched_rewards - used_matched_rewards
+
+
+def calculate_leftover(
+    octant_rewards: OctantRewardsDTO,
+    total_withdrawals: int,
+    project_rewards: List[ProjectRewardDTO],
+    matched_rewards: int,
+) -> int:
+    leftover = _calculate_octant_rewards_leftover(
+        octant_rewards, total_withdrawals
+    ) + _calculate_matched_rewards_leftover(project_rewards, matched_rewards)
+    return leftover
+
+
 def get_finalized_project_rewards(
     project_settings: ProjectSettings,
-    allocations: list[AllocationDTO],
-    all_projects: list[str],
+    allocations: List[AllocationDTO],
+    all_projects: List[str],
     matched_rewards: int,
 ) -> FinalizedProjectRewards:
     project_rewards_result = get_projects_rewards(
@@ -46,7 +69,7 @@ def get_finalized_project_rewards(
 
 
 def get_merkle_root(
-    user_rewards: list[AccountFundsDTO], projects_rewards: list[ProjectAccountFundsDTO]
+    user_rewards: List[AccountFundsDTO], projects_rewards: List[ProjectAccountFundsDTO]
 ):
     rewards = user_rewards + projects_rewards
     if not rewards:

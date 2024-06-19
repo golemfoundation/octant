@@ -11,21 +11,25 @@ from app.engine.projects.rewards.allocations import (
     ProjectAllocations,
     ProjectAllocationsPayload,
 )
-from app.engine.projects.rewards.allocations.default import DefaultProjectAllocations
+from app.engine.projects.rewards.allocations.preliminary import (
+    PreliminaryProjectAllocations,
+)
 from app.engine.projects.rewards.threshold import (
     ProjectThreshold,
     ProjectThresholdPayload,
 )
-from app.engine.projects.rewards.threshold.default import DefaultProjectThreshold
+from app.engine.projects.rewards.threshold.preliminary import (
+    PreliminaryProjectThreshold,
+)
 
 
 @dataclass
-class DefaultProjectRewards(ProjectRewards):
+class PreliminaryProjectRewards(ProjectRewards):
     projects_allocations: ProjectAllocations = field(
-        default_factory=DefaultProjectAllocations
+        default_factory=PreliminaryProjectAllocations
     )
     projects_threshold: ProjectThreshold = field(
-        default_factory=lambda: DefaultProjectThreshold(1)
+        default_factory=lambda: PreliminaryProjectThreshold(1)
     )
 
     def calculate_threshold(self, total_allocated: int, projects: list[str]) -> int:
@@ -47,7 +51,11 @@ class DefaultProjectRewards(ProjectRewards):
         threshold = self.calculate_threshold(total_allocated, payload.projects)
 
         total_allocated_above_threshold = sum(
-            [allocated for _, allocated in allocated_by_addr if allocated > threshold]
+            [
+                allocation.amount
+                for allocation in allocated_by_addr
+                if allocation.amount > threshold
+            ]
         )
 
         project_rewards_sum = 0
@@ -56,7 +64,10 @@ class DefaultProjectRewards(ProjectRewards):
             address: ProjectRewardDTO(address, 0, 0) for address in payload.projects
         }
 
-        for address, allocated in allocated_by_addr:
+        for allocation in allocated_by_addr:
+            address = allocation.project_address
+            allocated = allocation.amount
+
             matched = 0
             if allocated > threshold:
                 matched = int(

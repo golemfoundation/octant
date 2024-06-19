@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 from typing import Protocol, Optional, Tuple, runtime_checkable
 
 from app.context.manager import Context
@@ -24,7 +25,7 @@ class PreliminaryUQ(Model):
     antisybil: Antisybil
     epoch0_whitelist: Epoch0Whitelist
 
-    def calculate(self, context: Context, address: str) -> float:
+    def calculate(self, context: Context, address: str) -> Decimal:
         gp_score = self._get_gp_score(context, address)
         has_epoch0_poap = self.epoch0_whitelist.exists(context, address)
 

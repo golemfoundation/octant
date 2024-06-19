@@ -1,8 +1,8 @@
+from decimal import Decimal
+
 import pytest
 
 from app.modules.uq.core import calculate_uq
-
-THRESHOLD = 20
 
 
 @pytest.mark.parametrize(
@@ -14,10 +14,7 @@ def test_calculate_uq(
     gp_score,
     expected_output,
 ):
-    assert (
-        calculate_uq(
-            has_epoch_zero_poap,
-            gp_score,
-        )
-        == expected_output
-    )
+    assert calculate_uq(
+        has_epoch_zero_poap,
+        gp_score,
+    ) == Decimal(str(expected_output))

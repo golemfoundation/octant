@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from decimal import Decimal
+
 import pytest
 
 from tests.helpers.constants import USER1_ADDRESS
@@ -18,4 +20,4 @@ def test_calculate_uq_above_threshold(context, mock_antisybil, service):
 
 def test_calculate_uq_below_threshold(context, service):
     result = service.calculate(context, USER1_ADDRESS)
-    assert result == 0.2
+    assert result == Decimal("0.2")

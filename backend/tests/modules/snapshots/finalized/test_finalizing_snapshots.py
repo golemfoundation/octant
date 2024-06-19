@@ -6,7 +6,8 @@ from app.infrastructure import database
 from app.modules.dto import AllocationItem
 from app.modules.snapshots.finalized.service.finalizing import FinalizingSnapshots
 from tests.helpers import make_user_allocation
-from tests.helpers.constants import MATCHED_REWARDS, USER2_BUDGET
+from tests.helpers.allocations import make_user_allocation_with_uq_score
+from tests.helpers.constants import MATCHED_REWARDS, USER2_BUDGET, LOW_UQ_SCORE
 from tests.helpers.context import get_context
 
 
@@ -55,6 +56,50 @@ def test_create_finalized_snapshots_with_rewards(
     )
 
 
+def test_create_finalized_snapshots_with_rewards_and_user_uq_score(
+    mock_users_db_with_scores, mock_octant_rewards, mock_patron_mode, mock_user_rewards
+):
+    context = get_context(epoch_num=4)
+    projects = context.projects_details.projects
+
+    alice, bob, carol = mock_users_db_with_scores
+    make_user_allocation_with_uq_score(
+        context, carol, epoch=4, allocation_items=[AllocationItem(projects[0], 100)]
+    )
+
+    service = FinalizingSnapshots(
+        patrons_mode=mock_patron_mode,
+        octant_rewards=mock_octant_rewards,
+        user_rewards=mock_user_rewards,
+    )
+
+    result = service.create_finalized_epoch_snapshot(context)
+
+    assert result == 4
+    rewards = database.rewards.get_by_epoch(result)
+    assert rewards[0].address == bob.address
+    assert rewards[0].amount == str(200_000000000)
+    assert rewards[0].matched is None
+    assert rewards[1].address == projects[0]
+    assert rewards[1].amount == str(int(LOW_UQ_SCORE * (MATCHED_REWARDS + 100)))
+    assert rewards[1].matched == str(int(LOW_UQ_SCORE * MATCHED_REWARDS))
+    assert rewards[2].address == alice.address
+    assert rewards[2].amount == str(100_000000000)
+    assert rewards[2].matched is None
+
+    snapshot = database.finalized_epoch_snapshot.get_by_epoch_num(result)
+    assert snapshot.matched_rewards == str(MATCHED_REWARDS)
+    assert snapshot.total_withdrawals == str(
+        int(LOW_UQ_SCORE * (MATCHED_REWARDS + 100)) + 300_000000000
+    )
+    assert snapshot.patrons_rewards == str(USER2_BUDGET)
+    assert snapshot.leftover == str(453997405812588749025)
+    assert (
+        snapshot.withdrawals_merkle_root
+        == "0x6e72ed53161c05c41c054eda1368285bf28078a8bf971c0637299c26e881bf98"
+    )
+
+
 def test_create_finalized_snapshots_without_rewards(
     mock_users_db, mock_octant_rewards, mock_patron_mode, mock_user_rewards
 ):
@@ -77,5 +122,5 @@ def test_create_finalized_snapshots_without_rewards(
     snapshot = database.finalized_epoch_snapshot.get_by_epoch_num(result)
     assert snapshot.matched_rewards == str(MATCHED_REWARDS)
     assert snapshot.total_withdrawals == str(0)
-    assert snapshot.leftover == str(321_928767123_288000000)
+    assert snapshot.leftover == str(321_928767123_288000000 + MATCHED_REWARDS)
     assert snapshot.withdrawals_merkle_root is None
