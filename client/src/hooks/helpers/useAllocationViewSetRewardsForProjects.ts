@@ -4,6 +4,7 @@ import { useAccount } from 'wagmi';
 import { ALLOCATION_REWARDS_FOR_PROJECTS } from 'constants/localStorageKeys';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
+import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import useAllocationsStore from 'store/allocations/store';
 
@@ -21,6 +22,7 @@ export default function useAllocationViewSetRewardsForProjects(): {
     undefined,
     { refetchOnMount: true },
   );
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { isConnected } = useAccount();
 
   useEffect(() => {
@@ -43,7 +45,7 @@ export default function useAllocationViewSetRewardsForProjects(): {
     const localStorageRewardsForProjects = BigInt(
       JSON.parse(localStorage.getItem(ALLOCATION_REWARDS_FOR_PROJECTS) || '0'),
     );
-    if (userAllocations && userAllocations.elements.length > 0) {
+    if (isDecisionWindowOpen && userAllocations && userAllocations.elements.length > 0) {
       const userAllocationsSum = userAllocations.elements.reduce(
         (acc, curr) => acc + curr.value,
         BigInt(0),
@@ -54,6 +56,8 @@ export default function useAllocationViewSetRewardsForProjects(): {
       userAllocations.elements.length === 0 &&
       userAllocations.hasUserAlreadyDoneAllocation
     ) {
+      setRewardsForProjects(BigInt(0));
+    } else if (!isDecisionWindowOpen) {
       setRewardsForProjects(BigInt(0));
     } else {
       setRewardsForProjects(

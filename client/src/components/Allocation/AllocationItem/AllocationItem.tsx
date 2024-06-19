@@ -232,17 +232,18 @@ const AllocationItem: FC<AllocationItemProps> = ({
                 <div className={styles.name} data-test="AllocationItem__name">
                   {name}
                 </div>
-                <AllocationItemRewards
-                  address={address}
-                  isError={isError}
-                  value={value}
-                  {...rewardsProps}
-                />
+                <AllocationItemRewards address={address} value={value} {...rewardsProps} />
               </div>
             </div>
             <InputText
               ref={inputRef}
-              className={cx(styles.input, isEpoch1 && styles.isEpoch1, isError && styles.isError)}
+              className={cx(
+                styles.inputWrapper,
+                isEpoch1 && styles.isEpoch1,
+                isError && styles.isError,
+                !!value && styles.isValue,
+              )}
+              classNameInput={cx(value && styles.isValue)}
               dataTest="AllocationItem__InputText"
               error={isError}
               inputMode="decimal"

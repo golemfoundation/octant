@@ -1,10 +1,8 @@
 import { ProjectIpfsWithRewards } from 'hooks/queries/useProjectsIpfsWithRewards';
 
-export default interface RewardsProps {
-  address: string;
+export default interface RewardsWithoutThreshold {
   className?: string;
   epoch?: number;
-  isProjectView?: boolean;
   numberOfDonors: ProjectIpfsWithRewards['numberOfDonors'];
   totalValueOfAllocations: ProjectIpfsWithRewards['totalValueOfAllocations'];
 }

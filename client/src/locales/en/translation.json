@@ -326,10 +326,8 @@
       "allocationItem": {
         "epoch1": "No funding threshold in Epoch 1",
         "standard": "{{sum}} / {{threshold}}",
-        "simulate": {
-          "mobile": "{{value}} {{character}} {{matched}}",
-          "desktop": "{{value}} {{character}} {{matched}} matching"
-        }
+        "simulate": "Your impact {{value}}",
+        "simulateLoading": "Calculating..."
       },
       "allocationSuccessful": "Allocation successful",
       "tip": {

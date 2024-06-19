@@ -9,6 +9,7 @@ import useProjectsIpfs from 'hooks/queries/useProjectsIpfs';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import getFormattedEthValue from 'utils/getFormattedEthValue';
 import getRewardsSumWithValueAndSimulation from 'utils/getRewardsSumWithValueAndSimulation';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import styles from './AllocationSummaryProject.module.scss';
 import AllocationSummaryProjectProps from './types';
@@ -51,7 +52,7 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
 
   const rewardsSumWithValueAndSimulation = getRewardsSumWithValueAndSimulation(
     valueToUse,
-    simulatedMatched,
+    simulatedMatched ? parseUnitsBigInt(simulatedMatched, 'wei') : BigInt(0),
     simulatedMatched === undefined
       ? projectMatchedProjectRewards?.sum
       : projectMatchedProjectRewards?.allocated,

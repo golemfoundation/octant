@@ -8,11 +8,11 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
 import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
-import styles from './Rewards.module.scss';
-import RewardsProps from './types';
+import styles from './RewardsWithThreshold.module.scss';
+import RewardsWithThresholdProps from './types';
 import { getProgressPercentage } from './utils';
 
-const Rewards: FC<RewardsProps> = ({
+const RewardsWithThreshold: FC<RewardsWithThresholdProps> = ({
   address,
   className,
   epoch,
@@ -30,14 +30,9 @@ const Rewards: FC<RewardsProps> = ({
   const { data: projectRewardsThreshold, isFetching } = useProjectRewardsThreshold(epoch);
   const isDonationAboveThreshold = useIsDonationAboveThreshold({ epoch, projectAddress: address });
 
-  const totalValueOfAllocationsToDisplay = getValueCryptoToDisplay({
+  const currentTotalIncludingMFForProjectsAboveThreshold = getValueCryptoToDisplay({
     cryptoCurrency: 'ethereum',
-    shouldIgnoreGwei: true,
-    valueCrypto: totalValueOfAllocations,
-  });
-
-  const projectDonorsRewardsSumToDisplay = getValueCryptoToDisplay({
-    cryptoCurrency: 'ethereum',
+    shouldIgnoreGwei: isDonationAboveThreshold,
     valueCrypto: totalValueOfAllocations,
   });
 
@@ -132,9 +127,7 @@ const Rewards: FC<RewardsProps> = ({
             )}
             data-test="ProjectRewards__currentTotal__number"
           >
-            {isDonationAboveThreshold
-              ? totalValueOfAllocationsToDisplay
-              : projectDonorsRewardsSumToDisplay}
+            {currentTotalIncludingMFForProjectsAboveThreshold}
           </div>
         </div>
         {((!isArchivedProject && isDecisionWindowOpen && !isDonationAboveThreshold) ||
@@ -153,4 +146,4 @@ const Rewards: FC<RewardsProps> = ({
     </div>
   );
 };
-export default Rewards;
+export default RewardsWithThreshold;
