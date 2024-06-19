@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from decimal import Decimal
 
 import pytest
@@ -14,23 +16,13 @@ def before(app):
     pass
 
 
-def test_calculate_uq_above_threshold(context, service, mock_users_db):
-    alice, _, _ = mock_users_db
-
-    database.allocations.store_allocation_request(alice.address, 1, mock_request(0))
-    database.allocations.store_allocation_request(alice.address, 2, mock_request(1))
-    db.session.commit()
-
+def test_calculate_uq_above_threshold(context, mock_antisybil, service):
+    mock_antisybil.get_antisybil_status.return_value = (20.0, datetime.now())
     result = service.calculate(context, USER1_ADDRESS)
     assert result == 1.0
 
 
-def test_calculate_uq_below_threshold(context, service, mock_users_db):
-    alice, _, _ = mock_users_db
-
-    database.allocations.store_allocation_request(alice.address, 1, mock_request(0))
-    db.session.commit()
-
+def test_calculate_uq_below_threshold(context, service):
     result = service.calculate(context, USER1_ADDRESS)
     assert result == Decimal("0.2")
 
