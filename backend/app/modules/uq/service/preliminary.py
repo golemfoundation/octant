@@ -3,12 +3,11 @@ from decimal import Decimal
 from typing import Protocol, Optional, Tuple, runtime_checkable
 
 from app.context.manager import Context
-from app.infrastructure import database
 from app.infrastructure.database.uniqueness_quotient import (
     get_uq_by_address,
     save_uq_from_address,
 )
-from app.modules.uq.core import calculate_uq, Scores
+from app.modules.uq.core import calculate_uq
 from app.pydantic import Model
 
 
