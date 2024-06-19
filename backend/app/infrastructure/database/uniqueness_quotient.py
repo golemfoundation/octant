@@ -18,6 +18,9 @@ def get_uq_by_user(user: User, epoch: int) -> Optional[UniquenessQuotient]:
 def get_uq_by_address(user_address: str, epoch: int) -> Optional[UniquenessQuotient]:
     user: User = get_user_by_address(user_address)
 
+    if not user:
+        return None
+
     return get_uq_by_user(user, epoch)
 
 
