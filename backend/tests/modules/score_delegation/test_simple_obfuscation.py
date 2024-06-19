@@ -30,7 +30,7 @@ def test_delegation(context, payload, tos_users, patch_is_contract):
     verifier = SimpleObfuscationDelegationVerifier()
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
-        15.0,
+        20,
         "4024-05-22T14:46:46.810800+00:00",
         ["stamp"],
     )
@@ -45,7 +45,7 @@ def test_recalculation(context, payload, patch_is_contract):
     verifier = SimpleObfuscationDelegationVerifier()
     antisybil = Mock()
     antisybil.fetch_antisybil_status.return_value = (
-        15.0,
+        20,
         "4024-05-22T14:46:46.810800+00:00",
         ["stamp"],
     )
@@ -53,7 +53,7 @@ def test_recalculation(context, payload, patch_is_contract):
     service.delegate(context, payload)
 
     antisybil.fetch_antisybil_status.return_value = (
-        20.0,
+        25,
         "4024-05-22T14:46:46.810800+00:00",
         ["stamp"],
     )
