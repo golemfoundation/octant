@@ -5,11 +5,11 @@ export default function getRewardsSumWithValueAndSimulation(
   simulatedMatchedBigInt: bigint,
   projectMatchedProjectRewardsAllocated?: bigint,
   userAllocationToThisProject?: bigint,
-  uqScore?: number,
+  uqScore?: bigint,
 ): bigint {
   const userAllocationToThisProjectMultiplied =
     userAllocationToThisProject && uqScore
-      ? userAllocationToThisProject * BigInt(uqScore)
+      ? (userAllocationToThisProject * uqScore) / 100n
       : BigInt(0);
 
   return (

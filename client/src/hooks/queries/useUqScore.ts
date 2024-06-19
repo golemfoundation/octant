@@ -4,13 +4,17 @@ import { useAccount } from 'wagmi';
 import { apiGetUqScore } from 'api/calls/uqScore';
 import { QUERY_KEYS } from 'api/queryKeys';
 
-export default function useUqScore(epoch: number): UseQueryResult<number, unknown> {
+import useIsDecisionWindowOpen from './useIsDecisionWindowOpen';
+
+export default function useUqScore(epoch: number): UseQueryResult<bigint, unknown> {
   const { address } = useAccount();
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
 
   return useQuery({
-    enabled: !!address,
+    enabled: !!address && !!epoch && isDecisionWindowOpen,
     queryFn: () => apiGetUqScore(address!, epoch),
     queryKey: QUERY_KEYS.uqScore(epoch),
-    select: data => data.score,
+    // We expose it as bigint percentage multiplier, from 0 to 100.
+    select: data => BigInt(parseFloat(data.uniquenessQuotient) * 100),
   });
 }

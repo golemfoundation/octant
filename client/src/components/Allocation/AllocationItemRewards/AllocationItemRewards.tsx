@@ -15,9 +15,60 @@ import getRewardsSumWithValueAndSimulation from 'utils/getRewardsSumWithValueAnd
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import styles from './AllocationItemRewards.module.scss';
-import AllocationItemRewardsProps from './types';
+import AllocationItemRewardsProps, { AllocationItemRewardsDonorsProps } from './types';
 
 const bigintAbs = (n: bigint): bigint => (n < 0n ? -n : n);
+
+const AllocationItemRewardsDonors: FC<AllocationItemRewardsDonorsProps> = ({
+  isSimulateVisible,
+  isLoadingAllocateSimulate,
+  projectDonors,
+  isSimulatedMatchedAvailable,
+  isNewSimulatedPositive,
+}) => {
+  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
+
+  const shouldBeVisible =
+    !isSimulateVisible && !isLoadingAllocateSimulate && (projectDonors || !isDecisionWindowOpen);
+
+  if (!shouldBeVisible) {
+    return null;
+  }
+
+  return (
+    <div
+      className={cx(
+        styles.element,
+        isDecisionWindowOpen && styles.isDecisionWindowOpen,
+        isSimulatedMatchedAvailable && styles.isSimulatedMatchedAvailable,
+      )}
+    >
+      <Svg
+        classNameSvg={cx(
+          styles.icon,
+          isSimulatedMatchedAvailable && styles.isSimulatedMatchedAvailable,
+        )}
+        img={person}
+        size={1.2}
+      />
+      {!isDecisionWindowOpen && '0'}
+      {isDecisionWindowOpen &&
+        projectDonors &&
+        isNewSimulatedPositive &&
+        isSimulatedMatchedAvailable &&
+        projectDonors.length + 1}
+      {isDecisionWindowOpen &&
+        projectDonors &&
+        !isNewSimulatedPositive &&
+        isSimulatedMatchedAvailable &&
+        projectDonors.length - 1}
+      {isDecisionWindowOpen &&
+        projectDonors &&
+        !isSimulatedMatchedAvailable &&
+        projectDonors.length}
+    </div>
+  );
+};
 
 const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   address,
@@ -61,6 +112,10 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const userAllocationToThisProject = userAllocations?.elements.find(
     element => element.address === address,
   )?.value;
+
+  const isNewSimulatedPositive = userAllocationToThisProject
+    ? parseUnitsBigInt(valueToUse) >= userAllocationToThisProject
+    : true;
 
   const simulatedMatchedBigInt = simulatedMatched
     ? parseUnitsBigInt(simulatedMatched, 'wei')
@@ -110,37 +165,22 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
         {isDecisionWindowOpen &&
           !isLoadingAllocateSimulate &&
           isSimulateVisible &&
-          t('simulate', { value: yourImpactFormatted.fullString })}
+          t('simulate', {
+            value: `${isNewSimulatedPositive ? '' : '-'}${yourImpactFormatted.fullString}`,
+          })}
         {isDecisionWindowOpen &&
           !isLoadingAllocateSimulate &&
           !isSimulateVisible &&
           rewardsSumWithValueAndSimulationFormatted.fullString}
         {!isDecisionWindowOpen && getFormattedEthValue(0n).fullString}
       </div>
-      {!isSimulateVisible &&
-        !isLoadingAllocateSimulate &&
-        (projectDonors || !isDecisionWindowOpen) && (
-          <div
-            className={cx(
-              styles.element,
-              isDecisionWindowOpen && styles.isDecisionWindowOpen,
-              isSimulatedMatchedAvailable && styles.isSimulatedMatchedAvailable,
-            )}
-          >
-            <Svg
-              classNameSvg={cx(
-                styles.icon,
-                isSimulatedMatchedAvailable && styles.isSimulatedMatchedAvailable,
-              )}
-              img={person}
-              size={1.2}
-            />
-            {!isDecisionWindowOpen && '0'}
-            {isDecisionWindowOpen &&
-              projectDonors &&
-              (isSimulatedMatchedAvailable ? projectDonors.length + 1 : projectDonors.length)}
-          </div>
-        )}
+      <AllocationItemRewardsDonors
+        isLoadingAllocateSimulate={isLoadingAllocateSimulate}
+        isNewSimulatedPositive={isNewSimulatedPositive}
+        isSimulatedMatchedAvailable={isSimulatedMatchedAvailable}
+        isSimulateVisible={isSimulateVisible}
+        projectDonors={projectDonors}
+      />
     </div>
   );
 };
