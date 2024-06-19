@@ -87,7 +87,7 @@ user_patron_mode_request = api.model(
 uq_score_model = api.model(
     "UQScore",
     {
-        "uniqueness_quotient": fields.String(
+        "uniquenessQuotient": fields.String(
             required=True, description="Uniqueness quotient score"
         ),
     },
@@ -255,4 +255,4 @@ class UQScore(OctantResource):
         uq_score = uq_controller.get_uq(user_address, epoch)
         app.logger.debug(f"Uniqueness quotient: {uq_score}")
 
-        return {"uniqueness_quotient": uq_score}
+        return {"uniquenessQuotient": uq_score}
