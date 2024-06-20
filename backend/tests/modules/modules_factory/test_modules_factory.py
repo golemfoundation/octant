@@ -157,13 +157,9 @@ def test_pending_services_factory():
         patrons_mode=events_based_patron_mode
     )
     user_allocations = PendingUserAllocations(
-<<<<<<< HEAD
-        octant_rewards=octant_matched_rewards, verifier=allocations_verifier
-=======
-        octant_rewards=octant_rewards,
+        octant_rewards=octant_matched_rewards,
         verifier=allocations_verifier,
         uniqueness_quotients=uniqueness_quotients,
->>>>>>> develop
     )
     user_rewards = CalculatedUserRewards(
         user_budgets=saved_user_budgets,

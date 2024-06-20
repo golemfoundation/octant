@@ -17,18 +17,15 @@ from app.modules.modules_factory.protocols import (
 )
 from app.modules.modules_factory.protocols import SimulatePendingSnapshots
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
-<<<<<<< HEAD
 from app.modules.octant_rewards.general.service.calculated import (
     CalculatedOctantRewards,
-=======
-from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
+)
 from app.modules.projects.metadata.service.projects_metadata import (
     StaticProjectsMetadataService,
 )
 from app.modules.score_delegation.service.simple_obfuscation import (
     SimpleObfuscationDelegationVerifier,
     SimpleObfuscationDelegation,
->>>>>>> develop
 )
 from app.modules.snapshots.pending.service.simulated import SimulatedPendingSnapshots
 from app.modules.staking.proceeds.service.estimated import EstimatedStakingProceeds

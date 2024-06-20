@@ -987,11 +987,9 @@ def patch_has_pending_epoch_snapshot(monkeypatch):
 
 @pytest.fixture(scope="function")
 def patch_last_finalized_snapshot(monkeypatch):
-    (
-        monkeypatch.setattr(
-            "app.legacy.controllers.snapshots.get_last_finalized_snapshot",
-            MOCK_LAST_FINALIZED_SNAPSHOT,
-        ),
+    monkeypatch.setattr(
+        "app.legacy.controllers.snapshots.get_last_finalized_snapshot",
+        MOCK_LAST_FINALIZED_SNAPSHOT,
     )
     MOCK_LAST_FINALIZED_SNAPSHOT.return_value = 3
 

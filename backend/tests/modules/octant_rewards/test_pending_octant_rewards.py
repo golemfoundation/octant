@@ -100,11 +100,11 @@ def test_pending_get_matched_rewards_after_overhaul(
 
 
 def test_pending_get_leverage(
-<<<<<<< HEAD
-    proposal_accounts, mock_users_db, mock_pending_epoch_snapshot_db, service
-=======
-    project_accounts, mock_users_db, mock_pending_epoch_snapshot_db, mock_patron_mode
->>>>>>> develop
+    project_accounts,
+    mock_users_db,
+    mock_pending_epoch_snapshot_db,
+    mock_patron_mode,
+    service,
 ):
     user, _, _ = mock_users_db
     context = get_context()
