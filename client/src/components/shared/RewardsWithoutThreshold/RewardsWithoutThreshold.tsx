@@ -48,7 +48,7 @@ const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
           </div>
         </div>
         <div className={cx(styles.section, styles.rightSection)}>
-          <div className={styles.label}>Donors</div>
+          <div className={styles.label}>{t('donors')}</div>
           <div className={styles.value}>{numberOfDonors}</div>
         </div>
       </div>
