@@ -12,7 +12,7 @@ from app.modules.common.crypto.signature import encode_for_signing, EncodingStan
 def build_allocations_eip712_structure(payload: UserAllocationPayload):
     message = {}
     message["allocations"] = [
-        {"proposalAddress": a.proposal_address, "amount": a.amount}
+        {"proposalAddress": a.project_address, "amount": a.amount}
         for a in payload.allocations
     ]
     message["nonce"] = payload.nonce

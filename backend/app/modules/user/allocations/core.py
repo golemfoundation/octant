@@ -95,7 +95,7 @@ def _verify_allocations_not_empty(allocations: List[AllocationItem]):
 def _verify_no_invalid_projects(
     allocations: List[AllocationItem], valid_projects: List[str]
 ):
-    projects_addresses = [a.proposal_address for a in allocations]
+    projects_addresses = [a.project_address for a in allocations]
     invalid_projects = list(set(projects_addresses) - set(valid_projects))
 
     if invalid_projects:
@@ -103,11 +103,11 @@ def _verify_no_invalid_projects(
 
 
 def _verify_no_duplicates(allocations: List[AllocationItem]):
-    proposal_addresses = [allocation.proposal_address for allocation in allocations]
-    [proposal_addresses.remove(p) for p in set(proposal_addresses)]
+    project_addresses = [allocation.project_address for allocation in allocations]
+    [project_addresses.remove(p) for p in set(project_addresses)]
 
-    if proposal_addresses:
-        raise exceptions.DuplicatedProposals(proposal_addresses)
+    if project_addresses:
+        raise exceptions.DuplicatedProjects(project_addresses)
 
 
 def _verify_user_not_a_project(user_address: str, projects: List[str]):
@@ -116,9 +116,9 @@ def _verify_user_not_a_project(user_address: str, projects: List[str]):
 
 
 def _verify_allocations_within_budget(allocations: List[AllocationItem], budget: int):
-    proposals_sum = sum([a.amount for a in allocations])
+    projects_sum = sum([a.amount for a in allocations])
 
-    if proposals_sum > budget:
+    if projects_sum > budget:
         raise exceptions.RewardsBudgetExceeded
 
 

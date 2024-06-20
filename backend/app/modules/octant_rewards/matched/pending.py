@@ -16,6 +16,26 @@ class UserPatronMode(Protocol):
 class PendingOctantMatchedRewards(Model):
     patrons_mode: UserPatronMode
 
+<<<<<<< HEAD:backend/app/modules/octant_rewards/matched/pending.py
+=======
+    def get_octant_rewards(self, context: Context) -> OctantRewardsDTO:
+        pending_snapshot = database.pending_epoch_snapshot.get_by_epoch(
+            context.epoch_details.epoch_num
+        )
+        return OctantRewardsDTO(
+            staking_proceeds=int(pending_snapshot.eth_proceeds),
+            locked_ratio=Decimal(pending_snapshot.locked_ratio),
+            total_effective_deposit=int(pending_snapshot.total_effective_deposit),
+            total_rewards=int(pending_snapshot.total_rewards),
+            vanilla_individual_rewards=int(pending_snapshot.vanilla_individual_rewards),
+            operational_cost=int(pending_snapshot.operational_cost),
+            community_fund=pending_snapshot.validated_community_fund,
+            ppf=pending_snapshot.validated_ppf,
+            matched_rewards=self.get_matched_rewards(context),
+            patrons_rewards=self.patrons_mode.get_patrons_rewards(context),
+        )
+
+>>>>>>> develop:backend/app/modules/octant_rewards/service/pending.py
     def get_matched_rewards(self, context: Context) -> int:
         pending_snapshot = database.pending_epoch_snapshot.get_by_epoch(
             context.epoch_details.epoch_num
@@ -26,11 +46,13 @@ class PendingOctantMatchedRewards(Model):
         return matched_rewards_settings.calculate_matched_rewards(
             MatchedRewardsPayload(
                 total_rewards=int(pending_snapshot.total_rewards),
-                all_individual_rewards=int(pending_snapshot.all_individual_rewards),
+                vanilla_individual_rewards=int(
+                    pending_snapshot.vanilla_individual_rewards
+                ),
                 patrons_rewards=patrons_rewards,
                 staking_proceeds=int(pending_snapshot.eth_proceeds),
                 locked_ratio=Decimal(pending_snapshot.locked_ratio),
-                ire_percent=context.epoch_settings.octant_rewards.total_and_all_individual_rewards.IRE_PERCENT,
-                tr_percent=context.epoch_settings.octant_rewards.total_and_all_individual_rewards.TR_PERCENT,
+                ire_percent=context.epoch_settings.octant_rewards.total_and_vanilla_individual_rewards.IRE_PERCENT,
+                tr_percent=context.epoch_settings.octant_rewards.total_and_vanilla_individual_rewards.TR_PERCENT,
             )
         )

@@ -61,7 +61,11 @@ yarn apitest:up # in a first console
 yarn apitest:run # in a second console
 ```
 
-When backend code is changed, don't forget to re-run `localenv/scripts/images.sh` after every change.
+When backend code is changed, just re-run `yarn apitest:run`.
+To run just one test, use standard pytest naming:
+```
+yarn apitest:run tests/legacy/test_api_snapshot.py::test_pending_snapshot
+```
 
 To stop the env, run `yarn apitest:down`
 

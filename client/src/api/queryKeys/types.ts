@@ -20,6 +20,7 @@ export type Root = {
   projectRewardsThreshold: 'projectRewardsThreshold';
   projectsEpoch: 'projectsEpoch';
   projectsIpfsResults: 'projectsIpfsResults';
+  upcomingBudget: 'upcomingBudget';
   userAllocationNonce: 'userAllocationNonce';
   userAllocations: 'userAllocations';
   userTOS: 'userTOS';
@@ -70,6 +71,7 @@ export type QueryKeys = {
   totalAddresses: ['totalAddresses'];
   totalWithdrawals: ['totalWithdrawals'];
   unlocks: ['unlocks'];
+  upcomingBudget: (userAddress: string) => [Root['upcomingBudget'], string];
   userAllocationNonce: (userAddress: string) => [Root['userAllocationNonce'], string];
   userAllocations: (epochNumber: number) => [Root['userAllocations'], string];
   userTOS: (userAddress: string) => [Root['userTOS'], string];

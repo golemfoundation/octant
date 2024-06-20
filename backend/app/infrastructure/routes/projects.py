@@ -41,5 +41,5 @@ class ProjectsMetadata(OctantResource):
 
         return {
             "projectsAddresses": projects_metadata.projects_addresses,
-            "projectsCid": projects_metadata.proposals_cid,
+            "projectsCid": projects_metadata.projects_cid,
         }

@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from web3 import Web3
 
 from app.modules.common import parse_bool
-from app.constants import DEFAULT_MAINNET_PROPOSAL_CIDS
+from app.constants import DEFAULT_MAINNET_PROJECT_CIDS
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -24,15 +24,19 @@ class Config(object):
     ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY")
     BITQUERY_API_KEY = os.getenv("BITQUERY_API_KEY")
     BITQUERY_BEARER = os.getenv("BITQUERY_BEARER")
+    GC_PASSPORT_SCORER_ID = os.getenv("GC_PASSPORT_SCORER_ID")
+    GC_PASSPORT_SCORER_API_KEY = os.getenv("GC_PASSPORT_SCORER_API_KEY")
     SCHEDULER_ENABLED = parse_bool(os.getenv("SCHEDULER_ENABLED"))
     CACHE_TYPE = "SimpleCache"
+    DELEGATION_SALT = os.getenv("DELEGATION_SALT")
+    DELEGATION_SALT_PRIMARY = os.getenv("DELEGATION_SALT_PRIMARY")
 
     # Smart contract addresses
     GLM_CONTRACT_ADDRESS = os.getenv("GLM_CONTRACT_ADDRESS")
     EPOCHS_CONTRACT_ADDRESS = os.getenv("EPOCHS_CONTRACT_ADDRESS")
     AUTH_CONTRACT_ADDRESS = os.getenv("AUTH_CONTRACT_ADDRESS")
     DEPOSITS_CONTRACT_ADDRESS = os.getenv("DEPOSITS_CONTRACT_ADDRESS")
-    PROPOSALS_CONTRACT_ADDRESS = os.getenv("PROPOSALS_CONTRACT_ADDRESS")
+    PROJECTS_CONTRACT_ADDRESS = os.getenv("PROPOSALS_CONTRACT_ADDRESS")
     WITHDRAWALS_TARGET_CONTRACT_ADDRESS = os.getenv(
         "WITHDRAWALS_TARGET_CONTRACT_ADDRESS"
     )
@@ -63,8 +67,8 @@ class Config(object):
         os.getenv("EPOCH_2_STAKING_PROCEEDS_SURPLUS", 0)
     )
 
-    MAINNET_PROPOSAL_CIDS = os.getenv(
-        "MAINNET_PROPOSAL_CIDS", DEFAULT_MAINNET_PROPOSAL_CIDS
+    MAINNET_PROJECT_CIDS = os.getenv(
+        "MAINNET_PROPOSAL_CIDS", DEFAULT_MAINNET_PROJECT_CIDS
     )
 
 
@@ -131,7 +135,9 @@ class TestConfig(Config):
     # 6_050000000_000000000 - extra operations cost during the epoch
     EPOCH_2_STAKING_PROCEEDS_SURPLUS = 3_487357664_505573437
     WITHDRAWALS_TARGET_CONTRACT_ADDRESS = "0x1234123456123456123456123456123456123456"
-    MAINNET_PROPOSAL_CIDS = DEFAULT_MAINNET_PROPOSAL_CIDS
+    MAINNET_PROJECT_CIDS = DEFAULT_MAINNET_PROJECT_CIDS
+    DELEGATION_SALT = "salt"
+    DELEGATION_SALT_PRIMARY = "salt_primary"
 
 
 def get_config():

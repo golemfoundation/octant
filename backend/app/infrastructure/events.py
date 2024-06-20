@@ -11,7 +11,7 @@ from app.infrastructure.exception_handler import UNEXPECTED_EXCEPTION, Exception
 from app.modules.projects.rewards.controller import (
     get_allocation_threshold,
 )
-from app.modules.dto import ProposalDonationDTO
+from app.modules.dto import ProjectDonationDTO
 from app.modules.projects.rewards.controller import get_estimated_project_rewards
 from app.modules.user.allocations import controller
 
@@ -25,7 +25,7 @@ def handle_connect():
         emit("threshold", {"threshold": str(threshold)})
 
         project_rewards = get_estimated_project_rewards().rewards
-        emit("proposal_rewards", _serialize_project_rewards(project_rewards))
+        emit("project_rewards", _serialize_project_rewards(project_rewards))
 
 
 @socketio.on("disconnect")
@@ -51,25 +51,25 @@ def handle_allocate(msg):
 
     project_rewards = get_estimated_project_rewards().rewards
     emit(
-        "proposal_rewards",
+        "project_rewards",
         _serialize_project_rewards(project_rewards),
         broadcast=True,
     )
     for project in project_rewards:
         donors = controller.get_all_donations_by_project(project.address)
         emit(
-            "proposal_donors",
-            {"proposal": project.address, "donors": _serialize_donors(donors)},
+            "project_donors",
+            {"project": project.address, "donors": _serialize_donors(donors)},
             broadcast=True,
         )
 
 
-@socketio.on("proposal_donors")
-def handle_proposal_donors(proposal_address: str):
-    donors = controller.get_all_donations_by_project(proposal_address)
+@socketio.on("project_donors")
+def handle_project_donors(project_address: str):
+    donors = controller.get_all_donations_by_project(project_address)
     emit(
-        "proposal_donors",
-        {"proposal": proposal_address, "donors": _serialize_donors(donors)},
+        "project_donors",
+        {"project": project_address, "donors": _serialize_donors(donors)},
     )
 
 
@@ -93,7 +93,7 @@ def _serialize_project_rewards(project_rewards: List[ProjectRewardDTO]) -> List[
     ]
 
 
-def _serialize_donors(donors: List[ProposalDonationDTO]) -> List[dict]:
+def _serialize_donors(donors: List[ProjectDonationDTO]) -> List[dict]:
     return [
         {
             "address": donor.donor,

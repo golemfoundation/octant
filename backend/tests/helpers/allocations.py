@@ -9,16 +9,16 @@ from app.modules.dto import (
 from app.infrastructure import database
 
 
-def create_payload(proposals, amounts: list[int] | None, nonce: int = 0):
+def create_payload(projects, amounts: list[int] | None, nonce: int = 0):
     if amounts is None:
-        amounts = [randint(1 * 10**18, 1000 * 10**18) for _ in proposals]
+        amounts = [randint(1 * 10**18, 1000 * 10**18) for _ in projects]
 
     allocations = [
         {
             "proposalAddress": proposal.address,
             "amount": str(amount),
         }
-        for proposal, amount in zip(proposals, amounts)
+        for proposal, amount in zip(projects, amounts)
     ]
 
     return {"allocations": allocations, "nonce": nonce}
@@ -27,7 +27,7 @@ def create_payload(proposals, amounts: list[int] | None, nonce: int = 0):
 def deserialize_allocations(payload) -> List[AllocationItem]:
     return [
         AllocationItem(
-            proposal_address=allocation_data["proposalAddress"],
+            project_address=allocation_data["proposalAddress"],
             amount=int(allocation_data["amount"]),
         )
         for allocation_data in payload["allocations"]
@@ -57,3 +57,11 @@ def make_user_allocation(context, user, allocations=1, nonce=0, **kwargs):
     )
 
     return allocation_items
+
+
+def mock_request(nonce):
+    fake_signature = "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+    return UserAllocationRequestPayload(
+        payload=UserAllocationPayload([], nonce), signature=fake_signature
+    )

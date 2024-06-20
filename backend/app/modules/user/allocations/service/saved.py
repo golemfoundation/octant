@@ -3,7 +3,7 @@ from typing import List, Tuple, Optional
 from app.context.manager import Context
 from app.infrastructure import database
 from app.modules.common.time import Timestamp, from_datetime
-from app.modules.dto import AccountFundsDTO, ProposalDonationDTO
+from app.modules.dto import AccountFundsDTO, ProjectDonationDTO
 from app.modules.history.dto import (
     AllocationItem as HistoryAllocationItem,
     ProjectAllocationItem,
@@ -56,7 +56,7 @@ class SavedUserAllocations(Model):
                 leverage=alloc_request.leverage,
                 allocations=[
                     ProjectAllocationItem(
-                        project_address=a.proposal_address, amount=int(a.amount)
+                        project_address=a.project_address, amount=int(a.amount)
                     )
                     for a in allocations
                 ],
@@ -67,13 +67,13 @@ class SavedUserAllocations(Model):
 
     def get_all_allocations(
         self, context: Context, include_zero_allocations=True
-    ) -> List[ProposalDonationDTO]:
+    ) -> List[ProjectDonationDTO]:
         allocations = database.allocations.get_all(context.epoch_details.epoch_num)
         return [
-            ProposalDonationDTO(
+            ProjectDonationDTO(
                 donor=alloc.user_address,
                 amount=alloc.amount,
-                proposal=alloc.proposal_address,
+                project=alloc.project_address,
             )
             for alloc in allocations
             if include_zero_allocations or alloc.amount > 0
@@ -81,14 +81,14 @@ class SavedUserAllocations(Model):
 
     def get_allocations_by_project(
         self, context: Context, project_address: str
-    ) -> List[ProposalDonationDTO]:
+    ) -> List[ProjectDonationDTO]:
         allocations = database.allocations.get_all_by_project_addr_and_epoch(
             project_address, context.epoch_details.epoch_num
         )
 
         return [
-            ProposalDonationDTO(
-                donor=a.user.address, amount=int(a.amount), proposal=project_address
+            ProjectDonationDTO(
+                donor=a.user.address, amount=int(a.amount), project=project_address
             )
             for a in allocations
             if int(a.amount) != 0

@@ -115,7 +115,8 @@
         "donateWithPercentage": "Donate {{percentage}}%",
         "personalWithPercentage": "Personal {{percentage}}%",
         "allocated": "Allocated",
-        "manual": "Manual"
+        "manual": "Manual",
+        "availableDuringAllocation": "Available during allocation"
       },
       "allocationSummary": {
         "totalImpact": "Total impact",
@@ -318,6 +319,10 @@
   },
   "views": {
     "allocation": {
+      "multisigSignatureToast": {
+        "title": "Multi-sig: signature needed",
+        "message": "At least one signature is required to start allocation. Please do not close Octant."
+      },
       "allocationItem": {
         "epoch1": "No funding threshold in Epoch 1",
         "standard": "{{sum}} / {{threshold}}",
@@ -425,6 +430,10 @@
           "header": "Using the app",
           "text": "Before we can go any further, please read the terms of service and click the checkbox below to agree with them.",
           "waitingForWalletConfirmation": "Waiting for wallet confirmation"
+        },
+        "signingTheTerms": {
+          "header": "Signing the terms",
+          "text": "At least one signature is required to agree to the Terms of Service. Please do not close Octant until this is completed."
         }
       },
       "stepsDecisionWindowOpen": {

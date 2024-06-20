@@ -31,14 +31,22 @@ from app.modules.projects.rewards.service.finalizing import FinalizingProjectRew
 from app.modules.snapshots.finalized.service.simulated import (
     SimulatedFinalizedSnapshots,
 )
+from app.modules.uq.service.preliminary import PreliminaryUQ
 from app.modules.user.allocations.nonce.service.saved import SavedUserAllocationsNonce
 from app.modules.user.allocations.service.pending import (
     PendingUserAllocations,
     PendingUserAllocationsVerifier,
 )
+from app.modules.user.antisybil.service.initial import (
+    GitcoinPassportAntisybil,
+)
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.saved import SavedUserDeposits
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
+from app.modules.user.participation.epoch_0.service.whitelist import WhitelistEpoch0
+from app.modules.user.participation.identity_call.service.whitelist import (
+    WhitelistIdentityCall,
+)
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.withdrawals.service.pending import PendingWithdrawals
 from app.pydantic import Model
@@ -88,6 +96,12 @@ class PendingServices(Model):
         project_rewards = FinalizingProjectRewards()
         saved_user_budgets = SavedUserBudgets()
         user_nonce = SavedUserAllocationsNonce()
+        uniqueness_quotients = PreliminaryUQ(
+            antisybil=GitcoinPassportAntisybil(),
+            epoch0_whitelist=WhitelistEpoch0(),
+            identity_call_whitelist=WhitelistIdentityCall(),
+        )
+
         allocations_verifier = PendingUserAllocationsVerifier(
             user_nonce=user_nonce,
             user_budgets=saved_user_budgets,
@@ -98,7 +112,13 @@ class PendingServices(Model):
         )
 
         pending_user_allocations = PendingUserAllocations(
+<<<<<<< HEAD
             octant_rewards=octant_matched_rewards, verifier=allocations_verifier
+=======
+            octant_rewards=octant_rewards,
+            verifier=allocations_verifier,
+            uniqueness_quotients=uniqueness_quotients,
+>>>>>>> develop
         )
         user_rewards = CalculatedUserRewards(
             user_budgets=saved_user_budgets,

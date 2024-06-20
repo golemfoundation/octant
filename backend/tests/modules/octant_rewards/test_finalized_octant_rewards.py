@@ -55,14 +55,14 @@ def test_finalized_octant_rewards_after_overhaul(
 
 
 def test_finalized_get_leverage(
-    proposal_accounts, mock_users_db, mock_finalized_epoch_snapshot_db
+    project_accounts, mock_users_db, mock_finalized_epoch_snapshot_db
 ):
     user, _, _ = mock_users_db
     context = get_context()
     make_user_allocation(
         context,
         user,
-        allocation_items=[AllocationItem(proposal_accounts[0].address, USER1_BUDGET)],
+        allocation_items=[AllocationItem(project_accounts[0].address, USER1_BUDGET)],
     )
 
     service = FinalizedOctantRewards()

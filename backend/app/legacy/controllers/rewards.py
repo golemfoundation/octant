@@ -6,13 +6,13 @@ from dataclass_wizard import JSONWizard
 
 from app import exceptions
 from app.infrastructure import database
-from app.legacy.core import proposals
+from app.legacy.core import projects
 from app.legacy.core.epochs import epoch_snapshots as core_epoch_snapshots
 from app.modules.common import merkle_tree
 
 
 @dataclass()
-class ProposalReward(JSONWizard):
+class ProjectReward(JSONWizard):
     address: str
     allocated: int
     matched: int
@@ -33,23 +33,23 @@ class RewardsMerkleTree(JSONWizard):
     leaf_encoding: List[str]
 
 
-def get_finalized_epoch_proposals_rewards(epoch: int = None) -> List[ProposalReward]:
+def get_finalized_epoch_project_rewards(epoch: int = None) -> List[ProjectReward]:
     last_finalized_epoch = core_epoch_snapshots.get_last_finalized_snapshot()
     if epoch > last_finalized_epoch:
         raise exceptions.MissingSnapshot()
 
-    proposals_address_list = proposals.get_proposals_addresses(epoch)
-    raw_proposals_rewards = database.rewards.get_by_epoch_and_address_list(
-        epoch, proposals_address_list
+    projects_address_list = projects.get_projects_addresses(epoch)
+    raw_project_rewards = database.rewards.get_by_epoch_and_address_list(
+        epoch, projects_address_list
     )
 
     return [
-        ProposalReward(
+        ProjectReward(
             reward.address,
             int(reward.amount) - int(reward.matched),
             int(reward.matched),
         )
-        for reward in raw_proposals_rewards
+        for reward in raw_project_rewards
     ]
 
 

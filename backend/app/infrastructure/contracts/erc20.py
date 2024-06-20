@@ -22,6 +22,10 @@ class ERC20(SmartContract):
         return self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
 
     def approve(self, owner, benefactor, wad: int):
+        print("owner of lock: ", owner)
+        print("owner address: ", owner.address)
+        print("owner key: ", owner.key)
+        print("benefactor of lock: ", benefactor)
         nonce = self.w3.eth.get_transaction_count(owner.address)
         transaction = self.contract.functions.approve(
             benefactor, wad

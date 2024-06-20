@@ -219,7 +219,6 @@ def test_does_not_save_signature_when_verification_throws_exception(context, ali
     assert result is None
 
 
-@pytest.mark.skip
 def test_does_not_save_signature_when_wrong_user_address(
     context,
     alice,
@@ -246,7 +245,6 @@ def test_does_not_save_signature_when_wrong_user_address(
     assert result is None
 
 
-@pytest.mark.skip
 def test_does_not_save_signature_when_service_returns_404(
     context,
     alice,

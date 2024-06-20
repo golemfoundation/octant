@@ -41,6 +41,16 @@ class User(BaseModel):
         return int(budget) if budget is not None else None
 
 
+class GPStamps(BaseModel):
+    __tablename__ = "gitcoin_passport_stamps"
+    id = Column(db.Integer, primary_key=True)
+    user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    score = Column(db.Float, nullable=False)
+    expires_at = Column(db.TIMESTAMP, nullable=False)
+    # storing for analysis
+    stamps = Column(db.String, nullable=False)
+
+
 class PatronModeEvent(BaseModel):
     __tablename__ = "patron_events"
 
@@ -66,7 +76,7 @@ class Allocation(BaseModel):
     user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     nonce = Column(db.Integer, nullable=False)
     user = relationship("User", backref=db.backref("allocations", lazy=True))
-    proposal_address = Column(db.String(42), nullable=False)
+    project_address = Column(db.String(42), nullable=False)
     amount = Column(db.String, nullable=False)
     deleted_at = Column(db.TIMESTAMP, nullable=True)
 
@@ -97,7 +107,7 @@ class PendingEpochSnapshot(BaseModel):
     total_effective_deposit = Column(db.String, nullable=False)
     locked_ratio = Column(db.String, nullable=False)
     total_rewards = Column(db.String, nullable=False)
-    all_individual_rewards = Column(db.String, nullable=False)
+    vanilla_individual_rewards = Column(db.String, nullable=False)
     operational_cost = Column(db.String, nullable=False)
     ppf = Column(db.String, nullable=True)
     community_fund = Column(db.String, nullable=True)
@@ -162,6 +172,12 @@ class EpochZeroClaim(BaseModel):
     claim_nonce = db.Column(db.Integer(), unique=True, nullable=True)
 
 
+class IdentityCallsVerifications(BaseModel):
+    __tablename__ = "identity_call_verifications"
+    id = Column(db.Integer, primary_key=True, nullable=False)
+    address = Column(db.String(42), nullable=False, unique=True)
+
+
 class MultisigSignatures(BaseModel):
     __tablename__ = "multisig_signatures"
 
@@ -174,3 +190,17 @@ class MultisigSignatures(BaseModel):
     status = Column(db.String, nullable=False)
     user_ip = Column(db.String, nullable=False)
     confirmed_signature = Column(db.String, nullable=True)
+
+
+class ScoreDelegation(BaseModel):
+    id = Column(db.Integer, primary_key=True)
+    hashed_addr = Column(db.String, nullable=False)
+
+
+class UniquenessQuotient(BaseModel):
+    __tablename__ = "uniqueness_quotients"
+
+    id = Column(db.Integer, primary_key=True)
+    epoch = Column(db.Integer, nullable=False)
+    user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    score = Column(db.String, nullable=False)

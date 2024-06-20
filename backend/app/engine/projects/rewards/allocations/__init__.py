@@ -5,7 +5,7 @@ from typing import List, Tuple
 
 @dataclass(frozen=True)
 class AllocationItem:
-    proposal_address: str
+    project_address: str
     amount: int
 
 

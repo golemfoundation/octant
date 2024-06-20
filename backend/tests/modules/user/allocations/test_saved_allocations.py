@@ -5,7 +5,7 @@ from app.infrastructure import database
 from app.modules.common.time import from_timestamp_s
 from app.modules.dto import (
     AllocationItem,
-    ProposalDonationDTO,
+    ProjectDonationDTO,
     UserAllocationRequestPayload,
     UserAllocationPayload,
     AccountFundsDTO,
@@ -30,7 +30,7 @@ def service():
 
 
 def _alloc_item_to_donation(item, user):
-    return ProposalDonationDTO(user.address, item.amount, item.proposal_address)
+    return ProjectDonationDTO(user.address, item.amount, item.project_address)
 
 
 def _mock_request(nonce):
@@ -101,19 +101,19 @@ def test_has_user_allocated_rewards_returns_false(service, context, mock_users_d
 
 @freeze_time("2024-03-18 00:00:00")
 def test_user_allocations_by_timestamp(
-    service, context, mock_users_db, proposal_accounts
+    service, context, mock_users_db, project_accounts
 ):
     user1, _, _ = mock_users_db
     timestamp_before = from_timestamp_s(1710719999)
     timestamp_after = from_timestamp_s(1710720002)
 
     allocation1 = [
-        AllocationItem(proposal_accounts[0].address, 100),
-        AllocationItem(proposal_accounts[1].address, 100),
+        AllocationItem(project_accounts[0].address, 100),
+        AllocationItem(project_accounts[1].address, 100),
     ]
     allocation2 = [
-        AllocationItem(proposal_accounts[0].address, 200),
-        AllocationItem(proposal_accounts[1].address, 200),
+        AllocationItem(project_accounts[0].address, 200),
+        AllocationItem(project_accounts[1].address, 200),
     ]
 
     make_user_allocation(context, user1, nonce=0, allocation_items=allocation1)
@@ -140,11 +140,11 @@ def test_user_allocations_by_timestamp(
             leverage=2015.1555,
             allocations=[
                 ProjectAllocationItem(
-                    project_address=proposal_accounts[0].address,
+                    project_address=project_accounts[0].address,
                     amount=200,
                 ),
                 ProjectAllocationItem(
-                    project_address=proposal_accounts[1].address,
+                    project_address=project_accounts[1].address,
                     amount=200,
                 ),
             ],
@@ -156,11 +156,11 @@ def test_user_allocations_by_timestamp(
             leverage=None,
             allocations=[
                 ProjectAllocationItem(
-                    project_address=proposal_accounts[0].address,
+                    project_address=project_accounts[0].address,
                     amount=100,
                 ),
                 ProjectAllocationItem(
-                    project_address=proposal_accounts[1].address,
+                    project_address=project_accounts[1].address,
                     amount=100,
                 ),
             ],
@@ -175,11 +175,11 @@ def test_user_allocations_by_timestamp(
             leverage=2015.1555,
             allocations=[
                 ProjectAllocationItem(
-                    project_address=proposal_accounts[0].address,
+                    project_address=project_accounts[0].address,
                     amount=200,
                 ),
                 ProjectAllocationItem(
-                    project_address=proposal_accounts[1].address,
+                    project_address=project_accounts[1].address,
                     amount=200,
                 ),
             ],
@@ -297,10 +297,10 @@ def test_get_all_allocations_does_not_return_allocations_from_previous_and_futur
 
 
 def test_get_all_with_allocation_amount_equal_0(
-    service, context, mock_users_db, proposal_accounts
+    service, context, mock_users_db, project_accounts
 ):
     user1, _, _ = mock_users_db
-    allocation_items = [AllocationItem(proposal_accounts[0].address, 0)]
+    allocation_items = [AllocationItem(project_accounts[0].address, 0)]
     make_user_allocation(context, user1, allocation_items=allocation_items)
     expected_result = [_alloc_item_to_donation(a, user1) for a in allocation_items]
 
@@ -317,8 +317,7 @@ def test_get_last_user_allocation_returns_the_only_allocation(
     user1, _, _ = mock_users_db
     allocations = make_user_allocation(context, user1)
     expected_result = [
-        AccountFundsDTO(address=a.proposal_address, amount=a.amount)
-        for a in allocations
+        AccountFundsDTO(address=a.project_address, amount=a.amount) for a in allocations
     ]
 
     assert service.get_last_user_allocation(context, user1.address) == (
@@ -334,8 +333,7 @@ def test_get_last_user_allocation_returns_the_only_the_last_allocation(
     _ = make_user_allocation(context, user1)
     allocations = make_user_allocation(context, user1, allocations=10, nonce=1)
     expected_result = [
-        AccountFundsDTO(address=a.proposal_address, amount=a.amount)
-        for a in allocations
+        AccountFundsDTO(address=a.project_address, amount=a.amount) for a in allocations
     ]
 
     assert service.get_last_user_allocation(context, user1.address) == (
@@ -351,8 +349,7 @@ def test_get_last_user_allocation_returns_stored_metadata(
 
     allocations = make_user_allocation(context, user1, is_manually_edited=False)
     expected_result = [
-        AccountFundsDTO(address=a.proposal_address, amount=a.amount)
-        for a in allocations
+        AccountFundsDTO(address=a.project_address, amount=a.amount) for a in allocations
     ]
 
     assert service.get_last_user_allocation(context, user1.address) == (
@@ -362,8 +359,7 @@ def test_get_last_user_allocation_returns_stored_metadata(
 
     allocations = make_user_allocation(context, user1, nonce=1, is_manually_edited=True)
     expected_result = [
-        AccountFundsDTO(address=a.proposal_address, amount=a.amount)
-        for a in allocations
+        AccountFundsDTO(address=a.project_address, amount=a.amount) for a in allocations
     ]
 
     assert service.get_last_user_allocation(context, user1.address) == (
@@ -397,12 +393,12 @@ def test_get_allocations_by_project_returns_list_of_donations_per_project(
     result = service.get_allocations_by_project(context, project1)
     assert len(result) == 2
     for d in result:
-        assert d in list(filter(lambda d: d.proposal == project1, expected_results))
+        assert d in list(filter(lambda d: d.project == project1, expected_results))
 
     result = service.get_allocations_by_project(context, project2)
     assert len(result) == 2
     for d in result:
-        assert d in list(filter(lambda d: d.proposal == project2, expected_results))
+        assert d in list(filter(lambda d: d.project == project2, expected_results))
 
     assert result
 

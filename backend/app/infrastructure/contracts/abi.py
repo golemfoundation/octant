@@ -121,7 +121,7 @@ ERC20 = [
     },
 ]
 
-PROPOSALS = [
+PROJECTS = [
     {
         "inputs": [{"internalType": "uint256", "name": "_epoch", "type": "uint256"}],
         "name": "getProposalAddresses",
@@ -159,6 +159,24 @@ VAULT = [
             {"internalType": "bytes32", "name": "root", "type": "bytes32"},
         ],
         "name": "setMerkleRoot",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function",
+    },
+    {
+        "inputs": [
+            {
+                "components": [
+                    {"internalType": "uint256", "name": "epoch", "type": "uint256"},
+                    {"internalType": "uint256", "name": "amount", "type": "uint256"},
+                    {"internalType": "bytes32[]", "name": "proof", "type": "bytes32[]"},
+                ],
+                "internalType": "struct Vault.WithdrawPayload[]",
+                "name": "payloads",
+                "type": "tuple[]",
+            }
+        ],
+        "name": "batchWithdraw",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function",

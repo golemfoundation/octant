@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAccount, useSignTypedData } from 'wagmi';
 
 import { SignatureOpType, apiPostPendingMultisigSignatures } from 'api/calls/multisigSignatures';
+import { apiGetSafeMessages } from 'api/calls/safeMessages';
 import { handleError } from 'api/errorMessages';
 import networkConfig from 'constants/networkConfig';
 import useIsContract from 'hooks/queries/useIsContract';
@@ -13,6 +14,7 @@ const websocketService = () => import('services/websocketService');
 
 type UseAllocateProps = {
   nonce: number;
+  onMultisigMessageSign?: () => void;
   onSuccess: () => void;
 };
 
@@ -38,7 +40,11 @@ const types = {
   ],
 };
 
-export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): UseAllocate {
+export default function useAllocate({
+  onSuccess,
+  nonce,
+  onMultisigMessageSign,
+}: UseAllocateProps): UseAllocate {
   const { address } = useAccount();
   const { data: isContract } = useIsContract();
 
@@ -79,7 +85,7 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
     },
   });
 
-  const allocate = (allocations: AllocationValues, isManuallyEdited: boolean) => {
+  const allocate = async (allocations: AllocationValues, isManuallyEdited: boolean) => {
     if (!isContract) {
       setIsLoading(true);
     }
@@ -97,18 +103,28 @@ export default function useAllocate({ onSuccess, nonce }: UseAllocateProps): Use
       types,
     });
 
-    if (isContract) {
-      apiPostPendingMultisigSignatures(
-        address!,
-        {
-          isManuallyEdited,
-          payload: {
-            allocations: allocationsMapped,
-            nonce,
-          },
-        },
-        SignatureOpType.ALLOCATION,
-      );
+    if (isContract && !!onMultisigMessageSign) {
+      const safeMessages = await apiGetSafeMessages(address!);
+
+      const intervalId = setInterval(async () => {
+        const nextSafeMessages = await apiGetSafeMessages(address!);
+        if (nextSafeMessages.count > safeMessages.count) {
+          clearInterval(intervalId);
+          apiPostPendingMultisigSignatures(
+            address!,
+            {
+              isManuallyEdited,
+              payload: {
+                allocations: allocationsMapped,
+                nonce,
+              },
+            },
+            SignatureOpType.ALLOCATION,
+          ).then(() => {
+            onMultisigMessageSign();
+          });
+        }
+      }, 2000);
     }
   };
 
