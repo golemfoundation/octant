@@ -20,7 +20,7 @@
   }
 
   &.isSimulatedMatchedAvailable {
-    color: $color-octant-green8;
+    color: $color-octant-green;
   }
 
   &:not(:last-child) {
@@ -32,7 +32,7 @@
 
     &.isSimulatedMatchedAvailable {
       path {
-        stroke: $color-octant-green8;
+        stroke: $color-octant-green;
       }
     }
   }
