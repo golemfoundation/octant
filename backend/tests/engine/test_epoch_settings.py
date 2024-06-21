@@ -50,7 +50,7 @@ from app.engine.projects.rewards.capped_quadratic_funding import (
     CappedQuadraticFundingProjectRewards,
 )
 from app.engine.octant_rewards import LeftoverWithPPFAndUnusedMR
-from app.engine.octant_rewards import LeftoverWithPPF
+from app.engine.octant_rewards.leftover.with_ppf import LeftoverWithPPF
 from app.engine.octant_rewards.leftover.default import PreliminaryLeftover
 
 
