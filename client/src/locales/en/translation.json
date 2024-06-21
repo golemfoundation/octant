@@ -501,9 +501,17 @@
       "userDocs": "User Docs",
       "discordCommunity": "Discord Community",
       "website": "Website",
+      "visitWebsite": "Visit the website",
       "discord": "Discord",
+      "joinOurDiscord": "Join our Discord",
       "docs": "Docs",
-      "octantInfo": "Octant is a platform for experiments in decentralized governance that reward participation. Learn more below."
+      "checkOutDocs": "Check out the docs",
+      "octantInfo": "Octant is a platform for experiments in decentralized governance that reward participation. Learn more below.",
+      "yourUniquenessScore": "Your uniqueness score",
+      "recalculate": "Recalculate",
+      "delegate": "Delegate",
+      "whatIsThis": "What is this?",
+      "addresses": "addresses"
     },
     "syncStatus": {
       "information": "We're synchronizing things to prepare the<br/>next epoch, so the app will be unavailable<br/>for a little while. Please check back soon."
