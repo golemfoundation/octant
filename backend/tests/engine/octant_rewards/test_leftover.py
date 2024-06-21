@@ -25,6 +25,8 @@ def test_leftover_with_ppf():
         community_fund=50,
         ppf=350,
         total_withdrawals=430,
+        total_matched_rewards=100,
+        used_matched_rewards=95,
     )
     uut = LeftoverWithPPF()
 

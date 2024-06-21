@@ -19,6 +19,8 @@ def calculate_leftover(
     octant_rewards_settings: OctantRewardsSettings,
     octant_rewards: OctantRewardsDTO,
     total_withdrawals: int,
+    total_matched_rewards: int,
+    used_matched_rewards: int,
 ) -> int:
     return octant_rewards_settings.leftover.calculate_leftover(
         LeftoverPayload(
@@ -27,6 +29,8 @@ def calculate_leftover(
             community_fund=octant_rewards.community_fund,
             ppf=octant_rewards.ppf,
             total_withdrawals=total_withdrawals,
+            total_matched_rewards=total_matched_rewards,
+            used_matched_rewards=used_matched_rewards,
         )
     )
 

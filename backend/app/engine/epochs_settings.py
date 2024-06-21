@@ -28,6 +28,7 @@ from app.engine.user import UserSettings, DefaultWeightedAverageEffectiveDeposit
 from app.engine.user.effective_deposit.weighted_average.weights.timebased.default import (
     DefaultTimebasedWeights,
 )
+from app.engine.octant_rewards import LeftoverWithPPF
 
 
 @dataclass
@@ -84,6 +85,7 @@ def register_epoch_settings():
     )
 
     SETTINGS[3] = EpochSettings(
-        project=ProjectSettings(rewards=PreliminaryProjectRewards())
+        octant_rewards=OctantRewardsSettings(leftover=LeftoverWithPPF()),
+        project=ProjectSettings(rewards=PreliminaryProjectRewards()),
     )
     SETTINGS[4] = EpochSettings()

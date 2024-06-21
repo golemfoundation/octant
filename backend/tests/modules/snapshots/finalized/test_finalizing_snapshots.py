@@ -96,7 +96,7 @@ def test_create_finalized_snapshots_with_rewards_and_user_uq_score(
         int(LOW_UQ_SCORE * (MATCHED_REWARDS + 100)) + 300_000000000
     )
     assert snapshot.patrons_rewards == str(USER2_BUDGET)
-    assert snapshot.leftover == str(238270605810656390971)
+    assert snapshot.leftover == str(414362124463057389697)
     assert (
         snapshot.withdrawals_merkle_root
         == "0x6e72ed53161c05c41c054eda1368285bf28078a8bf971c0637299c26e881bf98"
@@ -126,5 +126,5 @@ def test_create_finalized_snapshots_without_rewards(
     snapshot = database.finalized_epoch_snapshot.get_by_epoch_num(result)
     assert snapshot.matched_rewards == str(MATCHED_REWARDS)
     assert snapshot.total_withdrawals == str(0)
-    assert snapshot.leftover == str(282_293485773_756640672)
+    assert snapshot.leftover == str(282_293485773_756640672 + MATCHED_REWARDS)
     assert snapshot.withdrawals_merkle_root is None
