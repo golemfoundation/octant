@@ -47,6 +47,7 @@ const MetricsGeneralGridTotalEthStaked: FC<MetricsGeneralGridTotalEthStakedProps
         {
           children: (
             <MetricsGridTileValue
+              dataTest="MetricsGeneralGridTotalEthStaked__totalEthStaked"
               isLoading={isLoading}
               subvalue={ethStakedFiatValue}
               value={ethStakedValue}

@@ -21,8 +21,13 @@ from app.modules.modules_factory.protocols import (
     ProjectsMetadataService,
 )
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
-from app.modules.octant_rewards.service.pending import PendingOctantRewards
+from app.modules.octant_rewards.general.service.pending import PendingOctantRewards
+from app.modules.octant_rewards.matched.pending import PendingOctantMatchedRewards
+from app.modules.projects.metadata.service.projects_metadata import (
+    StaticProjectsMetadataService,
+)
 from app.modules.projects.rewards.service.estimated import EstimatedProjectRewards
+from app.modules.projects.rewards.service.finalizing import FinalizingProjectRewards
 from app.modules.snapshots.finalized.service.simulated import (
     SimulatedFinalizedSnapshots,
 )
@@ -41,9 +46,6 @@ from app.modules.user.patron_mode.service.events_based import EventsBasedUserPat
 from app.modules.user.participation.epoch_0.service.whitelist import WhitelistEpoch0
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.withdrawals.service.pending import PendingWithdrawals
-from app.modules.projects.metadata.service.projects_metadata import (
-    StaticProjectsMetadataService,
-)
 from app.pydantic import Model
 from app.shared.blockchain_types import compare_blockchain_types, ChainTypes
 
@@ -88,7 +90,7 @@ class PendingServices(Model):
     @staticmethod
     def create(chain_id: int) -> "PendingServices":
         events_based_patron_mode = EventsBasedUserPatronMode()
-        octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
+        project_rewards = FinalizingProjectRewards()
         saved_user_budgets = SavedUserBudgets()
         user_nonce = SavedUserAllocationsNonce()
         uniqueness_quotients = PreliminaryUQ(
@@ -100,8 +102,12 @@ class PendingServices(Model):
             user_budgets=saved_user_budgets,
             patrons_mode=events_based_patron_mode,
         )
+        octant_matched_rewards = PendingOctantMatchedRewards(
+            patrons_mode=events_based_patron_mode
+        )
+
         pending_user_allocations = PendingUserAllocations(
-            octant_rewards=octant_rewards,
+            octant_rewards=octant_matched_rewards,
             verifier=allocations_verifier,
             uniqueness_quotients=uniqueness_quotients,
         )
@@ -110,10 +116,18 @@ class PendingServices(Model):
             patrons_mode=events_based_patron_mode,
             allocations=pending_user_allocations,
         )
+        octant_rewards = PendingOctantRewards(
+            patrons_mode=events_based_patron_mode,
+            user_rewards=user_rewards,
+            project_rewards=project_rewards,
+            octant_matched_rewards=octant_matched_rewards,
+        )
+
         finalized_snapshots_service = SimulatedFinalizedSnapshots(
             octant_rewards=octant_rewards,
             user_rewards=user_rewards,
             patrons_mode=events_based_patron_mode,
+            project_rewards=project_rewards,
         )
         withdrawals_service = PendingWithdrawals(user_rewards=user_rewards)
         project_rewards = EstimatedProjectRewards(octant_rewards=octant_rewards)

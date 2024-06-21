@@ -7,6 +7,7 @@ import {
   navigateWithCheck,
   connectWallet,
   checkProjectsViewLoaded,
+  ETH_USD,
 } from 'cypress/utils/e2e';
 import { moveTime, setupAndMoveToPlayground } from 'cypress/utils/moveTime';
 import viewports from 'cypress/utils/viewports';
@@ -14,6 +15,7 @@ import { QUERY_KEYS } from 'src/api/queryKeys';
 import {
   ALLOCATION_ITEMS_KEY,
   HAS_ONBOARDING_BEEN_CLOSED,
+  IS_CRYPTO_MAIN_VALUE_DISPLAY,
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
@@ -21,7 +23,13 @@ import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 chai.use(chaiColors);
 
-const budget = '10000000000'; // 10 GWEI.
+const budget = '10000000000000000'; // 0.01 ETH
+
+const changeMainValueToFiat = () => {
+  cy.get('[data-test=Navbar__Button--Settings]').click();
+  cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
+  cy.get('[data-test=Navbar__Button--Allocate]').click();
+};
 
 describe('allocation (allocation window open)', () => {
   describe('move time', () => {
@@ -83,6 +91,10 @@ describe('allocation (allocation window open)', () => {
           .eq(0)
           .find('[data-test=ProjectsListItem__ButtonAddToAllocate]')
           .click();
+        cy.get('[data-test^=ProjectsView__ProjectsListItem')
+          .eq(1)
+          .find('[data-test=ProjectsListItem__ButtonAddToAllocate]')
+          .click();
         navigateWithCheck(ROOT_ROUTES.allocation.absolute);
         cy.get('[data-test=AllocationItemSkeleton]').should('not.exist');
       });
@@ -130,7 +142,7 @@ describe('allocation (allocation window open)', () => {
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText__suffix]')
-          .contains('GWEI');
+          .contains('ETH');
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText]')
@@ -140,6 +152,60 @@ describe('allocation (allocation window open)', () => {
           .find('[data-test=AllocationItem__InputText]')
           .should('have.css', 'background-color')
           .and('be.colored', '#f1faf8');
+      });
+
+      it('AllocationItem__InputText has correct suffix', () => {
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
+          .find('[data-test=AllocationItem__InputText__suffix]')
+          .contains('ETH');
+
+        changeMainValueToFiat();
+
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
+          .find('[data-test=AllocationItem__InputText__suffix]')
+          .contains('USD');
+      });
+
+      it(`User can change allocation item value manually (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true)`, () => {
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
+          .find('[data-test=AllocationItem__InputText]')
+          .clear()
+          .type('0.005');
+        cy.get('[data-test=AllocationItem]')
+          .eq(1)
+          .find('[data-test=AllocationItem__InputText]')
+          .clear()
+          .type('0.002');
+        cy.get('[data-test=AllocationRewardsBox__section__value--0]')
+          .invoke('text')
+          .should('eq', '0.007 ETH');
+        cy.get('[data-test=AllocationRewardsBox__section__value--1]')
+          .invoke('text')
+          .should('eq', '0.003 ETH');
+      });
+
+      it(`User can change allocation item value manually (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
+        changeMainValueToFiat();
+
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
+          .find('[data-test=AllocationItem__InputText]')
+          .clear()
+          .type(`${(0.005 * ETH_USD).toFixed(2)}`);
+        cy.get('[data-test=AllocationItem]')
+          .eq(1)
+          .find('[data-test=AllocationItem__InputText]')
+          .clear()
+          .type(`${(0.002 * ETH_USD).toFixed(2)}`);
+        cy.get('[data-test=AllocationRewardsBox__section__value--0]')
+          .invoke('text')
+          .should('eq', `$${(0.007 * ETH_USD).toFixed(2)}`);
+        cy.get('[data-test=AllocationRewardsBox__section__value--1]')
+          .invoke('text')
+          .should('eq', `$${(0.003 * ETH_USD).toFixed(2)}`);
       });
     });
   });

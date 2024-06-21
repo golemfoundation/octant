@@ -7,10 +7,15 @@ import {
   visitWithLoader,
   navigateWithCheck,
   checkProjectsViewLoaded,
+  changeMainValueToFiat,
 } from 'cypress/utils/e2e';
 import { getNamesOfProjects } from 'cypress/utils/projects';
 import viewports from 'cypress/utils/viewports';
-import { HAS_ONBOARDING_BEEN_CLOSED, IS_ONBOARDING_DONE } from 'src/constants/localStorageKeys';
+import {
+  HAS_ONBOARDING_BEEN_CLOSED,
+  IS_CRYPTO_MAIN_VALUE_DISPLAY,
+  IS_ONBOARDING_DONE,
+} from 'src/constants/localStorageKeys';
 import getMilestones from 'src/constants/milestones';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
@@ -203,6 +208,21 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
             });
         }
       }
+    });
+
+    it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true)`, () => {
+      cy.get('[data-test=ProjectRewards__currentTotal__number]')
+        .first()
+        .invoke('text')
+        .should('eq', '0 ETH');
+    });
+    it(`shows current total (${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false)`, () => {
+      changeMainValueToFiat(ROOT_ROUTES.projects.absolute);
+
+      cy.get('[data-test=ProjectRewards__currentTotal__number]')
+        .first()
+        .invoke('text')
+        .should('eq', '$0.00');
     });
   });
 

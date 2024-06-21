@@ -14,7 +14,9 @@ from app.modules.modules_factory.protocols import (
     SavedProjectRewardsService,
     ProjectsMetadataService,
 )
-from app.modules.octant_rewards.service.pending import PendingOctantRewards
+from app.modules.octant_rewards.general.service.pending import PendingOctantRewards
+from app.modules.octant_rewards.matched.pending import PendingOctantMatchedRewards
+from app.modules.projects.rewards.service.finalizing import FinalizingProjectRewards
 from app.modules.projects.rewards.service.saved import SavedProjectRewards
 from app.modules.snapshots.finalized.service.finalizing import FinalizingSnapshots
 from app.modules.user.allocations.service.saved import SavedUserAllocations
@@ -54,16 +56,26 @@ class FinalizingServices(Model):
         events_based_patron_mode = EventsBasedUserPatronMode()
         saved_user_allocations = SavedUserAllocations()
         saved_user_budgets = SavedUserBudgets()
-        octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
+        project_rewards = FinalizingProjectRewards()
         user_rewards = CalculatedUserRewards(
             user_budgets=saved_user_budgets,
             patrons_mode=events_based_patron_mode,
             allocations=saved_user_allocations,
         )
+        octant_matched_rewards = PendingOctantMatchedRewards(
+            patrons_mode=events_based_patron_mode
+        )
+        octant_rewards = PendingOctantRewards(
+            patrons_mode=events_based_patron_mode,
+            user_rewards=user_rewards,
+            project_rewards=project_rewards,
+            octant_matched_rewards=octant_matched_rewards,
+        )
         finalized_snapshots_service = FinalizingSnapshots(
             octant_rewards=octant_rewards,
             user_rewards=user_rewards,
             patrons_mode=events_based_patron_mode,
+            project_rewards=project_rewards,
         )
         withdrawals_service = PendingWithdrawals(user_rewards=user_rewards)
 

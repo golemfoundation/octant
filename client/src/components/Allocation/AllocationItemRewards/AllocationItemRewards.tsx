@@ -3,6 +3,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Svg from 'components/ui/Svg';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useProjectDonors from 'hooks/queries/donors/useProjectDonors';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
@@ -43,7 +44,8 @@ const AllocationItemRewardsDonors: FC<AllocationItemRewardsDonorsProps> = ({
       [undefined, 0n].includes(userAllocationToThisProject)
     ) {
       return projectDonors.length + 1;
-    } if (
+    }
+    if (
       isDecisionWindowOpen &&
       !!projectDonors &&
       userAllocationToThisProject &&
@@ -130,6 +132,8 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
     element => element.address === address,
   )?.value;
 
+  const getValuesToDisplay = useGetValuesToDisplay();
+
   const isNewSimulatedPositive = userAllocationToThisProject
     ? parseUnitsBigInt(valueToUse) >= userAllocationToThisProject
     : true;
@@ -150,18 +154,22 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
 
   const yourImpactFormatted =
     valueToUse && simulatedMatched
-      ? getFormattedEthValue(
-          bigintAbs(
+      ? getValuesToDisplay({
+          cryptoCurrency: 'ethereum',
+          valueCrypto: bigintAbs(
             parseUnitsBigInt(value) +
               simulatedMatchedBigInt -
               (projectMatchedProjectRewards ? projectMatchedProjectRewards.matched : BigInt(0)),
           ),
-        )
-      : getFormattedEthValue(parseUnitsBigInt('0', 'wei'));
-  const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
-    rewardsSumWithValueAndSimulation,
-  );
-
+        })
+      : getValuesToDisplay({
+          cryptoCurrency: 'ethereum',
+          valueCrypto: parseUnitsBigInt('0', 'wei'),
+        });
+  const rewardsSumWithValueAndSimulationFormatted = getValuesToDisplay({
+    cryptoCurrency: 'ethereum',
+    valueCrypto: rewardsSumWithValueAndSimulation,
+  });
   const isSimulatedMatchedAvailable =
     !!simulatedMatched && parseUnitsBigInt(simulatedMatched, 'wei') > 0;
 
@@ -183,13 +191,13 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
           !isLoadingAllocateSimulate &&
           isSimulateVisible &&
           t('simulate', {
-            value: `${isNewSimulatedPositive ? '' : '-'}${yourImpactFormatted.fullString}`,
+            value: `${isNewSimulatedPositive ? '' : '-'}${yourImpactFormatted.primary}`,
           })}
         {isDecisionWindowOpen &&
           !isLoadingAllocateSimulate &&
           !isSimulateVisible &&
-          rewardsSumWithValueAndSimulationFormatted.fullString}
-        {!isDecisionWindowOpen && getFormattedEthValue(0n).fullString}
+          rewardsSumWithValueAndSimulationFormatted.primary}
+        {!isDecisionWindowOpen && getFormattedEthValue({ value: 0n }).fullString}
       </div>
       <AllocationItemRewardsDonors
         isLoadingAllocateSimulate={isLoadingAllocateSimulate}

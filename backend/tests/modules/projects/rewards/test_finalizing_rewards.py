@@ -1,18 +1,23 @@
-from app.modules.dto import ProjectAccountFundsDTO, AllocationDTO
-from app.modules.snapshots.finalized.core import get_finalized_project_rewards
+import pytest
+
+from app.modules.dto import AllocationDTO, ProjectAccountFundsDTO
+from app.modules.projects.rewards.service.finalizing import FinalizingProjectRewards
 
 
-def test_transform_project_rewards(context, projects):
+@pytest.fixture(autouse=True)
+def before(app):
+    pass
+
+
+def test_get_finalized_project_rewards(context, projects):
     allocations = [
         AllocationDTO(projects[2], 500),
         AllocationDTO(projects[0], 200),
         AllocationDTO(projects[1], 200),
         AllocationDTO(projects[3], 0),
     ]
-
-    result = get_finalized_project_rewards(
-        context.epoch_settings.project, allocations, projects, 9000
-    )
+    service = FinalizingProjectRewards()
+    result = service.get_finalized_project_rewards(context, allocations, projects, 9000)
 
     assert result.rewards == [
         ProjectAccountFundsDTO(projects[2], 5500, 5000),

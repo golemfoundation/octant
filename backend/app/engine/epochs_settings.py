@@ -6,6 +6,7 @@ from app.engine.octant_rewards import OctantRewardsSettings
 from app.engine.octant_rewards.community_fund.not_supported import (
     NotSupportedCFCalculator,
 )
+from app.engine.octant_rewards.leftover.default import PreliminaryLeftover
 from app.engine.octant_rewards.matched.preliminary import (
     PreliminaryMatchedRewards,
 )
@@ -27,6 +28,7 @@ from app.engine.user import UserSettings, DefaultWeightedAverageEffectiveDeposit
 from app.engine.user.effective_deposit.weighted_average.weights.timebased.default import (
     DefaultTimebasedWeights,
 )
+from app.engine.octant_rewards.leftover.with_ppf import LeftoverWithPPF
 
 
 @dataclass
@@ -51,6 +53,7 @@ def register_epoch_settings():
             operational_cost=OpCostPercent(Decimal("0.20")),
             ppf=NotSupportedPPFCalculator(),
             community_fund=NotSupportedCFCalculator(),
+            leftover=PreliminaryLeftover(),
         ),
         user=UserSettings(
             budget=PreliminaryUserBudget(),
@@ -71,6 +74,7 @@ def register_epoch_settings():
             matched_rewards=PreliminaryMatchedRewards(),
             ppf=NotSupportedPPFCalculator(),
             community_fund=NotSupportedCFCalculator(),
+            leftover=PreliminaryLeftover(),
         ),
         user=UserSettings(budget=PreliminaryUserBudget()),
         project=ProjectSettings(
@@ -81,6 +85,7 @@ def register_epoch_settings():
     )
 
     SETTINGS[3] = EpochSettings(
-        project=ProjectSettings(rewards=PreliminaryProjectRewards())
+        octant_rewards=OctantRewardsSettings(leftover=LeftoverWithPPF()),
+        project=ProjectSettings(rewards=PreliminaryProjectRewards()),
     )
     SETTINGS[4] = EpochSettings()
