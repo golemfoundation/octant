@@ -5,12 +5,10 @@ import { useTranslation } from 'react-i18next';
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import PieChart from 'components/ui/PieChart';
 import networkConfig from 'constants/networkConfig';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useMetricsEpoch from 'hooks/helpers/useMetrcisEpoch';
-import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useEpochInfo from 'hooks/queries/useEpochInfo';
-import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
 
 import styles from './MetricsEpochGridFundsUsage.module.scss';
 import MetricsEpochGridFundsUsageProps from './types';
@@ -24,10 +22,8 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
   const { epoch } = useMetricsEpoch();
-  const { data: currentEpoch } = useCurrentEpoch();
-  const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: epochInfo } = useEpochInfo(epoch);
-
+  const getValuesToDisplay = useGetValuesToDisplay();
   const getNumberValue = (value: bigint) =>
     Number(Number(formatUnitsBigInt(value, 'wei')).toFixed(3));
 
@@ -73,20 +69,6 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     ppf,
   ]);
 
-  const leftoverToUse = useMemo(() => {
-    if (!currentEpoch) {
-      return BigInt(0);
-    }
-    if (epoch === currentEpoch - 1 && isDecisionWindowOpen) {
-      return unusedRewards + ethBelowThreshold;
-    }
-    // TODO OCT-1612 OCT-1614 remove this bypass.
-    if (epoch === 3) {
-      return 3854465046588467390n;
-    }
-    return leftover;
-  }, [ethBelowThreshold, epoch, currentEpoch, isDecisionWindowOpen, leftover, unusedRewards]);
-
   const total =
     claimedByUsers +
     donatedToProjects +
@@ -94,73 +76,88 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
     staking +
     ppf / 2n +
     communityFund +
-    leftoverToUse;
+    leftover;
 
   // Testnet has much lower staking proceeds. Number of places needs to be bigger to see more than 0.
   const numberOfDecimalPlacesToUse = networkConfig.isTestnet ? 10 : 2;
+
+  const getFormattedEthValueProps = {
+    isUsingHairSpace: true,
+    numberOfDecimalPlaces: numberOfDecimalPlacesToUse,
+    shouldIgnoreGwei: false,
+    shouldIgnoreWei: false,
+  };
 
   const data = [
     {
       label: t('donatedToProjects'),
       value: getNumberValue(donatedToProjects),
-      valueLabel: getFormattedEthValue(
-        donatedToProjects,
-        true,
-        false,
-        false,
-        numberOfDecimalPlacesToUse,
-      ).fullString,
+      valueLabel: getValuesToDisplay({
+        cryptoCurrency: 'ethereum',
+        getFormattedEthValueProps,
+        showCryptoSuffix: true,
+        valueCrypto: donatedToProjects,
+      }).primary,
     },
     {
       label: t('leftover', { epochNumber: epoch + 1 }),
-      value: getNumberValue(leftoverToUse),
-      valueLabel: getFormattedEthValue(
-        leftoverToUse,
-        true,
-        false,
-        false,
-        numberOfDecimalPlacesToUse,
-      ).fullString,
+      value: getNumberValue(leftover),
+      valueLabel: getValuesToDisplay({
+        cryptoCurrency: 'ethereum',
+        getFormattedEthValueProps,
+        showCryptoSuffix: true,
+        valueCrypto: leftover,
+      }).primary,
     },
     {
       label: t('projectCosts'),
       value: getNumberValue(projectCosts),
-      valueLabel: getFormattedEthValue(projectCosts, true, false, false, numberOfDecimalPlacesToUse)
-        .fullString,
+      valueLabel: getValuesToDisplay({
+        cryptoCurrency: 'ethereum',
+        getFormattedEthValueProps,
+        showCryptoSuffix: true,
+        valueCrypto: projectCosts,
+      }).primary,
     },
     {
       label: t('claimedByUsers'),
       value: getNumberValue(claimedByUsers),
-      valueLabel: getFormattedEthValue(
-        claimedByUsers,
-        true,
-        false,
-        false,
-        numberOfDecimalPlacesToUse,
-      ).fullString,
+      valueLabel: getValuesToDisplay({
+        cryptoCurrency: 'ethereum',
+        getFormattedEthValueProps,
+        showCryptoSuffix: true,
+        valueCrypto: claimedByUsers,
+      }).primary,
     },
     {
       label: t('staking'),
       value: getNumberValue(staking),
-      valueLabel: getFormattedEthValue(staking, true, false, false, numberOfDecimalPlacesToUse)
-        .fullString,
+      valueLabel: getValuesToDisplay({
+        cryptoCurrency: 'ethereum',
+        getFormattedEthValueProps,
+        showCryptoSuffix: true,
+        valueCrypto: staking,
+      }).primary,
     },
     {
       label: t('communityFund'),
       value: getNumberValue(communityFund),
-      valueLabel: getFormattedEthValue(
-        communityFund,
-        true,
-        false,
-        false,
-        numberOfDecimalPlacesToUse,
-      ).fullString,
+      valueLabel: getValuesToDisplay({
+        cryptoCurrency: 'ethereum',
+        getFormattedEthValueProps,
+        showCryptoSuffix: true,
+        valueCrypto: communityFund,
+      }).primary,
     },
     {
       label: t('ppf'),
       value: getNumberValue(ppf / 2n),
-      valueLabel: getFormattedEthValue(ppf / 2n, true, false, false, numberOfDecimalPlacesToUse)
-        .fullString,
+      valueLabel: getValuesToDisplay({
+        cryptoCurrency: 'ethereum',
+        getFormattedEthValueProps,
+        showCryptoSuffix: true,
+        valueCrypto: ppf / 2n,
+      }).primary,
     },
   ];
 
@@ -179,8 +176,16 @@ const MetricsEpochGridFundsUsage: FC<MetricsEpochGridFundsUsageProps> = ({
                 <div className={cx(styles.label, isLoading && styles.isLoading)}>
                   {!isLoading && t('epochTotal', { epoch })}
                 </div>
-                <div className={cx(styles.value, isLoading && styles.isLoading)}>
-                  {!isLoading && getFormattedEthValue(total).fullString}
+                <div
+                  className={cx(styles.value, isLoading && styles.isLoading)}
+                  data-test="MetricsEpochGridFundsUsage__total"
+                >
+                  {!isLoading &&
+                    getValuesToDisplay({
+                      cryptoCurrency: 'ethereum',
+                      showCryptoSuffix: true,
+                      valueCrypto: total,
+                    }).primary}
                 </div>
               </div>
             </>

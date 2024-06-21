@@ -2,10 +2,7 @@ import cx from 'classnames';
 import React, { FC, memo } from 'react';
 
 import Identicon from 'components/ui/Identicon';
-import useCryptoValues from 'hooks/queries/useCryptoValues';
-import useSettingsStore from 'store/settings/store';
-import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
-import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
 import styles from './ProjectDonorsListItem.module.scss';
@@ -16,34 +13,21 @@ const ProjectDonorsListItem: FC<ProjectDonorsListItemProps> = ({
   amount,
   className,
 }) => {
-  const {
-    data: { displayCurrency, isCryptoMainValueDisplay },
-  } = useSettingsStore(({ data }) => ({
-    data: {
-      displayCurrency: data.displayCurrency,
-      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
-    },
-  }));
-  const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
+  const getValuesToDisplay = useGetValuesToDisplay();
 
   return (
     <div className={cx(styles.root, className)}>
       <Identicon className={styles.identicon} username={donorAddress} />
       <div className={styles.address}>{truncateEthAddress(donorAddress)}</div>
       <div className={styles.value}>
-        {isCryptoMainValueDisplay
-          ? getValueCryptoToDisplay({
-              cryptoCurrency: 'ethereum',
-              shouldIgnoreGwei: true,
-              valueCrypto: amount,
-            })
-          : getValueFiatToDisplay({
-              cryptoCurrency: 'ethereum',
-              cryptoValues,
-              displayCurrency: displayCurrency!,
-              error,
-              valueCrypto: amount,
-            })}
+        {
+          getValuesToDisplay({
+            cryptoCurrency: 'ethereum',
+            getFormattedEthValueProps: { shouldIgnoreGwei: true },
+            showCryptoSuffix: true,
+            valueCrypto: amount,
+          }).primary
+        }
       </div>
     </div>
   );

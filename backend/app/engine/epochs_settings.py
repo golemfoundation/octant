@@ -6,6 +6,7 @@ from app.engine.octant_rewards import OctantRewardsSettings
 from app.engine.octant_rewards.community_fund.not_supported import (
     NotSupportedCFCalculator,
 )
+from app.engine.octant_rewards.leftover.default import PreliminaryLeftover
 from app.engine.octant_rewards.matched.preliminary import (
     PreliminaryMatchedRewards,
 )
@@ -48,6 +49,7 @@ def register_epoch_settings():
             operational_cost=OpCostPercent(Decimal("0.20")),
             ppf=NotSupportedPPFCalculator(),
             community_fund=NotSupportedCFCalculator(),
+            leftover=PreliminaryLeftover(),
         ),
         user=UserSettings(
             budget=PreliminaryUserBudget(),
@@ -68,6 +70,7 @@ def register_epoch_settings():
             matched_rewards=PreliminaryMatchedRewards(),
             ppf=NotSupportedPPFCalculator(),
             community_fund=NotSupportedCFCalculator(),
+            leftover=PreliminaryLeftover(),
         ),
         user=UserSettings(budget=PreliminaryUserBudget()),
         project=ProjectSettings(

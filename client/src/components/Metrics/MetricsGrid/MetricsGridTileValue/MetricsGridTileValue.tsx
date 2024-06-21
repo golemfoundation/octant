@@ -11,11 +11,20 @@ const MetricsGridTileValue: FC<MetricsGridTileValueProps> = ({
   isLoading = false,
   showSubvalueLoader = true,
   isThinSubvalueLoader = false,
+  dataTest = 'MetricsGridTileValue',
 }) => (
-  <div className={cx(styles.root, styles[`size--${size}`], isLoading && styles.isLoading)}>
-    <div className={cx(styles.value)}>{!isLoading && value}</div>
+  <div
+    className={cx(styles.root, styles[`size--${size}`], isLoading && styles.isLoading)}
+    data-test={dataTest}
+  >
+    <div className={cx(styles.value)} data-test={`${dataTest}__value`}>
+      {!isLoading && value}
+    </div>
     {(subvalue || showSubvalueLoader) && (
-      <div className={cx(styles.subvalue, isThinSubvalueLoader && styles.isThinSubvalueLoader)}>
+      <div
+        className={cx(styles.subvalue, isThinSubvalueLoader && styles.isThinSubvalueLoader)}
+        data-test={`${dataTest}__subvalue`}
+      >
         {!isLoading && subvalue}
       </div>
     )}
