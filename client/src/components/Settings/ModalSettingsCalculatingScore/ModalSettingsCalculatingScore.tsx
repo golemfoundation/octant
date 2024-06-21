@@ -46,7 +46,7 @@ const ModalSettingsCalculatingScore: FC<ModalSettingsRecalculatingScoreProps> = 
           mode={isFinished ? 'select' : 'score'}
           score={0}
         />
-        {!isFinished && <SettingsProgressPath key="progress-path" />}
+        {!isFinished && <SettingsProgressPath key="progress-path" lastDoneStep={null} />}
       </AnimatePresence>
     </Modal>
   );

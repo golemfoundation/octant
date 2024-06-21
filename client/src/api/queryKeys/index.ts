@@ -1,6 +1,7 @@
 import { Root, QueryKeys } from './types';
 
 export const ROOTS: Root = {
+  antisybilStatus: 'antisybilStatus',
   calculateRewards: 'calculateRewards',
   cryptoValues: 'cryptoValues',
   depositAt: 'depositAt',
@@ -14,7 +15,6 @@ export const ROOTS: Root = {
   epochesEndTime: 'epochesEndTime',
   estimatedEffectiveDeposit: 'estimatedEffectiveDeposit',
   individualReward: 'individualReward',
-  antisybilStatus: 'antisybilStatus',
   matchedProjectRewards: 'matchedProjectRewards',
   patronMode: 'patronMode',
   projectDonors: 'projectDonors',
@@ -28,6 +28,7 @@ export const ROOTS: Root = {
 };
 
 export const QUERY_KEYS: QueryKeys = {
+  antisybilStatus: userAddress => [ROOTS.antisybilStatus, userAddress],
   blockNumber: ['blockNumber'],
   calculateRewards: (amount, days) => [ROOTS.calculateRewards, amount, days.toString()],
   cryptoValues: fiatCurrency => [ROOTS.cryptoValues, fiatCurrency],
@@ -59,7 +60,6 @@ export const QUERY_KEYS: QueryKeys = {
     projectAddress,
     epochNumber.toString(),
   ],
-  antisybilStatus: userAddress => [ROOTS.antisybilStatus, userAddress],
   projectRewardsThreshold: epochNumber => [ROOTS.projectRewardsThreshold, epochNumber.toString()],
   projectsEpoch: epochNumber => [ROOTS.projectsEpoch, epochNumber.toString()],
   projectsIpfsResults: (projectAddress, epochNumber) => [

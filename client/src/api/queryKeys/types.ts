@@ -11,6 +11,7 @@ export type Root = {
   epochLeverage: 'epochLeverage';
   epochPatrons: 'epochPatrons';
   epochTimestampHappenedIn: 'epochTimestampHappenedIn';
+  epochUnusedRewards: 'epochUnusedRewards';
   epochesEndTime: 'epochesEndTime';
   estimatedEffectiveDeposit: 'estimatedEffectiveDeposit';
   individualReward: 'individualReward';
@@ -24,7 +25,6 @@ export type Root = {
   userAllocationNonce: 'userAllocationNonce';
   userAllocations: 'userAllocations';
   userTOS: 'userTOS';
-  epochUnusedRewards: 'epochUnusedRewards';
 };
 
 export type QueryKeys = {
@@ -40,6 +40,7 @@ export type QueryKeys = {
   depositsValue: ['depositsValue'];
   epochAllocations: (epoch: number) => [Root['epochAllocations'], string];
   epochBudgets: (epoch: number) => [Root['epochBudgets'], string];
+  epochInfo: (epoch: number) => [Root['epochInfo'], string];
   epochLeverage: (epoch: number) => [Root['epochLeverage'], string];
   epochPatrons: (epoch: number) => [Root['epochPatrons'], string];
   epochTimestampHappenedIn: (timestamp: number) => [Root['epochTimestampHappenedIn'], string];
@@ -73,7 +74,6 @@ export type QueryKeys = {
   totalWithdrawals: ['totalWithdrawals'];
   unlocks: ['unlocks'];
   upcomingBudget: (userAddress: string) => [Root['upcomingBudget'], string];
-  epochInfo: (epoch: number) => [Root['epochInfo'], string];
   userAllocationNonce: (userAddress: string) => [Root['userAllocationNonce'], string];
   userAllocations: (epochNumber: number) => [Root['userAllocations'], string];
   userTOS: (userAddress: string) => [Root['userTOS'], string];

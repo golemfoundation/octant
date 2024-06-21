@@ -17,29 +17,37 @@ const ModalSettingsRecalculatingScore: FC<ModalSettingsRecalculatingScoreProps> 
   const { data: antisybilStatusScore, isSuccess } = useAntisybilStatusScore();
 
   useEffect(() => {
-    if (!isSuccess) {return;}
+    if (!isSuccess) {
+      return;
+    }
     setLastDoneStep(0);
   }, [isSuccess]);
 
   // "Checking allowlist", "Finished" mock
   useEffect(() => {
-    if (lastDoneStep === null) {return;}
+    if (lastDoneStep === null) {
+      return;
+    }
     if (lastDoneStep === 2) {
       setTimeout(() => {
         modalProps.onClosePanel();
-        
       }, 2500);
     }
 
     setTimeout(
       () =>
         setLastDoneStep(prev => {
-          if (prev === null) {return 0;}
-          if (prev === 0) {return 1;}
+          if (prev === null) {
+            return 0;
+          }
+          if (prev === 0) {
+            return 1;
+          }
           return 2;
         }),
       2500,
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastDoneStep]);
 
   const isScoreHighlighted = !!(lastDoneStep && lastDoneStep >= 1);
