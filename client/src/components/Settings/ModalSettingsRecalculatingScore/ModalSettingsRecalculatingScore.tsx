@@ -18,10 +18,7 @@ const ModalSettingsRecalculatingScore: FC<ModalSettingsRecalculatingScoreProps> 
       bodyClassName={styles.modalBody}
       dataTest="ModalSettingsRecalculatingScore"
       header={t('recalculatingScore')}
-      isOpen={modalProps.isOpen}
-      onClosePanel={() => {
-        modalProps.onClosePanel();
-      }}
+      {...modalProps}
     >
       <SettingsAddressScore
         address="0xe5e11cc5fb894eF5A9D7Da768cFb17066b9d35D7"
