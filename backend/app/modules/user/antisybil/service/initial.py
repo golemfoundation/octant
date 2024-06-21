@@ -1,6 +1,6 @@
 from flask import current_app as app
 
-from typing import Optional, Tuple, runtime_checkable, Protocol
+from typing import Optional, Tuple
 
 from datetime import datetime
 from typing import List
@@ -87,14 +87,3 @@ def _filter_older(cutoff, stamps: List[dict]) -> List[dict]:
         < cutoff
     )
     return list(filter(not_expired, stamps))
-
-
-@runtime_checkable
-class UniquenessQuotients(Protocol):
-    def calculate(self, user_address: str) -> str:
-        ...
-
-
-class MockUniquenessQuotients(Model):
-    def calculate(self, user_address: str) -> str:
-        return "42"
