@@ -49,6 +49,9 @@ from app.engine.user.effective_deposit.weighted_average.weights.timebased.withou
 from app.engine.projects.rewards.capped_quadratic_funding import (
     CappedQuadraticFundingProjectRewards,
 )
+from app.engine.octant_rewards import LeftoverWithPPFAndUnusedMR
+from app.engine.octant_rewards.leftover.with_ppf import LeftoverWithPPF
+from app.engine.octant_rewards.leftover.default import PreliminaryLeftover
 
 
 def test_default_epoch_settings():
@@ -70,6 +73,7 @@ def test_default_epoch_settings():
         ),
         projects_rewards=CappedQuadraticFundingProjectRewards(),
         projects_allocations=QuadraticFundingAllocations(),
+        leftover=LeftoverWithPPFAndUnusedMR(),
     )
 
 
@@ -89,6 +93,7 @@ def test_epoch_1_settings():
             projects_threshold=PreliminaryProjectThreshold(2),
         ),
         projects_allocations=PreliminaryProjectAllocations(),
+        leftover=PreliminaryLeftover(),
     )
 
 
@@ -108,6 +113,7 @@ def test_epoch_2_settings():
             projects_threshold=PreliminaryProjectThreshold(2),
         ),
         projects_allocations=PreliminaryProjectAllocations(),
+        leftover=PreliminaryLeftover(),
     )
 
 
@@ -133,6 +139,7 @@ def test_epoch_3_settings():
             projects_threshold=PreliminaryProjectThreshold(1),
         ),
         projects_allocations=PreliminaryProjectAllocations(),
+        leftover=LeftoverWithPPF(),
     )
 
 
@@ -158,6 +165,7 @@ def test_epoch_4_settings():
             projects_allocations=QuadraticFundingAllocations(),
         ),
         projects_allocations=QuadraticFundingAllocations(),
+        leftover=LeftoverWithPPFAndUnusedMR(),
     )
 
 
@@ -172,7 +180,8 @@ def check_settings(
     community_fund,
     user_budget,
     projects_rewards,
-    projects_allocations
+    projects_allocations,
+    leftover
 ):
     assert settings.octant_rewards.locked_ratio == DefaultLockedRatio()
     assert (
@@ -183,6 +192,7 @@ def check_settings(
     assert settings.octant_rewards.matched_rewards == matched_rewards
     assert settings.octant_rewards.ppf == ppf
     assert settings.octant_rewards.community_fund == community_fund
+    assert settings.octant_rewards.leftover == leftover
 
     assert settings.user.budget == user_budget
     assert settings.user.effective_deposit.cut_off == CutOff10GLM()

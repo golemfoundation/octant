@@ -3,10 +3,10 @@ import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ProgressBar from 'components/ui/ProgressBar';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
-import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
 import styles from './Rewards.module.scss';
 import RewardsProps from './types';
@@ -29,17 +29,19 @@ const Rewards: FC<RewardsProps> = ({
 
   const { data: projectRewardsThreshold, isFetching } = useProjectRewardsThreshold(epoch);
   const isDonationAboveThreshold = useIsDonationAboveThreshold({ epoch, projectAddress: address });
+  const getValuesToDisplay = useGetValuesToDisplay();
 
-  const totalValueOfAllocationsToDisplay = getValueCryptoToDisplay({
+  const totalValueOfAllocationsToDisplay = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
-    shouldIgnoreGwei: true,
+    showCryptoSuffix: true,
     valueCrypto: totalValueOfAllocations,
-  });
+  }).primary;
 
-  const projectDonorsRewardsSumToDisplay = getValueCryptoToDisplay({
+  const projectDonorsRewardsSumToDisplay = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
+    showCryptoSuffix: true,
     valueCrypto: totalValueOfAllocations,
-  });
+  }).primary;
 
   const showProgressBar =
     !isDonationAboveThreshold &&
@@ -90,10 +92,11 @@ const Rewards: FC<RewardsProps> = ({
     if (isDonationAboveThreshold && isArchivedProject) {
       return numberOfDonors;
     }
-    return getValueCryptoToDisplay({
+    return getValuesToDisplay({
       cryptoCurrency: 'ethereum',
+      showCryptoSuffix: true,
       valueCrypto: projectRewardsThreshold,
-    });
+    }).primary;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, rightSectionValueUseMemoDeps);
 
