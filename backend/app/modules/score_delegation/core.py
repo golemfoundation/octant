@@ -19,7 +19,7 @@ from app.modules.common.crypto.signature import (
 from app.modules.dto import ScoreDelegationPayload
 
 
-MIN_SCORE = 15
+MIN_SCORE = 20
 
 
 class HashedAddresses(NamedTuple):

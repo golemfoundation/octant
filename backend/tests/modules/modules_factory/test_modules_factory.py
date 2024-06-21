@@ -45,9 +45,6 @@ from app.modules.user.events_generator.service.db_and_graph import (
 )
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
 from app.modules.user.participation.epoch_0.service.whitelist import WhitelistEpoch0
-from app.modules.user.participation.identity_call.service.whitelist import (
-    WhitelistIdentityCall,
-)
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.user.rewards.service.saved import SavedUserRewards
 from app.modules.user.tos.service.initial import InitialUserTos, InitialUserTosVerifier
@@ -144,9 +141,7 @@ def test_pending_services_factory():
     saved_user_budgets = SavedUserBudgets()
     user_nonce = SavedUserAllocationsNonce()
     uniqueness_quotients = PreliminaryUQ(
-        antisybil=GitcoinPassportAntisybil(),
-        epoch0_whitelist=WhitelistEpoch0(),
-        identity_call_whitelist=WhitelistIdentityCall(),
+        antisybil=GitcoinPassportAntisybil(), epoch0_whitelist=WhitelistEpoch0()
     )
     allocations_verifier = PendingUserAllocationsVerifier(
         user_nonce=user_nonce,

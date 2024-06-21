@@ -18,7 +18,7 @@ def before(app):
 def test_simulate_finalized_snapshots(
     mock_users_db, mock_octant_rewards, mock_patron_mode, mock_user_rewards
 ):
-    context = get_context(4)
+    context = get_context(1)
     projects = context.projects_details.projects
     make_user_allocation(context, mock_users_db[2])
 
@@ -45,7 +45,7 @@ def test_simulate_finalized_snapshots(
         )
     ]
     assert result.total_withdrawals == MATCHED_REWARDS + 100 + 300_000000000
-    assert result.leftover == 62_179087158_255392165
+    assert result.leftover == 101_814368507_786751493
     assert (
         result.merkle_root
         == "0xe3cd8746f9df50db5c4cbc1962f3dcb0db4236bb06960593d36444a86e296b3c"

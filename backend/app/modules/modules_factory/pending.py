@@ -44,9 +44,6 @@ from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.saved import SavedUserDeposits
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
 from app.modules.user.participation.epoch_0.service.whitelist import WhitelistEpoch0
-from app.modules.user.participation.identity_call.service.whitelist import (
-    WhitelistIdentityCall,
-)
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.withdrawals.service.pending import PendingWithdrawals
 from app.pydantic import Model
@@ -97,9 +94,7 @@ class PendingServices(Model):
         saved_user_budgets = SavedUserBudgets()
         user_nonce = SavedUserAllocationsNonce()
         uniqueness_quotients = PreliminaryUQ(
-            antisybil=GitcoinPassportAntisybil(),
-            epoch0_whitelist=WhitelistEpoch0(),
-            identity_call_whitelist=WhitelistIdentityCall(),
+            antisybil=GitcoinPassportAntisybil(), epoch0_whitelist=WhitelistEpoch0()
         )
 
         allocations_verifier = PendingUserAllocationsVerifier(

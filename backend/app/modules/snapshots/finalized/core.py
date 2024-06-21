@@ -1,4 +1,5 @@
 from collections import namedtuple
+from typing import List
 
 from app.engine.octant_rewards import OctantRewardsSettings
 from app.engine.octant_rewards.leftover import LeftoverPayload
@@ -31,7 +32,7 @@ def calculate_leftover(
 
 
 def get_merkle_root(
-    user_rewards: list[AccountFundsDTO], projects_rewards: list[ProjectAccountFundsDTO]
+    user_rewards: List[AccountFundsDTO], projects_rewards: List[ProjectAccountFundsDTO]
 ):
     rewards = user_rewards + projects_rewards
     if not rewards:

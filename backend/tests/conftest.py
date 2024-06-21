@@ -8,14 +8,15 @@ from unittest.mock import MagicMock, Mock
 
 import gql
 import pytest
+from flask import current_app
 from flask import g as request_context
 from flask.testing import FlaskClient
-from flask import current_app
 from requests import RequestException
 from web3 import Web3
 
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
+from app.exceptions import ExternalApiException
 from app.extensions import db, deposits, glm, gql_factory, w3, vault, epochs
 from app.infrastructure import database
 from app.infrastructure.contracts.epochs import Epochs
@@ -28,7 +29,6 @@ from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
 from app.modules.common.verifier import Verifier
 from app.modules.dto import AccountFundsDTO, AllocationItem, SignatureOpType
 from app.settings import DevConfig, TestConfig
-from app.exceptions import ExternalApiException
 from tests.helpers import make_user_allocation
 from tests.helpers.constants import (
     STARTING_EPOCH,
@@ -61,6 +61,8 @@ from tests.helpers.constants import (
     MULTISIG_MOCKED_SAFE_HASH,
     MULTISIG_ADDRESS,
     PPF,
+    MAX_UQ_SCORE,
+    LOW_UQ_SCORE,
 )
 from tests.helpers.context import get_context
 from tests.helpers.gql_client import MockGQLClient
@@ -798,6 +800,9 @@ def app():
     _app = create_app(TestConfig)
 
     with _app.app_context():
+        db.session.close()
+        db.drop_all()
+
         db.create_all()
 
     ctx = _app.test_request_context()
@@ -991,6 +996,7 @@ def patch_last_finalized_snapshot(monkeypatch):
         "app.legacy.controllers.snapshots.get_last_finalized_snapshot",
         MOCK_LAST_FINALIZED_SNAPSHOT,
     )
+
     MOCK_LAST_FINALIZED_SNAPSHOT.return_value = 3
 
 
@@ -1084,6 +1090,21 @@ def patch_safe_api_user_details(monkeypatch):
         "app.modules.multisig_signatures.core.get_user_details",
         mock_safe_api_user_details,
     )
+
+
+@pytest.fixture(scope="function")
+def mock_users_db_with_scores(app, user_accounts):
+    alice = database.user.add_user(user_accounts[0].address)
+    bob = database.user.add_user(user_accounts[1].address)
+    carol = database.user.add_user(user_accounts[2].address)
+
+    db.session.commit()
+
+    database.uniqueness_quotient.save_uq(alice, 4, LOW_UQ_SCORE)
+    database.uniqueness_quotient.save_uq(bob, 4, MAX_UQ_SCORE)
+    database.uniqueness_quotient.save_uq(carol, 4, LOW_UQ_SCORE)
+
+    return alice, bob, carol
 
 
 @pytest.fixture(scope="function")
@@ -1431,6 +1452,6 @@ def mock_graphql(
 @pytest.fixture(scope="function")
 def mock_uniqueness_quotients():
     uniqueness_quotients = Mock()
-    uniqueness_quotients.calculate.return_value = "42"
+    uniqueness_quotients.calculate.return_value = LOW_UQ_SCORE
 
     return uniqueness_quotients
