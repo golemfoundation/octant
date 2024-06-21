@@ -30,6 +30,7 @@ export default defineConfig({
     supportFile: 'cypress/support/index.ts',
   },
   numTestsKeptInMemory: 4,
+  retries: 0,
   video: true,
   viewportHeight: 1080,
   viewportWidth: 1920,
