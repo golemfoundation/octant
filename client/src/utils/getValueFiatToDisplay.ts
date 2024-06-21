@@ -1,10 +1,22 @@
 import { Response } from 'api/calls/cryptoValues';
-import DoubleValueProps from 'components/ui/DoubleValue/types';
 import { FIAT_CURRENCIES_SYMBOLS } from 'constants/currencies';
 import { SettingsData } from 'store/settings/types';
+import { CryptoCurrency } from 'types/cryptoCurrency';
 
 import { formatUnitsBigInt } from './formatUnitsBigInt';
 import getNumberWithSpaces from './getNumberWithSpaces';
+
+export type GetValueFiatToDisplayProps = {
+  coinPricesServerDowntimeText?: 'Conversion offline' | '...';
+  cryptoCurrency: CryptoCurrency;
+  cryptoValues?: Response;
+  displayCurrency: NonNullable<SettingsData['displayCurrency']>;
+  error?: any;
+  isUsingHairSpace?: boolean;
+  showFiatPrefix?: boolean;
+  showLessThanOneCent?: boolean;
+  valueCrypto?: bigint;
+};
 
 export default function getValueFiatToDisplay({
   coinPricesServerDowntimeText = 'Conversion offline',
@@ -14,15 +26,9 @@ export default function getValueFiatToDisplay({
   error,
   isUsingHairSpace = true,
   valueCrypto,
-}: {
-  coinPricesServerDowntimeText?: DoubleValueProps['coinPricesServerDowntimeText'];
-  cryptoCurrency: DoubleValueProps['cryptoCurrency'];
-  cryptoValues?: Response;
-  displayCurrency: NonNullable<SettingsData['displayCurrency']>;
-  error?: any;
-  isUsingHairSpace?: boolean;
-  valueCrypto: DoubleValueProps['valueCrypto'];
-}): string {
+  showLessThanOneCent = false,
+  showFiatPrefix = true,
+}: GetValueFiatToDisplayProps): string {
   if (error) {
     return coinPricesServerDowntimeText;
   }
@@ -47,7 +53,7 @@ export default function getValueFiatToDisplay({
     !cryptoValues[cryptoCurrency][displayCurrency] ||
     !valueCrypto
   ) {
-    return `${prefix}0.00`;
+    return `${showFiatPrefix ? prefix : ''}${displayCurrency === 'jpy' ? '0' : '0.00'}`;
   }
 
   const exchangeRate = cryptoValues[cryptoCurrency][displayCurrency];
@@ -56,5 +62,13 @@ export default function getValueFiatToDisplay({
     displayCurrency === 'jpy' ? 0 : 2,
   );
 
-  return `${prefix}${getNumberWithSpaces(valueFiat, isUsingHairSpace)}`;
+  if (displayCurrency === 'jpy' && valueFiat === '0' && showLessThanOneCent) {
+    return `< ${prefix}1`;
+  }
+
+  if (valueFiat === '0.00' && showLessThanOneCent) {
+    return `< ${prefix}0.01`;
+  }
+
+  return `${showFiatPrefix ? prefix : ''}${getNumberWithSpaces(valueFiat, isUsingHairSpace)}`;
 }

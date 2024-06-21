@@ -7,13 +7,13 @@ import ProjectAllocationDetailRow from 'components/shared/ProjectAllocationDetai
 import BoxRounded from 'components/ui/BoxRounded';
 import Sections from 'components/ui/BoxRounded/Sections/Sections';
 import { SectionProps } from 'components/ui/BoxRounded/Sections/types';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useEpochLeverage from 'hooks/queries/useEpochLeverage';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useEpochTimestampHappenedIn from 'hooks/subgraph/useEpochTimestampHappenedIn';
 import { CryptoCurrency } from 'types/cryptoCurrency';
-import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
 
 import styles from './EarnHistoryItemDetailsAllocation.module.scss';
 import EarnHistoryItemDetailsAllocationProps from './types';
@@ -29,6 +29,8 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
   const { data: isDecisionWindowOpen } = useIsDecisionWindowOpen();
   const { data: epochTimestampHappenedIn, isFetching: isFetchingEpochTimestampHappenedIn } =
     useEpochTimestampHappenedIn(timestamp);
+
+  const getValuesToDisplay = useGetValuesToDisplay();
 
   const allocationEpoch = epochTimestampHappenedIn ? epochTimestampHappenedIn - 1 : undefined;
 
@@ -60,6 +62,7 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
         isFetching: isFetchingEpochTimestampHappenedIn || isFetchingIndividualReward,
+        showCryptoSuffix: true,
         valueCrypto: individualReward ? individualReward - amount : BigInt(0),
       },
       label: t('sections.allocationPersonal'),
@@ -70,6 +73,7 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
           {
             doubleValueProps: {
               cryptoCurrency: 'ethereum' as CryptoCurrency,
+              showCryptoSuffix: true,
               valueCrypto: amount,
             },
             label: t('sections.allocationProjects', { projectsNumber: allocations.length }),
@@ -101,10 +105,13 @@ const EarnHistoryItemDetailsAllocation: FC<EarnHistoryItemDetailsAllocationProps
                         styles.isFetchingEpochLeverage,
                     )}
                   >
-                    {getValueCryptoToDisplay({
-                      cryptoCurrency: 'ethereum',
-                      valueCrypto: amount * leverageToUse,
-                    })}
+                    {
+                      getValuesToDisplay({
+                        cryptoCurrency: 'ethereum',
+                        showCryptoSuffix: true,
+                        valueCrypto: amount * leverageToUse,
+                      }).primary
+                    }
                   </div>
                 ),
                 label: t('sections.finalMatchFunding'),

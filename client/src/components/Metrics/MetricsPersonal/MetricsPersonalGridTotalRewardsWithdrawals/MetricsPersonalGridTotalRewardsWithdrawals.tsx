@@ -3,10 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 import MetricsGridTile from 'components/Metrics/MetricsGrid/MetricsGridTile';
 import MetricsGridTileValue from 'components/Metrics/MetricsGrid/MetricsGridTileValue';
-import { getValuesToDisplay } from 'components/ui/DoubleValue/utils';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useMetricsPersonalDataRewardsUsage from 'hooks/helpers/useMetricsPersonalDataRewardsUsage';
-import useCryptoValues from 'hooks/queries/useCryptoValues';
-import useSettingsStore from 'store/settings/store';
 
 import MetricsPersonalGridTotalRewardsWithdrawalsProps from './types';
 
@@ -14,34 +12,18 @@ const MetricsPersonalGridTotalRewardsWithdrawals: FC<
   MetricsPersonalGridTotalRewardsWithdrawalsProps
 > = ({ isLoading }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.metrics' });
-  const {
-    data: { displayCurrency },
-  } = useSettingsStore(({ data }) => ({
-    data: {
-      displayCurrency: data.displayCurrency,
-      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
-    },
-  }));
-  const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
   const { data: metricsPersonalDataRewardsUsage } = useMetricsPersonalDataRewardsUsage();
+  const getValuesToDisplay = useGetValuesToDisplay();
 
   const totalRewardsUsedValues = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
-    cryptoValues,
-    displayCurrency: displayCurrency!,
-    error,
-    isCryptoMainValueDisplay: true,
-    shouldIgnoreGwei: false,
+    showCryptoSuffix: true,
     valueCrypto: metricsPersonalDataRewardsUsage?.totalRewardsUsed,
   });
 
   const totalWithdrawalsValues = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
-    cryptoValues,
-    displayCurrency: displayCurrency!,
-    error,
-    isCryptoMainValueDisplay: true,
-    shouldIgnoreGwei: false,
+    showCryptoSuffix: true,
     valueCrypto: metricsPersonalDataRewardsUsage?.totalWithdrawals,
   });
 
@@ -51,6 +33,7 @@ const MetricsPersonalGridTotalRewardsWithdrawals: FC<
         {
           children: (
             <MetricsGridTileValue
+              dataTest="MetricsPersonalGridTotalRewardsWithdrawals__totalRewards"
               isLoading={isLoading}
               size="S"
               subvalue={totalRewardsUsedValues.secondary}
@@ -62,6 +45,7 @@ const MetricsPersonalGridTotalRewardsWithdrawals: FC<
         {
           children: (
             <MetricsGridTileValue
+              dataTest="MetricsPersonalGridTotalRewardsWithdrawals__totalWithdrawals"
               isLoading={isLoading}
               size="S"
               subvalue={totalWithdrawalsValues.secondary}

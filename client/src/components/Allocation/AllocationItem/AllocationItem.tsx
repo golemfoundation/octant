@@ -7,7 +7,7 @@ import {
   useTransform,
 } from 'framer-motion';
 import debounce from 'lodash/debounce';
-import React, { FC, memo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAccount } from 'wagmi';
 
 import AllocationItemRewards from 'components/Allocation/AllocationItemRewards';
@@ -19,14 +19,21 @@ import Svg from 'components/ui/Svg';
 import { GWEI_5 } from 'constants/bigInt';
 import env from 'env';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
+import useCryptoValues from 'hooks/queries/useCryptoValues';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
 import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
+import useSettingsStore from 'store/settings/store';
 import { bin } from 'svg/misc';
+import convertFiatToCrypto from 'utils/convertFiatToCrypto';
+import { formatUnitsBigInt } from 'utils/formatUnitsBigInt';
+import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import {
   comma,
   floatNumberWithUpTo18DecimalPlaces,
+  floatNumberWithUpTo2DecimalPlaces,
   floatNumberWithUpTo9DecimalPlaces,
 } from 'utils/regExp';
 
@@ -50,7 +57,15 @@ const AllocationItem: FC<AllocationItemProps> = ({
 }) => {
   const { data: individualReward } = useIndividualReward();
   const isGweiRange = individualReward! < GWEI_5;
-
+  const {
+    data: { displayCurrency, isCryptoMainValueDisplay },
+  } = useSettingsStore(({ data }) => ({
+    data: {
+      displayCurrency: data.displayCurrency,
+      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
+    },
+  }));
+  const { data: cryptoValues } = useCryptoValues(displayCurrency);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const { ipfsGateways } = env;
   const { isConnected } = useAccount();
@@ -72,6 +87,13 @@ const AllocationItem: FC<AllocationItemProps> = ({
   const isEpoch1 = currentEpoch === 1;
   const isLoading = currentEpoch === undefined || isFetchingRewardsThreshold;
 
+  const inputSuffix = useMemo(() => {
+    if (!isCryptoMainValueDisplay) {
+      return displayCurrency.toUpperCase();
+    }
+    return isGweiRange ? 'GWEI' : 'ETH';
+  }, [isGweiRange, isCryptoMainValueDisplay, displayCurrency]);
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onChangeCallback = useCallback(
     debounce(
@@ -84,7 +106,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
     [onChange],
   );
 
-  const _onChange = (newValue: string) => {
+  const _onChangeCrypto = (newValue: string) => {
     const valueComma = newValue.replace(comma, '.');
     if (
       valueComma &&
@@ -108,14 +130,59 @@ const AllocationItem: FC<AllocationItemProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (isError || !isDecisionWindowOpen) {
+  const _onChangeFiat = (newValue: string) => {
+    const valueComma = newValue.replace(comma, '.');
+    if (valueComma && !floatNumberWithUpTo2DecimalPlaces.test(valueComma)) {
       return;
     }
+    const changeCallbackValue = formatUnitsBigInt(
+      convertFiatToCrypto({
+        cryptoCurrency: 'ethereum',
+        cryptoValues,
+        displayCurrency,
+        valueFiat: valueComma,
+      }),
+    )
+      // @ts-expect-error TS method collision.
+      .toLocaleString('fullwide', {
+        maximumSignificantDigits: 18,
+        useGrouping: false,
+      })
+      .replace(comma, '.');
 
-    setLocalValue(getAdjustedValue(value, isGweiRange, 'multiply'));
+    setLocalValue(valueComma);
+
+    if (!isError) {
+      onChangeCallback(
+        {
+          address,
+          value: changeCallbackValue,
+        },
+        true,
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (isError || !isDecisionWindowOpen || isInputFocused) {
+      return;
+    }
+    if (isCryptoMainValueDisplay) {
+      setLocalValue(getAdjustedValue(value, isGweiRange, 'multiply'));
+    } else {
+      setLocalValue(
+        getValueFiatToDisplay({
+          cryptoCurrency: 'ethereum',
+          cryptoValues,
+          displayCurrency,
+          showFiatPrefix: false,
+          valueCrypto: parseUnitsBigInt(value, 'ether'),
+        }),
+      );
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, isDecisionWindowOpen, isError, isGweiRange]);
+  }, [value, isDecisionWindowOpen, isError, isGweiRange, isCryptoMainValueDisplay]);
 
   useMotionValueEvent(x, 'change', latest => {
     if (latest < constraints[0]) {
@@ -250,14 +317,18 @@ const AllocationItem: FC<AllocationItemProps> = ({
                 !isConnected || !individualReward || !isDecisionWindowOpen || isThereAnyError
               }
               onBlur={() => setIsInputFocused(false)}
-              onChange={event => _onChange(event.target.value)}
+              onChange={event =>
+                isCryptoMainValueDisplay
+                  ? _onChangeCrypto(event.target.value)
+                  : _onChangeFiat(event.target.value)
+              }
               onFocus={() => {
                 inputRef.current?.select();
                 setIsInputFocused(true);
               }}
               placeholder="0.000"
               shouldAutoFocusAndSelect={false}
-              suffix={isGweiRange ? 'GWEI' : 'ETH'}
+              suffix={inputSuffix}
               textAlign="right"
               value={localValue}
               variant="allocation"
