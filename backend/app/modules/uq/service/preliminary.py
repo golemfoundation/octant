@@ -9,6 +9,7 @@ from app.infrastructure.database.uniqueness_quotient import (
 )
 from app.modules.uq.core import calculate_uq
 from app.pydantic import Model
+from flask import current_app as app
 
 
 @runtime_checkable
@@ -20,14 +21,14 @@ class Antisybil(Protocol):
 
 
 @runtime_checkable
-class Epoch0Whitelist(Protocol):
-    def exists(self, context: Context, address: str) -> bool:
+class UserBudgets(Protocol):
+    def get_budget(self, context: Context, user_address: str) -> int:
         ...
 
 
 class PreliminaryUQ(Model):
     antisybil: Antisybil
-    epoch0_whitelist: Epoch0Whitelist
+    budgets: UserBudgets
 
     def retrieve(
         self, context: Context, user_address: str, should_save: bool = False
@@ -49,11 +50,12 @@ class PreliminaryUQ(Model):
 
         return uq_score
 
-    def calculate(self, context: Context, address: str) -> Decimal:
-        gp_score = self._get_gp_score(context, address)
-        has_epoch0_poap = self.epoch0_whitelist.exists(context, address)
+    def calculate(self, context: Context, user_address: str) -> Decimal:
+        gp_score = self._get_gp_score(context, user_address)
+        budget = self.budgets.get_budget(context, user_address)
+        addresses = app.config["ADDRESSES"].split(",")
 
-        return calculate_uq(has_epoch0_poap, gp_score)
+        return calculate_uq(gp_score, budget, user_address, addresses)
 
     def _get_gp_score(self, context: Context, address: str) -> float:
         antisybil_status = self.antisybil.get_antisybil_status(context, address)
