@@ -14,6 +14,7 @@ export const ROOTS: Root = {
   epochesEndTime: 'epochesEndTime',
   estimatedEffectiveDeposit: 'estimatedEffectiveDeposit',
   individualReward: 'individualReward',
+  antisybilStatus: 'antisybilStatus',
   matchedProjectRewards: 'matchedProjectRewards',
   patronMode: 'patronMode',
   projectDonors: 'projectDonors',
@@ -58,6 +59,7 @@ export const QUERY_KEYS: QueryKeys = {
     projectAddress,
     epochNumber.toString(),
   ],
+  antisybilStatus: userAddress => [ROOTS.antisybilStatus, userAddress],
   projectRewardsThreshold: epochNumber => [ROOTS.projectRewardsThreshold, epochNumber.toString()],
   projectsEpoch: epochNumber => [ROOTS.projectsEpoch, epochNumber.toString()],
   projectsIpfsResults: (projectAddress, epochNumber) => [

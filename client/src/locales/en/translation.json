@@ -507,7 +507,8 @@
       "recalculatingScore": "Recalculating score",
       "calculatingScore": "Calculating score",
       "checkingPassportScore":"Checking Passport score",
-      "finished": "Finished"
+      "finished": "Finished",
+      "checkingAllowlist": "Checking allowlist"
     },
     "syncStatus": {
       "information": "We're synchronizing things to prepare the<br/>next epoch, so the app will be unavailable<br/>for a little while. Please check back soon."
