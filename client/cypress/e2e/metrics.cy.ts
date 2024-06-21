@@ -1,11 +1,73 @@
-import { mockCoinPricesServer, visitWithLoader } from 'cypress/utils/e2e';
+import {
+  changeMainValueToFiat,
+  connectWallet,
+  mockCoinPricesServer,
+  visitWithLoader,
+} from 'cypress/utils/e2e';
 import viewports from 'cypress/utils/viewports';
 import {
   HAS_ONBOARDING_BEEN_CLOSED,
+  IS_CRYPTO_MAIN_VALUE_DISPLAY,
   IS_ONBOARDING_ALWAYS_VISIBLE,
   IS_ONBOARDING_DONE,
 } from 'src/constants/localStorageKeys';
 import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
+
+const rendersTilesWithCorrectValues = (isCryptoAsAMainValue: boolean) => {
+  connectWallet({ isPatronModeEnabled: false, isTOSAccepted: true });
+  if (!isCryptoAsAMainValue) {
+    changeMainValueToFiat(ROOT_ROUTES.metrics.absolute);
+  }
+
+  cy.get('[data-test=MetricsEpochGridTopProjects__list__item__value]')
+    .eq(0)
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '0' : '$0.00');
+
+  cy.get('[data-test=MetricsEpochGridTotalDonationsAndPersonal__totalDonations__value]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '$0.00');
+  cy.get('[data-test=MetricsEpochGridTotalDonationsAndPersonal__totalDonations__subvalue]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '$0.00' : '0 ETH');
+  cy.get('[data-test=MetricsEpochGridTotalDonationsAndPersonal__totalPersonal__value]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '$0.00');
+  cy.get('[data-test=MetricsEpochGridTotalDonationsAndPersonal__totalPersonal__subvalue]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '$0.00' : '0 ETH');
+
+  cy.get('[data-test=MetricsEpochGridRewardsUnusedAndUnallocatedValue__unallocatedValue__value]')
+    .invoke('text')
+    .should(isCryptoAsAMainValue ? 'not.include' : 'include', '$');
+  cy.get('[data-test=MetricsEpochGridRewardsUnusedAndUnallocatedValue__unallocatedValue__subvalue]')
+    .invoke('text')
+    .should(isCryptoAsAMainValue ? 'include' : 'not.include', '$');
+
+  cy.get('[data-test=MetricsEpochGridBelowThreshold__ethBelowThreshold__value]')
+    .invoke('text')
+    .should('eq', '0');
+  cy.get('[data-test=MetricsEpochGridBelowThreshold__ethBelowThreshold__subvalue]')
+    .invoke('text')
+    .should('eq', '$0.00');
+
+  cy.get('[data-test=MetricsEpochGridFundsUsage__total]')
+    .invoke('text')
+    .should(isCryptoAsAMainValue ? 'not.include' : 'include', '$');
+
+  cy.get('[data-test=MetricsPersonalGridTotalRewardsWithdrawals__totalRewards__value]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '$0.00');
+  cy.get('[data-test=MetricsPersonalGridTotalRewardsWithdrawals__totalRewards__subvalue]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '$0.00' : '0 ETH');
+  cy.get('[data-test=MetricsPersonalGridTotalRewardsWithdrawals__totalWithdrawals__value]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '0 ETH' : '$0.00');
+  cy.get('[data-test=MetricsPersonalGridTotalRewardsWithdrawals__totalWithdrawals__subvalue]')
+    .invoke('text')
+    .should('eq', isCryptoAsAMainValue ? '$0.00' : '0 ETH');
+};
 
 Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDesktop }) => {
   describe(`metrics: ${device}`, { viewportHeight, viewportWidth }, () => {
@@ -126,6 +188,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
             : `${columnWidth}px ${columnWidth}px`,
         );
       });
+    });
+
+    it(`renders tiles values in correct order ${IS_CRYPTO_MAIN_VALUE_DISPLAY}: true`, () => {
+      rendersTilesWithCorrectValues(true);
+    });
+
+    it(`renders tiles values in correct order ${IS_CRYPTO_MAIN_VALUE_DISPLAY}: false`, () => {
+      rendersTilesWithCorrectValues(false);
     });
   });
 });

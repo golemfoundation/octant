@@ -23,13 +23,13 @@ const EarnGlmLockBudgetBox: FC<EarnGlmLockBudgetBoxProps> = ({
   });
 
   const depositsValueString = useMemo(
-    () => getFormattedGlmValue(depositsValue || BigInt(0)).fullString,
+    () => getFormattedGlmValue({ value: depositsValue || BigInt(0) }).fullString,
     [depositsValue],
   );
 
-  const availableFundsGlmString = getFormattedGlmValue(
-    BigInt(availableFundsGlm ? availableFundsGlm!.value : 0),
-  ).fullString;
+  const availableFundsGlmString = getFormattedGlmValue({
+    value: BigInt(availableFundsGlm ? availableFundsGlm!.value : 0),
+  }).fullString;
 
   return (
     <BoxRounded

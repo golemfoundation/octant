@@ -1,19 +1,33 @@
-import { CryptoCurrency } from 'types/cryptoCurrency';
+import { GetValuesToDisplayProps } from 'hooks/helpers/useGetValuesToDisplay';
+import { GetFormattedEthValueProps } from 'utils/getFormattedEthValue';
+import { GetFormattedGlmValueProps } from 'utils/getFormattedGlmValue';
 
 export const DOUBLE_VALUE_VARIANTS = ['big', 'standard', 'small', 'tiny'] as const;
 export type DoubleValueVariant = (typeof DOUBLE_VALUE_VARIANTS)[number];
 
-export default interface DoubleValueProps {
+type DoubleValueProps = {
   className?: string;
-  coinPricesServerDowntimeText?: 'Conversion offline' | '...';
-  cryptoCurrency: CryptoCurrency;
+  coinPricesServerDowntimeText?: GetValuesToDisplayProps['coinPricesServerDowntimeText'];
   dataTest?: string;
   isDisabled?: boolean;
   isError?: boolean;
   isFetching?: boolean;
-  shouldIgnoreGwei?: boolean;
+  showCryptoSuffix?: GetValuesToDisplayProps['showCryptoSuffix'];
   textAlignment?: 'left' | 'right';
   valueCrypto?: bigint;
   valueString?: string;
   variant?: DoubleValueVariant;
-}
+} & (
+  | {
+      cryptoCurrency: 'ethereum';
+      getFormattedEthValueProps?: Omit<GetFormattedEthValueProps, 'value'>;
+      getFormattedGlmValueProps?: never;
+    }
+  | {
+      cryptoCurrency: 'golem';
+      getFormattedEthValueProps?: never;
+      getFormattedGlmValueProps?: Omit<GetFormattedGlmValueProps, 'value'>;
+    }
+);
+
+export default DoubleValueProps;

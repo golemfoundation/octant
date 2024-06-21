@@ -3,7 +3,7 @@ from decimal import Decimal
 import pytest
 
 from app.engine.epochs_settings import register_epoch_settings
-from app.modules.octant_rewards.service.calculated import (
+from app.modules.octant_rewards.general.service.calculated import (
     CalculatedOctantRewards,
 )
 from tests.conftest import ETH_PROCEEDS, TOTAL_ED
