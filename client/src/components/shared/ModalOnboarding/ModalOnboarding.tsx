@@ -192,6 +192,19 @@ const ModalOnboarding: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isUserTOSAccepted]);
 
+  useEffect(() => {
+    /**
+     * User should not be able to have LAST_SEEN_STEP more than 0 without having ToS signed.
+     * However, whenever ToS is reset (on the backend, or by environment flush),
+     * we need to reset LAST_SEEN_STEP to 0 and IS_ONBOARDING_DONE to false.
+     */
+    if (!isUserTOSAccepted) {
+      setIsOnboardingDone(false);
+      setLastSeenStep(0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isUserTOSAccepted]);
+
   return (
     <Modal
       bodyClassName={styles.onboardingModalBody}
