@@ -24,9 +24,8 @@ const ModalSettingsCalculatingScore: FC<ModalSettingsRecalculatingScoreProps> = 
       bodyClassName={styles.modalBody}
       dataTest="ModalSettingsCalculatingScore"
       header={isFinished ? 'Switch Accounts' : t('calculatingScore')}
-      isOpen={modalProps.isOpen}
-      onClosePanel={modalProps.onClosePanel}
       showCloseButton={isFinished}
+      {...modalProps}
     >
       <AnimatePresence initial={false} mode="popLayout">
         <SettingsAddressScore
