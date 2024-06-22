@@ -19,6 +19,7 @@ from app.modules.modules_factory.protocols import (
     SavedProjectRewardsService,
     MultisigSignatures,
     ProjectsMetadataService,
+    UniquenessQuotients,
 )
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from app.modules.octant_rewards.service.pending import PendingOctantRewards
@@ -83,6 +84,7 @@ class PendingServices(Model):
     project_rewards_service: PendingProjectRewardsProtocol
     multisig_signatures_service: MultisigSignatures
     projects_metadata_service: ProjectsMetadataService
+    uniqueness_quotients: UniquenessQuotients
 
     @staticmethod
     def create(chain_id: int) -> "PendingServices":
@@ -137,4 +139,5 @@ class PendingServices(Model):
             project_rewards_service=project_rewards,
             multisig_signatures_service=multisig_signatures,
             projects_metadata_service=StaticProjectsMetadataService(),
+            uniqueness_quotients=uniqueness_quotients,
         )

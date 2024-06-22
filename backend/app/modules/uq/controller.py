@@ -11,7 +11,10 @@ from app.modules.registry import get_services
 def get_uq(user_address: str, epoch_num: int) -> Decimal:
     context = epoch_context(epoch_num)
 
-    if context.epoch_state != EpochState.PENDING:
+    if (
+        context.epoch_state == EpochState.FINALIZED
+        or context.epoch_state == EpochState.FUTURE
+    ):
         raise NotImplementedForGivenEpochState()
 
     service = get_services(

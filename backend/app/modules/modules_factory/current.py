@@ -14,6 +14,7 @@ from app.modules.modules_factory.protocols import (
     ProjectsMetadataService,
     UserAllocationNonceProtocol,
     ScoreDelegation,
+    UniquenessQuotients,
 )
 from app.modules.modules_factory.protocols import SimulatePendingSnapshots
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
@@ -27,6 +28,7 @@ from app.modules.score_delegation.service.simple_obfuscation import (
 )
 from app.modules.snapshots.pending.service.simulated import SimulatedPendingSnapshots
 from app.modules.staking.proceeds.service.estimated import EstimatedStakingProceeds
+from app.modules.uq.service.preliminary import PreliminaryUQ
 from app.modules.user.allocations.nonce.service.saved import SavedUserAllocationsNonce
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 from app.modules.user.budgets.service.upcoming import UpcomingUserBudgets
@@ -58,6 +60,7 @@ class CurrentServices(Model):
     projects_metadata_service: ProjectsMetadataService
     user_budgets_service: UpcomingUserBudgets
     score_delegation_service: ScoreDelegation
+    uniqueness_quotients: UniquenessQuotients
 
     @staticmethod
     def _prepare_simulation_data(
@@ -120,6 +123,9 @@ class CurrentServices(Model):
                 effective_deposits=user_deposits, octant_rewards=octant_rewards
             )
         )
+        uniqueness_quotients = PreliminaryUQ(
+            antisybil=GitcoinPassportAntisybil(), budgets=user_budgets
+        )
 
         return CurrentServices(
             user_allocations_nonce_service=user_allocations_nonce,
@@ -133,4 +139,5 @@ class CurrentServices(Model):
             projects_metadata_service=StaticProjectsMetadataService(),
             user_budgets_service=user_budgets,
             score_delegation_service=score_delegation,
+            uniqueness_quotients=uniqueness_quotients,
         )
