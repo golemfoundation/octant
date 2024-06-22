@@ -199,8 +199,10 @@ const ModalOnboarding: FC = () => {
      * we need to reset LAST_SEEN_STEP to 0 and IS_ONBOARDING_DONE to false.
      */
     if (!isUserTOSAccepted) {
+      setIsOnboardingModalOpen(true);
       setIsOnboardingDone(false);
       setLastSeenStep(0);
+      setCurrentStepIndex(0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isUserTOSAccepted]);
