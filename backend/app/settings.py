@@ -70,6 +70,7 @@ class Config(object):
     MAINNET_PROJECT_CIDS = os.getenv(
         "MAINNET_PROPOSAL_CIDS", DEFAULT_MAINNET_PROJECT_CIDS
     )
+    ADDRESSES = os.getenv("ADDRESSES")
 
 
 class ProdConfig(Config):
@@ -138,6 +139,7 @@ class TestConfig(Config):
     MAINNET_PROJECT_CIDS = DEFAULT_MAINNET_PROJECT_CIDS
     DELEGATION_SALT = "salt"
     DELEGATION_SALT_PRIMARY = "salt_primary"
+    ADDRESSES = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
 
 
 def get_config():
