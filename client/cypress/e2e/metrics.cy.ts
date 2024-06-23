@@ -88,6 +88,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       visitWithLoader(ROOT_ROUTES.metrics.absolute);
     });
 
+    after(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
+    });
+
     it('renders total projects tile', () => {
       cy.get('[data-test=MetricsGeneralGridTotalProjects]').should('be.visible');
     });
