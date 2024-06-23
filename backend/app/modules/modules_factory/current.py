@@ -18,7 +18,9 @@ from app.modules.modules_factory.protocols import (
 )
 from app.modules.modules_factory.protocols import SimulatePendingSnapshots
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
-from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
+from app.modules.octant_rewards.general.service.calculated import (
+    CalculatedOctantRewards,
+)
 from app.modules.projects.metadata.service.projects_metadata import (
     StaticProjectsMetadataService,
 )

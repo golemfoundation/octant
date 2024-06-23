@@ -17,6 +17,6 @@ export function getIndividualRewardText({
     return i18n.t('layouts.main.loadingRewardBudget');
   }
   return i18n.t('common.rewards', {
-    rewards: getFormattedEthValue(individualReward).fullString,
+    rewards: getFormattedEthValue({ value: individualReward }).fullString,
   });
 }

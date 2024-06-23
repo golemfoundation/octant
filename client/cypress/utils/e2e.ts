@@ -1,10 +1,11 @@
 import { navigationTabs } from 'src/constants/navigationTabs/navigationTabs';
+import { ROOT_ROUTES } from 'src/routes/RootRoutes/routes';
 
 import { ConnectWalletParameters } from './types';
 
 import Chainable = Cypress.Chainable;
 
-export const ETH_USD = 2041.91;
+export const ETH_USD = 2042.0;
 export const GLM_USD = 0.260878;
 
 export const loadersShouldNotExist = (): Chainable<any> => {
@@ -44,6 +45,12 @@ export const connectWallet = ({
   isTOSAccepted = false,
   isPatronModeEnabled = false,
 }: ConnectWalletParameters): Chainable<any> => {
+  /**
+   * Setting intercepts here is too late. It should be done before view loads.
+   * Making a reload is hack to skip that.
+   */
+  cy.reload();
+  loadersShouldNotExist();
   cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
   cy.intercept('GET', '/user/*/patron-mode', { body: { status: isPatronModeEnabled } });
   cy.intercept('PATCH', '/user/*/patron-mode', { body: { status: !isPatronModeEnabled } });
@@ -74,4 +81,10 @@ export const checkProjectsViewLoaded = (): Chainable<any> => {
   });
 
   return cy.get('[data-test^=ProjectItemSkeleton').should('not.exist');
+};
+
+export const changeMainValueToFiat = (endUrl: string): Chainable<any> => {
+  navigateWithCheck(ROOT_ROUTES.settings.absolute);
+  cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
+  return navigateWithCheck(endUrl);
 };
