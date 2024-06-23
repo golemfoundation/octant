@@ -1098,11 +1098,11 @@ def mock_users_db_with_scores(app, user_accounts):
     bob = database.user.add_user(user_accounts[1].address)
     carol = database.user.add_user(user_accounts[2].address)
 
+    db.session.commit()
+
     database.uniqueness_quotient.save_uq(alice, 4, LOW_UQ_SCORE)
     database.uniqueness_quotient.save_uq(bob, 4, MAX_UQ_SCORE)
     database.uniqueness_quotient.save_uq(carol, 4, LOW_UQ_SCORE)
-
-    db.session.commit()
 
     return alice, bob, carol
 
@@ -1362,6 +1362,7 @@ def mock_user_budgets(alice, bob, carol):
         bob.address: USER2_BUDGET,
         carol.address: USER3_BUDGET,
     }
+    user_budgets_service_mock.get_budget.return_value = USER1_BUDGET
 
     return user_budgets_service_mock
 

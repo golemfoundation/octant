@@ -7,10 +7,14 @@ from app.modules.modules_factory.future import FutureServices
 from app.modules.modules_factory.pending import PendingServices
 from app.modules.modules_factory.pre_pending import PrePendingServices
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
-from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
-from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
-from app.modules.octant_rewards.service.pending import PendingOctantRewards
+from app.modules.octant_rewards.general.service.calculated import (
+    CalculatedOctantRewards,
+)
+from app.modules.octant_rewards.general.service.finalized import FinalizedOctantRewards
+from app.modules.octant_rewards.general.service.pending import PendingOctantRewards
+from app.modules.octant_rewards.matched.pending import PendingOctantMatchedRewards
 from app.modules.projects.rewards.service.estimated import EstimatedProjectRewards
+from app.modules.projects.rewards.service.finalizing import FinalizingProjectRewards
 from app.modules.projects.rewards.service.saved import SavedProjectRewards
 from app.modules.snapshots.finalized.service.finalizing import FinalizingSnapshots
 from app.modules.snapshots.finalized.service.simulated import (
@@ -40,7 +44,6 @@ from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
 )
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
-from app.modules.user.participation.epoch_0.service.whitelist import WhitelistEpoch0
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.user.rewards.service.saved import SavedUserRewards
 from app.modules.user.tos.service.initial import InitialUserTos, InitialUserTosVerifier
@@ -134,19 +137,21 @@ def test_pending_services_factory():
     result = PendingServices.create(ChainTypes.MAINNET)
 
     events_based_patron_mode = EventsBasedUserPatronMode()
-    octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
     saved_user_budgets = SavedUserBudgets()
     user_nonce = SavedUserAllocationsNonce()
     uniqueness_quotients = PreliminaryUQ(
-        antisybil=GitcoinPassportAntisybil(), epoch0_whitelist=WhitelistEpoch0()
+        antisybil=GitcoinPassportAntisybil(), budgets=saved_user_budgets
     )
     allocations_verifier = PendingUserAllocationsVerifier(
         user_nonce=user_nonce,
         user_budgets=saved_user_budgets,
         patrons_mode=events_based_patron_mode,
     )
+    octant_matched_rewards = PendingOctantMatchedRewards(
+        patrons_mode=events_based_patron_mode
+    )
     user_allocations = PendingUserAllocations(
-        octant_rewards=octant_rewards,
+        octant_rewards=octant_matched_rewards,
         verifier=allocations_verifier,
         uniqueness_quotients=uniqueness_quotients,
     )
@@ -155,10 +160,19 @@ def test_pending_services_factory():
         patrons_mode=events_based_patron_mode,
         allocations=user_allocations,
     )
+    project_rewards = FinalizingProjectRewards()
+    octant_rewards = PendingOctantRewards(
+        patrons_mode=events_based_patron_mode,
+        user_rewards=user_rewards,
+        project_rewards=project_rewards,
+        octant_matched_rewards=octant_matched_rewards,
+    )
+
     finalized_snapshots_service = SimulatedFinalizedSnapshots(
         octant_rewards=octant_rewards,
         user_rewards=user_rewards,
         patrons_mode=events_based_patron_mode,
+        project_rewards=project_rewards,
     )
     withdrawals_service = PendingWithdrawals(user_rewards=user_rewards)
     project_rewards = EstimatedProjectRewards(octant_rewards=octant_rewards)
@@ -187,11 +201,21 @@ def test_finalizing_services_factory():
         patrons_mode=events_based_patron_mode,
         allocations=saved_user_allocations,
     )
-    octant_rewards = PendingOctantRewards(patrons_mode=events_based_patron_mode)
+    project_rewards = FinalizingProjectRewards()
+    octant_matched_rewards = PendingOctantMatchedRewards(
+        patrons_mode=events_based_patron_mode
+    )
+    octant_rewards = PendingOctantRewards(
+        patrons_mode=events_based_patron_mode,
+        project_rewards=project_rewards,
+        user_rewards=user_rewards,
+        octant_matched_rewards=octant_matched_rewards,
+    )
     finalized_snapshots_service = FinalizingSnapshots(
         octant_rewards=octant_rewards,
         user_rewards=user_rewards,
         patrons_mode=events_based_patron_mode,
+        project_rewards=project_rewards,
     )
     withdrawals_service = PendingWithdrawals(user_rewards=user_rewards)
     project_rewards_service = SavedProjectRewards()
@@ -216,7 +240,7 @@ def test_finalized_services_factory():
         patrons_mode=events_based_patron_mode,
         allocations=saved_user_allocations,
     )
-    withdrawals_service = FinalizedWithdrawals(user_rewards=user_rewards)
+    withdrawals_service = FinalizedWithdrawals()
     project_rewards_service = SavedProjectRewards()
 
     assert result.user_deposits_service == SavedUserDeposits()

@@ -2,16 +2,14 @@ import cx from 'classnames';
 import React, { FC, Fragment } from 'react';
 
 import DoubleValueSkeleton from 'components/ui/DoubleValueSkeleton';
-import useCryptoValues from 'hooks/queries/useCryptoValues';
-import useSettingsStore from 'store/settings/store';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 
 import styles from './DoubleValue.module.scss';
 import DoubleValueProps from './types';
-import { getValuesToDisplay } from './utils';
 
 const DoubleValue: FC<DoubleValueProps> = ({
   className,
-  coinPricesServerDowntimeText = 'Conversion offline',
+  coinPricesServerDowntimeText,
   cryptoCurrency,
   dataTest = 'DoubleValue',
   isDisabled,
@@ -21,28 +19,19 @@ const DoubleValue: FC<DoubleValueProps> = ({
   valueString,
   variant = 'big',
   isFetching = false,
-  shouldIgnoreGwei,
+  getFormattedEthValueProps,
+  getFormattedGlmValueProps,
+  showCryptoSuffix,
 }) => {
-  const {
-    data: { displayCurrency, isCryptoMainValueDisplay },
-  } = useSettingsStore(({ data }) => ({
-    data: {
-      displayCurrency: data.displayCurrency,
-      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
-    },
-  }));
-  const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
+  const getValuesToDisplay = useGetValuesToDisplay();
 
   const values = getValuesToDisplay({
     coinPricesServerDowntimeText,
     cryptoCurrency,
-    cryptoValues,
-    displayCurrency: displayCurrency!,
-    error,
-    isCryptoMainValueDisplay,
-    shouldIgnoreGwei,
+    showCryptoSuffix,
     valueCrypto,
     valueString,
+    ...(cryptoCurrency === 'ethereum' ? getFormattedEthValueProps : getFormattedGlmValueProps),
   });
 
   return (

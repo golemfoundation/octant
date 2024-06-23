@@ -14,7 +14,7 @@ from app.modules.modules_factory.protocols import (
     SavedProjectRewardsService,
     ProjectsMetadataService,
 )
-from app.modules.octant_rewards.service.finalized import FinalizedOctantRewards
+from app.modules.octant_rewards.general.service.finalized import FinalizedOctantRewards
 from app.modules.projects.rewards.service.saved import SavedProjectRewards
 from app.modules.user.allocations.service.saved import SavedUserAllocations
 from app.modules.user.budgets.service.saved import SavedUserBudgets

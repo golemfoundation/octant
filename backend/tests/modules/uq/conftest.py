@@ -14,14 +14,5 @@ def mock_antisybil():
 
 
 @pytest.fixture
-def mock_epoch0_whitelist():
-    mock = Mock()
-    mock.exists.return_value = False
-    return mock
-
-
-@pytest.fixture
-def service(mock_antisybil, mock_epoch0_whitelist):
-    return PreliminaryUQ(
-        antisybil=mock_antisybil, epoch0_whitelist=mock_epoch0_whitelist
-    )
+def service(mock_antisybil, mock_user_budgets):
+    return PreliminaryUQ(antisybil=mock_antisybil, budgets=mock_user_budgets)
