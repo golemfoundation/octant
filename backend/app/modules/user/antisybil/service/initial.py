@@ -84,6 +84,6 @@ def _parse_expirationDate(timestamp_str: str) -> datetime:
 def _filter_older(cutoff, stamps: List[dict]) -> List[dict]:
     not_expired = (
         lambda stamp: _parse_expirationDate(stamp["credential"]["expirationDate"])
-        < cutoff
+        > cutoff
     )
     return list(filter(not_expired, stamps))

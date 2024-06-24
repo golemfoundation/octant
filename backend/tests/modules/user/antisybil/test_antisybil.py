@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime
 from app.exceptions import UserNotFound
 from app.modules.user.antisybil.service.initial import GitcoinPassportAntisybil
 from tests.helpers.context import get_context
@@ -30,7 +31,8 @@ def test_antisybil_service(
 
     score, expires_at, stamps = service.fetch_antisybil_status(context, alice.address)
     assert score == 2.572
-    assert len(stamps) == 2
+    assert len(stamps) == 3
+    assert expires_at == datetime.strptime("2090-01-01T00:00:00Z", "%Y-%m-%dT%H:%M:%SZ")
 
     service.update_antisybil_status(context, alice.address, score, expires_at, stamps)
 
