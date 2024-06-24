@@ -1,7 +1,7 @@
 export default interface SettingsAddressScoreProps {
   address: string;
   areBottomCornersRounded?: boolean;
-  badgeLabel: string;
+  badge: 'primary' | 'secondary';
   className?: string;
   isScoreHighlighted?: boolean;
   score: number;

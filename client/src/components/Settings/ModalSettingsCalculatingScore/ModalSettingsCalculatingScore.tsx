@@ -5,10 +5,10 @@ import SettingsAddressScore from 'components/Settings/SettingsAddressScore';
 import SettingsProgressPath from 'components/Settings/SettingsProgressPath';
 import Modal from 'components/ui/Modal';
 
-import styles from './ModalSettingsRecalculatingScore.module.scss';
+import styles from './ModalSettingsCalculatingScore.module.scss';
 import ModalSettingsRecalculatingScoreProps from './types';
 
-const ModalSettingsRecalculatingScore: FC<ModalSettingsRecalculatingScoreProps> = ({
+const ModalSettingsCalculatingScore: FC<ModalSettingsRecalculatingScoreProps> = ({
   modalProps,
 }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
@@ -16,14 +16,20 @@ const ModalSettingsRecalculatingScore: FC<ModalSettingsRecalculatingScoreProps> 
   return (
     <Modal
       bodyClassName={styles.modalBody}
-      dataTest="ModalSettingsRecalculatingScore"
-      header={t('recalculatingScore')}
+      dataTest="ModalSettingsCalculatingScore"
+      header={t('calculatingScore')}
       {...modalProps}
     >
       <SettingsAddressScore
         address="0xe5e11cc5fb894eF5A9D7Da768cFb17066b9d35D7"
-        areBottomCornersRounded={false}
         badge="primary"
+        className={styles.primaryAddress}
+        score={22}
+      />
+      <SettingsAddressScore
+        address="0xe5e11cc5fb894eF5A9D7Da768cFb17066b9d35D7"
+        areBottomCornersRounded={false}
+        badge="secondary"
         score={0}
       />
       <SettingsProgressPath />
@@ -31,4 +37,4 @@ const ModalSettingsRecalculatingScore: FC<ModalSettingsRecalculatingScoreProps> 
   );
 };
 
-export default ModalSettingsRecalculatingScore;
+export default ModalSettingsCalculatingScore;

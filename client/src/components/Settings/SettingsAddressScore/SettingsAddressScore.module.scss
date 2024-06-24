@@ -44,6 +44,11 @@
     background-color: $color-octant-green8;
     line-height: 1.4rem;
     letter-spacing: 0.02rem;
+
+    &.secondary {
+      color: $color-octant-grey5;
+      background-color: $color-octant-grey1;
+    }
   }
 
   .score {
