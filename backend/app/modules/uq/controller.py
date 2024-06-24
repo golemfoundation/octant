@@ -17,7 +17,5 @@ def get_uq(user_address: str, epoch_num: int) -> Decimal:
     ):
         raise NotImplementedForGivenEpochState()
 
-    service = get_services(
-        context.epoch_state
-    ).user_rewards_service.allocations.uniqueness_quotients
+    service = get_services(context.epoch_state).uniqueness_quotients
     return service.retrieve(context, user_address)
