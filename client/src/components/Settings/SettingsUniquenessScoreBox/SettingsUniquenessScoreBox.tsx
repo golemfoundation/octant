@@ -1,15 +1,18 @@
-import React, { ReactNode, memo } from 'react';
+import React, { ReactNode, memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import SettingsUniquenessScoreAddresses from 'components/Settings/SettingsUniquenessScoreAddresses';
 import BoxRounded from 'components/ui/BoxRounded';
 import Button from 'components/ui/Button';
 
 import styles from './SettingsUniquenessScoreBox.module.scss';
 
-import SettingsUniquenessScoreAddresses from '../SettingsUniquenessScoreAddresses';
+import ModalSettingsCalculatingYourUniqueness from '../ModalSettingsCalculatingYourUniqueness';
 
 const SettingsUniquenessScoreBox = (): ReactNode => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <BoxRounded
@@ -21,7 +24,11 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
       justifyContent="spaceBetween"
       textAlign="left"
       title={t('yourUniquenessScore')}
-      titleSuffix={<div className={styles.titleSuffix}>{t('whatIsThis')}</div>}
+      titleSuffix={
+        <div className={styles.titleSuffix} onClick={() => setIsModalOpen(true)}>
+          {t('whatIsThis')}
+        </div>
+      }
     >
       <>
         <SettingsUniquenessScoreAddresses />
@@ -33,6 +40,9 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
             {t('delegate')}
           </Button>
         </div>
+        <ModalSettingsCalculatingYourUniqueness
+          modalProps={{ isOpen: isModalOpen, onClosePanel: () => setIsModalOpen(false) }}
+        />
       </>
     </BoxRounded>
   );
