@@ -1362,6 +1362,7 @@ def mock_user_budgets(alice, bob, carol):
         bob.address: USER2_BUDGET,
         carol.address: USER3_BUDGET,
     }
+    user_budgets_service_mock.get_budget.return_value = USER1_BUDGET
 
     return user_budgets_service_mock
 
