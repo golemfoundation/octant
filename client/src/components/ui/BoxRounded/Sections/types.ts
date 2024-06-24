@@ -10,15 +10,7 @@ export interface SectionProps {
   childrenRight?: ReactNode;
   className?: string;
   dataTest?: string;
-  doubleValueProps?: {
-    coinPricesServerDowntimeText?: DoubleValueProps['coinPricesServerDowntimeText'];
-    cryptoCurrency: DoubleValueProps['cryptoCurrency'];
-    dataTest?: DoubleValueProps['dataTest'];
-    isDisabled?: DoubleValueProps['isDisabled'];
-    isFetching?: DoubleValueProps['isFetching'];
-    shouldIgnoreGwei?: DoubleValueProps['shouldIgnoreGwei'];
-    valueCrypto: DoubleValueProps['valueCrypto'];
-  };
+  doubleValueProps?: DoubleValueProps;
   hasBottomDivider?: boolean;
   icon?: SvgImageConfig;
   isDisabled?: boolean;

@@ -80,6 +80,7 @@ const EarnHistoryItem: FC<EarnHistoryItemProps> = ({ isLast, ...rest }) => {
           }
           dataTest="HistoryItem__DoubleValue"
           isFetching={isFetchingEpochTimestampHappenedIn || isFetchingIndividualReward}
+          showCryptoSuffix
           textAlignment="right"
           valueCrypto={
             type === 'allocation' && isPersonalOnlyAllocation ? personalAllocationValue : amount

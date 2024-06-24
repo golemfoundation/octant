@@ -5,7 +5,12 @@ export const parseUnitsBigInt = (value: string, unit: 'ether' | 'wei' = 'ether')
     return BigInt(value);
   }
 
-  const [integerPart, fractionalPart] = value.split('.');
+  // eslint-disable-next-line prefer-const
+  let [integerPart, fractionalPart] = value.split('.');
+
+  if (fractionalPart?.length > 18) {
+    fractionalPart = fractionalPart.slice(0, 18);
+  }
 
   const trimmedIntegerPart = trimStart(integerPart, '0');
   const trimmedFractionalPart = trimStart(fractionalPart, '0');

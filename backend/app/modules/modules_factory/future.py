@@ -1,5 +1,7 @@
 from app.modules.modules_factory.protocols import OctantRewards, ProjectsMetadataService
-from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
+from app.modules.octant_rewards.general.service.calculated import (
+    CalculatedOctantRewards,
+)
 from app.modules.staking.proceeds.service.estimated import EstimatedStakingProceeds
 from app.modules.user.deposits.service.contract_balance import (
     ContractBalanceUserDeposits,

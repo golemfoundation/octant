@@ -56,6 +56,7 @@ const EarnWithdrawEth: FC<EarnWithdrawEthProps> = ({ onCloseModal }) => {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
         isFetching: isWithdrawableRewardsFetching || isAppWaitingForTransactionToBeIndexed,
+        showCryptoSuffix: true,
         valueCrypto: withdrawals?.sums.available,
       },
       label: t('amount'),
@@ -64,6 +65,7 @@ const EarnWithdrawEth: FC<EarnWithdrawEthProps> = ({ onCloseModal }) => {
       doubleValueProps: {
         cryptoCurrency: 'ethereum',
         isFetching: isFetchingFeeData,
+        showCryptoSuffix: true,
         valueCrypto: BigInt(feeData?.gasPrice ?? 0),
       },
       label: t('estimatedGasPrice'),
