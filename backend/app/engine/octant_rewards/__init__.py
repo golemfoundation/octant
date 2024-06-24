@@ -5,6 +5,8 @@ from app.engine.octant_rewards.community_fund.calculator import (
     CommunityFundCalculator,
     CommunityFundPercent,
 )
+from app.engine.octant_rewards.leftover import Leftover
+from app.engine.octant_rewards.leftover.with_ppf import LeftoverWithPPF
 from app.engine.octant_rewards.locked_ratio import LockedRatio
 from app.engine.octant_rewards.locked_ratio.default import DefaultLockedRatio
 from app.engine.octant_rewards.matched import MatchedRewards
@@ -57,3 +59,4 @@ class OctantRewardsSettings:
             OctantRewardsDefaultValues.COMMUNITY_FUND
         )
     )
+    leftover: Leftover = field(default_factory=LeftoverWithPPF)

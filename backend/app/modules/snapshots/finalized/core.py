@@ -1,12 +1,11 @@
 from collections import namedtuple
 
-from app.engine.projects import ProjectSettings
+from app.engine.octant_rewards import OctantRewardsSettings
+from app.engine.octant_rewards.leftover import LeftoverPayload
 from app.modules.common import merkle_tree
-from app.modules.common.project_rewards import get_projects_rewards
 from app.modules.dto import (
     OctantRewardsDTO,
     ProjectAccountFundsDTO,
-    AllocationDTO,
     AccountFundsDTO,
 )
 
@@ -15,33 +14,19 @@ FinalizedProjectRewards = namedtuple(
 )
 
 
-def calculate_leftover(octant_rewards: OctantRewardsDTO, total_withdrawals: int):
-    return (
-        octant_rewards.staking_proceeds
-        - octant_rewards.operational_cost
-        - total_withdrawals
-    )
-
-
-def get_finalized_project_rewards(
-    project_settings: ProjectSettings,
-    allocations: list[AllocationDTO],
-    all_projects: list[str],
-    matched_rewards: int,
-) -> FinalizedProjectRewards:
-    project_rewards_result = get_projects_rewards(
-        project_settings, allocations, all_projects, matched_rewards
-    )
-
-    return FinalizedProjectRewards(
-        rewards=[
-            ProjectAccountFundsDTO(
-                address=r.address, amount=r.allocated + r.matched, matched=r.matched
-            )
-            for r in project_rewards_result.rewards
-            if r.allocated > 0
-        ],
-        rewards_sum=project_rewards_result.rewards_sum,
+def calculate_leftover(
+    octant_rewards_settings: OctantRewardsSettings,
+    octant_rewards: OctantRewardsDTO,
+    total_withdrawals: int,
+) -> int:
+    return octant_rewards_settings.leftover.calculate_leftover(
+        LeftoverPayload(
+            staking_proceeds=octant_rewards.staking_proceeds,
+            operational_cost=octant_rewards.operational_cost,
+            community_fund=octant_rewards.community_fund,
+            ppf=octant_rewards.ppf,
+            total_withdrawals=total_withdrawals,
+        )
     )
 
 

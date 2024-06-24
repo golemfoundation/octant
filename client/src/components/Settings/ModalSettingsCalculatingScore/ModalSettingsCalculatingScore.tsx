@@ -23,7 +23,7 @@ const ModalSettingsCalculatingScore: FC<ModalSettingsRecalculatingScoreProps> = 
     <Modal
       bodyClassName={styles.modalBody}
       dataTest="ModalSettingsCalculatingScore"
-      header={isFinished ? 'Switch Accounts' : t('calculatingScore')}
+      header={isFinished ? t('switchAccounts') : t('calculatingScore')}
       showCloseButton={isFinished}
       {...modalProps}
     >

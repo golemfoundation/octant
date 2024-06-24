@@ -10,7 +10,9 @@ from app.modules.modules_factory.protocols import (
     SavedProjectRewardsService,
     ProjectsMetadataService,
 )
-from app.modules.octant_rewards.service.calculated import CalculatedOctantRewards
+from app.modules.octant_rewards.general.service.calculated import (
+    CalculatedOctantRewards,
+)
 from app.modules.projects.rewards.service.saved import SavedProjectRewards
 from app.modules.snapshots.pending.service.pre_pending import PrePendingSnapshots
 from app.modules.user.deposits.service.calculated import CalculatedUserDeposits
