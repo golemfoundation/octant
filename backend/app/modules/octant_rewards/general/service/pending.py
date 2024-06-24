@@ -99,5 +99,7 @@ class PendingOctantRewards(Model):
                 else None,
                 ppf=pending_snapshot.validated_ppf,
                 total_withdrawals=user_rewards + project_rewards.rewards_sum,
+                total_matched_rewards=matched_rewards,
+                used_matched_rewards=sum(r.matched for r in project_rewards.rewards),
             )
         )
