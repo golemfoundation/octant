@@ -2,11 +2,8 @@ import React, { FC, Fragment } from 'react';
 
 import Img from 'components/ui/Img';
 import env from 'env';
-import useCryptoValues from 'hooks/queries/useCryptoValues';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useProjectsIpfs from 'hooks/queries/useProjectsIpfs';
-import useSettingsStore from 'store/settings/store';
-import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
-import getValueFiatToDisplay from 'utils/getValueFiatToDisplay';
 
 import styles from './ProjectAllocationDetailRow.module.scss';
 import ProjectAllocationDetailRowProps from './types';
@@ -18,20 +15,13 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({
   isLoading,
 }) => {
   const { ipfsGateways } = env;
-  const {
-    data: { displayCurrency, isCryptoMainValueDisplay },
-  } = useSettingsStore(({ data }) => ({
-    data: {
-      displayCurrency: data.displayCurrency,
-      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
-    },
-  }));
-  const { data: cryptoValues, error } = useCryptoValues(displayCurrency);
   const { data: projectIpfs, isFetching: isFetchingProjectIpfs } = useProjectsIpfs(
     [address],
     epoch,
     !isLoading,
   );
+
+  const getValuesToDisplay = useGetValuesToDisplay();
 
   return (
     <div className={styles.root}>
@@ -49,19 +39,16 @@ const ProjectAllocationDetailRow: FC<ProjectAllocationDetailRowProps> = ({
             <div className={styles.name}>{projectIpfs[0].name}</div>
           </div>
           <div className={styles.amount}>
-            {isCryptoMainValueDisplay
-              ? getValueCryptoToDisplay({
-                  cryptoCurrency: 'ethereum',
+            {
+              getValuesToDisplay({
+                cryptoCurrency: 'ethereum',
+                getFormattedEthValueProps: {
                   shouldIgnoreGwei: true,
-                  valueCrypto: amount,
-                })
-              : getValueFiatToDisplay({
-                  cryptoCurrency: 'ethereum',
-                  cryptoValues,
-                  displayCurrency: displayCurrency!,
-                  error,
-                  valueCrypto: amount,
-                })}
+                },
+                showCryptoSuffix: true,
+                valueCrypto: amount,
+              }).primary
+            }
           </div>
         </Fragment>
       )}

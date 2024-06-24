@@ -4,6 +4,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
@@ -12,7 +13,7 @@ import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
+import useSettingsStore from 'store/settings/store';
 import getRewardsSumWithValueAndSimulation from 'utils/getRewardsSumWithValueAndSimulation';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
@@ -43,7 +44,13 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   const { data: matchedProjectRewards } = useMatchedProjectRewards();
   const { data: projectRewardsThreshold } = useProjectRewardsThreshold();
   const [isSimulateVisible, setIsSimulateVisible] = useState<boolean>(false);
-
+  const {
+    data: { isCryptoMainValueDisplay },
+  } = useSettingsStore(({ data }) => ({
+    data: {
+      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
+    },
+  }));
   const thresholdToUse = individualReward === 0n ? projectRewardsThreshold : simulatedThreshold;
 
   // value can an empty string, which crashes parseUnits. Hence the alternative.
@@ -90,6 +97,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
     thresholdToUse !== 0n;
 
   const isThresholdUnknown = isEpoch1 || !isRewardsDataDefined;
+  const getValuesToDisplay = useGetValuesToDisplay();
 
   const rewardsSumWithValueAndSimulation = getRewardsSumWithValueAndSimulation(
     valueToUse,
@@ -99,27 +107,44 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
       : projectMatchedProjectRewards?.allocated,
     userAllocationToThisProject,
   );
-  const valueFormatted = getFormattedEthValue(parseUnitsBigInt(valueToUse));
+  const valueFormatted = getValuesToDisplay({
+    cryptoCurrency: 'ethereum',
+    valueCrypto: parseUnitsBigInt(valueToUse),
+  });
   const simulatedMatchedBigInt = simulatedMatched
     ? parseUnitsBigInt(simulatedMatched, 'wei')
     : BigInt(0);
   const simulatedMatchedFormatted = simulatedMatched
-    ? getFormattedEthValue(
-        bigintAbs(
+    ? getValuesToDisplay({
+        cryptoCurrency: 'ethereum',
+        showCryptoSuffix: true,
+        valueCrypto: bigintAbs(
           simulatedMatchedBigInt -
             (projectMatchedProjectRewards ? projectMatchedProjectRewards.matched : BigInt(0)),
         ),
-      )
-    : getFormattedEthValue(parseUnitsBigInt('0', 'wei'));
-  const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
-    rewardsSumWithValueAndSimulation,
-  );
-  const thresholdToUseFormatted = getFormattedEthValue(thresholdToUse || BigInt(0));
+      })
+    : getValuesToDisplay({
+        cryptoCurrency: 'ethereum',
+        valueCrypto: parseUnitsBigInt('0', 'wei'),
+      });
+  const rewardsSumWithValueAndSimulationFormatted = getValuesToDisplay({
+    cryptoCurrency: 'ethereum',
+    valueCrypto: rewardsSumWithValueAndSimulation,
+  });
+  const thresholdToUseFormatted = getValuesToDisplay({
+    cryptoCurrency: 'ethereum',
+    showCryptoSuffix: true,
+    showFiatPrefix: false,
+    valueCrypto: thresholdToUse || BigInt(0),
+  });
 
-  const areValueAndSimulatedSuffixesTheSame =
-    valueFormatted.suffix === simulatedMatchedFormatted?.suffix;
-  const areTotalSuffixesTheSame =
-    rewardsSumWithValueAndSimulationFormatted?.suffix === thresholdToUseFormatted?.suffix;
+  const areValueAndSimulatedSuffixesTheSame = isCryptoMainValueDisplay
+    ? valueFormatted?.cryptoSuffix === simulatedMatchedFormatted?.cryptoSuffix
+    : true;
+  const areTotalSuffixesTheSame = isCryptoMainValueDisplay
+    ? rewardsSumWithValueAndSimulationFormatted?.cryptoSuffix ===
+      thresholdToUseFormatted?.cryptoSuffix
+    : true;
 
   const filled = getFilled(thresholdToUse, rewardsSumWithValueAndSimulation);
   const isDonationAboveThreshold = useIsDonationAboveThreshold({
@@ -174,10 +199,10 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
             }
             values={{
               character: isNewSimulatedPositive ? '+' : '-',
-              matched: simulatedMatchedFormatted.fullString,
+              matched: simulatedMatchedFormatted.primary,
               value: areValueAndSimulatedSuffixesTheSame
-                ? valueFormatted?.value
-                : valueFormatted?.fullString,
+                ? valueFormatted.primary
+                : `${valueFormatted.primary} ${valueFormatted?.cryptoSuffix}`,
             }}
           />
         ) : (
@@ -185,9 +210,9 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
             i18nKey="views.allocation.allocationItem.standard"
             values={{
               sum: areTotalSuffixesTheSame
-                ? rewardsSumWithValueAndSimulationFormatted?.value
-                : rewardsSumWithValueAndSimulationFormatted?.fullString,
-              threshold: thresholdToUseFormatted?.fullString,
+                ? rewardsSumWithValueAndSimulationFormatted.primary
+                : `${rewardsSumWithValueAndSimulationFormatted.primary} ${rewardsSumWithValueAndSimulationFormatted?.cryptoSuffix}`,
+              threshold: thresholdToUseFormatted.primary,
             }}
           />
         ))}

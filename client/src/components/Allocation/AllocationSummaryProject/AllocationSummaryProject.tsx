@@ -2,12 +2,13 @@ import cx from 'classnames';
 import React, { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
 import useProjectsIpfs from 'hooks/queries/useProjectsIpfs';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
+import useSettingsStore from 'store/settings/store';
 import getRewardsSumWithValueAndSimulation from 'utils/getRewardsSumWithValueAndSimulation';
 
 import styles from './AllocationSummaryProject.module.scss';
@@ -28,6 +29,14 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   // Real, not simulated threshold is used, because user won't change his decision here.
   const { data: projectRewardsThreshold } = useProjectRewardsThreshold();
   const { data: userAllocations } = useUserAllocations();
+  const getValuesToDisplay = useGetValuesToDisplay();
+  const {
+    data: { isCryptoMainValueDisplay },
+  } = useSettingsStore(({ data }) => ({
+    data: {
+      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
+    },
+  }));
 
   // value can an empty string, which crashes parseUnits. Hence the alternative.
   const valueToUse = value || '0';
@@ -40,14 +49,24 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   )?.value;
 
   const projectMatchedProjectRewardsFormatted = projectMatchedProjectRewards
-    ? getFormattedEthValue(projectMatchedProjectRewards?.sum)
+    ? getValuesToDisplay({
+        cryptoCurrency: 'ethereum',
+        valueCrypto: projectMatchedProjectRewards?.sum,
+      })
     : undefined;
   const projectRewardsThresholdFormatted =
     projectRewardsThreshold !== undefined
-      ? getFormattedEthValue(projectRewardsThreshold)
+      ? getValuesToDisplay({
+          cryptoCurrency: 'ethereum',
+          showCryptoSuffix: true,
+          showFiatPrefix: false,
+          valueCrypto: projectRewardsThreshold,
+        })
       : undefined;
-  const areSuffixesTheSame =
-    projectMatchedProjectRewardsFormatted?.suffix === projectRewardsThresholdFormatted?.suffix;
+  const areSuffixesTheSame = isCryptoMainValueDisplay
+    ? projectMatchedProjectRewardsFormatted?.cryptoSuffix ===
+      projectRewardsThresholdFormatted?.cryptoSuffix
+    : true;
 
   const rewardsSumWithValueAndSimulation = getRewardsSumWithValueAndSimulation(
     valueToUse,
@@ -57,14 +76,19 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
       : projectMatchedProjectRewards?.allocated,
     userAllocationToThisProject,
   );
-  const rewardsSumWithValueAndSimulationFormatted = getFormattedEthValue(
-    rewardsSumWithValueAndSimulation,
-  );
+  const rewardsSumWithValueAndSimulationFormatted = getValuesToDisplay({
+    cryptoCurrency: 'ethereum',
+    valueCrypto: rewardsSumWithValueAndSimulation,
+  });
 
-  const donationAmountToDisplay = getFormattedEthValue(amount, true, true);
+  const donationAmountToDisplay = getValuesToDisplay({
+    cryptoCurrency: 'ethereum',
+    getFormattedEthValueProps: { shouldIgnoreGwei: true },
+    valueCrypto: amount,
+  }).primary;
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test="AllocationSummaryProject">
       {isFetchingProjectIpfs ? null : (
         <>
           <div className={styles.leftSection}>
@@ -83,15 +107,17 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
                   i18nKey="views.allocation.allocationItem.standard"
                   values={{
                     sum: areSuffixesTheSame
-                      ? rewardsSumWithValueAndSimulationFormatted?.value
-                      : rewardsSumWithValueAndSimulationFormatted?.fullString,
-                    threshold: projectRewardsThresholdFormatted?.fullString,
+                      ? rewardsSumWithValueAndSimulationFormatted.primary
+                      : `${rewardsSumWithValueAndSimulationFormatted?.primary} ${rewardsSumWithValueAndSimulationFormatted?.cryptoSuffix}`,
+                    threshold: projectRewardsThresholdFormatted?.primary,
                   }}
                 />
               )}
             </div>
           </div>
-          <div className={styles.donation}>{donationAmountToDisplay.value}</div>
+          <div className={styles.donation} data-test="AllocationSummaryProject__donation">
+            {donationAmountToDisplay}
+          </div>
         </>
       )}
     </div>
