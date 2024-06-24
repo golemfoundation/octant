@@ -2,7 +2,7 @@ import cx from 'classnames';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import getValueCryptoToDisplay from 'utils/getValueCryptoToDisplay';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 
 import styles from './RewardsWithoutThreshold.module.scss';
 import RewardsWithoutThresholdProps from './types';
@@ -16,12 +16,12 @@ const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
   const { t, i18n } = useTranslation('translation', {
     keyPrefix: 'components.dedicated.projectRewards',
   });
+  const getValuesToDisplay = useGetValuesToDisplay();
 
   const isArchivedProject = epoch !== undefined;
 
-  const currentTotalIncludingMFForProjectsAboveThreshold = getValueCryptoToDisplay({
+  const currentTotalIncludingMFForProjectsAboveThreshold = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
-    shouldIgnoreGwei: true,
     valueCrypto: totalValueOfAllocations,
   });
 
@@ -44,7 +44,7 @@ const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
             {leftSectionLabel}
           </div>
           <div className={styles.value} data-test="ProjectRewards__currentTotal__number">
-            {currentTotalIncludingMFForProjectsAboveThreshold}
+            {currentTotalIncludingMFForProjectsAboveThreshold.primary}
           </div>
         </div>
         <div className={cx(styles.section, styles.rightSection)}>
