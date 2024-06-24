@@ -38,6 +38,7 @@ const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
 
   return (
     <div className={cx(styles.root, className)} data-test="ProjectRewards">
+      <div className={styles.divider} />
       <div className={styles.sections}>
         <div className={cx(styles.section, styles.leftSection)}>
           <div className={styles.label} data-test="ProjectRewards__currentTotal__label">
