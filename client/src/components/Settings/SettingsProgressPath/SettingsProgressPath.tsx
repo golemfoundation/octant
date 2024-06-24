@@ -1,21 +1,14 @@
 import cx from 'classnames';
 import { motion } from 'framer-motion';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import styles from './SettingsProgressPath.module.scss';
+import SettingsProgressPathProps from './types';
 
-const SettingsProgressPath: FC = () => {
+const SettingsProgressPath: FC<SettingsProgressPathProps> = ({ lastDoneStep }) => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
-  const steps = [t('checkingPassportScore'), t('finished')];
-
-  const [lastDoneStep, setLastDoneStep] = useState(0);
-
-  useEffect(() => {
-    setInterval(() => {
-      setLastDoneStep(prev => prev + 1);
-    }, 2500);
-  }, []);
+  const steps = [t('checkingPassportScore'), t('checkingAllowlist'), t('finished')];
 
   return (
     <motion.div className={styles.root} exit={{ opacity: 0 }} layout>
