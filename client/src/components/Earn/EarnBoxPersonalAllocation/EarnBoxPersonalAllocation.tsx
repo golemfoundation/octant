@@ -60,6 +60,7 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
                 (isPatronMode ? isFetchingIndividualReward : isFetchingWithdrawals) ||
                 (isAppWaitingForTransactionToBeIndexed &&
                   _first(transactionsPending)?.type === 'withdrawal'),
+              showCryptoSuffix: true,
               valueCrypto: isPatronMode ? individualReward : withdrawals?.sums.pending,
             },
             label: isPatronMode ? t('currentEpoch') : t('pending'),
@@ -102,6 +103,7 @@ const EarnBoxPersonalAllocation: FC<EarnBoxPersonalAllocationProps> = ({ classNa
           (isPatronMode ? isFetchingTotalPatronDonations : isFetchingWithdrawals) ||
           (isAppWaitingForTransactionToBeIndexed &&
             _first(transactionsPending)?.type === 'withdrawal'),
+        showCryptoSuffix: true,
         valueCrypto: isPatronMode ? totalPatronDonations?.value : withdrawals?.sums.available,
       },
       label: isPatronMode && !isProjectAdminMode ? t('allTime') : i18n.t('common.availableNow'),

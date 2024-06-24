@@ -41,7 +41,7 @@ const EarnHistoryItemDetailsModal: FC<EarnHistoryItemDetailsModalProps> = ({
   }, [t, type, epochTimestampHappenedIn, i18n]);
 
   return (
-    <Modal header={header} {...modalProps}>
+    <Modal header={header} {...modalProps} dataTest="EarnHistoryItemDetailsModal">
       <EarnHistoryItemDetails timestamp={timestamp} type={type} {...rest} />
     </Modal>
   );

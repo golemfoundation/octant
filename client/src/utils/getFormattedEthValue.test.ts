@@ -120,8 +120,13 @@ describe('getFormattedEthValue', () => {
       argument,
     )} when isUsingHairSpace`, () => {
       expect(
-        getFormattedEthValue(argument, true, shouldIgnoreGwei, shouldIgnoreWei, ethPrecission)
-          .fullString,
+        getFormattedEthValue({
+          isUsingHairSpace: true,
+          numberOfDecimalPlaces: ethPrecission,
+          shouldIgnoreGwei,
+          shouldIgnoreWei,
+          value: argument,
+        }).fullString,
       ).toBe(expectedValue);
     });
 
@@ -130,8 +135,13 @@ describe('getFormattedEthValue', () => {
       argument,
     )} when !isUsingHairSpace`, () => {
       expect(
-        getFormattedEthValue(argument, false, shouldIgnoreGwei, shouldIgnoreWei, ethPrecission)
-          .fullString,
+        getFormattedEthValue({
+          isUsingHairSpace: false,
+          numberOfDecimalPlaces: ethPrecission,
+          shouldIgnoreGwei,
+          shouldIgnoreWei,
+          value: argument,
+        }).fullString,
       ).toBe(expectedValueNormalSpace);
     });
   }

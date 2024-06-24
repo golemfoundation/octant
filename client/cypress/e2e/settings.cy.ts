@@ -43,14 +43,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       });
     });
 
-    it('"Use crypto as main value display" option is checked by default', () => {
+    it(`${IS_CRYPTO_MAIN_VALUE_DISPLAY} option is checked by default`, () => {
       cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').should('be.checked');
       cy.getAllLocalStorage().then(() => {
         expect(localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY)).eq('true');
       });
     });
 
-    it('"Use crypto as main value display" option toggle works', () => {
+    it(`${IS_CRYPTO_MAIN_VALUE_DISPLAY} option toggle works`, () => {
       cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').check();
       cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').should('be.checked');
       cy.getAllLocalStorage().then(() => {
@@ -70,13 +70,13 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       });
     });
 
-    it('"Use crypto as main value display" option by default displays crypto value as primary in DoubleValue component', () => {
+    it(`${IS_CRYPTO_MAIN_VALUE_DISPLAY} option by default displays crypto value as primary in DoubleValue component`, () => {
       navigateWithCheck(ROOT_ROUTES.earn.absolute);
 
       const cryptoValue = getValueCryptoToDisplay({
         cryptoCurrency: 'golem',
         valueCrypto: BigInt(0),
-      });
+      }).fullString;
 
       cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__primary]')
         .invoke('text')
@@ -86,14 +86,14 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         .should('not.eq', cryptoValue);
     });
 
-    it('"Use crypto as main value display" option changes DoubleValue sections order', () => {
+    it(`${IS_CRYPTO_MAIN_VALUE_DISPLAY} option changes DoubleValue sections order`, () => {
       cy.get('[data-test=SettingsCryptoMainValueBox__InputToggle]').uncheck();
       navigateWithCheck(ROOT_ROUTES.earn.absolute);
 
       const cryptoValue = getValueCryptoToDisplay({
         cryptoCurrency: 'golem',
         valueCrypto: BigInt(0),
-      });
+      }).fullString;
 
       cy.get('[data-test=BoxGlmLock__Section--effective__DoubleValue__primary]')
         .invoke('text')
@@ -189,38 +189,21 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
     });
 
     it('should show correct setting links', () => {
-      if (isDesktop) {
-        cy.get('[data-test=SettingsLinksInfoBox__Button]').each(($button, index) => {
-          const expectedOrderAndContentLinksDesktop = [
-            { href: OCTANT_BUILD_LINK, text: 'Octant.build' },
-            { href: OCTANT_DOCS, text: 'User Docs' },
-            { href: DISCORD_LINK, text: 'Discord Community' },
-            { href: TERMS_OF_USE, text: 'Terms & Conditions' },
-          ];
+      cy.get('[data-test=SettingsLinkBoxes__Button]').each(($button, index) => {
+        const expectedOrderAndContentLinksMobile = [
+          { href: OCTANT_BUILD_LINK, text: isDesktop ? 'Visit the website' : 'Website' },
+          { href: OCTANT_DOCS, text: isDesktop ? 'Check out the docs' : 'Docs' },
+          { href: DISCORD_LINK, text: isDesktop ? 'Join our Discord' : 'Discord' },
+        ];
 
-          cy.wrap($button)
-            .should('have.text', expectedOrderAndContentLinksDesktop[index].text)
-            .should('have.attr', 'href', expectedOrderAndContentLinksDesktop[index].href);
-        });
-      }
+        cy.wrap($button)
+          .should('have.text', expectedOrderAndContentLinksMobile[index].text)
+          .should('have.attr', 'href', expectedOrderAndContentLinksMobile[index].href);
 
-      if (!isDesktop) {
-        cy.get('[data-test=SettingsLinkBoxes__Button]').each(($button, index) => {
-          const expectedOrderAndContentLinksMobile = [
-            { href: OCTANT_BUILD_LINK, text: 'Website' },
-            { href: OCTANT_DOCS, text: 'Docs' },
-            { href: DISCORD_LINK, text: 'Discord' },
-          ];
-
-          cy.wrap($button)
-            .should('have.text', expectedOrderAndContentLinksMobile[index].text)
-            .should('have.attr', 'href', expectedOrderAndContentLinksMobile[index].href);
-
-          cy.get('[data-test=SettingsMainInfoBox__Button]')
-            .should('have.text', 'Terms & Conditions')
-            .and('have.attr', 'href', TERMS_OF_USE);
-        });
-      }
+        cy.get('[data-test=SettingsMainInfoBox__Button]')
+          .should('have.text', 'Terms & Conditions')
+          .and('have.attr', 'href', TERMS_OF_USE);
+      });
     });
   });
 });

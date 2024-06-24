@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 
 import MetricsProjectsListItem from 'components/Metrics/MetricsProjectsListItem';
 import MetricsProjectsListSkeletonItem from 'components/Metrics/MetricsProjectsListSkeletonItem';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
+import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 
 import styles from './MetricsProjectsList.module.scss';
 import MetricsProjectsListProps from './types';
@@ -11,9 +11,12 @@ const MetricsProjectsList: FC<MetricsProjectsListProps> = ({
   projects,
   isLoading,
   numberOfSkeletons,
+  dataTest = 'MetricsProjectsList',
 }) => {
+  const getValuesToDisplay = useGetValuesToDisplay();
+
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test={dataTest}>
       <div className={styles.projectsList}>
         {isLoading
           ? Array.from(Array(numberOfSkeletons)).map((_, idx) => (
@@ -24,8 +27,14 @@ const MetricsProjectsList: FC<MetricsProjectsListProps> = ({
               <MetricsProjectsListItem
                 key={project.address}
                 address={project.address}
+                dataTest={`${dataTest}__item`}
                 epoch={project.epoch}
-                value={getFormattedEthValue(project.value, true, true, true).value}
+                value={
+                  getValuesToDisplay({
+                    cryptoCurrency: 'ethereum',
+                    valueCrypto: project.value,
+                  }).primary
+                }
               />
             ))}
       </div>
