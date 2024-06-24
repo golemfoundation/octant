@@ -24,6 +24,7 @@ const ModalSettingsRecalculatingScore: FC<ModalSettingsRecalculatingScoreProps> 
         address="0xe5e11cc5fb894eF5A9D7Da768cFb17066b9d35D7"
         areBottomCornersRounded={false}
         badge="primary"
+        mode="score"
         score={0}
       />
       <SettingsProgressPath />
