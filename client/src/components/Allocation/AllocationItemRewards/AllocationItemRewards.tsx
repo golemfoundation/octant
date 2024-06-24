@@ -11,7 +11,6 @@ import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import useUqScore from 'hooks/queries/useUqScore';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { person } from 'svg/misc';
-import getFormattedEthValue from 'utils/getFormattedEthValue';
 import getRewardsSumWithValueAndSimulation from 'utils/getRewardsSumWithValueAndSimulation';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
@@ -168,6 +167,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
         });
   const rewardsSumWithValueAndSimulationFormatted = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
+    showCryptoSuffix: true,
     valueCrypto: rewardsSumWithValueAndSimulation,
   });
   const isSimulatedMatchedAvailable =
@@ -197,7 +197,12 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
           !isLoadingAllocateSimulate &&
           !isSimulateVisible &&
           rewardsSumWithValueAndSimulationFormatted.primary}
-        {!isDecisionWindowOpen && getFormattedEthValue({ value: 0n }).fullString}
+        {!isDecisionWindowOpen &&
+          getValuesToDisplay({
+            cryptoCurrency: 'ethereum',
+            showCryptoSuffix: true,
+            valueCrypto: 0n,
+          }).primary}
       </div>
       <AllocationItemRewardsDonors
         isLoadingAllocateSimulate={isLoadingAllocateSimulate}
