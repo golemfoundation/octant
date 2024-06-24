@@ -6,7 +6,7 @@ import Img from 'components/ui/Img';
 import Modal from 'components/ui/Modal';
 import ProgressStepperSlim from 'components/ui/ProgressStepperSlim';
 import Text from 'components/ui/Text';
-import { DISCORD_LINK } from 'constants/urls';
+import { GITCOIN_PASSPORT, SCORING_20_FOR_HUMANS_GUIDE } from 'constants/urls';
 import useMediaQuery from 'hooks/helpers/useMediaQuery';
 
 import styles from './ModalSettingsCalculatingYourUniqueness.module.scss';
@@ -24,9 +24,8 @@ const ModalSettingsCalculatingYourUniqueness: FC<ModalSettingsCalculatingYourUni
   const steps = [
     <Trans
       className={styles.onboardingModalText}
+      components={[<Button className={styles.link} href={GITCOIN_PASSPORT} variant="link3" />]}
       i18nKey="views.settings.calculatingYourUniquenessStep1"
-      // TODO: add "Gitcoin Passport" href
-      components={[<Button className={styles.link} href="https://google.com" variant="link3" />]}
     />,
     <Trans
       className={styles.onboardingModalText}
@@ -35,9 +34,7 @@ const ModalSettingsCalculatingYourUniqueness: FC<ModalSettingsCalculatingYourUni
     <Trans
       className={styles.onboardingModalText}
       components={[
-        <Button className={styles.link} href={DISCORD_LINK} variant="link3" />,
-        // TODO: "scoring 20 for humans"
-        <Button className={styles.link} href="https://google.com" variant="link3" />,
+        <Button className={styles.link} href={SCORING_20_FOR_HUMANS_GUIDE} variant="link3" />,
       ]}
       i18nKey="views.settings.calculatingYourUniquenessStep3"
     />,
