@@ -74,6 +74,7 @@ const AllocationItemRewardsDonors: FC<AllocationItemRewardsDonorsProps> = ({
         isDecisionWindowOpen && styles.isDecisionWindowOpen,
         isSimulatedMatchedAvailable && styles.isSimulatedMatchedAvailable,
       )}
+      data-test="AllocationItemRewardsDonors"
     >
       <Svg
         classNameSvg={cx(
@@ -175,7 +176,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
 
   return (
     // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
-    <div className={styles.root}>
+    <div className={styles.root} data-test="AllocationItemRewards">
       <div
         className={cx(
           styles.element,
@@ -185,6 +186,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
             isSimulatedMatchedAvailable &&
             styles.isSimulatedMatchedAvailable,
         )}
+        data-test="AllocationItemRewards__value"
       >
         {isDecisionWindowOpen && isLoadingAllocateSimulate && t('simulateLoading')}
         {isDecisionWindowOpen &&
