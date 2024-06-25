@@ -61,8 +61,22 @@ class OctantResource(Resource):
 
 
 def lookup_max_time():
-    assert max_time is not None
     return max_time
+
+
+def is_graph_error_permanent(error):
+    # TODO: if we differentiate between reasons for the error,
+    #       we can differentiate between transient and permanent ones,
+    #       so we can return True for permanent ones saving
+    #       up to SUBGRAPH_TIMEOUT seconds.
+    #       Look for these prints in logs and find
+    #       "the chain was reorganized while executing the query" line.
+    print("going through giveup...")
+    print(f"got TransportQueryError.query_id: {error.query_id}")
+    print(f"got TransportQueryError.errors: {error.errors}")
+    print(f"got TransportQueryError.data: {error.data}")
+    print(f"got TransportQueryError.extensions: {error.extensions}")
+    return False
 
 
 class GQLWithRetryBackoff(Client):
@@ -74,8 +88,12 @@ class GQLWithRetryBackoff(Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    # TODO this must differentiate between different sources reasons for
-    @backoff.on_exception(backoff.expo, TransportQueryError, max_time=lookup_max_time)
+    @backoff.on_exception(
+        backoff.expo,
+        TransportQueryError,
+        max_time=lookup_max_time,
+        giveup=is_graph_error_permanent,
+    )
     def execute(self, *args, **kwargs):
         return super().execute(*args, **kwargs)
 
