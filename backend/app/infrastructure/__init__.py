@@ -56,6 +56,15 @@ class OctantResource(Resource):
         return attr
 
 
+class GQLWithRetryBackoff(Client):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def execute(self, *args, **kwargs):
+        print("QGL middleware in action")
+        return super().execute(*args, **kwargs)
+
+
 class GQLConnectionFactory:
     def __init__(self):
         self._url = None
@@ -69,7 +78,7 @@ class GQLConnectionFactory:
                 "GQL Connection Factory hasn't been properly initialised."
             )
 
-        client = Client()
+        client = GQLWithRetryBackoff()
         transport = RequestsHTTPTransport(url=self._url, timeout=2)
         client.transport = transport
         client.fetch_schema_from_transport = False
