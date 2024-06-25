@@ -7,6 +7,7 @@ import urllib.request
 from unittest.mock import MagicMock, Mock
 
 import gql
+from gql.transport.exceptions import TransportQueryError
 import pytest
 from flask import g as request_context
 from flask.testing import FlaskClient
@@ -539,6 +540,7 @@ def deployment(pytestconfig):
     conf = DevConfig
     graph_url = os.environ["SUBGRAPH_URL"]
     conf.SUBGRAPH_ENDPOINT = f"{graph_url}/subgraphs/name/{graph_name}"
+    conf.SUBGRAPH_TIMEOUT = 10
     conf.GLM_CONTRACT_ADDRESS = envs["GLM_CONTRACT_ADDRESS"]
     conf.DEPOSITS_CONTRACT_ADDRESS = envs["DEPOSITS_CONTRACT_ADDRESS"]
     conf.EPOCHS_CONTRACT_ADDRESS = envs["EPOCHS_CONTRACT_ADDRESS"]
@@ -944,6 +946,11 @@ def projects(context):
 @pytest.fixture(scope="function")
 def mock_epoch_details(mocker, graphql_client):
     mock_graphql(mocker, epochs_events=list(EPOCH_EVENTS.values()))
+
+
+@pytest.fixture(scope="function")
+def mock_gql_transport_reorg_error(mocker):
+    mock_failing_gql(mocker)
 
 
 @pytest.fixture(scope="function")
@@ -1497,6 +1504,19 @@ def mock_graphql(
     )
     mocker.patch.object(gql_factory, "build")
     gql_factory.build.return_value = mock_client
+
+
+def mock_failing_gql(
+    mocker,
+):
+    gql_factory.set_url({"SUBGRAPH_ENDPOINT": "http://localhost:12345"})
+    gql_factory.set_max_time({"SUBGRAPH_TIMEOUT": 2})
+    from app.infrastructure import Client
+
+    mocker.patch.object(Client, "execute_sync")
+    Client.execute_sync.side_effect = TransportQueryError(
+        "the chain was reorganized while executing the query"
+    )
 
 
 @pytest.fixture(scope="function")

@@ -20,6 +20,7 @@ class Config(object):
     TEST_DIR = os.path.abspath(os.path.join(PROJECT_ROOT, "tests"))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SUBGRAPH_ENDPOINT = os.getenv("SUBGRAPH_ENDPOINT")
+    SUBGRAPH_TIMEOUT = int(os.getenv("SUBGRAPH_TIMEOUT", 10))  # seconds
     WEB3_PROVIDER = Web3.HTTPProvider(os.getenv("ETH_RPC_PROVIDER_URL"))
     ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY")
     BITQUERY_API_KEY = os.getenv("BITQUERY_API_KEY")

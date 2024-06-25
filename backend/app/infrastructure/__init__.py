@@ -4,6 +4,8 @@ from eth_utils import to_checksum_address
 
 from gql import Client
 from gql.transport.requests import RequestsHTTPTransport
+from gql.transport.exceptions import TransportQueryError
+import backoff
 
 from app.settings import Config
 from app.infrastructure.exception_handler import ExceptionHandler
@@ -15,6 +17,8 @@ default_decorators = {
     "post": ExceptionHandler.print_stacktrace_on_exception(True, True),
     "put": ExceptionHandler.print_stacktrace_on_exception(True, True),
 }
+
+max_time = None
 
 
 class OctantResource(Resource):
@@ -56,6 +60,26 @@ class OctantResource(Resource):
         return attr
 
 
+def lookup_max_time():
+    assert max_time is not None
+    return max_time
+
+
+class GQLWithRetryBackoff(Client):
+    """
+    It would be nice to use something out of the box from GQL
+    itself, but they have a retry wrapper only for async transports.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    # TODO this must differentiate between different sources reasons for
+    @backoff.on_exception(backoff.expo, TransportQueryError, max_time=lookup_max_time)
+    def execute(self, *args, **kwargs):
+        return super().execute(*args, **kwargs)
+
+
 class GQLConnectionFactory:
     def __init__(self):
         self._url = None
@@ -63,13 +87,17 @@ class GQLConnectionFactory:
     def set_url(self, config: Config):
         self._url = config["SUBGRAPH_ENDPOINT"]
 
+    def set_max_time(self, config: Config):
+        global max_time
+        max_time = config["SUBGRAPH_TIMEOUT"]
+
     def build(self):
         if not self._url:
             raise RuntimeError(
                 "GQL Connection Factory hasn't been properly initialised."
             )
 
-        client = Client()
+        client = GQLWithRetryBackoff()
         transport = RequestsHTTPTransport(url=self._url, timeout=2)
         client.transport = transport
         client.fetch_schema_from_transport = False
