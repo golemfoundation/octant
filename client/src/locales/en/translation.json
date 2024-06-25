@@ -266,8 +266,7 @@
         "fundedIn": "Funded in",
         "fundedAt": "Funded at",
         "didNotReach": "Did not reach",
-        "didNotReachThreshold": "Did not reach threshold",
-        "donors": "Donors"
+        "didNotReachThreshold": "Did not reach threshold"
       },
       "projectsList": {
         "epochArchive": "Epoch {{epoch}} Archive"
