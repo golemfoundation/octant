@@ -292,6 +292,14 @@ class DelegationAlreadyExists(OctantException):
         super().__init__(self.description, self.code)
 
 
+class AddressAlreadyDelegated(OctantException):
+    code = 400
+    description = "Address is already used for delegation"
+
+    def __init__(self):
+        super().__init__(self.description, self.code)
+
+
 class DelegationDoesNotExist(OctantException):
     code = 400
     description = "Delegation does not exists"

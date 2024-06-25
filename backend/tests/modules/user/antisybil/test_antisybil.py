@@ -1,5 +1,11 @@
+from datetime import datetime
+
 import pytest
+
+from app import exceptions, db
 from app.exceptions import UserNotFound
+from app.infrastructure import database
+from app.modules.common.delegation import get_hashed_addresses
 from app.modules.user.antisybil.service.initial import GitcoinPassportAntisybil
 from tests.helpers.context import get_context
 
@@ -36,3 +42,21 @@ def test_antisybil_service(
 
     score, _ = service.get_antisybil_status(context, alice.address)
     assert score == 2.572
+
+
+def test_antisybil_cant_be_update_when_address_is_delegated(alice, bob):
+    context = get_context(4)
+    score = 2.572
+    primary, secondary, both = get_hashed_addresses(alice.address, bob.address)
+    database.score_delegation.save_delegation(primary, secondary, both)
+    db.session.commit()
+
+    service = GitcoinPassportAntisybil()
+
+    with pytest.raises(exceptions.AddressAlreadyDelegated):
+        service.update_antisybil_status(
+            context, alice.address, score, datetime.now(), {}
+        )
+
+    with pytest.raises(exceptions.AddressAlreadyDelegated):
+        service.update_antisybil_status(context, bob.address, score, datetime.now(), {})
