@@ -11,13 +11,12 @@ import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
 import useUqScore from 'hooks/queries/useUqScore';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
 import { person } from 'svg/misc';
+import bigintAbs from 'utils/bigIntAbs';
 import getRewardsSumWithValueAndSimulation from 'utils/getRewardsSumWithValueAndSimulation';
 import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import styles from './AllocationItemRewards.module.scss';
 import AllocationItemRewardsProps, { AllocationItemRewardsDonorsProps } from './types';
-
-const bigintAbs = (n: bigint): bigint => (n < 0n ? -n : n);
 
 const AllocationItemRewardsDonors: FC<AllocationItemRewardsDonorsProps> = ({
   isLoadingAllocateSimulate,
@@ -156,6 +155,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
     valueToUse && simulatedMatched
       ? getValuesToDisplay({
           cryptoCurrency: 'ethereum',
+          showCryptoSuffix: true,
           valueCrypto: bigintAbs(
             parseUnitsBigInt(value) +
               simulatedMatchedBigInt -
@@ -164,6 +164,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
         })
       : getValuesToDisplay({
           cryptoCurrency: 'ethereum',
+          showCryptoSuffix: true,
           valueCrypto: parseUnitsBigInt('0', 'wei'),
         });
   const rewardsSumWithValueAndSimulationFormatted = getValuesToDisplay({
