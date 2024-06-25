@@ -27,7 +27,6 @@
     "availableNow": "Available now",
     "calculateRewards": "Calculate rewards",
     "estimateRewards": "Estimate rewards",
-    "calculating": "Calculating...",
     "close": "Close",
     "copied": "Copied",
     "copy": "Copy link",
@@ -266,8 +265,7 @@
         "fundedIn": "Funded in",
         "fundedAt": "Funded at",
         "didNotReach": "Did not reach",
-        "didNotReachThreshold": "Did not reach threshold",
-        "donors": "Donors"
+        "didNotReachThreshold": "Did not reach threshold"
       },
       "projectsList": {
         "epochArchive": "Epoch {{epoch}} Archive"
