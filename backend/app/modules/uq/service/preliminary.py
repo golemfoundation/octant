@@ -53,7 +53,9 @@ class PreliminaryUQ(Model):
     def calculate(self, context: Context, user_address: str) -> Decimal:
         gp_score = self._get_gp_score(context, user_address)
         budget = self.budgets.get_budget(context, user_address)
-        addresses = app.config["ADDRESSES"].split(",")
+        addresses = (
+            app.config["ADDRESSES"].split(",") if app.config["ADDRESSES"] else []
+        )
 
         return calculate_uq(gp_score, budget, user_address, addresses)
 
