@@ -1,5 +1,7 @@
 # Octant
 
+THIS BRANCH IS FOR CI debugging only.
+
 Octant is a community-driven platform for experiments in decentralized governance.
 
 Developed by the [Golem Foundation](https://golem.foundation/) to test various hypotheses around
