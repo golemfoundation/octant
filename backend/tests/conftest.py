@@ -950,11 +950,6 @@ def mock_epoch_details(mocker, graphql_client):
 
 
 @pytest.fixture(scope="function")
-def mock_gql_transport_reorg_error(mocker):
-    mock_failing_gql(mocker)
-
-
-@pytest.fixture(scope="function")
 def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.legacy.controllers.snapshots.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.core.projects.epochs", MOCK_EPOCHS)
@@ -1507,6 +1502,7 @@ def mock_graphql(
     gql_factory.build.return_value = mock_client
 
 
+@pytest.fixture(scope="function")
 def mock_failing_gql(
     mocker,
 ):
