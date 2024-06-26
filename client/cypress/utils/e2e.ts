@@ -51,6 +51,7 @@ export const connectWallet = ({
    */
   cy.reload();
   loadersShouldNotExist();
+  cy.intercept('GET', '/user/*/uq/*', { body: { uniquenessQuotient: '1.0' } });
   cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
   cy.intercept('GET', '/user/*/patron-mode', { body: { status: isPatronModeEnabled } });
   cy.intercept('PATCH', '/user/*/patron-mode', { body: { status: !isPatronModeEnabled } });

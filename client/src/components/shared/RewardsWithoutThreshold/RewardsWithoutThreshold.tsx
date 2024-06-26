@@ -22,6 +22,7 @@ const RewardsWithoutThreshold: FC<RewardsWithoutThresholdProps> = ({
 
   const currentTotalIncludingMFForProjectsAboveThreshold = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
+    showCryptoSuffix: true,
     valueCrypto: totalValueOfAllocations,
   });
 
