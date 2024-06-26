@@ -1,8 +1,6 @@
-from datetime import datetime
-
 import pytest
-
 from app import exceptions, db
+from datetime import datetime
 from app.exceptions import UserNotFound
 from app.infrastructure import database
 from app.modules.common.delegation import get_hashed_addresses
@@ -36,7 +34,8 @@ def test_antisybil_service(
 
     score, expires_at, stamps = service.fetch_antisybil_status(context, alice.address)
     assert score == 2.572
-    assert len(stamps) == 2
+    assert len(stamps) == 3
+    assert expires_at == datetime.strptime("2090-01-01T00:00:00Z", "%Y-%m-%dT%H:%M:%SZ")
 
     service.update_antisybil_status(context, alice.address, score, expires_at, stamps)
 

@@ -203,7 +203,7 @@ def mock_gitcoin_passport_fetch_stamps(*args, **kwargs):
                             "https://w3id.org/vc/status-list/2021/v1",
                         ],
                         "issuanceDate": "2024-03-12T14:28:53.876Z",
-                        "expirationDate": "2024-06-10T14:28:53.876Z",
+                        "expirationDate": "2090-01-01T00:00:00.000Z",
                         "credentialSubject": {
                             "id": "did:pkh:eip155:1:0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
                             "hash": "v0.0.0:pQzBR3arZrlQXpJ6KRGxKEjhR03DyQ05ois9EmRNrAQ=",
@@ -212,6 +212,77 @@ def mock_gitcoin_passport_fetch_stamps(*args, **kwargs):
                                 "provider": "https://schema.org/Text",
                             },
                             "provider": "Linkedin",
+                        },
+                    },
+                },
+                {
+                    "version": "1.0.0",
+                    "credential": {
+                        "type": ["VerifiableCredential"],
+                        "proof": {
+                            "type": "EthereumEip712Signature2021",
+                            "created": "2024-03-12T14:24:07.018Z",
+                            "@context": "https://w3id.org/security/suites/eip712sig-2021/v1",
+                            "proofValue": "0x2547250aca7112a8488eb45a62dfabc8f5f6e4ecc1bf24f8e28839ce1ff7e786496cf5eb5ffb9eaa27bbcf58ecd66bc966d20844b7b5a7666d4fbbc38f609b641c",
+                            "eip712Domain": {
+                                "types": {
+                                    "Proof": [
+                                        {"name": "@context", "type": "string"},
+                                        {"name": "created", "type": "string"},
+                                        {"name": "proofPurpose", "type": "string"},
+                                        {"name": "type", "type": "string"},
+                                        {
+                                            "name": "verificationMethod",
+                                            "type": "string",
+                                        },
+                                    ],
+                                    "@context": [
+                                        {"name": "hash", "type": "string"},
+                                        {"name": "provider", "type": "string"},
+                                    ],
+                                    "Document": [
+                                        {"name": "@context", "type": "string[]"},
+                                        {
+                                            "name": "credentialSubject",
+                                            "type": "CredentialSubject",
+                                        },
+                                        {"name": "expirationDate", "type": "string"},
+                                        {"name": "issuanceDate", "type": "string"},
+                                        {"name": "issuer", "type": "string"},
+                                        {"name": "proof", "type": "Proof"},
+                                        {"name": "type", "type": "string[]"},
+                                    ],
+                                    "EIP712Domain": [
+                                        {"name": "name", "type": "string"}
+                                    ],
+                                    "CredentialSubject": [
+                                        {"name": "@context", "type": "@context"},
+                                        {"name": "hash", "type": "string"},
+                                        {"name": "id", "type": "string"},
+                                        {"name": "provider", "type": "string"},
+                                    ],
+                                },
+                                "domain": {"name": "VerifiableCredential"},
+                                "primaryType": "Document",
+                            },
+                            "proofPurpose": "assertionMethod",
+                            "verificationMethod": "did:ethr:0xd6f8d6ca86aa01e551a311d670a0d1bd8577e5fb#controller",
+                        },
+                        "issuer": "did:ethr:0xd6f8d6ca86aa01e551a311d670a0d1bd8577e5fb",
+                        "@context": [
+                            "https://www.w3.org/2018/credentials/v1",
+                            "https://w3id.org/vc/status-list/2021/v1",
+                        ],
+                        "issuanceDate": "2024-03-12T14:24:07.018Z",
+                        "expirationDate": "2099-01-01T00:00:00.000Z",
+                        "credentialSubject": {
+                            "id": "did:pkh:eip155:1:0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                            "hash": "v0.0.0:PM/AuRacZWQ3McP8Dr6Ux+yb8PcVjeS7rlVcc6ry/2Q=",
+                            "@context": {
+                                "hash": "https://schema.org/Text",
+                                "provider": "https://schema.org/Text",
+                            },
+                            "provider": "Discord",
                         },
                     },
                 },
