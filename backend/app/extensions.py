@@ -56,7 +56,6 @@ def init_web3(app):
 
 def init_subgraph(app):
     gql_factory.set_url(app.config)
-    gql_factory.set_max_time(app.config)
 
 
 def init_scheduler(app):

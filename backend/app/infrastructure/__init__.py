@@ -7,7 +7,7 @@ from gql.transport.requests import RequestsHTTPTransport
 from gql.transport.exceptions import TransportQueryError
 import backoff
 
-from app.settings import Config
+from app.settings import Config, config
 from app.infrastructure.exception_handler import ExceptionHandler
 
 default_decorators = {
@@ -17,8 +17,6 @@ default_decorators = {
     "post": ExceptionHandler.print_stacktrace_on_exception(True, True),
     "put": ExceptionHandler.print_stacktrace_on_exception(True, True),
 }
-
-max_time = None
 
 
 class OctantResource(Resource):
@@ -61,14 +59,14 @@ class OctantResource(Resource):
 
 
 def lookup_max_time():
-    return max_time
+    return config.SUBGRAPH_RETRY_TIMEOUT
 
 
 def is_graph_error_permanent(error):
     # TODO: if we differentiate between reasons for the error,
     #       we can differentiate between transient and permanent ones,
     #       so we can return True for permanent ones saving
-    #       up to SUBGRAPH_TIMEOUT seconds.
+    #       up to SUBGRAPH_RETRY_TIMEOUT seconds.
     #       Look for these prints in logs and find
     #       "the chain was reorganized while executing the query" line.
     print("going through giveup...")
@@ -81,8 +79,9 @@ def is_graph_error_permanent(error):
 
 class GQLWithRetryBackoff(Client):
     """
-    It would be nice to use something out of the box from GQL
-    itself, but they have a retry wrapper only for async transports.
+    A retry wrapper for async transports. It overrides execute()
+    method to handle TransportQueryError and uses @backoff decorator
+    to make it retryable for given period of time.
     """
 
     def __init__(self, *args, **kwargs):
@@ -104,10 +103,6 @@ class GQLConnectionFactory:
 
     def set_url(self, config: Config):
         self._url = config["SUBGRAPH_ENDPOINT"]
-
-    def set_max_time(self, config: Config):
-        global max_time
-        max_time = config["SUBGRAPH_TIMEOUT"]
 
     def build(self):
         if not self._url:

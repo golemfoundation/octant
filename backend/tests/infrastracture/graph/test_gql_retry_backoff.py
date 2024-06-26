@@ -1,7 +1,6 @@
 import pytest
+from datetime import datetime, timedelta
 
-
-from tests.conftest import mock_gql_transport_reorg_error  # noqa: F401
 
 from gql import gql
 from gql.transport.exceptions import TransportQueryError
@@ -10,7 +9,7 @@ from app.extensions import gql_factory
 
 
 @pytest.fixture(autouse=True)
-def before(mock_gql_transport_reorg_error):  # noqa: F811
+def before(mock_gql_transport_reorg_error):
     pass
 
 
@@ -33,13 +32,8 @@ query {
 }
     """
     )
-    from datetime import datetime, timedelta
-
     start = datetime.now()
-    try:
+    with pytest.raises(TransportQueryError):
         gql_factory.build().execute(query)
-
-    except TransportQueryError:
-        pass
     finish = datetime.now()
-    assert finish - start > timedelta(seconds=1)
+    assert finish - start > timedelta(seconds=2)

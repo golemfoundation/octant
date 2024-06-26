@@ -19,6 +19,7 @@ from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
 from app.extensions import db, deposits, glm, gql_factory, w3, vault, epochs
 from app.infrastructure import database
+from app.infrastructure import Client as GQLClient
 from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.projects import Projects
@@ -540,7 +541,7 @@ def deployment(pytestconfig):
     conf = DevConfig
     graph_url = os.environ["SUBGRAPH_URL"]
     conf.SUBGRAPH_ENDPOINT = f"{graph_url}/subgraphs/name/{graph_name}"
-    conf.SUBGRAPH_TIMEOUT = 10
+    conf.SUBGRAPH_RETRY_TIMEOUT = 10
     conf.GLM_CONTRACT_ADDRESS = envs["GLM_CONTRACT_ADDRESS"]
     conf.DEPOSITS_CONTRACT_ADDRESS = envs["DEPOSITS_CONTRACT_ADDRESS"]
     conf.EPOCHS_CONTRACT_ADDRESS = envs["EPOCHS_CONTRACT_ADDRESS"]
@@ -1510,11 +1511,9 @@ def mock_failing_gql(
     mocker,
 ):
     gql_factory.set_url({"SUBGRAPH_ENDPOINT": "http://localhost:12345"})
-    gql_factory.set_max_time({"SUBGRAPH_TIMEOUT": 2})
-    from app.infrastructure import Client
 
-    mocker.patch.object(Client, "execute_sync")
-    Client.execute_sync.side_effect = TransportQueryError(
+    mocker.patch.object(GQLClient, "execute_sync")
+    GQLClient.execute_sync.side_effect = TransportQueryError(
         "the chain was reorganized while executing the query"
     )
 
