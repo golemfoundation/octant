@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Protocol, List, Dict, Tuple, Optional, runtime_checkable
 
 from app.context.manager import Context
@@ -240,4 +241,12 @@ class ScoreDelegation(Protocol):
         ...
 
     def check(self, context: Context, addresses: list[str]) -> set[Tuple[str, str]]:
+        ...
+
+
+@runtime_checkable
+class UniquenessQuotients(Protocol):
+    def retrieve(
+        self, context: Context, user_address: str, should_save: bool = False
+    ) -> Decimal:
         ...
