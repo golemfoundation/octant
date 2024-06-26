@@ -18,7 +18,7 @@ export default function useIndividualRewardAllEpochs({
     queries: [...Array(currentEpoch).keys()].map(epoch => ({
       enabled: !!address && currentEpoch !== undefined && currentEpoch > 1 && isEnabledAdditional,
       queryFn: () => {
-        // For Epoch 0 and Epoch 1 error 400 is returned.
+        // For Epoch 0 error 400 is always returned.
         if ([0].includes(epoch)) {
           return new Promise<Response>(resolve => {
             resolve({ budget: '0' });
