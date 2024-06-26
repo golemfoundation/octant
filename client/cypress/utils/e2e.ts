@@ -49,6 +49,7 @@ export const connectWallet = ({
   cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
   cy.intercept('GET', '/user/*/patron-mode', { body: { status: isPatronModeEnabled } });
   cy.intercept('PATCH', '/user/*/patron-mode', { body: { status: !isPatronModeEnabled } });
+  cy.intercept('POST', '/allocations/leverage/*', { body: { leverage: '100', matched: [], threshold: null } });
   /**
    * Setting intercepts here is too late. It should be done before view loads.
    * Making a reload is hack to skip that.
