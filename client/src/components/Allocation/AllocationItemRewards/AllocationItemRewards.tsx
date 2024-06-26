@@ -19,6 +19,7 @@ import styles from './AllocationItemRewards.module.scss';
 import AllocationItemRewardsProps, { AllocationItemRewardsDonorsProps } from './types';
 
 const AllocationItemRewardsDonors: FC<AllocationItemRewardsDonorsProps> = ({
+  isError,
   isLoadingAllocateSimulate,
   isSimulateVisible,
   isSimulatedMatchedAvailable,
@@ -72,6 +73,7 @@ const AllocationItemRewardsDonors: FC<AllocationItemRewardsDonorsProps> = ({
         styles.element,
         isDecisionWindowOpen && styles.isDecisionWindowOpen,
         isSimulatedMatchedAvailable && styles.isSimulatedMatchedAvailable,
+        isError && styles.isError,
       )}
       data-test="AllocationItemRewardsDonors"
     >
@@ -91,6 +93,7 @@ const AllocationItemRewardsDonors: FC<AllocationItemRewardsDonorsProps> = ({
 const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
   address,
   simulatedMatched,
+  isError,
   isLoadingAllocateSimulate,
   value,
 }) => {
@@ -182,6 +185,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
         className={cx(
           styles.element,
           isDecisionWindowOpen && styles.isDecisionWindowOpen,
+          isError && styles.isError,
           isLoadingAllocateSimulate && styles.isLoadingAllocateSimulate,
           !isLoadingAllocateSimulate &&
             isSimulatedMatchedAvailable &&
@@ -208,6 +212,7 @@ const AllocationItemRewards: FC<AllocationItemRewardsProps> = ({
           }).primary}
       </div>
       <AllocationItemRewardsDonors
+        isError={isError}
         isLoadingAllocateSimulate={isLoadingAllocateSimulate}
         isSimulatedMatchedAvailable={isSimulatedMatchedAvailable}
         isSimulateVisible={isSimulateVisible}

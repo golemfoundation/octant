@@ -299,7 +299,12 @@ const AllocationItem: FC<AllocationItemProps> = ({
                 <div className={styles.name} data-test="AllocationItem__name">
                   {name}
                 </div>
-                <AllocationItemRewards address={address} value={value} {...rewardsProps} />
+                <AllocationItemRewards
+                  address={address}
+                  isError={isError}
+                  value={value}
+                  {...rewardsProps}
+                />
               </div>
             </div>
             <InputText
