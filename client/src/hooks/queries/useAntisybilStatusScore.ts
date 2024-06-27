@@ -12,6 +12,7 @@ export default function useAntisybilStatusScore(
     enabled: !!address,
     queryFn: () => apiGetAntisybilStatus(address!),
     queryKey: QUERY_KEYS.antisybilStatus(address!),
+    refetchOnMount: true,
     select: response => Math.round(parseFloat(response.score)),
     ...options,
   });

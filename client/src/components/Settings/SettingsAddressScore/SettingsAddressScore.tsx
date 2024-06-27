@@ -1,8 +1,12 @@
 import cx from 'classnames';
 import { motion } from 'framer-motion';
 import React, { FC, memo } from 'react';
+import { useAccount } from 'wagmi';
 
+import Button from 'components/ui/Button';
 import Identicon from 'components/ui/Identicon';
+import Svg from 'components/ui/Svg';
+import { checkMark } from 'svg/misc';
 import truncateEthAddress from 'utils/truncateEthAddress';
 
 import styles from './SettingsAddressScore.module.scss';
@@ -15,9 +19,13 @@ const SettingsAddressScore: FC<SettingsAddressScoreProps> = ({
   className,
   isScoreHighlighted = false,
   areBottomCornersRounded = true,
-  isSelected,
+  isMessageSigned,
+  isSignMessageButtonDisabled,
+  onSignMessage,
   mode,
 }) => {
+  const { address: activeAddress } = useAccount();
+
   return (
     <motion.div
       className={cx(
@@ -30,25 +38,29 @@ const SettingsAddressScore: FC<SettingsAddressScoreProps> = ({
       <div className={styles.avatar}>
         <Identicon className={styles.identicon} username={address} />
       </div>
-      <div>
-        <div className={styles.address}>{truncateEthAddress(address)}</div>
+      <div className={styles.addressWrapper}>
+        <div className={cx(styles.address, activeAddress === address && styles.isActive)}>
+          {truncateEthAddress(address)}
+        </div>
         <span className={cx(styles.badge, badge === 'secondary' && styles.secondary)}>{badge}</span>
       </div>
-      {mode === 'score' ? (
+      {mode === 'score' && (
         <div className={cx(styles.score, isScoreHighlighted && styles.isScoreHighlighted)}>
           {score}
         </div>
-      ) : (
-        <svg
-          className={cx(styles.selector, isSelected && styles.isSelected)}
-          height="32"
-          viewBox="0 0 32 32"
-          width="32"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle className={styles.circle} cx="16" cy="16" r="8" />
-        </svg>
       )}
+      {mode === 'sign' &&
+        (isMessageSigned ? (
+          <Svg img={checkMark} size={3.6} />
+        ) : (
+          <Button
+            isDisabled={isSignMessageButtonDisabled}
+            onClick={onSignMessage}
+            variant="secondary2"
+          >
+            Sign message
+          </Button>
+        ))}
     </motion.div>
   );
 };

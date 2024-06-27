@@ -30,7 +30,12 @@
   .address {
     color: $color-octant-dark;
     font-size: $font-size-14;
-    font-weight: $font-weight-bold;
+    font-weight: $font-weight-semibold;
+
+    &.isActive {
+      color: $color-octant-green;
+      font-weight: $font-weight-bold;
+    }
   }
 
   .badge {
@@ -51,8 +56,11 @@
     }
   }
 
+  .addressWrapper {
+    margin-right: auto;
+  }
+
   .score {
-    margin-left: auto;
     color: $color-octant-grey2;
     font-size: $font-size-16;
     font-weight: $font-weight-bold;

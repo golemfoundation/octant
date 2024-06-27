@@ -34,6 +34,21 @@ export const IS_CRYPTO_MAIN_VALUE_DISPLAY = getLocalStorageKey(
   'isCryptoMainValueDisplay',
 );
 
+export const IS_DELEGATION_IN_PROGRESS = getLocalStorageKey(
+  settingsPrefix,
+  'isDelegationInProgress',
+);
+
+export const DELEGATION_PRIMARY_ADDRESS = getLocalStorageKey(
+  settingsPrefix,
+  'delegationPrimaryAddress',
+);
+
+export const DELEGATION_SECONDARY_ADDRESS = getLocalStorageKey(
+  settingsPrefix,
+  'delegationSecondaryAddress',
+);
+
 const tipTilesPrefix = 'tipTiles';
 export const WAS_ADD_FAVOURITES_ALREADY_CLOSED_TIP = getLocalStorageKey(
   tipTilesPrefix,

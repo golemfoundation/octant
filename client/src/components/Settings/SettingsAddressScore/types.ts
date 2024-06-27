@@ -3,8 +3,10 @@ export default interface SettingsAddressScoreProps {
   areBottomCornersRounded?: boolean;
   badge: 'primary' | 'secondary';
   className?: string;
+  isMessageSigned?: boolean;
   isScoreHighlighted?: boolean;
-  isSelected?: boolean;
-  mode: 'score' | 'select';
+  isSignMessageButtonDisabled?: boolean;
+  mode: 'score' | 'sign';
+  onSignMessage?: () => void;
   score: number;
 }
