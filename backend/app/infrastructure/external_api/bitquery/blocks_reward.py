@@ -1,6 +1,7 @@
 import requests
 
 import app as app_module
+from app import cache
 from app.constants import BITQUERY_API
 from app.exceptions import ExternalApiException
 from app.infrastructure.external_api.bitquery.req_producer import (
@@ -10,6 +11,7 @@ from app.infrastructure.external_api.bitquery.req_producer import (
 )
 
 
+@cache.memoize(timeout=60)
 def get_blocks_rewards(address: str, start_block: int, end_block: int) -> float:
     """
     Fetch Ethereum blocks rewards for given address and start and end block.
