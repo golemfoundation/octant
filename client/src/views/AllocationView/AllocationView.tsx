@@ -533,7 +533,6 @@ const AllocationView = (): ReactElement => {
                         simulatedMatched: allocationSimulated?.matched.find(
                           element => element.address === address,
                         )?.value,
-                        simulatedThreshold: allocationSimulated?.threshold,
                       }}
                       setAddressesWithError={setAddressesWithError}
                       value={value}

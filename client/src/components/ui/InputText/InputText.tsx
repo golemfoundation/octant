@@ -14,6 +14,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
     {
       autocomplete,
       className,
+      classNameInput,
       error,
       isButtonClearVisible = true,
       isDisabled,
@@ -46,7 +47,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
         !!error && styles.isError,
         suffix && styles.hasSuffix,
         variant === 'allocation' && value && value.length > 8 && styles.smallFontSize,
-        styles.className,
+        classNameInput,
       ),
       // eslint-disable-next-line @typescript-eslint/naming-convention
       'data-test': dataTest,

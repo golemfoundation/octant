@@ -2,14 +2,20 @@ import { parseUnitsBigInt } from './parseUnitsBigInt';
 
 export default function getRewardsSumWithValueAndSimulation(
   value: string,
-  simulatedMatched?: string,
+  simulatedMatchedBigInt: bigint,
   projectMatchedProjectRewardsAllocated?: bigint,
   userAllocationToThisProject?: bigint,
+  uqScore?: bigint,
 ): bigint {
+  const userAllocationToThisProjectMultiplied =
+    userAllocationToThisProject && uqScore
+      ? (userAllocationToThisProject * uqScore) / 100n
+      : BigInt(0);
+
   return (
     parseUnitsBigInt(value) +
-    (simulatedMatched ? parseUnitsBigInt(simulatedMatched, 'wei') : BigInt(0)) -
-    (userAllocationToThisProject || BigInt(0)) +
+    simulatedMatchedBigInt -
+    (userAllocationToThisProjectMultiplied || BigInt(0)) +
     (projectMatchedProjectRewardsAllocated || BigInt(0))
   );
 }
