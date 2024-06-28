@@ -7,6 +7,7 @@ import urllib.request
 from unittest.mock import MagicMock, Mock
 
 import gql
+from gql.transport.exceptions import TransportQueryError
 import pytest
 from flask import current_app
 from flask import g as request_context
@@ -19,6 +20,7 @@ from app.engine.user.effective_deposit import DepositEvent, EventType, UserDepos
 from app.exceptions import ExternalApiException
 from app.extensions import db, deposits, glm, gql_factory, w3, vault, epochs
 from app.infrastructure import database
+from app.infrastructure import Client as GQLClient
 from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.projects import Projects
@@ -541,6 +543,7 @@ def deployment(pytestconfig):
     conf = DevConfig
     graph_url = os.environ["SUBGRAPH_URL"]
     conf.SUBGRAPH_ENDPOINT = f"{graph_url}/subgraphs/name/{graph_name}"
+    conf.SUBGRAPH_RETRY_TIMEOUT_SEC = 10
     conf.GLM_CONTRACT_ADDRESS = envs["GLM_CONTRACT_ADDRESS"]
     conf.DEPOSITS_CONTRACT_ADDRESS = envs["DEPOSITS_CONTRACT_ADDRESS"]
     conf.EPOCHS_CONTRACT_ADDRESS = envs["EPOCHS_CONTRACT_ADDRESS"]
@@ -956,7 +959,7 @@ def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.legacy.controllers.snapshots.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.core.projects.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.context.epoch_state.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.context.epoch_details.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.context.epoch.factory.epochs", MOCK_EPOCHS)
 
     MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
     MOCK_EPOCHS.get_current_epoch.return_value = MOCKED_CURRENT_EPOCH_NO
@@ -1115,7 +1118,7 @@ def patch_etherscan_transactions_api(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_etherscan_get_block_api(monkeypatch):
     monkeypatch.setattr(
-        "app.context.epoch_details.get_block_num_from_ts",
+        "app.context.epoch.block_range.get_block_num_from_ts",
         mock_etherscan_api_get_block_num_from_ts,
     )
 
@@ -1519,6 +1522,20 @@ def mock_graphql(
     )
     mocker.patch.object(gql_factory, "build")
     gql_factory.build.return_value = mock_client
+
+
+@pytest.fixture(scope="function")
+def mock_failing_gql(
+    app,
+    mocker,
+):
+    # this URL is not called in this test, but it needs to be a proper URL
+    gql_factory.set_url({"SUBGRAPH_ENDPOINT": "http://domain.example:12345"})
+
+    mocker.patch.object(GQLClient, "execute_sync")
+    GQLClient.execute_sync.side_effect = TransportQueryError(
+        "the chain was reorganized while executing the query"
+    )
 
 
 @pytest.fixture(scope="function")

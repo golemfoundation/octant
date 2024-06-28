@@ -1,4 +1,4 @@
-from app.context.epoch_details import EpochDetails
+from app.context.epoch.details import EpochDetails
 from app.context.epoch_state import EpochState
 from app.context.manager import Context
 from app.context.projects import ProjectsDetails
@@ -12,7 +12,8 @@ def get_epoch_details(
     duration=1000,
     decision_window=500,
     remaining_sec=1000,
-    with_block_range=False,
+    start_block=1000,
+    end_block=2000,
     **kwargs
 ):
     return EpochDetails(
@@ -21,7 +22,8 @@ def get_epoch_details(
         start=start,
         decision_window=decision_window,
         remaining_sec=remaining_sec,
-        with_block_range=with_block_range,
+        start_block=start_block,
+        end_block=end_block,
     )
 
 
