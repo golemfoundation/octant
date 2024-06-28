@@ -7,6 +7,7 @@ import urllib.request
 from unittest.mock import MagicMock, Mock
 
 import gql
+from gql.transport.exceptions import TransportQueryError
 import pytest
 from flask import g as request_context
 from flask.testing import FlaskClient
@@ -18,6 +19,7 @@ from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
 from app.extensions import db, deposits, glm, gql_factory, w3, vault, epochs
 from app.infrastructure import database
+from app.infrastructure import Client as GQLClient
 from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.projects import Projects
@@ -539,6 +541,7 @@ def deployment(pytestconfig):
     conf = DevConfig
     graph_url = os.environ["SUBGRAPH_URL"]
     conf.SUBGRAPH_ENDPOINT = f"{graph_url}/subgraphs/name/{graph_name}"
+    conf.SUBGRAPH_RETRY_TIMEOUT_SEC = 10
     conf.GLM_CONTRACT_ADDRESS = envs["GLM_CONTRACT_ADDRESS"]
     conf.DEPOSITS_CONTRACT_ADDRESS = envs["DEPOSITS_CONTRACT_ADDRESS"]
     conf.EPOCHS_CONTRACT_ADDRESS = envs["EPOCHS_CONTRACT_ADDRESS"]
@@ -1497,6 +1500,20 @@ def mock_graphql(
     )
     mocker.patch.object(gql_factory, "build")
     gql_factory.build.return_value = mock_client
+
+
+@pytest.fixture(scope="function")
+def mock_failing_gql(
+    app,
+    mocker,
+):
+    # this URL is not called in this test, but it needs to be a proper URL
+    gql_factory.set_url({"SUBGRAPH_ENDPOINT": "http://domain.example:12345"})
+
+    mocker.patch.object(GQLClient, "execute_sync")
+    GQLClient.execute_sync.side_effect = TransportQueryError(
+        "the chain was reorganized while executing the query"
+    )
 
 
 @pytest.fixture(scope="function")
