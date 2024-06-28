@@ -1,5 +1,5 @@
 import { AnimatePresence } from 'framer-motion';
-import React, { ReactNode, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount, useSignMessage } from 'wagmi';
 
@@ -13,12 +13,16 @@ import useSettingsStore from 'store/settings/store';
 import { notificationIconWarning } from 'svg/misc';
 
 import styles from './SettingsCalculatingUQScore.module.scss';
+import SettingsCalculatingUQScoreProps from './types';
 
-const SettingsCalculatingUQScore = (): ReactNode => {
+const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
+  setShowCloseButton,
+}) => {
   const {
     delegationPrimaryAddress,
     delegationSecondaryAddress,
     calculatingUQScoreMode,
+    primaryAddressScore,
     setIsDelegationCalculatingUQScoreModalOpen,
     setIsDelegationInProgress,
     setCalculatingUQScoreMode,
@@ -27,6 +31,7 @@ const SettingsCalculatingUQScore = (): ReactNode => {
     calculatingUQScoreMode: state.data.calculatingUQScoreMode,
     delegationPrimaryAddress: state.data.delegationPrimaryAddress,
     delegationSecondaryAddress: state.data.delegationSecondaryAddress,
+    primaryAddressScore: state.data.primaryAddressScore,
     setCalculatingUQScoreMode: state.setCalculatingUQScoreMode,
     setIsDelegationCalculatingUQScoreModalOpen: state.setIsDelegationCalculatingUQScoreModalOpen,
     setIsDelegationCompleted: state.setIsDelegationCompleted,
@@ -56,6 +61,7 @@ const SettingsCalculatingUQScore = (): ReactNode => {
         setLastDoneStep(2);
         setTimeout(() => {
           if (secondaryAddressAntisybilStatusScore < 15) {
+            setShowCloseButton(true);
             return;
           }
 
@@ -84,8 +90,12 @@ const SettingsCalculatingUQScore = (): ReactNode => {
     secondaryAddressAntisybilStatusScore < 15;
 
   const scoreHighlight = useMemo(() => {
-    if (!isScoreHighlighted || secondaryAddressAntisybilStatusScore === undefined) {return undefined;}
-    if (secondaryAddressAntisybilStatusScore < 15) {return 'red';}
+    if (!isScoreHighlighted || secondaryAddressAntisybilStatusScore === undefined) {
+      return undefined;
+    }
+    if (secondaryAddressAntisybilStatusScore < 15) {
+      return 'red';
+    }
     return 'black';
   }, [isScoreHighlighted, secondaryAddressAntisybilStatusScore]);
 
@@ -118,7 +128,7 @@ const SettingsCalculatingUQScore = (): ReactNode => {
             });
           });
         }}
-        score={22}
+        score={primaryAddressScore ?? 0}
         showActiveDot={calculatingUQScoreMode === 'sign'}
       />
       <SettingsAddressScore
@@ -150,7 +160,7 @@ const SettingsCalculatingUQScore = (): ReactNode => {
             });
           });
         }}
-        score={0}
+        score={secondaryAddressAntisybilStatusScore ?? 0}
         scoreHighlight={scoreHighlight}
         showActiveDot={calculatingUQScoreMode === 'sign'}
       />

@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import SettingsCalculatingUQScore from 'components/Settings/SettingsCalculatingUQScore';
@@ -19,6 +19,8 @@ const ModalSettingsCalculatingUQScore: FC<ModalSettingsCalculatingUQScoreProps> 
     setIsDelegationConnectModalOpen: state.setIsDelegationConnectModalOpen,
   }));
 
+  const [showCloseButton, setShowCloseButton] = useState(false);
+
   return (
     <Modal
       bodyClassName={styles.modalBody}
@@ -26,13 +28,13 @@ const ModalSettingsCalculatingUQScore: FC<ModalSettingsCalculatingUQScoreProps> 
       header={
         calculatingUQScoreMode === 'sign' ? (
           <div className={styles.header}>
-            Sign messages
+            {t('signMessages')}
             <Button
               className={styles.button}
               onClick={() => setIsDelegationConnectModalOpen(true)}
               variant="cta"
             >
-              Switch account
+              {t('switchAccount')}
             </Button>
           </div>
         ) : (
@@ -40,10 +42,10 @@ const ModalSettingsCalculatingUQScore: FC<ModalSettingsCalculatingUQScoreProps> 
         )
       }
       isOverflowOnClickDisabled
-      showCloseButton={false}
+      showCloseButton={showCloseButton}
       {...modalProps}
     >
-      <SettingsCalculatingUQScore />
+      <SettingsCalculatingUQScore setShowCloseButton={setShowCloseButton} />
     </Modal>
   );
 };

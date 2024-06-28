@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import { motion } from 'framer-motion';
 import React, { FC, memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import Button from 'components/ui/Button';
@@ -25,6 +26,7 @@ const SettingsAddressScore: FC<SettingsAddressScoreProps> = ({
   mode,
   showActiveDot,
 }) => {
+  const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
   const { address: activeAddress } = useAccount();
 
   const isActive = activeAddress === address;
@@ -82,7 +84,7 @@ const SettingsAddressScore: FC<SettingsAddressScoreProps> = ({
             onClick={onSignMessage}
             variant="secondary2"
           >
-            Sign message
+            {t('signMessage')}
           </Button>
         ))}
     </motion.div>
