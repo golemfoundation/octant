@@ -951,7 +951,7 @@ def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.legacy.controllers.snapshots.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.core.projects.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.context.epoch_state.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.context.epoch_details.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.context.epoch.factory.epochs", MOCK_EPOCHS)
 
     MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
     MOCK_EPOCHS.get_current_epoch.return_value = MOCKED_CURRENT_EPOCH_NO
@@ -1109,7 +1109,7 @@ def patch_etherscan_transactions_api(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_etherscan_get_block_api(monkeypatch):
     monkeypatch.setattr(
-        "app.context.epoch_details.get_block_num_from_ts",
+        "app.context.epoch.block_range.get_block_num_from_ts",
         mock_etherscan_api_get_block_num_from_ts,
     )
 
