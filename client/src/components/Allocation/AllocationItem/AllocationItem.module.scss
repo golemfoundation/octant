@@ -92,7 +92,7 @@ $removeButtonHeightWidthDesktop: 10.4rem;
   }
 }
 
-.input {
+.inputWrapper {
   flex: 1;
   max-width: 26rem;
 
@@ -107,5 +107,11 @@ $removeButtonHeightWidthDesktop: 10.4rem;
   @media #{$tablet-down} {
     max-width: 14.2rem;
     min-width: 14.2rem;
+  }
+}
+
+.input {
+  &.isValue {
+    background: $color-octant-green;
   }
 }

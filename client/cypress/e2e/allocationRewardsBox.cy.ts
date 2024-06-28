@@ -405,6 +405,7 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight }) => 
     { viewportHeight, viewportWidth },
     () => {
       beforeEach(() => {
+        mockCoinPricesServer();
         visitWithLoader(ROOT_ROUTES.allocation.absolute);
       });
 

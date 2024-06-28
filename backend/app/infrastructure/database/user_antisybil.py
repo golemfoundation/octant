@@ -9,11 +9,18 @@ from app.extensions import db
 
 
 def add_score(
-    user_address: str, score: str, expires_at: datetime, stamps: dict
+    user_address: str, score: float, expires_at: datetime, stamps: dict
 ) -> GPStamps:
     user = get_by_address(user_address)
+
+    if user is None:
+        raise UserNotFound(user_address)
+
     verification = GPStamps(
-        user_id=user.id, score=score, expires_at=expires_at, stamps=json.dumps(stamps)
+        user_id=user.id,
+        score=str(score),
+        expires_at=expires_at,
+        stamps=json.dumps(stamps),
     )
     db.session.add(verification)
 

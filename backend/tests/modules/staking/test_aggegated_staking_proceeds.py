@@ -11,7 +11,6 @@ def before(app):
 def test_aggregated_staking_proceeds(
     patch_etherscan_transactions_api,
     patch_bitquery_get_blocks_rewards,
-    patch_etherscan_get_block_api,
 ):
     """
     Expected results for the test:

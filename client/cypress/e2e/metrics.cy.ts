@@ -44,13 +44,6 @@ const rendersTilesWithCorrectValues = (isCryptoAsAMainValue: boolean) => {
     .invoke('text')
     .should(isCryptoAsAMainValue ? 'include' : 'not.include', '$');
 
-  cy.get('[data-test=MetricsEpochGridBelowThreshold__ethBelowThreshold__value]')
-    .invoke('text')
-    .should('eq', '0');
-  cy.get('[data-test=MetricsEpochGridBelowThreshold__ethBelowThreshold__subvalue]')
-    .invoke('text')
-    .should('eq', '$0.00');
-
   cy.get('[data-test=MetricsEpochGridFundsUsage__total]')
     .invoke('text')
     .should(isCryptoAsAMainValue ? 'not.include' : 'include', '$');
@@ -88,6 +81,10 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
       visitWithLoader(ROOT_ROUTES.metrics.absolute);
     });
 
+    after(() => {
+      cy.disconnectMetamaskWalletFromAllDapps();
+    });
+
     it('renders total projects tile', () => {
       cy.get('[data-test=MetricsGeneralGridTotalProjects]').should('be.visible');
     });
@@ -122,7 +119,6 @@ Object.values(viewports).forEach(({ device, viewportWidth, viewportHeight, isDes
         'MetricsEpochGridCurrentDonors',
         'MetricsEpochGridAverageLeverage',
         'MetricsEpochGridRewardsUnusedAndUnallocatedValue',
-        'MetricsEpochGridBelowThreshold',
       ];
 
       const metricsGeneralGridTilesDataTest = [

@@ -1,44 +1,26 @@
+from decimal import Decimal
+
 import pytest
 
-from app.modules.uq.core import calculate_uq, Scores
-
-THRESHOLD = 20
+from app.modules.uq.core import calculate_uq
+from tests.helpers.constants import USER1_ADDRESS, USER2_ADDRESS
 
 
 @pytest.mark.parametrize(
-    "has_epoch_zero_poap, passed_identity_call, num_of_donations, gp_score, expected_output",
+    "gp_score, budget, in_addresses, expected_output",
     [
-        (True, True, 2, 20, 1.0),
-        (False, False, 0, 20, 1.0),
-        (True, False, 0, 10, 1.0),
-        (False, True, 0, 10, 1.0),
-        (False, False, 2, 10, 1.0),
-        (True, False, 2, 0, 1.0),
-        (False, True, 2, 0, 1.0),
-        (True, True, 0, 0, 1.0),
-        (False, True, 0, 0, 0.2),
-        (True, False, 0, 0, 0.2),
-        (False, False, 0, 15, 0.2),
-        (False, False, 2, 5, 0.2),
-        (False, False, 1, 15, 0.2),
-        (False, True, 1, 0, 0.2),
-        (True, False, 1, 0, 0.2),
+        (19, 0, True, 0.2),
+        (19, 0, False, 0.2),
+        (19, 1, False, 1.0),
+        (19, 1, True, 0.2),
+        (20, 0, True, 1.0),
+        (20, 0, False, 1.0),
+        (20, 1, True, 1.0),
+        (20, 1, False, 1.0),
     ],
 )
-def test_calculate_uq(
-    has_epoch_zero_poap,
-    passed_identity_call,
-    num_of_donations,
-    gp_score,
-    expected_output,
-):
-    assert (
-        calculate_uq(
-            has_epoch_zero_poap,
-            passed_identity_call,
-            num_of_donations,
-            gp_score,
-            Scores(),
-        )
-        == expected_output
+def test_calculate_uq(gp_score, budget, in_addresses, expected_output):
+    addresses = [USER1_ADDRESS, USER2_ADDRESS] if in_addresses else [USER2_ADDRESS]
+    assert calculate_uq(gp_score, budget, USER1_ADDRESS, addresses) == Decimal(
+        str(expected_output)
     )

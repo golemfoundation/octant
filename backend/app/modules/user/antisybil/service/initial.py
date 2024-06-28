@@ -1,14 +1,15 @@
 from flask import current_app as app
 
-from typing import Optional, Tuple, runtime_checkable, Protocol
+from typing import Optional, Tuple
 
 from datetime import datetime
 from typing import List
 
 from app.extensions import db
-from app.exceptions import ExternalApiException, UserNotFound
+from app.exceptions import ExternalApiException, UserNotFound, AddressAlreadyDelegated
 from app.context.manager import Context
 from app.infrastructure import database
+from app.modules.common.delegation import get_hashed_addresses
 from app.pydantic import Model
 from app.infrastructure.external_api.common import retry_request
 from app.infrastructure.external_api.gc_passport.score import (
@@ -22,7 +23,6 @@ class GitcoinPassportAntisybil(Model):
     def get_antisybil_status(
         self, _: Context, user_address: str
     ) -> Optional[Tuple[float, datetime]]:
-        score = None
         try:
             score = database.user_antisybil.get_score_by_address(user_address)
         except UserNotFound as ex:
@@ -52,7 +52,7 @@ class GitcoinPassportAntisybil(Model):
         valid_stamps = _filter_older(cutoff, all_stamps)
         expires_at = datetime.now()
         if len(valid_stamps) != 0:
-            expires_at = _parse_expirationDate(
+            expires_at = _parse_expiration_date(
                 min([stamp["credential"]["expirationDate"] for stamp in valid_stamps])
             )
         return float(score["score"]), expires_at, all_stamps
@@ -65,11 +65,18 @@ class GitcoinPassportAntisybil(Model):
         expires_at: datetime,
         stamps: dict,
     ):
+        self._verify_address_is_not_delegated(user_address)
         database.user_antisybil.add_score(user_address, score, expires_at, stamps)
         db.session.commit()
 
+    def _verify_address_is_not_delegated(self, user_address: str):
+        all_hashes = database.score_delegation.get_all_delegations()
+        primary, secondary, _ = get_hashed_addresses(user_address, user_address)
+        if primary in all_hashes or secondary in all_hashes:
+            raise AddressAlreadyDelegated()
 
-def _parse_expirationDate(timestamp_str: str) -> datetime:
+
+def _parse_expiration_date(timestamp_str: str) -> datetime:
     gp_api_formats = ["%Y-%m-%dT%H:%M:%S.%fZ", "%Y-%m-%dT%H:%M:%SZ"]
     for format_str in gp_api_formats:
         try:
@@ -83,18 +90,7 @@ def _parse_expirationDate(timestamp_str: str) -> datetime:
 
 def _filter_older(cutoff, stamps: List[dict]) -> List[dict]:
     not_expired = (
-        lambda stamp: _parse_expirationDate(stamp["credential"]["expirationDate"])
-        < cutoff
+        lambda stamp: _parse_expiration_date(stamp["credential"]["expirationDate"])
+        > cutoff
     )
     return list(filter(not_expired, stamps))
-
-
-@runtime_checkable
-class UniquenessQuotients(Protocol):
-    def calculate(self, user_address: str) -> str:
-        ...
-
-
-class MockUniquenessQuotients(Model):
-    def calculate(self, user_address: str) -> str:
-        return "42"

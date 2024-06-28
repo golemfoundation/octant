@@ -1,12 +1,14 @@
 from typing import List
 from random import randint
 
+from app import db
 from app.modules.dto import (
     AllocationItem,
     UserAllocationPayload,
     UserAllocationRequestPayload,
 )
 from app.infrastructure import database
+from tests.helpers.constants import LOW_UQ_SCORE
 
 
 def create_payload(projects, amounts: list[int] | None, nonce: int = 0):
@@ -35,17 +37,32 @@ def deserialize_allocations(payload) -> List[AllocationItem]:
 
 
 def make_user_allocation(context, user, allocations=1, nonce=0, **kwargs):
+    return _make_allocation(context, user, allocations, nonce, **kwargs)
+
+
+def make_user_allocation_with_uq_score(
+    context, user, epoch, allocations=1, nonce=0, uq_score=LOW_UQ_SCORE, **kwargs
+):
+    allocation = _make_allocation(context, user, allocations, nonce, **kwargs)
+    database.uniqueness_quotient.save_uq(user, epoch, uq_score)
+    db.session.commit()
+
+    return allocation
+
+
+def _make_allocation(context, user, allocations=1, nonce=0, **kwargs):
     projects = context.projects_details.projects
     database.allocations.soft_delete_all_by_epoch_and_user_id(
         context.epoch_details.epoch_num, user.id
     )
 
-    allocation_items = [
-        AllocationItem(projects[i], (i + 1) * 100) for i in range(allocations)
-    ]
-
     if kwargs.get("allocation_items"):
         allocation_items = kwargs.get("allocation_items")
+    else:
+        allocation_items = []
+
+        for i in range(allocations):
+            allocation_items.append(AllocationItem(projects[i], (i + 1) * 100))
 
     request = UserAllocationRequestPayload(
         payload=UserAllocationPayload(allocations=allocation_items, nonce=nonce),

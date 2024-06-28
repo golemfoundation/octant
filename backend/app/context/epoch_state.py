@@ -11,6 +11,7 @@ class EpochState(Enum):
     PENDING = auto()
     PRE_PENDING = auto()
     CURRENT = auto()
+    SIMULATED = auto()
     FUTURE = auto()
 
     def __gt__(self, other):
@@ -48,6 +49,8 @@ def get_epoch_number(epoch_state: EpochState) -> int:
     if epoch_state == EpochState.FUTURE:
         epoch_num = epochs.get_current_epoch() + 1
     if epoch_state == EpochState.CURRENT:
+        epoch_num = epochs.get_current_epoch()
+    if epoch_state == EpochState.SIMULATED:
         epoch_num = epochs.get_current_epoch()
     if epoch_state == EpochState.PRE_PENDING or epoch_state == EpochState.PENDING:
         epoch_num = epochs.get_pending_epoch()
