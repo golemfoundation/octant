@@ -28,7 +28,9 @@ query {
     """
     )
     start = datetime.now()
-    with pytest.raises(TransportQueryError):
+    with pytest.raises(
+        TransportQueryError, match="the chain was reorganized while executing the query"
+    ):
         gql_factory.build().execute(query)
     finish = datetime.now()
     assert finish - start > timedelta(seconds=2)
