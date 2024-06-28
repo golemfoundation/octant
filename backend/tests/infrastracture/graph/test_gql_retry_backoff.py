@@ -33,4 +33,4 @@ query {
     ):
         gql_factory.build().execute(query)
     finish = datetime.now()
-    assert finish - start > timedelta(seconds=2)
+    assert finish - start >= timedelta(seconds=2)
