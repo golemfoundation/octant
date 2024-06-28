@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { LeverageMatched } from 'api/calls/allocate';
-import { AllocateSimulate } from 'hooks/mutations/useAllocateSimulate';
 import { ProjectIpfsWithRewards } from 'hooks/queries/useProjectsIpfsWithRewards';
 import { AllocationValue } from 'views/AllocationView/types';
 
@@ -23,7 +22,6 @@ export default interface AllocationItemProps
   rewardsProps: {
     isLoadingAllocateSimulate: boolean;
     simulatedMatched?: LeverageMatched['value'];
-    simulatedThreshold?: AllocateSimulate['threshold'];
   };
   setAddressesWithError: React.Dispatch<React.SetStateAction<string[]>>;
 }

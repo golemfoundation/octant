@@ -2,7 +2,7 @@ import React, { FC, Fragment, memo, useMemo } from 'react';
 
 import ProjectDonors from 'components/Project/ProjectDonors';
 import ProjectListItemHeader from 'components/Project/ProjectListItemHeader';
-import Rewards from 'components/shared/Rewards';
+import Rewards from 'components/shared/RewardsWithThreshold';
 import Description from 'components/ui/Description';
 import decodeBase64ToUtf8 from 'utils/decodeBase64ToUtf8';
 

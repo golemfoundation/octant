@@ -8,11 +8,11 @@ import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThresho
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
 
-import styles from './Rewards.module.scss';
+import styles from './RewardsWithThreshold.module.scss';
 import RewardsProps from './types';
 import { getProgressPercentage } from './utils';
 
-const Rewards: FC<RewardsProps> = ({
+const RewardsWithThreshold: FC<RewardsProps> = ({
   address,
   className,
   epoch,
@@ -156,4 +156,4 @@ const Rewards: FC<RewardsProps> = ({
     </div>
   );
 };
-export default Rewards;
+export default RewardsWithThreshold;

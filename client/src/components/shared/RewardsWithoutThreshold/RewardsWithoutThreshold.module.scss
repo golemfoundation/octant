@@ -1,0 +1,50 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  align-self: stretch;
+  justify-content: space-between;
+
+  .divider {
+    height: 0.2rem;
+    margin: 0.3rem 0;
+    width: 100%;
+    content: '';
+    background: $color-octant-grey3;
+  }
+
+  .sections {
+    margin-top: 1.2rem;
+    display: flex;
+    justify-content: space-between;
+
+    .section {
+      font-weight: $font-weight-bold;
+      color: $color-octant-grey5;
+
+      .label {
+        font-size: $font-size-12;
+        height: 1.6rem;
+        margin-bottom: 0.4rem;
+        display: flex;
+        align-items: center;
+      }
+
+      &.leftSection {
+        text-align: left;
+
+        .label {
+          justify-content: flex-start;
+        }
+      }
+
+      &.rightSection {
+        text-align: right;
+
+        .label {
+          justify-content: flex-end;
+        }
+      }
+    }
+  }
+}
