@@ -1504,6 +1504,7 @@ def mock_graphql(
 
 @pytest.fixture(scope="function")
 def mock_failing_gql(
+    app,
     mocker,
 ):
     # this URL is not called in this test, but it needs to be a proper URL

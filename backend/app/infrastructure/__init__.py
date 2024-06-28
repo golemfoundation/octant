@@ -9,6 +9,7 @@ import backoff
 
 from app.settings import Config, config
 from app.infrastructure.exception_handler import ExceptionHandler
+from flask import current_app as app
 
 default_decorators = {
     "delete": ExceptionHandler.print_stacktrace_on_exception(True, True),
@@ -69,11 +70,11 @@ def is_graph_error_permanent(error):
     #       up to SUBGRAPH_RETRY_TIMEOUT_SEC.
     #       Look for these prints in logs and find
     #       "the chain was reorganized while executing the query" line.
-    print("going through giveup...")
-    print(f"got TransportQueryError.query_id: {error.query_id}")
-    print(f"got TransportQueryError.errors: {error.errors}")
-    print(f"got TransportQueryError.data: {error.data}")
-    print(f"got TransportQueryError.extensions: {error.extensions}")
+    app.logger.debug("going through giveup...")
+    app.logger.debug(f"got TransportQueryError.query_id: {error.query_id}")
+    app.logger.debug(f"got TransportQueryError.errors: {error.errors}")
+    app.logger.debug(f"got TransportQueryError.data: {error.data}")
+    app.logger.debug(f"got TransportQueryError.extensions: {error.extensions}")
     return False
 
 
