@@ -1,5 +1,6 @@
 import React, { FC, Fragment } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 
 import TipTile from 'components/shared/TipTile';
@@ -9,12 +10,15 @@ import useIndividualReward from 'hooks/queries/useIndividualReward';
 import useIsDecisionWindowOpen from 'hooks/queries/useIsDecisionWindowOpen';
 import useUqScore from 'hooks/queries/useUqScore';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
+import { ROOT_ROUTES } from 'routes/RootRoutes/routes';
 import useTipsStore from 'store/tips/store';
 
+import styles from './AllocationTipTiles.module.scss';
 import AllocationTipTilesProps from './types';
 
 const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
   const { t, i18n } = useTranslation('translation', { keyPrefix: 'views.allocation.tip' });
+  const navigate = useNavigate();
   const { isDesktop } = useMediaQuery();
   const { isConnected } = useAccount();
   const { data: currentEpoch } = useCurrentEpoch();
@@ -59,8 +63,18 @@ const AllocationTipTiles: FC<AllocationTipTilesProps> = ({ className }) => {
         image="images/uqTooLow.webp"
         infoLabel={i18n.t('common.octantTips')}
         isOpen={isUqTooLowTipVisible}
+        onClick={() => navigate(ROOT_ROUTES.settings.absolute)}
         onClose={() => setWasUqTooLowAlreadyClosed(true)}
-        text={isDesktop ? t('uqTooLow.text.desktop') : t('uqTooLow.text.mobile')}
+        text={
+          <Trans
+            components={[<span className={styles.bold} />]}
+            i18nKey={
+              isDesktop
+                ? 'views.allocation.tip.uqTooLow.text.desktop'
+                : 'views.allocation.tip.uqTooLow.text.mobile'
+            }
+          />
+        }
         title={isDesktop ? t('uqTooLow.title.desktop') : t('uqTooLow.title.mobile')}
       />
       <TipTile
