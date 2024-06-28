@@ -59,14 +59,14 @@ class OctantResource(Resource):
 
 
 def lookup_max_time():
-    return config.SUBGRAPH_RETRY_TIMEOUT
+    return config.SUBGRAPH_RETRY_TIMEOUT_SEC
 
 
 def is_graph_error_permanent(error):
     # TODO: if we differentiate between reasons for the error,
     #       we can differentiate between transient and permanent ones,
     #       so we can return True for permanent ones saving
-    #       up to SUBGRAPH_RETRY_TIMEOUT seconds.
+    #       up to SUBGRAPH_RETRY_TIMEOUT_SEC.
     #       Look for these prints in logs and find
     #       "the chain was reorganized while executing the query" line.
     print("going through giveup...")
