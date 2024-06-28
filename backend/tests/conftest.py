@@ -1506,7 +1506,8 @@ def mock_graphql(
 def mock_failing_gql(
     mocker,
 ):
-    gql_factory.set_url({"SUBGRAPH_ENDPOINT": "http://localhost:12345"})
+    # this URL is not called in this test, but it needs to be a proper URL
+    gql_factory.set_url({"SUBGRAPH_ENDPOINT": "http://domain.example:12345"})
 
     mocker.patch.object(GQLClient, "execute_sync")
     GQLClient.execute_sync.side_effect = TransportQueryError(
