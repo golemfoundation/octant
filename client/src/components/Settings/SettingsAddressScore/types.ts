@@ -4,9 +4,10 @@ export default interface SettingsAddressScoreProps {
   badge: 'primary' | 'secondary';
   className?: string;
   isMessageSigned?: boolean;
-  isScoreHighlighted?: boolean;
   isSignMessageButtonDisabled?: boolean;
   mode: 'score' | 'sign';
   onSignMessage?: () => void;
   score: number;
+  scoreHighlight?: 'black' | 'red';
+  showActiveDot?: boolean;
 }

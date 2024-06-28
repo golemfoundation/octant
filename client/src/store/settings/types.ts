@@ -7,9 +7,11 @@ export interface SettingsData {
   isAllocateOnboardingAlwaysVisible: boolean;
   isCryptoMainValueDisplay: boolean;
   isDelegationCalculatingUQScoreModalOpen: boolean;
+  isDelegationCompleted: boolean;
   isDelegationConnectModalOpen: boolean;
-  // delegation
   isDelegationInProgress: boolean;
+  primaryAddressScore?: number;
+  secondaryAddressScore?: number;
 }
 
 export interface SettingsMethods {
@@ -26,8 +28,10 @@ export interface SettingsMethods {
   setIsDelegationCalculatingUQScoreModalOpen: (
     payload: SettingsData['isDelegationCalculatingUQScoreModalOpen'],
   ) => void;
+  setIsDelegationCompleted: (payload: SettingsData['isDelegationCompleted']) => void;
   setIsDelegationConnectModalOpen: (payload: SettingsData['isDelegationConnectModalOpen']) => void;
-  // delegation
   setIsDelegationInProgress: (payload: SettingsData['isDelegationInProgress']) => void;
+  setPrimaryAddressScore: (payload: SettingsData['primaryAddressScore']) => void;
+  setSecondaryAddressScore: (payload: SettingsData['secondaryAddressScore']) => void;
   setValuesFromLocalStorage: () => void;
 }

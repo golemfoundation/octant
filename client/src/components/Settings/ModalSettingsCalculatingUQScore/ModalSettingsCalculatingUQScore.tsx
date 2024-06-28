@@ -1,14 +1,13 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import SettingsCalculatingUQScore from 'components/Settings/SettingsCalculatingUQScore';
 import Button from 'components/ui/Button';
 import Modal from 'components/ui/Modal';
 import useSettingsStore from 'store/settings/store';
 
 import styles from './ModalSettingsCalculatingUQScore.module.scss';
 import ModalSettingsCalculatingUQScoreProps from './types';
-
-import SettingsCalculatingUQScore from '../SettingsCalculatingUQScore';
 
 const ModalSettingsCalculatingUQScore: FC<ModalSettingsCalculatingUQScoreProps> = ({
   modalProps,
@@ -40,6 +39,8 @@ const ModalSettingsCalculatingUQScore: FC<ModalSettingsCalculatingUQScoreProps> 
           t('calculatingScore')
         )
       }
+      isOverflowOnClickDisabled
+      showCloseButton={false}
       {...modalProps}
     >
       <SettingsCalculatingUQScore />

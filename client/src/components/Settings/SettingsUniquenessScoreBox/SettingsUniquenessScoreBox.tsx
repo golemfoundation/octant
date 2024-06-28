@@ -4,6 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import { wagmiConfig } from 'api/clients/client-wagmi';
+import ModalSettingsCalculatingUQScore from 'components/Settings/ModalSettingsCalculatingUQScore';
+import ModalSettingsCalculatingYourUniqueness from 'components/Settings/ModalSettingsCalculatingYourUniqueness';
+import ModalSettingsRecalculatingScore from 'components/Settings/ModalSettingsRecalculatingScore';
 import SettingsUniquenessScoreAddresses from 'components/Settings/SettingsUniquenessScoreAddresses';
 import BoxRounded from 'components/ui/BoxRounded';
 import Button from 'components/ui/Button';
@@ -11,24 +14,20 @@ import useSettingsStore from 'store/settings/store';
 
 import styles from './SettingsUniquenessScoreBox.module.scss';
 
-import ModalSettingsCalculatingUQScore from '../ModalSettingsCalculatingUQScore';
-import ModalSettingsCalculatingYourUniqueness from '../ModalSettingsCalculatingYourUniqueness';
-import ModalSettingsRecalculatingScore from '../ModalSettingsRecalculatingScore';
-
 const SettingsUniquenessScoreBox = (): ReactNode => {
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
   const {
     isDelegationInProgress,
-    delegationSecondaryAddress,
     isDelegationCalculatingUQScoreModalOpen,
+    isDelegationCompleted,
     setIsDelegationInProgress,
     setIsDelegationConnectModalOpen,
     setDelegationPrimaryAddress,
     setDelegationSecondaryAddress,
     setIsDelegationCalculatingUQScoreModalOpen,
   } = useSettingsStore(state => ({
-    delegationSecondaryAddress: state.data.delegationSecondaryAddress,
     isDelegationCalculatingUQScoreModalOpen: state.data.isDelegationCalculatingUQScoreModalOpen,
+    isDelegationCompleted: state.data.isDelegationCompleted,
     isDelegationInProgress: state.data.isDelegationInProgress,
     setDelegationPrimaryAddress: state.setDelegationPrimaryAddress,
     setDelegationSecondaryAddress: state.setDelegationSecondaryAddress,
@@ -45,7 +44,7 @@ const SettingsUniquenessScoreBox = (): ReactNode => {
   useEffect(() => {
     if (
       !isDelegationInProgress ||
-      delegationSecondaryAddress ||
+      isDelegationCompleted ||
       isDelegationCalculatingUQScoreModalOpen
     ) {
       return;

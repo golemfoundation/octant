@@ -5,6 +5,9 @@ import {
   ARE_OCTANT_TIPS_ALWAYS_VISIBLE,
   DELEGATION_PRIMARY_ADDRESS,
   DELEGATION_SECONDARY_ADDRESS,
+  IS_DELEGATION_COMPLETED,
+  PRIMARY_ADDRESS_SCORE,
+  SECONDARY_ADDRESS_SCORE,
 } from 'constants/localStorageKeys';
 import { getStoreWithMeta } from 'store/utils/getStoreWithMeta';
 
@@ -19,8 +22,11 @@ export const initialState: SettingsData = {
   isAllocateOnboardingAlwaysVisible: false,
   isCryptoMainValueDisplay: true,
   isDelegationCalculatingUQScoreModalOpen: false,
+  isDelegationCompleted: false,
   isDelegationConnectModalOpen: false,
   isDelegationInProgress: false,
+  primaryAddressScore: 0,
+  secondaryAddressScore: 0,
 };
 
 export default getStoreWithMeta<SettingsData, SettingsMethods>({
@@ -39,13 +45,11 @@ export default getStoreWithMeta<SettingsData, SettingsMethods>({
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     setDelegationPrimaryAddress: payload => {
-      localStorage.setItem(DELEGATION_PRIMARY_ADDRESS, JSON.stringify(payload));
       set(state => ({ data: { ...state.data, delegationPrimaryAddress: payload } }));
     },
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     setDelegationSecondaryAddress: payload => {
-      localStorage.setItem(DELEGATION_SECONDARY_ADDRESS, JSON.stringify(payload));
       set(state => ({ data: { ...state.data, delegationSecondaryAddress: payload } }));
     },
 
@@ -73,6 +77,12 @@ export default getStoreWithMeta<SettingsData, SettingsMethods>({
     },
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
+    setIsDelegationCompleted: payload => {
+      localStorage.setItem(IS_DELEGATION_COMPLETED, JSON.stringify(payload));
+      set(state => ({ data: { ...state.data, isDelegationCompleted: payload } }));
+    },
+
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     setIsDelegationConnectModalOpen: payload => {
       set(state => ({ data: { ...state.data, isDelegationConnectModalOpen: payload } }));
     },
@@ -82,12 +92,30 @@ export default getStoreWithMeta<SettingsData, SettingsMethods>({
       set(state => ({ data: { ...state.data, isDelegationInProgress: payload } }));
     },
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    setPrimaryAddressScore: payload => {
+      localStorage.setItem(PRIMARY_ADDRESS_SCORE, JSON.stringify(payload));
+      set(state => ({ data: { ...state.data, primaryAddressScore: payload } }));
+    },
+
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    setSecondaryAddressScore: payload => {
+      localStorage.setItem(SECONDARY_ADDRESS_SCORE, JSON.stringify(payload));
+      set(state => ({ data: { ...state.data, secondaryAddressScore: payload } }));
+    },
+
     setValuesFromLocalStorage: () =>
       set({
         data: {
           ...initialState,
           areOctantTipsAlwaysVisible: JSON.parse(
             localStorage.getItem(ARE_OCTANT_TIPS_ALWAYS_VISIBLE) || 'null',
+          ),
+          delegationPrimaryAddress: JSON.parse(
+            localStorage.getItem(DELEGATION_PRIMARY_ADDRESS) || 'null',
+          ),
+          delegationSecondaryAddress: JSON.parse(
+            localStorage.getItem(DELEGATION_SECONDARY_ADDRESS) || 'null',
           ),
           displayCurrency: JSON.parse(localStorage.getItem(DISPLAY_CURRENCY) || 'null'),
           isAllocateOnboardingAlwaysVisible: JSON.parse(
@@ -96,12 +124,6 @@ export default getStoreWithMeta<SettingsData, SettingsMethods>({
           isCryptoMainValueDisplay: JSON.parse(
             localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY) || 'null',
           ),
-          // delegationPrimaryAddress: JSON.parse(
-          //   localStorage.getItem(DELEGATION_PRIMARY_ADDRESS) || 'null',
-          // ),
-          // delegationSecondaryAddress: JSON.parse(
-          //   localStorage.getItem(DELEGATION_SECONDARY_ADDRESS) || 'null',
-          // ),
         },
         meta: {
           isInitialized: true,

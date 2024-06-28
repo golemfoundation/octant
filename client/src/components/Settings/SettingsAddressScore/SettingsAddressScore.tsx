@@ -17,14 +17,17 @@ const SettingsAddressScore: FC<SettingsAddressScoreProps> = ({
   badge,
   score,
   className,
-  isScoreHighlighted = false,
+  scoreHighlight,
   areBottomCornersRounded = true,
   isMessageSigned,
   isSignMessageButtonDisabled,
   onSignMessage,
   mode,
+  showActiveDot,
 }) => {
   const { address: activeAddress } = useAccount();
+
+  const isActive = activeAddress === address;
 
   return (
     <motion.div
@@ -37,15 +40,36 @@ const SettingsAddressScore: FC<SettingsAddressScoreProps> = ({
     >
       <div className={styles.avatar}>
         <Identicon className={styles.identicon} username={address} />
+        {showActiveDot && (
+          <svg
+            className={cx(styles.activeDot, isActive && styles.isActive)}
+            fill="none"
+            viewBox="0 0 12 12"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              className={styles.activeDotCircle}
+              cx="6"
+              cy="6"
+              fill="#2D9B87"
+              r="5"
+              stroke="#F8F8F8"
+              strokeWidth="2"
+            />
+          </svg>
+        )}
       </div>
       <div className={styles.addressWrapper}>
-        <div className={cx(styles.address, activeAddress === address && styles.isActive)}>
-          {truncateEthAddress(address)}
-        </div>
+        <div className={styles.address}>{truncateEthAddress(address)}</div>
         <span className={cx(styles.badge, badge === 'secondary' && styles.secondary)}>{badge}</span>
       </div>
       {mode === 'score' && (
-        <div className={cx(styles.score, isScoreHighlighted && styles.isScoreHighlighted)}>
+        <div
+          className={cx(
+            styles.score,
+            scoreHighlight && styles[`scoreHighlight--${scoreHighlight}`],
+          )}
+        >
           {score}
         </div>
       )}
