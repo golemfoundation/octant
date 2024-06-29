@@ -1,4 +1,5 @@
 from decimal import Decimal
+from itertools import groupby
 
 from app.engine.projects.rewards.allocations import (
     ProjectAllocationsPayload,
@@ -14,6 +15,7 @@ def test_quadratic_funding_grouping(projects, data_for_qf_max_uq_score):
     payload = ProjectAllocationsPayload(allocations=allocations)
 
     (
+        grouped_allocations,
         result_allocations,
         total_allocated,
     ) = QuadraticFundingAllocations().group_allocations_by_projects(payload)
@@ -30,3 +32,8 @@ def test_quadratic_funding_grouping(projects, data_for_qf_max_uq_score):
     assert result_allocations[2].project_address == projects[2] and result_allocations[
         2
     ].amount == Decimal("974.2640687119285635803239250")
+
+    assert grouped_allocations == groupby(
+        sorted(payload.allocations, key=lambda a: a.project_address),
+        key=lambda a: a.project_address,
+    )

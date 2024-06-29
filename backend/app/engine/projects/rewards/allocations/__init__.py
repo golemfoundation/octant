@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from copy import deepcopy
 from dataclasses import dataclass
 from decimal import Decimal
 from itertools import groupby
@@ -37,16 +38,18 @@ class ProjectAllocations(ABC):
         self, payload: ProjectAllocationsPayload
     ) -> (List[ProjectSumAllocationsDTO], Union[int, Decimal]):
         result_allocations = []
-        total_allocated = 0
-        grouped_allocations = groupby(
+        original_grouped_allocations = groupby(
             sorted(payload.allocations, key=lambda a: a.project_address),
             key=lambda a: a.project_address,
         )
+        grouped_allocations = deepcopy(original_grouped_allocations)
+
+        total_plain_qf = 0
         for project_address, project_allocations in grouped_allocations:
             project_allocations = self._calc_allocations(project_allocations)
             result_allocations.append(
                 ProjectSumAllocationsDTO(project_address, project_allocations)
             )
-            total_allocated += project_allocations
+            total_plain_qf += project_allocations
 
-        return result_allocations, total_allocated
+        return original_grouped_allocations, result_allocations, total_plain_qf
