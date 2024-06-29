@@ -33,7 +33,8 @@ def test_quadratic_funding_grouping(projects, data_for_qf_max_uq_score):
         2
     ].amount == Decimal("974.2640687119285635803239250")
 
-    assert grouped_allocations == groupby(
-        sorted(payload.allocations, key=lambda a: a.project_address),
-        key=lambda a: a.project_address,
-    )
+    grouped_allocations = list(grouped_allocations)
+    assert len(grouped_allocations) == 3
+    assert grouped_allocations[0][0] == projects[1]
+    assert grouped_allocations[1][0] == projects[0]
+    assert grouped_allocations[2][0] == projects[2]

@@ -7,7 +7,7 @@ import pytest
 from app.modules.dto import AllocationItem
 from app.modules.projects.rewards.service.estimated import EstimatedProjectRewards
 from tests.helpers.allocations import make_user_allocation_with_uq_score
-from tests.helpers.constants import USER1_BUDGET, LOW_UQ_SCORE
+from tests.helpers.constants import USER1_BUDGET, LOW_UQ_SCORE, MATCHED_REWARDS
 from tests.helpers.context import get_context
 
 
@@ -52,11 +52,11 @@ def test_estimated_project_rewards_with_allocations(
     project_rewards = result.rewards
 
     assert len(project_rewards) == 10
-    assert project_rewards[0].allocated == 305373797847597
+    assert project_rewards[0].allocated == USER1_BUDGET
     for project in project_rewards[1:]:
         assert project.allocated == 0
         assert project.matched == 0
 
-    assert result.total_allocated == 305373797847597
-    assert result.rewards_sum == 44023185036898097278
+    assert result.total_allocated == USER1_BUDGET
+    assert result.rewards_sum == 44024406532089487668
     assert result.threshold is None

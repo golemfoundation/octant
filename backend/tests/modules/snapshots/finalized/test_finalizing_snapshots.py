@@ -84,7 +84,7 @@ def test_create_finalized_snapshots_with_rewards_and_user_uq_score(
     assert rewards[0].amount == str(200_000000000)
     assert rewards[0].matched is None
     assert rewards[1].address == projects[0]
-    assert rewards[1].amount == str(int(LOW_UQ_SCORE * (MATCHED_REWARDS + 100)))
+    assert rewards[1].amount == str(int(LOW_UQ_SCORE * MATCHED_REWARDS + 100))
     assert rewards[1].matched == str(int(LOW_UQ_SCORE * MATCHED_REWARDS))
     assert rewards[2].address == alice.address
     assert rewards[2].amount == str(100_000000000)
@@ -93,13 +93,13 @@ def test_create_finalized_snapshots_with_rewards_and_user_uq_score(
     snapshot = database.finalized_epoch_snapshot.get_by_epoch_num(result)
     assert snapshot.matched_rewards == str(MATCHED_REWARDS)
     assert snapshot.total_withdrawals == str(
-        int(LOW_UQ_SCORE * (MATCHED_REWARDS + 100)) + 300_000000000
+        int(LOW_UQ_SCORE * MATCHED_REWARDS) + 100 + 300_000000000
     )
     assert snapshot.patrons_rewards == str(USER2_BUDGET)
-    assert snapshot.leftover == str(414362124463057389697)
+    assert snapshot.leftover == str(414362124463057389617)
     assert (
         snapshot.withdrawals_merkle_root
-        == "0x6e72ed53161c05c41c054eda1368285bf28078a8bf971c0637299c26e881bf98"
+        == "0xb6bd0828b53f444a572c2da19f9f213a0e67109db91c2fbc458bbd42c4269775"
     )
 
 

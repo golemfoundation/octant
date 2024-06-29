@@ -51,11 +51,8 @@ class FundingCapPercentCalculator:
             "amount"
         ].sum()
 
-        print(grouped_matched_by_addr, "GROUPED", flush=True)
-
         for project in grouped_matched_by_addr.index:
             if grouped_matched_by_addr[project] > cap_amount:
-                print("ANY?", grouped_matched_by_addr[project], flush=True)
                 grouped_matched_by_addr[project] = cap_amount
 
         return grouped_matched_by_addr.to_dict()
