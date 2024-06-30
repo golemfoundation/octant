@@ -7,7 +7,7 @@ import pytest
 from app.modules.dto import AllocationItem
 from app.modules.projects.rewards.service.estimated import EstimatedProjectRewards
 from tests.helpers.allocations import make_user_allocation_with_uq_score
-from tests.helpers.constants import USER1_BUDGET, LOW_UQ_SCORE, MATCHED_REWARDS
+from tests.helpers.constants import USER1_BUDGET, LOW_UQ_SCORE
 from tests.helpers.context import get_context
 
 

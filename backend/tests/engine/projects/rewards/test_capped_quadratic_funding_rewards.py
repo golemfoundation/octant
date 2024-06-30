@@ -1,9 +1,5 @@
-from collections import defaultdict
-from decimal import Decimal
-
 import pytest
 
-from app.engine.projects.rewards import AllocationItem
 from app.engine.projects.rewards import (
     ProjectRewardsPayload,
     ProjectRewardsResult,
@@ -16,7 +12,6 @@ from app.engine.projects.rewards.quadratic_funding import QuadraticFundingProjec
 from tests.helpers.constants import (
     MATCHED_REWARDS,
     MR_FUNDING_CAP_PERCENT,
-    LOW_UQ_SCORE,
 )
 
 

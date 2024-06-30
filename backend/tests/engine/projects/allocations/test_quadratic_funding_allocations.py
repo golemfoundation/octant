@@ -1,5 +1,4 @@
 from decimal import Decimal
-from itertools import groupby
 
 from app.engine.projects.rewards.allocations import (
     ProjectAllocationsPayload,
