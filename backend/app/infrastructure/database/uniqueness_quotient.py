@@ -1,4 +1,3 @@
-from decimal import Decimal
 from typing import Optional
 
 from app import db
@@ -18,9 +17,6 @@ def get_uq_by_user(user: User, epoch: int) -> Optional[UniquenessQuotient]:
 def get_uq_by_address(user_address: str, epoch: int) -> Optional[UniquenessQuotient]:
     user: User = get_user_by_address(user_address)
 
-    if not user:
-        return None
-
     return get_uq_by_user(user, epoch)
 
 
@@ -32,9 +28,3 @@ def save_uq(user: User, epoch: int, score: float):
     )
 
     db.session.add(uq)
-
-
-def save_uq_from_address(user_address: str, epoch: int, score: Decimal):
-    user: User = get_user_by_address(user_address)
-
-    save_uq(user, epoch, score)
