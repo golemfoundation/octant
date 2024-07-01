@@ -8,6 +8,7 @@ import SettingsProgressPath from 'components/Settings/SettingsProgressPath';
 import BoxRounded from 'components/ui/BoxRounded';
 import Svg from 'components/ui/Svg';
 import useDelegate from 'hooks/mutations/useDelegate';
+import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
 import useSettingsStore from 'store/settings/store';
 import { notificationIconWarning } from 'svg/misc';
@@ -27,6 +28,7 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
     setIsDelegationInProgress,
     setCalculatingUQScoreMode,
     setIsDelegationCompleted,
+    setSecondaryAddressScore,
   } = useSettingsStore(state => ({
     calculatingUQScoreMode: state.data.calculatingUQScoreMode,
     delegationPrimaryAddress: state.data.delegationPrimaryAddress,
@@ -36,6 +38,7 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
     setIsDelegationCalculatingUQScoreModalOpen: state.setIsDelegationCalculatingUQScoreModalOpen,
     setIsDelegationCompleted: state.setIsDelegationCompleted,
     setIsDelegationInProgress: state.setIsDelegationInProgress,
+    setSecondaryAddressScore: state.setSecondaryAddressScore,
   }));
   const { t } = useTranslation('translation', { keyPrefix: 'views.settings' });
   const { address } = useAccount();
@@ -46,7 +49,11 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
     isSuccess: isSecondaryAddressMessageSigned,
   } = useSignMessage();
 
-  const { data: secondaryAddressAntisybilStatusScore } = useAntisybilStatusScore();
+  const { mutateAsync: refreshAntisybilStatus, isSuccess: isSuccessRefreshAntisybilStatus } =
+    useRefreshAntisybilStatus();
+  const { data: secondaryAddressAntisybilStatusScore } = useAntisybilStatusScore({
+    enabled: isSuccessRefreshAntisybilStatus,
+  });
 
   const [lastDoneStep, setLastDoneStep] = useState<null | 0 | 1 | 2>(null);
 
@@ -62,9 +69,10 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
         setTimeout(() => {
           if (secondaryAddressAntisybilStatusScore < 15) {
             setShowCloseButton(true);
+            setIsDelegationInProgress(false);
             return;
           }
-
+          setSecondaryAddressScore(secondaryAddressAntisybilStatusScore);
           setCalculatingUQScoreMode('sign');
         }, 2500);
       }, 2500);
@@ -98,6 +106,11 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
     }
     return 'black';
   }, [isScoreHighlighted, secondaryAddressAntisybilStatusScore]);
+
+  useEffect(() => {
+    refreshAntisybilStatus('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <AnimatePresence initial={false} mode="popLayout">

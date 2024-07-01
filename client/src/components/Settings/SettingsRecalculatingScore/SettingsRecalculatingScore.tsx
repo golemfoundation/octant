@@ -1,9 +1,12 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useAccount } from 'wagmi';
 
 import SettingsAddressScore from 'components/Settings/SettingsAddressScore';
 import SettingsProgressPath from 'components/Settings/SettingsProgressPath';
+import useRefreshAntisybilStatus from 'hooks/mutations/useRefreshAntisybilStatus';
 import useAntisybilStatusScore from 'hooks/queries/useAntisybilStatusScore';
+import useCurrentEpoch from 'hooks/queries/useCurrentEpoch';
+import useUqScore from 'hooks/queries/useUqScore';
 import useSettingsStore from 'store/settings/store';
 
 import SettingsRecalculatingScoreProps from './types';
@@ -11,58 +14,66 @@ import SettingsRecalculatingScoreProps from './types';
 // TODO: add support for delegation recalculation
 const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLastStepDone }) => {
   const [lastDoneStep, setLastDoneStep] = useState<null | 0 | 1 | 2>(null);
-  const { data: antisybilStatusScore, isSuccess } = useAntisybilStatusScore();
+  const { data: currentEpoch } = useCurrentEpoch();
+  const { mutateAsync: refreshAntisybilStatus, isSuccess: isSuccessRefreshAntisybilStatus } =
+    useRefreshAntisybilStatus();
+  const { data: antisybilStatusScore, isSuccess: isSuccessAntisybilStatusScore } =
+    useAntisybilStatusScore({ enabled: isSuccessRefreshAntisybilStatus });
+  const { data: uqScore, isSuccess: isSuccessUqScore } = useUqScore(currentEpoch!, {
+    enabled: isSuccessAntisybilStatusScore,
+  });
   const { address } = useAccount();
+
+  const calculatedUqScore = useMemo(() => {
+    if (antisybilStatusScore === undefined || uqScore === undefined || !lastDoneStep) {
+      return 0;
+    }
+    if (antisybilStatusScore < 20 && uqScore === 100n) {
+      return 20;
+    }
+    return antisybilStatusScore;
+  }, [antisybilStatusScore, uqScore, lastDoneStep]);
 
   const { setPrimaryAddressScore } = useSettingsStore(state => ({
     setPrimaryAddressScore: state.setPrimaryAddressScore,
   }));
 
   useEffect(() => {
-    if (!isSuccess) {
+    if (!isSuccessAntisybilStatusScore) {
       return;
     }
     setLastDoneStep(0);
-  }, [isSuccess]);
+  }, [isSuccessAntisybilStatusScore]);
 
-  // "Checking allowlist", "Finished" mock
   useEffect(() => {
-    if (lastDoneStep === null) {
+    if (lastDoneStep !== 0 || !isSuccessUqScore) {
       return;
     }
-    if (lastDoneStep === 2) {
+    setLastDoneStep(1);
+
+    setTimeout(() => {
+      setLastDoneStep(2);
       setTimeout(() => {
         onLastStepDone();
       }, 2500);
-    }
-
-    setTimeout(
-      () =>
-        setLastDoneStep(prev => {
-          if (prev === null) {
-            return 0;
-          }
-          if (prev === 0) {
-            return 1;
-          }
-          return 2;
-        }),
-      2500,
-    );
+    }, 2500);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lastDoneStep]);
+  }, [lastDoneStep, isSuccessUqScore]);
 
   const scoreHighlight = lastDoneStep && lastDoneStep >= 1 ? 'black' : undefined;
-  const score =
-    lastDoneStep && lastDoneStep >= 1 && antisybilStatusScore ? antisybilStatusScore : 0;
 
   useEffect(() => {
-    if (antisybilStatusScore === undefined) {
+    if (antisybilStatusScore === undefined || uqScore === undefined) {
       return;
     }
-    setPrimaryAddressScore(antisybilStatusScore);
+    setPrimaryAddressScore(calculatedUqScore);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [antisybilStatusScore]);
+  }, [calculatedUqScore]);
+
+  useEffect(() => {
+    refreshAntisybilStatus('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -71,7 +82,7 @@ const SettingsRecalculatingScore: FC<SettingsRecalculatingScoreProps> = ({ onLas
         areBottomCornersRounded={false}
         badge="primary"
         mode="score"
-        score={score}
+        score={calculatedUqScore}
         scoreHighlight={scoreHighlight}
       />
       <SettingsProgressPath lastDoneStep={lastDoneStep} />

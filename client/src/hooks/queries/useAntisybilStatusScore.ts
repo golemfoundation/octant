@@ -5,7 +5,7 @@ import { apiGetAntisybilStatus, Response } from 'api/calls/antisybilStatus';
 import { QUERY_KEYS } from 'api/queryKeys';
 
 export default function useAntisybilStatusScore(
-  options?: UseQueryOptions<Response, unknown, number, any>,
+  options?: Omit<UseQueryOptions<Response, unknown, number, any>, 'queryKey'>,
 ): UseQueryResult<number, unknown> {
   const { address } = useAccount();
   return useQuery({
