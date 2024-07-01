@@ -1,7 +1,9 @@
 import pytest
 
 from app.engine.projects.rewards.threshold import ProjectThresholdPayload
-from app.engine.projects.rewards.threshold.default import DefaultProjectThreshold
+from app.engine.projects.rewards.threshold.preliminary import (
+    PreliminaryProjectThreshold,
+)
 
 
 @pytest.mark.parametrize(
@@ -19,11 +21,11 @@ from app.engine.projects.rewards.threshold.default import DefaultProjectThreshol
         (9987_443300000, 0, 2, 0),
     ],
 )
-def test_default_threshold(
+def test_preliminary_threshold(
     allocated, projects_count, projects_count_multiplier, expected
 ):
     payload = ProjectThresholdPayload(allocated, projects_count)
-    uut = DefaultProjectThreshold(projects_count_multiplier)
+    uut = PreliminaryProjectThreshold(projects_count_multiplier)
 
     result = uut.calculate_threshold(payload)
 

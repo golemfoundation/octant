@@ -16,7 +16,7 @@ api.add_namespace(ns)
 user_allocations_payload_item = api.model(
     "UserAllocationPayloadItem",
     {
-        "projectAddress": fields.String(
+        "proposalAddress": fields.String(
             required=True,
             description="Project address",
         ),

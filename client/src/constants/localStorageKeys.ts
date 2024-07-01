@@ -85,3 +85,8 @@ export const WAS_ALLOCATE_REWARDS_ALREADY_CLOSED_TIP = getLocalStorageKey(
   tipTilesPrefix,
   'wasAllocateRewardsAlreadyClosed',
 );
+
+export const WAS_UQ_TOO_LOW_ALREADY_CLOSED_TIP = getLocalStorageKey(
+  tipTilesPrefix,
+  'wasUqTooLowAlreadyClosed',
+);

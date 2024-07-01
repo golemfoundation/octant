@@ -45,9 +45,19 @@ export const connectWallet = ({
   isTOSAccepted = false,
   isPatronModeEnabled = false,
 }: ConnectWalletParameters): Chainable<any> => {
+  cy.intercept('GET', '/user/*/uq/*', { body: { uniquenessQuotient: '1.0' } });
   cy.intercept('GET', '/user/*/tos', { body: { accepted: isTOSAccepted } });
   cy.intercept('GET', '/user/*/patron-mode', { body: { status: isPatronModeEnabled } });
   cy.intercept('PATCH', '/user/*/patron-mode', { body: { status: !isPatronModeEnabled } });
+  cy.intercept('POST', '/allocations/leverage/*', {
+    body: { leverage: '100', matched: [], threshold: null },
+  });
+  /**
+   * Setting intercepts here is too late. It should be done before view loads.
+   * Making a reload is hack to skip that.
+   */
+  cy.reload();
+  loadersShouldNotExist();
   cy.disconnectMetamaskWalletFromAllDapps();
   cy.wait(500);
   cy.get('[data-test=MainLayout__Button--connect]').click();

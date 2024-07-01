@@ -309,7 +309,13 @@ const AllocationItem: FC<AllocationItemProps> = ({
             </div>
             <InputText
               ref={inputRef}
-              className={cx(styles.input, isEpoch1 && styles.isEpoch1, isError && styles.isError)}
+              className={cx(
+                styles.inputWrapper,
+                isEpoch1 && styles.isEpoch1,
+                isError && styles.isError,
+                !!value && styles.isValue,
+              )}
+              classNameInput={cx(value && styles.isValue)}
               dataTest="AllocationItem__InputText"
               error={isError}
               inputMode="decimal"

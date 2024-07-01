@@ -20,6 +20,7 @@ class Config(object):
     TEST_DIR = os.path.abspath(os.path.join(PROJECT_ROOT, "tests"))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SUBGRAPH_ENDPOINT = os.getenv("SUBGRAPH_ENDPOINT")
+    SUBGRAPH_RETRY_TIMEOUT_SEC = int(os.getenv("SUBGRAPH_RETRY_TIMEOUT_SEC", 10))
     WEB3_PROVIDER = Web3.HTTPProvider(os.getenv("ETH_RPC_PROVIDER_URL"))
     ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY")
     BITQUERY_API_KEY = os.getenv("BITQUERY_API_KEY")
@@ -70,6 +71,7 @@ class Config(object):
     MAINNET_PROJECT_CIDS = os.getenv(
         "MAINNET_PROPOSAL_CIDS", DEFAULT_MAINNET_PROJECT_CIDS
     )
+    ADDRESSES = os.getenv("ADDRESSES")
 
 
 class ProdConfig(Config):
@@ -105,6 +107,7 @@ class DevConfig(Config):
     # Put the db file in project root
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{DB_PATH}"
+    SUBGRAPH_RETRY_TIMEOUT_SEC = 2
     X_REAL_IP_REQUIRED = parse_bool(os.getenv("X_REAL_IP_REQUIRED", "false"))
 
 
@@ -138,6 +141,8 @@ class TestConfig(Config):
     MAINNET_PROJECT_CIDS = DEFAULT_MAINNET_PROJECT_CIDS
     DELEGATION_SALT = "salt"
     DELEGATION_SALT_PRIMARY = "salt_primary"
+    ADDRESSES = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+    SUBGRAPH_RETRY_TIMEOUT_SEC = 2
 
 
 def get_config():

@@ -1,13 +1,18 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Query } from '@tanstack/react-query';
 
-import { ROOTS } from 'api/queryKeys';
+import { QUERY_KEYS, ROOTS } from 'api/queryKeys';
 import i18n from 'i18n';
 import toastService from 'services/toastService';
 
 import { QueryMutationError, QueryMutationErrorConfig, IgnoredQueries } from './types';
 
-const IGNORED_QUERIES: IgnoredQueries = [ROOTS.cryptoValues, ROOTS.projectsIpfsResults];
+const IGNORED_QUERIES: IgnoredQueries = [
+  ROOTS.cryptoValues,
+  ROOTS.individualReward,
+  ROOTS.projectsIpfsResults,
+  QUERY_KEYS.withdrawals,
+];
 
 const errors: QueryMutationErrorConfig = {
   4001: {

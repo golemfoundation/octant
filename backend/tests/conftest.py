@@ -7,17 +7,20 @@ import urllib.request
 from unittest.mock import MagicMock, Mock
 
 import gql
+from gql.transport.exceptions import TransportQueryError
 import pytest
+from flask import current_app
 from flask import g as request_context
 from flask.testing import FlaskClient
-from flask import current_app
 from requests import RequestException
 from web3 import Web3
 
 from app import create_app
 from app.engine.user.effective_deposit import DepositEvent, EventType, UserDeposit
+from app.exceptions import ExternalApiException
 from app.extensions import db, deposits, glm, gql_factory, w3, vault, epochs
 from app.infrastructure import database
+from app.infrastructure import Client as GQLClient
 from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.erc20 import ERC20
 from app.infrastructure.contracts.projects import Projects
@@ -28,7 +31,6 @@ from app.legacy.crypto.eip712 import build_allocations_eip712_data, sign
 from app.modules.common.verifier import Verifier
 from app.modules.dto import AccountFundsDTO, AllocationItem, SignatureOpType
 from app.settings import DevConfig, TestConfig
-from app.exceptions import ExternalApiException
 from tests.helpers import make_user_allocation
 from tests.helpers.constants import (
     STARTING_EPOCH,
@@ -61,6 +63,8 @@ from tests.helpers.constants import (
     MULTISIG_MOCKED_SAFE_HASH,
     MULTISIG_ADDRESS,
     PPF,
+    MAX_UQ_SCORE,
+    LOW_UQ_SCORE,
 )
 from tests.helpers.context import get_context
 from tests.helpers.gql_client import MockGQLClient
@@ -201,7 +205,7 @@ def mock_gitcoin_passport_fetch_stamps(*args, **kwargs):
                             "https://w3id.org/vc/status-list/2021/v1",
                         ],
                         "issuanceDate": "2024-03-12T14:28:53.876Z",
-                        "expirationDate": "2024-06-10T14:28:53.876Z",
+                        "expirationDate": "2090-01-01T00:00:00.000Z",
                         "credentialSubject": {
                             "id": "did:pkh:eip155:1:0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
                             "hash": "v0.0.0:pQzBR3arZrlQXpJ6KRGxKEjhR03DyQ05ois9EmRNrAQ=",
@@ -210,6 +214,77 @@ def mock_gitcoin_passport_fetch_stamps(*args, **kwargs):
                                 "provider": "https://schema.org/Text",
                             },
                             "provider": "Linkedin",
+                        },
+                    },
+                },
+                {
+                    "version": "1.0.0",
+                    "credential": {
+                        "type": ["VerifiableCredential"],
+                        "proof": {
+                            "type": "EthereumEip712Signature2021",
+                            "created": "2024-03-12T14:24:07.018Z",
+                            "@context": "https://w3id.org/security/suites/eip712sig-2021/v1",
+                            "proofValue": "0x2547250aca7112a8488eb45a62dfabc8f5f6e4ecc1bf24f8e28839ce1ff7e786496cf5eb5ffb9eaa27bbcf58ecd66bc966d20844b7b5a7666d4fbbc38f609b641c",
+                            "eip712Domain": {
+                                "types": {
+                                    "Proof": [
+                                        {"name": "@context", "type": "string"},
+                                        {"name": "created", "type": "string"},
+                                        {"name": "proofPurpose", "type": "string"},
+                                        {"name": "type", "type": "string"},
+                                        {
+                                            "name": "verificationMethod",
+                                            "type": "string",
+                                        },
+                                    ],
+                                    "@context": [
+                                        {"name": "hash", "type": "string"},
+                                        {"name": "provider", "type": "string"},
+                                    ],
+                                    "Document": [
+                                        {"name": "@context", "type": "string[]"},
+                                        {
+                                            "name": "credentialSubject",
+                                            "type": "CredentialSubject",
+                                        },
+                                        {"name": "expirationDate", "type": "string"},
+                                        {"name": "issuanceDate", "type": "string"},
+                                        {"name": "issuer", "type": "string"},
+                                        {"name": "proof", "type": "Proof"},
+                                        {"name": "type", "type": "string[]"},
+                                    ],
+                                    "EIP712Domain": [
+                                        {"name": "name", "type": "string"}
+                                    ],
+                                    "CredentialSubject": [
+                                        {"name": "@context", "type": "@context"},
+                                        {"name": "hash", "type": "string"},
+                                        {"name": "id", "type": "string"},
+                                        {"name": "provider", "type": "string"},
+                                    ],
+                                },
+                                "domain": {"name": "VerifiableCredential"},
+                                "primaryType": "Document",
+                            },
+                            "proofPurpose": "assertionMethod",
+                            "verificationMethod": "did:ethr:0xd6f8d6ca86aa01e551a311d670a0d1bd8577e5fb#controller",
+                        },
+                        "issuer": "did:ethr:0xd6f8d6ca86aa01e551a311d670a0d1bd8577e5fb",
+                        "@context": [
+                            "https://www.w3.org/2018/credentials/v1",
+                            "https://w3id.org/vc/status-list/2021/v1",
+                        ],
+                        "issuanceDate": "2024-03-12T14:24:07.018Z",
+                        "expirationDate": "2099-01-01T00:00:00.000Z",
+                        "credentialSubject": {
+                            "id": "did:pkh:eip155:1:0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+                            "hash": "v0.0.0:PM/AuRacZWQ3McP8Dr6Ux+yb8PcVjeS7rlVcc6ry/2Q=",
+                            "@context": {
+                                "hash": "https://schema.org/Text",
+                                "provider": "https://schema.org/Text",
+                            },
+                            "provider": "Discord",
                         },
                     },
                 },
@@ -468,6 +543,7 @@ def deployment(pytestconfig):
     conf = DevConfig
     graph_url = os.environ["SUBGRAPH_URL"]
     conf.SUBGRAPH_ENDPOINT = f"{graph_url}/subgraphs/name/{graph_name}"
+    conf.SUBGRAPH_RETRY_TIMEOUT_SEC = 10
     conf.GLM_CONTRACT_ADDRESS = envs["GLM_CONTRACT_ADDRESS"]
     conf.DEPOSITS_CONTRACT_ADDRESS = envs["DEPOSITS_CONTRACT_ADDRESS"]
     conf.EPOCHS_CONTRACT_ADDRESS = envs["EPOCHS_CONTRACT_ADDRESS"]
@@ -798,6 +874,9 @@ def app():
     _app = create_app(TestConfig)
 
     with _app.app_context():
+        db.session.close()
+        db.drop_all()
+
         db.create_all()
 
     ctx = _app.test_request_context()
@@ -880,7 +959,7 @@ def patch_epochs(monkeypatch):
     monkeypatch.setattr("app.legacy.controllers.snapshots.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.legacy.core.projects.epochs", MOCK_EPOCHS)
     monkeypatch.setattr("app.context.epoch_state.epochs", MOCK_EPOCHS)
-    monkeypatch.setattr("app.context.epoch_details.epochs", MOCK_EPOCHS)
+    monkeypatch.setattr("app.context.epoch.factory.epochs", MOCK_EPOCHS)
 
     MOCK_EPOCHS.get_pending_epoch.return_value = MOCKED_PENDING_EPOCH_NO
     MOCK_EPOCHS.get_current_epoch.return_value = MOCKED_CURRENT_EPOCH_NO
@@ -991,6 +1070,7 @@ def patch_last_finalized_snapshot(monkeypatch):
         "app.legacy.controllers.snapshots.get_last_finalized_snapshot",
         MOCK_LAST_FINALIZED_SNAPSHOT,
     )
+
     MOCK_LAST_FINALIZED_SNAPSHOT.return_value = 3
 
 
@@ -1038,7 +1118,7 @@ def patch_etherscan_transactions_api(monkeypatch):
 @pytest.fixture(scope="function")
 def patch_etherscan_get_block_api(monkeypatch):
     monkeypatch.setattr(
-        "app.context.epoch_details.get_block_num_from_ts",
+        "app.context.epoch.block_range.get_block_num_from_ts",
         mock_etherscan_api_get_block_num_from_ts,
     )
 
@@ -1084,6 +1164,21 @@ def patch_safe_api_user_details(monkeypatch):
         "app.modules.multisig_signatures.core.get_user_details",
         mock_safe_api_user_details,
     )
+
+
+@pytest.fixture(scope="function")
+def mock_users_db_with_scores(app, user_accounts):
+    alice = database.user.add_user(user_accounts[0].address)
+    bob = database.user.add_user(user_accounts[1].address)
+    carol = database.user.add_user(user_accounts[2].address)
+
+    db.session.commit()
+
+    database.uniqueness_quotient.save_uq(alice, 4, LOW_UQ_SCORE)
+    database.uniqueness_quotient.save_uq(bob, 4, MAX_UQ_SCORE)
+    database.uniqueness_quotient.save_uq(carol, 4, LOW_UQ_SCORE)
+
+    return alice, bob, carol
 
 
 @pytest.fixture(scope="function")
@@ -1341,6 +1436,7 @@ def mock_user_budgets(alice, bob, carol):
         bob.address: USER2_BUDGET,
         carol.address: USER3_BUDGET,
     }
+    user_budgets_service_mock.get_budget.return_value = USER1_BUDGET
 
     return user_budgets_service_mock
 
@@ -1429,8 +1525,22 @@ def mock_graphql(
 
 
 @pytest.fixture(scope="function")
+def mock_failing_gql(
+    app,
+    mocker,
+):
+    # this URL is not called in this test, but it needs to be a proper URL
+    gql_factory.set_url({"SUBGRAPH_ENDPOINT": "http://domain.example:12345"})
+
+    mocker.patch.object(GQLClient, "execute_sync")
+    GQLClient.execute_sync.side_effect = TransportQueryError(
+        "the chain was reorganized while executing the query"
+    )
+
+
+@pytest.fixture(scope="function")
 def mock_uniqueness_quotients():
     uniqueness_quotients = Mock()
-    uniqueness_quotients.calculate.return_value = "42"
+    uniqueness_quotients.calculate.return_value = LOW_UQ_SCORE
 
     return uniqueness_quotients

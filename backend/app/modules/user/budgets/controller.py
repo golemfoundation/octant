@@ -32,10 +32,8 @@ def get_budget(user_address: str, epoch_num: int) -> int:
 
 
 def get_upcoming_user_budget(user_address: str) -> int:
-    context = state_context(EpochState.CURRENT, is_simulated=True)
-    service: UpcomingUserBudgets = get_services(
-        context.epoch_state
-    ).user_budgets_service
+    context = state_context(EpochState.SIMULATED, with_block_range=True)
+    service: UpcomingUserBudgets = get_services(EpochState.CURRENT).user_budgets_service
 
     return service.get_budget(context, user_address)
 

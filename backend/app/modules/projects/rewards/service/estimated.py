@@ -21,10 +21,15 @@ class EstimatedProjectRewards(SavedProjectRewards, Model):
         project_settings = context.epoch_settings.project
         all_projects = context.projects_details.projects
         matched_rewards = self.octant_rewards.get_matched_rewards(context)
-        allocations = database.allocations.get_all(context.epoch_details.epoch_num)
+        allocations = database.allocations.get_all_with_uqs(
+            context.epoch_details.epoch_num
+        )
 
         projects_rewards = get_projects_rewards(
-            project_settings, allocations, all_projects, matched_rewards
+            project_settings,
+            allocations,
+            all_projects,
+            matched_rewards,
         )
 
         return projects_rewards

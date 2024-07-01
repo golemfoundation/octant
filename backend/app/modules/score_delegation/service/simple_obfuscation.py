@@ -4,10 +4,11 @@ from typing import Protocol, runtime_checkable, Tuple, Container
 from app.context.manager import Context
 from app.extensions import db
 from app.infrastructure import database
+from app.modules.common.delegation import get_hashed_addresses
 from app.modules.common.verifier import Verifier
 from app.modules.dto import ScoreDelegationPayload
 from app.modules.score_delegation import core
-from app.modules.score_delegation.core import get_hashed_addresses, ActionType
+from app.modules.score_delegation.core import ActionType
 from app.pydantic import Model
 
 from flask import current_app as app
@@ -54,9 +55,8 @@ class SimpleObfuscationDelegation(Model):
 
     def delegate(self, context: Context, payload: ScoreDelegationPayload):
         primary, secondary, both = get_hashed_addresses(
-            payload,
-            app.config["DELEGATION_SALT"],
-            app.config["DELEGATION_SALT_PRIMARY"],
+            payload.primary_addr,
+            payload.secondary_addr,
         )
         self._delegation(context, payload, ActionType.DELEGATION)
         database.score_delegation.save_delegation(primary, secondary, both)
@@ -79,9 +79,7 @@ class SimpleObfuscationDelegation(Model):
         self, context: Context, payload: ScoreDelegationPayload, action: ActionType
     ):
         hashed_addresses = get_hashed_addresses(
-            payload,
-            app.config["DELEGATION_SALT"],
-            app.config["DELEGATION_SALT_PRIMARY"],
+            payload.primary_addr, payload.secondary_addr
         )
         score, expires_at, stamps = self.antisybil.fetch_antisybil_status(
             context, payload.secondary_addr

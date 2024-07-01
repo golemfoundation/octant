@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Optional
 
 from app.extensions import db
@@ -172,12 +173,6 @@ class EpochZeroClaim(BaseModel):
     claim_nonce = db.Column(db.Integer(), unique=True, nullable=True)
 
 
-class IdentityCallsVerifications(BaseModel):
-    __tablename__ = "identity_call_verifications"
-    id = Column(db.Integer, primary_key=True, nullable=False)
-    address = Column(db.String(42), nullable=False, unique=True)
-
-
 class MultisigSignatures(BaseModel):
     __tablename__ = "multisig_signatures"
 
@@ -204,3 +199,8 @@ class UniquenessQuotient(BaseModel):
     epoch = Column(db.Integer, nullable=False)
     user_id = Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     score = Column(db.String, nullable=False)
+    user = relationship("User", backref=db.backref("uniqueness_quotients", lazy=True))
+
+    @property
+    def validated_score(self):
+        return Decimal(self.score)

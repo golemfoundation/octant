@@ -1,8 +1,5 @@
-from itertools import permutations
-from typing import NamedTuple
 from enum import Enum
-from eth_utils.address import to_checksum_address
-import hashlib
+from itertools import permutations
 from typing import Tuple
 
 from app.exceptions import (
@@ -16,16 +13,10 @@ from app.modules.common.crypto.signature import (
     EncodingStandardFor,
     verify_signed_message,
 )
+from app.modules.common.delegation import HashedAddresses, hash_addresses
 from app.modules.dto import ScoreDelegationPayload
 
-
-MIN_SCORE = 15
-
-
-class HashedAddresses(NamedTuple):
-    primary_addr_hash: str
-    secondary_addr_hash: str
-    both_hash: str
+MIN_SCORE = 20
 
 
 class ActionType(Enum):
@@ -37,29 +28,6 @@ def build_score_delegation_message(primary_addr: str, secondary_addr: str) -> st
     return f"Delegation of UQ score from {secondary_addr} to {primary_addr}"
 
 
-def get_hashed_addresses(
-    payload: ScoreDelegationPayload,
-    salt: str,
-    salt_primary: str,
-    normalize: bool = True,
-) -> HashedAddresses:
-    primary = payload.primary_addr
-    secondary = payload.secondary_addr
-    if normalize:
-        primary = to_checksum_address(primary)
-        secondary = to_checksum_address(secondary)
-    primary_addr_data = salt_primary + primary
-    secondary_addr_data = salt + secondary
-
-    hashed_primary = hashlib.sha256(primary_addr_data.encode()).hexdigest()
-    hashed_secondary = hashlib.sha256(secondary_addr_data.encode()).hexdigest()
-    hashed_both = hashlib.sha256(
-        (primary_addr_data + secondary_addr_data).encode()
-    ).hexdigest()
-
-    return HashedAddresses(hashed_primary, hashed_secondary, hashed_both)
-
-
 def delegation_check(
     addresses: list[str],
     all_hashes: set[str],
@@ -69,14 +37,8 @@ def delegation_check(
 ) -> set[Tuple[str, str]]:
     result = []
     for secondary, primary in permutations(addresses, 2):
-        payload = ScoreDelegationPayload(
-            primary_addr=primary,
-            secondary_addr=secondary,
-            primary_addr_signature=None,
-            secondary_addr_signature=None,
-        )
-        _, _, both = get_hashed_addresses(
-            payload, salt, salt_primary, normalize=normalize
+        _, _, both = hash_addresses(
+            primary, secondary, salt, salt_primary, normalize=normalize
         )
         if both in all_hashes:
             result.append((secondary, primary))

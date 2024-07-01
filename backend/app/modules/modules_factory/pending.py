@@ -19,6 +19,7 @@ from app.modules.modules_factory.protocols import (
     SavedProjectRewardsService,
     MultisigSignatures,
     ProjectsMetadataService,
+    UniquenessQuotients,
 )
 from app.modules.multisig_signatures.service.offchain import OffchainMultisigSignatures
 from app.modules.octant_rewards.general.service.pending import PendingOctantRewards
@@ -43,10 +44,6 @@ from app.modules.user.antisybil.service.initial import (
 from app.modules.user.budgets.service.saved import SavedUserBudgets
 from app.modules.user.deposits.service.saved import SavedUserDeposits
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
-from app.modules.user.participation.epoch_0.service.whitelist import WhitelistEpoch0
-from app.modules.user.participation.identity_call.service.whitelist import (
-    WhitelistIdentityCall,
-)
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.withdrawals.service.pending import PendingWithdrawals
 from app.pydantic import Model
@@ -89,6 +86,7 @@ class PendingServices(Model):
     project_rewards_service: PendingProjectRewardsProtocol
     multisig_signatures_service: MultisigSignatures
     projects_metadata_service: ProjectsMetadataService
+    uniqueness_quotients: UniquenessQuotients
 
     @staticmethod
     def create(chain_id: int) -> "PendingServices":
@@ -97,9 +95,7 @@ class PendingServices(Model):
         saved_user_budgets = SavedUserBudgets()
         user_nonce = SavedUserAllocationsNonce()
         uniqueness_quotients = PreliminaryUQ(
-            antisybil=GitcoinPassportAntisybil(),
-            epoch0_whitelist=WhitelistEpoch0(),
-            identity_call_whitelist=WhitelistIdentityCall(),
+            antisybil=GitcoinPassportAntisybil(), budgets=saved_user_budgets
         )
 
         allocations_verifier = PendingUserAllocationsVerifier(
@@ -157,4 +153,5 @@ class PendingServices(Model):
             project_rewards_service=project_rewards,
             multisig_signatures_service=multisig_signatures,
             projects_metadata_service=StaticProjectsMetadataService(),
+            uniqueness_quotients=uniqueness_quotients,
         )

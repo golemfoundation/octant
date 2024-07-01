@@ -7,6 +7,7 @@ export type TipTileProps = {
   infoLabel: string;
   isOpen: boolean;
   key?: string;
+  onClick?: () => void;
   onClose: () => void;
   text: string | ReactElement;
   title: string;

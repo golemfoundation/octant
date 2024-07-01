@@ -6,6 +6,7 @@ export type InputTextVariant = (typeof INPUT_TEXT_VARIANTS)[number];
 export default interface InputTextProps {
   autocomplete?: string;
   className?: string;
+  classNameInput?: string;
   dataTest?: string;
   error?: string | boolean;
   inputMode?: HTMLAttributes<HTMLInputElement>['inputMode'];

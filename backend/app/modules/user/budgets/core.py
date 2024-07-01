@@ -1,7 +1,7 @@
 from typing import List
 
 from app.constants import ZERO_ADDRESS
-from app.context.epoch_details import EpochDetails
+from app.context.epoch.details import EpochDetails
 from app.context.manager import Context
 from app.engine.user.budget import UserBudgetPayload
 from app.engine.user.effective_deposit import DepositEvent, EventType

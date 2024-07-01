@@ -84,7 +84,9 @@ class PendingOctantRewards(Model):
         pending_snapshot: PendingEpochSnapshot,
         matched_rewards: int,
     ) -> int:
-        allocations = database.allocations.get_all(context.epoch_details.epoch_num)
+        allocations = database.allocations.get_all_with_uqs(
+            context.epoch_details.epoch_num
+        )
         _, user_rewards = self.user_rewards.get_claimed_rewards(context)
         project_rewards = self.project_rewards.get_finalized_project_rewards(
             context, allocations, context.projects_details.projects, matched_rewards
@@ -99,5 +101,7 @@ class PendingOctantRewards(Model):
                 else None,
                 ppf=pending_snapshot.validated_ppf,
                 total_withdrawals=user_rewards + project_rewards.rewards_sum,
+                total_matched_rewards=matched_rewards,
+                used_matched_rewards=sum(r.matched for r in project_rewards.rewards),
             )
         )

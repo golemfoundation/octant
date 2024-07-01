@@ -44,10 +44,6 @@ from app.modules.user.events_generator.service.db_and_graph import (
     DbAndGraphEventsGenerator,
 )
 from app.modules.user.patron_mode.service.events_based import EventsBasedUserPatronMode
-from app.modules.user.participation.epoch_0.service.whitelist import WhitelistEpoch0
-from app.modules.user.participation.identity_call.service.whitelist import (
-    WhitelistIdentityCall,
-)
 from app.modules.user.rewards.service.calculated import CalculatedUserRewards
 from app.modules.user.rewards.service.saved import SavedUserRewards
 from app.modules.user.tos.service.initial import InitialUserTos, InitialUserTosVerifier
@@ -144,9 +140,7 @@ def test_pending_services_factory():
     saved_user_budgets = SavedUserBudgets()
     user_nonce = SavedUserAllocationsNonce()
     uniqueness_quotients = PreliminaryUQ(
-        antisybil=GitcoinPassportAntisybil(),
-        epoch0_whitelist=WhitelistEpoch0(),
-        identity_call_whitelist=WhitelistIdentityCall(),
+        antisybil=GitcoinPassportAntisybil(), budgets=saved_user_budgets
     )
     allocations_verifier = PendingUserAllocationsVerifier(
         user_nonce=user_nonce,
@@ -246,7 +240,7 @@ def test_finalized_services_factory():
         patrons_mode=events_based_patron_mode,
         allocations=saved_user_allocations,
     )
-    withdrawals_service = FinalizedWithdrawals(user_rewards=user_rewards)
+    withdrawals_service = FinalizedWithdrawals()
     project_rewards_service = SavedProjectRewards()
 
     assert result.user_deposits_service == SavedUserDeposits()

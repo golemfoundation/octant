@@ -13,6 +13,7 @@ import {
   ALLOCATION_REWARDS_FOR_PROJECTS,
   HAS_ONBOARDING_BEEN_CLOSED,
   LAST_SEEN_STEP,
+  WAS_UQ_TOO_LOW_ALREADY_CLOSED_TIP,
 } from 'constants/localStorageKeys';
 import { initialState as settingsStoreInitialState } from 'store/settings/store';
 import { initialState as tipsStoreInitialState } from 'store/tips/store';
@@ -137,6 +138,12 @@ const LocalStorageService = () => {
       tipsStoreInitialState.wasWithdrawAlreadyClosed,
     );
 
+  const validateWasUqTooLowAlreadyClosed = (): void =>
+    validateBoolean(
+      WAS_UQ_TOO_LOW_ALREADY_CLOSED_TIP,
+      tipsStoreInitialState.wasUqTooLowAlreadyClosed,
+    );
+
   const validateRewardsForProjects = (): void => validateBigInt(ALLOCATION_REWARDS_FOR_PROJECTS);
 
   const init = (): void => {
@@ -151,6 +158,7 @@ const LocalStorageService = () => {
     validateWasLockGLMAlreadyClosed();
     validateWasRewardsAlreadyClosed();
     validateWasWithdrawAlreadyClosed();
+    validateWasUqTooLowAlreadyClosed();
     validateRewardsForProjects();
     validateHasOnboardingBeenClosed();
     validateLastSeenStep();

@@ -15,6 +15,7 @@ from app.modules.user.antisybil.controller import (
     update_user_antisybil_status,
 )
 from app.settings import config
+from app.modules.uq import controller as uq_controller
 
 ns = Namespace("user", description="Octant user settings")
 api.add_namespace(ns)
@@ -54,7 +55,6 @@ tos_consent_post_parser.add_argument(
     case_sensitive=False,
 )
 
-
 user_patron_mode_status_model = api.model(
     "PatronModeStatus",
     {
@@ -64,7 +64,6 @@ user_patron_mode_status_model = api.model(
         ),
     },
 )
-
 
 patrons_model = api.model(
     "Patrons",
@@ -81,6 +80,15 @@ user_patron_mode_request = api.model(
         "signature": fields.String(
             required=True,
             description="signature of the patron mode status message as a hexadecimal string",
+        ),
+    },
+)
+
+uq_score_model = api.model(
+    "UQScore",
+    {
+        "uniquenessQuotient": fields.String(
+            required=True, description="Uniqueness quotient score"
         ),
     },
 )
@@ -227,3 +235,24 @@ class Patrons(OctantResource):
         app.logger.debug(f"Patrons addresses: {patrons}")
 
         return {"patrons": patrons}
+
+
+@ns.route("/<string:user_address>/uq/<int:epoch>")
+class UQScore(OctantResource):
+    @ns.doc(
+        description="Returns user's uniqueness quotient score for given epoch",
+        params={
+            "user_address": "User ethereum address in hexadecimal format (case-insensitive, prefixed with 0x)",
+            "epoch": "Epoch number",
+        },
+    )
+    @ns.marshal_with(uq_score_model)
+    @ns.response(200, "uniqueness quotient retrieved")
+    def get(self, user_address: str, epoch: int):
+        app.logger.debug(
+            f"Getting uniqueness quotient for user_address {user_address} and epoch {epoch}"
+        )
+        uq_score = uq_controller.get_uq(user_address, epoch)
+        app.logger.debug(f"Uniqueness quotient: {uq_score}")
+
+        return {"uniquenessQuotient": uq_score}

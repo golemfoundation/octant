@@ -19,6 +19,4 @@ class UserBudgetWithPPF(UserBudget):
 
         calced_budget = int(individual_share * full_individual_rewards)
 
-        # TODO vanilla_individual_rewards should be named vanilla_individual_rewards
-
         return calced_budget
