@@ -30,7 +30,7 @@ def test_save_pending_epoch_snapshot(mock_user_deposits, mock_octant_rewards):
     assert snapshot.eth_proceeds == str(ETH_PROCEEDS)
     assert snapshot.total_effective_deposit == "100022700000000000099999994"
     assert snapshot.locked_ratio == "0.100022700000000000099999994"
-    assert snapshot.all_individual_rewards == "101814368807786782825"
+    assert snapshot.vanilla_individual_rewards == "101814368807786782825"
     assert snapshot.total_rewards == "321928767123288031232"
     assert snapshot.operational_cost == "80482191780822000000"
     assert snapshot.ppf == str(PPF)

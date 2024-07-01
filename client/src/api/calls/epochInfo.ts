@@ -5,7 +5,6 @@ import apiService from 'services/apiService';
 
 export type Response = {
   communityFund: string | null;
-  individualRewards: string;
   leftover: string | null;
   matchedRewards: string | null;
   operationalCost: string;
@@ -15,6 +14,7 @@ export type Response = {
   totalEffectiveDeposit: string;
   totalRewards: string;
   totalWithdrawals: string | null;
+  vanillaIndividualRewards: string;
 };
 
 export async function apiGetEpochInfo(

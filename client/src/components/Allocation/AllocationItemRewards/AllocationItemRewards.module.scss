@@ -1,84 +1,35 @@
 .root {
-  width: 100%;
-  text-align: left;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  font-size: $font-size-12;
-  font-weight: $font-weight-semibold;
-  color: $color-octant-grey5;
-  line-height: 2.4rem;
-
-  /**
-   * When AW is open default color is orange, unless isDonationAboveThreshold.
-   * isRewardsDataDefined can be false when no allocations are yet made.
-   * That is why definition of color in &.isRewardsDataDefined is not enough.
-   */
-  &.isDecisionWindowOpen {
-    color: $color-octant-orange;
-  }
-  &:not(.isDecisionWindowOpen) {
-    color: $color-octant-grey5;
-  }
-
-  &.isRewardsDataDefined {
-    &:not(.isDonationAboveThreshold) {
-      color: $color-octant-orange;
-    }
-    &.isDonationAboveThreshold {
-      color: $color-octant-green;
-    }
-  }
-
-  @media #{$tablet-down} {
-    font-size: $font-size-10;
-  }
-
-  &.isLoadingAllocateSimulate,
-  &.isSimulateVisible {
-    color: $color-octant-grey5;
-  }
-}
-
-.progressBar {
-  position: relative;
-  height: 0.2rem;
-  width: 10rem;
-  background: $color-octant-grey1;
-  overflow: hidden;
+  align-items: center;
   margin: 0.8rem 0 0 0;
-
-
-  @media #{$tablet-down} {
-    margin: 0.4rem 0 0 0;
-  }
-
-  .simulateLoader {
-    height: 100%;
-    background: $color-octant-grey5;
-    width: 75%;
-    position: absolute;
-    animation: movingLeftAndRight 1s linear infinite;
-  }
-
-  .linearGradientSvg {
-    background: $color-octant-orange5;
-    border-radius: 0.2rem;
-    position: absolute;
-  }
-
-  .filled {
-    height: 100%;
-    border-radius: 0.2rem;
-    background: $color-octant-orange;
-
-    &.isError {
-      width: 0;
-    }
-  }
 }
 
-:export {
-  colorOctantOrange: $color-octant-orange;
-  colorOctantOrange5: $color-octant-orange5;
+.element {
+  display: flex;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+  background: $color-octant-grey6;
+  border-radius: $border-radius-04;
+
+  &.isLoadingAllocateSimulate, &.isError, &:not(.isDecisionWindowOpen) {
+    opacity: 0.5;
+  }
+
+  &.isSimulatedMatchedAvailable {
+    color: $color-octant-green;
+  }
+
+  &:not(:last-child) {
+    margin-right: 0.8rem;
+  }
+
+  .icon {
+    margin-right: 0.8rem;
+
+    &.isSimulatedMatchedAvailable {
+      path {
+        stroke: $color-octant-green;
+      }
+    }
+  }
 }

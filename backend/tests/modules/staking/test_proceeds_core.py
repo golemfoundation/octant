@@ -11,8 +11,8 @@ from app.modules.staking.proceeds.core import (
 @pytest.mark.parametrize(
     "days, result",
     [
-        (72, 680_547945205_479505920),
-        (90, 850_684931506_849316864),
+        (72, 749_589_041_095_890_305_024),
+        (90, 936_986_301_369_862_848_512),
     ],
 )
 def test_estimate_epoch_eth_staking_proceeds(days, result):

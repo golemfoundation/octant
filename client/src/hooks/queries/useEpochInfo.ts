@@ -7,7 +7,6 @@ import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 type EpochInfo = {
   communityFund: bigint;
-  individualRewards: bigint;
   leftover: bigint;
   matchedRewards: bigint;
   operationalCost: bigint;
@@ -18,6 +17,7 @@ type EpochInfo = {
   totalEffectiveDeposit: bigint;
   totalRewards: bigint;
   totalWithdrawals: bigint;
+  vanillaIndividualRewards: bigint;
 };
 
 // TODO OCT-1364 Remove this util, adjust backend response
@@ -49,7 +49,6 @@ export default function useEpochInfo(
       communityFund: response.communityFund
         ? parseUnitsBigInt(response.communityFund, 'wei')
         : BigInt(0),
-      individualRewards: parseUnitsBigInt(response.individualRewards, 'wei'),
       matchedRewards: response.matchedRewards
         ? parseUnitsBigInt(response.matchedRewards, 'wei')
         : BigInt(0),
@@ -66,6 +65,7 @@ export default function useEpochInfo(
       totalWithdrawals: response.totalWithdrawals
         ? parseUnitsBigInt(response.totalWithdrawals, 'wei')
         : BigInt(0),
+      vanillaIndividualRewards: parseUnitsBigInt(response.vanillaIndividualRewards, 'wei'),
       ...getLeftoverAndStaking(epoch, response.leftover),
     }),
     ...options,

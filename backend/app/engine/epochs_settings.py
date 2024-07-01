@@ -18,13 +18,17 @@ from app.engine.octant_rewards.total_and_individual.all_proceeds_with_op_cost im
 from app.engine.octant_rewards.total_and_individual.preliminary import (
     PreliminaryTotalAndAllIndividualRewards,
 )
-from app.engine.projects import ProjectSettings, DefaultProjectRewards
-from app.engine.projects.rewards.threshold.default import DefaultProjectThreshold
+from app.engine.projects import ProjectSettings
+from app.engine.projects.rewards.preliminary import PreliminaryProjectRewards
+from app.engine.projects.rewards.threshold.preliminary import (
+    PreliminaryProjectThreshold,
+)
 from app.engine.user.budget.preliminary import PreliminaryUserBudget
 from app.engine.user import UserSettings, DefaultWeightedAverageEffectiveDeposit
 from app.engine.user.effective_deposit.weighted_average.weights.timebased.default import (
     DefaultTimebasedWeights,
 )
+from app.engine.octant_rewards.leftover.with_ppf import LeftoverWithPPF
 
 
 @dataclass
@@ -44,7 +48,7 @@ def get_epoch_settings(epoch_number: int) -> EpochSettings:
 def register_epoch_settings():
     SETTINGS[1] = EpochSettings(
         octant_rewards=OctantRewardsSettings(
-            total_and_all_individual_rewards=AllProceedsWithOperationalCost(),
+            total_and_vanilla_individual_rewards=AllProceedsWithOperationalCost(),
             matched_rewards=PreliminaryMatchedRewards(),
             operational_cost=OpCostPercent(Decimal("0.20")),
             ppf=NotSupportedPPFCalculator(),
@@ -58,15 +62,15 @@ def register_epoch_settings():
             ),
         ),
         project=ProjectSettings(
-            rewards=DefaultProjectRewards(
-                projects_threshold=DefaultProjectThreshold(2),
+            rewards=PreliminaryProjectRewards(
+                projects_threshold=PreliminaryProjectThreshold(2),
             ),
         ),
     )
 
     SETTINGS[2] = EpochSettings(
         octant_rewards=OctantRewardsSettings(
-            total_and_all_individual_rewards=PreliminaryTotalAndAllIndividualRewards(),
+            total_and_vanilla_individual_rewards=PreliminaryTotalAndAllIndividualRewards(),
             matched_rewards=PreliminaryMatchedRewards(),
             ppf=NotSupportedPPFCalculator(),
             community_fund=NotSupportedCFCalculator(),
@@ -74,10 +78,14 @@ def register_epoch_settings():
         ),
         user=UserSettings(budget=PreliminaryUserBudget()),
         project=ProjectSettings(
-            rewards=DefaultProjectRewards(
-                projects_threshold=DefaultProjectThreshold(2),
+            rewards=PreliminaryProjectRewards(
+                projects_threshold=PreliminaryProjectThreshold(2),
             ),
         ),
     )
 
-    SETTINGS[3] = EpochSettings()
+    SETTINGS[3] = EpochSettings(
+        octant_rewards=OctantRewardsSettings(leftover=LeftoverWithPPF()),
+        project=ProjectSettings(rewards=PreliminaryProjectRewards()),
+    )
+    SETTINGS[4] = EpochSettings()

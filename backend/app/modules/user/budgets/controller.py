@@ -3,15 +3,15 @@ from typing import List
 from app.context.epoch_state import EpochState
 from app.context.manager import state_context, epoch_context
 from app.exceptions import NotImplementedForGivenEpochState
-from app.modules.dto import AccountFundsDTO
-from app.modules.modules_factory.protocols import UserBudgets
-from app.modules.registry import get_services
-from app.modules.user.budgets import core
+from app.modules.common.time import days_to_sec
 from app.modules.common.validations.user_validations import (
     validate_estimate_budget_by_epochs_inputs,
     validate_estimate_budget_inputs,
 )
-from app.modules.common.time import days_to_sec
+from app.modules.dto import AccountFundsDTO
+from app.modules.modules_factory.protocols import UserBudgets, UpcomingUserBudgets
+from app.modules.registry import get_services
+from app.modules.user.budgets import core
 
 
 def get_budgets(epoch_num: int) -> List[AccountFundsDTO]:
@@ -28,6 +28,13 @@ def get_budget(user_address: str, epoch_num: int) -> int:
     if context.epoch_state > EpochState.PENDING:
         raise NotImplementedForGivenEpochState()
     service: UserBudgets = get_services(context.epoch_state).user_budgets_service
+    return service.get_budget(context, user_address)
+
+
+def get_upcoming_user_budget(user_address: str) -> int:
+    context = state_context(EpochState.SIMULATED, with_block_range=True)
+    service: UpcomingUserBudgets = get_services(EpochState.CURRENT).user_budgets_service
+
     return service.get_budget(context, user_address)
 
 

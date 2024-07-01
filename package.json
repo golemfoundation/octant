@@ -13,15 +13,17 @@
     "prettier:ts:pure": "prettier --parser typescript --write",
     "type-check": "tsc --noEmit true",
     "localenv:build-images": "./localenv/scripts/images.sh",
+    "localenv:build-backend": "./localenv/scripts/images.sh backend",
     "localenv:build-anvil": "docker build --tag octant/anvil:latest -f localenv/anvil/Dockerfile localenv/anvil",
     "localenv:up": "docker compose -p octant -f ./localenv/docker-compose.yaml -f ./localenv/localenv.yaml up -d",
     "localenv:down": "docker compose -p octant -f ./localenv/docker-compose.yaml -f ./localenv/localenv.yaml down",
     "localenv:force-clean": "docker system prune --volumes -f",
     "localenv:reload": "yarn localenv:down && yarn localenv:build-images && yarn localenv:up",
-    "apitest:up": "docker compose -p octant -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml up anvil ipfs graph-postgres graph-node multideployer",
-    "apitest:down": "docker compose -p octant -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml down",
-    "apitest:run": "docker compose -p octant -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml up backend-apitest",
-    "preapitest:run": "yarn localenv:build-images"
+    "apitest:up": "docker compose -p apitest -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml up anvil ipfs graph-postgres graph-node multideployer",
+    "apitest:down": "docker compose -p apitest -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml down",
+    "apitest:run": "docker compose -p apitest -f ./localenv/docker-compose.yaml -f ./localenv/apitest.yaml run backend-apitest",
+    "preapitest:up": "docker rm -v -f $(docker ps -qa --filter 'name=apitest')",
+    "preapitest:run": "yarn localenv:build-backend"
   },
   "repository": {
     "type": "git",

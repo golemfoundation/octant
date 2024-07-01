@@ -136,6 +136,10 @@ jobs:
       OCTANT_ENV: dev
       CHAIN_ID: 1337
       CHAIN_NAME: localhost
+      GC_PASSPORT_SCORER_ID: "${{ secrets.GITCOIN_SCORER_ID }}"
+      GC_PASSPORT_SCORER_API_KEY: "${{ secrets.GITCOIN_SCORER_API_KEY }}"
+      DELEGATION_SALT: "${{ secrets.DELEGATION_SALT }}"
+      DELEGATION_SALT_PRIMARY: "${{ secrets.DELEGATION_SALT_PRIMARY }}"
     steps:
     - uses: actions/checkout@v4.1.0
     - uses: actions/cache/restore@v4

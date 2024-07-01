@@ -4,7 +4,6 @@ import { useAccount } from 'wagmi';
 
 import { apiPostAllocateLeverage, ApiPostAllocateLeverageResponse } from 'api/calls/allocate';
 import { getAllocationsMapped } from 'hooks/utils/utils';
-import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 import { AllocationValues } from 'views/AllocationView/types';
 
 export type AllocateSimulate = Omit<ApiPostAllocateLeverageResponse, 'threshold'> & {
@@ -40,7 +39,6 @@ export default function useAllocateSimulate(
     ...mutation,
     data: mutation.data && {
       ...mutation.data,
-      threshold: parseUnitsBigInt(mutation.data.threshold, 'wei'),
     },
     reset,
   };

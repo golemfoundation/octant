@@ -39,7 +39,7 @@ def test_calculate_octant_rewards_before_overhaul(
     assert result.locked_ratio == Decimal("0.100022700000000000099999994")
     assert result.total_effective_deposit == TOTAL_ED
     assert result.total_rewards == expected_tr
-    assert result.individual_rewards == expected_ir
+    assert result.vanilla_individual_rewards == expected_ir
     assert result.operational_cost == expected_operational_cost
 
 
@@ -61,11 +61,11 @@ def test_calculate_octant_rewards_after_overhaul(
         result.staking_proceeds
     )
 
-    assert result.individual_rewards == 40_250230619_178123337
+    assert result.vanilla_individual_rewards == 40_250230619_178123337
     assert result.operational_cost == 10_060273972_6027500000
     assert result.community_fund == overhaul_formulas.community_fund(
         result.staking_proceeds
     )
     assert result.ppf == overhaul_formulas.ppf(
-        result.staking_proceeds, result.individual_rewards, LOCKED_RATIO
+        result.staking_proceeds, result.vanilla_individual_rewards, LOCKED_RATIO
     )

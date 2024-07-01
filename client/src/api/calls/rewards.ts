@@ -10,13 +10,11 @@ export type Response = {
 };
 
 export async function apiGetEstimatedMatchedProjectRewards(): Promise<Response> {
-  return apiService
-    .get(`${env.serverEndpoint}rewards/proposals/estimated`)
-    .then(({ data }) => data);
+  return apiService.get(`${env.serverEndpoint}rewards/projects/estimated`).then(({ data }) => data);
 }
 
 export async function apiGetMatchedProjectRewards(epoch: number): Promise<Response> {
   return apiService
-    .get(`${env.serverEndpoint}rewards/proposals/epoch/${epoch}`)
+    .get(`${env.serverEndpoint}rewards/projects/epoch/${epoch}`)
     .then(({ data }) => data);
 }

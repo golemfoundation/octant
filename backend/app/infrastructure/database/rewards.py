@@ -33,7 +33,7 @@ def get_by_address_and_epoch_gt(address: str, epoch: int) -> List[RewardDB]:
     )
 
 
-def add_proposal_reward(epoch: int, address: str, amount: int, matched: int):
+def add_project_reward(epoch: int, address: str, amount: int, matched: int):
     db.session.add(
         RewardDB(
             epoch=epoch,

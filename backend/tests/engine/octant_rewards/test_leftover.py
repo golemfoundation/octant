@@ -1,4 +1,4 @@
-from app.engine.octant_rewards import LeftoverWithPPF
+from app.engine.octant_rewards.leftover.with_ppf import LeftoverWithPPF
 from app.engine.octant_rewards.leftover import LeftoverPayload
 from app.engine.octant_rewards.leftover.default import PreliminaryLeftover
 
@@ -25,6 +25,8 @@ def test_leftover_with_ppf():
         community_fund=50,
         ppf=350,
         total_withdrawals=430,
+        total_matched_rewards=100,
+        used_matched_rewards=95,
     )
     uut = LeftoverWithPPF()
 

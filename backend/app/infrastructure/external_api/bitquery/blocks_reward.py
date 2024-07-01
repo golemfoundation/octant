@@ -37,4 +37,4 @@ def get_blocks_rewards(address: str, start_block: int, end_block: int) -> float:
         app_module.ExceptionHandler.print_stacktrace(e)
         raise ExternalApiException(e, 500)
 
-    return json_response["data"]["ethereum"]["blocks"][0]["reward"]
+    return float(json_response["data"]["EVM"]["MinerRewards"][0]["sum"])

@@ -16,6 +16,7 @@ export const envViteKeys: EnvViteKeys = {
   ipfsGateways: 'VITE_IPFS_GATEWAYS',
   jsonRpcEndpoint: 'VITE_JSON_RPC_ENDPOINT',
   network: 'VITE_NETWORK',
+  safeEndpoint: 'VITE_SAFE_ENDPOINT',
   sentryAuthToken: 'VITE_SENTRY_AUTH_TOKEN',
   serverEndpoint: 'VITE_SERVER_ENDPOINT',
   subgraphAddress: 'VITE_SUBGRAPH_ADDRESS',
@@ -50,6 +51,8 @@ const env: Env = {
   jsonRpcEndpoint: import.meta.env[envViteKeys.jsonRpcEndpoint],
   // @ts-expect-error TS does not understand the way vite imports envs.
   network: import.meta.env[envViteKeys.network],
+  // @ts-expect-error TS does not understand the way vite imports envs.
+  safeEndpoint: import.meta.env[envViteKeys.safeEndpoint],
   // @ts-expect-error TS does not understand the way vite imports envs.
   sentryAuthToken: import.meta.env[envViteKeys.sentryAuthToken],
   // @ts-expect-error TS does not understand the way vite imports envs.

@@ -1,9 +1,28 @@
-.body.isWaitingForWalletConfirmationMultisig {
+.body.isWaitingForAllMultisigSignatures {
   opacity: 0.5;
 }
 
 .box {
   &:not(:last-child) {
     margin: 0 auto 1.6rem;
+  }
+}
+
+.initialSignatureMessage {
+  color: $color-octant-orange;
+  display: block;
+  text-align: right;
+  margin-top: 0.6rem;
+  margin-bottom: -1rem;
+
+  @media #{$desktop-up} {
+    margin-bottom: -1.8rem;
+  }
+
+  .text {
+    font-weight: $font-weight-bold;
+    color: $color-octant-orange;
+    line-height: 1.4rem;
+    font-size: $font-size-10;
   }
 }

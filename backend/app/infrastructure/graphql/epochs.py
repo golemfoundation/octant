@@ -37,30 +37,6 @@ query GetEpoch($epochNo: Int!) {
         raise exceptions.EpochNotIndexed(epoch_number)
 
 
-def get_epochs_by_range(from_epoch, to_epoch):
-    query = gql(
-        """
-query GetEpochs($fromEpoch: Int!, $toEpoch: Int!) {
-  epoches(where: {epoch_gt: $fromEpoch, epoch_lte: $toEpoch}) {
-    toTs
-    fromTs
-    epoch
-    duration
-    decisionWindow
-  }
-}
-"""
-    )
-
-    variables = {"fromEpoch": from_epoch, "toEpoch": to_epoch}
-
-    app.logger.debug(
-        f"[Subgraph] Getting list of epochs within range <{from_epoch, to_epoch}>"
-    )
-    data = gql_factory.build().execute(query, variable_values=variables)
-    return data["epoches"]
-
-
 def get_epochs():
     query = gql(
         """

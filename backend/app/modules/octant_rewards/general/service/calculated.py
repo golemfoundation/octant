@@ -24,6 +24,7 @@ class CalculatedOctantRewards(Model):
 
     def get_octant_rewards(self, context: Context) -> OctantRewardsDTO:
         eth_proceeds = self.staking_proceeds.get_staking_proceeds(context)
+
         total_effective_deposit = self.effective_deposits.get_total_effective_deposit(
             context
         )
@@ -34,14 +35,14 @@ class CalculatedOctantRewards(Model):
         (
             locked_ratio,
             total_rewards,
-            all_individual_rewards,
+            vanilla_individual_rewards,
             op_cost,
             ppf,
             community_fund,
         ) = (
             octant_rewards.locked_ratio,
             octant_rewards.total_rewards,
-            octant_rewards.all_individual_rewards,
+            octant_rewards.vanilla_individual_rewards,
             octant_rewards.operational_cost,
             octant_rewards.ppf_value,
             octant_rewards.community_fund,
@@ -52,7 +53,7 @@ class CalculatedOctantRewards(Model):
             locked_ratio=locked_ratio,
             total_effective_deposit=total_effective_deposit,
             total_rewards=total_rewards,
-            individual_rewards=all_individual_rewards,
+            vanilla_individual_rewards=vanilla_individual_rewards,
             operational_cost=op_cost,
             ppf=ppf,
             community_fund=community_fund,

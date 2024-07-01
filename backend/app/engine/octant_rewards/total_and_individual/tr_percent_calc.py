@@ -11,7 +11,7 @@ class PercentTotalAndAllIndividualRewards(TotalAndAllIndividualRewards):
     def calculate_total_rewards(self, payload: TotalAndAllIndividualPayload) -> int:
         return int(self.TR_PERCENT * payload.eth_proceeds)
 
-    def calculate_all_individual_rewards(
+    def calculate_vanilla_individual_rewards(
         self, payload: TotalAndAllIndividualPayload
     ) -> int:
         return int(payload.eth_proceeds * payload.locked_ratio)

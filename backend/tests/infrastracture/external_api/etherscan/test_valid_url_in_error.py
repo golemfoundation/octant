@@ -24,7 +24,7 @@ def test_get_transactions_success(mock_response):
 
 def test_get_transactions_raises_error_and_api_key_not_leaked():
     with patch(
-        "app.infrastructure.external_api.etherscan.blocks.requests.get"
+        "app.infrastructure.external_api.etherscan.account.requests.get"
     ) as mock_get, pytest.raises(ExternalApiException) as excinfo:
         mock_get.json.return_value = {"message": "NOT_OK"}
         get_transactions(TEST_ADDRESS, START_BLOCK, END_BLOCK)

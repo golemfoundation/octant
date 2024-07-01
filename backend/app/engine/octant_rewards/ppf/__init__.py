@@ -6,7 +6,7 @@ from decimal import Decimal
 @dataclass
 class PPFPayload:
     individual_rewards_equilibrium: int
-    all_individual_rewards: int
+    vanilla_individual_rewards: int
     locked_ratio: Decimal
     ire_percent: Decimal
 

@@ -12,7 +12,11 @@ from tests.conftest import (
     MOCKED_PENDING_EPOCH_NO,
     TOTAL_ED,
 )
-from tests.helpers.constants import ALL_INDIVIDUAL_REWARDS, LOCKED_RATIO, TOTAL_REWARDS
+from tests.helpers.constants import (
+    VANILLA_INDIVIDUAL_REWARDS,
+    LOCKED_RATIO,
+    TOTAL_REWARDS,
+)
 from tests.helpers.constants import LEFTOVER, OPERATIONAL_COST
 
 
@@ -22,7 +26,7 @@ def before(
     patch_epochs,
     patch_glm,
     patch_eth_get_balance,
-    patch_proposals,
+    patch_projects,
     mock_epoch_details,
 ):
     pass
@@ -149,7 +153,7 @@ def _setup(current, pending, finalized, pending_snapshot, finalized_snapshot):
             TOTAL_ED,
             LOCKED_RATIO,
             TOTAL_REWARDS,
-            ALL_INDIVIDUAL_REWARDS,
+            VANILLA_INDIVIDUAL_REWARDS,
             OPERATIONAL_COST,
         )
     if finalized_snapshot:

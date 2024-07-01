@@ -58,7 +58,7 @@ class PendingOctantRewards(Model):
             locked_ratio=Decimal(pending_snapshot.locked_ratio),
             total_effective_deposit=int(pending_snapshot.total_effective_deposit),
             total_rewards=int(pending_snapshot.total_rewards),
-            individual_rewards=int(pending_snapshot.all_individual_rewards),
+            vanilla_individual_rewards=int(pending_snapshot.vanilla_individual_rewards),
             operational_cost=int(pending_snapshot.operational_cost),
             community_fund=pending_snapshot.validated_community_fund,
             ppf=pending_snapshot.validated_ppf,
@@ -84,7 +84,9 @@ class PendingOctantRewards(Model):
         pending_snapshot: PendingEpochSnapshot,
         matched_rewards: int,
     ) -> int:
-        allocations = database.allocations.get_all(context.epoch_details.epoch_num)
+        allocations = database.allocations.get_all_with_uqs(
+            context.epoch_details.epoch_num
+        )
         _, user_rewards = self.user_rewards.get_claimed_rewards(context)
         project_rewards = self.project_rewards.get_finalized_project_rewards(
             context, allocations, context.projects_details.projects, matched_rewards
@@ -99,5 +101,7 @@ class PendingOctantRewards(Model):
                 else None,
                 ppf=pending_snapshot.validated_ppf,
                 total_withdrawals=user_rewards + project_rewards.rewards_sum,
+                total_matched_rewards=matched_rewards,
+                used_matched_rewards=sum(r.matched for r in project_rewards.rewards),
             )
         )

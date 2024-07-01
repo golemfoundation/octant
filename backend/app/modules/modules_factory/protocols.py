@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Protocol, List, Dict, Tuple, Optional, runtime_checkable
 
 from app.context.manager import Context
@@ -7,13 +8,14 @@ from app.modules.dto import (
     OctantRewardsDTO,
     AccountFundsDTO,
     AllocationDTO,
-    ProposalDonationDTO,
+    ProjectDonationDTO,
     FinalizedSnapshotDTO,
     PendingSnapshotDTO,
     WithdrawableEth,
     UserAllocationRequestPayload,
     SignatureOpType,
     ProjectsMetadata,
+    ScoreDelegationPayload,
 )
 from app.modules.history.dto import UserHistoryDTO
 from app.modules.multisig_signatures.dto import Signature
@@ -64,7 +66,7 @@ class GetUserAllocationsProtocol(Protocol):
 
     def get_allocations_by_project(
         self, context: Context, project: str
-    ) -> List[ProposalDonationDTO]:
+    ) -> List[ProjectDonationDTO]:
         ...
 
     def get_last_user_allocation(
@@ -106,6 +108,12 @@ class UserBudgets(Protocol):
     def get_all_budgets(self, context: Context) -> Dict[str, int]:
         ...
 
+    def get_budget(self, context: Context, user_address: str) -> int:
+        ...
+
+
+@runtime_checkable
+class UpcomingUserBudgets(Protocol):
     def get_budget(self, context: Context, user_address: str) -> int:
         ...
 
@@ -221,4 +229,24 @@ class ProjectsMetadataService(Protocol):
 @runtime_checkable
 class UserAllocationNonceProtocol(Protocol):
     def get_user_next_nonce(self, user_address: str) -> int:
+        ...
+
+
+@runtime_checkable
+class ScoreDelegation(Protocol):
+    def delegate(self, context: Context, payload: ScoreDelegationPayload):
+        ...
+
+    def recalculate(self, context: Context, payload: ScoreDelegationPayload):
+        ...
+
+    def check(self, context: Context, addresses: list[str]) -> set[Tuple[str, str]]:
+        ...
+
+
+@runtime_checkable
+class UniquenessQuotients(Protocol):
+    def retrieve(
+        self, context: Context, user_address: str, should_save: bool = False
+    ) -> Decimal:
         ...

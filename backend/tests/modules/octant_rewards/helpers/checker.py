@@ -2,7 +2,7 @@ from app.modules.dto import OctantRewardsDTO
 from tests.conftest import ETH_PROCEEDS, TOTAL_ED
 from tests.helpers.constants import (
     TOTAL_REWARDS,
-    ALL_INDIVIDUAL_REWARDS,
+    VANILLA_INDIVIDUAL_REWARDS,
     OPERATIONAL_COST,
     LOCKED_RATIO,
 )
@@ -21,7 +21,7 @@ def check_octant_rewards(
     assert rewards.locked_ratio == LOCKED_RATIO
     assert rewards.total_effective_deposit == TOTAL_ED
     assert rewards.total_rewards == TOTAL_REWARDS
-    assert rewards.individual_rewards == ALL_INDIVIDUAL_REWARDS
+    assert rewards.vanilla_individual_rewards == VANILLA_INDIVIDUAL_REWARDS
     assert rewards.operational_cost == OPERATIONAL_COST
     assert rewards.patrons_rewards == patrons_rewards
     assert rewards.total_withdrawals == total_withdrawals

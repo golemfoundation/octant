@@ -100,14 +100,18 @@ def test_pending_get_matched_rewards_after_overhaul(
 
 
 def test_pending_get_leverage(
-    proposal_accounts, mock_users_db, mock_pending_epoch_snapshot_db, service
+    project_accounts,
+    mock_users_db,
+    mock_pending_epoch_snapshot_db,
+    mock_patron_mode,
+    service,
 ):
     user, _, _ = mock_users_db
     context = get_context()
     make_user_allocation(
         context,
         user,
-        allocation_items=[AllocationItem(proposal_accounts[0].address, USER1_BUDGET)],
+        allocation_items=[AllocationItem(project_accounts[0].address, USER1_BUDGET)],
     )
 
     result = service.get_leverage(context)

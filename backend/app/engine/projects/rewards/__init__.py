@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import List
+from dataclasses import dataclass, field
+from typing import List, Optional
 
 from dataclass_wizard import JSONWizard
 
-from app.engine.projects.rewards.allocations import AllocationItem
+from app.engine.projects.rewards.allocations import AllocationItem, ProjectAllocations
 
 
 @dataclass
@@ -35,17 +35,18 @@ class ProjectRewardsResult:
     rewards: List[ProjectRewardDTO]
     rewards_sum: int
     total_allocated: int
-    threshold: int
+    threshold: Optional[int] = None
 
 
 @dataclass
 class ProjectRewards(ABC):
+    projects_allocations: ProjectAllocations = field(init=False)
+
     @abstractmethod
     def calculate_project_rewards(
         self, payload: ProjectRewardsPayload
     ) -> ProjectRewardsResult:
         pass
 
-    @abstractmethod
-    def calculate_threshold(self, total_allocated: int, projects: list[str]) -> int:
-        pass
+    def calculate_threshold(self, total_allocated: int, projects: List[str]) -> None:
+        return None

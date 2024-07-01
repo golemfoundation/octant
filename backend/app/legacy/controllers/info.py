@@ -34,7 +34,7 @@ def get_blockchain_info() -> ChainInfo:
         SmartContract("Deposits", app.config["DEPOSITS_CONTRACT_ADDRESS"]),
         SmartContract("Epochs", app.config["EPOCHS_CONTRACT_ADDRESS"]),
         SmartContract("GLM", app.config["GLM_CONTRACT_ADDRESS"]),
-        SmartContract("Proposals", app.config["PROPOSALS_CONTRACT_ADDRESS"]),
+        SmartContract("Projects", app.config["PROJECTS_CONTRACT_ADDRESS"]),
         SmartContract("Vault", app.config["VAULT_CONTRACT_ADDRESS"]),
         SmartContract(
             "WithdrawalsTarget", app.config["WITHDRAWALS_TARGET_CONTRACT_ADDRESS"]

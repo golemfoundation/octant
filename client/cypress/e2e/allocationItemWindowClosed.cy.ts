@@ -95,8 +95,12 @@ describe('allocation (allocation window closed)', () => {
           .should(isDesktop ? 'be.visible' : 'not.be.visible');
         cy.get('[data-test=AllocationItem]')
           .eq(0)
-          .find('[data-test=AllocationItemRewards]')
-          .contains(isDesktop ? 'Threshold data unavailable' : 'No threshold data');
+          .find('[data-test=AllocationItemRewards__value]')
+          .contains('0 ETH');
+        cy.get('[data-test=AllocationItem]')
+          .eq(0)
+          .find('[data-test=AllocationItemRewardsDonors]')
+          .contains('0');
         cy.get('[data-test=AllocationItem]')
           .eq(0)
           .find('[data-test=AllocationItem__InputText]')

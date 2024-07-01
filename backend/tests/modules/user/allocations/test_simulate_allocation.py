@@ -11,13 +11,13 @@ def test_simulate_allocation_single_user():
     projects = context.projects_details.projects
     # Test data
     allocations_before = [
-        AllocationDTO(projects[0], 10 * 10**18, USER1_ADDRESS),
-        AllocationDTO(projects[1], 20 * 10**18, USER1_ADDRESS),
-        AllocationDTO(projects[2], 30 * 10**18, USER1_ADDRESS),
+        AllocationDTO(projects[0], 10 * 10**18, user_address=USER1_ADDRESS),
+        AllocationDTO(projects[1], 20 * 10**18, user_address=USER1_ADDRESS),
+        AllocationDTO(projects[2], 30 * 10**18, user_address=USER1_ADDRESS),
     ]
     user_allocation = [
-        AllocationDTO(projects[0], 40 * 10**18, USER1_ADDRESS),
-        AllocationDTO(projects[1], 50 * 10**18, USER1_ADDRESS),
+        AllocationDTO(projects[0], 40 * 10**18, user_address=USER1_ADDRESS),
+        AllocationDTO(projects[1], 50 * 10**18, user_address=USER1_ADDRESS),
     ]
 
     # Call simulate allocation method
@@ -54,15 +54,15 @@ def test_simulate_allocation_multiple_user():
     projects = context.projects_details.projects
     # Test data
     allocations_before = [
-        AllocationDTO(projects[0], 10 * 10**18, USER1_ADDRESS),
-        AllocationDTO(projects[1], 20 * 10**18, USER1_ADDRESS),
-        AllocationDTO(projects[2], 30 * 10**18, USER1_ADDRESS),
-        AllocationDTO(projects[0], 40 * 10**18, USER2_ADDRESS),
-        AllocationDTO(projects[1], 50 * 10**18, USER2_ADDRESS),
+        AllocationDTO(projects[0], 10 * 10**18, user_address=USER1_ADDRESS),
+        AllocationDTO(projects[1], 20 * 10**18, user_address=USER1_ADDRESS),
+        AllocationDTO(projects[2], 30 * 10**18, user_address=USER1_ADDRESS),
+        AllocationDTO(projects[0], 40 * 10**18, user_address=USER2_ADDRESS),
+        AllocationDTO(projects[1], 50 * 10**18, user_address=USER2_ADDRESS),
     ]
     user_allocation = [
-        AllocationDTO(projects[0], 60 * 10**18, USER1_ADDRESS),
-        AllocationDTO(projects[1], 70 * 10**18, USER1_ADDRESS),
+        AllocationDTO(projects[0], 60 * 10**18, user_address=USER1_ADDRESS),
+        AllocationDTO(projects[1], 70 * 10**18, user_address=USER1_ADDRESS),
     ]
 
     # Call simulate allocation method

@@ -11,7 +11,7 @@ from app.engine.octant_rewards import (
 from app.exceptions import InvalidMatchedRewardsStrategy
 from tests.helpers.constants import (
     TOTAL_REWARDS,
-    ALL_INDIVIDUAL_REWARDS,
+    VANILLA_INDIVIDUAL_REWARDS,
     ETH_PROCEEDS,
     USER2_BUDGET,
 )
@@ -24,7 +24,7 @@ from tests.modules.octant_rewards.helpers.overhaul_formulas import (
 def test_preliminary_matched_rewards():
     patrons_budget = 1526868_989237987
     payload = MatchedRewardsPayload(
-        TOTAL_REWARDS, ALL_INDIVIDUAL_REWARDS, patrons_budget
+        TOTAL_REWARDS, VANILLA_INDIVIDUAL_REWARDS, patrons_budget
     )
     uut = PreliminaryMatchedRewards()
 

@@ -1,7 +1,7 @@
 from typing import List
 
-from app.context import epoch_details
-from app.context.epoch_details import EpochDetails
+from app.context.epoch.details import EpochDetails
+from app.context.epoch.factory import get_epochs_details
 from app.context.manager import Context
 from app.infrastructure import database
 from app.modules.common.time import Timestamp
@@ -34,8 +34,8 @@ class EventsBasedUserPatronMode(Model):
     ) -> list[PatronDonationItem]:
         last_finalized_snapshot = context.snapshots_state.last_finalized_snapshot_num
 
-        epochs = epoch_details.get_epochs_details(
-            last_finalized_snapshot - limit, last_finalized_snapshot
+        epochs = get_epochs_details(
+            last_finalized_snapshot - limit + 1, last_finalized_snapshot + 1
         )
         epochs = filter_and_reverse_epochs(epochs, from_timestamp)
         patron_donations = []

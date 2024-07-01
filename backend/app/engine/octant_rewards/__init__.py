@@ -6,7 +6,6 @@ from app.engine.octant_rewards.community_fund.calculator import (
     CommunityFundPercent,
 )
 from app.engine.octant_rewards.leftover import Leftover
-from app.engine.octant_rewards.leftover.with_ppf import LeftoverWithPPF
 from app.engine.octant_rewards.locked_ratio import LockedRatio
 from app.engine.octant_rewards.locked_ratio.default import DefaultLockedRatio
 from app.engine.octant_rewards.matched import MatchedRewards
@@ -22,6 +21,9 @@ from app.engine.octant_rewards.ppf.calculator import (
 from app.engine.octant_rewards.total_and_individual import TotalAndAllIndividualRewards
 from app.engine.octant_rewards.total_and_individual.tr_percent_calc import (
     PercentTotalAndAllIndividualRewards,
+)
+from app.engine.octant_rewards.leftover.with_ppf_and_unused import (
+    LeftoverWithPPFAndUnusedMR,
 )
 
 
@@ -41,7 +43,7 @@ class OctantRewardsSettings:
             OctantRewardsDefaultValues.OPERATIONAL_COST
         )
     )
-    total_and_all_individual_rewards: TotalAndAllIndividualRewards = field(
+    total_and_vanilla_individual_rewards: TotalAndAllIndividualRewards = field(
         default_factory=lambda: PercentTotalAndAllIndividualRewards(
             IRE_PERCENT=OctantRewardsDefaultValues.IRE_PERCENT,
             TR_PERCENT=OctantRewardsDefaultValues.TR_PERCENT,
@@ -59,4 +61,4 @@ class OctantRewardsSettings:
             OctantRewardsDefaultValues.COMMUNITY_FUND
         )
     )
-    leftover: Leftover = field(default_factory=LeftoverWithPPF)
+    leftover: Leftover = field(default_factory=LeftoverWithPPFAndUnusedMR)

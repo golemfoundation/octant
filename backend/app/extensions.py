@@ -12,7 +12,7 @@ from app.infrastructure.contracts import abi
 from app.infrastructure.contracts.epochs import Epochs
 from app.infrastructure.contracts.deposits import Deposits
 from app.infrastructure.contracts.erc20 import ERC20
-from app.infrastructure.contracts.proposals import Proposals
+from app.infrastructure.contracts.projects import Projects
 from app.infrastructure.contracts.vault import Vault
 from app.infrastructure import GQLConnectionFactory
 
@@ -35,7 +35,7 @@ w3 = Web3()
 glm = ERC20(abi=abi.ERC20)
 epochs = Epochs(abi=abi.EPOCHS)
 deposits = Deposits(abi=abi.DEPOSITS)
-proposals = Proposals(abi=abi.PROPOSALS)
+projects = Projects(abi=abi.PROJECTS)
 vault = Vault(abi=abi.VAULT)
 
 # GQL extensions
@@ -49,7 +49,7 @@ def init_web3(app):
 
     glm.init_web3(w3, app.config["GLM_CONTRACT_ADDRESS"])
     epochs.init_web3(w3, app.config["EPOCHS_CONTRACT_ADDRESS"])
-    proposals.init_web3(w3, app.config["PROPOSALS_CONTRACT_ADDRESS"])
+    projects.init_web3(w3, app.config["PROJECTS_CONTRACT_ADDRESS"])
     vault.init_web3(w3, app.config["VAULT_CONTRACT_ADDRESS"])
     deposits.init_web3(w3, app.config["DEPOSITS_CONTRACT_ADDRESS"])
 

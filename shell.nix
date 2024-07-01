@@ -1,18 +1,15 @@
 # shell.nix
 let
   sources = import ./nix/sources.nix;
-  pkgs16 = import sources.nixpkgs16 {};
+  pkgsrg = import sources.nixpkgs-rg {};
   pkgs = import sources.nixpkgs {};
-  yarn16 = pkgs16.yarn.overrideAttrs (finalAttrs: previousAttrs: {
-    buildInputs = [ pkgs16.nodejs-16_x ];
-  });
 in
 
 pkgs.mkShell {
   buildInputs = [
-	  pkgs16.nodejs-16_x
-    yarn16
+    pkgs.nodejs
+    pkgs.yarn
 	  pkgs.git
-	  pkgs.ripgrep
+	  pkgsrg.ripgrep
   ];
 }

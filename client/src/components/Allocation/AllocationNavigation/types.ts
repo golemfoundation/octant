@@ -5,7 +5,7 @@ export default interface AllocationNavigationProps {
   currentView: CurrentView;
   isLeftButtonDisabled: boolean;
   isLoading: boolean;
-  isWaitingForWalletConfirmationMultisig?: boolean;
+  isWaitingForAllMultisigSignatures?: boolean;
   onAllocate: () => void;
   onResetValues: () => void;
   setCurrentView: (newView: CurrentView) => void;

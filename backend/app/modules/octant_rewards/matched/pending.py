@@ -26,11 +26,13 @@ class PendingOctantMatchedRewards(Model):
         return matched_rewards_settings.calculate_matched_rewards(
             MatchedRewardsPayload(
                 total_rewards=int(pending_snapshot.total_rewards),
-                all_individual_rewards=int(pending_snapshot.all_individual_rewards),
+                vanilla_individual_rewards=int(
+                    pending_snapshot.vanilla_individual_rewards
+                ),
                 patrons_rewards=patrons_rewards,
                 staking_proceeds=int(pending_snapshot.eth_proceeds),
                 locked_ratio=Decimal(pending_snapshot.locked_ratio),
-                ire_percent=context.epoch_settings.octant_rewards.total_and_all_individual_rewards.IRE_PERCENT,
-                tr_percent=context.epoch_settings.octant_rewards.total_and_all_individual_rewards.TR_PERCENT,
+                ire_percent=context.epoch_settings.octant_rewards.total_and_vanilla_individual_rewards.IRE_PERCENT,
+                tr_percent=context.epoch_settings.octant_rewards.total_and_vanilla_individual_rewards.TR_PERCENT,
             )
         )

@@ -1,15 +1,14 @@
 import cx from 'classnames';
 import React, { FC } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 import useGetValuesToDisplay from 'hooks/helpers/useGetValuesToDisplay';
 import useIsDonationAboveThreshold from 'hooks/helpers/useIsDonationAboveThreshold';
 import useMatchedProjectRewards from 'hooks/queries/useMatchedProjectRewards';
-import useProjectRewardsThreshold from 'hooks/queries/useProjectRewardsThreshold';
 import useProjectsIpfs from 'hooks/queries/useProjectsIpfs';
 import useUserAllocations from 'hooks/queries/useUserAllocations';
-import useSettingsStore from 'store/settings/store';
-import getRewardsSumWithValueAndSimulation from 'utils/getRewardsSumWithValueAndSimulation';
+import bigintAbs from 'utils/bigIntAbs';
+import { parseUnitsBigInt } from 'utils/parseUnitsBigInt';
 
 import styles from './AllocationSummaryProject.module.scss';
 import AllocationSummaryProjectProps from './types';
@@ -21,22 +20,16 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
   isLoadingAllocateSimulate,
   value,
 }) => {
-  const { i18n } = useTranslation('translation');
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'views.allocation.allocationItem',
+  });
   const isDonationAboveThreshold = useIsDonationAboveThreshold({ projectAddress: address });
   const { data: projectIpfs, isFetching: isFetchingProjectIpfs } = useProjectsIpfs([address]);
 
   const { data: matchedProjectRewards } = useMatchedProjectRewards();
   // Real, not simulated threshold is used, because user won't change his decision here.
-  const { data: projectRewardsThreshold } = useProjectRewardsThreshold();
   const { data: userAllocations } = useUserAllocations();
   const getValuesToDisplay = useGetValuesToDisplay();
-  const {
-    data: { isCryptoMainValueDisplay },
-  } = useSettingsStore(({ data }) => ({
-    data: {
-      isCryptoMainValueDisplay: data.isCryptoMainValueDisplay,
-    },
-  }));
 
   // value can an empty string, which crashes parseUnits. Hence the alternative.
   const valueToUse = value || '0';
@@ -48,38 +41,30 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
     element => element.address === address,
   )?.value;
 
-  const projectMatchedProjectRewardsFormatted = projectMatchedProjectRewards
-    ? getValuesToDisplay({
-        cryptoCurrency: 'ethereum',
-        valueCrypto: projectMatchedProjectRewards?.sum,
-      })
-    : undefined;
-  const projectRewardsThresholdFormatted =
-    projectRewardsThreshold !== undefined
+  const isNewSimulatedPositive = userAllocationToThisProject
+    ? parseUnitsBigInt(valueToUse) >= userAllocationToThisProject
+    : true;
+
+  const simulatedMatchedBigInt = simulatedMatched
+    ? parseUnitsBigInt(simulatedMatched, 'wei')
+    : BigInt(0);
+
+  const yourImpactFormatted =
+    valueToUse && simulatedMatched
       ? getValuesToDisplay({
           cryptoCurrency: 'ethereum',
           showCryptoSuffix: true,
-          showFiatPrefix: false,
-          valueCrypto: projectRewardsThreshold,
+          valueCrypto: bigintAbs(
+            parseUnitsBigInt(value) +
+              simulatedMatchedBigInt -
+              (projectMatchedProjectRewards ? projectMatchedProjectRewards.matched : BigInt(0)),
+          ),
         })
-      : undefined;
-  const areSuffixesTheSame = isCryptoMainValueDisplay
-    ? projectMatchedProjectRewardsFormatted?.cryptoSuffix ===
-      projectRewardsThresholdFormatted?.cryptoSuffix
-    : true;
-
-  const rewardsSumWithValueAndSimulation = getRewardsSumWithValueAndSimulation(
-    valueToUse,
-    simulatedMatched,
-    simulatedMatched === undefined
-      ? projectMatchedProjectRewards?.sum
-      : projectMatchedProjectRewards?.allocated,
-    userAllocationToThisProject,
-  );
-  const rewardsSumWithValueAndSimulationFormatted = getValuesToDisplay({
-    cryptoCurrency: 'ethereum',
-    valueCrypto: rewardsSumWithValueAndSimulation,
-  });
+      : getValuesToDisplay({
+          cryptoCurrency: 'ethereum',
+          showCryptoSuffix: true,
+          valueCrypto: parseUnitsBigInt('0', 'wei'),
+        });
 
   const donationAmountToDisplay = getValuesToDisplay({
     cryptoCurrency: 'ethereum',
@@ -100,19 +85,11 @@ const AllocationSummaryProject: FC<AllocationSummaryProjectProps> = ({
                 isLoadingAllocateSimulate && styles.isLoadingAllocateSimulate,
               )}
             >
-              {isLoadingAllocateSimulate ? (
-                i18n.t('common.calculating')
-              ) : (
-                <Trans
-                  i18nKey="views.allocation.allocationItem.standard"
-                  values={{
-                    sum: areSuffixesTheSame
-                      ? rewardsSumWithValueAndSimulationFormatted.primary
-                      : `${rewardsSumWithValueAndSimulationFormatted?.primary} ${rewardsSumWithValueAndSimulationFormatted?.cryptoSuffix}`,
-                    threshold: projectRewardsThresholdFormatted?.primary,
-                  }}
-                />
-              )}
+              {isLoadingAllocateSimulate && t('simulateLoading')}
+              {!isLoadingAllocateSimulate &&
+                t('simulate', {
+                  value: `${isNewSimulatedPositive ? '' : '-'}${yourImpactFormatted.primary}`,
+                })}
             </div>
           </div>
           <div className={styles.donation} data-test="AllocationSummaryProject__donation">
