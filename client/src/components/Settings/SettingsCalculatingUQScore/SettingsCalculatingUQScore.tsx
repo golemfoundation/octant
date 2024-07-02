@@ -49,8 +49,8 @@ const SettingsCalculatingUQScore: FC<SettingsCalculatingUQScoreProps> = ({
   } = useSignMessage();
 
   const { mutateAsync: refreshAntisybilStatus, isSuccess: isSuccessRefreshAntisybilStatus } =
-    useRefreshAntisybilStatus();
-  const { data: secondaryAddressAntisybilStatusScore } = useAntisybilStatusScore({
+    useRefreshAntisybilStatus(address!);
+  const { data: secondaryAddressAntisybilStatusScore } = useAntisybilStatusScore(address!, {
     enabled: isSuccessRefreshAntisybilStatus,
   });
 

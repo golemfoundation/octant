@@ -124,6 +124,9 @@ export default getStoreWithMeta<SettingsData, SettingsMethods>({
           isCryptoMainValueDisplay: JSON.parse(
             localStorage.getItem(IS_CRYPTO_MAIN_VALUE_DISPLAY) || 'null',
           ),
+          isDelegationCompleted: JSON.parse(
+            localStorage.getItem(IS_DELEGATION_COMPLETED) || 'false',
+          ),
           primaryAddressScore: JSON.parse(localStorage.getItem(PRIMARY_ADDRESS_SCORE) || '0'),
           secondaryAddressScore: JSON.parse(localStorage.getItem(SECONDARY_ADDRESS_SCORE) || '0'),
         },
